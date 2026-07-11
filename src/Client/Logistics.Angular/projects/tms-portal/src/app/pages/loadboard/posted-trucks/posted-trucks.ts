@@ -1,8 +1,7 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { type PostTruckToLoadBoardCommand } from "@logistics/shared/api";
-import { Alert, Stack, Typography, UiButton } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Alert, Spinner, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { DashboardCard, EmptyState, ErrorState, PageHeader } from "@/shared/components";
 import { PostedTrucksTable, PostTruckDialog } from "../_components";
 import { LoadBoardStore } from "../store";
@@ -18,7 +17,7 @@ import { LoadBoardStore } from "../store";
     PageHeader,
     PostedTrucksTable,
     PostTruckDialog,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
     Typography,
     UiButton,

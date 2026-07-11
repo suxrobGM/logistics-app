@@ -1,4 +1,4 @@
-<p-card class="h-full">
+<ui-card class="h-full">
   <ng-template #header>
     <div class="flex items-center justify-between py-3 pr-4 pl-4">
       <div class="flex items-center gap-2">
@@ -7,17 +7,17 @@
       </div>
       <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
     </div>
-    <p-divider class="m-0" />
+    <ui-divider class="m-0" />
   </ng-template>
 
   @if (isLoading()) {
     <div class="flex flex-col gap-4">
       <div class="flex gap-6">
-        <p-skeleton width="120px" height="3rem" />
-        <p-skeleton width="120px" height="3rem" />
-        <p-skeleton width="120px" height="3rem" />
+        <ui-skeleton width="120px" height="3rem" />
+        <ui-skeleton width="120px" height="3rem" />
+        <ui-skeleton width="120px" height="3rem" />
       </div>
-      <p-skeleton height="280px" />
+      <ui-skeleton height="280px" />
     </div>
   } @else {
     <!-- Summary Stats -->
@@ -53,4 +53,4 @@
       <p-chart type="bar" [data]="chartData()" [options]="chartOptions()" class="h-full w-full" />
     </div>
   }
-</p-card>
+</ui-card>

@@ -1,7 +1,7 @@
 import { Component, computed, input } from "@angular/core";
-import { CardModule } from "primeng/card";
 import { Icon } from "../../content/icon/icon";
 import type { IconName } from "../../icons/icon-registry.generated";
+import { Card } from "../card/card";
 
 type ColorVariant = "blue" | "green" | "orange" | "red" | "purple" | "gray";
 
@@ -17,7 +17,7 @@ const COLOR_CLASSES: Record<ColorVariant, string> = {
 @Component({
   selector: "ui-dashboard-card",
   templateUrl: "./dashboard-card.html",
-  imports: [CardModule, Icon],
+  imports: [Card, Icon],
 })
 export class DashboardCard {
   public readonly title = input.required<string>();

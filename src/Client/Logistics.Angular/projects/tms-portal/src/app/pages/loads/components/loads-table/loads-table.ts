@@ -5,9 +5,14 @@ import type { LoadDto, LoadStatus } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
-import { UiButton, UiDataTable, UiSortHeader, UiTableRowDirectives } from "@logistics/shared/ui";
+import {
+  Card,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+  UiTableRowDirectives,
+} from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -17,7 +22,7 @@ import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/
   selector: "app-loads-table",
   templateUrl: "./loads-table.html",
   imports: [
-    CardModule,
+    Card,
     CurrencyFormatPipe,
     DataContainer,
     DateFormatPipe,

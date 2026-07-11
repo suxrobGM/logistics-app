@@ -1,11 +1,7 @@
 <ui-page-header title="Add Blog Post" />
 
 <div class="flex flex-col justify-center gap-6 md:flex-row">
-  <p-card class="w-full md:w-3/4 lg:w-2/3">
-    <adm-blog-post-form
-      mode="create"
-      [isLoading]="isLoading()"
-      (save)="onSave($event)"
-    />
-  </p-card>
+  <ui-card class="w-full md:w-3/4 lg:w-2/3">
+    <adm-blog-post-form mode="create" [isLoading]="isLoading()" (save)="onSave($event)" />
+  </ui-card>
 </div>

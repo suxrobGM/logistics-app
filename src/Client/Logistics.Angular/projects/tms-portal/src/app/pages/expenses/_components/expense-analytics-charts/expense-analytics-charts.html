@@ -1,7 +1,7 @@
 <ui-grid container spacing="6">
   @if (typeData()) {
     <ui-grid [size]="{ xs: 12, lg: 6 }">
-      <p-card class="overflow-hidden">
+      <ui-card class="overflow-hidden">
         <ng-template #header>
           <div class="p-4 pb-0">
             <ui-typography variant="h4">Expense by Type</ui-typography>
@@ -10,13 +10,13 @@
         <div class="h-80">
           <p-chart type="pie" [data]="typeData()" [options]="chartOptions" />
         </div>
-      </p-card>
+      </ui-card>
     </ui-grid>
   }
 
   @if (monthlyTrendData()) {
     <ui-grid [size]="{ xs: 12, lg: 6 }">
-      <p-card class="overflow-hidden">
+      <ui-card class="overflow-hidden">
         <ng-template #header>
           <div class="p-4 pb-0">
             <ui-typography variant="h4">Monthly Expense Trend</ui-typography>
@@ -25,13 +25,13 @@
         <div class="h-80">
           <p-chart type="line" [data]="monthlyTrendData()" [options]="lineChartOptions" />
         </div>
-      </p-card>
+      </ui-card>
     </ui-grid>
   }
 
   @if (companyCategoryData()) {
     <ui-grid [size]="{ xs: 12, lg: 6 }">
-      <p-card class="overflow-hidden">
+      <ui-card class="overflow-hidden">
         <ng-template #header>
           <div class="p-4 pb-0">
             <ui-typography variant="h4">Company Expenses by Category</ui-typography>
@@ -40,13 +40,13 @@
         <div class="h-80">
           <p-chart type="doughnut" [data]="companyCategoryData()" [options]="chartOptions" />
         </div>
-      </p-card>
+      </ui-card>
     </ui-grid>
   }
 
   @if (truckCategoryData()) {
     <ui-grid [size]="{ xs: 12, lg: 6 }">
-      <p-card class="overflow-hidden">
+      <ui-card class="overflow-hidden">
         <ng-template #header>
           <div class="p-4 pb-0">
             <ui-typography variant="h4">Truck Expenses by Category</ui-typography>
@@ -55,7 +55,7 @@
         <div class="h-80">
           <p-chart type="bar" [data]="truckCategoryData()" [options]="chartOptions" />
         </div>
-      </p-card>
+      </ui-card>
     </ui-grid>
   }
 </ui-grid>

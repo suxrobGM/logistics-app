@@ -9,7 +9,7 @@
   </ui-page-header>
 
   <!-- Filter Panel -->
-  <p-card class="mb-4">
+  <ui-card class="mb-4">
     <ui-stack direction="row" align="center" justify="between" class="mb-4">
       <ui-typography variant="body" color="primary" weight="semibold" class="text-lg">
         Filters
@@ -61,9 +61,9 @@
         </ui-form-field>
       </ui-grid>
     </ui-grid>
-  </p-card>
+  </ui-card>
 
-  <p-card>
+  <ui-card>
     <ui-data-container
       [loading]="store.isLoading()"
       [error]="store.error()"
@@ -139,5 +139,5 @@
         </ng-template>
       </ui-data-table>
     </ui-data-container>
-  </p-card>
+  </ui-card>
 </div>

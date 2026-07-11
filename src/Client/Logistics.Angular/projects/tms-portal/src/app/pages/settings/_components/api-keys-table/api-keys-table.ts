@@ -9,11 +9,9 @@ import {
   type ApiKeyCreatedDto,
   type ApiKeyDto,
 } from "@logistics/shared/api";
-import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
+import { Alert, Icon, Spinner, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageModule } from "primeng/message";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
@@ -22,13 +20,13 @@ import { UiFormField } from "@/shared/components";
   selector: "app-api-keys-table",
   templateUrl: "./api-keys-table.html",
   imports: [
+    Alert,
     DatePipe,
     DialogModule,
     FormsModule,
     Icon,
     InputTextModule,
-    MessageModule,
-    ProgressSpinnerModule,
+    Spinner,
     TooltipModule,
     UiButton,
     UiDataTable,

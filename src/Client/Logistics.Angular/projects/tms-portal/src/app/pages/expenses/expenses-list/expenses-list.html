@@ -7,7 +7,7 @@
   />
 </ui-page-header>
 
-<p-card>
+<ui-card>
   <div class="mb-4">
     <ui-search-field (searchChange)="onSearch($event)" />
   </div>
@@ -99,7 +99,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <!-- Context menu for actions -->
 <p-menu #menu [model]="actionMenuItems()" [popup]="true" />

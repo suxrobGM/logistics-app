@@ -1,6 +1,5 @@
 import { computed, inject } from "@angular/core";
-import { Api, getUpcomingMaintenance } from "@logistics/shared/api";
-import type { MaintenanceScheduleDto } from "@logistics/shared/api";
+import { Api, getUpcomingMaintenance, type MaintenanceScheduleDto } from "@logistics/shared/api";
 import type { AppError } from "@logistics/shared/errors";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 

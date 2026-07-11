@@ -15,7 +15,7 @@
 
   @if (isLoading()) {
     <div class="flex justify-center py-16">
-      <p-progress-spinner />
+      <ui-spinner />
     </div>
   } @else if (expense(); as e) {
     <ui-grid container spacing="6">
@@ -30,7 +30,7 @@
       </ui-grid>
     </ui-grid>
   } @else {
-    <p-card>
+    <ui-card>
       <div class="py-16 text-center">
         <ui-icon
           name="exclamation-circle"
@@ -40,7 +40,7 @@
         <ui-typography color="muted">Expense not found</ui-typography>
         <ui-button label="Back to Expenses" [routerLink]="['/expenses']" class="mt-4" />
       </div>
-    </p-card>
+    </ui-card>
   }
 </ui-container>
 

@@ -1,9 +1,9 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import {
   Api,
-  type NotificationDto,
   getNotifications,
   updateNotification,
+  type NotificationDto,
 } from "@logistics/shared/api";
 import { PredefinedDateRanges } from "@/shared/utils";
 import { BaseHubConnection } from "./base-hub-connection";

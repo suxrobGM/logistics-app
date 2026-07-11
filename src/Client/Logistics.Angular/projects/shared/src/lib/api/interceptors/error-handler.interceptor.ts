@@ -1,11 +1,11 @@
 import {
   HttpErrorResponse,
+  HttpRequest,
   type HttpEvent,
   type HttpHandlerFn,
-  HttpRequest,
 } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { Observable, catchError, throwError } from "rxjs";
+import { catchError, Observable, throwError } from "rxjs";
 import { ErrorHandlerService } from "../../errors";
 
 export function errorHandlerInterceptor(

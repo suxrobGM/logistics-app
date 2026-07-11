@@ -11,7 +11,7 @@
 
 @if (isLoading()) {
   <ui-stack align="center" justify="center" class="py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </ui-stack>
 } @else if (load()) {
   <!-- Enhanced Header with Load Number -->
@@ -42,7 +42,7 @@
     />
   </ui-surface>
 
-  <p-card>
+  <ui-card>
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
         <p-tab [value]="0">
@@ -69,7 +69,7 @@
           <ui-grid container spacing="6" class="pt-4">
             <!-- Load Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card class="border-default border">
+              <ui-card class="border-default border">
                 <ng-template #header>
                   <div class="p-4 pb-0">
                     <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -91,7 +91,7 @@
                     </ui-stack>
                   }
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <span>Type</span>
@@ -103,7 +103,7 @@
                     <app-load-status-tag [status]="load()!.status!" />
                   </ui-stack>
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <span>Delivery Cost</span>
@@ -119,7 +119,7 @@
                     </ui-stack>
                   }
 
-                  <p-divider />
+                  <ui-divider />
 
                   @if (load()!.invoice) {
                     <ui-stack direction="row" align="center" justify="between">
@@ -134,12 +134,12 @@
                     </ui-stack>
                   }
                 </ui-stack>
-              </p-card>
+              </ui-card>
             </ui-grid>
 
             <!-- Assignment Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card class="border-default border">
+              <ui-card class="border-default border">
                 <ng-template #header>
                   <div class="p-4 pb-0">
                     <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -161,7 +161,7 @@
                     </ui-stack>
                   }
 
-                  <p-divider />
+                  <ui-divider />
 
                   @if (load()!.assignedTruckNumber) {
                     <ui-stack direction="row" align="center" justify="between">
@@ -190,7 +190,7 @@
                   }
 
                   @if (load()!.tripId) {
-                    <p-divider />
+                    <ui-divider />
                     <ui-stack direction="row" align="center" justify="between">
                       <span>Trip</span>
                       <a
@@ -202,12 +202,12 @@
                     </ui-stack>
                   }
                 </ui-stack>
-              </p-card>
+              </ui-card>
             </ui-grid>
           </ui-grid>
 
           <!-- Route Card (full width) -->
-          <p-card class="border-default mt-6 border">
+          <ui-card class="border-default mt-6 border">
             <ng-template #header>
               <div class="p-4 pb-0">
                 <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -238,7 +238,7 @@
             </ui-grid>
 
             @if (load()!.currentAddress) {
-              <p-divider />
+              <ui-divider />
               <div>
                 <ui-stack direction="row" align="center" gap="2" class="mb-2">
                   <ui-icon name="truck" class="text-orange-500" />
@@ -249,10 +249,10 @@
                 <p class="text-subtle-foreground">{{ load()!.currentAddress | address }}</p>
               </div>
             }
-          </p-card>
+          </ui-card>
 
           <!-- Timeline Card -->
-          <p-card class="border-default mt-6 border">
+          <ui-card class="border-default mt-6 border">
             <ng-template #header>
               <div class="p-4 pb-0">
                 <ui-typography variant="h5" tag="h3" weight="semibold">Timeline</ui-typography>
@@ -299,7 +299,7 @@
                 </ui-grid>
               }
             </ui-grid>
-          </p-card>
+          </ui-card>
         </p-tabpanel>
 
         <!-- Documents Tab -->
@@ -328,7 +328,7 @@
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
-  </p-card>
+  </ui-card>
 
   <!-- Tracking Link Dialog -->
   <app-tracking-link-dialog [loadId]="id()" [(visible)]="showTrackingDialog" />
@@ -348,11 +348,11 @@
     (resolved)="onExceptionResolved()"
   />
 } @else {
-  <p-card>
+  <ui-card>
     <ui-stack align="center" gap="4" class="py-16">
       <ui-icon name="exclamation-circle" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Load not found</ui-typography>
       <ui-button label="Back to Loads" [routerLink]="['/loads']" />
     </ui-stack>
-  </p-card>
+  </ui-card>
 }

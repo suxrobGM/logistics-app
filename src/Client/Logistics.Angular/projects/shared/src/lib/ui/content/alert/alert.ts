@@ -32,11 +32,23 @@ const intentIconColor: Record<CalloutIntent, "info" | "success" | "warning" | "d
 /**
  * Themed inline alert/info box. `intent` (info/success/warning/danger/neutral)
  * picks the icon and accent color; supply `title`, body content, and optional dismiss.
+ *
+ * Absorbs `<p-message>` (10 sites, content-projected, `severity` its only input). The vocabularies
+ * already line up — the sweep maps `warn`→`warning`, `error`→`danger`, `secondary`→`neutral` — so no
+ * new intent was needed. (The brief expected `secondary` to be missing; `neutral` IS it, and it is
+ * the grey p-message paints.)
+ *
+ * `class: "block"` on the host is the one thing that had to change, and it would have failed
+ * quietly: an Angular component host is `display: inline` by default, and 3 of those 10 call sites
+ * pass `class="mb-4 w-full"`. `w-full` does nothing on an inline box, so the alert would have shrunk
+ * to fit its text instead of filling its column — on exactly the pages that use a full-width warning
+ * banner to say something important.
  */
 @Component({
   selector: "ui-alert",
   templateUrl: "./alert.html",
   imports: [Icon],
+  host: { class: "block" },
 })
 export class Alert {
   public readonly intent = input<CalloutIntent>("info");

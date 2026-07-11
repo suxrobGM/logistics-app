@@ -14,10 +14,17 @@ import {
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { AddressPipe, CurrencyFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
-import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import {
+  Card,
+  Divider,
+  Grid,
+  Icon,
+  Spinner,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { TabsModule } from "primeng/tabs";
 import { TooltipModule } from "primeng/tooltip";
 import {
@@ -42,11 +49,11 @@ import {
   styleUrl: "./truck-details.css",
   imports: [
     AddressPipe,
-    CardModule,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DistanceUnitPipe,
-    DividerModule,
+    Divider,
     DocumentManager,
     DocumentStatusOverview,
     GeolocationMap,
@@ -54,8 +61,8 @@ import {
     GrossBarchart,
     Icon,
     PageHeader,
-    ProgressSpinnerModule,
     RouterLink,
+    Spinner,
     Stack,
     Surface,
     TabsModule,

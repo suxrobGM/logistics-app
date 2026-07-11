@@ -9,9 +9,17 @@ import {
   type TerminalType,
 } from "@logistics/shared/api";
 import { terminalTypeOptions } from "@logistics/shared/api/enums";
-import { Container, Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import {
+  Card,
+  Container,
+  Grid,
+  Icon,
+  Spinner,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 
@@ -19,14 +27,14 @@ import { PageHeader } from "@/shared/components";
   selector: "app-terminal-details",
   templateUrl: "./terminal-details.html",
   imports: [
-    CardModule,
+    Card,
     Container,
     DatePipe,
     Grid,
     Icon,
     PageHeader,
-    ProgressSpinnerModule,
     RouterLink,
+    Spinner,
     Stack,
     Surface,
     Typography,

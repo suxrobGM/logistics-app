@@ -32,7 +32,14 @@ export function replaceImport(src, from, to) {
  *   - if other specifiers remain, only that specifier goes
  *   - if it was the last one, the whole import statement (and its trailing newline) goes
  * Refuses on `import * as x` / default imports / type-only edge shapes it does not understand.
+ *
+ * An INLINE TYPE MODIFIER is part of the specifier's syntax, not its name: `{ Labels, type Foo }`
+ * imports `Foo`, and a literal comparison against "Foo" silently misses it. The specifier then
+ * survives, still pointing at a symbol the codemod just deleted, and the failure lands at build time
+ * in a file the codemod reported as clean. Compare on the bare name; keep the modifier when re-emitting.
  */
+const bareSpecifier = (n) => n.replace(/^type\s+/, "");
+
 export function removeImportSpecifier(src, module, specifier) {
   const stmt = new RegExp(
     `import\\s+(type\\s+)?\\{([^}]*)\\}\\s*from\\s*['"]${esc(module)}['"];?[ \\t]*\\r?\\n?`,
@@ -46,11 +53,14 @@ export function removeImportSpecifier(src, module, specifier) {
     .map((s) => s.trim())
     .filter(Boolean);
 
-  if (!names.some((n) => n === specifier || n.startsWith(`${specifier} as `))) {
+  const hits = (n) =>
+    bareSpecifier(n) === specifier || bareSpecifier(n).startsWith(`${specifier} as `);
+
+  if (!names.some(hits)) {
     return ok(src, false, `'${specifier}' not imported from '${module}'`);
   }
 
-  const kept = names.filter((n) => n !== specifier && !n.startsWith(`${specifier} as `));
+  const kept = names.filter((n) => !hits(n));
   const typeKw = match[1] ?? "";
   const replacement =
     kept.length === 0 ? "" : `import ${typeKw}{ ${kept.join(", ")} } from '${module}';\n`;
@@ -122,32 +132,67 @@ export function addToComponentImports(src, symbol) {
  * Add a named specifier to an import from `module`, merging into an existing import when one is
  * present, otherwise inserting a new statement after the last import in the file.
  * Idempotent: if the specifier is already imported from that module, it is a no-op.
+ *
+ * A VALUE MUST NEVER BE MERGED INTO AN `import type { … }` STATEMENT.
+ * This function used to take the FIRST braced import from the module and merge into it, carrying the
+ * statement's `type` keyword along. So a file that already had
+ *
+ *     import type { IconName, UiBadgeIntent } from "@logistics/shared/ui";
+ *
+ * and needed the `Badge` COMPONENT got
+ *
+ *     import type { Badge, IconName, UiBadgeIntent } from "@logistics/shared/ui";
+ *
+ * — a type-only binding, erased at runtime, then referenced from `imports: [Badge]`. TypeScript calls
+ * it TS1361 ("cannot be used as a value because it was imported using 'import type'"), which is a
+ * loud failure and therefore a lucky one; the same bug on a symbol used only in a type position would
+ * have merged silently and been wrong forever. So: scan ALL statements from the module, and merge
+ * only into one of the right KIND. If none exists, emit a new statement rather than corrupting a
+ * type-only one. (Sibling of the inline-`type`-modifier bug fixed in removeImportSpecifier.)
+ *
+ * @param {object} [options]
+ * @param {boolean} [options.typeOnly] add as `import type` (default: false — a value import)
  */
-export function addImport(src, specifier, module) {
+export function addImport(src, specifier, module, { typeOnly = false } = {}) {
   const stmt = new RegExp(
     `import\\s+(type\\s+)?\\{([^}]*)\\}\\s*from\\s*['"]${esc(module)}['"];?`,
     "g",
   );
-  const match = stmt.exec(src);
-
-  if (match) {
-    const names = match[2]
+  const matches = [...src.matchAll(stmt)];
+  const namesOf = (m) =>
+    m[2]
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
-    if (names.includes(specifier)) return ok(src, false, "already imported");
 
-    const merged = [...names, specifier].sort((a, b) => a.localeCompare(b));
-    const replacement = `import ${match[1] ?? ""}{ ${merged.join(", ")} } from '${module}';`;
+  for (const m of matches) {
+    // Compare on the BARE name: `{ Icon, type Foo }` already imports Foo, and an `includes("Foo")`
+    // test says otherwise and appends a second specifier. TS then reports a duplicate identifier —
+    // if you are lucky. See removeImportSpecifier for the same trap.
+    if (!namesOf(m).some((n) => bareSpecifier(n) === specifier)) continue;
+    // Present, but in a type-only statement while we need a value: NOT "already imported". Refuse
+    // rather than silently leaving a binding that cannot be used where the caller is about to use it.
+    if (!typeOnly && Boolean(m[1])) {
+      return ok(src, false, `'${specifier}' is imported type-only from '${module}'`);
+    }
+    return ok(src, false, "already imported");
+  }
+
+  const target = matches.find((m) => Boolean(m[1]) === typeOnly);
+  const keyword = typeOnly ? "type " : "";
+
+  if (target) {
+    const merged = [...namesOf(target), specifier].sort((a, b) => a.localeCompare(b));
+    const replacement = `import ${keyword}{ ${merged.join(", ")} } from '${module}';`;
     return ok(
-      src.slice(0, match.index) + replacement + src.slice(match.index + match[0].length),
+      src.slice(0, target.index) + replacement + src.slice(target.index + target[0].length),
       true,
     );
   }
 
-  // No existing import from this module — insert after the last import statement in the file.
+  // No statement of the right kind — insert after the last import statement in the file.
   const imports = [...src.matchAll(/^import\s[^\n]*?;[ \t]*$/gm)];
-  const line = `import { ${specifier} } from '${module}';`;
+  const line = `import ${keyword}{ ${specifier} } from '${module}';`;
   if (imports.length === 0) return ok(`${line}\n\n${src}`, true);
 
   const last = imports.at(-1);

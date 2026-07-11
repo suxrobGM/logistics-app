@@ -30,7 +30,7 @@
         @if (row.endorsementLabels.length) {
           <ui-stack direction="row" gap="1" class="flex-wrap">
             @for (label of row.endorsementLabels; track label) {
-              <p-chip [label]="label" styleClass="text-xs" />
+              <ui-badge severity="secondary" rounded size="sm" [value]="label" />
             }
           </ui-stack>
         } @else {
@@ -39,7 +39,7 @@
       </td>
       <td>{{ row.license.expiresAt | date: "mediumDate" }}</td>
       <td>
-        <p-tag [value]="row.expiryLabel" [severity]="row.expirySeverity" />
+        <ui-badge [value]="row.expiryLabel" [severity]="row.expirySeverity" />
       </td>
       <td>
         <ui-stack direction="row" gap="1">

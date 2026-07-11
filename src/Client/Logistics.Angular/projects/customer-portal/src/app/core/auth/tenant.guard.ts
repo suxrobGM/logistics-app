@@ -1,6 +1,5 @@
 import { inject } from "@angular/core";
-import type { CanActivateFn } from "@angular/router";
-import { Router } from "@angular/router";
+import { Router, type CanActivateFn } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { PermissionService } from "@logistics/shared/services";
 import { TenantContextService } from "../services";

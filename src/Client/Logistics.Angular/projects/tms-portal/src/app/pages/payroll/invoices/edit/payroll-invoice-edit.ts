@@ -17,11 +17,17 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Stack, Typography, UiAutocompleteField, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import {
+  Card,
+  Divider,
+  Grid,
+  Spinner,
+  Stack,
+  Typography,
+  UiAutocompleteField,
+  UiButton,
+} from "@logistics/shared/ui";
 import { DatePicker } from "primeng/datepicker";
-import { DividerModule } from "primeng/divider";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField } from "@/shared/components";
 import { DateUtils, PredefinedDateRanges } from "@/shared/utils";
@@ -36,11 +42,11 @@ interface PayrollFormValue {
   selector: "app-payroll-invoice-edit",
   templateUrl: "./payroll-invoice-edit.html",
   imports: [
-    CardModule,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DatePicker,
-    DividerModule,
+    Divider,
     FormField,
     FormRoot,
     FormsModule,
@@ -48,8 +54,8 @@ interface PayrollFormValue {
     PageHeader,
     PayrollLineItemsTable,
     PayrollPaySummary,
-    ProgressSpinnerModule,
     RouterModule,
+    Spinner,
     Stack,
     Typography,
     UiAutocompleteField,

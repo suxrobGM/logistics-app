@@ -9,23 +9,13 @@ import {
   type TenantFeature,
 } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
-import { FeatureRow, PageHeader, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Card, FeatureRow, PageHeader, Spinner, UiButton } from "@logistics/shared/ui";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
 
 @Component({
   selector: "adm-default-features",
   templateUrl: "./default-features.html",
-  imports: [
-    CardModule,
-    FeatureRow,
-    FormsModule,
-    PageHeader,
-    ProgressSpinnerModule,
-    ToggleSwitchModule,
-    UiButton,
-  ],
+  imports: [Card, FeatureRow, FormsModule, PageHeader, Spinner, ToggleSwitchModule, UiButton],
 })
 export class DefaultFeatures implements OnInit {
   private readonly api = inject(Api);

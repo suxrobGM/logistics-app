@@ -10,20 +10,18 @@ import {
   type TenantDto,
   type UpdateTenantCommand,
 } from "@logistics/shared/api";
-import { PageHeader, Stack, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { SkeletonModule } from "primeng/skeleton";
+import { Card, PageHeader, Skeleton, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { TenantForm, type TenantFormValue } from "@/shared/components";
 
 @Component({
   selector: "adm-tenant-edit",
   templateUrl: "./tenant-edit.html",
   imports: [
-    CardModule,
+    Card,
     FormField,
     PageHeader,
     RouterModule,
-    SkeletonModule,
+    Skeleton,
     Stack,
     TenantForm,
     Typography,

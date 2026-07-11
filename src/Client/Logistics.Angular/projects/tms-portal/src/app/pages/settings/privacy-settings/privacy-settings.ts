@@ -14,31 +14,36 @@ import {
   type DataDeletionRequestDto,
   type DataExportRequestDto,
 } from "@logistics/shared/api";
-import { Container, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import {
+  Alert,
+  Badge,
+  Card,
+  Container,
+  Spinner,
+  Stack,
+  UiButton,
+  UiDataTable,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { MessageModule } from "primeng/message";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField } from "@/shared/components";
-import type { SeverityLevel } from "@/shared/utils";
 
 @Component({
   selector: "app-privacy-settings",
   templateUrl: "./privacy-settings.html",
   imports: [
-    CardModule,
+    Alert,
+    Badge,
+    Card,
     CommonModule,
     Container,
     DialogModule,
     FormsModule,
-    MessageModule,
     PageHeader,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
-    TagModule,
     TextareaModule,
     UiButton,
     UiDataTable,
@@ -131,7 +136,7 @@ export class PrivacySettings {
     }
   }
 
-  protected statusSeverity(status: string | undefined): SeverityLevel {
+  protected statusSeverity(status: string | undefined): UiBadgeIntent {
     switch (status) {
       case "ready":
       case "processed":

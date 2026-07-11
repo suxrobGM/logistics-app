@@ -2,12 +2,9 @@ import { Component, computed, inject, input, output, signal, type OnInit } from 
 import { Api, getMonthlyGrosses, type MonthlyGrossesDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
-import { Icon } from "@logistics/shared/ui";
+import { Card, Divider, Icon, Skeleton } from "@logistics/shared/ui";
 import { adjustColorBrightness } from "@logistics/shared/utils";
-import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
-import { DividerModule } from "primeng/divider";
-import { SkeletonModule } from "primeng/skeleton";
 import { ThemeService } from "@/core/services";
 import { DateRangePicker } from "@/shared/components/other";
 import { getChartPalette } from "@/shared/constants/chart-palette";
@@ -17,14 +14,14 @@ import { Converters, DateUtils } from "@/shared/utils";
   selector: "app-gross-barchart",
   templateUrl: "./gross-barchart.html",
   imports: [
-    CardModule,
+    Card,
     ChartModule,
     CurrencyFormatPipe,
     DateRangePicker,
     DistanceUnitPipe,
-    DividerModule,
+    Divider,
     Icon,
-    SkeletonModule,
+    Skeleton,
   ],
 })
 export class GrossBarchart implements OnInit {

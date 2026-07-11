@@ -12,9 +12,8 @@ import {
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import type { ConversationDto, EmployeeDto, MessageDto } from "@logistics/shared/api";
-import { EmptyState, Stack, UiButton } from "@logistics/shared/ui";
+import { EmptyState, Skeleton, Stack, UiButton } from "@logistics/shared/ui";
 import { InputTextModule } from "primeng/inputtext";
-import { SkeletonModule } from "primeng/skeleton";
 import { AuthService } from "@/core/auth";
 import { ChatService } from "@/core/services";
 import {
@@ -37,7 +36,7 @@ import { MessagesStore } from "../store/messages.store";
     InputTextModule,
     MessageBubble,
     RecipientSelector,
-    SkeletonModule,
+    Skeleton,
     Stack,
     UiButton,
   ],

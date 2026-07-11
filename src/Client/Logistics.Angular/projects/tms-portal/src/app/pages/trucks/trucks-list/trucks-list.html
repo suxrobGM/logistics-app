@@ -41,7 +41,7 @@
 
   @if (viewMode() === "table") {
     <!-- Data Table -->
-    <p-card>
+    <ui-card>
       <ui-data-container
         [loading]="store.isLoading()"
         [error]="store.error()"
@@ -130,7 +130,7 @@
           </ng-template>
         </ui-data-table>
       </ui-data-container>
-    </p-card>
+    </ui-card>
 
     <!-- Context menu for row actions -->
     <p-menu #menu [model]="actionMenuItems" [popup]="true" />

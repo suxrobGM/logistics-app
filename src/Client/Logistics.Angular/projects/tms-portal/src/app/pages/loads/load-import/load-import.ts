@@ -10,12 +10,18 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, PdfViewer, Stack, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
+import {
+  Alert,
+  Card,
+  Grid,
+  Icon,
+  PdfViewer,
+  Spinner,
+  Stack,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { FileUploadModule, type FileSelectEvent } from "primeng/fileupload";
-import { MessageModule } from "primeng/message";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import { SearchTruck, UiFormField } from "@/shared/components";
@@ -24,18 +30,17 @@ import { SearchTruck, UiFormField } from "@/shared/components";
   selector: "app-load-import",
   templateUrl: "./load-import.html",
   imports: [
-    CardModule,
+    Alert,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
-    DividerModule,
     FileUploadModule,
     Grid,
     Icon,
-    MessageModule,
     PdfViewer,
-    ProgressSpinnerModule,
     RouterLink,
     SearchTruck,
+    Spinner,
     Stack,
     ToastModule,
     Typography,

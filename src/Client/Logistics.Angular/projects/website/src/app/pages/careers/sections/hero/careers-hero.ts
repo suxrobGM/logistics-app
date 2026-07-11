@@ -1,5 +1,5 @@
-import { Component, inject } from "@angular/core";
 import { DOCUMENT } from "@angular/common";
+import { Component, inject } from "@angular/core";
 import { PageHero } from "@/shared/components";
 
 @Component({

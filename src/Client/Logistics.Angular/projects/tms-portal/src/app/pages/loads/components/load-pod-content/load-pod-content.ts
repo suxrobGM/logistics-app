@@ -1,12 +1,17 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { Api, downloadDocument, getDocuments, type DocumentDto } from "@logistics/shared/api";
-import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
+import {
+  Badge,
+  Card,
+  Icon,
+  Spinner,
+  UiButton,
+  UiDataTable,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
-import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 
@@ -14,13 +19,13 @@ import { ToastService } from "@/core/services";
   selector: "app-load-pod-content",
   templateUrl: "./load-pod-content.html",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CommonModule,
     DatePipe,
     DialogModule,
     Icon,
-    ProgressSpinnerModule,
-    TagModule,
+    Spinner,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -91,7 +96,7 @@ export class LoadPodContent {
     return type === "proof_of_delivery" ? "Proof of Delivery" : "Bill of Lading";
   }
 
-  protected getTypeSeverity(type?: string): "success" | "info" {
+  protected getTypeSeverity(type?: string): UiBadgeIntent {
     return type === "proof_of_delivery" ? "success" : "info";
   }
 

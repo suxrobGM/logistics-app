@@ -11,6 +11,8 @@ import {
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   Alert,
+  Badge,
+  Divider,
   Grid,
   Icon,
   Stack,
@@ -18,11 +20,9 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { InputNumberModule } from "primeng/inputnumber";
-import { TagModule } from "primeng/tag";
 import { PublicLayout } from "@/shared/layout";
 
 @Component({
@@ -30,10 +30,10 @@ import { PublicLayout } from "@/shared/layout";
   templateUrl: "./public-payment.html",
   imports: [
     Alert,
-    CardModule,
+    Badge,
     CurrencyFormatPipe,
     DatePipe,
-    DividerModule,
+    Divider,
     ErrorState,
     FormsModule,
     Grid,
@@ -43,7 +43,6 @@ import { PublicLayout } from "@/shared/layout";
     PublicLayout,
     Stack,
     Surface,
-    TagModule,
     Typography,
     UiButton,
     UiDataTable,
@@ -126,7 +125,7 @@ export class PublicPayment {
     }
   }
 
-  protected getStatusSeverity(): "success" | "info" | "warn" | "danger" {
+  protected getStatusSeverity(): UiBadgeIntent {
     const status = this.invoice()?.status;
     switch (status) {
       case "paid":

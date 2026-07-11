@@ -1,8 +1,8 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { UserData, userRoleOptions } from "@logistics/shared";
 import { PermissionService } from "@logistics/shared/services";
 import { EventTypes, OidcSecurityService, PublicEventsService } from "angular-auth-oidc-client";
-import { Observable, filter, from, map, switchMap } from "rxjs";
+import { filter, from, map, Observable, switchMap } from "rxjs";
 import { TenantService } from "@/core/services";
 
 @Injectable({ providedIn: "root" })

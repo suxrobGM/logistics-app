@@ -1,5 +1,5 @@
 import { Component, computed, input } from "@angular/core";
-import { SkeletonModule } from "primeng/skeleton";
+import { Skeleton } from "../skeleton/skeleton";
 
 /**
  * Configurable loading skeleton component with multiple layout variants.
@@ -7,7 +7,7 @@ import { SkeletonModule } from "primeng/skeleton";
 @Component({
   selector: "ui-loading-skeleton",
   templateUrl: "./loading-skeleton.html",
-  imports: [SkeletonModule],
+  imports: [Skeleton],
 })
 export class LoadingSkeleton {
   /** The layout variant: 'table' for rows, 'card' for a block, 'list' for avatar+text */

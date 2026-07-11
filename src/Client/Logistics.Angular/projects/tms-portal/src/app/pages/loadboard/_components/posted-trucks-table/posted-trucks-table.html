@@ -21,7 +21,7 @@
         </ui-stack>
       </td>
       <td>
-        <p-tag [value]="truck.providerName" severity="info" />
+        <ui-badge [value]="truck.providerName" severity="info" />
       </td>
       <td>
         <div class="text-sm">
@@ -52,7 +52,7 @@
         <span class="text-sm">{{ truck.equipmentType || "-" }}</span>
       </td>
       <td>
-        <p-tag [value]="truck.status" [severity]="getStatusSeverity(truck.status)" />
+        <ui-badge [value]="truck.status" [severity]="getStatusSeverity(truck.status)" />
       </td>
       <td>
         @if (truck.expiresAt) {

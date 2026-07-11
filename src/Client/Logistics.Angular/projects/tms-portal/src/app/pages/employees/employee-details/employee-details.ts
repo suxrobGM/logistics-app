@@ -9,12 +9,19 @@ import {
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ToastService } from "@logistics/shared/services";
-import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import {
+  Badge,
+  Card,
+  Divider,
+  Grid,
+  Icon,
+  Spinner,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { TabsModule } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DocumentManager, PageHeader } from "@/shared/components";
 import { EmployeeStatusTag } from "@/shared/components/tags";
@@ -29,10 +36,11 @@ import { EmployeeDetailsStore } from "../store";
   templateUrl: "./employee-details.html",
   providers: [EmployeeDetailsStore, CurrencyFormatPipe],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CommonModule,
     DatePipe,
-    DividerModule,
+    Divider,
     DocumentManager,
     DriverLicensesTab,
     EmployeeAvatar,
@@ -42,12 +50,11 @@ import { EmployeeDetailsStore } from "../store";
     Grid,
     Icon,
     PageHeader,
-    ProgressSpinnerModule,
     RouterLink,
+    Spinner,
     Stack,
     Surface,
     TabsModule,
-    TagModule,
     TooltipModule,
     Typography,
     UiButton,

@@ -1,6 +1,6 @@
 @if (pdfUrl(); as url) {
   @if (showCard()) {
-    <p-card>
+    <ui-card>
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <div class="flex items-center gap-2">
@@ -51,7 +51,7 @@
           </p>
         </object>
       }
-    </p-card>
+    </ui-card>
   } @else {
     <object
       [data]="url"

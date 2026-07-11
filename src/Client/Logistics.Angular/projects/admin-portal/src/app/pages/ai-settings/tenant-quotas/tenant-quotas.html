@@ -1,4 +1,4 @@
-<p-card header="Tenant Usage">
+<ui-card header="Tenant Usage">
   <!-- Actions bar -->
   <ui-stack direction="row" align="center" justify="between" class="mb-4">
     <ui-typography variant="body-sm" color="secondary">
@@ -82,7 +82,7 @@
           </div>
         </td>
         <td>
-          <p-tag [value]="usage.planName ?? 'N/A'" severity="info" />
+          <ui-badge [value]="usage.planName ?? 'N/A'" severity="info" />
         </td>
         <td class="text-center">
           <span class="font-mono font-medium" [class.text-danger]="usage.isOverQuota">
@@ -94,16 +94,16 @@
         </td>
         <td class="text-center">
           @if (usage.overageCount > 0) {
-            <p-tag [value]="'+' + usage.overageCount" severity="warn" />
+            <ui-badge [value]="'+' + usage.overageCount" severity="warn" />
           } @else {
             <span class="text-muted-foreground">-</span>
           }
         </td>
         <td class="w-40">
-          <p-progressBar
+          <ui-progress
+            height="0.5rem"
             [value]="Math.min((usage.usedThisWeek / usage.weeklyQuota) * 100, 100)"
             [showValue]="false"
-            [style]="{ height: '0.5rem' }"
           />
         </td>
         <td class="text-right">
@@ -141,4 +141,4 @@
       </tr>
     </ng-template>
   </ui-data-table>
-</p-card>
+</ui-card>

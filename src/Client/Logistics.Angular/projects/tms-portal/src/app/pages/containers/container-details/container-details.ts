@@ -11,16 +11,16 @@ import {
 } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
 import {
+  Card,
   Grid,
   Icon,
+  Spinner,
   Stack,
   StatusBadge,
   Surface,
   Typography,
   UiButton,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 
@@ -28,13 +28,13 @@ import { PageHeader } from "@/shared/components";
   selector: "app-container-details",
   templateUrl: "./container-details.html",
   imports: [
-    CardModule,
+    Card,
     DatePipe,
     Grid,
     Icon,
     PageHeader,
-    ProgressSpinnerModule,
     RouterLink,
+    Spinner,
     Stack,
     StatusBadge,
     Surface,

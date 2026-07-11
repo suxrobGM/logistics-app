@@ -83,7 +83,7 @@
                   </span>
                 </td>
                 <td>
-                  <p-tag
+                  <ui-badge
                     [value]="provider.isActive ? 'Active' : 'Inactive'"
                     [severity]="provider.isActive ? 'success' : 'danger'"
                   />
@@ -133,7 +133,7 @@
                 <td>{{ truck.providerName }}</td>
                 <td>{{ truck.availableFrom | date: "shortDate" }}</td>
                 <td>
-                  <p-tag
+                  <ui-badge
                     [value]="truck.status"
                     [severity]="truck.status === 'available' ? 'success' : 'secondary'"
                   />

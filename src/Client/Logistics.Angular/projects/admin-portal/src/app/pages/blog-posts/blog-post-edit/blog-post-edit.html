@@ -1,14 +1,14 @@
 <ui-page-header title="Edit Blog Post" />
 
 <div class="flex flex-col justify-center gap-6 md:flex-row">
-  <p-card class="w-full md:w-3/4 lg:w-2/3">
+  <ui-card class="w-full md:w-3/4 lg:w-2/3">
     @if (isFetching()) {
       <ui-stack gap="4">
-        <p-skeleton height="3rem" />
-        <p-skeleton height="20rem" />
-        <p-skeleton height="3rem" />
-        <p-skeleton height="3rem" />
-        <p-skeleton height="3rem" />
+        <ui-skeleton height="3rem" />
+        <ui-skeleton height="20rem" />
+        <ui-skeleton height="3rem" />
+        <ui-skeleton height="3rem" />
+        <ui-skeleton height="3rem" />
       </ui-stack>
     } @else {
       <adm-blog-post-form
@@ -22,5 +22,5 @@
         (unpublish)="onUnpublish()"
       />
     }
-  </p-card>
+  </ui-card>
 </div>

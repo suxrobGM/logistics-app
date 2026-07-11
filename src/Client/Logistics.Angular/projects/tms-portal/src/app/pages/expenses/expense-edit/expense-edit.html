@@ -3,10 +3,10 @@
 
   @if (isLoading()) {
     <ui-stack align="center" justify="center" class="py-16">
-      <p-progress-spinner />
+      <ui-spinner />
     </ui-stack>
   } @else if (expense(); as e) {
-    <p-card>
+    <ui-card>
       @switch (e.type) {
         @case ("company") {
           <app-company-expense-form mode="edit" [initial]="e" />
@@ -18,12 +18,12 @@
           <app-body-shop-expense-form mode="edit" [initial]="e" />
         }
       }
-    </p-card>
+    </ui-card>
   } @else {
-    <p-card>
+    <ui-card>
       <ui-stack align="center" gap="3" class="py-16">
         <ui-typography color="muted">Expense not found</ui-typography>
       </ui-stack>
-    </p-card>
+    </ui-card>
   }
 </ui-container>

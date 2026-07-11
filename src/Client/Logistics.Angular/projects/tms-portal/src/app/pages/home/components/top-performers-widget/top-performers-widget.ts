@@ -2,11 +2,16 @@ import { Component, computed, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { CurrencyFormatPipe } from "@logistics/shared";
 import type { TopTruckDto } from "@logistics/shared/api";
-import { Icon, Stack, Typography, type IconName } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { ProgressBarModule } from "primeng/progressbar";
-import { SkeletonModule } from "primeng/skeleton";
+import {
+  Card,
+  Divider,
+  Icon,
+  Progress,
+  Skeleton,
+  Stack,
+  Typography,
+  type IconName,
+} from "@logistics/shared/ui";
 
 interface RankIcon {
   name: IconName;
@@ -18,13 +23,13 @@ interface RankIcon {
   selector: "app-top-performers-widget",
   templateUrl: "./top-performers-widget.html",
   imports: [
-    CardModule,
-    DividerModule,
-    RouterLink,
-    SkeletonModule,
-    ProgressBarModule,
+    Card,
     CurrencyFormatPipe,
+    Divider,
     Icon,
+    Progress,
+    RouterLink,
+    Skeleton,
     Stack,
     Typography,
   ],

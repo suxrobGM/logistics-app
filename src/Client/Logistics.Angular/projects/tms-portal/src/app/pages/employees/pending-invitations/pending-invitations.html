@@ -2,7 +2,7 @@
   <ui-button icon="plus" label="Invite Employee" (click)="openInviteDialog()" />
 </ui-page-header>
 
-<p-card>
+<ui-card>
   <div class="mb-4">
     <ui-search-field (searchChange)="onSearch($event)" />
   </div>
@@ -45,7 +45,7 @@
         <tr>
           <td>{{ invitation.email }}</td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="invitation.type === 'Employee' ? 'Employee' : 'Customer'"
               [severity]="getInvitationTypeSeverity(invitation.type)"
             />
@@ -86,7 +86,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <app-invite-employee-dialog
   [(visible)]="inviteDialogVisible"

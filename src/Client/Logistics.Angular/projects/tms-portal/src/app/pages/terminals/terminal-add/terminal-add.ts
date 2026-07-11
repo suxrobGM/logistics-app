@@ -1,7 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, createTerminal, type CreateTerminalCommand } from "@logistics/shared/api";
-import { CardModule } from "primeng/card";
+import { Card } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { Container, PageHeader } from "@/shared/components";
 import { TerminalForm, type TerminalFormValue } from "../terminal-form/terminal-form";
@@ -9,7 +9,7 @@ import { TerminalForm, type TerminalFormValue } from "../terminal-form/terminal-
 @Component({
   selector: "app-terminal-add",
   templateUrl: "./terminal-add.html",
-  imports: [CardModule, TerminalForm, PageHeader, Container],
+  imports: [Card, Container, PageHeader, TerminalForm],
 })
 export class TerminalAdd {
   private readonly api = inject(Api);

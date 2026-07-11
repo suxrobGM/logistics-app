@@ -1,6 +1,6 @@
 import { Component, computed, input } from "@angular/core";
 import { type CustomerDto } from "@logistics/shared/api";
-import { type AvatarColors, type AvatarSize, UserAvatar } from "@/shared/components";
+import { UserAvatar, type AvatarColors, type AvatarSize } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 
 @Component({

@@ -1,24 +1,11 @@
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Icon, Stack, Typography } from "@logistics/shared/ui";
-import { BadgeModule } from "primeng/badge";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { SkeletonModule } from "primeng/skeleton";
+import { Card, CountBadge, Divider, Icon, Skeleton, Stack, Typography } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-attention-panel",
   templateUrl: "./attention-panel.html",
-  imports: [
-    CardModule,
-    BadgeModule,
-    DividerModule,
-    RouterLink,
-    SkeletonModule,
-    Icon,
-    Stack,
-    Typography,
-  ],
+  imports: [Card, CountBadge, Divider, Icon, RouterLink, Skeleton, Stack, Typography],
 })
 export class AttentionPanelComponent {
   public readonly unassignedLoadsCount = input<number>(0);

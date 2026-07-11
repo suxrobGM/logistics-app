@@ -1,7 +1,7 @@
 <ui-page-header title="Payment Settings" [centered]="true" />
 
 <ui-container maxWidth="md">
-  <p-card>
+  <ui-card>
     @if (isLoading()) {
       <ui-loading-skeleton
         variant="card"
@@ -24,7 +24,7 @@
           <div>
             <span class="text-muted-foreground text-sm">Connection Status</span>
             <ui-stack direction="row" align="center" gap="2" class="mt-1">
-              <p-tag [value]="statusLabel()" [severity]="statusSeverity()" />
+              <ui-badge [value]="statusLabel()" [severity]="statusSeverity()" />
               @if (connectStatus()?.accountId) {
                 <span class="text-muted-foreground text-xs">
                   Account: {{ connectStatus()?.accountId }}
@@ -153,7 +153,7 @@
         }
       }
     }
-  </p-card>
+  </ui-card>
 
   <div class="mt-6">
     <app-tenant-tax-rates-card />

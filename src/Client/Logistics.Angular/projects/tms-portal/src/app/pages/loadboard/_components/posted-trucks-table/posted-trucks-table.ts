@@ -1,8 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, input, output } from "@angular/core";
 import { type PostedTruckDto } from "@logistics/shared/api";
-import { Icon, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { TagModule } from "primeng/tag";
+import { Badge, Icon, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { getPostedTruckStatusSeverity } from "../loadboard.constants";
@@ -10,7 +9,7 @@ import { getPostedTruckStatusSeverity } from "../loadboard.constants";
 @Component({
   selector: "app-posted-trucks-table",
   templateUrl: "./posted-trucks-table.html",
-  imports: [DatePipe, Icon, Stack, TagModule, TooltipModule, UiButton, UiDataTable],
+  imports: [Badge, DatePipe, Icon, Stack, TooltipModule, UiButton, UiDataTable],
 })
 export class PostedTrucksTable {
   private readonly toast = inject(ToastService);

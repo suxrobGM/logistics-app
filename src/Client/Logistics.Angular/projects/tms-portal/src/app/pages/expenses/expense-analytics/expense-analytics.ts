@@ -3,10 +3,8 @@ import { Component, inject, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CurrencyFormatPipe } from "@logistics/shared";
-import { Icon, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import { Card, Icon, Spinner, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { DatePicker } from "primeng/datepicker";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { PageHeader } from "@/shared/components";
 import { ExpenseAnalyticsCharts, ExpenseAnalyticsSummary } from "../_components";
 import { ExpenseAnalyticsStore } from "../store/expense-analytics.store";
@@ -22,7 +20,7 @@ const RANK_BADGE_CLASSES: Record<number, string> = {
   templateUrl: "./expense-analytics.html",
   providers: [ExpenseAnalyticsStore],
   imports: [
-    CardModule,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DatePicker,
@@ -31,8 +29,8 @@ const RANK_BADGE_CLASSES: Record<number, string> = {
     FormsModule,
     Icon,
     PageHeader,
-    ProgressSpinnerModule,
     RouterModule,
+    Spinner,
     Typography,
     UiButton,
     UiDataTable,

@@ -1,6 +1,6 @@
 <ui-page-header title="Admins" subtitle="Manage platform administrators" />
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -44,7 +44,7 @@
           <td>{{ admin.email }}</td>
           <td>{{ getFullName(admin) }}</td>
           <td>
-            <p-tag [value]="admin.role ?? 'Admin'" [severity]="getRoleSeverity(admin.role)" />
+            <ui-badge [value]="admin.role ?? 'Admin'" [severity]="getRoleSeverity(admin.role)" />
           </td>
           <td>
             @if (!isSuperAdmin(admin)) {
@@ -62,9 +62,9 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
-<p-card class="mt-6 block">
+<ui-card class="mt-6 block">
   <h2 class="mb-4 text-lg font-semibold">Pending Invitations</h2>
   <ui-data-container
     [loading]="invitationsStore.isLoading()"
@@ -103,7 +103,7 @@
           <td>{{ invitation.lastSentAt ? (invitation.lastSentAt | date: "mediumDate") : "—" }}</td>
           <td>
             @if (invitation.isExpired) {
-              <p-tag value="Expired" severity="danger" />
+              <ui-badge value="Expired" severity="danger" />
             } @else {
               {{ invitation.expiresAt | date: "mediumDate" }}
             }
@@ -131,7 +131,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <p-dialog
   header="Add Admin"

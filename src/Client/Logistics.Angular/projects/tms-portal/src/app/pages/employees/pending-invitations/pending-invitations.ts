@@ -1,9 +1,15 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { ToastService } from "@logistics/shared";
-import { Icon, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
+import {
+  Badge,
+  Card,
+  Icon,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { InviteEmployeeDialog } from "../components";
@@ -14,14 +20,14 @@ import { PendingInvitationsStore } from "../store";
   templateUrl: "./pending-invitations.html",
   providers: [PendingInvitationsStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DatePipe,
     Icon,
     InviteEmployeeDialog,
     PageHeader,
     SearchField,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -73,9 +79,7 @@ export class PendingInvitations {
     });
   }
 
-  getInvitationTypeSeverity(
-    type: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  getInvitationTypeSeverity(type: string): UiBadgeIntent {
     return type === "Employee" ? "info" : "success";
   }
 

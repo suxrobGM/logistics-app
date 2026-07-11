@@ -12,11 +12,17 @@ import {
   type TimeEntryType,
 } from "@logistics/shared/api";
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
-import { Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import {
+  Badge,
+  Card,
+  Stack,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { DatePickerModule } from "primeng/datepicker";
 import { SelectModule } from "primeng/select";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader } from "@/shared/components";
@@ -28,7 +34,8 @@ import { TimesheetsListStore } from "../store/list.store";
   templateUrl: "./timesheets-list.html",
   providers: [TimesheetsListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DatePickerModule,
     DatePipe,
@@ -39,7 +46,6 @@ import { TimesheetsListStore } from "../store/list.store";
     SelectModule,
     SlicePipe,
     Stack,
-    TagModule,
     TimesheetFormDialog,
     TooltipModule,
     UiButton,
@@ -144,9 +150,7 @@ export class TimesheetsList {
     return timeEntryTypeOptions.find((o) => o.value === type)?.label ?? type;
   }
 
-  protected getTypeSeverity(
-    type: string | null | undefined,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  protected getTypeSeverity(type: string | null | undefined): UiBadgeIntent {
     switch (type) {
       case "regular":
         return "info";

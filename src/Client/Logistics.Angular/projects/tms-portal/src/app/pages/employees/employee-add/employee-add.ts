@@ -11,12 +11,19 @@ import {
   type UserDto,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Container, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
+import {
+  Container,
+  Icon,
+  Spinner,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import {
@@ -58,8 +65,8 @@ const EMPTY: EmployeeAddModel = {
     InputGroupModule,
     InputTextModule,
     PageHeader,
-    ProgressSpinnerModule,
     RouterLink,
+    Spinner,
     Stack,
     Surface,
     ToastModule,

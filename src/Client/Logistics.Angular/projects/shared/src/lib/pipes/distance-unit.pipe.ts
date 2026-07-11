@@ -1,4 +1,4 @@
-import { Pipe, type PipeTransform, inject } from "@angular/core";
+import { inject, Pipe, type PipeTransform } from "@angular/core";
 import { LocalizationService } from "../services/localization.service";
 import { Converters, type DistanceUnitTypes } from "../utils/converters";
 

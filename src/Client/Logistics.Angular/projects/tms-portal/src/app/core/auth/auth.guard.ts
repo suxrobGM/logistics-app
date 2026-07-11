@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { toObservable } from "@angular/core/rxjs-interop";
-import { type CanActivateFn, Router } from "@angular/router";
+import { Router, type CanActivateFn } from "@angular/router";
 import { UserRole } from "@logistics/shared";
 import { PermissionService } from "@logistics/shared/services";
 import { filter, map, switchMap, take } from "rxjs";

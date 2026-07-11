@@ -1,8 +1,6 @@
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Api, getExpenseById, type ExpenseDto } from "@logistics/shared/api";
-import { Container, Stack, Typography } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Card, Container, Spinner, Stack, Typography } from "@logistics/shared/ui";
 import { PageHeader } from "@/shared/components";
 import {
   BodyShopExpenseForm,
@@ -15,15 +13,15 @@ import {
   selector: "app-expense-edit",
   templateUrl: "./expense-edit.html",
   imports: [
-    CardModule,
-    ProgressSpinnerModule,
-    PageHeader,
-    Container,
-    Stack,
-    Typography,
-    CompanyExpenseForm,
-    TruckExpenseForm,
     BodyShopExpenseForm,
+    Card,
+    CompanyExpenseForm,
+    Container,
+    PageHeader,
+    Spinner,
+    Stack,
+    TruckExpenseForm,
+    Typography,
   ],
 })
 export class ExpenseEditPage implements OnInit {

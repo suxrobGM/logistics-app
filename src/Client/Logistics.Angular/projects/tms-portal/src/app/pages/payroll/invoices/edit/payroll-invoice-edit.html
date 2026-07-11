@@ -3,12 +3,12 @@
 <div class="mx-auto max-w-4xl">
   @if (isLoading()) {
     <ui-stack align="center" justify="center" class="py-8">
-      <p-progress-spinner />
+      <ui-spinner />
     </ui-stack>
   } @else {
     <form [formRoot]="form">
       <!-- Employee & Date Range Section -->
-      <p-card class="mb-4">
+      <ui-card class="mb-4">
         <ng-template #title>Pay Period Details</ng-template>
 
         <ui-grid container spacing="4">
@@ -43,7 +43,7 @@
         </ui-grid>
 
         @if (selectedEmployee()) {
-          <p-divider />
+          <ui-divider />
           <ui-grid container spacing="4" class="text-sm">
             <ui-grid [size]="{ xs: 6, md: 3 }">
               <ui-typography variant="caption" color="muted">Role</ui-typography>
@@ -69,22 +69,22 @@
             </ui-grid>
           </ui-grid>
         }
-      </p-card>
+      </ui-card>
 
       <!-- Line Items Section - Using shared component -->
-      <p-card class="mb-4">
+      <ui-card class="mb-4">
         <app-payroll-line-items-table
           [invoiceId]="invoiceId()"
           [lineItems]="lineItems()"
           (itemsChanged)="onLineItemsChanged()"
         />
-      </p-card>
+      </ui-card>
 
       <!-- Summary Section - Using shared component -->
-      <p-card class="mb-4">
+      <ui-card class="mb-4">
         <ng-template #title>Summary</ng-template>
         <app-payroll-pay-summary [lineItems]="lineItems()" />
-      </p-card>
+      </ui-card>
 
       <!-- Actions -->
       <ui-stack direction="row" gap="2">

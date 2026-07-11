@@ -3,7 +3,8 @@ import type { Routes } from "@angular/router";
 export const featuresRoutes: Routes = [
   {
     path: "",
-    loadComponent: () => import("./default-features/default-features").then((m) => m.DefaultFeatures),
+    loadComponent: () =>
+      import("./default-features/default-features").then((m) => m.DefaultFeatures),
     data: {
       breadcrumb: "Default Features",
     },

@@ -59,7 +59,7 @@
                   >
                     <span>{{ child.label }}</span>
                     @if (child.badge && child.badge()! > 0) {
-                      <p-badge [value]="child.badge()!.toString()" severity="danger" />
+                      <ui-count-badge [value]="child.badge()!.toString()" severity="danger" />
                     }
                   </a>
                 }
@@ -87,7 +87,7 @@
               }
             </div>
             @if (!collapsed() && item.badge && item.badge()! > 0) {
-              <p-badge [value]="item.badge()!.toString()" severity="danger" />
+              <ui-count-badge [value]="item.badge()!.toString()" severity="danger" />
             }
             @if (collapsed() && item.badge && item.badge()! > 0) {
               <span class="bg-danger absolute top-1 right-1 size-2 rounded-full"></span>
@@ -198,7 +198,7 @@
       >
         {{ child.label }}
         @if (child.badge && child.badge()! > 0) {
-          <p-badge [value]="child.badge()!.toString()" severity="danger" />
+          <ui-count-badge [value]="child.badge()!.toString()" severity="danger" />
         }
       </a>
     }

@@ -1,7 +1,7 @@
 <ui-page-header title="Add New Payroll" [centered]="true" backLink="/payroll/invoices" />
 
 <div class="mx-auto max-w-4xl">
-  <p-card>
+  <ui-card>
     <form [formRoot]="form">
       <!-- Mode Toggle -->
       <ui-form-field label="Creation Mode">
@@ -46,7 +46,7 @@
 
         <!-- Single Mode Preview -->
         @if (selectedEmployee() && previewPayrollInvoice()) {
-          <p-divider />
+          <ui-divider />
           <ui-typography variant="h4" tag="h4" color="primary" weight="semibold" class="mb-4">
             Preview Payroll Invoice
           </ui-typography>
@@ -128,7 +128,7 @@
 
         <!-- Bulk Preview Table -->
         @if (bulkPreviews().length > 0) {
-          <p-divider />
+          <ui-divider />
           <ui-stack direction="row" align="center" justify="between" class="mb-4">
             <ui-typography variant="h4" tag="h4" color="primary" weight="semibold">
               Preview ({{ bulkPreviews().length }} employees)
@@ -205,5 +205,5 @@
         </ui-stack>
       }
     </form>
-  </p-card>
+  </ui-card>
 </div>

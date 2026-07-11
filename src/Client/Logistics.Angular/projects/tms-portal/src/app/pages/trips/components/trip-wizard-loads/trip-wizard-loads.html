@@ -1,7 +1,7 @@
 <ui-stack gap="4">
   <ui-stack direction="row" align="center" gap="2">
     <ui-typography variant="h6" tag="h4" weight="semibold">Assigned Loads</ui-typography>
-    <p-tag [value]="getAssignedLoadsCount()" severity="info" />
+    <ui-badge [value]="getAssignedLoadsCount()" severity="info" />
   </ui-stack>
 
   <ui-data-table
@@ -70,9 +70,9 @@
           <ui-stack direction="row" align="center" gap="2">
             <span class="font-medium">{{ row.name }}</span>
             @if (row.kind === "new") {
-              <p-tag value="New" severity="success" [rounded]="true" />
+              <ui-badge value="New" severity="success" [rounded]="true" />
             } @else if (row.pendingDetach) {
-              <p-tag value="Detach" severity="danger" [rounded]="true" />
+              <ui-badge value="Detach" severity="danger" [rounded]="true" />
             }
           </ui-stack>
         </td>
@@ -93,7 +93,7 @@
           @if (row.kind === "existing") {
             <app-load-status-tag [status]="row.status" />
           } @else {
-            <p-tag value="Draft" severity="warn" [rounded]="true" />
+            <ui-badge value="Draft" severity="warn" [rounded]="true" />
           }
         </td>
         <td class="text-right font-medium">{{ row.distance | distanceUnit: "mi" }}</td>

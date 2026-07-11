@@ -1,11 +1,12 @@
 import { computed, inject } from "@angular/core";
 import { isEmptyGuid } from "@logistics/shared";
-import { Api, optimizeTripStops } from "@logistics/shared/api";
-import type {
-  CreateTripLoadCommand,
-  OptimizeTripStopsCommand,
-  TripLoadDto,
-  TripStopDto,
+import {
+  Api,
+  optimizeTripStops,
+  type CreateTripLoadCommand,
+  type OptimizeTripStopsCommand,
+  type TripLoadDto,
+  type TripStopDto,
 } from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 
@@ -167,13 +168,15 @@ export const TripWizardStore = signalStore(
       if (store.mode() === "edit") {
         // In edit mode, attached loads are the ones not in the initial loads
         const initialIds = new Set(store.initialLoads().map((l) => l.id));
-        return store.attachedLoads()
+        return store
+          .attachedLoads()
           .filter((l) => l.id && !initialIds.has(l.id))
           .map((l) => l.id!)
           .filter((id): id is string => !!id);
       }
       // In create mode, all attached loads are newly added
-      return store.attachedLoads()
+      return store
+        .attachedLoads()
         .map((l) => l.id)
         .filter((id): id is string => !!id);
     });

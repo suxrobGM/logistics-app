@@ -9,7 +9,7 @@
 </ui-page-header>
 
 <!-- Date Range Filter -->
-<p-card class="mb-6 block">
+<ui-card class="mb-6 block">
   <ui-stack direction="row" align="end" gap="4" wrap>
     <ui-form-field label="Start Date" for="startDate">
       <p-datepicker
@@ -33,7 +33,7 @@
       />
     </ui-form-field>
   </ui-stack>
-</p-card>
+</ui-card>
 
 <!-- Summary Cards -->
 <ui-grid container spacing="4" class="mb-6">
@@ -59,7 +59,7 @@
 <ui-dashboard-card title="Duty Status Logs" icon="history" iconColor="blue">
   @if (loading()) {
     <ui-stack align="center" justify="center" class="p-5">
-      <p-progressSpinner />
+      <ui-spinner />
     </ui-stack>
   } @else if (error()) {
     <ui-error-state [message]="error()!" (retry)="loadData()" />
@@ -105,7 +105,7 @@
             }
           </td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="log.dutyStatusDisplay"
               [severity]="getDutyStatusSeverity(log.dutyStatus)"
             />

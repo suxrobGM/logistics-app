@@ -1,6 +1,6 @@
 import { Component, computed, input } from "@angular/core";
-import { TooltipModule } from "primeng/tooltip";
 import type { LoadStatus } from "@logistics/shared/api";
+import { TooltipModule } from "primeng/tooltip";
 
 @Component({
   selector: "app-load-progress-bar",

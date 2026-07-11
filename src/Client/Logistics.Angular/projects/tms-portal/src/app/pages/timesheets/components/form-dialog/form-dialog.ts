@@ -23,6 +23,7 @@ import {
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
 import {
   Grid,
+  Spinner,
   Stack,
   UiButton,
   UiDateField,
@@ -32,7 +33,6 @@ import {
   ValidatedForm,
 } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 
@@ -55,7 +55,7 @@ const EMPTY = {
     FormField,
     FormRoot,
     Grid,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
     UiButton,
     UiDateField,

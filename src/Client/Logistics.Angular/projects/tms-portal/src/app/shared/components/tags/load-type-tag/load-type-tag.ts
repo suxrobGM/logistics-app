@@ -1,48 +1,48 @@
 import { Component, input } from "@angular/core";
 import type { LoadType } from "@logistics/shared/api";
-import { Tag } from "primeng/tag";
+import { Badge, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 
 interface TypeInfo {
   label: string;
-  severity: Tag["severity"];
-  icon?: string;
+  severity: UiBadgeIntent;
+  icon?: IconName;
 }
 
 const TYPE_INFO: Record<LoadType, TypeInfo> = {
-  general_freight: { label: "General Freight", severity: "info", icon: "pi pi-box" },
+  general_freight: { label: "General Freight", severity: "info", icon: "box" },
   refrigerated_goods: {
     label: "Refrigerated",
     severity: "info",
-    icon: "pi pi-snowflake",
+    icon: "snowflake",
   },
   hazardous_materials: {
     label: "Hazardous",
     severity: "danger",
-    icon: "pi pi-exclamation-triangle",
+    icon: "exclamation-triangle",
   },
-  oversize_heavy: { label: "Oversize / Heavy", severity: "warn", icon: "pi pi-truck" },
-  liquid: { label: "Liquid / Tanker", severity: "info", icon: "pi pi-sliders-h" },
-  bulk: { label: "Bulk", severity: "info", icon: "pi pi-inbox" },
-  vehicle: { label: "Vehicle / Car", severity: "success", icon: "pi pi-car" },
-  livestock: { label: "Livestock", severity: "success", icon: "pi pi-paw" },
+  oversize_heavy: { label: "Oversize / Heavy", severity: "warn", icon: "truck" },
+  liquid: { label: "Liquid / Tanker", severity: "info", icon: "sliders-h" },
+  bulk: { label: "Bulk", severity: "info", icon: "inbox" },
+  vehicle: { label: "Vehicle / Car", severity: "success", icon: "car" },
+  livestock: { label: "Livestock", severity: "success", icon: "paw" },
   intermodal_container: {
     label: "Intermodal Container",
     severity: "info",
-    icon: "pi pi-warehouse",
+    icon: "warehouse",
   },
-  tank_container: { label: "Tank Container", severity: "info", icon: "pi pi-sliders-h" },
-  reefer_container: { label: "Reefer Container", severity: "info", icon: "pi pi-snowflake" },
-  break_bulk: { label: "Break Bulk", severity: "info", icon: "pi pi-inbox" },
-  high_value: { label: "High Value", severity: "warn", icon: "pi pi-star" },
-  pharmaceutical: { label: "Pharmaceutical", severity: "info", icon: "pi pi-heart" },
-  project_cargo: { label: "Project Cargo", severity: "warn", icon: "pi pi-briefcase" },
+  tank_container: { label: "Tank Container", severity: "info", icon: "sliders-h" },
+  reefer_container: { label: "Reefer Container", severity: "info", icon: "snowflake" },
+  break_bulk: { label: "Break Bulk", severity: "info", icon: "inbox" },
+  high_value: { label: "High Value", severity: "warn", icon: "star" },
+  pharmaceutical: { label: "Pharmaceutical", severity: "info", icon: "heart" },
+  project_cargo: { label: "Project Cargo", severity: "warn", icon: "briefcase" },
 };
 
 @Component({
   selector: "app-load-type-tag",
   templateUrl: "./load-type-tag.html",
-  imports: [Tag, TooltipModule],
+  imports: [Badge, TooltipModule],
 })
 export class LoadTypeTag {
   /**

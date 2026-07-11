@@ -2,10 +2,10 @@ import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { MaintenanceDashboardPage } from "./maintenance-dashboard/maintenance-dashboard";
-import { ServiceRecordsPage } from "./service-records/service-records";
 import { ServiceRecordAddPage } from "./service-record-add/service-record-add";
 import { ServiceRecordDetailPage } from "./service-record-detail/service-record-detail";
 import { ServiceRecordEditPage } from "./service-record-edit/service-record-edit";
+import { ServiceRecordsPage } from "./service-records/service-records";
 import { UpcomingServicePage } from "./upcoming-service/upcoming-service";
 
 export const maintenanceRoutes: Routes = [

@@ -3,14 +3,13 @@ import { Api, bulkAssignLoads, type LoadDto, type TruckDto } from "@logistics/sh
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { UiButton } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { SearchTruck } from "@/shared/components";
 
 @Component({
   selector: "app-bulk-assign-dialog",
   templateUrl: "./bulk-assign-dialog.html",
-  imports: [CurrencyFormatPipe, DialogModule, ProgressSpinnerModule, SearchTruck, UiButton],
+  imports: [CurrencyFormatPipe, DialogModule, SearchTruck, UiButton],
 })
 export class BulkAssignDialog {
   private readonly api = inject(Api);

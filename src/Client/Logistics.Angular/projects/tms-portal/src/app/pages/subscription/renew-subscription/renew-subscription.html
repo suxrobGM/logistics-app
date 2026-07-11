@@ -14,13 +14,13 @@
   </div>
 
   <!-- Plan Summary -->
-  <p-card>
+  <ui-card>
     <ng-template #header>
       <div class="p-4 pb-0">
         <div class="flex items-center justify-between">
           <h3 class="m-0 text-lg font-semibold">Resume {{ planName() }} Plan</h3>
           @if (subscription()?.plan?.tier) {
-            <p-tag
+            <ui-badge
               [severity]="Labels.planTierSeverity(subscription()!.plan!.tier!)"
               [value]="Labels.planTierLabel(subscription()!.plan!.tier!)"
             />
@@ -70,5 +70,5 @@
         />
       </div>
     </ng-template>
-  </p-card>
+  </ui-card>
 </div>

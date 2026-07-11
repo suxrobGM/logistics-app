@@ -1,15 +1,13 @@
 import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
 import type { TripTimelineEventDto } from "@logistics/shared/api";
-import { Icon, type IconName } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
+import { Badge, Icon, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 import { TimelineModule } from "primeng/timeline";
 
 @Component({
   selector: "app-trip-timeline",
   templateUrl: "./trip-timeline.html",
-  imports: [CardModule, CommonModule, Icon, TagModule, TimelineModule],
+  imports: [Badge, CommonModule, Icon, TimelineModule],
 })
 export class TripTimeline {
   public readonly events = input<TripTimelineEventDto[]>([]);
@@ -52,9 +50,10 @@ export class TripTimeline {
     }
   }
 
-  protected getEventSeverity(
-    eventType: string | null,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" | undefined {
+  // The `| undefined` this used to declare was dead: every branch returns, `default` included.
+  // `<p-tag [severity]>` accepted `undefined`, so nothing ever forced the annotation to be honest.
+  // `<ui-badge>` does not, which is how a vestigial widening finally surfaced.
+  protected getEventSeverity(eventType: string | null): UiBadgeIntent {
     switch (eventType) {
       case "created":
         return "info";

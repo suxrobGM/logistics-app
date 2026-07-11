@@ -1,7 +1,6 @@
-import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
+import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Api, getEmployees } from "@logistics/shared/api";
-import type { EmployeeDto } from "@logistics/shared/api";
+import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { MultiSelectModule } from "primeng/multiselect";
 

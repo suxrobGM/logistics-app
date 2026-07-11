@@ -1,0 +1,52 @@
+@let title = titleTpl();
+@let subtitle = subtitleTpl();
+@let footer = footerTpl();
+
+<!-- card-header sits OUTSIDE card-body, and so outside its padding. That is p-card's structure and
+     ~60 call sites style their header with their own px/pt to suit it. -->
+@if (headerTpl(); as header) {
+  <div data-slot="card-header">
+    <ng-container *ngTemplateOutlet="header" />
+  </div>
+}
+
+<div
+  data-slot="card-body"
+  class="flex min-h-[var(--ui-card-body-min-h,auto)] [flex:var(--ui-card-body-flex,0_1_auto)] flex-col gap-2 p-[var(--ui-card-body-padding)]"
+>
+  @if (header() || title) {
+    <div data-slot="card-title" class="text-xl font-medium">
+      <!-- A `#title` template wins over the `header` string, exactly as in p-card. -->
+      @if (title) {
+        <ng-container *ngTemplateOutlet="title" />
+      } @else {
+        {{ header() }}
+      }
+    </div>
+  }
+
+  @if (subheader() || subtitle) {
+    <div data-slot="card-subtitle" class="text-muted-foreground">
+      @if (subtitle) {
+        <ng-container *ngTemplateOutlet="subtitle" />
+      } @else {
+        {{ subheader() }}
+      }
+    </div>
+  }
+
+  <!-- The scroll box. Inert by default (`visible` / no flex), so a plain card is unchanged; the TMS
+       dashboard switches it on through the variables — see home.css. -->
+  <div
+    data-slot="card-content"
+    class="min-h-[var(--ui-card-content-min-h,auto)] [flex:var(--ui-card-content-flex,0_1_auto)] [overflow-y:var(--ui-card-content-overflow,visible)] [overscroll-behavior:var(--ui-card-content-overscroll,auto)]"
+  >
+    <ng-content />
+  </div>
+
+  @if (footer) {
+    <div data-slot="card-footer">
+      <ng-container *ngTemplateOutlet="footer" />
+    </div>
+  }
+</div>

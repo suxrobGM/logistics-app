@@ -8,17 +8,18 @@ import {
   type SubscriptionDto,
 } from "@logistics/shared/api";
 import {
+  Badge,
+  Card,
   DataContainer,
   PageHeader,
   SearchField,
   UiButton,
   UiDataTable,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Menu, MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { SubscriptionsListStore } from "../store/subscriptions-list.store";
 
@@ -27,14 +28,14 @@ import { SubscriptionsListStore } from "../store/subscriptions-list.store";
   templateUrl: "./subscriptions-list.html",
   providers: [SubscriptionsListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     ConfirmDialogModule,
     DataContainer,
     MenuModule,
     PageHeader,
     RouterLink,
     SearchField,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -111,9 +112,7 @@ export class SubscriptionsList {
     this.store.removeItem(id);
   }
 
-  protected getStatusSeverity(
-    status?: string,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  protected getStatusSeverity(status?: string): UiBadgeIntent {
     switch (status) {
       case "active":
         return "success";

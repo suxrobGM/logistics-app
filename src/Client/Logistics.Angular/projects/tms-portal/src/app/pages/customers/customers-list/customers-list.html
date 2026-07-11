@@ -11,7 +11,7 @@
   </ui-permission-guard>
 </ui-stack>
 
-<p-card>
+<ui-card>
   <div class="mb-4">
     <ui-search-field (searchChange)="search($event)" />
   </div>
@@ -79,7 +79,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <app-invite-customer-dialog
   [(visible)]="inviteDialogVisible"

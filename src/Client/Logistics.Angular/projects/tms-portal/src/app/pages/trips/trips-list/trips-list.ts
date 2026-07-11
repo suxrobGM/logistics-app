@@ -19,7 +19,9 @@ import {
 } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import {
+  Card,
   Grid,
+  Progress,
   Stack,
   Typography,
   UiButton,
@@ -29,11 +31,9 @@ import {
 } from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
-import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { MenuModule } from "primeng/menu";
 import { MultiSelect } from "primeng/multiselect";
-import { ProgressBarModule } from "primeng/progressbar";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import {
@@ -70,7 +70,7 @@ import { TripsListStore } from "../store/trips-list.store";
     MenuModule,
     MultiSelect,
     PageHeader,
-    ProgressBarModule,
+    Progress,
     RouteBadge,
     SearchField,
     SearchTruck,

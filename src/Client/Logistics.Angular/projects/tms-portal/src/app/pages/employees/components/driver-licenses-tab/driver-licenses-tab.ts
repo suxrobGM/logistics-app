@@ -12,16 +12,21 @@ import {
   licenseEndorsementOptions,
 } from "@logistics/shared/api/enums";
 import { ToastService } from "@logistics/shared/services";
-import { Stack, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { ChipModule } from "primeng/chip";
-import { Tag as PrimeTag, TagModule } from "primeng/tag";
+import {
+  Badge,
+  Stack,
+  Typography,
+  UiButton,
+  UiDataTable,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { DriverLicenseEditDialog } from "../driver-license-edit-dialog/driver-license-edit-dialog";
 
 interface LicenseRowVm {
   license: DriverLicenseDto;
   classLabel: string;
   endorsementLabels: string[];
-  expirySeverity: PrimeTag["severity"];
+  expirySeverity: UiBadgeIntent;
   expiryLabel: string;
 }
 
@@ -29,12 +34,11 @@ interface LicenseRowVm {
   selector: "app-driver-licenses-tab",
   templateUrl: "./driver-licenses-tab.html",
   imports: [
-    ChipModule,
+    Badge,
     CommonModule,
     DatePipe,
     DriverLicenseEditDialog,
     Stack,
-    TagModule,
     Typography,
     UiButton,
     UiDataTable,
@@ -138,7 +142,7 @@ export class DriverLicensesTab {
     const status = license.status;
     const days = license.daysUntilExpiry ?? 0;
 
-    let expirySeverity: PrimeTag["severity"];
+    let expirySeverity: UiBadgeIntent;
     let expiryLabel: string;
 
     if (status === "revoked" || status === "suspended") {

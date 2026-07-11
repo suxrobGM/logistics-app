@@ -6,9 +6,7 @@ import {
   type MaintenanceRecordDto,
   type TruckDto,
 } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Card, Spinner, Stack } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import {
@@ -19,7 +17,7 @@ import {
 @Component({
   selector: "app-service-record-edit",
   templateUrl: "./service-record-edit.html",
-  imports: [CardModule, ProgressSpinnerModule, PageHeader, MaintenanceRecordForm, Stack],
+  imports: [Card, MaintenanceRecordForm, PageHeader, Spinner, Stack],
 })
 export class ServiceRecordEditPage implements OnInit {
   private readonly router = inject(Router);

@@ -9,15 +9,13 @@ import {
   type SubscriptionPlanDto,
   type UpdateSubscriptionPlanCommand,
 } from "@logistics/shared/api";
-import { PageHeader, Stack } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { SkeletonModule } from "primeng/skeleton";
+import { Card, PageHeader, Skeleton, Stack } from "@logistics/shared/ui";
 import { PlanForm, type PlanFormValue } from "@/shared/components";
 
 @Component({
   selector: "adm-plan-edit",
   templateUrl: "./plan-edit.html",
-  imports: [CardModule, RouterModule, PlanForm, SkeletonModule, PageHeader, Stack],
+  imports: [Card, PageHeader, PlanForm, RouterModule, Skeleton, Stack],
 })
 export class PlanEdit implements OnInit {
   private readonly api = inject(Api);

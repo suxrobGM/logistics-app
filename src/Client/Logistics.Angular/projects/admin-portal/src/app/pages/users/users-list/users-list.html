@@ -1,6 +1,6 @@
 <ui-page-header title="Users" />
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -41,7 +41,7 @@
           <td>{{ user.email }}</td>
           <td>{{ getFullName(user) }}</td>
           <td>
-            <p-tag [value]="user.role ?? 'Unknown'" [severity]="getRoleSeverity(user.role)" />
+            <ui-badge [value]="user.role ?? 'Unknown'" [severity]="getRoleSeverity(user.role)" />
           </td>
           <td>
             @if (user.tenantId) {
@@ -65,7 +65,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <p-menu #actionMenu [model]="actionMenuItems" [popup]="true" />
 

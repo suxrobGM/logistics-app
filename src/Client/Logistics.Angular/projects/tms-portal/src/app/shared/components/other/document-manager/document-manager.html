@@ -1,6 +1,6 @@
 <div class="document-manager mb-4">
   <!-- Upload Section -->
-  <p-card class="border-default mb-4 border p-2">
+  <ui-card class="border-default mb-4 border p-2">
     <ng-template #header>
       <div class="flex items-center gap-2">
         <ui-icon name="upload" class="text-foreground" />
@@ -56,16 +56,16 @@
         </div>
       }
     </div>
-  </p-card>
+  </ui-card>
 
   <!-- Documents List -->
-  <p-card class="border-default border p-2">
+  <ui-card class="border-default border p-2">
     <ng-template #header>
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <ui-icon name="folder" class="text-foreground" />
           <h3 class="m-0 text-lg font-semibold">Documents</h3>
-          <p-tag [value]="rows().length.toString()" severity="info" />
+          <ui-badge [value]="rows().length.toString()" severity="info" />
         </div>
         <ui-button
           appearance="text"
@@ -80,7 +80,7 @@
 
     @if (isLoading()) {
       <div class="flex justify-center py-8">
-        <p-progress-spinner />
+        <ui-spinner />
       </div>
     } @else {
       <ui-data-table [value]="rows()" [dataKey]="'id'" [scrollable]="true">
@@ -112,7 +112,7 @@
               </div>
             </td>
             <td>
-              <p-tag [value]="doc.status" [severity]="statusSeverity(doc.status)" class="text-xs" />
+              <ui-badge size="sm" [value]="doc.status" [severity]="statusSeverity(doc.status)" />
             </td>
             <td>
               <span class="text-subtle-foreground text-sm">
@@ -164,5 +164,5 @@
         </ng-template>
       </ui-data-table>
     }
-  </p-card>
+  </ui-card>
 </div>

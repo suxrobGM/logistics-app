@@ -1,0 +1,154 @@
+<section id="cosmetics" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Cards, spinners &amp; placeholders</ui-typography>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-card</ui-typography>
+  <div data-lab="cards" class="mt-2 grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <ui-card data-lab="card-plain">
+      <p class="text-sm">Content only. No header, no title, no footer.</p>
+    </ui-card>
+
+    <ui-card header="Quick Actions" data-lab="card-header-string">
+      <p class="text-sm">
+        The
+        <code>header</code>
+        STRING input — 43 call sites. It renders in card-title, inside the body, not in card-header.
+      </p>
+    </ui-card>
+
+    <ui-card data-lab="card-header-tpl">
+      <ng-template #header>
+        <div class="border-default flex items-center gap-2 border-b px-5 py-3">
+          <ui-typography variant="h6" tag="h5" class="m-0">#header template</ui-typography>
+        </div>
+      </ng-template>
+      <p class="text-sm">71 call sites. Sits OUTSIDE the body, so it owns its own padding.</p>
+    </ui-card>
+
+    <ui-card data-lab="card-title-subtitle">
+      <ng-template #title>#title template</ng-template>
+      <ng-template #subtitle>#subtitle template — 4 call sites</ng-template>
+      <p class="text-sm">Title and subtitle both come from templates here.</p>
+    </ui-card>
+
+    <ui-card data-lab="card-footer">
+      <ng-template #footer>
+        <div class="text-muted-foreground text-sm">#footer template — 3 call sites</div>
+      </ng-template>
+      <p class="text-sm">Footer sits inside the body, after the content.</p>
+    </ui-card>
+
+    <ui-card header="All four at once" data-lab="card-everything">
+      <ng-template #header>
+        <div class="bg-subtle px-5 py-3 text-sm font-semibold">#header</div>
+      </ng-template>
+      <ng-template #subtitle>a subtitle</ng-template>
+      <ng-template #footer>
+        <div class="text-muted-foreground text-sm">a footer</div>
+      </ng-template>
+      <p class="text-sm">
+        A
+        <code>#title</code>
+        template would beat the
+        <code>header</code>
+        string; there is none here, so the string wins.
+      </p>
+    </ui-card>
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-spinner</ui-typography>
+  <div data-lab="spinners" class="mt-2 flex flex-wrap items-end gap-6">
+    @for (size of spinnerSizes; track size) {
+      <div class="flex flex-col items-center gap-2">
+        <ui-spinner [size]="size" [ariaLabel]="'Loading ' + size" />
+        <span class="text-muted-foreground text-xs">{{ size }}</span>
+      </div>
+    }
+    <ui-typography variant="body-sm" color="muted">
+      100px is the default — it is p-progress-spinner's, and 50 of 63 call sites pass nothing.
+    </ui-typography>
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-skeleton</ui-typography>
+  <div data-lab="raw-skeletons" class="mt-2 flex flex-col gap-3">
+    <div class="flex items-center gap-3">
+      <ui-skeleton shape="circle" size="3rem" />
+      <div class="flex-1">
+        <ui-skeleton width="70%" height="1rem" class="mb-2" />
+        <ui-skeleton width="40%" height="0.75rem" />
+      </div>
+    </div>
+    <ui-skeleton height="3rem" class="w-full" />
+    <!-- 4 call sites repaint the background. It has to BEAT bg-muted on twMerge, not race it. -->
+    <ui-skeleton height="1.5rem" class="w-full bg-purple-500/20" data-lab="skeleton-repainted" />
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-avatar</ui-typography>
+  <div data-lab="avatars" class="mt-2 flex flex-wrap items-end gap-4">
+    @for (size of avatarSizes; track size) {
+      <div class="flex flex-col items-center gap-2">
+        <ui-avatar label="SI" [size]="size" />
+        <span class="text-muted-foreground text-xs">{{ size }}</span>
+      </div>
+    }
+    <!-- app-user-avatar tints its circle exactly like this. The host IS the circle, so [style] lands. -->
+    <div class="flex flex-col items-center gap-2">
+      <ui-avatar
+        label="JD"
+        size="large"
+        [style]="{
+          'background-color': 'color-mix(in srgb, var(--primary) 15%, transparent)',
+          color: 'var(--primary)',
+        }"
+      />
+      <span class="text-muted-foreground text-xs">[style] tint</span>
+    </div>
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-progress</ui-typography>
+  <div data-lab="progress" class="mt-2 flex flex-col gap-3">
+    <ui-progress [value]="progress()" />
+    <ui-progress [value]="progress()" class="h-1" />
+    <ui-progress [value]="progress()" showValue />
+    <ui-progress [value]="progress()" color="var(--success)" />
+    <input
+      type="range"
+      min="0"
+      max="100"
+      class="w-64"
+      [value]="progress()"
+      (input)="progress.set(+$any($event.target).value)"
+    />
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">
+    ui-count-badge / ui-overlay-badge
+  </ui-typography>
+  <div data-lab="count-badges" class="mt-2 flex flex-col gap-3">
+    @for (size of countBadgeSizes; track size) {
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-muted-foreground w-16 text-xs">{{ size }}</span>
+        @for (tone of tones; track tone) {
+          <ui-count-badge [value]="3" [severity]="tone" [size]="size" />
+        }
+        <ui-count-badge value="9+" severity="danger" [size]="size" />
+      </div>
+    }
+
+    <div class="mt-2 flex items-center gap-6">
+      <ui-overlay-badge [value]="unread()" severity="danger" badgeSize="small">
+        <span class="text-2xl">🔔</span>
+      </ui-overlay-badge>
+      <button
+        type="button"
+        class="border-default hover:bg-subtle rounded-md border px-2 py-1 text-sm"
+        data-lab="toggle-unread"
+        (click)="toggleUnread()"
+      >
+        unread = {{ unread() ?? "null" }} — toggle
+      </button>
+      <ui-typography variant="body-sm" color="muted">
+        A null value MUST hide the badge. The notification bell relies on it.
+      </ui-typography>
+    </div>
+  </div>
+</section>

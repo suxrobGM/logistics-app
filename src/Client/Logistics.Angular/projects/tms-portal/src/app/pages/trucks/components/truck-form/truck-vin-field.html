@@ -19,12 +19,12 @@
   </ui-stack>
   @if (sourceLabel()) {
     <ui-stack direction="row" gap="2" align="center" class="mt-2">
-      <p-tag [value]="sourceLabel()!" severity="info" />
+      <ui-badge [value]="sourceLabel()!" severity="info" />
     </ui-stack>
   }
   @if (decodedModelMissing()) {
-    <p-message severity="info" class="mt-2 block">
+    <ui-alert intent="info" class="mt-2 block">
       Make detected from VIN prefix only — please fill in model and year manually.
-    </p-message>
+    </ui-alert>
   }
 </ui-form-field>

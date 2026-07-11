@@ -1,7 +1,7 @@
 <ui-stack gap="4" class="px-1">
   <ui-grid container spacing="4">
     <ui-grid [size]="{ xs: 12, md: 4 }">
-      <p-card>
+      <ui-card>
         <ui-stack direction="row" align="center" justify="between">
           <div>
             <div class="text-sm opacity-70">Trip</div>
@@ -13,11 +13,11 @@
           Truck:
           <span class="font-medium">{{ reviewData().truckNumber || "Not assigned" }}</span>
         </div>
-      </p-card>
+      </ui-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 4 }">
-      <p-card>
+      <ui-card>
         <ui-stack direction="row" align="center" justify="between">
           <div>
             <div class="text-sm opacity-70">Loads</div>
@@ -31,11 +31,11 @@
           </div>
           <ui-icon name="box" size="xl" color="muted" class="opacity-60" />
         </ui-stack>
-      </p-card>
+      </ui-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 4 }">
-      <p-card>
+      <ui-card>
         <ui-stack direction="row" align="center" justify="between">
           <div>
             <div class="text-sm opacity-70">Totals</div>
@@ -52,12 +52,12 @@
           </div>
           <ui-icon name="chart-line" size="xl" color="muted" class="opacity-60" />
         </ui-stack>
-      </p-card>
+      </ui-card>
     </ui-grid>
   </ui-grid>
 
   <!-- Trip Stops table -->
-  <p-card>
+  <ui-card>
     <ng-template #header>
       <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
         <ui-typography variant="h6" tag="h5">Stops</ui-typography>
@@ -99,7 +99,7 @@
         </tr>
       </ng-template>
     </ui-data-table>
-  </p-card>
+  </ui-card>
 
   <app-direction-map
     [waypoints]="waypoints()"

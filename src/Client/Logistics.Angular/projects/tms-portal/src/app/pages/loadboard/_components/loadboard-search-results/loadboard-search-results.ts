@@ -2,8 +2,7 @@ import { DecimalPipe } from "@angular/common";
 import { Component, input, output } from "@angular/core";
 import { type LoadBoardListingDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
-import { UiButton, UiDataTable } from "@logistics/shared/ui";
-import { TagModule } from "primeng/tag";
+import { Badge, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { getProviderSeverity } from "../loadboard.constants";
 
@@ -11,11 +10,11 @@ import { getProviderSeverity } from "../loadboard.constants";
   selector: "app-loadboard-search-results",
   templateUrl: "./loadboard-search-results.html",
   imports: [
+    Badge,
     CurrencyFormatPipe,
     DateFormatPipe,
     DecimalPipe,
     DistanceUnitPipe,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,

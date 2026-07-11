@@ -8,9 +8,17 @@ import {
   type StripeConnectStatus,
   type StripeConnectStatusDto,
 } from "@logistics/shared/api";
-import { Container, Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
+import {
+  Badge,
+  Card,
+  Container,
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import { EmptyState, LoadingSkeleton, PageHeader } from "@/shared/components";
@@ -20,7 +28,8 @@ import { TenantTaxRatesCard } from "../_components";
   selector: "app-payment-settings",
   templateUrl: "./payment-settings.html",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     Container,
     EmptyState,
     Grid,
@@ -29,7 +38,6 @@ import { TenantTaxRatesCard } from "../_components";
     PageHeader,
     Stack,
     Surface,
-    TagModule,
     TenantTaxRatesCard,
     ToastModule,
     Typography,

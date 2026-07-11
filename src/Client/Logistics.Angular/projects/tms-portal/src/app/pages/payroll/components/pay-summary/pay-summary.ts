@@ -2,12 +2,12 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import type { InvoiceLineItemDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { DividerModule } from "primeng/divider";
+import { Divider } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-payroll-pay-summary",
   templateUrl: "./pay-summary.html",
-  imports: [CommonModule, CurrencyFormatPipe, DividerModule],
+  imports: [CommonModule, CurrencyFormatPipe, Divider],
 })
 export class PayrollPaySummary {
   public readonly lineItems = input<InvoiceLineItemDto[]>([]);

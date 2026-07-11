@@ -1,12 +1,11 @@
 import { Component, computed, input } from "@angular/core";
 import type { LoadDto, LoadStatus } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { CardModule } from "primeng/card";
 
 @Component({
   selector: "app-loads-summary-stats",
   templateUrl: "./loads-summary-stats.html",
-  imports: [CardModule, CurrencyFormatPipe],
+  imports: [CurrencyFormatPipe],
 })
 export class LoadsSummaryStats {
   readonly loads = input.required<LoadDto[]>();

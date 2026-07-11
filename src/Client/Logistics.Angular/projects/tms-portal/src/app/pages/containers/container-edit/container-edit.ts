@@ -25,6 +25,8 @@ import {
 } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
 import {
+  Badge,
+  Card,
   Container,
   Grid,
   Icon,
@@ -38,11 +40,10 @@ import {
   UiTextareaField,
   UiTextField,
   ValidatedForm,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
-import { TagModule } from "primeng/tag";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { SearchTerminal } from "@/shared/components/search";
@@ -83,7 +84,8 @@ const TERMINAL_EMPTY: TerminalFormModel = { terminal: null };
   selector: "app-container-edit",
   templateUrl: "./container-edit.html",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CheckboxModule,
     Container,
     DialogModule,
@@ -96,7 +98,6 @@ const TERMINAL_EMPTY: TerminalFormModel = { terminal: null };
     SearchTerminal,
     Stack,
     Surface,
-    TagModule,
     Typography,
     UiButton,
     UiFormField,
@@ -245,7 +246,7 @@ export class ContainerEdit implements OnInit {
     this.fetchContainer();
   }
 
-  protected statusSeverity(status?: ContainerStatus): "info" | "success" | "warn" | "secondary" {
+  protected statusSeverity(status?: ContainerStatus): UiBadgeIntent {
     switch (status) {
       case "loaded":
       case "in_transit":

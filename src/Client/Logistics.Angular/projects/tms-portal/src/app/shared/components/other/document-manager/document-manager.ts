@@ -10,12 +10,17 @@ import {
   type DocumentStatus,
   type DocumentType,
 } from "@logistics/shared/api";
-import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
+import {
+  Badge,
+  Card,
+  Icon,
+  Spinner,
+  UiButton,
+  UiDataTable,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
-import { CardModule } from "primeng/card";
 import { FileUploadModule } from "primeng/fileupload";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { Tag, TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -25,12 +30,12 @@ import { Converters } from "@/shared/utils";
   selector: "app-document-manager",
   templateUrl: "./document-manager.html",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CommonModule,
     FileUploadModule,
     Icon,
-    ProgressSpinnerModule,
-    TagModule,
+    Spinner,
     ToastModule,
     TooltipModule,
     UiButton,
@@ -140,7 +145,7 @@ export class DocumentManager implements OnInit {
     });
   }
 
-  protected statusSeverity(status: DocumentStatus): Tag["severity"] {
+  protected statusSeverity(status: DocumentStatus): UiBadgeIntent {
     switch (status) {
       case "active":
         return "success";

@@ -1,6 +1,5 @@
 import { Component, computed, input } from "@angular/core";
-import { Icon, Stack, Typography, type IconName } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import { Card, Icon, Stack, Typography, type IconName } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 
 type ColorVariant = "blue" | "green" | "orange" | "red" | "purple" | "gray";
@@ -18,7 +17,7 @@ const COLOR_VAR_MAP: Record<ColorVariant, string> = {
   selector: "app-stat-card",
   templateUrl: "./stat-card.html",
   styleUrl: "./stat-card.css",
-  imports: [CardModule, TooltipModule, Icon, Stack, Typography],
+  imports: [Card, Icon, Stack, TooltipModule, Typography],
   host: {
     "[style.--stat-card-icon-color]": "iconColorVar()",
   },

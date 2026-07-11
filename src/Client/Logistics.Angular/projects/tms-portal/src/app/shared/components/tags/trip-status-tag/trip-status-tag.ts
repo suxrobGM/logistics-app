@@ -1,10 +1,10 @@
 import { Component, computed, input } from "@angular/core";
 import type { TripStatus } from "@logistics/shared/api";
-import { Tag } from "primeng/tag";
+import { Badge, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-trip-status-tag",
-  imports: [Tag],
+  imports: [Badge],
   templateUrl: "./trip-status-tag.html",
 })
 export class TripStatusTag {
@@ -33,7 +33,7 @@ export class TripStatusTag {
     }
   });
 
-  protected readonly severity = computed<Tag["severity"]>(() => {
+  protected readonly severity = computed<UiBadgeIntent>(() => {
     switch (this.normalized()) {
       case "cancelled":
         return "danger";
@@ -50,21 +50,21 @@ export class TripStatusTag {
     }
   });
 
-  protected readonly icon = computed<string | undefined>(() => {
+  protected readonly icon = computed<IconName | undefined>(() => {
     if (!this.showIcon()) {
       return undefined;
     }
     switch (this.normalized()) {
       case "draft":
-        return "pi pi-pencil";
+        return "pencil";
       case "dispatched":
-        return "pi pi-send";
+        return "send";
       case "in_transit":
-        return "pi pi-truck";
+        return "truck";
       case "cancelled":
-        return "pi pi-times";
+        return "times";
       case "completed":
-        return "pi pi-check";
+        return "check";
       default:
         return undefined;
     }

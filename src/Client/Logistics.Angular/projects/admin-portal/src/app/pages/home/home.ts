@@ -7,22 +7,29 @@ import {
   getTenants,
   getUsers,
 } from "@logistics/shared/api";
-import { Grid, Icon, PageHeader, Stack, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { SkeletonModule } from "primeng/skeleton";
+import {
+  Card,
+  Divider,
+  Grid,
+  Icon,
+  PageHeader,
+  Skeleton,
+  Stack,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 
 @Component({
   selector: "adm-home",
   templateUrl: "./home.html",
   imports: [
-    CardModule,
-    DividerModule,
+    Card,
+    Divider,
     Grid,
     Icon,
     PageHeader,
     RouterLink,
-    SkeletonModule,
+    Skeleton,
     Stack,
     Typography,
     UiButton,

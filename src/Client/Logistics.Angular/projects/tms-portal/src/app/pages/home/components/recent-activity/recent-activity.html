@@ -1,16 +1,16 @@
-<p-card class="h-full">
+<ui-card class="h-full">
   <ng-template #header>
     <div class="flex items-center gap-2 py-3 pl-4">
       <ui-icon name="history" size="inherit" class="text-xl text-purple-600" />
       <h4 class="mb-0">Recent Activity</h4>
     </div>
-    <p-divider class="m-0" />
+    <ui-divider class="m-0" />
   </ng-template>
 
   @if (isLoading()) {
     <div class="flex flex-col gap-3">
       @for (_ of [1, 2, 3, 4, 5]; track $index) {
-        <p-skeleton height="2.5rem" />
+        <ui-skeleton height="2.5rem" />
       }
     </div>
   } @else if (activities().length === 0) {
@@ -26,7 +26,12 @@
           class="hover:bg-surface-100 dark:hover:bg-surface-800 flex items-center gap-3 rounded-lg px-2 py-3 transition-colors"
         >
           <!-- Icon -->
-          <ui-icon [name]="activity.icon" size="inherit" [class]="activity.iconClass" class="text-lg" />
+          <ui-icon
+            [name]="activity.icon"
+            size="inherit"
+            [class]="activity.iconClass"
+            class="text-lg"
+          />
 
           <!-- Content -->
           <div class="min-w-0 flex-1">
@@ -49,4 +54,4 @@
       }
     </div>
   }
-</p-card>
+</ui-card>

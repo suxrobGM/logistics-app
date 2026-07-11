@@ -13,12 +13,19 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import {
+  Badge,
+  Card,
+  Divider,
+  Grid,
+  Icon,
+  Spinner,
+  Stack,
+  Typography,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { DividerModule } from "primeng/divider";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { PdfService, TenantService, ToastService } from "@/core/services";
@@ -29,12 +36,13 @@ import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/compone
   selector: "app-payroll-invoice-details",
   templateUrl: "./payroll-invoice-details.html",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DatePipe,
     DialogModule,
-    DividerModule,
+    Divider,
     FormsModule,
     Grid,
     Icon,
@@ -42,11 +50,10 @@ import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/compone
     PageHeader,
     PaymentStatusTag,
     PercentPipe,
-    ProgressSpinnerModule,
     RecordPaymentDialog,
     RouterModule,
+    Spinner,
     Stack,
-    TagModule,
     TextareaModule,
     TooltipModule,
     Typography,

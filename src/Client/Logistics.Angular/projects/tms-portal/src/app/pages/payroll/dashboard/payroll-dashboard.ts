@@ -4,9 +4,16 @@ import { RouterModule } from "@angular/router";
 import { Api, getInvoices, type InvoiceDto } from "@logistics/shared/api";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Stack, Surface, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { SkeletonModule } from "primeng/skeleton";
+import {
+  Card,
+  Grid,
+  Skeleton,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { InvoiceStatusTag, PageHeader } from "@/shared/components";
 
@@ -26,7 +33,7 @@ interface PayrollDashboardData {
   selector: "app-payroll-dashboard",
   templateUrl: "./payroll-dashboard.html",
   imports: [
-    CardModule,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DatePipe,
@@ -34,7 +41,7 @@ interface PayrollDashboardData {
     InvoiceStatusTag,
     PageHeader,
     RouterModule,
-    SkeletonModule,
+    Skeleton,
     Stack,
     Surface,
     TooltipModule,

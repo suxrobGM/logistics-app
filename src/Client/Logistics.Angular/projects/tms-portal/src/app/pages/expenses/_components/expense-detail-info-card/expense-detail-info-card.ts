@@ -2,9 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { CurrencyFormatPipe } from "@logistics/shared";
 import { type ExpenseDto } from "@logistics/shared/api";
-import { Typography } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
+import { Card, Divider, Typography } from "@logistics/shared/ui";
 import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
 import { ExpenseDetailRow } from "../expense-detail-row/expense-detail-row";
 import { getCategoryLabel } from "../expense.constants";
@@ -13,14 +11,14 @@ import { getCategoryLabel } from "../expense.constants";
   selector: "app-expense-detail-info-card",
   templateUrl: "./expense-detail-info-card.html",
   imports: [
+    Card,
     CommonModule,
-    CardModule,
-    DividerModule,
-    Typography,
     CurrencyFormatPipe,
+    Divider,
+    ExpenseDetailRow,
     ExpenseStatusTag,
     ExpenseTypeTag,
-    ExpenseDetailRow,
+    Typography,
   ],
 })
 export class ExpenseDetailInfoCard {

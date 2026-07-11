@@ -1,13 +1,13 @@
 <ui-page-header title="Edit Subscription Plan" backLink="/subscription-plans" />
 
 <div class="flex flex-col justify-center gap-6 md:flex-row">
-  <p-card class="w-full lg:w-2/3">
+  <ui-card class="w-full lg:w-2/3">
     @if (isFetching()) {
       <ui-stack gap="4">
-        <p-skeleton height="3rem" />
-        <p-skeleton height="6rem" />
-        <p-skeleton height="3rem" />
-        <p-skeleton height="3rem" />
+        <ui-skeleton height="3rem" />
+        <ui-skeleton height="6rem" />
+        <ui-skeleton height="3rem" />
+        <ui-skeleton height="3rem" />
       </ui-stack>
     } @else {
       <adm-plan-form
@@ -18,5 +18,5 @@
         (remove)="onRemove()"
       />
     }
-  </p-card>
+  </ui-card>
 </div>

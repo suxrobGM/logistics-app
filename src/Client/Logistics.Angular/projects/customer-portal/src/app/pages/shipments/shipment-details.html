@@ -5,7 +5,7 @@
 
 @if (isLoading()) {
   <ui-stack direction="row" align="center" justify="center" class="py-12">
-    <p-progress-spinner strokeWidth="4" />
+    <ui-spinner />
   </ui-stack>
 } @else if (load()) {
   <ui-grid container spacing="6">
@@ -14,7 +14,7 @@
       <ui-surface variant="elevated" padding="md">
         <ui-stack direction="row" align="center" justify="between" class="mb-4">
           <ui-typography variant="h5" tag="h2">Load #{{ load()?.number }}</ui-typography>
-          <p-tag [value]="load()?.status" [severity]="getStatusSeverity(load()?.status)" />
+          <ui-badge [value]="load()?.status" [severity]="getStatusSeverity(load()?.status)" />
         </ui-stack>
 
         @if (load()?.name) {

@@ -1,16 +1,16 @@
-<p-card class="h-full">
+<ui-card class="h-full">
   <ng-template #header>
     <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
       <ui-icon name="exclamation-circle" size="xl" color="warning" />
       <ui-typography variant="h4" tag="h4" color="primary">Needs Attention</ui-typography>
     </ui-stack>
-    <p-divider class="m-0" />
+    <ui-divider class="m-0" />
   </ng-template>
 
   @if (isLoading()) {
     <ui-stack gap="3">
-      <p-skeleton height="3rem" />
-      <p-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
     </ui-stack>
   } @else {
     <ui-stack gap="3">
@@ -31,7 +31,7 @@
             <ui-typography variant="body-sm" color="muted">Loads without a truck</ui-typography>
           </div>
         </ui-stack>
-        <p-badge
+        <ui-count-badge
           [value]="unassignedLoadsCount().toString()"
           [severity]="unassignedLoadsCount() > 0 ? 'warn' : 'secondary'"
         />
@@ -56,11 +56,11 @@
             </ui-typography>
           </div>
         </ui-stack>
-        <p-badge
+        <ui-count-badge
           [value]="idleTrucksCount().toString()"
           [severity]="idleTrucksCount() > 5 ? 'warn' : 'secondary'"
         />
       </a>
     </ui-stack>
   }
-</p-card>
+</ui-card>

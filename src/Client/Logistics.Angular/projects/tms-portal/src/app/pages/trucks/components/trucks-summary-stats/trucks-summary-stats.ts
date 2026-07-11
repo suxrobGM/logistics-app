@@ -1,11 +1,10 @@
 import { Component, computed, input } from "@angular/core";
 import type { TruckDto, TruckStatus } from "@logistics/shared/api";
-import { CardModule } from "primeng/card";
 
 @Component({
   selector: "app-trucks-summary-stats",
   templateUrl: "./trucks-summary-stats.html",
-  imports: [CardModule],
+  imports: [],
 })
 export class TrucksSummaryStats {
   readonly trucks = input.required<TruckDto[]>();

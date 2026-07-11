@@ -1,4 +1,4 @@
-import { type HttpEvent, type HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { HttpRequest, type HttpEvent, type HttpHandlerFn } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { API_CONFIG } from "../api.provider";

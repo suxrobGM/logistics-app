@@ -1,11 +1,11 @@
 import { Component, input } from "@angular/core";
 import type { ExpenseStatus } from "@logistics/shared/api";
-import { Tag, TagModule } from "primeng/tag";
+import { Badge, type UiBadgeIntent } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-expense-status-tag",
   templateUrl: "./expense-status-tag.html",
-  imports: [TagModule],
+  imports: [Badge],
 })
 export class ExpenseStatusTag {
   public readonly status = input.required<ExpenseStatus | undefined>();
@@ -25,7 +25,7 @@ export class ExpenseStatusTag {
     }
   }
 
-  getSeverity(): Tag["severity"] {
+  getSeverity(): UiBadgeIntent {
     switch (this.status()) {
       case "pending":
         return "warn";

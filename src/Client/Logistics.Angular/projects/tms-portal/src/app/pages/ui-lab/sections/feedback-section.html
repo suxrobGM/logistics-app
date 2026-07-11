@@ -28,15 +28,27 @@
 
   <ui-typography variant="h4" tag="h3" class="mt-6">ui-badge</ui-typography>
   <div data-lab="badges" class="mt-2 flex flex-col gap-2">
-    @for (variant of badgeVariants; track variant) {
+    @for (rounded of badgeRounded; track rounded) {
       <div class="flex flex-wrap items-center gap-2">
-        <span class="text-muted-foreground w-20 text-xs">{{ variant }}</span>
+        <span class="text-muted-foreground w-20 text-xs">
+          {{ rounded ? "rounded" : "default" }}
+        </span>
         @for (severity of severities; track severity) {
-          <ui-badge [value]="severity" [severity]="severity" [variant]="variant" />
+          <ui-badge [value]="severity" [severity]="severity" [rounded]="rounded" />
         }
-        <ui-badge value="with icon" severity="success" [variant]="variant" icon="check" />
+        <ui-badge value="with icon" severity="success" [rounded]="rounded" icon="check" />
       </div>
     }
+  </div>
+
+  <!-- The size axis: `sm` and `lg` exist only because call sites reached for them through raw
+       classes (`class="text-xs"`, `class="px-4 py-2 text-lg"`). They render nowhere else, so this
+       row is the only place a regression in them would be visible. -->
+  <div data-lab="badge-sizes" class="mt-2 flex flex-wrap items-center gap-2">
+    <ui-badge value="sm" severity="info" size="sm" />
+    <ui-badge value="md (default)" severity="info" />
+    <ui-badge value="lg" severity="info" size="lg" />
+    <ui-badge severity="warn">projected content</ui-badge>
   </div>
 
   <ui-typography variant="h4" tag="h3" class="mt-6">ui-status-badge</ui-typography>

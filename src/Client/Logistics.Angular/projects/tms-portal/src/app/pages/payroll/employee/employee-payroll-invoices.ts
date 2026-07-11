@@ -10,10 +10,16 @@ import {
 } from "@logistics/shared/api";
 import { paymentMethodTypeOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import {
+  Card,
+  Divider,
+  Grid,
+  Spinner,
+  Stack,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, InvoiceStatusTag, PageHeader } from "@/shared/components";
 import { EmployeePayrollListStore } from "../store/employee-list.store";
@@ -23,16 +29,16 @@ import { EmployeePayrollListStore } from "../store/employee-list.store";
   templateUrl: "./employee-payroll-invoices.html",
   providers: [EmployeePayrollListStore],
   imports: [
-    CardModule,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DataContainer,
-    DividerModule,
+    Divider,
     Grid,
     InvoiceStatusTag,
     PageHeader,
-    ProgressSpinnerModule,
     RouterModule,
+    Spinner,
     Stack,
     TooltipModule,
     UiButton,

@@ -3,11 +3,18 @@ import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LocalizationService } from "@logistics/shared";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import {
+  Badge,
+  Card,
+  Icon,
+  Stack,
+  Typography,
+  UiDataTable,
+  UiSortHeader,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputTextModule } from "primeng/inputtext";
-import { Tag, TagModule } from "primeng/tag";
 import { DateRangePicker, PageHeader } from "@/shared/components";
 import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
 import { DriversDetailedStore } from "./store";
@@ -17,16 +24,16 @@ import { DriversDetailedStore } from "./store";
   templateUrl: "./drivers-detailed.html",
   providers: [DriversDetailedStore],
   imports: [
-    FormsModule,
-    CardModule,
-    InputTextModule,
+    Badge,
+    Card,
+    CurrencyFormatPipe,
     DatePickerModule,
     DateRangePicker,
-    CurrencyFormatPipe,
     DecimalPipe,
-    TagModule,
-    PageHeader,
+    FormsModule,
     Icon,
+    InputTextModule,
+    PageHeader,
     Stack,
     Typography,
     UiDataTable,
@@ -72,7 +79,7 @@ export class DriversDetailedComponent implements OnInit {
   protected getPerformanceLevel = getPerformanceLevel;
   protected getPerformanceSeverity = getPerformanceSeverity;
 
-  protected getDriverTypeSeverity(isMainDriver: boolean): Tag["severity"] {
+  protected getDriverTypeSeverity(isMainDriver: boolean): UiBadgeIntent {
     return isMainDriver ? "success" : "info";
   }
 }

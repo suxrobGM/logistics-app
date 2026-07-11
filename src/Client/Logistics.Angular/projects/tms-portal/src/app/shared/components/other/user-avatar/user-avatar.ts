@@ -1,5 +1,5 @@
 import { Component, input } from "@angular/core";
-import { AvatarModule } from "primeng/avatar";
+import { Avatar } from "@logistics/shared/ui";
 
 export type AvatarSize = "normal" | "large" | "xlarge";
 export interface AvatarColors {
@@ -10,7 +10,7 @@ export interface AvatarColors {
 @Component({
   selector: "app-user-avatar",
   templateUrl: "./user-avatar.html",
-  imports: [AvatarModule],
+  imports: [Avatar],
 })
 export class UserAvatar {
   public readonly initials = input.required<string>();

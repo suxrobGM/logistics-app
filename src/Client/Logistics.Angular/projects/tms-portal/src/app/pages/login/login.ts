@@ -1,14 +1,13 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Icon, UiButton } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Icon, Spinner, UiButton } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 
 @Component({
   selector: "app-login",
   templateUrl: "./login.html",
   styleUrl: "./login.css",
-  imports: [Icon, ProgressSpinnerModule, UiButton],
+  imports: [Icon, Spinner, UiButton],
 })
 export class LoginComponent implements OnInit {
   private readonly authService = inject(AuthService);

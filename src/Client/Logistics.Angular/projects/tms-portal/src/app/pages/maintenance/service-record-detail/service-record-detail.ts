@@ -3,10 +3,16 @@ import { Component, computed, inject, input, signal, type OnInit } from "@angula
 import { Router, RouterLink } from "@angular/router";
 import { Api, getMaintenanceRecords, type MaintenanceRecordDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TagModule } from "primeng/tag";
+import {
+  Badge,
+  Card,
+  Grid,
+  Icon,
+  Spinner,
+  Stack,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 
@@ -14,17 +20,17 @@ import { PageHeader } from "@/shared/components";
   selector: "app-service-record-detail",
   templateUrl: "./service-record-detail.html",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CurrencyFormatPipe,
     DatePipe,
     DecimalPipe,
     Grid,
     Icon,
     PageHeader,
-    ProgressSpinnerModule,
     RouterLink,
+    Spinner,
     Stack,
-    TagModule,
     Typography,
     UiButton,
   ],

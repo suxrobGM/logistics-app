@@ -1,6 +1,5 @@
-import { Injectable, effect, inject, signal } from "@angular/core";
-import { Api, getCurrentTenantFeatures } from "@logistics/shared/api";
-import type { FeatureStatusDto } from "@logistics/shared/api";
+import { effect, inject, Injectable, signal } from "@angular/core";
+import { Api, getCurrentTenantFeatures, type FeatureStatusDto } from "@logistics/shared/api";
 import { type FeatureProvider } from "@logistics/shared/services";
 import { TenantService } from "./tenant.service";
 

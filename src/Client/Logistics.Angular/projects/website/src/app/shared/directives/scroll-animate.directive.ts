@@ -1,4 +1,4 @@
-import { DestroyRef, Directive, ElementRef, afterNextRender, inject, input } from "@angular/core";
+import { afterNextRender, DestroyRef, Directive, ElementRef, inject, input } from "@angular/core";
 
 type AnimationType = "fade-up" | "fade-in" | "fade-left" | "fade-right" | "scale-up";
 

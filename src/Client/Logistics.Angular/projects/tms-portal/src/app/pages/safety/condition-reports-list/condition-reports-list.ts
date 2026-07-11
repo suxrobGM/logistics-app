@@ -2,12 +2,18 @@ import { DatePipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { ConditionReportDto } from "@logistics/shared/api";
-import { Icon, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import {
+  Badge,
+  Card,
+  Icon,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { isContainerLoadType } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ConditionReportsListStore } from "../store/condition-reports-list.store";
@@ -17,14 +23,14 @@ import { ConditionReportsListStore } from "../store/condition-reports-list.store
   templateUrl: "./condition-reports-list.html",
   providers: [ConditionReportsListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DatePipe,
     Icon,
     MenuModule,
     PageHeader,
     SearchField,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -71,7 +77,7 @@ export class ConditionReportsListPage implements OnInit {
     menu.toggle(event);
   }
 
-  protected getTypeSeverity(type: string | undefined): "success" | "info" {
+  protected getTypeSeverity(type: string | undefined): UiBadgeIntent {
     return type === "pickup" ? "info" : "success";
   }
 

@@ -11,7 +11,7 @@
     <ui-stack direction="row" align="center" gap="3">
       <ui-typography variant="h2" tag="h1">Notifications</ui-typography>
       @if (unreadCount() > 0) {
-        <p-tag [value]="unreadCount() + ' unread'" severity="info" [rounded]="true" />
+        <ui-badge [value]="unreadCount() + ' unread'" severity="info" [rounded]="true" />
       }
     </ui-stack>
     <ui-stack direction="row" align="center" gap="2">
@@ -77,10 +77,10 @@
   }
 
   <!-- Notifications List -->
-  <p-card>
+  <ui-card>
     @if (isLoading()) {
       <ui-stack align="center" justify="center" class="p-16">
-        <p-progress-spinner strokeWidth="4" [style]="{ width: '50px', height: '50px' }" />
+        <ui-spinner size="50px" />
       </ui-stack>
     } @else if (filteredNotifications().length === 0) {
       <ui-stack align="center" justify="center" gap="2" class="px-8 py-16 text-center">
@@ -117,7 +117,7 @@
         </span>
       </ui-stack>
 
-      <p-divider class="m-0" />
+      <ui-divider class="m-0" />
 
       <!-- Notification Items -->
       <div class="flex flex-col">
@@ -176,5 +176,5 @@
         }
       </div>
     }
-  </p-card>
+  </ui-card>
 </div>

@@ -1,9 +1,9 @@
 import {
+  afterNextRender,
   DestroyRef,
   Directive,
-  ElementRef,
-  afterNextRender,
   effect,
+  ElementRef,
   inject,
   input,
 } from "@angular/core";

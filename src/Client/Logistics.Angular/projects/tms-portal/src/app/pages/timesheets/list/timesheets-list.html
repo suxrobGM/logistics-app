@@ -46,7 +46,7 @@
   }
 </ui-stack>
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -102,7 +102,7 @@
             }
           </td>
           <td>
-            <p-tag [value]="getTypeLabel(entry.type)" [severity]="getTypeSeverity(entry.type)" />
+            <ui-badge [value]="getTypeLabel(entry.type)" [severity]="getTypeSeverity(entry.type)" />
           </td>
           <td>
             @if (entry.notes) {
@@ -115,9 +115,9 @@
           </td>
           <td>
             @if (entry.payrollInvoiceId) {
-              <p-tag value="Linked" severity="success" />
+              <ui-badge value="Linked" severity="success" />
             } @else {
-              <p-tag value="Unlinked" severity="secondary" />
+              <ui-badge value="Unlinked" severity="secondary" />
             }
           </td>
           <td>
@@ -149,7 +149,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <app-timesheet-form-dialog
   [(visible)]="formDialogVisible"

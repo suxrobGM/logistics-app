@@ -1,10 +1,17 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { Api, resetTenantQuotas } from "@logistics/shared/api";
-import { Icon, Stack, Typography, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressBar } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
+import {
+  Badge,
+  Card,
+  Icon,
+  Progress,
+  Stack,
+  Typography,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { TenantQuotasStore } from "./store";
@@ -14,13 +21,13 @@ import { TenantQuotasStore } from "./store";
   templateUrl: "./tenant-quotas.html",
   providers: [TenantQuotasStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CurrencyPipe,
     DatePipe,
     Icon,
-    ProgressBar,
+    Progress,
     Stack,
-    TagModule,
     TooltipModule,
     Typography,
     UiButton,

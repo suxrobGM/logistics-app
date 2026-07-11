@@ -13,10 +13,10 @@ import {
   DashboardCard,
   EmptyState,
   ErrorState,
+  Spinner,
   Stack,
   UiButton,
 } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { PageHeader } from "@/shared/components";
 import { EldProviderAddDialog, EldProvidersTable } from "../_components";
 
@@ -31,7 +31,7 @@ import { EldProviderAddDialog, EldProvidersTable } from "../_components";
     EmptyState,
     ErrorState,
     PageHeader,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
     UiButton,
   ],

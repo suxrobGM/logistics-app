@@ -1,4 +1,12 @@
-import { Component, DestroyRef, ElementRef, afterNextRender, inject, input, signal } from "@angular/core";
+import {
+  afterNextRender,
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  input,
+  signal,
+} from "@angular/core";
 
 @Component({
   selector: "web-animated-counter",
@@ -51,7 +59,9 @@ export class AnimatedCounter {
       const current = target * eased;
 
       this.displayValue.set(
-        decimals ? current.toFixed(decimals) + suffix : Math.floor(current).toLocaleString() + suffix,
+        decimals
+          ? current.toFixed(decimals) + suffix
+          : Math.floor(current).toLocaleString() + suffix,
       );
 
       if (progress < 1) {

@@ -1,12 +1,12 @@
 import { Component, computed, input } from "@angular/core";
 import { type EmployeeStatus } from "@logistics/shared/api";
 import { employeeStatusOptions } from "@logistics/shared/api/enums";
-import { Tag, TagModule } from "primeng/tag";
+import { Badge, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-employee-status-tag",
   templateUrl: "./employee-status-tag.html",
-  imports: [TagModule],
+  imports: [Badge],
 })
 export class EmployeeStatusTag {
   public readonly status = input.required<EmployeeStatus>();
@@ -15,7 +15,7 @@ export class EmployeeStatusTag {
     return employeeStatusOptions.find((option) => option.value === this.status())?.label ?? "";
   });
 
-  protected readonly severity = computed((): Tag["severity"] => {
+  protected readonly severity = computed((): UiBadgeIntent => {
     switch (this.status()) {
       case "active":
         return "success";
@@ -30,18 +30,18 @@ export class EmployeeStatusTag {
     }
   });
 
-  protected readonly icon = computed((): string => {
+  protected readonly icon = computed((): IconName => {
     switch (this.status()) {
       case "active":
-        return "pi pi-check-circle";
+        return "check-circle";
       case "on_leave":
-        return "pi pi-calendar";
+        return "calendar";
       case "suspended":
-        return "pi pi-pause-circle";
+        return "pause-circle";
       case "terminated":
-        return "pi pi-times-circle";
+        return "times-circle";
       default:
-        return "pi pi-circle";
+        return "circle";
     }
   });
 }

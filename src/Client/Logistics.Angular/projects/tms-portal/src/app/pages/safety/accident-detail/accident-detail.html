@@ -26,7 +26,7 @@
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </div>
 } @else if (report()) {
   <p-tabs value="0">
@@ -44,13 +44,13 @@
       <p-tabpanel value="0">
         <ui-grid container spacing="4" class="py-4">
           <ui-grid [size]="{ xs: 12, lg: 8 }">
-            <p-card header="Incident Details">
+            <ui-card header="Incident Details">
               <ui-grid container spacing="4">
                 <ui-grid [size]="{ xs: 6, md: 3 }">
                   <ui-typography variant="body-sm" color="muted" class="mb-1 block">
                     Status
                   </ui-typography>
-                  <p-tag
+                  <ui-badge
                     [value]="report()!.statusDisplay ?? 'Unknown'"
                     [severity]="getStatusSeverity(report()!.status)"
                   />
@@ -59,7 +59,7 @@
                   <ui-typography variant="body-sm" color="muted" class="mb-1 block">
                     Severity
                   </ui-typography>
-                  <p-tag
+                  <ui-badge
                     [value]="report()!.severityDisplay ?? 'Unknown'"
                     [severity]="getSeveritySeverity(report()!.severity)"
                   />
@@ -68,7 +68,7 @@
                   <ui-typography variant="body-sm" color="muted" class="mb-1 block">
                     Type
                   </ui-typography>
-                  <p-tag [value]="report()!.typeDisplay ?? 'Unknown'" severity="info" />
+                  <ui-badge [value]="report()!.typeDisplay ?? 'Unknown'" severity="info" />
                 </ui-grid>
                 <ui-grid [size]="{ xs: 6, md: 3 }">
                   <ui-typography variant="body-sm" color="muted" class="mb-1 block">
@@ -137,11 +137,11 @@
                   </ui-grid>
                 }
               </ui-grid>
-            </p-card>
+            </ui-card>
 
             <!-- Review Section -->
             @if (report()!.reviewedAt) {
-              <p-card header="Review Information" class="mt-4">
+              <ui-card header="Review Information" class="mt-4">
                 <ui-grid container spacing="4">
                   <ui-grid [size]="{ xs: 6 }">
                     <ui-typography variant="body-sm" color="muted" class="mb-1 block">
@@ -166,7 +166,7 @@
                     <p>{{ report()!.reviewNotes }}</p>
                   </div>
                 }
-              </p-card>
+              </ui-card>
             }
           </ui-grid>
 
@@ -174,7 +174,7 @@
             <ui-stack gap="4">
               <app-accident-quick-info [report]="report()!" />
 
-              <p-card header="Record Info">
+              <ui-card header="Record Info">
                 <ui-stack gap="3">
                   <div>
                     <ui-typography variant="body-sm" color="muted" class="mb-1 block">
@@ -198,7 +198,7 @@
                     </div>
                   }
                 </ui-stack>
-              </p-card>
+              </ui-card>
             </ui-stack>
           </ui-grid>
         </ui-grid>
@@ -208,7 +208,7 @@
       <p-tabpanel value="1">
         <ui-grid container spacing="4" class="py-4">
           <ui-grid [size]="{ xs: 12, lg: 6 }">
-            <p-card header="Injuries">
+            <ui-card header="Injuries">
               <ui-stack gap="4">
                 <ui-stack direction="row" align="center" gap="2">
                   @if (report()!.injuriesReported) {
@@ -241,11 +241,11 @@
                   </div>
                 }
               </ui-stack>
-            </p-card>
+            </ui-card>
           </ui-grid>
 
           <ui-grid [size]="{ xs: 12, lg: 6 }">
-            <p-card header="Damage">
+            <ui-card header="Damage">
               <ui-stack gap="4">
                 @if (report()!.estimatedDamage) {
                   <div>
@@ -296,7 +296,7 @@
                   </div>
                 }
               </ui-stack>
-            </p-card>
+            </ui-card>
           </ui-grid>
         </ui-grid>
       </p-tabpanel>
@@ -308,7 +308,7 @@
             <ui-grid container spacing="4">
               @for (party of report()!.thirdParties; track party.id; let i = $index) {
                 <ui-grid [size]="{ xs: 12, md: 6 }">
-                  <p-card [header]="'Third Party ' + (i + 1)">
+                  <ui-card [header]="'Third Party ' + (i + 1)">
                     <ui-stack gap="3">
                       <ui-grid container spacing="3">
                         <ui-grid [size]="{ xs: 6 }">
@@ -388,7 +388,7 @@
                         </div>
                       }
                     </ui-stack>
-                  </p-card>
+                  </ui-card>
                 </ui-grid>
               }
             </ui-grid>
@@ -411,7 +411,7 @@
             <ui-grid container spacing="4">
               @for (witness of report()!.witnesses; track witness.id; let i = $index) {
                 <ui-grid [size]="{ xs: 12, md: 6, lg: 4 }">
-                  <p-card [header]="witness.name ?? 'Witness ' + (i + 1)">
+                  <ui-card [header]="witness.name ?? 'Witness ' + (i + 1)">
                     <ui-stack gap="3">
                       @if (witness.phone) {
                         <div>
@@ -451,7 +451,7 @@
                         </div>
                       }
                     </ui-stack>
-                  </p-card>
+                  </ui-card>
                 </ui-grid>
               }
             </ui-grid>
@@ -471,7 +471,7 @@
       <p-tabpanel value="4">
         <ui-grid container spacing="4" class="py-4">
           <ui-grid [size]="{ xs: 12, lg: 6 }">
-            <p-card header="Police Report">
+            <ui-card header="Police Report">
               @if (report()!.policeReportFiled) {
                 <ui-stack gap="3">
                   <ui-stack direction="row" align="center" gap="2">
@@ -511,11 +511,11 @@
                   <ui-typography variant="body" color="muted">No police report filed</ui-typography>
                 </ui-stack>
               }
-            </p-card>
+            </ui-card>
           </ui-grid>
 
           <ui-grid [size]="{ xs: 12, lg: 6 }">
-            <p-card header="Insurance">
+            <ui-card header="Insurance">
               @if (report()!.insuranceClaimNumber || report()!.insuranceNotifiedAt) {
                 <ui-stack gap="3">
                   @if (report()!.insuranceClaimNumber) {
@@ -545,7 +545,7 @@
                   </ui-typography>
                 </ui-stack>
               }
-            </p-card>
+            </ui-card>
           </ui-grid>
         </ui-grid>
       </p-tabpanel>
@@ -556,7 +556,7 @@
           <ui-grid container spacing="4">
             <!-- Photos -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card header="Photos">
+              <ui-card header="Photos">
                 @if (report()!.photos && report()!.photos!.length > 0) {
                   <div class="grid grid-cols-2 gap-2 md:grid-cols-3">
                     @for (photo of report()!.photos; track photo.id) {
@@ -575,12 +575,12 @@
                     <ui-typography variant="body" color="muted">No photos uploaded</ui-typography>
                   </ui-stack>
                 }
-              </p-card>
+              </ui-card>
             </ui-grid>
 
             <!-- Documents -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card header="Documents">
+              <ui-card header="Documents">
                 @if (report()!.documents && report()!.documents!.length > 0) {
                   <ui-stack gap="2">
                     @for (doc of report()!.documents; track doc.id) {
@@ -598,7 +598,7 @@
                     </ui-typography>
                   </ui-stack>
                 }
-              </p-card>
+              </ui-card>
             </ui-grid>
           </ui-grid>
         </div>

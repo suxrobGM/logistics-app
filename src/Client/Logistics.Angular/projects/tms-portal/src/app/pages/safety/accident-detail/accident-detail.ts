@@ -13,17 +13,23 @@ import {
   type AccidentSeverity,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import {
+  Badge,
+  Card,
+  Grid,
+  Icon,
+  Spinner,
+  Stack,
+  Typography,
+  UiButton,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TabsModule } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
-import type { TagSeverity } from "@/shared/types";
 import { AccidentQuickInfo } from "../_components";
 
 @Component({
@@ -31,7 +37,8 @@ import { AccidentQuickInfo } from "../_components";
   templateUrl: "./accident-detail.html",
   imports: [
     AccidentQuickInfo,
-    CardModule,
+    Badge,
+    Card,
     CurrencyFormatPipe,
     DatePipe,
     DialogModule,
@@ -39,11 +46,10 @@ import { AccidentQuickInfo } from "../_components";
     Grid,
     Icon,
     PageHeader,
-    ProgressSpinnerModule,
     RouterLink,
+    Spinner,
     Stack,
     TabsModule,
-    TagModule,
     TextareaModule,
     Typography,
     UiButton,
@@ -105,7 +111,7 @@ export class AccidentDetailPage implements OnInit {
     }
   }
 
-  protected getStatusSeverity(status: AccidentReportStatus | undefined): TagSeverity {
+  protected getStatusSeverity(status: AccidentReportStatus | undefined): UiBadgeIntent {
     switch (status) {
       case "resolved":
         return "success";
@@ -122,7 +128,7 @@ export class AccidentDetailPage implements OnInit {
     }
   }
 
-  protected getSeveritySeverity(severity: AccidentSeverity | undefined): TagSeverity {
+  protected getSeveritySeverity(severity: AccidentSeverity | undefined): UiBadgeIntent {
     switch (severity) {
       case "minor":
         return "info";

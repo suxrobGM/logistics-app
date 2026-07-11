@@ -1,6 +1,5 @@
 import { computed, inject } from "@angular/core";
-import { Api, getPublishedBlogPosts } from "@logistics/shared/api";
-import type { BlogPostDto } from "@logistics/shared/api";
+import { Api, getPublishedBlogPosts, type BlogPostDto } from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 
 interface BlogState {

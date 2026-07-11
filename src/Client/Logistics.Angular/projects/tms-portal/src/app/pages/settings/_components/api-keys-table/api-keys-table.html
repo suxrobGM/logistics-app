@@ -1,6 +1,6 @@
 @if (isLoading()) {
   <div class="flex justify-center py-8">
-    <p-progress-spinner />
+    <ui-spinner />
   </div>
 } @else {
   <div class="mb-4 flex justify-end">
@@ -99,9 +99,9 @@
 >
   @let key = createdKey();
   @if (key) {
-    <p-message severity="warn" styleClass="mb-4 w-full">
+    <ui-alert intent="warning" class="mb-4 w-full">
       Copy your API key now. You won't be able to see it again.
-    </p-message>
+    </ui-alert>
 
     <div class="bg-subtle border-default mb-4 flex items-center gap-2 rounded-lg border p-3">
       <code class="flex-1 text-sm break-all">{{ key.plaintextKey }}</code>

@@ -1,12 +1,12 @@
 <ui-page-header [title]="title()" backLink="/terminals" />
 
 <ui-container maxWidth="md">
-  <p-card>
+  <ui-card>
     <app-terminal-form
       mode="edit"
       [initial]="initial()"
       [isLoading]="isLoading()"
       (save)="update($event)"
     />
-  </p-card>
+  </ui-card>
 </ui-container>

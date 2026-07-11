@@ -2,7 +2,7 @@
 
 @if (isLoading()) {
   <ui-stack align="center" justify="center" class="py-8">
-    <p-progress-spinner />
+    <ui-spinner />
   </ui-stack>
 } @else if (hasNothing()) {
   <ui-surface padding="lg">
@@ -16,7 +16,7 @@
   </ui-surface>
 } @else {
   <ui-stack gap="6">
-    <p-card>
+    <ui-card>
       <ng-template #title>Pending data exports</ng-template>
       <ng-template #subtitle>
         Exports waiting for the processing job to package and email the user.
@@ -38,15 +38,15 @@
               <td>{{ row.userId }}</td>
               <td>{{ row.requestedAt | date: "medium" }}</td>
               <td>
-                <p-tag [severity]="statusSeverity(row.status)" [value]="row.status" />
+                <ui-badge [severity]="statusSeverity(row.status)" [value]="row.status" />
               </td>
             </tr>
           </ng-template>
         </ui-data-table>
       }
-    </p-card>
+    </ui-card>
 
-    <p-card>
+    <ui-card>
       <ng-template #title>Pending account deletions</ng-template>
       <ng-template #subtitle>
         Deletion requests still in the 30-day grace period — anonymization runs once
@@ -76,6 +76,6 @@
           </ng-template>
         </ui-data-table>
       }
-    </p-card>
+    </ui-card>
   </ui-stack>
 }

@@ -13,6 +13,7 @@ import {
 import {
   Container,
   Icon,
+  Spinner,
   Stack,
   Surface,
   Typography,
@@ -20,7 +21,6 @@ import {
   UiSelectField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
 import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
@@ -71,7 +71,7 @@ const EMPTY: CompanySettingsModel = {
     Icon,
     PageHeader,
     PhoneField,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
     Surface,
     ToastModule,

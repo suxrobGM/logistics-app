@@ -25,7 +25,7 @@
 
 @if (store.isLoading()) {
   <div class="flex justify-center py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </div>
 } @else if (store.stats(); as stats) {
   <div class="mb-6">
@@ -42,7 +42,7 @@
   </div>
 
   @if ((stats.topTrucks ?? []).length > 0) {
-    <p-card>
+    <ui-card>
       <ng-template #header>
         <div class="p-4 pb-0">
           <ui-typography variant="h4">Top Trucks by Expense</ui-typography>
@@ -80,13 +80,13 @@
           </tr>
         </ng-template>
       </ui-data-table>
-    </p-card>
+    </ui-card>
   }
 } @else {
-  <p-card>
+  <ui-card>
     <div class="py-16 text-center">
       <ui-icon name="chart-bar" size="inherit" class="text-muted-foreground mb-4 text-4xl" />
       <ui-typography color="muted">No expense data available for the selected period</ui-typography>
     </div>
-  </p-card>
+  </ui-card>
 }

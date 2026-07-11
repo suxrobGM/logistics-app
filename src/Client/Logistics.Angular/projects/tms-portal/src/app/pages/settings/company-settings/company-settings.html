@@ -3,7 +3,7 @@
 <ui-container maxWidth="md">
   @if (isLoading()) {
     <ui-stack align="center" justify="center" class="py-8">
-      <p-progress-spinner />
+      <ui-spinner />
     </ui-stack>
   } @else {
     <form [formRoot]="form">

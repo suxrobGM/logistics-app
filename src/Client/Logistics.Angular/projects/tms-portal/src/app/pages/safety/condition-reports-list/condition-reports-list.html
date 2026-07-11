@@ -1,6 +1,6 @@
 <ui-page-header title="Cargo Condition Reports" />
 
-<p-card>
+<ui-card>
   <div class="mb-4">
     <ui-search-field (searchChange)="onSearch($event)" />
   </div>
@@ -41,7 +41,10 @@
       <ng-template #body let-report>
         <tr class="hover:bg-hover cursor-pointer" (click)="selectedRow.set(report)">
           <td>
-            <p-tag [value]="getTypeLabel(report.type)" [severity]="getTypeSeverity(report.type)" />
+            <ui-badge
+              [value]="getTypeLabel(report.type)"
+              [severity]="getTypeSeverity(report.type)"
+            />
           </td>
           <td>
             <span class="font-mono text-sm">{{ getIdentifier(report) }}</span>
@@ -60,7 +63,10 @@
           </td>
           <td>
             @if (getDefectCount(report) > 0) {
-              <p-tag [value]="getDefectCount(report).toString() + ' defect(s)'" severity="danger" />
+              <ui-badge
+                [value]="getDefectCount(report).toString() + ' defect(s)'"
+                severity="danger"
+              />
             } @else {
               <span class="text-muted-foreground text-sm">None</span>
             }
@@ -93,7 +99,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <!-- Reusable context menu for the actions button -->
 <p-menu #menu [model]="actionMenuItems" [popup]="true" />

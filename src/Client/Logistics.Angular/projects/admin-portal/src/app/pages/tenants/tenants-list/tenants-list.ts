@@ -2,6 +2,8 @@ import { Component, computed, inject, signal, viewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, deleteTenant, resendTenantWelcome } from "@logistics/shared/api";
 import {
+  Badge,
+  Card,
   ConfirmDeleteDialog,
   DataContainer,
   PageHeader,
@@ -9,11 +11,10 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { Menu, MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { TenantsListStore } from "../store/tenants-list.store";
@@ -23,13 +24,13 @@ import { TenantsListStore } from "../store/tenants-list.store";
   templateUrl: "./tenants-list.html",
   providers: [TenantsListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     ConfirmDeleteDialog,
     DataContainer,
     MenuModule,
     PageHeader,
     SearchField,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -121,9 +122,7 @@ export class TenantsList {
     return tenant.subscription?.status ?? "none";
   }
 
-  protected getStatusSeverity(
-    status: string,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  protected getStatusSeverity(status: string): UiBadgeIntent {
     switch (status) {
       case "active":
         return "success";

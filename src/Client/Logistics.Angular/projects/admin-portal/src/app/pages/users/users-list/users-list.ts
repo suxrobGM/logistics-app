@@ -2,20 +2,21 @@ import { Component, inject, signal, viewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import {
+  Badge,
+  Card,
   DataContainer,
   PageHeader,
   SearchField,
   UiButton,
   UiDataTable,
   UiSortHeader,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { Menu, MenuModule } from "primeng/menu";
 import { PasswordModule } from "primeng/password";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ImpersonationService, ToastService } from "@/core/services";
 import { UsersListStore } from "../store/users-list.store";
@@ -25,7 +26,8 @@ import { UsersListStore } from "../store/users-list.store";
   templateUrl: "./users-list.html",
   providers: [UsersListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DialogModule,
     FormsModule,
@@ -35,7 +37,6 @@ import { UsersListStore } from "../store/users-list.store";
     PasswordModule,
     RouterLink,
     SearchField,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -103,9 +104,7 @@ export class UsersList {
     }
   }
 
-  protected getRoleSeverity(
-    role?: string | null,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  protected getRoleSeverity(role?: string | null): UiBadgeIntent {
     switch (role?.toLowerCase()) {
       case "superadmin":
         return "danger";

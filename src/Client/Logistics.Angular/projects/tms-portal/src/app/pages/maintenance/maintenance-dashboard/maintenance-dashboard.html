@@ -55,11 +55,11 @@
               </td>
               <td>
                 @if (item.isOverdue) {
-                  <p-tag value="Overdue" severity="danger" />
+                  <ui-badge value="Overdue" severity="danger" />
                 } @else if ((item.daysUntilDue ?? 0) <= 7) {
-                  <p-tag value="Due Soon" severity="warn" />
+                  <ui-badge value="Due Soon" severity="warn" />
                 } @else {
-                  <p-tag value="Scheduled" severity="info" />
+                  <ui-badge value="Scheduled" severity="info" />
                 }
               </td>
             </tr>

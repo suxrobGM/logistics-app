@@ -1,5 +1,5 @@
 import { DOCUMENT } from "@angular/common";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 
 export interface BlogPostSchema {
   title: string;

@@ -1,4 +1,4 @@
-<p-card>
+<ui-card>
   <ng-template #header>
     <div class="p-4 pb-0">
       <ui-typography variant="h4">Expense Information</ui-typography>
@@ -10,7 +10,7 @@
       <span class="font-mono font-semibold">{{ expense().number }}</span>
     </app-expense-detail-row>
 
-    <p-divider />
+    <ui-divider />
 
     <app-expense-detail-row label="Type">
       <app-expense-type-tag [type]="expense().type" />
@@ -24,7 +24,7 @@
       <span class="font-medium">{{ categoryLabel() }}</span>
     </app-expense-detail-row>
 
-    <p-divider />
+    <ui-divider />
 
     <app-expense-detail-row label="Amount">
       <span class="text-success text-xl font-bold">
@@ -42,4 +42,4 @@
       </app-expense-detail-row>
     }
   </div>
-</p-card>
+</ui-card>

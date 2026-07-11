@@ -1,14 +1,14 @@
 import { Component, DestroyRef, effect, inject, input, signal } from "@angular/core";
 import { DomSanitizer, type SafeResourceUrl } from "@angular/platform-browser";
-import { CardModule } from "primeng/card";
 import { TooltipModule } from "primeng/tooltip";
 import { UiButton } from "../../action/button/button";
 import { Icon } from "../../content/icon/icon";
+import { Card } from "../../layout/card/card";
 
 @Component({
   selector: "ui-pdf-viewer",
   templateUrl: "./pdf-viewer.html",
-  imports: [CardModule, Icon, TooltipModule, UiButton],
+  imports: [Card, Icon, TooltipModule, UiButton],
 })
 export class PdfViewer {
   private readonly sanitizer = inject(DomSanitizer);

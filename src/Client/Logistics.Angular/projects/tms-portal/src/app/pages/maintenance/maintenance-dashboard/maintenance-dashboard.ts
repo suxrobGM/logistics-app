@@ -9,9 +9,7 @@ import {
   type MaintenanceScheduleDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
+import { Badge, Grid, Icon, Stack, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
 
@@ -19,7 +17,7 @@ import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
   selector: "app-maintenance-dashboard",
   templateUrl: "./maintenance-dashboard.html",
   imports: [
-    CardModule,
+    Badge,
     CurrencyFormatPipe,
     DashboardCard,
     DatePipe,
@@ -29,7 +27,6 @@ import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
     PageHeader,
     Stack,
     StatCard,
-    TagModule,
     TooltipModule,
     Typography,
     UiButton,

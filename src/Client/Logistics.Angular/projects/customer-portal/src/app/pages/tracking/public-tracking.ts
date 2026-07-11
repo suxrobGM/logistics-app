@@ -16,6 +16,7 @@ import {
   type PublicTrackingDto,
 } from "@logistics/shared/api";
 import {
+  Badge,
   Grid,
   Icon,
   Stack,
@@ -23,8 +24,8 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { TagModule } from "primeng/tag";
 import { ShipmentTimeline } from "@/shared/components";
 import { PublicLayout } from "@/shared/layout";
 
@@ -33,6 +34,7 @@ import { PublicLayout } from "@/shared/layout";
   templateUrl: "./public-tracking.html",
   imports: [
     AddressPipe,
+    Badge,
     DatePipe,
     ErrorState,
     Grid,
@@ -42,7 +44,6 @@ import { PublicLayout } from "@/shared/layout";
     ShipmentTimeline,
     Stack,
     Surface,
-    TagModule,
     Typography,
     UiButton,
     UiDataTable,
@@ -92,7 +93,7 @@ export class PublicTracking {
     }
   }
 
-  protected getStatusSeverity(status: string | undefined): "success" | "info" | "warn" | "danger" {
+  protected getStatusSeverity(status: string | undefined): UiBadgeIntent {
     switch (status) {
       case "Delivered":
         return "success";

@@ -25,20 +25,20 @@
 
 <ui-container maxWidth="md">
   @if (isLoading() && !t) {
-    <p-card>
+    <ui-card>
       <ui-stack align="center" justify="center" class="py-10">
-        <p-progress-spinner ariaLabel="Loading terminal" />
+        <ui-spinner ariaLabel="Loading terminal" />
       </ui-stack>
-    </p-card>
+    </ui-card>
   } @else if (!t) {
-    <p-card>
+    <ui-card>
       <ui-stack align="center" gap="3" class="py-10">
         <ui-icon name="alert-circle" color="muted" />
         <ui-typography variant="body" color="secondary">Terminal not found.</ui-typography>
       </ui-stack>
-    </p-card>
+    </ui-card>
   } @else {
-    <p-card>
+    <ui-card>
       <ui-stack gap="4">
         <ui-stack tag="section" gap="3">
           <ui-stack direction="row" gap="2" align="center">
@@ -135,6 +135,6 @@
           </ui-surface>
         </ui-stack>
       </ui-stack>
-    </p-card>
+    </ui-card>
   }
 </ui-container>

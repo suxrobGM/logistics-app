@@ -3,9 +3,8 @@ import { Component, effect, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, deleteCustomer, Permission, PermissionGuard } from "@logistics/shared";
 import type { CustomerDto } from "@logistics/shared/api";
-import { Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import { Card, Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { MenuModule } from "primeng/menu";
 import { TooltipModule } from "primeng/tooltip";
@@ -20,7 +19,7 @@ import { CustomersListStore } from "../store";
   templateUrl: "./customers-list.html",
   providers: [CustomersListStore],
   imports: [
-    CardModule,
+    Card,
     ConfirmDialogModule,
     CustomerAvatar,
     CustomerStatusTag,

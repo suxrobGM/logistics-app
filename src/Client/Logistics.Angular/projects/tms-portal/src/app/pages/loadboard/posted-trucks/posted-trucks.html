@@ -32,7 +32,7 @@
 <ui-dashboard-card title="Your Posted Trucks" icon="truck">
   @if (store.loading()) {
     <ui-stack align="center" justify="center" class="p-5">
-      <p-progressSpinner />
+      <ui-spinner />
     </ui-stack>
   } @else if (store.error()) {
     <ui-error-state [message]="store.error()!" (retry)="store.loadPostedTrucks()" />

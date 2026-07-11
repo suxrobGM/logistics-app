@@ -4,8 +4,7 @@ import { RouterModule } from "@angular/router";
 import { type PaymentMethodType } from "@logistics/shared/api";
 import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import { Card, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, PaymentStatusTag } from "@/shared/components";
 import { PaymentsListStore } from "../store/payments-list.store";
@@ -15,15 +14,15 @@ import { PaymentsListStore } from "../store/payments-list.store";
   templateUrl: "./payments-list.html",
   providers: [PaymentsListStore],
   imports: [
-    CurrencyFormatPipe,
-    CommonModule,
-    CardModule,
-    TooltipModule,
-    RouterModule,
-    PaymentStatusTag,
     AddressPipe,
+    Card,
+    CommonModule,
+    CurrencyFormatPipe,
     DataContainer,
     PageHeader,
+    PaymentStatusTag,
+    RouterModule,
+    TooltipModule,
     UiDataTable,
     UiSortHeader,
   ],

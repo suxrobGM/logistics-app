@@ -12,11 +12,9 @@ import {
 import { RouterLink } from "@angular/router";
 import type { NotificationDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
-import { Icon } from "@logistics/shared/ui";
-import { DividerModule } from "primeng/divider";
+import { Divider, Icon, OverlayBadge, Spinner } from "@logistics/shared/ui";
 import { OverlayBadgeModule } from "primeng/overlaybadge";
 import { Popover, PopoverModule } from "primeng/popover";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TooltipModule } from "primeng/tooltip";
 import { NotificationService, ToastService } from "@/core/services";
 
@@ -26,13 +24,14 @@ import { NotificationService, ToastService } from "@/core/services";
   styleUrl: "./notification-bell.css",
   imports: [
     CommonModule,
-    DividerModule,
+    Divider,
     Icon,
+    OverlayBadge,
     OverlayBadgeModule,
     PopoverModule,
-    ProgressSpinnerModule,
     RelativeTimePipe,
     RouterLink,
+    Spinner,
     TooltipModule,
   ],
 })

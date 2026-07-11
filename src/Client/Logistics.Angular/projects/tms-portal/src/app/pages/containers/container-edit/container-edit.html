@@ -1,10 +1,10 @@
 <ui-page-header [title]="'Container ' + (container()?.number ?? '')" backLink="/containers" />
 
 <ui-container maxWidth="md">
-  <p-card>
+  <ui-card>
     <ui-stack direction="row" align="center" gap="3" wrap class="border-default mb-4 border-b pb-4">
       <ui-typography variant="body-sm" color="secondary">Status:</ui-typography>
-      <p-tag
+      <ui-badge
         [severity]="statusSeverity(container()?.status)"
         [value]="statusLabel(container()?.status)"
       />
@@ -121,7 +121,7 @@
         </ui-stack>
       </ui-stack>
     </form>
-  </p-card>
+  </ui-card>
 </ui-container>
 
 <!-- Status change dialog -->

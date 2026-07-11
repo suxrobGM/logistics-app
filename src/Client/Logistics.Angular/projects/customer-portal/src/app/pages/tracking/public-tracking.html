@@ -18,11 +18,7 @@
             <ui-typography variant="body" color="muted">{{ data.loadName }}</ui-typography>
           }
         </div>
-        <p-tag
-          [value]="data.status"
-          [severity]="getStatusSeverity(data.status)"
-          class="px-4 py-2 text-lg"
-        />
+        <ui-badge size="lg" [value]="data.status" [severity]="getStatusSeverity(data.status)" />
       </ui-stack>
     </ui-surface>
 

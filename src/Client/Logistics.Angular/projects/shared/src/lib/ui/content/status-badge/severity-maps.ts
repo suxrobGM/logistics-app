@@ -1,8 +1,8 @@
-import type { BadgeSeverity } from "../badge/badge";
+import type { UiBadgeIntent } from "../badge/badge-intent";
 
 export type StatusKind = "load" | "truck" | "container" | "subscription" | "invoice" | "employee";
 
-type SeverityMap = Record<string, BadgeSeverity>;
+type SeverityMap = Record<string, UiBadgeIntent>;
 
 const loadSeverity: SeverityMap = {
   draft: "secondary",
@@ -75,7 +75,7 @@ const severityMaps: Record<StatusKind, SeverityMap> = {
 export function resolveStatusSeverity(
   kind: StatusKind,
   status: string | null | undefined,
-): BadgeSeverity {
+): UiBadgeIntent {
   if (!status) return "secondary";
   const key = status.replace(/\s+/g, "").toLowerCase();
   return severityMaps[kind][key] ?? "info";

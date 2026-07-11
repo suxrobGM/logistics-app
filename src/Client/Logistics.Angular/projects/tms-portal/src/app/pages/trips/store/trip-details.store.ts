@@ -1,25 +1,17 @@
 import { computed, inject } from "@angular/core";
 import {
   Api,
+  cancelTrip,
+  dispatchTrip,
   getTripById,
   getTripTimeline,
-  dispatchTrip,
-  cancelTrip,
   markStopArrived,
+  type TripDto,
+  type TripStopDto,
+  type TripTimelineDto,
+  type TripTimelineEventDto,
 } from "@logistics/shared/api";
-import type {
-  TripDto,
-  TripStopDto,
-  TripTimelineDto,
-  TripTimelineEventDto,
-} from "@logistics/shared/api";
-import {
-  patchState,
-  signalStore,
-  withComputed,
-  withMethods,
-  withState,
-} from "@ngrx/signals";
+import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 
 interface TripDetailsState {
   tripId: string | null;
@@ -68,9 +60,11 @@ export const TripDetailsStore = signalStore(
 
     // Timeline events sorted by timestamp
     const timelineEvents = computed<TripTimelineEventDto[]>(() => {
-      return (store.timeline()?.events ?? []).slice().sort(
-        (a, b) => new Date(a.timestamp ?? 0).getTime() - new Date(b.timestamp ?? 0).getTime()
-      );
+      return (store.timeline()?.events ?? [])
+        .slice()
+        .sort(
+          (a, b) => new Date(a.timestamp ?? 0).getTime() - new Date(b.timestamp ?? 0).getTime(),
+        );
     });
 
     // Check if trip can be dispatched (Draft status with truck assigned)
@@ -238,5 +232,5 @@ export const TripDetailsStore = signalStore(
     selectStop(stop: TripStopDto | null) {
       patchState(store, { selectedStop: stop });
     },
-  }))
+  })),
 );

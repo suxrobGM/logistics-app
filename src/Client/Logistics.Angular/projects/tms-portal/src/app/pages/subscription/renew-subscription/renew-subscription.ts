@@ -2,17 +2,15 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, renewSubscription, type SubscriptionDto } from "@logistics/shared/api";
-import { Icon, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import { Badge, Card, Icon, UiButton, type UiBadgeIntent } from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TagModule } from "primeng/tag";
 import { TenantService, ToastService } from "@/core/services";
-import { Labels, type SeverityLevel } from "@/shared/utils";
+import { Labels } from "@/shared/utils";
 
 @Component({
   selector: "app-renew-subscription",
   templateUrl: "./renew-subscription.html",
-  imports: [CardModule, CommonModule, ConfirmDialogModule, Icon, RouterModule, TagModule, UiButton],
+  imports: [Badge, Card, CommonModule, ConfirmDialogModule, Icon, RouterModule, UiButton],
 })
 export class RenewSubscriptionComponent {
   private readonly tenantService = inject(TenantService);
@@ -35,7 +33,7 @@ export class RenewSubscriptionComponent {
     });
   }
 
-  getSubStatusSeverity(): SeverityLevel {
+  getSubStatusSeverity(): UiBadgeIntent {
     if (!this.subscription()) return "info";
     return Labels.subscriptionStatusSeverity(this.subscription()!);
   }

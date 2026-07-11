@@ -2,10 +2,10 @@
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </div>
 } @else {
-  <p-card>
+  <ui-card>
     <p-stepper [linear]="true" [value]="activeStep()" (valueChange)="goToStep($event ?? 1)">
       <p-step-list>
         <p-step [value]="1">Incident Details</p-step>
@@ -72,5 +72,5 @@
         </p-step-panel>
       </p-step-panels>
     </p-stepper>
-  </p-card>
+  </ui-card>
 }

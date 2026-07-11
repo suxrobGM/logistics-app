@@ -8,9 +8,15 @@ import {
   type TenantFeature,
 } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
-import { Container, FeatureRow, Icon, Stack, Typography } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import {
+  Card,
+  Container,
+  FeatureRow,
+  Icon,
+  Spinner,
+  Stack,
+  Typography,
+} from "@logistics/shared/ui";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
@@ -19,16 +25,16 @@ import { PageHeader } from "@/shared/components";
   selector: "app-feature-settings",
   templateUrl: "./feature-settings.html",
   imports: [
-    FormsModule,
-    CardModule,
-    ProgressSpinnerModule,
-    ToggleSwitchModule,
-    PageHeader,
-    Icon,
-    Stack,
-    FeatureRow,
-    Typography,
+    Card,
     Container,
+    FeatureRow,
+    FormsModule,
+    Icon,
+    PageHeader,
+    Spinner,
+    Stack,
+    ToggleSwitchModule,
+    Typography,
   ],
 })
 export class FeatureSettingsComponent implements OnInit {

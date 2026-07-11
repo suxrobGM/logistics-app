@@ -1,13 +1,13 @@
 import { Component, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "@logistics/shared/ui";
 import { PageHeader } from "@/shared/components";
 import { MaintenanceRecordForm } from "../components/maintenance-record-form/maintenance-record-form";
 
 @Component({
   selector: "app-service-record-add",
   templateUrl: "./service-record-add.html",
-  imports: [CardModule, PageHeader, MaintenanceRecordForm],
+  imports: [Card, MaintenanceRecordForm, PageHeader],
 })
 export class ServiceRecordAddPage {
   private readonly router = inject(Router);

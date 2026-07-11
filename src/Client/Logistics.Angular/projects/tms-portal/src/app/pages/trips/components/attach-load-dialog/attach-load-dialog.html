@@ -31,7 +31,7 @@
     <!-- Loading state -->
     @if (isLoading()) {
       <div class="flex items-center justify-center p-8">
-        <p-progressSpinner strokeWidth="4" />
+        <ui-spinner />
       </div>
     } @else if (filteredLoads().length === 0) {
       <div class="text-muted-foreground flex flex-col items-center p-8 text-center">

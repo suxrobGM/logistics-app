@@ -10,11 +10,19 @@ import {
 } from "@logistics/shared/api";
 import { LocalizationService } from "@logistics/shared/services";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
-import { EmptyState, ErrorState, Grid, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import {
+  Badge,
+  Card,
+  EmptyState,
+  ErrorState,
+  Grid,
+  Spinner,
+  Stack,
+  UiButton,
+  UiDataTable,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { DatePicker } from "primeng/datepicker";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/components";
 
@@ -22,7 +30,8 @@ import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/compo
   selector: "app-eld-hos-logs",
   templateUrl: "./eld-hos-logs.html",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DashboardCard,
     DatePicker,
     DatePipe,
@@ -32,10 +41,9 @@ import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/compo
     FormsModule,
     Grid,
     PageHeader,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
     StatCard,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -132,9 +140,7 @@ export class EldHosLogsComponent implements OnInit {
     await this.loadData();
   }
 
-  protected getDutyStatusSeverity(
-    status?: DutyStatus,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  protected getDutyStatusSeverity(status?: DutyStatus): UiBadgeIntent {
     switch (status) {
       case "off_duty":
         return "secondary";

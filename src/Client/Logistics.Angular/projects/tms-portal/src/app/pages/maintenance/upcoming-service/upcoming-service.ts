@@ -2,14 +2,19 @@ import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { MaintenanceIntervalType, MaintenanceScheduleDto } from "@logistics/shared/api";
-import { Icon, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import {
+  Badge,
+  Card,
+  Icon,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader } from "@/shared/components";
-import type { TagSeverity } from "@/shared/types";
 import { UpcomingServiceStore } from "../store";
 
 @Component({
@@ -17,14 +22,14 @@ import { UpcomingServiceStore } from "../store";
   templateUrl: "./upcoming-service.html",
   providers: [UpcomingServiceStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DatePipe,
     DecimalPipe,
     Icon,
     MenuModule,
     PageHeader,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -54,7 +59,7 @@ export class UpcomingServicePage implements OnInit {
     this.store.load();
   }
 
-  protected getStatusSeverity(schedule: MaintenanceScheduleDto): TagSeverity {
+  protected getStatusSeverity(schedule: MaintenanceScheduleDto): UiBadgeIntent {
     if (schedule.isOverdue) {
       return "danger";
     }

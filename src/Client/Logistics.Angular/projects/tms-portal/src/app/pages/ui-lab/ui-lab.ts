@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { ThemeToggle, Typography } from "@logistics/shared/ui";
 import { UiLabButtonsSection } from "./sections/buttons-section";
+import { UiLabCosmeticsSection } from "./sections/cosmetics-section";
 import { UiLabFeedbackSection } from "./sections/feedback-section";
 import { UiLabFormsSection } from "./sections/forms-section";
 import { UiLabIconsSection } from "./sections/icons-section";
@@ -38,6 +39,7 @@ interface LabSection {
     UiLabFormsSection,
     UiLabOverlaysSection,
     UiLabFeedbackSection,
+    UiLabCosmeticsSection,
   ],
 })
 export class UiLab {
@@ -49,6 +51,7 @@ export class UiLab {
     { id: "forms", label: "Forms" },
     { id: "overlays", label: "Overlays" },
     { id: "feedback", label: "Feedback" },
+    { id: "cosmetics", label: "Cosmetics" },
     { id: "pending", label: "Pending" },
   ];
 }

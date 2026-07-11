@@ -2,15 +2,14 @@ import { DatePipe } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Api, getPublishedBlogPostBySlug, type BlogPostDto } from "@logistics/shared/api";
-import { Icon, UiButton } from "@logistics/shared/ui";
-import { SkeletonModule } from "primeng/skeleton";
+import { Icon, Skeleton, UiButton } from "@logistics/shared/ui";
 import { Avatar, SectionContainer } from "@/shared/components";
 import { getReadTime } from "@/shared/utils";
 
 @Component({
   selector: "web-blog-post",
   templateUrl: "./blog-post.html",
-  imports: [Avatar, DatePipe, Icon, RouterLink, SectionContainer, SkeletonModule, UiButton],
+  imports: [Avatar, DatePipe, Icon, RouterLink, SectionContainer, Skeleton, UiButton],
 })
 export class BlogPost implements OnInit {
   private readonly api = inject(Api);

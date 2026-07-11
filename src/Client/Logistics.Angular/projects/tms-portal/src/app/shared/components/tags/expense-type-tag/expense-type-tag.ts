@@ -1,11 +1,11 @@
 import { Component, input } from "@angular/core";
 import type { ExpenseType } from "@logistics/shared/api";
-import { Tag, TagModule } from "primeng/tag";
+import { Badge, type UiBadgeIntent } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-expense-type-tag",
   templateUrl: "./expense-type-tag.html",
-  imports: [TagModule],
+  imports: [Badge],
 })
 export class ExpenseTypeTag {
   public readonly type = input.required<ExpenseType | undefined>();
@@ -23,7 +23,7 @@ export class ExpenseTypeTag {
     }
   }
 
-  getSeverity(): Tag["severity"] {
+  getSeverity(): UiBadgeIntent {
     switch (this.type()) {
       case "company":
         return "info";

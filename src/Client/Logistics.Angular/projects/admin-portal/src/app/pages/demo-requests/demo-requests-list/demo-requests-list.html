@@ -1,6 +1,6 @@
 <ui-page-header title="Demo Requests" />
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -44,7 +44,7 @@
           <td>{{ request.company }}</td>
           <td>{{ request.fleetSize ?? "-" }}</td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="getStatusLabel(request.status)"
               [severity]="getStatusSeverity(request.status)"
             />
@@ -70,7 +70,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <p-dialog
   header="Demo Request Details"

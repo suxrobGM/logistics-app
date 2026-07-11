@@ -15,6 +15,8 @@ import {
 import { DateFormatPipe } from "@logistics/shared/pipes";
 import {
   Alert,
+  Card,
+  Spinner,
   Stack,
   Typography,
   UiButton,
@@ -26,9 +28,7 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 
 interface TaxRateModel {
@@ -52,12 +52,12 @@ const EMPTY: TaxRateModel = {
   templateUrl: "./tenant-tax-rates-card.html",
   imports: [
     Alert,
-    CardModule,
+    Card,
     DateFormatPipe,
     DialogModule,
     FormField,
     FormRoot,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
     Typography,
     UiButton,

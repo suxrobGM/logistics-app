@@ -11,8 +11,11 @@ import {
 } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import {
+  Card,
   Grid,
   Icon,
+  Progress,
+  Skeleton,
   Stack,
   Surface,
   Typography,
@@ -21,10 +24,6 @@ import {
   UiSortHeader,
   UiTableRowDirectives,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressBarModule } from "primeng/progressbar";
-import { SkeletonModule } from "primeng/skeleton";
-import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import {
   DirectionMap,
@@ -44,7 +43,7 @@ import { TripDetailsStore } from "../store/trip-details.store";
   providers: [TripDetailsStore],
   imports: [
     AddressPipe,
-    CardModule,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DateFormatPipe,
@@ -54,12 +53,11 @@ import { TripDetailsStore } from "../store/trip-details.store";
     Icon,
     LoadStatusTag,
     PageHeader,
-    ProgressBarModule,
+    Progress,
     RouterLink,
-    SkeletonModule,
+    Skeleton,
     Stack,
     Surface,
-    TagModule,
     ToastModule,
     TripActions,
     TripStatusTag,

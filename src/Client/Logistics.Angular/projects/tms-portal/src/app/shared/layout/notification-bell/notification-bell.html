@@ -6,13 +6,13 @@
   aria-label="Open notifications"
   type="button"
 >
-  <p-overlaybadge
+  <ui-overlay-badge
     [value]="unreadCount() > 0 ? (unreadCount() > 9 ? '9+' : unreadCount().toString()) : null"
     severity="danger"
     badgeSize="small"
   >
     <ui-icon name="bell" />
-  </p-overlaybadge>
+  </ui-overlay-badge>
   @if (expanded()) {
     <span>Notifications</span>
   }
@@ -30,13 +30,13 @@
       }
     </div>
 
-    <p-divider class="m-0" />
+    <ui-divider class="m-0" />
 
     <!-- Content -->
     <div class="max-h-100 overflow-y-auto">
       @if (isLoading()) {
         <div class="flex items-center justify-center p-8">
-          <p-progress-spinner strokeWidth="4" [style]="{ width: '40px', height: '40px' }" />
+          <ui-spinner size="40px" />
         </div>
       } @else if (displayedNotifications().length === 0) {
         <div class="text-muted-foreground flex flex-col items-center justify-center p-8">
@@ -74,7 +74,7 @@
 
     <!-- Footer -->
     @if (notifications().length > 0) {
-      <p-divider class="m-0" />
+      <ui-divider class="m-0" />
       <div class="px-4 py-3">
         <a
           routerLink="/notifications"

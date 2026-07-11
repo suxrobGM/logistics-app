@@ -12,6 +12,7 @@ import {
   type UpdateMaintenanceRecordCommand,
 } from "@logistics/shared/api";
 import {
+  Spinner,
   UiButton,
   UiDateField,
   UiFormField,
@@ -21,7 +22,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { SearchTruck } from "@/shared/components/search";
 
@@ -69,9 +69,9 @@ const maintenanceTypeOptions = [
   imports: [
     FormField,
     FormRoot,
-    ProgressSpinnerModule,
     RouterLink,
     SearchTruck,
+    Spinner,
     UiButton,
     UiDateField,
     UiFormField,

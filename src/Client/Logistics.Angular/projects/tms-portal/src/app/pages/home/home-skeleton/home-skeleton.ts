@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from "@angular/core";
-import { SkeletonModule } from "primeng/skeleton";
+import { Skeleton } from "@logistics/shared/ui";
 import { DashboardSettingsService } from "@/core/services";
 
 /**
@@ -10,7 +10,7 @@ import { DashboardSettingsService } from "@/core/services";
 @Component({
   selector: "app-home-skeleton",
   templateUrl: "./home-skeleton.html",
-  imports: [SkeletonModule],
+  imports: [Skeleton],
 })
 export class HomeSkeleton {
   private readonly dashboardSettings = inject(DashboardSettingsService);

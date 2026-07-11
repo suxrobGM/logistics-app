@@ -19,9 +19,16 @@ import {
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
-import { Icon, Stack, Surface, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
+import {
+  Badge,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import {
   AiDispatchHubService,
@@ -45,6 +52,7 @@ import { stripMarkdown } from "../utils/markdown";
   templateUrl: "./sessions-list.html",
   imports: [
     AiQuotaUsage,
+    Badge,
     ConfirmDialogModule,
     DatePipe,
     DecisionCard,
@@ -55,7 +63,6 @@ import { stripMarkdown } from "../utils/markdown";
     RunAgentDialog,
     Stack,
     Surface,
-    TagModule,
     TooltipModule,
     Typography,
     UiButton,

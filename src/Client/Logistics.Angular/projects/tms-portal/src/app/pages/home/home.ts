@@ -14,13 +14,19 @@ import {
   DateFormatPipe,
   DistanceUnitPipe,
 } from "@logistics/shared/pipes";
-import { Icon, Stack, StatusBadge, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
+import {
+  Card,
+  Divider,
+  Icon,
+  Stack,
+  StatusBadge,
+  Typography,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
 import { SharedModule, type MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { MenuModule } from "primeng/menu";
-import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
 import { DashboardSettingsService, type DashboardPanelConfig } from "@/core/services";
@@ -43,12 +49,12 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
   styleUrl: "./home.css",
   imports: [
     AttentionPanelComponent,
-    CardModule,
+    Card,
     CurrencyFormatPipe,
     DailyGrossChartComponent,
     DateFormatPipe,
     DistanceUnitPipe,
-    DividerModule,
+    Divider,
     FinancialHealthWidgetComponent,
     Gridster,
     GridsterItem,
@@ -60,7 +66,6 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
     RecentActivityComponent,
     RouterLink,
     SharedModule,
-    SkeletonModule,
     Stack,
     StatCard,
     StatusBadge,

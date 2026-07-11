@@ -2,12 +2,12 @@
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </div>
 } @else {
   <!-- Stats Cards -->
   <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-    <p-card
+    <ui-card
       class="cursor-pointer transition-shadow hover:shadow-lg"
       (click)="navigateTo('/safety/dvir')"
     >
@@ -20,9 +20,9 @@
           <div class="text-2xl font-bold">{{ pendingDvirCount() }}</div>
         </div>
       </div>
-    </p-card>
+    </ui-card>
 
-    <p-card
+    <ui-card
       class="cursor-pointer transition-shadow hover:shadow-lg"
       (click)="navigateTo('/safety/accidents')"
     >
@@ -35,9 +35,9 @@
           <div class="text-2xl font-bold">{{ openAccidentsCount() }}</div>
         </div>
       </div>
-    </p-card>
+    </ui-card>
 
-    <p-card
+    <ui-card
       class="cursor-pointer transition-shadow hover:shadow-lg"
       (click)="navigateTo('/safety/condition-reports')"
     >
@@ -50,9 +50,9 @@
           <div class="text-2xl font-bold">{{ conditionReportsCount() }}</div>
         </div>
       </div>
-    </p-card>
+    </ui-card>
 
-    <p-card
+    <ui-card
       class="cursor-pointer transition-shadow hover:shadow-lg"
       (click)="navigateTo('/safety/driver-behavior')"
     >
@@ -65,7 +65,7 @@
           <div class="text-2xl font-bold">-</div>
         </div>
       </div>
-    </p-card>
+    </ui-card>
   </div>
 
   <!-- Quick Actions -->
@@ -87,7 +87,7 @@
 
   <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
     <!-- Recent DVIRs -->
-    <p-card>
+    <ui-card>
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent DVIRs</h3>
@@ -111,7 +111,7 @@
               <td>{{ dvir.truckNumber }}</td>
               <td>{{ dvir.driverName }}</td>
               <td>
-                <p-tag
+                <ui-badge
                   [value]="dvir.statusDisplay ?? dvir.status"
                   [severity]="getDvirStatusSeverity(dvir.status)"
                 />
@@ -125,10 +125,10 @@
           <p class="text-muted-foreground">No recent DVIRs</p>
         </div>
       }
-    </p-card>
+    </ui-card>
 
     <!-- Recent Accidents -->
-    <p-card>
+    <ui-card>
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent Accidents</h3>
@@ -151,13 +151,13 @@
               <td>{{ accident.accidentDateTime | date: "shortDate" }}</td>
               <td>{{ accident.driverName }}</td>
               <td>
-                <p-tag
+                <ui-badge
                   [value]="accident.severityDisplay ?? accident.severity"
                   [severity]="getAccidentSeveritySeverity(accident.severity)"
                 />
               </td>
               <td>
-                <p-tag
+                <ui-badge
                   [value]="accident.statusDisplay ?? accident.status"
                   [severity]="getAccidentStatusSeverity(accident.status)"
                 />
@@ -171,12 +171,12 @@
           <p class="text-muted-foreground">No recent accidents</p>
         </div>
       }
-    </p-card>
+    </ui-card>
   </div>
 
   <!-- Recent Condition Reports -->
   @if (recentConditionReports().length > 0) {
-    <p-card class="mt-4">
+    <ui-card class="mt-4">
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent Condition Reports</h3>
@@ -203,11 +203,11 @@
             <td>{{ report.loadReferenceId }}</td>
             <td>{{ report.inspectorName }}</td>
             <td>
-              <p-tag [value]="report.typeDisplay ?? report.type" />
+              <ui-badge severity="primary" [value]="report.typeDisplay ?? report.type" />
             </td>
           </tr>
         </ng-template>
       </ui-data-table>
-    </p-card>
+    </ui-card>
   }
 }

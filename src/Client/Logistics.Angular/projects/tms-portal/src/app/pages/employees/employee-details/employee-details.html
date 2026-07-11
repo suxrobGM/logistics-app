@@ -12,7 +12,7 @@
 
 @if (store.isLoading()) {
   <ui-stack align="center" justify="center" class="py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </ui-stack>
 } @else if (store.employee(); as employee) {
   <!-- Enhanced Header with Employee Info -->
@@ -27,7 +27,7 @@
               <app-employee-status-tag [status]="employee.status" />
             }
             @if (employee.role?.displayName) {
-              <p-tag [value]="employee.role!.displayName!" severity="info" />
+              <ui-badge [value]="employee.role!.displayName!" severity="info" />
             }
           </ui-stack>
         </div>
@@ -41,7 +41,7 @@
     </ui-stack>
   </ui-surface>
 
-  <p-card>
+  <ui-card>
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
         <p-tab [value]="0">
@@ -82,7 +82,7 @@
           <ui-grid container spacing="6" class="pt-4">
             <!-- Contact Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card class="border-default border">
+              <ui-card class="border-default border">
                 <ng-template #header>
                   <div class="p-4 pb-0">
                     <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -102,7 +102,7 @@
                     </a>
                   </ui-stack>
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <ui-typography variant="body" color="muted">Phone</ui-typography>
@@ -118,7 +118,7 @@
                     }
                   </ui-stack>
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <ui-typography variant="body" color="muted">Joined Date</ui-typography>
@@ -127,12 +127,12 @@
                     </ui-typography>
                   </ui-stack>
                 </ui-stack>
-              </p-card>
+              </ui-card>
             </ui-grid>
 
             <!-- Salary Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card class="border-default border">
+              <ui-card class="border-default border">
                 <ng-template #header>
                   <div class="p-4 pb-0">
                     <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -149,31 +149,31 @@
                     </span>
                   </ui-stack>
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <ui-typography variant="body" color="muted">Salary</ui-typography>
                     <ui-typography variant="h6" weight="bold">{{ salaryDisplay() }}</ui-typography>
                   </ui-stack>
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <ui-typography variant="body" color="muted">Role</ui-typography>
                     @if (employee.role?.displayName) {
-                      <p-tag [value]="employee.role!.displayName!" severity="info" />
+                      <ui-badge [value]="employee.role!.displayName!" severity="info" />
                     } @else {
                       <ui-typography variant="body" color="muted">No role assigned</ui-typography>
                     }
                   </ui-stack>
                 </ui-stack>
-              </p-card>
+              </ui-card>
             </ui-grid>
           </ui-grid>
 
           <!-- Location Card (if available) -->
           @if (employee.lastKnownLocation) {
-            <p-card class="border-default mt-6 border">
+            <ui-card class="border-default mt-6 border">
               <ng-template #header>
                 <div class="p-4 pb-0">
                   <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -186,11 +186,11 @@
                 <ui-icon name="map-marker" class="text-primary" />
                 <span>{{ employee.lastKnownLocation }}</span>
               </ui-stack>
-            </p-card>
+            </ui-card>
           }
 
           <!-- Quick Actions Card -->
-          <p-card class="border-default mt-6 border">
+          <ui-card class="border-default mt-6 border">
             <ng-template #header>
               <div class="p-4 pb-0">
                 <ui-typography variant="h5" tag="h3" weight="semibold">Quick Actions</ui-typography>
@@ -218,7 +218,7 @@
                 [queryParams]="{ driverId: id() }"
               />
             </ui-stack>
-          </p-card>
+          </ui-card>
         </p-tabpanel>
 
         <!-- Documents Tab -->
@@ -248,7 +248,7 @@
             </ui-stack>
 
             <!-- Payout Setup Card -->
-            <p-card class="border-default mb-4 border">
+            <ui-card class="border-default mb-4 border">
               <ng-template #header>
                 <div class="p-4 pb-0">
                   <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -288,7 +288,7 @@
                   (click)="setupPayout()"
                 />
               }
-            </p-card>
+            </ui-card>
           </div>
         </p-tabpanel>
 
@@ -302,15 +302,15 @@
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
-  </p-card>
+  </ui-card>
 } @else {
-  <p-card>
+  <ui-card>
     <ui-stack align="center" gap="4" class="py-16">
       <ui-icon name="exclamation-circle" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Employee not found</ui-typography>
       <ui-button label="Back to Employees" [routerLink]="['/employees']" />
     </ui-stack>
-  </p-card>
+  </ui-card>
 }
 
 <!-- Edit Dialog -->

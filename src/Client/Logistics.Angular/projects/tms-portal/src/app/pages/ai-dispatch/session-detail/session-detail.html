@@ -3,7 +3,7 @@
     <!-- Header -->
     <ui-page-header [title]="'Session #' + session.number" backLink="/ai-dispatch">
       <ui-stack direction="row" align="center" gap="2">
-        <p-tag
+        <ui-badge
           [value]="session.status ?? ''"
           [severity]="Labels.dispatchStatusSeverity(session.status ?? '')"
         />
@@ -108,10 +108,10 @@
                 {{ decision.createdAt | date: "MMM d, h:mm a" }}
               </span>
               @if (isWriteTool(decision.toolName)) {
-                <p-tag
+                <ui-badge
+                  size="sm"
                   [value]="decision.status"
                   [severity]="Labels.dispatchStatusSeverity(decision.status)"
-                  [style]="{ fontSize: '0.7rem' }"
                 />
               }
             </div>

@@ -4,18 +4,19 @@ import { Router } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import { Api, deleteSubscriptionPlan, type PlanTier } from "@logistics/shared/api";
 import {
+  Badge,
+  Card,
   DataContainer,
   PageHeader,
   SearchField,
   UiButton,
   UiDataTable,
   UiSortHeader,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Menu, MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { PlansListStore } from "../store/plans-list.store";
 
@@ -24,14 +25,14 @@ import { PlansListStore } from "../store/plans-list.store";
   templateUrl: "./plans-list.html",
   providers: [PlansListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     ConfirmDialogModule,
     CurrencyPipe,
     DataContainer,
     MenuModule,
     PageHeader,
     SearchField,
-    TagModule,
     TitleCasePipe,
     TooltipModule,
     UiButton,
@@ -108,7 +109,7 @@ export class PlansList {
     }
   }
 
-  protected tierSeverity(tier?: PlanTier): "success" | "info" | "warn" | "secondary" {
+  protected tierSeverity(tier?: PlanTier): UiBadgeIntent {
     switch (tier) {
       case "starter":
         return "info";

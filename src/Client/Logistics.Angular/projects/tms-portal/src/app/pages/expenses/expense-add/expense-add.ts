@@ -1,5 +1,5 @@
 import { Component, signal } from "@angular/core";
-import { CardModule } from "primeng/card";
+import { Card } from "@logistics/shared/ui";
 import { TabsModule } from "primeng/tabs";
 import { Container, PageHeader } from "@/shared/components";
 import { BodyShopExpenseForm, CompanyExpenseForm, TruckExpenseForm } from "../_components";
@@ -8,13 +8,13 @@ import { BodyShopExpenseForm, CompanyExpenseForm, TruckExpenseForm } from "../_c
   selector: "app-expense-add",
   templateUrl: "./expense-add.html",
   imports: [
-    CardModule,
-    TabsModule,
-    PageHeader,
-    CompanyExpenseForm,
-    TruckExpenseForm,
     BodyShopExpenseForm,
+    Card,
+    CompanyExpenseForm,
     Container,
+    PageHeader,
+    TabsModule,
+    TruckExpenseForm,
   ],
 })
 export class ExpenseAddPage {

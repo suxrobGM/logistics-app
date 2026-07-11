@@ -8,15 +8,21 @@ import {
   type AccidentReportStatus,
   type AccidentSeverity,
 } from "@logistics/shared/api";
-import { Icon, Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import {
+  Badge,
+  Card,
+  Icon,
+  Stack,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
-import type { TagSeverity } from "@/shared/types";
 import { AccidentsListStore } from "../store";
 
 @Component({
@@ -24,7 +30,8 @@ import { AccidentsListStore } from "../store";
   templateUrl: "./accidents-list.html",
   providers: [AccidentsListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DatePipe,
     Icon,
@@ -32,7 +39,6 @@ import { AccidentsListStore } from "../store";
     PageHeader,
     SearchField,
     Stack,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -60,7 +66,7 @@ export class AccidentsListPage {
     },
   ];
 
-  protected getStatusSeverity(status: AccidentReportStatus | undefined): TagSeverity {
+  protected getStatusSeverity(status: AccidentReportStatus | undefined): UiBadgeIntent {
     switch (status) {
       case "resolved":
         return "success";
@@ -94,7 +100,7 @@ export class AccidentsListPage {
     }
   }
 
-  protected getSeveritySeverity(severity: AccidentSeverity | undefined): TagSeverity {
+  protected getSeveritySeverity(severity: AccidentSeverity | undefined): UiBadgeIntent {
     switch (severity) {
       case "minor":
         return "info";

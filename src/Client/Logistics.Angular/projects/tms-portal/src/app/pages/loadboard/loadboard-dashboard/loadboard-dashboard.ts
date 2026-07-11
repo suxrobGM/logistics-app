@@ -2,8 +2,7 @@ import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, searchLoadBoard, type LoadBoardListingDto } from "@logistics/shared/api";
-import { Grid, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { TagModule } from "primeng/tag";
+import { Badge, Grid, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { DashboardCard, EmptyState, ErrorState, PageHeader, StatCard } from "@/shared/components";
 import { LoadBoardQuickActions } from "../_components";
@@ -13,6 +12,7 @@ import { LoadBoardStore } from "../store";
   selector: "app-loadboard-dashboard",
   templateUrl: "./loadboard-dashboard.html",
   imports: [
+    Badge,
     DashboardCard,
     DatePipe,
     EmptyState,
@@ -22,7 +22,6 @@ import { LoadBoardStore } from "../store";
     PageHeader,
     Stack,
     StatCard,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,

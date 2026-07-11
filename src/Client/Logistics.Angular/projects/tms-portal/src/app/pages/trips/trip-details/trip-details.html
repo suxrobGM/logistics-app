@@ -15,14 +15,14 @@
 </ui-page-header>
 
 <ui-stack gap="4">
-  <p-card>
+  <ui-card>
     <ui-grid container spacing="8">
       @if (store.isLoading() || !store.trip()) {
         <ui-grid [size]="{ xs: 12, lg: 6 }">
-          <p-skeleton class="h-96!" />
+          <ui-skeleton class="h-96!" />
         </ui-grid>
         <ui-grid [size]="{ xs: 12, lg: 6 }">
-          <p-skeleton class="h-96!" />
+          <ui-skeleton class="h-96!" />
         </ui-grid>
       } @else {
         @let tripDetails = store.trip()!;
@@ -54,11 +54,7 @@
                 <span class="font-medium">Trip Progress</span>
                 <span class="text-foreground font-semibold">{{ store.progressPercentage() }}%</span>
               </ui-stack>
-              <p-progressBar
-                [value]="store.progressPercentage()"
-                [showValue]="false"
-                class="h-2!"
-              />
+              <ui-progress [value]="store.progressPercentage()" [showValue]="false" class="h-2!" />
               <ui-stack
                 direction="row"
                 align="center"
@@ -171,7 +167,7 @@
         <ui-button type="button" icon="arrow-left" label="Back to list" [routerLink]="['/trips']" />
       </div>
     </ng-template>
-  </p-card>
+  </ui-card>
 
   @if (store.trip()) {
     <ui-grid container spacing="4">
@@ -179,7 +175,7 @@
       <ui-grid [size]="{ xs: 12, lg: 8 }">
         <ui-stack gap="4">
           <!-- Trip Stops table -->
-          <p-card>
+          <ui-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
                 <ui-icon name="map-marker" color="primary" />
@@ -238,10 +234,10 @@
                 </tr>
               </ng-template>
             </ui-data-table>
-          </p-card>
+          </ui-card>
 
           <!-- Loads table -->
-          <p-card>
+          <ui-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
                 <ui-icon name="box" color="primary" />
@@ -273,13 +269,13 @@
                 </tr>
               </ng-template>
             </ui-data-table>
-          </p-card>
+          </ui-card>
         </ui-stack>
       </ui-grid>
 
       <!-- Right side: Timeline -->
       <ui-grid [size]="{ xs: 12, lg: 4 }">
-        <p-card class="h-full">
+        <ui-card class="h-full">
           <ng-template #header>
             <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
               <ui-icon name="history" color="primary" />
@@ -295,7 +291,7 @@
               <p class="m-0">No timeline events yet.</p>
             </ui-stack>
           }
-        </p-card>
+        </ui-card>
       </ui-grid>
     </ui-grid>
   }

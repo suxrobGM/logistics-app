@@ -9,6 +9,7 @@ import {
   type RoleDto,
 } from "@logistics/shared/api";
 import {
+  Spinner,
   Stack,
   UiButton,
   UiSelectField,
@@ -17,7 +18,6 @@ import {
   ValidatedForm,
 } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
@@ -31,7 +31,7 @@ const EMPTY = { email: "", role: "", personalMessage: "" };
     DialogModule,
     FormField,
     FormRoot,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
     UiButton,
     UiFormField,

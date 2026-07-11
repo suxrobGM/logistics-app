@@ -1,6 +1,11 @@
-<p-tag
-  [severity]="severity()"
-  [value]="value() === null ? '' : value()!.toString()"
-  [icon]="iconClass()"
-  [rounded]="variant() === 'outlined'"
-/>
+@if (icon(); as name) {
+  <!-- `size="inherit"` emits no text-* class, so the glyph tracks the chip's own font-size — the
+       same contract p-tag's `.p-tag-icon` had, and the reason ui-icon has an `inherit` size at all. -->
+  <ui-icon [name]="name" size="inherit" />
+}
+
+@if (text(); as label) {
+  {{ label }}
+} @else {
+  <ng-content />
+}

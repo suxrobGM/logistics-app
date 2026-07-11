@@ -15,6 +15,7 @@ import {
 import { invoiceStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
+  Card,
   Grid,
   Stack,
   Typography,
@@ -23,7 +24,6 @@ import {
   UiSortHeader,
   UiTableRowDirectives,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
 import { TextareaModule } from "primeng/textarea";
@@ -44,7 +44,7 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
   templateUrl: "./payroll-invoices-list.html",
   providers: [PayrollInvoicesListStore],
   imports: [
-    CardModule,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DataContainer,

@@ -5,7 +5,7 @@
 
 @if (isLoading()) {
   <ui-stack direction="row" align="center" justify="center" class="py-12">
-    <p-progress-spinner strokeWidth="4" />
+    <ui-spinner />
   </ui-stack>
 } @else {
   <ui-surface variant="elevated" padding="none">
@@ -23,7 +23,7 @@
         <tr>
           <td class="font-medium">{{ doc.fileName }}</td>
           <td>
-            <p-tag [value]="getDocumentTypeLabel(doc.documentType)" severity="info" />
+            <ui-badge [value]="getDocumentTypeLabel(doc.documentType)" severity="info" />
           </td>
           <td>
             @if (doc.loadId) {

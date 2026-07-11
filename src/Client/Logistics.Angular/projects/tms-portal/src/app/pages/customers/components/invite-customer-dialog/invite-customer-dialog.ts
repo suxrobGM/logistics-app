@@ -8,6 +8,7 @@ import {
   type CustomerDto,
 } from "@logistics/shared/api";
 import {
+  Spinner,
   Stack,
   UiButton,
   UiSelectField,
@@ -17,7 +18,6 @@ import {
 } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 
@@ -31,7 +31,7 @@ const EMPTY = { email: "", customerId: "", personalMessage: "" };
     FormField,
     FormRoot,
     InputTextModule,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
     UiButton,
     UiFormField,

@@ -10,7 +10,7 @@
 
 @if (isLoading()) {
   <ui-stack align="center" justify="center" class="py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </ui-stack>
 } @else if (truck()) {
   <!-- Enhanced Header with Truck Number -->
@@ -42,7 +42,7 @@
     </ui-grid>
   </ui-grid>
 
-  <p-card>
+  <ui-card>
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
         <p-tab [value]="0">
@@ -76,7 +76,7 @@
           <ui-grid container spacing="6" class="pt-4">
             <!-- Truck Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card class="border-default border">
+              <ui-card class="border-default border">
                 <ng-template #header>
                   <div class="p-4 pb-0">
                     <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -91,7 +91,7 @@
                     <span class="font-mono font-semibold">{{ truck()!.number }}</span>
                   </ui-stack>
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <span>Type</span>
@@ -104,7 +104,7 @@
                   </ui-stack>
 
                   @if (truck()!.vehicleCapacity) {
-                    <p-divider />
+                    <ui-divider />
                     <ui-stack direction="row" align="center" justify="between">
                       <span>Vehicle Capacity</span>
                       <span class="font-semibold">{{ truck()!.vehicleCapacity }} vehicles</span>
@@ -112,7 +112,7 @@
                   }
 
                   @if (truck()!.make || truck()!.model || truck()!.year) {
-                    <p-divider />
+                    <ui-divider />
                     @if (truck()!.make) {
                       <ui-stack direction="row" align="center" justify="between">
                         <span>Make</span>
@@ -134,7 +134,7 @@
                   }
 
                   @if (truck()!.vin) {
-                    <p-divider />
+                    <ui-divider />
                     <ui-stack direction="row" align="center" justify="between">
                       <span>VIN</span>
                       <span class="font-mono font-semibold">{{ truck()!.vin }}</span>
@@ -142,7 +142,7 @@
                   }
 
                   @if (truck()!.licensePlate) {
-                    <p-divider />
+                    <ui-divider />
                     <ui-stack direction="row" align="center" justify="between">
                       <span>License Plate</span>
                       <span class="font-mono font-semibold">
@@ -156,12 +156,12 @@
                     </ui-stack>
                   }
                 </ui-stack>
-              </p-card>
+              </ui-card>
             </ui-grid>
 
             <!-- Assignment Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card class="border-default border">
+              <ui-card class="border-default border">
                 <ng-template #header>
                   <div class="p-4 pb-0">
                     <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -200,19 +200,19 @@
                     </ui-stack>
                   }
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <span>Active Loads</span>
                     <span class="font-semibold">{{ truck()!.loads?.length ?? 0 }}</span>
                   </ui-stack>
                 </ui-stack>
-              </p-card>
+              </ui-card>
             </ui-grid>
           </ui-grid>
 
           <!-- Location Card (full width) -->
-          <p-card class="border-default mt-6 border">
+          <ui-card class="border-default mt-6 border">
             <ng-template #header>
               <div class="p-4 pb-0">
                 <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -241,10 +241,10 @@
                 </div>
               </ui-grid>
             </ui-grid>
-          </p-card>
+          </ui-card>
 
           <!-- Quick Stats Card -->
-          <p-card class="border-default mt-6 border">
+          <ui-card class="border-default mt-6 border">
             <ng-template #header>
               <div class="p-4 pb-0">
                 <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -279,7 +279,7 @@
                 </ui-typography>
               </ui-grid>
             </ui-grid>
-          </p-card>
+          </ui-card>
         </p-tabpanel>
 
         <!-- Loads Tab -->
@@ -305,13 +305,13 @@
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
-  </p-card>
+  </ui-card>
 } @else {
-  <p-card>
+  <ui-card>
     <ui-stack align="center" gap="4" class="py-16">
       <ui-icon name="exclamation-circle" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Truck not found</ui-typography>
       <ui-button label="Back to Trucks" [routerLink]="['/trucks']" />
     </ui-stack>
-  </p-card>
+  </ui-card>
 }

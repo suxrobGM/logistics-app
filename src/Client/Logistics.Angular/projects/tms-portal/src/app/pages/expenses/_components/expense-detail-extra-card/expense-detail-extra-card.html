@@ -1,4 +1,4 @@
-<p-card>
+<ui-card>
   <ng-template #header>
     <div class="p-4 pb-0">
       <ui-typography variant="h4">Additional Details</ui-typography>
@@ -62,13 +62,13 @@
     }
 
     @if (expense().notes) {
-      <p-divider />
+      <ui-divider />
       <app-expense-detail-row label="Notes" [stacked]="true">
         {{ expense().notes }}
       </app-expense-detail-row>
     }
 
-    <p-divider />
+    <ui-divider />
 
     @if (expense().receiptBlobPath) {
       <app-expense-detail-row label="Receipt">
@@ -86,4 +86,4 @@
       </app-expense-detail-row>
     }
   </div>
-</p-card>
+</ui-card>

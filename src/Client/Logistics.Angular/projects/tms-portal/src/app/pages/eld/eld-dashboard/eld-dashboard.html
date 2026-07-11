@@ -1,5 +1,5 @@
 <ui-page-header title="ELD / HOS Dashboard" subtitle="Monitor driver Hours of Service compliance">
-  <p-tag [value]="rules.ruleSetLabel()" severity="info" pTooltip="Active HOS rule set" />
+  <ui-badge [value]="rules.ruleSetLabel()" severity="info" pTooltip="Active HOS rule set" />
   <ui-button label="Configure Providers" icon="cog" (click)="configureProviders()" />
   <ui-button
     label="Sync HOS Data"
@@ -48,7 +48,7 @@
     <ui-dashboard-card title="Driver Hours of Service" icon="clock" iconColor="blue">
       @if (loading()) {
         <ui-stack align="center" justify="center" class="p-5">
-          <p-progressSpinner />
+          <ui-spinner />
         </ui-stack>
       } @else if (error()) {
         <ui-error-state [message]="error()!" (retry)="loadDriversHos()" />
@@ -98,10 +98,10 @@
                 </div>
               </td>
               <td>
-                <p-tag
+                <ui-badge
                   [value]="driver.currentDutyStatusDisplay"
                   [severity]="getDutyStatusSeverity(driver.currentDutyStatus)"
-                ></p-tag>
+                ></ui-badge>
               </td>
               <td>
                 <span [class.text-danger]="driver.drivingMinutesRemaining < drivingWarnMinutes()">
@@ -116,9 +116,9 @@
               <td>{{ driver.cycleTimeRemainingDisplay }}</td>
               <td>
                 @if (driver.isAvailableForDispatch) {
-                  <p-tag value="Available" severity="success"></p-tag>
+                  <ui-badge value="Available" severity="success"></ui-badge>
                 } @else {
-                  <p-tag value="Unavailable" severity="danger"></p-tag>
+                  <ui-badge value="Unavailable" severity="danger"></ui-badge>
                 }
               </td>
               <td>{{ driver.lastUpdatedAt | date: "short" }}</td>

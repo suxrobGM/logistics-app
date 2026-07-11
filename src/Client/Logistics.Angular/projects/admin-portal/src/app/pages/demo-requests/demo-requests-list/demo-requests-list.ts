@@ -8,6 +8,8 @@ import {
   type DemoRequestStatus,
 } from "@logistics/shared/api";
 import {
+  Badge,
+  Card,
   DataContainer,
   Grid,
   PageHeader,
@@ -21,11 +23,10 @@ import {
   UiSelectField,
   UiSortHeader,
   UiTextareaField,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { DateUtils } from "@logistics/shared/utils";
-import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DemoRequestsListStore } from "../store/demo-requests-list.store";
@@ -40,7 +41,8 @@ interface StatusOption {
   templateUrl: "./demo-requests-list.html",
   providers: [DemoRequestsListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DialogModule,
     FormField,
@@ -49,7 +51,6 @@ interface StatusOption {
     SearchField,
     Stack,
     Surface,
-    TagModule,
     TooltipModule,
     Typography,
     UiButton,
@@ -138,9 +139,7 @@ export class DemoRequestsList {
     }
   }
 
-  protected getStatusSeverity(
-    status?: DemoRequestStatus,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  protected getStatusSeverity(status?: DemoRequestStatus): UiBadgeIntent {
     switch (status) {
       case "new":
         return "info";

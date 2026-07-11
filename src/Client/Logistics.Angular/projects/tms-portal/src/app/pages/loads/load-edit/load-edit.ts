@@ -8,7 +8,6 @@ import {
   type UpdateLoadCommand,
 } from "@logistics/shared/api";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import { LoadForm, PageHeader, type LoadFormValue } from "@/shared/components";
@@ -17,7 +16,7 @@ import { Converters } from "@/shared/utils";
 @Component({
   selector: "app-load-edit",
   templateUrl: "./load-edit.html",
-  imports: [ToastModule, ConfirmDialogModule, ProgressSpinnerModule, LoadForm, PageHeader],
+  imports: [ToastModule, ConfirmDialogModule, LoadForm, PageHeader],
 })
 export class LoadEditComponent implements OnInit {
   private readonly api = inject(Api);

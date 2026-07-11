@@ -1,7 +1,6 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { type CreateLoadBoardConfigurationCommand } from "@logistics/shared/api";
-import { Alert, Stack, UiButton } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Alert, Spinner, Stack, UiButton } from "@logistics/shared/ui";
 import { DashboardCard, EmptyState, ErrorState, PageHeader } from "@/shared/components";
 import { ProviderAddDialog, ProvidersTable } from "../_components";
 import { LoadBoardStore } from "../store";
@@ -15,9 +14,9 @@ import { LoadBoardStore } from "../store";
     EmptyState,
     ErrorState,
     PageHeader,
-    ProgressSpinnerModule,
     ProviderAddDialog,
     ProvidersTable,
+    Spinner,
     Stack,
     UiButton,
   ],

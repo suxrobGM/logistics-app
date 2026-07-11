@@ -1,16 +1,14 @@
 import { Component, computed, inject, input, signal } from "@angular/core";
 import { FormField, type FieldTree } from "@angular/forms/signals";
 import { Api, decodeVin } from "@logistics/shared/api";
-import { Stack, UiButton, UiFormField, UiTextField } from "@logistics/shared/ui";
-import { MessageModule } from "primeng/message";
-import { TagModule } from "primeng/tag";
+import { Alert, Badge, Stack, UiButton, UiFormField, UiTextField } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import type { TruckFormModel } from "./truck-form";
 
 @Component({
   selector: "app-truck-vin-field",
   templateUrl: "./truck-vin-field.html",
-  imports: [FormField, MessageModule, Stack, TagModule, UiButton, UiFormField, UiTextField],
+  imports: [Alert, Badge, FormField, Stack, UiButton, UiFormField, UiTextField],
 })
 export class TruckVinField {
   private readonly api = inject(Api);

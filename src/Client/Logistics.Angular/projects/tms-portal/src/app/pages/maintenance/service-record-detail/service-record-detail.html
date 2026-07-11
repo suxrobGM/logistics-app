@@ -6,19 +6,19 @@
 
 @if (isLoading()) {
   <ui-stack align="center" justify="center" class="py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </ui-stack>
 } @else if (record()) {
   <ui-grid container spacing="4">
     <!-- Main Info -->
     <ui-grid [size]="{ xs: 12, lg: 8 }">
-      <p-card header="Service Details">
+      <ui-card header="Service Details">
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 6, md: 3 }">
             <ui-typography variant="caption" color="muted" class="mb-1 block">
               Service Type
             </ui-typography>
-            <p-tag [value]="record()!.typeDisplay ?? 'Unknown'" severity="info" />
+            <ui-badge [value]="record()!.typeDisplay ?? 'Unknown'" severity="info" />
           </ui-grid>
           <ui-grid [size]="{ xs: 6, md: 3 }">
             <ui-typography variant="caption" color="muted" class="mb-1 block">
@@ -80,11 +80,11 @@
             <ui-typography color="muted">{{ record()!.notes }}</ui-typography>
           </div>
         }
-      </p-card>
+      </ui-card>
 
       <!-- Parts Used -->
       @if (record()!.parts && record()!.parts!.length > 0) {
-        <p-card header="Parts Used" class="mt-4">
+        <ui-card header="Parts Used" class="mt-4">
           <div class="overflow-x-auto">
             <table class="min-w-full">
               <thead>
@@ -117,12 +117,12 @@
               </tbody>
             </table>
           </div>
-        </p-card>
+        </ui-card>
       }
 
       <!-- Documents -->
       @if (record()!.documents && record()!.documents!.length > 0) {
-        <p-card header="Documents" class="mt-4">
+        <ui-card header="Documents" class="mt-4">
           <ui-stack direction="row" wrap gap="2">
             @for (doc of record()!.documents; track doc.id) {
               <span class="inline-flex items-center gap-1">
@@ -131,14 +131,14 @@
               </span>
             }
           </ui-stack>
-        </p-card>
+        </ui-card>
       }
     </ui-grid>
 
     <!-- Sidebar - Costs -->
     <ui-grid [size]="{ xs: 12, lg: 4 }">
       <ui-stack gap="4">
-        <p-card header="Cost Summary">
+        <ui-card header="Cost Summary">
           <ui-stack gap="3">
             <ui-stack direction="row" justify="between">
               <ui-typography color="muted">Labor Cost</ui-typography>
@@ -157,11 +157,11 @@
               </ui-stack>
             </div>
           </ui-stack>
-        </p-card>
+        </ui-card>
 
         <!-- Vendor Info -->
         @if (record()!.vendorName || record()!.invoiceNumber) {
-          <p-card header="Vendor Information">
+          <ui-card header="Vendor Information">
             <ui-stack gap="3">
               @if (record()!.vendorName) {
                 <div>
@@ -180,11 +180,11 @@
                 </div>
               }
             </ui-stack>
-          </p-card>
+          </ui-card>
         }
 
         <!-- Meta Info -->
-        <p-card header="Record Information">
+        <ui-card header="Record Information">
           <ui-stack gap="3">
             <div>
               <ui-typography variant="caption" color="muted" class="mb-1 block">
@@ -193,7 +193,7 @@
               <div class="text-sm">{{ record()!.createdAt | date: "medium" }}</div>
             </div>
           </ui-stack>
-        </p-card>
+        </ui-card>
       </ui-stack>
     </ui-grid>
   </ui-grid>

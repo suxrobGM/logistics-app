@@ -1,5 +1,5 @@
-import { Injectable, computed, inject, signal } from "@angular/core";
-import { Api, CookieService, type UserTenantAccessDto, getPortalTenants } from "@logistics/shared";
+import { computed, inject, Injectable, signal } from "@angular/core";
+import { Api, CookieService, getPortalTenants, type UserTenantAccessDto } from "@logistics/shared";
 import { firstValueFrom } from "rxjs";
 import { AuthService } from "@/core/auth";
 

@@ -109,7 +109,7 @@
               />
             }
             @case ("active-loads") {
-              <p-card class="h-full">
+              <ui-card class="h-full">
                 <ng-template #header>
                   <ui-stack direction="row" align="center" justify="between" class="py-3 pr-2 pl-4">
                     <ui-stack direction="row" align="center" gap="2">
@@ -127,7 +127,7 @@
                       class="no-drag"
                     />
                   </ui-stack>
-                  <p-divider class="m-0" />
+                  <ui-divider class="m-0" />
                 </ng-template>
 
                 <ui-data-table
@@ -208,7 +208,7 @@
                     </tr>
                   </ng-template>
                 </ui-data-table>
-              </p-card>
+              </ui-card>
             }
             @case ("recent-activity") {
               <app-recent-activity
@@ -218,7 +218,7 @@
               />
             }
             @case ("fleet-map") {
-              <p-card class="h-full">
+              <ui-card class="h-full">
                 <ng-template #header>
                   <ui-stack direction="row" align="center" gap="2" class="py-3 pr-2 pl-4">
                     <span class="text-primary">
@@ -228,12 +228,12 @@
                       Fleet Overview
                     </ui-typography>
                   </ui-stack>
-                  <p-divider class="m-0" />
+                  <ui-divider class="m-0" />
                 </ng-template>
                 <div class="no-drag h-full">
                   <app-trucks-map height="100%" />
                 </div>
-              </p-card>
+              </ui-card>
             }
             @case ("daily-gross-chart") {
               <app-daily-gross-chart

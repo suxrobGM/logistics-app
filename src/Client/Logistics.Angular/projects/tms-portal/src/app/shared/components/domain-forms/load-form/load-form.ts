@@ -39,6 +39,7 @@ import {
 import {
   Grid,
   Icon,
+  Spinner,
   Stack,
   Surface,
   Typography,
@@ -52,9 +53,7 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { DividerModule } from "primeng/divider";
 import { Fieldset } from "primeng/fieldset";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
@@ -181,18 +180,17 @@ const EMPTY: LoadFormModel = {
   imports: [
     AddressAutocomplete,
     DirectionMap,
-    DividerModule,
     Fieldset,
     FormField,
     FormRoot,
     Grid,
     Icon,
-    ProgressSpinnerModule,
     RouterLink,
     SearchContainer,
     SearchCustomer,
     SearchTerminal,
     SearchTruck,
+    Spinner,
     Stack,
     Surface,
     ToastModule,

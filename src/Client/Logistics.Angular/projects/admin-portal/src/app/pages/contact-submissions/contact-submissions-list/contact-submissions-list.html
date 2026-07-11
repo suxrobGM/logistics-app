@@ -1,6 +1,6 @@
 <ui-page-header title="Contact Submissions" />
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -42,7 +42,7 @@
           <td>{{ submission.email }}</td>
           <td>{{ getSubjectLabel(submission.subject) }}</td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="getStatusLabel(submission.status)"
               [severity]="getStatusSeverity(submission.status)"
             />
@@ -68,7 +68,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <p-dialog
   header="Contact Submission Details"

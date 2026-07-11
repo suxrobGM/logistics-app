@@ -1,8 +1,14 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { UserRole } from "@logistics/shared";
-import { Api, getTenantRoles, getUsers } from "@logistics/shared/api";
-import type { RoleDto, RoleDtoPagedResponse, UserDto } from "@logistics/shared/api";
-import { Observable, from, map } from "rxjs";
+import {
+  Api,
+  getTenantRoles,
+  getUsers,
+  type RoleDto,
+  type RoleDtoPagedResponse,
+  type UserDto,
+} from "@logistics/shared/api";
+import { from, map, Observable } from "rxjs";
 import { AuthService } from "@/core/auth";
 
 @Injectable({ providedIn: "root" })

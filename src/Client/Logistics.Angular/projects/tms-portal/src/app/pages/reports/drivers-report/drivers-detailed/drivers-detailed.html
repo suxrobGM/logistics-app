@@ -12,7 +12,7 @@
 </ui-page-header>
 
 <!-- Drivers Table -->
-<p-card class="border-0 p-2 shadow-sm">
+<ui-card class="border-0 p-2 shadow-sm">
   <ng-template #header>
     <ui-stack direction="row" align="center" gap="2">
       <ui-icon name="users" color="info" />
@@ -73,7 +73,7 @@
           </span>
         </td>
         <td>
-          <p-tag
+          <ui-badge
             [value]="driver.isMainDriver ? 'Main Driver' : 'Secondary Driver'"
             [severity]="getDriverTypeSeverity(driver.isMainDriver)"
           />
@@ -100,7 +100,7 @@
           <span class="font-medium">{{ driver.efficiency | number: "1.1-1" }} loads/day</span>
         </td>
         <td>
-          <p-tag
+          <ui-badge
             [value]="getPerformanceLevel(driver.efficiency)"
             [severity]="getPerformanceSeverity(driver.efficiency)"
           />
@@ -126,4 +126,4 @@
       </tr>
     </ng-template>
   </ui-data-table>
-</p-card>
+</ui-card>

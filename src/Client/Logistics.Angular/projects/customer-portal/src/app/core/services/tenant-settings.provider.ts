@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { DEFAULT_TENANT_SETTINGS, type TenantSettings } from "@logistics/shared";
 import type { TenantSettingsProvider } from "@logistics/shared/services";
 import { TenantContextService } from "./tenant-context.service";

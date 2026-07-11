@@ -5,7 +5,7 @@
   addTooltip="Log service record"
 />
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -36,7 +36,7 @@
       <ng-template #body let-schedule>
         <tr>
           <td>
-            <p-tag [value]="getStatusLabel(schedule)" [severity]="getStatusSeverity(schedule)" />
+            <ui-badge [value]="getStatusLabel(schedule)" [severity]="getStatusSeverity(schedule)" />
           </td>
           <td>{{ schedule.truckNumber || "-" }}</td>
           <td>{{ schedule.typeDisplay || schedule.type }}</td>
@@ -76,7 +76,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <!-- Context menu for row actions -->
 <p-menu #menu [model]="actionMenuItems" [popup]="true" />

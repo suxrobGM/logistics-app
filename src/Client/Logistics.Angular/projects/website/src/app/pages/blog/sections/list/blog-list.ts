@@ -1,8 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Icon } from "@logistics/shared/ui";
-import { SkeletonModule } from "primeng/skeleton";
+import { Icon, Skeleton } from "@logistics/shared/ui";
 import { Avatar, FilterTabs, SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 import { getReadTime } from "@/shared/utils";
@@ -20,7 +19,7 @@ import { BlogStore } from "../../store/blog.store";
     ScrollAnimateDirective,
     SectionContainer,
     SectionHeader,
-    SkeletonModule,
+    Skeleton,
   ],
 })
 export class BlogList {

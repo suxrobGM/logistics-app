@@ -7,18 +7,27 @@ import {
   getBillingPortalUrl,
   type SubscriptionDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import {
+  Badge,
+  Card,
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TagModule } from "primeng/tag";
 import { TenantService, ToastService } from "@/core/services";
-import { Labels, type SeverityLevel } from "@/shared/utils";
+import { Labels } from "@/shared/utils";
 
 @Component({
   selector: "app-manage-subscription",
   templateUrl: "./manage-subscription.html",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CommonModule,
     ConfirmDialogModule,
     Grid,
@@ -26,7 +35,6 @@ import { Labels, type SeverityLevel } from "@/shared/utils";
     RouterModule,
     Stack,
     Surface,
-    TagModule,
     Typography,
     UiButton,
   ],
@@ -55,7 +63,7 @@ export class ManageSubscriptionComponent {
     });
   }
 
-  getSubStatusSeverity(): SeverityLevel {
+  getSubStatusSeverity(): UiBadgeIntent {
     return Labels.subscriptionStatusSeverity(this.subscription()!);
   }
 

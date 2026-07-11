@@ -2,14 +2,20 @@ import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { DvirReportDto, DvirStatus, DvirType } from "@logistics/shared/api";
-import { Icon, Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import {
+  Badge,
+  Card,
+  Icon,
+  Stack,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
-import type { TagSeverity } from "@/shared/types";
 import { DvirListStore } from "../store";
 
 @Component({
@@ -17,7 +23,8 @@ import { DvirListStore } from "../store";
   templateUrl: "./dvir-list.html",
   providers: [DvirListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DatePipe,
     Icon,
@@ -25,7 +32,6 @@ import { DvirListStore } from "../store";
     PageHeader,
     SearchField,
     Stack,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -51,7 +57,7 @@ export class DvirListPage {
     },
   ];
 
-  protected getStatusSeverity(status: DvirStatus | undefined): TagSeverity {
+  protected getStatusSeverity(status: DvirStatus | undefined): UiBadgeIntent {
     switch (status) {
       case "cleared":
         return "success";
@@ -85,7 +91,7 @@ export class DvirListPage {
     }
   }
 
-  protected getTypeSeverity(type: DvirType | undefined): TagSeverity {
+  protected getTypeSeverity(type: DvirType | undefined): UiBadgeIntent {
     switch (type) {
       case "pre_trip":
         return "info";

@@ -3,12 +3,19 @@ import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Icon, Stack, Typography, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import {
+  Badge,
+  Icon,
+  Stack,
+  Typography,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/ui";
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { LoadForm, LoadStatusTag, type LoadFormValue } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
@@ -21,6 +28,7 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
   imports: [
     AddressPipe,
     AttachLoadDialog,
+    Badge,
     CurrencyFormatPipe,
     Dialog,
     DistanceUnitPipe,
@@ -33,7 +41,6 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
     LoadStatusTag,
     RouterLink,
     Stack,
-    TagModule,
     TooltipModule,
     Typography,
     UiButton,

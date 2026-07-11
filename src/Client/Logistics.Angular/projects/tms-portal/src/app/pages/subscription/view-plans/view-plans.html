@@ -7,10 +7,13 @@
 <ui-grid container spacing="4">
   @for (plan of subscriptionPlans(); track plan.id) {
     <ui-grid [size]="{ xs: 12, md: 4 }">
-      <p-card>
+      <ui-card>
         <ng-template #header>
           <ui-stack align="center" gap="2" class="p-4 pb-0">
-            <p-tag [severity]="getTierSeverity(plan)" [value]="Labels.planTierLabel(plan.tier!)" />
+            <ui-badge
+              [severity]="getTierSeverity(plan)"
+              [value]="Labels.planTierLabel(plan.tier!)"
+            />
             <ui-typography variant="h2" tag="h2" class="m-0">{{ plan.name }}</ui-typography>
             <ui-typography color="secondary" align="center" class="m-0">
               {{ plan.description }}
@@ -78,7 +81,7 @@
             }
           </ui-stack>
         </ng-template>
-      </p-card>
+      </ui-card>
     </ui-grid>
   }
 </ui-grid>

@@ -11,9 +11,7 @@ import {
   type TruckDto,
   type UpdateAccidentReportCommand,
 } from "@logistics/shared/api";
-import { UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Card, Spinner, UiButton } from "@logistics/shared/ui";
 import { StepperModule } from "primeng/stepper";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
@@ -33,9 +31,9 @@ import {
     AccidentIncidentForm,
     AccidentInjuriesDamageForm,
     AccidentReviewSummary,
-    CardModule,
+    Card,
     PageHeader,
-    ProgressSpinnerModule,
+    Spinner,
     StepperModule,
     UiButton,
   ],

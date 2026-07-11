@@ -19,9 +19,8 @@ import {
   type AiDispatchDecisionDto,
   type AiDispatchSessionDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
+import { Badge, Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
 import { AiDispatchHubService, TenantService, ToastService } from "@/core/services";
 import { DateUtils, Labels } from "@/shared/utils";
@@ -43,6 +42,7 @@ import { MarkdownPipe } from "../utils/markdown";
   styleUrl: "./session-detail.css",
   imports: [
     ApproveRejectActions,
+    Badge,
     ConfirmDialogModule,
     DatePipe,
     Grid,
@@ -52,7 +52,6 @@ import { MarkdownPipe } from "../utils/markdown";
     PageHeader,
     Stack,
     Surface,
-    TagModule,
     TimelineModule,
     ToolOutputSummary,
     Typography,

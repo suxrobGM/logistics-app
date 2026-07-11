@@ -1,35 +1,35 @@
 import { Component, input } from "@angular/core";
 import type { TruckType } from "@logistics/shared/api";
-import { Tag } from "primeng/tag";
+import { Badge, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 
 interface TypeInfo {
   label: string;
-  severity: Tag["severity"];
-  icon?: string;
+  severity: UiBadgeIntent;
+  icon?: IconName;
 }
 
 const TYPE_INFO: Record<TruckType, TypeInfo> = {
-  flatbed: { label: "Flatbed", severity: "secondary", icon: "pi pi-minus" },
-  freight_truck: { label: "Freight", severity: "info", icon: "pi pi-truck" },
-  reefer: { label: "Reefer", severity: "info", icon: "pi pi-snowflake" },
-  tanker: { label: "Tanker", severity: "contrast", icon: "pi pi-circle" },
-  box_truck: { label: "Box Truck", severity: "info", icon: "pi pi-box" },
-  dump_truck: { label: "Dump Truck", severity: "warn", icon: "pi pi-sort-up" },
-  tow_truck: { label: "Tow Truck", severity: "secondary", icon: "pi pi-link" },
-  car_hauler: { label: "Car Hauler", severity: "success", icon: "pi pi-car" },
-  container_truck: { label: "Container Truck", severity: "info", icon: "pi pi-warehouse" },
-  tautliner: { label: "Tautliner", severity: "secondary", icon: "pi pi-truck" },
-  low_loader: { label: "Low Loader", severity: "warn", icon: "pi pi-sort-down" },
-  car_transporter: { label: "Car Transporter", severity: "success", icon: "pi pi-car" },
-  swap_body: { label: "Swap Body", severity: "info", icon: "pi pi-sync" },
-  curtainsider: { label: "Curtainsider", severity: "info", icon: "pi pi-truck" },
+  flatbed: { label: "Flatbed", severity: "secondary", icon: "minus" },
+  freight_truck: { label: "Freight", severity: "info", icon: "truck" },
+  reefer: { label: "Reefer", severity: "info", icon: "snowflake" },
+  tanker: { label: "Tanker", severity: "contrast", icon: "circle" },
+  box_truck: { label: "Box Truck", severity: "info", icon: "box" },
+  dump_truck: { label: "Dump Truck", severity: "warn", icon: "sort-up" },
+  tow_truck: { label: "Tow Truck", severity: "secondary", icon: "link" },
+  car_hauler: { label: "Car Hauler", severity: "success", icon: "car" },
+  container_truck: { label: "Container Truck", severity: "info", icon: "warehouse" },
+  tautliner: { label: "Tautliner", severity: "secondary", icon: "truck" },
+  low_loader: { label: "Low Loader", severity: "warn", icon: "sort-down" },
+  car_transporter: { label: "Car Transporter", severity: "success", icon: "car" },
+  swap_body: { label: "Swap Body", severity: "info", icon: "sync" },
+  curtainsider: { label: "Curtainsider", severity: "info", icon: "truck" },
 };
 
 @Component({
   selector: "app-truck-type-tag",
   templateUrl: "./truck-type-tag.html",
-  imports: [Tag, TooltipModule],
+  imports: [Badge, TooltipModule],
 })
 export class TruckTypeTag {
   public readonly type = input.required<TruckType>();

@@ -1,8 +1,12 @@
 import { Component, computed, input } from "@angular/core";
-import { Badge, type BadgeSeverity } from "../badge/badge";
+import type { IconName } from "../../icons/icon-registry.generated";
+import { Badge } from "../badge/badge";
+import type { UiBadgeIntent } from "../badge/badge-intent";
 import { resolveStatusSeverity, type StatusKind } from "./severity-maps";
 
-const SEVERITY_DEFAULT_ICON: Partial<Record<BadgeSeverity, string>> = {
+/** Typed against `IconName` now that `ui-badge` renders a real `<ui-icon>` — an unknown key here is
+ *  a compile error rather than a chip with a blank square where its glyph should be. */
+const SEVERITY_DEFAULT_ICON: Partial<Record<UiBadgeIntent, IconName>> = {
   success: "check-circle",
   danger: "times-circle",
   warn: "exclamation-triangle",
@@ -26,14 +30,23 @@ const SEVERITY_DEFAULT_ICON: Partial<Record<BadgeSeverity, string>> = {
 export class StatusBadge {
   public readonly status = input.required<string | null | undefined>();
   public readonly kind = input.required<StatusKind>();
-  public readonly icon = input<string | null>(null);
+
+  /**
+   * `IconName`, not `string` — `ui-badge` now renders a real `<ui-icon>`, whose name is a checked
+   * union. `""` stays in the union on purpose: it is this component's documented "no icon at all"
+   * escape hatch (see the class doc), and dropping it to tidy the type would silently delete a
+   * public behaviour. It has no callers today, which is exactly why nothing would have caught it.
+   */
+  public readonly icon = input<IconName | "" | null>(null);
 
   protected readonly severity = computed(() => resolveStatusSeverity(this.kind(), this.status()));
 
   protected readonly displayValue = computed(() => this.status() ?? "");
 
-  protected readonly resolvedIcon = computed(() => {
+  protected readonly resolvedIcon = computed((): IconName | null => {
     const explicit = this.icon();
+    // `""` suppresses; `null` (the default) falls through to the severity's icon.
+    if (explicit === "") return null;
     if (explicit !== null) return explicit;
     return SEVERITY_DEFAULT_ICON[this.severity()] ?? null;
   });

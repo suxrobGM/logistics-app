@@ -2,8 +2,7 @@ import { Component, computed, input, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { TruckStatus, TruckType } from "@logistics/shared/api";
 import { truckStatusOptions, truckTypeOptions } from "@logistics/shared/api/enums";
-import { Stack, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import { Card, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { MultiSelectModule } from "primeng/multiselect";
 import { SearchField, UiFormField } from "@/shared/components";
 
@@ -16,7 +15,7 @@ export interface TrucksFilterState {
   selector: "app-trucks-filter-panel",
   templateUrl: "./trucks-filter-panel.html",
   imports: [
-    CardModule,
+    Card,
     FormsModule,
     MultiSelectModule,
     SearchField,

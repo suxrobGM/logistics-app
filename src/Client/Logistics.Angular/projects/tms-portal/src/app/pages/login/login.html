@@ -2,7 +2,7 @@
   <div class="animate-fadein w-full max-w-md">
     @if (isLoading()) {
       <div class="login-card text-center">
-        <p-progress-spinner strokeWidth="4" />
+        <ui-spinner />
         <p class="loading-state-text">Authenticating...</p>
       </div>
     } @else if (!isAuthenticated()) {

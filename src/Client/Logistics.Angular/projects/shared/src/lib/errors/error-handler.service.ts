@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { ToastService } from "../services/toast.service";
 import type { AppError, ErrorCategory } from "./error.types";
-import { UPGRADE_HANDLER, isUpgradeError } from "./upgrade-handler";
+import { isUpgradeError, UPGRADE_HANDLER } from "./upgrade-handler";
 
 /**
  * Service for categorizing and handling application errors consistently.

@@ -3,13 +3,13 @@
 
   @if (isLoading()) {
     <ui-stack align="center" justify="center" class="py-8">
-      <p-progress-spinner />
+      <ui-spinner />
     </ui-stack>
   } @else if (invoice()) {
     <ui-grid container spacing="4">
       <!-- Invoice Header -->
       <ui-grid [size]="{ xs: 12, lg: 8 }">
-        <p-card>
+        <ui-card>
           <ui-stack direction="row" align="start" justify="between" class="mb-4">
             <div>
               <ui-typography variant="h4" tag="h2" class="mb-1">Payroll Invoice</ui-typography>
@@ -26,7 +26,7 @@
             </div>
           </ui-stack>
 
-          <p-divider />
+          <ui-divider />
 
           <!-- Employee Info -->
           <ui-grid container spacing="4" class="mb-4">
@@ -59,7 +59,7 @@
 
           <!-- Earnings Breakdown -->
           @if (invoice()!.lineItems && invoice()!.lineItems!.length > 0) {
-            <p-divider />
+            <ui-divider />
             <h4>Earnings Breakdown</h4>
             <ui-data-table [value]="invoice()!.lineItems!">
               <ng-template #header>
@@ -75,7 +75,7 @@
                   <td>
                     <span>{{ item.description }}</span>
                     @if (item.type) {
-                      <p-tag [value]="item.type" severity="secondary" styleClass="ml-2 text-xs" />
+                      <ui-badge class="ml-2" size="sm" [value]="item.type" severity="secondary" />
                     }
                   </td>
                   <td class="text-right">{{ item.quantity ?? 1 }}</td>
@@ -86,7 +86,7 @@
             </ui-data-table>
           }
 
-          <p-divider />
+          <ui-divider />
 
           <!-- Totals -->
           <div class="flex justify-end">
@@ -120,7 +120,7 @@
             invoice()!.status === "paid" ||
             invoice()!.status === "partially_paid"
           ) {
-            <p-divider />
+            <ui-divider />
             <div class="rounded bg-green-50 p-3">
               <p class="font-semibold text-green-700">
                 <ui-icon name="check-circle" class="mr-2" />
@@ -130,7 +130,7 @@
           }
 
           @if (invoice()!.status === "rejected") {
-            <p-divider />
+            <ui-divider />
             <div class="rounded bg-red-50 p-3">
               <p class="font-semibold text-red-700">
                 <ui-icon name="times-circle" class="mr-2" />
@@ -138,12 +138,12 @@
               </p>
             </div>
           }
-        </p-card>
+        </ui-card>
       </ui-grid>
 
       <!-- Actions Sidebar -->
       <ui-grid [size]="{ xs: 12, lg: 4 }">
-        <p-card header="Actions">
+        <ui-card header="Actions">
           <ui-stack gap="2">
             @if (canSubmitForApproval()) {
               <ui-button
@@ -215,11 +215,11 @@
               <ui-button appearance="outlined" block icon="arrow-left" label="Back to List" />
             </a>
           </ui-stack>
-        </p-card>
+        </ui-card>
 
         <!-- Payment History -->
         @if (invoice()!.payments && invoice()!.payments!.length > 0) {
-          <p-card header="Payment History" styleClass="mt-4">
+          <ui-card header="Payment History" class="mt-4">
             <ui-stack gap="3">
               @for (payment of invoice()!.payments; track payment.id) {
                 <ui-stack
@@ -240,7 +240,7 @@
                 </ui-stack>
               }
             </ui-stack>
-          </p-card>
+          </ui-card>
         }
       </ui-grid>
     </ui-grid>
@@ -279,11 +279,11 @@
       </ng-template>
     </p-dialog>
   } @else {
-    <p-card>
+    <ui-card>
       <ui-stack align="center" gap="4" class="text-muted-foreground py-8">
         <ui-icon name="exclamation-circle" size="xl" />
         <p>Payroll invoice not found</p>
       </ui-stack>
-    </p-card>
+    </ui-card>
   }
 </div>

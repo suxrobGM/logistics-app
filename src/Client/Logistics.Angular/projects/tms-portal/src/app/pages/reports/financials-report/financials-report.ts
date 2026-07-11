@@ -7,10 +7,17 @@ import {
   type RevenueTrendDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
+import {
+  Badge,
+  Grid,
+  Icon,
+  Skeleton,
+  Stack,
+  Typography,
+  UiDataTable,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { ChartModule } from "primeng/chart";
-import { SkeletonModule } from "primeng/skeleton";
-import { Tag, TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -32,20 +39,20 @@ import {
   selector: "app-financials-report",
   templateUrl: "./financials-report.html",
   imports: [
-    UiDataTable,
+    Badge,
     ChartModule,
-    DateRangePicker,
     CurrencyFormatPipe,
-    DecimalPipe,
-    SkeletonModule,
-    TagModule,
-    PageHeader,
-    StatCard,
     DashboardCard,
+    DateRangePicker,
+    DecimalPipe,
     Grid,
     Icon,
+    PageHeader,
+    Skeleton,
     Stack,
+    StatCard,
     Typography,
+    UiDataTable,
   ],
 })
 export class FinancialsReportComponent
@@ -150,11 +157,11 @@ export class FinancialsReportComponent
     }
   }
 
-  protected getMetricSeverity(trend?: number | null): Tag["severity"] {
+  protected getMetricSeverity(trend?: number | null): UiBadgeIntent {
     return (trend ?? 0) >= 0 ? "success" : "danger";
   }
 
-  protected getCategorySeverity(category?: string | null): Tag["severity"] {
+  protected getCategorySeverity(category?: string | null): UiBadgeIntent {
     switch (category?.toLowerCase()) {
       case "revenue":
         return "success";

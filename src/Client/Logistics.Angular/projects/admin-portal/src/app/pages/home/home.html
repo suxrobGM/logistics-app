@@ -4,12 +4,12 @@
   @if (isLoading()) {
     @for (_ of [1, 2, 3, 4]; track $index) {
       <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-        <p-skeleton height="8rem" />
+        <ui-skeleton height="8rem" />
       </ui-grid>
     }
   } @else {
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-      <p-card>
+      <ui-card>
         <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
             <ui-icon name="building" size="lg" class="text-blue-600" />
@@ -27,11 +27,11 @@
             routerLink="/tenants"
           />
         </div>
-      </p-card>
+      </ui-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-      <p-card>
+      <ui-card>
         <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <ui-icon name="credit-card" size="lg" class="text-green-600" />
@@ -49,11 +49,11 @@
             routerLink="/subscriptions"
           />
         </div>
-      </p-card>
+      </ui-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-      <p-card>
+      <ui-card>
         <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
             <ui-icon name="box" size="lg" class="text-purple-600" />
@@ -71,11 +71,11 @@
             routerLink="/subscription-plans"
           />
         </div>
-      </p-card>
+      </ui-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-      <p-card>
+      <ui-card>
         <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
             <ui-icon name="users" size="lg" class="text-orange-600" />
@@ -88,17 +88,17 @@
         <div class="mt-4">
           <ui-button appearance="link" label="View All" iconEnd="arrow-right" routerLink="/users" />
         </div>
-      </p-card>
+      </ui-card>
     </ui-grid>
   }
 </ui-grid>
 
 <ui-grid container spacing="4" class="mt-8">
   <ui-grid [size]="{ xs: 12, lg: 6 }">
-    <p-card>
+    <ui-card>
       <ng-template #header>
         <ui-typography variant="h6" tag="h4" class="py-2 pl-4">Quick Actions</ui-typography>
-        <p-divider class="m-0" />
+        <ui-divider class="m-0" />
       </ng-template>
       <ui-stack direction="row" gap="3" wrap>
         <ui-button label="Add Tenant" icon="plus" routerLink="/tenants/add" />
@@ -115,6 +115,6 @@
           routerLink="/subscriptions/add"
         />
       </ui-stack>
-    </p-card>
+    </ui-card>
   </ui-grid>
 </ui-grid>

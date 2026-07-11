@@ -15,18 +15,18 @@ import {
   type EmployeeDto,
 } from "@logistics/shared/api";
 import {
+  Badge,
   DashboardCard,
   EmptyState,
   ErrorState,
   Grid,
   Icon,
+  Spinner,
   Stack,
   UiButton,
   UiDataTable,
 } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField } from "@/shared/components";
@@ -36,6 +36,7 @@ import { getEldProviderLabel } from "../_components";
   selector: "app-eld-driver-mappings",
   templateUrl: "./eld-driver-mappings.html",
   imports: [
+    Badge,
     DashboardCard,
     DatePipe,
     EmptyState,
@@ -44,10 +45,9 @@ import { getEldProviderLabel } from "../_components";
     Grid,
     Icon,
     PageHeader,
-    ProgressSpinnerModule,
     SelectModule,
+    Spinner,
     Stack,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,

@@ -14,10 +14,17 @@ import {
   DateFormatPipe,
   DistanceUnitPipe,
 } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import {
+  Card,
+  Divider,
+  Grid,
+  Icon,
+  Spinner,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { TabsModule } from "primeng/tabs";
 import { DocumentManager, PageHeader } from "@/shared/components";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components/tags";
@@ -35,12 +42,12 @@ import {
   templateUrl: "./load-detail.html",
   imports: [
     AddressPipe,
-    CardModule,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DateFormatPipe,
     DistanceUnitPipe,
-    DividerModule,
+    Divider,
     DocumentManager,
     Grid,
     Icon,
@@ -50,10 +57,10 @@ import {
     LoadStatusTag,
     LoadTypeTag,
     PageHeader,
-    ProgressSpinnerModule,
     ReportExceptionDialog,
     ResolveExceptionDialog,
     RouterModule,
+    Spinner,
     Stack,
     Surface,
     TabsModule,

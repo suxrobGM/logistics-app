@@ -1,12 +1,11 @@
 import { Component, inject, input, output, signal } from "@angular/core";
 import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
-import { Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
+import { Avatar, Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import {
   AutoCompleteModule,
   type AutoCompleteCompleteEvent,
   type AutoCompleteSelectEvent,
 } from "primeng/autocomplete";
-import { AvatarModule } from "primeng/avatar";
 import { TooltipModule } from "primeng/tooltip";
 import { UserAvatar } from "@/shared/components";
 import { Converters } from "@/shared/utils";
@@ -16,7 +15,7 @@ import { Converters } from "@/shared/utils";
   templateUrl: "./recipient-selector.html",
   imports: [
     AutoCompleteModule,
-    AvatarModule,
+    Avatar,
     Icon,
     Stack,
     TooltipModule,

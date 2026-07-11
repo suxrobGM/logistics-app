@@ -1,23 +1,19 @@
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { CurrencyFormatPipe } from "@logistics/shared";
-import { Icon, Stack, Typography } from "@logistics/shared/ui";
-import { BadgeModule } from "primeng/badge";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { SkeletonModule } from "primeng/skeleton";
+import { Card, CountBadge, Divider, Icon, Skeleton, Stack, Typography } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-financial-health-widget",
   templateUrl: "./financial-health-widget.html",
   imports: [
-    CardModule,
-    BadgeModule,
-    DividerModule,
-    RouterLink,
-    SkeletonModule,
+    Card,
+    CountBadge,
     CurrencyFormatPipe,
+    Divider,
     Icon,
+    RouterLink,
+    Skeleton,
     Stack,
     Typography,
   ],

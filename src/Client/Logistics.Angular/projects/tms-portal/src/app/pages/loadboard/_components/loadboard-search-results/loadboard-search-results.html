@@ -20,7 +20,7 @@
   <ng-template #body let-listing>
     <tr>
       <td>
-        <p-tag
+        <ui-badge
           [value]="listing.providerName"
           [severity]="getProviderSeverity(listing.providerType)"
         />

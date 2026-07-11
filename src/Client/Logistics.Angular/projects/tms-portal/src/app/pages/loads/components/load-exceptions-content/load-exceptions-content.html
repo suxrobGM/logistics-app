@@ -1,11 +1,11 @@
-<p-card class="border-default border">
+<ui-card class="border-default border">
   <ng-template #header>
     <div class="flex items-center justify-between p-4 pb-0">
       <div class="flex items-center gap-2">
         <ui-icon name="exclamation-triangle" class="text-warning" />
         <h3 class="m-0 text-lg font-semibold">Load Exceptions</h3>
         @if (unresolvedCount() > 0) {
-          <p-badge [value]="unresolvedCount().toString()" severity="danger" />
+          <ui-count-badge [value]="unresolvedCount().toString()" severity="danger" />
         }
       </div>
       <div class="flex gap-2">
@@ -30,7 +30,7 @@
 
   @if (isLoading()) {
     <div class="flex justify-center py-8">
-      <p-progress-spinner />
+      <ui-spinner />
     </div>
   } @else {
     <ui-data-table [value]="exceptions()" [dataKey]="'id'">
@@ -118,4 +118,4 @@
       </ng-template>
     </ui-data-table>
   }
-</p-card>
+</ui-card>

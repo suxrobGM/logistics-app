@@ -6,27 +6,15 @@ import {
   revokePaymentLink,
   type PaymentLinkDto,
 } from "@logistics/shared/api";
-import { Icon, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
+import { Badge, Icon, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 
 @Component({
   selector: "app-payment-link-dialog",
   templateUrl: "./payment-link-dialog.html",
-  imports: [
-    DatePipe,
-    DialogModule,
-    Icon,
-    ProgressSpinnerModule,
-    Stack,
-    TagModule,
-    TooltipModule,
-    UiButton,
-    UiDataTable,
-  ],
+  imports: [Badge, DatePipe, DialogModule, Icon, Stack, TooltipModule, UiButton, UiDataTable],
 })
 export class PaymentLinkDialog {
   private readonly api = inject(Api);

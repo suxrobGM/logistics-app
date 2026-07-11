@@ -12,12 +12,9 @@ import {
 import { Api, getDailyGrosses, type DailyGrossesDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
-import { Icon } from "@logistics/shared/ui";
+import { Card, Divider, Icon, Skeleton } from "@logistics/shared/ui";
 import { hexToRgba } from "@logistics/shared/utils";
-import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
-import { DividerModule } from "primeng/divider";
-import { SkeletonModule } from "primeng/skeleton";
 import { ThemeService } from "@/core/services";
 import { DateRangePicker } from "@/shared/components";
 import { getChartPalette } from "@/shared/constants/chart-palette";
@@ -27,14 +24,14 @@ import { Converters, DateUtils } from "@/shared/utils";
   selector: "app-truck-gross-linechart",
   templateUrl: "./truck-gross-linechart.html",
   imports: [
-    CardModule,
+    Card,
     ChartModule,
     CurrencyFormatPipe,
     DateRangePicker,
     DecimalPipe,
-    DividerModule,
+    Divider,
     Icon,
-    SkeletonModule,
+    Skeleton,
   ],
 })
 export class TruckGrossLinechart implements OnInit {

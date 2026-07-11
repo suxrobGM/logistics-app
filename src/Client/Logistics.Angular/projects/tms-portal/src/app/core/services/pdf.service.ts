@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { downloadBlobFile } from "@logistics/shared";
 import { Api, downloadLoadInvoicePdf, downloadPayrollPayStubPdf } from "@logistics/shared/api";
 

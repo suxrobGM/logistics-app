@@ -5,6 +5,7 @@ import { Permission } from "@logistics/shared";
 import type { ContainerDto, ContainerIsoType, ContainerStatus } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
 import {
+  Card,
   Icon,
   Stack,
   StatusBadge,
@@ -12,7 +13,6 @@ import {
   UiDataTable,
   UiSortHeader,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
 import { SelectModule } from "primeng/select";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
@@ -23,7 +23,7 @@ import { ContainersListStore } from "../store";
   templateUrl: "./containers-list.html",
   providers: [ContainersListStore],
   imports: [
-    CardModule,
+    Card,
     DataContainer,
     DatePipe,
     Icon,

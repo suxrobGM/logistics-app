@@ -1,4 +1,5 @@
 import type { LoadBoardProviderType } from "@logistics/shared/api";
+import type { UiBadgeIntent } from "@logistics/shared/ui";
 
 export interface EquipmentOption {
   label: string;
@@ -49,9 +50,7 @@ export function getProviderLabel(type?: LoadBoardProviderType | string): string 
   return PROVIDER_OPTIONS.find((o) => o.value === type)?.label ?? type;
 }
 
-export function getProviderSeverity(
-  type?: LoadBoardProviderType | string,
-): "info" | "success" | "warn" | "secondary" {
+export function getProviderSeverity(type?: LoadBoardProviderType | string): UiBadgeIntent {
   switch (type) {
     case "dat":
       return "info";
@@ -64,9 +63,7 @@ export function getProviderSeverity(
   }
 }
 
-export function getPostedTruckStatusSeverity(
-  status?: string,
-): "success" | "warn" | "danger" | "secondary" {
+export function getPostedTruckStatusSeverity(status?: string): UiBadgeIntent {
   switch (status) {
     case "available":
       return "success";

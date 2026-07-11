@@ -26,23 +26,23 @@
 
 @if (isLoading()) {
   <ui-stack align="center" justify="center" class="py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </ui-stack>
 } @else if (report()) {
   <ui-stack gap="4" class="mx-auto max-w-4xl">
     <!-- Inspection Details -->
-    <p-card header="Inspection Details" class="w-full">
+    <ui-card header="Inspection Details" class="w-full">
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted-foreground mb-1 text-sm">Status</div>
-          <p-tag
+          <ui-badge
             [value]="getStatusLabel(report()!.status)"
             [severity]="getStatusSeverity(report()!.status)"
           />
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted-foreground mb-1 text-sm">Type</div>
-          <p-tag
+          <ui-badge
             [value]="getTypeLabel(report()!.type)"
             [severity]="getTypeSeverity(report()!.type)"
           />
@@ -96,11 +96,11 @@
           </ui-stack>
         }
       </ui-stack>
-    </p-card>
+    </ui-card>
 
     <!-- Mechanic Review - below Inspection Details -->
     @if (report()!.reviewedAt) {
-      <p-card header="Mechanic Review" class="w-full">
+      <ui-card header="Mechanic Review" class="w-full">
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 6, md: 3 }">
             <div class="text-muted-foreground mb-1 text-sm">Reviewed By</div>
@@ -136,19 +136,19 @@
             <p>{{ report()!.mechanicNotes }}</p>
           </div>
         }
-      </p-card>
+      </ui-card>
     }
 
     <!-- Defects -->
     @if (report()!.defects && report()!.defects!.length > 0) {
-      <p-card header="Defects" class="w-full">
+      <ui-card header="Defects" class="w-full">
         <app-dvir-defects-list [defects]="report()!.defects!" />
-      </p-card>
+      </ui-card>
     }
 
     <!-- Photos -->
     @if (report()!.photos && report()!.photos!.length > 0) {
-      <p-card header="Photos" class="w-full">
+      <ui-card header="Photos" class="w-full">
         <ui-grid container spacing="2">
           @for (photo of report()!.photos; track photo.id) {
             <ui-grid [size]="{ xs: 6, sm: 4, md: 3 }">
@@ -162,7 +162,7 @@
             </ui-grid>
           }
         </ui-grid>
-      </p-card>
+      </ui-card>
     }
   </ui-stack>
 }

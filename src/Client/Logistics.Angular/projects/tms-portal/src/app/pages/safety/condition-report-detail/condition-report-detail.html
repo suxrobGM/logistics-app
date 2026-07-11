@@ -1,7 +1,7 @@
 <ui-page-header title="Condition Report Details" backLink="/inspections/condition-reports">
   @if (report()) {
     <ui-stack direction="row" align="center" gap="3">
-      <p-tag
+      <ui-badge
         [value]="getTypeLabel(report()!.type ?? '')"
         [severity]="getTypeSeverity(report()!.type ?? '')"
       />
@@ -13,7 +13,7 @@
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </div>
 } @else if (report()) {
   <ui-grid container spacing="6">
@@ -22,7 +22,7 @@
       <ui-stack gap="6">
         <!-- Vehicle Information (only for Vehicle loads) -->
         @if (isVehicleLoad()) {
-          <p-card>
+          <ui-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
                 <ui-icon name="car" color="primary" />
@@ -52,12 +52,12 @@
                 </ui-grid>
               }
             </ui-grid>
-          </p-card>
+          </ui-card>
         }
 
         <!-- Container Information (only for container loads) -->
         @if (isContainerLoad()) {
-          <p-card>
+          <ui-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
                 <ui-icon name="package" color="primary" />
@@ -79,11 +79,11 @@
                 <p class="font-mono text-sm">{{ report()!.sealNumber || "N/A" }}</p>
               </ui-grid>
             </ui-grid>
-          </p-card>
+          </ui-card>
         }
 
         <!-- Defects -->
-        <p-card>
+        <ui-card>
           <ng-template #header>
             <ui-stack direction="row" align="center" justify="between" class="p-4 pb-0">
               <ui-stack direction="row" align="center" gap="2">
@@ -91,18 +91,18 @@
                 <ui-typography variant="h5" tag="h3">Damage / Defects</ui-typography>
               </ui-stack>
               @if ((report()!.defects ?? []).length > 0) {
-                <p-tag
+                <ui-badge
                   [value]="(report()!.defects ?? []).length + ' defect(s)'"
                   severity="danger"
                 />
               } @else {
-                <p-tag value="No defects" severity="success" />
+                <ui-badge value="No defects" severity="success" />
               }
             </ui-stack>
           </ng-template>
 
           <app-condition-defects-list [defects]="report()!.defects ?? []" />
-        </p-card>
+        </ui-card>
       </ui-stack>
     </ui-grid>
 
@@ -110,7 +110,7 @@
     <ui-grid [size]="{ xs: 12, lg: 6 }">
       <ui-stack gap="6">
         <!-- Inspection Information -->
-        <p-card>
+        <ui-card>
           <ng-template #header>
             <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
               <ui-icon name="clipboard" color="primary" />
@@ -124,7 +124,7 @@
                 <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
                   Inspection Type
                 </ui-typography>
-                <p-tag
+                <ui-badge
                   [value]="getTypeLabel(report()!.type ?? '')"
                   [severity]="getTypeSeverity(report()!.type ?? '')"
                 />
@@ -146,7 +146,7 @@
               </ui-grid>
             </ui-grid>
 
-            <p-divider />
+            <ui-divider />
 
             <ui-grid container spacing="4">
               <ui-grid [size]="{ xs: 6 }">
@@ -201,11 +201,11 @@
               </a>
             </div>
           </ui-stack>
-        </p-card>
+        </ui-card>
 
         <!-- Notes -->
         @if (report()!.notes) {
-          <p-card>
+          <ui-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
                 <ui-icon name="file-edit" color="primary" />
@@ -214,19 +214,19 @@
             </ng-template>
 
             <p class="text-subtle-foreground text-sm whitespace-pre-wrap">{{ report()!.notes }}</p>
-          </p-card>
+          </ui-card>
         }
 
         <!-- Photos -->
         @if (report()!.photos && (report()!.photos ?? []).length > 0) {
-          <p-card>
+          <ui-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" justify="between" class="p-4 pb-0">
                 <ui-stack direction="row" align="center" gap="2">
                   <ui-icon name="images" color="primary" />
                   <ui-typography variant="h5" tag="h3">Photos</ui-typography>
                 </ui-stack>
-                <p-tag [value]="(report()!.photos ?? []).length + ' photo(s)'" severity="info" />
+                <ui-badge [value]="(report()!.photos ?? []).length + ' photo(s)'" severity="info" />
               </ui-stack>
             </ng-template>
 
@@ -252,7 +252,7 @@
                 </div>
               }
             </div>
-          </p-card>
+          </ui-card>
         }
       </ui-stack>
     </ui-grid>

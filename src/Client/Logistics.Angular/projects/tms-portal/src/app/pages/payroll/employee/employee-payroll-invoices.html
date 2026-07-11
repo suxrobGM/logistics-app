@@ -6,14 +6,14 @@
 
 @if (isLoadingEmployee() || !employee()) {
   <ui-stack direction="row" align="center">
-    <p-progress-spinner />
+    <ui-spinner />
     <div class="ml-2">Loading employee data</div>
   </ui-stack>
 } @else {
-  <p-card class="mb-4">
+  <ui-card class="mb-4">
     <ng-template #header>
       <h4 class="py-2 pl-4">Payroll details</h4>
-      <p-divider />
+      <ui-divider />
     </ng-template>
 
     <ui-grid container spacing="4">
@@ -56,10 +56,10 @@
         </ui-grid>
       </ui-grid>
     </ui-grid>
-  </p-card>
+  </ui-card>
 }
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -129,4 +129,4 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>

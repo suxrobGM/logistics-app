@@ -1,12 +1,12 @@
 import { Component, input } from "@angular/core";
 import type { LoadExceptionType } from "@logistics/shared/api";
 import { loadExceptionTypeOptions } from "@logistics/shared/api/enums";
-import { Tag, TagModule } from "primeng/tag";
+import { Badge, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-exception-type-tag",
   templateUrl: "./exception-type-tag.html",
-  imports: [TagModule],
+  imports: [Badge],
 })
 export class ExceptionTypeTag {
   public readonly type = input.required<LoadExceptionType>();
@@ -15,7 +15,7 @@ export class ExceptionTypeTag {
     return loadExceptionTypeOptions.find((option) => option.value === this.type())?.label ?? "";
   }
 
-  getExceptionTypeSeverity(): Tag["severity"] {
+  getExceptionTypeSeverity(): UiBadgeIntent {
     switch (this.type()) {
       case "accident":
         return "danger";
@@ -34,23 +34,23 @@ export class ExceptionTypeTag {
     }
   }
 
-  getExceptionTypeIcon(): string {
+  getExceptionTypeIcon(): IconName {
     switch (this.type()) {
       case "accident":
-        return "pi pi-exclamation-triangle";
+        return "exclamation-triangle";
       case "delay":
-        return "pi pi-clock";
+        return "clock";
       case "weather_delay":
-        return "pi pi-cloud";
+        return "cloud";
       case "mechanical_failure":
-        return "pi pi-wrench";
+        return "wrench";
       case "route_change":
-        return "pi pi-directions";
+        return "directions";
       case "customer_request":
-        return "pi pi-user";
+        return "user";
       case "other":
       default:
-        return "pi pi-info-circle";
+        return "info-circle";
     }
   }
 }

@@ -9,14 +9,14 @@
               {{ subscription()!.plan?.name }} Plan
             </ui-typography>
             @if (subscription()!.plan?.tier) {
-              <p-tag
+              <ui-badge
                 [severity]="Labels.planTierSeverity(subscription()!.plan!.tier!)"
                 [value]="Labels.planTierLabel(subscription()!.plan!.tier!)"
               />
             }
-            <p-tag [severity]="getSubStatusSeverity()">{{ getSubStatusLabel() }}</p-tag>
+            <ui-badge [severity]="getSubStatusSeverity()">{{ getSubStatusLabel() }}</ui-badge>
             @if (subscription()!.cancelAtPeriodEnd) {
-              <p-tag severity="warn">Cancels at period end</p-tag>
+              <ui-badge severity="warn">Cancels at period end</ui-badge>
             }
           </ui-stack>
           <ui-typography variant="body-sm" color="muted" class="mt-1 mb-0">
@@ -35,7 +35,7 @@
     <ui-grid container spacing="6">
       <!-- Pricing Breakdown -->
       <ui-grid [size]="{ xs: 12, md: 8 }">
-        <p-card>
+        <ui-card>
           <ng-template #header>
             <div class="p-4 pb-0">
               <ui-typography variant="h3" tag="h3" weight="semibold" class="m-0">
@@ -68,12 +68,12 @@
               </ui-stack>
             </div>
           </ui-stack>
-        </p-card>
+        </ui-card>
       </ui-grid>
 
       <!-- Quick Actions -->
       <ui-grid [size]="{ xs: 12, md: 4 }">
-        <p-card>
+        <ui-card>
           <ng-template #header>
             <div class="p-4 pb-0">
               <ui-typography variant="h3" tag="h3" weight="semibold" class="m-0">
@@ -120,13 +120,13 @@
               />
             }
           </ui-stack>
-        </p-card>
+        </ui-card>
       </ui-grid>
     </ui-grid>
   </div>
 } @else {
   <ui-stack align="center" gap="4" class="py-8">
-    <p-card class="w-full max-w-lg text-center">
+    <ui-card class="w-full max-w-lg text-center">
       <ui-stack align="center" gap="4">
         <ui-icon name="credit-card" size="xl" color="muted" />
         <ui-typography variant="h2" tag="h2" class="m-0">No Active Subscription</ui-typography>
@@ -136,6 +136,6 @@
         </ui-typography>
         <ui-button [routerLink]="'/subscription/plans'" label="View Plans" icon="shopping-cart" />
       </ui-stack>
-    </p-card>
+    </ui-card>
   </ui-stack>
 }

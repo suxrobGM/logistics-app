@@ -5,8 +5,10 @@ import {
   getDocuments,
   getEmployeeById,
   getLoads,
+  type DocumentDto,
+  type EmployeeDto,
+  type LoadDto,
 } from "@logistics/shared/api";
-import type { DocumentDto, EmployeeDto, LoadDto } from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 
 interface EmployeeDetailsState {

@@ -1,11 +1,11 @@
 <ui-page-header title="Add Subscription" />
 
 <div class="flex flex-col justify-center gap-6 md:flex-row">
-  <p-card class="w-full lg:w-2/3">
+  <ui-card class="w-full lg:w-2/3">
     @if (isFetching()) {
       <ui-stack gap="4">
-        <p-skeleton height="3rem" />
-        <p-skeleton height="3rem" />
+        <ui-skeleton height="3rem" />
+        <ui-skeleton height="3rem" />
       </ui-stack>
     } @else {
       <form [formRoot]="form">
@@ -72,5 +72,5 @@
         </ui-stack>
       </form>
     }
-  </p-card>
+  </ui-card>
 </div>

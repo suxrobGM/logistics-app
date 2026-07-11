@@ -2,10 +2,7 @@ import { Component, computed, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
-import { Icon, type IconName } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { SkeletonModule } from "primeng/skeleton";
+import { Card, Divider, Icon, Skeleton, type IconName } from "@logistics/shared/ui";
 
 interface ActivityItem {
   loadId: string;
@@ -19,7 +16,7 @@ interface ActivityItem {
 @Component({
   selector: "app-recent-activity",
   templateUrl: "./recent-activity.html",
-  imports: [CardModule, DividerModule, Icon, RelativeTimePipe, RouterLink, SkeletonModule],
+  imports: [Card, Divider, Icon, RelativeTimePipe, RouterLink, Skeleton],
 })
 export class RecentActivityComponent {
   readonly loads = input<LoadDto[]>([]);

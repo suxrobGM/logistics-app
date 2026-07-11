@@ -3,6 +3,7 @@ import { Component, computed, inject, input, output } from "@angular/core";
 import type { TripStopDto, TripStopType } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
+  Card,
   Grid,
   Icon,
   Stack,
@@ -12,7 +13,6 @@ import {
   UiSortHeader,
   UiTableRowDirectives,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
 import {
   DirectionMap,
   type RouteSegmentClickEvent,
@@ -27,7 +27,7 @@ import { TripWizardStore } from "../../store/trip-wizard-store";
   templateUrl: "./trip-wizard-review.html",
   imports: [
     AddressPipe,
-    CardModule,
+    Card,
     CurrencyFormatPipe,
     DatePipe,
     DirectionMap,

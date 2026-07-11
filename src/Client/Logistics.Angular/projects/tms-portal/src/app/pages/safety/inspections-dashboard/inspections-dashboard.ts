@@ -14,26 +14,21 @@ import {
   type DvirReportDto,
   type DvirStatus,
 } from "@logistics/shared/api";
-import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TagModule } from "primeng/tag";
+import {
+  Badge,
+  Card,
+  Icon,
+  Spinner,
+  UiButton,
+  UiDataTable,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { PageHeader } from "@/shared/components";
-import type { TagSeverity } from "@/shared/types";
 
 @Component({
   selector: "app-inspections-dashboard",
   templateUrl: "./inspections-dashboard.html",
-  imports: [
-    CardModule,
-    DatePipe,
-    Icon,
-    PageHeader,
-    ProgressSpinnerModule,
-    TagModule,
-    UiButton,
-    UiDataTable,
-  ],
+  imports: [Badge, Card, DatePipe, Icon, PageHeader, Spinner, UiButton, UiDataTable],
 })
 export class InspectionsDashboardPage implements OnInit {
   private readonly router = inject(Router);
@@ -81,7 +76,7 @@ export class InspectionsDashboardPage implements OnInit {
     }
   }
 
-  protected getDvirStatusSeverity(status: DvirStatus | undefined): TagSeverity {
+  protected getDvirStatusSeverity(status: DvirStatus | undefined): UiBadgeIntent {
     switch (status) {
       case "cleared":
         return "success";
@@ -96,7 +91,7 @@ export class InspectionsDashboardPage implements OnInit {
     }
   }
 
-  protected getAccidentStatusSeverity(status: AccidentReportStatus | undefined): TagSeverity {
+  protected getAccidentStatusSeverity(status: AccidentReportStatus | undefined): UiBadgeIntent {
     switch (status) {
       case "resolved":
         return "success";
@@ -113,7 +108,7 @@ export class InspectionsDashboardPage implements OnInit {
     }
   }
 
-  protected getAccidentSeveritySeverity(severity: AccidentSeverity | undefined): TagSeverity {
+  protected getAccidentSeveritySeverity(severity: AccidentSeverity | undefined): UiBadgeIntent {
     switch (severity) {
       case "minor":
         return "info";

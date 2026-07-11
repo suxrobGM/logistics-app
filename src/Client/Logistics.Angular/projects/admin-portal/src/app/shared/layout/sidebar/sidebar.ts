@@ -2,16 +2,14 @@ import { Component, computed, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Converters, ThemeToggle } from "@logistics/shared";
 import { PermissionService } from "@logistics/shared/services";
-import { Icon, UiButton } from "@logistics/shared/ui";
-import { AvatarModule } from "primeng/avatar";
-import { DividerModule } from "primeng/divider";
+import { Avatar, Divider, Icon, UiButton } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 import { sidebarSections, type AdminNavSection } from "./sidebar-items";
 
 @Component({
   selector: "adm-sidebar",
   templateUrl: "./sidebar.html",
-  imports: [AvatarModule, DividerModule, Icon, RouterModule, ThemeToggle, UiButton],
+  imports: [Avatar, Divider, Icon, RouterModule, ThemeToggle, UiButton],
 })
 export class Sidebar {
   private readonly authService = inject(AuthService);

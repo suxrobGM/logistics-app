@@ -1,19 +1,17 @@
 import { DatePipe } from "@angular/common";
 import { Component, input } from "@angular/core";
 import type { DefectSeverity, DvirDefectDto } from "@logistics/shared/api";
-import { Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { TagModule } from "primeng/tag";
-import type { TagSeverity } from "@/shared/types";
+import { Badge, Icon, Stack, Surface, Typography, type UiBadgeIntent } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-dvir-defects-list",
   templateUrl: "./dvir-defects-list.html",
-  imports: [DatePipe, TagModule, Icon, Stack, Surface, Typography],
+  imports: [Badge, DatePipe, Icon, Stack, Surface, Typography],
 })
 export class DvirDefectsList {
   public readonly defects = input.required<DvirDefectDto[]>();
 
-  protected getSeverityColor(severity: DefectSeverity | undefined): TagSeverity {
+  protected getSeverityColor(severity: DefectSeverity | undefined): UiBadgeIntent {
     switch (severity) {
       case "minor":
         return "info";

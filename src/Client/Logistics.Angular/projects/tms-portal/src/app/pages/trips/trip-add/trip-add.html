@@ -1,6 +1,6 @@
 <ui-container maxWidth="md">
   <ui-page-header title="Add a new trip" backLink="/trips" />
-  <p-card>
+  <ui-card>
     <app-trip-wizard [mode]="'create'" (save)="createTrip($event)" />
-  </p-card>
+  </ui-card>
 </ui-container>

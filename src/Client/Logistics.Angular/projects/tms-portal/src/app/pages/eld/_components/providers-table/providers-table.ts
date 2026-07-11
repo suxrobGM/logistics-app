@@ -1,8 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, input, output } from "@angular/core";
 import { type EldProviderConfigurationDto } from "@logistics/shared/api";
-import { Icon, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { TagModule } from "primeng/tag";
+import { Badge, Icon, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { getEldProviderLabel } from "../eld.constants";
@@ -10,7 +9,7 @@ import { getEldProviderLabel } from "../eld.constants";
 @Component({
   selector: "app-eld-providers-table",
   templateUrl: "./providers-table.html",
-  imports: [DatePipe, Icon, Stack, TagModule, TooltipModule, UiButton, UiDataTable],
+  imports: [Badge, DatePipe, Icon, Stack, TooltipModule, UiButton, UiDataTable],
 })
 export class EldProvidersTable {
   private readonly toast = inject(ToastService);

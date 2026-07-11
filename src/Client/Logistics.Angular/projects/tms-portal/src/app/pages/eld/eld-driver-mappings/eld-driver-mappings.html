@@ -2,7 +2,7 @@
 
 @if (loading()) {
   <ui-stack align="center" justify="center" class="p-10">
-    <p-progressSpinner />
+    <ui-spinner />
   </ui-stack>
 } @else if (error()) {
   <ui-error-state [message]="error()!" (retry)="loadData()" />
@@ -47,9 +47,9 @@
                 </td>
                 <td>
                   @if (mapping.isSyncEnabled) {
-                    <p-tag value="Enabled" severity="success" />
+                    <ui-badge value="Enabled" severity="success" />
                   } @else {
-                    <p-tag value="Disabled" severity="secondary" />
+                    <ui-badge value="Disabled" severity="secondary" />
                   }
                 </td>
                 <td>

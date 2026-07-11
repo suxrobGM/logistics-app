@@ -1,12 +1,12 @@
 import { Component, input } from "@angular/core";
 import { type PaymentStatus } from "@logistics/shared/api";
 import { paymentStatusOptions } from "@logistics/shared/api/enums";
-import { Tag, TagModule } from "primeng/tag";
+import { Badge, type UiBadgeIntent } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-payment-status-tag",
   templateUrl: "./payment-status-tag.html",
-  imports: [TagModule],
+  imports: [Badge],
 })
 export class PaymentStatusTag {
   public readonly paymentStatus = input.required<PaymentStatus>();
@@ -18,7 +18,7 @@ export class PaymentStatusTag {
     );
   }
 
-  getPaymentStatusTagSeverity(): Tag["severity"] {
+  getPaymentStatusTagSeverity(): UiBadgeIntent {
     return this.paymentStatus() === "paid" ? "success" : "warn";
   }
 }

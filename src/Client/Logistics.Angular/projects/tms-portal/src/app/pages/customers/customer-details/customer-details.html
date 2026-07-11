@@ -5,7 +5,7 @@
 
 @if (store.isLoading()) {
   <ui-stack align="center" justify="center" class="py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </ui-stack>
 } @else if (store.customer(); as customer) {
   <!-- Enhanced Header with Customer Info -->
@@ -31,7 +31,7 @@
     </ui-stack>
   </ui-surface>
 
-  <p-card>
+  <ui-card>
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
         <p-tab [value]="0">
@@ -73,7 +73,7 @@
           <ui-grid container spacing="6" class="pt-4">
             <!-- Contact Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card class="border-default border">
+              <ui-card class="border-default border">
                 <ng-template #header>
                   <div class="p-4 pb-0">
                     <ui-typography variant="h5" tag="h3" weight="semibold">
@@ -97,7 +97,7 @@
                     }
                   </ui-stack>
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <ui-typography variant="body" color="muted">Phone</ui-typography>
@@ -113,7 +113,7 @@
                     }
                   </ui-stack>
 
-                  <p-divider />
+                  <ui-divider />
 
                   <ui-stack direction="row" align="center" justify="between">
                     <ui-typography variant="body" color="muted">Created Date</ui-typography>
@@ -122,12 +122,12 @@
                     </ui-typography>
                   </ui-stack>
                 </ui-stack>
-              </p-card>
+              </ui-card>
             </ui-grid>
 
             <!-- Address Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <p-card class="border-default border">
+              <ui-card class="border-default border">
                 <ng-template #header>
                   <div class="p-4 pb-0">
                     <ui-typography variant="h5" tag="h3" weight="semibold">Address</ui-typography>
@@ -163,13 +163,13 @@
                 } @else {
                   <ui-typography variant="body" color="muted">No address provided</ui-typography>
                 }
-              </p-card>
+              </ui-card>
             </ui-grid>
           </ui-grid>
 
           <!-- Notes Card -->
           @if (customer.notes) {
-            <p-card class="border-default mt-6 border">
+            <ui-card class="border-default mt-6 border">
               <ng-template #header>
                 <div class="p-4 pb-0">
                   <ui-typography variant="h5" tag="h3" weight="semibold">Notes</ui-typography>
@@ -177,11 +177,11 @@
               </ng-template>
 
               <p class="whitespace-pre-wrap">{{ customer.notes }}</p>
-            </p-card>
+            </ui-card>
           }
 
           <!-- Quick Actions Card -->
-          <p-card class="border-default mt-6 border">
+          <ui-card class="border-default mt-6 border">
             <ng-template #header>
               <div class="p-4 pb-0">
                 <ui-typography variant="h5" tag="h3" weight="semibold">Quick Actions</ui-typography>
@@ -204,7 +204,7 @@
                 [queryParams]="{ customerId: id() }"
               />
             </ui-stack>
-          </p-card>
+          </ui-card>
         </p-tabpanel>
 
         <!-- Invoices Tab -->
@@ -257,15 +257,15 @@
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
-  </p-card>
+  </ui-card>
 } @else {
-  <p-card>
+  <ui-card>
     <ui-stack align="center" gap="4" class="py-16">
       <ui-icon name="exclamation-circle" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Customer not found</ui-typography>
       <ui-button label="Back to Customers" [routerLink]="['/customers']" />
     </ui-stack>
-  </p-card>
+  </ui-card>
 }
 
 <!-- Edit Dialog -->

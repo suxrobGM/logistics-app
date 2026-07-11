@@ -1,5 +1,5 @@
 <div class="mx-auto max-w-4xl">
-  <p-card class="shadow-lg">
+  <ui-card class="shadow-lg">
     <ng-template #header>
       <ui-stack
         direction="row"
@@ -33,10 +33,10 @@
       <div class="space-y-2 p-2">
         @for (i of [1, 2, 3, 4, 5]; track i) {
           <div class="bg-hover flex items-center gap-4 rounded-xl p-4">
-            <p-skeleton shape="circle" size="3.5rem" />
+            <ui-skeleton shape="circle" size="3.5rem" />
             <div class="flex-1">
-              <p-skeleton width="50%" height="1.25rem" styleClass="mb-2" />
-              <p-skeleton width="75%" height="0.875rem" />
+              <ui-skeleton width="50%" height="1.25rem" class="mb-2" />
+              <ui-skeleton width="75%" height="0.875rem" />
             </div>
           </div>
         }
@@ -92,10 +92,10 @@
                 </p>
 
                 @if (conversation.unreadCount && conversation.unreadCount > 0) {
-                  <p-badge
+                  <ui-count-badge
                     [value]="conversation.unreadCount.toString()"
                     severity="danger"
-                    styleClass="shrink-0"
+                    class="shrink-0"
                   />
                 }
               </div>
@@ -106,5 +106,5 @@
         }
       </div>
     }
-  </p-card>
+  </ui-card>
 </div>

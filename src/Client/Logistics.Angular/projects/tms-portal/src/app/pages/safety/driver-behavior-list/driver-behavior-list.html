@@ -1,6 +1,6 @@
 <ui-page-header title="Driver Behavior Events" />
 
-<p-card>
+<ui-card>
   <!-- Filters -->
   <ui-stack direction="row" align="center" gap="4" class="mb-4 flex-wrap">
     <div class="flex-1">
@@ -69,7 +69,7 @@
           <td>{{ event.driverName }}</td>
           <td>{{ event.truckNumber ?? "-" }}</td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="event.eventTypeDisplay"
               [severity]="getEventTypeSeverity(event.eventType)"
             />
@@ -79,12 +79,12 @@
           <td>
             @if (event.isReviewed) {
               @if (event.isDismissed) {
-                <p-tag value="Dismissed" severity="secondary" />
+                <ui-badge value="Dismissed" severity="secondary" />
               } @else {
-                <p-tag value="Reviewed" severity="success" />
+                <ui-badge value="Reviewed" severity="success" />
               }
             } @else {
-              <p-tag value="Pending" severity="warn" />
+              <ui-badge value="Pending" severity="warn" />
             }
           </td>
           <td>
@@ -99,7 +99,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <!-- Review Dialog -->
 <p-dialog
@@ -118,7 +118,7 @@
           <ui-typography variant="body-sm" color="muted" class="mb-1 block">
             Event Type
           </ui-typography>
-          <p-tag
+          <ui-badge
             [value]="selectedEvent()!.eventTypeDisplay ?? ''"
             [severity]="
               selectedEvent()!.eventType

@@ -1,13 +1,12 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Spinner, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 
 @Component({
   selector: "cp-login",
   templateUrl: "./login.html",
-  imports: [ProgressSpinnerModule, Stack, Surface, Typography, UiButton],
+  imports: [Spinner, Stack, Surface, Typography, UiButton],
 })
 export class Login {
   private readonly authService = inject(AuthService);

@@ -174,6 +174,80 @@
   /* PrimeNG's `help` severity is purple, and the one purple this theme defines in both `:root` and
      `.dark-theme` is the load-status ramp's. Alias it rather than add a ninth hex to the palette. */
   --ui-btn-help: var(--status-pickedup);
+
+  /* ---------------------------------------------------------------------------------------------
+   * ui-badge / ui-card (see lib/ui/content/badge/badge-variants.ts, lib/ui/layout/card/card.ts).
+   *
+   * SAME MECHANISM AS --ui-btn-*, EXTENDED FROM SIZING TO COLOUR — because the four apps do NOT run
+   * the same PrimeNG preset. tms-portal provides `definePreset(Nora, …)`; admin / customer / website
+   * run stock Aura. The two disagree about what a tag *is*:
+   *
+   *     Aura   .p-tag-success   background {green.100}   color {green.700}    ← soft tint, dark ink
+   *     Nora   .p-tag-success   background {green.600}   color {surface.0}    ← SOLID fill, white ink
+   *
+   * Both ship today. Hard-coding either recipe silently repaints ~130 chips in one portal or ~130 in
+   * the other three, so the five hue cells resolve variables: THIS file carries Aura's recipe and
+   * tms-portal/src/styles.css overrides with Nora's. `secondary` and `contrast` need no fork (the
+   * presets agree) and are plain utilities in the cva.
+   *
+   * The base pair below is a SOLID fill inked with `--inverse`; the @supports block after this rule
+   * upgrades it to Aura's tint. Both branches are complete, legible pairs — see the note there.
+   * ------------------------------------------------------------------------------------------- */
+  --ui-badge-primary-bg: var(--primary);
+  --ui-badge-primary-fg: var(--primary-foreground);
+  --ui-badge-success-bg: var(--success);
+  --ui-badge-success-fg: var(--inverse);
+  --ui-badge-info-bg: var(--info);
+  --ui-badge-info-fg: var(--inverse);
+  --ui-badge-warn-bg: var(--warning);
+  --ui-badge-warn-fg: var(--inverse);
+  --ui-badge-danger-bg: var(--danger);
+  --ui-badge-danger-fg: var(--inverse);
+
+  /* Aura's `tag.root`. TMS overrides all four (its preset sets 0.75rem / 500 / 0.25rem 0.625rem). */
+  --ui-badge-font-size: 0.875rem;
+  --ui-badge-font-weight: 700;
+  --ui-badge-px: 0.5rem;
+  --ui-badge-py: 0.25rem;
+
+  /* `content.border.radius` (6px Aura / 2px Nora) and `card.border.radius` (12px / 4px) both fork;
+     `tag.roundedBorderRadius` is `{border.radius.xl}` = 12px in BOTH, so the pill does not.
+     NOT the `rounded-xl` utility: tms-portal/src/styles/variables.css re-points `--radius-xl` to
+     1rem, making that utility 16px in TMS and 12px elsewhere — a fork PrimeNG does not have. */
+  --ui-radius-content: 6px;
+  --ui-radius-pill: 12px;
+  --ui-radius-card: 12px;
+
+  --ui-card-body-padding: 1.25rem;
+  --ui-card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+/* -----------------------------------------------------------------------------------------------
+ * Aura's soft tint — declared HERE, by hand, rather than inline above.
+ *
+ * `chrome 109` is in this workspace's resolved browserslist and has no `color-mix()`. lightningcss
+ * therefore synthesises a fallback for every color-mix it sees, and its fallback for
+ * `color-mix(in srgb, var(--success) 16%, transparent)` is plain `var(--success)` — which, paired
+ * with a `var(--success)` FOREGROUND, is green text on a green background. An invisible tag, on the
+ * browser least likely to be tested.
+ *
+ * So the split is explicit: the `:root` rule above is a solid fill with `--inverse` ink (legible
+ * everywhere, and incidentally exactly Nora's recipe), and this block upgrades it to the tint only
+ * where color-mix actually works. Each branch is a COMPLETE bg+fg pair — never mix them.
+ * --------------------------------------------------------------------------------------------- */
+@supports (color: color-mix(in srgb, red, red)) {
+  :root {
+    --ui-badge-primary-bg: color-mix(in srgb, var(--primary) 16%, transparent);
+    --ui-badge-primary-fg: var(--primary);
+    --ui-badge-success-bg: color-mix(in srgb, var(--success) 16%, transparent);
+    --ui-badge-success-fg: var(--success);
+    --ui-badge-info-bg: color-mix(in srgb, var(--info) 16%, transparent);
+    --ui-badge-info-fg: var(--info);
+    --ui-badge-warn-bg: color-mix(in srgb, var(--warning) 16%, transparent);
+    --ui-badge-warn-fg: var(--warning);
+    --ui-badge-danger-bg: color-mix(in srgb, var(--danger) 16%, transparent);
+    --ui-badge-danger-fg: var(--danger);
+  }
 }
 
 .dark-theme {

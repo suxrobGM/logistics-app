@@ -15,7 +15,7 @@
         <td class="font-bold">{{ i + 1 }}</td>
         <td>{{ defect.partCategoryDisplay || defect.partCategory }}</td>
         <td>
-          <p-tag
+          <ui-badge
             [value]="defect.severityDisplay || defect.severity"
             [severity]="getSeverityBadge(defect.severity)"
           />

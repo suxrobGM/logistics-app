@@ -9,14 +9,14 @@ import {
   type ReviewDvirReportCommand,
 } from "@logistics/shared/api";
 import {
+  Card,
+  Spinner,
   UiButton,
   UiFormField,
   UiTextareaField,
   UiToggleField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
@@ -26,12 +26,12 @@ import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-l
   selector: "app-dvir-review",
   templateUrl: "./dvir-review.html",
   imports: [
-    CardModule,
+    Card,
     DvirDefectsList,
     FormField,
     FormRoot,
     PageHeader,
-    ProgressSpinnerModule,
+    Spinner,
     UiButton,
     UiFormField,
     UiTextareaField,

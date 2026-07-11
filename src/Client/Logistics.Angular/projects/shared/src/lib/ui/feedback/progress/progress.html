@@ -1,0 +1,15 @@
+<!-- The track. `hlmProgress` host-directives BrnProgress, so role="progressbar" and the aria-value*
+     triple land HERE, driven by the same `value` that drives the fill. -->
+<div hlmProgress class="h-full w-full rounded-[inherit] bg-transparent" [value]="value()">
+  <!-- `[style.background-color]` beats the indicator's own `bg-primary` (inline style vs class), so
+       `color` needs no class plumbing — and null simply leaves the themed fill alone. -->
+  <div
+    hlmProgressIndicator
+    class="flex items-center justify-center"
+    [style.background-color]="color()"
+  >
+    @if (showValue()) {
+      <span class="text-primary-foreground text-xs font-semibold">{{ label() }}</span>
+    }
+  </div>
+</div>

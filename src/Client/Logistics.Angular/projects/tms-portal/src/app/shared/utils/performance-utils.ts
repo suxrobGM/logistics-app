@@ -1,4 +1,4 @@
-import type { Tag } from "primeng/tag";
+import type { UiBadgeIntent } from "@logistics/shared/ui";
 
 export function getPerformanceLevel(efficiency: number): string {
   if (efficiency >= 2.0) return "Excellent";
@@ -7,7 +7,7 @@ export function getPerformanceLevel(efficiency: number): string {
   return "Below Average";
 }
 
-export function getPerformanceSeverity(efficiency: number): Tag["severity"] {
+export function getPerformanceSeverity(efficiency: number): UiBadgeIntent {
   if (efficiency >= 2.0) return "success";
   if (efficiency >= 1.5) return "info";
   if (efficiency >= 1.0) return "warn";

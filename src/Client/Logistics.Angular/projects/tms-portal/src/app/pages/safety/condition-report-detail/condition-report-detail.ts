@@ -2,13 +2,20 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInspection, type ConditionReportDto } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
+import {
+  Badge,
+  Card,
+  Divider,
+  Grid,
+  Icon,
+  Spinner,
+  Stack,
+  Typography,
+  UiButton,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import { isContainerLoadType } from "@logistics/shared/utils";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { GalleriaModule } from "primeng/galleria";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TagModule } from "primeng/tag";
 import { PageHeader } from "@/shared/components";
 import { ConditionDefectsList } from "@/shared/components/inspections";
 
@@ -16,18 +23,18 @@ import { ConditionDefectsList } from "@/shared/components/inspections";
   selector: "app-condition-report-detail",
   templateUrl: "./condition-report-detail.html",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CommonModule,
     ConditionDefectsList,
-    DividerModule,
+    Divider,
     GalleriaModule,
     Grid,
     Icon,
     PageHeader,
-    ProgressSpinnerModule,
     RouterModule,
+    Spinner,
     Stack,
-    TagModule,
     Typography,
     UiButton,
   ],
@@ -79,7 +86,7 @@ export class ConditionReportDetailPage implements OnInit {
     }
   }
 
-  getTypeSeverity(type: string): "info" | "success" | "warn" | "danger" | "secondary" | "contrast" {
+  getTypeSeverity(type: string): UiBadgeIntent {
     switch (type) {
       case "Pickup":
         return "info";

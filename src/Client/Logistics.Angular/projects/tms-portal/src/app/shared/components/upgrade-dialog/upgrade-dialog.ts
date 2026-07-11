@@ -3,16 +3,15 @@ import { Component, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import type { SubscriptionPlanDto } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
-import { Icon, UiButton } from "@logistics/shared/ui";
+import { Badge, Icon, UiButton, type UiBadgeIntent } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { TagModule } from "primeng/tag";
 import { UpgradePromptService } from "@/core/services";
 import { Labels } from "@/shared/utils";
 
 @Component({
   selector: "app-upgrade-dialog",
   templateUrl: "./upgrade-dialog.html",
-  imports: [CurrencyPipe, DialogModule, Icon, TagModule, UiButton],
+  imports: [Badge, CurrencyPipe, DialogModule, Icon, UiButton],
 })
 export class UpgradeDialog {
   private readonly router = inject(Router);
@@ -42,7 +41,7 @@ export class UpgradeDialog {
     }
   }
 
-  protected getTierSeverity(plan: SubscriptionPlanDto): "info" | "warn" | "success" {
+  protected getTierSeverity(plan: SubscriptionPlanDto): UiBadgeIntent {
     switch (plan.tier) {
       case "starter":
         return "info";

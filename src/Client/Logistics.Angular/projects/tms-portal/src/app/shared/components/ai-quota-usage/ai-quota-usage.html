@@ -4,12 +4,12 @@
       <ui-icon name="bolt" class="text-foreground" />
       <span class="font-semibold">AI Dispatch Usage</span>
       @if (quota().planName) {
-        <p-tag [value]="quota().planName!" severity="info" [style]="{ fontSize: '0.7rem' }" />
+        <ui-badge size="sm" [value]="quota().planName!" severity="info" />
       }
     </div>
     <div class="flex items-center gap-2">
       @if (quota().isOverQuota) {
-        <p-tag value="Overage charges apply" severity="warn" />
+        <ui-badge value="Overage charges apply" severity="warn" />
       }
       @if (quota().resetsAt) {
         <span class="text-muted-foreground text-sm">
@@ -18,10 +18,10 @@
       }
     </div>
   </div>
-  <p-progressBar
+  <ui-progress
+    height="1.5rem"
     [value]="Math.round(Math.min((quota().usagePercent ?? 0) * 100, 100))"
     [showValue]="true"
-    [style]="{ height: '1.5rem' }"
     [color]="progressBarColor()"
   />
 </div>

@@ -1,4 +1,4 @@
-<p-card>
+<ui-card>
   <div class="mb-4">
     <ui-typography variant="h4" tag="h2" color="primary" class="mb-2">Tax Rates</ui-typography>
     <ui-typography variant="body-sm" color="muted">
@@ -9,7 +9,7 @@
 
   @if (isLoading()) {
     <ui-stack align="center" justify="center" class="py-8">
-      <p-progress-spinner />
+      <ui-spinner />
     </ui-stack>
   } @else {
     <ui-stack direction="row" align="center" justify="between" class="mb-4">
@@ -75,7 +75,7 @@
       </ui-data-table>
     }
   }
-</p-card>
+</ui-card>
 
 <p-dialog
   [header]="editingId() ? 'Edit tax rate' : 'Add tax rate'"

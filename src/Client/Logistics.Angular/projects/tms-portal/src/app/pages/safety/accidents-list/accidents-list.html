@@ -4,7 +4,7 @@
   addTooltip="Report a new accident"
 />
 
-<p-card>
+<ui-card>
   <div class="mb-4">
     <ui-search-field (searchChange)="onSearch($event)" />
   </div>
@@ -51,7 +51,7 @@
           <td>{{ accident.driverName || "-" }}</td>
           <td>{{ accident.location || "-" }}</td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="getSeverityLabel(accident.severity)"
               [severity]="getSeveritySeverity(accident.severity)"
             />
@@ -67,7 +67,7 @@
             }
           </td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="getStatusLabel(accident.status)"
               [severity]="getStatusSeverity(accident.status)"
             />
@@ -84,7 +84,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <!-- Context menu for row actions -->
 <p-menu #menu [model]="actionMenuItems" [popup]="true" />

@@ -5,7 +5,7 @@
   addTooltip="Log new service"
 />
 
-<p-card>
+<ui-card>
   <div class="mb-4">
     <ui-search-field (searchChange)="onSearch($event)" />
   </div>
@@ -49,7 +49,7 @@
           <td>{{ record.serviceDate | date: "shortDate" }}</td>
           <td>{{ record.truckNumber || "-" }}</td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="record.typeDisplay || record.type"
               [severity]="getTypeSeverity(record.type)"
             />
@@ -75,7 +75,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <!-- Context menu for row actions -->
 <p-menu #menu [model]="actionMenuItems" [popup]="true" />

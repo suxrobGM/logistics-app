@@ -11,7 +11,7 @@
 <ui-dashboard-card title="Search Results" icon="list">
   @if (searching()) {
     <ui-stack align="center" justify="center" class="p-5">
-      <p-progressSpinner />
+      <ui-spinner />
     </ui-stack>
   } @else if (listings().length === 0) {
     <ui-empty-state

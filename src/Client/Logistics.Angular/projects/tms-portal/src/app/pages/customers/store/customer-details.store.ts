@@ -6,8 +6,11 @@ import {
   getCustomerUsersByCustomer,
   getInvoices,
   getLoads,
+  type CustomerDto,
+  type CustomerUserDto,
+  type InvoiceDto,
+  type LoadDto,
 } from "@logistics/shared/api";
-import type { CustomerDto, CustomerUserDto, InvoiceDto, LoadDto } from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 
 interface CustomerDetailsState {

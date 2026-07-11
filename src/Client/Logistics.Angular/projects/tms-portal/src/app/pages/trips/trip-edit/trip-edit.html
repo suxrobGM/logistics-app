@@ -1,6 +1,6 @@
 <ui-container maxWidth="md">
   <ui-page-header [title]="'Edit a trip #' + tripNumber()" backLink="/trips" />
-  <p-card>
+  <ui-card>
     <app-trip-wizard
       [mode]="'edit'"
       [disabled]="disabledForEditing()"
@@ -8,5 +8,5 @@
       (remove)="confirmToDelete()"
       (save)="updateTrip($event)"
     />
-  </p-card>
+  </ui-card>
 </ui-container>

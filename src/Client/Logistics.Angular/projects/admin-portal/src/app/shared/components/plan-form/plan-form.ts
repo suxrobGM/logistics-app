@@ -13,7 +13,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 
 export interface PlanFormValue {
   name: string;
@@ -59,7 +58,6 @@ const EMPTY: PlanFormValue = {
     CurrencyField,
     FormField,
     FormRoot,
-    ProgressSpinnerModule,
     RouterLink,
     UiButton,
     UiFormField,

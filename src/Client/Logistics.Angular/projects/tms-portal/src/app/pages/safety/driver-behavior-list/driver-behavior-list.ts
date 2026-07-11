@@ -8,6 +8,8 @@ import {
   type DriverBehaviorEventType,
 } from "@logistics/shared/api";
 import {
+  Badge,
+  Card,
   Grid,
   Icon,
   Stack,
@@ -15,19 +17,17 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
 import { MultiSelectModule } from "primeng/multiselect";
 import { SelectModule } from "primeng/select";
-import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
-import type { TagSeverity } from "@/shared/types";
 import { DriverBehaviorListStore } from "../store";
 
 const eventTypeOptions = [
@@ -57,7 +57,8 @@ const reviewStatusOptions = [
   templateUrl: "./driver-behavior-list.html",
   providers: [DriverBehaviorListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DatePipe,
     DecimalPipe,
@@ -72,7 +73,6 @@ const reviewStatusOptions = [
     SearchField,
     SelectModule,
     Stack,
-    TagModule,
     TextareaModule,
     ToggleSwitchModule,
     Typography,
@@ -99,7 +99,7 @@ export class DriverBehaviorListPage {
   protected reviewNotes = "";
   protected isDismissed = false;
 
-  protected getEventTypeSeverity(eventType: DriverBehaviorEventType): TagSeverity {
+  protected getEventTypeSeverity(eventType: DriverBehaviorEventType): UiBadgeIntent {
     switch (eventType) {
       case "speeding":
         return "warn";

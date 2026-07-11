@@ -12,9 +12,7 @@ import {
   type TenantFeature,
 } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
-import { FeatureRow, PageHeader, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Card, FeatureRow, PageHeader, Spinner, UiButton } from "@logistics/shared/ui";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { TooltipModule } from "primeng/tooltip";
 
@@ -22,11 +20,11 @@ import { TooltipModule } from "primeng/tooltip";
   selector: "adm-tenant-features",
   templateUrl: "./tenant-features.html",
   imports: [
-    CardModule,
+    Card,
     FeatureRow,
     FormsModule,
     PageHeader,
-    ProgressSpinnerModule,
+    Spinner,
     ToggleSwitchModule,
     TooltipModule,
     UiButton,

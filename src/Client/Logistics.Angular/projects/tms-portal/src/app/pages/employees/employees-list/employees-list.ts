@@ -5,25 +5,30 @@ import { Permission, PermissionGuard } from "@logistics/shared";
 import type { EmployeeDto, SalaryType } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import {
+  Badge,
+  Card,
+  Stack,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { EmployeeStatusTag } from "@/shared/components/tags";
 import { EmployeeAvatar, InviteEmployeeDialog } from "../components";
 import { EmployeesListStore } from "../store";
 
-type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "contrast";
-
 @Component({
   selector: "app-employees-list",
   templateUrl: "./employees-list.html",
   providers: [EmployeesListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CurrencyFormatPipe,
     DataContainer,
     DatePipe,
@@ -37,7 +42,6 @@ type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "cont
     RouterLink,
     SearchField,
     Stack,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -70,7 +74,7 @@ export class EmployeeList {
     },
   ];
 
-  protected getRoleSeverity(roleName: string | undefined): SeverityType {
+  protected getRoleSeverity(roleName: string | undefined): UiBadgeIntent {
     switch (roleName?.toLowerCase()) {
       case "owner":
         return "warn";

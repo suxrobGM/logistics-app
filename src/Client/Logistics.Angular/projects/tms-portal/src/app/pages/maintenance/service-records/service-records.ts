@@ -3,14 +3,18 @@ import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { MaintenanceRecordDto, MaintenanceType } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import {
+  Badge,
+  Card,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
-import type { TagSeverity } from "@/shared/types";
 import { ServiceRecordsStore } from "../store";
 
 @Component({
@@ -18,7 +22,8 @@ import { ServiceRecordsStore } from "../store";
   templateUrl: "./service-records.html",
   providers: [ServiceRecordsStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CurrencyFormatPipe,
     DataContainer,
     DatePipe,
@@ -26,7 +31,6 @@ import { ServiceRecordsStore } from "../store";
     MenuModule,
     PageHeader,
     SearchField,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -52,7 +56,7 @@ export class ServiceRecordsPage {
     },
   ];
 
-  protected getTypeSeverity(type: MaintenanceType | undefined): TagSeverity {
+  protected getTypeSeverity(type: MaintenanceType | undefined): UiBadgeIntent {
     switch (type) {
       case "oil_change":
         return "info";

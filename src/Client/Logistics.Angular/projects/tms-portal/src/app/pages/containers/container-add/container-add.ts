@@ -19,6 +19,7 @@ import {
 } from "@logistics/shared/api";
 import { containerIsoTypeOptions } from "@logistics/shared/api/enums";
 import {
+  Card,
   Container,
   Grid,
   Icon,
@@ -34,7 +35,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { SearchTerminal } from "@/shared/components/search";
@@ -55,7 +55,7 @@ interface ContainerFormModel {
   selector: "app-container-add",
   templateUrl: "./container-add.html",
   imports: [
-    CardModule,
+    Card,
     Container,
     FormField,
     FormRoot,

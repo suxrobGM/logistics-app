@@ -1,8 +1,7 @@
 import { Component, computed, input, output, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { AiDispatchDecisionDto } from "@logistics/shared/api";
-import { Icon, Stack, Surface, UiButton } from "@logistics/shared/ui";
-import { TagModule } from "primeng/tag";
+import { Badge, Icon, Stack, Surface, UiButton } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { Labels } from "@/shared/utils";
 import { getToolLabel, parseToolInput } from "../../utils/decision-utils";
@@ -11,7 +10,7 @@ import { stripMarkdown } from "../../utils/markdown";
 @Component({
   selector: "app-decision-card",
   templateUrl: "./decision-card.html",
-  imports: [Icon, RouterLink, Stack, Surface, TagModule, TooltipModule, UiButton],
+  imports: [Badge, Icon, RouterLink, Stack, Surface, TooltipModule, UiButton],
 })
 export class DecisionCard {
   public readonly decision = input.required<AiDispatchDecisionDto>();

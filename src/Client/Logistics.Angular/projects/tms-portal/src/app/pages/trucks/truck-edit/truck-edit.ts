@@ -10,8 +10,7 @@ import {
   type TruckDto,
   type UpdateTruckCommand,
 } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Spinner, Stack } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { TruckForm, type TruckFormData } from "../components";
@@ -19,7 +18,7 @@ import { TruckForm, type TruckFormData } from "../components";
 @Component({
   selector: "app-truck-edit",
   templateUrl: "./truck-edit.html",
-  imports: [ProgressSpinnerModule, PageHeader, TruckForm, Stack],
+  imports: [PageHeader, Spinner, Stack, TruckForm],
 })
 export class TruckEdit implements OnInit {
   private readonly api = inject(Api);

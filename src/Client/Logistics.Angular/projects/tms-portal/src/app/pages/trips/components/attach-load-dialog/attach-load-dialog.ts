@@ -2,13 +2,11 @@ import { Component, computed, inject, model, output, signal } from "@angular/cor
 import { FormsModule } from "@angular/forms";
 import { Api, getUnassignedLoads, type LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Icon, UiButton, UiDataTable, UiTableRowDirectives } from "@logistics/shared/ui";
+import { Icon, Spinner, UiButton, UiDataTable, UiTableRowDirectives } from "@logistics/shared/ui";
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TagModule } from "primeng/tag";
 import { LoadTypeTag } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 
@@ -26,8 +24,7 @@ import { DistanceUnitPipe } from "@/shared/pipes";
     InputIcon,
     InputTextModule,
     LoadTypeTag,
-    ProgressSpinnerModule,
-    TagModule,
+    Spinner,
     UiButton,
     UiDataTable,
     UiTableRowDirectives,

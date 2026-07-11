@@ -10,10 +10,8 @@ import {
   type SafetyTrendDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
+import { Grid, Icon, Skeleton, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ChartModule } from "primeng/chart";
-import { SkeletonModule } from "primeng/skeleton";
-import { TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -52,21 +50,20 @@ const EVENT_TYPE_COLORS = [
   selector: "app-safety-report",
   templateUrl: "./safety-report.html",
   imports: [
-    UiDataTable,
     ChartModule,
-    DateRangePicker,
     CurrencyFormatPipe,
-    DecimalPipe,
-    SkeletonModule,
-    TagModule,
-    PageHeader,
-    StatCard,
     DashboardCard,
-    RouterModule,
+    DateRangePicker,
+    DecimalPipe,
     Grid,
     Icon,
+    PageHeader,
+    RouterModule,
+    Skeleton,
     Stack,
+    StatCard,
     Typography,
+    UiDataTable,
   ],
 })
 export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> implements OnInit {

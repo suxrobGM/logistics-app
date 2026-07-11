@@ -2,13 +2,13 @@
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">
-    <p-progress-spinner />
+    <ui-spinner />
   </div>
 } @else if (report()) {
   <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
     <!-- Report Summary -->
     <div class="lg:col-span-2">
-      <p-card header="Report Summary">
+      <ui-card header="Report Summary">
         <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div>
             <div class="text-muted-foreground mb-1 text-sm">Truck</div>
@@ -36,19 +36,19 @@
             <p>{{ report()!.driverNotes }}</p>
           </div>
         }
-      </p-card>
+      </ui-card>
 
       <!-- Defects to Review -->
       @if (report()!.defects && report()!.defects!.length > 0) {
-        <p-card header="Defects to Review" class="mt-4">
+        <ui-card header="Defects to Review" class="mt-4">
           <app-dvir-defects-list [defects]="report()!.defects!" />
-        </p-card>
+        </ui-card>
       }
     </div>
 
     <!-- Review Form -->
     <div>
-      <p-card header="Your Review">
+      <ui-card header="Your Review">
         <form [formRoot]="form">
           @if (report()!.hasDefects) {
             <ui-form-field label="All Defects Corrected?" class="mb-4">
@@ -89,7 +89,7 @@
             />
           </div>
         </form>
-      </p-card>
+      </ui-card>
     </div>
   </div>
 }

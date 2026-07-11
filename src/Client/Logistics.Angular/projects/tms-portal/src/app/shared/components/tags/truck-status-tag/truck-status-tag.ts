@@ -1,12 +1,12 @@
 import { Component, computed, input } from "@angular/core";
 import { type TruckStatus } from "@logistics/shared/api";
 import { truckStatusOptions } from "@logistics/shared/api/enums";
-import { Tag, TagModule } from "primeng/tag";
+import { Badge, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-truck-status-tag",
   templateUrl: "./truck-status-tag.html",
-  imports: [TagModule],
+  imports: [Badge],
 })
 export class TruckStatusTag {
   public readonly status = input.required<TruckStatus>();
@@ -15,7 +15,7 @@ export class TruckStatusTag {
     return truckStatusOptions.find((option) => option.value === this.status())?.label ?? "";
   });
 
-  protected readonly severity = computed((): Tag["severity"] => {
+  protected readonly severity = computed((): UiBadgeIntent => {
     switch (this.status()) {
       case "available":
         return "success";
@@ -35,24 +35,24 @@ export class TruckStatusTag {
     }
   });
 
-  protected readonly icon = computed((): string => {
+  protected readonly icon = computed((): IconName => {
     switch (this.status()) {
       case "available":
-        return "pi pi-check-circle";
+        return "check-circle";
       case "en_route":
-        return "pi pi-truck";
+        return "truck";
       case "loading":
-        return "pi pi-arrow-down";
+        return "arrow-down";
       case "unloading":
-        return "pi pi-arrow-up";
+        return "arrow-up";
       case "maintenance":
-        return "pi pi-wrench";
+        return "wrench";
       case "out_of_service":
-        return "pi pi-ban";
+        return "ban";
       case "offline":
-        return "pi pi-wifi-off";
+        return "wifi-off";
       default:
-        return "pi pi-circle";
+        return "circle";
     }
   });
 }

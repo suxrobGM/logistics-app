@@ -1,12 +1,12 @@
 import { Component, computed, input } from "@angular/core";
 import { type CustomerStatus } from "@logistics/shared/api";
 import { customerStatusOptions } from "@logistics/shared/api/enums";
-import { Tag, TagModule } from "primeng/tag";
+import { Badge, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-customer-status-tag",
   templateUrl: "./customer-status-tag.html",
-  imports: [TagModule],
+  imports: [Badge],
 })
 export class CustomerStatusTag {
   public readonly status = input.required<CustomerStatus>();
@@ -15,7 +15,7 @@ export class CustomerStatusTag {
     return customerStatusOptions.find((option) => option.value === this.status())?.label ?? "";
   });
 
-  protected readonly severity = computed((): Tag["severity"] => {
+  protected readonly severity = computed((): UiBadgeIntent => {
     switch (this.status()) {
       case "active":
         return "success";
@@ -28,16 +28,16 @@ export class CustomerStatusTag {
     }
   });
 
-  protected readonly icon = computed((): string => {
+  protected readonly icon = computed((): IconName => {
     switch (this.status()) {
       case "active":
-        return "pi pi-check-circle";
+        return "check-circle";
       case "inactive":
-        return "pi pi-minus-circle";
+        return "minus-circle";
       case "prospect":
-        return "pi pi-star";
+        return "star";
       default:
-        return "pi pi-circle";
+        return "circle";
     }
   });
 }

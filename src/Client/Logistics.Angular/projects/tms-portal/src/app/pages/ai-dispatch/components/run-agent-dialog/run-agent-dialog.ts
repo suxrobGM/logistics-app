@@ -1,9 +1,8 @@
 import { Component, computed, input, model, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { AiDispatchMode, AiQuotaStatusDto } from "@logistics/shared/api";
-import { UiButton, type IconName, type UiButtonIntent } from "@logistics/shared/ui";
+import { Alert, UiButton, type IconName, type UiButtonIntent } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { MessageModule } from "primeng/message";
 import { TextareaModule } from "primeng/textarea";
 
 export interface RunAgentDialogData {
@@ -14,7 +13,7 @@ export interface RunAgentDialogData {
 @Component({
   selector: "app-run-agent-dialog",
   templateUrl: "./run-agent-dialog.html",
-  imports: [DialogModule, FormsModule, MessageModule, TextareaModule, UiButton],
+  imports: [Alert, DialogModule, FormsModule, TextareaModule, UiButton],
 })
 export class RunAgentDialog {
   public readonly visible = model(false);

@@ -4,7 +4,7 @@
   addTooltip="Add a new subscription plan"
 />
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -54,7 +54,7 @@
             </div>
           </td>
           <td>
-            <p-tag [value]="formatTier(plan.tier)" [severity]="tierSeverity(plan.tier)" />
+            <ui-badge [value]="formatTier(plan.tier)" [severity]="tierSeverity(plan.tier)" />
           </td>
           <td>{{ plan.price | currency }}/mo</td>
           <td>{{ plan.perTruckPrice | currency }}/truck</td>
@@ -72,6 +72,6 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <p-menu #actionMenu [model]="actionMenuItems()" [popup]="true" />

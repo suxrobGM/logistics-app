@@ -11,18 +11,18 @@
 </div>
 
 <!-- Documents List -->
-<p-card class="border-default border">
+<ui-card class="border-default border">
   <ng-template #header>
     <div class="flex items-center gap-2 p-4 pb-0">
       <ui-icon name="file-check" class="text-foreground" />
       <h3 class="m-0 text-lg font-semibold">POD / BOL Documents</h3>
-      <p-tag [value]="documents().length.toString()" severity="info" />
+      <ui-badge [value]="documents().length.toString()" severity="info" />
     </div>
   </ng-template>
 
   @if (isLoading()) {
     <div class="flex justify-center py-8">
-      <p-progress-spinner />
+      <ui-spinner />
     </div>
   } @else {
     <ui-data-table [value]="documents()" [dataKey]="'id'" [scrollable]="true">
@@ -40,10 +40,10 @@
       <ng-template #body let-doc>
         <tr class="hover:bg-hover cursor-pointer" (click)="viewDetails(doc)">
           <td>
-            <p-tag
+            <ui-badge
+              size="sm"
               [value]="getTypeLabel(doc.type)"
               [severity]="getTypeSeverity(doc.type)"
-              class="text-xs"
             />
           </td>
           <td>
@@ -128,7 +128,7 @@
       </ng-template>
     </ui-data-table>
   }
-</p-card>
+</ui-card>
 
 <!-- Detail Dialog -->
 <p-dialog
@@ -143,7 +143,7 @@
     <div class="space-y-4">
       <!-- Document Type -->
       <div class="flex items-center justify-between border-b pb-3">
-        <p-tag
+        <ui-badge
           [value]="getTypeLabel(selectedDocument()!.type)"
           [severity]="getTypeSeverity(selectedDocument()!.type)"
         />

@@ -8,7 +8,7 @@
 >
   @if (isLoading()) {
     <div class="flex justify-center py-4">
-      <p-progress-spinner />
+      <ui-spinner />
     </div>
   } @else {
     <p class="text-muted-foreground mb-4">
@@ -42,7 +42,7 @@
             <td>{{ link.expiresAt | date: "short" }}</td>
             <td>{{ link.accessCount }}</td>
             <td>
-              <p-tag [value]="getLinkStatusLabel(link)" [severity]="getLinkStatus(link)" />
+              <ui-badge [value]="getLinkStatusLabel(link)" [severity]="getLinkStatus(link)" />
             </td>
             <td class="text-right">
               <ui-button

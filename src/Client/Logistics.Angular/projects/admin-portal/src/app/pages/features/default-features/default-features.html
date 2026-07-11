@@ -2,10 +2,10 @@
   <ui-button icon="save" label="Save Changes" [loading]="isSaving()" (click)="saveAll()" />
 </ui-page-header>
 
-<p-card>
+<ui-card>
   @if (isLoading()) {
     <div class="flex justify-center py-8">
-      <p-progress-spinner />
+      <ui-spinner />
     </div>
   } @else {
     <p class="text-muted-foreground mb-4">
@@ -29,4 +29,4 @@
       }
     </div>
   }
-</p-card>
+</ui-card>

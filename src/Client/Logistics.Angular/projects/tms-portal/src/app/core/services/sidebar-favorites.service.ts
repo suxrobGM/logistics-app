@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Injectable, PLATFORM_ID, inject, signal } from "@angular/core";
+import { inject, Injectable, PLATFORM_ID, signal } from "@angular/core";
 import { UserRole } from "@logistics/shared";
 
 const STORAGE_KEY = "tms-sidebar-favorites";

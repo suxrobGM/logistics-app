@@ -9,6 +9,8 @@ import {
   type BlogPostDto,
 } from "@logistics/shared/api";
 import {
+  Badge,
+  Card,
   DataContainer,
   Icon,
   PageHeader,
@@ -17,11 +19,10 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { BlogPostsListStore } from "../store/blog-posts-list.store";
@@ -31,7 +32,8 @@ import { BlogPostsListStore } from "../store/blog-posts-list.store";
   templateUrl: "./blog-posts-list.html",
   providers: [BlogPostsListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DatePipe,
     Icon,
@@ -39,7 +41,6 @@ import { BlogPostsListStore } from "../store/blog-posts-list.store";
     PageHeader,
     SearchField,
     Stack,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -154,9 +155,7 @@ export class BlogPostsList {
     this.store.removeItem(id);
   }
 
-  protected getStatusSeverity(
-    status: string,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  protected getStatusSeverity(status: string): UiBadgeIntent {
     switch (status?.toLowerCase()) {
       case "published":
         return "success";

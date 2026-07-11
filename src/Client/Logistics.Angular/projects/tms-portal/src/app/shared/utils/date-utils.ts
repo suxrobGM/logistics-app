@@ -131,7 +131,10 @@ export abstract class DateUtils {
    * @param endDate The end date string or Date object.
    * @returns A formatted duration string (e.g., "45s", "2m 30s", "1h 15m"), or `null` if either date is missing.
    */
-  static formatDuration(startDate: string | Date | null | undefined, endDate: string | Date | null | undefined): string | null {
+  static formatDuration(
+    startDate: string | Date | null | undefined,
+    endDate: string | Date | null | undefined,
+  ): string | null {
     if (!startDate || !endDate) return null;
 
     const ms = new Date(endDate).getTime() - new Date(startDate).getTime();

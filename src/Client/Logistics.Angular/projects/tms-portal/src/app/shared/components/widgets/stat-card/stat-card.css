@@ -3,13 +3,17 @@
   --stat-card-icon-color: var(--info);
 }
 
-:host ::ng-deep .p-card {
+/* `::ng-deep` was never needed here and is gone with it. `.p-card` was p-card's own HOST — the
+   element written in THIS component's template — so it already carried stat-card's `_ngcontent`
+   attribute and a plain scoped selector matched it. Now that the element is `<ui-card>`, it can just
+   be named. (Contrast home.css, which reaches into a *child's* template and genuinely had to pierce.) */
+:host ui-card {
   transition:
     box-shadow var(--transition-base, 200ms ease),
     transform var(--transition-base, 200ms ease);
 }
 
-:host:hover ::ng-deep .p-card {
+:host:hover ui-card {
   box-shadow:
     var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1)),
     0 0 24px color-mix(in srgb, var(--stat-card-icon-color) 14%, transparent);

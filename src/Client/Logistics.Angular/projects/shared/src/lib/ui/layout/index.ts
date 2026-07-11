@@ -6,5 +6,6 @@ export * from "./grid/grid";
 export * from "./toolbar/toolbar";
 export * from "./responsive";
 export * from "./page-header/page-header";
+export * from "./card/card";
 export * from "./dashboard-card/dashboard-card";
 export * from "./feature-row/feature-row";

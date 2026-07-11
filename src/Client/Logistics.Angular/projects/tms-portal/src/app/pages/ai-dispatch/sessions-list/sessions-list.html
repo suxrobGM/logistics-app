@@ -79,7 +79,7 @@
   <div class="mb-6">
     <ui-typography variant="h5" tag="h2" class="mb-3">
       Pending Decisions
-      <p-tag [value]="writeDecisions().length.toString()" severity="warn" [rounded]="true" />
+      <ui-badge [value]="writeDecisions().length.toString()" severity="warn" [rounded]="true" />
     </ui-typography>
 
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-5">
@@ -164,7 +164,7 @@
         <td class="font-mono text-sm">{{ session.number }}</td>
         <td><app-mode-badge [mode]="session.mode" /></td>
         <td>
-          <p-tag
+          <ui-badge
             [value]="session.status"
             [severity]="Labels.dispatchStatusSeverity(session.status)"
           />

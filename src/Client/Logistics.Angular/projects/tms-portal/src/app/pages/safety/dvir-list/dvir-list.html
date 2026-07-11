@@ -1,6 +1,6 @@
 <ui-page-header title="DVIR Reports" />
 
-<p-card>
+<ui-card>
   <div class="mb-4">
     <ui-search-field (searchChange)="onSearch($event)" />
   </div>
@@ -41,7 +41,7 @@
         <tr>
           <td>{{ dvir.inspectionDate | date: "short" }}</td>
           <td>
-            <p-tag [value]="getTypeLabel(dvir.type)" [severity]="getTypeSeverity(dvir.type)" />
+            <ui-badge [value]="getTypeLabel(dvir.type)" [severity]="getTypeSeverity(dvir.type)" />
           </td>
           <td>{{ dvir.truckNumber || "-" }}</td>
           <td>{{ dvir.driverName || "-" }}</td>
@@ -59,7 +59,7 @@
             }
           </td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="getStatusLabel(dvir.status)"
               [severity]="getStatusSeverity(dvir.status)"
             />
@@ -76,7 +76,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <!-- Context menu for row actions -->
 <p-menu #menu [model]="actionMenuItems" [popup]="true" />

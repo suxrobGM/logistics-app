@@ -1,4 +1,4 @@
-import { Component, type OnDestroy, computed, inject, input, output, signal } from "@angular/core";
+import { Component, computed, inject, input, output, signal, type OnDestroy } from "@angular/core";
 import { Api, getTrucks } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { TrackingService } from "@/core/services";

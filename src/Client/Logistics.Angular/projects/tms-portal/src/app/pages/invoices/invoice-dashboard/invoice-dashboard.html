@@ -7,7 +7,7 @@
       @for (_ of [1, 2, 3, 4, 5]; track $index) {
         <ui-grid [size]="{ xs: 12, md: 6, lg: 4, xl: 2 }">
           <ui-surface class="block h-full">
-            <p-skeleton height="4rem" />
+            <ui-skeleton height="4rem" />
           </ui-surface>
         </ui-grid>
       }
@@ -103,7 +103,7 @@
 
     <!-- Quick Actions -->
     <ui-grid [size]="12">
-      <p-card header="Quick Actions">
+      <ui-card header="Quick Actions">
         <ui-stack direction="row" gap="2" wrap>
           <a routerLink="/invoices/loads" class="no-underline">
             <ui-button appearance="outlined" label="View All Load Invoices" icon="list" />
@@ -112,14 +112,14 @@
             <ui-button appearance="outlined" label="Setup Payments" icon="credit-card" />
           </a>
         </ui-stack>
-      </p-card>
+      </ui-card>
     </ui-grid>
 
     <!-- Recent Invoices -->
     <ui-grid [size]="12">
-      <p-card header="Recent Invoices">
+      <ui-card header="Recent Invoices">
         @if (isLoading()) {
-          <p-skeleton height="12rem" />
+          <ui-skeleton height="12rem" />
         } @else {
           <ui-data-table
             [value]="dashboard()?.recentInvoices ?? []"
@@ -172,7 +172,7 @@
             </ng-template>
           </ui-data-table>
         }
-      </p-card>
+      </ui-card>
     </ui-grid>
   </ui-grid>
 </div>

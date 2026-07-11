@@ -50,11 +50,10 @@
         >
           <ng-template let-employee #item>
             <div class="flex items-center gap-3 py-1">
-              <p-avatar
+              <ui-avatar
                 [label]="getInitials(employee.fullName)"
                 class="bg-surface-500 dark:bg-surface-400 text-white"
                 size="normal"
-                shape="circle"
               />
               <div>
                 <p class="font-medium">{{ employee.fullName }}</p>

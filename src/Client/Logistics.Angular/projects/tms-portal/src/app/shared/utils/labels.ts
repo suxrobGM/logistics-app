@@ -1,6 +1,5 @@
 import type { PlanTier, SubscriptionDto } from "@logistics/shared/api";
-
-export type SeverityLevel = "success" | "warn" | "danger" | "info" | "secondary";
+import type { UiBadgeIntent } from "@logistics/shared/ui";
 
 export const Labels = {
   /**
@@ -22,7 +21,7 @@ export const Labels = {
   /**
    * Get the severity for a plan tier badge.
    */
-  planTierSeverity(tier: PlanTier): SeverityLevel {
+  planTierSeverity(tier: PlanTier): UiBadgeIntent {
     switch (tier) {
       case "starter":
         return "info";
@@ -40,7 +39,7 @@ export const Labels = {
    * @param subscription The subscription object.
    * @returns The severity of the subscription status.
    */
-  subscriptionStatusSeverity(subscription: SubscriptionDto): SeverityLevel {
+  subscriptionStatusSeverity(subscription: SubscriptionDto): UiBadgeIntent {
     switch (subscription.status) {
       case "active":
       case "trialing":
@@ -78,7 +77,7 @@ export const Labels = {
     }
   },
 
-  dispatchStatusSeverity(status: string): SeverityLevel {
+  dispatchStatusSeverity(status: string): UiBadgeIntent {
     switch (status) {
       case "completed":
       case "executed":

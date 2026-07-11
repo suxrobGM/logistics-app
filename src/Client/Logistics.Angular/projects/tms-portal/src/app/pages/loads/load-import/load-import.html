@@ -9,7 +9,7 @@
   <!-- Left Pane: Upload, Extracted Data, Results -->
   <div [class.w-full]="!selectedFile()" [class.lg:w-1/2]="selectedFile()">
     <!-- File Upload Section -->
-    <p-card class="mb-4">
+    <ui-card class="mb-4">
       <ng-template #header>
         <ui-stack direction="row" align="center" gap="2" class="p-4">
           <ui-icon name="upload" color="primary" />
@@ -47,23 +47,23 @@
 
         @if (isUploading()) {
           <ui-stack direction="row" align="center" justify="center" gap="2" class="mt-4">
-            <p-progressSpinner [style]="{ width: '24px', height: '24px' }" />
+            <ui-spinner size="24px" />
             <span>Processing PDF...</span>
           </ui-stack>
         }
       }
-    </p-card>
+    </ui-card>
 
     <!-- Error State -->
     @if (error(); as errorMsg) {
-      <p-message severity="error" class="mb-4 w-full">
+      <ui-alert intent="danger" class="mb-4 w-full">
         {{ errorMsg }}
-      </p-message>
+      </ui-alert>
     }
 
     <!-- Extracted Data Preview -->
     @if (extractedData(); as data) {
-      <p-card class="mb-4">
+      <ui-card class="mb-4">
         <ng-template #header>
           <ui-stack direction="row" align="center" gap="2" class="p-4">
             <ui-icon name="check-circle" color="success" />
@@ -161,12 +161,12 @@
             }
           </ui-grid>
         </ui-grid>
-      </p-card>
+      </ui-card>
     }
 
     <!-- Import Result -->
     @if (importResult(); as result) {
-      <p-card>
+      <ui-card>
         <ng-template #header>
           <ui-stack direction="row" align="center" gap="2" class="p-4">
             <ui-icon name="check-circle" color="success" />
@@ -182,16 +182,14 @@
           </p>
 
           @if (result.customerCreated) {
-            <p-message severity="info">
-              New customer "{{ result.customerName }}" was created.
-            </p-message>
+            <ui-alert intent="info">New customer "{{ result.customerName }}" was created.</ui-alert>
           }
 
           @if (result.warnings && result.warnings.length > 0) {
             @for (warning of result.warnings; track warning) {
-              <p-message severity="warn">
+              <ui-alert intent="warning">
                 {{ warning }}
-              </p-message>
+              </ui-alert>
             }
           }
 
@@ -206,7 +204,7 @@
             />
           </ui-stack>
         </ui-stack>
-      </p-card>
+      </ui-card>
     }
   </div>
 

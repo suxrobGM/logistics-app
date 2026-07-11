@@ -2,7 +2,7 @@
   <ui-grid [size]="{ xs: 12, md: 6 }">
     <!-- Form Section -->
     @if (isLoading()) {
-      <p-progress-spinner />
+      <ui-spinner />
     }
 
     <form [formRoot]="form">

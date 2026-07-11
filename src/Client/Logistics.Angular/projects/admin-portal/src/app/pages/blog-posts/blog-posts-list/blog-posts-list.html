@@ -1,6 +1,6 @@
 <ui-page-header title="Blog Posts" addRoute="/blog-posts/add" addTooltip="Add a new blog post" />
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -51,7 +51,7 @@
           <td>{{ post.category || "-" }}</td>
           <td>{{ post.authorName }}</td>
           <td>
-            <p-tag [value]="post.status" [severity]="getStatusSeverity(post.status)" />
+            <ui-badge [value]="post.status" [severity]="getStatusSeverity(post.status)" />
           </td>
           <td>{{ post.publishedAt | date: "mediumDate" }}</td>
           <td>
@@ -67,6 +67,6 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <p-menu #menu [model]="actionMenuItems()" [popup]="true" />

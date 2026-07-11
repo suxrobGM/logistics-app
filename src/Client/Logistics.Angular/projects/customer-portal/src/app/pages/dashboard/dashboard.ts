@@ -11,33 +11,19 @@ import {
 import {
   Grid,
   Icon,
+  Skeleton,
   Stack,
   StatusBadge,
   Surface,
   Typography,
   UiDataTable,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SkeletonModule } from "primeng/skeleton";
 import { TenantContextService } from "@/core/services";
 
 @Component({
   selector: "cp-dashboard",
   templateUrl: "./dashboard.html",
-  imports: [
-    RouterLink,
-    CardModule,
-    ProgressSpinnerModule,
-    SkeletonModule,
-    Grid,
-    Icon,
-    Stack,
-    StatusBadge,
-    Surface,
-    Typography,
-    UiDataTable,
-  ],
+  imports: [Grid, Icon, RouterLink, Skeleton, Stack, StatusBadge, Surface, Typography, UiDataTable],
 })
 export class Dashboard {
   private readonly api = inject(Api);

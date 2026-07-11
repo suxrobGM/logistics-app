@@ -9,13 +9,18 @@ import {
   type NotificationDto,
 } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
-import { Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
+import {
+  Badge,
+  Card,
+  Divider,
+  Icon,
+  Spinner,
+  Stack,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { CheckboxModule } from "primeng/checkbox";
-import { DividerModule } from "primeng/divider";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectButtonModule } from "primeng/selectbutton";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { NotificationService, ToastService } from "@/core/services";
 
@@ -31,18 +36,18 @@ interface FilterOption {
   templateUrl: "./notifications.html",
   styleUrl: "./notifications.css",
   imports: [
-    CardModule,
+    Badge,
+    Card,
     CheckboxModule,
     DatePipe,
-    DividerModule,
+    Divider,
     FormsModule,
     Icon,
-    ProgressSpinnerModule,
     RelativeTimePipe,
     SearchField,
     SelectButtonModule,
+    Spinner,
     Stack,
-    TagModule,
     TooltipModule,
     Typography,
     UiButton,

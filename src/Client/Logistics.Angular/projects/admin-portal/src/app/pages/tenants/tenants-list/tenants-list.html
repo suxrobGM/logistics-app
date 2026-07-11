@@ -1,6 +1,6 @@
 <ui-page-header title="Tenants" addRoute="/tenants/add" addTooltip="Add a new tenant" />
 
-<p-card>
+<ui-card>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -43,13 +43,13 @@
           <td>{{ tenant.name }}</td>
           <td>{{ tenant.companyName }}</td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="tenant.settings?.region === 'eu' ? 'EU' : 'US'"
               [severity]="tenant.settings?.region === 'eu' ? 'info' : 'secondary'"
             />
           </td>
           <td>
-            <p-tag
+            <ui-badge
               [value]="getSubscriptionStatus(tenant)"
               [severity]="getStatusSeverity(getSubscriptionStatus(tenant))"
             />
@@ -67,7 +67,7 @@
       </ng-template>
     </ui-data-table>
   </ui-data-container>
-</p-card>
+</ui-card>
 
 <p-menu #actionMenu [model]="actionMenuItems()" [popup]="true" />
 

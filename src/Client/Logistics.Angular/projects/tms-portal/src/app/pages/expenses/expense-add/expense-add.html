@@ -1,6 +1,6 @@
 <ui-container maxWidth="md">
   <ui-page-header title="Add Expense" backLink="/expenses" />
-  <p-card>
+  <ui-card>
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
         <p-tab [value]="0">Company Expense</p-tab>
@@ -20,5 +20,5 @@
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
-  </p-card>
+  </ui-card>
 </ui-container>

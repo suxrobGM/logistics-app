@@ -7,7 +7,7 @@
       @for (_ of [1, 2, 3, 4]; track $index) {
         <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
           <ui-surface class="block h-full">
-            <p-skeleton height="4rem" />
+            <ui-skeleton height="4rem" />
           </ui-surface>
         </ui-grid>
       }
@@ -73,7 +73,7 @@
 
     <!-- Quick Actions -->
     <ui-grid [size]="12">
-      <p-card header="Quick Actions">
+      <ui-card header="Quick Actions">
         <ui-stack direction="row" gap="2" wrap>
           <a routerLink="/payroll/invoices/add" class="no-underline">
             <ui-button label="Create Payroll" icon="plus" />
@@ -88,13 +88,13 @@
             <ui-button appearance="outlined" label="Manage Employees" icon="users" />
           </a>
         </ui-stack>
-      </p-card>
+      </ui-card>
     </ui-grid>
 
     <!-- Pending Approval List -->
     @if ((dashboard()?.pendingApprovalCount ?? 0) > 0) {
       <ui-grid [size]="12">
-        <p-card header="Pending Approval">
+        <ui-card header="Pending Approval">
           <ui-typography variant="body" color="muted" class="mb-4">
             These payroll invoices are waiting for your approval before payment can be processed.
           </ui-typography>
@@ -105,15 +105,15 @@
               icon="check-circle"
             />
           </a>
-        </p-card>
+        </ui-card>
       </ui-grid>
     }
 
     <!-- Recent Payrolls -->
     <ui-grid [size]="12">
-      <p-card header="Recent Payrolls">
+      <ui-card header="Recent Payrolls">
         @if (isLoading()) {
-          <p-skeleton height="12rem" />
+          <ui-skeleton height="12rem" />
         } @else {
           <ui-data-table
             [value]="dashboard()?.recentPayrolls ?? []"
@@ -172,7 +172,7 @@
             </ng-template>
           </ui-data-table>
         }
-      </p-card>
+      </ui-card>
     </ui-grid>
   </ui-grid>
 </div>

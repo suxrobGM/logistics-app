@@ -10,6 +10,8 @@ import {
 } from "@logistics/shared/api";
 import type { SelectOption } from "@logistics/shared/models";
 import {
+  Badge,
+  Card,
   DataContainer,
   Grid,
   PageHeader,
@@ -23,11 +25,10 @@ import {
   UiSelectField,
   UiSortHeader,
   UiTextareaField,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { DateUtils } from "@logistics/shared/utils";
-import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { ContactSubmissionsListStore } from "../store/contact-submissions-list.store";
@@ -37,7 +38,8 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
   templateUrl: "./contact-submissions-list.html",
   providers: [ContactSubmissionsListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DialogModule,
     FormField,
@@ -46,7 +48,6 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
     SearchField,
     Stack,
     Surface,
-    TagModule,
     TooltipModule,
     Typography,
     UiButton,
@@ -152,9 +153,7 @@ export class ContactSubmissionsList {
     }
   }
 
-  protected getStatusSeverity(
-    status?: ContactSubmissionStatus,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  protected getStatusSeverity(status?: ContactSubmissionStatus): UiBadgeIntent {
     switch (status) {
       case "new":
         return "info";

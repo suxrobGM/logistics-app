@@ -3,13 +3,13 @@
 
   @if (isLoading()) {
     <ui-stack align="center" justify="center" class="py-8">
-      <p-progress-spinner />
+      <ui-spinner />
     </ui-stack>
   } @else if (invoice()) {
     <ui-grid container spacing="4">
       <!-- Invoice Header -->
       <ui-grid [size]="{ xs: 12, lg: 8 }">
-        <p-card>
+        <ui-card>
           <ui-stack direction="row" align="start" justify="between" class="mb-4">
             <div>
               <ui-typography variant="h4" tag="h2" class="mb-1">{{ companyName() }}</ui-typography>
@@ -25,7 +25,7 @@
             </div>
           </ui-stack>
 
-          <p-divider />
+          <ui-divider />
 
           <ui-grid container spacing="4" class="mb-4">
             <ui-grid [size]="6">
@@ -56,7 +56,7 @@
 
           <!-- Line Items -->
           @if (invoice()!.lineItems && invoice()!.lineItems!.length > 0) {
-            <p-divider />
+            <ui-divider />
             <h4>Line Items</h4>
             <ui-data-table [value]="invoice()!.lineItems!">
               <ng-template #header>
@@ -77,7 +77,7 @@
                   <td>
                     <span>{{ item.description }}</span>
                     @if (item.type) {
-                      <p-tag [value]="item.type" severity="secondary" styleClass="ml-2 text-xs" />
+                      <ui-badge class="ml-2" size="sm" [value]="item.type" severity="secondary" />
                     }
                   </td>
                   <td class="text-right">{{ item.quantity ?? 1 }}</td>
@@ -104,7 +104,7 @@
           }
 
           @if (hasTax() && (invoice()!.taxBreakdown?.length ?? 0) > 1) {
-            <p-divider />
+            <ui-divider />
             <h4>{{ taxLabel() }} breakdown</h4>
             <ui-data-table [value]="invoice()!.taxBreakdown!">
               <ng-template #header>
@@ -128,7 +128,7 @@
             </ui-data-table>
           }
 
-          <p-divider />
+          <ui-divider />
 
           <div class="flex justify-end">
             <div class="w-72">
@@ -167,12 +167,12 @@
               }
             </div>
           </div>
-        </p-card>
+        </ui-card>
       </ui-grid>
 
       <!-- Actions Sidebar -->
       <ui-grid [size]="{ xs: 12, lg: 4 }">
-        <p-card header="Actions">
+        <ui-card header="Actions">
           <ui-stack gap="2">
             <ui-button
               block
@@ -207,11 +207,11 @@
               <ui-button appearance="outlined" block icon="truck" label="View Load" />
             </a>
           </ui-stack>
-        </p-card>
+        </ui-card>
 
         <!-- Payment History -->
         @if (invoice()!.payments && invoice()!.payments!.length > 0) {
-          <p-card header="Payment History" styleClass="mt-4">
+          <ui-card header="Payment History" class="mt-4">
             <ui-stack gap="3">
               @for (payment of invoice()!.payments; track payment.id) {
                 <ui-stack
@@ -232,13 +232,13 @@
                 </ui-stack>
               }
             </ui-stack>
-          </p-card>
+          </ui-card>
         }
 
         @if (invoice()!.notes) {
-          <p-card header="Notes" styleClass="mt-4">
+          <ui-card header="Notes" class="mt-4">
             <p class="text-muted-foreground">{{ invoice()!.notes }}</p>
-          </p-card>
+          </ui-card>
         }
       </ui-grid>
     </ui-grid>
@@ -259,11 +259,11 @@
 
     <app-payment-link-dialog [invoiceId]="invoiceId()" [(visible)]="showPaymentLinkDialog" />
   } @else {
-    <p-card>
+    <ui-card>
       <ui-stack align="center" gap="4" class="text-muted-foreground py-8">
         <ui-icon name="exclamation-circle" size="xl" />
         <p>Invoice not found</p>
       </ui-stack>
-    </p-card>
+    </ui-card>
   }
 </div>

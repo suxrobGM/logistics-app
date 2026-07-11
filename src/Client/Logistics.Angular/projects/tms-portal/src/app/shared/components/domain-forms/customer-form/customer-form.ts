@@ -16,6 +16,7 @@ import { customerStatusOptions } from "@logistics/shared/api/enums";
 import {
   AddressForm,
   Grid,
+  Spinner,
   Stack,
   UiButton,
   UiCheckboxField,
@@ -25,7 +26,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { TenantService } from "@/core/services/tenant.service";
 
@@ -59,8 +59,8 @@ const EMPTY: CustomerFormValue = {
     FormField,
     FormRoot,
     Grid,
-    ProgressSpinnerModule,
     RouterLink,
+    Spinner,
     Stack,
     UiButton,
     UiCheckboxField,

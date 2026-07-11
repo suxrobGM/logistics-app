@@ -1,4 +1,4 @@
-<p-card class="h-full">
+<ui-card class="h-full">
   <ng-template #header>
     <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
       <span class="text-primary">
@@ -6,18 +6,18 @@
       </span>
       <ui-typography variant="h4" tag="h4" color="primary">Revenue Summary</ui-typography>
     </ui-stack>
-    <p-divider class="m-0" />
+    <ui-divider class="m-0" />
   </ng-template>
 
   @if (isLoading()) {
     <ui-stack gap="4">
-      <p-skeleton height="3rem" />
-      <p-skeleton height="3rem" />
-      <p-skeleton height="3rem" />
-      <p-skeleton height="3rem" />
-      <p-skeleton height="3rem" />
-      <p-skeleton height="3rem" />
-      <p-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
     </ui-stack>
   } @else {
     <ui-stack gap="4">
@@ -101,4 +101,4 @@
       </ui-stack>
     </ui-stack>
   }
-</p-card>
+</ui-card>

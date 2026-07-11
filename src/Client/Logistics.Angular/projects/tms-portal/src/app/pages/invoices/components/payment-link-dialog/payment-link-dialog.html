@@ -36,7 +36,7 @@
           <td>{{ link.expiresAt | date: "short" }}</td>
           <td>{{ link.accessCount }}</td>
           <td>
-            <p-tag [value]="getLinkStatusLabel(link)" [severity]="getLinkStatus(link)" />
+            <ui-badge [value]="getLinkStatusLabel(link)" [severity]="getLinkStatus(link)" />
           </td>
           <td class="text-right">
             <ui-button

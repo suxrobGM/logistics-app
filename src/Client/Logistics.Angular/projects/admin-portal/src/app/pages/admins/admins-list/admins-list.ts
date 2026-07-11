@@ -11,17 +11,18 @@ import {
   type UserDto,
 } from "@logistics/shared/api";
 import {
+  Badge,
+  Card,
   DataContainer,
   PageHeader,
   SearchField,
   UiButton,
   UiDataTable,
   UiSortHeader,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { AdminInvitationsListStore } from "../store/admin-invitations-list.store";
@@ -32,7 +33,8 @@ import { AdminsListStore } from "../store/admins-list.store";
   templateUrl: "./admins-list.html",
   providers: [AdminsListStore, AdminInvitationsListStore],
   imports: [
-    CardModule,
+    Badge,
+    Card,
     DataContainer,
     DatePipe,
     DialogModule,
@@ -40,7 +42,6 @@ import { AdminsListStore } from "../store/admins-list.store";
     InputTextModule,
     PageHeader,
     SearchField,
-    TagModule,
     TooltipModule,
     UiButton,
     UiDataTable,
@@ -66,7 +67,7 @@ export class AdminsList {
     return `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || "—";
   }
 
-  protected getRoleSeverity(role?: string | null): "danger" | "info" {
+  protected getRoleSeverity(role?: string | null): UiBadgeIntent {
     return role === "Super Admin" ? "danger" : "info";
   }
 

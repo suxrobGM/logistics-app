@@ -25,20 +25,20 @@
 
 <div class="mx-auto max-w-5xl">
   @if (isLoading() && !c) {
-    <p-card>
+    <ui-card>
       <ui-stack align="center" justify="center" class="py-10">
-        <p-progress-spinner ariaLabel="Loading container" />
+        <ui-spinner ariaLabel="Loading container" />
       </ui-stack>
-    </p-card>
+    </ui-card>
   } @else if (!c) {
-    <p-card>
+    <ui-card>
       <ui-stack align="center" gap="3" class="py-10">
         <ui-icon name="alert-circle" color="muted" />
         <ui-typography variant="body" color="secondary">Container not found.</ui-typography>
       </ui-stack>
-    </p-card>
+    </ui-card>
   } @else {
-    <p-card>
+    <ui-card>
       <ui-stack
         direction="row"
         align="center"
@@ -158,6 +158,6 @@
           </ui-stack>
         }
       </ui-stack>
-    </p-card>
+    </ui-card>
   }
 </div>

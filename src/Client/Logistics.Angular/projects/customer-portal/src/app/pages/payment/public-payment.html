@@ -33,11 +33,7 @@
           </ui-typography>
           <ui-typography variant="body" color="muted">{{ inv.companyName }}</ui-typography>
         </div>
-        <p-tag
-          [value]="getStatusLabel()"
-          [severity]="getStatusSeverity()"
-          class="px-4 py-2 text-lg"
-        />
+        <ui-badge size="lg" [value]="getStatusLabel()" [severity]="getStatusSeverity()" />
       </ui-stack>
     </ui-surface>
 
@@ -68,7 +64,7 @@
 
           <!-- Line Items -->
           @if (inv.lineItems && inv.lineItems.length > 0) {
-            <p-divider />
+            <ui-divider />
             <ui-data-table [value]="inv.lineItems" styleClass="p-datatable-sm">
               <ng-template #header>
                 <tr>
@@ -105,7 +101,7 @@
             </ui-alert>
           }
 
-          <p-divider />
+          <ui-divider />
 
           <div class="flex justify-end">
             <div class="w-72">
@@ -169,7 +165,7 @@
               </ui-typography>
             </div>
 
-            <p-divider />
+            <ui-divider />
 
             <div class="mb-4">
               <ui-typography variant="body-sm" color="muted" class="mb-2">

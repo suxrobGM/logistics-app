@@ -12,9 +12,11 @@ import {
   type TenantDto,
 } from "@logistics/shared/api";
 import {
+  Card,
   Grid,
   Icon,
   PageHeader,
+  Skeleton,
   Stack,
   Typography,
   UiButton,
@@ -22,8 +24,6 @@ import {
   UiSelectField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { CardModule } from "primeng/card";
-import { SkeletonModule } from "primeng/skeleton";
 
 interface SelectOption {
   label: string;
@@ -36,14 +36,14 @@ const EMPTY = { tenantId: "", planId: "" };
   selector: "adm-subscription-add",
   templateUrl: "./subscription-add.html",
   imports: [
-    CardModule,
+    Card,
     FormField,
     FormRoot,
     Grid,
     Icon,
     PageHeader,
     RouterModule,
-    SkeletonModule,
+    Skeleton,
     Stack,
     Typography,
     UiButton,

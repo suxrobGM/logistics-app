@@ -18,7 +18,9 @@ import {
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
+  Card,
   DateRangePicker,
+  Divider,
   Grid,
   Icon,
   Stack,
@@ -30,10 +32,7 @@ import {
   type IconName,
 } from "@logistics/shared/ui";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { MultiSelectModule } from "primeng/multiselect";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { SelectButtonModule } from "primeng/selectbutton";
 import { TooltipModule } from "primeng/tooltip";
@@ -59,11 +58,11 @@ interface PayrollFormValue {
   selector: "app-payroll-invoice-add",
   templateUrl: "./payroll-invoice-add.html",
   imports: [
-    CardModule,
+    Card,
     CommonModule,
     CurrencyFormatPipe,
     DateRangePicker,
-    DividerModule,
+    Divider,
     FormField,
     FormRoot,
     FormsModule,
@@ -71,7 +70,6 @@ interface PayrollFormValue {
     Icon,
     MultiSelectModule,
     PageHeader,
-    ProgressSpinnerModule,
     RouterModule,
     SelectButtonModule,
     SelectModule,

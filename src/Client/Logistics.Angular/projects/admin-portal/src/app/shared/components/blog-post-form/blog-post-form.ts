@@ -11,7 +11,6 @@ import {
   ValidatedForm,
 } from "@logistics/shared/ui";
 import { EditorModule } from "primeng/editor";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 
 export interface BlogPostFormValue {
   title: string;
@@ -40,7 +39,6 @@ const EMPTY: BlogPostFormValue = {
     EditorModule,
     FormField,
     FormRoot,
-    ProgressSpinnerModule,
     RouterLink,
     UiButton,
     UiCheckboxField,

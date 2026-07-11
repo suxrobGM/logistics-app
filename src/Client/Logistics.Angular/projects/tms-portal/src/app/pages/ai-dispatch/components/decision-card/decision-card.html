@@ -2,8 +2,8 @@
   <!-- Header -->
   <ui-stack direction="row" align="center" justify="between" class="mb-3">
     <ui-stack direction="row" align="center" gap="2">
-      <p-tag [value]="Labels.decisionTypeLabel(decision().type ?? '')" severity="info" />
-      <p-tag
+      <ui-badge [value]="Labels.decisionTypeLabel(decision().type ?? '')" severity="info" />
+      <ui-badge
         [value]="decision().status ?? ''"
         [severity]="Labels.dispatchStatusSeverity(decision().status ?? '')"
       />

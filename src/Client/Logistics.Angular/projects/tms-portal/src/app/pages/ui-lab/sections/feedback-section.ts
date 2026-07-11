@@ -8,8 +8,7 @@ import {
   LoadingSkeleton,
   StatusBadge,
   Typography,
-  type BadgeSeverity,
-  type BadgeVariant,
+  UI_BADGE_TONES,
   type CalloutIntent,
   type StatusKind,
   type TypographyVariant,
@@ -44,16 +43,25 @@ export class UiLabFeedbackSection {
     "neutral",
   ];
 
-  protected readonly severities: readonly BadgeSeverity[] = [
-    "info",
-    "success",
-    "warn",
-    "danger",
-    "secondary",
-    "contrast",
-  ];
+  /**
+   * Driven off the exported vocabulary rather than a hand-copied list, so a tone added to the union
+   * shows up in the lab by itself. A hand-written array is the one that silently stops covering the
+   * type it documents.
+   *
+   * `UI_BADGE_TONES`, not `UI_BADGE_INTENTS`: the tones are what `<ui-badge>` can PAINT (the six
+   * producer intents plus `primary`, which is what a bare `<p-tag>` fell through to). Driving the
+   * matrix off the producer vocabulary would leave `primary` — the one tone with no producer and so
+   * the one nobody would notice breaking — as the only cell never rendered.
+   */
+  protected readonly severities = UI_BADGE_TONES;
 
-  protected readonly badgeVariants: readonly BadgeVariant[] = ["solid", "outlined"];
+  /**
+   * The second axis is `rounded`, not the old `variant`. `variant="outlined"` never rendered an
+   * outline — the old template mapped it straight onto p-tag's `[rounded]`, so it drew a rounded
+   * SOLID tag. The lab was faithfully displaying a lie. This axis is the thing that was actually
+   * happening, under its real name.
+   */
+  protected readonly badgeRounded: readonly boolean[] = [false, true];
 
   protected readonly statusKinds: readonly LabStatus[] = [
     { kind: "load", statuses: ["Draft", "InTransit", "Delivered", "Cancelled", "Exception"] },

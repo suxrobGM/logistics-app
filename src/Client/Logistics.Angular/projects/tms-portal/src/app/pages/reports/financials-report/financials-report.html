@@ -9,7 +9,7 @@
   <ui-grid container>
     @for (item of [1, 2, 3, 4]; track item) {
       <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-6">
-        <p-skeleton height="120px"></p-skeleton>
+        <ui-skeleton height="120px"></ui-skeleton>
       </ui-grid>
     }
   </ui-grid>
@@ -70,10 +70,9 @@
               <div class="grow">
                 <ui-stack direction="row" align="center" gap="2" class="mb-1">
                   <ui-typography variant="h6" class="mb-0">{{ metric.metric }}</ui-typography>
-                  <p-tag
+                  <ui-badge
                     [value]="metric.category ?? ''"
                     [severity]="getCategorySeverity(metric.category)"
-                    class="p-tag-sm"
                   />
                 </ui-stack>
                 <ui-typography variant="h5" class="mb-0">
@@ -81,7 +80,7 @@
                 </ui-typography>
               </div>
               <div class="shrink-0">
-                <p-tag
+                <ui-badge
                   [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
                   [severity]="getMetricSeverity(metric.trend)"
                 />

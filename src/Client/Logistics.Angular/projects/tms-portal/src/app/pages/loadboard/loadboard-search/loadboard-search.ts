@@ -7,8 +7,7 @@ import {
   type LoadBoardListingDto,
   type SearchLoadBoardCommand,
 } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/ui";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Spinner, Stack } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { DashboardCard, EmptyState, PageHeader } from "@/shared/components";
 import { BookLoadDialog, LoadBoardSearchFilters, LoadBoardSearchResults } from "../_components";
@@ -24,7 +23,7 @@ import { LoadBoardStore } from "../store";
     LoadBoardSearchFilters,
     LoadBoardSearchResults,
     PageHeader,
-    ProgressSpinnerModule,
+    Spinner,
     Stack,
   ],
 })

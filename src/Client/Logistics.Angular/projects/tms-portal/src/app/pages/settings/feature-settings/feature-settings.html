@@ -1,10 +1,10 @@
 <ui-page-header title="Feature Settings" [centered]="true" />
 
 <ui-container maxWidth="md">
-  <p-card>
+  <ui-card>
     @if (isLoading()) {
       <ui-stack align="center" justify="center" class="py-8">
-        <p-progress-spinner />
+        <ui-spinner />
       </ui-stack>
     } @else {
       <ui-typography variant="body" color="muted" class="mb-6">
@@ -36,5 +36,5 @@
         </ui-stack>
       }
     }
-  </p-card>
+  </ui-card>
 </ui-container>
