@@ -12,9 +12,8 @@ import {
 import { RouterLink } from "@angular/router";
 import type { NotificationDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
-import { Divider, Icon, OverlayBadge, Spinner, UiTooltip } from "@logistics/shared/ui";
+import { Divider, Icon, OverlayBadge, Spinner, UiPopover, UiTooltip } from "@logistics/shared/ui";
 import { OverlayBadgeModule } from "primeng/overlaybadge";
-import { Popover, PopoverModule } from "primeng/popover";
 import { NotificationService, ToastService } from "@/core/services";
 
 @Component({
@@ -27,7 +26,7 @@ import { NotificationService, ToastService } from "@/core/services";
     Icon,
     OverlayBadge,
     OverlayBadgeModule,
-    PopoverModule,
+    UiPopover,
     RelativeTimePipe,
     RouterLink,
     Spinner,
@@ -38,7 +37,7 @@ export class NotificationBell implements OnInit, OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly toastService = inject(ToastService);
 
-  protected readonly popover = viewChild<Popover>("popover");
+  protected readonly popover = viewChild<UiPopover>("popover");
 
   /** Whether the sidebar is expanded (shows label) or collapsed (icon only) */
   public readonly expanded = input(true);

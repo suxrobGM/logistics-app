@@ -3,10 +3,17 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, downloadExpenseReceipt, type ExpenseDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
-import { Card, Icon, UiButton, UiDataTable, UiSortHeader, UiTooltip } from "@logistics/shared/ui";
+import {
+  Card,
+  Icon,
+  UiButton,
+  UiDataTable,
+  UiMenu,
+  UiSortHeader,
+  UiTooltip,
+  type UiMenuItem,
+} from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
 import { getCategoryLabel, RejectExpenseDialog } from "../_components";
@@ -26,13 +33,13 @@ import { ExpensesListStore } from "../store/expenses-list.store";
     ExpenseStatusTag,
     ExpenseTypeTag,
     Icon,
-    MenuModule,
     PageHeader,
     RejectExpenseDialog,
     RouterModule,
     SearchField,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
     UiTooltip,
   ],
@@ -45,19 +52,19 @@ export class ExpensesListPage {
 
   protected readonly selectedRow = signal<ExpenseDto | null>(null);
 
-  protected readonly actionMenuItems = computed<MenuItem[]>(() => {
+  protected readonly actionMenuItems = computed<UiMenuItem[]>(() => {
     const expense = this.selectedRow();
     const canApproveOrReject = expense?.status === "pending";
 
-    const items: MenuItem[] = [
+    const items: UiMenuItem[] = [
       {
         label: "View Details",
-        icon: "pi pi-eye",
+        icon: "eye",
         command: () => this.viewDetails(),
       },
       {
         label: "Edit",
-        icon: "pi pi-pencil",
+        icon: "pencil",
         command: () => this.editExpense(),
       },
     ];
@@ -67,12 +74,12 @@ export class ExpensesListPage {
         { separator: true },
         {
           label: "Approve",
-          icon: "pi pi-check",
+          icon: "check",
           command: () => this.approveExpense(),
         },
         {
           label: "Reject",
-          icon: "pi pi-times",
+          icon: "times",
           command: () => this.rejectExpense(),
         },
       );

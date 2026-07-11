@@ -7,10 +7,10 @@ import {
   Spinner,
   UiButton,
   UiDataTable,
+  UiDialog,
   UiTableRowDirectives,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
@@ -23,7 +23,6 @@ import { DistanceUnitPipe } from "@/shared/pipes";
   imports: [
     AddressPipe,
     CurrencyFormatPipe,
-    Dialog,
     DistanceUnitPipe,
     FormsModule,
     Icon,
@@ -34,6 +33,7 @@ import { DistanceUnitPipe } from "@/shared/pipes";
     Spinner,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiTableRowDirectives,
     UiTooltip,
   ],

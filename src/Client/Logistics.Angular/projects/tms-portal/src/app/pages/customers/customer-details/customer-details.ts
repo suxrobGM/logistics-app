@@ -12,8 +12,8 @@ import {
   Surface,
   Typography,
   UiButton,
+  UiTabsImports,
 } from "@logistics/shared/ui";
-import { TabsModule } from "primeng/tabs";
 import { PageHeader } from "@/shared/components";
 import { CustomerStatusTag } from "@/shared/components/tags";
 import { CustomerAvatar } from "../components";
@@ -43,9 +43,9 @@ import { CustomerDetailsStore } from "../store";
     Spinner,
     Stack,
     Surface,
-    TabsModule,
     Typography,
     UiButton,
+    UiTabsImports,
   ],
 })
 export class CustomerDetails implements OnInit {

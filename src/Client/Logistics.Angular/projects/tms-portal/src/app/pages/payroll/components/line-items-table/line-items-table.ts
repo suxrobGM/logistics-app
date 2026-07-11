@@ -16,13 +16,13 @@ import {
   Icon,
   UiButton,
   UiDataTable,
+  UiDialog,
   UiNumberField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 
@@ -40,12 +40,12 @@ const EMPTY = {
   imports: [
     CommonModule,
     CurrencyFormatPipe,
-    DialogModule,
     FormField,
     FormRoot,
     Icon,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiFormField,
     UiNumberField,
     UiSelectField,

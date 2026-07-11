@@ -1,24 +1,24 @@
 <ui-container maxWidth="md">
   <ui-page-header title="Add Expense" backLink="/expenses" />
   <ui-card>
-    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
-      <p-tablist>
-        <p-tab [value]="0">Company Expense</p-tab>
-        <p-tab [value]="1">Truck Expense</p-tab>
-        <p-tab [value]="2">Body Shop Expense</p-tab>
-      </p-tablist>
+    <ui-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+      <ui-tab-list>
+        <ui-tab value="0">Company Expense</ui-tab>
+        <ui-tab value="1">Truck Expense</ui-tab>
+        <ui-tab value="2">Body Shop Expense</ui-tab>
+      </ui-tab-list>
 
-      <p-tabpanels>
-        <p-tabpanel [value]="0">
+      <ui-tab-panels>
+        <ui-tab-panel value="0">
           <app-company-expense-form mode="add" />
-        </p-tabpanel>
-        <p-tabpanel [value]="1">
+        </ui-tab-panel>
+        <ui-tab-panel value="1">
           <app-truck-expense-form mode="add" />
-        </p-tabpanel>
-        <p-tabpanel [value]="2">
+        </ui-tab-panel>
+        <ui-tab-panel value="2">
           <app-body-shop-expense-form mode="add" />
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
+        </ui-tab-panel>
+      </ui-tab-panels>
+    </ui-tabs>
   </ui-card>
 </ui-container>

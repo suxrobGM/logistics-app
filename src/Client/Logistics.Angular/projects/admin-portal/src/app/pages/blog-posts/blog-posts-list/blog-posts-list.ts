@@ -18,12 +18,12 @@ import {
   Stack,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   UiTooltip,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { ToastService } from "@/core/services";
 import { BlogPostsListStore } from "../store/blog-posts-list.store";
 
@@ -37,12 +37,12 @@ import { BlogPostsListStore } from "../store/blog-posts-list.store";
     DataContainer,
     DatePipe,
     Icon,
-    MenuModule,
     PageHeader,
     SearchField,
     Stack,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
     UiTooltip,
   ],
@@ -55,7 +55,7 @@ export class BlogPostsList {
 
   protected readonly selectedPost = signal<BlogPostDto | null>(null);
 
-  protected readonly actionMenuItems = computed<MenuItem[]>(() => {
+  protected readonly actionMenuItems = computed<UiMenuItem[]>(() => {
     const post = this.selectedPost();
     if (!post) return [];
 
@@ -63,10 +63,10 @@ export class BlogPostsList {
     const isArchived = post.status?.toLowerCase() === "archived";
     const isPublished = post.status?.toLowerCase() === "published";
 
-    const items: MenuItem[] = [
+    const items: UiMenuItem[] = [
       {
         label: "Edit",
-        icon: "pi pi-pen-to-square",
+        icon: "pen-to-square",
         command: () => this.editPost(),
       },
     ];
@@ -74,7 +74,7 @@ export class BlogPostsList {
     if (isDraft || isArchived) {
       items.push({
         label: "Publish",
-        icon: "pi pi-send",
+        icon: "send",
         command: () => this.publishPost(),
       });
     }
@@ -82,7 +82,7 @@ export class BlogPostsList {
     if (isPublished) {
       items.push({
         label: "Unpublish",
-        icon: "pi pi-eye-slash",
+        icon: "eye-slash",
         command: () => this.unpublishPost(),
       });
     }
@@ -91,8 +91,8 @@ export class BlogPostsList {
       { separator: true },
       {
         label: "Delete",
-        icon: "pi pi-trash",
-        styleClass: "text-red-600",
+        icon: "trash",
+        variant: "destructive",
         command: () => this.confirmDelete(),
       },
     );

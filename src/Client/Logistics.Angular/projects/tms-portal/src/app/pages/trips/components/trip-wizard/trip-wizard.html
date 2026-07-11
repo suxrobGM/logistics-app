@@ -7,33 +7,33 @@
   </ui-stack>
 }
 
-<p-stepper [linear]="true" [value]="activeStep()" (valueChange)="store['goToStep']($event ?? 1)">
-  <p-step-list>
-    <p-step [value]="1">Basic Info</p-step>
-    <p-step [value]="2">Loads</p-step>
-    <p-step [value]="3">Review</p-step>
-  </p-step-list>
-  <p-step-panels>
-    <p-step-panel [value]="1">
-      <ng-template #content>
+<ui-stepper [linear]="true" [value]="activeStep()" (valueChange)="store['goToStep']($event)">
+  <ui-step-list>
+    <ui-step [value]="1">Basic Info</ui-step>
+    <ui-step [value]="2">Loads</ui-step>
+    <ui-step [value]="3">Review</ui-step>
+  </ui-step-list>
+  <ui-step-panels>
+    <ui-step-panel [value]="1">
+      <ng-template uiStepContent>
         <!-- Basic info form-->
         <app-trip-wizard-basic [disabled]="disabled()" />
       </ng-template>
-    </p-step-panel>
-    <p-step-panel [value]="2">
-      <ng-template #content>
+    </ui-step-panel>
+    <ui-step-panel [value]="2">
+      <ng-template uiStepContent>
         <!-- Loads table -->
         <app-trip-wizard-loads [disabled]="disabled()" />
       </ng-template>
-    </p-step-panel>
-    <p-step-panel [value]="3">
-      <ng-template #content>
+    </ui-step-panel>
+    <ui-step-panel [value]="3">
+      <ng-template uiStepContent>
         <!-- Review step -->
         <app-trip-wizard-review
           [saveButtonLabel]="mode() === 'create' ? 'Create' : 'Update'"
           (save)="processStep3()"
         />
       </ng-template>
-    </p-step-panel>
-  </p-step-panels>
-</p-stepper>
+    </ui-step-panel>
+  </ui-step-panels>
+</ui-stepper>

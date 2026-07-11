@@ -30,7 +30,7 @@
       icon="plus"
       (click)="menu.toggle($event)"
     />
-    <p-menu #menu [model]="quickActions" [popup]="true" />
+    <ui-menu #menu [items]="quickActions" />
   </ui-page-header>
 
   <!-- Skeleton during initial load (mirrors panel grid coordinates) -->

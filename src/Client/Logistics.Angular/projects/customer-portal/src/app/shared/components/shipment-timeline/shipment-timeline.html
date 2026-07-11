@@ -9,7 +9,9 @@
       </div>
       <ui-typography variant="body-sm" weight="medium" class="mt-2">{{ step.label }}</ui-typography>
       @if (step.date) {
-        <ui-typography variant="caption" color="muted">{{ step.date | date: "short" }}</ui-typography>
+        <ui-typography variant="caption" color="muted">
+          {{ step.date | date: "short" }}
+        </ui-typography>
       }
     </ui-stack>
     @if (!isLast) {

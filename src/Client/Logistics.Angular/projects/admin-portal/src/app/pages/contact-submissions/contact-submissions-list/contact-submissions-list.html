@@ -70,11 +70,11 @@
   </ui-data-container>
 </ui-card>
 
-<p-dialog
+<ui-dialog
   header="Contact Submission Details"
-  [(visible)]="viewDialogVisible"
+  [(open)]="viewDialogVisible"
   [modal]="true"
-  [style]="{ width: '600px' }"
+  width="600px"
 >
   @if (selectedSubmission(); as submission) {
     <ui-stack gap="4">
@@ -151,4 +151,4 @@
     <ui-button intent="secondary" label="Cancel" (click)="viewDialogVisible.set(false)" />
     <ui-button label="Save Changes" icon="check" (click)="saveSubmission()" />
   </ng-template>
-</p-dialog>
+</ui-dialog>

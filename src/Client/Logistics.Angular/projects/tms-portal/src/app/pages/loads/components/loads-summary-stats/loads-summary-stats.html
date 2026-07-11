@@ -1,6 +1,6 @@
 <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
   <!-- Total Loads -->
-  <div class="rounded-lg border border-default bg-elevated p-4">
+  <div class="border-default bg-elevated rounded-lg border p-4">
     <div class="text-muted-foreground mb-1 text-sm font-medium">Total Loads</div>
     <div class="text-foreground text-2xl font-bold">
       @if (isLoading()) {
@@ -9,13 +9,11 @@
         {{ totalRecords() }}
       }
     </div>
-    <div class="text-muted-foreground text-xs">
-      {{ loads().length }} shown on current page
-    </div>
+    <div class="text-muted-foreground text-xs">{{ loads().length }} shown on current page</div>
   </div>
 
   <!-- Total Value -->
-  <div class="rounded-lg border border-default bg-elevated p-4">
+  <div class="border-default bg-elevated rounded-lg border p-4">
     <div class="text-muted-foreground mb-1 text-sm font-medium">Page Total Value</div>
     <div class="text-success text-2xl font-bold">
       @if (isLoading()) {
@@ -28,7 +26,7 @@
   </div>
 
   <!-- Status Breakdown -->
-  <div class="rounded-lg border border-default bg-elevated p-4">
+  <div class="border-default bg-elevated rounded-lg border p-4">
     <div class="text-muted-foreground mb-2 text-sm font-medium">Status Breakdown</div>
     @if (isLoading()) {
       <span class="text-muted-foreground">...</span>

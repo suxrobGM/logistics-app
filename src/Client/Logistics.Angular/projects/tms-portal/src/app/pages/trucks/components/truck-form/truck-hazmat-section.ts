@@ -3,12 +3,12 @@ import { FormField, type FieldTree } from "@angular/forms/signals";
 import { hazmatClassOptions } from "@logistics/shared/api/enums";
 import {
   UiCheckboxField,
+  UiCollapsible,
   UiDateField,
   UiFormField,
   UiMultiSelectField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { Fieldset } from "primeng/fieldset";
 import type { TruckFormModel } from "./truck-form";
 
 @Component({
@@ -16,10 +16,10 @@ import type { TruckFormModel } from "./truck-form";
   templateUrl: "./truck-hazmat-section.html",
   imports: [
     FormField,
-    Fieldset,
-    UiFormField,
     UiCheckboxField,
+    UiCollapsible,
     UiDateField,
+    UiFormField,
     UiMultiSelectField,
     UiTextField,
   ],

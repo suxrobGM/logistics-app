@@ -1,0 +1,176 @@
+<section id="behaviour" class="scroll-mt-24" data-lab="behaviour">
+  <ui-typography variant="h2" tag="h2">Behaviour (S9)</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    Menu, tabs, accordion, popover, drawer, stepper, timeline. Every bug in these is invisible to
+    the build — click things.
+  </ui-typography>
+
+  <!-- ── ui-menu ─────────────────────────────────────────────────────────────────────────────── -->
+  <div class="border-default mt-4 rounded-lg border p-4" data-lab="menu">
+    <ui-typography variant="h3" tag="h3">ui-menu</ui-typography>
+    <ui-typography variant="body-sm" color="muted">
+      The row-kebab shape from all 19 call sites: set the row, then toggle. Must open on click,
+      close on Escape, on outside-click and on activating an item — and the command must see the row
+      of the kebab you actually clicked.
+    </ui-typography>
+
+    <div class="mt-3 flex flex-col gap-2">
+      @for (row of rows; track row) {
+        <div class="border-default flex items-center justify-between rounded-md border px-3 py-2">
+          <span class="text-sm">{{ row }}</span>
+          <ui-button
+            appearance="text"
+            icon="ellipsis-v"
+            ariaLabel="Show actions menu"
+            [attr.data-lab-menu-trigger]="row"
+            (click)="selectedRow.set(row); menu.toggle($event)"
+          />
+        </div>
+      }
+    </div>
+
+    <p class="text-muted-foreground mt-3 text-sm" data-lab="menu-output">
+      Last command:
+      <strong>{{ lastCommand() }}</strong>
+    </p>
+
+    <ui-menu #menu [items]="actionMenuItems()" ariaLabel="Row actions" />
+  </div>
+
+  <!-- ── ui-tabs ─────────────────────────────────────────────────────────────────────────────── -->
+  <div class="border-default mt-4 rounded-lg border p-4" data-lab="tabs">
+    <ui-typography variant="h3" tag="h3">ui-tabs</ui-typography>
+    <ui-typography variant="body-sm" color="muted">
+      Bound to a numeric
+      <code>signal(0)</code>
+      , exactly like the 5 real call sites — if the key coercion regressed, NO tab would be selected
+      and the panel area would be blank. Arrow keys must move between tabs.
+    </ui-typography>
+
+    <ui-tabs class="mt-3" [value]="activeTab()" (valueChange)="activeTab.set(+$event)">
+      <ui-tab-list>
+        <ui-tab value="0">Details</ui-tab>
+        <ui-tab value="1">Loads</ui-tab>
+        <ui-tab value="2">Documents</ui-tab>
+      </ui-tab-list>
+      <ui-tab-panels>
+        <ui-tab-panel value="0">
+          <p class="p-3 text-sm" data-lab="tab-panel-0">Panel 0 — details.</p>
+        </ui-tab-panel>
+        <ui-tab-panel value="1">
+          <p class="p-3 text-sm" data-lab="tab-panel-1">Panel 1 — loads.</p>
+        </ui-tab-panel>
+        <ui-tab-panel value="2">
+          <p class="p-3 text-sm" data-lab="tab-panel-2">Panel 2 — documents.</p>
+        </ui-tab-panel>
+      </ui-tab-panels>
+    </ui-tabs>
+    <p class="text-muted-foreground mt-2 text-sm">activeTab() = {{ activeTab() }}</p>
+  </div>
+
+  <!-- ── ui-accordion ───────────────────────────────────────────────────────────────────────── -->
+  <div class="border-default mt-4 rounded-lg border p-4" data-lab="accordion">
+    <ui-typography variant="h3" tag="h3">ui-accordion</ui-typography>
+    <ui-accordion class="mt-2" type="multiple">
+      <ui-accordion-panel>
+        <ui-accordion-header>First question</ui-accordion-header>
+        <ui-accordion-content>Answer one.</ui-accordion-content>
+      </ui-accordion-panel>
+      <ui-accordion-panel>
+        <ui-accordion-header>Second question</ui-accordion-header>
+        <ui-accordion-content>Answer two.</ui-accordion-content>
+      </ui-accordion-panel>
+    </ui-accordion>
+  </div>
+
+  <!-- ── ui-popover + ui-drawer ─────────────────────────────────────────────────────────────── -->
+  <div
+    class="border-default mt-4 flex flex-wrap gap-3 rounded-lg border p-4"
+    data-lab="overlays-s9"
+  >
+    <ui-button
+      label="Toggle popover"
+      appearance="outlined"
+      data-lab="popover-trigger"
+      (click)="pop.toggle($event)"
+    />
+    <ui-popover #pop width="260px" ariaLabel="Demo popover">
+      <div class="p-4">
+        <p class="m-0 text-sm">It opened. Now press Escape, or click outside.</p>
+        <ui-button class="mt-3" label="Close" appearance="text" (click)="pop.hide()" />
+      </div>
+    </ui-popover>
+
+    <ui-button label="Open drawer" appearance="outlined" (click)="drawerOpen.set(true)" />
+    <ui-drawer [(visible)]="drawerOpen" position="left" width="300px" header="Demo drawer">
+      <div class="p-4">
+        <p class="text-sm">Escape, the backdrop and the ✕ must all close this.</p>
+      </div>
+    </ui-drawer>
+  </div>
+
+  <!-- ── ui-stepper ─────────────────────────────────────────────────────────────────────────── -->
+  <div class="border-default mt-4 rounded-lg border p-4" data-lab="stepper">
+    <ui-typography variant="h3" tag="h3">ui-stepper</ui-typography>
+    <ui-typography variant="body-sm" color="muted">
+      <code>[linear]</code>
+      must refuse a forward jump from the headers (click "Review" from step 1 — nothing should
+      happen) while still allowing a step back.
+    </ui-typography>
+
+    <ui-stepper
+      class="mt-3"
+      [linear]="true"
+      [value]="activeStep()"
+      (valueChange)="goToStep($event)"
+    >
+      <ui-step-list>
+        <ui-step [value]="1">Basic info</ui-step>
+        <ui-step [value]="2">Loads</ui-step>
+        <ui-step [value]="3">Review</ui-step>
+      </ui-step-list>
+      <ui-step-panels>
+        <ui-step-panel [value]="1">
+          <ng-template uiStepContent>
+            <p class="text-sm" data-lab="step-panel-1">Step one.</p>
+          </ng-template>
+        </ui-step-panel>
+        <ui-step-panel [value]="2">
+          <ng-template uiStepContent>
+            <p class="text-sm" data-lab="step-panel-2">Step two.</p>
+          </ng-template>
+        </ui-step-panel>
+        <ui-step-panel [value]="3">
+          <ng-template uiStepContent>
+            <p class="text-sm" data-lab="step-panel-3">Step three.</p>
+          </ng-template>
+        </ui-step-panel>
+      </ui-step-panels>
+    </ui-stepper>
+
+    <div class="mt-3 flex gap-2">
+      <ui-button label="Back" appearance="outlined" icon="arrow-left" (click)="prevStep()" />
+      <ui-button label="Next" iconEnd="arrow-right" (click)="nextStep()" />
+    </div>
+  </div>
+
+  <!-- ── ui-timeline ────────────────────────────────────────────────────────────────────────── -->
+  <div class="border-default mt-4 rounded-lg border p-4" data-lab="timeline">
+    <ui-typography variant="h3" tag="h3">ui-timeline</ui-typography>
+    <ui-timeline class="mt-2" [value]="events">
+      <ng-template uiTimelineMarker let-event>
+        <span
+          class="bg-primary text-primary-foreground z-10 flex size-6 items-center justify-center rounded-full text-xs"
+        >
+          •
+        </span>
+      </ng-template>
+      <ng-template uiTimelineContent let-event>
+        <div class="pb-4">
+          <p class="m-0 text-sm font-medium">{{ event.title }}</p>
+          <p class="text-muted-foreground m-0 text-xs">{{ event.at }}</p>
+        </div>
+      </ng-template>
+    </ui-timeline>
+  </div>
+</section>

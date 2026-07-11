@@ -45,6 +45,7 @@ import {
   Typography,
   UiButton,
   UiCheckboxField,
+  UiCollapsible,
   UiDateField,
   UiFormField,
   UiNumberField,
@@ -53,7 +54,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { Fieldset } from "primeng/fieldset";
 import { ToastModule } from "primeng/toast";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
@@ -180,7 +180,6 @@ const EMPTY: LoadFormModel = {
   imports: [
     AddressAutocomplete,
     DirectionMap,
-    Fieldset,
     FormField,
     FormRoot,
     Grid,
@@ -197,6 +196,7 @@ const EMPTY: LoadFormModel = {
     Typography,
     UiButton,
     UiCheckboxField,
+    UiCollapsible,
     UiDateField,
     UiFormField,
     UiNumberField,

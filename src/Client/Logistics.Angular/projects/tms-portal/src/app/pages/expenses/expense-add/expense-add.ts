@@ -1,6 +1,5 @@
 import { Component, signal } from "@angular/core";
-import { Card } from "@logistics/shared/ui";
-import { TabsModule } from "primeng/tabs";
+import { Card, UiTabsImports } from "@logistics/shared/ui";
 import { Container, PageHeader } from "@/shared/components";
 import { BodyShopExpenseForm, CompanyExpenseForm, TruckExpenseForm } from "../_components";
 
@@ -13,8 +12,8 @@ import { BodyShopExpenseForm, CompanyExpenseForm, TruckExpenseForm } from "../_c
     CompanyExpenseForm,
     Container,
     PageHeader,
-    TabsModule,
     TruckExpenseForm,
+    UiTabsImports,
   ],
 })
 export class ExpenseAddPage {

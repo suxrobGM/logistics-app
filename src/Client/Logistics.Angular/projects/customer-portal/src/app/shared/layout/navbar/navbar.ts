@@ -2,9 +2,7 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { ThemeToggle, type UserTenantAccessDto } from "@logistics/shared";
-import { Icon, UiButton, type IconName } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
+import { Icon, UiButton, UiMenu, type IconName, type UiMenuItem } from "@logistics/shared/ui";
 import { SelectModule } from "primeng/select";
 import { AuthService } from "@/core/auth";
 import { TenantContextService } from "@/core/services";
@@ -22,12 +20,12 @@ interface NavItem {
   imports: [
     FormsModule,
     Icon,
-    MenuModule,
     RouterLink,
     RouterLinkActive,
     SelectModule,
     ThemeToggle,
     UiButton,
+    UiMenu,
   ],
 })
 export class Navbar {
@@ -52,26 +50,26 @@ export class Navbar {
     { label: "Documents", icon: "file", route: "/documents" },
   ];
 
-  protected readonly profileMenuItems: MenuItem[] = [
+  protected readonly profileMenuItems: UiMenuItem[] = [
     {
       label: "Account Settings",
-      icon: "pi pi-cog",
+      icon: "cog",
       routerLink: "/account",
     },
     {
       label: "Manage Profile",
-      icon: "pi pi-user",
+      icon: "user",
       command: () => this.openAccountUrl(),
     },
     {
       label: "Switch Company",
-      icon: "pi pi-building",
+      icon: "building",
       command: () => this.switchTenant(),
     },
     { separator: true },
     {
       label: "Sign Out",
-      icon: "pi pi-sign-out",
+      icon: "sign-out",
       command: () => this.logout(),
     },
   ];

@@ -1,0 +1,22 @@
+<ul class="m-0 flex list-none flex-col p-0">
+  @for (event of value(); track $index) {
+    <li class="flex gap-4">
+      <!-- Marker column: the dot, plus the connector running down to the next event. -->
+      <div class="flex flex-col items-center">
+        @if (marker(); as markerTpl) {
+          <ng-container *ngTemplateOutlet="markerTpl.templateRef; context: { $implicit: event }" />
+        } @else {
+          <span class="bg-primary mt-1.5 size-3 shrink-0 rounded-full" aria-hidden="true"></span>
+        }
+        @if (!$last) {
+          <span class="bg-border w-px flex-1" aria-hidden="true"></span>
+        }
+      </div>
+
+      <!-- Content column. This `flex-1` is the old `::ng-deep .p-timeline-event-content { flex: 1 }`. -->
+      <div class="min-w-0 flex-1">
+        <ng-container *ngTemplateOutlet="content().templateRef; context: { $implicit: event }" />
+      </div>
+    </li>
+  }
+</ul>

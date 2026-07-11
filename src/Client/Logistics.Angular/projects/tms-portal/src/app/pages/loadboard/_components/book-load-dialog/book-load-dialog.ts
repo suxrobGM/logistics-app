@@ -12,10 +12,10 @@ import {
   Surface,
   Typography,
   UiButton,
+  UiDialog,
   UiSelectField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { UiFormField } from "@/shared/components";
 
 const EMPTY = {
@@ -32,13 +32,13 @@ const EMPTY = {
   imports: [
     Alert,
     CurrencyFormatPipe,
-    DialogModule,
     FormField,
     FormRoot,
     Stack,
     Surface,
     Typography,
     UiButton,
+    UiDialog,
     UiFormField,
     UiSelectField,
     UiTextField,

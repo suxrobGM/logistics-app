@@ -133,7 +133,7 @@
     </ui-card>
 
     <!-- Context menu for row actions -->
-    <p-menu #menu [model]="actionMenuItems" [popup]="true" />
+    <ui-menu #menu [items]="actionMenuItems" />
   } @else {
     <!-- Map View -->
     <app-trucks-map-view [trucks]="store.data()" [isLoading]="store.isLoading()" />

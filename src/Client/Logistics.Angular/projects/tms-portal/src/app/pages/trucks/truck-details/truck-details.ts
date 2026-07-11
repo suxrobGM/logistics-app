@@ -24,8 +24,8 @@ import {
   Surface,
   Typography,
   UiButton,
+  UiTabsImports,
 } from "@logistics/shared/ui";
-import { TabsModule } from "primeng/tabs";
 import {
   DocumentManager,
   GeolocationMap,
@@ -64,13 +64,13 @@ import {
     Spinner,
     Stack,
     Surface,
-    TabsModule,
     TruckGrossLinechart,
     TruckLoadsList,
     TruckStatusTag,
     TruckTypeTag,
     Typography,
     UiButton,
+    UiTabsImports,
   ],
 })
 export class TruckDetailsComponent implements OnInit {

@@ -34,6 +34,7 @@ import {
   Surface,
   Typography,
   UiButton,
+  UiDialog,
   UiFormField,
   UiNumberField,
   UiSelectField,
@@ -43,7 +44,6 @@ import {
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { CheckboxModule } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { SearchTerminal } from "@/shared/components/search";
@@ -88,7 +88,6 @@ const TERMINAL_EMPTY: TerminalFormModel = { terminal: null };
     Card,
     CheckboxModule,
     Container,
-    DialogModule,
     FormField,
     FormRoot,
     Grid,
@@ -100,6 +99,7 @@ const TERMINAL_EMPTY: TerminalFormModel = { terminal: null };
     Surface,
     Typography,
     UiButton,
+    UiDialog,
     UiFormField,
     UiNumberField,
     UiSelectField,

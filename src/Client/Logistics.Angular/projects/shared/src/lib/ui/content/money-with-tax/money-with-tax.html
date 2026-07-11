@@ -2,12 +2,14 @@
   <span>{{ netLabel() }}</span>
 } @else if (mode() === "compact") {
   <span>
-    {{ netLabel() }} <span class="text-muted-foreground">({{ grossLabel() }})</span>
+    {{ netLabel() }}
+    <span class="text-muted-foreground">({{ grossLabel() }})</span>
   </span>
 } @else {
   <span>
     {{ netLabel() }}
-    <span class="text-muted-foreground"> + {{ rateLabel() }} ({{ taxLabel() }}) </span>
-    = <strong>{{ grossLabel() }}</strong>
+    <span class="text-muted-foreground">+ {{ rateLabel() }} ({{ taxLabel() }})</span>
+    =
+    <strong>{{ grossLabel() }}</strong>
   </span>
 }

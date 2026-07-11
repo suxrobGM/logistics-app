@@ -1,9 +1,9 @@
-<p-dialog
+<ui-dialog
   [header]="dialogTitle"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '500px' }"
-  (onHide)="close()"
+  width="500px"
+  (closed)="close()"
 >
   @if (form().submitting()) {
     <ui-stack align="center" justify="center" class="py-4">
@@ -111,4 +111,4 @@
       </ui-stack>
     </form>
   }
-</p-dialog>
+</ui-dialog>

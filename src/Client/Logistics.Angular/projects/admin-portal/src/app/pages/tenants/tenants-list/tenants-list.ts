@@ -10,11 +10,11 @@ import {
   SearchField,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { Menu, MenuModule } from "primeng/menu";
 import { ToastService } from "@/core/services";
 import { TenantsListStore } from "../store/tenants-list.store";
 
@@ -27,11 +27,11 @@ import { TenantsListStore } from "../store/tenants-list.store";
     Card,
     ConfirmDeleteDialog,
     DataContainer,
-    MenuModule,
     PageHeader,
     SearchField,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
   ],
 })
@@ -41,7 +41,7 @@ export class TenantsList {
   private readonly toastService = inject(ToastService);
   protected readonly store = inject(TenantsListStore);
 
-  private readonly actionMenu = viewChild<Menu>("actionMenu");
+  private readonly actionMenu = viewChild<UiMenu>("actionMenu");
   private readonly selectedTenant = signal<{ id: string; name: string } | null>(null);
 
   protected readonly resendingTenantId = signal<string | null>(null);
@@ -50,24 +50,24 @@ export class TenantsList {
   protected readonly deletingTenantName = signal<string>("");
   protected readonly isDeleting = signal(false);
 
-  protected readonly actionMenuItems = computed<MenuItem[]>(() => {
+  protected readonly actionMenuItems = computed<UiMenuItem[]>(() => {
     const tenant = this.selectedTenant();
     return [
       {
         label: "Edit",
-        icon: "pi pi-pen-to-square",
+        icon: "pen-to-square",
         command: () => this.router.navigate(["/tenants", tenant!.id, "edit"]),
       },
       {
         label: "Resend Welcome Email",
-        icon: "pi pi-envelope",
+        icon: "envelope",
         command: () => this.resendWelcome(tenant!.id),
       },
       { separator: true },
       {
         label: "Delete",
-        icon: "pi pi-trash",
-        styleClass: "text-red-600",
+        icon: "trash",
+        variant: "destructive",
         command: () => this.openDeleteDialog(tenant!.id, tenant!.name),
       },
     ];

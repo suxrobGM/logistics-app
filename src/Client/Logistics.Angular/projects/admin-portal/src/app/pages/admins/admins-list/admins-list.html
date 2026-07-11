@@ -133,12 +133,7 @@
   </ui-data-container>
 </ui-card>
 
-<p-dialog
-  header="Add Admin"
-  [(visible)]="showAddDialog"
-  [modal]="true"
-  [style]="{ width: '460px' }"
->
+<ui-dialog header="Add Admin" [(open)]="showAddDialog" [modal]="true" width="460px">
   <div class="flex flex-col gap-4">
     <p class="text-muted-foreground">
       Enter an email address. If the user already exists they'll be granted the Admin role
@@ -170,4 +165,4 @@
     <ui-button intent="secondary" label="Cancel" (click)="showAddDialog.set(false)" />
     <ui-button label="Add Admin" icon="plus" [loading]="isAdding()" (click)="submitAddAdmin()" />
   </ng-template>
-</p-dialog>
+</ui-dialog>

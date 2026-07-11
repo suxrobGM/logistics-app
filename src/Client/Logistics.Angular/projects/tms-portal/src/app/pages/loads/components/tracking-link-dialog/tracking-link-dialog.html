@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Tracking Links"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '650px' }"
-  (onShow)="onShow()"
-  (onHide)="close()"
+  width="650px"
+  (opened)="onShow()"
+  (closed)="close()"
 >
   @if (isLoading()) {
     <div class="flex justify-center py-4">
@@ -92,7 +92,7 @@
       </div>
     }
   }
-</p-dialog>
+</ui-dialog>
 
 @if (selectedLinkId()) {
   <app-send-tracking-link-dialog

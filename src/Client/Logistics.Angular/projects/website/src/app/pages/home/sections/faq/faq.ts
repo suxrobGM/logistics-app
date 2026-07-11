@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { AccordionModule } from "primeng/accordion";
+import { UiAccordionImports } from "@logistics/shared/ui";
 import { SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
@@ -11,7 +11,7 @@ interface FaqItem {
 @Component({
   selector: "web-faq",
   templateUrl: "./faq.html",
-  imports: [AccordionModule, SectionContainer, SectionHeader, ScrollAnimateDirective],
+  imports: [UiAccordionImports, SectionContainer, SectionHeader, ScrollAnimateDirective],
 })
 export class Faq {
   protected readonly faqs: FaqItem[] = [

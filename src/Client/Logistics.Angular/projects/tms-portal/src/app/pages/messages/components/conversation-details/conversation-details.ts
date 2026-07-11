@@ -1,15 +1,14 @@
 import { DatePipe } from "@angular/common";
 import { Component, input, model } from "@angular/core";
 import type { ConversationDto } from "@logistics/shared/api";
-import { Icon, Stack, Typography } from "@logistics/shared/ui";
-import { DrawerModule } from "primeng/drawer";
+import { Icon, Stack, Typography, UiDrawer } from "@logistics/shared/ui";
 import { UserAvatar } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-conversation-details",
   templateUrl: "./conversation-details.html",
-  imports: [DatePipe, DrawerModule, UserAvatar, Icon, Stack, Typography],
+  imports: [DatePipe, UiDrawer, UserAvatar, Icon, Stack, Typography],
 })
 export class ConversationDetails {
   readonly conversation = input<ConversationDto | null>(null);

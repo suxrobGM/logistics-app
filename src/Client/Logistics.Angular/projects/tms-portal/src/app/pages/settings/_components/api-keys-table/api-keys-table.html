@@ -60,12 +60,7 @@
 }
 
 <!-- Create API Key Dialog -->
-<p-dialog
-  header="Create API Key"
-  [(visible)]="showCreateDialog"
-  [modal]="true"
-  [style]="{ width: '450px' }"
->
+<ui-dialog header="Create API Key" [(open)]="showCreateDialog" [modal]="true" width="450px">
   <ui-form-field label="Key Name" for="keyName" [required]="true">
     <input
       pInputText
@@ -86,16 +81,16 @@
       (click)="createKey()"
     />
   </ng-template>
-</p-dialog>
+</ui-dialog>
 
 <!-- One-Time Key Display Dialog -->
-<p-dialog
+<ui-dialog
   header="API Key Created"
-  [(visible)]="showKeyDialog"
+  [(open)]="showKeyDialog"
   [modal]="true"
   [closable]="true"
-  [style]="{ width: '550px' }"
-  (onHide)="onKeyDialogHide()"
+  width="550px"
+  (closed)="onKeyDialogHide()"
 >
   @let key = createdKey();
   @if (key) {
@@ -123,4 +118,4 @@
   <ng-template #footer>
     <ui-button label="Done" (click)="showKeyDialog.set(false)" />
   </ng-template>
-</p-dialog>
+</ui-dialog>

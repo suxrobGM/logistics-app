@@ -23,17 +23,17 @@
   />
 </div>
 
-<p-tabs value="claude-desktop">
-  <p-tablist>
-    <p-tab value="claude-desktop">Claude Desktop</p-tab>
-    <p-tab value="claude-code">Claude Code</p-tab>
-    <p-tab value="cursor">Cursor</p-tab>
-    <p-tab value="copilot">GitHub Copilot</p-tab>
-    <p-tab value="api">REST API</p-tab>
-  </p-tablist>
+<ui-tabs value="claude-desktop">
+  <ui-tab-list>
+    <ui-tab value="claude-desktop">Claude Desktop</ui-tab>
+    <ui-tab value="claude-code">Claude Code</ui-tab>
+    <ui-tab value="cursor">Cursor</ui-tab>
+    <ui-tab value="copilot">GitHub Copilot</ui-tab>
+    <ui-tab value="api">REST API</ui-tab>
+  </ui-tab-list>
 
-  <p-tabpanels>
-    <p-tabpanel value="claude-desktop">
+  <ui-tab-panels>
+    <ui-tab-panel value="claude-desktop">
       <p class="text-muted-foreground mb-2 text-sm">
         Add to your
         <code>claude_desktop_config.json</code>
@@ -52,9 +52,9 @@
           (click)="copyToClipboard(claudeDesktopSnippet)"
         />
       </div>
-    </p-tabpanel>
+    </ui-tab-panel>
 
-    <p-tabpanel value="claude-code">
+    <ui-tab-panel value="claude-code">
       <p class="text-muted-foreground mb-2 text-sm">Run in your terminal:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ claudeCodeSnippet }}</pre>
@@ -69,9 +69,9 @@
           (click)="copyToClipboard(claudeCodeSnippet)"
         />
       </div>
-    </p-tabpanel>
+    </ui-tab-panel>
 
-    <p-tabpanel value="cursor">
+    <ui-tab-panel value="cursor">
       <p class="text-muted-foreground mb-2 text-sm">Add to your Cursor MCP settings:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ cursorSnippet }}</pre>
@@ -86,9 +86,9 @@
           (click)="copyToClipboard(cursorSnippet)"
         />
       </div>
-    </p-tabpanel>
+    </ui-tab-panel>
 
-    <p-tabpanel value="copilot">
+    <ui-tab-panel value="copilot">
       <p class="text-muted-foreground mb-2 text-sm">
         Add to your VS Code
         <code>.vscode/mcp.json</code>
@@ -107,9 +107,9 @@
           (click)="copyToClipboard(copilotSnippet)"
         />
       </div>
-    </p-tabpanel>
+    </ui-tab-panel>
 
-    <p-tabpanel value="api">
+    <ui-tab-panel value="api">
       <p class="text-muted-foreground mb-2 text-sm">
         Use the API key as a Bearer token for REST API requests:
       </p>
@@ -126,6 +126,6 @@
           (click)="copyToClipboard(apiSnippet)"
         />
       </div>
-    </p-tabpanel>
-  </p-tabpanels>
-</p-tabs>
+    </ui-tab-panel>
+  </ui-tab-panels>
+</ui-tabs>

@@ -8,11 +8,11 @@ import {
   Card,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ServiceRecordsStore } from "../store";
 
@@ -27,11 +27,11 @@ import { ServiceRecordsStore } from "../store";
     DataContainer,
     DatePipe,
     DecimalPipe,
-    MenuModule,
     PageHeader,
     SearchField,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
   ],
 })
@@ -41,15 +41,15 @@ export class ServiceRecordsPage {
 
   protected readonly selectedRow = signal<MaintenanceRecordDto | null>(null);
 
-  protected readonly actionMenuItems: MenuItem[] = [
+  protected readonly actionMenuItems: UiMenuItem[] = [
     {
       label: "View details",
-      icon: "pi pi-eye",
+      icon: "eye",
       command: () => this.viewDetails(this.selectedRow()!),
     },
     {
       label: "Edit",
-      icon: "pi pi-pencil",
+      icon: "pencil",
       command: () => this.editRecord(this.selectedRow()!),
     },
   ];

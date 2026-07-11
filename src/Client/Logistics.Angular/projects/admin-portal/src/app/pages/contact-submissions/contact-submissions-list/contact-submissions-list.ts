@@ -21,6 +21,7 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiDialog,
   UiFormField,
   UiSelectField,
   UiSortHeader,
@@ -29,7 +30,6 @@ import {
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { DateUtils } from "@logistics/shared/utils";
-import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 import { ContactSubmissionsListStore } from "../store/contact-submissions-list.store";
 
@@ -41,7 +41,6 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
     Badge,
     Card,
     DataContainer,
-    DialogModule,
     FormField,
     Grid,
     PageHeader,
@@ -51,6 +50,7 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
     Typography,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiFormField,
     UiSelectField,
     UiSortHeader,

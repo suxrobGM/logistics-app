@@ -1,0 +1,10 @@
+<ng-template #panel>
+  <div
+    role="dialog"
+    [attr.aria-label]="ariaLabel()"
+    [style]="panelStyle()"
+    class="bg-popover text-popover-foreground ring-foreground/10 rounded-md shadow-md ring-1 outline-none"
+  >
+    <ng-content />
+  </div>
+</ng-template>

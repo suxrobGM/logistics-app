@@ -13,8 +13,8 @@
 >
   <ng-template #item let-load>
     <div class="flex items-center gap-2">
-      <span class="font-bold">{{ load.number }} - </span>
-      <span class="text-sm text-muted-foreground">{{ load.name }}</span>
+      <span class="font-bold">{{ load.number }} -</span>
+      <span class="text-muted-foreground text-sm">{{ load.name }}</span>
       <app-load-status-tag [status]="load.status" />
     </div>
   </ng-template>

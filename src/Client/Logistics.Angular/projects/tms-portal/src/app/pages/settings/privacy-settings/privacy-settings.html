@@ -141,12 +141,12 @@
 </ui-container>
 
 <!-- Delete confirmation dialog -->
-<p-dialog
+<ui-dialog
   header="Delete my account"
   [modal]="true"
   [closable]="true"
-  [style]="{ width: '480px' }"
-  [(visible)]="deleteDialogOpen"
+  width="480px"
+  [(open)]="deleteDialogOpen"
 >
   <p class="text-sm">
     This will schedule your personal data for permanent anonymization 30 days from now. Operational
@@ -172,4 +172,4 @@
       (click)="confirmDeletion()"
     />
   </ng-template>
-</p-dialog>
+</ui-dialog>

@@ -11,9 +11,7 @@ import {
   type UpdateEmployeeCommand,
 } from "@logistics/shared/api";
 import { employeeStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
-import { AddressForm, Stack, UiButton } from "@logistics/shared/ui";
-import { AccordionModule } from "primeng/accordion";
-import { DialogModule } from "primeng/dialog";
+import { AddressForm, Stack, UiAccordionImports, UiButton, UiDialog } from "@logistics/shared/ui";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputTextModule } from "primeng/inputtext";
 import { AuthService } from "@/core/auth";
@@ -46,17 +44,17 @@ const EMPTY: EmployeeEditModel = {
   selector: "app-employee-edit-dialog",
   templateUrl: "./employee-edit-dialog.html",
   imports: [
-    AccordionModule,
+    UiAccordionImports,
     AddressForm,
     ChangeRoleDialog,
     CurrencyField,
-    DialogModule,
     FormField,
     FormRoot,
     InputGroupModule,
     InputTextModule,
     Stack,
     UiButton,
+    UiDialog,
     UiFormField,
     UiSelectField,
     UnitField,

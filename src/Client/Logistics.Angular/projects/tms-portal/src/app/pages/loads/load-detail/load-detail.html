@@ -43,29 +43,29 @@
   </ui-surface>
 
   <ui-card>
-    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
-      <p-tablist>
-        <p-tab [value]="0">
+    <ui-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+      <ui-tab-list>
+        <ui-tab value="0">
           <ui-icon name="info-circle" class="mr-2" />
           Details
-        </p-tab>
-        <p-tab [value]="1">
+        </ui-tab>
+        <ui-tab value="1">
           <ui-icon name="folder" class="mr-2" />
           Documents
-        </p-tab>
-        <p-tab [value]="2">
+        </ui-tab>
+        <ui-tab value="2">
           <ui-icon name="file-check" class="mr-2" />
           POD / BOL
-        </p-tab>
-        <p-tab [value]="3">
+        </ui-tab>
+        <ui-tab value="3">
           <ui-icon name="exclamation-triangle" class="mr-2" />
           Exceptions
-        </p-tab>
-      </p-tablist>
+        </ui-tab>
+      </ui-tab-list>
 
-      <p-tabpanels>
+      <ui-tab-panels>
         <!-- Details Tab -->
-        <p-tabpanel [value]="0">
+        <ui-tab-panel value="0">
           <ui-grid container spacing="6" class="pt-4">
             <!-- Load Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
@@ -300,24 +300,24 @@
               }
             </ui-grid>
           </ui-card>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- Documents Tab -->
-        <p-tabpanel [value]="1">
+        <ui-tab-panel value="1">
           <div class="pt-4">
             <app-document-manager [loadId]="id()" [types]="loadDocTypes" />
           </div>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- POD/BOL Tab -->
-        <p-tabpanel [value]="2">
+        <ui-tab-panel value="2">
           <div class="pt-4">
             <app-load-pod-content [loadId]="id()" />
           </div>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- Exceptions Tab -->
-        <p-tabpanel [value]="3">
+        <ui-tab-panel value="3">
           <div class="pt-4">
             <app-load-exceptions-content
               [loadId]="id()"
@@ -325,9 +325,9 @@
               (resolveException)="onResolveException($event)"
             />
           </div>
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
+        </ui-tab-panel>
+      </ui-tab-panels>
+    </ui-tabs>
   </ui-card>
 
   <!-- Tracking Link Dialog -->

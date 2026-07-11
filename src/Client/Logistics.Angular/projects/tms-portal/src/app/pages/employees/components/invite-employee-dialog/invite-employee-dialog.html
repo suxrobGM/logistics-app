@@ -1,9 +1,9 @@
-<p-dialog
+<ui-dialog
   header="Invite Employee"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '450px' }"
-  (onHide)="close()"
+  width="450px"
+  (closed)="close()"
 >
   @if (form().submitting()) {
     <ui-stack align="center" justify="center" class="py-4">
@@ -55,4 +55,4 @@
       </ui-stack>
     </form>
   }
-</p-dialog>
+</ui-dialog>

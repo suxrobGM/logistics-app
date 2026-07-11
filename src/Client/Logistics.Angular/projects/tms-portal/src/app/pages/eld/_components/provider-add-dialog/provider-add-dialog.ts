@@ -5,8 +5,7 @@ import {
   type CreateEldProviderConfigurationCommand,
   type EldProviderType,
 } from "@logistics/shared/api";
-import { Alert, UiButton, ValidatedForm } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
+import { Alert, UiButton, UiDialog, ValidatedForm } from "@logistics/shared/ui";
 import { SelectModule } from "primeng/select";
 import { UiFormField, UiPasswordField, UiTextField } from "@/shared/components";
 import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
@@ -23,12 +22,12 @@ const EMPTY = {
   templateUrl: "./provider-add-dialog.html",
   imports: [
     Alert,
-    DialogModule,
     FormField,
     FormRoot,
     FormsModule,
     SelectModule,
     UiButton,
+    UiDialog,
     UiFormField,
     UiPasswordField,
     UiTextField,

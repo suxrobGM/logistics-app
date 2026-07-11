@@ -15,11 +15,11 @@ import {
   SearchField,
   UiButton,
   UiDataTable,
+  UiMenu,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { Menu, MenuModule } from "primeng/menu";
 import { SubscriptionsListStore } from "../store/subscriptions-list.store";
 
 @Component({
@@ -31,12 +31,12 @@ import { SubscriptionsListStore } from "../store/subscriptions-list.store";
     Card,
     ConfirmDialogModule,
     DataContainer,
-    MenuModule,
     PageHeader,
     RouterLink,
     SearchField,
     UiButton,
     UiDataTable,
+    UiMenu,
   ],
 })
 export class SubscriptionsList {
@@ -45,25 +45,25 @@ export class SubscriptionsList {
   private readonly toastService = inject(ToastService);
   protected readonly store = inject(SubscriptionsListStore);
 
-  private readonly actionMenu = viewChild<Menu>("actionMenu");
+  private readonly actionMenu = viewChild<UiMenu>("actionMenu");
   private readonly selectedRow = signal<SubscriptionDto | null>(null);
 
-  protected readonly actionMenuItems = computed<MenuItem[]>(() => {
+  protected readonly actionMenuItems = computed<UiMenuItem[]>(() => {
     const sub = this.selectedRow();
-    const items: MenuItem[] = [];
+    const items: UiMenuItem[] = [];
 
     if (sub?.status === "active" || sub?.status === "trialing") {
       items.push({
         label: "Cancel Subscription",
-        icon: "pi pi-times-circle",
+        icon: "times-circle",
         command: () => this.confirmToCancel(sub!.id!),
       });
     }
 
     items.push({
       label: "Delete",
-      icon: "pi pi-trash",
-      styleClass: "text-red-600",
+      icon: "trash",
+      variant: "destructive",
       command: () => this.confirmToDelete(sub!.id!),
     });
 

@@ -72,12 +72,7 @@
   </ui-data-container>
 </ui-card>
 
-<p-dialog
-  header="Demo Request Details"
-  [(visible)]="viewDialogVisible"
-  [modal]="true"
-  [style]="{ width: '600px' }"
->
+<ui-dialog header="Demo Request Details" [(open)]="viewDialogVisible" [modal]="true" width="600px">
   @if (selectedRequest(); as request) {
     <ui-stack gap="4">
       <ui-grid container spacing="4">
@@ -153,4 +148,4 @@
     <ui-button intent="secondary" label="Cancel" (click)="viewDialogVisible.set(false)" />
     <ui-button label="Save Changes" icon="check" (click)="saveRequest()" />
   </ng-template>
-</p-dialog>
+</ui-dialog>

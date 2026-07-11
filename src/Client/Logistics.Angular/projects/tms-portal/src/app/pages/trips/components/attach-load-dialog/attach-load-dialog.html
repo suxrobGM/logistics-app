@@ -1,9 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Attach Existing Load"
   [modal]="true"
-  [(visible)]="visible"
-  [style]="{ width: '80vw', maxWidth: '1200px' }"
-  (onShow)="onDialogShow()"
+  [(open)]="visible"
+  width="80vw"
+  maxWidth="1200px"
+  (opened)="onDialogShow()"
 >
   <div class="flex flex-col gap-4">
     <!-- Search -->
@@ -120,4 +121,4 @@
       />
     </div>
   </ng-template>
-</p-dialog>
+</ui-dialog>

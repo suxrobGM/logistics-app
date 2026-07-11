@@ -2,9 +2,16 @@ import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { Address, TruckDto } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
-import { Card, Stack, UiButton, UiDataTable, UiSortHeader, UiTooltip } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
+import {
+  Card,
+  Stack,
+  UiButton,
+  UiDataTable,
+  UiMenu,
+  UiSortHeader,
+  UiTooltip,
+  type UiMenuItem,
+} from "@logistics/shared/ui";
 import { DataContainer, PageHeader, TruckStatusTag, TruckTypeTag } from "@/shared/components";
 import {
   TrucksFilterPanel,
@@ -22,7 +29,6 @@ import { TrucksListStore } from "../store/trucks-list.store";
     AddressPipe,
     Card,
     DataContainer,
-    MenuModule,
     PageHeader,
     Stack,
     TrucksFilterPanel,
@@ -32,6 +38,7 @@ import { TrucksListStore } from "../store/trucks-list.store";
     TruckTypeTag,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
     UiTooltip,
   ],
@@ -44,20 +51,20 @@ export class TrucksList {
   protected readonly selectedRow = signal<TruckDto | null>(null);
   protected readonly viewMode = signal<"table" | "map">("table");
 
-  protected readonly actionMenuItems: MenuItem[] = [
+  protected readonly actionMenuItems: UiMenuItem[] = [
     {
       label: "View details",
-      icon: "pi pi-eye",
+      icon: "eye",
       command: () => this.router.navigateByUrl(`/trucks/${this.selectedRow()!.id}`),
     },
     {
       label: "Edit truck",
-      icon: "pi pi-pencil",
+      icon: "pencil",
       command: () => this.router.navigateByUrl(`/trucks/${this.selectedRow()!.id}/edit`),
     },
     {
       label: "Manage documents",
-      icon: "pi pi-folder",
+      icon: "folder",
       command: () => this.router.navigateByUrl(`/trucks/${this.selectedRow()!.id}/documents`),
     },
   ];

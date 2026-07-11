@@ -5,13 +5,13 @@ import {
   Icon,
   PhoneField,
   UiButton,
+  UiDialog,
   UiFormField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 
 const EMPTY = {
   firstName: "",
@@ -27,12 +27,12 @@ const EMPTY = {
   selector: "web-demo-dialog",
   templateUrl: "./demo-dialog.html",
   imports: [
-    DialogModule,
     FormField,
     FormRoot,
     Icon,
     PhoneField,
     UiButton,
+    UiDialog,
     UiFormField,
     UiSelectField,
     UiTextareaField,

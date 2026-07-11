@@ -168,12 +168,7 @@
 }
 
 <!-- Dismiss Dialog -->
-<p-dialog
-  header="Dismiss DVIR Report"
-  [modal]="true"
-  [(visible)]="showDismissDialog"
-  [style]="{ width: '450px' }"
->
+<ui-dialog header="Dismiss DVIR Report" [modal]="true" [(open)]="showDismissDialog" width="450px">
   <div class="flex flex-col gap-4">
     <p class="text-muted-foreground">
       Dismissing this report will mark it as cleared. This is typically used for reports with no
@@ -203,15 +198,10 @@
       />
     </ui-stack>
   </ng-template>
-</p-dialog>
+</ui-dialog>
 
 <!-- Reject Dialog -->
-<p-dialog
-  header="Reject DVIR Report"
-  [modal]="true"
-  [(visible)]="showRejectDialog"
-  [style]="{ width: '450px' }"
->
+<ui-dialog header="Reject DVIR Report" [modal]="true" [(open)]="showRejectDialog" width="450px">
   <div class="flex flex-col gap-4">
     <p class="text-muted-foreground">
       Rejecting this report will send it back to the driver for corrections. Please provide a
@@ -242,4 +232,4 @@
       />
     </ui-stack>
   </ng-template>
-</p-dialog>
+</ui-dialog>

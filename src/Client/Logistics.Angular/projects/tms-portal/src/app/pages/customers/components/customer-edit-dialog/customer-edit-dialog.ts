@@ -14,16 +14,16 @@ import {
   AddressForm,
   Grid,
   Stack,
+  UiAccordionImports,
   UiButton,
   UiCheckboxField,
+  UiDialog,
   UiFormField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { AccordionModule } from "primeng/accordion";
-import { DialogModule } from "primeng/dialog";
 import { TenantService } from "@/core/services/tenant.service";
 
 interface UpdateCustomerModel {
@@ -52,15 +52,15 @@ const EMPTY: UpdateCustomerModel = {
   selector: "app-customer-edit-dialog",
   templateUrl: "./customer-edit-dialog.html",
   imports: [
-    AccordionModule,
+    UiAccordionImports,
     AddressForm,
-    DialogModule,
     FormField,
     FormRoot,
     Grid,
     Stack,
     UiButton,
     UiCheckboxField,
+    UiDialog,
     UiFormField,
     UiSelectField,
     UiTextareaField,

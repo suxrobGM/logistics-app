@@ -30,11 +30,6 @@
   </ng-template>
 </p-autocomplete>
 
-<p-dialog
-  header="Create Customer"
-  [modal]="true"
-  [(visible)]="customerDialogVisible"
-  [style]="{ width: '40rem' }"
->
+<ui-dialog header="Create Customer" [modal]="true" [(open)]="customerDialogVisible" width="40rem">
   <app-customer-form [mode]="'create'" (save)="handleCustomerCreated($event)" />
-</p-dialog>
+</ui-dialog>

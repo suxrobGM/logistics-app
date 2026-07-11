@@ -15,11 +15,11 @@ import {
   Stack,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { AccidentsListStore } from "../store";
@@ -34,12 +34,12 @@ import { AccidentsListStore } from "../store";
     DataContainer,
     DatePipe,
     Icon,
-    MenuModule,
     PageHeader,
     SearchField,
     Stack,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
   ],
 })
@@ -51,15 +51,15 @@ export class AccidentsListPage {
 
   protected readonly selectedRow = signal<AccidentReportDto | null>(null);
 
-  protected readonly actionMenuItems: MenuItem[] = [
+  protected readonly actionMenuItems: UiMenuItem[] = [
     {
       label: "View details",
-      icon: "pi pi-eye",
+      icon: "eye",
       command: () => this.viewDetails(this.selectedRow()!),
     },
     {
       label: "Submit report",
-      icon: "pi pi-send",
+      icon: "send",
       command: () => this.submitReport(this.selectedRow()!),
     },
   ];

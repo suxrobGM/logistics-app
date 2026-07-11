@@ -29,19 +29,19 @@
     <ui-spinner />
   </div>
 } @else if (report()) {
-  <p-tabs value="0">
-    <p-tablist>
-      <p-tab value="0">Overview</p-tab>
-      <p-tab value="1">Injuries & Damage</p-tab>
-      <p-tab value="2">Third Parties</p-tab>
-      <p-tab value="3">Witnesses</p-tab>
-      <p-tab value="4">Police & Insurance</p-tab>
-      <p-tab value="5">Documents</p-tab>
-    </p-tablist>
+  <ui-tabs value="0">
+    <ui-tab-list>
+      <ui-tab value="0">Overview</ui-tab>
+      <ui-tab value="1">Injuries & Damage</ui-tab>
+      <ui-tab value="2">Third Parties</ui-tab>
+      <ui-tab value="3">Witnesses</ui-tab>
+      <ui-tab value="4">Police & Insurance</ui-tab>
+      <ui-tab value="5">Documents</ui-tab>
+    </ui-tab-list>
 
-    <p-tabpanels>
+    <ui-tab-panels>
       <!-- Overview Tab -->
-      <p-tabpanel value="0">
+      <ui-tab-panel value="0">
         <ui-grid container spacing="4" class="py-4">
           <ui-grid [size]="{ xs: 12, lg: 8 }">
             <ui-card header="Incident Details">
@@ -202,10 +202,10 @@
             </ui-stack>
           </ui-grid>
         </ui-grid>
-      </p-tabpanel>
+      </ui-tab-panel>
 
       <!-- Injuries & Damage Tab -->
-      <p-tabpanel value="1">
+      <ui-tab-panel value="1">
         <ui-grid container spacing="4" class="py-4">
           <ui-grid [size]="{ xs: 12, lg: 6 }">
             <ui-card header="Injuries">
@@ -299,10 +299,10 @@
             </ui-card>
           </ui-grid>
         </ui-grid>
-      </p-tabpanel>
+      </ui-tab-panel>
 
       <!-- Third Parties Tab -->
-      <p-tabpanel value="2">
+      <ui-tab-panel value="2">
         <div class="py-4">
           @if (report()!.thirdParties && report()!.thirdParties!.length > 0) {
             <ui-grid container spacing="4">
@@ -402,10 +402,10 @@
             </ui-stack>
           }
         </div>
-      </p-tabpanel>
+      </ui-tab-panel>
 
       <!-- Witnesses Tab -->
-      <p-tabpanel value="3">
+      <ui-tab-panel value="3">
         <div class="py-4">
           @if (report()!.witnesses && report()!.witnesses!.length > 0) {
             <ui-grid container spacing="4">
@@ -465,10 +465,10 @@
             </ui-stack>
           }
         </div>
-      </p-tabpanel>
+      </ui-tab-panel>
 
       <!-- Police & Insurance Tab -->
-      <p-tabpanel value="4">
+      <ui-tab-panel value="4">
         <ui-grid container spacing="4" class="py-4">
           <ui-grid [size]="{ xs: 12, lg: 6 }">
             <ui-card header="Police Report">
@@ -548,10 +548,10 @@
             </ui-card>
           </ui-grid>
         </ui-grid>
-      </p-tabpanel>
+      </ui-tab-panel>
 
       <!-- Documents Tab -->
-      <p-tabpanel value="5">
+      <ui-tab-panel value="5">
         <div class="py-4">
           <ui-grid container spacing="4">
             <!-- Photos -->
@@ -602,18 +602,13 @@
             </ui-grid>
           </ui-grid>
         </div>
-      </p-tabpanel>
-    </p-tabpanels>
-  </p-tabs>
+      </ui-tab-panel>
+    </ui-tab-panels>
+  </ui-tabs>
 }
 
 <!-- Review Dialog -->
-<p-dialog
-  header="Start Review"
-  [modal]="true"
-  [(visible)]="showReviewDialog"
-  [style]="{ width: '450px' }"
->
+<ui-dialog header="Start Review" [modal]="true" [(open)]="showReviewDialog" width="450px">
   <ui-stack gap="4">
     <ui-typography variant="body" color="muted">
       Starting a review will change the report status to "Under Review". You can add optional notes
@@ -642,14 +637,14 @@
       />
     </ui-stack>
   </ng-template>
-</p-dialog>
+</ui-dialog>
 
 <!-- Resolve Dialog -->
-<p-dialog
+<ui-dialog
   header="Resolve Accident Report"
   [modal]="true"
-  [(visible)]="showResolveDialog"
-  [style]="{ width: '450px' }"
+  [(open)]="showResolveDialog"
+  width="450px"
 >
   <ui-stack gap="4">
     <ui-typography variant="body" color="muted">
@@ -681,4 +676,4 @@
       />
     </ui-stack>
   </ng-template>
-</p-dialog>
+</ui-dialog>

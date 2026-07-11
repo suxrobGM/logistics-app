@@ -1,0 +1,28 @@
+<hlm-sheet [state]="state()" [side]="position()" (stateChanged)="onStateChanged($event)">
+  <!--
+    *hlmSheetPortal is what portals this into the overlay. Remove it and the drawer silently never
+    opens — no error, no warning. See the class docblock (Lesson 5).
+  -->
+  <hlm-sheet-content
+    *hlmSheetPortal
+    [showCloseButton]="showCloseIcon()"
+    [style]="contentStyle()"
+    class="gap-0 p-0"
+  >
+    @if (header()) {
+      <h2 hlmSheetTitle class="border-subtle shrink-0 border-b px-5 py-4 text-base font-semibold">
+        {{ header() }}
+      </h2>
+    }
+
+    <!-- Custom header markup. Styled by the CONSUMER: projected nodes keep their declaring
+         component's style encapsulation, so the caller's own CSS still reaches them here. -->
+    <div class="shrink-0">
+      <ng-content select="[uiDrawerHeader]" />
+    </div>
+
+    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <ng-content />
+    </div>
+  </hlm-sheet-content>
+</hlm-sheet>

@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Assign Loads to Truck"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '450px' }"
+  width="450px"
   [closable]="true"
-  (onHide)="close()"
+  (closed)="close()"
 >
   <div class="space-y-4">
     <div class="bg-surface-100 dark:bg-surface-800 rounded-lg p-4">
@@ -43,4 +43,4 @@
       />
     </div>
   </ng-template>
-</p-dialog>
+</ui-dialog>

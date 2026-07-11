@@ -3,15 +3,14 @@ import { Component, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import type { SubscriptionPlanDto } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
-import { Badge, Icon, UiButton, type UiBadgeIntent } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
+import { Badge, Icon, UiButton, UiDialog, type UiBadgeIntent } from "@logistics/shared/ui";
 import { UpgradePromptService } from "@/core/services";
 import { Labels } from "@/shared/utils";
 
 @Component({
   selector: "app-upgrade-dialog",
   templateUrl: "./upgrade-dialog.html",
-  imports: [Badge, CurrencyPipe, DialogModule, Icon, UiButton],
+  imports: [Badge, CurrencyPipe, Icon, UiButton, UiDialog],
 })
 export class UpgradeDialog {
   private readonly router = inject(Router);

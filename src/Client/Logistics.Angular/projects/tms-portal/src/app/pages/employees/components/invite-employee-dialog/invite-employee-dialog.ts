@@ -12,12 +12,12 @@ import {
   Spinner,
   Stack,
   UiButton,
+  UiDialog,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
@@ -28,12 +28,12 @@ const EMPTY = { email: "", role: "", personalMessage: "" };
   selector: "app-invite-employee-dialog",
   templateUrl: "./invite-employee-dialog.html",
   imports: [
-    DialogModule,
     FormField,
     FormRoot,
     Spinner,
     Stack,
     UiButton,
+    UiDialog,
     UiFormField,
     UiSelectField,
     UiTextareaField,

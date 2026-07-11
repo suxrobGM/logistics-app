@@ -43,13 +43,13 @@
   </ui-grid>
 
   <ui-card>
-    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
-      <p-tablist>
-        <p-tab [value]="0">
+    <ui-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+      <ui-tab-list>
+        <ui-tab value="0">
           <ui-icon name="info-circle" class="mr-2" />
           Details
-        </p-tab>
-        <p-tab [value]="1">
+        </ui-tab>
+        <ui-tab value="1">
           <ui-icon name="box" class="mr-2" />
           Loads
           @if (truck()!.loads?.length) {
@@ -59,20 +59,20 @@
               {{ truck()!.loads!.length }}
             </span>
           }
-        </p-tab>
-        <p-tab [value]="2">
+        </ui-tab>
+        <ui-tab value="2">
           <ui-icon name="folder" class="mr-2" />
           Documents
-        </p-tab>
-        <p-tab [value]="3">
+        </ui-tab>
+        <ui-tab value="3">
           <ui-icon name="chart-line" class="mr-2" />
           Analytics
-        </p-tab>
-      </p-tablist>
+        </ui-tab>
+      </ui-tab-list>
 
-      <p-tabpanels>
+      <ui-tab-panels>
         <!-- Details Tab -->
-        <p-tabpanel [value]="0">
+        <ui-tab-panel value="0">
           <ui-grid container spacing="6" class="pt-4">
             <!-- Truck Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
@@ -280,31 +280,31 @@
               </ui-grid>
             </ui-grid>
           </ui-card>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- Loads Tab -->
-        <p-tabpanel [value]="1">
+        <ui-tab-panel value="1">
           <div class="pt-4">
             <app-truck-loads-list [loads]="truck()!.loads ?? []" />
           </div>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- Documents Tab -->
-        <p-tabpanel [value]="2">
+        <ui-tab-panel value="2">
           <div class="pt-4">
             <app-document-manager [truckId]="id()" [types]="truckDocTypes" />
           </div>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- Analytics Tab -->
-        <p-tabpanel [value]="3">
+        <ui-tab-panel value="3">
           <ui-stack gap="6" class="pt-4">
             <app-truck-gross-linechart [truckId]="id()!" (chartDrawn)="onLineChartDrawn($event)" />
             <app-gross-barchart [truckId]="id()!" (chartDrawn)="onBarChartDrawn($event)" />
           </ui-stack>
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
+        </ui-tab-panel>
+      </ui-tab-panels>
+    </ui-tabs>
   </ui-card>
 } @else {
   <ui-card>

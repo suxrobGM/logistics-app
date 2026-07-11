@@ -10,12 +10,12 @@ import {
   Typography,
   UiButton,
   UiDateField,
+  UiDialog,
   UiNumberField,
   UiSelectField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { UiFormField } from "@/shared/components";
 import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
 
@@ -61,13 +61,13 @@ const createEmptyForm = (): PostTruckFormValue => ({
   selector: "app-post-truck-dialog",
   templateUrl: "./post-truck-dialog.html",
   imports: [
-    DialogModule,
     FormField,
     FormRoot,
     Grid,
     Typography,
     UiButton,
     UiDateField,
+    UiDialog,
     UiFormField,
     UiNumberField,
     UiSelectField,

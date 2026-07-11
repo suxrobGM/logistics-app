@@ -21,11 +21,11 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiDialog,
   UiSortHeader,
   UiTableRowDirectives,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
@@ -49,7 +49,6 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     CurrencyFormatPipe,
     DataContainer,
     DateRangePicker,
-    DialogModule,
     FormsModule,
     Grid,
     InvoiceStatusTag,
@@ -62,6 +61,7 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     Typography,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiFormField,
     UiSortHeader,
     UiTableRowDirectives,

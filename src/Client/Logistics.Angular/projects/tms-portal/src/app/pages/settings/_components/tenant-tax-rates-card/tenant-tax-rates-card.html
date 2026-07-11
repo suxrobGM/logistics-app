@@ -77,11 +77,11 @@
   }
 </ui-card>
 
-<p-dialog
+<ui-dialog
   [header]="editingId() ? 'Edit tax rate' : 'Add tax rate'"
-  [(visible)]="dialogOpen"
+  [(open)]="dialogOpen"
   [modal]="true"
-  [style]="{ width: '600px' }"
+  width="600px"
   [closable]="true"
   [draggable]="false"
 >
@@ -152,4 +152,4 @@
       <ui-button type="submit" icon="check" label="Save" [loading]="form().submitting()" />
     </ui-stack>
   </form>
-</p-dialog>
+</ui-dialog>

@@ -1,25 +1,19 @@
-<p-drawer
+<ui-drawer
   [visible]="visible()"
   (visibleChange)="onVisibleChange($event)"
   position="left"
-  [modal]="true"
-  [closeOnEscape]="true"
-  [dismissible]="true"
-  [showCloseIcon]="true"
-  styleClass="mobile-nav-drawer"
+  width="300px"
 >
-  <ng-template #header>
-    <div class="mobile-nav-header">
-      @if (companyLogoUrl()) {
-        <img [src]="companyLogoUrl()" class="mobile-nav-logo" alt="Company logo" />
-      } @else {
-        <img src="images/logo.svg" class="mobile-nav-logo" alt="Logo" />
-      }
-      @if (companyName()) {
-        <h4 class="mobile-nav-company">{{ companyName() }}</h4>
-      }
-    </div>
-  </ng-template>
+  <div uiDrawerHeader class="mobile-nav-header">
+    @if (companyLogoUrl()) {
+      <img [src]="companyLogoUrl()" class="mobile-nav-logo" alt="Company logo" />
+    } @else {
+      <img src="images/logo.svg" class="mobile-nav-logo" alt="Logo" />
+    }
+    @if (companyName()) {
+      <h4 class="mobile-nav-company">{{ companyName() }}</h4>
+    }
+  </div>
 
   <nav class="mobile-nav-menu flex h-full flex-col">
     <!-- Search trigger -->
@@ -77,10 +71,10 @@
       }
     </div>
   </nav>
-</p-drawer>
+</ui-drawer>
 
 <!-- User profile popover -->
-<p-popover #mobileUserPopover appendTo="body">
+<ui-popover #mobileUserPopover>
   <div class="w-52">
     @if (userFullName()) {
       <div class="border-subtle border-b px-3.5 py-2.5">
@@ -109,4 +103,4 @@
       </button>
     </div>
   </div>
-</p-popover>
+</ui-popover>

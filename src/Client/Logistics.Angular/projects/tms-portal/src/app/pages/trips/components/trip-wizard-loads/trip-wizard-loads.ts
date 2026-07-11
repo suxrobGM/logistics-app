@@ -10,10 +10,10 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiDialog,
   UiSortHeader,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
@@ -30,7 +30,6 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
     AttachLoadDialog,
     Badge,
     CurrencyFormatPipe,
-    Dialog,
     DistanceUnitPipe,
     FormsModule,
     Icon,
@@ -44,6 +43,7 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
     Typography,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiSortHeader,
     UiTooltip,
   ],

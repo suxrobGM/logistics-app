@@ -77,12 +77,12 @@
 }
 
 <!-- Line Item Dialog -->
-<p-dialog
-  [visible]="showDialog()"
-  (visibleChange)="showDialog.set($event)"
+<ui-dialog
+  [open]="showDialog()"
+  (openChange)="showDialog.set($event)"
   [header]="editingItem() ? 'Edit Line Item' : 'Add Line Item'"
   [modal]="true"
-  [style]="{ width: '500px' }"
+  width="500px"
 >
   <form [formRoot]="form" class="space-y-4">
     <ui-form-field label="Description" [required]="true">
@@ -133,4 +133,4 @@
       (click)="saveItem()"
     />
   </ng-template>
-</p-dialog>
+</ui-dialog>

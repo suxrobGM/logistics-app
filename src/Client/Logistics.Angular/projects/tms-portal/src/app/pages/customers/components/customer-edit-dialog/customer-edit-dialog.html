@@ -1,8 +1,8 @@
-<p-dialog
+<ui-dialog
   header="Edit Customer"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '600px' }"
+  width="600px"
   [closable]="true"
   [draggable]="false"
 >
@@ -90,17 +90,17 @@
     </ui-stack>
   </form>
 
-  <p-accordion class="mt-6">
-    <p-accordion-panel value="danger">
-      <ng-template #header>
+  <ui-accordion class="mt-6">
+    <ui-accordion-panel>
+      <ui-accordion-header>
         <span class="text-danger">Danger Zone</span>
-      </ng-template>
-      <ng-template #content>
+      </ui-accordion-header>
+      <ui-accordion-content>
         <p class="text-muted-foreground mb-4">
           Deleting a customer will remove all associated data. This action cannot be undone.
         </p>
         <ui-button intent="danger" label="Delete Customer" icon="trash" (click)="deleted.emit()" />
-      </ng-template>
-    </p-accordion-panel>
-  </p-accordion>
-</p-dialog>
+      </ui-accordion-content>
+    </ui-accordion-panel>
+  </ui-accordion>
+</ui-dialog>

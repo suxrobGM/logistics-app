@@ -12,7 +12,9 @@
     </hlm-select-trigger>
     <hlm-select-content *hlmSelectPortal>
       @for (country of countries; track country.iso) {
-        <hlm-select-item [value]="country">{{ country.dialCode }} {{ country.name }}</hlm-select-item>
+        <hlm-select-item [value]="country">
+          {{ country.dialCode }} {{ country.name }}
+        </hlm-select-item>
       }
     </hlm-select-content>
   </hlm-select>

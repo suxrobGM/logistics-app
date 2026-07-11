@@ -253,12 +253,7 @@
       (recorded)="onPaymentRecorded()"
     />
 
-    <p-dialog
-      header="Reject Payroll"
-      [(visible)]="showRejectDialog"
-      [modal]="true"
-      [style]="{ width: '400px' }"
-    >
+    <ui-dialog header="Reject Payroll" [(open)]="showRejectDialog" [modal]="true" width="400px">
       <p class="mb-4">Please provide a reason for rejecting this payroll:</p>
       <textarea
         pInputTextarea
@@ -277,7 +272,7 @@
           (click)="confirmReject()"
         />
       </ng-template>
-    </p-dialog>
+    </ui-dialog>
   } @else {
     <ui-card>
       <ui-stack align="center" gap="4" class="text-muted-foreground py-8">

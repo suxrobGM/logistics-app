@@ -9,13 +9,13 @@ import {
   SearchField,
   UiButton,
   UiDataTable,
+  UiDialog,
+  UiMenu,
   UiSortHeader,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { Menu, MenuModule } from "primeng/menu";
 import { PasswordModule } from "primeng/password";
 import { ImpersonationService, ToastService } from "@/core/services";
 import { UsersListStore } from "../store/users-list.store";
@@ -28,16 +28,16 @@ import { UsersListStore } from "../store/users-list.store";
     Badge,
     Card,
     DataContainer,
-    DialogModule,
     FormsModule,
     InputTextModule,
-    MenuModule,
     PageHeader,
     PasswordModule,
     RouterLink,
     SearchField,
     UiButton,
     UiDataTable,
+    UiDialog,
+    UiMenu,
     UiSortHeader,
   ],
 })
@@ -46,13 +46,13 @@ export class UsersList {
   private readonly impersonationService = inject(ImpersonationService);
   private readonly toast = inject(ToastService);
 
-  private readonly actionMenu = viewChild<Menu>("actionMenu");
+  private readonly actionMenu = viewChild<UiMenu>("actionMenu");
   private readonly selectedEmail = signal("");
 
-  protected readonly actionMenuItems: MenuItem[] = [
+  protected readonly actionMenuItems: UiMenuItem[] = [
     {
       label: "Impersonate User",
-      icon: "pi pi-user",
+      icon: "user",
       command: () => this.openImpersonateDialog(this.selectedEmail()),
     },
   ];

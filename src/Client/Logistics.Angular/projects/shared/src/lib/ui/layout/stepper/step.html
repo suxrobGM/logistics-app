@@ -1,0 +1,32 @@
+<button
+  type="button"
+  role="tab"
+  class="flex shrink-0 items-center gap-2 rounded-md px-1 py-1 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-60"
+  [class.text-foreground]="active()"
+  [class.text-muted-foreground]="!active()"
+  [disabled]="disabled()"
+  [attr.aria-selected]="active()"
+  [attr.aria-current]="active() ? 'step' : null"
+  (click)="select()"
+>
+  <span
+    class="flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition-colors"
+    [class.border-transparent]="active() || completed()"
+    [class.bg-primary]="active() || completed()"
+    [class.text-primary-foreground]="active() || completed()"
+    [class.border-border]="!active() && !completed()"
+  >
+    @if (completed()) {
+      <ui-icon name="check" size="inherit" />
+    } @else {
+      {{ value() }}
+    }
+  </span>
+  <ng-content />
+</button>
+
+<!--
+  Connector. `group-last:hidden` keys off the HOST being :last-child (the host carries `group`);
+  a plain `last:` here would test this <span>, which is never the last child of the step list.
+-->
+<span class="bg-border hidden h-px flex-1 group-last:hidden sm:block" aria-hidden="true"></span>

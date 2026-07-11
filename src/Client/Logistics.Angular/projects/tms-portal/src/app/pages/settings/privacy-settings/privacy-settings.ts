@@ -23,9 +23,9 @@ import {
   Stack,
   UiButton,
   UiDataTable,
+  UiDialog,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField } from "@/shared/components";
@@ -39,7 +39,6 @@ import { PageHeader, UiFormField } from "@/shared/components";
     Card,
     CommonModule,
     Container,
-    DialogModule,
     FormsModule,
     PageHeader,
     Spinner,
@@ -47,6 +46,7 @@ import { PageHeader, UiFormField } from "@/shared/components";
     TextareaModule,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiFormField,
   ],
 })

@@ -20,8 +20,8 @@ import {
   Surface,
   Typography,
   UiButton,
+  UiTabsImports,
 } from "@logistics/shared/ui";
-import { TabsModule } from "primeng/tabs";
 import { DocumentManager, PageHeader } from "@/shared/components";
 import { EmployeeStatusTag } from "@/shared/components/tags";
 import { EmployeeAvatar } from "../components";
@@ -53,9 +53,9 @@ import { EmployeeDetailsStore } from "../store";
     Spinner,
     Stack,
     Surface,
-    TabsModule,
     Typography,
     UiButton,
+    UiTabsImports,
   ],
 })
 export class EmployeeDetails implements OnInit {

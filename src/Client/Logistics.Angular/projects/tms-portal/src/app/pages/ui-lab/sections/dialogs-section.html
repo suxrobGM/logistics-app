@@ -1,0 +1,208 @@
+<section id="dialogs" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Dialogs</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    ui-dialog (46 sites) and ui-collapsible (5 p-fieldset sites). Drag any dialog by its header; the
+    grip in the bottom-right corner resizes it. Both are on by default, as in p-dialog.
+  </ui-typography>
+
+  <div class="mt-4 flex flex-wrap gap-3">
+    <ui-button label="450px (the common width)" (click)="basic.set(true)" data-lab="dlg-450" />
+    <ui-button label="650px (must not clamp)" (click)="wide.set(true)" data-lab="dlg-650" />
+    <ui-button label="80vw + maxWidth" (click)="responsive.set(true)" data-lab="dlg-responsive" />
+    <ui-button label="breakpoints" (click)="breakpointed.set(true)" data-lab="dlg-breakpoints" />
+    <ui-button
+      label="closable=false"
+      appearance="outlined"
+      (click)="notClosable.set(true)"
+      data-lab="dlg-not-closable"
+    />
+    <ui-button
+      label="no drag / no resize"
+      appearance="outlined"
+      (click)="noDragNoResize.set(true)"
+      data-lab="dlg-no-drag"
+    />
+    <ui-button
+      label="nested slots"
+      appearance="outlined"
+      (click)="nestedSlots.set(true)"
+      data-lab="dlg-nested"
+    />
+    <ui-button
+      label="prefilled + (closed) reset"
+      appearance="outlined"
+      (click)="prefilled.set(true)"
+      data-lab="dlg-prefilled"
+    />
+    <ui-button
+      label="select inside dialog (Escape)"
+      appearance="outlined"
+      (click)="nestedOverlay.set(true)"
+      data-lab="dlg-nested-overlay"
+    />
+  </div>
+
+  <!-- The event log. `closed` appearing on an OPEN would mean the 16 real (onHide) handlers all run
+       at the wrong time — the failure that blanks a prefilled edit dialog as it appears. -->
+  <div class="border-default mt-4 rounded-lg border p-4">
+    <div class="mb-2 flex items-center justify-between">
+      <ui-typography variant="body-sm">Event log — (opened) / (closed)</ui-typography>
+      <ui-button label="Clear" size="sm" appearance="outlined" (click)="clearLog()" />
+    </div>
+    <pre class="text-muted-foreground text-xs" data-lab="dlg-log">{{
+      log().length ? log().join("\n") : "— open a dialog —"
+    }}</pre>
+  </div>
+
+  <!-- ui-collapsible: p-fieldset's replacement. The content is HIDDEN, not destroyed, so the field
+       inside stays registered with its form. -->
+  <div class="mt-6 max-w-lg">
+    <ui-collapsible
+      legend="Hazmat / ADR (toggleable, collapsed)"
+      [toggleable]="true"
+      [(collapsed)]="collapsedSeed"
+      data-lab="collapsible"
+    >
+      <p class="text-muted-foreground text-sm">
+        Collapsed content is display:none and inert — never destroyed. That is what keeps the four
+        collapsed sections of load-form contributing their fields to the form.
+      </p>
+    </ui-collapsible>
+  </div>
+</section>
+
+<!-- ============================ the dialogs themselves ============================ -->
+
+<ui-dialog
+  [(open)]="basic"
+  header="450px dialog"
+  width="450px"
+  (opened)="note('opened')"
+  (closed)="note('closed')"
+>
+  <p class="text-sm">
+    Measure me: 450px. Click the backdrop — I must NOT close. Press Escape — I must close.
+  </p>
+  <ng-template #footer>
+    <ui-button label="Close" (click)="basic.set(false)" />
+  </ng-template>
+</ui-dialog>
+
+<!--
+  ESCAPE BELONGS TO THE INNERMOST OVERLAY.
+
+  A dropdown opened inside a dialog is its OWN CDK overlay, stacked above the dialog's. Under PrimeNG,
+  p-select called stopPropagation() on Escape, so p-dialog's document listener never saw it. Helm's
+  select does not — so before `isTopmostOverlay` (internal/overlay-stack.ts) ONE Escape dismissed the
+  dropdown AND discarded the dialog behind it. This is the real trip-wizard "Create a new load" shape.
+
+  TO DRIVE IT: open the select, type in the text box first, press Escape ONCE.
+  The select must close, the dialog must STAY OPEN, and your text must still be there.
+  A second Escape then closes the dialog.
+-->
+<ui-dialog [(open)]="nestedOverlay" header="Select inside a dialog" width="480px">
+  <div class="flex flex-col gap-3">
+    <p class="text-sm">
+      Type below, open the select, then press Escape ONCE. The dropdown closes; this dialog — and
+      your text — must survive. Press Escape again to close the dialog.
+    </p>
+    <ui-text-field id="lab-nested-text" [(value)]="nestedText" data-lab="dlg-nested-text" />
+    <ui-select-field
+      id="lab-nested-select"
+      [(value)]="nestedChoice"
+      [options]="nestedOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Open me, then press Escape"
+      data-lab="dlg-nested-select"
+    />
+  </div>
+</ui-dialog>
+
+<ui-dialog [(open)]="wide" header="650px dialog" width="650px">
+  <p class="text-sm">
+    650px. Helm's own panel caps at sm:max-w-md (448px), so if the max-width override were missing I
+    would be 448px wide and this row would be the one that caught it.
+  </p>
+</ui-dialog>
+
+<ui-dialog [(open)]="responsive" header="Responsive dialog" width="80vw" maxWidth="1200px">
+  <p class="text-sm">80vw, capped at 1200px — attach-load-dialog's shape.</p>
+</ui-dialog>
+
+<ui-dialog
+  [(open)]="breakpointed"
+  header="Breakpointed dialog"
+  width="500px"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  <p class="text-sm">500px, but 95vw under a 640px viewport. Narrow the window to see it.</p>
+</ui-dialog>
+
+<!-- closable=false: no X, and Escape must NOT close it. Only the button gets you out. -->
+<ui-dialog [(open)]="notClosable" header="closable = false" width="450px" [closable]="false">
+  <p class="text-sm">
+    No X in the corner. Escape does nothing. This is confirm-delete-dialog while a delete is in
+    flight.
+  </p>
+  <ng-template #footer>
+    <ui-button label="Let me out" (click)="notClosable.set(false)" />
+  </ng-template>
+</ui-dialog>
+
+<ui-dialog
+  [(open)]="noDragNoResize"
+  header="draggable = false, resizable = false"
+  width="450px"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p class="text-sm">
+    The header does not drag and there is no grip. The 10 sites that pass [draggable]="false" are
+    opting OUT of a default-ON affordance.
+  </p>
+</ui-dialog>
+
+<!--
+  The Lesson-1 row. <app-ui-lab-nested-slots> below is a stand-in for the <p-accordion> that really
+  sits inside customer-edit-dialog. Its OWN slots are also called #header and #content. With
+  contentChild()'s DEFAULT descendants:true, ui-dialog would match them through the child component,
+  render "Danger Zone" as its title, and leave the box below empty.
+-->
+<ui-dialog [(open)]="nestedSlots" header="Edit Customer" width="500px">
+  <p class="text-sm">The dialog's title must still read “Edit Customer”.</p>
+
+  <div class="border-default mt-4 rounded-lg border p-3">
+    <p class="text-muted-foreground text-xs">A nested component owning #header / #content:</p>
+    <ng-template #header><span data-lab="stolen-header">Danger Zone</span></ng-template>
+    <ng-template #content><span data-lab="stolen-content">Delete Customer</span></ng-template>
+    <p class="text-sm" data-lab="nested-box">
+      Both templates above are declared inside this box. Neither may appear in the dialog's chrome.
+    </p>
+  </div>
+</ui-dialog>
+
+<!--
+  The prefilled edit dialog. (closed) resets the field. Open it, and the name must ALREADY be there:
+  if (closed) also fired on open, the reset would have run and this would be empty.
+-->
+<ui-dialog
+  [(open)]="prefilled"
+  header="Edit Customer (prefilled)"
+  width="450px"
+  (opened)="note('opened')"
+  (closed)="onPrefilledClosed()"
+>
+  <label class="text-sm" for="lab-dlg-name">Name — must be prefilled on open</label>
+  <input
+    id="lab-dlg-name"
+    data-lab="dlg-name"
+    class="border-default bg-background mt-1 w-full rounded-md border px-3 py-2 text-sm"
+    [value]="name()"
+    (input)="name.set($any($event.target).value)"
+  />
+  <ng-template #footer>
+    <ui-button label="Cancel" appearance="outlined" (click)="prefilled.set(false)" />
+    <ui-button label="Save" (click)="prefilled.set(false)" />
+  </ng-template>
+</ui-dialog>

@@ -1,11 +1,11 @@
-<p-dialog
+<ui-dialog
   header="Upgrade Your Plan"
-  [visible]="visible()"
+  [open]="visible()"
   [modal]="true"
   [closable]="true"
   [draggable]="false"
-  [style]="{ width: '36rem' }"
-  (onHide)="dismiss()"
+  width="36rem"
+  (closed)="dismiss()"
 >
   @if (data(); as prompt) {
     <!-- Message -->
@@ -111,4 +111,4 @@
       }
     </div>
   }
-</p-dialog>
+</ui-dialog>

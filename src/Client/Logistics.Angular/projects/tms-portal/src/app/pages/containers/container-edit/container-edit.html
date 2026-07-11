@@ -125,11 +125,11 @@
 </ui-container>
 
 <!-- Status change dialog -->
-<p-dialog
+<ui-dialog
   header="Change Container Status"
   [modal]="true"
-  [(visible)]="statusDialogVisible"
-  [style]="{ width: '32rem' }"
+  [(open)]="statusDialogVisible"
+  width="32rem"
 >
   <form [formRoot]="statusForm">
     <ui-stack gap="3">
@@ -163,14 +163,14 @@
       </ui-stack>
     </ui-stack>
   </form>
-</p-dialog>
+</ui-dialog>
 
 <!-- Move to terminal dialog -->
-<p-dialog
+<ui-dialog
   header="Move Container to Terminal"
   [modal]="true"
-  [(visible)]="terminalDialogVisible"
-  [style]="{ width: '32rem' }"
+  [(open)]="terminalDialogVisible"
+  width="32rem"
 >
   <form [formRoot]="terminalForm">
     <ui-stack gap="3">
@@ -194,4 +194,4 @@
       </ui-stack>
     </ui-stack>
   </form>
-</p-dialog>
+</ui-dialog>

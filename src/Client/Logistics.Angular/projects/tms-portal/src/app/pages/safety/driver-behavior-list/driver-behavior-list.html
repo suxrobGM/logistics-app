@@ -102,13 +102,13 @@
 </ui-card>
 
 <!-- Review Dialog -->
-<p-dialog
+<ui-dialog
   header="Review Event"
-  [(visible)]="showReviewDialog"
+  [(open)]="showReviewDialog"
   [modal]="true"
-  [style]="{ width: '600px' }"
+  width="600px"
   [closable]="true"
-  (onHide)="closeReviewDialog()"
+  (closed)="closeReviewDialog()"
 >
   @if (selectedEvent()) {
     <ui-stack gap="4">
@@ -275,4 +275,4 @@
       }
     </ng-template>
   }
-</p-dialog>
+</ui-dialog>

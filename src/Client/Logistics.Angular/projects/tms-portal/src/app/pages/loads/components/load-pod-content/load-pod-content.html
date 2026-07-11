@@ -131,11 +131,11 @@
 </ui-card>
 
 <!-- Detail Dialog -->
-<p-dialog
+<ui-dialog
   header="Document Details"
-  [(visible)]="showDetailDialog"
+  [(open)]="showDetailDialog"
   [modal]="true"
-  [style]="{ width: '600px' }"
+  width="600px"
   [draggable]="false"
   [resizable]="false"
 >
@@ -258,4 +258,4 @@
       </div>
     </div>
   }
-</p-dialog>
+</ui-dialog>

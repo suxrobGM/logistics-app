@@ -35,42 +35,15 @@
     <app-ui-lab-overlays />
     <app-ui-lab-feedback />
     <app-ui-lab-cosmetics />
+    <app-ui-lab-dialogs />
     <app-ui-lab-tooltip />
     <app-ui-lab-notifications />
 
     <!--
-      ============================================================================================
-      SLOTS FOR LATER MIGRATION STEPS.
-
-      These components do not exist yet. When a step lands one, delete its placeholder row below,
-      add a `<app-ui-lab-{name}>` child component under ./sections/, import it in ui-lab.ts, and
-      add its heading id to the `sections` array so the nav and the probe pick it up.
-
-        S7  ui-dialog   — open/close, modal + non-modal, a nested overlay inside a dialog.
-        S9  ui-menu     — trigger, keyboard nav, submenu.
-      ============================================================================================
+      S9 landed the behavioural tail (menu, tabs, accordion, popover, drawer, stepper, timeline), so
+      the `pending` section and its `slot-ui-menu` placeholder are gone — ui-menu is real now and is
+      rendered, and clickable, below.
     -->
-    <section id="pending" class="scroll-mt-24">
-      <ui-typography variant="h2" tag="h2">Pending</ui-typography>
-      <ui-typography variant="body-sm" color="muted">
-        Slots reserved for components that later steps will land. Each row is a placeholder, not a
-        rendered component.
-      </ui-typography>
-
-      <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        <div
-          class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
-          data-lab="slot-ui-dialog"
-        >
-          ui-dialog (S7)
-        </div>
-        <div
-          class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
-          data-lab="slot-ui-menu"
-        >
-          ui-menu (S9)
-        </div>
-      </div>
-    </section>
+    <app-ui-lab-behaviour />
   </div>
 </div>

@@ -107,7 +107,8 @@
     <ui-form-field label="Search (not form-bound)" hint="Emits (searchChange) after a debounce">
       <ui-search-field placeholder="Search shipments" (searchChange)="lastSearch.set($event)" />
       <p class="text-muted-foreground mt-1 text-xs" [attr.data-lab]="'search-echo-' + variant()">
-        last query: <code>{{ lastSearch() || "—" }}</code>
+        last query:
+        <code>{{ lastSearch() || "—" }}</code>
       </p>
     </ui-form-field>
 

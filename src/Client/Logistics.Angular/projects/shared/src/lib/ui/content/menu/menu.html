@@ -1,0 +1,45 @@
+<ng-template #panel>
+  <div
+    hlmDropdownMenu
+    class="max-w-72 min-w-48"
+    [attr.aria-label]="ariaLabel()"
+    (focusout)="onFocusOut($event)"
+  >
+    @for (item of visibleItems(); track $index) {
+      @if (item.separator) {
+        <div hlmDropdownMenuSeparator></div>
+      } @else if (item.routerLink) {
+        <!--
+          A real <a>, not a button: it keeps ctrl/middle-click and "open in new tab" working.
+          Safe with CdkMenuItem — its keydown handler skips preventDefault() when the node is an
+          'A' or a 'BUTTON', so Enter still dispatches the native click that RouterLink listens for.
+        -->
+        <a
+          hlmDropdownMenuItem
+          [routerLink]="item.routerLink"
+          [disabled]="item.disabled ?? false"
+          [variant]="item.variant ?? 'default'"
+          (triggered)="activate(item)"
+        >
+          @if (item.icon) {
+            <ui-icon [name]="item.icon" size="inherit" />
+          }
+          <span class="truncate">{{ item.label }}</span>
+        </a>
+      } @else {
+        <button
+          type="button"
+          hlmDropdownMenuItem
+          [disabled]="item.disabled ?? false"
+          [variant]="item.variant ?? 'default'"
+          (triggered)="activate(item)"
+        >
+          @if (item.icon) {
+            <ui-icon [name]="item.icon" size="inherit" />
+          }
+          <span class="truncate">{{ item.label }}</span>
+        </button>
+      }
+    }
+  </div>
+</ng-template>

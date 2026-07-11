@@ -98,8 +98,8 @@
     @if (session.decisions?.length) {
       <ui-typography variant="h5" tag="h2" class="mb-4">Agent Timeline</ui-typography>
 
-      <p-timeline [value]="session.decisions">
-        <ng-template #content let-decision>
+      <ui-timeline [value]="session.decisions">
+        <ng-template uiTimelineContent let-decision>
           <div class="animate-slide-in mb-4 pb-2">
             <!-- Tool name + time + status -->
             <div class="mb-1 flex flex-wrap items-center gap-2">
@@ -155,7 +155,7 @@
           </div>
         </ng-template>
 
-        <ng-template #marker let-decision>
+        <ng-template uiTimelineMarker let-decision>
           <span
             class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
             [class]="getToolMarkerClass(decision.toolName)"
@@ -163,7 +163,7 @@
             <ui-icon [name]="getToolIcon(decision.toolName)" size="inherit" class="text-xs" />
           </span>
         </ng-template>
-      </p-timeline>
+      </ui-timeline>
     }
   </div>
 } @else if (isLoading()) {

@@ -27,10 +27,12 @@ import {
   Surface,
   Typography,
   UiButton,
+  UiTimeline,
+  UiTimelineContent,
+  UiTimelineMarker,
   UiTooltip,
 } from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TimelineModule } from "primeng/timeline";
 import { AiDispatchHubService, TenantService, ToastService } from "@/core/services";
 import { DateUtils, Labels } from "@/shared/utils";
 import { ApproveRejectActions } from "../components/approve-reject-actions/approve-reject-actions";
@@ -61,10 +63,12 @@ import { MarkdownPipe } from "../utils/markdown";
     PageHeader,
     Stack,
     Surface,
-    TimelineModule,
     ToolOutputSummary,
     Typography,
     UiButton,
+    UiTimeline,
+    UiTimelineContent,
+    UiTimelineMarker,
     UiTooltip,
   ],
 })

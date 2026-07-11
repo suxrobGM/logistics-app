@@ -24,8 +24,8 @@ import {
   Surface,
   Typography,
   UiButton,
+  UiTabsImports,
 } from "@logistics/shared/ui";
-import { TabsModule } from "primeng/tabs";
 import { DocumentManager, PageHeader } from "@/shared/components";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components/tags";
 import {
@@ -63,10 +63,10 @@ import {
     Spinner,
     Stack,
     Surface,
-    TabsModule,
     TrackingLinkDialog,
     Typography,
     UiButton,
+    UiTabsImports,
   ],
 })
 export class LoadDetailPage implements OnInit {

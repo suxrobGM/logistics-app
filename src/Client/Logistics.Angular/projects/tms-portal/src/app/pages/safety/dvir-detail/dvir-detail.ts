@@ -19,9 +19,9 @@ import {
   Spinner,
   Stack,
   UiButton,
+  UiDialog,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { TextareaModule } from "primeng/textarea";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
@@ -36,7 +36,6 @@ import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-l
     Card,
     DatePipe,
     DecimalPipe,
-    DialogModule,
     DvirDefectsList,
     FormsModule,
     Grid,
@@ -47,6 +46,7 @@ import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-l
     Stack,
     TextareaModule,
     UiButton,
+    UiDialog,
   ],
 })
 export class DvirDetailPage implements OnInit {

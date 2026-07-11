@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Payment Links"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '650px' }"
-  (onShow)="onShow()"
-  (onHide)="close()"
+  width="650px"
+  (opened)="onShow()"
+  (closed)="close()"
 >
   <p class="text-muted-foreground mb-4">
     Generate payment links to share with customers so they can pay this invoice online.
@@ -76,4 +76,4 @@
       <p class="text-sm">Click "Generate New Link" to create a shareable payment link</p>
     </ui-stack>
   }
-</p-dialog>
+</ui-dialog>

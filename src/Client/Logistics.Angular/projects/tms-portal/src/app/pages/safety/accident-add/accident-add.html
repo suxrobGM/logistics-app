@@ -6,28 +6,28 @@
   </div>
 } @else {
   <ui-card>
-    <p-stepper [linear]="true" [value]="activeStep()" (valueChange)="goToStep($event ?? 1)">
-      <p-step-list>
-        <p-step [value]="1">Incident Details</p-step>
-        <p-step [value]="2">Injuries & Damage</p-step>
-        <p-step [value]="3">Review & Submit</p-step>
-      </p-step-list>
+    <ui-stepper [linear]="true" [value]="activeStep()" (valueChange)="goToStep($event)">
+      <ui-step-list>
+        <ui-step [value]="1">Incident Details</ui-step>
+        <ui-step [value]="2">Injuries & Damage</ui-step>
+        <ui-step [value]="3">Review & Submit</ui-step>
+      </ui-step-list>
 
-      <p-step-panels>
+      <ui-step-panels>
         <!-- Step 1: Incident Details -->
-        <p-step-panel [value]="1">
-          <ng-template #content>
+        <ui-step-panel [value]="1">
+          <ng-template uiStepContent>
             <app-accident-incident-form [field]="step1Form" />
 
             <div class="flex justify-end gap-2 py-4">
               <ui-button label="Next" iconEnd="arrow-right" (click)="nextStep()" />
             </div>
           </ng-template>
-        </p-step-panel>
+        </ui-step-panel>
 
         <!-- Step 2: Injuries & Damage -->
-        <p-step-panel [value]="2">
-          <ng-template #content>
+        <ui-step-panel [value]="2">
+          <ng-template uiStepContent>
             <app-accident-injuries-damage-form [field]="step2Form" />
 
             <div class="flex justify-between py-4">
@@ -40,11 +40,11 @@
               <ui-button label="Next" iconEnd="arrow-right" (click)="nextStep()" />
             </div>
           </ng-template>
-        </p-step-panel>
+        </ui-step-panel>
 
         <!-- Step 3: Review & Submit -->
-        <p-step-panel [value]="3">
-          <ng-template #content>
+        <ui-step-panel [value]="3">
+          <ng-template uiStepContent>
             <div class="py-4">
               <h3 class="mb-4 text-lg font-semibold">Review Report</h3>
 
@@ -69,8 +69,8 @@
               </div>
             </div>
           </ng-template>
-        </p-step-panel>
-      </p-step-panels>
-    </p-stepper>
+        </ui-step-panel>
+      </ui-step-panels>
+    </ui-stepper>
   </ui-card>
 }

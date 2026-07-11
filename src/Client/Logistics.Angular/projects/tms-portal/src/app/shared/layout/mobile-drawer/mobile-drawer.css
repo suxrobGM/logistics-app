@@ -1,36 +1,22 @@
-/* PrimeNG drawer overrides - can't be done with Tailwind */
-:host ::ng-deep {
-  .mobile-nav-drawer {
-    width: 300px !important;
-    max-width: 85vw;
-  }
-  .mobile-nav-drawer .p-drawer-header {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--border-subtle);
-    background: linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--primary-500) 6%, transparent) 0%,
-      transparent 50%
-    );
-  }
-  .mobile-nav-drawer .p-drawer-content {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background: var(--bg-surface);
-  }
-  .mobile-nav-drawer .p-drawer-close-button {
-    width: 2rem;
-    height: 2rem;
-    border-radius: var(--radius-md);
-    transition: background-color var(--transition-fast);
-  }
-  .mobile-nav-drawer .p-drawer-close-button:hover {
-    background-color: var(--bg-hover);
-  }
-}
-
+/*
+ * The old `:host ::ng-deep .p-drawer-*` block is GONE, and it had to go rather than be renamed.
+ *
+ * `<ui-drawer>` portals its panel into a CDK overlay at the document body. That panel is therefore no
+ * longer a DESCENDANT of this host, so `:host ::ng-deep …` selects nothing at all — renaming the
+ * `.p-drawer-*` classes to their new equivalents would have produced a rule that still matched
+ * nothing, silently. (Same shape as the S5 lesson: an element-selector rule stops matching the moment
+ * the tag is renamed, and says nothing about it.)
+ *
+ * So each rule was ported to where it can still apply:
+ *   - width: 300px / max-width: 85vw   -> `<ui-drawer width="300px">`; ui-drawer clamps to 85vw itself.
+ *   - .p-drawer-content padding/flex/height/background -> ui-drawer's own content box already is a
+ *     zero-padding, full-height flex column, and `.mobile-nav-menu` below paints the surface.
+ *   - .p-drawer-close-button sizing/hover -> Helm's sheet close button is already a themed ghost
+ *     icon-button of the same size.
+ *   - .p-drawer-header padding/border/gradient -> folded into `.mobile-nav-header` below. That element
+ *     is declared in THIS component's template, so it keeps this component's style encapsulation
+ *     attribute and these rules still reach it inside the overlay.
+ */
 .mobile-nav-menu {
   background: var(--bg-surface);
 }
@@ -38,6 +24,14 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--primary-500) 6%, transparent) 0%,
+    transparent 50%
+  );
 }
 .mobile-nav-logo {
   height: 2.25rem;

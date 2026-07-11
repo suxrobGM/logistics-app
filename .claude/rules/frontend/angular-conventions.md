@@ -72,9 +72,12 @@ onKeydown(event: KeyboardEvent) {}
   - **Forms**: `ui-form-field` (label/hint/error wrapper — auto-resolves the projected `[formField]`), `ui-text-field`, `ui-textarea-field`, `ui-select-field`, `ui-multiselect-field`, `ui-number-field`, `ui-currency-field`, `ui-unit-field`, `ui-date-field`, `ui-checkbox-field`, `ui-toggle-field`, `ui-password-field`, `ui-autocomplete-field`, `ui-search-field`, `ui-phone-field`, `ui-address-form`, `ui-language-picker`, plus the `ValidatedForm` directive (matches `form[formRoot]`)
   - **Data**: `ui-data-table` with `<th uiSortHeader="Field">`
   - **Content**: `ui-icon`, `ui-alert`, `ui-badge`, `ui-status-badge`, `ui-typography`, `ui-theme-toggle`
-  - **Layout**: `ui-divider`, `ui-container`, `ui-grid`, `ui-stack`, `ui-surface`, `ui-toolbar`, `ui-page-header`, `ui-dashboard-card`
-  - **Feedback**: `ui-empty-state`, `ui-error-state`, `ui-loading-skeleton`, `ui-data-container`, `ui-date-range-picker`
-- `ui-button`, `ui-card`, `ui-dialog`, `ui-tooltip`, `ui-spinner`, `ui-skeleton`, `ui-menu`, `ui-tabs`, `ui-chart` are **landing during the migration** — check `projects/shared/src/lib/ui/` for what exists before hand-rolling one
+  - **Layout**: `ui-divider`, `ui-container`, `ui-grid`, `ui-stack`, `ui-surface`, `ui-toolbar`, `ui-page-header`, `ui-dashboard-card`, `ui-tabs` (+ `ui-tab-list` / `ui-tab` / `ui-tab-panels` / `ui-tab-panel`), `ui-accordion` (+ `-panel` / `-header` / `-content`), `ui-stepper` (+ `ui-step-list` / `ui-step` / `ui-step-panels` / `ui-step-panel` and the `*uiStepContent` template), `ui-drawer`
+  - **Feedback**: `ui-empty-state`, `ui-error-state`, `ui-loading-skeleton`, `ui-data-container`, `ui-date-range-picker`, `ui-popover`
+  - **Menus**: `ui-menu` — a popup menu driven by a template ref: `<ui-menu #menu [items]="items()" />` plus `(click)="menu.toggle($event)"` on any trigger. Items are `UiMenuItem` (`icon` is a typed `IconName`, `variant: "destructive"` for danger rows). **Never import `MenuItem` from `primeng/api`.**
+  - **Timeline**: `ui-timeline` with `*uiTimelineContent` (and optional `*uiTimelineMarker`) templates
+- `ui-chart` is still **landing during the migration** — check `projects/shared/src/lib/ui/` for what exists before hand-rolling one
+- **Never hide an `<ng-icon>` with a Tailwind display utility** (`hidden`, `inline`, …). `NgIcon` ships an unlayered `:host { display: inline-block }` component style, and unlayered CSS beats every `@layer` — including `@layer utilities`, where all Tailwind utilities live. The class lands in the DOM, the rule lands in the stylesheet, and the icon stays visible anyway. Rotate it (`rotate-180`) or wrap it in a `<span>` you hide instead.
 - **Icons**: `<ui-icon name="..."/>` only. Never `<i class="pi pi-*">`, never a raw `<ng-icon>` in feature code
 - **Toasts / confirms**: `ToastService` from `@logistics/shared` only. Never inject `MessageService` / `ConfirmationService`
 

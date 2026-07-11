@@ -8,11 +8,11 @@ import {
   Spinner,
   UiButton,
   UiDataTable,
+  UiDialog,
   UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
-import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 
 @Component({
@@ -23,11 +23,11 @@ import { ToastService } from "@/core/services";
     Card,
     CommonModule,
     DatePipe,
-    DialogModule,
     Icon,
     Spinner,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiTooltip,
   ],
 })

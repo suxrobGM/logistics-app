@@ -45,7 +45,7 @@
         @if (userName()) {
           <span class="hidden text-sm text-gray-600 sm:block">{{ userName() }}</span>
         }
-        <p-menu #menu [model]="profileMenuItems" [popup]="true" />
+        <ui-menu #menu [items]="profileMenuItems" />
         <ui-button
           intent="secondary"
           appearance="text"

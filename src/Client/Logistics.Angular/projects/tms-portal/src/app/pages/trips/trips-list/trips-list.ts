@@ -26,14 +26,14 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   UiTableRowDirectives,
   UiTooltip,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
-import type { MenuItem } from "primeng/api";
 import { Checkbox } from "primeng/checkbox";
-import { MenuModule } from "primeng/menu";
 import { MultiSelect } from "primeng/multiselect";
 import { ToastService } from "@/core/services";
 import {
@@ -67,7 +67,6 @@ import { TripsListStore } from "../store/trips-list.store";
     Grid,
     LoadStatusTag,
     LoadTypeTag,
-    MenuModule,
     MultiSelect,
     PageHeader,
     Progress,
@@ -81,6 +80,7 @@ import { TripsListStore } from "../store/trips-list.store";
     UiButton,
     UiDataTable,
     UiFormField,
+    UiMenu,
     UiSortHeader,
     UiTableRowDirectives,
     UiTooltip,
@@ -121,12 +121,12 @@ export class TripsList {
   });
 
   // Dynamic action menu items based on selected trip status
-  protected readonly actionMenuItems = computed<MenuItem[]>(() => {
+  protected readonly actionMenuItems = computed<UiMenuItem[]>(() => {
     const trip = this.selectedRow();
-    const items: MenuItem[] = [
+    const items: UiMenuItem[] = [
       {
         label: "View trip details",
-        icon: "pi pi-eye",
+        icon: "eye",
         command: () => this.router.navigate(["/trips", trip!.id]),
       },
     ];
@@ -135,7 +135,7 @@ export class TripsList {
     if (trip?.status === "draft") {
       items.push({
         label: "Edit trip details",
-        icon: "pi pi-pen-to-square",
+        icon: "pen-to-square",
         command: () => this.router.navigate(["/trips", trip!.id, "edit"]),
       });
     }
@@ -144,7 +144,7 @@ export class TripsList {
     if (trip?.status === "draft" && trip?.truckId) {
       items.push({
         label: "Dispatch trip",
-        icon: "pi pi-send",
+        icon: "send",
         command: () => this.askDispatchTrip(trip!),
       });
     }
@@ -157,7 +157,7 @@ export class TripsList {
     ) {
       items.push({
         label: "Cancel trip",
-        icon: "pi pi-times",
+        icon: "times",
         command: () => this.askCancelTrip(trip!),
       });
     }
@@ -169,8 +169,8 @@ export class TripsList {
       });
       items.push({
         label: "Delete trip",
-        icon: "pi pi-trash",
-        styleClass: "text-red-500",
+        icon: "trash",
+        variant: "destructive",
         command: () => this.askRemoveTrip(trip!),
       });
     }

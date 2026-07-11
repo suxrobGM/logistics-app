@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Record Manual Payment"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '450px' }"
-  (onShow)="onShow()"
-  (onHide)="close()"
+  width="450px"
+  (opened)="onShow()"
+  (closed)="close()"
 >
   <p class="text-muted-foreground mb-4">
     Record a cash or check payment received from the customer.
@@ -67,4 +67,4 @@
       />
     </ui-stack>
   </form>
-</p-dialog>
+</ui-dialog>

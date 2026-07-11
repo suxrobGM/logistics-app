@@ -102,7 +102,7 @@
 </ui-card>
 
 <!-- Context menu for actions -->
-<p-menu #menu [model]="actionMenuItems()" [popup]="true" />
+<ui-menu #menu [items]="actionMenuItems()" />
 
 <!-- Reject dialog -->
 <app-reject-expense-dialog />

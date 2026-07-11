@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Add Load Board Provider"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '500px' }"
+  width="500px"
   [draggable]="false"
-  (onShow)="onShow()"
+  (opened)="onShow()"
 >
   <form [formRoot]="form" #formEl>
     <ui-form-field label="Provider" for="providerType" [required]="true">
@@ -103,4 +103,4 @@
     <ui-button appearance="text" label="Cancel" (click)="close()" />
     <ui-button label="Add Provider" icon="check" (click)="requestSubmit()" [loading]="saving()" />
   </ng-template>
-</p-dialog>
+</ui-dialog>

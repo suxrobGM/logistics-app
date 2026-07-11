@@ -9,11 +9,11 @@ import {
   Stack,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { DvirListStore } from "../store";
 
@@ -27,12 +27,12 @@ import { DvirListStore } from "../store";
     DataContainer,
     DatePipe,
     Icon,
-    MenuModule,
     PageHeader,
     SearchField,
     Stack,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
   ],
 })
@@ -42,15 +42,15 @@ export class DvirListPage {
 
   protected readonly selectedRow = signal<DvirReportDto | null>(null);
 
-  protected readonly actionMenuItems: MenuItem[] = [
+  protected readonly actionMenuItems: UiMenuItem[] = [
     {
       label: "View details",
-      icon: "pi pi-eye",
+      icon: "eye",
       command: () => this.viewDetails(this.selectedRow()!),
     },
     {
       label: "Review",
-      icon: "pi pi-check-circle",
+      icon: "check-circle",
       command: () => this.reviewDvir(this.selectedRow()!),
     },
   ];

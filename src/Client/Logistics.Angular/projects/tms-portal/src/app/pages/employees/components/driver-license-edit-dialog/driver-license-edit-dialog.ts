@@ -40,11 +40,11 @@ import {
   Stack,
   UiButton,
   UiDateField,
+  UiDialog,
   UiMultiSelectField,
   UiSelectField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { UiFormField, ValidatedForm } from "@/shared/components";
 
 interface DriverLicenseModel {
@@ -75,12 +75,12 @@ const EMPTY: DriverLicenseModel = {
   selector: "app-driver-license-edit-dialog",
   templateUrl: "./driver-license-edit-dialog.html",
   imports: [
-    DialogModule,
     FormField,
     FormRoot,
     Stack,
     UiButton,
     UiDateField,
+    UiDialog,
     UiFormField,
     UiMultiSelectField,
     UiSelectField,

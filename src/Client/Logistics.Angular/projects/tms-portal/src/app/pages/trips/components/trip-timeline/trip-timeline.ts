@@ -1,13 +1,20 @@
 import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
 import type { TripTimelineEventDto } from "@logistics/shared/api";
-import { Badge, Icon, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
-import { TimelineModule } from "primeng/timeline";
+import {
+  Badge,
+  Icon,
+  UiTimeline,
+  UiTimelineContent,
+  UiTimelineMarker,
+  type IconName,
+  type UiBadgeIntent,
+} from "@logistics/shared/ui";
 
 @Component({
   selector: "app-trip-timeline",
   templateUrl: "./trip-timeline.html",
-  imports: [Badge, CommonModule, Icon, TimelineModule],
+  imports: [Badge, CommonModule, Icon, UiTimeline, UiTimelineContent, UiTimelineMarker],
 })
 export class TripTimeline {
   public readonly events = input<TripTimelineEventDto[]>([]);

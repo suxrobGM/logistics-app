@@ -7,13 +7,13 @@ import {
   Stack,
   UiButton,
   UiDateField,
+  UiDialog,
   UiNumberField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 
 const EMPTY = {
@@ -28,12 +28,12 @@ const EMPTY = {
   selector: "app-record-payment-dialog",
   templateUrl: "./record-payment-dialog.html",
   imports: [
-    DialogModule,
     FormField,
     FormRoot,
     Stack,
     UiButton,
     UiDateField,
+    UiDialog,
     UiFormField,
     UiNumberField,
     UiSelectField,

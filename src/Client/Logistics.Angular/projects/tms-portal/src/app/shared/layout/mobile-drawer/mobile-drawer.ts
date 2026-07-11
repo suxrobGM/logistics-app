@@ -1,9 +1,7 @@
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { UserRole } from "@logistics/shared";
 import { FeatureService } from "@logistics/shared/services";
-import { Icon } from "@logistics/shared/ui";
-import { DrawerModule } from "primeng/drawer";
-import { PopoverModule } from "primeng/popover";
+import { Icon, UiDrawer, UiPopover } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 import {
   ChatService,
@@ -47,15 +45,7 @@ const ROLE_ITEM_ACCESS: Record<string, string[] | "*"> = {
   selector: "app-mobile-drawer",
   templateUrl: "./mobile-drawer.html",
   styleUrl: "./mobile-drawer.css",
-  imports: [
-    DrawerModule,
-    FavoritesBar,
-    Icon,
-    NavMenu,
-    NotificationBell,
-    PopoverModule,
-    ThemeToggle,
-  ],
+  imports: [UiDrawer, FavoritesBar, Icon, NavMenu, NotificationBell, UiPopover, ThemeToggle],
 })
 export class MobileDrawer {
   private readonly layoutService = inject(LayoutService);

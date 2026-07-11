@@ -27,12 +27,12 @@ import {
   Stack,
   UiButton,
   UiDateField,
+  UiDialog,
   UiNumberField,
   UiSelectField,
   UiTextareaField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 
@@ -51,7 +51,6 @@ const EMPTY = {
   selector: "app-timesheet-form-dialog",
   templateUrl: "./form-dialog.html",
   imports: [
-    DialogModule,
     FormField,
     FormRoot,
     Grid,
@@ -59,6 +58,7 @@ const EMPTY = {
     Stack,
     UiButton,
     UiDateField,
+    UiDialog,
     UiFormField,
     UiNumberField,
     UiSelectField,

@@ -11,12 +11,12 @@ import {
   Spinner,
   Stack,
   UiButton,
+  UiDialog,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
@@ -27,13 +27,13 @@ const EMPTY = { email: "", customerId: "", personalMessage: "" };
   selector: "app-invite-customer-dialog",
   templateUrl: "./invite-customer-dialog.html",
   imports: [
-    DialogModule,
     FormField,
     FormRoot,
     InputTextModule,
     Spinner,
     Stack,
     UiButton,
+    UiDialog,
     UiFormField,
     UiSelectField,
     UiTextareaField,

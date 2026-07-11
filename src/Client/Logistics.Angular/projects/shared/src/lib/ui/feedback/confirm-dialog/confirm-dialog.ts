@@ -1,11 +1,12 @@
 import { DialogRef } from "@angular/cdk/dialog";
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, inject } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { BrnDialogRef, injectBrnDialogContext } from "@spartan-ng/brain/dialog";
 import { UiButton } from "../../action/button/button";
 import type { UiButtonIntent } from "../../action/button/button-variants";
 import { Icon } from "../../content/icon/icon";
 import type { IconName } from "../../icons/icon-registry.generated";
+import { isTopmostOverlay } from "../../internal/overlay-stack";
 
 /**
  * The dialog's close result. `confirm()` maps it back to the caller's callbacks, and the mapping is
@@ -75,6 +76,7 @@ export interface UiConfirmDialogContext {
 })
 export class UiConfirmDialog {
   private readonly dialogRef = inject<BrnDialogRef<boolean>>(BrnDialogRef);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly context = injectBrnDialogContext<UiConfirmDialogContext>();
 
   constructor() {
@@ -90,10 +92,17 @@ export class UiConfirmDialog {
       });
   }
 
+  /**
+   * `isTopmostOverlay` guards the same bug as in `ui-dialog`: a confirm opened ON TOP of a `ui-dialog`
+   * (the customer edit dialog's Danger Zone → "Delete Customer" → confirm) shares this document-level
+   * listener with the dialog underneath it, and an unguarded Escape closed BOTH — dismissing the
+   * confirm and discarding the edit form behind it. See `internal/overlay-stack.ts`.
+   */
   protected onEscape(): void {
-    if (this.context.closeOnEscape) {
-      this.reject();
-    }
+    if (!this.context.closeOnEscape) return;
+    if (!isTopmostOverlay(this.host.nativeElement)) return;
+
+    this.reject();
   }
 
   protected accept(): void {

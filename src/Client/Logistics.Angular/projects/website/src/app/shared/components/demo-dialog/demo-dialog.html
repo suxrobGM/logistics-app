@@ -1,9 +1,9 @@
-<p-dialog
+<ui-dialog
   header="Request a Demo"
-  [visible]="visible()"
-  (visibleChange)="visible.set($event)"
+  [open]="visible()"
+  (openChange)="visible.set($event)"
   [modal]="true"
-  [style]="{ width: '500px' }"
+  width="500px"
   [breakpoints]="{ '640px': '95vw' }"
 >
   @if (isSubmitted()) {
@@ -82,4 +82,4 @@
       </div>
     </form>
   }
-</p-dialog>
+</ui-dialog>

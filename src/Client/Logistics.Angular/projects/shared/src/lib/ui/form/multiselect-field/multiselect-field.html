@@ -6,7 +6,11 @@
   [disabled]="disabled() || readonly()"
   (closed)="onClosed()"
 >
-  <hlm-select-trigger [buttonId]="id()" [forceInvalid]="showInvalid()" [class]="fluid() ? 'w-full' : ''">
+  <hlm-select-trigger
+    [buttonId]="id()"
+    [forceInvalid]="showInvalid()"
+    [class]="fluid() ? 'w-full' : ''"
+  >
     @if (display() === "chip" && selectedLabels().length) {
       <span class="flex flex-wrap gap-1">
         @for (chip of selectedLabels(); track chip.value) {

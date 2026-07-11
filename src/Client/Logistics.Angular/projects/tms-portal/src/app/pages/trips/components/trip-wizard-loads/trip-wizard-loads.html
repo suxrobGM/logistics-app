@@ -179,11 +179,12 @@
 
 <!-- Initialize dialog component only when it's visible to avoid unnecessary mapbox rendering on background -->
 @if (tripLoadDialogVisible()) {
-  <p-dialog
+  <ui-dialog
     header="Create a new load for this trip"
     [modal]="true"
-    [(visible)]="tripLoadDialogVisible"
-    [style]="{ width: '90vw', maxWidth: '1200px' }"
+    [(open)]="tripLoadDialogVisible"
+    width="90vw"
+    maxWidth="1200px"
   >
     <app-load-form
       [initial]="initialLoadData()"
@@ -191,5 +192,5 @@
       [canChangeAssignedTruck]="false"
       (save)="addNewLoad($event)"
     />
-  </p-dialog>
+  </ui-dialog>
 }

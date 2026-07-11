@@ -18,11 +18,11 @@ import {
   SearchField,
   UiButton,
   UiDataTable,
+  UiDialog,
   UiSortHeader,
   UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
 import { AdminInvitationsListStore } from "../store/admin-invitations-list.store";
@@ -37,13 +37,13 @@ import { AdminsListStore } from "../store/admins-list.store";
     Card,
     DataContainer,
     DatePipe,
-    DialogModule,
     FormsModule,
     InputTextModule,
     PageHeader,
     SearchField,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiSortHeader,
     UiTooltip,
   ],

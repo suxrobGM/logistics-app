@@ -9,8 +9,15 @@ import {
   type ApiKeyCreatedDto,
   type ApiKeyDto,
 } from "@logistics/shared/api";
-import { Alert, Icon, Spinner, UiButton, UiDataTable, UiTooltip } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
+import {
+  Alert,
+  Icon,
+  Spinner,
+  UiButton,
+  UiDataTable,
+  UiDialog,
+  UiTooltip,
+} from "@logistics/shared/ui";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
@@ -21,13 +28,13 @@ import { UiFormField } from "@/shared/components";
   imports: [
     Alert,
     DatePipe,
-    DialogModule,
     FormsModule,
     Icon,
     InputTextModule,
     Spinner,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiFormField,
     UiTooltip,
   ],

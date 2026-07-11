@@ -2,8 +2,14 @@ import { Component, inject, input, model, output, signal } from "@angular/core";
 import { email, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { UiFormField } from "@logistics/shared";
 import { Api, sendInvoice } from "@logistics/shared/api";
-import { Stack, UiButton, UiTextareaField, UiTextField, ValidatedForm } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
+import {
+  Stack,
+  UiButton,
+  UiDialog,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 
 const EMPTY = { email: "", personalMessage: "" };
@@ -12,11 +18,11 @@ const EMPTY = { email: "", personalMessage: "" };
   selector: "app-send-invoice-dialog",
   templateUrl: "./send-invoice-dialog.html",
   imports: [
-    DialogModule,
     FormField,
     FormRoot,
     Stack,
     UiButton,
+    UiDialog,
     UiFormField,
     UiTextareaField,
     UiTextField,

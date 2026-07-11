@@ -22,13 +22,13 @@ import {
   UiButton,
   UiDataTable,
   UiDateField,
+  UiDialog,
   UiFormField,
   UiNumberField,
   UiSelectField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 
 interface TaxRateModel {
@@ -54,7 +54,6 @@ const EMPTY: TaxRateModel = {
     Alert,
     Card,
     DateFormatPipe,
-    DialogModule,
     FormField,
     FormRoot,
     Spinner,
@@ -63,6 +62,7 @@ const EMPTY: TaxRateModel = {
     UiButton,
     UiDataTable,
     UiDateField,
+    UiDialog,
     UiFormField,
     UiNumberField,
     UiSelectField,

@@ -23,11 +23,11 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiTooltip,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
 import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
-import { SharedModule, type MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { AuthService } from "@/core/auth";
 import { DashboardSettingsService, type DashboardPanelConfig } from "@/core/services";
 import { PageHeader, StatCard, TrucksMap } from "@/shared/components";
@@ -61,11 +61,9 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
     HomeSkeleton,
     Icon,
     LoadProgressBarComponent,
-    MenuModule,
     PageHeader,
     RecentActivityComponent,
     RouterLink,
-    SharedModule,
     Stack,
     StatCard,
     StatusBadge,
@@ -74,6 +72,7 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
     Typography,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiTooltip,
   ],
   providers: [AddressPipe],
@@ -167,12 +166,12 @@ export class Home implements OnInit {
     return `Good evening, ${name}`;
   });
 
-  protected readonly quickActions: MenuItem[] = [
-    { label: "Create Load", icon: "pi pi-plus", routerLink: "/loads/add" },
-    { label: "View All Loads", icon: "pi pi-list", routerLink: "/loads" },
+  protected readonly quickActions: UiMenuItem[] = [
+    { label: "Create Load", icon: "plus", routerLink: "/loads/add" },
+    { label: "View All Loads", icon: "list", routerLink: "/loads" },
     { separator: true },
-    { label: "View Trucks", icon: "pi pi-truck", routerLink: "/trucks" },
-    { label: "Messages", icon: "pi pi-envelope", routerLink: "/messages" },
+    { label: "View Trucks", icon: "truck", routerLink: "/trucks" },
+    { label: "Messages", icon: "envelope", routerLink: "/messages" },
   ];
 
   constructor() {

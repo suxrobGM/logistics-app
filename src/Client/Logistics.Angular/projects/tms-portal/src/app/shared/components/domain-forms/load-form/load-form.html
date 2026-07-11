@@ -98,7 +98,7 @@
         </ui-stack>
 
         <!-- Schedule Section (collapsable) -->
-        <p-fieldset legend="Schedule" [toggleable]="true" [collapsed]="true">
+        <ui-collapsible legend="Schedule" [toggleable]="true" [collapsed]="true">
           <ui-grid container spacing="4">
             <ui-grid [size]="{ xs: 12, md: 6 }">
               <ui-form-field label="Requested Pickup Date" for="requestedPickupDate" class="mb-0">
@@ -125,10 +125,10 @@
               </ui-form-field>
             </ui-grid>
           </ui-grid>
-        </p-fieldset>
+        </ui-collapsible>
 
         <!-- Intermodal Section (collapsable) -->
-        <p-fieldset legend="Intermodal (optional)" [toggleable]="true" [collapsed]="true">
+        <ui-collapsible legend="Intermodal (optional)" [toggleable]="true" [collapsed]="true">
           <ui-form-field label="Container" for="container">
             <app-search-container [formField]="form.container" />
           </ui-form-field>
@@ -138,10 +138,10 @@
           <ui-form-field label="Destination Terminal" for="destinationTerminal" class="mb-0">
             <app-search-terminal [formField]="form.destinationTerminal" />
           </ui-form-field>
-        </p-fieldset>
+        </ui-collapsible>
 
         <!-- Hazmat / ADR Section -->
-        <p-fieldset legend="Hazmat / ADR" [toggleable]="true" [collapsed]="!model().isHazmat">
+        <ui-collapsible legend="Hazmat / ADR" [toggleable]="true" [collapsed]="!model().isHazmat">
           <ui-form-field label="Contains hazardous materials" for="isHazmat">
             <ui-checkbox-field inputId="isHazmat" [formField]="form.isHazmat" />
           </ui-form-field>
@@ -175,14 +175,14 @@
               />
             </ui-form-field>
           }
-        </p-fieldset>
+        </ui-collapsible>
 
         <!-- Notes Section (collapsable) -->
-        <p-fieldset legend="Notes" [toggleable]="true" [collapsed]="true">
+        <ui-collapsible legend="Notes" [toggleable]="true" [collapsed]="true">
           <ui-form-field label="Notes" for="notes" hint="Max 2000 characters" class="mb-0">
             <ui-textarea-field id="notes" [formField]="form.notes" [rows]="3" [maxlength]="2000" />
           </ui-form-field>
-        </p-fieldset>
+        </ui-collapsible>
 
         <!-- Pricing Section -->
         <ui-stack tag="section" gap="3">

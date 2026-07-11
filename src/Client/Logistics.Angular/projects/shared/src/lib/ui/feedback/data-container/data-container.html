@@ -1,5 +1,9 @@
 @if (loading()) {
-  <ui-loading-skeleton [variant]="skeletonVariant()" [rows]="skeletonRows()" [loadingText]="loadingText()" />
+  <ui-loading-skeleton
+    [variant]="skeletonVariant()"
+    [rows]="skeletonRows()"
+    [loadingText]="loadingText()"
+  />
 } @else if (error()) {
   <ui-error-state
     [message]="error()!.message"

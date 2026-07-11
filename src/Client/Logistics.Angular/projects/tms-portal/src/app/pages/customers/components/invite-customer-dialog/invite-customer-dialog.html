@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Invite Customer User"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '450px' }"
-  (onShow)="onShow()"
-  (onHide)="close()"
+  width="450px"
+  (opened)="onShow()"
+  (closed)="close()"
 >
   @if (form().submitting()) {
     <ui-stack align="center" justify="center" class="py-4">
@@ -68,4 +68,4 @@
       </ui-stack>
     </form>
   }
-</p-dialog>
+</ui-dialog>

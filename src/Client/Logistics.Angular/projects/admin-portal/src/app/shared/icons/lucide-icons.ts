@@ -10,6 +10,7 @@ import {
   lucideBuilding2,
   lucideChartColumn,
   lucideCreditCard,
+  lucideEllipsisVertical,
   lucideFilePenLine,
   lucideHouse,
   lucideLayoutGrid,
@@ -32,7 +33,7 @@ import {
  * Icons `admin-portal` uses that `BASE_NG_ICONS` does not already provide.
  * Registered in app.config.ts:  provideIcons({ ...BASE_NG_ICONS, ...ADMIN_NG_ICONS })
  *
- * 23 name(s) -> 21 distinct glyph(s).
+ * 24 name(s) -> 22 distinct glyph(s).
  */
 export const ADMIN_NG_ICONS = {
   lucideBot,
@@ -40,6 +41,7 @@ export const ADMIN_NG_ICONS = {
   lucideBuilding2,
   lucideChartColumn,
   lucideCreditCard,
+  lucideEllipsisVertical,
   lucideFilePenLine,
   lucideHouse,
   lucideLayoutGrid,

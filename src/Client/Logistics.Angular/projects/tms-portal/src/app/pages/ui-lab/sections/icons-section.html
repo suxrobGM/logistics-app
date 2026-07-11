@@ -5,7 +5,9 @@
     straight off the registries. Every cell is bordered — an empty box is a blank icon.
   </ui-typography>
 
-  <ui-typography variant="h4" tag="h3" class="mt-6">BASE_NG_ICONS ({{ baseIcons.length }})</ui-typography>
+  <ui-typography variant="h4" tag="h3" class="mt-6">
+    BASE_NG_ICONS ({{ baseIcons.length }})
+  </ui-typography>
   <div
     data-lab="icons-base"
     class="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10"
@@ -17,12 +19,16 @@
         [title]="icon.exportName"
       >
         <ui-icon [name]="icon.name" size="lg" />
-        <span class="text-muted-foreground truncate text-xs" [title]="icon.name">{{ icon.name }}</span>
+        <span class="text-muted-foreground truncate text-xs" [title]="icon.name">
+          {{ icon.name }}
+        </span>
       </div>
     }
   </div>
 
-  <ui-typography variant="h4" tag="h3" class="mt-6">TMS_NG_ICONS ({{ tmsIcons.length }})</ui-typography>
+  <ui-typography variant="h4" tag="h3" class="mt-6">
+    TMS_NG_ICONS ({{ tmsIcons.length }})
+  </ui-typography>
   <div
     data-lab="icons-tms"
     class="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10"
@@ -34,7 +40,9 @@
         [title]="icon.exportName"
       >
         <ui-icon [name]="icon.name" size="lg" />
-        <span class="text-muted-foreground truncate text-xs" [title]="icon.name">{{ icon.name }}</span>
+        <span class="text-muted-foreground truncate text-xs" [title]="icon.name">
+          {{ icon.name }}
+        </span>
       </div>
     }
   </div>
@@ -43,7 +51,9 @@
     Legacy aliases ({{ legacyAliases.length }})
   </ui-typography>
   <ui-typography variant="body-sm" color="muted">
-    The PrimeIcons-style names that call sites still pass to <code>&lt;ui-icon&gt;</code>.
+    The PrimeIcons-style names that call sites still pass to
+    <code>&lt;ui-icon&gt;</code>
+    .
   </ui-typography>
   <div
     data-lab="icons-legacy"
@@ -56,7 +66,9 @@
         [title]="icon.name + ' → ' + icon.exportName"
       >
         <ui-icon [name]="icon.name" size="lg" />
-        <span class="text-muted-foreground truncate text-xs" [title]="icon.name">{{ icon.name }}</span>
+        <span class="text-muted-foreground truncate text-xs" [title]="icon.name">
+          {{ icon.name }}
+        </span>
       </div>
     }
   </div>

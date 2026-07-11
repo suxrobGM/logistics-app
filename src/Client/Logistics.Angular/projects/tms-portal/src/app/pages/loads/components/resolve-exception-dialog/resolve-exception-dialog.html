@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Resolve Exception"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '450px' }"
+  width="450px"
   [closable]="true"
-  (onHide)="close()"
+  (closed)="close()"
 >
   @if (exception(); as exc) {
     <div class="space-y-4">
@@ -43,4 +43,4 @@
       />
     </div>
   </ng-template>
-</p-dialog>
+</ui-dialog>

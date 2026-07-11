@@ -9,18 +9,18 @@
 
   <div webScrollAnimate="fade-up" [delay]="200" class="mt-12">
     @defer {
-      <p-accordion [multiple]="true" [value]="[]" class="faq-accordion">
-        @for (faq of faqs; track faq.question; let i = $index) {
-          <p-accordion-panel [value]="'panel-' + i">
-            <p-accordion-header>
+      <ui-accordion type="multiple" class="faq-accordion">
+        @for (faq of faqs; track faq.question) {
+          <ui-accordion-panel>
+            <ui-accordion-header>
               <span class="font-display text-ink font-semibold">{{ faq.question }}</span>
-            </p-accordion-header>
-            <p-accordion-content>
+            </ui-accordion-header>
+            <ui-accordion-content>
               <p class="text-steel leading-relaxed">{{ faq.answer }}</p>
-            </p-accordion-content>
-          </p-accordion-panel>
+            </ui-accordion-content>
+          </ui-accordion-panel>
         }
-      </p-accordion>
+      </ui-accordion>
     }
   </div>
 </web-section-container>

@@ -1,5 +1,5 @@
-<p-timeline [value]="events()">
-  <ng-template #content let-event>
+<ui-timeline [value]="events()">
+  <ng-template uiTimelineContent let-event>
     <div class="flex flex-col gap-1 pb-4">
       <div class="flex flex-wrap items-center gap-2">
         <ui-badge
@@ -19,7 +19,7 @@
       }
     </div>
   </ng-template>
-  <ng-template #marker let-event>
+  <ng-template uiTimelineMarker let-event>
     <span
       class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
       [class]="getMarkerClass(event.eventType)"
@@ -27,4 +27,4 @@
       <ui-icon [name]="getEventIcon(event.eventType)" size="inherit" class="text-xs" />
     </span>
   </ng-template>
-</p-timeline>
+</ui-timeline>

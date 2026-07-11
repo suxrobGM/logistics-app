@@ -11,11 +11,11 @@ import {
   Stack,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { EmployeeStatusTag } from "@/shared/components/tags";
 import { EmployeeAvatar, InviteEmployeeDialog } from "../components";
@@ -34,7 +34,6 @@ import { EmployeesListStore } from "../store";
     EmployeeAvatar,
     EmployeeStatusTag,
     InviteEmployeeDialog,
-    MenuModule,
     PageHeader,
     PercentPipe,
     PermissionGuard,
@@ -43,6 +42,7 @@ import { EmployeesListStore } from "../store";
     Stack,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
   ],
 })
@@ -54,20 +54,20 @@ export class EmployeeList {
   protected readonly inviteDialogVisible = signal(false);
   protected readonly selectedRow = signal<EmployeeDto | null>(null);
 
-  protected readonly actionMenuItems: MenuItem[] = [
+  protected readonly actionMenuItems: UiMenuItem[] = [
     {
       label: "View details",
-      icon: "pi pi-eye",
+      icon: "eye",
       command: () => this.router.navigateByUrl(`/employees/${this.selectedRow()!.id}`),
     },
     {
       label: "View payrolls",
-      icon: "pi pi-file-o",
+      icon: "file-o",
       command: () => this.router.navigateByUrl(`/payroll/employee/${this.selectedRow()!.id}`),
     },
     {
       label: "View timesheets",
-      icon: "pi pi-clock",
+      icon: "clock",
       command: () => this.router.navigateByUrl(`/timesheets/employee/${this.selectedRow()!.id}`),
     },
   ];

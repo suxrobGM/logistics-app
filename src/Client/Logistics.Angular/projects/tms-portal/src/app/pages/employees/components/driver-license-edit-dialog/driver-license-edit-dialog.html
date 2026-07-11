@@ -1,8 +1,8 @@
-<p-dialog
-  [(visible)]="visible"
+<ui-dialog
+  [(open)]="visible"
   [modal]="true"
   [header]="title()"
-  [style]="{ width: '600px' }"
+  width="600px"
   [draggable]="false"
   [resizable]="false"
 >
@@ -108,4 +108,4 @@
       </ui-stack>
     </ui-stack>
   </form>
-</p-dialog>
+</ui-dialog>

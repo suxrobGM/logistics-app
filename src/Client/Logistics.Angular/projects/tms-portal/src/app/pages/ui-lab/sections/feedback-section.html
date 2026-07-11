@@ -5,7 +5,9 @@
   <div data-lab="alerts" class="mt-2 flex flex-col gap-3">
     @for (intent of intents; track intent) {
       <ui-alert [intent]="intent" [title]="intent + ' alert'" [attr.data-lab-intent]="intent">
-        The <code>{{ intent }}</code> intent picks the icon and the accent color.
+        The
+        <code>{{ intent }}</code>
+        intent picks the icon and the accent color.
       </ui-alert>
     }
 
@@ -93,7 +95,8 @@
     </div>
   </div>
   <ui-typography variant="body-sm" color="muted" class="mt-2" data-lab="last-action">
-    last action: <code>{{ lastAction() }}</code>
+    last action:
+    <code>{{ lastAction() }}</code>
   </ui-typography>
 
   <ui-typography variant="h4" tag="h3" class="mt-6">ui-loading-skeleton</ui-typography>

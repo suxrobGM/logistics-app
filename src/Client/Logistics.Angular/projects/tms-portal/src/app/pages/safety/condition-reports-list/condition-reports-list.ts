@@ -8,12 +8,12 @@ import {
   Icon,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
 import { isContainerLoadType } from "@logistics/shared/utils";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ConditionReportsListStore } from "../store/condition-reports-list.store";
 
@@ -27,11 +27,11 @@ import { ConditionReportsListStore } from "../store/condition-reports-list.store
     DataContainer,
     DatePipe,
     Icon,
-    MenuModule,
     PageHeader,
     SearchField,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
   ],
 })
@@ -40,19 +40,19 @@ export class ConditionReportsListPage implements OnInit {
   protected readonly store = inject(ConditionReportsListStore);
 
   protected readonly selectedRow = signal<ConditionReportDto | null>(null);
-  protected readonly actionMenuItems: MenuItem[];
+  protected readonly actionMenuItems: UiMenuItem[];
 
   constructor() {
     this.actionMenuItems = [
       {
         label: "View details",
-        icon: "pi pi-eye",
+        icon: "eye",
         command: () =>
           this.router.navigateByUrl(`/safety/condition-reports/${this.selectedRow()!.id}`),
       },
       {
         label: "View load",
-        icon: "pi pi-box",
+        icon: "box",
         command: () => this.router.navigateByUrl(`/loads/${this.selectedRow()!.loadId}`),
       },
     ];

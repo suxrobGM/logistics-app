@@ -67,15 +67,10 @@
   </ui-data-container>
 </ui-card>
 
-<p-menu #actionMenu [model]="actionMenuItems" [popup]="true" />
+<ui-menu #actionMenu [items]="actionMenuItems" />
 
 <!-- Impersonate Dialog -->
-<p-dialog
-  header="Impersonate User"
-  [(visible)]="showImpersonateDialog"
-  [modal]="true"
-  [style]="{ width: '400px' }"
->
+<ui-dialog header="Impersonate User" [(open)]="showImpersonateDialog" [modal]="true" width="400px">
   <div class="flex flex-col gap-4">
     <p class="text-gray-600">
       You are about to impersonate
@@ -103,4 +98,4 @@
       (click)="impersonate()"
     />
   </ng-template>
-</p-dialog>
+</ui-dialog>

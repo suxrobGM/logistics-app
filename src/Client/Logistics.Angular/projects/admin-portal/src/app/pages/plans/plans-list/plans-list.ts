@@ -11,12 +11,12 @@ import {
   SearchField,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { Menu, MenuModule } from "primeng/menu";
 import { PlansListStore } from "../store/plans-list.store";
 
 @Component({
@@ -29,12 +29,12 @@ import { PlansListStore } from "../store/plans-list.store";
     ConfirmDialogModule,
     CurrencyPipe,
     DataContainer,
-    MenuModule,
     PageHeader,
     SearchField,
     TitleCasePipe,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
   ],
 })
@@ -44,22 +44,22 @@ export class PlansList {
   private readonly toastService = inject(ToastService);
   protected readonly store = inject(PlansListStore);
 
-  private readonly actionMenu = viewChild<Menu>("actionMenu");
+  private readonly actionMenu = viewChild<UiMenu>("actionMenu");
   private readonly selectedPlan = signal<{ id?: string; name?: string } | null>(null);
 
-  protected readonly actionMenuItems = computed<MenuItem[]>(() => {
+  protected readonly actionMenuItems = computed<UiMenuItem[]>(() => {
     const plan = this.selectedPlan();
     return [
       {
         label: "Edit",
-        icon: "pi pi-pen-to-square",
+        icon: "pen-to-square",
         command: () => this.router.navigate(["/subscription-plans", plan!.id, "edit"]),
       },
       { separator: true },
       {
         label: "Delete",
-        icon: "pi pi-trash",
-        styleClass: "text-red-600",
+        icon: "trash",
+        variant: "destructive",
         command: () => this.confirmToDelete(plan!.id!),
       },
     ];

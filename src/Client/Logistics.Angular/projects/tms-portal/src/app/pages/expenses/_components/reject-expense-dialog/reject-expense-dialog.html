@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Reject Expense"
-  [(visible)]="service.showRejectDialog"
+  [(open)]="service.showRejectDialog"
   [modal]="true"
-  [style]="{ width: '450px' }"
+  width="450px"
   [closable]="true"
-  (onHide)="service.cancelReject()"
+  (closed)="service.cancelReject()"
 >
   <div class="flex flex-col gap-4">
     <p class="text-subtle-foreground">
@@ -28,4 +28,4 @@
       (click)="service.confirmReject()"
     />
   </ng-template>
-</p-dialog>
+</ui-dialog>

@@ -16,12 +16,11 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiDialog,
   UiSortHeader,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { MenuModule } from "primeng/menu";
 import { MultiSelectModule } from "primeng/multiselect";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
@@ -62,12 +61,10 @@ const reviewStatusOptions = [
     DataContainer,
     DatePipe,
     DecimalPipe,
-    DialogModule,
     FormsModule,
     Grid,
     Icon,
     InputTextModule,
-    MenuModule,
     MultiSelectModule,
     PageHeader,
     SearchField,
@@ -78,6 +75,7 @@ const reviewStatusOptions = [
     Typography,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiSortHeader,
   ],
 })

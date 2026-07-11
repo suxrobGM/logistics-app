@@ -8,11 +8,11 @@ import {
   Icon,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   type UiBadgeIntent,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { DataContainer, PageHeader } from "@/shared/components";
 import { UpcomingServiceStore } from "../store";
 
@@ -27,10 +27,10 @@ import { UpcomingServiceStore } from "../store";
     DatePipe,
     DecimalPipe,
     Icon,
-    MenuModule,
     PageHeader,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
   ],
 })
@@ -40,15 +40,15 @@ export class UpcomingServicePage implements OnInit {
 
   protected readonly selectedRow = signal<MaintenanceScheduleDto | null>(null);
 
-  protected readonly actionMenuItems: MenuItem[] = [
+  protected readonly actionMenuItems: UiMenuItem[] = [
     {
       label: "Log service",
-      icon: "pi pi-check",
+      icon: "check",
       command: () => this.logService(this.selectedRow()!),
     },
     {
       label: "View truck",
-      icon: "pi pi-truck",
+      icon: "truck",
       command: () => this.viewTruck(this.selectedRow()!),
     },
   ];

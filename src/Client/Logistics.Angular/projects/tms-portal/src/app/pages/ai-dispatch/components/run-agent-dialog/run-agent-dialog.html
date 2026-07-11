@@ -1,9 +1,4 @@
-<p-dialog
-  header="Run AI Dispatch Agent"
-  [(visible)]="visible"
-  [modal]="true"
-  [style]="{ width: '480px' }"
->
+<ui-dialog header="Run AI Dispatch Agent" [(open)]="visible" [modal]="true" width="480px">
   <p class="text-muted-foreground mt-0 mb-4 text-sm">
     @if (mode() === "human_in_the_loop") {
       The agent will propose assignments for your review.
@@ -35,4 +30,4 @@
     <ui-button intent="secondary" appearance="text" label="Cancel" (click)="cancel()" />
     <ui-button [label]="modeLabel" [icon]="modeIcon" [intent]="modeIntent" (click)="confirm()" />
   </ng-template>
-</p-dialog>
+</ui-dialog>

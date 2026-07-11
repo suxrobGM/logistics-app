@@ -1,8 +1,8 @@
-<p-dialog
+<ui-dialog
   header="Confirm {{ entityLabel() }} Deletion"
   [modal]="true"
-  [(visible)]="visible"
-  [style]="{ width: '28rem' }"
+  [(open)]="visible"
+  width="28rem"
   [closable]="!deleting()"
 >
   <div class="flex flex-col gap-4">
@@ -41,4 +41,4 @@
       (click)="onConfirm()"
     />
   </ng-template>
-</p-dialog>
+</ui-dialog>

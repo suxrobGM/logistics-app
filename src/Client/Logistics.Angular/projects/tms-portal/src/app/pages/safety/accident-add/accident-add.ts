@@ -2,8 +2,7 @@ import { Component, inject, signal } from "@angular/core";
 import { form, min, required, submit } from "@angular/forms/signals";
 import { Router } from "@angular/router";
 import { Api, createAccidentReport, type CreateAccidentReportCommand } from "@logistics/shared/api";
-import { Card, Spinner, UiButton } from "@logistics/shared/ui";
-import { StepperModule } from "primeng/stepper";
+import { Card, Spinner, UiButton, UiStepperImports } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { Converters } from "@/shared/utils";
@@ -25,7 +24,7 @@ import {
     Card,
     PageHeader,
     Spinner,
-    StepperModule,
+    UiStepperImports,
     UiButton,
   ],
 })

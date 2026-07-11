@@ -30,6 +30,7 @@ import {
   lucideCreditCard,
   lucideDollarSign,
   lucideDownload,
+  lucideEllipsisVertical,
   lucideFile,
   lucideFileCheck,
   lucideFileInput,
@@ -107,7 +108,7 @@ import {
  * Icons `tms-portal` uses that `BASE_NG_ICONS` does not already provide.
  * Registered in app.config.ts:  provideIcons({ ...BASE_NG_ICONS, ...TMS_NG_ICONS })
  *
- * 110 name(s) -> 96 distinct glyph(s).
+ * 111 name(s) -> 97 distinct glyph(s).
  */
 export const TMS_NG_ICONS = {
   lucideArrowRight,
@@ -135,6 +136,7 @@ export const TMS_NG_ICONS = {
   lucideCreditCard,
   lucideDollarSign,
   lucideDownload,
+  lucideEllipsisVertical,
   lucideFile,
   lucideFileCheck,
   lucideFileInput,

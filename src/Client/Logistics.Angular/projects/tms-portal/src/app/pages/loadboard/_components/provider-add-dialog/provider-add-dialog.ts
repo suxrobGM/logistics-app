@@ -9,12 +9,12 @@ import {
   Stack,
   Typography,
   UiButton,
+  UiDialog,
   UiPasswordField,
   UiSelectField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
 import { UiFormField } from "@/shared/components";
 import { PROVIDER_OPTIONS } from "../loadboard.constants";
 
@@ -30,13 +30,13 @@ const EMPTY = {
   selector: "app-provider-add-dialog",
   templateUrl: "./provider-add-dialog.html",
   imports: [
-    DialogModule,
     FormField,
     FormRoot,
     Icon,
     Stack,
     Typography,
     UiButton,
+    UiDialog,
     UiFormField,
     UiPasswordField,
     UiSelectField,

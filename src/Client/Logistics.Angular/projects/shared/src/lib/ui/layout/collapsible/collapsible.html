@@ -1,0 +1,30 @@
+<!-- A real <fieldset>/<legend>, as p-fieldset renders — it is the semantically right grouping for the
+     form sections these five call sites wrap, and it keeps the legend notched into the border. -->
+<fieldset
+  hlmCollapsible
+  [expanded]="expanded()"
+  (expandedChange)="onExpandedChange($event)"
+  class="border-border rounded-[var(--ui-radius-card)] border px-4 pb-4"
+>
+  <legend class="px-2">
+    @if (toggleable()) {
+      <button
+        hlmCollapsibleTrigger
+        type="button"
+        class="text-foreground hover:text-muted-foreground flex items-center gap-2 font-medium transition-colors"
+      >
+        <!-- p-fieldset's own glyphs: plus while collapsed, minus while open. -->
+        <ui-icon [name]="collapsed() ? 'plus' : 'minus'" size="sm" />
+        <span>{{ legend() }}</span>
+      </button>
+    } @else {
+      <span class="font-medium">{{ legend() }}</span>
+    }
+  </legend>
+
+  <!-- brain sets data-state / inert / the id here; Helm's `data-[state=closed]:hidden` does the
+       hiding. The content is NOT destroyed — see the note on the component. -->
+  <div hlmCollapsibleContent>
+    <ng-content />
+  </div>
+</fieldset>

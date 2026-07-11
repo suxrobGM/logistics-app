@@ -9,12 +9,12 @@ import {
   Card,
   UiButton,
   UiDataTable,
+  UiMenu,
   UiSortHeader,
   UiTableRowDirectives,
   UiTooltip,
+  type UiMenuItem,
 } from "@logistics/shared/ui";
-import type { MenuItem } from "primeng/api";
-import { MenuModule } from "primeng/menu";
 import { ToastService } from "@/core/services";
 import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/components";
 
@@ -29,11 +29,11 @@ import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/
     DistanceUnitPipe,
     LoadStatusTag,
     LoadTypeTag,
-    MenuModule,
     RouteBadge,
     RouterLink,
     UiButton,
     UiDataTable,
+    UiMenu,
     UiSortHeader,
     UiTableRowDirectives,
     UiTooltip,
@@ -71,45 +71,45 @@ export class LoadsTable {
   // Internal state
   protected readonly selectedRow = signal<LoadDto | null>(null);
 
-  protected readonly actionMenuItems = computed<MenuItem[]>(() => {
+  protected readonly actionMenuItems = computed<UiMenuItem[]>(() => {
     const row = this.selectedRow();
     const isEditable = row?.status !== "delivered" && row?.status !== "cancelled";
 
     return [
       {
         label: "View details",
-        icon: "pi pi-eye",
+        icon: "eye",
         command: () => this.router.navigateByUrl(`/loads/${row!.id}`),
       },
       {
         label: "Edit load details",
-        icon: "pi pi-pen-to-square",
+        icon: "pen-to-square",
         command: () => this.router.navigateByUrl(`/loads/${row!.id}/edit`),
         visible: isEditable,
       },
       { separator: true },
       {
         label: "Assign to Truck",
-        icon: "pi pi-truck",
+        icon: "truck",
         command: () => this.assignLoad.emit(row!),
         visible: isEditable,
       },
       {
         label: "Dispatch",
-        icon: "pi pi-send",
+        icon: "send",
         command: () => this.onDispatchLoad(row!),
         visible: row?.status === "draft",
       },
       { separator: true },
       {
         label: "View truck details",
-        icon: "pi pi-directions",
+        icon: "directions",
         command: () => this.router.navigateByUrl(`/trucks/${row!.assignedTruckId}`),
         visible: !!row?.assignedTruckId,
       },
       {
         label: "View invoice",
-        icon: "pi pi-book",
+        icon: "book",
         command: () => this.router.navigateByUrl(`/invoices/loads/${row!.id}/${row!.invoice?.id}`),
         visible: !!row?.invoice?.id,
       },

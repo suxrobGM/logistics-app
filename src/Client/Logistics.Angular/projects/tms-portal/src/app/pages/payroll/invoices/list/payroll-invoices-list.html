@@ -219,12 +219,7 @@
   </ui-card>
 
   <!-- Reject Dialog -->
-  <p-dialog
-    header="Reject Payroll"
-    [(visible)]="showRejectDialog"
-    [modal]="true"
-    [style]="{ width: '400px' }"
-  >
+  <ui-dialog header="Reject Payroll" [(open)]="showRejectDialog" [modal]="true" width="400px">
     <ui-stack gap="4">
       <p>Please provide a reason for rejecting this payroll invoice.</p>
       <textarea
@@ -244,5 +239,5 @@
         (click)="confirmReject()"
       />
     </ng-template>
-  </p-dialog>
+  </ui-dialog>
 </div>

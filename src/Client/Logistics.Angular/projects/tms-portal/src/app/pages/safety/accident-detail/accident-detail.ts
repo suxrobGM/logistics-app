@@ -22,10 +22,10 @@ import {
   Stack,
   Typography,
   UiButton,
+  UiDialog,
+  UiTabsImports,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { DialogModule } from "primeng/dialog";
-import { TabsModule } from "primeng/tabs";
 import { TextareaModule } from "primeng/textarea";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
@@ -41,7 +41,6 @@ import { AccidentQuickInfo } from "../_components";
     Card,
     CurrencyFormatPipe,
     DatePipe,
-    DialogModule,
     FormsModule,
     Grid,
     Icon,
@@ -49,10 +48,11 @@ import { AccidentQuickInfo } from "../_components";
     RouterLink,
     Spinner,
     Stack,
-    TabsModule,
     TextareaModule,
     Typography,
     UiButton,
+    UiDialog,
+    UiTabsImports,
   ],
 })
 export class AccidentDetailPage implements OnInit {

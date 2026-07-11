@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Send Invoice"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '450px' }"
-  (onShow)="onShow()"
-  (onHide)="close()"
+  width="450px"
+  (opened)="onShow()"
+  (closed)="close()"
 >
   <p class="text-muted-foreground mb-4">Send this invoice to the customer via email.</p>
 
@@ -32,4 +32,4 @@
       <ui-button type="submit" icon="send" label="Send Invoice" [loading]="form().submitting()" />
     </ui-stack>
   </form>
-</p-dialog>
+</ui-dialog>

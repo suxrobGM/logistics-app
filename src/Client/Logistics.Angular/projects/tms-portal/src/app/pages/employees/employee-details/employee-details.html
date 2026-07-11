@@ -42,13 +42,13 @@
   </ui-surface>
 
   <ui-card>
-    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
-      <p-tablist>
-        <p-tab [value]="0">
+    <ui-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+      <ui-tab-list>
+        <ui-tab value="0">
           <ui-icon name="user" class="mr-2" />
           Overview
-        </p-tab>
-        <p-tab [value]="1">
+        </ui-tab>
+        <ui-tab value="1">
           <ui-icon name="folder" class="mr-2" />
           Documents
           @if (store.documentsCount()) {
@@ -56,8 +56,8 @@
               {{ store.documentsCount() }}
             </span>
           }
-        </p-tab>
-        <p-tab [value]="2">
+        </ui-tab>
+        <ui-tab value="2">
           <ui-icon name="box" class="mr-2" />
           Loads
           @if (store.recentLoadsCount()) {
@@ -65,20 +65,20 @@
               {{ store.recentLoadsCount() }}
             </span>
           }
-        </p-tab>
-        <p-tab [value]="3">
+        </ui-tab>
+        <ui-tab value="3">
           <ui-icon name="dollar" class="mr-2" />
           Payroll
-        </p-tab>
-        <p-tab [value]="4">
+        </ui-tab>
+        <ui-tab value="4">
           <ui-icon name="id-card" class="mr-2" />
           Licenses
-        </p-tab>
-      </p-tablist>
+        </ui-tab>
+      </ui-tab-list>
 
-      <p-tabpanels>
+      <ui-tab-panels>
         <!-- Overview Tab -->
-        <p-tabpanel [value]="0">
+        <ui-tab-panel value="0">
           <ui-grid container spacing="6" class="pt-4">
             <!-- Contact Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
@@ -219,24 +219,24 @@
               />
             </ui-stack>
           </ui-card>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- Documents Tab -->
-        <p-tabpanel [value]="1">
+        <ui-tab-panel value="1">
           <div class="pt-4">
             <app-document-manager [employeeId]="id()" [types]="employeeDocTypes" />
           </div>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- Loads Tab -->
-        <p-tabpanel [value]="2">
+        <ui-tab-panel value="2">
           <div class="pt-4">
             <app-employee-loads-list [loads]="store.recentLoads()" [employeeId]="id()" />
           </div>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- Payroll Tab -->
-        <p-tabpanel [value]="3">
+        <ui-tab-panel value="3">
           <div class="pt-4">
             <ui-stack direction="row" align="center" justify="between" class="mb-4">
               <ui-typography variant="h5" tag="h3" class="m-0">Payroll</ui-typography>
@@ -290,18 +290,18 @@
               }
             </ui-card>
           </div>
-        </p-tabpanel>
+        </ui-tab-panel>
 
         <!-- Licenses Tab -->
-        <p-tabpanel [value]="4">
+        <ui-tab-panel value="4">
           <div class="pt-4">
             @if (id(); as employeeId) {
               <app-driver-licenses-tab [employeeId]="employeeId" />
             }
           </div>
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
+        </ui-tab-panel>
+      </ui-tab-panels>
+    </ui-tabs>
   </ui-card>
 } @else {
   <ui-card>

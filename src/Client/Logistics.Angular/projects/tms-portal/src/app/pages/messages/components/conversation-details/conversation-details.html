@@ -1,9 +1,4 @@
-<p-drawer
-  [(visible)]="visible"
-  position="right"
-  [style]="{ width: '320px' }"
-  header="Conversation Details"
->
+<ui-drawer [(visible)]="visible" position="right" width="320px" header="Conversation Details">
   @if (conversation(); as conv) {
     <ui-stack gap="6">
       <!-- Conversation Info -->
@@ -60,4 +55,4 @@
       }
     </ui-stack>
   }
-</p-drawer>
+</ui-drawer>

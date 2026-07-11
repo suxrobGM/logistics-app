@@ -19,6 +19,7 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiDialog,
   UiFormField,
   UiSelectField,
   UiSortHeader,
@@ -27,7 +28,6 @@ import {
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { DateUtils } from "@logistics/shared/utils";
-import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 import { DemoRequestsListStore } from "../store/demo-requests-list.store";
 
@@ -44,7 +44,6 @@ interface StatusOption {
     Badge,
     Card,
     DataContainer,
-    DialogModule,
     FormField,
     Grid,
     PageHeader,
@@ -54,6 +53,7 @@ interface StatusOption {
     Typography,
     UiButton,
     UiDataTable,
+    UiDialog,
     UiFormField,
     UiSelectField,
     UiSortHeader,

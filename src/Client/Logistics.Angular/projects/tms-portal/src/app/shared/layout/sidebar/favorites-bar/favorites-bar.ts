@@ -1,14 +1,13 @@
 import { Component, computed, inject, input, output } from "@angular/core";
 import { Router } from "@angular/router";
-import { Icon, UiTooltip } from "@logistics/shared/ui";
-import { PopoverModule } from "primeng/popover";
+import { Icon, UiPopover, UiTooltip } from "@logistics/shared/ui";
 import { SidebarFavoritesService } from "@/core/services";
 import type { NavItem, NavSection } from "../../nav-menu";
 
 @Component({
   selector: "app-favorites-bar",
   templateUrl: "./favorites-bar.html",
-  imports: [Icon, PopoverModule, UiTooltip],
+  imports: [Icon, UiPopover, UiTooltip],
 })
 export class FavoritesBar {
   private readonly router = inject(Router);

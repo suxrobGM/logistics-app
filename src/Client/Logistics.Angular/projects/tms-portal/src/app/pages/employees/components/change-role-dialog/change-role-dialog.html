@@ -1,9 +1,9 @@
-<p-dialog
+<ui-dialog
   header="Update Employee's Role"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
   [resizable]="true"
-  (onHide)="close()"
+  (closed)="close()"
 >
   @if (isLoading() || form().submitting()) {
     <ui-spinner />
@@ -47,4 +47,4 @@
       />
     </div>
   </form>
-</p-dialog>
+</ui-dialog>

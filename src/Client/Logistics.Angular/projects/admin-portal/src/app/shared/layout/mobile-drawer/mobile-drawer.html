@@ -1,17 +1,12 @@
-<p-drawer
+<ui-drawer
   [visible]="visible()"
   (visibleChange)="onVisibleChange($event)"
   position="left"
-  [modal]="true"
-  [closeOnEscape]="true"
-  [dismissible]="true"
-  [showCloseIcon]="true"
+  width="300px"
 >
-  <ng-template #header>
-    <div class="flex items-center gap-3">
-      <span class="text-foreground text-base font-semibold">Admin Portal</span>
-    </div>
-  </ng-template>
+  <div uiDrawerHeader class="border-subtle flex items-center gap-3 border-b px-5 py-4">
+    <span class="text-foreground text-base font-semibold">Admin Portal</span>
+  </div>
 
   <div class="flex h-full flex-col">
     <!-- Navigation -->
@@ -59,4 +54,4 @@
       />
     </div>
   </div>
-</p-drawer>
+</ui-drawer>

@@ -1,10 +1,10 @@
-<p-dialog
+<ui-dialog
   header="Send Tracking Link"
-  [(visible)]="visible"
+  [(open)]="visible"
   [modal]="true"
-  [style]="{ width: '450px' }"
-  (onShow)="onShow()"
-  (onHide)="close()"
+  width="450px"
+  (opened)="onShow()"
+  (closed)="close()"
 >
   <p class="text-muted-foreground mb-4">Send this tracking link to a customer via email.</p>
 
@@ -32,4 +32,4 @@
       <ui-button type="submit" icon="send" label="Send Email" [loading]="form().submitting()" />
     </div>
   </form>
-</p-dialog>
+</ui-dialog>
