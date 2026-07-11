@@ -12,12 +12,13 @@ import { provideIcons } from "@ng-icons/core";
 import Aura from "@primeuix/themes/aura";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
+import { WEBSITE_NG_ICONS } from "@/shared/icons/lucide-icons";
 import { environment } from "../environments/environment";
 import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideIcons({ ...BASE_NG_ICONS }),
+    provideIcons({ ...BASE_NG_ICONS, ...WEBSITE_NG_ICONS }),
     provideBrowserGlobalErrorListeners(),
     provideSpartanHlm(),
     provideRouter(

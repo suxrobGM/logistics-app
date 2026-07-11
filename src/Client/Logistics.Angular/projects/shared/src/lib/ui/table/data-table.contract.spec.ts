@@ -296,10 +296,17 @@ describe("<ui-data-table> — the table engine contract", () => {
       // list page binds `sortOrder`, so in production the first request of every list goes out
       // with sortOrder = undefined.
       //
-      // This is why `createListStore.onLazyLoad` does `event.sortOrder ?? -1`. That fallback is
-      // LIVE on every list's first request — it is not dead code, and it makes the initial sort
-      // DESCENDING. A re-implementation that "helpfully" emits 1 here would silently flip the
-      // default ordering of all 33 lists.
+      // This is why `createListStore.onLazyLoad` does `event.sortOrder ?? -1`. That fallback does
+      // run — but it does NOT reach the wire, and it does NOT make the initial sort descending:
+      // `buildQueryParams` calls `formatSortField(sortField, sortOrder)`, which opens with
+      // `if (!sortField) return ""` and never reads `sortOrder` at all. The initial `OrderBy` comes
+      // entirely from each store's `defaultSortField`, which bakes its own direction into the
+      // string ("-CreatedAt" = DESC, "Email" = ASC).
+      //
+      // So `undefined` here is harmless — but it IS the shipped behaviour, and it is pinned. A
+      // re-implementation that "helpfully" emits 1 would change `createListStore`'s stored
+      // `sortOrder` state from -1 to 1 while leaving the request identical: a silent divergence
+      // between what the store thinks it asked for and what it asked for. Leave it alone.
       const fixture = TestBed.createComponent(HostLazy);
       await settle(fixture);
 
@@ -619,17 +626,31 @@ describe("<ui-data-table> — the table engine contract", () => {
   });
 
   describe("client-side paging", () => {
-    // ⚠ THE HOST BINDS `[first]` AND `[totalRecords]`, AND IT HAS TO.
+    // The host binds `[first]` and `[totalRecords]`, but it no longer HAS to — it does so because
+    // these tests pin the paging ENGINE (slice by first/rows; page N ⇒ first = rows·(N−1)), and an
+    // engine test should state its inputs.
     //
-    // `<ui-data-table>` forwards `first`, `totalRecords` and `sortOrder` unconditionally, and all
-    // three inputs default to `undefined`. Writing `undefined` into the table clobbers the table's
-    // own field defaults (0, 0 and 1). With `first === undefined` the page slice degenerates to
-    // `slice(undefined, NaN)` → NO ROWS, and with `totalRecords === undefined` the page count is 0
-    // → NO PAGE BUTTONS.
+    // It used to have to, and that was a live outage. `first` and `totalRecords` were
+    // `input<number | undefined>(undefined)` and were forwarded unconditionally, so Angular wrote
+    // `undefined` over `<p-table>`'s own `_first = 0` / `_totalRecords = 0` on the first
+    // change-detection pass: the row slice degenerated to `slice(undefined, NaN)` → NO ROWS, and
+    // the paginator computed 0 pages → NO PAGE BUTTONS. All 14 client-paged templates in the app
+    // bind NEITHER, so all 14 rendered empty. FIXED: `first = input<number>(0)`, and the template
+    // binds `[totalRecords]="totalRecords() ?? value().length"`.
     //
-    // Bind both and the engine below works. All 14 client-paged templates in the app bind NEITHER,
-    // which is a live defect — see the report accompanying this spec. These tests pin the ENGINE
-    // (slice by first/rows, page N ⇒ first = rows·(N−1)); they deliberately do NOT pin the defect.
+    // ⚠ `sortOrder` IS STILL `input<number | undefined>(undefined)`, still forwarded
+    // unconditionally, still clobbering `<p-table>`'s `_sortOrder = 1`. That is DELIBERATE. Do not
+    // "finish the job" in S11 — it is both harmless and pinned:
+    //
+    //   • Harmless, because the initial lazy event carries no `sortField` either, and
+    //     `formatSortField()` returns "" for an empty `sortField` REGARDLESS of the order. So the
+    //     table's `sortOrder` never reaches the wire on a first request: `OrderBy` comes entirely
+    //     from each store's `defaultSortField` ("-CreatedAt", "Email", …), which bakes its own
+    //     direction into the string.
+    //   • Pinned, because "the initial lazy request carries NO sort at all" above asserts
+    //     `sortOrder === undefined`. A re-implementation that emitted `<p-table>`'s default `1`
+    //     would break that assertion and would silently change what `createListStore` writes into
+    //     `state.sortOrder`.
 
     it("renders only `rows` rows per page and advances a page at a time", async () => {
       const fixture = TestBed.createComponent(HostClient);

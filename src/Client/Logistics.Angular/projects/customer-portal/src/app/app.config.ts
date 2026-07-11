@@ -20,11 +20,12 @@ import { authConfig } from "@/core/auth";
 import { tenantInterceptor } from "@/core/interceptors";
 import { CustomerPortalSettingsProvider } from "@/core/services";
 import { environment } from "@/env";
+import { CUSTOMER_NG_ICONS } from "@/shared/icons/lucide-icons";
 import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideIcons({ ...BASE_NG_ICONS }),
+    provideIcons({ ...BASE_NG_ICONS, ...CUSTOMER_NG_ICONS }),
     provideBrowserGlobalErrorListeners(),
     provideSpartanHlm(),
     provideAuth({ config: authConfig }),

@@ -1,8 +1,16 @@
-import { Component, computed, input } from "@angular/core";
+import { booleanAttribute, Component, computed, input } from "@angular/core";
 import { NgIcon } from "@ng-icons/core";
+import type { IconName } from "../../icons/icon-registry.generated";
 import { resolveNgIcon } from "../../icons/ui-icons";
 
-export type IconSize = "xs" | "sm" | "md" | "lg" | "xl";
+/**
+ * `inherit` emits NO size class at all, so the icon takes its size from the surrounding element.
+ * This matters: a consumer rule of the form `[&_ng-icon:not([class*='text-'])]:size-4` (exactly how
+ * Helm's button sizes its icons) is defeated by ANY `text-*` class, so an icon inside a button must be
+ * able to opt out of emitting one. `md` stays the default — 246 call sites depend on it.
+ */
+export type IconSize = "inherit" | "xs" | "sm" | "md" | "lg" | "xl";
+
 export type IconColor =
   | "inherit"
   | "primary"
@@ -14,6 +22,7 @@ export type IconColor =
   | "info";
 
 const sizeClasses: Record<IconSize, string> = {
+  inherit: "",
   xs: "text-xs",
   sm: "text-sm",
   md: "text-base",
@@ -33,24 +42,36 @@ const colorClasses: Record<IconColor, string> = {
 };
 
 /**
- * Lucide icon (via @ng-icons/lucide) with size and color variants. Accepts the legacy
- * PrimeIcons-style `name` (with or without the `pi-` prefix); known names are mapped to a lucide
- * icon through {@link PI_TO_LUCIDE}, and any other name is treated as an already-lucide kebab name.
- * The resolved icon must be registered via `provideIcons(...)` in the portal.
+ * Lucide icon (via `@ng-icons/lucide`) with size, color and spin variants.
+ *
+ * `name` is an {@link IconName} — every name a call site may write, generated from
+ * `tools/codemods/icon-map.json`. A name outside that union is a compile error rather than a silently
+ * blank <svg>. The resolved glyph must be registered via `provideIcons(...)` in the portal.
+ *
+ * The host is `inline-flex`, not the browser default `inline`: `transform` does not apply to a
+ * non-replaced inline element, so `animate-spin` on an inline host is a no-op.
  */
 @Component({
   selector: "ui-icon",
   templateUrl: "./icon.html",
   imports: [NgIcon],
+  host: {
+    class: "inline-flex",
+  },
 })
 export class Icon {
-  public readonly name = input.required<string>();
+  public readonly name = input.required<IconName>();
   public readonly size = input<IconSize>("md");
   public readonly color = input<IconColor>("inherit");
+
+  /** Spins the glyph. primeicons' spin class was a CSS keyframe, not a glyph — this replaces it. */
+  public readonly spin = input(false, { transform: booleanAttribute });
 
   protected readonly iconName = computed(() => resolveNgIcon(this.name()));
 
   protected readonly classes = computed(() =>
-    [sizeClasses[this.size()], colorClasses[this.color()]].filter(Boolean).join(" "),
+    [sizeClasses[this.size()], colorClasses[this.color()], this.spin() ? "animate-spin" : ""]
+      .filter(Boolean)
+      .join(" "),
   );
 }

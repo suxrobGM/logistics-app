@@ -1,13 +1,13 @@
 import { Component, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/ui";
+import { Grid, Icon, Stack, Typography, type IconName } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 
 interface QuickAction {
   label: string;
   description: string;
-  icon: string;
+  icon: IconName;
   route: string;
   iconColor: "info" | "success" | "warning";
 }

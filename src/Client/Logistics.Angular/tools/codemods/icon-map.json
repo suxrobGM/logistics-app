@@ -8,7 +8,10 @@
     "        and the per-app provideIcons() registries.",
     "brand-* targets are NOT lucide (lucide ships no brand icons); they are hand-vendored SVG strings",
     "in projects/shared/src/lib/ui/icons/brand-icons.ts and registered the same way.",
-    "NOT ICONS, deliberately absent: \"spin\" (a primeicons CSS keyframe, not a glyph -> use <ui-icon spin>)."
+    "NOT ICONS, deliberately absent: \"spin\" (a primeicons CSS keyframe, not a glyph -> use <ui-icon spin>).",
+    "The trailing block of identity entries (banknote..trending-up) are already-lucide names written",
+    "directly by the DYNAMIC icon call sites (sidebar-items.ts nav data, the ui-lab grid). They must be",
+    "in the map because resolveNgIcon() no longer falls through unknown names -- it renders an error glyph."
   ],
   "icons": {
     "check": "check",
@@ -154,6 +157,18 @@
     "twitter": "brand-x",
     "undo": "undo",
     "user-minus": "user-minus",
-    "wifi-off": "wifi-off"
+    "wifi-off": "wifi-off",
+
+    "banknote": "banknote",
+    "bot": "bot",
+    "circle-check": "circle-check",
+    "file-pen-line": "file-pen-line",
+    "house": "house",
+    "layout-grid": "layout-grid",
+    "mail": "mail",
+    "messages-square": "messages-square",
+    "settings": "settings",
+    "shield-check": "shield-check",
+    "trending-up": "trending-up"
   }
 }

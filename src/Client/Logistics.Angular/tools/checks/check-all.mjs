@@ -15,12 +15,14 @@
 
 import { run as budgets } from "./budgets.mjs";
 import { run as burndown } from "./burndown.mjs";
+import { run as icons } from "./check-icons.mjs";
 import { run as spartanTokens } from "./spartan-tokens.mjs";
 
 const CHECKS = [
   { name: "burndown", run: burndown },
   { name: "budgets", run: budgets },
   { name: "spartan-tokens", run: spartanTokens },
+  { name: "icons", run: icons },
   // <- register new checks here (see REGISTRATION POINT above)
 ];
 

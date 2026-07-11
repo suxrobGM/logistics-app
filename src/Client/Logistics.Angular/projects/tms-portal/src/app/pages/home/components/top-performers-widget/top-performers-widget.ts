@@ -2,14 +2,14 @@ import { Component, computed, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { CurrencyFormatPipe } from "@logistics/shared";
 import type { TopTruckDto } from "@logistics/shared/api";
-import { Icon, Stack, Typography } from "@logistics/shared/ui";
+import { Icon, Stack, Typography, type IconName } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressBarModule } from "primeng/progressbar";
 import { SkeletonModule } from "primeng/skeleton";
 
 interface RankIcon {
-  name: string;
+  name: IconName;
   /** Inline color value to inherit through the wrapper, since these tones aren't in IconColor enum. */
   color: string;
 }

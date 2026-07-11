@@ -1,5 +1,5 @@
 import { Component, computed, input } from "@angular/core";
-import { Icon, Stack, Typography } from "@logistics/shared/ui";
+import { Icon, Stack, Typography, type IconName } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { TooltipModule } from "primeng/tooltip";
 
@@ -24,7 +24,7 @@ const COLOR_VAR_MAP: Record<ColorVariant, string> = {
   },
 })
 export class StatCard {
-  public readonly icon = input.required<string>();
+  public readonly icon = input.required<IconName>();
   public readonly label = input.required<string>();
   public readonly value = input.required<string | number>();
   public readonly color = input<ColorVariant>("blue");
@@ -40,7 +40,7 @@ export class StatCard {
     return "text-muted-foreground";
   });
 
-  protected readonly trendIcon = computed(() => {
+  protected readonly trendIcon = computed<IconName | null>(() => {
     if (this.trendDirection() === "up") return "arrow-up";
     if (this.trendDirection() === "down") return "arrow-down";
     return null;

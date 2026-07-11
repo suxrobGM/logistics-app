@@ -20,7 +20,7 @@ import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { form, FormField, required } from "@angular/forms/signals";
 import { provideIcons } from "@ng-icons/core";
-import { BASE_NG_ICONS } from "../../icons/lucide-icons";
+import { BASE_NG_ICONS } from "../../icons/icon-registry.generated";
 import { UiFormField } from "../form-field/form-field";
 import { UiCheckboxField } from "./checkbox-field";
 

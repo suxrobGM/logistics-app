@@ -1,113 +1,69 @@
+import { ICON_ALIASES, type UiIconName } from "./icon-registry.generated";
+
 /**
- * Maps the legacy PrimeIcons-style names `ui-icon` receives (`pi-` prefix stripped) onto
- * lucide icon names (kebab-case). Lets the 80+ existing `<ui-icon name="...">` call sites keep
- * their names while rendering lucide SVGs. Names not in the map are assumed to already be lucide
- * kebab names and pass through unchanged (that is how the nav's dynamic icons resolve). Phase 6
- * can migrate call sites to lucide names directly.
+ * The icon runtime: name -> `@ng-icons` export name.
  *
- * Icons render through `@ng-icons/lucide`, whose exports are named `lucide` + PascalCase of the
- * kebab name (e.g. `chevron-down` → `lucideChevronDown`). {@link toNgIconName} applies that
- * transform; the resolved icon must be registered via `provideIcons(...)` in each portal.
+ * `ICON_ALIASES` (generated from `tools/codemods/icon-map.json`) is the ONLY mapping table. It covers
+ * both the legacy PrimeIcons-style names call sites still write (`cog`, `times`,
+ * `exclamation-triangle`) and already-lucide kebab names (`chevron-down`, `settings`). Icons render
+ * through `@ng-icons/lucide`, whose exports are `lucide` + PascalCase of the kebab name; the three brand
+ * glyphs are hand-vendored in `./brand-icons` and exported as `brand` + PascalCase.
+ *
+ * Whatever a name resolves to MUST be registered via `provideIcons(...)` in the portal — see the
+ * generated `BASE_NG_ICONS` / `<APP>_NG_ICONS`.
  */
-export const PI_TO_LUCIDE: Record<string, string> = {
-  "check-circle": "circle-check",
-  box: "box",
-  truck: "truck",
-  "map-marker": "map-pin",
-  "map-pin": "map-pin",
-  "exclamation-triangle": "triangle-alert",
-  user: "user",
-  users: "users",
-  "exclamation-circle": "circle-alert",
-  "alert-circle": "circle-alert",
-  check: "check",
-  "info-circle": "info",
-  info: "info",
-  file: "file",
-  "id-card": "id-card",
-  comment: "message-square",
-  comments: "messages-square",
-  tag: "tag",
-  clock: "clock",
-  times: "x",
-  "times-circle": "circle-x",
-  inbox: "inbox",
-  flag: "flag",
-  dollar: "dollar-sign",
-  building: "building-2",
-  map: "map",
-  link: "link",
-  image: "image",
-  images: "images",
-  folder: "folder",
-  "folder-open": "folder-open",
-  "external-link": "external-link",
-  "credit-card": "credit-card",
-  car: "car",
-  cog: "settings",
-  minus: "minus",
-  "minus-circle": "circle-minus",
-  lock: "lock",
-  "file-edit": "file-pen",
-  "file-pdf": "file-text",
-  "file-invoice": "file-text",
-  "file-check": "file-check",
-  circle: "circle",
-  "chart-line": "chart-line",
-  "chart-bar": "chart-column",
-  bolt: "zap",
-  wallet: "wallet",
-  "user-plus": "user-plus",
-  upload: "upload",
-  trophy: "trophy",
-  "star-fill": "star",
-  sparkles: "sparkles",
-  send: "send",
-  "search-plus": "zoom-in",
-  receipt: "receipt",
-  question: "circle-help",
-  "plus-circle": "circle-plus",
-  phone: "phone",
-  package: "package",
-  history: "history",
-  globe: "globe",
-  directions: "navigation",
-  clipboard: "clipboard",
-  "chevron-right": "chevron-right",
-  "angle-right": "chevron-right",
-  calendar: "calendar",
-  briefcase: "briefcase",
-  "bell-slash": "bell-off",
-  "arrows-h": "move-horizontal",
-  "arrow-right": "arrow-right",
-  sun: "sun",
-  moon: "moon",
-  eye: "eye",
-  "eye-slash": "eye-off",
-};
 
-/** Fallback rendered when a name is empty or unresolved. */
-export const UI_ICON_FALLBACK = "circle";
+/** Rendered when a name does not resolve. Registered in `BASE_NG_ICONS` for every portal. */
+export const UI_ICON_ERROR_GLYPH = "lucideCircleAlert";
+
+/** Strips the legacy primeicons CLASS prefix off a name. See {@link LegacyPiIconName}. */
+const LEGACY_PREFIX = /^pi[-]/;
 
 /**
- * Converts a lucide kebab-case name to its `@ng-icons/lucide` export name.
- * `chevron-down` → `lucideChevronDown`, `map-pin` → `lucideMapPin`, `building-2` → `lucideBuilding2`.
+ * Converts a kebab-case icon name to its `@ng-icons` export name.
+ * `chevron-down` -> `lucideChevronDown`, `building-2` -> `lucideBuilding2`, `brand-x` -> `brandX`.
+ *
+ * Kept in lock-step with `toNgIconName()` in `tools/gen-icon-registry.mjs`.
  */
 export function toNgIconName(kebab: string): string {
-  const pascal = kebab
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("");
-  return `lucide${pascal}`;
+  const parts = kebab.split("-");
+  const pascal = (segments: string[]) =>
+    segments.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join("");
+
+  // Lucide ships no brand icons; `brand-*` resolves to ./brand-icons instead.
+  return parts[0] === "brand" ? `brand${pascal(parts.slice(1))}` : `lucide${pascal(parts)}`;
 }
 
 /**
- * Resolves a raw icon name (legacy PrimeIcons-style or lucide kebab) to its registered
- * `@ng-icons/lucide` export name. The single mapping site shared by `ui-icon` and the nav's
- * dynamic-icon renderers.
+ * Resolves an icon name to its registered `@ng-icons` export name. The single mapping site shared by
+ * `ui-icon` and the nav's dynamic-icon renderers.
+ *
+ * An unknown name is a compile error at every static call site (see `IconName`), so this can only be
+ * reached through a dynamic binding. When it is: log, and render a VISIBLE error glyph. It does NOT
+ * throw — the old behaviour (pass the name through unchanged) rendered a silently blank <svg>, and a
+ * throw during render would tear the view down in a zoneless app, which would make every intermediate
+ * state of this migration undrivable in a browser.
  */
 export function resolveNgIcon(name: string): string {
-  const trimmed = name.replace(/^pi-?/, "");
-  const kebab = (PI_TO_LUCIDE[trimmed] ?? trimmed) || UI_ICON_FALLBACK;
-  return toNgIconName(kebab);
+  // Tolerate the legacy primeicons CLASS spellings call sites still write where a NAME is wanted (see
+  // LegacyPiIconName): take the last whitespace-separated token and drop the prefix. S3 rewrites those
+  // call sites to the bare name and this normalization goes away with them.
+  const bare = (name.trim().split(/\s+/).pop() ?? "").replace(LEGACY_PREFIX, "");
+  const alias = ICON_ALIASES[bare as UiIconName];
+
+  if (!alias) {
+    console.error(
+      `[ui-icon] Unknown icon name "${name}". Add it to tools/codemods/icon-map.json and run ` +
+        `\`node tools/gen-icon-registry.mjs\`. Rendering the error glyph instead.`,
+    );
+    return UI_ICON_ERROR_GLYPH;
+  }
+
+  return toNgIconName(alias);
 }
+
+/**
+ * @deprecated Use {@link ICON_ALIASES}. Kept only so the S2 -> S3 window compiles; deleted in S3 once
+ * the last call site moves off the legacy names.
+ */
+export const PI_TO_LUCIDE: Record<string, string> = ICON_ALIASES;

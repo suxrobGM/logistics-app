@@ -1,36 +1,59 @@
+// ---------------------------------------------------------------------------------------------
+// GENERATED FILE — DO NOT EDIT.
+// Source: tools/codemods/icon-map.json + a scan of projects/admin-portal/src
+// Regenerate: node tools/gen-icon-registry.mjs   (runs automatically on `bun run build:shared`)
+// ---------------------------------------------------------------------------------------------
+
 import {
+  lucideArrowRight,
   lucideBot,
-  lucideBuilding,
-  lucideCreditCard,
+  lucideBox,
+  lucideBuilding2,
+  lucideChartColumn,
   lucideFilePenLine,
   lucideHouse,
   lucideInbox,
   lucideLayoutGrid,
+  lucideLogIn,
   lucideMail,
+  lucideMenu,
+  lucideSave,
+  lucideSettings,
   lucideShield,
   lucideShieldCheck,
+  lucideSquarePen,
+  lucideStar,
   lucideUser,
+  lucideUserMinus,
   lucideUsers,
 } from "@ng-icons/lucide";
 
 /**
- * Admin-portal-specific lucide icons. Foundational icons (chevrons, plus, x,
- * arrows, log-out, etc.) come from `BASE_NG_ICONS` in `@logistics/shared`.
+ * Icons `admin-portal` uses that `BASE_NG_ICONS` does not already provide.
+ * Registered in app.config.ts:  provideIcons({ ...BASE_NG_ICONS, ...ADMIN_NG_ICONS })
  *
- * Every icon referenced by `sidebar-items.ts` must be registered here, or the
- * sidebar renders a blank space instead of the glyph.
+ * 23 name(s) -> 21 distinct glyph(s).
  */
 export const ADMIN_NG_ICONS = {
+  lucideArrowRight,
   lucideBot,
-  lucideBuilding,
-  lucideCreditCard,
+  lucideBox,
+  lucideBuilding2,
+  lucideChartColumn,
   lucideFilePenLine,
   lucideHouse,
   lucideInbox,
   lucideLayoutGrid,
+  lucideLogIn,
   lucideMail,
+  lucideMenu,
+  lucideSave,
+  lucideSettings,
   lucideShield,
   lucideShieldCheck,
+  lucideSquarePen,
+  lucideStar,
   lucideUser,
+  lucideUserMinus,
   lucideUsers,
 };

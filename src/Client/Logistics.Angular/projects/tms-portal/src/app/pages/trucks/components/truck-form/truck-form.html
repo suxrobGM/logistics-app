@@ -2,13 +2,12 @@
   <!-- Left: Form -->
   @if (isLoading()) {
     <ui-stack direction="row" justify="center" class="py-8">
-      <ui-icon name="spin pi-spinner" size="xl" />
+      <ui-icon name="spinner" spin size="xl" />
     </ui-stack>
   }
 
   <form [formRoot]="form">
     <ui-stack gap="6">
-
       <!-- Truck Information Section -->
       <ui-stack tag="section" gap="3">
         <ui-stack direction="row" gap="2" align="center">

@@ -1,4 +1,5 @@
 import { booleanAttribute, Component, computed, input, output } from "@angular/core";
+import type { IconName } from "../../icons/icon-registry.generated";
 import { Icon } from "../icon/icon";
 
 export type CalloutIntent = "info" | "success" | "warning" | "danger" | "neutral";
@@ -11,7 +12,7 @@ const intentClasses: Record<CalloutIntent, string> = {
   neutral: "border-default bg-subtle",
 };
 
-const intentDefaultIcon: Record<CalloutIntent, string> = {
+const intentDefaultIcon: Record<CalloutIntent, IconName> = {
   info: "info-circle",
   success: "check-circle",
   warning: "exclamation-triangle",
@@ -40,7 +41,7 @@ const intentIconColor: Record<CalloutIntent, "info" | "success" | "warning" | "d
 export class Alert {
   public readonly intent = input<CalloutIntent>("info");
   public readonly title = input<string | null>(null);
-  public readonly icon = input<string | null>(null);
+  public readonly icon = input<IconName | null>(null);
   public readonly dismissible = input<boolean, unknown>(false, { transform: booleanAttribute });
   public readonly dismiss = output<void>();
 
