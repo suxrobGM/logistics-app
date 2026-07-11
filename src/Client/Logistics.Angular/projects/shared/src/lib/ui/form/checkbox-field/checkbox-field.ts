@@ -8,41 +8,32 @@ import {
   model,
   output,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { Checkbox } from "primeng/checkbox";
+import { Icon } from "../../content/icon/icon";
 import { focusFirstControl } from "../focus-control";
 
 /**
- * Binary checkbox.
+ * Binary checkbox — a native `<input type="checkbox">` (visually hidden, `peer sr-only`) behind a
+ * styled box with a lucide check.
  *
- * Implements Angular's `FormValueControl<boolean>` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
- * `ControlValueAccessor`, no compat shim.
- *
- * `p-checkbox` is a PrimeNG `BaseInput` (`ControlValueAccessor`), so it is driven internally with
- * a STANDALONE `NgModel` (`[ngModel]` + `(ngModelChange)` + `{ standalone: true }`). Never put
- * `formControlName` or `[formField]` on the PrimeNG element directly — it collides with Signal
- * Forms' `pattern` state input under strictTemplates. The inner `NgModel` lives in this wrapper's
- * view, so `ui-form-field`'s `contentChild(FORM_FIELD)` still resolves the OUTER binding.
+ * Implements Angular's `FormValueControl<boolean>` and nothing else — binds via `[formField]`,
+ * `formControlName` and `[(ngModel)]` alike, with no `ControlValueAccessor`. The inner control is
+ * a real native checkbox driven by plain `[checked]` / `(change)`.
  *
  * @example
  * <ui-form-field label="Accept terms" [required]="true">
- *   <ui-checkbox-field inputId="terms" label="I agree" formControlName="terms" />
+ *   <ui-checkbox-field inputId="terms" label="I agree" [formField]="form.terms" />
  * </ui-form-field>
  */
 @Component({
   selector: "ui-checkbox-field",
   templateUrl: "./checkbox-field.html",
-  imports: [Checkbox, FormsModule],
+  imports: [Icon],
 })
 export class UiCheckboxField implements FormValueControl<boolean> {
   /** The control's value. Required by `FormValueControl`. */
   public readonly value = model<boolean>(false);
 
-  // Optional state inputs. Signal Forms binds these automatically when present;
-  // the Reactive Forms bridge drives `disabled`.
   public readonly disabled = input(false, { transform: booleanAttribute });
   public readonly readonly = input(false, { transform: booleanAttribute });
   public readonly required = input(false, { transform: booleanAttribute });
@@ -59,16 +50,15 @@ export class UiCheckboxField implements FormValueControl<boolean> {
   public readonly inputId = input<string>("");
   public readonly label = input<string>("");
 
-  /**
-   * Signal Forms drives `invalid` from form creation, so a required, untouched field would render
-   * as invalid on page load. Reveal it only once the user has interacted — the same rule
-   * `ui-form-field` uses for its inline error message.
-   */
   protected readonly showInvalid = computed(
     () => this.invalid() && (this.touched() || this.dirty()),
   );
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  protected onChange(event: Event): void {
+    this.value.set((event.target as HTMLInputElement).checked);
+  }
 
   /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
   public focus(options?: FocusOptions): void {

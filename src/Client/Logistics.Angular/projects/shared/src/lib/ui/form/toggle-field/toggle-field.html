@@ -1,18 +1,39 @@
 <div class="flex items-center gap-2">
-  <p-toggleswitch
-    [inputId]="inputId()"
-    [ngModel]="value()"
-    (ngModelChange)="value.set($event)"
-    [ngModelOptions]="{ standalone: true }"
-    [disabled]="disabled()"
-    [readonly]="readonly()"
-    [required]="required()"
-    [invalid]="showInvalid()"
-    (focusout)="touch.emit()"
-  />
+  <label
+    class="inline-flex"
+    [class.cursor-pointer]="!disabled()"
+    [class.cursor-not-allowed]="disabled()"
+  >
+    <input
+      type="checkbox"
+      role="switch"
+      class="peer sr-only"
+      [id]="inputId() || null"
+      [attr.name]="name() || null"
+      [checked]="value()"
+      [disabled]="disabled()"
+      [required]="required()"
+      [attr.aria-invalid]="showInvalid() ? 'true' : null"
+      (change)="onChange($event)"
+      (blur)="touch.emit()"
+    />
+    <span
+      class="peer-focus-visible:ring-ring/50 relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border transition-colors peer-focus-visible:ring-3 peer-disabled:opacity-50"
+      [class.bg-primary]="value()"
+      [class.border-primary]="value()"
+      [class.bg-input]="!value()"
+      [class.border-input]="!value()"
+    >
+      <span
+        class="bg-background inline-block size-4 rounded-full shadow transition-transform"
+        [class.translate-x-4]="value()"
+        [class.translate-x-0.5]="!value()"
+      ></span>
+    </span>
+  </label>
 
   @if (label()) {
-    <label class="text-sm font-medium text-gray-700 dark:text-gray-300" [for]="inputId()">
+    <label class="text-foreground cursor-pointer text-sm font-medium" [for]="inputId()">
       {{ label() }}
     </label>
   }

@@ -1,17 +1,32 @@
 <div class="flex items-center gap-2">
-  <p-checkbox
-    [binary]="true"
-    [inputId]="inputId()"
-    [ngModel]="value()"
-    (ngModelChange)="value.set($event)"
-    [ngModelOptions]="{ standalone: true }"
-    [disabled]="disabled()"
-    [readonly]="readonly()"
-    [required]="required()"
-    [attr.name]="name() || null"
-    [attr.aria-invalid]="showInvalid() ? 'true' : null"
-    (onBlur)="touch.emit()"
-  />
+  <label
+    class="inline-flex"
+    [class.cursor-pointer]="!disabled()"
+    [class.cursor-not-allowed]="disabled()"
+  >
+    <input
+      type="checkbox"
+      class="peer sr-only"
+      [id]="inputId() || null"
+      [attr.name]="name() || null"
+      [checked]="value()"
+      [disabled]="disabled()"
+      [required]="required()"
+      [attr.aria-invalid]="showInvalid() ? 'true' : null"
+      (change)="onChange($event)"
+      (blur)="touch.emit()"
+    />
+    <span
+      class="peer-focus-visible:ring-ring/50 flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors peer-focus-visible:ring-3 peer-disabled:opacity-50"
+      [class.bg-primary]="value()"
+      [class.border-primary]="value()"
+      [class.border-input]="!value()"
+    >
+      @if (value()) {
+        <ui-icon name="check" size="xs" class="text-primary-foreground" />
+      }
+    </span>
+  </label>
   @if (label()) {
     <label class="cursor-pointer text-sm" [for]="inputId()">{{ label() }}</label>
   }

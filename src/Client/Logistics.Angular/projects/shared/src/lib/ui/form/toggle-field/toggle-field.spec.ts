@@ -68,7 +68,7 @@ function input(fixture: ComponentFixture<unknown>): HTMLInputElement {
 
 /** Toggles the switch the way a user would — the click handler lives on the host element. */
 function toggle(fixture: ComponentFixture<unknown>): void {
-  (fixture.nativeElement.querySelector("p-toggleswitch") as HTMLElement).click();
+  input(fixture).click();
 }
 
 describe("UiToggleField — a FormValueControl-only wrapper", () => {
@@ -142,9 +142,8 @@ describe("UiToggleField — a FormValueControl-only wrapper", () => {
       await settle(fixture);
 
       fixture.componentInstance.f.accept().value.set(false);
-      // focusout bubbles from the inner input to the host, raising `touch`,
-      // which Signal Forms uses to mark the field touched
-      input(fixture).dispatchEvent(new Event("focusout", { bubbles: true }));
+      // blurring the inner checkbox raises `touch`, which Signal Forms uses to mark it touched
+      input(fixture).dispatchEvent(new Event("blur"));
       await settle(fixture);
 
       expect(fixture.componentInstance.f.accept().invalid()).toBe(true);

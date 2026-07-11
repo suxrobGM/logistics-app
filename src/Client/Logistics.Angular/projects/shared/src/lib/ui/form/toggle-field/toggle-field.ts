@@ -8,36 +8,25 @@ import {
   model,
   output,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { ToggleSwitch } from "primeng/toggleswitch";
 import { focusFirstControl } from "../focus-control";
 
 /**
- * Boolean on/off switch.
+ * Boolean on/off switch — a native `<input type="checkbox">` (visually hidden, `peer sr-only`)
+ * behind a styled track + thumb.
  *
- * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
- * `ControlValueAccessor`, no compat shim.
- *
- * The PrimeNG `p-toggleswitch` is itself a `ControlValueAccessor`, so it is driven internally
- * with a standalone `ngModel` (never `formControlName` / `[formField]`, which would collide with
- * Signal Forms' `pattern` state input). The inner `NgModel` lives in THIS wrapper's view, so the
- * enclosing `ui-form-field`'s `contentChild(FORM_FIELD)` still resolves the OUTER binding.
- *
- * `p-toggleswitch` exposes no `onBlur` output (only `onChange`), so `touch` is raised from the
- * native, bubbling `(focusout)` on the host instead.
+ * Implements Angular's `FormValueControl` and nothing else — binds via `[formField]`,
+ * `formControlName` and `[(ngModel)]` alike, with no `ControlValueAccessor`. The inner control is
+ * a real native checkbox driven by plain `[checked]` / `(change)`.
  *
  * @example
  * <ui-form-field label="Notifications" for="notify">
- *   <ui-toggle-field inputId="notify" formControlName="notify" />
+ *   <ui-toggle-field inputId="notify" [formField]="form.notify" />
  * </ui-form-field>
  */
 @Component({
   selector: "ui-toggle-field",
   templateUrl: "./toggle-field.html",
-  imports: [ToggleSwitch, FormsModule],
 })
 export class UiToggleField implements FormValueControl<boolean> {
   /** The control's value. Required by `FormValueControl`. */
@@ -71,6 +60,10 @@ export class UiToggleField implements FormValueControl<boolean> {
   );
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  protected onChange(event: Event): void {
+    this.value.set((event.target as HTMLInputElement).checked);
+  }
 
   /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
   public focus(options?: FocusOptions): void {
