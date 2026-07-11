@@ -7,32 +7,39 @@ paths:
 # Angular Code Conventions
 
 ## Components
+
 - Standalone components (don't add `standalone: true` — it's the default in Angular 20+)
 - Separate template files (`templateUrl`), no inline templates/styles
 - Files: `{name}.ts`, `{name}.html` (not `{name}.component.ts`)
 - Prefixes: tms=`app-`, customer=`cp-`, website=`web-`, shared=`ui-`
 
 ## Signals & Reactivity
+
 - `signal()` for local state, `computed()` for derived state
 - `input()` / `output()` functions — NOT `@Input`/`@Output` decorators
 - `@ngrx/signals` stores for complex state
 
 ## DI & Access Modifiers
+
 - `inject()` function, not constructor injection
 - `private readonly` for services, `protected readonly` for template-used stores
 - `protected` for template-bound properties/methods, `private` for internal
 
 ## Templates
+
 - Native control flow: `@if`, `@for`, `@switch` — NOT `*ngIf`, `*ngFor`
 - Use `@empty` block in `@for` for empty states
 
 ## Imports
+
 - Shared: `import { X } from "@logistics/shared";`
 - API models: `import type { XDto } from "@logistics/shared/api/models";`
 - App-internal: `import { X } from "@/core/services";`
 
 ## Host Bindings
+
 - Use `host` property in `@Component` decorator — NOT `@HostListener` / `@HostBinding` decorators
+
 ```typescript
 // Good
 @Component({
@@ -48,15 +55,31 @@ onKeydown(event: KeyboardEvent) {}
 ```
 
 ## Animations
+
 - `provideAnimationsAsync()` is deprecated in Angular 21+ — do NOT add it to app.config.ts
 - Angular 21 enables animations by default, no provider needed
 
 ## Styling
+
 - Tailwind CSS utilities preferred, avoid custom CSS unless necessary
-- **Never use hardcoded color values** (e.g., `bg-yellow-50`, `text-yellow-700`, `border-yellow-200`) — use theme-aware utilities (`bg-subtle`, `bg-elevated`, `border-default`, `text-muted`) or PrimeNG components instead
-- **Prefer PrimeNG or custom components over manual Tailwind** for UI patterns that PrimeNG already provides: use `p-message` for alerts/warnings, `p-tag` for badges, `p-table` for data tables, `p-dialog` for modals, etc. Only use custom Tailwind when no suitable PrimeNG or custom component exists
+- **Never use hardcoded color values** (e.g., `bg-yellow-50`, `text-yellow-700`, `border-yellow-200`) — use the theme-aware utilities (`bg-subtle`, `bg-elevated`, `border-default`, `text-muted`) or the shadcn tokens (`bg-background`, `bg-card`, `bg-muted`, `text-foreground`, `text-muted-foreground`, `border-border`). Tokens live in `projects/shared/src/styles/theme.css`
+
+## UI components
+
+- The UI library is **spartan/ui** — Helm components vendored in-repo under `projects/shared/src/lib/ui/primitives/` on top of `@spartan-ng/brain`. **NOT PrimeNG.**
+- **PrimeNG is being removed — never add a new `p-*` component or a `primeng/*` import.** Existing ones are being swept out.
+- **Prefer the shared `ui-*` components from `@logistics/shared/ui` over hand-rolled Tailwind.** Never reach for a raw Helm primitive in feature code — the `ui-*` components are the public surface. What exists today:
+  - **Forms**: `ui-form-field` (label/hint/error wrapper — auto-resolves the projected `[formField]`), `ui-text-field`, `ui-textarea-field`, `ui-select-field`, `ui-multiselect-field`, `ui-number-field`, `ui-currency-field`, `ui-unit-field`, `ui-date-field`, `ui-checkbox-field`, `ui-toggle-field`, `ui-password-field`, `ui-autocomplete-field`, `ui-search-field`, `ui-phone-field`, `ui-address-form`, `ui-language-picker`, plus the `ValidatedForm` directive (matches `form[formRoot]`)
+  - **Data**: `ui-data-table` with `<th uiSortHeader="Field">`
+  - **Content**: `ui-icon`, `ui-alert`, `ui-badge`, `ui-status-badge`, `ui-typography`, `ui-theme-toggle`
+  - **Layout**: `ui-divider`, `ui-container`, `ui-grid`, `ui-stack`, `ui-surface`, `ui-toolbar`, `ui-page-header`, `ui-dashboard-card`
+  - **Feedback**: `ui-empty-state`, `ui-error-state`, `ui-loading-skeleton`, `ui-data-container`, `ui-date-range-picker`
+- `ui-button`, `ui-card`, `ui-dialog`, `ui-tooltip`, `ui-spinner`, `ui-skeleton`, `ui-menu`, `ui-tabs`, `ui-chart` are **landing during the migration** — check `projects/shared/src/lib/ui/` for what exists before hand-rolling one
+- **Icons**: `<ui-icon name="..."/>` only. Never `<i class="pi pi-*">`, never a raw `<ng-icon>` in feature code
+- **Toasts / confirms**: `ToastService` from `@logistics/shared` only. Never inject `MessageService` / `ConfirmationService`
 
 ## HTTP Caching
+
 - In-memory cache interceptor (`cacheInterceptor`) caches GET requests based on rules in `projects/shared/src/lib/api/cache.config.ts`
 - Rules are evaluated in order — first match wins, catch-all default is 2 min TTL
 - **Set `ttl: 0`** for endpoints that receive real-time updates via SignalR (e.g., dispatch, messages)

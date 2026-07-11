@@ -102,6 +102,16 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
     () => this.invalid() && (this.touched() || this.dirty()),
   );
 
+  /**
+   * True when something is selected. Guards `null` *and* `undefined`: the declared type is
+   * `T | null`, but a consumer can still hand us `undefined`, and the clear button must not
+   * appear for an empty select.
+   */
+  protected readonly hasValue = computed(() => {
+    const current = this.value();
+    return current !== null && current !== undefined;
+  });
+
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected resolveValue(option: unknown): unknown {
@@ -133,8 +143,10 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
     this.touch.emit();
   }
 
+  /** Fired by both click and Enter/Space, so suppress the key's default (page scroll on Space). */
   protected clear(event: Event): void {
     event.stopPropagation();
+    event.preventDefault();
     this.value.set(null);
     this.cleared.emit();
   }

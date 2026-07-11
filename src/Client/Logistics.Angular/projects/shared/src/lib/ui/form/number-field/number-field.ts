@@ -109,7 +109,7 @@ export class UiNumberField implements FormValueControl<number | null> {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected onInput(event: Event): void {
-    const raw = (event.target as HTMLInputElement).value.replace(/[^0-9.\-]/g, "");
+    const raw = (event.target as HTMLInputElement).value.replace(/[^0-9.-]/g, "");
     if (raw === "" || raw === "-" || raw === ".") {
       this.value.set(null);
       return;

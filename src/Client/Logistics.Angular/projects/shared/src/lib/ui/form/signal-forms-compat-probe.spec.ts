@@ -334,8 +334,11 @@ describe("Signal Forms <-> PrimeNG compat probe", () => {
     type Equal<A, B> =
       (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
     type Expect<T extends true> = T;
+    // Intentionally unreferenced: the guard IS the declaration. If upstream changes
+    // BaseInput['pattern'], `Expect<...>` fails its `T extends true` constraint and this file stops
+    // compiling. Referencing it would add nothing, so the unused-vars rule is wrong here.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type _AssertPatternIsString = Expect<Equal<BaseInputPatternType, string | null | undefined>>;
-    // Reference the alias so it is not flagged as unused; its mere existence is the guard.
     const patternIsString: BaseInputPatternType = "" as string | null | undefined;
     expect(typeof patternIsString).toBe("string");
 

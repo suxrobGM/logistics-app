@@ -5,14 +5,12 @@ import {
   Component,
   computed,
   contentChild,
-  forwardRef,
   input,
   linkedSignal,
   output,
   signal,
   viewChild,
 } from "@angular/core";
-import { NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import {
   BrnDatePickerTriggerToken,
   provideBrnDatePicker,
@@ -26,20 +24,10 @@ import { HlmCalendar } from "../../calendar";
 import { HlmPopoverImports } from "../../popover";
 import { injectHlmDatePickerConfig } from "./hlm-date-picker.token";
 
-export const HLM_DATE_PICKER_VALUE_ACCESSOR = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => HlmDatePicker),
-  multi: true,
-};
-
 @Component({
   selector: "hlm-date-picker",
   imports: [HlmPopoverImports, HlmCalendar],
-  providers: [
-    HLM_DATE_PICKER_VALUE_ACCESSOR,
-    provideBrnDatePicker(HlmDatePicker),
-    provideBrnLabelable(HlmDatePicker),
-  ],
+  providers: [provideBrnDatePicker(HlmDatePicker), provideBrnLabelable(HlmDatePicker)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnFieldControl],
   host: { class: "block" },
@@ -64,7 +52,7 @@ export const HLM_DATE_PICKER_VALUE_ACCESSOR = {
     </hlm-popover>
   `,
 })
-export class HlmDatePicker<T> implements BrnDatePickerBase<T>, ControlValueAccessor {
+export class HlmDatePicker<T> implements BrnDatePickerBase<T> {
   private readonly _config = injectHlmDatePickerConfig<T>();
 
   public readonly popover = viewChild.required(BrnPopover);
@@ -159,11 +147,6 @@ export class HlmDatePicker<T> implements BrnDatePickerBase<T>, ControlValueAcces
     this.dateChange.emit(transformedDate ?? null);
   }
 
-  /** CONTROL VALUE ACCESSOR */
-  public writeValue(value: T | null): void {
-    this._mutableDate.set(value ? this.transformDate()(value) : undefined);
-  }
-
   public registerOnChange(fn: ChangeFn<T | null>): void {
     this._onChange = fn;
   }
@@ -174,10 +157,6 @@ export class HlmDatePicker<T> implements BrnDatePickerBase<T>, ControlValueAcces
 
   public touched(): void {
     this._onTouched?.();
-  }
-
-  public setDisabledState(isDisabled: boolean): void {
-    this._disabled.set(isDisabled);
   }
 
   public open() {

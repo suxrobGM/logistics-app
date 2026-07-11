@@ -16,13 +16,12 @@ differs substantially — ignore any v21-era blog post, and distrust any answer 
 
 Every claim here is pinned by an executable spec that CI runs:
 
-| Spec                                                               | Pins                                                                    |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| `projects/shared/src/lib/forms/signal-forms-compat-probe.spec.ts`  | PrimeNG interop (claims A–E)                                            |
-| `projects/shared/src/lib/forms/signal-forms-v22-api-probe.spec.ts` | The Signal Forms API itself (claims F–O), including every example below |
+| Spec                                                                 | Pins                                                                    |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `projects/shared/src/lib/ui/form/signal-forms-v22-api-probe.spec.ts` | The Signal Forms API itself (claims F–O), including every example below |
 
-**Those specs are the source of truth, not this doc.** If they disagree, the specs win and this file
-is stale. Run them with `bun run ng test shared --watch=false`.
+**That spec is the source of truth, not this doc.** If they disagree, the spec wins and this file
+is stale. Run it with `bun run ng test shared --watch=false`.
 
 ## Step-by-step process
 
@@ -36,7 +35,7 @@ Read both the `.ts` and `.html` files completely. Identify:
 - **Dynamic behavior**: conditional validators, `control.enable()` / `control.disable()`
 - **Arrays**: `FormArray` usage, dynamic add/remove
 - **Template bindings**: `formControlName`, `formGroupName`, `formArrayName`, `[formControl]`, `[(ngModel)]`
-- **Third-party controls**: PrimeNG / Material / custom
+- **Third-party controls**: our `ui-*-field` wrappers / third-party libraries / custom
 - **Value access**: `.value`, `.getRawValue()`, `.valueChanges`, `.statusChanges`, `.patchValue()`, `.setValue()`, `.reset()`
 - **Validation display**: `.hasError()`, `.errors`, `.touched`, `.dirty`, `.invalid`
 - **Submission**: `(ngSubmit)`, `markAllAsTouched()`, server-error plumbing
@@ -227,35 +226,35 @@ provideSignalFormsConfig({
 });
 ```
 
-#### Third-party UI components (PrimeNG, Material, …)
+#### Third-party and custom UI controls
 
-> Pinned by `signal-forms-compat-probe.spec.ts` (claims A–E) on Angular 22.0.6 + primeng 21.1.6.
+**Never put `[formField]` directly on a third-party component.** A control written for Reactive Forms
+implements `ControlValueAccessor`, and two failure modes follow from that:
 
-**Never put `[formField]` directly on a PrimeNG component.** Two verified failure modes:
-
-- **`pTextarea` crashes at runtime.** PrimeNG's Textarea subscribes to `ngControl.valueChanges` in
-  `onInit`, but Signal Forms provides `NgControl` as an `InteropNgControl` with **no** `valueChanges`
-  / `statusChanges` — so `undefined.subscribe(...)` throws on the first change detection. Across all
-  of primeng's `fesm2022`, Textarea is the only component that does this.
-- **`pattern` type collision → TS2322 under `strictTemplates`.** Signal Forms binds the `pattern`
-  state input as `readonly RegExp[]`; PrimeNG's `BaseInput` declares `pattern: string`. Six
-  components inherit the collision: **Select, InputNumber, DatePicker, AutoComplete, InputMask,
-  Password**.
+- **Runtime crash on `ngControl` observables.** Such controls commonly subscribe to
+  `ngControl.valueChanges` / `statusChanges` in `ngOnInit`. Signal Forms provides `NgControl` as an
+  `InteropNgControl` that has **neither** — so `undefined.subscribe(...)` throws on the first change
+  detection.
+- **State-input type collisions → TS2322 under `strictTemplates`.** Signal Forms binds its state
+  inputs onto the bound element, and the names are reserved (see below). A library control that
+  declares an input of the same name with a different type fails to compile — e.g. Signal Forms binds
+  `pattern` as `readonly RegExp[]`, so any control declaring `pattern: string` collides.
 
 **The correct pattern: a wrapper implementing `FormValueControl` only.** Angular 22 bridges custom
 Signal Form controls into legacy Reactive and Template-Driven forms automatically — angular.dev:
 _"Custom Signal Form Controls can be used with Signal, Reactive and Template-Driven Forms without any
-extra compatibility code."_ Claim B pins this: the same `FormValueControl`-only component two-way
-syncs under both `[formField]` and `formControlName`. Therefore:
+extra compatibility code."_ Therefore:
 
 - **Never implement `ControlValueAccessor` alongside `FormValueControl`.** No dual-interface
   components, no `NG_VALUE_ACCESSOR`. The minimum contract is just `value = model<T>()`.
 - For a bare native control, put `[formField]` on the native element — always safe.
-- For anything richer, wrap it and bind `[formField]` to the wrapper, never to PrimeNG directly.
+- For anything richer, wrap it and bind `[formField]` to the wrapper, never to the library component.
 
 In **this repo** the wrappers already exist (`ui-text-field`, `ui-select-field`, `ui-date-field`, …
-in `projects/shared/src/lib/components/form/`). Templates already speak `ui-*-field`, so a form
-migration is normally a **`.ts`-only change**. If a control is still raw PrimeNG, wrap it first.
+in `projects/shared/src/lib/ui/form/`, exported from `@logistics/shared/ui`). They wrap the vendored
+spartan/ui Helm primitives, and they are the only thing `[formField]` should bind to. Templates
+already speak `ui-*-field`, so a form migration is normally a **`.ts`-only change**. If a control
+isn't wrapped yet, wrap it first.
 
 ##### `[formField]` value types are invariant
 

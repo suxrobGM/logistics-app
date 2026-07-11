@@ -5,15 +5,12 @@ import {
   Component,
   computed,
   contentChild,
-  forwardRef,
   input,
   linkedSignal,
   output,
   signal,
-  untracked,
   viewChild,
 } from "@angular/core";
-import { NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import {
   BrnDatePickerTriggerToken,
   provideBrnDatePicker,
@@ -27,20 +24,10 @@ import { HlmCalendarRange } from "../../calendar";
 import { HlmPopoverImports } from "../../popover";
 import { injectHlmDateRangePickerConfig } from "./hlm-date-range-picker.token";
 
-export const HLM_DATE_RANGE_PICKER_VALUE_ACCESSOR = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => HlmDateRangePicker),
-  multi: true,
-};
-
 @Component({
   selector: "hlm-date-range-picker",
   imports: [HlmPopoverImports, HlmCalendarRange],
-  providers: [
-    HLM_DATE_RANGE_PICKER_VALUE_ACCESSOR,
-    provideBrnDatePicker(HlmDateRangePicker),
-    provideBrnLabelable(HlmDateRangePicker),
-  ],
+  providers: [provideBrnDatePicker(HlmDateRangePicker), provideBrnLabelable(HlmDateRangePicker)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnFieldControl],
   host: { class: "block" },
@@ -66,7 +53,7 @@ export const HLM_DATE_RANGE_PICKER_VALUE_ACCESSOR = {
     </hlm-popover>
   `,
 })
-export class HlmDateRangePicker<T> implements BrnDatePickerBase<[T, T]>, ControlValueAccessor {
+export class HlmDateRangePicker<T> implements BrnDatePickerBase<[T, T]> {
   private readonly _config = injectHlmDateRangePickerConfig<T>();
 
   public readonly popover = viewChild.required(BrnPopover);
@@ -196,27 +183,12 @@ export class HlmDateRangePicker<T> implements BrnDatePickerBase<[T, T]>, Control
     this._onTouched?.();
   }
 
-  /** CONTROL VALUE ACCESSOR */
-  public writeValue(value: [T, T] | null): void {
-    untracked(() => {
-      if (!value) {
-        this._mutableDate.set(undefined);
-      } else {
-        this._mutableDate.set(this.transformDates()(value));
-      }
-    });
-  }
-
   public registerOnChange(fn: ChangeFn<[T, T] | null>): void {
     this._onChange = fn;
   }
 
   public registerOnTouched(fn: TouchFn): void {
     this._onTouched = fn;
-  }
-
-  public setDisabledState(isDisabled: boolean): void {
-    this._disabled.set(isDisabled);
   }
 
   public open() {

@@ -5,7 +5,6 @@ import {
   Component,
   computed,
   contentChild,
-  forwardRef,
   input,
   linkedSignal,
   numberAttribute,
@@ -13,7 +12,6 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import {
   BrnDatePickerTriggerToken,
   provideBrnDatePicker,
@@ -27,20 +25,10 @@ import { HlmCalendarMulti } from "../../calendar";
 import { HlmPopoverImports } from "../../popover";
 import { injectHlmDatePickerMultiConfig } from "./hlm-date-picker-multi.token";
 
-export const HLM_DATE_PICKER_MUTLI_VALUE_ACCESSOR = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => HlmDatePickerMulti),
-  multi: true,
-};
-
 @Component({
   selector: "hlm-date-picker-multi",
   imports: [HlmPopoverImports, HlmCalendarMulti],
-  providers: [
-    HLM_DATE_PICKER_MUTLI_VALUE_ACCESSOR,
-    provideBrnDatePicker(HlmDatePickerMulti),
-    provideBrnLabelable(HlmDatePickerMulti),
-  ],
+  providers: [provideBrnDatePicker(HlmDatePickerMulti), provideBrnLabelable(HlmDatePickerMulti)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnFieldControl],
   host: { class: "block" },
@@ -66,7 +54,7 @@ export const HLM_DATE_PICKER_MUTLI_VALUE_ACCESSOR = {
     </hlm-popover>
   `,
 })
-export class HlmDatePickerMulti<T> implements BrnDatePickerBase<T[]>, ControlValueAccessor {
+export class HlmDatePickerMulti<T> implements BrnDatePickerBase<T[]> {
   private readonly _config = injectHlmDatePickerMultiConfig<T>();
 
   public readonly popover = viewChild.required(BrnPopover);
@@ -180,21 +168,12 @@ export class HlmDatePickerMulti<T> implements BrnDatePickerBase<T[]>, ControlVal
     this._onTouched?.();
   }
 
-  /** CONTROL VALUE ACCESSOR */
-  public writeValue(value: T[] | null): void {
-    this._mutableDate.set(value ? this.transformDates()(value) : undefined);
-  }
-
   public registerOnChange(fn: ChangeFn<T[]>): void {
     this._onChange = fn;
   }
 
   public registerOnTouched(fn: TouchFn): void {
     this._onTouched = fn;
-  }
-
-  public setDisabledState(isDisabled: boolean): void {
-    this._disabled.set(isDisabled);
   }
 
   public open() {

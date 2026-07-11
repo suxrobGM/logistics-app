@@ -22,7 +22,9 @@
     <p [class]="classes()"><ng-container *ngTemplateOutlet="content" /></p>
   }
   @case ("label") {
-    <label [class]="classes()"><ng-container *ngTemplateOutlet="content" /></label>
+    <label [class]="classes()" [attr.for]="htmlFor()">
+      <ng-container *ngTemplateOutlet="content" />
+    </label>
   }
   @case ("div") {
     <div [class]="classes()"><ng-container *ngTemplateOutlet="content" /></div>

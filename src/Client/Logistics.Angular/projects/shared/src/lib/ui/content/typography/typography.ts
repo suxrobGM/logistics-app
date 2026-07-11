@@ -120,6 +120,13 @@ export class Typography {
   public readonly align = input<TypographyAlign | null>(null);
   public readonly tag = input<TypographyTag | null>(null);
 
+  /**
+   * Id of the control this labels, for `variant="label"` / `tag="label"`. A <label> with no `for`
+   * names nothing: clicking it focuses no control and screen readers announce it as orphaned.
+   * Named `htmlFor` because `for` is a reserved word (and input aliasing is banned).
+   */
+  public readonly htmlFor = input<string | undefined>(undefined);
+
   protected readonly resolvedTag = computed<TypographyTag>(
     () => this.tag() ?? variantDefaultTag[this.variant()],
   );

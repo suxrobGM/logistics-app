@@ -128,14 +128,18 @@ export class UiMultiSelectField<T = unknown> implements FormValueControl<T[]> {
     this.touch.emit();
   }
 
+  /** Fired by both click and Enter/Space, so suppress the key's default (page scroll on Space). */
   protected clear(event: Event): void {
     event.stopPropagation();
+    event.preventDefault();
     this.value.set([]);
     this.cleared.emit();
   }
 
+  /** Fired by both click and Enter/Space, so suppress the key's default (page scroll on Space). */
   protected removeChip(value: T, event: Event): void {
     event.stopPropagation();
+    event.preventDefault();
     const next = this.value().filter((v) => v !== value);
     this.value.set(next);
     this.selectionChange.emit(next);

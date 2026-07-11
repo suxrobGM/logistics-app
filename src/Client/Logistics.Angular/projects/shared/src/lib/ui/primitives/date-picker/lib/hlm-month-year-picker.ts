@@ -5,14 +5,12 @@ import {
   Component,
   computed,
   contentChild,
-  forwardRef,
   input,
   linkedSignal,
   output,
   signal,
   viewChild,
 } from "@angular/core";
-import { NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import {
   BrnDatePickerTriggerToken,
   provideBrnDatePicker,
@@ -26,19 +24,10 @@ import { HlmCalendarImports } from "../../calendar";
 import { HlmPopoverImports } from "../../popover";
 import { injectHlmMonthYearPickerConfig } from "./hlm-month-year-picker.token";
 
-export const HLM_MONTH_YEAR_PICKER_VALUE_ACCESSOR = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => HlmMonthYearPicker),
-  multi: true,
-};
 @Component({
   selector: "hlm-month-year-picker",
   imports: [HlmPopoverImports, HlmCalendarImports],
-  providers: [
-    HLM_MONTH_YEAR_PICKER_VALUE_ACCESSOR,
-    provideBrnDatePicker(HlmMonthYearPicker),
-    provideBrnLabelable(HlmMonthYearPicker),
-  ],
+  providers: [provideBrnDatePicker(HlmMonthYearPicker), provideBrnLabelable(HlmMonthYearPicker)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   hostDirectives: [BrnFieldControl],
   host: { class: "block" },
@@ -62,7 +51,7 @@ export const HLM_MONTH_YEAR_PICKER_VALUE_ACCESSOR = {
     </hlm-popover>
   `,
 })
-export class HlmMonthYearPicker<T> implements BrnDatePickerBase<T>, ControlValueAccessor {
+export class HlmMonthYearPicker<T> implements BrnDatePickerBase<T> {
   private readonly _config = injectHlmMonthYearPickerConfig<T>();
 
   public readonly popover = viewChild.required(BrnPopover);
@@ -152,11 +141,6 @@ export class HlmMonthYearPicker<T> implements BrnDatePickerBase<T>, ControlValue
     this.dateChange.emit(transformedDate ?? null);
   }
 
-  /** CONTROL VALUE ACCESSOR */
-  public writeValue(value: T | null): void {
-    this._mutableDate.set(value ? this.transformDate()(value) : undefined);
-  }
-
   public registerOnChange(fn: ChangeFn<T | null>): void {
     this._onChange = fn;
   }
@@ -167,10 +151,6 @@ export class HlmMonthYearPicker<T> implements BrnDatePickerBase<T>, ControlValue
 
   public touched(): void {
     this._onTouched?.();
-  }
-
-  public setDisabledState(isDisabled: boolean): void {
-    this._disabled.set(isDisabled);
   }
 
   public open() {

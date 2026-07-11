@@ -1,0 +1,54 @@
+{
+  "$comment": "Ratchet baseline for the PrimeNG -> spartan/ui migration. burndown: counts may only DECREASE. budgets: angular.json maximumError values may not change at all. Update deliberately, per step, via `node tools/checks/burndown.mjs --update` / `node tools/checks/budgets.mjs --update` — never by hand.",
+  "burndown": {
+    "primengImports": 934,
+    "piIcons": 944,
+    "pTags": 1419,
+    "pDirectives": 147,
+    "pCssSelectors": 14,
+    "cva": 21,
+    "legacyForms": 211
+  },
+  "budgets": {
+    "tms-portal": {
+      "initial": {
+        "maximumWarning": "4.5mb",
+        "maximumError": "6mb"
+      },
+      "anyComponentStyle": {
+        "maximumWarning": "4kb",
+        "maximumError": "6kb"
+      }
+    },
+    "customer-portal": {
+      "initial": {
+        "maximumWarning": "2mb",
+        "maximumError": "3mb"
+      },
+      "anyComponentStyle": {
+        "maximumWarning": "2kb",
+        "maximumError": "4kb"
+      }
+    },
+    "admin-portal": {
+      "initial": {
+        "maximumWarning": "2mb",
+        "maximumError": "3mb"
+      },
+      "anyComponentStyle": {
+        "maximumWarning": "2kb",
+        "maximumError": "4kb"
+      }
+    },
+    "website": {
+      "initial": {
+        "maximumWarning": "500kB",
+        "maximumError": "1.5MB"
+      },
+      "anyComponentStyle": {
+        "maximumWarning": "4kB",
+        "maximumError": "8kB"
+      }
+    }
+  }
+}

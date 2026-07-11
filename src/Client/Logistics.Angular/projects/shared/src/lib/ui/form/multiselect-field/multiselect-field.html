@@ -17,8 +17,11 @@
             <span
               class="text-muted-foreground hover:text-foreground cursor-pointer"
               role="button"
+              tabindex="0"
               aria-label="Remove"
               (click)="removeChip($any(chip.value), $event)"
+              (keydown.enter)="removeChip($any(chip.value), $event)"
+              (keydown.space)="removeChip($any(chip.value), $event)"
             >
               <ui-icon name="times" size="xs" />
             </span>
@@ -32,8 +35,11 @@
       <span
         class="text-muted-foreground hover:text-foreground inline-flex cursor-pointer items-center"
         role="button"
+        tabindex="0"
         aria-label="Clear"
         (click)="clear($event)"
+        (keydown.enter)="clear($event)"
+        (keydown.space)="clear($event)"
       >
         <ui-icon name="times" size="xs" />
       </span>

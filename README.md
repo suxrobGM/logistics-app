@@ -99,7 +99,7 @@ For full setup details, see the [Local Development Guide](docs/getting-started/l
 | Layer              | Technologies                                                                |
 | ------------------ | --------------------------------------------------------------------------- |
 | **Backend**        | .NET 10, ASP.NET Core, EF Core, MediatR, SignalR, Duende IdentityServer     |
-| **Frontend**       | Angular 21, PrimeNG, Tailwind CSS                                           |
+| **Frontend**       | Angular 22, spartan/ui, Tailwind CSS                                        |
 | **Mobile**         | Kotlin Multiplatform, Compose Multiplatform                                 |
 | **Database**       | PostgreSQL 18                                                               |
 | **Payments**       | Stripe, Stripe Connect                                                      |

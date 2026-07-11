@@ -9,12 +9,15 @@
 >
   <hlm-select-trigger [buttonId]="id()" [forceInvalid]="showInvalid()" [class]="fluid() ? 'w-full' : ''">
     <hlm-select-value [placeholder]="placeholder() ?? ''" />
-    @if (showClear() && value() != null) {
+    @if (showClear() && hasValue()) {
       <span
         class="text-muted-foreground hover:text-foreground inline-flex cursor-pointer items-center"
         role="button"
+        tabindex="0"
         aria-label="Clear"
         (click)="clear($event)"
+        (keydown.enter)="clear($event)"
+        (keydown.space)="clear($event)"
       >
         <ui-icon name="times" size="xs" />
       </span>

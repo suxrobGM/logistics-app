@@ -142,14 +142,14 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 
 ### Frontend & Mobile
 
-| Technology            | Used by                                   |
-| --------------------- | ----------------------------------------- |
-| Angular 21 + PrimeNG  | TMS Portal, Customer Portal, Admin Portal |
-| Angular 21 SSR        | Marketing Website                         |
-| Tailwind CSS          | All Angular projects                      |
-| Kotlin Multiplatform  | Driver App (shared business logic)        |
-| Compose Multiplatform | Driver App UI                             |
-| Remotion              | DemoVideo (programmatic marketing video)  |
+| Technology              | Used by                                   |
+| ----------------------- | ----------------------------------------- |
+| Angular 22 + spartan/ui | TMS Portal, Customer Portal, Admin Portal |
+| Angular 22 SSR          | Marketing Website                         |
+| Tailwind CSS            | All Angular projects                      |
+| Kotlin Multiplatform    | Driver App (shared business logic)        |
+| Compose Multiplatform   | Driver App UI                             |
+| Remotion                | DemoVideo (programmatic marketing video)  |
 
 ### Infrastructure & DevOps
 
