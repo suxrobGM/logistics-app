@@ -1,19 +1,16 @@
-<p-inputgroup>
-  <p-inputgroup-addon>{{ unit() }}</p-inputgroup-addon>
-  <input
-    pInputText
-    type="number"
-    [id]="id()"
-    [attr.name]="name() || null"
-    [value]="value() ?? ''"
-    [disabled]="disabled()"
-    [readOnly]="readonly()"
-    [required]="required()"
-    [attr.min]="min() ?? null"
-    [attr.max]="max() ?? null"
-    [attr.aria-invalid]="showInvalid() ? 'true' : null"
-    [placeholder]="placeholder()"
-    (input)="onInput($event)"
-    (blur)="touch.emit()"
-  />
-</p-inputgroup>
+<ui-number-field
+  [(value)]="value"
+  [id]="id()"
+  [name]="name()"
+  [disabled]="disabled()"
+  [readonly]="readonly()"
+  [required]="required()"
+  [invalid]="invalid()"
+  [touched]="touched()"
+  [dirty]="dirty()"
+  [min]="min()"
+  [max]="max()"
+  [placeholder]="placeholder()"
+  [suffixLabel]="unit()"
+  (touch)="touch.emit()"
+/>

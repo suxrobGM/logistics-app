@@ -66,12 +66,13 @@ function input(fixture: ComponentFixture<unknown>): HTMLInputElement {
 }
 
 /**
- * Simulate typing `text` and leaving the field. PrimeNG's InputNumber commits and re-formats
- * the value in `onInputBlur`, so a native blur is the realistic way to push a value out.
+ * Simulate typing `text` and leaving the field: the native input commits on `input`, then
+ * `blur` clamps/reformats and marks the field touched.
  */
 function enter(fixture: ComponentFixture<unknown>, text: string): void {
   const el = input(fixture);
   el.value = text;
+  el.dispatchEvent(new Event("input"));
   el.dispatchEvent(new Event("blur"));
 }
 

@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from "@angular/common";
 import {
   booleanAttribute,
   Component,
@@ -8,50 +7,40 @@ import {
   input,
   model,
   output,
+  signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { InputGroupModule } from "primeng/inputgroup";
-import { InputGroupAddonModule } from "primeng/inputgroupaddon";
-import { InputNumber } from "primeng/inputnumber";
+import { HlmInput } from "../../primitives/input";
 import { focusFirstControl } from "../focus-control";
 
 export type NumberFieldMode = "decimal" | "currency";
 
 /**
- * Numeric input. Supersedes `ui-currency-field` and `ui-unit-field`: set `mode="currency"`
- * with a `currency` code for money, or a `prefixLabel` / `suffixLabel` for unit inputs.
+ * Numeric input built on the native `<input>` + `hlmInput`. Supersedes `ui-currency-field`
+ * and `ui-unit-field`: set `mode="currency"` with a `currency` code for money, or a
+ * `prefixLabel` / `suffixLabel` addon for unit inputs.
  *
- * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
- * `ControlValueAccessor`, no compat shim.
+ * Implements Angular's `FormValueControl` and nothing else — binds via `[formField]`,
+ * `formControlName` and `[(ngModel)]` alike, with no `ControlValueAccessor`.
  *
- * `p-inputnumber` is a PrimeNG `BaseInput` and must NOT receive `formControlName` /
- * `[formField]` directly (its `pattern` state input collides with Signal Forms). It is driven
- * internally with a standalone `NgModel` instead. This inner `NgModel` lives in this wrapper's
- * view, not in `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(FORM_FIELD)`
- * still resolves the OUTER binding.
+ * Formatting is applied on blur (via `Intl.NumberFormat`) and the raw number is shown while
+ * editing — a small, deliberate simplification of `p-inputnumber`'s live caret formatting.
  *
  * @example
  * <ui-form-field label="Rate" for="rate" [required]="true">
- *   <ui-number-field id="rate" formControlName="rate" mode="currency" currency="USD" prefixLabel="$" />
+ *   <ui-number-field id="rate" [formField]="form.rate" mode="currency" currency="USD" />
  * </ui-form-field>
  */
 @Component({
   selector: "ui-number-field",
   templateUrl: "./number-field.html",
-  // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
-  // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
   host: { "[attr.id]": "null" },
-  imports: [InputNumber, InputGroupModule, InputGroupAddonModule, FormsModule, NgTemplateOutlet],
+  imports: [HlmInput],
 })
 export class UiNumberField implements FormValueControl<number | null> {
   /** The control's value. Required by `FormValueControl`. */
   public readonly value = model<number | null>(null);
 
-  // Optional state inputs. Signal Forms binds these automatically when present;
-  // the Reactive Forms bridge drives `disabled`.
   public readonly disabled = input(false, { transform: booleanAttribute });
   public readonly readonly = input(false, { transform: booleanAttribute });
   public readonly required = input(false, { transform: booleanAttribute });
@@ -73,34 +62,75 @@ export class UiNumberField implements FormValueControl<number | null> {
   public readonly minFractionDigits = input<number | undefined>(undefined);
   public readonly maxFractionDigits = input<number | undefined>(undefined);
   public readonly useGrouping = input(true, { transform: booleanAttribute });
-  public readonly showButtons = input(false, { transform: booleanAttribute });
 
   // Presentation
   public readonly placeholder = input<string>("");
   public readonly id = input<string>("");
   public readonly inputId = input<string>("");
-  public readonly fluid = input(true, { transform: booleanAttribute });
-  public readonly styleClass = input<string | undefined>(undefined);
-
-  /** Leading input-group addon (e.g. "$"). Renders the `p-inputgroup` chrome when set. */
+  /** `p-inputnumber` prefix/suffix rendered inside the field, around the number. */
+  public readonly prefix = input<string>("");
+  public readonly suffix = input<string>("");
+  /** Leading / trailing input-group addon (e.g. "$" / "mi"). */
   public readonly prefixLabel = input<string>("");
-  /** Trailing input-group addon (e.g. "mi"). Renders the `p-inputgroup` chrome when set. */
   public readonly suffixLabel = input<string>("");
-  /** Text rendered INSIDE the input after the number (p-inputnumber `suffix`), not an addon. */
-  public readonly suffix = input<string | undefined>(undefined);
-  /** Text rendered INSIDE the input before the number (p-inputnumber `prefix`), not an addon. */
-  public readonly prefix = input<string | undefined>(undefined);
 
-  /**
-   * Signal Forms drives `invalid` from form creation, so a required, untouched field would render
-   * as invalid on page load. Reveal it only once the user has interacted — the same rule
-   * `ui-form-field` uses for its inline error message.
-   */
+  // Kept for call-site API parity with the former p-inputnumber wrapper. The native input is
+  // always full-width and has no spinner ramp, so these are no-ops.
+  public readonly fluid = input(true, { transform: booleanAttribute });
+  public readonly showButtons = input(false, { transform: booleanAttribute });
+  public readonly styleClass = input<string>("");
+
+  protected readonly focused = signal(false);
+
+  private readonly formatter = computed(
+    () =>
+      new Intl.NumberFormat(this.locale() || undefined, {
+        style: this.mode() === "currency" ? "currency" : "decimal",
+        currency: this.mode() === "currency" ? this.currency() || "USD" : undefined,
+        minimumFractionDigits: this.minFractionDigits(),
+        maximumFractionDigits:
+          this.maxFractionDigits() ?? (this.mode() === "currency" ? 2 : undefined),
+        useGrouping: this.useGrouping(),
+      }),
+  );
+
+  /** Formatted when idle, raw number while editing. */
+  protected readonly displayValue = computed(() => {
+    const v = this.value();
+    if (v === null || v === undefined || Number.isNaN(v)) return "";
+    if (this.focused()) return String(v);
+    return `${this.prefix()}${this.formatter().format(v)}${this.suffix()}`;
+  });
+
   protected readonly showInvalid = computed(
     () => this.invalid() && (this.touched() || this.dirty()),
   );
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  protected onInput(event: Event): void {
+    const raw = (event.target as HTMLInputElement).value.replace(/[^0-9.\-]/g, "");
+    if (raw === "" || raw === "-" || raw === ".") {
+      this.value.set(null);
+      return;
+    }
+    const n = Number(raw);
+    this.value.set(Number.isNaN(n) ? null : n);
+  }
+
+  protected onBlur(): void {
+    const v = this.value();
+    if (v !== null && v !== undefined && !Number.isNaN(v)) {
+      const min = this.min();
+      const max = this.max();
+      let clamped = v;
+      if (min !== undefined && clamped < min) clamped = min;
+      if (max !== undefined && clamped > max) clamped = max;
+      if (clamped !== v) this.value.set(clamped);
+    }
+    this.focused.set(false);
+    this.touch.emit();
+  }
 
   /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
   public focus(options?: FocusOptions): void {

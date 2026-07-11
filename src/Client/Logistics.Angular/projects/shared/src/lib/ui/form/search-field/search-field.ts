@@ -1,14 +1,13 @@
 import { Component, DestroyRef, inject, input, output, type OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { IconFieldModule } from "primeng/iconfield";
-import { InputIconModule } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
 import { debounceTime, distinctUntilChanged, Subject } from "rxjs";
+import { Icon } from "../../content/icon/icon";
+import { HlmInput } from "../../primitives/input";
 
 @Component({
   selector: "ui-search-field",
   templateUrl: "./search-field.html",
-  imports: [IconFieldModule, InputIconModule, InputTextModule],
+  imports: [HlmInput, Icon],
   host: { class: "block" },
 })
 export class SearchField implements OnInit {

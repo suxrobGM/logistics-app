@@ -1,43 +1,35 @@
-@if (prefixLabel() || suffixLabel()) {
-  <p-inputgroup>
-    @if (prefixLabel()) {
-      <p-inputgroup-addon>{{ prefixLabel() }}</p-inputgroup-addon>
-    }
-    <ng-container [ngTemplateOutlet]="numberInput" />
-    @if (suffixLabel()) {
-      <p-inputgroup-addon>{{ suffixLabel() }}</p-inputgroup-addon>
-    }
-  </p-inputgroup>
-} @else {
-  <ng-container [ngTemplateOutlet]="numberInput" />
-}
-
-<ng-template #numberInput>
-  <p-inputnumber
-    [attr.id]="id() || null"
-    [inputId]="inputId()"
-    [name]="name()"
-    [ngModel]="value()"
-    (ngModelChange)="value.set($event)"
-    [ngModelOptions]="{ standalone: true }"
-    [suffix]="$any(suffix())"
-    [prefix]="$any(prefix())"
+<div class="flex items-stretch">
+  @if (prefixLabel()) {
+    <span
+      class="border-input bg-muted text-muted-foreground inline-flex items-center rounded-l-lg border border-r-0 px-2.5 text-sm"
+    >
+      {{ prefixLabel() }}
+    </span>
+  }
+  <input
+    hlmInput
+    type="text"
+    inputmode="decimal"
+    class="w-full"
+    [class.rounded-l-none]="prefixLabel()"
+    [class.rounded-r-none]="suffixLabel()"
+    [id]="id() || inputId() || null"
+    [attr.name]="name() || null"
+    [value]="displayValue()"
+    [placeholder]="placeholder()"
     [disabled]="disabled()"
     [readonly]="readonly()"
     [required]="required()"
-    [invalid]="showInvalid()"
-    [min]="min()"
-    [max]="max()"
-    [mode]="mode()"
-    [currency]="currency()"
-    [locale]="locale()"
-    [minFractionDigits]="minFractionDigits()"
-    [maxFractionDigits]="maxFractionDigits()"
-    [useGrouping]="useGrouping()"
-    [showButtons]="showButtons()"
-    [placeholder]="placeholder()"
-    [fluid]="fluid()"
-    [styleClass]="$any(styleClass())"
-    (onBlur)="touch.emit()"
+    [attr.aria-invalid]="showInvalid() ? 'true' : null"
+    (input)="onInput($event)"
+    (focus)="focused.set(true)"
+    (blur)="onBlur()"
   />
-</ng-template>
+  @if (suffixLabel()) {
+    <span
+      class="border-input bg-muted text-muted-foreground inline-flex items-center rounded-r-lg border border-l-0 px-2.5 text-sm"
+    >
+      {{ suffixLabel() }}
+    </span>
+  }
+</div>

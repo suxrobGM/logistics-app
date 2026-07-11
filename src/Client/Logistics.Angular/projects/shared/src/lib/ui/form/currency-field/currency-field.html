@@ -1,22 +1,20 @@
-<p-inputgroup>
-  <p-inputgroup-addon>{{ currency() }}</p-inputgroup-addon>
-  <p-input-number
-    [attr.id]="id() || null"
-    [inputId]="$any(inputId())"
-    [name]="name()"
-    [ngModel]="value()"
-    (ngModelChange)="value.set($event)"
-    [ngModelOptions]="{ standalone: true }"
-    [min]="min()"
-    [max]="max()"
-    [disabled]="disabled()"
-    [readonly]="readonly()"
-    [required]="required()"
-    [invalid]="showInvalid()"
-    [placeholder]="placeholder()"
-    mode="decimal"
-    [minFractionDigits]="2"
-    [maxFractionDigits]="2"
-    (onBlur)="touch.emit()"
-  />
-</p-inputgroup>
+<ui-number-field
+  [(value)]="value"
+  [id]="id()"
+  [inputId]="$any(inputId())"
+  [name]="name()"
+  [disabled]="disabled()"
+  [readonly]="readonly()"
+  [required]="required()"
+  [invalid]="invalid()"
+  [touched]="touched()"
+  [dirty]="dirty()"
+  [min]="min()"
+  [max]="max()"
+  [placeholder]="placeholder()"
+  mode="decimal"
+  [minFractionDigits]="2"
+  [maxFractionDigits]="2"
+  [prefixLabel]="currency()"
+  (touch)="touch.emit()"
+/>
