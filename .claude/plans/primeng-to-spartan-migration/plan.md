@@ -395,7 +395,12 @@ four default-drift bugs.
 - `load-form.patch()` assigns field by field: `LoadFormValue` carries keys the model lacks, which
   `patchValue()` dropped but a `model.update()` spread would add to the field tree.
 
-## Phase 5 — spartan/ui foundation + wrapper internals swap
+## Phase 5 — spartan/ui foundation + wrapper internals swap — ✅ **COMPLETE (2026-07-11)**
+
+> **All 7 remaining form controls are spartan-native.** `git grep "primeng/" projects/shared/src/lib/ui/form` returns
+> **only `phone-field`** (`p-inputmask` + `p-inputgroup` — the one deliberate Phase-6 carryover). `@lucide/angular` is
+> gone (icon runtime is `@ng-icons/lucide`). `build:all` green (5/5), 97 tests / 13 spec files, and every overlay
+> (select, filterable select, multiselect, autocomplete, date calendar) browser-verified open → pick → **close**.
 
 > ### ⭮ REWORKED 2026-07-11 — this block supersedes the "Step 1 / Two facts / sp-\*" narrative below.
 >
@@ -418,40 +423,53 @@ four default-drift bugs.
 >   `text-secondary`→`text-subtle-foreground`, `text/bg-accent`→`*-primary`, …). Verified light + dark.
 > - **5.2b** Promoted `ThemeService` to `@logistics/shared`; **working dark mode for admin + customer** (shared
 >   `ui-theme-toggle`, real `.dark-theme` variant, aligned PrimeNG `darkModeSelector`, token-driven body bg).
-> - **5.3** **`ui-icon` → lucide** via `@lucide/angular`'s `LucideDynamicIcon` + a `PI_TO_LUCIDE` map + expanded
->   `BASE_LUCIDE_ICONS`; single lucide runtime (`@ng-icons` was trialled then removed — deviation from the "@ng-icons"
->   decision because our wrappers build on brain, not raw Helm, and both libs require registration anyway). The
->   exhaustive raw `<i class="pi">`→lucide remap + dropping `primeicons` remain **Phase 6**.
+> - **5.3** **`ui-icon` → `@ng-icons/lucide`** — user decision (2026-07-11) **reverses** the earlier `@lucide/angular`
+>   choice. Rationale: `@ng-icons/lucide` is what Helm ships, so generated components need **zero icon edits** (the
+>   generator's `provideIcons({ lucideChevronDown })` / `<ng-icon>` are used as-is). `ui-icon` renders `<ng-icon>` via
+>   `NgIcon`; a `PI_TO_LUCIDE` map + `resolveNgIcon()` (kebab→`lucide`+PascalCase, with pass-through for native names)
+>   bridge legacy names; `BASE_NG_ICONS` / `TMS_NG_ICONS` / `ADMIN_NG_ICONS` register per portal via `provideIcons(...)`.
+>   The three dynamic-icon nav components (`nav-menu`, `favorites-bar`, `sidebar`) render `<ng-icon>` through
+>   `resolveNgIcon`. **`@lucide/angular` fully removed.** The exhaustive `<i class="pi">`→lucide remap + dropping
+>   `primeicons` remain **Phase 6** (the `pi→lucide` bridge now targets `@ng-icons`).
 >
-> **5.4 form-control internal swaps — 7 of 13 DONE** (each spec-validated; `lib/ui/primitives` has the vendored
-> `utils`/`input`/`textarea`, canonicalised):
+> **5.4 form-control internal swaps — ✅ COMPLETE (2026-07-11).** All wrappers are spartan-native and spec-validated.
 >
-> - ✅ `text`, `textarea` (pre-existing) · ✅ `password` (native + reveal) · ✅ `number` (native + `Intl.NumberFormat`) ·
->   ✅ `currency`, `unit` (thin delegations to `number`) · ✅ `search` (native + icon) · ✅ `checkbox`, `toggle`
->   (shadcn hidden-native-checkbox pattern — no brain CVA, no `@ng-icons`).
-> - ⬜ **REMAINING (the overlay/calendar group — a focused follow-on):** `select` (33 files; needs search + object
->   values → brain `BrnSelect` + CDK overlay), `multiselect`, `autocomplete`, `date` (single/range/multiple/time →
->   brain calendar + popover), and the select-dependent `language-picker`, `phone` (country select), `address-form`.
->   These need `provideSpartanHlm()` in the three portal `app.config.ts` first, then brain primitives + harvested Helm
->   listbox/calendar classes + `ui-icon`. Until then those wrappers still import `primeng/*`, so **PrimeNG cannot be
->   removed yet** and `git grep "primeng/" projects/shared/src/lib/ui/form` is non-zero.
+> - ✅ `text`, `textarea`, `password`, `number`, `currency`, `unit`, `search`, `checkbox`, `toggle` (pre-existing native).
+> - ✅ **`select`** — `hlm-select` (`BrnSelect` + `BrnPopover`), `[value]`/`(valueChange)`, `itemToString` renders the
+>   trigger label, `[forceInvalid]="showInvalid()"`, plus built-in **filter** (a projected search `<input>` with
+>   `(keydown.stopPropagation)` so brain's keyManager doesn't hijack it) and **clear**. 34 call sites unchanged.
+> - ✅ **`multiselect`** (`hlm-select-multiple`, `T[]`, comma + chip display) · **`autocomplete`** (`hlm-autocomplete`,
+>   async `completeMethod` debounced via rxjs — browser-verified against the real `/employees?…&Search=` API) ·
+>   **`date`** (`hlm-date-picker` + calendar + `provideNativeDateAdapter`; **single mode only** — the sole mode any call
+>   site uses — plus a native `<input type="time">` for the 5 `showTime`/`timeOnly` fields; `dateFormat` honoured, e.g.
+>   `07/18/2026`). Range/multiple live in the separate `feedback/date-range-picker`, out of form-wrapper scope.
+> - ✅ **`language-picker`** → `ui-select-field`; **`address-form`** fully de-primeng'd (`p-select`→`ui-select-field`,
+>   `pInputText`→`hlmInput`); **`phone-field`** country picker → `hlm-select` (keeps `p-inputmask`/`p-inputgroup`, the
+>   documented Phase-6 carryover).
 >
 > Spec pattern for every swap: the per-wrapper `*.spec.ts` proves the `FormValueControl` contract under Reactive Forms,
-> Signal Forms, and inside `ui-form-field`; wrappers that render `ui-icon` register `BASE_LUCIDE_ICONS` in their TestBed.
+> Signal Forms, and inside `ui-form-field`; overlay wrappers drive the inner brain instance (`BrnSelect`/`HlmDatePicker`)
+> for the view→control direction since options portal outside the fixture.
 >
-> **`select` spike (2026-07-11) — findings, reverted to keep the tree green.** Built `ui-select-field` on the CLI-generated
-> Helm select (`BrnSelect` + `BrnPopover`), driven by `[value]`/`(valueChange)` (no CVA). What worked: trigger renders +
-> shows the selected label, options render with the check on the active item, and a pick updates the value + display
-> (verified in-browser + a rewritten contract spec). **What did NOT work: the panel never closes** — on select, Escape,
-> or outside click. The content renders _inline_ (`.cdk-overlay-container` is empty), so `BrnPopover`/`BrnSelectContent`
-> isn't portaling to a CDK overlay; toggling `provideSpartanHlm()` (usePopover false↔true) made no difference. So the
-> open/close needs a proper overlay wiring fix — likely a missing brain overlay/popover provider or the content must sit
-> in a portal/template brain renders, not as a direct child. Resolve THIS before wiring the wrapper into the app.
-> Other friction to expect each generation: (1) the generator re-adds `@ng-icons` to package.json and imports it in the
-> icon-bearing Helm files (trigger/item/scroll-up/scroll-down) — replace with `@lucide/angular`'s `LucideDynamicIcon`
-> (`<svg lucideIcon="chevron-down">`, `check`, `chevron-up`); (2) Helm uses a `src/`-nested layout while our vendored
-> `utils` is flat — relativize `@logistics/shared/ui/primitives/utils` → `../../../utils`; (3) `verbatimModuleSyntax`
-> needs `import type { BooleanInput }`; (4) the brain select adds ~67 kB → tms `initial` budget (4 MB) needs a bump.
+> **`select` spike RESOLVED — the "panel never closes" bug was a missing structural portal.** The content must sit on an
+> `<ng-template>` carrying `BrnPopoverContent`, i.e. `<hlm-select-content *hlmSelectPortal>`. Without it
+> `registerContent()` never fires, the overlay never opens, content renders inline and `.cdk-overlay-container` stays
+> empty. Adding `*hlmSelectPortal` fixes open/pick/close (browser-verified). `provideSpartanHlm()` (usePopover:false) is
+> added to all four `app.config.ts` for overlay stacking, but it is **not** what fixes closing.
+>
+> **The `BrnFieldControl` trap + the fix.** `BrnSelect` / `BrnSelectMultiple` / `BrnAutocomplete` / `HlmDatePicker` all
+> host-direct `BrnFieldControl`, which hierarchically injects the ambient `NgControl` — inside our wrapper that resolves
+> the consumer's `[formField]` `InteropNgControl`, whose missing `.events` crashes `createStateTracker` (the `pTextarea`
+> shape). Fix: a **`uiDetachedControl`** directive on the inner Helm element provides `{ NgControl: null }`, so brain
+> resolves null on the self element and skips tracking. `git grep NG_VALUE_ACCESSOR projects/` stays empty for our
+> wrappers; the vendored `hlm-date-picker` declares it internally (inert — driven by `[date]`; a Phase-7 grep note).
+>
+> Generation friction is now handled once in `tools/normalize-helm.mjs`: flatten `<name>/src`→`<name>`, **preserve** the
+> hand-customised `utils`/`input`/`textarea` (the generator re-emits stock copies of `input`/`textarea` that re-add the
+> `BrnInput` host-directive we stripped), relativize alias imports, `import type` for
+> `BooleanInput`/`ClassValue`/`ButtonVariants`, and strip the CLI's broken `[forceInvalid]` binding on the date inputs
+> (a CLI/brain 1.1.0 mismatch). Icons are zero-touch now that we use `@ng-icons`. The brain overlays add ~1 MB across the
+> set → tms `initial` budget bumped to **5 MB** error / **4 MB** warning in `angular.json`.
 
 **Step 1 is DONE.** Deps installed into the Angular workspace package (`bun add --cwd src/Client/Logistics.Angular`):
 `@spartan-ng/brain@1.1.0` (MIT), `clsx`, `tw-animate-css`, `tailwind-merge`. `build:all` green, 98 tests green.
