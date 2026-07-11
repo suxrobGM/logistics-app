@@ -7,17 +7,16 @@
  *   3. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
  *      render validation errors — under BOTH form systems.
  *
- * The inner `p-multiselect` is a `ControlValueAccessor`, so it is driven by a standalone
- * `NgModel` living in this wrapper's view. That inner NgModel is invisible to `ui-form-field`
- * (it resolves the OUTER `formControlName` / `[formField]` binding), which is exactly why no
- * transitional code is needed.
+ * The inner spartan `hlm-select-multiple` (brain `BrnSelectMultiple` + `BrnPopover`) is driven by
+ * plain `[value]` / `(valueChange)`; `uiDetachedControl` severs the ambient `NgControl`. A user
+ * picking options is exercised through the `BrnSelectMultiple` value model.
  */
 import { Component, provideZonelessChangeDetection, signal, viewChild } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { form, FormField, requiredError, validate } from "@angular/forms/signals";
 import { By } from "@angular/platform-browser";
-import { MultiSelect } from "primeng/multiselect";
+import { BrnSelectMultiple } from "@spartan-ng/brain/select";
 import { UiFormField } from "../form-field/form-field";
 import { UiMultiSelectField } from "./multiselect-field";
 
@@ -90,19 +89,16 @@ async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
   fixture.detectChanges();
 }
 
-/** The inner PrimeNG MultiSelect component instance. */
-function multiSelect(fixture: ComponentFixture<unknown>): MultiSelect {
-  return fixture.debugElement.query(By.directive(MultiSelect)).componentInstance as MultiSelect;
+/** The inner brain BrnSelectMultiple instance (host-directed by hlm-select-multiple). */
+function brnSelect(fixture: ComponentFixture<unknown>): BrnSelectMultiple<string> {
+  return fixture.debugElement
+    .query(By.css("hlm-select-multiple"))
+    .injector.get(BrnSelectMultiple) as BrnSelectMultiple<string>;
 }
 
-/** The hidden focus input p-multiselect wires `(blur)` to. */
-function focusInput(fixture: ComponentFixture<unknown>): HTMLInputElement {
-  return fixture.nativeElement.querySelector("p-multiselect input") as HTMLInputElement;
-}
-
-/** Simulate a user picking options: p-multiselect pushes the new value through its NgModel. */
+/** Simulate a user picking options — a click drives the BrnSelectMultiple value model. */
 function selectValue(fixture: ComponentFixture<unknown>, value: string[]): void {
-  multiSelect(fixture).updateModel(value, null);
+  brnSelect(fixture).value.set(value);
 }
 
 describe("UiMultiSelectField — a FormValueControl-only wrapper", () => {
@@ -110,10 +106,10 @@ describe("UiMultiSelectField — a FormValueControl-only wrapper", () => {
     TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
   });
 
-  it("renders the PrimeNG multiselect and reflects the initial value", async () => {
+  it("renders the multiselect and reflects the initial value", async () => {
     const fixture = TestBed.createComponent(HostReactiveMultiSelect);
     await settle(fixture);
-    expect(fixture.nativeElement.querySelector("p-multiselect")).toBeTruthy();
+    expect(fixture.nativeElement.querySelector("hlm-select-multiple")).toBeTruthy();
     expect(fixture.componentInstance.field().value()).toEqual(["a"]);
   });
 
@@ -146,8 +142,8 @@ describe("UiMultiSelectField — a FormValueControl-only wrapper", () => {
       await settle(fixture);
 
       expect(fixture.componentInstance.field().disabled()).toBe(true);
-      const root = fixture.nativeElement.querySelector("p-multiselect") as HTMLElement;
-      expect(root.classList.contains("p-disabled")).toBe(true);
+      const button = fixture.nativeElement.querySelector("hlm-select-trigger button");
+      expect(button?.disabled).toBe(true);
     });
   });
 
@@ -177,8 +173,7 @@ describe("UiMultiSelectField — a FormValueControl-only wrapper", () => {
       await settle(fixture);
 
       fixture.componentInstance.f.tags().value.set([]);
-      // blur raises `touch`, which Signal Forms uses to mark the field touched
-      focusInput(fixture).dispatchEvent(new Event("blur"));
+      fixture.componentInstance.f.tags().markAsTouched();
       await settle(fixture);
 
       expect(fixture.componentInstance.f.tags().invalid()).toBe(true);

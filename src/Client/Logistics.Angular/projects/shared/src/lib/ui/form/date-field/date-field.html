@@ -1,25 +1,43 @@
-<p-datepicker
-  [ngModel]="value()"
-  (ngModelChange)="value.set($event)"
-  [ngModelOptions]="{ standalone: true }"
-  [id]="id()"
-  [inputId]="$any(inputId())"
-  [selectionMode]="selectionMode()"
-  [showIcon]="showIcon()"
-  [dateFormat]="dateFormat()"
-  [placeholder]="$any(placeholder())"
-  [appendTo]="appendTo()"
-  [fluid]="fluid()"
-  [showTime]="showTime()"
-  [timeOnly]="timeOnly()"
-  [styleClass]="$any(styleClass())"
-  [iconDisplay]="$any(iconDisplay())"
-  [minDate]="minDate()"
-  [maxDate]="maxDate()"
-  [disabled]="disabled()"
-  [readonlyInput]="readonly()"
-  [required]="required()"
-  [invalid]="showInvalid()"
-  (onBlur)="touch.emit()"
-  (onSelect)="dateSelected.emit($event)"
-/>
+@if (timeOnly()) {
+  <input
+    hlmInput
+    type="time"
+    [id]="controlId()"
+    [value]="timeValue()"
+    [disabled]="disabled() || readonly()"
+    [attr.aria-invalid]="showInvalid() || null"
+    [class.w-full]="fluid()"
+    (input)="onTimeInput($event)"
+  />
+} @else {
+  <div [class.flex]="showTime()" [class.gap-2]="showTime()">
+    <hlm-date-picker
+      uiDetachedControl
+      [class.flex-1]="showTime()"
+      [date]="value() ?? undefined"
+      (dateChange)="onDateChange($any($event))"
+      [formatDate]="formatDate"
+      [min]="minDate()"
+      [max]="maxDate()"
+      [disabled]="disabled() || readonly()"
+      [autoCloseOnSelect]="true"
+    >
+      <hlm-date-picker-input
+        [inputId]="controlId()"
+        [placeholder]="placeholder() ?? ''"
+        [forceInvalid]="showInvalid()"
+      />
+    </hlm-date-picker>
+
+    @if (showTime()) {
+      <input
+        hlmInput
+        type="time"
+        class="w-32"
+        [value]="timeValue()"
+        [disabled]="disabled() || readonly()"
+        (input)="onTimeInput($event)"
+      />
+    }
+  </div>
+}

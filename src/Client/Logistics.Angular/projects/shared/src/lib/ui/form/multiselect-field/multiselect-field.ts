@@ -7,26 +7,25 @@ import {
   input,
   model,
   output,
+  signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { MultiSelect } from "primeng/multiselect";
+import { Icon } from "../../content/icon/icon";
+import { HlmSelectImports } from "../../primitives/select";
+import { DetachedControl } from "../detached-control";
 import { focusFirstControl } from "../focus-control";
 
 /**
- * Multi-select dropdown backed by PrimeNG's `p-multiselect`.
+ * Multi-select dropdown.
  *
  * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
  * signal-form controls into Reactive and Template-Driven forms automatically, so this one
  * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
  * `ControlValueAccessor`, no compat shim.
  *
- * `p-multiselect` is a `ControlValueAccessor` (a `BaseEditableHolder`/`BaseInput` subclass), so
- * we must NOT put `formControlName` / `[formField]` on it — that would collide with Signal Forms'
- * `pattern` state input under strictTemplates. Instead we drive it with a standalone `NgModel`
- * (`[ngModel]` + `(ngModelChange)`); the `standalone: true` keeps that inner NgModel from
- * registering with an ancestor `NgForm`, and it lives in THIS wrapper's view so
- * `ui-form-field`'s `contentChild(FORM_FIELD)` still resolves the OUTER binding.
+ * The inner spartan `hlm-select-multiple` (brain `BrnSelectMultiple` + `BrnPopover`) is driven with
+ * plain `[value]` / `(valueChange)`. `uiDetachedControl` severs the ambient `NgControl` so brain's
+ * `BrnFieldControl` does not track our Signal Forms control. The panel portals via `*hlmSelectPortal`.
  *
  * @example
  * <ui-form-field label="Tags" for="tags" [required]="true">
@@ -40,7 +39,7 @@ import { focusFirstControl } from "../focus-control";
   // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
   // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
   host: { "[attr.id]": "null" },
-  imports: [MultiSelect, FormsModule],
+  imports: [HlmSelectImports, DetachedControl, Icon],
 })
 export class UiMultiSelectField<T = unknown> implements FormValueControl<T[]> {
   /** The control's value. Required by `FormValueControl`. */
@@ -57,8 +56,14 @@ export class UiMultiSelectField<T = unknown> implements FormValueControl<T[]> {
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 
-  /** Raised on blur so the form can mark the field touched. */
+  /** Raised when the panel closes so the form can mark the field touched. */
   public readonly touch = output<void>();
+
+  /** Raised after the selection changes. */
+  public readonly selectionChange = output<T[]>();
+
+  /** Raised when the user clears the whole selection. */
+  public readonly cleared = output<void>();
 
   // Presentation
   public readonly options = input.required<unknown[]>();
@@ -71,19 +76,70 @@ export class UiMultiSelectField<T = unknown> implements FormValueControl<T[]> {
   public readonly display = input<"comma" | "chip">("comma");
   public readonly maxSelectedLabels = input<number>();
   public readonly id = input<string>("");
-  /** PrimeNG defaults to undefined (inline overlay). Do not portal to body unless asked. */
-  public readonly appendTo = input<unknown>(undefined);
+  public readonly fluid = input(true, { transform: booleanAttribute });
 
-  /**
-   * Signal Forms drives `invalid` from form creation, so a required, untouched field would render
-   * as invalid on page load. Reveal it only once the user has interacted — the same rule
-   * `ui-form-field` uses for its inline error message.
-   */
+  /** Free-text filter over the visible options, active only when `filter` is set. */
+  protected readonly filterText = signal("");
+
+  protected readonly displayOptions = computed(() => {
+    const opts = this.options();
+    const query = this.filterText().trim().toLowerCase();
+    if (!this.filter() || !query) return opts;
+    return opts.filter((opt) => this.resolveLabel(opt).toLowerCase().includes(query));
+  });
+
+  /** The selected options, resolved back from the stored values for chip display. */
+  protected readonly selectedLabels = computed(() =>
+    this.value().map((v) => ({ value: v, label: this.itemToString(v) })),
+  );
+
   protected readonly showInvalid = computed(
     () => this.invalid() && (this.touched() || this.dirty()),
   );
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  protected resolveValue(option: unknown): unknown {
+    const path = this.optionValue();
+    return path ? (option as Record<string, unknown>)[path] : option;
+  }
+
+  protected resolveLabel(option: unknown): string {
+    const path = this.optionLabel();
+    const label = path ? (option as Record<string, unknown>)[path] : option;
+    return label == null ? "" : String(label);
+  }
+
+  /** Maps a stored value back to its label (used by `hlm-select-value` and chips). */
+  protected readonly itemToString = (value: unknown): string => {
+    const option = this.options().find((opt) => this.resolveValue(opt) === value);
+    if (option !== undefined) return this.resolveLabel(option);
+    return value == null ? "" : String(value);
+  };
+
+  protected onValueChange(next: T[] | null | undefined): void {
+    const value = next ?? [];
+    this.value.set(value);
+    this.selectionChange.emit(value);
+  }
+
+  protected onClosed(): void {
+    this.filterText.set("");
+    this.touch.emit();
+  }
+
+  protected clear(event: Event): void {
+    event.stopPropagation();
+    this.value.set([]);
+    this.cleared.emit();
+  }
+
+  protected removeChip(value: T, event: Event): void {
+    event.stopPropagation();
+    const next = this.value().filter((v) => v !== value);
+    this.value.set(next);
+    this.selectionChange.emit(next);
+  }
 
   /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
   public focus(options?: FocusOptions): void {

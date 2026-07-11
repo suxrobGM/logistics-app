@@ -8,29 +8,34 @@ import {
   model,
   output,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { AutoComplete, type AutoCompleteCompleteEvent } from "primeng/autocomplete";
+import { Subject } from "rxjs";
+import { debounceTime, filter } from "rxjs/operators";
+import { HlmAutocompleteImports } from "../../primitives/autocomplete";
+import { DetachedControl } from "../detached-control";
 import { focusFirstControl } from "../focus-control";
 
+/** The payload of `completeMethod` — the current search query. Mirrors the old p-autocomplete event. */
+export interface UiAutocompleteCompleteEvent {
+  query: string;
+}
+
 /**
- * Type-ahead autocomplete backed by PrimeNG's `p-autocomplete`.
+ * Type-ahead autocomplete.
  *
  * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
  * signal-form controls into Reactive and Template-Driven forms automatically, so this one
  * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
  * `ControlValueAccessor`, no compat shim.
  *
- * `p-autocomplete` extends `BaseInput` (a `ControlValueAccessor`) and so must never carry
- * `formControlName` / `[formField]` itself: every `BaseInput` subclass collides with Signal
- * Forms' `pattern` state input under strictTemplates (`pattern: string` vs the Signal Forms
- * `pattern` control). Instead we drive it with a standalone `NgModel`
- * (`[ngModel]` / `(ngModelChange)` + `{ standalone: true }`); the inner NgModel lives in THIS
- * view, not in `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(FORM_FIELD)`
- * still resolves the OUTER binding. See `forms/signal-forms-compat-probe.spec.ts`.
+ * The inner spartan `hlm-autocomplete` (brain `BrnAutocomplete` + `BrnPopover`) is driven with plain
+ * `[value]` / `(valueChange)` and its search via `(searchChange)`. `uiDetachedControl` severs the
+ * ambient `NgControl` so brain's `BrnFieldControl` does not track our Signal Forms control. The panel
+ * portals via `*hlmAutocompletePortal`.
  *
- * The parent still owns fetching suggestions: wire `(completeMethod)` to your search handler and
- * feed the result back through `[suggestions]`.
+ * The parent still owns fetching suggestions: wire `(completeMethod)` to your search handler and feed
+ * the result back through `[suggestions]`.
  *
  * @example
  * <ui-form-field label="Driver" for="driver" [required]="true">
@@ -45,7 +50,7 @@ import { focusFirstControl } from "../focus-control";
   // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
   // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
   host: { "[attr.id]": "null" },
-  imports: [AutoComplete, FormsModule],
+  imports: [HlmAutocompleteImports, DetachedControl],
 })
 export class UiAutocompleteField<T = unknown> implements FormValueControl<T | null> {
   /** The control's value. Required by `FormValueControl`. */
@@ -62,60 +67,75 @@ export class UiAutocompleteField<T = unknown> implements FormValueControl<T | nu
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 
-  /** Raised on blur so the form can mark the field touched. */
+  /** Raised when the panel closes so the form can mark the field touched. */
   public readonly touch = output<void>();
 
-  /**
-   * Raised when p-autocomplete needs suggestions. Mirrors `completeMethod`; carries `{ query }`.
-   * Every call site uses this to fetch and set `suggestions`.
-   */
-  public readonly completeMethod = output<AutoCompleteCompleteEvent>();
+  /** Raised (debounced) when the query is long enough to search. Every call site fetches and sets `suggestions`. */
+  public readonly completeMethod = output<UiAutocompleteCompleteEvent>();
 
-  /** Raised after the user picks a suggestion. Mirrors p-autocomplete's `onSelect`; emits the chosen value. */
+  /** Raised after the user picks a suggestion; emits the chosen value. */
   public readonly optionSelected = output<T | null>();
 
-  /** Raised when the user clicks the clear (x) button. Mirrors p-autocomplete's `onClear`. */
+  /** Raised when the user clears the field. */
   public readonly cleared = output<void>();
 
-  // Presentation. Every default below mirrors the PrimeNG AutoComplete class default
-  // (see node_modules/primeng/fesm2022/primeng-autocomplete.mjs) — do not "improve" them.
+  // Presentation
   public readonly suggestions = input.required<readonly T[]>();
-  /** Field path for an option's label. Undefined (not "") so PrimeNG applies its own label fallback. */
+  /** Field path for a suggestion's label. Undefined means the suggestion itself is the label. */
   public readonly optionLabel = input<string | undefined>(undefined);
   public readonly placeholder = input<string | undefined>(undefined);
-  /** PrimeNG default is 1. */
   /**
-   * Characters typed before a search fires (p-autocomplete's `minLength`).
+   * Characters typed before a search fires.
    *
    * Deliberately NOT called `minLength`: `FormValueControl` reserves that name for a validator-derived
-   * state input, and Signal Forms would auto-bind over it — silently changing when the search triggers.
+   * state input, and Signal Forms would auto-bind over it.
    */
   public readonly minQueryLength = input<number>(1);
-  /** PrimeNG default is 300 (ms). */
+  /** Debounce (ms) before `completeMethod` fires. */
   public readonly delay = input<number>(300);
   public readonly id = input<string>("");
-  /** PrimeNG signal input `appendTo`, default `undefined`. */
-  public readonly appendTo = input<unknown>(undefined);
-  /** PrimeNG (BaseInput) default is `undefined`. */
-  public readonly fluid = input<boolean | undefined>(undefined);
-  public readonly styleClass = input<string | undefined>(undefined);
-  /** PrimeNG default is `undefined` (booleanAttribute, no initializer). */
-  public readonly forceSelection = input<boolean | undefined>(undefined);
-  /** PrimeNG default is `false`. */
   public readonly showClear = input(false, { transform: booleanAttribute });
-  /** PrimeNG default is `undefined` (booleanAttribute, no initializer). */
-  public readonly dropdown = input<boolean | undefined>(undefined);
 
-  /**
-   * Signal Forms drives `invalid` from form creation, so a required, untouched field would render
-   * as invalid on page load. Reveal it only once the user has interacted — the same rule
-   * `ui-form-field` uses for its inline error message.
-   */
   protected readonly showInvalid = computed(
     () => this.invalid() && (this.touched() || this.dirty()),
   );
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly search$ = new Subject<string>();
+
+  constructor() {
+    this.search$
+      .pipe(
+        debounceTime(this.delay()),
+        filter((query) => query.length >= this.minQueryLength()),
+        takeUntilDestroyed(),
+      )
+      .subscribe((query) => this.completeMethod.emit({ query }));
+  }
+
+  protected label(option: unknown): string {
+    const path = this.optionLabel();
+    const label = path ? (option as Record<string, unknown>)[path] : option;
+    return label == null ? "" : String(label);
+  }
+
+  /** Maps the selected value back to its label so the input shows it after a pick. */
+  protected readonly itemToString = (value: unknown): string => this.label(value);
+
+  protected onValueChange(next: T | null | undefined): void {
+    const value = next ?? null;
+    this.value.set(value);
+    this.optionSelected.emit(value);
+    if (value == null) this.cleared.emit();
+  }
+
+  protected onSearch(query: string): void {
+    this.search$.next(query);
+  }
+
+  protected onClosed(): void {
+    this.touch.emit();
+  }
 
   /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
   public focus(options?: FocusOptions): void {

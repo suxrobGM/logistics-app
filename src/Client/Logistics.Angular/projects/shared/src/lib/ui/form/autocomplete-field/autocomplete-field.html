@@ -1,28 +1,25 @@
-<p-autocomplete
-  class="w-full"
-  inputStyleClass="w-full"
-  [suggestions]="$any(suggestions())"
-  [ngModel]="value()"
-  (ngModelChange)="value.set($event)"
-  [ngModelOptions]="{ standalone: true }"
-  [inputId]="id()"
-  [optionLabel]="$any(optionLabel())"
-  [placeholder]="$any(placeholder())"
-  [minLength]="minQueryLength()"
-  [delay]="delay()"
-  [appendTo]="appendTo()"
-  [fluid]="$any(fluid())"
-  [styleClass]="$any(styleClass())"
-  [forceSelection]="$any(forceSelection())"
-  [showClear]="showClear()"
-  [dropdown]="$any(dropdown())"
-  [disabled]="disabled()"
-  [readonly]="readonly()"
-  [required]="required()"
-  [invalid]="showInvalid()"
-  [attr.name]="name() || null"
-  (completeMethod)="completeMethod.emit($event)"
-  (onSelect)="optionSelected.emit($event.value)"
-  (onClear)="cleared.emit()"
-  (onBlur)="touch.emit()"
-/>
+<hlm-autocomplete
+  uiDetachedControl
+  [value]="value()"
+  (valueChange)="onValueChange($any($event))"
+  (searchChange)="onSearch($event)"
+  [itemToString]="itemToString"
+  [disabled]="disabled() || readonly()"
+  (closed)="onClosed()"
+>
+  <hlm-autocomplete-input
+    [inputId]="id()"
+    [placeholder]="placeholder() ?? ''"
+    [showClear]="showClear()"
+    [forceInvalid]="showInvalid()"
+  />
+
+  <hlm-autocomplete-content *hlmAutocompletePortal>
+    <div hlmAutocompleteList>
+      @for (option of suggestions(); track option) {
+        <hlm-autocomplete-item [value]="$any(option)">{{ label(option) }}</hlm-autocomplete-item>
+      }
+    </div>
+    <hlm-autocomplete-empty>No results found</hlm-autocomplete-empty>
+  </hlm-autocomplete-content>
+</hlm-autocomplete>

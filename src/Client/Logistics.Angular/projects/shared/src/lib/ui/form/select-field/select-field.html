@@ -1,25 +1,44 @@
-<p-select
-  [options]="$any(options())"
-  [ngModel]="value()"
-  (ngModelChange)="value.set($event)"
-  [ngModelOptions]="{ standalone: true }"
-  [inputId]="id()"
-  [optionLabel]="$any(optionLabel())"
-  [optionValue]="$any(optionValue())"
-  [placeholder]="$any(placeholder())"
-  [showClear]="showClear()"
-  [filter]="filter()"
-  [appendTo]="appendTo()"
-  [fluid]="fluid()"
-  [styleClass]="$any(styleClass())"
-  [filterPlaceholder]="$any(filterPlaceholder())"
-  [filterBy]="$any(filterBy())"
-  [loading]="loading()"
-  [disabled]="disabled()"
-  [readonly]="readonly()"
-  [required]="required()"
-  [invalid]="showInvalid()"
-  (onBlur)="touch.emit()"
-  (onChange)="selectionChange.emit($event.value)"
-  (onClear)="cleared.emit()"
-/>
+<hlm-select
+  uiDetachedControl
+  [value]="value()"
+  (valueChange)="onValueChange($any($event))"
+  [itemToString]="itemToString"
+  [disabled]="disabled() || readonly()"
+  [class]="styleClass()"
+  (closed)="onClosed()"
+>
+  <hlm-select-trigger [buttonId]="id()" [forceInvalid]="showInvalid()" [class]="fluid() ? 'w-full' : ''">
+    <hlm-select-value [placeholder]="placeholder() ?? ''" />
+    @if (showClear() && value() != null) {
+      <span
+        class="text-muted-foreground hover:text-foreground inline-flex cursor-pointer items-center"
+        role="button"
+        aria-label="Clear"
+        (click)="clear($event)"
+      >
+        <ui-icon name="times" size="xs" />
+      </span>
+    }
+  </hlm-select-trigger>
+
+  <hlm-select-content *hlmSelectPortal>
+    @if (filter()) {
+      <div class="border-border border-b p-1">
+        <input
+          type="text"
+          class="placeholder:text-muted-foreground w-full rounded-sm bg-transparent px-2 py-1 text-sm outline-none"
+          [placeholder]="filterPlaceholder() ?? 'Search...'"
+          [value]="filterText()"
+          (input)="filterText.set($any($event.target).value)"
+          (keydown)="$event.stopPropagation()"
+          (click)="$event.stopPropagation()"
+        />
+      </div>
+    }
+    @for (opt of displayOptions(); track resolveValue(opt)) {
+      <hlm-select-item [value]="$any(resolveValue(opt))">{{ resolveLabel(opt) }}</hlm-select-item>
+    } @empty {
+      <div class="text-muted-foreground px-2 py-1.5 text-sm">No results</div>
+    }
+  </hlm-select-content>
+</hlm-select>

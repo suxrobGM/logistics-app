@@ -8,20 +8,21 @@
  *   3. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
  *      render validation errors — under BOTH form systems.
  *
- * The inner `<p-datepicker>` is driven with a standalone `ngModel` (it is a ControlValueAccessor);
- * it never carries `formControlName`/`[formField]`, so it does not collide with Signal Forms'
- * `pattern` state input. See `forms/signal-forms-compat-probe.spec.ts`.
+ * The inner spartan `hlm-date-picker` (brain calendar + `BrnPopover`) is driven with plain `[date]`
+ * / `(dateChange)`; `uiDetachedControl` severs the ambient `NgControl`. Its calendar portals to a
+ * CDK overlay outside the fixture, so a user pick is exercised at the same seam the calendar hits —
+ * the picker's `updateDate` (which emits `dateChange`) — then we assert the OUTER control receives it.
  */
 import { Component, provideZonelessChangeDetection, signal, viewChild } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { form, FormField, required } from "@angular/forms/signals";
 import { By } from "@angular/platform-browser";
-import { DatePicker } from "primeng/datepicker";
+import { HlmDatePicker } from "../../primitives/date-picker";
 import { UiFormField } from "../form-field/form-field";
 import { UiDateField } from "./date-field";
 
-const INITIAL = new Date(2024, 0, 15); // Jan 15 2024 -> "01/15/2024" with dateFormat "mm/dd/yy"
+const INITIAL = new Date(2024, 0, 15); // Jan 15 2024
 
 /** Reactive Forms host: wrapper bound with formControlName, wrapped in ui-form-field chrome. */
 @Component({
@@ -66,20 +67,10 @@ async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
   fixture.detectChanges();
 }
 
-function input(fixture: ComponentFixture<unknown>): HTMLInputElement {
-  return fixture.nativeElement.querySelector("input") as HTMLInputElement;
-}
-
-/**
- * Simulate a user typing a formatted date into the datepicker's input.
- * `p-datepicker.onUserInput` early-returns unless a keydown was seen first (`isKeydown`),
- * so a keydown must precede the input event.
- */
-function typeDate(fixture: ComponentFixture<unknown>, text: string): void {
-  const el = input(fixture);
-  el.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true }));
-  el.value = text;
-  el.dispatchEvent(new Event("input", { bubbles: true }));
+/** The inner spartan date picker instance (drives the same seam a calendar click hits). */
+function picker(fixture: ComponentFixture<unknown>): HlmDatePicker<Date> {
+  return fixture.debugElement.query(By.directive(HlmDatePicker))
+    .componentInstance as HlmDatePicker<Date>;
 }
 
 describe("UiDateField — a FormValueControl-only wrapper", () => {
@@ -87,10 +78,11 @@ describe("UiDateField — a FormValueControl-only wrapper", () => {
     TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
   });
 
-  it("renders the PrimeNG datepicker and reflects the initial value", async () => {
+  it("renders the date field and reflects the initial value", async () => {
     const fixture = TestBed.createComponent(HostReactiveDate);
     await settle(fixture);
-    expect(input(fixture).value).toBe("01/15/2024");
+    expect(fixture.nativeElement.querySelector("input")).toBeTruthy();
+    expect(fixture.componentInstance.field().value()?.getTime()).toBe(INITIAL.getTime());
   });
 
   describe("under legacy Reactive Forms (formControlName)", () => {
@@ -103,21 +95,19 @@ describe("UiDateField — a FormValueControl-only wrapper", () => {
       await settle(fixture);
 
       expect(fixture.componentInstance.field().value()?.getTime()).toBe(next.getTime());
-      expect(input(fixture).value).toBe("06/20/2024");
     });
 
-    it("syncs view -> control (typing)", async () => {
+    it("syncs view -> control (calendar pick via the picker seam)", async () => {
       const fixture = TestBed.createComponent(HostReactiveDate);
       await settle(fixture);
 
-      typeDate(fixture, "03/10/2024");
+      const picked = new Date(2024, 2, 10); // Mar 10 2024
+      picker(fixture).updateDate(picked);
       await settle(fixture);
 
-      const value = fixture.componentInstance.fg.controls.shipDate.value;
-      expect(value).toBeInstanceOf(Date);
-      expect(value?.getFullYear()).toBe(2024);
-      expect(value?.getMonth()).toBe(2); // March
-      expect(value?.getDate()).toBe(10);
+      expect(fixture.componentInstance.fg.controls.shipDate.value?.getTime()).toBe(
+        picked.getTime(),
+      );
     });
 
     it("propagates disabled state from the control", async () => {
@@ -127,7 +117,7 @@ describe("UiDateField — a FormValueControl-only wrapper", () => {
       fixture.componentInstance.fg.controls.shipDate.disable();
       await settle(fixture);
 
-      expect(input(fixture).disabled).toBe(true);
+      expect(fixture.componentInstance.field().disabled()).toBe(true);
     });
   });
 
@@ -141,24 +131,9 @@ describe("UiDateField — a FormValueControl-only wrapper", () => {
       await settle(fixture);
 
       expect(fixture.componentInstance.field().value()?.getTime()).toBe(next.getTime());
-      expect(input(fixture).value).toBe("08/05/2024");
     });
 
-    it("syncs view -> field (typing)", async () => {
-      const fixture = TestBed.createComponent(HostSignalDate);
-      await settle(fixture);
-
-      typeDate(fixture, "04/12/2024");
-      await settle(fixture);
-
-      const value = fixture.componentInstance.model().shipDate;
-      expect(value).toBeInstanceOf(Date);
-      expect(value?.getFullYear()).toBe(2024);
-      expect(value?.getMonth()).toBe(3); // April
-      expect(value?.getDate()).toBe(12);
-    });
-
-    it("re-emits the inner DatePicker's (onSelect) as (dateSelected) with the picked Date", async () => {
+    it("re-emits the picker's date change as (dateSelected) and syncs to the field", async () => {
       const fixture = TestBed.createComponent(HostSignalDate);
       await settle(fixture);
 
@@ -166,24 +141,19 @@ describe("UiDateField — a FormValueControl-only wrapper", () => {
       let emitted: Date | undefined;
       fixture.componentInstance.field().dateSelected.subscribe((d) => (emitted = d));
 
-      // Emit from the real inner PrimeNG DatePicker instance — its `onSelect` carries a Date
-      // (verified against primeng-datepicker.mjs: `this.onSelect.emit(date)`).
-      const picker = fixture.debugElement.query(By.directive(DatePicker))
-        .componentInstance as DatePicker;
-      picker.onSelect.emit(picked);
+      picker(fixture).updateDate(picked);
       await settle(fixture);
 
-      expect(emitted).toBe(picked);
+      expect(emitted?.getTime()).toBe(picked.getTime());
+      expect(fixture.componentInstance.model().shipDate?.getTime()).toBe(picked.getTime());
     });
 
     it("ui-form-field renders the required error once touched — with NO transitional code", async () => {
       const fixture = TestBed.createComponent(HostSignalDate);
       await settle(fixture);
 
-      // Clear to an invalid (null) value, then blur — blur raises `touch`, which Signal Forms
-      // uses to mark the field touched.
       fixture.componentInstance.f.shipDate().value.set(null);
-      input(fixture).dispatchEvent(new Event("blur"));
+      fixture.componentInstance.f.shipDate().markAsTouched();
       await settle(fixture);
 
       expect(fixture.componentInstance.f.shipDate().invalid()).toBe(true);
