@@ -397,6 +397,48 @@ four default-drift bugs.
 
 ## Phase 5 — spartan/ui foundation + wrapper internals swap
 
+> ### ⭮ REWORKED 2026-07-11 — this block supersedes the "Step 1 / Two facts / sp-\*" narrative below.
+>
+> The whole design-system foundation was refactored (branch `feat/angular-22-upgrade`) per the user's four decisions
+> (2026-07-11): **canonical shadcn tokens** (drop `sp-*`), **keep the `ui-*-field` wrappers**, **single lucide runtime**,
+> and **use the official CLI**. The earlier "vendor Helm by hand, no CLI" and "namespace `sp-*`" decisions are reversed;
+> ignore them below.
+>
+> **Foundation — DONE & verified (build:all + 98 tests + Playwright):**
+>
+> - **5.0** Adopted `@spartan-ng/cli` (devDep); deleted the 320-line `tools/vendor-spartan-helm.mjs`; added a ~40-line
+>   `tools/normalize-helm.mjs` (relativizes the generator's self-alias imports, which ng-packagr rejects). ng-packagr
+>   spike settled: Helm uses **relative** imports, consumed from source.
+> - **5.1** Restructured `lib/components` → **`lib/ui`** (`primitives`/`form`/`table`/`layout`/`content`/`feedback`/
+>   `icons`); folded in `lib/spartan`, `lib/forms`, `lib/icons`; promoted `permission` out. Entry point
+>   `@logistics/shared/components` → **`@logistics/shared/ui`** (199 imports codemodded). Non-UI folders unchanged.
+> - **5.2** **Canonical shadcn tokens** in the shared `styles/theme.css` (renamed from `spartan.css`): `sp-*` gone,
+>   `tailwindcss-primeui` dropped, TMS's inverted `@theme` moved to the shared layer with light+dark keyed to its raw
+>   ramp. Utility codemod across ~170 files (`text-primary`→`text-foreground`, `text-muted`→`text-muted-foreground`,
+>   `text-secondary`→`text-subtle-foreground`, `text/bg-accent`→`*-primary`, …). Verified light + dark.
+> - **5.2b** Promoted `ThemeService` to `@logistics/shared`; **working dark mode for admin + customer** (shared
+>   `ui-theme-toggle`, real `.dark-theme` variant, aligned PrimeNG `darkModeSelector`, token-driven body bg).
+> - **5.3** **`ui-icon` → lucide** via `@lucide/angular`'s `LucideDynamicIcon` + a `PI_TO_LUCIDE` map + expanded
+>   `BASE_LUCIDE_ICONS`; single lucide runtime (`@ng-icons` was trialled then removed — deviation from the "@ng-icons"
+>   decision because our wrappers build on brain, not raw Helm, and both libs require registration anyway). The
+>   exhaustive raw `<i class="pi">`→lucide remap + dropping `primeicons` remain **Phase 6**.
+>
+> **5.4 form-control internal swaps — 7 of 13 DONE** (each spec-validated; `lib/ui/primitives` has the vendored
+> `utils`/`input`/`textarea`, canonicalised):
+>
+> - ✅ `text`, `textarea` (pre-existing) · ✅ `password` (native + reveal) · ✅ `number` (native + `Intl.NumberFormat`) ·
+>   ✅ `currency`, `unit` (thin delegations to `number`) · ✅ `search` (native + icon) · ✅ `checkbox`, `toggle`
+>   (shadcn hidden-native-checkbox pattern — no brain CVA, no `@ng-icons`).
+> - ⬜ **REMAINING (the overlay/calendar group — a focused follow-on):** `select` (33 files; needs search + object
+>   values → brain `BrnSelect` + CDK overlay), `multiselect`, `autocomplete`, `date` (single/range/multiple/time →
+>   brain calendar + popover), and the select-dependent `language-picker`, `phone` (country select), `address-form`.
+>   These need `provideSpartanHlm()` in the three portal `app.config.ts` first, then brain primitives + harvested Helm
+>   listbox/calendar classes + `ui-icon`. Until then those wrappers still import `primeng/*`, so **PrimeNG cannot be
+>   removed yet** and `git grep "primeng/" projects/shared/src/lib/ui/form` is non-zero.
+>
+> Spec pattern for every swap: the per-wrapper `*.spec.ts` proves the `FormValueControl` contract under Reactive Forms,
+> Signal Forms, and inside `ui-form-field`; wrappers that render `ui-icon` register `BASE_LUCIDE_ICONS` in their TestBed.
+
 **Step 1 is DONE.** Deps installed into the Angular workspace package (`bun add --cwd src/Client/Logistics.Angular`):
 `@spartan-ng/brain@1.1.0` (MIT), `clsx`, `tw-animate-css`, `tailwind-merge`. `build:all` green, 98 tests green.
 `@angular/cdk@22.0.4` was already present and satisfies brain's peer `>=21 <23`.
