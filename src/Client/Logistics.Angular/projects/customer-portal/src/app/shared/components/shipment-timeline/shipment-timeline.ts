@@ -1,11 +1,11 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
-import { Stack, Typography } from "@logistics/shared/ui";
+import { Icon, Stack, Typography, type IconName } from "@logistics/shared/ui";
 
 interface TimelineStep {
   label: string;
   date: string | null | undefined;
-  icon: string;
+  icon: IconName;
 }
 
 /**
@@ -14,7 +14,7 @@ interface TimelineStep {
 @Component({
   selector: "cp-shipment-timeline",
   templateUrl: "./shipment-timeline.html",
-  imports: [DatePipe, Stack, Typography],
+  imports: [DatePipe, Icon, Stack, Typography],
 })
 export class ShipmentTimeline {
   public readonly dispatchedAt = input<string | null | undefined>(null);
@@ -22,9 +22,9 @@ export class ShipmentTimeline {
   public readonly deliveredAt = input<string | null | undefined>(null);
 
   protected readonly steps = computed<TimelineStep[]>(() => [
-    { label: "Dispatched", date: this.dispatchedAt(), icon: "pi pi-send" },
-    { label: "Picked Up", date: this.pickedUpAt(), icon: "pi pi-box" },
-    { label: "Delivered", date: this.deliveredAt(), icon: "pi pi-check-circle" },
+    { label: "Dispatched", date: this.dispatchedAt(), icon: "send" },
+    { label: "Picked Up", date: this.pickedUpAt(), icon: "box" },
+    { label: "Delivered", date: this.deliveredAt(), icon: "check-circle" },
   ]);
 
   protected getStepColor(step: TimelineStep): string {

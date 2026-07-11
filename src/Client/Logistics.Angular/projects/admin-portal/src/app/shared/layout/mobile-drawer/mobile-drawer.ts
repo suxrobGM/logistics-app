@@ -2,19 +2,20 @@ import { Component, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { Converters } from "@logistics/shared";
 import { PermissionService } from "@logistics/shared/services";
+import { Icon } from "@logistics/shared/ui";
 import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
 import { DrawerModule } from "primeng/drawer";
 import { AuthService } from "@/core/auth";
 import { LayoutService } from "@/core/services/layout.service";
-import { type AdminNavSection, sidebarSections } from "../sidebar/sidebar-items";
+import { sidebarSections, type AdminNavSection } from "../sidebar/sidebar-items";
 
 @Component({
   selector: "adm-mobile-drawer",
   templateUrl: "./mobile-drawer.html",
   styleUrl: "./mobile-drawer.css",
-  imports: [DrawerModule, ButtonModule, AvatarModule, DividerModule],
+  imports: [DrawerModule, ButtonModule, AvatarModule, DividerModule, Icon],
 })
 export class MobileDrawer {
   private readonly router = inject(Router);

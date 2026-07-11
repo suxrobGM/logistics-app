@@ -1,7 +1,7 @@
 <div class="border-default bg-elevated rounded-lg border p-4">
   <div class="mb-3 flex items-center justify-between">
     <div class="flex items-center gap-2">
-      <i class="pi pi-bolt text-foreground"></i>
+      <ui-icon name="bolt" class="text-foreground" />
       <span class="font-semibold">AI Dispatch Usage</span>
       @if (quota().planName) {
         <p-tag [value]="quota().planName!" severity="info" [style]="{ fontSize: '0.7rem' }" />

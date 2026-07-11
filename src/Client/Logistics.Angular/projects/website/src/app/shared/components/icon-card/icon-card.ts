@@ -1,9 +1,10 @@
 import { Component, input } from "@angular/core";
-import { IconCircle } from "../icon-circle/icon-circle";
+import type { IconName } from "@logistics/shared/ui";
 import { ScrollAnimateDirective } from "@/shared/directives";
+import { IconCircle } from "../icon-circle/icon-circle";
 
 export interface IconCardItem {
-  icon: string;
+  icon: IconName;
   title: string;
   description: string;
 }
@@ -14,7 +15,7 @@ export interface IconCardItem {
   imports: [IconCircle, ScrollAnimateDirective],
 })
 export class IconCard {
-  public readonly icon = input.required<string>();
+  public readonly icon = input.required<IconName>();
   public readonly title = input.required<string>();
   public readonly description = input.required<string>();
   public readonly dark = input(false);

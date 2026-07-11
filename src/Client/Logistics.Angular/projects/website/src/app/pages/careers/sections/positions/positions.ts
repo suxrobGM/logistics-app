@@ -1,7 +1,8 @@
 import { Component, signal } from "@angular/core";
+import { Icon } from "@logistics/shared/ui";
+import { ButtonModule } from "primeng/button";
 import { FilterTabs, SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
-import { ButtonModule } from "primeng/button";
 
 interface JobPosition {
   id: string;
@@ -14,7 +15,14 @@ interface JobPosition {
 @Component({
   selector: "web-positions",
   templateUrl: "./positions.html",
-  imports: [SectionContainer, SectionHeader, ScrollAnimateDirective, ButtonModule, FilterTabs],
+  imports: [
+    ButtonModule,
+    FilterTabs,
+    Icon,
+    ScrollAnimateDirective,
+    SectionContainer,
+    SectionHeader,
+  ],
 })
 export class Positions {
   protected readonly departments = [

@@ -2,7 +2,7 @@
   <ng-template #header>
     <div class="flex items-center justify-between py-3 pr-4 pl-4">
       <div class="flex items-center gap-2">
-        <i class="pi pi-chart-line text-xl text-cyan-600"></i>
+        <ui-icon name="chart-line" size="inherit" class="text-xl text-cyan-600" />
         <h4 class="mb-0 font-semibold">Daily Gross Revenue</h4>
       </div>
       <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
@@ -24,25 +24,31 @@
     <!-- Summary Stats -->
     <div class="mb-4 flex flex-wrap gap-6">
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total Gross</div>
+        <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+          Total Gross
+        </div>
         <div class="mt-1 font-mono text-xl font-bold text-emerald-600">
           {{ totalGross() | currencyFormat }}
         </div>
       </div>
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total Miles</div>
-        <div class="mt-1 font-mono text-xl font-bold text-foreground">
+        <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+          Total Miles
+        </div>
+        <div class="text-foreground mt-1 font-mono text-xl font-bold">
           {{ totalDistance() | number: "1.0-0" }} mi
         </div>
       </div>
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Rate/Mile</div>
+        <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+          Rate/Mile
+        </div>
         <div class="mt-1 font-mono text-xl font-bold text-purple-600">
           {{ rpm() | currencyFormat }}
         </div>
       </div>
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Avg/Day</div>
+        <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">Avg/Day</div>
         <div class="mt-1 font-mono text-xl font-bold text-cyan-600">
           {{ avgDailyGross() | currencyFormat }}
         </div>

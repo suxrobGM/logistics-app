@@ -62,6 +62,63 @@ export function removeImportSpecifier(src, module, specifier) {
 }
 
 /**
+ * Add a symbol to a standalone component's `imports: [...]` array.
+ *
+ * Refuses (changed:false) unless it finds exactly one `@Component({...})` with an `imports: [` array,
+ * because a file with two decorators, or one whose imports array is spread/computed
+ * (`imports: [...BASE]`), is a shape this helper does not understand — and a template that renders
+ * `<ui-icon>` without the import fails at build time, which is the outcome we want over a silent
+ * mangling. Idempotent: a no-op when the symbol is already in the array.
+ */
+export function addToComponentImports(src, symbol) {
+  const decorators = [...src.matchAll(/@Component\s*\(\s*\{/g)];
+  if (decorators.length === 0) return ok(src, false, "no @Component decorator");
+  if (decorators.length > 1) return ok(src, false, "multiple @Component decorators");
+
+  // Find `imports: [` after the decorator opens, then walk to its matching `]`.
+  const open = src.indexOf("imports:", decorators[0].index);
+
+  // No imports array at all — a standalone component that so far needed none. Create one right after
+  // `templateUrl:`, which every component in this repo has (templateUrl-only is a repo convention).
+  if (open === -1) {
+    const tpl = /templateUrl:\s*["'`][^"'`]+["'`],/.exec(src.slice(decorators[0].index));
+    if (!tpl) return ok(src, false, "@Component has neither an imports array nor a templateUrl to anchor one");
+    const at = decorators[0].index + tpl.index + tpl[0].length;
+    return ok(`${src.slice(0, at)}\n  imports: [${symbol}],${src.slice(at)}`, true);
+  }
+
+  const lb = src.indexOf("[", open);
+  if (lb === -1) return ok(src, false, "imports is not an array literal");
+
+  let depth = 0;
+  let rb = -1;
+  for (let i = lb; i < src.length; i++) {
+    if (src[i] === "[") depth++;
+    else if (src[i] === "]") {
+      depth--;
+      if (depth === 0) {
+        rb = i;
+        break;
+      }
+    }
+  }
+  if (rb === -1) return ok(src, false, "unbalanced imports array");
+
+  const body = src.slice(lb + 1, rb);
+  if (body.includes("...")) return ok(src, false, "imports array uses a spread");
+
+  const names = body
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (names.includes(symbol)) return ok(src, false, "already in imports");
+
+  const merged = [...names, symbol].sort((a, b) => a.localeCompare(b));
+  // Re-emit flat; prettier re-wraps it to the project's width.
+  return ok(`${src.slice(0, lb + 1)}${merged.join(", ")}${src.slice(rb)}`, true);
+}
+
+/**
  * Add a named specifier to an import from `module`, merging into an existing import when one is
  * present, otherwise inserting a new statement after the last import in the file.
  * Idempotent: if the specifier is already imported from that module, it is a no-op.

@@ -34,7 +34,9 @@
         </ui-stack>
       }
       @if (parsedInput().reasoning) {
-        <div class="text-subtle-foreground mt-2 text-xs italic">"{{ parsedInput().reasoning }}"</div>
+        <div class="text-subtle-foreground mt-2 text-xs italic">
+          "{{ parsedInput().reasoning }}"
+        </div>
       }
     </div>
   }
@@ -45,7 +47,7 @@
       [routerLink]="['/ai-dispatch', decision().sessionId]"
       class="text-foreground mb-3 inline-flex items-center gap-1 text-xs hover:underline"
     >
-      <i class="pi pi-external-link text-xs"></i>
+      <ui-icon name="external-link" size="inherit" class="text-xs" />
       View session
     </a>
   }

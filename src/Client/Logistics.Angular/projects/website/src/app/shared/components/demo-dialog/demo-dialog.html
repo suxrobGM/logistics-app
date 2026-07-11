@@ -9,7 +9,7 @@
   @if (isSubmitted()) {
     <div class="flex flex-col items-center gap-4 py-8 text-center">
       <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-        <i class="pi pi-check text-3xl text-green-600"></i>
+        <ui-icon name="check" size="inherit" class="text-3xl text-green-600" />
       </div>
       <h3 class="text-xl font-semibold text-gray-900">Thanks!</h3>
       <p class="text-gray-600">
@@ -21,7 +21,7 @@
     <form [formRoot]="form" class="flex flex-col pt-4">
       @if (errorMessage()) {
         <div class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
-          <i class="pi pi-exclamation-circle mr-2"></i>
+          <ui-icon name="exclamation-circle" class="mr-2" />
           {{ errorMessage() }}
         </div>
       }
@@ -36,7 +36,12 @@
       </div>
 
       <ui-form-field label="Work Email" for="email" [required]="true">
-        <ui-text-field id="email" [formField]="form.email" type="email" placeholder="john@company.com" />
+        <ui-text-field
+          id="email"
+          [formField]="form.email"
+          type="email"
+          placeholder="john@company.com"
+        />
       </ui-form-field>
 
       <ui-form-field label="Company Name" for="company" [required]="true">

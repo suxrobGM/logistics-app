@@ -1,17 +1,18 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import type { LoadStatus } from "@logistics/shared/api";
+import { Icon, type IconName } from "@logistics/shared/ui";
 
 interface StepConfig {
   status: LoadStatus;
   label: string;
-  icon: string;
+  icon: IconName;
 }
 
 @Component({
   selector: "app-load-status-stepper",
   templateUrl: "./load-status-stepper.html",
-  imports: [DatePipe],
+  imports: [DatePipe, Icon],
 })
 export class LoadStatusStepper {
   public readonly currentStatus = input.required<LoadStatus>();
@@ -22,10 +23,10 @@ export class LoadStatusStepper {
   public readonly cancelledAt = input<string | null | undefined>(null);
 
   protected readonly steps: StepConfig[] = [
-    { status: "draft", label: "Draft", icon: "pi-file-edit" },
-    { status: "dispatched", label: "Dispatched", icon: "pi-send" },
-    { status: "picked_up", label: "Picked Up", icon: "pi-truck" },
-    { status: "delivered", label: "Delivered", icon: "pi-check-circle" },
+    { status: "draft", label: "Draft", icon: "file-edit" },
+    { status: "dispatched", label: "Dispatched", icon: "send" },
+    { status: "picked_up", label: "Picked Up", icon: "truck" },
+    { status: "delivered", label: "Delivered", icon: "check-circle" },
   ];
 
   protected readonly isCancelled = computed(() => this.currentStatus() === "cancelled");

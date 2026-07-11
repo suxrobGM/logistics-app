@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, input, output } from "@angular/core";
 import type { MessageDto } from "@logistics/shared/api";
+import { Icon } from "@logistics/shared/ui";
 import { AvatarModule } from "primeng/avatar";
 import { UserAvatar } from "@/shared/components";
 import { Converters } from "@/shared/utils";
@@ -8,7 +9,7 @@ import { Converters } from "@/shared/utils";
 @Component({
   selector: "app-message-bubble",
   templateUrl: "./message-bubble.html",
-  imports: [AvatarModule, DatePipe, UserAvatar],
+  imports: [AvatarModule, DatePipe, Icon, UserAvatar],
 })
 export class MessageBubble {
   readonly message = input.required<MessageDto>();

@@ -10,13 +10,12 @@
   @if (data(); as prompt) {
     <!-- Message -->
     <div class="bg-subtle border-default mb-4 flex items-start gap-3 rounded-lg border p-4">
-      <i
-        class="pi mt-0.5 text-lg"
-        [class]="
-          isResourceLimit() ? 'pi-exclamation-triangle text-warning' : 'pi-lock text-foreground'
-        "
-      >
-      </i>
+      <ui-icon
+        [name]="isResourceLimit() ? 'exclamation-triangle' : 'lock'"
+        size="inherit"
+        class="mt-0.5 text-lg"
+        [class]="isResourceLimit() ? 'text-warning' : 'text-foreground'"
+      />
       <p class="text-subtle-foreground m-0 text-sm">{{ prompt.message }}</p>
     </div>
 
@@ -35,19 +34,19 @@
               <span class="text-subtle-foreground text-xs">Current</span>
             </div>
             <div class="mb-1 text-xl font-bold">
-              {{ current.price | currency
-              }}<span class="text-subtle-foreground text-sm font-normal">/mo</span>
+              {{ current.price | currency }}
+              <span class="text-subtle-foreground text-sm font-normal">/mo</span>
             </div>
             <div class="text-subtle-foreground mb-2 text-xs">
               + {{ current.perTruckPrice | currency }}/truck
             </div>
             <div class="text-subtle-foreground flex flex-col gap-1 text-xs">
               <div class="flex items-center gap-1.5">
-                <i class="pi pi-truck text-xs"></i>
+                <ui-icon name="truck" size="inherit" class="text-xs" />
                 <span>{{ getMaxTrucksLabel(current) }}</span>
               </div>
               <div class="flex items-center gap-1.5">
-                <i class="pi pi-bolt text-xs"></i>
+                <ui-icon name="bolt" size="inherit" class="text-xs" />
                 <span>{{ getAiQuotaLabel(current) }}</span>
               </div>
             </div>
@@ -66,19 +65,19 @@
               <span class="text-foreground text-xs font-medium">Recommended</span>
             </div>
             <div class="mb-1 text-xl font-bold">
-              {{ recommended.price | currency
-              }}<span class="text-subtle-foreground text-sm font-normal">/mo</span>
+              {{ recommended.price | currency }}
+              <span class="text-subtle-foreground text-sm font-normal">/mo</span>
             </div>
             <div class="text-subtle-foreground mb-2 text-xs">
               + {{ recommended.perTruckPrice | currency }}/truck
             </div>
             <div class="text-subtle-foreground flex flex-col gap-1 text-xs">
               <div class="flex items-center gap-1.5">
-                <i class="pi pi-truck text-xs"></i>
+                <ui-icon name="truck" size="inherit" class="text-xs" />
                 <span>{{ getMaxTrucksLabel(recommended) }}</span>
               </div>
               <div class="flex items-center gap-1.5">
-                <i class="pi pi-bolt text-xs"></i>
+                <ui-icon name="bolt" size="inherit" class="text-xs" />
                 <span>{{ getAiQuotaLabel(recommended) }}</span>
               </div>
               @if (getExtraFeatures(prompt.currentPlan, recommended); as extras) {
@@ -87,7 +86,7 @@
                     <div class="mb-1 font-medium">Additional features:</div>
                     @for (feature of extras; track feature) {
                       <div class="flex items-center gap-1.5">
-                        <i class="pi pi-check text-xs text-green-500"></i>
+                        <ui-icon name="check" size="inherit" class="text-xs text-green-500" />
                         <span>{{ feature }}</span>
                       </div>
                     }

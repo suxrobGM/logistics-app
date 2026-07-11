@@ -10,7 +10,7 @@
     >
       <!-- Search input -->
       <div class="border-subtle flex items-center gap-3 border-b px-5 py-3.5">
-        <i class="pi pi-search text-muted-foreground shrink-0 text-lg"></i>
+        <ui-icon name="search" size="inherit" class="text-muted-foreground shrink-0 text-lg" />
         <input
           #searchInput
           type="text"
@@ -37,33 +37,37 @@
             type="button"
           >
             <div class="flex min-w-0 items-center gap-3">
-              @if (item.icon) {
-                <i
-                  [class]="item.icon"
-                  class="text-muted-foreground w-6 shrink-0 text-center"
+              @if (item.icon; as icon) {
+                <ui-icon
+                  [name]="icon"
+                  class="text-muted-foreground w-6 shrink-0 justify-center"
                   [class.text-primary]="i === selectedIndex()"
-                ></i>
+                />
               }
               <div>
                 <span class="block text-sm font-medium">{{ item.label }}</span>
-                <span class="text-muted-foreground mt-px block text-[0.6875rem]">{{ item.section }}</span>
+                <span class="text-muted-foreground mt-px block text-[0.6875rem]">
+                  {{ item.section }}
+                </span>
               </div>
             </div>
             @if (item.type === "action") {
               <span
                 class="bg-primary/12 text-primary shrink-0 rounded-lg px-2 py-0.5 text-[0.625rem] font-semibold tracking-wider uppercase"
-                >Action</span
               >
+                Action
+              </span>
             } @else if (item.type === "recent") {
               <span
                 class="bg-muted/12 text-muted-foreground shrink-0 rounded-lg px-2 py-0.5 text-[0.625rem] font-semibold tracking-wider uppercase"
-                >Recent</span
               >
+                Recent
+              </span>
             }
           </button>
         } @empty {
           <div class="text-muted-foreground flex flex-col items-center gap-2 py-8 text-sm">
-            <i class="pi pi-search text-2xl opacity-50"></i>
+            <ui-icon name="search" size="inherit" class="text-2xl opacity-50" />
             <span>No results found</span>
           </div>
         }
@@ -73,11 +77,19 @@
       <div
         class="border-subtle text-muted-foreground flex items-center gap-5 border-t px-5 py-2 text-[0.6875rem]"
       >
-        <span class="flex items-center gap-1.5"
-          ><kbd class="kbd">&uarr;</kbd><kbd class="kbd">&darr;</kbd> Navigate</span
-        >
-        <span class="flex items-center gap-1.5"><kbd class="kbd">Enter</kbd> Select</span>
-        <span class="flex items-center gap-1.5"><kbd class="kbd">Esc</kbd> Close</span>
+        <span class="flex items-center gap-1.5">
+          <kbd class="kbd">&uarr;</kbd>
+          <kbd class="kbd">&darr;</kbd>
+          Navigate
+        </span>
+        <span class="flex items-center gap-1.5">
+          <kbd class="kbd">Enter</kbd>
+          Select
+        </span>
+        <span class="flex items-center gap-1.5">
+          <kbd class="kbd">Esc</kbd>
+          Close
+        </span>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { Api, downloadDocument, getDocuments, type DocumentDto } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/ui";
+import { Icon, UiDataTable } from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -15,15 +15,16 @@ import { ToastService } from "@/core/services";
   selector: "app-load-pod-content",
   templateUrl: "./load-pod-content.html",
   imports: [
-    CommonModule,
-    CardModule,
     ButtonModule,
-    UiDataTable,
+    CardModule,
+    CommonModule,
+    DatePipe,
+    DialogModule,
+    Icon,
+    ProgressSpinnerModule,
     TagModule,
     TooltipModule,
-    DialogModule,
-    ProgressSpinnerModule,
-    DatePipe,
+    UiDataTable,
   ],
 })
 export class LoadPodContent {

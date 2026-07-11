@@ -2,19 +2,19 @@
   <!-- Map Header -->
   <div class="border-default flex items-center justify-between border-b p-3">
     <div class="flex items-center gap-2">
-      <i class="pi pi-map text-foreground"></i>
+      <ui-icon name="map" class="text-foreground" />
       <span class="font-medium">Fleet Map</span>
     </div>
     <div class="flex items-center gap-3 text-sm">
       @if (trucksWithLocation() > 0) {
         <span class="text-muted-foreground">
-          <i class="pi pi-map-marker text-success mr-1"></i>
+          <ui-icon name="map-marker" class="text-success mr-1" />
           {{ trucksWithLocation() }} tracked
         </span>
       }
       @if (trucksWithoutLocation() > 0) {
         <span class="text-muted-foreground">
-          <i class="pi pi-question-circle text-warning mr-1"></i>
+          <ui-icon name="question-circle" class="text-warning mr-1" />
           {{ trucksWithoutLocation() }} no location
         </span>
       }
@@ -25,7 +25,7 @@
   <div class="relative h-125">
     @if (isLoading()) {
       <div class="bg-subtle absolute inset-0 flex items-center justify-center">
-        <i class="pi pi-spin pi-spinner text-4xl"></i>
+        <ui-icon name="spinner" size="inherit" spin class="text-4xl" />
       </div>
     } @else {
       <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="4" height="500px" />

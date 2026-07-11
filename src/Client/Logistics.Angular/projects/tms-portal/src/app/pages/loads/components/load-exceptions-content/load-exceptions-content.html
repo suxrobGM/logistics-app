@@ -2,7 +2,7 @@
   <ng-template #header>
     <div class="flex items-center justify-between p-4 pb-0">
       <div class="flex items-center gap-2">
-        <i class="pi pi-exclamation-triangle text-warning"></i>
+        <ui-icon name="exclamation-triangle" class="text-warning" />
         <h3 class="m-0 text-lg font-semibold">Load Exceptions</h3>
         @if (unresolvedCount() > 0) {
           <p-badge [value]="unresolvedCount().toString()" severity="danger" />
@@ -64,7 +64,7 @@
           <td>
             @if (isResolved(exception)) {
               <span class="text-success flex items-center gap-1 text-sm font-medium">
-                <i class="pi pi-check-circle"></i>
+                <ui-icon name="check-circle" />
                 Resolved
               </span>
               <span class="text-muted-foreground text-xs">
@@ -72,7 +72,7 @@
               </span>
             } @else {
               <span class="text-warning flex items-center gap-1 text-sm font-medium">
-                <i class="pi pi-clock"></i>
+                <ui-icon name="clock" />
                 Unresolved
               </span>
             }
@@ -94,7 +94,7 @@
                 [showDelay]="300"
                 tooltipPosition="left"
               >
-                <i class="pi pi-info-circle"></i>
+                <ui-icon name="info-circle" />
               </span>
             }
           </td>
@@ -105,7 +105,7 @@
         <tr>
           <td colspan="6" class="py-8 text-center">
             <div class="text-muted-foreground flex flex-col items-center gap-3">
-              <i class="pi pi-check-circle text-success text-4xl"></i>
+              <ui-icon name="check-circle" size="inherit" class="text-success text-4xl" />
               <div>
                 <p class="font-medium">No exceptions reported</p>
                 <p class="text-sm">This load has no reported exceptions.</p>

@@ -28,19 +28,19 @@
 .theme-toggle:active {
   transform: scale(0.98);
 }
-.theme-toggle i {
+.theme-toggle-icon {
   font-size: 1.125rem;
   transition:
     transform var(--transition-base),
     color var(--transition-fast);
 }
-.theme-toggle:hover i {
+.theme-toggle:hover .theme-toggle-icon {
   color: var(--primary-500);
 }
-.theme-toggle:hover i.pi-sun {
+.theme-toggle:hover .theme-toggle-sun {
   transform: rotate(45deg) scale(1.1);
 }
-.theme-toggle:hover i.pi-moon {
+.theme-toggle:hover .theme-toggle-moon {
   transform: rotate(-15deg) scale(1.1);
 }
 .theme-toggle-label {

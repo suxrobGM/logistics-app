@@ -1,13 +1,14 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import type { AiQuotaStatusDto } from "@logistics/shared/api";
+import { Icon } from "@logistics/shared/ui";
 import { ProgressBar } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 
 @Component({
   selector: "app-ai-quota-usage",
   templateUrl: "./ai-quota-usage.html",
-  imports: [ProgressBar, TagModule, DatePipe],
+  imports: [DatePipe, Icon, ProgressBar, TagModule],
 })
 export class AiQuotaUsage {
   readonly quota = input.required<AiQuotaStatusDto>();

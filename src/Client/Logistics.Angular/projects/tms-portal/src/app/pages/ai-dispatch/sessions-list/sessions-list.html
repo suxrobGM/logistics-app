@@ -50,17 +50,17 @@
         compatibility, and revenue per mile to find optimal assignments.
       </p>
       <p class="m-0">
-        <i class="pi pi-play text-foreground mr-1 text-xs"></i>
+        <ui-icon name="play" size="inherit" class="text-foreground mr-1 text-xs" />
         <strong>Suggestions</strong>
         - proposes assignments for your review. Approve or reject each one, then use
         <strong>Re-plan</strong>
         to retry with rejection context.
-        <i class="pi pi-bolt mr-1 ml-3 text-xs text-orange-500"></i>
+        <ui-icon name="bolt" size="inherit" class="mr-1 ml-3 text-xs text-orange-500" />
         <strong>Autonomous</strong>
         - executes assignments, creates trips, and dispatches immediately.
       </p>
       <p class="text-muted-foreground m-0">
-        <i class="pi pi-comment mr-1 text-xs"></i>
+        <ui-icon name="comment" size="inherit" class="mr-1 text-xs" />
         Add custom instructions when running to guide priorities (e.g., "Prioritize Customer X" or
         "Skip Truck 42").
       </p>
@@ -94,7 +94,9 @@
         <ui-stack direction="row" align="center" gap="2" class="border-default border-b p-3">
           <ui-icon name="map" color="primary" />
           <span class="font-medium">Fleet Map</span>
-          <span class="text-muted-foreground text-sm">{{ truckLocations().length }} trucks tracked</span>
+          <span class="text-muted-foreground text-sm">
+            {{ truckLocations().length }} trucks tracked
+          </span>
         </ui-stack>
         <div class="h-125">
           <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="4" height="100%" />
@@ -171,7 +173,9 @@
         <td>{{ session.startedAt | date: "medium" }}</td>
         <td>{{ session.decisionCount }}</td>
         <td class="max-w-sm text-sm">
-          <span class="text-subtle-foreground line-clamp-2">{{ stripMarkdown(session.summary) }}</span>
+          <span class="text-subtle-foreground line-clamp-2">
+            {{ stripMarkdown(session.summary) }}
+          </span>
         </td>
         <td>
           <p-button icon="pi pi-eye" [rounded]="true" [text]="true" size="small" />
@@ -182,7 +186,7 @@
       <tr>
         <td colspan="7" class="py-8 text-center">
           <div class="text-muted-foreground">
-            <i class="pi pi-sparkles mb-2 text-4xl"></i>
+            <ui-icon name="sparkles" size="inherit" class="mb-2 text-4xl" />
             <p>No dispatch sessions yet. Click "Run" to start the AI dispatcher.</p>
           </div>
         </td>

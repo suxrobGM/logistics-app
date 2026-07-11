@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { UserRole } from "@logistics/shared";
 import { FeatureService } from "@logistics/shared/services";
+import { Icon } from "@logistics/shared/ui";
 import { PopoverModule } from "primeng/popover";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
@@ -13,7 +14,7 @@ import {
   TmsFeatureProvider,
 } from "@/core/services";
 import { environment } from "@/env";
-import { type NavItem, NavMenu, type NavSection } from "../nav-menu";
+import { NavMenu, type NavItem, type NavSection } from "../nav-menu";
 import { NotificationBell } from "../notification-bell";
 import { ThemeToggle } from "../theme-toggle/theme-toggle";
 import { FavoritesBar } from "./favorites-bar/favorites-bar";
@@ -46,7 +47,15 @@ const ROLE_ITEM_ACCESS: Record<string, string[] | "*"> = {
   selector: "app-sidebar",
   templateUrl: "./sidebar.html",
   styleUrl: "./sidebar.css",
-  imports: [TooltipModule, PopoverModule, NavMenu, FavoritesBar, ThemeToggle, NotificationBell],
+  imports: [
+    FavoritesBar,
+    Icon,
+    NavMenu,
+    NotificationBell,
+    PopoverModule,
+    ThemeToggle,
+    TooltipModule,
+  ],
 })
 export class Sidebar {
   private readonly authService = inject(AuthService);

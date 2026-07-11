@@ -24,7 +24,7 @@
   <nav class="mobile-nav-menu flex h-full flex-col">
     <!-- Search trigger -->
     <button class="mobile-search-trigger" (click)="openSearch()" type="button">
-      <i class="pi pi-search"></i>
+      <ui-icon name="search" />
       <span>Search...</span>
     </button>
 
@@ -60,18 +60,19 @@
           <div
             class="bg-primary/12 border-accent/20 flex size-9 shrink-0 items-center justify-center rounded-full border"
           >
-            <i class="pi pi-user text-primary text-sm"></i>
+            <ui-icon name="user" size="inherit" class="text-primary text-sm" />
           </div>
           <div class="min-w-0 flex-1">
             <span class="block truncate text-sm font-medium">{{ userFullName() }}</span>
             @if (userRole()) {
               <span
                 class="text-primary block text-[0.6875rem] font-semibold tracking-wider uppercase"
-                >{{ userRole() }}</span
               >
+                {{ userRole() }}
+              </span>
             }
           </div>
-          <i class="pi pi-ellipsis-v text-muted-foreground text-xs"></i>
+          <ui-icon name="ellipsis-v" size="inherit" class="text-muted-foreground text-xs" />
         </button>
       }
     </div>
@@ -95,7 +96,7 @@
         (click)="openAccountUrl(); mobileUserPopover.hide()"
         type="button"
       >
-        <i class="pi pi-user-edit text-muted-foreground w-5 text-center"></i>
+        <ui-icon name="user-edit" class="text-muted-foreground w-5 text-center" />
         <span>Manage Profile</span>
       </button>
       <button
@@ -103,7 +104,7 @@
         (click)="logout(); mobileUserPopover.hide()"
         type="button"
       >
-        <i class="pi pi-sign-out w-5 text-center"></i>
+        <ui-icon name="sign-out" class="w-5 text-center" />
         <span>Sign Out</span>
       </button>
     </div>

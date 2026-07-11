@@ -25,7 +25,7 @@
         aria-label="Select map layer style"
       >
         <ng-template #item let-item>
-          <i [class]="'pi ' + item.icon" [pTooltip]="item.label" tooltipPosition="bottom"></i>
+          <ui-icon [name]="item.icon" [pTooltip]="item.label" tooltipPosition="bottom" />
         </ng-template>
       </p-selectbutton>
     </div>

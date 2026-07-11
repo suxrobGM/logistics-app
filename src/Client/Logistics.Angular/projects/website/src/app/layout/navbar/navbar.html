@@ -70,7 +70,7 @@
         [class.text-ink]="showSolidNavbar()"
         (click)="mobileMenuOpen.set(!mobileMenuOpen())"
       >
-        <i class="pi" [class.pi-bars]="!mobileMenuOpen()" [class.pi-times]="mobileMenuOpen()"></i>
+        <ui-icon [name]="mobileMenuOpen() ? 'times' : 'bars'" />
       </button>
     </div>
   </div>

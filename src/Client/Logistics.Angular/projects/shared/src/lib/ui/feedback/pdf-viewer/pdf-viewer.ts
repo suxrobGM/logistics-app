@@ -3,11 +3,12 @@ import { DomSanitizer, type SafeResourceUrl } from "@angular/platform-browser";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TooltipModule } from "primeng/tooltip";
+import { Icon } from "../../content/icon/icon";
 
 @Component({
   selector: "ui-pdf-viewer",
   templateUrl: "./pdf-viewer.html",
-  imports: [CardModule, ButtonModule, TooltipModule],
+  imports: [ButtonModule, CardModule, Icon, TooltipModule],
 })
 export class PdfViewer {
   private readonly sanitizer = inject(DomSanitizer);

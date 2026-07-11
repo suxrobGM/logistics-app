@@ -14,7 +14,7 @@ import {
   type DvirReportDto,
   type DvirStatus,
 } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/ui";
+import { Icon, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -26,12 +26,13 @@ import type { TagSeverity } from "@/shared/types";
   selector: "app-inspections-dashboard",
   templateUrl: "./inspections-dashboard.html",
   imports: [
-    DatePipe,
     ButtonModule,
     CardModule,
+    DatePipe,
+    Icon,
+    PageHeader,
     ProgressSpinnerModule,
     TagModule,
-    PageHeader,
     UiDataTable,
   ],
 })

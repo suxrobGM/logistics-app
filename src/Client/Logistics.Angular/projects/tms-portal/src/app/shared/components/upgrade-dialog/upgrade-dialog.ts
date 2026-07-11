@@ -3,6 +3,7 @@ import { Component, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import type { SubscriptionPlanDto } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
+import { Icon } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { TagModule } from "primeng/tag";
@@ -12,7 +13,7 @@ import { Labels } from "@/shared/utils";
 @Component({
   selector: "app-upgrade-dialog",
   templateUrl: "./upgrade-dialog.html",
-  imports: [DialogModule, ButtonModule, TagModule, CurrencyPipe],
+  imports: [ButtonModule, CurrencyPipe, DialogModule, Icon, TagModule],
 })
 export class UpgradeDialog {
   private readonly router = inject(Router);

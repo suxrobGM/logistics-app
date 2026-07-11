@@ -1,6 +1,7 @@
 import { Component, inject, input, output } from "@angular/core";
 import { OidcSecurityService } from "angular-auth-oidc-client";
 import type { AppError } from "../../../errors/error.types";
+import type { IconName } from "../../icons/icon-registry.generated";
 import { EmptyState } from "../empty-state/empty-state";
 import { ErrorState } from "../error-state/error-state";
 import { LoadingSkeleton } from "../loading-skeleton/loading-skeleton";
@@ -44,7 +45,7 @@ export class DataContainer {
   public readonly emptyMessage = input("No items to display.");
 
   /** Icon for empty state */
-  public readonly emptyIcon = input("inbox");
+  public readonly emptyIcon = input<IconName>("inbox");
 
   /** Action button label for empty state */
   public readonly emptyActionLabel = input<string | null>(null);

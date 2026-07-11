@@ -1,6 +1,7 @@
 import { Component, computed, inject, input, output, signal } from "@angular/core";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { AddressPipe } from "@logistics/shared/pipes";
+import { Icon } from "@logistics/shared/ui";
 import type { LngLatBoundsLike, LngLatLike, Map } from "mapbox-gl";
 import { MapComponent, MarkerComponent, PopupComponent } from "ngx-mapbox-gl";
 import { MapStyleService } from "@/core/services";
@@ -14,12 +15,13 @@ import { MapControls } from "../map-controls/map-controls";
   templateUrl: "./geolocation-map.html",
   imports: [
     AddressPipe,
+    Icon,
     MapComponent,
-    MarkerComponent,
-    PopupComponent,
     MapContainer,
     MapControls,
     MapResizeDirective,
+    MarkerComponent,
+    PopupComponent,
   ],
 })
 export class GeolocationMap {

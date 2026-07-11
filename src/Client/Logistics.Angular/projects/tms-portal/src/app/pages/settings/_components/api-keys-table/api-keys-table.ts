@@ -9,7 +9,7 @@ import {
   type ApiKeyCreatedDto,
   type ApiKeyDto,
 } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/ui";
+import { Icon, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -23,16 +23,17 @@ import { UiFormField } from "@/shared/components";
   selector: "app-api-keys-table",
   templateUrl: "./api-keys-table.html",
   imports: [
-    FormsModule,
     ButtonModule,
+    DatePipe,
     DialogModule,
+    FormsModule,
+    Icon,
     InputTextModule,
     MessageModule,
-    TooltipModule,
-    UiFormField,
-    DatePipe,
     ProgressSpinnerModule,
+    TooltipModule,
     UiDataTable,
+    UiFormField,
   ],
 })
 export class ApiKeysTable implements OnInit {

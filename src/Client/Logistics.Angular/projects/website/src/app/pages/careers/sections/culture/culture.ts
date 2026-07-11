@@ -1,9 +1,10 @@
 import { Component } from "@angular/core";
+import type { IconName } from "@logistics/shared/ui";
 import { IconCircle, SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
 interface CultureHighlight {
-  icon: string;
+  icon: IconName;
   title: string;
   description: string;
 }
@@ -16,18 +17,18 @@ interface CultureHighlight {
 export class Culture {
   protected readonly highlights: CultureHighlight[] = [
     {
-      icon: "pi-bolt",
+      icon: "bolt",
       title: "Ship",
       description:
         "We push code often, iterate, and take the kind of risks where the downside is fixable.",
     },
     {
-      icon: "pi-heart",
+      icon: "heart",
       title: "Care",
       description: "About the customers, the team, and the quality of what we ship.",
     },
     {
-      icon: "pi-comments",
+      icon: "comments",
       title: "Talk straight",
       description:
         "Transparency, honest feedback, and keeping each other in the loop. No politicking.",

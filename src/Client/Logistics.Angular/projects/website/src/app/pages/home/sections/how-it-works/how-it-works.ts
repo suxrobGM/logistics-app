@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import type { IconName } from "@logistics/shared/ui";
 import { IconCircle, SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
@@ -6,7 +7,7 @@ interface Step {
   number: number;
   title: string;
   description: string;
-  icon: string;
+  icon: IconName;
 }
 
 @Component({
@@ -21,28 +22,28 @@ export class HowItWorks {
       title: "Set up the fleet",
       description:
         "Add trucks, drivers, and fleet details. Connect your ELD provider so HOS tracking happens automatically.",
-      icon: "pi-truck",
+      icon: "truck",
     },
     {
       number: 2,
       title: "Create loads",
       description:
         "Enter shipments or pull them in from a load board. The agent sees them as soon as they're saved.",
-      icon: "pi-box",
+      icon: "box",
     },
     {
       number: 3,
       title: "Let the agent dispatch",
       description:
         "It looks at availability, HOS, deadhead miles, and revenue, then proposes assignments.",
-      icon: "pi-sparkles",
+      icon: "sparkles",
     },
     {
       number: 4,
       title: "Review and go",
       description:
         "Approve the suggestions, or hand the agent the keys. Trips get created and dispatched either way.",
-      icon: "pi-check-circle",
+      icon: "check-circle",
     },
   ];
 }

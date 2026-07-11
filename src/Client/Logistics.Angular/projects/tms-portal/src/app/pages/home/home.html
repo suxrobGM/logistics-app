@@ -45,7 +45,7 @@
             @case ("kpi-weekly-gross") {
               <app-stat-card
                 class="h-full"
-                icon="pi-dollar"
+                icon="dollar"
                 label="Weekly Gross"
                 [value]="(weeklyGross() | currencyFormat) ?? '$0'"
                 color="green"
@@ -55,7 +55,7 @@
             @case ("kpi-billed-miles") {
               <app-stat-card
                 class="h-full"
-                icon="pi-map"
+                icon="map"
                 label="Billed Miles"
                 [value]="(weeklyDistance() | distanceUnit) ?? '0 mi'"
                 color="blue"
@@ -65,7 +65,7 @@
             @case ("kpi-rate-per-mile") {
               <app-stat-card
                 class="h-full"
-                icon="pi-chart-line"
+                icon="chart-line"
                 label="Rate Per Mile"
                 [value]="(weeklyRpm() | currencyFormat) ?? '$0'"
                 color="purple"
@@ -75,7 +75,7 @@
             @case ("kpi-today-gross") {
               <app-stat-card
                 class="h-full"
-                icon="pi-calendar"
+                icon="calendar"
                 label="Today's Gross"
                 [value]="(todayGross() | currencyFormat) ?? '$0'"
                 color="orange"
@@ -176,7 +176,10 @@
                       </td>
                       <td>
                         @if (load.assignedTruckId) {
-                          <a [routerLink]="['/trucks', load.assignedTruckId]" class="text-foreground">
+                          <a
+                            [routerLink]="['/trucks', load.assignedTruckId]"
+                            class="text-foreground"
+                          >
                             {{ load.assignedTruckNumber }}
                           </a>
                         } @else {
@@ -189,7 +192,12 @@
                     <tr>
                       <td colspan="5" class="text-center">
                         <ui-stack align="center" gap="2" class="text-muted-foreground py-8">
-                          <i class="pi pi-inbox text-4xl" aria-hidden="true"></i>
+                          <ui-icon
+                            name="inbox"
+                            size="inherit"
+                            class="text-4xl"
+                            aria-hidden="true"
+                          />
                           <ui-typography variant="body" color="muted">
                             No active loads
                           </ui-typography>

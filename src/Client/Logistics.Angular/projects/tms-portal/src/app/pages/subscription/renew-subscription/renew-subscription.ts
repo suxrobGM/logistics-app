@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, renewSubscription, type SubscriptionDto } from "@logistics/shared/api";
+import { Icon } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
@@ -12,7 +13,15 @@ import { Labels, type SeverityLevel } from "@/shared/utils";
 @Component({
   selector: "app-renew-subscription",
   templateUrl: "./renew-subscription.html",
-  imports: [CommonModule, CardModule, ButtonModule, TagModule, ConfirmDialogModule, RouterModule],
+  imports: [
+    ButtonModule,
+    CardModule,
+    CommonModule,
+    ConfirmDialogModule,
+    Icon,
+    RouterModule,
+    TagModule,
+  ],
 })
 export class RenewSubscriptionComponent {
   private readonly tenantService = inject(TenantService);

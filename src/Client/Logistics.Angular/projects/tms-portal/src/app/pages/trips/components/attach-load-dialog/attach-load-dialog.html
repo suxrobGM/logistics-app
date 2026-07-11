@@ -34,7 +34,7 @@
       </div>
     } @else if (filteredLoads().length === 0) {
       <div class="text-muted-foreground flex flex-col items-center p-8 text-center">
-        <i class="pi pi-inbox mb-2 text-4xl"></i>
+        <ui-icon name="inbox" size="inherit" class="mb-2 text-4xl" />
         @if (searchQuery()) {
           <p>No loads match your search criteria</p>
         } @else {
@@ -92,7 +92,7 @@
       <!-- Selection summary -->
       @if (selectedLoads().length > 0) {
         <div class="bg-surface-100 flex items-center justify-between rounded-lg p-3">
-          <span class="font-medium"> {{ selectedLoads().length }} load(s) selected </span>
+          <span class="font-medium">{{ selectedLoads().length }} load(s) selected</span>
           <div class="flex items-center gap-4 text-sm">
             <span>
               Total Distance:

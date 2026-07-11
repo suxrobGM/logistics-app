@@ -1,4 +1,5 @@
 import { Component, inject } from "@angular/core";
+import { Icon } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
@@ -28,7 +29,7 @@ interface PricingRow {
 @Component({
   selector: "web-compare",
   templateUrl: "./compare.html",
-  imports: [ButtonModule, SectionContainer, SectionHeader, ScrollAnimateDirective],
+  imports: [ButtonModule, Icon, ScrollAnimateDirective, SectionContainer, SectionHeader],
 })
 export class Compare {
   private readonly demoDialogService = inject(DemoDialogService);

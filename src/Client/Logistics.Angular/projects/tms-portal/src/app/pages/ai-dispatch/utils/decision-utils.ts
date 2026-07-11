@@ -1,3 +1,5 @@
+import type { IconName } from "@logistics/shared/ui";
+
 /** Parsed tool input for display in decision cards and timeline */
 export interface ParsedToolInput {
   loadId?: string;
@@ -137,33 +139,33 @@ export function getToolLabel(toolName: string | null | undefined): string {
   }
 }
 
-export function getToolIcon(toolName: string | null | undefined): string {
+export function getToolIcon(toolName: string | null | undefined): IconName {
   switch (toolName) {
     case "get_unassigned_loads":
-      return "pi pi-box";
+      return "box";
     case "get_available_trucks":
-      return "pi pi-truck";
+      return "truck";
     case "get_driver_hos_status":
-      return "pi pi-clock";
+      return "clock";
     case "check_hos_feasibility":
     case "batch_check_hos_feasibility":
-      return "pi pi-shield";
+      return "shield";
     case "calculate_distance":
-      return "pi pi-map";
+      return "map";
     case "calculate_assignment_metrics":
-      return "pi pi-chart-bar";
+      return "chart-bar";
     case "assign_load_to_truck":
-      return "pi pi-link";
+      return "link";
     case "create_trip":
-      return "pi pi-plus-circle";
+      return "plus-circle";
     case "dispatch_trip":
-      return "pi pi-send";
+      return "send";
     case "search_load_board":
-      return "pi pi-search";
+      return "search";
     case "book_load_board_load":
-      return "pi pi-shopping-cart";
+      return "shopping-cart";
     default:
-      return "pi pi-circle";
+      return "circle";
   }
 }
 

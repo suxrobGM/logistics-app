@@ -1,4 +1,5 @@
 import type { TenantFeature } from "@logistics/shared/api";
+import type { IconName } from "@logistics/shared/ui";
 
 export interface NavSection {
   id: string;
@@ -10,7 +11,8 @@ export interface NavSection {
 export interface NavItem {
   id: string;
   label: string;
-  icon?: string;
+  /** Canonical `<ui-icon name>`. Typed, so a bad name is a compile error, not a blank glyph. */
+  icon?: IconName;
   route?: string;
   feature?: TenantFeature;
   children?: NavItem[];

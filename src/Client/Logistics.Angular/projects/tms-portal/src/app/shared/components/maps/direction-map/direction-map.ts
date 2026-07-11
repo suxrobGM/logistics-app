@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
 import type { GeoPoint } from "@logistics/shared/api";
 import type { AppError } from "@logistics/shared/errors";
+import { Icon } from "@logistics/shared/ui";
 import type { LineString } from "geojson";
 import type { LngLatLike, Map, MapMouseEvent } from "mapbox-gl";
 import {
@@ -34,13 +35,14 @@ import type {
   selector: "app-direction-map",
   templateUrl: "./direction-map.html",
   imports: [
-    MapComponent,
-    LayerComponent,
     GeoJSONSourceComponent,
-    PopupComponent,
+    Icon,
+    LayerComponent,
+    MapComponent,
     MapContainer,
     MapControls,
     MapResizeDirective,
+    PopupComponent,
   ],
 })
 export class DirectionMap {

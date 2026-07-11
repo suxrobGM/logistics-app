@@ -15,7 +15,7 @@
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-file-edit"
+        icon="file-edit"
         label="Total DVIRs"
         [value]="(data()?.totalDvirs || 0).toString()"
         color="blue"
@@ -25,7 +25,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-car"
+        icon="car"
         label="Accidents"
         [value]="(data()?.totalAccidents || 0).toString()"
         color="red"
@@ -35,7 +35,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-dollar"
+        icon="dollar"
         label="Estimated Damage"
         [value]="(data()?.estimatedDamageCost || 0 | currencyFormat) ?? '$0'"
         color="orange"
@@ -45,7 +45,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-exclamation-triangle"
+        icon="exclamation-triangle"
         label="Behavior Events"
         [value]="(data()?.totalBehaviorEvents || 0).toString()"
         color="orange"
@@ -57,7 +57,7 @@
   <!-- Charts Row 1 -->
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
-      <ui-dashboard-card title="DVIR Status" icon="pi-chart-pie" iconColor="blue">
+      <ui-dashboard-card title="DVIR Status" icon="chart-pie" iconColor="blue">
         @if (hasDvirStatusData()) {
           <p-chart
             type="doughnut"
@@ -74,7 +74,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
-      <ui-dashboard-card title="Accident Severity" icon="pi-chart-pie" iconColor="red">
+      <ui-dashboard-card title="Accident Severity" icon="chart-pie" iconColor="red">
         @if (hasAccidentSeverityData()) {
           <p-chart
             type="doughnut"
@@ -91,7 +91,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
-      <ui-dashboard-card title="Behavior Events by Type" icon="pi-chart-bar" iconColor="orange">
+      <ui-dashboard-card title="Behavior Events by Type" icon="chart-bar" iconColor="orange">
         @if (hasBehaviorEventData()) {
           <p-chart
             type="bar"
@@ -112,7 +112,7 @@
 
   <!-- Safety Trends Chart -->
   <div class="mb-6">
-    <ui-dashboard-card title="Safety Trends" icon="pi-chart-line" iconColor="blue">
+    <ui-dashboard-card title="Safety Trends" icon="chart-line" iconColor="blue">
       @if (hasTrendData()) {
         <p-chart
           [type]="trendChartType()"
@@ -131,7 +131,7 @@
   <!-- Data Tables -->
   <ui-grid container spacing="2">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Top Drivers by Events" icon="pi-users" iconColor="orange">
+      <ui-dashboard-card title="Top Drivers by Events" icon="users" iconColor="orange">
         <ui-data-table [value]="data()?.topDriversByEvents || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
@@ -173,7 +173,9 @@
           </ng-template>
           <ng-template #empty>
             <tr>
-              <td colspan="3" class="text-muted-foreground text-center">No driver data available</td>
+              <td colspan="3" class="text-muted-foreground text-center">
+                No driver data available
+              </td>
             </tr>
           </ng-template>
         </ui-data-table>
@@ -181,7 +183,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Top Trucks by Defects" icon="pi-truck" iconColor="blue">
+      <ui-dashboard-card title="Top Trucks by Defects" icon="truck" iconColor="blue">
         <ui-data-table [value]="data()?.topTrucksByDefects || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
@@ -231,7 +233,7 @@
 
   <!-- DVIR Defect Rate Card -->
   <div class="mb-6">
-    <ui-dashboard-card title="DVIR Summary" icon="pi-clipboard" iconColor="blue">
+    <ui-dashboard-card title="DVIR Summary" icon="clipboard" iconColor="blue">
       <ui-grid container spacing="4" class="p-4">
         <ui-grid [size]="{ xs: 12, md: 4 }">
           <ui-typography variant="caption" color="muted">DVIRs with Defects</ui-typography>

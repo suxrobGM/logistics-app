@@ -2,7 +2,7 @@
 
 @if (o.error) {
   <div class="text-danger flex items-center gap-1">
-    <i class="pi pi-times-circle text-xs"></i>
+    <ui-icon name="times-circle" size="inherit" class="text-xs" />
     <span>{{ o.error }}</span>
   </div>
 } @else if (o.trucks) {
@@ -11,14 +11,17 @@
     @if (o.totalTrucks !== undefined) {
       <span class="text-muted-foreground">·</span>
       <span>
-        Total: <strong>{{ o.totalTrucks }}</strong>
+        Total:
+        <strong>{{ o.totalTrucks }}</strong>
       </span>
       <span>
-        Active trips: <strong>{{ o.activeTrips }}</strong>
+        Active trips:
+        <strong>{{ o.activeTrips }}</strong>
       </span>
       @if (o.driversInViolation) {
         <span class="text-danger">
-          Violations: <strong>{{ o.driversInViolation }}</strong>
+          Violations:
+          <strong>{{ o.driversInViolation }}</strong>
         </span>
       }
     }
@@ -26,7 +29,7 @@
 } @else if (o.batchResults) {
   @if (allBatchFailed()) {
     <div class="text-danger mb-1 flex items-center gap-1">
-      <i class="pi pi-times-circle text-xs"></i>
+      <ui-icon name="times-circle" size="inherit" class="text-xs" />
       <span>
         All {{ o.batchResults.length }} checks failed - no driver has sufficient HOS hours
       </span>
@@ -42,15 +45,17 @@
     <div class="flex flex-col gap-1">
       @for (r of o.batchResults; track $index) {
         <div class="flex items-center gap-2">
-          <i
+          <ui-icon
+            [name]="r.feasible ? 'check-circle' : 'times-circle'"
+            size="inherit"
             class="text-xs"
-            [class]="
-              r.feasible ? 'pi pi-check-circle text-success' : 'pi pi-times-circle text-danger'
-            "
-          ></i>
+            [class]="r.feasible ? 'text-success' : 'text-danger'"
+          />
           @if (r.feasible) {
             <span class="text-success">Feasible</span>
-            <span class="text-muted-foreground">- {{ r.driving_minutes_remaining }}min remaining</span>
+            <span class="text-muted-foreground">
+              - {{ r.driving_minutes_remaining }}min remaining
+            </span>
           } @else {
             <span class="text-muted-foreground">
               {{ r.driving_minutes_remaining }}min avail / {{ r.estimated_driving_minutes }}min
@@ -64,10 +69,10 @@
 } @else if (o.feasible !== undefined) {
   <div class="flex items-center gap-2">
     @if (o.feasible) {
-      <i class="pi pi-check-circle text-success"></i>
+      <ui-icon name="check-circle" class="text-success" />
       <span class="text-success">Feasible</span>
     } @else {
-      <i class="pi pi-times-circle text-danger"></i>
+      <ui-icon name="times-circle" class="text-danger" />
       <span class="text-danger">Not feasible</span>
     }
     @if (o.reason) {
@@ -84,10 +89,10 @@
 } @else if (o.success !== undefined) {
   <div class="flex items-center gap-1">
     @if (o.success) {
-      <i class="pi pi-check-circle text-success"></i>
+      <ui-icon name="check-circle" class="text-success" />
       <span class="text-success">Executed successfully</span>
     } @else {
-      <i class="pi pi-times-circle text-danger"></i>
+      <ui-icon name="times-circle" class="text-danger" />
       <span class="text-danger">Failed</span>
     }
   </div>

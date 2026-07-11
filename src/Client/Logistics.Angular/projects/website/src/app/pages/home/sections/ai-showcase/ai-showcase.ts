@@ -1,17 +1,18 @@
 import { Component } from "@angular/core";
+import type { IconName } from "@logistics/shared/ui";
 import { BrowserFrame, IconCircle, SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
 interface WorkflowStep {
   title: string;
   description: string;
-  icon: string;
+  icon: IconName;
 }
 
 interface CapabilityCard {
   title: string;
   description: string;
-  icon: string;
+  icon: IconName;
 }
 
 @Component({
@@ -24,27 +25,27 @@ export class AiShowcase {
     {
       title: "Pull fleet state",
       description: "Reads unassigned loads, truck locations, and who's available",
-      icon: "pi-search",
+      icon: "search",
     },
     {
       title: "Compare loads to trucks",
       description: "Looks at truck-type compatibility and revenue per mile",
-      icon: "pi-chart-bar",
+      icon: "chart-bar",
     },
     {
       title: "Run HOS checks",
       description: "Confirms each driver has the hours to take the trip",
-      icon: "pi-shield",
+      icon: "shield",
     },
     {
       title: "Score matches",
       description: "Ranks every feasible load-to-truck pairing",
-      icon: "pi-calculator",
+      icon: "calculator",
     },
     {
       title: "Assign and dispatch",
       description: "Sends suggestions for approval, or runs them itself",
-      icon: "pi-check-circle",
+      icon: "check-circle",
     },
   ];
 
@@ -53,19 +54,19 @@ export class AiShowcase {
       title: "Human-in-the-loop",
       description:
         "The agent suggests assignments. You approve, reject, or hand back context to re-plan. You stay in control.",
-      icon: "pi-user-edit",
+      icon: "user-edit",
     },
     {
       title: "Autonomous",
       description:
         "The agent runs on its own - assigns loads, creates trips, and dispatches without a human in the loop.",
-      icon: "pi-bolt",
+      icon: "bolt",
     },
     {
       title: "Full audit trail",
       description:
         "Every assignment is logged with the agent's reasoning - what it saw, why it picked that truck, and who approved it.",
-      icon: "pi-history",
+      icon: "history",
     },
   ];
 }

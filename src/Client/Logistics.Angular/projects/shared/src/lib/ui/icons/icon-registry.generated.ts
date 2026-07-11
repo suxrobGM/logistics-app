@@ -26,6 +26,7 @@ import {
   lucideEye,
   lucideEyeOff,
   lucideFileText,
+  lucideInbox,
   lucideInfo,
   lucideLoaderCircle,
   lucideLock,
@@ -204,18 +205,11 @@ export type UiIconName =
   | "trending-up";
 
 /**
- * The legacy primeicons CLASS spellings call sites still write where an icon NAME is wanted: the
- * icon name behind a `pi-…` prefix, optionally behind a leading `pi` token as well.
- * `resolveNgIcon()` strips them. Typo protection survives — a misspelled name is still a compile
- * error, prefix or no prefix.
- *
- * @deprecated Transitional. S3 rewrites these call sites to the bare name and DELETES this type.
+ * What an icon-name input accepts. Identical to {@link UiIconName}: S3 swept every call site onto
+ * the bare canonical name, so the transitional `pi-`-prefixed spelling (LegacyPiIconName) is gone.
+ * The alias is kept because it reads better at the call sites that already reference it.
  */
-type PrefixedIconName = `pi-${UiIconName}`;
-export type LegacyPiIconName = PrefixedIconName | `pi ${PrefixedIconName}`;
-
-/** What an icon-name input accepts during the S2 -> S3 window. */
-export type IconName = UiIconName | LegacyPiIconName;
+export type IconName = UiIconName;
 
 /** Call-site name -> lucide (or hand-vendored `brand-*`) kebab name. The runtime map. */
 export const ICON_ALIASES: Record<UiIconName, string> = {
@@ -395,6 +389,7 @@ export const BASE_ICON_NAMES: readonly UiIconName[] = [
   "eye",
   "eye-slash",
   "file-pdf",
+  "inbox",
   "info-circle",
   "lock",
   "moon",
@@ -488,6 +483,7 @@ export const TMS_ICON_NAMES: readonly UiIconName[] = [
   "image",
   "images",
   "inbox",
+  "info",
   "info-circle",
   "key",
   "link",
@@ -717,6 +713,7 @@ export const BASE_NG_ICONS = {
   lucideEye,
   lucideEyeOff,
   lucideFileText,
+  lucideInbox,
   lucideInfo,
   lucideLoaderCircle,
   lucideLock,

@@ -13,7 +13,8 @@
       <p class="m-0 text-sm">{{ event.description }}</p>
       @if (event.loadName) {
         <span class="text-muted-foreground text-xs">
-          <i class="pi pi-box mr-1"></i>{{ event.loadName }}
+          <ui-icon name="box" class="mr-1" />
+          {{ event.loadName }}
         </span>
       }
     </div>
@@ -23,7 +24,7 @@
       class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
       [class]="getMarkerClass(event.eventType)"
     >
-      <i [class]="getEventIcon(event.eventType)" class="text-xs"></i>
+      <ui-icon [name]="getEventIcon(event.eventType)" size="inherit" class="text-xs" />
     </span>
   </ng-template>
 </p-timeline>

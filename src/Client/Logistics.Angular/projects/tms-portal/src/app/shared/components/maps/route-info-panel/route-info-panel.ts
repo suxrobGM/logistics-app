@@ -1,4 +1,5 @@
 import { Component, computed, input } from "@angular/core";
+import { Icon } from "@logistics/shared/ui";
 import { formatDistanceMiles, formatDuration, type RouteInfo, type SegmentInfo } from "../types";
 
 /**
@@ -8,6 +9,7 @@ import { formatDistanceMiles, formatDuration, type RouteInfo, type SegmentInfo }
 @Component({
   selector: "app-route-info-panel",
   templateUrl: "./route-info-panel.html",
+  imports: [Icon],
 })
 export class RouteInfoPanel {
   /** Total distance in meters */

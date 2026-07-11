@@ -14,7 +14,6 @@ import {
   lucideFlag,
   lucideFolderOpen,
   lucideHome,
-  lucideInbox,
   lucideLogIn,
   lucideMap,
   lucideMapPin,
@@ -29,7 +28,7 @@ import {
  * Icons `customer-portal` uses that `BASE_NG_ICONS` does not already provide.
  * Registered in app.config.ts:  provideIcons({ ...BASE_NG_ICONS, ...CUSTOMER_NG_ICONS })
  *
- * 19 name(s) -> 18 distinct glyph(s).
+ * 18 name(s) -> 17 distinct glyph(s).
  */
 export const CUSTOMER_NG_ICONS = {
   lucideArrowRight,
@@ -41,7 +40,6 @@ export const CUSTOMER_NG_ICONS = {
   lucideFlag,
   lucideFolderOpen,
   lucideHome,
-  lucideInbox,
   lucideLogIn,
   lucideMap,
   lucideMapPin,

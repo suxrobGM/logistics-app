@@ -1,12 +1,13 @@
 import { Component, computed, input } from "@angular/core";
 import type { Address } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
+import { Icon } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 
 @Component({
   selector: "app-route-badge",
   templateUrl: "./route-badge.html",
-  imports: [TooltipModule],
+  imports: [Icon, TooltipModule],
 })
 export class RouteBadge {
   public readonly origin = input.required<Address>();

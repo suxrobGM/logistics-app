@@ -20,11 +20,13 @@ import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   DateRangePicker,
   Grid,
+  Icon,
   Stack,
   Surface,
   Typography,
   UiAutocompleteField,
   UiDataTable,
+  type IconName,
 } from "@logistics/shared/ui";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
@@ -57,30 +59,31 @@ interface PayrollFormValue {
   selector: "app-payroll-invoice-add",
   templateUrl: "./payroll-invoice-add.html",
   imports: [
-    CommonModule,
-    CardModule,
-    ValidatedForm,
-    FormRoot,
-    FormField,
-    UiFormField,
-    RouterModule,
-    UiAutocompleteField,
-    ProgressSpinnerModule,
-    FormsModule,
     ButtonModule,
-    SelectModule,
+    CardModule,
+    CommonModule,
+    CurrencyFormatPipe,
     DateRangePicker,
     DividerModule,
-    SelectButtonModule,
-    MultiSelectModule,
-    UiDataTable,
-    TooltipModule,
-    PageHeader,
+    FormField,
+    FormRoot,
+    FormsModule,
     Grid,
+    Icon,
+    MultiSelectModule,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterModule,
+    SelectButtonModule,
+    SelectModule,
     Stack,
     Surface,
+    TooltipModule,
     Typography,
-    CurrencyFormatPipe,
+    UiAutocompleteField,
+    UiDataTable,
+    UiFormField,
+    ValidatedForm,
   ],
 })
 export class PayrollInvoiceAdd {
@@ -135,8 +138,8 @@ export class PayrollInvoiceAdd {
   );
 
   protected readonly modeOptions = [
-    { label: "Single Employee", value: "single", icon: "pi pi-user" },
-    { label: "Multiple Employees", value: "bulk", icon: "pi pi-users" },
+    { label: "Single Employee", value: "single", icon: "user" as IconName },
+    { label: "Multiple Employees", value: "bulk", icon: "users" as IconName },
   ];
 
   constructor() {

@@ -1,27 +1,28 @@
 import { Component, computed, input } from "@angular/core";
 import type { EldProviderType } from "@logistics/shared/api";
+import { Icon, type IconName } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 
 interface ProviderInfo {
   label: string;
-  icon: string;
+  icon: IconName;
   color: string;
 }
 
 const PROVIDER_INFO: Record<EldProviderType, ProviderInfo> = {
-  samsara: { label: "Samsara", icon: "pi pi-wifi", color: "text-blue-600" },
-  motive: { label: "Motive", icon: "pi pi-wifi", color: "text-green-600" },
-  geotab: { label: "Geotab", icon: "pi pi-wifi", color: "text-purple-600" },
-  omnitracs: { label: "Omnitracs", icon: "pi pi-wifi", color: "text-orange-600" },
-  people_net: { label: "PeopleNet", icon: "pi pi-wifi", color: "text-teal-600" },
-  tt_eld: { label: "T&T ELD", icon: "pi pi-wifi", color: "text-red-600" },
-  demo: { label: "Demo", icon: "pi pi-wifi", color: "text-gray-600" },
+  samsara: { label: "Samsara", icon: "wifi", color: "text-blue-600" },
+  motive: { label: "Motive", icon: "wifi", color: "text-green-600" },
+  geotab: { label: "Geotab", icon: "wifi", color: "text-purple-600" },
+  omnitracs: { label: "Omnitracs", icon: "wifi", color: "text-orange-600" },
+  people_net: { label: "PeopleNet", icon: "wifi", color: "text-teal-600" },
+  tt_eld: { label: "T&T ELD", icon: "wifi", color: "text-red-600" },
+  demo: { label: "Demo", icon: "wifi", color: "text-gray-600" },
 };
 
 @Component({
   selector: "app-eld-status-badge",
   templateUrl: "./eld-status-badge.html",
-  imports: [TooltipModule],
+  imports: [Icon, TooltipModule],
 })
 export class EldStatusBadge {
   public readonly providerType = input<EldProviderType | null>(null);
@@ -31,7 +32,7 @@ export class EldStatusBadge {
   protected readonly providerInfo = computed(() => {
     const type = this.providerType();
     if (!type) return null;
-    return PROVIDER_INFO[type] ?? { label: type, icon: "pi pi-wifi", color: "text-gray-600" };
+    return PROVIDER_INFO[type] ?? { label: type, icon: "wifi", color: "text-gray-600" };
   });
 
   protected readonly statusText = computed(() => {

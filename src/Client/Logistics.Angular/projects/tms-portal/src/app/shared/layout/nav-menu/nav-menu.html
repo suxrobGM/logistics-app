@@ -26,18 +26,18 @@
             type="button"
           >
             <div class="flex min-w-0 items-center gap-3">
-              @if (item.icon) {
-                <ng-icon [name]="ngIcon(item.icon)" size="1.125rem" class="nav-icon" />
+              @if (item.icon; as icon) {
+                <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>
               }
             </div>
             @if (!collapsed()) {
-              <ng-icon
-                name="lucideChevronDown"
-                size="0.75rem"
-                class="text-muted-foreground shrink-0 transition-transform duration-200"
+              <ui-icon
+                name="chevron-down"
+                size="inherit"
+                class="text-muted-foreground shrink-0 text-xs transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-primary]="isGroupExpanded(item)"
               />
@@ -79,8 +79,8 @@
             tooltipPosition="right"
           >
             <div class="flex min-w-0 items-center gap-3">
-              @if (item.icon) {
-                <ng-icon [name]="ngIcon(item.icon)" size="1.125rem" class="nav-icon" />
+              @if (item.icon; as icon) {
+                <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>
@@ -117,18 +117,18 @@
             type="button"
           >
             <div class="flex min-w-0 items-center gap-3">
-              @if (item.icon) {
-                <ng-icon [name]="ngIcon(item.icon)" size="1.125rem" class="nav-icon" />
+              @if (item.icon; as icon) {
+                <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>
               }
             </div>
             @if (!collapsed()) {
-              <ng-icon
-                name="lucideChevronDown"
-                size="0.75rem"
-                class="text-muted-foreground shrink-0 transition-transform duration-200"
+              <ui-icon
+                name="chevron-down"
+                size="inherit"
+                class="text-muted-foreground shrink-0 text-xs transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-primary]="isGroupExpanded(item)"
               />
@@ -161,8 +161,8 @@
             (click)="navigateTo(item)"
           >
             <div class="flex min-w-0 items-center gap-3">
-              @if (item.icon) {
-                <ng-icon [name]="ngIcon(item.icon)" size="1.125rem" class="nav-icon" />
+              @if (item.icon; as icon) {
+                <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>

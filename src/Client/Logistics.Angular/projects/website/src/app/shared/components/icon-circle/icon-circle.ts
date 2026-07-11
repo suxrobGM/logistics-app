@@ -1,4 +1,5 @@
 import { Component, input } from "@angular/core";
+import { Icon, type IconName } from "@logistics/shared/ui";
 
 type IconSize = "sm" | "md" | "lg";
 type ColorVariant = "accent" | "ink" | "outlined";
@@ -6,9 +7,10 @@ type ColorVariant = "accent" | "ink" | "outlined";
 @Component({
   selector: "web-icon-circle",
   templateUrl: "./icon-circle.html",
+  imports: [Icon],
 })
 export class IconCircle {
-  public readonly icon = input.required<string>();
+  public readonly icon = input.required<IconName>();
   public readonly size = input<IconSize>("md");
   public readonly variant = input<ColorVariant>("accent");
   public readonly hoverScale = input(false);
@@ -50,10 +52,6 @@ export class IconCircle {
     }
 
     return classes;
-  }
-
-  protected iconClasses(): string {
-    return `pi ${this.icon()}`;
   }
 
   protected iconStyles(): Record<string, string> {

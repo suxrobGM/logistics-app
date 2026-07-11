@@ -1,4 +1,5 @@
 import { Component, signal } from "@angular/core";
+import { Icon, type IconName } from "@logistics/shared/ui";
 import { BrowserFrame, SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
@@ -13,13 +14,13 @@ interface ShowcaseItem {
   description: string;
   screenshots: Screenshot[];
   features: string[];
-  icon: string;
+  icon: IconName;
 }
 
 @Component({
   selector: "web-product-showcase",
   templateUrl: "./product-showcase.html",
-  imports: [SectionContainer, SectionHeader, BrowserFrame, ScrollAnimateDirective],
+  imports: [BrowserFrame, Icon, ScrollAnimateDirective, SectionContainer, SectionHeader],
 })
 export class ProductShowcase {
   protected readonly activeTab = signal(0);
@@ -52,7 +53,7 @@ export class ProductShowcase {
         "Agent reasoning timeline",
         "Approve or reject each suggestion",
       ],
-      icon: "pi-sparkles",
+      icon: "sparkles",
     },
     {
       title: "TMS Dashboard",
@@ -75,7 +76,7 @@ export class ProductShowcase {
         "Revenue and performance metrics",
         "Driver stats and top performers",
       ],
-      icon: "pi-chart-bar",
+      icon: "chart-bar",
     },
     {
       title: "Load Management",
@@ -98,7 +99,7 @@ export class ProductShowcase {
         "Status tracking with delivery workflow",
         "Load detail view with assignment",
       ],
-      icon: "pi-box",
+      icon: "box",
     },
     {
       title: "Trips & Route Optimization",
@@ -121,7 +122,7 @@ export class ProductShowcase {
         "Interactive map with stop visualization",
         "Truck & driver assignment per trip",
       ],
-      icon: "pi-map",
+      icon: "map",
     },
     {
       title: "Fleet Overview",
@@ -144,7 +145,7 @@ export class ProductShowcase {
         "Availability tracking",
         "Reports and analytics",
       ],
-      icon: "pi-truck",
+      icon: "truck",
     },
     {
       title: "Accounting",
@@ -167,7 +168,7 @@ export class ProductShowcase {
         "Payroll processing and approval",
         "Payment recording and history",
       ],
-      icon: "pi-wallet",
+      icon: "wallet",
     },
     {
       title: "Customer Portal",
@@ -186,7 +187,7 @@ export class ProductShowcase {
         },
       ],
       features: ["Live shipment tracking", "Invoice and document access", "Self-service login"],
-      icon: "pi-users",
+      icon: "users",
     },
   ];
 

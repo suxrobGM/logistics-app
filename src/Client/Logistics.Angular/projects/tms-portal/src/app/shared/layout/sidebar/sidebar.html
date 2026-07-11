@@ -23,13 +23,14 @@
     tooltipPosition="right"
     type="button"
   >
-    <i class="pi pi-search shrink-0 text-sm"></i>
+    <ui-icon name="search" size="inherit" class="shrink-0 text-sm" />
     @if (isOpened()) {
       <span class="flex-1 text-left">Search...</span>
       <kbd
         class="bg-surface border-subtle text-muted-foreground inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[0.625rem]"
-        >Ctrl+K</kbd
       >
+        Ctrl+K
+      </kbd>
     }
   </button>
 
@@ -51,7 +52,7 @@
     tooltipPosition="right"
     type="button"
   >
-    <i [class]="isOpened() ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" class="text-xs"></i>
+    <ui-icon [name]="isOpened() ? 'chevron-left' : 'chevron-right'" size="inherit" class="text-xs" />
     @if (isOpened()) {
       <span>Collapse</span>
     }
@@ -77,7 +78,7 @@
         <div
           class="bg-primary/12 border-accent/20 flex size-7 shrink-0 items-center justify-center rounded-full border"
         >
-          <i class="pi pi-user text-primary text-xs"></i>
+          <ui-icon name="user" size="inherit" class="text-primary text-xs" />
         </div>
         @if (isOpened()) {
           <div class="min-w-0 flex-1">
@@ -85,11 +86,12 @@
             @if (userRole()) {
               <span
                 class="text-primary block text-[0.625rem] font-semibold tracking-wider uppercase"
-                >{{ userRole() }}</span
               >
+                {{ userRole() }}
+              </span>
             }
           </div>
-          <i class="pi pi-ellipsis-v text-muted-foreground text-xs"></i>
+          <ui-icon name="ellipsis-v" size="inherit" class="text-muted-foreground text-xs" />
         }
       </button>
     }
@@ -113,7 +115,7 @@
         (click)="openAccountUrl(); userPopover.hide()"
         type="button"
       >
-        <i class="pi pi-user-edit text-muted-foreground w-5 text-center"></i>
+        <ui-icon name="user-edit" class="text-muted-foreground w-5 text-center" />
         <span>Manage Profile</span>
       </button>
       <button
@@ -121,7 +123,7 @@
         (click)="logout(); userPopover.hide()"
         type="button"
       >
-        <i class="pi pi-sign-out w-5 text-center"></i>
+        <ui-icon name="sign-out" class="w-5 text-center" />
         <span>Sign Out</span>
       </button>
     </div>

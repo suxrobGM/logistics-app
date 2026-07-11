@@ -18,7 +18,7 @@
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-money-bill"
+        icon="money-bill"
         label="Total Payroll"
         [value]="(data()?.totalPayroll || 0 | currencyFormat) ?? '$0'"
         color="blue"
@@ -27,7 +27,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-check-circle"
+        icon="check-circle"
         label="Total Paid"
         [value]="(data()?.totalPaid || 0 | currencyFormat) ?? '$0'"
         color="green"
@@ -36,7 +36,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-clock"
+        icon="clock"
         label="Outstanding"
         [value]="(data()?.totalOutstanding || 0 | currencyFormat) ?? '$0'"
         color="orange"
@@ -46,7 +46,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-users"
+        icon="users"
         label="Employees"
         [value]="(data()?.uniqueEmployees || 0).toString()"
         color="blue"
@@ -58,7 +58,7 @@
   <!-- Charts Row 1 -->
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Payroll Status Distribution" icon="pi-chart-pie" iconColor="blue">
+      <ui-dashboard-card title="Payroll Status Distribution" icon="chart-pie" iconColor="blue">
         @if (hasStatusChartData()) {
           <p-chart
             type="doughnut"
@@ -75,7 +75,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Salary Type Breakdown" icon="pi-chart-bar" iconColor="blue">
+      <ui-dashboard-card title="Salary Type Breakdown" icon="chart-bar" iconColor="blue">
         @if (hasSalaryTypeChartData()) {
           <p-chart
             type="bar"
@@ -94,7 +94,7 @@
 
   <!-- Payroll Trends Chart -->
   <div class="mb-6">
-    <ui-dashboard-card title="Payroll Trends" icon="pi-chart-line" iconColor="blue">
+    <ui-dashboard-card title="Payroll Trends" icon="chart-line" iconColor="blue">
       @if (hasTrendChartData()) {
         <p-chart
           type="line"
@@ -113,7 +113,7 @@
   <!-- Data Tables -->
   <ui-grid container spacing="2">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Payroll Trends by Period" icon="pi-table" iconColor="blue">
+      <ui-dashboard-card title="Payroll Trends by Period" icon="table" iconColor="blue">
         <ui-data-table [value]="data()?.payrollTrends || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
@@ -149,7 +149,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Top Employees by Earnings" icon="pi-users" iconColor="blue">
+      <ui-dashboard-card title="Top Employees by Earnings" icon="users" iconColor="blue">
         <ui-data-table [value]="data()?.topEmployees || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
@@ -193,7 +193,9 @@
           </ng-template>
           <ng-template #empty>
             <tr>
-              <td colspan="4" class="text-muted-foreground text-center">No employee data available</td>
+              <td colspan="4" class="text-muted-foreground text-center">
+                No employee data available
+              </td>
             </tr>
           </ng-template>
         </ui-data-table>
@@ -203,7 +205,7 @@
 
   <!-- Salary Type Breakdown Table -->
   <div class="mb-6">
-    <ui-dashboard-card title="Salary Type Summary" icon="pi-list" iconColor="blue">
+    <ui-dashboard-card title="Salary Type Summary" icon="list" iconColor="blue">
       <ui-data-table [value]="data()?.salaryTypeBreakdown || []">
         <ng-template #header>
           <tr>
@@ -237,7 +239,9 @@
         </ng-template>
         <ng-template #empty>
           <tr>
-            <td colspan="4" class="text-muted-foreground text-center">No salary type data available</td>
+            <td colspan="4" class="text-muted-foreground text-center">
+              No salary type data available
+            </td>
           </tr>
         </ng-template>
       </ui-data-table>

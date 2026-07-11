@@ -2,6 +2,7 @@ import { Component, computed, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
+import { Icon, type IconName } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
@@ -11,14 +12,14 @@ interface ActivityItem {
   loadNumber: number;
   action: string;
   timestamp: Date;
-  icon: string;
+  icon: IconName;
   iconClass: string;
 }
 
 @Component({
   selector: "app-recent-activity",
   templateUrl: "./recent-activity.html",
-  imports: [CardModule, DividerModule, SkeletonModule, RouterLink, RelativeTimePipe],
+  imports: [CardModule, DividerModule, Icon, RelativeTimePipe, RouterLink, SkeletonModule],
 })
 export class RecentActivityComponent {
   readonly loads = input<LoadDto[]>([]);
@@ -37,7 +38,7 @@ export class RecentActivityComponent {
           loadNumber: load.number,
           action: "was delivered",
           timestamp: new Date(load.deliveredAt),
-          icon: "pi-check-circle",
+          icon: "check-circle",
           iconClass: "text-emerald-600 dark:text-emerald-400",
         });
       } else if (load.pickedUpAt) {
@@ -46,7 +47,7 @@ export class RecentActivityComponent {
           loadNumber: load.number,
           action: "was picked up",
           timestamp: new Date(load.pickedUpAt),
-          icon: "pi-box",
+          icon: "box",
           iconClass: "text-amber-600 dark:text-amber-400",
         });
       } else if (load.dispatchedAt) {
@@ -55,7 +56,7 @@ export class RecentActivityComponent {
           loadNumber: load.number,
           action: "was dispatched",
           timestamp: new Date(load.dispatchedAt),
-          icon: "pi-send",
+          icon: "send",
           iconClass: "text-blue-600 dark:text-blue-400",
         });
       } else if (load.cancelledAt) {
@@ -64,7 +65,7 @@ export class RecentActivityComponent {
           loadNumber: load.number,
           action: "was cancelled",
           timestamp: new Date(load.cancelledAt),
-          icon: "pi-times-circle",
+          icon: "times-circle",
           iconClass: "text-red-600 dark:text-red-400",
         });
       } else if (load.createdAt) {
@@ -73,7 +74,7 @@ export class RecentActivityComponent {
           loadNumber: load.number,
           action: "was created",
           timestamp: new Date(load.createdAt),
-          icon: "pi-plus-circle",
+          icon: "plus-circle",
           iconClass: "text-gray-600 dark:text-gray-400",
         });
       }

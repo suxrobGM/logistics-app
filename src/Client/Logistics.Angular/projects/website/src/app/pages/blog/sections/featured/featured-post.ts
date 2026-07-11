@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { Icon } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { SkeletonModule } from "primeng/skeleton";
 import { Avatar, SectionContainer } from "@/shared/components";
@@ -12,13 +13,14 @@ import { BlogStore } from "../../store/blog.store";
   selector: "web-featured-post",
   templateUrl: "./featured-post.html",
   imports: [
-    SectionContainer,
-    ScrollAnimateDirective,
-    ButtonModule,
     Avatar,
-    SkeletonModule,
+    ButtonModule,
     DatePipe,
+    Icon,
     RouterLink,
+    ScrollAnimateDirective,
+    SectionContainer,
+    SkeletonModule,
   ],
 })
 export class FeaturedPost {

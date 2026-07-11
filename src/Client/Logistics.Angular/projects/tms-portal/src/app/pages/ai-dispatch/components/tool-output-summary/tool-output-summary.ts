@@ -1,9 +1,11 @@
 import { Component, computed, input } from "@angular/core";
-import { type ParsedToolOutput, parseToolOutput } from "../../utils/decision-utils";
+import { Icon } from "@logistics/shared/ui";
+import { parseToolOutput, type ParsedToolOutput } from "../../utils/decision-utils";
 
 @Component({
   selector: "app-tool-output-summary",
   templateUrl: "./tool-output-summary.html",
+  imports: [Icon],
 })
 export class ToolOutputSummary {
   public readonly toolOutput = input.required<string | null | undefined>();

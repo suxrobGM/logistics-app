@@ -1,4 +1,5 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
+import type { IconName } from "@logistics/shared/ui";
 import type { NavSection } from "@/shared/layout/nav-menu";
 import { RecentPagesService } from "./recent-pages.service";
 
@@ -6,7 +7,8 @@ export interface SearchableItem {
   id: string;
   label: string;
   section: string;
-  icon?: string;
+  /** Canonical `<ui-icon name>` — the palette renders it through `<ui-icon>`, not a class string. */
+  icon?: IconName;
   route?: string;
   type: "page" | "action" | "recent";
   keywords?: string[];
@@ -17,7 +19,7 @@ const QUICK_ACTIONS: SearchableItem[] = [
     id: "action-create-load",
     label: "Create Load",
     section: "Quick Actions",
-    icon: "pi pi-plus",
+    icon: "plus",
     route: "/loads/add",
     type: "action",
     keywords: ["new", "add", "load"],
@@ -26,7 +28,7 @@ const QUICK_ACTIONS: SearchableItem[] = [
     id: "action-add-employee",
     label: "Add Employee",
     section: "Quick Actions",
-    icon: "pi pi-user-plus",
+    icon: "user-plus",
     route: "/employees/add",
     type: "action",
     keywords: ["new", "hire", "driver"],
@@ -35,7 +37,7 @@ const QUICK_ACTIONS: SearchableItem[] = [
     id: "action-add-customer",
     label: "Add Customer",
     section: "Quick Actions",
-    icon: "pi pi-building",
+    icon: "building",
     route: "/customers/add",
     type: "action",
     keywords: ["new", "client"],
@@ -44,7 +46,7 @@ const QUICK_ACTIONS: SearchableItem[] = [
     id: "action-add-expense",
     label: "Add Expense",
     section: "Quick Actions",
-    icon: "pi pi-money-bill",
+    icon: "money-bill",
     route: "/expenses/add",
     type: "action",
     keywords: ["new", "cost"],
@@ -53,7 +55,7 @@ const QUICK_ACTIONS: SearchableItem[] = [
     id: "action-add-truck",
     label: "Add Truck",
     section: "Quick Actions",
-    icon: "pi pi-truck",
+    icon: "truck",
     route: "/trucks/add",
     type: "action",
     keywords: ["new", "vehicle", "fleet"],
@@ -143,7 +145,7 @@ export class CommandPaletteService {
       section: "Recent",
       route: p.route,
       type: "recent" as const,
-      icon: "pi pi-history",
+      icon: "history",
     }));
 
     return [...recent, ...QUICK_ACTIONS.slice(0, 3)];

@@ -3,7 +3,6 @@
 <div class="mx-auto max-w-4xl">
   <p-card>
     <form [formRoot]="form">
-
       <!-- Mode Toggle -->
       <ui-form-field label="Creation Mode">
         <p-select-button
@@ -16,7 +15,7 @@
         >
           <ng-template #item let-item>
             <ui-stack direction="row" align="center" gap="2">
-              <i [class]="item.icon"></i>
+              <ui-icon [name]="item.icon" />
               <span>{{ item.label }}</span>
             </ui-stack>
           </ng-template>
@@ -163,7 +162,7 @@
                 <td>{{ getSalaryTypeDesc(item.employee.salaryType) }}</td>
                 <td class="text-right">
                   @if (item.loading) {
-                    <i class="pi pi-spin pi-spinner"></i>
+                    <ui-icon name="spinner" spin />
                   } @else if (item.error) {
                     <span class="text-danger">Error</span>
                   } @else {
@@ -172,11 +171,11 @@
                 </td>
                 <td class="text-center">
                   @if (item.loading) {
-                    <i class="pi pi-spin pi-spinner text-foreground"></i>
+                    <ui-icon name="spinner" spin class="text-foreground" />
                   } @else if (item.error) {
-                    <i class="pi pi-times-circle text-danger" [pTooltip]="item.error"></i>
+                    <ui-icon name="times-circle" class="text-danger" [pTooltip]="item.error" />
                   } @else {
-                    <i class="pi pi-check-circle text-success"></i>
+                    <ui-icon name="check-circle" class="text-success" />
                   }
                 </td>
               </tr>

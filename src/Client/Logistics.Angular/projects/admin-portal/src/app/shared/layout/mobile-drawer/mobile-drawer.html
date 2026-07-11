@@ -25,7 +25,7 @@
             class="text-foreground hover:bg-surface-100 mb-0.5 flex w-full items-center gap-3 rounded-lg border-none bg-transparent px-3 py-2.5 text-left text-sm font-medium transition-colors"
             (click)="navigateTo(item.route)"
           >
-            <i [class]="item.icon + ' text-base'"></i>
+            <ui-icon [name]="item.icon" size="inherit" class="text-base" />
             <span>{{ item.label }}</span>
           </button>
         }

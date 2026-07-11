@@ -8,12 +8,17 @@
     "
     [pTooltip]="statusText() + (lastSyncText() ? ' • Last sync: ' + lastSyncText() : '')"
   >
-    <i [class]="providerInfo()!.icon + ' text-xs ' + (isConnected() ? 'text-green-600' : 'text-red-500')"></i>
+    <ui-icon
+      [name]="providerInfo()!.icon"
+      size="inherit"
+      class="text-xs"
+      [class]="isConnected() ? 'text-green-600' : 'text-red-500'"
+    />
     {{ providerInfo()!.label }}
     @if (isConnected()) {
-      <i class="pi pi-check-circle text-xs"></i>
+      <ui-icon name="check-circle" size="inherit" class="text-xs" />
     } @else {
-      <i class="pi pi-times-circle text-xs"></i>
+      <ui-icon name="times-circle" size="inherit" class="text-xs" />
     }
   </span>
 } @else {
@@ -21,7 +26,7 @@
     class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400"
     pTooltip="No ELD provider configured"
   >
-    <i class="pi pi-wifi text-xs"></i>
+    <ui-icon name="wifi" size="inherit" class="text-xs" />
     No ELD
   </span>
 }

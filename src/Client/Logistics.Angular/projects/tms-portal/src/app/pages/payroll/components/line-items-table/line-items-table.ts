@@ -13,6 +13,7 @@ import {
 import { payrollLineItemTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
+  Icon,
   UiDataTable,
   UiNumberField,
   UiSelectField,
@@ -37,19 +38,20 @@ const EMPTY = {
   selector: "app-payroll-line-items-table",
   templateUrl: "./line-items-table.html",
   imports: [
-    CommonModule,
-    FormRoot,
-    FormField,
-    UiDataTable,
     ButtonModule,
-    DialogModule,
-    TooltipModule,
-    UiFormField,
-    UiTextField,
-    UiSelectField,
-    UiNumberField,
-    UiTextareaField,
+    CommonModule,
     CurrencyFormatPipe,
+    DialogModule,
+    FormField,
+    FormRoot,
+    Icon,
+    TooltipModule,
+    UiDataTable,
+    UiFormField,
+    UiNumberField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
   ],
 })
 export class PayrollLineItemsTable {

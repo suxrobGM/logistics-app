@@ -4,11 +4,11 @@
   backLink="/loadboard"
 />
 
-<ui-dashboard-card title="Search Filters" icon="pi-filter" class="mb-6 block">
+<ui-dashboard-card title="Search Filters" icon="filter" class="mb-6 block">
   <app-loadboard-search-filters [searching]="searching()" (searched)="onSearch($event)" />
 </ui-dashboard-card>
 
-<ui-dashboard-card title="Search Results" icon="pi-list">
+<ui-dashboard-card title="Search Results" icon="list">
   @if (searching()) {
     <ui-stack align="center" justify="center" class="p-5">
       <p-progressSpinner />

@@ -11,7 +11,7 @@
     severity="danger"
     badgeSize="small"
   >
-    <i class="pi pi-bell"></i>
+    <ui-icon name="bell" />
   </p-overlaybadge>
   @if (expanded()) {
     <span>Notifications</span>
@@ -40,7 +40,7 @@
         </div>
       } @else if (displayedNotifications().length === 0) {
         <div class="text-muted-foreground flex flex-col items-center justify-center p-8">
-          <i class="pi pi-bell-slash mb-2 text-3xl"></i>
+          <ui-icon name="bell-slash" size="inherit" class="mb-2 text-3xl" />
           <p class="m-0 text-sm">No notifications</p>
         </div>
       } @else {
@@ -54,12 +54,12 @@
             tabindex="0"
           >
             <div class="mb-1 flex items-start justify-between gap-2">
-              <span class="text-foreground text-sm leading-tight font-semibold">{{
-                notification.title
-              }}</span>
-              <span class="text-muted-foreground shrink-0 text-xs whitespace-nowrap">{{
-                notification.createdDate | relativeTime
-              }}</span>
+              <span class="text-foreground text-sm leading-tight font-semibold">
+                {{ notification.title }}
+              </span>
+              <span class="text-muted-foreground shrink-0 text-xs whitespace-nowrap">
+                {{ notification.createdDate | relativeTime }}
+              </span>
             </div>
             <p
               class="notification-message text-subtle-foreground m-0 text-[0.8125rem] leading-snug"
@@ -82,7 +82,7 @@
           (click)="popover.hide()"
         >
           View all notifications
-          <i class="pi pi-arrow-right text-xs"></i>
+          <ui-icon name="arrow-right" size="inherit" class="text-xs" />
         </a>
       </div>
     }

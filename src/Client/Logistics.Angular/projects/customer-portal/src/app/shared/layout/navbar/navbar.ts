@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { ThemeToggle, type UserTenantAccessDto } from "@logistics/shared";
+import { Icon, type IconName } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { MenuModule } from "primeng/menu";
@@ -12,7 +13,7 @@ import { environment } from "@/env";
 
 interface NavItem {
   label: string;
-  icon: string;
+  icon: IconName;
   route: string;
 }
 
@@ -20,11 +21,12 @@ interface NavItem {
   selector: "cp-navbar",
   templateUrl: "./navbar.html",
   imports: [
+    ButtonModule,
     FormsModule,
+    Icon,
+    MenuModule,
     RouterLink,
     RouterLinkActive,
-    ButtonModule,
-    MenuModule,
     SelectModule,
     ThemeToggle,
   ],
@@ -45,10 +47,10 @@ export class Navbar {
   });
 
   protected readonly navItems: NavItem[] = [
-    { label: "Dashboard", icon: "pi-home", route: "/" },
-    { label: "Shipments", icon: "pi-truck", route: "/shipments" },
-    { label: "Invoices", icon: "pi-receipt", route: "/invoices" },
-    { label: "Documents", icon: "pi-file", route: "/documents" },
+    { label: "Dashboard", icon: "home", route: "/" },
+    { label: "Shipments", icon: "truck", route: "/shipments" },
+    { label: "Invoices", icon: "receipt", route: "/invoices" },
+    { label: "Documents", icon: "file", route: "/documents" },
   ];
 
   protected readonly profileMenuItems: MenuItem[] = [

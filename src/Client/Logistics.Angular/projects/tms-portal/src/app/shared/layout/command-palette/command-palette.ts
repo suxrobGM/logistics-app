@@ -1,10 +1,12 @@
-import { Component, ElementRef, computed, effect, inject, signal, viewChild } from "@angular/core";
+import { Component, computed, effect, ElementRef, inject, signal, viewChild } from "@angular/core";
 import { Router } from "@angular/router";
+import { Icon } from "@logistics/shared/ui";
 import { CommandPaletteService, type SearchableItem } from "@/core/services";
 
 @Component({
   selector: "app-command-palette",
   templateUrl: "./command-palette.html",
+  imports: [Icon],
   styleUrl: "./command-palette.css",
   host: {
     "(document:keydown)": "onKeydown($event)",

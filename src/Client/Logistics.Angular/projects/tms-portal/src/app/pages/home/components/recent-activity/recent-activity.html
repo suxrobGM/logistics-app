@@ -1,7 +1,7 @@
 <p-card class="h-full">
   <ng-template #header>
     <div class="flex items-center gap-2 py-3 pl-4">
-      <i class="pi pi-history text-xl text-purple-600"></i>
+      <ui-icon name="history" size="inherit" class="text-xl text-purple-600" />
       <h4 class="mb-0">Recent Activity</h4>
     </div>
     <p-divider class="m-0" />
@@ -15,7 +15,7 @@
     </div>
   } @else if (activities().length === 0) {
     <div class="text-muted-foreground flex flex-col items-center justify-center py-8 text-center">
-      <i class="pi pi-inbox mb-2 text-4xl"></i>
+      <ui-icon name="inbox" size="inherit" class="mb-2 text-4xl" />
       <p>No recent activity</p>
     </div>
   } @else {
@@ -26,13 +26,15 @@
           class="hover:bg-surface-100 dark:hover:bg-surface-800 flex items-center gap-3 rounded-lg px-2 py-3 transition-colors"
         >
           <!-- Icon -->
-          <i class="pi {{ activity.icon }} {{ activity.iconClass }} text-lg"></i>
+          <ui-icon [name]="activity.icon" size="inherit" [class]="activity.iconClass" class="text-lg" />
 
           <!-- Content -->
           <div class="min-w-0 flex-1">
             <span class="text-sm">
               <span class="text-foreground font-semibold">Load #{{ activity.loadNumber }}</span>
-              <span class="text-muted-foreground"> {{ activity.action }}</span>
+              <!-- &ngsp; not a plain space: Angular strips whitespace-only text nodes between
+                   elements, and Prettier re-strips a literal one. Without it: "Load #158was delivered". -->
+              <span class="text-muted-foreground">&ngsp;{{ activity.action }}</span>
             </span>
           </div>
 

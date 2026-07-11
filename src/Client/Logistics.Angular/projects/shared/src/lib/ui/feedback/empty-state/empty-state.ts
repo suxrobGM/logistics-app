@@ -1,6 +1,8 @@
 import { Component, computed, input, output } from "@angular/core";
 import { ButtonModule } from "primeng/button";
+import { Icon } from "../../content/icon/icon";
 import { Typography } from "../../content/typography/typography";
+import type { IconName } from "../../icons/icon-registry.generated";
 import { Stack } from "../../layout/stack/stack";
 
 type Severity = "info" | "success" | "warning" | "danger" | null;
@@ -25,7 +27,7 @@ const SEVERITY_COLOR: Record<Exclude<Severity, null>, string> = {
 @Component({
   selector: "ui-empty-state",
   templateUrl: "./empty-state.html",
-  imports: [ButtonModule, Stack, Typography],
+  imports: [ButtonModule, Icon, Stack, Typography],
 })
 export class EmptyState {
   /** Title displayed above the message */
@@ -34,13 +36,16 @@ export class EmptyState {
   /** Description message */
   public readonly message = input("There are no items to display.");
 
-  /** PrimeNG icon class (without 'pi pi-' prefix) */
-  public readonly icon = input("inbox");
+  /** Glyph shown above the title. */
+  public readonly icon = input<IconName>("inbox");
 
   /** Label for the optional action button */
   public readonly actionLabel = input<string | null>(null);
 
-  /** Icon for the action button */
+  /**
+   * Icon for the action button. Still a primeicons CLASS STRING because `<p-button [icon]>` renders
+   * it onto an internal `<span>` — it migrates with the button in S4, not here.
+   */
   public readonly actionIcon = input("pi pi-plus");
 
   /**
@@ -51,8 +56,6 @@ export class EmptyState {
 
   /** Emitted when the action button is clicked */
   public readonly action = output<void>();
-
-  protected readonly piIconClass = computed(() => `pi pi-${this.icon().replace(/^pi-?/, "")}`);
 
   protected readonly severityRingClass = computed(() => {
     const sev = this.severity();

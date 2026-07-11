@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { Icon } from "@logistics/shared/ui";
 import { Avatar, SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
@@ -13,7 +14,7 @@ interface TeamMember {
 @Component({
   selector: "web-team",
   templateUrl: "./team.html",
-  imports: [SectionContainer, SectionHeader, ScrollAnimateDirective, Avatar],
+  imports: [Avatar, Icon, ScrollAnimateDirective, SectionContainer, SectionHeader],
 })
 export class Team {
   protected readonly members: TeamMember[] = [

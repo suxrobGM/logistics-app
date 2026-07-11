@@ -1,8 +1,8 @@
 @if (isCancelled()) {
   <!-- Cancelled State -->
-  <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 text-center">
+  <div class="rounded-lg bg-red-50 p-4 text-center dark:bg-red-900/20">
     <div class="mb-2 flex items-center justify-center gap-2">
-      <i class="pi pi-times-circle text-danger text-2xl"></i>
+      <ui-icon name="times-circle" size="inherit" class="text-danger text-2xl" />
       <span class="text-danger text-lg font-semibold">Load Cancelled</span>
     </div>
     @if (cancelledAt()) {
@@ -25,13 +25,13 @@
           [class.bg-surface]="isStepPending(i)"
         >
           @if (isStepCompleted(i)) {
-            <i class="pi pi-check text-white"></i>
+            <ui-icon name="check" class="text-white" />
           } @else {
-            <i
-              class="pi {{ step.icon }}"
+            <ui-icon
+              [name]="step.icon"
               [class.text-white]="isStepCurrent(i)"
               [class.text-muted-foreground]="isStepPending(i)"
-            ></i>
+            />
           }
         </div>
 

@@ -2,7 +2,7 @@ import { Component, computed, inject, model, output, signal } from "@angular/cor
 import { FormsModule } from "@angular/forms";
 import { Api, getUnassignedLoads, type LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { UiDataTable, UiTableRowDirectives } from "@logistics/shared/ui";
+import { Icon, UiDataTable, UiTableRowDirectives } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
@@ -17,20 +17,21 @@ import { DistanceUnitPipe } from "@/shared/pipes";
   selector: "app-attach-load-dialog",
   templateUrl: "./attach-load-dialog.html",
   imports: [
-    FormsModule,
+    AddressPipe,
     ButtonModule,
+    CurrencyFormatPipe,
     Dialog,
+    DistanceUnitPipe,
+    FormsModule,
+    Icon,
     IconField,
     InputIcon,
     InputTextModule,
-    TagModule,
+    LoadTypeTag,
     ProgressSpinnerModule,
+    TagModule,
     UiDataTable,
     UiTableRowDirectives,
-    AddressPipe,
-    CurrencyFormatPipe,
-    LoadTypeTag,
-    DistanceUnitPipe,
   ],
 })
 export class AttachLoadDialog {

@@ -152,10 +152,31 @@ const RE_ICON_PROP =
 const RE_ICON_BINDING = /\[(?:name|icon)\]="([^"]*)"/g;
 
 /**
+ * `IconName` in a type position — the marker that a file's bare string literals are icon names.
+ *
+ * S3 retyped the status->icon lookup tables (`getToolIcon(t): IconName { … return "box"; }`) and the
+ * icon inputs (`input<IconName>("inbox")`). Their names live in a bare `return "box";` or an
+ * `input<…>(…)` default — no `pi-` prefix and no `icon:` key, so NOTHING above sees them. Before the
+ * sweep those same names read `return "pi pi-box"` and RE_PI caught them; the rewrite would otherwise
+ * have silently dropped them out of the per-app registries, i.e. re-introduced exactly the blank-glyph
+ * bug this generator exists to prevent — and check-icons.mjs, which shares this scanner, would have
+ * passed vacuously.
+ */
+const RE_ICON_NAME_TYPE = /\bIconName\b/;
+/** `return "box";` — only trusted in a file that traffics in `IconName`. */
+const RE_RETURN_LITERAL = /\breturn\s+["']([a-z][a-z0-9-]*)["']/g;
+/** `input<IconName>("inbox")`, `signal<IconName>("check")`, `"x" as IconName`. */
+const RE_ICON_TYPED_LITERAL =
+  /<IconName[^>]*>\s*\(\s*["']([a-z][a-z0-9-]*)["']|["']([a-z][a-z0-9-]*)["']\s+as\s+IconName\b/g;
+
+/**
  * Every icon name `project` writes, resolved through the map. Names that are not map keys are dropped:
  * the same regexes legitimately catch non-icon strings (`icon: "success"` severities, `pi-spin`), and a
  * literal that IS meant to be an icon but is not in the map is caught by check-icons.mjs, not silently
  * registered here.
+ *
+ * Deliberately generous. Over-registering costs one unused glyph in a bundle; under-registering renders
+ * a blank icon in production, which no other gate catches.
  */
 export function scanProject(project, iconMap) {
   const files = listFiles({ dirs: [`projects/${project}/src`], ext: [".ts", ".html"] });
@@ -177,6 +198,11 @@ export function scanProject(project, iconMap) {
     for (const m of src.matchAll(RE_ICON_PROP)) for (const tok of m[1].split(/\s+/)) consider(tok);
     for (const m of src.matchAll(RE_ICON_BINDING)) {
       for (const lit of m[1].matchAll(/'([a-z][a-z0-9-]*)'/g)) consider(lit[1]);
+    }
+
+    if (RE_ICON_NAME_TYPE.test(src)) {
+      for (const m of src.matchAll(RE_RETURN_LITERAL)) consider(m[1]);
+      for (const m of src.matchAll(RE_ICON_TYPED_LITERAL)) consider(m[1] ?? m[2]);
     }
   }
 
@@ -261,18 +287,11 @@ function emitShared(iconMap, reg) {
     ...names.map((n, i) => `  | ${quote(n)}${i === names.length - 1 ? ";" : ""}`),
     "",
     "/**",
-    " * The legacy primeicons CLASS spellings call sites still write where an icon NAME is wanted: the",
-    " * icon name behind a `pi-…` prefix, optionally behind a leading `pi` token as well.",
-    " * `resolveNgIcon()` strips them. Typo protection survives — a misspelled name is still a compile",
-    " * error, prefix or no prefix.",
-    " *",
-    " * @deprecated Transitional. S3 rewrites these call sites to the bare name and DELETES this type.",
+    " * What an icon-name input accepts. Identical to {@link UiIconName}: S3 swept every call site onto",
+    " * the bare canonical name, so the transitional `pi-`-prefixed spelling (LegacyPiIconName) is gone.",
+    " * The alias is kept because it reads better at the call sites that already reference it.",
     " */",
-    "type PrefixedIconName = `pi-${UiIconName}`;",
-    "export type LegacyPiIconName = PrefixedIconName | `pi ${PrefixedIconName}`;",
-    "",
-    "/** What an icon-name input accepts during the S2 -> S3 window. */",
-    "export type IconName = UiIconName | LegacyPiIconName;",
+    "export type IconName = UiIconName;",
     "",
     "/** Call-site name -> lucide (or hand-vendored `brand-*`) kebab name. The runtime map. */",
     "export const ICON_ALIASES: Record<UiIconName, string> = {",

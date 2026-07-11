@@ -2,6 +2,7 @@ import { Component, inject, model, signal } from "@angular/core";
 import { email, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { Api, createDemoRequest } from "@logistics/shared/api";
 import {
+  Icon,
   PhoneField,
   UiFormField,
   UiSelectField,
@@ -26,16 +27,17 @@ const EMPTY = {
   selector: "web-demo-dialog",
   templateUrl: "./demo-dialog.html",
   imports: [
-    ValidatedForm,
-    DialogModule,
-    FormRoot,
-    FormField,
     ButtonModule,
+    DialogModule,
+    FormField,
+    FormRoot,
+    Icon,
     PhoneField,
     UiFormField,
-    UiTextField,
     UiSelectField,
     UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class DemoDialog {

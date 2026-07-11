@@ -63,14 +63,14 @@
               <td class="text-ink py-2.5 pr-4 text-sm">{{ row.name }}</td>
               <td class="bg-accent/5 border-accent/10 border-x px-3 py-2.5 text-center">
                 @if (row.us === "✓") {
-                  <i class="pi pi-check text-accent text-sm font-bold"></i>
+                  <ui-icon name="check" size="inherit" class="text-accent text-sm font-bold" />
                 } @else {
                   <span class="text-accent text-xs font-semibold">{{ row.us }}</span>
                 }
               </td>
               <td class="px-3 py-2.5 text-center">
                 @if (row.dataTruck === "✓") {
-                  <i class="pi pi-check text-sm text-gray-400"></i>
+                  <ui-icon name="check" size="inherit" class="text-sm text-gray-400" />
                 } @else if (row.dataTruck === "-") {
                   <span class="text-gray-200">-</span>
                 } @else {
@@ -79,7 +79,7 @@
               </td>
               <td class="px-3 py-2.5 text-center">
                 @if (row.alvys === "✓") {
-                  <i class="pi pi-check text-sm text-gray-400"></i>
+                  <ui-icon name="check" size="inherit" class="text-sm text-gray-400" />
                 } @else if (row.alvys === "-") {
                   <span class="text-gray-200">-</span>
                 } @else {
@@ -88,7 +88,7 @@
               </td>
               <td class="px-3 py-2.5 text-center">
                 @if (row.roseRocket === "✓") {
-                  <i class="pi pi-check text-sm text-gray-400"></i>
+                  <ui-icon name="check" size="inherit" class="text-sm text-gray-400" />
                 } @else if (row.roseRocket === "-") {
                   <span class="text-gray-200">-</span>
                 } @else {

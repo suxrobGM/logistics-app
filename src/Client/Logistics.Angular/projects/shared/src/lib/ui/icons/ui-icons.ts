@@ -16,9 +16,6 @@ import { ICON_ALIASES, type UiIconName } from "./icon-registry.generated";
 /** Rendered when a name does not resolve. Registered in `BASE_NG_ICONS` for every portal. */
 export const UI_ICON_ERROR_GLYPH = "lucideCircleAlert";
 
-/** Strips the legacy primeicons CLASS prefix off a name. See {@link LegacyPiIconName}. */
-const LEGACY_PREFIX = /^pi[-]/;
-
 /**
  * Converts a kebab-case icon name to its `@ng-icons` export name.
  * `chevron-down` -> `lucideChevronDown`, `building-2` -> `lucideBuilding2`, `brand-x` -> `brandX`.
@@ -45,11 +42,10 @@ export function toNgIconName(kebab: string): string {
  * state of this migration undrivable in a browser.
  */
 export function resolveNgIcon(name: string): string {
-  // Tolerate the legacy primeicons CLASS spellings call sites still write where a NAME is wanted (see
-  // LegacyPiIconName): take the last whitespace-separated token and drop the prefix. S3 rewrites those
-  // call sites to the bare name and this normalization goes away with them.
-  const bare = (name.trim().split(/\s+/).pop() ?? "").replace(LEGACY_PREFIX, "");
-  const alias = ICON_ALIASES[bare as UiIconName];
+  // No prefix-stripping. S3 swept every call site onto the bare canonical name, so a `pi pi-x` spelling
+  // arriving here is now a genuine BUG (a missed dynamic call site), not a legacy spelling to tolerate
+  // — and it must surface as the error glyph rather than be silently normalized into working output.
+  const alias = ICON_ALIASES[name as UiIconName];
 
   if (!alias) {
     console.error(
@@ -61,9 +57,3 @@ export function resolveNgIcon(name: string): string {
 
   return toNgIconName(alias);
 }
-
-/**
- * @deprecated Use {@link ICON_ALIASES}. Kept only so the S2 -> S3 window compiles; deleted in S3 once
- * the last call site moves off the legacy names.
- */
-export const PI_TO_LUCIDE: Record<string, string> = ICON_ALIASES;

@@ -36,7 +36,7 @@
   } @else if (store.error()) {
     <!-- Error State -->
     <div class="mt-12 py-12 text-center text-gray-500">
-      <i class="pi pi-exclamation-triangle text-4xl text-amber-500"></i>
+      <ui-icon name="exclamation-triangle" size="inherit" class="text-4xl text-amber-500" />
       <p class="mt-4">{{ store.error() }}</p>
     </div>
   } @else {
@@ -61,7 +61,7 @@
               />
             } @else {
               <div class="flex h-full items-center justify-center">
-                <i class="pi pi-image text-4xl text-slate-300"></i>
+                <ui-icon name="image" size="inherit" class="text-4xl text-slate-300" />
               </div>
             }
           </div>
@@ -103,7 +103,7 @@
         </a>
       } @empty {
         <div class="col-span-full py-12 text-center text-gray-500">
-          <i class="pi pi-inbox text-4xl"></i>
+          <ui-icon name="inbox" size="inherit" class="text-4xl" />
           <p class="mt-4">No articles in this category yet.</p>
         </div>
       }

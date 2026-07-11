@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
 import type { TripTimelineEventDto } from "@logistics/shared/api";
+import { Icon, type IconName } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
@@ -8,27 +9,27 @@ import { TimelineModule } from "primeng/timeline";
 @Component({
   selector: "app-trip-timeline",
   templateUrl: "./trip-timeline.html",
-  imports: [CommonModule, TimelineModule, CardModule, TagModule],
+  imports: [CardModule, CommonModule, Icon, TagModule, TimelineModule],
 })
 export class TripTimeline {
   public readonly events = input<TripTimelineEventDto[]>([]);
 
-  protected getEventIcon(eventType: string | null): string {
+  protected getEventIcon(eventType: string | null): IconName {
     switch (eventType) {
       case "created":
-        return "pi pi-plus";
+        return "plus";
       case "dispatched":
-        return "pi pi-send";
+        return "send";
       case "pickup":
-        return "pi pi-upload";
+        return "upload";
       case "delivery":
-        return "pi pi-download";
+        return "download";
       case "completed":
-        return "pi pi-check";
+        return "check";
       case "cancelled":
-        return "pi pi-times";
+        return "times";
       default:
-        return "pi pi-circle";
+        return "circle";
     }
   }
 

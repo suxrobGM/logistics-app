@@ -30,23 +30,18 @@
       <app-stat-card
         label="Active Providers"
         [value]="store.activeProviders().length"
-        icon="pi-link"
+        icon="link"
         color="blue"
       />
     </ui-grid>
     <ui-grid [size]="{ xs: 12, md: 3 }">
-      <app-stat-card
-        label="Available Loads"
-        [value]="availableLoads()"
-        icon="pi-box"
-        color="green"
-      />
+      <app-stat-card label="Available Loads" [value]="availableLoads()" icon="box" color="green" />
     </ui-grid>
     <ui-grid [size]="{ xs: 12, md: 3 }">
       <app-stat-card
         label="Posted Trucks"
         [value]="store.activePostedTrucksCount()"
-        icon="pi-truck"
+        icon="truck"
         color="purple"
       />
     </ui-grid>
@@ -54,7 +49,7 @@
       <app-stat-card
         label="Total Providers"
         [value]="store.providers().length"
-        icon="pi-cog"
+        icon="cog"
         color="orange"
       />
     </ui-grid>
@@ -62,7 +57,7 @@
 
   <ui-grid container spacing="6">
     <ui-grid [size]="{ xs: 12, lg: 6 }">
-      <ui-dashboard-card title="Configured Providers" icon="pi-link">
+      <ui-dashboard-card title="Configured Providers" icon="link">
         @if (store.providers().length === 0) {
           <ui-empty-state
             title="No providers configured"
@@ -111,7 +106,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }">
-      <ui-dashboard-card title="Your Posted Trucks" icon="pi-truck">
+      <ui-dashboard-card title="Your Posted Trucks" icon="truck">
         @if (store.postedTrucks().length === 0) {
           <ui-empty-state
             title="No trucks posted"

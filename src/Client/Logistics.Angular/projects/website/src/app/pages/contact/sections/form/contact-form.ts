@@ -3,6 +3,7 @@ import { email, form, FormField, FormRoot, required } from "@angular/forms/signa
 import { Api, createContactSubmission, type ContactSubject } from "@logistics/shared/api";
 import type { SelectOption } from "@logistics/shared/models";
 import {
+  Icon,
   UiFormField,
   UiSelectField,
   UiTextareaField,
@@ -26,16 +27,17 @@ const EMPTY = {
   selector: "web-contact-form",
   templateUrl: "./contact-form.html",
   imports: [
-    ValidatedForm,
-    SectionContainer,
-    ScrollAnimateDirective,
-    FormRoot,
-    FormField,
     ButtonModule,
+    FormField,
+    FormRoot,
+    Icon,
+    ScrollAnimateDirective,
+    SectionContainer,
     UiFormField,
-    UiTextField,
     UiSelectField,
     UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class ContactForm {

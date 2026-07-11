@@ -5,7 +5,7 @@
     <app-stat-card
       label="Overdue"
       [value]="overdueCount()"
-      icon="pi pi-exclamation-triangle"
+      icon="exclamation-triangle"
       [color]="overdueCount() > 0 ? 'red' : 'green'"
     />
   </ui-grid>
@@ -13,120 +13,113 @@
     <app-stat-card
       label="Due Soon"
       [value]="dueSoonCount()"
-      icon="pi pi-clock"
+      icon="clock"
       [color]="dueSoonCount() > 5 ? 'orange' : 'blue'"
     />
   </ui-grid>
   <ui-grid [size]="{ xs: 12, md: 4 }">
-    <app-stat-card
-      label="This Month"
-      [value]="totalCostThisMonth()"
-      icon="pi pi-dollar"
-      color="gray"
-    />
+    <app-stat-card label="This Month" [value]="totalCostThisMonth()" icon="dollar" color="gray" />
   </ui-grid>
 </ui-grid>
 
 <ui-grid container spacing="4">
   <ui-grid [size]="{ xs: 12, lg: 6 }">
-  <!-- Upcoming Maintenance -->
-  <ui-dashboard-card title="Upcoming Maintenance" icon="pi-calendar">
-    @if (loading()) {
-      <div class="text-center py-4">
-        <i class="pi pi-spin pi-spinner text-2xl"></i>
-      </div>
-    } @else if (upcomingMaintenance().length > 0) {
-      <ui-data-table [value]="upcomingMaintenance()" [rows]="5" styleClass="p-datatable-sm">
-        <ng-template #header>
-          <tr>
-            <th>Truck</th>
-            <th>Service</th>
-            <th>Due</th>
-            <th>Status</th>
-          </tr>
-        </ng-template>
-        <ng-template #body let-item>
-          <tr class="cursor-pointer hover:bg-hover" (click)="viewTruckMaintenance(item.truckId)">
-            <td>{{ item.truckNumber || '-' }}</td>
-            <td>{{ item.typeDisplay || item.type }}</td>
-            <td>
-              @if (item.nextServiceDate) {
-                {{ item.nextServiceDate | date: "mediumDate" }}
-              } @else if (item.milesUntilDue) {
-                {{ item.milesUntilDue | number }} mi
-              } @else {
-                -
-              }
-            </td>
-            <td>
-              @if (item.isOverdue) {
-                <p-tag value="Overdue" severity="danger" />
-              } @else if ((item.daysUntilDue ?? 0) <= 7) {
-                <p-tag value="Due Soon" severity="warn" />
-              } @else {
-                <p-tag value="Scheduled" severity="info" />
-              }
-            </td>
-          </tr>
-        </ng-template>
-      </ui-data-table>
-      <div class="mt-2 text-right">
-        <p-button label="View All" [text]="true" (click)="viewAllUpcoming()" />
-      </div>
-    } @else {
-      <ui-stack align="center" gap="2" class="py-4">
-        <ui-icon name="check-circle" size="xl" color="muted" />
-        <ui-typography variant="body" color="muted">No upcoming maintenance scheduled</ui-typography>
-      </ui-stack>
-    }
-  </ui-dashboard-card>
+    <!-- Upcoming Maintenance -->
+    <ui-dashboard-card title="Upcoming Maintenance" icon="calendar">
+      @if (loading()) {
+        <div class="py-4 text-center">
+          <ui-icon name="spinner" size="inherit" spin class="text-2xl" />
+        </div>
+      } @else if (upcomingMaintenance().length > 0) {
+        <ui-data-table [value]="upcomingMaintenance()" [rows]="5" styleClass="p-datatable-sm">
+          <ng-template #header>
+            <tr>
+              <th>Truck</th>
+              <th>Service</th>
+              <th>Due</th>
+              <th>Status</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-item>
+            <tr class="hover:bg-hover cursor-pointer" (click)="viewTruckMaintenance(item.truckId)">
+              <td>{{ item.truckNumber || "-" }}</td>
+              <td>{{ item.typeDisplay || item.type }}</td>
+              <td>
+                @if (item.nextServiceDate) {
+                  {{ item.nextServiceDate | date: "mediumDate" }}
+                } @else if (item.milesUntilDue) {
+                  {{ item.milesUntilDue | number }} mi
+                } @else {
+                  -
+                }
+              </td>
+              <td>
+                @if (item.isOverdue) {
+                  <p-tag value="Overdue" severity="danger" />
+                } @else if ((item.daysUntilDue ?? 0) <= 7) {
+                  <p-tag value="Due Soon" severity="warn" />
+                } @else {
+                  <p-tag value="Scheduled" severity="info" />
+                }
+              </td>
+            </tr>
+          </ng-template>
+        </ui-data-table>
+        <div class="mt-2 text-right">
+          <p-button label="View All" [text]="true" (click)="viewAllUpcoming()" />
+        </div>
+      } @else {
+        <ui-stack align="center" gap="2" class="py-4">
+          <ui-icon name="check-circle" size="xl" color="muted" />
+          <ui-typography variant="body" color="muted">
+            No upcoming maintenance scheduled
+          </ui-typography>
+        </ui-stack>
+      }
+    </ui-dashboard-card>
   </ui-grid>
 
   <ui-grid [size]="{ xs: 12, lg: 6 }">
-  <!-- Recent Service Records -->
-  <ui-dashboard-card title="Recent Service Records" icon="pi-wrench">
-    @if (loading()) {
-      <div class="text-center py-4">
-        <i class="pi pi-spin pi-spinner text-2xl"></i>
-      </div>
-    } @else if (recentRecords().length > 0) {
-      <ui-data-table [value]="recentRecords()" [rows]="5" styleClass="p-datatable-sm">
-        <ng-template #header>
-          <tr>
-            <th>Date</th>
-            <th>Truck</th>
-            <th>Service</th>
-            <th>Cost</th>
-          </tr>
-        </ng-template>
-        <ng-template #body let-record>
-          <tr class="cursor-pointer hover:bg-hover" (click)="viewServiceRecord(record.id)">
-            <td>{{ record.serviceDate | date: "shortDate" }}</td>
-            <td>{{ record.truckNumber || '-' }}</td>
-            <td>{{ record.typeDisplay || record.type }}</td>
-            <td>{{ record.totalCost | currencyFormat }}</td>
-          </tr>
-        </ng-template>
-      </ui-data-table>
-      <div class="mt-2 text-right">
-        <p-button label="View All" [text]="true" (click)="viewAllRecords()" />
-      </div>
-    } @else {
-      <ui-stack align="center" gap="2" class="py-4">
-        <ui-icon name="inbox" size="xl" color="muted" />
-        <ui-typography variant="body" color="muted">No recent service records</ui-typography>
-      </ui-stack>
-    }
-  </ui-dashboard-card>
+    <!-- Recent Service Records -->
+    <ui-dashboard-card title="Recent Service Records" icon="wrench">
+      @if (loading()) {
+        <div class="py-4 text-center">
+          <ui-icon name="spinner" size="inherit" spin class="text-2xl" />
+        </div>
+      } @else if (recentRecords().length > 0) {
+        <ui-data-table [value]="recentRecords()" [rows]="5" styleClass="p-datatable-sm">
+          <ng-template #header>
+            <tr>
+              <th>Date</th>
+              <th>Truck</th>
+              <th>Service</th>
+              <th>Cost</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-record>
+            <tr class="hover:bg-hover cursor-pointer" (click)="viewServiceRecord(record.id)">
+              <td>{{ record.serviceDate | date: "shortDate" }}</td>
+              <td>{{ record.truckNumber || "-" }}</td>
+              <td>{{ record.typeDisplay || record.type }}</td>
+              <td>{{ record.totalCost | currencyFormat }}</td>
+            </tr>
+          </ng-template>
+        </ui-data-table>
+        <div class="mt-2 text-right">
+          <p-button label="View All" [text]="true" (click)="viewAllRecords()" />
+        </div>
+      } @else {
+        <ui-stack align="center" gap="2" class="py-4">
+          <ui-icon name="inbox" size="xl" color="muted" />
+          <ui-typography variant="body" color="muted">No recent service records</ui-typography>
+        </ui-stack>
+      }
+    </ui-dashboard-card>
   </ui-grid>
 </ui-grid>
 
 <ui-stack direction="row" gap="2" class="mt-4">
-  <p-button
-    icon="pi pi-plus"
-    label="Log Service"
-    (click)="addServiceRecord()"
-  />
+  <p-button icon="pi pi-plus" label="Log Service" (click)="addServiceRecord()" />
   <p-button
     icon="pi pi-refresh"
     label="Refresh"

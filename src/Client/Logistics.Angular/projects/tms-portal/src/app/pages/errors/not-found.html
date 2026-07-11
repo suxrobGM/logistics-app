@@ -1,28 +1,19 @@
-<div class="flex min-h-screen items-center justify-center bg-canvas p-4">
+<div class="bg-canvas flex min-h-screen items-center justify-center p-4">
   <div class="w-full max-w-md text-center">
-    <div class="rounded-xl bg-surface p-8 shadow-lg">
-      <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-hover">
-        <i class="pi pi-map text-4xl text-muted-foreground"></i>
+    <div class="bg-surface rounded-xl p-8 shadow-lg">
+      <div class="bg-hover mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
+        <ui-icon name="map" size="inherit" class="text-muted-foreground text-4xl" />
       </div>
 
-      <h1 class="mb-2 text-6xl text-muted-foreground">404</h1>
-      <h2 class="mb-2 text-foreground">Page Not Found</h2>
-      <p class="mb-6 text-subtle-foreground">
+      <h1 class="text-muted-foreground mb-2 text-6xl">404</h1>
+      <h2 class="text-foreground mb-2">Page Not Found</h2>
+      <p class="text-subtle-foreground mb-6">
         The page you're looking for doesn't exist or has been moved.
       </p>
 
       <div class="flex flex-col gap-3 sm:flex-row sm:justify-center">
-        <p-button
-          icon="pi pi-home"
-          label="Go to Dashboard"
-          routerLink="/home"
-        />
-        <p-button
-          icon="pi pi-arrow-left"
-          label="Go Back"
-          [outlined]="true"
-          (click)="goBack()"
-        />
+        <p-button icon="pi pi-home" label="Go to Dashboard" routerLink="/home" />
+        <p-button icon="pi pi-arrow-left" label="Go Back" [outlined]="true" (click)="goBack()" />
       </div>
     </div>
   </div>

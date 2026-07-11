@@ -1,7 +1,4 @@
-<ui-page-header
-  title="Maintenance Report"
-  subtitle="Service records, costs, and schedule metrics"
->
+<ui-page-header title="Maintenance Report" subtitle="Service records, costs, and schedule metrics">
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
 </ui-page-header>
 
@@ -18,7 +15,7 @@
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-dollar"
+        icon="dollar"
         label="Total Cost"
         [value]="(data()?.totalCost || 0 | currencyFormat) ?? '$0'"
         color="blue"
@@ -28,7 +25,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-wrench"
+        icon="wrench"
         label="Labor Cost"
         [value]="(data()?.laborCost || 0 | currencyFormat) ?? '$0'"
         color="green"
@@ -38,7 +35,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-box"
+        icon="box"
         label="Parts Cost"
         [value]="(data()?.partsCost || 0 | currencyFormat) ?? '$0'"
         color="orange"
@@ -48,7 +45,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="pi-calendar-times"
+        icon="calendar-times"
         label="Overdue"
         [value]="(data()?.overdueCount || 0).toString()"
         color="red"
@@ -60,7 +57,7 @@
   <!-- Charts Row 1 -->
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Cost by Service Type" icon="pi-chart-bar" iconColor="blue">
+      <ui-dashboard-card title="Cost by Service Type" icon="chart-bar" iconColor="blue">
         @if (hasServiceTypeData()) {
           <p-chart
             type="bar"
@@ -79,7 +76,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Cost by Vendor" icon="pi-chart-pie" iconColor="green">
+      <ui-dashboard-card title="Cost by Vendor" icon="chart-pie" iconColor="green">
         @if (hasVendorData()) {
           <p-chart
             type="doughnut"
@@ -98,7 +95,7 @@
 
   <!-- Cost Trends Chart -->
   <div class="mb-6">
-    <ui-dashboard-card title="Cost Trends" icon="pi-chart-line" iconColor="blue">
+    <ui-dashboard-card title="Cost Trends" icon="chart-line" iconColor="blue">
       @if (hasCostTrendData()) {
         <p-chart
           [type]="trendChartType()"
@@ -117,7 +114,7 @@
   <!-- Data Tables -->
   <ui-grid container spacing="2">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Service Type Summary" icon="pi-list" iconColor="blue">
+      <ui-dashboard-card title="Service Type Summary" icon="list" iconColor="blue">
         <ui-data-table [value]="data()?.byServiceType || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
@@ -149,7 +146,9 @@
           </ng-template>
           <ng-template #empty>
             <tr>
-              <td colspan="4" class="text-muted-foreground text-center">No service type data available</td>
+              <td colspan="4" class="text-muted-foreground text-center">
+                No service type data available
+              </td>
             </tr>
           </ng-template>
         </ui-data-table>
@@ -157,7 +156,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Top Trucks by Cost" icon="pi-truck" iconColor="orange">
+      <ui-dashboard-card title="Top Trucks by Cost" icon="truck" iconColor="orange">
         <ui-data-table [value]="data()?.topCostTrucks || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
@@ -213,7 +212,7 @@
 
   <!-- Vendor Breakdown Table -->
   <div class="mb-6">
-    <ui-dashboard-card title="Vendor Summary" icon="pi-building" iconColor="green">
+    <ui-dashboard-card title="Vendor Summary" icon="building" iconColor="green">
       <ui-data-table [value]="data()?.byVendor || []">
         <ng-template #header>
           <tr>
@@ -248,7 +247,7 @@
 
   <!-- Schedule Summary Card -->
   <div class="mb-6">
-    <ui-dashboard-card title="Schedule Summary" icon="pi-calendar" iconColor="blue">
+    <ui-dashboard-card title="Schedule Summary" icon="calendar" iconColor="blue">
       <ui-grid container spacing="4" class="p-4">
         <ui-grid [size]="{ xs: 12, md: 4 }">
           <ui-typography variant="caption" color="muted">Total Schedules</ui-typography>

@@ -1,5 +1,6 @@
 import { Component, inject, input, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { Icon } from "@logistics/shared/ui";
 import {
   ControlComponent,
   FullscreenControlDirective,
@@ -25,6 +26,7 @@ import type { MapControlPosition, MapLayerType } from "../types";
     FullscreenControlDirective,
     ScaleControlDirective,
     ButtonModule,
+    Icon,
     SelectButtonModule,
     TooltipModule,
     FormsModule,

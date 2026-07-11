@@ -1,6 +1,6 @@
 @if (invoices().length === 0) {
   <div class="py-8 text-center">
-    <i class="pi pi-inbox text-muted-foreground mb-3 text-4xl"></i>
+    <ui-icon name="inbox" size="inherit" class="text-muted-foreground mb-3 text-4xl" />
     <p class="text-muted-foreground">No invoices found for this customer</p>
     <p class="text-muted-foreground text-sm">Invoices will appear here when created for loads</p>
   </div>
@@ -34,9 +34,9 @@
           <app-invoice-status-tag [status]="invoice.status" />
         </td>
         <td>
-          <span class="font-medium">{{
-            invoice.total?.amount | currencyFormat: invoice.total?.currency || "USD"
-          }}</span>
+          <span class="font-medium">
+            {{ invoice.total?.amount | currencyFormat: invoice.total?.currency || "USD" }}
+          </span>
         </td>
         <td>
           @if (invoice.dueDate) {

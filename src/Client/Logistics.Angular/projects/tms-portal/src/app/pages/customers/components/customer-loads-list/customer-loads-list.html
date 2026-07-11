@@ -1,8 +1,10 @@
 @if (loads().length === 0) {
   <div class="py-8 text-center">
-    <i class="pi pi-inbox text-muted-foreground mb-3 text-4xl"></i>
+    <ui-icon name="inbox" size="inherit" class="text-muted-foreground mb-3 text-4xl" />
     <p class="text-muted-foreground">No loads found for this customer</p>
-    <p class="text-muted-foreground text-sm">Loads will appear here when created for this customer</p>
+    <p class="text-muted-foreground text-sm">
+      Loads will appear here when created for this customer
+    </p>
   </div>
 } @else {
   <ui-data-table [value]="loads()" dataKey="id" [scrollable]="true">

@@ -1,5 +1,6 @@
 import { Component, inject, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { Icon } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { AuthService } from "@/core/auth";
@@ -7,7 +8,7 @@ import { AuthService } from "@/core/auth";
 @Component({
   selector: "adm-login",
   templateUrl: "./login.html",
-  imports: [ButtonModule, CardModule],
+  imports: [ButtonModule, CardModule, Icon],
 })
 export class Login implements OnInit {
   private readonly authService = inject(AuthService);

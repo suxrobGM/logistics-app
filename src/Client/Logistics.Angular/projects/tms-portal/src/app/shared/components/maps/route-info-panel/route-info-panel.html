@@ -2,12 +2,13 @@
   <!-- Compact inline display -->
   <div class="route-info-compact flex items-center gap-3 text-sm">
     <span class="flex items-center gap-1">
-      <i class="pi pi-map text-foreground"></i>
-      <strong>{{ routeInfo().distanceMiles }}</strong> mi
+      <ui-icon name="map" class="text-foreground" />
+      <strong>{{ routeInfo().distanceMiles }}</strong>
+      mi
     </span>
     <span class="text-muted-foreground">·</span>
     <span class="flex items-center gap-1">
-      <i class="pi pi-clock text-foreground"></i>
+      <ui-icon name="clock" class="text-foreground" />
       <strong>{{ routeInfo().durationFormatted }}</strong>
     </span>
   </div>
@@ -15,7 +16,7 @@
   <!-- Full panel display -->
   <div class="route-info-panel bg-elevated border-default rounded-lg border p-4">
     <div class="mb-3 flex items-center gap-2">
-      <i class="pi pi-directions text-foreground"></i>
+      <ui-icon name="directions" class="text-foreground" />
       <span class="font-medium">Route Summary</span>
     </div>
 

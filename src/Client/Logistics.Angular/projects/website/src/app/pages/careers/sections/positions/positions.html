@@ -33,15 +33,15 @@
             </h3>
             <div class="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-500">
               <span class="flex items-center gap-1">
-                <i class="pi pi-briefcase"></i>
+                <ui-icon name="briefcase" />
                 {{ position.department }}
               </span>
               <span class="flex items-center gap-1">
-                <i class="pi pi-map-marker"></i>
+                <ui-icon name="map-marker" />
                 {{ position.location }}
               </span>
               <span class="flex items-center gap-1">
-                <i class="pi pi-clock"></i>
+                <ui-icon name="clock" />
                 {{ position.type }}
               </span>
             </div>
@@ -61,7 +61,7 @@
       </div>
     } @empty {
       <div class="py-12 text-center text-gray-500">
-        <i class="pi pi-inbox text-4xl"></i>
+        <ui-icon name="inbox" size="inherit" class="text-4xl" />
         <p class="mt-4">No open positions in this department right now.</p>
         <p class="text-sm">Check back soon or explore other departments.</p>
       </div>

@@ -1,5 +1,5 @@
 <div class="mb-4 flex items-center gap-2">
-  <i class="pi pi-link text-xl"></i>
+  <ui-icon name="link" size="inherit" class="text-xl" />
   <h2 class="m-0 text-lg font-semibold">MCP Server Integration</h2>
 </div>
 <p class="text-muted-foreground mb-4">
@@ -33,7 +33,11 @@
 
   <p-tabpanels>
     <p-tabpanel value="claude-desktop">
-      <p class="text-muted-foreground mb-2 text-sm">Add to your <code>claude_desktop_config.json</code>:</p>
+      <p class="text-muted-foreground mb-2 text-sm">
+        Add to your
+        <code>claude_desktop_config.json</code>
+        :
+      </p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ claudeDesktopSnippet }}</pre>
         <p-button
@@ -82,7 +86,9 @@
 
     <p-tabpanel value="copilot">
       <p class="text-muted-foreground mb-2 text-sm">
-        Add to your VS Code <code>.vscode/mcp.json</code> or user settings:
+        Add to your VS Code
+        <code>.vscode/mcp.json</code>
+        or user settings:
       </p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ copilotSnippet }}</pre>

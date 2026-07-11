@@ -1,4 +1,5 @@
 import { Component, inject, input } from "@angular/core";
+import { Icon } from "@logistics/shared/ui";
 import { TooltipModule } from "primeng/tooltip";
 import { ThemeService } from "@/core/services";
 
@@ -6,7 +7,7 @@ import { ThemeService } from "@/core/services";
   selector: "app-theme-toggle",
   templateUrl: "./theme-toggle.html",
   styleUrl: "./theme-toggle.css",
-  imports: [TooltipModule],
+  imports: [Icon, TooltipModule],
 })
 export class ThemeToggle {
   private readonly themeService = inject(ThemeService);

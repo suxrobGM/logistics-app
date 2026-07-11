@@ -10,7 +10,7 @@ import {
   type DocumentStatus,
   type DocumentType,
 } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/ui";
+import { Icon, UiDataTable } from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -26,15 +26,16 @@ import { Converters } from "@/shared/utils";
   selector: "app-document-manager",
   templateUrl: "./document-manager.html",
   imports: [
-    CommonModule,
     ButtonModule,
-    UiDataTable,
+    CardModule,
+    CommonModule,
     FileUploadModule,
+    Icon,
+    ProgressSpinnerModule,
     TagModule,
     ToastModule,
-    CardModule,
-    ProgressSpinnerModule,
     TooltipModule,
+    UiDataTable,
   ],
 })
 export class DocumentManager implements OnInit {

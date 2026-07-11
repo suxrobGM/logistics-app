@@ -1,5 +1,6 @@
 import { Component, input, output } from "@angular/core";
 import { ButtonModule } from "primeng/button";
+import { Icon } from "../../content/icon/icon";
 
 /**
  * Error state component with retry functionality.
@@ -7,7 +8,7 @@ import { ButtonModule } from "primeng/button";
 @Component({
   selector: "ui-error-state",
   templateUrl: "./error-state.html",
-  imports: [ButtonModule],
+  imports: [ButtonModule, Icon],
 })
 export class ErrorState {
   /** Title displayed above the error message */

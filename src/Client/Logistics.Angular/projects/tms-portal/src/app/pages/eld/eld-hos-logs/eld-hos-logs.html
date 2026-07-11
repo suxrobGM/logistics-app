@@ -1,8 +1,4 @@
-<ui-page-header
-  [title]="headerTitle()"
-  subtitle="View driver duty status history"
-  backLink="/eld"
->
+<ui-page-header [title]="headerTitle()" subtitle="View driver duty status history" backLink="/eld">
   <p-button
     label="Refresh"
     icon="pi pi-refresh"
@@ -43,7 +39,7 @@
 <ui-grid container spacing="4" class="mb-6">
   <ui-grid [size]="{ xs: 12, md: 6 }">
     <app-stat-card
-      icon="pi-car"
+      icon="car"
       label="Total Driving Time"
       [value]="totalDrivingDisplay()"
       color="green"
@@ -51,7 +47,7 @@
   </ui-grid>
   <ui-grid [size]="{ xs: 12, md: 6 }">
     <app-stat-card
-      icon="pi-clock"
+      icon="clock"
       label="Total On-Duty Time"
       [value]="totalOnDutyDisplay()"
       color="blue"
@@ -60,7 +56,7 @@
 </ui-grid>
 
 <!-- Logs Table -->
-<ui-dashboard-card title="Duty Status Logs" icon="pi-history" iconColor="blue">
+<ui-dashboard-card title="Duty Status Logs" icon="history" iconColor="blue">
   @if (loading()) {
     <ui-stack align="center" justify="center" class="p-5">
       <p-progressSpinner />

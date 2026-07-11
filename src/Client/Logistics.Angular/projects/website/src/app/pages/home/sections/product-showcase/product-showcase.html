@@ -20,7 +20,7 @@
         "
         (click)="setActiveTab(i)"
       >
-        <i class="pi {{ item.icon }} text-xs"></i>
+        <ui-icon [name]="item.icon" size="inherit" class="text-xs" />
         {{ item.title }}
       </button>
     }
@@ -40,7 +40,7 @@
                 <div
                   class="bg-accent/10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg"
                 >
-                  <i class="pi pi-check text-accent text-sm"></i>
+                  <ui-icon name="check" size="inherit" class="text-accent text-sm" />
                 </div>
                 <span class="text-ink font-medium">{{ feature }}</span>
               </li>

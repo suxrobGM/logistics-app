@@ -5,7 +5,7 @@
         class="flex size-12 items-center justify-center rounded-full"
         [style.background-color]="getStepColor(step)"
       >
-        <i [class]="step.icon" class="text-xl text-white"></i>
+        <ui-icon [name]="step.icon" size="inherit" class="text-xl text-white" />
       </div>
       <ui-typography variant="body-sm" weight="medium" class="mt-2">{{ step.label }}</ui-typography>
       @if (step.date) {

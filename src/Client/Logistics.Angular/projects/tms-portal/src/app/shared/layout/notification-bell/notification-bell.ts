@@ -1,17 +1,18 @@
 import { CommonModule } from "@angular/common";
 import {
   Component,
-  type OnDestroy,
-  type OnInit,
   computed,
   inject,
   input,
   signal,
   viewChild,
+  type OnDestroy,
+  type OnInit,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { NotificationDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
+import { Icon } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
 import { OverlayBadgeModule } from "primeng/overlaybadge";
@@ -25,15 +26,16 @@ import { NotificationService, ToastService } from "@/core/services";
   templateUrl: "./notification-bell.html",
   styleUrl: "./notification-bell.css",
   imports: [
-    CommonModule,
     ButtonModule,
-    PopoverModule,
-    OverlayBadgeModule,
-    TooltipModule,
+    CommonModule,
     DividerModule,
+    Icon,
+    OverlayBadgeModule,
+    PopoverModule,
     ProgressSpinnerModule,
     RelativeTimePipe,
     RouterLink,
+    TooltipModule,
   ],
 })
 export class NotificationBell implements OnInit, OnDestroy {
@@ -49,8 +51,8 @@ export class NotificationBell implements OnInit, OnDestroy {
   protected readonly isLoading = signal(false);
   protected readonly selectedNotification = signal<NotificationDto | null>(null);
 
-  protected readonly unreadCount = computed(() =>
-    this.notifications().filter((n) => !n.isRead).length,
+  protected readonly unreadCount = computed(
+    () => this.notifications().filter((n) => !n.isRead).length,
   );
 
   protected readonly displayedNotifications = computed(() => this.notifications().slice(0, 8));

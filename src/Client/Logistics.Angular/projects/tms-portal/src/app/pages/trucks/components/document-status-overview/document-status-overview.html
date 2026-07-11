@@ -3,21 +3,21 @@
     <h4
       class="text-subtle-foreground flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
     >
-      <i class="pi pi-file"></i>
+      <ui-icon name="file" />
       Document Status
     </h4>
     @if (summary().isComplete) {
       <span
         class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900 dark:text-green-300"
       >
-        <i class="pi pi-check mr-1"></i>
+        <ui-icon name="check" class="mr-1" />
         Complete
       </span>
     } @else {
       <span
         class="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900 dark:text-amber-300"
       >
-        <i class="pi pi-exclamation-triangle mr-1"></i>
+        <ui-icon name="exclamation-triangle" class="mr-1" />
         {{ summary().missingRequired.length }} Missing
       </span>
     }
@@ -30,7 +30,7 @@
           class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400"
           [pTooltip]="docType.label + ' uploaded'"
         >
-          <i class="pi pi-check text-xs"></i>
+          <ui-icon name="check" size="inherit" class="text-xs" />
           {{ docType.label }}
         </span>
       } @else if (docType.required) {
@@ -38,7 +38,7 @@
           class="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400"
           [pTooltip]="docType.label + ' required - not uploaded'"
         >
-          <i class="pi pi-times text-xs"></i>
+          <ui-icon name="times" size="inherit" class="text-xs" />
           {{ docType.label }}
         </span>
       } @else {
@@ -46,7 +46,7 @@
           class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400"
           [pTooltip]="docType.label + ' not uploaded (optional)'"
         >
-          <i class="pi pi-minus text-xs"></i>
+          <ui-icon name="minus" size="inherit" class="text-xs" />
           {{ docType.label }}
         </span>
       }
@@ -55,7 +55,7 @@
 
   @if (summary().missingRequired.length > 0) {
     <div class="text-muted-foreground mt-3 text-xs">
-      <i class="pi pi-info-circle mr-1"></i>
+      <ui-icon name="info-circle" class="mr-1" />
       Missing required documents: {{ summary().missingRequiredLabels }}
     </div>
   }

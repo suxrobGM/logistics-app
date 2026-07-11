@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from "@angular/common";
 import { computed, inject, Injectable, PLATFORM_ID, signal } from "@angular/core";
 import { ThemeService } from "@logistics/shared";
+import type { IconName } from "@logistics/shared/ui";
 import type { MapLayerType } from "@/shared/components/maps/types";
 
 const MAP_LAYER_STORAGE_KEY = "tms-map-layer";
@@ -34,10 +35,10 @@ export class MapStyleService {
   public readonly activeLayer = signal<MapLayerType>("streets");
 
   /** Available layer options for UI */
-  public readonly layerOptions: { value: MapLayerType; label: string; icon: string }[] = [
-    { value: "streets", label: "Streets", icon: "pi-map" },
-    { value: "satellite", label: "Satellite", icon: "pi-globe" },
-    { value: "terrain", label: "Terrain", icon: "pi-compass" },
+  public readonly layerOptions: { value: MapLayerType; label: string; icon: IconName }[] = [
+    { value: "streets", label: "Streets", icon: "map" },
+    { value: "satellite", label: "Satellite", icon: "globe" },
+    { value: "terrain", label: "Terrain", icon: "compass" },
   ];
 
   /** Current Mapbox style URL based on active layer and theme */

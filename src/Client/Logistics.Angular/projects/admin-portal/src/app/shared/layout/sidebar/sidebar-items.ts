@@ -1,4 +1,5 @@
 import { Permission } from "@logistics/shared";
+import type { IconName } from "@logistics/shared/ui";
 
 export interface AdminNavSection {
   label: string;
@@ -7,7 +8,8 @@ export interface AdminNavSection {
 
 export interface AdminNavItem {
   label: string;
-  icon: string;
+  /** Canonical `<ui-icon name>`. Typed, so a bad name is a compile error, not a blank glyph. */
+  icon: IconName;
   route: string;
   permission?: string;
 }

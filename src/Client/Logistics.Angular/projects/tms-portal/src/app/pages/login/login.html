@@ -1,5 +1,5 @@
 <div class="login-container">
-  <div class="w-full max-w-md animate-fadein">
+  <div class="animate-fadein w-full max-w-md">
     @if (isLoading()) {
       <div class="login-card text-center">
         <p-progress-spinner strokeWidth="4" />
@@ -9,26 +9,17 @@
       <div class="login-card">
         <div class="mb-8 text-center">
           <div class="login-logo">
-            <i class="pi pi-truck"></i>
+            <ui-icon name="truck" />
           </div>
           <h1 class="login-title">LogisticsX</h1>
           <p class="login-subtitle">Transportation Management System</p>
         </div>
 
-        <div class="login-description">
-          Sign in to access your dashboard and manage your fleet.
-        </div>
+        <div class="login-description">Sign in to access your dashboard and manage your fleet.</div>
 
-        <p-button
-          icon="pi pi-sign-in"
-          label="Sign In"
-          styleClass="w-full"
-          (click)="login()"
-        />
+        <p-button icon="pi pi-sign-in" label="Sign In" styleClass="w-full" (click)="login()" />
 
-        <div class="login-footer">
-          Need help? Contact your administrator.
-        </div>
+        <div class="login-footer">Need help? Contact your administrator.</div>
       </div>
     }
   </div>

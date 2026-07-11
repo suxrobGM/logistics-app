@@ -1,8 +1,8 @@
 <p-card class="h-full border-0 p-2 shadow-sm">
   <ng-template #header>
     <div class="flex items-center px-4 pt-4">
-      @if (icon()) {
-        <i [class]="iconClasses()"></i>
+      @if (icon(); as iconName) {
+        <ui-icon [name]="iconName" [class]="iconClasses()" />
       }
       <h5 class="mb-0">{{ title() }}</h5>
     </div>

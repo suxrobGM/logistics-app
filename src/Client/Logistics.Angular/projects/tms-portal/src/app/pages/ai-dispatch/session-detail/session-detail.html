@@ -36,7 +36,7 @@
     <ui-surface variant="elevated" [border]="true" class="mb-6 transition-all duration-300">
       @if (session.status === "running") {
         <div class="bg-primary/10 -mx-4 -mt-4 mb-4 flex items-center gap-2 rounded-t-lg px-4 py-2">
-          <i class="pi pi-spin pi-spinner text-foreground text-sm"></i>
+          <ui-icon name="spinner" size="inherit" spin class="text-foreground text-sm" />
           <span class="text-foreground text-sm font-medium">Agent is running...</span>
         </div>
       }
@@ -73,7 +73,7 @@
           <ui-icon name="sparkles" color="primary" />
           <span class="font-semibold">Agent Summary</span>
           @if (session.status === "running") {
-            <i class="pi pi-spin pi-spinner text-muted-foreground text-xs"></i>
+            <ui-icon name="spinner" size="inherit" spin class="text-muted-foreground text-xs" />
           }
         </ui-stack>
         <div
@@ -160,7 +160,7 @@
             class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
             [class]="getToolMarkerClass(decision.toolName)"
           >
-            <i [class]="getToolIcon(decision.toolName)" class="text-xs"></i>
+            <ui-icon [name]="getToolIcon(decision.toolName)" size="inherit" class="text-xs" />
           </span>
         </ng-template>
       </p-timeline>
@@ -168,6 +168,6 @@
   </div>
 } @else if (isLoading()) {
   <ui-stack align="center" justify="center" class="py-20">
-    <i class="pi pi-spin pi-spinner text-4xl"></i>
+    <ui-icon name="spinner" size="inherit" spin class="text-4xl" />
   </ui-stack>
 }

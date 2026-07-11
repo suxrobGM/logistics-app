@@ -14,7 +14,7 @@
   <ui-grid container spacing="6">
     <!-- Current Mappings -->
     <ui-grid [size]="12">
-      <ui-dashboard-card [title]="mappingsCardTitle()" icon="pi-link" iconColor="blue">
+      <ui-dashboard-card [title]="mappingsCardTitle()" icon="link" iconColor="blue">
         @if (mappings().length === 0) {
           <ui-empty-state
             title="No mappings yet"
@@ -85,7 +85,7 @@
 
     <!-- Create New Mapping -->
     <ui-grid [size]="12">
-      <ui-dashboard-card title="Create New Mapping" icon="pi-plus-circle" iconColor="green">
+      <ui-dashboard-card title="Create New Mapping" icon="plus-circle" iconColor="green">
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 12, md: 5 }">
             <ui-form-field label="ELD Driver" for="eldDriver">

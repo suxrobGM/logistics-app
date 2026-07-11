@@ -3,7 +3,7 @@ import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { UiDataTable } from "@logistics/shared/ui";
+import { Icon, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
@@ -12,15 +12,16 @@ import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
   selector: "app-employee-loads-list",
   templateUrl: "./employee-loads-list.html",
   imports: [
-    UiDataTable,
+    AddressPipe,
     ButtonModule,
-    TooltipModule,
-    RouterLink,
     CurrencyFormatPipe,
     DatePipe,
-    AddressPipe,
+    Icon,
     LoadStatusTag,
     LoadTypeTag,
+    RouterLink,
+    TooltipModule,
+    UiDataTable,
   ],
 })
 export class EmployeeLoadsList {

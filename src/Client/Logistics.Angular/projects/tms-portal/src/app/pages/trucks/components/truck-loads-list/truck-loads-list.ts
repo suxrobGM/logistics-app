@@ -2,7 +2,7 @@ import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { UiDataTable } from "@logistics/shared/ui";
+import { Icon, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
@@ -11,14 +11,15 @@ import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
   selector: "app-truck-loads-list",
   templateUrl: "./truck-loads-list.html",
   imports: [
-    UiDataTable,
-    ButtonModule,
-    TooltipModule,
-    RouterLink,
-    CurrencyFormatPipe,
     AddressPipe,
+    ButtonModule,
+    CurrencyFormatPipe,
+    Icon,
     LoadStatusTag,
     LoadTypeTag,
+    RouterLink,
+    TooltipModule,
+    UiDataTable,
   ],
 })
 export class TruckLoadsList {

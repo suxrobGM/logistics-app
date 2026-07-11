@@ -3,7 +3,7 @@ import { Component, inject, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CurrencyFormatPipe } from "@logistics/shared";
-import { Typography, UiDataTable } from "@logistics/shared/ui";
+import { Icon, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -23,19 +23,20 @@ const RANK_BADGE_CLASSES: Record<number, string> = {
   templateUrl: "./expense-analytics.html",
   providers: [ExpenseAnalyticsStore],
   imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    CardModule,
     ButtonModule,
-    DatePicker,
-    UiDataTable,
-    ProgressSpinnerModule,
+    CardModule,
+    CommonModule,
     CurrencyFormatPipe,
-    PageHeader,
-    Typography,
-    ExpenseAnalyticsSummary,
+    DatePicker,
     ExpenseAnalyticsCharts,
+    ExpenseAnalyticsSummary,
+    FormsModule,
+    Icon,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterModule,
+    Typography,
+    UiDataTable,
   ],
 })
 export class ExpenseAnalyticsPage implements OnInit {
