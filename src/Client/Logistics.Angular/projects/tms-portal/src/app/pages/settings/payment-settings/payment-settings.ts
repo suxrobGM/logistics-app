@@ -19,7 +19,6 @@ import {
   Typography,
   UiButton,
 } from "@logistics/shared/ui";
-import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import { EmptyState, LoadingSkeleton, PageHeader } from "@/shared/components";
 import { TenantTaxRatesCard } from "../_components";
@@ -39,7 +38,6 @@ import { TenantTaxRatesCard } from "../_components";
     Stack,
     Surface,
     TenantTaxRatesCard,
-    ToastModule,
     Typography,
     UiButton,
   ],

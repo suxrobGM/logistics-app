@@ -24,24 +24,26 @@
     </ui-form-field>
 
     <ui-form-field label="Status">
-      <p-multiselect
+      <ui-multiselect-field
         [options]="statusOptions"
-        [(ngModel)]="selectedStatuses"
+        optionLabel="label"
+        optionValue="value"
+        [(value)]="selectedStatuses"
+        (selectionChange)="applyFilters()"
         placeholder="Select status"
         [showClear]="true"
-        (onChange)="applyFilters()"
-        class="w-full"
       />
     </ui-form-field>
 
     <ui-form-field label="Type">
-      <p-multiselect
+      <ui-multiselect-field
         [options]="typeOptions"
-        [(ngModel)]="selectedTypes"
+        optionLabel="label"
+        optionValue="value"
+        [(value)]="selectedTypes"
+        (selectionChange)="applyFilters()"
         placeholder="Select type"
         [showClear]="true"
-        (onChange)="applyFilters()"
-        class="w-full"
       />
     </ui-form-field>
   </div>

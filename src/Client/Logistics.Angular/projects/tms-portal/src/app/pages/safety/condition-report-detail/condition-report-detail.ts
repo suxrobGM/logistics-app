@@ -12,10 +12,11 @@ import {
   Stack,
   Typography,
   UiButton,
+  UiLightbox,
   type UiBadgeIntent,
+  type UiLightboxImage,
 } from "@logistics/shared/ui";
 import { isContainerLoadType } from "@logistics/shared/utils";
-import { GalleriaModule } from "primeng/galleria";
 import { PageHeader } from "@/shared/components";
 import { ConditionDefectsList } from "@/shared/components/inspections";
 
@@ -28,7 +29,6 @@ import { ConditionDefectsList } from "@/shared/components/inspections";
     CommonModule,
     ConditionDefectsList,
     Divider,
-    GalleriaModule,
     Grid,
     Icon,
     PageHeader,
@@ -37,6 +37,7 @@ import { ConditionDefectsList } from "@/shared/components/inspections";
     Stack,
     Typography,
     UiButton,
+    UiLightbox,
   ],
 })
 export class ConditionReportDetailPage implements OnInit {
@@ -52,17 +53,16 @@ export class ConditionReportDetailPage implements OnInit {
 
   public readonly isContainerLoad = computed(() => isContainerLoadType(this.report()?.loadType));
 
-  public readonly photoUrls = computed(() => {
+  public readonly photoUrls = computed<UiLightboxImage[]>(() => {
     const r = this.report();
     if (!r?.photos) {
       return [];
     }
 
     return r.photos.map((p) => ({
-      itemImageSrc: this.getPhotoUrl(p.blobPath),
-      thumbnailImageSrc: this.getPhotoUrl(p.blobPath),
+      src: this.getPhotoUrl(p.blobPath),
+      thumbnailSrc: this.getPhotoUrl(p.blobPath),
       alt: p.originalFileName || p.fileName || "Photo",
-      title: p.originalFileName || p.fileName || "Photo",
     }));
   });
 

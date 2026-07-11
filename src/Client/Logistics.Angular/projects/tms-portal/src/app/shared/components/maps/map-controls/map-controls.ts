@@ -1,13 +1,11 @@
 import { Component, inject, input, output } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { Icon, UiTooltip } from "@logistics/shared/ui";
+import { UiToggleGroup } from "@logistics/shared/ui";
 import {
   ControlComponent,
   FullscreenControlDirective,
   NavigationControlDirective,
   ScaleControlDirective,
 } from "ngx-mapbox-gl";
-import { SelectButtonModule } from "primeng/selectbutton";
 import { MapStyleService } from "@/core/services";
 import type { MapControlPosition, MapLayerType } from "../types";
 
@@ -20,13 +18,10 @@ import type { MapControlPosition, MapLayerType } from "../types";
   templateUrl: "./map-controls.html",
   imports: [
     ControlComponent,
-    FormsModule,
     FullscreenControlDirective,
-    Icon,
     NavigationControlDirective,
     ScaleControlDirective,
-    SelectButtonModule,
-    UiTooltip,
+    UiToggleGroup,
   ],
 })
 export class MapControls {

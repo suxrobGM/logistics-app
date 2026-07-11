@@ -32,7 +32,6 @@ import {
   UiTimelineMarker,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { AiDispatchHubService, TenantService, ToastService } from "@/core/services";
 import { DateUtils, Labels } from "@/shared/utils";
 import { ApproveRejectActions } from "../components/approve-reject-actions/approve-reject-actions";
@@ -54,7 +53,6 @@ import { MarkdownPipe } from "../utils/markdown";
   imports: [
     ApproveRejectActions,
     Badge,
-    ConfirmDialogModule,
     DatePipe,
     Grid,
     Icon,

@@ -44,13 +44,14 @@
 
       <ui-grid [size]="{ xs: 12, md: 6, lg: 4 }">
         <ui-form-field label="Status">
-          <p-multiselect
+          <ui-multiselect-field
             [options]="statusOptions"
-            [(ngModel)]="selectedStatuses"
+            optionLabel="label"
+            optionValue="value"
+            [(value)]="selectedStatuses"
+            (selectionChange)="applyFilters()"
             placeholder="Select status"
             [showClear]="true"
-            (onChange)="applyFilters()"
-            class="w-full"
           />
         </ui-form-field>
       </ui-grid>

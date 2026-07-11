@@ -152,13 +152,12 @@
           @if (canPay()) {
             <div class="mb-4">
               <span class="mb-2 block text-sm font-medium text-gray-700">Payment Amount</span>
-              <p-inputnumber
-                [(ngModel)]="paymentAmount"
+              <ui-number-field
+                [(value)]="paymentAmount"
                 mode="currency"
                 [currency]="currency()"
                 [min]="0.01"
                 [max]="inv.amountDue ?? 0"
-                class="w-full"
               />
               <ui-typography variant="body-sm" color="muted" class="mt-1">
                 Maximum: {{ inv.amountDue | currencyFormat }}

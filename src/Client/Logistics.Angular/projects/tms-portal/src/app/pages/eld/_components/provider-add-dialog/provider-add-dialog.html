@@ -7,39 +7,23 @@
   (opened)="onShow()"
 >
   <form [formRoot]="form" #formEl>
-    <!--
-      Stays a raw p-select: it projects an `<ng-template #item>` to render each provider's
-      description sub-line, and `ui-select-field` has no item slot yet (an unconditional `#item`
-      would force custom rendering for every option in every select). So it is driven by ngModel
-      and `ui-form-field` is handed the field explicitly. Revisit when the item slot lands.
-    -->
-    <ui-form-field
-      label="Provider"
-      for="providerType"
-      [required]="true"
-      [field]="form.providerType"
-    >
-      <p-select
+    <ui-form-field label="Provider" for="providerType" [required]="true">
+      <ui-select-field
         id="providerType"
-        [ngModel]="form.providerType().value()"
-        (ngModelChange)="form.providerType().value.set($event)"
-        [ngModelOptions]="{ standalone: true }"
-        (onBlur)="form.providerType().markAsTouched()"
-        [invalid]="form.providerType().invalid() && form.providerType().touched()"
+        [formField]="form.providerType"
         [options]="providerOptions"
         optionLabel="label"
         optionValue="value"
         placeholder="Select provider"
-        class="w-full"
-        [style]="{ width: '100%' }"
       >
+        <!-- Each provider's description sub-line. Dropping this loses real information. -->
         <ng-template #item let-item>
           <div>
             <div class="font-medium">{{ item.label }}</div>
             <small class="text-muted-foreground">{{ item.description }}</small>
           </div>
         </ng-template>
-      </p-select>
+      </ui-select-field>
     </ui-form-field>
 
     <ui-form-field

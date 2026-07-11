@@ -85,14 +85,12 @@
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 12, md: 5 }">
             <ui-form-field label="ELD Driver" for="eldDriver">
-              <p-select
+              <ui-select-field
                 id="eldDriver"
-                [(ngModel)]="selectedEldDriver"
+                [(value)]="selectedEldDriver"
                 [options]="unmappedEldDrivers()"
                 optionLabel="name"
                 placeholder="Select ELD driver"
-                class="w-full"
-                [style]="{ width: '100%' }"
                 [showClear]="true"
               >
                 <ng-template #selectedItem let-item>
@@ -107,7 +105,7 @@
                     <small class="text-muted-foreground">ID: {{ item.externalDriverId }}</small>
                   </div>
                 </ng-template>
-              </p-select>
+              </ui-select-field>
             </ui-form-field>
           </ui-grid>
 
@@ -117,14 +115,12 @@
 
           <ui-grid [size]="{ xs: 12, md: 5 }">
             <ui-form-field label="TMS Employee" for="employee">
-              <p-select
+              <ui-select-field
                 id="employee"
-                [(ngModel)]="selectedEmployee"
+                [(value)]="selectedEmployee"
                 [options]="unmappedEmployees()"
                 optionLabel="fullName"
                 placeholder="Select employee"
-                class="w-full"
-                [style]="{ width: '100%' }"
                 [showClear]="true"
               >
                 <ng-template #selectedItem let-item>
@@ -139,7 +135,7 @@
                     <small class="text-muted-foreground">{{ item.email }}</small>
                   </div>
                 </ng-template>
-              </p-select>
+              </ui-select-field>
             </ui-form-field>
           </ui-grid>
         </ui-grid>
@@ -150,7 +146,7 @@
             icon="link"
             (click)="createMapping()"
             [loading]="saving()"
-            [disabled]="!selectedEldDriver || !selectedEmployee"
+            [disabled]="!selectedEldDriver() || !selectedEmployee()"
           />
         </ui-stack>
       </ui-dashboard-card>

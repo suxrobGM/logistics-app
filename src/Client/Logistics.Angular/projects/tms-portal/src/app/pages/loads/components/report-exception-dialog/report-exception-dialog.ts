@@ -1,17 +1,14 @@
 import { Component, inject, input, model, output, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { UiFormField } from "@logistics/shared";
 import { Api, reportLoadException, type LoadExceptionType } from "@logistics/shared/api";
 import { loadExceptionTypeOptions } from "@logistics/shared/api/enums";
-import { UiButton, UiDialog } from "@logistics/shared/ui";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
+import { UiButton, UiDialog, UiSelectField, UiTextareaField } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 
 @Component({
   selector: "app-report-exception-dialog",
   templateUrl: "./report-exception-dialog.html",
-  imports: [FormsModule, SelectModule, TextareaModule, UiButton, UiDialog, UiFormField],
+  imports: [UiButton, UiDialog, UiFormField, UiSelectField, UiTextareaField],
 })
 export class ReportExceptionDialog {
   private readonly api = inject(Api);

@@ -1,6 +1,5 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal, type OnDestroy, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { SearchField } from "@logistics/shared";
 import {
   Api,
@@ -18,10 +17,10 @@ import {
   Stack,
   Typography,
   UiButton,
+  UiCheckboxField,
+  UiToggleGroup,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { CheckboxModule } from "primeng/checkbox";
-import { SelectButtonModule } from "primeng/selectbutton";
 import { NotificationService, ToastService } from "@/core/services";
 
 type FilterType = "all" | "unread" | "read";
@@ -38,18 +37,17 @@ interface FilterOption {
   imports: [
     Badge,
     Card,
-    CheckboxModule,
     DatePipe,
     Divider,
-    FormsModule,
     Icon,
     RelativeTimePipe,
     SearchField,
-    SelectButtonModule,
     Spinner,
     Stack,
     Typography,
     UiButton,
+    UiCheckboxField,
+    UiToggleGroup,
     UiTooltip,
   ],
 })

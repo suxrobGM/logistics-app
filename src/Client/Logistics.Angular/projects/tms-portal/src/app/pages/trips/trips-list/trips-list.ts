@@ -1,5 +1,4 @@
 import { Component, computed, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import {
   Api,
@@ -25,16 +24,16 @@ import {
   Stack,
   Typography,
   UiButton,
+  UiCheckboxField,
   UiDataTable,
   UiMenu,
+  UiMultiSelectField,
   UiSortHeader,
   UiTableRowDirectives,
   UiTooltip,
   type UiMenuItem,
 } from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
-import { Checkbox } from "primeng/checkbox";
-import { MultiSelect } from "primeng/multiselect";
 import { ToastService } from "@/core/services";
 import {
   DataContainer,
@@ -57,30 +56,29 @@ import { TripsListStore } from "../store/trips-list.store";
   providers: [TripsListStore],
   imports: [
     Card,
-    Checkbox,
     CurrencyFormatPipe,
     DataContainer,
     DateFormatPipe,
     DateRangePicker,
     DistanceUnitPipe,
-    FormsModule,
     Grid,
     LoadStatusTag,
     LoadTypeTag,
-    MultiSelect,
     PageHeader,
     Progress,
     RouteBadge,
     SearchField,
     SearchTruck,
     Stack,
-    TripsSummaryStats,
     TripStatusTag,
+    TripsSummaryStats,
     Typography,
     UiButton,
+    UiCheckboxField,
     UiDataTable,
     UiFormField,
     UiMenu,
+    UiMultiSelectField,
     UiSortHeader,
     UiTableRowDirectives,
     UiTooltip,

@@ -20,9 +20,9 @@ import {
   Stack,
   UiButton,
   UiDialog,
+  UiTextareaField,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { TextareaModule } from "primeng/textarea";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
@@ -44,9 +44,9 @@ import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-l
     RouterLink,
     Spinner,
     Stack,
-    TextareaModule,
     UiButton,
     UiDialog,
+    UiTextareaField,
   ],
 })
 export class DvirDetailPage implements OnInit {

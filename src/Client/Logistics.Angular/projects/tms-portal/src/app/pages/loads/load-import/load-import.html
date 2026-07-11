@@ -27,23 +27,20 @@
           <app-search-truck [value]="selectedTruck()" (valueChange)="selectedTruck.set($event)" />
         </ui-form-field>
 
-        <p-fileUpload
+        <ui-file-upload
           mode="advanced"
-          name="file"
           accept=".pdf"
           [maxFileSize]="10485760"
           chooseLabel="Select PDF"
-          [auto]="true"
-          (onSelect)="onFileSelect($event)"
           [disabled]="!canUpload()"
+          (filesSelect)="onFileSelect($event)"
+          (rejected)="error.set($event)"
         >
-          <ng-template #content>
-            <ui-stack align="center" gap="4" class="p-8">
-              <ui-icon name="file-pdf" color="muted" size="xl" />
-              <ui-typography color="secondary">Drag and drop dispatch sheet PDF here</ui-typography>
-            </ui-stack>
-          </ng-template>
-        </p-fileUpload>
+          <ui-stack align="center" gap="4" class="p-8">
+            <ui-icon name="file-pdf" color="muted" size="xl" />
+            <ui-typography color="secondary">Drag and drop dispatch sheet PDF here</ui-typography>
+          </ui-stack>
+        </ui-file-upload>
 
         @if (isUploading()) {
           <ui-stack direction="row" align="center" justify="center" gap="2" class="mt-4">

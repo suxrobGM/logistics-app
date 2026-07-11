@@ -10,8 +10,15 @@ import {
   type SafetyTrendDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Skeleton, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ChartModule } from "primeng/chart";
+import {
+  Grid,
+  Icon,
+  Skeleton,
+  Stack,
+  Typography,
+  UiChart,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -50,7 +57,6 @@ const EVENT_TYPE_COLORS = [
   selector: "app-safety-report",
   templateUrl: "./safety-report.html",
   imports: [
-    ChartModule,
     CurrencyFormatPipe,
     DashboardCard,
     DateRangePicker,
@@ -63,6 +69,7 @@ const EVENT_TYPE_COLORS = [
     Stack,
     StatCard,
     Typography,
+    UiChart,
     UiDataTable,
   ],
 })

@@ -3,14 +3,13 @@ import { Component, computed, effect, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, renewSubscription, type SubscriptionDto } from "@logistics/shared/api";
 import { Badge, Card, Icon, UiButton, type UiBadgeIntent } from "@logistics/shared/ui";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TenantService, ToastService } from "@/core/services";
 import { Labels } from "@/shared/utils";
 
 @Component({
   selector: "app-renew-subscription",
   templateUrl: "./renew-subscription.html",
-  imports: [Badge, Card, CommonModule, ConfirmDialogModule, Icon, RouterModule, UiButton],
+  imports: [Badge, Card, CommonModule, Icon, RouterModule, UiButton],
 })
 export class RenewSubscriptionComponent {
   private readonly tenantService = inject(TenantService);

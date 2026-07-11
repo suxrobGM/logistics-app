@@ -17,9 +17,9 @@ import {
   Stack,
   StatusBadge,
   Typography,
+  UiChart,
   UiDataTable,
 } from "@logistics/shared/ui";
-import { ChartModule } from "primeng/chart";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -41,7 +41,6 @@ import {
   templateUrl: "./loads-report.html",
   imports: [
     Badge,
-    ChartModule,
     CurrencyFormatPipe,
     DashboardCard,
     DateRangePicker,
@@ -53,6 +52,7 @@ import {
     StatCard,
     StatusBadge,
     Typography,
+    UiChart,
     UiDataTable,
   ],
 })

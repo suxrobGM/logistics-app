@@ -1,23 +1,27 @@
-<p-datepicker
-  [(ngModel)]="selected"
-  selectionMode="range"
-  [showIcon]="true"
-  dateFormat="mm/dd/yy"
-  placeholder="Select date range"
-  [numberOfMonths]="2"
+<hlm-date-range-picker
+  [date]="range()"
+  (dateChange)="onRangeChange($any($event))"
+  [formatDates]="formatDates"
+  [min]="minDate()"
+  [max]="maxDate()"
+  [disabled]="disabled()"
 >
-  <ng-template #footer>
-    <div class="flex flex-wrap gap-2 border-t p-2">
-      @for (preset of presets(); track preset.label) {
-        <ui-button
-          intent="secondary"
-          appearance="text"
-          size="sm"
-          type="button"
-          [label]="preset.label"
-          (click)="selectPreset(preset)"
-        />
-      }
-    </div>
-  </ng-template>
-</p-datepicker>
+  <hlm-date-range-input
+    [inputId]="inputId()"
+    [placeholder]="placeholder()"
+    [showClear]="showClear()"
+  />
+
+  <div hlmDatePickerFooter class="border-border flex flex-wrap gap-2 border-t p-2">
+    @for (preset of presets(); track preset.label) {
+      <ui-button
+        intent="secondary"
+        appearance="text"
+        size="sm"
+        type="button"
+        [label]="preset.label"
+        (click)="selectPreset(preset)"
+      />
+    }
+  </div>
+</hlm-date-range-picker>

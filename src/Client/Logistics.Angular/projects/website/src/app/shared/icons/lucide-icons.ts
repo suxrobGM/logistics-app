@@ -6,6 +6,7 @@
 
 import { brandFacebook, brandLinkedin, brandX } from "@logistics/shared/ui";
 import {
+  lucideArrowRight,
   lucideBook,
   lucideBox,
   lucideBriefcase,
@@ -31,6 +32,7 @@ import {
   lucidePhone,
   lucidePlay,
   lucideReceipt,
+  lucideSend,
   lucideShield,
   lucideSmartphone,
   lucideSparkles,
@@ -46,12 +48,13 @@ import {
  * Icons `website` uses that `BASE_NG_ICONS` does not already provide.
  * Registered in app.config.ts:  provideIcons({ ...BASE_NG_ICONS, ...WEBSITE_NG_ICONS })
  *
- * 38 name(s) -> 37 distinct glyph(s).
+ * 41 name(s) -> 39 distinct glyph(s).
  */
 export const WEBSITE_NG_ICONS = {
   brandFacebook,
   brandLinkedin,
   brandX,
+  lucideArrowRight,
   lucideBook,
   lucideBox,
   lucideBriefcase,
@@ -77,6 +80,7 @@ export const WEBSITE_NG_ICONS = {
   lucidePhone,
   lucidePlay,
   lucideReceipt,
+  lucideSend,
   lucideShield,
   lucideSmartphone,
   lucideSparkles,

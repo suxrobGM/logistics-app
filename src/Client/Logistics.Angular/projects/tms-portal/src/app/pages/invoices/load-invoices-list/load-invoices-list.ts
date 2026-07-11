@@ -12,10 +12,10 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiMultiSelectField,
   UiSortHeader,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { MultiSelectModule } from "primeng/multiselect";
 import {
   DataContainer,
   DateRangePicker,
@@ -40,7 +40,6 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     FormsModule,
     Grid,
     InvoiceStatusTag,
-    MultiSelectModule,
     PageHeader,
     RouterModule,
     SearchField,
@@ -49,6 +48,7 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     UiButton,
     UiDataTable,
     UiFormField,
+    UiMultiSelectField,
     UiSortHeader,
     UiTooltip,
   ],

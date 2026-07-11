@@ -13,7 +13,6 @@ import { RouterLink } from "@angular/router";
 import type { NotificationDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
 import { Divider, Icon, OverlayBadge, Spinner, UiPopover, UiTooltip } from "@logistics/shared/ui";
-import { OverlayBadgeModule } from "primeng/overlaybadge";
 import { NotificationService, ToastService } from "@/core/services";
 
 @Component({
@@ -25,7 +24,6 @@ import { NotificationService, ToastService } from "@/core/services";
     Divider,
     Icon,
     OverlayBadge,
-    OverlayBadgeModule,
     UiPopover,
     RelativeTimePipe,
     RouterLink,

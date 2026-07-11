@@ -27,9 +27,8 @@ import {
   UiAutocompleteField,
   UiButton,
 } from "@logistics/shared/ui";
-import { DatePicker } from "primeng/datepicker";
 import { ToastService } from "@/core/services";
-import { PageHeader, UiFormField } from "@/shared/components";
+import { DateRangePicker, PageHeader, UiFormField } from "@/shared/components";
 import { DateUtils, PredefinedDateRanges } from "@/shared/utils";
 import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
 
@@ -45,7 +44,7 @@ interface PayrollFormValue {
     Card,
     CommonModule,
     CurrencyFormatPipe,
-    DatePicker,
+    DateRangePicker,
     Divider,
     FormField,
     FormRoot,

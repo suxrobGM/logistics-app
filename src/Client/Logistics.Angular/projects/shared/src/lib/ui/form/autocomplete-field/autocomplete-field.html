@@ -5,6 +5,8 @@
   (searchChange)="onSearch($event)"
   [itemToString]="itemToString"
   [disabled]="disabled() || readonly()"
+  [state]="popoverState()"
+  (stateChanged)="onStateChanged($event)"
   (closed)="onClosed()"
 >
   <hlm-autocomplete-input
@@ -17,9 +19,22 @@
   <hlm-autocomplete-content *hlmAutocompletePortal>
     <div hlmAutocompleteList>
       @for (option of suggestions(); track option) {
-        <hlm-autocomplete-item [value]="$any(option)">{{ label(option) }}</hlm-autocomplete-item>
+        <hlm-autocomplete-item [value]="$any(option)">
+          @if (itemTemplate(); as itemTpl) {
+            <ng-container *ngTemplateOutlet="itemTpl; context: { $implicit: option }"></ng-container>
+          } @else {
+            {{ label(option) }}
+          }
+        </hlm-autocomplete-item>
       }
     </div>
-    <hlm-autocomplete-empty>No results found</hlm-autocomplete-empty>
+
+    <hlm-autocomplete-empty>
+      @if (emptyTemplate(); as emptyTpl) {
+        <ng-container *ngTemplateOutlet="emptyTpl"></ng-container>
+      } @else {
+        No results found
+      }
+    </hlm-autocomplete-empty>
   </hlm-autocomplete-content>
 </hlm-autocomplete>

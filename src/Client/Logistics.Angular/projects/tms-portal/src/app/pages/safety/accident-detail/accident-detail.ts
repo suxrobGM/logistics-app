@@ -24,9 +24,9 @@ import {
   UiButton,
   UiDialog,
   UiTabsImports,
+  UiTextareaField,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { TextareaModule } from "primeng/textarea";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
@@ -48,11 +48,11 @@ import { AccidentQuickInfo } from "../_components";
     RouterLink,
     Spinner,
     Stack,
-    TextareaModule,
     Typography,
     UiButton,
     UiDialog,
     UiTabsImports,
+    UiTextareaField,
   ],
 })
 export class AccidentDetailPage implements OnInit {

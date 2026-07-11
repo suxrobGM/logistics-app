@@ -20,9 +20,8 @@ import {
   Stack,
   Typography,
   UiButton,
+  UiFileUpload,
 } from "@logistics/shared/ui";
-import { FileUploadModule, type FileSelectEvent } from "primeng/fileupload";
-import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import { SearchTruck, UiFormField } from "@/shared/components";
 
@@ -34,7 +33,6 @@ import { SearchTruck, UiFormField } from "@/shared/components";
     Card,
     CommonModule,
     CurrencyFormatPipe,
-    FileUploadModule,
     Grid,
     Icon,
     PdfViewer,
@@ -42,9 +40,9 @@ import { SearchTruck, UiFormField } from "@/shared/components";
     SearchTruck,
     Spinner,
     Stack,
-    ToastModule,
     Typography,
     UiButton,
+    UiFileUpload,
     UiFormField,
   ],
 })
@@ -61,17 +59,19 @@ export class LoadImportComponent {
   protected readonly selectedFile = signal<File | null>(null);
   protected readonly canUpload = computed(() => !this.isUploading());
 
-  protected async onFileSelect(event: FileSelectEvent): Promise<void> {
-    const file = event.files[0];
+  protected async onFileSelect(files: File[]): Promise<void> {
+    const file = files[0];
     if (!file) return;
 
-    // Validate file type
+    // `ui-file-upload` already enforces `accept=".pdf"` and the 10 MB `maxFileSize` — including for
+    // drag-and-drop, which the native `accept` attribute does not cover — and reports refusals via
+    // `(rejected)`. These two checks are kept as a backstop: they are the same limits, stated once
+    // more at the point that actually consumes the file.
     if (!file.name.toLowerCase().endsWith(".pdf")) {
       this.error.set("Please select a PDF file");
       return;
     }
 
-    // Validate file size (10 MB limit)
     if (file.size > 10 * 1024 * 1024) {
       this.error.set("File size exceeds 10 MB limit");
       return;

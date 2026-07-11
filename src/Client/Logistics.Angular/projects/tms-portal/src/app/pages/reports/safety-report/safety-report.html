@@ -59,7 +59,7 @@
     <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
       <ui-dashboard-card title="DVIR Status" icon="chart-pie" iconColor="blue">
         @if (hasDvirStatusData()) {
-          <p-chart
+          <ui-chart
             type="doughnut"
             [data]="dvirStatusChartData()"
             [options]="pieChartOptions"
@@ -76,7 +76,7 @@
     <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
       <ui-dashboard-card title="Accident Severity" icon="chart-pie" iconColor="red">
         @if (hasAccidentSeverityData()) {
-          <p-chart
+          <ui-chart
             type="doughnut"
             [data]="accidentSeverityChartData()"
             [options]="pieChartOptions"
@@ -93,7 +93,7 @@
     <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
       <ui-dashboard-card title="Behavior Events by Type" icon="chart-bar" iconColor="orange">
         @if (hasBehaviorEventData()) {
-          <p-chart
+          <ui-chart
             type="bar"
             [data]="behaviorEventChartData()"
             [options]="barChartOptions"
@@ -114,7 +114,7 @@
   <div class="mb-6">
     <ui-dashboard-card title="Safety Trends" icon="chart-line" iconColor="blue">
       @if (hasTrendData()) {
-        <p-chart
+        <ui-chart
           [type]="trendChartType()"
           [data]="trendChartData()"
           [options]="trendChartOptions()"

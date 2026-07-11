@@ -96,7 +96,7 @@
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Invoice Status Distribution" icon="chart-pie" iconColor="blue">
-        <p-chart
+        <ui-chart
           type="pie"
           [data]="invoiceStatusChartData()"
           [options]="invoiceStatusChartOptions"
@@ -107,7 +107,7 @@
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Financial Metrics" icon="chart-bar" iconColor="blue">
-        <p-chart
+        <ui-chart
           type="bar"
           [data]="financialMetricsChartData()"
           [options]="financialMetricsChartOptions"
@@ -120,7 +120,7 @@
   <!-- Revenue Trends Chart -->
   <div class="mb-6">
     <ui-dashboard-card title="Revenue & Profit Trends" icon="chart-line" iconColor="blue">
-      <p-chart
+      <ui-chart
         type="line"
         [data]="revenueTrendChartData()"
         [options]="revenueTrendChartOptions"

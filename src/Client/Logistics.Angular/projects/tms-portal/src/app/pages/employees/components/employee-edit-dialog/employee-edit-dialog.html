@@ -31,19 +31,24 @@
       @if (isShareOfGrossSalary()) {
         <ui-unit-field [formField]="form.salary" unit="%" />
       } @else if (isNoneSalary()) {
-        <input pInputText id="salary" type="text" class="w-full" [disabled]="true" value="N/A" />
+        <ui-text-field id="salary" value="N/A" [disabled]="true" />
       } @else {
         <ui-currency-field [formField]="form.salary" />
       }
     </ui-form-field>
 
+    <!--
+      Was a PrimeNG input-group, which joined the two controls into one bordered box. The control
+      inside is now a ui-text-field — a component with its OWN border — so re-wrapping it in a
+      bordered group (Helm's input-group expects a borderless `input[hlmInputGroupInput]`) would just
+      draw a second border around the first. A flex row is what this actually is: a read-only field
+      with an action beside it.
+    -->
     <ui-form-field label="Role" for="role" class="mt-4">
-      <p-inputgroup>
-        <input
-          pInputText
+      <div class="flex items-start gap-2">
+        <ui-text-field
           id="role"
-          type="text"
-          class="w-full"
+          class="block flex-1"
           [disabled]="true"
           [value]="employee()?.role?.displayName || 'No role assigned'"
         />
@@ -53,7 +58,7 @@
           [disabled]="!canChangeRole()"
           (click)="openChangeRoleDialog()"
         />
-      </p-inputgroup>
+      </div>
     </ui-form-field>
 
     <ui-form-field

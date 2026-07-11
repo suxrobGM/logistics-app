@@ -20,10 +20,10 @@
             [locked]="feature.isAdminLocked ?? false"
             lockedTooltip="This feature is locked by the administrator"
           >
-            <p-toggleswitch
-              [ngModel]="feature.isEnabled"
+            <ui-toggle-field
+              [value]="feature.isEnabled ?? false"
               [disabled]="(feature.isAdminLocked ?? false) || isSaving() === feature.feature"
-              (onChange)="toggleFeature(feature)"
+              (valueChange)="toggleFeature(feature)"
             />
           </ui-feature-row>
         }

@@ -54,7 +54,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ToastModule } from "primeng/toast";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import {
@@ -192,7 +191,6 @@ const EMPTY: LoadFormModel = {
     Spinner,
     Stack,
     Surface,
-    ToastModule,
     Typography,
     UiButton,
     UiCheckboxField,

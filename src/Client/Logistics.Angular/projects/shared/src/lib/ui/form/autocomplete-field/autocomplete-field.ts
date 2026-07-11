@@ -1,15 +1,20 @@
+import { NgTemplateOutlet } from "@angular/common";
 import {
   booleanAttribute,
   Component,
   computed,
+  contentChild,
   ElementRef,
   inject,
   input,
   model,
   output,
+  signal,
+  TemplateRef,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
+import type { BrnOverlayState } from "@spartan-ng/brain/overlay";
 import { Subject } from "rxjs";
 import { debounceTime, filter } from "rxjs/operators";
 import { HlmAutocompleteImports } from "../../primitives/autocomplete";
@@ -19,6 +24,11 @@ import { focusFirstControl } from "../focus-control";
 /** The payload of `completeMethod` — the current search query. Mirrors the old p-autocomplete event. */
 export interface UiAutocompleteCompleteEvent {
   query: string;
+}
+
+/** Context handed to the `#item` template: the raw suggestion object. */
+export interface UiAutocompleteOptionContext<T = unknown> {
+  $implicit: T;
 }
 
 /**
@@ -50,9 +60,26 @@ export interface UiAutocompleteCompleteEvent {
   // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
   // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
   host: { "[attr.id]": "null" },
-  imports: [HlmAutocompleteImports, DetachedControl],
+  imports: [HlmAutocompleteImports, DetachedControl, NgTemplateOutlet],
 })
 export class UiAutocompleteField<T = unknown> implements FormValueControl<T | null> {
+  /**
+   * Optional per-suggestion renderer, projected as `<ng-template #item let-suggestion>`.
+   * `$implicit` is the raw suggestion object, matching p-autocomplete.
+   *
+   * `descendants: false` — see `ui-select-field` for why (a nested autocomplete must keep its own).
+   */
+  protected readonly itemTemplate = contentChild<TemplateRef<UiAutocompleteOptionContext>>("item", {
+    descendants: false,
+  });
+
+  /**
+   * Optional empty-state renderer, projected as `<ng-template #empty>`. Several search components
+   * project one to offer a "create new" action when nothing matched, so this is not decorative.
+   */
+  protected readonly emptyTemplate = contentChild<TemplateRef<unknown>>("empty", {
+    descendants: false,
+  });
   /** The control's value. Required by `FormValueControl`. */
   public readonly value = model<T | null>(null);
 
@@ -135,6 +162,25 @@ export class UiAutocompleteField<T = unknown> implements FormValueControl<T | nu
 
   protected onClosed(): void {
     this.touch.emit();
+  }
+
+  /**
+   * Mirrors brain's popover state so `close()` can drive it. Writing the state back on every
+   * `stateChanged` is what keeps a forced close from latching the panel shut — without it the
+   * `[state]` binding would keep re-applying "closed" and the panel could never reopen.
+   */
+  protected readonly popoverState = signal<BrnOverlayState | null>(null);
+
+  protected onStateChanged(state: BrnOverlayState): void {
+    this.popoverState.set(state);
+  }
+
+  /**
+   * Closes the suggestions panel. A call site that opens a dialog from the `#empty` template must
+   * close the panel first, or the overlay survives underneath it.
+   */
+  public close(): void {
+    this.popoverState.set("closed");
   }
 
   /** Signal Forms calls this via `FieldState.focusBoundControl()`. */

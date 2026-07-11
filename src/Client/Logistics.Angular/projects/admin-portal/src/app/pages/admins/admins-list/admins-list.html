@@ -141,22 +141,18 @@
     </p>
     <div class="flex flex-col gap-2">
       <label for="adminEmail" class="font-medium">Email</label>
-      <input
-        pInputText
+      <ui-text-field
         id="adminEmail"
         type="email"
-        [(ngModel)]="addEmail"
-        class="w-full"
+        [(value)]="addEmail"
         placeholder="name@example.com"
       />
     </div>
     <div class="flex flex-col gap-2">
       <label for="adminMessage" class="font-medium">Message (optional)</label>
-      <input
-        pInputText
+      <ui-text-field
         id="adminMessage"
-        [(ngModel)]="addMessage"
-        class="w-full"
+        [(value)]="addMessage"
         placeholder="Add a personal note to the invitation"
       />
     </div>

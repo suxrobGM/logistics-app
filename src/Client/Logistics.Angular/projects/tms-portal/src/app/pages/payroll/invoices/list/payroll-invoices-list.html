@@ -65,26 +65,28 @@
 
       <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
         <ui-form-field label="Status">
-          <p-multiselect
+          <ui-multiselect-field
             [options]="statusOptions"
-            [(ngModel)]="selectedStatuses"
+            optionLabel="label"
+            optionValue="value"
+            [(value)]="selectedStatuses"
+            (selectionChange)="applyFilters()"
             placeholder="Select status"
             [showClear]="true"
-            (onChange)="applyFilters()"
-            class="w-full"
           />
         </ui-form-field>
       </ui-grid>
 
       <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
         <ui-form-field label="Salary Type">
-          <p-multiselect
+          <ui-multiselect-field
             [options]="salaryTypeOptions"
-            [(ngModel)]="selectedSalaryTypes"
+            optionLabel="label"
+            optionValue="value"
+            [(value)]="selectedSalaryTypes"
+            (selectionChange)="applyFilters()"
             placeholder="Select salary type"
             [showClear]="true"
-            (onChange)="applyFilters()"
-            class="w-full"
           />
         </ui-form-field>
       </ui-grid>
@@ -222,13 +224,12 @@
   <ui-dialog header="Reject Payroll" [(open)]="showRejectDialog" [modal]="true" width="400px">
     <ui-stack gap="4">
       <p>Please provide a reason for rejecting this payroll invoice.</p>
-      <textarea
-        pInputTextarea
-        [(ngModel)]="rejectionReason"
-        rows="3"
-        class="w-full"
+      <ui-textarea-field
+        [(value)]="rejectionReason"
+        [rows]="3"
+        class="block w-full"
         placeholder="Enter rejection reason..."
-      ></textarea>
+      />
     </ui-stack>
     <ng-template #footer>
       <ui-button appearance="text" label="Cancel" (click)="showRejectDialog.set(false)" />

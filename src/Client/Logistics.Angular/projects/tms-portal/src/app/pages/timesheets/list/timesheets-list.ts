@@ -1,6 +1,5 @@
 import { DatePipe, DecimalPipe, SlicePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { Permission, PermissionGuard } from "@logistics/shared";
 import {
@@ -18,12 +17,12 @@ import {
   Stack,
   UiButton,
   UiDataTable,
+  UiDateField,
+  UiSelectField,
   UiSortHeader,
   UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { DatePickerModule } from "primeng/datepicker";
-import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader } from "@/shared/components";
 import { TimesheetFormDialog } from "../components/form-dialog/form-dialog";
@@ -37,16 +36,15 @@ import { TimesheetsListStore } from "../store/list.store";
     Badge,
     Card,
     DataContainer,
-    DatePickerModule,
     DatePipe,
     DecimalPipe,
-    FormsModule,
     PageHeader,
     PermissionGuard,
-    SelectModule,
     SlicePipe,
     Stack,
     TimesheetFormDialog,
+    UiDateField,
+    UiSelectField,
     UiButton,
     UiDataTable,
     UiSortHeader,

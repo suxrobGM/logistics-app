@@ -1,8 +1,11 @@
-@import "primeicons/primeicons.css";
 @import "tailwindcss";
 
 /* spartan/ui token + variant layer (canonical shadcn tokens; see theme.css) */
 @import "../../shared/src/styles/theme.css";
+
+/* Quill snow theme, re-keyed to our tokens. Required by `ui-editor` on the blog-post form — see the
+   header of quill.css. Admin is the only app that SHIPS an editor. */
+@import "../../shared/src/styles/quill.css";
 
 /* Dark mode via the shared ThemeService (.dark-theme on <html>) */
 @custom-variant dark (&:where(.dark-theme, .dark-theme *));

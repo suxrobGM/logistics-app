@@ -1,9 +1,8 @@
 import { Component, ElementRef, inject, input, model, output, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
 import { focusFirstControl } from "@logistics/shared";
 import { Api, getContainers, type ContainerDto } from "@logistics/shared/api";
-import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { UiAutocompleteField } from "@logistics/shared/ui";
 
 /**
  * Container search autocomplete.
@@ -16,7 +15,7 @@ import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autoco
 @Component({
   selector: "app-search-container",
   templateUrl: "./search-container.html",
-  imports: [AutoCompleteModule, FormsModule],
+  imports: [UiAutocompleteField],
 })
 export class SearchContainer implements FormValueControl<ContainerDto | null> {
   private readonly api = inject(Api);
@@ -55,9 +54,5 @@ export class SearchContainer implements FormValueControl<ContainerDto | null> {
     } catch {
       this.suggestedContainers.set([]);
     }
-  }
-
-  protected changeSelectedContainer(event: AutoCompleteSelectEvent): void {
-    this.value.set(event.value);
   }
 }

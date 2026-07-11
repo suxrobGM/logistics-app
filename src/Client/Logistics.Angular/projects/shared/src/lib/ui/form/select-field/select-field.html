@@ -12,7 +12,25 @@
     [forceInvalid]="showInvalid()"
     [class]="fluid() ? 'w-full' : ''"
   >
-    <hlm-select-value [placeholder]="placeholder() ?? ''" />
+    <!--
+      A `#selectedItem` template renders the trigger itself. `hlm-select-value` owns the placeholder
+      in the default path, so when we take over we must render the placeholder ourselves — otherwise
+      an empty custom-trigger select shows nothing at all.
+    -->
+    @if (selectedItemTemplate(); as selectedTpl) {
+      @if (selectedOption(); as option) {
+        <span data-slot="select-value">
+          <ng-container
+            *ngTemplateOutlet="selectedTpl; context: { $implicit: option }"
+          ></ng-container>
+        </span>
+      } @else {
+        <span class="text-muted-foreground">{{ placeholder() ?? "" }}</span>
+      }
+    } @else {
+      <hlm-select-value [placeholder]="placeholder() ?? ''" />
+    }
+
     @if (showClear() && hasValue()) {
       <span
         class="text-muted-foreground hover:text-foreground inline-flex cursor-pointer items-center"
@@ -43,7 +61,13 @@
       </div>
     }
     @for (opt of displayOptions(); track resolveValue(opt)) {
-      <hlm-select-item [value]="$any(resolveValue(opt))">{{ resolveLabel(opt) }}</hlm-select-item>
+      <hlm-select-item [value]="$any(resolveValue(opt))">
+        @if (itemTemplate(); as itemTpl) {
+          <ng-container *ngTemplateOutlet="itemTpl; context: { $implicit: opt }"></ng-container>
+        } @else {
+          {{ resolveLabel(opt) }}
+        }
+      </hlm-select-item>
     } @empty {
       <div class="text-muted-foreground px-2 py-1.5 text-sm">No results</div>
     }

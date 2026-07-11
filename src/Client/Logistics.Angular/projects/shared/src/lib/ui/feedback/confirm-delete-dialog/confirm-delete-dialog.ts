@@ -1,8 +1,7 @@
 import { LowerCasePipe } from "@angular/common";
 import { Component, computed, effect, input, model, output, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { InputTextModule } from "primeng/inputtext";
 import { UiButton } from "../../action/button/button";
+import { UiTextField } from "../../form/text-field/text-field";
 import { UiDialog } from "../dialog/dialog";
 
 /**
@@ -22,7 +21,7 @@ import { UiDialog } from "../dialog/dialog";
 @Component({
   selector: "ui-confirm-delete-dialog",
   templateUrl: "./confirm-delete-dialog.html",
-  imports: [FormsModule, InputTextModule, LowerCasePipe, UiButton, UiDialog],
+  imports: [LowerCasePipe, UiButton, UiDialog, UiTextField],
 })
 export class ConfirmDeleteDialog {
   public readonly entityLabel = input("Item");

@@ -1,5 +1,4 @@
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import {
@@ -12,22 +11,20 @@ import {
   type TenantFeature,
 } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
-import { Card, FeatureRow, PageHeader, Spinner, UiButton, UiTooltip } from "@logistics/shared/ui";
-import { ToggleSwitchModule } from "primeng/toggleswitch";
+import {
+  Card,
+  FeatureRow,
+  PageHeader,
+  Spinner,
+  UiButton,
+  UiToggleField,
+  UiTooltip,
+} from "@logistics/shared/ui";
 
 @Component({
   selector: "adm-tenant-features",
   templateUrl: "./tenant-features.html",
-  imports: [
-    Card,
-    FeatureRow,
-    FormsModule,
-    PageHeader,
-    Spinner,
-    ToggleSwitchModule,
-    UiButton,
-    UiTooltip,
-  ],
+  imports: [Card, FeatureRow, PageHeader, Spinner, UiButton, UiToggleField, UiTooltip],
 })
 export class TenantFeatures implements OnInit {
   private readonly api = inject(Api);

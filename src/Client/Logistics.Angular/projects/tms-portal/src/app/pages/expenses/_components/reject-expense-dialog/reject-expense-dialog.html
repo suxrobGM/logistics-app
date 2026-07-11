@@ -10,13 +10,12 @@
     <p class="text-subtle-foreground">
       Please provide a reason for rejecting expense #{{ service.pendingExpenseNumber() }}.
     </p>
-    <textarea
-      pTextarea
-      [(ngModel)]="service.rejectionReason"
-      rows="4"
-      class="w-full"
+    <ui-textarea-field
+      [(value)]="service.rejectionReason"
+      [rows]="4"
+      class="block w-full"
       placeholder="Enter rejection reason..."
-    ></textarea>
+    />
   </div>
   <ng-template #footer>
     <ui-button appearance="text" label="Cancel" (click)="service.cancelReject()" />

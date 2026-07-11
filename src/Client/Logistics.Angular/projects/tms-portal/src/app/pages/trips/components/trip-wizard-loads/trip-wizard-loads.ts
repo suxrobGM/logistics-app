@@ -6,6 +6,7 @@ import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   Badge,
   Icon,
+  SearchField,
   Stack,
   Typography,
   UiButton,
@@ -14,9 +15,6 @@ import {
   UiSortHeader,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { IconField } from "primeng/iconfield";
-import { InputIcon } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
 import { LoadForm, LoadStatusTag, type LoadFormValue } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import { TripWizardStore, type TableRow } from "../../store/trip-wizard-store";
@@ -33,12 +31,10 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
     DistanceUnitPipe,
     FormsModule,
     Icon,
-    IconField,
-    InputIcon,
-    InputTextModule,
     LoadForm,
     LoadStatusTag,
     RouterLink,
+    SearchField,
     Stack,
     Typography,
     UiButton,
@@ -135,7 +131,7 @@ export class TripFormStepLoads {
     this.store.nextStep();
   }
 
-  protected applyFilter(event: Event): void {
-    this.dataTable()?.filterGlobal((event.target as HTMLInputElement).value, "contains");
+  protected applyFilter(value: string): void {
+    this.dataTable()?.filterGlobal(value, "contains");
   }
 }

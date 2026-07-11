@@ -16,12 +16,11 @@
       <strong>{{ entityName() }}</strong>
       to confirm:
     </p>
-    <input
-      pInputText
-      class="w-full"
+    <ui-text-field
+      class="block w-full"
       [placeholder]="'Enter ' + (entityLabel() | lowercase) + ' name'"
-      [ngModel]="confirmInput()"
-      (ngModelChange)="confirmInput.set($event)"
+      [value]="confirmInput()"
+      (valueChange)="confirmInput.set($event)"
       [disabled]="deleting()"
     />
   </div>

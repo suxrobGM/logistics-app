@@ -11,9 +11,9 @@ import {
   StatusBadge,
   UiButton,
   UiDataTable,
+  UiSelectField,
   UiSortHeader,
 } from "@logistics/shared/ui";
-import { SelectModule } from "primeng/select";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ContainersListStore } from "../store";
 
@@ -28,7 +28,7 @@ import { ContainersListStore } from "../store";
     Icon,
     PageHeader,
     SearchField,
-    SelectModule,
+    UiSelectField,
     Stack,
     StatusBadge,
     UiButton,

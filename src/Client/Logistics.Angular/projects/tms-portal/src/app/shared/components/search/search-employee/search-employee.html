@@ -1,16 +1,15 @@
-<p-autocomplete
+<ui-autocomplete-field
   class="w-full"
-  inputStyleClass="w-full"
   [placeholder]="placeholder()"
   optionLabel="fullName"
   [delay]="300"
-  [minLength]="2"
+  [minQueryLength]="2"
   [suggestions]="suggestedEmployees()"
-  [ngModel]="value()"
+  [value]="value()"
+  (optionSelected)="value.set($event)"
+  (cleared)="clearSelectedEmployee()"
   (completeMethod)="searchEmployee($event)"
-  (onSelect)="changeSelectedEmployee($event)"
-  (onClear)="clearSelectedEmployee()"
-  (onBlur)="touch.emit()"
+  (touch)="touch.emit()"
   [disabled]="disabled()"
 >
   <ng-template #item let-employee>
@@ -21,4 +20,4 @@
       }
     </div>
   </ng-template>
-</p-autocomplete>
+</ui-autocomplete-field>

@@ -4,7 +4,6 @@
  */
 
 /* === Core Imports === */
-@import "primeicons/primeicons.css";
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 

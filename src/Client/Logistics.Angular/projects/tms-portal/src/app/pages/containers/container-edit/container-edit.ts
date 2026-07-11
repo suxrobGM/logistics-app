@@ -43,7 +43,6 @@ import {
   ValidatedForm,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { CheckboxModule } from "primeng/checkbox";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { SearchTerminal } from "@/shared/components/search";
@@ -86,7 +85,6 @@ const TERMINAL_EMPTY: TerminalFormModel = { terminal: null };
   imports: [
     Badge,
     Card,
-    CheckboxModule,
     Container,
     FormField,
     FormRoot,

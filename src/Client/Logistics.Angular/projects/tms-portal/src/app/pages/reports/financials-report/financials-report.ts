@@ -14,10 +14,10 @@ import {
   Skeleton,
   Stack,
   Typography,
+  UiChart,
   UiDataTable,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { ChartModule } from "primeng/chart";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -40,7 +40,6 @@ import {
   templateUrl: "./financials-report.html",
   imports: [
     Badge,
-    ChartModule,
     CurrencyFormatPipe,
     DashboardCard,
     DateRangePicker,
@@ -52,6 +51,7 @@ import {
     Stack,
     StatCard,
     Typography,
+    UiChart,
     UiDataTable,
   ],
 })

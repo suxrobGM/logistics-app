@@ -14,8 +14,8 @@ import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
 import { focusFirstControl } from "@logistics/shared";
 import type { Address } from "@logistics/shared/api";
+import { UiTextField } from "@logistics/shared/ui";
 import { regionAllowedCountries } from "@logistics/shared/utils";
-import { InputTextModule } from "primeng/inputtext";
 import { catchError } from "rxjs";
 import { TenantService } from "@/core/services";
 import { environment } from "@/env";
@@ -33,7 +33,7 @@ const MAPBOX_MAX_COUNTRY_CODES = 5;
   selector: "app-address-autocomplete",
   templateUrl: "./address-autocomplete.html",
   styleUrl: "./address-autocomplete.css",
-  imports: [FormsModule, InputTextModule],
+  imports: [FormsModule, UiTextField],
 })
 export class AddressAutocomplete implements FormValueControl<Address | null> {
   private readonly http = inject(HttpClient);
@@ -90,12 +90,14 @@ export class AddressAutocomplete implements FormValueControl<Address | null> {
     focusFirstControl(this.host.nativeElement, options);
   }
 
-  protected handleAddressInputChange(event: Event): void {
+  protected handleAddressInputChange(query: string): void {
     if (this.disabled()) {
       return;
     }
 
-    const query = (event.target as HTMLInputElement)?.value;
+    // `ui-text-field` is a `FormValueControl<string>`, so it hands us a plain string. Mirror it
+    // into `addressString` (the linkedSignal that renders the input) before searching.
+    this.addressString.set(query);
 
     if (!query) {
       this.markAsTouched();

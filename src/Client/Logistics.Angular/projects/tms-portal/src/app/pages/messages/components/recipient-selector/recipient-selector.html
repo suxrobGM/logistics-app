@@ -38,15 +38,14 @@
           />
         </ui-stack>
       } @else {
-        <p-autocomplete
+        <ui-autocomplete-field
           [suggestions]="employeeSuggestions()"
           (completeMethod)="searchEmployees($event)"
-          (onSelect)="onRecipientSelect($event)"
+          (optionSelected)="onRecipientSelect($event)"
           optionLabel="fullName"
           placeholder="Search employees..."
-          [minLength]="2"
+          [minQueryLength]="2"
           class="w-full"
-          inputStyleClass="w-full"
         >
           <ng-template let-employee #item>
             <div class="flex items-center gap-3 py-1">
@@ -61,7 +60,7 @@
               </div>
             </div>
           </ng-template>
-        </p-autocomplete>
+        </ui-autocomplete-field>
       }
     </ui-stack>
 

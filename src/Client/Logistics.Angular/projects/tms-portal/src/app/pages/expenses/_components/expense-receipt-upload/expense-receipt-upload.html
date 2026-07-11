@@ -1,10 +1,10 @@
 <ui-form-field label="Receipt (Optional)">
-  <p-fileUpload
+  <ui-file-upload
     mode="basic"
-    [auto]="true"
     accept="image/*,.pdf"
     [chooseLabel]="chooseLabel()"
-    (onSelect)="onSelect($event)"
+    (filesSelect)="onSelect($event)"
+    (rejected)="onRejected($event)"
   />
   @if (hasReceipt()) {
     <ui-stack direction="row" align="center" gap="1" class="text-success mt-2 text-sm">

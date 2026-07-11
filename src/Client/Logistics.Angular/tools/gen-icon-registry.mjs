@@ -145,9 +145,25 @@ export function loadIconMap() {
 const RE_PI = /\bpi-([a-z0-9-]+)/g;
 /** `<ui-icon ... name="check">` (static literal only — dynamic bindings are handled below). */
 const RE_UI_ICON = /<ui-icon\b[^>]*?\bname="([^"]+)"/g;
-/** `icon="pi pi-check"`, `icon: "check"`, `[icon]="'check'"`, `closeIcon="pi pi-times"`, … */
+/**
+ * `icon="pi pi-check"`, `icon: "check"`, `[icon]="'check'"`, `closeIcon="pi pi-times"`, …
+ *
+ * EVERY INPUT TYPED `IconName` MUST BE LISTED HERE. This alternation is the only thing that tells the
+ * generator an app needs a glyph, and `check-icons.mjs` shares this scanner — so an input missing from
+ * this list is not merely unregistered, it is unregisterABLE: the gate passes vacuously while the app
+ * renders an empty box. That is exactly how `<ui-button iconEnd="arrow-right">` shipped four blank
+ * 16x16 boxes on the admin home page. `\bicon\b` does NOT match `iconEnd` (no word boundary after
+ * `icon`), so each camelCase input needs its own alternative.
+ *
+ * Deliberately ABSENT, because they do not carry an icon NAME: `iconColor` ("blue"), `iconPos`
+ * ("right"), `iconOnly` / `showIcon` / `showCloseIcon` (booleans), `iconDisplay` (an enum). Adding
+ * one of those would poison the registry with a non-icon token.
+ *
+ * To keep this honest: `grep -rhoE "readonly [a-zA-Z]*[Ii]con[a-zA-Z]* = input" projects/shared/src/lib/ui`
+ * lists the candidates; anything typed `input<IconName>` belongs here.
+ */
 const RE_ICON_PROP =
-  /\b(?:icon|iconName|leadingIcon|trailingIcon|menuIcon|toggleIcon|expandIcon|collapseIcon|removeIcon|filterIcon|clearIcon|dropdownIcon|chooseIcon|uploadIcon|cancelIcon|closeIcon|prevIcon|nextIcon)\b\]?\s*[:=]\s*["']([^"'`]*)["']/g;
+  /\b(?:icon|iconName|iconEnd|actionIcon|badgeIcon|emptyIcon|ctaIcon|leadingIcon|trailingIcon|menuIcon|toggleIcon|expandIcon|collapseIcon|removeIcon|filterIcon|clearIcon|dropdownIcon|chooseIcon|uploadIcon|cancelIcon|closeIcon|prevIcon|nextIcon)\b\]?\s*[:=]\s*["']([^"'`]*)["']/g;
 /** any quoted literal inside an icon-ish binding: `[name]="revealed() ? 'eye-slash' : 'eye'"`. */
 const RE_ICON_BINDING = /\[(?:name|icon)\]="([^"]*)"/g;
 

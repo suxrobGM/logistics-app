@@ -5,12 +5,12 @@
 // ---------------------------------------------------------------------------------------------
 
 import {
+  lucideArrowRight,
   lucideBot,
   lucideBox,
   lucideBuilding2,
   lucideChartColumn,
   lucideCreditCard,
-  lucideEllipsisVertical,
   lucideFilePenLine,
   lucideHouse,
   lucideLayoutGrid,
@@ -36,12 +36,12 @@ import {
  * 24 name(s) -> 22 distinct glyph(s).
  */
 export const ADMIN_NG_ICONS = {
+  lucideArrowRight,
   lucideBot,
   lucideBox,
   lucideBuilding2,
   lucideChartColumn,
   lucideCreditCard,
-  lucideEllipsisVertical,
   lucideFilePenLine,
   lucideHouse,
   lucideLayoutGrid,

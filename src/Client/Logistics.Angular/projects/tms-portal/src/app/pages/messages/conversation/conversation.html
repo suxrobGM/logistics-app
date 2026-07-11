@@ -67,15 +67,12 @@
   <div class="bg-surface border-t p-4">
     <div class="flex items-end gap-3">
       <div class="relative flex-1">
-        <input
-          type="text"
-          pInputText
-          class="focus:border-primary focus:ring-primary border-subtle w-full rounded-full py-3 pr-4 pl-4"
+        <ui-text-field
+          class="block w-full"
           placeholder="Type a message..."
-          [ngModel]="messageContent()"
-          (ngModelChange)="messageContent.set($event)"
+          [value]="messageContent()"
+          (valueChange)="messageContent.set($event); onInput()"
           (keydown)="onKeyDown($event)"
-          (input)="onInput()"
         />
       </div>
       <ui-button

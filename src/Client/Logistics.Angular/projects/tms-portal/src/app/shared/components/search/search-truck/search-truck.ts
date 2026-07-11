@@ -9,11 +9,10 @@ import {
   signal,
   untracked,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
 import { focusFirstControl, isEmptyGuid } from "@logistics/shared";
 import { Api, getTruckById, getTrucks, type TruckDto } from "@logistics/shared/api";
-import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { UiAutocompleteField } from "@logistics/shared/ui";
 
 /**
  * Component for searching and selecting a truck.
@@ -28,7 +27,7 @@ import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autoco
 @Component({
   selector: "app-search-truck",
   templateUrl: "./search-truck.html",
-  imports: [AutoCompleteModule, FormsModule],
+  imports: [UiAutocompleteField],
 })
 export class SearchTruck implements FormValueControl<TruckDto | null> {
   private readonly api = inject(Api);
@@ -80,10 +79,6 @@ export class SearchTruck implements FormValueControl<TruckDto | null> {
   protected async searchTruck(event: { query: string }): Promise<void> {
     const result = await this.api.invoke(getTrucks, { Search: event.query });
     this.suggestedTrucks.set(result.items ?? []);
-  }
-
-  protected changeSelectedTruck(event: AutoCompleteSelectEvent): void {
-    this.value.set(event.value);
   }
 
   /** Marks the control as touched so validation errors surface (on blur). */

@@ -1,5 +1,4 @@
 import { Component, inject, signal, viewChild } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import {
   Badge,
@@ -11,12 +10,11 @@ import {
   UiDataTable,
   UiDialog,
   UiMenu,
+  UiPasswordField,
   UiSortHeader,
   type UiBadgeIntent,
   type UiMenuItem,
 } from "@logistics/shared/ui";
-import { InputTextModule } from "primeng/inputtext";
-import { PasswordModule } from "primeng/password";
 import { ImpersonationService, ToastService } from "@/core/services";
 import { UsersListStore } from "../store/users-list.store";
 
@@ -28,16 +26,14 @@ import { UsersListStore } from "../store/users-list.store";
     Badge,
     Card,
     DataContainer,
-    FormsModule,
-    InputTextModule,
     PageHeader,
-    PasswordModule,
     RouterLink,
     SearchField,
     UiButton,
     UiDataTable,
     UiDialog,
     UiMenu,
+    UiPasswordField,
     UiSortHeader,
   ],
 })

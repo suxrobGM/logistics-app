@@ -1,0 +1,122 @@
+<section id="form-slots" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Form control slots</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    The projected templates
+    <code>ui-select-field</code>
+    and
+    <code>ui-autocomplete-field</code>
+    accept, plus the range picker. Each slotted control sits directly below its unslotted twin: if a
+    slot ever leaks into the default path, the plain control starts rendering rich rows and you see
+    it here.
+  </ui-typography>
+
+  <div class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <!-- select: no slots -->
+    <ui-form-field label="Select — no slots" for="lab-slot-plain" hint="Label text only.">
+      <ui-select-field
+        id="lab-slot-plain"
+        [options]="providers"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select provider"
+        [showClear]="true"
+        [(value)]="plainProvider"
+      />
+    </ui-form-field>
+
+    <!-- select: #item + #selectedItem -->
+    <ui-form-field
+      label="Select — #item + #selectedItem"
+      for="lab-slot-rich"
+      hint="Panel rows show a description sub-line; the trigger shows a one-liner."
+    >
+      <ui-select-field
+        id="lab-slot-rich"
+        [options]="providers"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select provider"
+        [showClear]="true"
+        [(value)]="slottedProvider"
+      >
+        <ng-template #selectedItem let-item>
+          <span class="font-medium">{{ item.label }}</span>
+        </ng-template>
+        <ng-template #item let-item>
+          <div>
+            <div class="font-medium">{{ item.label }}</div>
+            <small class="text-muted-foreground">{{ item.description }}</small>
+          </div>
+        </ng-template>
+      </ui-select-field>
+    </ui-form-field>
+
+    <!-- autocomplete: no slots -->
+    <ui-form-field
+      label="Autocomplete — no slots"
+      for="lab-ac-plain"
+      hint="Type 'a'. Plain rows, default empty text."
+    >
+      <ui-autocomplete-field
+        id="lab-ac-plain"
+        [suggestions]="suggestions()"
+        optionLabel="fullName"
+        placeholder="Search people…"
+        (completeMethod)="search($event)"
+      />
+    </ui-form-field>
+
+    <!-- autocomplete: #item + #empty -->
+    <ui-form-field
+      label="Autocomplete — #item + #empty"
+      for="lab-ac-rich"
+      hint="Type 'a' for rich rows; type 'zzz' for the custom empty template."
+    >
+      <ui-autocomplete-field
+        id="lab-ac-rich"
+        [suggestions]="suggestions()"
+        optionLabel="fullName"
+        placeholder="Search people…"
+        [(value)]="selectedPerson"
+        (completeMethod)="search($event)"
+      >
+        <ng-template #item let-person>
+          <div class="flex flex-col">
+            <span class="font-medium">{{ person.fullName }}</span>
+            <small class="text-muted-foreground">{{ person.email }}</small>
+          </div>
+        </ng-template>
+        <ng-template #empty>
+          <div class="flex items-center justify-between gap-2 p-2">
+            <span class="text-muted-foreground text-sm">
+              No one matching
+              <b>"{{ lastQuery() }}"</b>
+            </span>
+            <ui-button appearance="text" size="sm" label="Add new" />
+          </div>
+        </ng-template>
+      </ui-autocomplete-field>
+    </ui-form-field>
+
+    <!-- range picker -->
+    <ui-form-field
+      label="Date range picker"
+      hint="Emits only when BOTH ends are picked — the emission counter proves it."
+    >
+      <ui-date-range-picker [dates]="range()" (datesChange)="onRange($event)" />
+    </ui-form-field>
+
+    <div class="text-muted-foreground self-end text-sm">
+      <div>
+        emissions:
+        <b>{{ rangeEmissions() }}</b>
+      </div>
+      <div>
+        range:
+        <b>{{ range().length ? (range()[0] | date: "shortDate") : "—" }}</b>
+        →
+        <b>{{ range().length > 1 ? (range()[1] | date: "shortDate") : "—" }}</b>
+      </div>
+    </div>
+  </div>
+</section>

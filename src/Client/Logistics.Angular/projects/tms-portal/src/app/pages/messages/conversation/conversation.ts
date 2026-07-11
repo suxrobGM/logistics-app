@@ -12,8 +12,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import type { ConversationDto, EmployeeDto, MessageDto } from "@logistics/shared/api";
-import { EmptyState, Skeleton, Stack, UiButton } from "@logistics/shared/ui";
-import { InputTextModule } from "primeng/inputtext";
+import { EmptyState, Skeleton, Stack, UiButton, UiTextField } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 import { ChatService } from "@/core/services";
 import {
@@ -33,12 +32,12 @@ import { MessagesStore } from "../store/messages.store";
     ConversationHeader,
     EmptyState,
     FormsModule,
-    InputTextModule,
     MessageBubble,
     RecipientSelector,
     Skeleton,
     Stack,
     UiButton,
+    UiTextField,
   ],
 })
 export class ConversationComponent implements OnInit, OnDestroy {

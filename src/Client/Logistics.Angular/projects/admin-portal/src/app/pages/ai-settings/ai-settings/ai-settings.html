@@ -15,22 +15,20 @@
               The model used by the AI dispatch agent for every tenant. Choose a cost-efficient
               model; tenants never see or select the model.
             </ui-typography>
-            <p-select
-              [ngModel]="selectedModel()"
-              (ngModelChange)="selectedModel.set($event)"
+            <ui-select-field
+              [value]="selectedModel()"
+              (selectionChange)="selectedModel.set($event ?? '')"
               [options]="modelOptions()"
               optionLabel="label"
               optionValue="value"
               placeholder="Select a model"
-              [fluid]="true"
             />
 
             <ui-stack direction="row" align="center" gap="3">
-              <p-checkbox
+              <ui-checkbox-field
                 inputId="extendedThinking"
-                [ngModel]="extendedThinking()"
-                (ngModelChange)="extendedThinking.set($event)"
-                [binary]="true"
+                [value]="extendedThinking()"
+                (valueChange)="extendedThinking.set($event)"
               />
               <label for="extendedThinking">Enable extended thinking</label>
             </ui-stack>
@@ -52,12 +50,13 @@
             @for (plan of plans(); track plan.planId) {
               <ui-stack direction="row" align="center" gap="3">
                 <label class="w-40" [for]="'quota-' + plan.planId">{{ plan.planName }}</label>
-                <p-inputNumber
+                <ui-number-field
                   [inputId]="'quota-' + plan.planId"
-                  [ngModel]="plan.weeklyAiRequestQuota"
-                  (ngModelChange)="updatePlanQuota(plan.planId, $event)"
+                  [value]="plan.weeklyAiRequestQuota ?? null"
+                  (valueChange)="updatePlanQuota(plan.planId, $event)"
                   [min]="1"
                   [showButtons]="true"
+                  [fluid]="false"
                   placeholder="Unlimited"
                 />
               </ui-stack>

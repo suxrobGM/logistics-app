@@ -10,14 +10,13 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { InputGroupModule } from "primeng/inputgroup";
-import { InputMaskModule } from "primeng/inputmask";
 import { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES, type PhoneCountry } from "../../../constants";
+import { HlmInputGroup } from "../../primitives/input-group";
 import { HlmSelectImports } from "../../primitives/select";
 import { DetachedControl } from "../detached-control";
 import { focusFirstControl } from "../focus-control";
+import { MaskedInput } from "./masked-input";
 
 /**
  * Phone number input with a country dial-code selector.
@@ -36,7 +35,7 @@ import { focusFirstControl } from "../focus-control";
 @Component({
   selector: "ui-phone-field",
   templateUrl: "./phone-field.html",
-  imports: [InputGroupModule, InputMaskModule, FormsModule, HlmSelectImports, DetachedControl],
+  imports: [HlmInputGroup, HlmSelectImports, DetachedControl, MaskedInput],
 })
 export class PhoneField implements FormValueControl<string | null> {
   /** The control's value in E.164 format. Required by `FormValueControl`. */
@@ -67,6 +66,14 @@ export class PhoneField implements FormValueControl<string | null> {
   protected readonly phoneNumber = signal<string>("");
 
   protected readonly currentMask = computed(() => this.selectedCountry().mask);
+
+  /**
+   * The selected dial code as bare digits ("+1" -> "1"), so the mask can drop it from a pasted,
+   * fully-qualified number instead of shifting it into the first national slot.
+   */
+  protected readonly dialPrefixDigits = computed(() =>
+    this.selectedCountry().dialCode.replace(/\D/g, ""),
+  );
 
   /** Trigger shows only the dial code; the option list shows the full country name. */
   protected readonly countryDialCode = (country: unknown): string =>

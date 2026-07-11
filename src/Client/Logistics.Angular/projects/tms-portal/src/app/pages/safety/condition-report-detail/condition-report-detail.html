@@ -271,20 +271,11 @@
 }
 
 <!-- Photo Gallery Dialog -->
-<p-galleria
-  [value]="photoUrls()"
-  [(visible)]="showGallery"
+<ui-lightbox
+  [images]="photoUrls()"
+  [(open)]="showGallery"
   [(activeIndex)]="activeImageIndex"
   [circular]="true"
-  [fullScreen]="true"
-  [showItemNavigators]="true"
   [showThumbnails]="true"
-  [numVisible]="5"
->
-  <ng-template #item let-item>
-    <img [src]="item.itemImageSrc" [alt]="item.alt" class="max-h-[80vh] w-auto" />
-  </ng-template>
-  <ng-template #thumbnail let-item>
-    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" class="h-16 w-16 object-cover" />
-  </ng-template>
-</p-galleria>
+  [showNavigators]="true"
+/>

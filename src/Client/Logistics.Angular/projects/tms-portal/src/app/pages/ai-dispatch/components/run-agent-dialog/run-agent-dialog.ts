@@ -5,10 +5,10 @@ import {
   Alert,
   UiButton,
   UiDialog,
+  UiTextareaField,
   type IconName,
   type UiButtonIntent,
 } from "@logistics/shared/ui";
-import { TextareaModule } from "primeng/textarea";
 
 export interface RunAgentDialogData {
   mode: AiDispatchMode;
@@ -18,7 +18,7 @@ export interface RunAgentDialogData {
 @Component({
   selector: "app-run-agent-dialog",
   templateUrl: "./run-agent-dialog.html",
-  imports: [Alert, FormsModule, TextareaModule, UiButton, UiDialog],
+  imports: [Alert, FormsModule, UiButton, UiDialog, UiTextareaField],
 })
 export class RunAgentDialog {
   public readonly visible = model(false);

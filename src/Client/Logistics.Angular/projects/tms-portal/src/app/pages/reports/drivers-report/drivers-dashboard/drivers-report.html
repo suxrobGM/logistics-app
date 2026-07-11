@@ -90,7 +90,7 @@
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, lg: 8 }" class="mb-6">
       <ui-dashboard-card title="Driver Trends Over Time" icon="chart-line" iconColor="blue">
-        <p-chart
+        <ui-chart
           type="line"
           [data]="trendChartData()"
           [options]="trendChartOptions"
@@ -101,7 +101,7 @@
 
     <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
       <ui-dashboard-card title="Top Performers" icon="chart-bar" iconColor="blue">
-        <p-chart
+        <ui-chart
           type="bar"
           [data]="performanceChartData()"
           [options]="performanceChartOptions"
@@ -114,7 +114,7 @@
   <!-- Efficiency Chart -->
   <div class="mb-6">
     <ui-dashboard-card title="Efficiency Metrics" icon="chart-bar" iconColor="blue">
-      <p-chart
+      <ui-chart
         type="bar"
         [data]="efficiencyChartData()"
         [options]="efficiencyChartOptions"

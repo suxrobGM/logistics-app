@@ -5,11 +5,16 @@
     <div class="min-w-72 flex-1">
       <ui-search-field (searchChange)="search($event)" />
     </div>
-    <p-select
+    <ui-select-field
       [options]="typeOptions"
+      optionLabel="label"
+      optionValue="value"
+      [fluid]="false"
       [showClear]="true"
       placeholder="All types"
-      (onChange)="onTypeChange($event.value)"
+      [value]="typeFilter()"
+      (selectionChange)="onTypeChange($event)"
+      (cleared)="onTypeChange(null)"
     />
     <input
       type="text"

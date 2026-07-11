@@ -49,13 +49,14 @@
 
       <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
         <ui-form-field label="Status">
-          <p-multiselect
+          <ui-multiselect-field
             [options]="statusOptions"
-            [ngModel]="selectedStatuses()"
-            (ngModelChange)="selectedStatuses.set($event); applyFilters()"
+            optionLabel="label"
+            optionValue="value"
+            [value]="selectedStatuses()"
+            (selectionChange)="selectedStatuses.set($event); applyFilters()"
             placeholder="Select status"
             [showClear]="true"
-            class="w-full"
           />
         </ui-form-field>
       </ui-grid>
@@ -77,10 +78,9 @@
     </ui-grid>
 
     <ui-stack direction="row" align="center" gap="2" wrap class="mt-4">
-      <p-checkbox
-        [ngModel]="onlyActiveTrips()"
-        (ngModelChange)="onlyActiveTrips.set($event); applyFilters()"
-        [binary]="true"
+      <ui-checkbox-field
+        [value]="onlyActiveTrips()"
+        (valueChange)="onlyActiveTrips.set($event); applyFilters()"
         inputId="activeTripsOnly"
       />
       <label for="activeTripsOnly" class="text-subtle-foreground cursor-pointer text-sm">

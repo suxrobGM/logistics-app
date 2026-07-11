@@ -24,7 +24,6 @@ import {
   UiSortHeader,
   UiTableRowDirectives,
 } from "@logistics/shared/ui";
-import { ToastModule } from "primeng/toast";
 import {
   DirectionMap,
   LoadStatusTag,
@@ -58,7 +57,6 @@ import { TripDetailsStore } from "../store/trip-details.store";
     Skeleton,
     Stack,
     Surface,
-    ToastModule,
     TripActions,
     TripStatusTag,
     TripTimeline,

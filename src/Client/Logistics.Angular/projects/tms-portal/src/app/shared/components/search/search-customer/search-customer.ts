@@ -1,20 +1,14 @@
 import { Component, ElementRef, inject, input, model, output, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
 import { focusFirstControl } from "@logistics/shared";
 import { Api, getCustomers, type CustomerDto } from "@logistics/shared/api";
-import { UiButton, UiDialog } from "@logistics/shared/ui";
-import {
-  AutoComplete,
-  AutoCompleteModule,
-  type AutoCompleteSelectEvent,
-} from "primeng/autocomplete";
+import { UiAutocompleteField, UiButton, UiDialog } from "@logistics/shared/ui";
 import { CustomerForm } from "@/shared/components/domain-forms";
 
 @Component({
   selector: "app-search-customer",
   templateUrl: "./search-customer.html",
-  imports: [AutoCompleteModule, CustomerForm, FormsModule, UiButton, UiDialog],
+  imports: [CustomerForm, UiAutocompleteField, UiButton, UiDialog],
 })
 export class SearchCustomer implements FormValueControl<CustomerDto | null> {
   private readonly api = inject(Api);
@@ -58,13 +52,9 @@ export class SearchCustomer implements FormValueControl<CustomerDto | null> {
     }
   }
 
-  protected changeSelectedCustomer(event: AutoCompleteSelectEvent): void {
-    this.value.set(event.value);
-  }
-
-  protected openCreateCustomer(autoComplete: AutoComplete): void {
-    // close the suggestions panel before opening dialog
-    autoComplete.hide();
+  protected openCreateCustomer(autoComplete: UiAutocompleteField<CustomerDto>): void {
+    // Close the suggestions panel before opening the dialog, or the overlay survives underneath it.
+    autoComplete.close();
     this.customerDialogVisible.set(true);
   }
 

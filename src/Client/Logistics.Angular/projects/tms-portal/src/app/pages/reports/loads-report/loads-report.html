@@ -84,13 +84,13 @@
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Loads by Status" icon="chart-pie" iconColor="blue">
-        <p-chart type="pie" [data]="chartData()" [options]="pieOptions" style="height: 300px" />
+        <ui-chart type="pie" [data]="chartData()" [options]="pieOptions" style="height: 300px" />
       </ui-dashboard-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Revenue by Load Type" icon="chart-bar" iconColor="blue">
-        <p-chart
+        <ui-chart
           type="bar"
           [data]="typeChartData()"
           [options]="typeChartOptions"
@@ -103,7 +103,7 @@
   <!-- Trends Chart -->
   <div class="mb-6">
     <ui-dashboard-card title="Load Trends Over Time" icon="chart-line" iconColor="blue">
-      <p-chart
+      <ui-chart
         type="line"
         [data]="trendChartData()"
         [options]="trendChartOptions"
@@ -115,7 +115,7 @@
   <!-- Performance Chart -->
   <div class="mb-6">
     <ui-dashboard-card title="Performance Metrics" icon="chart-bar" iconColor="blue">
-      <p-chart
+      <ui-chart
         type="bar"
         [data]="performanceChartData()"
         [options]="performanceChartOptions"

@@ -24,10 +24,10 @@
         >
           <label [for]="'enabled-' + feature.feature" class="flex items-center gap-2 text-sm">
             <span class="text-muted-foreground">Enabled</span>
-            <p-toggleswitch
+            <ui-toggle-field
               [inputId]="'enabled-' + feature.feature"
-              [ngModel]="feature.isEnabled"
-              (onChange)="toggleEnabled(feature)"
+              [value]="feature.isEnabled ?? false"
+              (valueChange)="toggleEnabled(feature)"
             />
           </label>
           <label
@@ -37,10 +37,10 @@
             uiTooltipPosition="top"
           >
             <span class="text-muted-foreground">Locked</span>
-            <p-toggleswitch
+            <ui-toggle-field
               [inputId]="'locked-' + feature.feature"
-              [ngModel]="feature.isAdminLocked"
-              (onChange)="toggleLocked(feature)"
+              [value]="feature.isAdminLocked ?? false"
+              (valueChange)="toggleLocked(feature)"
             />
           </label>
         </ui-feature-row>

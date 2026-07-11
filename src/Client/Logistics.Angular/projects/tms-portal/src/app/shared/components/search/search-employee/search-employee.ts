@@ -1,9 +1,8 @@
 import { Component, ElementRef, inject, input, model, output, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
 import { focusFirstControl, type TenantRoleValue } from "@logistics/shared";
 import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
-import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { UiAutocompleteField } from "@logistics/shared/ui";
 
 /**
  * Component for searching and selecting an employee.
@@ -14,13 +13,13 @@ import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autoco
  * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
  * signal-form controls into Reactive and Template-Driven forms automatically, so this one
  * component binds via `[formField]`, `formControlName` and `[(value)]` alike — no
- * `ControlValueAccessor`, no compat shim. Never put `formControlName` / `[formField]` on the
- * inner PrimeNG element.
+ * `ControlValueAccessor`, no compat shim. Never put `formControlName` / `[formField]` on an
+ * inner third-party element.
  */
 @Component({
   selector: "app-search-employee",
   templateUrl: "./search-employee.html",
-  imports: [AutoCompleteModule, FormsModule],
+  imports: [UiAutocompleteField],
 })
 export class SearchEmployee implements FormValueControl<EmployeeDto | null> {
   private readonly api = inject(Api);
@@ -55,10 +54,6 @@ export class SearchEmployee implements FormValueControl<EmployeeDto | null> {
     });
 
     this.suggestedEmployees.set(result?.items ?? []);
-  }
-
-  protected changeSelectedEmployee(event: AutoCompleteSelectEvent): void {
-    this.value.set(event.value);
   }
 
   protected clearSelectedEmployee(): void {

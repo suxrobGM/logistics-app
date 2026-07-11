@@ -20,10 +20,10 @@ import {
   UiDataTable,
   UiDialog,
   UiSortHeader,
+  UiTextField,
   UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
 import { AdminInvitationsListStore } from "../store/admin-invitations-list.store";
 import { AdminsListStore } from "../store/admins-list.store";
@@ -38,13 +38,13 @@ import { AdminsListStore } from "../store/admins-list.store";
     DataContainer,
     DatePipe,
     FormsModule,
-    InputTextModule,
     PageHeader,
     SearchField,
     UiButton,
     UiDataTable,
     UiDialog,
     UiSortHeader,
+    UiTextField,
     UiTooltip,
   ],
 })

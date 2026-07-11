@@ -1,0 +1,63 @@
+<!--
+  The toolbar is a plain DOM container handed to quill's `toolbar` module: quill finds the `ql-*`
+  controls inside it and wires them up itself, then tags this div `ql-toolbar ql-snow`.
+
+  `type="button"` ON EVERY BUTTON IS LOAD-BEARING. This editor renders inside `<form [formRoot]>`,
+  and a <button> with no type defaults to type="submit" — so clicking Bold would submit the blog
+  post. p-editor set it on all of them; so do we.
+
+  Controls mirror p-editor's default toolbar one-for-one, so the blog form keeps the exact set of
+  formats it had.
+-->
+<div #toolbar>
+  <span class="ql-formats">
+    <select class="ql-header">
+      <option value="1">Heading</option>
+      <option value="2">Subheading</option>
+      <option selected>Normal</option>
+    </select>
+    <select class="ql-font">
+      <option selected>Sans Serif</option>
+      <option value="serif">Serif</option>
+      <option value="monospace">Monospace</option>
+    </select>
+  </span>
+  <span class="ql-formats">
+    <button class="ql-bold" type="button" aria-label="Bold"></button>
+    <button class="ql-italic" type="button" aria-label="Italic"></button>
+    <button class="ql-underline" type="button" aria-label="Underline"></button>
+  </span>
+  <span class="ql-formats">
+    <select class="ql-color"></select>
+    <select class="ql-background"></select>
+  </span>
+  <span class="ql-formats">
+    <button class="ql-list" value="ordered" type="button" aria-label="Ordered List"></button>
+    <button class="ql-list" value="bullet" type="button" aria-label="Unordered List"></button>
+    <select class="ql-align">
+      <option selected></option>
+      <option value="center">center</option>
+      <option value="right">right</option>
+      <option value="justify">justify</option>
+    </select>
+  </span>
+  <span class="ql-formats">
+    <button class="ql-link" type="button" aria-label="Insert Link"></button>
+    <button class="ql-image" type="button" aria-label="Insert Image"></button>
+    <button class="ql-code-block" type="button" aria-label="Insert Code Block"></button>
+  </span>
+  <span class="ql-formats">
+    <button class="ql-clean" type="button" aria-label="Remove Styles"></button>
+  </span>
+</div>
+
+<!--
+  Quill turns this into `.ql-container.ql-snow` and mounts `.ql-editor` (the contenteditable) inside
+  it. The height goes HERE, on the container — not on the host — because that is where p-editor put
+  it: `[style]` sized the content area, with the toolbar adding its height on top.
+-->
+<div
+  #editor
+  [style.height]="contentHeight()"
+  [attr.aria-invalid]="showInvalid() ? true : null"
+></div>

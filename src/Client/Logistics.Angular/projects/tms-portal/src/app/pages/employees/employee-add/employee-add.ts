@@ -20,11 +20,6 @@ import {
   Typography,
   UiButton,
 } from "@logistics/shared/ui";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { InputGroupModule } from "primeng/inputgroup";
-import { InputGroupAddonModule } from "primeng/inputgroupaddon";
-import { InputTextModule } from "primeng/inputtext";
-import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import {
   CurrencyField,
@@ -55,21 +50,16 @@ const EMPTY: EmployeeAddModel = {
   selector: "app-employee-add",
   templateUrl: "./employee-add.html",
   imports: [
-    ConfirmDialogModule,
     Container,
     CurrencyField,
     FormField,
     FormRoot,
     Icon,
-    InputGroupAddonModule,
-    InputGroupModule,
-    InputTextModule,
     PageHeader,
     RouterLink,
     Spinner,
     Stack,
     Surface,
-    ToastModule,
     Typography,
     UiAutocompleteField,
     UiButton,

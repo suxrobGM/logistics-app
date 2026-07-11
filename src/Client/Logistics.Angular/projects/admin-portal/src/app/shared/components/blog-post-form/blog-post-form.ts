@@ -5,12 +5,12 @@ import { ToastService } from "@logistics/shared";
 import {
   UiButton,
   UiCheckboxField,
+  UiEditor,
   UiFormField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { EditorModule } from "primeng/editor";
 
 export interface BlogPostFormValue {
   title: string;
@@ -36,12 +36,12 @@ const EMPTY: BlogPostFormValue = {
   selector: "adm-blog-post-form",
   templateUrl: "./blog-post-form.html",
   imports: [
-    EditorModule,
     FormField,
     FormRoot,
     RouterLink,
     UiButton,
     UiCheckboxField,
+    UiEditor,
     UiFormField,
     UiTextareaField,
     UiTextField,

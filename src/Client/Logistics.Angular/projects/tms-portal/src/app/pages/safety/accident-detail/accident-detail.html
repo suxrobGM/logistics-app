@@ -616,14 +616,13 @@
     </ui-typography>
     <div>
       <label for="reviewNotes" class="mb-2 block font-medium">Review Notes (Optional)</label>
-      <textarea
-        pTextarea
+      <ui-textarea-field
         id="reviewNotes"
-        [(ngModel)]="reviewNotes"
-        rows="4"
-        class="w-full"
+        [(value)]="reviewNotes"
+        [rows]="4"
+        class="block w-full"
         placeholder="Add any notes about this review..."
-      ></textarea>
+      />
     </div>
   </ui-stack>
   <ng-template #footer>
@@ -654,14 +653,13 @@
       <label for="resolutionNotes" class="mb-2 block font-medium">
         Resolution Notes (Optional)
       </label>
-      <textarea
-        pTextarea
+      <ui-textarea-field
         id="resolutionNotes"
-        [(ngModel)]="resolutionNotes"
-        rows="4"
-        class="w-full"
+        [(value)]="resolutionNotes"
+        [rows]="4"
+        class="block w-full"
         placeholder="Add any resolution notes..."
-      ></textarea>
+      />
     </div>
   </ui-stack>
   <ng-template #footer>

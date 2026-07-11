@@ -39,12 +39,11 @@
   <div
     class="mb-4 flex flex-wrap items-center justify-between gap-4 max-sm:flex-col max-sm:items-stretch"
   >
-    <p-selectButton
+    <ui-toggle-group
       [options]="filterOptions"
-      [(ngModel)]="filterType"
-      optionLabel="label"
-      optionValue="value"
-      size="small"
+      [value]="filterType()"
+      (valueChange)="filterType.set($event)"
+      size="sm"
     />
 
     <ui-search-field
@@ -109,7 +108,7 @@
           (click)="toggleSelectAll()"
           (keydown.enter)="toggleSelectAll()"
         >
-          <p-checkbox [ngModel]="allSelected()" [binary]="true" />
+          <ui-checkbox-field [value]="allSelected()" ariaLabel="Select all notifications" />
           <span>Select all</span>
         </span>
         <span class="text-muted-foreground text-xs">
@@ -128,10 +127,10 @@
             [class.selected]="isSelected(notification)"
           >
             <div class="pt-0.5">
-              <p-checkbox
-                [ngModel]="isSelected(notification)"
-                (ngModelChange)="toggleSelection(notification)"
-                [binary]="true"
+              <ui-checkbox-field
+                [value]="isSelected(notification)"
+                (valueChange)="toggleSelection(notification)"
+                ariaLabel="Select notification"
               />
             </div>
 

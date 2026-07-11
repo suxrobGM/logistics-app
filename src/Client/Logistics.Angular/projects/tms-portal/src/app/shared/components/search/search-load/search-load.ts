@@ -1,9 +1,8 @@
 import { Component, effect, ElementRef, inject, input, model, output, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
 import { focusFirstControl } from "@logistics/shared";
 import { Api, getLoadById, getLoads, type LoadDto } from "@logistics/shared/api";
-import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { UiAutocompleteField } from "@logistics/shared/ui";
 import { LoadStatusTag } from "../../tags/load-status-tag/load-status-tag";
 
 /**
@@ -18,7 +17,7 @@ import { LoadStatusTag } from "../../tags/load-status-tag/load-status-tag";
 @Component({
   selector: "app-search-load",
   templateUrl: "./search-load.html",
-  imports: [AutoCompleteModule, FormsModule, LoadStatusTag],
+  imports: [LoadStatusTag, UiAutocompleteField],
 })
 export class SearchLoad implements FormValueControl<LoadDto | null> {
   private readonly api = inject(Api);
@@ -67,10 +66,6 @@ export class SearchLoad implements FormValueControl<LoadDto | null> {
     }
 
     this.suggestedLoads.set(result.items);
-  }
-
-  protected changeSelectedLoad(event: AutoCompleteSelectEvent): void {
-    this.value.set(event.value);
   }
 
   private async fetchLoad(loadId: string): Promise<void> {

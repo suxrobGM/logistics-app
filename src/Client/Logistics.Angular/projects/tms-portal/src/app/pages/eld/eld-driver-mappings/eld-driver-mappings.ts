@@ -1,6 +1,5 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import {
   Api,
   deleteEldDriverMapping,
@@ -25,9 +24,9 @@ import {
   Stack,
   UiButton,
   UiDataTable,
+  UiSelectField,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField } from "@/shared/components";
 import { getEldProviderLabel } from "../_components";
@@ -41,16 +40,15 @@ import { getEldProviderLabel } from "../_components";
     DatePipe,
     EmptyState,
     ErrorState,
-    FormsModule,
     Grid,
     Icon,
     PageHeader,
-    SelectModule,
     Spinner,
     Stack,
     UiButton,
     UiDataTable,
     UiFormField,
+    UiSelectField,
     UiTooltip,
   ],
 })
@@ -88,8 +86,8 @@ export class EldDriverMappingsComponent implements OnInit {
     return this.employees().filter((e) => !mappedIds.has(e.id!));
   });
 
-  protected selectedEldDriver: EldDriverDto | null = null;
-  protected selectedEmployee: EmployeeDto | null = null;
+  protected readonly selectedEldDriver = signal<EldDriverDto | null>(null);
+  protected readonly selectedEmployee = signal<EmployeeDto | null>(null);
 
   ngOnInit(): void {
     this.loadData();
@@ -127,7 +125,9 @@ export class EldDriverMappingsComponent implements OnInit {
   }
 
   protected async createMapping(): Promise<void> {
-    if (!this.selectedEldDriver || !this.selectedEmployee || !this.providerType()) {
+    const eldDriver = this.selectedEldDriver();
+    const employee = this.selectedEmployee();
+    if (!eldDriver || !employee || !this.providerType()) {
       return;
     }
 
@@ -135,15 +135,15 @@ export class EldDriverMappingsComponent implements OnInit {
     try {
       await this.api.invoke(mapEldDriver, {
         body: {
-          employeeId: this.selectedEmployee.id!,
+          employeeId: employee.id!,
           providerType: this.providerType()!,
-          externalDriverId: this.selectedEldDriver.externalDriverId!,
-          externalDriverName: this.selectedEldDriver.name,
+          externalDriverId: eldDriver.externalDriverId!,
+          externalDriverName: eldDriver.name,
         },
       });
 
-      this.selectedEldDriver = null;
-      this.selectedEmployee = null;
+      this.selectedEldDriver.set(null);
+      this.selectedEmployee.set(null);
       await this.loadData();
     } catch (err) {
       console.error("Error creating mapping:", err);

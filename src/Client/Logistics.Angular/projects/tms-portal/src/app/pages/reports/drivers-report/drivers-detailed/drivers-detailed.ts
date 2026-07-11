@@ -7,14 +7,13 @@ import {
   Badge,
   Card,
   Icon,
+  SearchField,
   Stack,
   Typography,
   UiDataTable,
   UiSortHeader,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { DatePickerModule } from "primeng/datepicker";
-import { InputTextModule } from "primeng/inputtext";
 import { DateRangePicker, PageHeader } from "@/shared/components";
 import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
 import { DriversDetailedStore } from "./store";
@@ -27,13 +26,12 @@ import { DriversDetailedStore } from "./store";
     Badge,
     Card,
     CurrencyFormatPipe,
-    DatePickerModule,
     DateRangePicker,
     DecimalPipe,
     FormsModule,
     Icon,
-    InputTextModule,
     PageHeader,
+    SearchField,
     Stack,
     Typography,
     UiDataTable,
@@ -60,8 +58,7 @@ export class DriversDetailedComponent implements OnInit {
     );
   }
 
-  protected onSearch(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
+  protected onSearch(value: string): void {
     this.store.setSearch(value);
   }
 

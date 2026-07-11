@@ -1,12 +1,11 @@
 import { Component, input } from "@angular/core";
-import { Card, Grid, Typography } from "@logistics/shared/ui";
-import { ChartModule } from "primeng/chart";
+import { Card, Grid, Typography, UiChart } from "@logistics/shared/ui";
 import { chartOptions, lineChartOptions } from "../expense-analytics.utils";
 
 @Component({
   selector: "app-expense-analytics-charts",
   templateUrl: "./expense-analytics-charts.html",
-  imports: [Card, ChartModule, Grid, Typography],
+  imports: [Card, Grid, Typography, UiChart],
 })
 export class ExpenseAnalyticsCharts {
   public readonly typeData = input<unknown>(null);

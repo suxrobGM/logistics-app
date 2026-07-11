@@ -1,13 +1,13 @@
 {
   "$comment": "Ratchet baseline for the PrimeNG -> spartan/ui migration. burndown: counts may only DECREASE. budgets: angular.json maximumError values may not change at all. Update deliberately, per step, via `node tools/checks/burndown.mjs --update` / `node tools/checks/budgets.mjs --update` — never by hand.",
   "burndown": {
-    "primengImports": 137,
-    "piIcons": 4,
-    "pTags": 109,
-    "pDirectives": 18,
+    "primengImports": 14,
+    "piIcons": 0,
+    "pTags": 9,
+    "pDirectives": 4,
     "pCssSelectors": 1,
     "cva": 1,
-    "legacyForms": 196
+    "legacyForms": 56
   },
   "budgets": {
     "tms-portal": {

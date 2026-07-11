@@ -16,4 +16,6 @@ export * from "./toggle-field/toggle-field";
 export * from "./multiselect-field/multiselect-field";
 export * from "./password-field/password-field";
 export * from "./autocomplete-field/autocomplete-field";
+export * from "./editor/editor";
+export * from "./file-upload/file-upload";
 export * from "./focus-control";

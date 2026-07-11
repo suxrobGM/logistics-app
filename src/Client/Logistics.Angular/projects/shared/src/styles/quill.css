@@ -1,0 +1,127 @@
+/*
+ * Quill (snow theme) — structural CSS + a token re-key. The stylesheet for `ui-editor`.
+ *
+ * =================================================================================================
+ * AN APP THAT RENDERS <ui-editor> MUST IMPORT THIS FILE. If it does not, quill's toolbar has no
+ * styling at all and its `<select>` pickers expand into raw option lists — a **5118px** toolbar,
+ * measured in a browser, not hypothesised. `UiEditor` therefore checks for this stylesheet on mount
+ * and logs a loud, actionable error in dev if it is missing. Wired today in:
+ *
+ *   - admin-portal/src/styles.css  — the blog-post form, the only page that SHIPS an editor
+ *   - angular.json, tms-portal `development` config only — for /ui-lab, which is itself dev-only
+ *     (`canMatch: isDevMode`). Deliberately NOT in tms's production styles: no user of the TMS should
+ *     download 24kB of rich-text CSS for a page they can never reach.
+ *
+ * WHY NOT A COMPONENT STYLESHEET, which would travel with the component and could never be forgotten?
+ * That was the first fix, and it is the better design — but quill.snow.css is 24.6kB and the
+ * `anyComponentStyle` budget is 4kB (admin) / 6kB (tms). The only way to make it fit is to raise the
+ * budget, and `tools/checks/budgets.mjs` exists precisely to stop an agent doing that to go green.
+ * So: a global stylesheet, plus the runtime guard in `UiEditor` to replace what encapsulation would
+ * have guaranteed.
+ *
+ * Quill's own stylesheet is a self-contained LIGHT theme — hardcoded `#ccc` borders, `#444` icon
+ * strokes, `#fff` popovers, `#06c` accents. Shipped raw it stays light while the app goes dark, and
+ * it breaks the no-hardcoded-colours rule. PrimeNG never loaded this file at all; `p-editor` restyled
+ * quill's `ql-*` classes from the PrimeNG theme, which S13 deletes. So we take quill's STRUCTURE
+ * (toolbar layout, icon geometry, picker/tooltip positioning — none of it worth reinventing) and
+ * override only the colour surface, keyed to the canonical shadcn tokens in
+ * `shared/src/styles/theme.css` so both themes fall out for free.
+ *
+ * The `--ui-editor-loaded` custom property at the end is the sentinel `UiEditor` probes for.
+ */
+
+@import "quill/dist/quill.snow.css";
+
+/* Frame */
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+  border-color: var(--border);
+}
+
+.ql-container.ql-snow {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Toolbar icons */
+.ql-snow .ql-stroke {
+  stroke: var(--foreground);
+}
+
+.ql-snow .ql-fill,
+.ql-snow .ql-stroke.ql-fill {
+  fill: var(--foreground);
+}
+
+.ql-snow .ql-picker {
+  color: var(--foreground);
+}
+
+/* Hover / active state */
+.ql-snow.ql-toolbar button:hover,
+.ql-snow.ql-toolbar button.ql-active,
+.ql-snow.ql-toolbar .ql-picker-label:hover,
+.ql-snow.ql-toolbar .ql-picker-label.ql-active,
+.ql-snow.ql-toolbar .ql-picker-item:hover,
+.ql-snow.ql-toolbar .ql-picker-item.ql-selected {
+  color: var(--primary);
+}
+
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow.ql-toolbar button.ql-active .ql-stroke,
+.ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke,
+.ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-stroke,
+.ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke,
+.ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-stroke {
+  stroke: var(--primary);
+}
+
+.ql-snow.ql-toolbar button:hover .ql-fill,
+.ql-snow.ql-toolbar button.ql-active .ql-fill {
+  fill: var(--primary);
+}
+
+/* Dropdowns (header / font / align / colour pickers) */
+.ql-snow .ql-picker-options {
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border-color: var(--border);
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-label,
+.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+  border-color: var(--border);
+}
+
+/* Placeholder + links */
+.ql-editor.ql-blank::before {
+  color: var(--muted-foreground);
+  font-style: normal;
+}
+
+.ql-snow a {
+  color: var(--primary);
+}
+
+/* The link/image tooltip popover */
+.ql-snow .ql-tooltip {
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+.ql-snow .ql-tooltip input[type="text"] {
+  background-color: var(--background);
+  color: var(--foreground);
+  border-color: var(--input);
+}
+
+/*
+ * Sentinel. `UiEditor` reads this custom property off `.ql-toolbar` after mounting; if it is not
+ * "1", this stylesheet was never imported by the host app and the editor is about to render as an
+ * unstyled 5000px sprawl. Cheaper and far more legible than measuring the toolbar's height.
+ */
+.ql-toolbar {
+  --ui-editor-loaded: 1;
+}

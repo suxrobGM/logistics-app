@@ -16,9 +16,9 @@ import {
   UiButton,
   UiDataTable,
   UiDialog,
+  UiTextField,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 
@@ -30,12 +30,12 @@ import { UiFormField } from "@/shared/components";
     DatePipe,
     FormsModule,
     Icon,
-    InputTextModule,
     Spinner,
     UiButton,
     UiDataTable,
     UiDialog,
     UiFormField,
+    UiTextField,
     UiTooltip,
   ],
 })

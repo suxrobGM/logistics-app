@@ -3,8 +3,10 @@ import { ThemeToggle, Typography } from "@logistics/shared/ui";
 import { UiLabBehaviourSection } from "./sections/behaviour-section";
 import { UiLabButtonsSection } from "./sections/buttons-section";
 import { UiLabCosmeticsSection } from "./sections/cosmetics-section";
+import { UiLabDatavizSection } from "./sections/dataviz-section";
 import { UiLabDialogsSection } from "./sections/dialogs-section";
 import { UiLabFeedbackSection } from "./sections/feedback-section";
+import { UiLabFormSlotsSection } from "./sections/form-slots-section";
 import { UiLabFormsSection } from "./sections/forms-section";
 import { UiLabIconsSection } from "./sections/icons-section";
 import { UiLabNotificationsSection } from "./sections/notifications-section";
@@ -40,6 +42,7 @@ interface LabSection {
     UiLabIconsSection,
     UiLabButtonsSection,
     UiLabTableSection,
+    UiLabFormSlotsSection,
     UiLabFormsSection,
     UiLabOverlaysSection,
     UiLabFeedbackSection,
@@ -48,6 +51,7 @@ interface LabSection {
     UiLabTooltipSection,
     UiLabNotificationsSection,
     UiLabBehaviourSection,
+    UiLabDatavizSection,
   ],
 })
 export class UiLab {
@@ -64,5 +68,6 @@ export class UiLab {
     { id: "tooltip", label: "Tooltip" },
     { id: "notifications", label: "Notifications" },
     { id: "behaviour", label: "Behaviour" },
+    { id: "dataviz", label: "Data viz" },
   ];
 }

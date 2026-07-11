@@ -1,15 +1,10 @@
 <ui-stack direction="row" align="center" justify="between" class="mb-6">
   <ui-typography variant="h2" tag="h1">My Invoices</ui-typography>
-  <p-iconfield>
-    <p-inputicon class="pi pi-search" />
-    <input
-      type="text"
-      pInputText
-      placeholder="Search invoices..."
-      class="w-64"
-      (input)="onSearch($any($event.target).value)"
-    />
-  </p-iconfield>
+  <ui-search-field
+    placeholder="Search invoices..."
+    class="w-64"
+    (searchChange)="onSearch($event)"
+  />
 </ui-stack>
 
 <ui-surface variant="elevated" padding="none">

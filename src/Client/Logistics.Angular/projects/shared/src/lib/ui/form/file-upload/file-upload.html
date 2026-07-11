@@ -1,0 +1,66 @@
+<input
+  #fileInput
+  type="file"
+  class="hidden"
+  [accept]="accept()"
+  [multiple]="multiple()"
+  [disabled]="disabled()"
+  (change)="onInputChange($event)"
+/>
+
+@if (mode() === "basic") {
+  <ui-button
+    type="button"
+    icon="upload"
+    [label]="chooseLabel()"
+    [disabled]="disabled()"
+    (click)="choose()"
+  />
+} @else {
+  <!--
+    The drop zone. `(dragover)` must preventDefault or the browser navigates to the dropped file
+    instead of handing it to us.
+  -->
+  <div
+    class="border-border rounded-md border-2 border-dashed transition-colors"
+    [class.border-primary]="dragging()"
+    [class.bg-muted]="dragging()"
+    [class.opacity-50]="disabled()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+  >
+    <!-- The page's own drop-zone content (icon + copy). Falls back to a plain prompt. -->
+    <ng-content>
+      <div class="text-muted-foreground p-8 text-center">Drag and drop a file here</div>
+    </ng-content>
+
+    <div class="flex justify-center pb-6">
+      <ui-button
+        type="button"
+        icon="upload"
+        [label]="chooseLabel()"
+        [disabled]="disabled()"
+        (click)="choose()"
+      />
+    </div>
+  </div>
+
+  @if (files().length > 0) {
+    <ul class="mt-4 space-y-2">
+      @for (file of files(); track file.name + file.size) {
+        <li class="border-border flex items-center gap-2 rounded-md border px-3 py-2">
+          <ui-icon name="file" color="muted" />
+          <span class="flex-1 truncate text-sm">{{ file.name }}</span>
+          <ui-button
+            type="button"
+            variant="ghost"
+            icon="times"
+            ariaLabel="Remove file"
+            (click)="remove(file)"
+          />
+        </li>
+      }
+    </ul>
+  }
+}

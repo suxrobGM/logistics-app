@@ -6,6 +6,7 @@ import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import {
   Icon,
+  SearchField,
   Stack,
   StatusBadge,
   Surface,
@@ -13,9 +14,6 @@ import {
   UiButton,
   UiDataTable,
 } from "@logistics/shared/ui";
-import { IconFieldModule } from "primeng/iconfield";
-import { InputIconModule } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
 
 @Component({
   selector: "cp-invoices-list",
@@ -24,10 +22,8 @@ import { InputTextModule } from "primeng/inputtext";
     CurrencyFormatPipe,
     DateFormatPipe,
     Icon,
-    IconFieldModule,
-    InputIconModule,
-    InputTextModule,
     RouterLink,
+    SearchField,
     Stack,
     StatusBadge,
     Surface,

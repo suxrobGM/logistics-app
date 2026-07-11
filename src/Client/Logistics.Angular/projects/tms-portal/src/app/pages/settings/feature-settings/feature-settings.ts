@@ -1,5 +1,4 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import {
   Api,
   getCurrentTenantFeatures,
@@ -16,8 +15,8 @@ import {
   Spinner,
   Stack,
   Typography,
+  UiToggleField,
 } from "@logistics/shared/ui";
-import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 
@@ -28,13 +27,12 @@ import { PageHeader } from "@/shared/components";
     Card,
     Container,
     FeatureRow,
-    FormsModule,
     Icon,
     PageHeader,
     Spinner,
     Stack,
-    ToggleSwitchModule,
     Typography,
+    UiToggleField,
   ],
 })
 export class FeatureSettingsComponent implements OnInit {

@@ -1,17 +1,17 @@
 import { Component, ElementRef, input, model, output, signal, viewChild } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import {
   type CreateEldProviderConfigurationCommand,
   type EldProviderType,
 } from "@logistics/shared/api";
-import { Alert, UiButton, UiDialog, ValidatedForm } from "@logistics/shared/ui";
-import { SelectModule } from "primeng/select";
+import { Alert, UiButton, UiDialog, UiSelectField, ValidatedForm } from "@logistics/shared/ui";
 import { UiFormField, UiPasswordField, UiTextField } from "@/shared/components";
 import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
 
+// `providerType` is nullable because `ui-select-field` is a `FormValueControl<T | null>` and
+// `[formField]` value types are invariant — a non-nullable `EldProviderType` would not bind.
 const EMPTY = {
-  providerType: "demo" as EldProviderType,
+  providerType: "demo" as EldProviderType | null,
   apiKey: "",
   apiSecret: "",
   webhookSecret: "",
@@ -24,12 +24,11 @@ const EMPTY = {
     Alert,
     FormField,
     FormRoot,
-    FormsModule,
-    SelectModule,
     UiButton,
     UiDialog,
     UiFormField,
     UiPasswordField,
+    UiSelectField,
     UiTextField,
     ValidatedForm,
   ],
@@ -60,8 +59,9 @@ export class EldProviderAddDialog {
       submission: {
         action: async () => {
           const v = this.model();
+          // `required(p.providerType)` above means the action only runs with a provider chosen.
           this.save.emit({
-            providerType: v.providerType,
+            providerType: v.providerType as EldProviderType,
             apiKey: v.apiKey,
             apiSecret: v.apiSecret,
             webhookSecret: v.webhookSecret,

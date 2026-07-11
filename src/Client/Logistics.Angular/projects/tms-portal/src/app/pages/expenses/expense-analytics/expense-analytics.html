@@ -1,18 +1,20 @@
 <ui-page-header title="Expense Analytics" backLink="/expenses">
-  <p-datepicker
-    [ngModel]="store.fromDate()"
-    (ngModelChange)="store.setFromDate($event)"
+  <ui-date-field
+    [value]="store.fromDate()"
+    (valueChange)="store.setFromDate($event)"
     placeholder="From Date"
     [showIcon]="true"
-    (onSelect)="onDateChange()"
+    [fluid]="false"
+    (dateSelected)="onDateChange()"
   />
   <ui-typography variant="body-sm" color="muted">to</ui-typography>
-  <p-datepicker
-    [ngModel]="store.toDate()"
-    (ngModelChange)="store.setToDate($event)"
+  <ui-date-field
+    [value]="store.toDate()"
+    (valueChange)="store.setToDate($event)"
     placeholder="To Date"
     [showIcon]="true"
-    (onSelect)="onDateChange()"
+    [fluid]="false"
+    (dateSelected)="onDateChange()"
   />
   <ui-button
     appearance="outlined"

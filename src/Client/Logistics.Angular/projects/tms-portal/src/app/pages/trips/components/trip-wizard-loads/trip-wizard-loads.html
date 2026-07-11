@@ -23,15 +23,7 @@
       <ui-stack direction="row" align="center" gap="2">
         <!-- Display search bar when there are loads -->
         @if (rows().length) {
-          <p-icon-field>
-            <p-inputicon class="pi pi-search" />
-            <input
-              pInputText
-              type="text"
-              placeholder="Search loads"
-              (input)="applyFilter($event)"
-            />
-          </p-icon-field>
+          <ui-search-field placeholder="Search loads" (searchChange)="applyFilter($event)" />
         }
 
         <ui-button

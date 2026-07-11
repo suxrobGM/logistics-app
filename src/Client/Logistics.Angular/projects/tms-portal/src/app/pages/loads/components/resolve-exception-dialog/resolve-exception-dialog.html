@@ -19,13 +19,11 @@
       </div>
 
       <ui-form-field label="Resolution Notes" [required]="true">
-        <textarea
-          pTextarea
-          [(ngModel)]="resolution"
-          rows="4"
+        <ui-textarea-field
+          [(value)]="resolution"
+          [rows]="4"
           placeholder="Describe how the exception was resolved..."
-          class="w-full"
-        ></textarea>
+        />
       </ui-form-field>
     </div>
   }

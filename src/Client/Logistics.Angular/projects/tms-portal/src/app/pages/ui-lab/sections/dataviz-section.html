@@ -1,0 +1,198 @@
+<section id="dataviz" class="flex flex-col gap-6">
+  <ui-typography variant="h2" tag="h2">Data viz &amp; media (S10b)</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    ui-chart · ui-editor · ui-lightbox · ui-file-upload · ui-toggle-group · the phone mask. chart.js
+    is registered piecemeal (no chart.js/auto), so a missing controller or the Filler plugin is an
+    empty canvas at runtime, not a build error.
+  </ui-typography>
+
+  <!-- ── charts: all four registered types ──────────────────────────────────────────────────── -->
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2" data-lab="charts">
+    <div class="border-default rounded-md border p-4">
+      <ui-typography variant="body-sm" color="muted">bar</ui-typography>
+      <div class="h-56">
+        <ui-chart type="bar" [data]="barData" [options]="chartOptions()" class="h-full w-full" />
+      </div>
+    </div>
+
+    <div class="border-default rounded-md border p-4">
+      <ui-typography variant="body-sm" color="muted">
+        line —
+        <strong>filled</strong>
+        (Filler canary: a bare stroke means Filler was dropped)
+      </ui-typography>
+      <div class="h-56">
+        <ui-chart type="line" [data]="lineData" [options]="chartOptions()" class="h-full w-full" />
+      </div>
+    </div>
+
+    <div class="border-default rounded-md border p-4">
+      <ui-typography variant="body-sm" color="muted">doughnut</ui-typography>
+      <div class="h-56">
+        <ui-chart
+          type="doughnut"
+          [data]="doughnutData"
+          [options]="radialOptions()"
+          class="h-full w-full"
+        />
+      </div>
+    </div>
+
+    <div class="border-default rounded-md border p-4">
+      <ui-typography variant="body-sm" color="muted">pie</ui-typography>
+      <div class="h-56">
+        <ui-chart type="pie" [data]="pieData" [options]="radialOptions()" class="h-full w-full" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ── the dynamic [type] (maintenance-report / safety-report) ────────────────────────────── -->
+  <div class="border-default rounded-md border p-4" data-lab="chart-dynamic-type">
+    <ui-stack direction="row" align="center" justify="between" gap="4" class="mb-3">
+      <ui-typography variant="body-sm" color="muted">
+        dynamic [type] — must DESTROY and rebuild, not mutate
+      </ui-typography>
+      <ui-toggle-group
+        [options]="dynamicTypeOptions"
+        [value]="dynamicType()"
+        (valueChange)="toggleType($event)"
+        size="sm"
+      />
+    </ui-stack>
+    <div class="h-64">
+      <ui-chart
+        [type]="dynamicType()"
+        [data]="barData"
+        [options]="chartOptions()"
+        class="h-full w-full"
+      />
+    </div>
+  </div>
+
+  <!-- ── [data] change: the update() path, animated, no rebuild ─────────────────────────────── -->
+  <div class="border-default rounded-md border p-4" data-lab="chart-live-data">
+    <ui-stack direction="row" align="center" justify="between" gap="4" class="mb-3">
+      <ui-typography variant="body-sm" color="muted">
+        [data] change — animates via chart.update()
+      </ui-typography>
+      <ui-button label="Randomise" icon="refresh" size="sm" (click)="randomise()" />
+    </ui-stack>
+    <div class="h-56">
+      <ui-chart type="bar" [data]="liveData()" [options]="chartOptions()" class="h-full w-full" />
+    </div>
+  </div>
+
+  <!-- ── toggle group ───────────────────────────────────────────────────────────────────────── -->
+  <div class="border-default rounded-md border p-4" data-lab="toggle-group">
+    <ui-typography variant="body-sm" color="muted">
+      ui-toggle-group — click the ACTIVE segment: the selection must NOT clear. p-selectButton
+      (allowEmpty) and BrnToggleGroup (nullable) both default to deselecting to null.
+    </ui-typography>
+    <ui-stack direction="row" align="center" gap="6" class="mt-3">
+      <ui-toggle-group
+        [options]="densityOptions"
+        [value]="density()"
+        (valueChange)="density.set($event)"
+      />
+      <ui-toggle-group
+        [options]="iconOnlyOptions"
+        [value]="density()"
+        (valueChange)="density.set($event)"
+        [iconOnly]="true"
+        size="sm"
+        ariaLabel="Density (icon only)"
+      />
+      <code class="text-sm" data-lab="toggle-value">value: {{ density() }}</code>
+    </ui-stack>
+  </div>
+
+  <!-- ── lightbox ───────────────────────────────────────────────────────────────────────────── -->
+  <div class="border-default rounded-md border p-4" data-lab="lightbox">
+    <ui-typography variant="body-sm" color="muted">
+      ui-lightbox — click a thumbnail, then Left/Right/Home/End, then Escape.
+    </ui-typography>
+    <ui-stack direction="row" gap="2" class="mt-3">
+      @for (photo of photos; track photo.src) {
+        <button type="button" class="rounded" (click)="openGallery($index)">
+          <img [src]="photo.src" [alt]="photo.alt" class="h-16 w-24 rounded object-cover" />
+        </button>
+      }
+    </ui-stack>
+
+    <ui-lightbox [images]="photos" [(open)]="galleryOpen" [(activeIndex)]="galleryIndex" />
+  </div>
+
+  <!-- ── file upload: both modes ────────────────────────────────────────────────────────────── -->
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2" data-lab="file-upload">
+    <div class="border-default rounded-md border p-4">
+      <ui-typography variant="body-sm" color="muted">
+        advanced (drag-and-drop, .pdf, 10 MB)
+      </ui-typography>
+      <div class="mt-3">
+        <ui-file-upload
+          mode="advanced"
+          accept=".pdf"
+          [maxFileSize]="10485760"
+          chooseLabel="Select PDF"
+          (filesSelect)="onFiles($event)"
+          (rejected)="onRejected($event)"
+        >
+          <ui-stack align="center" gap="4" class="p-8">
+            <ui-icon name="file-pdf" color="muted" size="xl" />
+            <ui-typography color="secondary">Drag and drop a PDF here</ui-typography>
+          </ui-stack>
+        </ui-file-upload>
+      </div>
+    </div>
+
+    <div class="border-default rounded-md border p-4">
+      <ui-typography variant="body-sm" color="muted">basic (image/*, .pdf)</ui-typography>
+      <div class="mt-3">
+        <ui-file-upload
+          mode="basic"
+          accept="image/*,.pdf"
+          chooseLabel="Upload Receipt"
+          (filesSelect)="onFiles($event)"
+          (rejected)="onRejected($event)"
+        />
+      </div>
+
+      @if (picked().length > 0) {
+        <ul class="mt-3 text-sm" data-lab="file-picked">
+          @for (name of picked(); track name) {
+            <li>{{ name }}</li>
+          }
+        </ul>
+      }
+      @if (refused(); as reason) {
+        <p class="text-destructive mt-3 text-sm" data-lab="file-rejected">{{ reason }}</p>
+      }
+    </div>
+  </div>
+
+  <!-- ── editor + phone mask ────────────────────────────────────────────────────────────────── -->
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2" data-lab="editor-phone">
+    <div class="border-default rounded-md border p-4">
+      <ui-typography variant="body-sm" color="muted">
+        ui-editor — FormValueControl, quill loaded lazily on render
+      </ui-typography>
+      <div class="mt-3">
+        <ui-editor [(value)]="content" contentHeight="180px" />
+      </div>
+      <code class="mt-2 block truncate text-xs" data-lab="editor-value">{{ contentEcho() }}</code>
+    </div>
+
+    <div class="border-default rounded-md border p-4">
+      <ui-typography variant="body-sm" color="muted">
+        ui-phone-field — hand-rolled mask. Type digits, backspace over a "(" or "-", paste "+1 (555)
+        123-4567".
+      </ui-typography>
+      <div class="mt-3">
+        <ui-form-field label="Phone">
+          <ui-phone-field [(value)]="phone" />
+        </ui-form-field>
+      </div>
+      <code class="mt-2 block text-xs" data-lab="phone-value">E.164: {{ phoneEcho() }}</code>
+    </div>
+  </div>
+</section>

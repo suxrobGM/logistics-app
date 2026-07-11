@@ -33,7 +33,11 @@
                   Required for sign-in, security, and core features.
                 </ui-typography>
               </ui-stack>
-              <p-checkbox [binary]="true" [ngModel]="true" [disabled]="true" />
+              <ui-checkbox-field
+                [value]="true"
+                [disabled]="true"
+                ariaLabel="Strictly necessary cookies (always on)"
+              />
             </ui-stack>
             <ui-stack direction="row" justify="between" align="start" gap="4">
               <ui-stack gap="0">
@@ -42,11 +46,7 @@
                   Remember language, timezone, and other display preferences.
                 </ui-typography>
               </ui-stack>
-              <p-checkbox
-                [binary]="true"
-                [ngModel]="functional()"
-                (ngModelChange)="functional.set($event)"
-              />
+              <ui-checkbox-field [(value)]="functional" ariaLabel="Functional cookies" />
             </ui-stack>
             <ui-stack direction="row" justify="between" align="start" gap="4">
               <ui-stack gap="0">
@@ -55,11 +55,7 @@
                   Help us understand how the app is used.
                 </ui-typography>
               </ui-stack>
-              <p-checkbox
-                [binary]="true"
-                [ngModel]="analytics()"
-                (ngModelChange)="analytics.set($event)"
-              />
+              <ui-checkbox-field [(value)]="analytics" ariaLabel="Analytics cookies" />
             </ui-stack>
             <ui-stack direction="row" justify="between" align="start" gap="4">
               <ui-stack gap="0">
@@ -68,11 +64,7 @@
                   Show product news and offers tailored to you.
                 </ui-typography>
               </ui-stack>
-              <p-checkbox
-                [binary]="true"
-                [ngModel]="marketing()"
-                (ngModelChange)="marketing.set($event)"
-              />
+              <ui-checkbox-field [(value)]="marketing" ariaLabel="Marketing cookies" />
             </ui-stack>
           </ui-stack>
           <ui-stack direction="row" gap="2" justify="end" wrap>

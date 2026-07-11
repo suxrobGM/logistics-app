@@ -1,9 +1,8 @@
 import { Component, ElementRef, inject, input, model, output, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
 import { focusFirstControl } from "@logistics/shared";
 import { Api, getTerminals, type TerminalDto } from "@logistics/shared/api";
-import { AutoCompleteModule } from "primeng/autocomplete";
+import { UiAutocompleteField } from "@logistics/shared/ui";
 
 /**
  * Terminal search autocomplete.
@@ -16,7 +15,7 @@ import { AutoCompleteModule } from "primeng/autocomplete";
 @Component({
   selector: "app-search-terminal",
   templateUrl: "./search-terminal.html",
-  imports: [AutoCompleteModule, FormsModule],
+  imports: [UiAutocompleteField],
 })
 export class SearchTerminal implements FormValueControl<TerminalDto | null> {
   private readonly api = inject(Api);

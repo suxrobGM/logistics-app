@@ -1,16 +1,13 @@
-<p-autocomplete
+<ui-autocomplete-field
   class="w-full"
-  inputStyleClass="w-full"
   placeholder="Type a driver name or truck number"
   optionLabel="number"
-  appendTo="body"
   [delay]="300"
-  [minLength]="2"
+  [minQueryLength]="2"
   [suggestions]="suggestedTrucks()"
-  [(ngModel)]="value"
+  [(value)]="value"
   (completeMethod)="searchTruck($event)"
-  (onSelect)="changeSelectedTruck($event)"
-  (onBlur)="markTouched()"
+  (touch)="markTouched()"
   [disabled]="disabled()"
 >
   <ng-template #item let-truck>
@@ -23,4 +20,4 @@
       <span class="text-muted-foreground text-sm">({{ truck.type }})</span>
     </div>
   </ng-template>
-</p-autocomplete>
+</ui-autocomplete-field>

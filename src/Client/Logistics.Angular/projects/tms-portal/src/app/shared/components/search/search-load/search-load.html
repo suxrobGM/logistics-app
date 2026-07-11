@@ -1,15 +1,13 @@
-<p-autocomplete
+<ui-autocomplete-field
   class="w-full"
-  inputStyleClass="w-full"
   placeholder="Type a load name or number"
   optionLabel="number"
   [delay]="300"
   [suggestions]="suggestedLoads()"
-  [(ngModel)]="value"
+  [(value)]="value"
   [disabled]="disabled()"
   (completeMethod)="searchLoad($event)"
-  (onSelect)="changeSelectedLoad($event)"
-  (onBlur)="touch.emit()"
+  (touch)="touch.emit()"
 >
   <ng-template #item let-load>
     <div class="flex items-center gap-2">
@@ -18,11 +16,4 @@
       <app-load-status-tag [status]="load.status" />
     </div>
   </ng-template>
-  <!-- <ng-template #footer>
-    <span class="text-sm text-muted-foreground">
-      Not found?
-      <a [routerLink]="['/loads/add']" class="font-semibold">Click here</a>
-      to add a new load
-    </span>
-  </ng-template> -->
-</p-autocomplete>
+</ui-autocomplete-field>

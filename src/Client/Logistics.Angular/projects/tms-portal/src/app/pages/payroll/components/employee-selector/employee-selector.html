@@ -1,19 +1,18 @@
 @if (mode() === "single") {
-  <p-autocomplete
-    [(ngModel)]="selectedEmployeeValue"
+  <ui-autocomplete-field
+    [(value)]="selectedEmployeeValue"
     class="w-full"
-    inputStyleClass="w-full"
     [placeholder]="placeholder()"
     optionLabel="fullName"
-    [minLength]="2"
+    [minQueryLength]="2"
     [suggestions]="suggestedEmployees()"
     (completeMethod)="searchEmployee($event)"
-    (onSelect)="onEmployeeSelect($event)"
+    (optionSelected)="onEmployeeSelect($event)"
   />
 } @else {
-  <p-multiselect
-    [ngModel]="selectedEmployeesValue()"
-    (ngModelChange)="onMultiSelectChange($event)"
+  <ui-multiselect-field
+    [value]="selectedEmployeesValue()"
+    (selectionChange)="onMultiSelectChange($event)"
     [options]="allEmployees()"
     optionLabel="fullName"
     [placeholder]="placeholder()"

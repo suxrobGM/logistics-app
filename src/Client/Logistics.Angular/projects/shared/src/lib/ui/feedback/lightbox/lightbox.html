@@ -1,0 +1,56 @@
+<ui-dialog [(open)]="open" [draggable]="false" [resizable]="false" width="90vw" maxWidth="1200px">
+  @if (current(); as image) {
+    <div class="flex flex-col items-center gap-4">
+      <div class="flex w-full items-center justify-between gap-2">
+        @if (navigable()) {
+          <ui-button
+            variant="ghost"
+            icon="chevron-left"
+            ariaLabel="Previous photo"
+            (click)="go(-1)"
+          />
+        }
+
+        <img
+          [src]="image.src"
+          [alt]="image.alt || 'Photo'"
+          class="max-h-[70vh] w-auto max-w-full object-contain"
+        />
+
+        @if (navigable()) {
+          <ui-button variant="ghost" icon="chevron-right" ariaLabel="Next photo" (click)="go(1)" />
+        }
+      </div>
+
+      <p class="text-muted-foreground text-sm" aria-live="polite">
+        {{ activeIndex() + 1 }} / {{ count() }}
+      </p>
+
+      @if (showThumbnails() && count() > 1) {
+        <div class="flex max-w-full flex-wrap justify-center gap-2 overflow-x-auto">
+          @for (thumb of images(); track $index) {
+            <button
+              type="button"
+              class="focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
+              [class.opacity-50]="$index !== activeIndex()"
+              [attr.aria-label]="'Show photo ' + ($index + 1)"
+              [attr.aria-current]="$index === activeIndex() ? 'true' : null"
+              (click)="select($index)"
+            >
+              <img
+                [src]="thumb.thumbnailSrc || thumb.src"
+                [alt]="thumb.alt || 'Photo thumbnail'"
+                class="h-16 w-16 rounded object-cover"
+              />
+            </button>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="text-muted-foreground flex items-center justify-center gap-2 p-8">
+      <ui-icon name="image" />
+      <span>No photos to show.</span>
+    </div>
+  }
+</ui-dialog>

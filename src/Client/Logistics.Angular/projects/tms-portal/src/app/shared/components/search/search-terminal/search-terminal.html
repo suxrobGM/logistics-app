@@ -1,15 +1,14 @@
-<p-autocomplete
+<ui-autocomplete-field
   class="w-full"
-  inputStyleClass="w-full"
   [placeholder]="placeholder()"
-  [minLength]="2"
+  [minQueryLength]="2"
   [delay]="300"
   optionLabel="name"
   [disabled]="disabled()"
   [suggestions]="suggestedTerminals()"
-  [(ngModel)]="value"
+  [(value)]="value"
   (completeMethod)="searchTerminal($event)"
-  (onBlur)="touch.emit()"
+  (touch)="touch.emit()"
 >
   <ng-template #empty>
     <div class="p-2">
@@ -25,4 +24,4 @@
       <div class="text-muted-foreground text-xs">{{ terminal.countryCode }}</div>
     </div>
   </ng-template>
-</p-autocomplete>
+</ui-autocomplete-field>

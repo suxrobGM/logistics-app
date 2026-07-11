@@ -62,12 +62,10 @@
 <!-- Create API Key Dialog -->
 <ui-dialog header="Create API Key" [(open)]="showCreateDialog" [modal]="true" width="450px">
   <ui-form-field label="Key Name" for="keyName" [required]="true">
-    <input
-      pInputText
+    <ui-text-field
       id="keyName"
-      [(ngModel)]="newKeyName"
+      [(value)]="newKeyName"
       placeholder="e.g., Claude Desktop, Cursor"
-      [fluid]="true"
     />
   </ui-form-field>
 

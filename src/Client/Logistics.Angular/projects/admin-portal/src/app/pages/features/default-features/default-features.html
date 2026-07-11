@@ -19,9 +19,9 @@
           [name]="feature.name ?? ''"
           [description]="getFeatureDescription(feature.feature)"
         >
-          <p-toggleswitch
-            [ngModel]="feature.isEnabledByDefault"
-            (onChange)="toggleFeature(feature)"
+          <ui-toggle-field
+            [value]="feature.isEnabledByDefault ?? false"
+            (valueChange)="toggleFeature(feature)"
           />
         </ui-feature-row>
       } @empty {

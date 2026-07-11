@@ -176,14 +176,13 @@
     </p>
     <div>
       <label for="dismissNotes" class="mb-2 block font-medium">Notes (Optional)</label>
-      <textarea
-        pTextarea
+      <ui-textarea-field
         id="dismissNotes"
-        [(ngModel)]="dismissNotes"
-        rows="3"
-        class="w-full"
+        [(value)]="dismissNotes"
+        [rows]="3"
+        class="block w-full"
         placeholder="Add any notes..."
-      ></textarea>
+      />
     </div>
   </div>
   <ng-template #footer>
@@ -209,14 +208,13 @@
     </p>
     <div>
       <label for="rejectionReason" class="mb-2 block font-medium">Rejection Reason *</label>
-      <textarea
-        pTextarea
+      <ui-textarea-field
         id="rejectionReason"
-        [(ngModel)]="rejectionReason"
-        rows="3"
-        class="w-full"
+        [(value)]="rejectionReason"
+        [rows]="3"
+        class="block w-full"
         placeholder="Explain why this report is being rejected..."
-      ></textarea>
+      />
     </div>
   </div>
   <ng-template #footer>

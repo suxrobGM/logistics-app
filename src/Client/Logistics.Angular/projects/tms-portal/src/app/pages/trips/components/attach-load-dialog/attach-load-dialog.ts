@@ -4,6 +4,7 @@ import { Api, getUnassignedLoads, type LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   Icon,
+  SearchField,
   Spinner,
   UiButton,
   UiDataTable,
@@ -11,9 +12,6 @@ import {
   UiTableRowDirectives,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { IconField } from "primeng/iconfield";
-import { InputIcon } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
 import { LoadTypeTag } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 
@@ -26,10 +24,8 @@ import { DistanceUnitPipe } from "@/shared/pipes";
     DistanceUnitPipe,
     FormsModule,
     Icon,
-    IconField,
-    InputIcon,
-    InputTextModule,
     LoadTypeTag,
+    SearchField,
     Spinner,
     UiButton,
     UiDataTable,

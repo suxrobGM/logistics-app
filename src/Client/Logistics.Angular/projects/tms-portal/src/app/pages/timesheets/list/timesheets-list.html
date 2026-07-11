@@ -6,33 +6,34 @@
 
 <ui-stack direction="row" align="center" gap="2" wrap class="mb-4">
   <!-- Filters -->
-  <p-select
-    [ngModel]="filterType()"
-    (ngModelChange)="applyTypeFilter($event)"
+  <ui-select-field
+    [value]="filterType()"
+    (selectionChange)="applyTypeFilter($event)"
+    (cleared)="applyTypeFilter(null)"
     [options]="typeOptions"
     optionValue="value"
     optionLabel="label"
     placeholder="Filter by type"
+    [fluid]="false"
     [showClear]="true"
-    appendTo="body"
   />
 
-  <p-datepicker
-    [ngModel]="filterStartDate()"
-    (ngModelChange)="filterStartDate.set($event); applyDateFilter()"
+  <ui-date-field
+    [value]="filterStartDate()"
+    (valueChange)="filterStartDate.set($event); applyDateFilter()"
     dateFormat="mm/dd/yy"
     placeholder="Start date"
     [showIcon]="true"
-    appendTo="body"
+    [fluid]="false"
   />
 
-  <p-datepicker
-    [ngModel]="filterEndDate()"
-    (ngModelChange)="filterEndDate.set($event); applyDateFilter()"
+  <ui-date-field
+    [value]="filterEndDate()"
+    (valueChange)="filterEndDate.set($event); applyDateFilter()"
     dateFormat="mm/dd/yy"
     placeholder="End date"
     [showIcon]="true"
-    appendTo="body"
+    [fluid]="false"
   />
 
   @if (filterType() || filterStartDate() || filterEndDate()) {

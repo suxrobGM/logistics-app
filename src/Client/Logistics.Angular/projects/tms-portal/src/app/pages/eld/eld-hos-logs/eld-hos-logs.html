@@ -12,24 +12,26 @@
 <ui-card class="mb-6 block">
   <ui-stack direction="row" align="end" gap="4" wrap>
     <ui-form-field label="Start Date" for="startDate">
-      <p-datepicker
+      <ui-date-field
         id="startDate"
-        [(ngModel)]="startDate"
+        [(value)]="startDate"
         [showIcon]="true"
-        [maxDate]="endDate"
+        [maxDate]="endDate() ?? undefined"
         [dateFormat]="dateFormat()"
-        (onSelect)="onDateRangeChange()"
+        (dateSelected)="onDateRangeChange()"
+        [fluid]="false"
       />
     </ui-form-field>
     <ui-form-field label="End Date" for="endDate">
-      <p-datepicker
+      <ui-date-field
         id="endDate"
-        [(ngModel)]="endDate"
+        [(value)]="endDate"
         [showIcon]="true"
-        [minDate]="startDate"
+        [minDate]="startDate() ?? undefined"
         [maxDate]="today"
         [dateFormat]="dateFormat()"
-        (onSelect)="onDateRangeChange()"
+        (dateSelected)="onDateRangeChange()"
+        [fluid]="false"
       />
     </ui-form-field>
   </ui-stack>

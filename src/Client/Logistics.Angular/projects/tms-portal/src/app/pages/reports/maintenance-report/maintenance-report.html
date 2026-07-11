@@ -59,7 +59,7 @@
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Cost by Service Type" icon="chart-bar" iconColor="blue">
         @if (hasServiceTypeData()) {
-          <p-chart
+          <ui-chart
             type="bar"
             [data]="serviceTypeChartData()"
             [options]="barChartOptions"
@@ -78,7 +78,7 @@
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Cost by Vendor" icon="chart-pie" iconColor="green">
         @if (hasVendorData()) {
-          <p-chart
+          <ui-chart
             type="doughnut"
             [data]="vendorChartData()"
             [options]="pieChartOptions"
@@ -97,7 +97,7 @@
   <div class="mb-6">
     <ui-dashboard-card title="Cost Trends" icon="chart-line" iconColor="blue">
       @if (hasCostTrendData()) {
-        <p-chart
+        <ui-chart
           [type]="trendChartType()"
           [data]="costTrendChartData()"
           [options]="trendChartOptions()"

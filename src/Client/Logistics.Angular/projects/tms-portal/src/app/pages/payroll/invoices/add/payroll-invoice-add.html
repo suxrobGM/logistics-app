@@ -5,21 +5,11 @@
     <form [formRoot]="form">
       <!-- Mode Toggle -->
       <ui-form-field label="Creation Mode">
-        <p-select-button
+        <ui-toggle-group
           [options]="modeOptions"
-          [ngModel]="mode()"
-          [ngModelOptions]="{ standalone: true }"
-          (onChange)="onModeChange($event.value)"
-          optionLabel="label"
-          optionValue="value"
-        >
-          <ng-template #item let-item>
-            <ui-stack direction="row" align="center" gap="2">
-              <ui-icon [name]="item.icon" />
-              <span>{{ item.label }}</span>
-            </ui-stack>
-          </ng-template>
-        </p-select-button>
+          [value]="mode()"
+          (valueChange)="onModeChange($event)"
+        />
       </ui-form-field>
 
       <!-- Date Range Section -->
@@ -111,18 +101,16 @@
       <!-- Bulk Mode: Multiple Employees -->
       @if (mode() === "bulk") {
         <ui-form-field label="Select Employees">
-          <p-multi-select
+          <ui-multiselect-field
             [options]="allEmployees()"
-            [ngModel]="selectedEmployees()"
-            [ngModelOptions]="{ standalone: true }"
-            (ngModelChange)="onSelectedEmployeesChange($event)"
+            [value]="selectedEmployees()"
+            (selectionChange)="onSelectedEmployeesChange($event)"
             optionLabel="fullName"
+            filterBy="fullName"
             placeholder="Select employees"
             [filter]="true"
-            filterPlaceHolder="Search employees..."
             [showClear]="true"
             display="chip"
-            class="w-full"
           />
         </ui-form-field>
 

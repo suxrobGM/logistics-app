@@ -2,13 +2,12 @@ import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getEmployeeById, type DocumentType, type EmployeeDto } from "@logistics/shared/api";
 import { UiButton } from "@logistics/shared/ui";
-import { ToastModule } from "primeng/toast";
 import { DocumentManager } from "@/shared/components";
 
 @Component({
   selector: "app-employee-documents",
   templateUrl: "./employee-documents.html",
-  imports: [DocumentManager, RouterLink, ToastModule, UiButton],
+  imports: [DocumentManager, RouterLink, UiButton],
 })
 export class EmployeeDocumentsPage implements OnInit {
   private readonly api = inject(Api);

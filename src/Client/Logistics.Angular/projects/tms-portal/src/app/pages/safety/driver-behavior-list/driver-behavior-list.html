@@ -7,25 +7,27 @@
       <ui-search-field (searchChange)="onSearch($event)" placeholder="Search by driver name..." />
     </div>
 
-    <p-multiSelect
-      [(ngModel)]="selectedEventTypes"
+    <ui-multiselect-field
+      [(value)]="selectedEventTypes"
+      (selectionChange)="onFilterChange()"
       [options]="eventTypeOptions"
       optionLabel="label"
       optionValue="value"
       placeholder="Filter by event type"
       [maxSelectedLabels]="2"
+      [fluid]="false"
       class="w-64"
-      (onChange)="onFilterChange()"
     />
 
-    <p-select
-      [(ngModel)]="selectedReviewStatus"
+    <ui-select-field
+      [(value)]="selectedReviewStatus"
+      (selectionChange)="onFilterChange()"
       [options]="reviewStatusOptions"
       optionLabel="label"
       optionValue="value"
       placeholder="Review status"
+      [fluid]="false"
       class="w-40"
-      (onChange)="onFilterChange()"
     />
   </ui-stack>
 
@@ -243,21 +245,19 @@
 
           <ui-stack direction="row" align="center" justify="between" class="mb-4">
             <span>Dismiss this event (false positive)?</span>
-            <p-toggleswitch [(ngModel)]="isDismissed" />
+            <ui-toggle-field [(value)]="isDismissed" inputId="isDismissed" />
           </ui-stack>
 
           <div>
             <label for="reviewNotes" class="text-muted-foreground mb-1 block text-sm">
               Review Notes
             </label>
-            <textarea
-              pInputTextarea
+            <ui-textarea-field
               id="reviewNotes"
-              [(ngModel)]="reviewNotes"
-              class="w-full"
-              rows="3"
+              [(value)]="reviewNotes"
+              [rows]="3"
               placeholder="Add any notes about this event..."
-            ></textarea>
+            />
           </div>
         </div>
       }

@@ -16,7 +16,6 @@ import {
   type UiBadgeIntent,
   type UiMenuItem,
 } from "@logistics/shared/ui";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { PlansListStore } from "../store/plans-list.store";
 
 @Component({
@@ -26,7 +25,6 @@ import { PlansListStore } from "../store/plans-list.store";
   imports: [
     Badge,
     Card,
-    ConfirmDialogModule,
     CurrencyPipe,
     DataContainer,
     PageHeader,

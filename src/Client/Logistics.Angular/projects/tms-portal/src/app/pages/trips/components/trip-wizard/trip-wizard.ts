@@ -1,8 +1,6 @@
 import { Component, effect, inject, input, output } from "@angular/core";
 import type { CreateTripLoadCommand, TripLoadDto, TripStopDto } from "@logistics/shared/api";
 import { Alert, Stack, UiStepperImports } from "@logistics/shared/ui";
-import { InputGroupModule } from "primeng/inputgroup";
-import { InputTextModule } from "primeng/inputtext";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 import { TripWizardBasic } from "../trip-wizard-basic/trip-wizard-basic";
 import { TripFormStepLoads } from "../trip-wizard-loads/trip-wizard-loads";
@@ -28,16 +26,7 @@ export interface TripWizardValue {
   selector: "app-trip-wizard",
   templateUrl: "./trip-wizard.html",
   providers: [TripWizardStore],
-  imports: [
-    Alert,
-    InputGroupModule,
-    InputTextModule,
-    Stack,
-    UiStepperImports,
-    TripFormStepLoads,
-    TripWizardBasic,
-    TripWizardReview,
-  ],
+  imports: [Alert, Stack, UiStepperImports, TripFormStepLoads, TripWizardBasic, TripWizardReview],
 })
 export class TripWizard {
   protected readonly store = inject(TripWizardStore);

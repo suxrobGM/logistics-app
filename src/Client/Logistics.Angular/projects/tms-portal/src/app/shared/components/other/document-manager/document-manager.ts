@@ -21,26 +21,13 @@ import {
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
-import { FileUploadModule } from "primeng/fileupload";
-import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-document-manager",
   templateUrl: "./document-manager.html",
-  imports: [
-    Badge,
-    Card,
-    CommonModule,
-    FileUploadModule,
-    Icon,
-    Spinner,
-    ToastModule,
-    UiButton,
-    UiDataTable,
-    UiTooltip,
-  ],
+  imports: [Badge, Card, CommonModule, Icon, Spinner, UiButton, UiDataTable, UiTooltip],
 })
 export class DocumentManager implements OnInit {
   private readonly api = inject(Api);

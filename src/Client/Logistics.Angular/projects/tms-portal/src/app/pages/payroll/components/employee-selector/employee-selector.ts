@@ -1,13 +1,11 @@
 import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
-import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
-import { MultiSelectModule } from "primeng/multiselect";
+import { UiAutocompleteField, UiMultiSelectField } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-payroll-employee-selector",
   templateUrl: "./employee-selector.html",
-  imports: [FormsModule, AutoCompleteModule, MultiSelectModule],
+  imports: [UiAutocompleteField, UiMultiSelectField],
 })
 export class PayrollEmployeeSelector implements OnInit {
   private readonly api = inject(Api);
@@ -20,7 +18,8 @@ export class PayrollEmployeeSelector implements OnInit {
   protected readonly suggestedEmployees = signal<EmployeeDto[]>([]);
   protected readonly allEmployees = signal<EmployeeDto[]>([]);
   protected readonly selectedEmployeesValue = signal<EmployeeDto[]>([]);
-  protected selectedEmployeeValue: EmployeeDto | null = null;
+  /** Signal-backed so it can two-way bind to `ui-autocomplete-field`'s `value` model. */
+  protected readonly selectedEmployeeValue = signal<EmployeeDto | null>(null);
 
   async ngOnInit(): Promise<void> {
     if (this.mode() === "multi") {
@@ -35,9 +34,10 @@ export class PayrollEmployeeSelector implements OnInit {
     }
   }
 
-  onEmployeeSelect(event: AutoCompleteSelectEvent): void {
-    const employee = event.value as EmployeeDto;
-    this.employeeSelect.emit(employee);
+  onEmployeeSelect(employee: EmployeeDto | null): void {
+    if (employee) {
+      this.employeeSelect.emit(employee);
+    }
   }
 
   onMultiSelectChange(employees: EmployeeDto[]): void {
@@ -46,7 +46,7 @@ export class PayrollEmployeeSelector implements OnInit {
   }
 
   setEmployee(employee: EmployeeDto | null): void {
-    this.selectedEmployeeValue = employee;
+    this.selectedEmployeeValue.set(employee);
   }
 
   setEmployees(employees: EmployeeDto[]): void {

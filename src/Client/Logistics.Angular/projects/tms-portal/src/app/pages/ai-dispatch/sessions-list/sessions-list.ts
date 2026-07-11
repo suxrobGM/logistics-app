@@ -29,7 +29,6 @@ import {
   UiDataTable,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
 import {
   AiDispatchHubService,
   DispatchBadgeService,
@@ -53,7 +52,6 @@ import { stripMarkdown } from "../utils/markdown";
   imports: [
     AiQuotaUsage,
     Badge,
-    ConfirmDialogModule,
     DatePipe,
     DecisionCard,
     GeolocationMap,

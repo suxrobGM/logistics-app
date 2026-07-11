@@ -1,6 +1,5 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import {
   Api,
   getDriverHosLogs,
@@ -20,9 +19,9 @@ import {
   Stack,
   UiButton,
   UiDataTable,
+  UiDateField,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { DatePicker } from "primeng/datepicker";
 import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/components";
 
 @Component({
@@ -32,12 +31,10 @@ import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/compo
     Badge,
     Card,
     DashboardCard,
-    DatePicker,
     DatePipe,
     DecimalPipe,
     EmptyState,
     ErrorState,
-    FormsModule,
     Grid,
     PageHeader,
     Spinner,
@@ -45,6 +42,7 @@ import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/compo
     StatCard,
     UiButton,
     UiDataTable,
+    UiDateField,
     UiFormField,
   ],
 })
@@ -62,8 +60,12 @@ export class EldHosLogsComponent implements OnInit {
   protected readonly pageSize = signal(25);
   protected readonly first = signal(0);
 
-  protected startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  protected endDate = new Date();
+  // `Date | null` because `ui-date-field` is a `FormValueControl<Date | null>` — the value type is
+  // invariant, so a non-nullable `Date` signal will not two-way bind to it.
+  protected readonly startDate = signal<Date | null>(
+    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+  );
+  protected readonly endDate = signal<Date | null>(new Date());
   protected readonly today = new Date();
 
   protected readonly headerTitle = computed(() => `HOS Logs - ${this.employeeName()}`);
@@ -105,8 +107,8 @@ export class EldHosLogsComponent implements OnInit {
         this.api.invoke(getEmployeeById, { userId: employeeId }),
         this.api.invoke(getDriverHosLogs, {
           employeeId,
-          StartDate: this.startDate.toISOString(),
-          EndDate: this.endDate.toISOString(),
+          StartDate: this.startDate()?.toISOString(),
+          EndDate: this.endDate()?.toISOString(),
           Page: Math.floor(this.first() / this.pageSize()) + 1,
           PageSize: this.pageSize(),
           OrderBy: "startTime desc",

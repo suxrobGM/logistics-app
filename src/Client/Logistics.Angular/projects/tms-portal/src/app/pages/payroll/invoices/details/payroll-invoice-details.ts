@@ -25,9 +25,9 @@ import {
   UiButton,
   UiDataTable,
   UiDialog,
+  UiTextareaField,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { TextareaModule } from "primeng/textarea";
 import { PdfService, TenantService, ToastService } from "@/core/services";
 import { RecordPaymentDialog } from "@/pages/invoices/components";
 import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/components";
@@ -53,11 +53,11 @@ import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/compone
     RouterModule,
     Spinner,
     Stack,
-    TextareaModule,
     Typography,
     UiButton,
     UiDataTable,
     UiDialog,
+    UiTextareaField,
     UiTooltip,
   ],
 })

@@ -27,7 +27,7 @@
 
       <ui-form-field label="Customer" for="customerId" [required]="true">
         @if (customerId()) {
-          <input pInputText id="customerName" [value]="customerName()" class="w-full" disabled />
+          <ui-text-field id="customerName" [value]="customerName() ?? ''" [disabled]="true" />
         } @else {
           <ui-select-field
             [formField]="form.customerId"

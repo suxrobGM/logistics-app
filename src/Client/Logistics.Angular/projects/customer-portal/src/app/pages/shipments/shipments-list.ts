@@ -4,6 +4,7 @@ import { Api, getPortalLoads, type PortalLoadDto } from "@logistics/shared/api";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import {
   Icon,
+  SearchField,
   Stack,
   StatusBadge,
   Surface,
@@ -11,19 +12,14 @@ import {
   UiButton,
   UiDataTable,
 } from "@logistics/shared/ui";
-import { IconFieldModule } from "primeng/iconfield";
-import { InputIconModule } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
 
 @Component({
   selector: "cp-shipments-list",
   templateUrl: "./shipments-list.html",
   imports: [
     Icon,
-    IconFieldModule,
-    InputIconModule,
-    InputTextModule,
     RouterLink,
+    SearchField,
     Stack,
     StatusBadge,
     Surface,

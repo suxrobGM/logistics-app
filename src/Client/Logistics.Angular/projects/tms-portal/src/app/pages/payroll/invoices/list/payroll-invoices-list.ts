@@ -22,12 +22,12 @@ import {
   UiButton,
   UiDataTable,
   UiDialog,
+  UiMultiSelectField,
   UiSortHeader,
   UiTableRowDirectives,
+  UiTextareaField,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { MultiSelectModule } from "primeng/multiselect";
-import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import {
   DataContainer,
@@ -52,19 +52,19 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     FormsModule,
     Grid,
     InvoiceStatusTag,
-    MultiSelectModule,
     PageHeader,
     RouterModule,
     SearchField,
     Stack,
-    TextareaModule,
     Typography,
     UiButton,
     UiDataTable,
     UiDialog,
     UiFormField,
+    UiMultiSelectField,
     UiSortHeader,
     UiTableRowDirectives,
+    UiTextareaField,
     UiTooltip,
   ],
 })

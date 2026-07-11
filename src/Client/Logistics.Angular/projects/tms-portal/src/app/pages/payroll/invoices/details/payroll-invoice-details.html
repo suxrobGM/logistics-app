@@ -255,14 +255,13 @@
 
     <ui-dialog header="Reject Payroll" [(open)]="showRejectDialog" [modal]="true" width="400px">
       <p class="mb-4">Please provide a reason for rejecting this payroll:</p>
-      <textarea
-        pInputTextarea
+      <ui-textarea-field
         [rows]="4"
-        class="w-full"
+        class="block w-full"
         placeholder="Enter rejection reason..."
-        [ngModel]="rejectionReason()"
-        (ngModelChange)="rejectionReason.set($event)"
-      ></textarea>
+        [value]="rejectionReason()"
+        (valueChange)="rejectionReason.set($event)"
+      />
       <ng-template #footer>
         <ui-button appearance="text" label="Cancel" (click)="showRejectDialog.set(false)" />
         <ui-button

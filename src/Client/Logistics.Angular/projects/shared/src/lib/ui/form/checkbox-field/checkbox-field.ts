@@ -49,6 +49,11 @@ export class UiCheckboxField implements FormValueControl<boolean> {
   // Presentation
   public readonly inputId = input<string>("");
   public readonly label = input<string>("");
+  /**
+   * Accessible name for a checkbox whose text sits outside the component (e.g. beside it in the
+   * layout) and so cannot be passed as `label`. Without it such a checkbox has no accessible name.
+   */
+  public readonly ariaLabel = input<string>("");
 
   protected readonly showInvalid = computed(
     () => this.invalid() && (this.touched() || this.dirty()),

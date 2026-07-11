@@ -15,24 +15,22 @@
     </div>
 
     <ui-form-field label="Exception Type" [required]="true">
-      <p-select
+      <ui-select-field
         [options]="typeOptions"
-        [(ngModel)]="selectedType"
+        optionLabel="label"
+        optionValue="value"
+        [(value)]="selectedType"
         placeholder="Select exception type"
         [showClear]="true"
-        class="w-full"
-        styleClass="w-full"
       />
     </ui-form-field>
 
     <ui-form-field label="Reason" [required]="true">
-      <textarea
-        pTextarea
-        [(ngModel)]="reason"
-        rows="4"
+      <ui-textarea-field
+        [(value)]="reason"
+        [rows]="4"
         placeholder="Describe the exception or issue..."
-        class="w-full"
-      ></textarea>
+      />
     </ui-form-field>
   </div>
 

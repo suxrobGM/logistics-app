@@ -9,8 +9,7 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Skeleton, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ChartModule } from "primeng/chart";
+import { Grid, Skeleton, Stack, Typography, UiChart, UiDataTable } from "@logistics/shared/ui";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -45,7 +44,6 @@ const STATUS_COLORS = {
   selector: "app-payroll-report",
   templateUrl: "./payroll-report.html",
   imports: [
-    ChartModule,
     CurrencyFormatPipe,
     DashboardCard,
     DateRangePicker,
@@ -57,6 +55,7 @@ const STATUS_COLORS = {
     Stack,
     StatCard,
     Typography,
+    UiChart,
     UiDataTable,
   ],
 })

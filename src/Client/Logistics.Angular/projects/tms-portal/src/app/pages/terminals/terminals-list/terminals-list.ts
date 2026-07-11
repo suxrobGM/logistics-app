@@ -3,8 +3,14 @@ import { Router } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import type { TerminalDto, TerminalType } from "@logistics/shared/api";
 import { terminalTypeOptions } from "@logistics/shared/api/enums";
-import { Card, Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { SelectModule } from "primeng/select";
+import {
+  Card,
+  Stack,
+  UiButton,
+  UiDataTable,
+  UiSelectField,
+  UiSortHeader,
+} from "@logistics/shared/ui";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { TerminalsListStore } from "../store";
 
@@ -17,7 +23,7 @@ import { TerminalsListStore } from "../store";
     DataContainer,
     PageHeader,
     SearchField,
-    SelectModule,
+    UiSelectField,
     Stack,
     UiButton,
     UiDataTable,

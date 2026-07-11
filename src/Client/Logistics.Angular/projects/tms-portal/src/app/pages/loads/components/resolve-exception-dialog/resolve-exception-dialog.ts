@@ -2,15 +2,14 @@ import { Component, computed, inject, input, model, output, signal } from "@angu
 import { FormsModule } from "@angular/forms";
 import { UiFormField } from "@logistics/shared";
 import { Api, resolveLoadException, type LoadExceptionDto } from "@logistics/shared/api";
-import { UiButton, UiDialog } from "@logistics/shared/ui";
-import { TextareaModule } from "primeng/textarea";
+import { UiButton, UiDialog, UiTextareaField } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { ExceptionTypeTag } from "@/shared/components/tags";
 
 @Component({
   selector: "app-resolve-exception-dialog",
   templateUrl: "./resolve-exception-dialog.html",
-  imports: [ExceptionTypeTag, FormsModule, TextareaModule, UiButton, UiDialog, UiFormField],
+  imports: [ExceptionTypeTag, FormsModule, UiButton, UiDialog, UiFormField, UiTextareaField],
 })
 export class ResolveExceptionDialog {
   private readonly api = inject(Api);

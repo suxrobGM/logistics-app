@@ -1,6 +1,5 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, effect, inject, input, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { ErrorState, LoadingSkeleton, ToastService } from "@logistics/shared";
 import {
   Api,
@@ -20,9 +19,9 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiNumberField,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { InputNumberModule } from "primeng/inputnumber";
 import { PublicLayout } from "@/shared/layout";
 
 @Component({
@@ -35,10 +34,8 @@ import { PublicLayout } from "@/shared/layout";
     DatePipe,
     Divider,
     ErrorState,
-    FormsModule,
     Grid,
     Icon,
-    InputNumberModule,
     LoadingSkeleton,
     PublicLayout,
     Stack,
@@ -46,6 +43,7 @@ import { PublicLayout } from "@/shared/layout";
     Typography,
     UiButton,
     UiDataTable,
+    UiNumberField,
   ],
 })
 export class PublicPayment {

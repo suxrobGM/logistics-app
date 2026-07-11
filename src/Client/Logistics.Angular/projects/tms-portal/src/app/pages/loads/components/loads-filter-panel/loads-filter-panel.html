@@ -24,24 +24,26 @@
     </ui-form-field>
 
     <ui-form-field label="Status">
-      <p-multiselect
+      <ui-multiselect-field
         [options]="statusOptions"
-        [(ngModel)]="selectedStatuses"
+        optionLabel="label"
+        optionValue="value"
+        [(value)]="selectedStatuses"
+        (selectionChange)="applyFilters()"
         placeholder="Select status"
         [showClear]="true"
-        (onChange)="applyFilters()"
-        class="w-full"
       />
     </ui-form-field>
 
     <ui-form-field label="Type">
-      <p-multiselect
+      <ui-multiselect-field
         [options]="typeOptions"
-        [(ngModel)]="selectedTypes"
+        optionLabel="label"
+        optionValue="value"
+        [(value)]="selectedTypes"
+        (selectionChange)="applyFilters()"
         placeholder="Select type"
         [showClear]="true"
-        (onChange)="applyFilters()"
-        class="w-full"
       />
     </ui-form-field>
 
@@ -60,11 +62,10 @@
     </ui-form-field>
 
     <ui-stack direction="row" align="center" gap="2" class="mt-2">
-      <p-checkbox
-        [(ngModel)]="onlyActiveLoads"
-        [binary]="true"
+      <ui-checkbox-field
+        [(value)]="onlyActiveLoads"
+        (valueChange)="applyFilters()"
         inputId="activeOnly"
-        (onChange)="applyFilters()"
       />
       <label for="activeOnly" class="text-subtle-foreground mb-0 cursor-pointer text-sm">
         Active loads only

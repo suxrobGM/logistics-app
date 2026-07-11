@@ -1,0 +1,41 @@
+<!--
+  `[nullable]="false"` is bound EXPLICITLY. BrnToggleGroup defaults `nullable` to TRUE, so omitting
+  it would re-introduce the deselect-to-null behaviour this component exists to remove — the same
+  default that made p-selectButton write `null` into three non-nullable call sites. See the class.
+-->
+<hlm-toggle-group
+  variant="outline"
+  type="single"
+  [size]="size()"
+  [nullable]="false"
+  [value]="value()"
+  (valueChange)="onValueChange($any($event))"
+  [attr.aria-label]="ariaLabel() || null"
+>
+  @for (option of options(); track option.value) {
+    <!--
+      `[aria-label]` is an INPUT, not `[attr.aria-label]`. BrnToggleGroupItem declares
+      `ariaLabel = input(null, { alias: 'aria-label' })` and a HOST BINDING
+      `'[attr.aria-label]': 'ariaLabel() || null'`. Host bindings are applied after the template's
+      own attribute bindings, so an `[attr.aria-label]` here is silently CLOBBERED back to null by
+      the primitive — the icon-only items shipped with no accessible name at all. Feeding the input
+      instead lets the primitive render the attribute for us. (Lesson 1: the compiled host metadata
+      is contract, and it is invisible in the DOM.)
+    -->
+    <button
+      hlmToggleGroupItem
+      [value]="option.value"
+      [disabled]="option.disabled ?? false"
+      [aria-label]="iconOnly() ? option.label : null"
+      [uiTooltip]="iconOnly() ? option.label : ''"
+      uiTooltipPosition="bottom"
+    >
+      @if (option.icon) {
+        <ui-icon [name]="option.icon" />
+      }
+      @if (!iconOnly()) {
+        <span>{{ option.label }}</span>
+      }
+    </button>
+  }
+</hlm-toggle-group>

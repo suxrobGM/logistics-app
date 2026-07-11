@@ -5,17 +5,27 @@
     <div class="min-w-72 flex-1">
       <ui-search-field (searchChange)="search($event)" />
     </div>
-    <p-select
+    <ui-select-field
       [options]="statusOptions"
+      optionLabel="label"
+      optionValue="value"
+      [fluid]="false"
       [showClear]="true"
       placeholder="All statuses"
-      (onChange)="onStatusChange($event.value)"
+      [value]="statusFilter()"
+      (selectionChange)="onStatusChange($event)"
+      (cleared)="onStatusChange(null)"
     />
-    <p-select
+    <ui-select-field
       [options]="isoTypeOptions"
+      optionLabel="label"
+      optionValue="value"
+      [fluid]="false"
       [showClear]="true"
       placeholder="All ISO types"
-      (onChange)="onIsoTypeChange($event.value)"
+      [value]="isoTypeFilter()"
+      (selectionChange)="onIsoTypeChange($event)"
+      (cleared)="onIsoTypeChange(null)"
     />
   </ui-stack>
 

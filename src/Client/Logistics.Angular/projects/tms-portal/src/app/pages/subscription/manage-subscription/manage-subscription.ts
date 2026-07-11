@@ -18,7 +18,6 @@ import {
   UiButton,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TenantService, ToastService } from "@/core/services";
 import { Labels } from "@/shared/utils";
 
@@ -29,7 +28,6 @@ import { Labels } from "@/shared/utils";
     Badge,
     Card,
     CommonModule,
-    ConfirmDialogModule,
     Grid,
     Icon,
     RouterModule,

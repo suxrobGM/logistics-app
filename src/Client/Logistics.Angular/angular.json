@@ -95,7 +95,12 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "styles": [
+                "projects/tms-portal/src/styles.css",
+                "mapbox-gl/dist/mapbox-gl.css",
+                "projects/shared/src/styles/quill.css"
+              ]
             }
           },
           "defaultConfiguration": "production"

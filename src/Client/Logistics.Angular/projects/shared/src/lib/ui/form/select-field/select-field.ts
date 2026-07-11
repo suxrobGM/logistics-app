@@ -1,19 +1,27 @@
+import { NgTemplateOutlet } from "@angular/common";
 import {
   booleanAttribute,
   Component,
   computed,
+  contentChild,
   ElementRef,
   inject,
   input,
   model,
   output,
   signal,
+  TemplateRef,
 } from "@angular/core";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { Icon } from "../../content/icon/icon";
 import { HlmSelectImports } from "../../primitives/select";
 import { DetachedControl } from "../detached-control";
 import { focusFirstControl } from "../focus-control";
+
+/** Context handed to the `#item` / `#selectedItem` templates: the raw option object. */
+export interface UiSelectOptionContext<T = unknown> {
+  $implicit: T;
+}
 
 /**
  * Single-select dropdown.
@@ -41,9 +49,30 @@ import { focusFirstControl } from "../focus-control";
   // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
   // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
   host: { "[attr.id]": "null" },
-  imports: [HlmSelectImports, DetachedControl, Icon],
+  imports: [HlmSelectImports, DetachedControl, Icon, NgTemplateOutlet],
 })
 export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
+  /**
+   * Optional per-option renderer, projected as `<ng-template #item let-option>`. The context's
+   * `$implicit` is the raw option object (not the resolved `optionValue`), matching p-select.
+   *
+   * `descendants: false` is load-bearing: a nested `ui-select-field` inside our own projected
+   * content would otherwise have its `#item` template hoovered up by the outer select.
+   */
+  protected readonly itemTemplate = contentChild<TemplateRef<UiSelectOptionContext>>("item", {
+    descendants: false,
+  });
+
+  /**
+   * Optional renderer for the *trigger* (the chosen option), projected as
+   * `<ng-template #selectedItem let-option>`. Distinct from `#item`: p-select lets a call site
+   * render the closed trigger differently from the open panel's rows, and two ELD selects rely on
+   * exactly that (icon + one-line summary in the trigger, two-line detail in the list).
+   */
+  protected readonly selectedItemTemplate = contentChild<TemplateRef<UiSelectOptionContext>>(
+    "selectedItem",
+    { descendants: false },
+  );
   /** The control's value. Required by `FormValueControl`. */
   public readonly value = model<T | null>(null);
 
@@ -110,6 +139,12 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   protected readonly hasValue = computed(() => {
     const current = this.value();
     return current !== null && current !== undefined;
+  });
+
+  /** The full option object behind the current value — the context for `#selectedItem`. */
+  protected readonly selectedOption = computed(() => {
+    if (!this.hasValue()) return undefined;
+    return this.options().find((opt) => this.resolveValue(opt) === this.value());
   });
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);

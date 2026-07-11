@@ -9,16 +9,11 @@
   <div class="flex flex-col gap-4">
     <!-- Search -->
     <div class="flex items-center gap-2">
-      <p-icon-field class="flex-1">
-        <p-inputicon class="pi pi-search" />
-        <input
-          pInputText
-          type="text"
-          placeholder="Search by load name, customer, origin, or destination..."
-          class="w-full"
-          [(ngModel)]="searchQuery"
-        />
-      </p-icon-field>
+      <ui-search-field
+        class="flex-1"
+        placeholder="Search by load name, customer, origin, or destination..."
+        (searchChange)="searchQuery.set($event)"
+      />
       <ui-button
         appearance="outlined"
         ariaLabel="Refresh"

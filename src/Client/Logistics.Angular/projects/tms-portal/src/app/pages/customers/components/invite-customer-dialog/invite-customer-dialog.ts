@@ -17,7 +17,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 
@@ -29,15 +28,14 @@ const EMPTY = { email: "", customerId: "", personalMessage: "" };
   imports: [
     FormField,
     FormRoot,
-    InputTextModule,
     Spinner,
     Stack,
     UiButton,
     UiDialog,
     UiFormField,
     UiSelectField,
-    UiTextareaField,
     UiTextField,
+    UiTextareaField,
     ValidatedForm,
   ],
 })

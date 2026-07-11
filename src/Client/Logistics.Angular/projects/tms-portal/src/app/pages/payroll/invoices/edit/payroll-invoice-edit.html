@@ -28,15 +28,10 @@
 
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Date Range">
-              <p-date-picker
-                [ngModel]="model().dateRange"
-                [ngModelOptions]="{ standalone: true }"
-                (ngModelChange)="onDateRangeChange($event)"
-                selectionMode="range"
-                [showIcon]="true"
+              <ui-date-range-picker
+                [dates]="model().dateRange"
+                (datesChange)="onDateRangeChange($event); tryCalculatePayroll()"
                 [maxDate]="todayDate"
-                class="w-full"
-                (onSelect)="tryCalculatePayroll()"
               />
             </ui-form-field>
           </ui-grid>

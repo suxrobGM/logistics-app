@@ -79,12 +79,11 @@
     </p>
     <div class="flex flex-col gap-2">
       <label for="masterPassword" class="font-medium">Master Password</label>
-      <p-password
+      <ui-password-field
         id="masterPassword"
-        [(ngModel)]="masterPassword"
+        [(value)]="masterPassword"
         [feedback]="false"
         [toggleMask]="true"
-        inputStyleClass="w-full"
         placeholder="Enter master password"
       />
     </div>

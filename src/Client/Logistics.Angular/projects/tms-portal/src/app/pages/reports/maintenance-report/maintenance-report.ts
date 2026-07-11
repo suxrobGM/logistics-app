@@ -9,8 +9,15 @@ import {
   type MaintenanceVendorBreakdownDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Skeleton, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ChartModule } from "primeng/chart";
+import {
+  Grid,
+  Icon,
+  Skeleton,
+  Stack,
+  Typography,
+  UiChart,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -38,7 +45,6 @@ const TYPE_COLORS = [
   selector: "app-maintenance-report",
   templateUrl: "./maintenance-report.html",
   imports: [
-    ChartModule,
     CurrencyFormatPipe,
     DashboardCard,
     DatePipe,
@@ -51,6 +57,7 @@ const TYPE_COLORS = [
     Stack,
     StatCard,
     Typography,
+    UiChart,
     UiDataTable,
   ],
 })

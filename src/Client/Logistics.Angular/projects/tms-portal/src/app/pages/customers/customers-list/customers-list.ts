@@ -12,7 +12,6 @@ import {
   UiSortHeader,
   type UiMenuItem,
 } from "@logistics/shared/ui";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { CustomerStatusTag } from "@/shared/components/tags";
@@ -25,7 +24,6 @@ import { CustomersListStore } from "../store";
   providers: [CustomersListStore],
   imports: [
     Card,
-    ConfirmDialogModule,
     CustomerAvatar,
     CustomerStatusTag,
     DataContainer,

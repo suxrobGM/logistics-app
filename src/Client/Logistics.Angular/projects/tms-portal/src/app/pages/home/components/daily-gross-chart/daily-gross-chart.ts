@@ -2,8 +2,7 @@ import { Component, computed, inject, input, output, signal, type OnInit } from 
 import { Api, getDailyGrosses, type DailyGrossesDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
-import { Card, Divider, Icon, Skeleton } from "@logistics/shared/ui";
-import { ChartModule } from "primeng/chart";
+import { Card, Divider, Icon, Skeleton, UiChart } from "@logistics/shared/ui";
 import { ThemeService } from "@/core/services";
 import { getChartPalette, getLineGradient } from "@/shared/constants/chart-palette";
 import { Converters, DateUtils } from "@/shared/utils";
@@ -18,7 +17,7 @@ export interface DailyGrossChartData {
 @Component({
   selector: "app-daily-gross-chart",
   templateUrl: "./daily-gross-chart.html",
-  imports: [Card, ChartModule, CurrencyFormatPipe, Divider, Icon, Skeleton],
+  imports: [Card, CurrencyFormatPipe, Divider, Icon, Skeleton, UiChart],
 })
 export class DailyGrossChartComponent implements OnInit {
   private readonly api = inject(Api);

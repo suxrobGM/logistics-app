@@ -1,16 +1,14 @@
-<p-autocomplete
+<ui-autocomplete-field
   class="w-full"
-  inputStyleClass="w-full"
   placeholder="Type a container number"
-  [minLength]="2"
+  [minQueryLength]="2"
   [delay]="300"
   optionLabel="number"
   [suggestions]="suggestedContainers()"
   [disabled]="disabled()"
-  [(ngModel)]="value"
+  [(value)]="value"
   (completeMethod)="searchContainer($event)"
-  (onSelect)="changeSelectedContainer($event)"
-  (onBlur)="touch.emit()"
+  (touch)="touch.emit()"
 >
   <ng-template #empty>
     <div class="p-2">
@@ -31,4 +29,4 @@
       </div>
     </div>
   </ng-template>
-</p-autocomplete>
+</ui-autocomplete-field>

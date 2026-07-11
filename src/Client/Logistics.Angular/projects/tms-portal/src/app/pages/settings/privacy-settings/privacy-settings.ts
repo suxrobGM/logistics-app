@@ -24,9 +24,9 @@ import {
   UiButton,
   UiDataTable,
   UiDialog,
+  UiTextareaField,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField } from "@/shared/components";
 
@@ -43,11 +43,11 @@ import { PageHeader, UiFormField } from "@/shared/components";
     PageHeader,
     Spinner,
     Stack,
-    TextareaModule,
     UiButton,
     UiDataTable,
     UiDialog,
     UiFormField,
+    UiTextareaField,
   ],
 })
 export class PrivacySettings {

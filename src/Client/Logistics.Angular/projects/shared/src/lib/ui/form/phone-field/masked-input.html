@@ -1,0 +1,17 @@
+<!--
+  `value` is driven imperatively from the effect in the class, NOT bound here: binding it would let
+  Angular re-write the DOM value after the caret has been placed, and the caret would jump to the end
+  on every keystroke.
+-->
+<input
+  #input
+  hlmInputGroupInput
+  type="tel"
+  inputmode="tel"
+  autocomplete="tel-national"
+  [placeholder]="placeholder()"
+  [disabled]="disabled()"
+  (input)="onInput($event)"
+  (focus)="onFocus()"
+  (blur)="onBlur()"
+/>

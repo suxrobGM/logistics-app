@@ -15,19 +15,14 @@
 @if (showLayerToggle()) {
   <mgl-control position="top-left">
     <div class="bg-surface rounded p-1">
-      <p-selectbutton
+      <ui-toggle-group
         [options]="mapStyleService.layerOptions"
-        [ngModel]="mapStyleService.activeLayer()"
-        (ngModelChange)="onLayerChange($event)"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-        aria-label="Select map layer style"
-      >
-        <ng-template #item let-item>
-          <ui-icon [name]="item.icon" [uiTooltip]="item.label" uiTooltipPosition="bottom" />
-        </ng-template>
-      </p-selectbutton>
+        [value]="mapStyleService.activeLayer()"
+        (valueChange)="onLayerChange($event)"
+        [iconOnly]="true"
+        size="sm"
+        ariaLabel="Select map layer style"
+      />
     </div>
   </mgl-control>
 }

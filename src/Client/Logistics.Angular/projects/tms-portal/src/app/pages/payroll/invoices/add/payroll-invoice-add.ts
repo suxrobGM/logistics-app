@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { Router, RouterModule } from "@angular/router";
 import {
@@ -29,13 +28,13 @@ import {
   UiAutocompleteField,
   UiButton,
   UiDataTable,
+  UiMultiSelectField,
+  UiToggleGroup,
   UiTooltip,
   type IconName,
+  type UiToggleOption,
 } from "@logistics/shared/ui";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
-import { MultiSelectModule } from "primeng/multiselect";
-import { SelectModule } from "primeng/select";
-import { SelectButtonModule } from "primeng/selectbutton";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
@@ -65,14 +64,10 @@ interface PayrollFormValue {
     Divider,
     FormField,
     FormRoot,
-    FormsModule,
     Grid,
     Icon,
-    MultiSelectModule,
     PageHeader,
     RouterModule,
-    SelectButtonModule,
-    SelectModule,
     Stack,
     Surface,
     Typography,
@@ -80,6 +75,8 @@ interface PayrollFormValue {
     UiButton,
     UiDataTable,
     UiFormField,
+    UiMultiSelectField,
+    UiToggleGroup,
     UiTooltip,
     ValidatedForm,
   ],
@@ -135,7 +132,10 @@ export class PayrollInvoiceAdd {
     },
   );
 
-  protected readonly modeOptions = [
+  // Annotated, not inferred: without it `value` widens to `string`, ui-toggle-group's generic
+  // resolves to `UiToggleGroup<string>`, and `(valueChange)` would hand `onModeChange` a plain
+  // string instead of a PayrollMode.
+  protected readonly modeOptions: UiToggleOption<PayrollMode>[] = [
     { label: "Single Employee", value: "single", icon: "user" as IconName },
     { label: "Multiple Employees", value: "bulk", icon: "users" as IconName },
   ];

@@ -21,7 +21,6 @@ import {
   UiSelectField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
 import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
 
@@ -74,7 +73,6 @@ const EMPTY: CompanySettingsModel = {
     Spinner,
     Stack,
     Surface,
-    ToastModule,
     Typography,
     UiButton,
     UiFormField,

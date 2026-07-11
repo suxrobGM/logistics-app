@@ -1,9 +1,14 @@
 import { Component, computed, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
-import { ThemeToggle, type UserTenantAccessDto } from "@logistics/shared";
-import { Icon, UiButton, UiMenu, type IconName, type UiMenuItem } from "@logistics/shared/ui";
-import { SelectModule } from "primeng/select";
+import { ThemeToggle } from "@logistics/shared";
+import {
+  Icon,
+  UiButton,
+  UiMenu,
+  UiSelectField,
+  type IconName,
+  type UiMenuItem,
+} from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 import { TenantContextService } from "@/core/services";
 import { environment } from "@/env";
@@ -17,16 +22,7 @@ interface NavItem {
 @Component({
   selector: "cp-navbar",
   templateUrl: "./navbar.html",
-  imports: [
-    FormsModule,
-    Icon,
-    RouterLink,
-    RouterLinkActive,
-    SelectModule,
-    ThemeToggle,
-    UiButton,
-    UiMenu,
-  ],
+  imports: [Icon, RouterLink, RouterLinkActive, ThemeToggle, UiButton, UiMenu, UiSelectField],
 })
 export class Navbar {
   private readonly router = inject(Router);
@@ -82,7 +78,14 @@ export class Navbar {
     });
   }
 
-  protected onTenantChange(tenant: UserTenantAccessDto): void {
+  /**
+   * The select is keyed by `tenantId` rather than the DTO object: binding whole objects would make
+   * the trigger label depend on reference identity between `currentTenant()` and a member of
+   * `availableTenants()`.
+   */
+  protected onTenantChange(tenantId: string | null): void {
+    const tenant = this.availableTenants().find((t) => t.tenantId === tenantId);
+    if (!tenant) return;
     this.tenantService.selectTenant(tenant);
     // Reload current page to refresh data with new tenant
     window.location.reload();

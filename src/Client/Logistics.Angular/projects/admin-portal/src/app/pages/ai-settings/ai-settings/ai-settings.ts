@@ -1,5 +1,4 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Api, getAiSettings, updateAiSettings, type PlanQuotaDto } from "@logistics/shared/api";
 import {
   Alert,
@@ -10,10 +9,10 @@ import {
   Stack,
   Typography,
   UiButton,
+  UiCheckboxField,
+  UiNumberField,
+  UiSelectField,
 } from "@logistics/shared/ui";
-import { CheckboxModule } from "primeng/checkbox";
-import { InputNumberModule } from "primeng/inputnumber";
-import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
 import { TenantQuotas } from "../tenant-quotas/tenant-quotas";
 
@@ -28,17 +27,16 @@ interface ModelOption {
   imports: [
     Alert,
     Card,
-    CheckboxModule,
-    FormsModule,
     Grid,
-    InputNumberModule,
     PageHeader,
-    SelectModule,
     Spinner,
     Stack,
     TenantQuotas,
     Typography,
     UiButton,
+    UiCheckboxField,
+    UiNumberField,
+    UiSelectField,
   ],
 })
 export class AiSettings implements OnInit {

@@ -60,7 +60,7 @@
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Payroll Status Distribution" icon="chart-pie" iconColor="blue">
         @if (hasStatusChartData()) {
-          <p-chart
+          <ui-chart
             type="doughnut"
             [data]="statusChartData()"
             [options]="statusChartOptions"
@@ -77,7 +77,7 @@
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Salary Type Breakdown" icon="chart-bar" iconColor="blue">
         @if (hasSalaryTypeChartData()) {
-          <p-chart
+          <ui-chart
             type="bar"
             [data]="salaryTypeChartData()"
             [options]="salaryTypeChartOptions"
@@ -96,7 +96,7 @@
   <div class="mb-6">
     <ui-dashboard-card title="Payroll Trends" icon="chart-line" iconColor="blue">
       @if (hasTrendChartData()) {
-        <p-chart
+        <ui-chart
           type="line"
           [data]="trendChartData()"
           [options]="trendChartOptions"

@@ -8,6 +8,7 @@ export * from "./loading-skeleton/loading-skeleton";
 export * from "./confirm-delete-dialog/confirm-delete-dialog";
 export * from "./confirm-dialog/confirm-dialog";
 export * from "./dialog/dialog";
+export * from "./lightbox/lightbox";
 export * from "./toaster/toaster";
 export * from "./cookie-banner/cookie-banner";
 export * from "./pdf-viewer/pdf-viewer";

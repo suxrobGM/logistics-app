@@ -154,14 +154,12 @@
     accounting purposes.
   </p>
   <ui-form-field label="Reason (optional)" for="delete-reason" class="mt-4">
-    <textarea
-      pTextarea
+    <ui-textarea-field
       id="delete-reason"
-      rows="3"
-      class="w-full"
-      [ngModel]="deleteReason()"
-      (ngModelChange)="deleteReason.set($event)"
-    ></textarea>
+      [rows]="3"
+      [value]="deleteReason()"
+      (valueChange)="deleteReason.set($event)"
+    />
   </ui-form-field>
   <ng-template #footer>
     <ui-button intent="secondary" label="Cancel" (click)="deleteDialogOpen.set(false)" />

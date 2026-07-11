@@ -1,4 +1,4 @@
-<p-inputgroup>
+<hlm-input-group>
   <hlm-select
     uiDetachedControl
     class="flex-none"
@@ -7,7 +7,7 @@
     [itemToString]="countryDialCode"
     [disabled]="disabled()"
   >
-    <hlm-select-trigger class="min-w-28 rounded-r-none">
+    <hlm-select-trigger class="min-w-28 rounded-r-none border-0 shadow-none ring-0 focus:ring-0">
       <hlm-select-value />
     </hlm-select-trigger>
     <hlm-select-content *hlmSelectPortal>
@@ -18,14 +18,15 @@
       }
     </hlm-select-content>
   </hlm-select>
-  <p-inputmask
+
+  <ui-masked-input
+    class="flex-1"
     [mask]="currentMask()"
-    [ngModel]="phoneNumber()"
-    (ngModelChange)="onPhoneChange($event)"
+    [value]="phoneNumber()"
+    (valueChange)="onPhoneChange($event)"
     [placeholder]="placeholder()"
     [disabled]="disabled()"
-    (onBlur)="onBlur()"
-    slotChar="_"
-    [autoClear]="false"
+    [dialPrefix]="dialPrefixDigits()"
+    (blurred)="onBlur()"
   />
-</p-inputgroup>
+</hlm-input-group>

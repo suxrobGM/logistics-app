@@ -1,5 +1,6 @@
 export * from "./typography/typography";
 export * from "./icon/icon";
+export * from "./chart/chart";
 export * from "./badge/badge";
 export * from "./badge/badge-intent";
 export * from "./badge/badge-variants";
