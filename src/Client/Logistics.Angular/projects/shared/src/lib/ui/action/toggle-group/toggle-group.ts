@@ -1,7 +1,7 @@
 import { booleanAttribute, Component, input, output } from "@angular/core";
-import { Icon } from "../../content/icon/icon";
-import { UiTooltip } from "../../feedback/tooltip/tooltip";
+import { Icon } from "../../icons/icon/icon";
 import type { IconName } from "../../icons/icons";
+import { UiTooltip } from "../../overlay/tooltip/tooltip";
 import { HlmToggleGroupImports } from "../../primitives/toggle-group";
 
 /** One segment of a {@link UiToggleGroup}. */

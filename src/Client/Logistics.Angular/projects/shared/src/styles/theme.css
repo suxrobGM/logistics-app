@@ -194,7 +194,7 @@
   --ui-btn-help: var(--status-pickedup);
 
   /* ---------------------------------------------------------------------------------------------
-   * ui-badge / ui-card (see lib/ui/content/badge/badge-variants.ts, lib/ui/layout/card/card.ts).
+   * ui-badge / ui-card (see lib/ui/badges/badge/badge-variants.ts, lib/ui/containers/card/card.ts).
    *
    * SAME MECHANISM AS --ui-btn-*, EXTENDED FROM SIZING TO COLOUR — because the four apps do NOT run
    * the same PrimeNG preset. tms-portal provides `definePreset(Nora, …)`; admin / customer / website

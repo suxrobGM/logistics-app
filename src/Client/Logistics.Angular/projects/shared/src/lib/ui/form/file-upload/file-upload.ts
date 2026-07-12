@@ -9,7 +9,7 @@ import {
   viewChild,
 } from "@angular/core";
 import { UiButton } from "../../action/button";
-import { Icon } from "../../content/icon/icon";
+import { Icon } from "../../icons/icon/icon";
 
 /**
  * File picker, used at both of its call sites, in both of its modes:

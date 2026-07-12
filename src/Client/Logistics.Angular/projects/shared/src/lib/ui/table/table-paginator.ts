@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, output } from "@angular/core";
-import { Icon } from "../content/icon/icon";
 import { UiSelectField } from "../form/select-field/select-field";
+import { Icon } from "../icons/icon/icon";
 import { buttonVariants } from "../primitives/button";
 import { HlmPagination, HlmPaginationContent, HlmPaginationItem } from "../primitives/pagination";
 import { UiTableState } from "./table-state";

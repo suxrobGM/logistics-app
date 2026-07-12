@@ -10,7 +10,7 @@ import {
   signal,
 } from "@angular/core";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { Icon } from "../../content/icon/icon";
+import { Icon } from "../../icons/icon/icon";
 import { HlmSelectImports } from "../../primitives/select";
 import { DetachedControl } from "../detached-control";
 import { focusFirstControl } from "../focus-control";

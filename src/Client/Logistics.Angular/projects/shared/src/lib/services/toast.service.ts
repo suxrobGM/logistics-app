@@ -1,13 +1,13 @@
 import { inject, Injectable } from "@angular/core";
 import { toast } from "@spartan-ng/brain/sonner";
 import type { UiButtonIntent } from "../ui/action/button/button-variants";
+import type { IconName } from "../ui/icons/icons";
 import {
   CONFIRM_ACCEPT,
   CONFIRM_REJECT,
   UiConfirmDialog,
   type UiConfirmDialogContext,
-} from "../ui/feedback/confirm-dialog/confirm-dialog";
-import type { IconName } from "../ui/icons/icons";
+} from "../ui/overlay/confirm-dialog/confirm-dialog";
 import { HlmDialogService } from "../ui/primitives/dialog";
 
 /**

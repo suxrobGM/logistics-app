@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, input, output, type OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { debounceTime, distinctUntilChanged, Subject } from "rxjs";
-import { Icon } from "../../content/icon/icon";
+import { Icon } from "../../icons/icon/icon";
 import { HlmInput } from "../../primitives/input";
 
 @Component({

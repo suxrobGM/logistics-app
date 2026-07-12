@@ -9,7 +9,7 @@ import {
   output,
 } from "@angular/core";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { Icon } from "../../content/icon/icon";
+import { Icon } from "../../icons/icon/icon";
 import { focusFirstControl } from "../focus-control";
 
 /**

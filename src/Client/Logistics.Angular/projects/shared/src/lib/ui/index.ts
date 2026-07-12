@@ -10,8 +10,12 @@ export * from "./form";
 export * from "./action";
 export * from "./table";
 export * from "./layout";
-export * from "./content";
-export * from "./feedback";
+export * from "./containers";
+export * from "./disclosure";
+export * from "./badges";
+export * from "./display";
+export * from "./overlay";
+export * from "./status";
 export * from "./icons";
 
 // The one primitive-layer export consumers need: the app-bootstrap provider that configures

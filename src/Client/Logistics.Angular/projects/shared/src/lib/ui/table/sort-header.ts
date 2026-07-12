@@ -1,5 +1,5 @@
 import { Component, computed, HostAttributeToken, inject } from "@angular/core";
-import { Icon } from "../content/icon/icon";
+import { Icon } from "../icons/icon/icon";
 import type { IconName } from "../icons/icons";
 import { UiTableState } from "./table-state";
 

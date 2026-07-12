@@ -1,5 +1,5 @@
 import { booleanAttribute, Component, computed, input } from "@angular/core";
-import { Icon } from "../../content/icon/icon";
+import { Icon } from "../../icons/icon/icon";
 import type { IconName } from "../../icons/icons";
 import {
   uiButtonClass,

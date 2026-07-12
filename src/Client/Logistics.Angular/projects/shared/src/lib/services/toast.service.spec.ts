@@ -34,7 +34,7 @@ import {
 } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import { toastState } from "@spartan-ng/brain/sonner";
-import { UiToaster } from "../ui/feedback/toaster/toaster";
+import { UiToaster } from "../ui/overlay/toaster/toaster";
 import { ToastService, type ConfirmOptions } from "./toast.service";
 
 /** Our own vocabulary — independent of any UI library. */

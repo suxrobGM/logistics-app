@@ -12,8 +12,8 @@ import {
   type TemplateRef,
 } from "@angular/core";
 import type { ListLazyLoadEvent } from "../../stores";
-import { Spinner } from "../feedback/spinner/spinner";
 import { HlmTable, HlmTBody, HlmTFoot, HlmTHead } from "../primitives/table";
+import { Spinner } from "../status/spinner/spinner";
 import { UiTablePaginator } from "./table-paginator";
 import { resolveFieldData, UiTableState, type UiTableSelectionMode } from "./table-state";
 
