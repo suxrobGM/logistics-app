@@ -1,7 +1,9 @@
 # Stage 1: Build
-FROM oven/bun:latest AS builder
+FROM node:24-alpine AS builder
 ARG PROJECT_DIR=src/Client/Logistics.Angular
 WORKDIR /app
+
+RUN npm install -g bun
 
 COPY package.json bun.lock ./
 COPY src/Client/Logistics.Angular/package.json src/Client/Logistics.Angular/
@@ -10,7 +12,7 @@ RUN bun install --frozen-lockfile
 
 COPY ${PROJECT_DIR}/ ${PROJECT_DIR}/
 WORKDIR /app/${PROJECT_DIR}
-RUN bun run gen:api && bun run build:shared && bun run build:customer
+RUN bun run gen:api && npm run build:shared && npm run build:customer
 
 # Stage 2: Runtime
 FROM nginx:alpine

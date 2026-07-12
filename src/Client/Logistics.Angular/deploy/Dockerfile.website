@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:25-alpine AS builder
+FROM node:24-alpine AS builder
 ARG PROJECT_DIR=src/Client/Logistics.Angular
 WORKDIR /app
 
@@ -15,7 +15,7 @@ WORKDIR /app/${PROJECT_DIR}
 RUN bun run gen:api && npm run build:shared && npm run build:website
 
 # Stage 2: Runtime (Node.js for SSR)
-FROM node:25-alpine
+FROM node:24-alpine
 ARG PROJECT_DIR=src/Client/Logistics.Angular
 WORKDIR /app
 COPY --from=builder /app/${PROJECT_DIR}/dist/website .

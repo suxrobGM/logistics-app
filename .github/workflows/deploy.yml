@@ -1,18 +1,8 @@
-# Docker-based deployment to VPS
+# Docker-based deployment to VPS.
 #
-# Required GitHub Secrets:
-# - SSH_HOST: VPS IP address or hostname
-# - SSH_USER: SSH username
-# - SSH_KEY: SSH private key for VPS access
-# - GHCR_PAT: Personal Access Token with read:packages, write:packages scope
-# - DOCKER_ENV: Full .env file content for docker-compose (includes all config)
-# - FIREBASE_CREDENTIALS_JSON: Firebase Admin SDK service account JSON (for push notifications)
-#
-# Setup instructions:
-# 1. Create PAT: GitHub Settings -> Developer settings -> Personal access tokens with read:packages, write:packages scope
-# 2. On VPS: mkdir -p /deploy/logistics
-# 3. Add DOCKER_ENV secret with all environment variables
-# 4. Add FIREBASE_CREDENTIALS_JSON secret with the contents of firebase-adminsdk-key.json
+# Secrets: SSH_HOST / SSH_USER / SSH_KEY (VPS access), GHCR_PAT (read:packages + write:packages),
+# DOCKER_ENV (full .env contents for compose), FIREBASE_CREDENTIALS_JSON (Firebase Admin SDK key).
+# One-time on the VPS: mkdir -p ~/deploy/logistics
 
 name: Build and Deploy
 
@@ -30,7 +20,7 @@ jobs:
     name: Build ${{ matrix.image }}
     runs-on: ubuntu-latest
     concurrency:
-      group: build-${{ matrix.image }}
+      group: build-${{ matrix.image }}-${{ github.ref }}
       cancel-in-progress: true
     permissions:
       contents: read
@@ -76,9 +66,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
+      # Via env, not script interpolation: a quote in the JSON would break out of the echo.
       - name: Write Firebase credentials
         if: matrix.image == 'api'
-        run: echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > ./src/Presentation/Logistics.API/firebase-adminsdk-key.json
+        env:
+          FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIALS_JSON }}
+        run: printf '%s' "$FIREBASE_CREDENTIALS_JSON" > ./src/Presentation/Logistics.API/firebase-adminsdk-key.json
 
       - name: Build and push ${{ matrix.image }}
         uses: docker/build-push-action@v6
@@ -125,10 +118,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           envs: DOCKER_ENV,GHCR_PAT,GITHUB_REPOSITORY,IMAGE_TAG
           script: |
-            # Navigate to app directory
+            set -eu
             cd ${{ env.APP_DIR }}
 
-            # Create .env file from secret
             echo "$DOCKER_ENV" > .env
 
             # Lowercase for GHCR; export so it overrides .env (compose prefers shell env)
@@ -136,26 +128,18 @@ jobs:
             echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY" >> .env
             echo "IMAGE_TAG=$IMAGE_TAG" >> .env
 
-            # Login to GitHub Container Registry
             echo "$GHCR_PAT" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            # Pull latest images BEFORE stopping anything (minimizes downtime)
+            # Pull before stopping anything, then recreate in place — no down/up cycle
             docker compose pull
-
-            # Recreate containers in-place with new images (no down/up cycle)
             docker compose up -d --force-recreate --remove-orphans
-
-            # Clean up old images after new containers are running
             docker image prune -f
 
-            # Show running containers
-            echo "=== Running Containers ==="
-            docker compose ps
-
-            # Show container health
-            echo "=== Container Health ==="
+            echo "=== Containers ==="
             docker compose ps --format "table {{.Name}}\t{{.Status}}"
 
+      # Polls until the API answers or the budget runs out, and FAILS the job if it never does —
+      # the previous `curl || echo` reported success even when every container was crash-looping.
       - name: Health check
         uses: appleboy/ssh-action@v1.2.4
         with:
@@ -163,14 +147,21 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            echo "Waiting for services to start..."
-            sleep 30
+            set -u
+            cd ${{ env.APP_DIR }}
+            PORT=$(sed -n 's/^API_PORT=//p' .env | head -n1 | tr -dc '0-9')
+            PORT=${PORT:-7000}
 
-            echo "=== API Health Check ==="
-            curl -sf http://localhost:7000/health || echo "API not responding yet"
+            for i in $(seq 1 30); do
+              if curl -sf "http://localhost:${PORT}/health" > /dev/null; then
+                echo "API healthy (attempt ${i})"
+                docker compose ps --format "table {{.Name}}\t{{.Status}}"
+                exit 0
+              fi
+              sleep 5
+            done
 
-            echo "=== Container Status ==="
-            docker compose -f ${{ env.APP_DIR }}/docker-compose.yml ps --format "table {{.Name}}\t{{.Status}}"
-
-            echo "=== Recent Logs ==="
-            docker compose -f ${{ env.APP_DIR }}/docker-compose.yml logs --tail=10 2>/dev/null || true
+            echo "API did not pass /health within 150s"
+            docker compose ps --format "table {{.Name}}\t{{.Status}}"
+            docker compose logs --tail=50
+            exit 1
