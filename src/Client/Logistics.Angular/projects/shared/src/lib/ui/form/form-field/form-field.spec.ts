@@ -60,7 +60,7 @@ class HostSignal {
   });
 }
 
-/** A signal form whose validators supply NO message — exercises the fallback copy. */
+/** A signal form whose validator supplies NO message — exercises the generic fallback copy. */
 @Component({
   selector: "ui-host-signal-nomsg",
   imports: [UiFormField, ProbeInput, FormField],
@@ -122,16 +122,15 @@ describe("UiFormField", () => {
     expect(errorText(fixture)).not.toContain("Name is required.");
   });
 
-  it("falls back to generated copy for a camelCase minLength error with no message", async () => {
+  it("falls back to a generic message when a validator supplies none", async () => {
     const fixture = TestBed.createComponent(HostSignalNoMessage);
     await settle(fixture);
 
     fixture.componentInstance.f.name().markAsTouched();
     await settle(fixture);
 
-    // The trap: kind is `minLength` and the payload prop is `minLength` (not `requiredLength`).
-    // A template that only knew the reactive spellings would render "Invalid value." here.
-    expect(errorText(fixture)).toContain("Minimum length is 5 characters.");
-    expect(errorText(fixture)).not.toContain("Invalid value.");
+    // There is no per-`kind` message table — a message-less error renders one generic sentence,
+    // regardless of its `kind`.
+    expect(errorText(fixture)).toContain("This field is invalid.");
   });
 });

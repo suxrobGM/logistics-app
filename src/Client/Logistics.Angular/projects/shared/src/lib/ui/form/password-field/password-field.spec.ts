@@ -33,7 +33,7 @@ class HostSignalPassword {
   readonly lock = signal(false);
   readonly model = signal({ secret: "initial" });
   readonly f = form(this.model, (p) => {
-    required(p.secret);
+    required(p.secret, { message: "This field is required." });
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.secret, { when: () => this.lock() });

@@ -48,7 +48,7 @@ class HostSignalAc {
   readonly suggestions: Driver[] = [ALICE, BOB];
   readonly model = signal<{ driver: Driver | null }>({ driver: ALICE });
   readonly f = form(this.model, (p) => {
-    required(p.driver);
+    required(p.driver, { message: "This field is required." });
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.driver, { when: () => this.lock() });

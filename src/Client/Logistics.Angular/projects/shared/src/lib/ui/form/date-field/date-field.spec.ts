@@ -37,7 +37,7 @@ class HostSignalDate {
   readonly lock = signal(false);
   readonly model = signal<{ shipDate: Date | null }>({ shipDate: INITIAL });
   readonly f = form(this.model, (p) => {
-    required(p.shipDate);
+    required(p.shipDate, { message: "This field is required." });
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.shipDate, { when: () => this.lock() });

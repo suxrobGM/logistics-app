@@ -34,7 +34,7 @@ class HostSignalText {
   readonly lock = signal(false);
   readonly model = signal({ name: "initial" });
   readonly f = form(this.model, (p) => {
-    required(p.name);
+    required(p.name, { message: "This field is required." });
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.name, { when: () => this.lock() });
@@ -55,7 +55,7 @@ class HostSignalText {
 class HostSignalRequiredEmpty {
   readonly model = signal({ name: "" });
   readonly f = form(this.model, (p) => {
-    required(p.name);
+    required(p.name, { message: "This field is required." });
   });
   readonly field = viewChild.required(UiTextField);
 }

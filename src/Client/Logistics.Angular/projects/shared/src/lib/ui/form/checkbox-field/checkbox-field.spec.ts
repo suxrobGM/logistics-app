@@ -11,8 +11,8 @@
  * `false`. Reactive Forms has a built-in one (`Validators.requiredTrue`). For Signal Forms,
  * `required()` treats `false` as empty (`isEmpty(false) === true` in @angular/forms/signals),
  * so `required(p.terms)` DOES report a `false` boolean as invalid — no custom validator needed.
- * Both paths surface the classic `required` error key, which `ui-form-field` renders as
- * "This field is required.".
+ * The validator supplies the message; `ui-form-field` renders it verbatim (it no longer maps error
+ * `kind`s to copy), so this fixture states "This field is required." explicitly.
  */
 import { Component, provideZonelessChangeDetection, signal, viewChild } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
@@ -36,7 +36,7 @@ class HostSignalCheckbox {
   readonly model = signal({ terms: false });
   readonly f = form(this.model, (p) => {
     // `required()` treats `false` as empty, so this makes an unchecked box invalid.
-    required(p.terms);
+    required(p.terms, { message: "This field is required." });
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.terms, { when: () => this.lock() });

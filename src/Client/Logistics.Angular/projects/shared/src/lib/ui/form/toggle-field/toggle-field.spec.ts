@@ -32,7 +32,9 @@ class HostSignalToggle {
   readonly lock = signal(false);
   readonly model = signal({ accept: true });
   readonly f = form(this.model, (p) => {
-    validate(p.accept, (ctx) => (ctx.value() ? null : requiredError()));
+    validate(p.accept, (ctx) =>
+      ctx.value() ? null : requiredError({ message: "This field is required." }),
+    );
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.accept, { when: () => this.lock() });

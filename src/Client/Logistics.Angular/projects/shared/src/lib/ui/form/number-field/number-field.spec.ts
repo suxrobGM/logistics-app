@@ -30,7 +30,7 @@ class HostSignalNumber {
   readonly lock = signal(false);
   readonly model = signal<{ rate: number | null }>({ rate: 10 });
   readonly f = form(this.model, (p) => {
-    required(p.rate);
+    required(p.rate, { message: "This field is required." });
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.rate, { when: () => this.lock() });

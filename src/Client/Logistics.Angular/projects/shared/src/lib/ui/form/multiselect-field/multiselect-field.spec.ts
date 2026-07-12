@@ -49,7 +49,9 @@ class HostSignalMultiSelect {
     // (see `isEmpty` in @angular/forms/signals) — an empty ARRAY passes it and would count as
     // valid. So to make "no selection" invalid we add a custom validator that raises a
     // `required`-kind error, which `ui-form-field` renders as "This field is required."
-    validate(p.tags, (ctx) => (ctx.value().length === 0 ? requiredError() : undefined));
+    validate(p.tags, (ctx) =>
+      ctx.value().length === 0 ? requiredError({ message: "This field is required." }) : undefined,
+    );
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.tags, { when: () => this.lock() });

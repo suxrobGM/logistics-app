@@ -12,64 +12,17 @@ export interface FieldError {
   readonly message?: string;
 }
 
-/** Reads an error's validator-specific payload (e.g. `minLength`). */
-function payloadOf(error: FieldError): Record<string, unknown> {
-  return error as unknown as Record<string, unknown>;
-}
-
 /**
- * Fallback copy for errors that carry no `message`.
+ * Renders an error's copy: the validator's own `message` when it supplied one, otherwise a single
+ * generic fallback.
  *
- * Prefer `{message: '...'}` on the validator itself; this only covers rules declared without one.
- * Note Signal Forms' built-in error `kind`s are camelCase (`minLength`) and their payload prop is
- * `minLength`, not reactive forms' `requiredLength`.
- *
- * @see signal-forms-v22-api-probe.spec.ts, claim J
+ * Every validator in this codebase passes `{ message: '...' }`, so the field's message is used
+ * verbatim. The generic sentence only covers the rare rule declared without one (e.g. a test
+ * fixture or a third-party schema error) — there is deliberately no per-`kind` message table.
  */
 function describeError(error: FieldError): string {
-  if (typeof error.message === "string" && error.message.length > 0) {
-    return error.message;
-  }
-
-  const payload = payloadOf(error);
-  const num = (...keys: string[]): number | undefined => {
-    for (const key of keys) {
-      const value = payload[key];
-      if (typeof value === "number") {
-        return value;
-      }
-    }
-    return undefined;
-  };
-
-  switch (error.kind) {
-    case "required":
-      return "This field is required.";
-    case "email":
-      return "Enter a valid email address.";
-    case "minLength": {
-      const n = num("minLength");
-      return n === undefined ? "Value is too short." : `Minimum length is ${n} characters.`;
-    }
-    case "maxLength": {
-      const n = num("maxLength");
-      return n === undefined ? "Value is too long." : `Maximum length is ${n} characters.`;
-    }
-    case "min":
-    case "minDate": {
-      const n = num("min", "minDate");
-      return n === undefined ? "Value is too small." : `Must be at least ${n}.`;
-    }
-    case "max":
-    case "maxDate": {
-      const n = num("max", "maxDate");
-      return n === undefined ? "Value is too large." : `Must be at most ${n}.`;
-    }
-    case "pattern":
-      return "Invalid format.";
-    default:
-      return "Invalid value.";
-  }
+  const message = error.message;
+  return typeof message === "string" && message.length > 0 ? message : "This field is invalid.";
 }
 
 @Component({

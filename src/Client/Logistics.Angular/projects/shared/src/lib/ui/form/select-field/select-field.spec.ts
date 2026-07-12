@@ -48,7 +48,7 @@ class HostSignalSelect {
   readonly options = OPTIONS;
   readonly model = signal<{ color: string | null }>({ color: null });
   readonly f = form(this.model, (p) => {
-    required(p.color);
+    required(p.color, { message: "This field is required." });
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.color, { when: () => this.lock() });
@@ -80,7 +80,7 @@ class HostSignalSelectSeeded {
   readonly options = OPTIONS;
   readonly model = signal<{ color: string | null }>({ color: "green" });
   readonly f = form(this.model, (p) => {
-    required(p.color);
+    required(p.color, { message: "This field is required." });
   });
   readonly field = viewChild.required(UiSelectField);
 }

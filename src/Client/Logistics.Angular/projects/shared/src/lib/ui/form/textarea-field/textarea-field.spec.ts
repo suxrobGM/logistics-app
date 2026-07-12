@@ -29,7 +29,7 @@ class HostSignalTextarea {
   readonly lock = signal(false);
   readonly model = signal({ notes: "initial" });
   readonly f = form(this.model, (p) => {
-    required(p.notes);
+    required(p.notes, { message: "This field is required." });
     // Reactive disabled rule — the shape every real form uses:
     //   disabled(p.truckId, { when: () => this.mode() === "edit" })
     disabled(p.notes, { when: () => this.lock() });
