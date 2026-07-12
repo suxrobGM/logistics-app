@@ -65,10 +65,7 @@
           class="flex h-10 w-10 items-center justify-center rounded-full"
           [class]="overdueInvoiceCount() > 0 ? 'bg-danger/10' : 'bg-subtle'"
         >
-          <ui-icon
-            name="triangle-alert"
-            [color]="overdueInvoiceCount() > 0 ? 'danger' : 'muted'"
-          />
+          <ui-icon name="triangle-alert" [color]="overdueInvoiceCount() > 0 ? 'danger' : 'muted'" />
         </div>
       </a>
     </ui-stack>

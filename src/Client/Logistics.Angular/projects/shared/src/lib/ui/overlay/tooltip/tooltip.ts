@@ -29,6 +29,7 @@ import {
   type BrnTooltipType,
 } from "@spartan-ng/brain/tooltip";
 import type { Subscription } from "rxjs";
+import { firstFocusableIn, FOCUSABLE_SELECTOR } from "../../internal/focusable";
 import {
   DEFAULT_TOOLTIP_CONTENT_CLASSES,
   DEFAULT_TOOLTIP_SVG_CLASS,
@@ -39,9 +40,9 @@ import { hlm } from "../../primitives/utils";
 export type UiTooltipPosition = "top" | "bottom" | "left" | "right";
 
 /**
- * CDK anchors, byte-identical to `BRN_TOOLTIP_POSITIONS_MAP` (which brain does not export).
- * They MUST stay identical: `resolveTooltipPosition()` maps a CDK-resolved pair back to a side by
- * comparing these four anchors, and it is what keeps the arrow pointing the right way after a flip.
+ * Copy of brain's unexported `BRN_TOOLTIP_POSITIONS_MAP`. These must stay byte-identical to it:
+ * `resolveTooltipPosition()` maps a CDK-resolved pair back to a side by comparing against them, and
+ * that is what keeps the arrow pointing the right way after a flip.
  */
 const TOOLTIP_POSITIONS: Record<UiTooltipPosition, ConnectedPosition> = {
   top: { originX: "center", originY: "top", overlayX: "center", overlayY: "bottom", offsetY: -8 },
@@ -50,38 +51,17 @@ const TOOLTIP_POSITIONS: Record<UiTooltipPosition, ConnectedPosition> = {
   right: { originX: "end", originY: "center", overlayX: "start", overlayY: "center", offsetX: 8 },
 };
 
-/** What a screen reader will actually focus — i.e. what `aria-describedby` has to land on. */
-const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
 /**
- * The tooltip. Replaces `pTooltip` at 124 call sites.
+ * The tooltip. It reuses brain's `BrnTooltipContent` but owns the trigger and a11y wiring itself,
+ * because `BrnTooltip` binds both to its own host — and most hosts here are `<ui-button>`, a wrapper
+ * around the real `<button>`. On a wrapper that breaks twice, silently: `focus`/`blur` do not bubble,
+ * so brain's focus listener never fires and the tooltip never opens for keyboard users; and
+ * `aria-describedby` would land on the non-focusable wrapper, where no screen reader reads it. We
+ * listen for `focusin`/`focusout` (which do bubble) and resolve the description onto the focusable
+ * descendant. Escape closing is ours too — brain has no keydown handling.
  *
- * WHY THIS OWNS ITS OVERLAY INSTEAD OF WRAPPING `BrnTooltip`
- * `BrnTooltip` is already a one-attribute directive (`HlmTooltip` is a thin `hostDirectives` alias of
- * it), so wrapping it looked like the whole job. It is not, because `BrnTooltip` binds its triggers
- * and its `aria-describedby` to ITS OWN HOST ELEMENT — and 82 of our 124 hosts are `<ui-button>`,
- * which is a WRAPPER around the real `<button>` (see `UiButton`: it keeps the wrapper node on
- * purpose). Two things break on a wrapper, both silently:
- *
- *   1. `focus`/`blur` DO NOT BUBBLE. brain listens for `focus` on the wrapper, the inner `<button>`
- *      is what actually receives focus, so the listener never fires and the tooltip NEVER OPENS ON
- *      KEYBOARD FOCUS. Nothing throws; it just doesn't work for keyboard users.
- *   2. `aria-describedby` would be written onto `<ui-button>`, which is not the focusable node, so a
- *      screen reader parked on the inner `<button>` never announces the description.
- *
- * So we keep brain's *content* (`BrnTooltipContent` — styled, animated, `role="tooltip"`, with the
- * arrow and the `data-side`/`data-state` hooks) and Helm's styling, and own only the trigger and
- * a11y wiring, which is the part that has to know about the wrapper. `focusin`/`focusout` DO bubble,
- * so they catch the inner button's focus from the host; `aria-describedby` is resolved onto the
- * focusable descendant.
- *
- * ESCAPE
- * brain has no keydown handling at all. Users expect Escape to dismiss an open tooltip, so
- * dropping that support would have been a silent a11y regression.
- *
- * ACCESSIBLE NAME vs DESCRIPTION
- * A tooltip is a DESCRIPTION, never a name. This directive only ever writes `aria-describedby`; it
- * does not touch `aria-label`, so the explicit `ariaLabel` on every icon-only button survives.
+ * A tooltip is a description, never a name: this only writes `aria-describedby` and never touches
+ * `aria-label`.
  *
  * @example
  * <ui-button icon="trash" ariaLabel="Delete load" uiTooltip="Delete load" />
@@ -98,11 +78,11 @@ const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]:not([tab
     }),
   ],
   host: {
-    // mouseenter/mouseleave use boundary-crossing semantics: entering a descendant does not re-fire
-    // on the host, and leaving to a descendant does not fire mouseleave. Exactly right for a wrapper.
+    // mouseenter/mouseleave use boundary-crossing semantics: moving between the host and its
+    // descendants does not re-fire them. Right for a wrapper.
     "(mouseenter)": "requestShow()",
     "(mouseleave)": "requestHide()",
-    // focusin/focusout DO bubble (focus/blur do not) — this is what makes the inner <button> work.
+    // focusin/focusout bubble (focus/blur do not) — this is what catches the inner <button>.
     "(focusin)": "requestShow()",
     "(focusout)": "requestHide()",
   },
@@ -113,20 +93,17 @@ export class UiTooltip {
   private readonly overlay = inject(Overlay);
   private readonly positionBuilder = inject(OverlayPositionBuilder);
   private readonly document = inject(DOCUMENT);
-  // Declared before the inputs on purpose: class fields initialize top-to-bottom, and
-  // `uiTooltipDelay` reads `config.showDelay` for its default.
+  // Must precede the inputs: class fields initialize top-to-bottom and `uiTooltipDelay` reads
+  // `config.showDelay` for its default.
   private readonly config = injectBrnTooltipDefaultOptions();
 
   /**
-   * Empty / whitespace / undefined renders NO tooltip — never an empty box.
+   * Empty / whitespace / undefined renders no tooltip, never an empty box.
    *
-   * A `TemplateRef` is accepted for the rare tooltip that needs structure. It is the ONLY supported
-   * way to get markup in: a raw `innerHTML` string was interpolating tenant address data straight
-   * into itself at the one call site that needed structure. A template's bindings are escaped by
-   * Angular, so the markup stays and the injection does not.
+   * A `TemplateRef` is the only supported way to get markup in; an HTML string would be an injection
+   * vector, whereas a template's bindings are escaped by Angular.
    */
   public readonly uiTooltip = input<string | TemplateRef<void> | undefined>();
-  /** `"right"` is the default; the 79 call sites that set no position rely on it. */
   public readonly uiTooltipPosition = input<UiTooltipPosition>("right");
   public readonly uiTooltipDelay = input(this.config.showDelay, { transform: numberAttribute });
 
@@ -146,8 +123,8 @@ export class UiTooltip {
   private activePosition?: UiTooltipPosition;
 
   constructor() {
-    // Keep an open tooltip in sync with a text that changes underneath it, and close it outright if
-    // the text goes empty — otherwise we would be left showing a stale or empty box.
+    // Keep an open tooltip in sync with text that changes underneath it, and close it if the text
+    // goes empty — otherwise a stale or empty box stays on screen.
     effect(() => {
       const content = this.content();
       if (!this.contentRef) return;
@@ -192,24 +169,19 @@ export class UiTooltip {
       if (resolved && this.contentRef) this.applyProps(resolved);
     });
 
-    // The description lands on the FOCUSABLE element, not on this (possibly wrapper) host.
+    // The description lands on the focusable element, not on this (possibly wrapper) host.
     this.describedEl = this.resolveDescribedEl();
     this.renderer.setAttribute(this.describedEl, "aria-describedby", this.contentRef.instance.id());
 
-    // Escape closes even when the tooltip was opened by hover (focus is then elsewhere, so a host
-    // keydown would never see it).
+    // On `document`: a hover-opened tooltip leaves focus elsewhere, so a host keydown never sees it.
     const unlistenKey = this.renderer.listen("document", "keydown", (event: KeyboardEvent) => {
       if (event.key === "Escape") this.hide();
     });
 
-    // Scroll closes, matching brain. This MUST be a CAPTURE-phase listener on `document`:
-    // scroll events DO NOT BUBBLE, and this app never scrolls the window — every page scrolls inside
-    // `div.overflow-y-auto` (the main content pane) or the sidebar nav. A `window`- or bubble-phase
-    // listener therefore NEVER FIRES here, which left a focus-opened tooltip stranded hundreds of px
-    // from its host once the user scrolled (the hover path hid it by accident, via the `mouseleave`
-    // that firing from the host scrolling out from under the cursor — so only KEYBOARD users saw it).
-    // Capture-phase fires for a scroll on any element, so it catches those containers.
-    // `Renderer2.listen` cannot pass `capture`, hence the raw listener plus explicit teardown.
+    // Close on scroll. Must be capture-phase on `document`: scroll events do not bubble, and this app
+    // never scrolls the window — pages scroll inside `div.overflow-y-auto` or the sidebar nav — so a
+    // window/bubble-phase listener never fires and a focus-opened tooltip stays stranded away from its
+    // host. `Renderer2.listen` cannot pass `capture`, hence the raw listener plus explicit teardown.
     const onScroll = () => this.hide();
     this.document.addEventListener("scroll", onScroll, { capture: true, passive: true });
 
@@ -226,10 +198,8 @@ export class UiTooltip {
     }
     if (!this.contentRef) return;
 
-    // Detach synchronously rather than waiting out the exit animation. brain keeps the content
-    // mounted through its fade-out and guards the re-show race with a generation counter; we drop
-    // the fade-out instead of importing that race. A tooltip that reliably closes beats a prettier
-    // one that can get stuck open.
+    // Detach synchronously rather than waiting out an exit animation: keeping the content mounted
+    // through a fade-out opens a re-show race that has to be guarded with a generation counter.
     this.teardownGlobals?.();
     this.teardownGlobals = undefined;
     this.positionSub?.unsubscribe();
@@ -281,18 +251,17 @@ export class UiTooltip {
   }
 
   /**
-   * The host when it is itself focusable (`<button uiTooltip>`, `<a uiTooltip>`); otherwise, for a
-   * COMPONENT host that renders its own control (`<ui-button>` -> its inner `<button>`), that control.
+   * The host if it is focusable itself; else, for a component host that renders its own control
+   * (`<ui-button>` -> its inner `<button>`), that control.
    *
-   * A native non-focusable host — `<span>`, `<td>`, `<label>` — keeps the description on ITSELF even
-   * if it happens to contain a button. The tooltip on a table cell describes the cell; hoisting it
-   * onto some control that merely lives inside the cell would make a screen reader announce the
-   * cell's hint as that button's description, which is worse than announcing nothing.
+   * A native non-focusable host (`<span>`, `<td>`) keeps the description even if it contains a button:
+   * a tooltip on a table cell describes the cell, and hoisting it onto a control that merely lives
+   * inside would make a screen reader announce the cell's hint as that button's description.
    */
   private resolveDescribedEl(): HTMLElement {
     const host = this.elementRef.nativeElement;
-    if (host.matches(FOCUSABLE)) return host;
+    if (host.matches(FOCUSABLE_SELECTOR)) return host;
     if (!host.tagName.includes("-")) return host; // a native element, not a control wrapper
-    return host.querySelector<HTMLElement>(FOCUSABLE) ?? host;
+    return firstFocusableIn(host) ?? host;
   }
 }

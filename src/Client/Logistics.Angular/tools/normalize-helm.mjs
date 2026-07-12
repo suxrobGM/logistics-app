@@ -1,97 +1,69 @@
 #!/usr/bin/env node
 /**
  * normalize-helm.mjs — post-processor for `ng g @spartan-ng/cli:ui <primitive>`.
- * ============================================================================
- * This is NOT a reimplementation of the Spartan CLI (that was the old
- * `vendor-spartan-helm.mjs`, now deleted). The CLI remains the single source of
- * truth for the Helm component code. This script fixes the monorepo
- * incompatibilities in the generator's output so `ng build shared` (ng-packagr)
- * succeeds and the layout stays consistent with the hand-authored primitives.
  *
- * Passes, in order:
+ * The Spartan CLI stays the source of truth for Helm component code; this only fixes the monorepo
+ * incompatibilities in its output so `ng build shared` (ng-packagr) succeeds and the layout matches
+ * the hand-authored primitives.
  *
- *   1. `flattenSrc()` — flatten `<name>/src/**` → `<name>/**`. The generator emits a
- *      `src/`-nested layout; our primitives are flat (`<name>/index.ts`,
- *      `<name>/lib/*.ts`). We keep one layout.
+ * Passes:
+ *   1. flattenSrc()               `<name>/src/**` -> `<name>/**` (the generator nests; we are flat).
  *
- *      *** ANTI-CLOBBER GUARD (the important part) ***
- *      The CLI's `getDependentPrimitives` recursively CO-GENERATES dependencies:
- *        pagination → [utils, button, select]      dialog → [utils, button]
- *        tabs       → [utils, button]              sheet  → [utils, button]
- *        toggle-group → [utils, toggle]
- *        sidebar    → [utils, button, input, separator, sheet, skeleton, tooltip]
- *      So generating `pagination` re-emits a STOCK `select` — which would overwrite our
- *      vendored one and silently drop the load-bearing `*hlmSelectPortal` structural
- *      directive (without it the overlay never opens/closes — this bug already shipped
- *      once in this migration).
- *      Therefore: any primitive dir ALREADY TRACKED IN GIT is "vendored". If the
- *      generator emits a `src/` for it, we DISCARD the regenerated copy and keep ours.
- *      Escape hatch: `--force <name>[,<name>]` deliberately lets the regenerated copy
- *      win (for an intentional upstream re-pull). Without the flag we refuse, loudly.
+ *      ANTI-CLOBBER GUARD — the important part. The CLI recursively CO-GENERATES dependencies, so
+ *      generating `pagination` also re-emits a STOCK `select`, which would overwrite our vendored one
+ *      and silently drop its load-bearing `*hlmSelectPortal` directive (without which the overlay never
+ *      opens). Therefore: any primitive dir ALREADY TRACKED IN GIT is "vendored" — if the generator
+ *      emits a `src/` for it we DISCARD the regenerated copy and keep ours. `--force <name>` overrides,
+ *      for a deliberate upstream re-pull. Without the flag we refuse, loudly.
  *
- *   2. `relativizeImports()` — rewrite `@logistics/shared/ui/primitives/<name>` self-alias
- *      imports to plain relative paths. ng-packagr rejects tsconfig path aliases that
- *      resolve outside the entry point; we consume the library from source.
- *
- *   3. `fixTypeOnlyImports()` — promote known type-only symbols to `import type` (TS1484
- *      under `verbatimModuleSyntax`).
- *
- *   4. `stripGeneratorBugs()` — drop the CLI's bogus `[forceInvalid]` inner binding.
- *
- *   5. `stripInertCva()` — strip the dead ControlValueAccessor plumbing from the 4
- *      date-picker components. See the function's docblock for the inertness proof.
- *
- *   6. `stripTsconfigPaths()` — drop the `@logistics/shared/ui/primitives/*` tsconfig
- *      paths the generator adds.
- *
- *   7. `assertNoBareSpartanClasses()` — GATE. The generator inlines the Tailwind
- *      utilities it harvests from `style-vega.css`, but leaves three tokens un-inlined:
- *      `spartan-invalid`, `spartan-menu-target`, `spartan-logical-sides`. Those class
- *      names are UNDEFINED here (we deliberately do not import
- *      `@spartan-ng/brain/hlm-tailwind-preset.css`), so a component emitting one renders
- *      UNSTYLED — silently. Any bare `spartan-*` CSS class token → print file:line and
- *      exit(1).
+ *   2. rewriteSources()           ONE read/write per file, applying three independent rewrites, then
+ *                                 gating on bare `spartan-*` classes:
+ *                                   relativizeImports()  self-alias -> relative (ng-packagr rejects the alias)
+ *                                   fixTypeOnlyImports() TS1484 under `verbatimModuleSyntax`
+ *                                   stripGeneratorBugs() drop the CLI's bogus `[forceInvalid]` binding
+ *                                 GATE — see lib/spartan-scan.mjs.
+ *   3. stripInertCva()            the date-pickers ship dead CVA plumbing; this repo is Signal Forms.
+ *   4. stripTsconfigPaths()       drop the paths the generator adds.
  *
  * Run it right after generating a primitive:
  *   bunx ng g @spartan-ng/cli:ui <primitive> --no-interactive
- *   bun run ui:normalize          # (== node tools/normalize-helm.mjs)
+ *   bun run ui:normalize
  *   bunx prettier --write "projects/shared/src/lib/ui/primitives/**" tsconfig.json
  *
- * Idempotent: re-running it on an already-normalized tree is a no-op and exits 0.
+ * Idempotent: re-running on an already-normalized tree is a no-op and exits 0.
  */
-import {
-  readFileSync,
-  writeFileSync,
-  readdirSync,
-  statSync,
-  rmSync,
-  renameSync,
-  existsSync,
-  mkdirSync,
-} from "node:fs";
 import { execFileSync } from "node:child_process";
-import { join, relative, dirname } from "node:path";
+import { existsSync, mkdirSync, readdirSync, renameSync, rmSync, statSync } from "node:fs";
+import { dirname, join, relative } from "node:path";
+import {
+  lineOf,
+  listFiles,
+  readText,
+  relative as toWorkspacePath,
+  WORKSPACE_ROOT,
+  writeText,
+} from "./lib/io.mjs";
+import { findBareTokens } from "./lib/spartan-scan.mjs";
 
 const ALIAS = "@logistics/shared/ui/primitives";
 const PRIMS_DIR = "projects/shared/src/lib/ui/primitives";
+const PRIMS_ABS = join(WORKSPACE_ROOT, PRIMS_DIR);
 const TSCONFIG = "tsconfig.json";
 
 /**
- * WHY primitives get preserved (documentation; the runtime guard is `trackedPrimitives()`).
- *
- * `utils` is hand-canonicalised (its `classes()` / `provideSpartanHlm()` are load-bearing).
- * `input` / `textarea` were deliberately stripped of brain's `BrnInput` /
- * `BrnFieldControlDescribedBy` host-directives, which inject the ambient `NgControl` and drive
- * `aria-invalid` from the raw, ungated control state — the pristine-invalid bug.
- * `select` carries the `*hlmSelectPortal` structural directive; `date-picker` has its CVA stripped.
- *
- * This list is now only a SAFETY FLOOR. The real guard is "is this dir tracked in git?", so every
- * vendored primitive is protected automatically as Phase 6 lands ~18 more.
+ * A safety floor only — the real guard is `trackedPrimitives()` ("is this dir tracked in git?"), which
+ * protects every vendored primitive automatically. Listed here because their hand-modifications are the
+ * ones that hurt most if silently regenerated: `utils` is hand-canonicalised, and `input` / `textarea`
+ * had brain's `BrnInput` / `BrnFieldControlDescribedBy` host-directives stripped (they inject the
+ * ambient `NgControl` and drive `aria-invalid` from ungated state — the pristine-invalid bug).
  */
 const PRESERVE = new Set(["utils", "input", "textarea"]);
 
 /** The 2 vendored date-picker components that ship an inert ControlValueAccessor. See stripInertCva(). */
-const CVA_FILES = ["date-picker/lib/hlm-date-picker.ts", "date-picker/lib/hlm-date-range-picker.ts"];
+const CVA_FILES = [
+  "date-picker/lib/hlm-date-picker.ts",
+  "date-picker/lib/hlm-date-range-picker.ts",
+];
 
 /** `--force select,button` or `--force=select,button` (repeatable). */
 function parseForce(argv) {
@@ -140,16 +112,6 @@ function trackedPrimitives() {
     if (name) names.add(name);
   }
   return names;
-}
-
-function walk(dir) {
-  const out = [];
-  for (const name of readdirSync(dir)) {
-    const p = join(dir, name);
-    if (statSync(p).isDirectory()) out.push(...walk(p));
-    else if (p.endsWith(".ts")) out.push(p);
-  }
-  return out;
 }
 
 /** Move a file or directory tree from `from` to `to`, overwriting existing files. */
@@ -207,26 +169,15 @@ function flattenSrc(vendored) {
   return { flattened, preserved: preserved.length, forced: forced.length };
 }
 
+const ALIAS_IMPORT_RE = new RegExp(`(['"\`])${ALIAS}/([a-z0-9-]+)\\1`, "g");
+
 /** Rewrite `@logistics/shared/ui/primitives/<name>` imports to a relative path (flat layout). */
-function relativizeImports() {
-  let changed = 0;
-  for (const file of walk(PRIMS_DIR)) {
-    const src = readFileSync(file, "utf8");
-    const next = src.replace(
-      new RegExp(`(['"\`])${ALIAS}/([a-z0-9-]+)\\1`, "g"),
-      (_m, q, name) => {
-        const target = join(PRIMS_DIR, name);
-        let rel = relative(dirname(file), target).replaceAll("\\", "/");
-        if (!rel.startsWith(".")) rel = "./" + rel;
-        return `${q}${rel}${q}`;
-      },
-    );
-    if (next !== src) {
-      writeFileSync(file, next);
-      changed++;
-    }
-  }
-  return changed;
+function relativizeImports(src, file) {
+  return src.replace(ALIAS_IMPORT_RE, (_m, q, name) => {
+    let rel = relative(dirname(file), join(PRIMS_ABS, name)).replaceAll("\\", "/");
+    if (!rel.startsWith(".")) rel = "./" + rel;
+    return `${q}${rel}${q}`;
+  });
 }
 
 /**
@@ -237,12 +188,11 @@ function relativizeImports() {
  * quote-agnostic and whitespace-tolerant rather than assuming Prettier's double-quoted,
  * single-space formatting. Same for `stripGeneratorBugs()`.
  */
-function fixTypeOnlyImports() {
-  const COERCION_TYPES = /^(?:BooleanInput|NumberInput|StringInput)$/;
-  let changed = 0;
-  for (const file of walk(PRIMS_DIR)) {
-    const src = readFileSync(file, "utf8");
-    let next = src
+const COERCION_TYPES = /^(?:BooleanInput|NumberInput|StringInput)$/;
+
+function fixTypeOnlyImports(src) {
+  return (
+    src
       // `import { BooleanInput[, NumberInput] } from "@angular/cdk/coercion";` → `import type { ... }`
       // Only when EVERY specifier is a coercion *type* (cdk/coercion also exports real functions).
       .replace(
@@ -263,13 +213,8 @@ function fixTypeOnlyImports() {
       .replace(
         /import\s+\{\s*ButtonVariants\s*,\s*HlmButtonImports\s*\}/g,
         "import { type ButtonVariants, HlmButtonImports }",
-      );
-    if (next !== src) {
-      writeFileSync(file, next);
-      changed++;
-    }
-  }
-  return changed;
+      )
+  );
 }
 
 /**
@@ -280,17 +225,46 @@ function fixTypeOnlyImports() {
  *
  * Runs pre-prettier — quote-agnostic (Angular templates accept `'` or `"` around a binding value).
  */
-function stripGeneratorBugs() {
-  let changed = 0;
-  for (const file of walk(PRIMS_DIR)) {
-    const src = readFileSync(file, "utf8");
-    const next = src.replace(/^[ \t]*\[forceInvalid\]=(["'])forceInvalid\(\)\1[ \t]*\r?\n/gm, "");
-    if (next !== src) {
-      writeFileSync(file, next);
-      changed++;
+function stripGeneratorBugs(src) {
+  return src.replace(/^[ \t]*\[forceInvalid\]=(["'])forceInvalid\(\)\1[ \t]*\r?\n/gm, "");
+}
+
+/**
+ * The three rewrites above, plus the gate, in ONE read/write per file. They used to be four passes,
+ * each re-walking PRIMS_DIR and re-reading all ~124 files. They are independent, order-free rewrites
+ * over the same source, so they compose.
+ *
+ * The gate reads the in-memory text rather than calling checks/spartan-tokens.mjs, which would re-read
+ * the tree from disk. The DETECTOR is the thing that must not drift, and that is shared.
+ */
+function rewriteSources() {
+  const changed = { imports: 0, typeImports: 0, bugs: 0 };
+  const offenders = [];
+
+  for (const file of listFiles({ dirs: [PRIMS_DIR], ext: [".ts"] })) {
+    const src = readText(file);
+
+    const relativized = relativizeImports(src, file);
+    if (relativized !== src) changed.imports++;
+
+    const typed = fixTypeOnlyImports(relativized);
+    if (typed !== relativized) changed.typeImports++;
+
+    const next = stripGeneratorBugs(typed);
+    if (next !== typed) changed.bugs++;
+
+    if (next !== src) writeText(file, next);
+
+    for (const hit of findBareTokens(next)) {
+      offenders.push({
+        file: toWorkspacePath(file),
+        line: lineOf(next, hit.offset),
+        token: hit.token,
+      });
     }
   }
-  return changed;
+
+  return { changed, offenders };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -332,7 +306,10 @@ function removeMethod(src, name) {
 
 /** Remove a single-line class field declaration `_name...;` if present. */
 function removeField(src, name) {
-  return src.replace(new RegExp(`\\n[ \\t]*(?:public |protected |private )?${name}\\??:[^\\n]*;`), "");
+  return src.replace(
+    new RegExp(`\\n[ \\t]*(?:public |protected |private )?${name}\\??:[^\\n]*;`),
+    "",
+  );
 }
 
 /** Drop named import specifiers that are no longer referenced; drop the import if it empties. */
@@ -348,11 +325,22 @@ function pruneUnusedImports(src) {
       .filter(Boolean)
       .filter((spec) => {
         // `type Foo`, `Foo as Bar`, `Foo` → the local binding is the last identifier.
-        const local = spec.replace(/^type\s+/, "").split(/\s+as\s+/).pop().trim();
+        const local = spec
+          .replace(/^type\s+/, "")
+          .split(/\s+as\s+/)
+          .pop()
+          .trim();
         return new RegExp(`\\b${local}\\b`).test(body);
       });
     if (!kept.length) return "";
-    if (kept.length === specs.split(",").map((s) => s.trim()).filter(Boolean).length) return whole;
+    if (
+      kept.length ===
+      specs
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean).length
+    )
+      return whole;
     return `import ${typeKw ?? ""}{ ${kept.join(", ")} } from ${q}${mod}${q};\n`;
   });
 }
@@ -385,7 +373,7 @@ function stripInertCva() {
   for (const rel of CVA_FILES) {
     const file = join(PRIMS_DIR, rel);
     if (!existsSync(file)) continue;
-    const original = readFileSync(file, "utf8");
+    const original = readText(file);
     let src = original;
     const removed = [];
 
@@ -453,7 +441,7 @@ function stripInertCva() {
     src = src.replace(/\n{3,}/g, "\n\n");
 
     if (src !== original) {
-      writeFileSync(file, src);
+      writeText(file, src);
       report.push({ file: rel, removed });
     }
   }
@@ -464,71 +452,17 @@ function stripInertCva() {
   return report.length;
 }
 
-// ---------------------------------------------------------------------------------------------
-// Pass 7 — gate on bare `spartan-*` class tokens.
-// ---------------------------------------------------------------------------------------------
-
 /**
- * Collect string / template literal spans, skipping comments (so the word "spartan" in a comment is
- * never flagged). Deliberately simple: it does not model `${}` interpolation or regex literals,
- * neither of which appears in Helm primitives.
+ * GATE: a bare `spartan-*` CSS class token renders the component unstyled (we do not ship
+ * `hlm-tailwind-preset.css`). Detector lives in lib/spartan-scan.mjs, shared with the CI check so the
+ * two cannot drift apart.
  */
-function stringLiterals(src) {
-  const spans = [];
-  for (let i = 0; i < src.length; ) {
-    const c = src[i];
-    if (c === "/" && src[i + 1] === "/") {
-      while (i < src.length && src[i] !== "\n") i++;
-    } else if (c === "/" && src[i + 1] === "*") {
-      i += 2;
-      while (i < src.length && !(src[i] === "*" && src[i + 1] === "/")) i++;
-      i += 2;
-    } else if (c === '"' || c === "'" || c === "`") {
-      const start = ++i;
-      while (i < src.length && src[i] !== c) i += src[i] === "\\" ? 2 : 1;
-      spans.push({ start, text: src.slice(start, i) });
-      i++;
-    } else {
-      i++;
-    }
-  }
-  return spans;
-}
-
-/**
- * GATE: a bare `spartan-*` CSS class token renders unstyled (we don't ship
- * `hlm-tailwind-preset.css`). A token counts as a bare CLASS only when it starts at a class
- * boundary — start of the literal, whitespace, a nested quote, or a Tailwind variant `:`.
- *
- * Deliberately NOT flagged (all fine, none need a CSS rule):
- *   - `data-[matches-spartan-invalid=true]:ring-3`  → preceded by `-` (attribute selector)
- *   - `[attr.data-matches-spartan-invalid]`         → preceded by `-`
- *   - `var(--spartan-overlay-width)`                → preceded by `-` (CSS custom property)
- *   - `"@spartan-ng/brain/select"`                  → preceded by `@` (module specifier)
- *   - `"./lib/provide-spartan-hlm"`                 → preceded by `-` (module specifier)
- */
-function assertNoBareSpartanClasses() {
-  const TOKEN = /spartan-[a-z0-9]+(?:-[a-z0-9]+)*/g;
-  const offenders = [];
-  for (const file of walk(PRIMS_DIR)) {
-    const src = readFileSync(file, "utf8");
-    for (const span of stringLiterals(src)) {
-      for (let m; (m = TOKEN.exec(span.text)); ) {
-        const prev = m.index === 0 ? undefined : span.text[m.index - 1];
-        const atClassBoundary = prev === undefined || /[\s"'`:]/.test(prev);
-        if (!atClassBoundary) continue;
-        const abs = span.start + m.index;
-        const line = src.slice(0, abs).split("\n").length;
-        offenders.push({ file: file.replaceAll("\\", "/"), line, token: m[0] });
-      }
-    }
-  }
+function assertNoBareSpartanClasses(offenders) {
   if (!offenders.length) return;
 
   console.error(
     `\nnormalize-helm: FAILED — ${offenders.length} bare \`spartan-*\` class token(s).\n` +
-      `These class names are UNDEFINED in this repo (we deliberately do not import\n` +
-      `@spartan-ng/brain/hlm-tailwind-preset.css), so the component renders UNSTYLED.\n` +
+      `These class names are UNDEFINED in this repo, so the component renders UNSTYLED.\n` +
       `Replace each with the equivalent inlined Tailwind utilities:\n`,
   );
   for (const o of offenders) console.error(`  ${o.file}:${o.line}  ${o.token}`);
@@ -538,7 +472,7 @@ function assertNoBareSpartanClasses() {
 
 /** Drop every `@logistics/shared/ui/primitives/*` entry the generator added to tsconfig paths. */
 function stripTsconfigPaths() {
-  const raw = readFileSync(TSCONFIG, "utf8");
+  const raw = readText(TSCONFIG);
   const json = JSON.parse(raw);
   const paths = json?.compilerOptions?.paths;
   if (!paths) return 0;
@@ -549,21 +483,19 @@ function stripTsconfigPaths() {
       removed++;
     }
   }
-  if (removed) writeFileSync(TSCONFIG, JSON.stringify(json, null, 2) + "\n");
+  if (removed) writeText(TSCONFIG, JSON.stringify(json, null, 2) + "\n");
   return removed;
 }
 
 const vendored = trackedPrimitives();
 const { flattened, preserved, forced } = flattenSrc(vendored);
-const importsFixed = relativizeImports();
-const typeImportsFixed = fixTypeOnlyImports();
-const bugsStripped = stripGeneratorBugs();
+const { changed, offenders } = rewriteSources();
 const cvaStripped = stripInertCva();
 const pathsRemoved = stripTsconfigPaths();
 console.log(
   `normalize-helm: flattened ${flattened} primitive(s), preserved ${preserved} vendored, ` +
-    `force-overwrote ${forced}, relativized ${importsFixed} file(s), ` +
-    `fixed ${typeImportsFixed} type-only import(s), stripped ${bugsStripped} generator bug(s), ` +
+    `force-overwrote ${forced}, relativized ${changed.imports} file(s), ` +
+    `fixed ${changed.typeImports} type-only import(s), stripped ${changed.bugs} generator bug(s), ` +
     `stripped CVA from ${cvaStripped} file(s), removed ${pathsRemoved} tsconfig path alias(es).`,
 );
-assertNoBareSpartanClasses();
+assertNoBareSpartanClasses(offenders);

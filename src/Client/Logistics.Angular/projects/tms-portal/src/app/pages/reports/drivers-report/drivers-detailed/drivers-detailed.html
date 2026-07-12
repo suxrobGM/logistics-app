@@ -1,9 +1,5 @@
 <ui-page-header title="Drivers Report" subtitle="Detailed driver performance and statistics">
-  <ui-search-field
-    class="w-50"
-    placeholder="Search drivers..."
-    (searchChange)="onSearch($event)"
-  />
+  <ui-search-field class="w-50" placeholder="Search drivers..." (searchChange)="onSearch($event)" />
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
 </ui-page-header>
 

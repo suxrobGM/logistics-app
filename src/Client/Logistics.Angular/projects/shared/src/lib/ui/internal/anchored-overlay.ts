@@ -2,28 +2,21 @@ import { ESCAPE } from "@angular/cdk/keycodes";
 import { Overlay, type ConnectedPosition, type OverlayRef } from "@angular/cdk/overlay";
 import { TemplatePortal } from "@angular/cdk/portal";
 import { DestroyRef, inject, signal, ViewContainerRef, type TemplateRef } from "@angular/core";
+import { firstFocusableIn, isFocusable } from "./focusable";
 
 /**
- * An overlay anchored to WHATEVER ELEMENT THE EVENT CAME FROM, with an imperative
- * `toggle(event)` / `hide()`.
+ * An overlay anchored to whatever element the event came from, with an imperative
+ * `toggle(event)` / `hide()`. Internal; shared by `ui-menu` and `ui-popover`.
  *
- * INTERNAL. Not exported from `@logistics/shared/ui` — it exists only so `ui-menu` and `ui-popover`
- * share ONE implementation of "open here, and definitely close again". Both are driven by call sites
- * through a template ref (`<ui-menu #menu />` plus `menu.toggle($event)` from a *sibling* button), so
- * neither can use the CDK/brain trigger
- * directives: those anchor their overlay to their OWN host element, and measure outside-clicks
- * against it. Anchoring to the event's `currentTarget` is the whole point of this class.
+ * Both are driven through a template ref (`<ui-menu #menu />` plus `menu.toggle($event)` from a
+ * *sibling* button), so neither can use the CDK/brain trigger directives: those anchor the overlay to
+ * their own host and measure outside-clicks against it. Anchoring to the event's `currentTarget` is
+ * the whole point of this class.
  *
- * Every close path is explicit and lives here, once (Lesson 5 — "the overlay must CLOSE", and this
- * migration has already shipped that bug):
- *
- *   - Escape             `keydownEvents()`
- *   - Outside pointer    `outsidePointerEvents()`, ignoring the trigger itself — see below
- *   - Navigation         `disposeOnNavigation`
- *   - Scrolled away      the reposition strategy's `autoClose`
- *
- * and `opened` is derived from `detachments()`, so it cannot go stale no matter which path fired.
- * Callers layer their own extra closers on top (an activated menu item; a `hide()` from a link).
+ * Close paths, all explicit: Escape (`keydownEvents()`), outside pointer (`outsidePointerEvents()`,
+ * ignoring the trigger — see below), navigation (`disposeOnNavigation`) and scrolled-away (the
+ * reposition strategy's `autoClose`). `opened` is derived from `detachments()`, so it cannot go stale
+ * whichever path fired.
  */
 export class AnchoredOverlay {
   private readonly overlay = inject(Overlay);
@@ -65,8 +58,8 @@ export class AnchoredOverlay {
   }
 
   public show(event: Event): void {
-    // `currentTarget` is the element the listener is bound to — the trigger button. `target` may be
-    // an inner <span> or the icon's <svg>, and anchoring to that would hang the panel off the glyph.
+    // `currentTarget` is the element the listener is bound to — the trigger. `target` may be an inner
+    // <span> or the icon's <svg>, and anchoring to that would hang the panel off the glyph.
     const origin = (event.currentTarget ?? event.target) as HTMLElement | null;
     if (!origin) return;
 
@@ -80,18 +73,19 @@ export class AnchoredOverlay {
   }
 
   /**
-   * Put focus back where it came from after Escape — otherwise it falls to <body> and the user's tab
+   * Put focus back on the trigger after Escape — otherwise it falls to <body> and the user's tab
    * position resets.
    *
-   * The anchor is usually `<ui-button>`, a WRAPPER around the real `<button>` (the click listener is
-   * bound to the component element, so that is what `event.currentTarget` hands us). A custom element
-   * has no tabindex, so `anchor.focus()` is a silent no-op — the same wrapper trap that broke keyboard
-   * tooltips in S6. Focus the anchor only if it is genuinely focusable, else its first focusable child.
+   * The anchor is usually `<ui-button>`, a wrapper around the real `<button>` (the click listener is
+   * bound to the component element, so that is what `currentTarget` hands us). A custom element has no
+   * tabindex, so `.focus()` on it is a silent no-op — hence: the anchor only if it is genuinely
+   * focusable, else its first focusable child.
+   *
+   * Takes the anchor as an argument because `hide()` clears `origin` synchronously.
    */
-  private refocusTrigger(): void {
-    const anchor = this.origin;
+  private static refocusTrigger(anchor: HTMLElement | undefined): void {
     if (!anchor) return;
-    const target = anchor.tabIndex >= 0 ? anchor : anchor.querySelector<HTMLElement>(FOCUSABLE);
+    const target = isFocusable(anchor) ? anchor : firstFocusableIn(anchor);
     target?.focus({ preventScroll: true });
   }
 
@@ -110,31 +104,35 @@ export class AnchoredOverlay {
 
     const overlayRef = this.overlay.create({
       positionStrategy,
-      // Reposition rather than close: most of these hang off a row inside a scrollable table, and
-      // closing would make the panel vanish on the smallest trackpad nudge. `autoClose` still
-      // detaches once the anchor is scrolled out of view, which is the case where staying glued looks
-      // broken.
+      // Reposition rather than close: most of these hang off a row in a scrollable table, where
+      // closing would make the panel vanish on the smallest trackpad nudge. `autoClose` still detaches
+      // once the anchor is scrolled out of view.
       scrollStrategy: this.overlay.scrollStrategies.reposition({ autoClose: true }),
       hasBackdrop: false,
       disposeOnNavigation: true,
     });
 
-    overlayRef.detachments().subscribe(() => this._opened.set(false));
+    // Drop the anchor on close: one <ui-menu> serves every row of a table, so holding the trigger
+    // would pin that row's detached <ui-button> subtree once the table re-renders.
+    overlayRef.detachments().subscribe(() => {
+      this._opened.set(false);
+      this.origin = undefined;
+    });
 
     overlayRef.keydownEvents().subscribe((event) => {
       if (event.keyCode !== ESCAPE) return;
       event.preventDefault();
+      const anchor = this.origin; // hide() clears it, synchronously — read it first.
       this.hide();
-      this.refocusTrigger();
+      AnchoredOverlay.refocusTrigger(anchor);
     });
 
     overlayRef.outsidePointerEvents().subscribe((event) => {
-      // THE TRIGGER COUNTS AS "OUTSIDE", AND THIS GUARD IS LOAD-BEARING.
-      // CDK's OverlayOutsideClickDispatcher listens on <body> in the CAPTURE phase and emits on the
-      // `click`. Capture runs before the trigger's own bubble-phase handler, so on a SECOND click of
-      // the kebab the order is: [capture] outside-click -> hide, then [bubble] toggle() -> sees a
-      // closed panel -> reopens it. The button would be unable to close what it opened, and the menu
-      // would look stuck. So ignore the trigger here and let `toggle()` own that case.
+      // The trigger counts as "outside", and this guard is load-bearing. CDK's outside-click
+      // dispatcher listens on <body> in the capture phase, which runs before the trigger's own
+      // bubble-phase handler: on a second click of the trigger the order would be [capture]
+      // outside-click -> hide, then [bubble] toggle() -> sees a closed panel -> reopens it, so the
+      // button could never close what it opened. Ignore the trigger and let `toggle()` own that case.
       const target = event.target as Node | null;
       if (target && this.origin?.contains(target)) return;
       this.hide();
@@ -144,9 +142,6 @@ export class AnchoredOverlay {
     return overlayRef;
   }
 }
-
-/** What actually takes focus inside a wrapper element like `<ui-button>`. */
-const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 /** Anchored below the trigger and right-aligned, flipping above it when there is no room. */
 export const BELOW_TRIGGER_POSITIONS: ConnectedPosition[] = [

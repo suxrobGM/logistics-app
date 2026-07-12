@@ -1,15 +1,11 @@
 /**
- * `ui-card`'s contract. The three things pinned here are the three that would ship broken:
+ * `ui-card`'s contract. Three things, each of which breaks silently — build, lint and every other
+ * spec stay green:
  *
- *   1. THE 83 TEMPLATE SLOTS. `<ng-template #header>` x71, `#title` x8, `#subtitle` x4, `#footer` x3.
- *      It is easy to assume the card is 100% plain content projection with zero templates — a grep
- *      for the old `pTemplate="header"` spelling finds nothing. It is not: a card that ignores these
- *      slots drops the heading off 71 panels and still compiles, still lints, and still passes every
- *      other test.
- *   2. `header` (the STRING, 43 sites) renders in card-TITLE, not card-HEADER. They are different
- *      boxes with different padding — the header sits outside the body. Getting it backwards moves
- *      43 headings by 1.25rem and nothing complains.
- *   3. The call site's `class` reaches the host and beats our own (86 sites pass one).
+ *   1. the `#header` / `#title` / `#subtitle` / `#footer` template slots are rendered at all;
+ *   2. the `header` STRING renders in card-title, not card-header (different boxes, different
+ *      padding — the header sits outside the body);
+ *   3. a call site's `class` reaches the host and beats the card's own.
  */
 import { NgTemplateOutlet } from "@angular/common";
 import {
@@ -23,13 +19,12 @@ import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import { Card } from "./card";
 
 /**
- * The class-merge hosts use a STATIC `class=`, which is what every one of the 86 call sites writes.
- * That is not incidental: `classes()` harvests the class attribute via `HostAttributeToken` at
- * construction and twMerges it, so a static class is genuinely merged (the card's own
- * `rounded-[…]` is DROPPED, not merely outranked). A `[class]` binding whose value CHANGES after
- * first render is appended by the MutationObserver without re-merging — so a test written against a
- * mutable signal would be testing a shape no call site has, and would report a merge failure that
- * does not exist in the app. No p-card / p-tag / p-skeleton / p-divider site binds `[class]`.
+ * The class-merge host must use a STATIC `class=` — the shape every call site writes. `classes()`
+ * harvests the class attribute via `HostAttributeToken` at construction and twMerges it, so a static
+ * class is genuinely merged (the card's own `rounded-[…]` is DROPPED, not merely outranked). A
+ * `[class]` binding whose value changes after first render is appended by the MutationObserver
+ * without re-merging, so a test driven from a mutable signal would report a merge failure that does
+ * not exist in the app.
  */
 @Component({
   selector: "ui-host-card-class",
@@ -68,11 +63,9 @@ class HostCard {
 }
 
 /**
- * A stand-in for `<ui-data-table>`: a CHILD COMPONENT that owns its own `#header` slot.
- *
- * This is the shape every one of the 48 list pages actually writes, and the one the tests above miss
- * — they only ever put `<ng-template #header>` as a DIRECT child of `<ui-card>`, which is the one
- * arrangement where a descending query and a non-descending query agree.
+ * A stand-in for `<ui-data-table>`: a child component that owns its own `#header` slot. This is the
+ * shape the list pages write, and the only one that can catch a descending `contentChild` — the
+ * other tests place templates as DIRECT children, where both query kinds behave identically.
  */
 @Component({
   selector: "ui-fake-table",
@@ -120,7 +113,6 @@ describe("ui-card", () => {
     expect(slot("content")?.querySelector('[data-test="body"]')).toBeTruthy();
   });
 
-  // 1. The slots the brief said did not exist.
   describe("the 83 template slots", () => {
     it("renders a #header template into card-header", () => {
       host.withHeaderTpl.set(true);
@@ -159,15 +151,10 @@ describe("ui-card", () => {
     });
 
     /**
-     * THE REGRESSION THAT SHIPPED. `contentChild()` defaults to `descendants: true`; p-card declared
-     * every slot `@ContentChild('header', { descendants: false })`. `#header` / `#title` / `#footer`
-     * are ALSO `ui-data-table`'s slot names, and 48 pages nest a table inside a card — so a descending
-     * card STEALS the table's header row and renders `<tr><th>` into card-header, orphaned outside any
-     * `<table>`. Build green, lint green, all 236 tests green; /customers read
-     * "Name↑↓StatusEmail↑↓Phone↑↓Created↑↓" above the card.
-     *
-     * The tests above could not catch it: they only place templates as DIRECT children, the one
-     * arrangement in which both query kinds behave identically.
+     * `contentChild()` defaults to `descendants: true`, and `#header` / `#title` / `#footer` are also
+     * `ui-data-table`'s slot names. With the default, a card containing a table steals the table's
+     * header row and renders `<tr><th>` into card-header, orphaned outside any `<table>` — while the
+     * build, the lint and every other test stay green.
      */
     it("does NOT steal a #header belonging to a NESTED component (descendants: false)", async () => {
       const nested = TestBed.createComponent(HostNested);
@@ -188,7 +175,6 @@ describe("ui-card", () => {
     });
   });
 
-  // 2. The 43 `header="…"` sites.
   describe("the `header` string input", () => {
     it("renders into card-TITLE, not card-header", () => {
       host.header.set("Quick Actions");
@@ -197,7 +183,7 @@ describe("ui-card", () => {
       expect(slot("header")).toBeNull();
     });
 
-    it("yields to a #title template, as p-card did", () => {
+    it("yields to a #title template", () => {
       host.header.set("Quick Actions");
       host.withTitleTpl.set(true);
       fixture.detectChanges();
@@ -206,7 +192,6 @@ describe("ui-card", () => {
     });
   });
 
-  // 3. The 86 `class=` sites.
   describe("the host class", () => {
     it("carries the card's own surface and radius", () => {
       const cls = card().className;

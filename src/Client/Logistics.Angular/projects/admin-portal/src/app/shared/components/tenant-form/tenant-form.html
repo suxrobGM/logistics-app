@@ -40,7 +40,7 @@
   <div class="mb-4">
     <h4 class="mb-2 font-semibold">
       Company Address
-      <span class="text-red-500">*</span>
+      <span class="text-danger">*</span>
     </h4>
     <ui-address-form [formField]="form.companyAddress" />
   </div>
@@ -48,7 +48,7 @@
   @if (mode() === "create") {
     <div class="mb-4">
       <h4 class="mb-2 font-semibold">Owner Account</h4>
-      <p class="text-surface-500 mb-4 text-sm">
+      <p class="text-muted-foreground mb-4 text-sm">
         The owner will receive login credentials via email.
       </p>
 

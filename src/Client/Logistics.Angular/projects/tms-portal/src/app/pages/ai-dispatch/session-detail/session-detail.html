@@ -73,7 +73,12 @@
           <ui-icon name="sparkles" color="primary" />
           <span class="font-semibold">Agent Summary</span>
           @if (session.status === "running") {
-            <ui-icon name="loader-circle" size="inherit" spin class="text-muted-foreground text-xs" />
+            <ui-icon
+              name="loader-circle"
+              size="inherit"
+              spin
+              class="text-muted-foreground text-xs"
+            />
           }
         </ui-stack>
         <div

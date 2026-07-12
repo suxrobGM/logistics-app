@@ -82,11 +82,11 @@
           <ui-typography variant="h5" tag="h2" class="mb-4">Account Status</ui-typography>
           <ui-stack direction="row" align="center" gap="2">
             @if (profile()?.isActive) {
-              <span class="flex h-3 w-3 rounded-full bg-green-500"></span>
-              <span class="text-green-700">Active</span>
+              <span class="bg-success flex h-3 w-3 rounded-full"></span>
+              <span class="text-success">Active</span>
             } @else {
-              <span class="flex h-3 w-3 rounded-full bg-red-500"></span>
-              <span class="text-red-700">Inactive</span>
+              <span class="bg-danger flex h-3 w-3 rounded-full"></span>
+              <span class="text-danger">Inactive</span>
             }
           </ui-stack>
           <ui-typography variant="body-sm" color="muted" class="mt-2">

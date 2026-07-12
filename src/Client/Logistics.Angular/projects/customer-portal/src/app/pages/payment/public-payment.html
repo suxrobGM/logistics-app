@@ -7,8 +7,8 @@
     <!-- Payment Success -->
     <ui-surface variant="elevated" padding="lg" class="block text-center">
       <div class="mb-6">
-        <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-          <ui-icon name="check" size="xl" class="text-green-600" />
+        <div class="bg-success/15 mx-auto flex h-20 w-20 items-center justify-center rounded-full">
+          <ui-icon name="check" size="xl" class="text-success" />
         </div>
       </div>
       <ui-typography variant="h3" tag="h2" class="mb-2">Payment Successful!</ui-typography>
@@ -28,7 +28,9 @@
           <ui-typography variant="h3" tag="h2">
             Invoice #{{ inv.number }}
             @if (inv.loadNumber) {
-              <span class="text-lg font-normal text-gray-500">- Load #{{ inv.loadNumber }}</span>
+              <span class="text-muted-foreground text-lg font-normal">
+                - Load #{{ inv.loadNumber }}
+              </span>
             }
           </ui-typography>
           <ui-typography variant="body" color="muted">{{ inv.companyName }}</ui-typography>
@@ -124,7 +126,7 @@
                 <span class="font-semibold">{{ inv.total?.amount | currencyFormat }}</span>
               </ui-stack>
               @if ((inv.total?.amount ?? 0) > (inv.amountDue ?? 0)) {
-                <ui-stack direction="row" justify="between" class="py-1 text-green-600">
+                <ui-stack direction="row" justify="between" class="text-success py-1">
                   <span>Paid:</span>
                   <span>
                     {{ (inv.total?.amount ?? 0) - (inv.amountDue ?? 0) | currencyFormat }}
@@ -151,7 +153,9 @@
 
           @if (canPay()) {
             <div class="mb-4">
-              <span class="mb-2 block text-sm font-medium text-gray-700">Payment Amount</span>
+              <span class="text-muted-foreground mb-2 block text-sm font-medium">
+                Payment Amount
+              </span>
               <ui-number-field
                 [(value)]="paymentAmount"
                 mode="currency"
@@ -170,7 +174,7 @@
               <ui-typography variant="body-sm" color="muted" class="mb-2">
                 You'll be redirected to Stripe to complete your payment.
               </ui-typography>
-              <ui-stack direction="row" align="center" gap="2" class="text-gray-400">
+              <ui-stack direction="row" align="center" gap="2" class="text-muted-foreground">
                 <ui-icon name="lock" />
                 <ui-typography variant="body-sm">Securely processed via Stripe</ui-typography>
               </ui-stack>
@@ -187,18 +191,18 @@
           } @else if (inv.status === "paid") {
             <ui-stack align="center" gap="2" class="py-4">
               <div
-                class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100"
+                class="bg-success/15 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full"
               >
-                <ui-icon name="check" size="lg" class="text-green-600" />
+                <ui-icon name="check" size="lg" class="text-success" />
               </div>
-              <ui-typography variant="body" weight="medium" class="text-green-600">
+              <ui-typography variant="body" weight="medium" class="text-success">
                 This invoice has been paid in full.
               </ui-typography>
             </ui-stack>
           } @else {
             <ui-stack align="center" gap="2" class="py-4">
               <div
-                class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100"
+                class="bg-muted mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full"
               >
                 <ui-icon name="info" size="lg" color="muted" />
               </div>

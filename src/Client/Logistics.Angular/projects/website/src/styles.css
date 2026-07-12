@@ -9,6 +9,15 @@
 
 /* Design System: Route Atlas Editorial */
 :root {
+  /* theme.css ships the app portals' font and a radius scale one notch above Tailwind's. The
+     website runs neither — pin Tailwind's defaults back so `rounded-*` and `font-sans` are
+     unchanged here. */
+  --font-sans: var(--font-body);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
   /* Primary - Rich Black */
   --color-ink: #141414;
   --color-ink-light: #2d2d2d;
@@ -73,6 +82,12 @@ body {
 
 /* Typography */
 @layer base {
+  /* theme.css colours links with the portals' primary. Here they are styled per-site with
+     utilities, so keep Tailwind preflight's `inherit`. */
+  a {
+    color: inherit;
+  }
+
   h1,
   h2,
   h3,

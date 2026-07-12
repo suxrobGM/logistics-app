@@ -1,35 +1,32 @@
 /**
- * theme.css — the shared design-system token layer (canonical shadcn vocabulary).
- * ============================================================================
- * One token system for tms / admin / customer. Spartan Helm primitives use the
- * canonical names natively (bg-primary, text-muted-foreground, ring-destructive, …),
- * so there is no `sp-` prefix and no token-rewriting tool any more.
+ * theme.css — the design system for tms / admin / customer.
  *
- * Light values live in `:root`, dark values in `.dark-theme`. Each app declares its
- * own `dark` Tailwind variant (TMS: `.dark-theme`). The canonical tokens are keyed to
- * TMS's raw ramp (`--bg-base`, `--text-primary`, `--primary-500`, …) via
- * `var(--raw, literal)`: tms-portal supplies the raw vars (and flips them under
- * `.dark-theme`); admin / customer have no raw ramp and take the literal — so they
- * inherit BOTH a light and a dark default palette and are dark-ready for free.
+ * One palette (`:root` light, `.dark-theme` dark), one set of canonical shadcn tokens keyed to it,
+ * and the base element layer. Import it after `@import "tailwindcss"` and you have the whole theme.
  *
- * We deliberately do NOT import `@spartan-ng/brain/hlm-tailwind-preset.css`
- * (its radius/font/dark keys and oklch values would fight this hand-authored layer).
+ * The canonical tokens alias the palette WITHOUT re-declaring themselves under `.dark-theme`. That
+ * works because ThemeService toggles `.dark-theme` on <html> — the same element `:root` selects — and
+ * a custom property's `var()`s resolve on the element that declares them. So `--background` follows
+ * `--bg-base` into dark automatically. (Move `.dark-theme` to <body> and every alias freezes light.)
+ *
+ * The website imports this file too, then re-points the palette to its own editorial one.
  */
 
 @import "@angular/cdk/overlay-prebuilt.css";
 @import "tw-animate-css";
 
-/* CDK fades the backdrop with its own opacity transition and the spartan overlay class
-   fades it again, so the two visibly double up. Neutralise CDK's. Kept UNLAYERED so it
-   beats CDK's runtime `@layer cdk-overlay`. Scoped off `.cdk-overlay-transparent-backdrop`
-   so CDK's invisible click-catcher backdrops keep their own `opacity: 0`. */
+/* CDK fades the backdrop and the spartan overlay class fades it again, so they visibly double up.
+   Neutralise CDK's. Unlayered, so it beats CDK's runtime `@layer cdk-overlay`. Scoped off the
+   transparent variant so CDK's invisible click-catcher backdrops keep their own `opacity: 0`. */
 .cdk-overlay-backdrop:not(.cdk-overlay-transparent-backdrop) {
   opacity: var(--spartan-overlay-backdrop-opacity, 1);
   transition: var(--spartan-overlay-backdrop-transition, none);
 }
 
-/* State variants brain's primitives drive via data-attributes. `dark` is NOT here —
-   each app declares its own. */
+/* ThemeService toggles `.dark-theme` on <html>. */
+@custom-variant dark (&:where(.dark-theme, .dark-theme *));
+
+/* State variants brain's primitives drive via data-attributes. */
 @custom-variant data-open {
   &:where([data-state="open"]),
   &:where([data-open]:not([data-open="false"])) {
@@ -82,29 +79,47 @@
   }
 }
 
-/* ---------------------------------------------------------------------------------------------
- * Token values. `var(--raw, literal)`: TMS supplies `--raw` (light + dark via `.dark-theme`);
- * admin / customer take the literal. `:root` = light default, `.dark-theme` = dark default.
- * ------------------------------------------------------------------------------------------- */
+/* ============================================================================================== */
+/* Palette (light)                                                                                 */
+/* ============================================================================================== */
 
 :root {
-  /* The ONE thing PrimeNG's injected theme still actually painted (S13).
-   *
-   * Everything else in its stylesheet was either scoped to a `.p-*` class (and no element carries
-   * one any more) or a duplicate of Tailwind preflight's `box-sizing: border-box`. But
-   * `providePrimeNG` also emitted, unscoped:
-   *
-   *     :root, :host { color-scheme: light }        .dark-theme { color-scheme: dark }
-   *
-   * and it was the ONLY source of the `color-scheme` property in the whole document. `color-scheme`
-   * is what tells the UA to render the *native* widgets dark: scrollbars (the dashboard panels on
-   * /home are full of them), form controls, the canvas behind the page, and `accent-color`
-   * defaults. Deleting PrimeNG without porting this drops color-scheme to `normal`, and dark mode
-   * silently grows light-grey scrollbars.
-   *
-   * `.dark-theme` is set on <html> by ThemeService, so :root and .dark-theme are the same element;
-   * the override below wins on source order, exactly as PrimeNG's did. */
+  /* Drives native scrollbars, form controls and the page canvas. Load-bearing: without it, dark
+     mode keeps light scrollbars. */
   color-scheme: light;
+
+  --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+
+  /* surfaces */
+  --bg-base: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-hover: #e2e8f0;
+  --bg-active: #cbd5e1;
+
+  /* text */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-inverse: #f1f5f9;
+
+  /* borders */
+  --border-subtle: #e2e8f0;
+  --border-default: #cbd5e1;
+  --border-strong: #94a3b8;
+
+  /* primary ramp (cyan) */
+  --primary-50: #ecfeff;
+  --primary-100: #cffafe;
+  --primary-200: #a5f3fc;
+  --primary-300: #67e8f9;
+  --primary-400: #22d3ee;
+  --primary-500: #0891b2;
+  --primary-600: #0e7490;
+  --primary-700: #155e75;
+  --primary-800: #164e63;
+  --primary-900: #134e4a;
 
   /* semantic */
   --success: #16a34a;
@@ -120,63 +135,57 @@
   --status-cancelled: #dc2626;
   --status-completed: #0891b2;
 
-  /* canonical surfaces + text */
-  --background: var(--bg-base, #f1f5f9);
-  --foreground: var(--text-primary, #0f172a);
-  --card: var(--bg-surface, #ffffff);
-  --card-foreground: var(--text-primary, #0f172a);
-  --popover: var(--bg-elevated, #ffffff);
-  --popover-foreground: var(--text-primary, #0f172a);
-  --primary: var(--primary-500, #0891b2);
+  /* elevation + motion */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* Radius scale — one notch above Tailwind's defaults. The website re-pins Tailwind's. */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* ---- canonical shadcn tokens (aliases; they follow the palette into dark on their own) ---- */
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+  --card: var(--bg-surface);
+  --card-foreground: var(--text-primary);
+  --popover: var(--bg-elevated);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--primary-500);
   --primary-foreground: #ffffff;
-  --secondary: var(--bg-hover, #e2e8f0);
-  --secondary-foreground: var(--text-primary, #0f172a);
-  --muted: var(--bg-hover, #e2e8f0);
-  --muted-foreground: var(--text-muted, #94a3b8);
-  --accent: var(--bg-hover, #e2e8f0);
-  --accent-foreground: var(--text-primary, #0f172a);
-  --subtle-foreground: var(--text-secondary, #475569);
-  --inverse: var(--text-inverse, #f1f5f9);
+  --secondary: var(--bg-hover);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--bg-hover);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--bg-hover);
+  --accent-foreground: var(--text-primary);
+  --subtle-foreground: var(--text-secondary);
+  --inverse: var(--text-inverse);
   --destructive: var(--danger);
   --destructive-foreground: #ffffff;
-  --border: var(--border-default, #cbd5e1);
-  --input: var(--border-default, #cbd5e1);
-  --ring: var(--primary-500, #0891b2);
-
-  /* surface / border aliases (preserve existing TMS utility names) */
-  --elevated: var(--bg-elevated, #ffffff);
-  --hover: var(--bg-hover, #e2e8f0);
-  --active: var(--bg-active, #cbd5e1);
-  --subtle: var(--border-subtle, #e2e8f0);
-  --strong: var(--border-strong, #94a3b8);
+  --border: var(--border-default);
+  --input: var(--border-default);
+  --ring: var(--primary-500);
 
   /* sidebar */
-  --sidebar: var(--bg-surface, #ffffff);
-  --sidebar-foreground: var(--text-primary, #0f172a);
-  --sidebar-primary: var(--primary-500, #0891b2);
+  --sidebar: var(--bg-surface);
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--primary-500);
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--bg-hover, #e2e8f0);
-  --sidebar-accent-foreground: var(--text-primary, #0f172a);
-  --sidebar-border: var(--border-subtle, #e2e8f0);
-  --sidebar-ring: var(--primary-500, #0891b2);
+  --sidebar-accent: var(--bg-hover);
+  --sidebar-accent-foreground: var(--text-primary);
+  --sidebar-border: var(--border-subtle);
+  --sidebar-ring: var(--primary-500);
 
-  /* ---------------------------------------------------------------------------------------------
-   * ui-button (see lib/ui/action/button/button-variants.ts).
-   *
-   * These are FLAT DEFAULTS, and only the `primary` intent needs them at all. TMS paints its
-   * primary buttons with a gradient and font-weight 600 (its primeng-preset.ts did that to the
-   * p-button-primary class); admin / customer / website run stock and must stay pixel-identical. So
-   * the cva reads variables and each app supplies them — tms-portal/src/styles.css overrides the
-   * primary ones, everyone else takes what is here. The gradient rides on `-image` because a
-   * `linear-gradient()` is not a valid `background-color`.
-   *
-   * No `.dark-theme` block, and that is load-bearing rather than lazy: a custom property whose
-   * value contains `var()` is substituted at computed-value time ON THE ELEMENT THAT DECLARES IT.
-   * `theme.service.ts` toggles `.dark-theme` on `<html>` — the very element `:root` selects — so
-   * `--primary`, `--status-pickedup` and `--inverse` are already their dark values by the time
-   * these resolve. Dark mode comes for free. (Were `.dark-theme` ever moved to `<body>`, every
-   * line below would silently freeze at its light value and would need re-declaring there.)
-   * ------------------------------------------------------------------------------------------- */
+  /* ---- component knobs (read by the cva's in lib/ui) ---- */
+
+  /* ui-button. Only `primary` needs variables; the other intents are plain utilities. The `-image`
+     pair exists because a `linear-gradient()` is not a valid `background-color`. */
   --ui-btn-primary-bg: var(--primary);
   --ui-btn-primary-bg-hover: color-mix(in oklab, var(--primary) 88%, black);
   --ui-btn-primary-image: none;
@@ -184,111 +193,59 @@
   --ui-btn-primary-fg: var(--primary-foreground);
   --ui-btn-primary-weight: 500;
 
-  /* Ink on a saturated solid fill (success / info / warn / danger / help). `--inverse` is the
-     theme's opposing ink — near-white in light, near-black in dark — which is exactly the flip a
-     bright solid needs: white on #16a34a in light, dark ink on #22c55e in dark. */
+  /* Ink on a saturated solid fill. `--inverse` is the theme's opposing ink — near-white in light,
+     near-black in dark — which is the flip a bright solid needs. */
   --ui-btn-on-solid: var(--inverse);
-
-  /* PrimeNG's `help` severity is purple, and the one purple this theme defines in both `:root` and
-     `.dark-theme` is the load-status ramp's. Alias it rather than add a ninth hex to the palette. */
   --ui-btn-help: var(--status-pickedup);
 
-  /* ---------------------------------------------------------------------------------------------
-   * ui-badge / ui-card (see lib/ui/badges/badge/badge-variants.ts, lib/ui/containers/card/card.ts).
-   *
-   * SAME MECHANISM AS --ui-btn-*, EXTENDED FROM SIZING TO COLOUR — because the four apps do NOT run
-   * the same PrimeNG preset. tms-portal provides `definePreset(Nora, …)`; admin / customer / website
-   * run stock Aura. The two disagree about what a tag *is*:
-   *
-   *     Aura   .p-tag-success   background {green.100}   color {green.700}    ← soft tint, dark ink
-   *     Nora   .p-tag-success   background {green.600}   color {surface.0}    ← SOLID fill, white ink
-   *
-   * Both ship today. Hard-coding either recipe silently repaints ~130 chips in one portal or ~130 in
-   * the other three, so the five hue cells resolve variables: THIS file carries Aura's recipe and
-   * tms-portal/src/styles.css overrides with Nora's. `secondary` and `contrast` need no fork (the
-   * presets agree) and are plain utilities in the cva.
-   *
-   * The base pair below is a SOLID fill inked with `--inverse`; the @supports block after this rule
-   * upgrades it to Aura's tint. Both branches are complete, legible pairs — see the note there.
-   * ------------------------------------------------------------------------------------------- */
-  --ui-badge-primary-bg: var(--primary);
-  --ui-badge-primary-fg: var(--primary-foreground);
-  --ui-badge-success-bg: var(--success);
-  --ui-badge-success-fg: var(--inverse);
-  --ui-badge-info-bg: var(--info);
-  --ui-badge-info-fg: var(--inverse);
-  --ui-badge-warn-bg: var(--warning);
-  --ui-badge-warn-fg: var(--inverse);
-  --ui-badge-danger-bg: var(--danger);
-  --ui-badge-danger-fg: var(--inverse);
-
-  /* Aura's `tag.root`. TMS overrides all four (its preset sets 0.75rem / 500 / 0.25rem 0.625rem). */
-  --ui-badge-font-size: 0.875rem;
-  --ui-badge-font-weight: 700;
-  --ui-badge-px: 0.5rem;
-  --ui-badge-py: 0.25rem;
-
-  /* `content.border.radius` (6px Aura / 2px Nora) and `card.border.radius` (12px / 4px) both fork;
-     `tag.roundedBorderRadius` is `{border.radius.xl}` = 12px in BOTH, so the pill does not.
-     NOT the `rounded-xl` utility: tms-portal/src/styles/variables.css re-points `--radius-xl` to
-     1rem, making that utility 16px in TMS and 12px elsewhere — a fork PrimeNG does not have. */
-  --ui-radius-content: 6px;
+  /* Chip radii — read by ui-badge, ui-progress, ui-skeleton. The badge's colours and metrics were
+     here too (`--ui-badge-*`), until the preset fork they indirected for went away; they are named
+     utilities in badge-variants.ts now. */
+  --ui-radius-content: 2px;
   --ui-radius-pill: 12px;
-  --ui-radius-card: 12px;
 
+  /* ui-card */
+  --ui-radius-card: 4px;
   --ui-card-body-padding: 1.25rem;
-  --ui-card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --ui-card-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.1);
 
-  /* The `<th>` signature of `<ui-data-table>`.
-   *
-   * SAME MECHANISM AS --ui-btn-* / --ui-badge-*: a flat default here, the fork in the one app that
-   * has one. `primeng-preset.ts` gave TMS — and ONLY TMS, the other three run Aura — an uppercase,
-   * 12px, wide-tracked column header via `.p-datatable-thead > tr > th`. That rule dies with the
-   * preset, and the uppercase headers on ~90 TMS tables would die silently with it. */
-  --ui-table-th-transform: none;
-  --ui-table-th-size: 0.875rem;
-  --ui-table-th-tracking: normal;
+  /* ui-data-table `<th>` */
+  --ui-table-th-transform: uppercase;
+  --ui-table-th-size: 0.75rem;
+  --ui-table-th-tracking: 0.05em;
 }
 
-/* -----------------------------------------------------------------------------------------------
- * Aura's soft tint — declared HERE, by hand, rather than inline above.
- *
- * `chrome 109` is in this workspace's resolved browserslist and has no `color-mix()`. lightningcss
- * therefore synthesises a fallback for every color-mix it sees, and its fallback for
- * `color-mix(in srgb, var(--success) 16%, transparent)` is plain `var(--success)` — which, paired
- * with a `var(--success)` FOREGROUND, is green text on a green background. An invisible tag, on the
- * browser least likely to be tested.
- *
- * So the split is explicit: the `:root` rule above is a solid fill with `--inverse` ink (legible
- * everywhere, and incidentally exactly Nora's recipe), and this block upgrades it to the tint only
- * where color-mix actually works. Each branch is a COMPLETE bg+fg pair — never mix them.
- * --------------------------------------------------------------------------------------------- */
-@supports (color: color-mix(in srgb, red, red)) {
-  :root {
-    --ui-badge-primary-bg: color-mix(in srgb, var(--primary) 16%, transparent);
-    --ui-badge-primary-fg: var(--primary);
-    --ui-badge-success-bg: color-mix(in srgb, var(--success) 16%, transparent);
-    --ui-badge-success-fg: var(--success);
-    --ui-badge-info-bg: color-mix(in srgb, var(--info) 16%, transparent);
-    --ui-badge-info-fg: var(--info);
-    --ui-badge-warn-bg: color-mix(in srgb, var(--warning) 16%, transparent);
-    --ui-badge-warn-fg: var(--warning);
-    --ui-badge-danger-bg: color-mix(in srgb, var(--danger) 16%, transparent);
-    --ui-badge-danger-fg: var(--danger);
-  }
-}
+/* ============================================================================================== */
+/* Palette (dark) — only the palette flips; the aliases above follow it.                           */
+/* ============================================================================================== */
 
 .dark-theme {
-  /* Ported from PrimeNG's `darkModeSelector: ".dark-theme"` output — see the note on :root. */
   color-scheme: dark;
 
-  /* semantic (brighter for dark bg) */
+  --bg-base: #0f1419;
+  --bg-surface: #1a1f2e;
+  --bg-elevated: #242b3d;
+  --bg-hover: #2d3548;
+  --bg-active: #363f54;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+
+  --border-subtle: #2d3548;
+  --border-default: #3d4760;
+  --border-strong: #4d5a78;
+
+  /* brighter on a dark canvas */
+  --primary-500: #06b6d4;
+  --primary-600: #0891b2;
+
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
   --info: #3b82f6;
 
-  /* load-status ramp (dark) */
   --status-pending: #f59e0b;
   --status-dispatched: #3b82f6;
   --status-pickedup: #8b5cf6;
@@ -296,39 +253,9 @@
   --status-cancelled: #ef4444;
   --status-completed: #06b6d4;
 
-  /* canonical surfaces + text (dark defaults; TMS overrides via its own raw ramp) */
-  --background: var(--bg-base, #0f1419);
-  --foreground: var(--text-primary, #f1f5f9);
-  --card: var(--bg-surface, #1a1f2e);
-  --card-foreground: var(--text-primary, #f1f5f9);
-  --popover: var(--bg-elevated, #242b3d);
-  --popover-foreground: var(--text-primary, #f1f5f9);
-  --primary: var(--primary-500, #06b6d4);
-  --secondary: var(--bg-hover, #2d3548);
-  --secondary-foreground: var(--text-primary, #f1f5f9);
-  --muted: var(--bg-hover, #2d3548);
-  --muted-foreground: var(--text-muted, #64748b);
-  --accent: var(--bg-hover, #2d3548);
-  --accent-foreground: var(--text-primary, #f1f5f9);
-  --subtle-foreground: var(--text-secondary, #94a3b8);
-  --inverse: var(--text-inverse, #0f172a);
-  --border: var(--border-default, #3d4760);
-  --input: var(--border-default, #3d4760);
-  --ring: var(--primary-500, #06b6d4);
-
-  --elevated: var(--bg-elevated, #242b3d);
-  --hover: var(--bg-hover, #2d3548);
-  --active: var(--bg-active, #363f54);
-  --subtle: var(--border-subtle, #2d3548);
-  --strong: var(--border-strong, #4d5a78);
-
-  --sidebar: var(--bg-surface, #1a1f2e);
-  --sidebar-foreground: var(--text-primary, #f1f5f9);
-  --sidebar-primary: var(--primary-500, #06b6d4);
-  --sidebar-accent: var(--bg-hover, #2d3548);
-  --sidebar-accent-foreground: var(--text-primary, #f1f5f9);
-  --sidebar-border: var(--border-subtle, #2d3548);
-  --sidebar-ring: var(--primary-500, #06b6d4);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
 }
 
 /* `inline` so utilities emit `var(--token)` and `.dark-theme` re-points them at runtime. */
@@ -363,16 +290,17 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* TMS extension aliases — keep bg-canvas/bg-surface/bg-elevated/bg-hover/bg-active,
-     border-subtle/border-default/border-strong working unchanged. */
+  /* aliases: bg-canvas / bg-surface / bg-elevated / bg-hover / bg-active,
+     border-subtle / border-default / border-strong. Straight off the raw ramp — they used to hop
+     through an `--elevated` / `--hover` / … set whose only readers were these six lines. */
   --color-canvas: var(--background);
   --color-surface: var(--card);
-  --color-elevated: var(--elevated);
-  --color-hover: var(--hover);
-  --color-active: var(--active);
-  --color-subtle: var(--subtle);
+  --color-elevated: var(--bg-elevated);
+  --color-hover: var(--bg-hover);
+  --color-active: var(--bg-active);
+  --color-subtle: var(--border-subtle);
   --color-default: var(--border);
-  --color-strong: var(--strong);
+  --color-strong: var(--border-strong);
 
   /* semantic */
   --color-success: var(--success);
@@ -380,10 +308,10 @@
   --color-danger: var(--danger);
   --color-info: var(--info);
 
-  /* `help` must be a REAL registered colour, not just a raw custom property, so that the button cva
-     can spell it as a named utility. An arbitrary-property class is a different tailwind-merge class
-     group than a named one, so it will NOT dedupe against the base border colour and the two both
-     survive — which silently left the outlined help button with no border at all. */
+  /* `help` must be a REAL registered colour so the button cva can spell it as a named utility. An
+     arbitrary-property class is a different tailwind-merge class group, so it would not dedupe
+     against the base border colour and both would survive — leaving the outlined help button with
+     no border at all. */
   --color-help: var(--ui-btn-help);
 
   /* load-status */
@@ -394,10 +322,9 @@
   --color-cancelled: var(--status-cancelled);
   --color-completed: var(--status-completed);
 
-  /* Static slate ramp. This is now the ONLY definition of the `surface-*` utilities — the plugin
-     that used to supply them is long gone, and these keys are what keeps the ~200 existing
-     `bg-surface-*` / `border-surface-*` call sites painting.
-     Usages pick light/dark shades explicitly (e.g. `bg-surface-300 dark:bg-surface-600`). */
+  /* Static slate ramp — the only definition of the `surface-*` utilities. It does NOT follow the
+     theme, so a call site must pick both shades itself (`bg-surface-300 dark:bg-surface-600`).
+     Prefer a semantic token (`bg-card`, `bg-sidebar`, `bg-muted`) — those flip on their own. */
   --color-surface-0: #ffffff;
   --color-surface-50: #f8fafc;
   --color-surface-100: #f1f5f9;
@@ -420,5 +347,124 @@
     100% {
       transform: translateX(100%) scaleX(0.5);
     }
+  }
+}
+
+/* ============================================================================================== */
+/* Base layer                                                                                      */
+/* ============================================================================================== */
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  transition:
+    background-color var(--transition-slow),
+    color var(--transition-slow);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h5 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+
+  h6 {
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  a:hover {
+    color: var(--primary-400);
+  }
+
+  code,
+  pre {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Scrollbars. `color-scheme` above already themes the native ones; these restyle WebKit's. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 5px;
+  border: 2px solid var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) var(--bg-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

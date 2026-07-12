@@ -7,7 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark light" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <!-- DM Sans Font - Modern, geometric, technical aesthetic -->
+    <script>
+      // Set the theme before first paint, or the page flashes light and flips.
+      // Key must match THEME_STORAGE_KEY in shared/lib/services/theme.service.ts.
+      // Keep above the font <link>: a script cannot run while a preceding stylesheet is loading.
+      (function () {
+        const stored = localStorage.getItem("logisticsx-theme");
+        const isDark = stored
+          ? stored === "dark"
+          : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.add(isDark ? "dark-theme" : "light-theme");
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,18 +28,5 @@
   </head>
   <body>
     <app-root></app-root>
-    <script>
-      // Initialize theme from localStorage or system preference
-      // Must run before Angular so the app never flashes the wrong theme on load
-      const stored = localStorage.getItem("tms-theme");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const isDark = stored ? stored === "dark" : prefersDark;
-
-      if (isDark) {
-        document.documentElement.classList.add("dark-theme");
-      } else {
-        document.documentElement.classList.add("light-theme");
-      }
-    </script>
   </body>
 </html>

@@ -5,7 +5,7 @@
         class="flex size-12 items-center justify-center rounded-full"
         [style.background-color]="getStepColor(step)"
       >
-        <ui-icon [name]="step.icon" size="inherit" class="text-xl text-white" />
+        <ui-icon [name]="step.icon" size="inherit" class="text-inverse text-xl" />
       </div>
       <ui-typography variant="body-sm" weight="medium" class="mt-2">{{ step.label }}</ui-typography>
       @if (step.date) {
@@ -15,9 +15,9 @@
       }
     </ui-stack>
     @if (!isLast) {
-      <div class="mx-2 h-1 flex-1 rounded bg-gray-200">
+      <div class="bg-border mx-2 h-1 flex-1 rounded">
         <div
-          class="h-full rounded bg-green-500 transition-all"
+          class="bg-success h-full rounded transition-all"
           [style.width]="step.date ? '100%' : '0%'"
         ></div>
       </div>

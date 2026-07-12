@@ -8,7 +8,7 @@ import {
   LoadingSkeleton,
   StatusBadge,
   Typography,
-  UI_BADGE_TONES,
+  UI_BADGE_INTENTS,
   type CalloutIntent,
   type StatusKind,
   type TypographyVariant,
@@ -44,16 +44,11 @@ export class UiLabFeedbackSection {
   ];
 
   /**
-   * Driven off the exported vocabulary rather than a hand-copied list, so a tone added to the union
+   * Driven off the exported vocabulary rather than a hand-copied list, so an intent added to the union
    * shows up in the lab by itself. A hand-written array is the one that silently stops covering the
    * type it documents.
-   *
-   * `UI_BADGE_TONES`, not `UI_BADGE_INTENTS`: the tones are what `<ui-badge>` can PAINT (the six
-   * producer intents plus `primary`, which is what a bare `<p-tag>` fell through to). Driving the
-   * matrix off the producer vocabulary would leave `primary` — the one tone with no producer and so
-   * the one nobody would notice breaking — as the only cell never rendered.
    */
-  protected readonly severities = UI_BADGE_TONES;
+  protected readonly severities = UI_BADGE_INTENTS;
 
   /**
    * The second axis is `rounded`, not the old `variant`. `variant="outlined"` never rendered an

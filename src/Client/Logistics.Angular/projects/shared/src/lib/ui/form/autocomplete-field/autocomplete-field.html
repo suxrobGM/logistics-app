@@ -21,7 +21,9 @@
       @for (option of suggestions(); track option) {
         <hlm-autocomplete-item [value]="$any(option)">
           @if (itemTemplate(); as itemTpl) {
-            <ng-container *ngTemplateOutlet="itemTpl; context: { $implicit: option }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="itemTpl; context: { $implicit: option }"
+            ></ng-container>
           } @else {
             {{ label(option) }}
           }

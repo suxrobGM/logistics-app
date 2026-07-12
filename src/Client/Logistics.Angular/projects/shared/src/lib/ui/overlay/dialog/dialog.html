@@ -1,12 +1,9 @@
 <!--
-  `*hlmDialogPortal` is NOT optional decoration. BrnDialog.open() early-returns unless a
-  BrnDialogContent has registered a template with it (`if (!this._content) return;`), so without the
-  portal directive the dialog never opens and never closes — silently, with no error. This migration
-  has already shipped that bug once, on the select overlay.
+  `*hlmDialogPortal` is required: BrnDialog.open() early-returns unless a BrnDialogContent has
+  registered a template with it, so without it the dialog never opens — silently, with no error.
 
-  Everything below the portal is rendered into the CDK overlay container, NOT into <ui-dialog>. That
-  is why the width is an inline style HERE and not on the host, and why Escape is handled on the
-  document rather than on the host element.
+  Everything below the portal renders into the CDK overlay container, NOT into <ui-dialog>. Hence the
+  inline width here rather than on the host, and the document-level Escape handler.
 -->
 <hlm-dialog
   [state]="state()"
@@ -28,10 +25,8 @@
     [cdkDragDisabled]="!draggable()"
   >
     <!--
-      Drag by the header, as p-dialog does (its titlebar owns the (mousedown)="initDrag($event)").
-      `cursor` is an inline style rather than a class because HlmDialogHeader drives its own class list
-      through spartan's `classes()` manager, which rewrites className and would drop a [class.x] we
-      added from out here.
+      `cursor` is an inline style, not a class: HlmDialogHeader drives its own class list through
+      spartan's `classes()` manager, which rewrites className and would drop a `[class.x]` set here.
     -->
     <hlm-dialog-header cdkDragHandle [style.cursor]="draggable() ? 'move' : null">
       @if (headerTpl(); as tpl) {
@@ -57,8 +52,6 @@
     }
 
     @if (resizable()) {
-      <!-- p-dialog renders exactly this: a grip in the bottom-right corner, whenever `resizable`
-           (which defaults to TRUE — 44 of the 46 dialogs have one today). -->
       <div
         data-slot="dialog-resize-grip"
         class="absolute right-0 bottom-0 h-4 w-4 cursor-se-resize touch-none"

@@ -67,10 +67,12 @@ jobs:
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun run ng test shared --watch=false
 
-      # Vendored Helm primitives must not emit bare spartan-* CSS classes (they'd render unstyled).
-      - name: Spartan token check
+      # Every gate in tools/checks/, discovered — a new gate is a new file there, not a new step here.
+      # They catch what build/test/lint cannot: a bare spartan-* class (renders the component
+      # unstyled) and a hardcoded colour (does not follow the theme — how admin/customer dark mode broke).
+      - name: UI gates
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run check:spartan-tokens
+        run: bun run check
 
       - name: Lint (0 errors, 0 warnings)
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular

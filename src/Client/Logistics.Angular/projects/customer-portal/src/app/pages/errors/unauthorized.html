@@ -1,20 +1,16 @@
-<div
-  class="flex min-h-screen items-center justify-center bg-linear-to-b from-slate-50 to-slate-100 p-4"
->
+<div class="bg-background flex min-h-screen items-center justify-center p-4">
   <div class="w-full max-w-md text-center">
     <!-- Illustration -->
     <div class="relative mx-auto mb-10 h-48 w-48">
       <!-- Background circle -->
-      <div
-        class="absolute inset-0 rounded-full bg-linear-to-br from-amber-100 to-orange-100 opacity-80"
-      ></div>
+      <div class="bg-warning/15 absolute inset-0 rounded-full opacity-80"></div>
 
       <!-- Shield icon container -->
       <div class="absolute inset-4 flex items-center justify-center">
         <div class="relative">
           <!-- Shield shape using SVG -->
           <svg
-            class="h-24 w-24 text-amber-200"
+            class="text-warning/40 h-24 w-24"
             viewBox="0 0 24 24"
             fill="currentColor"
             xmlns="http://www.w3.org/2000/svg"
@@ -24,19 +20,19 @@
 
           <!-- Warning icon overlay -->
           <div class="absolute inset-0 flex items-center justify-center">
-            <ui-icon name="triangle-alert" size="lg" class="text-amber-500" />
+            <ui-icon name="triangle-alert" size="lg" class="text-warning" />
           </div>
         </div>
       </div>
 
       <!-- Decorative dots -->
-      <div class="absolute top-2 left-6 h-2 w-2 rounded-full bg-amber-300/60"></div>
-      <div class="absolute top-8 right-4 h-3 w-3 rounded-full bg-orange-200/60"></div>
-      <div class="absolute bottom-6 left-4 h-2.5 w-2.5 rounded-full bg-amber-200/60"></div>
+      <div class="bg-warning/40 absolute top-2 left-6 h-2 w-2 rounded-full"></div>
+      <div class="bg-warning/30 absolute top-8 right-4 h-3 w-3 rounded-full"></div>
+      <div class="bg-warning/30 absolute bottom-6 left-4 h-2.5 w-2.5 rounded-full"></div>
     </div>
 
     <!-- Error Code (subtle) -->
-    <p class="mb-2 text-7xl font-extralight tracking-tight text-slate-200">401</p>
+    <p class="text-muted-foreground/40 mb-2 text-7xl font-extralight tracking-tight">401</p>
 
     <!-- Title -->
     <ui-typography variant="h3" tag="h1" align="center" class="mb-3">Access Denied</ui-typography>
@@ -64,7 +60,7 @@
       <ui-typography variant="body-sm" weight="medium" class="mb-3 block">
         Why am I seeing this?
       </ui-typography>
-      <ul class="space-y-2.5 text-left text-sm text-slate-500">
+      <ul class="text-muted-foreground space-y-2.5 text-left text-sm">
         <li class="flex items-center gap-3">
           <ui-icon name="clock" color="muted" />
           <span>Your session may have expired</span>

@@ -28,6 +28,6 @@ export class ShipmentTimeline {
   ]);
 
   protected getStepColor(step: TimelineStep): string {
-    return step.date ? "#22c55e" : "#d1d5db";
+    return step.date ? "var(--success)" : "var(--border)";
   }
 }

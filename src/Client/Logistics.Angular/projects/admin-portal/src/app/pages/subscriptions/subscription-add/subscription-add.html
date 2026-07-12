@@ -24,7 +24,7 @@
               />
             </ui-form-field>
             @if (tenantOptions().length === 0) {
-              <ui-stack direction="row" align="center" gap="2" class="mt-1 text-sm text-orange-500">
+              <ui-stack direction="row" align="center" gap="2" class="text-warning mt-1 text-sm">
                 <ui-icon name="info" size="sm" />
                 <ui-typography variant="body-sm">
                   All tenants already have active subscriptions.
@@ -47,7 +47,7 @@
               />
             </ui-form-field>
             @if (planOptions().length === 0) {
-              <ui-stack direction="row" align="center" gap="2" class="mt-1 text-sm text-orange-500">
+              <ui-stack direction="row" align="center" gap="2" class="text-warning mt-1 text-sm">
                 <ui-icon name="info" size="sm" />
                 <ui-typography variant="body-sm">
                   No subscription plans available.

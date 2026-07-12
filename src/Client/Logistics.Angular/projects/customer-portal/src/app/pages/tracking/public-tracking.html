@@ -40,7 +40,7 @@
           <ui-stack gap="4">
             <div>
               <ui-stack direction="row" align="center" gap="2" class="mb-1">
-                <ui-icon name="map-pin" class="text-blue-500" />
+                <ui-icon name="map-pin" class="text-info" />
                 <ui-typography variant="caption" color="muted" weight="medium">
                   Origin
                 </ui-typography>
@@ -53,7 +53,7 @@
             @if (data.currentAddress) {
               <div>
                 <ui-stack direction="row" align="center" gap="2" class="mb-1">
-                  <ui-icon name="truck" class="text-orange-500" />
+                  <ui-icon name="truck" class="text-warning" />
                   <ui-typography variant="caption" color="muted" weight="medium">
                     Current Location
                   </ui-typography>
@@ -66,7 +66,7 @@
 
             <div>
               <ui-stack direction="row" align="center" gap="2" class="mb-1">
-                <ui-icon name="flag" class="text-green-500" />
+                <ui-icon name="flag" class="text-success" />
                 <ui-typography variant="caption" color="muted" weight="medium">
                   Destination
                 </ui-typography>
@@ -84,8 +84,8 @@
           <ui-typography variant="h5" tag="h3" class="mb-4">Driver Information</ui-typography>
           @if (data.driverName || data.truckNumber) {
             <ui-stack direction="row" align="center" gap="4">
-              <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-                <ui-icon name="user" size="lg" class="text-gray-600" />
+              <div class="bg-muted flex h-14 w-14 items-center justify-center rounded-full">
+                <ui-icon name="user" size="lg" class="text-muted-foreground" />
               </div>
               <div>
                 @if (data.driverName) {
@@ -114,7 +114,7 @@
             <ui-stack direction="row" gap="4">
               <ui-stack direction="row" align="center" gap="2">
                 @if (data.hasBillOfLading) {
-                  <ui-icon name="circle-check" class="text-green-500" />
+                  <ui-icon name="circle-check" class="text-success" />
                 } @else {
                   <ui-icon name="circle" color="muted" />
                 }
@@ -122,7 +122,7 @@
               </ui-stack>
               <ui-stack direction="row" align="center" gap="2">
                 @if (data.hasProofOfDelivery) {
-                  <ui-icon name="circle-check" class="text-green-500" />
+                  <ui-icon name="circle-check" class="text-success" />
                 } @else {
                   <ui-icon name="circle" color="muted" />
                 }

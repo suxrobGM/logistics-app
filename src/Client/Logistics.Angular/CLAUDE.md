@@ -112,18 +112,38 @@ Do **not** disable the submit button with `[disabled]="form().invalid()"` — ke
 
 ## Theme files
 
-- `projects/shared/src/styles/theme.css` — **canonical** shadcn token layer shared by tms / admin /
-  customer (`--background`, `--card`, `--muted`, `--foreground`, `--border`, …). Light in `:root`,
-  dark in `.dark-theme`. It also owns `color-scheme` (`light` on `:root`, `dark` on `.dark-theme`) —
-  that declaration is what makes native scrollbars, form controls and the page canvas follow the
-  theme. It is load-bearing: drop it and dark mode keeps light scrollbars.
-- `projects/tms-portal/src/styles/variables.css` — the TMS raw ramp (`--bg-base`, `--text-primary`,
-  `--primary-500`, …) that `theme.css` keys the canonical tokens to.
+**`projects/shared/src/styles/theme.css` is the whole design system** for tms / admin / customer — one
+palette (`:root` light, `.dark-theme` dark), the canonical shadcn tokens keyed to it, the component
+knobs (`--ui-btn-*`, `--ui-card-*`, `--ui-table-th-*`, `--ui-radius-*`), and the base element layer.
+Each portal's `styles.css` is ~4 lines: `@import "tailwindcss"` then `@import theme.css`.
 
-There is **no PrimeNG theme preset**. The four portals are styled entirely by `theme.css` + Tailwind;
-`primeng-preset.ts` and `providePrimeNG()` were deleted in the S13 migration step.
+A knob earns its place by having MORE THAN ONE VALUE. `--ui-badge-*` held the badge's colours and
+metrics for the Nora/Aura preset fork; with the presets gone it resolved one way, so the badge spells
+named utilities directly (`badges/badge/badge-variants.ts`, whose `TONE_CLASSES` `ui-count-badge`
+shares). Don't reintroduce a single-valued knob.
 
-For the `bg-elevated` / `bg-subtle` / `border-default` / `text-muted` rule (and the no-hardcoded-colors rule), see `angular-conventions.md`.
+The three portals are theme-identical by construction. Only `projects/tms-portal/src/styles/chrome.css`
+sits on top, and only for what is genuinely TMS-only: its sidebar gradients and its animations.
+
+Two things in `theme.css` are load-bearing and look droppable:
+
+- **`color-scheme`** (`light` on `:root`, `dark` on `.dark-theme`) — what makes native scrollbars, form
+  controls and the page canvas follow the theme. Each portal's `index.html` must also carry
+  `<meta name="color-scheme" content="dark light">`; `only light` overrides it and dark mode half-works.
+- **The canonical tokens alias the palette and are NOT re-declared under `.dark-theme`.** That works only
+  because `.dark-theme` lands on `<html>`, the same element `:root` selects. Move it to `<body>` and
+  every alias freezes at its light value.
+
+The website is deliberately outside this: it keeps its own editorial palette and has no dark mode, so it
+re-pins Tailwind's radius scale and its own fonts after importing `theme.css`.
+
+**Never hardcode a colour** (`bg-white`, `text-gray-600`, `bg-green-100`) — it does not follow the theme,
+survives every build/test/lint, and then renders a white sidebar on a dark page. That is exactly how
+admin/customer dark mode broke. Use a semantic token (`bg-card`, `bg-background`, `bg-sidebar`,
+`text-muted-foreground`, `border-border`, `text-success`, `bg-success/15`). `bun run check:theme-tokens`
+enforces this on admin + customer.
+
+There is **no PrimeNG theme preset**; the portals are styled entirely by `theme.css` + Tailwind.
 
 ## UI library
 
@@ -132,9 +152,21 @@ full `ui-*` catalogue. PrimeNG is gone: no dependency, no import, no `p-*` marku
 blocked by the ESLint `no-restricted-imports` rule in `eslint.config.js`, which fails lint on any
 `primeng`/`primeicons`/`@primeuix/*` import.
 
+`ui-dialog` / `ui-confirm-dialog` deliberately keep a hand-rolled Escape handler instead of brain's
+`disableClose`. Brain gates Escape and backdrop-click on that one flag, and its `backdropClick()` is
+otherwise ungated — binding it would give every dialog click-outside-to-discard. There is no "escape
+closes, backdrop does not" option. Do not "simplify" this.
+
 ```bash
 bun run ng test shared          # the shared-library specs
-bun run check:spartan-tokens    # fails on bare spartan-* CSS classes in primitives (they'd render unstyled)
+bun run check                   # every gate in tools/checks/ — this is what CI runs
+bun run check --self-test       # prove each gate still fires
+bun run check:spartan-tokens    # bare spartan-* classes in primitives (they'd render unstyled)
+bun run check:theme-tokens      # hardcoded palette colours in admin/customer
 ```
+
+`bun run check` DISCOVERS its gates: any file in `tools/checks/` exporting a `check` runs. To add one,
+declare it with `defineCheck({ dirs, ext, find, cases })` from `tools/lib/check.mjs` — no script and no
+CI step to add.
 
 `/ui-lab` is a lazy dev route in tms-portal that renders every `ui-*` component in light and dark.

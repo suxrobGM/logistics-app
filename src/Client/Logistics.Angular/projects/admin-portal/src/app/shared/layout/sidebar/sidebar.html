@@ -1,5 +1,5 @@
 <aside
-  class="bg-surface-0 border-border fixed top-0 left-0 z-40 hidden h-screen w-64 flex-col border-r md:flex"
+  class="bg-sidebar border-border fixed top-0 left-0 z-40 hidden h-screen w-64 flex-col border-r md:flex"
 >
   <!-- Header -->
   <div class="border-border flex h-16 items-center justify-center border-b px-4">
@@ -19,7 +19,7 @@
           [routerLink]="item.route"
           routerLinkActive="bg-primary/12 text-foreground"
           [routerLinkActiveOptions]="{ exact: true }"
-          class="text-foreground hover:bg-surface-100 mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
+          class="text-foreground hover:bg-sidebar-accent mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
         >
           <ui-icon [name]="item.icon" size="inherit" class="shrink-0 text-base" />
           <span>{{ item.label }}</span>

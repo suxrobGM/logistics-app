@@ -94,8 +94,8 @@
         <ui-typography variant="h5" tag="h2" class="mb-4">Driver Information</ui-typography>
         @if (load()?.driverName) {
           <ui-stack direction="row" align="center" gap="3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
-              <ui-icon name="user" class="text-gray-600" />
+            <div class="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
+              <ui-icon name="user" class="text-muted-foreground" />
             </div>
             <div>
               <ui-typography variant="body" weight="medium">{{ load()?.driverName }}</ui-typography>
@@ -140,7 +140,7 @@
             <ui-typography variant="body" color="muted">Bill of Lading</ui-typography>
             <span class="font-medium">
               @if (load()?.hasBillOfLading) {
-                <ui-icon name="check" class="text-green-600" />
+                <ui-icon name="check" class="text-success" />
               } @else {
                 <ui-icon name="x" color="muted" />
               }
@@ -150,7 +150,7 @@
             <ui-typography variant="body" color="muted">Proof of Delivery</ui-typography>
             <span class="font-medium">
               @if (load()?.hasProofOfDelivery) {
-                <ui-icon name="check" class="text-green-600" />
+                <ui-icon name="check" class="text-success" />
               } @else {
                 <ui-icon name="x" color="muted" />
               }
@@ -162,7 +162,7 @@
   </ui-grid>
 } @else {
   <ui-stack align="center" gap="2" class="py-12">
-    <ui-icon name="triangle-alert" size="xl" class="text-yellow-500" />
+    <ui-icon name="triangle-alert" size="xl" class="text-warning" />
     <ui-typography variant="body" color="muted">Shipment not found</ui-typography>
   </ui-stack>
 }

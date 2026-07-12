@@ -8,7 +8,7 @@ import {
   Skeleton,
   Spinner,
   Typography,
-  UI_BADGE_TONES,
+  UI_BADGE_INTENTS,
   type UiAvatarSize,
   type UiCountBadgeSize,
 } from "@logistics/shared/ui";
@@ -33,7 +33,7 @@ import {
 })
 export class UiLabCosmeticsSection {
   /** Driven off the exported vocabulary, so a tone added to the union appears here by itself. */
-  protected readonly tones = UI_BADGE_TONES;
+  protected readonly tones = UI_BADGE_INTENTS;
 
   protected readonly avatarSizes: readonly UiAvatarSize[] = ["normal", "large", "xlarge"];
   protected readonly countBadgeSizes: readonly UiCountBadgeSize[] = ["small", "normal"];

@@ -1,0 +1,110 @@
+/**
+ * TMS-only chrome: the sidebar gradients and the animations its layout components use.
+ * Everything else — palette, tokens, typography, scrollbars — lives in shared/styles/theme.css.
+ */
+
+:root {
+  --sidebar-bg: linear-gradient(165deg, #ffffff 0%, #f1f5f9 30%, #e2e8f0 70%, #cfe2eb 100%);
+  --sidebar-footer-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-surface) 95%, transparent) 0%,
+    color-mix(in srgb, var(--primary-50) 30%, var(--bg-surface)) 100%
+  );
+  --sidebar-item-active-bg: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--primary-500) 18%, transparent) 0%,
+    color-mix(in srgb, var(--primary-500) 7%, transparent) 100%
+  );
+
+  --shimmer-base: #e2e8f0;
+  --shimmer-highlight: #f1f5f9;
+}
+
+.dark-theme {
+  --sidebar-bg: linear-gradient(165deg, #252d40 0%, #1a2030 35%, #111720 70%, #0a0e14 100%);
+  --sidebar-footer-bg: linear-gradient(
+    180deg,
+    var(--bg-elevated) 0%,
+    color-mix(in srgb, var(--primary-900) 15%, var(--bg-elevated)) 100%
+  );
+  --sidebar-item-active-bg: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--primary-500) 22%, transparent) 0%,
+    color-mix(in srgb, var(--primary-500) 8%, transparent) 100%
+  );
+
+  --shimmer-base: #242b3d;
+  --shimmer-highlight: #2d3548;
+}
+
+@keyframes stagger-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@layer utilities {
+  .animate-slide-in {
+    animation: slide-fade-in 0.4s ease-out;
+  }
+
+  .animate-stagger > * {
+    animation: stagger-fade-in 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-stagger > *:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .animate-stagger > *:nth-child(2) {
+    animation-delay: 50ms;
+  }
+  .animate-stagger > *:nth-child(3) {
+    animation-delay: 100ms;
+  }
+  .animate-stagger > *:nth-child(4) {
+    animation-delay: 150ms;
+  }
+  .animate-stagger > *:nth-child(5) {
+    animation-delay: 200ms;
+  }
+  .animate-stagger > *:nth-child(n + 6) {
+    animation-delay: 250ms;
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--shimmer-base) 0%,
+      var(--shimmer-highlight) 50%,
+      var(--shimmer-base) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}

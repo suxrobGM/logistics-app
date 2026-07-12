@@ -1,19 +1,19 @@
-<div class="min-h-screen bg-gray-50">
-  <header class="bg-white shadow-sm">
+<div class="bg-background min-h-screen">
+  <header class="bg-card shadow-sm">
     <div class="mx-auto max-w-4xl px-4 py-6">
       <div class="flex items-center gap-4">
         @if (tenantLogoUrl()) {
           <img [src]="tenantLogoUrl()" alt="Company Logo" class="h-12 w-auto object-contain" />
         } @else {
-          <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600">
-            <ui-icon name="truck" size="inherit" class="text-2xl text-white" />
+          <div class="bg-primary flex h-12 w-12 items-center justify-center rounded-lg">
+            <ui-icon name="truck" size="inherit" class="text-primary-foreground text-2xl" />
           </div>
         }
         <div>
-          <h1 class="text-gray-900">
+          <h1 class="text-foreground">
             {{ tenantName() || "Shipment Tracking" }}
           </h1>
-          <p class="text-sm text-gray-500">{{ subtitle() }}</p>
+          <p class="text-muted-foreground text-sm">{{ subtitle() }}</p>
         </div>
       </div>
     </div>

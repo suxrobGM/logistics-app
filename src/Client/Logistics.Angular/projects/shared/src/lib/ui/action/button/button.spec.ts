@@ -1,17 +1,16 @@
 /**
- * `ui-button`'s contract. Everything pinned here is something that (a) 496 call sites depend on and
- * (b) NO other gate would catch — each one stays green through `build:all`, `lint` and every other
- * spec while shipping a broken button:
+ * `ui-button`'s contract. Everything pinned here fails SILENTLY — build, lint and every other spec
+ * stay green while the button is broken:
  *
- *   1. the 32-cell intent x appearance matrix — a hole emits no CSS and no warning, so
- *      `intent="success"` would render as an unstyled or primary-blue button. Silent by design.
- *   2. `type` defaults to "button" and survives being set to "submit" — 37 sites say `submit`, and
- *      a dropped one is a SAVE BUTTON THAT DOES NOTHING. Proven against a real <form>.
- *   3. `loading` disables AND swaps the glyph for a spinner — 100 sites. Miss the disable and the
- *      button double-submits; miss the swap and it looks idle while it works.
- *   4. icon-only goes square and is named only by `ariaLabel`.
- *   5. `buttonClass` lands on the INNER button — 44 sites lay out against it, and putting it on
- *      the host instead breaks all of them while looking right in code review.
+ *   1. the intent x appearance matrix — a hole emits no CSS and no warning, so the button just
+ *      renders unstyled;
+ *   2. `type` defaults to "button" and survives being set to "submit" (a dropped `submit` is a save
+ *      button that does nothing), proven against a real <form>;
+ *   3. `loading` disables AND swaps the glyph for a spinner — miss the disable and the button
+ *      double-submits, miss the swap and it looks idle while it works;
+ *   4. icon-only goes square and is named only by `ariaLabel`;
+ *   5. `buttonClass` lands on the INNER button — putting it on the host looks right in review and
+ *      breaks every call site's layout;
  *   6. `(click)` bubbles — there is no output, so every call site's `(click)` rests on it.
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
@@ -149,8 +148,8 @@ describe("ui-button", () => {
     });
 
     it("keeps danger a SOLID red fill and success green — these are money-moving actions", () => {
-      // `bg-danger` at FULL opacity, not shadcn's `bg-destructive/10` tint. Asserted against the
-      // class list, not the raw string: the cell also carries `hover:bg-danger/90`.
+      // Full opacity, not a tint. Asserted against the split class list rather than the raw string,
+      // because the cell also carries a `hover:` class with the same colour name.
       expect(INTENT_APPEARANCE.danger.solid.split(" ")).toContain("bg-danger");
       expect(INTENT_APPEARANCE.success.solid.split(" ")).toContain("bg-success");
       expect(INTENT_APPEARANCE.success.solid).not.toContain("bg-primary");
@@ -183,7 +182,7 @@ describe("ui-button", () => {
       expect(INTENT_APPEARANCE.primary.solid).toContain("var(--ui-btn-primary-bg)");
       expect(INTENT_APPEARANCE.primary.solid).toContain("var(--ui-btn-primary-image)");
       expect(INTENT_APPEARANCE.primary.solid).toContain("var(--ui-btn-primary-weight)");
-      // ...and only for `solid`: the preset excluded text/outlined/link from the gradient.
+      // ...and only for `solid` — the gradient must not reach outlined/text/link.
       for (const appearance of ["outlined", "text", "link"] as const) {
         expect(INTENT_APPEARANCE.primary[appearance]).not.toContain("--ui-btn-primary");
       }
@@ -342,7 +341,7 @@ describe("ui-button", () => {
       expect(host(fixture).className).toContain("pointer-events-none");
     });
 
-    it("stays inline-flex so it keeps its place in the flex rows the p-buttons sat in", async () => {
+    it("stays inline-flex, so it keeps its place in a flex row", async () => {
       const fixture = await render();
       expect(host(fixture).className).toContain("inline-flex");
     });

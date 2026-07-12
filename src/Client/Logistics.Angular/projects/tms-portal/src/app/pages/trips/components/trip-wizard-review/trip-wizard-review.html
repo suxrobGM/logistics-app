@@ -111,11 +111,6 @@
 
   <ui-stack direction="row" justify="between" class="pt-6">
     <ui-button type="button" label="Back" icon="arrow-left" (click)="goToPreviousStep()" />
-    <ui-button
-      type="button"
-      icon="square-pen"
-      [label]="saveButtonLabel()"
-      (click)="save.emit()"
-    />
+    <ui-button type="button" icon="square-pen" [label]="saveButtonLabel()" (click)="save.emit()" />
   </ui-stack>
 </ui-stack>

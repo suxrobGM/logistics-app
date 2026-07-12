@@ -5,8 +5,26 @@
     <title>LogisticsX Admin</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="only light" />
+    <meta name="color-scheme" content="dark light" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <script>
+      // Set the theme before first paint, or the page flashes light and flips.
+      // Key must match THEME_STORAGE_KEY in shared/lib/services/theme.service.ts.
+      // Keep above the font <link>: a script cannot run while a preceding stylesheet is loading.
+      (function () {
+        const stored = localStorage.getItem("logisticsx-theme");
+        const isDark = stored
+          ? stored === "dark"
+          : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.add(isDark ? "dark-theme" : "light-theme");
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <adm-root></adm-root>

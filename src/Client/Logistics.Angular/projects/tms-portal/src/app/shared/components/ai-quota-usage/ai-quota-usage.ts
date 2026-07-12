@@ -15,8 +15,8 @@ export class AiQuotaUsage {
 
   protected readonly progressBarColor = computed(() => {
     const pct = (this.quota().usagePercent ?? 0) * 100;
-    if (pct >= 90) return "var(--red-500)";
-    if (pct >= 70) return "var(--yellow-500)";
+    if (pct >= 90) return "var(--danger)";
+    if (pct >= 70) return "var(--warning)";
     return "";
   });
 }
