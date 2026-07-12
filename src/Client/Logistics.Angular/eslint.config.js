@@ -15,6 +15,18 @@ export default defineConfig([
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["primeng", "primeng/*", "primeicons", "primeicons/*", "@primeuix/*"],
+              message:
+                "PrimeNG was removed in the spartan/ui migration. Use ui-* components from @logistics/shared/ui.",
+            },
+          ],
+        },
+      ],
       "@angular-eslint/directive-selector": [
         "error",
         {

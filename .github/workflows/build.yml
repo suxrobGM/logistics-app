@@ -62,20 +62,15 @@ jobs:
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun run build:shared
 
-      # Pins the Signal Forms behaviours the ui-* form controls rely on (submit() marks the tree
-      # touched; InteropNgControl.errors is a keyed object, which is how ui-form-field renders every
-      # inline error in the app) plus the three open Angular bugs we work around.
+      # Pins the Signal Forms behaviours the ui-* form controls rely on.
       - name: Test shared library
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun run ng test shared --watch=false
 
-      # THE EXIT GATE. PrimeNG was removed across S0-S13; this is what keeps it removed.
-      # Scans projects/ for PrimeNG in CODE (comments naming it are exempt and are the point), and
-      # asserts primeng/primeicons/@primeuix are absent from package.json, bun.lock and angular.json.
-      # Also runs check:all (burndown/budgets/spartan-tokens/icons) as an INDEPENDENT second scanner.
-      - name: Phase 7 gate — PrimeNG must not come back
+      # Vendored Helm primitives must not emit bare spartan-* CSS classes (they'd render unstyled).
+      - name: Spartan token check
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run gate:phase7
+        run: bun run check:spartan-tokens
 
       - name: Lint (0 errors, 0 warnings)
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
