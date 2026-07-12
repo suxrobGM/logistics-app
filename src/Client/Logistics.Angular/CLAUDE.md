@@ -128,13 +128,13 @@ For the `bg-elevated` / `bg-subtle` / `border-default` / `text-muted` rule (and 
 ## UI library
 
 **spartan/ui** (Helm, vendored in-repo) — see `.claude/rules/frontend/angular-conventions.md` for the
-full `ui-*` catalogue. PrimeNG is gone: no dependency, no import, no `p-*` markup. `tools/gates/phase7.sh`
-runs in CI and fails the build if any of it comes back.
+full `ui-*` catalogue. PrimeNG is gone: no dependency, no import, no `p-*` markup. Reintroducing one is
+blocked by the ESLint `no-restricted-imports` rule in `eslint.config.js`, which fails lint on any
+`primeng`/`primeicons`/`@primeuix/*` import.
 
 ```bash
-bun run gate:phase7        # the PrimeNG exit gate (+ check:all as an independent cross-check)
-bun run check:all          # burndown + budgets + spartan-tokens + icons
-bun run ng test shared     # the shared-library specs
+bun run ng test shared          # the shared-library specs
+bun run check:spartan-tokens    # fails on bare spartan-* CSS classes in primitives (they'd render unstyled)
 ```
 
 `/ui-lab` is a lazy dev route in tms-portal that renders every `ui-*` component in light and dark.

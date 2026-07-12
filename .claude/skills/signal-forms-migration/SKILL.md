@@ -18,7 +18,7 @@ Every claim here is pinned by an executable spec that CI runs:
 
 | Spec                                                                 | Pins                                                                                                                                                                                           |
 | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `projects/shared/src/lib/ui/form/signal-forms-v22-api-probe.spec.ts` | The Signal Forms API itself (claims F–O), including every example below                                                                                                                        |
+| `projects/shared/src/lib/ui/form/signal-forms-v22-api-probe.spec.ts` | The Signal Forms API itself (claims F–L), including every example below                                                                                                                        |
 | `projects/shared/src/lib/ui/form/form-value-control.spec.ts`         | The `FormValueControl` contract every `ui-*-field` rests on: two-way sync with `[formField]` and no value-accessor glue; `InteropNgControl.errors` is a **keyed object**; 3 known Angular bugs |
 
 **Those specs are the source of truth, not this doc.** If they disagree, the spec wins and this file

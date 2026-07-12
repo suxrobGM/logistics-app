@@ -24,9 +24,13 @@ src/Client/Logistics.Angular/
 │   │   │       ├── form/           # ui-form-field + the ui-*-field controls
 │   │   │       ├── table/          # ui-data-table
 │   │   │       ├── layout/         # ui-stack, ui-grid, ui-page-header, ...
-│   │   │       ├── content/        # ui-icon, ui-alert, ui-badge, ...
-│   │   │       ├── feedback/       # ui-empty-state, ui-error-state, ...
-│   │   │       └── icons/          # Lucide icon registry
+│   │   │       ├── containers/     # ui-card, ui-dashboard-card, ...
+│   │   │       ├── badges/         # ui-badge, ui-status-badge, ...
+│   │   │       ├── display/        # ui-alert, ui-typography, ui-avatar, ...
+│   │   │       ├── overlay/        # ui-dialog, ui-popover, ui-toaster, ...
+│   │   │       ├── status/         # ui-empty-state, ui-error-state, ...
+│   │   │       ├── disclosure/     # ui-tabs, ui-accordion, ui-stepper, ...
+│   │   │       └── icons/          # UI_ICONS record (icons.ts) + ui-icon
 │   │   └── ng-package.json
 │   ├── admin-portal/               # Admin Portal (super admin)
 │   │   └── src/app/
@@ -333,9 +337,10 @@ The UI library is **spartan/ui**: Helm components vendored in-repo under
 `projects/shared/src/lib/ui/primitives/` on top of `@spartan-ng/brain`.
 
 **PrimeNG is gone** — fully removed (no dependency, no import, no `p-*` markup, no theme preset).
-Never reintroduce a `p-*` component or a `primeng/*` import: `tools/gates/phase7.sh` runs in CI and
-fails the build if any of it comes back. Browse `/ui-lab` (a lazy dev route in tms-portal) to see
-every `ui-*` component rendered in light and dark before hand-rolling anything new.
+Never reintroduce a `p-*` component or a `primeng/*` import: the ESLint `no-restricted-imports` rule
+in `eslint.config.js` fails lint on any `primeng`/`primeicons`/`@primeuix/*` import. Browse `/ui-lab`
+(a lazy dev route in tms-portal) to see every `ui-*` component rendered in light and dark before
+hand-rolling anything new.
 
 Feature code does not touch the Helm primitives directly. It uses the shared `ui-*` components from
 `@logistics/shared/ui`, which live in `projects/shared/src/lib/ui/`:
@@ -352,21 +357,26 @@ import {
 } from "@logistics/shared/ui";
 ```
 
-| Area     | Components                                                                                                                                                                                                                                                                                                                                     |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Forms    | `ui-form-field`, `ui-text-field`, `ui-textarea-field`, `ui-select-field`, `ui-multiselect-field`, `ui-number-field`, `ui-currency-field`, `ui-unit-field`, `ui-date-field`, `ui-checkbox-field`, `ui-toggle-field`, `ui-password-field`, `ui-autocomplete-field`, `ui-search-field`, `ui-phone-field`, `ui-address-form`, `ui-language-picker` |
-| Data     | `ui-data-table` (+ `<th uiSortHeader="Field">`)                                                                                                                                                                                                                                                                                                |
-| Content  | `ui-icon`, `ui-alert`, `ui-badge`, `ui-status-badge`, `ui-typography`, `ui-theme-toggle`                                                                                                                                                                                                                                                       |
-| Layout   | `ui-divider`, `ui-container`, `ui-grid`, `ui-stack`, `ui-surface`, `ui-toolbar`, `ui-page-header`, `ui-dashboard-card`                                                                                                                                                                                                                         |
-| Feedback | `ui-empty-state`, `ui-error-state`, `ui-loading-skeleton`, `ui-data-container`, `ui-date-range-picker`                                                                                                                                                                                                                                         |
+| Area       | Components                                                                                                                                                                                                                                                                                                                                                             |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Forms      | `ui-form-field`, `ui-text-field`, `ui-textarea-field`, `ui-select-field`, `ui-multiselect-field`, `ui-number-field`, `ui-currency-field`, `ui-unit-field`, `ui-date-field`, `ui-date-range-picker`, `ui-checkbox-field`, `ui-toggle-field`, `ui-password-field`, `ui-autocomplete-field`, `ui-search-field`, `ui-phone-field`, `ui-address-form`, `ui-language-picker` |
+| Table      | `ui-data-table` (+ `<th uiSortHeader="Field">`), `ui-table-paginator`                                                                                                                                                                                                                                                                                                  |
+| Action     | `ui-button`, `ui-toggle-group`, `ui-theme-toggle`                                                                                                                                                                                                                                                                                                                      |
+| Badges     | `ui-badge`, `ui-status-badge`, `ui-count-badge`, `ui-overlay-badge`                                                                                                                                                                                                                                                                                                    |
+| Display    | `ui-typography`, `ui-avatar`, `ui-timeline`, `ui-chart`, `ui-money-with-tax`, `ui-pdf-viewer`, `ui-alert`                                                                                                                                                                                                                                                              |
+| Overlay    | `ui-dialog`, `ui-confirm-dialog`, `ui-confirm-delete-dialog`, `ui-popover`, `[uiTooltip]`, `ui-drawer`, `ui-menu`, `ui-lightbox`, `ui-toaster`, `ui-cookie-banner`                                                                                                                                                                                                     |
+| Status     | `ui-spinner`, `ui-skeleton`, `ui-loading-skeleton`, `ui-progress`, `ui-empty-state`, `ui-error-state`, `ui-data-container`                                                                                                                                                                                                                                             |
+| Layout     | `ui-divider`, `ui-container`, `ui-grid`, `ui-stack`, `ui-surface`, `ui-toolbar`                                                                                                                                                                                                                                                                                        |
+| Containers | `ui-card`, `ui-dashboard-card`, `ui-feature-row`, `ui-page-header`                                                                                                                                                                                                                                                                                                     |
+| Disclosure | `ui-tabs`, `ui-accordion`, `ui-stepper`, `ui-collapsible`                                                                                                                                                                                                                                                                                                              |
 
-`ui-button`, `ui-card`, `ui-dialog`, `ui-tooltip`, `ui-spinner`, `ui-skeleton`, `ui-menu`, `ui-tabs`,
-and `ui-chart` are landing during the migration — check `projects/shared/src/lib/ui/` for what exists
-before hand-rolling one.
+Check `projects/shared/src/lib/ui/` for the full set before hand-rolling a new component.
 
-Icons are `<ui-icon name="..."/>` only — never `<i class="pi pi-*">` and never a raw `<ng-icon>` in
-feature code. Toasts and confirmation dialogs go through `ToastService` from `@logistics/shared` —
-never inject `MessageService` or `ConfirmationService`.
+Icons are `<ui-icon name="..."/>` only — never a raw `<ng-icon>` in feature code. `name` is the typed
+`IconName` union (a key of the `UI_ICONS` record in `projects/shared/src/lib/ui/icons/icons.ts`); an
+unknown static name is a compile error. To add a glyph, import its `@ng-icons/lucide` export and add
+one entry to `UI_ICONS`. Toasts and confirmation dialogs go through `ToastService` from
+`@logistics/shared` — never inject `MessageService` or `ConfirmationService`.
 
 ## Routing
 
