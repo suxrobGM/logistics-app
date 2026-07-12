@@ -44,9 +44,9 @@ interface AddressParts {
 }
 
 /**
- * Parses an incoming {@link Address} into the individual, editable part signals.
- * Replaces the old `writeValue`: normalises the country to an ISO code and, when the
- * country has a fixed option list, normalises the state to a matching option value.
+ * Parses an incoming {@link Address} into the individual, editable part signals: normalises the
+ * country to an ISO code and, when the country has a fixed option list, normalises the state to a
+ * matching option value.
  */
 function parseAddress(value: Address | null): AddressParts {
   if (!value) {
@@ -80,12 +80,12 @@ function parseAddress(value: Address | null): AddressParts {
 /**
  * Composite address editor.
  *
- * Implements Angular's `FormValueControl<Address | null>` and nothing else — Signal Forms binds
- * straight to it via `[formField]`, so no value accessor and no compat shim are needed.
+ * Implements `FormValueControl<Address | null>` only — see `text-field.ts` for the FormValueControl
+ * bridge contract.
  *
  * The sub-fields are driven by plain signals rather than an internal `FormGroup`. Each edit
- * recomposes an `Address` and pushes it through `value` — but only once every required part is
- * present, mirroring the previous "don't emit an incomplete address" behaviour.
+ * recomposes an `Address` and pushes it through `value`, but only once every required part is
+ * present, so an incomplete address is never emitted.
  */
 @Component({
   selector: "ui-address-form",
@@ -116,10 +116,10 @@ export class AddressForm implements FormValueControl<Address | null> {
   }
 
   /**
-   * Editable parts, seeded from `value()`. This replaces `writeValue`: whenever the bound
-   * value changes externally, the parts re-derive from it. User edits update the parts in
-   * place (see the `on*` handlers) and re-compose a new value — so there is no write-back
-   * loop, because `value.set` is only ever called from a user-input handler, never reactively.
+   * Editable parts, seeded from `value()`: whenever the bound value changes externally, the parts
+   * re-derive from it. User edits update the parts in place (see the `on*` handlers) and re-compose
+   * a new value — so there is no write-back loop, because `value.set` is only ever called from a
+   * user-input handler, never reactively.
    */
   protected readonly parts = linkedSignal<Address | null, AddressParts>({
     source: this.value,
@@ -197,10 +197,9 @@ export class AddressForm implements FormValueControl<Address | null> {
   }
 
   /**
-   * Recomposes an `Address` from the current parts and pushes it through `value`. Skips the
-   * write while any required part is missing, so the bound control keeps its previous value
-   * (matching the legacy `handleFormValueChange` early-return) and stays invalid via the
-   * parent control's own `Validators.required`.
+   * Recomposes an `Address` from the current parts and pushes it through `value`. Skips the write
+   * while any required part is missing, so the bound control keeps its previous value and stays
+   * invalid via the parent field's own `required` rule.
    */
   private emit(): void {
     const parts = this.parts();

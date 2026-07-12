@@ -55,11 +55,7 @@ export class DvirReviewPage implements OnInit {
     mechanicNotes: "",
   });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit: it marks the tree touched first, skips the
-   * action while invalid, and drives `form().submitting()` — so there is no `isSaving` signal and
-   * no `markAllAsTouched()` call. The review fields are optional, so there are no validation rules.
-   */
+  /** The review fields are all optional, so the form declares no validation rules. */
   protected readonly form = form(
     this.model,
     () => {

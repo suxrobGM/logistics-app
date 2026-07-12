@@ -86,12 +86,7 @@ export class EmployeeEditDialog {
 
   protected readonly model = signal<EmployeeEditModel>({ ...EMPTY });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()` — so there is no `isLoading` signal.
-   * The salary control's validators and disabled state are declarative, replacing the old
-   * `salaryType.valueChanges` subscription.
-   */
+  /** The salary control's validators and disabled state are declarative, keyed off `salaryType`. */
   protected readonly form = form(
     this.model,
     (p) => {

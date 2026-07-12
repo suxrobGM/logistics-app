@@ -40,11 +40,6 @@ export class SendInvoiceDialog {
 
   protected readonly model = signal({ ...EMPTY });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()` — so there is no `isSending` signal
-   * and no `markAllAsTouched()` call.
-   */
   protected readonly form = form(
     this.model,
     (p) => {

@@ -79,11 +79,8 @@ export class TenantForm {
   protected readonly model = signal<TenantFormModel>({ ...EMPTY });
 
   /**
-   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched first and
-   * skips the action while invalid, so there is no `markAllAsTouched()` and no invalid guard here.
-   * Owner fields are required only in create mode via declarative `applyWhen`, replacing the old
-   * `setValidators` / `clearValidators` effect. The action just re-raises `save`; the parent owns
-   * the API call and drives the button's loading state through the `isLoading` input.
+   * Owner fields are required only in create mode, via declarative `applyWhen`. The action just
+   * re-raises `save`; the parent owns the API call and the button's loading state (`isLoading`).
    */
   protected readonly form = form(
     this.model,

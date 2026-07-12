@@ -55,11 +55,7 @@ export class ProviderAddDialog {
 
   protected readonly model = signal({ ...EMPTY });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips the
-   * action while invalid, and drives `form().submitting()`. The parent owns the async save, so the
-   * button stays bound to the `saving` input, and the action just emits the command.
-   */
+  /** The parent owns the async save: the action just emits the command; the button binds `saving`. */
   protected readonly form = form(
     this.model,
     (p) => {

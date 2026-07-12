@@ -81,10 +81,8 @@ export class TimesheetFormDialog {
   protected readonly model = signal({ ...EMPTY });
 
   /**
-   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched first, skips
-   * the action (running `onInvalid`) while invalid, and drives `form().submitting()`. The
-   * start/end ordering check is a cross-field `validate()` rule, so an out-of-order time makes the
-   * form invalid and blocks submission without any manual guard.
+   * The start/end ordering check is a cross-field `validate()` rule, so an out-of-order time makes
+   * the form invalid and blocks submission.
    */
   protected readonly form = form(
     this.model,

@@ -15,15 +15,9 @@ import { focusFirstControl } from "../focus-control";
 /**
  * Multi-line text input.
  *
- * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]` with no value-accessor glue and no compat
- * shim.
- *
+ * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
  * The inner native textarea is styled by spartan's `hlmTextarea` and driven with plain value/event
- * bindings. It used to be PrimeNG's `pTextarea`, the one component in all of primeng that subscribes
- * to `ngControl.valueChanges` and therefore throws under `[formField]`
- * (`forms/signal-forms-compat-probe.spec.ts`, claim C).
+ * bindings.
  *
  * @example
  * <ui-form-field label="Notes" for="notes" [required]="true">
@@ -42,8 +36,6 @@ export class UiTextareaField implements FormValueControl<string> {
   /** The control's value. Required by `FormValueControl`. */
   public readonly value = model<string>("");
 
-  // Optional state inputs. Signal Forms binds these automatically when present;
-  // the Reactive Forms bridge drives `disabled`.
   public readonly disabled = input(false, { transform: booleanAttribute });
   public readonly readonly = input(false, { transform: booleanAttribute });
   public readonly required = input(false, { transform: booleanAttribute });
@@ -62,11 +54,6 @@ export class UiTextareaField implements FormValueControl<string> {
   public readonly placeholder = input<string>("");
   public readonly maxlength = input<number | null>(null);
 
-  /**
-   * Signal Forms drives `invalid` from form creation, so a required, untouched field would render
-   * as invalid on page load. Reveal it only once the user has interacted — the same rule
-   * `ui-form-field` uses for its inline error message.
-   */
   protected readonly showInvalid = computed(
     () => this.invalid() && (this.touched() || this.dirty()),
   );

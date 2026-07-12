@@ -21,10 +21,7 @@ import { MaskedInput } from "./masked-input";
 /**
  * Phone number input with a country dial-code selector.
  *
- * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]` with no value-accessor glue and no compat
- * shim.
+ * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
  *
  * The public `value` is an E.164 string (`+[dialCode][digits]`). It is split into the
  * `selectedCountry` + `phoneNumber` presentation signals when set from OUTSIDE, and
@@ -41,8 +38,6 @@ export class PhoneField implements FormValueControl<string | null> {
   /** The control's value in E.164 format. Required by `FormValueControl`. */
   public readonly value = model<string | null>(null);
 
-  // Optional state inputs. Signal Forms binds these automatically when present;
-  // the Reactive Forms bridge drives `disabled`.
   public readonly disabled = input(false, { transform: booleanAttribute });
   public readonly required = input(false, { transform: booleanAttribute });
   public readonly invalid = input(false, { transform: booleanAttribute });

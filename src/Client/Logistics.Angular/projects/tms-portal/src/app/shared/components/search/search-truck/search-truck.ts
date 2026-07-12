@@ -19,8 +19,7 @@ import { UiAutocompleteField } from "@logistics/shared/ui";
  * This component uses an autocomplete input to allow users to search for trucks by name or number.
  * Its value is always a TruckDto; pass `[truckId]` to seed it from a bare ID.
  *
- * Implements Angular's `FormValueControl` and nothing else, so this component binds via
- * `[formField]` with no value-accessor glue and no compat shim.
+ * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
  */
 @Component({
   selector: "app-search-truck",

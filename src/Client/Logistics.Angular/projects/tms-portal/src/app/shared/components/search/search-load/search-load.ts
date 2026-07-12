@@ -7,12 +7,9 @@ import { LoadStatusTag } from "../../tags/load-status-tag/load-status-tag";
 
 /**
  * Component for searching and selecting loads.
- * It uses the AutoComplete component from PrimeNG to provide suggestions based on user input.
+ * It uses an autocomplete input to provide suggestions based on user input.
  *
- * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]` with no value-accessor glue and no compat
- * shim.
+ * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
  */
 @Component({
   selector: "app-search-load",

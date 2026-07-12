@@ -93,10 +93,8 @@ export class TenantTaxRatesCard implements OnInit {
   protected readonly model = signal<TaxRateModel>({ ...EMPTY });
 
   /**
-   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()` — so there is no `isSaving` signal
-   * and no `if (form.invalid) return` guard. The jurisdiction is disabled while editing (editing it
-   * would create a different rate row), driven declaratively off `editingId()`.
+   * The jurisdiction is disabled while editing (editing it would create a different rate row),
+   * driven declaratively off `editingId()`.
    */
   protected readonly form = form(
     this.model,

@@ -112,8 +112,7 @@ function contains(value: unknown, filter: string): boolean {
  * CONSUMER's `<ng-template #header>` inject it: the template is DECLARED as a child of the
  * `<ui-data-table>` element, and `createEmbeddedView` parents the embedded view's injector at the
  * declaration node. For trips-list's nested table the inner element is a strictly closer ancestor
- * of its own templates, so the inner state shadows the outer one structurally. (Both properties
- * are pinned by `di-shadowing.probe.spec.ts`.)
+ * of its own templates, so the inner state shadows the outer one structurally.
  *
  * NOTHING here emits. The single `lazyLoad` output belongs to `UiDataTable`; this class calls the
  * `emit` callback handed to {@link connect}, and only ever from a user-intent method.

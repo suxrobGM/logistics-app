@@ -103,12 +103,7 @@ export class PayrollInvoiceAdd {
     dateRange: [this.lastWeek.startDate, this.lastWeek.endDate],
   });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()` — so there are no `isLoading` /
-   * `isBulkCreating` signals and no `if (!form.valid) return` guards. Employee is only required in
-   * single mode; bulk mode validates its own selection.
-   */
+  /** Employee is only required in single mode; bulk mode validates its own selection. */
   protected readonly form = form(
     this.model,
     (p) => {

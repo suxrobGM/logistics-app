@@ -110,9 +110,7 @@ export class PayrollLineItemsTable {
 
   /**
    * The footer button lives in the dialog footer (outside the `<form>`), so submission is driven
-   * imperatively. `submit()` marks the tree touched, skips the action while invalid, and drives
-   * `form().submitting()` — replacing the old `isSaving` signal and the `if (!form.valid) return`
-   * guard.
+   * imperatively via `submit()` rather than `[formRoot]`.
    */
   async saveItem(): Promise<void> {
     await submit(this.form, async () => {

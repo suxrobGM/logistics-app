@@ -9,8 +9,7 @@ import { UiTableState } from "./table-state";
  * Injects the enclosing table's {@link UiTableState}. That works from inside a CONSUMER's
  * `<ng-template #header>` because the template is declared as a child node of the
  * `<ui-data-table>` element and an embedded view's injector is parented at its DECLARATION node —
- * so a nested table's headers resolve the nested state, not the outer one. Pinned by
- * `di-shadowing.probe.spec.ts`.
+ * so a nested table's headers resolve the nested state, not the outer one.
  *
  * The field is a static attribute (`uiSortHeader="Name"`), which is how all ~50 call sites use it:
  * sort fields are column names, not expressions.

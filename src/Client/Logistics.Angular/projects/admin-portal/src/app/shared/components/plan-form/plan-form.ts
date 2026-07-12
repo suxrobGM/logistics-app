@@ -83,11 +83,6 @@ export class PlanForm {
 
   protected readonly model = signal<PlanFormValue>({ ...EMPTY });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched first, skips
-   * the action while invalid, and emits the value to the parent, which owns the save request and
-   * drives `isLoading`.
-   */
   protected readonly form = form(
     this.model,
     (p) => {

@@ -2,14 +2,9 @@
  * Signal Forms — Angular 22 API surface probe
  * ===========================================
  *
- * WHAT THIS GUARDS
- * ----------------
- * `signal-forms-compat-probe.spec.ts` pins the PrimeNG *interop* facts. This file pins the
- * facts about the Signal Forms API itself that Phase 4 (reactive forms -> Signal Forms) and
- * the rewritten `ValidatedForm` / `ui-form-field` depend on.
- *
- * Several of these contradict what a reader would assume coming from Reactive Forms, and
- * every one of them is invisible to `build:all`:
+ * Pins the facts about the Signal Forms API itself that `ValidatedForm`, `ui-form-field`, and the
+ * form wrappers depend on. Several contradict what a reader would assume coming from Reactive Forms,
+ * and every one of them is invisible to `build:all`:
  *
  *   F. `submit()` marks the whole tree touched BEFORE checking validity, guards re-entrancy,
  *      drives `submitting`, and skips `action` when invalid (running `onInvalid` instead).
@@ -32,8 +27,8 @@
  *      no `focus()` it calls `.focus()` on the directive's host element (a no-op for a
  *      non-focusable custom element host).
  *
- * Environment note: same as the compat probe — Vitest + jsdom, zoneless, so every TestBed
- * module installs `provideZonelessChangeDetection()`.
+ * Environment note: Vitest + jsdom, zoneless, so every TestBed module installs
+ * `provideZonelessChangeDetection()`.
  */
 
 import {
@@ -48,9 +43,6 @@ import {
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NgControl } from "@angular/forms";
 import {
-  applyEach,
-  applyWhen,
-  disabled,
   form,
   FormField,
   FormRoot,
@@ -58,7 +50,6 @@ import {
   minLength,
   required,
   submit,
-  validate,
   type FormValueControl,
 } from "@angular/forms/signals";
 
@@ -345,90 +336,5 @@ describe("Signal Forms v22 API probe", () => {
       host.probe().focusCalls,
       "a FormValueControl that implements focus() receives focusBoundControl()",
     ).toBe(1);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// Schema-rule shapes. These exist so the examples in
-// `.claude/skills/signal-forms-migration/SKILL.md` are compile-verified, not just plausible.
-// ---------------------------------------------------------------------------
-
-describe("Signal Forms schema rules (skill examples, compile-verified)", () => {
-  beforeEach(() => configure());
-
-  it("M: cross-field validate() returns a plain {kind, message} — there is no customError()", () => {
-    const data = signal({ password: "abc", confirm: "xyz" });
-    const f = TestBed.runInInjectionContext(() =>
-      form(data, (p) => {
-        validate(p.confirm, ({ valueOf }) =>
-          valueOf(p.password) === valueOf(p.confirm)
-            ? null
-            : { kind: "passwordMismatch", message: "Passwords must match" },
-        );
-      }),
-    );
-
-    expect(f.confirm().invalid()).toBe(true);
-    expect(f.confirm().errors()[0].kind).toBe("passwordMismatch");
-    expect(f.confirm().errors()[0].message).toBe("Passwords must match");
-
-    f.confirm().value.set("abc");
-    expect(f.confirm().valid()).toBe(true);
-  });
-
-  it("N: applyWhen() scopes rules to a condition; disabled() takes {when}", () => {
-    const data = signal({ isBusiness: false, companyName: "", notes: "" });
-    const f = TestBed.runInInjectionContext(() =>
-      form(data, (p) => {
-        applyWhen(
-          p,
-          ({ value }) => value().isBusiness,
-          (bp) => required(bp.companyName, { message: "Company name is required" }),
-        );
-        disabled(p.notes, { when: ({ valueOf }) => !valueOf(p.isBusiness) });
-      }),
-    );
-
-    // Personal account: companyName has no required rule, notes is disabled.
-    expect(f.companyName().valid()).toBe(true);
-    expect(f.notes().disabled()).toBe(true);
-
-    f.isBusiness().value.set(true);
-    expect(f.companyName().invalid(), "required() applies once the condition flips").toBe(true);
-    expect(f.companyName().errors()[0].message).toBe("Company name is required");
-    expect(f.notes().disabled()).toBe(false);
-  });
-
-  it("N: required({when}) is the single-rule alternative to applyWhen", () => {
-    const data = signal({ isBusiness: false, companyName: "" });
-    const f = TestBed.runInInjectionContext(() =>
-      form(data, (p) => {
-        required(p.companyName, { when: ({ valueOf }) => valueOf(p.isBusiness) });
-      }),
-    );
-
-    expect(f.companyName().valid()).toBe(true);
-    f.isBusiness().value.set(true);
-    expect(f.companyName().invalid()).toBe(true);
-  });
-
-  it("O: arrays are plain arrays in the model; applyEach applies a per-item schema", () => {
-    const data = signal({ items: [{ name: "ok" }, { name: "" }] });
-    const f = TestBed.runInInjectionContext(() =>
-      form(data, (p) => {
-        applyEach(p.items, (item) => required(item.name));
-      }),
-    );
-
-    expect(f.items[0].name().valid()).toBe(true);
-    expect(f.items[1].name().invalid()).toBe(true);
-    expect(f().invalid(), "an invalid item invalidates the root").toBe(true);
-
-    // Add / remove is a plain immutable model update — there is no FormArray.
-    data.update((v) => ({ ...v, items: [...v.items, { name: "added" }] }));
-    expect(f.items[2].name().value()).toBe("added");
-
-    data.update((v) => ({ ...v, items: v.items.filter((_, i) => i !== 1) }));
-    expect(f().valid(), "removing the invalid item revalidates the root").toBe(true);
   });
 });

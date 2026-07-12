@@ -234,13 +234,9 @@ export class LoadForm implements OnInit {
   protected readonly model = signal<LoadFormModel>({ ...EMPTY });
 
   /**
-   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched, skips the
-   * action while invalid (so the old `if (form.invalid) return` guard is gone) and drives
-   * `submitting()`. The parent owns the async save, so the action just emits.
-   *
    * `distance`, `assignedDispatcherName`, `tripId` and `tripNumber` are permanently disabled — they
-   * are computed or informational. Unlike reactive forms' `form.value`, `model()` still contains
-   * them, which is what the old `getRawValue()` call relied on.
+   * are computed or informational. `model()` still holds them (a disabled field drops out of
+   * validation, not out of the value), so they ride along to the parent's save.
    */
   protected readonly form = form(
     this.model,

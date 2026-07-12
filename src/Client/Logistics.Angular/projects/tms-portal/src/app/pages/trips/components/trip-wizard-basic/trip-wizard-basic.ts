@@ -36,11 +36,6 @@ export class TripWizardBasic {
 
   protected readonly model = signal<TripBasicModel>({ tripName: "", truck: null });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()` — so there is no validity guard and
-   * no `markAllAsTouched()` call here.
-   */
   protected readonly form = form(
     this.model,
     (p) => {
@@ -50,8 +45,7 @@ export class TripWizardBasic {
     {
       submission: {
         action: async () => {
-          // Reactive forms excluded a disabled control from `form.value`; reproduce that here so a
-          // disabled truck is treated as "no truck" in the payload.
+          // A disabled truck is treated as "no truck" in the payload.
           const truck = this.form.truck().disabled() ? null : this.model().truck;
 
           // Only validate truck type if a truck is selected.

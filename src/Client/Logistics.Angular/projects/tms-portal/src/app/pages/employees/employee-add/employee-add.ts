@@ -83,11 +83,7 @@ export class EmployeeAdd {
 
   protected readonly model = signal<EmployeeAddModel>({ ...EMPTY });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()`. `isLoading` is kept because it also
-   * tracks the initial roles load, not the submit.
-   */
+  /** `isLoading` is retained separately because it tracks the initial roles load, not the submit. */
   protected readonly form = form(
     this.model,
     (p) => {

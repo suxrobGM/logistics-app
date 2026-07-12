@@ -67,10 +67,6 @@ export class BlogPostForm {
     ...(this.initial() ?? {}),
   }));
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first and
-   * skips the action while invalid, so there is no `markAllAsTouched()` and no `form.invalid` guard.
-   */
   protected readonly form = form(
     this.model,
     (p) => {

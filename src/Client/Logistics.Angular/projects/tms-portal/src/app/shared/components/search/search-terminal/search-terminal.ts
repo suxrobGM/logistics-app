@@ -7,10 +7,7 @@ import { UiAutocompleteField } from "@logistics/shared/ui";
 /**
  * Terminal search autocomplete.
  *
- * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]` with no value-accessor glue and no compat
- * shim.
+ * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
  */
 @Component({
   selector: "app-search-terminal",

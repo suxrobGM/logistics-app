@@ -26,10 +26,7 @@ export interface UiSelectOptionContext<T = unknown> {
 /**
  * Single-select dropdown.
  *
- * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]` with no value-accessor glue and no compat
- * shim.
+ * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
  *
  * The inner spartan `hlm-select` (brain `BrnSelect` + `BrnPopover`) is driven with plain
  * `[value]` / `(valueChange)` — never `formControlName` / `[formField]` on it. `uiDetachedControl`
@@ -76,8 +73,6 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   /** The control's value. Required by `FormValueControl`. */
   public readonly value = model<T | null>(null);
 
-  // Optional state inputs. Signal Forms binds these automatically when present;
-  // the Reactive Forms bridge drives `disabled`.
   public readonly disabled = input(false, { transform: booleanAttribute });
   public readonly readonly = input(false, { transform: booleanAttribute });
   public readonly required = input(false, { transform: booleanAttribute });
@@ -122,11 +117,6 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
     return opts.filter((opt) => this.resolveLabel(opt).toLowerCase().includes(query));
   });
 
-  /**
-   * Signal Forms drives `invalid` from form creation, so a required, untouched field would render
-   * as invalid on page load. Reveal it only once the user has interacted — the same rule
-   * `ui-form-field` uses for its inline error message.
-   */
   protected readonly showInvalid = computed(
     () => this.invalid() && (this.touched() || this.dirty()),
   );

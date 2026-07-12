@@ -105,9 +105,8 @@ export class PostTruckDialog {
   }
 
   /**
-   * The dialog's footer button lives outside the `<form>`, so submission is imperative. `submit()`
-   * marks the whole tree touched, skips the action when invalid, and only emits on success — which
-   * replaces the old `if (this.form.invalid) return;` guard.
+   * The dialog's footer button lives outside the `<form>`, so submission is driven imperatively via
+   * `submit()` rather than `[formRoot]`.
    */
   protected async onSubmit(): Promise<void> {
     await submit(this.form, async () => {

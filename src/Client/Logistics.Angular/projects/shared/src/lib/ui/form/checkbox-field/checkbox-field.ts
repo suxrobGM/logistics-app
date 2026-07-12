@@ -16,9 +16,8 @@ import { focusFirstControl } from "../focus-control";
  * Binary checkbox — a native `<input type="checkbox">` (visually hidden, `peer sr-only`) behind a
  * styled box with a lucide check.
  *
- * Implements Angular's `FormValueControl<boolean>` and nothing else — binds via `[formField]`,
- * with no value-accessor glue of any kind. The inner control is
- * a real native checkbox driven by plain `[checked]` / `(change)`.
+ * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
+ * The inner control is a real native checkbox driven by plain `[checked]` / `(change)`.
  *
  * @example
  * <ui-form-field label="Accept terms" [required]="true">

@@ -81,11 +81,7 @@ export class PayrollInvoiceEdit implements OnInit {
     dateRange: [this.lastWeek.startDate, this.lastWeek.endDate],
   });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()` — so there is no `isSaving` signal
-   * and no `if (!form.valid) return` guard. `isLoading` is kept because it tracks the initial fetch.
-   */
+  /** `isLoading` is retained separately because it tracks the initial fetch, not the submit. */
   protected readonly form = form(
     this.model,
     (p) => {

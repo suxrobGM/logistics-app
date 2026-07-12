@@ -34,10 +34,7 @@ export interface UiAutocompleteOptionContext<T = unknown> {
 /**
  * Type-ahead autocomplete.
  *
- * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]` with no value-accessor glue and no compat
- * shim.
+ * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
  *
  * The inner spartan `hlm-autocomplete` (brain `BrnAutocomplete` + `BrnPopover`) is driven with plain
  * `[value]` / `(valueChange)` and its search via `(searchChange)`. `uiDetachedControl` severs the
@@ -83,8 +80,6 @@ export class UiAutocompleteField<T = unknown> implements FormValueControl<T | nu
   /** The control's value. Required by `FormValueControl`. */
   public readonly value = model<T | null>(null);
 
-  // Optional state inputs. Signal Forms binds these automatically when present;
-  // the Reactive Forms bridge drives `disabled`.
   public readonly disabled = input(false, { transform: booleanAttribute });
   public readonly readonly = input(false, { transform: booleanAttribute });
   public readonly required = input(false, { transform: booleanAttribute });

@@ -84,11 +84,6 @@ export class CustomerEditDialog {
   protected readonly statusOptions = customerStatusOptions;
   protected readonly model = signal<UpdateCustomerModel>({ ...EMPTY });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit — it marks the tree touched first, skips the
-   * action while invalid, and drives `form().submitting()`, so there is no `isLoading` signal and
-   * no `if (!form.valid) return` guard.
-   */
   protected readonly form = form(
     this.model,
     (p) => {

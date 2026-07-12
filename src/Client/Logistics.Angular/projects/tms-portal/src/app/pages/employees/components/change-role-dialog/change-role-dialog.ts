@@ -34,9 +34,8 @@ export class ChangeRoleDialog {
   protected readonly model = signal({ ...EMPTY });
 
   /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the tree touched first and skips the
-   * action while `role` is empty, running `onInvalid` — which preserves the old "select a role"
-   * toast since this dialog has no inline `ui-form-field` error slot.
+   * An empty `role` on submit runs `onInvalid`, which shows the "select a role" toast — this dialog
+   * has no inline `ui-form-field` error slot to surface the error otherwise.
    */
   protected readonly form = form(
     this.model,

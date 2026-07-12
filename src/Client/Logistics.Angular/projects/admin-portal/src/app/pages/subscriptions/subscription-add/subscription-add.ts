@@ -63,11 +63,6 @@ export class SubscriptionAdd implements OnInit {
 
   protected readonly model = signal({ ...EMPTY });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()` — so there is no `isLoading` signal
-   * for the submit and no `markAllAsTouched()` / invalid guard.
-   */
   protected readonly form = form(
     this.model,
     (p) => {

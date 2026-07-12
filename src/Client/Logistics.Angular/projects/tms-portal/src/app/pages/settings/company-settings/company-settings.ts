@@ -130,11 +130,6 @@ export class CompanySettingsComponent implements OnInit {
 
   protected readonly model = signal<CompanySettingsModel>({ ...EMPTY });
 
-  /**
-   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()` — so there is no `isSaving` signal
-   * and no `if (!form.valid) return` guard.
-   */
   protected readonly form = form(
     this.model,
     (p) => {

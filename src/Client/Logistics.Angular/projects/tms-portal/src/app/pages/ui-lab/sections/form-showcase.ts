@@ -170,8 +170,7 @@ export class UiLabFormShowcase {
       if (this.variant() !== "invalid") {
         return;
       }
-      // `submit()` marks the whole tree touched before it checks validity, which is exactly how a
-      // real user reveals these errors. Inputs are set by the time `afterNextRender` runs.
+      // Reveal the inline errors the way a real user would, once inputs are set (afterNextRender).
       void submit(this.form, async () => undefined);
     });
   }

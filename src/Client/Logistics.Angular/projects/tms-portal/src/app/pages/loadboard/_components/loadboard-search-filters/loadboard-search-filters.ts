@@ -55,10 +55,9 @@ export class LoadBoardSearchFilters {
   });
 
   /**
-   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
-   * the action while invalid, and drives `form().submitting()`. The radius / max-results bounds are
-   * schema validators so Signal Forms drives the reserved `min` / `max` state inputs on the number
-   * fields (which is why the template no longer sets `[min]` / `[max]`).
+   * The radius / max-results bounds are schema validators, so Signal Forms drives the reserved
+   * `min` / `max` state inputs on the number fields (which is why the template no longer sets
+   * `[min]` / `[max]`).
    */
   protected readonly form = form(
     this.model,

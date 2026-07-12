@@ -10,11 +10,8 @@ import { UiAutocompleteField } from "@logistics/shared/ui";
  * It emits the selected employee via its `value` model. Supports filtering by role
  * (e.g., "Driver", "Dispatcher").
  *
- * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
- * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]` with no value-accessor glue and no compat
- * shim. Never put `formControlName` / `[formField]` on an
- * inner third-party element.
+ * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
+ * Never put `formControlName` / `[formField]` on an inner third-party element.
  */
 @Component({
   selector: "app-search-employee",
