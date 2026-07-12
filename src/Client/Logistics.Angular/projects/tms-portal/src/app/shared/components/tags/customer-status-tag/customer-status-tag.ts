@@ -31,9 +31,9 @@ export class CustomerStatusTag {
   protected readonly icon = computed((): IconName => {
     switch (this.status()) {
       case "active":
-        return "check-circle";
+        return "circle-check";
       case "inactive":
-        return "minus-circle";
+        return "circle-minus";
       case "prospect":
         return "star";
       default:

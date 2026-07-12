@@ -17,7 +17,7 @@
       <span
         class="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900 dark:text-amber-300"
       >
-        <ui-icon name="exclamation-triangle" class="mr-1" />
+        <ui-icon name="triangle-alert" class="mr-1" />
         {{ summary().missingRequired.length }} Missing
       </span>
     }
@@ -38,7 +38,7 @@
           class="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400"
           [uiTooltip]="docType.label + ' required - not uploaded'"
         >
-          <ui-icon name="times" size="inherit" class="text-xs" />
+          <ui-icon name="x" size="inherit" class="text-xs" />
           {{ docType.label }}
         </span>
       } @else {
@@ -55,7 +55,7 @@
 
   @if (summary().missingRequired.length > 0) {
     <div class="text-muted-foreground mt-3 text-xs">
-      <ui-icon name="info-circle" class="mr-1" />
+      <ui-icon name="info" class="mr-1" />
       Missing required documents: {{ summary().missingRequiredLabels }}
     </div>
   }

@@ -43,7 +43,7 @@ export class HowItWorks {
       title: "Review and go",
       description:
         "Approve the suggestions, or hand the agent the keys. Trips get created and dispatched either way.",
-      icon: "check-circle",
+      icon: "circle-check",
     },
   ];
 }

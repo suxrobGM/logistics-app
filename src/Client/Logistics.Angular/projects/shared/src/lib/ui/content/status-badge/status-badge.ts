@@ -1,5 +1,5 @@
 import { Component, computed, input } from "@angular/core";
-import type { IconName } from "../../icons/icon-registry.generated";
+import type { IconName } from "../../icons/icons";
 import { Badge } from "../badge/badge";
 import type { UiBadgeIntent } from "../badge/badge-intent";
 import { resolveStatusSeverity, type StatusKind } from "./severity-maps";
@@ -7,10 +7,10 @@ import { resolveStatusSeverity, type StatusKind } from "./severity-maps";
 /** Typed against `IconName` now that `ui-badge` renders a real `<ui-icon>` — an unknown key here is
  *  a compile error rather than a chip with a blank square where its glyph should be. */
 const SEVERITY_DEFAULT_ICON: Partial<Record<UiBadgeIntent, IconName>> = {
-  success: "check-circle",
-  danger: "times-circle",
-  warn: "exclamation-triangle",
-  info: "info-circle",
+  success: "circle-check",
+  danger: "circle-x",
+  warn: "triangle-alert",
+  info: "info",
 };
 
 /**
@@ -19,7 +19,7 @@ const SEVERITY_DEFAULT_ICON: Partial<Record<UiBadgeIntent, IconName>> = {
  * per-page `getXxxSeverity()` methods.
  *
  * Icons: callers can pass an explicit `icon`; otherwise a sensible default
- * is chosen from the resolved severity (success → check-circle, etc.).
+ * is chosen from the resolved severity (success → circle-check, etc.).
  * Pass `icon=""` (empty string) to suppress all icons.
  */
 @Component({

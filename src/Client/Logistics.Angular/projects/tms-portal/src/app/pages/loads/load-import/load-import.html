@@ -37,7 +37,7 @@
           (rejected)="error.set($event)"
         >
           <ui-stack align="center" gap="4" class="p-8">
-            <ui-icon name="file-pdf" color="muted" size="xl" />
+            <ui-icon name="file-text" color="muted" size="xl" />
             <ui-typography color="secondary">Drag and drop dispatch sheet PDF here</ui-typography>
           </ui-stack>
         </ui-file-upload>
@@ -63,7 +63,7 @@
       <ui-card class="mb-4">
         <ng-template #header>
           <ui-stack direction="row" align="center" gap="2" class="p-4">
-            <ui-icon name="check-circle" color="success" />
+            <ui-icon name="circle-check" color="success" />
             <ui-typography variant="h6" tag="h3">Extracted Data</ui-typography>
             @if (data.sourceTemplate) {
               <span class="bg-primary/10 text-foreground rounded px-2 py-1 text-xs">
@@ -166,7 +166,7 @@
       <ui-card>
         <ng-template #header>
           <ui-stack direction="row" align="center" gap="2" class="p-4">
-            <ui-icon name="check-circle" color="success" />
+            <ui-icon name="circle-check" color="success" />
             <ui-typography variant="h6" tag="h3">Load Created Successfully</ui-typography>
           </ui-stack>
         </ng-template>

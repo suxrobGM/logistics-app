@@ -23,8 +23,6 @@
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { provideIcons } from "@ng-icons/core";
-import { BASE_NG_ICONS } from "../../icons/icon-registry.generated";
 import { UiMenu } from "./menu";
 import type { UiMenuItem } from "./menu-item";
 
@@ -77,7 +75,7 @@ describe("ui-menu", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TestHost],
-      providers: [provideZonelessChangeDetection(), provideIcons(BASE_NG_ICONS)],
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
     fixture = TestBed.createComponent(TestHost);
     host = fixture.componentInstance;

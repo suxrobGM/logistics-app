@@ -35,7 +35,7 @@ export class RecentActivityComponent {
           loadNumber: load.number,
           action: "was delivered",
           timestamp: new Date(load.deliveredAt),
-          icon: "check-circle",
+          icon: "circle-check",
           iconClass: "text-emerald-600 dark:text-emerald-400",
         });
       } else if (load.pickedUpAt) {
@@ -62,7 +62,7 @@ export class RecentActivityComponent {
           loadNumber: load.number,
           action: "was cancelled",
           timestamp: new Date(load.cancelledAt),
-          icon: "times-circle",
+          icon: "circle-x",
           iconClass: "text-red-600 dark:text-red-400",
         });
       } else if (load.createdAt) {
@@ -71,7 +71,7 @@ export class RecentActivityComponent {
           loadNumber: load.number,
           action: "was created",
           timestamp: new Date(load.createdAt),
-          icon: "plus-circle",
+          icon: "circle-plus",
           iconClass: "text-gray-600 dark:text-gray-400",
         });
       }

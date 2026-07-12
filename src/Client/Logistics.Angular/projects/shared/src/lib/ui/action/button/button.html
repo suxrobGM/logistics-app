@@ -10,7 +10,7 @@
   <!-- The spinner takes the leading glyph's place while busy — never both. `size="inherit"` emits no
        text-* class, so the icon tracks the button's font-size and `animate-spin` works on it. -->
   @if (busy) {
-    <ui-icon name="spinner" size="inherit" spin />
+    <ui-icon name="loader-circle" size="inherit" spin />
   } @else if (icon(); as name) {
     <ui-icon [name]="name" size="inherit" />
   }

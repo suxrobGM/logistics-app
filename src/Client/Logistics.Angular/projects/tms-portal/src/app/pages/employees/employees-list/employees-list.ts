@@ -62,7 +62,7 @@ export class EmployeeList {
     },
     {
       label: "View payrolls",
-      icon: "file-o",
+      icon: "file",
       command: () => this.router.navigateByUrl(`/payroll/employee/${this.selectedRow()!.id}`),
     },
     {

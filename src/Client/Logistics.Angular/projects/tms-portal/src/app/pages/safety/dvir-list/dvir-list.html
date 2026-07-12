@@ -48,7 +48,7 @@
           <td>
             @if (dvir.hasDefects) {
               <ui-stack direction="row" align="center" gap="1" class="text-danger font-medium">
-                <ui-icon name="exclamation-triangle" />
+                <ui-icon name="triangle-alert" />
                 {{ dvir.defects?.length || 0 }}
               </ui-stack>
             } @else {
@@ -67,7 +67,7 @@
           <td>
             <ui-button
               appearance="text"
-              icon="ellipsis-v"
+              icon="ellipsis-vertical"
               ariaLabel="Show actions menu"
               (click)="$event.stopPropagation(); selectedRow.set(dvir); menu.toggle($event)"
             />

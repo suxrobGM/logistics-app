@@ -30,7 +30,7 @@ export class AiShowcase {
     {
       title: "Compare loads to trucks",
       description: "Looks at truck-type compatibility and revenue per mile",
-      icon: "chart-bar",
+      icon: "chart-column",
     },
     {
       title: "Run HOS checks",
@@ -45,7 +45,7 @@ export class AiShowcase {
     {
       title: "Assign and dispatch",
       description: "Sends suggestions for approval, or runs them itself",
-      icon: "check-circle",
+      icon: "circle-check",
     },
   ];
 
@@ -54,13 +54,13 @@ export class AiShowcase {
       title: "Human-in-the-loop",
       description:
         "The agent suggests assignments. You approve, reject, or hand back context to re-plan. You stay in control.",
-      icon: "user-edit",
+      icon: "user-pen",
     },
     {
       title: "Autonomous",
       description:
         "The agent runs on its own - assigns loads, creates trips, and dispatches without a human in the loop.",
-      icon: "bolt",
+      icon: "zap",
     },
     {
       title: "Full audit trail",

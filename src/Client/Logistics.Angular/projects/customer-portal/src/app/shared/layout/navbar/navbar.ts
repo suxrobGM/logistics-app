@@ -49,7 +49,7 @@ export class Navbar {
   protected readonly profileMenuItems: UiMenuItem[] = [
     {
       label: "Account Settings",
-      icon: "cog",
+      icon: "settings",
       routerLink: "/account",
     },
     {
@@ -59,13 +59,13 @@ export class Navbar {
     },
     {
       label: "Switch Company",
-      icon: "building",
+      icon: "building-2",
       command: () => this.switchTenant(),
     },
     { separator: true },
     {
       label: "Sign Out",
-      icon: "sign-out",
+      icon: "log-out",
       command: () => this.logout(),
     },
   ];

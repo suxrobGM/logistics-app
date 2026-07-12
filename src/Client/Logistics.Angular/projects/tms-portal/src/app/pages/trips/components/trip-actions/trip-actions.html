@@ -13,7 +13,7 @@
     <ui-button
       intent="danger"
       appearance="outlined"
-      icon="times"
+      icon="x"
       label="Cancel Trip"
       [loading]="isProcessing()"
       (click)="onCancelClick()"
@@ -21,6 +21,6 @@
   }
 
   @if (showEdit()) {
-    <ui-button icon="pen-to-square" label="Edit" [routerLink]="editLink()" />
+    <ui-button icon="square-pen" label="Edit" [routerLink]="editLink()" />
   }
 </div>

@@ -40,7 +40,7 @@
           <ui-stack gap="4">
             <div>
               <ui-stack direction="row" align="center" gap="2" class="mb-1">
-                <ui-icon name="map-marker" class="text-blue-500" />
+                <ui-icon name="map-pin" class="text-blue-500" />
                 <ui-typography variant="caption" color="muted" weight="medium">
                   Origin
                 </ui-typography>
@@ -114,7 +114,7 @@
             <ui-stack direction="row" gap="4">
               <ui-stack direction="row" align="center" gap="2">
                 @if (data.hasBillOfLading) {
-                  <ui-icon name="check-circle" class="text-green-500" />
+                  <ui-icon name="circle-check" class="text-green-500" />
                 } @else {
                   <ui-icon name="circle" color="muted" />
                 }
@@ -122,7 +122,7 @@
               </ui-stack>
               <ui-stack direction="row" align="center" gap="2">
                 @if (data.hasProofOfDelivery) {
-                  <ui-icon name="check-circle" class="text-green-500" />
+                  <ui-icon name="circle-check" class="text-green-500" />
                 } @else {
                   <ui-icon name="circle" color="muted" />
                 }

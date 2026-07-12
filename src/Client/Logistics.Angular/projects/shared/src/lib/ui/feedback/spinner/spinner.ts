@@ -28,9 +28,8 @@ import { Icon } from "../../content/icon/icon";
  *
  * WHY NOT `hlm-spinner` (we generated it, then deleted it)
  * It is a `<ng-icon>` on `lucideLoader2` with `animate-spin`, registered through its own local
- * `provideIcons`. We already have that glyph — `spinner` → `loader-circle` in the icon registry —
- * and `ui-button` already spins it. Adopting HlmSpinner would mean a second loader icon and a second
- * registration path for the same picture. One icon pipeline.
+ * `provideIcons`. We already render that glyph — `<ui-icon name="loader-circle" spin>` — and
+ * `ui-button` already spins it. One icon pipeline.
  *
  * @example
  * <ui-spinner />                                   <!-- 100px, like p-progress-spinner -->

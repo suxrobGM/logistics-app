@@ -16,8 +16,6 @@
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { provideIcons } from "@ng-icons/core";
-import { BASE_NG_ICONS } from "../../icons/icon-registry.generated";
 import { UiButton } from "./button";
 import {
   INTENT_APPEARANCE,
@@ -123,7 +121,7 @@ async function render(): Promise<ComponentFixture<HostButton>> {
 describe("ui-button", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), provideIcons({ ...BASE_NG_ICONS })],
+      providers: [provideZonelessChangeDetection()],
     });
   });
 

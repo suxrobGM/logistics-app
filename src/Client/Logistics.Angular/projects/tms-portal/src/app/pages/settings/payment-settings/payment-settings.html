@@ -39,7 +39,7 @@
         @case ("active") {
           <!-- Active State with Capabilities -->
           <ui-stack align="center" gap="2" class="mb-4 text-center">
-            <ui-icon name="check-circle" size="xl" color="success" class="text-6xl" />
+            <ui-icon name="circle-check" size="xl" color="success" class="text-6xl" />
             <ui-typography variant="h5" tag="h3" class="mb-2">
               Ready to Accept Payments
             </ui-typography>
@@ -54,7 +54,7 @@
               <ui-surface variant="subtle" padding="md" radius="lg">
                 <ui-stack direction="row" align="center" gap="2">
                   <ui-icon
-                    [name]="connectStatus()?.chargesEnabled ? 'check-circle' : 'times-circle'"
+                    [name]="connectStatus()?.chargesEnabled ? 'circle-check' : 'circle-x'"
                     [class.text-green-500]="connectStatus()?.chargesEnabled"
                     [class.text-red-500]="!connectStatus()?.chargesEnabled"
                   />
@@ -69,7 +69,7 @@
               <ui-surface variant="subtle" padding="md" radius="lg">
                 <ui-stack direction="row" align="center" gap="2">
                   <ui-icon
-                    [name]="connectStatus()?.payoutsEnabled ? 'check-circle' : 'times-circle'"
+                    [name]="connectStatus()?.payoutsEnabled ? 'circle-check' : 'circle-x'"
                     [class.text-green-500]="connectStatus()?.payoutsEnabled"
                     [class.text-red-500]="!connectStatus()?.payoutsEnabled"
                   />
@@ -84,14 +84,14 @@
 
           <ui-stack direction="row" justify="center" gap="3" class="mt-6">
             <ui-button
-              icon="chart-bar"
+              icon="chart-column"
               label="Open Dashboard"
               (click)="openDashboard()"
               [loading]="isOpeningDashboard()"
             />
             <ui-button
               appearance="outlined"
-              icon="cog"
+              icon="settings"
               label="Account Settings"
               (click)="continueOnboarding()"
               [loading]="isGettingLink()"
@@ -112,7 +112,7 @@
 
         @case ("restricted") {
           <ui-empty-state
-            icon="exclamation-triangle"
+            icon="triangle-alert"
             title="Account Restricted"
             message="Your Stripe Connect account has some restrictions. Please complete the required steps to restore full functionality."
             actionLabel="Resolve Issues"

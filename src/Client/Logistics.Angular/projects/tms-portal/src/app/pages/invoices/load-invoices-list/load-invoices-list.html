@@ -2,7 +2,7 @@
   <ui-page-header title="Load Invoices">
     <ui-button
       appearance="outlined"
-      icon="chart-bar"
+      icon="chart-column"
       label="Dashboard"
       [routerLink]="['/invoices']"
     />
@@ -24,7 +24,7 @@
           appearance="text"
           size="sm"
           label="Clear All"
-          icon="times"
+          icon="x"
           (click)="clearFilters()"
           [disabled]="activeFilterCount() === 0"
         />

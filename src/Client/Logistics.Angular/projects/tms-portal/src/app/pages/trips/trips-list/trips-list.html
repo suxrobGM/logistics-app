@@ -33,7 +33,7 @@
           appearance="text"
           size="sm"
           label="Clear All"
-          icon="times"
+          icon="x"
           (click)="clearFilters()"
           [disabled]="activeFilterCount() === 0"
         />
@@ -200,7 +200,7 @@
             <td (click)="$event.stopPropagation()">
               <ui-button
                 appearance="text"
-                icon="ellipsis-v"
+                icon="ellipsis-vertical"
                 (click)="selectedRow.set(trip); menu.toggle($event)"
                 ariaLabel="Show actions menu"
               />

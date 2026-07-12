@@ -23,7 +23,7 @@
  */
 
 import { pathToFileURL } from "node:url";
-import { listFiles, readText, relative } from "../codemods/lib/io.mjs";
+import { listFiles, readText, relative } from "../lib/io.mjs";
 
 const PRIMITIVES = "projects/shared/src/lib/ui/primitives";
 

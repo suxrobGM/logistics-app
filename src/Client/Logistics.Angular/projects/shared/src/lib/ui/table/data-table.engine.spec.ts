@@ -8,7 +8,6 @@
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import type { ListLazyLoadEvent } from "../../stores";
-import { BASE_ICON_NAMES } from "../icons/icon-registry.generated";
 import { UiDataTable } from "./data-table";
 import { UiSortHeader } from "./sort-header";
 import { UiTableRowDirectives } from "./table-row-directives";
@@ -195,27 +194,5 @@ describe("<ui-data-table> engine", () => {
     table["state"].setPage(50); // the last, PARTIAL page: {last} clamps to the total
     await settle(fixture);
     expect(report()).toBe("Showing 51 to 57 of 57 rows");
-  });
-
-  it("registers every glyph `<th uiSortHeader>` can render, in every portal", () => {
-    // ⚠ REGRESSION — the exact bug hunt item #9 exists for: "a sort header with no arrow passes
-    // every test and every code review".
-    //
-    // `sort-header.ts` renders its arrow through `[name]="sortIcon()"`, and `gen-icon-registry.mjs`
-    // finds the glyphs each portal must register by REGEX-SCANNING the source. A computed is
-    // invisible to it, so `chevrons-up-down` — the UNSORTED arrow, i.e. the DEFAULT state of every
-    // sortable column in the app — was never registered: it resolved through `ICON_ALIASES` (so it
-    // compiled, and check-icons passed) while `provideIcons` had no glyph for it, and @ng-icons
-    // rendered an empty <svg>. All four portals shipped blank sort arrows.
-    //
-    // It is pinned in that script's MANDATORY_BASE now. This asserts the outcome rather than the
-    // mechanism: whatever the scanner does or does not see, these glyphs reach BASE_NG_ICONS.
-    for (const glyph of ["chevrons-up-down", "chevron-up", "chevron-down"] as const) {
-      expect(BASE_ICON_NAMES).toContain(glyph);
-    }
-    // The paginator's first/last-page buttons, blank for the same reason.
-    for (const glyph of ["chevrons-left", "chevrons-right"] as const) {
-      expect(BASE_ICON_NAMES).toContain(glyph);
-    }
   });
 });

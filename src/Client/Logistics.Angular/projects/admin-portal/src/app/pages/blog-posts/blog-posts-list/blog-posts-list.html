@@ -43,7 +43,7 @@
           <td>
             <ui-stack direction="row" align="center" gap="2">
               @if (post.isFeatured) {
-                <ui-icon name="star-fill" color="warning" uiTooltip="Featured" />
+                <ui-icon name="star" color="warning" uiTooltip="Featured" />
               }
               {{ post.title }}
             </ui-stack>
@@ -58,7 +58,7 @@
             <ui-button
               intent="secondary"
               appearance="text"
-              icon="ellipsis-v"
+              icon="ellipsis-vertical"
               (click)="openActionMenu(post, menu, $event)"
               ariaLabel="Show actions menu"
             />

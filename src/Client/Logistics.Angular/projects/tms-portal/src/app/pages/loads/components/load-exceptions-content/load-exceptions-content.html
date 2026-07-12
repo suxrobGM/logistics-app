@@ -2,7 +2,7 @@
   <ng-template #header>
     <div class="flex items-center justify-between p-4 pb-0">
       <div class="flex items-center gap-2">
-        <ui-icon name="exclamation-triangle" class="text-warning" />
+        <ui-icon name="triangle-alert" class="text-warning" />
         <h3 class="m-0 text-lg font-semibold">Load Exceptions</h3>
         @if (unresolvedCount() > 0) {
           <ui-count-badge [value]="unresolvedCount().toString()" severity="danger" />
@@ -20,7 +20,7 @@
           appearance="outlined"
           size="sm"
           ariaLabel="Refresh exceptions"
-          icon="refresh"
+          icon="refresh-cw"
           (click)="refresh()"
           [loading]="isLoading()"
         />
@@ -65,7 +65,7 @@
           <td>
             @if (isResolved(exception)) {
               <span class="text-success flex items-center gap-1 text-sm font-medium">
-                <ui-icon name="check-circle" />
+                <ui-icon name="circle-check" />
                 Resolved
               </span>
               <span class="text-muted-foreground text-xs">
@@ -96,7 +96,7 @@
                 [uiTooltipDelay]="300"
                 uiTooltipPosition="left"
               >
-                <ui-icon name="info-circle" />
+                <ui-icon name="info" />
               </span>
             }
           </td>
@@ -107,7 +107,7 @@
         <tr>
           <td colspan="6" class="py-8 text-center">
             <div class="text-muted-foreground flex flex-col items-center gap-3">
-              <ui-icon name="check-circle" size="inherit" class="text-success text-4xl" />
+              <ui-icon name="circle-check" size="inherit" class="text-success text-4xl" />
               <div>
                 <p class="font-medium">No exceptions reported</p>
                 <p class="text-sm">This load has no reported exceptions.</p>

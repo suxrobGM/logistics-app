@@ -11,7 +11,7 @@
         appearance="outlined"
         size="sm"
         label="Reset Selected"
-        icon="refresh"
+        icon="refresh-cw"
         [disabled]="selectedTenantIds().size === 0"
         [loading]="isResetting()"
         (click)="resetSelected()"
@@ -21,7 +21,7 @@
         appearance="outlined"
         size="sm"
         label="Reset All"
-        icon="refresh"
+        icon="refresh-cw"
         [loading]="isResetting()"
         (click)="resetAll()"
       />
@@ -134,7 +134,7 @@
       <tr>
         <td colspan="11" class="py-8 text-center">
           <ui-stack align="center" gap="2" class="text-muted-foreground">
-            <ui-icon name="chart-bar" size="xl" />
+            <ui-icon name="chart-column" size="xl" />
             <ui-typography variant="body">No tenants with AI quota configured.</ui-typography>
           </ui-stack>
         </td>

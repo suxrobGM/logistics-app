@@ -18,7 +18,7 @@
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="file-export"
+        icon="file-output"
         label="Total Invoiced"
         [value]="(data()?.totalInvoiced || 0 | currencyFormat) ?? '$0'"
         color="blue"
@@ -29,7 +29,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="check-circle"
+        icon="circle-check"
         label="Total Paid"
         [value]="(data()?.totalPaid || 0 | currencyFormat) ?? '$0'"
         color="green"
@@ -50,7 +50,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="percentage"
+        icon="percent"
         label="Collection Rate"
         [value]="(data()?.collectionRate || 0 | number: '1.1-1') + '%'"
         color="blue"
@@ -106,7 +106,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Financial Metrics" icon="chart-bar" iconColor="blue">
+      <ui-dashboard-card title="Financial Metrics" icon="chart-column" iconColor="blue">
         <ui-chart
           type="bar"
           [data]="financialMetricsChartData()"

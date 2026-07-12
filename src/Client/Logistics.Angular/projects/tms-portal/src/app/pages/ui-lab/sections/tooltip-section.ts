@@ -43,7 +43,7 @@ export class UiLabTooltipSection {
   protected readonly iconButtons = [
     { icon: "pencil", label: "Edit load" },
     { icon: "trash", label: "Delete load" },
-    { icon: "refresh", label: "Refresh exceptions" },
+    { icon: "refresh-cw", label: "Refresh exceptions" },
     { icon: "eye", label: "View session" },
     { icon: "download", label: "Download manifest" },
   ] as const;

@@ -17,7 +17,7 @@ interface CultureHighlight {
 export class Culture {
   protected readonly highlights: CultureHighlight[] = [
     {
-      icon: "bolt",
+      icon: "zap",
       title: "Ship",
       description:
         "We push code often, iterate, and take the kind of risks where the downside is fixable.",
@@ -28,7 +28,7 @@ export class Culture {
       description: "About the customers, the team, and the quality of what we ship.",
     },
     {
-      icon: "comments",
+      icon: "messages-square",
       title: "Talk straight",
       description:
         "Transparency, honest feedback, and keeping each other in the loop. No politicking.",

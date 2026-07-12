@@ -18,14 +18,14 @@
         <ui-button
           appearance="outlined"
           type="button"
-          icon="sync"
+          icon="refresh-cw"
           label="Change Status"
           (click)="openStatusDialog()"
         />
         <ui-button
           appearance="outlined"
           type="button"
-          icon="map-marker"
+          icon="map-pin"
           label="Move to Terminal"
           (click)="openTerminalDialog()"
         />
@@ -93,7 +93,7 @@
 
         <ui-stack tag="section" gap="3">
           <ui-stack direction="row" gap="2" align="center">
-            <ui-icon name="comment" color="secondary" />
+            <ui-icon name="message-square" color="secondary" />
             <ui-typography variant="overline" color="secondary">Notes</ui-typography>
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">

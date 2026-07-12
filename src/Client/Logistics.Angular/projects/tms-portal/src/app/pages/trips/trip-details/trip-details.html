@@ -61,7 +61,7 @@
                 gap="1"
                 class="text-muted-foreground mt-2 text-sm"
               >
-                <ui-icon name="map-marker" />
+                <ui-icon name="map-pin" />
                 <span>
                   {{ store.completedStops().length }} of {{ store.sortedStops().length }} stops
                   completed
@@ -151,7 +151,7 @@
               }
               @if (tripDetails.completedAt) {
                 <ui-stack direction="row" align="center" gap="2" class="text-sm">
-                  <ui-icon name="check-circle" color="success" />
+                  <ui-icon name="circle-check" color="success" />
                   <span class="text-muted-foreground">Completed:</span>
                   <span>{{ tripDetails.completedAt | dateFormat: "medium" }}</span>
                 </ui-stack>
@@ -178,7 +178,7 @@
           <ui-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
-                <ui-icon name="map-marker" color="primary" />
+                <ui-icon name="map-pin" color="primary" />
                 <ui-typography variant="h6" tag="h5">Stops</ui-typography>
               </ui-stack>
             </ng-template>
@@ -226,7 +226,7 @@
                           (click)="onMarkStopArrived(tripStop)"
                         />
                       } @else {
-                        <ui-icon name="check-circle" class="text-green-500" />
+                        <ui-icon name="circle-check" class="text-green-500" />
                       }
                     </td>
                   }

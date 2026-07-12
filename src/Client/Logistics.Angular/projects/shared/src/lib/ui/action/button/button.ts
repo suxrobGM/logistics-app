@@ -1,6 +1,6 @@
 import { booleanAttribute, Component, computed, input } from "@angular/core";
 import { Icon } from "../../content/icon/icon";
-import type { IconName } from "../../icons/icon-registry.generated";
+import type { IconName } from "../../icons/icons";
 import {
   uiButtonClass,
   type UiButtonAppearance,

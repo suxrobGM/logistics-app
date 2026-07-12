@@ -55,12 +55,12 @@ export class TenantsList {
     return [
       {
         label: "Edit",
-        icon: "pen-to-square",
+        icon: "square-pen",
         command: () => this.router.navigate(["/tenants", tenant!.id, "edit"]),
       },
       {
         label: "Resend Welcome Email",
-        icon: "envelope",
+        icon: "mail",
         command: () => this.resendWelcome(tenant!.id),
       },
       { separator: true },

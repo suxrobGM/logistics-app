@@ -24,7 +24,7 @@
 
           <!-- Warning icon overlay -->
           <div class="absolute inset-0 flex items-center justify-center">
-            <ui-icon name="exclamation-triangle" size="lg" class="text-amber-500" />
+            <ui-icon name="triangle-alert" size="lg" class="text-amber-500" />
           </div>
         </div>
       </div>
@@ -49,12 +49,12 @@
 
     <!-- Actions -->
     <ui-stack direction="row" justify="center" gap="3" class="flex-col sm:flex-row">
-      <ui-button intent="success" label="Sign In Again" icon="sign-in" (click)="login()" />
+      <ui-button intent="success" label="Sign In Again" icon="log-in" (click)="login()" />
       <ui-button
         intent="success"
         appearance="outlined"
         label="Sign Out"
-        icon="sign-out"
+        icon="log-out"
         (click)="logout()"
       />
     </ui-stack>

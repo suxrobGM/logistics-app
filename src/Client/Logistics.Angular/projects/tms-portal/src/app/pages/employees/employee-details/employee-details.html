@@ -67,7 +67,7 @@
           }
         </ui-tab>
         <ui-tab value="3">
-          <ui-icon name="dollar" class="mr-2" />
+          <ui-icon name="dollar-sign" class="mr-2" />
           Payroll
         </ui-tab>
         <ui-tab value="4">
@@ -183,7 +183,7 @@
               </ng-template>
 
               <ui-stack direction="row" align="center" gap="2">
-                <ui-icon name="map-marker" class="text-primary" />
+                <ui-icon name="map-pin" class="text-primary" />
                 <span>{{ employee.lastKnownLocation }}</span>
               </ui-stack>
             </ui-card>
@@ -200,7 +200,7 @@
             <ui-stack direction="row" gap="2" wrap>
               <ui-button
                 appearance="outlined"
-                icon="dollar"
+                icon="dollar-sign"
                 label="View Payroll"
                 [routerLink]="['/payroll/employee', id()]"
               />
@@ -259,7 +259,7 @@
 
               @if (employee.stripeConnectedAccountId) {
                 <ui-stack direction="row" align="center" gap="2">
-                  <ui-icon name="check-circle" class="text-green-500" />
+                  <ui-icon name="circle-check" class="text-green-500" />
                   <span>Payout account connected</span>
                 </ui-stack>
                 <ui-button
@@ -273,7 +273,7 @@
                 />
               } @else {
                 <ui-stack direction="row" align="center" gap="2">
-                  <ui-icon name="info-circle" class="text-orange-500" />
+                  <ui-icon name="info" class="text-orange-500" />
                   <span>
                     No payout account set up. Set up Stripe Connect to pay this employee via bank
                     transfer.
@@ -306,7 +306,7 @@
 } @else {
   <ui-card>
     <ui-stack align="center" gap="4" class="py-16">
-      <ui-icon name="exclamation-circle" size="xl" color="muted" />
+      <ui-icon name="circle-alert" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Employee not found</ui-typography>
       <ui-button label="Back to Employees" [routerLink]="['/employees']" />
     </ui-stack>

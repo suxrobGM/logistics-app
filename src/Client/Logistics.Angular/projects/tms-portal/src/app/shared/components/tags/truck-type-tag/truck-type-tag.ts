@@ -14,14 +14,14 @@ const TYPE_INFO: Record<TruckType, TypeInfo> = {
   reefer: { label: "Reefer", severity: "info", icon: "snowflake" },
   tanker: { label: "Tanker", severity: "contrast", icon: "circle" },
   box_truck: { label: "Box Truck", severity: "info", icon: "box" },
-  dump_truck: { label: "Dump Truck", severity: "warn", icon: "sort-up" },
+  dump_truck: { label: "Dump Truck", severity: "warn", icon: "arrow-up" },
   tow_truck: { label: "Tow Truck", severity: "secondary", icon: "link" },
   car_hauler: { label: "Car Hauler", severity: "success", icon: "car" },
   container_truck: { label: "Container Truck", severity: "info", icon: "warehouse" },
   tautliner: { label: "Tautliner", severity: "secondary", icon: "truck" },
-  low_loader: { label: "Low Loader", severity: "warn", icon: "sort-down" },
+  low_loader: { label: "Low Loader", severity: "warn", icon: "arrow-down" },
   car_transporter: { label: "Car Transporter", severity: "success", icon: "car" },
-  swap_body: { label: "Swap Body", severity: "info", icon: "sync" },
+  swap_body: { label: "Swap Body", severity: "info", icon: "refresh-cw" },
   curtainsider: { label: "Curtainsider", severity: "info", icon: "truck" },
 };
 

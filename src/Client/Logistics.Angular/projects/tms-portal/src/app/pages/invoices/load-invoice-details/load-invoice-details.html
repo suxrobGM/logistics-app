@@ -183,7 +183,7 @@
             <ui-button
               appearance="outlined"
               block
-              icon="dollar"
+              icon="dollar-sign"
               label="Record Payment"
               (click)="showRecordPaymentDialog.set(true)"
               [disabled]="getOutstandingAmount() <= 0"
@@ -198,7 +198,7 @@
             <ui-button
               appearance="outlined"
               block
-              icon="file-pdf"
+              icon="file-text"
               label="Download PDF"
               [loading]="isDownloadingPdf()"
               (click)="exportToPdf()"
@@ -261,7 +261,7 @@
   } @else {
     <ui-card>
       <ui-stack align="center" gap="4" class="text-muted-foreground py-8">
-        <ui-icon name="exclamation-circle" size="xl" />
+        <ui-icon name="circle-alert" size="xl" />
         <p>Invoice not found</p>
       </ui-stack>
     </ui-card>

@@ -133,7 +133,7 @@ export class TripsList {
     if (trip?.status === "draft") {
       items.push({
         label: "Edit trip details",
-        icon: "pen-to-square",
+        icon: "square-pen",
         command: () => this.router.navigate(["/trips", trip!.id, "edit"]),
       });
     }
@@ -155,7 +155,7 @@ export class TripsList {
     ) {
       items.push({
         label: "Cancel trip",
-        icon: "times",
+        icon: "x",
         command: () => this.askCancelTrip(trip!),
       });
     }

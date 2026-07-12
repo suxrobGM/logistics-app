@@ -6,16 +6,13 @@ import {
   withInMemoryScrolling,
   withRouterConfig,
 } from "@angular/router";
-import { BASE_NG_ICONS, provideSpartanHlm } from "@logistics/shared";
+import { provideSpartanHlm } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
-import { provideIcons } from "@ng-icons/core";
-import { WEBSITE_NG_ICONS } from "@/shared/icons/lucide-icons";
 import { environment } from "../environments/environment";
 import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideIcons({ ...BASE_NG_ICONS, ...WEBSITE_NG_ICONS }),
     provideBrowserGlobalErrorListeners(),
     provideSpartanHlm(),
     provideRouter(

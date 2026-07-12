@@ -150,7 +150,7 @@
                 <td>{{ getSalaryTypeDesc(item.employee.salaryType) }}</td>
                 <td class="text-right">
                   @if (item.loading) {
-                    <ui-icon name="spinner" spin />
+                    <ui-icon name="loader-circle" spin />
                   } @else if (item.error) {
                     <span class="text-danger">Error</span>
                   } @else {
@@ -159,11 +159,11 @@
                 </td>
                 <td class="text-center">
                   @if (item.loading) {
-                    <ui-icon name="spinner" spin class="text-foreground" />
+                    <ui-icon name="loader-circle" spin class="text-foreground" />
                   } @else if (item.error) {
-                    <ui-icon name="times-circle" class="text-danger" [uiTooltip]="item.error" />
+                    <ui-icon name="circle-x" class="text-danger" [uiTooltip]="item.error" />
                   } @else {
-                    <ui-icon name="check-circle" class="text-success" />
+                    <ui-icon name="circle-check" class="text-success" />
                   }
                 </td>
               </tr>

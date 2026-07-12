@@ -1,6 +1,6 @@
 <div class="flex flex-col items-center justify-center py-12 text-center">
   <ui-icon
-    name="exclamation-triangle"
+    name="triangle-alert"
     size="inherit"
     class="mb-4 text-6xl text-orange-500 dark:text-orange-400"
   />
@@ -8,10 +8,10 @@
   <p class="mb-6 max-w-md text-gray-600 dark:text-gray-400">{{ message() }}</p>
   <div class="flex gap-2">
     @if (retryable()) {
-      <ui-button label="Retry" icon="refresh" (click)="onRetry()" />
+      <ui-button label="Retry" icon="refresh-cw" (click)="onRetry()" />
     }
     @if (showLogout()) {
-      <ui-button intent="secondary" label="Log Out" icon="sign-out" (click)="onLogout()" />
+      <ui-button intent="secondary" label="Log Out" icon="log-out" (click)="onLogout()" />
     }
   </div>
 </div>

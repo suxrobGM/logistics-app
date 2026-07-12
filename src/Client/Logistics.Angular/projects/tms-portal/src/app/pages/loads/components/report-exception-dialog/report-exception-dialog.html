@@ -39,7 +39,7 @@
       <ui-button appearance="text" label="Cancel" (click)="close()" [disabled]="isSubmitting()" />
       <ui-button
         label="Report Exception"
-        icon="exclamation-triangle"
+        icon="triangle-alert"
         (click)="submit()"
         [loading]="isSubmitting()"
         [disabled]="!selectedType() || !reason().trim()"

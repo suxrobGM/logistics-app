@@ -56,7 +56,7 @@
             @if (isExpiringSoon(invitation.expiresAt)) {
               <span class="font-medium text-orange-500">
                 {{ invitation.expiresAt | date: "short" }}
-                <ui-icon name="exclamation-triangle" class="ml-1" uiTooltip="Expiring soon" />
+                <ui-icon name="triangle-alert" class="ml-1" uiTooltip="Expiring soon" />
               </span>
             } @else {
               {{ invitation.expiresAt | date: "short" }}
@@ -67,7 +67,7 @@
             <ui-button
               appearance="text"
               ariaLabel="Resend invitation"
-              icon="refresh"
+              icon="refresh-cw"
               uiTooltip="Resend invitation"
               uiTooltipPosition="bottom"
               (click)="resendInvitation(invitation.id)"
@@ -76,7 +76,7 @@
               intent="danger"
               appearance="text"
               ariaLabel="Cancel invitation"
-              icon="times"
+              icon="x"
               uiTooltip="Cancel invitation"
               uiTooltipPosition="bottom"
               (click)="cancelInvitation(invitation.id)"

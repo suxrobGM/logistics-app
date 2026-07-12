@@ -1,5 +1,5 @@
 import { booleanAttribute, Component, computed, input } from "@angular/core";
-import type { IconName } from "../../icons/icon-registry.generated";
+import type { IconName } from "../../icons/icons";
 import { classes } from "../../primitives/utils";
 import { Icon } from "../icon/icon";
 import type { UiBadgeTone } from "./badge-intent";

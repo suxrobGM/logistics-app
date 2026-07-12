@@ -18,7 +18,7 @@
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="money-bill"
+        icon="banknote"
         label="Total Payroll"
         [value]="(data()?.totalPayroll || 0 | currencyFormat) ?? '$0'"
         color="blue"
@@ -27,7 +27,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="check-circle"
+        icon="circle-check"
         label="Total Paid"
         [value]="(data()?.totalPaid || 0 | currencyFormat) ?? '$0'"
         color="green"
@@ -75,7 +75,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
-      <ui-dashboard-card title="Salary Type Breakdown" icon="chart-bar" iconColor="blue">
+      <ui-dashboard-card title="Salary Type Breakdown" icon="chart-column" iconColor="blue">
         @if (hasSalaryTypeChartData()) {
           <ui-chart
             type="bar"

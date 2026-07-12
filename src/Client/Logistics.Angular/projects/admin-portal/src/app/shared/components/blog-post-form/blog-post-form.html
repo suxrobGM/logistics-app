@@ -59,7 +59,7 @@
       [loading]="isLoading()"
       [disabled]="isLoading()"
     />
-    <ui-button intent="secondary" label="Cancel" icon="times" routerLink="/blog-posts" />
+    <ui-button intent="secondary" label="Cancel" icon="x" routerLink="/blog-posts" />
     @if (mode() === "edit") {
       @if (status() === "draft" || status() === "archived") {
         <ui-button
@@ -75,7 +75,7 @@
           intent="warn"
           appearance="outlined"
           label="Unpublish"
-          icon="eye-slash"
+          icon="eye-off"
           (click)="askUnpublish()"
         />
       }

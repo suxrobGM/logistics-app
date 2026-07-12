@@ -66,7 +66,7 @@ export class BlogPostsList {
     const items: UiMenuItem[] = [
       {
         label: "Edit",
-        icon: "pen-to-square",
+        icon: "square-pen",
         command: () => this.editPost(),
       },
     ];
@@ -82,7 +82,7 @@ export class BlogPostsList {
     if (isPublished) {
       items.push({
         label: "Unpublish",
-        icon: "eye-slash",
+        icon: "eye-off",
         command: () => this.unpublishPost(),
       });
     }

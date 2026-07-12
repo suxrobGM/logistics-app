@@ -2,7 +2,7 @@
 
 @if (o.error) {
   <div class="text-danger flex items-center gap-1">
-    <ui-icon name="times-circle" size="inherit" class="text-xs" />
+    <ui-icon name="circle-x" size="inherit" class="text-xs" />
     <span>{{ o.error }}</span>
   </div>
 } @else if (o.trucks) {
@@ -29,7 +29,7 @@
 } @else if (o.batchResults) {
   @if (allBatchFailed()) {
     <div class="text-danger mb-1 flex items-center gap-1">
-      <ui-icon name="times-circle" size="inherit" class="text-xs" />
+      <ui-icon name="circle-x" size="inherit" class="text-xs" />
       <span>
         All {{ o.batchResults.length }} checks failed - no driver has sufficient HOS hours
       </span>
@@ -46,7 +46,7 @@
       @for (r of o.batchResults; track $index) {
         <div class="flex items-center gap-2">
           <ui-icon
-            [name]="r.feasible ? 'check-circle' : 'times-circle'"
+            [name]="r.feasible ? 'circle-check' : 'circle-x'"
             size="inherit"
             class="text-xs"
             [class]="r.feasible ? 'text-success' : 'text-danger'"
@@ -69,10 +69,10 @@
 } @else if (o.feasible !== undefined) {
   <div class="flex items-center gap-2">
     @if (o.feasible) {
-      <ui-icon name="check-circle" class="text-success" />
+      <ui-icon name="circle-check" class="text-success" />
       <span class="text-success">Feasible</span>
     } @else {
-      <ui-icon name="times-circle" class="text-danger" />
+      <ui-icon name="circle-x" class="text-danger" />
       <span class="text-danger">Not feasible</span>
     }
     @if (o.reason) {
@@ -89,10 +89,10 @@
 } @else if (o.success !== undefined) {
   <div class="flex items-center gap-1">
     @if (o.success) {
-      <ui-icon name="check-circle" class="text-success" />
+      <ui-icon name="circle-check" class="text-success" />
       <span class="text-success">Executed successfully</span>
     } @else {
-      <ui-icon name="times-circle" class="text-danger" />
+      <ui-icon name="circle-x" class="text-danger" />
       <span class="text-danger">Failed</span>
     }
   </div>

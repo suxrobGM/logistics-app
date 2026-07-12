@@ -59,7 +59,7 @@
           <td>
             @if (accident.injuriesReported) {
               <ui-stack direction="row" align="center" gap="1" class="text-danger font-medium">
-                <ui-icon name="exclamation-triangle" />
+                <ui-icon name="triangle-alert" />
                 Yes
               </ui-stack>
             } @else {
@@ -75,7 +75,7 @@
           <td>
             <ui-button
               appearance="text"
-              icon="ellipsis-v"
+              icon="ellipsis-vertical"
               ariaLabel="Show actions menu"
               (click)="$event.stopPropagation(); selectedRow.set(accident); menu.toggle($event)"
             />

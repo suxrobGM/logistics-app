@@ -17,8 +17,7 @@
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { provideIcons } from "@ng-icons/core";
-import { BASE_NG_ICONS, type IconName } from "../../icons/icon-registry.generated";
+import type { IconName } from "../../icons/icons";
 import { Badge } from "./badge";
 import { UI_BADGE_TONES, type UiBadgeTone } from "./badge-intent";
 import { TONE_CLASSES, uiBadgeClass, type UiBadgeSize } from "./badge-variants";
@@ -70,7 +69,7 @@ describe("ui-badge", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HostBadge],
-      providers: [provideZonelessChangeDetection(), provideIcons(BASE_NG_ICONS)],
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
     fixture = TestBed.createComponent(HostBadge);
     host = fixture.componentInstance;
@@ -166,7 +165,7 @@ describe("ui-badge", () => {
 
   // The icon is a real glyph now, not a `pi pi-*` class string.
   it("renders `icon` as an <ng-icon>, not as a class", () => {
-    host.icon.set("check-circle");
+    host.icon.set("circle-check");
     fixture.detectChanges();
     expect(el().querySelector("ng-icon")).toBeTruthy();
     expect(el().className).not.toContain("pi-");

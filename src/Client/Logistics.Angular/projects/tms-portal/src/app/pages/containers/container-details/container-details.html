@@ -33,7 +33,7 @@
   } @else if (!c) {
     <ui-card>
       <ui-stack align="center" gap="3" class="py-10">
-        <ui-icon name="alert-circle" color="muted" />
+        <ui-icon name="circle-alert" color="muted" />
         <ui-typography variant="body" color="secondary">Container not found.</ui-typography>
       </ui-stack>
     </ui-card>
@@ -149,7 +149,7 @@
         @if (c.notes) {
           <ui-stack tag="section" gap="3">
             <ui-stack direction="row" gap="2" align="center">
-              <ui-icon name="comment" color="secondary" />
+              <ui-icon name="message-square" color="secondary" />
               <ui-typography variant="overline" color="secondary">Notes</ui-typography>
             </ui-stack>
             <ui-surface variant="elevated" [border]="true">

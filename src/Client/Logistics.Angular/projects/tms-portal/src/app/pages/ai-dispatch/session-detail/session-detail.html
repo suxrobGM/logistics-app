@@ -24,7 +24,7 @@
             appearance="outlined"
             size="sm"
             label="Re-plan"
-            icon="refresh"
+            icon="refresh-cw"
             uiTooltip="Start a new session with rejection context"
             (click)="replanSession()"
           />
@@ -36,7 +36,7 @@
     <ui-surface variant="elevated" [border]="true" class="mb-6 transition-all duration-300">
       @if (session.status === "running") {
         <div class="bg-primary/10 -mx-4 -mt-4 mb-4 flex items-center gap-2 rounded-t-lg px-4 py-2">
-          <ui-icon name="spinner" size="inherit" spin class="text-foreground text-sm" />
+          <ui-icon name="loader-circle" size="inherit" spin class="text-foreground text-sm" />
           <span class="text-foreground text-sm font-medium">Agent is running...</span>
         </div>
       }
@@ -54,7 +54,7 @@
     @if (session.instructions) {
       <ui-surface variant="subtle" [border]="true" class="mb-6">
         <ui-stack direction="row" align="center" gap="2" class="mb-2">
-          <ui-icon name="comment" color="primary" />
+          <ui-icon name="message-square" color="primary" />
           <span class="text-sm font-semibold">Dispatcher Instructions</span>
         </ui-stack>
         <p class="text-subtle-foreground m-0 text-sm">{{ session.instructions }}</p>
@@ -73,7 +73,7 @@
           <ui-icon name="sparkles" color="primary" />
           <span class="font-semibold">Agent Summary</span>
           @if (session.status === "running") {
-            <ui-icon name="spinner" size="inherit" spin class="text-muted-foreground text-xs" />
+            <ui-icon name="loader-circle" size="inherit" spin class="text-muted-foreground text-xs" />
           }
         </ui-stack>
         <div
@@ -87,7 +87,7 @@
     @if (session.errorMessage) {
       <div class="bg-danger/10 border-danger/20 mb-6 rounded-lg border p-4">
         <ui-stack direction="row" align="center" gap="2">
-          <ui-icon name="exclamation-triangle" color="danger" />
+          <ui-icon name="triangle-alert" color="danger" />
           <span class="text-danger font-semibold">Error</span>
         </ui-stack>
         <p class="text-danger mt-1 text-sm">{{ session.errorMessage }}</p>
@@ -168,6 +168,6 @@
   </div>
 } @else if (isLoading()) {
   <ui-stack align="center" justify="center" class="py-20">
-    <ui-icon name="spinner" size="inherit" spin class="text-4xl" />
+    <ui-icon name="loader-circle" size="inherit" spin class="text-4xl" />
   </ui-stack>
 }

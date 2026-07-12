@@ -1,6 +1,6 @@
 import { Component, computed, HostAttributeToken, inject } from "@angular/core";
 import { Icon } from "../content/icon/icon";
-import type { IconName } from "../icons/icon-registry.generated";
+import type { IconName } from "../icons/icons";
 import { UiTableState } from "./table-state";
 
 /**
@@ -55,17 +55,7 @@ export class UiSortHeader {
 
   protected readonly ascending = computed(() => this.sorted() && (this.state.sortOrder() ?? 1) > 0);
 
-  /**
-   * ⚠ Typed `IconName`, and the unsorted arrow is returned as a BARE literal on its own `return`.
-   *
-   * Both details are load-bearing for the icon GATE, not just for types. `gen-icon-registry.mjs`
-   * decides which glyphs each portal registers by REGEX-SCANNING the source; a `[name]="sortIcon()"`
-   * binding is invisible to it, so the name has to be discoverable another way. All three of this
-   * component's glyphs are therefore also pinned in that script's `MANDATORY_BASE` — the list for
-   * icons a scan cannot see. Until they were, `chevrons-up-down` resolved through `ICON_ALIASES`
-   * (so this compiled and check-icons passed) while `provideIcons` never registered it, and every
-   * unsorted column header in all four portals rendered a blank 12x12 box.
-   */
+  /** The unsorted `chevrons-up-down` is the DEFAULT state of every sortable header — a blank arrow here reads as broken to every user. */
   protected readonly sortIcon = computed<IconName>(() => {
     if (!this.sorted()) {
       return "chevrons-up-down";

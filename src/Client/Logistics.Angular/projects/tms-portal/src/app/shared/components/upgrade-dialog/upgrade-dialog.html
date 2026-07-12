@@ -11,7 +11,7 @@
     <!-- Message -->
     <div class="bg-subtle border-default mb-4 flex items-start gap-3 rounded-lg border p-4">
       <ui-icon
-        [name]="isResourceLimit() ? 'exclamation-triangle' : 'lock'"
+        [name]="isResourceLimit() ? 'triangle-alert' : 'lock'"
         size="inherit"
         class="mt-0.5 text-lg"
         [class]="isResourceLimit() ? 'text-warning' : 'text-foreground'"
@@ -46,7 +46,7 @@
                 <span>{{ getMaxTrucksLabel(current) }}</span>
               </div>
               <div class="flex items-center gap-1.5">
-                <ui-icon name="bolt" size="inherit" class="text-xs" />
+                <ui-icon name="zap" size="inherit" class="text-xs" />
                 <span>{{ getAiQuotaLabel(current) }}</span>
               </div>
             </div>
@@ -77,7 +77,7 @@
                 <span>{{ getMaxTrucksLabel(recommended) }}</span>
               </div>
               <div class="flex items-center gap-1.5">
-                <ui-icon name="bolt" size="inherit" class="text-xs" />
+                <ui-icon name="zap" size="inherit" class="text-xs" />
                 <span>{{ getAiQuotaLabel(recommended) }}</span>
               </div>
               @if (getExtraFeatures(prompt.currentPlan, recommended); as extras) {

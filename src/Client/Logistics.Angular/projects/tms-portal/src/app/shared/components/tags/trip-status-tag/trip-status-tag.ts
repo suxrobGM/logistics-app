@@ -62,7 +62,7 @@ export class TripStatusTag {
       case "in_transit":
         return "truck";
       case "cancelled":
-        return "times";
+        return "x";
       case "completed":
         return "check";
       default:

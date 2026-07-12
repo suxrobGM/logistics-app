@@ -7,7 +7,7 @@ import {
   UiConfirmDialog,
   type UiConfirmDialogContext,
 } from "../ui/feedback/confirm-dialog/confirm-dialog";
-import type { IconName } from "../ui/icons/icon-registry.generated";
+import type { IconName } from "../ui/icons/icons";
 import { HlmDialogService } from "../ui/primitives/dialog";
 
 /**
@@ -55,22 +55,18 @@ export interface ConfirmOptions {
   reject?: () => void;
 }
 
-/**
- * The seam, resolved. Every one of these ten names is in `BASE_ICON_NAMES` — the set `provideIcons`
- * registers in ALL FOUR portals — so no call site can ask for a glyph its app has not registered.
- * (An unregistered name does not throw; it renders the error glyph. Silent-ish, so: verified.)
- */
+/** The seam, resolved: each semantic token maps to a canonical {@link IconName} `<ui-icon>` renders. */
 const ICONS: Record<ConfirmIcon, IconName> = {
-  warning: "exclamation-triangle",
-  success: "check-circle",
-  question: "question-circle",
-  info: "info-circle",
+  warning: "triangle-alert",
+  success: "circle-check",
+  question: "circle-help",
+  info: "info",
   send: "send",
   payment: "credit-card",
-  refresh: "refresh",
-  hide: "eye-slash",
+  refresh: "refresh-cw",
+  hide: "eye-off",
   check: "check",
-  close: "times",
+  close: "x",
 };
 
 /**

@@ -23,7 +23,7 @@ export class Features {
         "Create, assign, and track shipments from pickup to delivery. Stops, cargo details, special instructions - all in one place.",
     },
     {
-      icon: "map-marker",
+      icon: "map-pin",
       title: "Live GPS Tracking",
       description:
         "See the whole fleet on a live map: driver locations, route lines, geofencing alerts. Updates over SignalR.",
@@ -35,7 +35,7 @@ export class Features {
         "Auto-generated invoices, paid through Stripe and Stripe Connect so money goes straight to your bank. Shareable payment links and partial payments.",
     },
     {
-      icon: "mobile",
+      icon: "smartphone",
       title: "Driver Mobile App",
       description:
         "Native Kotlin Multiplatform app for assignments, POD capture, navigation, DVIR inspections, and chat with dispatch.",
@@ -56,7 +56,7 @@ export class Features {
 
   protected readonly moreFeatures: Feature[] = [
     {
-      icon: "directions",
+      icon: "navigation",
       title: "Trip Planning & Route Optimization",
       description:
         "Bundle loads into trips with multi-stop routing, driver assignment, and conflict detection.",
@@ -92,7 +92,7 @@ export class Features {
         "Digital DVIR inspections with photo documentation, incident reporting, and safety records you can pull for an audit.",
     },
     {
-      icon: "chart-bar",
+      icon: "chart-column",
       title: "Reports & Analytics",
       description:
         "Driver performance, revenue, utilization, ops dashboards. Export the data when you want to dig deeper.",
@@ -104,7 +104,7 @@ export class Features {
         "Customers can log in any time to track shipments, view invoices, download documents, and pay online.",
     },
     {
-      icon: "comments",
+      icon: "messages-square",
       title: "Messaging",
       description:
         "In-app chat between dispatchers and drivers. Read receipts, typing indicators, push notifications.",
@@ -116,7 +116,7 @@ export class Features {
         "ISO 6346 tracking across multiple loads. State machine handles the lifecycle: Empty → Loaded → At Port → In Transit → Delivered → Returned.",
     },
     {
-      icon: "building",
+      icon: "building-2",
       title: "Terminals & Depots",
       description:
         "UN/LOCODE directory of sea ports, rail terminals, inland depots, air cargo facilities, and border crossings - usable as pickup or drop-off points.",

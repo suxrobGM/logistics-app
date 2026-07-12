@@ -28,7 +28,7 @@ export class Values {
         "We build with the dispatcher and the driver in mind. The road test is whether they'd actually use it, not whether it demos well.",
     },
     {
-      icon: "check-circle",
+      icon: "circle-check",
       title: "Integrity",
       description:
         "We say what we ship, ship what we say, and tell you when we got something wrong.",

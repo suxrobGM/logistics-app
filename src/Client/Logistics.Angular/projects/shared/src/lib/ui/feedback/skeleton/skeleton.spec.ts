@@ -13,9 +13,7 @@
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { provideIcons } from "@ng-icons/core";
 import { Avatar } from "../../content/avatar/avatar";
-import { BASE_NG_ICONS } from "../../icons/icon-registry.generated";
 import { Divider } from "../../layout/divider/divider";
 import { Progress } from "../progress/progress";
 import { Spinner } from "../spinner/spinner";
@@ -104,7 +102,7 @@ describe("ui-spinner", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Host],
-      providers: [provideZonelessChangeDetection(), provideIcons(BASE_NG_ICONS)],
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
     fixture = TestBed.createComponent(Host);
     host = fixture.componentInstance;

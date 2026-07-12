@@ -85,7 +85,7 @@ const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]:not([tab
  *
  * @example
  * <ui-button icon="trash" ariaLabel="Delete load" uiTooltip="Delete load" />
- * <ui-button icon="refresh" ariaLabel="Refresh" uiTooltip="Refresh" uiTooltipPosition="bottom" />
+ * <ui-button icon="refresh-cw" ariaLabel="Refresh" uiTooltip="Refresh" uiTooltipPosition="bottom" />
  */
 @Directive({
   selector: "[uiTooltip]",

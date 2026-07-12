@@ -25,7 +25,7 @@
                 <div
                   class="bg-primary/12 text-foreground group-hover:bg-primary group-hover:text-primary-foreground flex h-12 w-12 items-center justify-center rounded-lg"
                 >
-                  <ui-icon name="building" size="lg" />
+                  <ui-icon name="building-2" size="lg" />
                 </div>
                 <div class="flex-1">
                   <ui-typography variant="body" weight="semibold">
@@ -51,12 +51,12 @@
 
       @if (tenants().length === 0) {
         <ui-surface variant="elevated" padding="lg" class="block text-center">
-          <ui-icon name="exclamation-triangle" size="xl" class="mb-4 text-yellow-500" />
+          <ui-icon name="triangle-alert" size="xl" class="mb-4 text-yellow-500" />
           <ui-typography variant="h5" tag="h3" class="mb-2">No Access</ui-typography>
           <ui-typography variant="body" color="muted" class="mb-6">
             You don't have access to any companies. Please contact your administrator.
           </ui-typography>
-          <ui-button appearance="outlined" label="Sign Out" icon="sign-out" (click)="logout()" />
+          <ui-button appearance="outlined" label="Sign Out" icon="log-out" (click)="logout()" />
         </ui-surface>
       }
     }

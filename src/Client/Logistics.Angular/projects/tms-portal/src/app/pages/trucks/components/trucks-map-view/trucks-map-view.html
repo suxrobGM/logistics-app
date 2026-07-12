@@ -8,13 +8,13 @@
     <div class="flex items-center gap-3 text-sm">
       @if (trucksWithLocation() > 0) {
         <span class="text-muted-foreground">
-          <ui-icon name="map-marker" class="text-success mr-1" />
+          <ui-icon name="map-pin" class="text-success mr-1" />
           {{ trucksWithLocation() }} tracked
         </span>
       }
       @if (trucksWithoutLocation() > 0) {
         <span class="text-muted-foreground">
-          <ui-icon name="question-circle" class="text-warning mr-1" />
+          <ui-icon name="circle-help" class="text-warning mr-1" />
           {{ trucksWithoutLocation() }} no location
         </span>
       }
@@ -25,7 +25,7 @@
   <div class="relative h-125">
     @if (isLoading()) {
       <div class="bg-subtle absolute inset-0 flex items-center justify-center">
-        <ui-icon name="spinner" size="inherit" spin class="text-4xl" />
+        <ui-icon name="loader-circle" size="inherit" spin class="text-4xl" />
       </div>
     } @else {
       <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="4" height="500px" />

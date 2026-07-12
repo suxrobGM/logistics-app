@@ -38,7 +38,7 @@ export class TruckStatusTag {
   protected readonly icon = computed((): IconName => {
     switch (this.status()) {
       case "available":
-        return "check-circle";
+        return "circle-check";
       case "en_route":
         return "truck";
       case "loading":

@@ -2,7 +2,7 @@ import { Component, computed, input, output } from "@angular/core";
 import { UiButton } from "../../action/button/button";
 import { Icon } from "../../content/icon/icon";
 import { Typography } from "../../content/typography/typography";
-import type { IconName } from "../../icons/icon-registry.generated";
+import type { IconName } from "../../icons/icons";
 import { Stack } from "../../layout/stack/stack";
 
 type Severity = "info" | "success" | "warning" | "danger" | null;

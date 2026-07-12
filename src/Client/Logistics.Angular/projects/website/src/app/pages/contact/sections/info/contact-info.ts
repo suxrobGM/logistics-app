@@ -18,7 +18,7 @@ interface ContactCard {
 export class ContactInfo {
   protected readonly contacts: ContactCard[] = [
     {
-      icon: "envelope",
+      icon: "mail",
       title: "Email Us",
       lines: ["General inquiries", "Sales questions"],
       link: { href: "mailto:hello@logisticsx.app", text: "hello@logisticsx.app" },
@@ -30,15 +30,15 @@ export class ContactInfo {
       link: { href: "tel:+18578671942", text: "(857) 867-1942" },
     },
     {
-      icon: "map-marker",
+      icon: "map-pin",
       title: "Visit Us",
       lines: ["10016 Sandmeyer Ln", "Philadelphia, PA 19116"],
     },
   ];
 
   protected readonly socialLinks: { icon: IconName; href: string; label: string }[] = [
-    { icon: "twitter", href: "#", label: "Twitter" },
-    { icon: "linkedin", href: "#", label: "LinkedIn" },
-    { icon: "facebook", href: "#", label: "Facebook" },
+    { icon: "brand-x", href: "#", label: "Twitter" },
+    { icon: "brand-linkedin", href: "#", label: "LinkedIn" },
+    { icon: "brand-facebook", href: "#", label: "Facebook" },
   ];
 }

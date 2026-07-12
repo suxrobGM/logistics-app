@@ -7,12 +7,12 @@
     @if (selectedInvoices().length > 0) {
       <ui-button
         intent="success"
-        icon="check-circle"
+        icon="circle-check"
         label="Approve Selected ({{ selectedInvoices().length }})"
         [loading]="isBatchApproving()"
         (click)="batchApprove()"
       />
-      <ui-button appearance="text" icon="times" label="Clear" (click)="clearSelection()" />
+      <ui-button appearance="text" icon="x" label="Clear" (click)="clearSelection()" />
     }
     <ui-button
       appearance="outlined"
@@ -23,7 +23,7 @@
     />
     <ui-button
       appearance="outlined"
-      icon="chart-bar"
+      icon="chart-column"
       label="Dashboard"
       [routerLink]="['/payroll']"
     />
@@ -45,7 +45,7 @@
           appearance="text"
           size="sm"
           label="Clear All"
-          icon="times"
+          icon="x"
           (click)="clearFilters()"
           [disabled]="activeFilterCount() === 0"
         />
@@ -194,7 +194,7 @@
                     intent="danger"
                     appearance="text"
                     ariaLabel="Reject"
-                    icon="times"
+                    icon="x"
                     [rounded]="true"
                     uiTooltip="Reject"
                     uiTooltipPosition="bottom"
@@ -205,7 +205,7 @@
                   <ui-button
                     appearance="text"
                     ariaLabel="Edit"
-                    icon="pen-to-square"
+                    icon="square-pen"
                     [rounded]="true"
                     uiTooltip="Edit"
                     uiTooltipPosition="bottom"

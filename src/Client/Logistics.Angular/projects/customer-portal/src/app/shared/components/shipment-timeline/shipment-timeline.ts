@@ -24,7 +24,7 @@ export class ShipmentTimeline {
   protected readonly steps = computed<TimelineStep[]>(() => [
     { label: "Dispatched", date: this.dispatchedAt(), icon: "send" },
     { label: "Picked Up", date: this.pickedUpAt(), icon: "box" },
-    { label: "Delivered", date: this.deliveredAt(), icon: "check-circle" },
+    { label: "Delivered", date: this.deliveredAt(), icon: "circle-check" },
   ]);
 
   protected getStepColor(step: TimelineStep): string {

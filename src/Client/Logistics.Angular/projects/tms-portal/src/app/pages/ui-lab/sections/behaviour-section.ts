@@ -68,7 +68,7 @@ export class UiLabBehaviourSection {
   public constructor() {
     this.actionMenuItems.set([
       { label: "View details", icon: "eye", command: () => this.run("view") },
-      { label: "Edit", icon: "pen-to-square", command: () => this.run("edit") },
+      { label: "Edit", icon: "square-pen", command: () => this.run("edit") },
       { separator: true },
       { label: "Never visible", icon: "box", visible: false, command: () => this.run("BUG") },
       { label: "Disabled", icon: "clock", disabled: true, command: () => this.run("BUG") },

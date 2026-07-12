@@ -37,7 +37,7 @@ export class ExceptionTypeTag {
   getExceptionTypeIcon(): IconName {
     switch (this.type()) {
       case "accident":
-        return "exclamation-triangle";
+        return "triangle-alert";
       case "delay":
         return "clock";
       case "weather_delay":
@@ -45,12 +45,12 @@ export class ExceptionTypeTag {
       case "mechanical_failure":
         return "wrench";
       case "route_change":
-        return "directions";
+        return "navigation";
       case "customer_request":
         return "user";
       case "other":
       default:
-        return "info-circle";
+        return "info";
     }
   }
 }

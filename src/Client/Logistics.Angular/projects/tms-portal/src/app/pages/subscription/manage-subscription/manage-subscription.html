@@ -88,7 +88,7 @@
               block
               [routerLink]="'/subscription/plans'"
               label="Change Plan"
-              icon="sync"
+              icon="refresh-cw"
             />
             <ui-button
               intent="secondary"
@@ -105,7 +105,7 @@
                 intent="success"
                 block
                 label="Resume Subscription"
-                icon="refresh"
+                icon="refresh-cw"
                 [routerLink]="'/subscription/renew'"
               />
             } @else {
@@ -114,7 +114,7 @@
                 appearance="outlined"
                 block
                 label="Cancel Subscription"
-                icon="times"
+                icon="x"
                 [disabled]="isLoading()"
                 (click)="confirmCancelSubscription()"
               />

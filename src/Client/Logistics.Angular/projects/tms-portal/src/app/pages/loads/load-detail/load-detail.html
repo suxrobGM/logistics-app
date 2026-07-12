@@ -46,7 +46,7 @@
     <ui-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <ui-tab-list>
         <ui-tab value="0">
-          <ui-icon name="info-circle" class="mr-2" />
+          <ui-icon name="info" class="mr-2" />
           Details
         </ui-tab>
         <ui-tab value="1">
@@ -58,7 +58,7 @@
           POD / BOL
         </ui-tab>
         <ui-tab value="3">
-          <ui-icon name="exclamation-triangle" class="mr-2" />
+          <ui-icon name="triangle-alert" class="mr-2" />
           Exceptions
         </ui-tab>
       </ui-tab-list>
@@ -219,7 +219,7 @@
             <ui-grid container spacing="6">
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-stack direction="row" align="center" gap="2" class="mb-2">
-                  <ui-icon name="map-marker" class="text-blue-500" />
+                  <ui-icon name="map-pin" class="text-blue-500" />
                   <ui-typography variant="body" weight="medium" class="text-info">
                     Origin
                   </ui-typography>
@@ -350,7 +350,7 @@
 } @else {
   <ui-card>
     <ui-stack align="center" gap="4" class="py-16">
-      <ui-icon name="exclamation-circle" size="xl" color="muted" />
+      <ui-icon name="circle-alert" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Load not found</ui-typography>
       <ui-button label="Back to Loads" [routerLink]="['/loads']" />
     </ui-stack>

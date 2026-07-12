@@ -20,7 +20,7 @@
     />
   }
   @if (canResolve()) {
-    <ui-button intent="success" label="Resolve" icon="check-circle" (click)="openResolveDialog()" />
+    <ui-button intent="success" label="Resolve" icon="circle-check" (click)="openResolveDialog()" />
   }
 </ui-page-header>
 
@@ -107,7 +107,7 @@
                   Location
                 </ui-typography>
                 <ui-stack direction="row" align="center" gap="2">
-                  <ui-icon name="map-marker" color="muted" />
+                  <ui-icon name="map-pin" color="muted" />
                   <span>{{ report()!.location ?? "Not specified" }}</span>
                 </ui-stack>
               </div>
@@ -212,12 +212,12 @@
               <ui-stack gap="4">
                 <ui-stack direction="row" align="center" gap="2">
                   @if (report()!.injuriesReported) {
-                    <ui-icon name="exclamation-triangle" size="xl" color="danger" />
+                    <ui-icon name="triangle-alert" size="xl" color="danger" />
                     <span class="text-danger text-lg font-semibold">
                       {{ report()!.numberOfInjuries ?? 0 }} Injuries Reported
                     </span>
                   } @else {
-                    <ui-icon name="check-circle" size="xl" color="success" />
+                    <ui-icon name="circle-check" size="xl" color="success" />
                     <span class="text-success text-lg font-semibold">No Injuries Reported</span>
                   }
                 </ui-stack>
@@ -233,7 +233,7 @@
                 @if (report()!.fatalitiesReported) {
                   <div class="mt-4 border-t pt-4">
                     <ui-stack direction="row" align="center" gap="2">
-                      <ui-icon name="exclamation-circle" size="xl" color="danger" />
+                      <ui-icon name="circle-alert" size="xl" color="danger" />
                       <span class="text-danger text-lg font-semibold">
                         {{ report()!.numberOfFatalities ?? 0 }} Fatalities Reported
                       </span>
@@ -282,7 +282,7 @@
                 @if (report()!.hazmatInvolved) {
                   <div class="mt-2 border-t pt-4">
                     <ui-stack direction="row" align="center" gap="2">
-                      <ui-icon name="exclamation-triangle" size="lg" color="danger" />
+                      <ui-icon name="triangle-alert" size="lg" color="danger" />
                       <span class="text-danger font-semibold">Hazmat Involved</span>
                     </ui-stack>
                     @if (report()!.hazmatDescription) {
@@ -475,7 +475,7 @@
               @if (report()!.policeReportFiled) {
                 <ui-stack gap="3">
                   <ui-stack direction="row" align="center" gap="2">
-                    <ui-icon name="check-circle" size="lg" color="success" />
+                    <ui-icon name="circle-check" size="lg" color="success" />
                     <span class="font-medium">Police report filed</span>
                   </ui-stack>
                   @if (report()!.policeReportNumber) {
@@ -507,7 +507,7 @@
                 </ui-stack>
               } @else {
                 <ui-stack align="center" gap="2" class="py-8 text-center">
-                  <ui-icon name="times-circle" size="xl" color="muted" />
+                  <ui-icon name="circle-x" size="xl" color="muted" />
                   <ui-typography variant="body" color="muted">No police report filed</ui-typography>
                 </ui-stack>
               }
@@ -668,7 +668,7 @@
       <ui-button
         intent="success"
         label="Resolve"
-        icon="check-circle"
+        icon="circle-check"
         (click)="confirmResolve()"
         [loading]="isSubmitting()"
       />

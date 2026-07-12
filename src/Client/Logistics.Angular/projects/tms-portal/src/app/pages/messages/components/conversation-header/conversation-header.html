@@ -13,7 +13,7 @@
   />
 
   @if (isNewConversation()) {
-    <ui-icon name="plus-circle" size="lg" color="primary" />
+    <ui-icon name="circle-plus" size="lg" color="primary" />
     <div class="flex-1">
       <ui-typography variant="h5" tag="h2" weight="semibold">New Conversation</ui-typography>
       <ui-typography variant="caption" color="muted">
@@ -43,7 +43,7 @@
     <ui-button
       appearance="text"
       ariaLabel="View details"
-      icon="info-circle"
+      icon="info"
       [rounded]="true"
       (click)="toggleDetails.emit()"
       uiTooltip="View details"

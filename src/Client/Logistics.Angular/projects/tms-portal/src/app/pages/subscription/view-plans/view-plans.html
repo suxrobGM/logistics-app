@@ -39,7 +39,7 @@
         @if (planHasFeature(plan, "agentic_dispatch")) {
           <ui-surface variant="subtle" padding="sm" radius="lg" class="mb-3">
             <ui-stack direction="row" align="center" gap="2">
-              <ui-icon name="bolt" class="text-foreground" />
+              <ui-icon name="zap" class="text-foreground" />
               <div>
                 <div class="font-medium">AI Dispatch - {{ getAiDispatchLabel(plan) }}</div>
                 <div class="text-subtle-foreground text-xs">
@@ -56,10 +56,10 @@
           @for (feature of allFeatures; track feature) {
             <ui-stack direction="row" align="center" gap="2">
               @if (planHasFeature(plan, feature)) {
-                <ui-icon name="check-circle" class="text-green-500" />
+                <ui-icon name="circle-check" class="text-green-500" />
                 <span>{{ getFeatureLabel(feature) }}</span>
               } @else {
-                <ui-icon name="minus-circle" class="text-gray-300" />
+                <ui-icon name="circle-minus" class="text-gray-300" />
                 <span class="text-gray-400">{{ getFeatureLabel(feature) }}</span>
               }
             </ui-stack>

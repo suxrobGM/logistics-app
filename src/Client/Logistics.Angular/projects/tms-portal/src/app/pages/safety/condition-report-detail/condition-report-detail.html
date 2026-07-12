@@ -87,7 +87,7 @@
           <ng-template #header>
             <ui-stack direction="row" align="center" justify="between" class="p-4 pb-0">
               <ui-stack direction="row" align="center" gap="2">
-                <ui-icon name="exclamation-triangle" color="warning" />
+                <ui-icon name="triangle-alert" color="warning" />
                 <ui-typography variant="h5" tag="h3">Damage / Defects</ui-typography>
               </ui-stack>
               @if ((report()!.defects ?? []).length > 0) {
@@ -135,7 +135,7 @@
                 </ui-typography>
                 @if (report()!.hasSignature) {
                   <ui-stack direction="row" align="center" gap="1" class="text-success">
-                    <ui-icon name="check-circle" />
+                    <ui-icon name="circle-check" />
                     Captured
                   </ui-stack>
                 } @else {
@@ -208,7 +208,7 @@
           <ui-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
-                <ui-icon name="file-edit" color="primary" />
+                <ui-icon name="file-pen" color="primary" />
                 <ui-typography variant="h5" tag="h3">Notes</ui-typography>
               </ui-stack>
             </ng-template>
@@ -247,7 +247,7 @@
                   <div
                     class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
                   >
-                    <ui-icon name="search-plus" size="xl" />
+                    <ui-icon name="zoom-in" size="xl" />
                   </div>
                 </div>
               }
@@ -259,7 +259,7 @@
   </ui-grid>
 } @else {
   <ui-stack align="center" gap="4" class="py-16 text-center">
-    <ui-icon name="exclamation-circle" size="xl" color="muted" />
+    <ui-icon name="circle-alert" size="xl" color="muted" />
     <ui-typography variant="body" color="muted">Condition report not found</ui-typography>
     <ui-button
       appearance="outlined"

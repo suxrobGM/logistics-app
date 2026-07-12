@@ -1,7 +1,7 @@
 import { Component, inject, input, output } from "@angular/core";
 import { OidcSecurityService } from "angular-auth-oidc-client";
 import type { AppError } from "../../../errors/error.types";
-import type { IconName } from "../../icons/icon-registry.generated";
+import type { IconName } from "../../icons/icons";
 import { EmptyState } from "../empty-state/empty-state";
 import { ErrorState } from "../error-state/error-state";
 import { LoadingSkeleton } from "../loading-skeleton/loading-skeleton";

@@ -1,15 +1,13 @@
 /**
- * Hand-vendored brand glyphs. **Lucide ships no brand icons**, so `facebook` / `linkedin` / `twitter`
- * map to `brand-facebook` / `brand-linkedin` / `brand-x` in `icon-map.json` and resolve here instead.
+ * Hand-vendored brand glyphs. **Lucide ships no brand icons**, so these three are entries in
+ * `UI_ICONS` (see `./icons`) under the keys `brand-facebook` / `brand-linkedin` / `brand-x`.
  *
- * `provideIcons()` takes `Record<string, string>` where the value is raw SVG markup — exactly what
- * `@ng-icons/lucide`'s exports are (`export const lucideCheck = "<svg …>…</svg>"`). So these need no
- * new dependency: they are plain strings registered the same way.
+ * Each is a raw SVG string — exactly what `@ng-icons/lucide`'s exports are
+ * (`export const lucideCheck = "<svg …>…</svg>"`) — so `<ui-icon>` binds them through the same `svg`
+ * input with no extra dependency.
  *
  * Paths are the official simple-icons glyphs. Unlike lucide (stroke-based, `fill="none"`), brand marks
  * are solid shapes — hence `fill="currentColor"` and no stroke.
- *
- * Naming round-trips through `toNgIconName()`: `brand-facebook` -> `brandFacebook`.
  */
 
 const brandSvg = (path: string): string =>

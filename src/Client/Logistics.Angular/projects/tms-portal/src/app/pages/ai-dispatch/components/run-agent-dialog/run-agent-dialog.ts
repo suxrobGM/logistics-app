@@ -35,7 +35,7 @@ export class RunAgentDialog {
   }
 
   protected get modeIcon(): IconName {
-    return this.mode() === "human_in_the_loop" ? "play" : "bolt";
+    return this.mode() === "human_in_the_loop" ? "play" : "zap";
   }
 
   /** Autonomous mode moves loads without asking, so its Run button is deliberately a warning. */

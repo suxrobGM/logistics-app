@@ -1,7 +1,7 @@
 <ui-page-header title="Expenses" addRoute="/expenses/add" addTooltip="Add a new expense">
   <ui-button
     appearance="outlined"
-    icon="chart-bar"
+    icon="chart-column"
     label="Analytics"
     [routerLink]="['/expenses/analytics']"
   />
@@ -90,7 +90,7 @@
           <td>
             <ui-button
               appearance="text"
-              icon="ellipsis-v"
+              icon="ellipsis-vertical"
               (click)="openActionMenu(expense, menu, $event); $event.stopPropagation()"
               ariaLabel="Show actions menu"
             />

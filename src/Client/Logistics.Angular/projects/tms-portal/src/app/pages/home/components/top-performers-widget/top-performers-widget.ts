@@ -52,11 +52,11 @@ export class TopPerformersWidgetComponent {
   protected getRankIcon(index: number): RankIcon {
     switch (index) {
       case 0:
-        return { name: "star-fill", color: "#eab308" }; // gold
+        return { name: "star", color: "#eab308" }; // gold
       case 1:
-        return { name: "star-fill", color: "var(--text-muted)" }; // silver
+        return { name: "star", color: "var(--text-muted)" }; // silver
       case 2:
-        return { name: "star-fill", color: "#b45309" }; // bronze
+        return { name: "star", color: "#b45309" }; // bronze
       default:
         return { name: "star", color: "var(--border-default)" };
     }

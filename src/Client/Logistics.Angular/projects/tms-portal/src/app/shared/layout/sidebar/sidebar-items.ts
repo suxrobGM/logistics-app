@@ -178,7 +178,7 @@ export const sidebarSections: NavSection[] = [
       {
         id: "customers",
         label: "Customers",
-        icon: "building",
+        icon: "building-2",
         route: "/customers",
         feature: "customers",
       },

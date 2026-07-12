@@ -5,7 +5,7 @@
     <app-stat-card
       label="Overdue"
       [value]="overdueCount()"
-      icon="exclamation-triangle"
+      icon="triangle-alert"
       [color]="overdueCount() > 0 ? 'red' : 'green'"
     />
   </ui-grid>
@@ -18,7 +18,7 @@
     />
   </ui-grid>
   <ui-grid [size]="{ xs: 12, md: 4 }">
-    <app-stat-card label="This Month" [value]="totalCostThisMonth()" icon="dollar" color="gray" />
+    <app-stat-card label="This Month" [value]="totalCostThisMonth()" icon="dollar-sign" color="gray" />
   </ui-grid>
 </ui-grid>
 
@@ -28,7 +28,7 @@
     <ui-dashboard-card title="Upcoming Maintenance" icon="calendar">
       @if (loading()) {
         <div class="py-4 text-center">
-          <ui-icon name="spinner" size="inherit" spin class="text-2xl" />
+          <ui-icon name="loader-circle" size="inherit" spin class="text-2xl" />
         </div>
       } @else if (upcomingMaintenance().length > 0) {
         <ui-data-table [value]="upcomingMaintenance()" [rows]="5" styleClass="p-datatable-sm">
@@ -70,7 +70,7 @@
         </div>
       } @else {
         <ui-stack align="center" gap="2" class="py-4">
-          <ui-icon name="check-circle" size="xl" color="muted" />
+          <ui-icon name="circle-check" size="xl" color="muted" />
           <ui-typography variant="body" color="muted">
             No upcoming maintenance scheduled
           </ui-typography>
@@ -84,7 +84,7 @@
     <ui-dashboard-card title="Recent Service Records" icon="wrench">
       @if (loading()) {
         <div class="py-4 text-center">
-          <ui-icon name="spinner" size="inherit" spin class="text-2xl" />
+          <ui-icon name="loader-circle" size="inherit" spin class="text-2xl" />
         </div>
       } @else if (recentRecords().length > 0) {
         <ui-data-table [value]="recentRecords()" [rows]="5" styleClass="p-datatable-sm">
@@ -122,7 +122,7 @@
   <ui-button icon="plus" label="Log Service" (click)="addServiceRecord()" />
   <ui-button
     appearance="outlined"
-    icon="refresh"
+    icon="refresh-cw"
     label="Refresh"
     (click)="loadData()"
     [loading]="loading()"

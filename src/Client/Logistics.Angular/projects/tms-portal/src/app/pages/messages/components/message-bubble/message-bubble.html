@@ -27,7 +27,7 @@
       <span>{{ message().sentAt | date: "shortTime" }}</span>
       @if (isOwn()) {
         @if (message().isRead) {
-          <ui-icon name="check-circle" size="inherit" class="text-xs text-cyan-300" />
+          <ui-icon name="circle-check" size="inherit" class="text-xs text-cyan-300" />
         } @else {
           <ui-icon name="check" size="inherit" class="text-xs text-white/50" />
         }

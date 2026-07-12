@@ -8,7 +8,6 @@ import {
 import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding, withRouterConfig } from "@angular/router";
 import {
-  BASE_NG_ICONS,
   getAccessToken,
   PERMISSION_CHECKER,
   provideSpartanHlm,
@@ -20,7 +19,6 @@ import {
   I18nService,
   TENANT_SETTINGS_PROVIDER,
 } from "@logistics/shared/services";
-import { provideIcons } from "@ng-icons/core";
 import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import { provideAuth } from "angular-auth-oidc-client";
@@ -31,7 +29,6 @@ import { TmsFeatureProvider } from "@/core/services/feature.provider";
 import { TmsTenantSettingsProvider } from "@/core/services/tenant-settings.provider";
 import { UpgradePromptService } from "@/core/services/upgrade-prompt.service";
 import { environment } from "@/env";
-import { TMS_NG_ICONS } from "@/shared/icons/lucide-icons";
 import { appRoutes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
@@ -53,7 +50,6 @@ export const appConfig: ApplicationConfig = {
       tokenGetter: () => getAccessToken("tmsportal"),
     }),
     provideMapboxGL({ accessToken: environment.mapboxToken }),
-    provideIcons({ ...BASE_NG_ICONS, ...TMS_NG_ICONS }),
     provideTranslateService({ fallbackLang: "en", lang: "en" }),
     provideTranslateHttpLoader({ prefix: "/assets/i18n/", suffix: ".json" }),
     provideAppInitializer(() => {

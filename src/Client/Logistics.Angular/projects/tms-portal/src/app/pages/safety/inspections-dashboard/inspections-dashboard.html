@@ -28,7 +28,7 @@
     >
       <div class="flex items-center gap-4">
         <div class="bg-danger/10 flex h-12 w-12 items-center justify-center rounded-lg">
-          <ui-icon name="exclamation-triangle" size="inherit" class="text-danger text-2xl" />
+          <ui-icon name="triangle-alert" size="inherit" class="text-danger text-2xl" />
         </div>
         <div>
           <div class="text-muted-foreground text-sm">Open Accidents</div>
@@ -43,7 +43,7 @@
     >
       <div class="flex items-center gap-4">
         <div class="bg-info/10 flex h-12 w-12 items-center justify-center rounded-lg">
-          <ui-icon name="file-edit" size="inherit" class="text-info text-2xl" />
+          <ui-icon name="file-pen" size="inherit" class="text-info text-2xl" />
         </div>
         <div>
           <div class="text-muted-foreground text-sm">Condition Reports</div>
@@ -80,7 +80,7 @@
     <ui-button
       appearance="outlined"
       label="Condition Reports"
-      icon="file-edit"
+      icon="file-pen"
       (click)="navigateTo('/safety/condition-reports')"
     />
   </div>
@@ -167,7 +167,7 @@
         </ui-data-table>
       } @else {
         <div class="flex flex-col items-center py-8 text-center">
-          <ui-icon name="check-circle" size="inherit" class="text-success mb-2 text-3xl" />
+          <ui-icon name="circle-check" size="inherit" class="text-success mb-2 text-3xl" />
           <p class="text-muted-foreground">No recent accidents</p>
         </div>
       }

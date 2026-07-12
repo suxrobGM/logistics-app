@@ -1,4 +1,4 @@
-import type { IconName } from "../../icons/icon-registry.generated";
+import type { IconName } from "../../icons/icons";
 
 /**
  * A single entry in a `<ui-menu>`. Repo-owned replacement for PrimeNG's `MenuItem`

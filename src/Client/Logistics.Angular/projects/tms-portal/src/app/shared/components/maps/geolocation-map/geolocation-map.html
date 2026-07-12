@@ -46,7 +46,7 @@
                 {{ geoData.truckNumber }}
               </div>
               <div class="truck-pin text-red-600">
-                <ui-icon name="map-marker" size="inherit" class="text-xl" />
+                <ui-icon name="map-pin" size="inherit" class="text-xl" />
               </div>
             </div>
           </mgl-marker>
@@ -74,7 +74,7 @@
             }
             @if (selectedMarker()!.data.currentAddress) {
               <div class="flex items-start gap-2 text-sm">
-                <ui-icon name="map-marker" class="text-muted-foreground mt-0.5" />
+                <ui-icon name="map-pin" class="text-muted-foreground mt-0.5" />
                 <span>{{ selectedMarker()!.data.currentAddress | address }}</span>
               </div>
             }

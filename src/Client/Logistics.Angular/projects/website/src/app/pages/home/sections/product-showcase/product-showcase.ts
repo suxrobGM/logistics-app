@@ -76,7 +76,7 @@ export class ProductShowcase {
         "Revenue and performance metrics",
         "Driver stats and top performers",
       ],
-      icon: "chart-bar",
+      icon: "chart-column",
     },
     {
       title: "Load Management",

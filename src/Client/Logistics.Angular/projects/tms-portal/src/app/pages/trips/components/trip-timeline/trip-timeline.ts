@@ -32,7 +32,7 @@ export class TripTimeline {
       case "completed":
         return "check";
       case "cancelled":
-        return "times";
+        return "x";
       default:
         return "circle";
     }

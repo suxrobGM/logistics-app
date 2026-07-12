@@ -79,7 +79,7 @@ export class ExpensesListPage {
         },
         {
           label: "Reject",
-          icon: "times",
+          icon: "x",
           command: () => this.rejectExpense(),
         },
       );

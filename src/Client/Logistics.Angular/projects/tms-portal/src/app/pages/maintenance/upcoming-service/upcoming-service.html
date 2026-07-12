@@ -59,7 +59,7 @@
           <td>
             @if (schedule.isOverdue) {
               <span class="text-danger inline-flex items-center gap-1 font-medium">
-                <ui-icon name="exclamation-triangle" size="sm" color="danger" />
+                <ui-icon name="triangle-alert" size="sm" color="danger" />
                 <span>Overdue</span>
               </span>
             } @else if (schedule.daysUntilDue) {
@@ -75,7 +75,7 @@
           <td>
             <ui-button
               appearance="text"
-              icon="ellipsis-v"
+              icon="ellipsis-vertical"
               ariaLabel="Show actions menu"
               (click)="$event.stopPropagation(); selectedRow.set(schedule); menu.toggle($event)"
             />

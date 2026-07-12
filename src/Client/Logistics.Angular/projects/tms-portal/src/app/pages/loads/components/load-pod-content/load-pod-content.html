@@ -3,7 +3,7 @@
   <ui-button
     appearance="outlined"
     size="sm"
-    icon="refresh"
+    icon="refresh-cw"
     label="Refresh"
     (click)="refresh()"
     [loading]="isLoading()"
@@ -72,7 +72,7 @@
                 class="text-foreground flex items-center gap-1 text-sm hover:underline"
                 (click)="$event.stopPropagation()"
               >
-                <ui-icon name="map-marker" />
+                <ui-icon name="map-pin" />
                 <span>View on Map</span>
               </a>
             } @else {

@@ -84,13 +84,13 @@
             @if (report.hasSignature) {
               <ui-icon name="check" color="success" />
             } @else {
-              <ui-icon name="times" color="muted" />
+              <ui-icon name="x" color="muted" />
             }
           </td>
           <td>
             <ui-button
               appearance="text"
-              icon="ellipsis-v"
+              icon="ellipsis-vertical"
               (click)="openActionMenu(report, menu, $event); $event.stopPropagation()"
               ariaLabel="Show actions menu"
             />

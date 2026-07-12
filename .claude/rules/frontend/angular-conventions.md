@@ -78,7 +78,7 @@ onKeydown(event: KeyboardEvent) {}
   - **Timeline**: `ui-timeline` with `*uiTimelineContent` (and optional `*uiTimelineMarker`) templates
 - Browse `/ui-lab` (lazy dev route in tms-portal) to see every component rendered in light and dark before building a new one.
 - **Never hide an `<ng-icon>` with a Tailwind display utility** (`hidden`, `inline`, …). `NgIcon` ships an unlayered `:host { display: inline-block }` component style, and unlayered CSS beats every `@layer` — including `@layer utilities`, where all Tailwind utilities live. The class lands in the DOM, the rule lands in the stylesheet, and the icon stays visible anyway. Rotate it (`rotate-180`) or wrap it in a `<span>` you hide instead.
-- **Icons**: `<ui-icon name="..."/>` only — never a raw `<ng-icon>` in feature code. `name` is the typed `IconName` union; an unregistered name renders a **blank** glyph, so `bun run check:icons` gates it.
+- **Icons**: `<ui-icon name="..."/>` only — never a raw `<ng-icon>` in feature code. `name` is the typed `IconName` union (a key of `UI_ICONS` in `projects/shared/src/lib/ui/icons/icons.ts`); an unknown name is a **compile error**. To add a glyph, import its `@ng-icons/lucide` export and add one entry to `UI_ICONS`.
 - **Toasts / confirms**: `ToastService` from `@logistics/shared` only.
 
 ## HTTP Caching

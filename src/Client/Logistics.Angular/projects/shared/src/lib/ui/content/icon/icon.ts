@@ -1,7 +1,6 @@
 import { booleanAttribute, Component, computed, input } from "@angular/core";
 import { NgIcon } from "@ng-icons/core";
-import type { IconName } from "../../icons/icon-registry.generated";
-import { resolveNgIcon } from "../../icons/ui-icons";
+import { ERROR_ICON_SVG, UI_ICONS, type IconName } from "../../icons/icons";
 
 /**
  * `inherit` emits NO size class at all, so the icon takes its size from the surrounding element.
@@ -44,9 +43,9 @@ const colorClasses: Record<IconColor, string> = {
 /**
  * Lucide icon (via `@ng-icons/lucide`) with size, color and spin variants.
  *
- * `name` is an {@link IconName} — every name a call site may write, generated from
- * `tools/codemods/icon-map.json`. A name outside that union is a compile error rather than a silently
- * blank <svg>. The resolved glyph must be registered via `provideIcons(...)` in the portal.
+ * `name` is an {@link IconName} — a key of `UI_ICONS`. A name outside that union is a compile error
+ * rather than a silently blank <svg>. The glyph's SVG is bound directly, so there is nothing to
+ * register.
  *
  * The host is `inline-flex`, not the browser default `inline`: `transform` does not apply to a
  * non-replaced inline element, so `animate-spin` on an inline host is a no-op.
@@ -67,7 +66,21 @@ export class Icon {
   /** Spins the glyph. primeicons' spin class was a CSS keyframe, not a glyph — this replaces it. */
   public readonly spin = input(false, { transform: booleanAttribute });
 
-  protected readonly iconName = computed(() => resolveNgIcon(this.name()));
+  /**
+   * The glyph's raw SVG, bound to `<ng-icon [svg]>` — which bypasses the registry entirely. An unknown
+   * name is a compile error at every static call site, so `undefined` here is only reachable through a
+   * dynamic `[name]` binding: log it and render a VISIBLE error glyph rather than a silently blank box.
+   */
+  protected readonly svg = computed(() => {
+    const svg = UI_ICONS[this.name()];
+    if (svg === undefined) {
+      console.error(
+        `[ui-icon] Unknown icon name "${this.name()}". Add it to projects/shared/src/lib/ui/icons/icons.ts.`,
+      );
+      return ERROR_ICON_SVG;
+    }
+    return svg;
+  });
 
   protected readonly classes = computed(() =>
     [sizeClasses[this.size()], colorClasses[this.color()], this.spin() ? "animate-spin" : ""]

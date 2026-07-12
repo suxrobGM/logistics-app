@@ -1,9 +1,9 @@
 <ui-page-header title="ELD / HOS Dashboard" subtitle="Monitor driver Hours of Service compliance">
   <ui-badge [value]="rules.ruleSetLabel()" severity="info" uiTooltip="Active HOS rule set" />
-  <ui-button label="Configure Providers" icon="cog" (click)="configureProviders()" />
+  <ui-button label="Configure Providers" icon="settings" (click)="configureProviders()" />
   <ui-button
     label="Sync HOS Data"
-    icon="refresh"
+    icon="refresh-cw"
     [loading]="loading()"
     (click)="syncDriversHos()"
   />
@@ -13,7 +13,7 @@
 <ui-grid container spacing="4" class="mb-6">
   <ui-grid [size]="{ xs: 12, md: 6, lg: 4 }">
     <app-stat-card
-      icon="check-circle"
+      icon="circle-check"
       label="Available Drivers"
       [value]="availableDrivers().length"
       color="green"
@@ -33,7 +33,7 @@
 
   <ui-grid [size]="{ xs: 12, md: 6, lg: 4 }">
     <app-stat-card
-      icon="exclamation-triangle"
+      icon="triangle-alert"
       label="HOS Violations"
       [value]="violationCount()"
       [color]="violationCount() > 0 ? 'red' : 'gray'"
@@ -56,10 +56,10 @@
         <ui-empty-state
           title="No driver HOS data"
           message="Configure an ELD provider and map your drivers to start tracking HOS."
-          icon="info-circle"
+          icon="info"
           severity="info"
           actionLabel="Configure Providers"
-          actionIcon="cog"
+          actionIcon="settings"
           (action)="configureProviders()"
         />
       } @else {
@@ -89,7 +89,7 @@
                 <div class="flex items-center gap-2">
                   @if (driver.isInViolation) {
                     <ui-icon
-                      name="exclamation-triangle"
+                      name="triangle-alert"
                       class="text-danger"
                       uiTooltip="HOS Violation"
                     />

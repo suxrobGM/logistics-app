@@ -14,7 +14,7 @@ import type { UiMenuItem } from "./menu-item";
  * row-kebab pattern — and is the only consumer of the Helm dropdown-menu primitive.
  *
  * DROP-IN TRIGGER CONTRACT, deliberately unchanged from PrimeNG:
- *   <ui-button icon="ellipsis-v" (click)="selectedRow.set(row); menu.toggle($event)" />
+ *   <ui-button icon="ellipsis-vertical" (click)="selectedRow.set(row); menu.toggle($event)" />
  *   <ui-menu #menu [items]="actionMenuItems()" />
  *
  * The imperative `toggle($event)` is not a stylistic hangover, it is load-bearing. The call sites run

@@ -50,7 +50,7 @@ export class PlansList {
     return [
       {
         label: "Edit",
-        icon: "pen-to-square",
+        icon: "square-pen",
         command: () => this.router.navigate(["/subscription-plans", plan!.id, "edit"]),
       },
       { separator: true },

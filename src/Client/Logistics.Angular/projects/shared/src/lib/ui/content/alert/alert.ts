@@ -1,5 +1,5 @@
 import { booleanAttribute, Component, computed, input, output } from "@angular/core";
-import type { IconName } from "../../icons/icon-registry.generated";
+import type { IconName } from "../../icons/icons";
 import { Icon } from "../icon/icon";
 
 export type CalloutIntent = "info" | "success" | "warning" | "danger" | "neutral";
@@ -13,11 +13,11 @@ const intentClasses: Record<CalloutIntent, string> = {
 };
 
 const intentDefaultIcon: Record<CalloutIntent, IconName> = {
-  info: "info-circle",
-  success: "check-circle",
-  warning: "exclamation-triangle",
-  danger: "times-circle",
-  neutral: "info-circle",
+  info: "info",
+  success: "circle-check",
+  warning: "triangle-alert",
+  danger: "circle-x",
+  neutral: "info",
 };
 
 const intentIconColor: Record<CalloutIntent, "info" | "success" | "warning" | "danger" | "muted"> =

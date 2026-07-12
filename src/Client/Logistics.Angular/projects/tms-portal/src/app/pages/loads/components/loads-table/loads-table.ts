@@ -83,7 +83,7 @@ export class LoadsTable {
       },
       {
         label: "Edit load details",
-        icon: "pen-to-square",
+        icon: "square-pen",
         command: () => this.router.navigateByUrl(`/loads/${row!.id}/edit`),
         visible: isEditable,
       },
@@ -103,7 +103,7 @@ export class LoadsTable {
       { separator: true },
       {
         label: "View truck details",
-        icon: "directions",
+        icon: "navigation",
         command: () => this.router.navigateByUrl(`/trucks/${row!.assignedTruckId}`),
         visible: !!row?.assignedTruckId,
       },

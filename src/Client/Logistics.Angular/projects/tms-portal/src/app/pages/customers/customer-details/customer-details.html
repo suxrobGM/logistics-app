@@ -39,7 +39,7 @@
           Overview
         </ui-tab>
         <ui-tab value="1">
-          <ui-icon name="file-invoice" class="mr-2" />
+          <ui-icon name="file-text" class="mr-2" />
           Invoices
           @if (store.invoicesCount()) {
             <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
@@ -198,7 +198,7 @@
               />
               <ui-button
                 appearance="outlined"
-                icon="file-invoice"
+                icon="file-text"
                 label="View Invoices"
                 [routerLink]="['/invoices']"
                 [queryParams]="{ customerId: id() }"
@@ -261,7 +261,7 @@
 } @else {
   <ui-card>
     <ui-stack align="center" gap="4" class="py-16">
-      <ui-icon name="exclamation-circle" size="xl" color="muted" />
+      <ui-icon name="circle-alert" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Customer not found</ui-typography>
       <ui-button label="Back to Customers" [routerLink]="['/customers']" />
     </ui-stack>

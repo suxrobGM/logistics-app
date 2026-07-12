@@ -28,7 +28,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="dollar"
+        icon="dollar-sign"
         label="Total Earnings"
         [value]="(data()?.totalEarnings || 0 | currencyFormat) ?? '$0'"
         color="green"
@@ -50,7 +50,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="check-circle"
+        icon="circle-check"
         label="Loads Delivered"
         [value]="(data()?.totalLoadsDelivered || 0 | number) ?? '0'"
         color="orange"
@@ -100,7 +100,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
-      <ui-dashboard-card title="Top Performers" icon="chart-bar" iconColor="blue">
+      <ui-dashboard-card title="Top Performers" icon="chart-column" iconColor="blue">
         <ui-chart
           type="bar"
           [data]="performanceChartData()"
@@ -113,7 +113,7 @@
 
   <!-- Efficiency Chart -->
   <div class="mb-6">
-    <ui-dashboard-card title="Efficiency Metrics" icon="chart-bar" iconColor="blue">
+    <ui-dashboard-card title="Efficiency Metrics" icon="chart-column" iconColor="blue">
       <ui-chart
         type="bar"
         [data]="efficiencyChartData()"

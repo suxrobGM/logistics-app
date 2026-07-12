@@ -33,13 +33,13 @@ export class EmployeeStatusTag {
   protected readonly icon = computed((): IconName => {
     switch (this.status()) {
       case "active":
-        return "check-circle";
+        return "circle-check";
       case "on_leave":
         return "calendar";
       case "suspended":
         return "pause-circle";
       case "terminated":
-        return "times-circle";
+        return "circle-x";
       default:
         return "circle";
     }

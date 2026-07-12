@@ -19,14 +19,14 @@
         <ui-button
           appearance="text"
           label="Mark all as read"
-          icon="check-circle"
+          icon="circle-check"
           (click)="markAllAsRead()"
         />
       }
       <ui-button
         appearance="text"
         ariaLabel="Refresh"
-        icon="refresh"
+        icon="refresh-cw"
         [rounded]="true"
         (click)="fetchNotifications()"
         uiTooltip="Refresh"
@@ -69,7 +69,7 @@
         appearance="text"
         size="sm"
         label="Clear selection"
-        icon="times"
+        icon="x"
         (click)="clearSelection()"
       />
     </div>
@@ -83,7 +83,7 @@
       </ui-stack>
     } @else if (filteredNotifications().length === 0) {
       <ui-stack align="center" justify="center" gap="2" class="px-8 py-16 text-center">
-        <ui-icon name="bell-slash" size="xl" color="muted" class="mb-2" />
+        <ui-icon name="bell-off" size="xl" color="muted" class="mb-2" />
         <ui-typography variant="h6" tag="h3">No notifications</ui-typography>
         <ui-typography variant="body-sm" color="muted">
           @if (searchQuery()) {

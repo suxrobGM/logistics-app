@@ -19,11 +19,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-/** Angular workspace root (…/src/Client/Logistics.Angular) — this file lives at tools/codemods/lib/. */
-export const WORKSPACE_ROOT = path.resolve(
-  fileURLToPath(new URL(".", import.meta.url)),
-  "../../..",
-);
+/** Angular workspace root (…/src/Client/Logistics.Angular) — this file lives at tools/lib/. */
+export const WORKSPACE_ROOT = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "../..");
 
 /** Read a file as text with line endings normalized to LF. */
 export function readText(file) {

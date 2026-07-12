@@ -34,7 +34,7 @@ export class LoadBoardQuickActions {
     {
       label: "Configure Providers",
       description: "Connect to DAT, Truckstop, 123Loadboard",
-      icon: "cog",
+      icon: "settings",
       route: "/loadboard/providers",
       iconColor: "warning",
     },

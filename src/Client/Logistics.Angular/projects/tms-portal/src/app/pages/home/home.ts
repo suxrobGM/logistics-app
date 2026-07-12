@@ -171,7 +171,7 @@ export class Home implements OnInit {
     { label: "View All Loads", icon: "list", routerLink: "/loads" },
     { separator: true },
     { label: "View Trucks", icon: "truck", routerLink: "/trucks" },
-    { label: "Messages", icon: "envelope", routerLink: "/messages" },
+    { label: "Messages", icon: "mail", routerLink: "/messages" },
   ];
 
   constructor() {

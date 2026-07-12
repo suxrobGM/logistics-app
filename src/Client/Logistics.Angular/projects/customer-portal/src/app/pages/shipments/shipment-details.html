@@ -142,7 +142,7 @@
               @if (load()?.hasBillOfLading) {
                 <ui-icon name="check" class="text-green-600" />
               } @else {
-                <ui-icon name="times" color="muted" />
+                <ui-icon name="x" color="muted" />
               }
             </span>
           </ui-stack>
@@ -152,7 +152,7 @@
               @if (load()?.hasProofOfDelivery) {
                 <ui-icon name="check" class="text-green-600" />
               } @else {
-                <ui-icon name="times" color="muted" />
+                <ui-icon name="x" color="muted" />
               }
             </span>
           </ui-stack>
@@ -162,7 +162,7 @@
   </ui-grid>
 } @else {
   <ui-stack align="center" gap="2" class="py-12">
-    <ui-icon name="exclamation-triangle" size="xl" class="text-yellow-500" />
+    <ui-icon name="triangle-alert" size="xl" class="text-yellow-500" />
     <ui-typography variant="body" color="muted">Shipment not found</ui-typography>
   </ui-stack>
 }

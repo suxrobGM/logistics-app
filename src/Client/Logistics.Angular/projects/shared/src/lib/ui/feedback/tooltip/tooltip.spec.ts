@@ -19,9 +19,7 @@
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { provideIcons } from "@ng-icons/core";
 import { UiButton } from "../../action/button/button";
-import { BASE_NG_ICONS } from "../../icons/icon-registry.generated";
 import { UiTooltip } from "./tooltip";
 
 /** The directive's default show delay (brain's `defaultOptions.showDelay`). */
@@ -56,7 +54,7 @@ describe("UiTooltip", () => {
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     TestBed.configureTestingModule({
       imports: [TestHost],
-      providers: [provideZonelessChangeDetection(), provideIcons(BASE_NG_ICONS)],
+      providers: [provideZonelessChangeDetection()],
     });
     fixture = TestBed.createComponent(TestHost);
     host = fixture.componentInstance;

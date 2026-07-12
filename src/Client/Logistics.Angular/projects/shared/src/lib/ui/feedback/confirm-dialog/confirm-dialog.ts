@@ -5,7 +5,7 @@ import { BrnDialogRef, injectBrnDialogContext } from "@spartan-ng/brain/dialog";
 import { UiButton } from "../../action/button/button";
 import type { UiButtonIntent } from "../../action/button/button-variants";
 import { Icon } from "../../content/icon/icon";
-import type { IconName } from "../../icons/icon-registry.generated";
+import type { IconName } from "../../icons/icons";
 import { isTopmostOverlay } from "../../internal/overlay-stack";
 
 /**

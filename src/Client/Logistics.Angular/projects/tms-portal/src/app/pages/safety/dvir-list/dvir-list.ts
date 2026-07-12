@@ -50,7 +50,7 @@ export class DvirListPage {
     },
     {
       label: "Review",
-      icon: "check-circle",
+      icon: "circle-check",
       command: () => this.reviewDvir(this.selectedRow()!),
     },
   ];

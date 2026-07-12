@@ -22,7 +22,12 @@ export const sidebarSections: AdminNavSection[] = [
   {
     label: "Tenant Management",
     items: [
-      { label: "Tenants", icon: "building", route: "/tenants", permission: Permission.Tenant.View },
+      {
+        label: "Tenants",
+        icon: "building-2",
+        route: "/tenants",
+        permission: Permission.Tenant.View,
+      },
       {
         label: "Features",
         icon: "layout-grid",

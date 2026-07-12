@@ -23,10 +23,10 @@ export class LoadStatusStepper {
   public readonly cancelledAt = input<string | null | undefined>(null);
 
   protected readonly steps: StepConfig[] = [
-    { status: "draft", label: "Draft", icon: "file-edit" },
+    { status: "draft", label: "Draft", icon: "file-pen" },
     { status: "dispatched", label: "Dispatched", icon: "send" },
     { status: "picked_up", label: "Picked Up", icon: "truck" },
-    { status: "delivered", label: "Delivered", icon: "check-circle" },
+    { status: "delivered", label: "Delivered", icon: "circle-check" },
   ];
 
   protected readonly isCancelled = computed(() => this.currentStatus() === "cancelled");

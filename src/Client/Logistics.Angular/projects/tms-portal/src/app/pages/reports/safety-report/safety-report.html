@@ -15,7 +15,7 @@
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="file-edit"
+        icon="file-pen"
         label="Total DVIRs"
         [value]="(data()?.totalDvirs || 0).toString()"
         color="blue"
@@ -35,7 +35,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="dollar"
+        icon="dollar-sign"
         label="Estimated Damage"
         [value]="(data()?.estimatedDamageCost || 0 | currencyFormat) ?? '$0'"
         color="orange"
@@ -45,7 +45,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <app-stat-card
-        icon="exclamation-triangle"
+        icon="triangle-alert"
         label="Behavior Events"
         [value]="(data()?.totalBehaviorEvents || 0).toString()"
         color="orange"
@@ -91,7 +91,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
-      <ui-dashboard-card title="Behavior Events by Type" icon="chart-bar" iconColor="orange">
+      <ui-dashboard-card title="Behavior Events by Type" icon="chart-column" iconColor="orange">
         @if (hasBehaviorEventData()) {
           <ui-chart
             type="bar"

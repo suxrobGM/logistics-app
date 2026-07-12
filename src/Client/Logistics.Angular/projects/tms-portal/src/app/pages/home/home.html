@@ -7,7 +7,7 @@
       intent="secondary"
       appearance="text"
       ariaLabel="Refresh data"
-      icon="refresh"
+      icon="refresh-cw"
       [rounded]="true"
       (click)="refreshData()"
       uiTooltip="Refresh data"
@@ -17,7 +17,7 @@
       intent="secondary"
       appearance="text"
       ariaLabel="Reset Layout"
-      icon="th-large"
+      icon="layout-grid"
       [rounded]="true"
       (click)="resetLayout()"
       uiTooltip="Reset Layout"
@@ -47,7 +47,7 @@
             @case ("kpi-weekly-gross") {
               <app-stat-card
                 class="h-full"
-                icon="dollar"
+                icon="dollar-sign"
                 label="Weekly Gross"
                 [value]="(weeklyGross() | currencyFormat) ?? '$0'"
                 color="green"
@@ -222,7 +222,7 @@
                 <ng-template #header>
                   <ui-stack direction="row" align="center" gap="2" class="py-3 pr-2 pl-4">
                     <span class="text-primary">
-                      <ui-icon name="map-marker" color="inherit" />
+                      <ui-icon name="map-pin" color="inherit" />
                     </span>
                     <ui-typography variant="h4" tag="h4" color="primary">
                       Fleet Overview

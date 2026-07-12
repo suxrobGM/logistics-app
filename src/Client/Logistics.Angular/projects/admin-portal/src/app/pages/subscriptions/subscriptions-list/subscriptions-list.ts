@@ -53,7 +53,7 @@ export class SubscriptionsList {
     if (sub?.status === "active" || sub?.status === "trialing") {
       items.push({
         label: "Cancel Subscription",
-        icon: "times-circle",
+        icon: "circle-x",
         command: () => this.confirmToCancel(sub!.id!),
       });
     }

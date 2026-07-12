@@ -15,8 +15,6 @@
 import { Component, provideZonelessChangeDetection, signal, viewChild } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import { disabled, form, FormField, required } from "@angular/forms/signals";
-import { provideIcons } from "@ng-icons/core";
-import { BASE_NG_ICONS } from "../../icons/icon-registry.generated";
 import { UiFormField } from "../form-field/form-field";
 import { UiPasswordField } from "./password-field";
 
@@ -63,7 +61,7 @@ function type(fixture: ComponentFixture<unknown>, text: string): void {
 describe("UiPasswordField — a FormValueControl-only wrapper", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), provideIcons(BASE_NG_ICONS)],
+      providers: [provideZonelessChangeDetection()],
     });
   });
 

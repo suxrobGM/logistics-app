@@ -153,11 +153,11 @@ export function getToolIcon(toolName: string | null | undefined): IconName {
     case "calculate_distance":
       return "map";
     case "calculate_assignment_metrics":
-      return "chart-bar";
+      return "chart-column";
     case "assign_load_to_truck":
       return "link";
     case "create_trip":
-      return "plus-circle";
+      return "circle-plus";
     case "dispatch_trip":
       return "send";
     case "search_load_board":

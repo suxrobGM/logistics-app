@@ -13,7 +13,7 @@
       <ui-button
         intent="danger"
         appearance="outlined"
-        icon="times"
+        icon="x"
         label="Reject"
         (click)="openRejectDialog()"
       />
@@ -80,18 +80,18 @@
       <ui-stack direction="row" align="center" gap="4" class="mt-4">
         @if (report()!.hasDriverSignature) {
           <ui-stack direction="row" align="center" gap="1" class="text-success">
-            <ui-icon name="check-circle" />
+            <ui-icon name="circle-check" />
             <span class="text-sm">Driver signed</span>
           </ui-stack>
         }
         @if (report()!.hasDefects) {
           <ui-stack direction="row" align="center" gap="1" class="text-danger">
-            <ui-icon name="exclamation-triangle" />
+            <ui-icon name="triangle-alert" />
             <span class="text-sm">{{ report()!.defects?.length ?? 0 }} defect(s) found</span>
           </ui-stack>
         } @else {
           <ui-stack direction="row" align="center" gap="1" class="text-success">
-            <ui-icon name="check-circle" />
+            <ui-icon name="circle-check" />
             <span class="text-sm">No defects</span>
           </ui-stack>
         }
@@ -124,7 +124,7 @@
             <ui-grid [size]="{ xs: 6, md: 3 }">
               <div class="text-muted-foreground mb-1 text-sm">Signature</div>
               <ui-stack direction="row" align="center" gap="1" class="text-success">
-                <ui-icon name="check-circle" />
+                <ui-icon name="circle-check" />
                 <span class="text-sm">Mechanic signed</span>
               </ui-stack>
             </ui-grid>
@@ -223,7 +223,7 @@
       <ui-button
         intent="danger"
         label="Reject"
-        icon="times"
+        icon="x"
         (click)="confirmReject()"
         [loading]="isSubmitting()"
         [disabled]="!rejectionReason.trim()"
