@@ -29,22 +29,16 @@ interface QuillLike {
 }
 
 /**
- * Rich-text editor. One call site, the admin blog-post form.
+ * Rich-text editor, used by the admin blog-post form.
  *
- * Implements `FormValueControl<string>` and nothing else, like every other `ui-*-field` — never a
- * legacy value accessor. That is the governing rule of this repo's form layer, and the exit gate
- * greps for it. `[formField]="form.content"` binds straight to `value`.
+ * Implements `FormValueControl<string>` and nothing else, never a legacy `ControlValueAccessor`:
+ * `[formField]="form.content"` binds straight to `value`.
  *
- * QUILL IS LOADED LAZILY (`await import("quill")`) and only when the component renders. It is ~43KB
- * min+gzip, it is needed on exactly one admin page, and a static import would put it in admin's
- * initial bundle for every user who never writes a blog post.
- *
- * Two consequences of lazy loading that the code below has to handle, and which are invisible until
- * they bite:
- *   1. `value` can be set (by the form, from the API) BEFORE quill exists. So the incoming value is
- *      held in a signal and flushed into quill once it resolves — see `syncIntoQuill`.
- *   2. The component can be destroyed while the `import()` is still in flight. Writing to a
- *      destroyed view then throws. `destroyed` guards the continuation.
+ * Quill is loaded lazily (`await import("quill")`) when the component renders — it is ~43KB min+gzip
+ * for one admin page, so a static import would land in admin's initial bundle for everyone. Two
+ * consequences the code has to handle: `value` can be set before quill exists (held in a signal and
+ * flushed by `syncIntoQuill` once it resolves), and the component can be destroyed mid-`import()`
+ * (writing to the destroyed view throws, so `destroyed` guards the continuation).
  */
 @Component({
   selector: "ui-editor",
@@ -70,18 +64,7 @@ export class UiEditor implements FormValueControl<string> {
   public readonly id = input<string>("");
   public readonly placeholder = input<string>("");
 
-  /**
-   * Height of the EDITABLE AREA — not of the whole component.
-   *
-   * `p-editor` took a `[style]` object and applied it, via `[ngStyle]`, to its content div only
-   * (`<div [class]="cx('content')" [ngStyle]="style">`), with the toolbar stacked above and
-   * contributing its own height. The blog form passed `[style]="{ height: '320px' }"`, so it asked
-   * for a 320px *text area*, and the component rendered ~320px + toolbar.
-   *
-   * Forwarding that object to `<ui-editor>`'s host as a plain Angular style binding would have meant
-   * 320px for toolbar AND text, silently shrinking the writing area. Hence an explicit input with an
-   * unambiguous name instead of a `style` passthrough.
-   */
+  /** Height of the editable area only — the toolbar stacks above it and adds its own height. */
   public readonly contentHeight = input<string>("320px");
 
   protected readonly showInvalid = computed(
@@ -95,10 +78,10 @@ export class UiEditor implements FormValueControl<string> {
   private destroyed = false;
 
   /**
-   * The last HTML this component itself pushed into `value`. Quill normalises whatever you give it
-   * (`<b>` -> `<strong>`, attribute order, whitespace), so echoing our own emission back into
-   * `setContents` would reset the caret to the top of the document on every keystroke. Comparing
-   * against what we emitted lets `syncIntoQuill` ignore the round trip.
+   * The last HTML this component pushed into `value`. Quill normalises what you give it (`<b>` ->
+   * `<strong>`, attribute order, whitespace), so feeding our own emission back into `setContents`
+   * would reset the caret to the top of the document on every keystroke; `syncIntoQuill` compares
+   * against this to ignore the round trip.
    */
   private lastEmitted: string | null = null;
 
@@ -164,11 +147,10 @@ export class UiEditor implements FormValueControl<string> {
   }
 
   /**
-   * Quill's stylesheet is a GLOBAL one (`shared/src/styles/quill.css`) — it is 24.6kB, which does not
-   * fit the 4-6kB `anyComponentStyle` budget, so it cannot travel with the component. That leaves the
-   * classic shared-component trap: the second app to render `<ui-editor>` forgets to import it, and
-   * quill's `<select>` pickers, with nothing styling them, expand into raw option lists — a 5118px
-   * toolbar. It is not subtle, but it is also not obviously ABOUT a missing stylesheet, so say so.
+   * Quill's stylesheet is global (`shared/src/styles/quill.css`): at 24.6kB it blows the
+   * `anyComponentStyle` budget, so it cannot travel with the component and each app must import it.
+   * When an app forgets, quill's `<select>` pickers expand into raw option lists and the toolbar
+   * renders thousands of pixels tall — a symptom that does not point at a missing stylesheet.
    */
   private assertStylesheetLoaded(): void {
     if (!isDevMode()) {

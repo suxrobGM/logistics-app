@@ -13,7 +13,7 @@ import { HlmAccordionTrigger } from "../../primitives/accordion";
   templateUrl: "./accordion-header.html",
   imports: [HlmAccordionTrigger],
   // `contents` for the same reason as ui-accordion-content: keep this wrapper out of the panel's
-  // `flex flex-col` layout so the Helm trigger stays a direct flex item of it (Lesson 3).
+  // `flex flex-col` layout so the Helm trigger stays a direct flex item of it.
   host: { class: "contents" },
 })
 export class UiAccordionHeader {}

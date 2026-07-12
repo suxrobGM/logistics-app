@@ -16,46 +16,42 @@ export type UiButtonAppearance = "solid" | "outlined" | "text" | "link";
 export type UiButtonSize = "sm" | "md" | "lg";
 
 /**
- * `ui-button`'s OWN cva. It is deliberately NOT an extension of `hlm-button`'s `buttonVariants`:
- * that cva is imported by the four `hlm-calendar*` primitives and by `hlm-date-picker-trigger`, so
- * adding intents to it would re-render the calendar nav and the date-picker trigger through a
- * variant table they never asked for. Zero forks of vendored Helm — this table stands alone.
+ * `ui-button`'s own cva. Deliberately NOT an extension of `hlm-button`'s `buttonVariants`: that cva
+ * is imported by the `hlm-calendar*` primitives and `hlm-date-picker-trigger`, so adding intents to
+ * it would push a variant table onto components that never asked for one.
  *
- * COLOURS COME FROM TOKENS ONLY. Every value below dereferences a custom property that is defined
- * in BOTH `:root` and `.dark-theme` (see shared/src/styles/theme.css), so dark mode is free and
- * there is not one hex literal in this file.
+ * TWO RULES ABOUT ARBITRARY PROPERTIES, and both are load-bearing:
+ *   1. A cell that needs a CSS variable writes the bracketed property:value form
+ *      (`[background-color:var(…)]`), never a bg-/text- utility wrapping a bare `var()` — Tailwind
+ *      has to infer the target property of an arbitrary value, and for a bare `var()` that is
+ *      ambiguous (a background could be colour or image), so the declaration may not be emitted.
+ *   2. But an arbitrary property lands in its OWN tailwind-merge class group, so it survives the
+ *      merge alongside a conflicting `bg-*` / `border-*` utility instead of beating it — leaving
+ *      stylesheet source order to pick the winner. So a cell that has to OVERRIDE a named utility
+ *      coming from BASE (its transparent border, say) must itself be spelled as a named utility.
  *
- * ARBITRARY PROPERTIES, NOT ARBITRARY VALUES. Where a cell needs a CSS variable it is written in
- * the bracketed property:value form, never as a bg-/text- utility wrapping a bare var(). Tailwind
- * has to *infer* the target property of an arbitrary value, and for a bare var() that inference is
- * ambiguous — a background could be a colour or an image, a text- could be a colour or a font-size.
- * Naming the property outright means the declaration is always emitted.
+ * Colours come from tokens defined in both `:root` and `.dark-theme` (shared/src/styles/theme.css),
+ * so dark mode is free and there is no hex literal in this file.
  */
 
 /**
- * 8 intents x 4 appearances = 32 cells, enumerated. The `Record<UiButtonIntent, Record<...>>` type
- * is the point: a missing cell is a COMPILE ERROR. It has to be, because every other failure mode
- * here is silent — an unknown Tailwind token emits no CSS and no warning, so a hole would render
- * `intent="success"` as an unstyled (or primary-blue) button, and "the payroll button turned blue"
- * is not something a type checker, a linter or a unit test would otherwise catch.
+ * The intent x appearance matrix, fully enumerated. The `Record<UiButtonIntent, Record<...>>` type is
+ * the point: a missing cell is a compile error. It has to be, because the failure is otherwise
+ * silent — an unknown Tailwind token emits no CSS and no warning, so a hole renders as an unstyled
+ * button that nothing catches.
  *
- * Two product decisions are encoded here and must not be "corrected" back to shadcn defaults:
- *   danger/solid  renders SOLID RED (shadcn's destructive is a soft tint), and
- *   success       KEEPS GREEN (shadcn has no success intent at all).
- * These sit on money-moving actions — payroll, invoices, subscriptions, void, refund — where the
- * colour carries the meaning. Collapsing them into the primary blue changes what the button says.
+ * Two product decisions that must not be "corrected" back to shadcn defaults: danger/solid is SOLID
+ * red (shadcn's destructive is a soft tint) and `success` keeps green (shadcn has no success intent).
+ * These sit on money-moving actions — payroll, invoices, refunds — where the colour carries meaning.
  */
 export const INTENT_APPEARANCE: Record<UiButtonIntent, Record<UiButtonAppearance, string>> = {
   /**
-   * The only intent that resolves through `--ui-btn-*` indirection rather than straight to a
-   * semantic token. TMS paints its primary buttons with a gradient + font-weight 600; admin /
-   * customer / website run stock and must stay pixel-identical. So the cell reads the variables
-   * and each app supplies them: flat defaults in shared theme.css, the gradient in
-   * tms-portal/src/styles.css. The gradient rides on `background-image` — a `linear-gradient()`
-   * is not a valid `background-color`, so a single `bg-*` utility could never have carried it.
-   *
-   * The gradient is scoped structurally: only `solid` reads the vars, so outlined/text/link
-   * appearances never pick up the gradient.
+   * The only intent that resolves through `--ui-btn-*` indirection rather than straight to a semantic
+   * token: TMS paints its primary buttons with a gradient + heavier weight, the other apps run flat.
+   * Each app supplies the variables (flat defaults in shared theme.css, the gradient in
+   * tms-portal/src/styles.css). The gradient rides on `background-image` — a `linear-gradient()` is
+   * not a valid `background-color`, so no single background utility could carry it. Only `solid`
+   * reads the vars, which is what keeps the gradient off outlined/text/link.
    */
   primary: {
     solid:
@@ -66,9 +62,9 @@ export const INTENT_APPEARANCE: Record<UiButtonIntent, Record<UiButtonAppearance
   },
 
   /**
-   * `--secondary` and `--accent` are the SAME token (`--bg-hover`) in this theme, so the obvious
-   * `hover:bg-accent` would be a no-op hover. `--active` (`--bg-active`) is the next step down the
-   * surface ramp and is what actually produces visible feedback.
+   * `--secondary` and `--accent` are the SAME token in this theme, so the obvious `hover:bg-accent`
+   * would be a no-op hover. `--active` is the next step down the surface ramp and is what actually
+   * produces visible feedback.
    */
   secondary: {
     solid: "bg-secondary text-secondary-foreground hover:bg-active",
@@ -108,17 +104,10 @@ export const INTENT_APPEARANCE: Record<UiButtonIntent, Record<UiButtonAppearance
   },
 
   /**
-   * The `help` intent is purple, and this theme has exactly one purple defined in both
-   * `:root` and `.dark-theme`: the load-status ramp's `--status-pickedup`. `--ui-btn-help` aliases
-   * it rather than introducing a ninth hex literal into the palette, and theme.css registers that
-   * alias as a real colour so the cells below can be spelled as NAMED utilities.
-   *
-   * They must be named. An earlier version wrote this cell with arbitrary properties, and the
-   * outlined variant shipped with NO BORDER: tailwind-merge files an arbitrary property under a
-   * different class group than the equivalent named utility, so it never saw the cell's border
-   * colour as conflicting with BASE's `border-transparent`. Both classes survived the merge, they
-   * have equal specificity, and the base one happens to come later in the emitted stylesheet — so
-   * it won. The other seven intents were never exposed to this because they were already named.
+   * `help` is purple, and the theme's only purple is the load-status ramp's `--status-pickedup`;
+   * `--ui-btn-help` aliases it, and theme.css registers the alias as a real colour so these cells can
+   * be spelled as NAMED utilities. They must be: written as arbitrary properties, the outlined
+   * variant renders with no border at all (see rule 2 at the top of this file).
    */
   help: {
     solid: "bg-help [color:var(--ui-btn-on-solid)] hover:bg-help/90",
@@ -137,14 +126,13 @@ export const INTENT_APPEARANCE: Record<UiButtonIntent, Record<UiButtonAppearance
 };
 
 /**
- * The arbitrary-variant rules below size a nested `ng-icon` from the button, and they are the reason
- * `<ui-icon size="inherit">` (which emits NO `text-*` class) is mandatory inside this component: the
- * variant deliberately does not match an icon that carries a text-size class of its own, so an icon
- * with one stops tracking the button's size. Same mechanism Helm's button uses. See ui/content/icon.
+ * The arbitrary-variant rules below size a nested `ng-icon` from the button, and they are why
+ * `<ui-icon size="inherit">` (which emits no text-size class) is mandatory inside this component:
+ * the variant deliberately does not match an icon that carries a text-size class of its own, so such
+ * an icon stops tracking the button's size.
  *
  * Do not paraphrase those selectors in prose here. Tailwind scans this file as plain TEXT, comments
- * included, so a class-shaped string in a comment is harvested and emitted as a real CSS rule — an
- * earlier draft of this very comment shipped a `font-size:...` declaration into all four bundles.
+ * included, so a class-shaped string in a comment is harvested and emitted as a real CSS rule.
  */
 const BASE =
   "group/button inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-transparent bg-clip-padding font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_ng-icon]:pointer-events-none [&_ng-icon]:shrink-0 [&_ng-icon:not([class*='text-'])]:text-[length:--spacing(4)]";
@@ -156,7 +144,7 @@ export const buttonVariants = cva(BASE, {
       md: "h-9 gap-2 px-4 text-sm",
       lg: "h-10 gap-2 px-5 text-base [&_ng-icon:not([class*='text-'])]:text-[length:--spacing(5)]",
     },
-    /** No label: the button collapses to a square so the glyph is optically centred. */
+    /** Empty on purpose: the square sizing comes from the compoundVariants, which need this key. */
     iconOnly: { true: "", false: "" },
     rounded: { true: "rounded-full", false: "" },
   },
@@ -180,9 +168,9 @@ export interface UiButtonClassOptions {
 }
 
 /**
- * The whole class string for the INNER `<button>`. `hlm()` (twMerge) runs last so later groups beat
- * earlier ones: the intent cell's `border-danger` beats BASE's `border-transparent`, the icon-only
- * compound's `size-9 p-0` beats the size cell's `h-9 px-4`, and the call site's `extra` beats us.
+ * The whole class string for the INNER `<button>`. Argument order is the precedence order — twMerge
+ * lets a later group beat an earlier one, so the intent cell beats BASE, the icon-only compound beats
+ * the size cell, and the call site's `extra` beats everything.
  */
 export function uiButtonClass(options: UiButtonClassOptions): string {
   return hlm(

@@ -42,7 +42,7 @@ export class EmptyState {
   /** Label for the optional action button */
   public readonly actionLabel = input<string | null>(null);
 
-  /** Icon for the action button. Typed `IconName` since S4 — an unknown name is now a compile error. */
+  /** Icon for the action button. Typed `IconName`, so an unknown name is a compile error. */
   public readonly actionIcon = input<IconName>("plus");
 
   /**

@@ -14,9 +14,8 @@ export type UiDrawerPosition = "left" | "right" | "top" | "bottom";
  * three of our call sites are plain edge panels with no drag affordance, so `hlm-sheet` is the honest
  * match; `hlm-drawer` would have added a grab handle nobody asked for.
  *
- * `*hlmSheetPortal` in the template is LOAD-BEARING (Lesson 5). It is the structural directive that
- * portals the content into the overlay; without it the sheet never opens and never closes, and — this
- * is the dangerous part — nothing throws. This migration has already shipped that bug once.
+ * `*hlmSheetPortal` in the template is LOAD-BEARING: it portals the content into the overlay, and
+ * without it the sheet never opens and never closes — and nothing throws.
  *
  * The `[modal]`, `[dismissible]` and `[closeOnEscape]` inputs are gone because `BrnDialog`
  * already does all three by default: `hasBackdrop: true`, backdrop-click dismisses, and Escape

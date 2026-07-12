@@ -13,9 +13,8 @@ export type UiTableSelectionMode = "single" | "multiple" | undefined;
 /**
  * The input signals `<ui-data-table>` hands to its state on construction.
  *
- * Passed in rather than injected: `UiDataTable` provides `UiTableState` on its own node, so a
- * `inject(UiDataTable)` inside the state would be a construction cycle (NG0200) the moment the
- * component itself injects the state for its template.
+ * Passed in rather than injected: `UiDataTable` provides `UiTableState` on its own node, so
+ * `inject(UiDataTable)` from inside the state would be a construction cycle (NG0200).
  */
 export interface UiTableSources<T> {
   value: Signal<readonly T[]>;
@@ -34,12 +33,7 @@ export interface UiTableSources<T> {
   globalFilterFields: Signal<string[] | undefined>;
 }
 
-/**
- * Resolves a possibly-dotted field path ("customer.name", "originAddress.line1") against a row.
- *
- * Six client-sorted templates and the eight sort headers of trips-list's nested table pass
- * dotted paths.
- */
+/** Resolves a possibly-dotted field path ("customer.name", "originAddress.line1") against a row. */
 export function resolveFieldData(data: unknown, field: string | undefined): unknown {
   if (data == null || !field) {
     return undefined;
@@ -58,15 +52,11 @@ export function resolveFieldData(data: unknown, field: string | undefined): unkn
 }
 
 /**
- * The legacy comparator, reproduced EXACTLY. Every clause here is characterization:
+ * Nullish sorts first on ascending (and therefore last on descending).
  *
- *  • **Nullish sorts FIRST on ascending** (`null` vs non-null yields -1, then the whole result is
- *    multiplied by the order). Descending therefore puts the holes last. This is what ships.
- *  • **Strings compare with `localeCompare`, which is NOT numeric-aware** — so a column of
- *    numeric-ish strings ("Load #", "Truck #") orders "10", "100", "9". A WART, pinned by the
- *    contract spec and made visible by the /ui-lab fixture. Do not "fix" it here: six templates
- *    depend on today's ordering, and making it numeric-aware is a separate, visible decision.
- *  • Real numbers fall through to `<` / `>`, so they sort numerically.
+ * Strings compare with `localeCompare`, which is not numeric-aware, so a column of numeric-ish
+ * strings ("Load #") orders "10", "100", "9". Do not "fix" it here — client-sorted templates depend
+ * on today's ordering, and it is pinned by the contract spec. Real numbers sort numerically.
  */
 function compareFieldValues(value1: unknown, value2: unknown): number {
   if (value1 == null && value2 != null) {
@@ -102,43 +92,35 @@ function contains(value: unknown, filter: string): boolean {
 }
 
 /**
- * The table ENGINE.
- *
- * Owns seven things Helm's presentational table directives do not provide — client sort, client
- * paging, a client global filter, selection, row expansion, the sort/page state a `<th
- * uiSortHeader>` reads, and the single lazy-load request the 33 server-paged pages live on.
+ * The table engine: client sort, client paging, client global filter, selection, row expansion, the
+ * sort/page state `<th uiSortHeader>` reads, and the lazy-load request server-paged pages live on.
  *
  * Provided on `<ui-data-table>`'s own node, which is what lets a `<th uiSortHeader>` written in a
- * CONSUMER's `<ng-template #header>` inject it: the template is DECLARED as a child of the
+ * CONSUMER's `<ng-template #header>` inject it: the template is declared as a child of the
  * `<ui-data-table>` element, and `createEmbeddedView` parents the embedded view's injector at the
- * declaration node. For trips-list's nested table the inner element is a strictly closer ancestor
- * of its own templates, so the inner state shadows the outer one structurally.
+ * declaration node. A nested table's inner state therefore shadows the outer one structurally.
  *
- * NOTHING here emits. The single `lazyLoad` output belongs to `UiDataTable`; this class calls the
- * `emit` callback handed to {@link connect}, and only ever from a user-intent method.
+ * Nothing here emits. This class calls the `emit` callback handed to {@link connect}, and only from
+ * a user-intent method; the `lazyLoad` output itself belongs to `UiDataTable`.
  */
 @Injectable()
 export class UiTableState<T = unknown> {
   private src!: UiTableSources<T>;
   private emit: () => void = () => undefined;
 
-  // ── State ───────────────────────────────────────────────────────────────────────────────────
-  // `linkedSignal`s SEEDED from the inputs. Seeding never emits, so a consumer's `[first]` or
-  // `sortField="…"` is already in state by the time `ngOnInit` fires the one initial lazy load —
-  // and a later input change (a store writing back `first`) re-seeds without emitting either.
-  // They are lazy, so reading them before `connect()` is impossible in practice.
+  // State: `linkedSignal`s seeded from the inputs. Seeding never emits, so a consumer's `[first]`
+  // or `sortField` is already in state before `ngOnInit` fires the initial lazy load, and a later
+  // input change (a store writing `first` back) re-seeds without emitting either.
 
-  /** 0-indexed row OFFSET of the current page. Not a page number. */
+  /** 0-indexed row offset of the current page. Not a page number. */
   public readonly first = linkedSignal(() => this.src.first());
   /** Page size. `undefined` when the consumer binds no `[rows]`. */
   public readonly size = linkedSignal(() => this.src.rows());
   public readonly sortField = linkedSignal(() => this.src.sortField());
   /**
-   * `undefined` until something sorts — NOT 1.
-   *
-   * The initial lazy request must carry `sortOrder: undefined`; `createListStore` then applies its
-   * own `?? -1`. Emitting a nominal default of `1` instead would silently change what the store
-   * records having asked for. Pinned by the contract spec.
+   * `undefined` until something sorts — not 1. The initial lazy request must carry
+   * `sortOrder: undefined` so `createListStore` applies its own `?? -1`; emitting a nominal `1`
+   * would silently change what the store records having asked for. Pinned by the contract spec.
    */
   public readonly sortOrder = linkedSignal(() => this.src.sortOrder());
   private readonly globalFilter = signal("");
@@ -150,32 +132,26 @@ export class UiTableState<T = unknown> {
     this.emit = emit;
   }
 
-  // ── Derived config ──────────────────────────────────────────────────────────────────────────
-
   public readonly lazy = computed(() => this.src.lazy());
   public readonly paginator = computed(() => this.src.paginator());
   public readonly selectionMode = computed(() => this.src.selectionMode());
   /**
-   * 0 when unbound; every slice/page computation guards on it.
+   * Page size, 0 when unbound; every slice/page computation guards on it.
    *
-   * ⚠ Reads {@link size}, the linkedSignal — NOT the raw `rows` input. `setPageSize()` writes
-   * `size`, so a `pageSize` that read the input instead would bypass it: a LAZY table would still
-   * limp along (its store writes the new size back through `[rows]`), but the 14 CLIENT-paged
-   * tables have nothing to write back, so picking "25" would change the trigger, reset to page 1,
-   * and still render 10 rows forever.
+   * Reads {@link size}, the linkedSignal — not the raw `rows` input. `setPageSize()` writes `size`,
+   * so reading the input here would bypass it and a client-paged table (which has no store to write
+   * the new size back through `[rows]`) would keep rendering the old page size forever.
    */
   public readonly pageSize = computed(() => this.size() ?? 0);
 
   /**
-   * The effective sort order. `sortOrder` stays `undefined` on the wire, but a client sort needs a
-   * direction: a bound-but-orderless sort field simply means ascending, and the header toggles
-   * from there. The two templates that bind `sortField="order"` (trip-wizard-review, trip-details)
-   * show stops already stored in `order`, so ascending is the order they already render in.
+   * A client sort needs a direction even though `sortOrder` stays `undefined` on the wire: a
+   * bound-but-orderless sort field means ascending, and the header toggles from there.
    */
   private readonly effectiveSortOrder = computed(() => this.sortOrder() ?? 1);
 
-  // ── The client pipeline: filter -> sort -> slice ─────────────────────────────────────────────
-  // For a LAZY table `value` IS the server's page: no filtering, no sorting, no slicing.
+  // The client pipeline: filter -> sort -> slice. For a lazy table `value` IS the server's page, so
+  // none of the three steps apply.
 
   private readonly filtered = computed<readonly T[]>(() => {
     const data = this.src.value();
@@ -190,8 +166,8 @@ export class UiTableState<T = unknown> {
   });
 
   /**
-   * Filtered + sorted, but NOT paged — this is what select-all and the header checkbox operate on
-   * (so select-all on a client-paged table takes every matching row, not just the visible page).
+   * Filtered and sorted, but not paged — this is what select-all and the header checkbox operate
+   * on, so select-all takes every matching row rather than just the visible page.
    */
   public readonly processed = computed<readonly T[]>(() => {
     const data = this.filtered();
@@ -200,8 +176,7 @@ export class UiTableState<T = unknown> {
       return data;
     }
     const order = this.effectiveSortOrder();
-    // Copy, not an in-place sort — not mutating a store's `data()` out from under it is strictly
-    // safer.
+    // Copy, not an in-place sort: never mutate a store's `data()` out from under it.
     return [...data].sort(
       (a, b) => order * compareFieldValues(resolveFieldData(a, field), resolveFieldData(b, field)),
     );
@@ -220,18 +195,18 @@ export class UiTableState<T = unknown> {
 
   /**
    * What the paginator reports on. A lazy table is told by the server; a client table counts what
-   * survived the filter — filter to 3 rows while sitting on page 3 and the table must repaginate,
-   * not go blank.
+   * survived the filter, so filtering to 3 rows while sitting on page 3 repaginates instead of
+   * going blank.
    */
   public readonly totalRecords = computed(() =>
     this.lazy() ? (this.src.totalRecords() ?? this.src.value().length) : this.processed().length,
   );
 
-  // ── User intent. The ONLY things that ask for a new page of data. ────────────────────────────
+  // User intent — the only things that ask for a new page of data.
 
   /**
-   * Sorts by `field`. A FRESH column starts ASCENDING; the same column toggles. Sorting resets the
-   * page offset to 0 in the SAME event, so a lazy table issues exactly ONE request.
+   * Sorts by `field`. A fresh column starts ascending; the same column toggles. The page reset and
+   * the sort happen in the same event, so a lazy table issues exactly one request.
    */
   public sort(field: string): void {
     const isSameColumn = this.sortField() === field;
@@ -248,7 +223,7 @@ export class UiTableState<T = unknown> {
     return this.sortField() === field;
   }
 
-  /** @param first 0-indexed row offset, NOT a page number. */
+  /** @param first 0-indexed row offset, not a page number. */
   public setPage(first: number): void {
     this.first.set(first);
     if (this.lazy()) {
@@ -274,15 +249,12 @@ export class UiTableState<T = unknown> {
     }
   }
 
-  // ── Selection ───────────────────────────────────────────────────────────────────────────────
-
   /**
-   * Selection is keyed by `dataKey`, NEVER by object reference — a refetch hands back new object
-   * instances, and reference identity would silently drop every selected row.
+   * Selection is keyed by `dataKey`, never by object reference: a refetch hands back new instances,
+   * and reference identity would silently drop every selected row.
    *
-   * When there is no `dataKey` we fall back to the row OBJECT as the key (reference identity).
-   * Keying every row by a resolved `undefined` would collapse them all onto one key, so the
-   * absence of a `dataKey` must not reach `resolveFieldData` at all.
+   * Without a `dataKey` we fall back to the row object itself. The absence of a `dataKey` must not
+   * reach `resolveFieldData`, which would resolve `undefined` and collapse every row onto one key.
    */
   private keyOf(row: T): unknown {
     const dataKey = this.src.dataKey();
@@ -312,7 +284,7 @@ export class UiTableState<T = unknown> {
   public readonly isEmpty = computed(() => this.src.value().length === 0);
 
   /**
-   * Toggles ONE row and preserves the rest, appending at the end. Individually-checked rows
+   * Toggles one row and preserves the rest, appending at the end. Individually-checked rows
    * therefore survive paging — unlike select-all, which replaces.
    */
   public toggleRow(row: T): void {
@@ -343,9 +315,9 @@ export class UiTableState<T = unknown> {
   }
 
   /**
-   * The select-all checkbox is checked only when EVERY processed row is selected. A PARTIAL
-   * selection renders it UNCHECKED — there is no indeterminate/tri-state, and adding one would be
-   * a behaviour change, not a bug fix. Pinned by the contract spec.
+   * Checked only when every processed row is selected. A partial selection renders it unchecked —
+   * there is no indeterminate/tri-state, and adding one is a behaviour change, not a bug fix.
+   * Pinned by the contract spec.
    */
   public readonly allSelected = computed(() => {
     const data = this.processed();
@@ -355,9 +327,8 @@ export class UiTableState<T = unknown> {
   });
 
   /**
-   * REPLACES the selection with exactly the processed rows — it does NOT merge. Anything selected
-   * elsewhere (another page) is DISCARDED, because `selectionPageOnly` is set nowhere in this repo.
-   * Bulk actions rely on getting exactly these rows back.
+   * Replaces the selection with exactly the processed rows; it does not merge. Anything selected on
+   * another page is discarded — bulk actions rely on getting exactly these rows back.
    */
   public toggleAll(checked: boolean): void {
     if (this.src.value().length === 0) {
@@ -365,8 +336,6 @@ export class UiTableState<T = unknown> {
     }
     this.src.selection.set(checked ? [...this.processed()] : []);
   }
-
-  // ── Row expansion ───────────────────────────────────────────────────────────────────────────
 
   public isExpanded(row: T): boolean {
     return this.expandedKeys().has(this.keyOf(row));
@@ -382,9 +351,8 @@ export class UiTableState<T = unknown> {
   }
 
   /**
-   * Dev-only. A sort path that resolves `undefined` for EVERY row is a silent no-op sort — the
-   * signature of a server-side column name ("CreatedDate") pasted into a client-side table, which
-   * otherwise just quietly does nothing when clicked.
+   * Dev-only. A sort path that resolves `undefined` for every row is a silent no-op sort — usually
+   * a server-side column name ("CreatedDate") pasted into a client-side table.
    */
   private warnIfSortFieldUnresolvable(field: string): void {
     if (!isDevMode() || this.lazy() || this.warnedSortFields.has(field)) {

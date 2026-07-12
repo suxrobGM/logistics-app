@@ -4,36 +4,15 @@ import { classes } from "../../primitives/utils";
 export type UiSkeletonShape = "rect" | "circle";
 
 /**
- * The loading placeholder. Replaces `<p-skeleton>` at 98 call sites / 31 files.
+ * The loading placeholder.
  *
- * =================================================================================================
- * WHY HELM'S SKELETON IS INLINED HERE RATHER THAN COMPOSED IN (the primitive is deleted)
- * =================================================================================================
- * The natural build is `hostDirectives: [HlmSkeleton]` — the host IS the grey box, so the directive
- * belongs on the host. ng-packagr rejects it:
+ * Helm's skeleton (four utility classes) is inlined below rather than composed in. The styled box has
+ * to BE the host, or call sites' `class=` would restyle a wrapper instead of the grey box — but
+ * `hostDirectives: [HlmSkeleton]` fails ng-packagr's NG3001, since a host directive is public API and
+ * would force the deliberately-private `HlmSkeleton` to be re-exported from `@logistics/shared/ui`.
  *
- *     NG3001: Unsupported private class HlmSkeleton. This class is visible to consumers via
- *             Skeleton -> HlmSkeleton, but is not exported from the top-level library entrypoint.
- *
- * A host directive is part of a component's PUBLIC API (its inputs land on the host), so composing
- * one in would force `HlmSkeleton` to be re-exported from `@logistics/shared/ui` — and the Helm
- * primitives are deliberately private, precisely so feature code cannot reach past `ui-*`. Template
- * composition is the usual escape hatch, but it does not apply here: the styled box has to be the
- * host, or the 15 `class=` and 14 `styleClass=` call sites (including four that repaint the
- * background with `bg-purple-500/20`) would land on a wrapper instead of on the thing they are
- * trying to restyle.
- *
- * Helm's entire skeleton is four utility classes. They are reproduced verbatim below rather than
- * making a private primitive public to import them.
- * =================================================================================================
- *
- * THE ANIMATION CHANGES, and it is the one thing here that is not a reproduction. The previous
- * shimmer animation did not respect `prefers-reduced-motion`; Helm's pulse does, via `motion-safe:`
- * — a straight accessibility win. Both read as "loading" and neither is load-bearing.
- *
- * SIZES ARE CSS LENGTHS, NOT TAILWIND: `height="3rem"`, `width="120px"`, `height="100%"`. The call
- * sites pass raw CSS, so these are inline styles. (As classes they would need an arbitrary-value
- * class per distinct length, and there are 20 distinct heights.)
+ * Sizes are raw CSS lengths (`height="3rem"`, `width="120px"`, `height="100%"`), hence inline styles;
+ * as classes each distinct length would need its own arbitrary-value class.
  */
 @Component({
   selector: "ui-skeleton",
@@ -47,12 +26,11 @@ export class Skeleton {
   public readonly width = input<string | null>(null);
   public readonly height = input<string | null>(null);
 
-  /** p-skeleton's `shape`. Only `circle` is ever passed (6 sites); `rect` is the default. */
   public readonly shape = input<UiSkeletonShape>("rect");
 
   /**
-   * p-skeleton's `size` (6 sites): one length for BOTH axes. Only ever used with `shape="circle"`,
-   * which is the point of it — a circle whose width and height disagree is an ellipse.
+   * One length for BOTH axes, for `shape="circle"` — a circle whose width and height disagree is an
+   * ellipse.
    */
   public readonly size = input<string | null>(null);
 
@@ -60,9 +38,9 @@ export class Skeleton {
   protected readonly resolvedHeight = computed(() => this.size() ?? this.height());
 
   constructor() {
-    // `classes()` twMerges the call site's `class` LAST, which is what makes the four
-    // `bg-purple-500/20` sites actually beat `bg-muted` instead of racing it in stylesheet order.
-    // `--ui-radius-content` is the per-app fork (Aura 6px, Nora/TMS 2px) — see theme.css.
+    // `classes()` twMerges the call site's `class` LAST, so a site that repaints the background beats
+    // `bg-muted` instead of racing it in stylesheet order. `motion-safe:` respects
+    // `prefers-reduced-motion`.
     classes(() => [
       "bg-muted block motion-safe:animate-pulse",
       this.shape() === "circle" ? "rounded-full" : "rounded-[var(--ui-radius-content)]",

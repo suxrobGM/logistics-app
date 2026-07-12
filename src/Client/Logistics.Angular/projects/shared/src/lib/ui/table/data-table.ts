@@ -21,21 +21,15 @@ export type DataTableSize = "small" | "large" | undefined;
 export type DataTableSelectionMode = UiTableSelectionMode;
 
 /**
- * The one place that knows what renders a data table.
+ * Data table. Feature templates project the `#header` / `#body` / `#footer` / `#empty` /
+ * `#caption` / `#expandedrow` slots and use `<th uiSortHeader="Field">` for sortable columns.
  *
- * Feature templates project the familiar `#header` / `#body` / `#footer` / `#empty` / `#caption` /
- * `#expandedrow` slots and use `<th uiSortHeader="Field">` for sortable columns. 82 templates use
- * this component; the point of the shape below is that they did not have to change when the
- * `<p-table>` underneath it was removed.
+ * The markup is Helm's presentational table directives; all behaviour lives in {@link UiTableState},
+ * provided on this component's own node so that a `<th uiSortHeader>` or `<ui-table-checkbox>`
+ * written inside a CONSUMER's `<ng-template>` can inject it.
  *
- * The MARKUP is Helm's presentational table directives. The BEHAVIOUR — client sort, client
- * paging, the client global filter, selection, row expansion, and the single lazy-load request the
- * 33 server-paged pages live on — is {@link UiTableState}, provided on this component's own node so
- * that a `<th uiSortHeader>` or a `<ui-table-checkbox>` written inside a CONSUMER's
- * `<ng-template>` can inject it.
- *
- * The input surface is deliberately only what the codebase uses. Column filters, cell editing,
- * frozen/resizable/reorderable columns, virtual scroll and row grouping are used nowhere.
+ * The input surface is deliberately only what the codebase uses — no column filters, cell editing,
+ * frozen/resizable columns, virtual scroll or row grouping.
  *
  * @example
  * <ui-data-table
@@ -73,24 +67,20 @@ export class UiDataTable<T> implements OnInit {
   public readonly paginator = input(false, { transform: booleanAttribute });
   public readonly rows = input<number | undefined>(undefined);
   /**
-   * 0-indexed row OFFSET of the current page — not a page number.
+   * 0-indexed row offset of the current page — not a page number.
    *
-   * Must default to `0`, never `undefined`: this used to be `input<number | undefined>(undefined)`,
-   * forwarded straight into the row slice — an unbound consumer's `first` stayed `undefined` all
-   * the way through, degenerating `slice(undefined, NaN)` — every client-paginated table in the
-   * app rendered ZERO rows. See {@link totalRecords} for the same bug class.
+   * Must default to `0`, never `undefined`: most client-paged consumers leave it unbound, and an
+   * `undefined` reaching the row slice degenerates to `slice(undefined, NaN)`, rendering no rows.
    */
   public readonly first = input<number>(0);
   /**
-   * Total row count. Server-lazy tables bind it; client-side tables leave it unbound, and the
-   * engine then counts the rows that survived the filter. Forwarding a bare `undefined` is what
-   * used to make the paginator report "0 of 0" and render no page links.
+   * Total row count. Server-lazy tables bind it; client-side tables leave it unbound and the engine
+   * counts the rows that survived the filter instead of reporting "0 of 0".
    */
   public readonly totalRecords = input<number | undefined>(undefined);
   /**
-   * Page-size choices. It is `[10, 25, 50]` at all 41 sites that bind it — but it is NOT
-   * hardcoded, because ~50 tables bind nothing and must keep showing no page-size control at all
-   * (`UiTablePaginator` renders the dropdown only when `rowsPerPageOptions` is bound).
+   * Page-size choices. Not hardcoded: tables that bind nothing must show no page-size control at
+   * all, and `UiTablePaginator` renders the dropdown only when this is bound.
    */
   public readonly rowsPerPageOptions = input<number[] | undefined>(undefined);
   public readonly showCurrentPageReport = input(false, { transform: booleanAttribute });
@@ -144,14 +134,12 @@ export class UiDataTable<T> implements OnInit {
   }
 
   /**
-   * The initial page request — the ONLY reason a server-paged page ever shows data.
+   * The initial page request — the only reason a server-paged page ever shows data.
    *
-   * Imperative, once, synchronously. NEVER derive this from an `effect()` over the state signals:
-   * that is exactly how you get zero emits (which reads as "no data" on all 33 lists) or two
-   * (which doubles every list request). Every later emit comes from a user-intent method on
-   * `UiTableState` — sort, setPage, setPageSize, filterGlobal — each calling back into
-   * {@link emitLazy} exactly once. Inputs arriving later (a store writing back `totalRecords`)
-   * re-seed the state's `linkedSignal`s and must NOT emit.
+   * Imperative, once, synchronously. Never derive this from an `effect()` over the state signals:
+   * that yields either zero emits (reads as "no data") or two (doubles every list request). Every
+   * later emit comes from a user-intent method on `UiTableState`, each calling {@link emitLazy}
+   * exactly once; inputs arriving later re-seed the state's `linkedSignal`s and must not emit.
    */
   public ngOnInit(): void {
     if (this.lazy()) {
@@ -159,7 +147,7 @@ export class UiDataTable<T> implements OnInit {
     }
   }
 
-  /** The ONLY `.emit()` call site for `lazyLoad`. */
+  /** The only `.emit()` call site for `lazyLoad`. */
   private emitLazy(): void {
     this.lazyLoad.emit({
       first: this.state.first(),
@@ -171,11 +159,8 @@ export class UiDataTable<T> implements OnInit {
   }
 
   /**
-   * Applies the client-side global filter. Only the trip wizard's load picker uses it; every other
-   * list filters server-side through its store.
-   *
-   * `matchMode` is accepted for call-site compatibility — "contains" is the only mode ever passed,
-   * and the only one implemented.
+   * Applies the client-side global filter. `matchMode` is accepted for call-site compatibility:
+   * "contains" is the only mode ever passed and the only one implemented.
    */
   public filterGlobal(value: string, matchMode = "contains"): void {
     void matchMode;
@@ -210,9 +195,8 @@ export class UiDataTable<T> implements OnInit {
   });
 
   /**
-   * ⚠ `[&>tr>td]`, NOT `[&_td]`. A descendant selector on `<tbody>` reaches into the NESTED
-   * `<ui-data-table>` that trips-list renders inside its expanded row, and would restyle every
-   * cell of the inner table too. Direct children only.
+   * `[&>tr>td]`, not `[&_td]`: a descendant selector on `<tbody>` reaches into a nested
+   * `<ui-data-table>` rendered inside an expanded row and restyles its cells too.
    */
   protected readonly bodyClass = computed(() =>
     [

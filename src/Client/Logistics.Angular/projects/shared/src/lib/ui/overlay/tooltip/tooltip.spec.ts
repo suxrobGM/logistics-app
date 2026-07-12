@@ -1,20 +1,15 @@
 /**
- * `[uiTooltip]`'s contract. Everything pinned here is something that (a) the 124 call sites depend on
- * and (b) NO other gate would catch — each one stays green through `build:all`, `lint` and every
- * other spec while shipping a broken or inaccessible tooltip:
+ * `[uiTooltip]`'s contract. Each of these fails silently — build, lint and every other spec stay green
+ * while the tooltip is broken or inaccessible:
  *
- *   1. OPENS ON KEYBOARD FOCUS THROUGH THE `<ui-button>` WRAPPER. 82 of the 124 hosts are
- *      `<ui-button>`, which renders a real `<button>` INSIDE itself. `focus` does not bubble, so the
- *      obvious implementation (brain's, which listens for `focus` on its own host) never fires here.
- *      Nothing throws. The tooltip simply never appears for anyone using a keyboard.
- *   2. `aria-describedby` LANDS ON THE INNER `<button>`, not on the `<ui-button>` wrapper — a
- *      description on a non-focusable node is a description no screen reader ever reads.
- *   3. The accessible NAME survives. A tooltip is a description; if it ever became the name, the 82
- *      icon-only buttons would regress to being named by their tooltip text (or by nothing).
- *   4. It CLOSES — on mouseleave, on blur, and on Escape. A tooltip stuck open is worse than none.
- *   5. Empty / whitespace / undefined text renders NOTHING — not an empty box.
- *   6. The default position is `right` — the 79 call sites that specify no position are laid out
- *      against it.
+ *   1. Opens on keyboard focus through the `<ui-button>` wrapper (`focus` does not bubble, so a
+ *      listener on the wrapper never fires for the inner `<button>`).
+ *   2. `aria-describedby` lands on the inner `<button>` — a description on a non-focusable node is
+ *      never read out.
+ *   3. The accessible name survives; a tooltip is a description, not a name.
+ *   4. It closes — on mouseleave, blur, Escape and scroll.
+ *   5. Empty / whitespace / undefined text renders nothing, not an empty box.
+ *   6. The default position is `right`.
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
@@ -48,8 +43,7 @@ describe("UiTooltip", () => {
   let host: TestHost;
 
   beforeEach(() => {
-    // Only setTimeout is faked: the directive's show delay is the one thing we need to control, and
-    // faking more would interfere with zoneless change detection.
+    // Only setTimeout is faked — faking more interferes with zoneless change detection.
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     TestBed.configureTestingModule({
       imports: [TestHost],
@@ -64,7 +58,7 @@ describe("UiTooltip", () => {
     vi.useRealTimers();
   });
 
-  /** The `<ui-button>` wrapper element — NOT the focusable node. */
+  /** The `<ui-button>` wrapper element — not the focusable node. */
   const wrapper = (): HTMLElement => fixture.nativeElement.querySelector("ui-button");
   /** The real `<button>` the browser actually focuses, inside the wrapper. */
   const innerButton = (): HTMLElement => wrapper().querySelector("button")!;
@@ -83,7 +77,7 @@ describe("UiTooltip", () => {
     fixture.detectChanges();
   });
 
-  // (1) The whole reason this directive exists rather than wrapping BrnTooltip.
+  // (1)
   it("opens on keyboard FOCUS of the inner button, through the <ui-button> wrapper", () => {
     open(innerButton(), "focusin");
     expect(tooltip()).not.toBeNull();
@@ -92,7 +86,7 @@ describe("UiTooltip", () => {
     fixture.detectChanges();
   });
 
-  // (2) A description on the wrapper is a description nobody hears.
+  // (2)
   it("puts aria-describedby on the inner <button>, never on the wrapper", () => {
     open(innerButton(), "focusin");
 
@@ -105,7 +99,7 @@ describe("UiTooltip", () => {
     fixture.detectChanges();
   });
 
-  // (3) A tooltip is a DESCRIPTION, never a NAME.
+  // (3)
   it("leaves the button's accessible name alone", () => {
     open(innerButton(), "focusin");
     expect(innerButton().getAttribute("aria-label")).toBe("Delete load");
@@ -113,7 +107,7 @@ describe("UiTooltip", () => {
     fixture.detectChanges();
   });
 
-  // (4) Closing. Three ways in, three ways out.
+  // (4)
   it("closes on mouseleave, and drops the aria-describedby with it", () => {
     open(wrapper(), "mouseenter");
     expect(tooltip()).not.toBeNull();
@@ -147,21 +141,10 @@ describe("UiTooltip", () => {
   });
 
   /**
-   * (4) CLOSES ON A SCROLL IN ANY CONTAINER — not just on a window scroll.
-   *
-   * SCROLL EVENTS DO NOT BUBBLE, and this app NEVER SCROLLS THE WINDOW: every page scrolls inside
-   * `div.overflow-y-auto` (the main content pane) or the sidebar nav. So a `window`-scroll listener
-   * — the obvious implementation, and the one that shipped — never fires in the product at all, and
-   * the overlay uses a `noop()` scroll strategy that will not reposition either. The tooltip is left
-   * STRANDED hundreds of pixels from its host, pointing at nothing.
-   *
-   * Verified in a browser before this test was written: focus a tooltip'd icon button on /ui-lab,
-   * scroll the content pane 400px, and the host moves -400px while the tooltip moves +56px.
-   *
-   * The hover path hid this by accident — scrolling drags the host out from under the cursor, so
-   * `mouseleave` fires and closes it. Only KEYBOARD users, whom this directive exists to serve, ever
-   * saw the stranded tooltip. Hence: dispatch from a non-window element, exactly as a real scroll
-   * container does.
+   * (4) Scroll events do not bubble, and this app never scrolls the window — pages scroll inside
+   * `div.overflow-y-auto` or the sidebar nav. A window-scroll listener therefore never fires here, and
+   * the overlay's `noop()` scroll strategy will not reposition either, so the tooltip is left stranded
+   * away from its host. Hence: dispatch from a non-window element, as a real scroll container does.
    */
   it("closes on a scroll inside a container, not only on a window scroll", () => {
     const scroller = document.createElement("div");
@@ -170,8 +153,8 @@ describe("UiTooltip", () => {
     open(wrapper(), "focusin");
     expect(tooltip()).not.toBeNull();
 
-    // A scroll on an inner element. `bubbles: false` is the whole point — this is what a real
-    // scroll event is, and it is why a bubble-phase/window listener misses it.
+    // `bubbles: false` is the point — a real scroll event does not bubble, which is why a
+    // bubble-phase or window listener misses it.
     scroller.dispatchEvent(new Event("scroll", { bubbles: false }));
     fixture.detectChanges();
 
@@ -181,7 +164,7 @@ describe("UiTooltip", () => {
     scroller.remove();
   });
 
-  // (5) An empty value is not an empty tooltip — it is no tooltip.
+  // (5)
   it("renders nothing for empty, whitespace or undefined text", () => {
     for (const value of ["", "   ", undefined]) {
       host.text.set(value);
@@ -206,7 +189,7 @@ describe("UiTooltip", () => {
     expect(tooltip()).toBeNull();
   });
 
-  // (6) The default position. 79 sites set no position and are laid out against it.
+  // (6)
   it("defaults to the right side and honours an explicit side", () => {
     open(wrapper(), "mouseenter");
     expect(tooltip()?.getAttribute("data-side")).toBe("right");
@@ -235,9 +218,8 @@ describe("UiTooltip", () => {
     expect(tooltip()).toBeNull();
   });
 
-  // The retarget is for COMPONENT hosts that render their own control. A <td> that merely contains a
-  // button is not that: the tooltip describes the cell, and hoisting it onto the button would make a
-  // screen reader announce the cell's hint as the button's.
+  // The retarget is only for component hosts that render their own control. A <td> that merely
+  // contains a button is not one: the tooltip describes the cell.
   it("does NOT hoist the description onto a button that merely lives inside a native host", () => {
     const cell: HTMLElement = fixture.nativeElement.querySelector("td[uiTooltip]");
     const nested: HTMLElement = fixture.nativeElement.querySelector("#in-cell");

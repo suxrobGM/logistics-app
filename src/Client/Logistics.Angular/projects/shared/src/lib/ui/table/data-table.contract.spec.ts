@@ -1,37 +1,13 @@
 /**
- * CHARACTERIZATION SPEC for `<ui-data-table>`.
+ * Characterization spec for `<ui-data-table>`. These tests record what the table actually does
+ * today, not what it ought to do, and several of the recorded behaviours are surprising: the
+ * missing `sortOrder` on the initial lazy load, the replace semantics of select-all, the absence of
+ * any indeterminate state, the lexicographic ordering of numeric-ish strings. Production relies on
+ * all of them, so if a change makes one fail, fix the change rather than the test.
  *
- * This file is the CONTRACT for the table engine. It was recorded against the original table
- * internals and must keep passing — UNCHANGED — against the hand-rolled ones.
- *
- * Everything asserted here is behaviour that 82 templates and 33 server-paged list pages depend on
- * SILENTLY. The original implementation is gone, so this record is the only place the behaviour
- * is written down.
- *
- * READ THIS BEFORE "FIXING" ANYTHING BELOW. These tests record what the table ACTUALLY DOES today,
- * not what it ought to do. Several recorded behaviours are surprising — the missing `sortOrder` on
- * the initial lazy load, the REPLACE semantics of select-all, the absence of any indeterminate
- * state, the lexicographic ordering of numeric-ish strings. They are surprising AND load-bearing.
- * If a change makes one of these fail, that change altered behaviour production code relies on:
- * fix the change, not the test.
- *
- * ─────────────────────────────────────────────────────────────────────────────────────────────────
- * SELECTOR CONTRACT — the surface a re-implementation must keep so this spec compiles and passes
- * without edits:
- *
- *   • `<ui-data-table>` inputs: value, lazy, paginator, rows, first, totalRecords,
- *     rowsPerPageOptions, sortField, sortOrder, selectionMode, dataKey; two-way `selection`;
- *     output `lazyLoad`.
- *   • Projected `<ng-template #header>` / `#body` slots; `#body` context is `$implicit` + `rowIndex`.
- *   • `<th uiSortHeader="Field">` is clickable and triggers the sort.
- *   • Rows render as `tbody tr`. The paginator renders `<button>`s whose text is the page number,
- *     and a `[role="combobox"]` for the page size whose choices are `[role="option"]`.
- *   • Selection checkboxes render a real `<input type="checkbox">`: one in `thead` (select-all),
- *     one per `tbody tr`.
- *
- * A rename of `UiTableCheckbox` / `UiTableHeaderCheckbox` (or their selectors) must be mirrored
- * here — every assertion below still has to hold.
- * ─────────────────────────────────────────────────────────────────────────────────────────────────
+ * It also pins the DOM surface these assertions read: rows as `tbody tr`, paginator page `<button>`s
+ * labelled by page number, a `[role="combobox"]` page-size control with `[role="option"]` choices,
+ * and a real `<input type="checkbox">` in `thead` plus one per row.
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
@@ -57,9 +33,7 @@ function rows(n: number): Row[] {
   }));
 }
 
-// ── Test hosts ───────────────────────────────────────────────────────────────────────────────────
-
-/** Exactly the shape the 33 server-paged list pages use: lazy + paginator + sortable headers. */
+/** The shape the server-paged list pages use: lazy + paginator + sortable headers. */
 @Component({
   selector: "ui-host-lazy-table",
   imports: [UiDataTable, UiSortHeader],
@@ -100,12 +74,9 @@ class HostLazy {
 /**
  * Client-side table: no `lazy`, so the table owns sorting and slicing itself.
  *
- * `[first]` and `[totalRecords]` are bound here ON PURPOSE — but no longer out of necessity. The
- * table works without them now: `first` defaults to `0`, and `totalRecords` falls back to
- * `value().length` (production's 14 client-paged templates bind neither, and the ui-lab's client
- * table deliberately binds neither so a regression is visible on screen). They are bound because
- * these fixtures pin the paging ENGINE — slice by `first`/`rows` — and a test of the engine should
- * state its inputs rather than lean on a default it is not the one testing.
+ * `[first]` and `[totalRecords]` are bound though the table defaults both — these fixtures pin the
+ * paging engine (slice by `first`/`rows`), so they state their inputs rather than lean on a default
+ * they are not the ones testing.
  */
 @Component({
   selector: "ui-host-client-table",
@@ -142,14 +113,12 @@ class HostClient {
 }
 
 /**
- * Multi-select with a select-all header checkbox — the bulk-action lists (loads, payroll invoices,
- * attach-load dialog).
+ * Multi-select with a select-all header checkbox, as the bulk-action lists use it.
  *
  * This host declares NO providers on purpose. The projected `#header` / `#body` templates are
- * declared in the CONSUMER, so everything inside them does DI against the CONSUMER's injector —
- * and `UiTableCheckbox` / `UiTableHeaderCheckbox` / `UiSelectableRow` all inject `UiTableState`.
- * `UiDataTable` must therefore provide it on its own node, and this host is what proves it: if
- * the provider goes missing, every test below dies at construction with NG0201.
+ * declared in the consumer, so the row directives inside them resolve `UiTableState` against the
+ * CONSUMER's injector; `UiDataTable` must provide it on its own node or every test below dies at
+ * construction with NG0201.
  */
 @Component({
   selector: "ui-host-selection-table",
@@ -175,8 +144,6 @@ class HostSelection {
   readonly data = signal(rows(3));
   readonly selected = signal<Row[]>([]);
 }
-
-// ── Helpers ──────────────────────────────────────────────────────────────────────────────────────
 
 async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
   fixture.detectChanges();
@@ -260,10 +227,6 @@ describe("<ui-data-table> — the table engine contract", () => {
     TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
   });
 
-  // ── The initial lazy load ─────────────────────────────────────────────────────────────────────
-  // The only reason a server-paged page ever shows data: nothing else asks for the first page.
-  // Zero emits reads as "no data"; two emits doubles every request on all 33 lists.
-
   describe("initial load", () => {
     it("a lazy table asks for its first page EXACTLY ONCE on mount", async () => {
       const fixture = TestBed.createComponent(HostLazy);
@@ -282,24 +245,11 @@ describe("<ui-data-table> — the table engine contract", () => {
     });
 
     it("the initial lazy request carries NO sort at all — sortOrder is undefined, not 1", async () => {
-      // ⚠ THIS CONTRADICTS THE FOLKLORE. `<p-table>`'s own field default for sortOrder is 1, but
-      // `<ui-data-table>` forwards its own `sortOrder` input unconditionally and that input
-      // defaults to `undefined`. Angular writes `undefined` into the table on the first
-      // change-detection pass, clobbering the 1 BEFORE ngOnInit fires the initial lazy load. No
-      // list page binds `sortOrder`, so in production the first request of every list goes out
-      // with sortOrder = undefined.
-      //
-      // This is why `createListStore.onLazyLoad` does `event.sortOrder ?? -1`. That fallback does
-      // run — but it does NOT reach the wire, and it does NOT make the initial sort descending:
-      // `buildQueryParams` calls `formatSortField(sortField, sortOrder)`, which opens with
-      // `if (!sortField) return ""` and never reads `sortOrder` at all. The initial `OrderBy` comes
-      // entirely from each store's `defaultSortField`, which bakes its own direction into the
-      // string ("-CreatedAt" = DESC, "Email" = ASC).
-      //
-      // So `undefined` here is harmless — but it IS the shipped behaviour, and it is pinned. A
-      // re-implementation that "helpfully" emits 1 would change `createListStore`'s stored
-      // `sortOrder` state from -1 to 1 while leaving the request identical: a silent divergence
-      // between what the store thinks it asked for and what it asked for. Leave it alone.
+      // Harmless on the wire: `formatSortField()` returns "" when there is no `sortField`, so the
+      // initial `OrderBy` comes entirely from each store's `defaultSortField` ("-CreatedAt" = DESC,
+      // "Email" = ASC). But emitting a nominal `1` instead would change what `createListStore`
+      // stores in `state.sortOrder` (its `event.sortOrder ?? -1` fallback) while leaving the request
+      // identical — a silent divergence between what the store thinks it asked for and what it did.
       const fixture = TestBed.createComponent(HostLazy);
       await settle(fixture);
 
@@ -316,9 +266,6 @@ describe("<ui-data-table> — the table engine contract", () => {
       expect(fixture.componentInstance.events.length).toBe(0);
     });
   });
-
-  // ── Sorting ───────────────────────────────────────────────────────────────────────────────────
-  // ~50 sort headers depend on this exact sequence.
 
   describe("sorting a lazy table", () => {
     it("clicking a fresh column sorts ASCENDING (sortOrder = 1) in a single request", async () => {
@@ -368,9 +315,7 @@ describe("<ui-data-table> — the table engine contract", () => {
     });
 
     it("sorting from page 3 jumps back to the first row AND still issues only ONE request", async () => {
-      // The page reset and the sort are coalesced into a single lazy load. An implementation that
-      // emitted one event for "first = 0" and another for "sort changed" would double every
-      // request on every list.
+      // The page reset and the sort are coalesced into a single lazy load.
       const fixture = TestBed.createComponent(HostLazy);
       await settle(fixture);
 
@@ -402,8 +347,6 @@ describe("<ui-data-table> — the table engine contract", () => {
     });
   });
 
-  // ── Paging ────────────────────────────────────────────────────────────────────────────────────
-
   describe("paging a lazy table", () => {
     it("jumping to page N requests first = rows * (N - 1), keeps the page size, and emits ONCE", async () => {
       const fixture = TestBed.createComponent(HostLazy);
@@ -434,20 +377,13 @@ describe("<ui-data-table> — the table engine contract", () => {
     });
   });
 
-  // ── Selection ─────────────────────────────────────────────────────────────────────────────────
-
   describe("selection", () => {
     it("provides TableService, so projected row checkboxes construct instead of throwing NG0201", async () => {
-      // ⚠ THE OUTAGE TEST. `<ui-data-table>` must provide `UiTableState` on its own host node. The
-      // projected `#header` / `#body` templates are declared in the consumer, so the row directives
-      // inside them resolve DI against the CONSUMER's injector, where `UiTableState` is not visible
-      // otherwise. Drop that provider and `TableCheckbox` / `TableHeaderCheckbox` / `SelectableRow`
-      // throw NG0201 at construction — which does not just blank the checkbox, it takes the WHOLE
-      // table's render down. `/loads` shipped exactly that: a summary card reading "195 Total Loads"
-      // above an empty table reading "0 of 0".
-      //
-      // So this asserts on the DOM, not on the injector: the checkboxes must really be there, and
-      // the rows around them must really have rendered.
+      // `UiDataTable` must provide `UiTableState` on its own host node: the projected `#header` /
+      // `#body` templates are declared in the consumer, so the row directives inside them resolve
+      // DI against the CONSUMER's injector, where the state is otherwise invisible. Without that
+      // provider they throw NG0201 at construction, which takes the whole table's render down — so
+      // this asserts on the DOM, not the injector.
       const fixture = TestBed.createComponent(HostSelection);
       await settle(fixture); // Throws NG0201 here if either provider is missing.
 
@@ -460,9 +396,8 @@ describe("<ui-data-table> — the table engine contract", () => {
     });
 
     it("the select-all checkbox REPLACES the selection with exactly the table's rows", async () => {
-      // ⚠ REPLACE, not merge. `selectionPageOnly` is set nowhere in this repo, so select-all starts
-      // from an EMPTY array and appends the whole `value`. Bulk actions rely on getting exactly the
-      // current `value` back.
+      // Replace, not merge: select-all starts from an empty array and appends the whole `value`.
+      // Bulk actions rely on getting exactly the current `value` back.
       const fixture = TestBed.createComponent(HostSelection);
       const host = fixture.componentInstance;
       await settle(fixture);
@@ -475,7 +410,7 @@ describe("<ui-data-table> — the table engine contract", () => {
     });
 
     it("select-all DISCARDS anything already selected that is not in `value`", async () => {
-      // The corollary of REPLACE: a row selected on another page does not survive select-all.
+      // The corollary of replace: a row selected on another page does not survive select-all.
       const fixture = TestBed.createComponent(HostSelection);
       const host = fixture.componentInstance;
       host.selected.set([{ id: 99, name: "Off page", code: "99", customer: { name: "Ghost" } }]);
@@ -504,10 +439,8 @@ describe("<ui-data-table> — the table engine contract", () => {
     });
 
     it("a PARTIAL selection renders the select-all checkbox UNCHECKED — there is no tri-state", async () => {
-      // ⚠ COUNTER-INTUITIVE AND DELIBERATE. The select-all checkbox is plain binary: checked only
-      // when EVERY row is selected, otherwise unchecked. It has no indeterminate/mixed rendering
-      // today and nothing depends on one. Someone WILL want to "fix" this while re-implementing;
-      // adding a tri-state is a behaviour change, not a bug fix.
+      // Deliberate: the checkbox is plain binary, checked only when every row is selected. Adding
+      // an indeterminate/mixed rendering would be a behaviour change, not a bug fix.
       const fixture = TestBed.createComponent(HostSelection);
       const host = fixture.componentInstance;
       host.selected.set([host.data()[0]]);
@@ -544,9 +477,6 @@ describe("<ui-data-table> — the table engine contract", () => {
     });
   });
 
-  // ── The client-side engine (lazy = false) ─────────────────────────────────────────────────────
-  // Not every table is server-paged; the client-side ones need a real sort + slice engine.
-
   describe("client-side sorting", () => {
     it("sorting reorders the RENDERED rows, and clicking again reverses them", async () => {
       const fixture = TestBed.createComponent(HostClient);
@@ -582,11 +512,8 @@ describe("<ui-data-table> — the table engine contract", () => {
     });
 
     it("sorts numeric-ish STRINGS lexicographically, so '10' and '100' come BEFORE '9'", async () => {
-      // ⚠ CHARACTERIZATION OF A WART, recorded because it ships today. String cells are compared
-      // with `localeCompare`, which is not numeric-aware, so a "Load #" column of strings orders
-      // 10, 100, 9 — not 9, 10, 100. Making the comparison numeric-aware would visibly change every
-      // client-sorted string column, so it is a separate decision, not something to slip in while
-      // swapping the engine.
+      // String cells are compared with `localeCompare`, which is not numeric-aware. Making it
+      // numeric-aware would visibly change every client-sorted string column — a separate decision.
       const fixture = TestBed.createComponent(HostClient);
       fixture.componentInstance.data.set([
         { id: 1, name: "n", code: "9", customer: { name: "C1" } },
@@ -618,31 +545,12 @@ describe("<ui-data-table> — the table engine contract", () => {
   });
 
   describe("client-side paging", () => {
-    // The host binds `[first]` and `[totalRecords]`, but it no longer HAS to — it does so because
-    // these tests pin the paging ENGINE (slice by first/rows; page N ⇒ first = rows·(N−1)), and an
-    // engine test should state its inputs.
+    // Client-paged consumers usually bind neither `[first]` nor `[totalRecords]`, so both must keep
+    // their defaults (`first = 0`, `totalRecords ?? value().length`). An `undefined` `first` reaching
+    // the row slice degenerates to `slice(undefined, NaN)` and renders no rows at all.
     //
-    // It used to have to, and that was a live outage. `first` and `totalRecords` were
-    // `input<number | undefined>(undefined)` and were forwarded unconditionally, so an unbound
-    // consumer's `first` stayed `undefined` all the way through: the row slice degenerated to
-    // `slice(undefined, NaN)` → NO ROWS, and the paginator computed 0 pages → NO PAGE BUTTONS. All
-    // 14 client-paged templates in the app bind NEITHER, so all 14 rendered empty. FIXED:
-    // `first = input<number>(0)`, and the template binds
-    // `[totalRecords]="totalRecords() ?? value().length"`.
-    //
-    // ⚠ `sortOrder` IS STILL `input<number | undefined>(undefined)`, still forwarded
-    // unconditionally. That is DELIBERATE. Do not "finish the job" — it is both harmless and
-    // pinned:
-    //
-    //   • Harmless, because the initial lazy event carries no `sortField` either, and
-    //     `formatSortField()` returns "" for an empty `sortField` REGARDLESS of the order. So the
-    //     table's `sortOrder` never reaches the wire on a first request: `OrderBy` comes entirely
-    //     from each store's `defaultSortField` ("-CreatedAt", "Email", …), which bakes its own
-    //     direction into the string.
-    //   • Pinned, because "the initial lazy request carries NO sort at all" above asserts
-    //     `sortOrder === undefined`. A re-implementation that emitted a nominal default of `1`
-    //     would break that assertion and would silently change what `createListStore` writes into
-    //     `state.sortOrder`.
+    // `sortOrder` is still `input<number | undefined>(undefined)` and forwarded unconditionally.
+    // Leave it: see "the initial lazy request carries NO sort at all" above.
 
     it("renders only `rows` rows per page and advances a page at a time", async () => {
       const fixture = TestBed.createComponent(HostClient);

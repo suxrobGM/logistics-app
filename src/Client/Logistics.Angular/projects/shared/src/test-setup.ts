@@ -1,23 +1,17 @@
 /**
- * Global test-environment shims for the `shared` library.
+ * JSDOM gaps the specs need patched.
  *
- * These patch gaps in JSDOM — the headless DOM the specs run against. They must never patch anything
- * a real browser would not already provide, because a shim that changes BEHAVIOUR (rather than merely
- * supplying a missing API) turns the suite into a test of the shim.
+ * Supply MISSING APIs only. A shim that changes behaviour, rather than merely providing something a
+ * real browser already has, turns the suite into a test of the shim.
  */
 
 /**
- * JSDOM does not implement `window.matchMedia` at all — the property is simply absent.
+ * JSDOM has no `matchMedia`. `BrnSonnerToaster` calls it from an `afterNextRender` hook, so unpatched
+ * it throws DURING RENDER, tearing the toaster down and failing every toast assertion for a reason
+ * unrelated to toasts.
  *
- * `BrnSonnerToaster` (the toast surface behind `ToastService`) calls
- * `matchMedia('(prefers-color-scheme: dark)').addEventListener(...)` from an `afterNextRender` hook to
- * follow the OS colour-scheme preference. Unpatched, that throws `matchMedia is not a function` DURING
- * RENDER, which tears the toaster down and makes every toast assertion fail for a reason that has
- * nothing to do with the toast.
- *
- * The stub reports "no match" (i.e. light) and accepts-but-never-fires listeners. That is a faithful
- * stand-in: the app does not read the OS preference anyway — it themes from `--popover` / `--border`,
- * which flip with the in-app `.dark-theme` class — so nothing under test depends on the answer.
+ * Reporting "no match" is faithful: the app themes from `--popover` / `--border`, which follow the
+ * in-app `.dark-theme` class, so nothing under test depends on the OS preference.
  */
 if (typeof window !== "undefined" && typeof window.matchMedia !== "function") {
   Object.defineProperty(window, "matchMedia", {
@@ -39,16 +33,11 @@ if (typeof window !== "undefined" && typeof window.matchMedia !== "function") {
 }
 
 /**
- * JSDOM implements no scrolling at all, so `Element.prototype.scrollIntoView` is absent.
+ * JSDOM implements no scrolling, so `scrollIntoView` is absent. `BrnSelectItem` calls it whenever the
+ * CDK key manager makes an option active — i.e. as soon as any `hlm-select` panel opens, including the
+ * data table paginator's rows-per-page dropdown.
  *
- * `BrnSelectItem.setActiveStyles()` calls it whenever the CDK key manager makes an option active —
- * which happens as soon as any `hlm-select` panel opens, including the rows-per-page dropdown on
- * `<ui-data-table>`'s paginator. Unpatched it throws `scrollIntoView is not a function` from inside
- * an effect during the open, so the option never gets clicked and a page-size test fails for a
- * reason that has nothing to do with paging.
- *
- * Supplying the missing API only. Scrolling a viewport that does not exist is a genuine no-op here,
- * and nothing under test asserts on scroll position.
+ * A no-op is faithful: there is no viewport to scroll, and nothing under test asserts scroll position.
  */
 if (typeof Element !== "undefined" && typeof Element.prototype.scrollIntoView !== "function") {
   Element.prototype.scrollIntoView = function scrollIntoView(): void {

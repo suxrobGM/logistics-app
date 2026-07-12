@@ -1,32 +1,17 @@
 /*
- * Quill (snow theme) — structural CSS + a token re-key. The stylesheet for `ui-editor`.
+ * Quill (snow theme) — the stylesheet for `ui-editor`: quill's structure, our colours.
  *
- * =================================================================================================
- * AN APP THAT RENDERS <ui-editor> MUST IMPORT THIS FILE. If it does not, quill's toolbar has no
- * styling at all and its `<select>` pickers expand into raw option lists — a **5118px** toolbar,
- * measured in a browser, not hypothesised. `UiEditor` therefore checks for this stylesheet on mount
- * and logs a loud, actionable error in dev if it is missing. Wired today in:
+ * AN APP THAT RENDERS <ui-editor> MUST IMPORT THIS FILE, or quill's toolbar has no styling at all and
+ * its `<select>` pickers expand into raw option lists (a 5118px toolbar). `UiEditor` probes for the
+ * `--ui-editor-loaded` sentinel at the end of this file and logs a loud dev error if it is missing.
+ * It is a global stylesheet rather than a component one only because quill.snow.css is 24.6kB and
+ * blows the `anyComponentStyle` budget. Imported by admin (the blog-post form, the only page that
+ * ships an editor) and by tms's `development` config (for /ui-lab, which is dev-only).
  *
- *   - admin-portal/src/styles.css  — the blog-post form, the only page that SHIPS an editor
- *   - angular.json, tms-portal `development` config only — for /ui-lab, which is itself dev-only
- *     (`canMatch: isDevMode`). Deliberately NOT in tms's production styles: no user of the TMS should
- *     download 24kB of rich-text CSS for a page they can never reach.
- *
- * WHY NOT A COMPONENT STYLESHEET, which would travel with the component and could never be forgotten?
- * That was the first fix, and it is the better design — but quill.snow.css is 24.6kB and the
- * `anyComponentStyle` budget is 4kB (admin) / 6kB (tms). The only way to make it fit is to raise the
- * budget, and `tools/checks/budgets.mjs` exists precisely to stop an agent doing that to go green.
- * So: a global stylesheet, plus the runtime guard in `UiEditor` to replace what encapsulation would
- * have guaranteed.
- *
- * Quill's own stylesheet is a self-contained LIGHT theme — hardcoded `#ccc` borders, `#444` icon
- * strokes, `#fff` popovers, `#06c` accents. Shipped raw it stays light while the app goes dark, and
- * it breaks the no-hardcoded-colours rule. So we take quill's STRUCTURE (toolbar layout, icon
- * geometry, picker/tooltip positioning — none of it worth reinventing) and override only the colour
- * surface, keyed to the canonical shadcn tokens in `shared/src/styles/theme.css` so both themes fall
- * out for free.
- *
- * The `--ui-editor-loaded` custom property at the end is the sentinel `UiEditor` probes for.
+ * Quill's own CSS is a self-contained LIGHT theme (hardcoded `#ccc` / `#444` / `#fff` / `#06c`), so
+ * shipped raw it stays light while the app goes dark. We keep its structure — toolbar layout, icon
+ * geometry, picker positioning — and re-key only the colour surface to the theme tokens, so both
+ * themes fall out for free.
  */
 
 @import "quill/dist/quill.snow.css";

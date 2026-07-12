@@ -44,9 +44,8 @@ interface AddressParts {
 }
 
 /**
- * Parses an incoming {@link Address} into the individual, editable part signals: normalises the
- * country to an ISO code and, when the country has a fixed option list, normalises the state to a
- * matching option value.
+ * Splits an incoming {@link Address} into editable parts: the country is normalised to an ISO code,
+ * and the state to a matching option value when the country has a fixed option list.
  */
 function parseAddress(value: Address | null): AddressParts {
   if (!value) {
@@ -80,11 +79,9 @@ function parseAddress(value: Address | null): AddressParts {
 /**
  * Composite address editor.
  *
- * Implements `FormValueControl<Address | null>` only — see `text-field.ts` for the FormValueControl
- * bridge contract.
- *
- * The sub-fields are driven by plain signals rather than an internal `FormGroup`. Each edit
- * recomposes an `Address` and pushes it through `value`, but only once every required part is
+ * Implements `FormValueControl<Address | null>` only, never a legacy `ControlValueAccessor` — see
+ * `text-field.ts` for the bridge contract. The sub-fields are plain signals, not a nested form: each
+ * edit recomposes an `Address` and pushes it through `value`, but only once every required part is
  * present, so an incomplete address is never emitted.
  */
 @Component({
@@ -116,10 +113,9 @@ export class AddressForm implements FormValueControl<Address | null> {
   }
 
   /**
-   * Editable parts, seeded from `value()`: whenever the bound value changes externally, the parts
-   * re-derive from it. User edits update the parts in place (see the `on*` handlers) and re-compose
-   * a new value — so there is no write-back loop, because `value.set` is only ever called from a
-   * user-input handler, never reactively.
+   * Editable parts, re-derived whenever the bound value changes externally. User edits update the
+   * parts in place (see the `on*` handlers) and re-compose a new value; there is no write-back loop
+   * because `value.set` is only ever called from a user-input handler, never reactively.
    */
   protected readonly parts = linkedSignal<Address | null, AddressParts>({
     source: this.value,
@@ -175,8 +171,8 @@ export class AddressForm implements FormValueControl<Address | null> {
   }
 
   /**
-   * Country changes additionally reset the state when the input mode flips between a fixed
-   * option list and free text (a stale option value is meaningless in the other mode).
+   * A country change also clears the state when the input mode flips between a fixed option list and
+   * free text — a stale value is meaningless in the other mode.
    */
   protected onCountrySelect(newCountry: string): void {
     this.parts.update((parts) => {
@@ -199,7 +195,7 @@ export class AddressForm implements FormValueControl<Address | null> {
   /**
    * Recomposes an `Address` from the current parts and pushes it through `value`. Skips the write
    * while any required part is missing, so the bound control keeps its previous value and stays
-   * invalid via the parent field's own `required` rule.
+   * invalid via the parent field's `required` rule.
    */
   private emit(): void {
     const parts = this.parts();
@@ -216,8 +212,8 @@ export class AddressForm implements FormValueControl<Address | null> {
       city: parts.city,
       state: parts.state,
       zipCode: parts.zipCode,
-      // Emit the ISO-3166-1 alpha-2 code (e.g. "US"), not the display label.
-      // The backend AddressValidator requires a 2-letter country code.
+      // The ISO-3166-1 alpha-2 code, not the display label: the backend AddressValidator requires a
+      // 2-letter country code.
       country: countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value,
     };
 

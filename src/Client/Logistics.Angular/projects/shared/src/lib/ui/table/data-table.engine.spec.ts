@@ -1,9 +1,8 @@
 /**
  * Regression tests for the hand-rolled `<ui-data-table>` engine.
  *
- * SEPARATE FROM `data-table.contract.spec.ts` ON PURPOSE. That file is the characterization
- * contract captured against the live `<p-table>` and must pass UNCHANGED; this one pins behaviour
- * the swap introduced or that the contract does not reach.
+ * Separate from `data-table.contract.spec.ts` on purpose: that file is the characterization contract
+ * and must pass UNCHANGED, while this one pins behaviour the contract does not reach.
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";

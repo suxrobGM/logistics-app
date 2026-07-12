@@ -23,14 +23,14 @@ import type { UiMenuItem } from "./menu-item";
  * that setter on the same element, and a menu built from a stale row navigates to the wrong record.
  * See `AnchoredOverlay` for why that also rules out `CdkMenuTrigger` and its overlay.
  *
- * WHY THE CLOSE PATHS ARE OURS (Lesson 5)
+ * WHY THE CLOSE PATHS ARE OURS
  * `CdkMenu` sets `isInline = !this._parentTrigger`. With no `CdkMenuTrigger` above it there is no
  * `MENU_TRIGGER`, so it considers itself "inline" — and an inline menu NEVER PUSHES ITSELF ONTO THE
  * MENU STACK (`ngAfterContentInit`: `if (!this.isInline) this.menuStack.push(this)`). Its Escape
  * handler then calls `menuStack.close(this)`, whose first act is an `indexOf(this) >= 0` test that is
- * false, so it is a SILENT NO-OP. Trusting CDK's stack here would have shipped a menu that opens and
- * never closes on Escape, with no error anywhere. `AnchoredOverlay` owns Escape / outside-click /
- * navigation / scroll-away; this class adds the two menu-specific ones (item activation, tab-out).
+ * false, so it is a SILENT NO-OP: trusting CDK's stack here gives a menu that opens and never closes on
+ * Escape, with no error anywhere. `AnchoredOverlay` owns Escape / outside-click / navigation /
+ * scroll-away; this class adds the two menu-specific ones (item activation, tab-out).
  *
  * What `CdkMenu` still gives us is the genuinely hard part: roving-tabindex arrow keys, type-ahead and
  * Home/End. Focusing the menu container on open is enough to start it — `CdkMenuBase._handleFocus()`
@@ -78,7 +78,7 @@ export class UiMenu {
   /**
    * Tabbing past the last item moves focus out of the overlay, and the menu should not linger.
    *
-   * `focusout`, not `blur` — blur does not bubble (Lesson 4), so a listener on the container would
+   * `focusout`, not `blur` — blur does not bubble, so a listener on the container would
    * never see focus leaving a child item. The null check matters just as much: clicking dead space
    * inside the menu fires `focusout` with a null `relatedTarget`, and closing on that would make the
    * menu shut whenever the user clicked its own padding.

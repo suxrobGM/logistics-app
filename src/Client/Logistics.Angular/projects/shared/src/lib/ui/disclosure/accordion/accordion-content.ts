@@ -2,10 +2,9 @@ import { Component } from "@angular/core";
 import { HlmAccordionContent } from "../../primitives/accordion";
 
 /**
- * The collapsible body. Replaces `<p-accordion-content>`. Brain animates its height and sets `inert`
- * when closed.
+ * The collapsible body. Brain animates its height and sets `inert` when closed.
  *
- * `display: contents` IS LOAD-BEARING (Lesson 3 — "a wrapper element changes layout").
+ * `display: contents` IS LOAD-BEARING — a wrapper element here changes layout.
  *
  * Helm collapses the panel with `data-[state=closed]:h-0` + `overflow-hidden` on `<hlm-accordion-content>`.
  * That is an UNKNOWN element, so its default display is `inline` — and height and overflow do not

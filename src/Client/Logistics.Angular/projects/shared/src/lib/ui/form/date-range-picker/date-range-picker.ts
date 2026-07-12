@@ -9,7 +9,7 @@ export interface DatePreset {
   getRange: () => { startDate: Date; endDate: Date };
 }
 
-/** Default preset options for common date ranges */
+/** Default preset options for common date ranges. */
 export const DEFAULT_DATE_PRESETS: DatePreset[] = [
   { label: "This Week", getRange: () => PredefinedDateRanges.getThisWeek() },
   { label: "Last Week", getRange: () => PredefinedDateRanges.getLastWeek() },
@@ -19,19 +19,16 @@ export const DEFAULT_DATE_PRESETS: DatePreset[] = [
 
 const pad = (value: number): string => String(value).padStart(2, "0");
 
-/** `mm/dd/yy` per the old p-datepicker `dateFormat`, which rendered a 4-digit year. */
+/** Formats one end of the range as `mm/dd/yyyy`. */
 const formatOne = (date: Date | null): string =>
   date ? `${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${date.getFullYear()}` : "";
 
 /**
- * Date range picker with preset buttons in the calendar footer.
+ * Date range picker with preset buttons in the calendar footer. The app's only range-capable date
+ * control; `ui-date-field` is deliberately single-date.
  *
- * Built on the vendored spartan `hlm-date-range-picker` (brain range calendar + `BrnPopover`).
- * This is also the app's only range-capable date control: `ui-date-field` is deliberately
- * single-date, so range call sites point here.
- *
- * `datesChange` only fires once **both** ends of the range are picked — 14 call sites rely on that
- * (they push straight into a filter and refetch), so a half-picked range must stay silent.
+ * `datesChange` only fires once both ends are picked — call sites push it straight into a filter and
+ * refetch, so a half-picked range must stay silent.
  *
  * @example
  * <ui-date-range-picker [dates]="dateRange()" (datesChange)="onDateChange($event)" />
@@ -54,10 +51,8 @@ export class DateRangePicker {
   public readonly maxDate = input<Date | undefined>(undefined);
 
   /**
-   * Brain's `BrnDateInput.showClear` defaults to **true**, which would put a clear button on every
-   * one of these where the old p-datepicker had none — and its clear emits `null`, which no call
-   * site's `onDateRangeChange(dates: Date[])` expects. Default it off to preserve behaviour; opting
-   * in emits `[]`.
+   * Defaulted off, unlike brain's `BrnDateInput.showClear`, which defaults to true: its clear emits
+   * `null`, which no call site's `onDateRangeChange(dates: Date[])` expects. Opting in emits `[]`.
    */
   public readonly showClear = input(false, { transform: booleanAttribute });
 
@@ -89,8 +84,8 @@ export class DateRangePicker {
 
   protected selectPreset(preset: DatePreset): void {
     const { startDate, endDate } = preset.getRange();
-    // `updateDate` writes the picker's internal model *and* emits `dateChange`, so the range shows
-    // in the input and the parent is notified through the same path as a manual pick.
+    // `updateDate` writes the picker's internal model and emits `dateChange`, so a preset notifies
+    // the parent through the same path as a manual pick.
     this.picker().updateDate([startDate, endDate]);
   }
 }

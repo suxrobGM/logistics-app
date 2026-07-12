@@ -4,14 +4,14 @@ import { TABS_CONTENT_CLASSES } from "../../primitives/tabs";
 import { classes } from "../../primitives/utils";
 
 /**
- * One tab's content. Replaces `<p-tabpanel>`.
+ * One tab's content.
  *
- * `value` is brain's `contentFor` straight through the host directive, so — exactly as for `ui-tab` —
- * it is a plain string attribute: `<ui-tab-panel value="0">`.
+ * `value` is brain's `contentFor` straight through the host directive, so — as for `ui-tab` — it is a
+ * plain string attribute: `<ui-tab-panel value="0">`.
  *
  * Brain hides the unselected panel with `[hidden]` on this host and sets `role="tabpanel"` /
- * `aria-labelledby`, so no inner wrapper element is needed (and Lesson 3: not adding one keeps the
- * panel's own box out of the layout).
+ * `aria-labelledby`, so no inner wrapper is needed — and not adding one keeps the panel's own box out
+ * of the layout.
  */
 @Component({
   selector: "ui-tab-panel",

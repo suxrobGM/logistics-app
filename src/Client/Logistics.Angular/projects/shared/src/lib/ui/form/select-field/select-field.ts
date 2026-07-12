@@ -26,13 +26,12 @@ export interface UiSelectOptionContext<T = unknown> {
 /**
  * Single-select dropdown.
  *
- * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
- *
- * The inner spartan `hlm-select` (brain `BrnSelect` + `BrnPopover`) is driven with plain
- * `[value]` / `(valueChange)` — never `formControlName` / `[formField]` on it. `uiDetachedControl`
- * severs the ambient `NgControl` so brain's `BrnFieldControl` does not track our Signal Forms
- * control; invalid styling is owned by `[forceInvalid]="showInvalid()"` on the trigger. The panel
- * portals via `*hlmSelectPortal` (brain's `BrnPopoverContent`) — without it the overlay never opens.
+ * Implements `FormValueControl` only, never a legacy `ControlValueAccessor` — see `text-field.ts`
+ * for the bridge contract. The inner `hlm-select` is driven with plain `[value]` / `(valueChange)`,
+ * never `[formField]`; `uiDetachedControl` severs the ambient `NgControl` so brain's
+ * `BrnFieldControl` does not track our Signal Forms control, and invalid styling is owned by
+ * `[forceInvalid]="showInvalid()"` on the trigger. The panel portals via `*hlmSelectPortal` —
+ * without it the overlay never opens.
  *
  * @example
  * <ui-form-field label="Color" for="color" [required]="true">
@@ -50,21 +49,18 @@ export interface UiSelectOptionContext<T = unknown> {
 })
 export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   /**
-   * Optional per-option renderer, projected as `<ng-template #item let-option>`. The context's
-   * `$implicit` is the raw option object (not the resolved `optionValue`).
-   *
-   * `descendants: false` is load-bearing: a nested `ui-select-field` inside our own projected
-   * content would otherwise have its `#item` template hoovered up by the outer select.
+   * Optional per-option renderer, projected as `<ng-template #item let-option>`; `$implicit` is the
+   * raw option object, not the resolved `optionValue`. `descendants: false` is load-bearing: without
+   * it, a nested `ui-select-field` in our projected content loses its `#item` to the outer select.
    */
   protected readonly itemTemplate = contentChild<TemplateRef<UiSelectOptionContext>>("item", {
     descendants: false,
   });
 
   /**
-   * Optional renderer for the *trigger* (the chosen option), projected as
-   * `<ng-template #selectedItem let-option>`. Distinct from `#item`: a call site can render the
-   * closed trigger differently from the open panel's rows, and two ELD selects rely on
-   * exactly that (icon + one-line summary in the trigger, two-line detail in the list).
+   * Optional renderer for the trigger (the chosen option), projected as
+   * `<ng-template #selectedItem let-option>`. Distinct from `#item`, so the closed trigger can render
+   * differently from the open panel's rows.
    */
   protected readonly selectedItemTemplate = contentChild<TemplateRef<UiSelectOptionContext>>(
     "selectedItem",
@@ -122,9 +118,8 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   );
 
   /**
-   * True when something is selected. Guards `null` *and* `undefined`: the declared type is
-   * `T | null`, but a consumer can still hand us `undefined`, and the clear button must not
-   * appear for an empty select.
+   * True when something is selected. Guards `undefined` as well as `null`: the declared type is
+   * `T | null`, but a consumer can still hand us `undefined`.
    */
   protected readonly hasValue = computed(() => {
     const current = this.value();

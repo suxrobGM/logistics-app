@@ -21,7 +21,7 @@ import { HlmAutocompleteImports } from "../../primitives/autocomplete";
 import { DetachedControl } from "../detached-control";
 import { focusFirstControl } from "../focus-control";
 
-/** The payload of `completeMethod` — the current search query. Mirrors the old p-autocomplete event. */
+/** The payload of `completeMethod` — the current search query. */
 export interface UiAutocompleteCompleteEvent {
   query: string;
 }
@@ -34,15 +34,13 @@ export interface UiAutocompleteOptionContext<T = unknown> {
 /**
  * Type-ahead autocomplete.
  *
- * Implements `FormValueControl` only — see `text-field.ts` for the FormValueControl bridge contract.
+ * Implements `FormValueControl` only, never a legacy `ControlValueAccessor` — see `text-field.ts`
+ * for the bridge contract. The inner `hlm-autocomplete` is driven with plain `[value]` /
+ * `(valueChange)` and `(searchChange)`; `uiDetachedControl` severs the ambient `NgControl` so
+ * brain's `BrnFieldControl` does not track our Signal Forms control. The panel portals via
+ * `*hlmAutocompletePortal`.
  *
- * The inner spartan `hlm-autocomplete` (brain `BrnAutocomplete` + `BrnPopover`) is driven with plain
- * `[value]` / `(valueChange)` and its search via `(searchChange)`. `uiDetachedControl` severs the
- * ambient `NgControl` so brain's `BrnFieldControl` does not track our Signal Forms control. The panel
- * portals via `*hlmAutocompletePortal`.
- *
- * The parent still owns fetching suggestions: wire `(completeMethod)` to your search handler and feed
- * the result back through `[suggestions]`.
+ * The parent owns fetching: wire `(completeMethod)` to a search handler and feed `[suggestions]` back.
  *
  * @example
  * <ui-form-field label="Driver" for="driver" [required]="true">
@@ -61,19 +59,15 @@ export interface UiAutocompleteOptionContext<T = unknown> {
 })
 export class UiAutocompleteField<T = unknown> implements FormValueControl<T | null> {
   /**
-   * Optional per-suggestion renderer, projected as `<ng-template #item let-suggestion>`.
-   * `$implicit` is the raw suggestion object, matching p-autocomplete.
-   *
-   * `descendants: false` — see `ui-select-field` for why (a nested autocomplete must keep its own).
+   * Optional per-suggestion renderer, projected as `<ng-template #item let-suggestion>`; `$implicit`
+   * is the raw suggestion object. `descendants: false` so a nested autocomplete keeps its own
+   * template instead of having it picked up here.
    */
   protected readonly itemTemplate = contentChild<TemplateRef<UiAutocompleteOptionContext>>("item", {
     descendants: false,
   });
 
-  /**
-   * Optional empty-state renderer, projected as `<ng-template #empty>`. Several search components
-   * project one to offer a "create new" action when nothing matched, so this is not decorative.
-   */
+  /** Optional empty-state renderer, `<ng-template #empty>` (e.g. a "create new" action). */
   protected readonly emptyTemplate = contentChild<TemplateRef<unknown>>("empty", {
     descendants: false,
   });
@@ -92,7 +86,7 @@ export class UiAutocompleteField<T = unknown> implements FormValueControl<T | nu
   /** Raised when the panel closes so the form can mark the field touched. */
   public readonly touch = output<void>();
 
-  /** Raised (debounced) when the query is long enough to search. Every call site fetches and sets `suggestions`. */
+  /** Raised (debounced) when the query is long enough to search. */
   public readonly completeMethod = output<UiAutocompleteCompleteEvent>();
 
   /** Raised after the user picks a suggestion; emits the chosen value. */
@@ -107,10 +101,8 @@ export class UiAutocompleteField<T = unknown> implements FormValueControl<T | nu
   public readonly optionLabel = input<string | undefined>(undefined);
   public readonly placeholder = input<string | undefined>(undefined);
   /**
-   * Characters typed before a search fires.
-   *
-   * Deliberately NOT called `minLength`: `FormValueControl` reserves that name for a validator-derived
-   * state input, and Signal Forms would auto-bind over it.
+   * Characters typed before a search fires. Not called `minLength`: `FormValueControl` reserves that
+   * name for a validator-derived state input, and Signal Forms would auto-bind over it.
    */
   public readonly minQueryLength = input<number>(1);
   /** Debounce (ms) before `completeMethod` fires. */
@@ -160,9 +152,9 @@ export class UiAutocompleteField<T = unknown> implements FormValueControl<T | nu
   }
 
   /**
-   * Mirrors brain's popover state so `close()` can drive it. Writing the state back on every
-   * `stateChanged` is what keeps a forced close from latching the panel shut — without it the
-   * `[state]` binding would keep re-applying "closed" and the panel could never reopen.
+   * Mirrors brain's popover state so `close()` can drive it. The state must be written back on
+   * every `stateChanged`, or the `[state]` binding keeps re-applying "closed" and the panel never
+   * reopens.
    */
   protected readonly popoverState = signal<BrnOverlayState | null>(null);
 

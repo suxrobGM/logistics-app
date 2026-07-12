@@ -9,29 +9,16 @@ import {
 } from "./button-variants";
 
 /**
- * The button. Replaces `<p-button>` at 496 call sites.
+ * The button. A wrapper element around a real `<button>`, not a directive on a native one — call
+ * sites lay out against the wrapper node, so collapsing the DOM would reflow their parents.
  *
- * WHY IT IS A WRAPPER AND NOT A DIRECTIVE ON A NATIVE `<button>`
- * `<p-button>` is itself a wrapper element that renders a real `<button>` inside. Those 496 hosts
- * sit inside flex rows, grid cells and `gap-*` stacks that were laid out against a wrapper element.
- * Collapsing the DOM to a bare `<button>` would reflow roughly fifty parents in ways no type check
- * or unit test can see. So `ui-button` keeps the wrapper node, and phase 2 is a pure tag rename.
+ * There must NEVER be a `routerLink` input. `RouterLink`'s selector is `[routerLink]`, so it already
+ * matches the HOST and already navigates on host click. Declaring our own input of that name and
+ * forwarding it to an inner `<a>` would bind both — one click, two navigations. Same for
+ * `queryParams`. The attribute stays on the host and this component does not know it exists.
  *
- * WHY THERE IS NO `routerLink` INPUT (and there must never be one)
- * 90 call sites write `<p-button routerLink="/loads">`. `RouterLink`'s selector is `[routerLink]`,
- * which matches the HOST element — it is already bound there today, it already navigates on host
- * click, and it will keep doing exactly that on `<ui-button>` with no work from us. If we ALSO
- * declared an input named `routerLink` and forwarded it to an inner `<a>`, both would bind: the
- * directive on the host and our own inner link. One click, two navigations, on all 90 sites. The
- * attribute stays on the host and this component does not know it exists. Same for `queryParams`.
- *
- * WHY THERE IS NO `<ng-content>`
- * `label` and `icon` inputs are the only way to fill a button. Accepting projected content as well
- * would be two ways to say the same thing, and virtually none of the ~496 call sites need it.
- *
- * WHY THERE IS NO OUTPUT
- * `(click)` bubbles natively from the inner `<button>` to the host, so a call site's `(click)`
- * keeps working with the plain `MouseEvent` payload — no wrapped `{originalEvent}` object.
+ * There is no `<ng-content>` (`label` / `icon` are the only way to fill a button) and no output:
+ * `(click)` bubbles natively from the inner `<button>` with a plain `MouseEvent` payload.
  *
  * @example
  * <ui-button label="Save" icon="check" type="submit" [loading]="saving()" />
@@ -43,10 +30,9 @@ import {
   imports: [Icon],
   host: {
     class: "inline-flex",
-    // The inner <button> gets [disabled], which already blocks its own clicks. This stops the HOST
-    // from being clickable too — which matters precisely because of RouterLink above: RouterLink
-    // listens on the host, so without this a disabled `<ui-button routerLink=...>` would still
-    // navigate. It is also what makes a `loading` button un-double-submittable.
+    // The inner <button>'s own [disabled] blocks its clicks; this kills the HOST's. Load-bearing
+    // because RouterLink listens on the host — without it a disabled `<ui-button routerLink=…>`
+    // would still navigate, and a `loading` button would still be double-submittable.
     "[class.pointer-events-none]": "disabled() || loading()",
     "[class.w-full]": "block()",
   },
@@ -57,7 +43,7 @@ export class UiButton {
   /** Typed against the generated `IconName` union — an unknown icon is a compile error, not a blank. */
   public readonly icon = input<IconName>();
 
-  /** Trailing glyph. Replaces the old `iconPos="right"` (16 sites); there is no `iconPos`. */
+  /** Trailing glyph. There is no `iconPos` input — use this instead. */
   public readonly iconEnd = input<IconName>();
 
   public readonly intent = input<UiButtonIntent>("primary");
@@ -65,33 +51,28 @@ export class UiButton {
   public readonly size = input<UiButtonSize>("md");
 
   /**
-   * `<p-button>` has NO type default — it renders `[attr.type]="type || buttonProps?.type"`, so an
-   * untyped p-button inside a <form> is a submit button by HTML's own default. We default to
-   * "button", which is the safe direction; the 37 sites that say `type="submit"` MUST carry it
-   * across, and phase 2 counts them per file to prove none were dropped. A dropped `submit` is a
-   * save button that silently does nothing.
+   * Defaults to "button", NOT to HTML's own default of "submit". A button inside a `<form>` that
+   * means to submit must say so explicitly.
    */
   public readonly type = input<"button" | "submit" | "reset">("button");
 
   public readonly disabled = input(false, { transform: booleanAttribute });
 
-  /** Swaps the icon for a spinner, disables the button and sets aria-busy. All three, in one place. */
+  /** Swaps the icon for a spinner, disables the button and sets aria-busy — all three. */
   public readonly loading = input(false, { transform: booleanAttribute });
 
   public readonly rounded = input(false, { transform: booleanAttribute });
   public readonly block = input(false, { transform: booleanAttribute });
 
   /**
-   * The accessible name. MANDATORY when the button is icon-only, which is the only case where there
-   * is no text to name it. Phase 2 fills it in at every icon-only site and `check-buttons.mjs`
-   * enforces it statically — a runtime warning would only fire on pages someone happened to open.
+   * The accessible name. MANDATORY when the button is icon-only — there is no text to name it.
+   * `check-buttons.mjs` enforces that statically.
    */
   public readonly ariaLabel = input<string>();
 
   /**
-   * Extra classes for the button element (44 sites). It lands on the INNER `<button>`, which is
-   * where those call sites lay out against. Mapping it to the host `class` instead would look right
-   * and silently break layout at every one of those 44 sites.
+   * Extra classes for the INNER `<button>`, which is what call sites lay out against. Mapping it to
+   * the host `class` instead would look right and silently break their layout.
    */
   public readonly buttonClass = input<string>("");
 

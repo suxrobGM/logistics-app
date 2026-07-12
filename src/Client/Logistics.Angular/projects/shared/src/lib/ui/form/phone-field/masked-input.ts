@@ -16,40 +16,18 @@ import { HlmInputGroupInput } from "../../primitives/input-group";
 const DIGIT = "9";
 
 /**
- * A digit mask over a plain `<input>`.
+ * A digit mask over a plain `<input>`. Private to `ui-phone-field`, not in the ui barrel.
  *
- * PRIVATE TO `ui-phone-field`. Not exported from the ui barrel: it implements exactly the slice of
- * masking that the phone field needs (`mask`, `slotChar="_"`, no auto-clear) and nothing more.
- * A general-purpose mask is a much bigger contract than we need.
+ * The model is the digit string ("5551234"), never the rendered text: the display is `render()`ed
+ * from the digits and every input event is reduced back to them. Nothing edits the displayed text in
+ * place, which keeps caret arithmetic from becoming a special case per mask literal.
  *
- * ------------------------------------------------------------------------------------------------
- * THE MODEL IS THE DIGITS, NOT THE TEXT.
- * ------------------------------------------------------------------------------------------------
- * The single idea that makes this tractable. State is a string of digits ("5551234"); everything the
- * user sees is `render()`ed from it, and everything they type is reduced back to it. There is no
- * attempt to edit the displayed text in place — that is where mask implementations go to die,
- * because every literal in the mask makes caret arithmetic a special case.
- *
- * This also matches the contract `ui-phone-field` already had. `p-inputmask` (with `unmask` unset)
- * pushed the RAW INPUT TEXT into the model — slot chars and all, e.g. `"(555) 12_-____"` — and
- * `PhoneField.emitValue()` did `phone.replace(/\D/g, "")` to recover the digits. So the field only
- * ever cared about digits; this component simply says so, and emits digits directly.
- *
- * ------------------------------------------------------------------------------------------------
- * THE EDGE CASES, and why each line exists.
- * ------------------------------------------------------------------------------------------------
- * - BACKSPACE OVER A LITERAL. In `(555) 123-4567`, backspacing when the caret sits after `)` deletes
- *   the `)`, not a digit. Re-rendering from unchanged digits would restore the `)` and the caret
- *   would jump — the field becomes impossible to clear. So: if a delete left the digit count
- *   unchanged, drop a digit ourselves (`deleteContentBackward` -> the one before the caret,
- *   `deleteContentForward` -> the one after).
- * - PASTE. `insertFromPaste` lands the pasted text in `input.value`; stripping to digits and
- *   re-rendering handles `+1 (555) 123-4567`, `555.123.4567` and `5551234567` identically.
- * - CARET. After every re-render the caret is placed just past the last filled slot, so typing
- *   continues where the user expects instead of at the end of the trailing `___`.
- * - BLUR WITH A PARTIAL VALUE. `p-inputmask` had `[autoClear]="false"`, meaning an incomplete entry
- *   is KEPT on blur, not wiped. (Its default is `true`; the phone field opted out.) An EMPTY value
- *   still clears to "" so the placeholder shows.
+ * Consequences handled below: a delete that only removed a mask literal leaves the digit count
+ * unchanged, so we drop the digit the user aimed at (or the field can never be cleared past a
+ * literal); a paste of any format is stripped to digits; after every re-render the caret is re-parked
+ * just past the last filled slot, so typing continues where the user expects rather than after the
+ * trailing slot chars; a partial value survives blur, while an empty one renders "" so the
+ * placeholder shows.
  */
 @Component({
   selector: "ui-masked-input",
@@ -65,17 +43,10 @@ export class MaskedInput {
   public readonly slotChar = input<string>("_");
 
   /**
-   * Digits of the selected country's dial code, e.g. `"1"` for +1 — stripped from an OVERLONG paste.
-   *
-   * Pasting `+1 (555) 123-4567` into a 10-slot US mask yields eleven digits. Filling the mask in
-   * order puts the country code's `1` into the first national slot and drops the last digit:
-   * `(155) 512-3456`, which composes to `+11555123456` — a phone number that is silently, plausibly
-   * WRONG. (`p-inputmask` did exactly this: its `checkVal()` skips non-slot characters and fills the
-   * digits in order.) Pasting a fully-qualified number is the normal way people move one between
-   * systems, so it is worth getting right.
-   *
-   * Only applied on OVERFLOW, so a legitimate 10-digit national number that happens to start with 1
-   * is never touched.
+   * Digits of the selected country's dial code, e.g. `"1"` for +1. Stripped only when a paste
+   * overflows the mask: `+1 (555) 123-4567` is eleven digits, and filling a 10-slot US mask in order
+   * would shift the country code into the first national slot and drop the last digit — a silently
+   * plausible wrong number. Overflow-only, so a national number starting with 1 is never touched.
    */
   public readonly dialPrefix = input<string>("");
 
@@ -104,8 +75,7 @@ export class MaskedInput {
   });
 
   constructor() {
-    // Adopt values set from outside (the form loading an existing number), and re-cap when the
-    // country — and therefore the mask — changes.
+    // Adopt values set from outside, and re-fit when the country (and so the mask) changes.
     effect(() => {
       const incoming = this.fit(this.onlyDigits(this.value()));
       untracked(() => {
@@ -138,8 +108,8 @@ export class MaskedInput {
 
     let next = this.fit(this.onlyDigits(element.value));
 
-    // A delete that removed only a mask literal leaves the digits untouched. Take the digit the user
-    // was actually aiming at, or the field can never be emptied past a literal.
+    // A delete that removed only a mask literal leaves the digits untouched, so drop the digit the
+    // user was aiming at.
     if (next.length === before.length && next.length > 0) {
       if (inputType === "deleteContentBackward") {
         next = next.slice(0, -1);
@@ -163,7 +133,7 @@ export class MaskedInput {
 
   private commit(digits: string): void {
     if (digits === this.digits()) {
-      // Still force the DOM back in line: the user may have typed a character the mask rejected, and
+      // Force the DOM back in line anyway: the user may have typed a character the mask rejected and
       // the browser has already painted it.
       this.inputRef().nativeElement.value = this.display();
       const caret = this.caretFor(digits.length);
@@ -213,8 +183,8 @@ export class MaskedInput {
   }
 
   /**
-   * Cut a digit string down to what the mask can hold, dropping a leading dial code first when the
-   * input overflows — see {@link dialPrefix}. Truncation is the last resort, not the first.
+   * Cut a digit string down to what the mask can hold, dropping a leading dial code before falling
+   * back to truncation — see {@link dialPrefix}.
    */
   private fit(digits: string): string {
     const capacity = this.capacity();
