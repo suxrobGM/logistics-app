@@ -14,13 +14,13 @@ import {
 } from "@logistics/shared/ui";
 
 /**
- * The S5 cosmetics: ui-card, ui-spinner, ui-skeleton, ui-avatar, ui-progress, ui-count-badge,
+ * The cosmetics: ui-card, ui-spinner, ui-skeleton, ui-avatar, ui-progress, ui-count-badge,
  * ui-overlay-badge.
  *
- * The card matrix is the one that earns its keep. `<p-card>`'s 227 call sites use FOUR template
- * slots (`#header` x71, `#title` x8, `#subtitle` x4, `#footer` x3) that a grep for the PrimeNG-20
- * spellings does not find, so every one of them is a way for the card to silently drop content. All
- * four are rendered below, together and separately.
+ * The card matrix is the one that earns its keep. `ui-card` supports FOUR template slots
+ * (`#header`, `#title`, `#subtitle`, `#footer`), and a card wired up with the wrong slot name
+ * silently drops that content — nothing warns you. All four are rendered below, together and
+ * separately.
  *
  * `ui-overlay-badge` is here for one row: the null-value case. The notification bell says "nothing
  * unread" by passing `null` and trusting the badge to disappear. Both states are on the page so the

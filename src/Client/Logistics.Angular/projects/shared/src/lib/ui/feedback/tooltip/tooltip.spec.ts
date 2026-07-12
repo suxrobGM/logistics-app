@@ -11,11 +11,10 @@
  *      description on a non-focusable node is a description no screen reader ever reads.
  *   3. The accessible NAME survives. A tooltip is a description; if it ever became the name, the 82
  *      icon-only buttons would regress to being named by their tooltip text (or by nothing).
- *   4. It CLOSES — on mouseleave, on blur, and on Escape. A tooltip stuck open is worse than none,
- *      and PrimeNG closed on Escape (`hideOnEscape: true`), so dropping it is a silent regression.
+ *   4. It CLOSES — on mouseleave, on blur, and on Escape. A tooltip stuck open is worse than none.
  *   5. Empty / whitespace / undefined text renders NOTHING — not an empty box.
- *   6. The default position is `right`, which is PrimeNG's default and therefore what the 79 call
- *      sites that specify no position are laid out against.
+ *   6. The default position is `right` — the 79 call sites that specify no position are laid out
+ *      against it.
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
@@ -207,7 +206,7 @@ describe("UiTooltip", () => {
     expect(tooltip()).toBeNull();
   });
 
-  // (6) PrimeNG's default. 79 sites set no position and are laid out against it.
+  // (6) The default position. 79 sites set no position and are laid out against it.
   it("defaults to the right side and honours an explicit side", () => {
     open(wrapper(), "mouseenter");
     expect(tooltip()?.getAttribute("data-side")).toBe("right");

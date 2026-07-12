@@ -1,8 +1,8 @@
 <section id="dialogs" class="scroll-mt-24">
   <ui-typography variant="h2" tag="h2">Dialogs</ui-typography>
   <ui-typography variant="body-sm" color="muted">
-    ui-dialog (46 sites) and ui-collapsible (5 p-fieldset sites). Drag any dialog by its header; the
-    grip in the bottom-right corner resizes it. Both are on by default, as in p-dialog.
+    ui-dialog (46 sites) and ui-collapsible (5 sites). Drag any dialog by its header; the
+    grip in the bottom-right corner resizes it. Both are on by default.
   </ui-typography>
 
   <div class="mt-4 flex flex-wrap gap-3">
@@ -54,8 +54,8 @@
     }}</pre>
   </div>
 
-  <!-- ui-collapsible: p-fieldset's replacement. The content is HIDDEN, not destroyed, so the field
-       inside stays registered with its form. -->
+  <!-- ui-collapsible: the content is HIDDEN, not destroyed, so the field inside stays registered
+       with its form. -->
   <div class="mt-6 max-w-lg">
     <ui-collapsible
       legend="Hazmat / ADR (toggleable, collapsed)"
@@ -91,10 +91,10 @@
 <!--
   ESCAPE BELONGS TO THE INNERMOST OVERLAY.
 
-  A dropdown opened inside a dialog is its OWN CDK overlay, stacked above the dialog's. Under PrimeNG,
-  p-select called stopPropagation() on Escape, so p-dialog's document listener never saw it. Helm's
-  select does not — so before `isTopmostOverlay` (internal/overlay-stack.ts) ONE Escape dismissed the
-  dropdown AND discarded the dialog behind it. This is the real trip-wizard "Create a new load" shape.
+  A dropdown opened inside a dialog is its OWN CDK overlay, stacked above the dialog's. Helm's select
+  does not stop Escape from propagating — so before `isTopmostOverlay` (internal/overlay-stack.ts) ONE
+  Escape dismissed the dropdown AND discarded the dialog behind it. This is the real trip-wizard
+  "Create a new load" shape.
 
   TO DRIVE IT: open the select, type in the text box first, press Escape ONCE.
   The select must close, the dialog must STAY OPEN, and your text must still be there.
@@ -164,7 +164,7 @@
 </ui-dialog>
 
 <!--
-  The Lesson-1 row. <app-ui-lab-nested-slots> below is a stand-in for the <p-accordion> that really
+  The Lesson-1 row. <app-ui-lab-nested-slots> below is a stand-in for the <ui-accordion> that really
   sits inside customer-edit-dialog. Its OWN slots are also called #header and #content. With
   contentChild()'s DEFAULT descendants:true, ui-dialog would match them through the child component,
   render "Danger Zone" as its title, and leave the box below empty.

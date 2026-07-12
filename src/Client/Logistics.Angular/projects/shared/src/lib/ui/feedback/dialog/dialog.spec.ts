@@ -168,7 +168,7 @@ describe("UiDialog", () => {
    * A dropdown opened INSIDE the dialog (ui-select-field, autocomplete, date-picker, menu, popover) is
    * its own CDK overlay, stacked above the dialog's pane. Escape there must dismiss only the dropdown.
    *
-   * PrimeNG's select called `event.stopPropagation()` on Escape (primeng-select.mjs:1512), so
+   * PrimeNG's select called `event.stopPropagation()` on Escape, so
    * p-dialog's document listener never saw it. Helm's overlays do NOT stop propagation — so without a
    * topmost-overlay guard a single Escape closed the dropdown AND discarded the form behind it. Found
    * in a browser, on the trip wizard's "Create a new load" dialog; invisible to build, lint and tests.

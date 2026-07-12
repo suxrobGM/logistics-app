@@ -21,11 +21,10 @@
  *
  * Quill's own stylesheet is a self-contained LIGHT theme — hardcoded `#ccc` borders, `#444` icon
  * strokes, `#fff` popovers, `#06c` accents. Shipped raw it stays light while the app goes dark, and
- * it breaks the no-hardcoded-colours rule. PrimeNG never loaded this file at all; `p-editor` restyled
- * quill's `ql-*` classes from the PrimeNG theme, which S13 deletes. So we take quill's STRUCTURE
- * (toolbar layout, icon geometry, picker/tooltip positioning — none of it worth reinventing) and
- * override only the colour surface, keyed to the canonical shadcn tokens in
- * `shared/src/styles/theme.css` so both themes fall out for free.
+ * it breaks the no-hardcoded-colours rule. So we take quill's STRUCTURE (toolbar layout, icon
+ * geometry, picker/tooltip positioning — none of it worth reinventing) and override only the colour
+ * surface, keyed to the canonical shadcn tokens in `shared/src/styles/theme.css` so both themes fall
+ * out for free.
  *
  * The `--ui-editor-loaded` custom property at the end is the sentinel `UiEditor` probes for.
  */

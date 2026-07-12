@@ -11,7 +11,7 @@
 @import "../../shared/src/styles/theme.css";
 
 /* === Tailwind v4 Dark Mode Configuration === */
-/* Aligns Tailwind's dark: variant with PrimeNG's darkModeSelector */
+/* Matches the .dark-theme class that theme.service.ts toggles on <html> */
 @custom-variant dark (&:where(.dark-theme, .dark-theme *));
 
 /* === Design System Imports === */
@@ -22,13 +22,10 @@
 /* ===============================================================================================
  * The TMS button signature — TMS ONLY.
  *
- * `primeng-preset.ts` gives the p-button-primary class a 135deg gradient and font-weight 600, with
- * a lighter gradient on hover. That is the single most recognisable thing about this portal's
- * chrome, and `ui-button` has to keep it while admin / customer / website stay flat (they run
- * stock Aura today and must not change by a pixel).
- *
- * (The class name is written without its leading dot on purpose: tools/checks/burndown.mjs counts
- * `.p-*` occurrences in CSS to ratchet the PrimeNG surface down, and it reads comments too.)
+ * TMS's button chrome used a 135deg gradient and font-weight 600, with a lighter gradient on
+ * hover. That was the single most recognisable thing about this portal's chrome, and `ui-button`
+ * has to keep it while admin / customer / website stay flat (they run a stock, unmodified look
+ * today and must not change by a pixel).
  *
  * So the cva's `primary/solid` cell reads these variables, shared/theme.css gives them flat
  * defaults, and the gradient exists here and nowhere else. The gradient goes on `background-image`
@@ -47,13 +44,10 @@
  * ---------------------------------------------------------------------------------------------
  * AND YET IT IS OFF. Here is why, because it is not obvious and someone will want to switch it on.
  *
- * The gradient never actually painted this app. PrimeNG only adds the `.p-button-primary` class
- * when `severity` is set EXPLICITLY:
- *     [`p-button-${instance.severity}`]: instance.severity        (primeng-button.mjs)
- * and `severity="primary"` appears at exactly ONE call site in the entire repo. The other ~370
- * `<p-button>`s carried no severity, so they never matched the preset's
- * `.p-button-primary:not(...)` rule and rendered FLAT. The preset author plainly intended the
- * gradient as the primary look; it just never fired.
+ * The gradient never actually painted this app. The old button component only applied the
+ * gradient class when a severity was set explicitly, and that happened at exactly one call site
+ * in the entire repo — every other button carried no severity and rendered FLAT. The gradient
+ * was plainly intended as the primary look; it just never fired.
  *
  * `primary` is `ui-button`'s DEFAULT intent, so enabling the block below would newly paint ~370
  * buttons that have always been flat — i.e. it would CHANGE the TMS look under a banner of
@@ -112,8 +106,8 @@
   --ui-badge-danger-bg: var(--danger);
   --ui-badge-danger-fg: var(--inverse);
 
-  /* primeng-preset.ts: `tag.root { fontSize: 0.75rem, fontWeight: 500, padding: 0.25rem 0.625rem }`.
-     Aura's stock 0.875rem/700/0.5rem stays in shared/theme.css for the other three apps. */
+  /* TMS's badge/tag sizing: fontSize 0.75rem, fontWeight 500, padding 0.25rem 0.625rem.
+     The larger stock 0.875rem/700/0.5rem stays in shared/theme.css for the other three apps. */
   --ui-badge-font-size: 0.75rem;
   --ui-badge-font-weight: 500;
   --ui-badge-px: 0.625rem;
@@ -131,17 +125,14 @@
          Aura  card.root.shadow  0 1px 3px 0 rgb(0 0 0/.1), 0 1px 2px -1px rgb(0 0 0/.1)   ← two layers
          Nora  card.root.shadow  0 1px 4px 0 rgb(0 0 0/.1)                                 ← one, softer
 
-     `primeng-preset.ts` overrides only `card.colorScheme.dark.root`, so Nora's shadow is what all
-     ~227 TMS cards wear today. shared/theme.css ships Aura's pair for the other three apps. */
+     Only the dark-mode card root shadow was ever overridden, so the single-layer shadow above is
+     what all ~227 TMS cards wear today. shared/theme.css ships the two-layer pair for the other
+     three apps. */
   --ui-card-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.1);
 
-  /* TMS is the only portal whose table headers are uppercase. From `primeng-preset.ts`:
-   *
-   *     .p-datatable .p-datatable-thead > tr > th {
-   *       text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
-   *     }
-   *
-   * A `datatable.css` override, so it never applied to admin / customer / website. */
+  /* TMS is the only portal whose table headers are uppercase, sized at 0.75rem with 0.05em
+   * letter-spacing. That styling was a table-specific override, so it never applied to
+   * admin / customer / website. */
   --ui-table-th-transform: uppercase;
   --ui-table-th-size: 0.75rem;
   --ui-table-th-tracking: 0.05em;

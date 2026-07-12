@@ -1,13 +1,13 @@
 import { Component, computed, Directive, ElementRef, inject, input } from "@angular/core";
 import { UiTableState } from "./table-state";
 
-/** Marks a row for the arrow-key traversal below. Mirrors PrimeNG's `data-p-selectable-row`. */
+/** Marks a row for the arrow-key traversal below. */
 const SELECTABLE_ROW_ATTR = "data-ui-selectable-row";
 
 /**
  * Makes a `<tr>` selectable by click and by keyboard.
  *
- * Reproduces PrimeNG's `SelectableRow`, including its ROVING TABINDEX: with nothing selected every
+ * Implements a ROVING TABINDEX: with nothing selected every
  * row is tabbable (0); once there is a selection only the anchor row is, and the rest go to -1, so
  * Tab lands back where the user left off instead of walking the whole table.
  *
@@ -38,8 +38,7 @@ export class UiSelectableRow<T = unknown> {
   protected readonly selected = computed(() => this.state.isSelected(this.row()));
 
   /**
-   * Roving tabindex, as PrimeNG computes it: 0 while nothing is selected, otherwise 0 only for the
-   * selected (anchor) row.
+   * Roving tabindex: 0 while nothing is selected, otherwise 0 only for the selected (anchor) row.
    */
   protected readonly tabIndex = computed(() => {
     if (!this.state.selectionMode()) {
@@ -108,7 +107,7 @@ export class UiSelectableRow<T = unknown> {
     return edge === "first" ? rows[0] : rows[rows.length - 1];
   }
 
-  /** Hand the tabstop to the newly focused row, exactly as PrimeNG's `focusRowChange` does. */
+  /** Hand the tabstop to the newly focused row. */
   private focusRow(next: HTMLElement | null): void {
     if (!next) {
       return;

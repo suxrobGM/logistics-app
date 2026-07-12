@@ -6,8 +6,9 @@
   [attr.aria-label]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
   type="button"
 >
-  <!-- `theme-toggle-sun` / `theme-toggle-moon` replace the old `i.pi-sun` / `i.pi-moon` CSS hooks:
-       the glyph is an <svg> now, so a selector can no longer key off the icon's own class name. -->
+  <!-- `theme-toggle-sun` / `theme-toggle-moon` exist because the glyph is an <svg> now: a CSS
+       selector can no longer key off the icon's own class name, so these classes give the toggle
+       something to target instead. -->
   <ui-icon
     [name]="isDark() ? 'sun' : 'moon'"
     size="inherit"

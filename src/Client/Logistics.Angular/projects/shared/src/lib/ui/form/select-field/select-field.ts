@@ -51,7 +51,7 @@ export interface UiSelectOptionContext<T = unknown> {
 export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   /**
    * Optional per-option renderer, projected as `<ng-template #item let-option>`. The context's
-   * `$implicit` is the raw option object (not the resolved `optionValue`), matching p-select.
+   * `$implicit` is the raw option object (not the resolved `optionValue`).
    *
    * `descendants: false` is load-bearing: a nested `ui-select-field` inside our own projected
    * content would otherwise have its `#item` template hoovered up by the outer select.
@@ -62,8 +62,8 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
 
   /**
    * Optional renderer for the *trigger* (the chosen option), projected as
-   * `<ng-template #selectedItem let-option>`. Distinct from `#item`: p-select lets a call site
-   * render the closed trigger differently from the open panel's rows, and two ELD selects rely on
+   * `<ng-template #selectedItem let-option>`. Distinct from `#item`: a call site can render the
+   * closed trigger differently from the open panel's rows, and two ELD selects rely on
    * exactly that (icon + one-line summary in the trigger, two-line detail in the list).
    */
   protected readonly selectedItemTemplate = contentChild<TemplateRef<UiSelectOptionContext>>(
@@ -85,10 +85,10 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   /** Raised when the field is blurred (the panel closes) so the form can mark it touched. */
   public readonly touch = output<void>();
 
-  /** Raised after the user picks an option. Mirrors the old p-select `onChange`. */
+  /** Raised after the user picks an option. */
   public readonly selectionChange = output<T | null>();
 
-  /** Raised when the user clicks the clear (x) button. Mirrors the old p-select `onClear`. */
+  /** Raised when the user clicks the clear (x) button. */
   public readonly cleared = output<void>();
 
   // Presentation

@@ -3,8 +3,8 @@ import type { UiBadgeTone } from "../badge/badge-intent";
 import { CountBadge, type UiCountBadgeSize } from "../count-badge/count-badge";
 
 /**
- * A count pill pinned to the top-right corner of whatever you project into it. Replaces
- * `<p-overlaybadge>` — 1 call site, the notification bell.
+ * A count pill pinned to the top-right corner of whatever you project into it. One call site: the
+ * notification bell.
  *
  * =================================================================================================
  * A NULL / EMPTY `value` MUST HIDE THE BADGE ENTIRELY. This is the whole component.
@@ -13,14 +13,13 @@ import { CountBadge, type UiCountBadgeSize } from "../count-badge/count-badge";
  *
  *     [value]="unreadCount() > 0 ? (unreadCount() > 9 ? '9+' : unreadCount().toString()) : null"
  *
- * i.e. it says "no unread messages" by handing over `null` and trusts the badge to disappear.
- * PrimeNG does that implicitly (`<p-badge *ngIf="value">`), so nothing at the call site — no `@if`,
- * no class, no comment — records that the dependency exists. Render an empty red dot on `null` and
- * the bell claims unread notifications forever, on every page, for every user. There is a spec
- * pinning this precisely because the call site cannot tell you it matters.
+ * i.e. it says "no unread messages" by handing over `null` and trusts the badge to disappear —
+ * nothing at the call site (no `@if`, no class, no comment) records that the dependency exists.
+ * Render an empty red dot on `null` and the bell claims unread notifications forever, on every
+ * page, for every user. There is a spec pinning this precisely because the call site cannot tell
+ * you it matters.
  *
- * `hidden()` also covers `""` and `0`: `0` unread is not a notification either, and PrimeNG's
- * truthiness check treated it the same way.
+ * `hidden()` also covers `""` and `0`: `0` unread is not a notification either.
  */
 @Component({
   selector: "ui-overlay-badge",

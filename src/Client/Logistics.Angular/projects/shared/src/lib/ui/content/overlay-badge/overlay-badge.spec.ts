@@ -4,10 +4,10 @@
  *
  *     [value]="unreadCount() > 0 ? (… ) : null"        notification-bell.html
  *
- * The bell says "no unread messages" by handing over `null`, and trusts the badge to vanish. PrimeNG
- * did that implicitly (`<p-badge *ngIf="value">`), so there is no `@if`, no class and no comment at
- * the call site recording the dependency. Get it wrong and the bell shows a red dot forever, on every
- * page, for every user — with a green build and a green test suite.
+ * The bell says "no unread messages" by handing over `null`, and trusts the badge to vanish — there
+ * is no `@if`, no class and no comment at the call site recording the dependency. Get it wrong and
+ * the bell shows a red dot forever, on every page, for every user — with a green build and a green
+ * test suite.
  *
  * That is what this file is for. The rest of the component is 10 lines of positioning.
  */

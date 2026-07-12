@@ -17,10 +17,9 @@ import type { Chart, ChartData, ChartOptions } from "chart.js";
 export type UiChartType = "bar" | "line" | "doughnut" | "pie";
 
 /**
- * chart.js ships two entry points. `chart.js/auto` — the one PrimeNG's `p-chart` imported —
- * self-registers EVERY controller, element, scale and plugin (radar, polar, bubble, scatter,
- * time scale, …), which is ~60KB min+gz of code this app never draws. `chart.js` registers
- * nothing and makes you opt in.
+ * chart.js ships two entry points. `chart.js/auto` self-registers EVERY controller, element, scale
+ * and plugin (radar, polar, bubble, scatter, time scale, …), which is ~60KB min+gz of code this app
+ * never draws. `chart.js` registers nothing and makes you opt in.
  *
  * This is the opt-in list, and it is derived from what the option objects and dataset builders
  * ACTUALLY use — not from a guess:
@@ -60,11 +59,6 @@ export type UiChartType = "bar" | "line" | "doughnut" | "pie";
  *   reachable from the eager root AND shared by many lazy chunks gets hoisted by esbuild into the
  *   COMMON chunk — which is `main`. So the component, and with it all of chart.js, is pulled forward
  *   into the initial bundle.
- *
- * Before this migration `<p-chart>` came from `primeng/chart` — a separate package entry that
- * esbuild put in its OWN lazy chunk. So the static import here was a silent 179KB regression against
- * PrimeNG, and the pre-existing comment ("registration is a function, therefore it is shakeable")
- * was the reason nobody looked.
  *
  * `await import("chart.js")` makes the eager/lazy question moot: there is no static edge for esbuild
  * to hoist, chart.js gets its own chunk, and it is fetched the first time a chart actually renders.

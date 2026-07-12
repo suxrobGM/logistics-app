@@ -27,13 +27,11 @@ import {
  *
  * WHY THERE IS NO `<ng-content>`
  * `label` and `icon` inputs are the only way to fill a button. Accepting projected content as well
- * would be two ways to say the same thing, and it buys exactly 3 of the 496 sites (the only ones
- * with a closing `</p-button>` tag). Phase 2 hand-handles those three.
+ * would be two ways to say the same thing, and virtually none of the ~496 call sites need it.
  *
  * WHY THERE IS NO OUTPUT
  * `(click)` bubbles natively from the inner `<button>` to the host, so a call site's `(click)`
- * keeps working. PrimeNG's `(onClick)` emits a plain `MouseEvent` — not a wrapped `{originalEvent}`
- * — so phase 2's `(onClick)` -> `(click)` rename is payload-identical, not merely close enough.
+ * keeps working with the plain `MouseEvent` payload — no wrapped `{originalEvent}` object.
  *
  * @example
  * <ui-button label="Save" icon="check" type="submit" [loading]="saving()" />
@@ -59,7 +57,7 @@ export class UiButton {
   /** Typed against the generated `IconName` union — an unknown icon is a compile error, not a blank. */
   public readonly icon = input<IconName>();
 
-  /** Trailing glyph. Replaces PrimeNG's `iconPos="right"` (16 sites); there is no `iconPos`. */
+  /** Trailing glyph. Replaces the old `iconPos="right"` (16 sites); there is no `iconPos`. */
   public readonly iconEnd = input<IconName>();
 
   public readonly intent = input<UiButtonIntent>("primary");
@@ -91,9 +89,9 @@ export class UiButton {
   public readonly ariaLabel = input<string>();
 
   /**
-   * PrimeNG's `styleClass` (44 sites). It lands on the INNER `<button>`, because that is where
-   * PrimeNG put it (`[class]="cn(cx('root'), styleClass, ...)"`). Mapping it to the host `class`
-   * instead would look right and silently break layout at every one of those 44 sites.
+   * Extra classes for the button element (44 sites). It lands on the INNER `<button>`, which is
+   * where those call sites lay out against. Mapping it to the host `class` instead would look right
+   * and silently break layout at every one of those 44 sites.
    */
   public readonly buttonClass = input<string>("");
 

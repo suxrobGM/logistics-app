@@ -9,7 +9,7 @@
  *   3. spin             — `animate-spin`, replacing primeicons' spin class (a CSS keyframe, not a glyph).
  *   4. unknown name     — console.error + a VISIBLE error glyph, and NOT a throw: a throw during
  *                          render tears down the view in a zoneless app, and every intermediate state
- *                          of the PrimeNG -> spartan migration must stay drivable in a browser.
+ *                          of an icon-name rename must stay drivable in a browser.
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";

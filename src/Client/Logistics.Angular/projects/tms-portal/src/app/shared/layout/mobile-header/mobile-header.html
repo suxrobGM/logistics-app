@@ -1,8 +1,7 @@
 <header
   class="border-default bg-surface sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 md:hidden"
 >
-  <!-- Hamburger Menu Button. size="lg" rather than the old `styleClass="text-xl"`: ui-button sizes its
-       glyph from the size variant (lg = 1.25rem), which is exactly what the old text-xl gave the primeicons glyph. -->
+  <!-- Hamburger Menu Button. size="lg": ui-button sizes its glyph from the size variant (lg = 1.25rem). -->
   <ui-button
     [icon]="mobileMenuOpen() ? 'x' : 'menu'"
     appearance="text"

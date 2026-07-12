@@ -9,7 +9,7 @@ import {
 } from "@logistics/shared/ui";
 
 /**
- * S7: `ui-dialog` (46 sites) and `ui-collapsible` (the 5 `p-fieldset` sites).
+ * `ui-dialog` and `ui-collapsible`.
  *
  * Every row here exists because a build and a full test run both stay GREEN through the failure it
  * demonstrates. None of these are type errors; all of them are obvious in a browser in five seconds:
@@ -19,9 +19,9 @@ import {
  *      rows are here to be MEASURED, not admired — a 650px dialog that comes out 448px wide is the
  *      single most likely silent failure in this step.
  *
- *   2. THE BACKDROP MUST NOT CLOSE. p-dialog only closes on a mask click when `dismissableMask` is
- *      set, and not one of the 46 call sites sets it. brain's default is the opposite. Click beside
- *      any dialog below: it must stay open, with whatever you typed still in it.
+ *   2. THE BACKDROP MUST NOT CLOSE. No dialog in this app opts into closing on a mask click, but
+ *      brain's default is the opposite. Click beside any dialog below: it must stay open, with
+ *      whatever you typed still in it.
  *
  *   3. (closed) MUST NOT FIRE ON OPEN. 16 call sites reset their form in it. The event log row makes
  *      the ordering visible; the "prefilled" row makes the consequence visible — get it backwards and
@@ -33,14 +33,13 @@ import {
  *      "Edit Customer" and "Danger Zone" must stay inside the box.
  *
  *   5. ESCAPE BELONGS TO THE INNERMOST OVERLAY. A select opened inside a dialog is a SECOND CDK
- *      overlay stacked on the dialog's. PrimeNG's select called stopPropagation() on Escape, so
- *      p-dialog's document listener never saw it; Helm's select does not, so one Escape dismissed the
- *      dropdown AND discarded the dialog behind it — with the half-filled form in it. The "select
- *      inside dialog" row reproduces the trip wizard's "Create a new load" shape. Type in the text
- *      box, open the select, press Escape ONCE: the dropdown closes, the dialog and your text stay.
+ *      overlay stacked on the dialog's. Helm's select does not stop Escape from propagating, so one
+ *      Escape could dismiss the dropdown AND discard the dialog behind it — with the half-filled
+ *      form in it. The "select inside dialog" row reproduces the trip wizard's "Create a new load"
+ *      shape. Type in the text box, open the select, press Escape ONCE: the dropdown closes, the
+ *      dialog and your text stay.
  *
- * Drag any dialog by its header; grab the bottom-right grip to resize. Both are ON BY DEFAULT,
- * because p-dialog's `draggable` and `resizable` both default to true.
+ * Drag any dialog by its header; grab the bottom-right grip to resize. Both are ON BY DEFAULT.
  */
 @Component({
   selector: "app-ui-lab-dialogs",
@@ -59,9 +58,9 @@ export class UiLabDialogsSection {
 
   /**
    * The nested-overlay Escape row. A select opened INSIDE a dialog is a second CDK overlay stacked on
-   * the dialog's, and Escape belongs to it alone. PrimeNG's select stopped the event; Helm's does not,
-   * so one Escape used to dismiss the dropdown AND throw the dialog away with the form still in it.
-   * `nestedText` is here so the data loss is VISIBLE, not just the dialog disappearing.
+   * the dialog's, and Escape belongs to it alone. Helm's select does not stop the event from
+   * propagating, so one Escape could dismiss the dropdown AND throw the dialog away with the form
+   * still in it. `nestedText` is here so the data loss is VISIBLE, not just the dialog disappearing.
    */
   protected readonly nestedOverlay = signal(false);
   protected readonly nestedText = signal("");

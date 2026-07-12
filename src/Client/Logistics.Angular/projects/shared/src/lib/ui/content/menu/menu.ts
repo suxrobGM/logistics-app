@@ -10,10 +10,10 @@ import { Icon } from "../icon/icon";
 import type { UiMenuItem } from "./menu-item";
 
 /**
- * The popup menu. Replaces `<p-menu [popup]="true">` at 19 call sites — every one of them the same
- * row-kebab pattern — and is the only consumer of the Helm dropdown-menu primitive.
+ * The popup menu — the same row-kebab pattern at every call site, and the only consumer of the Helm
+ * dropdown-menu primitive.
  *
- * DROP-IN TRIGGER CONTRACT, deliberately unchanged from PrimeNG:
+ * THE TRIGGER CONTRACT:
  *   <ui-button icon="ellipsis-vertical" (click)="selectedRow.set(row); menu.toggle($event)" />
  *   <ui-menu #menu [items]="actionMenuItems()" />
  *

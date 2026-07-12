@@ -2,10 +2,7 @@
   <ui-typography variant="h2" tag="h2">Buttons</ui-typography>
   <ui-typography variant="body-sm" color="muted">
     <code>ui-button</code>
-    : 8 intents x 4 appearances x 3 sizes. The
-    <code>p-button</code>
-    column that stood beside each cell during the S4 component step is gone — the sweep took all 498
-    call sites, so there is no PrimeNG button left in the workspace to compare against.
+    : 8 intents x 4 appearances x 3 sizes.
   </ui-typography>
 
   <!-- ============================================================================================
@@ -48,17 +45,13 @@
   }
 
   <!-- ============================================================================================
-       THE OPEN DECISION FROM THE S4 COMPONENT STEP, RE-POSED WITHOUT PRIMENG.
+       THE OPEN DECISION: KEEP THE TMS GRADIENT, OR GO FLAT?
 
-       PrimeNG only put `.p-button-primary` on a button whose `severity` was EXPLICITLY set, and the
-       census found exactly ONE such site. So the TMS gradient — which the old preset hung off that
-       class — painted one button, while the ~370 severity-less p-buttons rendered flat. `primary` is
-       `ui-button`'s DEFAULT intent, so the gradient now reaches all of them. That is a real visual
-       change to ~370 buttons and it has not been ruled on.
+       `primary` is `ui-button`'s DEFAULT intent, so the gradient now reaches every primary button.
+       That is a real visual change to ~370 buttons and it has not been ruled on.
 
-       The p-button that used to sit here as the "flat" reference is gone with the sweep. The flat
-       look is reproduced instead by resetting the three `--ui-btn-primary-*` variables to the
-       defaults shared/theme.css already ships (image:none, weight:500) — which is precisely what
+       The flat look is reproduced instead by resetting the three `--ui-btn-primary-*` variables to
+       the defaults shared/theme.css already ships (image:none, weight:500) — which is precisely what
        deleting the `:root` block at the bottom of tms-portal/src/styles.css would do globally.
 
        Left = flat (what ~370 TMS buttons render today). Right = gradient (what ships now).

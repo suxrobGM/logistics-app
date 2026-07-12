@@ -2,10 +2,8 @@
 @if (isHorizontal()) {
   <!-- `empty:hidden` is load-bearing, not tidiness. With no projected label this span still rendered,
        and its `px-3` punched a 1.5rem GAP through the middle of the rule — so a plain `<ui-divider />`
-       drew a broken line, not a continuous one. Nobody noticed at 2 call sites; the 43 bare
-       p-divider elements swept in here would have made it a broken line on 43 pages.
-       (Spelled without the angle bracket on purpose: a literal p-* tag inside a comment is a false
-       positive for every grep-based PrimeNG audit, and has tripped the burndown check before.) -->
+       drew a broken line, not a continuous one. Nobody noticed at 2 call sites; sweeping in the 43
+       dividers with no projected label would have made it a broken line on 43 pages. -->
   <span class="text-subtle-foreground px-3 text-xs empty:hidden">
     <ng-content />
   </span>

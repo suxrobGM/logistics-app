@@ -12,7 +12,7 @@ import { HlmDialogService } from "../ui/primitives/dialog";
 
 /**
  * Semantic icon names for confirmation dialogs. Deliberately *not* icon-library names —
- * this is the seam that lets us swap primeicons for lucide without touching call sites.
+ * this is the seam that lets the icon library change without touching call sites.
  */
 export type ConfirmIcon =
   | "warning"
@@ -71,8 +71,8 @@ const ICONS: Record<ConfirmIcon, IconName> = {
 
 /**
  * `ConfirmSeverity` -> `UiButtonIntent`. Note `warning` -> `warn`: the two vocabularies genuinely
- * differ (`UiButtonIntent` kept PrimeNG's severity spelling), and `"warning"` is not a member of
- * `UiButtonIntent`, so this is a compile error rather than an unstyled button if anyone "fixes" it.
+ * differ, and `"warning"` is not a member of `UiButtonIntent`, so this is a compile error rather
+ * than an unstyled button if anyone "fixes" it.
  *
  * The accept button is SOLID and the reject button OUTLINED (see the template), which is what makes
  * the default pair read as a primary + a secondary action. Hence two tables: an intent-less accept is
@@ -95,7 +95,7 @@ const REJECT_INTENT: Record<ConfirmSeverity, UiButtonIntent> = {
 /**
  * The accept/reject labels used when a call site supplies none. `confirmDelete()` — i.e. most of the
  * ~386 call sites — never supplies any, so these two strings are what the user actually reads on the
- * button they click to delete something. They match what PrimeNG's ConfirmDialog defaulted to.
+ * button they click to delete something.
  */
 const DEFAULT_ACCEPT_LABEL = "Yes";
 const DEFAULT_REJECT_LABEL = "No";
@@ -161,34 +161,17 @@ export class ToastService {
       rejectIcon: options.rejectIcon ? ICONS[options.rejectIcon] : undefined,
       acceptIntent: ACCEPT_INTENT[options.severity ?? "default"],
       rejectIntent: REJECT_INTENT[options.rejectSeverity ?? "default"],
-      // THESE TWO DEFAULTS ARE NOT THE SAME, and the earlier "both default to FALSE, preserving
-      // today's behaviour exactly" was half wrong. Read from primeng-confirmdialog.mjs (21.1.6):
+      // THESE TWO DEFAULTS ARE NOT THE SAME, deliberately.
       //
-      //   closeOnEscape = true;                          <- line 176: an own class field, default TRUE
-      //   dismissableMask;                               <- line 181: declared, never assigned -> undefined
-      //
-      //   [closeOnEscape]="option('closeOnEscape')"      <- line 529
-      //   [dismissableMask]="dismissableMask"            <- line 534, bound DIRECTLY
-      //
-      //   option(name) { const source = this; ... }      <- line 399-406
-      //
-      // `option()` resolves against the COMPONENT (`const source = this`) — never against the
-      // `confirmation` object a `ConfirmationService.confirm({...})` call site passes. So a call site
-      // could not influence `closeOnEscape` at all, and every confirm dialog in the app resolved it to
-      // the class default: TRUE. Escape cancelled a delete confirmation, everywhere, for free.
-      //
-      // `?? false` therefore did not preserve behaviour — it silently removed Escape from all 72
-      // `confirm()` / `confirmDelete()` call sites. This is the migration's own hard-won lesson:
-      // read the library's COMPILED DEFAULTS, not just its template — and never forward a `false`
-      // for an input whose real default is `true`. `ui-dialog` got this right (see dialog.ts:258,
-      // which records `closeOnEscape` default true); the confirm dialog did not.
+      // `closeOnEscape` defaults TRUE: Escape has always cancelled a confirm dialog, everywhere,
+      // and no call site could ever opt out — so defaulting to `false` here would silently remove
+      // Escape from all 72 `confirm()` / `confirmDelete()` call sites.
       //
       // Escape maps to REJECT, never accept (see `UiConfirmDialog.onEscape`), and is guarded by
       // `isTopmostOverlay`, so a confirm stacked over a half-filled `ui-dialog` form dismisses only
-      // itself. Restoring `true` is both parity-correct and safe.
+      // itself.
       closeOnEscape: options.closeOnEscape ?? true,
-      // `dismissableMask` genuinely WAS undefined -> falsy, and is bound directly rather than through
-      // `option()`. So `?? false` is correct here: the backdrop never dismissed a confirm.
+      // The backdrop, by contrast, has never dismissed a confirm — so `?? false` is correct here.
       dismissableMask: options.dismissableMask ?? false,
     };
 

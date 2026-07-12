@@ -110,8 +110,8 @@ describe("ui-spinner", () => {
   });
 
   /**
-   * 50 of 63 call sites pass NOTHING, so this default IS the spinner in fifty places. PrimeNG's
-   * `.p-progressspinner` is 100px square; changing it reflows all fifty.
+   * 50 of 63 call sites pass NOTHING, so this default IS the spinner in fifty places; changing it
+   * reflows all fifty.
    */
   it("defaults to p-progress-spinner's 100px box", () => {
     const spinner = TestBed.createComponent(Spinner);
@@ -169,7 +169,7 @@ describe("ui-avatar", () => {
     expect(el().className).toContain("rounded-full");
   });
 
-  it("maps PrimeNG's three sizes to 2 / 3 / 4rem", () => {
+  it("maps the three named sizes to 2 / 3 / 4rem", () => {
     expect(el().className).toContain("size-8");
     host.size.set("large");
     fixture.detectChanges();

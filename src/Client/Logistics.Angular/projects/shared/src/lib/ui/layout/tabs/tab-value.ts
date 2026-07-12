@@ -1,4 +1,4 @@
-/** What a call site may bind to `<ui-tabs [value]>`. PrimeNG allowed either; five sites bind numbers. */
+/** What a call site may bind to `<ui-tabs [value]>` — both are accepted because five sites bind numbers. */
 export type UiTabValue = string | number;
 
 /**

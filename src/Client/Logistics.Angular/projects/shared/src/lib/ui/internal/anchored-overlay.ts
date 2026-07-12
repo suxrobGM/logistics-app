@@ -8,9 +8,9 @@ import { DestroyRef, inject, signal, ViewContainerRef, type TemplateRef } from "
  * `toggle(event)` / `hide()`.
  *
  * INTERNAL. Not exported from `@logistics/shared/ui` — it exists only so `ui-menu` and `ui-popover`
- * share ONE implementation of "open here, and definitely close again". Both replace a PrimeNG
- * component whose call sites drive it through a template ref (`<ui-menu #menu />` plus
- * `menu.toggle($event)` from a *sibling* button), so neither can use the CDK/brain trigger
+ * share ONE implementation of "open here, and definitely close again". Both are driven by call sites
+ * through a template ref (`<ui-menu #menu />` plus `menu.toggle($event)` from a *sibling* button), so
+ * neither can use the CDK/brain trigger
  * directives: those anchor their overlay to their OWN host element, and measure outside-clicks
  * against it. Anchoring to the event's `currentTarget` is the whole point of this class.
  *
@@ -81,7 +81,7 @@ export class AnchoredOverlay {
 
   /**
    * Put focus back where it came from after Escape — otherwise it falls to <body> and the user's tab
-   * position resets, which PrimeNG did not do.
+   * position resets.
    *
    * The anchor is usually `<ui-button>`, a WRAPPER around the real `<button>` (the click listener is
    * bound to the component element, so that is what `event.currentTarget` hands us). A custom element

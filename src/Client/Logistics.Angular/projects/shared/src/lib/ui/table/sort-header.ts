@@ -14,9 +14,8 @@ import { UiTableState } from "./table-state";
  * The field is a static attribute (`uiSortHeader="Name"`), which is how all ~50 call sites use it:
  * sort fields are column names, not expressions.
  *
- * ⚠ **It renders its own arrow.** PrimeNG's came from `<p-sortIcon>` and the `p-datatable-*`
- * classes that die with the preset — and a sort header with no arrow passes every test and every
- * code review while looking broken to every user.
+ * ⚠ **It renders its own arrow.** Nothing else supplies one — and a sort header with no arrow
+ * passes every test and every code review while looking broken to every user.
  *
  * @example
  * <th uiSortHeader="Name">Name</th>

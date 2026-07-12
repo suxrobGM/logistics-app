@@ -10,10 +10,9 @@
     @for (action of actions; track action.route) {
       <ui-grid [size]="{ xs: 12, md: 4 }">
         <!-- Deliberately NOT a ui-button. ui-button is filled by `label` + `icon`, and this is a
-             clickable CARD: an icon medallion, a title and a description, laid out by itself. It was
-             only ever a PrimeNG button because that one had an ng-content. The classes below are the
-             secondary/outlined cell of ui-button's own cva plus the old styleClass, so it still
-             looks like the button it used to be. -->
+             clickable CARD: an icon medallion, a title and a description, laid out by itself — free-
+             form content ui-button's slots cannot express. The classes below are the
+             secondary/outlined cell of ui-button's own cva, so it still looks like a button. -->
         <button
           type="button"
           class="border-strong text-subtle-foreground hover:bg-secondary hover:text-foreground flex h-auto w-full cursor-pointer items-center gap-3 rounded-md border p-4 text-left transition-colors"

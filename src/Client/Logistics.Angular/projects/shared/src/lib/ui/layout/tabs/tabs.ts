@@ -8,7 +8,7 @@ import { tabKey, type UiTabValue } from "./tab-value";
  * Tabs. Replaces `<p-tabs>` at 7 call sites (31 tabs / 31 panels).
  *
  * The five-element shape (`ui-tabs` / `ui-tab-list` / `ui-tab` / `ui-tab-panels` / `ui-tab-panel`)
- * mirrors PrimeNG's, so every call site is a tag rename with `[value]` left alone.
+ * mirrors `<p-tabs>`'s, so every call site is a tag rename with `[value]` left alone.
  *
  * THE NUMBER/STRING TRAP — why `value` is normalised rather than forwarded.
  * `BrnTabs` selects by strict identity against each trigger's key (`$activeTab() === triggerFor()`),
@@ -22,7 +22,7 @@ import { tabKey, type UiTabValue } from "./tab-value";
  * `if (typeof index === "number") this.activeTab.set(index)`. Emit a string there and the tab never
  * changes, again silently. So `valueChange` re-emits in the caller's own type.
  *
- * CONTROLLED **AND** UNCONTROLLED, which is what PrimeNG did.
+ * CONTROLLED **AND** UNCONTROLLED — both call-site shapes must keep working.
  * Two call sites (`accident-detail`, `mcp-integration-guide`) pass a static `value` and bind NO
  * `(valueChange)`; their tabs must still switch on click. So `BrnTabs` owns the active tab and `value`
  * only *seeds* it: the sync effect below depends solely on `value()`, so a user click — which moves

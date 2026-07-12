@@ -8,7 +8,7 @@ export type UiCountBadgeSize = "small" | "normal";
  * The count pill. Replaces `<p-badge>` (8 sites) and backs `<ui-overlay-badge>`.
  *
  * =================================================================================================
- * WHY THIS IS NOT `ui-badge`. THEY ARE DIFFERENT COMPONENTS IN PrimeNG AND THEY LOOK DIFFERENT.
+ * WHY THIS IS NOT `ui-badge`. THEY ARE STRUCTURALLY DIFFERENT COMPONENTS AND THEY LOOK DIFFERENT.
  * =================================================================================================
  * `<p-badge>` and `<p-tag>` share a severity vocabulary and nothing else. They are two token blocks:
  *

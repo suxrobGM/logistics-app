@@ -15,7 +15,7 @@
  * away my half-filled form". Under PrimeNG that distinction came for free, because PrimeNG's own
  * select stops the event:
  *
- *     onEscapeKey(event) { ... event.preventDefault(); event.stopPropagation(); }   // primeng-select.mjs:1512
+ *     onEscapeKey(event) { ... event.preventDefault(); event.stopPropagation(); }
  *
  * so `p-dialog`'s document listener NEVER SAW the escape that dismissed a dropdown. Helm/brain's
  * overlays do not stop propagation — they close themselves through CDK's keyboard dispatcher and let

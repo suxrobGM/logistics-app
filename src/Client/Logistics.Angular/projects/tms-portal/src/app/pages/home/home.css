@@ -6,44 +6,31 @@
 /* -------------------------------------------------------------------------------------------------
  * MAKE THE CARD FILL ITS GRIDSTER PANEL AND SCROLL ITS CONTENT.
  *
- * This used to be five `::ng-deep` rules keyed to `p-card` / `.p-card` / `.p-card-body` /
- * `.p-card-content`. Every one of them was keyed to a PrimeNG name, so they would have stopped
- * matching the moment `<p-card>` became `<ui-card>` — with no error and no failing test, just
- * dashboard panels that quietly stopped filling their tiles and stopped scrolling.
- *
- * They are gone. `ui-card` exposes the same four boxes as CUSTOM PROPERTIES, and custom properties
- * inherit straight THROUGH component boundaries — so setting them here on `.dashboard-panel` reaches
- * the `<ui-card>` nested inside `<app-stat-card>` / `<app-attention-panel>` without piercing anything
- * and without those children having to opt in. `::ng-deep` is deprecated precisely because it does
- * what these rules did; inheritance is the supported mechanism, and it is also the simpler one.
- *
- * The sixth rule, `.dashboard-panel > p-card { display: block }`, is deliberately NOT ported: `.p-card`
- * sat on p-card's own host, so `.dashboard-panel .p-card` (0,2,0) selected the same element and beat
- * `.dashboard-panel > p-card` (0,1,1) on specificity. `display: block` never applied — the card has
- * always been `display: flex`. Reproducing it would introduce a bug, not preserve one.
+ * `ui-card` exposes the same four boxes as CUSTOM PROPERTIES, and custom properties inherit straight
+ * THROUGH component boundaries — so setting them here on `.dashboard-panel` reaches the `<ui-card>`
+ * nested inside `<app-stat-card>` / `<app-attention-panel>` without piercing anything and without
+ * those children having to opt in. `::ng-deep` is deprecated precisely because it pierces
+ * encapsulation that way; inheritance is the supported mechanism, and it is also the simpler one.
  * ----------------------------------------------------------------------------------------------- */
 .dashboard-panel {
   border-radius: var(--radius-sm);
   overflow: hidden;
 
-  /* was `.p-card { display:flex; flex-direction:column; height:100% }` — ui-card is already a
-     flex column, so only the height needs saying. */
+  /* ui-card is already a flex column, so only the height needs saying here. */
   --ui-card-h: 100%;
 
-  /* was `.p-card-body { flex:1 1 auto; display:flex; flex-direction:column; min-height:0 }` */
   --ui-card-body-flex: 1 1 auto;
   --ui-card-body-min-h: 0;
 
-  /* was `.p-card-content { flex:1 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain }`
-     — content scrolls inside the card body, and scroll chaining to the page is contained. */
+  /* Content scrolls inside the card body, and scroll chaining to the page is contained. */
   --ui-card-content-flex: 1 1 auto;
   --ui-card-content-min-h: 0;
   --ui-card-content-overflow: auto;
   --ui-card-content-overscroll: contain;
 }
 
-/* was `.dashboard-panel app-stat-card .p-card-body { padding: 0.625rem 1rem }` — a tighter box to fit
-   the shorter stat row. Overrides the 1.25rem default that shared/theme.css sets on :root. */
+/* A tighter box to fit the shorter stat row. Overrides the 1.25rem default that shared/theme.css
+   sets on :root. */
 .dashboard-panel app-stat-card {
   --ui-card-body-padding: 0.625rem 1rem;
 }
@@ -60,8 +47,7 @@
 
   /* These two DO still need `::ng-deep`: unlike the card rules above, they reach into
      `<app-stat-card>`'s own template to shrink the value text and close the label/value gap, and
-     there is no custom property to inherit. They are stat-card internals and have nothing to do with
-     PrimeNG — carried across untouched. */
+     there is no custom property to inherit. They are stat-card internals. */
   ::ng-deep .dashboard-panel app-stat-card .stat-icon-ring + div > :first-child {
     margin-bottom: 0;
   }

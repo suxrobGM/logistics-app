@@ -11,9 +11,6 @@ import { HlmSelectScrollUp } from "./lib/hlm-select-scroll-up";
 import { HlmSelectSeparator } from "./lib/hlm-select-separator";
 import { HlmSelectTrigger } from "./lib/hlm-select-trigger";
 import { HlmSelectValue } from "./lib/hlm-select-value";
-import { HlmSelectValueTemplate } from "./lib/hlm-select-value-template";
-import { HlmSelectValues } from "./lib/hlm-select-values";
-import { HlmSelectValuesContent } from "./lib/hlm-select-values-content";
 
 export * from "./lib/hlm-select";
 export * from "./lib/hlm-select-content";
@@ -28,9 +25,6 @@ export * from "./lib/hlm-select-scroll-up";
 export * from "./lib/hlm-select-separator";
 export * from "./lib/hlm-select-trigger";
 export * from "./lib/hlm-select-value";
-export * from "./lib/hlm-select-value-template";
-export * from "./lib/hlm-select-values";
-export * from "./lib/hlm-select-values-content";
 
 export const HlmSelectImports = [
   HlmSelect,
@@ -46,7 +40,4 @@ export const HlmSelectImports = [
   HlmSelectSeparator,
   HlmSelectTrigger,
   HlmSelectValue,
-  HlmSelectValues,
-  HlmSelectValuesContent,
-  HlmSelectValueTemplate,
 ] as const;

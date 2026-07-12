@@ -29,9 +29,6 @@
             CLIENT-side table: the sort field is resolved off the ROW OBJECT, so it must be the
             camelCase DTO property (`schedule.truckNumber` below), not the PascalCase server field
             name. Lazy tables are the opposite — they forward the string to the API as `OrderBy`.
-            These two read "TruckNumber"/"NextServiceDate" since the original <p-table>, which
-            resolved them to `undefined` on every row: the header flipped to aria-sort="ascending"
-            but the rows never moved.
           -->
           <th uiSortHeader="truckNumber">Truck</th>
           <th>Service Type</th>

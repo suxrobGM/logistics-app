@@ -111,7 +111,7 @@ describe("UiPasswordField — a FormValueControl-only wrapper", () => {
      * `disabled(p.truckId, ...)` in the expense forms, tax-rates, timesheets, ...).
      *
      * It used to be covered ONLY by the legacy Reactive-Forms host ("propagates disabled state from
-     * the control"). That host was deleted with PrimeNG, and the assertion went with it — leaving the
+     * the control"). That host was deleted, and the assertion went with it — leaving the
      * whole `disabled` dimension of all 10 wrappers untested. This is its Signal Forms twin.
      */
     it("propagates the schema's disabled rule to the control — and reacts when it flips", async () => {

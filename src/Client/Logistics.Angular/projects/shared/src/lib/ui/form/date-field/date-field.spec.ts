@@ -1,6 +1,6 @@
 /**
- * Proves the wrapper contract that the whole PrimeNG -> spartan migration rests on, for the
- * date-picker wrapper.
+ * Proves the wrapper contract that the whole `ui-*-field` layer rests on, for the date-picker
+ * wrapper.
  *
  * `UiDateField` implements ONLY `FormValueControl<Date | null>`. It must therefore work:
  *   1. under Signal Forms `[formField]`,
@@ -117,7 +117,7 @@ describe("UiDateField — a FormValueControl-only wrapper", () => {
      * `disabled(p.truckId, ...)` in the expense forms, tax-rates, timesheets, ...).
      *
      * It used to be covered ONLY by the legacy Reactive-Forms host ("propagates disabled state from
-     * the control"). That host was deleted with PrimeNG, and the assertion went with it — leaving the
+     * the control"). That host was deleted, and the assertion went with it — leaving the
      * whole `disabled` dimension of all 10 wrappers untested. This is its Signal Forms twin.
      */
     it("propagates the schema's disabled rule to the control — and reacts when it flips", async () => {

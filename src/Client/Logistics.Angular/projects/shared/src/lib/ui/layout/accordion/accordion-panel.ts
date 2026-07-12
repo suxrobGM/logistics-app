@@ -4,11 +4,11 @@ import { ACCORDION_ITEM_CLASSES } from "../../primitives/accordion";
 import { classes } from "../../primitives/utils";
 
 /**
- * One expandable panel. Replaces `<p-accordion-panel>`.
+ * One expandable panel.
  *
- * PrimeNG's `[value]` key is gone: brain tracks open state per item instance (`openItem` / `closeItem`
- * through DI), so an author-supplied identity is redundant. Bind `[isOpened]` to open a panel
- * initially and `(openedChange)` to observe it.
+ * There is deliberately no author-supplied `[value]` key: brain tracks open state per item instance
+ * (`openItem` / `closeItem` through DI), so an identity input would be redundant. Bind `[isOpened]`
+ * to open a panel initially and `(openedChange)` to observe it.
  */
 @Component({
   selector: "ui-accordion-panel",

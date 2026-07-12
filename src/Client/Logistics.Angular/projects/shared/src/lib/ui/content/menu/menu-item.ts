@@ -1,14 +1,13 @@
 import type { IconName } from "../../icons/icons";
 
 /**
- * A single entry in a `<ui-menu>`. Repo-owned replacement for PrimeNG's `MenuItem`
- * (`primeng/api`), which was imported by 18 feature files.
+ * A single entry in a `<ui-menu>`.
  *
- * TWO DELIBERATE DIVERGENCES FROM `MenuItem`, both of which turn a silent runtime failure into a
- * compile error:
+ * TWO DELIBERATE DIVERGENCES FROM the previous `MenuItem` contract, both of which turn a silent
+ * runtime failure into a compile error:
  *
- *   1. `icon` is an {@link IconName}, not a `pi pi-*` CSS class string. PrimeNG rendered
- *      `icon: "pi pi-eyeee"` as an empty `<span>`; here a name outside the union does not compile.
+ *   1. `icon` is an {@link IconName}, not a CSS class string. A name outside the union does not
+ *      compile — the old contract rendered an unknown icon name as an empty `<span>` instead.
  *      It also feeds `<ui-icon [name]>`, so the glyph is registered by the icon generator
  *      (`icon: "eye"` is matched by its `RE_ICON_PROP` scan) instead of relying on a global CSS font.
  *

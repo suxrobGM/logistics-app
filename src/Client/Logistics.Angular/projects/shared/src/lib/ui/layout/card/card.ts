@@ -8,9 +8,8 @@ import { classes } from "../../primitives/utils";
  * =================================================================================================
  * IT IS NOT "PLAIN CONTENT PROJECTION". THERE ARE 83 TEMPLATE SLOTS.
  * =================================================================================================
- * PrimeNG 21 retired `pTemplate="header"` and `<p-header>` in favour of plain template refs, so a
- * grep for the old spellings finds nothing and the card looks like a content-projection-only box. It
- * is not. Across the repo:
+ * The old `pTemplate="header"` / `<p-header>` spelling is gone from this codebase, so a grep for it
+ * finds nothing and the card looks like a content-projection-only box. It is not. Across the repo:
  *
  *     <ng-template #header>     71        <ng-template #subtitle>    4
  *     <ng-template #title>       8        <ng-template #footer>      3
@@ -21,7 +20,7 @@ import { classes } from "../../primitives/utils";
  * cards that pages lay out against — where template refs make the sweep a pure tag rename. The
  * old-fashioned API buys a mechanical, reviewable migration; it can be modernised later, alone.
  *
- * THE DOM IS p-card's, NODE FOR NODE (primeng-card.mjs):
+ * THE DOM IS p-card's, NODE FOR NODE:
  *
  *     <ui-card>                    ← the root. `.p-card` lived on p-card's host too, which is why
  *       <div card-header>          ← all 86 `class=` call sites lay out against THIS box.
@@ -69,7 +68,7 @@ export class Card {
    * ===============================================================================================
    * p-card declares every one of these five queries EXPLICITLY non-descending:
    *
-   *     @ContentChild('header', { descendants: false }) headerTemplate;      — primeng-card.mjs
+   *     @ContentChild('header', { descendants: false }) headerTemplate;
    *     @ContentChild('title',  { descendants: false }) titleTemplate;
    *     ... and the same for subtitle / content / footer
    *

@@ -1,6 +1,6 @@
-<!-- The tooltip is a TEMPLATE, not an HTML string. It used to be assembled by hand and injected with
-     PrimeNG's [escape]="false" (which sets innerHTML), with `line1` / `city` / `state` interpolated
-     straight into it — so any address field carrying markup was executed. These bindings escape. -->
+<!-- The tooltip is a TEMPLATE, not an HTML string: `line1` / `city` / `state` come from tenant-supplied
+     address data, and these bindings escape it — rendering it as raw innerHTML would let a crafted
+     address field execute markup. -->
 <ng-template #routeTooltip>
   <div class="flex items-start gap-3">
     <div>

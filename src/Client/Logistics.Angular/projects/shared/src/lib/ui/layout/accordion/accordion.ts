@@ -4,15 +4,14 @@ import { ACCORDION_ROOT_CLASSES } from "../../primitives/accordion";
 import { classes } from "../../primitives/utils";
 
 /**
- * Accordion. Replaces `<p-accordion>` at 3 call sites.
+ * Accordion, with 3 call sites.
  *
- * ONE CHILD API, not two. PrimeNG accepted both element children and `<ng-template #header>` /
- * `#content`, and our three sites were split across both. Rather than carry a dual-API component
- * forever, the two `ng-template` sites (the "Danger Zone" panels in the customer and employee edit
- * dialogs) were hand-converted to element children. One shape, no branching.
+ * ONE CHILD API, deliberately: element children only, no `<ng-template #header>` / `#content`
+ * slots. Rather than carry a dual-API component forever, the two template-driven sites (the
+ * "Danger Zone" panels in the customer and employee edit dialogs) were hand-converted to element
+ * children. One shape, no branching.
  *
- * `type` is `"single"` (default) or `"multiple"` — the FAQ's old `[multiple]="true"` becomes
- * `type="multiple"`.
+ * `type` is `"single"` (default) or `"multiple"`.
  *
  * Hosts brain's `BrnAccordion` rather than `HlmAccordion`, because a Helm host directive would drag
  * the private primitive into the public API (NG3001); Helm's classes come across as a const instead.

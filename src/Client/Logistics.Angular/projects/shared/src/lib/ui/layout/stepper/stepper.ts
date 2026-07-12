@@ -10,8 +10,8 @@ import { Component, Directive, inject, input, output, TemplateRef } from "@angul
  * A template, not plain projection, and that is deliberate. Content passed through `<ng-content>` is
  * instantiated with the PARENT view whether or not the slot is rendered, so every step of every wizard
  * would be constructed up front — `trip-wizard` step 2 alone is a full loads table, and
- * `accident-add`'s steps are forms that would start validating before they were ever shown. PrimeNG's
- * `<ng-template #content>` was lazy; this keeps it lazy.
+ * `accident-add`'s steps are forms that would start validating before they were ever shown. The
+ * template keeps every step lazy.
  */
 @Directive({ selector: "[uiStepContent]" })
 export class UiStepContent {
@@ -19,15 +19,15 @@ export class UiStepContent {
 }
 
 /**
- * A linear wizard. Replaces `<p-stepper>` at 3 call sites (trip-wizard, accident-add, accident-edit),
- * all of which are `[linear]="true"` with numeric step values.
+ * A linear wizard, with 3 call sites (trip-wizard, accident-add, accident-edit) — all of them
+ * `[linear]="true"` with numeric step values.
  *
  * Hand-rolled: spartan has no stepper. It is deliberately dumb — it renders headers and swaps panels,
  * and that is all. Every call site already drives navigation from its own Back/Next buttons through
  * its own store, so this owns no navigation logic of its own.
  *
- * `linear` blocks only FORWARD jumps from the header (`value > active`), exactly as PrimeNG did.
- * Going back to a completed step stays allowed, which is what the wizards' Back buttons rely on.
+ * `linear` blocks only FORWARD jumps from the header (`value > active`). Going back to a completed
+ * step stays allowed, which is what the wizards' Back buttons rely on.
  */
 @Component({
   selector: "ui-stepper",

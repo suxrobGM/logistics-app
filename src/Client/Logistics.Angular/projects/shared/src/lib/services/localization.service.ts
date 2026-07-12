@@ -109,11 +109,11 @@ export class LocalizationService {
   }
 
   /**
-   * Gets the PrimeNG p-datepicker date format string. PrimeNG uses a different
-   * syntax to the Angular date pipe (lowercase, single chars).
-   * @returns PrimeNG-compatible pattern
+   * Gets the date-picker format string, in the syntax `ui-date-field`'s `dateFormat` input
+   * expects — which differs from the Angular date pipe (lowercase, single chars).
+   * @returns picker-compatible pattern
    */
-  getPrimeNgDateFormat(): string {
+  getPickerDateFormat(): string {
     const formats: Record<string, string> = {
       us: "mm/dd/yy",
       european: "dd/mm/yy",

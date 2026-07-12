@@ -15,7 +15,8 @@
 
 /**
  * Focusable descendants, in the order a wrapper is likely to render them. `[tabindex]` catches
- * PrimeNG widgets (p-multiselect, p-select) whose focus target is a `div`, not an `input`.
+ * widgets like `ui-select-field` / `ui-multiselect-field`, whose focus target is a `div`
+ * (Helm's `hlm-select-trigger`), not an `input`.
  */
 const FOCUSABLE = 'input:not([type="hidden"]), textarea, select, [tabindex]:not([tabindex="-1"])';
 

@@ -123,9 +123,8 @@
   </ui-typography>
   <ui-typography variant="body-sm" color="muted">
     All 57 rows, no paginator. The body must SCROLL INSIDE the 300px box with the header pinned to
-    the top of it — it must not simply grow and push this page down. The old PrimeNG table provided
-    both the scroll container and the sticky thead silently, and a table that grows instead of
-    scrolling looks entirely fine in a screenshot. Scroll it and watch the header stay.
+    the top of it — it must not simply grow and push this page down. A table that grows instead of
+    scrolling looks entirely fine in a screenshot, so scroll it and watch the header stay.
   </ui-typography>
   <div data-lab="table-scroll" class="border-default mt-2 rounded-md border">
     <ui-data-table [value]="shipments" dataKey="id" [scrollable]="true" scrollHeight="300px">

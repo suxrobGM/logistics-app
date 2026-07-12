@@ -1,11 +1,12 @@
 /**
  * CHARACTERIZATION SPEC for `<ui-data-table>`.
  *
- * This file is the CONTRACT for the table engine. It passes today against the PrimeNG `<p-table>`
- * internals, and it must keep passing — UNCHANGED — once those internals are hand-rolled.
+ * This file is the CONTRACT for the table engine. It was recorded against the original table
+ * internals and must keep passing — UNCHANGED — against the hand-rolled ones.
  *
  * Everything asserted here is behaviour that 82 templates and 33 server-paged list pages depend on
- * SILENTLY. When `primeng` is uninstalled it becomes unrecoverable, so it is written down here.
+ * SILENTLY. The original implementation is gone, so this record is the only place the behaviour
+ * is written down.
  *
  * READ THIS BEFORE "FIXING" ANYTHING BELOW. These tests record what the table ACTUALLY DOES today,
  * not what it ought to do. Several recorded behaviours are surprising — the missing `sortOrder` on
@@ -28,16 +29,8 @@
  *   • Selection checkboxes render a real `<input type="checkbox">`: one in `thead` (select-all),
  *     one per `tbody tr`.
  *
- * ONE EDIT IS PERMITTED to this file during the swap, and NO others:
- *   1. Renaming the `<p-tableCheckbox>` / `<p-tableHeaderCheckbox>` selectors if the row-directive
- *      module renames them.
- *
- * (A second edit used to be permitted here — deleting a `TableService` workaround provider on
- * `HostSelection`, which existed only because `UiDataTable` did not provide `TableService`. That is
- * DONE: `UiDataTable` provides it now, and the test "provides TableService, so projected row
- * checkboxes construct instead of throwing NG0201" below pins that it keeps doing so.)
- *
- * Every assertion must still hold after that rename.
+ * A rename of `UiTableCheckbox` / `UiTableHeaderCheckbox` (or their selectors) must be mirrored
+ * here — every assertion below still has to hold.
  * ─────────────────────────────────────────────────────────────────────────────────────────────────
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
@@ -154,9 +147,9 @@ class HostClient {
  *
  * This host declares NO providers on purpose. The projected `#header` / `#body` templates are
  * declared in the CONSUMER, so everything inside them does DI against the CONSUMER's injector —
- * and `<p-tableCheckbox>` / `<p-tableHeaderCheckbox>` / `[pSelectableRow]` inject BOTH `Table` and
- * `TableService`. `UiDataTable` must therefore re-expose both, and this host is what proves it: if
- * either provider goes missing, every test below dies at construction with NG0201.
+ * and `UiTableCheckbox` / `UiTableHeaderCheckbox` / `UiSelectableRow` all inject `UiTableState`.
+ * `UiDataTable` must therefore provide it on its own node, and this host is what proves it: if
+ * the provider goes missing, every test below dies at construction with NG0201.
  */
 @Component({
   selector: "ui-host-selection-table",
@@ -445,14 +438,13 @@ describe("<ui-data-table> — the table engine contract", () => {
 
   describe("selection", () => {
     it("provides TableService, so projected row checkboxes construct instead of throwing NG0201", async () => {
-      // ⚠ THE OUTAGE TEST. `<ui-data-table>` must re-provide BOTH `Table` and `TableService` on its
-      // own host node. The projected `#header` / `#body` templates are declared in the consumer, so
-      // the row directives inside them resolve DI against the CONSUMER's injector, where neither is
-      // visible: `TableService` is `@Injectable()` with no `providedIn` and lives only in `Table`'s
-      // node providers. Drop the `TableService` provider and `TableCheckbox` /
-      // `TableHeaderCheckbox` / `SelectableRow` throw NG0201 at construction — which does not just
-      // blank the checkbox, it takes the WHOLE table's render down. `/loads` shipped exactly that:
-      // a summary card reading "195 Total Loads" above an empty table reading "0 of 0".
+      // ⚠ THE OUTAGE TEST. `<ui-data-table>` must provide `UiTableState` on its own host node. The
+      // projected `#header` / `#body` templates are declared in the consumer, so the row directives
+      // inside them resolve DI against the CONSUMER's injector, where `UiTableState` is not visible
+      // otherwise. Drop that provider and `TableCheckbox` / `TableHeaderCheckbox` / `SelectableRow`
+      // throw NG0201 at construction — which does not just blank the checkbox, it takes the WHOLE
+      // table's render down. `/loads` shipped exactly that: a summary card reading "195 Total Loads"
+      // above an empty table reading "0 of 0".
       //
       // So this asserts on the DOM, not on the injector: the checkboxes must really be there, and
       // the rows around them must really have rendered.
@@ -631,16 +623,16 @@ describe("<ui-data-table> — the table engine contract", () => {
     // engine test should state its inputs.
     //
     // It used to have to, and that was a live outage. `first` and `totalRecords` were
-    // `input<number | undefined>(undefined)` and were forwarded unconditionally, so Angular wrote
-    // `undefined` over `<p-table>`'s own `_first = 0` / `_totalRecords = 0` on the first
-    // change-detection pass: the row slice degenerated to `slice(undefined, NaN)` → NO ROWS, and
-    // the paginator computed 0 pages → NO PAGE BUTTONS. All 14 client-paged templates in the app
-    // bind NEITHER, so all 14 rendered empty. FIXED: `first = input<number>(0)`, and the template
-    // binds `[totalRecords]="totalRecords() ?? value().length"`.
+    // `input<number | undefined>(undefined)` and were forwarded unconditionally, so an unbound
+    // consumer's `first` stayed `undefined` all the way through: the row slice degenerated to
+    // `slice(undefined, NaN)` → NO ROWS, and the paginator computed 0 pages → NO PAGE BUTTONS. All
+    // 14 client-paged templates in the app bind NEITHER, so all 14 rendered empty. FIXED:
+    // `first = input<number>(0)`, and the template binds
+    // `[totalRecords]="totalRecords() ?? value().length"`.
     //
     // ⚠ `sortOrder` IS STILL `input<number | undefined>(undefined)`, still forwarded
-    // unconditionally, still clobbering `<p-table>`'s `_sortOrder = 1`. That is DELIBERATE. Do not
-    // "finish the job" in S11 — it is both harmless and pinned:
+    // unconditionally. That is DELIBERATE. Do not "finish the job" — it is both harmless and
+    // pinned:
     //
     //   • Harmless, because the initial lazy event carries no `sortField` either, and
     //     `formatSortField()` returns "" for an empty `sortField` REGARDLESS of the order. So the
@@ -648,7 +640,7 @@ describe("<ui-data-table> — the table engine contract", () => {
     //     from each store's `defaultSortField` ("-CreatedAt", "Email", …), which bakes its own
     //     direction into the string.
     //   • Pinned, because "the initial lazy request carries NO sort at all" above asserts
-    //     `sortOrder === undefined`. A re-implementation that emitted `<p-table>`'s default `1`
+    //     `sortOrder === undefined`. A re-implementation that emitted a nominal default of `1`
     //     would break that assertion and would silently change what `createListStore` writes into
     //     `state.sortOrder`.
 

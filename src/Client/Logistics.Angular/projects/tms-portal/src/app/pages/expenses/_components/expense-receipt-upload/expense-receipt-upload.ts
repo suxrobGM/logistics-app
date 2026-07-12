@@ -38,7 +38,7 @@ export class ExpenseReceiptUpload {
     }
   }
 
-  /** A file the accept/size guards turned away — previously PrimeNG swallowed this silently. */
+  /** A file the accept/size guards turned away; surfaces a toast so the rejection isn't silent. */
   protected onRejected(reason: string): void {
     this.toast.showError(reason);
   }

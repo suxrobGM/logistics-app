@@ -10,15 +10,11 @@ import {
 /**
  * `ui-button`, every cell.
  *
- * The S4 component step rendered a `<p-button>` beside each of these so a human could see which of
- * the 32 intent x appearance cells had moved. The S4 SWEEP then took all 498 call sites, so there is
- * no PrimeNG button left in the workspace: the comparison column is gone, and with it the
- * `LabAppearance` / `LabSize` shapes that existed only to translate our vocabulary into PrimeNG's
- * (`outlined`/`text`/`link` booleans, `small`/`large`). The matrix now iterates the real unions, so
- * adding an intent or an appearance to the type makes it appear here with no edit to this file.
+ * The matrix iterates the real `UiButtonIntent` / `UiButtonAppearance` unions, so adding an intent
+ * or an appearance to the type makes it appear here with no edit to this file.
  *
  * What survives is the part that is still an open question: the TMS primary gradient. The template
- * poses it with two `ui-button`s and a scoped `--ui-btn-primary-*` reset instead of a p-button.
+ * poses it with two `ui-button`s and a scoped `--ui-btn-primary-*` reset.
  */
 @Component({
   selector: "app-ui-lab-buttons",

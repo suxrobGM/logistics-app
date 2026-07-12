@@ -9,10 +9,9 @@
  * =================================================================================================
  * WHY THERE IS NO `neutral` AND NO `primary` (yet) — read before adding one
  * =================================================================================================
- * These six ARE PrimeNG's `<p-tag>` vocabulary, exactly:
+ * These six ARE `<p-tag>`'s vocabulary, exactly:
  *
  *     severity: 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | undefined | null
- *                                                            — primeng/types/primeng-tag.d.ts
  *
  * Until the S5 template sweep lands, ~60 producers still feed `<p-tag [severity]="...">`. That input
  * is NOT loosely typed, so a union member p-tag does not know (`neutral`, `primary`) is not merely
@@ -20,7 +19,7 @@
  * Widening a union is backwards-compatible for producers, so `primary` can be added the moment the
  * last `<p-tag>` is gone. Adding it NOW is a build break, not a head start.
  *
- * `neutral` is a different mistake: it has no `<p-tag>` colour at all. The grey chip PrimeNG paints
+ * `neutral` is a different mistake: it has no `<p-tag>` colour at all. The grey chip `<p-tag>` paints
  * is `secondary` ({surface.100}/{surface.600}), which this union already has. Two names for one
  * colour is precisely the drift this type exists to end.
  *

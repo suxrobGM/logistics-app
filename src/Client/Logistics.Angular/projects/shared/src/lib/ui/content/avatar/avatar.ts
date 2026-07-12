@@ -7,15 +7,14 @@ export type UiAvatarSize = "normal" | "large" | "xlarge";
  * The initials avatar. Replaces `<p-avatar>` at all 4 call sites.
  *
  * ALL FOUR ARE INITIALS-ONLY CIRCLES — `[label]` + `shape="circle"`, never an image, never an icon.
- * So this component does one thing, and `shape` is not an input: a non-circular avatar has no caller
- * and PrimeNG's square default was never used.
+ * So this component does one thing, and `shape` is not an input: a non-circular avatar has no caller.
  *
  * WHY NOT `hlm-avatar` (we generated it, then deleted it)
  * HlmAvatar is `BrnAvatar` + image-with-fallback machinery: it exists to swap a broken `<img>` for a
  * fallback, and projects both through `<ng-content select>`. With no images anywhere, all of that is
- * dead weight around a `<div>` with two letters in it. Its sizes also disagree with PrimeNG's
+ * dead weight around a `<div>` with two letters in it. Its sizes also disagree with this component's
  * (`sm/default/lg` = 1.5/2/2.5rem, against normal/large/xlarge = 2/3/4rem) and it paints an
- * `after:border` ring that p-avatar has no equivalent for. Nothing survived the port.
+ * `after:border` ring this design has no use for. Nothing survived the port.
  *
  * COLOURS COME FROM THE CALL SITE, VIA `[style]`, AND THAT IS ALREADY HOW IT WORKS.
  * `app-user-avatar` tints its circle per user by binding `[style]="{ 'background-color': …, color: … }"`.
@@ -33,7 +32,7 @@ export type UiAvatarSize = "normal" | "large" | "xlarge";
 export class Avatar {
   public readonly label = input.required<string>();
 
-  /** PrimeNG's three: normal 2rem / large 3rem / xlarge 4rem, with the font scaled 1 / 1.5 / 2rem. */
+  /** The three sizes: normal 2rem / large 3rem / xlarge 4rem, with the font scaled 1 / 1.5 / 2rem. */
   public readonly size = input<UiAvatarSize>("normal");
 
   constructor() {

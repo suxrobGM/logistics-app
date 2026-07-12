@@ -48,15 +48,14 @@ export type UiButtonSize = "sm" | "md" | "lg";
 export const INTENT_APPEARANCE: Record<UiButtonIntent, Record<UiButtonAppearance, string>> = {
   /**
    * The only intent that resolves through `--ui-btn-*` indirection rather than straight to a
-   * semantic token. TMS paints its primary buttons with a gradient + font-weight 600 (its
-   * `primeng-preset.ts` did this to `.p-button-primary`); admin / customer / website run stock and
-   * must stay pixel-identical. So the cell reads the variables and each app supplies them: flat
-   * defaults in shared theme.css, the gradient in tms-portal/src/styles.css. The gradient rides on
-   * `background-image` — a `linear-gradient()` is not a valid `background-color`, so a single
-   * `bg-*` utility could never have carried it.
+   * semantic token. TMS paints its primary buttons with a gradient + font-weight 600; admin /
+   * customer / website run stock and must stay pixel-identical. So the cell reads the variables
+   * and each app supplies them: flat defaults in shared theme.css, the gradient in
+   * tms-portal/src/styles.css. The gradient rides on `background-image` — a `linear-gradient()`
+   * is not a valid `background-color`, so a single `bg-*` utility could never have carried it.
    *
-   * Note TMS's preset scoped the gradient to `:not(.p-button-text):not(.p-button-outlined)
-   * :not(.p-button-link)`. That exclusion is reproduced structurally: only `solid` reads the vars.
+   * The gradient is scoped structurally: only `solid` reads the vars, so outlined/text/link
+   * appearances never pick up the gradient.
    */
   primary: {
     solid:
@@ -93,7 +92,7 @@ export const INTENT_APPEARANCE: Record<UiButtonIntent, Record<UiButtonAppearance
     link: "text-info bg-transparent underline-offset-4 hover:underline",
   },
 
-  /** The intent is `warn` (PrimeNG's severity name); the TOKEN is `--warning`. They differ — keep both. */
+  /** The intent is `warn`; the TOKEN is `--warning`. The two spellings differ — keep both. */
   warn: {
     solid: "bg-warning [color:var(--ui-btn-on-solid)] hover:bg-warning/90",
     outlined: "border-warning text-warning bg-transparent hover:bg-warning/10",
@@ -109,7 +108,7 @@ export const INTENT_APPEARANCE: Record<UiButtonIntent, Record<UiButtonAppearance
   },
 
   /**
-   * PrimeNG's `help` severity is purple and this theme has exactly one purple defined in both
+   * The `help` intent is purple, and this theme has exactly one purple defined in both
    * `:root` and `.dark-theme`: the load-status ramp's `--status-pickedup`. `--ui-btn-help` aliases
    * it rather than introducing a ninth hex literal into the palette, and theme.css registers that
    * alias as a real colour so the cells below can be spelled as NAMED utilities.
@@ -128,7 +127,7 @@ export const INTENT_APPEARANCE: Record<UiButtonIntent, Record<UiButtonAppearance
     link: "text-help bg-transparent underline-offset-4 hover:underline",
   },
 
-  /** PrimeNG's `contrast`: the theme's ink and paper, swapped. Flips itself in dark mode for free. */
+  /** `contrast`: the theme's ink and paper, swapped. Flips itself in dark mode for free. */
   contrast: {
     solid: "bg-foreground text-background hover:bg-foreground/90",
     outlined: "border-foreground text-foreground bg-transparent hover:bg-foreground/10",
@@ -176,7 +175,7 @@ export interface UiButtonClassOptions {
   readonly iconOnly: boolean;
   readonly rounded: boolean;
   readonly block: boolean;
-  /** `buttonClass` from the call site (PrimeNG's `styleClass`). Last, so a call site can win. */
+  /** `buttonClass` from the call site. Last, so a call site can win. */
   readonly extra?: string;
 }
 

@@ -36,7 +36,7 @@ const MIN_RESIZE_HEIGHT = 140;
  * =================================================================================================
  * `descendants: false` IS LOAD-BEARING. Do not drop it "because the default is fine".
  * =================================================================================================
- * p-dialog declares all three of its projection slots EXPLICITLY non-descending (primeng-dialog.mjs):
+ * p-dialog declared all three of its projection slots EXPLICITLY non-descending:
  *
  *     @ContentChild('header',  { descendants: false }) _headerTemplate;
  *     @ContentChild('content', { descendants: false }) _contentTemplate;
@@ -70,7 +70,7 @@ const MIN_RESIZE_HEIGHT = 140;
  * =================================================================================================
  * WHY THE BACKDROP MUST NOT CLOSE THE DIALOG (this would have been a silent data-loss regression)
  * =================================================================================================
- * p-dialog only closes on a mask click when `dismissableMask` is set (primeng-dialog.mjs:635):
+ * p-dialog only closed on a mask click when `dismissableMask` was set:
  *
  *     if (this.closable && this.dismissableMask) { …bind mousedown on the mask… }
  *
@@ -125,8 +125,7 @@ const MIN_RESIZE_HEIGHT = 140;
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     // On `document`, not on the host: the panel is portalled into the CDK overlay container, which is
-    // NOT inside this component's DOM, so a host-scoped keydown would never see the event. (This also
-    // matches p-dialog, which binds its escape listener on the document — primeng-dialog.mjs:890.)
+    // NOT inside this component's DOM, so a host-scoped keydown would never see the event.
     "(document:keydown.escape)": "onEscape()",
   },
 })
@@ -161,13 +160,13 @@ export class UiDialog {
   public readonly closable = input(true, { transform: booleanAttribute });
 
   /**
-   * p-dialog's `draggable` DEFAULTS TO TRUE (primeng-dialog.mjs:151), and all 10 call sites that
-   * mention it pass `false` — they are opting OUT. So 36 of the 46 dialogs are draggable today and
-   * the default here must stay `true` or we would silently remove the affordance from all of them.
+   * `draggable` DEFAULTS TO TRUE, matching p-dialog, and all 10 call sites that mention it pass
+   * `false` — they are opting OUT. So 36 of the 46 dialogs are draggable today and the default here
+   * must stay `true` or we would silently remove the affordance from all of them.
    */
   public readonly draggable = input(true, { transform: booleanAttribute });
 
-  /** Same story: p-dialog's `resizable` defaults TRUE (:156); 2 sites opt out, 1 redundantly opts in. */
+  /** Same story: p-dialog's `resizable` also defaulted TRUE; 2 sites opt out, 1 redundantly opts in. */
   public readonly resizable = input(true, { transform: booleanAttribute });
 
   /** Every call site passes `true`; kept so the tag stays a faithful drop-in. Drives the backdrop. */
@@ -255,7 +254,7 @@ export class UiDialog {
   }
 
   /**
-   * p-dialog closes on Escape when `closeOnEscape && closable` (primeng-dialog.mjs:838). No call site
+   * p-dialog closed on Escape when `closeOnEscape && closable`. No call site
    * touches `closeOnEscape` (default true), so `closable` alone decides — and it is read live here,
    * which is the point of not delegating to brain's open-time `disableClose` snapshot.
    *

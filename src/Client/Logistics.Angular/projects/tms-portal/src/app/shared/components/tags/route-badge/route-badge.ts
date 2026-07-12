@@ -27,10 +27,9 @@ export class RouteBadge {
   /**
    * The address as plain LINES for the tooltip template to render.
    *
-   * This used to return a string of HTML (the same parts joined with `<br>`, wrapped in hand-written
-   * `<div class="...">`s) which the template handed to PrimeNG's `[escape]="false"` — i.e. straight
-   * into `innerHTML`, with tenant-supplied address fields interpolated inside it. Returning data
-   * instead of markup is what closes that: the template escapes every line it renders.
+   * Returns data, not markup, so the template can escape each line: these fields come from
+   * tenant-supplied address data, and rendering them as raw HTML would let a crafted address field
+   * inject markup into the page.
    */
   private addressLines(addr: Address): string[] {
     const lines: string[] = [];

@@ -76,8 +76,8 @@ const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]:not([tab
  * focusable descendant.
  *
  * ESCAPE
- * brain has no keydown handling at all. PrimeNG's tooltip defaults to `hideOnEscape: true`, so
- * dropping it would have been a silent a11y regression against the very thing we are replacing.
+ * brain has no keydown handling at all. Users expect Escape to dismiss an open tooltip, so
+ * dropping that support would have been a silent a11y regression.
  *
  * ACCESSIBLE NAME vs DESCRIPTION
  * A tooltip is a DESCRIPTION, never a name. This directive only ever writes `aria-describedby`; it
@@ -121,13 +121,12 @@ export class UiTooltip {
    * Empty / whitespace / undefined renders NO tooltip — never an empty box.
    *
    * A `TemplateRef` is accepted for the rare tooltip that needs structure. It is the ONLY supported
-   * way to get markup in: PrimeNG's equivalent was `[escape]="false"`, which sets `innerHTML` from a
-   * hand-built HTML string, and the one site using it was interpolating tenant address data straight
-   * into that string. A template's bindings are escaped by Angular, so the markup stays and the
-   * injection does not.
+   * way to get markup in: a raw `innerHTML` string was interpolating tenant address data straight
+   * into itself at the one call site that needed structure. A template's bindings are escaped by
+   * Angular, so the markup stays and the injection does not.
    */
   public readonly uiTooltip = input<string | TemplateRef<void> | undefined>();
-  /** `"right"` is PrimeNG's default, which the 79 call sites that set no position rely on. */
+  /** `"right"` is the default; the 79 call sites that set no position rely on it. */
   public readonly uiTooltipPosition = input<UiTooltipPosition>("right");
   public readonly uiTooltipDelay = input(this.config.showDelay, { transform: numberAttribute });
 
@@ -203,7 +202,7 @@ export class UiTooltip {
       if (event.key === "Escape") this.hide();
     });
 
-    // Scroll closes, matching brain and PrimeNG. This MUST be a CAPTURE-phase listener on `document`:
+    // Scroll closes, matching brain. This MUST be a CAPTURE-phase listener on `document`:
     // scroll events DO NOT BUBBLE, and this app never scrolls the window — every page scrolls inside
     // `div.overflow-y-auto` (the main content pane) or the sidebar nav. A `window`- or bubble-phase
     // listener therefore NEVER FIRES here, which left a focus-opened tooltip stranded hundreds of px

@@ -1,7 +1,6 @@
 /**
- * CONTRACT spec for `ToastService`. It was written to SURVIVE step S8, in which the service's
- * internals were swapped from PrimeNG's message/confirmation services to
- * `@spartan-ng/brain/sonner`'s imperative `toast` + a Helm-based `ui-confirm-dialog`.
+ * CONTRACT spec for `ToastService`, whose internals sit on `@spartan-ng/brain/sonner`'s imperative
+ * `toast` and a Helm-based `ui-confirm-dialog`.
  *
  * ~386 call sites across ~118 files must keep working with ZERO changes, so this spec asserts on
  * WHAT THE USER SEES AND WHAT GETS CALLED — never on a rendering library's API having been invoked.
@@ -9,12 +8,12 @@
  *   - dialog never opens AND `accept` is dropped  => "Delete" silently does nothing;
  *   - `accept` fires with no dialog               => it deletes WITHOUT ASKING.
  *
- * ======================== HOW THIS FILE SURVIVED THE S8 SWAP ========================
+ * ======================== WHY THIS SPEC SURVIVES A RENDERING SWAP ========================
  * Everything that knows which library renders these surfaces is quarantined in the block marked
  * `RENDERING-LAYER ADAPTER`: the host component, the DI providers, and four tiny readers that
- * translate "what the rendering layer did" back into our own vocabulary. S8 rewrote ONLY that block.
- * Every `describe`/`it` body and every `expect(...)` below is BYTE-IDENTICAL to the PrimeNG-era file
- * — which is the entire point, and the reason it is evidence of anything.
+ * translate "what the rendering layer did" back into our own vocabulary. A rendering-layer swap
+ * should only ever need to touch that block — every `describe`/`it` body and every `expect(...)`
+ * below asserts on OUR vocabulary, never the library's, which is the entire point.
  *
  * Keep it that way. If a future rendering swap seems to require changing an assertion, that is a
  * BEHAVIOUR CHANGE, not a test-maintenance chore: fix the code, or land the behaviour change
@@ -43,7 +42,7 @@ type Severity = "success" | "error" | "warning" | "info";
 type Intent = "default" | "danger" | "warning" | "success";
 
 // ═════════════════════ RENDERING-LAYER ADAPTER (brain/sonner + Helm dialog) ═════════════════════
-// ▼▼▼ S8: EVERYTHING BETWEEN THESE MARKERS IS THE ONLY PART THAT CHANGES ▼▼▼
+// ▼▼▼ EVERYTHING BETWEEN THESE MARKERS IS THE ONLY PART A RENDERING SWAP CHANGES ▼▼▼
 
 /**
  * Mirrors what every app's `app.html` renders — which is now just the toaster. The confirm dialog is
@@ -76,9 +75,9 @@ class HostNotificationSurfaces {
 
       // `fixture.destroy()` tears down the VIEW but leaves the root element's DOM in the document —
       // TestBed only strips root elements at `resetTestingModule()`, i.e. in the NEXT test's
-      // `beforeEach`. PrimeNG's toast hid that from us by removing its own container in `ngOnDestroy`;
-      // sonner renders in place and (rightly) leaves lifetime to the framework. So the surface detaches
-      // itself here, or `afterEach` would find the previous test's toast still hanging off <body>.
+      // `beforeEach`. Sonner renders in place and (rightly) leaves lifetime to the framework, so the
+      // surface detaches itself here, or `afterEach` would find the previous test's toast still
+      // hanging off <body>.
       //
       // This cannot mask a real failure: it only removes THIS host's subtree. A toast that failed to
       // render still fails `theToast()`, and the leaks that actually matter — the module-global
@@ -93,8 +92,8 @@ const RENDERING_PROVIDERS: never[] = [];
 
 /**
  * The accept/reject button labels the rendering layer falls back to when the caller supplies none.
- * `confirmDelete` — i.e. most of the ~386 call sites — relies on these. Unchanged in S8: they are now
- * `ToastService`'s own DEFAULT_ACCEPT_LABEL / DEFAULT_REJECT_LABEL rather than PrimeNG's.
+ * `confirmDelete` — i.e. most of the ~386 call sites — relies on these: they are
+ * `ToastService`'s own DEFAULT_ACCEPT_LABEL / DEFAULT_REJECT_LABEL.
  */
 const DEFAULT_ACCEPT_LABEL = "Yes";
 const DEFAULT_REJECT_LABEL = "No";
@@ -123,7 +122,7 @@ function renderedIntent(button: Element): Intent {
 
 /** Did an icon actually get rendered inside this element (excluding icons in nested buttons)? */
 function rendersIcon(host: Element): boolean {
-  // `<ui-icon>` renders an `<ng-icon>`; nothing here emits a PrimeIcons `<i>` any more.
+  // `<ui-icon>` renders an `<ng-icon>`; nothing here emits an icon font's `<i>` tag any more.
   const icons = [...host.querySelectorAll("ui-icon, ng-icon")];
   return icons.some((icon) => icon.closest("button") === host.closest("button"));
 }
@@ -139,10 +138,10 @@ function clickBackdrop(): boolean {
   return true;
 }
 
-// ▲▲▲ S8: END OF THE ONLY PART THAT CHANGES ▲▲▲
+// ▲▲▲ END OF THE ONLY PART A RENDERING SWAP CHANGES ▲▲▲
 // ═══════════════════════════════════════════════════════════════════════════════════════════════
 
-// ───────────────────────── Library-agnostic queries (must NOT change in S8) ─────────────────────
+// ───────────────────────── Library-agnostic queries (must NOT change on a rendering swap) ───────
 // Everything is rooted at `document.body` so it works whether the surface renders in place or is
 // portaled into an overlay container.
 
@@ -160,9 +159,10 @@ function theToast(): HTMLElement {
 
 /**
  * The confirmation surface: an element carrying a dialog role that the user can actually see and
- * read. The visible-and-non-empty filter is NOT cosmetic — PrimeNG leaves an empty `<p-dialog>`
- * shell in the DOM (carrying a static `role="alertdialog"`) even while closed, and matching that
- * shell would make every "the dialog opened" assertion below pass vacuously.
+ * read. The visible-and-non-empty filter is NOT cosmetic — a dialog root can linger in the DOM
+ * (hidden, or left behind by a test that didn't tear down cleanly) carrying a static
+ * `role="alertdialog"`, and matching on role alone would make every "the dialog opened" assertion
+ * below pass vacuously.
  */
 function confirmSurface(): HTMLElement | null {
   const candidates = [
@@ -191,8 +191,8 @@ function accessibleName(element: Element): string {
 
 /**
  * Find a button BY ACCESSIBLE NAME — the way a user (or a screen reader, or Testing Library) finds
- * it. Deliberately not `.p-confirm-dialog-accept`: a class query is implementation coupling and
- * would break in S8 for the wrong reason.
+ * it. Deliberately not a CSS class selector: a class query is implementation coupling and would
+ * break the moment the rendering layer changes, for the wrong reason.
  */
 function buttonNamed(root: Element, name: string): HTMLElement {
   const buttons = [...root.querySelectorAll<HTMLElement>("button, [role='button']")];
@@ -245,8 +245,9 @@ describe("ToastService — the contract every call site depends on", () => {
     await settle();
   });
 
-  // Surfaces may be portaled out of the fixture root (PrimeNG appends its dialog to <body>), so
-  // tear the host down explicitly — a dialog left open by one test must not leak into the next.
+  // Surfaces may be portaled out of the fixture root (the dialog portals into <body> via the CDK
+  // overlay container), so tear the host down explicitly — a dialog left open by one test must
+  // not leak into the next.
   afterEach(() => {
     fixture.destroy();
     expect(confirmSurface()).toBeNull();
@@ -497,17 +498,15 @@ describe("ToastService — the contract every call site depends on", () => {
      * REGRESSION GUARD — this test used to assert the OPPOSITE, as a "characterization of today's
      * behaviour", and today's behaviour was a bug.
      *
-     * `ToastService.confirm` forwarded `closeOnEscape ?? false` on the belief that PrimeNG "coerced
-     * undefined to false". It did not. In primeng-confirmdialog.mjs (21.1.6) `closeOnEscape = true`
-     * is an own class field (line 176) and the template binds `option('closeOnEscape')` (line 529),
-     * whose `option()` resolves against the COMPONENT, not the confirmation object (line 399:
-     * `const source = this`). A call site could not influence it; every confirm dialog in the app
-     * resolved it to TRUE. So Escape cancelled a delete confirmation, everywhere — and `?? false`
-     * silently removed that from all 72 confirm()/confirmDelete() call sites.
+     * `ToastService.confirm` used to forward `closeOnEscape ?? false` on the belief that an
+     * unspecified value coerced to false. It did not: every confirm dialog in the app actually
+     * resolved `closeOnEscape` to TRUE regardless of what a call site passed, so Escape cancelled a
+     * delete confirmation everywhere — and `?? false` silently removed that from all 72
+     * confirm()/confirmDelete() call sites.
      *
      * The default is now `true`, restoring parity. Escape REJECTS — never accepts.
      */
-    it("by default Escape rejects and closes — PrimeNG's closeOnEscape defaulted to TRUE", async () => {
+    it("by default Escape rejects and closes — closeOnEscape defaults to TRUE", async () => {
       const accept = vi.fn();
       const reject = vi.fn();
 

@@ -75,10 +75,10 @@ export class UiDataTable<T> implements OnInit {
   /**
    * 0-indexed row OFFSET of the current page — not a page number.
    *
-   * Must default to `0`, never `undefined`: this used to be `input<number | undefined>(undefined)`
-   * forwarded straight into `<p-table>`, which overwrote its `_first = 0` and degenerated the row
-   * slice to `slice(undefined, NaN)` — every client-paginated table in the app rendered ZERO rows.
-   * See {@link totalRecords} for the same bug class.
+   * Must default to `0`, never `undefined`: this used to be `input<number | undefined>(undefined)`,
+   * forwarded straight into the row slice — an unbound consumer's `first` stayed `undefined` all
+   * the way through, degenerating `slice(undefined, NaN)` — every client-paginated table in the
+   * app rendered ZERO rows. See {@link totalRecords} for the same bug class.
    */
   public readonly first = input<number>(0);
   /**
@@ -90,7 +90,7 @@ export class UiDataTable<T> implements OnInit {
   /**
    * Page-size choices. It is `[10, 25, 50]` at all 41 sites that bind it — but it is NOT
    * hardcoded, because ~50 tables bind nothing and must keep showing no page-size control at all
-   * (`<p-paginator>` renders the dropdown behind `*ngIf="rowsPerPageOptions"`).
+   * (`UiTablePaginator` renders the dropdown only when `rowsPerPageOptions` is bound).
    */
   public readonly rowsPerPageOptions = input<number[] | undefined>(undefined);
   public readonly showCurrentPageReport = input(false, { transform: booleanAttribute });

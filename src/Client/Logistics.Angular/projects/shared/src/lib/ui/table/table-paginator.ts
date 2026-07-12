@@ -9,16 +9,11 @@ import { UiTableState } from "./table-state";
  * The paginator for `<ui-data-table>`.
  *
  * Built on Helm's PRESENTATIONAL pagination directives (`hlmPagination` / `hlmPaginationContent` /
- * `hlmPaginationItem`) plus `buttonVariants` — deliberately NOT on `HlmNumberedPagination`, which
- * is 1-indexed, bakes in its own page-size select, hard-codes a "N total items" report with no
- * token templating, and leaves goToFirst/goToLast unwired.
- *
- * It is also NOT built on `HlmPaginationLink` / `-Previous` / `-Next`, even though those are on the
- * "presentational" list: every one of them renders an `<a>` with a `RouterLink` HOST DIRECTIVE.
- * That would (a) inject `Router`/`ActivatedRoute` into every table, exploding any test bed without
- * router providers — including the contract spec's — and (b) render anchors, where the contract
- * requires real `<button>`s. This paginator pages by STATE, not by URL. So it borrows their look
- * (`buttonVariants`, which is all `HlmPaginationLink` applies) and skips their routing.
+ * `hlmPaginationItem`) plus `buttonVariants`. The `hlm-numbered-pagination` and
+ * `hlm-pagination-link` / `-previous` / `-next` / `-ellipsis` leaves were vendored but never used —
+ * this component pages by STATE, not by URL, and those leaves render `<a>` elements via a
+ * `RouterLink` host directive — so they were removed from the vendored primitive. This component
+ * borrows their look (`buttonVariants`) without their routing.
  */
 @Component({
   selector: "ui-table-paginator",

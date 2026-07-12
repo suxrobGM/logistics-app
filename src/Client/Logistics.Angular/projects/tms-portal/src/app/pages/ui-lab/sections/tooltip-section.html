@@ -29,7 +29,7 @@
     </div>
   </div>
 
-  <!-- (2) All four placements. `right` is the default (PrimeNG's), so the unpositioned one must
+  <!-- (2) All four placements. `right` is the default, so the unpositioned one must
        land on the right. -->
   <div class="mt-6">
     <ui-typography variant="h3" tag="h3">Placements</ui-typography>
@@ -99,7 +99,7 @@
 
       <span
         class="text-muted-foreground inline-flex items-center gap-1.5 text-sm"
-        uiTooltip="A non-focusable host. Hover-only, exactly as it was under PrimeNG."
+        uiTooltip="A non-focusable host. Hover-only."
         uiTooltipPosition="top"
         data-lab="tooltip-span"
       >
@@ -109,9 +109,9 @@
     </div>
   </div>
 
-  <!-- (5) A structured tooltip. This is what replaced PrimeNG's [escape]="false" innerHTML string
-       at the one site that used it (route-badge, which was interpolating tenant address data into
-       hand-built HTML). A TemplateRef keeps the layout and escapes the bindings. -->
+  <!-- (5) A structured tooltip: route-badge interpolates tenant address data into markup, so a
+       TemplateRef is used instead of an innerHTML string — it keeps the layout while still
+       escaping the bindings. -->
   <div class="mt-6">
     <ui-typography variant="h3" tag="h3">
       Template content (replaces [escape]="false")

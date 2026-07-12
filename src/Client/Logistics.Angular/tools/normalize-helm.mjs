@@ -90,13 +90,8 @@ const TSCONFIG = "tsconfig.json";
  */
 const PRESERVE = new Set(["utils", "input", "textarea"]);
 
-/** The 4 vendored date-picker components that ship an inert ControlValueAccessor. See stripInertCva(). */
-const CVA_FILES = [
-  "date-picker/lib/hlm-date-picker.ts",
-  "date-picker/lib/hlm-date-picker-multi.ts",
-  "date-picker/lib/hlm-date-range-picker.ts",
-  "date-picker/lib/hlm-month-year-picker.ts",
-];
+/** The 2 vendored date-picker components that ship an inert ControlValueAccessor. See stripInertCva(). */
+const CVA_FILES = ["date-picker/lib/hlm-date-picker.ts", "date-picker/lib/hlm-date-range-picker.ts"];
 
 /** `--force select,button` or `--force=select,button` (repeatable). */
 function parseForce(argv) {
@@ -363,10 +358,10 @@ function pruneUnusedImports(src) {
 }
 
 /**
- * Strip the INERT ControlValueAccessor plumbing from the 4 vendored date-picker components.
+ * Strip the INERT ControlValueAccessor plumbing from the 2 vendored date-picker components.
  *
  * WHY IT IS INERT (verified, not assumed):
- *   The ONLY consumer of `hlm-date-picker*` / `hlm-month-year-picker` in this workspace is
+ *   The ONLY consumer of `hlm-date-picker*` in this workspace is
  *   `ui-date-field` (projects/shared/src/lib/ui/form/date-field/). It drives the picker with plain
  *   `[date]` / `(dateChange)` bindings and additionally applies `uiDetachedControl`, which severs
  *   the ambient `NgControl`. No template anywhere binds `ngModel` / `formControlName` / `[formControl]`

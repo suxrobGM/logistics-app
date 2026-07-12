@@ -3,10 +3,8 @@ import type { AppError } from "../errors";
 /**
  * A lazy-load request from a data table: which page, and how to sort it.
  *
- * Deliberately owned by us rather than imported from a UI library. It is a structural
- * subset of PrimeNG's `TableLazyLoadEvent`, so `<p-table (onLazyLoad)>` still binds
- * directly to a handler typed with this — and it will keep binding after the table is
- * swapped for a different implementation.
+ * Deliberately owned by us rather than imported from a UI library, so handlers typed with
+ * this keep binding unchanged if the table is ever swapped for a different implementation.
  */
 export interface ListLazyLoadEvent {
   /** Index of the first row to load (0-based). */

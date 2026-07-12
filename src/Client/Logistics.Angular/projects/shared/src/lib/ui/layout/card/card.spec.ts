@@ -2,10 +2,10 @@
  * `ui-card`'s contract. The three things pinned here are the three that would ship broken:
  *
  *   1. THE 83 TEMPLATE SLOTS. `<ng-template #header>` x71, `#title` x8, `#subtitle` x4, `#footer` x3.
- *      The brief for this step asserted p-card was "100% plain content projection, ZERO templates" —
- *      it is not, because PrimeNG 21 renamed `pTemplate="header"` to a plain `#header` ref and a grep
- *      for the old spelling finds nothing. A card that ignores them drops the heading off 71 panels
- *      and still compiles, still lints, and still passes every other test.
+ *      It is easy to assume the card is 100% plain content projection with zero templates — a grep
+ *      for the old `pTemplate="header"` spelling finds nothing. It is not: a card that ignores these
+ *      slots drops the heading off 71 panels and still compiles, still lints, and still passes every
+ *      other test.
  *   2. `header` (the STRING, 43 sites) renders in card-TITLE, not card-HEADER. They are different
  *      boxes with different padding — the header sits outside the body. Getting it backwards moves
  *      43 headings by 1.25rem and nothing complains.

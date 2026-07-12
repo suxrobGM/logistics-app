@@ -37,8 +37,8 @@ export interface UiTableSources<T> {
 /**
  * Resolves a possibly-dotted field path ("customer.name", "originAddress.line1") against a row.
  *
- * Reproduces PrimeNG's `ObjectUtils.resolveFieldData`. Six client-sorted templates and the eight
- * sort headers of trips-list's nested table pass dotted paths.
+ * Six client-sorted templates and the eight sort headers of trips-list's nested table pass
+ * dotted paths.
  */
 export function resolveFieldData(data: unknown, field: string | undefined): unknown {
   if (data == null || !field) {
@@ -58,7 +58,7 @@ export function resolveFieldData(data: unknown, field: string | undefined): unkn
 }
 
 /**
- * PrimeNG's `sortSingle` comparator, reproduced EXACTLY. Every clause here is characterization:
+ * The legacy comparator, reproduced EXACTLY. Every clause here is characterization:
  *
  *  • **Nullish sorts FIRST on ascending** (`null` vs non-null yields -1, then the whole result is
  *    multiplied by the order). Descending therefore puts the holes last. This is what ships.
@@ -88,7 +88,7 @@ function compareFieldValues(value1: unknown, value2: unknown): number {
       : 0;
 }
 
-/** PrimeNG's "contains" match mode: accent-insensitive, case-insensitive substring. */
+/** The "contains" match mode: accent-insensitive, case-insensitive substring. */
 function contains(value: unknown, filter: string): boolean {
   if (filter.trim() === "") {
     return true;
@@ -102,7 +102,7 @@ function contains(value: unknown, filter: string): boolean {
 }
 
 /**
- * The table ENGINE: everything `<p-table>` used to do silently.
+ * The table ENGINE.
  *
  * Owns seven things Helm's presentational table directives do not provide — client sort, client
  * paging, a client global filter, selection, row expansion, the sort/page state a `<th
@@ -130,14 +130,14 @@ export class UiTableState<T = unknown> {
 
   /** 0-indexed row OFFSET of the current page. Not a page number. */
   public readonly first = linkedSignal(() => this.src.first());
-  /** Page size. `undefined` when the consumer binds no `[rows]`, exactly as `<p-table>` leaves it. */
+  /** Page size. `undefined` when the consumer binds no `[rows]`. */
   public readonly size = linkedSignal(() => this.src.rows());
   public readonly sortField = linkedSignal(() => this.src.sortField());
   /**
    * `undefined` until something sorts — NOT 1.
    *
    * The initial lazy request must carry `sortOrder: undefined`; `createListStore` then applies its
-   * own `?? -1`. Emitting PrimeNG's nominal default of `1` would silently change what the store
+   * own `?? -1`. Emitting a nominal default of `1` instead would silently change what the store
    * records having asked for. Pinned by the contract spec.
    */
   public readonly sortOrder = linkedSignal(() => this.src.sortOrder());
@@ -168,15 +168,9 @@ export class UiTableState<T = unknown> {
 
   /**
    * The effective sort order. `sortOrder` stays `undefined` on the wire, but a client sort needs a
-   * direction, and PrimeNG's own `defaultSortOrder` is 1.
-   *
-   * This also un-breaks a live wart. `<p-table>` guards its client sort with `if (field && order)`,
-   * and the wrapper clobbers its `_sortOrder = 1` with an unbound `undefined` — so the two
-   * templates that bind `sortField="order"` (trip-wizard-review, trip-details) have a sort header
-   * that has NEVER sorted: the first click computes `undefined * -1` = `NaN`, which is falsy, so
-   * the guard skips. Here a bound-but-orderless sort field simply means ascending, and the header
-   * toggles from there. The stops those tables show are already stored in `order`, so ascending is
-   * the order they already render in.
+   * direction: a bound-but-orderless sort field simply means ascending, and the header toggles
+   * from there. The two templates that bind `sortField="order"` (trip-wizard-review, trip-details)
+   * show stops already stored in `order`, so ascending is the order they already render in.
    */
   private readonly effectiveSortOrder = computed(() => this.sortOrder() ?? 1);
 
@@ -196,9 +190,8 @@ export class UiTableState<T = unknown> {
   });
 
   /**
-   * Filtered + sorted, but NOT paged — PrimeNG calls this `processedData`, and it is what
-   * select-all and the header checkbox operate on (so select-all on a client-paged table takes
-   * every matching row, not just the visible page).
+   * Filtered + sorted, but NOT paged — this is what select-all and the header checkbox operate on
+   * (so select-all on a client-paged table takes every matching row, not just the visible page).
    */
   public readonly processed = computed<readonly T[]>(() => {
     const data = this.filtered();
@@ -207,8 +200,8 @@ export class UiTableState<T = unknown> {
       return data;
     }
     const order = this.effectiveSortOrder();
-    // Copy: `<p-table>` sorts the consumer's array IN PLACE. Renders identically, and not
-    // mutating a store's `data()` out from under it is strictly safer.
+    // Copy, not an in-place sort — not mutating a store's `data()` out from under it is strictly
+    // safer.
     return [...data].sort(
       (a, b) => order * compareFieldValues(resolveFieldData(a, field), resolveFieldData(b, field)),
     );

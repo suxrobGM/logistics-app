@@ -103,7 +103,7 @@ describe("ui-badge", () => {
   });
 
   // 2. The default that four previous bugs were made of.
-  it('defaults `severity` to "info" — NOT "primary" (a bare PrimeNG p-tag was primary; ui-badge is not)', () => {
+  it('defaults `severity` to "info" — NOT "primary"', () => {
     fixture.detectChanges();
     expect(el().className).toContain("--ui-badge-info-bg");
     expect(el().className).not.toContain("--ui-badge-primary-bg");
@@ -152,7 +152,7 @@ describe("ui-badge", () => {
    * 6. `rounded` is a real input now (8 sites bind it), and it resolves through `--ui-radius-pill`
    * rather than Tailwind's `rounded-xl` — that utility is 16px in TMS and 12px in the other three
    * apps (variables.css re-points `--radius-xl`), which would have invented a 4px fork where
-   * PrimeNG's `tag.roundedBorderRadius` (12px) has none.
+   * none exists.
    */
   it("rounds through the pill token when `rounded`, and to the content radius otherwise", () => {
     expect(el().className).toContain("rounded-[var(--ui-radius-content)]");

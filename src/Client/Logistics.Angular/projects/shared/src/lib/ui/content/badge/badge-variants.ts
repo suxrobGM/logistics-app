@@ -19,7 +19,7 @@ export type UiBadgeSize = "sm" | "md" | "lg";
  * string, not a dependency.
  *
  * COLOURS COME FROM TOKENS ONLY — and, for five of the seven, through a per-app indirection.
- * The four apps do not run the same PrimeNG preset (TMS = Nora, the rest = stock Aura), and the two
+ * The four apps do not run the same design preset (TMS = Nora, the rest = stock Aura), and the two
  * presets disagree about what a tag even IS:
  *
  *     Aura   .p-tag-success   background {green.100}   color {green.700}    ← soft tint
@@ -56,7 +56,7 @@ export const TONE_CLASSES: Record<UiBadgeTone, string> = {
 
   info: "[background-color:var(--ui-badge-info-bg)] [color:var(--ui-badge-info-fg)]",
 
-  /** The tone is `warn` (PrimeNG's severity name); the TOKEN is `--warning`. They differ — keep both. */
+  /** The tone is `warn`; the TOKEN is `--warning`. They differ — keep both. */
   warn: "[background-color:var(--ui-badge-warn-bg)] [color:var(--ui-badge-warn-fg)]",
 
   danger: "[background-color:var(--ui-badge-danger-bg)] [color:var(--ui-badge-danger-fg)]",
@@ -89,10 +89,10 @@ export const badgeVariants = cva(
         lg: "px-4 py-2 text-lg font-semibold",
       },
       /**
-       * PrimeNG's `[rounded]` (8 sites): `tag.roundedBorderRadius` = `{border.radius.xl}` = 12px, in
-       * BOTH presets. NOT `rounded-xl` — that utility is 16px in TMS (variables.css re-points
-       * `--radius-xl` to 1rem) and 12px in the other three, so it would invent a 4px fork where
-       * PrimeNG has none. `--ui-radius-pill` is 12px everywhere; see theme.css.
+       * `rounded`: the pill radius is `{border.radius.xl}` = 12px, in BOTH presets. NOT `rounded-xl`
+       * — that utility is 16px in TMS (variables.css re-points `--radius-xl` to 1rem) and 12px in the
+       * other three, so it would invent a 4px fork where none exists. `--ui-radius-pill` is 12px
+       * everywhere; see theme.css.
        */
       rounded: {
         true: "rounded-[var(--ui-radius-pill)]",
@@ -107,7 +107,7 @@ export interface UiBadgeClassOptions {
   readonly tone: UiBadgeTone;
   readonly size: UiBadgeSize;
   readonly rounded: boolean;
-  /** The call site's `class` (PrimeNG's `styleClass`). Last, so a call site can win. */
+  /** The call site's `class`. Last, so a call site can win. */
   readonly extra?: string;
 }
 

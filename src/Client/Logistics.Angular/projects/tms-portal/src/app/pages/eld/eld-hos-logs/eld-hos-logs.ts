@@ -90,7 +90,7 @@ export class EldHosLogsComponent implements OnInit {
     this.localization.formatHosDuration(this.totalOnDutyMinutes()),
   );
 
-  protected readonly dateFormat = computed(() => this.localization.getPrimeNgDateFormat());
+  protected readonly dateFormat = computed(() => this.localization.getPickerDateFormat());
 
   ngOnInit(): void {
     this.loadData();

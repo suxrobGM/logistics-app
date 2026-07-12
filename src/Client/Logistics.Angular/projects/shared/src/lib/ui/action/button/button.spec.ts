@@ -10,9 +10,9 @@
  *   3. `loading` disables AND swaps the glyph for a spinner — 100 sites. Miss the disable and the
  *      button double-submits; miss the swap and it looks idle while it works.
  *   4. icon-only goes square and is named only by `ariaLabel`.
- *   5. `buttonClass` (PrimeNG's `styleClass`) lands on the INNER button — 44 sites lay out against
- *      it, and putting it on the host instead breaks all of them while looking right in code review.
- *   6. `(click)` bubbles — there is no output, so the whole (onClick) -> (click) rename rests on it.
+ *   5. `buttonClass` lands on the INNER button — 44 sites lay out against it, and putting it on
+ *      the host instead breaks all of them while looking right in code review.
+ *   6. `(click)` bubbles — there is no output, so every call site's `(click)` rests on it.
  */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
@@ -305,7 +305,7 @@ describe("ui-button", () => {
     });
   });
 
-  describe("buttonClass (PrimeNG's styleClass)", () => {
+  describe("buttonClass", () => {
     it("lands on the INNER button, not on the host", async () => {
       const fixture = await render();
       fixture.componentInstance.buttonClass.set("mt-2 tracking-wide");

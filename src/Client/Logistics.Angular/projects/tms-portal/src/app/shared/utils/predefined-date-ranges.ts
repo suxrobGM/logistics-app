@@ -5,7 +5,7 @@ export type DatePreset = "today" | "week" | "month";
 /**
  * Returns a date range tuple [startDate, endDate] for the given preset.
  * The start date is normalized to 00:00:00.000 and end date to 23:59:59.999.
- * Suitable for use with PrimeNG datepicker in range mode.
+ * Suitable for a date picker in range mode.
  */
 export function getDatePreset(preset: DatePreset): [Date, Date] {
   const today = new Date();

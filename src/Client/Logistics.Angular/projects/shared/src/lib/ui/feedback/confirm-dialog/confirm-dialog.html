@@ -10,9 +10,9 @@
       <h2 class="text-foreground text-base font-semibold">{{ header }}</h2>
     }
 
-    <!-- `whitespace-pre-line` is load-bearing, not styling: the TMS shell's <p-confirm-dialog> carried
-         `'white-space': 'pre-line'`, so the confirm messages that embed newlines render as separate
-         lines. Without it they collapse into one run-on paragraph. -->
+    <!-- `whitespace-pre-line` is load-bearing, not styling: confirm messages can embed newlines, and
+         without this class they collapse into one run-on paragraph instead of rendering as separate
+         lines. -->
     <p class="text-muted-foreground mt-1 text-sm whitespace-pre-line">{{ ctx.message }}</p>
   </div>
 </div>

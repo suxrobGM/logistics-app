@@ -27,10 +27,9 @@ export type UiSkeletonShape = "rect" | "circle";
  * making a private primitive public to import them.
  * =================================================================================================
  *
- * THE ANIMATION CHANGES, and it is the one thing here that is not a reproduction. PrimeNG's skeleton
- * shimmers — a translucent gradient swept across the box by a `::after` pseudo-element on a 1.2s
- * loop. Helm's pulses. Both read as "loading", neither is load-bearing, and `motion-safe:` (the pulse
- * respects `prefers-reduced-motion`; the shimmer did not) is a straight accessibility win.
+ * THE ANIMATION CHANGES, and it is the one thing here that is not a reproduction. The previous
+ * shimmer animation did not respect `prefers-reduced-motion`; Helm's pulse does, via `motion-safe:`
+ * — a straight accessibility win. Both read as "loading" and neither is load-bearing.
  *
  * SIZES ARE CSS LENGTHS, NOT TAILWIND: `height="3rem"`, `width="120px"`, `height="100%"`. The call
  * sites pass raw CSS, so these are inline styles. (As classes they would need an arbitrary-value

@@ -12,7 +12,7 @@ import { UiButton } from "../../action/button";
 import { Icon } from "../../content/icon/icon";
 
 /**
- * File picker. Replaces `<p-fileUpload>` at both of its call sites, in both of its modes:
+ * File picker, used at both of its call sites, in both of its modes:
  *
  *   - `basic`    a single choose button              (expenses / expense-receipt-upload)
  *   - `advanced` a drag-and-drop zone with projected content, a choose button, and a file list
@@ -21,8 +21,8 @@ import { Icon } from "../../content/icon/icon";
  * =================================================================================================
  * THIS COMPONENT DOES NOT UPLOAD ANYTHING. THAT IS THE POINT, AND IT FIXES A LIVE BUG.
  * =================================================================================================
- * Both call sites set `[auto]="true"` but gave `p-fileUpload` no `url` and no `customUpload`. So
- * PrimeNG, on every file selection, ran (primeng-fileupload.mjs, `uploader()`):
+ * Both call sites set `[auto]="true"` but the old file-upload widget was given no `url` and no
+ * `customUpload`. So on every file selection it ran:
  *
  *     this.uploading = true;
  *     this.http.request(this.method, this.url, { body: formData, ... })   // this.url is UNDEFINED
