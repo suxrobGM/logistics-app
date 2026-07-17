@@ -5,8 +5,6 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CreateTenantCommand = Logistics.Application.Modules.IdentityAccess.Tenants.Commands.CreateTenantCommand;
-using UpdateTenantCommand = Logistics.Application.Modules.IdentityAccess.Tenants.Commands.UpdateTenantCommand;
 using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 using Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
 using Logistics.Application.Modules.Integrations.AiDispatch.Commands;

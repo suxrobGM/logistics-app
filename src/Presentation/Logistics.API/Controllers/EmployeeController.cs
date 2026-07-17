@@ -3,8 +3,6 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CreateEmployeeCommand = Logistics.Application.Modules.IdentityAccess.Employees.Commands.CreateEmployeeCommand;
-using UpdateEmployeeCommand = Logistics.Application.Modules.IdentityAccess.Employees.Commands.UpdateEmployeeCommand;
 using Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 using Logistics.Application.Modules.IdentityAccess.Employees.Queries;
 using Logistics.Application.Modules.Financial.Payroll.Commands;

@@ -3,13 +3,6 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using LoadsReportQuery = Logistics.Application.Modules.Platform.Reports.Queries.LoadsReportQuery;
-using DriversReportQuery = Logistics.Application.Modules.Platform.Reports.Queries.DriversReportQuery;
-using FinancialsReportQuery = Logistics.Application.Modules.Platform.Reports.Queries.FinancialsReportQuery;
-using DriverDashboardQuery = Logistics.Application.Modules.Platform.Reports.Queries.DriverDashboardQuery;
-using PayrollReportQuery = Logistics.Application.Modules.Platform.Reports.Queries.PayrollReportQuery;
-using SafetyReportQuery = Logistics.Application.Modules.Platform.Reports.Queries.SafetyReportQuery;
-using MaintenanceReportQuery = Logistics.Application.Modules.Platform.Reports.Queries.MaintenanceReportQuery;
 using Logistics.Application.Modules.Platform.Reports.Queries;
 
 namespace Logistics.API.Controllers;

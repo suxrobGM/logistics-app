@@ -3,8 +3,6 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using GetDailyGrossesQuery = Logistics.Application.Modules.Platform.Stats.Queries.GetDailyGrossesQuery;
-using GetMonthlyGrossesQuery = Logistics.Application.Modules.Platform.Stats.Queries.GetMonthlyGrossesQuery;
 using Logistics.Application.Modules.Platform.Stats.Queries;
 
 namespace Logistics.API.Controllers;
