@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Financial.Payments.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -7,29 +6,24 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Payments.Queries;
 
-internal sealed class GetPaymentsHandler : IAppRequestHandler<GetPaymentsQuery, PagedResult<PaymentDto>>
+internal sealed class GetPaymentsHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetPaymentsQuery, PagedResult<PaymentDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetPaymentsHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
-    public async Task<PagedResult<PaymentDto>> Handle(
+    public Task<PagedResult<PaymentDto>> Handle(
         GetPaymentsQuery req,
         CancellationToken ct)
     {
-        var totalItems = await _tenantUow.Repository<Payment>().CountAsync();
+        var query = tenantUow.Repository<Payment>().Query()
+            .Where(i => i.CreatedAt >= req.StartDate && i.CreatedAt <= req.EndDate);
 
-        var specification =
-            new FilterPaymentsByInterval(req.OrderBy, req.StartDate, req.EndDate, req.Page, req.PageSize);
+        var totalItems = query.Count();
 
-        var payments = _tenantUow.Repository<Payment>()
-            .ApplySpecification(specification)
+        var payments = query
+            .OrderBy(req.OrderBy)
+            .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<PaymentDto>.Ok(payments, totalItems, req.PageSize);
+        return Task.FromResult(PagedResult<PaymentDto>.Ok(payments, totalItems, req.PageSize));
     }
 }

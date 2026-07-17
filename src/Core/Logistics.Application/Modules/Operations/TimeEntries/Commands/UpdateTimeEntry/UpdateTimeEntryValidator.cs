@@ -6,8 +6,6 @@ internal sealed class UpdateTimeEntryValidator : AbstractValidator<UpdateTimeEnt
 {
     public UpdateTimeEntryValidator()
     {
-        RuleFor(x => x.Id).NotEmpty();
-
         RuleFor(x => x.StartTime)
             .LessThan(x => x.EndTime!.Value)
             .When(x => x.StartTime.HasValue && x.EndTime.HasValue)

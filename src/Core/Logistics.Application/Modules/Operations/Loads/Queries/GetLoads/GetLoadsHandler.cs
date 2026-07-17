@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Operations.Loads.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -11,14 +10,23 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
     : IAppRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
 {
-    public async Task<PagedResult<LoadDto>> Handle(
+    public Task<PagedResult<LoadDto>> Handle(
         GetLoadsQuery req,
         CancellationToken ct)
     {
-        var totalItems = await tenantUow.Repository<Load>().CountAsync(ct: ct);
-        var spec = new SearchLoads(req.Search, req.OrderBy);
+        var baseQuery = tenantUow.Repository<Load>().Query();
 
-        var baseQuery = tenantUow.Repository<Load>().ApplySpecification(spec);
+        if (!string.IsNullOrEmpty(req.Search))
+        {
+            baseQuery = baseQuery.Where(i =>
+                (i.Name != null && i.Name.Contains(req.Search)) ||
+                (i.Customer != null && i.Customer.Name.Contains(req.Search)) ||
+                i.Number.ToString().Contains(req.Search) ||
+                i.OriginAddress.Line1.Contains(req.Search) ||
+                (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.Contains(req.Search)) ||
+                i.DestinationAddress.Line1.Contains(req.Search) ||
+                (i.DestinationAddress.Line2 != null && i.DestinationAddress.Line2.Contains(req.Search)));
+        }
 
         if (req.OnlyActiveLoads)
         {
@@ -59,12 +67,16 @@ internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
                                              i.DispatchedAt <= req.EndDate);
         }
 
+        var totalItems = baseQuery.Count();
+
+        baseQuery = baseQuery.OrderBy(req.OrderBy);
+
         if (!req.LoadAllPages)
         {
             baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
         }
 
         var loads = baseQuery.Select(i => i.ToDto()).ToArray();
-        return PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize);
+        return Task.FromResult(PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize));
     }
 }

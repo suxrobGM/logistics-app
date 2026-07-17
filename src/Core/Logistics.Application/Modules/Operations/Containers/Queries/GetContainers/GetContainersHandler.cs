@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Operations.Containers.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,23 +9,41 @@ namespace Logistics.Application.Modules.Operations.Containers.Queries;
 internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
     : IAppRequestHandler<GetContainersQuery, PagedResult<ContainerDto>>
 {
-    public async Task<PagedResult<ContainerDto>> Handle(GetContainersQuery req, CancellationToken ct)
+    public Task<PagedResult<ContainerDto>> Handle(GetContainersQuery req, CancellationToken ct)
     {
-        var totalItems = await tenantUow.Repository<Container>().CountAsync(ct: ct);
-        var specification = new SearchContainers(
-            req.Search,
-            req.OrderBy,
-            req.Page,
-            req.PageSize,
-            req.Status,
-            req.IsoType,
-            req.CurrentTerminalId);
+        var query = tenantUow.Repository<Container>().Query();
 
-        var containers = tenantUow.Repository<Container>()
-            .ApplySpecification(specification)
+        if (!string.IsNullOrEmpty(req.Search))
+        {
+            query = query.Where(i =>
+                i.Number.Contains(req.Search) ||
+                (i.BookingReference != null && i.BookingReference.Contains(req.Search)) ||
+                (i.BillOfLadingNumber != null && i.BillOfLadingNumber.Contains(req.Search)));
+        }
+
+        if (req.Status.HasValue)
+        {
+            query = query.Where(i => i.Status == req.Status.Value);
+        }
+
+        if (req.IsoType.HasValue)
+        {
+            query = query.Where(i => i.IsoType == req.IsoType.Value);
+        }
+
+        if (req.CurrentTerminalId.HasValue)
+        {
+            query = query.Where(i => i.CurrentTerminalId == req.CurrentTerminalId.Value);
+        }
+
+        var totalItems = query.Count();
+
+        var containers = query
+            .OrderBy(req.OrderBy)
+            .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<ContainerDto>.Ok(containers, totalItems, req.PageSize);
+        return Task.FromResult(PagedResult<ContainerDto>.Ok(containers, totalItems, req.PageSize));
     }
 }

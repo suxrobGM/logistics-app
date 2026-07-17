@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Operations.Loads.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -11,9 +10,22 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IAppRequ
 {
     public async Task<Result<LoadsReportDto>> Handle(LoadsReportQuery req, CancellationToken ct)
     {
-        var specification = new FilterLoadsByCreationDate(req.StartDate, req.EndDate);
+        var hasStart = req.StartDate != default;
+        var hasEnd = req.EndDate != default;
 
-        var queryable = tenantUow.Repository<Load>().ApplySpecification(specification);
+        var queryable = tenantUow.Repository<Load>().Query();
+
+        if (hasStart)
+        {
+            var from = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
+            queryable = queryable.Where(l => l.CreatedAt >= from);
+        }
+
+        if (hasEnd)
+        {
+            var to = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
+            queryable = queryable.Where(l => l.CreatedAt <= to);
+        }
 
         var totalLoads = queryable.Count();
         var totalRevenue = queryable.Select(l => l.DeliveryCost.Amount).Sum();

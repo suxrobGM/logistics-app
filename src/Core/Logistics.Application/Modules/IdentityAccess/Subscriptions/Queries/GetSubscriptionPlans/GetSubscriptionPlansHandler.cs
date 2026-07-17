@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.IdentityAccess.Subscriptions.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -7,27 +6,22 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Queries;
 
-internal sealed class
-    GetSubscriptionPlansHandler : IAppRequestHandler<GetSubscriptionPlansQuery, PagedResult<SubscriptionPlanDto>>
+internal sealed class GetSubscriptionPlansHandler(IMasterUnitOfWork masterUow)
+    : IAppRequestHandler<GetSubscriptionPlansQuery, PagedResult<SubscriptionPlanDto>>
 {
-    private readonly IMasterUnitOfWork _masterUow;
-
-    public GetSubscriptionPlansHandler(IMasterUnitOfWork masterUow)
-    {
-        _masterUow = masterUow;
-    }
-
-    public async Task<PagedResult<SubscriptionPlanDto>> Handle(
+    public Task<PagedResult<SubscriptionPlanDto>> Handle(
         GetSubscriptionPlansQuery req, CancellationToken ct)
     {
-        var totalItems = await _masterUow.Repository<SubscriptionPlan>().CountAsync();
-        var spec = new GetSubscriptionPlans(req.OrderBy, req.Page, req.PageSize);
+        var query = masterUow.Repository<SubscriptionPlan>().Query();
 
-        var items = _masterUow.Repository<SubscriptionPlan>()
-            .ApplySpecification(spec)
+        var totalItems = query.Count();
+
+        var items = query
+            .OrderBy(req.OrderBy)
+            .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<SubscriptionPlanDto>.Ok(items, totalItems, req.PageSize);
+        return Task.FromResult(PagedResult<SubscriptionPlanDto>.Ok(items, totalItems, req.PageSize));
     }
 }

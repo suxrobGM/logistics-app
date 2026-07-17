@@ -1,36 +1,26 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Operations.Loads.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 
-internal sealed class DeleteEmployeeHandler : IAppRequestHandler<DeleteEmployeeCommand, Result>
+internal sealed class DeleteEmployeeHandler(
+    IMasterUnitOfWork masterUow,
+    ITenantUnitOfWork tenantUow) : IAppRequestHandler<DeleteEmployeeCommand, Result>
 {
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public DeleteEmployeeHandler(
-        IMasterUnitOfWork masterUow,
-        ITenantUnitOfWork tenantUow)
-    {
-        _masterUow = masterUow;
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result> Handle(
         DeleteEmployeeCommand req, CancellationToken ct)
     {
-        var tenant = _tenantUow.GetCurrentTenant();
-        var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+        var tenant = tenantUow.GetCurrentTenant();
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
         if (employee is null)
         {
             return Result.Fail($"Could not find employee with ID {req.UserId}");
         }
 
-        var user = await _masterUow.Repository<User>().GetByIdAsync(employee.Id);
+        var user = await masterUow.Repository<User>().GetByIdAsync(employee.Id);
 
         // Remove tenant from user if it matches the current tenant
         if (user?.Tenant != null && user.Tenant.Id == tenant.Id)
@@ -38,8 +28,9 @@ internal sealed class DeleteEmployeeHandler : IAppRequestHandler<DeleteEmployeeC
             user.Tenant = null;
         }
 
-        var employeeLoads = _tenantUow.Repository<Load>().ApplySpecification(new GetEmployeeLoads(employee.Id));
-        // var truck = await _tenantRepository.GetAsync<Truck>(i => i.DriverId == employee.Id);
+        var employeeLoads = tenantUow.Repository<Load>()
+            .Query()
+            .Where(i => i.AssignedDispatcherId == employee.Id);
 
         foreach (var load in employeeLoads)
         {
@@ -49,9 +40,9 @@ internal sealed class DeleteEmployeeHandler : IAppRequestHandler<DeleteEmployeeC
             }
         }
 
-        _tenantUow.Repository<Employee>().Delete(employee);
-        await _tenantUow.SaveChangesAsync();
-        await _masterUow.SaveChangesAsync();
+        tenantUow.Repository<Employee>().Delete(employee);
+        await tenantUow.SaveChangesAsync();
+        await masterUow.SaveChangesAsync();
         return Result.Ok();
     }
 }

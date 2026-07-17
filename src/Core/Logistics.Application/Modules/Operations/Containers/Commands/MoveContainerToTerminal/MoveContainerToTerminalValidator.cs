@@ -6,7 +6,6 @@ internal sealed class MoveContainerToTerminalValidator : AbstractValidator<MoveC
 {
     public MoveContainerToTerminalValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
         RuleFor(i => i.TerminalId).NotEmpty();
     }
 }

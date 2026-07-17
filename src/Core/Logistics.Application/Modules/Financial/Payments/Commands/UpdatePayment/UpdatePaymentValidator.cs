@@ -7,8 +7,6 @@ internal sealed class UpdatePaymentValidator : AbstractValidator<UpdatePaymentCo
 {
     public UpdatePaymentValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
-
         RuleFor(i => i.BillingAddress!)
             .SetValidator(new AddressValidator())
             .When(i => i.BillingAddress is not null);

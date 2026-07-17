@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.IdentityAccess.Roles.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -7,25 +6,28 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Roles.Queries;
 
-internal sealed class GetTenantRolesHandler : IAppRequestHandler<GetTenantRolesQuery, PagedResult<RoleDto>>
+internal sealed class GetTenantRolesHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetTenantRolesQuery, PagedResult<RoleDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetTenantRolesHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
-    public async Task<PagedResult<RoleDto>> Handle(
+    public Task<PagedResult<RoleDto>> Handle(
         GetTenantRolesQuery req, CancellationToken ct)
     {
-        var totalItems = await _tenantUow.Repository<TenantRole>().CountAsync();
+        var query = tenantUow.Repository<TenantRole>().Query();
 
-        var rolesDto = _tenantUow.Repository<TenantRole>()
-            .ApplySpecification(new SearchTenantRoles(req.Search, req.Page, req.PageSize))
+        if (!string.IsNullOrEmpty(req.Search))
+        {
+            query = query.Where(i =>
+                i.Name.Contains(req.Search) ||
+                (i.DisplayName != null && i.DisplayName.Contains(req.Search)));
+        }
+
+        var totalItems = query.Count();
+
+        var rolesDto = query
+            .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<RoleDto>.Ok(rolesDto, totalItems, req.PageSize);
+        return Task.FromResult(PagedResult<RoleDto>.Ok(rolesDto, totalItems, req.PageSize));
     }
 }

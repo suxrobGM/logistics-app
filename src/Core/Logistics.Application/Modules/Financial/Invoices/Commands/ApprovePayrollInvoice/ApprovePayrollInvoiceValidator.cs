@@ -6,7 +6,6 @@ internal sealed class ApprovePayrollInvoiceValidator : AbstractValidator<Approve
 {
     public ApprovePayrollInvoiceValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
         RuleFor(i => i.Notes).MaximumLength(1000);
     }
 }

@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Operations.Terminals.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,22 +9,33 @@ namespace Logistics.Application.Modules.Operations.Terminals.Queries;
 internal sealed class GetTerminalsHandler(ITenantUnitOfWork tenantUow)
     : IAppRequestHandler<GetTerminalsQuery, PagedResult<TerminalDto>>
 {
-    public async Task<PagedResult<TerminalDto>> Handle(GetTerminalsQuery req, CancellationToken ct)
+    public Task<PagedResult<TerminalDto>> Handle(GetTerminalsQuery req, CancellationToken ct)
     {
-        var totalItems = await tenantUow.Repository<Terminal>().CountAsync(ct: ct);
-        var specification = new SearchTerminals(
-            req.Search,
-            req.OrderBy,
-            req.Page,
-            req.PageSize,
-            req.Type,
-            req.CountryCode);
+        var query = tenantUow.Repository<Terminal>().Query();
 
-        var terminals = tenantUow.Repository<Terminal>()
-            .ApplySpecification(specification)
+        if (!string.IsNullOrEmpty(req.Search))
+        {
+            query = query.Where(i => i.Name.Contains(req.Search) || i.Code.Contains(req.Search));
+        }
+
+        if (req.Type.HasValue)
+        {
+            query = query.Where(i => i.Type == req.Type.Value);
+        }
+
+        if (!string.IsNullOrEmpty(req.CountryCode))
+        {
+            query = query.Where(i => i.CountryCode == req.CountryCode);
+        }
+
+        var totalItems = query.Count();
+
+        var terminals = query
+            .OrderBy(req.OrderBy)
+            .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<TerminalDto>.Ok(terminals, totalItems, req.PageSize);
+        return Task.FromResult(PagedResult<TerminalDto>.Ok(terminals, totalItems, req.PageSize));
     }
 }

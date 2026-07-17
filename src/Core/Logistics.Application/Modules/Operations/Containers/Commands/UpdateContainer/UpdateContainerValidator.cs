@@ -6,7 +6,6 @@ internal sealed class UpdateContainerValidator : AbstractValidator<UpdateContain
 {
     public UpdateContainerValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
         When(i => !string.IsNullOrEmpty(i.Number), () =>
         {
             RuleFor(i => i.Number)

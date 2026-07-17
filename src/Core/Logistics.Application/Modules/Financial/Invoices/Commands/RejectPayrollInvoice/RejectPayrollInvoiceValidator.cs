@@ -6,7 +6,6 @@ internal sealed class RejectPayrollInvoiceValidator : AbstractValidator<RejectPa
 {
     public RejectPayrollInvoiceValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
         RuleFor(i => i.Reason).NotEmpty().MaximumLength(1000);
     }
 }

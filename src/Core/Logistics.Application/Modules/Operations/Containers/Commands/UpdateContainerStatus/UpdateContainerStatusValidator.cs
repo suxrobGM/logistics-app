@@ -7,7 +7,6 @@ internal sealed class UpdateContainerStatusValidator : AbstractValidator<UpdateC
 {
     public UpdateContainerStatusValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
         RuleFor(i => i.TargetStatus).IsInEnum();
         When(i => i.TargetStatus is ContainerStatus.AtPort or ContainerStatus.Returned, () =>
         {

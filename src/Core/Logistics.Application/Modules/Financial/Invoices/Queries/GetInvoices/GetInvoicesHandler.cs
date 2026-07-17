@@ -29,15 +29,24 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
         return GetAllInvoices(req);
     }
 
-    private async Task<PagedResult<InvoiceDto>> GetAllInvoices(GetInvoicesQuery req)
+    private Task<PagedResult<InvoiceDto>> GetAllInvoices(GetInvoicesQuery req)
     {
-        var totalItems = await tenantUow.Repository<Invoice>().CountAsync();
-        var invoicesDto = tenantUow.Repository<Invoice>()
-            .ApplySpecification(new GetInvoices(req.InvoiceType, req.OrderBy, req.Page, req.PageSize))
+        var query = tenantUow.Repository<Invoice>().Query();
+
+        if (req.InvoiceType is not null)
+        {
+            query = query.Where(i => i.Type == req.InvoiceType);
+        }
+
+        var totalItems = query.Count();
+
+        var invoicesDto = query
+            .OrderBy(req.OrderBy)
+            .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<InvoiceDto>.Ok(invoicesDto, totalItems, req.PageSize);
+        return Task.FromResult(PagedResult<InvoiceDto>.Ok(invoicesDto, totalItems, req.PageSize));
     }
 
     private async Task<PagedResult<InvoiceDto>> GetLoadInvoices(GetInvoicesQuery req)

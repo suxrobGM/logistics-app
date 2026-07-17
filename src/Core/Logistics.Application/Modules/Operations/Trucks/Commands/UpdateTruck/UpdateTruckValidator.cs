@@ -6,7 +6,6 @@ internal sealed class UpdateTruckValidator : AbstractValidator<UpdateTruckComman
 {
     public UpdateTruckValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
         RuleFor(i => i.TruckType).IsInEnum();
         RuleFor(i => i.TruckStatus).IsInEnum();
     }

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Commands;
 
-public class UpdateExpenseCommand : ICommand<Result>
+public class UpdateExpenseCommand : ICommand<Result>, IExpenseFields
 {
     public Guid Id { get; set; }
     public decimal Amount { get; set; }

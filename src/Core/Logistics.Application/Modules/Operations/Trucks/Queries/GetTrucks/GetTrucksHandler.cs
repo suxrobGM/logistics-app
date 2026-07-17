@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Modules.Operations.Trucks.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,12 +9,23 @@ namespace Logistics.Application.Modules.Operations.Trucks.Queries;
 internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
     : IAppRequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
 {
-    public async Task<PagedResult<TruckDto>> Handle(
+    public Task<PagedResult<TruckDto>> Handle(
         GetTrucksQuery req,
         CancellationToken ct)
     {
-        var spec = new SearchTrucks(req.Search, req.OrderBy);
-        var baseQuery = tenantUow.Repository<Truck>().ApplySpecification(spec);
+        var baseQuery = tenantUow.Repository<Truck>().Query();
+
+        if (!string.IsNullOrEmpty(req.Search))
+        {
+            baseQuery = baseQuery.Where(i => i.Number.Contains(req.Search) ||
+                            i.MainDriver != null && (i.MainDriver.FirstName.Contains(req.Search) ||
+                                                     i.MainDriver.LastName.Contains(req.Search)) ||
+                            (i.SecondaryDriver != null &&
+                             (i.SecondaryDriver.FirstName.Contains(req.Search) ||
+                              i.SecondaryDriver.LastName.Contains(req.Search))));
+        }
+
+        baseQuery = baseQuery.OrderBy(req.OrderBy);
 
         if (req.Statuses?.Length > 0)
         {
@@ -35,6 +45,6 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
                 : baseQuery.Select(i => i.ToDto(new List<LoadDto>())))
             .ToArray();
 
-        return PagedResult<TruckDto>.Ok(trucks, totalItems, req.PageSize);
+        return Task.FromResult(PagedResult<TruckDto>.Ok(trucks, totalItems, req.PageSize));
     }
 }

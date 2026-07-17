@@ -7,7 +7,6 @@ internal sealed class UpdateTerminalValidator : AbstractValidator<UpdateTerminal
 {
     public UpdateTerminalValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
         When(i => !string.IsNullOrEmpty(i.Code), () =>
         {
             RuleFor(i => i.Code).Length(5)

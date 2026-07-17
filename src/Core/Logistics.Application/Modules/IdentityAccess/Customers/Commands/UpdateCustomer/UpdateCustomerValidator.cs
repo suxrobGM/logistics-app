@@ -7,7 +7,6 @@ internal sealed class UpdateCustomerValidator : AbstractValidator<UpdateCustomer
 {
     public UpdateCustomerValidator()
     {
-        RuleFor(i => i.Id).NotEmpty();
         RuleFor(i => i.Name).NotEmpty();
 
         RuleFor(i => i.Address!)

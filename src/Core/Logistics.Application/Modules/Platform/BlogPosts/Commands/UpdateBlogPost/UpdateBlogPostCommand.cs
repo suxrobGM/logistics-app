@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.BlogPosts.Commands;
 
-public sealed class UpdateBlogPostCommand : ICommand<Result>
+public sealed class UpdateBlogPostCommand : ICommand<Result>, IBlogPostFields
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;

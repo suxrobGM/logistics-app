@@ -37,6 +37,10 @@ paths:
 - Private fields: `camelCase` (no `_` prefix) — enforced by `.editorconfig`
 - Constants and static readonly: `PascalCase`
 
+## Validation
+
+- Don't write a validator whose only rule is `Id NotEmpty` — the handler's not-found path covers it. For Create/Update pairs sharing ≥3 rules, use the shared-fields base-validator pattern (see Ifta TaxRates).
+
 ## Enum Display Names
 
 Use `GetDescription()` from `Logistics.Domain.Primitives.Enums.EnumExtensions` for display strings — it auto-humanizes enum names (`PickedUp` → "Picked Up"). Only use `[Description]` when humanization isn't enough: acronyms (`Eld` → "ELD / HOS"), special formatting (`OnDutyNotDriving` → "On Duty (Not Driving)"), domain-specific (`Driving11Hour` → "11-Hour Driving Limit").
