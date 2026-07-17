@@ -1,0 +1,94 @@
+<ui-page-header
+  title="IFTA Tax Rates"
+  addRoute="/ifta-rates/add"
+  addTooltip="Add a new IFTA tax rate"
+/>
+
+<ui-card>
+  <ui-stack direction="row" align="end" gap="3" wrap class="mb-4">
+    <div class="min-w-72 flex-1">
+      <ui-search-field (searchChange)="search($event)" />
+    </div>
+    <ui-select-field
+      [options]="yearOptions"
+      [fluid]="false"
+      [showClear]="true"
+      placeholder="All years"
+      [value]="yearFilter()"
+      (selectionChange)="onYearChange($event)"
+      (cleared)="onYearChange(null)"
+    />
+    <ui-select-field
+      [options]="quarterOptions"
+      [fluid]="false"
+      [showClear]="true"
+      placeholder="All quarters"
+      [value]="quarterFilter()"
+      (selectionChange)="onQuarterChange($event)"
+      (cleared)="onQuarterChange(null)"
+    />
+  </ui-stack>
+
+  <ui-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No IFTA tax rates found"
+    emptyMessage="Add a rate or adjust the year/quarter filters."
+    emptyActionLabel="Add Rate"
+    (retry)="store.retry()"
+    (emptyAction)="addRate()"
+  >
+    <ui-data-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (lazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #header>
+        <tr>
+          <th uiSortHeader="Jurisdiction.CountryCode">Jurisdiction</th>
+          <th uiSortHeader="Year">Year</th>
+          <th uiSortHeader="Quarter">Quarter</th>
+          <th uiSortHeader="RatePerGallon">Rate / Gallon</th>
+          <th>Surcharge / Gallon</th>
+          <th class="w-20">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-rate>
+        <tr>
+          <td class="font-mono font-medium">{{ jurisdictionLabel(rate) }}</td>
+          <td>{{ rate.year }}</td>
+          <td>Q{{ rate.quarter }}</td>
+          <td>{{ rate.ratePerGallon | number: "1.4-4" }}</td>
+          <td>
+            {{
+              rate.surchargeRatePerGallon !== null && rate.surchargeRatePerGallon !== undefined
+                ? (rate.surchargeRatePerGallon | number: "1.4-4")
+                : "-"
+            }}
+          </td>
+          <td>
+            <ui-button
+              intent="secondary"
+              appearance="text"
+              icon="ellipsis-vertical"
+              (click)="openActionMenu(rate, menu, $event)"
+              ariaLabel="Show actions menu"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </ui-data-table>
+  </ui-data-container>
+</ui-card>
+
+<ui-menu #menu [items]="actionMenuItems()" />

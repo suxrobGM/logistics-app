@@ -64,6 +64,12 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "ifta-rates",
+    loadChildren: () =>
+      import("./pages/ifta-rates/ifta-rates.routes").then((m) => m.iftaRatesRoutes),
+    canActivate: [authGuard],
+  },
+  {
     path: "data-requests",
     loadChildren: () =>
       import("./pages/data-requests/data-requests.routes").then((m) => m.dataRequestsRoutes),

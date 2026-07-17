@@ -1,0 +1,91 @@
+<form [formRoot]="form">
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12 md:col-span-6">
+      <ui-form-field label="Country" [required]="true">
+        <ui-select-field
+          [formField]="form.countryCode"
+          [options]="countryOptions"
+          placeholder="Select country"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-6">
+      <ui-form-field label="State / Province" hint="Leave as country-wide for a national rate">
+        <ui-select-field
+          [formField]="form.region"
+          [options]="regionOptions()"
+          placeholder="Country-wide"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </div>
+  </div>
+
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12 md:col-span-6">
+      <ui-form-field label="Year" [required]="true">
+        <ui-number-field [formField]="form.year" [useGrouping]="false" [fluid]="true" />
+      </ui-form-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-6">
+      <ui-form-field label="Quarter" [required]="true">
+        <ui-select-field
+          [formField]="form.quarter"
+          [options]="quarterOptions"
+          placeholder="Select quarter"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </div>
+  </div>
+
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12 md:col-span-6">
+      <ui-form-field label="Rate Per Gallon (USD)" [required]="true">
+        <ui-number-field
+          [formField]="form.ratePerGallon"
+          [maxFractionDigits]="4"
+          placeholder="0.0000"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-6">
+      <ui-form-field
+        label="Surcharge Per Gallon (USD)"
+        hint="Only Indiana, Kentucky, and Virginia publish a surcharge"
+      >
+        <ui-number-field
+          [formField]="form.surchargePerGallon"
+          [maxFractionDigits]="4"
+          placeholder="None"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-wrap gap-2">
+    <ui-button
+      [label]="mode() === 'create' ? 'Create' : 'Save'"
+      icon="check"
+      type="submit"
+      [loading]="isLoading()"
+      [disabled]="isLoading()"
+    />
+    <ui-button intent="secondary" label="Cancel" icon="x" routerLink="/ifta-rates" />
+    @if (mode() === "edit") {
+      <ui-button
+        intent="danger"
+        appearance="outlined"
+        label="Delete"
+        icon="trash"
+        (click)="askRemove()"
+      />
+    }
+  </div>
+</form>

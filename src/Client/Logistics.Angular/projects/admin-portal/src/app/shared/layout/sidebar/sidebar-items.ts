@@ -68,6 +68,17 @@ export const sidebarSections: AdminNavSection[] = [
     ],
   },
   {
+    label: "Compliance",
+    items: [
+      {
+        label: "IFTA Tax Rates",
+        icon: "fuel",
+        route: "/ifta-rates",
+        permission: Permission.IftaRate.View,
+      },
+    ],
+  },
+  {
     label: "Inbox",
     items: [
       { label: "Demo Requests", icon: "inbox", route: "/demo-requests" },

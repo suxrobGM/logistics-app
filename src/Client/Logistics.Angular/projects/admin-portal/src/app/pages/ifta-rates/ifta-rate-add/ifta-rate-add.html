@@ -1,0 +1,7 @@
+<ui-page-header title="Add IFTA Tax Rate" />
+
+<div class="flex flex-col justify-center gap-6 md:flex-row">
+  <ui-card class="w-full md:w-3/4 lg:w-2/3">
+    <adm-ifta-rate-form mode="create" [isLoading]="isLoading()" (save)="onSave($event)" />
+  </ui-card>
+</div>

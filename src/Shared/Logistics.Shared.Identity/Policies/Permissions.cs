@@ -176,6 +176,12 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(BlogPost)}.Manage";
     }
 
+    public static class IftaRate
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(IftaRate)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(IftaRate)}.Manage";
+    }
+
     public static class Dvir
     {
         public const string View = $"{nameof(Permission)}.{nameof(Dvir)}.View";

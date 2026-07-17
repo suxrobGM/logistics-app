@@ -20,6 +20,8 @@ export class Integrations {
     { name: "Samsara", logo: "images/icons/samsara.png" },
     { name: "Motive", logo: "images/icons/motive.jpg" },
     { name: "TT ELD", logo: "images/icons/tteld.png" },
+    { name: "WEX", logo: "images/icons/wex.svg" },
+    { name: "EFS", logo: "images/icons/efs.svg" },
     { name: "Stripe", logo: "images/icons/stripe.svg" },
     { name: "Mapbox", logo: "images/icons/mapbox.svg" },
     { name: "Firebase", logo: "images/icons/firebase.svg" },
