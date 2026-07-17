@@ -13,7 +13,9 @@ name: logistics-dev
 
 services:
   postgres:
-    image: postgres:latest
+    # Pinned major version; 18+ images store data under /var/lib/postgresql (not .../data),
+    # so the volume mounts there. Bumping the major requires pg_upgrade or a fresh volume.
+    image: postgres:18
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -22,7 +24,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - logistics-pg-data:/var/lib/postgresql/data
+      - logistics-pg-data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s

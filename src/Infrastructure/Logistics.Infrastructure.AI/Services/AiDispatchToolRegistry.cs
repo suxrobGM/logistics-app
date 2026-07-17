@@ -6,7 +6,7 @@ namespace Logistics.Infrastructure.AI.Services;
 internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
 {
     private static readonly HashSet<string> LoadBoardTools =
-        ["search_loadboard", "book_loadboard_load"];
+        ["search_loadboard", "check_broker_credit", "book_loadboard_load"];
 
     private static readonly List<AiDispatchToolDefinition> Tools =
     [
@@ -181,6 +181,18 @@ internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
                     ["destination_state"] = Prop("string", "Optional destination state filter")
                 },
                 ["required"] = new JsonArray("origin_city", "origin_state")
+            })),
+
+        new("check_broker_credit",
+            "Check a load-board broker's credit standing (score 0-100, days-to-pay, FMCSA authority status) by MC number. Always call this before book_loadboard_load; never book when the score is below the tenant minimum or the authority is inactive.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["mc_number"] = Prop("string", "The broker's MC number, e.g. 'MC123456' or '123456'")
+                },
+                ["required"] = new JsonArray("mc_number")
             })),
 
         // ── Write Tools ──

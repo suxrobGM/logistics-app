@@ -26,6 +26,12 @@ public record LoadBoardBookingRequest
     /// Optional notes for the booking
     /// </summary>
     public string? Notes { get; set; }
+
+    /// <summary>
+    /// Dispatcher override: book even when the broker's credit is below the tenant's
+    /// minimum score or the broker's authority is inactive.
+    /// </summary>
+    public bool OverrideCreditCheck { get; set; }
 }
 
 public record LoadBoardBookingResultDto

@@ -63,6 +63,14 @@ export function getProviderSeverity(type?: LoadBoardProviderType | string): UiBa
   }
 }
 
+/** Broker credit score badge: >=75 healthy, 50-74 caution, <50 risky. */
+export function getCreditSeverity(score?: number | null): UiBadgeIntent {
+  if (score == null) return "secondary";
+  if (score >= 75) return "success";
+  if (score >= 50) return "warn";
+  return "danger";
+}
+
 export function getPostedTruckStatusSeverity(status?: string): UiBadgeIntent {
   switch (status) {
     case "available":

@@ -45,7 +45,11 @@ internal static class AiDispatchSystemPrompt
         var sanitizedName = SanitizeCompanyName(companyName);
 
         var loadBoardStep = hasLoadBoardIntegration
-            ? "\n9. If trucks have no loads after assignments, search load boards with `search_loadboard`"
+            ? """
+
+              9. If trucks have no loads after assignments, search load boards with `search_loadboard`
+              10. Before booking any load-board load, check the broker with `check_broker_credit`. NEVER call `book_loadboard_load` when the broker's credit score is below the tenant's minimum or their FMCSA authority is inactive — skip the load and note why in your summary. If no credit data exists, you may proceed but must flag the missing data.
+              """
             : "";
 
         return $$"""

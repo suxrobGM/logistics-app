@@ -19,6 +19,12 @@ internal sealed class DemoTenantsSeeder(
     public override SeederType Type => SeederType.Infrastructure;
     public override int Order => 40;
 
+    /// <summary>
+    /// Demo threshold for the broker credit booking gate — the Demo load-board provider
+    /// generates scores 30-100, so ~half its brokers trip the gate for demo purposes.
+    /// </summary>
+    private const int DemoMinBrokerCreditScore = 70;
+
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
         LogStarting();
@@ -69,6 +75,7 @@ internal sealed class DemoTenantsSeeder(
                 };
                 ApplyRegionalSettings(tenant, profile);
                 ApplyDemoTaxIdentifiers(tenant, profile);
+                tenant.Settings.MinBrokerCreditScore = DemoMinBrokerCreditScore;
 
                 await repo.AddAsync(tenant, cancellationToken);
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
@@ -88,6 +95,11 @@ internal sealed class DemoTenantsSeeder(
                 }
                 if (ApplyDemoTaxIdentifiers(existing, profile))
                 {
+                    updated = true;
+                }
+                if (existing.Settings.MinBrokerCreditScore is null)
+                {
+                    existing.Settings.MinBrokerCreditScore = DemoMinBrokerCreditScore;
                     updated = true;
                 }
 

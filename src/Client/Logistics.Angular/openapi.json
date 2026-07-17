@@ -8789,6 +8789,54 @@
         }
       }
     },
+    "/loadboard/brokers/{mcNumber}/credit": {
+      "get": {
+        "tags": [
+          "LoadBoard"
+        ],
+        "operationId": "GetBrokerCredit",
+        "parameters": [
+          {
+            "name": "mcNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "listingId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrokerCreditDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/loadboard/listings/{listingId}/book": {
       "post": {
         "tags": [
@@ -16105,6 +16153,49 @@
         ],
         "type": "string"
       },
+      "BrokerCreditDto": {
+        "required": [
+          "mcNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "mcNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "creditScore": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "daysToPay": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "authorityActive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/BrokerCreditSource"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BrokerCreditSource": {
+        "enum": [
+          "dat",
+          "truckstop",
+          "fmcsa",
+          "demo"
+        ],
+        "type": "string"
+      },
       "BulkAssignRequest": {
         "type": "object",
         "properties": {
@@ -21172,6 +21263,9 @@
           "notes": {
             "type": "string",
             "nullable": true
+          },
+          "overrideCreditCheck": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -21356,6 +21450,21 @@
           },
           "brokerMcNumber": {
             "type": "string",
+            "nullable": true
+          },
+          "brokerCreditScore": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "brokerDaysToPay": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "brokerCreditCheckedAt": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           },
           "status": {
@@ -24820,6 +24929,11 @@
           },
           "llmEnabled": {
             "type": "boolean",
+            "nullable": true
+          },
+          "minBrokerCreditScore": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },

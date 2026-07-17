@@ -50,6 +50,7 @@ export class Pricing {
       features: [
         "Everything in Starter",
         "Load board integrations",
+        "Broker credit checks",
         "Payroll management",
         "Timesheets tracking",
         "Safety & compliance",

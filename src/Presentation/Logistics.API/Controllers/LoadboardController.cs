@@ -58,6 +58,16 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpGet("brokers/{mcNumber}/credit", Name = "GetBrokerCredit")]
+    [ProducesResponseType(typeof(BrokerCreditDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.LoadBoard.View)]
+    public async Task<IActionResult> GetBrokerCredit(string mcNumber, [FromQuery] Guid? listingId)
+    {
+        var result = await mediator.Send(new GetBrokerCreditQuery { McNumber = mcNumber, ListingId = listingId });
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("listings/{listingId:guid}/book", Name = "BookLoadBoardListing")]
     [ProducesResponseType(typeof(LoadBoardBookingResultDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -71,7 +81,8 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
             DispatcherId = request.DispatcherId,
             CustomerId = request.CustomerId,
             CustomerName = request.CustomerName,
-            Notes = request.Notes
+            Notes = request.Notes,
+            OverrideCreditCheck = request.OverrideCreditCheck
         });
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }

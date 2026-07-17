@@ -9,6 +9,7 @@
     <tr>
       <th>Provider</th>
       <th>Route</th>
+      <th>Broker</th>
       <th>Pickup</th>
       <th>Equipment</th>
       <th>Weight</th>
@@ -36,6 +37,27 @@
           </div>
           @if (listing.distance) {
             <div class="text-muted-foreground text-xs">{{ listing.distance | distanceUnit }}</div>
+          }
+        </div>
+      </td>
+      <td>
+        <div class="max-w-40">
+          <div class="truncate text-sm font-medium" [uiTooltip]="listing.brokerName">
+            {{ listing.brokerName || "-" }}
+          </div>
+          @if (listing.brokerCreditScore !== null && listing.brokerCreditScore !== undefined) {
+            <div class="mt-1 flex items-center gap-1">
+              <ui-badge
+                [value]="'Credit ' + listing.brokerCreditScore"
+                [severity]="getCreditSeverity(listing.brokerCreditScore)"
+                uiTooltip="Broker credit score (0-100)"
+              />
+              @if (listing.brokerDaysToPay !== null && listing.brokerDaysToPay !== undefined) {
+                <span class="text-muted-foreground text-xs">{{ listing.brokerDaysToPay }}d to pay</span>
+              }
+            </div>
+          } @else if (listing.brokerMcNumber) {
+            <div class="text-muted-foreground text-xs">No credit data</div>
           }
         </div>
       </td>

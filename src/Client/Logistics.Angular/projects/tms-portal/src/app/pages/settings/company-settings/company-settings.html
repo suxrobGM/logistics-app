@@ -222,6 +222,30 @@
           </ui-surface>
         </ui-stack>
 
+        <!-- Dispatch Settings Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="shield-check" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Dispatch Settings</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <ui-form-field
+                label="Minimum Broker Credit Score"
+                for="minBrokerCreditScore"
+                hint="Load-board bookings from brokers scoring below this (0-100) are blocked unless a dispatcher overrides. Leave empty to disable."
+                class="mb-0"
+              >
+                <ui-number-field
+                  id="minBrokerCreditScore"
+                  [formField]="form.minBrokerCreditScore"
+                  [fluid]="true"
+                />
+              </ui-form-field>
+            </div>
+          </ui-surface>
+        </ui-stack>
+
         <!-- Actions -->
         <ui-stack direction="row" gap="2">
           <ui-button

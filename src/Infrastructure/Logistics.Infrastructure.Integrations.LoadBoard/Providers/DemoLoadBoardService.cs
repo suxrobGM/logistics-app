@@ -1,6 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Infrastructure.Integrations.LoadBoard.Credit;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
@@ -151,6 +152,8 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
         var totalRate = Math.Round(ratePerMile * distance, 2);
 
         var pickupStart = DateTime.UtcNow.AddDays(random.Next(1, 5));
+        var brokerMcNumber = $"MC{random.Next(100000, 999999)}";
+        var (creditScore, daysToPay, _) = DemoBrokerCredit.Compute(brokerMcNumber);
 
         return new LoadBoardListingDto
         {
@@ -192,7 +195,9 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
             BrokerName = brokerNames[random.Next(brokerNames.Length)],
             BrokerPhone = $"555-{random.Next(100, 999)}-{random.Next(1000, 9999)}",
             BrokerEmail = $"dispatch{random.Next(1, 100)}@broker.example.com",
-            BrokerMcNumber = $"MC{random.Next(100000, 999999)}",
+            BrokerMcNumber = brokerMcNumber,
+            BrokerCreditScore = creditScore,
+            BrokerDaysToPay = daysToPay,
             Status = LoadBoardListingStatus.Available,
             ExpiresAt = DateTime.UtcNow.AddDays(7)
         };

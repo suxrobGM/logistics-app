@@ -49,6 +49,8 @@ internal static class DatMapper
             BrokerPhone = load.Broker?.Phone,
             BrokerEmail = load.Broker?.Email,
             BrokerMcNumber = load.Broker?.McNumber,
+            BrokerCreditScore = load.Broker?.CreditScore,
+            BrokerDaysToPay = load.Broker?.DaysToPay,
             Status = LoadBoardListingStatus.Available,
             ExpiresAt = load.ExpiresAt ?? DateTime.MaxValue
         };

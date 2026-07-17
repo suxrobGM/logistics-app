@@ -67,6 +67,18 @@ public class LoadBoardListing : AuditableEntity, ITenantEntity
     public string? BrokerEmail { get; set; }
     public string? BrokerMcNumber { get; set; }
 
+    /// <summary>
+    /// Broker credit score normalized to 0-100, stamped when a credit check runs for this listing.
+    /// </summary>
+    public int? BrokerCreditScore { get; set; }
+
+    /// <summary>
+    /// Average days the broker takes to pay carriers.
+    /// </summary>
+    public int? BrokerDaysToPay { get; set; }
+
+    public DateTime? BrokerCreditCheckedAt { get; set; }
+
     public LoadBoardListingStatus Status { get; set; } = LoadBoardListingStatus.Available;
 
     public DateTime? BookedAt { get; set; }

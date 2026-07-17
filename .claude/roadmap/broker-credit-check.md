@@ -1,6 +1,6 @@
 # Broker Credit Check
 
-- **Status**: Planned
+- **Status**: Done
 - **Priority**: P0 — DataTruck's AI Dispatcher vets broker credit before booking; ours books blind
 - **Effort**: S
 - **Category**: Table stakes / AI tool
@@ -24,4 +24,4 @@ already integrate the first two for load search (`Infrastructure.Integrations.Lo
 
 ## Notes
 
-_(add dated implementation notes here)_
+- **2026-07-16**: Shipped on `feat/fuel-integrations`. `check_broker_credit` read tool (registry + `LoadBoardTools` gate → dispatch agent + MCP), `IBrokerCreditService` in `Infrastructure.Integrations.LoadBoard/Credit/` (24h `BrokerCreditRecord` tenant-DB cache → Demo deterministic score → FMCSA QCMobile authority fallback; DAT/Truckstop credit fields mapped from search responses when the subscription includes them). Hard server-side gate in `BookLoadBoardLoadHandler` (`BROKER_CREDIT_BELOW_THRESHOLD` prefix, dispatcher `OverrideCreditCheck` flag, missing score never blocks, inactive authority always blocks) + system-prompt rule. Threshold: `TenantSettings.MinBrokerCreditScore`, editable in company settings. UI: broker column + credit badge on load-board search, override confirm dialog. Also fixed pre-existing bug: search results were never persisted, so booking by listing ID could never succeed — `SearchLoadBoardHandler` now upserts listings.

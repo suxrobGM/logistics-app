@@ -60,6 +60,13 @@ export class Compare {
         { name: "DAT load board", us: "✓", dataTruck: "✓", alvys: "✓", roseRocket: "-" },
         { name: "Truckstop", us: "✓", dataTruck: "✓", alvys: "-", roseRocket: "-" },
         { name: "123Loadboard", us: "✓", dataTruck: "✓", alvys: "-", roseRocket: "-" },
+        {
+          name: "Broker credit vetting (blocks risky bookings)",
+          us: "✓",
+          dataTruck: "✓",
+          alvys: "-",
+          roseRocket: "-",
+        },
       ],
     },
     {

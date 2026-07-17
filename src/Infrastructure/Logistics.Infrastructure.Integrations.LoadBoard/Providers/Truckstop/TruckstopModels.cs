@@ -48,6 +48,16 @@ internal record TruckstopBroker
     public string? Phone { get; set; }
     public string? Email { get; set; }
     public string? McNumber { get; set; }
+
+    /// <summary>
+    /// Credit score (0-100), present only on subscriptions that include credit data.
+    /// </summary>
+    public int? CreditScore { get; set; }
+
+    /// <summary>
+    /// Average days-to-pay, present only on subscriptions that include credit data.
+    /// </summary>
+    public int? DaysToPay { get; set; }
 }
 
 internal record TruckstopBookingResponse

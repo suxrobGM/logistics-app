@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
@@ -80,6 +81,8 @@ internal sealed class SearchLoadBoardHandler(
             .Take(req.MaxResults)
             .ToList();
 
+        await PersistListingsAsync(sortedListings, ct);
+
         var result = new LoadBoardSearchResultDto
         {
             Listings = sortedListings,
@@ -89,5 +92,85 @@ internal sealed class SearchLoadBoardHandler(
         };
 
         return Result<LoadBoardSearchResultDto>.Ok(result);
+    }
+
+    /// <summary>
+    /// Upserts search results as LoadBoardListing entities so they can be booked later —
+    /// booking resolves the listing by entity Id. Stamps each DTO with the entity Id and
+    /// reflects any already-booked state back onto the DTO.
+    /// </summary>
+    private async Task PersistListingsAsync(List<LoadBoardListingDto> listings, CancellationToken ct)
+    {
+        if (listings.Count == 0)
+        {
+            return;
+        }
+
+        var externalIds = listings.Select(l => l.ExternalListingId).ToList();
+        var listingRepository = tenantUow.Repository<LoadBoardListing>();
+        var existing = await listingRepository.GetListAsync(l => externalIds.Contains(l.ExternalListingId), ct);
+        var existingByKey = existing
+            .GroupBy(l => (l.ProviderType, l.ExternalListingId))
+            .ToDictionary(g => g.Key, g => g.First());
+
+        foreach (var dto in listings)
+        {
+            if (existingByKey.TryGetValue((dto.ProviderType, dto.ExternalListingId), out var entity))
+            {
+                entity.RatePerMile = dto.RatePerMile;
+                entity.TotalRate = ToMoney(dto.TotalRate, dto.Currency);
+                entity.ExpiresAt = dto.ExpiresAt;
+                entity.BrokerCreditScore = dto.BrokerCreditScore ?? entity.BrokerCreditScore;
+                entity.BrokerDaysToPay = dto.BrokerDaysToPay ?? entity.BrokerDaysToPay;
+
+                // Reflect already-booked state back onto the DTO
+                dto.Status = entity.Status;
+                dto.BookedAt = entity.BookedAt;
+                dto.LoadId = entity.LoadId;
+            }
+            else
+            {
+                entity = new LoadBoardListing
+                {
+                    ExternalListingId = dto.ExternalListingId,
+                    ProviderType = dto.ProviderType,
+                    OriginAddress = dto.OriginAddress,
+                    OriginLocation = dto.OriginLocation,
+                    DestinationAddress = dto.DestinationAddress,
+                    DestinationLocation = dto.DestinationLocation,
+                    RatePerMile = dto.RatePerMile,
+                    TotalRate = ToMoney(dto.TotalRate, dto.Currency),
+                    Distance = dto.Distance,
+                    Weight = dto.Weight,
+                    Length = dto.Length,
+                    PickupDateStart = dto.PickupDateStart,
+                    PickupDateEnd = dto.PickupDateEnd,
+                    DeliveryDateStart = dto.DeliveryDateStart,
+                    DeliveryDateEnd = dto.DeliveryDateEnd,
+                    EquipmentType = dto.EquipmentType,
+                    Commodity = dto.Commodity,
+                    BrokerName = dto.BrokerName,
+                    BrokerPhone = dto.BrokerPhone,
+                    BrokerEmail = dto.BrokerEmail,
+                    BrokerMcNumber = dto.BrokerMcNumber,
+                    BrokerCreditScore = dto.BrokerCreditScore,
+                    BrokerDaysToPay = dto.BrokerDaysToPay,
+                    Status = LoadBoardListingStatus.Available,
+                    ExpiresAt = dto.ExpiresAt
+                };
+                await listingRepository.AddAsync(entity, ct);
+            }
+
+            dto.Id = entity.Id;
+        }
+
+        await tenantUow.SaveChangesAsync(ct);
+    }
+
+    private static Money? ToMoney(decimal? amount, string? currency)
+    {
+        return amount.HasValue
+            ? new Money { Amount = amount.Value, Currency = currency ?? "USD" }
+            : null;
     }
 }

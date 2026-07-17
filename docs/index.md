@@ -40,9 +40,11 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 - **GPS Tracking** - Live fleet map over SignalR WebSockets.
 - **Fleet & Maintenance Tracking** - Trucks, trailers, schedules, VIN decoding.
 - **Load Board Integration** - Search DAT, Truckstop, and 123Loadboard. Book loads. Post trucks.
+- **Broker Credit Check** - Credit score, days-to-pay, and FMCSA authority status on every load-board listing; low-credit bookings are blocked unless overridden.
 - **Invoicing & Payments** - Stripe and Stripe Connect, with payment links and partial payments.
 - **Payroll & Timesheets** - Driver pay calculation and payroll invoices.
 - **Expense Tracking** - Categorized fleet expenses with reports.
+- **QuickBooks Sync** - Customers, invoices, payments, and expenses pushed to QuickBooks Online.
 - **ELD / HOS Compliance** - Samsara and Motive.
 - **Safety & DVIR** - Digital inspections, incident tracking, compliance records.
 - **Reports & Analytics** - 7 report types: driver, truck, revenue, customer, payroll, expense, operations.

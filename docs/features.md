@@ -54,11 +54,12 @@ The dispatcher and manager web interface for managing all fleet operations.
 
 ### Load Board Integration
 
-| Feature                   | Description                                                                                                                                                       |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Multi-Provider Search** | Search for available freight across DAT, Truckstop.com, and 123Loadboard from a single interface. Filter by origin, destination, dates, equipment type, and rate. |
-| **Book Loads**            | Book loads directly from search results. Automatically creates a new load in the TMS with all details pre-filled from the listing.                                |
-| **Post Trucks**           | Advertise available capacity to load boards. Specify truck location, destination preferences, equipment type, and availability window with auto-refresh.          |
+| Feature                   | Description                                                                                                                                                                                                                              |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Multi-Provider Search** | Search for available freight across DAT, Truckstop.com, and 123Loadboard from a single interface. Filter by origin, destination, dates, equipment type, and rate.                                                                        |
+| **Book Loads**            | Book loads directly from search results. Automatically creates a new load in the TMS with all details pre-filled from the listing.                                                                                                       |
+| **Broker Credit Check**   | Vet brokers before booking: credit score, days-to-pay, and FMCSA authority status on every listing. Bookings below your minimum score are blocked unless a dispatcher overrides, and the AI dispatcher refuses to book unvetted brokers. |
+| **Post Trucks**           | Advertise available capacity to load boards. Specify truck location, destination preferences, equipment type, and availability window with auto-refresh.                                                                                 |
 
 ### Financial
 
@@ -70,6 +71,7 @@ The dispatcher and manager web interface for managing all fleet operations.
 | **Payroll Management** | Calculate driver pay by miles, percentage, or flat rate. Generate payroll invoices with PDF stubs. Track payment history per employee.                                                          |
 | **Timesheets**         | Track employee work hours and overtime. Link timesheets to payroll calculations for accurate compensation.                                                                                      |
 | **Expense Tracking**   | Record and categorize fleet expenses - fuel, tolls, repairs, insurance, and more. Monitor spending with breakdowns by category, truck, or time period.                                          |
+| **QuickBooks Sync**    | Push customers, invoices, payments, and expenses to QuickBooks Online automatically. OAuth connection with nightly background sync.                                                             |
 
 ### Compliance & Safety
 

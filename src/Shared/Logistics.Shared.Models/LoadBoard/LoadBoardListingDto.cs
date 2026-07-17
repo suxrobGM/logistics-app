@@ -35,6 +35,18 @@ public record LoadBoardListingDto
     public string? BrokerEmail { get; set; }
     public string? BrokerMcNumber { get; set; }
 
+    /// <summary>
+    /// Broker credit score normalized to 0-100, when the provider or a credit check supplied one.
+    /// </summary>
+    public int? BrokerCreditScore { get; set; }
+
+    /// <summary>
+    /// Average days the broker takes to pay carriers.
+    /// </summary>
+    public int? BrokerDaysToPay { get; set; }
+
+    public DateTime? BrokerCreditCheckedAt { get; set; }
+
     public LoadBoardListingStatus Status { get; set; }
     public DateTime? BookedAt { get; set; }
     public DateTime ExpiresAt { get; set; }

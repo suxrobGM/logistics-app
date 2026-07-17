@@ -40,6 +40,16 @@ internal record DatBroker
     public string? Phone { get; set; }
     public string? Email { get; set; }
     public string? McNumber { get; set; }
+
+    /// <summary>
+    /// Credit score (0-100) from DAT CreditStop, present only on subscriptions that include credit data.
+    /// </summary>
+    public int? CreditScore { get; set; }
+
+    /// <summary>
+    /// Average days-to-pay from DAT CreditStop, present only on subscriptions that include credit data.
+    /// </summary>
+    public int? DaysToPay { get; set; }
 }
 
 internal record DatBookingResponse

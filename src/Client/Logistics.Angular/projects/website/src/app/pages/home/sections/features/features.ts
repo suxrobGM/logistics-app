@@ -47,6 +47,12 @@ export class Features {
         "Search DAT, Truckstop, and 123Loadboard from one place. Book loads. Post trucks.",
     },
     {
+      icon: "shield-check",
+      title: "Broker Credit Check",
+      description:
+        "Credit score, days-to-pay, and FMCSA authority on every listing. Low-credit bookings are blocked before you haul for a broker who won't pay.",
+    },
+    {
       icon: "globe",
       title: "US and Europe",
       description:

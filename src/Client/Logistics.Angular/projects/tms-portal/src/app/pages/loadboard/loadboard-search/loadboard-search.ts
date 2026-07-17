@@ -13,6 +13,9 @@ import { DashboardCard, EmptyState, PageHeader } from "@/shared/components";
 import { BookLoadDialog, LoadBoardSearchFilters, LoadBoardSearchResults } from "../_components";
 import { LoadBoardStore } from "../store";
 
+/** Must match BookLoadBoardLoadHandler.CreditCheckErrorPrefix on the backend. */
+const CREDIT_BLOCK_PREFIX = "BROKER_CREDIT_BELOW_THRESHOLD";
+
 @Component({
   selector: "app-loadboard-search",
   templateUrl: "./loadboard-search.html",
@@ -67,26 +70,56 @@ export class LoadBoardSearchComponent implements OnInit {
 
   protected async onBook(body: LoadBoardBookingRequest): Promise<void> {
     const listing = this.selectedListing();
-    if (!listing?.externalListingId) {
+    if (!listing?.id) {
       return;
     }
 
+    await this.bookListing(listing, body);
+  }
+
+  private async bookListing(
+    listing: LoadBoardListingDto,
+    body: LoadBoardBookingRequest,
+  ): Promise<void> {
     this.booking.set(true);
     try {
-      await this.api.invoke(bookLoadBoardListing, {
-        listingId: listing.externalListingId,
-        body,
-      });
+      await this.api.invoke(bookLoadBoardListing, { listingId: listing.id!, body });
       this.showBookDialog.set(false);
       this.toast.showSuccess("Load booked successfully! A new load has been created in your TMS.");
       this.listings.update((cur) =>
         cur.filter((l) => l.externalListingId !== listing.externalListingId),
       );
     } catch (err) {
+      const message = this.extractApiError(err);
+      if (message?.startsWith(CREDIT_BLOCK_PREFIX)) {
+        this.confirmCreditOverride(listing, body, message);
+        return;
+      }
       console.error("Error booking load:", err);
       this.toast.showError("Failed to book load");
     } finally {
       this.booking.set(false);
     }
+  }
+
+  private confirmCreditOverride(
+    listing: LoadBoardListingDto,
+    body: LoadBoardBookingRequest,
+    message: string,
+  ): void {
+    const reason = message.slice(CREDIT_BLOCK_PREFIX.length).replace(/^:\s*/, "");
+    this.toast.confirm({
+      header: "Broker Credit Warning",
+      message: `${reason} Book anyway?`,
+      icon: "warning",
+      severity: "danger",
+      acceptLabel: "Book Anyway",
+      accept: () => void this.bookListing(listing, { ...body, overrideCreditCheck: true }),
+    });
+  }
+
+  private extractApiError(err: unknown): string | undefined {
+    const body = (err as { error?: { error?: unknown } })?.error;
+    return typeof body?.error === "string" ? body.error : undefined;
   }
 }

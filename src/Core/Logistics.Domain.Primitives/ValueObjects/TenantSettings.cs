@@ -29,4 +29,10 @@ public record TenantSettings
     /// Bypassed in development environments.
     /// </summary>
     public bool? LlmEnabled { get; set; }
+
+    /// <summary>
+    /// Minimum broker credit score (0-100) required to book a load-board load.
+    /// Null disables the gate. A missing score never blocks; inactive FMCSA authority always does.
+    /// </summary>
+    public int? MinBrokerCreditScore { get; set; }
 }

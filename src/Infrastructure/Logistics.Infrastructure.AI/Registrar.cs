@@ -52,6 +52,7 @@ public static class Registrar
 
         // Load board tools (conditionally included in tool definitions based on tenant feature flag)
         services.AddScoped<IAiDispatchTool, SearchLoadBoardTool>();
+        services.AddScoped<IAiDispatchTool, CheckBrokerCreditTool>();
         services.AddScoped<IAiDispatchTool, BookLoadBoardLoadTool>();
 
         return services;

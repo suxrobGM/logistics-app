@@ -42,5 +42,10 @@ internal sealed class UpdateTenantValidator : AbstractValidator<UpdateTenantComm
         RuleFor(i => i.CompanyAddress!)
             .SetValidator(new AddressValidator())
             .When(i => i.CompanyAddress is not null);
+
+        RuleFor(i => i.Settings!.MinBrokerCreditScore)
+            .InclusiveBetween(0, 100)
+            .When(i => i.Settings?.MinBrokerCreditScore is not null)
+            .WithMessage("Minimum broker credit score must be between 0 and 100.");
     }
 }

@@ -16,7 +16,7 @@ in its **Notes** section. Keep this index's Status column in sync.
 | [IFTA fuel tax reporting](ifta-reporting.md)        | P0       | M      | Planned |
 | [Fuel card integrations](fuel-card-integrations.md) | P0       | M      | Planned |
 | [Factoring integration](factoring-integration.md)   | P0       | M      | Planned |
-| [Broker credit check](broker-credit-check.md)       | P0       | S      | Planned |
+| [Broker credit check](broker-credit-check.md)       | P0       | S      | Done    |
 | [EDI integration](edi-integration.md)               | P2       | XL     | Planned |
 
 ## Phase 2 — AI differentiation (extend the existing agent platform)

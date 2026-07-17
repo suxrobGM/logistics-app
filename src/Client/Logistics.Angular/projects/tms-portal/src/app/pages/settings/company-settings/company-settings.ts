@@ -1,5 +1,14 @@
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
-import { email, form, FormField, FormRoot, maxLength, required } from "@angular/forms/signals";
+import {
+  email,
+  form,
+  FormField,
+  FormRoot,
+  max,
+  maxLength,
+  min,
+  required,
+} from "@angular/forms/signals";
 import { AddressForm, PhoneField, regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
@@ -18,6 +27,7 @@ import {
   Surface,
   Typography,
   UiButton,
+  UiNumberField,
   UiSelectField,
   UiTextField,
 } from "@logistics/shared/ui";
@@ -40,6 +50,8 @@ interface CompanySettingsModel {
   weightUnit: string;
   dateFormat: string;
   timezone: string;
+  // Dispatch settings
+  minBrokerCreditScore: number | null;
 }
 
 const EMPTY: CompanySettingsModel = {
@@ -57,6 +69,7 @@ const EMPTY: CompanySettingsModel = {
   weightUnit: "pounds",
   dateFormat: "us",
   timezone: "America/New_York",
+  minBrokerCreditScore: null,
 };
 
 @Component({
@@ -76,6 +89,7 @@ const EMPTY: CompanySettingsModel = {
     Typography,
     UiButton,
     UiFormField,
+    UiNumberField,
     UiSelectField,
     UiTextField,
     ValidatedForm,
@@ -140,6 +154,8 @@ export class CompanySettingsComponent implements OnInit {
       required(p.billingEmail, { message: "Billing email is required." });
       email(p.billingEmail, { message: "Enter a valid email address." });
       required(p.companyAddress, { message: "Company address is required." });
+      min(p.minBrokerCreditScore, 0, { message: "Score must be between 0 and 100." });
+      max(p.minBrokerCreditScore, 100, { message: "Score must be between 0 and 100." });
     },
     {
       submission: {
@@ -168,6 +184,7 @@ export class CompanySettingsComponent implements OnInit {
               dateFormat: value.dateFormat,
               timezone: value.timezone,
               currency: "usd",
+              minBrokerCreditScore: value.minBrokerCreditScore,
             } as TenantSettings,
           };
 
@@ -272,6 +289,7 @@ export class CompanySettingsComponent implements OnInit {
           weightUnit: tenant.settings?.weightUnit ?? "pounds",
           dateFormat: tenant.settings?.dateFormat ?? "us",
           timezone: tenant.settings?.timezone ?? "America/New_York",
+          minBrokerCreditScore: tenant.settings?.minBrokerCreditScore ?? null,
         });
 
         if (tenant.logoUrl) {

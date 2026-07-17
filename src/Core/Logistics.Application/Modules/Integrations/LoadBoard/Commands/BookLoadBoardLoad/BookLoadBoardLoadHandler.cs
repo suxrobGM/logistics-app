@@ -12,9 +12,15 @@ namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 internal sealed class BookLoadBoardLoadHandler(
     ITenantUnitOfWork tenantUow,
     ILoadBoardProviderFactory providerFactory,
+    IBrokerCreditService brokerCreditService,
     ILogger<BookLoadBoardLoadHandler> logger)
     : IAppRequestHandler<BookLoadBoardLoadCommand, Result<LoadBoardBookingResultDto>>
 {
+    /// <summary>
+    /// Stable error prefix the frontend keys the override-confirmation dialog off.
+    /// </summary>
+    public const string CreditCheckErrorPrefix = "BROKER_CREDIT_BELOW_THRESHOLD";
+
     public async Task<Result<LoadBoardBookingResultDto>> Handle(
         BookLoadBoardLoadCommand req,
         CancellationToken ct)
@@ -54,6 +60,36 @@ internal sealed class BookLoadBoardLoadHandler(
         if (dispatcher is null)
         {
             return Result<LoadBoardBookingResultDto>.Fail("Dispatcher not found");
+        }
+
+        // Broker credit gate: fetch + stamp credit either way (audit trail of what was
+        // known at booking time); enforce only when the dispatcher hasn't overridden.
+        var credit = await brokerCreditService.GetBrokerCreditAsync(listing.BrokerMcNumber, ct);
+        if (credit is not null)
+        {
+            listing.BrokerCreditScore = credit.CreditScore ?? listing.BrokerCreditScore;
+            listing.BrokerDaysToPay = credit.DaysToPay ?? listing.BrokerDaysToPay;
+            listing.BrokerCreditCheckedAt = credit.CheckedAt;
+            await tenantUow.SaveChangesAsync(ct);
+        }
+
+        if (!req.OverrideCreditCheck)
+        {
+            if (credit?.AuthorityActive == false)
+            {
+                return Result<LoadBoardBookingResultDto>.Fail(
+                    $"{CreditCheckErrorPrefix}: Broker '{listing.BrokerName}' (MC {listing.BrokerMcNumber}) has inactive FMCSA operating authority.");
+            }
+
+            var minScore = tenantUow.GetCurrentTenant().Settings.MinBrokerCreditScore;
+            var effectiveScore = credit?.CreditScore ?? listing.BrokerCreditScore;
+
+            // A missing score never blocks; only a known score below the tenant threshold does.
+            if (minScore.HasValue && effectiveScore < minScore)
+            {
+                return Result<LoadBoardBookingResultDto>.Fail(
+                    $"{CreditCheckErrorPrefix}: Broker '{listing.BrokerName}' (MC {listing.BrokerMcNumber}) credit score {effectiveScore} is below your minimum of {minScore}.");
+            }
         }
 
         // Get or create customer

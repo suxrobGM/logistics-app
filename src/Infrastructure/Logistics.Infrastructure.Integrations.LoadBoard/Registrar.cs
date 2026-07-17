@@ -1,4 +1,5 @@
-﻿using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
+﻿using Logistics.Infrastructure.Integrations.LoadBoard.Credit;
+using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Truckstop;
@@ -29,6 +30,11 @@ public static class Registrar
 
         // Factory pattern for provider selection
         services.AddScoped<ILoadBoardProviderFactory, LoadBoardProviderFactory>();
+
+        // Broker credit check (cache -> demo/FMCSA authority fallback)
+        services.Configure<FmcsaOptions>(configuration.GetSection(FmcsaOptions.SectionName));
+        services.AddHttpClient<FmcsaClient>();
+        services.AddScoped<IBrokerCreditService, BrokerCreditService>();
 
         return services;
     }
