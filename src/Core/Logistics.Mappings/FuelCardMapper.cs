@@ -1,47 +1,45 @@
 using Logistics.Domain.Entities;
 using Logistics.Shared.Models;
+using Riok.Mapperly.Abstractions;
 
 namespace Logistics.Mappings;
 
-public static class FuelCardMapper
+/// <summary>
+/// TruckNumber is deliberately not flattened from the Truck navigation property — that would
+/// lazy-load one query per row. Callers batch-load the numbers and pass them in.
+/// </summary>
+[Mapper]
+public static partial class FuelCardMapper
 {
-    public static FuelCardTransactionDto ToDto(this FuelCardTransaction entity)
+    [MapperIgnoreSource(nameof(FuelCardTransaction.Truck))]
+    [MapperIgnoreSource(nameof(FuelCardTransaction.ExternalCardId))]
+    [MapperIgnoreSource(nameof(FuelCardTransaction.RawPayloadJson))]
+    [MapperIgnoreSource(nameof(FuelCardTransaction.DomainEvents))]
+    [MapperIgnoreSource(nameof(FuelCardTransaction.CreatedAt))]
+    [MapperIgnoreSource(nameof(FuelCardTransaction.CreatedBy))]
+    [MapperIgnoreSource(nameof(FuelCardTransaction.UpdatedAt))]
+    [MapperIgnoreSource(nameof(FuelCardTransaction.UpdatedBy))]
+    [MapperIgnoreTarget(nameof(FuelCardTransactionDto.TruckNumber))]
+    public static partial FuelCardTransactionDto ToDto(this FuelCardTransaction entity);
+
+    public static FuelCardTransactionDto ToDto(this FuelCardTransaction entity, string? truckNumber)
     {
-        return new FuelCardTransactionDto
-        {
-            Id = entity.Id,
-            ProviderType = entity.ProviderType,
-            ExternalTransactionId = entity.ExternalTransactionId,
-            TransactionDate = entity.TransactionDate,
-            Amount = entity.Amount,
-            Quantity = entity.Quantity,
-            QuantityUnit = entity.QuantityUnit,
-            PricePerUnit = entity.PricePerUnit,
-            ProductCategory = entity.ProductCategory,
-            MerchantName = entity.MerchantName,
-            MerchantCity = entity.MerchantCity,
-            PurchaseJurisdiction = entity.PurchaseJurisdiction,
-            CardNumberMasked = entity.CardNumberMasked,
-            UnitNumber = entity.UnitNumber,
-            DriverName = entity.DriverName,
-            Status = entity.Status,
-            TruckId = entity.TruckId,
-            TruckNumber = entity.Truck?.Number,
-            ExpenseId = entity.ExpenseId
-        };
+        var dto = entity.ToDto();
+        return dto with { TruckNumber = truckNumber };
     }
 
-    public static FuelCardDto ToDto(this FuelCard entity)
+    [MapperIgnoreSource(nameof(FuelCard.Truck))]
+    [MapperIgnoreSource(nameof(FuelCard.DomainEvents))]
+    [MapperIgnoreSource(nameof(FuelCard.CreatedAt))]
+    [MapperIgnoreSource(nameof(FuelCard.CreatedBy))]
+    [MapperIgnoreSource(nameof(FuelCard.UpdatedAt))]
+    [MapperIgnoreSource(nameof(FuelCard.UpdatedBy))]
+    [MapperIgnoreTarget(nameof(FuelCardDto.TruckNumber))]
+    public static partial FuelCardDto ToDto(this FuelCard entity);
+
+    public static FuelCardDto ToDto(this FuelCard entity, string? truckNumber)
     {
-        return new FuelCardDto
-        {
-            Id = entity.Id,
-            ProviderType = entity.ProviderType,
-            ExternalCardId = entity.ExternalCardId,
-            UnitNumber = entity.UnitNumber,
-            TruckId = entity.TruckId,
-            TruckNumber = entity.Truck?.Number,
-            IsActive = entity.IsActive
-        };
+        var dto = entity.ToDto();
+        return dto with { TruckNumber = truckNumber };
     }
 }

@@ -13,24 +13,19 @@ internal sealed class CreateIftaTaxRateHandler(
 {
     public async Task<Result<Guid>> Handle(CreateIftaTaxRateCommand req, CancellationToken ct)
     {
-        var country = req.CountryCode.ToUpperInvariant();
-        var region = string.IsNullOrWhiteSpace(req.Region) ? null : req.Region.ToUpperInvariant();
+        var jurisdiction = TaxJurisdiction.Create(req.CountryCode, req.Region);
 
-        // (Year, Quarter, Jurisdiction) uniqueness lives here: complex-type members
-        // cannot participate in a DB unique index (see IftaTaxRateEntityConfiguration)
-        var duplicate = await masterUow.Repository<IftaTaxRate>().GetAsync(
-            x => x.Year == req.Year && x.Quarter == req.Quarter &&
-                 x.Jurisdiction.CountryCode == country && x.Jurisdiction.Region == region, ct);
+        var conflict = await IftaTaxRateUniqueness.FindConflictAsync(
+            masterUow, jurisdiction, req.Year, req.Quarter, excludeId: null, ct);
 
-        if (duplicate is not null)
+        if (conflict is not null)
         {
-            return Result<Guid>.Fail(
-                $"An IFTA tax rate for {duplicate.Jurisdiction} {req.Year} Q{req.Quarter} already exists");
+            return Result<Guid>.Fail(conflict);
         }
 
         var rate = new IftaTaxRate
         {
-            Jurisdiction = new TaxJurisdiction { CountryCode = country, Region = region },
+            Jurisdiction = jurisdiction,
             Year = req.Year,
             Quarter = req.Quarter,
             RatePerGallon = req.RatePerGallon,

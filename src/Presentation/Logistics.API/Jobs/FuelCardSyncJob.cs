@@ -1,8 +1,10 @@
 using Hangfire;
+using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Realtime;
 using Logistics.Application.Modules.Integrations.FuelCards.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.API.Jobs;
@@ -59,6 +61,15 @@ public class FuelCardSyncJob(
     private async Task SyncTenantAsync(Tenant tenant, CancellationToken ct)
     {
         using var scope = scopeFactory.CreateScope();
+
+        // Jobs bypass the MediatR pipeline, so the [RequiresFeature] gate on the commands does not
+        // apply here — check explicitly, or a downgraded tenant keeps having expenses written.
+        var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
+        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.FuelCards))
+        {
+            return;
+        }
+
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
 
         tenantUow.SetCurrentTenant(tenant);

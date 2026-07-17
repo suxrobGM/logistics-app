@@ -109,27 +109,34 @@ public class BoundaryTests
             .Check(AssemblyAnchors.Architecture);
     }
 
-    // Logistics.Infrastructure.AI is intentionally omitted from this Theory
-    // until slice 1.9-AI decouples it. See REFACTOR-INDEX.md.
-    [Theory]
-    [InlineData(nameof(AssemblyAnchors.InfrastructureCommunications))]
-    [InlineData(nameof(AssemblyAnchors.InfrastructureDocuments))]
-    [InlineData(nameof(AssemblyAnchors.InfrastructureEld))]
-    [InlineData(nameof(AssemblyAnchors.InfrastructureLoadBoard))]
-    [InlineData(nameof(AssemblyAnchors.InfrastructurePayments))]
-    [InlineData(nameof(AssemblyAnchors.InfrastructurePersistence))]
-    [InlineData(nameof(AssemblyAnchors.InfrastructureRouting))]
-    [InlineData(nameof(AssemblyAnchors.InfrastructureStorage))]
-    [InlineData(nameof(AssemblyAnchors.InfrastructureTax))]
-    [InlineData(nameof(AssemblyAnchors.InfrastructureVin))]
-    public void Each_Infrastructure_assembly_references_Abstractions_not_Application(string assemblyAnchorName)
+    /// <summary>
+    /// Derived from AssemblyAnchors.AllInfrastructure, so a new infrastructure project is covered
+    /// by this rule as soon as it has an anchor — no separate list to remember here.
+    /// </summary>
+    public static TheoryData<string> InfrastructureAssemblies
     {
-        var asm = typeof(AssemblyAnchors)
-            .GetField(assemblyAnchorName)!
-            .GetValue(null) as System.Reflection.Assembly
-            ?? throw new InvalidOperationException($"Anchor '{assemblyAnchorName}' is not a System.Reflection.Assembly.");
+        get
+        {
+            var data = new TheoryData<string>();
+            var names = AssemblyAnchors.AllInfrastructure
+                .Select(a => a.GetName().Name!)
+                .Where(n => !AssemblyAnchors.BoundaryExempt.Contains(n))
+                .Order();
 
-        Classes().That().ResideInAssembly(asm)
+            foreach (var name in names)
+            {
+                data.Add(name);
+            }
+
+            return data;
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(InfrastructureAssemblies))]
+    public void Each_Infrastructure_assembly_references_Abstractions_not_Application(string assemblyName)
+    {
+        Classes().That().ResideInAssembly(AssemblyAnchors.ByName(assemblyName))
             .Should().NotDependOnAny(Types().That().ResideInAssembly(AssemblyAnchors.Application))
             .Check(AssemblyAnchors.Architecture);
     }

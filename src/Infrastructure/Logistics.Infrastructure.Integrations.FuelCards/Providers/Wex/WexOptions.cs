@@ -1,8 +1,9 @@
 namespace Logistics.Infrastructure.Integrations.FuelCards.Providers.Wex;
 
-public class WexOptions
+/// <summary>
+///     WEX fleet card API configuration. Bound as <see cref="FuelCardsOptions.Wex"/>.
+/// </summary>
+public record WexOptions
 {
-    public const string SectionName = "FuelCards:Wex";
-
     public string BaseUrl { get; set; } = "https://api.wexinc.com";
 }

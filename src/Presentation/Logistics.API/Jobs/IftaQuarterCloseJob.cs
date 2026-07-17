@@ -54,17 +54,19 @@ public class IftaQuarterCloseJob(
         using var scope = scopeFactory.CreateScope();
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
 
-        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.Ifta))
-        {
-            return;
-        }
-
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         tenantUow.SetCurrentTenant(tenant);
 
         var closeService = scope.ServiceProvider.GetRequiredService<IIftaQuarterCloseService>();
-        await closeService.CloseQuarterForCurrentTenantAsync(ct);
 
+        if (await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.Ifta))
+        {
+            await closeService.CloseQuarterForCurrentTenantAsync(ct);
+        }
+
+        // Purge regardless of the IFTA flag: TruckLocationRecorder writes a breadcrumb on every
+        // ELD GPS ping, which is not IFTA-gated. Skipping the purge for non-IFTA tenants would
+        // grow the table forever and retain GPS history indefinitely.
         var purged = await closeService.PurgeExpiredLocationHistoryAsync(ct);
         if (purged > 0)
         {

@@ -19,4 +19,10 @@ public static class ErrorCodes
     ///     A resource limit defined by the subscription plan has been reached (e.g., max trucks).
     /// </summary>
     public const string ResourceLimitReached = "RESOURCE_LIMIT_REACHED";
+
+    /// <summary>
+    ///     The broker's credit is below the tenant's configured threshold, or its FMCSA operating
+    ///     authority is inactive. Retryable by re-issuing the booking with the override flag set.
+    /// </summary>
+    public const string BrokerCreditBelowThreshold = "BROKER_CREDIT_BELOW_THRESHOLD";
 }

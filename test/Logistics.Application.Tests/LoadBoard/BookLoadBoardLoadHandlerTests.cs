@@ -128,7 +128,7 @@ public class BookLoadBoardLoadHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ScoreBelowThreshold_BlocksWithStablePrefix()
+    public async Task Handle_ScoreBelowThreshold_BlocksWithErrorCode()
     {
         tenant.Settings.MinBrokerCreditScore = 70;
         SetupCredit(score: 50);
@@ -136,7 +136,7 @@ public class BookLoadBoardLoadHandlerTests
         var result = await sut.Handle(command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        Assert.StartsWith(BookLoadBoardLoadHandler.CreditCheckErrorPrefix, result.Error);
+        Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
         await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
     }
 
@@ -175,7 +175,7 @@ public class BookLoadBoardLoadHandlerTests
         var result = await sut.Handle(command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        Assert.StartsWith(BookLoadBoardLoadHandler.CreditCheckErrorPrefix, result.Error);
+        Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
         Assert.Contains("authority", result.Error, StringComparison.OrdinalIgnoreCase);
     }
 

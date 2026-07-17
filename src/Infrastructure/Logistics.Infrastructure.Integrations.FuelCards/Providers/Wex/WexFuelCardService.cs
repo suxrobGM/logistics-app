@@ -14,21 +14,23 @@ namespace Logistics.Infrastructure.Integrations.FuelCards.Providers.Wex;
 /// </summary>
 internal class WexFuelCardService(
     HttpClient httpClient,
-    IOptions<WexOptions> options,
+    IOptions<FuelCardsOptions> options,
     ILogger<WexFuelCardService> logger) : IFuelCardProviderService
 {
+    private readonly WexOptions options = options.Value.Wex ?? new WexOptions();
+
     public FuelCardProviderType ProviderType => FuelCardProviderType.Wex;
 
     public void Initialize(FuelCardProviderConfiguration configuration)
     {
-        httpClient.BaseAddress ??= new Uri(options.Value.BaseUrl);
+        httpClient.BaseAddress ??= new Uri(options.BaseUrl);
         httpClient.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", configuration.AccessToken ?? configuration.ApiKey);
     }
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
     {
-        httpClient.BaseAddress ??= new Uri(options.Value.BaseUrl);
+        httpClient.BaseAddress ??= new Uri(options.BaseUrl);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
         var response = await httpClient.TryGetFromJsonAsync<WexTransactionsResponse>(

@@ -32,7 +32,4 @@ public static class IftaQuarters
         var monthAfterEnd = EndOf(year, quarter);
         return monthAfterEnd.AddMonths(1).AddDays(-1);
     }
-
-    public static bool IsClosed(int year, int quarter, DateTime utcNow) =>
-        EndOf(year, quarter) <= utcNow;
 }

@@ -17,8 +17,7 @@ public static class Registrar
         IConfiguration configuration)
     {
         // Configuration
-        services.Configure<WexOptions>(configuration.GetSection(WexOptions.SectionName));
-        services.Configure<EfsOptions>(configuration.GetSection(EfsOptions.SectionName));
+        services.Configure<FuelCardsOptions>(configuration.GetSection(FuelCardsOptions.SectionName));
 
         // Fuel card providers (with HttpClient for external APIs)
         services.AddHttpClient<WexFuelCardService>();

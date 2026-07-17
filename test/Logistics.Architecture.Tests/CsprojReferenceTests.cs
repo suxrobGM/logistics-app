@@ -45,19 +45,37 @@ public class CsprojReferenceTests
         CsprojAssertions.AssertNoPackage(csproj, "Stripe.net");
     }
 
-    // Logistics.Infrastructure.AI is intentionally omitted from this Theory
-    // until slice 1.9-AI decouples it. See REFACTOR-INDEX.md.
+    /// <summary>
+    /// Every project under src/Infrastructure, discovered from disk rather than hand-listed, so a
+    /// newly added infrastructure project is covered by this rule without anyone remembering to
+    /// register it here.
+    /// </summary>
+    public static TheoryData<string> InfrastructureProjects
+    {
+        get
+        {
+            // Logistics.Infrastructure.AI is intentionally exempt until slice 1.9-AI
+            // decouples it. See REFACTOR-INDEX.md.
+            string[] exempt = ["Logistics.Infrastructure.AI"];
+
+            var root = CsprojAssertions.ResolveRepoFile("src", "Infrastructure");
+            var data = new TheoryData<string>();
+
+            foreach (var dir in Directory.EnumerateDirectories(root).Order())
+            {
+                var name = Path.GetFileName(dir);
+                if (!exempt.Contains(name) && File.Exists(Path.Combine(dir, $"{name}.csproj")))
+                {
+                    data.Add(name);
+                }
+            }
+
+            return data;
+        }
+    }
+
     [Theory]
-    [InlineData("Logistics.Infrastructure.Communications")]
-    [InlineData("Logistics.Infrastructure.Documents")]
-    [InlineData("Logistics.Infrastructure.Integrations.Eld")]
-    [InlineData("Logistics.Infrastructure.Integrations.LoadBoard")]
-    [InlineData("Logistics.Infrastructure.Payments")]
-    [InlineData("Logistics.Infrastructure.Persistence")]
-    [InlineData("Logistics.Infrastructure.Routing")]
-    [InlineData("Logistics.Infrastructure.Storage")]
-    [InlineData("Logistics.Infrastructure.Tax")]
-    [InlineData("Logistics.Infrastructure.Vin")]
+    [MemberData(nameof(InfrastructureProjects))]
     public void Each_Infrastructure_csproj_does_not_reference_Application_project(string projectName)
     {
         var csproj = CsprojAssertions.ResolveRepoFile(

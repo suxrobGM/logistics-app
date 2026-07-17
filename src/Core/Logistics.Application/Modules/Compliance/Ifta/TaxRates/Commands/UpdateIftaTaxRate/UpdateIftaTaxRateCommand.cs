@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Ifta.TaxRates.Commands;
 
-public sealed class UpdateIftaTaxRateCommand : ICommand<Result>
+public sealed class UpdateIftaTaxRateCommand : ICommand<Result>, IIftaTaxRateFields
 {
     public Guid Id { get; set; }
     public string CountryCode { get; set; } = string.Empty;

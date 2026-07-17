@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.FuelCards.Queries;
 
@@ -15,14 +16,15 @@ internal sealed class GetFuelCardProviderConfigurationsHandler(ITenantUnitOfWork
     {
         var configs = await tenantUow.Repository<FuelCardProviderConfiguration>().GetListAsync(ct: ct);
 
-        var dtos = new List<FuelCardProviderConfigurationDto>();
-        foreach (var config in configs)
-        {
-            var pendingCount = await tenantUow.Repository<FuelCardTransaction>()
-                .CountAsync(t => t.ProviderType == config.ProviderType
-                    && t.Status == FuelCardTransactionStatus.Pending, ct);
+        // One grouped count for every provider, rather than a COUNT round trip per config.
+        var pendingCounts = await tenantUow.Repository<FuelCardTransaction>().Query()
+            .Where(t => t.Status == FuelCardTransactionStatus.Pending)
+            .GroupBy(t => t.ProviderType)
+            .Select(g => new { ProviderType = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.ProviderType, x => x.Count, ct);
 
-            dtos.Add(new FuelCardProviderConfigurationDto
+        var dtos = configs
+            .Select(config => new FuelCardProviderConfigurationDto
             {
                 Id = config.Id,
                 ProviderType = config.ProviderType,
@@ -31,9 +33,9 @@ internal sealed class GetFuelCardProviderConfigurationsHandler(ITenantUnitOfWork
                 IsConnected = config.IsActive && !string.IsNullOrEmpty(config.ApiKey),
                 LastSyncedAt = config.LastSyncedAt,
                 ExternalAccountId = config.ExternalAccountId,
-                PendingTransactionsCount = pendingCount
-            });
-        }
+                PendingTransactionsCount = pendingCounts.GetValueOrDefault(config.ProviderType)
+            })
+            .ToList();
 
         return Result<List<FuelCardProviderConfigurationDto>>.Ok(dtos);
     }

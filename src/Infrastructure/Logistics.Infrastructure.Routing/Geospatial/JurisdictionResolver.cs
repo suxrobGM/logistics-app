@@ -44,7 +44,7 @@ internal sealed class JurisdictionResolver : IJurisdictionResolver
                 continue;
             }
 
-            var jurisdiction = new TaxJurisdiction { CountryCode = country, Region = region };
+            var jurisdiction = TaxJurisdiction.Create(country, region);
             index.Insert(
                 feature.Geometry.EnvelopeInternal,
                 (PreparedGeometryFactory.Prepare(feature.Geometry), jurisdiction));

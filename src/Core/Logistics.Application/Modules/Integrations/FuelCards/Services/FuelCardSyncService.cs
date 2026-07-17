@@ -66,9 +66,11 @@ internal sealed class FuelCardSyncService(
                     .ToListAsync(ct))
                 .ToHashSet();
 
-            var trucksByNumber = (await tenantUow.Repository<Truck>().GetListAsync(ct: ct))
+            var trucks = await tenantUow.Repository<Truck>().GetListAsync(ct: ct);
+            var trucksByNumber = trucks
                 .GroupBy(t => t.Number.Trim().ToUpperInvariant())
                 .ToDictionary(g => g.Key, g => g.First());
+            var trucksById = trucks.ToDictionary(t => t.Id);
 
             var cardsByExternalId = (await tenantUow.Repository<FuelCard>()
                     .GetListAsync(c => c.ProviderType == config.ProviderType, ct))
@@ -82,7 +84,8 @@ internal sealed class FuelCardSyncService(
                          .Where(t => !knownIds.Contains(t.ExternalTransactionId)))
             {
                 var entity = CreateTransactionEntity(config.ProviderType, data);
-                var truck = await ResolveTruckAsync(config.ProviderType, data, trucksByNumber, cardsByExternalId, ct);
+                var truck = await ResolveTruckAsync(
+                    config.ProviderType, data, trucksByNumber, trucksById, cardsByExternalId, ct);
 
                 if (truck is not null)
                 {
@@ -119,14 +122,18 @@ internal sealed class FuelCardSyncService(
         FuelCardProviderType providerType,
         FuelCardTransactionData data,
         Dictionary<string, Truck> trucksByNumber,
+        Dictionary<Guid, Truck> trucksById,
         Dictionary<string, FuelCard> cardsByExternalId,
         CancellationToken ct)
     {
+        // Resolve through the already-loaded truck list rather than card.Truck: the navigation
+        // property would lazy-load one SELECT per mapped transaction.
         if (data.ExternalCardId is not null &&
             cardsByExternalId.TryGetValue(data.ExternalCardId, out var card) &&
-            card is { IsActive: true, TruckId: not null })
+            card is { IsActive: true, TruckId: not null } &&
+            trucksById.TryGetValue(card.TruckId.Value, out var mappedTruck))
         {
-            return card.Truck;
+            return mappedTruck;
         }
 
         var unitNumber = data.UnitNumber?.Trim().ToUpperInvariant();

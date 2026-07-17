@@ -48,8 +48,29 @@ internal sealed class GetFuelCardTransactionsHandler(ITenantUnitOfWork tenantUow
             .ApplyPaging(req.Page, req.PageSize)
             .ToListAsync(ct);
 
-        var dtos = transactions.Select(t => t.ToDto()).ToArray();
+        var truckNumbers = await GetTruckNumbersAsync(transactions.Select(t => t.TruckId), ct);
+        var dtos = transactions
+            .Select(t => t.ToDto(t.TruckId is { } id ? truckNumbers.GetValueOrDefault(id) : null))
+            .ToArray();
 
         return PagedResult<FuelCardTransactionDto>.Ok(dtos, totalItems, req.PageSize);
+    }
+
+    /// <summary>
+    /// One query for the whole page — reading Truck.Number off each row would lazy-load per row.
+    /// </summary>
+    private async Task<Dictionary<Guid, string>> GetTruckNumbersAsync(
+        IEnumerable<Guid?> truckIds,
+        CancellationToken ct)
+    {
+        var ids = truckIds.OfType<Guid>().Distinct().ToArray();
+        if (ids.Length == 0)
+        {
+            return [];
+        }
+
+        return await tenantUow.Repository<Truck>().Query()
+            .Where(t => ids.Contains(t.Id))
+            .ToDictionaryAsync(t => t.Id, t => t.Number, ct);
     }
 }

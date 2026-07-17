@@ -1,8 +1,9 @@
 namespace Logistics.Infrastructure.Integrations.FuelCards.Providers.Efs;
 
-public class EfsOptions
+/// <summary>
+///     EFS card program API configuration. Bound as <see cref="FuelCardsOptions.Efs"/>.
+/// </summary>
+public record EfsOptions
 {
-    public const string SectionName = "FuelCards:Efs";
-
     public string BaseUrl { get; set; } = "https://api.efsllc.com";
 }

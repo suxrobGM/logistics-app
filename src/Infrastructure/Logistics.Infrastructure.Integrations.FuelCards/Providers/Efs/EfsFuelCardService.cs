@@ -15,21 +15,23 @@ namespace Logistics.Infrastructure.Integrations.FuelCards.Providers.Efs;
 /// </summary>
 internal class EfsFuelCardService(
     HttpClient httpClient,
-    IOptions<EfsOptions> options,
+    IOptions<FuelCardsOptions> options,
     ILogger<EfsFuelCardService> logger) : IFuelCardProviderService
 {
+    private readonly EfsOptions options = options.Value.Efs ?? new EfsOptions();
+
     public FuelCardProviderType ProviderType => FuelCardProviderType.Efs;
 
     public void Initialize(FuelCardProviderConfiguration configuration)
     {
-        httpClient.BaseAddress ??= new Uri(options.Value.BaseUrl);
+        httpClient.BaseAddress ??= new Uri(options.BaseUrl);
         httpClient.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", configuration.AccessToken ?? configuration.ApiKey);
     }
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
     {
-        httpClient.BaseAddress ??= new Uri(options.Value.BaseUrl);
+        httpClient.BaseAddress ??= new Uri(options.BaseUrl);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
         var response = await httpClient.TryGetFromJsonAsync<EfsTransactionsResponse>(

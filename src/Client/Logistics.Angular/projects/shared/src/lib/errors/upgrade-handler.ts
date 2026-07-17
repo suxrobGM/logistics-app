@@ -8,6 +8,7 @@ export const ErrorCodes = {
   FeatureNotInPlan: "FEATURE_NOT_IN_PLAN",
   FeatureDisabledByAdmin: "FEATURE_DISABLED_BY_ADMIN",
   ResourceLimitReached: "RESOURCE_LIMIT_REACHED",
+  BrokerCreditBelowThreshold: "BROKER_CREDIT_BELOW_THRESHOLD",
 } as const;
 
 /**

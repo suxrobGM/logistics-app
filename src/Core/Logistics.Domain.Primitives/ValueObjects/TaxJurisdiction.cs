@@ -12,7 +12,17 @@ public record TaxJurisdiction
     public required string CountryCode { get; set; }
     public string? Region { get; set; }
 
-    public static TaxJurisdiction ForCountry(string countryCode) => new() { CountryCode = countryCode };
+    /// <summary>
+    /// Normalizing factory — use this on every write path. Codes are compared as upper-case, and a
+    /// blank region means "country-level", so it must normalize to null rather than an empty string.
+    /// </summary>
+    public static TaxJurisdiction Create(string countryCode, string? region = null) => new()
+    {
+        CountryCode = countryCode.ToUpperInvariant(),
+        Region = string.IsNullOrWhiteSpace(region) ? null : region.ToUpperInvariant()
+    };
+
+    public static TaxJurisdiction ForCountry(string countryCode) => Create(countryCode);
 
     public override string ToString() =>
         string.IsNullOrEmpty(Region) ? CountryCode : $"{CountryCode}-{Region}";

@@ -21,6 +21,7 @@ public static class Registrar
 
         // Offline point-in-polygon jurisdiction lookup (IFTA mileage attribution)
         services.AddSingleton<IJurisdictionResolver, JurisdictionResolver>();
+        services.AddHostedService<JurisdictionResolverWarmup>();
 
         // Trip optimization services
         services.AddSingleton<HeuristicTripOptimizer>();

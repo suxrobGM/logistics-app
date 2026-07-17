@@ -16,11 +16,6 @@ internal sealed class BookLoadBoardLoadHandler(
     ILogger<BookLoadBoardLoadHandler> logger)
     : IAppRequestHandler<BookLoadBoardLoadCommand, Result<LoadBoardBookingResultDto>>
 {
-    /// <summary>
-    /// Stable error prefix the frontend keys the override-confirmation dialog off.
-    /// </summary>
-    public const string CreditCheckErrorPrefix = "BROKER_CREDIT_BELOW_THRESHOLD";
-
     public async Task<Result<LoadBoardBookingResultDto>> Handle(
         BookLoadBoardLoadCommand req,
         CancellationToken ct)
@@ -78,7 +73,8 @@ internal sealed class BookLoadBoardLoadHandler(
             if (credit?.AuthorityActive == false)
             {
                 return Result<LoadBoardBookingResultDto>.Fail(
-                    $"{CreditCheckErrorPrefix}: Broker '{listing.BrokerName}' (MC {listing.BrokerMcNumber}) has inactive FMCSA operating authority.");
+                    $"Broker '{listing.BrokerName}' (MC {listing.BrokerMcNumber}) has inactive FMCSA operating authority.",
+                    ErrorCodes.BrokerCreditBelowThreshold);
             }
 
             var minScore = tenantUow.GetCurrentTenant().Settings.MinBrokerCreditScore;
@@ -88,7 +84,8 @@ internal sealed class BookLoadBoardLoadHandler(
             if (minScore.HasValue && effectiveScore < minScore)
             {
                 return Result<LoadBoardBookingResultDto>.Fail(
-                    $"{CreditCheckErrorPrefix}: Broker '{listing.BrokerName}' (MC {listing.BrokerMcNumber}) credit score {effectiveScore} is below your minimum of {minScore}.");
+                    $"Broker '{listing.BrokerName}' (MC {listing.BrokerMcNumber}) credit score {effectiveScore} is below your minimum of {minScore}.",
+                    ErrorCodes.BrokerCreditBelowThreshold);
             }
         }
 
