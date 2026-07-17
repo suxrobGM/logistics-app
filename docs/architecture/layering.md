@@ -39,15 +39,15 @@ If Infrastructure implements it, the interface goes in Abstractions.
 
 ### Application workflow services → `Application`
 
-These are interfaces **implemented inside Application itself**. They orchestrate domain logic and ports — no external system, no EF Core, no HTTP. They exist for testability and for sharing logic across handlers.
+These are interfaces **implemented inside Application itself**. They orchestrate domain logic and ports — no external system, no EF Core, no HTTP. They exist for testability and for sharing logic across handlers. Each lives beside its feature under `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Services/`:
 
-Examples under `src/Core/Logistics.Application/Services/`:
-
-- `Services/Load/ILoadService.cs` — load-lifecycle orchestration
-- `Services/Payroll/IPayrollService.cs` — payroll computation
-- `Services/Hos/RuleSetSelector.cs` — region → HOS ruleset
+- `Modules/Operations/Loads/Services/ILoadService.cs` — load-lifecycle orchestration
+- `Modules/Financial/Payroll/Services/PayrollService.cs` — payroll computation
+- `Modules/Compliance/Eld/Services/RuleSetSelector.cs` — region → HOS ruleset
 
 If Application implements it, the interface stays in Application.
+
+Trivial CRUD handlers don't get bespoke classes: `Delete`/`GetById`/`Update` slices subclass the shared generic base handlers in `src/Core/Logistics.Application/Handlers/` (`DeleteTenantEntityHandler`, `DeleteMasterEntityHandler`, `GetTenantEntityByIdHandler`, `UpdateTenantEntityHandler`).
 
 ### Quick decision
 
@@ -95,8 +95,6 @@ Layering rules are not aspirational — they're verified on every build by [`tes
 
 `Integrations.Common` is the one deliberate exception to the "each Infrastructure assembly → Abstractions" line: it is a leaf helper project holding shared `HttpClient` JSON helpers and references no other project in the repo, Abstractions included. The rule it must satisfy is the same one everything else does — no dependency on `Application`.
 
-Both infrastructure rules discover what they cover rather than hand-listing it: `CsprojReferenceTests.InfrastructureProjects` enumerates `src/Infrastructure/*` from disk, and `BoundaryTests.InfrastructureAssemblies` derives from `AssemblyAnchors.AllInfrastructure`.
-
-When you add a new Infrastructure project, the csproj rule covers it automatically. To join the IL-level boundary matrix it also needs an anchor in `AssemblyAnchors.AllInfrastructure` and a `ProjectReference` in `Logistics.Architecture.Tests.csproj`.
+Both infrastructure rules discover what they cover rather than hand-listing it, so a new project is picked up off disk automatically; the IL-level boundary rule additionally needs an anchor in `AssemblyAnchors.AllInfrastructure` and a `ProjectReference` in the arch-tests csproj. CLAUDE.md holds the canonical version of this rule.
 
 Exemptions exist and are named explicitly — the local `exempt` array in `CsprojReferenceTests.cs` and `AssemblyAnchors.BoundaryExempt`, both currently just `Logistics.Infrastructure.AI`, which stays there until slice 1.9-AI decouples it. Adding your project to either array is the wrong reflex: a boundary failure means the dependency is wrong, not the rule.

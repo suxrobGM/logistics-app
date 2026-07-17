@@ -161,11 +161,10 @@ GET /api/loads?search=container
 
 ## Rate Limiting
 
-Production APIs implement rate limiting:
-
-- **Standard endpoints**: 100 requests/minute
-- **Authentication**: 10 requests/minute
-- **Webhooks**: No limit
+The API applies a global fixed-window limiter of **100 requests/minute**, partitioned by authenticated user
+(falling back to the `Host` header). Stricter named policies apply to specific surfaces (`impersonation`,
+`login`, `mcp`). Exceeded limits return `429`. Full table in
+[Architecture overview → Rate limiting](../architecture/overview.md#rate-limiting).
 
 ## Webhooks
 
@@ -175,7 +174,7 @@ Stripe webhooks are received at:
 POST /webhooks/stripe
 ```
 
-See [Webhooks](../configuration/stripe-integration.md) for configuration.
+See [Stripe Webhooks](../stripe-webhooks.md) for configuration, and [Webhook conventions](../architecture/overview.md#webhook-conventions) for signature validation and idempotency.
 
 ## Real-Time (SignalR)
 
@@ -184,6 +183,7 @@ For real-time features, connect to SignalR hubs:
 - **GPS Tracking**: `/hubs/tracking`
 - **Notifications**: `/hubs/notification`
 - **Chat**: `/hubs/chat`
+- **AI Dispatch**: `/hubs/ai-dispatch`
 
 See [SignalR Hubs](signalr-hubs.md) for details.
 

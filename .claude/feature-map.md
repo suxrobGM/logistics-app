@@ -19,7 +19,7 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 - **Shared provider HTTP**: `Logistics.Infrastructure.Integrations.Common/HttpClientJsonExtensions.cs` — `TryGetFromJsonAsync` (never throws; logs, returns `default`), used by LoadBoard/FuelCards/Eld. Don't copy it into a new integration. `Integrations.Accounting`'s QBO helpers deliberately **throw** so push errors surface — not duplicates, don't fold in
 - **REST controllers**: `src/Presentation/Logistics.API/Controllers/{Feature}Controller.cs`
 - **SignalR hubs**: `src/Infrastructure/Logistics.Infrastructure.Communications/SignalR/Hubs/`
-- **Hangfire jobs**: `src/Presentation/Logistics.API/Jobs/` — fan out with `TenantJobRunner.ForEachTenantAsync`. Jobs bypass the MediatR pipeline, so `[RequiresFeature]` is inert: check `IFeatureService.IsFeatureEnabledAsync(tenant.Id, feature)` **inside** the body (a job may need part of its work to run unflagged)
+- **Hangfire jobs**: `src/Presentation/Logistics.API/Jobs/` — fan out with `TenantJobRunner.ForEachTenantAsync` and gate features inside the body (see CLAUDE.md for the canonical `[RequiresFeature]`-is-inert rule)
 - **Machine-readable API errors**: `Result.Fail(message, ErrorCodes.X)` → `errorCode` → frontend `err.error.errorCode`. Mirror new codes in `Logistics.Shared.Models/ErrorCodes.cs` **and** `projects/shared/src/lib/errors/upgrade-handler.ts`. Never encode a code in the message string
 - **Webhooks**: `WebhookController.cs` + `Application/Modules/Integrations/Webhooks/Commands/`
 - **EF configurations**: `src/Infrastructure/Logistics.Infrastructure.Persistence/Configurations/{Feature}/`
@@ -97,7 +97,7 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 
 - Domain: `Entities/AiDispatch/AiDispatchSession.cs`
 - Application: `Modules/Integrations/AiDispatch/Commands/`, `Modules/Integrations/AiDispatch/Queries/`
-- Infrastructure: `Infrastructure.AI/Services/AiDispatchService.cs`
+- Infrastructure: `Infrastructure.AI/Services/AiDispatchService.cs`, `Infrastructure.Communications/SignalR/Hubs/AiDispatchHub.cs` (streams live agent updates, mounted at `/hubs/ai-dispatch`)
 - API/UI: `AiDispatchController.cs`, `tms-portal/pages/ai-dispatch/`
 
 ### Dispatch decisions
@@ -119,8 +119,8 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 ### Quota / pricing
 
 - Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAiRequestQuota`)
-- Application: `Services/AiQuotaService.cs`
-- Infrastructure: `Infrastructure.AI/Services/LlmPricing.cs`
+- Application: `Application.Abstractions/AiDispatch/IAiQuotaService.cs` (port)
+- Infrastructure: `Infrastructure.Persistence/Services/AiDispatch/AiQuotaService.cs` (quota tracking), `Infrastructure.AI/Services/LlmPricing.cs`
 - API/UI: (quota bar in `tms-portal/pages/ai-dispatch/`)
 
 ### Global AI settings
@@ -316,7 +316,7 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 ### Notifications
 
 - Domain: `Entities/Notification.cs`
-- Application: `Modules/Platform/Notifications/Queries/`, `Modules/Integrations/UpdateNotifications/Commands/`, `Services/Notification/`
+- Application: `Modules/Platform/Notifications/Queries/`, `Modules/Integrations/UpdateNotifications/Commands/`, `Application.Abstractions/Notifications/INotificationService.cs` (port)
 - Infrastructure: `Infrastructure.Communications/Notifications/` (Firebase push), `SignalR/Hubs/NotificationHub.cs`
 - API/UI: `NotificationController.cs`, `tms-portal/pages/notifications/`
 
@@ -362,8 +362,8 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 ### Tenants
 
 - Domain: `Entities/Tenant.cs`
-- Application: `Modules/IdentityAccess/Tenants/Commands/`, `Modules/IdentityAccess/Tenants/Queries/`, `Services/Tenant/`
-- Infrastructure: `Infrastructure.Persistence/Services/Tenant/TenantService.cs`, `TenantDatabaseService.cs`
+- Application: `Modules/IdentityAccess/Tenants/Commands/`, `Modules/IdentityAccess/Tenants/Queries/`
+- Infrastructure: `Infrastructure.Persistence/Services/Tenant/CurrentTenantAccessor.cs` (`ICurrentTenantAccessor`, resolves the current tenant), `TenantDatabaseService.cs`
 - API/UI: `TenantController.cs`, `admin-portal/pages/tenants/`
 
 ### Impersonation
@@ -381,7 +381,8 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 ### Feature flags
 
 - Domain: `Entities/Feature/DefaultFeatureConfig.cs`, `TenantFeatureConfig.cs`
-- Application: `Modules/IdentityAccess/Features/Commands/`, `Modules/IdentityAccess/Features/Queries/`, `Services/Feature/`
+- Application: `Modules/IdentityAccess/Features/Commands/`, `Modules/IdentityAccess/Features/Queries/`, `Application.Abstractions/Features/IFeatureService.cs` (port)
+- Infrastructure: `Infrastructure.Persistence/Services/Feature/FeatureService.cs`
 - API/UI: `FeaturesController.cs`, `TenantFeaturesController.cs`, `admin-portal/pages/features/`
 
 ## Documents & storage
@@ -395,7 +396,7 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 
 ### PDF generation
 
-- Application: `Services/Pdf/`
+- Application: `Application.Abstractions/Documents/` (`IInvoicePdfService`, `IIftaReportPdfService`, … ports)
 - Infrastructure: `Infrastructure.Documents/Pdf/` (QuestPDF: invoices, payroll, BOL, POD)
 
 ### PDF import / extraction
@@ -457,12 +458,12 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 
 ### Captcha
 
-- Application: `Services/Captcha/`
+- Application: `Application.Abstractions/Captcha/ICaptchaService.cs` (port)
 - Infrastructure: `Infrastructure.Communications/Captcha/` (Google reCAPTCHA)
 
 ### Geocoding
 
-- Application: `Services/Geocoding/`
+- Application: `Application.Abstractions/Geocoding/IGeocodingService.cs` (port)
 - Infrastructure: `Infrastructure.Routing/Geocoding/` (Mapbox; biased to `Tenant.Settings.Region` country + language)
 
 ### Trip optimization

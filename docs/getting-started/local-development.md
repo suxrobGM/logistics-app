@@ -69,6 +69,9 @@ scripts/seed-databases.cmd
 dotnet run --project src/Presentation/Logistics.DbMigrator
 ```
 
+The migrator applies **all pending migrations automatically** — master DB first, then every tenant DB — so a
+newly added migration needs no special step; just run it (or the Docker `migrator` service does it for you).
+
 ## Step 5: Run Applications
 
 Open separate terminals for each service:

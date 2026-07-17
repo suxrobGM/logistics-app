@@ -79,27 +79,41 @@ dotnet ef migrations add Add{Entity} \
 Name it for what it does (`AddSubcontractor`) — EF prefixes the timestamp, so no `Version_NNNN`,
 numeric suffix, or date. Inspect the generated SQL before committing.
 
-### 4. Specifications (if list queries need filtering)
+### 4. Reads (inline `.Query()` first)
 
-`src/Core/Logistics.Domain/Specifications/{Feature}/{Entity}Specs.cs`
-
-Reuse pattern: `Specification<T>` with `Query.Where(...)` + `OrderBy(...)`.
+Default to an inline `.Query()` inside the query handler — do **not** create a `Specification<T>` class for a
+one-off read. Only add a dedicated spec (`src/Core/Logistics.Domain/Specifications/{Feature}/`) when the same
+condition is genuinely reused across handlers; there are just a few left in the codebase
+(`FilterLoadInvoices`, `FilterPayrollInvoices`, `FilterLoadsByDeliveryDate`).
 
 ### 5. Commands and queries
 
+Commands and queries are the request contract — bind them **directly** as the request body (flat properties),
+no `*Dto` wrapper. Add a dedicated `*Request` record only when the wire shape must differ from the command.
+
 `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Commands/`:
 
-- `Create{Entity}/Create{Entity}Command.cs` — `record Create{Entity}Command(Create{Entity}Dto Dto) : ICommand<Result<{Entity}Dto>>`
+- `Create{Entity}/Create{Entity}Command.cs` — flat-property command `: ICommand` (or `ICommand<Result<T>>` if the client needs data back)
 - `Create{Entity}/Create{Entity}Handler.cs` — `internal sealed class`, primary-constructor DI
-- `Create{Entity}/Create{Entity}Validator.cs` — FluentValidation
+- `Create{Entity}/Create{Entity}Validator.cs` — FluentValidation (see validator rules below)
 - Same pattern for `Update{Entity}/`, `Delete{Entity}/`
+
+**Don't hand-write trivial handlers.** `Delete`/`GetById`/`Update` slices subclass the generic base handlers in
+`src/Core/Logistics.Application/Handlers/` — `DeleteTenantEntityHandler`, `DeleteMasterEntityHandler`,
+`GetTenantEntityByIdHandler`, `UpdateTenantEntityHandler`. Only write a bespoke handler when there's real logic.
+
+**Validators.** Skip the validator entirely when its only rule would be `Id NotEmpty` (the handler's not-found
+path covers it). For a Create/Update pair sharing ≥3 rules, put the shared rules in a base validator both
+subclass (see Ifta `TaxRates`).
 
 `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Queries/`:
 
-- `Get{Entity}ById/Get{Entity}ByIdQuery.cs` + handler — `: IQuery<Result<{Entity}Dto>>`
+- `Get{Entity}ById/Get{Entity}ByIdQuery.cs` + handler — `: IQuery<Result<{Entity}Dto>>` (`Get{Entity}ByIdQuery` can subclass the base handler)
 - `Get{Entities}/Get{Entities}Query.cs` + handler — paged list
 
-For master-DB commands, use `IMasterCommand<T>` instead of `ICommand<T>`. Handlers own their own `SaveChangesAsync` calls — there is no auto-transaction wrapper.
+A command targets the master or tenant DB purely by which unit of work its handler injects (`IMasterUnitOfWork`
+vs `ITenantUnitOfWork`) — there is no separate marker interface. Handlers own their own `SaveChangesAsync`
+calls — there is no auto-transaction wrapper.
 
 ### 6. DTOs and Mapperly mapper
 

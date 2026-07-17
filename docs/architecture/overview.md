@@ -99,7 +99,7 @@ flowchart TB
     I --> D
 ```
 
-Application is wired to infrastructure implementations only at the **composition root**. Each module ships its own DI registrar inside `Logistics.Application/Modules/{Module}/` and each infrastructure project ships a registrar (`AddPersistenceInfrastructure`, `AddPaymentsInfrastructure`, …) consumed by every presentation `Program.cs`.
+Application is wired to infrastructure implementations only at the **composition root**. Each module ships its own DI registrar inside `Logistics.Application/Modules/{Module}/` (all six invoked by the aggregate `AddApplicationLayer()`), and each infrastructure project ships a registrar (`AddPersistenceInfrastructure`, `AddPaymentsInfrastructure`, …). The composition root is the API's `Setup.cs` (`ConfigureServices`), reached through a thin `LogisticsHost.Run` shell in `Program.cs` — `Program.cs` no longer holds wiring. See [Hosts and cross-cutting concerns](#hosts-and-cross-cutting-concerns).
 
 ### Architecture enforcement
 
@@ -110,11 +110,7 @@ Layering rules are enforced by [`test/Logistics.Architecture.Tests/`](../../test
 - Each Infrastructure assembly references `Application.Abstractions`, not `Application`.
 - No handler injects `IHttpContextAccessor`.
 
-Both infrastructure rules discover what they cover instead of hand-listing it: `CsprojReferenceTests.InfrastructureProjects` enumerates `src/Infrastructure/*` from disk, and `BoundaryTests.InfrastructureAssemblies` derives from `AssemblyAnchors.AllInfrastructure`.
-
-Adding a new infrastructure project? The csproj rule picks it up automatically. The IL-level boundary rule needs two more steps: add an anchor to `AssemblyAnchors.AllInfrastructure` and add a `ProjectReference` in `Logistics.Architecture.Tests.csproj`.
-
-Exemptions are explicit and named — the local `exempt` array in `CsprojReferenceTests.cs` and `AssemblyAnchors.BoundaryExempt`, both currently just `Logistics.Infrastructure.AI`. A boundary failure means fix the dependency, not add an exemption.
+Both infrastructure rules discover what they cover instead of hand-listing it, so a new project is picked up off disk automatically (the IL-level boundary rule additionally needs an anchor in `AssemblyAnchors.AllInfrastructure` and a `ProjectReference` in the arch-tests csproj). CLAUDE.md holds the canonical rule; [layering.md](layering.md#enforcement) covers the full matrix and the named exemptions.
 
 ## Project Structure
 
@@ -188,13 +184,13 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 
 ### CQRS
 
-Commands and queries are separated and dispatched through MediatR. Both extend `IRequest<TResponse>` via the `ICommand<T>` / `IQuery<T>` markers in `Logistics.Application.Abstractions.Common`. Use `IMasterCommand<T>` for commands that target the master DB, otherwise the tenant DB. Handlers own their own `SaveChangesAsync` calls — there is no auto-transaction wrapper.
+Commands and queries are separated and dispatched through MediatR. Both extend `IRequest<TResponse>` via the `ICommand<T>` / `IQuery<T>` markers in `Logistics.Application.Abstractions.Common`. A command targets the master or tenant DB purely by which unit of work its handler injects (`IMasterUnitOfWork` vs `ITenantUnitOfWork`) — there is no separate marker interface. Handlers own their own `SaveChangesAsync` calls — there is no auto-transaction wrapper.
 
 Commands and queries live under `Logistics.Application/Modules/{Module}/{Feature}/{Commands|Queries}/`. See [module-layout.md](module-layout.md) for the six modules and the feature-folder convention.
 
 ```csharp
-public record CreateLoadCommand(CreateLoadDto Dto) : ICommand<Result<LoadDto>>;
-public record GetLoadByIdQuery(string Id) : IQuery<Result<LoadDto>>;
+public class CreateLoadCommand : ICommand;                 // flat fields, bound directly as the request body
+public record GetLoadByIdQuery(Guid Id) : IQuery<Result<LoadDto>>;
 ```
 
 ### MediatR Pipeline
@@ -213,7 +209,7 @@ flowchart LR
 
 `FeatureCheckBehaviour` reads the optional `[RequiresFeature]` attribute on the request type and short-circuits with a `Result.Fail` when the tenant's plan or admin lock disables the feature; the lookup is cached per closed generic instantiation.
 
-Hangfire jobs do not go through the MediatR pipeline, so `[RequiresFeature]` never applies to them. A job that needs a feature gate must call `IFeatureService.IsFeatureEnabledAsync(tenantId, feature)` itself.
+Hangfire jobs do not go through the MediatR pipeline, so `[RequiresFeature]` never applies to them — a job must gate features itself. CLAUDE.md holds the canonical rule.
 
 ### Repository + Specification
 
@@ -257,7 +253,7 @@ public class Load : AggregateRoot
 There are two UoWs - one per database type:
 
 - `IMasterUnitOfWork` - master DB (tenants, subscriptions, super admins)
-- `ITenantUnitOfWork` - per-request tenant DB resolved via `ITenantService`
+- `ITenantUnitOfWork` - per-request tenant DB resolved via `ICurrentTenantAccessor`
 
 ## Infrastructure Projects
 
@@ -271,14 +267,14 @@ Database access, repositories, and multi-tenancy.
 - 40+ entity configurations, organized by domain (`Load/`, `Trip/`, `Invoice/`, `Container/`, `Eld/`, `Safety/`, ...)
 - Master and Tenant migrations
 - `IRepository<T>`, `IUnitOfWork`, and tenant-aware `DbContextFactory`s
-- `TenantService` (resolves the current tenant) and `TenantDatabaseService` (provisions tenant DBs)
+- `CurrentTenantAccessor` (`ICurrentTenantAccessor`, resolves the current tenant) and `TenantDatabaseService` (provisions tenant DBs)
 - EF Core interceptors for domain events and auditing
 
 ### Logistics.Infrastructure.Communications
 
 Real-time and outbound messaging.
 
-- SignalR hubs: `TrackingHub`, `ChatHub`, `NotificationHub`
+- SignalR hubs: `TrackingHub`, `ChatHub`, `NotificationHub`, `AiDispatchHub` (mapped by the API at `/hubs/tracking`, `/hubs/chat`, `/hubs/notification`, `/hubs/ai-dispatch`)
 - Email via Resend with Fluid templates
 - Push notifications via Firebase Cloud Messaging
 - Google reCAPTCHA validation
@@ -297,9 +293,14 @@ See [AI Dispatch](../ai-dispatch.md).
 
 ### Logistics.Infrastructure.Integrations.Common
 
-Shared HTTP helpers for the third-party integration providers. `HttpClientJsonExtensions.TryGetFromJsonAsync<T>` wraps the "send + status check + JSON deserialise + log on failure" pattern used by the ELD, load board, and fuel card providers.
+The shared kernel for the third-party integration providers — do not hand-roll a fourth copy of any of it:
 
-The contract is that it **never throws** — a failure is logged and returns `default`. That is why the QuickBooks helpers in `Integrations.Accounting` are deliberately not folded in here: they throw `QboApiException` so a push error surfaces to the sync job instead of being swallowed. Keep push paths that must report failure out of this project.
+- `HttpClientJsonExtensions.TryGetFromJsonAsync<T>` — "send + status check + JSON deserialise + log on failure" for reads; and `HttpClientWriteExtensions` / `HttpJsonResult<T>` for writes that need to report success or failure back to the caller
+- `IntegrationJsonOptions` — the shared `JsonSerializerOptions` for provider payloads
+- `WebhookSignature.VerifyHmacSha256` — constant-time HMAC-SHA256 verification for inbound webhooks (see [Webhook conventions](#webhook-conventions))
+- `ProviderFactoryBase` + `AddProviderIntegration` (`ProviderRegistrationExtensions`) — the provider-selection factory base and its DI registration helper, shared by the ELD, load board, fuel card, and accounting factories
+
+The read helper's contract is that it **never throws** — a failure is logged and returns `default`. That is why the QuickBooks helpers in `Integrations.Accounting` are deliberately not folded in here: they throw `QboApiException` so a push error surfaces to the sync job instead of being swallowed. Keep push paths that must report failure out of the read helper.
 
 It is a leaf helper library: it references no other project in the repo.
 
@@ -383,9 +384,38 @@ Accounting sync providers: QuickBooks Online and a Demo provider, selected throu
 | -------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `Logistics.API`            | REST API, SignalR hubs, Hangfire background jobs, webhooks (Stripe, ELD)                             |
 | `Logistics.IdentityServer` | OAuth2 / OIDC via Duende IdentityServer, JWT issuance, user management                               |
-| `Logistics.McpServer`      | MCP over Streamable HTTP at `/mcp`; exposes `AiDispatchToolRegistry` to Claude Desktop, Cursor, etc. |
-| `Logistics.TelegramBot`    | Telegram bot worker for driver / dispatcher commands                                                 |
-| `Logistics.DbMigrator`     | Standalone EF Core migrations runner (master + tenant)                                               |
+| `Logistics.McpServer`      | Library composed into the API: MCP over Streamable HTTP at `/mcp`, exposing `AiDispatchToolRegistry` |
+| `Logistics.TelegramBot`    | Library composed into the API: Telegram bot for driver / dispatcher commands                         |
+| `Logistics.DbMigrator`     | Console app: standalone EF Core migrations runner (master + tenant)                                  |
+| `Logistics.HostDefaults`   | Shared library: host bootstrap for the web hosts (`LogisticsHost.Run`, CORS, data protection)        |
+
+Only **two** projects are independently runnable web hosts (API, IdentityServer). `McpServer` and `TelegramBot` are class libraries with no `Program.cs`; the API composes them (`AddMcpServerInfrastructure` + `MapMcpEndpoint`, `AddTelegramBotInfrastructure` + `MapTelegramWebhook`). `DbMigrator` is a console app. See [Hosts and cross-cutting concerns](#hosts-and-cross-cutting-concerns).
+
+## Hosts and cross-cutting concerns
+
+The two web hosts share a bootstrap: `Program.cs` is a one-line `LogisticsHost.Run(args, …)` shell (`Logistics.HostDefaults`) that owns the Serilog logger, the standard HTTP resilience handler, health checks at `/health`, and the top-level try/catch. Each host's real wiring lives in its own `Setup.cs` (`ConfigureServices` + `ConfigurePipeline`); the API additionally schedules its Hangfire jobs. `HostDefaults` also supplies `AddLogisticsCors`, `AddLogisticsDataProtection` (app names `LogisticsX` / `LogisticsX.IdentityServer`, key ring persisted in the master DB), and the `AddIpFixedWindowPolicy` rate-limit helper.
+
+### Rate limiting
+
+| Policy             | Applies to           | Limit                               | Partitioned by                         |
+| ------------------ | -------------------- | ----------------------------------- | -------------------------------------- |
+| _global_ (unnamed) | API, all endpoints   | 100 / min, fixed window             | authenticated user, else `Host` header |
+| `impersonation`    | API + IdentityServer | 5 / 15 min, fixed window (no queue) | client IP                              |
+| `login`            | IdentityServer login | 10 / 15 min, sliding window         | client IP                              |
+| `mcp`              | API `/mcp` endpoint  | 100 / min, fixed window             | API-key subject, else IP               |
+
+Rejections return `429`. The per-IP `impersonation` policy is built by the shared `AddIpFixedWindowPolicy` helper in `HostDefaults`.
+
+### Hangfire dashboard
+
+The dashboard is mounted at `/hangfire` and gated by `HangfireDashboardAuthorizationFilter`: in development, loopback requests are allowed so the local dashboard just works; otherwise the caller must hold the `SuperAdmin` role.
+
+### Webhook conventions
+
+Inbound third-party webhooks land on `WebhookController` (mounted at `/webhooks/*`, `[AllowAnonymous]` — the signature is the auth) and follow two invariants:
+
+- **Signature first, fail closed.** The raw request body is verified before it is parsed — `WebhookSignature.VerifyHmacSha256` (constant-time, in `Integrations.Common`) for the ELD / load-board providers, `EventUtility.ConstructEvent` for Stripe. A configured-but-missing or incorrect signature returns `400`. Stripe specifics live in [stripe-webhooks.md](../stripe-webhooks.md).
+- **Idempotency.** Providers retry, so each processed delivery is recorded in the master-DB `ProcessedWebhookEvent` ledger, unique on `(Provider, EventKey)`. `EventKey` is the provider's event id when present, else a SHA-256 hash of the raw body. A duplicate is a no-op returning `200`. `WebhookEventCleanupJob` prunes old rows daily.
 
 ## Multi-Tenancy
 

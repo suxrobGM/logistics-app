@@ -10,15 +10,16 @@ src/Core/Logistics.Application/
 │   ├── Operations/     # Loads, Trips, Trucks, Containers, Terminals, …
 │   │   └── Loads/
 │   │       ├── Commands/CreateLoad/
-│   │       └── Queries/GetLoadById/
+│   │       ├── Queries/GetLoadById/
+│   │       └── Services/         # feature-scoped workflow services (e.g. ILoadService)
 │   ├── Compliance/     # ELD, DVIR, Accidents, Safety, Privacy, Ifta
 │   ├── Financial/      # Invoices, Payments, Payroll, Expenses, Tax
 │   ├── IdentityAccess/ # Users, Tenants, Roles, Subscriptions
 │   ├── Integrations/   # AiDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents
 │   └── Platform/       # Stats, Reports, BlogPosts, Notifications
-├── Services/           # Application workflow services
+├── Handlers/           # Generic base handlers (Delete/GetById/Update) that trivial slices subclass
 ├── Behaviours/         # MediatR pipeline
-└── Validators/         # FluentValidation
+└── Validators/         # Shared FluentValidation base validators (e.g. AddressValidator)
 
 src/Core/Logistics.Application.Abstractions/
 └── (Infrastructure ports grouped by domain: AiDispatch, Storage, Geocoding, Eld, Payments, …)
@@ -83,93 +84,93 @@ src/Infrastructure/
 
 ### Step 1: Create Command/Query
 
+Commands and queries are the request contract — they are bound **directly** as the request body (flat
+properties, no `*Dto` wrapper). Add a dedicated `*Request` record only when the wire shape must differ
+from the command; see [api-design.md](../../.claude/rules/backend/api-design.md).
+
 ```csharp
 // Modules/Operations/Loads/Commands/CreateLoad/CreateLoadCommand.cs
-public record CreateLoadCommand(CreateLoadDto Dto) : ICommand<Result<LoadDto>>;
+public class CreateLoadCommand : ICommand   // ICommand<Result<T>> when the client needs data back
+{
+    public string Name { get; set; } = null!;
+    public Guid CustomerId { get; set; }
+    public Address OriginAddress { get; set; } = null!;
+    public Address DestinationAddress { get; set; } = null!;
+    // …flat fields, value objects bind as nested objects
+}
 
 internal sealed class CreateLoadHandler(ITenantUnitOfWork unitOfWork)
-    : IRequestHandler<CreateLoadCommand, Result<LoadDto>>
+    : IRequestHandler<CreateLoadCommand, Result>
 {
-    public async Task<Result<LoadDto>> Handle(
-        CreateLoadCommand req,
-        CancellationToken ct)
+    public async Task<Result> Handle(CreateLoadCommand req, CancellationToken ct)
     {
-        var load = Load.Create(req.Dto.CustomerId, req.Dto.Origin, req.Dto.Destination);
+        var load = Load.Create(req.Name, req.CustomerId, req.OriginAddress, req.DestinationAddress);
 
         await unitOfWork.Repository<Load>().AddAsync(load, ct);
         await unitOfWork.SaveChangesAsync(ct);
-
-        return Result<LoadDto>.Ok(load.ToDto());
+        return Result.Ok();
     }
 }
 ```
 
+Trivial `Delete`/`GetById`/`Update` slices don't need a hand-written handler — subclass the generic base
+handlers in `Logistics.Application/Handlers/` (`DeleteTenantEntityHandler`, `GetTenantEntityByIdHandler`,
+`UpdateTenantEntityHandler`; master variants exist too). A command targets the master or tenant DB purely
+by which unit of work its handler injects (`IMasterUnitOfWork` vs `ITenantUnitOfWork`) — there is no
+separate marker interface.
+
 ### Step 2: Add Validation
 
+Skip the validator entirely when its only rule would be `Id NotEmpty` (the handler's not-found path
+already covers it). For Create/Update pairs sharing rules, use a shared-fields base validator. See
+[csharp-conventions.md](../../.claude/rules/backend/csharp-conventions.md).
+
 ```csharp
-// Validators/CreateLoadValidator.cs
 public class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
 {
     public CreateLoadValidator()
     {
-        RuleFor(x => x.Dto.CustomerId)
-            .NotEmpty()
-            .WithMessage("Customer is required");
-
-        RuleFor(x => x.Dto.Origin)
-            .NotEmpty()
-            .MaximumLength(200);
-
-        RuleFor(x => x.Dto.Destination)
-            .NotEmpty()
-            .MaximumLength(200);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.CustomerId).NotEmpty();
     }
 }
 ```
 
 ### Step 3: Create Controller Endpoint
 
+Literal plural-lowercase route, primary-constructor DI, policy-based authorization per action. Full rules
+in [api-design.md](../../.claude/rules/backend/api-design.md).
+
 ```csharp
-// Controllers/LoadsController.cs
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class LoadsController : ControllerBase
+// Controllers/LoadController.cs
+[Route("loads")]
+[Produces("application/json")]
+public class LoadController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public LoadsController(IMediator mediator)
+    [HttpPost(Name = "CreateLoad")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
     {
-        _mediator = mediator;
-    }
-
-    [HttpPost]
-    [Authorize(Roles = "Owner,Manager,Dispatcher")]
-    public async Task<ActionResult<Result<LoadDto>>> Create(CreateLoadDto dto)
-    {
-        var result = await _mediator.Send(new CreateLoadCommand(dto));
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }
 ```
 
 ### Step 4: Define DTO
 
+DTOs are the **read** shape, returned by queries and produced by Mapperly mappers (never mapped by hand —
+see [mapperly.md](../../.claude/rules/backend/mapperly.md)). Entity ids are `Guid`.
+
 ```csharp
 // Logistics.Shared.Models/LoadDto.cs
-public record CreateLoadDto
-{
-    public string CustomerId { get; init; } = string.Empty;
-    public string Origin { get; init; } = string.Empty;
-    public string Destination { get; init; } = string.Empty;
-}
-
 public record LoadDto
 {
-    public string Id { get; init; } = string.Empty;
-    public string CustomerId { get; init; } = string.Empty;
-    public string Origin { get; init; } = string.Empty;
-    public string Destination { get; init; } = string.Empty;
+    public Guid Id { get; init; }
+    public Guid CustomerId { get; init; }
+    public string Name { get; init; } = string.Empty;
     public LoadStatus Status { get; init; }
     public DateTime CreatedDate { get; init; }
 }
@@ -180,13 +181,12 @@ public record LoadDto
 ### Entity Base Class
 
 ```csharp
-public abstract class Entity
+public abstract class Entity : IEntity<Guid>
 {
-    public string Id { get; protected set; } = Guid.NewGuid().ToString();
-    public DateTime CreatedDate { get; protected set; } = DateTime.UtcNow;
-    public DateTime? ModifiedDate { get; protected set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
 }
 
+// AuditableEntity adds CreatedDate / LastModifiedDate; inherit it for almost everything.
 public abstract class AggregateRoot : Entity
 {
     private readonly List<IDomainEvent> _domainEvents = new();
@@ -206,20 +206,18 @@ public abstract class AggregateRoot : Entity
 ```csharp
 public class Load : AggregateRoot
 {
-    public string CustomerId { get; private set; }
-    public string Origin { get; private set; }
-    public string Destination { get; private set; }
+    public string Name { get; private set; } = null!;
+    public Guid CustomerId { get; private set; }
     public LoadStatus Status { get; private set; }
 
     private Load() { } // EF Core
 
-    public static Load Create(string customerId, string origin, string destination)
+    public static Load Create(string name, Guid customerId, Address origin, Address destination)
     {
         var load = new Load
         {
+            Name = name,
             CustomerId = customerId,
-            Origin = origin,
-            Destination = destination,
             Status = LoadStatus.Pending
         };
 
@@ -233,7 +231,6 @@ public class Load : AggregateRoot
             throw new InvalidOperationException("Load already completed");
 
         Status = LoadStatus.Completed;
-        ModifiedDate = DateTime.UtcNow;
         AddDomainEvent(new LoadCompletedEvent(this));
     }
 }
@@ -241,10 +238,14 @@ public class Load : AggregateRoot
 
 ## Specifications
 
+Most reads use an inline `.Query()` inside the handler now. Write a dedicated `Specification<T>` class
+**only** when the same query condition is reused across handlers (there are just a few left, e.g.
+`FilterLoadInvoices`, `FilterPayrollInvoices`, `FilterLoadsByDeliveryDate`).
+
 ```csharp
 public class ActiveLoadsByCustomerSpec : Specification<Load>
 {
-    public ActiveLoadsByCustomerSpec(string customerId)
+    public ActiveLoadsByCustomerSpec(Guid customerId)
     {
         Query
             .Where(l => l.CustomerId == customerId)
@@ -254,8 +255,8 @@ public class ActiveLoadsByCustomerSpec : Specification<Load>
 }
 
 // Usage
-var loads = await _unitOfWork.Loads.GetListAsync(
-    new ActiveLoadsByCustomerSpec(customerId));
+var loads = await unitOfWork.Repository<Load>()
+    .GetListAsync(new ActiveLoadsByCustomerSpec(customerId), ct);
 ```
 
 ## Domain Events
@@ -278,11 +279,7 @@ public class LoadCompletedHandler : INotificationHandler<LoadCompletedEvent>
 
 ## Background Jobs
 
-Recurring Hangfire jobs live in `src/Presentation/Logistics.API/Jobs/`. Two rules matter here.
-
-**Fan out with `TenantJobRunner`.** `TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, operation, body, ct)` runs the body once per tenant that has a provisioned database, giving each tenant its own DI scope and its own try/catch so one tenant's failure does not abort the rest of the cycle. Do not hand-roll the loop.
-
-**Check features yourself.** Jobs bypass the MediatR pipeline, so `FeatureCheckBehaviour` never runs and `[RequiresFeature]` has no effect. A job that needs a feature gate must call `IFeatureService.IsFeatureEnabledAsync(tenantId, feature)` inside the body. Keep the check in the body rather than hoisting it to the runner: a job may still need to do some work for every tenant regardless of the flag, as `IftaQuarterCloseJob` does when it purges breadcrumbs for tenants without IFTA enabled.
+Recurring Hangfire jobs live in `src/Presentation/Logistics.API/Jobs/`. The canonical rule is in CLAUDE.md: fan out with `TenantJobRunner.ForEachTenantAsync` (never hand-roll the loop), and because jobs bypass the MediatR pipeline the body must gate features itself with `IFeatureService` (`[RequiresFeature]` is inert). Keep the feature check inside the body — a job may still do some work for every tenant regardless of the flag, as `IftaQuarterCloseJob` does when it purges breadcrumbs for tenants without IFTA enabled. The worked pattern:
 
 ```csharp
 [AutomaticRetry(Attempts = 2)]
@@ -303,65 +300,45 @@ private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, Cancellat
 
 ## Testing
 
+xUnit + NSubstitute (not Moq). The system under test is named `sut`; private fields are `camelCase` with
+no `_` prefix. Full conventions in [testing.md](../../.claude/rules/backend/testing.md).
+
 ```csharp
 public class CreateLoadHandlerTests
 {
-    private readonly Mock<IUnitOfWork> _unitOfWork;
-    private readonly CreateLoadHandler _handler;
+    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly CreateLoadHandler sut;
 
-    public CreateLoadHandlerTests()
-    {
-        _unitOfWork = new Mock<IUnitOfWork>();
-        _handler = new CreateLoadHandler(_unitOfWork.Object);
-    }
+    public CreateLoadHandlerTests() => sut = new CreateLoadHandler(tenantUow);
 
     [Fact]
     public async Task Handle_ValidLoad_ReturnsSuccess()
     {
         // Arrange
-        var command = new CreateLoadCommand(new CreateLoadDto
+        var command = new CreateLoadCommand
         {
-            CustomerId = "cust-1",
-            Origin = "Chicago",
-            Destination = "New York"
-        });
-
-        _unitOfWork.Setup(x => x.Loads.AddAsync(It.IsAny<Load>()))
-            .Returns(Task.CompletedTask);
-        _unitOfWork.Setup(x => x.SaveChangesAsync())
-            .ReturnsAsync(1);
+            Name = "ACME-42",
+            CustomerId = Guid.NewGuid()
+        };
+        tenantUow.SaveChangesAsync().Returns(1);
 
         // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
+        var result = await sut.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.NotNull(result.Data);
+        await tenantUow.Repository<Load>().Received(1).AddAsync(Arg.Any<Load>());
     }
 }
 ```
 
 ## Conventions
 
-### Naming
-
-- Commands: `{Verb}{Entity}Command` (CreateLoadCommand)
-- Queries: `Get{Entity}Query` (GetLoadByIdQuery)
-- Handlers: `{Command/Query}Handler`
-- Validators: `{Command}Validator`
-
-### Response Types
-
-- Use `Result<T>` for single items
-- Use `PagedResult<T>` for lists
-
-### Error Handling
-
-- Throw domain exceptions for business rule violations
-- Return `Result.Fail("message")` for expected failures. When the client must branch on the failure (show an upgrade dialog, offer an override), use the `Result.Fail(message, ErrorCodes.X)` overload so it carries a machine-readable code instead of a message the client has to substring-match
-- Let middleware handle unexpected exceptions
+- **Naming** (Commands/Queries/Handlers/Validators/DTOs/Mappers): see [csharp-conventions.md](../../.claude/rules/backend/csharp-conventions.md).
+- **Response types**: `Result<T>` for single items, `PagedResult<T>` for lists.
+- **Error handling**: throw domain exceptions for business-rule violations; return `Result.Fail(...)` for expected failures, and when the client must branch on the failure use the machine-readable-code overload. See [api-design.md](../../.claude/rules/backend/api-design.md). Let middleware handle unexpected exceptions.
 
 ## Next Steps
 
 - [Angular Guide](angular-guide.md) - Frontend patterns
-- [Testing](testing.md) - Test strategies
+- [Testing rules](../../.claude/rules/backend/testing.md) - Test strategies

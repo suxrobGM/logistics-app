@@ -75,14 +75,14 @@ One per company. Schema includes:
 
 ## Tenant resolution
 
-On every HTTP request, `TenantService.GetCurrentTenantAsync` resolves the active tenant by checking three sources in priority order, then validates the subscription before returning the tenant.
+On every HTTP request, `CurrentTenantAccessor.GetCurrentTenantAsync` resolves the active tenant by checking three sources in priority order, then validates the subscription before returning the tenant.
 
 ```mermaid
 sequenceDiagram
     autonumber
     participant Client
     participant Mw as ASP.NET pipeline
-    participant TS as TenantService
+    participant TS as CurrentTenantAccessor
     participant Master as Master DB
     participant TDb as Tenant DB
 
@@ -116,11 +116,9 @@ If none of the three resolve, `InvalidTenantException` is thrown.
 
 ### Background jobs and migrations
 
-When there is no `HttpContext` (Hangfire workers, `DbMigrator`, integration tests), `TenantService` returns a default tenant pointing at the connection string from `TenantDbContextOptions`. Jobs that need to run for a specific tenant set the connection string explicitly before opening `TenantDbContext`.
+When there is no `HttpContext` (Hangfire workers, `DbMigrator`, integration tests), `CurrentTenantAccessor` returns a default tenant pointing at the connection string from `TenantDbContextOptions`. Jobs that need to run for a specific tenant set the connection string explicitly before opening `TenantDbContext`.
 
-The recurring jobs do not hand-roll that fan-out. `TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, operation, body, ct)` in `src/Presentation/Logistics.API/Jobs/` runs the body once per tenant that has a provisioned database, giving each tenant its own DI scope and its own try/catch so one tenant's failure does not abort the rest of the cycle. `EldSyncJob`, `FuelCardSyncJob`, `AccountingSyncJob`, `IftaQuarterCloseJob`, and `LoadBoardSyncJob` (twice) call it — six call sites in total.
-
-Feature flags go inside the body, never as a runner parameter. A job may need to run part of its work for every tenant regardless of the flag: in `IftaQuarterCloseJob` the quarter snapshot is IFTA-gated but the breadcrumb purge deliberately is not. Jobs bypass the MediatR pipeline, so `[RequiresFeature]` does not apply and the body must call `IFeatureService.IsFeatureEnabledAsync(tenantId, feature)` itself.
+Recurring jobs fan out per tenant with `TenantJobRunner.ForEachTenantAsync` and must check `IFeatureService` inside the body (they bypass the MediatR pipeline, so `[RequiresFeature]` is inert). See CLAUDE.md and [backend-guide.md](../development/backend-guide.md#background-jobs) for the canonical rule.
 
 ### Subscription enforcement
 
@@ -160,7 +158,7 @@ sequenceDiagram
     autonumber
     participant Admin
     participant API as Logistics.API
-    participant TS as TenantService
+    participant TS as CurrentTenantAccessor
     participant TDS as TenantDatabaseService
     participant Master as Master DB
     participant Postgres

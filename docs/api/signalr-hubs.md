@@ -4,22 +4,23 @@ Real-time communication via SignalR WebSocket connections.
 
 ## Available Hubs
 
-| Hub | URL | Purpose |
-|-----|-----|---------|
-| Live Tracking | `/hubs/chat` | GPS location updates |
-| Notifications | `/hubs/notification` | Push notifications |
-| Messaging | `/hubs/chat` | Real-time chat messages |
+| Hub           | URL                  | Purpose                        |
+| ------------- | -------------------- | ------------------------------ |
+| Live Tracking | `/hubs/tracking`     | GPS location updates           |
+| Notifications | `/hubs/notification` | Push notifications             |
+| Messaging     | `/hubs/chat`         | Real-time chat messages        |
+| AI Dispatch   | `/hubs/ai-dispatch`  | Live AI dispatch agent updates |
 
 ## Connecting to Hubs
 
 ### JavaScript/TypeScript
 
 ```typescript
-import * as signalR from '@microsoft/signalr';
+import * as signalR from "@microsoft/signalr";
 
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl('https://api.yourdomain.com/hubs/notification', {
-    accessTokenFactory: () => getAccessToken()
+  .withUrl("https://api.yourdomain.com/hubs/notification", {
+    accessTokenFactory: () => getAccessToken(),
   })
   .withAutomaticReconnect()
   .build();
@@ -33,8 +34,8 @@ Hubs require JWT authentication. Pass the token via query string or header:
 
 ```typescript
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl('/hubs/notification', {
-    accessTokenFactory: () => localStorage.getItem('access_token')
+  .withUrl("/hubs/notification", {
+    accessTokenFactory: () => localStorage.getItem("access_token"),
   })
   .build();
 ```
@@ -48,11 +49,11 @@ Real-time GPS location tracking for drivers.
 **SendLocation**: Driver sends their GPS location
 
 ```typescript
-await connection.invoke('SendLocation', {
+await connection.invoke("SendLocation", {
   latitude: 41.8781,
   longitude: -87.6298,
   heading: 90,
-  speed: 65
+  speed: 65,
 });
 ```
 
@@ -61,7 +62,7 @@ await connection.invoke('SendLocation', {
 **ReceiveLocation**: Receive driver location updates
 
 ```typescript
-connection.on('ReceiveLocation', (driverId: string, location: Location) => {
+connection.on("ReceiveLocation", (driverId: string, location: Location) => {
   console.log(`Driver ${driverId} at ${location.latitude}, ${location.longitude}`);
   updateMapMarker(driverId, location);
 });
@@ -70,7 +71,7 @@ connection.on('ReceiveLocation', (driverId: string, location: Location) => {
 **DriverOffline**: Driver disconnected
 
 ```typescript
-connection.on('DriverOffline', (driverId: string) => {
+connection.on("DriverOffline", (driverId: string) => {
   removeMapMarker(driverId);
 });
 ```
@@ -93,34 +94,34 @@ Real-time chat messaging between employees (dispatchers and drivers).
 **JoinConversation**: Join a conversation to receive messages
 
 ```typescript
-await connection.invoke('JoinConversation', conversationId);
+await connection.invoke("JoinConversation", conversationId);
 ```
 
 **LeaveConversation**: Leave a conversation
 
 ```typescript
-await connection.invoke('LeaveConversation', conversationId);
+await connection.invoke("LeaveConversation", conversationId);
 ```
 
 **SendMessage**: Send a message to a conversation
 
 ```typescript
-await connection.invoke('SendMessage', {
-  conversationId: 'conv-123',
-  content: 'Hello!'
+await connection.invoke("SendMessage", {
+  conversationId: "conv-123",
+  content: "Hello!",
 });
 ```
 
 **MarkAsRead**: Mark a message as read
 
 ```typescript
-await connection.invoke('MarkAsRead', conversationId, messageId, readById);
+await connection.invoke("MarkAsRead", conversationId, messageId, readById);
 ```
 
 **SendTypingIndicator**: Broadcast typing status
 
 ```typescript
-await connection.invoke('SendTypingIndicator', conversationId, true);
+await connection.invoke("SendTypingIndicator", conversationId, true);
 ```
 
 ### Server → Client Events
@@ -128,7 +129,7 @@ await connection.invoke('SendTypingIndicator', conversationId, true);
 **ReceiveMessage**: New message received
 
 ```typescript
-connection.on('ReceiveMessage', (message: MessageDto) => {
+connection.on("ReceiveMessage", (message: MessageDto) => {
   addMessageToChat(message);
 });
 ```
@@ -136,7 +137,7 @@ connection.on('ReceiveMessage', (message: MessageDto) => {
 **MessageRead**: Message was read by another user
 
 ```typescript
-connection.on('MessageRead', (messageId: string, readBy: string) => {
+connection.on("MessageRead", (messageId: string, readBy: string) => {
   updateMessageReadStatus(messageId, readBy);
 });
 ```
@@ -144,7 +145,7 @@ connection.on('MessageRead', (messageId: string, readBy: string) => {
 **TypingIndicator**: User is typing
 
 ```typescript
-connection.on('TypingIndicator', (dto: TypingIndicatorDto) => {
+connection.on("TypingIndicator", (dto: TypingIndicatorDto) => {
   if (dto.isTyping) {
     showTypingIndicator(dto.userId);
   } else {
@@ -156,7 +157,7 @@ connection.on('TypingIndicator', (dto: TypingIndicatorDto) => {
 **UserJoinedConversation**: User joined the conversation
 
 ```typescript
-connection.on('UserJoinedConversation', (conversationId, userId, time) => {
+connection.on("UserJoinedConversation", (conversationId, userId, time) => {
   console.log(`User ${userId} joined at ${time}`);
 });
 ```
@@ -170,7 +171,7 @@ Real-time notifications for all users.
 **ReceiveNotification**: New notification received
 
 ```typescript
-connection.on('ReceiveNotification', (notification: Notification) => {
+connection.on("ReceiveNotification", (notification: Notification) => {
   showToast(notification.title, notification.message);
 });
 ```
@@ -178,7 +179,7 @@ connection.on('ReceiveNotification', (notification: Notification) => {
 **LoadStatusChanged**: Load status updated
 
 ```typescript
-connection.on('LoadStatusChanged', (loadId: string, status: string) => {
+connection.on("LoadStatusChanged", (loadId: string, status: string) => {
   updateLoadInList(loadId, status);
 });
 ```
@@ -186,7 +187,7 @@ connection.on('LoadStatusChanged', (loadId: string, status: string) => {
 **NewLoadAssigned**: Driver assigned to a new load
 
 ```typescript
-connection.on('NewLoadAssigned', (load: LoadDto) => {
+connection.on("NewLoadAssigned", (load: LoadDto) => {
   showAlert(`New load assigned: ${load.origin} → ${load.destination}`);
 });
 ```
@@ -197,20 +198,20 @@ connection.on('NewLoadAssigned', (load: LoadDto) => {
 
 ```typescript
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl('/hubs/notification')
+  .withUrl("/hubs/notification")
   .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
   .build();
 
-connection.onreconnecting(error => {
-  console.log('Reconnecting...', error);
+connection.onreconnecting((error) => {
+  console.log("Reconnecting...", error);
 });
 
-connection.onreconnected(connectionId => {
-  console.log('Reconnected:', connectionId);
+connection.onreconnected((connectionId) => {
+  console.log("Reconnected:", connectionId);
 });
 
-connection.onclose(error => {
-  console.log('Connection closed', error);
+connection.onclose((error) => {
+  console.log("Connection closed", error);
 });
 ```
 
@@ -221,7 +222,7 @@ async function startConnection() {
   try {
     await connection.start();
   } catch (err) {
-    console.error('Connection failed, retrying...', err);
+    console.error("Connection failed, retrying...", err);
     setTimeout(startConnection, 5000);
   }
 }
@@ -281,7 +282,7 @@ hubConnection.start().blockingAwait()
 
 ```typescript
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl('/hubs/notification')
+  .withUrl("/hubs/notification")
   .configureLogging(signalR.LogLevel.Debug)
   .build();
 ```
