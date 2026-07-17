@@ -1,0 +1,17 @@
+<ui-dialog
+  [header]="header()"
+  [(open)]="visible"
+  [modal]="true"
+  width="500px"
+  [draggable]="false"
+  (opened)="opened.emit()"
+>
+  <form [formRoot]="form()" #formEl>
+    <ng-content />
+  </form>
+
+  <ng-template #footer>
+    <ui-button appearance="text" label="Cancel" (click)="close()" />
+    <ui-button [label]="submitLabel()" icon="check" (click)="requestSubmit()" [loading]="saving()" />
+  </ng-template>
+</ui-dialog>

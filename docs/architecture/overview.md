@@ -41,7 +41,7 @@ flowchart TB
         SharedGeo["Shared.Geo<br/>Geolocation utilities"]
     end
 
-    subgraph Infra["Infrastructure (9 projects)"]
+    subgraph Infra["Infrastructure (14 projects)"]
         direction LR
         Persistence["Persistence"]
         AI["AI"]
@@ -50,8 +50,9 @@ flowchart TB
         Routing["Routing"]
         Documents["Documents"]
         Storage["Storage"]
-        Eld["Integrations.Eld"]
-        LoadBoard["Integrations.LoadBoard"]
+        Tax["Tax"]
+        Vin["Vin"]
+        Integrations["Integrations<br/>Common · Eld · LoadBoard<br/>FuelCards · Accounting"]
     end
 
     subgraph External["External Services"]
@@ -59,7 +60,7 @@ flowchart TB
         Postgres[("PostgreSQL 18<br/>Master + Tenant DBs")]
         SaaS["Stripe · Mapbox · Firebase<br/>Azure Blob · Cloudflare R2 · Resend"]
         Llm["Anthropic · OpenAI · DeepSeek"]
-        Providers["Samsara · Motive<br/>DAT · Truckstop · 123LB"]
+        Providers["Samsara · Motive · TT ELD · Geotab<br/>DAT · Truckstop · 123LB<br/>WEX · EFS · QuickBooks Online"]
     end
 
     Clients --> Presentation
@@ -86,7 +87,7 @@ flowchart TB
     Ab["Application.Abstractions<br/>Infrastructure ports · marker interfaces · DTOs"]
     D["Domain<br/>Entities · Aggregates · Events · Specifications"]
     Pr["Domain.Primitives<br/>Value objects · Enums"]
-    I["Infrastructure<br/>Persistence · Communications · AI · Eld · LoadBoard · Payments · Documents · Routing · Storage · Tax · Vin"]
+    I["Infrastructure<br/>Persistence · Communications · AI · Payments · Documents · Routing · Storage · Tax · Vin<br/>Integrations.Common · Integrations.Eld · Integrations.LoadBoard · Integrations.FuelCards · Integrations.Accounting"]
 
     P --> A
     P -.composition root.-> I
@@ -109,7 +110,11 @@ Layering rules are enforced by [`test/Logistics.Architecture.Tests/`](../../test
 - Each Infrastructure assembly references `Application.Abstractions`, not `Application`.
 - No handler injects `IHttpContextAccessor`.
 
-Adding a new infrastructure assembly? Append its anchor to the `[Theory]` in `BoundaryTests.cs` so it's covered.
+Both infrastructure rules discover what they cover instead of hand-listing it: `CsprojReferenceTests.InfrastructureProjects` enumerates `src/Infrastructure/*` from disk, and `BoundaryTests.InfrastructureAssemblies` derives from `AssemblyAnchors.AllInfrastructure`.
+
+Adding a new infrastructure project? The csproj rule picks it up automatically. The IL-level boundary rule needs two more steps: add an anchor to `AssemblyAnchors.AllInfrastructure` and add a `ProjectReference` in `Logistics.Architecture.Tests.csproj`.
+
+Exemptions are explicit and named — the local `exempt` array in `CsprojReferenceTests.cs` and `AssemblyAnchors.BoundaryExempt`, both currently just `Logistics.Infrastructure.AI`. A boundary failure means fix the dependency, not add an exemption.
 
 ## Project Structure
 
@@ -120,7 +125,7 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 | `src/Client`         | `Logistics.Angular` (workspace: tms-portal, customer-portal, admin-portal, website, shared library), `Logistics.DriverApp` (Kotlin Multiplatform), `Logistics.DemoVideo` (Remotion) |
 | `src/Core`           | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`                                              |
 | `src/Shared`         | `Logistics.Shared.Geo`, `Logistics.Shared.Identity`, `Logistics.Shared.Models`                                                                                                      |
-| `src/Infrastructure` | `Persistence`, `Communications`, `AI`, `Integrations.Eld`, `Integrations.LoadBoard`, `Payments`, `Documents`, `Routing`, `Storage`                                                  |
+| `src/Infrastructure` | `Persistence`, `Communications`, `AI`, `Payments`, `Documents`, `Routing`, `Storage`, `Tax`, `Vin`, `Integrations.{Common, Eld, LoadBoard, FuelCards, Accounting}`                  |
 | `src/Presentation`   | `Logistics.API`, `Logistics.IdentityServer`, `Logistics.McpServer`, `Logistics.TelegramBot`, `Logistics.DbMigrator`                                                                 |
 
 ## Tech Stack
@@ -163,19 +168,21 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 
 ### External Services
 
-| Service                        | Purpose                                 |
-| ------------------------------ | --------------------------------------- |
-| Stripe                         | Subscription billing                    |
-| Stripe Connect                 | Direct payouts to trucking companies    |
-| Anthropic / OpenAI / DeepSeek  | LLM providers for the AI dispatch agent |
-| Firebase                       | Push notifications                      |
-| Mapbox                         | Maps, geocoding, route optimization     |
-| Azure Blob / Cloudflare R2     | Document & photo storage (pluggable)    |
-| NHTSA API                      | VIN decoding                            |
-| Samsara / Motive               | ELD / HOS providers                     |
-| DAT / Truckstop / 123Loadboard | Load board providers                    |
-| Resend                         | Transactional email                     |
-| Google reCAPTCHA               | Public form protection                  |
+| Service                            | Purpose                                 |
+| ---------------------------------- | --------------------------------------- |
+| Stripe                             | Subscription billing                    |
+| Stripe Connect                     | Direct payouts to trucking companies    |
+| Anthropic / OpenAI / DeepSeek      | LLM providers for the AI dispatch agent |
+| Firebase                           | Push notifications                      |
+| Mapbox                             | Maps, geocoding, route optimization     |
+| Azure Blob / Cloudflare R2         | Document & photo storage (pluggable)    |
+| NHTSA API                          | VIN decoding                            |
+| Samsara / Motive / TT ELD / Geotab | ELD / HOS providers                     |
+| DAT / Truckstop / 123Loadboard     | Load board providers                    |
+| WEX / EFS                          | Fuel card transaction feeds             |
+| QuickBooks Online                  | Accounting sync                         |
+| Resend                             | Transactional email                     |
+| Google reCAPTCHA                   | Public form protection                  |
 
 ## Design Patterns
 
@@ -205,6 +212,8 @@ flowchart LR
 ```
 
 `FeatureCheckBehaviour` reads the optional `[RequiresFeature]` attribute on the request type and short-circuits with a `Result.Fail` when the tenant's plan or admin lock disables the feature; the lookup is cached per closed generic instantiation.
+
+Hangfire jobs do not go through the MediatR pipeline, so `[RequiresFeature]` never applies to them. A job that needs a feature gate must call `IFeatureService.IsFeatureEnabledAsync(tenantId, feature)` itself.
 
 ### Repository + Specification
 
@@ -252,7 +261,7 @@ There are two UoWs - one per database type:
 
 ## Infrastructure Projects
 
-The infrastructure layer is split into nine focused projects so each has a single concern.
+The infrastructure layer is split into fourteen focused projects so each has a single concern.
 
 ### Logistics.Infrastructure.Persistence
 
@@ -286,13 +295,36 @@ LLM dispatch agent and tool registry.
 
 See [AI Dispatch](../ai-dispatch.md).
 
+### Logistics.Infrastructure.Integrations.Common
+
+Shared HTTP helpers for the third-party integration providers. `HttpClientJsonExtensions.TryGetFromJsonAsync<T>` wraps the "send + status check + JSON deserialise + log on failure" pattern used by the ELD, load board, and fuel card providers.
+
+The contract is that it **never throws** — a failure is logged and returns `default`. That is why the QuickBooks helpers in `Integrations.Accounting` are deliberately not folded in here: they throw `QboApiException` so a push error surfaces to the sync job instead of being swallowed. Keep push paths that must report failure out of this project.
+
+It is a leaf helper library: it references no other project in the repo.
+
 ### Logistics.Infrastructure.Integrations.Eld
 
-ELD providers for HOS compliance: Samsara, Motive (KeepTruckin), and a Demo provider for tests. Factory pattern for provider selection plus webhook handlers signed by the provider.
+ELD providers for HOS compliance: Samsara, Motive (KeepTruckin), TT ELD, Geotab, and a Demo provider for tests. Factory pattern for provider selection plus webhook handlers signed by the provider.
 
 ### Logistics.Infrastructure.Integrations.LoadBoard
 
 Load board providers: DAT, Truckstop, 123Loadboard, and a Demo provider. Search loads, post trucks, provider-specific request/response mappers.
+
+### Logistics.Infrastructure.Integrations.FuelCards
+
+Fuel card providers: WEX, EFS, and a Demo provider, selected through `FuelCardProviderFactory`.
+
+- `BearerFuelCardService<TProbeResponse>` base class for the bearer-token providers
+- Per-provider mappers and models, plus a shared `JurisdictionMapper`
+- `FuelCardsOptions` binds the `FuelCards` section, with a nullable entry per provider
+
+### Logistics.Infrastructure.Integrations.Accounting
+
+Accounting sync providers: QuickBooks Online and a Demo provider, selected through `AccountingProviderFactory`.
+
+- `QuickBooksOAuthClient` for the OAuth token flow, `QuickBooksOnlineService` for the Data API
+- `HttpClientQboExtensions` throws `QboApiException` on failure so push errors reach the sync job
 
 ### Logistics.Infrastructure.Payments
 
@@ -305,7 +337,6 @@ Load board providers: DAT, Truckstop, 123Loadboard, and a Demo provider. Search 
 
 - PDF generation via QuestPDF (invoices, payroll stubs, BOL, POD)
 - Template-based PDF import / extraction
-- VIN decoder (NHTSA API)
 
 ### Logistics.Infrastructure.Routing
 
@@ -333,6 +364,18 @@ Load board providers: DAT, Truckstop, 123Loadboard, and a Demo provider. Search 
   }
 }
 ```
+
+### Logistics.Infrastructure.Tax
+
+- `ITaxCalculator` selected per the `Tax:Provider` value (`stripe` | `manual`), defaulting to Stripe
+- Stripe Tax calculation API client and `IStripeTaxConfigService` for onboarding info, registered regardless of the selected calculator
+- `ManualTaxCalculator` backed by static rate data: US sales tax, EU VAT rates and rules, other-country rates
+- `ITaxJurisdictionsProvider` for the jurisdiction list
+
+### Logistics.Infrastructure.Vin
+
+- `IVinDecoderService` fronted by `CompositeVinDecoderService`
+- `WmiPrefixDecoder` for WMI prefix lookup and `NhtsaVinDecoderService` for full-VIN decode via the NHTSA API
 
 ## Presentation Projects
 

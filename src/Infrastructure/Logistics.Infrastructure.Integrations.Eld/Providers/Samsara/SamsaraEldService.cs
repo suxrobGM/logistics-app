@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -58,9 +59,9 @@ internal class SamsaraEldService(
     {
         var result = await httpClient.TryGetFromJsonAsync<SamsaraHosClockResponse>(
             $"{baseUrl}/fleet/hos/drivers/{externalDriverId}/clocks",
-            EldJsonOptions.CamelCase,
             logger,
-            $"Samsara HOS clocks for driver {externalDriverId}");
+            $"Samsara HOS clocks for driver {externalDriverId}",
+            EldJsonOptions.CamelCase);
         return result?.Data is null ? null : SamsaraMapper.MapToDto(externalDriverId, result.Data);
     }
 
@@ -68,9 +69,9 @@ internal class SamsaraEldService(
     {
         var result = await httpClient.TryGetFromJsonAsync<SamsaraHosClocksResponse>(
             $"{baseUrl}/fleet/hos/clocks",
-            EldJsonOptions.CamelCase,
             logger,
-            "Samsara HOS clocks (all drivers)");
+            "Samsara HOS clocks (all drivers)",
+            EldJsonOptions.CamelCase);
         return result?.Data?.Select(d => SamsaraMapper.MapToDto(d.Driver?.Id ?? "", d)) ?? [];
     }
 
@@ -84,9 +85,9 @@ internal class SamsaraEldService(
 
         var result = await httpClient.TryGetFromJsonAsync<SamsaraHosLogsResponse>(
             $"{baseUrl}/fleet/hos/logs?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
-            EldJsonOptions.CamelCase,
             logger,
-            $"Samsara HOS logs for driver {externalDriverId}");
+            $"Samsara HOS logs for driver {externalDriverId}",
+            EldJsonOptions.CamelCase);
         return result?.Data?.Select(SamsaraMapper.MapToLogDto) ?? [];
     }
 
@@ -100,9 +101,9 @@ internal class SamsaraEldService(
 
         var result = await httpClient.TryGetFromJsonAsync<SamsaraViolationsResponse>(
             $"{baseUrl}/fleet/hos/violations?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
-            EldJsonOptions.CamelCase,
             logger,
-            $"Samsara violations for driver {externalDriverId}");
+            $"Samsara violations for driver {externalDriverId}",
+            EldJsonOptions.CamelCase);
         return result?.Data?.Select(v => SamsaraMapper.MapToViolationDto(externalDriverId, v)) ?? [];
     }
 
@@ -110,9 +111,9 @@ internal class SamsaraEldService(
     {
         var result = await httpClient.TryGetFromJsonAsync<SamsaraDriversResponse>(
             $"{baseUrl}/fleet/drivers",
-            EldJsonOptions.CamelCase,
             logger,
-            "Samsara drivers list");
+            "Samsara drivers list",
+            EldJsonOptions.CamelCase);
         return result?.Data?.Select(SamsaraMapper.MapToDriverDto) ?? [];
     }
 
@@ -120,9 +121,9 @@ internal class SamsaraEldService(
     {
         var result = await httpClient.TryGetFromJsonAsync<SamsaraVehiclesResponse>(
             $"{baseUrl}/fleet/vehicles",
-            EldJsonOptions.CamelCase,
             logger,
-            "Samsara vehicles list");
+            "Samsara vehicles list",
+            EldJsonOptions.CamelCase);
         return result?.Data?.Select(SamsaraMapper.MapToVehicleDto) ?? [];
     }
 

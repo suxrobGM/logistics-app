@@ -8,37 +8,16 @@ namespace Logistics.Infrastructure.Integrations.LoadBoard.Common;
 internal sealed record HttpJsonResult<T>(bool IsSuccess, T? Value, string ErrorBody, HttpStatusCode? StatusCode);
 
 /// <summary>
-/// HttpClient extensions used by load board provider services. Each method wraps the
+/// Write-side HttpClient extensions used by load board provider services. Each method wraps the
 /// "send + status check + JSON deserialise + log on failure" pattern so providers stop
 /// repeating try/catch + IsSuccessStatusCode boilerplate in every operation.
+///
+/// The read side lives in <see cref="Integrations.Common.HttpClientJsonExtensions"/>, shared with
+/// the fuel card and ELD integrations. These write helpers are load-board-only so far; move them
+/// alongside it if another integration grows the same need.
 /// </summary>
 internal static class HttpClientLoadBoardExtensions
 {
-    public static async Task<T?> TryGetFromJsonAsync<T>(
-        this HttpClient client,
-        string url,
-        ILogger logger,
-        string action,
-        CancellationToken ct = default)
-    {
-        try
-        {
-            var response = await client.GetAsync(url, ct);
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("LoadBoard {Action} returned {StatusCode}", action, response.StatusCode);
-                return default;
-            }
-
-            return await response.Content.ReadFromJsonAsync<T>(ct);
-        }
-        catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException or NotSupportedException)
-        {
-            logger.LogError(ex, "LoadBoard {Action} failed", action);
-            return default;
-        }
-    }
-
     public static async Task<HttpJsonResult<TResp>> TryPostAsJsonAsync<TReq, TResp>(
         this HttpClient client,
         string url,

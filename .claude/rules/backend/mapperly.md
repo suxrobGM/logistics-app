@@ -26,3 +26,23 @@ public static EntityDto ToDto(this Entity entity, int computed)
     return dto with { ComputedField = computed };
 }
 ```
+
+## Never flatten a navigation property
+
+Lazy loading is on, so letting Mapperly flatten `Truck.Number` into `TruckNumber` costs one SELECT
+**per row** — an N+1 that is invisible in the mapper. `[MapperIgnoreTarget]` it, batch the lookup
+in the handler, pass the value in:
+
+```csharp
+[MapperIgnoreSource(nameof(FuelCardTransaction.Truck))]
+[MapperIgnoreTarget(nameof(FuelCardTransactionDto.TruckNumber))]
+public static partial FuelCardTransactionDto ToDto(this FuelCardTransaction entity);
+
+public static FuelCardTransactionDto ToDto(this FuelCardTransaction entity, string? truckNumber)
+{
+    var dto = entity.ToDto();
+    return dto with { TruckNumber = truckNumber };
+}
+```
+
+Worked example: `FuelCardMapper` + `GetFuelCardTransactionsHandler`.

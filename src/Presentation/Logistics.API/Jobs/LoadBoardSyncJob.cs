@@ -38,71 +38,20 @@ public class LoadBoardSyncJob(
     ///     Refresh all posted trucks to prevent expiration on load boards.
     /// </summary>
     [AutomaticRetry(Attempts = 2)]
-    public async Task RefreshPostedTrucksAsync(CancellationToken ct)
-    {
-        using var scope = scopeFactory.CreateScope();
-        var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
-
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync(t => t.ConnectionString != null);
-
-        logger.LogInformation("Starting load board truck refresh for {TenantCount} tenants", tenants.Count);
-
-        foreach (var tenant in tenants)
-        {
-            if (ct.IsCancellationRequested)
-            {
-                break;
-            }
-
-            try
-            {
-                await RefreshTenantTrucksAsync(tenant, ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error refreshing trucks for tenant {TenantName}", tenant.Name);
-            }
-        }
-
-        logger.LogInformation("Completed load board truck refresh cycle");
-    }
+    public Task RefreshPostedTrucksAsync(CancellationToken ct) =>
+        TenantJobRunner.ForEachTenantAsync(
+            scopeFactory, logger, "load board truck refresh", RefreshTenantTrucksAsync, ct);
 
     /// <summary>
     ///     Clean up expired listings and expired truck posts.
     /// </summary>
     [AutomaticRetry(Attempts = 2)]
-    public async Task CleanupExpiredDataAsync(CancellationToken ct)
+    public Task CleanupExpiredDataAsync(CancellationToken ct) =>
+        TenantJobRunner.ForEachTenantAsync(
+            scopeFactory, logger, "load board cleanup", CleanupTenantDataAsync, ct);
+
+    private async Task RefreshTenantTrucksAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        using var scope = scopeFactory.CreateScope();
-        var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
-
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync(t => t.ConnectionString != null);
-
-        logger.LogInformation("Starting load board cleanup for {TenantCount} tenants", tenants.Count);
-
-        foreach (var tenant in tenants)
-        {
-            if (ct.IsCancellationRequested)
-            {
-                break;
-            }
-
-            try
-            {
-                await CleanupTenantDataAsync(tenant, ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error cleaning up data for tenant {TenantName}", tenant.Name);
-            }
-        }
-
-        logger.LogInformation("Completed load board cleanup cycle");
-    }
-
-    private async Task RefreshTenantTrucksAsync(Tenant tenant, CancellationToken ct)
-    {
-        using var scope = scopeFactory.CreateScope();
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         var providerFactory = scope.ServiceProvider.GetRequiredService<ILoadBoardProviderFactory>();
 
@@ -194,9 +143,8 @@ public class LoadBoardSyncJob(
         await tenantUow.SaveChangesAsync(ct);
     }
 
-    private async Task CleanupTenantDataAsync(Tenant tenant, CancellationToken ct)
+    private async Task CleanupTenantDataAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        using var scope = scopeFactory.CreateScope();
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
 
         tenantUow.SetCurrentTenant(tenant);

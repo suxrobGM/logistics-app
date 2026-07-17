@@ -52,3 +52,27 @@ Use a short, descriptive PascalCase name that says what the migration does — E
 - Bad: `Version_0042`, `Migration_5`, `Update3`, `Changes_2026_05_19`
 
 The first migration for a database is conventionally named `InitialSchema` (or `InitialCreate`).
+
+## Amending a migration that hasn't shipped
+
+If the migration is only on your branch (`git branch -a --contains <sha>` — not on `main` means no
+real DB has applied it) and is the **latest** for that context, regenerate it rather than stacking
+a corrective one:
+
+```bash
+dotnet ef migrations remove --project src/Infrastructure/Logistics.Infrastructure.Persistence --context TenantDbContext --force
+dotnet ef migrations add {SameName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context TenantDbContext -o Migrations/Tenant
+```
+
+The timestamp changes, so anyone who applied the old one locally must drop and re-migrate. The
+connection error `remove` prints when Postgres is unreachable is just the applied-check; `--force`
+removes the files anyway. Never do this to a migration already on `main`.
+
+## Traps
+
+- **Complex types cannot be part of a unique index.** If uniqueness spans a `ComplexProperty`
+  member, EF can't express it and there is no DB guard — every write path must probe in code
+  (`IftaTaxRateUniqueness.FindConflictAsync`), and the value object needs a normalizing factory
+  (`TaxJurisdiction.Create`) so casing or empty-vs-null can't defeat the comparison.
+- Seeders in `src/Presentation/Logistics.DbMigrator/Seeders/` are **explicitly registered** —
+  adding the file is not enough.

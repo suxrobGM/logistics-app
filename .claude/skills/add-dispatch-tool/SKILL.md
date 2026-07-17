@@ -13,7 +13,7 @@ Adds a new tool that the AI dispatch agent can call. Tools are auto-discovered v
 2. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AiDispatchToolRegistry.cs`** — JSON schema + description for the LLM
 3. **`src/Infrastructure/Logistics.Infrastructure.AI/Registrar.cs`** — DI registration
 4. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AiDispatchDecisionProcessor.cs`** — only if write tool, add name to `WriteTools` HashSet
-5. **`tests/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`** — unit test
+5. **`test/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`** — unit test
 
 ## Step-by-step
 
@@ -109,7 +109,7 @@ private static readonly HashSet<string> WriteTools =
 
 ### 6. Write a unit test
 
-`tests/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`. Use NSubstitute and `MockQueryable.NSubstitute` for `IQueryable`-returning repositories. Pattern:
+`test/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`. Use NSubstitute and `MockQueryable.NSubstitute` for `IQueryable`-returning repositories. Pattern:
 
 ```csharp
 public class GetSomethingToolTests
@@ -140,7 +140,7 @@ Before reporting done:
 - [ ] Registered in `Registrar.cs` (otherwise DI won't find it and `AiDispatchToolExecutor` returns "Unknown tool")
 - [ ] Added to `AiDispatchToolRegistry.Tools` list (otherwise the LLM never knows it exists)
 - [ ] **If write tool**: added to `AiDispatchDecisionProcessor.WriteTools` HashSet
-- [ ] Unit test added under `tests/Logistics.Infrastructure.AI.Tests/Tools/`
+- [ ] Unit test added under `test/Logistics.Infrastructure.AI.Tests/Tools/`
 - [ ] `dotnet build` passes
 - [ ] `dotnet test --filter "{ToolName}ToolTests"` passes
 

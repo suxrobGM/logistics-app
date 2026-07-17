@@ -228,6 +228,16 @@ Stripe events have unique `id` fields — perfect for idempotency keys. Mount th
 
 Both use `X-{Provider}-Signature` HMAC-SHA256. Mount at `/webhooks/eld/{provider}`. The signed payload contains the tenant's ELD account, but you'll typically need to look up the `EldProviderConfiguration` row to map back to a tenant.
 
+### Calling back into the provider
+
+When the handler needs to fetch more from the provider's API, use `TryGetFromJsonAsync` from `Logistics.Infrastructure.Integrations.Common` rather than hand-rolling a try/catch around `GetAsync` + `ReadFromJsonAsync`:
+
+```csharp
+var trip = await httpClient.TryGetFromJsonAsync<TripResponse>(url, logger, "fetch trip", ct: ct);
+```
+
+It logs and returns `default` on a non-success status, network error, or parse failure, so it never throws. Push paths that must surface an error to the caller are the exception — see the QuickBooks helpers in `Integrations.Accounting`, which throw on purpose.
+
 ## Related
 
 - `.claude/rules/backend/security.md` — webhook signature validation rule

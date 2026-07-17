@@ -1,81 +1,74 @@
-<ui-dialog
+<app-provider-connect-dialog
   header="Add ELD Provider"
-  [(open)]="visible"
-  [modal]="true"
-  width="500px"
-  [draggable]="false"
+  submitLabel="Add Provider"
+  [(visible)]="visible"
+  [saving]="saving()"
+  [form]="form"
   (opened)="onShow()"
 >
-  <form [formRoot]="form" #formEl>
-    <ui-form-field label="Provider" for="providerType" [required]="true">
-      <ui-select-field
-        id="providerType"
-        [formField]="form.providerType"
-        [options]="providerOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Select provider"
-      >
-        <!-- Each provider's description sub-line. Dropping this loses real information. -->
-        <ng-template #item let-item>
-          <div>
-            <div class="font-medium">{{ item.label }}</div>
-            <small class="text-muted-foreground">{{ item.description }}</small>
-          </div>
-        </ng-template>
-      </ui-select-field>
-    </ui-form-field>
-
-    <ui-form-field
-      label="API Key"
-      for="apiKey"
-      [required]="true"
-      hint="Your ELD provider API key or access token"
+  <ui-form-field label="Provider" for="providerType" [required]="true">
+    <ui-select-field
+      id="providerType"
+      [formField]="form.providerType"
+      [options]="providerOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Select provider"
     >
-      <ui-text-field id="apiKey" [formField]="form.apiKey" placeholder="Enter API key" />
-    </ui-form-field>
+      <!-- Each provider's description sub-line. Dropping this loses real information. -->
+      <ng-template #item let-item>
+        <div>
+          <div class="font-medium">{{ item.label }}</div>
+          <small class="text-muted-foreground">{{ item.description }}</small>
+        </div>
+      </ng-template>
+    </ui-select-field>
+  </ui-form-field>
 
-    <ui-form-field label="API Secret (Optional)" for="apiSecret" hint="Required for some providers">
-      <ui-password-field
-        id="apiSecret"
-        [formField]="form.apiSecret"
-        [toggleMask]="true"
-        [feedback]="false"
-        placeholder="Enter API secret"
-      />
-    </ui-form-field>
+  <ui-form-field
+    label="API Key"
+    for="apiKey"
+    [required]="true"
+    hint="Your ELD provider API key or access token"
+  >
+    <ui-text-field id="apiKey" [formField]="form.apiKey" placeholder="Enter API key" />
+  </ui-form-field>
 
-    <ui-form-field
-      label="Webhook Secret (Optional)"
-      for="webhookSecret"
-      hint="For verifying incoming webhook requests"
-    >
-      <ui-password-field
-        id="webhookSecret"
-        [formField]="form.webhookSecret"
-        [toggleMask]="true"
-        [feedback]="false"
-        placeholder="Enter webhook secret"
-      />
-    </ui-form-field>
+  <ui-form-field label="API Secret (Optional)" for="apiSecret" hint="Required for some providers">
+    <ui-password-field
+      id="apiSecret"
+      [formField]="form.apiSecret"
+      [toggleMask]="true"
+      [feedback]="false"
+      placeholder="Enter API secret"
+    />
+  </ui-form-field>
 
-    <ui-alert intent="warning" title="Where to get credentials" class="mt-4 block">
-      <ul class="mt-1 mb-0 list-inside list-disc text-sm">
-        <li>Demo: Enter any text as API key (for testing only)</li>
-        <li>Samsara: Settings → API Tokens in your Samsara dashboard</li>
-        <li>Motive: Settings → Integrations → API Keys</li>
-        <li>
-          Geotab: API key as
-          <code>database|userName</code>
-          , password as API secret. Webhook secret is the HMAC-SHA256 key configured on your Geotab
-          Add-In / IOX forwarder.
-        </li>
-      </ul>
-    </ui-alert>
-  </form>
+  <ui-form-field
+    label="Webhook Secret (Optional)"
+    for="webhookSecret"
+    hint="For verifying incoming webhook requests"
+  >
+    <ui-password-field
+      id="webhookSecret"
+      [formField]="form.webhookSecret"
+      [toggleMask]="true"
+      [feedback]="false"
+      placeholder="Enter webhook secret"
+    />
+  </ui-form-field>
 
-  <ng-template #footer>
-    <ui-button appearance="text" label="Cancel" (click)="close()" />
-    <ui-button label="Add Provider" icon="check" (click)="requestSubmit()" [loading]="saving()" />
-  </ng-template>
-</ui-dialog>
+  <ui-alert intent="warning" title="Where to get credentials" class="mt-4 block">
+    <ul class="mt-1 mb-0 list-inside list-disc text-sm">
+      <li>Demo: Enter any text as API key (for testing only)</li>
+      <li>Samsara: Settings → API Tokens in your Samsara dashboard</li>
+      <li>Motive: Settings → Integrations → API Keys</li>
+      <li>
+        Geotab: API key as
+        <code>database|userName</code>
+        , password as API secret. Webhook secret is the HMAC-SHA256 key configured on your Geotab
+        Add-In / IOX forwarder.
+      </li>
+    </ul>
+  </ui-alert>
+</app-provider-connect-dialog>

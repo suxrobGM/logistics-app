@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using Logistics.Infrastructure.Integrations.Common;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Logistics.Domain.Entities;

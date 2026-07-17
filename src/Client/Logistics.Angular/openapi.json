@@ -6220,82 +6220,6 @@
         }
       }
     },
-    "/fuelcards/cards": {
-      "get": {
-        "tags": [
-          "FuelCards"
-        ],
-        "operationId": "GetFuelCards",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FuelCardDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/fuelcards/cards/{fuelCardId}": {
-      "put": {
-        "tags": [
-          "FuelCards"
-        ],
-        "operationId": "UpdateFuelCardMapping",
-        "parameters": [
-          {
-            "name": "fuelCardId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateFuelCardMappingCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateFuelCardMappingCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateFuelCardMappingCommand"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/ifta/rates": {
       "get": {
         "tags": [
@@ -21238,42 +21162,6 @@
         },
         "additionalProperties": false
       },
-      "FuelCardDto": {
-        "required": [
-          "externalCardId"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "providerType": {
-            "$ref": "#/components/schemas/FuelCardProviderType"
-          },
-          "externalCardId": {
-            "type": "string",
-            "nullable": true
-          },
-          "unitNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "truckId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "truckNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "isActive": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
       "FuelCardProviderConfigurationDto": {
         "type": "object",
         "properties": {
@@ -27509,21 +27397,6 @@
           "actualCompletionDate": {
             "type": "string",
             "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdateFuelCardMappingCommand": {
-        "type": "object",
-        "properties": {
-          "fuelCardId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "truckId": {
-            "type": "string",
-            "format": "uuid",
             "nullable": true
           }
         },

@@ -4,14 +4,14 @@
 
 ## The six modules
 
-| Module           | Bounded context                              | Example features                                                                           |
-| ---------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `Operations`     | Daily TMS work: dispatching, fleet, tracking | Loads, Trips, Trucks, Containers, Terminals, Tracking                                      |
-| `Compliance`     | Regulatory and safety                        | ELD/HOS, DVIR, Inspections, Accidents, Safety, Privacy                                     |
-| `Financial`      | Money in / money out                         | Invoices, Tax, Payments, PaymentLinks, Payroll, StripeConnect, Expenses                    |
-| `IdentityAccess` | Who can do what, and which org               | Users, Roles, Tenants, Customers, Employees, Subscriptions, ApiKeys, Features, Invitations |
-| `Integrations`   | Outbound integrations + inbound webhooks     | AiDispatch, LoadBoard, Webhooks, Messaging, Documents, UpdateNotifications                 |
-| `Platform`       | Cross-cutting, marketing, internal           | Stats, Reports, BlogPosts, Contacts, DemoRequests, Notifications                           |
+| Module           | Bounded context                              | Example features                                                                                  |
+| ---------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `Operations`     | Daily TMS work: dispatching, fleet, tracking | Loads, Trips, Trucks, Containers, Terminals, Tracking                                             |
+| `Compliance`     | Regulatory and safety                        | ELD/HOS, DVIR, Inspections, Accidents, Safety, Privacy, Ifta                                      |
+| `Financial`      | Money in / money out                         | Invoices, Tax, Payments, PaymentLinks, Payroll, StripeConnect, Expenses                           |
+| `IdentityAccess` | Who can do what, and which org               | Users, Roles, Tenants, Customers, Employees, Subscriptions, ApiKeys, Features, Invitations        |
+| `Integrations`   | Outbound integrations + inbound webhooks     | AiDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents, UpdateNotifications |
+| `Platform`       | Cross-cutting, marketing, internal           | Stats, Reports, BlogPosts, Contacts, DemoRequests, Notifications                                  |
 
 ## Folder convention inside a module
 

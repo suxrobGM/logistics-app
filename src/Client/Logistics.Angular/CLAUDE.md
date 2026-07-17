@@ -110,6 +110,20 @@ Do **not** disable the submit button with `[disabled]="form().invalid()"` — ke
 (guard only on `form().submitting()`) so `ValidatedForm` can reveal what's missing. There is no
 `ui-validation-summary`; inline field errors plus reveal-on-submit replace it.
 
+### Provider connect dialogs
+
+ELD / load board / fuel card "add provider" dialogs all use `<app-provider-connect-dialog>`
+(tms-portal-local, `shared/components/other/provider-connect-dialog/`). It owns the dialog chrome,
+the `<form [formRoot]>`, the submit and the footer; project the fields, keep the typed form in the
+feature, reset from `(opened)`. Don't copy it for a fourth integration.
+
+## API errors
+
+Branch on `error.error?.errorCode` (set by `Result.Fail(message, ErrorCodes.X)`), never on message
+text. `projects/shared/src/lib/errors/upgrade-handler.ts` mirrors
+`src/Shared/Logistics.Shared.Models/ErrorCodes.cs` — add new codes to both. `isUpgradeError()`
+matches only the plan/limit codes by design.
+
 ## Theme files
 
 **`projects/shared/src/styles/theme.css` is the whole design system** for tms / admin / customer — one

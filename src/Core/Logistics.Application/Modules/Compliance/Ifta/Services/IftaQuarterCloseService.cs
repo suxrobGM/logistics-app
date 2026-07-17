@@ -33,9 +33,6 @@ internal sealed class IftaQuarterCloseService(
             Year = year,
             Quarter = quarter,
             ClosedAt = report.ClosedAt.Value,
-            TotalMiles = report.TotalMiles,
-            TotalGallons = report.TotalGallons,
-            AverageMpg = report.AverageMpg,
             ReportJson = JsonSerializer.Serialize(report)
         }, ct);
         await tenantUow.SaveChangesAsync(ct);

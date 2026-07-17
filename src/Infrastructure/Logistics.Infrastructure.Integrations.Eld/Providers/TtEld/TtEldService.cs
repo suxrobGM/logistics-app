@@ -1,5 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -85,9 +86,9 @@ internal class TtEldService(
 
         var result = await httpClient.TryGetFromJsonAsync<List<TtEldTrackingPoint>>(
             $"{baseUrl}/api/externalservice/trackings/{usdot}/{externalDriverId}/?from={fromStr}&to={toStr}",
-            EldJsonOptions.CamelCase,
             logger,
-            $"TT ELD tracking for vehicle {externalDriverId}");
+            $"TT ELD tracking for vehicle {externalDriverId}",
+            EldJsonOptions.CamelCase);
         return result?.Select(p => TtEldMapper.MapToLogDto(p, externalDriverId)) ?? [];
     }
 
@@ -128,9 +129,9 @@ internal class TtEldService(
     {
         var result = await httpClient.TryGetFromJsonAsync<TtEldTrackingV2Response>(
             $"{baseUrl}/api/v2/units-by-usdot/{usdot}",
-            EldJsonOptions.CamelCase,
             logger,
             "TT ELD vehicle locations",
+            EldJsonOptions.CamelCase,
             ct);
         return result?.Units?.Select(TtEldMapper.MapToLocationDto) ?? [];
     }
@@ -152,9 +153,9 @@ internal class TtEldService(
         {
             var result = await httpClient.TryGetFromJsonAsync<TResponse>(
                 urlForPage(page),
-                EldJsonOptions.CamelCase,
                 logger,
-                $"{action} page {page}");
+                $"{action} page {page}",
+                EldJsonOptions.CamelCase);
             if (result is null)
             {
                 break;

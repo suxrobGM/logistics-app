@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.LoadBoard.Common;

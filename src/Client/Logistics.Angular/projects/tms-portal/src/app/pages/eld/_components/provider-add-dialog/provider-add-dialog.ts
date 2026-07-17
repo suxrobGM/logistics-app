@@ -1,11 +1,16 @@
-import { Component, ElementRef, input, model, output, signal, viewChild } from "@angular/core";
-import { form, FormField, FormRoot, required } from "@angular/forms/signals";
+import { Component, input, model, output, signal } from "@angular/core";
+import { form, FormField, required } from "@angular/forms/signals";
 import {
   type CreateEldProviderConfigurationCommand,
   type EldProviderType,
 } from "@logistics/shared/api";
-import { Alert, UiButton, UiDialog, UiSelectField, ValidatedForm } from "@logistics/shared/ui";
-import { UiFormField, UiPasswordField, UiTextField } from "@/shared/components";
+import { Alert, UiSelectField } from "@logistics/shared/ui";
+import {
+  ProviderConnectDialog,
+  UiFormField,
+  UiPasswordField,
+  UiTextField,
+} from "@/shared/components";
 import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
 
 // `providerType` is nullable because `ui-select-field` is a `FormValueControl<T | null>` and
@@ -23,14 +28,11 @@ const EMPTY = {
   imports: [
     Alert,
     FormField,
-    FormRoot,
-    UiButton,
-    UiDialog,
+    ProviderConnectDialog,
     UiFormField,
     UiPasswordField,
     UiSelectField,
     UiTextField,
-    ValidatedForm,
   ],
 })
 export class EldProviderAddDialog {
@@ -39,8 +41,6 @@ export class EldProviderAddDialog {
   public readonly save = output<CreateEldProviderConfigurationCommand>();
 
   protected readonly providerOptions = ELD_PROVIDER_OPTIONS;
-
-  private readonly formEl = viewChild.required("formEl", { read: ElementRef });
 
   protected readonly model = signal({ ...EMPTY });
 
@@ -70,14 +70,5 @@ export class EldProviderAddDialog {
 
   protected onShow(): void {
     this.form().reset({ ...EMPTY });
-  }
-
-  /** The footer buttons live outside the `<form>`, so submit it imperatively via a real submit event. */
-  protected requestSubmit(): void {
-    (this.formEl().nativeElement as HTMLFormElement).requestSubmit();
-  }
-
-  protected close(): void {
-    this.visible.set(false);
   }
 }

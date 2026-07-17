@@ -11,6 +11,9 @@ paths:
 | ----------------------------------- | -------------------------------------------- | --------------------------- |
 | `Logistics.Application.Tests`       | Application layer (handlers, services)       | —                           |
 | `Logistics.Infrastructure.AI.Tests` | AI agent, quota, tools, prompts, LLM pricing | `MockQueryable.NSubstitute` |
+| `Logistics.Architecture.Tests`      | Layering / dependency boundaries             | `TngTech.ArchUnitNET.xUnit` |
+
+Other `Logistics.Infrastructure.*.Tests` projects cover their own infrastructure module.
 
 ## Stack
 
@@ -27,6 +30,20 @@ paths:
 - Field naming: `sut` for the system under test
 - Use `[Fact]` for single cases, `[Theory]` + `[InlineData]` for parameterized tests
 - Inject mocked dependencies via constructor, wire them in the constructor body
+
+## Architecture tests
+
+`Logistics.Architecture.Tests` **discovers** what it covers — never reintroduce an `InlineData`
+roster there, since a hand-maintained list silently skips whatever nobody remembered to add (which
+is how two infra projects went unchecked).
+
+- `CsprojReferenceTests.InfrastructureProjects` enumerates `src/Infrastructure/*` from disk.
+- `BoundaryTests.InfrastructureAssemblies` derives from `AssemblyAnchors.AllInfrastructure`.
+- Exemptions: the local `exempt` array and `AssemblyAnchors.BoundaryExempt` (both just
+  `Infrastructure.AI`). A boundary failure means fix the dependency, not add an exemption.
+
+Adding an infra project: the csproj rule picks it up automatically; the IL-level rule also needs
+an anchor in `AssemblyAnchors.AllInfrastructure` + a `ProjectReference` in the arch-tests csproj.
 
 ## Running Tests
 

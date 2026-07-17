@@ -91,28 +91,4 @@ public class FuelCardsController(IMediator mediator) : ControllerBase
     }
 
     #endregion
-
-    #region Cards
-
-    [HttpGet("cards", Name = "GetFuelCards")]
-    [ProducesResponseType(typeof(List<FuelCardDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.FuelCard.View)]
-    public async Task<IActionResult> GetCards()
-    {
-        var result = await mediator.Send(new GetFuelCardsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    [HttpPut("cards/{fuelCardId:guid}", Name = "UpdateFuelCardMapping")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.FuelCard.Manage)]
-    public async Task<IActionResult> UpdateCardMapping(Guid fuelCardId, [FromBody] UpdateFuelCardMappingCommand request)
-    {
-        request.FuelCardId = fuelCardId;
-        var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    #endregion
 }

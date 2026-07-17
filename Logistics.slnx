@@ -29,6 +29,7 @@
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Communications/Logistics.Infrastructure.Communications.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Documents/Logistics.Infrastructure.Documents.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Integrations.Accounting/Logistics.Infrastructure.Integrations.Accounting.csproj" />
+    <Project Path="src/Infrastructure/Logistics.Infrastructure.Integrations.Common/Logistics.Infrastructure.Integrations.Common.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Integrations.Eld/Logistics.Infrastructure.Integrations.Eld.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Integrations.LoadBoard/Logistics.Infrastructure.Integrations.LoadBoard.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Payments/Logistics.Infrastructure.Payments.csproj" />

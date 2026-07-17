@@ -27,19 +27,4 @@ public static partial class FuelCardMapper
         var dto = entity.ToDto();
         return dto with { TruckNumber = truckNumber };
     }
-
-    [MapperIgnoreSource(nameof(FuelCard.Truck))]
-    [MapperIgnoreSource(nameof(FuelCard.DomainEvents))]
-    [MapperIgnoreSource(nameof(FuelCard.CreatedAt))]
-    [MapperIgnoreSource(nameof(FuelCard.CreatedBy))]
-    [MapperIgnoreSource(nameof(FuelCard.UpdatedAt))]
-    [MapperIgnoreSource(nameof(FuelCard.UpdatedBy))]
-    [MapperIgnoreTarget(nameof(FuelCardDto.TruckNumber))]
-    public static partial FuelCardDto ToDto(this FuelCard entity);
-
-    public static FuelCardDto ToDto(this FuelCard entity, string? truckNumber)
-    {
-        var dto = entity.ToDto();
-        return dto with { TruckNumber = truckNumber };
-    }
 }

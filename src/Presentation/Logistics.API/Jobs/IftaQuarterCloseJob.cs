@@ -25,33 +25,11 @@ public class IftaQuarterCloseJob(
     }
 
     [AutomaticRetry(Attempts = 2)]
-    public async Task ProcessAllTenantsAsync(CancellationToken ct)
+    public Task ProcessAllTenantsAsync(CancellationToken ct) =>
+        TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "IFTA quarter close", ProcessTenantAsync, ct);
+
+    private async Task ProcessTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        using var scope = scopeFactory.CreateScope();
-        var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync(t => t.ConnectionString != null);
-
-        foreach (var tenant in tenants)
-        {
-            if (ct.IsCancellationRequested)
-            {
-                break;
-            }
-
-            try
-            {
-                await ProcessTenantAsync(tenant, ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error closing IFTA quarter for tenant {TenantName}", tenant.Name);
-            }
-        }
-    }
-
-    private async Task ProcessTenantAsync(Tenant tenant, CancellationToken ct)
-    {
-        using var scope = scopeFactory.CreateScope();
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
 
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();

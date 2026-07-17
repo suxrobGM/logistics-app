@@ -1,4 +1,5 @@
 using Logistics.Infrastructure.Integrations.LoadBoard.Common;
+using Logistics.Infrastructure.Integrations.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -31,7 +32,7 @@ public class FmcsaClient(
 
         var url = $"{options.BaseUrl.TrimEnd('/')}/carriers/docket-number/{Uri.EscapeDataString(mcNumber)}?webKey={Uri.EscapeDataString(options.WebKey!)}";
         var response = await httpClient.TryGetFromJsonAsync<FmcsaDocketResponse>(
-            url, logger, $"FMCSA docket lookup {mcNumber}", ct);
+            url, logger, $"FMCSA docket lookup {mcNumber}", ct: ct);
 
         var carrier = response?.Content?.FirstOrDefault()?.Carrier;
         if (carrier is null)

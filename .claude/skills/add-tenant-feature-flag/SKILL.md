@@ -33,9 +33,11 @@ Don't use this skill for:
 1. `src/Core/Logistics.Domain.Primitives/Enums/Tenant/TenantFeature.cs` — enum value
 2. Master DB migration — adds row to `DefaultFeatureConfig` table for the new feature
 3. (Optional) Update `SubscriptionPlan` seeders / `PlanFeature` rows to grant the feature to specific tiers
-4. Frontend: feature gate in route guards, components, or services
-5. Admin portal: feature toggles UI (usually picks up the new enum value automatically)
-6. TMS portal AI Settings or other surfaces: respect the gate
+4. Backend: `[RequiresFeature]` on **every** command AND query in the module
+5. Backend: any Hangfire job touching the feature — jobs bypass the pipeline and must check explicitly
+6. Frontend: feature gate in route guards, components, or services
+7. Admin portal: feature toggles UI (usually picks up the new enum value automatically)
+8. TMS portal AI Settings or other surfaces: respect the gate
 
 ## Step-by-step
 
@@ -85,23 +87,43 @@ If the feature is universally available, **skip this step** — the `DefaultFeat
 
 ### 4. Backend: gate the API
 
-Inject `IFeatureService` in the handler/controller and check before executing:
+Put `[RequiresFeature]` on the command/query itself. `FeatureCheckBehaviour` enforces it in the
+MediatR pipeline — no injection, no per-handler branch:
 
 ```csharp
-public class CreateContainerHandler(
-    IFeatureService featureService,
-    ITenantUnitOfWork tenantUow) : IRequestHandler<CreateContainerCommand, DataResult<ContainerDto>>
+[RequiresFeature(TenantFeature.ContainerTracking)]
+public class CreateContainerCommand : ICommand<Result<Guid>>
 {
-    public async Task<DataResult<ContainerDto>> Handle(CreateContainerCommand cmd, CancellationToken ct)
-    {
-        if (!await featureService.IsEnabledAsync(TenantFeature.ContainerTracking, ct))
-            return DataResult<ContainerDto>.CreateError("ContainerTracking is not enabled for this tenant");
-        // ...
-    }
+    // ...
 }
 ```
 
-For controllers, prefer guarding at the handler level — controllers stay focused on auth + validation.
+**Gate the queries too, not just the commands.** A half-gated module still serves the data to a
+tenant whose plan excludes it, and the gap is invisible — every request type in the module should
+carry the attribute.
+
+### 4b. Backend: gate the jobs
+
+Hangfire jobs **bypass the MediatR pipeline**, so `[RequiresFeature]` is inert there — the job must
+ask `IFeatureService` itself:
+
+```csharp
+private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
+{
+    var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
+    if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.ContainerTracking))
+    {
+        return;
+    }
+    // ...
+}
+```
+
+Signature is `IsFeatureEnabledAsync(Guid tenantId, TenantFeature feature)` — tenant id, no `ct`.
+
+Keep the check inside the body, not in `TenantJobRunner.ForEachTenantAsync`: a job may need part of
+its work to run unflagged (`IftaQuarterCloseJob` gates the snapshot but not the breadcrumb purge,
+since breadcrumbs are written on every ELD ping regardless).
 
 ### 5. Frontend: gate the UI
 
@@ -154,7 +176,8 @@ Non-subscription tenants (`Tenant.IsSubscriptionRequired = false`) **bypass plan
 - [ ] Enum value added with description if needed
 - [ ] Master migration adds `DefaultFeatureConfig` row
 - [ ] (If tier-restricted) `PlanFeature` rows added for the right plans
-- [ ] Backend handler/controller guards on `IFeatureService.IsEnabledAsync`
+- [ ] `[RequiresFeature]` on every command **and** query in the module (no half-gating)
+- [ ] Every Hangfire job that touches the feature checks `IFeatureService.IsFeatureEnabledAsync`
 - [ ] Frontend guards on `FeatureService` (template + route guard)
 - [ ] Admin portal shows the new toggle
 - [ ] Test: tenant on a plan without the feature gets blocked end-to-end
@@ -167,6 +190,8 @@ Non-subscription tenants (`Tenant.IsSubscriptionRequired = false`) **bypass plan
 - **Gating only in the UI** — the API still serves the data, so a sophisticated client can bypass. Always gate at the handler level.
 - **Plan gate without a tenant override path** — Enterprise customers sometimes want to disable a feature; the `TenantFeatureConfig` row is the way out.
 - **Ignoring `IsSubscriptionRequired = false` tenants** — internal/demo tenants don't go through plan gating, so a feature gated only by `PlanFeature` won't work for them.
+- **Gating the commands but not the queries** — the writes are blocked while the reads still serve the data. This has happened; gate the whole module.
+- **Forgetting the jobs** — `[RequiresFeature]` does nothing in Hangfire. A downgraded tenant keeps getting nightly syncs writing into their books until the job checks `IFeatureService` itself.
 
 ## Related
 

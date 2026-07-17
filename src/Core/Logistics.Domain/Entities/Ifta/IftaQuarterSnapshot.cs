@@ -16,10 +16,10 @@ public class IftaQuarterSnapshot : AuditableEntity, ITenantEntity
 
     public required DateTime ClosedAt { get; set; }
 
-    public decimal TotalMiles { get; set; }
-    public decimal TotalGallons { get; set; }
-    public decimal AverageMpg { get; set; }
-
-    /// <summary>Full serialized IftaReportDto for the quarter.</summary>
+    /// <summary>
+    /// Full serialized IftaReportDto for the quarter — the single source of truth. Totals are
+    /// deliberately not denormalized into columns: nothing queries them, and a second copy can
+    /// only drift from this one.
+    /// </summary>
     public required string ReportJson { get; set; }
 }

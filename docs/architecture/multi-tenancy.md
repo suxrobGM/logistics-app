@@ -118,6 +118,10 @@ If none of the three resolve, `InvalidTenantException` is thrown.
 
 When there is no `HttpContext` (Hangfire workers, `DbMigrator`, integration tests), `TenantService` returns a default tenant pointing at the connection string from `TenantDbContextOptions`. Jobs that need to run for a specific tenant set the connection string explicitly before opening `TenantDbContext`.
 
+The recurring jobs do not hand-roll that fan-out. `TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, operation, body, ct)` in `src/Presentation/Logistics.API/Jobs/` runs the body once per tenant that has a provisioned database, giving each tenant its own DI scope and its own try/catch so one tenant's failure does not abort the rest of the cycle. `EldSyncJob`, `FuelCardSyncJob`, `AccountingSyncJob`, `IftaQuarterCloseJob`, and `LoadBoardSyncJob` (twice) call it — six call sites in total.
+
+Feature flags go inside the body, never as a runner parameter. A job may need to run part of its work for every tenant regardless of the flag: in `IftaQuarterCloseJob` the quarter snapshot is IFTA-gated but the breadcrumb purge deliberately is not. Jobs bypass the MediatR pipeline, so `[RequiresFeature]` does not apply and the body must call `IFeatureService.IsFeatureEnabledAsync(tenantId, feature)` itself.
+
 ### Subscription enforcement
 
 `CheckSubscription` runs immediately after the tenant is resolved:

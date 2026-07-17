@@ -39,7 +39,7 @@ Self-reported HOS for non-ELD drivers is **not supported**; drivers without a ce
 While in the file, all four provider services were simplified:
 
 - [EldJsonOptions](../../src/Infrastructure/Logistics.Infrastructure.Integrations.Eld/EldJsonOptions.cs) centralises camelCase / snake_case naming policies — model files dropped ~90 `[JsonPropertyName]` attributes.
-- [HttpClient.TryGetFromJsonAsync](../../src/Infrastructure/Logistics.Infrastructure.Integrations.Eld/HttpClientEldExtensions.cs) extension wraps GET + status check + parse + log on failure, replacing repeated try/catch blocks across Samsara / Motive / TT ELD / Geotab.
+- [HttpClient.TryGetFromJsonAsync](../../src/Infrastructure/Logistics.Infrastructure.Integrations.Common/HttpClientJsonExtensions.cs) extension wraps GET + status check + parse + log on failure, replacing repeated try/catch blocks across Samsara / Motive / TT ELD / Geotab. It has since moved out of `Integrations.Eld` into the shared `Integrations.Common` project, which the load board and fuel card providers also use.
 
 ## Tests
 

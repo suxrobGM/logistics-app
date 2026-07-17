@@ -57,7 +57,7 @@ onKeydown(event: KeyboardEvent) {}
 ## Animations
 
 - `provideAnimationsAsync()` is deprecated in Angular 21+ — do NOT add it to app.config.ts
-- Angular 21 enables animations by default, no provider needed
+- Angular 21+ enables animations by default, no provider needed (this workspace is on Angular 22)
 
 ## Styling
 

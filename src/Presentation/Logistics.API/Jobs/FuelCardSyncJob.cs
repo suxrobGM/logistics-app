@@ -29,39 +29,11 @@ public class FuelCardSyncJob(
     }
 
     [AutomaticRetry(Attempts = 2)]
-    public async Task SyncAllTenantsAsync(CancellationToken ct)
+    public Task SyncAllTenantsAsync(CancellationToken ct) =>
+        TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "fuel card sync", SyncTenantAsync, ct);
+
+    private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        using var scope = scopeFactory.CreateScope();
-        var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
-
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync(t => t.ConnectionString != null);
-
-        logger.LogInformation("Starting fuel card sync for {TenantCount} tenants", tenants.Count);
-
-        foreach (var tenant in tenants)
-        {
-            if (ct.IsCancellationRequested)
-            {
-                break;
-            }
-
-            try
-            {
-                await SyncTenantAsync(tenant, ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error syncing fuel card data for tenant {TenantName}", tenant.Name);
-            }
-        }
-
-        logger.LogInformation("Completed fuel card sync cycle");
-    }
-
-    private async Task SyncTenantAsync(Tenant tenant, CancellationToken ct)
-    {
-        using var scope = scopeFactory.CreateScope();
-
         // Jobs bypass the MediatR pipeline, so the [RequiresFeature] gate on the commands does not
         // apply here — check explicitly, or a downgraded tenant keeps having expenses written.
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();

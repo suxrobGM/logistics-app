@@ -13,10 +13,6 @@ internal sealed class IftaQuarterSnapshotEntityConfiguration : IEntityTypeConfig
         builder.HasIndex(i => new { i.Year, i.Quarter })
             .IsUnique();
 
-        builder.Property(i => i.TotalMiles).HasPrecision(14, 2);
-        builder.Property(i => i.TotalGallons).HasPrecision(14, 2);
-        builder.Property(i => i.AverageMpg).HasPrecision(8, 2);
-
         builder.Property(i => i.ReportJson)
             .HasColumnType("jsonb")
             .IsRequired();

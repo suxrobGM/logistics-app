@@ -93,4 +93,10 @@ Layering rules are not aspirational — they're verified on every build by [`tes
 - Each Infrastructure assembly → Abstractions, not Application
 - No handler injects `IHttpContextAccessor`
 
-When you add a new Infrastructure project, append its anchor to the `[Theory]` in `BoundaryTests.cs` so it joins the matrix.
+`Integrations.Common` is the one deliberate exception to the "each Infrastructure assembly → Abstractions" line: it is a leaf helper project holding shared `HttpClient` JSON helpers and references no other project in the repo, Abstractions included. The rule it must satisfy is the same one everything else does — no dependency on `Application`.
+
+Both infrastructure rules discover what they cover rather than hand-listing it: `CsprojReferenceTests.InfrastructureProjects` enumerates `src/Infrastructure/*` from disk, and `BoundaryTests.InfrastructureAssemblies` derives from `AssemblyAnchors.AllInfrastructure`.
+
+When you add a new Infrastructure project, the csproj rule covers it automatically. To join the IL-level boundary matrix it also needs an anchor in `AssemblyAnchors.AllInfrastructure` and a `ProjectReference` in `Logistics.Architecture.Tests.csproj`.
+
+Exemptions exist and are named explicitly — the local `exempt` array in `CsprojReferenceTests.cs` and `AssemblyAnchors.BoundaryExempt`, both currently just `Logistics.Infrastructure.AI`, which stays there until slice 1.9-AI decouples it. Adding your project to either array is the wrong reflex: a boundary failure means the dependency is wrong, not the rule.

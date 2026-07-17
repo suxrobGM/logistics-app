@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -55,9 +56,9 @@ internal class MotiveEldService(
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveHosResponse>(
             $"{baseUrl}/hours_of_service?driver_ids={externalDriverId}",
-            EldJsonOptions.SnakeCase,
             logger,
-            $"Motive HOS for driver {externalDriverId}");
+            $"Motive HOS for driver {externalDriverId}",
+            EldJsonOptions.SnakeCase);
         var driverHos = result?.HoursOfService?.FirstOrDefault();
         return driverHos is null ? null : MotiveMapper.MapToDto(driverHos);
     }
@@ -66,9 +67,9 @@ internal class MotiveEldService(
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveHosResponse>(
             $"{baseUrl}/hours_of_service",
-            EldJsonOptions.SnakeCase,
             logger,
-            "Motive HOS (all drivers)");
+            "Motive HOS (all drivers)",
+            EldJsonOptions.SnakeCase);
         return result?.HoursOfService?.Select(MotiveMapper.MapToDto) ?? [];
     }
 
@@ -82,9 +83,9 @@ internal class MotiveEldService(
 
         var result = await httpClient.TryGetFromJsonAsync<MotiveDriverLogsResponse>(
             $"{baseUrl}/driver_logs?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
-            EldJsonOptions.SnakeCase,
             logger,
-            $"Motive HOS logs for driver {externalDriverId}");
+            $"Motive HOS logs for driver {externalDriverId}",
+            EldJsonOptions.SnakeCase);
         return result?.DriverLogs?.SelectMany(dl =>
             dl.Events?.Select(e => MotiveMapper.MapToLogDto(externalDriverId, dl.LogDate, e)) ?? []) ?? [];
     }
@@ -99,9 +100,9 @@ internal class MotiveEldService(
 
         var result = await httpClient.TryGetFromJsonAsync<MotiveViolationsResponse>(
             $"{baseUrl}/hos_violations?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
-            EldJsonOptions.SnakeCase,
             logger,
-            $"Motive violations for driver {externalDriverId}");
+            $"Motive violations for driver {externalDriverId}",
+            EldJsonOptions.SnakeCase);
         return result?.HosViolations?.Select(v => MotiveMapper.MapToViolationDto(externalDriverId, v)) ?? [];
     }
 
@@ -109,9 +110,9 @@ internal class MotiveEldService(
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveUsersResponse>(
             $"{baseUrl}/users?role=driver",
-            EldJsonOptions.SnakeCase,
             logger,
-            "Motive users (drivers)");
+            "Motive users (drivers)",
+            EldJsonOptions.SnakeCase);
         return result?.Users?.Select(MotiveMapper.MapToDriverDto) ?? [];
     }
 
@@ -119,9 +120,9 @@ internal class MotiveEldService(
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveVehiclesResponse>(
             $"{baseUrl}/vehicles",
-            EldJsonOptions.SnakeCase,
             logger,
-            "Motive vehicles");
+            "Motive vehicles",
+            EldJsonOptions.SnakeCase);
         return result?.Vehicles?.Select(MotiveMapper.MapToVehicleDto) ?? [];
     }
 

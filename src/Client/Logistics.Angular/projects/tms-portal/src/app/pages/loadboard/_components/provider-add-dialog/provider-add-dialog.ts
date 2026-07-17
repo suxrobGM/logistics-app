@@ -1,21 +1,11 @@
-import { Component, ElementRef, input, model, output, signal, viewChild } from "@angular/core";
-import { form, FormField, FormRoot, required } from "@angular/forms/signals";
+import { Component, input, model, output, signal } from "@angular/core";
+import { form, FormField, required } from "@angular/forms/signals";
 import {
   type CreateLoadBoardConfigurationCommand,
   type LoadBoardProviderType,
 } from "@logistics/shared/api";
-import {
-  Icon,
-  Stack,
-  Typography,
-  UiButton,
-  UiDialog,
-  UiPasswordField,
-  UiSelectField,
-  UiTextField,
-  ValidatedForm,
-} from "@logistics/shared/ui";
-import { UiFormField } from "@/shared/components";
+import { Alert, UiPasswordField, UiSelectField, UiTextField } from "@logistics/shared/ui";
+import { ProviderConnectDialog, UiFormField } from "@/shared/components";
 import { PROVIDER_OPTIONS } from "../loadboard.constants";
 
 const EMPTY = {
@@ -30,18 +20,13 @@ const EMPTY = {
   selector: "app-provider-add-dialog",
   templateUrl: "./provider-add-dialog.html",
   imports: [
+    Alert,
     FormField,
-    FormRoot,
-    Icon,
-    Stack,
-    Typography,
-    UiButton,
-    UiDialog,
+    ProviderConnectDialog,
     UiFormField,
     UiPasswordField,
     UiSelectField,
     UiTextField,
-    ValidatedForm,
   ],
 })
 export class ProviderAddDialog {
@@ -50,8 +35,6 @@ export class ProviderAddDialog {
   public readonly save = output<CreateLoadBoardConfigurationCommand>();
 
   protected readonly providerOptions = PROVIDER_OPTIONS;
-
-  private readonly formEl = viewChild.required("formEl", { read: ElementRef });
 
   protected readonly model = signal({ ...EMPTY });
 
@@ -81,14 +64,5 @@ export class ProviderAddDialog {
 
   protected onShow(): void {
     this.form().reset({ ...EMPTY });
-  }
-
-  /** The footer buttons live outside the `<form>`, so submit it imperatively via a real submit event. */
-  protected requestSubmit(): void {
-    (this.formEl().nativeElement as HTMLFormElement).requestSubmit();
-  }
-
-  protected close(): void {
-    this.visible.set(false);
   }
 }

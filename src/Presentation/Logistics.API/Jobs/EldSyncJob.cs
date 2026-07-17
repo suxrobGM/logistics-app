@@ -36,39 +36,11 @@ public class EldSyncJob(
     ///     Main job entry point - syncs HOS data for all tenants.
     /// </summary>
     [AutomaticRetry(Attempts = 2)]
-    public async Task SyncAllTenantsAsync(CancellationToken ct)
+    public Task SyncAllTenantsAsync(CancellationToken ct) =>
+        TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "ELD sync", SyncTenantAsync, ct);
+
+    private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        using var scope = scopeFactory.CreateScope();
-        var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
-
-        // Get all active tenants
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync(t => t.ConnectionString != null);
-
-        logger.LogInformation("Starting ELD sync for {TenantCount} tenants", tenants.Count);
-
-        foreach (var tenant in tenants)
-        {
-            if (ct.IsCancellationRequested)
-            {
-                break;
-            }
-
-            try
-            {
-                await SyncTenantAsync(tenant, ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error syncing ELD data for tenant {TenantName}", tenant.Name);
-            }
-        }
-
-        logger.LogInformation("Completed ELD sync cycle");
-    }
-
-    private async Task SyncTenantAsync(Tenant tenant, CancellationToken ct)
-    {
-        using var scope = scopeFactory.CreateScope();
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         var eldFactory = scope.ServiceProvider.GetRequiredService<IEldProviderFactory>();
         var locationRecorder = scope.ServiceProvider.GetRequiredService<ITruckLocationRecorder>();

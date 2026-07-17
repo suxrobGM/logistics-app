@@ -78,7 +78,7 @@ The dispatcher and manager web interface for managing all fleet operations.
 
 | Feature                        | Description                                                                                                                                                                                                                                                                                      |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **ELD / HOS**                  | Integration with ELD providers (Samsara, Motive) for Hours of Service tracking. Real-time duty status, driving hours, and violation alerts. Webhook-based status sync.                                                                                                                           |
+| **ELD / HOS**                  | Integration with ELD providers (Samsara, Motive, TT ELD, Geotab) for Hours of Service tracking. Real-time duty status, driving hours, and violation alerts. Webhook-based status sync.                                                                                                           |
 | **IFTA Fuel Tax Reporting**    | Quarterly per-jurisdiction miles (derived from ELD GPS via offline boundary matching) and gallons (from fuel card imports and expenses) with tax due per the published rate matrix. Closed quarters are snapshotted immutably for audits; filing-deadline reminders and PDF/CSV export included. |
 | **Vehicle Inspections (DVIR)** | Digital pre-trip and post-trip Driver Vehicle Inspection Reports. Interactive damage marking on vehicle diagrams, defect categorization by severity, and photo attachments. Inspection history per vehicle.                                                                                      |
 | **Safety & Incidents**         | Track safety incidents, violations, and corrective actions. Maintain compliance records for audits.                                                                                                                                                                                              |
@@ -108,7 +108,7 @@ The dispatcher and manager web interface for managing all fleet operations.
 
 | Feature                       | Description                                                                                                                    |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **Role-Based Access Control** | Six roles with granular permissions: Owner, Manager, Dispatcher, Driver, Customer, and Super Admin.                            |
+| **Role-Based Access Control** | Seven roles with granular permissions: Super Admin, Admin, Owner, Manager, Dispatcher, Driver, and Customer.                   |
 | **Company Settings**          | Configure company profile, billing address, notification preferences, and feature toggles.                                     |
 | **Subscription Management**   | Three tiers (Starter, Professional, Enterprise) with plan-based feature gating. Stripe-powered billing with per-truck pricing. |
 

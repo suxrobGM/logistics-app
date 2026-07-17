@@ -27,7 +27,7 @@ paths:
 
 ## Domain Events
 
-- Raise events in entity methods, not handlers. Handlers in `Logistics.Application/Events/`
+- Raise events in entity methods, not handlers. Handlers in `Logistics.Application/Modules/{Module}/{Feature}/Events/`
 
 ## Naming
 

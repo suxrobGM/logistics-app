@@ -57,6 +57,11 @@ internal sealed class SubcontractorEntityConfiguration : IEntityTypeConfiguratio
 }
 ```
 
+**Complex types cannot participate in a unique index.** If the entity needs uniqueness spanning a
+value-object member, EF can't express it — enforce it in code on every write path (see
+`IftaTaxRateUniqueness.FindConflictAsync`) and give the value object a normalizing factory like
+`TaxJurisdiction.Create` so casing or an empty-vs-null member can't defeat the comparison.
+
 The `MasterDbContext` / `TenantDbContext` discover configurations via `ApplyConfigurationsFromAssembly` — you don't need to register them.
 
 ### 3. Migration
@@ -65,13 +70,14 @@ Use the `migration-creator` skill or run:
 
 ```bash
 # Tenant
-dotnet ef migrations add Version_{N} \
+dotnet ef migrations add Add{Entity} \
   --project src/Infrastructure/Logistics.Infrastructure.Persistence \
   --context TenantDbContext \
   -o Migrations/Tenant
 ```
 
-Replace `{N}` with the next sequential number. Inspect the generated SQL before committing.
+Name it for what it does (`AddSubcontractor`) — EF prefixes the timestamp, so no `Version_NNNN`,
+numeric suffix, or date. Inspect the generated SQL before committing.
 
 ### 4. Specifications (if list queries need filtering)
 
@@ -97,7 +103,7 @@ For master-DB commands, use `IMasterCommand<T>` instead of `ICommand<T>`. Handle
 
 ### 6. DTOs and Mapperly mapper
 
-`src/Core/Logistics.Shared.Models/{Entity}Dto.cs` for the public DTO.
+`src/Shared/Logistics.Shared.Models/{Entity}Dto.cs` for the public DTO.
 
 `src/Core/Logistics.Mappings/{Entity}Mapper.cs`:
 

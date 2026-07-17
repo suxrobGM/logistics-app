@@ -21,6 +21,7 @@ internal static class AssemblyAnchors
 
     public static readonly Assembly InfrastructureAI = typeof(Logistics.Infrastructure.AI.Registrar).Assembly;
     public static readonly Assembly InfrastructureAccounting = typeof(Logistics.Infrastructure.Integrations.Accounting.Registrar).Assembly;
+    public static readonly Assembly InfrastructureIntegrationsCommon = typeof(Logistics.Infrastructure.Integrations.Common.HttpClientJsonExtensions).Assembly;
     public static readonly Assembly InfrastructureCommunications = typeof(Logistics.Infrastructure.Communications.Registrar).Assembly;
     public static readonly Assembly InfrastructureDocuments = typeof(Logistics.Infrastructure.Documents.Registrar).Assembly;
     public static readonly Assembly InfrastructureEld = typeof(Logistics.Infrastructure.Integrations.Eld.Registrar).Assembly;
@@ -37,6 +38,7 @@ internal static class AssemblyAnchors
     [
         InfrastructureAI,
         InfrastructureAccounting,
+        InfrastructureIntegrationsCommon,
         InfrastructureCommunications,
         InfrastructureDocuments,
         InfrastructureEld,

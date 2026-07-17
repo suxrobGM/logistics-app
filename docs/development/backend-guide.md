@@ -11,10 +11,10 @@ src/Core/Logistics.Application/
 │   │   └── Loads/
 │   │       ├── Commands/CreateLoad/
 │   │       └── Queries/GetLoadById/
-│   ├── Compliance/     # ELD, DVIR, Accidents, Safety, Privacy
+│   ├── Compliance/     # ELD, DVIR, Accidents, Safety, Privacy, Ifta
 │   ├── Financial/      # Invoices, Payments, Payroll, Expenses, Tax
 │   ├── IdentityAccess/ # Users, Tenants, Roles, Subscriptions
-│   ├── Integrations/   # AiDispatch, LoadBoard, Webhooks, Messaging, Documents
+│   ├── Integrations/   # AiDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents
 │   └── Platform/       # Stats, Reports, BlogPosts, Notifications
 ├── Services/           # Application workflow services
 ├── Behaviours/         # MediatR pipeline
@@ -41,25 +41,42 @@ src/Infrastructure/
 │   ├── Email/                     # Email services
 │   └── Notifications/             # Push notifications
 │
+├── Logistics.Infrastructure.AI/       # LLM providers, dispatch agent, tool registry
+│
+├── Logistics.Infrastructure.Integrations.Common/
+│   └── HttpClientJsonExtensions.cs    # Shared HTTP JSON helpers; leaf project, no repo references
+│
 ├── Logistics.Infrastructure.Integrations.Eld/
-│   └── Providers/                 # Samsara, Motive
+│   └── Providers/                 # Samsara, Motive, TtEld, Geotab, Demo
 │
 ├── Logistics.Infrastructure.Integrations.LoadBoard/
-│   └── Providers/                 # DAT, Truckstop, 123Loadboard
+│   └── Providers/                 # DAT, Truckstop, 123Loadboard, Demo
+│
+├── Logistics.Infrastructure.Integrations.FuelCards/
+│   └── Providers/                 # Wex, Efs, Demo
+│
+├── Logistics.Infrastructure.Integrations.Accounting/
+│   └── Providers/                 # QuickBooks, Demo
 │
 ├── Logistics.Infrastructure.Payments/
 │   └── Stripe/                    # Stripe, Stripe Connect
 │
 ├── Logistics.Infrastructure.Documents/
-│   ├── Pdf/                       # PDF generation
-│   ├── Storage/                   # Azure Blob, file storage
-│   └── Vin/                       # VIN decoder
+│   └── Pdf/                       # PDF generation, template import
 │
 ├── Logistics.Infrastructure.Routing/
 │   └── Trip/                      # Trip optimization, geocoding
 │
-└── Logistics.Infrastructure.Storage/
-    └── (Blob storage implementations)
+├── Logistics.Infrastructure.Storage/
+│   └── (Blob storage implementations: Azure Blob, Cloudflare R2, local file system)
+│
+├── Logistics.Infrastructure.Tax/
+│   ├── Stripe/                    # Stripe Tax calculator and config
+│   ├── Manual/                    # Manual tax calculator
+│   └── Data/                      # US sales tax, EU VAT, other-country rates
+│
+└── Logistics.Infrastructure.Vin/
+    └── (VIN decoder: WMI prefix lookup + NHTSA API)
 ```
 
 ## Adding a New Feature
@@ -68,27 +85,21 @@ src/Infrastructure/
 
 ```csharp
 // Modules/Operations/Loads/Commands/CreateLoad/CreateLoadCommand.cs
-public record CreateLoadCommand(CreateLoadDto Dto) : IRequest<DataResult<LoadDto>>;
+public record CreateLoadCommand(CreateLoadDto Dto) : ICommand<Result<LoadDto>>;
 
-public class CreateLoadHandler : IRequestHandler<CreateLoadCommand, DataResult<LoadDto>>
+internal sealed class CreateLoadHandler(ITenantUnitOfWork unitOfWork)
+    : IRequestHandler<CreateLoadCommand, Result<LoadDto>>
 {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public CreateLoadHandler(IUnitOfWork unitOfWork)
+    public async Task<Result<LoadDto>> Handle(
+        CreateLoadCommand req,
+        CancellationToken ct)
     {
-        _unitOfWork = unitOfWork;
-    }
+        var load = Load.Create(req.Dto.CustomerId, req.Dto.Origin, req.Dto.Destination);
 
-    public async Task<DataResult<LoadDto>> Handle(
-        CreateLoadCommand request,
-        CancellationToken cancellationToken)
-    {
-        var load = Load.Create(request.Dto.CustomerId, request.Dto.Origin, request.Dto.Destination);
+        await unitOfWork.Repository<Load>().AddAsync(load, ct);
+        await unitOfWork.SaveChangesAsync(ct);
 
-        await _unitOfWork.Loads.AddAsync(load);
-        await _unitOfWork.SaveChangesAsync();
-
-        return DataResult<LoadDto>.Success(load.ToDto());
+        return Result<LoadDto>.Ok(load.ToDto());
     }
 }
 ```
@@ -134,7 +145,7 @@ public class LoadsController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Owner,Manager,Dispatcher")]
-    public async Task<ActionResult<DataResult<LoadDto>>> Create(CreateLoadDto dto)
+    public async Task<ActionResult<Result<LoadDto>>> Create(CreateLoadDto dto)
     {
         var result = await _mediator.Send(new CreateLoadCommand(dto));
         return result.IsSuccess ? Ok(result) : BadRequest(result);
@@ -265,6 +276,31 @@ public class LoadCompletedHandler : INotificationHandler<LoadCompletedEvent>
 }
 ```
 
+## Background Jobs
+
+Recurring Hangfire jobs live in `src/Presentation/Logistics.API/Jobs/`. Two rules matter here.
+
+**Fan out with `TenantJobRunner`.** `TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, operation, body, ct)` runs the body once per tenant that has a provisioned database, giving each tenant its own DI scope and its own try/catch so one tenant's failure does not abort the rest of the cycle. Do not hand-roll the loop.
+
+**Check features yourself.** Jobs bypass the MediatR pipeline, so `FeatureCheckBehaviour` never runs and `[RequiresFeature]` has no effect. A job that needs a feature gate must call `IFeatureService.IsFeatureEnabledAsync(tenantId, feature)` inside the body. Keep the check in the body rather than hoisting it to the runner: a job may still need to do some work for every tenant regardless of the flag, as `IftaQuarterCloseJob` does when it purges breadcrumbs for tenants without IFTA enabled.
+
+```csharp
+[AutomaticRetry(Attempts = 2)]
+public Task SyncAllTenantsAsync(CancellationToken ct) =>
+    TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "fuel card sync", SyncTenantAsync, ct);
+
+private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
+{
+    var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
+    if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.FuelCards))
+    {
+        return;
+    }
+
+    // …
+}
+```
+
 ## Testing
 
 ```csharp
@@ -316,13 +352,13 @@ public class CreateLoadHandlerTests
 
 ### Response Types
 
-- Use `DataResult<T>` for single items
-- Use `PagedDataResult<T>` for lists
+- Use `Result<T>` for single items
+- Use `PagedResult<T>` for lists
 
 ### Error Handling
 
 - Throw domain exceptions for business rule violations
-- Return `DataResult.Failure()` for expected failures
+- Return `Result.Fail("message")` for expected failures. When the client must branch on the failure (show an upgrade dialog, offer an override), use the `Result.Fail(message, ErrorCodes.X)` overload so it carries a machine-readable code instead of a message the client has to substring-match
 - Let middleware handle unexpected exceptions
 
 ## Next Steps

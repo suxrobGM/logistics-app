@@ -30,37 +30,11 @@ public class AccountingSyncJob(
     }
 
     [AutomaticRetry(Attempts = 2)]
-    public async Task SyncAllTenantsAsync(CancellationToken ct)
+    public Task SyncAllTenantsAsync(CancellationToken ct) =>
+        TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "accounting sync", SyncTenantAsync, ct);
+
+    private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        using var scope = scopeFactory.CreateScope();
-        var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync(t => t.ConnectionString != null);
-
-        logger.LogInformation("Starting accounting sync for {TenantCount} tenants", tenants.Count);
-
-        foreach (var tenant in tenants)
-        {
-            if (ct.IsCancellationRequested)
-            {
-                break;
-            }
-
-            try
-            {
-                await SyncTenantAsync(tenant, ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error syncing accounting data for tenant {TenantName}", tenant.Name);
-            }
-        }
-
-        logger.LogInformation("Completed accounting sync cycle");
-    }
-
-    private async Task SyncTenantAsync(Tenant tenant, CancellationToken ct)
-    {
-        using var scope = scopeFactory.CreateScope();
         var uow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         var factory = scope.ServiceProvider.GetRequiredService<IAccountingProviderFactory>();
         uow.SetCurrentTenant(tenant);

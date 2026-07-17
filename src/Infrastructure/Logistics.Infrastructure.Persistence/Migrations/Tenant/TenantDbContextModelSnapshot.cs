@@ -1787,11 +1787,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<decimal>("AverageMpg")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)")
-                        .HasColumnName("average_mpg");
-
                     b.Property<DateTime>("ClosedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("closed_at");
@@ -1815,16 +1810,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .IsRequired()
                         .HasColumnType("jsonb")
                         .HasColumnName("report_json");
-
-                    b.Property<decimal>("TotalGallons")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("numeric(14,2)")
-                        .HasColumnName("total_gallons");
-
-                    b.Property<decimal>("TotalMiles")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("numeric(14,2)")
-                        .HasColumnName("total_miles");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
