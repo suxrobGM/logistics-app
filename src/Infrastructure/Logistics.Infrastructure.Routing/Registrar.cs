@@ -1,5 +1,6 @@
 ﻿using Logistics.Infrastructure.Options;
 using Logistics.Infrastructure.Routing.Geocoding;
+using Logistics.Infrastructure.Routing.Geospatial;
 using Logistics.Infrastructure.Routing.Optimization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,9 @@ public static class Registrar
         services.Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.SectionName));
         services.AddHttpClient<IGeocodingService, MapboxGeocodingService>();
         services.AddHttpClient<MapboxMatrixClient>();
+
+        // Offline point-in-polygon jurisdiction lookup (IFTA mileage attribution)
+        services.AddSingleton<IJurisdictionResolver, JurisdictionResolver>();
 
         // Trip optimization services
         services.AddSingleton<HeuristicTripOptimizer>();

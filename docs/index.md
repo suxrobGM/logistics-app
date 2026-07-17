@@ -47,6 +47,7 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 - **QuickBooks Sync** - Customers, invoices, payments, and expenses pushed to QuickBooks Online.
 - **Fuel Card Sync** - WEX/EFS transactions imported nightly as fuel expenses with gallons and purchase state; unmatched ones queue for review.
 - **ELD / HOS Compliance** - Samsara and Motive.
+- **IFTA Fuel Tax Reporting** - Quarterly per-jurisdiction miles (from ELD GPS) and gallons (from fuel cards/expenses) with tax due, immutable quarter snapshots, filing reminders, and PDF/CSV export.
 - **Safety & DVIR** - Digital inspections, incident tracking, compliance records.
 - **Reports & Analytics** - 7 report types: driver, truck, revenue, customer, payroll, expense, operations.
 - **Messaging** - In-app chat with read receipts and typing indicators.

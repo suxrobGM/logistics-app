@@ -257,6 +257,8 @@ internal static class Setup
         LoadBoardSyncJob.ScheduleJobs();
         AccountingSyncJob.ScheduleJobs();
         FuelCardSyncJob.ScheduleJobs();
+        IftaQuarterCloseJob.ScheduleJobs();
+        IftaFilingReminderJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
         LicenseExpiryReminderJob.ScheduleJobs();
         InvitationExpiryJob.ScheduleJobs();

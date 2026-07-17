@@ -11326,6 +11326,103 @@
         }
       }
     },
+    "/reports/ifta": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "operationId": "GetIftaReport",
+        "parameters": [
+          {
+            "name": "Year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Quarter",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IftaReportDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/ifta/pdf": {
+      "get": {
+        "tags": [
+          "Report"
+        ],
+        "operationId": "ExportIftaReportPdf",
+        "parameters": [
+          {
+            "name": "Year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Quarter",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/reports/financials": {
       "get": {
         "tags": [
@@ -21294,6 +21391,106 @@
         },
         "additionalProperties": false
       },
+      "IftaJurisdictionRowDto": {
+        "required": [
+          "countryCode",
+          "region"
+        ],
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "miles": {
+            "type": "number",
+            "format": "double"
+          },
+          "purchasedGallons": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxableGallons": {
+            "type": "number",
+            "format": "double"
+          },
+          "netTaxableGallons": {
+            "type": "number",
+            "format": "double"
+          },
+          "ratePerGallon": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "surchargeRatePerGallon": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "taxDue": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "rateMissing": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "IftaReportDto": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quarter": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isClosed": {
+            "type": "boolean"
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "totalMiles": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalGallons": {
+            "type": "number",
+            "format": "double"
+          },
+          "averageMpg": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalTaxDue": {
+            "type": "number",
+            "format": "double"
+          },
+          "hasMissingRates": {
+            "type": "boolean"
+          },
+          "jurisdictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IftaJurisdictionRowDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ImpersonateUserCommand": {
         "required": [
           "masterPassword",
@@ -25533,7 +25730,8 @@
           "telegram_bot",
           "mcp_server",
           "accounting",
-          "fuel_cards"
+          "fuel_cards",
+          "ifta"
         ],
         "type": "string"
       },

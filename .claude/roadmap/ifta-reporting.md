@@ -1,6 +1,6 @@
 # IFTA Fuel Tax Reporting
 
-- **Status**: Planned
+- **Status**: Done
 - **Priority**: P0 — quarterly legal obligation for interstate carriers; TMSs without it get filtered out immediately
 - **Effort**: M
 - **Category**: Table stakes
@@ -26,4 +26,4 @@ For a quarter of ELD + fuel data, the report matches per-jurisdiction miles/gall
 
 ## Notes
 
-_(add dated implementation notes here)_
+- **2026-07-16**: Shipped on `feat/fuel-integrations`. Location history: `TruckLocationHistory` breadcrumbs (4-yr audit retention, BRIN-indexed, purged by the quarter-close job) + `TruckJurisdictionMileage` daily rollups, both written by `TruckLocationRecorder` (odometer-delta-or-haversine distance, 90 mph teleport guard, gaps still accrue) — ELD sync and driver-app GPS paths now route through it (also fixed a pre-existing swapped lat/lng bug that made TT ELD GPS sync throw). Jurisdiction snapping: offline NetTopologySuite point-in-polygon over embedded Natural Earth admin-1 boundaries (US+CA = the IFTA jurisdictions; EU = add polygons later). `IftaReportService`: miles from rollups, gallons from fuel expenses (fuel-card imports carry jurisdiction), fleet MPG, tax due from master-DB `IftaTaxRate` (quarterly seed JSON — **recurring ops task**; missing rates are flagged, never guessed; IN/KY/VA surcharge on all taxable gallons). Quarter-close job snapshots closed quarters immutably (`IftaQuarterSnapshot`); filing reminders 30/14/7/3/1 days before Apr 30/Jul 31/Oct 31/Jan 31. UI: `reports/ifta` (quarter picker, PDF via QuestPDF, client CSV) gated on `TenantFeature.Ifta` (Professional+). Note: first fileable quarter is the first full quarter after deploy — no GPS backfill exists.

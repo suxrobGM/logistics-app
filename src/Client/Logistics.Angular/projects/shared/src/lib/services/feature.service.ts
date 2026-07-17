@@ -123,4 +123,5 @@ export const FEATURE_DESCRIPTIONS: Record<TenantFeature, string> = {
   mcp_server: "MCP server for third-party integrations",
   accounting: "Sync invoices, payments, and expenses to QuickBooks",
   fuel_cards: "Import fuel card transactions (WEX, EFS) as truck expenses",
+  ifta: "Quarterly IFTA fuel tax reports with per-jurisdiction miles and gallons",
 };

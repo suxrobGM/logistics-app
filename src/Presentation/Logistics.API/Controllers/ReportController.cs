@@ -39,6 +39,28 @@ public class ReportController(IMediator mediator) : ControllerBase
         return Ok(PagedResponse<DriverReportDto>.FromPagedResult(result, request.Page, request.PageSize));
     }
 
+    [HttpGet("ifta", Name = "GetIftaReport")]
+    [ProducesResponseType(typeof(IftaReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Stat.View)]
+    public async Task<IActionResult> GetIftaReport([FromQuery] IftaReportQuery request)
+    {
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpGet("ifta/pdf", Name = "ExportIftaReportPdf")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Stat.View)]
+    public async Task<IActionResult> ExportIftaReportPdf([FromQuery] ExportIftaReportPdfQuery request)
+    {
+        var result = await mediator.Send(request);
+        return result.IsSuccess
+            ? File(result.Value!, "application/pdf", $"ifta-report-{request.Year}-q{request.Quarter}.pdf")
+            : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpGet("financials", Name = "GetFinancialsReport")]
     [ProducesResponseType(typeof(FinancialsReportDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

@@ -76,12 +76,13 @@ The dispatcher and manager web interface for managing all fleet operations.
 
 ### Compliance & Safety
 
-| Feature                        | Description                                                                                                                                                                                                 |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **ELD / HOS**                  | Integration with ELD providers (Samsara, Motive) for Hours of Service tracking. Real-time duty status, driving hours, and violation alerts. Webhook-based status sync.                                      |
-| **Vehicle Inspections (DVIR)** | Digital pre-trip and post-trip Driver Vehicle Inspection Reports. Interactive damage marking on vehicle diagrams, defect categorization by severity, and photo attachments. Inspection history per vehicle. |
-| **Safety & Incidents**         | Track safety incidents, violations, and corrective actions. Maintain compliance records for audits.                                                                                                         |
-| **Document Management**        | Centralized storage for load paperwork (POD, POL, BOL), employee records, and compliance documents. Azure Blob Storage backend with secure access.                                                          |
+| Feature                        | Description                                                                                                                                                                                                                                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **ELD / HOS**                  | Integration with ELD providers (Samsara, Motive) for Hours of Service tracking. Real-time duty status, driving hours, and violation alerts. Webhook-based status sync.                                                                                                                           |
+| **IFTA Fuel Tax Reporting**    | Quarterly per-jurisdiction miles (derived from ELD GPS via offline boundary matching) and gallons (from fuel card imports and expenses) with tax due per the published rate matrix. Closed quarters are snapshotted immutably for audits; filing-deadline reminders and PDF/CSV export included. |
+| **Vehicle Inspections (DVIR)** | Digital pre-trip and post-trip Driver Vehicle Inspection Reports. Interactive damage marking on vehicle diagrams, defect categorization by severity, and photo attachments. Inspection history per vehicle.                                                                                      |
+| **Safety & Incidents**         | Track safety incidents, violations, and corrective actions. Maintain compliance records for audits.                                                                                                                                                                                              |
+| **Document Management**        | Centralized storage for load paperwork (POD, POL, BOL), employee records, and compliance documents. Azure Blob Storage backend with secure access.                                                                                                                                               |
 
 ### Reports & Analytics
 

@@ -48,5 +48,8 @@ public enum TenantFeature
     Accounting,
 
     [Description("Fuel Cards")]
-    FuelCards
+    FuelCards,
+
+    [Description("IFTA Reporting")]
+    Ifta
 }

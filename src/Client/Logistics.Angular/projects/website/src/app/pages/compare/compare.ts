@@ -106,6 +106,13 @@ export class Compare {
           alvys: "✓",
           roseRocket: "-",
         },
+        {
+          name: "IFTA fuel tax reporting",
+          us: "✓",
+          dataTruck: "✓",
+          alvys: "✓",
+          roseRocket: "-",
+        },
       ],
     },
     {

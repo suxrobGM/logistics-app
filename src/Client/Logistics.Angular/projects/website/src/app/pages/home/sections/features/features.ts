@@ -98,6 +98,12 @@ export class Features {
         "WEX and EFS transactions import nightly as paid fuel expenses - gallons, price, and purchase state included. No manual entry, and IFTA data builds itself.",
     },
     {
+      icon: "map",
+      title: "IFTA Reporting",
+      description:
+        "Per-jurisdiction miles from ELD GPS and gallons from fuel cards roll into a quarterly IFTA report with tax due - snapshot-frozen for audits, exportable as PDF or CSV.",
+    },
+    {
       icon: "clock",
       title: "ELD / HOS",
       description:

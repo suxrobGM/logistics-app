@@ -17,6 +17,7 @@ public static class Registrar
         // PDF generation
         services.AddScoped<IInvoicePdfService, InvoicePdfService>();
         services.AddScoped<IPayrollPayStubService, PayrollPayStubService>();
+        services.AddScoped<IIftaReportPdfService, Services.Pdf.Ifta.IftaReportPdfService>();
 
         // PDF import (LLM-based extraction)
         services.AddScoped<IPdfDataExtractor, LlmPdfDataExtractor>();

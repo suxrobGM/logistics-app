@@ -307,6 +307,12 @@ export const sidebarSections: NavSection[] = [
             route: "/reports/maintenance",
           },
           {
+            id: "reports-ifta",
+            label: "IFTA Report",
+            route: "/reports/ifta",
+            feature: "ifta",
+          },
+          {
             id: "reports-revenue",
             label: "Revenue Overview",
             route: "/reports/revenue",

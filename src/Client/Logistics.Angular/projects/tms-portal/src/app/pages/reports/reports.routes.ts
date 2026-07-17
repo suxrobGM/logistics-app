@@ -103,6 +103,15 @@ export const reportsRoutes: Routes = [
           permission: Permission.Stat.View,
         },
       },
+      {
+        path: "ifta",
+        loadComponent: () => import("./ifta-report/ifta-report").then((m) => m.IftaReportComponent),
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: "IFTA",
+          permission: Permission.Stat.View,
+        },
+      },
       { path: "", redirectTo: "loads", pathMatch: "full" },
     ],
   },

@@ -1,0 +1,123 @@
+<ui-page-header
+  title="IFTA Fuel Tax Report"
+  subtitle="Quarterly per-jurisdiction miles, gallons, and tax due for your IFTA return"
+>
+  <ui-stack direction="row" gap="2" align="center">
+    <ui-select-field
+      class="w-44"
+      [options]="quarterOptions"
+      optionLabel="label"
+      optionValue="value"
+      [value]="selectedQuarter()"
+      (valueChange)="onQuarterChange($event)"
+    />
+    <ui-button
+      label="CSV"
+      icon="download"
+      appearance="outlined"
+      (click)="exportCsv()"
+      uiTooltip="Export the jurisdiction table as CSV"
+    />
+    <ui-button
+      label="PDF"
+      icon="file-text"
+      (click)="exportPdf()"
+      [loading]="exporting()"
+      uiTooltip="Download a filing-ready PDF"
+    />
+  </ui-stack>
+</ui-page-header>
+
+@if (isLoading()) {
+  <ui-stack align="center" justify="center" class="p-8">
+    <ui-spinner />
+  </ui-stack>
+} @else if (report(); as r) {
+  @if (r.isClosed) {
+    <ui-alert intent="info" class="mb-4 block" title="Closed quarter">
+      This quarter was closed on {{ r.closedAt | slice: 0 : 10 }} — figures are frozen for filing
+      and audit.
+    </ui-alert>
+  }
+  @if (r.hasMissingRates) {
+    <ui-alert intent="warning" class="mb-4 block" title="Missing tax rates">
+      Some jurisdictions have no published tax rate for this quarter, so their tax due is omitted
+      from the total. Ask your administrator to update the IFTA rate table before filing.
+    </ui-alert>
+  }
+
+  <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+    <app-stat-card icon="route" label="Total Miles" [value]="(r.totalMiles | number: '1.0-1')!" />
+    <app-stat-card
+      icon="fuel"
+      label="Total Gallons"
+      [value]="(r.totalGallons | number: '1.0-1')!"
+      color="green"
+    />
+    <app-stat-card
+      icon="gauge"
+      label="Fleet Avg MPG"
+      [value]="(r.averageMpg | number: '1.0-2')!"
+      color="purple"
+    />
+    <app-stat-card
+      icon="dollar-sign"
+      label="Net Tax Due"
+      [value]="'$' + (r.totalTaxDue | number: '1.2-2')"
+      color="orange"
+      tooltip="Negative = net credit across jurisdictions"
+    />
+  </div>
+
+  @if (hasData()) {
+    <ui-dashboard-card title="Per-Jurisdiction Breakdown" icon="map">
+      <ui-data-table [value]="r.jurisdictions ?? []" [paginator]="true" [rows]="60">
+        <ng-template #header>
+          <tr>
+            <th>Jurisdiction</th>
+            <th>Miles</th>
+            <th>Taxable Gal</th>
+            <th>Purchased Gal</th>
+            <th>Net Taxable Gal</th>
+            <th>Rate $/Gal</th>
+            <th>Tax Due $</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td>
+              <span class="font-medium">{{ row.countryCode }}-{{ row.region }}</span>
+            </td>
+            <td>{{ row.miles | number: "1.0-1" }}</td>
+            <td>{{ row.taxableGallons | number: "1.0-1" }}</td>
+            <td>{{ row.purchasedGallons | number: "1.0-1" }}</td>
+            <td [class.text-success]="row.netTaxableGallons < 0">
+              {{ row.netTaxableGallons | number: "1.0-1" }}
+            </td>
+            <td>
+              @if (row.rateMissing) {
+                <ui-badge value="missing" severity="warn" />
+              } @else {
+                {{ row.ratePerGallon | number: "1.4-4" }}
+                @if (row.surchargeRatePerGallon) {
+                  <span class="text-muted-foreground text-xs">
+                    +{{ row.surchargeRatePerGallon | number: "1.4-4" }}
+                  </span>
+                }
+              }
+            </td>
+            <td [class.text-success]="row.taxDue < 0">
+              {{ row.taxDue !== null && row.taxDue !== undefined ? (row.taxDue | number: "1.2-2") : "—" }}
+            </td>
+          </tr>
+        </ng-template>
+      </ui-data-table>
+    </ui-dashboard-card>
+  } @else {
+    <ui-empty-state
+      title="No IFTA data for this quarter"
+      message="Jurisdiction miles come from ELD GPS tracking and gallons from fuel expenses or fuel card imports. Data appears here as it accumulates."
+      icon="map"
+    />
+  }
+}

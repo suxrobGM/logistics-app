@@ -52,6 +52,7 @@ export class Pricing {
         "Load board integrations",
         "Broker credit checks",
         "Fuel card sync (WEX, EFS)",
+        "IFTA fuel tax reporting",
         "Payroll management",
         "Timesheets tracking",
         "Safety & compliance",

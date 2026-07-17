@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Compliance.Ifta.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -8,6 +9,7 @@ namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 
 internal sealed class SetTruckGeolocationHandler(
     ITenantUnitOfWork tenantUow,
+    ITruckLocationRecorder locationRecorder,
     ILogger<SetTruckGeolocationHandler> logger)
     : IAppRequestHandler<SetTruckGeolocationCommand, Result>
 {
@@ -25,7 +27,13 @@ internal sealed class SetTruckGeolocationHandler(
         }
 
         truck.CurrentAddress = req.GeolocationData.CurrentAddress;
-        truck.CurrentLocation = req.GeolocationData.CurrentLocation;
+
+        if (req.GeolocationData.CurrentLocation is not null)
+        {
+            // Appends the breadcrumb, accrues IFTA jurisdiction mileage, sets CurrentLocation
+            await locationRecorder.RecordAsync(truck, req.GeolocationData.CurrentLocation, DateTime.UtcNow, ct: ct);
+        }
+
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

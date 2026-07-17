@@ -8,6 +8,7 @@ using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
 using Logistics.Application.Abstractions.Eld;
+using Logistics.Application.Modules.Compliance.Ifta.Services;
 
 namespace Logistics.API.Jobs;
 
@@ -70,6 +71,7 @@ public class EldSyncJob(
         using var scope = scopeFactory.CreateScope();
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         var eldFactory = scope.ServiceProvider.GetRequiredService<IEldProviderFactory>();
+        var locationRecorder = scope.ServiceProvider.GetRequiredService<ITruckLocationRecorder>();
 
         // Switch to tenant database
         tenantUow.SetCurrentTenant(tenant);
@@ -93,7 +95,7 @@ public class EldSyncJob(
 
             try
             {
-                await SyncProviderDataAsync(tenantUow, eldFactory, config, tenant, ct);
+                await SyncProviderDataAsync(tenantUow, eldFactory, locationRecorder, config, tenant, ct);
             }
             catch (Exception ex)
             {
@@ -106,6 +108,7 @@ public class EldSyncJob(
     private async Task SyncProviderDataAsync(
         ITenantUnitOfWork tenantUow,
         IEldProviderFactory eldFactory,
+        ITruckLocationRecorder locationRecorder,
         EldProviderConfiguration config,
         Tenant tenant,
         CancellationToken ct)
@@ -145,7 +148,7 @@ public class EldSyncJob(
         // GPS tracking sync (for providers that support it, e.g., TT ELD)
         if (provider is IEldGpsTrackingProvider gpsProvider)
         {
-            await SyncVehicleLocationsAsync(tenantUow, gpsProvider, config, tenant, ct);
+            await SyncVehicleLocationsAsync(tenantUow, locationRecorder, gpsProvider, config, tenant, ct);
         }
 
         // Update configuration last synced time
@@ -157,6 +160,7 @@ public class EldSyncJob(
 
     private async Task SyncVehicleLocationsAsync(
         ITenantUnitOfWork tenantUow,
+        ITruckLocationRecorder locationRecorder,
         IEldGpsTrackingProvider gpsProvider,
         EldProviderConfiguration config,
         Tenant tenant,
@@ -191,7 +195,13 @@ public class EldSyncJob(
             }
 
             var truck = mapping.Truck;
-            truck.CurrentLocation = new GeoPoint(location.Latitude, location.Longitude);
+            // GeoPoint takes (longitude, latitude) — the previous direct write passed them
+            // swapped, which threw for US longitudes and silently broke GPS sync.
+            var point = new GeoPoint(location.Longitude, location.Latitude);
+            var timestamp = location.Timestamp == default ? DateTime.UtcNow : location.Timestamp;
+
+            // Appends the breadcrumb, accrues IFTA jurisdiction mileage, sets CurrentLocation
+            await locationRecorder.RecordAsync(truck, point, timestamp, config.ProviderType, ct: ct);
             mapping.LastSyncedAt = DateTime.UtcNow;
             syncedCount++;
 
@@ -199,7 +209,7 @@ public class EldSyncJob(
             {
                 TruckId = truck.Id,
                 TenantId = tenant.Id,
-                CurrentLocation = new GeoPoint(location.Latitude, location.Longitude),
+                CurrentLocation = point,
                 TruckNumber = truck.Number
             };
 
