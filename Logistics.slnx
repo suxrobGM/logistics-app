@@ -38,6 +38,7 @@
     <Project Path="src/Infrastructure/Logistics.Infrastructure.AI/Logistics.Infrastructure.AI.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Tax/Logistics.Infrastructure.Tax.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Vin/Logistics.Infrastructure.Vin.csproj" />
+    <Project Path="src/Infrastructure/Logistics.Infrastructure.Integrations.FuelCards/Logistics.Infrastructure.Integrations.FuelCards.csproj" />
   </Folder>
   <Folder Name="/Presentation/">
     <Project Path="src/Presentation/Logistics.API/Logistics.API.csproj" />

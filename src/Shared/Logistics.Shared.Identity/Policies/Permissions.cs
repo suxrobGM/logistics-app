@@ -158,6 +158,12 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(LoadBoard)}.Manage";
     }
 
+    public static class FuelCard
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(FuelCard)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(FuelCard)}.Manage";
+    }
+
     public static class Dispatch
     {
         public const string View = $"{nameof(Permission)}.{nameof(Dispatch)}.View";

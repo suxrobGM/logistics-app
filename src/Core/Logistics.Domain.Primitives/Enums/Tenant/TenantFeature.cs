@@ -45,5 +45,8 @@ public enum TenantFeature
     McpServer,
 
     [Description("Accounting (QuickBooks)")]
-    Accounting
+    Accounting,
+
+    [Description("Fuel Cards")]
+    FuelCards
 }

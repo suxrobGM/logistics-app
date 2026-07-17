@@ -92,6 +92,12 @@ export class Features {
         "Push customers, invoices, payments, and expenses to QuickBooks Online so your accountant's books stay current without re-entry.",
     },
     {
+      icon: "fuel",
+      title: "Fuel Card Sync",
+      description:
+        "WEX and EFS transactions import nightly as paid fuel expenses - gallons, price, and purchase state included. No manual entry, and IFTA data builds itself.",
+    },
+    {
       icon: "clock",
       title: "ELD / HOS",
       description:

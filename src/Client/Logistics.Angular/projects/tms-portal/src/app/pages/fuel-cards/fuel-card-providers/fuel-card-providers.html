@@ -1,0 +1,49 @@
+<ui-page-header
+  title="Fuel Card Providers"
+  subtitle="Connect your fleet fuel cards to import transactions as truck expenses"
+  backLink="/fuel-cards"
+>
+  <ui-button
+    buttonClass="whitespace-nowrap"
+    label="Add Provider"
+    icon="plus"
+    (click)="showAddDialog.set(true)"
+  />
+</ui-page-header>
+
+<ui-alert intent="info" title="How Fuel Card Integration Works" class="mb-6 block">
+  Connect a fuel card provider and transactions sync automatically every night. Purchases are
+  matched to trucks by card or unit number and posted as paid fuel expenses with gallons and
+  purchase state — feeding expense reports and IFTA. Unmatched transactions land in the review
+  queue for manual assignment.
+</ui-alert>
+
+<ui-dashboard-card title="Configured Providers" icon="credit-card">
+  @if (loading()) {
+    <ui-stack align="center" justify="center" class="p-5">
+      <ui-spinner />
+    </ui-stack>
+  } @else if (error()) {
+    <ui-error-state [message]="error()!" (retry)="loadProviders()" />
+  } @else if (providers().length === 0) {
+    <ui-empty-state
+      title="No providers configured"
+      message="Add your first fuel card provider to start importing transactions."
+      icon="credit-card"
+      actionLabel="Add Provider"
+      (action)="showAddDialog.set(true)"
+    />
+  } @else {
+    <app-fuel-card-providers-table
+      [providers]="providers()"
+      (sync)="onSync($event)"
+      (delete)="deleteProvider($event)"
+    />
+  }
+</ui-dashboard-card>
+
+<app-fuel-card-provider-add-dialog
+  [(visible)]="showAddDialog"
+  [saving]="saving()"
+  (save)="onSave($event)"
+/>

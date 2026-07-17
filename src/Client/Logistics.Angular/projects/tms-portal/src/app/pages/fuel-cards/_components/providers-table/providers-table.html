@@ -1,0 +1,72 @@
+<ui-data-table [value]="providers()">
+  <ng-template #header>
+    <tr>
+      <th>Provider</th>
+      <th>Status</th>
+      <th>Pending Review</th>
+      <th>Last Synced</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-provider>
+    <tr>
+      <td>
+        <ui-stack direction="row" align="center" gap="3">
+          <div class="bg-subtle flex h-10 w-10 items-center justify-center rounded-full">
+            <ui-icon name="credit-card" color="info" />
+          </div>
+          <div>
+            <div class="font-medium">{{ getProviderLabel(provider.providerType) }}</div>
+            @if (provider.externalAccountId) {
+              <small class="text-muted-foreground">{{ provider.externalAccountId }}</small>
+            }
+          </div>
+        </ui-stack>
+      </td>
+      <td>
+        @if (provider.isConnected) {
+          <ui-badge value="Connected" severity="success" />
+        } @else {
+          <ui-badge value="Disconnected" severity="danger" />
+        }
+      </td>
+      <td>
+        @if (provider.pendingTransactionsCount) {
+          <ui-badge [value]="provider.pendingTransactionsCount" severity="warn" />
+        } @else {
+          <span class="text-muted-foreground text-sm">0</span>
+        }
+      </td>
+      <td>
+        @if (provider.lastSyncedAt) {
+          <span class="text-muted-foreground text-sm">
+            {{ provider.lastSyncedAt | date: "short" }}
+          </span>
+        } @else {
+          <span class="text-muted-foreground text-sm">Never</span>
+        }
+      </td>
+      <td>
+        <div class="flex gap-1">
+          <ui-button
+            appearance="text"
+            icon="refresh-cw"
+            [rounded]="true"
+            uiTooltip="Sync Now"
+            ariaLabel="Sync transactions now"
+            (click)="sync.emit(provider)"
+          />
+          <ui-button
+            intent="danger"
+            appearance="text"
+            icon="trash"
+            [rounded]="true"
+            uiTooltip="Delete Provider"
+            ariaLabel="Delete provider"
+            (click)="confirmDelete(provider)"
+          />
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</ui-data-table>

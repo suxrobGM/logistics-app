@@ -4,6 +4,7 @@ using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Services;
 using Logistics.DbMigrator.Workers;
 using Logistics.Application;
+using Logistics.Infrastructure.Integrations.FuelCards;
 using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Tax;
@@ -27,8 +28,10 @@ builder.Services.AddPersistenceInfrastructure(builder.Configuration)
     .AddIdentity();
 
 builder.Services.AddApplicationTaxServices();
+builder.Services.AddApplicationFuelCardServices();
 builder.Services.AddPaymentsInfrastructure(builder.Configuration);
 builder.Services.AddTaxInfrastructure(builder.Configuration);
+builder.Services.AddFuelCardIntegrations(builder.Configuration);
 builder.Services.AddScoped<PayrollService>();
 builder.Services.AddSeeders();
 

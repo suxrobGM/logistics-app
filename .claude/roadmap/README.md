@@ -14,7 +14,7 @@ in its **Notes** section. Keep this index's Status column in sync.
 | --------------------------------------------------- | -------- | ------ | ------- |
 | [QuickBooks sync](quickbooks-sync.md)               | P0       | M      | Done    |
 | [IFTA fuel tax reporting](ifta-reporting.md)        | P0       | M      | Planned |
-| [Fuel card integrations](fuel-card-integrations.md) | P0       | M      | Planned |
+| [Fuel card integrations](fuel-card-integrations.md) | P0       | M      | Done    |
 | [Factoring integration](factoring-integration.md)   | P0       | M      | Planned |
 | [Broker credit check](broker-credit-check.md)       | P0       | S      | Done    |
 | [EDI integration](edi-integration.md)               | P2       | XL     | Planned |

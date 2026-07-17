@@ -1,0 +1,127 @@
+<ui-page-header
+  title="Fuel Card Transactions"
+  subtitle="Review imported transactions and assign unmatched ones to trucks"
+>
+  <ui-button
+    buttonClass="whitespace-nowrap"
+    label="Providers"
+    icon="settings"
+    appearance="outlined"
+    routerLink="/fuel-cards/providers"
+  />
+</ui-page-header>
+
+<ui-stack direction="row" class="mb-4">
+  <ui-toggle-group
+    [options]="statusOptions"
+    [value]="statusFilter()"
+    (valueChange)="onStatusFilterChange($any($event))"
+  />
+</ui-stack>
+
+@if (loading()) {
+  <ui-stack align="center" justify="center" class="p-5">
+    <ui-spinner />
+  </ui-stack>
+} @else if (error()) {
+  <ui-error-state [message]="error()!" (retry)="loadTransactions()" />
+} @else if (transactions().length === 0) {
+  <ui-empty-state
+    title="No transactions"
+    message="No fuel card transactions match this filter. Connect a provider or run a sync from the Providers page."
+    icon="credit-card"
+  />
+} @else {
+  <ui-data-table [value]="transactions()" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100]">
+    <ng-template #header>
+      <tr>
+        <th>Date</th>
+        <th>Provider</th>
+        <th>Merchant</th>
+        <th>Fuel</th>
+        <th>Amount</th>
+        <th>Unit #</th>
+        <th>Truck</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-txn>
+      <tr>
+        <td>
+          <span class="text-sm">{{ txn.transactionDate | dateFormat: "shortDate" }}</span>
+        </td>
+        <td>
+          <span class="text-sm">{{ getProviderLabel(txn.providerType) }}</span>
+        </td>
+        <td>
+          <div class="max-w-48">
+            <div class="truncate text-sm font-medium" [uiTooltip]="txn.merchantName">
+              {{ txn.merchantName || "-" }}
+            </div>
+            <div class="text-muted-foreground text-xs">
+              {{ txn.merchantCity || "" }}
+              @if (txn.purchaseJurisdiction?.region) {
+                <span>({{ txn.purchaseJurisdiction.region }})</span>
+              }
+            </div>
+          </div>
+        </td>
+        <td>
+          @if (txn.quantity) {
+            <span class="text-sm">
+              {{ txn.quantity | number: "1.0-1" }}
+              {{ txn.quantityUnit === "liters" ? "L" : "gal" }}
+            </span>
+          } @else {
+            <span class="text-muted-foreground">-</span>
+          }
+        </td>
+        <td>
+          <span class="text-success font-medium">{{ txn.amount.amount | currencyFormat }}</span>
+        </td>
+        <td>
+          <span class="text-sm">{{ txn.unitNumber || "-" }}</span>
+        </td>
+        <td>
+          <span class="text-sm">{{ txn.truckNumber || "-" }}</span>
+        </td>
+        <td>
+          <ui-badge [value]="txn.status" [severity]="getStatusSeverity(txn.status)" />
+        </td>
+        <td>
+          @if (txn.status === "pending") {
+            <div class="flex gap-1">
+              <ui-button
+                size="sm"
+                icon="truck"
+                label="Assign"
+                [rounded]="true"
+                uiTooltip="Assign to a truck"
+                (click)="openAssignDialog(txn)"
+              />
+              <ui-button
+                size="sm"
+                appearance="text"
+                intent="danger"
+                icon="x"
+                [rounded]="true"
+                uiTooltip="Ignore this transaction"
+                ariaLabel="Ignore transaction"
+                (click)="ignoreTransaction(txn)"
+              />
+            </div>
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </ui-data-table>
+}
+
+<app-assign-truck-dialog
+  [(visible)]="showAssignDialog"
+  [transaction]="selectedTransaction()"
+  [trucks]="trucks()"
+  [saving]="saving()"
+  (save)="onAssign($event)"
+/>

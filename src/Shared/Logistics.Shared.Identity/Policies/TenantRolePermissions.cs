@@ -69,6 +69,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Invitation)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Expense)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.LoadBoard)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.FuelCard)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Tenant)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dvir)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Safety)));
@@ -100,6 +101,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Eld)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Invitation)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.LoadBoard)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.FuelCard)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dvir)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Safety)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Maintenance)));
@@ -128,6 +130,8 @@ public static class TenantRolePermissions
         list.Add(Permission.LoadBoard.Search);
         list.Add(Permission.LoadBoard.Book);
         list.Add(Permission.LoadBoard.Post);
+        list.Add(Permission.FuelCard.View);
+        list.Add(Permission.FuelCard.Manage);
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dispatch)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Container)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Terminal)));

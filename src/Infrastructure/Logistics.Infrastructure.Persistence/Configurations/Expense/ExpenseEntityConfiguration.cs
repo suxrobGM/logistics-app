@@ -65,6 +65,15 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
                 .WithMany()
                 .HasForeignKey(e => e.TruckId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(e => e.ExternalTransactionId).HasMaxLength(100);
+            builder.Property(e => e.PricePerUnit).HasPrecision(18, 4);
+
+            // Belt-and-suspenders idempotency for fuel-card imports (the staging table's
+            // unique index is the primary guard).
+            builder.HasIndex(e => new { e.FuelCardProvider, e.ExternalTransactionId })
+                .IsUnique()
+                .HasFilter("external_transaction_id IS NOT NULL");
         }
     }
 

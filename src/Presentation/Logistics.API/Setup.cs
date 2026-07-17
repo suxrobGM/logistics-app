@@ -17,6 +17,7 @@ using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Infrastructure.Documents;
 using Logistics.Infrastructure.Integrations.Accounting;
 using Logistics.Infrastructure.Integrations.Eld;
+using Logistics.Infrastructure.Integrations.FuelCards;
 using Logistics.Infrastructure.Integrations.LoadBoard;
 using Logistics.Application.Abstractions.Accounting;
 using Logistics.Infrastructure.Persistence.Data;
@@ -66,6 +67,7 @@ internal static class Setup
         services.AddEldIntegrations(configuration);
         services.AddLoadBoardIntegrations(configuration);
         services.AddAccountingIntegrations(configuration);
+        services.AddFuelCardIntegrations(configuration);
         services.AddPaymentsInfrastructure(configuration);
         services.AddTaxInfrastructure(configuration);
         services.AddRoutingInfrastructure(configuration);
@@ -254,6 +256,7 @@ internal static class Setup
         EldSyncJob.ScheduleJobs();
         LoadBoardSyncJob.ScheduleJobs();
         AccountingSyncJob.ScheduleJobs();
+        FuelCardSyncJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
         LicenseExpiryReminderJob.ScheduleJobs();
         InvitationExpiryJob.ScheduleJobs();

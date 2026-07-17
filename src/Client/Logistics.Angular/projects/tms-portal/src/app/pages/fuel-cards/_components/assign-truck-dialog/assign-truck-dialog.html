@@ -1,0 +1,61 @@
+<ui-dialog
+  header="Assign Transaction to Truck"
+  [(open)]="visible"
+  [modal]="true"
+  width="480px"
+  [draggable]="false"
+  (opened)="onShow()"
+>
+  @if (transaction(); as txn) {
+    <ui-surface variant="subtle" [border]="true" class="mb-4 block">
+      <ui-stack gap="1" class="p-3">
+        <ui-typography variant="body">
+          <span class="font-medium">{{ txn.merchantName || "Unknown merchant" }}</span>
+          @if (txn.merchantCity) {
+            <span class="text-muted-foreground">— {{ txn.merchantCity }}</span>
+          }
+        </ui-typography>
+        <ui-typography variant="body" color="secondary">
+          {{ txn.transactionDate | dateFormat: "shortDate" }} ·
+          {{ txn.amount.amount | currencyFormat }}
+          @if (txn.quantity) {
+            · {{ txn.quantity }} {{ txn.quantityUnit === "liters" ? "L" : "gal" }}
+          }
+          @if (txn.unitNumber) {
+            · Unit "{{ txn.unitNumber }}"
+          }
+        </ui-typography>
+      </ui-stack>
+    </ui-surface>
+  }
+
+  <form [formRoot]="form" #formEl>
+    <ui-form-field label="Truck" for="truckId" [required]="true">
+      <ui-select-field
+        id="truckId"
+        [formField]="form.truckId"
+        [options]="trucks()"
+        optionLabel="number"
+        optionValue="id"
+        [filter]="true"
+        placeholder="Select truck"
+      />
+    </ui-form-field>
+
+    <ui-form-field
+      for="rememberMapping"
+      hint="Future transactions on this card will match this truck automatically."
+    >
+      <ui-checkbox-field
+        id="rememberMapping"
+        [formField]="form.rememberMapping"
+        label="Remember this card's truck"
+      />
+    </ui-form-field>
+  </form>
+
+  <ng-template #footer>
+    <ui-button appearance="text" label="Cancel" (click)="close()" />
+    <ui-button label="Assign" icon="check" (click)="requestSubmit()" [loading]="saving()" />
+  </ng-template>
+</ui-dialog>

@@ -1,4 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
@@ -39,4 +40,25 @@ public class TruckExpense : Expense
     ///     Unit the <see cref="Quantity"/> is expressed in (Gallons / Liters).
     /// </summary>
     public VolumeUnit? QuantityUnit { get; set; }
+
+    /// <summary>
+    ///     Jurisdiction (country + state/province) where the purchase happened.
+    ///     Set by fuel-card sync or manual entry; feeds IFTA per-jurisdiction gallons.
+    /// </summary>
+    public TaxJurisdiction? PurchaseJurisdiction { get; set; }
+
+    /// <summary>
+    ///     Fuel card provider this expense was imported from, when auto-created by sync.
+    /// </summary>
+    public FuelCardProviderType? FuelCardProvider { get; set; }
+
+    /// <summary>
+    ///     Provider-side transaction ID for expenses imported from a fuel card (idempotency).
+    /// </summary>
+    public string? ExternalTransactionId { get; set; }
+
+    /// <summary>
+    ///     Unit price paid (per gallon/liter), when known.
+    /// </summary>
+    public decimal? PricePerUnit { get; set; }
 }

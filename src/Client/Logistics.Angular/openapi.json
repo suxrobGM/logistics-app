@@ -5904,6 +5904,398 @@
         }
       }
     },
+    "/fuelcards/providers": {
+      "get": {
+        "tags": [
+          "FuelCards"
+        ],
+        "operationId": "GetFuelCardProviders",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FuelCardProviderConfigurationDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FuelCards"
+        ],
+        "operationId": "CreateFuelCardProvider",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFuelCardProviderConfigurationCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFuelCardProviderConfigurationCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFuelCardProviderConfigurationCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fuelcards/providers/{providerId}": {
+      "delete": {
+        "tags": [
+          "FuelCards"
+        ],
+        "operationId": "DeleteFuelCardProvider",
+        "parameters": [
+          {
+            "name": "providerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fuelcards/sync": {
+      "post": {
+        "tags": [
+          "FuelCards"
+        ],
+        "operationId": "SyncFuelCardTransactions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncFuelCardTransactionsCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncFuelCardTransactionsCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncFuelCardTransactionsCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FuelCardSyncResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fuelcards/transactions": {
+      "get": {
+        "tags": [
+          "FuelCards"
+        ],
+        "operationId": "GetFuelCardTransactions",
+        "parameters": [
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/FuelCardTransactionStatus"
+            }
+          },
+          {
+            "name": "ProviderType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/FuelCardProviderType"
+            }
+          },
+          {
+            "name": "TruckId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "FromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FuelCardTransactionDtoPagedResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fuelcards/transactions/{transactionId}/assign": {
+      "post": {
+        "tags": [
+          "FuelCards"
+        ],
+        "operationId": "AssignFuelCardTransactionTruck",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignFuelCardTransactionTruckCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignFuelCardTransactionTruckCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignFuelCardTransactionTruckCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fuelcards/transactions/{transactionId}/ignore": {
+      "post": {
+        "tags": [
+          "FuelCards"
+        ],
+        "operationId": "IgnoreFuelCardTransaction",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fuelcards/cards": {
+      "get": {
+        "tags": [
+          "FuelCards"
+        ],
+        "operationId": "GetFuelCards",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FuelCardDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fuelcards/cards/{fuelCardId}": {
+      "put": {
+        "tags": [
+          "FuelCards"
+        ],
+        "operationId": "UpdateFuelCardMapping",
+        "parameters": [
+          {
+            "name": "fuelCardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFuelCardMappingCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFuelCardMappingCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFuelCardMappingCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/impersonation": {
       "post": {
         "tags": [
@@ -15950,6 +16342,23 @@
         },
         "additionalProperties": false
       },
+      "AssignFuelCardTransactionTruckCommand": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "truckId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rememberMapping": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "AssignLoadRequest": {
         "type": "object",
         "properties": {
@@ -17521,6 +17930,30 @@
           },
           "salaryType": {
             "$ref": "#/components/schemas/SalaryType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateFuelCardProviderConfigurationCommand": {
+        "required": [
+          "apiKey"
+        ],
+        "type": "object",
+        "properties": {
+          "providerType": {
+            "$ref": "#/components/schemas/FuelCardProviderType"
+          },
+          "apiKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "apiSecret": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalAccountId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -20020,6 +20453,17 @@
           "quantityUnit": {
             "$ref": "#/components/schemas/VolumeUnit"
           },
+          "purchaseJurisdiction": {
+            "$ref": "#/components/schemas/TaxJurisdiction"
+          },
+          "fuelCardProvider": {
+            "$ref": "#/components/schemas/FuelCardProviderType"
+          },
+          "pricePerUnit": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "vendorAddress": {
             "type": "string",
             "nullable": true
@@ -20418,6 +20862,251 @@
           }
         },
         "additionalProperties": false
+      },
+      "FuelCardDto": {
+        "required": [
+          "externalCardId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "providerType": {
+            "$ref": "#/components/schemas/FuelCardProviderType"
+          },
+          "externalCardId": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "truckId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "truckNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FuelCardProviderConfigurationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "providerType": {
+            "$ref": "#/components/schemas/FuelCardProviderType"
+          },
+          "providerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isConnected": {
+            "type": "boolean"
+          },
+          "lastSyncedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "externalAccountId": {
+            "type": "string",
+            "nullable": true
+          },
+          "pendingTransactionsCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FuelCardProviderType": {
+        "enum": [
+          "wex",
+          "efs",
+          "comdata",
+          "demo"
+        ],
+        "type": "string"
+      },
+      "FuelCardSyncResultDto": {
+        "type": "object",
+        "properties": {
+          "imported": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "matched": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pending": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errors": {
+            "type": "object",
+            "properties": {
+              "wex": {
+                "type": "string"
+              },
+              "efs": {
+                "type": "string"
+              },
+              "comdata": {
+                "type": "string"
+              },
+              "demo": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FuelCardTransactionDto": {
+        "required": [
+          "amount",
+          "externalTransactionId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "providerType": {
+            "$ref": "#/components/schemas/FuelCardProviderType"
+          },
+          "externalTransactionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "quantityUnit": {
+            "$ref": "#/components/schemas/VolumeUnit"
+          },
+          "pricePerUnit": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "productCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "merchantName": {
+            "type": "string",
+            "nullable": true
+          },
+          "merchantCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "purchaseJurisdiction": {
+            "$ref": "#/components/schemas/TaxJurisdiction"
+          },
+          "cardNumberMasked": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "driverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/FuelCardTransactionStatus"
+          },
+          "truckId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "truckNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "expenseId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FuelCardTransactionDtoPagedResult": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSuccess": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FuelCardTransactionDto"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FuelCardTransactionStatus": {
+        "enum": [
+          "pending",
+          "matched",
+          "ignored"
+        ],
+        "type": "string"
       },
       "GeoPoint": {
         "type": "object",
@@ -24632,6 +25321,15 @@
         ],
         "type": "string"
       },
+      "SyncFuelCardTransactionsCommand": {
+        "type": "object",
+        "properties": {
+          "providerType": {
+            "$ref": "#/components/schemas/FuelCardProviderType"
+          }
+        },
+        "additionalProperties": false
+      },
       "TaxBehavior": {
         "enum": [
           "exclusive",
@@ -24639,6 +25337,23 @@
           "reverse_charge"
         ],
         "type": "string"
+      },
+      "TaxJurisdiction": {
+        "required": [
+          "countryCode"
+        ],
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "TaxJurisdictionDto": {
         "type": "object",
@@ -24817,7 +25532,8 @@
           "api_access",
           "telegram_bot",
           "mcp_server",
-          "accounting"
+          "accounting",
+          "fuel_cards"
         ],
         "type": "string"
       },
@@ -26272,6 +26988,21 @@
         },
         "additionalProperties": false
       },
+      "UpdateFuelCardMappingCommand": {
+        "type": "object",
+        "properties": {
+          "fuelCardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "truckId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateInvoiceCommand": {
         "type": "object",
         "properties": {
@@ -27183,6 +27914,9 @@
     },
     {
       "name": "Features"
+    },
+    {
+      "name": "FuelCards"
     },
     {
       "name": "Impersonation"

@@ -45,6 +45,7 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 - **Payroll & Timesheets** - Driver pay calculation and payroll invoices.
 - **Expense Tracking** - Categorized fleet expenses with reports.
 - **QuickBooks Sync** - Customers, invoices, payments, and expenses pushed to QuickBooks Online.
+- **Fuel Card Sync** - WEX/EFS transactions imported nightly as fuel expenses with gallons and purchase state; unmatched ones queue for review.
 - **ELD / HOS Compliance** - Samsara and Motive.
 - **Safety & DVIR** - Digital inspections, incident tracking, compliance records.
 - **Reports & Analytics** - 7 report types: driver, truck, revenue, customer, payroll, expense, operations.

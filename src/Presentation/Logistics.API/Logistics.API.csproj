@@ -36,6 +36,7 @@
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.AI\Logistics.Infrastructure.AI.csproj" />
     <ProjectReference Include="..\Logistics.McpServer\Logistics.McpServer.csproj" />
     <ProjectReference Include="..\Logistics.TelegramBot\Logistics.TelegramBot.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Integrations.FuelCards\Logistics.Infrastructure.Integrations.FuelCards.csproj" />
   </ItemGroup>
 
   <ItemGroup>

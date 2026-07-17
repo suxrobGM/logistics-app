@@ -51,6 +51,7 @@ export class Pricing {
         "Everything in Starter",
         "Load board integrations",
         "Broker credit checks",
+        "Fuel card sync (WEX, EFS)",
         "Payroll management",
         "Timesheets tracking",
         "Safety & compliance",

@@ -51,7 +51,10 @@ public static class ExpenseMapper
                 TruckCategory = truckExpense.Category,
                 OdometerReading = truckExpense.OdometerReading,
                 Quantity = truckExpense.Quantity,
-                QuantityUnit = truckExpense.QuantityUnit
+                QuantityUnit = truckExpense.QuantityUnit,
+                PurchaseJurisdiction = truckExpense.PurchaseJurisdiction,
+                FuelCardProvider = truckExpense.FuelCardProvider,
+                PricePerUnit = truckExpense.PricePerUnit
             },
             BodyShopExpense bodyShopExpense => new ExpenseDto
             {

@@ -1,6 +1,6 @@
 # Fuel Card Integrations (WEX / EFS / Comdata)
 
-- **Status**: Planned
+- **Status**: Done
 - **Priority**: P0 — one of the "4 must-have TMS integrations" (ELD ✓, fuel cards ✗, factoring ✗, accounting ✗)
 - **Effort**: M
 - **Category**: Table stakes
@@ -26,4 +26,4 @@ A fuel transaction made on a connected card appears as a truck expense with gall
 
 ## Notes
 
-_(add dated implementation notes here)_
+- **2026-07-16**: Shipped on `feat/fuel-integrations`. New `Infrastructure.Integrations.FuelCards/` project (WEX + EFS clients, deterministic Demo provider, factory) behind `IFuelCardProviderService`/`IFuelCardProviderFactory` ports. Transactions stage in `FuelCardTransaction` (unique (provider, external ID) = idempotency; RawPayloadJson kept for disputes), match by `FuelCard` mapping → unit-number auto-match (remembers the mapping) → Pending review queue. Matched transactions materialize as **Paid** `TruckExpense`s (Category=Fuel, gallons + `PurchaseJurisdiction` → feeds IFTA). Nightly `FuelCardSyncJob` (02:00 UTC, 3-day overlap window) + manual sync command. `TenantFeature.FuelCards` (Professional+), `Permission.FuelCard.View/Manage`. UI: `tms-portal/pages/fuel-cards/` (providers + review queue with assign/ignore). `FuelCardSeeder` seeds Demo provider + 90 days of transactions. Real WEX/EFS API contracts are best-effort pending partner sandbox access — Demo provider covers dev/demo; Comdata deferred.

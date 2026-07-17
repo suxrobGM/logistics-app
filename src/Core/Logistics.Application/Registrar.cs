@@ -44,6 +44,21 @@ public static class Registrar
         return services;
     }
 
+    /// <summary>
+    /// Registers fuel-card application services (<see cref="Modules.Integrations.FuelCards.Services.IFuelCardSyncService"/>).
+    /// Used by hosts like DbMigrator that seed fuel card demo data without pulling in the full
+    /// <see cref="AddApplicationLayer"/> stack.
+    /// </summary>
+    public static IServiceCollection AddApplicationFuelCardServices(this IServiceCollection services)
+    {
+        services.Scan(scan => scan
+            .FromAssemblies(typeof(Registrar).Assembly)
+            .AddClasses(c => c.InNamespaces("Logistics.Application.Modules.Integrations.FuelCards.Services"), publicOnly: false)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+        return services;
+    }
+
     private static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.Scan(scan => scan

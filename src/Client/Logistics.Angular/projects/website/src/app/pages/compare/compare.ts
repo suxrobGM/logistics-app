@@ -99,6 +99,13 @@ export class Compare {
           alvys: "✓",
           roseRocket: "✓",
         },
+        {
+          name: "Fuel card sync (WEX, EFS)",
+          us: "✓",
+          dataTruck: "✓",
+          alvys: "✓",
+          roseRocket: "-",
+        },
       ],
     },
     {

@@ -42,6 +42,9 @@ public record ExpenseDto
     public int? OdometerReading { get; init; }
     public decimal? Quantity { get; init; }
     public VolumeUnit? QuantityUnit { get; init; }
+    public TaxJurisdiction? PurchaseJurisdiction { get; init; }
+    public FuelCardProviderType? FuelCardProvider { get; init; }
+    public decimal? PricePerUnit { get; init; }
 
     // BodyShopExpense fields
     public string? VendorAddress { get; init; }

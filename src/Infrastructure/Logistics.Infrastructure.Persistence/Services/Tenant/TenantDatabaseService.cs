@@ -134,7 +134,12 @@ internal partial class TenantDatabaseService(
         {
             if (!role.Claims.Any(c => c.ClaimType == CustomClaimTypes.Permission && c.ClaimValue == permission))
             {
-                role.Claims.Add(new TenantRoleClaim(CustomClaimTypes.Permission, permission));
+                var claim = new TenantRoleClaim(CustomClaimTypes.Permission, permission);
+                role.Claims.Add(claim);
+                // Entity presets a client-generated Guid key, so a claim discovered only via the
+                // tracked collection is marked Modified (UPDATE on a non-existent row →
+                // DbUpdateConcurrencyException). Add() pins it as an insert.
+                context.Set<TenantRoleClaim>().Add(claim);
                 logger.LogInformation("Added permission '{Permission}' to tenant role '{Role}'", permission, role.Name);
             }
         }

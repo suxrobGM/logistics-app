@@ -122,4 +122,5 @@ export const FEATURE_DESCRIPTIONS: Record<TenantFeature, string> = {
   telegram_bot: "Telegram bot integration",
   mcp_server: "MCP server for third-party integrations",
   accounting: "Sync invoices, payments, and expenses to QuickBooks",
+  fuel_cards: "Import fuel card transactions (WEX, EFS) as truck expenses",
 };

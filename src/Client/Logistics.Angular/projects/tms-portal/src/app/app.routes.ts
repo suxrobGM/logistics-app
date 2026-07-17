@@ -132,7 +132,17 @@ export const appRoutes: Routes = [
     canActivate: [featureGuardFromData],
     data: {
       breadcrumb: "Load Board",
-      feature: "loadboard",
+      feature: "load_board",
+    },
+  },
+  {
+    path: "fuel-cards",
+    loadChildren: () =>
+      import("./pages/fuel-cards/fuel-cards.routes").then((m) => m.fuelCardsRoutes),
+    canActivate: [featureGuardFromData],
+    data: {
+      breadcrumb: "Fuel Cards",
+      feature: "fuel_cards",
     },
   },
   {

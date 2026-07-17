@@ -63,15 +63,16 @@ The dispatcher and manager web interface for managing all fleet operations.
 
 ### Financial
 
-| Feature                | Description                                                                                                                                                                                     |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Invoicing**          | Automated invoice generation for completed loads. Itemized charges with base rate, fuel surcharge, detention, accessorial fees, and more. Three invoice types: Load, Payroll, and Subscription. |
-| **Payment Processing** | Stripe integration for credit card and ACH payments. Shareable payment links with expiration. Supports partial payments with balance tracking.                                                  |
-| **Stripe Connect**     | Direct bank deposits for trucking companies via Stripe Connect destination charges. Express account onboarding for simplified setup.                                                            |
-| **Payroll Management** | Calculate driver pay by miles, percentage, or flat rate. Generate payroll invoices with PDF stubs. Track payment history per employee.                                                          |
-| **Timesheets**         | Track employee work hours and overtime. Link timesheets to payroll calculations for accurate compensation.                                                                                      |
-| **Expense Tracking**   | Record and categorize fleet expenses - fuel, tolls, repairs, insurance, and more. Monitor spending with breakdowns by category, truck, or time period.                                          |
-| **QuickBooks Sync**    | Push customers, invoices, payments, and expenses to QuickBooks Online automatically. OAuth connection with nightly background sync.                                                             |
+| Feature                | Description                                                                                                                                                                                                                |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Invoicing**          | Automated invoice generation for completed loads. Itemized charges with base rate, fuel surcharge, detention, accessorial fees, and more. Three invoice types: Load, Payroll, and Subscription.                            |
+| **Payment Processing** | Stripe integration for credit card and ACH payments. Shareable payment links with expiration. Supports partial payments with balance tracking.                                                                             |
+| **Stripe Connect**     | Direct bank deposits for trucking companies via Stripe Connect destination charges. Express account onboarding for simplified setup.                                                                                       |
+| **Payroll Management** | Calculate driver pay by miles, percentage, or flat rate. Generate payroll invoices with PDF stubs. Track payment history per employee.                                                                                     |
+| **Timesheets**         | Track employee work hours and overtime. Link timesheets to payroll calculations for accurate compensation.                                                                                                                 |
+| **Expense Tracking**   | Record and categorize fleet expenses - fuel, tolls, repairs, insurance, and more. Monitor spending with breakdowns by category, truck, or time period.                                                                     |
+| **QuickBooks Sync**    | Push customers, invoices, payments, and expenses to QuickBooks Online automatically. OAuth connection with nightly background sync.                                                                                        |
+| **Fuel Card Sync**     | Import WEX and EFS card transactions nightly as paid fuel expenses, matched to trucks by card or unit number with gallons, price, and purchase state. Unmatched transactions land in a review queue for manual assignment. |
 
 ### Compliance & Safety
 

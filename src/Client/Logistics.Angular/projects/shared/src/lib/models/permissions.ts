@@ -80,6 +80,10 @@ export const Permission = {
     Post: "Permission.LoadBoard.Post",
     Manage: "Permission.LoadBoard.Manage",
   },
+  FuelCard: {
+    View: "Permission.FuelCard.View",
+    Manage: "Permission.FuelCard.Manage",
+  },
   Dispatch: {
     View: "Permission.Dispatch.View",
     Manage: "Permission.Dispatch.Manage",
