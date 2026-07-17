@@ -14,6 +14,7 @@
     <PackageReference Include="Hangfire.PostgreSql" Version="1.20.13" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.22" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.2" />
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.1.0" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.15.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
@@ -34,6 +35,7 @@
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Routing\Logistics.Infrastructure.Routing.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Storage\Logistics.Infrastructure.Storage.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.AI\Logistics.Infrastructure.AI.csproj" />
+    <ProjectReference Include="..\Logistics.HostDefaults\Logistics.HostDefaults.csproj" />
     <ProjectReference Include="..\Logistics.McpServer\Logistics.McpServer.csproj" />
     <ProjectReference Include="..\Logistics.TelegramBot\Logistics.TelegramBot.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Integrations.FuelCards\Logistics.Infrastructure.Integrations.FuelCards.csproj" />

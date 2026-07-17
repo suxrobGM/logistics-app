@@ -43,6 +43,7 @@
   </Folder>
   <Folder Name="/Presentation/">
     <Project Path="src/Presentation/Logistics.API/Logistics.API.csproj" />
+    <Project Path="src/Presentation/Logistics.HostDefaults/Logistics.HostDefaults.csproj" />
     <Project Path="src/Presentation/Logistics.IdentityServer/Logistics.IdentityServer.csproj" />
     <Project Path="src/Presentation/Logistics.DbMigrator/Logistics.DbMigrator.csproj" />
     <Project Path="src/Presentation/Logistics.McpServer/Logistics.McpServer.csproj" />

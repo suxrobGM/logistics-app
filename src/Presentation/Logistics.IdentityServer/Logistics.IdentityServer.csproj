@@ -14,9 +14,11 @@
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.1.0"/>
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.2"/>
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.2"/>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Logistics.HostDefaults\Logistics.HostDefaults.csproj"/>
     <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj"/>
     <ProjectReference Include="..\..\Core\Logistics.Application.Abstractions\Logistics.Application.Abstractions.csproj"/>
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Communications\Logistics.Infrastructure.Communications.csproj"/>

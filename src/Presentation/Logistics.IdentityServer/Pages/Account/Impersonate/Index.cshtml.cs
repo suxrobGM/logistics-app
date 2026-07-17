@@ -12,7 +12,7 @@ namespace Logistics.IdentityServer.Pages.Account.Impersonate;
 
 [SecurityHeaders]
 [AllowAnonymous]
-[EnableRateLimiting("impersonate")]
+[EnableRateLimiting("impersonation")]
 public class Index(
     IMasterUnitOfWork masterUow,
     SignInManager<User> signInManager,

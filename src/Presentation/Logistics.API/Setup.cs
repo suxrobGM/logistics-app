@@ -20,9 +20,9 @@ using Logistics.Infrastructure.Integrations.Eld;
 using Logistics.Infrastructure.Integrations.FuelCards;
 using Logistics.Infrastructure.Integrations.LoadBoard;
 using Logistics.Application.Abstractions.Accounting;
+using Logistics.HostDefaults;
 using Logistics.Infrastructure.Persistence.Data;
 using Logistics.Infrastructure.Persistence.Services.Accounting;
-using Microsoft.AspNetCore.DataProtection;
 using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Builder;
@@ -83,9 +83,10 @@ internal static class Setup
 
         // Backs secret-column encryption and the OAuth state protector. Stable app name + master-DB
         // key ring so ciphertext survives restarts and works across API instances.
-        services.AddDataProtection()
-            .PersistKeysToDbContext<MasterDbContext>()
-            .SetApplicationName("LogisticsX");
+        services.AddLogisticsDataProtection<MasterDbContext>("LogisticsX");
+
+        // Real health probe: master DB connectivity (composes with AddHealthChecks() in LogisticsHost).
+        services.AddHealthChecks().AddDbContextCheck<MasterDbContext>("master-db");
 
         // Registered here (not the shared persistence builder) since it needs Data Protection —
         // keeps hosts without it, e.g. the DB migrator, constructible.
@@ -114,16 +115,7 @@ internal static class Setup
                     }));
 
             // Strict rate limit for impersonation endpoint
-            options.AddPolicy("impersonation", context =>
-                RateLimitPartition.GetFixedWindowLimiter(
-                    partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                    factory: _ => new FixedWindowRateLimiterOptions
-                    {
-                        AutoReplenishment = true,
-                        PermitLimit = 5,
-                        Window = TimeSpan.FromMinutes(15),
-                        QueueLimit = 0
-                    }));
+            options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
 
             options.OnRejected = async (context, cancellationToken) =>
             {
@@ -193,22 +185,7 @@ internal static class Setup
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
 
-        services.AddCors(options =>
-        {
-            options.AddPolicy("DefaultCors", cors =>
-            {
-                cors.SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .WithOrigins("https://logisticsx.app", "https://*.logisticsx.app")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-            options.AddPolicy("AnyCors", cors =>
-            {
-                cors.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
+        services.AddLogisticsCors("https://logisticsx.app", "https://*.logisticsx.app");
         return builder.Build();
     }
 
@@ -225,14 +202,17 @@ internal static class Setup
         }
 
         app.UseHttpsRedirection();
-        app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
+        app.UseLogisticsCors();
 
         app.UseLocalStorageStaticFiles();
 
         app.UseAuthentication();
         app.UseRateLimiter();
         app.UseAuthorization();
-        app.UseHangfireDashboard();
+        app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            Authorization = [new HangfireDashboardAuthorizationFilter(app.Environment.IsDevelopment())]
+        });
 
         app.MapControllers();
 

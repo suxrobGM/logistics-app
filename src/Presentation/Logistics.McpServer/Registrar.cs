@@ -13,19 +13,25 @@ public static class Registrar
 {
     public static IServiceCollection AddMcpServerInfrastructure(this IServiceCollection services)
     {
-        // Build MCP tools dynamically from the dispatch tool registry (single source of truth)
-        var registry = services.BuildServiceProvider().GetRequiredService<IAiDispatchToolRegistry>();
-        var mcpTools = registry.GetToolDefinitions(includeLoadBoardTools: true)
-            .Select(def => (McpServerTool)new AiDispatchMcpTool(def))
-            .ToList();
-
-        // MCP server with Streamable HTTP transport and server instructions
+        // MCP server with Streamable HTTP transport.
         services.AddMcpServer()
-            .WithHttpTransport()
-            .WithTools(mcpTools);
+            .WithHttpTransport();
 
-        services.Configure<McpServerOptions>(options =>
-            options.ServerInstructions = McpServerInstructions.Text);
+        // Build the server instructions and MCP tools from the dispatch tool registry (single source
+        // of truth) at options-build time. Deferred here so registration never builds an interim
+        // service provider; IAiDispatchToolRegistry is a singleton, resolvable when options build,
+        // which also removes any ordering dependency on AddAIInfrastructure.
+        services.AddOptions<McpServerOptions>()
+            .Configure<IAiDispatchToolRegistry>((options, registry) =>
+            {
+                options.ServerInstructions = McpServerInstructions.Text;
+
+                options.ToolCollection ??= new McpServerPrimitiveCollection<McpServerTool>();
+                foreach (var definition in registry.GetToolDefinitions(includeLoadBoardTools: true))
+                {
+                    options.ToolCollection.Add(new AiDispatchMcpTool(definition));
+                }
+            });
 
         // API key authentication scheme
         services.AddAuthentication()

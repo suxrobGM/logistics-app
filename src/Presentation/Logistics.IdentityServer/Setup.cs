@@ -3,13 +3,13 @@ using Duende.IdentityServer;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
+using Logistics.HostDefaults;
 using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure.Communications;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
@@ -52,8 +52,12 @@ internal static class Setup
         services.AddRazorPages();
         AddAuthSchemes(services);
 
-        services.AddDataProtection()
-            .PersistKeysToDbContext<MasterDbContext>();
+        // Explicit app name (previously unset). This invalidates cookies protected before this
+        // change — a one-time forced re-login; there are no persisted grants to lose.
+        services.AddLogisticsDataProtection<MasterDbContext>("LogisticsX.IdentityServer");
+
+        // Real health probe: master DB connectivity (composes with AddHealthChecks() in LogisticsHost).
+        services.AddHealthChecks().AddDbContextCheck<MasterDbContext>("master-db");
 
         services.AddIdentityServer(options =>
             {
@@ -79,23 +83,7 @@ internal static class Setup
                 options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
             });
 
-        services.AddCors(options =>
-        {
-            options.AddPolicy("DefaultCors", cors =>
-            {
-                cors.SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .WithOrigins("https://*.logisticsx.app")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-
-            options.AddPolicy("AnyCors", cors =>
-            {
-                cors.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
+        services.AddLogisticsCors("https://*.logisticsx.app");
 
         // Rate limiting configuration
         services.AddRateLimiter(options =>
@@ -114,16 +102,7 @@ internal static class Setup
                     }));
 
             // Rate limit for impersonation token validation
-            options.AddPolicy("impersonate", context =>
-                RateLimitPartition.GetFixedWindowLimiter(
-                    partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                    factory: _ => new FixedWindowRateLimiterOptions
-                    {
-                        AutoReplenishment = true,
-                        PermitLimit = 5,
-                        Window = TimeSpan.FromMinutes(15),
-                        QueueLimit = 0
-                    }));
+            options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
 
             options.OnRejected = async (context, _) =>
             {
@@ -155,7 +134,7 @@ internal static class Setup
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseRouting();
-        app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
+        app.UseLogisticsCors();
 
         app.UseRateLimiter();
         app.UseIdentityServer();
