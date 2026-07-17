@@ -1,4 +1,3 @@
-using Logistics.Infrastructure.Integrations.LoadBoard.Common;
 using Logistics.Infrastructure.Integrations.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

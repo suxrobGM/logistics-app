@@ -1,4 +1,5 @@
-﻿using Logistics.Infrastructure.Integrations.Eld.Providers;
+using Logistics.Infrastructure.Integrations.Common;
+using Logistics.Infrastructure.Integrations.Eld.Providers;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Motive;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
@@ -18,9 +19,6 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Configuration
-        services.Configure<EldOptions>(configuration.GetSection(EldOptions.SectionName));
-
         // ELD providers (with HttpClient for external APIs)
         services.AddHttpClient<SamsaraEldService>();
         services.AddHttpClient<MotiveEldService>();
@@ -29,8 +27,9 @@ public static class Registrar
         services.AddScoped<GeotabEldService>();
         services.AddScoped<DemoEldService>();
 
-        // Factory pattern for provider selection
-        services.AddScoped<IEldProviderFactory, EldProviderFactory>();
+        // Options binding + factory pattern for provider selection
+        services.AddProviderIntegration<EldOptions, IEldProviderFactory, EldProviderFactory>(
+            configuration, EldOptions.SectionName);
         return services;
     }
 }

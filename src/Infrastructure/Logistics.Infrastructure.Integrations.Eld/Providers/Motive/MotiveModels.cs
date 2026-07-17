@@ -1,6 +1,6 @@
 namespace Logistics.Infrastructure.Integrations.Eld.Providers.Motive;
 
-// Motive wire format is snake_case — see EldJsonOptions.SnakeCase. No [JsonPropertyName] needed.
+// Motive wire format is snake_case — see IntegrationJsonOptions.SnakeCase. No [JsonPropertyName] needed.
 
 internal record MotiveHosResponse
 {

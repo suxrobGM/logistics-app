@@ -1,7 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
-using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -88,7 +87,7 @@ internal class TtEldService(
             $"{baseUrl}/api/externalservice/trackings/{usdot}/{externalDriverId}/?from={fromStr}&to={toStr}",
             logger,
             $"TT ELD tracking for vehicle {externalDriverId}",
-            EldJsonOptions.CamelCase);
+            IntegrationJsonOptions.CamelCase);
         return result?.Select(p => TtEldMapper.MapToLogDto(p, externalDriverId)) ?? [];
     }
 
@@ -131,7 +130,7 @@ internal class TtEldService(
             $"{baseUrl}/api/v2/units-by-usdot/{usdot}",
             logger,
             "TT ELD vehicle locations",
-            EldJsonOptions.CamelCase,
+            IntegrationJsonOptions.CamelCase,
             ct);
         return result?.Units?.Select(TtEldMapper.MapToLocationDto) ?? [];
     }
@@ -155,7 +154,7 @@ internal class TtEldService(
                 urlForPage(page),
                 logger,
                 $"{action} page {page}",
-                EldJsonOptions.CamelCase);
+                IntegrationJsonOptions.CamelCase);
             if (result is null)
             {
                 break;

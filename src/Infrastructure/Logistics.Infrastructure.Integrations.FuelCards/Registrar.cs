@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.FuelCards;
+using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.FuelCards.Providers;
 using Logistics.Infrastructure.Integrations.FuelCards.Providers.Efs;
 using Logistics.Infrastructure.Integrations.FuelCards.Providers.Wex;
@@ -16,16 +17,14 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Configuration
-        services.Configure<FuelCardsOptions>(configuration.GetSection(FuelCardsOptions.SectionName));
-
         // Fuel card providers (with HttpClient for external APIs)
         services.AddHttpClient<WexFuelCardService>();
         services.AddHttpClient<EfsFuelCardService>();
         services.AddScoped<DemoFuelCardService>();
 
-        // Factory pattern for provider selection
-        services.AddScoped<IFuelCardProviderFactory, FuelCardProviderFactory>();
+        // Options binding + factory pattern for provider selection
+        services.AddProviderIntegration<FuelCardsOptions, IFuelCardProviderFactory, FuelCardProviderFactory>(
+            configuration, FuelCardsOptions.SectionName);
 
         return services;
     }

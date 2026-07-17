@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Logistics.Application.Modules.Compliance.Eld.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
@@ -10,6 +12,7 @@ namespace Logistics.Application.Modules.Compliance.Eld.Commands;
 
 internal sealed class ProcessEldWebhookHandler(
     ITenantUnitOfWork tenantUow,
+    IMasterUnitOfWork masterUow,
     IEldProviderFactory eldProviderFactory,
     ILogger<ProcessEldWebhookHandler> logger)
     : IAppRequestHandler<ProcessEldWebhookCommand, Result>
@@ -40,6 +43,20 @@ internal sealed class ProcessEldWebhookHandler(
             return Result.Fail(webhookResult.ErrorMessage ?? "Invalid webhook");
         }
 
+        // Idempotency (master DB): providers retry deliveries. Prefer a provider-supplied event id;
+        // otherwise fall back to a hash of the raw body so a re-sent payload maps to the same key.
+        var provider = req.ProviderType.ToString();
+        var eventKey = webhookResult.ExternalEventId
+                       ?? Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(req.RequestBodyJson)));
+
+        var alreadyProcessed = await masterUow.Repository<ProcessedWebhookEvent>()
+            .GetAsync(e => e.Provider == provider && e.EventKey == eventKey, ct);
+        if (alreadyProcessed is not null)
+        {
+            logger.LogInformation("Duplicate {Provider} webhook '{EventKey}' ignored", provider, eventKey);
+            return Result.Ok();
+        }
+
         // Handle different webhook event types
         switch (webhookResult.EventType)
         {
@@ -61,6 +78,12 @@ internal sealed class ProcessEldWebhookHandler(
         }
 
         await tenantUow.SaveChangesAsync(ct);
+
+        // Record the event so provider retries of the same delivery become no-ops.
+        await masterUow.Repository<ProcessedWebhookEvent>()
+            .AddAsync(new ProcessedWebhookEvent { Provider = provider, EventKey = eventKey }, ct);
+        await masterUow.SaveChangesAsync(ct);
+
         return Result.Ok();
     }
 

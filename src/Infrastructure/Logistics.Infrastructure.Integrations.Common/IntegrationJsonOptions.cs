@@ -1,13 +1,13 @@
 using System.Text.Json;
 
-namespace Logistics.Infrastructure.Integrations.Eld.Common;
+namespace Logistics.Infrastructure.Integrations.Common;
 
 /// <summary>
-/// Shared <see cref="JsonSerializerOptions"/> instances for ELD provider APIs. Each provider
-/// has a consistent JSON casing convention; using a naming policy avoids decorating every
-/// model property with <c>[JsonPropertyName]</c>.
+/// Shared <see cref="JsonSerializerOptions"/> instances for third-party integration provider APIs.
+/// Each provider has a consistent JSON casing convention; using a naming policy avoids decorating
+/// every model property with <c>[JsonPropertyName]</c>.
 /// </summary>
-internal static class EldJsonOptions
+public static class IntegrationJsonOptions
 {
     /// <summary>
     /// camelCase wire format. Used by Samsara, Geotab, and most TT ELD endpoints.

@@ -1,6 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
-using Logistics.Infrastructure.Integrations.Eld.Common;
+using Logistics.Infrastructure.Integrations.Common;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
@@ -68,7 +68,7 @@ internal class GeotabClient(HttpClient httpClient, ILogger<GeotabClient> logger)
 
         try
         {
-            var response = await httpClient.PostAsJsonAsync($"{baseUrl}/apiv1", request, EldJsonOptions.CamelCase, ct);
+            var response = await httpClient.PostAsJsonAsync($"{baseUrl}/apiv1", request, IntegrationJsonOptions.CamelCase, ct);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -76,7 +76,7 @@ internal class GeotabClient(HttpClient httpClient, ILogger<GeotabClient> logger)
                 return default;
             }
 
-            var rpc = await response.Content.ReadFromJsonAsync<GeotabRpcResponse<T>>(EldJsonOptions.CamelCase, ct);
+            var rpc = await response.Content.ReadFromJsonAsync<GeotabRpcResponse<T>>(IntegrationJsonOptions.CamelCase, ct);
             if (rpc?.Error is not null)
             {
                 logger.LogWarning("Geotab {Method} error: {Name} - {Message}", method, rpc.Error.Name, rpc.Error.Message);
@@ -94,11 +94,11 @@ internal class GeotabClient(HttpClient httpClient, ILogger<GeotabClient> logger)
 
     private object MergeWithCredentials(object @params)
     {
-        var paramsJson = JsonSerializer.SerializeToElement(@params, EldJsonOptions.CamelCase);
+        var paramsJson = JsonSerializer.SerializeToElement(@params, IntegrationJsonOptions.CamelCase);
         var dict = new Dictionary<string, object?>();
         foreach (var prop in paramsJson.EnumerateObject())
         {
-            dict[prop.Name] = JsonSerializer.Deserialize<object?>(prop.Value.GetRawText(), EldJsonOptions.CamelCase);
+            dict[prop.Name] = JsonSerializer.Deserialize<object?>(prop.Value.GetRawText(), IntegrationJsonOptions.CamelCase);
         }
         dict["credentials"] = credentials;
         return dict;

@@ -2,7 +2,7 @@ using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.Integrations.Eld.Common;
+using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -142,7 +142,7 @@ internal class GeotabEldService(
 
         try
         {
-            var webhook = JsonSerializer.Deserialize<GeotabWebhookPayload>(payload, EldJsonOptions.CamelCase);
+            var webhook = JsonSerializer.Deserialize<GeotabWebhookPayload>(payload, IntegrationJsonOptions.CamelCase);
             if (webhook is null)
             {
                 return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));

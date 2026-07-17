@@ -2,7 +2,7 @@ namespace Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 
 /// <summary>
 /// MyGeotab API uses a JSON-RPC-style envelope: POST /apiv1 with { method, params }.
-/// All wire fields are camelCase — no [JsonPropertyName] needed (see EldJsonOptions.CamelCase).
+/// All wire fields are camelCase — no [JsonPropertyName] needed (see IntegrationJsonOptions.CamelCase).
 /// See https://geotab.github.io/sdk/software/api/reference/.
 /// </summary>
 internal record GeotabRpcRequest(string Method, object Params);

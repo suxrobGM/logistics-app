@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.Integrations.LoadBoard.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,6 +18,7 @@ namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Truckstop;
 /// </summary>
 internal class TruckstopLoadBoardService(
     HttpClient httpClient,
+    IHttpClientFactory httpClientFactory,
     IOptions<LoadBoardOptions> options,
     ILogger<TruckstopLoadBoardService> logger)
     : ILoadBoardProviderService
@@ -64,7 +64,7 @@ internal class TruckstopLoadBoardService(
     {
         try
         {
-            using var authClient = new HttpClient();
+            var authClient = httpClientFactory.CreateClient();
             var tokenRequest = new Dictionary<string, string>
             {
                 ["grant_type"] = "refresh_token", ["refresh_token"] = refreshToken
@@ -248,6 +248,24 @@ internal class TruckstopLoadBoardService(
     public Task<LoadBoardWebhookResultDto> ProcessWebhookAsync(string payload, string? signature,
         string? webhookSecret)
     {
+        if (!string.IsNullOrEmpty(webhookSecret))
+        {
+            if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+            {
+                logger.LogWarning("Rejected Truckstop webhook with invalid signature");
+                return Task.FromResult(new LoadBoardWebhookResultDto
+                {
+                    IsValid = false,
+                    EventType = LoadBoardWebhookEventType.Unknown,
+                    ErrorMessage = "Invalid webhook signature"
+                });
+            }
+        }
+        else
+        {
+            logger.LogWarning("Truckstop webhook processed without signature verification - no webhook secret configured");
+        }
+
         try
         {
             var webhook = JsonSerializer.Deserialize<TruckstopWebhookPayload>(payload);
@@ -270,7 +288,7 @@ internal class TruckstopLoadBoardService(
 
     private async Task<TruckstopTokenResponse?> GetTokenAsync(string username, string? password)
     {
-        using var authClient = new HttpClient();
+        var authClient = httpClientFactory.CreateClient();
         var tokenRequest = new Dictionary<string, string>
         {
             ["grant_type"] = "password", ["username"] = username, ["password"] = password ?? string.Empty

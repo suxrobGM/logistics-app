@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using Logistics.Infrastructure.Integrations.Eld.Common;
+using Logistics.Infrastructure.Integrations.Common;
 using Xunit;
 
 namespace Logistics.Application.Tests.Eld;

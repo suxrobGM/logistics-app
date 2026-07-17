@@ -3,7 +3,6 @@ using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
-using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -61,7 +60,7 @@ internal class SamsaraEldService(
             $"{baseUrl}/fleet/hos/drivers/{externalDriverId}/clocks",
             logger,
             $"Samsara HOS clocks for driver {externalDriverId}",
-            EldJsonOptions.CamelCase);
+            IntegrationJsonOptions.CamelCase);
         return result?.Data is null ? null : SamsaraMapper.MapToDto(externalDriverId, result.Data);
     }
 
@@ -71,7 +70,7 @@ internal class SamsaraEldService(
             $"{baseUrl}/fleet/hos/clocks",
             logger,
             "Samsara HOS clocks (all drivers)",
-            EldJsonOptions.CamelCase);
+            IntegrationJsonOptions.CamelCase);
         return result?.Data?.Select(d => SamsaraMapper.MapToDto(d.Driver?.Id ?? "", d)) ?? [];
     }
 
@@ -87,7 +86,7 @@ internal class SamsaraEldService(
             $"{baseUrl}/fleet/hos/logs?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
             logger,
             $"Samsara HOS logs for driver {externalDriverId}",
-            EldJsonOptions.CamelCase);
+            IntegrationJsonOptions.CamelCase);
         return result?.Data?.Select(SamsaraMapper.MapToLogDto) ?? [];
     }
 
@@ -103,7 +102,7 @@ internal class SamsaraEldService(
             $"{baseUrl}/fleet/hos/violations?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
             logger,
             $"Samsara violations for driver {externalDriverId}",
-            EldJsonOptions.CamelCase);
+            IntegrationJsonOptions.CamelCase);
         return result?.Data?.Select(v => SamsaraMapper.MapToViolationDto(externalDriverId, v)) ?? [];
     }
 
@@ -113,7 +112,7 @@ internal class SamsaraEldService(
             $"{baseUrl}/fleet/drivers",
             logger,
             "Samsara drivers list",
-            EldJsonOptions.CamelCase);
+            IntegrationJsonOptions.CamelCase);
         return result?.Data?.Select(SamsaraMapper.MapToDriverDto) ?? [];
     }
 
@@ -123,15 +122,28 @@ internal class SamsaraEldService(
             $"{baseUrl}/fleet/vehicles",
             logger,
             "Samsara vehicles list",
-            EldJsonOptions.CamelCase);
+            IntegrationJsonOptions.CamelCase);
         return result?.Data?.Select(SamsaraMapper.MapToVehicleDto) ?? [];
     }
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
     {
+        if (!string.IsNullOrEmpty(webhookSecret))
+        {
+            if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+            {
+                logger.LogWarning("Rejected Samsara webhook with invalid signature");
+                return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
+            }
+        }
+        else
+        {
+            logger.LogWarning("Samsara webhook processed without signature verification - no webhook secret configured");
+        }
+
         try
         {
-            var webhook = JsonSerializer.Deserialize<SamsaraWebhookPayload>(payload, EldJsonOptions.CamelCase);
+            var webhook = JsonSerializer.Deserialize<SamsaraWebhookPayload>(payload, IntegrationJsonOptions.CamelCase);
             if (webhook is null)
             {
                 return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));

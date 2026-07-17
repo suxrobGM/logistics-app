@@ -1,47 +1,38 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Truckstop;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard;
 
-internal class LoadBoardProviderFactory(
+internal sealed class LoadBoardProviderFactory(
     IServiceProvider serviceProvider,
     ILogger<LoadBoardProviderFactory> logger)
-    : ILoadBoardProviderFactory
+    : ProviderFactoryBase<ILoadBoardProviderService, LoadBoardProviderType>(serviceProvider, logger),
+        ILoadBoardProviderFactory
 {
-    public ILoadBoardProviderService GetProvider(LoadBoardProviderType providerType)
-    {
-        ILoadBoardProviderService service = providerType switch
-        {
-            LoadBoardProviderType.Dat => serviceProvider.GetRequiredService<DatLoadBoardService>(),
-            LoadBoardProviderType.Truckstop => serviceProvider.GetRequiredService<TruckstopLoadBoardService>(),
-            LoadBoardProviderType.OneTwo3Loadboard => serviceProvider.GetRequiredService<OneTwo3LoadBoardService>(),
-            LoadBoardProviderType.Demo => serviceProvider.GetRequiredService<DemoLoadBoardService>(),
-            _ => throw new NotSupportedException($"Load board provider '{providerType}' is not supported.")
-        };
+    protected override string FamilyName => "Load board";
 
-        logger.LogDebug("Created load board provider service for {ProviderType}", providerType);
-        return service;
-    }
+    protected override IReadOnlyDictionary<LoadBoardProviderType, Type> Providers => ProviderMap;
+
+    private static readonly IReadOnlyDictionary<LoadBoardProviderType, Type> ProviderMap =
+        new Dictionary<LoadBoardProviderType, Type>
+        {
+            [LoadBoardProviderType.Dat] = typeof(DatLoadBoardService),
+            [LoadBoardProviderType.Truckstop] = typeof(TruckstopLoadBoardService),
+            [LoadBoardProviderType.OneTwo3Loadboard] = typeof(OneTwo3LoadBoardService),
+            [LoadBoardProviderType.Demo] = typeof(DemoLoadBoardService)
+        };
 
     public ILoadBoardProviderService GetProvider(LoadBoardConfiguration configuration)
     {
         var service = GetProvider(configuration.ProviderType);
         service.Initialize(configuration);
         return service;
-    }
-
-    public bool IsProviderSupported(LoadBoardProviderType providerType)
-    {
-        return providerType is LoadBoardProviderType.Dat
-            or LoadBoardProviderType.Truckstop
-            or LoadBoardProviderType.OneTwo3Loadboard
-            or LoadBoardProviderType.Demo;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Logistics.Infrastructure.Integrations.LoadBoard.Credit;
+using Logistics.Infrastructure.Integrations.Common;
+using Logistics.Infrastructure.Integrations.LoadBoard.Credit;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
@@ -18,18 +19,15 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Configuration
-        services.Configure<LoadBoardOptions>(
-            configuration.GetSection(LoadBoardOptions.SectionName));
-
         // LoadBoard providers (with HttpClient for external APIs)
         services.AddHttpClient<DatLoadBoardService>();
         services.AddHttpClient<TruckstopLoadBoardService>();
         services.AddHttpClient<OneTwo3LoadBoardService>();
         services.AddScoped<DemoLoadBoardService>();
 
-        // Factory pattern for provider selection
-        services.AddScoped<ILoadBoardProviderFactory, LoadBoardProviderFactory>();
+        // Options binding + factory pattern for provider selection
+        services.AddProviderIntegration<LoadBoardOptions, ILoadBoardProviderFactory, LoadBoardProviderFactory>(
+            configuration, LoadBoardOptions.SectionName);
 
         // Broker credit check (cache -> demo/FMCSA authority fallback)
         services.Configure<FmcsaOptions>(configuration.GetSection(FmcsaOptions.SectionName));

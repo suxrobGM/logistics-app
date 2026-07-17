@@ -2,7 +2,6 @@ using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
-using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -58,7 +57,7 @@ internal class MotiveEldService(
             $"{baseUrl}/hours_of_service?driver_ids={externalDriverId}",
             logger,
             $"Motive HOS for driver {externalDriverId}",
-            EldJsonOptions.SnakeCase);
+            IntegrationJsonOptions.SnakeCase);
         var driverHos = result?.HoursOfService?.FirstOrDefault();
         return driverHos is null ? null : MotiveMapper.MapToDto(driverHos);
     }
@@ -69,7 +68,7 @@ internal class MotiveEldService(
             $"{baseUrl}/hours_of_service",
             logger,
             "Motive HOS (all drivers)",
-            EldJsonOptions.SnakeCase);
+            IntegrationJsonOptions.SnakeCase);
         return result?.HoursOfService?.Select(MotiveMapper.MapToDto) ?? [];
     }
 
@@ -85,7 +84,7 @@ internal class MotiveEldService(
             $"{baseUrl}/driver_logs?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
             logger,
             $"Motive HOS logs for driver {externalDriverId}",
-            EldJsonOptions.SnakeCase);
+            IntegrationJsonOptions.SnakeCase);
         return result?.DriverLogs?.SelectMany(dl =>
             dl.Events?.Select(e => MotiveMapper.MapToLogDto(externalDriverId, dl.LogDate, e)) ?? []) ?? [];
     }
@@ -102,7 +101,7 @@ internal class MotiveEldService(
             $"{baseUrl}/hos_violations?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
             logger,
             $"Motive violations for driver {externalDriverId}",
-            EldJsonOptions.SnakeCase);
+            IntegrationJsonOptions.SnakeCase);
         return result?.HosViolations?.Select(v => MotiveMapper.MapToViolationDto(externalDriverId, v)) ?? [];
     }
 
@@ -112,7 +111,7 @@ internal class MotiveEldService(
             $"{baseUrl}/users?role=driver",
             logger,
             "Motive users (drivers)",
-            EldJsonOptions.SnakeCase);
+            IntegrationJsonOptions.SnakeCase);
         return result?.Users?.Select(MotiveMapper.MapToDriverDto) ?? [];
     }
 
@@ -122,15 +121,28 @@ internal class MotiveEldService(
             $"{baseUrl}/vehicles",
             logger,
             "Motive vehicles",
-            EldJsonOptions.SnakeCase);
+            IntegrationJsonOptions.SnakeCase);
         return result?.Vehicles?.Select(MotiveMapper.MapToVehicleDto) ?? [];
     }
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
     {
+        if (!string.IsNullOrEmpty(webhookSecret))
+        {
+            if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+            {
+                logger.LogWarning("Rejected Motive webhook with invalid signature");
+                return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
+            }
+        }
+        else
+        {
+            logger.LogWarning("Motive webhook processed without signature verification - no webhook secret configured");
+        }
+
         try
         {
-            var webhook = JsonSerializer.Deserialize<MotiveWebhookPayload>(payload, EldJsonOptions.SnakeCase);
+            var webhook = JsonSerializer.Deserialize<MotiveWebhookPayload>(payload, IntegrationJsonOptions.SnakeCase);
             if (webhook is null)
             {
                 return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));

@@ -1,6 +1,6 @@
 namespace Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 
-// Samsara wire format is camelCase — see EldJsonOptions.CamelCase. No [JsonPropertyName] needed.
+// Samsara wire format is camelCase — see IntegrationJsonOptions.CamelCase. No [JsonPropertyName] needed.
 
 internal record SamsaraHosClockResponse(SamsaraHosClockData? Data);
 

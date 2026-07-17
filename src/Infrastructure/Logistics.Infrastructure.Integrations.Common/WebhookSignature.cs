@@ -1,13 +1,13 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Logistics.Infrastructure.Integrations.Eld.Common;
+namespace Logistics.Infrastructure.Integrations.Common;
 
 /// <summary>
 /// Helpers for verifying inbound webhook HMAC signatures with constant-time
 /// comparison (per the project security rules).
 /// </summary>
-internal static class WebhookSignature
+public static class WebhookSignature
 {
     /// <summary>
     /// Verifies that <paramref name="signatureHex"/> equals the lowercase hex

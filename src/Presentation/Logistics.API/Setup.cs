@@ -266,6 +266,7 @@ internal static class Setup
         DataDeletionJob.ScheduleJobs();
         DataRetentionJob.ScheduleJobs();
         DataExportExpiryJob.ScheduleJobs();
+        WebhookEventCleanupJob.ScheduleJobs();
 
         // Remove old stale dispatch agent job if it exists
         RecurringJob.RemoveIfExists("ai-dispatch");

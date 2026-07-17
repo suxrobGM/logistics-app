@@ -2,7 +2,6 @@ using System.Text.Json;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.Integrations.LoadBoard.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,6 +16,7 @@ namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 /// </summary>
 internal class OneTwo3LoadBoardService(
     HttpClient httpClient,
+    IHttpClientFactory httpClientFactory,
     IOptions<LoadBoardOptions> options,
     ILogger<OneTwo3LoadBoardService> logger)
     : ILoadBoardProviderService
@@ -48,7 +48,7 @@ internal class OneTwo3LoadBoardService(
     {
         try
         {
-            using var testClient = new HttpClient();
+            var testClient = httpClientFactory.CreateClient();
             testClient.BaseAddress = new Uri(options.BaseUrl);
             testClient.DefaultRequestHeaders.Add("X-API-Key", apiKey);
 
@@ -219,6 +219,24 @@ internal class OneTwo3LoadBoardService(
     public Task<LoadBoardWebhookResultDto> ProcessWebhookAsync(string payload, string? signature,
         string? webhookSecret)
     {
+        if (!string.IsNullOrEmpty(webhookSecret))
+        {
+            if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+            {
+                logger.LogWarning("Rejected 123Loadboard webhook with invalid signature");
+                return Task.FromResult(new LoadBoardWebhookResultDto
+                {
+                    IsValid = false,
+                    EventType = LoadBoardWebhookEventType.Unknown,
+                    ErrorMessage = "Invalid webhook signature"
+                });
+            }
+        }
+        else
+        {
+            logger.LogWarning("123Loadboard webhook processed without signature verification - no webhook secret configured");
+        }
+
         try
         {
             var webhook = JsonSerializer.Deserialize<OneTwo3WebhookPayload>(payload);

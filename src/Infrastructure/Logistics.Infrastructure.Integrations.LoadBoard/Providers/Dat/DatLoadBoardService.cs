@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.Integrations.LoadBoard.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,6 +19,7 @@ namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 /// </summary>
 internal class DatLoadBoardService(
     HttpClient httpClient,
+    IHttpClientFactory httpClientFactory,
     IOptions<LoadBoardOptions> options,
     ILogger<DatLoadBoardService> logger)
     : ILoadBoardProviderService
@@ -50,7 +50,7 @@ internal class DatLoadBoardService(
     {
         try
         {
-            using var authClient = new HttpClient();
+            var authClient = httpClientFactory.CreateClient();
             var response = await authClient.PostAsJsonAsync(options.AuthUrl, new { clientId = apiKey, clientSecret = apiSecret });
             if (response.IsSuccessStatusCode)
             {
@@ -219,6 +219,24 @@ internal class DatLoadBoardService(
     public Task<LoadBoardWebhookResultDto> ProcessWebhookAsync(string payload, string? signature,
         string? webhookSecret)
     {
+        if (!string.IsNullOrEmpty(webhookSecret))
+        {
+            if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+            {
+                logger.LogWarning("Rejected DAT webhook with invalid signature");
+                return Task.FromResult(new LoadBoardWebhookResultDto
+                {
+                    IsValid = false,
+                    EventType = LoadBoardWebhookEventType.Unknown,
+                    ErrorMessage = "Invalid webhook signature"
+                });
+            }
+        }
+        else
+        {
+            logger.LogWarning("DAT webhook processed without signature verification - no webhook secret configured");
+        }
+
         try
         {
             var webhook = JsonSerializer.Deserialize<DatWebhookPayload>(payload);

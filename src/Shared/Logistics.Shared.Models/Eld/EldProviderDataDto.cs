@@ -87,6 +87,12 @@ public record EldWebhookResultDto
     public object? Data { get; set; }
     public bool IsValid { get; set; }
     public string? ErrorMessage { get; set; }
+
+    /// <summary>
+    /// Provider-supplied unique event id, when the webhook payload carries one. Used by the
+    /// webhook handler for idempotency; when null the handler falls back to a hash of the body.
+    /// </summary>
+    public string? ExternalEventId { get; set; }
 }
 
 public enum EldWebhookEventType
