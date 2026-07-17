@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Queries;
 
-public class GetInvoiceByIdQuery : IQuery<Result<InvoiceDto>>
+public class GetInvoiceByIdQuery : IQuery<Result<InvoiceDto>>, IHaveId
 {
     public Guid Id { get; set; }
 }

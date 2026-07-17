@@ -1,23 +1,14 @@
-using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Customers.Commands;
 
 internal sealed class UpdateCustomerHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateCustomerCommand, Result>
+    : UpdateTenantEntityHandler<UpdateCustomerCommand, Customer>(tenantUow)
 {
-    public async Task<Result> Handle(UpdateCustomerCommand req, CancellationToken ct)
+    protected override void ApplyChanges(UpdateCustomerCommand req, Customer customerEntity)
     {
-        var customerEntity = await tenantUow.Repository<Customer>().GetByIdAsync(req.Id, ct);
-
-        if (customerEntity is null)
-        {
-            return Result.Fail($"Could not find a customer with ID '{req.Id}'");
-        }
-
         customerEntity.Name = PropertyUpdater.UpdateIfChanged(req.Name, customerEntity.Name);
         customerEntity.Email = PropertyUpdater.UpdateIfChanged(req.Email, customerEntity.Email);
         customerEntity.Phone = PropertyUpdater.UpdateIfChanged(req.Phone, customerEntity.Phone);
@@ -26,8 +17,5 @@ internal sealed class UpdateCustomerHandler(ITenantUnitOfWork tenantUow)
         customerEntity.Notes = PropertyUpdater.UpdateIfChanged(req.Notes, customerEntity.Notes);
         customerEntity.TaxId = PropertyUpdater.UpdateIfChanged(req.TaxId, customerEntity.TaxId);
         customerEntity.IsVatExempt = PropertyUpdater.UpdateIfChanged(req.IsVatExempt, customerEntity.IsVatExempt);
-        tenantUow.Repository<Customer>().Update(customerEntity);
-        await tenantUow.SaveChangesAsync(ct);
-        return Result.Ok();
     }
 }

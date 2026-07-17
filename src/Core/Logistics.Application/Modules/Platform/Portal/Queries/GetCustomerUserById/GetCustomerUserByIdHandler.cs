@@ -1,28 +1,12 @@
-using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Portal.Queries;
 
 internal sealed class GetCustomerUserByIdHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetCustomerUserByIdQuery, Result<CustomerUserDto>>
+    : GetTenantEntityByIdHandler<GetCustomerUserByIdQuery, CustomerUser, CustomerUserDto>(tenantUow)
 {
-    public async Task<Result<CustomerUserDto>> Handle(
-        GetCustomerUserByIdQuery req,
-        CancellationToken ct)
-    {
-        var customerUser = await tenantUow.Repository<CustomerUser>().Query()
-            .Where(cu => cu.Id == req.Id)
-            .FirstOrDefaultAsync(ct);
-
-        if (customerUser == null)
-        {
-            return Result<CustomerUserDto>.Fail("Customer user not found.");
-        }
-
-        return Result<CustomerUserDto>.Ok(customerUser.ToDto());
-    }
+    protected override CustomerUserDto MapToDto(CustomerUser entity) => entity.ToDto();
 }

@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Queries;
 
-public record GetDvirReportByIdQuery(Guid Id) : IQuery<Result<DvirReportDto>>;
+public record GetDvirReportByIdQuery(Guid Id) : IQuery<Result<DvirReportDto>>, IHaveId;

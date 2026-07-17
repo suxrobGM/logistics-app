@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 [RequiresFeature(TenantFeature.LoadBoard)]
-public class DeleteLoadBoardConfigurationCommand : ICommand
+public class DeleteLoadBoardConfigurationCommand : ICommand, IHaveId
 {
     public Guid Id { get; set; }
 }

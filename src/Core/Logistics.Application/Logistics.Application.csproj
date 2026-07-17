@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Using Include="Logistics.Application.Abstractions.Common" />
+    <Using Include="Logistics.Application.Handlers" />
   </ItemGroup>
 
   <ItemGroup>

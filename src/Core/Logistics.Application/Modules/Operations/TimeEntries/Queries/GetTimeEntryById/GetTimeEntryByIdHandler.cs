@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -7,16 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Operations.TimeEntries.Queries;
 
 internal sealed class GetTimeEntryByIdHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTimeEntryByIdQuery, Result<TimeEntryDto>>
+    : GetTenantEntityByIdHandler<GetTimeEntryByIdQuery, TimeEntry, TimeEntryDto>(tenantUow)
 {
-    public async Task<Result<TimeEntryDto>> Handle(GetTimeEntryByIdQuery req, CancellationToken ct)
-    {
-        var timeEntry = await tenantUow.Repository<TimeEntry>().GetByIdAsync(req.Id);
-        if (timeEntry is null)
-        {
-            return Result<TimeEntryDto>.Fail("Time entry not found");
-        }
-
-        return Result<TimeEntryDto>.Ok(timeEntry.ToDto());
-    }
+    protected override TimeEntryDto MapToDto(TimeEntry entity) => entity.ToDto();
 }
