@@ -6,7 +6,7 @@ namespace Logistics.Application.Modules.Platform.AiSettings.Commands;
 /// <summary>
 /// Sets the platform-wide AI dispatch model and per-plan weekly quotas. Admin only.
 /// </summary>
-public sealed class UpdateAiSettingsCommand : IMasterCommand
+public sealed class UpdateAiSettingsCommand : ICommand
 {
     /// <summary>The globally selected model id (must exist in the model catalog).</summary>
     public string Model { get; set; } = string.Empty;

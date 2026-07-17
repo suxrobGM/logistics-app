@@ -1,7 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.Services.Pdf.Invoice;
-using Logistics.Infrastructure.Services.Pdf.Shared;
+using Logistics.Infrastructure.Documents.Pdf.Invoice;
+using Logistics.Infrastructure.Documents.Pdf.Shared;
 using QuestPDF;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -9,7 +9,7 @@ using QuestPDF.Infrastructure;
 using Logistics.Application.Abstractions.Documents;
 using QuestDocument = QuestPDF.Fluent.Document;
 
-namespace Logistics.Infrastructure.Services.Pdf;
+namespace Logistics.Infrastructure.Documents.Pdf;
 
 public class InvoicePdfService : IInvoicePdfService
 {

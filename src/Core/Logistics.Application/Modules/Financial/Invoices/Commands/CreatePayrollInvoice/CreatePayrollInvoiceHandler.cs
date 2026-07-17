@@ -6,23 +6,15 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 
-internal sealed class CreatePayrollInvoiceHandler : IAppRequestHandler<CreatePayrollInvoiceCommand, Result>
+internal sealed class CreatePayrollInvoiceHandler(
+    ITenantUnitOfWork tenantUow,
+    IPayrollService payrollService)
+    : IAppRequestHandler<CreatePayrollInvoiceCommand, Result>
 {
-    private readonly IPayrollService _payrollService;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public CreatePayrollInvoiceHandler(
-        ITenantUnitOfWork tenantUow,
-        IPayrollService payrollService)
-    {
-        _tenantUow = tenantUow;
-        _payrollService = payrollService;
-    }
-
     public async Task<Result> Handle(
         CreatePayrollInvoiceCommand req, CancellationToken ct)
     {
-        var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.EmployeeId);
 
         if (employee is null)
         {
@@ -30,7 +22,7 @@ internal sealed class CreatePayrollInvoiceHandler : IAppRequestHandler<CreatePay
         }
 
         // Check for overlapping payroll periods
-        var overlappingPayroll = await _tenantUow.Repository<PayrollInvoice>()
+        var overlappingPayroll = await tenantUow.Repository<PayrollInvoice>()
             .GetAsync(p =>
                 p.EmployeeId == req.EmployeeId &&
                 p.PeriodStart < req.PeriodEnd &&
@@ -43,13 +35,13 @@ internal sealed class CreatePayrollInvoiceHandler : IAppRequestHandler<CreatePay
                 $"({overlappingPayroll.PeriodStart:d} - {overlappingPayroll.PeriodEnd:d})");
         }
 
-        var payroll = _payrollService.CreatePayrollInvoice(employee, req.PeriodStart, req.PeriodEnd);
-        await _tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
-        await _tenantUow.SaveChangesAsync();
+        var payroll = payrollService.CreatePayrollInvoice(employee, req.PeriodStart, req.PeriodEnd);
+        await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
+        await tenantUow.SaveChangesAsync();
 
         // Link time entries to the payroll (for hourly employees)
-        await _payrollService.LinkTimeEntriesToPayrollAsync(payroll);
-        await _tenantUow.SaveChangesAsync();
+        await payrollService.LinkTimeEntriesToPayrollAsync(payroll);
+        await tenantUow.SaveChangesAsync();
 
         return Result.Ok();
     }

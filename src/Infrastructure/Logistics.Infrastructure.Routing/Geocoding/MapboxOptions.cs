@@ -1,4 +1,4 @@
-﻿namespace Logistics.Infrastructure.Options;
+﻿namespace Logistics.Infrastructure.Routing.Geocoding;
 
 public sealed class MapboxOptions
 {

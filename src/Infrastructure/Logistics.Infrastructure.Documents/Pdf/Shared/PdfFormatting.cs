@@ -2,7 +2,7 @@ using System.Globalization;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
-namespace Logistics.Infrastructure.Services.Pdf.Shared;
+namespace Logistics.Infrastructure.Documents.Pdf.Shared;
 
 /// <summary>
 /// Display formatters reused across invoice and pay-stub PDFs. Currency is rendered as

@@ -7,27 +7,21 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
-internal sealed class GetDriverStatsHandler : IAppRequestHandler<GetDriverStatsQuery, Result<DriverStatsDto>>
+internal sealed class GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetDriverStatsQuery, Result<DriverStatsDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<DriverStatsDto>> Handle(
         GetDriverStatsQuery req, CancellationToken ct)
     {
         var driverStats = new DriverStatsDto();
-        var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+        var driver = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
         if (driver is null)
         {
             return Result<DriverStatsDto>.Fail($"Could not find driver with the user ID '{req.UserId}'");
         }
 
-        var assignedTruck = await _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == driver.Id
+        var assignedTruck = await tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == driver.Id
                                                                                || i.SecondaryDriverId == driver.Id);
 
         if (assignedTruck is null)
@@ -42,7 +36,7 @@ internal sealed class GetDriverStatsHandler : IAppRequestHandler<GetDriverStatsQ
         var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var lastMonthStart = startOfMonth.AddMonths(-1);
 
-        var loadsRepository = _tenantUow.Repository<Load>();
+        var loadsRepository = tenantUow.Repository<Load>();
         var thisWeekLoads = await loadsRepository.GetListAsync(
             new FilterLoadsByDeliveryDate(assignedTruck.Id, startOfWeek, now), ct);
         var lastWeekLoads = await loadsRepository.GetListAsync(

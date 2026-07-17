@@ -1,6 +1,6 @@
 using Logistics.Domain.Entities;
-using Logistics.Infrastructure.Services.Pdf.Payroll;
-using Logistics.Infrastructure.Services.Pdf.Shared;
+using Logistics.Infrastructure.Documents.Pdf.Payroll;
+using Logistics.Infrastructure.Documents.Pdf.Shared;
 using QuestPDF;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -8,7 +8,7 @@ using QuestPDF.Infrastructure;
 using Logistics.Application.Abstractions.Documents;
 using QuestDocument = QuestPDF.Fluent.Document;
 
-namespace Logistics.Infrastructure.Services.Pdf;
+namespace Logistics.Infrastructure.Documents.Pdf;
 
 public class PayrollPayStubService : IPayrollPayStubService
 {

@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions.Documents;
 using Logistics.Domain.Entities;
-using Logistics.Infrastructure.Services.Pdf.Shared;
+using Logistics.Infrastructure.Documents.Pdf.Shared;
 using Logistics.Shared.Models;
 using QuestPDF;
 using QuestPDF.Fluent;
@@ -8,7 +8,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using QuestDocument = QuestPDF.Fluent.Document;
 
-namespace Logistics.Infrastructure.Services.Pdf.Ifta;
+namespace Logistics.Infrastructure.Documents.Pdf.Ifta;
 
 public class IftaReportPdfService : IIftaReportPdfService
 {

@@ -6,15 +6,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Queries;
 
-internal sealed class GetTruckHandler : IAppRequestHandler<GetTruckQuery, Result<TruckDto>>
+internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetTruckQuery, Result<TruckDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetTruckHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<TruckDto>> Handle(
         GetTruckQuery req, CancellationToken ct)
     {
@@ -36,13 +30,13 @@ internal sealed class GetTruckHandler : IAppRequestHandler<GetTruckQuery, Result
             return null;
         }
 
-        var truck = await _tenantUow.Repository<Truck>().GetAsync(i => i.Id == truckOrDriverId);
+        var truck = await tenantUow.Repository<Truck>().GetAsync(i => i.Id == truckOrDriverId);
         return truck ?? await GetTruckFromDriver(truckOrDriverId.Value);
     }
 
     private Task<Truck?> GetTruckFromDriver(Guid userId)
     {
-        return _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == userId || i.SecondaryDriverId == userId);
+        return tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == userId || i.SecondaryDriverId == userId);
     }
 
     private static TruckDto ConvertToDto(Truck truckEntity, bool includeLoads, bool onlyActiveLoads)

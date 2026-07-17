@@ -3,7 +3,7 @@ using System.Text.Json;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
-namespace Logistics.Infrastructure.Services.PdfImport;
+namespace Logistics.Infrastructure.Documents.PdfImport;
 
 /// <summary>
 ///     Turns the LLM's JSON response into a validated <see cref="ExtractedLoadDataDto"/>.

@@ -3,7 +3,7 @@ using Logistics.Application.Abstractions.Documents;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Infrastructure.Services.PdfImport;
+namespace Logistics.Infrastructure.Documents.PdfImport;
 
 /// <summary>
 ///     Extracts load data from dispatch-sheet PDFs using an LLM. Pulls text with PdfPig and asks the

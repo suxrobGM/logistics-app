@@ -3,7 +3,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace Logistics.Infrastructure.Services.Pdf.Shared;
+namespace Logistics.Infrastructure.Documents.Pdf.Shared;
 
 internal static class PdfFooter
 {

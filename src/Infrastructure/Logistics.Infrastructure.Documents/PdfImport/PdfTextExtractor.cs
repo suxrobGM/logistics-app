@@ -1,7 +1,7 @@
 using System.Text;
 using UglyToad.PdfPig;
 
-namespace Logistics.Infrastructure.Services.PdfImport;
+namespace Logistics.Infrastructure.Documents.PdfImport;
 
 /// <summary>
 ///     Extracts the concatenated text of a PDF using PdfPig. Returns near-empty text for

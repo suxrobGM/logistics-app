@@ -9,7 +9,7 @@ using Logistics.Shared.Identity.Claims;
 using Microsoft.AspNetCore.Http;
 using Logistics.Application.Abstractions.Tenancy;
 
-namespace Logistics.Infrastructure.Services;
+namespace Logistics.Infrastructure.Persistence.Services;
 
 internal class CurrentTenantAccessor(
     IMasterUnitOfWork masterUow,

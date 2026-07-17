@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.Services.PdfImport;
+namespace Logistics.Infrastructure.Documents.PdfImport;
 
 /// <summary>
 ///     System prompt instructing the LLM to extract structured load data from a dispatch sheet.

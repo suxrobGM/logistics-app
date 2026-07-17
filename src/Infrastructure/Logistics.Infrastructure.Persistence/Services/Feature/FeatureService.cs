@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Features;
 
-namespace Logistics.Infrastructure.Services;
+namespace Logistics.Infrastructure.Persistence.Services.Feature;
 
 internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
 {

@@ -6,18 +6,12 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Commands;
 
-internal sealed class RejectExpenseHandler : IAppRequestHandler<RejectExpenseCommand, Result>
+internal sealed class RejectExpenseHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<RejectExpenseCommand, Result>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public RejectExpenseHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result> Handle(RejectExpenseCommand req, CancellationToken ct)
     {
-        var expense = await _tenantUow.Repository<Expense>().GetByIdAsync(req.Id);
+        var expense = await tenantUow.Repository<Expense>().GetByIdAsync(req.Id);
 
         if (expense is null)
         {
@@ -31,8 +25,8 @@ internal sealed class RejectExpenseHandler : IAppRequestHandler<RejectExpenseCom
 
         expense.Reject(req.ApproverId, req.Reason);
 
-        _tenantUow.Repository<Expense>().Update(expense);
-        await _tenantUow.SaveChangesAsync();
+        tenantUow.Repository<Expense>().Update(expense);
+        await tenantUow.SaveChangesAsync();
 
         return Result.Ok();
     }

@@ -2,7 +2,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using QuestPDF.Fluent;
 
-namespace Logistics.Infrastructure.Services.Pdf.Shared;
+namespace Logistics.Infrastructure.Documents.Pdf.Shared;
 
 /// <summary>
 /// Reusable QuestPDF cell-style helpers shared by all invoice/pay-stub PDFs.

@@ -4,7 +4,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace Logistics.Infrastructure.Services.Pdf.Shared;
+namespace Logistics.Infrastructure.Documents.Pdf.Shared;
 
 /// <summary>
 /// Renders the "Payment History" panel — a table of paid <see cref="Payment"/>s with date,

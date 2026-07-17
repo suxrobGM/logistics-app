@@ -1,7 +1,7 @@
 ﻿using Logistics.Application.Abstractions.Privacy;
 using Logistics.Infrastructure.Documents.Privacy;
-using Logistics.Infrastructure.Services.Pdf;
-using Logistics.Infrastructure.Services.PdfImport;
+using Logistics.Infrastructure.Documents.Pdf;
+using Logistics.Infrastructure.Documents.PdfImport;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Abstractions.Documents;
 
@@ -17,7 +17,7 @@ public static class Registrar
         // PDF generation
         services.AddScoped<IInvoicePdfService, InvoicePdfService>();
         services.AddScoped<IPayrollPayStubService, PayrollPayStubService>();
-        services.AddScoped<IIftaReportPdfService, Services.Pdf.Ifta.IftaReportPdfService>();
+        services.AddScoped<IIftaReportPdfService, Pdf.Ifta.IftaReportPdfService>();
 
         // PDF import (LLM-based extraction)
         services.AddScoped<IPdfDataExtractor, LlmPdfDataExtractor>();

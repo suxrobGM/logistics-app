@@ -5,19 +5,13 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 
-internal sealed class SetDriverDeviceTokenHandler : IAppRequestHandler<SetDriverDeviceTokenCommand, Result>
+internal sealed class SetDriverDeviceTokenHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<SetDriverDeviceTokenCommand, Result>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public SetDriverDeviceTokenHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result> Handle(
         SetDriverDeviceTokenCommand req, CancellationToken ct)
     {
-        var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
+        var driver = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
 
         if (driver is null)
         {
@@ -30,8 +24,8 @@ internal sealed class SetDriverDeviceTokenHandler : IAppRequestHandler<SetDriver
         }
 
         driver.DeviceToken = req.DeviceToken;
-        _tenantUow.Repository<Employee>().Update(driver);
-        await _tenantUow.SaveChangesAsync();
+        tenantUow.Repository<Employee>().Update(driver);
+        await tenantUow.SaveChangesAsync();
         return Result.Ok();
     }
 }

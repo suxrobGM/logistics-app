@@ -4,15 +4,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
-public class GetTruckStatsListHandler : IAppRequestHandler<GetTrucksStatsListQuery, PagedResult<TruckStatsDto>>
+public class GetTruckStatsListHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetTrucksStatsListQuery, PagedResult<TruckStatsDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetTruckStatsListHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<PagedResult<TruckStatsDto>> Handle(
         GetTrucksStatsListQuery req, CancellationToken ct)
     {
@@ -25,7 +19,7 @@ public class GetTruckStatsListHandler : IAppRequestHandler<GetTrucksStatsListQue
                 '{req.OrderBy}'
             );
         """;
-        var truckStatsDto = await _tenantUow.ExecuteRawSql<TruckStatsDto>(query);
+        var truckStatsDto = await tenantUow.ExecuteRawSql<TruckStatsDto>(query);
         var totalItems = truckStatsDto.FirstOrDefault()?.TotalItems ?? 0;
 
         return PagedResult<TruckStatsDto>.Ok(truckStatsDto, totalItems, req.PageSize);

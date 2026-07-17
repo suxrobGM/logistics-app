@@ -45,12 +45,6 @@ public interface IUnitOfWork<in TMarker> : IDisposable
     Task RollbackTransactionAsync(CancellationToken ct = default);
 
     /// <summary>
-    ///     Reverts tracked changes in the current DbContext without touching the database.
-    ///     Added entities are detached; modified/deleted entities revert to Unchanged.
-    /// </summary>
-    //void RollbackTrackedChanges();
-
-    /// <summary>
     ///     Executes a raw SQL command (non-query).
     /// </summary>
     Task ExecuteRawSql(string sql, CancellationToken ct = default);

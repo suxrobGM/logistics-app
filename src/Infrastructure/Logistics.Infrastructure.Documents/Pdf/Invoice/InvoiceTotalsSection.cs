@@ -1,11 +1,11 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.Services.Pdf.Shared;
+using Logistics.Infrastructure.Documents.Pdf.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace Logistics.Infrastructure.Services.Pdf.Invoice;
+namespace Logistics.Infrastructure.Documents.Pdf.Invoice;
 
 /// <summary>
 /// Right-aligned totals box: Subtotal / Tax / Total / Paid / Balance Due.

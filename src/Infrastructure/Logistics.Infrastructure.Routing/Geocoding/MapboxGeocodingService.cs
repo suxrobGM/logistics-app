@@ -4,7 +4,6 @@ using System.Web;
 using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Infrastructure.Options;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

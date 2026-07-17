@@ -6,21 +6,15 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Notifications.Queries;
 
-internal sealed class GetNotificationsHandler : IAppRequestHandler<GetNotificationsQuery, Result<NotificationDto[]>>
+internal sealed class GetNotificationsHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetNotificationsQuery, Result<NotificationDto[]>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetNotificationsHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<NotificationDto[]>> Handle(
         GetNotificationsQuery req,
         CancellationToken ct)
     {
         var notificationsList =
-            await _tenantUow.Repository<Notification>()
+            await tenantUow.Repository<Notification>()
                 .GetListAsync(i => i.CreatedDate >= req.StartDate && i.CreatedDate <= req.EndDate, ct);
 
         var notificationsDto = notificationsList

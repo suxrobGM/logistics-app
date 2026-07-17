@@ -7,14 +7,10 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Logistics.Infrastructure.Persistence.Interceptors;
 
-public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
+public class AuditableEntitySaveChangesInterceptor(IHttpContextAccessor? httpContextAccessor = null)
+    : SaveChangesInterceptor
 {
-    private readonly HttpContext? _httpContext;
-
-    public AuditableEntitySaveChangesInterceptor(IHttpContextAccessor? httpContextAccessor = null)
-    {
-        _httpContext = httpContextAccessor?.HttpContext;
-    }
+    private readonly HttpContext? httpContext = httpContextAccessor?.HttpContext;
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
@@ -41,13 +37,13 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
             if (entry.State is EntityState.Added)
             {
                 entry.Entity.CreatedAt = DateTime.UtcNow;
-                entry.Entity.CreatedBy = _httpContext.GetUserId();
+                entry.Entity.CreatedBy = httpContext.GetUserId();
             }
 
             if (entry.State is EntityState.Modified || entry.HasChangedOwnedEntities())
             {
                 entry.Entity.UpdatedAt = DateTime.UtcNow;
-                entry.Entity.UpdatedBy = _httpContext.GetUserId();
+                entry.Entity.UpdatedBy = httpContext.GetUserId();
             }
         }
     }

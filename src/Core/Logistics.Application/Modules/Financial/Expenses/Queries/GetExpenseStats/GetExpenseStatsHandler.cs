@@ -7,18 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Queries;
 
-internal sealed class GetExpenseStatsHandler : IAppRequestHandler<GetExpenseStatsQuery, Result<ExpenseStatsDto>>
+internal sealed class GetExpenseStatsHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetExpenseStatsQuery, Result<ExpenseStatsDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetExpenseStatsHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<ExpenseStatsDto>> Handle(GetExpenseStatsQuery req, CancellationToken ct)
     {
-        var query = _tenantUow.Repository<Expense>().Query();
+        var query = tenantUow.Repository<Expense>().Query();
 
         // Apply date filters
         if (req.FromDate.HasValue)
@@ -112,7 +106,7 @@ internal sealed class GetExpenseStatsHandler : IAppRequestHandler<GetExpenseStat
 
         foreach (var truckId in truckIds)
         {
-            var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(truckId);
+            var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckId);
             if (truck != null)
             {
                 var truckAmount = truckExpenses

@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2"/>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.2"/>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.5"/>
     <PackageReference Include="PdfPig" Version="0.1.13"/>
     <PackageReference Include="QuestPDF" Version="2025.12.3"/>
   </ItemGroup>

@@ -1,6 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Infrastructure.Services;
+using Logistics.Infrastructure.Persistence.Services.AiDispatch;
 using MockQueryable;
 using NSubstitute;
 using Xunit;

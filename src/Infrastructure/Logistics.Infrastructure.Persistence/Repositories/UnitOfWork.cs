@@ -102,9 +102,4 @@ internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
     /// <summary>Create a repository instance for the given entity/key types.</summary>
     protected abstract IRepository<TEntity, TKey> CreateRepository<TEntity, TKey>()
         where TEntity : class, IEntity<TKey>, TMarker;
-
-    // public void RollbackTrackedChanges()
-    // {
-    //     Db.ChangeTracker.Clear();
-    // }
 }

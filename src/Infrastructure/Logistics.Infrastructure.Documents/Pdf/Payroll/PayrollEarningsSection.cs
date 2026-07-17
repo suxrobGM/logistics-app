@@ -1,11 +1,11 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.Services.Pdf.Shared;
+using Logistics.Infrastructure.Documents.Pdf.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace Logistics.Infrastructure.Services.Pdf.Payroll;
+namespace Logistics.Infrastructure.Documents.Pdf.Payroll;
 
 /// <summary>
 /// Body of the pay stub: earnings table → gross row → optional deductions table →

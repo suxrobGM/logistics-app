@@ -6,22 +6,14 @@ using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class ConfirmLoadStatusHandler : IAppRequestHandler<ConfirmLoadStatusCommand, Result>
+internal sealed class ConfirmLoadStatusHandler(
+    ITenantUnitOfWork tenantUow,
+    INotificationService notificationService)
+    : IAppRequestHandler<ConfirmLoadStatusCommand, Result>
 {
-    private readonly INotificationService _notificationService;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public ConfirmLoadStatusHandler(
-        ITenantUnitOfWork tenantUow,
-        INotificationService notificationService)
-    {
-        _tenantUow = tenantUow;
-        _notificationService = notificationService;
-    }
-
     public async Task<Result> Handle(ConfirmLoadStatusCommand req, CancellationToken ct)
     {
-        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
+        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
 
         if (load is null)
         {
@@ -31,7 +23,7 @@ internal sealed class ConfirmLoadStatusHandler : IAppRequestHandler<ConfirmLoadS
         var loadStatus = req.LoadStatus!.Value;
         load.UpdateStatus(loadStatus, true);
 
-        var changes = await _tenantUow.SaveChangesAsync(ct);
+        var changes = await tenantUow.SaveChangesAsync(ct);
 
         if (changes > 0)
         {
@@ -46,6 +38,6 @@ internal sealed class ConfirmLoadStatusHandler : IAppRequestHandler<ConfirmLoadS
         const string title = "Load updates";
         var driverName = load.AssignedTruck?.MainDriver?.GetFullName();
         var message = $"Driver {driverName} confirmed the load #{load.Number} status to '{load.Status}'";
-        await _notificationService.SendNotificationAsync(title, message);
+        await notificationService.SendNotificationAsync(title, message);
     }
 }

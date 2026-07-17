@@ -4,7 +4,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace Logistics.Infrastructure.Services.Pdf.Ifta;
+namespace Logistics.Infrastructure.Documents.Pdf.Ifta;
 
 internal static class IftaHeaderSection
 {

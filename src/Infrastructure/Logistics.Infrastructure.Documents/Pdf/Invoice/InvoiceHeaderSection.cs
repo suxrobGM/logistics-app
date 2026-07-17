@@ -1,10 +1,10 @@
 using Logistics.Domain.Entities;
-using Logistics.Infrastructure.Services.Pdf.Shared;
+using Logistics.Infrastructure.Documents.Pdf.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace Logistics.Infrastructure.Services.Pdf.Invoice;
+namespace Logistics.Infrastructure.Documents.Pdf.Invoice;
 
 /// <summary>
 /// Top section of the load invoice: company letterhead, invoice number, bill-to,

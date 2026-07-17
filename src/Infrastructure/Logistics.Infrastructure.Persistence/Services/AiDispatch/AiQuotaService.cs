@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Abstractions.AiDispatch;
 
-namespace Logistics.Infrastructure.Services;
+namespace Logistics.Infrastructure.Persistence.Services.AiDispatch;
 
 internal sealed class AiQuotaService(
     IMasterUnitOfWork masterUow,

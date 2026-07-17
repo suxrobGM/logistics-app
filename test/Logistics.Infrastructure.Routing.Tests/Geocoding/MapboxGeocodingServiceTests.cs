@@ -7,7 +7,7 @@ using Logistics.Infrastructure.Routing.Geocoding;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using MapboxOptions = Logistics.Infrastructure.Options.MapboxOptions;
+using MapboxOptions = Logistics.Infrastructure.Routing.Geocoding.MapboxOptions;
 using MsOptions = Microsoft.Extensions.Options.Options;
 
 namespace Logistics.Infrastructure.Routing.Tests.Geocoding;

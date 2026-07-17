@@ -7,23 +7,14 @@ using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Queries;
 
-internal sealed class
-    DownloadDocumentHandler : IAppRequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
+internal sealed class DownloadDocumentHandler(
+    ITenantUnitOfWork tenantUow,
+    IBlobStorageService blobStorageService)
+    : IAppRequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
 {
-    private readonly IBlobStorageService _blobStorage;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public DownloadDocumentHandler(
-        ITenantUnitOfWork tenantUow,
-        IBlobStorageService blobStorageService)
-    {
-        _tenantUow = tenantUow;
-        _blobStorage = blobStorageService;
-    }
-
     public async Task<Result<DocumentDownloadDto>> Handle(DownloadDocumentQuery req, CancellationToken ct)
     {
-        var document = await _tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
+        var document = await tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
         if (document is null)
         {
             return Result<DocumentDownloadDto>.Fail($"Could not find document with ID '{req.DocumentId}'");
@@ -35,7 +26,7 @@ internal sealed class
         }
 
         // Verify requester exists (audit)
-        var requester = await _tenantUow.Repository<Employee>().GetByIdAsync(req.RequestedById, ct);
+        var requester = await tenantUow.Repository<Employee>().GetByIdAsync(req.RequestedById, ct);
         if (requester is null)
         {
             return Result<DocumentDownloadDto>.Fail($"Could not find employee with ID '{req.RequestedById}'");
@@ -43,13 +34,13 @@ internal sealed class
 
         try
         {
-            var exists = await _blobStorage.ExistsAsync(document.BlobContainer, document.BlobPath, ct);
+            var exists = await blobStorageService.ExistsAsync(document.BlobContainer, document.BlobPath, ct);
             if (!exists)
             {
                 return Result<DocumentDownloadDto>.Fail("Document file not found in storage");
             }
 
-            var stream = await _blobStorage.DownloadAsync(document.BlobContainer, document.BlobPath, ct);
+            var stream = await blobStorageService.DownloadAsync(document.BlobContainer, document.BlobPath, ct);
 
             var dto = new DocumentDownloadDto
             {
