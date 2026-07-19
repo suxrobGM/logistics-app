@@ -10,14 +10,7 @@ import {
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { Grid, Skeleton, Stack, Typography, UiChart, UiDataTable } from "@logistics/shared/ui";
-import {
-  BaseReportComponent,
-  DashboardCard,
-  DateRangePicker,
-  PageHeader,
-  StatCard,
-  type ReportQueryParams,
-} from "@/shared/components";
+import { DashboardCard, DateRangePicker, PageHeader, StatCard } from "@/shared/components";
 import {
   getPayrollStatusChartOptions,
   getPayrollTrendChartOptions,
@@ -26,6 +19,7 @@ import {
   SALARY_TYPE_COLORS,
 } from "@/shared/constants";
 import { Converters } from "@/shared/utils";
+import { BaseReportComponent, type ReportQueryParams } from "../components";
 
 // Status chart colors - aligned with PAYROLL_STATUS_LABELS order
 const STATUS_COLORS = {

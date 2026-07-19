@@ -19,15 +19,9 @@ import {
   UiChart,
   UiDataTable,
 } from "@logistics/shared/ui";
-import {
-  BaseReportComponent,
-  DashboardCard,
-  DateRangePicker,
-  PageHeader,
-  StatCard,
-  type ReportQueryParams,
-} from "@/shared/components";
+import { DashboardCard, DateRangePicker, PageHeader, StatCard } from "@/shared/components";
 import { Converters } from "@/shared/utils";
+import { BaseReportComponent, type ReportQueryParams } from "../components";
 
 // Status colors for DVIR
 const DVIR_STATUS_COLORS = {

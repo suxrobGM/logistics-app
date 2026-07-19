@@ -4,7 +4,7 @@ import { Api, createTerminal, type CreateTerminalCommand } from "@logistics/shar
 import { Card } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { Container, PageHeader } from "@/shared/components";
-import { TerminalForm, type TerminalFormValue } from "../terminal-form/terminal-form";
+import { TerminalForm, type TerminalFormValue } from "../components";
 
 @Component({
   selector: "app-terminal-add",

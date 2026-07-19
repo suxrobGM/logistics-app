@@ -113,7 +113,7 @@ Do **not** disable the submit button with `[disabled]="form().invalid()"` - keep
 ### Provider connect dialogs
 
 ELD / load board / fuel card "add provider" dialogs all use `<app-provider-connect-dialog>`
-(tms-portal-local, `shared/components/other/provider-connect-dialog/`). It owns the dialog chrome,
+(tms-portal-local, `shared/components/integrations/provider-connect-dialog/`). It owns the dialog chrome,
 the `<form [formRoot]>`, the submit and the footer; project the fields, keep the typed form in the
 feature, reset from `(opened)`. Don't copy it for a fourth integration.
 

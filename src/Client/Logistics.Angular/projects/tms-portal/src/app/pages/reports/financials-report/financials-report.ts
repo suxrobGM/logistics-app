@@ -18,14 +18,7 @@ import {
   UiDataTable,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import {
-  BaseReportComponent,
-  DashboardCard,
-  DateRangePicker,
-  PageHeader,
-  StatCard,
-  type ReportQueryParams,
-} from "@/shared/components";
+import { DashboardCard, DateRangePicker, PageHeader, StatCard } from "@/shared/components";
 import {
   FINANCIALS_CHART_BACKGROUND_COLORS,
   FINANCIALS_CHART_HOVER_BACKGROUND_COLORS,
@@ -34,6 +27,7 @@ import {
   getInvoiceStatusChartOptions,
   getRevenueTrendChartOptions,
 } from "@/shared/constants";
+import { BaseReportComponent, type ReportQueryParams } from "../components";
 
 @Component({
   selector: "app-financials-report",

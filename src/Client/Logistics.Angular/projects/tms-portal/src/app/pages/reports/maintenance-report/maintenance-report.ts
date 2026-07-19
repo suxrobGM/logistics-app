@@ -18,14 +18,8 @@ import {
   UiChart,
   UiDataTable,
 } from "@logistics/shared/ui";
-import {
-  BaseReportComponent,
-  DashboardCard,
-  DateRangePicker,
-  PageHeader,
-  StatCard,
-  type ReportQueryParams,
-} from "@/shared/components";
+import { DashboardCard, DateRangePicker, PageHeader, StatCard } from "@/shared/components";
+import { BaseReportComponent, type ReportQueryParams } from "../components";
 
 // Maintenance type colors
 const TYPE_COLORS = [

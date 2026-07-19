@@ -19,7 +19,7 @@ import {
 } from "@logistics/shared/ui";
 import { isContainerLoadType } from "@logistics/shared/utils";
 import { PageHeader } from "@/shared/components";
-import { ConditionDefectsList } from "@/shared/components/inspections";
+import { ConditionDefectsList } from "../components";
 
 @Component({
   selector: "app-condition-report-details",

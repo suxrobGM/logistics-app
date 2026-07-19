@@ -20,14 +20,7 @@ import {
   UiChart,
   UiDataTable,
 } from "@logistics/shared/ui";
-import {
-  BaseReportComponent,
-  DashboardCard,
-  DateRangePicker,
-  PageHeader,
-  StatCard,
-  type ReportQueryParams,
-} from "@/shared/components";
+import { DashboardCard, DateRangePicker, PageHeader, StatCard } from "@/shared/components";
 import {
   getLoadsPerformanceChartOptions,
   getLoadsPieOptions,
@@ -35,6 +28,7 @@ import {
   getLoadsTypeChartOptions,
   LOADS_CHART_PALETTE,
 } from "@/shared/constants";
+import { BaseReportComponent, type ReportQueryParams } from "../components";
 
 @Component({
   selector: "app-loads-report",

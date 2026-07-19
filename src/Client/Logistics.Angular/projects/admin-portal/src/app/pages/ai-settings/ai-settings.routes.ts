@@ -4,7 +4,7 @@ import { authGuard } from "@/core/auth";
 export const aiSettingsRoutes: Routes = [
   {
     path: "",
-    loadComponent: () => import("./ai-settings/ai-settings").then((m) => m.AiSettings),
+    loadComponent: () => import("./general/ai-settings").then((m) => m.AiSettings),
     canActivate: [authGuard],
     data: {
       breadcrumb: "AI Settings",

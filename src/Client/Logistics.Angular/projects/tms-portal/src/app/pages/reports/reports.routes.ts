@@ -21,8 +21,8 @@ export const reportsRoutes: Routes = [
       {
         path: "drivers",
         loadComponent: () =>
-          import("./drivers-report/drivers-dashboard/drivers-report").then(
-            (m) => m.DriversReportComponent,
+          import("./drivers-report/drivers-dashboard/drivers-dashboard").then(
+            (m) => m.DriversDashboardComponent,
           ),
         canActivate: [authGuard],
         data: {

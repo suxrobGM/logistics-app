@@ -19,14 +19,7 @@ import {
   UiChart,
   UiDataTable,
 } from "@logistics/shared/ui";
-import {
-  BaseReportComponent,
-  DashboardCard,
-  DateRangePicker,
-  PageHeader,
-  StatCard,
-  type ReportQueryParams,
-} from "@/shared/components";
+import { DashboardCard, DateRangePicker, PageHeader, StatCard } from "@/shared/components";
 import {
   DRIVERS_CHART_PALETTE,
   getDriversEfficiencyChartOptions,
@@ -34,10 +27,11 @@ import {
   getDriversTrendChartOptions,
 } from "@/shared/constants/drivers-chart.options";
 import { getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
+import { BaseReportComponent, type ReportQueryParams } from "../../components";
 
 @Component({
-  selector: "app-drivers-report",
-  templateUrl: "./drivers-report.html",
+  selector: "app-drivers-dashboard",
+  templateUrl: "./drivers-dashboard.html",
   imports: [
     Badge,
     CurrencyFormatPipe,
@@ -55,7 +49,7 @@ import { getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
     UiDataTable,
   ],
 })
-export class DriversReportComponent
+export class DriversDashboardComponent
   extends BaseReportComponent<DriverDashboardDto>
   implements OnInit
 {
