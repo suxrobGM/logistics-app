@@ -8,3 +8,4 @@ export * from "./localization.service";
 export * from "./feature.service";
 export * from "./consent.service";
 export * from "./i18n.service";
+export * from "./layout.service";

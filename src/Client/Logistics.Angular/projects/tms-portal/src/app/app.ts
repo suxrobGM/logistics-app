@@ -1,9 +1,9 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { NavigationEnd, Router, RouterOutlet } from "@angular/router";
+import { LayoutService } from "@logistics/shared/services";
 import { Spinner, UiToaster } from "@logistics/shared/ui";
 import { filter } from "rxjs";
 import { AuthService } from "@/core/auth";
-import { LayoutService } from "@/core/services";
 import { UpgradeDialog } from "@/shared/components/upgrade-dialog/upgrade-dialog";
 import { MobileDrawer, MobileHeader, Sidebar } from "@/shared/layout";
 import { CommandPalette } from "@/shared/layout/command-palette/command-palette";

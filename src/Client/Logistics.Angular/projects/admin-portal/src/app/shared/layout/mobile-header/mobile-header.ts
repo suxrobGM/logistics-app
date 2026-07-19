@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
+import { LayoutService } from "@logistics/shared/services";
 import { UiButton } from "@logistics/shared/ui";
-import { LayoutService } from "@/core/services/layout.service";
 
 @Component({
   selector: "adm-mobile-header",

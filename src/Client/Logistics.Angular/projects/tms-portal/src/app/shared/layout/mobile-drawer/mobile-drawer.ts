@@ -1,8 +1,8 @@
 import { Component, computed, inject } from "@angular/core";
+import { LayoutService } from "@logistics/shared/services";
 import { Icon, UiDrawer, UiPopover } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 import { CommandPaletteService, SidebarNavService, TenantService } from "@/core/services";
-import { LayoutService } from "@/core/services/layout.service";
 import { environment } from "@/env";
 import { NavMenu } from "../nav-menu";
 import { NotificationBell } from "../notification-bell";

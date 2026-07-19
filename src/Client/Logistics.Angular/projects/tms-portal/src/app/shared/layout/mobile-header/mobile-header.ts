@@ -1,9 +1,9 @@
 import { Component, inject } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router, RouterLink } from "@angular/router";
+import { LayoutService } from "@logistics/shared/services";
 import { UiButton } from "@logistics/shared/ui";
 import { filter, map, startWith } from "rxjs";
-import { LayoutService } from "@/core/services/layout.service";
 import { NotificationBell } from "../notification-bell";
 
 @Component({
