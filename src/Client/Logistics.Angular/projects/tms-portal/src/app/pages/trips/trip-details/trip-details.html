@@ -285,10 +285,7 @@
           @if (store.timelineEvents().length > 0) {
             <app-trip-timeline [events]="store.timelineEvents()" />
           } @else {
-            <ui-stack align="center" gap="2" class="text-muted-foreground py-8">
-              <ui-icon name="clock" size="xl" color="muted" class="opacity-50" />
-              <p class="m-0">No timeline events yet.</p>
-            </ui-stack>
+            <ui-empty-state icon="clock" title="No timeline events yet" message="" />
           }
         </ui-card>
       </ui-grid>

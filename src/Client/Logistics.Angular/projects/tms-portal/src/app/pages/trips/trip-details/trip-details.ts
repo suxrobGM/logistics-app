@@ -12,6 +12,7 @@ import {
 import { LocalizationService } from "@logistics/shared/services";
 import {
   Card,
+  EmptyState,
   Grid,
   Icon,
   Progress,
@@ -48,6 +49,7 @@ import { TripDetailsStore } from "../store/trip-details.store";
     DateFormatPipe,
     DirectionMap,
     DistanceUnitPipe,
+    EmptyState,
     Grid,
     Icon,
     LoadStatusTag,

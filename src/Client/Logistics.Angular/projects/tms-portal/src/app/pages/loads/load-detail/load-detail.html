@@ -69,61 +69,38 @@
           <ui-grid container spacing="6" class="pt-4">
             <!-- Load Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <ui-card class="border-default border">
-                <ng-template #header>
-                  <div class="p-4 pb-0">
-                    <ui-typography variant="h5" tag="h3" weight="semibold">
-                      Load Information
-                    </ui-typography>
-                  </div>
-                </ng-template>
-
+              <ui-detail-section heading="Load Information" class="block">
                 <ui-stack gap="4">
-                  <ui-stack direction="row" align="center" justify="between">
-                    <span>Load #</span>
+                  <ui-info-row label="Load #">
                     <span class="font-mono font-semibold">{{ load()!.number }}</span>
-                  </ui-stack>
+                  </ui-info-row>
 
                   @if (load()!.name) {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Name</span>
-                      <span class="font-medium">{{ load()!.name }}</span>
-                    </ui-stack>
+                    <ui-info-row label="Name" [value]="load()!.name ?? null" />
                   }
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <span>Type</span>
+                  <ui-info-row label="Type" divider>
                     <app-load-type-tag [type]="load()!.type!" />
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-stack direction="row" align="center" justify="between">
-                    <span>Status</span>
+                  <ui-info-row label="Status">
                     <app-load-status-tag [status]="load()!.status!" />
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <span>Delivery Cost</span>
+                  <ui-info-row label="Delivery Cost" divider>
                     <ui-typography variant="h6" weight="bold" class="text-success">
                       {{ load()!.deliveryCost | currencyFormat }}
                     </ui-typography>
-                  </ui-stack>
+                  </ui-info-row>
 
                   @if (load()!.distance) {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Distance</span>
-                      <span>{{ load()!.distance | distanceUnit }}</span>
-                    </ui-stack>
+                    <ui-info-row label="Distance">
+                      {{ load()!.distance | distanceUnit }}
+                    </ui-info-row>
                   }
 
-                  <ui-divider />
-
                   @if (load()!.invoice) {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Invoice</span>
+                    <ui-info-row label="Invoice" divider>
                       <a
                         [routerLink]="['/invoices/loads', id(), load()!.invoice!.id]"
                         class="text-foreground flex items-center gap-1 font-medium hover:underline"
@@ -131,91 +108,66 @@
                         <ui-icon name="external-link" size="sm" />
                         #{{ load()!.invoice!.number }}
                       </a>
-                    </ui-stack>
+                    </ui-info-row>
                   }
                 </ui-stack>
-              </ui-card>
+              </ui-detail-section>
             </ui-grid>
 
             <!-- Assignment Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <ui-card class="border-default border">
-                <ng-template #header>
-                  <div class="p-4 pb-0">
-                    <ui-typography variant="h5" tag="h3" weight="semibold">
-                      Assignment
-                    </ui-typography>
-                  </div>
-                </ng-template>
-
+              <ui-detail-section heading="Assignment" class="block">
                 <ui-stack gap="4">
                   @if (load()!.customer) {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Customer</span>
+                    <ui-info-row label="Customer">
                       <a
                         [routerLink]="['/customers', load()!.customer!.id]"
                         class="text-foreground font-medium hover:underline"
                       >
                         {{ load()!.customer!.name }}
                       </a>
-                    </ui-stack>
+                    </ui-info-row>
                   }
 
-                  <ui-divider />
-
                   @if (load()!.assignedTruckNumber) {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Truck</span>
+                    <ui-info-row label="Truck" divider>
                       <a
                         [routerLink]="['/trucks', load()!.assignedTruckId]"
                         class="text-foreground font-medium hover:underline"
                       >
                         {{ load()!.assignedTruckNumber }}
                       </a>
-                    </ui-stack>
+                    </ui-info-row>
                   }
 
                   @if (load()!.assignedTruckDriversName?.length) {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Driver(s)</span>
-                      <span>{{ load()!.assignedTruckDriversName!.join(", ") }}</span>
-                    </ui-stack>
+                    <ui-info-row
+                      label="Driver(s)"
+                      [value]="load()!.assignedTruckDriversName!.join(', ')"
+                    />
                   }
 
                   @if (load()!.assignedDispatcherName) {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Dispatcher</span>
-                      <span>{{ load()!.assignedDispatcherName }}</span>
-                    </ui-stack>
+                    <ui-info-row label="Dispatcher" [value]="load()!.assignedDispatcherName ?? null" />
                   }
 
                   @if (load()!.tripId) {
-                    <ui-divider />
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Trip</span>
+                    <ui-info-row label="Trip" divider>
                       <a
                         [routerLink]="['/trips', load()!.tripId]"
                         class="text-foreground font-medium hover:underline"
                       >
                         {{ load()!.tripName }}
                       </a>
-                    </ui-stack>
+                    </ui-info-row>
                   }
                 </ui-stack>
-              </ui-card>
+              </ui-detail-section>
             </ui-grid>
           </ui-grid>
 
           <!-- Route Card (full width) -->
-          <ui-card class="border-default mt-6 border">
-            <ng-template #header>
-              <div class="p-4 pb-0">
-                <ui-typography variant="h5" tag="h3" weight="semibold">
-                  Route Information
-                </ui-typography>
-              </div>
-            </ng-template>
-
+          <ui-detail-section heading="Route Information" class="mt-6 block">
             <ui-grid container spacing="6">
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-stack direction="row" align="center" gap="2" class="mb-2">
@@ -249,57 +201,46 @@
                 <p class="text-subtle-foreground">{{ load()!.currentAddress | address }}</p>
               </div>
             }
-          </ui-card>
+          </ui-detail-section>
 
           <!-- Timeline Card -->
-          <ui-card class="border-default mt-6 border">
-            <ng-template #header>
-              <div class="p-4 pb-0">
-                <ui-typography variant="h5" tag="h3" weight="semibold">Timeline</ui-typography>
-              </div>
-            </ng-template>
-
+          <ui-detail-section heading="Timeline" class="mt-6 block">
             <ui-grid container spacing="4">
               <ui-grid [size]="{ xs: 6, md: 3 }">
-                <ui-typography variant="caption" color="muted">Created</ui-typography>
-                <ui-typography variant="body" weight="medium">
+                <ui-info-item label="Created">
                   {{ load()!.createdAt | dateFormat: "medium" }}
-                </ui-typography>
+                </ui-info-item>
               </ui-grid>
               @if (load()!.dispatchedAt) {
                 <ui-grid [size]="{ xs: 6, md: 3 }">
-                  <ui-typography variant="caption" color="muted">Dispatched</ui-typography>
-                  <ui-typography variant="body" weight="medium">
+                  <ui-info-item label="Dispatched">
                     {{ load()!.dispatchedAt | dateFormat: "medium" }}
-                  </ui-typography>
+                  </ui-info-item>
                 </ui-grid>
               }
               @if (load()!.pickedUpAt) {
                 <ui-grid [size]="{ xs: 6, md: 3 }">
-                  <ui-typography variant="caption" color="muted">Picked Up</ui-typography>
-                  <ui-typography variant="body" weight="medium">
+                  <ui-info-item label="Picked Up">
                     {{ load()!.pickedUpAt | dateFormat: "medium" }}
-                  </ui-typography>
+                  </ui-info-item>
                 </ui-grid>
               }
               @if (load()!.deliveredAt) {
                 <ui-grid [size]="{ xs: 6, md: 3 }">
-                  <ui-typography variant="caption" color="muted">Delivered</ui-typography>
-                  <ui-typography variant="body" weight="medium" class="text-success">
-                    {{ load()!.deliveredAt | dateFormat: "medium" }}
-                  </ui-typography>
+                  <ui-info-item label="Delivered">
+                    <span class="text-success">{{ load()!.deliveredAt | dateFormat: "medium" }}</span>
+                  </ui-info-item>
                 </ui-grid>
               }
               @if (load()!.cancelledAt) {
                 <ui-grid [size]="{ xs: 6, md: 3 }">
-                  <ui-typography variant="caption" color="muted">Cancelled</ui-typography>
-                  <ui-typography variant="body" weight="medium" class="text-danger">
-                    {{ load()!.cancelledAt | dateFormat: "medium" }}
-                  </ui-typography>
+                  <ui-info-item label="Cancelled">
+                    <span class="text-danger">{{ load()!.cancelledAt | dateFormat: "medium" }}</span>
+                  </ui-info-item>
                 </ui-grid>
               }
             </ui-grid>
-          </ui-card>
+          </ui-detail-section>
         </ui-tab-panel>
 
         <!-- Documents Tab -->
