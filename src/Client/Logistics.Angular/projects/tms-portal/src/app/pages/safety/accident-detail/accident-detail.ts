@@ -14,9 +14,11 @@ import {
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   Badge,
-  Card,
+  DetailSection,
+  EmptyState,
   Grid,
   Icon,
+  InfoItem,
   Spinner,
   Stack,
   Typography,
@@ -37,11 +39,13 @@ import { AccidentQuickInfo } from "../_components";
   imports: [
     AccidentQuickInfo,
     Badge,
-    Card,
     CurrencyFormatPipe,
     DatePipe,
+    DetailSection,
+    EmptyState,
     Grid,
     Icon,
+    InfoItem,
     PageHeader,
     RouterLink,
     Spinner,
