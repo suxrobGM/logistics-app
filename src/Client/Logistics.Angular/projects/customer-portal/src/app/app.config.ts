@@ -14,11 +14,11 @@ import {
   TENANT_ID_PROVIDER,
   tenantInterceptor,
 } from "@logistics/shared";
+import { provideAppAuth } from "@logistics/shared/auth";
 import { I18nService, TENANT_SETTINGS_PROVIDER } from "@logistics/shared/services";
 import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
-import { provideAuth } from "angular-auth-oidc-client";
-import { authConfig } from "@/core/auth";
+import { authOidcOptions } from "@/core/auth";
 import { CustomerPortalSettingsProvider, TenantContextService } from "@/core/services";
 import { environment } from "@/env";
 import { routes } from "./app.routes";
@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideSpartanHlm(),
-    provideAuth({ config: authConfig }),
+    provideAppAuth({ oidc: authOidcOptions, loadPermissionsOnInit: false }),
     provideRouter(
       routes,
       withComponentInputBinding(),

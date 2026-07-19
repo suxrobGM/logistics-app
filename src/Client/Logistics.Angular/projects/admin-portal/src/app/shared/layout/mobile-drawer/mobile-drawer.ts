@@ -18,7 +18,7 @@ export class MobileDrawer {
   private readonly permissionService = inject(PermissionService);
 
   protected readonly visible = this.layoutService.mobileMenuOpen;
-  protected readonly userName = this.authService.userName;
+  protected readonly userName = computed(() => this.authService.userName() ?? "Admin");
   protected readonly userInitials = computed(() => Converters.getInitials(this.userName()));
 
   protected readonly sections = computed<AdminNavSection[]>(() => {

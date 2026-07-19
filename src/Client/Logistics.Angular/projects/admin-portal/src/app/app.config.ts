@@ -7,8 +7,8 @@ import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding, withRouterConfig } from "@angular/router";
 import { getAccessToken, PERMISSION_CHECKER, provideSpartanHlm } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
-import { provideAuth } from "angular-auth-oidc-client";
-import { authConfig, PermissionService } from "@/core/auth";
+import { provideAppAuth } from "@logistics/shared/auth";
+import { authOidcOptions, PermissionService } from "@/core/auth";
 import { environment } from "@/env";
 import { appRoutes } from "./app.routes";
 
@@ -16,7 +16,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideSpartanHlm(),
-    provideAuth({ config: authConfig }),
+    provideAppAuth({ oidc: authOidcOptions }),
     provideRouter(
       appRoutes,
       withComponentInputBinding(),

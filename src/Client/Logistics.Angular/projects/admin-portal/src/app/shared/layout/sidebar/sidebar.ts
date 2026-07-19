@@ -27,7 +27,7 @@ export class Sidebar {
       .filter((section) => section.items.length > 0);
   });
 
-  protected readonly userName = this.authService.userName;
+  protected readonly userName = computed(() => this.authService.userName() ?? "Admin");
   protected readonly userInitials = computed(() => Converters.getInitials(this.userName()));
 
   protected logout(): void {

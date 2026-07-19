@@ -2,6 +2,7 @@
  * Public API Surface of @logistics/shared
  */
 export * from "./lib/api";
+export * from "./lib/auth";
 export * from "./lib/errors";
 export * from "./lib/ui";
 export * from "./lib/permission";
