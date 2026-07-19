@@ -14,7 +14,7 @@
       [center]="center()"
       [fitBounds]="bounds()!"
       [fitBoundsOptions]="{ padding: 50 }"
-      [style.width]="width()"
+      [style.width]="chromeCfg().width"
       [style.height]="height()"
       role="application"
       aria-label="Route map showing trip waypoints and directions"
@@ -22,8 +22,11 @@
       (mapLoad)="onMapLoad($event.target)"
     >
       <!-- Map Controls -->
-      @if (showControls()) {
-        <app-map-controls [showLayerToggle]="showLayerToggle()" (fitBoundsClick)="fitToBounds()" />
+      @if (chromeCfg().showControls) {
+        <app-map-controls
+          [showLayerToggle]="chromeCfg().showLayerToggle"
+          (fitBoundsClick)="fitToBounds()"
+        />
       }
 
       <mgl-geojson-source id="waypoints-src" [data]="waypointsData()!" />

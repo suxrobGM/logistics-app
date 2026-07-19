@@ -12,15 +12,18 @@
       [center]="center()"
       [fitBounds]="bounds()!"
       [fitBoundsOptions]="{ padding: 50, maxZoom: 12 }"
-      [style.width]="width()"
+      [style.width]="chromeCfg().width"
       [style.height]="height()"
       role="application"
       aria-label="Fleet map showing truck locations"
       (mapLoad)="onMapLoad($event.target)"
     >
       <!-- Map Controls -->
-      @if (showControls()) {
-        <app-map-controls [showLayerToggle]="showLayerToggle()" (fitBoundsClick)="fitToBounds()" />
+      @if (chromeCfg().showControls) {
+        <app-map-controls
+          [showLayerToggle]="chromeCfg().showLayerToggle"
+          (fitBoundsClick)="fitToBounds()"
+        />
       }
 
       @for (geoData of geolocationData(); track geoData.truckId) {

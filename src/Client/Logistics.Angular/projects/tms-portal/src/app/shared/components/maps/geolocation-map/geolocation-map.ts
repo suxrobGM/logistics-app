@@ -9,6 +9,7 @@ import { TenantService } from "@/core/services/tenant.service";
 import { MapResizeDirective } from "@/shared/directives";
 import { MapContainer } from "../map-container/map-container";
 import { MapControls } from "../map-controls/map-controls";
+import { DEFAULT_MAP_CHROME, type MapChrome } from "../types";
 
 @Component({
   selector: "app-geolocation-map",
@@ -67,14 +68,12 @@ export class GeolocationMap {
   public readonly zoom = input<number>(this.defaultZoom());
   /** The center coordinates. Region-aware default ([-95, 35] for US, [10, 50] for EU). */
   public readonly center = input<LngLatLike>(this.defaultCenter());
-  public readonly width = input("100%");
   public readonly height = input("100%");
 
-  /** Show map controls */
-  public readonly showControls = input(true);
+  /** Chrome (width/controls/layer toggle) options. */
+  public readonly chrome = input<MapChrome>({});
 
-  /** Show layer toggle in controls */
-  public readonly showLayerToggle = input(true);
+  protected readonly chromeCfg = computed(() => ({ ...DEFAULT_MAP_CHROME, ...this.chrome() }));
 
   /** Whether the map is in a loading state (controlled by parent) */
   public readonly loading = input(false);

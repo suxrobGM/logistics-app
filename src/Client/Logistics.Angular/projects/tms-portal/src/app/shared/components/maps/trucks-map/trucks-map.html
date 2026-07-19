@@ -1,9 +1,7 @@
 <app-geolocation-map
   [height]="height()"
-  [width]="width()"
+  [chrome]="chrome()"
   [geolocationData]="truckLocations()"
   [loading]="loading()"
-  [showControls]="showControls()"
-  [showLayerToggle]="showLayerToggle()"
   (truckSelect)="onTruckSelect($event)"
 />

@@ -3,6 +3,7 @@ import { Api, getTrucks } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { TrackingService } from "@/core/services";
 import { GeolocationMap } from "@/shared/components";
+import type { MapChrome } from "../types";
 
 @Component({
   selector: "app-trucks-map",
@@ -28,14 +29,10 @@ export class TrucksMap implements OnDestroy {
     () => this.truckLocations().filter((t) => !t.currentLocation).length,
   );
 
-  public readonly width = input("100%");
   public readonly height = input("100%");
 
-  /** Show map controls */
-  public readonly showControls = input(true);
-
-  /** Show layer toggle in controls */
-  public readonly showLayerToggle = input(true);
+  /** Chrome (width/controls/layer toggle) options forwarded to the underlying map. */
+  public readonly chrome = input<MapChrome>({});
 
   /** Emitted when a truck is selected on the map */
   public readonly truckSelect = output<TruckGeolocationDto>();

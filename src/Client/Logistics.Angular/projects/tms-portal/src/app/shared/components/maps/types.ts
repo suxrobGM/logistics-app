@@ -37,6 +37,23 @@ export interface SegmentInfo {
   toLabel: string;
 }
 
+/** Chrome (non-data) display options shared by the top-level map components. */
+export interface MapChrome {
+  /** Width of the map container. Default is 100%. */
+  width?: string;
+  /** Show map controls. Default is true. */
+  showControls?: boolean;
+  /** Show layer toggle in controls. Default is true. */
+  showLayerToggle?: boolean;
+}
+
+/** Default values applied to any `MapChrome` fields left unset by the caller. */
+export const DEFAULT_MAP_CHROME: Required<MapChrome> = {
+  width: "100%",
+  showControls: true,
+  showLayerToggle: true,
+};
+
 /**
  * Formats a distance in meters to miles.
  */

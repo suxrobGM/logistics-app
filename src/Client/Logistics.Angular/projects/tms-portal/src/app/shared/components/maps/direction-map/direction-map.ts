@@ -19,7 +19,7 @@ import { MapResizeDirective } from "@/shared/directives";
 import type { MapboxDirectionsResponse } from "@/shared/types/mapbox";
 import { MapContainer } from "../map-container/map-container";
 import { MapControls } from "../map-controls/map-controls";
-import { formatDistanceMiles, formatDuration } from "../types";
+import { DEFAULT_MAP_CHROME, formatDistanceMiles, formatDuration, type MapChrome } from "../types";
 import type {
   RouteChangeEvent,
   RouteSegmentClickEvent,
@@ -102,17 +102,13 @@ export class DirectionMap {
   /** Color used for highlights. */
   public readonly highlightColor = input<string>("#111");
 
-  /** The width of the map container. Default is 100%. */
-  public readonly width = input<string>("100%");
-
   /** The height of the map container. Default is 100%. */
   public readonly height = input<string>("100%");
 
-  /** Show map controls */
-  public readonly showControls = input(true);
+  /** Chrome (width/controls/layer toggle) options. */
+  public readonly chrome = input<MapChrome>({});
 
-  /** Show layer toggle in controls */
-  public readonly showLayerToggle = input(true);
+  protected readonly chromeCfg = computed(() => ({ ...DEFAULT_MAP_CHROME, ...this.chrome() }));
 
   /** Emitted when the route changes. */
   public readonly routeChange = output<RouteChangeEvent>();
