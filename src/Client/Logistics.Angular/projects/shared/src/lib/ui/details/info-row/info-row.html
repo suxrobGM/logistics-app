@@ -1,0 +1,9 @@
+@if (divider()) {
+  <ui-divider />
+}
+<div class="flex items-center justify-between">
+  <span class="text-muted-foreground">{{ label() }}</span>
+  <span class="font-medium">
+    <ng-content>{{ value() }}</ng-content>
+  </span>
+</div>

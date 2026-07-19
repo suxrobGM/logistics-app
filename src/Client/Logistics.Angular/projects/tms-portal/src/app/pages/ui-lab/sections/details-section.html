@@ -1,0 +1,53 @@
+<section id="details" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Detail sections, rows, items &amp; stats</ui-typography>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">
+    ui-detail-section + ui-info-row
+  </ui-typography>
+  <div data-lab="detail-info-rows" class="mt-2 grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <ui-detail-section heading="Truck Information" icon="truck">
+      <ui-stack gap="4">
+        <ui-info-row label="Truck #">
+          <span class="font-mono font-semibold">TRK-1042</span>
+        </ui-info-row>
+        <ui-info-row label="Type" [value]="'Flatbed'" />
+        <ui-info-row label="Status">
+          <ui-badge value="Active" severity="success" />
+        </ui-info-row>
+        <ui-info-row label="VIN" [value]="'1FUJGLDR8CLBP8834'" divider />
+        <ui-info-row label="License Plate" [value]="'TX · 8H1-2044'" />
+      </ui-stack>
+    </ui-detail-section>
+
+    <ui-detail-section heading="Assignment">
+      <ui-button uiDetailSectionActions appearance="text" icon="pencil" label="Edit" />
+      <ui-stack gap="4">
+        <ui-info-row label="Main Driver" [value]="'John Doe'" />
+        <ui-info-row label="Secondary Driver" [value]="'Jane Roe'" />
+        <ui-info-row label="Active Loads" [value]="3" divider />
+      </ui-stack>
+    </ui-detail-section>
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-info-item</ui-typography>
+  <ui-detail-section heading="Incident Details" icon="triangle-alert" class="mt-2 block">
+    <div data-lab="info-items" class="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <ui-info-item label="Status" [value]="'Under Review'" />
+      <ui-info-item label="Severity" [value]="'Major'" />
+      <ui-info-item label="Driver Name" [value]="null" emptyText="Not provided" />
+      <ui-info-item label="Truck">
+        <a class="text-foreground font-medium" href="#details">TRK-1042</a>
+      </ui-info-item>
+    </div>
+  </ui-detail-section>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-stat-item</ui-typography>
+  <ui-detail-section heading="Performance Summary" icon="chart-line" class="mt-2 block">
+    <div data-lab="stat-items" class="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <ui-stat-item label="Gross (30 days)" value="$18,420" intent="success" />
+      <ui-stat-item label="Deductions" value="-$2,150" intent="danger" />
+      <ui-stat-item label="Pending" value="$4,000" intent="warning" />
+      <ui-stat-item label="RPM (30 days)" value="$2.14" />
+    </div>
+  </ui-detail-section>
+</section>

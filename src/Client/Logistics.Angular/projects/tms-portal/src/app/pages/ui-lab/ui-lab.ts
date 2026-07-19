@@ -4,6 +4,7 @@ import { UiLabBehaviourSection } from "./sections/behaviour-section";
 import { UiLabButtonsSection } from "./sections/buttons-section";
 import { UiLabCosmeticsSection } from "./sections/cosmetics-section";
 import { UiLabDatavizSection } from "./sections/dataviz-section";
+import { UiLabDetailsSection } from "./sections/details-section";
 import { UiLabDialogsSection } from "./sections/dialogs-section";
 import { UiLabFeedbackSection } from "./sections/feedback-section";
 import { UiLabFormSlotsSection } from "./sections/form-slots-section";
@@ -41,6 +42,7 @@ interface LabSection {
     Typography,
     UiLabIconsSection,
     UiLabButtonsSection,
+    UiLabDetailsSection,
     UiLabTableSection,
     UiLabFormSlotsSection,
     UiLabFormsSection,
@@ -59,6 +61,7 @@ export class UiLab {
   protected readonly sections: readonly LabSection[] = [
     { id: "icons", label: "Icons" },
     { id: "buttons", label: "Buttons" },
+    { id: "details", label: "Details" },
     { id: "table", label: "Table" },
     { id: "forms", label: "Forms" },
     { id: "overlays", label: "Overlays" },

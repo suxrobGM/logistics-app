@@ -1,0 +1,15 @@
+<ui-card class="border-border border">
+  <ng-template #header>
+    <div class="flex items-center justify-between p-4 pb-0">
+      <div class="flex items-center gap-2">
+        @if (icon(); as name) {
+          <ui-icon [name]="name" />
+        }
+        <ui-typography variant="h5" tag="h3" weight="semibold">{{ heading() }}</ui-typography>
+      </div>
+      <ng-content select="[uiDetailSectionActions]" />
+    </div>
+  </ng-template>
+
+  <ng-content />
+</ui-card>

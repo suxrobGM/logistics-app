@@ -11,6 +11,7 @@ export * from "./action";
 export * from "./table";
 export * from "./layout";
 export * from "./containers";
+export * from "./details";
 export * from "./disclosure";
 export * from "./badges";
 export * from "./display";
