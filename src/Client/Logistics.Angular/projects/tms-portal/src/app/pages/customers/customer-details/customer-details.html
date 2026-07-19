@@ -73,18 +73,9 @@
           <ui-grid container spacing="6" class="pt-4">
             <!-- Contact Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <ui-card class="border-default border">
-                <ng-template #header>
-                  <div class="p-4 pb-0">
-                    <ui-typography variant="h5" tag="h3" weight="semibold">
-                      Contact Information
-                    </ui-typography>
-                  </div>
-                </ng-template>
-
+              <ui-detail-section heading="Contact Information" class="block">
                 <ui-stack gap="4">
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body" color="muted">Email</ui-typography>
+                  <ui-info-row label="Email">
                     @if (customer.email) {
                       <a
                         [href]="'mailto:' + customer.email"
@@ -95,12 +86,9 @@
                     } @else {
                       <ui-typography variant="body" color="muted">Not provided</ui-typography>
                     }
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body" color="muted">Phone</ui-typography>
+                  <ui-info-row label="Phone" divider>
                     @if (customer.phone) {
                       <a
                         [href]="'tel:' + customer.phone"
@@ -111,29 +99,20 @@
                     } @else {
                       <ui-typography variant="body" color="muted">Not provided</ui-typography>
                     }
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body" color="muted">Created Date</ui-typography>
-                    <ui-typography variant="body" weight="medium">
-                      {{ customer.createdAt | date: "mediumDate" }}
-                    </ui-typography>
-                  </ui-stack>
+                  <ui-info-row
+                    label="Created Date"
+                    [value]="customer.createdAt | date: 'mediumDate'"
+                    divider
+                  />
                 </ui-stack>
-              </ui-card>
+              </ui-detail-section>
             </ui-grid>
 
             <!-- Address Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <ui-card class="border-default border">
-                <ng-template #header>
-                  <div class="p-4 pb-0">
-                    <ui-typography variant="h5" tag="h3" weight="semibold">Address</ui-typography>
-                  </div>
-                </ng-template>
-
+              <ui-detail-section heading="Address" class="block">
                 @if (customer.address) {
                   <ui-stack gap="2">
                     @if (customer.address.line1) {
@@ -163,31 +142,19 @@
                 } @else {
                   <ui-typography variant="body" color="muted">No address provided</ui-typography>
                 }
-              </ui-card>
+              </ui-detail-section>
             </ui-grid>
           </ui-grid>
 
           <!-- Notes Card -->
           @if (customer.notes) {
-            <ui-card class="border-default mt-6 border">
-              <ng-template #header>
-                <div class="p-4 pb-0">
-                  <ui-typography variant="h5" tag="h3" weight="semibold">Notes</ui-typography>
-                </div>
-              </ng-template>
-
+            <ui-detail-section heading="Notes" class="mt-6 block">
               <p class="whitespace-pre-wrap">{{ customer.notes }}</p>
-            </ui-card>
+            </ui-detail-section>
           }
 
           <!-- Quick Actions Card -->
-          <ui-card class="border-default mt-6 border">
-            <ng-template #header>
-              <div class="p-4 pb-0">
-                <ui-typography variant="h5" tag="h3" weight="semibold">Quick Actions</ui-typography>
-              </div>
-            </ng-template>
-
+          <ui-detail-section heading="Quick Actions" class="mt-6 block">
             <ui-stack direction="row" gap="2" wrap>
               <ui-button
                 appearance="outlined"
@@ -204,7 +171,7 @@
                 [queryParams]="{ customerId: id() }"
               />
             </ui-stack>
-          </ui-card>
+          </ui-detail-section>
         </ui-tab-panel>
 
         <!-- Invoices Tab -->
@@ -258,8 +225,7 @@
 } @else {
   <ui-card>
     <ui-stack align="center" gap="4" class="py-16">
-      <ui-icon name="circle-alert" size="xl" color="muted" />
-      <ui-typography variant="body" color="muted">Customer not found</ui-typography>
+      <ui-empty-state icon="circle-alert" title="Customer not found" message="" />
       <ui-button label="Back to Customers" [routerLink]="['/customers']" />
     </ui-stack>
   </ui-card>

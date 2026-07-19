@@ -259,8 +259,7 @@
   </ui-grid>
 } @else {
   <ui-stack align="center" gap="4" class="py-16 text-center">
-    <ui-icon name="circle-alert" size="xl" color="muted" />
-    <ui-typography variant="body" color="muted">Condition report not found</ui-typography>
+    <ui-empty-state icon="circle-alert" title="Condition report not found" message="" />
     <ui-button
       appearance="outlined"
       label="Back to List"

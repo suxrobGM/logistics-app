@@ -34,47 +34,46 @@
     <ui-card header="Inspection Details" class="w-full">
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted-foreground mb-1 text-sm">Status</div>
-          <ui-badge
-            [value]="getStatusLabel(report()!.status)"
-            [severity]="getStatusSeverity(report()!.status)"
-          />
+          <ui-info-item label="Status">
+            <ui-badge
+              [value]="getStatusLabel(report()!.status)"
+              [severity]="getStatusSeverity(report()!.status)"
+            />
+          </ui-info-item>
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted-foreground mb-1 text-sm">Type</div>
-          <ui-badge
-            [value]="getTypeLabel(report()!.type)"
-            [severity]="getTypeSeverity(report()!.type)"
-          />
+          <ui-info-item label="Type">
+            <ui-badge
+              [value]="getTypeLabel(report()!.type)"
+              [severity]="getTypeSeverity(report()!.type)"
+            />
+          </ui-info-item>
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted-foreground mb-1 text-sm">Date</div>
-          <div class="font-medium">{{ report()!.inspectionDate | date: "medium" }}</div>
+          <ui-info-item label="Date" [value]="report()!.inspectionDate | date: 'medium'" />
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted-foreground mb-1 text-sm">Odometer</div>
-          <div class="font-medium">{{ report()!.odometerReading | number }} mi</div>
+          <ui-info-item label="Odometer">{{ report()!.odometerReading | number }} mi</ui-info-item>
         </ui-grid>
       </ui-grid>
 
       <ui-grid container spacing="4" class="mt-4">
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted-foreground mb-1 text-sm">Truck</div>
-          <a [routerLink]="['/trucks', report()!.truckId]" class="text-foreground font-medium">
-            {{ report()!.truckNumber }}
-          </a>
+          <ui-info-item label="Truck">
+            <a [routerLink]="['/trucks', report()!.truckId]" class="text-foreground font-medium">
+              {{ report()!.truckNumber }}
+            </a>
+          </ui-info-item>
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted-foreground mb-1 text-sm">Driver</div>
-          <div class="font-medium">{{ report()!.driverName }}</div>
+          <ui-info-item label="Driver">{{ report()!.driverName }}</ui-info-item>
         </ui-grid>
       </ui-grid>
 
       @if (report()!.driverNotes) {
-        <div class="mt-4">
-          <div class="text-muted-foreground mb-1 text-sm">Driver Notes</div>
+        <ui-info-item label="Driver Notes" class="mt-4">
           <p>{{ report()!.driverNotes }}</p>
-        </div>
+        </ui-info-item>
       }
 
       <ui-stack direction="row" align="center" gap="4" class="mt-4">
@@ -103,38 +102,37 @@
       <ui-card header="Mechanic Review" class="w-full">
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 6, md: 3 }">
-            <div class="text-muted-foreground mb-1 text-sm">Reviewed By</div>
-            <div class="font-medium">{{ report()!.reviewedByName }}</div>
+            <ui-info-item label="Reviewed By">{{ report()!.reviewedByName }}</ui-info-item>
           </ui-grid>
           <ui-grid [size]="{ xs: 6, md: 3 }">
-            <div class="text-muted-foreground mb-1 text-sm">Reviewed At</div>
-            <div>{{ report()!.reviewedAt | date: "medium" }}</div>
+            <ui-info-item label="Reviewed At" [value]="report()!.reviewedAt | date: 'medium'" />
           </ui-grid>
           @if (report()!.defectsCorrected !== null) {
             <ui-grid [size]="{ xs: 6, md: 3 }">
-              <div class="text-muted-foreground mb-1 text-sm">Defects Corrected</div>
-              @if (report()!.defectsCorrected) {
-                <span class="text-success font-medium">Yes</span>
-              } @else {
-                <span class="text-danger font-medium">No</span>
-              }
+              <ui-info-item label="Defects Corrected">
+                @if (report()!.defectsCorrected) {
+                  <span class="text-success font-medium">Yes</span>
+                } @else {
+                  <span class="text-danger font-medium">No</span>
+                }
+              </ui-info-item>
             </ui-grid>
           }
           @if (report()!.hasMechanicSignature) {
             <ui-grid [size]="{ xs: 6, md: 3 }">
-              <div class="text-muted-foreground mb-1 text-sm">Signature</div>
-              <ui-stack direction="row" align="center" gap="1" class="text-success">
-                <ui-icon name="circle-check" />
-                <span class="text-sm">Mechanic signed</span>
-              </ui-stack>
+              <ui-info-item label="Signature">
+                <ui-stack direction="row" align="center" gap="1" class="text-success">
+                  <ui-icon name="circle-check" />
+                  <span class="text-sm">Mechanic signed</span>
+                </ui-stack>
+              </ui-info-item>
             </ui-grid>
           }
         </ui-grid>
         @if (report()!.mechanicNotes) {
-          <div class="mt-4">
-            <div class="text-muted-foreground mb-1 text-sm">Mechanic Notes</div>
+          <ui-info-item label="Mechanic Notes" class="mt-4">
             <p>{{ report()!.mechanicNotes }}</p>
-          </div>
+          </ui-info-item>
         }
       </ui-card>
     }
