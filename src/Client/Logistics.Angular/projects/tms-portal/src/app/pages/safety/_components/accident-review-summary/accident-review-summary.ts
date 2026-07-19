@@ -2,7 +2,7 @@ import { DatePipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import type { FieldTree } from "@angular/forms/signals";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Badge, Card, Grid, Stack, Typography } from "@logistics/shared/ui";
+import { Badge, Card, Grid, InfoItem, InfoRow, Stack } from "@logistics/shared/ui";
 import { Converters } from "@/shared/utils";
 import {
   getAccidentSeverityLabel,
@@ -14,7 +14,7 @@ import {
 @Component({
   selector: "app-accident-review-summary",
   templateUrl: "./accident-review-summary.html",
-  imports: [Badge, Card, CurrencyFormatPipe, DatePipe, Grid, Stack, Typography],
+  imports: [Badge, Card, CurrencyFormatPipe, DatePipe, Grid, InfoItem, InfoRow, Stack],
 })
 export class AccidentReviewSummary {
   public readonly incidentForm = input.required<FieldTree<AccidentIncidentModel>>();

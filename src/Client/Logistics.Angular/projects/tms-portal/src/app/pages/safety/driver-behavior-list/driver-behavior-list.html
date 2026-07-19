@@ -117,96 +117,76 @@
       <!-- Event Details -->
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 6 }">
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">
-            Event Type
-          </ui-typography>
-          <ui-badge
-            [value]="selectedEvent()!.eventTypeDisplay ?? ''"
-            [severity]="
-              selectedEvent()!.eventType
-                ? getEventTypeSeverity(selectedEvent()!.eventType!)
-                : 'secondary'
-            "
-          />
+          <ui-info-item label="Event Type">
+            <ui-badge
+              [value]="selectedEvent()!.eventTypeDisplay ?? ''"
+              [severity]="
+                selectedEvent()!.eventType
+                  ? getEventTypeSeverity(selectedEvent()!.eventType!)
+                  : 'secondary'
+              "
+            />
+          </ui-info-item>
         </ui-grid>
         <ui-grid [size]="{ xs: 6 }">
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">
-            Date/Time
-          </ui-typography>
-          <ui-typography variant="body" weight="medium">
+          <ui-info-item label="Date/Time">
             {{ selectedEvent()!.occurredAt | date: "medium" }}
-          </ui-typography>
+          </ui-info-item>
         </ui-grid>
       </ui-grid>
 
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 6 }">
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Driver</ui-typography>
-          <ui-typography variant="body" weight="medium">
-            {{ selectedEvent()!.driverName }}
-          </ui-typography>
+          <ui-info-item label="Driver">{{ selectedEvent()!.driverName }}</ui-info-item>
         </ui-grid>
         <ui-grid [size]="{ xs: 6 }">
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Truck</ui-typography>
-          <ui-typography variant="body" weight="medium">
-            {{ selectedEvent()!.truckNumber ?? "N/A" }}
-          </ui-typography>
+          <ui-info-item
+            label="Truck"
+            [value]="selectedEvent()!.truckNumber ?? null"
+            emptyText="N/A"
+          />
         </ui-grid>
       </ui-grid>
 
       @if (selectedEvent()!.location) {
-        <div>
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Location</ui-typography>
+        <ui-info-item label="Location">
           <ui-stack direction="row" align="center" gap="2">
             <ui-icon name="map-pin" color="muted" />
             <span>{{ selectedEvent()!.location }}</span>
           </ui-stack>
-        </div>
+        </ui-info-item>
       }
 
       @if (selectedEvent()!.speedMph) {
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 6 }">
-            <ui-typography variant="body-sm" color="muted" class="mb-1 block">Speed</ui-typography>
-            <ui-typography variant="body" weight="medium">
+            <ui-info-item label="Speed">
               {{ selectedEvent()!.speedMph | number: "1.0-0" }} mph
-            </ui-typography>
+            </ui-info-item>
           </ui-grid>
           @if (selectedEvent()!.speedLimitMph) {
             <ui-grid [size]="{ xs: 6 }">
-              <ui-typography variant="body-sm" color="muted" class="mb-1 block">
-                Speed Limit
-              </ui-typography>
-              <ui-typography variant="body" weight="medium">
+              <ui-info-item label="Speed Limit">
                 {{ selectedEvent()!.speedLimitMph | number: "1.0-0" }} mph
-              </ui-typography>
+              </ui-info-item>
             </ui-grid>
           }
         </ui-grid>
       }
 
       @if (selectedEvent()!.gForce) {
-        <div>
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">G-Force</ui-typography>
-          <ui-typography variant="body" weight="medium">
-            {{ selectedEvent()!.gForce | number: "1.2-2" }} G
-          </ui-typography>
-        </div>
+        <ui-info-item label="G-Force">
+          {{ selectedEvent()!.gForce | number: "1.2-2" }} G
+        </ui-info-item>
       }
 
       @if (selectedEvent()!.durationSeconds) {
-        <div>
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Duration</ui-typography>
-          <ui-typography variant="body" weight="medium">
-            {{ selectedEvent()!.durationSeconds }} seconds
-          </ui-typography>
-        </div>
+        <ui-info-item label="Duration">
+          {{ selectedEvent()!.durationSeconds }} seconds
+        </ui-info-item>
       }
 
-      <div>
-        <ui-typography variant="body-sm" color="muted" class="mb-1 block">Source</ui-typography>
-        <div>{{ selectedEvent()!.providerTypeDisplay }}</div>
-      </div>
+      <ui-info-item label="Source">{{ selectedEvent()!.providerTypeDisplay }}</ui-info-item>
 
       <!-- Review Section -->
       @if (selectedEvent()!.isReviewed) {

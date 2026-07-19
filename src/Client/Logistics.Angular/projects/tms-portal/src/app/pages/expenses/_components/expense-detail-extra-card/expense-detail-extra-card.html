@@ -7,71 +7,71 @@
 
   <div class="space-y-4">
     @if (expense().truck) {
-      <app-expense-detail-row label="Truck">
+      <ui-info-row label="Truck">
         <a
           [routerLink]="['/trucks', expense().truckId, 'edit']"
           class="text-foreground font-medium hover:underline"
         >
           {{ expense().truck?.number }}
         </a>
-      </app-expense-detail-row>
+      </ui-info-row>
     }
 
     @if (expense().odometerReading) {
-      <app-expense-detail-row label="Odometer">
+      <ui-info-row label="Odometer">
         <span>{{ expense().odometerReading | number }} mi</span>
-      </app-expense-detail-row>
+      </ui-info-row>
     }
 
     @if (expense().quantity !== null) {
-      <app-expense-detail-row label="Quantity">
+      <ui-info-row label="Quantity">
         <span>{{ formatQuantity() }}</span>
-      </app-expense-detail-row>
+      </ui-info-row>
     }
 
     @if (expense().type === "body_shop") {
       @if (expense().vendorAddress) {
-        <app-expense-detail-row label="Shop Address">
+        <ui-info-row label="Shop Address">
           <span class="text-right">{{ expense().vendorAddress }}</span>
-        </app-expense-detail-row>
+        </ui-info-row>
       }
 
       @if (expense().vendorPhone) {
-        <app-expense-detail-row label="Shop Phone">
+        <ui-info-row label="Shop Phone">
           <span>{{ expense().vendorPhone }}</span>
-        </app-expense-detail-row>
+        </ui-info-row>
       }
 
       @if (expense().repairDescription) {
-        <app-expense-detail-row label="Repair Description" [stacked]="true">
+        <ui-info-item label="Repair Description">
           {{ expense().repairDescription }}
-        </app-expense-detail-row>
+        </ui-info-item>
       }
 
       @if (expense().estimatedCompletionDate) {
-        <app-expense-detail-row label="Est. Completion">
+        <ui-info-row label="Est. Completion">
           <span>{{ expense().estimatedCompletionDate | date: "mediumDate" }}</span>
-        </app-expense-detail-row>
+        </ui-info-row>
       }
 
       @if (expense().actualCompletionDate) {
-        <app-expense-detail-row label="Actual Completion">
+        <ui-info-row label="Actual Completion">
           <span>{{ expense().actualCompletionDate | date: "mediumDate" }}</span>
-        </app-expense-detail-row>
+        </ui-info-row>
       }
     }
 
     @if (expense().notes) {
       <ui-divider />
-      <app-expense-detail-row label="Notes" [stacked]="true">
+      <ui-info-item label="Notes">
         {{ expense().notes }}
-      </app-expense-detail-row>
+      </ui-info-item>
     }
 
     <ui-divider />
 
     @if (expense().receiptBlobPath) {
-      <app-expense-detail-row label="Receipt">
+      <ui-info-row label="Receipt">
         <ui-button
           appearance="outlined"
           size="sm"
@@ -79,11 +79,11 @@
           label="View Receipt"
           (click)="viewReceipt.emit()"
         />
-      </app-expense-detail-row>
+      </ui-info-row>
     } @else {
-      <app-expense-detail-row label="Receipt">
+      <ui-info-row label="Receipt">
         <span class="text-muted-foreground">No receipt attached</span>
-      </app-expense-detail-row>
+      </ui-info-row>
     }
   </div>
 </ui-card>

@@ -1,6 +1,5 @@
 export * from "./expense.constants";
 export * from "./expense-analytics.utils";
-export * from "./expense-detail-row/expense-detail-row";
 export * from "./expense-receipt-upload/expense-receipt-upload";
 export * from "./expense-detail-info-card/expense-detail-info-card";
 export * from "./expense-detail-extra-card/expense-detail-extra-card";

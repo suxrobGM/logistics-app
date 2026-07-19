@@ -274,10 +274,7 @@
     </ui-dialog>
   } @else {
     <ui-card>
-      <ui-stack align="center" gap="4" class="text-muted-foreground py-8">
-        <ui-icon name="circle-alert" size="xl" />
-        <p>Payroll invoice not found</p>
-      </ui-stack>
+      <ui-empty-state icon="circle-alert" title="Payroll invoice not found" message="" />
     </ui-card>
   }
 </div>

@@ -5,57 +5,44 @@
       <ui-stack gap="3">
         <ui-grid container spacing="3">
           <ui-grid [size]="{ xs: 6 }">
-            <ui-typography variant="body-sm" color="muted" class="mb-1 block">
-              Date & Time
-            </ui-typography>
-            <ui-typography variant="body" weight="medium">
+            <ui-info-item label="Date & Time">
               {{ incidentForm().accidentDateTime().value() | date: "medium" }}
-            </ui-typography>
+            </ui-info-item>
           </ui-grid>
           <ui-grid [size]="{ xs: 6 }">
-            <ui-typography variant="body-sm" color="muted" class="mb-1 block">
-              Location
-            </ui-typography>
-            <ui-typography variant="body" weight="medium">{{ locationString() }}</ui-typography>
+            <ui-info-item label="Location">{{ locationString() }}</ui-info-item>
           </ui-grid>
         </ui-grid>
 
         <ui-grid container spacing="3">
           <ui-grid [size]="{ xs: 6 }">
-            <ui-typography variant="body-sm" color="muted" class="mb-1 block">Truck</ui-typography>
-            <ui-typography variant="body" weight="medium">
+            <ui-info-item label="Truck">
               {{ incidentForm().truck().value()?.number ?? "-" }}
-            </ui-typography>
+            </ui-info-item>
           </ui-grid>
           <ui-grid [size]="{ xs: 6 }">
-            <ui-typography variant="body-sm" color="muted" class="mb-1 block">Driver</ui-typography>
-            <ui-typography variant="body" weight="medium">
+            <ui-info-item label="Driver">
               {{ incidentForm().driver().value()?.fullName ?? "-" }}
-            </ui-typography>
+            </ui-info-item>
           </ui-grid>
         </ui-grid>
 
         <ui-grid container spacing="3">
           <ui-grid [size]="{ xs: 6 }">
-            <ui-typography variant="body-sm" color="muted" class="mb-1 block">Type</ui-typography>
-            <ui-badge [value]="typeLabel()" severity="info" />
+            <ui-info-item label="Type">
+              <ui-badge [value]="typeLabel()" severity="info" />
+            </ui-info-item>
           </ui-grid>
           <ui-grid [size]="{ xs: 6 }">
-            <ui-typography variant="body-sm" color="muted" class="mb-1 block">
-              Severity
-            </ui-typography>
-            <ui-badge [value]="severityLabel()" severity="warn" />
+            <ui-info-item label="Severity">
+              <ui-badge [value]="severityLabel()" severity="warn" />
+            </ui-info-item>
           </ui-grid>
         </ui-grid>
 
-        <div>
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">
-            Description
-          </ui-typography>
-          <ui-typography variant="body-sm">
-            {{ incidentForm().description().value() }}
-          </ui-typography>
-        </div>
+        <ui-info-item label="Description">
+          {{ incidentForm().description().value() }}
+        </ui-info-item>
 
         @if (
           incidentForm().weatherConditions().value() || incidentForm().roadConditions().value()
@@ -63,22 +50,16 @@
           <ui-grid container spacing="3" class="border-t pt-3">
             @if (incidentForm().weatherConditions().value()) {
               <ui-grid [size]="{ xs: 6 }">
-                <ui-typography variant="body-sm" color="muted" class="mb-1 block">
-                  Weather
-                </ui-typography>
-                <ui-typography variant="body-sm">
+                <ui-info-item label="Weather">
                   {{ incidentForm().weatherConditions().value() }}
-                </ui-typography>
+                </ui-info-item>
               </ui-grid>
             }
             @if (incidentForm().roadConditions().value()) {
               <ui-grid [size]="{ xs: 6 }">
-                <ui-typography variant="body-sm" color="muted" class="mb-1 block">
-                  Road Conditions
-                </ui-typography>
-                <ui-typography variant="body-sm">
+                <ui-info-item label="Road Conditions">
                   {{ incidentForm().roadConditions().value() }}
-                </ui-typography>
+                </ui-info-item>
               </ui-grid>
             }
           </ui-grid>
@@ -91,8 +72,7 @@
   <ui-grid [size]="{ xs: 12, lg: 6 }">
     <ui-card header="Injuries & Damage">
       <ui-stack gap="3">
-        <ui-stack direction="row" align="center" justify="between">
-          <ui-typography variant="body" color="muted">Injuries Reported</ui-typography>
+        <ui-info-row label="Injuries Reported">
           @if (injuriesDamageForm().injuriesReported().value()) {
             <span class="text-danger font-medium">
               Yes ({{ injuriesDamageForm().numberOfInjuries().value() ?? 0 }})
@@ -100,10 +80,9 @@
           } @else {
             <span class="text-success font-medium">No</span>
           }
-        </ui-stack>
+        </ui-info-row>
 
-        <ui-stack direction="row" align="center" justify="between">
-          <ui-typography variant="body" color="muted">Fatalities</ui-typography>
+        <ui-info-row label="Fatalities">
           @if (injuriesDamageForm().fatalitiesReported().value()) {
             <span class="text-danger font-medium">
               Yes ({{ injuriesDamageForm().numberOfFatalities().value() ?? 0 }})
@@ -111,33 +90,30 @@
           } @else {
             <span class="text-success font-medium">No</span>
           }
-        </ui-stack>
+        </ui-info-row>
 
-        <ui-stack direction="row" align="center" justify="between">
-          <ui-typography variant="body" color="muted">Hazmat Involved</ui-typography>
+        <ui-info-row label="Hazmat Involved">
           @if (injuriesDamageForm().hazmatInvolved().value()) {
             <span class="text-danger font-medium">Yes</span>
           } @else {
             <span class="text-success font-medium">No</span>
           }
-        </ui-stack>
+        </ui-info-row>
 
-        <ui-stack direction="row" align="center" justify="between">
-          <ui-typography variant="body" color="muted">Vehicle Towed</ui-typography>
+        <ui-info-row label="Vehicle Towed">
           @if (injuriesDamageForm().vehicleTowed().value()) {
             <span class="text-warn font-medium">Yes</span>
           } @else {
             <span class="text-success font-medium">No</span>
           }
-        </ui-stack>
+        </ui-info-row>
 
         @if (injuriesDamageForm().estimatedDamage().value()) {
-          <ui-stack direction="row" align="center" justify="between" class="border-t pt-3">
-            <ui-typography variant="body" color="muted">Estimated Damage</ui-typography>
+          <ui-info-row label="Estimated Damage" [divider]="true">
             <span class="text-foreground font-bold">
               {{ injuriesDamageForm().estimatedDamage().value() | currencyFormat }}
             </span>
-          </ui-stack>
+          </ui-info-row>
         }
       </ui-stack>
     </ui-card>

@@ -2,9 +2,8 @@ import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { CurrencyFormatPipe } from "@logistics/shared";
 import { type ExpenseDto } from "@logistics/shared/api";
-import { Card, Divider, Typography } from "@logistics/shared/ui";
+import { Card, Divider, InfoRow, Typography } from "@logistics/shared/ui";
 import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
-import { ExpenseDetailRow } from "../expense-detail-row/expense-detail-row";
 import { getCategoryLabel } from "../expense.constants";
 
 @Component({
@@ -15,9 +14,9 @@ import { getCategoryLabel } from "../expense.constants";
     CommonModule,
     CurrencyFormatPipe,
     Divider,
-    ExpenseDetailRow,
     ExpenseStatusTag,
     ExpenseTypeTag,
+    InfoRow,
     Typography,
   ],
 })

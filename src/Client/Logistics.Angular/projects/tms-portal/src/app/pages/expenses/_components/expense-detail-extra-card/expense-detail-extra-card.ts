@@ -3,14 +3,13 @@ import { Component, inject, input, output } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { LocalizationService } from "@logistics/shared";
 import { type ExpenseDto } from "@logistics/shared/api";
-import { Card, Divider, Typography, UiButton } from "@logistics/shared/ui";
-import { ExpenseDetailRow } from "../expense-detail-row/expense-detail-row";
+import { Card, Divider, InfoItem, InfoRow, Typography, UiButton } from "@logistics/shared/ui";
 import { toShortVolumeUnit } from "../expense.constants";
 
 @Component({
   selector: "app-expense-detail-extra-card",
   templateUrl: "./expense-detail-extra-card.html",
-  imports: [Card, CommonModule, Divider, ExpenseDetailRow, RouterModule, Typography, UiButton],
+  imports: [Card, CommonModule, Divider, InfoItem, InfoRow, RouterModule, Typography, UiButton],
 })
 export class ExpenseDetailExtraCard {
   private readonly localization = inject(LocalizationService);

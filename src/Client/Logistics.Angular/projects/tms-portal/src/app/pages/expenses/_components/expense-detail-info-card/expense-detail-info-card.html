@@ -6,40 +6,40 @@
   </ng-template>
 
   <div class="space-y-4">
-    <app-expense-detail-row label="Expense #">
+    <ui-info-row label="Expense #">
       <span class="font-mono font-semibold">{{ expense().number }}</span>
-    </app-expense-detail-row>
+    </ui-info-row>
 
     <ui-divider />
 
-    <app-expense-detail-row label="Type">
+    <ui-info-row label="Type">
       <app-expense-type-tag [type]="expense().type" />
-    </app-expense-detail-row>
+    </ui-info-row>
 
-    <app-expense-detail-row label="Status">
+    <ui-info-row label="Status">
       <app-expense-status-tag [status]="expense().status" />
-    </app-expense-detail-row>
+    </ui-info-row>
 
-    <app-expense-detail-row label="Category">
+    <ui-info-row label="Category">
       <span class="font-medium">{{ categoryLabel() }}</span>
-    </app-expense-detail-row>
+    </ui-info-row>
 
     <ui-divider />
 
-    <app-expense-detail-row label="Amount">
+    <ui-info-row label="Amount">
       <span class="text-success text-xl font-bold">
         {{ expense().amount?.amount ?? 0 | currencyFormat: expense().amount?.currency ?? "USD" }}
       </span>
-    </app-expense-detail-row>
+    </ui-info-row>
 
-    <app-expense-detail-row label="Expense Date">
+    <ui-info-row label="Expense Date">
       <span>{{ expense().expenseDate | date: "mediumDate" }}</span>
-    </app-expense-detail-row>
+    </ui-info-row>
 
     @if (expense().vendorName) {
-      <app-expense-detail-row label="Vendor">
+      <ui-info-row label="Vendor">
         <span>{{ expense().vendorName }}</span>
-      </app-expense-detail-row>
+      </ui-info-row>
     }
   </div>
 </ui-card>
