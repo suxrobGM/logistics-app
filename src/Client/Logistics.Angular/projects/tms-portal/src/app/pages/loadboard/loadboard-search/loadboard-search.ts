@@ -11,7 +11,7 @@ import {
 import { Spinner, Stack } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { DashboardCard, EmptyState, PageHeader } from "@/shared/components";
-import { BookLoadDialog, LoadBoardSearchFilters, LoadBoardSearchResults } from "../_components";
+import { BookLoadDialog, LoadBoardSearchFilters, LoadBoardSearchResults } from "../components";
 import { LoadBoardStore } from "../store";
 
 @Component({

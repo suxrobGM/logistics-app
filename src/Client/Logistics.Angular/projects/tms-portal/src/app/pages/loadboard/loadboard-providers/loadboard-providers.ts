@@ -2,7 +2,7 @@ import { Component, inject, signal, type OnInit } from "@angular/core";
 import { type CreateLoadBoardConfigurationCommand } from "@logistics/shared/api";
 import { Alert, Spinner, Stack, UiButton } from "@logistics/shared/ui";
 import { DashboardCard, EmptyState, ErrorState, PageHeader } from "@/shared/components";
-import { ProviderAddDialog, ProvidersTable } from "../_components";
+import { ProviderAddDialog, ProvidersTable } from "../components";
 import { LoadBoardStore } from "../store";
 
 @Component({

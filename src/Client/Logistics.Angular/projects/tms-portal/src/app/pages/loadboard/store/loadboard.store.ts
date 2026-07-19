@@ -17,7 +17,7 @@ import {
 } from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { ToastService } from "@/core/services";
-import { getProviderLabel } from "../_components/loadboard.constants";
+import { getProviderLabel } from "../components/loadboard.constants";
 
 interface LoadBoardState {
   providers: LoadBoardConfigurationDto[];

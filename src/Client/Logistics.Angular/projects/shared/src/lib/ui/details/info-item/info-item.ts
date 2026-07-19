@@ -3,7 +3,7 @@ import { Typography } from "../../display/typography/typography";
 
 /**
  * A stacked label / value block for detail cards - the muted-label-over-value pattern repeated all
- * over accident-detail and the other detail pages. The label sits above the value as a small muted
+ * over accident-details and the other detail pages. The label sits above the value as a small muted
  * caption; the value is emphasised body text.
  *
  * The value comes from either the `value` input or projected content, so the same component covers

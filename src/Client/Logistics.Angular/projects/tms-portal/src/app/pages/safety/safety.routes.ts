@@ -2,13 +2,13 @@ import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { AccidentAddPage } from "./accident-add/accident-add";
-import { AccidentDetailPage } from "./accident-detail/accident-detail";
+import { AccidentDetailsPage } from "./accident-details/accident-details";
 import { AccidentEditPage } from "./accident-edit/accident-edit";
 import { AccidentsListPage } from "./accidents-list/accidents-list";
-import { ConditionReportDetailPage } from "./condition-report-detail/condition-report-detail";
+import { ConditionReportDetailsPage } from "./condition-report-details/condition-report-details";
 import { ConditionReportsListPage } from "./condition-reports-list/condition-reports-list";
 import { DriverBehaviorListPage } from "./driver-behavior-list/driver-behavior-list";
-import { DvirDetailPage } from "./dvir-detail/dvir-detail";
+import { DvirDetailsPage } from "./dvir-details/dvir-details";
 import { DvirListPage } from "./dvir-list/dvir-list";
 import { DvirReviewPage } from "./dvir-review/dvir-review";
 import { InspectionsDashboardPage } from "./inspections-dashboard/inspections-dashboard";
@@ -35,7 +35,7 @@ export const inspectionRoutes: Routes = [
   },
   {
     path: "condition-reports/:id",
-    component: ConditionReportDetailPage,
+    component: ConditionReportDetailsPage,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Details",
@@ -54,7 +54,7 @@ export const inspectionRoutes: Routes = [
   },
   {
     path: "dvir/:id",
-    component: DvirDetailPage,
+    component: DvirDetailsPage,
     canActivate: [authGuard],
     data: {
       breadcrumb: "DVIR Details",
@@ -91,7 +91,7 @@ export const inspectionRoutes: Routes = [
   },
   {
     path: "accidents/:id",
-    component: AccidentDetailPage,
+    component: AccidentDetailsPage,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Accident Details",

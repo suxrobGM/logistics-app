@@ -8,7 +8,7 @@ import {
   buildMonthlyTrendChart,
   buildTruckCategoryChart,
   buildTypeChart,
-} from "../_components/expense-analytics.utils";
+} from "../components/expense-analytics.utils";
 
 interface ExpenseAnalyticsState {
   fromDate: Date | null;

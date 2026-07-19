@@ -26,11 +26,11 @@ import {
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
-import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-list";
+import { DvirDefectsList } from "../components/dvir-defects-list/dvir-defects-list";
 
 @Component({
-  selector: "app-dvir-detail",
-  templateUrl: "./dvir-detail.html",
+  selector: "app-dvir-details",
+  templateUrl: "./dvir-details.html",
   imports: [
     Badge,
     Card,
@@ -49,7 +49,7 @@ import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-l
     UiTextareaField,
   ],
 })
-export class DvirDetailPage implements OnInit {
+export class DvirDetailsPage implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);

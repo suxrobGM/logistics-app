@@ -3,7 +3,7 @@ import { Divider } from "../../layout/divider/divider";
 
 /**
  * A horizontal label / value line for detail cards - the `label … value` row repeated across the
- * tms detail pages (truck-details, load-detail, …), where each row is a flex `justify-between`
+ * tms detail pages (truck-details, load-details, …), where each row is a flex `justify-between`
  * with a muted label on the left and an emphasised value on the right, optionally preceded by a
  * `<ui-divider>` to group sections.
  *

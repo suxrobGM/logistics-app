@@ -17,8 +17,8 @@ import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 
 @Component({
-  selector: "app-service-record-detail",
-  templateUrl: "./service-record-detail.html",
+  selector: "app-service-record-details",
+  templateUrl: "./service-record-details.html",
   imports: [
     Badge,
     Card,
@@ -35,7 +35,7 @@ import { PageHeader } from "@/shared/components";
     UiButton,
   ],
 })
-export class ServiceRecordDetailPage implements OnInit {
+export class ServiceRecordDetailsPage implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);

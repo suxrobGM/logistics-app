@@ -6,7 +6,7 @@ import type { IconName } from "../../icons/icons";
 
 /**
  * A titled detail card - the card-with-header boilerplate repeated across ~13 tms detail pages
- * (truck-details, accident-detail, load/trip/employee detail, …). Renders a `<ui-card>` with a
+ * (truck-details, accident-details, load/trip/employee detail, …). Renders a `<ui-card>` with a
  * `#header` slot holding the heading (and an optional leading glyph), plus an optional actions
  * slot on the right and the body via the default `<ng-content>`.
  *

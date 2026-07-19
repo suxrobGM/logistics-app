@@ -29,7 +29,7 @@ import {
 } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField } from "@/shared/components";
-import { getEldProviderLabel } from "../_components";
+import { getEldProviderLabel } from "../components";
 
 @Component({
   selector: "app-eld-driver-mappings",

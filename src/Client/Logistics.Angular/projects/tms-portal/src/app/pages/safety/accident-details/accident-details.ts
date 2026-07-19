@@ -31,11 +31,11 @@ import {
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
-import { AccidentQuickInfo } from "../_components";
+import { AccidentQuickInfo } from "../components";
 
 @Component({
-  selector: "app-accident-detail",
-  templateUrl: "./accident-detail.html",
+  selector: "app-accident-details",
+  templateUrl: "./accident-details.html",
   imports: [
     AccidentQuickInfo,
     Badge,
@@ -57,7 +57,7 @@ import { AccidentQuickInfo } from "../_components";
     UiTextareaField,
   ],
 })
-export class AccidentDetailPage implements OnInit {
+export class AccidentDetailsPage implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);

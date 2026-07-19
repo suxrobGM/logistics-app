@@ -16,7 +16,7 @@ import {
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
-import { getCategoryLabel, RejectExpenseDialog } from "../_components";
+import { getCategoryLabel, RejectExpenseDialog } from "../components";
 import { ExpenseActionsService } from "../services/expense-actions.service";
 import { ExpensesListStore } from "../store/expenses-list.store";
 

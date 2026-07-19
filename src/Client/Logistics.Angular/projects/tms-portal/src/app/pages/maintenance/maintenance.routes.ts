@@ -3,7 +3,7 @@ import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { MaintenanceDashboardPage } from "./maintenance-dashboard/maintenance-dashboard";
 import { ServiceRecordAddPage } from "./service-record-add/service-record-add";
-import { ServiceRecordDetailPage } from "./service-record-detail/service-record-detail";
+import { ServiceRecordDetailsPage } from "./service-record-details/service-record-details";
 import { ServiceRecordEditPage } from "./service-record-edit/service-record-edit";
 import { ServiceRecordsPage } from "./service-records/service-records";
 import { UpcomingServicePage } from "./upcoming-service/upcoming-service";
@@ -38,7 +38,7 @@ export const maintenanceRoutes: Routes = [
   },
   {
     path: "records/:id",
-    component: ServiceRecordDetailPage,
+    component: ServiceRecordDetailsPage,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Service Record Details",

@@ -20,7 +20,7 @@ import {
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
-import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-list";
+import { DvirDefectsList } from "../components/dvir-defects-list/dvir-defects-list";
 
 @Component({
   selector: "app-dvir-review",

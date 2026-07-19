@@ -20,7 +20,7 @@ import {
 } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
-import { FuelCardProviderAddDialog, FuelCardProvidersTable } from "../_components";
+import { FuelCardProviderAddDialog, FuelCardProvidersTable } from "../components";
 
 @Component({
   selector: "app-fuel-card-providers",

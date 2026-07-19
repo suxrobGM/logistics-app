@@ -17,7 +17,7 @@ export class UiTimelineMarker {
 }
 
 /**
- * A vertical timeline, used by ai-dispatch/session-detail and trips/trip-timeline. Hand-rolled:
+ * A vertical timeline, used by ai-dispatch/session-details and trips/trip-timeline. Hand-rolled:
  * spartan has no timeline.
  *
  * BOTH templates are supported, because both are used: `trip-timeline.html` binds `#marker` for its

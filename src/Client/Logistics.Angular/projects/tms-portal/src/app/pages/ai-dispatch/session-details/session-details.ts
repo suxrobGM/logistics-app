@@ -47,9 +47,9 @@ import {
 import { MarkdownPipe } from "../utils/markdown";
 
 @Component({
-  selector: "app-session-detail",
-  templateUrl: "./session-detail.html",
-  styleUrl: "./session-detail.css",
+  selector: "app-session-details",
+  templateUrl: "./session-details.html",
+  styleUrl: "./session-details.css",
   imports: [
     ApproveRejectActions,
     Badge,
@@ -70,7 +70,7 @@ import { MarkdownPipe } from "../utils/markdown";
     UiTooltip,
   ],
 })
-export class SessionDetailPage implements OnInit, OnDestroy {
+export class SessionDetailsPage implements OnInit, OnDestroy {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly aiDispatchHub = inject(AiDispatchHubService);

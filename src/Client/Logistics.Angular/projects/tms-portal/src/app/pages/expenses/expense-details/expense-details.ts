@@ -14,12 +14,12 @@ import {
   ExpenseDetailExtraCard,
   ExpenseDetailInfoCard,
   RejectExpenseDialog,
-} from "../_components";
+} from "../components";
 import { ExpenseActionsService } from "../services/expense-actions.service";
 
 @Component({
-  selector: "app-expense-detail",
-  templateUrl: "./expense-detail.html",
+  selector: "app-expense-details",
+  templateUrl: "./expense-details.html",
   providers: [ExpenseActionsService],
   imports: [
     Card,
@@ -37,7 +37,7 @@ import { ExpenseActionsService } from "../services/expense-actions.service";
     UiButton,
   ],
 })
-export class ExpenseDetailPage implements OnInit {
+export class ExpenseDetailsPage implements OnInit {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly expenseActions = inject(ExpenseActionsService);

@@ -41,8 +41,8 @@ import {
 } from "../components";
 
 @Component({
-  selector: "app-load-detail",
-  templateUrl: "./load-detail.html",
+  selector: "app-load-details",
+  templateUrl: "./load-details.html",
   imports: [
     AddressPipe,
     Card,
@@ -75,7 +75,7 @@ import {
     UiTabsImports,
   ],
 })
-export class LoadDetailPage implements OnInit {
+export class LoadDetailsPage implements OnInit {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
 

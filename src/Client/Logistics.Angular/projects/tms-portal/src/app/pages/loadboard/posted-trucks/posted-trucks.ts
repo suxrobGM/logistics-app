@@ -3,7 +3,7 @@ import { Router } from "@angular/router";
 import { type PostTruckToLoadBoardCommand } from "@logistics/shared/api";
 import { Alert, Spinner, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { DashboardCard, EmptyState, ErrorState, PageHeader } from "@/shared/components";
-import { PostedTrucksTable, PostTruckDialog } from "../_components";
+import { PostedTrucksTable, PostTruckDialog } from "../components";
 import { LoadBoardStore } from "../store";
 
 @Component({

@@ -2,7 +2,7 @@ import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { LoadAddComponent } from "./load-add/load-add";
-import { LoadDetailPage } from "./load-detail/load-detail";
+import { LoadDetailsPage } from "./load-details/load-details";
 import { LoadEditComponent } from "./load-edit/load-edit";
 import { LoadsListComponent } from "./loads-list/loads-list";
 
@@ -45,7 +45,7 @@ export const loadRoutes: Routes = [
   },
   {
     path: ":id",
-    component: LoadDetailPage,
+    component: LoadDetailsPage,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Details",

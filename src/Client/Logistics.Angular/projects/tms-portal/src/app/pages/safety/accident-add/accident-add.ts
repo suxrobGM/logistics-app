@@ -12,7 +12,7 @@ import {
   AccidentReviewSummary,
   type AccidentIncidentModel,
   type AccidentInjuriesDamageModel,
-} from "../_components";
+} from "../components";
 
 @Component({
   selector: "app-accident-add",

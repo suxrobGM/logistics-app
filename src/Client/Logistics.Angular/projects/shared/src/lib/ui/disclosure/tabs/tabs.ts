@@ -23,7 +23,7 @@ import { tabKey, type UiTabValue } from "./tab-value";
  * changes, again silently. So `valueChange` re-emits in the caller's own type.
  *
  * CONTROLLED **AND** UNCONTROLLED - both call-site shapes must keep working.
- * Two call sites (`accident-detail`, `mcp-integration-guide`) pass a static `value` and bind NO
+ * Two call sites (`accident-details`, `mcp-integration-guide`) pass a static `value` and bind NO
  * `(valueChange)`; their tabs must still switch on click. So `BrnTabs` owns the active tab and `value`
  * only *seeds* it: the sync effect below depends solely on `value()`, so a user click - which moves
  * `BrnTabs.activeTab` but not `value` - cannot retrigger it and snap the tab back. Reading `activeTab`

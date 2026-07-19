@@ -14,7 +14,8 @@ export const aiDispatchRoutes: Routes = [
   },
   {
     path: ":id",
-    loadComponent: () => import("./session-detail/session-detail").then((m) => m.SessionDetailPage),
+    loadComponent: () =>
+      import("./session-details/session-details").then((m) => m.SessionDetailsPage),
     canActivate: [authGuard],
     data: {
       breadcrumb: "Session",

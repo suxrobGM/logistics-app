@@ -7,7 +7,7 @@ import {
   CompanyExpenseForm,
   getExpenseTypeLabel,
   TruckExpenseForm,
-} from "../_components";
+} from "../components";
 
 @Component({
   selector: "app-expense-edit",

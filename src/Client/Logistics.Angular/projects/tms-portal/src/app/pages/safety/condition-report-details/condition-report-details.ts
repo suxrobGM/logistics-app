@@ -22,8 +22,8 @@ import { PageHeader } from "@/shared/components";
 import { ConditionDefectsList } from "@/shared/components/inspections";
 
 @Component({
-  selector: "app-condition-report-detail",
-  templateUrl: "./condition-report-detail.html",
+  selector: "app-condition-report-details",
+  templateUrl: "./condition-report-details.html",
   imports: [
     Badge,
     Card,
@@ -42,7 +42,7 @@ import { ConditionDefectsList } from "@/shared/components/inspections";
     UiLightbox,
   ],
 })
-export class ConditionReportDetailPage implements OnInit {
+export class ConditionReportDetailsPage implements OnInit {
   private readonly api = inject(Api);
 
   public readonly id = input.required<string>();

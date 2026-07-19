@@ -3,7 +3,7 @@ import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { ExpenseAddPage } from "./expense-add/expense-add";
 import { ExpenseAnalyticsPage } from "./expense-analytics/expense-analytics";
-import { ExpenseDetailPage } from "./expense-detail/expense-detail";
+import { ExpenseDetailsPage } from "./expense-details/expense-details";
 import { ExpenseEditPage } from "./expense-edit/expense-edit";
 import { ExpensesListPage } from "./expenses-list/expenses-list";
 
@@ -37,7 +37,7 @@ export const expenseRoutes: Routes = [
   },
   {
     path: ":id",
-    component: ExpenseDetailPage,
+    component: ExpenseDetailsPage,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Details",

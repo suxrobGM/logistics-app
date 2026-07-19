@@ -18,7 +18,7 @@ import {
   UiButton,
 } from "@logistics/shared/ui";
 import { PageHeader } from "@/shared/components";
-import { EldProviderAddDialog, EldProvidersTable } from "../_components";
+import { EldProviderAddDialog, EldProvidersTable } from "../components";
 
 @Component({
   selector: "app-eld-providers",

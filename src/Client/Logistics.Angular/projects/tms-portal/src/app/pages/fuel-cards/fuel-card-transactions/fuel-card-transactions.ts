@@ -26,7 +26,7 @@ import {
   getFuelCardProviderLabel,
   getTransactionStatusSeverity,
   type AssignTruckRequest,
-} from "../_components";
+} from "../components";
 import { FuelCardQueueStore } from "../store";
 
 @Component({

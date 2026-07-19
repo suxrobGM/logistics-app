@@ -21,7 +21,7 @@ import {
 } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { EmptyState, LoadingSkeleton, PageHeader } from "@/shared/components";
-import { TenantTaxRatesCard } from "../_components";
+import { TenantTaxRatesCard } from "../components";
 
 @Component({
   selector: "app-payment-settings",

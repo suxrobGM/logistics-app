@@ -12,7 +12,7 @@ import {
   UiDateField,
 } from "@logistics/shared/ui";
 import { PageHeader } from "@/shared/components";
-import { ExpenseAnalyticsCharts, ExpenseAnalyticsSummary } from "../_components";
+import { ExpenseAnalyticsCharts, ExpenseAnalyticsSummary } from "../components";
 import { ExpenseAnalyticsStore } from "../store/expense-analytics.store";
 
 const RANK_BADGE_CLASSES: Record<number, string> = {
