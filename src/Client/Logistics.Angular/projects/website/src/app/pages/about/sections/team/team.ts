@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
-import { Icon } from "@logistics/shared/ui";
-import { Avatar, SectionContainer, SectionHeader } from "@/shared/components";
+import { Avatar, Icon } from "@logistics/shared/ui";
+import { SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
 interface TeamMember {

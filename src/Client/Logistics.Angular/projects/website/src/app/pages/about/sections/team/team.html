@@ -17,7 +17,10 @@
       >
         <!-- Avatar -->
         <div class="flex justify-center">
-          <web-avatar [initials]="member.initials" size="lg" [hoverScale]="true" />
+          <ui-avatar
+            [label]="member.initials"
+            class="bg-accent font-display text-paper size-24 text-2xl shadow-lg transition-transform group-hover:scale-105"
+          />
         </div>
 
         <!-- Info -->

@@ -4,11 +4,11 @@
   </div>
 
   <!-- Category Filter -->
-  <div class="mt-12">
-    <web-filter-tabs
-      [options]="store.categories()"
-      [selected]="store.selectedCategory()"
-      (selectionChange)="selectCategory($event)"
+  <div class="mt-12" webScrollAnimate="fade-up" [delay]="100">
+    <ui-toggle-group
+      [options]="categoryOptions()"
+      [value]="store.selectedCategory()"
+      (valueChange)="selectCategory($event)"
     />
   </div>
 
@@ -91,7 +91,10 @@
             <!-- Meta -->
             <div class="mt-4 flex items-center gap-3">
               <!-- Author Avatar -->
-              <web-avatar [initials]="post.authorInitials ?? ''" size="sm" />
+              <ui-avatar
+                [label]="post.authorInitials ?? ''"
+                class="bg-accent font-display text-paper size-8 text-xs shadow-lg"
+              />
               <div class="text-sm">
                 <p class="font-medium text-gray-900">{{ post.authorName }}</p>
                 <p class="text-gray-500">

@@ -90,7 +90,10 @@
       <footer class="mt-12 border-t border-gray-200 pt-8">
         <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <div class="flex items-center gap-4">
-            <web-avatar [initials]="article.authorInitials ?? ''" size="md" />
+            <ui-avatar
+              [label]="article.authorInitials ?? ''"
+              class="bg-accent font-display text-paper size-10 text-sm shadow-lg"
+            />
             <div>
               <p class="text-sm text-gray-500">Written by</p>
               <p class="font-semibold text-gray-900">{{ article.authorName }}</p>

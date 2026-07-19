@@ -1,8 +1,8 @@
 import { DatePipe } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, computed, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Icon, Skeleton } from "@logistics/shared/ui";
-import { Avatar, FilterTabs, SectionContainer, SectionHeader } from "@/shared/components";
+import { Avatar, Icon, Skeleton, UiToggleGroup, type UiToggleOption } from "@logistics/shared/ui";
+import { SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 import { getReadTime } from "@/shared/utils";
 import { BlogStore } from "../../store/blog.store";
@@ -13,18 +13,22 @@ import { BlogStore } from "../../store/blog.store";
   imports: [
     Avatar,
     DatePipe,
-    FilterTabs,
     Icon,
     RouterLink,
     ScrollAnimateDirective,
     SectionContainer,
     SectionHeader,
     Skeleton,
+    UiToggleGroup,
   ],
 })
 export class BlogList {
   protected readonly store = inject(BlogStore);
   protected readonly getReadTime = getReadTime;
+
+  protected readonly categoryOptions = computed<UiToggleOption[]>(() =>
+    this.store.categories().map((category) => ({ label: category, value: category })),
+  );
 
   protected selectCategory(category: string): void {
     this.store.selectCategory(category);

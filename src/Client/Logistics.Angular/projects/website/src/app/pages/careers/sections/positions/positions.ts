@@ -1,6 +1,6 @@
 import { Component, signal } from "@angular/core";
-import { Icon, UiButton } from "@logistics/shared/ui";
-import { FilterTabs, SectionContainer, SectionHeader } from "@/shared/components";
+import { Icon, UiButton, UiToggleGroup, type UiToggleOption } from "@logistics/shared/ui";
+import { SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
 interface JobPosition {
@@ -14,7 +14,7 @@ interface JobPosition {
 @Component({
   selector: "web-positions",
   templateUrl: "./positions.html",
-  imports: [FilterTabs, Icon, ScrollAnimateDirective, SectionContainer, SectionHeader, UiButton],
+  imports: [Icon, ScrollAnimateDirective, SectionContainer, SectionHeader, UiButton, UiToggleGroup],
 })
 export class Positions {
   protected readonly departments = [
@@ -25,6 +25,11 @@ export class Positions {
     "Customer Success",
     "Operations",
   ];
+
+  protected readonly departmentOptions: UiToggleOption[] = this.departments.map((department) => ({
+    label: department,
+    value: department,
+  }));
 
   protected readonly selectedDepartment = signal("All Departments");
 

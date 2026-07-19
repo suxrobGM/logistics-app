@@ -2,8 +2,8 @@ import { DatePipe } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Api, getPublishedBlogPostBySlug, type BlogPostDto } from "@logistics/shared/api";
-import { Icon, Skeleton, UiButton } from "@logistics/shared/ui";
-import { Avatar, SectionContainer } from "@/shared/components";
+import { Avatar, Icon, Skeleton, UiButton } from "@logistics/shared/ui";
+import { SectionContainer } from "@/shared/components";
 import { getReadTime } from "@/shared/utils";
 
 @Component({

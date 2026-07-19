@@ -8,12 +8,11 @@
   </div>
 
   <!-- Department Filter -->
-  <div class="mt-12">
-    <web-filter-tabs
-      [options]="departments"
-      [selected]="selectedDepartment()"
-      variant="dark"
-      (selectionChange)="selectDepartment($event)"
+  <div class="mt-12" webScrollAnimate="fade-up" [delay]="100">
+    <ui-toggle-group
+      [options]="departmentOptions"
+      [value]="selectedDepartment()"
+      (valueChange)="selectDepartment($event)"
     />
   </div>
 

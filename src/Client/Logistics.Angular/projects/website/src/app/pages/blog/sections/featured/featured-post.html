@@ -69,7 +69,10 @@
           <!-- Meta -->
           <div class="mt-6 flex items-center gap-4">
             <!-- Author Avatar -->
-            <web-avatar [initials]="featured.authorInitials ?? ''" size="md" />
+            <ui-avatar
+              [label]="featured.authorInitials ?? ''"
+              class="bg-accent font-display text-paper size-10 text-sm shadow-lg"
+            />
             <div>
               <p class="font-medium text-white">{{ featured.authorName }}</p>
               <p class="text-sm text-purple-300">
