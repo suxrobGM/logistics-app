@@ -53,11 +53,7 @@
           <ui-icon name="box" class="mr-2" />
           Loads
           @if (truck()!.loads?.length) {
-            <span
-              class="ml-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300"
-            >
-              {{ truck()!.loads!.length }}
-            </span>
+            <ui-count-badge [value]="truck()!.loads!.length" severity="info" class="ml-1" />
           }
         </ui-tab>
         <ui-tab value="2">
@@ -76,75 +72,53 @@
           <ui-grid container spacing="6" class="pt-4">
             <!-- Truck Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <ui-card class="border-default border">
-                <ng-template #header>
-                  <div class="p-4 pb-0">
-                    <ui-typography variant="h5" tag="h3" weight="semibold">
-                      Truck Information
-                    </ui-typography>
-                  </div>
-                </ng-template>
-
+              <ui-detail-section heading="Truck Information" class="block">
                 <ui-stack gap="4">
-                  <ui-stack direction="row" align="center" justify="between">
-                    <span>Truck #</span>
+                  <ui-info-row label="Truck #">
                     <span class="font-mono font-semibold">{{ truck()!.number }}</span>
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <span>Type</span>
+                  <ui-info-row label="Type" divider>
                     <app-truck-type-tag [type]="truck()!.type!" />
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-stack direction="row" align="center" justify="between">
-                    <span>Status</span>
+                  <ui-info-row label="Status">
                     <app-truck-status-tag [status]="truck()!.status!" />
-                  </ui-stack>
+                  </ui-info-row>
 
                   @if (truck()!.vehicleCapacity) {
-                    <ui-divider />
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Vehicle Capacity</span>
+                    <ui-info-row label="Vehicle Capacity" divider>
                       <span class="font-semibold">{{ truck()!.vehicleCapacity }} vehicles</span>
-                    </ui-stack>
+                    </ui-info-row>
                   }
 
                   @if (truck()!.make || truck()!.model || truck()!.year) {
                     <ui-divider />
                     @if (truck()!.make) {
-                      <ui-stack direction="row" align="center" justify="between">
-                        <span>Make</span>
+                      <ui-info-row label="Make">
                         <span class="font-semibold">{{ truck()!.make }}</span>
-                      </ui-stack>
+                      </ui-info-row>
                     }
                     @if (truck()!.model) {
-                      <ui-stack direction="row" align="center" justify="between">
-                        <span>Model</span>
+                      <ui-info-row label="Model">
                         <span class="font-semibold">{{ truck()!.model }}</span>
-                      </ui-stack>
+                      </ui-info-row>
                     }
                     @if (truck()!.year) {
-                      <ui-stack direction="row" align="center" justify="between">
-                        <span>Year</span>
+                      <ui-info-row label="Year">
                         <span class="font-semibold">{{ truck()!.year }}</span>
-                      </ui-stack>
+                      </ui-info-row>
                     }
                   }
 
                   @if (truck()!.vin) {
-                    <ui-divider />
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>VIN</span>
+                    <ui-info-row label="VIN" divider>
                       <span class="font-mono font-semibold">{{ truck()!.vin }}</span>
-                    </ui-stack>
+                    </ui-info-row>
                   }
 
                   @if (truck()!.licensePlate) {
-                    <ui-divider />
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>License Plate</span>
+                    <ui-info-row label="License Plate" divider>
                       <span class="font-mono font-semibold">
                         {{ truck()!.licensePlate }}
                         @if (truck()!.licensePlateState) {
@@ -153,74 +127,50 @@
                           </span>
                         }
                       </span>
-                    </ui-stack>
+                    </ui-info-row>
                   }
                 </ui-stack>
-              </ui-card>
+              </ui-detail-section>
             </ui-grid>
 
             <!-- Assignment Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <ui-card class="border-default border">
-                <ng-template #header>
-                  <div class="p-4 pb-0">
-                    <ui-typography variant="h5" tag="h3" weight="semibold">
-                      Assignment
-                    </ui-typography>
-                  </div>
-                </ng-template>
-
+              <ui-detail-section heading="Assignment" class="block">
                 <ui-stack gap="4">
                   @if (truck()!.mainDriver) {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Main Driver</span>
+                    <ui-info-row label="Main Driver">
                       <a
                         [routerLink]="['/employees', truck()!.mainDriver!.id]"
                         class="text-foreground font-medium hover:underline"
                       >
                         {{ truck()!.mainDriver!.fullName }}
                       </a>
-                    </ui-stack>
+                    </ui-info-row>
                   } @else {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Main Driver</span>
+                    <ui-info-row label="Main Driver">
                       <ui-typography variant="body" color="muted">Unassigned</ui-typography>
-                    </ui-stack>
+                    </ui-info-row>
                   }
 
                   @if (truck()!.secondaryDriver) {
-                    <ui-stack direction="row" align="center" justify="between">
-                      <span>Secondary Driver</span>
+                    <ui-info-row label="Secondary Driver">
                       <a
                         [routerLink]="['/employees', truck()!.secondaryDriver!.id]"
                         class="text-foreground font-medium hover:underline"
                       >
                         {{ truck()!.secondaryDriver!.fullName }}
                       </a>
-                    </ui-stack>
+                    </ui-info-row>
                   }
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <span>Active Loads</span>
-                    <span class="font-semibold">{{ truck()!.loads?.length ?? 0 }}</span>
-                  </ui-stack>
+                  <ui-info-row label="Active Loads" [value]="truck()!.loads?.length ?? 0" divider />
                 </ui-stack>
-              </ui-card>
+              </ui-detail-section>
             </ui-grid>
           </ui-grid>
 
           <!-- Location Card (full width) -->
-          <ui-card class="border-default mt-6 border">
-            <ng-template #header>
-              <div class="p-4 pb-0">
-                <ui-typography variant="h5" tag="h3" weight="semibold">
-                  Current Location
-                </ui-typography>
-              </div>
-            </ng-template>
-
+          <ui-detail-section heading="Current Location" class="mt-6 block">
             <ui-grid container spacing="6">
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-stack direction="row" align="center" gap="2" class="mb-2">
@@ -241,45 +191,36 @@
                 </div>
               </ui-grid>
             </ui-grid>
-          </ui-card>
+          </ui-detail-section>
 
           <!-- Quick Stats Card -->
-          <ui-card class="border-default mt-6 border">
-            <ng-template #header>
-              <div class="p-4 pb-0">
-                <ui-typography variant="h5" tag="h3" weight="semibold">
-                  Performance Summary
-                </ui-typography>
-              </div>
-            </ng-template>
-
+          <ui-detail-section heading="Performance Summary" class="mt-6 block">
             <ui-grid container spacing="4">
               <ui-grid [size]="{ xs: 6, md: 3 }">
-                <ui-typography variant="caption" color="muted">Gross (30 days)</ui-typography>
-                <ui-typography variant="h6" weight="bold" class="text-success">
-                  {{ dailyGrosses()?.totalGross | currencyFormat }}
-                </ui-typography>
+                <ui-stat-item
+                  label="Gross (30 days)"
+                  [value]="(dailyGrosses()?.totalGross | currencyFormat) ?? ''"
+                  intent="success"
+                />
               </ui-grid>
               <ui-grid [size]="{ xs: 6, md: 3 }">
-                <ui-typography variant="caption" color="muted">Gross (Year)</ui-typography>
-                <ui-typography variant="h6" weight="bold" class="text-success">
-                  {{ monthlyGrosses()?.totalGross | currencyFormat }}
-                </ui-typography>
+                <ui-stat-item
+                  label="Gross (Year)"
+                  [value]="(monthlyGrosses()?.totalGross | currencyFormat) ?? ''"
+                  intent="success"
+                />
               </ui-grid>
               <ui-grid [size]="{ xs: 6, md: 3 }">
-                <ui-typography variant="caption" color="muted">Distance (30 days)</ui-typography>
-                <ui-typography variant="h6" weight="bold">
-                  {{ dailyGrosses()?.totalDistance | distanceUnit }}
-                </ui-typography>
+                <ui-stat-item
+                  label="Distance (30 days)"
+                  [value]="dailyGrosses()?.totalDistance | distanceUnit"
+                />
               </ui-grid>
               <ui-grid [size]="{ xs: 6, md: 3 }">
-                <ui-typography variant="caption" color="muted">RPM (30 days)</ui-typography>
-                <ui-typography variant="h6" weight="bold">
-                  {{ rpmCurrent() | currencyFormat }}
-                </ui-typography>
+                <ui-stat-item label="RPM (30 days)" [value]="(rpmCurrent() | currencyFormat) ?? ''" />
               </ui-grid>
             </ui-grid>
-          </ui-card>
+          </ui-detail-section>
         </ui-tab-panel>
 
         <!-- Loads Tab -->
@@ -308,9 +249,8 @@
   </ui-card>
 } @else {
   <ui-card>
-    <ui-stack align="center" gap="4" class="py-16">
-      <ui-icon name="circle-alert" size="xl" color="muted" />
-      <ui-typography variant="body" color="muted">Truck not found</ui-typography>
+    <ui-stack align="center" gap="4">
+      <ui-empty-state icon="circle-alert" title="Truck not found" message="" />
       <ui-button label="Back to Trucks" [routerLink]="['/trucks']" />
     </ui-stack>
   </ui-card>

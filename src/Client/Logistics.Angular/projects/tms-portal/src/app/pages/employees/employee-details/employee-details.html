@@ -52,18 +52,14 @@
           <ui-icon name="folder" class="mr-2" />
           Documents
           @if (store.documentsCount()) {
-            <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
-              {{ store.documentsCount() }}
-            </span>
+            <ui-count-badge [value]="store.documentsCount()" severity="info" class="ml-1" />
           }
         </ui-tab>
         <ui-tab value="2">
           <ui-icon name="box" class="mr-2" />
           Loads
           @if (store.recentLoadsCount()) {
-            <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
-              {{ store.recentLoadsCount() }}
-            </span>
+            <ui-count-badge [value]="store.recentLoadsCount()" severity="info" class="ml-1" />
           }
         </ui-tab>
         <ui-tab value="3">
@@ -82,30 +78,18 @@
           <ui-grid container spacing="6" class="pt-4">
             <!-- Contact Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <ui-card class="border-default border">
-                <ng-template #header>
-                  <div class="p-4 pb-0">
-                    <ui-typography variant="h5" tag="h3" weight="semibold">
-                      Contact Information
-                    </ui-typography>
-                  </div>
-                </ng-template>
-
+              <ui-detail-section heading="Contact Information" class="block">
                 <ui-stack gap="4">
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body" color="muted">Email</ui-typography>
+                  <ui-info-row label="Email">
                     <a
                       [href]="'mailto:' + employee.email"
                       class="text-primary font-medium hover:underline"
                     >
                       {{ employee.email }}
                     </a>
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body" color="muted">Phone</ui-typography>
+                  <ui-info-row label="Phone" divider>
                     @if (employee.phoneNumber) {
                       <a
                         [href]="'tel:' + employee.phoneNumber"
@@ -116,87 +100,55 @@
                     } @else {
                       <ui-typography variant="body" color="muted">Not provided</ui-typography>
                     }
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body" color="muted">Joined Date</ui-typography>
-                    <ui-typography variant="body" weight="medium">
-                      {{ employee.joinedDate | date: "mediumDate" }}
-                    </ui-typography>
-                  </ui-stack>
+                  <ui-info-row
+                    label="Joined Date"
+                    [value]="employee.joinedDate | date: 'mediumDate'"
+                    divider
+                  />
                 </ui-stack>
-              </ui-card>
+              </ui-detail-section>
             </ui-grid>
 
             <!-- Salary Info Card -->
             <ui-grid [size]="{ xs: 12, lg: 6 }">
-              <ui-card class="border-default border">
-                <ng-template #header>
-                  <div class="p-4 pb-0">
-                    <ui-typography variant="h5" tag="h3" weight="semibold">
-                      Salary Information
-                    </ui-typography>
-                  </div>
-                </ng-template>
-
+              <ui-detail-section heading="Salary Information" class="block">
                 <ui-stack gap="4">
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body" color="muted">Salary Type</ui-typography>
+                  <ui-info-row label="Salary Type">
                     <span class="font-medium capitalize">
                       {{ employee.salaryType?.replace("_", " ") || "None" }}
                     </span>
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body" color="muted">Salary</ui-typography>
+                  <ui-info-row label="Salary" divider>
                     <ui-typography variant="h6" weight="bold">{{ salaryDisplay() }}</ui-typography>
-                  </ui-stack>
+                  </ui-info-row>
 
-                  <ui-divider />
-
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body" color="muted">Role</ui-typography>
+                  <ui-info-row label="Role" divider>
                     @if (employee.role?.displayName) {
                       <ui-badge [value]="employee.role!.displayName!" severity="info" />
                     } @else {
                       <ui-typography variant="body" color="muted">No role assigned</ui-typography>
                     }
-                  </ui-stack>
+                  </ui-info-row>
                 </ui-stack>
-              </ui-card>
+              </ui-detail-section>
             </ui-grid>
           </ui-grid>
 
           <!-- Location Card (if available) -->
           @if (employee.lastKnownLocation) {
-            <ui-card class="border-default mt-6 border">
-              <ng-template #header>
-                <div class="p-4 pb-0">
-                  <ui-typography variant="h5" tag="h3" weight="semibold">
-                    Last Known Location
-                  </ui-typography>
-                </div>
-              </ng-template>
-
+            <ui-detail-section heading="Last Known Location" class="mt-6 block">
               <ui-stack direction="row" align="center" gap="2">
                 <ui-icon name="map-pin" class="text-primary" />
                 <span>{{ employee.lastKnownLocation }}</span>
               </ui-stack>
-            </ui-card>
+            </ui-detail-section>
           }
 
           <!-- Quick Actions Card -->
-          <ui-card class="border-default mt-6 border">
-            <ng-template #header>
-              <div class="p-4 pb-0">
-                <ui-typography variant="h5" tag="h3" weight="semibold">Quick Actions</ui-typography>
-              </div>
-            </ng-template>
-
+          <ui-detail-section heading="Quick Actions" class="mt-6 block">
             <ui-stack direction="row" gap="2" wrap>
               <ui-button
                 appearance="outlined"
@@ -218,7 +170,7 @@
                 [queryParams]="{ driverId: id() }"
               />
             </ui-stack>
-          </ui-card>
+          </ui-detail-section>
         </ui-tab-panel>
 
         <!-- Documents Tab -->
@@ -248,15 +200,7 @@
             </ui-stack>
 
             <!-- Payout Setup Card -->
-            <ui-card class="border-default mb-4 border">
-              <ng-template #header>
-                <div class="p-4 pb-0">
-                  <ui-typography variant="h5" tag="h3" weight="semibold">
-                    Bank Payout Setup
-                  </ui-typography>
-                </div>
-              </ng-template>
-
+            <ui-detail-section heading="Bank Payout Setup" class="mb-4 block">
               @if (employee.stripeConnectedAccountId) {
                 <ui-stack direction="row" align="center" gap="2">
                   <ui-icon name="circle-check" class="text-green-500" />
@@ -288,7 +232,7 @@
                   (click)="setupPayout()"
                 />
               }
-            </ui-card>
+            </ui-detail-section>
           </div>
         </ui-tab-panel>
 
@@ -305,9 +249,8 @@
   </ui-card>
 } @else {
   <ui-card>
-    <ui-stack align="center" gap="4" class="py-16">
-      <ui-icon name="circle-alert" size="xl" color="muted" />
-      <ui-typography variant="body" color="muted">Employee not found</ui-typography>
+    <ui-stack align="center" gap="4">
+      <ui-empty-state icon="circle-alert" title="Employee not found" message="" />
       <ui-button label="Back to Employees" [routerLink]="['/employees']" />
     </ui-stack>
   </ui-card>
