@@ -13,7 +13,7 @@ import {
   provideSpartanHlm,
   UPGRADE_HANDLER,
 } from "@logistics/shared";
-import { provideApi } from "@logistics/shared/api";
+import { provideApi, TENANT_ID_PROVIDER, tenantInterceptor } from "@logistics/shared/api";
 import {
   FEATURE_PROVIDER,
   I18nService,
@@ -24,9 +24,9 @@ import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import { provideAuth } from "angular-auth-oidc-client";
 import { provideMapboxGL } from "ngx-mapbox-gl";
 import { authConfig, PermissionService } from "@/core/auth";
-import { tenantInterceptor } from "@/core/interceptors";
 import { TmsFeatureProvider } from "@/core/services/feature.provider";
 import { TmsTenantSettingsProvider } from "@/core/services/tenant-settings.provider";
+import { TenantService } from "@/core/services/tenant.service";
 import { UpgradePromptService } from "@/core/services/upgrade-prompt.service";
 import { environment } from "@/env";
 import { appRoutes } from "./app.routes";
@@ -57,6 +57,7 @@ export const appConfig: ApplicationConfig = {
     }),
 
     { provide: PERMISSION_CHECKER, useExisting: PermissionService },
+    { provide: TENANT_ID_PROVIDER, useExisting: TenantService },
     { provide: TENANT_SETTINGS_PROVIDER, useExisting: TmsTenantSettingsProvider },
     { provide: FEATURE_PROVIDER, useExisting: TmsFeatureProvider },
     { provide: UPGRADE_HANDLER, useExisting: UpgradePromptService },

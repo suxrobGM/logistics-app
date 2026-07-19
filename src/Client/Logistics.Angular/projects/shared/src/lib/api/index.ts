@@ -1,6 +1,7 @@
 // Re-export everything from generated API layer
 export * from "./generated";
 export * from "./api.provider";
+export * from "./interceptors";
 
 /**
  * Utility function to format sort field for API queries.

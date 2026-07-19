@@ -1,4 +1,3 @@
-import { HttpHeaders } from "@angular/common/http";
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { CookieService } from "@logistics/shared";
 import { Api, getTenantById, type TenantDto } from "@logistics/shared/api";
@@ -42,20 +41,6 @@ export class TenantService {
    */
   getTenantId(): string | null {
     return this.tenantId();
-  }
-
-  /**
-   * Append tenant header 'X-Tenant' to the headers
-   * @param headers HttpHeaders
-   * @returns Updated HttpHeaders
-   */
-  generateTenantHeaders(headers: HttpHeaders): HttpHeaders {
-    const tenantId = this.tenantId();
-    if (!tenantId) {
-      return headers;
-    }
-
-    return headers.append("X-Tenant", tenantId);
   }
 
   /**
