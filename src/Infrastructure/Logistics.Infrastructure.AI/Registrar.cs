@@ -49,6 +49,8 @@ public static class Registrar
         services.AddScoped<IAiDispatchTool, DispatchTripTool>();
         services.AddScoped<IAiDispatchTool, CalculateAssignmentMetricsTool>();
         services.AddScoped<IAiDispatchTool, PreviewTaxCalculationTool>();
+        services.AddScoped<IAiDispatchTool, GetContainerStatusTool>();
+        services.AddScoped<IAiDispatchTool, GetTerminalInfoTool>();
 
         // Load board tools (conditionally included in tool definitions based on tenant feature flag)
         services.AddScoped<IAiDispatchTool, SearchLoadBoardTool>();

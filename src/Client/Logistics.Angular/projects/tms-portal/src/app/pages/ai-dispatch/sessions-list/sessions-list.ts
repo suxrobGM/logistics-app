@@ -1,15 +1,13 @@
-import { DatePipe } from "@angular/common";
+﻿import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal, type OnDestroy, type OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { PageHeader } from "@logistics/shared";
 import {
   Api,
-  approveAiDispatchDecision,
   getAiDispatchSessions,
   getAiQuotaStatus,
   getPendingDecisions,
   getTrucks,
-  rejectAiDispatchDecision,
   runAiDispatch,
   type AiDispatchDecisionDto,
   type AiDispatchMode,
@@ -39,16 +37,18 @@ import { AiQuotaUsage, GeolocationMap } from "@/shared/components";
 import { Labels } from "@/shared/utils";
 import { DecisionCard } from "../components/decision-card/decision-card";
 import { ModeBadge } from "../components/mode-badge/mode-badge";
+import { RejectDecisionDialog } from "../components/reject-decision-dialog/reject-decision-dialog";
 import {
   RunAgentDialog,
   type RunAgentDialogData,
 } from "../components/run-agent-dialog/run-agent-dialog";
-import { buildDecisionDetail } from "../utils/decision-utils";
+import { DecisionActionsService } from "../services/decision-actions.service";
 import { stripMarkdown } from "../utils/markdown";
 
 @Component({
   selector: "app-sessions-list",
   templateUrl: "./sessions-list.html",
+  providers: [DecisionActionsService],
   imports: [
     AiQuotaUsage,
     Badge,
@@ -58,6 +58,8 @@ import { stripMarkdown } from "../utils/markdown";
     Icon,
     ModeBadge,
     PageHeader,
+    RejectDecisionDialog,
+    RouterLink,
     RunAgentDialog,
     Stack,
     Surface,
@@ -74,6 +76,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
   private readonly aiDispatchHub = inject(AiDispatchHubService);
   private readonly tenantService = inject(TenantService);
   private readonly dispatchBadgeService = inject(DispatchBadgeService);
+  protected readonly decisionActions = inject(DecisionActionsService);
 
   protected readonly Labels = Labels;
   protected readonly Math = Math;
@@ -200,39 +203,11 @@ export class SessionsListPage implements OnInit, OnDestroy {
   }
 
   protected approveDecision(decision: AiDispatchDecisionDto): void {
-    this.toastService.confirm({
-      message: `Are you sure you want to approve and execute this decision?\n\n${buildDecisionDetail(decision)}`,
-      header: "Approve Decision",
-      icon: "success",
-      severity: "success",
-      accept: async () => {
-        try {
-          await this.api.invoke(approveAiDispatchDecision, { decisionId: decision.id! });
-          this.toastService.showSuccess("Decision approved and executed");
-          await this.loadData();
-        } catch {
-          this.toastService.showError("Failed to approve decision");
-        }
-      },
-    });
+    this.decisionActions.approve(decision, () => this.loadData());
   }
 
   protected rejectDecision(decision: AiDispatchDecisionDto): void {
-    this.toastService.confirm({
-      message: `Are you sure you want to reject this decision?\n\n${buildDecisionDetail(decision)}`,
-      header: "Reject Decision",
-      icon: "warning",
-      severity: "danger",
-      accept: async () => {
-        try {
-          await this.api.invoke(rejectAiDispatchDecision, { decisionId: decision.id!, body: {} });
-          this.toastService.showSuccess("Decision rejected");
-          await this.loadData();
-        } catch {
-          this.toastService.showError("Failed to reject decision");
-        }
-      },
-    });
+    this.decisionActions.reject(decision, () => this.loadData());
   }
 
   protected viewSession(session: AiDispatchSessionDto): void {

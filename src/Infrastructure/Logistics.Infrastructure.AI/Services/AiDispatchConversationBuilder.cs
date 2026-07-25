@@ -37,6 +37,8 @@ internal sealed class AiDispatchConversationBuilder(
 
         // Resolve the global model (admin-managed): system setting → appsettings default.
         // The provider is derived from the model via the catalog, so it can't drift.
+        // No per-request model override here on purpose - the agent's model is global, and tenants
+        // never pick or see one. `ILlmClient.ModelId` exists only for one-shot background calls.
         var selection = await modelResolver.ResolveAsync(config);
         var resolvedProvider = selection.Provider;
         var provider = providerFactory.Create(resolvedProvider);
@@ -47,7 +49,8 @@ internal sealed class AiDispatchConversationBuilder(
 
         // Check load board feature for this tenant
         var hasLoadBoard = await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.LoadBoard);
-        var systemPrompt = AiDispatchSystemPrompt.Build(companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit);
+        var policy = await GetLearnedPolicyAsync();
+        var systemPrompt = AiDispatchSystemPrompt.Build(companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit, policy);
         var tools = toolRegistry.GetToolDefinitions(includeLoadBoardTools: hasLoadBoard);
 
         var model = selection.Model;
@@ -102,6 +105,18 @@ internal sealed class AiDispatchConversationBuilder(
         return message;
     }
 
+    /// <summary>
+    /// Loads the tenant's learned dispatch policy. Filtering on <c>IsEnabled</c> in SQL means a
+    /// disabled policy is simply absent - the prompt section then omits itself.
+    /// </summary>
+    private async Task<LearnedDispatchPolicy?> GetLearnedPolicyAsync()
+    {
+        return await tenantUow.Repository<AiDispatchPolicy>().Query()
+            .Where(p => p.IsEnabled)
+            .Select(p => new LearnedDispatchPolicy(p.ManualContent, p.GeneratedContent))
+            .FirstOrDefaultAsync();
+    }
+
     private async Task<string?> GetPreviousSessionContextAsync()
     {
         var lastSession = await tenantUow.Repository<AiDispatchSession>().Query()
@@ -122,8 +137,7 @@ internal sealed class AiDispatchConversationBuilder(
 
     private static string SanitizeInstructions(string input)
     {
-        // Strip control characters to prevent prompt injection
-        var sanitized = new string([.. input.Where(c => !char.IsControl(c) || c == '\n')]);
+        var sanitized = AiDispatchSystemPrompt.StripControlChars(input, allowLineBreaks: true);
         return sanitized.Length > 500 ? sanitized[..500] : sanitized;
     }
 }

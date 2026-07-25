@@ -107,10 +107,19 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 - Infrastructure: `Infrastructure.AI/Services/AiDispatchDecisionProcessor.cs`
 - API/UI: (under `ai-dispatch/`)
 
+### Dispatch policy (learned preferences)
+
+- Domain: `Entities/AiDispatch/AiDispatchPolicy.cs` (one row per tenant; `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned)
+- Application: `Modules/Integrations/AiDispatch/Services/AiDispatchPolicyLearner.cs` + `DecisionHistoryDigest.cs` + `AiDispatchPolicyPrompt.cs`; `Commands/{Update,Regenerate,Delete}AiDispatchPolicy/`, `Queries/GetAiDispatchPolicy/`
+- Infrastructure: injected into the prompt by `Infrastructure.AI/Prompts/AiDispatchSystemPrompt.cs` (`LearnedDispatchPolicy`), loaded in `AiDispatchConversationBuilder`
+- Jobs: `Logistics.API/Jobs/AiDispatchPolicyLearningJob.cs` (nightly, `Cron.Daily(4)`)
+- API/UI: `AiDispatchController` `ai/dispatch/policy`, `tms-portal/pages/ai-dispatch/dispatch-policy/`
+
 ### Tool registry
 
 - Infrastructure: `Infrastructure.AI/Services/AiDispatchToolRegistry.cs`, `Tools/`
 - API/UI: shared with `Logistics.McpServer`
+- Intermodal reads: `Tools/GetContainerStatusTool.cs` (ISO 6346), `Tools/GetTerminalInfoTool.cs` (UN/LOCODE)
 
 ### LLM providers
 

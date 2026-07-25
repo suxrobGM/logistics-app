@@ -30,9 +30,24 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IAiDispatchTo
             dest_lng = l.DestinationLocation?.Longitude,
             distance_km = Math.Round(l.Distance / 1000.0, 1),
             delivery_cost = l.DeliveryCost,
-            customer = l.Customer?.Name
+            customer = l.Customer?.Name,
+            // Intermodal metadata - present only on container loads. Without it the agent has no
+            // reason to call get_container_status / get_terminal_info.
+            container_number = l.ContainerNumber,
+            container_iso_type = l.ContainerIsoType?.ToString(),
+            origin_terminal = FormatTerminal(l.OriginTerminalName, l.OriginTerminalCode),
+            destination_terminal = FormatTerminal(l.DestinationTerminalName, l.DestinationTerminalCode)
         });
 
         return JsonSerializer.Serialize(new { loads, count = items.Count });
+    }
+
+    /// <summary>"Los Angeles (USLAX)" - null when the load has no terminal, so it stays out of the JSON.</summary>
+    private static string? FormatTerminal(string? name, string? code)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return string.IsNullOrWhiteSpace(code) ? null : code;
+
+        return string.IsNullOrWhiteSpace(code) ? name : $"{name} ({code})";
     }
 }

@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
@@ -247,6 +247,7 @@ internal static class Setup
         DataRetentionJob.ScheduleJobs();
         DataExportExpiryJob.ScheduleJobs();
         WebhookEventCleanupJob.ScheduleJobs();
+        AiDispatchPolicyLearningJob.ScheduleJobs();
 
         // Remove old stale dispatch agent job if it exists
         RecurringJob.RemoveIfExists("ai-dispatch");

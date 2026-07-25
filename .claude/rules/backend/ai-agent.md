@@ -17,13 +17,18 @@ This file is conventions only.
 
 ## Project structure
 
-All AI agent code lives in `src/Infrastructure/Logistics.Infrastructure.AI/`:
+The agent loop and everything provider-specific lives in `src/Infrastructure/Logistics.Infrastructure.AI/`:
 
 - `Providers/` - `ILlmProvider` interface, `LlmTypes`, `AnthropicLlmProvider`, `OpenAiLlmProvider`, `LlmProviderFactory`
 - `Services/` - Agent loop (`AiDispatchService`), `AiDispatchToolExecutor`, `AiDispatchToolRegistry`, `AiDispatchDecisionProcessor`, `AiDispatchConversationBuilder`, `LlmPricing`
 - `Tools/` - Individual tool implementations (one per file, each implementing `IAiDispatchTool`)
-- `Prompts/` - System prompt builders
+- `Prompts/` - The agent's own system prompt builders
 - `Options/` - Configuration (`LlmOptions`, `LlmProviderOptions`)
+
+A one-shot `ILlmClient` feature is **not** agent code: its workflow service and its prompt live
+together in `Logistics.Application/Modules/{Module}/.../Services/` (policy learning) or in the
+infrastructure project that owns the feature (`Infrastructure.Documents/PdfImport/DispatchSheetPrompt`).
+Only prompts the dispatch agent itself sends belong in `Infrastructure.AI/Prompts/`.
 
 ## Multi-provider architecture
 
@@ -127,3 +132,34 @@ Resolution order in `AiDispatchConversationBuilder` (no tenant override):
 
 Extended thinking is likewise global: `SystemSettings["Ai.ExtendedThinking"]` → `LlmOptions.EnableExtendedThinking`.
 Only honored by providers that support it.
+
+### Per-request override (one-shot calls only)
+
+`LlmCompletionRequest.ModelId` lets a **one-shot** `ILlmClient` call pick a specific `LlmModelCatalog`
+model - used by the nightly policy learning pass to stay on a cheap tier. `LlmModelResolver` honors it
+only when the id is in the catalog **and** that provider has an API key configured; otherwise it logs a
+warning and falls back to the global model. The API-key check is load-bearing: without it, an install
+that configured only one provider would fail every night.
+
+The **agent loop has no override** and must not get one - `AiDispatchConversationBuilder` always calls
+`ResolveAsync(config)`. Tenants do not pick models and never see model names.
+
+## Learned dispatch policy
+
+`AiDispatchPolicy` (one row per tenant) holds a short markdown policy the nightly
+`AiDispatchPolicyLearningJob` derives from approve/reject history, injected into the system prompt
+between `## HOS Rules` and `## Workflow` as _strong defaults that rank below the hard constraints_.
+
+Non-obvious rules when touching this:
+
+- The human-approved population is `Status == Executed && ApprovedByUserId != null`. `Approve()` is
+  immediately overwritten by `MarkExecuted()`, so filtering on `Approved` finds nothing, and autonomous
+  executions carry no human signal.
+- `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned. Never merge them.
+- Policy text is **untrusted** - it is LLM output derived from dispatcher-typed rejection reasons.
+  `AiDispatchSystemPrompt` sanitises and truncates it; keep that at the injection point, not in callers.
+- Truncation keeps whole lines only. A half-truncated rule reads as a different rule.
+- Learning creates **no** `AiDispatchSession` row, so it never consumes the tenant's weekly quota.
+  Cost lands on `AiDispatchPolicy.GenerationCostUsd` and is never exposed to the tenant.
+
+See [docs/ai-dispatch.md](../../../docs/ai-dispatch.md) for the full picture.

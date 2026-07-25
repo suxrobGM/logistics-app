@@ -1,4 +1,4 @@
-import { DatePipe } from "@angular/common";
+﻿import { DatePipe } from "@angular/common";
 import {
   Component,
   computed,
@@ -11,10 +11,8 @@ import {
 import { PageHeader } from "@logistics/shared";
 import {
   Api,
-  approveAiDispatchDecision,
   cancelAiDispatchSession,
   getAiDispatchSessionById,
-  rejectAiDispatchDecision,
   replanAiDispatchSession,
   type AiDispatchDecisionDto,
   type AiDispatchSessionDto,
@@ -36,9 +34,10 @@ import { AiDispatchHubService, TenantService, ToastService } from "@/core/servic
 import { DateUtils, Labels } from "@/shared/utils";
 import { ApproveRejectActions } from "../components/approve-reject-actions/approve-reject-actions";
 import { ModeBadge } from "../components/mode-badge/mode-badge";
+import { RejectDecisionDialog } from "../components/reject-decision-dialog/reject-decision-dialog";
 import { ToolOutputSummary } from "../components/tool-output-summary/tool-output-summary";
+import { DecisionActionsService } from "../services/decision-actions.service";
 import {
-  buildDecisionDetail,
   getToolIcon,
   getToolLabel,
   getToolMarkerClass,
@@ -50,6 +49,7 @@ import { MarkdownPipe } from "../utils/markdown";
   selector: "app-session-details",
   templateUrl: "./session-details.html",
   styleUrl: "./session-details.css",
+  providers: [DecisionActionsService],
   imports: [
     ApproveRejectActions,
     Badge,
@@ -59,6 +59,7 @@ import { MarkdownPipe } from "../utils/markdown";
     MarkdownPipe,
     ModeBadge,
     PageHeader,
+    RejectDecisionDialog,
     Stack,
     Surface,
     ToolOutputSummary,
@@ -75,6 +76,7 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
   private readonly toastService = inject(ToastService);
   private readonly aiDispatchHub = inject(AiDispatchHubService);
   private readonly tenantService = inject(TenantService);
+  protected readonly decisionActions = inject(DecisionActionsService);
 
   public readonly id = input.required<string>();
 
@@ -181,39 +183,11 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
   }
 
   protected approveDecision(decision: AiDispatchDecisionDto): void {
-    this.toastService.confirm({
-      message: `Are you sure you want to approve and execute this decision?\n\n${buildDecisionDetail(decision)}`,
-      header: "Approve Decision",
-      icon: "success",
-      severity: "success",
-      accept: async () => {
-        try {
-          await this.api.invoke(approveAiDispatchDecision, { decisionId: decision.id! });
-          this.toastService.showSuccess("Decision approved and executed");
-          await this.loadSession();
-        } catch {
-          this.toastService.showError("Failed to approve decision");
-        }
-      },
-    });
+    this.decisionActions.approve(decision, () => this.loadSession());
   }
 
   protected rejectDecision(decision: AiDispatchDecisionDto): void {
-    this.toastService.confirm({
-      message: `Are you sure you want to reject this decision?\n\n${buildDecisionDetail(decision)}`,
-      header: "Reject Decision",
-      icon: "warning",
-      severity: "danger",
-      accept: async () => {
-        try {
-          await this.api.invoke(rejectAiDispatchDecision, { decisionId: decision.id!, body: {} });
-          this.toastService.showSuccess("Decision rejected");
-          await this.loadSession();
-        } catch {
-          this.toastService.showError("Failed to reject decision");
-        }
-      },
-    });
+    this.decisionActions.reject(decision, () => this.loadSession());
   }
 
   protected async replanSession(): Promise<void> {

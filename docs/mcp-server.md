@@ -10,20 +10,22 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 
 ## Available Tools
 
-| Tool                           | Type  | Description                                             |
-| ------------------------------ | ----- | ------------------------------------------------------- |
-| `get_unassigned_loads`         | Read  | All Draft loads not assigned to any trip                |
-| `get_available_trucks`         | Read  | Available trucks with driver HOS data and fleet summary |
-| `get_driver_hos_status`        | Read  | Detailed HOS status for a specific driver               |
-| `check_hos_feasibility`        | Read  | Can a driver complete a trip given HOS remaining?       |
-| `batch_check_hos_feasibility`  | Read  | Batch HOS feasibility for multiple driver-load pairs    |
-| `calculate_distance`           | Read  | Driving distance between two geographic points          |
-| `calculate_assignment_metrics` | Read  | Revenue/mile and deadhead analysis for truck-load pairs |
-| `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for available loads   |
-| `assign_load_to_truck`         | Write | Assign a load to a truck                                |
-| `create_trip`                  | Write | Create a trip from assigned loads                       |
-| `dispatch_trip`                | Write | Transition trip to Dispatched status                    |
-| `book_loadboard_load`          | Write | Book a load from a load board                           |
+| Tool                           | Type  | Description                                               |
+| ------------------------------ | ----- | --------------------------------------------------------- |
+| `get_unassigned_loads`         | Read  | All Draft loads not assigned to any trip                  |
+| `get_available_trucks`         | Read  | Available trucks with driver HOS data and fleet summary   |
+| `get_driver_hos_status`        | Read  | Detailed HOS status for a specific driver                 |
+| `check_hos_feasibility`        | Read  | Can a driver complete a trip given HOS remaining?         |
+| `batch_check_hos_feasibility`  | Read  | Batch HOS feasibility for multiple driver-load pairs      |
+| `calculate_distance`           | Read  | Driving distance between two geographic points            |
+| `calculate_assignment_metrics` | Read  | Revenue/mile and deadhead analysis for truck-load pairs   |
+| `get_container_status`         | Read  | ISO 6346 lookup: status, terminal, seal, B/L, linked load |
+| `get_terminal_info`            | Read  | UN/LOCODE lookup: name, type, country, street address     |
+| `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for available loads     |
+| `assign_load_to_truck`         | Write | Assign a load to a truck                                  |
+| `create_trip`                  | Write | Create a trip from assigned loads                         |
+| `dispatch_trip`                | Write | Transition trip to Dispatched status                      |
+| `book_loadboard_load`          | Write | Book a load from a load board                             |
 
 Write tools come with a confirmation prompt. The AI explains what it's about to do and waits for you to approve before it runs.
 

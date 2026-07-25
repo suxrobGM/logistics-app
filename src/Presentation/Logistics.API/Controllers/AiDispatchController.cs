@@ -90,6 +90,46 @@ public class AiDispatchController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpGet("policy", Name = "GetAiDispatchPolicy")]
+    [ProducesResponseType(typeof(AiDispatchPolicyDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.View)]
+    public async Task<IActionResult> GetPolicy()
+    {
+        var result = await mediator.Send(new GetAiDispatchPolicyQuery());
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("policy", Name = "UpdateAiDispatchPolicy")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> UpdatePolicy([FromBody] UpdateAiDispatchPolicyCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("policy/regenerate", Name = "RegenerateAiDispatchPolicy")]
+    [ProducesResponseType(typeof(AiDispatchPolicyDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> RegeneratePolicy()
+    {
+        var result = await mediator.Send(new RegenerateAiDispatchPolicyCommand());
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpDelete("policy", Name = "DeleteAiDispatchPolicy")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> DeletePolicy()
+    {
+        var result = await mediator.Send(new DeleteAiDispatchPolicyCommand());
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("decisions/{decisionId:guid}/reject", Name = "RejectAiDispatchDecision")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

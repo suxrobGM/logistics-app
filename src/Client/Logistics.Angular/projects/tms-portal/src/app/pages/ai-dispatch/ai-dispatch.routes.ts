@@ -12,6 +12,18 @@ export const aiDispatchRoutes: Routes = [
       permission: Permission.Dispatch.View,
     },
   },
+  // Must stay above ":id" - routing is first-match-wins, so after it "policy" would be read as a
+  // session id.
+  {
+    path: "policy",
+    loadComponent: () =>
+      import("./dispatch-policy/dispatch-policy").then((m) => m.DispatchPolicyPage),
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Policy",
+      permission: Permission.Dispatch.View,
+    },
+  },
   {
     path: ":id",
     loadComponent: () =>

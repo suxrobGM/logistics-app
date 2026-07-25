@@ -1,4 +1,4 @@
-using Logistics.Shared.Models;
+﻿using Logistics.Shared.Models;
 
 namespace Logistics.Application.Abstractions.Ai;
 
@@ -32,6 +32,16 @@ public sealed record LlmCompletionRequest
 
     /// <summary>Maximum output tokens for the response.</summary>
     public int MaxTokens { get; init; } = 4096;
+
+    /// <summary>
+    /// Optional <c>LlmModelCatalog</c> id to run this one call on, e.g. a cheap tier for a background
+    /// learning pass. Ignored - falling back to the global admin-selected model - when the id is
+    /// unknown or its provider has no API key configured.
+    /// <para>
+    /// This is for one-shot calls only. The dispatch agent loop stays strictly on the global model.
+    /// </para>
+    /// </summary>
+    public string? ModelId { get; init; }
 }
 
 /// <summary>

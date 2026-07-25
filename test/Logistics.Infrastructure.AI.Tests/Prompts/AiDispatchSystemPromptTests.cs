@@ -1,4 +1,4 @@
-using Logistics.Domain.Primitives.Enums;
+﻿using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Prompts;
 using Xunit;
 
@@ -103,6 +103,160 @@ public class AiDispatchSystemPromptTests
         // Should contain truncated name (100 chars), not the full 200
         Assert.DoesNotContain(longName, prompt);
         Assert.Contains(new string('A', 100), prompt);
+    }
+
+    #endregion
+
+    #region Intermodal tools
+
+    [Fact]
+    public void Build_DescribesIntermodalTools_NotAsUnavailable()
+    {
+        var prompt = AiDispatchSystemPrompt.Build("Fleet", AiDispatchMode.Autonomous);
+
+        Assert.Contains("get_container_status", prompt);
+        Assert.Contains("get_terminal_info", prompt);
+        Assert.DoesNotContain("not yet exposed", prompt);
+    }
+
+    /// <summary>
+    /// Terminals carry no coordinates. If the prompt ever implies otherwise the agent will try to
+    /// feed terminal data into calculate_distance and produce nonsense deadhead numbers.
+    /// </summary>
+    [Fact]
+    public void Build_SaysTerminalsHaveNoCoordinates()
+    {
+        var prompt = AiDispatchSystemPrompt.Build("Fleet", AiDispatchMode.Autonomous);
+
+        Assert.Contains("NO coordinates", prompt);
+        Assert.Contains("origin_lat", prompt);
+    }
+
+    #endregion
+
+    #region Learned policy
+
+    private static LearnedDispatchPolicy Policy(string? directives = null, string? learned = null) =>
+        new(directives, learned);
+
+    [Fact]
+    public void Build_NullPolicy_OmitsSection()
+    {
+        var prompt = AiDispatchSystemPrompt.Build("Fleet", AiDispatchMode.Autonomous);
+
+        Assert.DoesNotContain("Dispatcher Preferences", prompt);
+    }
+
+    [Fact]
+    public void Build_EmptyPolicy_OmitsSection()
+    {
+        var prompt = AiDispatchSystemPrompt.Build(
+            "Fleet", AiDispatchMode.Autonomous, policy: Policy("   ", ""));
+
+        Assert.DoesNotContain("Dispatcher Preferences", prompt);
+    }
+
+    [Fact]
+    public void Build_PolicyPresent_RanksItBelowHardConstraints()
+    {
+        var prompt = AiDispatchSystemPrompt.Build(
+            "Fleet", AiDispatchMode.Autonomous, policy: Policy(learned: "- Prefer short hauls (4 rejections)"));
+
+        Assert.Contains("STRONG DEFAULTS", prompt);
+        Assert.Contains("rank BELOW the hard constraints", prompt);
+        Assert.Contains("- Prefer short hauls (4 rejections)", prompt);
+    }
+
+    /// <summary>
+    /// Position carries authority in a prompt: HOS and type rules must be read before the learned
+    /// preferences, and the workflow steps must come after so they act on both.
+    /// </summary>
+    [Fact]
+    public void Build_PolicySection_SitsBetweenHosRulesAndWorkflow()
+    {
+        var prompt = AiDispatchSystemPrompt.Build(
+            "Fleet", AiDispatchMode.Autonomous, policy: Policy(learned: "- Prefer short hauls (4 rejections)"));
+
+        var hos = prompt.IndexOf("## HOS Rules", StringComparison.Ordinal);
+        var policy = prompt.IndexOf("## Dispatcher Preferences", StringComparison.Ordinal);
+        var workflow = prompt.IndexOf("## Workflow", StringComparison.Ordinal);
+
+        Assert.True(hos >= 0 && policy >= 0 && workflow >= 0);
+        Assert.True(hos < policy, "Hard HOS constraints must precede learned preferences");
+        Assert.True(policy < workflow, "Learned preferences must precede the workflow steps");
+    }
+
+
+    /// <summary>
+    /// Policy text is machine-learned from dispatcher-typed rejection reasons - an injection path.
+    /// Control characters are built with (char) casts so this file stays free of literal control bytes.
+    /// </summary>
+    [Fact]
+    public void Build_PolicyWithControlChars_StripsThemButKeepsLineBreaks()
+    {
+        const char bell = (char)7;
+        const char nul = (char)0;
+        const char lf = (char)10;
+        var learned = "- Prefer short " + bell + "hauls" + lf + "- Avoid night runs" + nul;
+
+        var prompt = AiDispatchSystemPrompt.Build(
+            "Fleet", AiDispatchMode.Autonomous, policy: Policy(learned: learned));
+
+        Assert.DoesNotContain(bell, prompt);
+        Assert.DoesNotContain(nul, prompt);
+        // Newlines survive - they are what keeps the markdown bullets readable.
+        Assert.Contains("- Prefer short hauls" + lf + "- Avoid night runs", prompt);
+    }
+
+    [Fact]
+    public void Build_OverlongPolicy_TruncatesAtLineBoundary()
+    {
+        const char lf = (char)10;
+        var bullet = "- " + new string('x', 120);
+        var learned = string.Join(lf, Enumerable.Repeat(bullet, 60));
+
+        var prompt = AiDispatchSystemPrompt.Build(
+            "Fleet", AiDispatchMode.Autonomous, policy: Policy(learned: learned));
+
+        Assert.DoesNotContain(learned, prompt);
+
+        var section = prompt[prompt.IndexOf("### Learned preferences", StringComparison.Ordinal)..];
+        var kept = section.Split(lf).Where(l => l.StartsWith("- x", StringComparison.Ordinal)).ToList();
+
+        Assert.NotEmpty(kept);
+        // Every surviving bullet is whole - truncation landed on a newline, never mid-line.
+        Assert.All(kept, l => Assert.Equal(bullet, l));
+        Assert.True(kept.Count < 60, "The policy must be truncated, not passed through whole");
+    }
+
+    /// <summary>
+    /// Directives and learned content share one budget and directives claim it first, so a
+    /// dispatcher's own rule is never dropped to make room for an inferred one. What is left over
+    /// must not leak a partial learned bullet - a half-rule reads as a different rule.
+    /// </summary>
+    [Fact]
+    public void Build_LongDirectives_KeepThemAndNeverLeakPartialLearnedBullet()
+    {
+        const char lf = (char)10;
+        var directives = string.Join(lf, Enumerable.Repeat("- " + new string('d', 120), 60));
+        var learnedBullet = "- " + new string('m', 120);
+        var learned = string.Join(lf, Enumerable.Repeat(learnedBullet, 60));
+
+        var prompt = AiDispatchSystemPrompt.Build(
+            "Fleet", AiDispatchMode.Autonomous, policy: Policy(directives: directives, learned: learned));
+
+        Assert.Contains("### Dispatcher directives", prompt);
+        Assert.Contains("- " + new string('d', 120), prompt);
+
+        // Whatever budget survives, any learned bullet present must be complete.
+        var learnedIndex = prompt.IndexOf("### Learned preferences", StringComparison.Ordinal);
+        if (learnedIndex >= 0)
+        {
+            var kept = prompt[learnedIndex..].Split(lf)
+                .Where(l => l.StartsWith("- m", StringComparison.Ordinal))
+                .ToList();
+            Assert.All(kept, l => Assert.Equal(learnedBullet, l));
+        }
     }
 
     #endregion

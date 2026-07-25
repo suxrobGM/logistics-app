@@ -58,6 +58,21 @@ public class AiDispatchToolRegistryTests
         Assert.Contains("check_hos_feasibility", names);
         Assert.Contains("batch_check_hos_feasibility", names);
         Assert.Contains("calculate_distance", names);
+        Assert.Contains("get_container_status", names);
+        Assert.Contains("get_terminal_info", names);
+    }
+
+    /// <summary>
+    /// The intermodal tools are plain reads - listing either in <c>WriteTools</c> would put them
+    /// behind dispatcher approval and stall the agent mid-run.
+    /// </summary>
+    [Fact]
+    public void GetToolDefinitions_IntermodalToolsAreNotLoadBoardGated()
+    {
+        var names = sut.GetToolDefinitions().Select(t => t.Name).ToHashSet();
+
+        Assert.Contains("get_container_status", names);
+        Assert.Contains("get_terminal_info", names);
     }
 
     [Fact]

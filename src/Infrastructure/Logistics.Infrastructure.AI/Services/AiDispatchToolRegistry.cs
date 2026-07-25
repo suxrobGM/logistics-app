@@ -168,6 +168,32 @@ internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
                 ["required"] = new JsonArray("customer_id", "currency", "line_items")
             })),
 
+        new("get_container_status",
+            "Look up an intermodal container by its ISO 6346 number. Returns status (Empty, Loaded, AtPort, InTransit, Delivered, Returned), ISO type, laden flag, gross weight, seal, booking reference, bill of lading, the terminal the box is currently at, and the load it is linked to. Call this for any load that reports a container_number before assigning it.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["container_number"] = Prop("string", "ISO 6346 container number, e.g. 'MSCU1234567'"),
+                    ["container_id"] = Prop("string", "Container ID (GUID) - use only when the number is unknown")
+                },
+                ["required"] = new JsonArray()
+            })),
+
+        new("get_terminal_info",
+            "Look up an intermodal terminal by UN/LOCODE. Returns name, type (SeaPort, RailTerminal, InlandDepot, AirCargo, BorderCrossing), country, street address, and how many containers are currently sitting there. Terminals carry no coordinates - keep using the load's origin_lat/origin_lng for deadhead math.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["code"] = Prop("string", "UN/LOCODE, e.g. 'USLAX' (Los Angeles), 'BEANR' (Antwerp)"),
+                    ["terminal_id"] = Prop("string", "Terminal ID (GUID) - use only when the code is unknown")
+                },
+                ["required"] = new JsonArray()
+            })),
+
         new("search_loadboard",
             "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.",
             BuildSchema(new JsonObject

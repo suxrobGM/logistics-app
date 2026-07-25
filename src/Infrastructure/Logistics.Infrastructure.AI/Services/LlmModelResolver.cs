@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions.AiDispatch;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Options;
+using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Services;
 
@@ -10,10 +11,27 @@ namespace Logistics.Infrastructure.AI.Services;
 /// The provider is derived from the model via <see cref="LlmModelCatalog"/> so it cannot drift.
 /// Shared by the dispatch conversation builder and the one-shot <c>ILlmClient</c>.
 /// </summary>
-internal sealed class LlmModelResolver(ISystemSettingsService systemSettings)
+internal sealed class LlmModelResolver(
+    ISystemSettingsService systemSettings,
+    ILogger<LlmModelResolver> logger)
 {
-    public async Task<LlmModelSelection> ResolveAsync(LlmOptions config, CancellationToken ct = default)
+    /// <param name="config">LLM options, supplying the default provider and per-provider settings.</param>
+    /// <param name="preferredModelId">
+    /// Optional per-call override (see <c>LlmCompletionRequest.ModelId</c>). Honoured only when the id is
+    /// in the catalog AND that provider has an API key; otherwise the global model wins. The dispatch
+    /// agent loop never passes this - its model is global by design.
+    /// </param>
+    /// <param name="ct">Cancellation token.</param>
+    public async Task<LlmModelSelection> ResolveAsync(
+        LlmOptions config,
+        string? preferredModelId = null,
+        CancellationToken ct = default)
     {
+        if (TryResolvePreferred(config, preferredModelId, out var preferred))
+        {
+            return preferred;
+        }
+
         var modelSetting = await systemSettings.GetAsync(AiSettingsKeys.Model, ct);
         var modelInfo = LlmModelCatalog.Find(modelSetting);
         var provider = modelInfo?.Provider ?? config.DefaultProvider;
@@ -21,6 +39,42 @@ internal sealed class LlmModelResolver(ISystemSettingsService systemSettings)
         var model = modelInfo?.Id ?? providerConfig.Model;
 
         return new LlmModelSelection(model, provider, providerConfig);
+    }
+
+    private bool TryResolvePreferred(
+        LlmOptions config,
+        string? preferredModelId,
+        out LlmModelSelection selection)
+    {
+        selection = null!;
+
+        if (string.IsNullOrWhiteSpace(preferredModelId))
+        {
+            return false;
+        }
+
+        var info = LlmModelCatalog.Find(preferredModelId);
+        if (info is null)
+        {
+            logger.LogWarning(
+                "Preferred model '{PreferredModel}' is not in the catalog; falling back to the global model",
+                preferredModelId);
+            return false;
+        }
+
+        // A deployment may only have keys for some providers. Without this check a cheap-tier
+        // preference would hard-fail every run on an install that only configured one provider.
+        var providerConfig = config.GetProviderConfig(info.Provider);
+        if (string.IsNullOrWhiteSpace(providerConfig.ApiKey))
+        {
+            logger.LogWarning(
+                "Preferred model '{PreferredModel}' needs provider {Provider}, which has no API key configured; falling back to the global model",
+                info.Id, info.Provider);
+            return false;
+        }
+
+        selection = new LlmModelSelection(info.Id, info.Provider, providerConfig);
+        return true;
     }
 }
 

@@ -1,4 +1,4 @@
-# AI Dispatch
+﻿# AI Dispatch
 
 Load-to-truck dispatch driven by an LLM agent. Runs in two modes: human-in-the-loop or autonomous. Available on the Enterprise plan.
 
@@ -51,6 +51,8 @@ The agent assigns loads on its own, no human approval. I'd only flip this on aft
 | `calculate_distance`           | Read  | Driving distance between two points                  |
 | `calculate_assignment_metrics` | Read  | Revenue/deadhead analysis for a potential assignment |
 | `optimize_trip_stops`          | Read  | Optimize stop ordering for multi-load trips          |
+| `get_container_status`         | Read  | ISO 6346 lookup: status, terminal, seal, B/L, load   |
+| `get_terminal_info`            | Read  | UN/LOCODE lookup: name, type, country, address       |
 | `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for opportunities  |
 | `assign_load_to_truck`         | Write | Assign a load to a truck                             |
 | `create_trip`                  | Write | Create a trip from assigned loads                    |
@@ -70,7 +72,11 @@ GET    /ai/dispatch/sessions                     List sessions (paged)
 GET    /ai/dispatch/sessions/{sessionId}         Session detail with decisions
 GET    /ai/dispatch/pending                      All pending decisions
 POST   /ai/dispatch/decisions/{id}/approve       Approve a suggestion
-POST   /ai/dispatch/decisions/{id}/reject        Reject a suggestion
+POST   /ai/dispatch/decisions/{id}/reject        Reject a suggestion (body carries the reason)
+GET    /ai/dispatch/policy                       Learned dispatch policy
+PUT    /ai/dispatch/policy                       Edit directives / pause learning
+POST   /ai/dispatch/policy/regenerate            Learn now instead of waiting for the nightly pass
+DELETE /ai/dispatch/policy                       Erase the learned policy and directives
 ```
 
 ## Audit Trail
@@ -92,6 +98,57 @@ Each decision within a session is a **AiDispatchDecision** with:
 - Related entity IDs (load, truck, trip)
 - Who approved/rejected and when
 
+The rejection **reason** is required in the UI, not optional: it is the labelled signal the nightly
+learning pass below uses. A bare rejection teaches the agent nothing.
+
+## Learning From Approvals & Rejections
+
+A nightly Hangfire job (`AiDispatchPolicyLearningJob`, `Cron.Daily(4)`) turns each tenant's
+approve/reject history into a short markdown **dispatch policy** that is injected into the agent's
+system prompt, so the agent stops re-suggesting patterns the dispatcher keeps refusing.
+
+**Storage** - one `AiDispatchPolicy` row per tenant (`ai_dispatch_policies`), with two content columns:
+
+| Column             | Owner      | Behaviour                                              |
+| ------------------ | ---------- | ------------------------------------------------------ |
+| `GeneratedContent` | The job    | Overwritten on every successful pass                   |
+| `ManualContent`    | Dispatcher | Never touched by the job, and outranks learned content |
+
+The split is what lets the policy keep regenerating without either clobbering dispatcher text or
+freezing the moment someone edits it.
+
+**What it reads** (`AiDispatchPolicyLearner`, in `Logistics.Application`): non-`Query` decisions from
+the last 60 days that are either `Rejected` or `Executed` **with a non-null `ApprovedByUserId`**. That
+last condition matters - `Approve()` is immediately overwritten by `MarkExecuted()`, so `Approved` is a
+transient status, and autonomous-mode executions have no approver and no human signal. Counting them
+would train the agent on its own output.
+
+**Skip conditions** (each returns a reason for the job log): learning switched off; `LlmEnabled` false
+for the tenant; fewer than 15 qualifying decisions or fewer than 3 rejections; no new decisions since
+the `LastDecisionAt` watermark; a manual regenerate within 10 minutes of the last run. `force: true`
+(the regenerate endpoint) bypasses only the last two. The watermark is what makes the job's
+`[AutomaticRetry]` safe and a quiet night free - and it is deliberately **not** advanced when the LLM
+call fails, so the next run retries the same history.
+
+**Bounding** - the prompt asks for ≤ 8 bullets / ≤ 400 words, `MaxTokens` is 1024, and the stored text
+is capped at 4000 chars. `AiDispatchSystemPrompt` caps it again at the injection point, keeping whole
+lines only: a half-truncated rule reads as a different rule, so a line that will not fit is dropped.
+
+**Where it lands in the prompt** - between `## HOS Rules` and `## Workflow`. Position carries authority,
+so the hard constraints are read first and the workflow steps then act on both. The section states that
+preferences are STRONG DEFAULTS ranking _below_ hard constraints and below this run's instructions. The
+text is treated as untrusted (control characters stripped): it is LLM output derived from
+dispatcher-typed rejection reasons, which is a prompt-injection path.
+
+**Cost** - learning runs on `Llm:PolicyLearningModel` (default `deepseek-v4-flash`) via the optional
+`LlmCompletionRequest.ModelId` override, and creates **no** `AiDispatchSession` row, so it does not
+consume the tenant's weekly quota. Cost is recorded on the policy row (`GenerationCostUsd`) for
+platform observability and is never exposed to the tenant.
+
+**UI** - `tms-portal/pages/ai-dispatch/dispatch-policy/`: read the learned rules, write your own
+directives, pause learning, regenerate, or delete everything. Deleting does not stop the agent
+re-learning tomorrow unless learning is also switched off - the confirm dialog says so.
+
 ## Configuration
 
 ### Environment Variables
@@ -103,6 +160,7 @@ Each decision within a session is a **AiDispatchDecision** with:
 | `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key                                                                |
 | `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key                                                              |
 | `Llm__MaxTokens`                    | Max tokens per response (default: 8192)                                       |
+| `Llm__PolicyLearningModel`          | Model for nightly policy learning (default: `deepseek-v4-flash`)              |
 
 ### appsettings.json
 
@@ -184,7 +242,7 @@ See the `add-llm-provider` skill for the full checklist.
 ## Roadmap
 
 - Telegram bot for drivers and dispatchers - accept/reject loads, status updates, fleet summaries.
-- Learning from overrides - track dispatcher corrections so future suggestions get better.
+- Graduated autonomy - use per-action-type approval rates from the same decision history to widen what the agent may execute unattended.
 
 ## Related
 

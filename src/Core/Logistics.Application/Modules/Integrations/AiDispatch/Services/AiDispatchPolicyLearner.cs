@@ -1,0 +1,178 @@
+﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Ai;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+
+namespace Logistics.Application.Modules.Integrations.AiDispatch.Services;
+
+internal sealed class AiDispatchPolicyLearner(
+    ITenantUnitOfWork tenantUow,
+    ILlmClient llmClient,
+    IConfiguration configuration,
+    ILogger<AiDispatchPolicyLearner> logger) : IAiDispatchPolicyLearner
+{
+    /// <summary>How far back to look. Older preferences are likely stale.</summary>
+    private const int LookbackDays = 60;
+
+    /// <summary>Below this the model has nothing to generalise from and starts inventing rules.</summary>
+    private const int MinDecisions = 15;
+    private const int MinRejections = 3;
+
+    /// <summary>Rate-limits the manual regenerate endpoint. The nightly pass uses the watermark instead.</summary>
+    private static readonly TimeSpan ManualRerunCooldown = TimeSpan.FromMinutes(10);
+
+    public async Task<Result<AiDispatchPolicyLearningOutcome>> LearnForCurrentTenantAsync(
+        bool force = false,
+        CancellationToken ct = default)
+    {
+        var tenant = tenantUow.GetCurrentTenant();
+        var bypassGate = configuration.GetValue<bool>("Llm:BypassLlmGate");
+
+        if (!bypassGate && tenant.Settings.LlmEnabled == false)
+        {
+            return Skipped("AI is disabled for this tenant");
+        }
+
+        var policyRepo = tenantUow.Repository<AiDispatchPolicy>();
+        var policy = await policyRepo.Query().FirstOrDefaultAsync(ct);
+
+        if (policy is not null && !policy.IsEnabled)
+        {
+            return Skipped("Policy learning is switched off");
+        }
+
+        if (force && policy?.LastRunAt is not null &&
+            DateTime.UtcNow - policy.LastRunAt.Value < ManualRerunCooldown)
+        {
+            return Skipped("Policy was regenerated less than 10 minutes ago");
+        }
+
+        // Cheapest gate first: one indexed aggregate, no rows transferred. On a night where nothing
+        // was decided this is the only query the tenant costs.
+        if (!force && policy?.LastDecisionAt is not null)
+        {
+            var newestDecisionAt = await QualifyingHistory().MaxAsync(d => (DateTime?)d.CreatedAt, ct);
+            if (newestDecisionAt <= policy.LastDecisionAt)
+            {
+                return Skipped("No new decisions since the last run");
+            }
+        }
+
+        var entries = await LoadHistoryAsync(ct);
+        var digest = DecisionHistoryDigest.Build(entries);
+
+        if (digest.Count < MinDecisions || digest.RejectionCount < MinRejections)
+        {
+            // Only stamp the run for a manual attempt - that is the only path the cooldown guards.
+            // The nightly pass relies on the watermark, so stamping here would be a pointless UPDATE
+            // for every tenant that has not yet accumulated enough history.
+            if (force && policy is not null)
+            {
+                policy.MarkRunCompleted();
+                await tenantUow.SaveChangesAsync(ct);
+            }
+
+            return Skipped(
+                $"Not enough reviewed decisions yet - need {MinDecisions} ({MinRejections} rejections), have {digest.Count} ({digest.RejectionCount})");
+        }
+
+        var completion = await llmClient.CompleteAsync(
+            new LlmCompletionRequest
+            {
+                SystemPrompt = AiDispatchPolicyPrompt.SystemPrompt,
+                UserText = AiDispatchPolicyPrompt.BuildUserText(digest.Text, policy?.GeneratedContent),
+                MaxTokens = 1024,
+                ModelId = configuration["Llm:PolicyLearningModel"]
+            },
+            ct);
+
+        if (!completion.IsSuccess || completion.Value is null)
+        {
+            // Deliberately leave the watermark untouched so tonight's failure retries tomorrow.
+            logger.LogWarning(
+                "Policy learning failed for tenant {TenantId}: {Error}", tenant.Id, completion.Error);
+            return Result<AiDispatchPolicyLearningOutcome>.Fail(
+                completion.Error ?? "Policy learning failed.");
+        }
+
+        var result = completion.Value;
+        var content = NormalizeOutput(result.Text);
+
+        policy ??= await CreatePolicyAsync(policyRepo, ct);
+        policy.ApplyLearnedPolicy(
+            content, digest.Count, digest.LastDecisionAt, result.ModelUsed, result.EstimatedCostUsd);
+
+        await tenantUow.SaveChangesAsync(ct);
+
+        logger.LogInformation(
+            "Learned dispatch policy for tenant {TenantId} from {DecisionCount} decisions ({RejectionCount} rejections), model {Model}, est ${Cost:F4}{Empty}",
+            tenant.Id, digest.Count, digest.RejectionCount, result.ModelUsed, result.EstimatedCostUsd,
+            content is null ? " - no rule met the evidence bar" : "");
+
+        return Result<AiDispatchPolicyLearningOutcome>.Ok(
+            new AiDispatchPolicyLearningOutcome(
+                content is not null, null, digest.Count, result.EstimatedCostUsd));
+    }
+
+    /// <summary>
+    /// The labelled history: dispatcher rejections, plus executions a human actually approved.
+    /// Autonomous-mode executions carry no human signal (<c>ApprovedByUserId</c> is null) and are
+    /// excluded - including them would train the agent on its own output.
+    /// </summary>
+    private IQueryable<AiDispatchDecision> QualifyingHistory()
+    {
+        var cutoff = DateTime.UtcNow.AddDays(-LookbackDays);
+
+        return tenantUow.Repository<AiDispatchDecision>().Query()
+            .Where(d => d.Type != AiDispatchDecisionType.Query)
+            .Where(d => d.CreatedAt >= cutoff)
+            .Where(d => d.Status == AiDispatchDecisionStatus.Rejected ||
+                        (d.Status == AiDispatchDecisionStatus.Executed && d.ApprovedByUserId != null));
+    }
+
+    private async Task<List<DecisionHistoryEntry>> LoadHistoryAsync(CancellationToken ct)
+    {
+        // Newest first, then capped: the digest can never use more than its own caps allow, and
+        // taking from the newest end keeps the watermark correct without reading the whole window.
+        return await QualifyingHistory()
+            .OrderByDescending(d => d.CreatedAt)
+            .Take(DecisionHistoryDigest.MaxDecisions)
+            .Select(d => new DecisionHistoryEntry(
+                d.Status, d.ToolName, d.ToolInput, d.Reasoning, d.RejectionReason, d.CreatedAt))
+            .ToListAsync(ct);
+    }
+
+    private static async Task<AiDispatchPolicy> CreatePolicyAsync(
+        ITenantRepository<AiDispatchPolicy, Guid> repo,
+        CancellationToken ct)
+    {
+        var policy = new AiDispatchPolicy();
+        await repo.AddAsync(policy, ct);
+        return policy;
+    }
+
+    /// <summary>
+    /// Reads the model's answer as either "no policy" or policy text. The no-policy token and empty
+    /// output both mean "clear the learned section". Length clamping belongs to
+    /// <see cref="AiDispatchPolicy.ApplyLearnedPolicy"/> (storage) and the prompt builder (injection),
+    /// so it is deliberately not repeated here.
+    /// </summary>
+    private static string? NormalizeOutput(string text)
+    {
+        var trimmed = text.Trim();
+
+        return trimmed.Length == 0 ||
+               trimmed.Equals(AiDispatchPolicyPrompt.NoPolicyToken, StringComparison.OrdinalIgnoreCase)
+            ? null
+            : trimmed;
+    }
+
+    private static Result<AiDispatchPolicyLearningOutcome> Skipped(string reason) =>
+        Result<AiDispatchPolicyLearningOutcome>.Ok(
+            new AiDispatchPolicyLearningOutcome(false, reason, 0, 0m));
+}

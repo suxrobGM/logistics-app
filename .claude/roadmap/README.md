@@ -1,4 +1,4 @@
-# Product Roadmap
+﻿# Product Roadmap
 
 Feature backlog from the July 2026 competitive review (vs. Alvys, DataTruck, Truckbase, Toro, Rose Rocket).
 One file per feature. When you start/finish/drop a feature, update its **Status** line and add dated notes
@@ -23,11 +23,11 @@ in its **Notes** section. Keep this index's Status column in sync.
 
 | Feature                                                | Priority | Effort | Status  |
 | ------------------------------------------------------ | -------- | ------ | ------- |
-| [AI preference flywheel](ai-preference-flywheel.md)    | P1       | M      | Planned |
+| [AI preference learning](ai-preference-learning.md)    | P1       | M      | Done    |
 | [AI exception sentinel](ai-exception-sentinel.md)      | P1       | L      | Planned |
 | [Graduated autonomy](ai-graduated-autonomy.md)         | P1       | M      | Planned |
 | [AI eval harness](ai-eval-harness.md)                  | P1       | M      | Planned |
-| [Container & terminal AI tools](ai-container-tools.md) | P1       | S      | Planned |
+| [Container & terminal AI tools](ai-container-tools.md) | P1       | S      | Done    |
 | [TMS-wide AI copilot](ai-tms-copilot.md)               | P1       | L      | Planned |
 | [AI rate negotiation](ai-rate-negotiation.md)          | P2       | L      | Planned |
 | [Voice driver assistant](ai-voice-driver-assistant.md) | P2       | XL     | Planned |

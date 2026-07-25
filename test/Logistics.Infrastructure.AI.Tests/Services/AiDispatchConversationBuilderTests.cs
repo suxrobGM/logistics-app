@@ -1,4 +1,4 @@
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -26,6 +26,8 @@ public class AiDispatchConversationBuilderTests
     private readonly IFeatureService featureService = Substitute.For<IFeatureService>();
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ISystemSettingsService systemSettings = Substitute.For<ISystemSettingsService>();
+    private readonly ITenantRepository<AiDispatchPolicy, Guid> policyRepo =
+        Substitute.For<ITenantRepository<AiDispatchPolicy, Guid>>();
 
     public AiDispatchConversationBuilderTests()
     {
@@ -47,9 +49,13 @@ public class AiDispatchConversationBuilderTests
         sessionRepo.Query().Returns(emptySessionList);
         tenantUow.Repository<AiDispatchSession>().Returns(sessionRepo);
 
+        // Mock the AiDispatchPolicy repository for GetLearnedPolicyAsync
+        tenantUow.Repository<AiDispatchPolicy>().Returns(policyRepo);
+        SetPolicies();
+
         var llmOptions = MsOptions.Options.Create(ValidConfig);
         var providerFactory = new LlmProviderFactory(llmOptions);
-        var modelResolver = new LlmModelResolver(systemSettings);
+        var modelResolver = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);
 
         sut = new AiDispatchConversationBuilder(toolRegistry, featureService, providerFactory, modelResolver, tenantUow, systemSettings, logger);
     }
@@ -78,6 +84,84 @@ public class AiDispatchConversationBuilderTests
     {
         return new AiDispatchRequest(Guid.NewGuid(), mode, null);
     }
+
+    private void SetPolicies(params AiDispatchPolicy[] policies)
+    {
+        policyRepo.Query().Returns(policies.ToList().BuildMock());
+    }
+
+    private static AiDispatchPolicy CreatePolicy(
+        string? learned = null,
+        string? directives = null,
+        bool isEnabled = true)
+    {
+        var policy = new AiDispatchPolicy();
+        policy.ApplyLearnedPolicy(learned, 20, DateTime.UtcNow, "deepseek-v4-flash", 0.001m);
+        policy.EditManual(directives, isEnabled, Guid.NewGuid());
+        return policy;
+    }
+
+    #region Learned policy injection
+
+    [Fact]
+    public async Task BuildAsync_NoPolicyRow_OmitsPolicySection()
+    {
+        SetPolicies();
+        var session = new AiDispatchSession { Mode = AiDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+
+        Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
+    }
+
+    /// <summary>
+    /// The disabled policy is filtered out in SQL, so it must not reach the prompt at all.
+    /// </summary>
+    [Fact]
+    public async Task BuildAsync_DisabledPolicy_OmitsPolicySection()
+    {
+        SetPolicies(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
+        var session = new AiDispatchSession { Mode = AiDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+
+        Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
+        Assert.DoesNotContain("Prefer short hauls", conversation.SystemPrompt);
+    }
+
+    [Fact]
+    public async Task BuildAsync_EnabledPolicy_InjectsBothSections()
+    {
+        SetPolicies(CreatePolicy(
+            learned: "## Learned preferences\n- Prefer short hauls (5 rejections)",
+            directives: "- Never assign Truck 42 to hazmat"));
+        var session = new AiDispatchSession { Mode = AiDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+
+        Assert.Contains("Dispatcher Preferences", conversation.SystemPrompt);
+        Assert.Contains("Prefer short hauls", conversation.SystemPrompt);
+        Assert.Contains("Never assign Truck 42 to hazmat", conversation.SystemPrompt);
+
+        // Human directives outrank machine-inferred preferences, so they must come first.
+        Assert.True(
+            conversation.SystemPrompt.IndexOf("Dispatcher directives", StringComparison.Ordinal) <
+            conversation.SystemPrompt.IndexOf("Learned preferences", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task BuildAsync_PolicyWithOnlyDirectives_OmitsLearnedHeading()
+    {
+        SetPolicies(CreatePolicy(directives: "- Prefer flatbeds out of Dallas"));
+        var session = new AiDispatchSession { Mode = AiDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+
+        Assert.Contains("Dispatcher directives", conversation.SystemPrompt);
+        Assert.DoesNotContain("### Learned preferences", conversation.SystemPrompt);
+    }
+
+    #endregion
 
     [Fact]
     public async Task BuildAsync_ValidConfig_ReturnsConversation()
