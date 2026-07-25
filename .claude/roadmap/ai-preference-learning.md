@@ -50,6 +50,8 @@ user-facing surface is **Dispatch Policy**. Decisions worth remembering:
   section says preferences are STRONG DEFAULTS ranking below hard constraints, and the text is
   sanitised as untrusted - it is LLM output derived from dispatcher-typed reasons.
 - **Truncation keeps whole lines only.** A half-truncated rule reads as a different rule, so a line
-  that will not fit is dropped (in both the learner and the prompt builder).
+  that will not fit is dropped. `DispatchPolicyText` (Domain) owns that rule and the size budget for
+  every layer that enforces it: the entity clamps storage, the prompt builder clamps injection, and
+  the update validator and EF column read the same constants.
 - Deferred: `ui-tabs` edit/preview split (a single Preview toggle covers it) and nav sub-items (the
   page is reached from a header button, which cannot disturb the pending-decisions badge).
