@@ -1,7 +1,7 @@
 import { Component, inject, type OnInit } from "@angular/core";
 import { MetaService, SchemaService } from "@/shared/services";
 import {
-  AiShowcase,
+  AIShowcase,
   Faq,
   Features,
   Hero,
@@ -14,7 +14,7 @@ import {
 @Component({
   selector: "web-home",
   templateUrl: "./home.html",
-  imports: [Hero, AiShowcase, Features, ProductShowcase, Integrations, HowItWorks, Pricing, Faq],
+  imports: [Hero, AIShowcase, Features, ProductShowcase, Integrations, HowItWorks, Pricing, Faq],
 })
 export class Home implements OnInit {
   private readonly metaService = inject(MetaService);

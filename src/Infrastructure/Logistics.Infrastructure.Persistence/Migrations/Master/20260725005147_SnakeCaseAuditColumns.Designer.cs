@@ -1241,7 +1241,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<string>("StripeAiOveragePriceId")
+                    b.Property<string>("StripeAIOveragePriceId")
                         .HasColumnType("text")
                         .HasColumnName("stripe_ai_overage_price_id");
 
@@ -1271,7 +1271,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("character varying(50)")
                         .HasColumnName("updated_by");
 
-                    b.Property<int?>("WeeklyAiRequestQuota")
+                    b.Property<int?>("WeeklyAIRequestQuota")
                         .HasColumnType("integer")
                         .HasColumnName("weekly_ai_request_quota");
 

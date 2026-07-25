@@ -15,7 +15,7 @@ load↔container↔terminal links already exist.
 ## What to build
 
 - **Demurrage & per-diem clocks**: last-free-day and container-return deadlines on `Container`/load; countdown badges in `tms-portal/pages/containers/` and on the dispatch board; escalating notifications (existing notification infra) as deadlines approach.
-- **Deadline-aware dispatch**: agent priority rule - loads nearing last-free-day jump the queue (`AiDispatchSystemPrompt` + expose deadlines in `get_unassigned_loads` output). Pairs with [ai-container-tools](ai-container-tools.md).
+- **Deadline-aware dispatch**: agent priority rule - loads nearing last-free-day jump the queue (`AIDispatchSystemPrompt` + expose deadlines in `get_unassigned_loads` output). Pairs with [ai-container-tools](ai-container-tools.md).
 - **Terminal appointments**: appointment window entity per load stop; later, terminal-system integrations (eModal etc.) - start with manual entry + reminders.
 - **Chassis tracking**: chassis as an asset (owned/pool/rented, per-diem rate) linked to container moves.
 - **Street-turn matching**: detect when an import empty can cover a nearby export booking instead of returning to the terminal - quick-win optimization drayage dispatchers love; good agent tool candidate.

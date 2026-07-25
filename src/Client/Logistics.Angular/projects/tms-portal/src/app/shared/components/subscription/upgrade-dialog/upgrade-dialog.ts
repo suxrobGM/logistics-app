@@ -29,7 +29,7 @@ export class UpgradeDialog {
     return plan.maxTrucks ? `Up to ${plan.maxTrucks} trucks` : "Unlimited trucks";
   }
 
-  protected getAiQuotaLabel(plan: SubscriptionPlanDto): string {
+  protected getAIQuotaLabel(plan: SubscriptionPlanDto): string {
     switch (plan.tier) {
       case "enterprise":
         return "Unlimited AI dispatch";

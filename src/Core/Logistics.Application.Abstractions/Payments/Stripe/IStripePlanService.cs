@@ -24,4 +24,4 @@ public record StripePlanResult(
     Product Product,
     Price BasePrice,
     Price PerTruckPrice,
-    Price? AiOveragePrice = null);
+    Price? AIOveragePrice = null);

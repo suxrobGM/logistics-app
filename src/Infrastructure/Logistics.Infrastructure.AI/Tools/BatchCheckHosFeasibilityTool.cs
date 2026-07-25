@@ -5,7 +5,7 @@ using Logistics.Domain.Persistence;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAiDispatchTool
+internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
 {
     public string Name => "batch_check_hos_feasibility";
 

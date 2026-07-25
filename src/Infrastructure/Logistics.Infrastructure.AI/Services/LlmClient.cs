@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Ai;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.AI.Models;
 using Logistics.Infrastructure.AI.Providers;
 using Logistics.Shared.Models;

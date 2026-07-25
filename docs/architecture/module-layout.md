@@ -10,7 +10,7 @@
 | `Compliance`     | Regulatory and safety                        | ELD/HOS, DVIR, Inspections, Accidents, Safety, Privacy, Ifta                                      |
 | `Financial`      | Money in / money out                         | Invoices, Tax, Payments, PaymentLinks, Payroll, StripeConnect, Expenses                           |
 | `IdentityAccess` | Who can do what, and which org               | Users, Roles, Tenants, Customers, Employees, Subscriptions, ApiKeys, Features, Invitations        |
-| `Integrations`   | Outbound integrations + inbound webhooks     | AiDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents, UpdateNotifications |
+| `Integrations`   | Outbound integrations + inbound webhooks     | AIDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents, UpdateNotifications |
 | `Platform`       | Cross-cutting, marketing, internal           | Stats, Reports, BlogPosts, Contacts, DemoRequests, Notifications                                  |
 
 ## Folder convention inside a module

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Logistics.Application.Modules.Integrations.AiDispatch.Queries;
+using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 using Logistics.Application.Modules.Operations.Containers.Commands;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Queries;

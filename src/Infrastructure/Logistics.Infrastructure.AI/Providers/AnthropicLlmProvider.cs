@@ -2,8 +2,8 @@ using System.Text.Json.Nodes;
 using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
 using Logistics.Infrastructure.AI.Models;
-using Logistics.Application.Abstractions.Ai;
-using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.AIDispatch;
 using Tool = Anthropic.SDK.Common.Tool;
 using Function = Anthropic.SDK.Common.Function;
 
@@ -19,7 +19,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config) : ILlmProv
         var client = new AnthropicClient(config.ApiKey);
 
         var tools = request.Tools
-            .Select<AiDispatchToolDefinition, Tool>(t =>
+            .Select<AIDispatchToolDefinition, Tool>(t =>
                 new Function(t.Name, t.Description, (JsonNode)t.InputSchema))
             .ToList();
 

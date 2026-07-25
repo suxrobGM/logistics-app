@@ -30,7 +30,7 @@ Examples - verified locations under `src/Core/Logistics.Application.Abstractions
 
 - `Storage/IBlobStorageService.cs` - implemented by `Infrastructure.Storage`
 - `Geocoding/IGeocodingService.cs` - implemented by `Infrastructure.Routing`
-- `AiDispatch/ILlmProvider.cs` - implemented by `Infrastructure.AI`
+- `AIDispatch/ILlmProvider.cs` - implemented by `Infrastructure.AI`
 - `Dispatch/IDispatchEligibilityService.cs` - pure-domain check, currently here as a port
 - `Notifications/INotificationService.cs` - implemented by `Infrastructure.Communications`
 - `Payments/IStripePaymentService.cs` - implemented by `Infrastructure.Payments`

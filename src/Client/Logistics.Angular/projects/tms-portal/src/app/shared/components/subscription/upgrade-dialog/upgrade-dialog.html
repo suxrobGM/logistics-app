@@ -47,7 +47,7 @@
               </div>
               <div class="flex items-center gap-1.5">
                 <ui-icon name="zap" size="inherit" class="text-xs" />
-                <span>{{ getAiQuotaLabel(current) }}</span>
+                <span>{{ getAIQuotaLabel(current) }}</span>
               </div>
             </div>
           </div>
@@ -78,7 +78,7 @@
               </div>
               <div class="flex items-center gap-1.5">
                 <ui-icon name="zap" size="inherit" class="text-xs" />
-                <span>{{ getAiQuotaLabel(recommended) }}</span>
+                <span>{{ getAIQuotaLabel(recommended) }}</span>
               </div>
               @if (getExtraFeatures(prompt.currentPlan, recommended); as extras) {
                 @if (extras.length > 0) {

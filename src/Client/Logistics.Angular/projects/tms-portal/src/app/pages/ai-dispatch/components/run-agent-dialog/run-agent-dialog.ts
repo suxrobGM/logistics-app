@@ -1,5 +1,5 @@
 import { Component, computed, input, model, output } from "@angular/core";
-import type { AiDispatchMode, AiQuotaStatusDto } from "@logistics/shared/api";
+import type { AIDispatchMode, AIQuotaStatusDto } from "@logistics/shared/api";
 import {
   Alert,
   UiButton,
@@ -10,7 +10,7 @@ import {
 } from "@logistics/shared/ui";
 
 export interface RunAgentDialogData {
-  mode: AiDispatchMode;
+  mode: AIDispatchMode;
   instructions?: string;
 }
 
@@ -21,8 +21,8 @@ export interface RunAgentDialogData {
 })
 export class RunAgentDialog {
   public readonly visible = model(false);
-  public readonly mode = input<AiDispatchMode>("human_in_the_loop");
-  public readonly quotaStatus = input<AiQuotaStatusDto | null>(null);
+  public readonly mode = input<AIDispatchMode>("human_in_the_loop");
+  public readonly quotaStatus = input<AIQuotaStatusDto | null>(null);
   public readonly run = output<RunAgentDialogData>();
 
   protected readonly instructions = model("");

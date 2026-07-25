@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Infrastructure.AI.Models;
 
@@ -9,7 +9,7 @@ internal record LlmRequest
 {
     public required string SystemPrompt { get; init; }
     public required List<LlmMessage> Messages { get; init; }
-    public required List<AiDispatchToolDefinition> Tools { get; init; }
+    public required List<AIDispatchToolDefinition> Tools { get; init; }
     public required string Model { get; init; }
     public int MaxTokens { get; init; } = 16384;
     public decimal? Temperature { get; init; } = 0m;

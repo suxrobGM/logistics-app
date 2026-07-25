@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Operations.Trips.Commands;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class CreateTripTool(IMediator mediator) : IAiDispatchTool
+internal sealed class CreateTripTool(IMediator mediator) : IAIDispatchTool
 {
     public string Name => "create_trip";
 

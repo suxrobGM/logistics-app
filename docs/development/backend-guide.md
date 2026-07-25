@@ -15,14 +15,14 @@ src/Core/Logistics.Application/
 │   ├── Compliance/     # ELD, DVIR, Accidents, Safety, Privacy, Ifta
 │   ├── Financial/      # Invoices, Payments, Payroll, Expenses, Tax
 │   ├── IdentityAccess/ # Users, Tenants, Roles, Subscriptions
-│   ├── Integrations/   # AiDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents
+│   ├── Integrations/   # AIDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents
 │   └── Platform/       # Stats, Reports, BlogPosts, Notifications
 ├── Handlers/           # Generic base handlers (Delete/GetById/Update) that trivial slices subclass
 ├── Behaviours/         # MediatR pipeline
 └── Validators/         # Shared FluentValidation base validators (e.g. AddressValidator)
 
 src/Core/Logistics.Application.Abstractions/
-└── (Infrastructure ports grouped by domain: AiDispatch, Storage, Geocoding, Eld, Payments, …)
+└── (Infrastructure ports grouped by domain: AIDispatch, Storage, Geocoding, Eld, Payments, …)
 
 src/Core/Logistics.Domain/
 ├── Entities/           # Domain entities

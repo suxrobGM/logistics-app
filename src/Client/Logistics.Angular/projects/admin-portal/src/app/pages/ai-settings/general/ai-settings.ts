@@ -1,5 +1,5 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
-import { Api, getAiSettings, updateAiSettings, type PlanQuotaDto } from "@logistics/shared/api";
+import { Api, getAISettings, updateAISettings, type PlanQuotaDto } from "@logistics/shared/api";
 import {
   Alert,
   Card,
@@ -39,7 +39,7 @@ interface ModelOption {
     UiSelectField,
   ],
 })
-export class AiSettings implements OnInit {
+export class AISettings implements OnInit {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
@@ -58,7 +58,7 @@ export class AiSettings implements OnInit {
   private async load(): Promise<void> {
     this.isLoading.set(true);
     try {
-      const settings = await this.api.invoke(getAiSettings);
+      const settings = await this.api.invoke(getAISettings);
       this.selectedModel.set(settings.model ?? "");
       this.extendedThinking.set(settings.extendedThinking ?? false);
       this.modelOptions.set(
@@ -77,20 +77,20 @@ export class AiSettings implements OnInit {
 
   protected updatePlanQuota(planId: string | undefined, quota: number | null): void {
     this.plans.update((plans) =>
-      plans.map((p) => (p.planId === planId ? { ...p, weeklyAiRequestQuota: quota } : p)),
+      plans.map((p) => (p.planId === planId ? { ...p, weeklyAIRequestQuota: quota } : p)),
     );
   }
 
   protected async save(): Promise<void> {
     this.isSaving.set(true);
     try {
-      await this.api.invoke(updateAiSettings, {
+      await this.api.invoke(updateAISettings, {
         body: {
           model: this.selectedModel(),
           extendedThinking: this.extendedThinking(),
           plans: this.plans().map((p) => ({
             planId: p.planId,
-            weeklyAiRequestQuota: p.weeklyAiRequestQuota,
+            weeklyAIRequestQuota: p.weeklyAIRequestQuota,
           })),
         },
       });

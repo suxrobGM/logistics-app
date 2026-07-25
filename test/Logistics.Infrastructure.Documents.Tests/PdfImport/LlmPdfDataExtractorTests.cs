@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Logistics.Application.Abstractions.Ai;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.Documents.PdfImport;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;

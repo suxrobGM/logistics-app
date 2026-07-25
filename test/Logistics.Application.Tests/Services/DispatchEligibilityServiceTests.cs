@@ -1,4 +1,4 @@
-using Logistics.Application.Modules.Integrations.AiDispatch.Services;
+using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

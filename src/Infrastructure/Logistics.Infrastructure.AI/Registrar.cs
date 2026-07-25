@@ -1,10 +1,10 @@
-using Logistics.Application.Abstractions.Ai;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.AI.Providers;
 using Logistics.Infrastructure.AI.Services;
 using Logistics.Infrastructure.AI.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Infrastructure.AI;
 
@@ -27,34 +27,34 @@ public static class Registrar
         services.AddScoped<ILlmClient, LlmClient>();
 
         // Agent services
-        services.AddSingleton<AiDispatchSessionCancellationRegistry>();
-        services.AddScoped<IAiDispatchService, AiDispatchService>();
-        services.AddScoped<AiDispatchConversationBuilder>();
-        services.AddScoped<AiDispatchDecisionProcessor>();
-        services.AddScoped<IAiDispatchToolExecutor, AiDispatchToolExecutor>();
-        services.AddSingleton<IAiDispatchToolRegistry, AiDispatchToolRegistry>();
+        services.AddSingleton<AIDispatchSessionCancellationRegistry>();
+        services.AddScoped<IAIDispatchService, AIDispatchService>();
+        services.AddScoped<AIDispatchConversationBuilder>();
+        services.AddScoped<AIDispatchDecisionProcessor>();
+        services.AddScoped<IAIDispatchToolExecutor, AIDispatchToolExecutor>();
+        services.AddSingleton<IAIDispatchToolRegistry, AIDispatchToolRegistry>();
 
         // Individual dispatch tools
-        services.AddScoped<IAiDispatchTool, GetUnassignedLoadsTool>();
-        services.AddScoped<IAiDispatchTool, GetAvailableTrucksTool>();
-        services.AddScoped<IAiDispatchTool, GetDriverHosTool>();
-        services.AddScoped<IAiDispatchTool, CheckHosFeasibilityTool>();
-        services.AddScoped<IAiDispatchTool, BatchCheckHosFeasibilityTool>();
-        services.AddScoped<IAiDispatchTool, CheckDispatchEligibilityTool>();
-        services.AddScoped<IAiDispatchTool, CalculateDistanceTool>();
-        services.AddScoped<IAiDispatchTool, OptimizeTripStopsTool>();
-        services.AddScoped<IAiDispatchTool, AssignLoadToTruckTool>();
-        services.AddScoped<IAiDispatchTool, CreateTripTool>();
-        services.AddScoped<IAiDispatchTool, DispatchTripTool>();
-        services.AddScoped<IAiDispatchTool, CalculateAssignmentMetricsTool>();
-        services.AddScoped<IAiDispatchTool, PreviewTaxCalculationTool>();
-        services.AddScoped<IAiDispatchTool, GetContainerStatusTool>();
-        services.AddScoped<IAiDispatchTool, GetTerminalInfoTool>();
+        services.AddScoped<IAIDispatchTool, GetUnassignedLoadsTool>();
+        services.AddScoped<IAIDispatchTool, GetAvailableTrucksTool>();
+        services.AddScoped<IAIDispatchTool, GetDriverHosTool>();
+        services.AddScoped<IAIDispatchTool, CheckHosFeasibilityTool>();
+        services.AddScoped<IAIDispatchTool, BatchCheckHosFeasibilityTool>();
+        services.AddScoped<IAIDispatchTool, CheckDispatchEligibilityTool>();
+        services.AddScoped<IAIDispatchTool, CalculateDistanceTool>();
+        services.AddScoped<IAIDispatchTool, OptimizeTripStopsTool>();
+        services.AddScoped<IAIDispatchTool, AssignLoadToTruckTool>();
+        services.AddScoped<IAIDispatchTool, CreateTripTool>();
+        services.AddScoped<IAIDispatchTool, DispatchTripTool>();
+        services.AddScoped<IAIDispatchTool, CalculateAssignmentMetricsTool>();
+        services.AddScoped<IAIDispatchTool, PreviewTaxCalculationTool>();
+        services.AddScoped<IAIDispatchTool, GetContainerStatusTool>();
+        services.AddScoped<IAIDispatchTool, GetTerminalInfoTool>();
 
         // Load board tools (conditionally included in tool definitions based on tenant feature flag)
-        services.AddScoped<IAiDispatchTool, SearchLoadBoardTool>();
-        services.AddScoped<IAiDispatchTool, CheckBrokerCreditTool>();
-        services.AddScoped<IAiDispatchTool, BookLoadBoardLoadTool>();
+        services.AddScoped<IAIDispatchTool, SearchLoadBoardTool>();
+        services.AddScoped<IAIDispatchTool, CheckBrokerCreditTool>();
+        services.AddScoped<IAIDispatchTool, BookLoadBoardLoadTool>();
 
         return services;
     }

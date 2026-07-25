@@ -1,9 +1,9 @@
 import { inject, Injectable, signal } from "@angular/core";
 import {
   Api,
-  approveAiDispatchDecision,
-  rejectAiDispatchDecision,
-  type AiDispatchDecisionDto,
+  approveAIDispatchDecision,
+  rejectAIDispatchDecision,
+  type AIDispatchDecisionDto,
 } from "@logistics/shared/api";
 import { ToastService } from "@logistics/shared/services";
 import { buildDecisionDetail } from "../utils/decision-utils";
@@ -20,11 +20,11 @@ export class DecisionActionsService {
   private readonly toast = inject(ToastService);
 
   public readonly showRejectDialog = signal(false);
-  public readonly pendingDecision = signal<AiDispatchDecisionDto | null>(null);
+  public readonly pendingDecision = signal<AIDispatchDecisionDto | null>(null);
 
   private onComplete?: () => void | Promise<void>;
 
-  approve(decision: AiDispatchDecisionDto, onComplete?: () => void | Promise<void>): void {
+  approve(decision: AIDispatchDecisionDto, onComplete?: () => void | Promise<void>): void {
     this.onComplete = onComplete;
 
     this.toast.confirm({
@@ -34,7 +34,7 @@ export class DecisionActionsService {
       severity: "success",
       accept: async () => {
         try {
-          await this.api.invoke(approveAiDispatchDecision, { decisionId: decision.id! });
+          await this.api.invoke(approveAIDispatchDecision, { decisionId: decision.id! });
           this.toast.showSuccess("Decision approved and executed");
           await this.onComplete?.();
         } catch {
@@ -45,7 +45,7 @@ export class DecisionActionsService {
   }
 
   /** Opens the reason dialog; the rejection itself happens in {@link confirmReject}. */
-  reject(decision: AiDispatchDecisionDto, onComplete?: () => void | Promise<void>): void {
+  reject(decision: AIDispatchDecisionDto, onComplete?: () => void | Promise<void>): void {
     this.onComplete = onComplete;
     this.pendingDecision.set(decision);
     this.showRejectDialog.set(true);
@@ -56,7 +56,7 @@ export class DecisionActionsService {
     if (!decision) return;
 
     try {
-      await this.api.invoke(rejectAiDispatchDecision, {
+      await this.api.invoke(rejectAIDispatchDecision, {
         decisionId: decision.id!,
         body: { reason },
       });

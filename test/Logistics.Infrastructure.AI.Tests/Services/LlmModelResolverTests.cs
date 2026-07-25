@@ -1,7 +1,7 @@
-﻿using Logistics.Application.Abstractions.AiDispatch;
+﻿using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Application.Abstractions.Ai;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.AI.Services;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -24,7 +24,7 @@ public class LlmModelResolverTests
         var providers = new Dictionary<LlmProvider, LlmProviderOptions>
         {
             [LlmProvider.Anthropic] = new() { ApiKey = "", Model = "claude-haiku-4-5" },
-            [LlmProvider.OpenAi] = new() { ApiKey = "", Model = "gpt-5.4-mini" },
+            [LlmProvider.OpenAI] = new() { ApiKey = "", Model = "gpt-5.4-mini" },
             [LlmProvider.DeepSeek] = new() { ApiKey = "", Model = "deepseek-v4-flash" }
         };
 
@@ -46,7 +46,7 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_NoOverride_UsesSystemSetting()
     {
-        systemSettings.GetAsync(AiSettingsKeys.Model, Arg.Any<CancellationToken>())
+        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-opus-4-8");
 
         var selection = await sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic));
@@ -58,7 +58,7 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_NoSettingAndNoOverride_FallsBackToAppsettings()
     {
-        systemSettings.GetAsync(AiSettingsKeys.Model, Arg.Any<CancellationToken>()).Returns((string?)null);
+        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>()).Returns((string?)null);
 
         var selection = await sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic));
 
@@ -73,7 +73,7 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_KnownOverrideWithApiKey_UsesItAndDerivesProvider()
     {
-        systemSettings.GetAsync(AiSettingsKeys.Model, Arg.Any<CancellationToken>())
+        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-opus-4-8");
 
         var selection = await sut.ResolveAsync(
@@ -87,7 +87,7 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_UnknownOverride_FallsBackToGlobalModel()
     {
-        systemSettings.GetAsync(AiSettingsKeys.Model, Arg.Any<CancellationToken>())
+        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-opus-4-8");
 
         var selection = await sut.ResolveAsync(
@@ -103,7 +103,7 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_OverrideProviderHasNoApiKey_FallsBackToGlobalModel()
     {
-        systemSettings.GetAsync(AiSettingsKeys.Model, Arg.Any<CancellationToken>())
+        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-opus-4-8");
 
         var selection = await sut.ResolveAsync(
@@ -119,7 +119,7 @@ public class LlmModelResolverTests
     [InlineData("   ")]
     public async Task ResolveAsync_BlankOverride_IsIgnored(string? modelId)
     {
-        systemSettings.GetAsync(AiSettingsKeys.Model, Arg.Any<CancellationToken>())
+        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-opus-4-8");
 
         var selection = await sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic), modelId);

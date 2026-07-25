@@ -20,7 +20,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
     public override IReadOnlyList<string> DependsOn => [nameof(SubscriptionPlanSeeder)];
 
     private const string MeterEventName = "ai_dispatch_session";
-    private const string MeterSettingKey = "Stripe:AiOverageMeterId";
+    private const string MeterSettingKey = "Stripe:AIOverageMeterId";
 
     public override Task<bool> ShouldSkipAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
@@ -62,7 +62,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
             plan.StripeProductId = result.Product.Id;
             plan.StripePriceId = result.BasePrice.Id;
             plan.StripePerTruckPriceId = result.PerTruckPrice.Id;
-            plan.StripeAiOveragePriceId = result.AiOveragePrice?.Id;
+            plan.StripeAIOveragePriceId = result.AIOveragePrice?.Id;
 
             await context.MasterUnitOfWork.SaveChangesAsync(ct);
             syncedCount++;

@@ -14,9 +14,9 @@ internal sealed class StripeUsageService(
     IOptions<StripeOptions> options,
     ILogger<StripeUsageService> logger) : IStripeUsageService
 {
-    private const string MeterSettingKey = "Stripe:AiOverageMeterId";
+    private const string MeterSettingKey = "Stripe:AIOverageMeterId";
 
-    public async Task ReportAiSessionOverageAsync(Guid tenantId, int billingUnits = 1, CancellationToken ct = default)
+    public async Task ReportAISessionOverageAsync(Guid tenantId, int billingUnits = 1, CancellationToken ct = default)
     {
         var meterId = await settingService.GetAsync(MeterSettingKey, ct);
         if (string.IsNullOrEmpty(meterId))
@@ -37,7 +37,7 @@ internal sealed class StripeUsageService(
         var meterEventService = new MeterEventService();
         await meterEventService.CreateAsync(new MeterEventCreateOptions
         {
-            EventName = options.Value.AiOverageMeterEventName,
+            EventName = options.Value.AIOverageMeterEventName,
             Payload = new Dictionary<string, string>
             {
                 ["stripe_customer_id"] = tenant.StripeCustomerId,

@@ -5,7 +5,7 @@ description: Add a new LLM provider or model to the AI dispatch system. Use when
 
 # Add an LLM Provider or Model
 
-The AI dispatch agent supports multiple LLM providers via the `ILlmProvider` adapter pattern. New OpenAI-compatible providers (DeepSeek, GLM, etc.) reuse `OpenAiLlmProvider` with a custom `BaseUrl`. New non-compatible providers need a new `ILlmProvider` implementation.
+The AI dispatch agent supports multiple LLM providers via the `ILlmProvider` adapter pattern. New OpenAI-compatible providers (DeepSeek, GLM, etc.) reuse `OpenAILlmProvider` with a custom `BaseUrl`. New non-compatible providers need a new `ILlmProvider` implementation.
 
 ## Decide the path
 
@@ -24,7 +24,7 @@ The AI dispatch agent supports multiple LLM providers via the `ILlmProvider` ada
 3. `src/Infrastructure/Logistics.Infrastructure.AI/Providers/{X}LlmProvider.cs` - only for non-OpenAI-compatible
 4. `src/Infrastructure/Logistics.Infrastructure.AI/Providers/LlmProviderFactory.cs` - resolution case
 5. `src/Infrastructure/Logistics.Infrastructure.AI/Services/LlmPricing.cs` - pricing, multiplier, tier, billing units
-6. `src/Core/Logistics.Application.Abstractions/AiDispatch/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider }` (single source for the admin dropdown)
+6. `src/Core/Logistics.Application.Abstractions/AIDispatch/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider }` (single source for the admin dropdown)
 
 ## Step-by-step
 
@@ -34,7 +34,7 @@ The AI dispatch agent supports multiple LLM providers via the `ILlmProvider` ada
 public enum LlmProvider
 {
     Anthropic,
-    OpenAi,
+    OpenAI,
     DeepSeek,
     NewProvider // ← here
 }
@@ -73,7 +73,7 @@ API key passed via env var: `Llm__Providers__NewProvider__ApiKey`.
 
 ### 3. (Custom SDK only) Create `ILlmProvider` implementation
 
-If the provider is OpenAI-compatible (most modern providers are), **skip this step** - `OpenAiLlmProvider` handles it via `BaseUrl`.
+If the provider is OpenAI-compatible (most modern providers are), **skip this step** - `OpenAILlmProvider` handles it via `BaseUrl`.
 
 If it requires a custom SDK, add `Providers/NewLlmProvider.cs`:
 
@@ -96,14 +96,14 @@ Provider-specific SDK types **must not leak** outside this class. The agent loop
 public ILlmProvider GetProvider(LlmProvider provider) => provider switch
 {
     LlmProvider.Anthropic => anthropic,
-    LlmProvider.OpenAi => openai,
+    LlmProvider.OpenAI => openai,
     LlmProvider.DeepSeek => deepseek,        // OpenAI-compatible reuse
     LlmProvider.NewProvider => newProvider,  // ← here
     _ => throw new NotSupportedException($"Unknown provider: {provider}")
 };
 ```
 
-For OpenAI-compatible providers, instantiate `OpenAiLlmProvider` with the right `BaseUrl` from options.
+For OpenAI-compatible providers, instantiate `OpenAILlmProvider` with the right `BaseUrl` from options.
 
 ### 5. Update `LlmPricing.cs`
 
@@ -136,7 +136,7 @@ Decide the cost tier (1× / 5× / 10×), then keep billing units in step (1 / 2 
 
 ### 6. Add the model to `LlmModelCatalog`
 
-In `src/Core/Logistics.Application.Abstractions/AiDispatch/LlmModelCatalog.cs`:
+In `src/Core/Logistics.Application.Abstractions/AIDispatch/LlmModelCatalog.cs`:
 
 ```csharp
 public static readonly IReadOnlyList<LlmModelInfo> Models =
@@ -147,7 +147,7 @@ public static readonly IReadOnlyList<LlmModelInfo> Models =
 ```
 
 This is the **single source** for the admin AI Settings dropdown (`GET /ai/settings`) and for validating the
-selected model in `UpdateAiSettingsCommand`. The admin UI populates automatically - no frontend change.
+selected model in `UpdateAISettingsCommand`. The admin UI populates automatically - no frontend change.
 
 ## Verification checklist
 
@@ -164,7 +164,7 @@ selected model in `UpdateAiSettingsCommand`. The admin UI populates automaticall
 
 - **`GetMultiplier` and `GetOverageBillingUnits` out of sync**: a Premium model with multiplier=5 but billing=1 underbills overages.
 - **`LlmModelCatalog` id ≠ `LlmPricing` key**: the catalog offers a model the pricing map doesn't know, so it falls back to default pricing/multiplier.
-- **Forgetting `BaseUrl`** for OpenAI-compatible providers - `OpenAiLlmProvider` defaults to OpenAI's endpoint and 401s.
+- **Forgetting `BaseUrl`** for OpenAI-compatible providers - `OpenAILlmProvider` defaults to OpenAI's endpoint and 401s.
 - **SDK types leaking**: importing the provider SDK in any file other than `Providers/{X}LlmProvider.cs` breaks the abstraction.
 
 ## Related

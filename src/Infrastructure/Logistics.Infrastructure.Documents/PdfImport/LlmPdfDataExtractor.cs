@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Ai;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.Documents;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;

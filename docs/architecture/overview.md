@@ -274,7 +274,7 @@ Database access, repositories, and multi-tenancy.
 
 Real-time and outbound messaging.
 
-- SignalR hubs: `TrackingHub`, `ChatHub`, `NotificationHub`, `AiDispatchHub` (mapped by the API at `/hubs/tracking`, `/hubs/chat`, `/hubs/notification`, `/hubs/ai-dispatch`)
+- SignalR hubs: `TrackingHub`, `ChatHub`, `NotificationHub`, `AIDispatchHub` (mapped by the API at `/hubs/tracking`, `/hubs/chat`, `/hubs/notification`, `/hubs/ai-dispatch`)
 - Email via Resend with Fluid templates
 - Push notifications via Firebase Cloud Messaging
 - Google reCAPTCHA validation
@@ -283,9 +283,9 @@ Real-time and outbound messaging.
 
 LLM dispatch agent and tool registry.
 
-- `ILlmProvider` adapter pattern with `AnthropicLlmProvider` (Claude SDK) and `OpenAiLlmProvider` (OpenAI-compatible: OpenAI, DeepSeek, GLM)
-- `AiDispatchService` agent loop (max 25 iterations, prompt caching, extended thinking)
-- `AiDispatchToolRegistry` - shared tool definitions used by both the agent and the MCP server
+- `ILlmProvider` adapter pattern with `AnthropicLlmProvider` (Claude SDK) and `OpenAILlmProvider` (OpenAI-compatible: OpenAI, DeepSeek, GLM)
+- `AIDispatchService` agent loop (max 25 iterations, prompt caching, extended thinking)
+- `AIDispatchToolRegistry` - shared tool definitions used by both the agent and the MCP server
 - Quota tracking with multiplier-based weekly limits (1x / 5x / 10x by the global model's cost tier)
 - Global, admin-selected dispatch model (`LlmModelCatalog` + `SystemSettings`); plans differ by quota only
 
@@ -384,7 +384,7 @@ Accounting sync providers: QuickBooks Online and a Demo provider, selected throu
 | -------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `Logistics.API`            | REST API, SignalR hubs, Hangfire background jobs, webhooks (Stripe, ELD)                             |
 | `Logistics.IdentityServer` | OAuth2 / OIDC via Duende IdentityServer, JWT issuance, user management                               |
-| `Logistics.McpServer`      | Library composed into the API: MCP over Streamable HTTP at `/mcp`, exposing `AiDispatchToolRegistry` |
+| `Logistics.McpServer`      | Library composed into the API: MCP over Streamable HTTP at `/mcp`, exposing `AIDispatchToolRegistry` |
 | `Logistics.TelegramBot`    | Library composed into the API: Telegram bot for driver / dispatcher commands                         |
 | `Logistics.DbMigrator`     | Console app: standalone EF Core migrations runner (master + tenant)                                  |
 | `Logistics.HostDefaults`   | Shared library: host bootstrap for the web hosts (`LogisticsHost.Run`, CORS, data protection)        |

@@ -92,7 +92,7 @@ erDiagram
         PlanTier Tier
         Money BaseFee
         Money PerTruckFee
-        int WeeklyAiRequestQuota
+        int WeeklyAIRequestQuota
     }
     USER {
         guid Id
@@ -109,7 +109,7 @@ The master DB also stores `SuperAdmin`, `BlogPost`, `ContactSubmission`, `DemoRe
 
 Every customer company is one `Tenant` row. The connection string for that company's tenant DB is stored in `Tenant.ConnectionString`, which is generated from `TenantDatabaseDefaults.NameTemplate` at provisioning time (see [Multi-Tenancy](multi-tenancy.md)).
 
-Subscriptions are 1:1 with tenants and reference a `SubscriptionPlan`. Plan tiers (Starter / Professional / Enterprise) gate features through the `PlanFeature` join table and set the weekly AI dispatch quota via `WeeklyAiRequestQuota` (the dispatch model itself is global, set by an admin - not per plan).
+Subscriptions are 1:1 with tenants and reference a `SubscriptionPlan`. Plan tiers (Starter / Professional / Enterprise) gate features through the `PlanFeature` join table and set the weekly AI dispatch quota via `WeeklyAIRequestQuota` (the dispatch model itself is global, set by an admin - not per plan).
 
 ## Tenant database
 
@@ -228,7 +228,7 @@ An aggregate is a consistency boundary - the root entity is the only thing outsi
 | `Truck`             | `TruckDocument[]`                                                           |
 | `Container`         | (lifecycle owner - referenced by `Load`)                                    |
 | `Invoice` TPH       | `InvoiceLineItem[]`, `Payment[]`, `PaymentLink[]`                           |
-| `AiDispatchSession` | `AiDispatchDecision[]`                                                      |
+| `AIDispatchSession` | `AIDispatchDecision[]`                                                      |
 | `Conversation`      | `Message[]`, `ConversationParticipant[]`, `MessageReadReceipt[]`            |
 | `DvirReport`        | `DvirDefect[]`                                                              |
 | `AccidentReport`    | `AccidentThirdParty[]`, `AccidentWitness[]`                                 |

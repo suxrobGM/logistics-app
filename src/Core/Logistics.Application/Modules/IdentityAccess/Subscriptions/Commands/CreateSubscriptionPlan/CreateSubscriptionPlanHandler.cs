@@ -25,7 +25,7 @@ internal sealed class CreateSubscriptionPlanHandler(
             Tier = req.Tier,
             PerTruckPrice = new() { Amount = req.PerTruckPrice, Currency = "USD" },
             MaxTrucks = req.MaxTrucks,
-            WeeklyAiRequestQuota = req.WeeklyAiRequestQuota
+            WeeklyAIRequestQuota = req.WeeklyAIRequestQuota
         };
 
         var result = await stripePlanService.CreatePlanAsync(subscriptionPlan);
@@ -33,7 +33,7 @@ internal sealed class CreateSubscriptionPlanHandler(
         subscriptionPlan.StripeProductId = result.Product.Id;
         subscriptionPlan.StripePriceId = result.BasePrice.Id;
         subscriptionPlan.StripePerTruckPriceId = result.PerTruckPrice.Id;
-        subscriptionPlan.StripeAiOveragePriceId = result.AiOveragePrice?.Id;
+        subscriptionPlan.StripeAIOveragePriceId = result.AIOveragePrice?.Id;
         await masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan, ct);
         await masterUow.SaveChangesAsync(ct);
         return Result.Ok();

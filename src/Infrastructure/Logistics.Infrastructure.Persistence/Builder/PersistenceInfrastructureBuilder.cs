@@ -5,7 +5,7 @@ using Logistics.Infrastructure.Persistence.Data;
 using Logistics.Infrastructure.Persistence.Options;
 using Logistics.Infrastructure.Persistence.Repositories;
 using Logistics.Infrastructure.Persistence.Services;
-using Logistics.Infrastructure.Persistence.Services.AiDispatch;
+using Logistics.Infrastructure.Persistence.Services.AIDispatch;
 using Logistics.Infrastructure.Persistence.Services.Feature;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +15,7 @@ using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Modules.Platform.ReadModels;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Application.Abstractions.Tenancy;
-using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Infrastructure.Persistence.Reads.Platform;
 
 namespace Logistics.Infrastructure.Persistence.Builder;
@@ -70,7 +70,7 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         services.AddScoped(typeof(MasterRepository<,>));
         services.AddScoped<ICurrentTenantAccessor, CurrentTenantAccessor>();
         services.AddScoped<IFeatureService, FeatureService>();
-        services.AddScoped<IAiQuotaService, AiQuotaService>();
+        services.AddScoped<IAIQuotaService, AIQuotaService>();
         services.AddScoped<ISystemSettingsService, SystemSettingsService>();
         logger?.LogInformation("Added master database with connection string: {ConnectionString}", connectionString);
         return this;

@@ -146,7 +146,7 @@ export class ViewPlansComponent implements OnInit {
     return plan.maxTrucks ? `Up to ${plan.maxTrucks} trucks` : "Unlimited trucks";
   }
 
-  protected getAiDispatchLabel(plan: SubscriptionPlanDto): string {
+  protected getAIDispatchLabel(plan: SubscriptionPlanDto): string {
     switch (plan.tier) {
       case "enterprise":
         return "unlimited usage";

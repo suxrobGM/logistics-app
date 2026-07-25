@@ -1,6 +1,6 @@
 import { Component, computed, input, output, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import type { AiDispatchDecisionDto } from "@logistics/shared/api";
+import type { AIDispatchDecisionDto } from "@logistics/shared/api";
 import { Badge, Icon, Stack, Surface, UiButton } from "@logistics/shared/ui";
 import { Labels } from "@/shared/utils";
 import { getToolLabel, parseToolInput } from "../../utils/decision-utils";
@@ -12,10 +12,10 @@ import { stripMarkdown } from "../../utils/markdown";
   imports: [Badge, Icon, RouterLink, Stack, Surface, UiButton],
 })
 export class DecisionCard {
-  public readonly decision = input.required<AiDispatchDecisionDto>();
+  public readonly decision = input.required<AIDispatchDecisionDto>();
   public readonly showSessionLink = input(false);
-  public readonly approve = output<AiDispatchDecisionDto>();
-  public readonly reject = output<AiDispatchDecisionDto>();
+  public readonly approve = output<AIDispatchDecisionDto>();
+  public readonly reject = output<AIDispatchDecisionDto>();
 
   protected readonly Labels = Labels;
   protected readonly stripMarkdown = stripMarkdown;

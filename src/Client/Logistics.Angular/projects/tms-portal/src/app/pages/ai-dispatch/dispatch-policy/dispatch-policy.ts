@@ -4,11 +4,11 @@ import { form, FormField, FormRoot, maxLength, submit } from "@angular/forms/sig
 import { getApiErrorMessage, PageHeader } from "@logistics/shared";
 import {
   Api,
-  deleteAiDispatchPolicy,
-  getAiDispatchPolicy,
-  regenerateAiDispatchPolicy,
-  updateAiDispatchPolicy,
-  type AiDispatchPolicyDto,
+  deleteAIDispatchPolicy,
+  getAIDispatchPolicy,
+  regenerateAIDispatchPolicy,
+  updateAIDispatchPolicy,
+  type AIDispatchPolicyDto,
 } from "@logistics/shared/api";
 import {
   Card,
@@ -64,7 +64,7 @@ export class DispatchPolicyPage implements OnInit {
   protected readonly maxLength = MAX_DIRECTIVES_LENGTH;
 
   /** Server state - everything editable derives from it. */
-  protected readonly policy = signal<AiDispatchPolicyDto>(emptyPolicy());
+  protected readonly policy = signal<AIDispatchPolicyDto>(emptyPolicy());
 
   /**
    * Editable mirrors that reset whenever server state changes, so a failed write only has to leave
@@ -107,7 +107,7 @@ export class DispatchPolicyPage implements OnInit {
   protected async load(): Promise<void> {
     this.isLoading.set(true);
     try {
-      this.policy.set(await this.api.invoke(getAiDispatchPolicy));
+      this.policy.set(await this.api.invoke(getAIDispatchPolicy));
     } catch {
       this.toastService.showError("Failed to load the dispatch policy");
     } finally {
@@ -141,7 +141,7 @@ export class DispatchPolicyPage implements OnInit {
     const isEnabled = this.isEnabled();
 
     try {
-      await this.api.invoke(updateAiDispatchPolicy, { body: { manualContent, isEnabled } });
+      await this.api.invoke(updateAIDispatchPolicy, { body: { manualContent, isEnabled } });
       this.policy.update((p) => ({ ...p, manualContent, isEnabled }));
       this.toastService.showSuccess(successMessage);
     } catch {
@@ -154,7 +154,7 @@ export class DispatchPolicyPage implements OnInit {
   protected async regenerate(): Promise<void> {
     this.isRegenerating.set(true);
     try {
-      this.policy.set(await this.api.invoke(regenerateAiDispatchPolicy));
+      this.policy.set(await this.api.invoke(regenerateAIDispatchPolicy));
       this.toastService.showSuccess("Policy regenerated from recent decisions");
     } catch (error: unknown) {
       // A skip ("not enough reviewed decisions yet") arrives as a 400 - show that reason, it tells
@@ -181,7 +181,7 @@ export class DispatchPolicyPage implements OnInit {
   private async deletePolicy(): Promise<void> {
     this.isDeleting.set(true);
     try {
-      await this.api.invoke(deleteAiDispatchPolicy);
+      await this.api.invoke(deleteAIDispatchPolicy);
       this.policy.set(emptyPolicy());
       this.toastService.showSuccess("Dispatch policy deleted");
     } catch {
@@ -192,7 +192,7 @@ export class DispatchPolicyPage implements OnInit {
   }
 }
 
-/** Mirrors `AiDispatchPolicyDto.Empty` on the server: a tenant with no policy row. */
-function emptyPolicy(): AiDispatchPolicyDto {
+/** Mirrors `AIDispatchPolicyDto.Empty` on the server: a tenant with no policy row. */
+function emptyPolicy(): AIDispatchPolicyDto {
   return { isEnabled: true };
 }

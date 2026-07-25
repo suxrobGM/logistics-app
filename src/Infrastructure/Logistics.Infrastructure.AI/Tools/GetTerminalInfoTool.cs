@@ -12,7 +12,7 @@ namespace Logistics.Infrastructure.AI.Tools;
 /// Terminals carry no coordinates, so this cannot feed <c>calculate_distance</c> - the deadhead
 /// anchor stays the load's origin latitude / longitude.
 /// </summary>
-internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAiDispatchTool
+internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
 {
     public string Name => "get_terminal_info";
 

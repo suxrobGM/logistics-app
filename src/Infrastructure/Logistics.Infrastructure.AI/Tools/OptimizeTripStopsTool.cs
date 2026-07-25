@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class OptimizeTripStopsTool : IAiDispatchTool
+internal sealed class OptimizeTripStopsTool : IAIDispatchTool
 {
     public string Name => "optimize_trip_stops";
 

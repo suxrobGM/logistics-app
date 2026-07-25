@@ -13,7 +13,7 @@ internal sealed class StripePlanService(
     ISystemSettingsService settingService,
     ILogger<StripePlanService> logger) : IStripePlanService
 {
-    private const string MeterSettingKey = "Stripe:AiOverageMeterId";
+    private const string MeterSettingKey = "Stripe:AIOverageMeterId";
 
     public async Task<StripePlanResult> CreatePlanAsync(SubscriptionPlan plan)
     {
@@ -43,7 +43,7 @@ internal sealed class StripePlanService(
 
         // 4. Create AI overage metered price if plan has a weekly quota
         Price? aiOveragePrice = null;
-        if (plan.WeeklyAiRequestQuota.HasValue)
+        if (plan.WeeklyAIRequestQuota.HasValue)
         {
             aiOveragePrice = await CreateMeteredOveragePriceAsync(priceService, product.Id, plan);
         }

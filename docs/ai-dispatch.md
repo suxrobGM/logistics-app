@@ -81,7 +81,7 @@ DELETE /ai/dispatch/policy                       Erase the learned policy and di
 
 ## Audit Trail
 
-Every agent run creates a **AiDispatchSession** with:
+Every agent run creates a **AIDispatchSession** with:
 
 - Mode (HumanInTheLoop / Autonomous)
 - Who triggered it (user or background job)
@@ -90,7 +90,7 @@ Every agent run creates a **AiDispatchSession** with:
 - Model used and provider
 - Agent's summary
 
-Each decision within a session is a **AiDispatchDecision** with:
+Each decision within a session is a **AIDispatchDecision** with:
 
 - Tool called and input parameters
 - Agent's reasoning
@@ -103,11 +103,11 @@ learning pass below uses. A bare rejection teaches the agent nothing.
 
 ## Learning From Approvals & Rejections
 
-A nightly Hangfire job (`AiDispatchPolicyLearningJob`, `Cron.Daily(4)`) turns each tenant's
+A nightly Hangfire job (`AIDispatchPolicyLearningJob`, `Cron.Daily(4)`) turns each tenant's
 approve/reject history into a short markdown **dispatch policy** that is injected into the agent's
 system prompt, so the agent stops re-suggesting patterns the dispatcher keeps refusing.
 
-**Storage** - one `AiDispatchPolicy` row per tenant (`ai_dispatch_policies`), with two content columns:
+**Storage** - one `AIDispatchPolicy` row per tenant (`ai_dispatch_policies`), with two content columns:
 
 | Column             | Owner      | Behaviour                                              |
 | ------------------ | ---------- | ------------------------------------------------------ |
@@ -117,7 +117,7 @@ system prompt, so the agent stops re-suggesting patterns the dispatcher keeps re
 The split is what lets the policy keep regenerating without either clobbering dispatcher text or
 freezing the moment someone edits it.
 
-**What it reads** (`AiDispatchPolicyLearner`, in `Logistics.Application`): non-`Query` decisions from
+**What it reads** (`AIDispatchPolicyLearner`, in `Logistics.Application`): non-`Query` decisions from
 the last 60 days that are either `Rejected` or `Executed` **with a non-null `ApprovedByUserId`**. That
 last condition matters - `Approve()` is immediately overwritten by `MarkExecuted()`, so `Approved` is a
 transient status, and autonomous-mode executions have no approver and no human signal. Counting them
@@ -131,7 +131,7 @@ the `LastDecisionAt` watermark; a manual regenerate within 10 minutes of the las
 call fails, so the next run retries the same history.
 
 **Bounding** - the prompt asks for ≤ 8 bullets / ≤ 400 words, `MaxTokens` is 1024, and the stored text
-is capped at 4000 chars. `AiDispatchSystemPrompt` caps it again at the injection point, keeping whole
+is capped at 4000 chars. `AIDispatchSystemPrompt` caps it again at the injection point, keeping whole
 lines only: a half-truncated rule reads as a different rule, so a line that will not fit is dropped.
 
 **Where it lands in the prompt** - between `## HOS Rules` and `## Workflow`. Position carries authority,
@@ -141,7 +141,7 @@ text is treated as untrusted (control characters stripped): it is LLM output der
 dispatcher-typed rejection reasons, which is a prompt-injection path.
 
 **Cost** - learning runs on `Llm:PolicyLearningModel` (default `deepseek-v4-flash`) via the optional
-`LlmCompletionRequest.ModelId` override, and creates **no** `AiDispatchSession` row, so it does not
+`LlmCompletionRequest.ModelId` override, and creates **no** `AIDispatchSession` row, so it does not
 consume the tenant's weekly quota. Cost is recorded on the policy row (`GenerationCostUsd`) for
 platform observability and is never exposed to the tenant.
 
@@ -155,7 +155,7 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
 
 | Variable                            | Description                                                                   |
 | ----------------------------------- | ----------------------------------------------------------------------------- |
-| `Llm__DefaultProvider`              | LLM provider: `Anthropic`, `OpenAi`, `DeepSeek`, `Glm` (default: `Anthropic`) |
+| `Llm__DefaultProvider`              | LLM provider: `Anthropic`, `OpenAI`, `DeepSeek`, `Glm` (default: `Anthropic`) |
 | `Llm__Providers__Anthropic__ApiKey` | Anthropic API key                                                             |
 | `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key                                                                |
 | `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key                                                              |
@@ -175,7 +175,7 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
         "ApiKey": "<key>",
         "Model": "claude-haiku-4-5"
       },
-      "OpenAi": {
+      "OpenAI": {
         "ApiKey": "<key>",
         "Model": "gpt-5.4-mini"
       },
@@ -192,8 +192,8 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
 ### Global model (admin-managed)
 
 The dispatch model is global, not per-tenant. An admin sets it in the Admin Portal → AI Settings page,
-which persists `Ai.Model` / `Ai.Provider` / `Ai.ExtendedThinking` to `SystemSettings` (keys in
-`AiSettingsKeys`). `AiDispatchConversationBuilder` resolves the model from those settings, falling back to
+which persists `AI.Model` / `AI.Provider` / `AI.ExtendedThinking` to `SystemSettings` (keys in
+`AISettingsKeys`). `AIDispatchConversationBuilder` resolves the model from those settings, falling back to
 the appsettings `Llm` defaults. The selectable models come from `LlmModelCatalog`. Tenants never select or
 see the model. Per tenant, an admin can still toggle `LlmEnabled` (Tenant Edit) to block AI for demo/test
 tenants.
@@ -213,18 +213,18 @@ src/Infrastructure/Logistics.Infrastructure.AI/
 │   ├── ILlmProvider.cs                  # Provider-agnostic interface
 │   ├── LlmTypes.cs                      # Request/response/message types
 │   ├── AnthropicLlmProvider.cs          # Anthropic SDK adapter
-│   ├── OpenAiLlmProvider.cs             # OpenAI-compatible adapter
+│   ├── OpenAILlmProvider.cs             # OpenAI-compatible adapter
 │   └── LlmProviderFactory.cs            # Resolves provider from config
 ├── Services/
-│   ├── AiDispatchService.cs          # Agent loop orchestration
-│   ├── AiDispatchConversationBuilder.cs   # Builds provider-agnostic conversation
-│   ├── AiDispatchDecisionProcessor.cs     # Tool call → decision entity processing
-│   ├── AiDispatchToolExecutor.cs          # Maps tool calls to MediatR
-│   ├── AiDispatchToolRegistry.cs          # Tool definitions (JSON Schema)
+│   ├── AIDispatchService.cs          # Agent loop orchestration
+│   ├── AIDispatchConversationBuilder.cs   # Builds provider-agnostic conversation
+│   ├── AIDispatchDecisionProcessor.cs     # Tool call → decision entity processing
+│   ├── AIDispatchToolExecutor.cs          # Maps tool calls to MediatR
+│   ├── AIDispatchToolRegistry.cs          # Tool definitions (JSON Schema)
 │   └── LlmPricing.cs                   # Token → USD cost calculator
-├── Tools/                               # Individual IAiDispatchTool implementations
+├── Tools/                               # Individual IAIDispatchTool implementations
 └── Prompts/
-    └── AiDispatchSystemPrompt.cs          # Dynamic system prompt builder
+    └── AIDispatchSystemPrompt.cs          # Dynamic system prompt builder
 ```
 
 `ILlmProvider` keeps SDK-specific code isolated to one file per provider. The agent loop, tools, and decision processor only deal with `LlmTypes`, the provider-agnostic records for requests, responses, messages, and tool calls.

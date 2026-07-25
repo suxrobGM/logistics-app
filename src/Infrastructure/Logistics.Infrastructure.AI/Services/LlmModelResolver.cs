@@ -1,13 +1,13 @@
-using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Application.Abstractions.Ai;
+using Logistics.Application.Abstractions.AI;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
-/// Resolves the global, admin-managed LLM model: system setting (<c>Ai.Model</c>) → appsettings default.
+/// Resolves the global, admin-managed LLM model: system setting (<c>AI.Model</c>) → appsettings default.
 /// The provider is derived from the model via <see cref="LlmModelCatalog"/> so it cannot drift.
 /// Shared by the dispatch conversation builder and the one-shot <c>ILlmClient</c>.
 /// </summary>
@@ -29,7 +29,7 @@ internal sealed class LlmModelResolver(
             return preferred;
         }
 
-        var modelSetting = await systemSettings.GetAsync(AiSettingsKeys.Model, ct);
+        var modelSetting = await systemSettings.GetAsync(AISettingsKeys.Model, ct);
         var modelInfo = LlmModelCatalog.Find(modelSetting);
         var provider = modelInfo?.Provider ?? config.DefaultProvider;
         var providerConfig = config.GetProviderConfig(provider);

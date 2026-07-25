@@ -52,7 +52,7 @@
                 <label class="w-40" [for]="'quota-' + plan.planId">{{ plan.planName }}</label>
                 <ui-number-field
                   [inputId]="'quota-' + plan.planId"
-                  [value]="plan.weeklyAiRequestQuota ?? null"
+                  [value]="plan.weeklyAIRequestQuota ?? null"
                   (valueChange)="updatePlanQuota(plan.planId, $event)"
                   [min]="1"
                   [showButtons]="true"

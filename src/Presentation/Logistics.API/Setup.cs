@@ -43,7 +43,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Extensions.Logging;
 using Logistics.Application.Abstractions.BackgroundJobs;
-using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.API;
 
@@ -129,7 +129,7 @@ internal static class Setup
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
-        services.AddScoped<IBackgroundJobRunner<AiDispatchRequest>, HangfireAiDispatchJobRunner>();
+        services.AddScoped<IBackgroundJobRunner<AIDispatchRequest>, HangfireAIDispatchJobRunner>();
         services.AddScoped<ICommandEnqueuer, HangfireCommandEnqueuer>();
         services.AddHangfireServer();
         services.AddHangfire(config => config
@@ -224,7 +224,7 @@ internal static class Setup
 
         // SignalR Hubs
         app.MapHub<TrackingHub>("/hubs/tracking");
-        app.MapHub<AiDispatchHub>("/hubs/ai-dispatch");
+        app.MapHub<AIDispatchHub>("/hubs/ai-dispatch");
         app.MapHub<NotificationHub>("/hubs/notification");
         app.MapHub<ChatHub>("/hubs/chat");
         return app;
@@ -247,7 +247,7 @@ internal static class Setup
         DataRetentionJob.ScheduleJobs();
         DataExportExpiryJob.ScheduleJobs();
         WebhookEventCleanupJob.ScheduleJobs();
-        AiDispatchPolicyLearningJob.ScheduleJobs();
+        AIDispatchPolicyLearningJob.ScheduleJobs();
 
         // Remove old stale dispatch agent job if it exists
         RecurringJob.RemoveIfExists("ai-dispatch");
