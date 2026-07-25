@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
+import { getApiErrorMessage } from "@logistics/shared";
 import {
   Api,
   deleteContainer,
@@ -85,11 +86,7 @@ export class ContainerDetails implements OnInit {
           this.toast.showSuccess("Container has been deleted successfully");
           this.router.navigateByUrl("/containers");
         } catch (error: unknown) {
-          const message =
-            (error as { error?: { error?: string }; message?: string })?.error?.error ??
-            (error as { message?: string })?.message ??
-            "Failed to delete container";
-          this.toast.showError(message);
+          this.toast.showError(getApiErrorMessage(error, "Failed to delete container"));
         } finally {
           this.isDeleting.set(false);
         }

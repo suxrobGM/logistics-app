@@ -1,5 +1,5 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
-import { ErrorCodes } from "@logistics/shared";
+import { ErrorCodes, getApiError } from "@logistics/shared";
 import {
   Api,
   bookLoadBoardListing,
@@ -88,7 +88,7 @@ export class LoadBoardSearchComponent implements OnInit {
         cur.filter((l) => l.externalListingId !== listing.externalListingId),
       );
     } catch (err) {
-      const apiError = this.extractApiError(err);
+      const apiError = getApiError(err);
       if (apiError?.errorCode === ErrorCodes.BrokerCreditBelowThreshold) {
         this.confirmCreditOverride(listing, body, apiError.message);
         return;
@@ -113,16 +113,5 @@ export class LoadBoardSearchComponent implements OnInit {
       acceptLabel: "Book Anyway",
       accept: () => void this.bookListing(listing, { ...body, overrideCreditCheck: true }),
     });
-  }
-
-  private extractApiError(err: unknown): { message: string; errorCode?: string } | undefined {
-    const body = (err as { error?: { error?: unknown; errorCode?: unknown } })?.error;
-    if (typeof body?.error !== "string") {
-      return undefined;
-    }
-    return {
-      message: body.error,
-      errorCode: typeof body.errorCode === "string" ? body.errorCode : undefined,
-    };
   }
 }

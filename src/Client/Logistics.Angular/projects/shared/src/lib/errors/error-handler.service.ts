@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { ToastService } from "../services/toast.service";
+import { getApiError } from "./api-error";
 import type { AppError, ErrorCategory } from "./error.types";
 import { isUpgradeError, UPGRADE_HANDLER } from "./upgrade-handler";
 
@@ -131,8 +132,9 @@ export class ErrorHandlerService {
       return error.error;
     }
 
-    if (error.error?.error) {
-      return error.error.error;
+    const apiError = getApiError(error);
+    if (apiError) {
+      return apiError.message;
     }
 
     if (error.error?.message) {

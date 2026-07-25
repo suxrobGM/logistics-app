@@ -1,7 +1,7 @@
 ﻿import { DatePipe } from "@angular/common";
 import { Component, computed, inject, linkedSignal, signal, type OnInit } from "@angular/core";
 import { form, FormField, FormRoot, maxLength, submit } from "@angular/forms/signals";
-import { PageHeader } from "@logistics/shared";
+import { getApiErrorMessage, PageHeader } from "@logistics/shared";
 import {
   Api,
   deleteAiDispatchPolicy,
@@ -161,10 +161,9 @@ export class DispatchPolicyPage implements OnInit {
       this.policy.set(await this.api.invoke(regenerateAiDispatchPolicy));
       this.toastService.showSuccess("Policy regenerated from recent decisions");
     } catch (error: unknown) {
-      // A skip ("not enough reviewed decisions yet") arrives as a 400 with `{ error: "..." }` -
-      // show that reason, it tells the dispatcher what to do next.
-      const message = (error as { error?: { error?: string } })?.error?.error;
-      this.toastService.showError(message ?? "Failed to regenerate the policy");
+      // A skip ("not enough reviewed decisions yet") arrives as a 400 - show that reason, it tells
+      // the dispatcher what to do next.
+      this.toastService.showError(getApiErrorMessage(error, "Failed to regenerate the policy"));
     } finally {
       this.isRegenerating.set(false);
     }
