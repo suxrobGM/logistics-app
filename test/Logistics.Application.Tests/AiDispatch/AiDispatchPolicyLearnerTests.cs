@@ -70,8 +70,8 @@ public class AiDispatchPolicyLearnerTests
     }
 
     /// <summary>
-    /// With one or two rejections there is nothing to generalise and the model invents rules, so the
-    /// rejection floor is enforced separately from the total count.
+    /// A couple of rejections give the model nothing to generalise from, so the rejection floor is
+    /// enforced separately from the total count.
     /// </summary>
     [Fact]
     public async Task Learn_EnoughDecisionsButTooFewRejections_SkipsWithoutCallingLlm()
@@ -101,8 +101,8 @@ public class AiDispatchPolicyLearnerTests
     #region Which decisions count
 
     /// <summary>
-    /// Autonomous executions carry no human signal - counting them would train the agent on its own
-    /// output. Query-type decisions are read tool calls and carry no verdict at all.
+    /// Autonomous executions would train the agent on its own output; Query decisions are read tool
+    /// calls carrying no verdict at all.
     /// </summary>
     [Fact]
     public async Task Learn_ExcludesAutonomousExecutionsAndQueries()
@@ -116,8 +116,7 @@ public class AiDispatchPolicyLearnerTests
                 type: AiDispatchDecisionType.Query, toolName: "query_tool"))
             .ToList();
 
-        // Enough qualifying rows to clear the evidence gate, so the only reason the noise could be
-        // absent from the prompt is the filter itself.
+        // Enough qualifying rows to clear the evidence gate, so only the filter can keep the noise out.
         SetDecisions([.. Rejections(5), .. Approvals(15), .. autonomous, .. queries]);
         SetLlmResponse("## Learned preferences\n- Prefer short hauls (5 rejections)");
 
@@ -258,8 +257,8 @@ public class AiDispatchPolicyLearnerTests
     }
 
     /// <summary>
-    /// Storage clamping is the entity's invariant (the wider column budget); the 4000-char injection
-    /// cap belongs to the prompt builder. Either way a stored bullet is always whole.
+    /// Storage clamping is the entity's invariant (the wider column budget); the injection cap belongs
+    /// to the prompt builder. Either way a stored bullet is whole.
     /// </summary>
     [Fact]
     public async Task Learn_OverlongOutput_ClampsToStorageBudgetAtLineBoundary()
@@ -302,9 +301,7 @@ public class AiDispatchPolicyLearnerTests
         await llmClient.DidNotReceiveWithAnyArgs().CompleteAsync(default!, default);
     }
 
-    /// <summary>
-    /// A failed pass must leave the watermark alone so tomorrow's run retries the same history.
-    /// </summary>
+    /// <summary>A failed pass leaves the watermark alone so tomorrow's run retries the same history.</summary>
     [Fact]
     public async Task Learn_LlmFails_ReturnsFailAndLeavesWatermarkUntouched()
     {

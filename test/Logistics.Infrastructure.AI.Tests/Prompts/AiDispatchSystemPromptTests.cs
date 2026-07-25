@@ -120,8 +120,8 @@ public class AiDispatchSystemPromptTests
     }
 
     /// <summary>
-    /// Terminals carry no coordinates. If the prompt ever implies otherwise the agent will try to
-    /// feed terminal data into calculate_distance and produce nonsense deadhead numbers.
+    /// Terminals carry no coordinates. Imply otherwise and the agent feeds terminal data into
+    /// calculate_distance, producing nonsense deadhead numbers.
     /// </summary>
     [Fact]
     public void Build_SaysTerminalsHaveNoCoordinates()
@@ -168,8 +168,8 @@ public class AiDispatchSystemPromptTests
     }
 
     /// <summary>
-    /// Position carries authority in a prompt: HOS and type rules must be read before the learned
-    /// preferences, and the workflow steps must come after so they act on both.
+    /// Position carries authority: HOS and type rules must come before the learned preferences, and
+    /// the workflow steps after, so they act on both.
     /// </summary>
     [Fact]
     public void Build_PolicySection_SitsBetweenHosRulesAndWorkflow()
@@ -188,8 +188,8 @@ public class AiDispatchSystemPromptTests
 
 
     /// <summary>
-    /// Policy text is machine-learned from dispatcher-typed rejection reasons - an injection path.
-    /// Control characters are built with (char) casts so this file stays free of literal control bytes.
+    /// Policy text comes from dispatcher-typed rejection reasons - an injection path. Control
+    /// characters use (char) casts so this file holds no literal control bytes.
     /// </summary>
     [Fact]
     public void Build_PolicyWithControlChars_StripsThemButKeepsLineBreaks()
@@ -230,9 +230,8 @@ public class AiDispatchSystemPromptTests
     }
 
     /// <summary>
-    /// Directives and learned content share one budget and directives claim it first, so a
-    /// dispatcher's own rule is never dropped to make room for an inferred one. What is left over
-    /// must not leak a partial learned bullet - a half-rule reads as a different rule.
+    /// Directives claim the shared budget first, so a dispatcher's own rule is never dropped for an
+    /// inferred one - and what is left must not leak a partial learned bullet.
     /// </summary>
     [Fact]
     public void Build_LongDirectives_KeepThemAndNeverLeakPartialLearnedBullet()

@@ -31,8 +31,8 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IAiDispatchTo
             distance_km = Math.Round(l.Distance / 1000.0, 1),
             delivery_cost = l.DeliveryCost,
             customer = l.Customer?.Name,
-            // Intermodal metadata - present only on container loads. Without it the agent has no
-            // reason to call get_container_status / get_terminal_info.
+            // Intermodal metadata. Without it the agent never calls get_container_status /
+            // get_terminal_info, because it cannot tell a load has a container.
             container_number = l.ContainerNumber,
             container_iso_type = l.ContainerIsoType?.ToString(),
             origin_terminal = FormatTerminal(l.OriginTerminalName, l.OriginTerminalCode),

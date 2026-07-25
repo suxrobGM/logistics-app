@@ -12,8 +12,7 @@ export const aiDispatchRoutes: Routes = [
       permission: Permission.Dispatch.View,
     },
   },
-  // Must stay above ":id" - routing is first-match-wins, so after it "policy" would be read as a
-  // session id.
+  // Must stay above ":id" - routing is first-match-wins, or "policy" reads as a session id.
   {
     path: "policy",
     loadComponent: () =>

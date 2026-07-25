@@ -63,12 +63,12 @@ export class DispatchPolicyPage implements OnInit {
 
   protected readonly maxLength = MAX_DIRECTIVES_LENGTH;
 
-  /** Server state - the single source of truth. Everything editable derives from it. */
+  /** Server state - everything editable derives from it. */
   protected readonly policy = signal<AiDispatchPolicyDto>(emptyPolicy());
 
   /**
-   * Editable mirrors that reset whenever the server state changes, so there is no hand-written sync
-   * step to forget - and a failed write simply leaves `policy` alone rather than needing a rollback.
+   * Editable mirrors that reset whenever server state changes, so a failed write only has to leave
+   * `policy` alone instead of rolling anything back.
    */
   protected readonly isEnabled = linkedSignal(() => this.policy().isEnabled ?? true);
   protected readonly model = linkedSignal(() => ({
@@ -123,10 +123,7 @@ export class DispatchPolicyPage implements OnInit {
     submit(this.directivesForm);
   }
 
-  /**
-   * The toggle pauses learning as well as injection, so it saves on change instead of waiting for
-   * the directives form to be submitted.
-   */
+  /** The toggle pauses learning too, so it saves on change rather than on form submit. */
   protected async onEnabledChange(): Promise<void> {
     this.isSavingToggle.set(true);
     try {
@@ -139,9 +136,9 @@ export class DispatchPolicyPage implements OnInit {
   }
 
   /**
-   * One writer for the whole policy document - the toggle and the directives are the same PUT, so
-   * they cannot drift apart. On success the local copy is updated rather than re-fetched: the server
-   * returns 204 and we already know both values it changed.
+   * One writer for the whole document - the toggle and the directives share a PUT, so they cannot
+   * drift apart. Updates the local copy instead of re-fetching: the server returns 204 and we
+   * already know both values it changed.
    */
   private async persist(successMessage: string): Promise<void> {
     const manualContent = this.model().manualContent;
@@ -152,7 +149,7 @@ export class DispatchPolicyPage implements OnInit {
       this.policy.update((p) => ({ ...p, manualContent, isEnabled }));
       this.toastService.showSuccess(successMessage);
     } catch {
-      // `policy` is untouched, so the linked signals snap the controls back to server state.
+      // `policy` is unchanged, so the linked signals snap the controls back to server state.
       this.policy.update((p) => ({ ...p }));
       this.toastService.showError("Failed to update the policy");
     }
@@ -164,8 +161,8 @@ export class DispatchPolicyPage implements OnInit {
       this.policy.set(await this.api.invoke(regenerateAiDispatchPolicy));
       this.toastService.showSuccess("Policy regenerated from recent decisions");
     } catch (error: unknown) {
-      // A skip ("not enough reviewed decisions yet") comes back as a 400 whose body is
-      // `{ error: "..." }` - show that reason, it tells the dispatcher what to do next.
+      // A skip ("not enough reviewed decisions yet") arrives as a 400 with `{ error: "..." }` -
+      // show that reason, it tells the dispatcher what to do next.
       const message = (error as { error?: { error?: string } })?.error?.error;
       this.toastService.showError(message ?? "Failed to regenerate the policy");
     } finally {
@@ -200,7 +197,7 @@ export class DispatchPolicyPage implements OnInit {
   }
 }
 
-/** Mirrors `AiDispatchPolicyDto.Empty` on the server: a tenant with no policy row yet. */
+/** Mirrors `AiDispatchPolicyDto.Empty` on the server: a tenant with no policy row. */
 function emptyPolicy(): AiDispatchPolicyDto {
   return { isEnabled: true };
 }

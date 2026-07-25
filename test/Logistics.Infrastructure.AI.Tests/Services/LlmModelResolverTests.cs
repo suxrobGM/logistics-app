@@ -80,7 +80,7 @@ public class LlmModelResolverTests
             ConfigWith(LlmProvider.Anthropic, LlmProvider.DeepSeek), "deepseek-v4-flash");
 
         Assert.Equal("deepseek-v4-flash", selection.Model);
-        // Provider comes from the catalog, so it cannot drift from the model.
+        // Provider comes from the catalog, so it cannot drift.
         Assert.Equal(LlmProvider.DeepSeek, selection.Provider);
     }
 
@@ -97,8 +97,8 @@ public class LlmModelResolverTests
     }
 
     /// <summary>
-    /// A deployment may configure only one provider's key. Honouring an override whose provider has
-    /// no key would hard-fail the nightly learning on every such install.
+    /// A deployment may configure only one provider's key; honouring a keyless override would
+    /// hard-fail the nightly learning on every such install.
     /// </summary>
     [Fact]
     public async Task ResolveAsync_OverrideProviderHasNoApiKey_FallsBackToGlobalModel()

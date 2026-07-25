@@ -10,8 +10,8 @@ internal sealed class AiDispatchPolicyEntityConfiguration : IEntityTypeConfigura
     {
         builder.ToTable("ai_dispatch_policies");
 
-        // Deliberate headroom over the injection cap: a long pass is stored, then clamped at the
-        // prompt boundary rather than failing the insert.
+        // Headroom over the injection cap: a long pass is stored, then clamped at the prompt
+        // boundary rather than failing the insert.
         builder.Property(p => p.GeneratedContent)
             .HasMaxLength(DispatchPolicyText.MaxStoredChars);
 

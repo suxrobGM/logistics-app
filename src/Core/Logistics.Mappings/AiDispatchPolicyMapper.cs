@@ -7,8 +7,7 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class AiDispatchPolicyMapper
 {
-    // ModelUsed / GenerationCostUsd are platform observability only - tenants never see model names,
-    // so they are ignored rather than added to the DTO.
+    // ModelUsed / GenerationCostUsd stay out of the DTO - platform observability only.
     [MapperIgnoreSource(nameof(AiDispatchPolicy.DomainEvents))]
     [MapperIgnoreSource(nameof(AiDispatchPolicy.ModelUsed))]
     [MapperIgnoreSource(nameof(AiDispatchPolicy.GenerationCostUsd))]

@@ -11,9 +11,8 @@ namespace Logistics.API.Jobs;
 ///     Nightly job that turns each tenant's AI dispatch approve/reject history into a short
 ///     dispatch policy injected into the agent's system prompt.
 ///     <para>
-///     Runs daily rather than weekly even though the policy changes slowly: the learner keeps a
-///     watermark, so a night with no new decisions costs one query and no tokens. Daily means a new
-///     preference reaches the agent within 24h of the rejection that taught it.
+///     Daily rather than weekly: the learner's watermark makes a quiet night cost one query and no
+///     tokens, so a new preference can reach the agent within 24h of the rejection that taught it.
 ///     </para>
 /// </summary>
 public class AiDispatchPolicyLearningJob(
@@ -29,8 +28,8 @@ public class AiDispatchPolicyLearningJob(
     }
 
     /// <summary>
-    ///     Retries are safe: tenants processed by the failed attempt have an advanced watermark and
-    ///     skip without calling the LLM again.
+    ///     Retries are safe: tenants the failed attempt already processed have an advanced watermark
+    ///     and skip without calling the LLM again.
     /// </summary>
     [AutomaticRetry(Attempts = 2)]
     public Task ProcessAllTenantsAsync(CancellationToken ct) =>
@@ -69,7 +68,7 @@ public class AiDispatchPolicyLearningJob(
         }
         else
         {
-            // Debug: most tenants skip most nights, and at Information this drowns the job log.
+            // Debug, not Information - most tenants skip most nights and would drown the job log.
             logger.LogDebug("Skipped policy learning for tenant {TenantName}: {Reason}",
                 tenant.Name, outcome.SkipReason);
         }

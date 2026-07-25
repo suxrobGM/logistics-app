@@ -1,11 +1,8 @@
 ﻿namespace Logistics.Shared.Models;
 
 /// <summary>
-/// The tenant's learned dispatch policy.
-/// <para>
-/// Deliberately carries no model name and no generation cost: plans differ by quota, not model tier,
-/// and tenants never see which model ran.
-/// </para>
+/// The tenant's learned dispatch policy. Carries no model name and no generation cost: plans differ
+/// by quota, not model tier, and tenants never see which model ran.
 /// </summary>
 public record AiDispatchPolicyDto
 {
@@ -26,8 +23,8 @@ public record AiDispatchPolicyDto
     public Guid? LastEditedByUserId { get; set; }
 
     /// <summary>
-    /// What a tenant with no policy row looks like. Defined once so the read and regenerate endpoints
-    /// cannot describe the same tenant differently.
+    /// A tenant with no policy row. Defined once so the read and regenerate endpoints cannot
+    /// describe the same tenant differently.
     /// </summary>
     public static AiDispatchPolicyDto Empty => new() { IsEnabled = true };
 }

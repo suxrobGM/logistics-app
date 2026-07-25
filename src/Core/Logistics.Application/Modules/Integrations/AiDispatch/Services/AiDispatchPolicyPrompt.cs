@@ -1,8 +1,8 @@
 ﻿namespace Logistics.Application.Modules.Integrations.AiDispatch.Services;
 
 /// <summary>
-/// The prompt that turns decision history into a policy. Its whole job is to stop the model from
-/// inventing rules: every bullet must be backed by repeated evidence, and thin evidence must produce
+/// The prompt that turns decision history into a policy. Most of it exists to stop the model
+/// inventing rules: every bullet needs repeated evidence, and thin evidence must produce
 /// <see cref="NoPolicyToken"/> rather than a plausible guess.
 /// </summary>
 internal static class AiDispatchPolicyPrompt
@@ -62,8 +62,7 @@ internal static class AiDispatchPolicyPrompt
 
         if (!string.IsNullOrWhiteSpace(existingPolicy))
         {
-            // Re-deriving from scratch each night would make the policy flap between wordings. Anchor
-            // it: keep rules the evidence still supports, drop the ones it no longer does.
+            // Anchor on the previous version, or the wording flaps from night to night.
             text += $"""
 
 

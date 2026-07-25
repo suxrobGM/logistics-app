@@ -25,9 +25,8 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAiDisp
 
         if (!string.IsNullOrEmpty(code))
         {
-            // `ToUpper()` translates to SQL `upper()`. Do NOT "simplify" this to
-            // string.Equals(.., StringComparison.*) - EF Core cannot translate that overload and the
-            // query throws at runtime.
+            // Keep `ToUpper()` - EF Core cannot translate string.Equals(.., StringComparison.*)
+            // and throws at runtime.
             var normalized = code.ToUpperInvariant();
             terminal = await tenantUow.Repository<Terminal>()
                 .GetAsync(t => t.Code.ToUpper() == normalized, ct);
@@ -67,8 +66,8 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAiDisp
     }
 
     /// <summary>
-    /// Single-line address. <see cref="Address"/> is a record, so its default <c>ToString</c> emits
-    /// property syntax - too noisy to spend tokens on.
+    /// Single-line address. <see cref="Address"/> is a record, and its default <c>ToString</c> emits
+    /// property syntax - too many tokens for what it says.
     /// </summary>
     internal static string FormatAddress(Address address)
     {

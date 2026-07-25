@@ -7,8 +7,8 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Infrastructure.AI.Tools;
 
 /// <summary>
-/// Looks up an intermodal container by its ISO 6346 number (or id) so the agent can reason about
-/// where the box actually is before assigning the load that carries it.
+/// Looks up an intermodal container by ISO 6346 number (or id), so the agent knows where the box is
+/// before assigning the load that carries it.
 /// </summary>
 internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow) : IAiDispatchTool
 {
@@ -23,10 +23,8 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow) : IAiD
 
         if (!string.IsNullOrEmpty(number))
         {
-            // ISO 6346 numbers are canonically upper-case, but dispatchers type them either way.
-            // `ToUpper()` translates to SQL `upper()`. Do NOT "simplify" this to
-            // string.Equals(.., StringComparison.*) - EF Core cannot translate that overload and the
-            // query throws at runtime.
+            // Dispatchers type ISO 6346 numbers in either case. Keep `ToUpper()` - EF Core cannot
+            // translate string.Equals(.., StringComparison.*) and throws at runtime.
             var normalized = number.ToUpperInvariant();
             container = await tenantUow.Repository<Container>()
                 .GetAsync(c => c.Number.ToUpper() == normalized, ct);

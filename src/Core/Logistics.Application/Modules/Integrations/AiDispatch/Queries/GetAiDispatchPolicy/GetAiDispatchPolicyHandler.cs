@@ -15,8 +15,8 @@ internal sealed class GetAiDispatchPolicyHandler(ITenantUnitOfWork tenantUow)
     {
         var policy = await tenantUow.Repository<AiDispatchPolicy>().Query().FirstOrDefaultAsync(ct);
 
-        // No row yet is the normal state for a new tenant, not an error. Returning a blank enabled
-        // policy keeps the null branch out of the controller, the generated client and the page.
+        // No row is normal for a new tenant. A blank enabled policy keeps the null branch out of the
+        // controller, the generated client and the page.
         return Result<AiDispatchPolicyDto>.Ok(policy?.ToDto() ?? AiDispatchPolicyDto.Empty);
     }
 }

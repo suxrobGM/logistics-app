@@ -3,7 +3,7 @@ import { UiButton, UiDialog, UiTextareaField } from "@logistics/shared/ui";
 import { DecisionActionsService } from "../../services/decision-actions.service";
 import { buildDecisionDetail } from "../../utils/decision-utils";
 
-/** Quick picks cover the rejection causes the agent can actually learn a preference from. */
+/** Quick picks cover the rejection causes the agent can learn a preference from. */
 const QUICK_REASONS = [
   "Deadhead too far",
   "Wrong driver for this customer",
@@ -13,10 +13,8 @@ const QUICK_REASONS = [
 ] as const;
 
 /**
- * Collects a rejection reason, then hands it to {@link DecisionActionsService}.
- *
- * The reason is the labelled training signal nightly policy learning uses, so it is required here
- * rather than optional - a bare rejection teaches the agent nothing.
+ * Collects a rejection reason, then hands it to {@link DecisionActionsService}. Required, not
+ * optional: the reason is the training signal nightly policy learning depends on.
  */
 @Component({
   selector: "app-reject-decision-dialog",

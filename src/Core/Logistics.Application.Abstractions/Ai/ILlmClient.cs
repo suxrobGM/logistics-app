@@ -34,12 +34,9 @@ public sealed record LlmCompletionRequest
     public int MaxTokens { get; init; } = 4096;
 
     /// <summary>
-    /// Optional <c>LlmModelCatalog</c> id to run this one call on, e.g. a cheap tier for a background
-    /// learning pass. Ignored - falling back to the global admin-selected model - when the id is
-    /// unknown or its provider has no API key configured.
-    /// <para>
-    /// This is for one-shot calls only. The dispatch agent loop stays strictly on the global model.
-    /// </para>
+    /// Optional <c>LlmModelCatalog</c> id for this one call, e.g. a cheap tier for a background pass.
+    /// Falls back to the global model when the id is unknown or its provider has no API key.
+    /// One-shot calls only - the dispatch agent loop stays on the global model.
     /// </summary>
     public string? ModelId { get; init; }
 }

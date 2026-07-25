@@ -10,10 +10,7 @@ import { buildDecisionDetail } from "../utils/decision-utils";
 
 /**
  * Approve/reject for agent decisions, shared by the sessions list and the session details page.
- *
- * Owns the reject dialog's state and the wire calls so the required-reason rule and the request shape
- * exist once - the reason is the labelled signal nightly policy learning depends on, and a second
- * copy is a second place to forget it.
+ * Owns the reject dialog state and the wire calls so the required-reason rule exists once.
  *
  * Provided per page (`providers: [DecisionActionsService]`), not app-wide.
  */

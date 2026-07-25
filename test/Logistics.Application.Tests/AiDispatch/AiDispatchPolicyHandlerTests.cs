@@ -29,8 +29,8 @@ public class AiDispatchPolicyHandlerTests
     #region Get
 
     /// <summary>
-    /// A tenant that has never run the agent has no row. Returning a blank enabled policy keeps the
-    /// null branch out of the controller, the generated client and the page.
+    /// A tenant that has never run the agent has no row. A blank enabled policy keeps the null branch
+    /// out of the controller, the generated client and the page.
     /// </summary>
     [Fact]
     public async Task Get_NoRow_ReturnsBlankEnabledPolicy()
@@ -159,8 +159,7 @@ public class AiDispatchPolicyHandlerTests
     #region Mapper
 
     /// <summary>
-    /// Plans differ by quota, not model tier, and tenants never see model names - so the DTO must not
-    /// carry the model or the generation cost.
+    /// Plans differ by quota, not model tier, so the DTO carries neither model nor generation cost.
     /// </summary>
     [Fact]
     public void ToDto_OmitsModelAndCost()

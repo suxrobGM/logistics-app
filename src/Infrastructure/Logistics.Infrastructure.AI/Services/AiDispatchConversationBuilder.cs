@@ -37,8 +37,7 @@ internal sealed class AiDispatchConversationBuilder(
 
         // Resolve the global model (admin-managed): system setting → appsettings default.
         // The provider is derived from the model via the catalog, so it can't drift.
-        // No per-request model override here on purpose - the agent's model is global, and tenants
-        // never pick or see one. `ILlmClient.ModelId` exists only for one-shot background calls.
+        // No per-request override on purpose - `ILlmClient.ModelId` is for one-shot background calls.
         var selection = await modelResolver.ResolveAsync(config);
         var resolvedProvider = selection.Provider;
         var provider = providerFactory.Create(resolvedProvider);
@@ -106,8 +105,8 @@ internal sealed class AiDispatchConversationBuilder(
     }
 
     /// <summary>
-    /// Loads the tenant's learned dispatch policy. Filtering on <c>IsEnabled</c> in SQL means a
-    /// disabled policy is simply absent - the prompt section then omits itself.
+    /// Loads the tenant's learned dispatch policy. Filtering <c>IsEnabled</c> in SQL means a disabled
+    /// policy is simply absent, so the prompt section omits itself.
     /// </summary>
     private async Task<LearnedDispatchPolicy?> GetLearnedPolicyAsync()
     {

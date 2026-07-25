@@ -16,7 +16,7 @@ internal sealed class UpdateAiDispatchPolicyHandler(
         var repo = tenantUow.Repository<AiDispatchPolicy>();
         var policy = await repo.Query().FirstOrDefaultAsync(ct);
 
-        // Created on demand so a dispatcher can write directives before the agent has learned anything.
+        // Created on demand: directives can be written before the agent has learned anything.
         if (policy is null)
         {
             policy = new AiDispatchPolicy();

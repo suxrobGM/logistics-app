@@ -11,8 +11,7 @@ internal static class AiDispatchSystemPrompt
     /// The prompt includes detailed instructions on priorities, rules, workflow, token efficiency, and edge case handling to guide the agent's decision-making process effectively.
     /// </summary>
     /// <param name="policy">
-    /// The tenant's learned dispatch policy, or null to omit the section entirely. Rendered as strong
-    /// defaults that rank below the hard constraints - see <see cref="BuildPolicySection"/>.
+    /// The tenant's learned dispatch policy, or null to omit the section - see <see cref="BuildPolicySection"/>.
     /// </param>
     public static string Build(string companyName, AiDispatchMode mode, bool hasLoadBoardIntegration = false, DistanceUnit distanceUnit = DistanceUnit.Miles, LearnedDispatchPolicy? policy = null)
     {
@@ -155,10 +154,9 @@ internal static class AiDispatchSystemPrompt
     }
 
     /// <summary>
-    /// Renders the learned policy as strong defaults. The ranking language is load-bearing: the
-    /// content is machine-learned from dispatcher-typed rejection reasons, so it is untrusted text
-    /// on a prompt-injection path and must never be able to promote itself to a hard rule.
-    /// Returns an empty string when there is nothing to inject, so the section disappears entirely.
+    /// Renders the learned policy as strong defaults. The ranking language is load-bearing: this is
+    /// untrusted text on a prompt-injection path and must never promote itself to a hard rule.
+    /// Returns an empty string when there is nothing to inject.
     /// </summary>
     private static string BuildPolicySection(LearnedDispatchPolicy? policy)
     {
@@ -167,8 +165,7 @@ internal static class AiDispatchSystemPrompt
             return "";
         }
 
-        // Budget is shared, and dispatcher-authored directives outrank machine-inferred preferences,
-        // so directives get first claim on the character cap.
+        // Shared budget: directives outrank learned preferences, so they claim the cap first.
         var directives = ClampPolicyText(policy.Directives, DispatchPolicyText.MaxContentChars);
         var learned = ClampPolicyText(
             policy.Learned, DispatchPolicyText.MaxContentChars - (directives?.Length ?? 0));
@@ -193,14 +190,13 @@ internal static class AiDispatchSystemPrompt
             """;
     }
 
-    /// <summary>A labelled sub-section, or nothing at all when there is no content for it.</summary>
+    /// <summary>A labelled sub-section, or nothing when there is no content for it.</summary>
     private static string Subsection(string heading, string? content) =>
         content is null ? "" : $"### {heading}\n{content}\n\n";
 
     /// <summary>
-    /// Strips control characters (newlines and tabs survive) and clamps to whole lines. This is the
-    /// last point at which anything can stop untrusted policy text reaching the model, so both steps
-    /// live here rather than in a caller.
+    /// Strips control characters (newlines and tabs survive) and clamps to whole lines. The last point
+    /// at which anything can stop untrusted policy text reaching the model, so both steps live here.
     /// </summary>
     private static string? ClampPolicyText(string? text, int maxChars)
     {
@@ -223,8 +219,7 @@ internal static class AiDispatchSystemPrompt
     }
 
     /// <summary>
-    /// Removes control characters from text that will be embedded in a prompt - the shared
-    /// prompt-injection defence for every untrusted value the prompt interpolates.
+    /// The shared prompt-injection defence for every untrusted value the prompt interpolates.
     /// </summary>
     /// <param name="allowLineBreaks">
     /// True for multi-line documents, where newlines and tabs carry the markdown structure. False for

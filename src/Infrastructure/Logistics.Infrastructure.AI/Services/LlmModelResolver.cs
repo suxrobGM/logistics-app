@@ -15,13 +15,10 @@ internal sealed class LlmModelResolver(
     ISystemSettingsService systemSettings,
     ILogger<LlmModelResolver> logger)
 {
-    /// <param name="config">LLM options, supplying the default provider and per-provider settings.</param>
     /// <param name="preferredModelId">
-    /// Optional per-call override (see <c>LlmCompletionRequest.ModelId</c>). Honoured only when the id is
-    /// in the catalog AND that provider has an API key; otherwise the global model wins. The dispatch
-    /// agent loop never passes this - its model is global by design.
+    /// Optional per-call override (see <c>LlmCompletionRequest.ModelId</c>). Honoured only when the id
+    /// is in the catalog AND that provider has an API key; otherwise the global model wins.
     /// </param>
-    /// <param name="ct">Cancellation token.</param>
     public async Task<LlmModelSelection> ResolveAsync(
         LlmOptions config,
         string? preferredModelId = null,
@@ -62,8 +59,8 @@ internal sealed class LlmModelResolver(
             return false;
         }
 
-        // A deployment may only have keys for some providers. Without this check a cheap-tier
-        // preference would hard-fail every run on an install that only configured one provider.
+        // A deployment may configure only one provider's key; without this the override would
+        // hard-fail every run on such an install.
         var providerConfig = config.GetProviderConfig(info.Provider);
         if (string.IsNullOrWhiteSpace(providerConfig.ApiKey))
         {

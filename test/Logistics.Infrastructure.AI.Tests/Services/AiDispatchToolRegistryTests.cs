@@ -64,7 +64,7 @@ public class AiDispatchToolRegistryTests
 
     /// <summary>
     /// The intermodal tools are plain reads - listing either in <c>WriteTools</c> would put them
-    /// behind dispatcher approval and stall the agent mid-run.
+    /// behind dispatcher approval and stall the agent.
     /// </summary>
     [Fact]
     public void GetToolDefinitions_IntermodalToolsAreNotLoadBoardGated()

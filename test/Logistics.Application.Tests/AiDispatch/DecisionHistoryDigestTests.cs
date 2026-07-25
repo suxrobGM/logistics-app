@@ -36,10 +36,7 @@ public class DecisionHistoryDigestTests
         Assert.Contains("Deadhead too far", result.Text);
     }
 
-    /// <summary>
-    /// Rejections carry the only behaviour-changing signal, so they must survive the caps that
-    /// approvals get squeezed out by.
-    /// </summary>
+    /// <summary>Rejections carry the only behaviour-changing signal, so the caps drop approvals first.</summary>
     [Fact]
     public void Build_ListsRejectionsBeforeApprovals()
     {
@@ -57,8 +54,8 @@ public class DecisionHistoryDigestTests
     }
 
     /// <summary>
-    /// The watermark covers everything examined, including rows the caps dropped - otherwise those
-    /// rows look "new" forever and the job never converges.
+    /// The watermark covers everything examined, including dropped rows - otherwise they look "new"
+    /// forever and the job never converges.
     /// </summary>
     [Fact]
     public void Build_WatermarkCoversAllInputEvenBeyondCaps()
@@ -97,7 +94,7 @@ public class DecisionHistoryDigestTests
 
         var result = DecisionHistoryDigest.Build(entries);
 
-        // DecisionHistoryEntry has no ToolOutput member at all - assert the shape stays that way.
+        // DecisionHistoryEntry has no ToolOutput member - assert the shape stays that way.
         Assert.DoesNotContain("tool_output", result.Text);
         Assert.DoesNotContain("output:", result.Text);
     }

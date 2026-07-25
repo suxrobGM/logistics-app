@@ -49,7 +49,6 @@ public class AiDispatchConversationBuilderTests
         sessionRepo.Query().Returns(emptySessionList);
         tenantUow.Repository<AiDispatchSession>().Returns(sessionRepo);
 
-        // Mock the AiDispatchPolicy repository for GetLearnedPolicyAsync
         tenantUow.Repository<AiDispatchPolicy>().Returns(policyRepo);
         SetPolicies();
 
@@ -114,9 +113,7 @@ public class AiDispatchConversationBuilderTests
         Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
     }
 
-    /// <summary>
-    /// The disabled policy is filtered out in SQL, so it must not reach the prompt at all.
-    /// </summary>
+    /// <summary>A disabled policy is filtered out in SQL, so it never reaches the prompt.</summary>
     [Fact]
     public async Task BuildAsync_DisabledPolicy_OmitsPolicySection()
     {
@@ -143,7 +140,7 @@ public class AiDispatchConversationBuilderTests
         Assert.Contains("Prefer short hauls", conversation.SystemPrompt);
         Assert.Contains("Never assign Truck 42 to hazmat", conversation.SystemPrompt);
 
-        // Human directives outrank machine-inferred preferences, so they must come first.
+        // Directives outrank learned preferences, so they come first.
         Assert.True(
             conversation.SystemPrompt.IndexOf("Dispatcher directives", StringComparison.Ordinal) <
             conversation.SystemPrompt.IndexOf("Learned preferences", StringComparison.Ordinal));

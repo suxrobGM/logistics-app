@@ -23,7 +23,7 @@ internal sealed class AiDispatchPolicyLearner(
     private const int MinDecisions = 15;
     private const int MinRejections = 3;
 
-    /// <summary>Rate-limits the manual regenerate endpoint. The nightly pass uses the watermark instead.</summary>
+    /// <summary>Rate-limits manual regeneration. The nightly pass uses the watermark instead.</summary>
     private static readonly TimeSpan ManualRerunCooldown = TimeSpan.FromMinutes(10);
 
     public async Task<Result<AiDispatchPolicyLearningOutcome>> LearnForCurrentTenantAsync(
@@ -52,8 +52,7 @@ internal sealed class AiDispatchPolicyLearner(
             return Skipped("Policy was regenerated less than 10 minutes ago");
         }
 
-        // Cheapest gate first: one indexed aggregate, no rows transferred. On a night where nothing
-        // was decided this is the only query the tenant costs.
+        // Cheapest gate first: on a quiet night this aggregate is the only query the tenant costs.
         if (!force && policy?.LastDecisionAt is not null)
         {
             var newestDecisionAt = await QualifyingHistory().MaxAsync(d => (DateTime?)d.CreatedAt, ct);
@@ -68,9 +67,8 @@ internal sealed class AiDispatchPolicyLearner(
 
         if (digest.Count < MinDecisions || digest.RejectionCount < MinRejections)
         {
-            // Only stamp the run for a manual attempt - that is the only path the cooldown guards.
-            // The nightly pass relies on the watermark, so stamping here would be a pointless UPDATE
-            // for every tenant that has not yet accumulated enough history.
+            // Only manual attempts are cooldown-guarded; stamping the nightly pass would be a
+            // pointless UPDATE for every tenant short on history.
             if (force && policy is not null)
             {
                 policy.MarkRunCompleted();
@@ -93,7 +91,7 @@ internal sealed class AiDispatchPolicyLearner(
 
         if (!completion.IsSuccess || completion.Value is null)
         {
-            // Deliberately leave the watermark untouched so tonight's failure retries tomorrow.
+            // Leave the watermark untouched so tonight's failure retries tomorrow.
             logger.LogWarning(
                 "Policy learning failed for tenant {TenantId}: {Error}", tenant.Id, completion.Error);
             return Result<AiDispatchPolicyLearningOutcome>.Fail(
@@ -120,9 +118,8 @@ internal sealed class AiDispatchPolicyLearner(
     }
 
     /// <summary>
-    /// The labelled history: dispatcher rejections, plus executions a human actually approved.
-    /// Autonomous-mode executions carry no human signal (<c>ApprovedByUserId</c> is null) and are
-    /// excluded - including them would train the agent on its own output.
+    /// The labelled history: rejections, plus executions a human approved. Autonomous executions carry
+    /// no human signal (null <c>ApprovedByUserId</c>) - including them would train the agent on itself.
     /// </summary>
     private IQueryable<AiDispatchDecision> QualifyingHistory()
     {
@@ -137,8 +134,8 @@ internal sealed class AiDispatchPolicyLearner(
 
     private async Task<List<DecisionHistoryEntry>> LoadHistoryAsync(CancellationToken ct)
     {
-        // Newest first, then capped: the digest can never use more than its own caps allow, and
-        // taking from the newest end keeps the watermark correct without reading the whole window.
+        // Newest first, then capped - taking from the newest end keeps the watermark correct
+        // without reading the whole window.
         return await QualifyingHistory()
             .OrderByDescending(d => d.CreatedAt)
             .Take(DecisionHistoryDigest.MaxDecisions)
@@ -157,10 +154,9 @@ internal sealed class AiDispatchPolicyLearner(
     }
 
     /// <summary>
-    /// Reads the model's answer as either "no policy" or policy text. The no-policy token and empty
-    /// output both mean "clear the learned section". Length clamping belongs to
-    /// <see cref="AiDispatchPolicy.ApplyLearnedPolicy"/> (storage) and the prompt builder (injection),
-    /// so it is deliberately not repeated here.
+    /// The no-policy token and empty output both mean "clear the learned section". Length clamping is
+    /// not repeated here - it belongs to <see cref="AiDispatchPolicy.ApplyLearnedPolicy"/> (storage)
+    /// and the prompt builder (injection).
     /// </summary>
     private static string? NormalizeOutput(string text)
     {
