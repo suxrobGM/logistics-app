@@ -25,19 +25,15 @@ internal static class ModelBuilderAuditExtensions
 
                 var entity = modelBuilder.Entity(entityType.ClrType);
 
+                // Column names are left to the snake_case naming convention
+                // (created_at, updated_at, created_by, updated_by).
                 entity.Property(nameof(AuditableEntity.CreatedAt))
-                    .HasColumnName("CreatedAt")
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                entity.Property(nameof(AuditableEntity.UpdatedAt))
-                    .HasColumnName("LastModifiedAt");
-
                 entity.Property(nameof(AuditableEntity.CreatedBy))
-                    .HasColumnName("CreatedBy")
                     .HasMaxLength(50);
 
                 entity.Property(nameof(AuditableEntity.UpdatedBy))
-                    .HasColumnName("LastModifiedBy")
                     .HasMaxLength(50);
             }
         }

@@ -1,7 +1,7 @@
 namespace Logistics.Domain.Core;
 
 /// <summary>
-///     Adds immutable Created* fields and mutable LastModified* fields
+///     Adds immutable Created* fields and mutable Updated* fields
 ///     to every domain entity.
 /// </summary>
 public abstract class AuditableEntity : Entity, IAuditableEntity
