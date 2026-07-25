@@ -1,16 +1,11 @@
 using System.Text.Json.Nodes;
 using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Services;
 
 internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
 {
-    private static readonly HashSet<string> LoadBoardTools =
-        ["search_loadboard", "check_broker_credit", "book_loadboard_load"];
-
-    private static readonly HashSet<string> IntermodalTools =
-        ["get_container_status", "get_terminal_info"];
-
     private static readonly List<AiDispatchToolDefinition> Tools =
     [
         // ── Read Tools ──
@@ -182,7 +177,8 @@ internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
                     ["container_id"] = Prop("string", "Container ID (GUID) - use only when the number is unknown")
                 },
                 ["required"] = new JsonArray()
-            })),
+            }),
+            TenantFeature.IntermodalContainers),
 
         new("get_terminal_info",
             "Look up an intermodal terminal by UN/LOCODE. Returns name, type (SeaPort, RailTerminal, InlandDepot, AirCargo, BorderCrossing), country, street address, and how many containers are currently sitting there. Terminals carry no coordinates - keep using the load's origin_lat/origin_lng for deadhead math.",
@@ -195,7 +191,8 @@ internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
                     ["terminal_id"] = Prop("string", "Terminal ID (GUID) - use only when the code is unknown")
                 },
                 ["required"] = new JsonArray()
-            })),
+            }),
+            TenantFeature.IntermodalContainers),
 
         new("search_loadboard",
             "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.",
@@ -210,7 +207,8 @@ internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
                     ["destination_state"] = Prop("string", "Optional destination state filter")
                 },
                 ["required"] = new JsonArray("origin_city", "origin_state")
-            })),
+            }),
+            TenantFeature.LoadBoard),
 
         new("check_broker_credit",
             "Check a load-board broker's credit standing (score 0-100, days-to-pay, FMCSA authority status) by MC number. Always call this before book_loadboard_load; never book when the score is below the tenant minimum or the authority is inactive.",
@@ -222,7 +220,8 @@ internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
                     ["mc_number"] = Prop("string", "The broker's MC number, e.g. 'MC123456' or '123456'")
                 },
                 ["required"] = new JsonArray("mc_number")
-            })),
+            }),
+            TenantFeature.LoadBoard),
 
         // ── Write Tools ──
 
@@ -284,21 +283,14 @@ internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
                     ["truck_id"] = Prop("string", "The truck ID (GUID) to assign the booked load to")
                 },
                 ["required"] = new JsonArray("external_listing_id", "provider", "truck_id")
-            }))
+            }),
+            TenantFeature.LoadBoard)
     ];
 
-    public IReadOnlyList<AiDispatchToolDefinition> GetToolDefinitions(
-        bool includeLoadBoardTools = false,
-        bool includeIntermodalTools = false)
-    {
-        if (includeLoadBoardTools && includeIntermodalTools)
-            return Tools;
+    public IReadOnlyList<AiDispatchToolDefinition> GetToolDefinitions(IReadOnlySet<TenantFeature> enabledFeatures) =>
+        [.. Tools.Where(t => t.RequiredFeature is null || enabledFeatures.Contains(t.RequiredFeature.Value))];
 
-        return Tools
-            .Where(t => includeLoadBoardTools || !LoadBoardTools.Contains(t.Name))
-            .Where(t => includeIntermodalTools || !IntermodalTools.Contains(t.Name))
-            .ToList();
-    }
+    public IReadOnlyList<AiDispatchToolDefinition> GetAllToolDefinitions() => Tools;
 
     private static JsonNode BuildSchema(JsonObject schema) => schema;
 

@@ -20,11 +20,11 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow)
             return Result<TruckDto>.Fail($"Could not find a truck with ID '{req.TruckOrDriverId}'");
         }
 
-        var intermodal = req.IncludeLoads
-            ? await LoadIntermodalResolver.ResolveAsync(tenantUow, truckEntity.Loads, ct)
-            : LoadIntermodalLookup.Empty;
+        // Resolve only the loads that reach the DTO, not ones OnlyActiveLoads drops.
+        var loads = SelectLoads(truckEntity, req.IncludeLoads, req.OnlyActiveLoads);
+        var intermodal = await LoadIntermodalResolver.ResolveAsync(tenantUow, loads, ct);
 
-        var truckDto = ConvertToDto(truckEntity, req.IncludeLoads, req.OnlyActiveLoads, intermodal);
+        var truckDto = ConvertToDto(truckEntity, loads, intermodal);
         return Result<TruckDto>.Ok(truckDto);
     }
 
@@ -44,26 +44,26 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow)
         return tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == userId || i.SecondaryDriverId == userId);
     }
 
+    private static IReadOnlyCollection<Load> SelectLoads(
+        Truck truckEntity, bool includeLoads, bool onlyActiveLoads)
+    {
+        if (!includeLoads)
+        {
+            return [];
+        }
+
+        return onlyActiveLoads
+            ? [.. truckEntity.Loads.Where(l => l.DeliveredAt is null)]
+            : [.. truckEntity.Loads];
+    }
+
     private static TruckDto ConvertToDto(
         Truck truckEntity,
-        bool includeLoads,
-        bool onlyActiveLoads,
+        IReadOnlyCollection<Load> loads,
         LoadIntermodalLookup intermodal)
     {
         var truckDto = truckEntity.ToDto(new List<LoadDto>());
-
-        if (!includeLoads)
-        {
-            return truckDto;
-        }
-
-        var loads = truckEntity.Loads.Select(l => l.ToDto(intermodal));
-        if (onlyActiveLoads)
-        {
-            loads = loads.Where(l => l.DeliveredAt == null);
-        }
-
-        truckDto.Loads = loads.ToArray();
+        truckDto.Loads = [.. loads.Select(l => l.ToDto(intermodal))];
         return truckDto;
     }
 }

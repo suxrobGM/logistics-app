@@ -23,16 +23,11 @@ internal static class LoadIntermodalResolver
             .Distinct()
             .ToArray();
 
-        var terminalIds = loads
-            .SelectMany(l => new[] { l.OriginTerminalId, l.DestinationTerminalId })
+        var terminalIds = loads.Select(l => l.OriginTerminalId)
+            .Concat(loads.Select(l => l.DestinationTerminalId))
             .OfType<Guid>()
             .Distinct()
             .ToArray();
-
-        if (containerIds.Length == 0 && terminalIds.Length == 0)
-        {
-            return LoadIntermodalLookup.Empty;
-        }
 
         var containers = containerIds.Length == 0
             ? []

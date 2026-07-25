@@ -62,6 +62,7 @@ internal static class AiDispatchSystemPrompt
         // ~310 tokens, and names tools a gated tenant never gets - so it travels with them.
         var intermodalSection = hasIntermodal
             ? """
+
               ## Intermodal Loads (containers & terminals)
               `get_unassigned_loads` reports `container_number`, `container_iso_type`, `origin_terminal` and
               `destination_terminal` on loads that have them. When a load reports a `container_number`:
@@ -76,7 +77,6 @@ internal static class AiDispatchSystemPrompt
                 `origin_lat` / `origin_lng`, not from terminal data.
               - The container's current terminal can differ from the load's origin terminal. If it does, say so
                 in your reasoning - repositioning the box is extra work the dispatcher should see.
-
               """
             : "";
 
@@ -109,7 +109,9 @@ internal static class AiDispatchSystemPrompt
             - **ContainerTruck** → can haul `IntermodalContainer` ONLY
             If no truck of a compatible type is available, skip the load and report it.
 
-            {{intermodalSection}}## HOS Rules
+            {{intermodalSection}}
+
+            ## HOS Rules
             `get_available_trucks` returns each driver's `driving_minutes_remaining` and `on_duty_minutes_remaining`.
             Compute estimated driving time: **estimated_driving_minutes = distance_km / 80 × 60** (assumes 80 km/h average).
 

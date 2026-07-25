@@ -68,7 +68,7 @@ internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
                                              i.DispatchedAt <= req.EndDate);
         }
 
-        var totalItems = baseQuery.Count();
+        var totalItems = await baseQuery.CountAsync(ct);
 
         baseQuery = baseQuery.OrderBy(req.OrderBy);
 

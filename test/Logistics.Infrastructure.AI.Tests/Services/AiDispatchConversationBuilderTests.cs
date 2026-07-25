@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Nodes;
+using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -31,7 +31,7 @@ public class AiDispatchConversationBuilderTests
 
     public AiDispatchConversationBuilderTests()
     {
-        toolRegistry.GetToolDefinitions(Arg.Any<bool>()).Returns(
+        toolRegistry.GetToolDefinitions(Arg.Any<IReadOnlySet<TenantFeature>>()).Returns(
             [new AiDispatchToolDefinition("test_tool", "A test tool", new JsonObject { ["type"] = "object" })]);
 
         tenantUow.GetCurrentTenant().Returns(new Tenant

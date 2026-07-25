@@ -46,16 +46,15 @@ internal sealed class AiDispatchConversationBuilder(
         if (string.IsNullOrWhiteSpace(providerConfig.ApiKey))
             throw new InvalidOperationException("LLM API key is not configured.");
 
-        // Prompt section and schemas move together: a rule naming a tool the agent was not given
-        // is worse than no rule.
-        var hasLoadBoard = await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.LoadBoard);
-        var hasIntermodal = await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.IntermodalContainers);
+        // One resolve for every gate - IsFeatureEnabledAsync costs master-DB round trips each time.
+        var enabledFeatures = (await featureService.GetEnabledFeaturesAsync(tenant.Id)).ToHashSet();
+        var hasLoadBoard = enabledFeatures.Contains(TenantFeature.LoadBoard);
+        var hasIntermodal = enabledFeatures.Contains(TenantFeature.IntermodalContainers);
 
         var policy = await GetLearnedPolicyAsync();
         var systemPrompt = AiDispatchSystemPrompt.Build(
             companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit, policy, hasIntermodal);
-        var tools = toolRegistry.GetToolDefinitions(
-            includeLoadBoardTools: hasLoadBoard, includeIntermodalTools: hasIntermodal);
+        var tools = toolRegistry.GetToolDefinitions(enabledFeatures);
 
         var model = selection.Model;
         session.ModelUsed = model;

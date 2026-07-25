@@ -1,4 +1,5 @@
-using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Domain.Primitives.Enums;
+
 namespace Logistics.Application.Abstractions.AiDispatch;
 
 /// <summary>
@@ -8,19 +9,25 @@ namespace Logistics.Application.Abstractions.AiDispatch;
 public interface IAiDispatchToolRegistry
 {
     /// <summary>
-    /// The tools the agent may call. Gated groups are excluded unless opted in - their schemas cost
-    /// tokens on every request.
+    /// The tools a tenant with <paramref name="enabledFeatures"/> may call. A gated tool is dropped
+    /// when its feature is off - its schema would otherwise cost tokens on every request.
     /// </summary>
-    IReadOnlyList<AiDispatchToolDefinition> GetToolDefinitions(
-        bool includeLoadBoardTools = false,
-        bool includeIntermodalTools = false);
+    IReadOnlyList<AiDispatchToolDefinition> GetToolDefinitions(IReadOnlySet<TenantFeature> enabledFeatures);
+
+    /// <summary>Every tool, gated or not. For surfaces that enforce features per call rather than per catalogue.</summary>
+    IReadOnlyList<AiDispatchToolDefinition> GetAllToolDefinitions();
 }
 
 /// <summary>
 /// Defines a single tool that the dispatch agent can use.
 /// Compatible with both Claude API tool schemas and MCP tool definitions.
 /// </summary>
+/// <param name="RequiredFeature">
+/// Gates the tool. Declared here so the schema filter and the MCP call-time check read the same
+/// value - a new gated group is one field, not a new flag threaded through every caller.
+/// </param>
 public record AiDispatchToolDefinition(
     string Name,
     string Description,
-    object InputSchema);
+    object InputSchema,
+    TenantFeature? RequiredFeature = null);

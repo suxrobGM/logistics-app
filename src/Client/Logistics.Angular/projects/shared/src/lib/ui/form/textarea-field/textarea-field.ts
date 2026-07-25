@@ -32,8 +32,7 @@ import { focusFirstControl } from "../focus-control";
   templateUrl: "./textarea-field.html",
   // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
   // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
-  // The counter is a second element in the host, so the host has to stack.
-  host: { "[attr.id]": "null", "[class.block]": "counterVisible()" },
+  host: { "[attr.id]": "null" },
   imports: [HlmTextarea],
 })
 export class UiTextareaField implements FormValueControl<string> {
@@ -68,14 +67,16 @@ export class UiTextareaField implements FormValueControl<string> {
     () => this.invalid() && (this.touched() || this.dirty()),
   );
 
-  protected readonly charsRemaining = computed(() => {
+  /** Null when the counter is off or there is no maxlength to count against. */
+  protected readonly counter = computed(() => {
     const max = this.maxlength();
-    return max === null ? null : max - this.value().length;
-  });
+    if (!this.showCounter() || max === null) {
+      return null;
+    }
 
-  protected readonly counterVisible = computed(
-    () => this.showCounter() && this.charsRemaining() !== null,
-  );
+    const remaining = max - this.value().length;
+    return { remaining, max, warn: remaining <= this.counterWarnAt() };
+  });
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 

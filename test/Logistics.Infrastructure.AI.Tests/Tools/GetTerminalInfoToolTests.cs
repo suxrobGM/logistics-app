@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
-using Logistics.Application.Abstractions.Features;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -17,28 +16,12 @@ public class GetTerminalInfoToolTests
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<Terminal, Guid> terminalRepo =
         Substitute.For<ITenantRepository<Terminal, Guid>>();
-    private readonly IFeatureService featureService = Substitute.For<IFeatureService>();
     private readonly GetTerminalInfoTool sut;
 
     public GetTerminalInfoToolTests()
     {
         tenantUow.Repository<Terminal>().Returns(terminalRepo);
-        tenantUow.GetCurrentTenant().Returns(new Tenant
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test Fleet",
-            ConnectionString = "test",
-            BillingEmail = "test@test.com",
-            CompanyAddress = new()
-            {
-                Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US"
-            }
-        });
-        featureService
-            .IsFeatureEnabledAsync(Arg.Any<Guid>(), TenantFeature.IntermodalContainers)
-            .Returns(true);
-
-        sut = new GetTerminalInfoTool(tenantUow, featureService);
+        sut = new GetTerminalInfoTool(tenantUow);
     }
 
     [Fact]
@@ -140,23 +123,6 @@ public class GetTerminalInfoToolTests
                 Country = "US"
             }
         };
-    }
-
-    /// <summary>Same MCP bypass as the container tool - the gate has to hold inside the tool.</summary>
-    [Fact]
-    public async Task Execute_FeatureDisabled_RefusesBeforeTouchingTheDatabase()
-    {
-        featureService
-            .IsFeatureEnabledAsync(Arg.Any<Guid>(), TenantFeature.IntermodalContainers)
-            .Returns(false);
-
-        var input = new JsonObject { ["code"] = "USLAX" };
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
-
-        var error = JsonDocument.Parse(result).RootElement.GetProperty("error").GetString();
-        Assert.Contains("not enabled", error);
-        await terminalRepo.DidNotReceiveWithAnyArgs()
-            .GetAsync(default(Expression<Func<Terminal, bool>>)!, default);
     }
 
 }

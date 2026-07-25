@@ -22,13 +22,13 @@ internal sealed class AiDispatchMcpTool : McpServerTool
     private static readonly HashSet<string> WriteTools =
         ["assign_load_to_truck", "create_trip", "dispatch_trip", "book_loadboard_load"];
 
-    private static readonly HashSet<string> LoadBoardTools =
-        ["search_loadboard", "book_loadboard_load"];
-
     private readonly Tool protocolTool;
+    private readonly TenantFeature? requiredFeature;
 
     public AiDispatchMcpTool(AiDispatchToolDefinition definition)
     {
+        requiredFeature = definition.RequiredFeature;
+
         var description = WriteTools.Contains(definition.Name)
             ? definition.Description + WriteWarning
             : definition.Description;
@@ -63,11 +63,12 @@ internal sealed class AiDispatchMcpTool : McpServerTool
             return ErrorResult("MCP Server feature is not enabled for this tenant. Please upgrade your subscription plan.");
         }
 
-        // Feature gate: Load Board (for load board tools only)
-        if (LoadBoardTools.Contains(protocolTool.Name) &&
-            !await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.LoadBoard))
+        // Feature gate: whatever the tool itself declares. The agent path filters gated tools out of
+        // the catalogue, but MCP publishes every tool at startup - so this is where that gate holds.
+        if (requiredFeature is { } feature &&
+            !await featureService.IsFeatureEnabledAsync(tenant.Id, feature))
         {
-            return ErrorResult("Load Board feature is not enabled for this tenant.");
+            return ErrorResult($"The {feature.GetDescription()} feature is not enabled for this tenant.");
         }
 
         // Serialize arguments to JSON and delegate to the tool executor

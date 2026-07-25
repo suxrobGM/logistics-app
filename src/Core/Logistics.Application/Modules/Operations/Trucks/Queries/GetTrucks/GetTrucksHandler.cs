@@ -39,7 +39,7 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(i => req.Types.Contains(i.Type));
         }
 
-        var totalItems = baseQuery.Count();
+        var totalItems = await baseQuery.CountAsync(ct);
         baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
 
         var entities = await baseQuery.ToArrayAsync(ct);

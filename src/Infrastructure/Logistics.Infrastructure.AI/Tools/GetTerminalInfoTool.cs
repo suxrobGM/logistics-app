@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
-using Logistics.Application.Abstractions.Features;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -13,24 +12,12 @@ namespace Logistics.Infrastructure.AI.Tools;
 /// Terminals carry no coordinates, so this cannot feed <c>calculate_distance</c> - the deadhead
 /// anchor stays the load's origin latitude / longitude.
 /// </summary>
-internal sealed class GetTerminalInfoTool(
-    ITenantUnitOfWork tenantUow,
-    IFeatureService featureService) : IAiDispatchTool
+internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAiDispatchTool
 {
     public string Name => "get_terminal_info";
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        // The agent never gets this tool ungated, but MCP lists every tool - so the gate holds here.
-        var tenant = tenantUow.GetCurrentTenant();
-        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.IntermodalContainers))
-        {
-            return JsonSerializer.Serialize(new
-            {
-                error = "Intermodal container tracking is not enabled for this tenant"
-            });
-        }
-
         var code = input["code"]?.GetValue<string>()?.Trim();
         var idRaw = input["terminal_id"]?.GetValue<string>();
 

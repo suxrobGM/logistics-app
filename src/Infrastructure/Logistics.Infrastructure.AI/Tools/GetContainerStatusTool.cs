@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
-using Logistics.Application.Abstractions.Features;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 
@@ -11,24 +10,12 @@ namespace Logistics.Infrastructure.AI.Tools;
 /// Looks up an intermodal container by ISO 6346 number (or id), so the agent knows where the box is
 /// before assigning the load that carries it.
 /// </summary>
-internal sealed class GetContainerStatusTool(
-    ITenantUnitOfWork tenantUow,
-    IFeatureService featureService) : IAiDispatchTool
+internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow) : IAiDispatchTool
 {
     public string Name => "get_container_status";
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        // The agent never gets this tool ungated, but MCP lists every tool - so the gate holds here.
-        var tenant = tenantUow.GetCurrentTenant();
-        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.IntermodalContainers))
-        {
-            return JsonSerializer.Serialize(new
-            {
-                error = "Intermodal container tracking is not enabled for this tenant"
-            });
-        }
-
         var number = input["container_number"]?.GetValue<string>()?.Trim();
         var idRaw = input["container_id"]?.GetValue<string>();
 
