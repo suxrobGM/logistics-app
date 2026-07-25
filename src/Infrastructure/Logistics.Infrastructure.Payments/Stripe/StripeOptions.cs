@@ -11,5 +11,5 @@ public class StripeOptions
     /// Must match the meter's event_name configuration in Stripe.
     /// The meter ID itself is stored in the database (SystemSettings).
     /// </summary>
-    public string AiOverageMeterEventName { get; set; } = "ai_dispatch_session";
+    public string AIOverageMeterEventName { get; set; } = "ai_dispatch_session";
 }

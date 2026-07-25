@@ -64,15 +64,17 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 
 ### Containers (ISO 6346)
 
-- Domain: `Entities/Container/`
+- Domain: `Entities/Container/` - `Number` is canonicalised on write by `Container.NormalizeNumber`
 - Application: `Modules/Operations/Containers/Commands/`, `Modules/Operations/Containers/Queries/`
 - API/UI: `ContainerController.cs`, `tms-portal/pages/containers/`
+- Feature flag: `TenantFeature.IntermodalContainers` (Professional+; off by default)
 
 ### Terminals (UN/LOCODE)
 
-- Domain: `Entities/Terminal/`
+- Domain: `Entities/Terminal/` - `Code` is canonicalised on write by `Terminal.NormalizeCode`
 - Application: `Modules/Operations/Terminals/Commands/`, `Modules/Operations/Terminals/Queries/`
 - API/UI: `tms-portal/pages/terminals/`
+- Feature flag: `TenantFeature.IntermodalContainers` (shared with Containers)
 
 ### Employees / Drivers
 
@@ -95,22 +97,33 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 
 ### Dispatch sessions
 
-- Domain: `Entities/AiDispatch/AiDispatchSession.cs`
-- Application: `Modules/Integrations/AiDispatch/Commands/`, `Modules/Integrations/AiDispatch/Queries/`
-- Infrastructure: `Infrastructure.AI/Services/AiDispatchService.cs`, `Infrastructure.Communications/SignalR/Hubs/AiDispatchHub.cs` (streams live agent updates, mounted at `/hubs/ai-dispatch`)
-- API/UI: `AiDispatchController.cs`, `tms-portal/pages/ai-dispatch/`
+- Domain: `Entities/AIDispatch/AIDispatchSession.cs`
+- Application: `Modules/Integrations/AIDispatch/Commands/`, `Modules/Integrations/AIDispatch/Queries/`
+- Infrastructure: `Infrastructure.AI/Services/AIDispatchService.cs`, `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (streams live agent updates, mounted at `/hubs/ai-dispatch`)
+- API/UI: `AIDispatchController.cs`, `tms-portal/pages/ai-dispatch/`
 
 ### Dispatch decisions
 
-- Domain: `Entities/AiDispatch/AiDispatchDecision.cs`
-- Application: `Modules/Integrations/AiDispatch/Commands/Approve*`, `Reject*`
-- Infrastructure: `Infrastructure.AI/Services/AiDispatchDecisionProcessor.cs`
+- Domain: `Entities/AIDispatch/AIDispatchDecision.cs`
+- Application: `Modules/Integrations/AIDispatch/Commands/Approve*`, `Reject*`
+- Infrastructure: `Infrastructure.AI/Services/AIDispatchDecisionProcessor.cs`
 - API/UI: (under `ai-dispatch/`)
+
+### Dispatch policy (learned preferences)
+
+- Domain: `Entities/AIDispatch/AIDispatchPolicy.cs` (one row per tenant; `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned)
+- Application: `Modules/Integrations/AIDispatch/Services/AIDispatchPolicyLearner.cs` + `DecisionHistoryDigest.cs` + `AIDispatchPolicyPrompt.cs`; `Commands/{Update,Regenerate,Delete}AIDispatchPolicy/`, `Queries/GetAIDispatchPolicy/`
+- Infrastructure: injected into the prompt by `Infrastructure.AI/Prompts/AIDispatchSystemPrompt.cs` (`LearnedDispatchPolicy`), loaded in `AIDispatchConversationBuilder`
+- Jobs: `Logistics.API/Jobs/AIDispatchPolicyLearningJob.cs` (nightly, `Cron.Daily(4)`)
+- API/UI: `AIDispatchController` `ai/dispatch/policy`, `tms-portal/pages/ai-dispatch/dispatch-policy/`
 
 ### Tool registry
 
-- Infrastructure: `Infrastructure.AI/Services/AiDispatchToolRegistry.cs`, `Tools/`
+- Infrastructure: `Infrastructure.AI/Services/AIDispatchToolRegistry.cs`, `Tools/`
 - API/UI: shared with `Logistics.McpServer`
+- Intermodal reads: `Tools/GetContainerStatusTool.cs` (ISO 6346), `Tools/GetTerminalInfoTool.cs` (UN/LOCODE).
+  Gated by `TenantFeature.IntermodalContainers` - the schemas, the prompt section and the tools' own
+  guard all move together; MCP lists every tool, so the guard inside each tool is the real gate.
 
 ### LLM providers
 
@@ -118,24 +131,24 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 
 ### Quota / pricing
 
-- Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAiRequestQuota`)
-- Application: `Application.Abstractions/AiDispatch/IAiQuotaService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/AiDispatch/AiQuotaService.cs` (quota tracking), `Infrastructure.AI/Services/LlmPricing.cs`
+- Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAIRequestQuota`)
+- Application: `Application.Abstractions/AIDispatch/IAIQuotaService.cs` (port)
+- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (quota tracking), `Infrastructure.AI/Services/LlmPricing.cs`
 - API/UI: (quota bar in `tms-portal/pages/ai-dispatch/`)
 
 ### Global AI settings
 
-- Application: `Modules/Platform/AiSettings/` (`GetAiSettings`, `UpdateAiSettings`); `Abstractions/AiDispatch/LlmModelCatalog.cs`
-- Infrastructure: `SystemSettingsService` (`Ai.Model`/`Ai.Provider`/`Ai.ExtendedThinking` keys)
-- API/UI: `AiSettingsController.cs`, `admin-portal/pages/ai-settings/`
+- Application: `Modules/Platform/AISettings/` (`GetAISettings`, `UpdateAISettings`); `Abstractions/AIDispatch/LlmModelCatalog.cs`
+- Infrastructure: `SystemSettingsService` (`AI.Model`/`AI.ExtendedThinking` keys)
+- API/UI: `AISettingsController.cs`, `admin-portal/pages/ai-settings/`
 
 ### Background runner
 
-- API/UI: `Jobs/AiDispatchSessionJob.cs`
+- API/UI: `Jobs/AIDispatchSessionJob.cs`
 
 ### MCP server
 
-- API/UI: `Logistics.McpServer/` (uses `AiDispatchToolRegistry`)
+- API/UI: `Logistics.McpServer/` (uses `AIDispatchToolRegistry`)
 
 ## Compliance & safety
 

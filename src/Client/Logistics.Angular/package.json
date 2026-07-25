@@ -22,7 +22,7 @@
     "check:theme-tokens": "node tools/checks/theme-tokens.mjs",
     "ui:normalize": "node tools/normalize-helm.mjs",
     "format": "prettier --write ./projects",
-    "gen:api": "ng-openapi-gen && bun scripts/fix-verbatim-imports.ts",
+    "gen:api": "ng-openapi-gen && bun scripts/fix-generated-api.ts",
     "gen:api:live": "bun scripts/fetch-openapi.ts && bun run gen:api"
   },
   "dependencies": {

@@ -41,9 +41,9 @@ internal sealed class UpdateSubscriptionPlanHandler(
         {
             subscriptionPlan.MaxTrucks = req.MaxTrucks;
         }
-        if (req.WeeklyAiRequestQuota.HasValue)
+        if (req.WeeklyAIRequestQuota.HasValue)
         {
-            subscriptionPlan.WeeklyAiRequestQuota = req.WeeklyAiRequestQuota;
+            subscriptionPlan.WeeklyAIRequestQuota = req.WeeklyAIRequestQuota;
         }
         subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
 

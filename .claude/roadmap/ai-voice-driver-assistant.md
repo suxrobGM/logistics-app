@@ -17,7 +17,7 @@ drivers already hold.
 - Speech: on-device STT/TTS in the KMP app (`src/Client/Logistics.DriverApp/`) - platform APIs first (Android SpeechRecognizer / iOS Speech), streaming ASR later.
 - Voice DVIR: conversational walk-through mapping speech to `DvirReport`/`DvirDefect` fields; confirm summary before submit.
 - Hands-free/CDL compliance: audio-first UX, large single-tap trigger, never require reading while driving.
-- Quota: driver sessions metered like dispatch sessions (`AiQuotaService`).
+- Quota: driver sessions metered like dispatch sessions (`AIQuotaService`).
 - Phase it: (1) text chat driver assistant in the app, (2) voice input, (3) voice DVIR.
 
 ## Acceptance

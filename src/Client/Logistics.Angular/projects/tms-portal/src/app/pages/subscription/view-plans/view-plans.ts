@@ -52,6 +52,7 @@ const featureLabels: Record<TenantFeature, string> = {
   accounting: "Accounting (QuickBooks)",
   fuel_cards: "Fuel Cards",
   ifta: "IFTA Reporting",
+  intermodal_containers: "Intermodal Containers",
 };
 
 /** All features in display order */
@@ -82,6 +83,7 @@ const allFeatures: TenantFeature[] = [
   "accounting",
   "fuel_cards",
   "ifta",
+  "intermodal_containers",
 ];
 
 @Component({
@@ -144,7 +146,7 @@ export class ViewPlansComponent implements OnInit {
     return plan.maxTrucks ? `Up to ${plan.maxTrucks} trucks` : "Unlimited trucks";
   }
 
-  protected getAiDispatchLabel(plan: SubscriptionPlanDto): string {
+  protected getAIDispatchLabel(plan: SubscriptionPlanDto): string {
     switch (plan.tier) {
       case "enterprise":
         return "unlimited usage";

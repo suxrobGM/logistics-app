@@ -9,7 +9,7 @@ import { AnimatedText, ScreenshotFrame } from "@/components";
 const PART2_START = 170;
 const PART3_START = 340;
 
-export function SceneAiDispatch(): ReactElement {
+export function SceneAIDispatch(): ReactElement {
   const frame = useCurrentFrame();
 
   return (

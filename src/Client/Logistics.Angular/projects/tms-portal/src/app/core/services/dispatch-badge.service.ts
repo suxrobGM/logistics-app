@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { Api, getPendingDecisions, type AiDispatchDecisionDto } from "@logistics/shared/api";
+import { Api, getPendingDecisions, type AIDispatchDecisionDto } from "@logistics/shared/api";
 
 /**
  * Lightweight global service that tracks the pending dispatch decisions count
@@ -15,7 +15,7 @@ export class DispatchBadgeService {
     try {
       const pending = await this.api.invoke(getPendingDecisions);
       const writeDecisions = (pending ?? []).filter(
-        (d: AiDispatchDecisionDto) => d.type !== "query",
+        (d: AIDispatchDecisionDto) => d.type !== "query",
       );
       this.pendingCount.set(writeDecisions.length);
     } catch {

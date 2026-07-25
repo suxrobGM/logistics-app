@@ -13,6 +13,6 @@ public record SubscriptionPlanDto
     public int? MaxTrucks { get; set; }
     public BillingInterval Interval { get; set; } = BillingInterval.Month;
     public int IntervalCount { get; set; } = 1;
-    public int? WeeklyAiRequestQuota { get; set; }
+    public int? WeeklyAIRequestQuota { get; set; }
     public List<TenantFeature> Features { get; set; } = [];
 }

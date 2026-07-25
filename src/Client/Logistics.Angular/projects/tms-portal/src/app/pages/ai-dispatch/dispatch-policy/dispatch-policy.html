@@ -1,0 +1,148 @@
+﻿<ui-page-header title="Dispatch Policy" backLink="/ai-dispatch">
+  <ui-stack [direction]="{ xs: 'col', sm: 'row' }" gap="2" class="whitespace-nowrap">
+    <ui-button
+      size="sm"
+      appearance="outlined"
+      icon="refresh-cw"
+      label="Regenerate now"
+      [loading]="isRegenerating()"
+      (click)="regenerate()"
+    />
+    <ui-button
+      size="sm"
+      intent="danger"
+      appearance="outlined"
+      icon="trash"
+      label="Delete"
+      [disabled]="isEmpty()"
+      [loading]="isDeleting()"
+      (click)="confirmDelete()"
+    />
+  </ui-stack>
+</ui-page-header>
+
+<div class="animate-in fade-in mx-auto max-w-5xl">
+  <ui-surface variant="subtle" [border]="true" class="mb-6">
+    <ui-stack direction="row" align="start" gap="3">
+      <ui-icon name="sparkles" color="muted" />
+      <div>
+        <ui-typography variant="body">
+          The agent learns from the decisions you approve and reject. Each night it summarises that
+          history into the preferences below and applies them to new sessions.
+        </ui-typography>
+        <ui-typography variant="caption" color="secondary">
+          Preferences are strong defaults only - they never override HOS limits or truck-type rules.
+        </ui-typography>
+      </div>
+    </ui-stack>
+  </ui-surface>
+
+  <ui-surface [border]="true" class="mb-6">
+    <ui-stack direction="row" align="center" justify="between" gap="3">
+      <div>
+        <ui-typography variant="body">Apply learned preferences to new sessions</ui-typography>
+        <ui-typography variant="caption" color="secondary">
+          Switching this off also pauses nightly learning.
+        </ui-typography>
+      </div>
+      <ui-toggle-field
+        [(value)]="isEnabled"
+        inputId="isEnabled"
+        [disabled]="isSavingToggle()"
+        (valueChange)="onEnabledChange()"
+      />
+    </ui-stack>
+  </ui-surface>
+
+  @if (isLoading() && isEmpty()) {
+    <ui-card>
+      <ui-stack align="center" justify="center" class="py-10">
+        <ui-spinner ariaLabel="Loading dispatch policy" />
+      </ui-stack>
+    </ui-card>
+  } @else {
+    <!-- Learned preferences (read-only) -->
+    <ui-card header="Learned preferences" class="mb-6">
+      @if (hasLearned()) {
+        <div
+          class="prose prose-sm dark:prose-invert max-w-none"
+          [innerHTML]="policy().generatedContent | markdown"
+        ></div>
+        <ui-typography variant="caption" color="secondary" class="mt-4 block">
+          Learned from {{ policy().decisionsAnalyzed ?? 0 }} reviewed
+          {{ (policy().decisionsAnalyzed ?? 0) === 1 ? "decision" : "decisions" }}
+          @if (policy().generatedAt) {
+            · {{ policy().generatedAt | date: "medium" }}
+          }
+        </ui-typography>
+      } @else {
+        <ui-stack align="center" gap="3" class="py-8 text-center">
+          <ui-icon name="sparkles" color="muted" />
+          <ui-typography variant="body" color="secondary">
+            The agent hasn't learned anything yet.
+          </ui-typography>
+          <ui-typography variant="caption" color="secondary">
+            It needs at least 15 reviewed decisions, including 3 rejections. Reject a suggestion with
+            a reason to teach it something.
+          </ui-typography>
+          <ui-button
+            size="sm"
+            appearance="outlined"
+            icon="refresh-cw"
+            label="Check now"
+            [loading]="isRegenerating()"
+            (click)="regenerate()"
+          />
+        </ui-stack>
+      }
+    </ui-card>
+
+    <!-- Dispatcher directives (editable) -->
+    <ui-card header="Your directives" subheader="Rules you write yourself. Never overwritten by nightly learning, and they outrank the learned preferences above.">
+      <form [formRoot]="directivesForm" (ngSubmit)="submitDirectives()">
+        <ui-stack direction="row" align="center" justify="between" gap="2" class="mb-2">
+          <ui-typography variant="caption" color="secondary">Markdown supported</ui-typography>
+          <ui-button
+            type="button"
+            size="sm"
+            appearance="text"
+            intent="secondary"
+            [icon]="showPreview() ? 'pencil' : 'eye'"
+            [label]="showPreview() ? 'Edit' : 'Preview'"
+            (click)="showPreview.set(!showPreview())"
+          />
+        </ui-stack>
+
+        @if (showPreview()) {
+          <div
+            class="prose prose-sm dark:prose-invert border-border min-h-[16rem] max-w-none rounded-md border p-3"
+            [innerHTML]="model().manualContent | markdown"
+          ></div>
+        } @else {
+          <ui-form-field for="manualContent" hint="e.g. - Never assign hazmat loads to team drivers">
+            <ui-textarea-field
+              id="manualContent"
+              [formField]="directivesForm.manualContent"
+              [rows]="12"
+              [maxlength]="maxLength"
+              placeholder="- Prefer pickups within 50 miles of the truck's current position"
+              class="block w-full font-mono text-sm"
+              showCounter
+              [counterWarnAt]="200"
+            />
+          </ui-form-field>
+        }
+
+        <ui-stack direction="row" justify="end" gap="2" class="mt-4">
+          <ui-button
+            type="submit"
+            size="sm"
+            icon="save"
+            label="Save directives"
+            [loading]="directivesForm().submitting()"
+          />
+        </ui-stack>
+      </form>
+    </ui-card>
+  }
+</div>

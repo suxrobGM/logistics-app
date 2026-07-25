@@ -3,6 +3,14 @@
   <ui-page-header title="AI Dispatch">
     <ui-stack [direction]="{ xs: 'col', sm: 'row' }" gap="2" class="whitespace-nowrap">
       <ui-button
+        intent="secondary"
+        appearance="outlined"
+        size="sm"
+        label="Dispatch Policy"
+        icon="sparkles"
+        [routerLink]="['/ai-dispatch', 'policy']"
+      />
+      <ui-button
         size="sm"
         label="Run (Suggestions)"
         icon="play"
@@ -36,6 +44,9 @@
     [quotaStatus]="quotaStatus()"
     (run)="onRunConfirmed($event)"
   />
+
+  <!-- Reject Decision Dialog (state lives in DecisionActionsService) -->
+  <app-reject-decision-dialog />
 
   <!-- How it works -->
   <ui-surface variant="subtle" [border]="true" class="mb-6">

@@ -5,7 +5,7 @@ using ModelContextProtocol.Server;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.McpServer;
 
@@ -19,17 +19,18 @@ public static class Registrar
 
         // Build the server instructions and MCP tools from the dispatch tool registry (single source
         // of truth) at options-build time. Deferred here so registration never builds an interim
-        // service provider; IAiDispatchToolRegistry is a singleton, resolvable when options build,
+        // service provider; IAIDispatchToolRegistry is a singleton, resolvable when options build,
         // which also removes any ordering dependency on AddAIInfrastructure.
         services.AddOptions<McpServerOptions>()
-            .Configure<IAiDispatchToolRegistry>((options, registry) =>
+            .Configure<IAIDispatchToolRegistry>((options, registry) =>
             {
                 options.ServerInstructions = McpServerInstructions.Text;
 
-                options.ToolCollection ??= new McpServerPrimitiveCollection<McpServerTool>();
-                foreach (var definition in registry.GetToolDefinitions(includeLoadBoardTools: true))
+                options.ToolCollection ??= [];
+                // No tenant context at startup, so list every tool - AIDispatchMcpTool gates per call.
+                foreach (var definition in registry.GetAllToolDefinitions())
                 {
-                    options.ToolCollection.Add(new AiDispatchMcpTool(definition));
+                    options.ToolCollection.Add(new AIDispatchMcpTool(definition));
                 }
             });
 

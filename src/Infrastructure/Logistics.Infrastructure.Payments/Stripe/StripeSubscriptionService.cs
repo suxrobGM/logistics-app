@@ -171,8 +171,8 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
             new() { Price = plan.StripePerTruckPriceId, Quantity = truckCount }
         };
 
-        if (!string.IsNullOrEmpty(plan.StripeAiOveragePriceId))
-            items.Add(new SubscriptionItemOptions { Price = plan.StripeAiOveragePriceId });
+        if (!string.IsNullOrEmpty(plan.StripeAIOveragePriceId))
+            items.Add(new SubscriptionItemOptions { Price = plan.StripeAIOveragePriceId });
 
         return items;
     }

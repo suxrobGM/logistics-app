@@ -11,7 +11,7 @@ using Logistics.Application.Abstractions.Captcha;
 using Logistics.Application.Abstractions.Notifications;
 using Logistics.Application.Abstractions.Realtime;
 using Logistics.Application.Abstractions.Routing;
-using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Infrastructure.Communications;
 
@@ -34,7 +34,7 @@ public static class Registrar
         services.AddScoped<IRealtimeLiveTrackingService, SignalRLiveTrackingService>();
         services.AddScoped<IRealtimeNotificationService, SignalRNotificationService>();
         services.AddScoped<ITripTrackingService, SignalRTripTrackingService>();
-        services.AddScoped<IAiDispatchBroadcastService, SignalRAiDispatchBroadcastService>();
+        services.AddScoped<IAIDispatchBroadcastService, SignalRAIDispatchBroadcastService>();
 
         // Email services (Resend)
         services.Configure<ResendOptions>(configuration.GetSection(ResendOptions.SectionName));

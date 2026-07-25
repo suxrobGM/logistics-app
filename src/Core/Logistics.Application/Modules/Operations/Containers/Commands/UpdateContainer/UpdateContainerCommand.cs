@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Attributes;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
@@ -8,6 +9,7 @@ namespace Logistics.Application.Modules.Operations.Containers.Commands;
 /// Updates non-status fields of a Container. Status transitions go through
 /// the dedicated MarkContainer* commands; location-only moves use MoveContainerToTerminal.
 /// </summary>
+[RequiresFeature(TenantFeature.IntermodalContainers)]
 public class UpdateContainerCommand : ICommand<Result>
 {
     public Guid Id { get; set; }

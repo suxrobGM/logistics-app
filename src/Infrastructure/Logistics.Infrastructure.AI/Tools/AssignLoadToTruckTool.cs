@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Operations.Loads.Commands;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class AssignLoadToTruckTool(IMediator mediator) : IAiDispatchTool
+internal sealed class AssignLoadToTruckTool(IMediator mediator) : IAIDispatchTool
 {
     public string Name => "assign_load_to_truck";
 

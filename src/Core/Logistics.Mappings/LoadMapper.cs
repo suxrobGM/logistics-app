@@ -7,9 +7,18 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class LoadMapper
 {
-    [UserMapping(Default = true)]
-    public static LoadDto ToDto(this Load entity)
+    /// <summary>
+    /// Container / terminal values come from <paramref name="intermodal"/> only - there is no
+    /// navigation-property fallback, so a handler that skips the resolver gets blank fields instead
+    /// of silently paying three lazy SELECTs per row. Single-row callers pass
+    /// <see cref="LoadIntermodalLookup.Empty"/> and resolve nothing.
+    /// </summary>
+    public static LoadDto ToDto(this Load entity, LoadIntermodalLookup intermodal)
     {
+        var container = intermodal.FindContainer(entity.ContainerId);
+        var originTerminal = intermodal.FindTerminal(entity.OriginTerminalId);
+        var destinationTerminal = intermodal.FindTerminal(entity.DestinationTerminalId);
+
         var dto = new LoadDto
         {
             Id = entity.Id,
@@ -37,14 +46,14 @@ public static partial class LoadMapper
             HazmatClass = entity.HazmatClass,
             UnNumber = entity.UnNumber,
             ContainerId = entity.ContainerId,
-            ContainerNumber = entity.Container?.Number,
-            ContainerIsoType = entity.Container?.IsoType,
+            ContainerNumber = container?.Number,
+            ContainerIsoType = container?.IsoType,
             OriginTerminalId = entity.OriginTerminalId,
-            OriginTerminalName = entity.OriginTerminal?.Name,
-            OriginTerminalCode = entity.OriginTerminal?.Code,
+            OriginTerminalName = originTerminal?.Name,
+            OriginTerminalCode = originTerminal?.Code,
             DestinationTerminalId = entity.DestinationTerminalId,
-            DestinationTerminalName = entity.DestinationTerminal?.Name,
-            DestinationTerminalCode = entity.DestinationTerminal?.Code,
+            DestinationTerminalName = destinationTerminal?.Name,
+            DestinationTerminalCode = destinationTerminal?.Code,
             Status = entity.Status,
             AssignedDispatcherId = entity.AssignedDispatcherId,
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),

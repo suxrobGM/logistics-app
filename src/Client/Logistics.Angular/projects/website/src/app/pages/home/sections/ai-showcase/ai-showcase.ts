@@ -20,7 +20,7 @@ interface CapabilityCard {
   templateUrl: "./ai-showcase.html",
   imports: [SectionContainer, SectionHeader, BrowserFrame, IconCircle, ScrollAnimateDirective],
 })
-export class AiShowcase {
+export class AIShowcase {
   protected readonly workflowSteps: WorkflowStep[] = [
     {
       title: "Pull fleet state",

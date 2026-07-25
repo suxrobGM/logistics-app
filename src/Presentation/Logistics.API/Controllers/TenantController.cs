@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 using Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
-using Logistics.Application.Modules.Integrations.AiDispatch.Commands;
-using Logistics.Application.Modules.Integrations.AiDispatch.Queries;
+using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
+using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
 namespace Logistics.API.Controllers;
 

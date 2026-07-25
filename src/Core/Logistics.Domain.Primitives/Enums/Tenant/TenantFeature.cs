@@ -51,5 +51,8 @@ public enum TenantFeature
     FuelCards,
 
     [Description("IFTA Reporting")]
-    Ifta
+    Ifta,
+
+    [Description("Intermodal Containers")]
+    IntermodalContainers
 }

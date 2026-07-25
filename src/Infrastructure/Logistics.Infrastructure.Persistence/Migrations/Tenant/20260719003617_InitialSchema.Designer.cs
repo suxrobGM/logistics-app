@@ -95,7 +95,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("accounting_provider_configurations", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AiDispatchDecision", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchDecision", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -176,7 +176,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("ai_dispatch_decisions", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AiDispatchSession", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchSession", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -5644,9 +5644,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasDiscriminator().HasValue("delivery");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AiDispatchDecision", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchDecision", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.AiDispatchSession", "Session")
+                    b.HasOne("Logistics.Domain.Entities.AIDispatchSession", "Session")
                         .WithMany("Decisions")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -6469,7 +6469,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("TripStop");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AiDispatchSession", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchSession", b =>
                 {
                     b.Navigation("Decisions");
                 });

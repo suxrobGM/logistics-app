@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
+import { getApiErrorMessage } from "@logistics/shared";
 import {
   Api,
   deleteTerminal,
@@ -83,11 +84,7 @@ export class TerminalDetails implements OnInit {
           this.toast.showSuccess("Terminal has been deleted successfully");
           this.router.navigateByUrl("/terminals");
         } catch (error: unknown) {
-          const message =
-            (error as { error?: { error?: string }; message?: string })?.error?.error ??
-            (error as { message?: string })?.message ??
-            "Failed to delete terminal";
-          this.toast.showError(message);
+          this.toast.showError(getApiErrorMessage(error, "Failed to delete terminal"));
         } finally {
           this.isDeleting.set(false);
         }

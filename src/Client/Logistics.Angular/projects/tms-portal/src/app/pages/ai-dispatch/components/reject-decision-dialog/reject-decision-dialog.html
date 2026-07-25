@@ -1,0 +1,56 @@
+<ui-dialog
+  header="Reject Decision"
+  [(open)]="actions.showRejectDialog"
+  [modal]="true"
+  width="480px"
+>
+  @if (detail()) {
+    <pre
+      class="bg-muted text-muted-foreground mt-0 mb-4 rounded-md p-3 font-sans text-xs whitespace-pre-wrap"
+      >{{ detail() }}</pre
+    >
+  }
+
+  <p class="text-muted-foreground mt-0 mb-2 text-sm">
+    Why is this wrong? The agent learns from your reasons and stops suggesting the same pattern.
+  </p>
+
+  <div class="mb-3 flex flex-wrap gap-2">
+    @for (quick of quickReasons; track quick) {
+      <ui-button
+        [label]="quick"
+        intent="secondary"
+        appearance="outlined"
+        size="sm"
+        (click)="applyQuickReason(quick)"
+      />
+    }
+  </div>
+
+  <ui-textarea-field
+    [(value)]="reason"
+    [maxlength]="500"
+    [rows]="4"
+    [required]="true"
+    [invalid]="submitAttempted() && isEmpty()"
+    [touched]="submitAttempted()"
+    placeholder="e.g. Deadhead is over 80 miles - not worth it for this rate"
+    class="block w-full text-sm"
+    showCounter
+  />
+
+  @if (submitAttempted() && isEmpty()) {
+    <p class="text-destructive mt-1 mb-0 text-xs">A reason is required.</p>
+  }
+
+  <ng-template #footer>
+    <ui-button intent="secondary" appearance="text" label="Cancel" (click)="close()" />
+    <ui-button
+      label="Reject"
+      icon="x"
+      intent="danger"
+      [loading]="isSubmitting()"
+      (click)="confirm()"
+    />
+  </ng-template>
+</ui-dialog>

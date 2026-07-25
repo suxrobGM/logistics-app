@@ -23,6 +23,9 @@ import { focusFirstControl } from "../focus-control";
  * <ui-form-field label="Notes" for="notes" [required]="true">
  *   <ui-textarea-field id="notes" [formField]="form.notes" placeholder="Details" />
  * </ui-form-field>
+ *
+ * @example Opt into the remaining-characters counter:
+ * <ui-textarea-field [formField]="form.notes" [maxlength]="500" showCounter />
  */
 @Component({
   selector: "ui-textarea-field",
@@ -54,9 +57,26 @@ export class UiTextareaField implements FormValueControl<string> {
   public readonly placeholder = input<string>("");
   public readonly maxlength = input<number | null>(null);
 
+  /** Renders a "remaining / max" counter under the textarea. Ignored without a `maxlength`. */
+  public readonly showCounter = input(false, { transform: booleanAttribute });
+
+  /** Remaining characters at or below which the counter turns destructive. */
+  public readonly counterWarnAt = input<number>(50);
+
   protected readonly showInvalid = computed(
     () => this.invalid() && (this.touched() || this.dirty()),
   );
+
+  /** Null when the counter is off or there is no maxlength to count against. */
+  protected readonly counter = computed(() => {
+    const max = this.maxlength();
+    if (!this.showCounter() || max === null) {
+      return null;
+    }
+
+    const remaining = max - this.value().length;
+    return { remaining, max, warn: remaining <= this.counterWarnAt() };
+  });
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 

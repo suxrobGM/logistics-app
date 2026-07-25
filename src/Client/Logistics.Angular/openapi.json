@@ -737,24 +737,24 @@
     "/ai/dispatch/run": {
       "post": {
         "tags": [
-          "AiDispatch"
+          "AIDispatch"
         ],
-        "operationId": "RunAiDispatch",
+        "operationId": "RunAIDispatch",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RunAiDispatchCommand"
+                "$ref": "#/components/schemas/RunAIDispatchCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/RunAiDispatchCommand"
+                "$ref": "#/components/schemas/RunAIDispatchCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/RunAiDispatchCommand"
+                "$ref": "#/components/schemas/RunAIDispatchCommand"
               }
             }
           }
@@ -786,9 +786,9 @@
     "/ai/dispatch/cancel/{sessionId}": {
       "post": {
         "tags": [
-          "AiDispatch"
+          "AIDispatch"
         ],
-        "operationId": "CancelAiDispatchSession",
+        "operationId": "CancelAIDispatchSession",
         "parameters": [
           {
             "name": "sessionId",
@@ -810,15 +810,15 @@
     "/ai/dispatch/sessions": {
       "get": {
         "tags": [
-          "AiDispatch"
+          "AIDispatch"
         ],
-        "operationId": "GetAiDispatchSessions",
+        "operationId": "GetAIDispatchSessions",
         "parameters": [
           {
             "name": "Status",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/AiDispatchSessionStatus"
+              "$ref": "#/components/schemas/AIDispatchSessionStatus"
             }
           },
           {
@@ -851,7 +851,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AiDispatchSessionDtoPagedResponse"
+                  "$ref": "#/components/schemas/AIDispatchSessionDtoPagedResponse"
                 }
               }
             }
@@ -862,9 +862,9 @@
     "/ai/dispatch/sessions/{sessionId}": {
       "get": {
         "tags": [
-          "AiDispatch"
+          "AIDispatch"
         ],
-        "operationId": "GetAiDispatchSessionById",
+        "operationId": "GetAIDispatchSessionById",
         "parameters": [
           {
             "name": "sessionId",
@@ -882,7 +882,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AiDispatchSessionDto"
+                  "$ref": "#/components/schemas/AIDispatchSessionDto"
                 }
               }
             }
@@ -903,16 +903,16 @@
     "/ai/dispatch/quota": {
       "get": {
         "tags": [
-          "AiDispatch"
+          "AIDispatch"
         ],
-        "operationId": "GetAiQuotaStatus",
+        "operationId": "GetAIQuotaStatus",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AiQuotaStatusDto"
+                  "$ref": "#/components/schemas/AIQuotaStatusDto"
                 }
               }
             }
@@ -923,7 +923,7 @@
     "/ai/dispatch/pending": {
       "get": {
         "tags": [
-          "AiDispatch"
+          "AIDispatch"
         ],
         "operationId": "GetPendingDecisions",
         "responses": {
@@ -934,7 +934,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AiDispatchDecisionDto"
+                    "$ref": "#/components/schemas/AIDispatchDecisionDto"
                   }
                 }
               }
@@ -946,9 +946,9 @@
     "/ai/dispatch/decisions/{decisionId}/approve": {
       "post": {
         "tags": [
-          "AiDispatch"
+          "AIDispatch"
         ],
-        "operationId": "ApproveAiDispatchDecision",
+        "operationId": "ApproveAIDispatchDecision",
         "parameters": [
           {
             "name": "decisionId",
@@ -980,9 +980,9 @@
     "/ai/dispatch/sessions/{sessionId}/replan": {
       "post": {
         "tags": [
-          "AiDispatch"
+          "AIDispatch"
         ],
-        "operationId": "ReplanAiDispatchSession",
+        "operationId": "ReplanAIDispatchSession",
         "parameters": [
           {
             "name": "sessionId",
@@ -998,17 +998,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReplanAiDispatchSessionCommand"
+                "$ref": "#/components/schemas/ReplanAIDispatchSessionCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReplanAiDispatchSessionCommand"
+                "$ref": "#/components/schemas/ReplanAIDispatchSessionCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ReplanAiDispatchSessionCommand"
+                "$ref": "#/components/schemas/ReplanAIDispatchSessionCommand"
               }
             }
           }
@@ -1037,12 +1037,133 @@
         }
       }
     },
+    "/ai/dispatch/policy": {
+      "get": {
+        "tags": [
+          "AIDispatch"
+        ],
+        "operationId": "GetAIDispatchPolicy",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIDispatchPolicyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AIDispatch"
+        ],
+        "operationId": "UpdateAIDispatchPolicy",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAIDispatchPolicyCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAIDispatchPolicyCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAIDispatchPolicyCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AIDispatch"
+        ],
+        "operationId": "DeleteAIDispatchPolicy",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/dispatch/policy/regenerate": {
+      "post": {
+        "tags": [
+          "AIDispatch"
+        ],
+        "operationId": "RegenerateAIDispatchPolicy",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIDispatchPolicyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/ai/dispatch/decisions/{decisionId}/reject": {
       "post": {
         "tags": [
-          "AiDispatch"
+          "AIDispatch"
         ],
-        "operationId": "RejectAiDispatchDecision",
+        "operationId": "RejectAIDispatchDecision",
         "parameters": [
           {
             "name": "decisionId",
@@ -1058,17 +1179,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RejectAiDispatchDecisionCommand"
+                "$ref": "#/components/schemas/RejectAIDispatchDecisionCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/RejectAiDispatchDecisionCommand"
+                "$ref": "#/components/schemas/RejectAIDispatchDecisionCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/RejectAiDispatchDecisionCommand"
+                "$ref": "#/components/schemas/RejectAIDispatchDecisionCommand"
               }
             }
           }
@@ -1093,16 +1214,16 @@
     "/ai/settings": {
       "get": {
         "tags": [
-          "AiSettings"
+          "AISettings"
         ],
-        "operationId": "GetAiSettings",
+        "operationId": "GetAISettings",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AiSettingsDto"
+                  "$ref": "#/components/schemas/AISettingsDto"
                 }
               }
             }
@@ -1121,24 +1242,24 @@
       },
       "put": {
         "tags": [
-          "AiSettings"
+          "AISettings"
         ],
-        "operationId": "UpdateAiSettings",
+        "operationId": "UpdateAISettings",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAiSettingsCommand"
+                "$ref": "#/components/schemas/UpdateAISettingsCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAiSettingsCommand"
+                "$ref": "#/components/schemas/UpdateAISettingsCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAiSettingsCommand"
+                "$ref": "#/components/schemas/UpdateAISettingsCommand"
               }
             }
           }
@@ -16280,7 +16401,7 @@
         },
         "additionalProperties": false
       },
-      "AiDispatchDecisionDto": {
+      "AIDispatchDecisionDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -16292,10 +16413,10 @@
             "format": "uuid"
           },
           "type": {
-            "$ref": "#/components/schemas/AiDispatchDecisionType"
+            "$ref": "#/components/schemas/AIDispatchDecisionType"
           },
           "status": {
-            "$ref": "#/components/schemas/AiDispatchDecisionStatus"
+            "$ref": "#/components/schemas/AIDispatchDecisionStatus"
           },
           "reasoning": {
             "type": "string",
@@ -16357,7 +16478,7 @@
         },
         "additionalProperties": false
       },
-      "AiDispatchDecisionStatus": {
+      "AIDispatchDecisionStatus": {
         "enum": [
           "suggested",
           "approved",
@@ -16367,7 +16488,7 @@
         ],
         "type": "string"
       },
-      "AiDispatchDecisionType": {
+      "AIDispatchDecisionType": {
         "enum": [
           "query",
           "assign_load",
@@ -16378,14 +16499,54 @@
         ],
         "type": "string"
       },
-      "AiDispatchMode": {
+      "AIDispatchMode": {
         "enum": [
           "human_in_the_loop",
           "autonomous"
         ],
         "type": "string"
       },
-      "AiDispatchSessionDto": {
+      "AIDispatchPolicyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "generatedContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "manualContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "decisionsAnalyzed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastEditedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastEditedByUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AIDispatchSessionDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -16397,10 +16558,10 @@
             "format": "int64"
           },
           "mode": {
-            "$ref": "#/components/schemas/AiDispatchMode"
+            "$ref": "#/components/schemas/AIDispatchMode"
           },
           "status": {
-            "$ref": "#/components/schemas/AiDispatchSessionStatus"
+            "$ref": "#/components/schemas/AIDispatchSessionStatus"
           },
           "triggeredByUserId": {
             "type": "string",
@@ -16466,20 +16627,20 @@
           "decisions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AiDispatchDecisionDto"
+              "$ref": "#/components/schemas/AIDispatchDecisionDto"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "AiDispatchSessionDtoPagedResponse": {
+      "AIDispatchSessionDtoPagedResponse": {
         "type": "object",
         "properties": {
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AiDispatchSessionDto"
+              "$ref": "#/components/schemas/AIDispatchSessionDto"
             },
             "nullable": true
           },
@@ -16489,7 +16650,7 @@
         },
         "additionalProperties": false
       },
-      "AiDispatchSessionStatus": {
+      "AIDispatchSessionStatus": {
         "enum": [
           "running",
           "completed",
@@ -16498,7 +16659,7 @@
         ],
         "type": "string"
       },
-      "AiQuotaStatusDto": {
+      "AIQuotaStatusDto": {
         "type": "object",
         "properties": {
           "usagePercent": {
@@ -16520,7 +16681,7 @@
         },
         "additionalProperties": false
       },
-      "AiSettingsDto": {
+      "AISettingsDto": {
         "type": "object",
         "properties": {
           "model": {
@@ -18658,7 +18819,7 @@
             "format": "int32",
             "nullable": true
           },
-          "weeklyAiRequestQuota": {
+          "weeklyAIRequestQuota": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -24110,7 +24271,7 @@
             "type": "string",
             "nullable": true
           },
-          "weeklyAiRequestQuota": {
+          "weeklyAIRequestQuota": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -24820,7 +24981,7 @@
         ],
         "type": "string"
       },
-      "RejectAiDispatchDecisionCommand": {
+      "RejectAIDispatchDecisionCommand": {
         "type": "object",
         "properties": {
           "decisionId": {
@@ -24881,7 +25042,7 @@
         },
         "additionalProperties": false
       },
-      "ReplanAiDispatchSessionCommand": {
+      "ReplanAIDispatchSessionCommand": {
         "type": "object",
         "properties": {
           "originalSessionId": {
@@ -25072,11 +25233,11 @@
         },
         "additionalProperties": false
       },
-      "RunAiDispatchCommand": {
+      "RunAIDispatchCommand": {
         "type": "object",
         "properties": {
           "mode": {
-            "$ref": "#/components/schemas/AiDispatchMode"
+            "$ref": "#/components/schemas/AIDispatchMode"
           },
           "instructions": {
             "type": "string",
@@ -25690,7 +25851,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "weeklyAiRequestQuota": {
+          "weeklyAIRequestQuota": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -25947,7 +26108,8 @@
           "mcp_server",
           "accounting",
           "fuel_cards",
-          "ifta"
+          "ifta",
+        "intermodal_containers"
         ],
         "type": "string"
       },
@@ -27014,7 +27176,20 @@
         },
         "additionalProperties": false
       },
-      "UpdateAiSettingsCommand": {
+      "UpdateAIDispatchPolicyCommand": {
+        "type": "object",
+        "properties": {
+          "manualContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateAISettingsCommand": {
         "type": "object",
         "properties": {
           "model": {
@@ -27758,7 +27933,7 @@
             "format": "int32",
             "nullable": true
           },
-          "weeklyAiRequestQuota": {
+          "weeklyAIRequestQuota": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -28296,10 +28471,10 @@
       "name": "Admin"
     },
     {
-      "name": "AiDispatch"
+      "name": "AIDispatch"
     },
     {
-      "name": "AiSettings"
+      "name": "AISettings"
     },
     {
       "name": "ApiKeys"

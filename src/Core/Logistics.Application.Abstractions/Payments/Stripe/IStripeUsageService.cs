@@ -15,7 +15,7 @@ public interface IStripeUsageService
     /// The number of billing units to report (e.g., 1 for base model, 2 for premium, etc.).
     /// This should be calculated based on the model used and the number of sessions.</param>
     /// <param name="ct">Cancellation token.</param>
-    Task ReportAiSessionOverageAsync(
+    Task ReportAISessionOverageAsync(
         Guid tenantId,
         int billingUnits = 1,
         CancellationToken ct = default);

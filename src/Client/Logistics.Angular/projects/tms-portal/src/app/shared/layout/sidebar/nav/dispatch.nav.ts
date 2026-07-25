@@ -52,6 +52,7 @@ export const dispatchNav: NavSection = {
       id: "intermodal",
       label: "Intermodal",
       icon: "warehouse",
+      feature: "intermodal_containers",
       children: [
         {
           id: "intermodal-containers",

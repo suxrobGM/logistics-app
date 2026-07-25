@@ -1,6 +1,5 @@
-using Logistics.Application.Abstractions.Ai;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.AI.Models;
-using Logistics.Infrastructure.AI.Options;
 using Logistics.Infrastructure.AI.Providers;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -23,7 +22,7 @@ internal sealed class LlmClient(
         CancellationToken ct = default)
     {
         var config = options.Value;
-        var selection = await modelResolver.ResolveAsync(config, ct);
+        var selection = await modelResolver.ResolveAsync(config, request.ModelId, ct);
 
         if (string.IsNullOrWhiteSpace(selection.ProviderConfig.ApiKey))
             return Result<LlmCompletionResult>.Fail($"LLM API key for provider '{selection.Provider}' is not configured.");

@@ -79,7 +79,10 @@ internal sealed class CreateConditionReportHandler(
             }
             else if (load.Type.IsContainerLoad())
             {
-                report.ContainerNumber = req.ContainerNumber?.ToUpperInvariant();
+                // Canonical like Container.Number, but stays null when absent (Normalize gives "").
+                report.ContainerNumber = string.IsNullOrWhiteSpace(req.ContainerNumber)
+                    ? null
+                    : Container.NormalizeNumber(req.ContainerNumber);
                 report.SealNumber = req.SealNumber;
             }
 

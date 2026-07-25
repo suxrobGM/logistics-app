@@ -17,12 +17,15 @@ internal sealed class UpdateTerminalHandler(ITenantUnitOfWork tenantUow)
             return Result.Fail($"Could not find terminal with ID '{req.Id}'");
         }
 
-        if (!string.IsNullOrEmpty(req.Code) && req.Code != terminal.Code)
+        // Canonical vs canonical: a case-only edit is not a change, and the lookup needs the
+        // stored form to find anything.
+        var code = Terminal.NormalizeCode(req.Code);
+        if (!string.IsNullOrEmpty(code) && code != terminal.Code)
         {
-            var conflict = await tenantUow.Repository<Terminal>().GetAsync(i => i.Code == req.Code, ct);
+            var conflict = await tenantUow.Repository<Terminal>().GetAsync(i => i.Code == code, ct);
             if (conflict is not null && conflict.Id != terminal.Id)
             {
-                return Result.Fail($"A terminal with code '{req.Code}' already exists");
+                return Result.Fail($"A terminal with code '{code}' already exists");
             }
         }
 

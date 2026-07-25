@@ -7,14 +7,14 @@
 
 ## Why
 
-Today the agent runs on demand or via `AiDispatchSessionJob` schedule. Real money is lost on
+Today the agent runs on demand or via `AIDispatchSessionJob` schedule. Real money is lost on
 exceptions: a driver running out of HOS mid-trip, a late pickup, detention building at a receiver.
 All the trigger data already flows through us (ELD webhooks, GPS tracking, HOS violations).
 
 ## What to build
 
 - Trigger layer: subscribe to domain events / webhook processing (`ProcessEldWebhook` stamps HOS data; `TripTrackingService` has positions) and detect exception conditions: HOS shortfall vs. remaining planned route, ETA slip beyond appointment window, dwell time exceeding threshold at a stop.
-- Scoped agent session type: reuse `AiDispatchService.RunAsync` with `Instructions` describing the specific exception (field already exists on `AiDispatchRequest`), constrained to the affected trip.
+- Scoped agent session type: reuse `AIDispatchService.RunAsync` with `Instructions` describing the specific exception (field already exists on `AIDispatchRequest`), constrained to the affected trip.
 - Output = suggestions via the existing decision approve/reject flow + a drafted customer notification (hook into [customer-update-agent](customer-update-agent.md)).
 - Debounce/dedupe per trip (don't spawn a session per GPS ping); respect tenant quota; new `TenantFeature` flag, Professional+.
 - Notify dispatcher via existing `NotificationHub` + Firebase push: "AI flagged trip #123: driver will run out of hours 40 mi short. Proposed swap ready for review."

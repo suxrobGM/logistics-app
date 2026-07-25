@@ -15,8 +15,11 @@ internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            // Number is stored canonical; the other two are free-form, so they keep the raw term.
+            var number = Container.NormalizeNumber(req.Search);
+
             query = query.Where(i =>
-                i.Number.Contains(req.Search) ||
+                i.Number.Contains(number) ||
                 (i.BookingReference != null && i.BookingReference.Contains(req.Search)) ||
                 (i.BillOfLadingNumber != null && i.BillOfLadingNumber.Contains(req.Search)));
         }

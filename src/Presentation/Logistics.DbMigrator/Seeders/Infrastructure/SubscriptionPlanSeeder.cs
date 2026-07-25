@@ -44,7 +44,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.McpServer,
         TenantFeature.Accounting,
         TenantFeature.FuelCards,
-        TenantFeature.Ifta
+        TenantFeature.Ifta,
+        TenantFeature.IntermodalContainers
     ];
 
     private static readonly TenantFeature[] EnterpriseFeatures = Enum.GetValues<TenantFeature>();
@@ -65,7 +66,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 12m,
                 MaxTrucks = (int?)10,
                 Tier = PlanTier.Starter,
-                WeeklyAiRequestQuota = (int?)500,
+                WeeklyAIRequestQuota = (int?)500,
                 Features = StarterFeatures
             },
             new
@@ -76,7 +77,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 9m,
                 MaxTrucks = (int?)30,
                 Tier = PlanTier.Professional,
-                WeeklyAiRequestQuota = (int?)2500,
+                WeeklyAIRequestQuota = (int?)2500,
                 Features = ProfessionalFeatures
             },
             new
@@ -87,7 +88,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 6m,
                 MaxTrucks = (int?)null,
                 Tier = PlanTier.Enterprise,
-                WeeklyAiRequestQuota = (int?)null, // unlimited
+                WeeklyAIRequestQuota = (int?)null, // unlimited
                 Features = EnterpriseFeatures
             }
         };
@@ -106,7 +107,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     PerTruckPrice = new() { Amount = planDef.PerTruckPrice, Currency = "USD" },
                     MaxTrucks = planDef.MaxTrucks,
                     Tier = planDef.Tier,
-                    WeeklyAiRequestQuota = planDef.WeeklyAiRequestQuota
+                    WeeklyAIRequestQuota = planDef.WeeklyAIRequestQuota
                 };
 
                 await planRepo.AddAsync(newPlan, cancellationToken);
@@ -161,9 +162,9 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     updated = true;
                 }
 
-                if (existingPlan.WeeklyAiRequestQuota != planDef.WeeklyAiRequestQuota)
+                if (existingPlan.WeeklyAIRequestQuota != planDef.WeeklyAIRequestQuota)
                 {
-                    existingPlan.WeeklyAiRequestQuota = planDef.WeeklyAiRequestQuota;
+                    existingPlan.WeeklyAIRequestQuota = planDef.WeeklyAIRequestQuota;
                     updated = true;
                 }
 

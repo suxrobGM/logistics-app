@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import type { AiDispatchDecisionDto } from "@logistics/shared/api";
+import type { AIDispatchDecisionDto } from "@logistics/shared/api";
 import { BaseHubConnection } from "./base-hub-connection";
 
-export interface AiDispatchUpdate {
+export interface AIDispatchUpdate {
   sessionId: string;
   status: string;
   mode: string;
@@ -14,19 +14,19 @@ export interface AiDispatchUpdate {
  * Service for managing real-time AI dispatch agent operations via SignalR.
  */
 @Injectable({ providedIn: "root" })
-export class AiDispatchHubService extends BaseHubConnection {
+export class AIDispatchHubService extends BaseHubConnection {
   constructor() {
     super("ai-dispatch");
   }
 
-  set onReceiveAiDispatchUpdate(callback: (update: AiDispatchUpdate) => void) {
-    this.hubConnection.off("ReceiveAiDispatchUpdate");
-    this.hubConnection.on("ReceiveAiDispatchUpdate", callback);
+  set onReceiveAIDispatchUpdate(callback: (update: AIDispatchUpdate) => void) {
+    this.hubConnection.off("ReceiveAIDispatchUpdate");
+    this.hubConnection.on("ReceiveAIDispatchUpdate", callback);
   }
 
-  set onReceiveAiDispatchDecision(callback: (decision: AiDispatchDecisionDto) => void) {
-    this.hubConnection.off("ReceiveAiDispatchDecision");
-    this.hubConnection.on("ReceiveAiDispatchDecision", callback);
+  set onReceiveAIDispatchDecision(callback: (decision: AIDispatchDecisionDto) => void) {
+    this.hubConnection.off("ReceiveAIDispatchDecision");
+    this.hubConnection.on("ReceiveAIDispatchDecision", callback);
   }
 
   async subscribeToDispatchBoard(tenantId: string): Promise<void> {

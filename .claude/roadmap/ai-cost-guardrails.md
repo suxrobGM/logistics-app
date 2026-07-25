@@ -8,7 +8,7 @@
 ## Why
 
 Starter includes 500 AI request-units/week at $29 base; Enterprise quota is `null` (unlimited -
-`SubscriptionPlanSeeder`, `WeeklyAiRequestQuota`). If a heavy user's real LLM spend exceeds ~30% of
+`SubscriptionPlanSeeder`, `WeeklyAIRequestQuota`). If a heavy user's real LLM spend exceeds ~30% of
 plan price, the plan loses money. Enterprise + MCP access + unlimited quota is also scriptable abuse
 surface.
 

@@ -1,5 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.AI.Options;
+using Logistics.Application.Abstractions.AI;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Providers;
@@ -18,7 +18,7 @@ internal sealed class LlmProviderFactory(IOptions<LlmOptions> options)
         return type switch
         {
             LlmProvider.Anthropic => new AnthropicLlmProvider(config),
-            _ => new OpenAiLlmProvider(config)
+            _ => new OpenAILlmProvider(config)
         };
     }
 }

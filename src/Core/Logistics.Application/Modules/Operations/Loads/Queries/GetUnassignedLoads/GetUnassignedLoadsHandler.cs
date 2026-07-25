@@ -4,6 +4,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
@@ -27,10 +28,12 @@ internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow)
             predicate: l => l.Status == LoadStatus.Draft && l.TripStops.Count == 0,
             ct: ct);
 
-        var loads = baseQuery
+        var entities = await baseQuery
             .ApplyPaging(req.Page, req.PageSize)
-            .Select(l => l.ToDto())
-            .ToArray();
+            .ToArrayAsync(ct);
+
+        var intermodal = await LoadIntermodalResolver.ResolveAsync(uow, entities, ct);
+        var loads = entities.Select(l => l.ToDto(intermodal)).ToArray();
 
         return PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize);
     }

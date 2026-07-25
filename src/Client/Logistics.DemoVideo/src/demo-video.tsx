@@ -4,7 +4,7 @@ import { fade } from "@remotion/transitions/fade";
 import { slide } from "@remotion/transitions/slide";
 import { SCENE_DURATIONS, TRANSITION_FRAMES } from "@/lib/constants";
 import {
-  SceneAiDispatch,
+  SceneAIDispatch,
   SceneBrandIntro,
   SceneCta,
   SceneDashboard,
@@ -49,7 +49,7 @@ export function DemoVideo(): ReactElement {
 
       {/* Scene 5: AI Dispatch - Hero (12s) */}
       <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.aiDispatch}>
-        <SceneAiDispatch />
+        <SceneAIDispatch />
       </TransitionSeries.Sequence>
 
       <TransitionSeries.Transition presentation={fade()} timing={T} />

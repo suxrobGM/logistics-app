@@ -1,4 +1,4 @@
-import { DatePipe } from "@angular/common";
+﻿import { DatePipe } from "@angular/common";
 import {
   Component,
   computed,
@@ -11,13 +11,11 @@ import {
 import { PageHeader } from "@logistics/shared";
 import {
   Api,
-  approveAiDispatchDecision,
-  cancelAiDispatchSession,
-  getAiDispatchSessionById,
-  rejectAiDispatchDecision,
-  replanAiDispatchSession,
-  type AiDispatchDecisionDto,
-  type AiDispatchSessionDto,
+  cancelAIDispatchSession,
+  getAIDispatchSessionById,
+  replanAIDispatchSession,
+  type AIDispatchDecisionDto,
+  type AIDispatchSessionDto,
 } from "@logistics/shared/api";
 import {
   Badge,
@@ -32,13 +30,14 @@ import {
   UiTimelineMarker,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { AiDispatchHubService, TenantService, ToastService } from "@/core/services";
+import { AIDispatchHubService, TenantService, ToastService } from "@/core/services";
 import { DateUtils, Labels } from "@/shared/utils";
 import { ApproveRejectActions } from "../components/approve-reject-actions/approve-reject-actions";
 import { ModeBadge } from "../components/mode-badge/mode-badge";
+import { RejectDecisionDialog } from "../components/reject-decision-dialog/reject-decision-dialog";
 import { ToolOutputSummary } from "../components/tool-output-summary/tool-output-summary";
+import { DecisionActionsService } from "../services/decision-actions.service";
 import {
-  buildDecisionDetail,
   getToolIcon,
   getToolLabel,
   getToolMarkerClass,
@@ -50,6 +49,7 @@ import { MarkdownPipe } from "../utils/markdown";
   selector: "app-session-details",
   templateUrl: "./session-details.html",
   styleUrl: "./session-details.css",
+  providers: [DecisionActionsService],
   imports: [
     ApproveRejectActions,
     Badge,
@@ -59,6 +59,7 @@ import { MarkdownPipe } from "../utils/markdown";
     MarkdownPipe,
     ModeBadge,
     PageHeader,
+    RejectDecisionDialog,
     Stack,
     Surface,
     ToolOutputSummary,
@@ -73,12 +74,13 @@ import { MarkdownPipe } from "../utils/markdown";
 export class SessionDetailsPage implements OnInit, OnDestroy {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
-  private readonly aiDispatchHub = inject(AiDispatchHubService);
+  private readonly aiDispatchHub = inject(AIDispatchHubService);
   private readonly tenantService = inject(TenantService);
+  protected readonly decisionActions = inject(DecisionActionsService);
 
   public readonly id = input.required<string>();
 
-  protected readonly session = signal<AiDispatchSessionDto | null>(null);
+  protected readonly session = signal<AIDispatchSessionDto | null>(null);
   protected readonly isLoading = signal(false);
 
   protected readonly Labels = Labels;
@@ -148,13 +150,13 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
     const tenant = this.tenantService.getTenantData();
     if (!tenant?.id) return;
 
-    this.aiDispatchHub.onReceiveAiDispatchUpdate = (update) => {
+    this.aiDispatchHub.onReceiveAIDispatchUpdate = (update) => {
       if (update.sessionId === this.id()) {
         this.loadSession();
       }
     };
 
-    this.aiDispatchHub.onReceiveAiDispatchDecision = (decision) => {
+    this.aiDispatchHub.onReceiveAIDispatchDecision = (decision) => {
       if (decision.sessionId === this.id()) {
         this.session.update((s) => {
           if (!s) return s;
@@ -171,7 +173,7 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
   protected async loadSession(): Promise<void> {
     this.isLoading.set(true);
     try {
-      const session = await this.api.invoke(getAiDispatchSessionById, { sessionId: this.id() });
+      const session = await this.api.invoke(getAIDispatchSessionById, { sessionId: this.id() });
       this.session.set(session);
     } catch {
       this.toastService.showError("Failed to load session");
@@ -180,40 +182,12 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  protected approveDecision(decision: AiDispatchDecisionDto): void {
-    this.toastService.confirm({
-      message: `Are you sure you want to approve and execute this decision?\n\n${buildDecisionDetail(decision)}`,
-      header: "Approve Decision",
-      icon: "success",
-      severity: "success",
-      accept: async () => {
-        try {
-          await this.api.invoke(approveAiDispatchDecision, { decisionId: decision.id! });
-          this.toastService.showSuccess("Decision approved and executed");
-          await this.loadSession();
-        } catch {
-          this.toastService.showError("Failed to approve decision");
-        }
-      },
-    });
+  protected approveDecision(decision: AIDispatchDecisionDto): void {
+    this.decisionActions.approve(decision, () => this.loadSession());
   }
 
-  protected rejectDecision(decision: AiDispatchDecisionDto): void {
-    this.toastService.confirm({
-      message: `Are you sure you want to reject this decision?\n\n${buildDecisionDetail(decision)}`,
-      header: "Reject Decision",
-      icon: "warning",
-      severity: "danger",
-      accept: async () => {
-        try {
-          await this.api.invoke(rejectAiDispatchDecision, { decisionId: decision.id!, body: {} });
-          this.toastService.showSuccess("Decision rejected");
-          await this.loadSession();
-        } catch {
-          this.toastService.showError("Failed to reject decision");
-        }
-      },
-    });
+  protected rejectDecision(decision: AIDispatchDecisionDto): void {
+    this.decisionActions.reject(decision, () => this.loadSession());
   }
 
   protected async replanSession(): Promise<void> {
@@ -221,7 +195,7 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
     if (!session) return;
 
     try {
-      await this.api.invoke(replanAiDispatchSession, {
+      await this.api.invoke(replanAIDispatchSession, {
         sessionId: session.id!,
         body: {},
       });
@@ -236,7 +210,7 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
     if (!session) return;
 
     try {
-      await this.api.invoke(cancelAiDispatchSession, { sessionId: session.id! });
+      await this.api.invoke(cancelAIDispatchSession, { sessionId: session.id! });
       this.toastService.showSuccess("Session cancelled");
       await this.loadSession();
     } catch {
