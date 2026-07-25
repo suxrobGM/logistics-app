@@ -6,6 +6,7 @@ COPY *.slnx ./
 COPY src/Core/ src/Core/
 COPY src/Shared/ src/Shared/
 COPY src/Infrastructure/ src/Infrastructure/
+COPY src/Presentation/Logistics.HostDefaults/ src/Presentation/Logistics.HostDefaults/
 COPY src/Presentation/Logistics.IdentityServer/ src/Presentation/Logistics.IdentityServer/
 
 # Restore dependencies

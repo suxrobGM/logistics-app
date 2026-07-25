@@ -6,6 +6,7 @@ COPY *.slnx ./
 COPY src/Core/ src/Core/
 COPY src/Infrastructure/ src/Infrastructure/
 COPY src/Shared/ src/Shared/
+COPY src/Presentation/Logistics.HostDefaults/ src/Presentation/Logistics.HostDefaults/
 COPY src/Presentation/Logistics.API/ src/Presentation/Logistics.API/
 COPY src/Presentation/Logistics.McpServer/ src/Presentation/Logistics.McpServer/
 COPY src/Presentation/Logistics.TelegramBot/ src/Presentation/Logistics.TelegramBot/
