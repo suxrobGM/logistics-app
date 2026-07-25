@@ -50,12 +50,20 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
             return PagedResult<TruckDto>.Ok(withoutLoads, totalItems, req.PageSize);
         }
 
-        // One lookup for every load on the page, not one per load.
-        var pageLoads = entities.SelectMany(i => i.Loads).ToArray();
+        // i.Loads would lazy-load one SELECT per truck; fetch the whole page's loads in one.
+        var truckIds = entities.Select(i => i.Id).ToArray();
+        var pageLoads = await tenantUow.Repository<Load>()
+            .Query()
+            .Where(l => l.AssignedTruckId != null && truckIds.Contains(l.AssignedTruckId.Value))
+            .ToArrayAsync(ct);
+
         var intermodal = await LoadIntermodalResolver.ResolveAsync(tenantUow, pageLoads, ct);
+        var loadsByTruck = pageLoads
+            .GroupBy(l => l.AssignedTruckId!.Value)
+            .ToDictionary(g => g.Key, g => g.ToArray());
 
         var trucks = entities
-            .Select(i => i.ToDto(i.Loads.Select(load => load.ToDto(intermodal))))
+            .Select(i => i.ToDto(loadsByTruck.GetValueOrDefault(i.Id, []).Select(load => load.ToDto(intermodal))))
             .ToArray();
 
         return PagedResult<TruckDto>.Ok(trucks, totalItems, req.PageSize);
