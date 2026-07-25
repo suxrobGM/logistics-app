@@ -35,7 +35,6 @@ export class RejectDecisionDialog {
   });
 
   protected readonly isEmpty = computed(() => this.reason().trim().length === 0);
-  protected readonly charsRemaining = computed(() => 500 - this.reason().length);
 
   protected applyQuickReason(text: string): void {
     const current = this.reason().trim();

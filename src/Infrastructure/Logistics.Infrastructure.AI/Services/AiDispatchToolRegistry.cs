@@ -8,6 +8,9 @@ internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
     private static readonly HashSet<string> LoadBoardTools =
         ["search_loadboard", "check_broker_credit", "book_loadboard_load"];
 
+    private static readonly HashSet<string> IntermodalTools =
+        ["get_container_status", "get_terminal_info"];
+
     private static readonly List<AiDispatchToolDefinition> Tools =
     [
         // ── Read Tools ──
@@ -284,12 +287,17 @@ internal sealed class AiDispatchToolRegistry : IAiDispatchToolRegistry
             }))
     ];
 
-    public IReadOnlyList<AiDispatchToolDefinition> GetToolDefinitions(bool includeLoadBoardTools = false)
+    public IReadOnlyList<AiDispatchToolDefinition> GetToolDefinitions(
+        bool includeLoadBoardTools = false,
+        bool includeIntermodalTools = false)
     {
-        if (includeLoadBoardTools)
+        if (includeLoadBoardTools && includeIntermodalTools)
             return Tools;
 
-        return Tools.Where(t => !LoadBoardTools.Contains(t.Name)).ToList();
+        return Tools
+            .Where(t => includeLoadBoardTools || !LoadBoardTools.Contains(t.Name))
+            .Where(t => includeIntermodalTools || !IntermodalTools.Contains(t.Name))
+            .ToList();
     }
 
     private static JsonNode BuildSchema(JsonObject schema) => schema;

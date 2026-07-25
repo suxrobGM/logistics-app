@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions.Ai;
 using Logistics.Infrastructure.AI.Models;
-using Logistics.Infrastructure.AI.Options;
+using Logistics.Application.Abstractions.Ai;
 using Logistics.Infrastructure.AI.Providers;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;

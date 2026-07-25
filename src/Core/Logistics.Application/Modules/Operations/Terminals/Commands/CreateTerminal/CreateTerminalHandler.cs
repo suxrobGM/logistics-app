@@ -11,16 +11,19 @@ internal sealed class CreateTerminalHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result<TerminalDto>> Handle(CreateTerminalCommand req, CancellationToken ct)
     {
-        var existing = await tenantUow.Repository<Terminal>().GetAsync(i => i.Code == req.Code, ct);
+        // Stored codes are canonical, so the search term must be too, or "uslax" reads as free
+        // and then collides on insert.
+        var code = Terminal.NormalizeCode(req.Code);
+        var existing = await tenantUow.Repository<Terminal>().GetAsync(i => i.Code == code, ct);
         if (existing is not null)
         {
-            return Result<TerminalDto>.Fail($"A terminal with code '{req.Code}' already exists");
+            return Result<TerminalDto>.Fail($"A terminal with code '{code}' already exists");
         }
 
         var terminal = new Terminal
         {
             Name = req.Name,
-            Code = req.Code,
+            Code = code,
             CountryCode = req.CountryCode,
             Type = req.Type,
             Address = req.Address,

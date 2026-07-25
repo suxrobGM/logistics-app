@@ -3,7 +3,8 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Configuration;
+using Logistics.Application.Abstractions.Ai;
+using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.AiDispatch;
 
@@ -13,12 +14,12 @@ internal sealed class ApproveAiDispatchDecisionHandler(
     ITenantUnitOfWork tenantUow,
     IAiDispatchToolExecutor toolExecutor,
     ICurrentUserService currentUser,
-    IConfiguration configuration) : IAppRequestHandler<ApproveAiDispatchDecisionCommand, Result>
+    IOptions<LlmOptions> llmOptions) : IAppRequestHandler<ApproveAiDispatchDecisionCommand, Result>
 {
     public async Task<Result> Handle(ApproveAiDispatchDecisionCommand request, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        var bypassGate = configuration.GetValue<bool>("Llm:BypassLlmGate");
+        var bypassGate = llmOptions.Value.BypassLlmGate;
 
         if (!bypassGate && tenant.Settings.LlmEnabled == false)
             return Result.Fail("AI dispatch is disabled for this tenant");

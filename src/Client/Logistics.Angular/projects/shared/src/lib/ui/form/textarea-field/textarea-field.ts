@@ -23,13 +23,17 @@ import { focusFirstControl } from "../focus-control";
  * <ui-form-field label="Notes" for="notes" [required]="true">
  *   <ui-textarea-field id="notes" [formField]="form.notes" placeholder="Details" />
  * </ui-form-field>
+ *
+ * @example Opt into the remaining-characters counter:
+ * <ui-textarea-field [formField]="form.notes" [maxlength]="500" showCounter />
  */
 @Component({
   selector: "ui-textarea-field",
   templateUrl: "./textarea-field.html",
   // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
   // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
-  host: { "[attr.id]": "null" },
+  // The counter is a second element in the host, so the host has to stack.
+  host: { "[attr.id]": "null", "[class.block]": "counterVisible()" },
   imports: [HlmTextarea],
 })
 export class UiTextareaField implements FormValueControl<string> {
@@ -54,8 +58,23 @@ export class UiTextareaField implements FormValueControl<string> {
   public readonly placeholder = input<string>("");
   public readonly maxlength = input<number | null>(null);
 
+  /** Renders a "remaining / max" counter under the textarea. Ignored without a `maxlength`. */
+  public readonly showCounter = input(false, { transform: booleanAttribute });
+
+  /** Remaining characters at or below which the counter turns destructive. */
+  public readonly counterWarnAt = input<number>(50);
+
   protected readonly showInvalid = computed(
     () => this.invalid() && (this.touched() || this.dirty()),
+  );
+
+  protected readonly charsRemaining = computed(() => {
+    const max = this.maxlength();
+    return max === null ? null : max - this.value().length;
+  });
+
+  protected readonly counterVisible = computed(
+    () => this.showCounter() && this.charsRemaining() !== null,
   );
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);

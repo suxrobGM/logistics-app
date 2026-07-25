@@ -64,15 +64,17 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 
 ### Containers (ISO 6346)
 
-- Domain: `Entities/Container/`
+- Domain: `Entities/Container/` - `Number` is canonicalised on write by `Container.NormalizeNumber`
 - Application: `Modules/Operations/Containers/Commands/`, `Modules/Operations/Containers/Queries/`
 - API/UI: `ContainerController.cs`, `tms-portal/pages/containers/`
+- Feature flag: `TenantFeature.IntermodalContainers` (Professional+; off by default)
 
 ### Terminals (UN/LOCODE)
 
-- Domain: `Entities/Terminal/`
+- Domain: `Entities/Terminal/` - `Code` is canonicalised on write by `Terminal.NormalizeCode`
 - Application: `Modules/Operations/Terminals/Commands/`, `Modules/Operations/Terminals/Queries/`
 - API/UI: `tms-portal/pages/terminals/`
+- Feature flag: `TenantFeature.IntermodalContainers` (shared with Containers)
 
 ### Employees / Drivers
 
@@ -119,7 +121,9 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 
 - Infrastructure: `Infrastructure.AI/Services/AiDispatchToolRegistry.cs`, `Tools/`
 - API/UI: shared with `Logistics.McpServer`
-- Intermodal reads: `Tools/GetContainerStatusTool.cs` (ISO 6346), `Tools/GetTerminalInfoTool.cs` (UN/LOCODE)
+- Intermodal reads: `Tools/GetContainerStatusTool.cs` (ISO 6346), `Tools/GetTerminalInfoTool.cs` (UN/LOCODE).
+  Gated by `TenantFeature.IntermodalContainers` - the schemas, the prompt section and the tools' own
+  guard all move together; MCP lists every tool, so the guard inside each tool is the real gate.
 
 ### LLM providers
 

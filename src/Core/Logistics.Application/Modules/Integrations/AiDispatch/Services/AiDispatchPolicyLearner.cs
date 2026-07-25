@@ -5,15 +5,15 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.Integrations.AiDispatch.Services;
 
 internal sealed class AiDispatchPolicyLearner(
     ITenantUnitOfWork tenantUow,
     ILlmClient llmClient,
-    IConfiguration configuration,
+    IOptions<LlmOptions> llmOptions,
     ILogger<AiDispatchPolicyLearner> logger) : IAiDispatchPolicyLearner
 {
     /// <summary>How far back to look. Older preferences are likely stale.</summary>
@@ -31,7 +31,7 @@ internal sealed class AiDispatchPolicyLearner(
         CancellationToken ct = default)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        var bypassGate = configuration.GetValue<bool>("Llm:BypassLlmGate");
+        var bypassGate = llmOptions.Value.BypassLlmGate;
 
         if (!bypassGate && tenant.Settings.LlmEnabled == false)
         {
@@ -85,7 +85,7 @@ internal sealed class AiDispatchPolicyLearner(
                 SystemPrompt = AiDispatchPolicyPrompt.SystemPrompt,
                 UserText = AiDispatchPolicyPrompt.BuildUserText(digest.Text, policy?.GeneratedContent),
                 MaxTokens = 1024,
-                ModelId = configuration["Llm:PolicyLearningModel"]
+                ModelId = llmOptions.Value.PolicyLearningModel
             },
             ct);
 

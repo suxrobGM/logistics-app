@@ -12,10 +12,26 @@ public class Terminal : AuditableEntity, ITenantEntity
 {
     public required string Name { get; set; }
 
+    private string code = "";
+
     /// <summary>
     /// UN/LOCODE identifier (e.g. "BEANR" Antwerp, "USLAX" Los Angeles, "DEHAM" Hamburg).
+    /// <para>
+    /// Canonicalised on write by <see cref="NormalizeCode"/> - see <c>Container.Number</c> for why.
+    /// </para>
     /// </summary>
-    public required string Code { get; set; }
+    public required string Code
+    {
+        get => code;
+        set => code = NormalizeCode(value);
+    }
+
+    /// <summary>
+    /// The canonical form of a UN/LOCODE. Callers that query by code must normalise the search term
+    /// through this, since the stored value is always canonical.
+    /// </summary>
+    public static string NormalizeCode(string? value) =>
+        value?.Trim().ToUpperInvariant() ?? "";
 
     /// <summary>
     /// ISO 3166-1 alpha-2 country code (e.g. "BE", "US", "DE").

@@ -4,13 +4,14 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
 internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
     : IAppRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
 {
-    public Task<PagedResult<LoadDto>> Handle(
+    public async Task<PagedResult<LoadDto>> Handle(
         GetLoadsQuery req,
         CancellationToken ct)
     {
@@ -76,7 +77,10 @@ internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
         }
 
-        var loads = baseQuery.Select(i => i.ToDto()).ToArray();
-        return Task.FromResult(PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize));
+        var entities = await baseQuery.ToArrayAsync(ct);
+        var intermodal = await LoadIntermodalResolver.ResolveAsync(tenantUow, entities, ct);
+        var loads = entities.Select(i => i.ToDto(intermodal)).ToArray();
+
+        return PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize);
     }
 }

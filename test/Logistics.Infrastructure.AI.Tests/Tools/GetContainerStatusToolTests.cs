@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
+using Logistics.Application.Abstractions.Features;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -18,13 +19,29 @@ public class GetContainerStatusToolTests
         Substitute.For<ITenantRepository<Container, Guid>>();
     private readonly ITenantRepository<Load, Guid> loadRepo =
         Substitute.For<ITenantRepository<Load, Guid>>();
+    private readonly IFeatureService featureService = Substitute.For<IFeatureService>();
     private readonly GetContainerStatusTool sut;
 
     public GetContainerStatusToolTests()
     {
         tenantUow.Repository<Container>().Returns(containerRepo);
         tenantUow.Repository<Load>().Returns(loadRepo);
-        sut = new GetContainerStatusTool(tenantUow);
+        tenantUow.GetCurrentTenant().Returns(new Tenant
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Fleet",
+            ConnectionString = "test",
+            BillingEmail = "test@test.com",
+            CompanyAddress = new()
+            {
+                Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US"
+            }
+        });
+        featureService
+            .IsFeatureEnabledAsync(Arg.Any<Guid>(), TenantFeature.IntermodalContainers)
+            .Returns(true);
+
+        sut = new GetContainerStatusTool(tenantUow, featureService);
     }
 
     [Fact]
@@ -160,4 +177,25 @@ public class GetContainerStatusToolTests
             DeliveryCost = Money.Zero("USD")
         };
     }
+
+    /// <summary>
+    /// The agent never gets this tool ungated, but MCP lists every tool - so a gated tenant could
+    /// still reach it there.
+    /// </summary>
+    [Fact]
+    public async Task Execute_FeatureDisabled_RefusesBeforeTouchingTheDatabase()
+    {
+        featureService
+            .IsFeatureEnabledAsync(Arg.Any<Guid>(), TenantFeature.IntermodalContainers)
+            .Returns(false);
+
+        var input = new JsonObject { ["container_number"] = "MSCU1234567" };
+        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+
+        var error = JsonDocument.Parse(result).RootElement.GetProperty("error").GetString();
+        Assert.Contains("not enabled", error);
+        await containerRepo.DidNotReceiveWithAnyArgs()
+            .GetAsync(default(Expression<Func<Container, bool>>)!, default);
+    }
+
 }

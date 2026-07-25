@@ -159,7 +159,7 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
 | `Llm__Providers__Anthropic__ApiKey` | Anthropic API key                                                             |
 | `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key                                                                |
 | `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key                                                              |
-| `Llm__MaxTokens`                    | Max tokens per response (default: 8192)                                       |
+| `Llm__MaxTokens`                    | Max tokens per response (default: 16384)                                      |
 | `Llm__PolicyLearningModel`          | Model for nightly policy learning (default: `deepseek-v4-flash`)              |
 
 ### appsettings.json
@@ -168,7 +168,8 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
 {
   "Llm": {
     "DefaultProvider": "Anthropic",
-    "MaxTokens": 8192,
+    "MaxTokens": 16384,
+    "ThinkingBudgetTokens": 16384,
     "Providers": {
       "Anthropic": {
         "ApiKey": "<key>",

@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
 using Logistics.Infrastructure.AI.Models;
-using Logistics.Infrastructure.AI.Options;
+using Logistics.Application.Abstractions.Ai;
 using Logistics.Application.Abstractions.AiDispatch;
 using Tool = Anthropic.SDK.Common.Tool;
 using Function = Anthropic.SDK.Common.Function;

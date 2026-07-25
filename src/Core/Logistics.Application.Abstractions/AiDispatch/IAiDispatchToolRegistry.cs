@@ -7,7 +7,13 @@ namespace Logistics.Application.Abstractions.AiDispatch;
 /// </summary>
 public interface IAiDispatchToolRegistry
 {
-    IReadOnlyList<AiDispatchToolDefinition> GetToolDefinitions(bool includeLoadBoardTools = false);
+    /// <summary>
+    /// The tools the agent may call. Gated groups are excluded unless opted in - their schemas cost
+    /// tokens on every request.
+    /// </summary>
+    IReadOnlyList<AiDispatchToolDefinition> GetToolDefinitions(
+        bool includeLoadBoardTools = false,
+        bool includeIntermodalTools = false);
 }
 
 /// <summary>

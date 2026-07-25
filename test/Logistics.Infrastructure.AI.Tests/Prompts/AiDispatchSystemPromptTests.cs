@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Prompts;
 using Xunit;
 
@@ -109,10 +109,13 @@ public class AiDispatchSystemPromptTests
 
     #region Intermodal tools
 
+    private static string IntermodalPrompt() =>
+        AiDispatchSystemPrompt.Build("Fleet", AiDispatchMode.Autonomous, hasIntermodal: true);
+
     [Fact]
     public void Build_DescribesIntermodalTools_NotAsUnavailable()
     {
-        var prompt = AiDispatchSystemPrompt.Build("Fleet", AiDispatchMode.Autonomous);
+        var prompt = IntermodalPrompt();
 
         Assert.Contains("get_container_status", prompt);
         Assert.Contains("get_terminal_info", prompt);
@@ -126,10 +129,38 @@ public class AiDispatchSystemPromptTests
     [Fact]
     public void Build_SaysTerminalsHaveNoCoordinates()
     {
-        var prompt = AiDispatchSystemPrompt.Build("Fleet", AiDispatchMode.Autonomous);
+        var prompt = IntermodalPrompt();
 
         Assert.Contains("NO coordinates", prompt);
         Assert.Contains("origin_lat", prompt);
+    }
+
+    /// <summary>
+    /// ~310 tokens per request, naming tools a gated tenant is not given - a rule pointing at a
+    /// missing tool is worse than no rule.
+    /// </summary>
+    [Fact]
+    public void Build_WithoutIntermodalFeature_OmitsTheWholeSection()
+    {
+        var prompt = AiDispatchSystemPrompt.Build("Fleet", AiDispatchMode.Autonomous);
+
+        Assert.DoesNotContain("Intermodal Loads", prompt);
+        Assert.DoesNotContain("get_container_status", prompt);
+        Assert.DoesNotContain("get_terminal_info", prompt);
+        Assert.DoesNotContain("container_number", prompt);
+    }
+
+    /// <summary>Dropping the section must not disturb the sections around it.</summary>
+    [Fact]
+    public void Build_WithoutIntermodalFeature_KeepsTypeRulesAndHosAdjacent()
+    {
+        var prompt = AiDispatchSystemPrompt.Build("Fleet", AiDispatchMode.Autonomous);
+
+        var typeRules = prompt.IndexOf("Truck Type Compatibility Rules", StringComparison.Ordinal);
+        var hos = prompt.IndexOf("## HOS Rules", StringComparison.Ordinal);
+
+        Assert.True(typeRules >= 0 && hos > typeRules);
+        Assert.Contains("ContainerTruck", prompt);
     }
 
     #endregion

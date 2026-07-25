@@ -42,15 +42,19 @@ export const appRoutes: Routes = [
     path: "containers",
     loadChildren: () =>
       import("./pages/containers/container.routes").then((m) => m.containerRoutes),
+    canActivate: [featureGuardFromData],
     data: {
       breadcrumb: "Containers",
+      feature: "intermodal_containers",
     },
   },
   {
     path: "terminals",
     loadChildren: () => import("./pages/terminals/terminal.routes").then((m) => m.terminalRoutes),
+    canActivate: [featureGuardFromData],
     data: {
       breadcrumb: "Terminals",
+      feature: "intermodal_containers",
     },
   },
   {

@@ -27,7 +27,10 @@ public static class Registrar
                 options.ServerInstructions = McpServerInstructions.Text;
 
                 options.ToolCollection ??= new McpServerPrimitiveCollection<McpServerTool>();
-                foreach (var definition in registry.GetToolDefinitions(includeLoadBoardTools: true))
+                // Built once at startup with no tenant context, so it lists every tool - feature
+                // enforcement lives in the tools themselves.
+                foreach (var definition in registry.GetToolDefinitions(
+                    includeLoadBoardTools: true, includeIntermodalTools: true))
                 {
                     options.ToolCollection.Add(new AiDispatchMcpTool(definition));
                 }

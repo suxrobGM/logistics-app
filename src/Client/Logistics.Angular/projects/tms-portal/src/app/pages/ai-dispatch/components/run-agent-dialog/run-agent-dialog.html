@@ -17,14 +17,8 @@
     placeholder="Optional instructions (e.g., 'Don't assign to Truck 42', 'Prioritize Customer X loads')"
     [rows]="5"
     class="block w-full text-sm"
+    showCounter
   />
-  <div
-    class="mt-1 text-right text-xs"
-    [class.text-muted-foreground]="charsRemaining() > 50"
-    [class.text-red-500]="charsRemaining() <= 50"
-  >
-    {{ charsRemaining() }} / 500
-  </div>
   <ng-template #footer>
     <ui-button intent="secondary" appearance="text" label="Cancel" (click)="cancel()" />
     <ui-button [label]="modeLabel" [icon]="modeIcon" [intent]="modeIntent" (click)="confirm()" />

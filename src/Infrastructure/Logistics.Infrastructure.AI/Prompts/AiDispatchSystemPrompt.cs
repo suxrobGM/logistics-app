@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Prompts;
@@ -13,7 +13,17 @@ internal static class AiDispatchSystemPrompt
     /// <param name="policy">
     /// The tenant's learned dispatch policy, or null to omit the section - see <see cref="BuildPolicySection"/>.
     /// </param>
-    public static string Build(string companyName, AiDispatchMode mode, bool hasLoadBoardIntegration = false, DistanceUnit distanceUnit = DistanceUnit.Miles, LearnedDispatchPolicy? policy = null)
+    /// <param name="hasIntermodal">
+    /// Whether the tenant has <c>TenantFeature.IntermodalContainers</c>. The section costs ~310 tokens
+    /// per request and names tools a gated tenant is not given, so it must move in lockstep with them.
+    /// </param>
+    public static string Build(
+        string companyName,
+        AiDispatchMode mode,
+        bool hasLoadBoardIntegration = false,
+        DistanceUnit distanceUnit = DistanceUnit.Miles,
+        LearnedDispatchPolicy? policy = null,
+        bool hasIntermodal = false)
     {
         var unitLabel = distanceUnit == DistanceUnit.Kilometers ? "km" : "miles";
         var conversionNote = distanceUnit == DistanceUnit.Miles
@@ -49,6 +59,27 @@ internal static class AiDispatchSystemPrompt
         var sanitizedName = SanitizeCompanyName(companyName);
         var policySection = BuildPolicySection(policy);
 
+        // ~310 tokens, and names tools a gated tenant never gets - so it travels with them.
+        var intermodalSection = hasIntermodal
+            ? """
+              ## Intermodal Loads (containers & terminals)
+              `get_unassigned_loads` reports `container_number`, `container_iso_type`, `origin_terminal` and
+              `destination_terminal` on loads that have them. When a load reports a `container_number`:
+              - Call `get_container_status` once for that box before assigning. Cite its status and current
+                terminal in your assignment reasoning.
+              - Only a **ContainerTruck** can haul it (see the type rules above).
+              - The box must be somewhere the truck can collect it. `AtPort` or `Loaded` is normal; `InTransit`
+                means it is already moving; `Delivered` or `Returned` means the move is finished - do NOT assign
+                it, list it under Issues instead.
+              - Use `get_terminal_info` when you need a terminal's type, city or address (e.g. to explain a
+                pickup point). Terminals have NO coordinates: keep computing deadhead from the load's
+                `origin_lat` / `origin_lng`, not from terminal data.
+              - The container's current terminal can differ from the load's origin terminal. If it does, say so
+                in your reasoning - repositioning the box is extra work the dispatcher should see.
+
+              """
+            : "";
+
         var loadBoardStep = hasLoadBoardIntegration
             ? """
 
@@ -78,22 +109,7 @@ internal static class AiDispatchSystemPrompt
             - **ContainerTruck** → can haul `IntermodalContainer` ONLY
             If no truck of a compatible type is available, skip the load and report it.
 
-            ## Intermodal Loads (containers & terminals)
-            `get_unassigned_loads` reports `container_number`, `container_iso_type`, `origin_terminal` and
-            `destination_terminal` on loads that have them. When a load reports a `container_number`:
-            - Call `get_container_status` once for that box before assigning. Cite its status and current
-              terminal in your assignment reasoning.
-            - Only a **ContainerTruck** can haul it (see the type rules above).
-            - The box must be somewhere the truck can collect it. `AtPort` or `Loaded` is normal; `InTransit`
-              means it is already moving; `Delivered` or `Returned` means the move is finished - do NOT assign
-              it, list it under Issues instead.
-            - Use `get_terminal_info` when you need a terminal's type, city or address (e.g. to explain a
-              pickup point). Terminals have NO coordinates: keep computing deadhead from the load's
-              `origin_lat` / `origin_lng`, not from terminal data.
-            - The container's current terminal can differ from the load's origin terminal. If it does, say so
-              in your reasoning - repositioning the box is extra work the dispatcher should see.
-
-            ## HOS Rules
+            {{intermodalSection}}## HOS Rules
             `get_available_trucks` returns each driver's `driving_minutes_remaining` and `on_duty_minutes_remaining`.
             Compute estimated driving time: **estimated_driving_minutes = distance_km / 80 × 60** (assumes 80 km/h average).
 

@@ -18,12 +18,15 @@ internal sealed class UpdateContainerHandler(ITenantUnitOfWork tenantUow)
             return Result.Fail($"Could not find container with ID '{req.Id}'");
         }
 
-        if (!string.IsNullOrEmpty(req.Number) && req.Number != container.Number)
+        // Canonical vs canonical: a case-only edit is not a change, and the lookup needs the
+        // stored form to find anything.
+        var number = Container.NormalizeNumber(req.Number);
+        if (!string.IsNullOrEmpty(number) && number != container.Number)
         {
-            var conflict = await tenantUow.Repository<Container>().GetAsync(i => i.Number == req.Number, ct);
+            var conflict = await tenantUow.Repository<Container>().GetAsync(i => i.Number == number, ct);
             if (conflict is not null && conflict.Id != container.Id)
             {
-                return Result.Fail($"A container with number '{req.Number}' already exists");
+                return Result.Fail($"A container with number '{number}' already exists");
             }
         }
 

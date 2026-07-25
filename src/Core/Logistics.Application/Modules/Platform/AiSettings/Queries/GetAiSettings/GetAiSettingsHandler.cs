@@ -4,23 +4,25 @@ using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Configuration;
+using Logistics.Application.Abstractions.Ai;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.Platform.AiSettings.Queries;
 
 internal sealed class GetAiSettingsHandler(
     ISystemSettingsService systemSettings,
     IMasterUnitOfWork masterUow,
-    IConfiguration configuration) : IAppRequestHandler<GetAiSettingsQuery, Result<AiSettingsDto>>
+    IOptions<LlmOptions> llmOptions) : IAppRequestHandler<GetAiSettingsQuery, Result<AiSettingsDto>>
 {
     public async Task<Result<AiSettingsDto>> Handle(GetAiSettingsQuery req, CancellationToken ct)
     {
+        var config = llmOptions.Value;
+
         // Global model: system setting → appsettings default
         var model = await systemSettings.GetAsync(AiSettingsKeys.Model, ct);
         if (string.IsNullOrWhiteSpace(model))
         {
-            var defaultProvider = configuration["Llm:DefaultProvider"];
-            model = configuration[$"Llm:Providers:{defaultProvider}:Model"];
+            model = config.FindProviderModel(config.DefaultProvider);
         }
 
         var modelInfo = LlmModelCatalog.Find(model) ?? LlmModelCatalog.Models[0];
@@ -29,7 +31,7 @@ internal sealed class GetAiSettingsHandler(
         var thinkingSetting = await systemSettings.GetAsync(AiSettingsKeys.ExtendedThinking, ct);
         var extendedThinking = bool.TryParse(thinkingSetting, out var parsedThinking)
             ? parsedThinking
-            : configuration.GetValue<bool>("Llm:EnableExtendedThinking");
+            : config.EnableExtendedThinking;
 
         var plans = await masterUow.Repository<SubscriptionPlan>().GetListAsync(ct: ct);
 

@@ -37,6 +37,26 @@ class HostSignalTextarea {
   readonly field = viewChild.required(UiTextareaField);
 }
 
+/** The counter is presentation only, so this host skips the Signal Forms wiring. */
+@Component({
+  selector: "ui-host-counter-textarea",
+  imports: [UiTextareaField],
+  template: `
+    <ui-textarea-field
+      [(value)]="text"
+      [maxlength]="max()"
+      [showCounter]="show()"
+      [counterWarnAt]="warnAt()"
+    />
+  `,
+})
+class HostCounterTextarea {
+  readonly text = signal("");
+  readonly max = signal<number | null>(500);
+  readonly show = signal(true);
+  readonly warnAt = signal(50);
+}
+
 async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
   fixture.detectChanges();
   await fixture.whenStable();
@@ -120,6 +140,65 @@ describe("UiTextareaField - a FormValueControl-only wrapper", () => {
       expect(fixture.componentInstance.f.notes().disabled()).toBe(true);
       expect(fixture.componentInstance.field().disabled()).toBe(true);
       expect(textarea(fixture).disabled).toBe(true);
+    });
+  });
+
+  /**
+   * Replaced three hand-rolled copies, one of which had drifted onto a hardcoded `text-red-500`
+   * with no dark counterpart. The arithmetic and the token live here now.
+   */
+  describe("remaining-characters counter", () => {
+    function counter(fixture: ComponentFixture<unknown>): HTMLElement | null {
+      return fixture.nativeElement.querySelector("ui-textarea-field > div");
+    }
+
+    it("is opt-in and counts down from maxlength", async () => {
+      const fixture = TestBed.createComponent(HostCounterTextarea);
+      await settle(fixture);
+      expect(counter(fixture)?.textContent?.trim()).toBe("500 / 500");
+
+      type(fixture, "hello");
+      await settle(fixture);
+      expect(counter(fixture)?.textContent?.trim()).toBe("495 / 500");
+
+      fixture.componentInstance.show.set(false);
+      await settle(fixture);
+      expect(counter(fixture)).toBeNull();
+    });
+
+    it("stays hidden without a maxlength to count against", async () => {
+      const fixture = TestBed.createComponent(HostCounterTextarea);
+      fixture.componentInstance.max.set(null);
+      await settle(fixture);
+
+      expect(counter(fixture)).toBeNull();
+    });
+
+    it("switches to the destructive token at the warn threshold - never a raw palette colour", async () => {
+      const fixture = TestBed.createComponent(HostCounterTextarea);
+      await settle(fixture);
+      expect(counter(fixture)?.className).toContain("text-muted-foreground");
+
+      // 460 typed leaves 40 remaining, under the warnAt of 50.
+      type(fixture, "x".repeat(460));
+      await settle(fixture);
+
+      expect(counter(fixture)?.className).toContain("text-destructive");
+      expect(counter(fixture)?.className).not.toContain("text-red");
+    });
+
+    it("honours a caller's warn threshold", async () => {
+      const fixture = TestBed.createComponent(HostCounterTextarea);
+      fixture.componentInstance.warnAt.set(200);
+      await settle(fixture);
+
+      type(fixture, "x".repeat(250));
+      await settle(fixture);
+      expect(counter(fixture)?.className).toContain("text-muted-foreground");
+
+      type(fixture, "x".repeat(350));
+      await settle(fixture);
+      expect(counter(fixture)?.className).toContain("text-destructive");
     });
   });
 });

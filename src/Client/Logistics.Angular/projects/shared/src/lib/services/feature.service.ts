@@ -124,4 +124,6 @@ export const FEATURE_DESCRIPTIONS: Record<TenantFeature, string> = {
   accounting: "Sync invoices, payments, and expenses to QuickBooks",
   fuel_cards: "Import fuel card transactions (WEX, EFS) as truck expenses",
   ifta: "Quarterly IFTA fuel tax reports with per-jurisdiction miles and gallons",
+  intermodal_containers:
+    "Track intermodal containers and terminals, and let the AI dispatch agent reason about them",
 };

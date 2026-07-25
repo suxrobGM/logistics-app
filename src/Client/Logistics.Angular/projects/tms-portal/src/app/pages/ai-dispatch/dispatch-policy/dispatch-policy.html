@@ -127,15 +127,10 @@
               [maxlength]="maxLength"
               placeholder="- Prefer pickups within 50 miles of the truck's current position"
               class="block w-full font-mono text-sm"
+              showCounter
+              [counterWarnAt]="200"
             />
           </ui-form-field>
-          <div
-            class="mt-1 text-right text-xs"
-            [class.text-muted-foreground]="charsRemaining() > 200"
-            [class.text-destructive]="charsRemaining() <= 200"
-          >
-            {{ charsRemaining() }} / {{ maxLength }}
-          </div>
         }
 
         <ui-stack direction="row" justify="end" gap="2" class="mt-4">

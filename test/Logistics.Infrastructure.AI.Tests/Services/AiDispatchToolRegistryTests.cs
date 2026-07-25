@@ -40,7 +40,7 @@ public class AiDispatchToolRegistryTests
     [Fact]
     public void GetToolDefinitions_IncludesLoadBoardTools_WhenRequested()
     {
-        var tools = sut.GetToolDefinitions(true);
+        var tools = sut.GetToolDefinitions(includeLoadBoardTools: true, includeIntermodalTools: true);
 
         Assert.Contains(tools, t => t.Name == "search_loadboard");
         Assert.Contains(tools, t => t.Name == "book_loadboard_load");
@@ -58,8 +58,6 @@ public class AiDispatchToolRegistryTests
         Assert.Contains("check_hos_feasibility", names);
         Assert.Contains("batch_check_hos_feasibility", names);
         Assert.Contains("calculate_distance", names);
-        Assert.Contains("get_container_status", names);
-        Assert.Contains("get_terminal_info", names);
     }
 
     /// <summary>
@@ -67,12 +65,39 @@ public class AiDispatchToolRegistryTests
     /// behind dispatcher approval and stall the agent.
     /// </summary>
     [Fact]
-    public void GetToolDefinitions_IntermodalToolsAreNotLoadBoardGated()
+    public void GetToolDefinitions_IntermodalToolsAreReadsNotWrites()
     {
-        var names = sut.GetToolDefinitions().Select(t => t.Name).ToHashSet();
+        var names = sut.GetToolDefinitions(includeIntermodalTools: true).Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_container_status", names);
         Assert.Contains("get_terminal_info", names);
+    }
+
+    /// <summary>
+    /// Their schemas cost tokens on every request, so a tenant without the feature must not get them.
+    /// </summary>
+    [Fact]
+    public void GetToolDefinitions_WithoutIntermodalFeature_OmitsTheIntermodalTools()
+    {
+        var names = sut.GetToolDefinitions().Select(t => t.Name).ToHashSet();
+
+        Assert.DoesNotContain("get_container_status", names);
+        Assert.DoesNotContain("get_terminal_info", names);
+    }
+
+    /// <summary>The two gated groups are independent - neither switch may pull in the other.</summary>
+    [Fact]
+    public void GetToolDefinitions_GatedGroupsAreIndependent()
+    {
+        var loadBoardOnly = sut.GetToolDefinitions(includeLoadBoardTools: true)
+            .Select(t => t.Name).ToHashSet();
+        Assert.Contains("search_loadboard", loadBoardOnly);
+        Assert.DoesNotContain("get_container_status", loadBoardOnly);
+
+        var intermodalOnly = sut.GetToolDefinitions(includeIntermodalTools: true)
+            .Select(t => t.Name).ToHashSet();
+        Assert.Contains("get_container_status", intermodalOnly);
+        Assert.DoesNotContain("search_loadboard", intermodalOnly);
     }
 
     [Fact]
@@ -89,7 +114,7 @@ public class AiDispatchToolRegistryTests
     [Fact]
     public void GetToolDefinitions_HasUniqueToolNames()
     {
-        var tools = sut.GetToolDefinitions(true);
+        var tools = sut.GetToolDefinitions(includeLoadBoardTools: true, includeIntermodalTools: true);
 
         var names = tools.Select(t => t.Name).ToList();
         Assert.Equal(names.Count, names.Distinct().Count());

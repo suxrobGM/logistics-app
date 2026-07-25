@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
+using Logistics.Application.Abstractions.Features;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -12,12 +13,24 @@ namespace Logistics.Infrastructure.AI.Tools;
 /// Terminals carry no coordinates, so this cannot feed <c>calculate_distance</c> - the deadhead
 /// anchor stays the load's origin latitude / longitude.
 /// </summary>
-internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAiDispatchTool
+internal sealed class GetTerminalInfoTool(
+    ITenantUnitOfWork tenantUow,
+    IFeatureService featureService) : IAiDispatchTool
 {
     public string Name => "get_terminal_info";
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
+        // The agent never gets this tool ungated, but MCP lists every tool - so the gate holds here.
+        var tenant = tenantUow.GetCurrentTenant();
+        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.IntermodalContainers))
+        {
+            return JsonSerializer.Serialize(new
+            {
+                error = "Intermodal container tracking is not enabled for this tenant"
+            });
+        }
+
         var code = input["code"]?.GetValue<string>()?.Trim();
         var idRaw = input["terminal_id"]?.GetValue<string>();
 
@@ -25,11 +38,11 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAiDisp
 
         if (!string.IsNullOrEmpty(code))
         {
-            // Keep `ToUpper()` - EF Core cannot translate string.Equals(.., StringComparison.*)
-            // and throws at runtime.
-            var normalized = code.ToUpperInvariant();
+            // Stored codes are canonical, so normalise the term and compare exactly - that lookup
+            // the unique index can serve.
+            var normalized = Terminal.NormalizeCode(code);
             terminal = await tenantUow.Repository<Terminal>()
-                .GetAsync(t => t.Code.ToUpper() == normalized, ct);
+                .GetAsync(t => t.Code == normalized, ct);
         }
         else if (Guid.TryParse(idRaw, out var terminalId))
         {

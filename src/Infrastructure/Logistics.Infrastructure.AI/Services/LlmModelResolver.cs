@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions.AiDispatch;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.AI.Options;
+using Logistics.Application.Abstractions.Ai;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Services;

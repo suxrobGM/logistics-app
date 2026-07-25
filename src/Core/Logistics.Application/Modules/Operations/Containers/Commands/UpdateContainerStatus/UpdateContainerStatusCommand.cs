@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Attributes;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
@@ -9,6 +10,7 @@ namespace Logistics.Application.Modules.Operations.Containers.Commands;
 /// <see cref="TerminalId"/> is required for transitions to <c>AtPort</c> and <c>Returned</c>;
 /// ignored for other targets.
 /// </summary>
+[RequiresFeature(TenantFeature.IntermodalContainers)]
 public class UpdateContainerStatusCommand : ICommand<Result>
 {
     public Guid Id { get; set; }

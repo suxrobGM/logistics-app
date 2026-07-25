@@ -12,11 +12,14 @@ internal sealed class CreateContainerHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result<ContainerDto>> Handle(CreateContainerCommand req, CancellationToken ct)
     {
-        var existing = await tenantUow.Repository<Container>().GetAsync(i => i.Number == req.Number, ct);
+        // Stored numbers are canonical, so the search term must be too, or "mscu1234567" reads as
+        // free and then collides on insert.
+        var number = Container.NormalizeNumber(req.Number);
+        var existing = await tenantUow.Repository<Container>().GetAsync(i => i.Number == number, ct);
 
         if (existing is not null)
         {
-            return Result<ContainerDto>.Fail($"A container with number '{req.Number}' already exists");
+            return Result<ContainerDto>.Fail($"A container with number '{number}' already exists");
         }
 
         Terminal? terminal = null;
@@ -31,7 +34,7 @@ internal sealed class CreateContainerHandler(ITenantUnitOfWork tenantUow)
 
         var container = new Container
         {
-            Number = req.Number,
+            Number = number,
             IsoType = req.IsoType,
             SealNumber = req.SealNumber,
             BookingReference = req.BookingReference,

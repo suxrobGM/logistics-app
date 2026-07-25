@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 using OpenAI;
 using OpenAI.Chat;
 using Logistics.Infrastructure.AI.Models;
+using Logistics.Application.Abstractions.Ai;
 
 namespace Logistics.Infrastructure.AI.Providers;
 
@@ -11,7 +12,7 @@ namespace Logistics.Infrastructure.AI.Providers;
 /// LLM provider for OpenAI-compatible APIs (OpenAI, DeepSeek, GLM, Groq, Mistral, etc.).
 /// Uses the official OpenAI .NET SDK with configurable base URL for alternative providers.
 /// </summary>
-internal sealed class OpenAiLlmProvider(Options.LlmProviderOptions config) : ILlmProvider
+internal sealed class OpenAiLlmProvider(LlmProviderOptions config) : ILlmProvider
 {
     public async Task<LlmResponse> SendAsync(LlmRequest request, CancellationToken ct)
     {

@@ -100,10 +100,6 @@ export class DispatchPolicyPage implements OnInit {
     () => !this.hasLearned() && (this.policy().manualContent ?? "").trim().length === 0,
   );
 
-  protected readonly charsRemaining = computed(
-    () => MAX_DIRECTIVES_LENGTH - this.model().manualContent.length,
-  );
-
   ngOnInit(): void {
     this.load();
   }

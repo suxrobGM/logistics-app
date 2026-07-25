@@ -36,20 +36,12 @@
     [touched]="submitAttempted()"
     placeholder="e.g. Deadhead is over 80 miles - not worth it for this rate"
     class="block w-full text-sm"
+    showCounter
   />
 
-  <div class="mt-1 flex items-start gap-2 text-xs">
-    @if (submitAttempted() && isEmpty()) {
-      <span class="text-destructive">A reason is required.</span>
-    }
-    <span
-      class="ml-auto"
-      [class.text-muted-foreground]="charsRemaining() > 50"
-      [class.text-destructive]="charsRemaining() <= 50"
-    >
-      {{ charsRemaining() }} / 500
-    </span>
-  </div>
+  @if (submitAttempted() && isEmpty()) {
+    <p class="text-destructive mt-1 mb-0 text-xs">A reason is required.</p>
+  }
 
   <ng-template #footer>
     <ui-button intent="secondary" appearance="text" label="Cancel" (click)="close()" />

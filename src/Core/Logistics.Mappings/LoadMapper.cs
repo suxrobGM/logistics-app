@@ -8,8 +8,19 @@ namespace Logistics.Mappings;
 public static partial class LoadMapper
 {
     [UserMapping(Default = true)]
-    public static LoadDto ToDto(this Load entity)
+    public static LoadDto ToDto(this Load entity) => entity.ToDto(LoadIntermodalLookup.Empty);
+
+    /// <summary>
+    /// Maps with container / terminal values already resolved for the page. Anything the lookup does
+    /// not carry falls back to the navigation property and lazy-loads, so list handlers must pass a
+    /// populated <see cref="LoadIntermodalLookup"/>.
+    /// </summary>
+    public static LoadDto ToDto(this Load entity, LoadIntermodalLookup intermodal)
     {
+        var container = intermodal.FindContainer(entity.ContainerId);
+        var originTerminal = intermodal.FindTerminal(entity.OriginTerminalId);
+        var destinationTerminal = intermodal.FindTerminal(entity.DestinationTerminalId);
+
         var dto = new LoadDto
         {
             Id = entity.Id,
@@ -37,14 +48,14 @@ public static partial class LoadMapper
             HazmatClass = entity.HazmatClass,
             UnNumber = entity.UnNumber,
             ContainerId = entity.ContainerId,
-            ContainerNumber = entity.Container?.Number,
-            ContainerIsoType = entity.Container?.IsoType,
+            ContainerNumber = container?.Number ?? entity.Container?.Number,
+            ContainerIsoType = container?.IsoType ?? entity.Container?.IsoType,
             OriginTerminalId = entity.OriginTerminalId,
-            OriginTerminalName = entity.OriginTerminal?.Name,
-            OriginTerminalCode = entity.OriginTerminal?.Code,
+            OriginTerminalName = originTerminal?.Name ?? entity.OriginTerminal?.Name,
+            OriginTerminalCode = originTerminal?.Code ?? entity.OriginTerminal?.Code,
             DestinationTerminalId = entity.DestinationTerminalId,
-            DestinationTerminalName = entity.DestinationTerminal?.Name,
-            DestinationTerminalCode = entity.DestinationTerminal?.Code,
+            DestinationTerminalName = destinationTerminal?.Name ?? entity.DestinationTerminal?.Name,
+            DestinationTerminalCode = destinationTerminal?.Code ?? entity.DestinationTerminal?.Code,
             Status = entity.Status,
             AssignedDispatcherId = entity.AssignedDispatcherId,
             AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),

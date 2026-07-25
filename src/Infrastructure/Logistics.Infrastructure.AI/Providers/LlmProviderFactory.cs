@@ -1,5 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.AI.Options;
+using Logistics.Application.Abstractions.Ai;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Providers;

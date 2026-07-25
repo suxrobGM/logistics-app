@@ -26108,7 +26108,8 @@
           "mcp_server",
           "accounting",
           "fuel_cards",
-          "ifta"
+          "ifta",
+        "intermodal_containers"
         ],
         "type": "string"
       },

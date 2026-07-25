@@ -14,3 +14,13 @@
   (input)="onInput($event)"
   (blur)="touch.emit()"
 ></textarea>
+
+@if (counterVisible()) {
+  <div
+    class="mt-1 text-right font-sans text-xs"
+    [class.text-muted-foreground]="charsRemaining()! > counterWarnAt()"
+    [class.text-destructive]="charsRemaining()! <= counterWarnAt()"
+  >
+    {{ charsRemaining() }} / {{ maxlength() }}
+  </div>
+}

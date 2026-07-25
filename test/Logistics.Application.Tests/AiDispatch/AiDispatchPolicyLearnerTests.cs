@@ -5,8 +5,8 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using MockQueryable;
 using NSubstitute;
 using Xunit;
@@ -43,15 +43,10 @@ public class AiDispatchPolicyLearnerTests
         SetDecisions();
         SetPolicy(null);
 
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Llm:PolicyLearningModel"] = "deepseek-v4-flash"
-            })
-            .Build();
+        var llmOptions = Options.Create(new LlmOptions { PolicyLearningModel = "deepseek-v4-flash" });
 
         sut = new AiDispatchPolicyLearner(
-            tenantUow, llmClient, configuration, NullLogger<AiDispatchPolicyLearner>.Instance);
+            tenantUow, llmClient, llmOptions, NullLogger<AiDispatchPolicyLearner>.Instance);
     }
 
     #region Minimum-evidence gate
