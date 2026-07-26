@@ -260,7 +260,7 @@ export class LoadFormComponent {
 `(ngSubmit)`. Never gate the submit button on `form().invalid()` - keep it clickable so the
 `ValidatedForm` directive can focus the first invalid control.
 
-Full API and migration recipes: `.claude/skills/signal-forms-migration/SKILL.md`.
+Full API and recipes: `.claude/skills/signal-forms-reference/SKILL.md`.
 
 ## API Client
 

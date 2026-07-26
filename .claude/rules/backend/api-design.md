@@ -39,12 +39,10 @@ return Result<T>.Fail($"Credit score {score} is below your minimum of {min}.",
 Add the constant to `src/Shared/Logistics.Shared.Models/ErrorCodes.cs` **and** mirror it in
 `projects/shared/src/lib/errors/upgrade-handler.ts`.
 
-## HTTP Methods
+## Security invariants
 
-| Action | Method | Route             | Returns              |
-| ------ | ------ | ----------------- | -------------------- |
-| List   | GET    | `/resources`      | `PagedResponse<Dto>` |
-| Get    | GET    | `/resources/{id}` | `Dto` or 404         |
-| Create | POST   | `/resources`      | `Dto` or 204         |
-| Update | PUT    | `/resources/{id}` | 204 or 400           |
-| Delete | DELETE | `/resources/{id}` | 204 or 404           |
+- **Tenant isolation**: validate tenant context on every tenant-scoped operation. A handler that reads `Repository<T>()` without a resolved tenant reads the wrong database, and nothing fails.
+- **File uploads**: extension allowlist **and** a MIME-type match (extension alone is not a check), plus `[RequestSizeLimit]`. Store in blob storage, never on the app disk.
+- **Raw SQL**: `FromSqlInterpolated`, never `FromSqlRaw` with concatenation.
+
+Inbound webhooks have their own signature/idempotency contract - use the `add-webhook-handler` skill, don't hand-roll it.

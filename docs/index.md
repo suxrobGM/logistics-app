@@ -17,6 +17,7 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 | [Development](development/backend-guide.md)             | Backend, Angular, mobile guides        |
 | [Configuration](configuration/environment-variables.md) | Environment variables, services        |
 | [Stripe Webhooks](stripe-webhooks.md)                   | Endpoint, event list, local testing    |
+| [Roadmap](roadmap/README.md)                            | Feature backlog, phases, statuses      |
 
 ## Platform Overview
 

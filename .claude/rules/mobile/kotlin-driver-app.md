@@ -5,84 +5,39 @@ paths:
 
 # Kotlin Driver App Conventions
 
-Kotlin Multiplatform mobile app for truck drivers using Compose Multiplatform.
+Kotlin Multiplatform + Compose Multiplatform. Source root is
+`composeApp/src/commonMain/kotlin/com/logisticsx/driver/`, with `androidMain/` and `iosMain/`
+for expect/actual. The folder layout and the library set are self-evident from `ls` and
+`gradle/libs.versions.toml` - what follows is what isn't.
 
-## Project Structure
+## API layer
 
-```text
-composeApp/src/commonMain/kotlin/com/logisticsx/driver/
-├── api/           # ApiFactory and generated API clients
-├── model/         # Domain models, extensions, settings
-├── navigation/    # Routes, Navigator, entry provider
-├── service/       # Services (auth, location, messaging)
-├── ui/components/ # Reusable UI components
-├── ui/screens/    # Screen composables
-├── ui/theme/      # Colors, typography, theme
-├── util/          # Extension functions, utilities
-├── viewmodel/     # ViewModels with UI state
-└── Module.kt      # Koin DI module
-```
+- Clients are **generated** from the backend swagger: `./gradlew openApiGenerate`. Never hand-edit
+  anything under `com.logisticsx.driver.api` - regenerate.
+- Reach them through `ApiFactory` (Koin singletons). Calls return `Response<T>`; `.body()` unwraps.
+- Every request must carry the **`X-Tenant` header** sourced from `PreferencesManager`. Without it the
+  API resolves no tenant and the call fails on the server, not the client.
+- A 401 goes through `AuthEventBus` so logout happens once, centrally - do not handle it per-call.
+- Sort params use the API's `-PropertyName` syntax (see `.claude/rules/backend/csharp-conventions.md`).
 
-Platform-specific: `androidMain/`, `iosMain/` for expect/actual implementations.
+## Koin DI
 
-## Tech Stack
+- Register in `Module.kt`: `singleOf(::Service)`, `viewModelOf(::ViewModel)`.
+- Parameterized VMs: `viewModel { params -> VM(get(), params.get<String>()) }`.
+- In composables: `koinViewModel()` for VMs, `koinInject()` for services.
 
-| Category      | Library                                                             |
-| ------------- | ------------------------------------------------------------------- |
-| UI            | Compose Multiplatform (Material3)                                   |
-| Navigation    | Navigation 3 (type-safe, `@Serializable` routes)                    |
-| DI            | Koin (`singleOf`, `viewModelOf`, `koinViewModel()`, `koinInject()`) |
-| Networking    | Ktor Client                                                         |
-| Serialization | kotlinx.serialization                                               |
-| State         | StateFlow + collectAsState()                                        |
-| ViewModel     | JetBrains Lifecycle ViewModel                                       |
-| Storage       | DataStore Preferences                                               |
-| API           | OpenAPI Generator (auto-generated from swagger.json)                |
+## Navigation 3
 
-## API Layer
+- Routes are `@Serializable data object XRoute : NavKey` (or a `data class` when parameterized).
+- Bottom-nav destinations must also be in the `topLevelRoutes` set - a route missing from it still
+  navigates but loses its tab state.
+- Entry provider maps routes via `entry<XRoute> { ... }`.
 
-- Generated from backend swagger.json: `./gradlew openApiGenerate`
-- Package: `com.logisticsx.driver.api` (clients), `com.logisticsx.driver.api.models` (DTOs)
-- APIs accessed via `ApiFactory` (registered in Koin as singletons)
-- APIs return `Response<T>` - use `.body()` to get data
-- Include `X-Tenant` header via PreferencesManager
-- Handle 401 via AuthEventBus for automatic logout
-- OrderBy: `-PropertyName` for descending, `PropertyName` for ascending
+## ViewModel + UI
 
-## DI (Koin)
-
-- Register in `Module.kt`: `singleOf(::Service)`, `viewModelOf(::ViewModel)`
-- Parameterized VMs: `viewModel { params -> VM(get(), params.get<String>()) }`
-- In composables: `koinViewModel()` (auto-wired), `koinInject()` (services)
-
-## Navigation (Navigation 3)
-
-- Routes: `@Serializable data object XRoute : NavKey` or `data class XRoute(val id: String) : NavKey`
-- Top-level routes defined in `topLevelRoutes` set for bottom nav
-- Entry provider maps routes to composables via `entry<XRoute> { ... }`
-- Actions: `navigator.navigate()`, `goBack()`, `clearAndNavigate()`, `navigateAndClear()`
-
-## ViewModel Pattern
-
-- Extend `ViewModel()`, use `MutableStateFlow<UiState>` + `asStateFlow()`
-- Sealed class for UI states: `Loading`, `Success(data)`, `Error(message)`
-- Load data in `init {}`, expose `refresh()` for pull-to-refresh
-- Use `viewModelScope.launch {}` for coroutines
-
-## UI Conventions
-
-- Screen composables: navigation callbacks as parameters, ViewModel as last param
-- Use `Scaffold` + `AppTopBar` for screen structure
-- `when (state)` for UiState rendering: Loading → `LoadingIndicator()`, Error → `ErrorView()`
-- Reusable components: `CardContainer`, `SectionCard`, `DetailRow`, `EmptyStateView`
-- Access user settings via `LocalUserSettings.current`
-- DTO extensions in `model/DtoExtensions.kt`
-- Platform-specific formatting via expect/actual (`formatCurrency()`, `formatDistance()`)
-
-## Build
-
-```bash
-./gradlew assembleDebug          # Android
-./gradlew openApiGenerate        # Regenerate API clients
-./gradlew clean build            # Clean build
-```
+- `MutableStateFlow<UiState>` + `asStateFlow()`; sealed `Loading` / `Success(data)` / `Error(message)`.
+  Load in `init {}`, expose `refresh()` for pull-to-refresh.
+- Screen composables take navigation callbacks as parameters and the ViewModel **last**.
+- Reuse `CardContainer`, `SectionCard`, `DetailRow`, `EmptyStateView`, `AppTopBar` before writing new chrome.
+- Currency/distance formatting is expect/actual (`formatCurrency()`, `formatDistance()`) - don't inline
+  platform formatting in a composable.

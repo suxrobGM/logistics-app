@@ -161,24 +161,13 @@ REST conventions:
 
 ### 8. Permissions
 
-Add `Subcontractors.View` and `Subcontractors.Manage` to the `Permission` constants (location: shared identity project). Wire to `TenantRole` claims via the seeder or admin UI.
+Add `Subcontractors.View` and `Subcontractors.Manage` to the `Permission` constants (use the `add-permission` skill - `src/Shared/Logistics.Shared.Identity/Policies/`, plus the hand-mirrored `projects/shared/src/lib/models/permissions.ts`). Wire to `TenantRole` claims via the seeder or admin UI.
 
 ### 9. Tests
 
-`tests/Logistics.Application.Tests/Commands/{Feature}/Create{Entity}HandlerTests.cs` - xUnit + NSubstitute. Field name `sut`.
+`test/Logistics.Application.Tests/Commands/{Feature}/Create{Entity}HandlerTests.cs` - xUnit + NSubstitute. Field name `sut`.
 
-```csharp
-public class CreateSubcontractorHandlerTests
-{
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly CreateSubcontractorHandler sut;
-
-    public CreateSubcontractorHandlerTests() => sut = new CreateSubcontractorHandler(tenantUow);
-
-    [Fact]
-    public async Task Handle_ValidInput_CreatesEntity() { /* ... */ }
-}
-```
+See `.claude/rules/backend/testing.md` for the mock-setup pattern.
 
 ### 10. Frontend
 
@@ -237,23 +226,22 @@ Add a row under the appropriate domain section in `.claude/feature-map.md`:
 
 ## Common mistakes
 
-- Forgetting the `IMasterEntity` / `ITenantEntity` marker - entity is invisible to both DbContexts.
-- Manual mapping inside handlers - Mapperly should own all mapping.
 - Missing `[Authorize(Policy = ...)]` - controller falls back to default auth, leaks data across tenants.
-- Updating Angular `models.ts` barrel manually after regen but forgetting to commit it - breaks the build.
-- Forgetting the feature-map.md row - feature becomes invisible to future sessions.
+- Regenerating the Angular client but not committing the `models.ts` barrel - breaks the build.
+- Skipping the feature-map row - the feature becomes invisible to future sessions.
 
 ## Related skills
 
-- `migration-creator` - generates the EF migration in step 3
-- `add-dispatch-tool` - if the new feature should be agent-callable
-- `simplify` - run after scaffolding to prune any boilerplate
+- `migration-creator` - the EF migration in step 3
+- `add-permission` - step 8
+- `add-angular-page` - step 10, if the page needs nav/role wiring
+- `add-dispatch-tool` - if the feature should be agent-callable
 
 ## Related rules
 
 - `.claude/rules/backend/csharp-conventions.md`
 - `.claude/rules/backend/api-design.md`
 - `.claude/rules/backend/mapperly.md`
-- `.claude/rules/backend/security.md`
 - `.claude/rules/backend/testing.md`
+- `.claude/rules/code-quality.md`
 - `.claude/rules/frontend/angular-conventions.md`

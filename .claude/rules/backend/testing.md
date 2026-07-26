@@ -33,25 +33,17 @@ Other `Logistics.Infrastructure.*.Tests` projects cover their own infrastructure
 
 ## Architecture tests
 
-`Logistics.Architecture.Tests` **discovers** what it covers - never reintroduce an `InlineData`
-roster there, since a hand-maintained list silently skips whatever nobody remembered to add (which
-is how two infra projects went unchecked).
+CLAUDE.md carries the rule (discovery, never a hand-maintained roster - that is how two infra
+projects went unchecked). Here is how the discovery actually works:
 
 - `CsprojReferenceTests.InfrastructureProjects` enumerates `src/Infrastructure/*` from disk.
 - `BoundaryTests.InfrastructureAssemblies` derives from `AssemblyAnchors.AllInfrastructure`.
 - Exemptions: the local `exempt` array and `AssemblyAnchors.BoundaryExempt` (both just
   `Infrastructure.AI`). A boundary failure means fix the dependency, not add an exemption.
 
-Adding an infra project: the csproj rule picks it up automatically; the IL-level rule also needs
-an anchor in `AssemblyAnchors.AllInfrastructure` + a `ProjectReference` in the arch-tests csproj.
+Adding an infra project: see CLAUDE.md for the anchor + `ProjectReference` requirement.
 
-## Running Tests
-
-```bash
-dotnet test                                    # All tests
-dotnet test --filter "ClassName"               # Filter by class
-dotnet test --filter "FullyQualifiedName~Method" # Filter by method
-```
+Test commands are in CLAUDE.md; `--filter "FullyQualifiedName~Method"` narrows to a single method.
 
 ## Patterns
 

@@ -4,6 +4,8 @@ Stable starting points for finding code by feature. Read this before grepping. I
 
 Each feature lists only the layers it touches: **Domain** (entities/VOs), **Application** (commands/queries/services), **Infrastructure** (service implementations), **API/UI** (controllers, jobs, frontend pages). A missing label means that layer has nothing feature-specific.
 
+This file answers _where_. For _how it works_, follow the deep dive: **AI dispatch** → [docs/ai-dispatch.md](../docs/ai-dispatch.md) · **Financial** → [invoices](../docs/invoices.md), [customer payments](../docs/customer-payments.md), [Stripe Connect](../docs/stripe-connect.md), [Stripe webhooks](../docs/stripe-webhooks.md) · **MCP** → [docs/mcp-server.md](../docs/mcp-server.md) · **architecture** → [overview](../docs/architecture/overview.md), [multi-tenancy](../docs/architecture/multi-tenancy.md), [domain model](../docs/architecture/domain-model.md), [module layout](../docs/architecture/module-layout.md) · **not built yet** → [docs/roadmap/](../docs/roadmap/README.md).
+
 ## Where things go (conventions)
 
 - **Domain entity**: `src/Core/Logistics.Domain/Entities/{Feature}/`
@@ -20,14 +22,14 @@ Each feature lists only the layers it touches: **Domain** (entities/VOs), **Appl
 - **REST controllers**: `src/Presentation/Logistics.API/Controllers/{Feature}Controller.cs`
 - **SignalR hubs**: `src/Infrastructure/Logistics.Infrastructure.Communications/SignalR/Hubs/`
 - **Hangfire jobs**: `src/Presentation/Logistics.API/Jobs/` - fan out with `TenantJobRunner.ForEachTenantAsync` and gate features inside the body (see CLAUDE.md for the canonical `[RequiresFeature]`-is-inert rule)
-- **Machine-readable API errors**: `Result.Fail(message, ErrorCodes.X)` → `errorCode` → frontend `err.error.errorCode`. Mirror new codes in `Logistics.Shared.Models/ErrorCodes.cs` **and** `projects/shared/src/lib/errors/upgrade-handler.ts`. Never encode a code in the message string
+- **Machine-readable API errors**: `Logistics.Shared.Models/ErrorCodes.cs`, mirrored in `projects/shared/src/lib/errors/upgrade-handler.ts` (see `.claude/rules/backend/api-design.md` for the contract)
 - **Webhooks**: `WebhookController.cs` + `Application/Modules/Integrations/Webhooks/Commands/`
 - **EF configurations**: `src/Infrastructure/Logistics.Infrastructure.Persistence/Configurations/{Feature}/`
 - **Frontend pages**: `src/Client/Logistics.Angular/projects/{portal}/src/app/pages/{feature}/`
   - Portals: `tms-portal` (dispatchers), `customer-portal` (shippers), `admin-portal` (super admin), `website` (marketing)
 - **Mobile (driver)**: `src/Client/Logistics.DriverApp/composeApp/src/commonMain/kotlin/com/logisticsx/driver/`
-- **Provider connect dialogs**: ELD / load board / fuel card "add provider" dialogs MUST use `<app-provider-connect-dialog>` (`tms-portal/src/app/shared/components/integrations/provider-connect-dialog/`) - project the fields, keep the typed form in the feature, reset from `(opened)`.
-- **Address inputs**: every form that captures an `Address` value object MUST use `<ui-address-form>` from `@logistics/shared`. Do not build addresses from raw `<input>`s. Country drives the State / Region / Province label (US/CA/AU/MX/DE/NL/etc., see `state-labels.ts`); State stays required across all countries. Reusable server-side validator: `Logistics.Application.Validators.AddressValidator`.
+- **Provider connect dialogs**: `tms-portal/src/app/shared/components/integrations/provider-connect-dialog/` - MUST be used for every ELD / load board / fuel card "add provider" dialog (see the Angular `CLAUDE.md` for how)
+- **Address inputs**: `<ui-address-form>` from `@logistics/shared` - MUST be used by every form that captures an `Address` value object; never raw `<input>`s. Country drives the State / Region / Province label (`state-labels.ts`), State stays required everywhere. Server-side counterpart: `Logistics.Application.Validators.AddressValidator`
 
 ## Operations
 

@@ -5,14 +5,15 @@ description: Add a new tool to the AI dispatch agent. Use when the user wants to
 
 # Add a Dispatch Tool
 
-Adds a new tool that the AI dispatch agent can call. Tools are auto-discovered via DI: each tool is a class implementing `IAIDispatchTool`, registered in `Registrar.cs`, and described in `AIDispatchToolRegistry.cs` for the LLM.
+Tools are auto-discovered via DI, and `AIDispatchToolRegistry` is shared with the MCP server - add a
+tool once and both surfaces expose it.
 
 ## Files that must change
 
 1. **`src/Infrastructure/Logistics.Infrastructure.AI/Tools/{ToolName}Tool.cs`** - the tool implementation
 2. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AIDispatchToolRegistry.cs`** - JSON schema + description for the LLM
 3. **`src/Infrastructure/Logistics.Infrastructure.AI/Registrar.cs`** - DI registration
-4. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AIDispatchDecisionProcessor.cs`** - only if write tool, add name to `WriteTools` HashSet
+4. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AIDispatchDecisionProcessor.cs`** - write tools only
 5. **`test/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`** - unit test
 
 ## Step-by-step
@@ -22,7 +23,8 @@ Adds a new tool that the AI dispatch agent can call. Tools are auto-discovered v
 - **Read tool**: pure query - runs immediately in both Autonomous and HumanInTheLoop modes. Examples: `get_unassigned_loads`, `check_hos_feasibility`.
 - **Write tool**: mutates state (assigns load, dispatches trip, books from load board). In HumanInTheLoop mode it creates a `Suggested` decision; in Autonomous mode it executes immediately.
 
-If write tool, you **must** add the tool name to `WriteTools` HashSet in step 4 - missing this step breaks HumanInTheLoop approvals silently.
+A write tool **must** be added to the `WriteTools` HashSet (step 5). Miss it and the tool
+auto-executes instead of creating a `Suggested` decision - HumanInTheLoop approvals break silently.
 
 ### 2. Create the tool class
 
@@ -105,36 +107,13 @@ private static readonly HashSet<string> WriteTools =
 ];
 ```
 
-**Skip this step for read tools.** Read tools always execute immediately.
-
 ### 6. Write a unit test
 
-`test/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`. Use NSubstitute and `MockQueryable.NSubstitute` for `IQueryable`-returning repositories. Pattern:
-
-```csharp
-public class GetSomethingToolTests
-{
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly GetSomethingTool sut;
-
-    public GetSomethingToolTests() => sut = new GetSomethingTool(tenantUow);
-
-    [Fact]
-    public async Task ExecuteAsync_MissingId_ReturnsError()
-    {
-        var input = JsonNode.Parse("""{}""")!;
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
-        result.Should().Contain("\"error\"");
-    }
-
-    [Fact]
-    public async Task ExecuteAsync_ValidInput_ReturnsExpectedFields() { /* ... */ }
-}
-```
+`test/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`, using NSubstitute and
+`MockQueryable.NSubstitute` for `IQueryable`-returning repositories. Cover at least missing input
+(`JsonNode.Parse("""{}""")` → result contains `"error"`) and the happy path.
 
 ## Verification checklist
-
-Before reporting done:
 
 - [ ] Tool class created, implements `IAIDispatchTool`, name is `snake_case`
 - [ ] Registered in `Registrar.cs` (otherwise DI won't find it and `AIDispatchToolExecutor` returns "Unknown tool")
@@ -146,9 +125,8 @@ Before reporting done:
 
 ## Common mistakes
 
-- **Missing `WriteTools` registration**: Tool runs in Autonomous mode but is silently auto-executed in HumanInTheLoop instead of creating a `Suggested` decision.
-- **Throwing instead of returning `{error}`**: The agent loop catches exceptions but the agent loses the context of what went wrong.
-- **Verbose tool names or descriptions**: Every tool definition is sent on every API call - keep descriptions tight.
+- **Throwing instead of returning `{error}`**: the agent loop catches it, but the agent loses all context on what went wrong.
+- **Verbose tool names or descriptions**: every tool definition is sent on every API call - keep descriptions tight.
 - **Not registering in `Registrar.cs`**: `AIDispatchToolExecutor.toolMap` is built from DI; an unregistered tool is invisible at runtime.
 
 ## Related

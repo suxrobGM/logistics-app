@@ -5,26 +5,25 @@ description: Add a new LLM provider or model to the AI dispatch system. Use when
 
 # Add an LLM Provider or Model
 
-The AI dispatch agent supports multiple LLM providers via the `ILlmProvider` adapter pattern. New OpenAI-compatible providers (DeepSeek, GLM, etc.) reuse `OpenAILlmProvider` with a custom `BaseUrl`. New non-compatible providers need a new `ILlmProvider` implementation.
+Providers sit behind the `ILlmProvider` adapter.
 
 ## Decide the path
 
-- **New OpenAI-compatible provider** (DeepSeek-style): no SDK code needed - just a new `LlmProvider` enum value and config. Skip step 3.
-- **New custom-SDK provider** (e.g., Gemini, Mistral): create a new `ILlmProvider` implementation in step 3.
-- **New model from an existing provider** (e.g., new Claude version): only steps 4–6 needed.
+- **New OpenAI-compatible provider** (DeepSeek-style): no SDK code - `OpenAILlmProvider` handles it via `BaseUrl`. Skip step 3.
+- **New custom-SDK provider** (e.g. Gemini, Mistral): new `ILlmProvider` implementation in step 3.
+- **New model from an existing provider** (e.g. a new Claude version): steps 4–6 only.
 
-> The dispatch model is **global** (admin-selected). There is no per-tenant model selection and no
-> per-plan tier gating. The admin dropdown is populated automatically from `LlmModelCatalog`, so adding a
-> model needs **no UI change** - just the catalog + pricing.
+> The dispatch model is **global** (admin-selected) - no per-tenant selection, no per-plan tier gating.
 
 ## Files that must change (full provider)
 
-1. `src/Core/Logistics.Domain.Primitives/Enums/Llm/LlmProvider.cs` - add enum value
-2. `src/Infrastructure/Logistics.Infrastructure.AI/Options/LlmOptions.cs` - provider config section
+1. `src/Core/Logistics.Domain.Primitives/Enums/AIDispatch/LlmProvider.cs` - add enum value
+2. `src/Core/Logistics.Application.Abstractions/AI/LlmOptions.cs` - provider config section. Config is
+   deliberately **not** in `Infrastructure.AI` (the application layer reads it) - see `.claude/rules/backend/ai-agent.md`
 3. `src/Infrastructure/Logistics.Infrastructure.AI/Providers/{X}LlmProvider.cs` - only for non-OpenAI-compatible
 4. `src/Infrastructure/Logistics.Infrastructure.AI/Providers/LlmProviderFactory.cs` - resolution case
 5. `src/Infrastructure/Logistics.Infrastructure.AI/Services/LlmPricing.cs` - pricing, multiplier, tier, billing units
-6. `src/Core/Logistics.Application.Abstractions/AIDispatch/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider }` (single source for the admin dropdown)
+6. `src/Core/Logistics.Application.Abstractions/AIDispatch/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider }`
 
 ## Step-by-step
 
@@ -53,23 +52,8 @@ public record LlmProviderOptions
 }
 ```
 
-Then in `appsettings.json`:
-
-```json
-{
-  "Llm": {
-    "Providers": {
-      "NewProvider": {
-        "ApiKey": "...",
-        "Model": "new-model-1",
-        "BaseUrl": "https://api.newprovider.com/v1"
-      }
-    }
-  }
-}
-```
-
-API key passed via env var: `Llm__Providers__NewProvider__ApiKey`.
+Binds from `Llm:Providers:{Name}` in `appsettings.json`; the API key comes from the env var
+`Llm__Providers__{Name}__ApiKey`, never a committed file.
 
 ### 3. (Custom SDK only) Create `ILlmProvider` implementation
 

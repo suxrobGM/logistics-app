@@ -5,25 +5,13 @@ paths:
 
 # C# Code Conventions
 
-## Style
+Style, naming casing, and nullability are enforced by `.editorconfig` and the analyzers - match the
+surrounding file and let the build tell you. What follows is the part no tool checks.
 
-- File-scoped namespaces, one type per file matching filename
-- Primary constructors for DI
-- `var` only when type is apparent from RHS
-- Prefer pattern matching, expression-bodied members, collection expressions (`[1, 2, 3]`)
+## Non-obvious defaults
 
-## Async
-
-- `Async` suffix on async methods (except handlers)
-- Always accept `CancellationToken`, never use `.Result` or `.Wait()`
-
-## Null Handling
-
-- Use nullable reference types (`string?`), `is null` / `is not null`, `??`, `?.`
-
-## EF Core
-
-- Lazy loading enabled - do NOT use `.Include()` for navigation properties
+- Primary constructors for DI; one type per file matching the filename.
+- `Async` suffix on async methods (**except** MediatR handlers). Always accept `CancellationToken`; never `.Result` / `.Wait()`.
 
 ## Domain Events
 

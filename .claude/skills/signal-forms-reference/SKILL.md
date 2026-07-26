@@ -1,12 +1,16 @@
 ---
-name: signal-forms-migration
-description: "Convert Angular Reactive Forms (FormGroup/FormControl/FormArray) or template-driven forms (ngModel/FormsModule) to the Signal Forms API (form()/FormField/FormRoot/submit()) on Angular 22. Handles validation, arrays, nested objects, disabled state, submission, and third-party component bindings."
+name: signal-forms-reference
+description: "Angular 22 Signal Forms (@angular/forms/signals) API reference and recipes for this repo - form()/FormField/FormRoot/submit(), validators and error kinds, nested objects and arrays, disabled/readonly/hidden logic, async and server-side validation, and writing a FormValueControl for a third-party component. Use when building or debugging any Angular form here, or when converting a stray Reactive/template-driven form."
 ---
 
-# Signal Forms Migration
+# Signal Forms (Angular 22) - reference
 
-Convert an Angular component from Reactive Forms or template-driven forms to Signal Forms
-(`@angular/forms/signals`).
+This repo is **100% Signal Forms** - zero `ReactiveFormsModule`, zero `ngModel`. Use this file when
+writing a form, debugging one, wrapping a third-party control, or converting a stray legacy form.
+The shared `ui-*-field` controls and the `<ui-form-field>` wrapper are documented in
+`src/Client/Logistics.Angular/CLAUDE.md`; this file is the underlying API.
+
+Jump to **Angular 22 API reference** at the bottom for the exported surface and the v22 gotchas.
 
 ## Provenance of everything below
 
@@ -30,7 +34,11 @@ is stale. Run them with `bun run ng test shared --watch=false`.
 > app by reading `InteropNgControl.errors` as a keyed object. If that shape ever flips to an array,
 > field errors silently stop rendering everywhere.
 
-## Step-by-step process
+## Converting a legacy form
+
+The repo has none left, so this section applies only to code arriving from outside (a copied snippet,
+an old branch, a vendored component). If you are writing a **new** form, skip to the API reference and
+follow the `<ui-form-field>` pattern in the Angular `CLAUDE.md` instead.
 
 ### 1. Read and analyze the component
 

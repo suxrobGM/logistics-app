@@ -177,14 +177,14 @@ gh project item-edit --project-id <project.id> --id <item-id> \
 For issue types (Feature, Task, Bug), write the GraphQL mutation to a temp file to avoid shell escaping issues:
 
 ```bash
-cat > /tmp/gql_query.txt << 'GQL'
+cat > "${TMPDIR:-/tmp}/gql_query.txt" << 'GQL'
 mutation($issueId: ID!, $typeId: ID!) {
   updateIssueIssueType(input: {issueId: $issueId, issueTypeId: $typeId}) {
     issue { number }
   }
 }
 GQL
-gh api graphql -F query=@/tmp/gql_query.txt -F issueId=<issue-node-id> -F typeId=<issueTypes[value]>
+gh api graphql -F query=@"${TMPDIR:-/tmp}/gql_query.txt" -F issueId=<issue-node-id> -F typeId=<issueTypes[value]>
 ```
 
 To get the issue node ID for type assignment:

@@ -1,3 +1,9 @@
+---
+paths:
+  - "src/Client/Logistics.Angular/**/*.ts"
+  - "src/Client/Logistics.Angular/**/*.html"
+---
+
 # Frontend Folder Structure
 
 ## Pages

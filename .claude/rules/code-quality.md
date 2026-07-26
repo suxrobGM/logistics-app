@@ -12,17 +12,40 @@ paths:
 
 ## Lines of Code (soft targets / refactor thresholds)
 
-| File type                                 | Aim     | Refactor at |
-| ----------------------------------------- | ------- | ----------- |
-| Angular `.ts` component                   | 150–250 | 300–400     |
-| Angular `.html` template                  | 100–200 | 250–300     |
-| React component (`.tsx`)                  | 150–250 | 300–400     |
-| React hooks (`use*.ts`)                   | 50–150  | 200+        |
-| Services / signal stores / NgRx / Zustand | 200–400 | 500+        |
-| C# handlers / controllers / services      | 150–300 | 400+        |
-| Kotlin classes                            | 150–300 | 400+        |
+This table is the **single source** for size thresholds - `refactor-and-split` and every other doc
+links here rather than restating numbers.
+
+| File type                                | Aim     | Refactor at |
+| ---------------------------------------- | ------- | ----------- |
+| C# domain entity                         | 100–200 | 250         |
+| C# EF configuration                      | 50–100  | 200         |
+| C# command/query handler                 | 150–250 | 400         |
+| C# controller                            | 150–250 | 400         |
+| C# application service                   | 200–300 | 500         |
+| C# infrastructure service                | 250–400 | 600         |
+| C# static utility class                  | 150–250 | 400         |
+| Angular `.ts` component                  | 150–250 | 350         |
+| Angular `.html` template                 | 100–200 | 300         |
+| Angular services / `@ngrx/signals` store | 200–400 | 500         |
+| React component (`.tsx`)                 | 150–250 | 350         |
+| React hooks (`use*.ts`)                  | 50–150  | 200         |
+| Kotlin classes                           | 150–300 | 400         |
 
 Generated files (`api.ts`, EF migrations, OpenAPI clients) - **ignore these rules**.
+
+## Comments
+
+**Default to none.** A comment earns its place by saying _why_, never _what_.
+
+Write one only for: code that looks wrong but is right (state the constraint); a load-bearing
+ordering or lifetime; an external contract (vendor quirk, spec units); a regex or formula's intent.
+
+Never write section labels (`// Filter state`, `// Data inputs`), restatements of the identifier
+(`// Get user by id`), change narration (`// Added for X`, `// was previously a switch`), or
+commented-out code. A comment explaining a name means the name is wrong - rename instead.
+
+C#: `///` on public members with a contract a caller must honour; skip them on `internal sealed`
+handlers and DTOs. TypeScript: TSDoc only on exported shared-library API.
 
 ## How to Split
 

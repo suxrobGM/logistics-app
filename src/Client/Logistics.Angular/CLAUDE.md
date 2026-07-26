@@ -1,6 +1,10 @@
 # Logistics Angular Workspace
 
-For Angular code conventions (signals, control flow, host bindings, theme utilities), see `.claude/rules/frontend/angular-conventions.md` - auto-loaded on `.ts` / `.html` edits.
+Companion rules, auto-loaded when you edit a `.ts` / `.html` file in this workspace (read them
+manually if your agent doesn't do that):
+
+- `.claude/rules/frontend/angular-conventions.md` - signals, control flow, host bindings, the full `ui-*` catalogue, HTTP caching, security
+- `.claude/rules/frontend/folder-structure.md` - where pages, stores, and shared components go
 
 ## Commands
 
@@ -29,15 +33,12 @@ bun run lint               # Lint code
 ## Forms
 
 **This repo is 100% Signal Forms** (`@angular/forms/signals`) - zero `ReactiveFormsModule`, zero
-`formControlName`. Do not introduce either. See
-`.claude/skills/signal-forms-migration/SKILL.md` for the full API.
+`formControlName`. Do not introduce either. Use the `signal-forms-reference` skill for the API.
 
 Shared form building blocks live in `projects/shared/src/lib/ui/form/`, exported from
-`@logistics/shared/ui`: `ui-form-field` plus the `*-field` controls (`ui-text-field`,
-`ui-textarea-field`, `ui-select-field`, `ui-multiselect-field`, `ui-number-field`,
-`ui-currency-field`, `ui-unit-field`, `ui-date-field`, `ui-checkbox-field`, `ui-toggle-field`,
-`ui-password-field`, `ui-autocomplete-field`, `ui-search-field`, `ui-phone-field`) and the
-composites `ui-address-form` / `ui-language-picker`.
+`@logistics/shared/ui`: `ui-form-field` plus the `*-field` controls and the `ui-address-form` /
+`ui-language-picker` composites. The catalogue is in
+`.claude/rules/frontend/angular-conventions.md`.
 
 Each `*-field` implements `FormValueControl` only - **never** a legacy value accessor - so
 `[formField]` binds straight to it.
@@ -131,13 +132,15 @@ palette (`:root` light, `.dark-theme` dark), the canonical shadcn tokens keyed t
 knobs (`--ui-btn-*`, `--ui-card-*`, `--ui-table-th-*`, `--ui-radius-*`), and the base element layer.
 Each portal's `styles.css` is ~4 lines: `@import "tailwindcss"` then `@import theme.css`.
 
-A knob earns its place by having MORE THAN ONE VALUE. `--ui-badge-*` held the badge's colours and
-metrics for the Nora/Aura preset fork; with the presets gone it resolved one way, so the badge spells
-named utilities directly (`badges/badge/badge-variants.ts`, whose `TONE_CLASSES` `ui-count-badge`
-shares). Don't reintroduce a single-valued knob.
+A knob earns its place by having MORE THAN ONE VALUE. `--ui-badge-*` existed for the Nora/Aura preset
+fork; with the presets gone it resolved one way, so the badge spells named utilities directly
+(`badges/badge/badge-variants.ts`, whose `TONE_CLASSES` `ui-count-badge` shares). Don't reintroduce a
+single-valued knob.
 
-The three portals are theme-identical by construction. Only `projects/tms-portal/src/styles/chrome.css`
-sits on top, and only for what is genuinely TMS-only: its sidebar gradients and its animations.
+The three portals are theme-identical by construction; only `projects/tms-portal/src/styles/chrome.css`
+sits on top, for genuinely TMS-only things (sidebar gradients, animations). The website is deliberately
+outside all of this - its own editorial palette, no dark mode, and it re-pins Tailwind's radius scale
+and fonts after importing `theme.css`.
 
 Two things in `theme.css` are load-bearing and look droppable:
 
@@ -147,9 +150,6 @@ Two things in `theme.css` are load-bearing and look droppable:
 - **The canonical tokens alias the palette and are NOT re-declared under `.dark-theme`.** That works only
   because `.dark-theme` lands on `<html>`, the same element `:root` selects. Move it to `<body>` and
   every alias freezes at its light value.
-
-The website is deliberately outside this: it keeps its own editorial palette and has no dark mode, so it
-re-pins Tailwind's radius scale and its own fonts after importing `theme.css`.
 
 **Never hardcode a colour** (`bg-white`, `text-gray-600`, `bg-green-100`) - it does not follow the theme,
 survives every build/test/lint, and then renders a white sidebar on a dark page. That is exactly how
@@ -161,10 +161,8 @@ There is **no PrimeNG theme preset**; the portals are styled entirely by `theme.
 
 ## UI library
 
-**spartan/ui** (Helm, vendored in-repo) - see `.claude/rules/frontend/angular-conventions.md` for the
-full `ui-*` catalogue. PrimeNG is gone: no dependency, no import, no `p-*` markup. Reintroducing one is
-blocked by the ESLint `no-restricted-imports` rule in `eslint.config.js`, which fails lint on any
-`primeng`/`primeicons`/`@primeuix/*` import.
+**spartan/ui** (Helm, vendored in-repo). The full `ui-*` catalogue, the PrimeNG ban, and how to add a
+component are in `.claude/rules/frontend/angular-conventions.md`.
 
 `ui-dialog` / `ui-confirm-dialog` deliberately keep a hand-rolled Escape handler instead of brain's
 `disableClose`. Brain gates Escape and backdrop-click on that one flag, and its `backdropClick()` is

@@ -5,24 +5,19 @@ description: Add a new plan-gated tenant feature flag (e.g. "ContainerTracking",
 
 # Add a Tenant Feature Flag
 
-LogisticsX uses a layered feature-flag system that resolves in this priority order:
+`FeatureService.IsEnabledAsync(feature)` walks four tiers and returns the first that decides:
 
-1. **Admin-locked override** (super admin sets `IsAdminLocked = true`)
-2. **Plan gating** (the tenant's subscription plan grants the feature via `PlanFeature`)
-3. **Tenant config** (the tenant has explicitly enabled/disabled the feature)
-4. **Default config** (`DefaultFeatureConfig` for the platform)
+1. **Admin-locked override** - super admin set `IsAdminLocked = true`
+2. **Plan gating** - the tenant's plan grants it via `PlanFeature` **and** no negative `TenantFeatureConfig` override exists
+3. **Tenant config** - the tenant explicitly enabled/disabled it
+4. **Default config** - `DefaultFeatureConfig` for the platform
 
-`FeatureService` walks this chain and returns the effective value.
+Tenants with `IsSubscriptionRequired = false` (internal, demo) **bypass plan gating entirely** - a
+feature gated only by `PlanFeature` will not work for them.
 
 ## When to use this skill
 
-Use this skill if the new feature should:
-
-- Be enabled only for certain plan tiers (Starter / Professional / Enterprise)
-- Be toggleable per tenant (so an Enterprise customer can opt out)
-- Be admin-overridable (super admin can lock or unlock for one tenant)
-
-Don't use this skill for:
+Don't use it for:
 
 - Roles/permissions - those go through `Permission` constants and policy authorization
 - Code-level kill switches - use a config flag instead
@@ -147,30 +142,6 @@ For route-level guards, use a `CanActivateFn` that calls `FeatureService` and re
 
 The admin portal's tenant feature-config page reads the `TenantFeature` enum and shows a toggle for each value. New enum values are picked up automatically - verify by opening the page and confirming the new toggle is visible.
 
-### 7. Update default disabled flag (optional)
-
-Some features should default to **off** at the platform level. Set `IsEnabled = false` in step 2's INSERT. Tenants then opt in either via plan gating or per-tenant override.
-
-## Resolution chain reference
-
-`FeatureService.IsEnabledAsync(feature)` walks:
-
-```text
-1. Is there a TenantFeatureConfig with IsAdminLocked=true?
-   → return its IsEnabled value
-
-2. Does the tenant's plan grant this feature via PlanFeature?
-   AND no negative TenantFeatureConfig override exists?
-   → return true
-
-3. Is there a TenantFeatureConfig (not admin-locked) for this tenant + feature?
-   → return its IsEnabled value
-
-4. Fall back to DefaultFeatureConfig.IsEnabled
-```
-
-Non-subscription tenants (`Tenant.IsSubscriptionRequired = false`) **bypass plan gating entirely** - they get whatever the tenant config or default says, without checking `PlanFeature`.
-
 ## Verification checklist
 
 - [ ] Enum value added with description if needed
@@ -189,11 +160,10 @@ Non-subscription tenants (`Tenant.IsSubscriptionRequired = false`) **bypass plan
 - **Forgetting the default config row** - `FeatureService` falls through to a missing config and either throws or returns false unexpectedly.
 - **Gating only in the UI** - the API still serves the data, so a sophisticated client can bypass. Always gate at the handler level.
 - **Plan gate without a tenant override path** - Enterprise customers sometimes want to disable a feature; the `TenantFeatureConfig` row is the way out.
-- **Ignoring `IsSubscriptionRequired = false` tenants** - internal/demo tenants don't go through plan gating, so a feature gated only by `PlanFeature` won't work for them.
-- **Gating the commands but not the queries** - the writes are blocked while the reads still serve the data. This has happened; gate the whole module.
-- **Forgetting the jobs** - `[RequiresFeature]` does nothing in Hangfire. A downgraded tenant keeps getting nightly syncs writing into their books until the job checks `IFeatureService` itself.
+- **Half-gating a module** - this has actually happened: writes blocked, reads still serving. Gate every request type.
+- **Forgetting the jobs** - a downgraded tenant keeps getting nightly syncs writing into their books.
 
 ## Related
 
-- Auto-memory note: _FeatureService resolution: admin-locked > plan gating > tenant config > defaults; non-subscription tenants bypass all gating_
 - `feature-map.md` → Identity & access → Feature flags row
+- `add-hangfire-job` - if the feature has a background job, the gate goes in the job body

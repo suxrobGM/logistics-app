@@ -8,161 +8,85 @@ paths:
 
 # AI Dispatch Agent Conventions
 
-For step-by-step recipes, use the skills:
+Conventions and traps only. For step-by-step recipes use the skills - `add-dispatch-tool` (new tool)
+and `add-llm-provider` (new model or provider). For how the system works end to end, read
+[docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 
-- `add-dispatch-tool` - add a new tool the agent can call
-- `add-llm-provider` - add a new model or LLM provider
+## Where things live
 
-This file is conventions only.
+`src/Infrastructure/Logistics.Infrastructure.AI/` holds the agent loop and everything
+provider-specific: `Providers/`, `Services/`, `Tools/` (one class per file), `Prompts/`.
 
-## Project structure
+Two placement rules that get broken:
 
-The agent loop and everything provider-specific lives in `src/Infrastructure/Logistics.Infrastructure.AI/`:
+- **Config is not here.** `LlmOptions` / `LlmProviderOptions` live in `Application.Abstractions/AI/`,
+  because the application layer reads them.
+- **Only the dispatch agent's own prompts go in `Prompts/`.** A one-shot `ILlmClient` feature is not
+  agent code - its workflow service and prompt live together, either in
+  `Logistics.Application/Modules/{Module}/.../Services/` (policy learning) or in the infrastructure
+  project that owns the feature (`Infrastructure.Documents/PdfImport/DispatchSheetPrompt`).
 
-- `Providers/` - `ILlmProvider` interface, `LlmTypes`, `AnthropicLlmProvider`, `OpenAILlmProvider`, `LlmProviderFactory`
-- `Services/` - Agent loop (`AIDispatchService`), `AIDispatchToolExecutor`, `AIDispatchToolRegistry`, `AIDispatchDecisionProcessor`, `AIDispatchConversationBuilder`, `LlmPricing`
-- `Tools/` - Individual tool implementations (one per file, each implementing `IAIDispatchTool`)
-- `Prompts/` - The agent's own system prompt builders
+## Provider abstraction
 
-Configuration (`LlmOptions`, `LlmProviderOptions`) is **not** here - the application layer reads it,
-so it lives in `Application.Abstractions/AI/`.
+`AnthropicLlmProvider` (Claude via `Anthropic.SDK` - prompt caching, extended thinking) and
+`OpenAILlmProvider` (any OpenAI-compatible endpoint via configurable `BaseUrl`) both sit behind
+`ILlmProvider`, resolved by `LlmProviderFactory`.
 
-A one-shot `ILlmClient` feature is **not** agent code: its workflow service and its prompt live
-together in `Logistics.Application/Modules/{Module}/.../Services/` (policy learning) or in the
-infrastructure project that owns the feature (`Infrastructure.Documents/PdfImport/DispatchSheetPrompt`).
-Only prompts the dispatch agent itself sends belong in `Infrastructure.AI/Prompts/`.
-
-## Multi-provider architecture
-
-Provider-agnostic via the `ILlmProvider` adapter pattern:
-
-- `AnthropicLlmProvider` - Claude API via `Anthropic.SDK` (prompt caching, extended thinking)
-- `OpenAILlmProvider` - OpenAI-compatible APIs via `OpenAI` SDK (OpenAI, DeepSeek, GLM via configurable `BaseUrl`)
-- `LlmProviderFactory` - resolves provider from `LlmOptions.DefaultProvider`
-
-**Provider-specific SDK types must not leak outside the provider classes.** The agent loop, tools, and decision processor use `LlmTypes` (`LlmRequest`, `LlmResponse`, `LlmToolUseBlock`) only.
+**Provider SDK types must not leak past the provider class.** The agent loop, tools, and decision
+processor see `LlmTypes` (`LlmRequest`, `LlmResponse`, `LlmToolUseBlock`) only.
 
 ## Tools
 
-Each tool is its own class implementing `IAIDispatchTool`:
+`internal sealed`, implementing `IAIDispatchTool`, **snake_case** `Name`, JSON Schema that works for
+both Claude and OpenAI function calling. Registered in `Registrar.cs`; schemas in
+`AIDispatchToolRegistry.Tools`, which is shared with the MCP server.
 
-```csharp
-internal sealed class GetSomethingTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
-{
-    public string Name => "get_something";
-    public Task<string> ExecuteAsync(JsonNode input, CancellationToken ct) { /* ... */ }
-}
-```
+- Read tools are pure queries and always execute immediately.
+- Write tools mutate state: `HumanInTheLoop` turns them into `Suggested` decisions, `Autonomous`
+  executes them.
+- **A write tool's name must be added to the `AIDispatchDecisionProcessor.WriteTools` HashSet.**
+  Miss it and HumanInTheLoop approvals break silently - the tool just executes.
 
-`AIDispatchToolExecutor` builds a name → tool dictionary from DI-injected `IEnumerable<IAIDispatchTool>`. Tools must be registered in `Registrar.cs` with `services.AddScoped<IAIDispatchTool, MyTool>()`. Their schemas live in `AIDispatchToolRegistry.Tools`.
+The agent loop caps at **25 iterations per session**.
 
-Tool names use **snake_case**. Schemas follow JSON Schema (compatible with both Claude and OpenAI function calling).
+## Model selection and cost
 
-## Tool classification
+The dispatch model is **global**, set by an admin. Tenants never pick a model and never see model
+names; plans differ by **quota only** - there is no per-plan model tier.
 
-- **Read tools** - pure queries. Always execute immediately in both modes.
-- **Write tools** - mutate state. In `HumanInTheLoop` → create `Suggested` decisions for approval. In `Autonomous` → execute immediately.
+- `LlmModelCatalog` (`Application.Abstractions/AIDispatch`) is the single source of selectable models.
+- `LlmPricing` is the single source of pricing, cost multipliers, and overage units, keyed by the same
+  ids. **Read the current numbers there** - do not copy them into docs, they change every model refresh.
+- `GetMultiplier` and `GetOverageBillingUnits` must agree on each model's tier. `add-llm-provider`
+  enforces this.
+- Quota counting is multiplier-based, not flat session counts: `AIDispatchSession.RequestCost` comes
+  from `GetMultiplier()`, `AIQuotaService` sums it for the week, and the tenant-facing API returns a
+  percentage only.
 
-A write tool's name **must** be added to `AIDispatchDecisionProcessor.WriteTools` HashSet. Missing this entry silently breaks HumanInTheLoop approvals.
+Resolution order in `AIDispatchConversationBuilder`: `SystemSettings["AI.Model"]` (admin-set; provider
+is derived from the catalog, never stored) → `LlmOptions.DefaultProvider` + `Model` from appsettings.
+Extended thinking follows the same shape via `SystemSettings["AI.ExtendedThinking"]`.
 
-## Agent loop pattern
-
-`AIDispatchService` loop: send message → receive tool calls → record decision → execute or suggest → send tool results → repeat until `end_turn`.
-
-Max **25 iterations per session** to prevent runaway token usage.
-
-## Configuration
-
-`appsettings.json` `"Llm"` section with nested provider configs:
-
-```json
-{
-  "Llm": {
-    "DefaultProvider": "Anthropic",
-    "Providers": {
-      "Anthropic": { "ApiKey": "...", "Model": "claude-haiku-4-5" },
-      "OpenAI": { "ApiKey": "...", "Model": "gpt-5.4-mini" },
-      "DeepSeek": {
-        "ApiKey": "...",
-        "Model": "deepseek-v4-flash",
-        "BaseUrl": "https://api.deepseek.com/v1"
-      }
-    }
-  }
-}
-```
-
-API keys via env vars: `Llm__Providers__{Provider}__ApiKey`.
-
-## Global model (admin-managed)
-
-The dispatch model is **global**, set by an admin in the admin portal - tenants do not pick a model and
-never see model names. Plans differ by **quota only**, not by model tier (there is no per-plan model
-gating / `AllowedModelTier`).
-
-`LlmModelCatalog` (in `Application.Abstractions/AIDispatch`) is the single source of selectable models
-(`Id`, `DisplayName`, `Provider`). `LlmPricing` keeps pricing, the cost multiplier, and overage units keyed
-by the same ids:
-
-| Model                              | Multiplier | Overage units (at $0.20) |
-| ---------------------------------- | ---------- | ------------------------ |
-| deepseek-v4-flash, deepseek-v4-pro | 1×         | 1 ($0.20)                |
-| gpt-5.4-mini, claude-haiku-4-5     | 1×         | 1 ($0.20)                |
-| gpt-5.4, claude-sonnet-4-6         | 5×         | 2 ($0.40)                |
-| claude-opus-4-8                    | 10×        | 4 ($0.80)                |
-
-## Quota system
-
-Weekly AI request quotas use multiplier-based counting (not flat session counts):
-
-- `SubscriptionPlan.WeeklyAIRequestQuota` - weekly limit in request units (null = unlimited). Admin-editable
-  live from the admin portal AI Settings page.
-- `AIDispatchSession.RequestCost` - multiplier (1, 5, or 10) set from `LlmPricing.GetMultiplier()`
-- `AIQuotaService` sums `RequestCost` across completed sessions for the week
-- Tenant-facing API returns usage as a percentage (no raw numbers, no model/tier names)
-- Overage billing via Stripe: `LlmPricing.GetOverageBillingUnits()` returns 1 / 2 / 4 at $0.20/unit
-
-`GetMultiplier` and `GetOverageBillingUnits` must agree on each model's cost tier (1×→1 unit, 5×→2, 10×→4). The `add-llm-provider` skill enforces this.
-
-## Model selection priority
-
-Resolution order in `AIDispatchConversationBuilder` (no tenant override):
-
-1. **Global system setting** - `SystemSettings["AI.Model"]` (key in `AISettingsKeys`), set via the
-   admin `UpdateAISettingsCommand`. The provider is derived from the model via `LlmModelCatalog`,
-   never stored.
-2. **System default** - `LlmOptions.DefaultProvider` + `LlmProviderOptions.Model` from appsettings.
-
-Extended thinking is likewise global: `SystemSettings["AI.ExtendedThinking"]` → `LlmOptions.EnableExtendedThinking`.
-Only honored by providers that support it.
-
-### Per-request override (one-shot calls only)
-
-`LlmCompletionRequest.ModelId` lets a **one-shot** `ILlmClient` call pick a specific `LlmModelCatalog`
-model - used by the nightly policy learning pass to stay on a cheap tier. `LlmModelResolver` honors it
-only when the id is in the catalog **and** that provider has an API key configured; otherwise it logs a
-warning and falls back to the global model. The API-key check is load-bearing: without it, an install
-that configured only one provider would fail every night.
-
-The **agent loop has no override** and must not get one - `AIDispatchConversationBuilder` always calls
-`ResolveAsync(config)`. Tenants do not pick models and never see model names.
+**Per-request override is for one-shot calls only.** `LlmCompletionRequest.ModelId` lets an
+`ILlmClient` call pin a cheap model (the nightly policy learning pass does this). `LlmModelResolver`
+honors it only when the id is in the catalog **and** that provider has an API key configured. That
+API-key check is load-bearing: without it, an install that configured a single provider fails every
+night. The agent loop has no override and must not get one.
 
 ## Learned dispatch policy
 
-`AIDispatchPolicy` (one row per tenant) holds a short markdown policy the nightly
-`AIDispatchPolicyLearningJob` derives from approve/reject history, injected into the system prompt
-between `## HOS Rules` and `## Workflow` as _strong defaults that rank below the hard constraints_.
+`AIDispatchPolicy` (one row per tenant) holds a short markdown policy that the nightly
+`AIDispatchPolicyLearningJob` derives from approve/reject history. It is injected into the system
+prompt between `## HOS Rules` and `## Workflow` as _strong defaults ranking below the hard constraints_.
 
-Non-obvious rules when touching this:
+Traps, all of which look fine in review:
 
 - The human-approved population is `Status == Executed && ApprovedByUserId != null`. `Approve()` is
-  immediately overwritten by `MarkExecuted()`, so filtering on `Approved` finds nothing, and autonomous
-  executions carry no human signal.
+  immediately overwritten by `MarkExecuted()`, so **filtering on `Approved` finds nothing** - and
+  autonomous executions carry no human signal at all.
 - `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned. Never merge them.
 - Policy text is **untrusted** - it is LLM output derived from dispatcher-typed rejection reasons.
-  `AIDispatchSystemPrompt` sanitises and truncates it; keep that at the injection point, not in callers.
-- Truncation keeps whole lines only. A half-truncated rule reads as a different rule.
-- Learning creates **no** `AIDispatchSession` row, so it never consumes the tenant's weekly quota.
-  Cost lands on `AIDispatchPolicy.GenerationCostUsd` and is never exposed to the tenant.
-
-See [docs/ai-dispatch.md](../../../docs/ai-dispatch.md) for the full picture.
+  `AIDispatchSystemPrompt` sanitises and truncates it. Keep that at the injection point, not in callers.
+- Truncation keeps **whole lines only**. A half-truncated rule reads as a different rule.
+- Learning creates no `AIDispatchSession` row, so it never consumes tenant quota. Cost lands on
+  `AIDispatchPolicy.GenerationCostUsd` and is never exposed to the tenant.

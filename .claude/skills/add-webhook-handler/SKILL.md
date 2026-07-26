@@ -155,38 +155,13 @@ Order matters:
 
 ### 5. Config
 
-`appsettings.json`:
-
-```json
-{
-  "ProviderOptions": {
-    "WebhookSecret": ""
-  }
-}
-```
-
-Real value comes from env var: `ProviderOptions__WebhookSecret`. **Never commit a real secret.**
+Declare `ProviderOptions:WebhookSecret` as an empty string in `appsettings.json`; the real value
+comes from the env var `ProviderOptions__WebhookSecret`. **Never commit a real secret.**
 
 ### 6. Tests
 
-Minimum coverage:
-
-```csharp
-public class ProviderWebhookHandlerTests
-{
-    [Fact]
-    public async Task Handle_BadSignature_ReturnsError() { /* signature fails → 400 */ }
-
-    [Fact]
-    public async Task Handle_ReplayedEvent_IsIdempotent() { /* same payload twice → both 200, side effect runs once */ }
-
-    [Fact]
-    public async Task Handle_UnknownEventType_LogsAndReturnsSuccess() { /* no crash */ }
-
-    [Fact]
-    public async Task Handle_ValidEvent_DispatchesCommand() { /* happy path */ }
-}
-```
+Four cases, minimum: bad signature → error; the same payload twice → both 200 with the side effect
+running once; unknown event type → logged, 200, no crash; happy path → command dispatched.
 
 ## Verification checklist
 
@@ -203,12 +178,9 @@ public class ProviderWebhookHandlerTests
 
 ## Common mistakes
 
-- **Parsing JSON before verifying signature** - opens an attack surface for malformed-payload exploits.
-- **Using `==` to compare signatures** - timing attacks let attackers forge valid signatures one byte at a time.
 - **No idempotency** - providers retry on 5xx, you double-charge / double-create.
 - **Returning non-200 for unknown event types** - provider keeps retrying forever.
 - **Logging the raw body at INFO** - webhooks often contain PII (emails, names). Use DEBUG and scrub.
-- **Storing the secret in appsettings.json** - it ends up in git history. Always env var or Key Vault.
 
 ## Provider-specific notes
 
@@ -238,6 +210,7 @@ It logs and returns `default` on a non-success status, network error, or parse f
 
 ## Related
 
-- `.claude/rules/backend/security.md` - webhook signature validation rule
+- `.claude/rules/backend/api-design.md` - security invariants and error-code conventions
+- `add-integration-provider` - if the webhook comes with a new vendor integration
 - `feature-map.md` → Operations / Financial / Compliance for the feature being webhooked
 - `WebhookController.cs` - existing endpoints to copy from

@@ -5,41 +5,19 @@ description: Refactor existing code without changing behavior - split oversized 
 
 # Refactor, Split, and Simplify
 
-Proactive cleanup of existing code. Three things are in scope:
-
-1. **Split** - break oversized files into smaller cohesive ones
-2. **Deduplicate** - extract recurring patterns into shared helpers
-3. **Simplify** - remove speculative abstractions, dead options, wrapper indirection, and impossible-state defensive code
-
-Behavior must not change. Verify by running tests after each step.
+Proactive cleanup of existing code. **Behavior must not change** - run tests after each step.
 
 ## When this skill applies
 
-Trigger this skill when **any** of these are true:
+Any of: a file over its size threshold; **four or more** places with nearly identical code that has
+diverged subtly; a file mixing unrelated concerns (entity + factory + status machine + events in one);
+over-engineering signs (see "Simplification smells").
 
-- A class file exceeds the size threshold for its kind (see below)
-- Three or more places have nearly identical code that's diverged subtly
-- A file mixes unrelated concerns (entity + factory + status machine + events all in one)
-- Code has signs of over-engineering (see "Simplification smells" below)
-- The user asks to "refactor", "split", "deduplicate", "simplify", "untangle", "clean up", "remove dead code"
+## Size thresholds
 
-Don't use it as a generic style polish - that's what linters and `simplify` (built-in) are for.
-
-## Size thresholds (project-specific)
-
-| File kind                | Soft threshold | Hard threshold |
-| ------------------------ | -------------- | -------------- |
-| Domain entity            | 150 lines      | 250 lines      |
-| EF configuration         | 100 lines      | 200 lines      |
-| Command/Query handler    | 200 lines      | 400 lines      |
-| Controller               | 250 lines      | 400 lines      |
-| Application service      | 300 lines      | 500 lines      |
-| Infrastructure service   | 400 lines      | 600 lines      |
-| Angular component (.ts)  | 200 lines      | 350 lines      |
-| Angular template (.html) | 150 lines      | 300 lines      |
-| Static utility class     | 200 lines      | 400 lines      |
-
-Above the **soft** threshold = consider splitting if the file mixes cohesive concerns. Above the **hard** threshold = split now.
+`.claude/rules/code-quality.md` holds the per-file-type table - it is the single source, don't
+restate the numbers here. Above the **aim** range, split only if the file mixes cohesive concerns;
+above **refactor at**, split now. Line count is a smell, not a verdict.
 
 ## Step-by-step
 
@@ -92,31 +70,14 @@ Plan: split Load.cs (412 lines) into 4 partials and remove dead options:
 | Sub-components / child components | Angular templates with repeated complex blocks                   |
 | `@ngrx/signals` store extraction  | Component holding 5+ signals or non-trivial derived state        |
 
-#### Simplification mechanisms (see next section for what to look for)
-
-| Mechanism                             | When to use                                                      |
-| ------------------------------------- | ---------------------------------------------------------------- |
-| Inline single-call helper             | Helper is called once and isn't named more clearly than its body |
-| Drop unused parameter / property      | Tooling confirms zero readers across the solution                |
-| Replace interface with concrete class | One implementation, no test double in use, no DI substitution    |
-| Remove unreachable branch             | Type system or earlier guard makes the branch impossible         |
-| Replace LINQ chain with simple loop   | The loop is shorter, more readable, and not on a hot path        |
-| Collapse pass-through wrapper         | Wrapper just delegates without adding behavior                   |
-| Drop async                            | Method has no `await` and isn't part of an async interface       |
+For simplification mechanisms, see "Simplification smells" below - each smell names its own action.
 
 ### 4. Identify duplicates first
 
-Before splitting, scan for near-duplicates that should be extracted:
-
-```bash
-# Quick same-line search
-grep -rn "the obvious duplicated string" src/Core/
-
-# Look for similar method shapes by signature
-grep -rn "public async Task<.*> Handle.*Command.*Cancellation" src/Core/Logistics.Application/Commands/
-```
-
-If duplicates exist, extract them **before** splitting - that way each split partial pulls from one canonical source.
+Scan for near-duplicates before splitting - grep the obvious repeated string, and grep by method
+shape (`public async Task<.*> Handle.*Command.*Cancellation` across
+`src/Core/Logistics.Application/Modules/`). Extract them **first**, so each split partial pulls from
+one canonical source.
 
 ### 5. Make the edits in small, verifiable steps
 
@@ -267,19 +228,14 @@ Use the `commit` skill afterwards.
 
 ## Common mistakes
 
-- **Splitting a file that's actually cohesive** - long doesn't mean bad. A 350-line entity that's all one aggregate's behavior is fine.
-- **Premature abstraction**: extracting a "shared helper" with one caller. If only one caller exists, leave it inline.
 - **Removing a "single-impl" interface that DI uses for testing** - check the test project for `Substitute.For<IFoo>()` before deletion.
 - **Removing config that's set in production but unused locally** - search appsettings.\*.json AND the deployment env-var docs before deletion.
 - **Renaming while refactoring**: changing names in the same commit hides the move. Rename in a follow-up commit.
 - **Splitting along wrong seams** - if two halves still need to touch the same private state, the split is wrong. Use `partial class` or step back.
 - **Leaving stale namespaces or `internal` modifiers** - when moving types, the visibility may need to change.
 - **Forgetting to update `feature-map.md`** if a feature's primary file moves to a new path.
-- **Simplifying away a convention** - see "Don't simplify" above. If a rule file documents the pattern, leave it.
 
 ## Related
 
-- Built-in `simplify` skill - review recent changes for quality/reuse (complementary, narrower scope: only diffs)
-- `.claude/rules/backend/csharp-conventions.md` - file-scoped namespaces, one type per file matching filename, async/cancellation conventions
-- `.claude/rules/backend/mapperly.md` - when manual mapping is appropriate vs. Mapperly
-- `feature-map.md` - update if a feature's primary file paths change
+- Built-in `simplify` skill - narrower scope: recent diffs only
+- `.claude/rules/backend/csharp-conventions.md`, `mapperly.md`, `code-quality.md`

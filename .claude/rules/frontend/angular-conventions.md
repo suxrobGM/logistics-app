@@ -85,6 +85,22 @@ onKeydown(event: KeyboardEvent) {}
 - **Icons**: `<ui-icon name="..."/>` only - never a raw `<ng-icon>` in feature code. `name` is the typed `IconName` union (a key of `UI_ICONS` in `projects/shared/src/lib/ui/icons/icons.ts`); an unknown name is a **compile error**. To add a glyph, import its `@ng-icons/lucide` export and add one entry to `UI_ICONS`.
 - **Toasts / confirms**: `ToastService` from `@logistics/shared` only.
 
+### Adding a shared `ui-*` component
+
+1. `projects/shared/src/lib/ui/{category}/{name}/` - `{name}.ts` (+ `{name}.html` when non-trivial).
+2. Export it from the **category barrel** (`ui/{category}/index.ts`). The barrels export **per file, not per folder** - a second file in the folder needs a second export line.
+3. `ui/index.ts` only changes when you add a whole new category. `public-api.ts` already does `export * from "./lib/ui"` - nothing to add there.
+4. Register it in `/ui-lab` (tms-portal, `pages/ui-lab/`): add the component to an existing section, or for a new section add it to `imports`, push `{ id, label }` onto the `sections` array, and place the tag in `ui-lab.html` with a `<section id="...">` whose id **matches the array entry** - a mismatch silently breaks the anchor nav.
+5. Add the selector to the catalogue above, or it is invisible to future agents.
+
+Note: `check:theme-tokens` currently scopes to admin + customer only, so a hardcoded colour in `shared/ui` passes CI. The never-hardcode-a-colour rule is on you here.
+
+## Security
+
+- **XSS**: never bind `[innerHTML]` to user content. If dynamic HTML is unavoidable, go through `DomSanitizer`; avoid `bypassSecurityTrustHtml()`.
+- **Storage**: no tokens or sensitive data in `localStorage` / `sessionStorage`. Clear client state on logout.
+- **Authorization is server-side.** Route guards and `<ui-permission-guard>` shape the UI; they are not a security boundary. The API re-checks every permission.
+
 ## HTTP Caching
 
 - In-memory cache interceptor (`cacheInterceptor`) caches GET requests based on rules in `projects/shared/src/lib/api/cache.config.ts`
