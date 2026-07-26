@@ -35,11 +35,7 @@
     />
 
     <!-- Navigation -->
-    <app-nav-menu
-      [sections]="menuSections()"
-      [collapsed]="false"
-      (itemClick)="onNavItemClick()"
-    />
+    <app-nav-menu [sections]="menuSections()" [collapsed]="false" (itemClick)="onNavItemClick()" />
 
     <!-- Footer -->
     <div class="border-subtle border-t px-4 py-3">
@@ -97,6 +93,14 @@
       >
         <ui-icon name="user-pen" class="text-muted-foreground w-5 text-center" />
         <span>Manage Profile</span>
+      </button>
+      <button
+        class="text-subtle-foreground hover:bg-hover hover:text-foreground flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
+        (click)="openPrivacyUrl(); mobileUserPopover.hide()"
+        type="button"
+      >
+        <ui-icon name="shield" class="text-muted-foreground w-5 text-center" />
+        <span>Privacy &amp; Data</span>
       </button>
       <button
         class="text-danger hover:bg-danger/10 flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"

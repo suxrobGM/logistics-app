@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Api, getPortalProfile, type CustomerUserDto } from "@logistics/shared/api";
+import { openIdentityAccountPage } from "@logistics/shared/auth";
 import { Grid, Spinner, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { TenantContextService } from "@/core/services";
 import { environment } from "@/env";
@@ -37,10 +38,14 @@ export class AccountSettings {
   }
 
   protected openManageProfile(): void {
-    window.open(`${environment.identityServerUrl}/account/manage/profile`, "_blank");
+    openIdentityAccountPage(environment.identityServerUrl, "profile");
   }
 
   protected openChangePassword(): void {
-    window.open(`${environment.identityServerUrl}/account/manage/changepassword`, "_blank");
+    openIdentityAccountPage(environment.identityServerUrl, "changepassword");
+  }
+
+  protected openPrivacy(): void {
+    openIdentityAccountPage(environment.identityServerUrl, "privacy");
   }
 }

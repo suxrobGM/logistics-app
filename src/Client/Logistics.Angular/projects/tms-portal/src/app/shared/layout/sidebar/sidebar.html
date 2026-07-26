@@ -123,6 +123,14 @@
         <span>Manage Profile</span>
       </button>
       <button
+        class="text-subtle-foreground hover:bg-hover hover:text-foreground flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
+        (click)="openPrivacyUrl(); userPopover.hide()"
+        type="button"
+      >
+        <ui-icon name="shield" class="text-muted-foreground w-5 text-center" />
+        <span>Privacy &amp; Data</span>
+      </button>
+      <button
         class="text-danger hover:bg-danger/10 flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
         (click)="logout(); userPopover.hide()"
         type="button"

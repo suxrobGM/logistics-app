@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { ThemeToggle } from "@logistics/shared";
+import { openIdentityAccountPage } from "@logistics/shared/auth";
 import {
   Icon,
   UiButton,
@@ -58,6 +59,11 @@ export class Navbar {
       command: () => this.openAccountUrl(),
     },
     {
+      label: "Privacy & Data",
+      icon: "shield",
+      command: () => this.openPrivacyUrl(),
+    },
+    {
       label: "Switch Company",
       icon: "building-2",
       command: () => this.switchTenant(),
@@ -97,7 +103,11 @@ export class Navbar {
   }
 
   protected openAccountUrl(): void {
-    window.open(`${environment.identityServerUrl}/account/manage/profile`, "_blank");
+    openIdentityAccountPage(environment.identityServerUrl, "profile");
+  }
+
+  protected openPrivacyUrl(): void {
+    openIdentityAccountPage(environment.identityServerUrl, "privacy");
   }
 
   protected switchTenant(): void {

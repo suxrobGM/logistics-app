@@ -1,4 +1,5 @@
 import { Component, computed, inject } from "@angular/core";
+import { openIdentityAccountPage } from "@logistics/shared/auth";
 import { LayoutService } from "@logistics/shared/services";
 import { Icon, UiDrawer, UiPopover } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
@@ -64,6 +65,10 @@ export class MobileDrawer {
   }
 
   protected openAccountUrl(): void {
-    window.open(`${environment.identityServerUrl}/account/manage/profile`, "_blank");
+    openIdentityAccountPage(environment.identityServerUrl, "profile");
+  }
+
+  protected openPrivacyUrl(): void {
+    openIdentityAccountPage(environment.identityServerUrl, "privacy");
   }
 }

@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from "@angular/core";
+import { openIdentityAccountPage } from "@logistics/shared/auth";
 import { Icon, UiPopover, UiTooltip } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 import {
@@ -65,6 +66,10 @@ export class Sidebar {
   }
 
   protected openAccountUrl(): void {
-    window.open(`${environment.identityServerUrl}/account/manage/profile`, "_blank");
+    openIdentityAccountPage(environment.identityServerUrl, "profile");
+  }
+
+  protected openPrivacyUrl(): void {
+    openIdentityAccountPage(environment.identityServerUrl, "privacy");
   }
 }
