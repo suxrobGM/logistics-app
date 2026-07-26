@@ -17,9 +17,22 @@ import {
   Surface,
   Typography,
   UiButton,
+  type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { EmptyState, LoadingSkeleton } from "@/shared/components";
+
+/**
+ * Exhaustive on purpose: `StripeConnectStatus` is generated from the API spec, so a status added
+ * upstream becomes a compile error here instead of silently rendering as "Not Connected".
+ */
+const STATUS_META: Record<StripeConnectStatus, { severity: UiBadgeIntent; label: string }> = {
+  not_connected: { severity: "secondary", label: "Not Connected" },
+  pending: { severity: "warn", label: "Pending Verification" },
+  active: { severity: "success", label: "Active" },
+  restricted: { severity: "warn", label: "Restricted" },
+  disabled: { severity: "danger", label: "Disabled" },
+};
 
 /** Stripe Connect onboarding + payout status. Rendered by the Billing settings tab. */
 @Component({
@@ -48,26 +61,12 @@ export class StripeConnectCard implements OnInit {
   protected readonly isOpeningDashboard = signal(false);
   protected readonly connectStatus = signal<StripeConnectStatusDto | null>(null);
 
-  protected readonly statusSeverity = computed(() => {
-    const status = this.connectStatus()?.status;
-    switch (status) {
-      case "active":
-        return "success";
-      case "pending":
-        return "warn";
-      case "restricted":
-        return "warn";
-      case "disabled":
-        return "danger";
-      default:
-        return "secondary";
-    }
-  });
+  private readonly statusMeta = computed(
+    () => STATUS_META[this.connectStatus()?.status ?? "not_connected"],
+  );
 
-  protected readonly statusLabel = computed(() => {
-    const status = this.connectStatus()?.status;
-    return this.getStatusLabel(status);
-  });
+  protected readonly statusSeverity = computed(() => this.statusMeta().severity);
+  protected readonly statusLabel = computed(() => this.statusMeta().label);
 
   ngOnInit(): void {
     this.fetchConnectStatus();
@@ -139,21 +138,6 @@ export class StripeConnectCard implements OnInit {
       this.toastService.showError("Failed to load payment settings");
     } finally {
       this.isLoading.set(false);
-    }
-  }
-
-  private getStatusLabel(status: StripeConnectStatus | undefined): string {
-    switch (status) {
-      case "active":
-        return "Active";
-      case "pending":
-        return "Pending Verification";
-      case "restricted":
-        return "Restricted";
-      case "disabled":
-        return "Disabled";
-      default:
-        return "Not Connected";
     }
   }
 }
