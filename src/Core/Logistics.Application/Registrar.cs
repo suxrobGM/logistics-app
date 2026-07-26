@@ -59,6 +59,22 @@ public static class Registrar
         return services;
     }
 
+    /// <summary>
+    /// Registers only the Compliance/Privacy MediatR slice, for hosts (the IdentityServer) that serve
+    /// the GDPR self-service page without the full <see cref="AddApplicationLayer"/> stack.
+    /// </summary>
+    public static IServiceCollection AddApplicationPrivacyServices(this IServiceCollection services)
+    {
+        const string privacyNamespace = "Logistics.Application.Modules.Compliance.Privacy";
+
+        // The filter isn't tidiness: an unfiltered scan registers notification handlers that
+        // DispatchDomainEventsInterceptor would construct on SaveChanges. FeatureCheck is off - it
+        // needs IFeatureService + ICurrentTenantAccessor, which this host doesn't wire.
+        return services.AddApplicationCommon(
+            typeFilter: type => type.Namespace?.StartsWith(privacyNamespace, StringComparison.Ordinal) == true,
+            withFeatureCheck: false);
+    }
+
     private static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.Scan(scan => scan
@@ -69,16 +85,35 @@ public static class Registrar
         return services;
     }
 
-    private static IServiceCollection AddApplicationCommon(this IServiceCollection services)
+    /// <summary>
+    /// Validators + MediatR with the core pipeline. <paramref name="typeFilter"/> narrows the scan
+    /// to one slice, for hosts that don't want the whole Application layer.
+    /// </summary>
+    private static IServiceCollection AddApplicationCommon(
+        this IServiceCollection services,
+        Func<Type, bool>? typeFilter = null,
+        bool withFeatureCheck = true)
     {
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
+        services.AddValidatorsFromAssembly(
+            Assembly.GetExecutingAssembly(),
+            includeInternalTypes: true,
+            filter: typeFilter is null ? null : result => typeFilter(result.ValidatorType));
+
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(typeof(Registrar).Assembly);
+            if (typeFilter is not null)
+            {
+                cfg.TypeEvaluator = typeFilter;
+            }
+
             cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
             cfg.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
             cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
-            cfg.AddOpenBehavior(typeof(FeatureCheckBehaviour<,>));
+            if (withFeatureCheck)
+            {
+                cfg.AddOpenBehavior(typeof(FeatureCheckBehaviour<,>));
+            }
         });
         return services;
     }

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Shared.Identity.Claims;
 
 namespace Logistics.Infrastructure.Persistence.Services;
 
@@ -14,7 +15,11 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
 
     public Guid? GetUserId()
     {
-        var userIdClaim = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = httpContextAccessor.HttpContext?.User;
+
+        var userIdClaim = user?.FindFirstValue(ClaimTypes.NameIdentifier)
+                          ?? user?.FindFirstValue(CustomClaimTypes.Subject);
+
         return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
     }
 

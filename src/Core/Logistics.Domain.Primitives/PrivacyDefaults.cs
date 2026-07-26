@@ -44,8 +44,8 @@ public static class PrivacyDefaults
     public const string ExportBlobContainer = "data-exports";
 
     /// <summary>
-    /// Path of the in-app privacy page on the TMS portal, used for the link
-    /// in the data-export-ready email.
+    /// Privacy page on the IdentityServer (one page for every portal), used for the link in
+    /// the data-export-ready email.
     /// </summary>
-    public const string PortalPrivacyPath = "/settings/privacy";
+    public const string PrivacyPagePath = "/account/manage/privacy";
 }

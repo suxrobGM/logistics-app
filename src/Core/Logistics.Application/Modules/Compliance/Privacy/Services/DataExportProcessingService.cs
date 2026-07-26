@@ -20,10 +20,10 @@ internal sealed class DataExportProcessingService(
     IBlobStorageService blobStorage,
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
-    IOptions<ImpersonationOptions> impersonationOptions,
+    IOptions<IdentityServerOptions> identityServerOptions,
     ILogger<DataExportProcessingService> logger) : IDataExportProcessingService
 {
-    private readonly string portalBaseUrl = impersonationOptions.Value.TmsPortalUrl;
+    private readonly string privacyPageBaseUrl = identityServerOptions.Value.UserFacingAuthority;
 
     public async Task ProcessPendingAsync(CancellationToken ct = default)
     {
@@ -99,7 +99,7 @@ internal sealed class DataExportProcessingService(
         var model = new DataExportReadyEmailModel
         {
             UserName = user.GetFullName(),
-            PortalUrl = $"{portalBaseUrl.TrimEnd('/')}{PrivacyDefaults.PortalPrivacyPath}?export={request.Id}",
+            PortalUrl = $"{privacyPageBaseUrl.TrimEnd('/')}{PrivacyDefaults.PrivacyPagePath}",
             ExpiresAt = request.ExpiresAt?.ToString("MMMM dd, yyyy 'UTC'") ?? "soon"
         };
 

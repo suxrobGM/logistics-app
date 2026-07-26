@@ -1,5 +1,6 @@
 using System.Threading.RateLimiting;
 using Duende.IdentityServer;
+using Logistics.Application;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
@@ -9,6 +10,7 @@ using Logistics.Infrastructure.Communications;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Data;
+using Logistics.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -44,10 +46,13 @@ internal static class Setup
                     .AddDefaultTokenProviders();
             });
 
-        // Application services used directly by Razor pages (e.g. the Manage Profile page).
-        // The IdentityServer doesn't pull in the full Application/MediatR stack, so register
-        // only what it needs (UserService depends solely on the master/tenant unit of work).
+        // Backs the signed download URL on the Manage Privacy page's data exports.
+        services.AddStorageInfrastructure(configuration);
+
+        // Application services used directly by Razor pages. Still not the full Application/MediatR
+        // stack - just UserService (Manage Profile) and the Privacy slice (Manage Privacy).
         services.AddScoped<IUserService, UserService>();
+        services.AddApplicationPrivacyServices();
 
         services.AddRazorPages();
         AddAuthSchemes(services);

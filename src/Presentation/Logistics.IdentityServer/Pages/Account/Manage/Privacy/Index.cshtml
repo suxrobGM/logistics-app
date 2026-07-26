@@ -1,0 +1,176 @@
+@page
+@using Logistics.Domain.Primitives.Enums
+@using Logistics.IdentityServer.Pages.Account.Manage
+@model Logistics.IdentityServer.Pages.Account.Manage.Privacy.PrivacyModel
+@{
+    ViewData["Title"] = "Privacy & data";
+    ViewData["ActivePage"] = ManageNavPages.Privacy;
+}
+
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Download my data</h5>
+        <p class="card-text text-muted">
+            We'll prepare a ZIP with your profile, organisations you have access to, consent history,
+            and the activity records we hold for you. You'll get an email when it's ready. Limit: one
+            export per 24 hours.
+        </p>
+
+        <form method="post" asp-page-handler="RequestExport" class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Request export</button>
+        </form>
+
+        @if (Model.Exports.Count > 0)
+        {
+            <div class="table-responsive mt-3">
+                <table class="table table-sm align-middle">
+                    <thead>
+                    <tr>
+                        <th>Requested</th>
+                        <th>Status</th>
+                        <th>Expires</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var export in Model.Exports)
+                    {
+                        <tr>
+                            <td>@export.RequestedAt.ToLocalTime().ToString("g")</td>
+                            <td>
+                                <span class="badge @Model.ExportStatusClass(export.Status)">
+                                    @export.Status.GetDescription()
+                                </span>
+                            </td>
+                            <td>@(export.ExpiresAt?.ToLocalTime().ToString("g") ?? "-")</td>
+                            <td class="text-end">
+                                @if (export.Status == DataExportStatus.Ready)
+                                {
+                                    <form method="post" asp-page-handler="Download" asp-route-id="@export.Id">
+                                        <button type="submit" class="btn btn-link btn-sm p-0">Download</button>
+                                    </form>
+                                }
+                                else if (export.Status == DataExportStatus.Failed)
+                                {
+                                    <span class="text-muted small">@export.ErrorMessage</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Delete my account</h5>
+        <p class="card-text text-muted">
+            Account deletion is irreversible after a 30-day grace period. Operational and financial
+            records (loads, invoices, payments, audit logs) stay intact for legal and accounting
+            compliance - only your name, email, and phone are replaced with placeholders.
+        </p>
+
+        @if (Model.PendingDeletion is { } pending)
+        {
+            <div class="alert alert-warning">
+                Your account is scheduled for deletion on
+                <strong>@pending.ScheduledFor.ToLocalTime().ToString("d")</strong>.
+                @if (pending.IsCancellable)
+                {
+                    <text>You can still cancel this until then.</text>
+                }
+                else
+                {
+                    <text>The grace period has elapsed; deletion will run on the next scheduled job.</text>
+                }
+            </div>
+
+            @if (pending.IsCancellable)
+            {
+                <form method="post" asp-page-handler="CancelDeletion" asp-route-id="@pending.Id" class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-secondary">Cancel deletion</button>
+                </form>
+            }
+        }
+        else
+        {
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#delete-account-modal">
+                    Delete my account
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Consent history</h5>
+        <p class="card-text text-muted">A record of every cookie / processing consent you've made.</p>
+
+        @if (Model.Consents.Count == 0)
+        {
+            <p class="text-muted small mb-0">No consent records yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead>
+                    <tr>
+                        <th>When</th>
+                        <th>Category</th>
+                        <th>Decision</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var consent in Model.Consents)
+                    {
+                        <tr>
+                            <td>@consent.Timestamp.ToLocalTime().ToString("g")</td>
+                            <td>@consent.ConsentType.GetDescription()</td>
+                            <td>
+                                <span class="badge @(consent.Granted ? "bg-success" : "bg-secondary")">
+                                    @(consent.Granted ? "Granted" : "Denied")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="delete-account-modal" tabindex="-1" aria-labelledby="delete-account-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" asp-page-handler="RequestDeletion" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delete-account-modal-label">Delete my account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small">
+                    This will schedule your personal data for permanent anonymization 30 days from now.
+                    Operational and financial records (loads, invoices, payments) remain attached to your
+                    organization for accounting purposes.
+                </p>
+                <div class="mb-0">
+                    <label asp-for="DeleteReason" class="form-label">Reason (optional)</label>
+                    <textarea asp-for="DeleteReason" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger">Schedule deletion</button>
+            </div>
+        </form>
+    </div>
+</div>
