@@ -1,5 +1,6 @@
 using Logistics.Application.Modules.Compliance.Privacy.Commands;
 using Logistics.Application.Modules.Compliance.Privacy.Queries;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using MediatR;
@@ -15,6 +16,9 @@ namespace Logistics.IdentityServer.Pages.Account.Manage.Privacy;
 /// </summary>
 public class PrivacyModel(IMediator mediator) : PageModel
 {
+    /// <summary>Single source for the grace-period copy, so the page can't drift from the job that enforces it.</summary>
+    public int GracePeriodDays => PrivacyDefaults.DeletionGracePeriod.Days;
+
     public IReadOnlyList<DataExportRequestDto> Exports { get; private set; } = [];
     public IReadOnlyList<ConsentRecordDto> Consents { get; private set; } = [];
     public DataDeletionRequestDto? PendingDeletion { get; private set; }
@@ -51,7 +55,7 @@ public class PrivacyModel(IMediator mediator) : PageModel
         };
 
         return Done(await mediator.Send(command, ct),
-            "Deletion scheduled. You have 30 days to cancel before your data is anonymized.");
+            $"Deletion scheduled. You have {GracePeriodDays} days to cancel before your data is anonymized.");
     }
 
     public async Task<IActionResult> OnPostCancelDeletionAsync(Guid id, CancellationToken ct) =>

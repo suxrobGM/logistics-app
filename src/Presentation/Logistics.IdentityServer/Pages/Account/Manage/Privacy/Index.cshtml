@@ -71,7 +71,7 @@
     <div class="card-body">
         <h5 class="card-title">Delete my account</h5>
         <p class="card-text text-muted">
-            Account deletion is irreversible after a 30-day grace period. Operational and financial
+            Account deletion is irreversible after a @(Model.GracePeriodDays)-day grace period. Operational and financial
             records (loads, invoices, payments, audit logs) stay intact for legal and accounting
             compliance - only your name, email, and phone are replaced with placeholders.
         </p>
@@ -158,7 +158,7 @@
             </div>
             <div class="modal-body">
                 <p class="small">
-                    This will schedule your personal data for permanent anonymization 30 days from now.
+                    This will schedule your personal data for permanent anonymization @(Model.GracePeriodDays) days from now.
                     Operational and financial records (loads, invoices, payments) remain attached to your
                     organization for accounting purposes.
                 </p>
