@@ -54,6 +54,20 @@ export class FeatureService {
   }
 
   /**
+   * One flag, or several of which **any** enabled one satisfies the requirement; `undefined`
+   * passes. The single definition of `TenantFeature | TenantFeature[]` semantics.
+   */
+  isAnyEnabled(feature: TenantFeature | TenantFeature[] | undefined): boolean {
+    if (!feature) {
+      return true;
+    }
+    if (!Array.isArray(feature)) {
+      return this.isEnabled(feature);
+    }
+    return feature.some((f) => this.isEnabled(f));
+  }
+
+  /**
    * Check if a specific feature is locked by admin.
    * @param feature The feature to check
    * @returns true if admin-locked, false otherwise

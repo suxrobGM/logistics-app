@@ -46,6 +46,18 @@ export const Permission = {
     View: "Permission.Invoice.View",
     Manage: "Permission.Invoice.Manage",
   },
+  Tax: {
+    View: "Permission.Tax.View",
+    Manage: "Permission.Tax.Manage",
+  },
+  Accounting: {
+    View: "Permission.Accounting.View",
+    Manage: "Permission.Accounting.Manage",
+  },
+  ApiKey: {
+    View: "Permission.ApiKey.View",
+    Manage: "Permission.ApiKey.Manage",
+  },
   Payroll: {
     View: "Permission.Payroll.View",
     Manage: "Permission.Payroll.Manage",

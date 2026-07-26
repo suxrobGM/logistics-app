@@ -46,29 +46,30 @@ export function featureGuard(feature: TenantFeature): CanActivateFn {
 }
 
 /**
- * Route guard that reads the feature from route data.
- * The route must have a `feature` property in its data object.
+ * Route guard that reads the feature from route data. `feature` may be one flag or an array, in
+ * which case **any** enabled flag admits the route; the first drives the upgrade-prompt copy.
  */
 export const featureGuardFromData: CanActivateFn = async (route) => {
   const featureService = inject(FeatureService);
   const router = inject(Router);
   const upgradeHandler = inject(UPGRADE_HANDLER, { optional: true });
 
-  const feature = route.data["feature"] as TenantFeature | undefined;
+  const declared = route.data["feature"] as TenantFeature | TenantFeature[] | undefined;
 
   // If no feature specified, allow access
-  if (!feature) {
+  if (!declared) {
     return true;
   }
 
   // Wait for features to be loaded before checking
   await featureService.waitForLoad();
 
-  if (featureService.isEnabled(feature)) {
+  if (featureService.isAnyEnabled(declared)) {
     return true;
   }
 
-  return handleDisabledFeature(featureService, router, upgradeHandler, feature);
+  const [first] = Array.isArray(declared) ? declared : [declared];
+  return handleDisabledFeature(featureService, router, upgradeHandler, first);
 };
 
 /**
