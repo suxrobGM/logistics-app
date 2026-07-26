@@ -1,0 +1,22 @@
+<ui-page-header title="Integrations" [centered]="true" />
+
+<ui-container maxWidth="md">
+  <ui-stack gap="6">
+    @if (showAccounting()) {
+      <app-quickbooks-card />
+    }
+
+    @if (showApiKeys()) {
+      <app-api-keys-table />
+      <app-mcp-integration-guide />
+    }
+
+    @if (!showAccounting() && !showApiKeys()) {
+      <ui-empty-state
+        icon="link"
+        title="No integrations available"
+        message="Your current plan doesn't include any integrations. Upgrade to connect QuickBooks or issue API keys for the MCP server."
+      />
+    }
+  </ui-stack>
+</ui-container>

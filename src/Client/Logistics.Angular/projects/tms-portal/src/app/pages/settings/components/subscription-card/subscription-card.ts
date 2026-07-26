@@ -21,9 +21,13 @@ import {
 import { TenantService, ToastService } from "@/core/services";
 import { Labels } from "@/shared/utils";
 
+/**
+ * Plan overview, pricing breakdown and subscription actions. Rendered by the Billing settings tab;
+ * links out to `/subscription/plans` and `/subscription/renew`, which stay standalone routes.
+ */
 @Component({
-  selector: "app-manage-subscription",
-  templateUrl: "./manage-subscription.html",
+  selector: "app-subscription-card",
+  templateUrl: "./subscription-card.html",
   imports: [
     Badge,
     Card,
@@ -37,7 +41,7 @@ import { Labels } from "@/shared/utils";
     UiButton,
   ],
 })
-export class ManageSubscriptionComponent {
+export class SubscriptionCard {
   private readonly tenantService = inject(TenantService);
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
@@ -61,15 +65,15 @@ export class ManageSubscriptionComponent {
     });
   }
 
-  getSubStatusSeverity(): UiBadgeIntent {
+  protected getSubStatusSeverity(): UiBadgeIntent {
     return Labels.subscriptionStatusSeverity(this.subscription()!);
   }
 
-  getSubStatusLabel(): string {
+  protected getSubStatusLabel(): string {
     return Labels.subscriptionStatus(this.subscription()!);
   }
 
-  confirmCancelSubscription(): void {
+  protected confirmCancelSubscription(): void {
     const sub = this.subscription();
     if (!sub) return;
 
@@ -101,7 +105,7 @@ export class ManageSubscriptionComponent {
     });
   }
 
-  async openBillingPortal(): Promise<void> {
+  protected async openBillingPortal(): Promise<void> {
     this.isLoading.set(true);
     const result = await this.api.invoke(getBillingPortalUrl, {
       returnUrl: window.location.href,
@@ -113,7 +117,7 @@ export class ManageSubscriptionComponent {
     this.isLoading.set(false);
   }
 
-  calcTotalSubscriptionCost(): number {
+  protected calcTotalSubscriptionCost(): number {
     const sub = this.subscription();
     if (!sub) return 0;
     const baseFee = sub.plan?.price ?? 0;

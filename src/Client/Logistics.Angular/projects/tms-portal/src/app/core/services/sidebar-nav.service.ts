@@ -1,8 +1,8 @@
 import { computed, effect, inject, Injectable, signal } from "@angular/core";
 import { UserRole } from "@logistics/shared";
 import { FeatureService } from "@logistics/shared/services";
-import { AuthService } from "@/core/auth";
-import type { NavItem, NavSection } from "@/shared/layout/nav-menu";
+import { AuthService, PermissionService } from "@/core/auth";
+import { isNavItemVisible, type NavItem, type NavSection } from "@/shared/layout/nav-menu";
 import { sidebarSections } from "@/shared/layout/sidebar/sidebar-items";
 import { ChatService } from "./chat.service";
 import { CommandPaletteService } from "./command-palette.service";
@@ -34,6 +34,8 @@ const ROLE_ITEM_ACCESS: Record<string, string[] | "*"> = {
     "invoicing",
     "expenses",
     "reports",
+    // Billing + Integrations only; per-route `data.permission` keeps Manager out of the rest.
+    "settings",
   ],
   [UserRole.Owner]: "*",
 };
@@ -50,6 +52,7 @@ const ROLE_ITEM_ACCESS: Record<string, string[] | "*"> = {
 export class SidebarNavService {
   private readonly authService = inject(AuthService);
   private readonly featureService = inject(FeatureService);
+  private readonly permissionService = inject(PermissionService);
   private readonly featureProvider = inject(TmsFeatureProvider);
   private readonly tenantService = inject(TenantService);
   private readonly chatService = inject(ChatService);
@@ -119,20 +122,22 @@ export class SidebarNavService {
       .filter((item) => {
         // Role access.
         if (allowedItems !== "*" && !allowedItems.includes(item.id)) return false;
-        // Feature flag.
-        if (item.feature && !this.featureService.isEnabled(item.feature)) return false;
+        // Feature flag + permission.
+        if (!this.isVisible(item)) return false;
         return true;
       })
       .map((item) => {
         if (!item.children) return item;
 
-        // Children are filtered by their own feature flag; `menuHidden` is applied later per surface.
-        const children = item.children.filter(
-          (child) => !child.feature || this.featureService.isEnabled(child.feature),
-        );
+        // Children filter on their own feature/permission; `menuHidden` is applied later per surface.
+        const children = item.children.filter((child) => this.isVisible(child));
         return this.collapseOrKeep(item, children);
       })
       .filter((item): item is NavItem => item !== null);
+  }
+
+  private isVisible(item: NavItem): boolean {
+    return isNavItemVisible(item, this.featureService, this.permissionService);
   }
 
   /**

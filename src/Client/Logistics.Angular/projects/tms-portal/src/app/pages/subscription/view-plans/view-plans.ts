@@ -190,7 +190,7 @@ export class ViewPlansComponent implements OnInit {
           hasSubscription ? "Plan changed successfully" : "Subscription created successfully",
         );
         this.tenantService.refetchTenantData();
-        this.router.navigateByUrl("/subscription/manage");
+        this.router.navigateByUrl("/settings/billing");
 
         this.isLoading.set(false);
       },

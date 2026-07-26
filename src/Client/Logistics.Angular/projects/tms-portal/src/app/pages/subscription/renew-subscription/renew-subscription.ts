@@ -69,7 +69,9 @@ export class RenewSubscriptionComponent {
 
     this.tenantService.refetchTenantData();
     this.toastService.showSuccess("Subscription resumed successfully");
-    this.router.navigateByUrl("/subscription/manage");
+    // Home, not Billing: any role can land here from /unauthorized when the tenant lapses, and
+    // Billing admits only Owner and Manager.
+    this.router.navigateByUrl("/");
 
     this.isLoading.set(false);
   }

@@ -1,3 +1,4 @@
+import { Permission } from "@logistics/shared";
 import type { NavSection } from "@/shared/layout/nav-menu";
 
 export const systemNav: NavSection = {
@@ -10,51 +11,38 @@ export const systemNav: NavSection = {
       label: "Settings",
       icon: "settings",
       route: "/settings",
-      // Children stay in the data for the command palette + stored favorites, but each is
-      // `menuHidden` so the rendered menu shows Settings as a single link to the tabbed layout.
+      // Single source of truth for the settings tab bar - `settings-layout` derives it from these,
+      // so the two can't drift. Each is `menuHidden`, so the sidebar shows Settings as one link
+      // while the command palette and favorites still index them. `permission` mirrors the matching
+      // route's `data.permission`: the route enforces, this hides.
       children: [
         {
           id: "settings-company",
           label: "Company",
           route: "/settings/company",
+          permission: Permission.Tenant.View,
           menuHidden: true,
         },
         {
-          id: "settings-payments",
-          label: "Payments",
-          route: "/settings/payments",
+          id: "settings-billing",
+          label: "Billing",
+          route: "/settings/billing",
+          permission: Permission.Payment.View,
           menuHidden: true,
         },
         {
-          id: "settings-subscription",
-          label: "Plan & Billing",
-          route: "/subscription/manage",
+          id: "settings-integrations",
+          label: "Integrations",
+          route: "/settings/integrations",
+          feature: ["accounting", "mcp_server"],
+          permission: Permission.Accounting.View,
           menuHidden: true,
         },
         {
           id: "settings-features",
           label: "Features",
           route: "/settings/features",
-          menuHidden: true,
-        },
-        {
-          id: "settings-api-keys",
-          label: "API Keys",
-          route: "/settings/api-keys",
-          feature: "mcp_server",
-          menuHidden: true,
-        },
-        {
-          id: "settings-accounting",
-          label: "Accounting",
-          route: "/settings/accounting",
-          feature: "accounting",
-          menuHidden: true,
-        },
-        {
-          id: "settings-privacy",
-          label: "Privacy",
-          route: "/settings/privacy",
+          permission: Permission.Tenant.View,
           menuHidden: true,
         },
       ],

@@ -11,7 +11,6 @@ import {
 import {
   Badge,
   Card,
-  Container,
   Grid,
   Icon,
   Stack,
@@ -20,29 +19,26 @@ import {
   UiButton,
 } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
-import { EmptyState, LoadingSkeleton, PageHeader } from "@/shared/components";
-import { TenantTaxRatesCard } from "../components";
+import { EmptyState, LoadingSkeleton } from "@/shared/components";
 
+/** Stripe Connect onboarding + payout status. Rendered by the Billing settings tab. */
 @Component({
-  selector: "app-payment-settings",
-  templateUrl: "./payment-settings.html",
+  selector: "app-stripe-connect-card",
+  templateUrl: "./stripe-connect-card.html",
   imports: [
     Badge,
     Card,
-    Container,
     EmptyState,
     Grid,
     Icon,
     LoadingSkeleton,
-    PageHeader,
     Stack,
     Surface,
-    TenantTaxRatesCard,
     Typography,
     UiButton,
   ],
 })
-export class PaymentSettingsComponent implements OnInit {
+export class StripeConnectCard implements OnInit {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 

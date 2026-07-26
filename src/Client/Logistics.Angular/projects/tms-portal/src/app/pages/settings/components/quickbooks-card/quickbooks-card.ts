@@ -8,16 +8,16 @@ import {
   getQuickBooksConnection,
   type AccountingConnectionDto,
 } from "@logistics/shared/api";
-import { Badge, Card, Container, Spinner, Stack, UiButton } from "@logistics/shared/ui";
+import { Badge, Card, Spinner, Stack, UiButton } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
-import { PageHeader } from "@/shared/components";
 
+/** QuickBooks Online connection. Rendered by the Integrations settings tab. */
 @Component({
-  selector: "app-accounting-settings",
-  templateUrl: "./accounting-settings.html",
-  imports: [Badge, Card, Container, DatePipe, PageHeader, Spinner, Stack, UiButton],
+  selector: "app-quickbooks-card",
+  templateUrl: "./quickbooks-card.html",
+  imports: [Badge, Card, DatePipe, Spinner, Stack, UiButton],
 })
-export class AccountingSettings implements OnInit {
+export class QuickbooksCard implements OnInit {
   private readonly api = inject(Api);
   private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);

@@ -14,7 +14,9 @@
   } @else {
     <ui-stack direction="row" align="center" justify="between" class="mb-4">
       <ui-typography variant="h5" tag="h3">Configured rates ({{ rates().length }})</ui-typography>
-      <ui-button icon="plus" label="Add rate" (click)="openCreate()" />
+      @if (canManage()) {
+        <ui-button icon="plus" label="Add rate" (click)="openCreate()" />
+      }
     </ui-stack>
 
     @if (rates().length === 0) {
@@ -33,7 +35,9 @@
             <th class="text-right" style="width: 100px">Rate</th>
             <th>Description</th>
             <th>Effective</th>
-            <th style="width: 120px"></th>
+            @if (canManage()) {
+              <th style="width: 120px"></th>
+            }
           </tr>
         </ng-template>
         <ng-template #body let-rate>
@@ -50,26 +54,28 @@
                 – {{ rate.effectiveTo | dateFormat: "mediumDate" }}
               }
             </td>
-            <td>
-              <ui-stack direction="row" gap="2">
-                <ui-button
-                  intent="secondary"
-                  appearance="text"
-                  size="sm"
-                  icon="pencil"
-                  (click)="openEdit(rate)"
-                  ariaLabel="Edit"
-                />
-                <ui-button
-                  intent="danger"
-                  appearance="text"
-                  size="sm"
-                  icon="trash"
-                  (click)="askDelete(rate)"
-                  ariaLabel="Delete"
-                />
-              </ui-stack>
-            </td>
+            @if (canManage()) {
+              <td>
+                <ui-stack direction="row" gap="2">
+                  <ui-button
+                    intent="secondary"
+                    appearance="text"
+                    size="sm"
+                    icon="pencil"
+                    (click)="openEdit(rate)"
+                    ariaLabel="Edit"
+                  />
+                  <ui-button
+                    intent="danger"
+                    appearance="text"
+                    size="sm"
+                    icon="trash"
+                    (click)="askDelete(rate)"
+                    ariaLabel="Delete"
+                  />
+                </ui-stack>
+              </td>
+            }
           </tr>
         </ng-template>
       </ui-data-table>

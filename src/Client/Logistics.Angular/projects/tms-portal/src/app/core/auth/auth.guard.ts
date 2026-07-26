@@ -14,3 +14,15 @@ export const authGuard = createRoleGuard({
       ? true
       : inject(Router).parseUrl("/unauthorized?reason=subscription"),
 });
+
+// Tenant administration. Mirrors what the API authorizes: Owner holds every settings permission,
+// Manager only Payment.*/Accounting.*, Dispatcher and Driver none. Per-tab `data.permission` does
+// the rest - `createRoleGuard` checks it automatically.
+export const settingsGuard = createRoleGuard({
+  allowedRoles: [UserRole.Owner, UserRole.Manager],
+  unauthenticatedRedirect: "/unauthorized",
+  extraCheck: () =>
+    inject(TenantService).isSubscriptionActive()
+      ? true
+      : inject(Router).parseUrl("/unauthorized?reason=subscription"),
+});

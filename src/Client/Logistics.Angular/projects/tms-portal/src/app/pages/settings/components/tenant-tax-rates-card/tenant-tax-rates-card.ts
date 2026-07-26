@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { disabled, form, FormField, FormRoot, max, min, required } from "@angular/forms/signals";
+import { Permission } from "@logistics/shared";
 import {
   Api,
   createTenantTaxRate,
@@ -29,6 +30,7 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
+import { PermissionService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 
 interface TaxRateModel {
@@ -73,6 +75,12 @@ const EMPTY: TaxRateModel = {
 export class TenantTaxRatesCard implements OnInit {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
+  private readonly permissionService = inject(PermissionService);
+
+  /** Read-only without `Tax.Manage` - Manager holds `Tax.View` alone, so they see rates but can't edit. */
+  protected readonly canManage = computed(() =>
+    this.permissionService.hasPermission(Permission.Tax.Manage),
+  );
 
   protected readonly isLoading = signal(false);
   protected readonly rates = signal<TenantTaxRateDto[]>([]);
