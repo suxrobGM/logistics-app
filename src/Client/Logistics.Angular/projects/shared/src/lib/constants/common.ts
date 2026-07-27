@@ -31,4 +31,5 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   dateFormat: "us",
   timezone: "America/New_York",
   weightUnit: "pounds",
+  operatingMode: "fleet",
 };

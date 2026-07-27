@@ -218,6 +218,22 @@
                   filterPlaceholder="Search timezone..."
                 />
               </ui-form-field>
+
+              <ui-form-field
+                label="Operating mode"
+                for="operatingMode"
+                hint="Choose Fleet if you employ drivers. Owner-operator hides the team features (employees, payroll, messages) and shows a dashboard built around your own truck."
+                class="mb-0 md:col-span-2"
+              >
+                <ui-select-field
+                  id="operatingMode"
+                  [formField]="form.operatingMode"
+                  [options]="operatingModeOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  [fluid]="true"
+                />
+              </ui-form-field>
             </div>
           </ui-surface>
         </ui-stack>

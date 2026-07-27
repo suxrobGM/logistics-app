@@ -29,6 +29,7 @@ export class TenantAdd {
       ownerEmail: formValue.ownerEmail,
       ownerFirstName: formValue.ownerFirstName,
       ownerLastName: formValue.ownerLastName,
+      operatingMode: formValue.operatingMode,
     };
 
     await this.api.invoke(createTenant, { body: command });

@@ -20,6 +20,7 @@ import type {
   LoadSource,
   LoadStatus,
   LoadType,
+  OperatingMode,
   PaymentMethodType,
   PaymentStatus,
   Region,
@@ -247,6 +248,11 @@ export const terminalTypeOptions: SelectOption<TerminalType>[] = [
 export const regionOptions: SelectOption<Region>[] = [
   { label: "United States", value: "us" },
   { label: "Europe", value: "eu" },
+];
+
+export const operatingModeOptions: SelectOption<OperatingMode>[] = [
+  { label: "Fleet", value: "fleet" },
+  { label: "Owner-operator (solo)", value: "solo_operator" },
 ];
 
 export const licenseClassOptions: SelectOption<LicenseClass>[] = [
