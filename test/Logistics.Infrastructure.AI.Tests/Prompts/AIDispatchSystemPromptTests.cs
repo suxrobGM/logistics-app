@@ -165,6 +165,130 @@ public class AIDispatchSystemPromptTests
 
     #endregion
 
+    #region Operating mode (fleet vs solo owner-operator)
+
+    private static string SoloPrompt() =>
+        AIDispatchSystemPrompt.Build(
+            "Fleet", AIDispatchMode.Autonomous, operatingMode: OperatingMode.SoloOperator);
+
+    [Fact]
+    public void Build_SoloOperator_IncludesFleetProfileSection()
+    {
+        var prompt = SoloPrompt();
+
+        Assert.Contains("## Fleet Profile: SOLO OWNER-OPERATOR", prompt);
+        Assert.Contains("one truck and one driver", prompt);
+        Assert.Contains("get_driver_hos_status", prompt);
+    }
+
+    [Fact]
+    public void Build_FleetMode_OmitsTheWholeSoloSection()
+    {
+        var prompt = AIDispatchSystemPrompt.Build("Fleet", AIDispatchMode.Autonomous);
+
+        Assert.DoesNotContain("Fleet Profile", prompt);
+        Assert.DoesNotContain("SOLO OWNER-OPERATOR", prompt);
+    }
+
+    /// <summary>
+    /// The default keeps the ~23 existing call sites - and every tenant that never set the field - on
+    /// the fleet prompt.
+    /// </summary>
+    [Fact]
+    public void Build_DefaultOperatingMode_MatchesFleet()
+    {
+        var defaulted = AIDispatchSystemPrompt.Build("Fleet", AIDispatchMode.Autonomous);
+        var explicitFleet = AIDispatchSystemPrompt.Build(
+            "Fleet", AIDispatchMode.Autonomous, operatingMode: OperatingMode.Fleet);
+
+        Assert.Equal(explicitFleet, defaulted);
+    }
+
+    /// <summary>
+    /// An override block cannot undo a line still sitting in context, so the three fleet-framed lines
+    /// are swapped out rather than contradicted.
+    /// </summary>
+    [Fact]
+    public void Build_SoloOperator_DropsFleetUtilizationPriority()
+    {
+        var prompt = SoloPrompt();
+
+        Assert.DoesNotContain("Maximize fleet utilization", prompt);
+        Assert.Contains("Maximize rate per mile", prompt);
+    }
+
+    [Fact]
+    public void Build_SoloOperator_DropsTruckToTruckComparisonStep()
+    {
+        var prompt = SoloPrompt();
+
+        Assert.DoesNotContain("When multiple trucks are candidates", prompt);
+        Assert.Contains("compare the loads against each other", prompt);
+        // The tool itself still applies - it is only the framing that changes.
+        Assert.Contains("calculate_assignment_metrics", prompt);
+    }
+
+    [Fact]
+    public void Build_SoloOperator_ReplacesTheAssignmentTableWithAPlan()
+    {
+        var prompt = SoloPrompt();
+
+        Assert.DoesNotContain("| Load | Truck | Driver | Reasoning |", prompt);
+        Assert.Contains("### Plan", prompt);
+    }
+
+    [Fact]
+    public void Build_FleetMode_KeepsTheAssignmentTable()
+    {
+        var prompt = AIDispatchSystemPrompt.Build("Fleet", AIDispatchMode.Autonomous);
+
+        Assert.Contains("| Load | Truck | Driver | Reasoning |", prompt);
+        Assert.DoesNotContain("### Plan", prompt);
+    }
+
+    [Fact]
+    public void Build_SoloOperatorInKilometers_UsesTheTenantsUnit()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(
+            "Fleet",
+            AIDispatchMode.Autonomous,
+            distanceUnit: DistanceUnit.Kilometers,
+            operatingMode: OperatingMode.SoloOperator);
+
+        Assert.Contains("Maximize rate per km", prompt);
+        Assert.DoesNotContain("rate per mile", prompt);
+    }
+
+    /// <summary>
+    /// The solo block overrides the fleet framing above it, so it must not sit before the sections it
+    /// overrides - and must stay ahead of the summary format it dictates.
+    /// </summary>
+    [Fact]
+    public void Build_SoloSection_SitsAfterTheWorkflowAndBeforeTheFinalSummary()
+    {
+        var prompt = SoloPrompt();
+
+        var workflow = prompt.IndexOf("## Workflow", StringComparison.Ordinal);
+        var solo = prompt.IndexOf("## Fleet Profile", StringComparison.Ordinal);
+        var summary = prompt.IndexOf("## Final Summary", StringComparison.Ordinal);
+
+        Assert.True(workflow >= 0 && solo >= 0 && summary >= 0);
+        Assert.True(workflow < solo, "The solo overrides must come after the fleet framing they override");
+        Assert.True(solo < summary, "The solo overrides must precede the summary format they dictate");
+    }
+
+    /// <summary>The two mode concepts share the word "mode" - they must not share a heading.</summary>
+    [Fact]
+    public void Build_SoloOperator_DoesNotReuseTheDispatchModeHeading()
+    {
+        var prompt = SoloPrompt();
+
+        Assert.Contains("Operating Mode: AUTONOMOUS", prompt);
+        Assert.Single(prompt.Split("## Operating Mode")[1..]);
+    }
+
+    #endregion
+
     #region Learned policy
 
     private static LearnedDispatchPolicy Policy(string? directives = null, string? learned = null) =>

@@ -17,18 +17,25 @@ internal static class AIDispatchSystemPrompt
     /// Whether the tenant has <c>TenantFeature.IntermodalContainers</c>. The section costs ~310 tokens
     /// per request and names tools a gated tenant is not given, so it must move in lockstep with them.
     /// </param>
+    /// <param name="operatingMode">
+    /// The tenant's <c>TenantSettings.OperatingMode</c>. <c>SoloOperator</c> swaps the fleet-wide
+    /// framing (utilization, truck-to-truck comparison, the assignment table) for one-truck framing.
+    /// </param>
     public static string Build(
         string companyName,
         AIDispatchMode mode,
         bool hasLoadBoardIntegration = false,
         DistanceUnit distanceUnit = DistanceUnit.Miles,
         LearnedDispatchPolicy? policy = null,
-        bool hasIntermodal = false)
+        bool hasIntermodal = false,
+        OperatingMode operatingMode = OperatingMode.Fleet)
     {
         var unitLabel = distanceUnit == DistanceUnit.Kilometers ? "km" : "miles";
+        var perUnitLabel = distanceUnit == DistanceUnit.Kilometers ? "km" : "mile";
         var conversionNote = distanceUnit == DistanceUnit.Miles
             ? "Tool data is in kilometers - convert to miles (× 0.621) for all output."
             : "";
+        var isSolo = operatingMode == OperatingMode.SoloOperator;
         var modeInstructions = mode switch
         {
             AIDispatchMode.HumanInTheLoop => """
@@ -80,6 +87,49 @@ internal static class AIDispatchSystemPrompt
               """
             : "";
 
+        // Three fleet-framed lines are swapped rather than overridden: an override that contradicts a
+        // line still leaves the contradicted line in context, and "pick the best truck" is the one
+        // instruction a one-truck carrier cannot follow.
+        var utilizationPriority = isSolo
+            ? $"4. **Maximize rate per {perUnitLabel}** - take the load that pays best net of deadhead"
+            : "4. **Maximize fleet utilization** - keep trucks moving and earning revenue";
+
+        var metricsStep = isSolo
+            ? $"7. When several loads compete for the same window, use `calculate_assignment_metrics` to compare the loads against each other and pick the best rate per {perUnitLabel} net of deadhead"
+            : "7. When multiple trucks are candidates for a load, use `calculate_assignment_metrics` to compare revenue per mile and pick the most profitable option";
+
+        var summaryPlanSection = isSolo
+            ? $"""
+              ### Plan
+              One short line per load: what to run, when to leave, and what it pays net of deadhead {unitLabel}. No table - there is only one truck to plan for.
+              """
+            : """
+              ### Assignments
+              | Load | Truck | Driver | Reasoning |
+              |------|-------|--------|-----------|
+              """;
+
+        var soloSection = isSolo
+            ? $"""
+
+              ## Fleet Profile: SOLO OWNER-OPERATOR
+              This carrier is one truck and one driver, and that driver is the owner you are reporting to.
+              Where the sections above assume a fleet, this section wins.
+
+              - Address them as "you" and call it "your truck". Do not read out truck numbers or the driver's
+                own name back to them.
+              - Rank options by deadhead {unitLabel} first, then rate per {perUnitLabel}. Fleet utilization is not
+                a goal here - an empty day costs them directly, and a cheap load that fills it may still be wrong.
+              - There is no truck-to-truck comparison to make. Never present output as a ranked assignment
+                table across trucks; compare *loads*, not trucks.
+              - That one driver's clock is the whole constraint. Check it with `get_driver_hos_status` when the
+                margin matters. If the hours do not work the load waits - there is no next truck to try, so say
+                when the hours reset instead of looking for an alternative.
+              - With `search_loadboard`, search near the truck's current location for its equipment type only.
+                No results is a real answer: report it plainly and say when it is worth looking again.
+              """
+            : "";
+
         var loadBoardStep = hasLoadBoardIntegration
             ? """
 
@@ -100,7 +150,7 @@ internal static class AIDispatchSystemPrompt
             1. **HOS compliance** - see HOS rules below. This is a hard constraint, not a suggestion
             2. **Truck type compatibility** - MUST match before considering any other factor (see rules below)
             3. **Minimize deadhead {{unitLabel}}** - prefer trucks geographically closest to pickup locations
-            4. **Maximize fleet utilization** - keep trucks moving and earning revenue
+            {{utilizationPriority}}
 
             ## Truck Type Compatibility Rules
             ALWAYS filter by type FIRST. Incompatible trucks must be skipped entirely - do NOT run HOS checks on them.
@@ -134,7 +184,7 @@ internal static class AIDispatchSystemPrompt
             4. If a candidate is clearly feasible (driving time well under remaining hours), assign directly with `assign_load_to_truck`
             5. If borderline or you need confirmation, use `batch_check_hos_feasibility` with all candidates at once
             6. Use `calculate_distance` only when trucks have location data and you need to compare deadhead miles
-            7. When multiple trucks are candidates for a load, use `calculate_assignment_metrics` to compare revenue per mile and pick the most profitable option
+            {{metricsStep}}
             8. In autonomous mode: after assignments, group loads into trips with `create_trip` and dispatch with `dispatch_trip`{{loadBoardStep}}
 
             ## Token Efficiency Rules
@@ -150,6 +200,7 @@ internal static class AIDispatchSystemPrompt
             - **No available trucks**: Report the constraint and finish with recommendations
             - **All HOS infeasible**: Report it in ONE statement (don't enumerate every failed check), recommend waiting for rest periods
             - **No feasible assignment for a load**: Skip it and explain briefly in the summary
+            {{soloSection}}
 
             ## Final Summary
             After completing all work, provide a concise markdown summary. Use **{{unitLabel}}** for distances and human-readable durations (e.g., "10h 20m") for time - never raw minutes.
@@ -157,9 +208,7 @@ internal static class AIDispatchSystemPrompt
             ### Status
             One line: `COMPLETED - X of Y loads assigned` or `NO ACTION - [reason]`
 
-            ### Assignments
-            | Load | Truck | Driver | Reasoning |
-            |------|-------|--------|-----------|
+            {{summaryPlanSection}}
 
             ### Issues
             Bullet list of problems (keep it brief - no need to list every driver individually if all failed for the same reason)
