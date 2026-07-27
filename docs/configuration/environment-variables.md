@@ -33,13 +33,15 @@ Production uses an external (installed) PostgreSQL instance instead of a contain
 ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
 ConnectionStrings__UsTenantDatabase="Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=your-secure-password"
 ConnectionStrings__EuTenantDatabase="Host=localhost;Port=5432;Database=eu_logisticsx;Username=postgres;Password=your-secure-password"
+ConnectionStrings__SoloTenantDatabase="Host=localhost;Port=5432;Database=solo_logisticsx;Username=postgres;Password=your-secure-password"
 ```
 
-| Variable                              | Description                                            |
-| ------------------------------------- | ------------------------------------------------------ |
-| `ConnectionStrings__MasterDatabase`   | Full connection string for the master database         |
-| `ConnectionStrings__UsTenantDatabase` | Full connection string for the US demo tenant database |
-| `ConnectionStrings__EuTenantDatabase` | Full connection string for the EU demo tenant database |
+| Variable                                | Description                                                       |
+| --------------------------------------- | ----------------------------------------------------------------- |
+| `ConnectionStrings__MasterDatabase`     | Full connection string for the master database                    |
+| `ConnectionStrings__UsTenantDatabase`   | Fallback tenant database the API registers `TenantDbContext` with |
+| `ConnectionStrings__EuTenantDatabase`   | EU demo tenant database - read by the migrator only               |
+| `ConnectionStrings__SoloTenantDatabase` | Owner-operator demo tenant database - read by the migrator only   |
 
 ### Stripe Integration
 
@@ -125,6 +127,40 @@ TenantDatabaseDefaults__Password="your-secure-tenant-db-password"
 | `SuperAdmin__*`                    | Initial super admin account credentials (synced on each run) |
 | `TenantDatabaseDefaults__Password` | Password used when provisioning new tenant databases         |
 
+#### Demo tenants (`Tenants[]`)
+
+The migrator seeds one demo tenant per entry in the `Tenants` array of its
+`appsettings.json`. `DemoTenantsSeeder` reads the whole array, so adding an entry is all it takes to
+get a new demo company; there is no other list to keep in sync.
+
+| Field              | Required | Description                                                                                                                                                                                   |
+| ------------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Name`             | yes      | Tenant slug, lowercase. This is the value clients send in the `X-Tenant` header, and the `{tenant}` token in the `{tenant}_logisticsx` database name.                                         |
+| `CompanyName`      | yes      | Display name (e.g. `Heartland Logistics LLC`).                                                                                                                                                |
+| `BillingEmail`     | yes      | Billing contact on the tenant record.                                                                                                                                                         |
+| `Region`           | yes      | `Us` or `Eu`. Drives currency, units, date format, timezone, and the region's seed route points and company address.                                                                          |
+| `SeedDataKey`      | no       | Top-level section in `SeedData/*.json` this tenant draws its users and customers from. Defaults to the region name. **Two tenants in the same region need distinct keys** - see below.        |
+| `OperatingMode`    | no       | `Fleet` (default) or `SoloOperator`.                                                                                                                                                          |
+| `DataScale`        | no       | Multiplier on the fake-data volumes. `1.0` (default) is the fleet-sized demo of 100 loads; `0.12` gives a one-truck tenant 12. Scaled counts never floor below 1.                             |
+| `ConnectionString` | no       | Explicit connection string. When omitted, the seeder falls back to `ConnectionStrings:{Name}TenantDatabase` (`us` -> `UsTenantDatabase`), which is the slot Aspire's `WithReference()` fills. |
+
+`SeedDataKey` is load-bearing because a seed user belongs to exactly one tenant (`User.TenantId`).
+Two tenants sharing a key means the second run re-homes the first tenant's logins onto the second
+tenant. `us` and `eu` leave it unset and inherit their region names; `solo` sets `Solo`.
+
+In Docker the array is set through the double-underscore index form, and the index must match the
+tenant's position in `appsettings.json`:
+
+```yaml
+Tenants__0__ConnectionString: "Host=postgres;Port=5432;Database=us_logisticsx;Username=postgres;Password=Test12345#"
+Tenants__1__ConnectionString: "Host=postgres;Port=5432;Database=eu_logisticsx;Username=postgres;Password=Test12345#"
+Tenants__2__ConnectionString: "Host=postgres;Port=5432;Database=solo_logisticsx;Username=postgres;Password=Test12345#"
+```
+
+`Tenants__N__ConnectionString` wins over the `ConnectionStrings:{Name}TenantDatabase` fallback, which
+is why `deploy/docker-compose.dev.yml` uses it: the containerized run needs `Host=postgres`, not the
+`Host=localhost` baked into `appsettings.json`.
+
 ### ASP.NET Core
 
 ```bash
@@ -142,6 +178,7 @@ IDENTITY_SERVER_PORT=7001
 ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
 ConnectionStrings__UsTenantDatabase="Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=your-secure-password"
 ConnectionStrings__EuTenantDatabase="Host=localhost;Port=5432;Database=eu_logisticsx;Username=postgres;Password=your-secure-password"
+ConnectionStrings__SoloTenantDatabase="Host=localhost;Port=5432;Database=solo_logisticsx;Username=postgres;Password=your-secure-password"
 
 # Stripe
 Stripe__SecretKey="sk_live_xxx"

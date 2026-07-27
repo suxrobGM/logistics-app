@@ -149,7 +149,7 @@ Recurring jobs fan out per tenant with `TenantJobRunner.ForEachTenantAsync` and 
 
 ### Naming convention
 
-Tenant databases follow `{tenant_slug}_logisticsx` - for example `acme_logisticsx`, `swift_transport_logisticsx`, `default_logisticsx`. Slugs are normalized to lowercase before lookup.
+Tenant databases follow `{tenant_slug}_logisticsx` - for example `acme_logisticsx`, `swift_transport_logisticsx`, `us_logisticsx`. Slugs are normalized to lowercase before lookup.
 
 ## Provisioning a new tenant
 

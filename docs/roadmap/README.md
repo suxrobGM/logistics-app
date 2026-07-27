@@ -47,7 +47,7 @@ in its **Notes** section. Keep this index's Status column in sync.
 | ---------------------------------------------------- | -------- | ------ | ------- |
 | [EU market readiness](eu-market-readiness.md)        | P1       | M      | Planned |
 | [Drayage / intermodal vertical](drayage-vertical.md) | P1       | L      | Planned |
-| [Owner-operator (solo) mode](owner-operator-mode.md) | P1       | M      | Planned |
+| [Owner-operator (solo) mode](owner-operator-mode.md) | P1       | M      | Done    |
 
 ## Launch hygiene
 
