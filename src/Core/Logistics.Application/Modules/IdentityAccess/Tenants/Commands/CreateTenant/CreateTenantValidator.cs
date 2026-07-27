@@ -30,5 +30,9 @@ internal sealed class CreateTenantValidator : AbstractValidator<CreateTenantComm
         RuleFor(i => i.CompanyAddress)
             .NotNull()
             .SetValidator(new AddressValidator());
+
+        RuleFor(i => i.OperatingMode)
+            .IsInEnum()
+            .When(i => i.OperatingMode.HasValue);
     }
 }
