@@ -40,11 +40,18 @@ internal class LoadSeeder(
     {
         LogStarting();
 
-        var employees = context.CreatedEmployees ?? throw new InvalidOperationException("Employees not seeded");
-        var trucks = context.CreatedTrucks ?? throw new InvalidOperationException("Trucks not seeded");
-        var customers = context.CreatedCustomers ?? throw new InvalidOperationException("Customers not seeded");
+        var employees = context.CreatedEmployees;
+        var trucks = context.CreatedTrucks;
+        var customers = context.CreatedCustomers;
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
         var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
+
+        if (employees is null || trucks is null || customers is null)
+        {
+            logger.LogWarning("Skipping LoadSeeder: an upstream seeder was skipped this run");
+            LogCompleted(0);
+            return;
+        }
         var terminals = context.CreatedTerminals ?? [];
         var availableContainers = (context.CreatedContainers ?? []).ToList();
 

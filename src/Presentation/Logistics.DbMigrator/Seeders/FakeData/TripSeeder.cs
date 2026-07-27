@@ -36,11 +36,22 @@ internal class TripSeeder(
     {
         LogStarting();
 
-        var employees = context.CreatedEmployees ?? throw new InvalidOperationException("Employees not seeded");
-        var trucks = context.CreatedTrucks ?? throw new InvalidOperationException("Trucks not seeded");
-        var customers = context.CreatedCustomers ?? throw new InvalidOperationException("Customers not seeded");
+        var employees = context.CreatedEmployees;
+        var trucks = context.CreatedTrucks;
+        var customers = context.CreatedCustomers;
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
         var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
+
+        // An upstream seeder skipped because its data already exists, so it published nothing to the
+        // context. Reachable whenever this seeder legitimately produced nothing on an earlier run -
+        // a solo tenant has no car hauler and so never gets trips, which would otherwise make every
+        // re-run fail here.
+        if (employees is null || trucks is null || customers is null)
+        {
+            logger.LogWarning("Skipping TripSeeder: an upstream seeder was skipped this run");
+            LogCompleted(0);
+            return;
+        }
 
         var carHaulerTrucks = trucks.Where(t => t.Type == TruckType.CarHauler).ToList();
         if (carHaulerTrucks.Count == 0)

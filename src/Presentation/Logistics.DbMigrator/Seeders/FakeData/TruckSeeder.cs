@@ -27,8 +27,15 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
     {
         LogStarting();
 
-        var employees = context.CreatedEmployees ?? throw new InvalidOperationException("Employees not seeded");
+        var employees = context.CreatedEmployees;
         var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
+
+        if (employees is null)
+        {
+            logger.LogWarning("Skipping TruckSeeder: an upstream seeder was skipped this run");
+            LogCompleted(0);
+            return;
+        }
         var drivers = employees.Drivers;
 
         if (drivers.Count == 0)

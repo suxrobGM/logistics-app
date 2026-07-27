@@ -28,7 +28,14 @@ internal class PayrollSeeder(ILogger<PayrollSeeder> logger) : SeederBase(logger)
     {
         LogStarting();
 
-        var employees = context.CreatedEmployees ?? throw new InvalidOperationException("Employees not seeded");
+        var employees = context.CreatedEmployees;
+        if (employees is null)
+        {
+            logger.LogWarning("Skipping PayrollSeeder: an upstream seeder was skipped this run");
+            LogCompleted(0);
+            return;
+        }
+
         var payrollService = context.ServiceProvider.GetRequiredService<PayrollService>();
 
         await payrollService.GeneratePayrolls(employees, startDate, endDate);

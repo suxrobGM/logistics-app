@@ -35,7 +35,14 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
             return;
         }
 
-        var customers = context.CreatedCustomers ?? throw new InvalidOperationException("Customers not seeded");
+        var customers = context.CreatedCustomers;
+        if (customers is null)
+        {
+            logger.LogWarning("Skipping CustomerUserSeeder: an upstream seeder was skipped this run");
+            LogCompleted(0);
+            return;
+        }
+
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
 
         var customerUserRepository = context.TenantUnitOfWork.Repository<CustomerUser>();
