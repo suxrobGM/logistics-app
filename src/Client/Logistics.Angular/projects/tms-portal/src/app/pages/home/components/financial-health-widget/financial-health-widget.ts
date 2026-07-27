@@ -43,7 +43,7 @@ export class FinancialHealthWidgetComponent {
       this.overdueInvoiceCount() === 0,
   );
 
-  /** Invoices are raised off a load, so the first invoice starts on the load form. */
+  /** Invoices are raised off a load, so the first one starts on the load form. */
   protected startFirstInvoice(): void {
     void this.router.navigate(["/loads/add"]);
   }

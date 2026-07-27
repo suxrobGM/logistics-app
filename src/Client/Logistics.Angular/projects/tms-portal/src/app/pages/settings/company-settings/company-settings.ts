@@ -186,9 +186,8 @@ export class CompanySettingsComponent implements OnInit {
             companyRegistrationNumber: value.companyRegistrationNumber || null,
             taxResidencyCountry: value.taxResidencyCountry || null,
             companyAddress: value.companyAddress ?? undefined,
-            // Whole-object replace on the server: spread the loaded settings first or the fields
-            // this form does not own (region, language, llmEnabled, volume/temperature units) are
-            // wiped on every save.
+            // Whole-object replace on the server: without the spread, every setting this form does
+            // not own (region, language, llmEnabled, volume/temperature units) is wiped on save.
             settings: {
               ...this.tenant()?.settings,
               distanceUnit: value.distanceUnit,

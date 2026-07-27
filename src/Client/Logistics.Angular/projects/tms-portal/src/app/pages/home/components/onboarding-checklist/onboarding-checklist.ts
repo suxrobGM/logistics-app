@@ -15,10 +15,7 @@ import {
 
 const DISMISSED_KEY = "tms-onboarding-dismissed";
 
-/**
- * The keys `/onboarding/progress` emits, in the order it emits them. `inviteTeam` is omitted from
- * the response entirely in solo-operator mode.
- */
+/** What `/onboarding/progress` emits; `inviteTeam` is absent entirely in solo-operator mode. */
 type OnboardingStepKey =
   | "companyProfile"
   | "addTruck"
@@ -36,9 +33,8 @@ interface OnboardingStepMeta {
 }
 
 /**
- * Copy and destinations live on the client on purpose: changing a label must not need a backend
- * deploy. Exhaustive over `OnboardingStepKey`, so a step added to that union without copy here is a
- * compile error rather than a silently missing row.
+ * Exhaustive on purpose: a step added to the union without copy here is a compile error rather than
+ * a silently missing row.
  */
 const ONBOARDING_STEPS: Record<OnboardingStepKey, OnboardingStepMeta> = {
   companyProfile: {
@@ -90,11 +86,6 @@ interface OnboardingRow extends OnboardingStepMeta {
   isComplete: boolean;
 }
 
-/**
- * Setup checklist for a new tenant. Fetches its own progress, so it takes no inputs and can be
- * dropped anywhere on the dashboard. Never blocks: it renders nothing once every step is done, on a
- * failed fetch, or after the owner dismisses it.
- */
 @Component({
   selector: "app-onboarding-checklist",
   templateUrl: "./onboarding-checklist.html",
@@ -133,7 +124,7 @@ export class OnboardingChecklist implements OnInit {
   });
 
   /**
-   * Deliberately false while the fetch is in flight: this sits at the top of the dashboard, so a
+   * False while the fetch is in flight on purpose: this sits at the top of the dashboard, and a
    * placeholder that vanishes for every established tenant costs more than it buys the new one.
    */
   protected readonly isVisible = computed(

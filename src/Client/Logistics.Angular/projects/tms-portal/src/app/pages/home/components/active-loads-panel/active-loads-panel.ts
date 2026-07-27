@@ -34,6 +34,6 @@ import { LoadProgressBarComponent } from "../load-progress-bar/load-progress-bar
 export class ActiveLoadsPanel {
   public readonly loads = input<LoadDto[]>([]);
   public readonly isLoading = input(false);
-  /** Solo operators see their own book of work, not a dispatcher's queue. */
+  /** Overridden in solo mode: an owner-operator sees their own book of work, not a dispatch queue. */
   public readonly title = input("Active Loads");
 }

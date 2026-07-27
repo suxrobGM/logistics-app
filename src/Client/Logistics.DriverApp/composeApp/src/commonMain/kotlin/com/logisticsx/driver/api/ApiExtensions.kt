@@ -5,8 +5,7 @@ import com.logisticsx.driver.infrastructure.HttpResponse
 /**
  * Exception thrown when an API call returns a non-success status code.
  *
- * [message] is surfaced verbatim by `BaseViewModel` error states, so the default is written
- * for a driver reading it full-screen, not for a log line.
+ * [message] is shown verbatim in full-screen error states, so it is written for a driver, not a log.
  */
 class ApiException(
     val statusCode: Int,

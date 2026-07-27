@@ -19,7 +19,7 @@ interface HosClock {
   minutes: number;
 }
 
-/** Below this many minutes left the clock is worth reacting to before booking the next load. */
+/** Below this, the clock is worth reacting to before booking the next load. */
 const LOW_MINUTES = 60;
 
 @Component({
@@ -36,8 +36,7 @@ export class HosRemaining implements OnInit {
 
   /**
    * `Employee.CreateEmployeeFromUser` assigns `Employee.Id = user.Id`, so the OIDC `sub` is the
-   * employee id the ELD endpoint keys on. A solo tenant with a single mapped driver still resolves
-   * when the signed-in owner is not that driver themselves.
+   * employee id the ELD endpoint keys on.
    */
   protected readonly status = computed<DriverHosStatusDto | null>(() => {
     const all = this.drivers();

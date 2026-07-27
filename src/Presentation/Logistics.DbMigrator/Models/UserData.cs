@@ -7,10 +7,6 @@ public record UserData
     public required string LastName { get; set; }
     public required string Password { get; set; }
 
-    /// <summary>
-    /// Tenant role this user should be given, as a <c>TenantRoles</c> constant
-    /// (<c>tenant.owner</c>, <c>tenant.manager</c>, <c>tenant.dispatcher</c>, <c>tenant.driver</c>).
-    /// When no user in a seed set sets this, EmployeeSeeder falls back to its positional split.
-    /// </summary>
+    /// <summary>A <c>TenantRoles</c> constant (e.g. <c>tenant.driver</c>); when unset everywhere, EmployeeSeeder splits positionally.</summary>
     public string? Role { get; set; }
 }

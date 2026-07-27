@@ -190,10 +190,6 @@ public class AIDispatchSystemPromptTests
         Assert.DoesNotContain("SOLO OWNER-OPERATOR", prompt);
     }
 
-    /// <summary>
-    /// The default keeps the ~23 existing call sites - and every tenant that never set the field - on
-    /// the fleet prompt.
-    /// </summary>
     [Fact]
     public void Build_DefaultOperatingMode_MatchesFleet()
     {
@@ -204,10 +200,6 @@ public class AIDispatchSystemPromptTests
         Assert.Equal(explicitFleet, defaulted);
     }
 
-    /// <summary>
-    /// An override block cannot undo a line still sitting in context, so the three fleet-framed lines
-    /// are swapped out rather than contradicted.
-    /// </summary>
     [Fact]
     public void Build_SoloOperator_DropsFleetUtilizationPriority()
     {
@@ -259,10 +251,6 @@ public class AIDispatchSystemPromptTests
         Assert.DoesNotContain("rate per mile", prompt);
     }
 
-    /// <summary>
-    /// The solo block overrides the fleet framing above it, so it must not sit before the sections it
-    /// overrides - and must stay ahead of the summary format it dictates.
-    /// </summary>
     [Fact]
     public void Build_SoloSection_SitsAfterTheWorkflowAndBeforeTheFinalSummary()
     {

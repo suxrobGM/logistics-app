@@ -13,7 +13,6 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// <summary>
 /// Seeds freight loads with a realistic type mix (general / reefer / hazmat / intermodal / tank)
 /// using region-specific route points, customer names, and container / terminal links.
-/// Volume is 100 loads at the default data scale.
 /// </summary>
 internal class LoadSeeder(
     ILogger<LoadSeeder> logger,

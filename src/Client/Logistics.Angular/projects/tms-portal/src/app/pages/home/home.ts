@@ -86,7 +86,6 @@ export class Home implements OnInit {
   protected readonly lastUpdated = signal<Date>(new Date());
   protected readonly currentDate = new Date();
 
-  /** Visible panels filtered by role + feature + operating mode. Template consumes this. */
   protected readonly dashboardPanels = this.dashboardSettings.visiblePanels;
 
   protected readonly activeLoadsTitle = computed(() =>
@@ -138,7 +137,6 @@ export class Home implements OnInit {
     { label: "Messages", icon: "mail", routerLink: "/messages" },
   ];
 
-  /** Add the panels this user is entitled to but has off the grid, and take back the ones they have. */
   protected readonly panelMenuItems = computed<UiMenuItem[]>(() => {
     const additions = this.dashboardSettings.availablePanels().map<UiMenuItem>((panel) => ({
       label: `Add ${panel.label}`,
@@ -157,8 +155,7 @@ export class Home implements OnInit {
   });
 
   constructor() {
-    // Re-fetch company stats whenever the visible panels start including an owner panel - either
-    // once auth resolves and the user is detected as Owner, or when they add one from the menu.
+    // Covers both auth resolving the user as Owner and the user adding an owner panel by hand.
     effect(() => {
       if (this.dashboardSettings.hasOwnerPanels()) {
         this.fetchCompanyStats();
@@ -208,8 +205,8 @@ export class Home implements OnInit {
   }
 
   /**
-   * The KPI cards are default-visible while the daily-gross chart is not, so the page owns this
-   * fetch instead of reading it off the chart panel's output. Both hit the same cached GET.
+   * Lives here, not on the chart panel, because the KPI cards are default-visible and the chart is
+   * not. Both hit the same cached GET.
    */
   private async fetchWeeklyKpis(): Promise<void> {
     const result = await this.api.invoke(getDailyGrosses, {
@@ -230,9 +227,8 @@ export class Home implements OnInit {
   }
 
   /**
-   * `ngOnInit` and the owner-panel effect both want this on a cold load, and the first request is
-   * still in flight when the second asks - hence the in-flight guard, which is only sound because
-   * `isLoadingCompanyStats` is set before the first await.
+   * `ngOnInit` and the owner-panel effect both call this on a cold load. The in-flight guard is only
+   * sound because `isLoadingCompanyStats` is set before the first await.
    */
   private async fetchCompanyStats(force = false): Promise<void> {
     if (this.isLoadingCompanyStats()) return;

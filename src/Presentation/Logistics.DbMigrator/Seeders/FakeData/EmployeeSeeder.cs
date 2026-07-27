@@ -79,9 +79,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
             companyEmployees.AllEmployees.Add(managerEmployee);
         }
 
-        // An owner-operator drives their own truck. Registering them as a driver here (after
-        // AllEmployees is built, so they are not counted twice) is what gives TruckSeeder and the
-        // driver-scoped safety seeders something to work with.
+        // An owner-operator drives their own truck; added after AllEmployees so they are not counted twice.
         if (companyEmployees.Drivers.Count == 0)
         {
             companyEmployees.Drivers.Add(ownerEmployee);
@@ -121,11 +119,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
         return orderedUsers;
     }
 
-    /// <summary>
-    /// Maps users onto company roles. When the seed data declares an explicit <c>Role</c> the
-    /// mapping is by role name; otherwise it falls back to the positional convention the fleet
-    /// seed sets rely on (owner, manager, three dispatchers, the rest drivers).
-    /// </summary>
+    /// <summary>Splits by declared <c>Role</c>, falling back to position so the existing fleet seed sets need no <c>Role</c> field.</summary>
     private UserRoleSplit SplitUsersByRole(IList<User> users, UserData[] seedUsers)
     {
         var rolesByEmail = seedUsers

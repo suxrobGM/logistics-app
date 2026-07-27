@@ -22,10 +22,6 @@ export class TenantService {
    */
   public readonly tenantCurrency = computed(() => this._tenantData()?.settings?.currency ?? "USD");
 
-  /**
-   * Signal that is true when the tenant runs as a one-person carrier (owner-operator).
-   * Drives the solo UX preset: fewer team-oriented nav items, a reshaped dashboard.
-   */
   public readonly isSoloMode = computed(
     () => this._tenantData()?.settings?.operatingMode === "solo_operator",
   );

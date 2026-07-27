@@ -148,8 +148,7 @@ public static class TenantRolePermissions
         list.Add(Permission.Truck.View);
         list.Add(Permission.Load.View);
         list.Add(Permission.Stat.View);
-        // Drivers file and submit their own DVIRs, but must never sign off on them - Dvir.Review
-        // stays with the roles that supervise them.
+        // Drivers file their own DVIRs; Dvir.Review stays with the roles that supervise them.
         list.Add(Permission.Dvir.View);
         list.Add(Permission.Dvir.Manage);
         return list;

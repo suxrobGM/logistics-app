@@ -36,7 +36,6 @@ const OWNER_PANEL_IDS: ReadonlySet<PanelType> = new Set<PanelType>([
 export interface DashboardPanelConfig {
   id: PanelType;
   label: string;
-  /** Shown beside the label wherever the panel is named rather than rendered ("Add panel"). */
   icon: IconName;
   x: number;
   y: number;
@@ -50,12 +49,9 @@ export interface DashboardPanelConfig {
   feature?: TenantFeature;
   /** Panel is shown only in this operating mode. Absent = both modes. */
   mode?: OperatingMode;
-  /**
-   * Modes where the panel starts off the dashboard, reachable from "Add panel". Static metadata,
-   * re-applied from the defaults on every load - it is the default, not the user's choice.
-   */
+  /** Static metadata, re-applied from the defaults on every load - never the user's choice. */
   hiddenByDefaultIn?: readonly OperatingMode[];
-  /** The user's explicit show/hide choice. Overrides {@link hiddenByDefaultIn} once set. */
+  /** The user's explicit choice. Overrides {@link hiddenByDefaultIn} once set. */
   hidden?: boolean;
 }
 
@@ -65,12 +61,8 @@ interface DashboardSettings {
 }
 
 /**
- * The default grid, on 12 columns.
- *
- * The two modes are deliberately COMPLEMENTARY: the slots the fleet-only panels occupy
- * (`attention-panel` at x8/y2, `fleet-map` at x0/y7) are exactly the slots the solo-only panels
- * fill (`hos-remaining`, `financial-health`). Either mode renders three full 12-column bands with
- * no holes. Moving one of those four panels means moving its counterpart too.
+ * 12 columns. The fleet-only panels (`attention-panel` x8/y2, `fleet-map` x0/y7) sit in exactly the
+ * slots the solo-only ones fill, so moving one of those four means moving its counterpart.
  */
 const DEFAULT_PANELS: DashboardPanelConfig[] = [
   {
@@ -246,26 +238,22 @@ export class DashboardSettingsService {
   /** All panels (raw, unfiltered). Used by gridster `updatePanelLayout` callbacks. */
   public readonly panels = this._panels.asReadonly();
 
-  /** Tenant operating mode. Falls back to `fleet` until the tenant request resolves. */
   public readonly operatingMode = computed<OperatingMode>(
     () => this.tenantService.tenantData()?.settings?.operatingMode ?? "fleet",
   );
 
-  /** Panels on the dashboard: pass the role/feature/mode gates and are not hidden. */
   public readonly visiblePanels = computed(() =>
     this.gatedPanels()
       .filter(({ hidden }) => !hidden)
       .map(({ panel }) => panel),
   );
 
-  /** Panels the user could add: pass the gates, but are currently hidden. */
   public readonly availablePanels = computed(() =>
     this.gatedPanels()
       .filter(({ hidden }) => hidden)
       .map(({ panel }) => panel),
   );
 
-  /** Whether any owner-specific panels are currently visible (decides the getCompanyStats fetch). */
   public readonly hasOwnerPanels = computed(() =>
     this.visiblePanels().some((p) => OWNER_PANEL_IDS.has(p.id)),
   );
@@ -305,9 +293,8 @@ export class DashboardSettingsService {
   }
 
   /**
-   * Put a hidden panel back on the dashboard, landing it below everything currently on screen.
-   * Its stored coordinates are ignored on purpose: reusing them would drop the panel on top of
-   * whatever the user has since arranged there, and gridster would shove that layout aside.
+   * Lands below everything on screen: reusing the stored coordinates would drop the panel on top of
+   * whatever the user has since arranged there.
    */
   public showPanel(panelId: PanelType): void {
     const nextY = this.visiblePanels().reduce((max, p) => Math.max(max, p.y + p.rows), 0);
@@ -391,9 +378,8 @@ export class DashboardSettingsService {
   }
 
   /**
-   * Reconcile a stored layout with the current defaults: the user owns geometry and the explicit
-   * show/hide choice, the defaults own everything else. Stored ids that no longer ship are dropped
-   * - the template has no `@case` for them, so gridster would render a silent empty tile.
+   * Stored ids that no longer ship are dropped: the template has no `@case` for them, so gridster
+   * would render a silent empty tile.
    */
   private mergeWithDefaults(storedPanels: DashboardPanelConfig[]): DashboardPanelConfig[] {
     const defaults = new Map(DEFAULT_PANELS.map((d) => [d.id, d]));
@@ -408,9 +394,8 @@ export class DashboardSettingsService {
         hidden: stored.hidden,
       }));
 
-    // A panel introduced since the stored version cannot keep its default coordinates: those are
-    // laid out against the CURRENT default grid, and the stored one is arbitrary. Stack the
-    // newcomers underneath instead, so an upgrade never drops a panel on top of an existing one.
+    // Newly-introduced panels stack underneath rather than at their default coordinates, which are
+    // laid out against the current grid and would land on top of the stored one.
     const keptIds = new Set(kept.map((p) => p.id));
     let nextY = kept.reduce((max, p) => Math.max(max, p.y + p.rows), 0);
     const added = DEFAULT_PANELS.filter((d) => !keptIds.has(d.id)).map((d) => {

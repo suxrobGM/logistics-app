@@ -28,8 +28,8 @@ export class SidebarFavoritesService {
   }
 
   /**
-   * @param availableIds Nav ids the current tenant/role can actually reach. Defaults are narrowed to
-   *   these so an owner-operator is never seeded with a favourite pointing at a hidden page.
+   * Defaults are narrowed to `availableIds` so an owner-operator is never seeded with a favourite
+   * pointing at a page their mode hides.
    */
   initWithRole(role: string, availableIds?: readonly string[]): void {
     // Only set defaults if no stored favorites exist

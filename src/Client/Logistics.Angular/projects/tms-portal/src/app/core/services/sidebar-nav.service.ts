@@ -40,10 +40,7 @@ const ROLE_ITEM_ACCESS: Record<string, string[] | "*"> = {
   [UserRole.Owner]: "*",
 };
 
-/**
- * Top-level nav ids hidden in owner-operator mode: a one-person carrier has no team to manage and
- * cannot message itself. Timesheets is a `payroll` child, so it leaves with its parent.
- */
+/** Hidden in owner-operator mode. Timesheets is a `payroll` child, so it leaves with its parent. */
 const SOLO_HIDDEN_ITEMS = ["employees", "payroll", "messages"];
 
 /**
@@ -125,8 +122,8 @@ export class SidebarNavService {
   }
 
   private filterItems(items: NavItem[], allowedItems: string[] | "*"): NavItem[] {
-    // Read inside the computed, not the constructor effect, so a mode change repaints the nav
-    // without waiting on a feature refresh.
+    // Read here rather than in the constructor effect, so a mode change repaints the nav without
+    // waiting on a feature refresh.
     const isSolo = this.tenantService.isSoloMode();
 
     return items

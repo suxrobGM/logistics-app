@@ -203,8 +203,7 @@ export class TruckForm {
   }
 
   protected async searchDriver(event: { query: string }): Promise<void> {
-    // Unfiltered by role on purpose: nothing in the domain requires the Driver role to be assigned
-    // to a truck, and an owner-operator has to be able to pick themselves.
+    // Unfiltered by role on purpose: an owner-operator has to be able to pick themselves.
     const result = await this.api.invoke(getEmployees, {
       Search: event.query,
     });

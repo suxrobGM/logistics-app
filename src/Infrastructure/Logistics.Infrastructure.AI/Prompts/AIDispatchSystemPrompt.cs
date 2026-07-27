@@ -18,8 +18,7 @@ internal static class AIDispatchSystemPrompt
     /// per request and names tools a gated tenant is not given, so it must move in lockstep with them.
     /// </param>
     /// <param name="operatingMode">
-    /// The tenant's <c>TenantSettings.OperatingMode</c>. <c>SoloOperator</c> swaps the fleet-wide
-    /// framing (utilization, truck-to-truck comparison, the assignment table) for one-truck framing.
+    /// <c>SoloOperator</c> swaps the fleet-wide framing for one-truck framing.
     /// </param>
     public static string Build(
         string companyName,
@@ -87,9 +86,7 @@ internal static class AIDispatchSystemPrompt
               """
             : "";
 
-        // Three fleet-framed lines are swapped rather than overridden: an override that contradicts a
-        // line still leaves the contradicted line in context, and "pick the best truck" is the one
-        // instruction a one-truck carrier cannot follow.
+        // Swapped rather than overridden: an override still leaves the contradicted line in context.
         var utilizationPriority = isSolo
             ? $"4. **Maximize rate per {perUnitLabel}** - take the load that pays best net of deadhead"
             : "4. **Maximize fleet utilization** - keep trucks moving and earning revenue";

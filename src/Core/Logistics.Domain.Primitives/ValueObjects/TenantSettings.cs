@@ -18,10 +18,7 @@ public record TenantSettings
     public VolumeUnit VolumeUnit { get; set; } = VolumeUnit.Gallons;
     public TemperatureUnit TemperatureUnit { get; set; } = TemperatureUnit.Fahrenheit;
 
-    /// <summary>
-    /// Whether this tenant runs as a fleet with a back office or as a solo owner-operator.
-    /// Drives the UX preset (hidden team surfaces, dashboard layout) and the AI dispatch prompt.
-    /// </summary>
+    /// <summary>Drives the UX preset (hidden team surfaces, dashboard layout) and the AI dispatch prompt.</summary>
     public OperatingMode OperatingMode { get; set; } = OperatingMode.Fleet;
 
     /// <summary>

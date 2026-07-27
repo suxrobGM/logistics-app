@@ -42,10 +42,8 @@ internal class TripSeeder(
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
         var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
 
-        // An upstream seeder skipped because its data already exists, so it published nothing to the
-        // context. Reachable whenever this seeder legitimately produced nothing on an earlier run -
-        // a solo tenant has no car hauler and so never gets trips, which would otherwise make every
-        // re-run fail here.
+        // Reachable on every re-run: a solo tenant has no car hauler, so it never gets trips and
+        // upstream seeders keep skipping as already-seeded.
         if (employees is null || trucks is null || customers is null)
         {
             logger.LogWarning("Skipping TripSeeder: an upstream seeder was skipped this run");

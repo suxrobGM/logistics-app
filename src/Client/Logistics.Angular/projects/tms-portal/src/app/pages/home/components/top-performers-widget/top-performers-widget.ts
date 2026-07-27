@@ -20,10 +20,7 @@ interface RankIcon {
   color: string;
 }
 
-/**
- * Podium tones, keyed to the theme rather than to fixed hex so they track light/dark. Bronze has no
- * token of its own, so it is mixed off the same warning hue that stands in for gold.
- */
+/** Bronze has no token of its own, so it is mixed off the same warning hue that stands in for gold. */
 const RANK_COLORS = [
   "var(--warning)",
   "var(--text-muted)",
