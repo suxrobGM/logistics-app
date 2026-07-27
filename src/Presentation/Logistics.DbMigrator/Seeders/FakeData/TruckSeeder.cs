@@ -83,11 +83,14 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
     /// the first driver gets a CarHauler (anchors the trip seeder),
     /// the second gets a ContainerTruck (anchors intermodal loads),
     /// the rest are FreightTrucks. With 5 drivers: 1 CarHauler + 1 ContainerTruck + 3 Freight.
+    /// A one-driver tenant is an owner-operator and gets a plain FreightTruck instead - a solo
+    /// carrier hauling only vehicles would be a strange demo.
     /// </summary>
     private static TruckType PickTruckType(int driverIdx, int driverCount)
     {
+        if (driverCount == 1) return TruckType.FreightTruck;
         if (driverIdx == 0) return TruckType.CarHauler;
-        if (driverIdx == 1 && driverCount > 1) return TruckType.ContainerTruck;
+        if (driverIdx == 1) return TruckType.ContainerTruck;
         return TruckType.FreightTruck;
     }
 }

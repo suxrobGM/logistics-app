@@ -38,6 +38,23 @@ public class SeederContext
     }
 
     /// <summary>
+    /// Top-level section of the merged <c>SeedData/*.json</c> configuration this tenant reads its
+    /// users, customers and portal logins from. Null during the master-only Infrastructure pass.
+    /// </summary>
+    public string? SeedDataKey { get; set; }
+
+    /// <summary>
+    /// Multiplier applied to the fake-data volumes via <see cref="Scale"/>.
+    /// </summary>
+    public double DataScale { get; set; } = 1.0;
+
+    /// <summary>
+    /// Scales a fleet-sized seed count down (or up) for the current tenant. Never returns less
+    /// than 1 - a demo tenant with zero loads is worse than one with a single load.
+    /// </summary>
+    public int Scale(int baseCount) => Math.Max(1, (int)Math.Floor(baseCount * DataScale));
+
+    /// <summary>
     /// Shared state dictionary for passing data between seeders.
     /// </summary>
     private Dictionary<string, object> SharedState { get; } = [];

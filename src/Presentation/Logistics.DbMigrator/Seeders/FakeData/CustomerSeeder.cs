@@ -16,8 +16,8 @@ internal class CustomerSeeder(ILogger<CustomerSeeder> logger) : SeederBase(logge
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
         LogStarting();
-        var region = context.Region?.Region.ToString() ?? throw new InvalidOperationException("Region not set");
-        var customers = context.Configuration.GetRequiredSection($"{region}:Customers").Get<Customer[]>()!;
+        var seedKey = context.SeedDataKey ?? throw new InvalidOperationException("Seed data key not set");
+        var customers = context.Configuration.GetRequiredSection($"{seedKey}:Customers").Get<Customer[]>()!;
         var customersList = new List<Customer>();
         var customerRepository = context.TenantUnitOfWork.Repository<Customer>();
 

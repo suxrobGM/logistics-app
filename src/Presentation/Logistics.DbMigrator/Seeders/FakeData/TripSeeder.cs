@@ -55,18 +55,25 @@ internal class TripSeeder(
         var tripRepo = context.TenantUnitOfWork.Repository<Trip>();
         var loadRepo = context.TenantUnitOfWork.Repository<Load>();
         var paymentRepo = context.TenantUnitOfWork.Repository<Payment>();
+        // An owner-operator has no back office: the owner dispatches their own trips.
+        List<Employee> dispatcherPool =
+            employees.Dispatchers.Count > 0 ? employees.Dispatchers : [employees.Owner];
+        var tripCount = context.Scale(30);
         var count = 0;
 
-        for (var tripIdx = 0; tripIdx < 30; tripIdx++)
+        for (var tripIdx = 0; tripIdx < tripCount; tripIdx++)
         {
             var truck = random.Pick(carHaulerTrucks);
-            var dispatcher = random.Pick(employees.Dispatchers);
+            var dispatcher = random.Pick(dispatcherPool);
             var customer = random.Pick(customers);
 
             var loadsCount = random.Next(2, 5);
             var maxStart = routePoints.Count - (loadsCount + 1);
             if (maxStart < 0)
             {
+                logger.LogWarning(
+                    "Region has {PointCount} route points - too few for a {LoadCount}-leg trip; skipping",
+                    routePoints.Count, loadsCount);
                 continue;
             }
             var startIndex = random.Next(0, maxStart + 1);

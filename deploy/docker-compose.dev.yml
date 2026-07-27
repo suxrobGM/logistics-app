@@ -48,6 +48,7 @@ services:
       ConnectionStrings__MasterDatabase: "Host=postgres;Port=5432;Database=master_logisticsx;Username=postgres;Password=Test12345#"
       Tenants__0__ConnectionString: "Host=postgres;Port=5432;Database=us_logisticsx;Username=postgres;Password=Test12345#"
       Tenants__1__ConnectionString: "Host=postgres;Port=5432;Database=eu_logisticsx;Username=postgres;Password=Test12345#"
+      Tenants__2__ConnectionString: "Host=postgres;Port=5432;Database=solo_logisticsx;Username=postgres;Password=Test12345#"
       SuperAdmin__Email: "admin@test.com"
       SuperAdmin__Password: "Test12345#"
 

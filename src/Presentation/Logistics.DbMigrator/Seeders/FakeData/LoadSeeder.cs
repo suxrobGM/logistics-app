@@ -11,8 +11,9 @@ using Logistics.Domain.Primitives.ValueObjects;
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
 /// <summary>
-/// Seeds 100 freight loads with a realistic type mix (general / reefer / hazmat / intermodal / tank)
+/// Seeds freight loads with a realistic type mix (general / reefer / hazmat / intermodal / tank)
 /// using region-specific route points, customer names, and container / terminal links.
+/// Volume is 100 loads at the default data scale.
 /// </summary>
 internal class LoadSeeder(
     ILogger<LoadSeeder> logger,
@@ -60,9 +61,13 @@ internal class LoadSeeder(
 
         var loadRepository = context.TenantUnitOfWork.Repository<Load>();
         var paymentRepository = context.TenantUnitOfWork.Repository<Payment>();
+        // An owner-operator has no back office: the owner dispatches their own loads.
+        List<Employee> dispatcherPool =
+            employees.Dispatchers.Count > 0 ? employees.Dispatchers : [employees.Owner];
+        var loadCount = context.Scale(100);
         var count = 0;
 
-        for (var i = 1; i <= 100; i++)
+        for (var i = 1; i <= loadCount; i++)
         {
             var loadType = PickLoadType();
             var requiresContainer = loadType is LoadType.IntermodalContainer or LoadType.TankContainer;
@@ -82,7 +87,7 @@ internal class LoadSeeder(
 
             var truck = random.Pick(truckPool);
             var customer = random.Pick(customers);
-            var dispatcher = random.Pick(employees.Dispatchers);
+            var dispatcher = random.Pick(dispatcherPool);
 
             Container? container = null;
             Terminal? originTerminal = null;

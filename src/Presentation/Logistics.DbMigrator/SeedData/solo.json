@@ -1,0 +1,44 @@
+{
+  "Solo": {
+    "CustomerPortalUsers": [
+      {
+        "Email": "solo_customer1@test.com",
+        "FirstName": "Dana",
+        "LastName": "Whitfield",
+        "Password": "Test12345#",
+        "CustomerNames": ["Cardinal Freight Brokers"]
+      }
+    ],
+    "Customers": [
+      {
+        "Name": "Cardinal Freight Brokers",
+        "Address": {
+          "Line1": "4820 Reliance Dr",
+          "City": "Fort Worth",
+          "State": "TX",
+          "ZipCode": "76106",
+          "Country": "US"
+        }
+      },
+      {
+        "Name": "Bluegrass Building Supply",
+        "Address": {
+          "Line1": "1200 Industry Rd",
+          "City": "Louisville",
+          "State": "KY",
+          "ZipCode": "40208",
+          "Country": "US"
+        }
+      }
+    ],
+    "Users": [
+      {
+        "Email": "solo@test.com",
+        "FirstName": "Miguel",
+        "LastName": "Rodriguez",
+        "Password": "Test12345#",
+        "Role": "tenant.owner"
+      }
+    ]
+  }
+}

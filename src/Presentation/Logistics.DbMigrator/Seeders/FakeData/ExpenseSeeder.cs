@@ -58,16 +58,16 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         }
         var count = 0;
 
-        // Seed 20 company expenses
-        for (var i = 0; i < 20; i++)
+        var companyExpenseCount = context.Scale(20);
+        for (var i = 0; i < companyExpenseCount; i++)
         {
             var expense = CreateCompanyExpense();
             await expenseRepository.AddAsync(expense, cancellationToken);
             count++;
         }
 
-        // Seed 30 truck expenses
-        for (var i = 0; i < 30; i++)
+        var truckExpenseCount = context.Scale(30);
+        for (var i = 0; i < truckExpenseCount; i++)
         {
             var truck = random.Pick(trucks);
             var expense = CreateTruckExpense(truck);
@@ -75,8 +75,8 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
             count++;
         }
 
-        // Seed 10 body shop expenses
-        for (var i = 0; i < 10; i++)
+        var bodyShopExpenseCount = context.Scale(10);
+        for (var i = 0; i < bodyShopExpenseCount; i++)
         {
             var truck = random.Pick(trucks);
             var expense = CreateBodyShopExpense(truck);

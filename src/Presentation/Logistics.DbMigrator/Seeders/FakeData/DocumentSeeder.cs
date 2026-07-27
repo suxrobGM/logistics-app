@@ -4,6 +4,7 @@ using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Roles;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
@@ -49,7 +50,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
 
         // Get drivers from context or load from database
         var drivers = context.CreatedEmployees?.Drivers
-            ?? await employeeRepository.GetListAsync(e => e.Role != null && e.Role.Name == "Driver", ct: cancellationToken);
+            ?? await employeeRepository.GetListAsync(e => e.Role != null && e.Role.Name == TenantRoles.Driver, ct: cancellationToken);
         if (drivers.Count == 0)
         {
             logger.LogWarning("No drivers available for document seeding");
