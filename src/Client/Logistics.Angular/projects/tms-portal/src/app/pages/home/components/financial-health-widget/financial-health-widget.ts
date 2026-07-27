@@ -34,7 +34,7 @@ export class FinancialHealthWidgetComponent {
   public readonly overdueInvoiceCount = input<number>(0);
   public readonly isLoading = input<boolean>(false);
 
-  protected readonly hasNoMoneyYet = computed(
+  protected readonly hasNothingOwing = computed(
     () =>
       this.outstandingInvoiceTotal() === 0 &&
       this.paymentsReceivedThisWeek() === 0 &&

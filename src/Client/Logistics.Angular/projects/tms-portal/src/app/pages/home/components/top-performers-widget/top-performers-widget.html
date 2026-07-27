@@ -15,13 +15,11 @@
       <ui-skeleton height="4rem" />
     </ui-stack>
   } @else if (!topTrucks() || topTrucks()!.length === 0) {
+    <!-- Also an established fleet on the 1st of the month, so no first-truck CTA here. -->
     <ui-empty-state
       icon="trophy"
       title="No revenue this month yet"
       message="Once your trucks start delivering, your best earners are ranked here."
-      actionLabel="Add your first truck"
-      actionIcon="truck"
-      actionLink="/trucks/add"
     />
   } @else {
     <ui-stack gap="4">
