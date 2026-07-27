@@ -1,5 +1,5 @@
-import { Component, computed, inject, input } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
+import { Component, computed, input } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
 import {
@@ -39,8 +39,6 @@ interface ActivityItem {
   ],
 })
 export class RecentActivityComponent {
-  private readonly router = inject(Router);
-
   readonly loads = input<LoadDto[]>([]);
   readonly isLoading = input(false);
 
@@ -102,8 +100,4 @@ export class RecentActivityComponent {
     // Sort by timestamp, most recent first
     return items.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 5);
   });
-
-  protected startFirstLoad(): void {
-    void this.router.navigate(["/loads/add"]);
-  }
 }

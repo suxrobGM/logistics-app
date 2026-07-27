@@ -1,4 +1,5 @@
 import { Component, computed, input, output } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { UiButton } from "../../action/button/button";
 import { Typography } from "../../display/typography/typography";
 import { Icon } from "../../icons/icon/icon";
@@ -27,7 +28,7 @@ const SEVERITY_COLOR: Record<Exclude<Severity, null>, string> = {
 @Component({
   selector: "ui-empty-state",
   templateUrl: "./empty-state.html",
-  imports: [Icon, Stack, Typography, UiButton],
+  imports: [Icon, RouterLink, Stack, Typography, UiButton],
 })
 export class EmptyState {
   /** Title displayed above the message */
@@ -44,6 +45,12 @@ export class EmptyState {
 
   /** Icon for the action button. Typed `IconName`, so an unknown name is a compile error. */
   public readonly actionIcon = input<IconName>("plus");
+
+  /**
+   * Route the action button navigates to. Set this instead of handling {@link action} when the
+   * button is a plain link - it saves the host a `Router` injection and a one-line method.
+   */
+  public readonly actionLink = input<string | unknown[] | null>(null);
 
   /**
    * Optional severity tint for the icon. Default `null` renders a neutral muted

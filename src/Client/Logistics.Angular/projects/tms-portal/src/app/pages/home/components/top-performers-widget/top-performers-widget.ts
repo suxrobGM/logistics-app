@@ -1,5 +1,5 @@
-import { Component, computed, inject, input } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
+import { Component, computed, input } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { CurrencyFormatPipe } from "@logistics/shared";
 import type { TopTruckDto } from "@logistics/shared/api";
 import {
@@ -39,8 +39,6 @@ const DEFAULT_RANK_COLOR = "var(--border-default)";
   ],
 })
 export class TopPerformersWidgetComponent {
-  private readonly router = inject(Router);
-
   public readonly topTrucks = input<TopTruckDto[] | null>([]);
   public readonly isLoading = input<boolean>(false);
 
@@ -49,10 +47,6 @@ export class TopPerformersWidgetComponent {
     if (!trucks || trucks.length === 0) return 1;
     return Math.max(...trucks.map((t) => t.revenue ?? 0));
   });
-
-  protected startFirstTruck(): void {
-    void this.router.navigate(["/trucks/add"]);
-  }
 
   protected getProgressValue(revenue: number | undefined): number {
     const max = this.maxRevenue();

@@ -1,5 +1,5 @@
-import { Component, computed, inject, input } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
+import { Component, computed, input } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { CurrencyFormatPipe } from "@logistics/shared";
 import {
   Card,
@@ -29,8 +29,6 @@ import {
   ],
 })
 export class FinancialHealthWidgetComponent {
-  private readonly router = inject(Router);
-
   public readonly outstandingInvoiceTotal = input<number>(0);
   public readonly paymentsReceivedThisWeek = input<number>(0);
   public readonly overdueInvoiceCount = input<number>(0);
@@ -42,9 +40,4 @@ export class FinancialHealthWidgetComponent {
       this.paymentsReceivedThisWeek() === 0 &&
       this.overdueInvoiceCount() === 0,
   );
-
-  /** Invoices are raised off a load, so the first one starts on the load form. */
-  protected startFirstInvoice(): void {
-    void this.router.navigate(["/loads/add"]);
-  }
 }
