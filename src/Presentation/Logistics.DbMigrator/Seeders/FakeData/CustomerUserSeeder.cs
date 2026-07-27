@@ -38,8 +38,7 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
         var customers = context.CreatedCustomers;
         if (customers is null)
         {
-            logger.LogWarning("Skipping CustomerUserSeeder: an upstream seeder was skipped this run");
-            LogCompleted(0);
+            LogUpstreamSkipped();
             return;
         }
 

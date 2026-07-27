@@ -42,12 +42,9 @@ internal class TripSeeder(
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
         var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
 
-        // Reachable on every re-run: a solo tenant has no car hauler, so it never gets trips and
-        // upstream seeders keep skipping as already-seeded.
         if (employees is null || trucks is null || customers is null)
         {
-            logger.LogWarning("Skipping TripSeeder: an upstream seeder was skipped this run");
-            LogCompleted(0);
+            LogUpstreamSkipped();
             return;
         }
 
@@ -64,9 +61,7 @@ internal class TripSeeder(
         var tripRepo = context.TenantUnitOfWork.Repository<Trip>();
         var loadRepo = context.TenantUnitOfWork.Repository<Load>();
         var paymentRepo = context.TenantUnitOfWork.Repository<Payment>();
-        // An owner-operator has no back office: the owner dispatches their own trips.
-        List<Employee> dispatcherPool =
-            employees.Dispatchers.Count > 0 ? employees.Dispatchers : [employees.Owner];
+        var dispatcherPool = employees.DispatcherPool;
         var tripCount = context.Scale(30);
         var count = 0;
 

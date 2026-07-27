@@ -15,8 +15,8 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
 
     protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
     {
-        var testUsers = LoadSeedUsers(context);
-        if (testUsers is null || testUsers.Length == 0)
+        var testUsers = context.GetSeedUsers();
+        if (testUsers.Length == 0)
         {
             return true; // Skip if no users configured for this seed set
         }
@@ -29,16 +29,8 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
         LogStarting();
-        var testUsers = LoadSeedUsers(context);
+        var testUsers = context.GetSeedUsers();
         var usersList = new List<User>();
-
-        if (testUsers is null)
-        {
-            logger.LogWarning("No test users found in configuration");
-            context.CreatedUsers = usersList;
-            LogCompleted();
-            return;
-        }
 
         foreach (var fakeUser in testUsers)
         {
@@ -72,19 +64,5 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
 
         context.CreatedUsers = usersList;
         LogCompleted(usersList.Count);
-    }
-
-    /// <summary>
-    /// Pulls the user array from the tenant's seed-data section
-    /// (e.g. <c>Us:Users</c> or <c>Solo:Users</c>) loaded from <c>SeedData/*.json</c>.
-    /// </summary>
-    private static UserData[]? LoadSeedUsers(SeederContext context)
-    {
-        var key = context.SeedDataKey;
-        if (string.IsNullOrEmpty(key))
-        {
-            return null;
-        }
-        return context.Configuration.GetSection($"{key}:Users").Get<UserData[]>();
     }
 }

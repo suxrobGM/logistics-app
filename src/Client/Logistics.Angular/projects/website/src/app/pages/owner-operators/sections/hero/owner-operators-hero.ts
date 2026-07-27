@@ -1,11 +1,6 @@
 import { Component, inject } from "@angular/core";
-import { PageHero } from "@/shared/components";
+import { PageHero, type StatItem } from "@/shared/components";
 import { DemoDialogService } from "@/shared/services";
-
-interface StatItem {
-  value: string;
-  label: string;
-}
 
 @Component({
   selector: "web-owner-operators-hero",

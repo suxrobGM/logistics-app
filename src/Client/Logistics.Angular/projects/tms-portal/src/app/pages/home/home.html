@@ -57,7 +57,7 @@
                 class="h-full"
                 icon="dollar-sign"
                 label="Weekly Gross"
-                [value]="(weeklyGross() | currencyFormat) ?? '$0'"
+                [value]="(weeklyKpis().totalGross | currencyFormat) ?? '$0'"
                 color="green"
                 tooltip="Total gross for the past 7 days"
               />
@@ -67,7 +67,7 @@
                 class="h-full"
                 icon="map"
                 label="Billed Miles"
-                [value]="(weeklyDistance() | distanceUnit) ?? '0 mi'"
+                [value]="(weeklyKpis().totalDistance | distanceUnit) ?? '0 mi'"
                 color="blue"
                 tooltip="Billable miles driven in the past 7 days"
               />
@@ -77,7 +77,7 @@
                 class="h-full"
                 icon="chart-line"
                 label="Rate Per Mile"
-                [value]="(weeklyRpm() | currencyFormat) ?? '$0'"
+                [value]="(weeklyKpis().ratePerMile | currencyFormat) ?? '$0'"
                 color="purple"
                 tooltip="Weekly gross divided by billed miles"
               />
@@ -87,7 +87,7 @@
                 class="h-full"
                 icon="calendar"
                 label="Today's Gross"
-                [value]="(todayGross() | currencyFormat) ?? '$0'"
+                [value]="(weeklyKpis().todayGross | currencyFormat) ?? '$0'"
                 color="orange"
                 tooltip="Gross earned today"
               />

@@ -47,8 +47,7 @@ internal class LoadSeeder(
 
         if (employees is null || trucks is null || customers is null)
         {
-            logger.LogWarning("Skipping LoadSeeder: an upstream seeder was skipped this run");
-            LogCompleted(0);
+            LogUpstreamSkipped();
             return;
         }
         var terminals = context.CreatedTerminals ?? [];
@@ -67,9 +66,7 @@ internal class LoadSeeder(
 
         var loadRepository = context.TenantUnitOfWork.Repository<Load>();
         var paymentRepository = context.TenantUnitOfWork.Repository<Payment>();
-        // An owner-operator has no back office: the owner dispatches their own loads.
-        List<Employee> dispatcherPool =
-            employees.Dispatchers.Count > 0 ? employees.Dispatchers : [employees.Owner];
+        var dispatcherPool = employees.DispatcherPool;
         var loadCount = context.Scale(100);
         var count = 0;
 

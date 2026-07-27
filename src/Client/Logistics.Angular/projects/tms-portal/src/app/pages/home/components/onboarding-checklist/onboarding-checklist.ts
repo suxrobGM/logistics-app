@@ -100,15 +100,10 @@ export class OnboardingChecklist implements OnInit {
 
   protected readonly rows = computed<OnboardingRow[]>(() =>
     this.steps().flatMap((step) => {
-      const key = step.key;
-      if (!key) {
-        return [];
-      }
+      const key = step.key as OnboardingStepKey | undefined;
+      if (!key) return [];
 
-      const meta = Object.hasOwn(ONBOARDING_STEPS, key)
-        ? ONBOARDING_STEPS[key as OnboardingStepKey]
-        : undefined;
-
+      const meta: OnboardingStepMeta | undefined = ONBOARDING_STEPS[key];
       return meta ? [{ ...meta, key, isComplete: step.isComplete === true }] : [];
     }),
   );
@@ -132,6 +127,9 @@ export class OnboardingChecklist implements OnInit {
   );
 
   ngOnInit(): void {
+    // The whole template hangs off `isVisible`, so a dismissed checklist has nothing to render and
+    // the endpoint is uncached by design - skipping the fetch saves it on every dashboard visit.
+    if (this.dismissed()) return;
     void this.fetchProgress();
   }
 

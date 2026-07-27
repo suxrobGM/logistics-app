@@ -26,7 +26,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
         LogStarting();
 
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
-        var seedUsers = LoadSeedUsers(context);
+        var seedUsers = context.GetSeedUsers();
 
         // Load users from shared context or from database in config order (if UserSeeder was skipped)
         var users = context.CreatedUsers;
@@ -92,14 +92,6 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
 
         context.CreatedEmployees = companyEmployees;
         LogCompleted(companyEmployees.AllEmployees.Count);
-    }
-
-    private static UserData[] LoadSeedUsers(SeederContext context)
-    {
-        var seedKey = context.SeedDataKey;
-        if (string.IsNullOrEmpty(seedKey)) return [];
-
-        return context.Configuration.GetSection($"{seedKey}:Users").Get<UserData[]>() ?? [];
     }
 
     /// <summary>

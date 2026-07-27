@@ -32,8 +32,8 @@
         >
           <ui-stack direction="row" align="center" justify="between">
             <ui-stack direction="row" align="center" gap="3">
-              <span [style.color]="getRankIcon(i).color">
-                <ui-icon [name]="getRankIcon(i).name" color="inherit" />
+              <span [style.color]="rankColor(i)">
+                <ui-icon name="star" color="inherit" />
               </span>
               <div>
                 <ui-typography variant="body" weight="medium" color="primary" tag="div">

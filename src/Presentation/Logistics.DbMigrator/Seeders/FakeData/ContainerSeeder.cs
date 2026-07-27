@@ -37,8 +37,7 @@ internal class ContainerSeeder(ILogger<ContainerSeeder> logger) : SeederBase(log
         var terminals = context.CreatedTerminals;
         if (terminals is null)
         {
-            logger.LogWarning("Skipping ContainerSeeder: an upstream seeder was skipped this run");
-            LogCompleted(0);
+            LogUpstreamSkipped();
             return;
         }
 

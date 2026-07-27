@@ -1,10 +1,11 @@
-import { Component, computed, effect, inject, signal, type OnInit } from "@angular/core";
+import { Component, computed, effect, inject, signal, untracked, type OnInit } from "@angular/core";
 import {
   Api,
   getCompanyStats,
   getDailyGrosses,
   getLoads,
   type CompanyStatsDto,
+  type DailyGrossesDto,
   type LoadDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
@@ -21,9 +22,12 @@ import {
 } from "@logistics/shared/ui";
 import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
 import { AuthService } from "@/core/auth";
-import { DashboardSettingsService, type DashboardPanelConfig } from "@/core/services";
+import {
+  DashboardSettingsService,
+  TenantService,
+  type DashboardPanelConfig,
+} from "@/core/services";
 import { PageHeader, StatCard, TrucksMap } from "@/shared/components";
-import { Converters, DateUtils } from "@/shared/utils";
 import {
   ActiveLoadsPanel,
   AttentionPanelComponent,
@@ -35,6 +39,7 @@ import {
   TopPerformersWidgetComponent,
 } from "./components";
 import { HomeSkeleton } from "./home-skeleton/home-skeleton";
+import { summarizeDailyGrosses, weeklyGrossStartDate } from "./utils/weekly-gross";
 
 @Component({
   selector: "app-home",
@@ -71,12 +76,11 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
 export class Home implements OnInit {
   private readonly api = inject(Api);
   private readonly authService = inject(AuthService);
+  private readonly tenantService = inject(TenantService);
   protected readonly dashboardSettings = inject(DashboardSettingsService);
 
-  protected readonly todayGross = signal(0);
-  protected readonly weeklyGross = signal(0);
-  protected readonly weeklyDistance = signal(0);
-  protected readonly weeklyRpm = signal(0);
+  private readonly dailyGrosses = signal<DailyGrossesDto | null>(null);
+  protected readonly weeklyKpis = computed(() => summarizeDailyGrosses(this.dailyGrosses()));
   protected readonly isLoadingLoadsData = signal(false);
   protected readonly isLoadingCompanyStats = signal(false);
   protected readonly initialLoadComplete = signal(false);
@@ -89,7 +93,7 @@ export class Home implements OnInit {
   protected readonly dashboardPanels = this.dashboardSettings.visiblePanels;
 
   protected readonly activeLoadsTitle = computed(() =>
-    this.dashboardSettings.operatingMode() === "solo_operator" ? "Your Loads" : "Active Loads",
+    this.tenantService.isSoloMode() ? "Your Loads" : "Active Loads",
   );
 
   /** Gridster configuration */
@@ -155,10 +159,11 @@ export class Home implements OnInit {
   });
 
   constructor() {
-    // Covers both auth resolving the user as Owner and the user adding an owner panel by hand.
+    // Covers both auth resolving the user as Owner and the user adding a stats-backed panel by hand.
+    // `untracked` keeps the fetch's own guard signals out of this effect's dependency set.
     effect(() => {
-      if (this.dashboardSettings.hasOwnerPanels()) {
-        this.fetchCompanyStats();
+      if (this.dashboardSettings.needsCompanyStats()) {
+        untracked(() => this.fetchCompanyStats());
       }
     });
   }
@@ -172,7 +177,7 @@ export class Home implements OnInit {
     this.fetchActiveLoads();
     this.fetchRecentLoads();
     this.fetchWeeklyKpis();
-    if (this.dashboardSettings.hasOwnerPanels()) {
+    if (this.dashboardSettings.needsCompanyStats()) {
       this.fetchCompanyStats(true);
     }
   }
@@ -206,24 +211,15 @@ export class Home implements OnInit {
 
   /**
    * Lives here, not on the chart panel, because the KPI cards are default-visible and the chart is
-   * not. Both hit the same cached GET.
+   * not. Both issue the same request, which the HTTP cache then serves once.
    */
   private async fetchWeeklyKpis(): Promise<void> {
     const result = await this.api.invoke(getDailyGrosses, {
-      StartDate: DateUtils.daysAgo(7).toISOString(),
+      StartDate: weeklyGrossStartDate(),
     });
-    if (!result) return;
-
-    const miles = Converters.metersTo(result.totalDistance ?? 0, "mi");
-    const today = new Date().getDate();
-    this.weeklyGross.set(result.totalGross ?? 0);
-    this.weeklyDistance.set(result.totalDistance ?? 0);
-    this.weeklyRpm.set(miles > 0 ? (result.totalGross ?? 0) / miles : 0);
-    this.todayGross.set(
-      (result.data ?? [])
-        .filter((i) => i.date && DateUtils.dayOfMonth(i.date) === today)
-        .reduce((sum, i) => sum + (i.gross ?? 0), 0),
-    );
+    if (result) {
+      this.dailyGrosses.set(result);
+    }
   }
 
   /**

@@ -76,6 +76,7 @@ internal class SeederOrchestrationWorker(
             tenantContext.CurrentTenant = tenantEntity;
             tenantContext.Region = regionFactory.Get(tenantConfig.Region);
             tenantContext.SeedDataKey = tenantConfig.ResolveSeedDataKey();
+            tenantContext.OperatingMode = tenantConfig.OperatingMode;
             tenantContext.DataScale = tenantConfig.DataScale;
             tenantContext.TenantUnitOfWork.SetCurrentTenant(tenantEntity);
 

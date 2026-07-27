@@ -10,8 +10,6 @@ import { TenantService } from "./tenant.service";
 const DASHBOARD_SETTINGS_KEY = "tms-dashboard-settings";
 const CURRENT_VERSION = 3;
 
-const ALL_MODES: readonly OperatingMode[] = ["fleet", "solo_operator"];
-
 export type PanelType =
   | "kpi-weekly-gross"
   | "kpi-billed-miles"
@@ -27,7 +25,8 @@ export type PanelType =
   | "financial-health"
   | "top-performers";
 
-const OWNER_PANEL_IDS: ReadonlySet<PanelType> = new Set<PanelType>([
+/** Panels fed by `getCompanyStats` - the home page only issues that request when one is visible. */
+const STATS_BACKED_PANEL_IDS: ReadonlySet<PanelType> = new Set<PanelType>([
   "attention-panel",
   "financial-health",
   "top-performers",
@@ -50,8 +49,10 @@ export interface DashboardPanelConfig {
   /** Panel is shown only in this operating mode. Absent = both modes. */
   mode?: OperatingMode;
   /** Static metadata, re-applied from the defaults on every load - never the user's choice. */
+  hiddenByDefault?: boolean;
+  /** Narrower form of {@link hiddenByDefault}, for panels that only start hidden in some modes. */
   hiddenByDefaultIn?: readonly OperatingMode[];
-  /** The user's explicit choice. Overrides {@link hiddenByDefaultIn} once set. */
+  /** The user's explicit choice. Overrides both defaults once set. */
   hidden?: boolean;
 }
 
@@ -172,6 +173,7 @@ const DEFAULT_PANELS: DashboardPanelConfig[] = [
     rows: 5,
     minItemCols: 3,
     minItemRows: 2,
+    roles: [UserRole.Owner],
   },
   {
     id: "kpi-today-gross",
@@ -183,7 +185,7 @@ const DEFAULT_PANELS: DashboardPanelConfig[] = [
     rows: 2,
     minItemCols: 2,
     minItemRows: 1,
-    hiddenByDefaultIn: ALL_MODES,
+    hiddenByDefault: true,
   },
   {
     id: "top-performers",
@@ -198,7 +200,7 @@ const DEFAULT_PANELS: DashboardPanelConfig[] = [
     roles: [UserRole.Owner],
     feature: "dashboard",
     mode: "fleet",
-    hiddenByDefaultIn: ALL_MODES,
+    hiddenByDefault: true,
   },
   {
     id: "recent-activity",
@@ -210,7 +212,7 @@ const DEFAULT_PANELS: DashboardPanelConfig[] = [
     rows: 5,
     minItemCols: 3,
     minItemRows: 2,
-    hiddenByDefaultIn: ALL_MODES,
+    hiddenByDefault: true,
   },
   {
     id: "daily-gross-chart",
@@ -222,7 +224,7 @@ const DEFAULT_PANELS: DashboardPanelConfig[] = [
     rows: 5,
     minItemCols: 6,
     minItemRows: 2,
-    hiddenByDefaultIn: ALL_MODES,
+    hiddenByDefault: true,
   },
 ];
 
@@ -238,10 +240,6 @@ export class DashboardSettingsService {
   /** All panels (raw, unfiltered). Used by gridster `updatePanelLayout` callbacks. */
   public readonly panels = this._panels.asReadonly();
 
-  public readonly operatingMode = computed<OperatingMode>(
-    () => this.tenantService.tenantData()?.settings?.operatingMode ?? "fleet",
-  );
-
   public readonly visiblePanels = computed(() =>
     this.gatedPanels()
       .filter(({ hidden }) => !hidden)
@@ -254,13 +252,13 @@ export class DashboardSettingsService {
       .map(({ panel }) => panel),
   );
 
-  public readonly hasOwnerPanels = computed(() =>
-    this.visiblePanels().some((p) => OWNER_PANEL_IDS.has(p.id)),
+  public readonly needsCompanyStats = computed(() =>
+    this.visiblePanels().some((p) => STATS_BACKED_PANEL_IDS.has(p.id)),
   );
 
   private readonly gatedPanels = computed(() => {
     const role = this.authService.getUserData()?.role ?? null;
-    const mode = this.operatingMode();
+    const mode = this.tenantService.operatingMode();
     return this._panels()
       .filter((panel) => this.passesGates(panel, role, mode))
       .map((panel) => ({ panel, hidden: this.isHidden(panel, mode) }));
@@ -342,7 +340,9 @@ export class DashboardSettingsService {
   }
 
   private isHidden(panel: DashboardPanelConfig, mode: OperatingMode): boolean {
-    return panel.hidden ?? panel.hiddenByDefaultIn?.includes(mode) ?? false;
+    return (
+      panel.hidden ?? panel.hiddenByDefault ?? panel.hiddenByDefaultIn?.includes(mode) ?? false
+    );
   }
 
   private loadSettings(): void {

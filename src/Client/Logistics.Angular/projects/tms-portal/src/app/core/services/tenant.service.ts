@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { CookieService } from "@logistics/shared";
-import { Api, getTenantById, type TenantDto } from "@logistics/shared/api";
+import { Api, getTenantById, type OperatingMode, type TenantDto } from "@logistics/shared/api";
 
 @Injectable({ providedIn: "root" })
 export class TenantService {
@@ -22,9 +22,12 @@ export class TenantService {
    */
   public readonly tenantCurrency = computed(() => this._tenantData()?.settings?.currency ?? "USD");
 
-  public readonly isSoloMode = computed(
-    () => this._tenantData()?.settings?.operatingMode === "solo_operator",
+  /** The tenant's operating mode. Single source for every solo-vs-fleet branch in the portal. */
+  public readonly operatingMode = computed<OperatingMode>(
+    () => this._tenantData()?.settings?.operatingMode ?? "fleet",
   );
+
+  public readonly isSoloMode = computed(() => this.operatingMode() === "solo_operator");
 
   getTenantData(): TenantDto | null {
     return this._tenantData();

@@ -11,16 +11,16 @@ import {
   type IconName,
 } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
+import { EldRulesService } from "@/core/services";
 
 interface HosClock {
   label: string;
   icon: IconName;
   display: string;
   minutes: number;
+  /** Below this, the clock is worth reacting to before booking the next load. */
+  warnMinutes: number;
 }
-
-/** Below this, the clock is worth reacting to before booking the next load. */
-const LOW_MINUTES = 60;
 
 @Component({
   selector: "app-hos-remaining",
@@ -30,6 +30,7 @@ const LOW_MINUTES = 60;
 export class HosRemaining implements OnInit {
   private readonly api = inject(Api);
   private readonly authService = inject(AuthService);
+  private readonly rules = inject(EldRulesService);
 
   protected readonly isLoading = signal(true);
   private readonly drivers = signal<DriverHosStatusDto[]>([]);
@@ -47,36 +48,42 @@ export class HosRemaining implements OnInit {
   protected readonly clocks = computed<HosClock[]>(() => {
     const hos = this.status();
     if (!hos) return [];
+
+    const onDutyWarn = this.rules.onDutyWarnMinutes();
     return [
       {
         label: "Driving",
         icon: "gauge",
         display: hos.drivingTimeRemainingDisplay ?? "--",
         minutes: hos.drivingMinutesRemaining ?? 0,
+        warnMinutes: this.rules.drivingWarnMinutes(),
       },
       {
         label: "On duty",
         icon: "clock",
         display: hos.onDutyTimeRemainingDisplay ?? "--",
         minutes: hos.onDutyMinutesRemaining ?? 0,
+        warnMinutes: onDutyWarn,
       },
       {
         label: "Cycle",
         icon: "history",
         display: hos.cycleTimeRemainingDisplay ?? "--",
         minutes: hos.cycleMinutesRemaining ?? 0,
+        warnMinutes: onDutyWarn,
       },
     ];
   });
 
   async ngOnInit(): Promise<void> {
     this.isLoading.set(true);
+    void this.rules.load();
     const data = await this.api.invoke(getAllDriversHos);
     this.drivers.set(data ?? []);
     this.isLoading.set(false);
   }
 
-  protected isLow(minutes: number): boolean {
-    return minutes <= LOW_MINUTES;
+  protected isLow(clock: HosClock): boolean {
+    return clock.minutes <= clock.warnMinutes;
   }
 }

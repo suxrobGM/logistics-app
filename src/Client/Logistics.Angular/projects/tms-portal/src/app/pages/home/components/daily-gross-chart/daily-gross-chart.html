@@ -29,19 +29,19 @@
           Weekly Total
         </div>
         <div class="text-success mt-1 font-mono text-lg font-bold">
-          {{ totalGross() | currencyFormat }}
+          {{ summary().totalGross | currencyFormat }}
         </div>
       </div>
       <div>
         <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">Today</div>
         <div class="text-primary mt-1 font-mono text-lg font-bold">
-          {{ todayGross() | currencyFormat }}
+          {{ summary().todayGross | currencyFormat }}
         </div>
       </div>
       <div>
         <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">Avg/Day</div>
         <div class="text-foreground mt-1 font-mono text-lg font-bold">
-          {{ totalGross() / 7 | currencyFormat }}
+          {{ summary().totalGross / 7 | currencyFormat }}
         </div>
       </div>
     </div>

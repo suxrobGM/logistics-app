@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using MockQueryable;
 using NSubstitute;
 using Xunit;
 
@@ -46,13 +47,18 @@ public class GetOnboardingProgressHandlerTests
         tenantUow.Repository<Load>().Returns(loadRepo);
         tenantUow.Repository<EldProviderConfiguration>().Returns(eldConfigRepo);
 
-        truckRepo.CountAsync().ReturnsForAnyArgs(0);
-        employeeRepo.CountAsync().ReturnsForAnyArgs(0);
-        customerRepo.CountAsync().ReturnsForAnyArgs(0);
-        loadRepo.CountAsync().ReturnsForAnyArgs(0);
-        eldConfigRepo.CountAsync().ReturnsForAnyArgs(0);
+        truckRepo.Query().Returns(QueryOf<Truck>(0));
+        employeeRepo.Query().Returns(QueryOf<Employee>(0));
+        customerRepo.Query().Returns(QueryOf<Customer>(0));
+        loadRepo.Query().Returns(QueryOf<Load>(0));
+        eldConfigRepo.Query().Returns(QueryOf<EldProviderConfiguration>(0));
 
         sut = new GetOnboardingProgressHandler(tenantUow);
+    }
+
+    private static IQueryable<T> QueryOf<T>(int count) where T : class
+    {
+        return Enumerable.Range(0, count).Select(_ => Substitute.For<T>()).ToList().BuildMock();
     }
 
     [Fact]
@@ -78,7 +84,7 @@ public class GetOnboardingProgressHandlerTests
         Assert.Equal(OperatingMode.SoloOperator, result.Value!.OperatingMode);
         Assert.DoesNotContain(result.Value.Steps, s => s.Key == "inviteTeam");
         Assert.Equal(6, result.Value.Steps.Count);
-        await employeeRepo.DidNotReceiveWithAnyArgs().CountAsync();
+        employeeRepo.DidNotReceive().Query();
     }
 
     [Fact]
@@ -89,11 +95,11 @@ public class GetOnboardingProgressHandlerTests
             Line1 = "1 Main St", City = "Dallas", State = "TX", ZipCode = "75001", Country = "US"
         };
         tenant.ConnectStatus = StripeConnectStatus.Active;
-        truckRepo.CountAsync().ReturnsForAnyArgs(3);
-        employeeRepo.CountAsync().ReturnsForAnyArgs(4);
-        customerRepo.CountAsync().ReturnsForAnyArgs(2);
-        loadRepo.CountAsync().ReturnsForAnyArgs(7);
-        eldConfigRepo.CountAsync().ReturnsForAnyArgs(1);
+        truckRepo.Query().Returns(QueryOf<Truck>(3));
+        employeeRepo.Query().Returns(QueryOf<Employee>(4));
+        customerRepo.Query().Returns(QueryOf<Customer>(2));
+        loadRepo.Query().Returns(QueryOf<Load>(7));
+        eldConfigRepo.Query().Returns(QueryOf<EldProviderConfiguration>(1));
 
         var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
@@ -103,7 +109,7 @@ public class GetOnboardingProgressHandlerTests
     [Fact]
     public async Task Handle_SingleEmployee_InviteTeamIncomplete()
     {
-        employeeRepo.CountAsync().ReturnsForAnyArgs(1);
+        employeeRepo.Query().Returns(QueryOf<Employee>(1));
 
         var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 

@@ -31,8 +31,7 @@ internal class PayrollSeeder(ILogger<PayrollSeeder> logger) : SeederBase(logger)
         var employees = context.CreatedEmployees;
         if (employees is null)
         {
-            logger.LogWarning("Skipping PayrollSeeder: an upstream seeder was skipped this run");
-            LogCompleted(0);
+            LogUpstreamSkipped();
             return;
         }
 
