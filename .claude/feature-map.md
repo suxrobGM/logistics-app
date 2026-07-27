@@ -97,8 +97,8 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 ### Onboarding
 
-- Application: `Modules/Platform/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client
-- API/UI: `OnboardingController.cs` (`GET /onboarding/progress`, reuses `Permission.Stat.View`), `tms-portal/pages/home/components/onboarding-checklist/`
+- Application: `Modules/Platform/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client. Each step declares a `TenantFeature`, so a disabled feature drops its step rather than shipping one that can never complete
+- API/UI: `OnboardingController.cs` (`GET /onboarding/progress`, `Permission.Employee.Manage` - Owner + Manager), `tms-portal/pages/home/components/onboarding-checklist/`
 
 ### Solo / owner-operator mode
 

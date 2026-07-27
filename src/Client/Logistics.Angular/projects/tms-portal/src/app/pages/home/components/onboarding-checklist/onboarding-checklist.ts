@@ -15,7 +15,10 @@ import {
 
 const DISMISSED_KEY = "tms-onboarding-dismissed";
 
-/** What `/onboarding/progress` emits; `inviteTeam` is absent entirely in solo-operator mode. */
+/**
+ * What `/onboarding/progress` can emit. Any key may be absent: the server drops steps whose tenant
+ * feature is off, and `inviteTeam` in solo-operator mode.
+ */
 type OnboardingStepKey =
   | "companyProfile"
   | "addTruck"

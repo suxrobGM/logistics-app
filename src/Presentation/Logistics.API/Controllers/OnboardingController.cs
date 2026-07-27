@@ -15,7 +15,9 @@ public class OnboardingController(IMediator mediator) : ControllerBase
     [HttpGet("progress", Name = "GetOnboardingProgress")]
     [ProducesResponseType(typeof(OnboardingProgressDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Stat.View)]
+    // Not Stat.View: that is held by Driver and Dispatcher too, and neither has any business
+    // reading whether the company has set up payouts.
+    [Authorize(Policy = Permission.Employee.Manage)]
     public async Task<IActionResult> GetOnboardingProgress([FromQuery] GetOnboardingProgressQuery request)
     {
         var result = await mediator.Send(request);

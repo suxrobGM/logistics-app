@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Platform.Onboarding.Queries;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -12,6 +13,7 @@ namespace Logistics.Application.Tests.Platform;
 public class GetOnboardingProgressHandlerTests
 {
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IFeatureService featureService = Substitute.For<IFeatureService>();
 
     private readonly ITenantRepository<Truck, Guid> truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
@@ -53,7 +55,14 @@ public class GetOnboardingProgressHandlerTests
         loadRepo.Query().Returns(QueryOf<Load>(0));
         eldConfigRepo.Query().Returns(QueryOf<EldProviderConfiguration>(0));
 
-        sut = new GetOnboardingProgressHandler(tenantUow);
+        EnableFeatures(Enum.GetValues<TenantFeature>());
+
+        sut = new GetOnboardingProgressHandler(tenantUow, featureService);
+    }
+
+    private void EnableFeatures(params TenantFeature[] features)
+    {
+        featureService.GetEnabledFeaturesAsync(Arg.Any<Guid>()).Returns(features);
     }
 
     private static IQueryable<T> QueryOf<T>(int count) where T : class
@@ -128,6 +137,28 @@ public class GetOnboardingProgressHandlerTests
         var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.False(result.Value!.Steps.Single(s => s.Key == "getPaid").IsComplete);
+    }
+
+    [Fact]
+    public async Task Handle_FeatureDisabled_OmitsItsStep()
+    {
+        EnableFeatures(
+            [.. Enum.GetValues<TenantFeature>().Where(f => f is not TenantFeature.Eld)]);
+
+        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+
+        Assert.DoesNotContain(result.Value!.Steps, s => s.Key == "connectEld");
+        eldConfigRepo.DidNotReceive().Query();
+    }
+
+    [Fact]
+    public async Task Handle_NoFeaturesEnabled_KeepsOnlyCompanyProfile()
+    {
+        EnableFeatures();
+
+        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+
+        Assert.Equal(["companyProfile"], result.Value!.Steps.Select(s => s.Key));
     }
 
     [Fact]
