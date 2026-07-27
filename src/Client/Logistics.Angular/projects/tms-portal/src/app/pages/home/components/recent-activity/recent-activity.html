@@ -1,37 +1,36 @@
 <ui-card class="h-full">
   <ng-template #header>
-    <div class="flex items-center gap-2 py-3 pl-4">
-      <ui-icon name="history" size="inherit" class="text-xl text-purple-600" />
-      <h4 class="mb-0">Recent Activity</h4>
-    </div>
+    <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
+      <ui-icon name="history" size="xl" color="info" />
+      <ui-typography variant="h4" tag="h4" color="primary">Recent Activity</ui-typography>
+    </ui-stack>
     <ui-divider class="m-0" />
   </ng-template>
 
   @if (isLoading()) {
-    <div class="flex flex-col gap-3">
+    <ui-stack gap="3">
       @for (_ of [1, 2, 3, 4, 5]; track $index) {
         <ui-skeleton height="2.5rem" />
       }
-    </div>
+    </ui-stack>
   } @else if (activities().length === 0) {
-    <div class="text-muted-foreground flex flex-col items-center justify-center py-8 text-center">
-      <ui-icon name="inbox" size="inherit" class="mb-2 text-4xl" />
-      <p>No recent activity</p>
-    </div>
+    <ui-empty-state
+      icon="inbox"
+      title="Nothing has happened yet"
+      message="Loads you create, dispatch and deliver show up here as you go."
+      actionLabel="Book your first load"
+      actionIcon="plus"
+      (action)="startFirstLoad()"
+    />
   } @else {
     <div class="flex flex-col">
       @for (activity of activities(); track activity.loadId + activity.action; let last = $last) {
         <a
           [routerLink]="['/loads', activity.loadId, 'edit']"
-          class="hover:bg-surface-100 dark:hover:bg-surface-800 flex items-center gap-3 rounded-lg px-2 py-3 transition-colors"
+          class="hover:bg-hover flex items-center gap-3 rounded-lg px-2 py-3 transition-colors"
         >
           <!-- Icon -->
-          <ui-icon
-            [name]="activity.icon"
-            size="inherit"
-            [class]="activity.iconClass"
-            class="text-lg"
-          />
+          <ui-icon [name]="activity.icon" [color]="activity.color" size="inherit" class="text-lg" />
 
           <!-- Content -->
           <div class="min-w-0 flex-1">
@@ -49,7 +48,7 @@
           </span>
         </a>
         @if (!last) {
-          <div class="border-surface-200 dark:border-surface-700 ml-5 border-l-2 py-1"></div>
+          <div class="border-default ml-5 border-l-2 py-1"></div>
         }
       }
     </div>

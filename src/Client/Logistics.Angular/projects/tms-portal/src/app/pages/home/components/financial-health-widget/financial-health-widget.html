@@ -13,6 +13,15 @@
       <ui-skeleton height="4rem" />
       <ui-skeleton height="4rem" />
     </ui-stack>
+  } @else if (hasNoMoneyYet()) {
+    <ui-empty-state
+      icon="receipt"
+      title="No money moving yet"
+      message="Invoices are raised from your loads. Book one and what you are owed shows up here."
+      actionLabel="Create your first invoice"
+      actionIcon="plus"
+      (action)="startFirstInvoice()"
+    />
   } @else {
     <ui-stack gap="4">
       <!-- Outstanding Invoices -->

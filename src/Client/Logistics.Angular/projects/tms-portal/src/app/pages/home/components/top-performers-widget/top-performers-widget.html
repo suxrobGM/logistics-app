@@ -17,15 +17,14 @@
       <ui-skeleton height="4rem" />
     </ui-stack>
   } @else if (!topTrucks() || topTrucks()!.length === 0) {
-    <ui-stack align="center" justify="center" gap="2" class="py-8 text-center">
-      <ui-icon
-        name="chart-column"
-        size="inherit"
-        class="text-muted-foreground text-4xl"
-        aria-hidden="true"
-      />
-      <ui-typography variant="body" color="muted">No data available yet</ui-typography>
-    </ui-stack>
+    <ui-empty-state
+      icon="trophy"
+      title="No revenue this month yet"
+      message="Once your trucks start delivering, your best earners are ranked here."
+      actionLabel="Add your first truck"
+      actionIcon="truck"
+      (action)="startFirstTruck()"
+    />
   } @else {
     <ui-stack gap="4">
       @for (truck of topTrucks(); track truck.truckId; let i = $index) {
