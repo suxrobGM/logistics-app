@@ -5,10 +5,7 @@ import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
 import { UiAutocompleteField } from "@logistics/shared/ui";
 
 /**
- * Component for searching and selecting an employee.
- * This component uses an autocomplete input to allow users to search for employees by name.
- * It emits the selected employee via its `value` model. Supports filtering by role
- * (e.g., "Driver", "Dispatcher").
+ * Autocomplete for picking an employee by name, optionally narrowed to a set of tenant roles.
  *
  * Implements `FormValueControl` only - see `text-field.ts` for the FormValueControl bridge contract.
  * Never put `formControlName` / `[formField]` on an inner third-party element.
@@ -32,8 +29,8 @@ export class SearchEmployee implements FormValueControl<EmployeeDto | null> {
   /** Raised on blur so the form can mark the field touched. */
   public readonly touch = output<void>();
 
-  /** Filter employees by role (e.g., "Driver", "Dispatcher") */
-  public readonly role = input<TenantRoleValue | null>(null);
+  /** Restrict results to these exact tenant roles (e.g. `DRIVING_ROLES`). Empty = every role. */
+  public readonly roles = input<readonly TenantRoleValue[]>([]);
   public readonly placeholder = input<string>("Type employee name");
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -44,10 +41,10 @@ export class SearchEmployee implements FormValueControl<EmployeeDto | null> {
   }
 
   protected async searchEmployee(event: { query: string }): Promise<void> {
-    const roleValue = this.role() as string;
+    const roles = this.roles();
     const result = await this.api.invoke(getEmployees, {
       Search: event.query,
-      ...(roleValue ? { Role: roleValue } : {}),
+      ...(roles.length > 0 ? { Roles: [...roles] } : {}),
     });
 
     this.suggestedEmployees.set(result?.items ?? []);

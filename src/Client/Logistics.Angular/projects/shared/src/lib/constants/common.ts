@@ -23,6 +23,12 @@ export const TenantRole = {
 export type TenantRoleValue = (typeof TenantRole)[keyof typeof TenantRole];
 
 /**
+ * Roles assignable to a truck or named on a driver-facing record. Owner is here because an
+ * owner-operator drives their own truck - the same reason Owner carries `Permission.Driver.*`.
+ */
+export const DRIVING_ROLES: readonly TenantRoleValue[] = [TenantRole.Driver, TenantRole.Owner];
+
+/**
  * Default tenant localization settings matches with US locales
  */
 export const DEFAULT_TENANT_SETTINGS: TenantSettings = {

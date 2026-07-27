@@ -4892,10 +4892,13 @@
         "operationId": "GetEmployees",
         "parameters": [
           {
-            "name": "Role",
+            "name": "Roles",
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {

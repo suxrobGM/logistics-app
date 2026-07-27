@@ -26,7 +26,11 @@
     </ui-form-field>
 
     <ui-form-field label="Driver" for="driver" [required]="true">
-      <app-search-employee [formField]="field().driver" placeholder="Search for driver..." />
+      <app-search-employee
+        [formField]="field().driver"
+        [roles]="drivingRoles"
+        placeholder="Search for driver..."
+      />
     </ui-form-field>
   </div>
 

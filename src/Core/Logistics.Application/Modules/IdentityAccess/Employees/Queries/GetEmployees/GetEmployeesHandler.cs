@@ -23,9 +23,9 @@ internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IAppReq
                 (i.Email != null && i.Email.Contains(req.Search)));
         }
 
-        if (!string.IsNullOrEmpty(req.Role))
+        if (req.Roles.Length > 0)
         {
-            query = query.Where(e => e.Role != null && e.Role.Name.Contains(req.Role));
+            query = query.Where(e => e.Role != null && req.Roles.Contains(e.Role.Name));
         }
 
         var totalItems = query.Count();
