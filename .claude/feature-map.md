@@ -95,6 +95,11 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Application: `Modules/Platform/Stats/Queries/`, `Modules/Platform/Reports/Queries/`
 - API/UI: `StatController.cs`, `ReportController.cs`, `tms-portal/pages/dashboard/`, `pages/reports/`
 
+### Onboarding
+
+- Application: `Modules/Platform/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client
+- API/UI: `OnboardingController.cs` (`GET /onboarding/progress`, reuses `Permission.Stat.View`)
+
 ## AI dispatch
 
 ### Dispatch sessions
