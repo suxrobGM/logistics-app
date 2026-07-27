@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
@@ -8,11 +9,18 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 
-internal sealed class CreateDvirReportHandler(ITenantUnitOfWork tenantUow)
+internal sealed class CreateDvirReportHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUser)
     : IAppRequestHandler<CreateDvirReportCommand, Result<DvirReportDto>>
 {
     public async Task<Result<DvirReportDto>> Handle(CreateDvirReportCommand req, CancellationToken ct)
     {
+        if (!await DvirReportAccess.CanFileForAsync(tenantUow, currentUser.GetUserId(), req.DriverId, ct))
+        {
+            return Result<DvirReportDto>.Fail("You can only file a DVIR for yourself.");
+        }
+
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
