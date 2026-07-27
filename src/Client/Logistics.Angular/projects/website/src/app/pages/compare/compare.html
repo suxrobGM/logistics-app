@@ -109,19 +109,19 @@
     <web-section-header
       label="Pricing"
       title="Cost at scale"
-      subtitle="Monthly cost on our Professional plan against the competition. No hidden fees."
+      subtitle="What you'd pay us at four fleet sizes, against the competition. No hidden fees."
     />
   </div>
 
   <div
-    class="mx-auto mt-16 grid max-w-4xl gap-6 md:grid-cols-3"
+    class="mx-auto mt-16 grid max-w-4xl gap-6 sm:grid-cols-2 lg:grid-cols-4"
     webScrollAnimate="fade-up"
     [delay]="150"
   >
     @for (row of pricing; track row.trucks; let i = $index) {
       <div class="rounded-2xl border-2 border-gray-200 bg-white p-6 text-center shadow-sm">
         <div class="text-steel text-sm font-medium tracking-wide uppercase">
-          {{ row.trucks }} trucks
+          {{ row.trucks }} {{ row.trucks === 1 ? "truck" : "trucks" }}
         </div>
 
         <div class="mt-4">

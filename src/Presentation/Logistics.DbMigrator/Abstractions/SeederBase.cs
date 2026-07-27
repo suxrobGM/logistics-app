@@ -50,6 +50,16 @@ public abstract class SeederBase(ILogger logger) : ISeeder
         logger.LogInformation("Skipping {SeederName}: {Reason}", Name, reason);
     }
 
+    /// <summary>
+    /// Closes out a run where an upstream seeder left its shared-context output unset - reachable on
+    /// every re-run, since an already-seeded upstream skips without publishing anything.
+    /// </summary>
+    protected void LogUpstreamSkipped()
+    {
+        LogSkipping("an upstream seeder was skipped this run");
+        LogCompleted(0);
+    }
+
     protected void LogStarting()
     {
         logger.LogInformation("Starting {SeederName}...", Name);

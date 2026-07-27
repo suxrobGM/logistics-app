@@ -26,6 +26,8 @@ The agent looks at the fleet and produces suggestions a dispatcher reviews in th
 
 The agent assigns loads on its own, no human approval. I'd only flip this on after running in human-in-the-loop for a while and trusting what the agent picks. The UI flags it as experimental.
 
+Separately from those two, the system prompt varies by `TenantSettings.OperatingMode`. A `SoloOperator` tenant gets a "Fleet Profile" section that drops fleet utilization, the truck-to-truck comparison and the assignment table, since there is one truck and the owner is the driver.
+
 ## How It Works
 
 ```text

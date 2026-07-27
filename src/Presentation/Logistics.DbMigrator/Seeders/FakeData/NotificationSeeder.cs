@@ -23,8 +23,9 @@ internal class NotificationSeeder(ILogger<NotificationSeeder> logger) : SeederBa
     {
         LogStarting();
         var notificationRepository = context.TenantUnitOfWork.Repository<Notification>();
+        var notificationCount = context.Scale(10);
 
-        for (var i = 1; i <= 10; i++)
+        for (var i = 1; i <= notificationCount; i++)
         {
             var notification = new Notification
             {
@@ -40,6 +41,6 @@ internal class NotificationSeeder(ILogger<NotificationSeeder> logger) : SeederBa
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
-        LogCompleted(10);
+        LogCompleted(notificationCount);
     }
 }

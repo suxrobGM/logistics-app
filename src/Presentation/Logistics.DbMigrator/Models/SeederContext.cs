@@ -1,6 +1,7 @@
 using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.DbMigrator.Models;
@@ -36,6 +37,27 @@ public class SeederContext
         get => SharedState.TryGetValue(nameof(Region), out var val) ? (IRegionProfile)val : null;
         set => SharedState[nameof(Region)] = value!;
     }
+
+    /// <summary><c>SeedData/*.json</c> section this tenant reads from. Null during the master-only Infrastructure pass.</summary>
+    public string? SeedDataKey { get; set; }
+
+    public OperatingMode OperatingMode { get; set; } = OperatingMode.Fleet;
+
+    public double DataScale { get; set; } = 1.0;
+
+    /// <summary>
+    /// The user array from this tenant's seed-data section (e.g. <c>Us:Users</c> or <c>Solo:Users</c>),
+    /// loaded from <c>SeedData/*.json</c>. Empty when the tenant has no seed set.
+    /// </summary>
+    public UserData[] GetSeedUsers()
+    {
+        return string.IsNullOrEmpty(SeedDataKey)
+            ? []
+            : Configuration.GetSection($"{SeedDataKey}:Users").Get<UserData[]>() ?? [];
+    }
+
+    /// <summary>Scales a fleet-sized seed count for the current tenant. Never returns less than 1.</summary>
+    public int Scale(int baseCount) => Math.Max(1, (int)Math.Floor(baseCount * DataScale));
 
     /// <summary>
     /// Shared state dictionary for passing data between seeders.

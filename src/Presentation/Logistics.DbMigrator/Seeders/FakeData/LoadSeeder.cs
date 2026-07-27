@@ -11,7 +11,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
 /// <summary>
-/// Seeds 100 freight loads with a realistic type mix (general / reefer / hazmat / intermodal / tank)
+/// Seeds freight loads with a realistic type mix (general / reefer / hazmat / intermodal / tank)
 /// using region-specific route points, customer names, and container / terminal links.
 /// </summary>
 internal class LoadSeeder(
@@ -39,11 +39,17 @@ internal class LoadSeeder(
     {
         LogStarting();
 
-        var employees = context.CreatedEmployees ?? throw new InvalidOperationException("Employees not seeded");
-        var trucks = context.CreatedTrucks ?? throw new InvalidOperationException("Trucks not seeded");
-        var customers = context.CreatedCustomers ?? throw new InvalidOperationException("Customers not seeded");
+        var employees = context.CreatedEmployees;
+        var trucks = context.CreatedTrucks;
+        var customers = context.CreatedCustomers;
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
         var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
+
+        if (employees is null || trucks is null || customers is null)
+        {
+            LogUpstreamSkipped();
+            return;
+        }
         var terminals = context.CreatedTerminals ?? [];
         var availableContainers = (context.CreatedContainers ?? []).ToList();
 
@@ -60,9 +66,11 @@ internal class LoadSeeder(
 
         var loadRepository = context.TenantUnitOfWork.Repository<Load>();
         var paymentRepository = context.TenantUnitOfWork.Repository<Payment>();
+        var dispatcherPool = employees.DispatcherPool;
+        var loadCount = context.Scale(100);
         var count = 0;
 
-        for (var i = 1; i <= 100; i++)
+        for (var i = 1; i <= loadCount; i++)
         {
             var loadType = PickLoadType();
             var requiresContainer = loadType is LoadType.IntermodalContainer or LoadType.TankContainer;
@@ -82,7 +90,7 @@ internal class LoadSeeder(
 
             var truck = random.Pick(truckPool);
             var customer = random.Pick(customers);
-            var dispatcher = random.Pick(employees.Dispatchers);
+            var dispatcher = random.Pick(dispatcherPool);
 
             Container? container = null;
             Terminal? originTerminal = null;

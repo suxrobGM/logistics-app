@@ -53,6 +53,7 @@ public static class TenantRolePermissions
         var list = new List<string>();
         list.AddRange(GetBasicPermissions());
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Employee)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Driver)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Load)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Truck)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.TenantRole)));
@@ -147,6 +148,9 @@ public static class TenantRolePermissions
         list.Add(Permission.Truck.View);
         list.Add(Permission.Load.View);
         list.Add(Permission.Stat.View);
+        // Drivers file their own DVIRs; Dvir.Review stays with the roles that supervise them.
+        list.Add(Permission.Dvir.View);
+        list.Add(Permission.Dvir.Manage);
         return list;
     }
 

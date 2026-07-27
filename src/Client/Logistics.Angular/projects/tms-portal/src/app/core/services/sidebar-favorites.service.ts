@@ -27,11 +27,17 @@ export class SidebarFavoritesService {
     this.loadFromStorage();
   }
 
-  initWithRole(role: string): void {
+  /**
+   * Defaults are narrowed to `availableIds` so an owner-operator is never seeded with a favourite
+   * pointing at a page their mode hides.
+   */
+  initWithRole(role: string, availableIds?: readonly string[]): void {
     // Only set defaults if no stored favorites exist
     if (this._favoriteIds().length === 0) {
       const defaults = ROLE_DEFAULTS[role] ?? ROLE_DEFAULTS[UserRole.Owner];
-      this._favoriteIds.set(defaults);
+      this._favoriteIds.set(
+        availableIds ? defaults.filter((id) => availableIds.includes(id)) : defaults,
+      );
       this.persist();
     }
   }

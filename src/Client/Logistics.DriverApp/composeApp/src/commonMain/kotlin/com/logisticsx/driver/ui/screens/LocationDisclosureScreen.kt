@@ -137,8 +137,9 @@ fun LocationDisclosureScreen(
             InfoCard(
                 icon = Icons.Filled.Group,
                 title = "Who sees it",
-                body = "Your dispatcher at your trucking company and the customer " +
-                    "of your currently active load. Not shared with third parties."
+                body = "The dispatchers and managers on your trucking company's account, " +
+                    "and the customer of your currently active load. Not shared with " +
+                    "third parties."
             )
 
             InfoCard(
@@ -159,7 +160,7 @@ private fun HeroHeader() {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "We share your truck's location with your dispatcher",
+            text = "We share your truck's location with your trucking company",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.fillMaxWidth()

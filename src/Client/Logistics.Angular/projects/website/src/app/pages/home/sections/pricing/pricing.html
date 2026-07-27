@@ -22,7 +22,9 @@
         <!-- Badge -->
         @if (tier.badge) {
           <div
-            class="bg-accent text-paper absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-sm font-semibold whitespace-nowrap"
+            class="text-paper absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-sm font-semibold whitespace-nowrap"
+            [class.bg-accent]="tier.highlighted"
+            [class.bg-ink]="!tier.highlighted"
           >
             {{ tier.badge }}
           </div>

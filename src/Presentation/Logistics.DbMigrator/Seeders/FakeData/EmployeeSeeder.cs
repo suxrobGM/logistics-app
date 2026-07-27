@@ -26,12 +26,13 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
         LogStarting();
 
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
+        var seedUsers = context.GetSeedUsers();
 
         // Load users from shared context or from database in config order (if UserSeeder was skipped)
         var users = context.CreatedUsers;
         if (users is null || users.Count == 0)
         {
-            users = await LoadUsersInConfigOrderAsync(context, cancellationToken);
+            users = await LoadUsersInConfigOrderAsync(context, seedUsers, cancellationToken);
         }
 
         if (users.Count == 0)
@@ -47,19 +48,16 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
         var dispatcherRole = roles.First(i => i.Name == TenantRoles.Dispatcher);
         var driverRole = roles.First(i => i.Name == TenantRoles.Driver);
 
-        var owner = users[0];
-        var manager = users.Count > 1 ? users[1] : null;
-        var dispatchers = users.Skip(2).Take(3);
-        var drivers = users.Skip(5);
+        var split = SplitUsersByRole(users, seedUsers);
 
-        var ownerEmployee = await CreateEmployeeAsync(context, tenant.Id, owner, 0, SalaryType.None, ownerRole);
-        var managerEmployee = manager is not null
-            ? await CreateEmployeeAsync(context, tenant.Id, manager, 5000, SalaryType.Monthly, managerRole)
+        var ownerEmployee = await CreateEmployeeAsync(context, tenant.Id, split.Owner, 0, SalaryType.None, ownerRole);
+        var managerEmployee = split.Manager is not null
+            ? await CreateEmployeeAsync(context, tenant.Id, split.Manager, 5000, SalaryType.Monthly, managerRole)
             : ownerEmployee;
 
         var companyEmployees = new CompanyEmployees(ownerEmployee, managerEmployee);
 
-        foreach (var dispatcher in dispatchers)
+        foreach (var dispatcher in split.Dispatchers)
         {
             var dispatcherEmployee = await CreateEmployeeAsync(
                 context, tenant.Id, dispatcher, 1000, SalaryType.Weekly, dispatcherRole);
@@ -67,7 +65,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
             companyEmployees.AllEmployees.Add(dispatcherEmployee);
         }
 
-        foreach (var driver in drivers)
+        foreach (var driver in split.Drivers)
         {
             var driverEmployee = await CreateEmployeeAsync(
                 context, tenant.Id, driver, 0.3M, SalaryType.ShareOfGross, driverRole);
@@ -76,9 +74,17 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
         }
 
         companyEmployees.AllEmployees.Add(ownerEmployee);
-        if (manager is not null)
+        if (split.Manager is not null)
         {
             companyEmployees.AllEmployees.Add(managerEmployee);
+        }
+
+        // An owner-operator drives their own truck; added after AllEmployees so they are not counted twice.
+        if (companyEmployees.Drivers.Count == 0)
+        {
+            companyEmployees.Drivers.Add(ownerEmployee);
+            logger.LogInformation("No dedicated drivers seeded - {Owner} drives their own truck",
+                split.Owner.UserName);
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
@@ -89,20 +95,13 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
     }
 
     /// <summary>
-    /// Loads users from database in the same order as fake-dataset.json to preserve role assignments.
+    /// Loads users from database in the same order as the seed data, to preserve role assignments.
     /// </summary>
     private static async Task<IList<User>> LoadUsersInConfigOrderAsync(
-        SeederContext context, CancellationToken ct)
+        SeederContext context, UserData[] seedUsers, CancellationToken ct)
     {
-        var region = context.Region?.Region.ToString();
-        if (string.IsNullOrEmpty(region)) return [];
-
-        var testUsers = context.Configuration.GetSection($"{region}:Users").Get<UserData[]>();
-        if (testUsers is null || testUsers.Length == 0)
-            return [];
-
         var orderedUsers = new List<User>();
-        foreach (var fakeUser in testUsers)
+        foreach (var fakeUser in seedUsers)
         {
             var user = await context.UserManager.FindByNameAsync(fakeUser.Email);
             if (user is not null)
@@ -111,6 +110,63 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
 
         return orderedUsers;
     }
+
+    /// <summary>Splits by declared <c>Role</c>, falling back to position so the existing fleet seed sets need no <c>Role</c> field.</summary>
+    private UserRoleSplit SplitUsersByRole(IList<User> users, UserData[] seedUsers)
+    {
+        var rolesByEmail = seedUsers
+            .Where(u => !string.IsNullOrWhiteSpace(u.Role))
+            .ToDictionary(u => u.Email, u => u.Role!, StringComparer.OrdinalIgnoreCase);
+
+        if (rolesByEmail.Count == 0)
+        {
+            return new UserRoleSplit(
+                users[0],
+                users.Count > 1 ? users[1] : null,
+                [.. users.Skip(2).Take(3)],
+                [.. users.Skip(5)]);
+        }
+
+        User? owner = null;
+        User? manager = null;
+        var dispatchers = new List<User>();
+        var drivers = new List<User>();
+
+        foreach (var user in users)
+        {
+            var key = user.Email ?? user.UserName ?? string.Empty;
+            var role = rolesByEmail.GetValueOrDefault(key, TenantRoles.Driver);
+
+            switch (role)
+            {
+                case TenantRoles.Owner:
+                    owner ??= user;
+                    break;
+                case TenantRoles.Manager:
+                    manager ??= user;
+                    break;
+                case TenantRoles.Dispatcher:
+                    dispatchers.Add(user);
+                    break;
+                case TenantRoles.Driver:
+                    drivers.Add(user);
+                    break;
+                default:
+                    logger.LogWarning("Unknown seed role '{Role}' for {Email} - treating as driver",
+                        role, key);
+                    drivers.Add(user);
+                    break;
+            }
+        }
+
+        return new UserRoleSplit(owner ?? users[0], manager, dispatchers, drivers);
+    }
+
+    private sealed record UserRoleSplit(
+        User Owner,
+        User? Manager,
+        List<User> Dispatchers,
+        List<User> Drivers);
 
     private async Task<Employee> CreateEmployeeAsync(
         SeederContext context,

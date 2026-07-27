@@ -92,8 +92,9 @@ class ConversationListViewModel(
                 onlyActiveLoads = true
             ).bodyOrThrow()
 
+            // An owner-operator dispatches their own loads - without this the app offers a chat with yourself.
             val loadWithDispatcher = truck.loads?.firstOrNull {
-                !it.assignedDispatcherId.isNullOrEmpty()
+                !it.assignedDispatcherId.isNullOrEmpty() && it.assignedDispatcherId != userId
             }
 
             loadWithDispatcher?.let { load ->

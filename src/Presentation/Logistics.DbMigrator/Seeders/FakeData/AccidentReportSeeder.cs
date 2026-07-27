@@ -100,7 +100,7 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
         }
 
         var count = 0;
-        var reportsToCreate = random.Next(5, 12);
+        var reportsToCreate = random.Next(context.Scale(5), context.Scale(12));
 
         for (var i = 0; i < reportsToCreate; i++)
         {

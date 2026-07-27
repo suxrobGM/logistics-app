@@ -93,7 +93,21 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 ### Dashboard / stats
 
 - Application: `Modules/Platform/Stats/Queries/`, `Modules/Platform/Reports/Queries/`
-- API/UI: `StatController.cs`, `ReportController.cs`, `tms-portal/pages/dashboard/`, `pages/reports/`
+- API/UI: `StatController.cs`, `ReportController.cs`, `tms-portal/pages/home/` (+ its `components/` panels), `pages/reports/`. `pages/dashboard/` is a redirect-only stub kept for old bookmarks - don't add anything there
+
+### Onboarding
+
+- Application: `Modules/Platform/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client. Each step declares a `TenantFeature`, so a disabled feature drops its step rather than shipping one that can never complete
+- API/UI: `OnboardingController.cs` (`GET /onboarding/progress`, `Permission.Employee.Manage` - Owner + Manager), `tms-portal/pages/home/components/onboarding-checklist/`
+
+### Solo / owner-operator mode
+
+- Domain: `Primitives/Enums/Tenant/OperatingMode.cs` (`Fleet` | `SoloOperator`), stored on the `TenantSettings` VO (`settings_operating_mode` on `tenants`, master DB)
+- Application: `Modules/IdentityAccess/Tenants/Commands/CreateTenant` + `UpdateTenant` carry it; `Modules/Platform/Onboarding/` drops the `inviteTeam` step in solo mode
+- Infrastructure: `Infrastructure.AI/Prompts/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section (the `## Operating Mode` heading is already taken by `AIDispatchMode`)
+- API/UI: `tms-portal/core/services/tenant.service.ts` (`isSoloMode`), `core/services/sidebar-nav.service.ts` (`SOLO_HIDDEN_ITEMS`), `tms-portal/pages/settings/company-settings/`, `admin-portal/shared/components/tenant-form/`
+- Note: solo relies on Owner holding `Permission.Driver.*` (`Shared.Identity/Policies/TenantRolePermissions.cs`), and driver-facing queries keying off `Truck.MainDriverId`/`SecondaryDriverId` rather than the role. There is no multi-role model
+- Seed: `DbMigrator` tenant `solo` (`SeedData/solo.json`, `SeedDataKey`/`OperatingMode`/`DataScale` on `Models/DemoTenantConfig.cs`)
 
 ## AI dispatch
 
@@ -379,7 +393,8 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Domain: `Entities/Tenant.cs`
 - Application: `Modules/IdentityAccess/Tenants/Commands/`, `Modules/IdentityAccess/Tenants/Queries/`
 - Infrastructure: `Infrastructure.Persistence/Services/Tenant/CurrentTenantAccessor.cs` (`ICurrentTenantAccessor`, resolves the current tenant), `TenantDatabaseService.cs`
-- API/UI: `TenantController.cs`, `admin-portal/pages/tenants/`
+- API/UI: `TenantController.cs`, `admin-portal/pages/tenants/` (+ `admin-portal/shared/components/tenant-form/`)
+- Demo tenants (`us`, `eu`, `solo`) come from the `Tenants[]` config array read by `DbMigrator/Seeders/Infrastructure/DemoTenantsSeeder.cs`; see [environment-variables.md](../docs/configuration/environment-variables.md#demo-tenants-tenants)
 
 ### Impersonation
 
@@ -462,7 +477,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 ### Tenant settings
 
-- Domain: `Entities/Tenant.cs` → `TenantSettings` VO; `McNumber`/`VatNumber`/`EoriNumber`/`CompanyRegistrationNumber`/`TaxResidencyCountry`
+- Domain: `Entities/Tenant.cs` → `TenantSettings` VO; `McNumber`/`VatNumber`/`EoriNumber`/`CompanyRegistrationNumber`/`TaxResidencyCountry`; `OperatingMode` (see _Solo / owner-operator mode_)
 - Application: `Modules/IdentityAccess/Tenants/Commands/UpdateTenant` (regulatory IDs validated server-side via `RegexPatterns.VatNumber`/`McNumber`/`EoriNumber`; `LlmEnabled` toggle per tenant)
 - API/UI: `tms-portal/pages/settings/company-settings/`
 

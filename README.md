@@ -24,7 +24,7 @@
 | TMS Portal      | [tms.logisticsx.app](https://tms.logisticsx.app)           |
 | Customer Portal | [customer.logisticsx.app](https://customer.logisticsx.app) |
 
-**US tenant** (Default Logistics):
+**US tenant** (Heartland Logistics LLC):
 
 | Role       | Email                  | Password   |
 | ---------- | ---------------------- | ---------- |
@@ -44,6 +44,15 @@
 | Driver     | `eu_driver1@test.com`     | Test12345# |
 | Customer   | `eu_customer1@test.com`   | Test12345# |
 
+**Solo tenant** (Rodriguez Trucking LLC - owner-operator mode, one person and one truck):
+
+| Role     | Email                     | Password   |
+| -------- | ------------------------- | ---------- |
+| Owner    | `solo@test.com`           | Test12345# |
+| Customer | `solo_customer1@test.com` | Test12345# |
+
+`solo@test.com` is the only employee - they own the company and drive the truck, so the same login works in the TMS portal and the driver app.
+
 [All test credentials](docs/getting-started/test-credentials.md)
 
 ## Who it's for
@@ -56,6 +65,8 @@ Roles:
 - **Drivers** get assignments, navigate routes, capture proof of delivery, and message dispatch from the mobile app.
 - **Customers** track shipments, download documents, and pay invoices through the customer portal.
 - **Owners** see financials, driver metrics, payroll, and operational reports.
+
+One person can be several of these. An owner-operator switches the company to **solo mode**, which hides the team screens (employees, payroll, messaging), trims the setup checklist, and points the AI agent at a one-truck operation. The same Owner login runs the TMS portal and the driver app.
 
 ## AI dispatch agent
 

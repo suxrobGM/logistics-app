@@ -39,6 +39,7 @@ internal sealed class CreateTenantHandler(
             CompanyAddress = req.CompanyAddress,
             BillingEmail = req.BillingEmail!,
             ConnectionString = tenantDatabase.GenerateConnectionString(tenantName),
+            Settings = { OperatingMode = req.OperatingMode ?? OperatingMode.Fleet },
             // New tenants start subscription-less so they're usable immediately
             // (admin-led onboarding/impersonation). The subscription check only
             // enforces when IsSubscriptionRequired is true; an admin assigns a

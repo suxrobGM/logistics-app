@@ -15,10 +15,14 @@ import {
   getTenantById,
   updateTenant,
   type Address,
+  type DateFormatType,
+  type DistanceUnit,
+  type OperatingMode,
   type TenantDto,
-  type TenantSettings,
   type UpdateTenantCommand,
+  type WeightUnit,
 } from "@logistics/shared/api";
+import { operatingModeOptions } from "@logistics/shared/api/enums";
 import {
   Container,
   Icon,
@@ -46,10 +50,11 @@ interface CompanySettingsModel {
   taxResidencyCountry: string;
   companyAddress: Address | null;
   // Regional settings
-  distanceUnit: string;
-  weightUnit: string;
-  dateFormat: string;
+  distanceUnit: DistanceUnit;
+  weightUnit: WeightUnit;
+  dateFormat: DateFormatType;
   timezone: string;
+  operatingMode: OperatingMode;
   // Dispatch settings
   minBrokerCreditScore: number | null;
 }
@@ -69,6 +74,7 @@ const EMPTY: CompanySettingsModel = {
   weightUnit: "pounds",
   dateFormat: "us",
   timezone: "America/New_York",
+  operatingMode: "fleet",
   minBrokerCreditScore: null,
 };
 
@@ -118,6 +124,8 @@ export class CompanySettingsComponent implements OnInit {
     { label: "Pounds (lbs)", value: "pounds" },
     { label: "Kilograms (kg)", value: "kilograms" },
   ];
+
+  protected readonly operatingModeOptions = operatingModeOptions;
 
   protected readonly dateFormatOptions = [
     { label: "MM/DD/YYYY (US)", value: "us" },
@@ -178,14 +186,17 @@ export class CompanySettingsComponent implements OnInit {
             companyRegistrationNumber: value.companyRegistrationNumber || null,
             taxResidencyCountry: value.taxResidencyCountry || null,
             companyAddress: value.companyAddress ?? undefined,
+            // Whole-object replace on the server: without the spread, every setting this form does
+            // not own (region, language, llmEnabled, volume/temperature units) is wiped on save.
             settings: {
+              ...this.tenant()?.settings,
               distanceUnit: value.distanceUnit,
               weightUnit: value.weightUnit,
               dateFormat: value.dateFormat,
               timezone: value.timezone,
-              currency: "usd",
+              operatingMode: value.operatingMode,
               minBrokerCreditScore: value.minBrokerCreditScore,
-            } as TenantSettings,
+            },
           };
 
           try {
@@ -289,6 +300,7 @@ export class CompanySettingsComponent implements OnInit {
           weightUnit: tenant.settings?.weightUnit ?? "pounds",
           dateFormat: tenant.settings?.dateFormat ?? "us",
           timezone: tenant.settings?.timezone ?? "America/New_York",
+          operatingMode: tenant.settings?.operatingMode ?? "fleet",
           minBrokerCreditScore: tenant.settings?.minBrokerCreditScore ?? null,
         });
 

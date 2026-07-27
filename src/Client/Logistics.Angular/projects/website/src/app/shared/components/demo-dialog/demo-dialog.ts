@@ -48,7 +48,8 @@ export class DemoDialog {
   protected readonly errorMessage = signal<string | null>(null);
 
   protected readonly fleetSizeOptions = [
-    { label: "1-10 trucks", value: "1-10" },
+    { label: "1 truck (owner-operator)", value: "1" },
+    { label: "2-10 trucks", value: "2-10" },
     { label: "11-25 trucks", value: "11-25" },
     { label: "26-50 trucks", value: "26-50" },
     { label: "51-100 trucks", value: "51-100" },

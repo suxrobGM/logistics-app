@@ -5,19 +5,22 @@ import type { TopTruckDto } from "@logistics/shared/api";
 import {
   Card,
   Divider,
+  EmptyState,
   Icon,
   Progress,
   Skeleton,
   Stack,
   Typography,
-  type IconName,
 } from "@logistics/shared/ui";
 
-interface RankIcon {
-  name: IconName;
-  /** Inline color value to inherit through the wrapper, since these tones aren't in IconColor enum. */
-  color: string;
-}
+/** Bronze has no token of its own, so it is mixed off the same warning hue that stands in for gold. */
+const RANK_COLORS = [
+  "var(--warning)",
+  "var(--text-muted)",
+  "color-mix(in oklab, var(--warning) 55%, var(--text-muted))",
+] as const;
+
+const DEFAULT_RANK_COLOR = "var(--border-default)";
 
 @Component({
   selector: "app-top-performers-widget",
@@ -26,6 +29,7 @@ interface RankIcon {
     Card,
     CurrencyFormatPipe,
     Divider,
+    EmptyState,
     Icon,
     Progress,
     RouterLink,
@@ -49,16 +53,8 @@ export class TopPerformersWidgetComponent {
     return max > 0 ? ((revenue ?? 0) / max) * 100 : 0;
   }
 
-  protected getRankIcon(index: number): RankIcon {
-    switch (index) {
-      case 0:
-        return { name: "star", color: "#eab308" }; // gold
-      case 1:
-        return { name: "star", color: "var(--text-muted)" }; // silver
-      case 2:
-        return { name: "star", color: "#b45309" }; // bronze
-      default:
-        return { name: "star", color: "var(--border-default)" };
-    }
+  /** Inline value, since these tones aren't in the IconColor enum - the wrapper inherits it. */
+  protected rankColor(index: number): string {
+    return RANK_COLORS[index] ?? DEFAULT_RANK_COLOR;
   }
 }

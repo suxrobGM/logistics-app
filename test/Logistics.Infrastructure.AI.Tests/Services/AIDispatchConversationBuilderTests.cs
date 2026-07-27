@@ -34,14 +34,7 @@ public class AIDispatchConversationBuilderTests
         toolRegistry.GetToolDefinitions(Arg.Any<IReadOnlySet<TenantFeature>>()).Returns(
             [new AIDispatchToolDefinition("test_tool", "A test tool", new JsonObject { ["type"] = "object" })]);
 
-        tenantUow.GetCurrentTenant().Returns(new Tenant
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test Fleet",
-            ConnectionString = "test",
-            BillingEmail = "test@test.com",
-            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
-        });
+        SetTenant();
 
         // Mock the AIDispatchSession repository for GetPreviousSessionContextAsync
         var sessionRepo = Substitute.For<ITenantRepository<AIDispatchSession, Guid>>();
@@ -82,6 +75,19 @@ public class AIDispatchConversationBuilderTests
     private static AIDispatchRequest CreateRequest(AIDispatchMode mode = AIDispatchMode.Autonomous)
     {
         return new AIDispatchRequest(Guid.NewGuid(), mode, null);
+    }
+
+    private void SetTenant(OperatingMode operatingMode = OperatingMode.Fleet)
+    {
+        tenantUow.GetCurrentTenant().Returns(new Tenant
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Fleet",
+            ConnectionString = "test",
+            BillingEmail = "test@test.com",
+            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" },
+            Settings = new() { OperatingMode = operatingMode }
+        });
     }
 
     private void SetPolicies(params AIDispatchPolicy[] policies)
@@ -156,6 +162,33 @@ public class AIDispatchConversationBuilderTests
 
         Assert.Contains("Dispatcher directives", conversation.SystemPrompt);
         Assert.DoesNotContain("### Learned preferences", conversation.SystemPrompt);
+    }
+
+    #endregion
+
+    #region Operating mode
+
+    [Fact]
+    public async Task BuildAsync_SoloOperatorTenant_BuildsTheSoloPrompt()
+    {
+        SetTenant(OperatingMode.SoloOperator);
+        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+
+        Assert.Contains("## Fleet Profile: SOLO OWNER-OPERATOR", conversation.SystemPrompt);
+        Assert.DoesNotContain("Maximize fleet utilization", conversation.SystemPrompt);
+    }
+
+    [Fact]
+    public async Task BuildAsync_FleetTenant_BuildsTheFleetPrompt()
+    {
+        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+
+        Assert.DoesNotContain("SOLO OWNER-OPERATOR", conversation.SystemPrompt);
+        Assert.Contains("Maximize fleet utilization", conversation.SystemPrompt);
     }
 
     #endregion

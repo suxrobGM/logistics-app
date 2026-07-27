@@ -4,3 +4,6 @@ export * from "./daily-gross-chart/daily-gross-chart";
 export * from "./attention-panel/attention-panel";
 export * from "./financial-health-widget/financial-health-widget";
 export * from "./top-performers-widget/top-performers-widget";
+export * from "./active-loads-panel/active-loads-panel";
+export * from "./hos-remaining/hos-remaining";
+export * from "./onboarding-checklist/onboarding-checklist";

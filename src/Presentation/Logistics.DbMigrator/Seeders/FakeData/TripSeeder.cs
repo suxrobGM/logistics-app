@@ -36,11 +36,17 @@ internal class TripSeeder(
     {
         LogStarting();
 
-        var employees = context.CreatedEmployees ?? throw new InvalidOperationException("Employees not seeded");
-        var trucks = context.CreatedTrucks ?? throw new InvalidOperationException("Trucks not seeded");
-        var customers = context.CreatedCustomers ?? throw new InvalidOperationException("Customers not seeded");
+        var employees = context.CreatedEmployees;
+        var trucks = context.CreatedTrucks;
+        var customers = context.CreatedCustomers;
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
         var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
+
+        if (employees is null || trucks is null || customers is null)
+        {
+            LogUpstreamSkipped();
+            return;
+        }
 
         var carHaulerTrucks = trucks.Where(t => t.Type == TruckType.CarHauler).ToList();
         if (carHaulerTrucks.Count == 0)
@@ -55,18 +61,23 @@ internal class TripSeeder(
         var tripRepo = context.TenantUnitOfWork.Repository<Trip>();
         var loadRepo = context.TenantUnitOfWork.Repository<Load>();
         var paymentRepo = context.TenantUnitOfWork.Repository<Payment>();
+        var dispatcherPool = employees.DispatcherPool;
+        var tripCount = context.Scale(30);
         var count = 0;
 
-        for (var tripIdx = 0; tripIdx < 30; tripIdx++)
+        for (var tripIdx = 0; tripIdx < tripCount; tripIdx++)
         {
             var truck = random.Pick(carHaulerTrucks);
-            var dispatcher = random.Pick(employees.Dispatchers);
+            var dispatcher = random.Pick(dispatcherPool);
             var customer = random.Pick(customers);
 
             var loadsCount = random.Next(2, 5);
             var maxStart = routePoints.Count - (loadsCount + 1);
             if (maxStart < 0)
             {
+                logger.LogWarning(
+                    "Region has {PointCount} route points - too few for a {LoadCount}-leg trip; skipping",
+                    routePoints.Count, loadsCount);
                 continue;
             }
             var startIndex = random.Next(0, maxStart + 1);

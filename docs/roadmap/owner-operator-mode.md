@@ -1,6 +1,6 @@
 # Owner-Operator (Solo) Mode
 
-- **Status**: Planned
+- **Status**: Done
 - **Priority**: P1 - the largest carrier segment by count (most US carriers run 1 truck) and explicitly ignored by our competitors
 - **Effort**: M
 - **Category**: Market expansion
@@ -32,4 +32,43 @@ A one-person carrier can sign up, get a load suggested by the AI from a load boa
 
 ## Notes
 
-_(add dated implementation notes here)_
+**2026-07-27 - shipped.** `OperatingMode` (`Fleet` | `SoloOperator`) sits on the `TenantSettings`
+complex type - column `settings_operating_mode`, default `fleet`, migration
+`20260727082723_AddTenantOperatingMode`. It is pickable when an admin creates a tenant and
+switchable later in Settings → Company. Decisions worth remembering:
+
+- **Multi-role turned out to be unnecessary.** The first bullet above asked to verify that one user
+  can hold Owner + Dispatcher + Driver cleanly. Wrong question: every driver-facing query keys off
+  `Truck.MainDriverId` / `SecondaryDriverId`, never off the role. An Owner-role employee assigned to
+  a truck already flows through loads, HOS, payroll, stats and dispatch eligibility, so the role
+  model needed no change at all.
+- **Owner was missing `Permission.Driver.*`.** That 403'd all four `DriverController` endpoints, so
+  the KMP driver app was dead for a solo login - the one thing this feature exists to enable.
+  Deploy note: the permission list is C#, but `GetCurrentUserPermissionsHandler` reads
+  `TenantRoleClaim` rows, so nothing changes in a running environment until `TenantRoleSeeder`
+  re-syncs them on a DbMigrator run.
+- **Two pre-existing bugs surfaced in the same pass,** neither solo-specific. Drivers had no
+  `Permission.Dvir` at all, so DVIR submission 403'd for every real driver. And the truck driver
+  autocomplete sent `Role: "Driver"` into a case-sensitive `Contains` on `"tenant.driver"`, so it
+  matched nobody. The role filter is deleted rather than corrected - nothing in the domain requires
+  the Driver role to be assigned to a truck, and an owner-operator has to be able to pick themselves.
+- **Solo mode is expressed as absence, not as a second UI.** The nav drops `employees`, `payroll`
+  and `messages` (timesheets goes with its payroll parent), the onboarding checklist drops
+  `inviteTeam`, and default sidebar favourites are filtered to ids the tenant can actually reach.
+  Everything else is the fleet product. The dashboard simplification that landed alongside
+  (fewer default panels, real empty states) applies to both modes.
+- **The solo prompt section is `## Fleet Profile`, not `## Operating Mode`.** That heading was
+  already taken by the suggestions/autonomous switch, and two same-named sections in one system
+  prompt is a good way to have the model obey the wrong one.
+- **A third demo tenant beats a flag on `us`.** `solo` / Rodriguez Trucking LLC seeds one employee,
+  one truck, two customers and 12 loads. Seed data had been keyed by region, so a second US tenant
+  would have made `UserSeeder` skip and `EmployeeSeeder` re-home every existing `us` login onto it.
+  `DemoTenantConfig.SeedDataKey` (falling back to the region name) plus a `DataScale` multiplier
+  fixed both, with `us`/`eu` output byte-identical.
+- Deferred: **owner pay**. A solo owner still has no draw or settlement path; the plan remains the
+  existing employee Stripe Connect payout rails rather than `PayrollInvoice` cycles. Also deferred:
+  **net-new business-side features in the mobile app** - it still has no create-load, invoice,
+  expense or receipt-capture surface. This pass made the driver app usable by a solo owner, not
+  their back office. And **self-serve signup** - `POST /tenants` is still behind
+  `Permission.Tenant.Manage`, so the `/owner-operators` marketing page routes to Request a Demo and
+  a human provisions the tenant.

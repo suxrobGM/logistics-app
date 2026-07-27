@@ -15,6 +15,10 @@
     {{ message() }}
   </ui-typography>
   @if (actionLabel()) {
-    <ui-button [label]="actionLabel()!" [icon]="actionIcon()" (click)="onAction()" />
+    @if (actionLink(); as link) {
+      <ui-button [label]="actionLabel()!" [icon]="actionIcon()" [routerLink]="link" />
+    } @else {
+      <ui-button [label]="actionLabel()!" [icon]="actionIcon()" (click)="onAction()" />
+    }
   }
 </ui-stack>

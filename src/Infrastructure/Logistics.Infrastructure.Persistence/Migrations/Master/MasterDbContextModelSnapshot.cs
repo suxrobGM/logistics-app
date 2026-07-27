@@ -1572,6 +1572,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("integer")
                                 .HasColumnName("settings_min_broker_credit_score");
 
+                            b1.Property<string>("OperatingMode")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("settings_operating_mode");
+
                             b1.Property<string>("Region")
                                 .IsRequired()
                                 .HasColumnType("text")

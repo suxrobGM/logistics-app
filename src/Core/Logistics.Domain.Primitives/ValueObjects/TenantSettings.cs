@@ -18,6 +18,9 @@ public record TenantSettings
     public VolumeUnit VolumeUnit { get; set; } = VolumeUnit.Gallons;
     public TemperatureUnit TemperatureUnit { get; set; } = TemperatureUnit.Fahrenheit;
 
+    /// <summary>Drives the UX preset (hidden team surfaces, dashboard layout) and the AI dispatch prompt.</summary>
+    public OperatingMode OperatingMode { get; set; } = OperatingMode.Fleet;
+
     /// <summary>
     /// ISO 639-1 language code used as the tenant's UI/document default. Falls back to "en".
     /// </summary>

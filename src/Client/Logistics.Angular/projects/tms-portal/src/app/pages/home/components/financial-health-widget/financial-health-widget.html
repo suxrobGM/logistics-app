@@ -13,6 +13,16 @@
       <ui-skeleton height="4rem" />
       <ui-skeleton height="4rem" />
     </ui-stack>
+  } @else if (hasNothingOwing()) {
+    <!-- Reachable on a fresh tenant and on a fully-collected week, so the copy claims neither. -->
+    <ui-empty-state
+      icon="receipt"
+      title="Nothing owed to you right now"
+      message="No unpaid invoices and nothing received this week. Invoices are raised from a delivered load."
+      actionLabel="View loads"
+      actionIcon="box"
+      actionLink="/loads"
+    />
   } @else {
     <ui-stack gap="4">
       <!-- Outstanding Invoices -->

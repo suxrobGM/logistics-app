@@ -83,6 +83,7 @@ export class TenantEdit implements OnInit {
       dotNumber: tenant.dotNumber ?? "",
       companyAddress: tenant.companyAddress,
       region: tenant.settings?.region ?? "us",
+      operatingMode: tenant.settings?.operatingMode ?? "fleet",
     };
   });
 
@@ -102,6 +103,7 @@ export class TenantEdit implements OnInit {
       settings: {
         ...tenant.settings,
         region: formValue.region,
+        operatingMode: formValue.operatingMode,
       },
     };
 

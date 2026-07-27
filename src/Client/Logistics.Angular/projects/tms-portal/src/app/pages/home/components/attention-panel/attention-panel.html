@@ -12,6 +12,13 @@
       <ui-skeleton height="3rem" />
       <ui-skeleton height="3rem" />
     </ui-stack>
+  } @else if (isAllClear()) {
+    <ui-empty-state
+      icon="circle-check"
+      severity="success"
+      title="Nothing needs your attention"
+      message="Every load has a truck and every truck has work. Check back after your next dispatch."
+    />
   } @else {
     <ui-stack gap="3">
       <!-- Unassigned Loads -->

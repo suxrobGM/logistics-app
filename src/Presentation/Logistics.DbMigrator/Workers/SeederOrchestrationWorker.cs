@@ -75,6 +75,9 @@ internal class SeederOrchestrationWorker(
             var tenantContext = BuildContext(tenantScope, configuration);
             tenantContext.CurrentTenant = tenantEntity;
             tenantContext.Region = regionFactory.Get(tenantConfig.Region);
+            tenantContext.SeedDataKey = tenantConfig.ResolveSeedDataKey();
+            tenantContext.OperatingMode = tenantConfig.OperatingMode;
+            tenantContext.DataScale = tenantConfig.DataScale;
             tenantContext.TenantUnitOfWork.SetCurrentTenant(tenantEntity);
 
             logger.LogInformation("─── Seeding tenant '{Name}' ({Region}) ───",

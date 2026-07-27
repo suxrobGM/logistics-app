@@ -20,7 +20,8 @@ import kotlinx.coroutines.flow.asStateFlow
 
 data class DashboardData(
     val truck: TruckDto,
-    val trips: List<TripDto> = emptyList()
+    val trips: List<TripDto> = emptyList(),
+    val currentUserId: String? = null
 )
 
 class DashboardViewModel(
@@ -67,7 +68,7 @@ class DashboardViewModel(
             preferencesManager.saveDriverName(truck.mainDriver?.fullName() ?: "")
             preferencesManager.saveTruckNumber(truck.number ?: "")
 
-            DashboardData(truck, trips)
+            DashboardData(truck, trips, userId)
         }
     }
 

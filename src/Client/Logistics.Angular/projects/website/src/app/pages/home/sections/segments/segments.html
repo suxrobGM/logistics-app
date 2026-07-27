@@ -1,0 +1,33 @@
+<web-section-container sectionId="segments" background="dark">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Who It's For"
+      title="One truck or a hundred"
+      subtitle="Most TMS vendors start selling at ten trucks. We start at one, on the same platform."
+      [dark]="true"
+    />
+  </div>
+
+  <div class="mt-16 grid gap-8 md:grid-cols-3">
+    @for (segment of segments; track segment.title; let i = $index) {
+      <web-icon-card
+        [icon]="segment.icon"
+        [title]="segment.title"
+        [description]="segment.description"
+        [variant]="segment.variant"
+        [dark]="true"
+        [delay]="i * 100"
+      />
+    }
+  </div>
+
+  <div class="mt-10 text-center" webScrollAnimate="fade-up" [delay]="300">
+    <a
+      routerLink="/owner-operators"
+      class="font-display text-accent inline-flex items-center gap-2 text-sm font-semibold hover:underline"
+    >
+      What solo mode actually changes
+      <ui-icon name="arrow-right" size="inherit" class="text-xs" />
+    </a>
+  </div>
+</web-section-container>

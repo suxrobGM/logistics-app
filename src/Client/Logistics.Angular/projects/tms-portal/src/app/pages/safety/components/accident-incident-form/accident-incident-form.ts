@@ -1,5 +1,6 @@
 import { Component, input } from "@angular/core";
 import { FormField, type FieldTree } from "@angular/forms/signals";
+import { DRIVING_ROLES } from "@logistics/shared";
 import {
   UiDateField,
   UiFormField,
@@ -35,4 +36,5 @@ export class AccidentIncidentForm {
 
   protected readonly typeOptions = ACCIDENT_TYPE_OPTIONS;
   protected readonly severityOptions = ACCIDENT_SEVERITY_OPTIONS;
+  protected readonly drivingRoles = DRIVING_ROLES;
 }

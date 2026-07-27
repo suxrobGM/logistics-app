@@ -12,29 +12,24 @@ cd logistics-app
 ## Step 2: Install Angular Dependencies
 
 ```bash
-cd src/Client/Logistics.OfficeApp
+cd src/Client/Logistics.Angular
 bun install
 cd ../../..
 ```
 
 ## Step 3: Configure Database
 
-### Create Databases
+### Create the Master Database
 
-Connect to PostgreSQL and create the required databases:
-
-```sql
-CREATE DATABASE master_logisticsx;
-CREATE DATABASE default_logisticsx;
-```
-
-Or via command line:
+Only the master database has to exist up front - the migrator creates each tenant database itself:
 
 ```bash
 psql -U postgres -c "CREATE DATABASE master_logisticsx;"
-psql -U postgres -c "CREATE DATABASE us_logisticsx;"
-psql -U postgres -c "CREATE DATABASE eu_logisticsx;"
 ```
+
+The seeded demo tenants are `us` (Heartland Logistics LLC), `eu` (EuroFreight GmbH) and `solo`
+(Rodriguez Trucking LLC, owner-operator mode), giving you `us_logisticsx`, `eu_logisticsx` and
+`solo_logisticsx`.
 
 ### Update Connection Strings
 
@@ -55,7 +50,17 @@ Edit `src/Presentation/Logistics.API/appsettings.json`:
 }
 ```
 
+Per-request the API reads the tenant's own connection string out of the master database, so it needs
+no entry for `eu` or `solo`. `UsTenantDatabase` is only the fallback the `TenantDbContext` is
+registered with when no tenant has been resolved yet, and `TenantDatabaseDefaults` is what the API
+uses to provision a database for a newly created tenant.
+
 Also update `src/Presentation/Logistics.IdentityServer/appsettings.json` with the same connection string.
+
+The migrator has its own `Tenants[]` array (`src/Presentation/Logistics.DbMigrator/appsettings.json`)
+where each demo tenant carries an explicit connection string. Change the password there too, or the
+seed run fails. See [Demo tenants (`Tenants[]`)](../configuration/environment-variables.md#demo-tenants-tenants)
+for the full field list.
 
 ## Step 4: Seed Databases
 
@@ -90,19 +95,20 @@ dotnet run --project src/Presentation/Logistics.IdentityServer
 # Runs on https://localhost:7001
 ```
 
-**Terminal 3 - Admin App**:
+**Terminal 3 - Admin Portal**:
 
 ```bash
-dotnet run --project src/Presentation/Logistics.AdminApp
-# Runs on https://localhost:7002
+cd src/Client/Logistics.Angular
+bun run start:admin
+# Runs on http://localhost:7002
 ```
 
-**Terminal 4 - Office App**:
+**Terminal 4 - TMS Portal**:
 
 ```bash
 cd src/Client/Logistics.Angular
 bun run start:tms
-# Runs on https://localhost:7003
+# Runs on http://localhost:7003
 ```
 
 **Terminal 5 - Customer Portal (Optional)**:
@@ -110,7 +116,7 @@ bun run start:tms
 ```bash
 cd src/Client/Logistics.Angular
 bun run start:customer
-# Runs on https://localhost:7004
+# Runs on http://localhost:7004
 ```
 
 Or use the provided scripts:
@@ -118,7 +124,7 @@ Or use the provided scripts:
 ```bash
 scripts/run-api.cmd
 scripts/run-identity.cmd
-scripts/run-adminapp.cmd
+scripts/run-admin.cmd
 scripts/run-tms.cmd
 scripts/run-customer.cmd
 ```
@@ -150,22 +156,17 @@ For payment testing:
 
 ## Step 7: Access Applications
 
-| Application     | URL                              | Credentials                   |
-| --------------- | -------------------------------- | ----------------------------- |
-| API (Swagger)   | <https://localhost:7000/swagger> | -                             |
-| Identity Server | <https://localhost:7001>         | -                             |
-| Admin App       | <https://localhost:7002>         | <admin@test.com> / Test12345# |
-| Office App      | <https://localhost:7003>         | <owner@test.com> / Test12345# |
+| Application     | URL                              | Credentials                       |
+| --------------- | -------------------------------- | --------------------------------- |
+| API (Swagger)   | <https://localhost:7000/swagger> | -                                 |
+| Identity Server | <https://localhost:7001>         | -                                 |
+| Admin Portal    | <http://localhost:7002>          | <admin@test.com> / Test12345#     |
+| TMS Portal      | <http://localhost:7003>          | <owner@test.com> / Test12345#     |
+| Customer Portal | <http://localhost:7004>          | <customer1@test.com> / Test12345# |
 
-## Test Credentials
-
-| Role        | Email                  | Password   | App Access        |
-| ----------- | ---------------------- | ---------- | ----------------- |
-| Super Admin | <admin@test.com>       | Test12345# | Admin App         |
-| Owner       | <owner@test.com>       | Test12345# | Office App        |
-| Manager     | <manager1@test.com>    | Test12345# | Office App        |
-| Dispatcher  | <dispatcher1@test.com> | Test12345# | Office App        |
-| Driver      | <driver1@test.com>     | Test12345# | Driver Mobile App |
+Every seeded password is `Test12345#`. The TMS portal logs you into the `us` tenant; `eu_owner@test.com`
+and `solo@test.com` get you into the EU fleet and the owner-operator tenant. See
+[Test Credentials](test-credentials.md) for the full list.
 
 ## Common Issues
 
@@ -198,7 +199,7 @@ lsof -i :7000
 ### Angular Build Errors
 
 ```bash
-cd src/Client/Logistics.OfficeApp
+cd src/Client/Logistics.Angular
 bun install --force
 ```
 

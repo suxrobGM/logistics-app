@@ -1,208 +1,65 @@
 import { isPlatformBrowser } from "@angular/common";
 import { computed, inject, Injectable, PLATFORM_ID, signal } from "@angular/core";
 import { UserRole } from "@logistics/shared";
-import type { TenantFeature } from "@logistics/shared/api";
+import type { OperatingMode } from "@logistics/shared/api";
 import { FeatureService } from "@logistics/shared/services";
 import { AuthService } from "@/core/auth";
+import {
+  DEFAULT_PANELS,
+  STATS_BACKED_PANEL_IDS,
+  type DashboardPanelConfig,
+  type PanelType,
+} from "./dashboard-panels";
+import { TenantService } from "./tenant.service";
 
 const DASHBOARD_SETTINGS_KEY = "tms-dashboard-settings";
-const CURRENT_VERSION = 2;
-
-export type PanelType =
-  | "kpi-weekly-gross"
-  | "kpi-billed-miles"
-  | "kpi-rate-per-mile"
-  | "kpi-today-gross"
-  | "active-loads"
-  | "recent-activity"
-  | "fleet-map"
-  | "daily-gross-chart"
-  // Owner-only panels (added in v2)
-  | "attention-panel"
-  | "financial-health"
-  | "top-performers"
-  | "owner-kpi-row";
-
-const OWNER_PANEL_IDS: ReadonlySet<PanelType> = new Set<PanelType>([
-  "attention-panel",
-  "financial-health",
-  "top-performers",
-  "owner-kpi-row",
-]);
-
-export interface DashboardPanelConfig {
-  id: PanelType;
-  label: string;
-  x: number;
-  y: number;
-  cols: number;
-  rows: number;
-  minItemCols?: number;
-  minItemRows?: number;
-  /** Panel is shown only if the user's role is in this list. Absent = universal. */
-  roles?: UserRole[];
-  /** Panel is shown only if this tenant feature is enabled. Absent = universal. */
-  feature?: TenantFeature;
-}
+const CURRENT_VERSION = 3;
 
 interface DashboardSettings {
   version: number;
   panels: DashboardPanelConfig[];
 }
 
-const DEFAULT_PANELS: DashboardPanelConfig[] = [
-  // KPI Cards Row (y=0) - universal panels
-  {
-    id: "kpi-weekly-gross",
-    label: "Weekly Gross",
-    x: 0,
-    y: 0,
-    cols: 3,
-    rows: 2,
-    minItemCols: 2,
-    minItemRows: 1,
-  },
-  {
-    id: "kpi-billed-miles",
-    label: "Billed Miles",
-    x: 3,
-    y: 0,
-    cols: 3,
-    rows: 2,
-    minItemCols: 2,
-    minItemRows: 1,
-  },
-  {
-    id: "kpi-rate-per-mile",
-    label: "Rate Per Mile",
-    x: 6,
-    y: 0,
-    cols: 3,
-    rows: 2,
-    minItemCols: 2,
-    minItemRows: 1,
-  },
-  {
-    id: "kpi-today-gross",
-    label: "Today's Gross",
-    x: 9,
-    y: 0,
-    cols: 3,
-    rows: 2,
-    minItemCols: 2,
-    minItemRows: 1,
-  },
-  // Owner panels (y=2) - only visible to Owner with `dashboard` feature enabled
-  {
-    id: "attention-panel",
-    label: "Attention",
-    x: 0,
-    y: 2,
-    cols: 4,
-    rows: 5,
-    minItemCols: 3,
-    minItemRows: 2,
-    roles: [UserRole.Owner],
-    feature: "dashboard",
-  },
-  {
-    id: "financial-health",
-    label: "Financial Health",
-    x: 4,
-    y: 2,
-    cols: 4,
-    rows: 5,
-    minItemCols: 3,
-    minItemRows: 2,
-    roles: [UserRole.Owner],
-    feature: "dashboard",
-  },
-  {
-    id: "top-performers",
-    label: "Top Performers",
-    x: 8,
-    y: 2,
-    cols: 4,
-    rows: 5,
-    minItemCols: 3,
-    minItemRows: 2,
-    roles: [UserRole.Owner],
-    feature: "dashboard",
-  },
-  // Active Loads Table (y=7 to leave room for owner row of rows=5)
-  {
-    id: "active-loads",
-    label: "Active Loads",
-    x: 0,
-    y: 7,
-    cols: 6,
-    rows: 5,
-    minItemCols: 6,
-    minItemRows: 3,
-  },
-  // Fleet Map (y=7)
-  {
-    id: "fleet-map",
-    label: "Fleet Map",
-    x: 6,
-    y: 7,
-    cols: 6,
-    rows: 12,
-    minItemCols: 4,
-    minItemRows: 2,
-  },
-  // Recent Activity (y=12)
-  {
-    id: "recent-activity",
-    label: "Recent Activity",
-    x: 0,
-    y: 12,
-    cols: 6,
-    rows: 7,
-    minItemCols: 3,
-    minItemRows: 2,
-  },
-  // Daily Gross Chart (y=19)
-  {
-    id: "daily-gross-chart",
-    label: "Daily Gross Chart",
-    x: 0,
-    y: 19,
-    cols: 12,
-    rows: 5,
-    minItemCols: 6,
-    minItemRows: 2,
-  },
-];
+/** The row a panel appended below `panels` should start on. */
+function bottomOf(panels: readonly DashboardPanelConfig[]): number {
+  return panels.reduce((max, p) => Math.max(max, p.y + p.rows), 0);
+}
 
 @Injectable({ providedIn: "root" })
 export class DashboardSettingsService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly authService = inject(AuthService);
   private readonly featureService = inject(FeatureService);
+  private readonly tenantService = inject(TenantService);
 
   private readonly _panels = signal<DashboardPanelConfig[]>(DEFAULT_PANELS);
 
-  /** All panels (raw, unfiltered). Used by gridster `updatePanelLayout` callbacks. */
-  public readonly panels = this._panels.asReadonly();
-
-  /** Panels visible to the current user, filtered by role + feature gates. */
-  public readonly visiblePanels = computed(() => {
+  /** Panels the current user may see, split by whether they are on the grid or in the Add menu. */
+  private readonly gatedPanels = computed(() => {
     const role = this.authService.getUserData()?.role ?? null;
-    return this._panels().filter((p) => this.passesGates(p, role));
+    const mode = this.tenantService.operatingMode();
+    const visible: DashboardPanelConfig[] = [];
+    const available: DashboardPanelConfig[] = [];
+
+    for (const panel of this._panels()) {
+      if (!this.passesGates(panel, role, mode)) {
+        continue;
+      }
+      (this.isHidden(panel, mode) ? available : visible).push(panel);
+    }
+
+    return { visible, available };
   });
 
-  /** Whether any owner-specific panels are currently visible (used to decide on getCompanyStats fetch). */
-  public readonly hasOwnerPanels = computed(() =>
-    this.visiblePanels().some((p) => OWNER_PANEL_IDS.has(p.id)),
+  public readonly visiblePanels = computed(() => this.gatedPanels().visible);
+  public readonly availablePanels = computed(() => this.gatedPanels().available);
+
+  public readonly needsCompanyStats = computed(() =>
+    this.visiblePanels().some((p) => STATS_BACKED_PANEL_IDS.has(p.id)),
   );
 
   constructor() {
     this.loadSettings();
-  }
-
-  public getPanel(panelId: PanelType): DashboardPanelConfig | undefined {
-    return this._panels().find((p) => p.id === panelId);
   }
 
   public updatePanelLayout(
@@ -212,15 +69,16 @@ export class DashboardSettingsService {
     cols: number,
     rows: number,
   ): void {
-    this._panels.update((panels) =>
-      panels.map((p) => (p.id === panelId ? { ...p, x, y, cols, rows } : p)),
-    );
-    this.persistSettings();
+    this.patchPanel(panelId, { x, y, cols, rows });
   }
 
-  public updateAllPanels(panels: DashboardPanelConfig[]): void {
-    this._panels.set(panels);
-    this.persistSettings();
+  /** Lands below everything on screen - stored coordinates would drop it onto a rearranged grid. */
+  public showPanel(panelId: PanelType): void {
+    this.patchPanel(panelId, { hidden: false, x: 0, y: bottomOf(this.visiblePanels()) });
+  }
+
+  public hidePanel(panelId: PanelType): void {
+    this.patchPanel(panelId, { hidden: true });
   }
 
   public resetToDefaults(): void {
@@ -228,22 +86,26 @@ export class DashboardSettingsService {
     this.persistSettings();
   }
 
-  /** Clear any persisted layout - call on logout to avoid leaking layout to next user. */
-  public clearPersistedSettings(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(DASHBOARD_SETTINGS_KEY);
-    }
-    this._panels.set(DEFAULT_PANELS);
+  private patchPanel(panelId: PanelType, changes: Partial<DashboardPanelConfig>): void {
+    this._panels.update((panels) =>
+      panels.map((p) => (p.id === panelId ? { ...p, ...changes } : p)),
+    );
+    this.persistSettings();
   }
 
-  private passesGates(panel: DashboardPanelConfig, role: string | null): boolean {
-    if (panel.roles && panel.roles.length > 0) {
-      if (!role || !panel.roles.includes(role as UserRole)) return false;
-    }
-    if (panel.feature && !this.featureService.isEnabled(panel.feature)) {
-      return false;
-    }
+  private passesGates(
+    panel: DashboardPanelConfig,
+    role: string | null,
+    mode: OperatingMode,
+  ): boolean {
+    if (panel.roles?.length && !panel.roles.includes(role as UserRole)) return false;
+    if (panel.feature && !this.featureService.isEnabled(panel.feature)) return false;
+    if (panel.mode && panel.mode !== mode) return false;
     return true;
+  }
+
+  private isHidden(panel: DashboardPanelConfig, mode: OperatingMode): boolean {
+    return panel.hidden ?? panel.hiddenByDefaultIn?.includes(mode) ?? false;
   }
 
   private loadSettings(): void {
@@ -254,39 +116,55 @@ export class DashboardSettingsService {
 
     try {
       const parsed = JSON.parse(stored) as DashboardSettings;
-      // Newer-than-current versions: leave DEFAULT_PANELS to avoid data we don't know how to read.
+      // A version we don't know how to read: keep the defaults rather than guess at the shape.
       if (parsed.version > CURRENT_VERSION) return;
 
-      // Older versions upgrade implicitly: mergeWithDefaults appends any panel IDs introduced
-      // since the stored version while preserving the stored positions of shared panels.
       this._panels.set(this.mergeWithDefaults(parsed.panels));
       if (parsed.version < CURRENT_VERSION) {
         this.persistSettings();
       }
     } catch {
-      this._panels.set(DEFAULT_PANELS);
+      // Corrupt payload - `_panels` still holds DEFAULT_PANELS.
     }
   }
 
   private persistSettings(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const settings: DashboardSettings = {
-        version: CURRENT_VERSION,
-        panels: this._panels(),
-      };
-      localStorage.setItem(DASHBOARD_SETTINGS_KEY, JSON.stringify(settings));
-    }
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const settings: DashboardSettings = { version: CURRENT_VERSION, panels: this._panels() };
+    localStorage.setItem(DASHBOARD_SETTINGS_KEY, JSON.stringify(settings));
   }
 
-  /** Append any new default panel IDs that aren't in the stored set, preserving stored positions. */
+  /**
+   * Stored ids that no longer ship are dropped - the template has no `@case` for them, so gridster
+   * would render a silent empty tile. Only geometry and `hidden` survive; the rest is re-read from
+   * the defaults, so gate metadata can change between versions.
+   */
   private mergeWithDefaults(storedPanels: DashboardPanelConfig[]): DashboardPanelConfig[] {
-    const existingIds = new Set(storedPanels.map((p) => p.id));
-    const newPanels = DEFAULT_PANELS.filter((p) => !existingIds.has(p.id));
-    // Re-apply gate metadata from defaults in case it changed since storage.
-    const enriched = storedPanels.map((stored) => {
-      const def = DEFAULT_PANELS.find((d) => d.id === stored.id);
-      return def ? { ...stored, roles: def.roles, feature: def.feature, label: def.label } : stored;
+    const defaults = new Map(DEFAULT_PANELS.map((d) => [d.id, d]));
+    const kept = storedPanels
+      .filter((stored) => defaults.has(stored.id))
+      .map((stored) => ({
+        ...defaults.get(stored.id)!,
+        x: stored.x,
+        y: stored.y,
+        cols: stored.cols,
+        rows: stored.rows,
+        hidden: stored.hidden,
+      }));
+
+    // New panels stack underneath - their default coordinates would overlap a stored one. Hidden
+    // panels keep stale coordinates and gridster never compacts, so they don't count toward it.
+    const mode = this.tenantService.operatingMode();
+    const keptIds = new Set(kept.map((p) => p.id));
+    let nextY = bottomOf(kept.filter((p) => !this.isHidden(p, mode)));
+
+    const added = DEFAULT_PANELS.filter((d) => !keptIds.has(d.id)).map((d) => {
+      const placed = { ...d, x: 0, y: nextY };
+      nextY += d.rows;
+      return placed;
     });
-    return [...enriched, ...newPanels];
+
+    return [...kept, ...added];
   }
 }

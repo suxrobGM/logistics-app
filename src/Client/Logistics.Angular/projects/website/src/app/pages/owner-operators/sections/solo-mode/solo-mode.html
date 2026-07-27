@@ -1,0 +1,20 @@
+<web-section-container sectionId="solo-mode" background="white">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Solo Mode"
+      title="What actually changes"
+      subtitle="Solo mode isn't a cheaper tier with features taken away. It's the same platform with the crew-shaped assumptions removed."
+    />
+  </div>
+
+  <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    @for (change of changes; track change.title; let i = $index) {
+      <web-icon-card
+        [icon]="change.icon"
+        [title]="change.title"
+        [description]="change.description"
+        [delay]="i * 100"
+      />
+    }
+  </div>
+</web-section-container>

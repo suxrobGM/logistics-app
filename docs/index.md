@@ -54,8 +54,10 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 - **Messaging** - In-app chat with read receipts and typing indicators.
 - **Customer Portal** - Shipment tracking, invoices, documents, online payments.
 - **Driver Mobile App** - Kotlin Multiplatform, Android and iOS.
+- **Owner-Operator (Solo) Mode** - A per-tenant operating mode for one-person carriers: team screens hidden, a shorter setup checklist, and a dispatch agent prompted for a single truck rather than a fleet.
+- **Setup Checklist** - Dashboard checklist tracking what a new company still owes - profile, first truck, team, customer, load, Stripe payouts, ELD.
 - **Multi-Region** - US and European operations, with address validation, currency (USD or EUR), and map defaults that match the region.
-- **Multi-Tenant** - One PostgreSQL database per company. Demo seeders for both US and EU regions.
+- **Multi-Tenant** - One PostgreSQL database per company. Demo seeders for a US fleet, an EU fleet, and a US owner-operator.
 
 [Complete feature list](features.md)
 

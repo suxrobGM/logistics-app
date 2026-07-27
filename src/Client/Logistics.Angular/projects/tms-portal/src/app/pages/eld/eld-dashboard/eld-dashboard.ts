@@ -24,11 +24,6 @@ import {
 import { EldRulesService } from "@/core/services";
 import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
 
-const DEFAULT_DRIVING_WARN_MINUTES = 60;
-const DEFAULT_ON_DUTY_WARN_MINUTES = 120;
-const DRIVING_WARN_PCT = 0.1;
-const ON_DUTY_WARN_PCT = 0.15;
-
 @Component({
   selector: "app-eld-dashboard",
   templateUrl: "./eld-dashboard.html",
@@ -67,15 +62,8 @@ export class EldDashboardComponent implements OnInit {
     () => this.drivers().filter((d) => d.isInViolation).length,
   );
 
-  protected readonly drivingWarnMinutes = computed(() => {
-    const max = this.rules.limits()?.maxDailyDrivingMinutes;
-    return max ? Math.round(max * DRIVING_WARN_PCT) : DEFAULT_DRIVING_WARN_MINUTES;
-  });
-
-  protected readonly onDutyWarnMinutes = computed(() => {
-    const max = this.rules.limits()?.maxDailyOnDutyMinutes;
-    return max ? Math.round(max * ON_DUTY_WARN_PCT) : DEFAULT_ON_DUTY_WARN_MINUTES;
-  });
+  protected readonly drivingWarnMinutes = this.rules.drivingWarnMinutes;
+  protected readonly onDutyWarnMinutes = this.rules.onDutyWarnMinutes;
 
   ngOnInit(): void {
     this.rules.load();

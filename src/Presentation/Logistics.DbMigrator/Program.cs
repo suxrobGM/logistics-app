@@ -20,6 +20,7 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Configuration.AddJsonFile("SeedData/us.json", optional: true);
 builder.Configuration.AddJsonFile("SeedData/eu.json", optional: true);
+builder.Configuration.AddJsonFile("SeedData/solo.json", optional: true);
 builder.Configuration["Tax:Provider"] ??= "manual";
 
 builder.Services.AddPersistenceInfrastructure(builder.Configuration)

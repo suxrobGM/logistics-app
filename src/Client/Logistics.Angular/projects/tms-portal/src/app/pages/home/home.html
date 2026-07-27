@@ -26,6 +26,14 @@
     <ui-button
       appearance="outlined"
       buttonClass="whitespace-nowrap"
+      label="Add Panel"
+      icon="layout-grid"
+      (click)="panelMenu.toggle($event)"
+    />
+    <ui-menu #panelMenu [items]="panelMenuItems()" ariaLabel="Add or remove dashboard panels" />
+    <ui-button
+      appearance="outlined"
+      buttonClass="whitespace-nowrap"
       label="Quick Actions"
       icon="plus"
       (click)="menu.toggle($event)"
@@ -49,7 +57,7 @@
                 class="h-full"
                 icon="dollar-sign"
                 label="Weekly Gross"
-                [value]="(weeklyGross() | currencyFormat) ?? '$0'"
+                [value]="(weeklyKpis().totalGross | currencyFormat) ?? '$0'"
                 color="green"
                 tooltip="Total gross for the past 7 days"
               />
@@ -59,7 +67,7 @@
                 class="h-full"
                 icon="map"
                 label="Billed Miles"
-                [value]="(weeklyDistance() | distanceUnit) ?? '0 mi'"
+                [value]="(weeklyKpis().totalDistance | distanceUnit) ?? '0 mi'"
                 color="blue"
                 tooltip="Billable miles driven in the past 7 days"
               />
@@ -69,7 +77,7 @@
                 class="h-full"
                 icon="chart-line"
                 label="Rate Per Mile"
-                [value]="(weeklyRpm() | currencyFormat) ?? '$0'"
+                [value]="(weeklyKpis().ratePerMile | currencyFormat) ?? '$0'"
                 color="purple"
                 tooltip="Weekly gross divided by billed miles"
               />
@@ -79,9 +87,17 @@
                 class="h-full"
                 icon="calendar"
                 label="Today's Gross"
-                [value]="(todayGross() | currencyFormat) ?? '$0'"
+                [value]="(weeklyKpis().todayGross | currencyFormat) ?? '$0'"
                 color="orange"
                 tooltip="Gross earned today"
+              />
+            }
+            @case ("active-loads") {
+              <app-active-loads-panel
+                class="h-full"
+                [title]="activeLoadsTitle()"
+                [loads]="loads()"
+                [isLoading]="isLoadingLoadsData()"
               />
             }
             @case ("attention-panel") {
@@ -91,6 +107,12 @@
                 [idleTrucksCount]="companyStats()?.idleTrucksCount ?? 0"
                 [isLoading]="isLoadingCompanyStats()"
               />
+            }
+            @case ("hos-remaining") {
+              <app-hos-remaining class="h-full" />
+            }
+            @case ("onboarding-checklist") {
+              <app-onboarding-checklist class="h-full" />
             }
             @case ("financial-health") {
               <app-financial-health-widget
@@ -107,108 +129,6 @@
                 [topTrucks]="companyStats()?.topTrucks ?? []"
                 [isLoading]="isLoadingCompanyStats()"
               />
-            }
-            @case ("active-loads") {
-              <ui-card class="h-full">
-                <ng-template #header>
-                  <ui-stack direction="row" align="center" justify="between" class="py-3 pr-2 pl-4">
-                    <ui-stack direction="row" align="center" gap="2">
-                      <span class="text-primary">
-                        <ui-icon name="box" color="inherit" />
-                      </span>
-                      <ui-typography variant="h4" tag="h4" color="primary">
-                        Active Loads
-                      </ui-typography>
-                    </ui-stack>
-                    <ui-button
-                      appearance="text"
-                      label="View All"
-                      [routerLink]="['/loads']"
-                      class="no-drag"
-                    />
-                  </ui-stack>
-                  <ui-divider class="m-0" />
-                </ng-template>
-
-                <ui-data-table
-                  [value]="loads()"
-                  [loading]="isLoadingLoadsData()"
-                  [scrollable]="true"
-                  scrollHeight="flex"
-                  class="no-drag"
-                >
-                  <ng-template #header>
-                    <tr>
-                      <th>Load</th>
-                      <th>Status</th>
-                      <th>Route</th>
-                      <th>Progress</th>
-                      <th>Truck</th>
-                    </tr>
-                  </ng-template>
-                  <ng-template #body let-load>
-                    <tr>
-                      <td>
-                        <a
-                          [routerLink]="['/loads', load.id, 'edit']"
-                          class="text-foreground font-semibold"
-                        >
-                          #{{ load.number }}
-                        </a>
-                      </td>
-                      <td>
-                        <ui-status-badge [status]="load.status" kind="load" />
-                      </td>
-                      <td>
-                        <ui-stack direction="row" align="center" gap="1" class="text-sm">
-                          <span class="max-w-20 truncate" [uiTooltip]="load.originAddress?.city">
-                            {{ load.originAddress?.city || "N/A" }}
-                          </span>
-                          <ui-icon name="arrow-right" size="xs" color="muted" />
-                          <span
-                            class="max-w-20 truncate"
-                            [uiTooltip]="load.destinationAddress?.city"
-                          >
-                            {{ load.destinationAddress?.city || "N/A" }}
-                          </span>
-                        </ui-stack>
-                      </td>
-                      <td class="min-w-32">
-                        <app-load-progress-bar [status]="load.status" [compact]="true" />
-                      </td>
-                      <td>
-                        @if (load.assignedTruckId) {
-                          <a
-                            [routerLink]="['/trucks', load.assignedTruckId]"
-                            class="text-foreground"
-                          >
-                            {{ load.assignedTruckNumber }}
-                          </a>
-                        } @else {
-                          <span class="text-muted-foreground">Unassigned</span>
-                        }
-                      </td>
-                    </tr>
-                  </ng-template>
-                  <ng-template #empty>
-                    <tr>
-                      <td colspan="5" class="text-center">
-                        <ui-stack align="center" gap="2" class="text-muted-foreground py-8">
-                          <ui-icon
-                            name="inbox"
-                            size="inherit"
-                            class="text-4xl"
-                            aria-hidden="true"
-                          />
-                          <ui-typography variant="body" color="muted">
-                            No active loads
-                          </ui-typography>
-                        </ui-stack>
-                      </td>
-                    </tr>
-                  </ng-template>
-                </ui-data-table>
-              </ui-card>
             }
             @case ("recent-activity") {
               <app-recent-activity
@@ -236,10 +156,7 @@
               </ui-card>
             }
             @case ("daily-gross-chart") {
-              <app-daily-gross-chart
-                chartClass="no-drag"
-                (dataLoaded)="onChartDataLoaded($event)"
-              />
+              <app-daily-gross-chart chartClass="no-drag" />
             }
           }
         </gridster-item>

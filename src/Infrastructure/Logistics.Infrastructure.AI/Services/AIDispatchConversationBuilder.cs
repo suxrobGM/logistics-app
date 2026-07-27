@@ -53,7 +53,8 @@ internal sealed class AIDispatchConversationBuilder(
 
         var policy = await GetLearnedPolicyAsync();
         var systemPrompt = AIDispatchSystemPrompt.Build(
-            companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit, policy, hasIntermodal);
+            companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit, policy, hasIntermodal,
+            tenant.Settings.OperatingMode);
         var tools = toolRegistry.GetToolDefinitions(enabledFeatures);
 
         var model = selection.Model;

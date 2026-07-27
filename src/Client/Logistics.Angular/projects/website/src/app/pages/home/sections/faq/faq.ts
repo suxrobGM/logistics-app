@@ -21,9 +21,14 @@ export class Faq {
         "A Transportation Management System is software for running a trucking company - dispatching, tracking, invoicing, and compliance, in one place instead of five spreadsheets.",
     },
     {
+      question: "Does this work for a one-truck owner-operator?",
+      answer:
+        "Yes. Switch the account to solo mode and the parts built for a crew - team invites, dispatcher assignment, driver messaging - get out of the way. The dispatch agent plans around your truck and your hours instead of comparing trucks you don't have. One truck on Starter is $41/mo.",
+    },
+    {
       question: "How long does setup take?",
       answer:
-        "Usually 1-2 days. Our onboarding team helps you import data, set up the account, and train your staff. Support is on hand during the transition.",
+        "You do it yourself, usually in an afternoon. A checklist appears on the dashboard after sign-up: company profile, first truck, your team, a customer, your first load, payouts, and your ELD. Each item links to the page that finishes it and ticks itself off. Nothing waits on us.",
     },
     {
       question: "Do you integrate with ELD providers?",
@@ -43,12 +48,12 @@ export class Faq {
     {
       question: "Do you offer a free trial?",
       answer:
-        "We start with a demo using your own data. If it looks like a fit, we'll set up a trial so you can see how it works before committing.",
+        "There's no time-limited trial. You sign up, set the account up yourself, and pay month to month from $29/mo plus $12 per truck - cancel whenever. If you'd rather see it against your own data before you commit, book a demo and we'll load some of it in.",
     },
     {
       question: "What kind of support do you offer?",
       answer:
-        "Support is available by phone, email, and chat. The team has people who've worked in trucking, not just generic SaaS support.",
+        "Email and in-app chat on every plan, Starter included. Enterprise adds priority support. The people answering have worked in trucking, so you won't be explaining what a BOL is.",
     },
     {
       question: "Is my data secure?",

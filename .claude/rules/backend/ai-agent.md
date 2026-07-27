@@ -26,6 +26,11 @@ Two placement rules that get broken:
   `Logistics.Application/Modules/{Module}/.../Services/` (policy learning) or in the infrastructure
   project that owns the feature (`Infrastructure.Documents/PdfImport/DispatchSheetPrompt`).
 
+`AIDispatchSystemPrompt.Build` also varies by `TenantSettings.OperatingMode`: `SoloOperator` swaps the
+fleet-framed lines (utilization, truck-to-truck comparison, the assignment table) and appends a
+`## Fleet Profile` block. That heading is deliberately not `## Operating Mode` - that one is already
+taken by `AIDispatchMode`, and reusing it makes the model conflate the two.
+
 ## Provider abstraction
 
 `AnthropicLlmProvider` (Claude via `Anthropic.SDK` - prompt caching, extended thinking) and

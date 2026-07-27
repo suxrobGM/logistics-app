@@ -34,7 +34,13 @@ internal class ContainerSeeder(ILogger<ContainerSeeder> logger) : SeederBase(log
         LogStarting();
 
         var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
-        var terminals = context.CreatedTerminals ?? throw new InvalidOperationException("Terminals not seeded");
+        var terminals = context.CreatedTerminals;
+        if (terminals is null)
+        {
+            LogUpstreamSkipped();
+            return;
+        }
+
         if (terminals.Count == 0)
         {
             logger.LogWarning("No terminals available - skipping containers");
@@ -47,7 +53,9 @@ internal class ContainerSeeder(ILogger<ContainerSeeder> logger) : SeederBase(log
         var ownerCodes = region.ContainerOwnerCodes;
         var created = new List<Container>();
 
-        for (var i = 0; i < 30; i++)
+        var containerCount = context.Scale(30);
+
+        for (var i = 0; i < containerCount; i++)
         {
             var ownerCode = random.Pick((IList<string>)ownerCodes);
             var isoType = random.Pick(CommonIsoTypes);

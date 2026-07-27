@@ -1,9 +1,7 @@
 <ui-card class="h-full">
   <ng-template #header>
     <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
-      <span style="color: #eab308">
-        <ui-icon name="trophy" size="xl" color="inherit" />
-      </span>
+      <ui-icon name="trophy" size="xl" color="warning" />
       <ui-typography variant="h4" tag="h4" color="primary">Top Performers</ui-typography>
       <ui-typography variant="caption" color="muted">(This Month)</ui-typography>
     </ui-stack>
@@ -17,15 +15,12 @@
       <ui-skeleton height="4rem" />
     </ui-stack>
   } @else if (!topTrucks() || topTrucks()!.length === 0) {
-    <ui-stack align="center" justify="center" gap="2" class="py-8 text-center">
-      <ui-icon
-        name="chart-column"
-        size="inherit"
-        class="text-muted-foreground text-4xl"
-        aria-hidden="true"
-      />
-      <ui-typography variant="body" color="muted">No data available yet</ui-typography>
-    </ui-stack>
+    <!-- Also an established fleet on the 1st of the month, so no first-truck CTA here. -->
+    <ui-empty-state
+      icon="trophy"
+      title="No revenue this month yet"
+      message="Once your trucks start delivering, your best earners are ranked here."
+    />
   } @else {
     <ui-stack gap="4">
       @for (truck of topTrucks(); track truck.truckId; let i = $index) {
@@ -35,8 +30,8 @@
         >
           <ui-stack direction="row" align="center" justify="between">
             <ui-stack direction="row" align="center" gap="3">
-              <span [style.color]="getRankIcon(i).color">
-                <ui-icon [name]="getRankIcon(i).name" color="inherit" />
+              <span [style.color]="rankColor(i)">
+                <ui-icon name="star" color="inherit" />
               </span>
               <div>
                 <ui-typography variant="body" weight="medium" color="primary" tag="div">

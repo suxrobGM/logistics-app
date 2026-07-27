@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
 import { form, FormField, FormRoot, max, min, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
+import { DRIVING_ROLES } from "@logistics/shared";
 import {
   Api,
   getEmployees,
@@ -205,7 +206,7 @@ export class TruckForm {
   protected async searchDriver(event: { query: string }): Promise<void> {
     const result = await this.api.invoke(getEmployees, {
       Search: event.query,
-      Role: "Driver",
+      Roles: [...DRIVING_ROLES],
     });
     if (result.items) {
       this.suggestedDrivers.set(result.items);

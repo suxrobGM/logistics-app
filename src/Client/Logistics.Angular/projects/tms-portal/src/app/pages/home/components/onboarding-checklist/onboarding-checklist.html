@@ -1,0 +1,67 @@
+@if (isVisible()) {
+  <ui-card class="h-full">
+    <ng-template #header>
+      <ui-stack direction="row" align="center" justify="between" gap="2" class="py-3 pr-2 pl-4">
+        <ui-stack direction="row" align="center" gap="2">
+          <ui-icon name="sparkles" size="xl" color="info" />
+          <ui-typography variant="h4" tag="h4" color="primary">Finish setting up</ui-typography>
+        </ui-stack>
+        <ui-button
+          appearance="text"
+          intent="secondary"
+          size="sm"
+          label="Dismiss"
+          (click)="dismiss()"
+        />
+      </ui-stack>
+      <ui-divider class="m-0" />
+    </ng-template>
+
+    <ui-stack gap="4">
+      <ui-stack gap="2">
+        <ui-stack direction="row" align="center" justify="between" gap="2">
+          <ui-typography variant="body-sm" color="muted">
+            {{ completedCount() }} of {{ totalCount() }} done
+          </ui-typography>
+          <ui-typography variant="body-sm" color="muted">
+            Pick up where you left off - nothing here is required.
+          </ui-typography>
+        </ui-stack>
+        <ui-progress [value]="percentComplete()" height="0.5rem" />
+      </ui-stack>
+
+      <ui-stack gap="1">
+        @for (step of rows(); track step.key) {
+          <div class="hover:bg-hover flex items-center gap-3 rounded-lg p-2 transition-colors">
+            @if (step.isComplete) {
+              <ui-icon name="circle-check" color="success" />
+            } @else {
+              <ui-icon [name]="step.icon" color="muted" />
+            }
+
+            <ui-typography
+              variant="body"
+              tag="div"
+              class="min-w-0 flex-1"
+              [color]="step.isComplete ? 'muted' : 'primary'"
+            >
+              {{ step.label }}
+            </ui-typography>
+
+            @if (step.isComplete) {
+              <ui-typography variant="body-sm" color="muted">Done</ui-typography>
+            } @else {
+              <ui-button
+                appearance="text"
+                size="sm"
+                buttonClass="whitespace-nowrap"
+                [label]="step.cta"
+                [routerLink]="step.route"
+              />
+            }
+          </div>
+        }
+      </ui-stack>
+    </ui-stack>
+  </ui-card>
+}

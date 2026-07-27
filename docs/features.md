@@ -112,6 +112,14 @@ The dispatcher and manager web interface for managing all fleet operations.
 | **Company Settings**          | Configure company profile, billing address, notification preferences, and feature toggles.                                     |
 | **Subscription Management**   | Three tiers (Starter, Professional, Enterprise) with plan-based feature gating. Stripe-powered billing with per-truck pricing. |
 
+### Onboarding & Solo Mode
+
+| Feature                        | Description                                                                                                                                                                           |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Setup Checklist**            | Dismissible dashboard checklist that tracks the steps a new company still owes: company profile, first truck, invite the team, first customer, first load, Stripe payouts, ELD.       |
+| **Owner-Operator (Solo) Mode** | Operating mode for a one-person carrier. Hides employees, payroll, timesheets and messaging, drops "invite the team" from the checklist, and reshapes the dashboard around one truck. |
+| **Solo AI Dispatch**           | The dispatch agent's system prompt switches to a one-truck profile in solo mode - it plans for the owner's own truck and HOS instead of choosing between drivers.                     |
+
 ---
 
 ## Customer Portal

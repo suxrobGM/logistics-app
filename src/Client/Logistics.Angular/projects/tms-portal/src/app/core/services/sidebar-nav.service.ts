@@ -40,6 +40,9 @@ const ROLE_ITEM_ACCESS: Record<string, string[] | "*"> = {
   [UserRole.Owner]: "*",
 };
 
+/** Hidden in owner-operator mode. Timesheets is a `payroll` child, so it leaves with its parent. */
+const SOLO_HIDDEN_ITEMS = ["employees", "payroll", "messages"];
+
 /**
  * Single home for the sidebar/mobile-drawer nav pipeline: role + feature filtering, badge wiring,
  * favorites init and the command-palette index. Both surfaces consume the same two computeds so they
@@ -96,8 +99,9 @@ export class SidebarNavService {
       const role = this.role();
       if (!role) return;
       this.dispatchBadgeService.refresh();
-      this.favoritesService.initWithRole(role);
-      this.commandPaletteService.buildIndex(this.fullSections());
+      const sections = this.fullSections();
+      this.favoritesService.initWithRole(role, this.collectItemIds(sections));
+      this.commandPaletteService.buildIndex(sections);
     });
   }
 
@@ -118,10 +122,15 @@ export class SidebarNavService {
   }
 
   private filterItems(items: NavItem[], allowedItems: string[] | "*"): NavItem[] {
+    // Read here rather than in the constructor effect, so a mode change repaints the nav without
+    // waiting on a feature refresh.
+    const isSolo = this.tenantService.isSoloMode();
+
     return items
       .filter((item) => {
         // Role access.
         if (allowedItems !== "*" && !allowedItems.includes(item.id)) return false;
+        if (isSolo && SOLO_HIDDEN_ITEMS.includes(item.id)) return false;
         // Feature flag + permission.
         if (!this.isVisible(item)) return false;
         return true;
@@ -134,6 +143,12 @@ export class SidebarNavService {
         return this.collapseOrKeep(item, children);
       })
       .filter((item): item is NavItem => item !== null);
+  }
+
+  private collectItemIds(sections: NavSection[]): string[] {
+    return sections.flatMap((section) =>
+      section.items.flatMap((item) => [item.id, ...(item.children?.map((c) => c.id) ?? [])]),
+    );
   }
 
   private isVisible(item: NavItem): boolean {

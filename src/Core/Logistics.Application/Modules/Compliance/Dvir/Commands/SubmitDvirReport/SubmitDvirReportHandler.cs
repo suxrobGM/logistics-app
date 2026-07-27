@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
@@ -7,7 +8,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 
-internal sealed class SubmitDvirReportHandler(ITenantUnitOfWork tenantUow)
+internal sealed class SubmitDvirReportHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUser)
     : IAppRequestHandler<SubmitDvirReportCommand, Result<DvirReportDto>>
 {
     public async Task<Result<DvirReportDto>> Handle(SubmitDvirReportCommand req, CancellationToken ct)
@@ -16,6 +19,11 @@ internal sealed class SubmitDvirReportHandler(ITenantUnitOfWork tenantUow)
         if (report is null)
         {
             return Result<DvirReportDto>.Fail("DVIR report not found.");
+        }
+
+        if (!await DvirReportAccess.CanFileForAsync(tenantUow, currentUser.GetUserId(), report.DriverId, ct))
+        {
+            return Result<DvirReportDto>.Fail("You can only submit your own DVIR.");
         }
 
         if (report.Status != DvirStatus.Draft)

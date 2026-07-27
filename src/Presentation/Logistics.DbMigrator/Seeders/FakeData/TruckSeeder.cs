@@ -27,8 +27,14 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
     {
         LogStarting();
 
-        var employees = context.CreatedEmployees ?? throw new InvalidOperationException("Employees not seeded");
+        var employees = context.CreatedEmployees;
         var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
+
+        if (employees is null)
+        {
+            LogUpstreamSkipped();
+            return;
+        }
         var drivers = employees.Drivers;
 
         if (drivers.Count == 0)
@@ -43,10 +49,12 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
         var truckNumber = 101;
         var truckRepo = context.TenantUnitOfWork.Repository<Truck>();
 
+        var isSolo = context.OperatingMode is OperatingMode.SoloOperator;
+
         for (var idx = 0; idx < drivers.Count; idx++)
         {
             var driver = drivers[idx];
-            var truckType = PickTruckType(idx, drivers.Count);
+            var truckType = PickTruckType(idx, isSolo);
             var truck = Truck.Create(truckNumber.ToString(), truckType, driver);
 
             truck.VehicleCapacity = truckType == TruckType.CarHauler ? 7 : 0;
@@ -83,11 +91,13 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
     /// the first driver gets a CarHauler (anchors the trip seeder),
     /// the second gets a ContainerTruck (anchors intermodal loads),
     /// the rest are FreightTrucks. With 5 drivers: 1 CarHauler + 1 ContainerTruck + 3 Freight.
+    /// An owner-operator hauls one trailer, so it gets a plain FreightTruck instead.
     /// </summary>
-    private static TruckType PickTruckType(int driverIdx, int driverCount)
+    private static TruckType PickTruckType(int driverIdx, bool isSolo)
     {
+        if (isSolo) return TruckType.FreightTruck;
         if (driverIdx == 0) return TruckType.CarHauler;
-        if (driverIdx == 1 && driverCount > 1) return TruckType.ContainerTruck;
+        if (driverIdx == 1) return TruckType.ContainerTruck;
         return TruckType.FreightTruck;
     }
 }

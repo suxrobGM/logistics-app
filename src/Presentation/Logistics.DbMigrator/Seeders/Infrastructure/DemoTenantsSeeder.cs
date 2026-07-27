@@ -76,6 +76,7 @@ internal sealed class DemoTenantsSeeder(
                 ApplyRegionalSettings(tenant, profile);
                 ApplyDemoTaxIdentifiers(tenant, profile);
                 tenant.Settings.MinBrokerCreditScore = DemoMinBrokerCreditScore;
+                tenant.Settings.OperatingMode = config.OperatingMode;
 
                 await repo.AddAsync(tenant, cancellationToken);
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
@@ -100,6 +101,11 @@ internal sealed class DemoTenantsSeeder(
                 if (existing.Settings.MinBrokerCreditScore is null)
                 {
                     existing.Settings.MinBrokerCreditScore = DemoMinBrokerCreditScore;
+                    updated = true;
+                }
+                if (existing.Settings.OperatingMode != config.OperatingMode)
+                {
+                    existing.Settings.OperatingMode = config.OperatingMode;
                     updated = true;
                 }
 

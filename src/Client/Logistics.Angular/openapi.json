@@ -4892,10 +4892,13 @@
         "operationId": "GetEmployees",
         "parameters": [
           {
-            "name": "Role",
+            "name": "Roles",
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
@@ -10463,6 +10466,45 @@
         }
       }
     },
+    "/onboarding/progress": {
+      "get": {
+        "tags": [
+          "Onboarding"
+        ],
+        "operationId": "GetOnboardingProgress",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/GetOnboardingProgressQuery"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingProgressDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/payments/{id}": {
       "get": {
         "tags": [
@@ -15825,6 +15867,317 @@
   },
   "components": {
     "schemas": {
+      "AIDispatchDecisionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AIDispatchDecisionType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AIDispatchDecisionStatus"
+          },
+          "reasoning": {
+            "type": "string",
+            "nullable": true
+          },
+          "toolName": {
+            "type": "string",
+            "nullable": true
+          },
+          "toolInput": {
+            "type": "string",
+            "nullable": true
+          },
+          "toolOutput": {
+            "type": "string",
+            "nullable": true
+          },
+          "loadId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "loadName": {
+            "type": "string",
+            "nullable": true
+          },
+          "truckId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "truckNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "tripId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "executedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "approvedByUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AIDispatchDecisionStatus": {
+        "enum": [
+          "suggested",
+          "approved",
+          "rejected",
+          "executed",
+          "failed"
+        ],
+        "type": "string"
+      },
+      "AIDispatchDecisionType": {
+        "enum": [
+          "query",
+          "assign_load",
+          "create_trip",
+          "dispatch_trip",
+          "book_load_board_load",
+          "reassign_load"
+        ],
+        "type": "string"
+      },
+      "AIDispatchMode": {
+        "enum": [
+          "human_in_the_loop",
+          "autonomous"
+        ],
+        "type": "string"
+      },
+      "AIDispatchPolicyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "generatedContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "manualContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "decisionsAnalyzed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastEditedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastEditedByUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AIDispatchSessionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/AIDispatchMode"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AIDispatchSessionStatus"
+          },
+          "triggeredByUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "totalTokensUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inputTokensUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outputTokensUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cacheReadTokens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cacheCreationTokens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estimatedCostUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "modelUsed": {
+            "type": "string",
+            "nullable": true
+          },
+          "decisionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOverage": {
+            "type": "boolean"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIDispatchDecisionDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AIDispatchSessionDtoPagedResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIDispatchSessionDto"
+            },
+            "nullable": true
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AIDispatchSessionStatus": {
+        "enum": [
+          "running",
+          "completed",
+          "failed",
+          "cancelled"
+        ],
+        "type": "string"
+      },
+      "AIQuotaStatusDto": {
+        "type": "object",
+        "properties": {
+          "usagePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "isOverQuota": {
+            "type": "boolean"
+          },
+          "planName": {
+            "type": "string",
+            "nullable": true
+          },
+          "resetsAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AISettingsDto": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "nullable": true
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true
+          },
+          "extendedThinking": {
+            "type": "boolean"
+          },
+          "availableModels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LlmModelOptionDto"
+            },
+            "nullable": true
+          },
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanQuotaDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AcceptInvitationCommand": {
         "required": [
           "firstName",
@@ -16396,317 +16749,6 @@
           },
           "orangePlateNumber": {
             "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AIDispatchDecisionDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "sessionId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "type": {
-            "$ref": "#/components/schemas/AIDispatchDecisionType"
-          },
-          "status": {
-            "$ref": "#/components/schemas/AIDispatchDecisionStatus"
-          },
-          "reasoning": {
-            "type": "string",
-            "nullable": true
-          },
-          "toolName": {
-            "type": "string",
-            "nullable": true
-          },
-          "toolInput": {
-            "type": "string",
-            "nullable": true
-          },
-          "toolOutput": {
-            "type": "string",
-            "nullable": true
-          },
-          "loadId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "loadName": {
-            "type": "string",
-            "nullable": true
-          },
-          "truckId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "truckNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "tripId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "executedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "approvedByUserId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "rejectionReason": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AIDispatchDecisionStatus": {
-        "enum": [
-          "suggested",
-          "approved",
-          "rejected",
-          "executed",
-          "failed"
-        ],
-        "type": "string"
-      },
-      "AIDispatchDecisionType": {
-        "enum": [
-          "query",
-          "assign_load",
-          "create_trip",
-          "dispatch_trip",
-          "book_load_board_load",
-          "reassign_load"
-        ],
-        "type": "string"
-      },
-      "AIDispatchMode": {
-        "enum": [
-          "human_in_the_loop",
-          "autonomous"
-        ],
-        "type": "string"
-      },
-      "AIDispatchPolicyDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "generatedContent": {
-            "type": "string",
-            "nullable": true
-          },
-          "manualContent": {
-            "type": "string",
-            "nullable": true
-          },
-          "isEnabled": {
-            "type": "boolean"
-          },
-          "generatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "decisionsAnalyzed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "lastEditedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "lastEditedByUserId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AIDispatchSessionDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "number": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "mode": {
-            "$ref": "#/components/schemas/AIDispatchMode"
-          },
-          "status": {
-            "$ref": "#/components/schemas/AIDispatchSessionStatus"
-          },
-          "triggeredByUserId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "completedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "totalTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "inputTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "outputTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cacheReadTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cacheCreationTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "estimatedCostUsd": {
-            "type": "number",
-            "format": "double"
-          },
-          "modelUsed": {
-            "type": "string",
-            "nullable": true
-          },
-          "decisionCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "summary": {
-            "type": "string",
-            "nullable": true
-          },
-          "instructions": {
-            "type": "string",
-            "nullable": true
-          },
-          "errorMessage": {
-            "type": "string",
-            "nullable": true
-          },
-          "isOverage": {
-            "type": "boolean"
-          },
-          "decisions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AIDispatchDecisionDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AIDispatchSessionDtoPagedResponse": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AIDispatchSessionDto"
-            },
-            "nullable": true
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationMeta"
-          }
-        },
-        "additionalProperties": false
-      },
-      "AIDispatchSessionStatus": {
-        "enum": [
-          "running",
-          "completed",
-          "failed",
-          "cancelled"
-        ],
-        "type": "string"
-      },
-      "AIQuotaStatusDto": {
-        "type": "object",
-        "properties": {
-          "usagePercent": {
-            "type": "number",
-            "format": "double"
-          },
-          "isOverQuota": {
-            "type": "boolean"
-          },
-          "planName": {
-            "type": "string",
-            "nullable": true
-          },
-          "resetsAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AISettingsDto": {
-        "type": "object",
-        "properties": {
-          "model": {
-            "type": "string",
-            "nullable": true
-          },
-          "provider": {
-            "type": "string",
-            "nullable": true
-          },
-          "extendedThinking": {
-            "type": "boolean"
-          },
-          "availableModels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LlmModelOptionDto"
-            },
-            "nullable": true
-          },
-          "plans": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PlanQuotaDto"
-            },
             "nullable": true
           }
         },
@@ -18858,6 +18900,9 @@
           },
           "companyAddress": {
             "$ref": "#/components/schemas/Address"
+          },
+          "operatingMode": {
+            "$ref": "#/components/schemas/OperatingMode"
           },
           "ownerEmail": {
             "type": "string",
@@ -21550,6 +21595,10 @@
         "type": "object",
         "additionalProperties": false
       },
+      "GetOnboardingProgressQuery": {
+        "type": "object",
+        "additionalProperties": false
+      },
       "GuidResult": {
         "type": "object",
         "properties": {
@@ -23896,6 +23945,45 @@
         },
         "additionalProperties": false
       },
+      "OnboardingProgressDto": {
+        "type": "object",
+        "properties": {
+          "operatingMode": {
+            "$ref": "#/components/schemas/OperatingMode"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OnboardingStepDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OnboardingStepDto": {
+        "required": [
+          "key"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "isComplete": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OperatingMode": {
+        "enum": [
+          "fleet",
+          "solo_operator"
+        ],
+        "type": "string"
+      },
       "OptimizeTripStopsCommand": {
         "type": "object",
         "properties": {
@@ -26109,7 +26197,7 @@
           "accounting",
           "fuel_cards",
           "ifta",
-        "intermodal_containers"
+          "intermodal_containers"
         ],
         "type": "string"
       },
@@ -26214,6 +26302,9 @@
           },
           "temperatureUnit": {
             "$ref": "#/components/schemas/TemperatureUnit"
+          },
+          "operatingMode": {
+            "$ref": "#/components/schemas/OperatingMode"
           },
           "language": {
             "type": "string",
@@ -27064,6 +27155,39 @@
         },
         "additionalProperties": false
       },
+      "UpdateAIDispatchPolicyCommand": {
+        "type": "object",
+        "properties": {
+          "manualContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateAISettingsCommand": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "nullable": true
+          },
+          "extendedThinking": {
+            "type": "boolean"
+          },
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanQuotaDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateAccidentReportCommand": {
         "required": [
           "accidentDateTime",
@@ -27171,39 +27295,6 @@
           "tripId": {
             "type": "string",
             "format": "uuid",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdateAIDispatchPolicyCommand": {
-        "type": "object",
-        "properties": {
-          "manualContent": {
-            "type": "string",
-            "nullable": true
-          },
-          "isEnabled": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdateAISettingsCommand": {
-        "type": "object",
-        "properties": {
-          "model": {
-            "type": "string",
-            "nullable": true
-          },
-          "extendedThinking": {
-            "type": "boolean"
-          },
-          "plans": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PlanQuotaDto"
-            },
             "nullable": true
           }
         },
@@ -28556,6 +28647,9 @@
     },
     {
       "name": "Notification"
+    },
+    {
+      "name": "Onboarding"
     },
     {
       "name": "Payment"

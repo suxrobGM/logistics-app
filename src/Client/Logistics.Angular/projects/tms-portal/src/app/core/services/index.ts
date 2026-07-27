@@ -6,6 +6,7 @@ export * from "./chat.service";
 export * from "./pdf.service";
 export * from "./tenant.service";
 export * from "./map-style.service";
+export * from "./dashboard-panels";
 export * from "./dashboard-settings.service";
 export * from "./feature.provider";
 export * from "./sidebar-favorites.service";

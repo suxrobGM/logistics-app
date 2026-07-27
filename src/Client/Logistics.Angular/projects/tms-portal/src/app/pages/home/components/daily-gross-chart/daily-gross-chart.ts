@@ -1,18 +1,11 @@
-import { Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Api, getDailyGrosses, type DailyGrossesDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import { Card, Divider, Icon, Skeleton, UiChart } from "@logistics/shared/ui";
 import { ThemeService } from "@/core/services";
 import { getChartPalette, getLineGradient } from "@/shared/constants/chart-palette";
-import { Converters, DateUtils } from "@/shared/utils";
-
-export interface DailyGrossChartData {
-  totalGross: number;
-  totalDistance: number;
-  rpm: number;
-  todayGross: number;
-}
+import { summarizeDailyGrosses, weeklyGrossStartDate } from "../../utils/weekly-gross";
 
 @Component({
   selector: "app-daily-gross-chart",
@@ -30,25 +23,7 @@ export class DailyGrossChartComponent implements OnInit {
   protected readonly dailyGrosses = signal<DailyGrossesDto | null>(null);
   protected readonly chartData = signal<Record<string, unknown>>({ labels: [], datasets: [] });
 
-  public readonly dataLoaded = output<DailyGrossChartData>();
-
-  protected readonly totalGross = computed(() => this.dailyGrosses()?.totalGross ?? 0);
-  protected readonly totalDistance = computed(() =>
-    Converters.metersTo(this.dailyGrosses()?.totalDistance ?? 0, "mi"),
-  );
-  protected readonly rpm = computed(() => {
-    const distance = this.totalDistance();
-    return distance > 0 ? this.totalGross() / distance : 0;
-  });
-
-  protected readonly todayGross = computed(() => {
-    const today = new Date();
-    let total = 0;
-    (this.dailyGrosses()?.data ?? [])
-      .filter((i) => i.date && DateUtils.dayOfMonth(i.date) === today.getDate())
-      .forEach((i) => (total += i.gross ?? 0));
-    return total;
-  });
+  protected readonly summary = computed(() => summarizeDailyGrosses(this.dailyGrosses()));
 
   protected readonly chartOptions = computed(() => {
     const currencySymbol = this.localizationService?.getCurrencySymbol() ?? "$";
@@ -120,21 +95,14 @@ export class DailyGrossChartComponent implements OnInit {
 
   async fetchDailyGrosses(): Promise<void> {
     this.isLoading.set(true);
-    const oneWeekAgo = DateUtils.daysAgo(7);
 
     const result = await this.api.invoke(getDailyGrosses, {
-      StartDate: oneWeekAgo.toISOString(),
+      StartDate: weeklyGrossStartDate(),
     });
 
     if (result) {
       this.dailyGrosses.set(result);
       this.drawChart(result);
-      this.dataLoaded.emit({
-        totalGross: this.totalGross(),
-        totalDistance: this.dailyGrosses()?.totalDistance ?? 0,
-        rpm: this.rpm(),
-        todayGross: this.todayGross(),
-      });
     }
 
     this.isLoading.set(false);

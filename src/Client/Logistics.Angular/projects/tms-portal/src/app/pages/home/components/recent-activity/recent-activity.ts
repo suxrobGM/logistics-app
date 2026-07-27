@@ -2,7 +2,17 @@ import { Component, computed, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
-import { Card, Divider, Icon, Skeleton, type IconName } from "@logistics/shared/ui";
+import {
+  Card,
+  Divider,
+  EmptyState,
+  Icon,
+  Skeleton,
+  Stack,
+  Typography,
+  type IconColor,
+  type IconName,
+} from "@logistics/shared/ui";
 
 interface ActivityItem {
   loadId: string;
@@ -10,13 +20,23 @@ interface ActivityItem {
   action: string;
   timestamp: Date;
   icon: IconName;
-  iconClass: string;
+  color: IconColor;
 }
 
 @Component({
   selector: "app-recent-activity",
   templateUrl: "./recent-activity.html",
-  imports: [Card, Divider, Icon, RelativeTimePipe, RouterLink, Skeleton],
+  imports: [
+    Card,
+    Divider,
+    EmptyState,
+    Icon,
+    RelativeTimePipe,
+    RouterLink,
+    Skeleton,
+    Stack,
+    Typography,
+  ],
 })
 export class RecentActivityComponent {
   readonly loads = input<LoadDto[]>([]);
@@ -36,7 +56,7 @@ export class RecentActivityComponent {
           action: "was delivered",
           timestamp: new Date(load.deliveredAt),
           icon: "circle-check",
-          iconClass: "text-emerald-600 dark:text-emerald-400",
+          color: "success",
         });
       } else if (load.pickedUpAt) {
         items.push({
@@ -45,7 +65,7 @@ export class RecentActivityComponent {
           action: "was picked up",
           timestamp: new Date(load.pickedUpAt),
           icon: "box",
-          iconClass: "text-amber-600 dark:text-amber-400",
+          color: "warning",
         });
       } else if (load.dispatchedAt) {
         items.push({
@@ -54,7 +74,7 @@ export class RecentActivityComponent {
           action: "was dispatched",
           timestamp: new Date(load.dispatchedAt),
           icon: "send",
-          iconClass: "text-blue-600 dark:text-blue-400",
+          color: "info",
         });
       } else if (load.cancelledAt) {
         items.push({
@@ -63,7 +83,7 @@ export class RecentActivityComponent {
           action: "was cancelled",
           timestamp: new Date(load.cancelledAt),
           icon: "circle-x",
-          iconClass: "text-red-600 dark:text-red-400",
+          color: "danger",
         });
       } else if (load.createdAt) {
         items.push({
@@ -72,7 +92,7 @@ export class RecentActivityComponent {
           action: "was created",
           timestamp: new Date(load.createdAt),
           icon: "circle-plus",
-          iconClass: "text-gray-600 dark:text-gray-400",
+          color: "muted",
         });
       }
     }

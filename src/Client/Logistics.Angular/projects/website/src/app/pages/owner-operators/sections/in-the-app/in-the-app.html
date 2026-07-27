@@ -1,0 +1,41 @@
+<web-section-container sectionId="in-the-app" background="light">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="In The App"
+      title="The whole back office on one screen"
+      subtitle="Same dashboard the fleets get. There's just less of it to fill in."
+    />
+  </div>
+
+  <div class="mt-12 grid items-center gap-12 lg:grid-cols-2">
+    <div webScrollAnimate="fade-up">
+      <ul class="space-y-4">
+        @for (point of points; track point) {
+          <li class="flex items-start gap-3">
+            <div
+              class="bg-paper mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg"
+            >
+              <ui-icon name="check" size="inherit" class="text-accent text-sm" />
+            </div>
+            <span class="text-ink font-medium">{{ point }}</span>
+          </li>
+        }
+      </ul>
+
+      <p class="text-steel mt-8 leading-relaxed">
+        Want to poke at it before you talk to anyone? The test account
+        <span class="text-ink font-semibold">solo&#64;test.com</span>
+        (password
+        <span class="text-ink font-semibold">Test12345#</span>
+        ) is a one-truck carrier with real loads in it.
+      </p>
+    </div>
+
+    <div webScrollAnimate="fade-up" [delay]="150">
+      <web-browser-frame
+        src="images/screenshots/tms-dashboard.png"
+        alt="TMS dashboard showing loads, revenue, and the fleet map"
+      />
+    </div>
+  </div>
+</web-section-container>

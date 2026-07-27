@@ -1,0 +1,25 @@
+<web-section-container sectionId="owner-operators-cta" background="dark">
+  <div class="text-center" webScrollAnimate="fade-up">
+    <h2 class="font-display text-paper text-3xl font-bold sm:text-4xl">$41 a month, one truck</h2>
+    <p class="text-steel mx-auto mt-4 max-w-xl text-lg">
+      Starter plan, month to month, no setup fee. Book a demo if you want it walked through, or go
+      straight to the pricing and read the plan.
+    </p>
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+      <ui-button
+        buttonClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
+        label="Request a Demo"
+        iconEnd="arrow-right"
+        [rounded]="true"
+        (click)="openDemoDialog()"
+      />
+      <a
+        routerLink="/"
+        fragment="pricing"
+        class="font-display text-accent text-sm font-semibold hover:underline"
+      >
+        See all plans
+      </a>
+    </div>
+  </div>
+</web-section-container>

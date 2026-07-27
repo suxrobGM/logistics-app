@@ -110,20 +110,20 @@ export class SchemaService {
         {
           "@type": "Offer",
           priceCurrency: "USD",
-          price: "19",
-          description: "Starter plan - $19/mo base + $12/truck/mo",
+          price: "29",
+          description: "Starter plan - $29/mo base + $12/truck/mo",
         },
         {
           "@type": "Offer",
           priceCurrency: "USD",
           price: "79",
-          description: "Professional plan - $79/mo base + $7/truck/mo",
+          description: "Professional plan - $79/mo base + $9/truck/mo",
         },
         {
           "@type": "Offer",
           priceCurrency: "USD",
-          price: "149",
-          description: "Enterprise plan - $149/mo base + $4/truck/mo",
+          price: "169",
+          description: "Enterprise plan - $169/mo base + $6/truck/mo",
         },
       ],
     });

@@ -15,10 +15,10 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
 
     protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
     {
-        var testUsers = LoadUsersForRegion(context);
-        if (testUsers is null || testUsers.Length == 0)
+        var testUsers = context.GetSeedUsers();
+        if (testUsers.Length == 0)
         {
-            return true; // Skip if no users configured for this region
+            return true; // Skip if no users configured for this seed set
         }
 
         // Check if first test user already exists
@@ -29,16 +29,8 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
         LogStarting();
-        var testUsers = LoadUsersForRegion(context);
+        var testUsers = context.GetSeedUsers();
         var usersList = new List<User>();
-
-        if (testUsers is null)
-        {
-            logger.LogWarning("No test users found in configuration");
-            context.CreatedUsers = usersList;
-            LogCompleted();
-            return;
-        }
 
         foreach (var fakeUser in testUsers)
         {
@@ -72,19 +64,5 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
 
         context.CreatedUsers = usersList;
         LogCompleted(usersList.Count);
-    }
-
-    /// <summary>
-    /// Pulls the user array from the region-keyed config section
-    /// (e.g. <c>Us:Users</c> or <c>Eu:Users</c>) loaded from <c>SeedData/{us,eu}.json</c>.
-    /// </summary>
-    private static UserData[]? LoadUsersForRegion(SeederContext context)
-    {
-        var region = context.Region?.Region.ToString();
-        if (string.IsNullOrEmpty(region))
-        {
-            return null;
-        }
-        return context.Configuration.GetSection($"{region}:Users").Get<UserData[]>();
     }
 }

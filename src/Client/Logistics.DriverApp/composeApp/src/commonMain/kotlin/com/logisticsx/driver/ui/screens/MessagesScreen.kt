@@ -99,7 +99,8 @@ fun MessagesScreen(
         floatingActionButton = {
             // Show FAB to message dispatcher if dispatcher info is available and has conversations
             val state = uiState
-            if (dispatcherInfo != null && state is UiState.Success) {
+            val dispatcher = dispatcherInfo
+            if (dispatcher != null && state is UiState.Success) {
                 val conversations = state.data
                 if (conversations.isNotEmpty()) {
                     FloatingActionButton(
@@ -115,7 +116,7 @@ fun MessagesScreen(
                         } else {
                             Icon(
                                 Icons.AutoMirrored.Filled.Chat,
-                                contentDescription = "Message Dispatcher"
+                                contentDescription = "Message ${dispatcher.name}"
                             )
                         }
                     }
@@ -147,7 +148,7 @@ fun MessagesScreen(
                         ) {
                             AssistChip(
                                 onClick = { viewModel.openTeamChat() },
-                                label = { Text("Team Chat") },
+                                label = { Text("Company Chat") },
                                 leadingIcon = {
                                     if (isLoadingTeamChat) {
                                         CircularProgressIndicator(
@@ -219,9 +220,9 @@ private fun EmptyMessagesView(
     onStartConversation: () -> Unit
 ) {
     val message = if (dispatcherInfo != null) {
-        "Start a conversation with your dispatcher"
+        "Start a conversation with ${dispatcherInfo.name}, the dispatcher on your active load."
     } else {
-        "You'll be able to message your dispatcher once you have an active load"
+        "Use New Message to reach someone at your company, or open Company Chat."
     }
 
     EmptyStateView(

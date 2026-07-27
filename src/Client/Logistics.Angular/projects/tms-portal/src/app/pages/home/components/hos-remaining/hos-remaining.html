@@ -1,0 +1,62 @@
+<ui-card class="h-full">
+  <ng-template #header>
+    <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
+      <ui-icon name="clock" size="xl" color="info" />
+      <ui-typography variant="h4" tag="h4" color="primary">Hours of Service</ui-typography>
+    </ui-stack>
+    <ui-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <ui-stack gap="3">
+      <ui-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
+      <ui-skeleton height="3rem" />
+    </ui-stack>
+  } @else if (!status()) {
+    <ui-empty-state
+      icon="clock"
+      title="No HOS data yet"
+      message="Connect an ELD provider and map yourself as a driver to see your remaining hours here."
+    />
+  } @else {
+    <ui-stack gap="3">
+      @if (status()!.isInViolation) {
+        <ui-stack
+          direction="row"
+          align="center"
+          gap="2"
+          class="bg-danger/10 text-danger rounded-lg p-3"
+        >
+          <ui-icon name="circle-alert" color="inherit" />
+          <ui-typography variant="body-sm" color="inherit">
+            You are in an HOS violation. Do not start another load until the clock resets.
+          </ui-typography>
+        </ui-stack>
+      }
+
+      @for (clock of clocks(); track clock.label) {
+        <ui-stack direction="row" align="center" justify="between" class="bg-canvas rounded-lg p-3">
+          <ui-stack direction="row" align="center" gap="3">
+            <div class="bg-info/10 flex h-10 w-10 items-center justify-center rounded-full">
+              <ui-icon [name]="clock.icon" color="info" />
+            </div>
+            <ui-typography variant="body" weight="medium" color="primary" tag="div">
+              {{ clock.label }}
+            </ui-typography>
+          </ui-stack>
+          <span
+            class="font-mono text-lg font-bold"
+            [class]="isLow(clock) ? 'text-warning' : 'text-foreground'"
+          >
+            {{ clock.display }}
+          </span>
+        </ui-stack>
+      }
+
+      <ui-typography variant="caption" color="muted">
+        Currently {{ status()!.currentDutyStatusDisplay || "unknown" }}
+      </ui-typography>
+    </ui-stack>
+  }
+</ui-card>

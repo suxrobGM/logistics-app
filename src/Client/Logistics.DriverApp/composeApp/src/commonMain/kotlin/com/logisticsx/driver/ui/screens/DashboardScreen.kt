@@ -113,8 +113,13 @@ fun DashboardScreen(
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     for (driver in truck.driversList) {
+                                        val isMe = driver.id == dashboardData.currentUserId
                                         Text(
-                                            text = "Driver: ${driver.fullName()}",
+                                            text = if (isMe) {
+                                                "Driver: you (${driver.fullName()})"
+                                            } else {
+                                                "Driver: ${driver.fullName()}"
+                                            },
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )

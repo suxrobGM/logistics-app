@@ -1,0 +1,77 @@
+<ui-card class="h-full">
+  <ng-template #header>
+    <ui-stack direction="row" align="center" justify="between" class="py-3 pr-2 pl-4">
+      <ui-stack direction="row" align="center" gap="2">
+        <span class="text-primary">
+          <ui-icon name="box" color="inherit" />
+        </span>
+        <ui-typography variant="h4" tag="h4" color="primary">{{ title() }}</ui-typography>
+      </ui-stack>
+      <ui-button appearance="text" label="View All" [routerLink]="['/loads']" class="no-drag" />
+    </ui-stack>
+    <ui-divider class="m-0" />
+  </ng-template>
+
+  <ui-data-table
+    [value]="loads()"
+    [loading]="isLoading()"
+    [scrollable]="true"
+    scrollHeight="flex"
+    class="no-drag"
+  >
+    <ng-template #header>
+      <tr>
+        <th>Load</th>
+        <th>Status</th>
+        <th>Route</th>
+        <th>Progress</th>
+        <th>Truck</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-load>
+      <tr>
+        <td>
+          <a [routerLink]="['/loads', load.id, 'edit']" class="text-foreground font-semibold">
+            #{{ load.number }}
+          </a>
+        </td>
+        <td>
+          <ui-status-badge [status]="load.status" kind="load" />
+        </td>
+        <td>
+          <ui-stack direction="row" align="center" gap="1" class="text-sm">
+            <span class="max-w-20 truncate" [uiTooltip]="load.originAddress?.city">
+              {{ load.originAddress?.city || "N/A" }}
+            </span>
+            <ui-icon name="arrow-right" size="xs" color="muted" />
+            <span class="max-w-20 truncate" [uiTooltip]="load.destinationAddress?.city">
+              {{ load.destinationAddress?.city || "N/A" }}
+            </span>
+          </ui-stack>
+        </td>
+        <td class="min-w-32">
+          <app-load-progress-bar [status]="load.status" [compact]="true" />
+        </td>
+        <td>
+          @if (load.assignedTruckId) {
+            <a [routerLink]="['/trucks', load.assignedTruckId]" class="text-foreground">
+              {{ load.assignedTruckNumber }}
+            </a>
+          } @else {
+            <span class="text-muted-foreground">Unassigned</span>
+          }
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #empty>
+      <tr>
+        <td colspan="5" class="text-center">
+          <ui-stack align="center" gap="2" class="text-muted-foreground py-8">
+            <ui-icon name="inbox" size="inherit" class="text-4xl" aria-hidden="true" />
+            <ui-typography variant="body" color="muted">No active loads</ui-typography>
+          </ui-stack>
+        </td>
+      </tr>
+    </ng-template>
+  </ui-data-table>
+</ui-card>

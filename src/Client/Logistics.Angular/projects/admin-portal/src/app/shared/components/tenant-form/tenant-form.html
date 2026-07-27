@@ -32,7 +32,23 @@
       <ui-select-field
         [formField]="form.region"
         [options]="regionOptions"
+        optionLabel="label"
+        optionValue="value"
         placeholder="Select region"
+      />
+    </ui-form-field>
+
+    <ui-form-field
+      label="Operating Mode"
+      [required]="true"
+      hint="Owner-operator hides team features (employees, payroll, messages) and reshapes the dashboard"
+    >
+      <ui-select-field
+        [formField]="form.operatingMode"
+        [options]="operatingModeOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select operating mode"
       />
     </ui-form-field>
   </div>

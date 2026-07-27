@@ -2,8 +2,8 @@ import { Component, effect, inject, input, output, signal } from "@angular/core"
 import { applyWhen, email, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import type { Address, Region } from "@logistics/shared/api";
-import { regionOptions } from "@logistics/shared/api/enums";
+import type { Address, OperatingMode, Region } from "@logistics/shared/api";
+import { operatingModeOptions, regionOptions } from "@logistics/shared/api/enums";
 import {
   AddressForm,
   UiButton,
@@ -23,6 +23,7 @@ export interface TenantFormValue {
   ownerFirstName: string;
   ownerLastName: string;
   region: Region;
+  operatingMode: OperatingMode;
 }
 
 /** Editable model shape - `companyAddress` is null until the address editor is fully filled. */
@@ -36,6 +37,7 @@ interface TenantFormModel {
   ownerFirstName: string;
   ownerLastName: string;
   region: Region;
+  operatingMode: OperatingMode;
 }
 
 const EMPTY: TenantFormModel = {
@@ -48,6 +50,7 @@ const EMPTY: TenantFormModel = {
   ownerFirstName: "",
   ownerLastName: "",
   region: "us",
+  operatingMode: "fleet",
 };
 
 @Component({
@@ -68,6 +71,7 @@ const EMPTY: TenantFormModel = {
 export class TenantForm {
   private readonly toastService = inject(ToastService);
   protected readonly regionOptions = regionOptions;
+  protected readonly operatingModeOptions = operatingModeOptions;
 
   public readonly mode = input.required<"create" | "edit">();
   public readonly initial = input<Partial<TenantFormValue> | null>(null);
@@ -90,6 +94,7 @@ export class TenantForm {
       required(p.billingEmail, { message: "Billing email is required." });
       email(p.billingEmail, { message: "Enter a valid email address." });
       required(p.region, { message: "Region is required." });
+      required(p.operatingMode, { message: "Operating mode is required." });
       required(p.companyAddress, { message: "Company address is required." });
 
       applyWhen(

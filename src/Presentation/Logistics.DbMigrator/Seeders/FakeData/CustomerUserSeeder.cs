@@ -25,17 +25,23 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
     {
         LogStarting();
 
-        var region = context.Region?.Region.ToString() ?? throw new InvalidOperationException("Region not set");
-        var portalUsers = context.Configuration.GetSection($"{region}:CustomerPortalUsers").Get<CustomerPortalUserData[]>();
+        var seedKey = context.SeedDataKey ?? throw new InvalidOperationException("Seed data key not set");
+        var portalUsers = context.Configuration.GetSection($"{seedKey}:CustomerPortalUsers").Get<CustomerPortalUserData[]>();
 
         if (portalUsers is null || portalUsers.Length == 0)
         {
-            logger.LogWarning("No customer portal users found in configuration for {Region}", region);
+            logger.LogWarning("No customer portal users found in configuration for {SeedDataKey}", seedKey);
             LogCompleted(0);
             return;
         }
 
-        var customers = context.CreatedCustomers ?? throw new InvalidOperationException("Customers not seeded");
+        var customers = context.CreatedCustomers;
+        if (customers is null)
+        {
+            LogUpstreamSkipped();
+            return;
+        }
+
         var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
 
         var customerUserRepository = context.TenantUnitOfWork.Repository<CustomerUser>();

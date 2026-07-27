@@ -91,7 +91,7 @@ fun EmployeeSelectScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                placeholder = { Text("Search employees...") },
+                placeholder = { Text("Search by name...") },
                 leadingIcon = {
                     Icon(Icons.Default.Search, contentDescription = null)
                 },
@@ -114,8 +114,9 @@ fun EmployeeSelectScreen(
                     if (searchQuery.isEmpty()) {
                         EmptyStateView(
                             icon = Icons.Default.Search,
-                            title = "Search for employees",
-                            message = "Enter at least 2 characters to search"
+                            title = "Who do you want to message?",
+                            message = "Type at least 2 characters of a name to search " +
+                                "your company."
                         )
                     }
                 }
@@ -134,8 +135,10 @@ fun EmployeeSelectScreen(
                     if (employees.isEmpty()) {
                         EmptyStateView(
                             icon = Icons.Default.Person,
-                            title = "No employees found",
-                            message = "Try a different search term"
+                            title = "Nobody to message",
+                            message = "No one else on your company's account matched that " +
+                                "name. If you're the only person on the account, there's " +
+                                "nobody to message yet."
                         )
                     } else {
                         LazyColumn(
