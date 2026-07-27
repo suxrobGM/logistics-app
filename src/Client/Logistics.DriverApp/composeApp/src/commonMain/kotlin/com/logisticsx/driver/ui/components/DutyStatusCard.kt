@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 
 /**
  * Dashboard card showing whether the driver is On Duty (location is being
- * shared with dispatch) or Off Duty. Tapping the switch flips the state via
+ * shared) or Off Duty. Tapping the switch flips the state via
  * [onToggle], which is wired to `DutyStatusManager` in the ViewModel.
  */
 @Composable
@@ -44,7 +44,7 @@ fun DutyStatusCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = if (isOnDuty) {
-                        "Sharing truck location with dispatch."
+                        "Sharing your truck's location with your company."
                     } else {
                         "Location sharing is off. Tap to start a shift."
                     },

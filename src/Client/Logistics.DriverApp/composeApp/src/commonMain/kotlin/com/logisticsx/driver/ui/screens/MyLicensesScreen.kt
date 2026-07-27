@@ -69,7 +69,8 @@ fun MyLicensesScreen(
                 EmptyStateView(
                     icon = Icons.Default.Badge,
                     title = "No licenses on file",
-                    message = "Ask your dispatcher to add your driver's license.",
+                    message = "Licenses are added from the TMS portal, under your employee " +
+                        "profile. Once one is on file it shows up here.",
                     modifier = Modifier.padding(paddingValues)
                 )
             } else {
