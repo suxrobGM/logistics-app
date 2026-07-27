@@ -2,9 +2,9 @@
   <ng-template #header>
     <div class="flex items-center justify-between py-3 pr-4 pl-4">
       <div class="flex items-center gap-2">
-        <ui-icon name="chart-line" size="inherit" class="text-xl text-cyan-600" />
+        <ui-icon name="chart-line" size="inherit" class="text-primary text-xl" />
         <h4 class="mb-0 font-semibold">Daily Gross</h4>
-        <span class="bg-surface-100 dark:bg-surface-700 rounded-full px-2 py-0.5 text-xs">
+        <span class="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs">
           Last 7 Days
         </span>
       </div>
@@ -28,13 +28,13 @@
         <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           Weekly Total
         </div>
-        <div class="mt-1 font-mono text-lg font-bold text-emerald-600">
+        <div class="text-success mt-1 font-mono text-lg font-bold">
           {{ totalGross() | currencyFormat }}
         </div>
       </div>
       <div>
         <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">Today</div>
-        <div class="mt-1 font-mono text-lg font-bold text-cyan-600">
+        <div class="text-primary mt-1 font-mono text-lg font-bold">
           {{ todayGross() | currencyFormat }}
         </div>
       </div>

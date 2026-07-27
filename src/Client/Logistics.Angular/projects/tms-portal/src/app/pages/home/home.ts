@@ -1,28 +1,20 @@
 import { Component, computed, effect, inject, signal, type OnInit } from "@angular/core";
-import { RouterLink } from "@angular/router";
 import {
   Api,
   getCompanyStats,
+  getDailyGrosses,
   getLoads,
-  type Address,
   type CompanyStatsDto,
   type LoadDto,
 } from "@logistics/shared/api";
-import {
-  AddressPipe,
-  CurrencyFormatPipe,
-  DateFormatPipe,
-  DistanceUnitPipe,
-} from "@logistics/shared/pipes";
+import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import {
   Card,
   Divider,
   Icon,
   Stack,
-  StatusBadge,
   Typography,
   UiButton,
-  UiDataTable,
   UiMenu,
   UiTooltip,
   type UiMenuItem,
@@ -31,15 +23,16 @@ import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
 import { AuthService } from "@/core/auth";
 import { DashboardSettingsService, type DashboardPanelConfig } from "@/core/services";
 import { PageHeader, StatCard, TrucksMap } from "@/shared/components";
-import { Converters } from "@/shared/utils";
+import { Converters, DateUtils } from "@/shared/utils";
 import {
+  ActiveLoadsPanel,
   AttentionPanelComponent,
   DailyGrossChartComponent,
   FinancialHealthWidgetComponent,
-  LoadProgressBarComponent,
+  HosRemaining,
+  OnboardingChecklist,
   RecentActivityComponent,
   TopPerformersWidgetComponent,
-  type DailyGrossChartData,
 } from "./components";
 import { HomeSkeleton } from "./home-skeleton/home-skeleton";
 
@@ -48,6 +41,7 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
   templateUrl: "./home.html",
   styleUrl: "./home.css",
   imports: [
+    ActiveLoadsPanel,
     AttentionPanelComponent,
     Card,
     CurrencyFormatPipe,
@@ -59,27 +53,23 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
     Gridster,
     GridsterItem,
     HomeSkeleton,
+    HosRemaining,
     Icon,
-    LoadProgressBarComponent,
+    OnboardingChecklist,
     PageHeader,
     RecentActivityComponent,
-    RouterLink,
     Stack,
     StatCard,
-    StatusBadge,
     TopPerformersWidgetComponent,
     TrucksMap,
     Typography,
     UiButton,
-    UiDataTable,
     UiMenu,
     UiTooltip,
   ],
-  providers: [AddressPipe],
 })
 export class Home implements OnInit {
   private readonly api = inject(Api);
-  private readonly addressPipe = inject(AddressPipe);
   private readonly authService = inject(AuthService);
   protected readonly dashboardSettings = inject(DashboardSettingsService);
 
@@ -96,38 +86,12 @@ export class Home implements OnInit {
   protected readonly lastUpdated = signal<Date>(new Date());
   protected readonly currentDate = new Date();
 
-  /** Visible panels filtered by role + feature. Template consumes this. */
+  /** Visible panels filtered by role + feature + operating mode. Template consumes this. */
   protected readonly dashboardPanels = this.dashboardSettings.visiblePanels;
 
-  /** Owner-derived KPI computeds (only relevant when owner panels visible). */
-  protected readonly thisWeekGrossTrend = computed(() => {
-    const stats = this.companyStats();
-    if (!stats?.thisWeekGross || !stats?.lastWeekGross || stats.lastWeekGross === 0) return null;
-    const change = ((stats.thisWeekGross - stats.lastWeekGross) / stats.lastWeekGross) * 100;
-    return {
-      value: `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`,
-      direction: change >= 0 ? ("up" as const) : ("down" as const),
-    };
-  });
-
-  protected readonly rpmTrend = computed(() => {
-    const stats = this.companyStats();
-    if (!stats) return null;
-    const thisWeekRpm = this.calcRpm(stats.thisWeekGross, stats.thisWeekDistance);
-    const lastWeekRpm = this.calcRpm(stats.lastWeekGross, stats.lastWeekDistance);
-    if (lastWeekRpm === 0) return null;
-    const change = ((thisWeekRpm - lastWeekRpm) / lastWeekRpm) * 100;
-    return {
-      value: `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`,
-      direction: change >= 0 ? ("up" as const) : ("down" as const),
-    };
-  });
-
-  protected readonly thisWeekRpm = computed(() => {
-    const stats = this.companyStats();
-    if (!stats) return 0;
-    return this.calcRpm(stats.thisWeekGross, stats.thisWeekDistance);
-  });
+  protected readonly activeLoadsTitle = computed(() =>
+    this.dashboardSettings.operatingMode() === "solo_operator" ? "Your Loads" : "Active Loads",
+  );
 
   /** Gridster configuration */
   protected readonly gridsterOptions: GridsterConfig = {
@@ -174,9 +138,27 @@ export class Home implements OnInit {
     { label: "Messages", icon: "mail", routerLink: "/messages" },
   ];
 
+  /** Add the panels this user is entitled to but has off the grid, and take back the ones they have. */
+  protected readonly panelMenuItems = computed<UiMenuItem[]>(() => {
+    const additions = this.dashboardSettings.availablePanels().map<UiMenuItem>((panel) => ({
+      label: `Add ${panel.label}`,
+      icon: panel.icon,
+      command: () => this.dashboardSettings.showPanel(panel.id),
+    }));
+    const removals = this.dashboardSettings.visiblePanels().map<UiMenuItem>((panel) => ({
+      label: `Remove ${panel.label}`,
+      icon: "minus",
+      variant: "destructive",
+      command: () => this.dashboardSettings.hidePanel(panel.id),
+    }));
+    const separator: UiMenuItem[] =
+      additions.length && removals.length ? [{ separator: true }] : [];
+    return [...additions, ...separator, ...removals];
+  });
+
   constructor() {
-    // Re-fetch company stats whenever the visible panels start including an owner panel
-    // (e.g. once auth resolves and the user is detected as Owner).
+    // Re-fetch company stats whenever the visible panels start including an owner panel - either
+    // once auth resolves and the user is detected as Owner, or when they add one from the menu.
     effect(() => {
       if (this.dashboardSettings.hasOwnerPanels()) {
         this.fetchCompanyStats();
@@ -188,33 +170,18 @@ export class Home implements OnInit {
     this.refreshData();
   }
 
-  protected formatAddress(addressObj: Address): string {
-    return this.addressPipe.transform(addressObj) || "No address provided";
-  }
-
   protected refreshData(): void {
     this.lastUpdated.set(new Date());
     this.fetchActiveLoads();
     this.fetchRecentLoads();
+    this.fetchWeeklyKpis();
     if (this.dashboardSettings.hasOwnerPanels()) {
-      this.fetchCompanyStats();
+      this.fetchCompanyStats(true);
     }
   }
 
   protected resetLayout(): void {
     this.dashboardSettings.resetToDefaults();
-  }
-
-  protected onChartDataLoaded(data: DailyGrossChartData): void {
-    this.weeklyGross.set(data.totalGross);
-    this.weeklyDistance.set(data.totalDistance);
-    this.weeklyRpm.set(data.rpm);
-    this.todayGross.set(data.todayGross);
-  }
-
-  private calcRpm(gross?: number, distance?: number): number {
-    if (gross == null || distance == null || distance === 0) return 0;
-    return gross / Converters.metersTo(distance, "mi");
   }
 
   private async fetchActiveLoads(): Promise<void> {
@@ -240,8 +207,37 @@ export class Home implements OnInit {
     }
   }
 
-  private async fetchCompanyStats(): Promise<void> {
-    if (this.companyStats() !== null) return; // already fetched this session
+  /**
+   * The KPI cards are default-visible while the daily-gross chart is not, so the page owns this
+   * fetch instead of reading it off the chart panel's output. Both hit the same cached GET.
+   */
+  private async fetchWeeklyKpis(): Promise<void> {
+    const result = await this.api.invoke(getDailyGrosses, {
+      StartDate: DateUtils.daysAgo(7).toISOString(),
+    });
+    if (!result) return;
+
+    const miles = Converters.metersTo(result.totalDistance ?? 0, "mi");
+    const today = new Date().getDate();
+    this.weeklyGross.set(result.totalGross ?? 0);
+    this.weeklyDistance.set(result.totalDistance ?? 0);
+    this.weeklyRpm.set(miles > 0 ? (result.totalGross ?? 0) / miles : 0);
+    this.todayGross.set(
+      (result.data ?? [])
+        .filter((i) => i.date && DateUtils.dayOfMonth(i.date) === today)
+        .reduce((sum, i) => sum + (i.gross ?? 0), 0),
+    );
+  }
+
+  /**
+   * `ngOnInit` and the owner-panel effect both want this on a cold load, and the first request is
+   * still in flight when the second asks - hence the in-flight guard, which is only sound because
+   * `isLoadingCompanyStats` is set before the first await.
+   */
+  private async fetchCompanyStats(force = false): Promise<void> {
+    if (this.isLoadingCompanyStats()) return;
+    if (!force && this.companyStats() !== null) return;
+
     this.isLoadingCompanyStats.set(true);
     const result = await this.api.invoke(getCompanyStats, {});
     if (result) {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Api, getDailyGrosses, type DailyGrossesDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
@@ -6,13 +6,6 @@ import { Card, Divider, Icon, Skeleton, UiChart } from "@logistics/shared/ui";
 import { ThemeService } from "@/core/services";
 import { getChartPalette, getLineGradient } from "@/shared/constants/chart-palette";
 import { Converters, DateUtils } from "@/shared/utils";
-
-export interface DailyGrossChartData {
-  totalGross: number;
-  totalDistance: number;
-  rpm: number;
-  todayGross: number;
-}
 
 @Component({
   selector: "app-daily-gross-chart",
@@ -29,8 +22,6 @@ export class DailyGrossChartComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly dailyGrosses = signal<DailyGrossesDto | null>(null);
   protected readonly chartData = signal<Record<string, unknown>>({ labels: [], datasets: [] });
-
-  public readonly dataLoaded = output<DailyGrossChartData>();
 
   protected readonly totalGross = computed(() => this.dailyGrosses()?.totalGross ?? 0);
   protected readonly totalDistance = computed(() =>
@@ -129,12 +120,6 @@ export class DailyGrossChartComponent implements OnInit {
     if (result) {
       this.dailyGrosses.set(result);
       this.drawChart(result);
-      this.dataLoaded.emit({
-        totalGross: this.totalGross(),
-        totalDistance: this.dailyGrosses()?.totalDistance ?? 0,
-        rpm: this.rpm(),
-        todayGross: this.todayGross(),
-      });
     }
 
     this.isLoading.set(false);
