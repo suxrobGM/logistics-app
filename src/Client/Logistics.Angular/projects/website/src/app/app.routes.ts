@@ -47,6 +47,11 @@ export const routes: Routes = [
     loadComponent: () => import("./pages/compare/compare").then((m) => m.Compare),
   },
   {
+    path: "owner-operators",
+    loadComponent: () =>
+      import("./pages/owner-operators/owner-operators").then((m) => m.OwnerOperators),
+  },
+  {
     path: "**",
     redirectTo: "",
   },

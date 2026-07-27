@@ -166,6 +166,13 @@ export class Compare {
   ];
 
   protected readonly pricing: PricingRow[] = [
+    {
+      trucks: 1,
+      us: "$41",
+      usDetail: "Starter: $29 + $12",
+      dataTruck: "10+ trucks only",
+      alvys: "Custom",
+    },
     { trucks: 5, us: "$89", usDetail: "Starter: $29 + $60", dataTruck: "$99–299", alvys: "~$514+" },
     {
       trucks: 15,

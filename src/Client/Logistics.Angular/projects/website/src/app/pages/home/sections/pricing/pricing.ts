@@ -27,8 +27,9 @@ export class Pricing {
       name: "Starter",
       basePrice: 29,
       perTruckPrice: 12,
-      description: "The basics for small fleets just getting started.",
+      description: "One truck or a handful. $41/mo all in for a single truck.",
       features: [
+        "Owner-operator (solo) mode",
         "Load management & dispatching",
         "Trip & route optimization",
         "Fleet & driver management",
@@ -41,6 +42,7 @@ export class Pricing {
         "Up to 10 trucks",
       ],
       highlighted: false,
+      badge: "Owner-Operator",
     },
     {
       name: "Professional",

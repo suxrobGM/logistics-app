@@ -19,31 +19,31 @@ export class HowItWorks {
   protected readonly steps: Step[] = [
     {
       number: 1,
-      title: "Set up the fleet",
+      title: "Create the account",
       description:
-        "Add trucks, drivers, and fleet details. Connect your ELD provider so HOS tracking happens automatically.",
-      icon: "truck",
+        "Sign up and fill in the company details. A setup checklist lands on the dashboard with whatever is still missing.",
+      icon: "building-2",
     },
     {
       number: 2,
-      title: "Create loads",
+      title: "Work the checklist",
       description:
-        "Enter shipments or pull them in from a load board. The agent sees them as soon as they're saved.",
-      icon: "box",
+        "Add a truck, your team if you have one, a customer, your ELD, and Stripe payouts. Each item links to the page that finishes it.",
+      icon: "check-square",
     },
     {
       number: 3,
-      title: "Let the agent dispatch",
+      title: "Add your first load",
       description:
-        "It looks at availability, HOS, deadhead miles, and revenue, then proposes assignments.",
-      icon: "sparkles",
+        "Type it in or pull it off DAT, Truckstop, or 123Loadboard. The agent sees it as soon as it's saved.",
+      icon: "box",
     },
     {
       number: 4,
-      title: "Review and go",
+      title: "Let the agent dispatch",
       description:
-        "Approve the suggestions, or hand the agent the keys. Trips get created and dispatched either way.",
-      icon: "circle-check",
+        "It weighs HOS, deadhead miles, and rate per mile, then proposes the assignment. Approve it, or hand the agent the keys.",
+      icon: "sparkles",
     },
   ];
 }

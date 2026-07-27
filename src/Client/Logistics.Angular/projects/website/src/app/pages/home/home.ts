@@ -9,12 +9,23 @@ import {
   Integrations,
   Pricing,
   ProductShowcase,
+  Segments,
 } from "./sections";
 
 @Component({
   selector: "web-home",
   templateUrl: "./home.html",
-  imports: [Hero, AIShowcase, Features, ProductShowcase, Integrations, HowItWorks, Pricing, Faq],
+  imports: [
+    Hero,
+    AIShowcase,
+    Features,
+    Segments,
+    ProductShowcase,
+    Integrations,
+    HowItWorks,
+    Pricing,
+    Faq,
+  ],
 })
 export class Home implements OnInit {
   private readonly metaService = inject(MetaService);
@@ -42,7 +53,12 @@ export class Home implements OnInit {
       {
         question: "How long does setup take?",
         answer:
-          "Most companies are up and running within 1-2 days. Our onboarding team will help you import your data, set up your account, and train your staff.",
+          "You set it up yourself, usually in an afternoon. After sign-up a checklist appears on the dashboard covering the company profile, your first truck, your team, a customer, your first load, payouts, and your ELD. Each item links to the page that completes it, and it ticks itself off as you go. There is no onboarding call to book first.",
+      },
+      {
+        question: "Does this work for a one-truck owner-operator?",
+        answer:
+          "Yes. Solo mode hides the parts of the app built for a crew - team invites, dispatcher assignment, driver messaging - and the AI dispatch agent plans around your single truck and your hours instead of comparing trucks. The Starter plan costs $29/mo plus $12 for the truck, so $41/mo for one truck.",
       },
       {
         question: "Do you integrate with ELD providers?",
