@@ -13,8 +13,8 @@ const QUICK_REASONS = [
 ] as const;
 
 /**
- * Collects a rejection reason, then hands it to {@link DecisionActionsService}. Required, not
- * optional: the reason is the training signal nightly policy learning depends on.
+ * Collects a rejection reason for {@link DecisionActionsService}. Required, not optional: the
+ * reason is the training signal nightly policy learning depends on.
  */
 @Component({
   selector: "app-reject-decision-dialog",

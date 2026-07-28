@@ -7,8 +7,8 @@ using Xunit;
 namespace Logistics.Infrastructure.AI.Tests.Providers;
 
 /// <summary>
-/// Chat replies interleave text and tool calls. Keeping only the first text block silently drops
-/// reply content, and replaying a reordered transcript to the API changes what the model said.
+/// Chat replies interleave text and tool calls: keeping only the first text block drops reply
+/// content, and reordering the transcript changes what the model said.
 /// </summary>
 public class AnthropicLlmProviderTests
 {

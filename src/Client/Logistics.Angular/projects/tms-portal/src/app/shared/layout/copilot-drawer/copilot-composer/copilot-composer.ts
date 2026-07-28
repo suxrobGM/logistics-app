@@ -1,10 +1,7 @@
 import { Component, input, output, signal } from "@angular/core";
 import { UiButton, UiTextareaField } from "@logistics/shared/ui";
 
-/**
- * Free-text message composer. Enter sends, Shift+Enter inserts a newline; while a turn runs
- * the send button becomes a stop button.
- */
+/** Enter sends, Shift+Enter inserts a newline; while a turn runs the send button becomes stop. */
 @Component({
   selector: "app-copilot-composer",
   templateUrl: "./copilot-composer.html",

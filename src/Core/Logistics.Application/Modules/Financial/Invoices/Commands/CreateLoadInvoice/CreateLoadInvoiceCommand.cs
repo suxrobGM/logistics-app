@@ -14,9 +14,6 @@ public class CreateLoadInvoiceCommand : ICommand
     /// </summary>
     public decimal PaymentAmount { get; set; }
 
-    /// <summary>
-    ///     When false, the invoice is created unpaid (to be settled later via a payment link or
-    ///     manual payment) instead of applying <see cref="PaymentAmount" /> as a payment on creation.
-    /// </summary>
+    /// <summary>When false, the invoice is created unpaid, to be settled later.</summary>
     public bool RecordPayment { get; set; } = true;
 }

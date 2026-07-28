@@ -161,8 +161,8 @@ internal static class Setup
                     ValidAudience = configuration["IdentityServer:Audience"]
                 };
 
-                // Browser websockets cannot set an Authorization header; authorized hubs receive
-                // the token as the standard SignalR access_token query parameter instead.
+                // Browser websockets cannot set an Authorization header, so SignalR passes the
+                // token as the access_token query parameter.
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>

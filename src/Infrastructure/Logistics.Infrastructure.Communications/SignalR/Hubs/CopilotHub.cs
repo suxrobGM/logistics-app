@@ -8,8 +8,8 @@ namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 /// <summary>
 ///     Copilot conversations are private, so this hub - unlike <see cref="AIDispatchHub"/> - is
-///     authorized and derives its group membership entirely from the caller's JWT claims. Clients
-///     never supply tenant or user ids; a connection lands in exactly one per-user group.
+///     authorized and takes its group membership from the caller's JWT claims. Clients never
+///     supply tenant or user ids.
 /// </summary>
 [Authorize]
 public class CopilotHub : Hub<IAICopilotHubClient>

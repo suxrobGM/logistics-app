@@ -9,15 +9,12 @@ import { environment } from "@/env";
 import { TenantService } from "./tenant.service";
 
 export interface HubConnectionOptions {
-  /**
-   * Supplies the JWT for authorized hubs. Browser websockets cannot set an Authorization header,
-   * so SignalR sends it as the standard access_token query parameter.
-   */
+  /** JWT for authorized hubs; SignalR sends it as the access_token query parameter. */
   accessTokenFactory?: () => string | Promise<string>;
 
   /**
-   * Whether to invoke RegisterTenant/UnregisterTenant with the client-side tenant id (the legacy
-   * hub handshake). Authorized hubs derive identity from JWT claims and skip it. Default true.
+   * Whether to run the RegisterTenant/UnregisterTenant handshake. Authorized hubs derive identity
+   * from JWT claims and skip it. Default true.
    */
   registerTenant?: boolean;
 }

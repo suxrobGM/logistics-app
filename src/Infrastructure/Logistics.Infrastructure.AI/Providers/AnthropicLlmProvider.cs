@@ -58,9 +58,8 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config) : ILlmProv
     }
 
     /// <summary>
-    /// Preserves block order: chat replies interleave text and tool calls, and the transcript
-    /// must replay to the API in the same shape it arrived. All text blocks are kept -
-    /// taking only the first one silently drops reply content around tool calls.
+    /// Preserves block order and keeps every text block: replies interleave text with tool calls,
+    /// and the transcript must replay in the shape it arrived.
     /// </summary>
     internal static LlmResponse MapResponse(MessageResponse response)
     {

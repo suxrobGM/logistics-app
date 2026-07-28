@@ -37,8 +37,8 @@ internal sealed class AIDispatchSessionEntityConfiguration : IEntityTypeConfigur
 
         builder.HasIndex(s => s.ConversationId);
 
-        // Deleting a conversation removes its turn sessions (and, transitively, their decisions) -
-        // the conversation is the user's own audit surface.
+        // A conversation is the user's own audit surface, so deleting it takes its turn sessions
+        // (and transitively their decisions) with it.
         builder.HasOne(s => s.Conversation)
             .WithMany()
             .HasForeignKey(s => s.ConversationId)

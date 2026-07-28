@@ -3,8 +3,8 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Abstractions.AICopilot;
 
 /// <summary>
-///     Pushes copilot events to the conversation owner's SignalR group. Copilot conversations are
-///     private, so every broadcast targets one tenant + user pair - never the whole tenant.
+///     Pushes copilot events to the conversation owner's SignalR group. Conversations are private,
+///     so every broadcast targets one tenant + user pair - never the whole tenant.
 /// </summary>
 public interface IAICopilotBroadcastService
 {

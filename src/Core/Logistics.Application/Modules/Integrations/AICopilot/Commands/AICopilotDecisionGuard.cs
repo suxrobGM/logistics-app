@@ -5,8 +5,8 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
 
 /// <summary>
-/// The checks shared by copilot decision approval and rejection: the decision must exist, belong
-/// to a copilot turn, still be Suggested, and its conversation must be owned by the caller.
+/// Shared by copilot decision approval and rejection: the decision must exist, belong to a copilot
+/// turn, still be Suggested, and its conversation must be owned by the caller.
 /// </summary>
 internal static class AICopilotDecisionGuard
 {

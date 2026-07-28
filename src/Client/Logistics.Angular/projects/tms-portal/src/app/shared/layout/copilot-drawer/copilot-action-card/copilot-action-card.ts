@@ -6,9 +6,8 @@ import { ApproveRejectActions } from "@/shared/components";
 import { getToolIcon, getToolLabel, Labels } from "@/shared/utils";
 
 /**
- * A suggested (or resolved) write action rendered inline in the chat stream.
- * The approve/reject buttons are permission-gated in the UI; the API re-checks the
- * tool's own permission on approval.
+ * A suggested (or resolved) write action rendered inline in the chat stream. The approve/reject
+ * buttons are permission-gated here; the API re-checks the tool's own permission on approval.
  */
 @Component({
   selector: "app-copilot-action-card",

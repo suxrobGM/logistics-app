@@ -14,11 +14,9 @@ import { buildDecisionDetail } from "@/shared/utils";
 export type DecisionEndpoint = "dispatch" | "copilot";
 
 /**
- * Approve/reject for agent decisions, shared by the dispatch pages and the copilot drawer.
- * Owns the reject dialog state and the wire calls so the required-reason rule exists once.
- *
- * Provided per consumer (`providers: [DecisionActionsService]`), not app-wide. The copilot drawer
- * calls `configure("copilot")`; dispatch pages keep the default.
+ * Approve/reject for agent decisions, shared by the dispatch pages and the copilot drawer, so the
+ * required-reason rule exists once. Provided per consumer, not app-wide: the copilot drawer calls
+ * `configure("copilot")`, dispatch pages keep the default.
  */
 @Injectable()
 export class DecisionActionsService {

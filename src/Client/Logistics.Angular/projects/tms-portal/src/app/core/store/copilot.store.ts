@@ -51,9 +51,9 @@ const initialState: CopilotState = {
 };
 
 /**
- * Root-provided: the drawer body unmounts when closed and the launchers (sidebar, mobile header)
- * need the open/unread state, so nothing here can live in a component. Also the sole subscriber
- * of CopilotHubService - its setters are single-subscriber, a second registrant would steal them.
+ * Root-provided: the drawer body unmounts when closed and the launchers need the open/unread
+ * state, so none of this can live in a component. Also the sole subscriber of CopilotHubService -
+ * its setters are single-subscriber, a second registrant would steal them.
  */
 export const CopilotStore = signalStore(
   { providedIn: "root" },
@@ -199,7 +199,7 @@ export const CopilotStore = signalStore(
         },
 
         startNewChat(): void {
-          // The conversation itself is created lazily on first send - no empty rows.
+          // The conversation is created lazily on first send - no empty rows.
           patchState(store, {
             view: "chat",
             currentConversation: null,

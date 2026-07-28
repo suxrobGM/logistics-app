@@ -3,9 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools;
 
-/// <summary>
-/// Shared fixtures for the copilot tool tests - a LoadDto requires four value objects to construct.
-/// </summary>
+/// <summary>Shared fixtures for the copilot tool tests.</summary>
 internal static class CopilotToolTestData
 {
     public static Address SomeAddress => new()

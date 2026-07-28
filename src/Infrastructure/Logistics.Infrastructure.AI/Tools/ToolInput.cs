@@ -4,8 +4,7 @@ namespace Logistics.Infrastructure.AI.Tools;
 
 /// <summary>
 /// Lenient accessors for LLM-authored tool input. Models emit inconsistent JSON (numbers as
-/// strings, wrong casing), so every accessor coerces where it safely can and returns null
-/// instead of throwing.
+/// strings, wrong casing), so every accessor coerces where it can and returns null instead of throwing.
 /// </summary>
 internal static class ToolInput
 {

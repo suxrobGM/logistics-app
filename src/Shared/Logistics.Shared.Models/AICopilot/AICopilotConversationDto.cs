@@ -13,6 +13,6 @@ public record AICopilotConversationDto
     /// <summary>Populated by the detail query only; null in list responses.</summary>
     public List<AICopilotMessageDto>? Messages { get; set; }
 
-    /// <summary>All decisions across the conversation's turns. Populated by the detail query only.</summary>
+    /// <summary>Across all of the conversation's turns. Populated by the detail query only.</summary>
     public List<AIDispatchDecisionDto>? Decisions { get; set; }
 }

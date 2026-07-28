@@ -27,8 +27,8 @@ public static class ErrorCodes
     public const string BrokerCreditBelowThreshold = "BROKER_CREDIT_BELOW_THRESHOLD";
 
     /// <summary>
-    ///     The tenant's weekly AI request quota is exhausted. Resolves when the quota window
-    ///     resets or the tenant upgrades to a plan with a higher quota.
+    ///     The tenant's weekly AI request quota is exhausted. Resolves on the next quota window
+    ///     or a plan upgrade.
     /// </summary>
     public const string AIQuotaExceeded = "AI_QUOTA_EXCEEDED";
 }

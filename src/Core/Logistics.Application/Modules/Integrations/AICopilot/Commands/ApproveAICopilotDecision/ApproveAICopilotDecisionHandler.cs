@@ -35,8 +35,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
         var decision = guard.Decision!;
         var conversation = guard.Conversation!;
 
-        // The approver must hold the tool's own permission - Copilot.Manage alone is not enough
-        // to execute, say, an invoice write.
+        // Copilot.Manage alone is not enough to execute, say, an invoice write.
         if (toolRegistry.TryGetDefinition(decision.ToolName!)?.RequiredPermission is { } requiredPermission)
         {
             var permissions = await mediator.Send(new GetCurrentUserPermissionsQuery

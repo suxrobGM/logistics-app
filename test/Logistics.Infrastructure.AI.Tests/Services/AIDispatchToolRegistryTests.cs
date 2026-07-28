@@ -161,10 +161,7 @@ public class AIDispatchToolRegistryTests
     private static readonly IReadOnlySet<TenantFeature> EveryFeature =
         With([.. Enum.GetValues<TenantFeature>()]);
 
-    /// <summary>
-    /// A dispatch run scoped to Dispatch.* permissions must never see the copilot tools - in
-    /// autonomous mode an exposed write tool executes unattended.
-    /// </summary>
+    /// <summary>In autonomous mode an exposed copilot write tool would execute unattended.</summary>
     [Fact]
     public void GetToolDefinitions_DispatchScope_ExcludesCopilotTools()
     {

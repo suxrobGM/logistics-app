@@ -4,9 +4,8 @@ namespace Logistics.Infrastructure.AI.Prompts;
 
 /// <summary>
 /// System prompt for the TMS-wide copilot. Deliberately separate from
-/// <see cref="AIDispatchSystemPrompt"/>: the copilot is conversational, covers the whole TMS
-/// (invoicing, expenses, maintenance, customers, dispatch), and never receives the learned
-/// dispatch policy or fleet-run workflow.
+/// <see cref="AIDispatchSystemPrompt"/>: it is conversational, covers the whole TMS, and never
+/// receives the learned dispatch policy or fleet-run workflow.
 /// </summary>
 internal static class AICopilotSystemPrompt
 {

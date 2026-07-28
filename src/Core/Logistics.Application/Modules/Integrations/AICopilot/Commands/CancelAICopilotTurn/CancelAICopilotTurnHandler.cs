@@ -28,8 +28,8 @@ internal sealed class CancelAICopilotTurnHandler(
             .Select(s => (Guid?)s.Id)
             .FirstOrDefaultAsync(ct);
 
-        // Cancellation is cooperative: the session cancel signals the loop, and the turn's own
-        // finally block calls EndTurn. Only a turn with no live session needs unsticking here.
+        // Cancellation is cooperative - the turn's own finally block calls EndTurn. Only a turn
+        // with no live session needs unsticking here.
         if (runningSessionId is { } sessionId)
         {
             await dispatchService.CancelAsync(sessionId, ct);

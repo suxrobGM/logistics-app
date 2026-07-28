@@ -23,7 +23,6 @@ internal sealed class AICopilotConversationBuilder(
     ITenantUnitOfWork tenantUow,
     ILogger<AICopilotConversationBuilder> logger)
 {
-    /// <summary>Transcript rows replayed per turn - older history is summarized by omission.</summary>
     private const int MaxTranscriptMessages = 30;
 
     public async Task<LlmConversation> BuildAsync(
@@ -56,8 +55,8 @@ internal sealed class AICopilotConversationBuilder(
 
         var messages = BuildMessages(conversation.Messages);
 
-        // Thinking stays off for copilot turns: thinking blocks are not persisted in the transcript,
-        // and replaying prior assistant turns without them violates provider requirements.
+        // Thinking stays off: thinking blocks are not persisted, and replaying prior assistant
+        // turns without them violates provider requirements.
         return new LlmConversation(
             provider, systemPrompt, messages, tools, selection.Model, config.MaxTokens, Thinking: null);
     }
@@ -77,8 +76,7 @@ internal sealed class AICopilotConversationBuilder(
             if (blocks.Count == 0)
                 continue;
 
-            // System rows (approval outcomes) replay as user-role notes - providers only accept
-            // user/assistant roles mid-conversation.
+            // System rows replay as user-role notes - providers only accept user/assistant mid-conversation.
             var role = row.Role == AICopilotMessageRole.Assistant ? LlmRole.Assistant : LlmRole.User;
             messages.Add(new LlmMessage(role, blocks));
         }
@@ -90,8 +88,8 @@ internal sealed class AICopilotConversationBuilder(
     }
 
     /// <summary>
-    /// Takes the most recent rows, but only cuts at a plain user chat message: starting the window
-    /// mid-turn would orphan a tool_use/tool_result pair and the provider rejects the request.
+    /// Cuts only at a plain user chat message: starting the window mid-turn orphans a
+    /// tool_use/tool_result pair and the provider rejects the request.
     /// </summary>
     private static (List<AICopilotMessage> Window, bool Truncated) TakeRecentWindow(
         List<AICopilotMessage> ordered)
@@ -103,7 +101,7 @@ internal sealed class AICopilotConversationBuilder(
         while (start < ordered.Count && !IsChatBoundary(ordered[start]))
             start++;
 
-        // No boundary in the window (one enormous turn) - replay everything rather than corrupt it.
+        // No boundary in the window - replay everything rather than corrupt it.
         return start >= ordered.Count ? (ordered, false) : (ordered[start..], start > 0);
     }
 

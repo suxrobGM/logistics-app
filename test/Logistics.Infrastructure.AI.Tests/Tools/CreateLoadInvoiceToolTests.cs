@@ -108,7 +108,7 @@ public class CreateLoadInvoiceToolTests
         Assert.True(root.GetProperty("success").GetBoolean());
         Assert.Equal(2350m, root.GetProperty("amount").GetDecimal());
 
-        // The copilot must never mark the invoice paid on creation - the customer pays via link.
+        // The copilot must never mark the invoice paid on creation.
         await mediator.Received(1).Send(
             Arg.Is<CreateLoadInvoiceCommand>(c =>
                 c.LoadId == load.Id &&

@@ -7,8 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
-/// The provider-agnostic agent iteration loop, shared by the dispatch agent and the copilot:
-/// send, accumulate tokens onto the session, process tool calls, repeat until the model stops.
+/// The provider-agnostic agent iteration loop, shared by the dispatch agent and the copilot.
 /// New messages accumulate on <see cref="LlmConversation.Messages"/> - callers that persist the
 /// transcript read them from there after the run.
 /// </summary>
@@ -90,10 +89,7 @@ internal sealed class AgentLoopRunner(
             totalCacheReadTokens, totalCacheCreationTokens);
     }
 
-    /// <summary>
-    /// Strips provider secrets and auth details out of an exception before it lands on a
-    /// tenant-visible session row.
-    /// </summary>
+    /// <summary>Strips provider auth details before the message lands on a tenant-visible session row.</summary>
     internal static string SanitizeErrorMessage(Exception ex)
     {
         var message = ex.Message;

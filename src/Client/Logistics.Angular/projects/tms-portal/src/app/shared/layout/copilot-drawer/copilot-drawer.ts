@@ -13,12 +13,12 @@ type StreamItem =
   | { kind: "decision"; at: string; decision: AIDispatchDecisionDto };
 
 /**
- * The copilot chat drawer - a non-modal docked panel (command-palette precedent; `ui-drawer`
- * is deliberately modal) so the page behind stays interactive mid-conversation. Desktop: docked
- * right flex child in the shell row. Mobile: full-screen takeover above the z-40 mobile header.
+ * The copilot chat drawer. Non-modal on purpose (`ui-drawer` is modal) so the page behind stays
+ * interactive mid-conversation: a docked flex child on desktop, a full-screen takeover above the
+ * z-40 mobile header on mobile.
  *
- * Always mounted in the shell for the Ctrl+I shortcut; the body renders only while open, so all
- * state lives in the root CopilotStore.
+ * Always mounted in the shell for the Ctrl+I shortcut, but the body renders only while open - so
+ * all state lives in the root CopilotStore.
  */
 @Component({
   selector: "app-copilot-drawer",

@@ -4,27 +4,20 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Domain.Entities;
 
 /// <summary>
-/// A multi-turn copilot chat owned by one user. Each turn is recorded as an
-/// <see cref="AIDispatchSession"/> of type Copilot; the transcript lives in <see cref="Messages"/>.
+/// A multi-turn copilot chat owned by one user. Each turn is an <see cref="AIDispatchSession"/>
+/// of type Copilot.
 /// </summary>
 public class AICopilotConversation : AuditableEntity, ITenantEntity
 {
-    /// <summary>
-    /// The owning user. Every handler must verify the caller matches - conversations are private.
-    /// </summary>
+    /// <summary>Conversations are private - every handler must verify the caller matches.</summary>
     public Guid CreatedById { get; init; }
 
-    /// <summary>
-    /// Derived from the first user message; shown in the conversation list.
-    /// </summary>
+    /// <summary>Derived from the first user message.</summary>
     public string? Title { get; set; }
 
     public AICopilotConversationStatus Status { get; private set; } = AICopilotConversationStatus.Idle;
 
-    /// <summary>
-    /// When the in-flight turn began. Lets a crashed turn be taken over after a staleness window
-    /// instead of locking the conversation forever.
-    /// </summary>
+    /// <summary>Lets a crashed turn be taken over after a staleness window.</summary>
     public DateTime? TurnStartedAt { get; private set; }
 
     public DateTime LastMessageAt { get; set; } = DateTime.UtcNow;

@@ -8,9 +8,8 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.API.Jobs;
 
 /// <summary>
-///     Hangfire job that runs a single copilot turn. Enqueued by <see cref="HangfireAICopilotTurnRunner"/>
-///     from the send-message handler, which has already created the user message and marked the
-///     conversation Running.
+///     Runs a single copilot turn. Enqueued from the send-message handler, which has already
+///     created the user message and marked the conversation Running.
 /// </summary>
 public class AICopilotTurnJob(
     IServiceScopeFactory scopeFactory,
@@ -23,8 +22,7 @@ public class AICopilotTurnJob(
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         await tenantUow.SetCurrentTenantByIdAsync(tenantId);
 
-        // Hangfire bypasses the MediatR pipeline, so [RequiresFeature] on the send command does
-        // not protect this path - re-check explicitly.
+        // Hangfire bypasses the MediatR pipeline, so [RequiresFeature] is inert here.
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
         if (!await featureService.IsFeatureEnabledAsync(tenantId, TenantFeature.AICopilot))
         {
@@ -48,9 +46,6 @@ public class AICopilotTurnJob(
     }
 }
 
-/// <summary>
-///     Hangfire-backed implementation of <see cref="IBackgroundJobRunner{T}"/> for copilot turns.
-/// </summary>
 public class HangfireAICopilotTurnRunner(IBackgroundJobClient jobClient) : IBackgroundJobRunner<AICopilotTurnRequest>
 {
     public void Enqueue(AICopilotTurnRequest request)

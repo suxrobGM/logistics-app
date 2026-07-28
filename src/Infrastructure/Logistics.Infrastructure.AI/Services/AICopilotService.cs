@@ -14,9 +14,8 @@ using Microsoft.Extensions.Options;
 namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
-/// Runs one conversational copilot turn. Each turn is an <see cref="AIDispatchSession"/> of type
-/// Copilot (quota, tokens, and decisions ride the existing session machinery); the transcript is
-/// persisted per message so the next turn replays the exact provider sequence.
+/// Runs one conversational copilot turn as an <see cref="AIDispatchSession"/> of type Copilot, so
+/// quota, tokens, and decisions ride the existing session machinery.
 /// </summary>
 internal sealed class AICopilotService(
     IOptions<LlmOptions> options,
@@ -98,8 +97,7 @@ internal sealed class AICopilotService(
             cancellationRegistry.Unregister(session.Id);
         }
 
-        // Persist whatever the turn produced even on failure - the audit trail and the next turn's
-        // context both depend on it.
+        // Persist even on failure - the audit trail and the next turn's context both depend on it.
         var newMessages = state is null
             ? []
             : PersistTurnMessages(conversation, session, state.Messages.Skip(priorMessageCount));
@@ -118,8 +116,8 @@ internal sealed class AICopilotService(
     }
 
     /// <summary>
-    /// Maps the turn's appended LLM messages onto transcript rows. Tool-result messages persist
-    /// with a null DisplayText - replayed to the provider, never rendered.
+    /// Maps the turn's appended LLM messages onto transcript rows. Tool-result rows get a null
+    /// DisplayText - replayed to the provider, never rendered.
     /// </summary>
     private List<AICopilotMessage> PersistTurnMessages(
         AICopilotConversation conversation,

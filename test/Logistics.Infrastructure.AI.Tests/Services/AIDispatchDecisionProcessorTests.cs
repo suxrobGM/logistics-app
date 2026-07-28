@@ -110,8 +110,7 @@ public class AIDispatchDecisionProcessorTests
 
     #region Write-tool metadata
 
-    // If any of these loses IsWrite, HumanInTheLoop silently auto-executes it instead of
-    // creating a Suggested decision - the exact failure mode the metadata refactor must prevent.
+    // Lose IsWrite on any of these and HumanInTheLoop auto-executes it instead of suggesting it.
     [Theory]
     [InlineData("assign_load_to_truck", true)]
     [InlineData("create_trip", true)]

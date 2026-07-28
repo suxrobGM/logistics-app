@@ -5,10 +5,9 @@ using Logistics.Infrastructure.AI.Models;
 namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
-/// Serializes provider content blocks to the transcript's ContentJson and back. Tool_use ids are
-/// preserved so a resumed conversation replays the exact tool_use/tool_result pairing the provider
-/// saw - without them the API rejects the transcript. Unknown block types are skipped on decode so
-/// old rows survive future block additions; image/document blocks are not part of copilot v1.
+/// Serializes provider content blocks to the transcript's ContentJson and back. Tool_use ids must
+/// round-trip exactly or the API rejects the replayed transcript. Unknown block types are skipped
+/// on decode so old rows survive future block additions.
 /// </summary>
 internal static class CopilotTranscriptCodec
 {

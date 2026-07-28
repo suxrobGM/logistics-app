@@ -9,13 +9,10 @@ public record AICopilotMessageDto
     public int Sequence { get; set; }
     public AICopilotMessageRole Role { get; set; }
 
-    /// <summary>
-    ///     Rendered text (markdown for assistant messages). Null for internal tool-result rows,
-    ///     which the UI does not display.
-    /// </summary>
+    /// <summary>Markdown for assistant messages. Null for tool-result rows, which the UI hides.</summary>
     public string? Text { get; set; }
 
-    /// <summary>The turn (session) that produced this message.</summary>
+    /// <summary>The turn that produced this message.</summary>
     public Guid? SessionId { get; set; }
 
     public DateTime CreatedAt { get; set; }

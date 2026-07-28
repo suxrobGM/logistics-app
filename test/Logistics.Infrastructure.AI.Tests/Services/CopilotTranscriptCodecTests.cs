@@ -6,8 +6,8 @@ using Xunit;
 namespace Logistics.Infrastructure.AI.Tests.Services;
 
 /// <summary>
-/// The transcript must round-trip tool_use ids exactly - a resumed conversation replays them to
-/// the provider, which rejects any tool_result whose id no longer matches.
+/// Tool_use ids must round-trip exactly - the provider rejects any replayed tool_result whose id
+/// no longer matches.
 /// </summary>
 public class CopilotTranscriptCodecTests
 {

@@ -14,8 +14,8 @@ namespace Logistics.Infrastructure.AI.Services;
 /// <summary>
 /// Processes LLM tool calls into AIDispatchDecision entities.
 /// Handles mode-aware execution (HumanInTheLoop suggests, Autonomous executes).
-/// Write/permission/decision-type behavior is driven entirely by the tool's
-/// <see cref="AIDispatchToolDefinition"/> metadata - there is no separate tool-name list here.
+/// Write/permission/decision-type behavior comes from the tool's
+/// <see cref="AIDispatchToolDefinition"/> metadata - there is no tool-name list here.
 /// </summary>
 internal sealed class AIDispatchDecisionProcessor(
     IAIDispatchToolExecutor toolExecutor,

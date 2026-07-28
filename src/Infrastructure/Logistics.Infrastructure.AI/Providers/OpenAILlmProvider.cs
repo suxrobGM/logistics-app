@@ -114,8 +114,8 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config) : ILlmProvide
             return [ChatMessage.CreateUserMessage(parts)];
         }
 
-        // Assistant message with potential tool calls. Text blocks may be interleaved with tool
-        // calls (Anthropic's shape); OpenAI has no ordering, so they collapse into one text part.
+        // Text blocks may be interleaved with tool calls (Anthropic's shape); OpenAI has no
+        // ordering, so they collapse into one text part.
         var assistantTextParts = message.Content.OfType<LlmTextBlock>().Select(t => t.Text).ToList();
         var assistantText = assistantTextParts.Count > 0 ? string.Join("\n\n", assistantTextParts) : null;
         var toolUses = message.Content.OfType<LlmToolUseBlock>().ToList();

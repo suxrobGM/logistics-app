@@ -20,8 +20,8 @@ internal sealed class SendAICopilotMessageHandler(
     : IAppRequestHandler<SendAICopilotMessageCommand, Result<SendAICopilotMessageResultDto>>
 {
     /// <summary>
-    /// A Running conversation older than this is assumed crashed (its turn never called EndTurn)
-    /// and may be taken over instead of locking the conversation forever.
+    /// A Running conversation older than this is assumed crashed and may be taken over, rather
+    /// than staying locked forever.
     /// </summary>
     private static readonly TimeSpan StaleTurnWindow = TimeSpan.FromMinutes(15);
 

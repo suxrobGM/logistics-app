@@ -9,11 +9,10 @@ namespace Logistics.Application.Abstractions.AIDispatch;
 public interface IAIDispatchToolRegistry
 {
     /// <summary>
-    /// The tools a tenant with <paramref name="enabledFeatures"/> may call. A gated tool is dropped
-    /// when its feature is off - its schema would otherwise cost tokens on every request.
-    /// When <paramref name="callerPermissions"/> is provided, tools whose
-    /// <see cref="AIDispatchToolDefinition.RequiredPermission"/> the caller lacks are dropped too,
-    /// so the model never sees a tool it cannot use.
+    /// The tools a tenant with <paramref name="enabledFeatures"/> may call. Gated tools whose
+    /// feature is off are dropped - their schemas would cost tokens on every request. When
+    /// <paramref name="callerPermissions"/> is given, tools the caller lacks the permission for
+    /// are dropped too, so the model never sees a tool it cannot use.
     /// </summary>
     IReadOnlyList<AIDispatchToolDefinition> GetToolDefinitions(
         IReadOnlySet<TenantFeature> enabledFeatures,
@@ -35,15 +34,14 @@ public interface IAIDispatchToolRegistry
 /// value - a new gated group is one field, not a new flag threaded through every caller.
 /// </param>
 /// <param name="IsWrite">
-/// Write tools mutate state: HumanInTheLoop turns them into Suggested decisions awaiting approval,
-/// Autonomous executes them. This flag is the single registration point - there is no separate
-/// write-tool list anywhere else.
+/// Write tools mutate state: HumanInTheLoop turns them into Suggested decisions, Autonomous
+/// executes them. The single registration point - there is no separate write-tool list.
 /// </param>
 /// <param name="RequiredPermission">
-/// The caller permission the tool maps to. Enforced only for permission-scoped runs (copilot);
-/// dispatch runs pass no caller permissions and are gated by the endpoint's policy instead.
+/// Enforced only for permission-scoped runs (copilot); dispatch runs pass no caller permissions
+/// and are gated by the endpoint's policy instead.
 /// </param>
-/// <param name="DecisionType">How a call to this tool is categorized in the decision audit trail.</param>
+/// <param name="DecisionType">How a call is categorized in the decision audit trail.</param>
 public record AIDispatchToolDefinition(
     string Name,
     string Description,

@@ -30,7 +30,7 @@ internal sealed class GetAICopilotConversationByIdHandler(
             .ToListAsync(ct);
 
         var dto = conversation.ToDto();
-        // Tool-result rows (null DisplayText) are provider replay data, not chat content.
+        // Null DisplayText marks a tool-result row: provider replay data, not chat content.
         dto.Messages = conversation.Messages
             .Where(m => m.DisplayText != null)
             .OrderBy(m => m.Sequence)

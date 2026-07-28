@@ -18,11 +18,10 @@ export interface CopilotTurnUpdate {
 }
 
 /**
- * Real-time copilot events. The hub is authorized: identity comes from the JWT (sent via
- * accessTokenFactory), and the server auto-joins the connection to its private per-user group -
- * no RegisterTenant handshake.
+ * Real-time copilot events. The hub is authorized: identity comes from the JWT and the server
+ * auto-joins the connection to its private per-user group - no RegisterTenant handshake.
  *
- * The setters are single-subscriber (`.off()` then `.on()`); the CopilotStore is the ONLY
+ * The setters are single-subscriber (`.off()` then `.on()`), so CopilotStore must stay the only
  * subscriber - components read the store, never this service.
  */
 @Injectable({ providedIn: "root" })

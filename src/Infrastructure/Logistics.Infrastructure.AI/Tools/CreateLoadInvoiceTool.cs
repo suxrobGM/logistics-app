@@ -44,15 +44,14 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator) : IAIDispatchToo
             CustomerId = load.Customer.Id,
             LoadId = loadId,
             PaymentAmount = amount,
-            // The invoice is settled later via a payment link or manual payment - the customer
-            // has not paid at creation time.
+            // The customer has not paid yet - settled later via a payment link.
             RecordPayment = false
         }, ct);
 
         if (!result.IsSuccess)
             return JsonSerializer.Serialize(new { success = false, error = result.Error });
 
-        // The command returns no id; look the invoice up so the conversation can reference it.
+        // The command returns no id; look it up so the conversation can reference the invoice.
         var created = await mediator.Send(new GetInvoicesQuery
         {
             LoadId = loadId,
