@@ -136,10 +136,30 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 ### Tool registry
 
 - Infrastructure: `Infrastructure.AI/Services/AIDispatchToolRegistry.cs`, `Tools/`
-- API/UI: shared with `Logistics.McpServer`
+- API/UI: shared with `Logistics.McpServer` and the AI copilot
+- Behavior metadata (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`) lives on
+  each `AIDispatchToolDefinition` - there is no separate write-tool list anywhere
 - Intermodal reads: `Tools/GetContainerStatusTool.cs` (ISO 6346), `Tools/GetTerminalInfoTool.cs` (UN/LOCODE).
   Gated by `TenantFeature.IntermodalContainers` - the schemas, the prompt section and the tools' own
   guard all move together; MCP lists every tool, so the guard inside each tool is the real gate.
+
+## AI copilot
+
+See [docs/ai-copilot.md](../docs/ai-copilot.md). Conversational agent sharing the dispatch tool
+registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICopilot` +
+`Permission.Copilot.View/Manage`; tool catalogue scoped per user.
+
+### Conversations & turns
+
+- Domain: `Entities/AICopilot/AICopilotConversation.cs`, `AICopilotMessage.cs` (transcript with tool_use ids); `AIDispatchSession.Type == Copilot` per turn
+- Application: `Modules/Integrations/AICopilot/Commands/`, `Queries/`
+- Infrastructure: `Infrastructure.AI/Services/AICopilotService.cs`, `AICopilotConversationBuilder.cs`, `CopilotTranscriptCodec.cs`, `Prompts/AICopilotSystemPrompt.cs`; `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
+- Jobs: `Logistics.API/Jobs/AICopilotTurnJob.cs`
+- API/UI: `AICopilotController.cs` (`ai/copilot`), `tms-portal/shared/layout/copilot-drawer/`
+
+### Copilot tools (loads, customers, invoicing, expenses, maintenance)
+
+- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `GetUpcomingMaintenanceTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `ToolInput.cs` parsing)
 
 ### LLM providers
 

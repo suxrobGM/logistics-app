@@ -21,17 +21,17 @@ in its **Notes** section. Keep this index's Status column in sync.
 
 ## Phase 2 - AI differentiation (extend the existing agent platform)
 
-| Feature                                                | Priority | Effort | Status  |
-| ------------------------------------------------------ | -------- | ------ | ------- |
-| [AI preference learning](ai-preference-learning.md)    | P1       | M      | Done    |
-| [AI exception sentinel](ai-exception-sentinel.md)      | P1       | L      | Planned |
-| [Graduated autonomy](ai-graduated-autonomy.md)         | P1       | M      | Planned |
-| [AI eval harness](ai-eval-harness.md)                  | P1       | M      | Planned |
-| [Container & terminal AI tools](ai-container-tools.md) | P1       | S      | Done    |
-| [TMS-wide AI copilot](ai-tms-copilot.md)               | P1       | L      | Planned |
-| [AI rate negotiation](ai-rate-negotiation.md)          | P2       | L      | Planned |
-| [Voice driver assistant](ai-voice-driver-assistant.md) | P2       | XL     | Planned |
-| [MCP client (outbound)](mcp-client-integrations.md)    | P2       | L      | Planned |
+| Feature                                                | Priority | Effort | Status      |
+| ------------------------------------------------------ | -------- | ------ | ----------- |
+| [AI preference learning](ai-preference-learning.md)    | P1       | M      | Done        |
+| [AI exception sentinel](ai-exception-sentinel.md)      | P1       | L      | Planned     |
+| [Graduated autonomy](ai-graduated-autonomy.md)         | P1       | M      | Planned     |
+| [AI eval harness](ai-eval-harness.md)                  | P1       | M      | Planned     |
+| [Container & terminal AI tools](ai-container-tools.md) | P1       | S      | Done        |
+| [TMS-wide AI copilot](ai-tms-copilot.md)               | P1       | L      | In Progress |
+| [AI rate negotiation](ai-rate-negotiation.md)          | P2       | L      | Planned     |
+| [Voice driver assistant](ai-voice-driver-assistant.md) | P2       | XL     | Planned     |
+| [MCP client (outbound)](mcp-client-integrations.md)    | P2       | L      | Planned     |
 
 ## Phase 3 - Wedge products (attack competitor economics)
 

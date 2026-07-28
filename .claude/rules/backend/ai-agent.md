@@ -49,10 +49,15 @@ both Claude and OpenAI function calling. Registered in `Registrar.cs`; schemas i
 - Read tools are pure queries and always execute immediately.
 - Write tools mutate state: `HumanInTheLoop` turns them into `Suggested` decisions, `Autonomous`
   executes them.
-- **A write tool's name must be added to the `AIDispatchDecisionProcessor.WriteTools` HashSet.**
-  Miss it and HumanInTheLoop approvals break silently - the tool just executes.
+- **Behavior metadata lives on the registry definition**: `IsWrite`, `RequiredPermission`,
+  `DecisionType`, `RequiredFeature`. There is no separate write-tool list. Miss `IsWrite: true`
+  and HumanInTheLoop approvals break silently - the tool just executes. Miss `RequiredPermission`
+  and the tool leaks into every copilot conversation regardless of the caller's role.
+- The registry serves three surfaces: the dispatch agent (catalogue scoped to
+  `Permission.Dispatch.*`), the TMS copilot (scoped to the calling user's permissions - see
+  `docs/ai-copilot.md`), and the MCP server (publishes everything, gates per call).
 
-The agent loop caps at **25 iterations per session**.
+The agent loop (`AgentLoopRunner`, shared by dispatch and copilot) caps at **25 iterations per session**.
 
 ## Model selection and cost
 

@@ -249,4 +249,5 @@ See the `add-llm-provider` skill for the full checklist.
 
 ## Related
 
+- [AI Copilot](ai-copilot.md) - the conversational agent in the TMS portal built on the same tool registry, agent loop, decision machinery, and quota. Its catalogue is permission-scoped per user; the dispatch agent's is scoped to `Permission.Dispatch.*`.
 - [MCP Server](mcp-server.md) - connect Claude Desktop, Cursor, and other MCP clients to your fleet using the same dispatch tools.

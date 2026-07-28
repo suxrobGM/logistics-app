@@ -7,7 +7,7 @@
 [fsl]: https://fsl.software/
 [fsl-shield]: https://img.shields.io/badge/License-FSL--1.1--Apache--2.0-blue.svg
 
-> Fleet management platform for trucking companies. An AI driven dispatch agent matches loads to trucks, checks HOS compliance, plans routes, and pulls leads from load boards - every decision logged so a human can review or override it.
+> Fleet management platform for trucking companies. AI runs through it: a dispatch agent matches loads to trucks, checks HOS compliance, plans routes, and pulls leads from load boards, while a TMS-wide copilot answers questions and handles invoicing, expenses, and maintenance from a chat drawer - every decision logged so a human can review or override it.
 
 ![AI Dispatch - Sessions & Decisions](docs/images/tms-portal/ai-dispatch-sessions.png)
 
@@ -68,25 +68,28 @@ Roles:
 
 One person can be several of these. An owner-operator switches the company to **solo mode**, which hides the team screens (employees, payroll, messaging), trims the setup checklist, and points the AI agent at a one-truck operation. The same Owner login runs the TMS portal and the driver app.
 
-## AI dispatch agent
+## AI agents
 
-The agent looks at fleet state, picks a truck for a load, checks HOS compliance, plans a trip, and watches load boards for revenue. Two modes:
+**Dispatch agent** - looks at fleet state, picks a truck for a load, checks HOS compliance, plans a trip, and watches load boards for revenue. Two modes:
 
 - **Human-in-the-loop** - the agent suggests assignments; a dispatcher approves them.
 - **Autonomous** - the agent acts on its own.
 
-Every decision is logged with the reasoning that produced it, so dispatchers can approve, reject, or re-plan instead of staring at a black box. See [AI Dispatch](docs/ai-dispatch.md) and [MCP Server](docs/mcp-server.md) for connecting Claude Desktop, Cursor, and other AI tools to your fleet.
+**TMS-wide copilot** - a chat drawer across the whole portal. Ask it about loads, spend, or which trucks are due for service, or have it invoice delivered loads and send payment links. It only sees the tools your role permits, and every write action waits for your approval.
+
+Every decision either agent makes is logged with the reasoning that produced it, so you approve, reject, or re-plan instead of staring at a black box. See [AI Dispatch](docs/ai-dispatch.md), [AI Copilot](docs/ai-copilot.md), and [MCP Server](docs/mcp-server.md) for connecting Claude Desktop, Cursor, and other AI tools to your fleet.
 
 ## Features
 
 | Operations                               | Financial                          | Compliance                      | Communication                |
 | :--------------------------------------- | :--------------------------------- | :------------------------------ | :--------------------------- |
 | AI-powered dispatching                   | Invoicing & Stripe payments        | ELD / HOS (Samsara, Motive)     | Real-time messaging          |
-| MCP server for AI tools                  | Stripe Connect direct payouts      | Safety & DVIR inspections       | Push notifications           |
-| Trip planning & route optimization       | Multi-currency billing (USD / EUR) | Document management (POD, BOL)  | Customer self-service portal |
-| Intermodal container tracking (ISO 6346) | Payroll & timesheets               | Region-aware address validation | Driver mobile app            |
-| Terminals & depots (UN/LOCODE)           | Expense tracking                   | Role-based access control       |                              |
-| Fleet & maintenance tracking             | Reports & analytics                |                                 |                              |
+| TMS-wide AI copilot                      | Stripe Connect direct payouts      | Safety & DVIR inspections       | Push notifications           |
+| MCP server for AI tools                  | Multi-currency billing (USD / EUR) | Document management (POD, BOL)  | Customer self-service portal |
+| Trip planning & route optimization       | Payroll & timesheets               | Region-aware address validation | Driver mobile app            |
+| Intermodal container tracking (ISO 6346) | Expense tracking                   | Role-based access control       |                              |
+| Terminals & depots (UN/LOCODE)           | Reports & analytics                |                                 |                              |
+| Fleet & maintenance tracking             |                                    |                                 |                              |
 | Load board integration (DAT, Truckstop)  |                                    |                                 |                              |
 
 [Complete feature list](docs/features.md)
@@ -177,6 +180,7 @@ Architecture: DDD + CQRS with MediatR, multi-tenant with one database per compan
 | [API Reference](docs/api/overview.md)                    | Authentication, endpoints, webhooks                           |
 | [Deployment](docs/deployment/overview.md)                | VPS setup, Docker Compose, Nginx, SSL                         |
 | [AI Dispatch](docs/ai-dispatch.md)                       | Agentic dispatcher architecture & API                         |
+| [AI Copilot](docs/ai-copilot.md)                         | Conversational TMS agent: transcript, approvals, permissions  |
 | [MCP Server](docs/mcp-server.md)                         | Connect Claude Desktop, Cursor & other AI tools to your fleet |
 | [Development](docs/development/backend-guide.md)         | Backend, Angular, mobile guides                               |
 

@@ -1,6 +1,6 @@
 # TMS-wide AI Copilot
 
-- **Status**: Planned
+- **Status**: In Progress
 - **Priority**: P1 - generalizes the agent from "dispatch feature" to "platform"; every tool added also lands on the MCP server for free
 - **Effort**: L
 - **Category**: AI differentiation
@@ -27,4 +27,13 @@ From the chat panel, "invoice load #123 and send the customer a payment link" pr
 
 ## Notes
 
-_(add dated implementation notes here)_
+- **2026-07-28** - Backend complete on `feature/ai-tms-copilot`. Diverged from the sketch above in
+  three places, all deliberate: (1) write metadata (`IsWrite`, `RequiredPermission`, `DecisionType`)
+  moved onto `AIDispatchToolDefinition`, deleting the `WriteTools` HashSet and its MCP duplicate
+  instead of extending them; (2) approvals got copilot-local endpoints
+  (`ai/copilot/decisions/{id}/approve|reject`) because the dispatch ones are gated on
+  `AgenticDispatch` + `Dispatch.Manage`; (3) `CreateLoadInvoiceCommand` gained a `RecordPayment`
+  opt-out so the copilot can create _unpaid_ invoices - the existing flow marks them Paid at birth,
+  which would make a payment link meaningless. Each turn is an `AIDispatchSession` of new type
+  `Copilot`; the transcript (with tool_use ids) lives in `ai_copilot_messages`. Deep dive:
+  [docs/ai-copilot.md](../ai-copilot.md). Frontend drawer next.

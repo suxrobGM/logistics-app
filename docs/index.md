@@ -34,6 +34,7 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 ## Features
 
 - **AI Dispatch Agent** - Picks a truck for a load, runs HOS feasibility checks, supports multiple LLMs, and shows the reasoning behind every decision.
+- **AI Copilot** - A chat drawer across the whole TMS: ask about loads, expenses, or maintenance, or have it invoice delivered loads and send payment links - write actions wait for your approval. See [AI Copilot](ai-copilot.md).
 - **Load Management & Dispatching** - Create, assign, and track shipments.
 - **Intermodal Containers** - ISO 6346 tracking with a lifecycle state machine (Empty → Loaded → At Port → In Transit → Delivered → Returned).
 - **Terminals & Depots** - UN/LOCODE directory for sea ports, rail terminals, inland depots, air cargo facilities, and border crossings.
