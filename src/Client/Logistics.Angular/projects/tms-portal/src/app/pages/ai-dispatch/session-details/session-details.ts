@@ -31,19 +31,22 @@ import {
   UiTooltip,
 } from "@logistics/shared/ui";
 import { AIDispatchHubService, TenantService, ToastService } from "@/core/services";
-import { DateUtils, Labels } from "@/shared/utils";
-import { ApproveRejectActions } from "../components/approve-reject-actions/approve-reject-actions";
-import { ModeBadge } from "../components/mode-badge/mode-badge";
-import { RejectDecisionDialog } from "../components/reject-decision-dialog/reject-decision-dialog";
-import { ToolOutputSummary } from "../components/tool-output-summary/tool-output-summary";
-import { DecisionActionsService } from "../services/decision-actions.service";
 import {
+  ApproveRejectActions,
+  DecisionActionsService,
+  RejectDecisionDialog,
+} from "@/shared/components";
+import { MarkdownPipe } from "@/shared/pipes";
+import {
+  DateUtils,
   getToolIcon,
   getToolLabel,
   getToolMarkerClass,
   isWriteTool,
-} from "../utils/decision-utils";
-import { MarkdownPipe } from "../utils/markdown";
+  Labels,
+} from "@/shared/utils";
+import { ModeBadge } from "../components/mode-badge/mode-badge";
+import { ToolOutputSummary } from "../components/tool-output-summary/tool-output-summary";
 
 @Component({
   selector: "app-session-details",

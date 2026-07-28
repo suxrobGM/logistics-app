@@ -1,5 +1,6 @@
 export * from "@logistics/shared/ui";
 
+export * from "./ai";
 export * from "./tags";
 export * from "./maps";
 export * from "./charts";

@@ -5,7 +5,7 @@ import { Spinner, UiToaster } from "@logistics/shared/ui";
 import { filter } from "rxjs";
 import { AuthService } from "@/core/auth";
 import { UpgradeDialog } from "@/shared/components/subscription/upgrade-dialog/upgrade-dialog";
-import { MobileDrawer, MobileHeader, Sidebar } from "@/shared/layout";
+import { CopilotDrawer, MobileDrawer, MobileHeader, Sidebar } from "@/shared/layout";
 import { CommandPalette } from "@/shared/layout/command-palette/command-palette";
 
 /** Routes that should not show the sidebar/breadcrumb layout */
@@ -18,6 +18,7 @@ const STANDALONE_ROUTES = ["/", "/unauthorized", "/404"];
   imports: [
     UiToaster,
     CommandPalette,
+    CopilotDrawer,
     MobileDrawer,
     MobileHeader,
     RouterOutlet,

@@ -9,6 +9,7 @@ export const ErrorCodes = {
   FeatureDisabledByAdmin: "FEATURE_DISABLED_BY_ADMIN",
   ResourceLimitReached: "RESOURCE_LIMIT_REACHED",
   BrokerCreditBelowThreshold: "BROKER_CREDIT_BELOW_THRESHOLD",
+  AIQuotaExceeded: "AI_QUOTA_EXCEEDED",
 } as const;
 
 /**
@@ -34,5 +35,10 @@ export const UPGRADE_HANDLER = new InjectionToken<IUpgradePromptHandler>("Upgrad
  * Check if an error code is an upgrade-related error that should show an upgrade dialog.
  */
 export function isUpgradeError(errorCode: string | undefined | null): boolean {
-  return errorCode === ErrorCodes.FeatureNotInPlan || errorCode === ErrorCodes.ResourceLimitReached;
+  return (
+    errorCode === ErrorCodes.FeatureNotInPlan ||
+    errorCode === ErrorCodes.ResourceLimitReached ||
+    // The weekly AI quota is a plan limit - a bigger plan raises it
+    errorCode === ErrorCodes.AIQuotaExceeded
+  );
 }

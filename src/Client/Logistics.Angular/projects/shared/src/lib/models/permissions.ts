@@ -130,6 +130,10 @@ export const Permission = {
     View: "Permission.Container.View",
     Manage: "Permission.Container.Manage",
   },
+  Copilot: {
+    View: "Permission.Copilot.View",
+    Manage: "Permission.Copilot.Manage",
+  },
   Terminal: {
     View: "Permission.Terminal.View",
     Manage: "Permission.Terminal.Manage",

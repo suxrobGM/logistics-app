@@ -24,7 +24,7 @@ import {
   ValidatedForm,
 } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
-import { MarkdownPipe } from "../utils/markdown";
+import { MarkdownPipe } from "@/shared/pipes";
 
 /** Mirrors `DispatchPolicyText.MaxContentChars` on the server. */
 const MAX_DIRECTIVES_LENGTH = 4000;

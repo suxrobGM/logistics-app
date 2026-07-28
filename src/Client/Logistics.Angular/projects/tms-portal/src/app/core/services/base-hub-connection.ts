@@ -8,15 +8,35 @@ import {
 import { environment } from "@/env";
 import { TenantService } from "./tenant.service";
 
+export interface HubConnectionOptions {
+  /**
+   * Supplies the JWT for authorized hubs. Browser websockets cannot set an Authorization header,
+   * so SignalR sends it as the standard access_token query parameter.
+   */
+  accessTokenFactory?: () => string | Promise<string>;
+
+  /**
+   * Whether to invoke RegisterTenant/UnregisterTenant with the client-side tenant id (the legacy
+   * hub handshake). Authorized hubs derive identity from JWT claims and skip it. Default true.
+   */
+  registerTenant?: boolean;
+}
+
 export abstract class BaseHubConnection {
   private readonly tenantService = inject(TenantService);
+  private readonly registerTenant: boolean;
   protected readonly hubConnection: HubConnection;
 
-  constructor(private readonly hubName: string) {
+  constructor(
+    private readonly hubName: string,
+    options: HubConnectionOptions = {},
+  ) {
+    this.registerTenant = options.registerTenant ?? true;
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.apiUrl}/hubs/${hubName}`, {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
+        accessTokenFactory: options.accessTokenFactory,
       })
       .withAutomaticReconnect()
       .build();
@@ -33,15 +53,16 @@ export abstract class BaseHubConnection {
     }
 
     try {
-      const tenant = this.tenantService.getTenantData();
-
-      if (!tenant) {
-        console.error(`Failed to connect to the ${this.hubName} hub, tenant ID is null`);
-        return;
-      }
-
       await this.hubConnection.start();
-      await this.hubConnection.invoke("RegisterTenant", tenant.id);
+
+      if (this.registerTenant) {
+        const tenant = this.tenantService.getTenantData();
+        if (!tenant) {
+          console.error(`Failed to connect to the ${this.hubName} hub, tenant ID is null`);
+          return;
+        }
+        await this.hubConnection.invoke("RegisterTenant", tenant.id);
+      }
     } catch (error) {
       console.error(`Failed to connect to the ${this.hubName} hub`, error);
     }
@@ -54,14 +75,13 @@ export abstract class BaseHubConnection {
     }
 
     try {
-      const tenant = this.tenantService.getTenantData();
-
-      if (!tenant) {
-        console.error(`Failed to disconnect from the ${this.hubName} hub, tenant ID is null`);
-        return;
+      if (this.registerTenant) {
+        const tenant = this.tenantService.getTenantData();
+        if (tenant) {
+          await this.hubConnection.invoke("UnregisterTenant", tenant.id);
+        }
       }
 
-      await this.hubConnection.invoke("UnregisterTenant", tenant.id);
       await this.hubConnection.stop();
     } catch (error) {
       console.error(`Failed to disconnect from the ${this.hubName} hub`, error);

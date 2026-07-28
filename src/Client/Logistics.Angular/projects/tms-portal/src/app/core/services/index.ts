@@ -1,5 +1,6 @@
 export * from "./tracking.service";
 export * from "./ai-dispatch-hub.service";
+export * from "./copilot-hub.service";
 export * from "./dispatch-badge.service";
 export * from "./notification.service";
 export * from "./chat.service";

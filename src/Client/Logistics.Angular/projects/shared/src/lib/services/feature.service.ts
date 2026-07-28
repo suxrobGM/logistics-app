@@ -140,4 +140,6 @@ export const FEATURE_DESCRIPTIONS: Record<TenantFeature, string> = {
   ifta: "Quarterly IFTA fuel tax reports with per-jurisdiction miles and gallons",
   intermodal_containers:
     "Track intermodal containers and terminals, and let the AI dispatch agent reason about them",
+  ai_copilot:
+    "Chat assistant across the whole TMS - answers from live data, write actions wait for approval",
 };

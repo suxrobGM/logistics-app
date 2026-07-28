@@ -1,6 +1,6 @@
 import { Component, computed, input } from "@angular/core";
 import { Icon } from "@logistics/shared/ui";
-import { parseToolOutput, type ParsedToolOutput } from "../../utils/decision-utils";
+import { parseToolOutput, type ParsedToolOutput } from "@/shared/utils";
 
 @Component({
   selector: "app-tool-output-summary",

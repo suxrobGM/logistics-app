@@ -53,6 +53,7 @@ const featureLabels: Record<TenantFeature, string> = {
   fuel_cards: "Fuel Cards",
   ifta: "IFTA Reporting",
   intermodal_containers: "Intermodal Containers",
+  ai_copilot: "AI Copilot",
 };
 
 /** All features in display order */
@@ -84,6 +85,7 @@ const allFeatures: TenantFeature[] = [
   "fuel_cards",
   "ifta",
   "intermodal_containers",
+  "ai_copilot",
 ];
 
 @Component({

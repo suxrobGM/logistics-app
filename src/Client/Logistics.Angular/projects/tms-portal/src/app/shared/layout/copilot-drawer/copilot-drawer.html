@@ -1,0 +1,108 @@
+@if (store.open()) {
+  <aside
+    class="border-border bg-card flex h-full w-[400px] shrink-0 flex-col border-l max-md:fixed max-md:inset-0 max-md:z-50 max-md:w-full max-md:border-l-0"
+  >
+    <!-- Header -->
+    <div class="border-border flex items-center justify-between gap-2 border-b px-3 py-2">
+      <div class="flex min-w-0 items-center gap-2">
+        <ui-icon name="bot-message-square" size="inherit" class="text-primary" />
+        <span class="truncate text-sm font-semibold">
+          {{ store.currentConversation()?.title || "AI Copilot" }}
+        </span>
+      </div>
+      <div class="flex shrink-0 items-center gap-1">
+        <ui-button
+          icon="history"
+          appearance="text"
+          intent="secondary"
+          size="sm"
+          ariaLabel="Conversation history"
+          uiTooltip="History"
+          (click)="store.showHistory()"
+        />
+        <ui-button
+          icon="plus"
+          appearance="text"
+          intent="secondary"
+          size="sm"
+          ariaLabel="New chat"
+          uiTooltip="New chat"
+          (click)="store.startNewChat()"
+        />
+        <ui-button
+          icon="x"
+          appearance="text"
+          intent="secondary"
+          size="sm"
+          ariaLabel="Close copilot"
+          (click)="store.closeDrawer()"
+        />
+      </div>
+    </div>
+
+    @switch (store.view()) {
+      @case ("history") {
+        <div class="min-h-0 flex-1 overflow-y-auto">
+          <app-copilot-history
+            [conversations]="store.conversations()"
+            (open)="store.openConversation($event)"
+            (newChat)="store.startNewChat()"
+            (delete)="store.deleteConversation($event)"
+          />
+        </div>
+      }
+      @default {
+        <div #messagesContainer class="min-h-0 flex-1 space-y-3 overflow-y-auto p-3">
+          @if (store.loading()) {
+            <div class="text-muted-foreground flex items-center gap-2 text-sm">
+              <ui-icon name="loader-circle" size="inherit" spin />
+              Loading conversation...
+            </div>
+          } @else if (stream().length === 0) {
+            <div class="text-muted-foreground px-2 py-6 text-center text-sm">
+              <p class="m-0 font-medium">What can I help with?</p>
+              <p class="mt-1 mb-0 text-xs">
+                Try "which loads were delivered last week?" or "invoice load #42 and send the
+                customer a payment link".
+              </p>
+            </div>
+          }
+
+          @for (item of stream(); track item.kind === "message" ? item.message.id : item.decision.id) {
+            @if (item.kind === "message") {
+              <app-copilot-message [message]="item.message" />
+            } @else {
+              <app-copilot-action-card
+                [decision]="item.decision"
+                (approve)="approve($event)"
+                (reject)="reject($event)"
+              />
+            }
+          }
+
+          @if (store.isRunning()) {
+            <div class="text-muted-foreground flex items-center gap-2 text-sm">
+              <ui-icon name="loader-circle" size="inherit" spin />
+              Copilot is working...
+            </div>
+          }
+
+          @if (store.turnStatus() === "failed") {
+            <div class="bg-danger/10 border-danger/20 text-danger rounded-md border p-2 text-xs">
+              {{ store.turnError() || "The copilot turn failed. Try again." }}
+            </div>
+          }
+        </div>
+
+        <app-copilot-composer
+          [isRunning]="store.isRunning()"
+          [disabled]="store.sending()"
+          (sendMessage)="store.sendMessage($event)"
+          (stopTurn)="store.cancelTurn()"
+        />
+      }
+    }
+  </aside>
+}
+
+<app-reject-decision-dialog />

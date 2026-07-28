@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { UiButton, UiDialog, UiTextareaField } from "@logistics/shared/ui";
-import { DecisionActionsService } from "../../services/decision-actions.service";
-import { buildDecisionDetail } from "../../utils/decision-utils";
+import { buildDecisionDetail } from "@/shared/utils";
+import { DecisionActionsService } from "../decision-actions.service";
 
 /** Quick picks cover the rejection causes the agent can learn a preference from. */
 const QUICK_REASONS = [

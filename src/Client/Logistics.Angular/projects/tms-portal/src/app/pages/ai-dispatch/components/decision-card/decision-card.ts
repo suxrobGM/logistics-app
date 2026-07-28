@@ -2,9 +2,8 @@ import { Component, computed, input, output, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { AIDispatchDecisionDto } from "@logistics/shared/api";
 import { Badge, Icon, Stack, Surface, UiButton } from "@logistics/shared/ui";
-import { Labels } from "@/shared/utils";
-import { getToolLabel, parseToolInput } from "../../utils/decision-utils";
-import { stripMarkdown } from "../../utils/markdown";
+import { stripMarkdown } from "@/shared/pipes";
+import { getToolLabel, Labels, parseToolInput } from "@/shared/utils";
 
 @Component({
   selector: "app-decision-card",

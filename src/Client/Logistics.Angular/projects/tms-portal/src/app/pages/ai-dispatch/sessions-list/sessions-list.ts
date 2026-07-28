@@ -33,17 +33,20 @@ import {
   TenantService,
   ToastService,
 } from "@/core/services";
-import { AIQuotaUsage, GeolocationMap } from "@/shared/components";
+import {
+  AIQuotaUsage,
+  DecisionActionsService,
+  GeolocationMap,
+  RejectDecisionDialog,
+} from "@/shared/components";
+import { stripMarkdown } from "@/shared/pipes";
 import { Labels } from "@/shared/utils";
 import { DecisionCard } from "../components/decision-card/decision-card";
 import { ModeBadge } from "../components/mode-badge/mode-badge";
-import { RejectDecisionDialog } from "../components/reject-decision-dialog/reject-decision-dialog";
 import {
   RunAgentDialog,
   type RunAgentDialogData,
 } from "../components/run-agent-dialog/run-agent-dialog";
-import { DecisionActionsService } from "../services/decision-actions.service";
-import { stripMarkdown } from "../utils/markdown";
 
 @Component({
   selector: "app-sessions-list",

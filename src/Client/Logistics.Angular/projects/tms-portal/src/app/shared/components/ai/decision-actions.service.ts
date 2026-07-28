@@ -2,17 +2,23 @@ import { inject, Injectable, signal } from "@angular/core";
 import {
   Api,
   approveAIDispatchDecision,
+  approveCopilotDecision,
   rejectAIDispatchDecision,
+  rejectCopilotDecision,
   type AIDispatchDecisionDto,
 } from "@logistics/shared/api";
 import { ToastService } from "@logistics/shared/services";
-import { buildDecisionDetail } from "../utils/decision-utils";
+import { buildDecisionDetail } from "@/shared/utils";
+
+/** Which decision endpoints the consumer's suggestions live behind. */
+export type DecisionEndpoint = "dispatch" | "copilot";
 
 /**
- * Approve/reject for agent decisions, shared by the sessions list and the session details page.
+ * Approve/reject for agent decisions, shared by the dispatch pages and the copilot drawer.
  * Owns the reject dialog state and the wire calls so the required-reason rule exists once.
  *
- * Provided per page (`providers: [DecisionActionsService]`), not app-wide.
+ * Provided per consumer (`providers: [DecisionActionsService]`), not app-wide. The copilot drawer
+ * calls `configure("copilot")`; dispatch pages keep the default.
  */
 @Injectable()
 export class DecisionActionsService {
@@ -22,7 +28,12 @@ export class DecisionActionsService {
   public readonly showRejectDialog = signal(false);
   public readonly pendingDecision = signal<AIDispatchDecisionDto | null>(null);
 
+  private endpoint: DecisionEndpoint = "dispatch";
   private onComplete?: () => void | Promise<void>;
+
+  configure(endpoint: DecisionEndpoint): void {
+    this.endpoint = endpoint;
+  }
 
   approve(decision: AIDispatchDecisionDto, onComplete?: () => void | Promise<void>): void {
     this.onComplete = onComplete;
@@ -34,7 +45,9 @@ export class DecisionActionsService {
       severity: "success",
       accept: async () => {
         try {
-          await this.api.invoke(approveAIDispatchDecision, { decisionId: decision.id! });
+          const operation =
+            this.endpoint === "copilot" ? approveCopilotDecision : approveAIDispatchDecision;
+          await this.api.invoke(operation, { decisionId: decision.id! });
           this.toast.showSuccess("Decision approved and executed");
           await this.onComplete?.();
         } catch {
@@ -56,7 +69,9 @@ export class DecisionActionsService {
     if (!decision) return;
 
     try {
-      await this.api.invoke(rejectAIDispatchDecision, {
+      const operation =
+        this.endpoint === "copilot" ? rejectCopilotDecision : rejectAIDispatchDecision;
+      await this.api.invoke(operation, {
         decisionId: decision.id!,
         body: { reason },
       });

@@ -1,0 +1,28 @@
+<div class="border-border flex items-end gap-2 border-t p-3">
+  <ui-textarea-field
+    [(value)]="text"
+    [rows]="2"
+    [maxlength]="4000"
+    placeholder="Ask about loads, invoices, expenses..."
+    (keydown)="onKeydown($event)"
+    class="block min-w-0 flex-1 text-sm"
+  />
+  @if (isRunning()) {
+    <ui-button
+      icon="stop-circle"
+      intent="danger"
+      appearance="outlined"
+      [rounded]="true"
+      ariaLabel="Stop the running turn"
+      (click)="stopTurn.emit()"
+    />
+  } @else {
+    <ui-button
+      icon="send"
+      [rounded]="true"
+      [disabled]="disabled()"
+      ariaLabel="Send message"
+      (click)="submit()"
+    />
+  }
+</div>

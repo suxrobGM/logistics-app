@@ -64,9 +64,22 @@
 
   <!-- Footer -->
   <div class="sidebar-footer" [class.sidebar-footer-collapsed]="!isOpened()">
-    <!-- Notifications + Theme -->
+    <!-- Notifications + Copilot + Theme -->
     <div class="sidebar-footer-actions">
       <app-notification-bell [expanded]="false" />
+      @if (copilotStore.launcherVisible()) {
+        <button
+          class="text-subtle-foreground hover:bg-hover hover:text-foreground relative flex cursor-pointer items-center justify-center rounded-md border-none bg-transparent p-1.5 transition-all"
+          uiTooltip="AI Copilot (Ctrl+I)"
+          aria-label="Open AI Copilot"
+          (click)="copilotStore.openOrUpsell()"
+        >
+          <ui-icon name="bot-message-square" />
+          @if (copilotStore.hasUnread()) {
+            <span class="bg-primary absolute top-0.5 right-0.5 size-2 rounded-full"></span>
+          }
+        </button>
+      }
       <app-theme-toggle [showLabel]="false" />
     </div>
 

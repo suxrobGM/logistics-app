@@ -1,5 +1,6 @@
 export * from "./array-utils";
 export * from "./date-utils";
+export * from "./decision-utils";
 export * from "./converters";
 export * from "./number-utils";
 export * from "./date-range";

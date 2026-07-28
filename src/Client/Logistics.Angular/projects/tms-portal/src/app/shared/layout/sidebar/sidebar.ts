@@ -8,6 +8,7 @@ import {
   SidebarNavService,
   TenantService,
 } from "@/core/services";
+import { CopilotStore } from "@/core/store";
 import { environment } from "@/env";
 import { NavMenu, type NavItem } from "../nav-menu";
 import { NotificationBell } from "../notification-bell";
@@ -21,6 +22,7 @@ import { FavoritesBar } from "./favorites-bar/favorites-bar";
   imports: [FavoritesBar, Icon, NavMenu, NotificationBell, UiPopover, ThemeToggle, UiTooltip],
 })
 export class Sidebar {
+  protected readonly copilotStore = inject(CopilotStore);
   private readonly authService = inject(AuthService);
   private readonly tenantService = inject(TenantService);
   private readonly favoritesService = inject(SidebarFavoritesService);

@@ -1,0 +1,26 @@
+@switch (message().role) {
+  @case ("user") {
+    <div class="flex justify-end">
+      <div class="bg-primary/10 max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap">
+        {{ message().text }}
+      </div>
+    </div>
+  }
+  @case ("system") {
+    <div class="text-muted-foreground flex items-center gap-2 px-1 text-xs">
+      <ui-icon name="info" size="inherit" />
+      <span>{{ message().text }}</span>
+    </div>
+  }
+  @default {
+    <div class="flex items-start gap-2">
+      <div class="bg-primary/10 text-primary mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full">
+        <ui-icon name="bot" size="inherit" class="text-xs" />
+      </div>
+      <div
+        class="prose prose-sm dark:prose-invert max-w-none min-w-0 flex-1 text-sm"
+        [innerHTML]="message().text | markdown"
+      ></div>
+    </div>
+  }
+}

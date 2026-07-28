@@ -130,10 +130,42 @@ export function getToolLabel(toolName: string | null | undefined): string {
       return "Create Trip";
     case "dispatch_trip":
       return "Dispatch Trip";
-    case "search_load_board":
+    case "search_loadboard":
       return "Search Load Board";
-    case "book_load_board_load":
+    case "book_loadboard_load":
       return "Book Load";
+    case "check_broker_credit":
+      return "Broker Credit Check";
+    case "check_dispatch_eligibility":
+      return "Dispatch Eligibility Check";
+    case "preview_tax_calculation":
+      return "Tax Preview";
+    case "get_container_status":
+      return "Container Status";
+    case "get_terminal_info":
+      return "Terminal Info";
+    case "search_loads":
+      return "Search Loads";
+    case "get_load":
+      return "Load Details";
+    case "search_customers":
+      return "Customer Lookup";
+    case "get_invoices":
+      return "Invoices";
+    case "get_invoice":
+      return "Invoice Details";
+    case "search_expenses":
+      return "Expenses";
+    case "get_expense_stats":
+      return "Expense Stats";
+    case "get_upcoming_maintenance":
+      return "Upcoming Maintenance";
+    case "create_load_invoice":
+      return "Create Invoice";
+    case "send_invoice":
+      return "Send Invoice";
+    case "create_payment_link":
+      return "Create Payment Link";
     default:
       return toolName ?? "Unknown";
   }
@@ -160,10 +192,31 @@ export function getToolIcon(toolName: string | null | undefined): IconName {
       return "circle-plus";
     case "dispatch_trip":
       return "send";
-    case "search_load_board":
+    case "search_loadboard":
       return "search";
-    case "book_load_board_load":
+    case "book_loadboard_load":
       return "shopping-cart";
+    case "search_loads":
+      return "search";
+    case "get_load":
+      return "box";
+    case "search_customers":
+      return "users";
+    case "get_invoices":
+    case "get_invoice":
+      return "file-text";
+    case "search_expenses":
+      return "receipt";
+    case "get_expense_stats":
+      return "chart-column";
+    case "get_upcoming_maintenance":
+      return "wrench";
+    case "create_load_invoice":
+      return "file-text";
+    case "send_invoice":
+      return "mail";
+    case "create_payment_link":
+      return "credit-card";
     default:
       return "circle";
   }
@@ -197,9 +250,16 @@ export function buildDecisionDetail(decision: {
 }
 
 export function isWriteTool(toolName: string | null | undefined): boolean {
-  return ["assign_load_to_truck", "create_trip", "dispatch_trip", "book_load_board_load"].includes(
-    toolName ?? "",
-  );
+  // Mirrors the IsWrite metadata in the backend AIDispatchToolRegistry.
+  return [
+    "assign_load_to_truck",
+    "create_trip",
+    "dispatch_trip",
+    "book_loadboard_load",
+    "create_load_invoice",
+    "send_invoice",
+    "create_payment_link",
+  ].includes(toolName ?? "");
 }
 
 export function getToolMarkerClass(toolName: string | null | undefined): string {
