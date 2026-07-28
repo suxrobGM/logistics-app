@@ -124,7 +124,8 @@ internal sealed class AIDispatchConversationBuilder(
     private async Task<string?> GetPreviousSessionContextAsync()
     {
         var lastSession = await tenantUow.Repository<AIDispatchSession>().Query()
-            .Where(s => s.Status == AIDispatchSessionStatus.Completed && s.Summary != null)
+            .Where(s => s.Type == AIDispatchSessionType.Dispatch
+                && s.Status == AIDispatchSessionStatus.Completed && s.Summary != null)
             .OrderByDescending(s => s.CompletedAt)
             .Select(s => new { s.Number, s.CompletedAt, s.Summary })
             .FirstOrDefaultAsync();

@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,8 @@ internal sealed class GetAIDispatchSessionsHandler(
     public async Task<PagedResult<AIDispatchSessionDto>> Handle(
         GetAIDispatchSessionsQuery request, CancellationToken ct)
     {
-        var query = tenantUow.Repository<AIDispatchSession>().Query();
+        var query = tenantUow.Repository<AIDispatchSession>().Query()
+            .Where(s => s.Type == AIDispatchSessionType.Dispatch);
 
         if (request.Status.HasValue)
             query = query.Where(s => s.Status == request.Status.Value);

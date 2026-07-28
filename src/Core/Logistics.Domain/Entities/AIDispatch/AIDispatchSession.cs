@@ -15,7 +15,14 @@ public class AIDispatchSession : AuditableEntity, ITenantEntity
     public long Number { get; private set; }
 
     public AIDispatchMode Mode { get; init; }
+    public AIDispatchSessionType Type { get; init; } = AIDispatchSessionType.Dispatch;
     public AIDispatchSessionStatus Status { get; private set; } = AIDispatchSessionStatus.Running;
+
+    /// <summary>
+    /// The copilot conversation this turn belongs to. Null for dispatch sessions.
+    /// </summary>
+    public Guid? ConversationId { get; init; }
+    public virtual AICopilotConversation? Conversation { get; init; }
 
     /// <summary>
     /// The user who triggered this session. Null if triggered by background job.

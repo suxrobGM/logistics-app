@@ -39,6 +39,8 @@ public class AIDispatchDecision : Entity, ITenantEntity
     public Guid? LoadId { get; set; }
     public Guid? TruckId { get; set; }
     public Guid? TripId { get; set; }
+    public Guid? InvoiceId { get; set; }
+    public Guid? CustomerId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? ExecutedAt { get; set; }

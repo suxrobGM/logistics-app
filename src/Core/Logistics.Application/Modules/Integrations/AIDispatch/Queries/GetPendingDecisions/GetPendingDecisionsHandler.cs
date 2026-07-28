@@ -12,8 +12,10 @@ internal sealed class GetPendingDecisionsHandler(
     public async Task<Result<List<AIDispatchDecisionDto>>> Handle(
         GetPendingDecisionsQuery request, CancellationToken ct)
     {
+        // Copilot suggestions surface in the chat drawer, not on the dispatch board.
         var decisions = await tenantUow.Repository<AIDispatchDecision>()
-            .GetListAsync(d => d.Status == AIDispatchDecisionStatus.Suggested, ct);
+            .GetListAsync(d => d.Status == AIDispatchDecisionStatus.Suggested
+                && d.Session.Type == AIDispatchSessionType.Dispatch, ct);
 
         // Batch-load load names and truck numbers to avoid N+1
         var loadIds = decisions.Where(d => d.LoadId is not null).Select(d => d.LoadId!.Value).Distinct().ToList();
