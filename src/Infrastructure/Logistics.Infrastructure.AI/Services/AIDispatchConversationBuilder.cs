@@ -26,6 +26,13 @@ internal sealed class AIDispatchConversationBuilder(
     ISystemSettingsService systemSettings,
     ILogger<AIDispatchConversationBuilder> logger)
 {
+    /// <summary>
+    /// The dispatch agent only gets dispatch-scoped tools. The registry also holds copilot tools
+    /// (invoicing, expenses, ...) that must never surface in a dispatch run - in autonomous mode
+    /// they would execute unattended.
+    /// </summary>
+    private static readonly HashSet<string> DispatchToolScope =
+        [Shared.Identity.Policies.Permission.Dispatch.View, Shared.Identity.Policies.Permission.Dispatch.Manage];
 
     public async Task<LlmConversation> BuildAsync(
         AIDispatchSession session,
@@ -55,7 +62,7 @@ internal sealed class AIDispatchConversationBuilder(
         var systemPrompt = AIDispatchSystemPrompt.Build(
             companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit, policy, hasIntermodal,
             tenant.Settings.OperatingMode);
-        var tools = toolRegistry.GetToolDefinitions(enabledFeatures);
+        var tools = toolRegistry.GetToolDefinitions(enabledFeatures, DispatchToolScope);
 
         var model = selection.Model;
         session.ModelUsed = model;

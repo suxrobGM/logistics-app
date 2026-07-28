@@ -56,6 +56,19 @@ public static class Registrar
         services.AddScoped<IAIDispatchTool, CheckBrokerCreditTool>();
         services.AddScoped<IAIDispatchTool, BookLoadBoardLoadTool>();
 
+        // Copilot tools (loads, customers, invoicing, expenses, maintenance)
+        services.AddScoped<IAIDispatchTool, SearchLoadsTool>();
+        services.AddScoped<IAIDispatchTool, GetLoadTool>();
+        services.AddScoped<IAIDispatchTool, SearchCustomersTool>();
+        services.AddScoped<IAIDispatchTool, GetInvoicesTool>();
+        services.AddScoped<IAIDispatchTool, GetInvoiceTool>();
+        services.AddScoped<IAIDispatchTool, SearchExpensesTool>();
+        services.AddScoped<IAIDispatchTool, GetExpenseStatsTool>();
+        services.AddScoped<IAIDispatchTool, GetUpcomingMaintenanceTool>();
+        services.AddScoped<IAIDispatchTool, CreateLoadInvoiceTool>();
+        services.AddScoped<IAIDispatchTool, SendInvoiceTool>();
+        services.AddScoped<IAIDispatchTool, CreatePaymentLinkTool>();
+
         return services;
     }
 }

@@ -155,4 +155,66 @@ public class AIDispatchToolRegistryTests
         var names = tools.Select(t => t.Name).ToList();
         Assert.Equal(names.Count, names.Distinct().Count());
     }
+
+    #region Permission scoping
+
+    private static readonly IReadOnlySet<TenantFeature> EveryFeature =
+        With([.. Enum.GetValues<TenantFeature>()]);
+
+    /// <summary>
+    /// A dispatch run scoped to Dispatch.* permissions must never see the copilot tools - in
+    /// autonomous mode an exposed write tool executes unattended.
+    /// </summary>
+    [Fact]
+    public void GetToolDefinitions_DispatchScope_ExcludesCopilotTools()
+    {
+        var dispatchScope = new HashSet<string> { "Permission.Dispatch.View", "Permission.Dispatch.Manage" };
+
+        var names = sut.GetToolDefinitions(EveryFeature, dispatchScope).Select(t => t.Name).ToHashSet();
+
+        Assert.Contains("get_unassigned_loads", names);
+        Assert.Contains("assign_load_to_truck", names);
+        Assert.DoesNotContain("create_load_invoice", names);
+        Assert.DoesNotContain("send_invoice", names);
+        Assert.DoesNotContain("search_loads", names);
+    }
+
+    [Fact]
+    public void GetToolDefinitions_CallerWithInvoicePermissions_SeesInvoiceToolsOnly()
+    {
+        var invoiceScope = new HashSet<string> { "Permission.Invoice.View", "Permission.Invoice.Manage" };
+
+        var names = sut.GetToolDefinitions(EveryFeature, invoiceScope).Select(t => t.Name).ToHashSet();
+
+        Assert.Contains("get_invoices", names);
+        Assert.Contains("create_load_invoice", names);
+        Assert.Contains("send_invoice", names);
+        Assert.DoesNotContain("assign_load_to_truck", names);
+        Assert.DoesNotContain("create_payment_link", names);
+    }
+
+    [Fact]
+    public void GetToolDefinitions_NullPermissions_DisablesPermissionFiltering()
+    {
+        Assert.Equal(
+            sut.GetAllToolDefinitions().Select(t => t.Name),
+            sut.GetToolDefinitions(EveryFeature).Select(t => t.Name));
+    }
+
+    /// <summary>Every tool must declare a permission - an undeclared one bypasses copilot scoping.</summary>
+    [Fact]
+    public void GetAllToolDefinitions_EveryToolDeclaresARequiredPermission()
+    {
+        Assert.All(sut.GetAllToolDefinitions(), t =>
+            Assert.False(string.IsNullOrWhiteSpace(t.RequiredPermission), $"Tool '{t.Name}' has no RequiredPermission"));
+    }
+
+    [Fact]
+    public void TryGetDefinition_KnownAndUnknownNames()
+    {
+        Assert.NotNull(sut.TryGetDefinition("create_load_invoice"));
+        Assert.Null(sut.TryGetDefinition("hallucinated_tool"));
+    }
+
+    #endregion
 }

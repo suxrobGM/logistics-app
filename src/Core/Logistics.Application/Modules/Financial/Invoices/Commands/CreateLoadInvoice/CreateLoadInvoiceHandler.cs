@@ -33,14 +33,6 @@ internal sealed class CreateLoadInvoiceHandler(
         var tenant = tenantUow.GetCurrentTenant();
         var currency = (tenant.Settings?.Currency ?? CurrencyCode.USD).ToString();
 
-        var payment = new Payment
-        {
-            StripePaymentMethodId = req.StripePaymentMethodId,
-            TenantId = tenant.Id,
-            Amount = new() { Amount = req.PaymentAmount, Currency = currency },
-            BillingAddress = tenant.CompanyAddress
-        };
-
         var amount = new Money { Amount = req.PaymentAmount, Currency = currency };
         var invoice = new LoadInvoice
         {
@@ -52,7 +44,18 @@ internal sealed class CreateLoadInvoiceHandler(
             LoadId = req.LoadId
         };
 
-        invoice.ApplyPayment(payment);
+        if (req.RecordPayment)
+        {
+            var payment = new Payment
+            {
+                StripePaymentMethodId = req.StripePaymentMethodId,
+                TenantId = tenant.Id,
+                Amount = new() { Amount = req.PaymentAmount, Currency = currency },
+                BillingAddress = tenant.CompanyAddress
+            };
+
+            invoice.ApplyPayment(payment);
+        }
 
         await taxApplier.ApplyAsync(invoice, ct);
 

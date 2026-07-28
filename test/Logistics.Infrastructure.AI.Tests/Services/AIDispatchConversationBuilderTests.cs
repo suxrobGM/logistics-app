@@ -31,7 +31,7 @@ public class AIDispatchConversationBuilderTests
 
     public AIDispatchConversationBuilderTests()
     {
-        toolRegistry.GetToolDefinitions(Arg.Any<IReadOnlySet<TenantFeature>>()).Returns(
+        toolRegistry.GetToolDefinitions(Arg.Any<IReadOnlySet<TenantFeature>>(), Arg.Any<IReadOnlySet<string>?>()).Returns(
             [new AIDispatchToolDefinition("test_tool", "A test tool", new JsonObject { ["type"] = "object" })]);
 
         SetTenant();

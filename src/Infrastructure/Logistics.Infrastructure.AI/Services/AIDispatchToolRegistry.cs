@@ -237,6 +237,150 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
             TenantFeature.LoadBoard,
             RequiredPermission: Permission.Dispatch.View),
 
+        new("search_loads",
+            "Search loads by status, type, customer, truck, date range, or free text. Returns up to 20 loads per page with number, status, origin/destination, delivery cost, and customer. Use for load history questions ('delivered loads last week', 'loads for customer X').",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["search"] = Prop("string", "Free-text search over load name and reference fields"),
+                    ["statuses"] = new JsonObject
+                    {
+                        ["type"] = "array",
+                        ["items"] = new JsonObject { ["type"] = "string" },
+                        ["description"] = "Filter by statuses: Draft, Dispatched, PickedUp, Delivered, Cancelled"
+                    },
+                    ["types"] = new JsonObject
+                    {
+                        ["type"] = "array",
+                        ["items"] = new JsonObject { ["type"] = "string" },
+                        ["description"] = "Filter by load types, e.g. GeneralFreight, RefrigeratedGoods, IntermodalContainer"
+                    },
+                    ["customer_id"] = Prop("string", "Filter by customer ID (GUID) - find it with search_customers"),
+                    ["truck_id"] = Prop("string", "Filter by assigned truck ID (GUID)"),
+                    ["start_date"] = Prop("string", "Loads created on or after this date (ISO 8601)"),
+                    ["end_date"] = Prop("string", "Loads created on or before this date (ISO 8601)"),
+                    ["page"] = Prop("integer", "Page number when a previous call returned truncated: true")
+                },
+                ["required"] = new JsonArray()
+            }),
+            TenantFeature.Loads,
+            RequiredPermission: Permission.Load.View),
+
+        new("get_load",
+            "Get one load by ID: status, addresses, delivery cost, customer (with email), assigned truck, delivery timestamps, and whether it already has an invoice. ALWAYS call this before create_load_invoice - it supplies the delivery cost and shows whether the load is Delivered.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["load_id"] = Prop("string", "The load ID (GUID)")
+                },
+                ["required"] = new JsonArray("load_id")
+            }),
+            TenantFeature.Loads,
+            RequiredPermission: Permission.Load.View),
+
+        new("search_customers",
+            "Search customers by name. The match is a case-sensitive substring - if nothing is found, retry with a shorter fragment (e.g. 'Acme' instead of 'acme logistics'). Returns up to 20 customers with ID, name, email, and phone.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["search"] = Prop("string", "Customer name or name fragment (case-sensitive substring match)")
+                },
+                ["required"] = new JsonArray()
+            }),
+            TenantFeature.Customers,
+            RequiredPermission: Permission.Customer.View),
+
+        new("get_invoices",
+            "List load invoices filtered by load, customer, status, overdue flag, or date range. Returns up to 20 per page with number, status, total, due date, and customer.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["load_id"] = Prop("string", "Filter by load ID (GUID)"),
+                    ["customer_id"] = Prop("string", "Filter by customer ID (GUID)"),
+                    ["status"] = Prop("string", "Filter by status: Draft, Issued, Sent, PartiallyPaid, Paid, Overdue, Cancelled"),
+                    ["overdue_only"] = Prop("boolean", "Only invoices past their due date"),
+                    ["start_date"] = Prop("string", "Invoices created on or after this date (ISO 8601)"),
+                    ["end_date"] = Prop("string", "Invoices created on or before this date (ISO 8601)"),
+                    ["page"] = Prop("integer", "Page number when a previous call returned truncated: true")
+                },
+                ["required"] = new JsonArray()
+            }),
+            TenantFeature.Invoices,
+            RequiredPermission: Permission.Invoice.View),
+
+        new("get_invoice",
+            "Get one invoice by ID: status, totals, amount paid, due date, send history, customer (with email), and the load it bills.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["invoice_id"] = Prop("string", "The invoice ID (GUID)")
+                },
+                ["required"] = new JsonArray("invoice_id")
+            }),
+            TenantFeature.Invoices,
+            RequiredPermission: Permission.Invoice.View),
+
+        new("search_expenses",
+            "List expense line items filtered by type (Company, Truck, BodyShop), status, truck, date range, or vendor/notes text. Returns up to 20 per page. There is no category filter - for spend-by-category questions use get_expense_stats instead.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["type"] = Prop("string", "Expense type: Company, Truck, or BodyShop"),
+                    ["status"] = Prop("string", "Expense status: Pending, Approved, Rejected, or Paid"),
+                    ["truck_id"] = Prop("string", "Filter by truck ID (GUID)"),
+                    ["from_date"] = Prop("string", "Expenses on or after this date (ISO 8601)"),
+                    ["to_date"] = Prop("string", "Expenses on or before this date (ISO 8601)"),
+                    ["search"] = Prop("string", "Search vendor name or notes"),
+                    ["page"] = Prop("integer", "Page number when a previous call returned truncated: true")
+                },
+                ["required"] = new JsonArray()
+            }),
+            TenantFeature.Expenses,
+            RequiredPermission: Permission.Expense.View),
+
+        new("get_expense_stats",
+            "Expense rollups for a date range: totals by approval status, by type, by company/truck category, 12-month trend, and top trucks by spend. Prefer this over search_expenses for 'how much did we spend on X' questions.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["from_date"] = Prop("string", "Start of the period (ISO 8601)"),
+                    ["to_date"] = Prop("string", "End of the period (ISO 8601)")
+                },
+                ["required"] = new JsonArray()
+            }),
+            TenantFeature.Expenses,
+            RequiredPermission: Permission.Expense.View),
+
+        new("get_upcoming_maintenance",
+            "Trucks with maintenance due within the next N days (default 30), including overdue items. Date-based schedules only: mileage and engine-hour intervals are NOT evaluated - say so when answering maintenance questions.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["days_ahead"] = Prop("integer", "Look-ahead window in days (default 30)"),
+                    ["truck_id"] = Prop("string", "Limit to one truck (GUID)"),
+                    ["include_overdue"] = Prop("boolean", "Include already-overdue schedules (default true)")
+                },
+                ["required"] = new JsonArray()
+            }),
+            TenantFeature.Maintenance,
+            RequiredPermission: Permission.Maintenance.View),
+
         // ── Write Tools ──
 
         new("assign_load_to_truck",
@@ -310,7 +454,62 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
             TenantFeature.LoadBoard,
             IsWrite: true,
             RequiredPermission: Permission.Dispatch.Manage,
-            DecisionType: AIDispatchDecisionType.BookLoadBoardLoad)
+            DecisionType: AIDispatchDecisionType.BookLoadBoardLoad),
+
+        new("create_load_invoice",
+            "Create an UNPAID invoice for a load, billed to the load's customer. Call get_load first: the amount defaults to the load's delivery cost, and you should warn the user when the load is not yet Delivered. Fails if the load already has an invoice. In human-in-the-loop mode, creates a suggestion for approval.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["load_id"] = Prop("string", "The load ID (GUID) to invoice"),
+                    ["amount"] = Prop("number", "Invoice total. Omit to use the load's delivery cost - only set when the user explicitly names a different amount"),
+                    ["reasoning"] = Prop("string", "Brief explanation of why this invoice should be created")
+                },
+                ["required"] = new JsonArray("load_id", "reasoning")
+            }),
+            TenantFeature.Invoices,
+            IsWrite: true,
+            RequiredPermission: Permission.Invoice.Manage,
+            DecisionType: AIDispatchDecisionType.CreateInvoice),
+
+        new("send_invoice",
+            "Email an invoice to a recipient. This mints a 30-day payment link and includes it in the email - do NOT also call create_payment_link for the same invoice. In human-in-the-loop mode, creates a suggestion for approval.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["invoice_id"] = Prop("string", "The invoice ID (GUID) to send"),
+                    ["recipient_email"] = Prop("string", "Recipient email address - use the customer's email from get_load or get_invoice unless the user gives another"),
+                    ["personal_message"] = Prop("string", "Optional note included in the email body"),
+                    ["reasoning"] = Prop("string", "Brief explanation of why this invoice should be sent")
+                },
+                ["required"] = new JsonArray("invoice_id", "recipient_email", "reasoning")
+            }),
+            TenantFeature.Invoices,
+            IsWrite: true,
+            RequiredPermission: Permission.Invoice.Manage,
+            DecisionType: AIDispatchDecisionType.SendInvoice),
+
+        new("create_payment_link",
+            "Create a public payment link URL for an invoice without emailing anything. Use when the user wants a link to share themselves; send_invoice already includes one. In human-in-the-loop mode, creates a suggestion for approval.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["invoice_id"] = Prop("string", "The invoice ID (GUID) to create the link for"),
+                    ["expiration_days"] = Prop("integer", "Days until the link expires (default 30)"),
+                    ["reasoning"] = Prop("string", "Brief explanation of why this link should be created")
+                },
+                ["required"] = new JsonArray("invoice_id", "reasoning")
+            }),
+            TenantFeature.Payments,
+            IsWrite: true,
+            RequiredPermission: Permission.Payment.Manage,
+            DecisionType: AIDispatchDecisionType.CreatePaymentLink)
     ];
 
     private static readonly Dictionary<string, AIDispatchToolDefinition> ToolsByName =
