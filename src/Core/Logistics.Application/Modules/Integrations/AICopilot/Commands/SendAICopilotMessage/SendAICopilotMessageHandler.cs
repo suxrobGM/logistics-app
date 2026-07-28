@@ -1,0 +1,79 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.AICopilot;
+using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Models;
+using Microsoft.Extensions.Logging;
+
+namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
+
+internal sealed class SendAICopilotMessageHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUser,
+    IAIQuotaService quotaService,
+    IBackgroundJobRunner<AICopilotTurnRequest> backgroundRunner,
+    ILogger<SendAICopilotMessageHandler> logger)
+    : IAppRequestHandler<SendAICopilotMessageCommand, Result<SendAICopilotMessageResultDto>>
+{
+    /// <summary>
+    /// A Running conversation older than this is assumed crashed (its turn never called EndTurn)
+    /// and may be taken over instead of locking the conversation forever.
+    /// </summary>
+    private static readonly TimeSpan StaleTurnWindow = TimeSpan.FromMinutes(15);
+
+    public async Task<Result<SendAICopilotMessageResultDto>> Handle(
+        SendAICopilotMessageCommand request, CancellationToken ct)
+    {
+        var userId = currentUser.GetUserId();
+        if (userId is null)
+            return Result<SendAICopilotMessageResultDto>.Fail("User is not authenticated");
+
+        var conversation = await tenantUow.Repository<AICopilotConversation>()
+            .GetByIdAsync(request.ConversationId, ct);
+
+        if (conversation is null || conversation.CreatedById != userId.Value)
+            return Result<SendAICopilotMessageResultDto>.Fail("Conversation not found");
+
+        if (conversation.Status == AICopilotConversationStatus.Running)
+        {
+            if (conversation.TurnStartedAt > DateTime.UtcNow - StaleTurnWindow)
+                return Result<SendAICopilotMessageResultDto>.Fail("A copilot turn is already in progress");
+
+            logger.LogWarning(
+                "Copilot conversation {ConversationId} stuck Running since {TurnStartedAt}; taking over",
+                conversation.Id, conversation.TurnStartedAt);
+        }
+
+        var tenant = tenantUow.GetCurrentTenant();
+        var quota = await quotaService.GetQuotaStatusAsync(tenant.Id, ct);
+        if (quota.IsOverQuota)
+        {
+            return Result<SendAICopilotMessageResultDto>.Fail(
+                "Your weekly AI request quota is exhausted. It resets " +
+                (quota.ResetsAt is { } resetsAt ? $"on {resetsAt:yyyy-MM-dd}." : "next week."),
+                ErrorCodes.AIQuotaExceeded);
+        }
+
+        var message = AICopilotMessage.TextMessage(
+            conversation.Id,
+            conversation.Messages.Count > 0 ? conversation.Messages.Max(m => m.Sequence) + 1 : 1,
+            AICopilotMessageRole.User,
+            request.Text.Trim());
+        conversation.Messages.Add(message);
+        conversation.LastMessageAt = DateTime.UtcNow;
+        conversation.BeginTurn();
+        await tenantUow.SaveChangesAsync(ct);
+
+        backgroundRunner.Enqueue(new AICopilotTurnRequest(tenant.Id, conversation.Id, userId.Value));
+
+        return Result<SendAICopilotMessageResultDto>.Ok(new SendAICopilotMessageResultDto
+        {
+            ConversationId = conversation.Id,
+            UserMessageId = message.Id
+        });
+    }
+}

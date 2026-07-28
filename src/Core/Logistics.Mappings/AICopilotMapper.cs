@@ -14,6 +14,8 @@ public static partial class AICopilotMapper
     [MapperIgnoreSource(nameof(AICopilotConversation.CreatedBy))]
     [MapperIgnoreSource(nameof(AICopilotConversation.UpdatedAt))]
     [MapperIgnoreSource(nameof(AICopilotConversation.UpdatedBy))]
+    [MapperIgnoreTarget(nameof(AICopilotConversationDto.Messages))]
+    [MapperIgnoreTarget(nameof(AICopilotConversationDto.Decisions))]
     public static partial AICopilotConversationDto ToDto(this AICopilotConversation entity);
 
     [MapperIgnoreSource(nameof(AICopilotMessage.DomainEvents))]

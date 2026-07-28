@@ -20,6 +20,7 @@ using Logistics.Infrastructure.Integrations.Eld;
 using Logistics.Infrastructure.Integrations.FuelCards;
 using Logistics.Infrastructure.Integrations.LoadBoard;
 using Logistics.Application.Abstractions.Accounting;
+using Logistics.Application.Abstractions.AICopilot;
 using Logistics.HostDefaults;
 using Logistics.Infrastructure.Persistence.Data;
 using Logistics.Infrastructure.Persistence.Services.Accounting;
@@ -130,6 +131,7 @@ internal static class Setup
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
         services.AddScoped<IBackgroundJobRunner<AIDispatchRequest>, HangfireAIDispatchJobRunner>();
+        services.AddScoped<IBackgroundJobRunner<AICopilotTurnRequest>, HangfireAICopilotTurnRunner>();
         services.AddScoped<ICommandEnqueuer, HangfireCommandEnqueuer>();
         services.AddHangfireServer();
         services.AddHangfire(config => config
@@ -157,6 +159,23 @@ internal static class Setup
                     ValidateIssuer = true,
                     ValidIssuers = configuration.GetSection("IdentityServer:ValidIssuers").Get<string[]>(),
                     ValidAudience = configuration["IdentityServer:Audience"]
+                };
+
+                // Browser websockets cannot set an Authorization header; authorized hubs receive
+                // the token as the standard SignalR access_token query parameter instead.
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            context.HttpContext.Request.Path.StartsWithSegments("/hubs/copilot"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
@@ -227,6 +246,7 @@ internal static class Setup
         app.MapHub<AIDispatchHub>("/hubs/ai-dispatch");
         app.MapHub<NotificationHub>("/hubs/notification");
         app.MapHub<ChatHub>("/hubs/chat");
+        app.MapHub<CopilotHub>("/hubs/copilot");
         return app;
     }
 

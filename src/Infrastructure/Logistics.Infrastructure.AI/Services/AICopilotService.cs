@@ -186,14 +186,11 @@ internal sealed class AICopilotService(
         logger.LogInformation("LLM is disabled for tenant {TenantId}, skipping copilot turn", request.TenantId);
 
         const string notice = "AI is disabled for this company. Contact your administrator to enable it.";
-        var row = new AICopilotMessage
-        {
-            ConversationId = conversation.Id,
-            Sequence = conversation.Messages.Count > 0 ? conversation.Messages.Max(m => m.Sequence) + 1 : 1,
-            Role = AICopilotMessageRole.System,
-            ContentJson = CopilotTranscriptCodec.Encode([new LlmTextBlock(notice)]),
-            DisplayText = notice
-        };
+        var row = AICopilotMessage.TextMessage(
+            conversation.Id,
+            conversation.Messages.Count > 0 ? conversation.Messages.Max(m => m.Sequence) + 1 : 1,
+            AICopilotMessageRole.System,
+            notice);
         conversation.Messages.Add(row);
         conversation.EndTurn();
         await tenantUow.SaveChangesAsync(ct);

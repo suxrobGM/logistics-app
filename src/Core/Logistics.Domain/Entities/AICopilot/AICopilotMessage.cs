@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.Enums;
 
@@ -37,4 +38,23 @@ public class AICopilotMessage : Entity, ITenantEntity
     public Guid? SessionId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    /// <summary>
+    /// A plain text row in the canonical transcript block format
+    /// (<c>[{"type":"text","text":...}]</c>). The single place this shape is written outside the
+    /// AI infrastructure's codec - keep the two in sync.
+    /// </summary>
+    public static AICopilotMessage TextMessage(
+        Guid conversationId, int sequence, AICopilotMessageRole role, string text)
+    {
+        return new AICopilotMessage
+        {
+            ConversationId = conversationId,
+            Sequence = sequence,
+            Role = role,
+            ContentJson = new JsonArray(
+                new JsonObject { ["type"] = "text", ["text"] = text }).ToJsonString(),
+            DisplayText = text.Length > 4000 ? text[..4000] : text
+        };
+    }
 }
