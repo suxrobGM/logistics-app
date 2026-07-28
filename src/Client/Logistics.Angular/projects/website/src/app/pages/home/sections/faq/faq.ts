@@ -75,5 +75,10 @@ export class Faq {
       answer:
         "Yes. Human-in-the-loop is the default - you review every decision before it runs. Each action is in the audit trail with the agent's reasoning. Autonomous mode is opt-in, and a per-session iteration cap keeps it from running away.",
     },
+    {
+      question: "What can the AI copilot do?",
+      answer:
+        "It's a chat drawer across the whole TMS. Ask it about loads, expenses, or which trucks are due for service, or have it invoice delivered loads and send payment links. It only sees the data your role permits, answers come from your live data, and anything that changes the books waits for your approval.",
+    },
   ];
 }

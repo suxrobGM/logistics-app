@@ -35,7 +35,7 @@ export class Compare {
 
   protected readonly features: FeatureCategory[] = [
     {
-      category: "AI Dispatch",
+      category: "AI",
       rows: [
         {
           name: "AI dispatch (agentic, multi-LLM)",
@@ -43,6 +43,13 @@ export class Compare {
           dataTruck: "✓ (TruckGPT)",
           alvys: "Basic",
           roseRocket: "✓ (Rosie)",
+        },
+        {
+          name: "TMS-wide AI copilot (in base plans)",
+          us: "✓",
+          dataTruck: "$399+$99/mo add-ons",
+          alvys: "-",
+          roseRocket: "-",
         },
         { name: "Human-in-the-loop AI", us: "✓", dataTruck: "-", alvys: "-", roseRocket: "-" },
         {

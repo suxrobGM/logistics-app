@@ -1,9 +1,9 @@
 <web-section-container sectionId="ai-dispatch" background="light">
   <div webScrollAnimate="fade-up">
     <web-section-header
-      label="AI Dispatch"
-      title="Watch the agent reason, decide, and act"
-      subtitle="The agent looks at your fleet live. Every decision and every reasoning step is written to a session log you can read."
+      label="AI Agents"
+      title="Watch the agents reason, decide, and act"
+      subtitle="A dispatch agent plans your fleet and a TMS-wide copilot handles the rest of the office. Every decision and every reasoning step is written to a log you can read."
     />
   </div>
 
@@ -39,7 +39,7 @@
   </div>
 
   <!-- Capability cards -->
-  <div class="mt-20 grid gap-8 md:grid-cols-3">
+  <div class="mt-20 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
     @for (card of capabilities; track card.title; let i = $index) {
       <div
         webScrollAnimate="fade-up"

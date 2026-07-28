@@ -63,9 +63,15 @@ export class AIShowcase {
       icon: "zap",
     },
     {
+      title: "TMS-wide copilot",
+      description:
+        "A chat drawer across the whole TMS. Ask about loads, spend, or maintenance - or have it invoice delivered loads and send payment links. Writes wait for your approval.",
+      icon: "bot",
+    },
+    {
       title: "Full audit trail",
       description:
-        "Every assignment is logged with the agent's reasoning - what it saw, why it picked that truck, and who approved it.",
+        "Every action either agent takes is logged with its reasoning - what it saw, why it chose it, and who approved it.",
       icon: "history",
     },
   ];

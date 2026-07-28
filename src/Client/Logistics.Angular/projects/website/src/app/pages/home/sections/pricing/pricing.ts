@@ -63,6 +63,7 @@ export class Pricing {
         "MCP Server",
         "QuickBooks accounting sync",
         "AI Dispatch - higher usage",
+        "TMS-wide AI copilot",
         "Up to 30 trucks",
       ],
       highlighted: true,
