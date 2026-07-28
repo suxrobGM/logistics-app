@@ -114,8 +114,10 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config) : ILlmProvide
             return [ChatMessage.CreateUserMessage(parts)];
         }
 
-        // Assistant message with potential tool calls
-        var assistantText = message.Content.OfType<LlmTextBlock>().FirstOrDefault()?.Text;
+        // Assistant message with potential tool calls. Text blocks may be interleaved with tool
+        // calls (Anthropic's shape); OpenAI has no ordering, so they collapse into one text part.
+        var assistantTextParts = message.Content.OfType<LlmTextBlock>().Select(t => t.Text).ToList();
+        var assistantText = assistantTextParts.Count > 0 ? string.Join("\n\n", assistantTextParts) : null;
         var toolUses = message.Content.OfType<LlmToolUseBlock>().ToList();
 
         if (toolUses.Count == 0)
@@ -137,18 +139,19 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config) : ILlmProvide
     private static LlmResponse MapResponse(ChatCompletion completion)
     {
         var content = new List<LlmContentBlock>();
-        string? textContent = null;
+        var textParts = new List<string>();
         var toolCalls = new List<LlmToolUseBlock>();
 
-        // Extract text content
         foreach (var part in completion.Content)
         {
             if (part.Kind == ChatMessageContentPartKind.Text)
             {
-                textContent = part.Text;
+                textParts.Add(part.Text);
                 content.Add(new LlmTextBlock(part.Text));
             }
         }
+
+        var textContent = textParts.Count > 0 ? string.Join("\n\n", textParts) : null;
 
         // Extract tool calls
         foreach (var toolCall in completion.ToolCalls)

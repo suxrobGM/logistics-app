@@ -54,27 +54,38 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config) : ILlmProv
         }
 
         var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
+        return MapResponse(response);
+    }
 
-        var textContent = response.Content?.OfType<TextContent>().FirstOrDefault()?.Text;
-        var toolUseBlocks = response.Content?.OfType<ToolUseContent>().ToList() ?? [];
-
+    /// <summary>
+    /// Preserves block order: chat replies interleave text and tool calls, and the transcript
+    /// must replay to the API in the same shape it arrived. All text blocks are kept -
+    /// taking only the first one silently drops reply content around tool calls.
+    /// </summary>
+    internal static LlmResponse MapResponse(MessageResponse response)
+    {
         var assistantContent = new List<LlmContentBlock>();
-        if (textContent is not null)
+        foreach (var block in response.Content ?? [])
         {
-            assistantContent.Add(new LlmTextBlock(textContent));
+            switch (block)
+            {
+                case TextContent text:
+                    assistantContent.Add(new LlmTextBlock(text.Text));
+                    break;
+                case ToolUseContent toolUse:
+                    assistantContent.Add(new LlmToolUseBlock(toolUse.Id, toolUse.Name, toolUse.Input));
+                    break;
+            }
         }
 
-        foreach (var tool in toolUseBlocks)
-        {
-            assistantContent.Add(new LlmToolUseBlock(tool.Id, tool.Name, tool.Input));
-        }
+        var textBlocks = assistantContent.OfType<LlmTextBlock>().Select(t => t.Text).ToList();
 
         return new LlmResponse
         {
             AssistantMessage = new LlmMessage(LlmRole.Assistant, assistantContent),
-            TextContent = textContent,
+            TextContent = textBlocks.Count > 0 ? string.Join("\n\n", textBlocks) : null,
             StopReason = response.StopReason ?? "end_turn",
-            ToolCalls = [.. toolUseBlocks.Select(t => new LlmToolUseBlock(t.Id, t.Name, t.Input))],
+            ToolCalls = [.. assistantContent.OfType<LlmToolUseBlock>()],
             Usage = new LlmTokenUsage(
                 response.Usage?.InputTokens ?? 0,
                 response.Usage?.OutputTokens ?? 0,
