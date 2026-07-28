@@ -54,5 +54,8 @@ public enum TenantFeature
     Ifta,
 
     [Description("Intermodal Containers")]
-    IntermodalContainers
+    IntermodalContainers,
+
+    [Description("AI Copilot")]
+    AICopilot
 }

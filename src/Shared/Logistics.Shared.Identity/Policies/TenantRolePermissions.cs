@@ -79,6 +79,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.ApiKey)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Container)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Terminal)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Copilot)));
         return list;
     }
 
@@ -109,6 +110,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dispatch)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Container)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Terminal)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Copilot)));
         return list;
     }
 
@@ -136,6 +138,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dispatch)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Container)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Terminal)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Copilot)));
         return list;
     }
 
@@ -151,6 +154,7 @@ public static class TenantRolePermissions
         // Drivers file their own DVIRs; Dvir.Review stays with the roles that supervise them.
         list.Add(Permission.Dvir.View);
         list.Add(Permission.Dvir.Manage);
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Copilot)));
         return list;
     }
 

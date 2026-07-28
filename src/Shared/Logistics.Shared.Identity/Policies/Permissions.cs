@@ -219,6 +219,12 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(Terminal)}.Manage";
     }
 
+    public static class Copilot
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Copilot)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Copilot)}.Manage";
+    }
+
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();
