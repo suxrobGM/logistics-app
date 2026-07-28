@@ -1,6 +1,6 @@
 # TMS-wide AI Copilot
 
-- **Status**: In Progress
+- **Status**: Done
 - **Priority**: P1 - generalizes the agent from "dispatch feature" to "platform"; every tool added also lands on the MCP server for free
 - **Effort**: L
 - **Category**: AI differentiation
@@ -36,4 +36,10 @@ From the chat panel, "invoice load #123 and send the customer a payment link" pr
   opt-out so the copilot can create _unpaid_ invoices - the existing flow marks them Paid at birth,
   which would make a payment link meaningless. Each turn is an `AIDispatchSession` of new type
   `Copilot`; the transcript (with tool_use ids) lives in `ai_copilot_messages`. Deep dive:
-  [docs/ai-copilot.md](../ai-copilot.md). Frontend drawer next.
+  [docs/ai-copilot.md](../ai-copilot.md).
+- **2026-07-28** - Frontend + website shipped: non-modal docked chat drawer in the tms-portal shell
+  (Ctrl+I, sidebar/mobile launchers), root `CopilotStore` over an authorized per-user
+  `/hubs/copilot`, the ai-dispatch approve/reject stack promoted to `shared/components/ai/` with a
+  dispatch/copilot endpoint switch, and landing-page copy. Migrations applied and roles/plans
+  re-seeded on local dev. Remaining manual check: the live acceptance run ("invoice load X and
+  send a payment link") against a configured LLM key.
