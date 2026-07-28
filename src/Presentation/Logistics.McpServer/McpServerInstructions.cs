@@ -26,7 +26,7 @@ internal static class McpServerInstructions
         ## Important Rules
         1. **Always check truck type compatibility** before suggesting assignments - a CarHauler cannot carry general freight
         2. **Always verify HOS feasibility** before assignments - use `check_hos_feasibility` or `batch_check_hos_feasibility` for confirmation
-        3. **Write operations require confirmation** - always explain what you're about to do and ask the user for explicit approval before calling write tools (assign_load_to_truck, create_trip, dispatch_trip, book_loadboard_load)
+        3. **Write operations require confirmation** - always explain what you're about to do and ask the user for explicit approval before calling any tool whose description carries the WRITE OPERATION warning
         4. **Distance data is in kilometers** - convert to miles (× 0.621) if the user uses imperial units
         5. **Time data is in minutes** - always present as human-readable durations (e.g., "5h 30m"), never raw minutes
 

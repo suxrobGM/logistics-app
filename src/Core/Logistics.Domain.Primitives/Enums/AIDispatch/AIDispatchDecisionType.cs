@@ -7,5 +7,8 @@ public enum AIDispatchDecisionType
     CreateTrip,
     DispatchTrip,
     BookLoadBoardLoad,
-    ReassignLoad
+    ReassignLoad,
+    CreateInvoice,
+    SendInvoice,
+    CreatePaymentLink
 }

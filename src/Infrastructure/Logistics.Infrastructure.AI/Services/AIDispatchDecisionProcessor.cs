@@ -14,24 +14,19 @@ namespace Logistics.Infrastructure.AI.Services;
 /// <summary>
 /// Processes LLM tool calls into AIDispatchDecision entities.
 /// Handles mode-aware execution (HumanInTheLoop suggests, Autonomous executes).
+/// Write/permission/decision-type behavior is driven entirely by the tool's
+/// <see cref="AIDispatchToolDefinition"/> metadata - there is no separate tool-name list here.
 /// </summary>
 internal sealed class AIDispatchDecisionProcessor(
     IAIDispatchToolExecutor toolExecutor,
+    IAIDispatchToolRegistry toolRegistry,
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
     ILogger<AIDispatchDecisionProcessor> logger)
 {
-    private static readonly HashSet<string> WriteTools =
-    [
-        "assign_load_to_truck",
-        "create_trip",
-        "dispatch_trip",
-        "book_loadboard_load"
-    ];
-
     public async Task<List<LlmToolResultBlock>> ProcessToolCallsAsync(
         AIDispatchSession session,
-        AIDispatchMode mode,
+        ToolCallContext context,
         List<LlmToolUseBlock> toolCalls,
         string? reasoning,
         CancellationToken ct)
@@ -41,8 +36,9 @@ internal sealed class AIDispatchDecisionProcessor(
 
         foreach (var toolCall in toolCalls)
         {
-            var decision = CreateDecision(session, toolCall, reasoning);
-            var toolResult = await ExecuteOrSuggestAsync(session, decision, toolCall, mode, ct);
+            var definition = toolRegistry.TryGetDefinition(toolCall.Name);
+            var decision = CreateDecision(session, toolCall, definition, reasoning);
+            var toolResult = await ExecuteOrSuggestAsync(session, decision, toolCall, definition, context, ct);
 
             ExtractEntityIds(decision, toolCall.Input);
             await tenantUow.Repository<AIDispatchDecision>().AddAsync(decision, CancellationToken.None);
@@ -57,25 +53,40 @@ internal sealed class AIDispatchDecisionProcessor(
 
         foreach (var decision in decisions)
         {
-            await BroadcastDecisionAsync(decision);
+            await BroadcastDecisionAsync(decision, context);
         }
 
         return toolResults;
     }
 
-    public static bool IsWriteTool(string toolName) => WriteTools.Contains(toolName);
-
     private async Task<string> ExecuteOrSuggestAsync(
         AIDispatchSession session,
         AIDispatchDecision decision,
         LlmToolUseBlock toolCall,
-        AIDispatchMode mode,
+        AIDispatchToolDefinition? definition,
+        ToolCallContext context,
         CancellationToken ct)
     {
         var toolInputJson = toolCall.Input?.ToJsonString() ?? "{}";
-        var isWriteTool = WriteTools.Contains(toolCall.Name);
 
-        if (isWriteTool && mode == AIDispatchMode.HumanInTheLoop)
+        if (context.CallerPermissions is not null
+            && definition?.RequiredPermission is { } requiredPermission
+            && !context.CallerPermissions.Contains(requiredPermission))
+        {
+            var denied = JsonSerializer.Serialize(new
+            {
+                error = "permission_denied",
+                required_permission = requiredPermission
+            });
+            decision.MarkFailed(denied);
+            logger.LogInformation("Session {SessionId}: tool {ToolName} denied - caller lacks {Permission}",
+                session.Id, toolCall.Name, requiredPermission);
+            return denied;
+        }
+
+        var isWriteTool = definition?.IsWrite == true;
+
+        if (isWriteTool && context.Mode == AIDispatchMode.HumanInTheLoop)
         {
             decision.Status = AIDispatchDecisionStatus.Suggested;
             var result = JsonSerializer.Serialize(new
@@ -116,26 +127,18 @@ internal sealed class AIDispatchDecisionProcessor(
     private static AIDispatchDecision CreateDecision(
         AIDispatchSession session,
         LlmToolUseBlock toolCall,
+        AIDispatchToolDefinition? definition,
         string? reasoning)
     {
         return new AIDispatchDecision
         {
             SessionId = session.Id,
-            Type = MapToolToDecisionType(toolCall.Name),
+            Type = definition?.DecisionType ?? AIDispatchDecisionType.Query,
             ToolName = toolCall.Name,
             ToolInput = toolCall.Input?.ToJsonString() ?? "{}",
             Reasoning = reasoning ?? ""
         };
     }
-
-    private static AIDispatchDecisionType MapToolToDecisionType(string toolName) => toolName switch
-    {
-        "assign_load_to_truck" => AIDispatchDecisionType.AssignLoad,
-        "create_trip" => AIDispatchDecisionType.CreateTrip,
-        "dispatch_trip" => AIDispatchDecisionType.DispatchTrip,
-        "book_loadboard_load" => AIDispatchDecisionType.BookLoadBoardLoad,
-        _ => AIDispatchDecisionType.Query
-    };
 
     private static void ExtractEntityIds(AIDispatchDecision decision, JsonNode? input)
     {
@@ -150,12 +153,24 @@ internal sealed class AIDispatchDecisionProcessor(
 
         if (input["trip_id"] is JsonValue tripIdVal && Guid.TryParse(tripIdVal.GetValue<string>(), out var tripId))
             decision.TripId = tripId;
+
+        if (input["invoice_id"] is JsonValue invoiceIdVal && Guid.TryParse(invoiceIdVal.GetValue<string>(), out var invoiceId))
+            decision.InvoiceId = invoiceId;
+
+        if (input["customer_id"] is JsonValue customerIdVal && Guid.TryParse(customerIdVal.GetValue<string>(), out var customerId))
+            decision.CustomerId = customerId;
     }
 
-    private async Task BroadcastDecisionAsync(AIDispatchDecision decision)
+    private async Task BroadcastDecisionAsync(AIDispatchDecision decision, ToolCallContext context)
     {
         try
         {
+            if (context.DecisionBroadcastOverride is not null)
+            {
+                await context.DecisionBroadcastOverride(decision.ToDto());
+                return;
+            }
+
             var tenantId = tenantUow.GetCurrentTenant().Id;
             await broadcastService.BroadcastDecisionAsync(tenantId, decision.ToDto());
         }

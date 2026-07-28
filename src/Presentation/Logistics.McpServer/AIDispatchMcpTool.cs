@@ -19,9 +19,6 @@ internal sealed class AIDispatchMcpTool : McpServerTool
     private const string WriteWarning =
         " ⚠️ WRITE OPERATION: Always explain what you're about to do and get explicit user confirmation before calling this tool.";
 
-    private static readonly HashSet<string> WriteTools =
-        ["assign_load_to_truck", "create_trip", "dispatch_trip", "book_loadboard_load"];
-
     private readonly Tool protocolTool;
     private readonly TenantFeature? requiredFeature;
 
@@ -29,7 +26,7 @@ internal sealed class AIDispatchMcpTool : McpServerTool
     {
         requiredFeature = definition.RequiredFeature;
 
-        var description = WriteTools.Contains(definition.Name)
+        var description = definition.IsWrite
             ? definition.Description + WriteWarning
             : definition.Description;
 

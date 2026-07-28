@@ -26,6 +26,7 @@ public class AIDispatchDecisionProcessorTests
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IAIDispatchToolExecutor toolExecutor = Substitute.For<IAIDispatchToolExecutor>();
     private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
+    private readonly IAIDispatchToolRegistry toolRegistry = new AIDispatchToolRegistry();
 
     public AIDispatchDecisionProcessorTests()
     {
@@ -38,7 +39,7 @@ public class AIDispatchDecisionProcessorTests
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });
-        sut = new AIDispatchDecisionProcessor(toolExecutor, tenantUow, broadcastService, logger);
+        sut = new AIDispatchDecisionProcessor(toolExecutor, toolRegistry, tenantUow, broadcastService, logger);
     }
 
     private static AIDispatchSession CreateSession(AIDispatchMode mode = AIDispatchMode.Autonomous)
@@ -66,7 +67,7 @@ public class AIDispatchDecisionProcessorTests
             .ThrowsAsync(new InvalidOperationException("Trip is not in Draft status"));
 
         var results = await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.Autonomous, [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         Assert.Single(results);
 
@@ -98,7 +99,7 @@ public class AIDispatchDecisionProcessorTests
             .Returns("{}");
 
         await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.HumanInTheLoop, [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.HumanInTheLoop), [toolUse], null, CancellationToken.None);
 
         await decisionRepo.Received(1).AddAsync(
             Arg.Is<AIDispatchDecision>(d => d.Type == expectedType),
@@ -107,8 +108,10 @@ public class AIDispatchDecisionProcessorTests
 
     #endregion
 
-    #region IsWriteTool
+    #region Write-tool metadata
 
+    // If any of these loses IsWrite, HumanInTheLoop silently auto-executes it instead of
+    // creating a Suggested decision - the exact failure mode the metadata refactor must prevent.
     [Theory]
     [InlineData("assign_load_to_truck", true)]
     [InlineData("create_trip", true)]
@@ -116,9 +119,72 @@ public class AIDispatchDecisionProcessorTests
     [InlineData("book_loadboard_load", true)]
     [InlineData("get_available_trucks", false)]
     [InlineData("calculate_distance", false)]
-    public void IsWriteTool_ClassifiesCorrectly(string toolName, bool expected)
+    public void Registry_ClassifiesWriteToolsCorrectly(string toolName, bool expected)
     {
-        Assert.Equal(expected, AIDispatchDecisionProcessor.IsWriteTool(toolName));
+        Assert.Equal(expected, toolRegistry.TryGetDefinition(toolName)!.IsWrite);
+    }
+
+    #endregion
+
+    #region Permission-scoped runs
+
+    [Fact]
+    public async Task ProcessToolCalls_CallerLacksToolPermission_FailsWithoutExecuting()
+    {
+        var session = CreateSession(AIDispatchMode.HumanInTheLoop);
+        var toolUse = CreateToolUse("get_available_trucks");
+        var context = new ToolCallContext(AIDispatchMode.HumanInTheLoop, CallerPermissions: new HashSet<string>());
+
+        var results = await sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
+
+        Assert.Contains("permission_denied", Assert.Single(results).Content);
+        await toolExecutor.DidNotReceive().ExecuteToolAsync(
+            Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await decisionRepo.Received(1).AddAsync(
+            Arg.Is<AIDispatchDecision>(d => d.Status == AIDispatchDecisionStatus.Failed),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ProcessToolCalls_CallerHasToolPermission_Executes()
+    {
+        var session = CreateSession(AIDispatchMode.HumanInTheLoop);
+        var toolUse = CreateToolUse("get_available_trucks");
+        var context = new ToolCallContext(
+            AIDispatchMode.HumanInTheLoop,
+            CallerPermissions: new HashSet<string> { "Permission.Dispatch.View" });
+
+        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns("{}");
+
+        await sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
+
+        await toolExecutor.Received(1).ExecuteToolAsync(
+            "get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ProcessToolCalls_DecisionBroadcastOverride_ReplacesDefaultBroadcast()
+    {
+        var session = CreateSession();
+        var toolUse = CreateToolUse("get_available_trucks");
+        var overridden = new List<AIDispatchDecisionDto>();
+        var context = new ToolCallContext(
+            AIDispatchMode.Autonomous,
+            DecisionBroadcastOverride: dto =>
+            {
+                overridden.Add(dto);
+                return Task.CompletedTask;
+            });
+
+        toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns("{}");
+
+        await sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
+
+        Assert.Single(overridden);
+        await broadcastService.DidNotReceive().BroadcastDecisionAsync(
+            Arg.Any<Guid>(), Arg.Any<AIDispatchDecisionDto>());
     }
 
     #endregion
@@ -136,7 +202,7 @@ public class AIDispatchDecisionProcessorTests
         });
 
         var results = await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.HumanInTheLoop, [toolUse], "reasoning", CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.HumanInTheLoop), [toolUse], "reasoning", CancellationToken.None);
 
         Assert.Single(results);
 
@@ -166,7 +232,7 @@ public class AIDispatchDecisionProcessorTests
             .Returns("{\"success\": true}");
 
         var results = await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.Autonomous, [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         Assert.Single(results);
 
@@ -190,7 +256,7 @@ public class AIDispatchDecisionProcessorTests
             .Returns("{\"total_trucks\": 5}");
 
         var results = await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.HumanInTheLoop, [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.HumanInTheLoop), [toolUse], null, CancellationToken.None);
 
         Assert.Single(results);
 
@@ -220,7 +286,7 @@ public class AIDispatchDecisionProcessorTests
             .Returns("{\"success\": true}");
 
         await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.Autonomous, [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         await decisionRepo.Received(1).AddAsync(
             Arg.Is<AIDispatchDecision>(d =>
@@ -242,7 +308,7 @@ public class AIDispatchDecisionProcessorTests
             .Returns("{\"success\": true}");
 
         await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.Autonomous, [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         await decisionRepo.Received(1).AddAsync(
             Arg.Is<AIDispatchDecision>(d =>
@@ -270,7 +336,7 @@ public class AIDispatchDecisionProcessorTests
         };
 
         await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.Autonomous, tools, "analyzing fleet", CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.Autonomous), tools, "analyzing fleet", CancellationToken.None);
 
         Assert.Equal(3, session.DecisionCount);
     }
@@ -285,7 +351,7 @@ public class AIDispatchDecisionProcessorTests
             .Returns("{}");
 
         await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.Autonomous, [toolUse], "Let me check the fleet status", CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], "Let me check the fleet status", CancellationToken.None);
 
         await decisionRepo.Received(1).AddAsync(
             Arg.Is<AIDispatchDecision>(d => d.Reasoning == "Let me check the fleet status"),
@@ -310,7 +376,7 @@ public class AIDispatchDecisionProcessorTests
             .Returns("{\"success\": true}");
 
         await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.Autonomous, [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         await broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<AIDispatchDecisionDto>());
@@ -326,7 +392,7 @@ public class AIDispatchDecisionProcessorTests
             .Returns("{}");
 
         await sut.ProcessToolCallsAsync(
-            session, AIDispatchMode.Autonomous, [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         await broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<AIDispatchDecisionDto>());

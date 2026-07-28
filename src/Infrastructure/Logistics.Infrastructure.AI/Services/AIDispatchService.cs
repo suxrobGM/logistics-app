@@ -150,7 +150,7 @@ internal sealed class AIDispatchService(
             }
 
             var toolResults = await decisionProcessor.ProcessToolCallsAsync(
-                session, request.Mode, result.ToolCalls, result.TextContent, ct);
+                session, new ToolCallContext(request.Mode), result.ToolCalls, result.TextContent, ct);
 
             conversation.Messages.Add(LlmMessage.FromToolResults(toolResults));
 

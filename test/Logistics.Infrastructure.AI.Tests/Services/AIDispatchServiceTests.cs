@@ -63,7 +63,8 @@ public class AIDispatchServiceTests
 
         var toolExecutor = Substitute.For<IAIDispatchToolExecutor>();
         var decisionProcessor = new AIDispatchDecisionProcessor(
-            toolExecutor, tenantUow, broadcastService, NullLogger<AIDispatchDecisionProcessor>.Instance);
+            toolExecutor, toolRegistry, tenantUow, broadcastService,
+            NullLogger<AIDispatchDecisionProcessor>.Instance);
 
         var cancellationRegistry = new AIDispatchSessionCancellationRegistry();
 
