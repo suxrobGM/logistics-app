@@ -15,17 +15,13 @@ namespace Logistics.Infrastructure.AI.Services;
 internal sealed class AIDispatchService(
     IOptions<LlmOptions> options,
     AIDispatchConversationBuilder conversationBuilder,
-    AIDispatchDecisionProcessor decisionProcessor,
+    AgentLoopRunner loopRunner,
     AIDispatchSessionCancellationRegistry cancellationRegistry,
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
     IStripeUsageService stripeUsageService,
     ILogger<AIDispatchService> logger) : IAIDispatchService
 {
-    private const int MaxIterations = 25;
-    private const int MaxRetries = 3;
-    private static readonly int[] RetryDelaysMs = [2000, 4000, 8000];
-
     public async Task<AIDispatchSession> RunAsync(AIDispatchRequest request, CancellationToken ct = default)
     {
         var blocked = await CheckLlmDisabledAsync(request, ct);
@@ -67,7 +63,7 @@ internal sealed class AIDispatchService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Dispatch agent session {SessionId} failed", session.Id);
-            session.Fail(SanitizeErrorMessage(ex));
+            session.Fail(AgentLoopRunner.SanitizeErrorMessage(ex));
         }
         finally
         {
@@ -103,93 +99,10 @@ internal sealed class AIDispatchService(
         var config = options.Value;
         var conversation = await conversationBuilder.BuildAsync(session, request, config);
 
-        var totalInputTokens = 0;
-        var totalOutputTokens = 0;
-        var totalCacheReadTokens = 0;
-        var totalCacheCreationTokens = 0;
-
-        for (var iteration = 0; iteration < MaxIterations; iteration++)
-        {
-            ct.ThrowIfCancellationRequested();
-
-            var llmRequest = new LlmRequest
-            {
-                SystemPrompt = conversation.SystemPrompt,
-                Messages = conversation.Messages,
-                Tools = [.. conversation.Tools],
-                Model = conversation.Model,
-                MaxTokens = conversation.MaxTokens,
-                Temperature = conversation.Thinking is not null ? null : 0m,
-                Thinking = conversation.Thinking
-            };
-
-            var result = await SendWithRetryAsync(conversation.Provider, llmRequest, session, ct);
-
-            // Update token usage
-            totalInputTokens += result.Usage.InputTokens;
-            totalOutputTokens += result.Usage.OutputTokens;
-            totalCacheReadTokens += result.Usage.CacheReadTokens;
-            totalCacheCreationTokens += result.Usage.CacheCreationTokens;
-
-            session.InputTokensUsed = totalInputTokens;
-            session.OutputTokensUsed = totalOutputTokens;
-            session.CacheReadTokens = totalCacheReadTokens;
-            session.CacheCreationTokens = totalCacheCreationTokens;
-
-            conversation.Messages.Add(result.AssistantMessage);
-
-            if (result.TextContent is not null)
-                session.Summary = result.TextContent;
-
-            if (result.StopReason == "end_turn" || result.ToolCalls.Count == 0)
-            {
-                logger.LogInformation(
-                    "Agent session {SessionId} completed after {Iterations} iterations, {Tokens} tokens",
-                    session.Id, iteration + 1, session.TotalTokensUsed);
-                break;
-            }
-
-            var toolResults = await decisionProcessor.ProcessToolCallsAsync(
-                session, new ToolCallContext(request.Mode), result.ToolCalls, result.TextContent, ct);
-
-            conversation.Messages.Add(LlmMessage.FromToolResults(toolResults));
-
-            // Broadcast session progress after each iteration (decisions already saved + broadcast by ProcessToolCallsAsync)
-            await BroadcastSessionUpdateAsync(session);
-        }
-
-        // Set quota cost and estimated cost
-        var modelUsed = session.ModelUsed ?? config.GetProviderConfig(config.DefaultProvider).Model;
-        session.RequestCost = LlmPricing.GetMultiplier(modelUsed);
-        session.EstimatedCostUsd = LlmPricing.Calculate(
-            session.ModelUsed ?? config.GetProviderConfig(config.DefaultProvider).Model,
-            totalInputTokens, totalOutputTokens,
-            totalCacheReadTokens, totalCacheCreationTokens);
-    }
-
-    private async Task<LlmResponse> SendWithRetryAsync(
-        ILlmProvider provider,
-        LlmRequest request,
-        AIDispatchSession session,
-        CancellationToken ct)
-    {
-        for (var attempt = 0; attempt <= MaxRetries; attempt++)
-        {
-            try
-            {
-                return await provider.SendAsync(request, ct);
-            }
-            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests && attempt < MaxRetries)
-            {
-                var delay = RetryDelaysMs[attempt];
-                logger.LogWarning(
-                    "Rate limited on session {SessionId}, attempt {Attempt}/{MaxRetries}. Retrying in {Delay}ms",
-                    session.Id, attempt + 1, MaxRetries, delay);
-                await Task.Delay(delay, ct);
-            }
-        }
-
-        throw new HttpRequestException("Rate limited by LLM API after maximum retries. Please try again later.");
+        // Broadcast progress after each iteration (decisions already saved + broadcast by the processor)
+        await loopRunner.RunAsync(
+            session, conversation, new ToolCallContext(request.Mode), config,
+            () => BroadcastSessionUpdateAsync(session), ct);
     }
 
     private async Task<AIDispatchSession?> CheckLlmDisabledAsync(
@@ -214,20 +127,6 @@ internal sealed class AIDispatchService(
         await tenantUow.Repository<AIDispatchSession>().AddAsync(session, ct);
         await tenantUow.SaveChangesAsync(ct);
         return session;
-    }
-
-    private static string SanitizeErrorMessage(Exception ex)
-    {
-        var message = ex.Message;
-        if (ex is HttpRequestException or UnauthorizedAccessException
-            || message.Contains("api key", StringComparison.OrdinalIgnoreCase)
-            || message.Contains("authentication", StringComparison.OrdinalIgnoreCase)
-            || message.Contains("unauthorized", StringComparison.OrdinalIgnoreCase))
-        {
-            return "API authentication error. Check the LLM API key configuration.";
-        }
-
-        return message.Length > 500 ? message[..500] : message;
     }
 
     private async Task BroadcastSessionUpdateAsync(AIDispatchSession session)

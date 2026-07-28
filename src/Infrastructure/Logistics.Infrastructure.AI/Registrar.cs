@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Infrastructure.AI.Providers;
 using Logistics.Infrastructure.AI.Services;
 using Logistics.Infrastructure.AI.Tools;
@@ -28,11 +29,16 @@ public static class Registrar
 
         // Agent services
         services.AddSingleton<AIDispatchSessionCancellationRegistry>();
+        services.AddScoped<AgentLoopRunner>();
         services.AddScoped<IAIDispatchService, AIDispatchService>();
         services.AddScoped<AIDispatchConversationBuilder>();
         services.AddScoped<AIDispatchDecisionProcessor>();
         services.AddScoped<IAIDispatchToolExecutor, AIDispatchToolExecutor>();
         services.AddSingleton<IAIDispatchToolRegistry, AIDispatchToolRegistry>();
+
+        // Copilot (conversational agent sharing the loop, tools, and decision machinery)
+        services.AddScoped<IAICopilotService, AICopilotService>();
+        services.AddScoped<AICopilotConversationBuilder>();
 
         // Individual dispatch tools
         services.AddScoped<IAIDispatchTool, GetUnassignedLoadsTool>();

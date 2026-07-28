@@ -17,6 +17,8 @@ public class AIDispatchDecisionDto
     public Guid? TruckId { get; set; }
     public string? TruckNumber { get; set; }
     public Guid? TripId { get; set; }
+    public Guid? InvoiceId { get; set; }
+    public Guid? CustomerId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ExecutedAt { get; set; }
     public Guid? ApprovedByUserId { get; set; }

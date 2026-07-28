@@ -65,11 +65,12 @@ public class AIDispatchServiceTests
         var decisionProcessor = new AIDispatchDecisionProcessor(
             toolExecutor, toolRegistry, tenantUow, broadcastService,
             NullLogger<AIDispatchDecisionProcessor>.Instance);
+        var loopRunner = new AgentLoopRunner(decisionProcessor, NullLogger<AgentLoopRunner>.Instance);
 
         var cancellationRegistry = new AIDispatchSessionCancellationRegistry();
 
         sut = new AIDispatchService(
-            llmOptions, conversationBuilder, decisionProcessor, cancellationRegistry,
+            llmOptions, conversationBuilder, loopRunner, cancellationRegistry,
             tenantUow, broadcastService, stripeUsageService,
             NullLogger<AIDispatchService>.Instance);
     }
