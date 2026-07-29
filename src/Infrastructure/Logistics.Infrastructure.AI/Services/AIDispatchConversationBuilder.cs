@@ -26,13 +26,6 @@ internal sealed class AIDispatchConversationBuilder(
     ISystemSettingsService systemSettings,
     ILogger<AIDispatchConversationBuilder> logger)
 {
-    /// <summary>
-    /// The registry also holds copilot tools (invoicing, expenses, ...) that must never surface in
-    /// a dispatch run - in autonomous mode they would execute unattended.
-    /// </summary>
-    private static readonly HashSet<string> DispatchToolScope =
-        [Shared.Identity.Policies.Permission.Dispatch.View, Shared.Identity.Policies.Permission.Dispatch.Manage];
-
     public async Task<LlmConversation> BuildAsync(
         AIDispatchSession session,
         AIDispatchRequest request,
@@ -61,7 +54,8 @@ internal sealed class AIDispatchConversationBuilder(
         var systemPrompt = AIDispatchSystemPrompt.Build(
             companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit, policy, hasIntermodal,
             tenant.Settings.OperatingMode);
-        var tools = toolRegistry.GetToolDefinitions(enabledFeatures, DispatchToolScope);
+        // No caller permissions: a dispatch run is gated by the endpoint's policy, not per tool.
+        var tools = toolRegistry.GetToolDefinitions(enabledFeatures, forDispatchAgent: true);
 
         var model = selection.Model;
         session.ModelUsed = model;
@@ -130,8 +124,8 @@ internal sealed class AIDispatchConversationBuilder(
     private async Task<string?> GetPreviousSessionContextAsync()
     {
         var lastSession = await tenantUow.Repository<AIDispatchSession>().Query()
-            .Where(s => s.Type == AIDispatchSessionType.Dispatch
-                && s.Status == AIDispatchSessionStatus.Completed && s.Summary != null)
+            .DispatchOnly()
+            .Where(s => s.Status == AIDispatchSessionStatus.Completed && s.Summary != null)
             .OrderByDescending(s => s.CompletedAt)
             .Select(s => new { s.Number, s.CompletedAt, s.Summary })
             .FirstOrDefaultAsync();

@@ -12,7 +12,7 @@ its own feature + permission scope).
 ## Files that must change
 
 1. **`src/Infrastructure/Logistics.Infrastructure.AI/Tools/{ToolName}Tool.cs`** - the tool implementation
-2. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AIDispatchToolRegistry.cs`** - JSON schema + description **and the behavior metadata** (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`)
+2. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AIDispatchToolRegistry.cs`** - JSON schema + description **and the behavior metadata** (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`, `DispatchAgent`)
 3. **`src/Infrastructure/Logistics.Infrastructure.AI/Registrar.cs`** - DI registration
 4. **`test/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`** - unit test
 
@@ -85,13 +85,19 @@ new("get_something",
     TenantFeature.Loads,                                  // omit when ungated
     IsWrite: true,                                        // write tools only
     RequiredPermission: Permission.Load.Manage,           // ALWAYS - copilot scoping depends on it
-    DecisionType: AIDispatchDecisionType.AssignLoad),     // write tools; add an enum value if new
+    DecisionType: AIDispatchDecisionType.AssignLoad,      // write tools; add an enum value if new
+    DispatchAgent: true),                                 // fleet dispatch agent tools only
 ```
 
 Group with other read tools or other write tools (look at the `── Read Tools ──` / `── Write Tools ──` comments).
 
 - **Every tool declares `RequiredPermission`** - the copilot filters its catalogue by the calling
   user's permissions, and an undeclared permission bypasses that scoping (a registry test enforces this).
+- **`DispatchAgent` decides whether the _fleet dispatch agent_ sees the tool**, independently of
+  which permission it names. It defaults to false because that agent can run `Autonomous`, where an
+  unintended write tool executes with no dispatcher approval. Set it only for tools that belong in
+  a fleet dispatch run; a copilot-only tool leaves it off. The copilot sees every tool the calling
+  user has the permission for either way.
 - Write tools also declare `DecisionType` so the audit trail categorizes them; append to the
   `AIDispatchDecisionType` enum when no existing value fits (append-only).
 - If the tool's ids should link into the decision audit (`load_id`, `invoice_id`, ...), check
@@ -117,6 +123,7 @@ services.AddScoped<IAIDispatchTool, GetSomethingTool>();
 - [ ] Registered in `Registrar.cs` (otherwise DI won't find it and `AIDispatchToolExecutor` returns "Unknown tool")
 - [ ] Added to `AIDispatchToolRegistry.Tools` list (otherwise the LLM never knows it exists)
 - [ ] `RequiredPermission` set; **if write tool**: `IsWrite: true` + `DecisionType` set
+- [ ] `DispatchAgent: true` **only** if the fleet dispatch agent should call it
 - [ ] Unit test added under `test/Logistics.Infrastructure.AI.Tests/Tools/`
 - [ ] `dotnet build` passes
 - [ ] `dotnet test --filter "{ToolName}ToolTests"` passes
@@ -126,7 +133,8 @@ services.AddScoped<IAIDispatchTool, GetSomethingTool>();
 - **Throwing instead of returning `{error}`**: the agent loop catches it, but the agent loses all context on what went wrong.
 - **Verbose tool names or descriptions**: every tool definition is sent on every API call - keep descriptions tight.
 - **Not registering in `Registrar.cs`**: `AIDispatchToolExecutor.toolMap` is built from DI; an unregistered tool is invisible at runtime.
-- **Forgetting `RequiredPermission`**: the dispatch agent's catalogue is scoped to `Permission.Dispatch.*`; a tool without a permission leaks into every copilot conversation regardless of role.
+- **Forgetting `RequiredPermission`**: a tool without a permission leaks into every copilot conversation regardless of role.
+- **Forgetting `DispatchAgent: true` on a dispatch tool**: it is simply absent from the dispatch agent's catalogue, with no error - the agent just can't do the thing.
 
 ## Related
 

@@ -163,17 +163,48 @@ public class AIDispatchToolRegistryTests
 
     /// <summary>In autonomous mode an exposed copilot write tool would execute unattended.</summary>
     [Fact]
-    public void GetToolDefinitions_DispatchScope_ExcludesCopilotTools()
+    public void GetToolDefinitions_ForDispatchAgent_ExcludesCopilotTools()
     {
-        var dispatchScope = new HashSet<string> { "Permission.Dispatch.View", "Permission.Dispatch.Manage" };
-
-        var names = sut.GetToolDefinitions(EveryFeature, dispatchScope).Select(t => t.Name).ToHashSet();
+        var names = sut.GetToolDefinitions(EveryFeature, forDispatchAgent: true)
+            .Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_unassigned_loads", names);
         Assert.Contains("assign_load_to_truck", names);
         Assert.DoesNotContain("create_load_invoice", names);
         Assert.DoesNotContain("send_invoice", names);
         Assert.DoesNotContain("search_loads", names);
+    }
+
+    /// <summary>
+    /// The dispatch catalogue must not be a by-product of which permission a tool happens to name -
+    /// picking a non-Dispatch permission for a new dispatch tool would silently drop it.
+    /// </summary>
+    [Fact]
+    public void GetToolDefinitions_ForDispatchAgent_IsIndependentOfTheToolsPermission()
+    {
+        var dispatchTools = sut.GetToolDefinitions(EveryFeature, forDispatchAgent: true);
+
+        Assert.All(dispatchTools, t => Assert.True(t.DispatchAgent));
+        Assert.Equal(
+            sut.GetAllToolDefinitions().Where(t => t.DispatchAgent).Select(t => t.Name),
+            dispatchTools.Select(t => t.Name));
+    }
+
+    /// <summary>
+    /// A write tool the dispatch agent may call executes unattended in Autonomous mode, so opting
+    /// one in is a deliberate act - this pins the current set.
+    /// </summary>
+    [Fact]
+    public void GetAllToolDefinitions_DispatchAgentWriteToolsAreAKnownSet()
+    {
+        var writeTools = sut.GetAllToolDefinitions()
+            .Where(t => t is { DispatchAgent: true, IsWrite: true })
+            .Select(t => t.Name)
+            .OrderBy(n => n);
+
+        Assert.Equal(
+            ["assign_load_to_truck", "book_loadboard_load", "create_trip", "dispatch_trip"],
+            writeTools);
     }
 
     [Fact]

@@ -14,8 +14,7 @@ internal sealed class GetAIDispatchSessionsHandler(
     public async Task<PagedResult<AIDispatchSessionDto>> Handle(
         GetAIDispatchSessionsQuery request, CancellationToken ct)
     {
-        var query = tenantUow.Repository<AIDispatchSession>().Query()
-            .Where(s => s.Type == AIDispatchSessionType.Dispatch);
+        var query = tenantUow.Repository<AIDispatchSession>().Query().DispatchOnly();
 
         if (request.Status.HasValue)
             query = query.Where(s => s.Status == request.Status.Value);

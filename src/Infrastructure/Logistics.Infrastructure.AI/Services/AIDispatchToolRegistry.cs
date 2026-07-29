@@ -19,7 +19,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 ["properties"] = new JsonObject(),
                 ["required"] = new JsonArray()
             }),
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("get_available_trucks",
             "Get all trucks with Available status along with their driver info, HOS (Hours of Service) status, and a fleet summary (total trucks, available trucks, active trips, drivers in violation). Returns truck ID, number, type, current location, driver name, and remaining driving/on-duty hours.",
@@ -29,7 +30,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 ["properties"] = new JsonObject(),
                 ["required"] = new JsonArray()
             }),
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("get_driver_hos_status",
             "Get detailed HOS (Hours of Service) status for a specific driver. Returns current duty status, driving minutes remaining, on-duty minutes remaining, cycle minutes remaining, violation status, and next mandatory break time.",
@@ -42,7 +44,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 },
                 ["required"] = new JsonArray("driver_id")
             }),
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("check_hos_feasibility",
             "Check if a driver can feasibly complete a trip given the estimated driving distance. Returns whether the driver has enough HOS hours remaining and details about any constraints.",
@@ -56,7 +59,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 },
                 ["required"] = new JsonArray("driver_id", "distance_km")
             }),
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("check_dispatch_eligibility",
             "Check if a truck (and optionally a specific driver) is eligible to carry a load based on driver license class + endorsements, US Hazmat / EU ADR rules, ADR cert validity, truck Hazmat-placarding, and DOT medical certificate. Returns is_eligible and a list of issues with reason codes (severity: error blocks dispatch, warning is informational). Call this BEFORE dispatch_trip or assign_load_to_truck on hazmat / ADR loads, and whenever the human asks 'can driver X carry load Y'.",
@@ -72,7 +76,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 },
                 ["required"] = new JsonArray("truck_id", "load_id")
             }),
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("batch_check_hos_feasibility",
             "Check HOS feasibility for multiple driver-distance pairs in a single call. More efficient than calling check_hos_feasibility multiple times. Returns feasibility result for each pair.",
@@ -99,7 +104,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 },
                 ["required"] = new JsonArray("checks")
             }),
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("calculate_distance",
             "Calculate the driving distance and estimated duration between two geographic points.",
@@ -115,7 +121,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 },
                 ["required"] = new JsonArray("origin_lat", "origin_lng", "dest_lat", "dest_lng")
             }),
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("calculate_assignment_metrics",
             "Calculate revenue per mile/km, deadhead ratio, and profitability for candidate truck-load pairs. Use this when multiple trucks are candidates for a load to pick the most profitable option.",
@@ -142,7 +149,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 },
                 ["required"] = new JsonArray("candidates")
             }),
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("preview_tax_calculation",
             "Compute VAT / sales tax / GST for a hypothetical set of line items without persisting an invoice. Returns per-line tax amount, aggregate breakdown by jurisdiction, and reverse-charge / not-collecting flags. Use when quoting a customer or sanity-checking that tax setup will work before creating the invoice. Read-only.",
@@ -174,7 +182,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 },
                 ["required"] = new JsonArray("customer_id", "currency", "line_items")
             }),
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("get_container_status",
             "Look up an intermodal container by its ISO 6346 number. Returns status (Empty, Loaded, AtPort, InTransit, Delivered, Returned), ISO type, laden flag, gross weight, seal, booking reference, bill of lading, the terminal the box is currently at, and the load it is linked to. Call this for any load that reports a container_number before assigning it.",
@@ -189,7 +198,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 ["required"] = new JsonArray()
             }),
             TenantFeature.IntermodalContainers,
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("get_terminal_info",
             "Look up an intermodal terminal by UN/LOCODE. Returns name, type (SeaPort, RailTerminal, InlandDepot, AirCargo, BorderCrossing), country, street address, and how many containers are currently sitting there. Terminals carry no coordinates - keep using the load's origin_lat/origin_lng for deadhead math.",
@@ -204,7 +214,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 ["required"] = new JsonArray()
             }),
             TenantFeature.IntermodalContainers,
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("search_loadboard",
             "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.",
@@ -221,7 +232,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 ["required"] = new JsonArray("origin_city", "origin_state")
             }),
             TenantFeature.LoadBoard,
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("check_broker_credit",
             "Check a load-board broker's credit standing (score 0-100, days-to-pay, FMCSA authority status) by MC number. Always call this before book_loadboard_load; never book when the score is below the tenant minimum or the authority is inactive.",
@@ -235,7 +247,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 ["required"] = new JsonArray("mc_number")
             }),
             TenantFeature.LoadBoard,
-            RequiredPermission: Permission.Dispatch.View),
+            RequiredPermission: Permission.Dispatch.View,
+            DispatchAgent: true),
 
         new("search_loads",
             "Search loads by status, type, customer, truck, date range, or free text. Returns up to 20 loads per page with number, status, origin/destination, delivery cost, and customer. Use for load history questions ('delivered loads last week', 'loads for customer X').",
@@ -398,7 +411,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
             }),
             IsWrite: true,
             RequiredPermission: Permission.Dispatch.Manage,
-            DecisionType: AIDispatchDecisionType.AssignLoad),
+            DecisionType: AIDispatchDecisionType.AssignLoad,
+            DispatchAgent: true),
 
         new("create_trip",
             "Create a new trip from a set of loads assigned to a truck. Groups multiple loads into an optimized multi-stop trip. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -421,7 +435,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
             }),
             IsWrite: true,
             RequiredPermission: Permission.Dispatch.Manage,
-            DecisionType: AIDispatchDecisionType.CreateTrip),
+            DecisionType: AIDispatchDecisionType.CreateTrip,
+            DispatchAgent: true),
 
         new("dispatch_trip",
             "Dispatch a trip, transitioning it from Draft to Dispatched status. This notifies the driver and starts the trip. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -436,7 +451,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
             }),
             IsWrite: true,
             RequiredPermission: Permission.Dispatch.Manage,
-            DecisionType: AIDispatchDecisionType.DispatchTrip),
+            DecisionType: AIDispatchDecisionType.DispatchTrip,
+            DispatchAgent: true),
 
         new("book_loadboard_load",
             "Book a load from a load board. This claims the load and creates it in the system. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -454,7 +470,8 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
             TenantFeature.LoadBoard,
             IsWrite: true,
             RequiredPermission: Permission.Dispatch.Manage,
-            DecisionType: AIDispatchDecisionType.BookLoadBoardLoad),
+            DecisionType: AIDispatchDecisionType.BookLoadBoardLoad,
+            DispatchAgent: true),
 
         new("create_load_invoice",
             "Create an UNPAID invoice for a load, billed to the load's customer. Call get_load first: the amount defaults to the load's delivery cost, and you should warn the user when the load is not yet Delivered. Fails if the load already has an invoice. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -517,8 +534,10 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
 
     public IReadOnlyList<AIDispatchToolDefinition> GetToolDefinitions(
         IReadOnlySet<TenantFeature> enabledFeatures,
-        IReadOnlySet<string>? callerPermissions = null) =>
+        IReadOnlySet<string>? callerPermissions = null,
+        bool forDispatchAgent = false) =>
         [.. Tools
+            .Where(t => !forDispatchAgent || t.DispatchAgent)
             .Where(t => t.RequiredFeature is null || enabledFeatures.Contains(t.RequiredFeature.Value))
             .Where(t => callerPermissions is null
                 || t.RequiredPermission is null

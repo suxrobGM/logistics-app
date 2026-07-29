@@ -42,6 +42,7 @@ internal sealed class DataRetentionService(
 
                 var oldSessions = await tenantUow.Repository<AIDispatchSession>()
                     .Query()
+                    .DispatchOnly()
                     .Where(s => s.StartedAt < dispatchCutoff)
                     .ToListAsync(ct);
 

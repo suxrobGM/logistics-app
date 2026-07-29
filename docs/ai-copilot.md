@@ -51,8 +51,10 @@ Two layers, both driven by `AIDispatchToolDefinition.RequiredPermission`:
 Approving a suggestion re-checks again: the approver needs `Permission.Copilot.Manage` for the
 endpoint **and** the tool's own permission (e.g. `Permission.Invoice.Manage`).
 
-The dispatch agent's catalogue is scoped to `Permission.Dispatch.*`, which is what keeps copilot
-write tools (invoicing) out of autonomous dispatch runs.
+The dispatch agent's catalogue is a separate axis: it keeps only tools declaring
+`DispatchAgent: true`, which is what keeps copilot write tools (invoicing) out of autonomous
+dispatch runs. It is deliberately **not** derived from `RequiredPermission` - a dispatch tool may
+legitimately require a non-`Dispatch.*` permission, and coupling the two would hide it silently.
 
 ## Approvals
 

@@ -50,12 +50,17 @@ both Claude and OpenAI function calling. Registered in `Registrar.cs`; schemas i
 - Write tools mutate state: `HumanInTheLoop` turns them into `Suggested` decisions, `Autonomous`
   executes them.
 - **Behavior metadata lives on the registry definition**: `IsWrite`, `RequiredPermission`,
-  `DecisionType`, `RequiredFeature`. There is no separate write-tool list. Miss `IsWrite: true`
-  and HumanInTheLoop approvals break silently - the tool just executes. Miss `RequiredPermission`
-  and the tool leaks into every copilot conversation regardless of the caller's role.
-- The registry serves three surfaces: the dispatch agent (catalogue scoped to
-  `Permission.Dispatch.*`), the TMS copilot (scoped to the calling user's permissions - see
-  `docs/ai-copilot.md`), and the MCP server (publishes everything, gates per call).
+  `DecisionType`, `RequiredFeature`, `DispatchAgent`. There is no separate write-tool list. Miss
+  `IsWrite: true` and HumanInTheLoop approvals break silently - the tool just executes. Miss
+  `RequiredPermission` and the tool leaks into every copilot conversation regardless of the
+  caller's role.
+- The registry serves three surfaces: the dispatch agent (`forDispatchAgent: true`, which keeps
+  only tools declaring `DispatchAgent: true`), the TMS copilot (scoped to the calling user's
+  permissions - see `docs/ai-copilot.md`), and the MCP server (publishes everything, gates per call).
+- **`DispatchAgent` defaults to false, and that default is the safe one.** The dispatch agent can
+  run `Autonomous`, so a tool it should not have executes with no dispatcher approval. Opting a
+  tool in is deliberate. Do **not** re-derive this from `RequiredPermission` - a dispatch tool is
+  free to require `Permission.Trip.Manage`, and coupling the two silently hides it.
 
 The agent loop (`AgentLoopRunner`, shared by dispatch and copilot) caps at **25 iterations per session**.
 

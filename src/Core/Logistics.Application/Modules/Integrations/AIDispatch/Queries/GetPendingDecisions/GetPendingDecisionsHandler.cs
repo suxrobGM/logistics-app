@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
@@ -14,8 +15,10 @@ internal sealed class GetPendingDecisionsHandler(
     {
         // Copilot suggestions surface in the chat drawer, not on the dispatch board.
         var decisions = await tenantUow.Repository<AIDispatchDecision>()
-            .GetListAsync(d => d.Status == AIDispatchDecisionStatus.Suggested
-                && d.Session.Type == AIDispatchSessionType.Dispatch, ct);
+            .Query()
+            .DispatchOnly()
+            .Where(d => d.Status == AIDispatchDecisionStatus.Suggested)
+            .ToListAsync(ct);
 
         // Batch-load load names and truck numbers to avoid N+1
         var loadIds = decisions.Where(d => d.LoadId is not null).Select(d => d.LoadId!.Value).Distinct().ToList();

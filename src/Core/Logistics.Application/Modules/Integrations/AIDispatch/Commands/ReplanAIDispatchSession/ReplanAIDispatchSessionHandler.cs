@@ -6,6 +6,7 @@ using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.AIDispatch;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
@@ -17,7 +18,9 @@ internal sealed class ReplanAIDispatchSessionHandler(
     public async Task<Result<Guid>> Handle(ReplanAIDispatchSessionCommand request, CancellationToken ct)
     {
         var originalSession = await tenantUow.Repository<AIDispatchSession>()
-            .GetByIdAsync(request.OriginalSessionId, ct);
+            .Query()
+            .DispatchOnly()
+            .FirstOrDefaultAsync(s => s.Id == request.OriginalSessionId, ct);
 
         if (originalSession is null)
             return Result<Guid>.Fail("Original session not found");

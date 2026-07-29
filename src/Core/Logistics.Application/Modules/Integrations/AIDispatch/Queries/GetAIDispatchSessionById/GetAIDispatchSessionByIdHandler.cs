@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
@@ -13,7 +14,9 @@ internal sealed class GetAIDispatchSessionByIdHandler(
         GetAIDispatchSessionByIdQuery request, CancellationToken ct)
     {
         var session = await tenantUow.Repository<AIDispatchSession>()
-            .GetByIdAsync(request.SessionId, ct);
+            .Query()
+            .DispatchOnly()
+            .FirstOrDefaultAsync(s => s.Id == request.SessionId, ct);
 
         if (session is null)
             return Result<AIDispatchSessionDto>.Fail("Session not found");

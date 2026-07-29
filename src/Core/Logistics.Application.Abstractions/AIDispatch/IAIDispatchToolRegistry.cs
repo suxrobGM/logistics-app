@@ -9,39 +9,42 @@ namespace Logistics.Application.Abstractions.AIDispatch;
 public interface IAIDispatchToolRegistry
 {
     /// <summary>
-    /// The tools a tenant with <paramref name="enabledFeatures"/> may call. Gated tools whose
-    /// feature is off are dropped - their schemas would cost tokens on every request. When
-    /// <paramref name="callerPermissions"/> is given, tools the caller lacks the permission for
-    /// are dropped too, so the model never sees a tool it cannot use.
+    /// The catalogue for one agent run. Tools whose feature is off are dropped (their schemas cost
+    /// tokens every request), as are tools the caller lacks the permission for, so the model never
+    /// sees a tool it cannot use. Null <paramref name="callerPermissions"/> skips that filter.
     /// </summary>
     IReadOnlyList<AIDispatchToolDefinition> GetToolDefinitions(
         IReadOnlySet<TenantFeature> enabledFeatures,
-        IReadOnlySet<string>? callerPermissions = null);
+        IReadOnlySet<string>? callerPermissions = null,
+        bool forDispatchAgent = false);
 
-    /// <summary>Every tool, gated or not. For surfaces that enforce features per call rather than per catalogue.</summary>
+    /// <summary>Every tool, gated or not. For surfaces that gate per call rather than per catalogue.</summary>
     IReadOnlyList<AIDispatchToolDefinition> GetAllToolDefinitions();
 
-    /// <summary>The definition for <paramref name="name"/>, or null for unknown (e.g. hallucinated) tool names.</summary>
+    /// <summary>Null for unknown (e.g. hallucinated) tool names.</summary>
     AIDispatchToolDefinition? TryGetDefinition(string name);
 }
 
 /// <summary>
-/// Defines a single tool that the AI agents can use.
-/// Compatible with both Claude API tool schemas and MCP tool definitions.
+/// A single tool the AI agents can use. Compatible with both Claude API tool schemas and MCP.
 /// </summary>
 /// <param name="RequiredFeature">
-/// Gates the tool. Declared here so the schema filter and the MCP call-time check read the same
-/// value - a new gated group is one field, not a new flag threaded through every caller.
+/// Gates the tool. Read by both the schema filter and the MCP call-time check, so a new gated
+/// group is one field rather than a flag threaded through every caller.
 /// </param>
 /// <param name="IsWrite">
 /// Write tools mutate state: HumanInTheLoop turns them into Suggested decisions, Autonomous
 /// executes them. The single registration point - there is no separate write-tool list.
 /// </param>
 /// <param name="RequiredPermission">
-/// Enforced only for permission-scoped runs (copilot); dispatch runs pass no caller permissions
-/// and are gated by the endpoint's policy instead.
+/// Enforced only for permission-scoped runs (copilot); dispatch runs are gated by the endpoint's
+/// policy instead.
 /// </param>
 /// <param name="DecisionType">How a call is categorized in the decision audit trail.</param>
+/// <param name="DispatchAgent">
+/// Whether the fleet dispatch agent may call this tool. False by default: that agent can run
+/// Autonomous, so a tool it should not have executes unattended. The copilot is unaffected.
+/// </param>
 public record AIDispatchToolDefinition(
     string Name,
     string Description,
@@ -49,4 +52,5 @@ public record AIDispatchToolDefinition(
     TenantFeature? RequiredFeature = null,
     bool IsWrite = false,
     string? RequiredPermission = null,
-    AIDispatchDecisionType DecisionType = AIDispatchDecisionType.Query);
+    AIDispatchDecisionType DecisionType = AIDispatchDecisionType.Query,
+    bool DispatchAgent = false);

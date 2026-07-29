@@ -126,7 +126,7 @@ internal sealed class AIDispatchPolicyLearner(
         var cutoff = DateTime.UtcNow.AddDays(-LookbackDays);
 
         return tenantUow.Repository<AIDispatchDecision>().Query()
-            .Where(d => d.Session.Type == AIDispatchSessionType.Dispatch)
+            .DispatchOnly()
             .Where(d => d.Type != AIDispatchDecisionType.Query)
             .Where(d => d.CreatedAt >= cutoff)
             .Where(d => d.Status == AIDispatchDecisionStatus.Rejected ||

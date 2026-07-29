@@ -6,6 +6,7 @@ using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.AI;
 using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.CurrentUser;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
@@ -23,7 +24,9 @@ internal sealed class RejectAIDispatchDecisionHandler(
             return Result.Fail("AI dispatch is disabled for this tenant");
 
         var decision = await tenantUow.Repository<AIDispatchDecision>()
-            .GetByIdAsync(request.DecisionId, ct);
+            .Query()
+            .DispatchOnly()
+            .FirstOrDefaultAsync(d => d.Id == request.DecisionId, ct);
 
         if (decision is null)
             return Result.Fail("Decision not found");
