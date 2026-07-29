@@ -236,7 +236,7 @@ Tool definitions are JSON Schema, which works with both Claude API tool schemas 
 
 1. **OpenAI-compatible** (most providers): Add a new `LlmProvider` enum value and configure with `BaseUrl` in appsettings
 2. **Custom SDK**: Create a new `ILlmProvider` implementation, add a case in `LlmProviderFactory`
-3. Add model pricing to `LlmPricing.cs` (Pricing, GetMultiplier, GetOverageBillingUnits)
+3. Add one `Pricing` entry in `LlmPricing.cs`, wrapped in `Base`/`Premium`/`Ultra` to set its tier
 4. Add the model to `LlmModelCatalog` - it populates the admin AI Settings dropdown automatically
 
 See the `add-llm-provider` skill for the full checklist.

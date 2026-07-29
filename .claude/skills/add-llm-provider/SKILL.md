@@ -91,32 +91,17 @@ For OpenAI-compatible providers, instantiate `OpenAILlmProvider` with the right 
 
 ### 5. Update `LlmPricing.cs`
 
-**Three places** in this file. Miss any one and quota/billing breaks silently.
+**One entry.** Wrap it in the tier factory - that sets quota multiplier and overage units together, so they cannot drift apart.
 
 ```csharp
 private static readonly Dictionary<string, ModelPricing> Pricing = new()
 {
     // existing entries
-    ["new-model-1"] = new(0.50m, 2.0m, 0.05m), // input, output, cache-read per M tokens
-};
-
-public static int GetMultiplier(string model) => model switch
-{
-    "deepseek-..." or "claude-haiku-4-5" or "gpt-5.4-mini" or "new-model-1" => 1, // base = 1x
-    "gpt-5.4" or "claude-sonnet-4-6" => 5, // premium = 5x
-    "claude-opus-4-8" => 10, // ultra = 10x
-    _ => 1
-};
-
-public static int GetOverageBillingUnits(string model) => model switch
-{
-    "gpt-5.4" or "claude-sonnet-4-6" => 2,
-    "claude-opus-4-8" => 4,
-    _ => 1 // ← matches GetMultiplier mapping
+    ["new-model-1"] = Base(0.50m, 2.0m, 0.05m), // input, output, cache-read per M tokens
 };
 ```
 
-Decide the cost tier (1× / 5× / 10×), then keep billing units in step (1 / 2 / 4 at $0.20/unit). The tier only affects quota cost - it does **not** gate which plans can use the model (the model is global).
+Pick the tier: `Base` (1× quota, 1 overage unit), `Premium` (5×, 2), or `Ultra` (10×, 4) — billing units are $0.20 each. The tier only affects quota cost; it does **not** gate which plans can use the model (the model is global).
 
 ### 6. Add the model to `LlmModelCatalog`
 
@@ -139,14 +124,14 @@ selected model in `UpdateAISettingsCommand`. The admin UI populates automaticall
 - [ ] Config section + appsettings entry + env var documented
 - [ ] (If custom SDK) Provider implementation, no SDK types leak
 - [ ] Factory resolves the new provider
-- [ ] **All three `LlmPricing` switches/dictionaries updated** (Pricing, GetMultiplier, GetOverageBillingUnits)
+- [ ] **`LlmPricing.Pricing` entry added**, wrapped in `Base`/`Premium`/`Ultra`
 - [ ] `LlmModelCatalog` includes the model (id matches the `LlmPricing` keys)
 - [ ] Admin AI Settings page shows the new model in the dropdown
 - [ ] Selecting the model as the global model runs a dispatch session successfully
 
 ## Common mistakes
 
-- **`GetMultiplier` and `GetOverageBillingUnits` out of sync**: a Premium model with multiplier=5 but billing=1 underbills overages.
+- **Using `new(...)` instead of a tier factory** in `Pricing`: it will not compile, because the tier fields have no defaults. That is deliberate - forgetting the tier used to silently bill a Premium model at base rates.
 - **`LlmModelCatalog` id ≠ `LlmPricing` key**: the catalog offers a model the pricing map doesn't know, so it falls back to default pricing/multiplier.
 - **Forgetting `BaseUrl`** for OpenAI-compatible providers - `OpenAILlmProvider` defaults to OpenAI's endpoint and 401s.
 - **SDK types leaking**: importing the provider SDK in any file other than `Providers/{X}LlmProvider.cs` breaks the abstraction.

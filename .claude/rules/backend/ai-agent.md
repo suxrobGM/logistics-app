@@ -72,8 +72,10 @@ names; plans differ by **quota only** - there is no per-plan model tier.
 - `LlmModelCatalog` (`Application.Abstractions/AIDispatch`) is the single source of selectable models.
 - `LlmPricing` is the single source of pricing, cost multipliers, and overage units, keyed by the same
   ids. **Read the current numbers there** - do not copy them into docs, they change every model refresh.
-- `GetMultiplier` and `GetOverageBillingUnits` must agree on each model's tier. `add-llm-provider`
-  enforces this.
+- Tier is declared once per model, via the `Base`/`Premium`/`Ultra` factory used in the `Pricing`
+  dictionary; `GetMultiplier` and `GetOverageBillingUnits` both read it, so they cannot disagree.
+  The one thing to preserve: an **unknown** model falls back to base tier for quota and overage but
+  to Sonnet rates for cost. That asymmetry is deliberate - see the comment on `DefaultPricing`.
 - Quota counting is multiplier-based, not flat session counts: `AIDispatchSession.RequestCost` comes
   from `GetMultiplier()`, `AIQuotaService` sums it for the week, and the tenant-facing API returns a
   percentage only.

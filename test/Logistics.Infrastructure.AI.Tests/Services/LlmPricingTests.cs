@@ -59,8 +59,8 @@ public class LlmPricingTests
     #region GetMultiplier
 
     [Theory]
-    [InlineData("deepseek-chat", 1)]
-    [InlineData("deepseek-reasoner", 1)]
+    [InlineData("deepseek-v4-flash", 1)]
+    [InlineData("deepseek-v4-pro", 1)]
     [InlineData("gpt-5.4-mini", 1)]
     [InlineData("claude-haiku-4-5", 1)]
     [InlineData("gpt-5.4", 5)]
@@ -77,7 +77,7 @@ public class LlmPricingTests
     #region GetOverageBillingUnits
 
     [Theory]
-    [InlineData("deepseek-chat", 1)]
+    [InlineData("deepseek-v4-flash", 1)]
     [InlineData("claude-haiku-4-5", 1)]
     [InlineData("gpt-5.4-mini", 1)]
     [InlineData("gpt-5.4", 2)]
