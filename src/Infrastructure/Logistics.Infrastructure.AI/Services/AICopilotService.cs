@@ -90,7 +90,7 @@ internal sealed class AICopilotService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Copilot turn {SessionId} failed", session.Id);
-            session.Fail(AgentLoopRunner.SanitizeErrorMessage(ex));
+            session.Fail(LlmErrorSanitizer.ForSession(ex));
         }
         finally
         {

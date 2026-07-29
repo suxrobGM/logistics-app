@@ -35,7 +35,7 @@ internal sealed class LlmSessionSetup(
         var selection = await modelResolver.ResolveAsync(config);
         var provider = providerFactory.Create(selection.Provider);
 
-        // Worded to match AgentLoopRunner.SanitizeErrorMessage, which classifies anything
+        // Worded to match LlmErrorSanitizer.ForSession, which classifies anything
         // mentioning "api key" as a configuration fault before it reaches the tenant.
         if (string.IsNullOrWhiteSpace(selection.ProviderConfig.ApiKey))
             throw new InvalidOperationException("LLM API key is not configured.");

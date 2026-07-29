@@ -97,26 +97,6 @@ internal sealed class AgentLoopRunner(
         }
     }
 
-    /// <summary>Strips provider auth details before the message lands on a tenant-visible session row.</summary>
-    internal static string SanitizeErrorMessage(Exception ex)
-    {
-        // Our own message, already safe - and it must not be swallowed by the auth arm below,
-        // which would send an operator hunting for a key problem during a rate-limit window.
-        if (ex is LlmRateLimitedException)
-            return ex.Message;
-
-        var message = ex.Message;
-        if (ex is HttpRequestException or UnauthorizedAccessException
-            || message.Contains("api key", StringComparison.OrdinalIgnoreCase)
-            || message.Contains("authentication", StringComparison.OrdinalIgnoreCase)
-            || message.Contains("unauthorized", StringComparison.OrdinalIgnoreCase))
-        {
-            return "API authentication error. Check the LLM API key configuration.";
-        }
-
-        return message.Length > 500 ? message[..500] : message;
-    }
-
     private async Task<LlmResponse> SendWithRetryAsync(
         ILlmProvider provider,
         LlmRequest request,
@@ -132,7 +112,7 @@ internal sealed class AgentLoopRunner(
             catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.TooManyRequests)
             {
                 // Rethrow on the final attempt rather than letting the provider's own exception
-                // escape - SanitizeErrorMessage cannot tell that one apart from an auth failure.
+                // escape - LlmErrorSanitizer cannot tell that one apart from an auth failure.
                 if (attempt == MaxRetries)
                     throw new LlmRateLimitedException(
                         "Rate limited by the LLM API after maximum retries. Please try again later.", ex);

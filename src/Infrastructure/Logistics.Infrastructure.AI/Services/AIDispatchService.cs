@@ -63,7 +63,7 @@ internal sealed class AIDispatchService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Dispatch agent session {SessionId} failed", session.Id);
-            session.Fail(AgentLoopRunner.SanitizeErrorMessage(ex));
+            session.Fail(LlmErrorSanitizer.ForSession(ex));
         }
         finally
         {

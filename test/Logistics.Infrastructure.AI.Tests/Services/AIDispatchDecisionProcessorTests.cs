@@ -78,6 +78,54 @@ public class AIDispatchDecisionProcessorTests
             Arg.Any<CancellationToken>());
     }
 
+    [Fact]
+    public async Task ProcessToolCalls_ToolCancelled_PropagatesAndSkipsRemainingTools()
+    {
+        var session = CreateSession();
+        var first = CreateToolUse("dispatch_trip", new JsonObject { ["trip_id"] = Guid.NewGuid().ToString() });
+        var second = CreateToolUse("create_trip", new JsonObject { ["truck_id"] = Guid.NewGuid().ToString() });
+
+        toolExecutor.ExecuteToolAsync("dispatch_trip", Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new OperationCanceledException());
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            sut.ProcessToolCallsAsync(
+                session, new ToolCallContext(AIDispatchMode.Autonomous), [first, second], null,
+                CancellationToken.None));
+
+        // A cancel must stop the batch, not degrade into a failed decision and carry on executing
+        // the remaining write tools.
+        await toolExecutor.DidNotReceive().ExecuteToolAsync(
+            "create_trip", Arg.Any<string>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ProcessToolCalls_ToolThrowsAuthError_RecordsSanitizedMessage()
+    {
+        var session = CreateSession();
+        var toolUse = CreateToolUse("dispatch_trip", new JsonObject
+        {
+            ["trip_id"] = Guid.NewGuid().ToString()
+        });
+
+        toolExecutor.ExecuteToolAsync("dispatch_trip", Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new InvalidOperationException(
+                "Login failed for user 'sa'; unauthorized at Host=db-prod-01;Password=hunter2"));
+
+        var results = await sut.ProcessToolCallsAsync(
+            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
+
+        // The decision row is tenant-visible and the same text is fed back to the model.
+        Assert.DoesNotContain("hunter2", results[0].Content);
+        Assert.DoesNotContain("db-prod-01", results[0].Content);
+
+        await decisionRepo.Received(1).AddAsync(
+            Arg.Is<AIDispatchDecision>(d =>
+                d.Status == AIDispatchDecisionStatus.Failed &&
+                !d.ToolOutput!.Contains("hunter2")),
+            Arg.Any<CancellationToken>());
+    }
+
     #endregion
 
     #region Decision type mapping

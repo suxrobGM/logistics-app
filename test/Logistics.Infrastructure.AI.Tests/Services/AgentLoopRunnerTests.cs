@@ -149,18 +149,40 @@ public class AgentLoopRunnerTests
         Assert.Equal(4, calls);
 
         // The tenant must be told about the rate limit, not sent to check the API key.
-        var sanitized = AgentLoopRunner.SanitizeErrorMessage(ex);
+        var sanitized = LlmErrorSanitizer.ForSession(ex);
         Assert.Contains("Rate limited", sanitized);
         Assert.DoesNotContain("API key", sanitized);
     }
 
     [Fact]
-    public void SanitizeErrorMessage_GenuineAuthFailure_StillReportsKeyProblem()
+    public void ForSession_GenuineAuthFailure_StillReportsKeyProblem()
     {
-        var sanitized = AgentLoopRunner.SanitizeErrorMessage(
+        var sanitized = LlmErrorSanitizer.ForSession(
             new HttpRequestException("401 Unauthorized", null, HttpStatusCode.Unauthorized));
 
         Assert.Equal("API authentication error. Check the LLM API key configuration.", sanitized);
+    }
+
+    [Fact]
+    public void ForToolCall_AuthShapedFailure_RedactsWithoutBlamingTheLlmKey()
+    {
+        // A tool talks to the database and to vendor APIs, so an auth failure here is not the LLM
+        // credentials - saying so would send the operator to the wrong system entirely.
+        var sanitized = LlmErrorSanitizer.ForToolCall(
+            new InvalidOperationException("unauthorized: Host=db-prod-01;Password=hunter2"));
+
+        Assert.DoesNotContain("hunter2", sanitized);
+        Assert.DoesNotContain("db-prod-01", sanitized);
+        Assert.DoesNotContain("API key", sanitized);
+    }
+
+    [Fact]
+    public void ForToolCall_OrdinaryFailure_KeepsTheMessage()
+    {
+        var sanitized = LlmErrorSanitizer.ForToolCall(
+            new InvalidOperationException("Trip is not in Draft status"));
+
+        Assert.Equal("Trip is not in Draft status", sanitized);
     }
 
     [Fact]

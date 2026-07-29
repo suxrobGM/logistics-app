@@ -2,7 +2,7 @@ namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
 /// The provider kept returning 429 after every retry. Distinct from a bare
-/// <see cref="HttpRequestException"/> so <c>AgentLoopRunner.SanitizeErrorMessage</c> can tell a
+/// <see cref="HttpRequestException"/> so <c>LlmErrorSanitizer</c> can tell a
 /// rate-limit window apart from a credentials problem - the two send an operator to very different
 /// places.
 /// </summary>

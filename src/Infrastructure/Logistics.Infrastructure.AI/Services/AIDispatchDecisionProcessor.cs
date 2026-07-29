@@ -115,11 +115,15 @@ internal sealed class AIDispatchDecisionProcessor(
 
             return result;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             logger.LogWarning(ex, "Session {SessionId}: tool {ToolName} failed",
                 session.Id, toolCall.Name);
-            var errorResult = JsonSerializer.Serialize(new { error = ex.Message });
+
+            // Sanitized: this lands on a tenant-visible decision row AND goes back into the model's
+            // context, so a raw exception could leak connection strings or vendor credentials.
+            var errorResult = JsonSerializer.Serialize(
+                new { error = LlmErrorSanitizer.ForToolCall(ex) });
             decision.MarkFailed(errorResult);
             return errorResult;
         }
