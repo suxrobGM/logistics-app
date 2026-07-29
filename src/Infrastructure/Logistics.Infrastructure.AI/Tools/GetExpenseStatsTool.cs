@@ -20,7 +20,7 @@ internal sealed class GetExpenseStatsTool(IMediator mediator) : IAIDispatchTool
         var result = await mediator.Send(query, ct);
 
         if (!result.IsSuccess || result.Value is null)
-            return JsonSerializer.Serialize(new { error = result.Error ?? "No expense data" });
+            return ToolResult.Error(result.Error ?? "No expense data");
 
         var s = result.Value;
         return JsonSerializer.Serialize(new

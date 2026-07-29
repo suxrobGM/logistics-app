@@ -12,7 +12,7 @@ internal sealed class CreatePaymentLinkTool(IMediator mediator) : IAIDispatchToo
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
         if (input.GetGuid("invoice_id") is not { } invoiceId)
-            return JsonSerializer.Serialize(new { error = "Invalid or missing invoice_id" });
+            return ToolResult.Error("Invalid or missing invoice_id");
 
         var result = await mediator.Send(new CreatePaymentLinkCommand
         {
@@ -21,7 +21,7 @@ internal sealed class CreatePaymentLinkTool(IMediator mediator) : IAIDispatchToo
         }, ct);
 
         if (!result.IsSuccess || result.Value is null)
-            return JsonSerializer.Serialize(new { success = false, error = result.Error });
+            return ToolResult.WriteFailed(result);
 
         var link = result.Value;
         return JsonSerializer.Serialize(new

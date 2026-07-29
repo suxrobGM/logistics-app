@@ -20,18 +20,18 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IAIDispatc
     {
         if (!Guid.TryParse(input["customer_id"]?.GetValue<string>(), out var customerId))
         {
-            return Error("Missing or invalid customer_id");
+            return ToolResult.Error("Missing or invalid customer_id");
         }
 
         var currency = input["currency"]?.GetValue<string>();
         if (string.IsNullOrWhiteSpace(currency))
         {
-            return Error("Missing currency");
+            return ToolResult.Error("Missing currency");
         }
 
         if (input["line_items"] is not JsonArray itemsArray || itemsArray.Count == 0)
         {
-            return Error("Missing or empty line_items");
+            return ToolResult.Error("Missing or empty line_items");
         }
 
         var lineItems = new List<PreviewInvoiceTaxLineItem>(itemsArray.Count);
@@ -40,7 +40,7 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IAIDispatc
             if (item is null) continue;
             if (!decimal.TryParse(item["amount"]?.ToString(), out var amount))
             {
-                return Error("Each line_item requires a numeric amount");
+                return ToolResult.Error("Each line_item requires a numeric amount");
             }
 
             lineItems.Add(new PreviewInvoiceTaxLineItem
@@ -65,7 +65,7 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IAIDispatc
 
         if (!result.IsSuccess || result.Value is null)
         {
-            return Error(result.Error ?? "Unknown error");
+            return ToolResult.Error(result.Error ?? "Unknown error");
         }
 
         var response = result.Value;
@@ -101,7 +101,4 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IAIDispatc
         Enum.TryParse<InvoiceLineItemType>(raw, ignoreCase: true, out var parsed)
             ? parsed
             : InvoiceLineItemType.Other;
-
-    private static string Error(string message) =>
-        JsonSerializer.Serialize(new { error = message });
 }

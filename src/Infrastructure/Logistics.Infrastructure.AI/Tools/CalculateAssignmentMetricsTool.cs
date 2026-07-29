@@ -15,7 +15,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
     {
         var candidateNodes = input["candidates"]?.AsArray();
         if (candidateNodes is null || candidateNodes.Count == 0)
-            return JsonSerializer.Serialize(new { error = "Missing or empty candidates array" });
+            return ToolResult.Error("Missing or empty candidates array");
 
         var results = new List<object>();
 

@@ -13,12 +13,12 @@ internal sealed class CheckDispatchEligibilityTool(IDispatchEligibilityService e
     {
         if (!Guid.TryParse(input["truck_id"]?.GetValue<string>(), out var truckId))
         {
-            return JsonSerializer.Serialize(new { error = "Invalid or missing truck_id" });
+            return ToolResult.Error("Invalid or missing truck_id");
         }
 
         if (!Guid.TryParse(input["load_id"]?.GetValue<string>(), out var loadId))
         {
-            return JsonSerializer.Serialize(new { error = "Invalid or missing load_id" });
+            return ToolResult.Error("Invalid or missing load_id");
         }
 
         Guid? driverId = null;
@@ -27,7 +27,7 @@ internal sealed class CheckDispatchEligibilityTool(IDispatchEligibilityService e
         {
             if (!Guid.TryParse(driverIdRaw, out var parsedDriverId))
             {
-                return JsonSerializer.Serialize(new { error = "Invalid driver_id" });
+                return ToolResult.Error("Invalid driver_id");
             }
             driverId = parsedDriverId;
         }

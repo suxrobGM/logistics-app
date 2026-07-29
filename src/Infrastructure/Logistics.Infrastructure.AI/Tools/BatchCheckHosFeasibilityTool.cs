@@ -13,7 +13,7 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) 
     {
         var checksNode = input["checks"]?.AsArray();
         if (checksNode is null || checksNode.Count == 0)
-            return JsonSerializer.Serialize(new { error = "Missing or empty 'checks' array" });
+            return ToolResult.Error("Missing or empty 'checks' array");
 
         // Parse all check requests
         var checks = checksNode
@@ -27,7 +27,7 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) 
             .ToList();
 
         if (checks.Count == 0)
-            return JsonSerializer.Serialize(new { error = "No valid checks provided" });
+            return ToolResult.Error("No valid checks provided");
 
         // Batch-load all HOS statuses in one query
         var driverIds = checks.Select(c => c.DriverId!.Value).Distinct().ToList();

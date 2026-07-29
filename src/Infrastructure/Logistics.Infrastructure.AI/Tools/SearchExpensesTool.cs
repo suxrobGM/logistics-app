@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Financial.Expenses.Queries;
@@ -8,8 +7,6 @@ namespace Logistics.Infrastructure.AI.Tools;
 
 internal sealed class SearchExpensesTool(IMediator mediator) : IAIDispatchTool
 {
-    private const int MaxResults = 20;
-
     public string Name => "search_expenses";
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
@@ -23,13 +20,13 @@ internal sealed class SearchExpensesTool(IMediator mediator) : IAIDispatchTool
             ToDate = input.GetDate("to_date"),
             Search = input.GetString("search"),
             Page = input.GetInt("page") ?? 1,
-            PageSize = MaxResults
+            PageSize = ToolResult.MaxResults
         };
 
         var result = await mediator.Send(query, ct);
 
         if (!result.IsSuccess)
-            return JsonSerializer.Serialize(new { error = result.Error });
+            return ToolResult.Error(result.Error);
 
         var items = result.Value?.ToList() ?? [];
         var expenses = items.Select(e => new
@@ -45,14 +42,8 @@ internal sealed class SearchExpensesTool(IMediator mediator) : IAIDispatchTool
             truck_number = e.Truck?.Number,
             expense_date = e.ExpenseDate.ToString("yyyy-MM-dd"),
             notes = e.Notes
-        });
+        }).ToList();
 
-        return JsonSerializer.Serialize(new
-        {
-            expenses,
-            count = items.Count,
-            total = result.TotalItems,
-            truncated = result.TotalItems > items.Count
-        });
+        return ToolResult.Paged("expenses", expenses, result.TotalItems);
     }
 }

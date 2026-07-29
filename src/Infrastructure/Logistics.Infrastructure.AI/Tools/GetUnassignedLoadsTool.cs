@@ -14,7 +14,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IAIDispatchTo
         var result = await mediator.Send(new GetUnassignedLoadsQuery(), ct);
 
         if (!result.IsSuccess)
-            return JsonSerializer.Serialize(new { error = result.Error });
+            return ToolResult.Error(result.Error);
 
         var items = result.Value?.ToList() ?? [];
         var loads = items.Select(l => new

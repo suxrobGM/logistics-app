@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Operations.Loads.Queries;
@@ -8,8 +7,6 @@ namespace Logistics.Infrastructure.AI.Tools;
 
 internal sealed class SearchLoadsTool(IMediator mediator) : IAIDispatchTool
 {
-    private const int MaxResults = 20;
-
     public string Name => "search_loads";
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
@@ -25,13 +22,13 @@ internal sealed class SearchLoadsTool(IMediator mediator) : IAIDispatchTool
             EndDate = input.GetDate("end_date"),
             OrderBy = "-CreatedAt",
             Page = input.GetInt("page") ?? 1,
-            PageSize = MaxResults
+            PageSize = ToolResult.MaxResults
         };
 
         var result = await mediator.Send(query, ct);
 
         if (!result.IsSuccess)
-            return JsonSerializer.Serialize(new { error = result.Error });
+            return ToolResult.Error(result.Error);
 
         var items = result.Value?.ToList() ?? [];
         var loads = items.Select(l => new
@@ -49,14 +46,8 @@ internal sealed class SearchLoadsTool(IMediator mediator) : IAIDispatchTool
             truck_number = l.AssignedTruckNumber,
             delivered_at = l.DeliveredAt?.ToString("yyyy-MM-dd"),
             created_at = l.CreatedAt.ToString("yyyy-MM-dd")
-        });
+        }).ToList();
 
-        return JsonSerializer.Serialize(new
-        {
-            loads,
-            count = items.Count,
-            total = result.TotalItems,
-            truncated = result.TotalItems > items.Count
-        });
+        return ToolResult.Paged("loads", loads, result.TotalItems);
     }
 }

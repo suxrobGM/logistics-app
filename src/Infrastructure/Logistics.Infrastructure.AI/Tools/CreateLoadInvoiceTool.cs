@@ -14,15 +14,15 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator) : IAIDispatchToo
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
         if (input.GetGuid("load_id") is not { } loadId)
-            return JsonSerializer.Serialize(new { error = "Invalid or missing load_id" });
+            return ToolResult.Error("Invalid or missing load_id");
 
         var loadResult = await mediator.Send(new GetLoadByIdQuery { Id = loadId }, ct);
         if (!loadResult.IsSuccess || loadResult.Value is null)
-            return JsonSerializer.Serialize(new { error = loadResult.Error ?? "Load not found" });
+            return ToolResult.Error(loadResult.Error ?? "Load not found");
 
         var load = loadResult.Value;
         if (load.Customer is null)
-            return JsonSerializer.Serialize(new { error = "The load has no customer to invoice" });
+            return ToolResult.Error("The load has no customer to invoice");
 
         if (load.Invoice is not null)
         {
@@ -36,7 +36,7 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator) : IAIDispatchToo
 
         var amount = input.GetDecimal("amount") ?? load.DeliveryCost;
         if (amount <= 0)
-            return JsonSerializer.Serialize(new { error = "Invoice amount must be greater than zero" });
+            return ToolResult.Error("Invoice amount must be greater than zero");
 
         var result = await mediator.Send(new CreateLoadInvoiceCommand
         {
@@ -48,7 +48,7 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator) : IAIDispatchToo
         }, ct);
 
         if (!result.IsSuccess)
-            return JsonSerializer.Serialize(new { success = false, error = result.Error });
+            return ToolResult.WriteFailed(result);
 
         // Read the created invoice back for its number and currency, which the command does not return.
         var created = await mediator.Send(new GetInvoiceByIdQuery { Id = result.Value }, ct);

@@ -12,12 +12,12 @@ internal sealed class GetInvoiceTool(IMediator mediator) : IAIDispatchTool
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
         if (input.GetGuid("invoice_id") is not { } invoiceId)
-            return JsonSerializer.Serialize(new { error = "Invalid or missing invoice_id" });
+            return ToolResult.Error("Invalid or missing invoice_id");
 
         var result = await mediator.Send(new GetInvoiceByIdQuery { Id = invoiceId }, ct);
 
         if (!result.IsSuccess || result.Value is null)
-            return JsonSerializer.Serialize(new { error = result.Error ?? "Invoice not found" });
+            return ToolResult.Error(result.Error ?? "Invoice not found");
 
         var i = result.Value;
         var payments = i.Payments.ToList();

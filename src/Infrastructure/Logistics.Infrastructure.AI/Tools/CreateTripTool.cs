@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Operations.Trips.Commands;
@@ -12,17 +11,17 @@ internal sealed class CreateTripTool(IMediator mediator) : IAIDispatchTool
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
         if (!Guid.TryParse(input["truck_id"]?.GetValue<string>(), out var truckId))
-            return JsonSerializer.Serialize(new { error = "Invalid or missing truck_id" });
+            return ToolResult.Error("Invalid or missing truck_id");
 
         var loadIdNodes = input["load_ids"]?.AsArray();
         if (loadIdNodes is null || loadIdNodes.Count == 0)
-            return JsonSerializer.Serialize(new { error = "Missing or empty load_ids" });
+            return ToolResult.Error("Missing or empty load_ids");
 
         var loadIds = new List<Guid>();
         foreach (var node in loadIdNodes)
         {
             if (!Guid.TryParse(node?.GetValue<string>(), out var id))
-                return JsonSerializer.Serialize(new { error = $"Invalid load_id: {node}" });
+                return ToolResult.Error($"Invalid load_id: {node}");
             loadIds.Add(id);
         }
 
@@ -37,8 +36,6 @@ internal sealed class CreateTripTool(IMediator mediator) : IAIDispatchTool
 
         var result = await mediator.Send(command, ct);
 
-        return result.IsSuccess
-            ? JsonSerializer.Serialize(new { success = true, trip_id = result.Value })
-            : JsonSerializer.Serialize(new { success = false, error = result.Error });
+        return ToolResult.Written(result, new { success = true, trip_id = result.Value });
     }
 }

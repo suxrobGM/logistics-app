@@ -16,7 +16,7 @@ internal sealed class CalculateDistanceTool : IAIDispatchTool
         double? destLng = input["dest_lng"]?.GetValue<double>();
 
         if (originLat is null || originLng is null || destLat is null || destLng is null)
-            return Task.FromResult(JsonSerializer.Serialize(new { error = "Missing required coordinate parameters" }));
+            return Task.FromResult(ToolResult.Error("Missing required coordinate parameters"));
 
         var origin = new GeoPoint(originLng.Value, originLat.Value);
         var destination = new GeoPoint(destLng.Value, destLat.Value);

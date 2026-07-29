@@ -13,7 +13,7 @@ internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditSer
         var mcNumber = input["mc_number"]?.GetValue<string>();
         if (string.IsNullOrWhiteSpace(mcNumber))
         {
-            return JsonSerializer.Serialize(new { error = "Missing mc_number" });
+            return ToolResult.Error("Missing mc_number");
         }
 
         var credit = await brokerCreditService.GetBrokerCreditAsync(mcNumber, ct);

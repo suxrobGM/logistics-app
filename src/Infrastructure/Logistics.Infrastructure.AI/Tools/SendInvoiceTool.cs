@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Financial.Invoices.Commands;
@@ -12,11 +11,11 @@ internal sealed class SendInvoiceTool(IMediator mediator) : IAIDispatchTool
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
         if (input.GetGuid("invoice_id") is not { } invoiceId)
-            return JsonSerializer.Serialize(new { error = "Invalid or missing invoice_id" });
+            return ToolResult.Error("Invalid or missing invoice_id");
 
         var recipientEmail = input.GetString("recipient_email");
         if (string.IsNullOrWhiteSpace(recipientEmail))
-            return JsonSerializer.Serialize(new { error = "Invalid or missing recipient_email" });
+            return ToolResult.Error("Invalid or missing recipient_email");
 
         var result = await mediator.Send(new SendInvoiceCommand
         {
@@ -25,8 +24,6 @@ internal sealed class SendInvoiceTool(IMediator mediator) : IAIDispatchTool
             PersonalMessage = input.GetString("personal_message")
         }, ct);
 
-        return result.IsSuccess
-            ? JsonSerializer.Serialize(new { success = true, invoice_id = invoiceId, sent_to = recipientEmail })
-            : JsonSerializer.Serialize(new { success = false, error = result.Error });
+        return ToolResult.Written(result, new { success = true, invoice_id = invoiceId, sent_to = recipientEmail });
     }
 }

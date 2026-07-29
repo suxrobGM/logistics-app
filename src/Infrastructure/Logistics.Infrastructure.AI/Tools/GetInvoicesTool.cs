@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
@@ -8,8 +7,6 @@ namespace Logistics.Infrastructure.AI.Tools;
 
 internal sealed class GetInvoicesTool(IMediator mediator) : IAIDispatchTool
 {
-    private const int MaxResults = 20;
-
     public string Name => "get_invoices";
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
@@ -25,13 +22,13 @@ internal sealed class GetInvoicesTool(IMediator mediator) : IAIDispatchTool
             InvoiceType = InvoiceType.Load,
             OrderBy = "-CreatedDate",
             Page = input.GetInt("page") ?? 1,
-            PageSize = MaxResults
+            PageSize = ToolResult.MaxResults
         };
 
         var result = await mediator.Send(query, ct);
 
         if (!result.IsSuccess)
-            return JsonSerializer.Serialize(new { error = result.Error });
+            return ToolResult.Error(result.Error);
 
         var items = result.Value?.ToList() ?? [];
         var invoices = items.Select(i => new
@@ -48,14 +45,8 @@ internal sealed class GetInvoicesTool(IMediator mediator) : IAIDispatchTool
             customer = i.Customer?.Name,
             customer_id = i.CustomerId,
             created_at = i.CreatedDate.ToString("yyyy-MM-dd")
-        });
+        }).ToList();
 
-        return JsonSerializer.Serialize(new
-        {
-            invoices,
-            count = items.Count,
-            total = result.TotalItems,
-            truncated = result.TotalItems > items.Count
-        });
+        return ToolResult.Paged("invoices", invoices, result.TotalItems);
     }
 }

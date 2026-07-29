@@ -12,12 +12,12 @@ internal sealed class GetLoadTool(IMediator mediator) : IAIDispatchTool
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
         if (input.GetGuid("load_id") is not { } loadId)
-            return JsonSerializer.Serialize(new { error = "Invalid or missing load_id" });
+            return ToolResult.Error("Invalid or missing load_id");
 
         var result = await mediator.Send(new GetLoadByIdQuery { Id = loadId }, ct);
 
         if (!result.IsSuccess || result.Value is null)
-            return JsonSerializer.Serialize(new { error = result.Error ?? "Load not found" });
+            return ToolResult.Error(result.Error ?? "Load not found");
 
         var l = result.Value;
         return JsonSerializer.Serialize(new

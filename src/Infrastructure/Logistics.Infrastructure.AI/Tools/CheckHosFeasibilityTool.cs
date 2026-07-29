@@ -12,7 +12,7 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAI
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
         if (!Guid.TryParse(input["driver_id"]?.GetValue<string>(), out var driverId))
-            return JsonSerializer.Serialize(new { error = "Invalid or missing driver_id" });
+            return ToolResult.Error("Invalid or missing driver_id");
 
         var distanceKm = input["distance_km"]?.GetValue<double>() ?? 0;
 

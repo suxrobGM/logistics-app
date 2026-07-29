@@ -12,13 +12,13 @@ internal sealed class GetDriverHosTool(ITenantUnitOfWork tenantUow) : IAIDispatc
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
         if (!Guid.TryParse(input["driver_id"]?.GetValue<string>(), out var driverId))
-            return JsonSerializer.Serialize(new { error = "Invalid or missing driver_id" });
+            return ToolResult.Error("Invalid or missing driver_id");
 
         var hos = await tenantUow.Repository<DriverHosStatus>()
             .GetAsync(h => h.EmployeeId == driverId, ct);
 
         if (hos is null)
-            return JsonSerializer.Serialize(new { error = "No HOS data found for this driver" });
+            return ToolResult.Error("No HOS data found for this driver");
 
         return JsonSerializer.Serialize(new
         {

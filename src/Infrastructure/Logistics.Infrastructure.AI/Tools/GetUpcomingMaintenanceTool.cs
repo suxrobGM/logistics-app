@@ -21,7 +21,7 @@ internal sealed class GetUpcomingMaintenanceTool(IMediator mediator) : IAIDispat
         var result = await mediator.Send(query, ct);
 
         if (!result.IsSuccess || result.Value is null)
-            return JsonSerializer.Serialize(new { error = result.Error ?? "No maintenance data" });
+            return ToolResult.Error(result.Error ?? "No maintenance data");
 
         var schedules = result.Value.Select(s => new
         {
