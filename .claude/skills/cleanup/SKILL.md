@@ -1,6 +1,8 @@
 ---
 name: cleanup
 description: 'Review and clean up the given file(s)/folder(s)/module(s) in any language or framework: rate organization, find dead code, duplication, coupling, over-engineering, structural and architectural problems, then produce and execute a phased refactor plan. May apply architecture/pattern changes when they are a net simplification. Trigger on "clean up X", "review and refactor X", "rate the code in X", "code quality review of X".'
+metadata:
+  version: 1.0
 ---
 
 # Code Cleanup
