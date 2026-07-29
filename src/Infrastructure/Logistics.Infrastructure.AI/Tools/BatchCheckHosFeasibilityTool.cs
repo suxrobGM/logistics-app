@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -38,55 +37,24 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) 
         var results = checks.Select(check =>
         {
             var driverId = check.DriverId!.Value;
-            var estimatedDrivingMinutes = (int)(check.DistanceKm / 80.0 * 60);
-
-            if (!hosStatuses.TryGetValue(driverId, out var hos))
-                return new
-                {
-                    driver_id = driverId.ToString(),
-                    distance_km = check.DistanceKm,
-                    feasible = false,
-                    feasible_multi_day = false,
-                    estimated_driving_minutes = estimatedDrivingMinutes,
-                    driving_minutes_remaining = (int?)null,
-                    on_duty_minutes_remaining = (int?)null,
-                    reason = "No HOS data available for this driver"
-                };
-
-            var singleWindowFeasible = !hos.IsInViolation
-                && hos.DrivingMinutesRemaining >= estimatedDrivingMinutes
-                && hos.OnDutyMinutesRemaining >= estimatedDrivingMinutes;
-
-            var multiDay = !singleWindowFeasible && !hos.IsInViolation
-                && hos.DrivingMinutesRemaining >= 120;
-
-            var reason = $"Insufficient hours: need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min driving - too low to make meaningful progress";
-            if (singleWindowFeasible)
-            {
-                reason = "Driver has sufficient hours to complete in one stretch";
-            }
-            else if (hos.IsInViolation)
-            {
-                reason = "Driver is currently in HOS violation";
-            }
-            else if (multiDay)
-            {
-                reason = $"Not completable in current window (need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min), but feasible as multi-day trip with rest stops";
-            }
+            var hos = hosStatuses.GetValueOrDefault(driverId);
+            var verdict = hos is null
+                ? HosFeasibility.Unknown(check.DistanceKm)
+                : HosFeasibility.Evaluate(hos, check.DistanceKm);
 
             return new
             {
                 driver_id = driverId.ToString(),
                 distance_km = check.DistanceKm,
-                feasible = singleWindowFeasible,
-                feasible_multi_day = multiDay,
-                estimated_driving_minutes = estimatedDrivingMinutes,
-                driving_minutes_remaining = (int?)hos.DrivingMinutesRemaining,
-                on_duty_minutes_remaining = (int?)hos.OnDutyMinutesRemaining,
-                reason
+                feasible = verdict.Feasible,
+                feasible_multi_day = verdict.FeasibleMultiDay,
+                estimated_driving_minutes = verdict.EstimatedDrivingMinutes,
+                driving_minutes_remaining = (int?)hos?.DrivingMinutesRemaining,
+                on_duty_minutes_remaining = (int?)hos?.OnDutyMinutesRemaining,
+                reason = verdict.Reason
             };
         }).ToList();
 
-        return JsonSerializer.Serialize(new { results, count = results.Count });
+        return ToolResult.Ok(new { results, count = results.Count });
     }
 }

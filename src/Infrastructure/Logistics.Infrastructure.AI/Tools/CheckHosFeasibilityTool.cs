@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -19,42 +18,25 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAI
         var hos = await tenantUow.Repository<DriverHosStatus>()
             .GetAsync(h => h.EmployeeId == driverId, ct);
 
+        // Deliberately a shorter payload than the batch tool's no-data arm.
         if (hos is null)
-            return JsonSerializer.Serialize(new { feasible = false, reason = "No HOS data available for this driver" });
+            return ToolResult.Ok(new
+            {
+                feasible = false,
+                reason = HosFeasibility.Unknown(distanceKm).Reason
+            });
 
-        // Estimate driving time: assume average 80 km/h
-        var estimatedDrivingMinutes = (int)(distanceKm / 80.0 * 60);
+        var verdict = HosFeasibility.Evaluate(hos, distanceKm);
 
-        var singleWindowFeasible = !hos.IsInViolation
-            && hos.DrivingMinutesRemaining >= estimatedDrivingMinutes
-            && hos.OnDutyMinutesRemaining >= estimatedDrivingMinutes;
-
-        var multiDay = !singleWindowFeasible && !hos.IsInViolation
-            && hos.DrivingMinutesRemaining >= 120; // at least 2h remaining to make progress
-
-        var reason = $"Insufficient hours: need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min driving - too low to make meaningful progress";
-        if (singleWindowFeasible)
+        return ToolResult.Ok(new
         {
-            reason = "Driver has sufficient hours to complete in one stretch";
-        }
-        else if (hos.IsInViolation)
-        {
-            reason = "Driver is currently in HOS violation";
-        }
-        else if (multiDay)
-        {
-            reason = $"Not completable in current window (need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min), but feasible as multi-day trip with rest stops";
-        }
-
-        return JsonSerializer.Serialize(new
-        {
-            feasible = singleWindowFeasible,
-            feasible_multi_day = multiDay,
-            estimated_driving_minutes = estimatedDrivingMinutes,
+            feasible = verdict.Feasible,
+            feasible_multi_day = verdict.FeasibleMultiDay,
+            estimated_driving_minutes = verdict.EstimatedDrivingMinutes,
             driving_minutes_remaining = hos.DrivingMinutesRemaining,
             on_duty_minutes_remaining = hos.OnDutyMinutesRemaining,
             is_in_violation = hos.IsInViolation,
-            reason
+            reason = verdict.Reason
         });
     }
 }
