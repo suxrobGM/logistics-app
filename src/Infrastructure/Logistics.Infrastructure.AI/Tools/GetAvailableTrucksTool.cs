@@ -15,19 +15,26 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IAID
         var trucks = await tenantUow.Repository<Truck>()
             .GetListAsync(t => t.Status == TruckStatus.Available, ct);
 
-        // Batch-load HOS statuses to avoid N+1 queries
         var driverIds = trucks
             .Where(t => t.MainDriverId is not null)
             .Select(t => t.MainDriverId!.Value)
             .ToList();
 
+        // Both the HOS rows and the drivers themselves are batched. Truck.MainDriver is a lazy
+        // navigation, so reading it inside the projection below would be one SELECT per truck - in
+        // the tool the system prompt tells the agent to call first on every run.
         var hosStatuses = driverIds.Count > 0
             ? (await tenantUow.Repository<DriverHosStatus>()
                 .GetListAsync(h => driverIds.Contains(h.EmployeeId), ct))
                 .ToDictionary(h => h.EmployeeId)
             : [];
 
-        // Fleet summary (replaces separate get_fleet_overview tool)
+        var drivers = driverIds.Count > 0
+            ? (await tenantUow.Repository<Employee>()
+                .GetListAsync(e => driverIds.Contains(e.Id), ct))
+                .ToDictionary(e => e.Id)
+            : [];
+
         var totalTrucks = await tenantUow.Repository<Truck>().CountAsync(ct: ct);
         var activeTrips = await tenantUow.Repository<Trip>()
             .CountAsync(t => t.Status == TripStatus.Dispatched || t.Status == TripStatus.InTransit, ct);
@@ -37,6 +44,8 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IAID
         {
             var hosStatus = truck.MainDriverId is not null
                 && hosStatuses.TryGetValue(truck.MainDriverId.Value, out var hos) ? hos : null;
+            var driver = truck.MainDriverId is not null
+                && drivers.TryGetValue(truck.MainDriverId.Value, out var found) ? found : null;
 
             return new
             {
@@ -46,10 +55,10 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IAID
                 current_lat = truck.CurrentLocation?.Latitude,
                 current_lng = truck.CurrentLocation?.Longitude,
                 current_address = truck.CurrentAddress?.ToString(),
-                main_driver = truck.MainDriver is not null ? new
+                main_driver = driver is not null ? new
                 {
-                    id = truck.MainDriver.Id,
-                    name = truck.MainDriver.GetFullName(),
+                    id = driver.Id,
+                    name = driver.GetFullName(),
                     hos = hosStatus is not null ? new
                     {
                         driving_minutes_remaining = hosStatus.DrivingMinutesRemaining,

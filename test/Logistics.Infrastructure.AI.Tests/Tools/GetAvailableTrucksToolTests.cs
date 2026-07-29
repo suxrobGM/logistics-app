@@ -188,7 +188,7 @@ public class GetAvailableTrucksToolTests
     }
 
     [Fact]
-    public async Task Execute_ManyTrucks_LoadsHosInOneQuery()
+    public async Task Execute_ManyTrucks_BatchesHosAndDriversIntoOneQueryEach()
     {
         var drivers = Enumerable.Range(0, 5).Select(_ => Driver(Guid.NewGuid())).ToList();
         Setup(
@@ -199,5 +199,21 @@ public class GetAvailableTrucksToolTests
 
         await hosRepo.Received(1).GetListAsync(
             Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>());
+
+        // Truck.MainDriver is a lazy navigation - reading it per truck would be five extra
+        // SELECTs here and one per truck in a real fleet.
+        await employeeRepo.Received(1).GetListAsync(
+            Arg.Any<Expression<Func<Employee, bool>>>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Execute_NoTrucksHaveDrivers_SkipsTheDriverQueryEntirely()
+    {
+        Setup([AvailableTruck("T-1", null), AvailableTruck("T-2", null)], []);
+
+        await Run();
+
+        await employeeRepo.DidNotReceive().GetListAsync(
+            Arg.Any<Expression<Func<Employee, bool>>>(), Arg.Any<CancellationToken>());
     }
 }

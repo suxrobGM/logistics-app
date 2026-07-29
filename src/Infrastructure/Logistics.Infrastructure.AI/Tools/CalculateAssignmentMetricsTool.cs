@@ -1,4 +1,4 @@
-using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -8,6 +8,24 @@ namespace Logistics.Infrastructure.AI.Tools;
 internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
 {
     private const double KmToMiles = 0.621371;
+    private const double MetersPerKm = 1000.0;
+
+    /// <summary>
+    /// One scored truck/load pairing. A record rather than an anonymous type so the sort can read
+    /// <see cref="RevenuePerMile"/> directly - the keys are snake_case because the model reads them
+    /// by name, hence the explicit attributes.
+    /// </summary>
+    private sealed record CandidateMetric(
+        [property: JsonPropertyName("load_id")] Guid LoadId,
+        [property: JsonPropertyName("truck_id")] Guid TruckId,
+        [property: JsonPropertyName("load_name")] string? LoadName,
+        [property: JsonPropertyName("truck_number")] string TruckNumber,
+        [property: JsonPropertyName("deadhead_miles")] double DeadheadMiles,
+        [property: JsonPropertyName("loaded_miles")] double LoadedMiles,
+        [property: JsonPropertyName("total_miles")] double TotalMiles,
+        [property: JsonPropertyName("delivery_cost")] double DeliveryCost,
+        [property: JsonPropertyName("revenue_per_mile")] double RevenuePerMile,
+        [property: JsonPropertyName("deadhead_ratio")] double DeadheadRatio);
 
     public string Name => "calculate_assignment_metrics";
 
@@ -17,65 +35,88 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
         if (candidateNodes is null || candidateNodes.Count == 0)
             return ToolResult.Error("Missing or empty candidates array");
 
-        var results = new List<object>();
+        var parsed = new List<(Guid LoadId, Guid TruckId)>();
+        var errors = new List<object>();
 
         foreach (var node in candidateNodes)
         {
             if (!Guid.TryParse(node?["load_id"]?.GetValue<string>(), out var loadId) ||
                 !Guid.TryParse(node?["truck_id"]?.GetValue<string>(), out var truckId))
             {
-                results.Add(new { error = "Invalid load_id or truck_id", load_id = node?["load_id"]?.ToString(), truck_id = node?["truck_id"]?.ToString() });
+                errors.Add(new
+                {
+                    error = "Invalid load_id or truck_id",
+                    load_id = node?["load_id"]?.ToString(),
+                    truck_id = node?["truck_id"]?.ToString()
+                });
                 continue;
             }
 
-            var load = await tenantUow.Repository<Load>().GetByIdAsync(loadId, ct);
-            var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckId, ct);
+            parsed.Add((loadId, truckId));
+        }
+
+        // The prompt tells the agent to score every competing pairing at once, so a per-candidate
+        // GetByIdAsync pair meant 2N sequential round trips. Two batched reads instead.
+        var loadIds = parsed.Select(p => p.LoadId).Distinct().ToList();
+        var truckIds = parsed.Select(p => p.TruckId).Distinct().ToList();
+
+        var loads = loadIds.Count > 0
+            ? (await tenantUow.Repository<Load>().GetListAsync(l => loadIds.Contains(l.Id), ct))
+                .ToDictionary(l => l.Id)
+            : [];
+        var trucks = truckIds.Count > 0
+            ? (await tenantUow.Repository<Truck>().GetListAsync(t => truckIds.Contains(t.Id), ct))
+                .ToDictionary(t => t.Id)
+            : [];
+
+        var metrics = new List<CandidateMetric>();
+
+        foreach (var (loadId, truckId) in parsed)
+        {
+            var load = loads.GetValueOrDefault(loadId);
+            var truck = trucks.GetValueOrDefault(truckId);
 
             if (load is null || truck is null)
             {
-                results.Add(new { load_id = loadId, truck_id = truckId, error = load is null ? "Load not found" : "Truck not found" });
+                errors.Add(new
+                {
+                    load_id = loadId,
+                    truck_id = truckId,
+                    error = load is null ? "Load not found" : "Truck not found"
+                });
                 continue;
             }
 
-            // Calculate deadhead distance (truck current location → load pickup) using GeoPoint.DistanceTo()
             var deadheadKm = 0.0;
             if (truck.CurrentLocation is not null && load.OriginLocation is not null)
-                deadheadKm = truck.CurrentLocation.DistanceTo(load.OriginLocation) / 1000.0;
+                deadheadKm = truck.CurrentLocation.DistanceTo(load.OriginLocation) / MetersPerKm;
 
-            // Load distance (origin → destination) is stored in meters
-            var loadedKm = load.Distance / 1000.0;
+            var loadedKm = load.Distance / MetersPerKm;
             var totalMiles = (deadheadKm + loadedKm) * KmToMiles;
             var deadheadMiles = deadheadKm * KmToMiles;
             var loadedMiles = loadedKm * KmToMiles;
             var deliveryCost = (double)(load.DeliveryCost?.Amount ?? 0);
 
-            var revenuePerMile = totalMiles > 0 ? deliveryCost / totalMiles : 0;
-            var deadheadRatio = totalMiles > 0 ? deadheadMiles / totalMiles : 0;
-
-            results.Add(new
-            {
-                load_id = loadId,
-                truck_id = truckId,
-                load_name = load.Name,
-                truck_number = truck.Number,
-                deadhead_miles = Math.Round(deadheadMiles, 1),
-                loaded_miles = Math.Round(loadedMiles, 1),
-                total_miles = Math.Round(totalMiles, 1),
-                delivery_cost = deliveryCost,
-                revenue_per_mile = Math.Round(revenuePerMile, 2),
-                deadhead_ratio = Math.Round(deadheadRatio, 3)
-            });
+            metrics.Add(new CandidateMetric(
+                loadId,
+                truckId,
+                load.Name,
+                truck.Number,
+                Math.Round(deadheadMiles, 1),
+                Math.Round(loadedMiles, 1),
+                Math.Round(totalMiles, 1),
+                deliveryCost,
+                RevenuePerMile: Math.Round(totalMiles > 0 ? deliveryCost / totalMiles : 0, 2),
+                DeadheadRatio: Math.Round(totalMiles > 0 ? deadheadMiles / totalMiles : 0, 3)));
         }
 
-        // Sort by revenue per mile descending
-        var sorted = results
-            .OrderByDescending(r =>
-            {
-                var json = JsonSerializer.SerializeToElement(r);
-                return json.TryGetProperty("revenue_per_mile", out var rpm) ? rpm.GetDouble() : -1;
-            })
+        // Best pairings first; unscoreable candidates trail them, as before.
+        var candidates = metrics
+            .OrderByDescending(m => m.RevenuePerMile)
+            .Cast<object>()
+            .Concat(errors)
             .ToList();
 
-        return JsonSerializer.Serialize(new { candidates = sorted, count = sorted.Count });
+        return ToolResult.Ok(new { candidates, count = candidates.Count });
     }
 }
