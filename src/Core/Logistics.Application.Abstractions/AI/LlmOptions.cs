@@ -25,6 +25,20 @@ public class LlmOptions
     public int ThinkingBudgetTokens { get; set; } = 16384;
 
     /// <summary>
+    /// Per-call ceiling on an LLM HTTP request. Generous because extended thinking on a large
+    /// prompt legitimately takes minutes - this is a backstop against a wedged connection, not a
+    /// latency target. The agent loop runs up to 25 iterations, so without it a single stuck
+    /// session can hang for 25x the SDK default.
+    /// </summary>
+    public int RequestTimeoutSeconds { get; set; } = 300;
+
+    /// <summary>
+    /// Ceiling on one whole agent session, across all its iterations. Stops a session that keeps
+    /// making individually-fast calls forever.
+    /// </summary>
+    public int SessionTimeoutMinutes { get; set; } = 30;
+
+    /// <summary>
     /// When true, skips the per-tenant LlmEnabled check. Set to true in development environments.
     /// </summary>
     public bool BypassLlmGate { get; set; }

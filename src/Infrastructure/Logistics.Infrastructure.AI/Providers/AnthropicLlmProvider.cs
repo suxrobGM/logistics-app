@@ -12,11 +12,13 @@ namespace Logistics.Infrastructure.AI.Providers;
 /// <summary>
 /// LLM provider implementation using the Anthropic (Claude) API.
 /// </summary>
-internal sealed class AnthropicLlmProvider(LlmProviderOptions config) : ILlmProvider
+internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient httpClient) : ILlmProvider
 {
     public async Task<LlmResponse> SendAsync(LlmRequest request, CancellationToken ct)
     {
-        var client = new AnthropicClient(config.ApiKey);
+        // The HttpClient is factory-pooled and carries the configured timeout; AnthropicClient
+        // must not dispose it, so it is never wrapped in a using.
+        var client = new AnthropicClient(new APIAuthentication(config.ApiKey), httpClient);
 
         var tools = request.Tools
             .Select<AIDispatchToolDefinition, Tool>(t =>

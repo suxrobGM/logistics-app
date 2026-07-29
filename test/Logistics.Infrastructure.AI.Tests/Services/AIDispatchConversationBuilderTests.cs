@@ -49,7 +49,9 @@ public class AIDispatchConversationBuilderTests
         SetPolicies();
 
         var llmOptions = MsOptions.Options.Create(ValidConfig);
-        var providerFactory = new LlmProviderFactory(llmOptions);
+        var httpClientFactory = Substitute.For<IHttpClientFactory>();
+        httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient());
+        var providerFactory = new LlmProviderFactory(llmOptions, httpClientFactory);
         var modelResolver = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);
 
         var sessionSetup = new LlmSessionSetup(featureService, providerFactory, modelResolver, tenantUow);

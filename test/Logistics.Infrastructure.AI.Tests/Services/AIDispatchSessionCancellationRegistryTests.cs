@@ -17,6 +17,26 @@ public class AIDispatchSessionCancellationRegistryTests
     }
 
     [Fact]
+    public async Task Register_DeadlineElapses_CancelsToken()
+    {
+        var token = sut.Register(Guid.NewGuid(), CancellationToken.None, TimeSpan.FromMilliseconds(50));
+
+        Assert.False(token.IsCancellationRequested);
+
+        // The per-request HTTP timeout bounds one call; this bounds the whole session.
+        await Task.Delay(300);
+        Assert.True(token.IsCancellationRequested);
+    }
+
+    [Fact]
+    public void Register_NoDeadline_LeavesTokenOpen()
+    {
+        var token = sut.Register(Guid.NewGuid(), CancellationToken.None, deadline: null);
+
+        Assert.False(token.IsCancellationRequested);
+    }
+
+    [Fact]
     public void TryCancel_RegisteredSession_CancelsToken()
     {
         var sessionId = Guid.NewGuid();

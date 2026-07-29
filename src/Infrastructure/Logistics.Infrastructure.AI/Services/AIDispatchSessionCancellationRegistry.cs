@@ -11,12 +11,19 @@ internal sealed class AIDispatchSessionCancellationRegistry
     private readonly ConcurrentDictionary<Guid, CancellationTokenSource> sessions = new();
 
     /// <summary>
-    /// Registers a session and returns a linked CancellationToken that can be cancelled
-    /// either by the external token or by calling <see cref="TryCancel"/>.
+    /// Registers a session and returns a linked CancellationToken that can be cancelled by the
+    /// external token, by <see cref="TryCancel"/>, or by <paramref name="deadline"/> elapsing.
     /// </summary>
-    public CancellationToken Register(Guid sessionId, CancellationToken externalCt)
+    /// <param name="deadline">
+    /// Wall-clock ceiling on the whole session. The per-request HTTP timeout only bounds one call;
+    /// without this, a session making 25 individually-fast calls has no upper bound at all.
+    /// </param>
+    public CancellationToken Register(Guid sessionId, CancellationToken externalCt, TimeSpan? deadline = null)
     {
         var cts = CancellationTokenSource.CreateLinkedTokenSource(externalCt);
+        if (deadline is { } timeout && timeout > TimeSpan.Zero)
+            cts.CancelAfter(timeout);
+
         sessions[sessionId] = cts;
         return cts.Token;
     }

@@ -1,4 +1,5 @@
 using System.ClientModel;
+using System.ClientModel.Primitives;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenAI;
@@ -12,11 +13,17 @@ namespace Logistics.Infrastructure.AI.Providers;
 /// LLM provider for OpenAI-compatible APIs (OpenAI, DeepSeek, GLM, Groq, Mistral, etc.).
 /// Uses the official OpenAI .NET SDK with configurable base URL for alternative providers.
 /// </summary>
-internal sealed class OpenAILlmProvider(LlmProviderOptions config) : ILlmProvider
+internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient httpClient) : ILlmProvider
 {
     public async Task<LlmResponse> SendAsync(LlmRequest request, CancellationToken ct)
     {
-        var clientOptions = new OpenAIClientOptions();
+        // System.ClientModel has no Timeout of its own - the only way to bound a call is to hand it
+        // a transport over our factory-pooled HttpClient, which carries the configured timeout.
+        var clientOptions = new OpenAIClientOptions
+        {
+            Transport = new HttpClientPipelineTransport(httpClient)
+        };
+
         if (config.BaseUrl is not null)
             clientOptions.Endpoint = new Uri(config.BaseUrl);
 

@@ -41,7 +41,8 @@ internal sealed class AIDispatchService(
         await tenantUow.SaveChangesAsync(ct);
         await BroadcastSessionUpdateAsync(session);
 
-        var linkedCt = cancellationRegistry.Register(session.Id, ct);
+        var linkedCt = cancellationRegistry.Register(
+            session.Id, ct, TimeSpan.FromMinutes(options.Value.SessionTimeoutMinutes));
 
         logger.LogInformation(
             "Starting dispatch agent session {SessionId} in {Mode} mode (triggered by {UserId})",

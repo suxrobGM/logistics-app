@@ -53,7 +53,9 @@ public class AIDispatchServiceTests
             }
         });
 
-        var providerFactory = new LlmProviderFactory(llmOptions);
+        var httpClientFactory = Substitute.For<IHttpClientFactory>();
+        httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient());
+        var providerFactory = new LlmProviderFactory(llmOptions, httpClientFactory);
 
         var systemSettings = Substitute.For<ISystemSettingsService>();
         var modelResolver = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);

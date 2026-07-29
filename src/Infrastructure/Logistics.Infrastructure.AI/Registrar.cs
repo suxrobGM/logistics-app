@@ -18,7 +18,15 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.Configure<LlmOptions>(configuration.GetSection(LlmOptions.SectionName));
+        var llmSection = configuration.GetSection(LlmOptions.SectionName);
+        services.Configure<LlmOptions>(llmSection);
+
+        // Both SDKs otherwise run on their own defaults with no ceiling we control. At 25 iterations
+        // per session, one wedged connection would tie up a Hangfire worker for a very long time.
+        var requestTimeout = llmSection.Get<LlmOptions>()?.RequestTimeoutSeconds
+            ?? new LlmOptions().RequestTimeoutSeconds;
+        services.AddHttpClient(LlmProviderFactory.HttpClientName,
+            client => client.Timeout = TimeSpan.FromSeconds(requestTimeout));
 
         // Provider factory and shared model resolution
         services.AddSingleton<LlmProviderFactory>();

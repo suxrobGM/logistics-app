@@ -55,7 +55,8 @@ internal sealed class AICopilotService(
         await tenantUow.Repository<AIDispatchSession>().AddAsync(session, ct);
         await tenantUow.SaveChangesAsync(ct);
 
-        var linkedCt = cancellationRegistry.Register(session.Id, ct);
+        var linkedCt = cancellationRegistry.Register(
+            session.Id, ct, TimeSpan.FromMinutes(options.Value.SessionTimeoutMinutes));
         await BroadcastTurnUpdateAsync(request, conversation, session);
 
         logger.LogInformation(
