@@ -66,7 +66,7 @@ public class AIDispatchServiceTests
         var decisionProcessor = new AIDispatchDecisionProcessor(
             toolExecutor, toolRegistry, tenantUow, broadcastService,
             NullLogger<AIDispatchDecisionProcessor>.Instance);
-        var loopRunner = new AgentLoopRunner(decisionProcessor, NullLogger<AgentLoopRunner>.Instance);
+        var loopRunner = new AgentLoopRunner(decisionProcessor, tenantUow, NullLogger<AgentLoopRunner>.Instance);
 
         var cancellationRegistry = new AIDispatchSessionCancellationRegistry();
 

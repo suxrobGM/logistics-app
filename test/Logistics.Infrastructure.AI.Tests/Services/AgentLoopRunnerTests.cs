@@ -9,6 +9,7 @@ using Logistics.Infrastructure.AI.Services;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Microsoft.Extensions.Logging.Abstractions;
+using MockQueryable;
 using NSubstitute;
 using Xunit;
 
@@ -19,12 +20,23 @@ public class AgentLoopRunnerTests
     private readonly ILlmProvider provider = Substitute.For<ILlmProvider>();
     private readonly IAIDispatchToolExecutor toolExecutor = Substitute.For<IAIDispatchToolExecutor>();
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<AIDispatchSession, Guid> sessionRepo =
+        Substitute.For<ITenantRepository<AIDispatchSession, Guid>>();
     private readonly AgentLoopRunner sut;
+
+    /// <summary>
+    /// The loop re-reads the session's status from the database each iteration to honour a cancel
+    /// issued on another instance. Point that query at <paramref name="rows"/>.
+    /// </summary>
+    private void SessionInDatabase(params AIDispatchSession[] rows) =>
+        sessionRepo.Query().Returns(rows.ToList().BuildMock());
 
     public AgentLoopRunnerTests()
     {
         tenantUow.Repository<AIDispatchDecision>()
             .Returns(Substitute.For<ITenantRepository<AIDispatchDecision, Guid>>());
+        tenantUow.Repository<AIDispatchSession>().Returns(sessionRepo);
+        SessionInDatabase();
         tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
@@ -38,7 +50,7 @@ public class AgentLoopRunnerTests
             toolExecutor, new AIDispatchToolRegistry(), tenantUow,
             Substitute.For<IAIDispatchBroadcastService>(),
             NullLogger<AIDispatchDecisionProcessor>.Instance);
-        sut = new AgentLoopRunner(processor, NullLogger<AgentLoopRunner>.Instance);
+        sut = new AgentLoopRunner(processor, tenantUow, NullLogger<AgentLoopRunner>.Instance);
     }
 
     private static AIDispatchSession Session() => new()
@@ -211,6 +223,44 @@ public class AgentLoopRunnerTests
         // that only counts successes would make a failing prompt free to retry.
         Assert.Equal(LlmPricing.GetMultiplier("claude-haiku-4-5"), session.RequestCost);
         Assert.True(session.EstimatedCostUsd > 0);
+    }
+
+    [Fact]
+    public async Task Run_SessionCancelledOnAnotherInstance_StopsWithoutCallingTheProvider()
+    {
+        var session = Session();
+        // What a cancel from a different API instance looks like to this worker: its own token is
+        // untouched (the registry is process-local) but the row already says Cancelled.
+        var rowAsPersisted = Session();
+        rowAsPersisted.Id = session.Id;
+        rowAsPersisted.Cancel();
+        SessionInDatabase(rowAsPersisted);
+
+        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+            .Returns(TextResponse("should never run"));
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode),
+                null, CancellationToken.None));
+
+        await provider.DidNotReceive().SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Run_SessionStillRunningInDatabase_Proceeds()
+    {
+        var session = Session();
+        var rowAsPersisted = Session();
+        rowAsPersisted.Id = session.Id;
+        SessionInDatabase(rowAsPersisted);
+
+        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+            .Returns(TextResponse("All done."));
+
+        await sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode),
+            null, CancellationToken.None);
+
+        await provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

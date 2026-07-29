@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using System.Net;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Models;
 using Logistics.Infrastructure.AI.Providers;
-using Logistics.Application.Abstractions.AI;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Services;
@@ -15,6 +17,7 @@ namespace Logistics.Infrastructure.AI.Services;
 /// </summary>
 internal sealed class AgentLoopRunner(
     AIDispatchDecisionProcessor decisionProcessor,
+    ITenantUnitOfWork tenantUow,
     ILogger<AgentLoopRunner> logger)
 {
     private const int MaxIterations = 25;
@@ -55,6 +58,7 @@ internal sealed class AgentLoopRunner(
         for (var iteration = 0; iteration < MaxIterations; iteration++)
         {
             ct.ThrowIfCancellationRequested();
+            await ThrowIfCancelledElsewhereAsync(session, ct);
 
             var llmRequest = new LlmRequest
             {
@@ -95,6 +99,31 @@ internal sealed class AgentLoopRunner(
             if (onIterationCompleted is not null)
                 await onIterationCompleted();
         }
+    }
+
+    /// <summary>
+    /// Honours a cancel issued on a different instance. AIDispatchSessionCancellationRegistry is
+    /// process-local, but a session runs in a Hangfire worker while the cancel arrives at whichever
+    /// API instance the request landed on - there, TryCancel finds nothing and the worker would
+    /// keep burning tokens against a session the database already shows as Cancelled.
+    /// </summary>
+    private async Task ThrowIfCancelledElsewhereAsync(AIDispatchSession session, CancellationToken ct)
+    {
+        // Deliberately AsNoTracking and projected: reading session.Status off the tracked entity
+        // returns this worker's own cached value, which is always Running.
+        var status = await tenantUow.Repository<AIDispatchSession>().Query()
+            .AsNoTracking()
+            .Where(s => s.Id == session.Id)
+            .Select(s => (AIDispatchSessionStatus?)s.Status)
+            .FirstOrDefaultAsync(ct);
+
+        if (status is null or AIDispatchSessionStatus.Running)
+            return;
+
+        logger.LogInformation(
+            "Agent session {SessionId} is {Status} in the database - stopping this worker",
+            session.Id, status);
+        throw new OperationCanceledException($"Session {session.Id} was {status} elsewhere.");
     }
 
     private async Task<LlmResponse> SendWithRetryAsync(
