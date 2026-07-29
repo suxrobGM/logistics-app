@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Abstractions.AIDispatch;
@@ -48,7 +49,7 @@ public interface IAIDispatchToolRegistry
 public record AIDispatchToolDefinition(
     string Name,
     string Description,
-    object InputSchema,
+    JsonNode InputSchema,
     TenantFeature? RequiredFeature = null,
     bool IsWrite = false,
     string? RequiredPermission = null,

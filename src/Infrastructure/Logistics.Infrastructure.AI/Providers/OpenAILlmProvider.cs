@@ -39,9 +39,7 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config) : ILlmProvide
         var tools = new List<ChatTool>();
         foreach (var tool in request.Tools)
         {
-            var schema = tool.InputSchema is JsonNode node
-                ? BinaryData.FromString(node.ToJsonString())
-                : BinaryData.FromString(JsonSerializer.Serialize(tool.InputSchema));
+            var schema = BinaryData.FromString(tool.InputSchema.ToJsonString());
 
             tools.Add(ChatTool.CreateFunctionTool(tool.Name, tool.Description, schema));
         }

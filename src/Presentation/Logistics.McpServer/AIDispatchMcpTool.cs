@@ -30,8 +30,7 @@ internal sealed class AIDispatchMcpTool : McpServerTool
             ? definition.Description + WriteWarning
             : definition.Description;
 
-        var inputSchema = JsonSerializer.Deserialize<JsonElement>(
-            JsonSerializer.Serialize(definition.InputSchema));
+        var inputSchema = definition.InputSchema.Deserialize<JsonElement>();
 
         protocolTool = new Tool
         {

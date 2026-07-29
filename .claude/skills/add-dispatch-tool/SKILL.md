@@ -73,7 +73,7 @@ In `AIDispatchToolRegistry.cs`, append to the `Tools` list. The JSON schema is w
 ```csharp
 new("get_something",
     "Returns X for Y. Include 1-2 sentences describing inputs, outputs, and when to call this vs alternatives.",
-    BuildSchema(new JsonObject
+    new JsonObject
     {
         ["type"] = "object",
         ["properties"] = new JsonObject
@@ -81,7 +81,7 @@ new("get_something",
             ["some_id"] = Prop("string", "GUID of the entity")
         },
         ["required"] = new JsonArray("some_id")
-    }),
+    },
     TenantFeature.Loads,                                  // omit when ungated
     IsWrite: true,                                        // write tools only
     RequiredPermission: Permission.Load.Manage,           // ALWAYS - copilot scoping depends on it

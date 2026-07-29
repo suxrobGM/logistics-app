@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.AIDispatch;
@@ -46,7 +47,7 @@ public class ApproveAICopilotDecisionHandlerTests
         currentUser.GetUserId().Returns(userId);
         SetCallerPermissions("Permission.Invoice.Manage");
         toolRegistry.TryGetDefinition("send_invoice").Returns(new AIDispatchToolDefinition(
-            "send_invoice", "Send an invoice", new object(),
+            "send_invoice", "Send an invoice", new JsonObject(),
             IsWrite: true, RequiredPermission: "Permission.Invoice.Manage"));
 
         sut = new ApproveAICopilotDecisionHandler(

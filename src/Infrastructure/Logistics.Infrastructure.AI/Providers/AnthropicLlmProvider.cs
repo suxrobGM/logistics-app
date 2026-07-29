@@ -20,7 +20,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config) : ILlmProv
 
         var tools = request.Tools
             .Select<AIDispatchToolDefinition, Tool>(t =>
-                new Function(t.Name, t.Description, (JsonNode)t.InputSchema))
+                new Function(t.Name, t.Description, t.InputSchema))
             .ToList();
 
         var messages = request.Messages.Select(ToAnthropicMessage).ToList();
