@@ -149,12 +149,26 @@ public class AgentLoopRunnerTests
                 throw new HttpRequestException("rate limited", null, HttpStatusCode.TooManyRequests);
             });
 
-        await Assert.ThrowsAsync<HttpRequestException>(() =>
+        var ex = await Assert.ThrowsAsync<LlmRateLimitedException>(() =>
             sut.RunAsync(Session(), Conversation(), new ToolCallContext(AIDispatchMode.Autonomous),
                 config, null, CancellationToken.None));
 
         // One initial attempt plus MaxRetries backoff attempts.
         Assert.Equal(4, calls);
+
+        // The tenant must be told about the rate limit, not sent to check the API key.
+        var sanitized = AgentLoopRunner.SanitizeErrorMessage(ex);
+        Assert.Contains("Rate limited", sanitized);
+        Assert.DoesNotContain("API key", sanitized);
+    }
+
+    [Fact]
+    public void SanitizeErrorMessage_GenuineAuthFailure_StillReportsKeyProblem()
+    {
+        var sanitized = AgentLoopRunner.SanitizeErrorMessage(
+            new HttpRequestException("401 Unauthorized", null, HttpStatusCode.Unauthorized));
+
+        Assert.Equal("API authentication error. Check the LLM API key configuration.", sanitized);
     }
 
     [Fact]

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Net;
 using Logistics.Domain.Entities;
 using Logistics.Infrastructure.AI.Models;
 using Logistics.Infrastructure.AI.Providers;
@@ -82,6 +84,11 @@ internal sealed class AgentLoopRunner(
     /// <summary>Strips provider auth details before the message lands on a tenant-visible session row.</summary>
     internal static string SanitizeErrorMessage(Exception ex)
     {
+        // Our own message, already safe - and it must not be swallowed by the auth arm below,
+        // which would send an operator hunting for a key problem during a rate-limit window.
+        if (ex is LlmRateLimitedException)
+            return ex.Message;
+
         var message = ex.Message;
         if (ex is HttpRequestException or UnauthorizedAccessException
             || message.Contains("api key", StringComparison.OrdinalIgnoreCase)
@@ -106,8 +113,14 @@ internal sealed class AgentLoopRunner(
             {
                 return await provider.SendAsync(request, ct);
             }
-            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests && attempt < MaxRetries)
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.TooManyRequests)
             {
+                // Rethrow on the final attempt rather than letting the provider's own exception
+                // escape - SanitizeErrorMessage cannot tell that one apart from an auth failure.
+                if (attempt == MaxRetries)
+                    throw new LlmRateLimitedException(
+                        "Rate limited by the LLM API after maximum retries. Please try again later.", ex);
+
                 var delay = RetryDelaysMs[attempt];
                 logger.LogWarning(
                     "Rate limited on session {SessionId}, attempt {Attempt}/{MaxRetries}. Retrying in {Delay}ms",
@@ -116,6 +129,6 @@ internal sealed class AgentLoopRunner(
             }
         }
 
-        throw new HttpRequestException("Rate limited by LLM API after maximum retries. Please try again later.");
+        throw new UnreachableException("The retry loop either returns a response or throws.");
     }
 }
