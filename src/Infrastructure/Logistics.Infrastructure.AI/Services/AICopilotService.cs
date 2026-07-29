@@ -68,7 +68,7 @@ internal sealed class AICopilotService(
 
         try
         {
-            state = await conversationBuilder.BuildAsync(session, conversation, permissions, options.Value);
+            state = await conversationBuilder.BuildAsync(session, conversation, permissions, options.Value, linkedCt);
             priorMessageCount = state.Messages.Count;
 
             var toolContext = new ToolCallContext(

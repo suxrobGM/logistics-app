@@ -121,7 +121,7 @@ public class AIDispatchConversationBuilderTests
         SetPolicies();
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
     }
@@ -133,7 +133,7 @@ public class AIDispatchConversationBuilderTests
         SetPolicies(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
         Assert.DoesNotContain("Prefer short hauls", conversation.SystemPrompt);
@@ -147,7 +147,7 @@ public class AIDispatchConversationBuilderTests
             directives: "- Never assign Truck 42 to hazmat"));
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.Contains("Dispatcher Preferences", conversation.SystemPrompt);
         Assert.Contains("Prefer short hauls", conversation.SystemPrompt);
@@ -165,7 +165,7 @@ public class AIDispatchConversationBuilderTests
         SetPolicies(CreatePolicy(directives: "- Prefer flatbeds out of Dallas"));
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.Contains("Dispatcher directives", conversation.SystemPrompt);
         Assert.DoesNotContain("### Learned preferences", conversation.SystemPrompt);
@@ -181,7 +181,7 @@ public class AIDispatchConversationBuilderTests
         SetTenant(OperatingMode.SoloOperator);
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.Contains("## Fleet Profile: SOLO OWNER-OPERATOR", conversation.SystemPrompt);
         Assert.DoesNotContain("Maximize fleet utilization", conversation.SystemPrompt);
@@ -192,7 +192,7 @@ public class AIDispatchConversationBuilderTests
     {
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.DoesNotContain("SOLO OWNER-OPERATOR", conversation.SystemPrompt);
         Assert.Contains("Maximize fleet utilization", conversation.SystemPrompt);
@@ -205,7 +205,7 @@ public class AIDispatchConversationBuilderTests
     {
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.NotNull(conversation.Provider);
         Assert.Single(conversation.Messages);
@@ -218,7 +218,7 @@ public class AIDispatchConversationBuilderTests
     {
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.Single(conversation.Tools);
     }
@@ -228,7 +228,7 @@ public class AIDispatchConversationBuilderTests
     {
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.NotNull(conversation.SystemPrompt);
         Assert.NotEmpty(conversation.SystemPrompt);
@@ -240,7 +240,7 @@ public class AIDispatchConversationBuilderTests
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => sut.BuildAsync(session, CreateRequest(), EmptyApiKeyConfig));
+            () => sut.BuildAsync(session, CreateRequest(), EmptyApiKeyConfig, CancellationToken.None));
 
         Assert.Contains("API key", ex.Message);
     }
@@ -250,7 +250,7 @@ public class AIDispatchConversationBuilderTests
     {
         var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
         Assert.Single(conversation.Messages);
         Assert.NotEmpty(conversation.Messages[0].Content);

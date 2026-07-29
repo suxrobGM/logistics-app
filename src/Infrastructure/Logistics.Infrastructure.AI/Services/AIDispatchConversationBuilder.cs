@@ -27,9 +27,10 @@ internal sealed class AIDispatchConversationBuilder(
     public async Task<LlmConversation> BuildAsync(
         AIDispatchSession session,
         AIDispatchRequest request,
-        LlmOptions config)
+        LlmOptions config,
+        CancellationToken ct)
     {
-        var setup = await sessionSetup.ResolveAsync(config);
+        var setup = await sessionSetup.ResolveAsync(config, ct);
         var tenant = setup.Tenant;
         var companyName = tenant.Name ?? "Fleet";
         var resolvedProvider = setup.Selection.Provider;
@@ -38,7 +39,7 @@ internal sealed class AIDispatchConversationBuilder(
         var hasLoadBoard = enabledFeatures.Contains(TenantFeature.LoadBoard);
         var hasIntermodal = enabledFeatures.Contains(TenantFeature.IntermodalContainers);
 
-        var policy = await GetLearnedPolicyAsync();
+        var policy = await GetLearnedPolicyAsync(ct);
         var systemPrompt = AIDispatchSystemPrompt.Build(
             companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit, policy, hasIntermodal,
             tenant.Settings.OperatingMode);
@@ -52,9 +53,8 @@ internal sealed class AIDispatchConversationBuilder(
             "Agent session {SessionId} initialized with {ToolCount} tools, model {Model}, provider {Provider}",
             session.Id, tools.Count, model, resolvedProvider);
 
-        // Build user message with optional context
         var userMessage = BuildUserMessage(request);
-        var previousContext = await GetPreviousSessionContextAsync();
+        var previousContext = await GetPreviousSessionContextAsync(ct);
         if (previousContext is not null)
             userMessage = $"{previousContext}\n\n{userMessage}";
 
@@ -63,7 +63,7 @@ internal sealed class AIDispatchConversationBuilder(
         // Build thinking options: global system setting → appsettings default.
         // Only honored by providers/models that support it; others ignore it.
         LlmThinkingOptions? thinking = null;
-        var thinkingSetting = await systemSettings.GetAsync(AISettingsKeys.ExtendedThinking);
+        var thinkingSetting = await systemSettings.GetAsync(AISettingsKeys.ExtendedThinking, ct);
         var enableThinking = bool.TryParse(thinkingSetting, out var parsedThinking)
             ? parsedThinking
             : config.EnableExtendedThinking;
@@ -101,22 +101,22 @@ internal sealed class AIDispatchConversationBuilder(
     /// Loads the tenant's learned dispatch policy. Filtering <c>IsEnabled</c> in SQL means a disabled
     /// policy is simply absent, so the prompt section omits itself.
     /// </summary>
-    private async Task<LearnedDispatchPolicy?> GetLearnedPolicyAsync()
+    private async Task<LearnedDispatchPolicy?> GetLearnedPolicyAsync(CancellationToken ct)
     {
         return await tenantUow.Repository<AIDispatchPolicy>().Query()
             .Where(p => p.IsEnabled)
             .Select(p => new LearnedDispatchPolicy(p.ManualContent, p.GeneratedContent))
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
     }
 
-    private async Task<string?> GetPreviousSessionContextAsync()
+    private async Task<string?> GetPreviousSessionContextAsync(CancellationToken ct)
     {
         var lastSession = await tenantUow.Repository<AIDispatchSession>().Query()
             .DispatchOnly()
             .Where(s => s.Status == AIDispatchSessionStatus.Completed && s.Summary != null)
             .OrderByDescending(s => s.CompletedAt)
             .Select(s => new { s.Number, s.CompletedAt, s.Summary })
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
 
         if (lastSession is null)
             return null;

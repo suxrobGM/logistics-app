@@ -28,14 +28,12 @@ public static class Registrar
         services.AddHttpClient(LlmProviderFactory.HttpClientName,
             client => client.Timeout = TimeSpan.FromSeconds(requestTimeout));
 
-        // Provider factory and shared model resolution
         services.AddSingleton<LlmProviderFactory>();
         services.AddScoped<LlmModelResolver>();
 
         // One-shot LLM client (used by non-agent features, e.g. PDF parsing)
         services.AddScoped<ILlmClient, LlmClient>();
 
-        // Agent services
         services.AddSingleton<AIDispatchSessionCancellationRegistry>();
         services.AddScoped<LlmSessionSetup>();
         services.AddScoped<AgentLoopRunner>();
@@ -49,7 +47,6 @@ public static class Registrar
         services.AddScoped<IAICopilotService, AICopilotService>();
         services.AddScoped<AICopilotConversationBuilder>();
 
-        // Individual dispatch tools
         services.AddScoped<IAIDispatchTool, GetUnassignedLoadsTool>();
         services.AddScoped<IAIDispatchTool, GetAvailableTrucksTool>();
         services.AddScoped<IAIDispatchTool, GetDriverHosTool>();

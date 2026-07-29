@@ -2,9 +2,6 @@ using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Infrastructure.AI.Models;
 
-/// <summary>
-/// Defines the structure of a request sent to an LLM provider.
-/// </summary>
 internal record LlmRequest
 {
     public required string SystemPrompt { get; init; }

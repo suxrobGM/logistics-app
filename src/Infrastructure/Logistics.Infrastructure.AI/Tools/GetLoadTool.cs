@@ -29,7 +29,7 @@ internal sealed class GetLoadTool(IMediator mediator) : IAIDispatchTool
             type = l.Type.ToString(),
             origin = l.OriginAddress.ToString(),
             destination = l.DestinationAddress.ToString(),
-            distance_km = Math.Round(l.Distance / 1000.0, 1),
+            distance_km = Math.Round(DispatchUnits.MetersToKm(l.Distance), 1),
             delivery_cost = l.DeliveryCost,
             customer = l.Customer?.Name,
             customer_id = l.Customer?.Id,

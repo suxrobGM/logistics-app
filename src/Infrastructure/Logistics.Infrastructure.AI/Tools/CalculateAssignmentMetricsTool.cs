@@ -7,9 +7,6 @@ namespace Logistics.Infrastructure.AI.Tools;
 
 internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
 {
-    private const double KmToMiles = 0.621371;
-    private const double MetersPerKm = 1000.0;
-
     /// <summary>
     /// One scored truck/load pairing. A record rather than an anonymous type so the sort can read
     /// <see cref="RevenuePerMile"/> directly - the keys are snake_case because the model reads them
@@ -89,12 +86,12 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
 
             var deadheadKm = 0.0;
             if (truck.CurrentLocation is not null && load.OriginLocation is not null)
-                deadheadKm = truck.CurrentLocation.DistanceTo(load.OriginLocation) / MetersPerKm;
+                deadheadKm = DispatchUnits.MetersToKm(truck.CurrentLocation.DistanceTo(load.OriginLocation));
 
-            var loadedKm = load.Distance / MetersPerKm;
-            var totalMiles = (deadheadKm + loadedKm) * KmToMiles;
-            var deadheadMiles = deadheadKm * KmToMiles;
-            var loadedMiles = loadedKm * KmToMiles;
+            var loadedKm = DispatchUnits.MetersToKm(load.Distance);
+            var totalMiles = DispatchUnits.KmToMiles(deadheadKm + loadedKm);
+            var deadheadMiles = DispatchUnits.KmToMiles(deadheadKm);
+            var loadedMiles = DispatchUnits.KmToMiles(loadedKm);
             var deliveryCost = (double)(load.DeliveryCost?.Amount ?? 0);
 
             metrics.Add(new CandidateMetric(

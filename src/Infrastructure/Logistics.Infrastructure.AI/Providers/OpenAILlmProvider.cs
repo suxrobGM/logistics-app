@@ -32,17 +32,14 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient ht
 
         var messages = new List<ChatMessage>
         {
-            // System prompt
             ChatMessage.CreateSystemMessage(request.SystemPrompt)
         };
 
-        // Conversation history
         foreach (var message in request.Messages)
         {
             messages.AddRange(ToOpenAIMessages(message));
         }
 
-        // Tools
         var tools = new List<ChatTool>();
         foreach (var tool in request.Tools)
         {
@@ -150,7 +147,6 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient ht
 
         var textContent = textParts.Count > 0 ? string.Join("\n\n", textParts) : null;
 
-        // Extract tool calls
         foreach (var toolCall in completion.ToolCalls)
         {
             var input = string.IsNullOrEmpty(toolCall.FunctionArguments?.ToString())

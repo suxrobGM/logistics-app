@@ -98,7 +98,7 @@ internal sealed class AIDispatchService(
         CancellationToken ct)
     {
         var config = options.Value;
-        var conversation = await conversationBuilder.BuildAsync(session, request, config);
+        var conversation = await conversationBuilder.BuildAsync(session, request, config, ct);
 
         // Broadcast progress after each iteration (decisions already saved + broadcast by the processor)
         await loopRunner.RunAsync(

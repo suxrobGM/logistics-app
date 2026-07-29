@@ -25,14 +25,14 @@ internal sealed class LlmSessionSetup(
     LlmModelResolver modelResolver,
     ITenantUnitOfWork tenantUow)
 {
-    public async Task<LlmSessionContext> ResolveAsync(LlmOptions config)
+    public async Task<LlmSessionContext> ResolveAsync(LlmOptions config, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
 
         // The global model is admin-managed: system setting → appsettings default. The provider is
         // derived from the model via the catalog, so it can't drift. No per-request override on
         // purpose - ILlmClient.ModelId is for one-shot background calls.
-        var selection = await modelResolver.ResolveAsync(config);
+        var selection = await modelResolver.ResolveAsync(config, ct: ct);
         var provider = providerFactory.Create(selection.Provider);
 
         // Worded to match LlmErrorSanitizer.ForSession, which classifies anything

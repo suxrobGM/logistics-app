@@ -20,7 +20,7 @@ internal sealed class CalculateDistanceTool : IAIDispatchTool
 
         var origin = new GeoPoint(originLng.Value, originLat.Value);
         var destination = new GeoPoint(destLng.Value, destLat.Value);
-        var straightLineKm = origin.DistanceTo(destination) / 1000.0;
+        var straightLineKm = DispatchUnits.MetersToKm(origin.DistanceTo(destination));
         var drivingDistanceKm = straightLineKm * 1.3;
         var estimatedMinutes = (int)(drivingDistanceKm / 80.0 * 60);
 

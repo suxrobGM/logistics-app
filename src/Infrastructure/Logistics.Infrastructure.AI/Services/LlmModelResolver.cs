@@ -25,7 +25,7 @@ internal sealed class LlmModelResolver(
         string? preferredModelId = null,
         CancellationToken ct = default)
     {
-        if (TryResolvePreferred(config, preferredModelId, out var preferred))
+        if (ResolvePreferred(config, preferredModelId) is { } preferred)
         {
             return preferred;
         }
@@ -39,16 +39,11 @@ internal sealed class LlmModelResolver(
         return new LlmModelSelection(model, provider, providerConfig);
     }
 
-    private bool TryResolvePreferred(
-        LlmOptions config,
-        string? preferredModelId,
-        out LlmModelSelection selection)
+    private LlmModelSelection? ResolvePreferred(LlmOptions config, string? preferredModelId)
     {
-        selection = null!;
-
         if (string.IsNullOrWhiteSpace(preferredModelId))
         {
-            return false;
+            return null;
         }
 
         var info = LlmModelCatalog.Find(preferredModelId);
@@ -57,7 +52,7 @@ internal sealed class LlmModelResolver(
             logger.LogWarning(
                 "Preferred model '{PreferredModel}' is not in the catalog; falling back to the global model",
                 preferredModelId);
-            return false;
+            return null;
         }
 
         // A deployment may configure only one provider's key; without this the override would
@@ -68,10 +63,9 @@ internal sealed class LlmModelResolver(
             logger.LogWarning(
                 "Preferred model '{PreferredModel}' needs provider {Provider}, which has no API key configured; falling back to the global model",
                 info.Id, info.Provider);
-            return false;
+            return null;
         }
 
-        selection = new LlmModelSelection(info.Id, info.Provider, providerConfig);
-        return true;
+        return new LlmModelSelection(info.Id, info.Provider, providerConfig);
     }
 }

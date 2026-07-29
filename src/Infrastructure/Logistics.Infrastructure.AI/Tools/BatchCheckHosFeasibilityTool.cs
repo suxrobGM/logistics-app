@@ -14,7 +14,6 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) 
         if (checksNode is null || checksNode.Count == 0)
             return ToolResult.Error("Missing or empty 'checks' array");
 
-        // Parse all check requests
         var checks = checksNode
             .Where(c => c is not null)
             .Select(c => new
@@ -28,7 +27,6 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) 
         if (checks.Count == 0)
             return ToolResult.Error("No valid checks provided");
 
-        // Batch-load all HOS statuses in one query
         var driverIds = checks.Select(c => c.DriverId!.Value).Distinct().ToList();
         var hosStatuses = (await tenantUow.Repository<DriverHosStatus>()
             .GetListAsync(h => driverIds.Contains(h.EmployeeId), ct))

@@ -26,9 +26,10 @@ internal sealed class AICopilotConversationBuilder(
         AIDispatchSession session,
         AICopilotConversation conversation,
         IReadOnlySet<string> callerPermissions,
-        LlmOptions config)
+        LlmOptions config,
+        CancellationToken ct)
     {
-        var setup = await sessionSetup.ResolveAsync(config);
+        var setup = await sessionSetup.ResolveAsync(config, ct);
         var tenant = setup.Tenant;
         var selection = setup.Selection;
 

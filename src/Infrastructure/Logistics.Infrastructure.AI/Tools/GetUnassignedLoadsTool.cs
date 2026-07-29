@@ -28,7 +28,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IAIDispatchTo
             origin_lng = l.OriginLocation?.Longitude,
             dest_lat = l.DestinationLocation?.Latitude,
             dest_lng = l.DestinationLocation?.Longitude,
-            distance_km = Math.Round(l.Distance / 1000.0, 1),
+            distance_km = Math.Round(DispatchUnits.MetersToKm(l.Distance), 1),
             delivery_cost = l.DeliveryCost,
             customer = l.Customer?.Name,
             // Intermodal metadata. Without it the agent never calls get_container_status /
