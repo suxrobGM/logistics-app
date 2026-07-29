@@ -79,24 +79,16 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config) : ILlmProvide
 
             var textParts = message.Content.OfType<LlmTextBlock>().ToList();
             var text = string.Join("\n", textParts.Select(t => t.Text));
-            var images = message.Content.OfType<LlmImageBlock>().ToList();
             var documents = message.Content.OfType<LlmDocumentBlock>().ToList();
 
-            if (images.Count == 0 && documents.Count == 0)
+            if (documents.Count == 0)
                 return [ChatMessage.CreateUserMessage(text)];
 
-            // Multimodal message: text plus inline images and/or documents (e.g. PDFs) as content parts.
+            // Multimodal message: text plus inline documents (e.g. PDFs) as content parts.
             var parts = new List<ChatMessageContentPart>();
             if (!string.IsNullOrEmpty(text))
             {
                 parts.Add(ChatMessageContentPart.CreateTextPart(text));
-            }
-
-            foreach (var image in images)
-            {
-                parts.Add(ChatMessageContentPart.CreateImagePart(
-                    BinaryData.FromBytes(Convert.FromBase64String(image.Base64Data)),
-                    image.MediaType));
             }
 
             foreach (var document in documents)

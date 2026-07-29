@@ -11,7 +11,7 @@ internal record LlmRequest
     public required List<LlmMessage> Messages { get; init; }
     public required List<AIDispatchToolDefinition> Tools { get; init; }
     public required string Model { get; init; }
-    public int MaxTokens { get; init; } = 16384;
-    public decimal? Temperature { get; init; } = 0m;
+    public required int MaxTokens { get; init; }
+    public decimal? Temperature { get; init; }
     public LlmThinkingOptions? Thinking { get; init; }
 }

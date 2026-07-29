@@ -115,17 +115,6 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config) : ILlmProv
                         Content = [new TextContent { Text = toolResult.Content }]
                     });
                     break;
-                case LlmImageBlock image:
-                    content.Add(new ImageContent
-                    {
-                        Source = new ImageSource
-                        {
-                            Type = SourceType.base64,
-                            MediaType = image.MediaType,
-                            Data = image.Base64Data
-                        }
-                    });
-                    break;
                 case LlmDocumentBlock document:
                     content.Add(new DocumentContent
                     {

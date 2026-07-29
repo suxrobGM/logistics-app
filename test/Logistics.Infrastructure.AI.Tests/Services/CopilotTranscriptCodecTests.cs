@@ -62,12 +62,12 @@ public class CopilotTranscriptCodecTests
     }
 
     [Fact]
-    public void Encode_SkipsImageAndDocumentBlocks()
+    public void Encode_SkipsDocumentBlocks()
     {
         var blocks = new List<LlmContentBlock>
         {
             new LlmTextBlock("hello"),
-            new LlmImageBlock("image/png", "base64data")
+            new LlmDocumentBlock("application/pdf", "base64data")
         };
 
         var decoded = CopilotTranscriptCodec.Decode(CopilotTranscriptCodec.Encode(blocks));

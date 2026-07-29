@@ -14,8 +14,5 @@ internal record LlmToolUseBlock(string Id, string Name, JsonNode? Input) : LlmCo
 
 internal record LlmToolResultBlock(string ToolUseId, string Content) : LlmContentBlock;
 
-/// <summary>An inline image (base64-encoded). Mapped to provider-native image content.</summary>
-internal record LlmImageBlock(string MediaType, string Base64Data) : LlmContentBlock;
-
 /// <summary>An inline document such as a PDF (base64-encoded). Mapped to provider-native document content.</summary>
 internal record LlmDocumentBlock(string MediaType, string Base64Data) : LlmContentBlock;
