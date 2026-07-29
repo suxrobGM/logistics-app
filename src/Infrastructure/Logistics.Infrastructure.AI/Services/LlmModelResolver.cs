@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.AI;
+using Logistics.Infrastructure.AI.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Services;
@@ -74,6 +75,3 @@ internal sealed class LlmModelResolver(
         return true;
     }
 }
-
-/// <summary>The resolved model, its provider, and that provider's configuration.</summary>
-internal sealed record LlmModelSelection(string Model, LlmProvider Provider, LlmProviderOptions ProviderConfig);

@@ -146,15 +146,3 @@ internal sealed class AIDispatchConversationBuilder(
         return sanitized.Length > 500 ? sanitized[..500] : sanitized;
     }
 }
-
-/// <summary>
-/// Provider-agnostic conversation state returned by <see cref="AIDispatchConversationBuilder"/>.
-/// </summary>
-internal record LlmConversation(
-    ILlmProvider Provider,
-    string SystemPrompt,
-    List<LlmMessage> Messages,
-    IReadOnlyList<AIDispatchToolDefinition> Tools,
-    string Model,
-    int MaxTokens,
-    LlmThinkingOptions? Thinking);
