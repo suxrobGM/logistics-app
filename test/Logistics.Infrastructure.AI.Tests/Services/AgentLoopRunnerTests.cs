@@ -139,6 +139,48 @@ public class AgentLoopRunnerTests
     }
 
     [Fact]
+    public async Task Run_RateLimitedEveryAttempt_StopsAfterFourCallsAndThrows()
+    {
+        var calls = 0;
+        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+            .Returns<LlmResponse>(_ =>
+            {
+                calls++;
+                throw new HttpRequestException("rate limited", null, HttpStatusCode.TooManyRequests);
+            });
+
+        await Assert.ThrowsAsync<HttpRequestException>(() =>
+            sut.RunAsync(Session(), Conversation(), new ToolCallContext(AIDispatchMode.Autonomous),
+                config, null, CancellationToken.None));
+
+        // One initial attempt plus MaxRetries backoff attempts.
+        Assert.Equal(4, calls);
+    }
+
+    [Fact]
+    public async Task Run_ProviderThrowsMidRun_StillAccumulatesTokensAlreadySpent()
+    {
+        var session = Session();
+        var calls = 0;
+        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns("{}");
+        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+            .Returns(_ =>
+            {
+                calls++;
+                if (calls == 1)
+                    return ToolCallResponse("get_available_trucks");
+                throw new InvalidOperationException("provider exploded");
+            });
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode),
+                config, null, CancellationToken.None));
+
+        Assert.Equal(220, session.TotalTokensUsed);
+    }
+
+    [Fact]
     public async Task Run_Cancelled_Throws()
     {
         using var cts = new CancellationTokenSource();
