@@ -10,10 +10,10 @@ internal sealed class AssignLoadToTruckTool(IMediator mediator) : IAIDispatchToo
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        if (!Guid.TryParse(input["load_id"]?.GetValue<string>(), out var loadId))
+        if (input.GetGuid("load_id") is not { } loadId)
             return ToolResult.Error("Invalid or missing load_id");
 
-        if (!Guid.TryParse(input["truck_id"]?.GetValue<string>(), out var truckId))
+        if (input.GetGuid("truck_id") is not { } truckId)
             return ToolResult.Error("Invalid or missing truck_id");
 
         var result = await mediator.Send(new AssignLoadToTruckCommand { LoadId = loadId, TruckId = truckId }, ct);

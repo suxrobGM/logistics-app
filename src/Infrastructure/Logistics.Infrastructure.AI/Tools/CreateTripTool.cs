@@ -10,22 +10,24 @@ internal sealed class CreateTripTool(IMediator mediator) : IAIDispatchTool
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        if (!Guid.TryParse(input["truck_id"]?.GetValue<string>(), out var truckId))
+        if (input.GetGuid("truck_id") is not { } truckId)
             return ToolResult.Error("Invalid or missing truck_id");
 
-        var loadIdNodes = input["load_ids"]?.AsArray();
-        if (loadIdNodes is null || loadIdNodes.Count == 0)
+        var loadIdNodes = input.GetArray("load_ids");
+        if (loadIdNodes.Count == 0)
             return ToolResult.Error("Missing or empty load_ids");
 
+        // One bad id fails the whole call rather than quietly building a shorter trip - the
+        // dispatcher approving this needs the trip to be the one the agent described.
         var loadIds = new List<Guid>();
         foreach (var node in loadIdNodes)
         {
-            if (!Guid.TryParse(node?.GetValue<string>(), out var id))
+            if (!Guid.TryParse(node?.ToString(), out var id))
                 return ToolResult.Error($"Invalid load_id: {node}");
             loadIds.Add(id);
         }
 
-        var name = input["name"]?.GetValue<string>() ?? "AI-Generated Trip";
+        var name = input.GetString("name") ?? "AI-Generated Trip";
 
         var command = new CreateTripCommand
         {

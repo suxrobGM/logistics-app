@@ -203,6 +203,65 @@ public class DispatchWriteToolTests
 
     #endregion
 
+    #region LLM-authored JSON is not always the type the schema asked for
+
+    [Fact]
+    public async Task AssignLoad_IdsEmittedAsNumbers_ReturnsErrorRatherThanThrowing()
+    {
+        // Models intermittently emit a bare number where the schema says string. That must surface
+        // as a readable {error} the agent can act on, not an InvalidOperationException that the
+        // decision processor turns into an opaque failed decision.
+        var result = await new AssignLoadToTruckTool(mediator).ExecuteAsync(
+            new JsonObject { ["load_id"] = 12345, ["truck_id"] = 67890 }, CancellationToken.None);
+
+        Assert.Equal("Invalid or missing load_id", Parse(result).GetProperty("error").GetString());
+    }
+
+    [Fact]
+    public async Task DispatchTrip_IdEmittedAsNumber_ReturnsErrorRatherThanThrowing()
+    {
+        var result = await new DispatchTripTool(mediator).ExecuteAsync(
+            new JsonObject { ["trip_id"] = 42 }, CancellationToken.None);
+
+        Assert.Equal("Invalid or missing trip_id", Parse(result).GetProperty("error").GetString());
+    }
+
+    [Fact]
+    public async Task CreateTrip_NameEmittedAsNumber_CoercesInsteadOfThrowing()
+    {
+        mediator.Send(Arg.Any<CreateTripCommand>(), Arg.Any<CancellationToken>())
+            .Returns(Result<Guid>.Ok(Guid.NewGuid()));
+
+        await new CreateTripTool(mediator).ExecuteAsync(
+            new JsonObject
+            {
+                ["truck_id"] = Guid.NewGuid().ToString(),
+                ["load_ids"] = new JsonArray(Guid.NewGuid().ToString()),
+                ["name"] = 2026
+            },
+            CancellationToken.None);
+
+        await mediator.Received(1).Send(
+            Arg.Is<CreateTripCommand>(c => c.Name == "2026"), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task CreateTrip_LoadIdEmittedAsNumber_ReturnsErrorRatherThanThrowing()
+    {
+        var result = await new CreateTripTool(mediator).ExecuteAsync(
+            new JsonObject
+            {
+                ["truck_id"] = Guid.NewGuid().ToString(),
+                ["load_ids"] = new JsonArray(12345)
+            },
+            CancellationToken.None);
+
+        Assert.Contains("12345", Parse(result).GetProperty("error").GetString());
+        await mediator.DidNotReceive().Send(Arg.Any<CreateTripCommand>(), Arg.Any<CancellationToken>());
+    }
+
+    #endregion
+
     [Fact]
     public void Names_AreSnakeCase()
     {

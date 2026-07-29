@@ -10,7 +10,7 @@ internal sealed class DispatchTripTool(IMediator mediator) : IAIDispatchTool
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        if (!Guid.TryParse(input["trip_id"]?.GetValue<string>(), out var tripId))
+        if (input.GetGuid("trip_id") is not { } tripId)
             return ToolResult.Error("Invalid or missing trip_id");
 
         var result = await mediator.Send(new DispatchTripCommand { TripId = tripId }, ct);

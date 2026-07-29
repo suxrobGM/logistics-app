@@ -20,6 +20,9 @@ internal static class ToolInput
     public static decimal? GetDecimal(this JsonNode input, string key) =>
         decimal.TryParse(input.GetString(key), out var number) ? number : null;
 
+    public static double? GetDouble(this JsonNode input, string key) =>
+        double.TryParse(input.GetString(key), out var number) ? number : null;
+
     public static bool? GetBool(this JsonNode input, string key) =>
         bool.TryParse(input.GetString(key), out var flag) ? flag : null;
 
@@ -30,6 +33,13 @@ internal static class ToolInput
 
     public static TEnum? GetEnum<TEnum>(this JsonNode input, string key) where TEnum : struct, Enum =>
         Enum.TryParse<TEnum>(input.GetString(key), ignoreCase: true, out var value) ? value : null;
+
+    /// <summary>
+    /// The array at <paramref name="key"/>, or an empty list when it is absent or not an array.
+    /// Callers that require a non-empty array check <c>Count</c> and return their own message.
+    /// </summary>
+    public static IReadOnlyList<JsonNode?> GetArray(this JsonNode input, string key) =>
+        input[key] is JsonArray array ? [.. array] : [];
 
     public static TEnum[]? GetEnumArray<TEnum>(this JsonNode input, string key) where TEnum : struct, Enum
     {
