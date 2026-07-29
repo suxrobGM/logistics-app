@@ -20,6 +20,7 @@ internal sealed class AIDispatchService(
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
     IStripeUsageService stripeUsageService,
+    IAgentRunContext runContext,
     ILogger<AIDispatchService> logger) : IAIDispatchService
 {
     public async Task<AIDispatchSession> RunAsync(AIDispatchRequest request, CancellationToken ct = default)
@@ -27,6 +28,8 @@ internal sealed class AIDispatchService(
         var blocked = await CheckLlmDisabledAsync(request, ct);
         if (blocked is not null)
             return blocked;
+
+        runContext.SetTriggeredBy(request.TriggeredByUserId);
 
         var session = new AIDispatchSession
         {

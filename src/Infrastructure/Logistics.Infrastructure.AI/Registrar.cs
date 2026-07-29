@@ -34,6 +34,7 @@ public static class Registrar
         // One-shot LLM client (used by non-agent features, e.g. PDF parsing)
         services.AddScoped<ILlmClient, LlmClient>();
 
+        services.AddScoped<IAgentRunContext, AgentRunContext>();
         services.AddSingleton<AIDispatchSessionCancellationRegistry>();
         services.AddScoped<LlmSessionSetup>();
         services.AddScoped<AgentLoopRunner>();

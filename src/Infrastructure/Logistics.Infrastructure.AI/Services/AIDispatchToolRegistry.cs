@@ -227,7 +227,7 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                     ["origin_city"] = Prop("string", "Origin city name"),
                     ["origin_state"] = Prop("string", "Origin state code (e.g., 'TX', 'CA')"),
                     ["radius_miles"] = Prop("number", "Search radius in miles from origin (default: 100)"),
-                    ["destination_state"] = Prop("string", "Optional destination state filter")
+                    ["destination_state"] = Prop("string", "Optional destination state filter (e.g., 'AZ')")
                 },
                 ["required"] = new JsonArray("origin_city", "origin_state")
             },
@@ -460,11 +460,12 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                 ["type"] = "object",
                 ["properties"] = new JsonObject
                 {
-                    ["external_listing_id"] = Prop("string", "The load board listing ID to book"),
-                    ["provider"] = Prop("string", "The load board provider (DAT, Truckstop, OneTwo3Loadboard)"),
-                    ["truck_id"] = Prop("string", "The truck ID (GUID) to assign the booked load to")
+                    ["listing_id"] = Prop("string", "The listing_id (GUID) returned by search_loadboard. Not the load board's own external id, which is not stable between searches."),
+                    ["truck_id"] = Prop("string", "The truck ID (GUID) to assign the booked load to"),
+                    ["customer_name"] = Prop("string", "Optional customer name, when booking creates a new customer from the broker"),
+                    ["notes"] = Prop("string", "Optional notes recorded against the booking")
                 },
-                ["required"] = new JsonArray("external_listing_id", "provider", "truck_id")
+                ["required"] = new JsonArray("listing_id", "truck_id")
             },
             TenantFeature.LoadBoard,
             IsWrite: true,

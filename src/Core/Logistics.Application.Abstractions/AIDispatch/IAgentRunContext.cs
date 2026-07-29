@@ -1,0 +1,22 @@
+namespace Logistics.Application.Abstractions.AIDispatch;
+
+/// <summary>
+/// Who an agent run is acting on behalf of. Tools receive only the model's JSON arguments, so a
+/// tool that must attribute a write to a real person has no other way to learn who that is - and
+/// it must not come from the model, which has no reliable source for a user id and should not be
+/// able to name one.
+/// </summary>
+/// <remarks>
+/// Scoped. Populated when a session starts, including inside a Hangfire worker, where
+/// <c>ICurrentUserService</c> has no HTTP context to read.
+/// </remarks>
+public interface IAgentRunContext
+{
+    /// <summary>
+    /// The user who triggered the run, or null for a run with no human origin (a scheduled
+    /// dispatch pass). Tools that require attribution fail rather than guess.
+    /// </summary>
+    Guid? TriggeredByUserId { get; }
+
+    void SetTriggeredBy(Guid? userId);
+}

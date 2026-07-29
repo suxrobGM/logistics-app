@@ -74,7 +74,7 @@ public class AIDispatchServiceTests
 
         sut = new AIDispatchService(
             llmOptions, conversationBuilder, loopRunner, cancellationRegistry,
-            tenantUow, broadcastService, stripeUsageService,
+            tenantUow, broadcastService, stripeUsageService, new AgentRunContext(),
             NullLogger<AIDispatchService>.Instance);
     }
 

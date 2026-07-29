@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.AICopilot;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 using Logistics.Domain.Entities;
@@ -24,6 +25,7 @@ internal sealed class AICopilotService(
     AIDispatchSessionCancellationRegistry cancellationRegistry,
     ITenantUnitOfWork tenantUow,
     IAICopilotBroadcastService broadcastService,
+    IAgentRunContext runContext,
     IMediator mediator,
     ILogger<AICopilotService> logger) : IAICopilotService
 {
@@ -41,6 +43,7 @@ internal sealed class AICopilotService(
         if (await AppendLlmDisabledNoticeAsync(request, conversation, ct))
             return;
 
+        runContext.SetTriggeredBy(request.UserId);
         var permissions = await ResolveCallerPermissionsAsync(request, ct);
 
         var session = new AIDispatchSession
