@@ -428,8 +428,7 @@ internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
                         ["items"] = new JsonObject { ["type"] = "string" },
                         ["description"] = "List of load IDs (GUIDs) to include in the trip"
                     },
-                    ["name"] = Prop("string", "A descriptive name for the trip"),
-                    ["optimize_stops"] = Prop("boolean", "Whether to optimize stop ordering (default: true)")
+                    ["name"] = Prop("string", "A descriptive name for the trip")
                 },
                 ["required"] = new JsonArray("truck_id", "load_ids", "name")
             }),

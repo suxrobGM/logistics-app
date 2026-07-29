@@ -48,7 +48,6 @@ public static class Registrar
         services.AddScoped<IAIDispatchTool, BatchCheckHosFeasibilityTool>();
         services.AddScoped<IAIDispatchTool, CheckDispatchEligibilityTool>();
         services.AddScoped<IAIDispatchTool, CalculateDistanceTool>();
-        services.AddScoped<IAIDispatchTool, OptimizeTripStopsTool>();
         services.AddScoped<IAIDispatchTool, AssignLoadToTruckTool>();
         services.AddScoped<IAIDispatchTool, CreateTripTool>();
         services.AddScoped<IAIDispatchTool, DispatchTripTool>();

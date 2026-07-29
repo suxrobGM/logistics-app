@@ -52,7 +52,6 @@ Separately from those two, the system prompt varies by `TenantSettings.Operating
 | `batch_check_hos_feasibility`  | Read  | Batch HOS feasibility for multiple driver-load pairs |
 | `calculate_distance`           | Read  | Driving distance between two points                  |
 | `calculate_assignment_metrics` | Read  | Revenue/deadhead analysis for a potential assignment |
-| `optimize_trip_stops`          | Read  | Optimize stop ordering for multi-load trips          |
 | `get_container_status`         | Read  | ISO 6346 lookup: status, terminal, seal, B/L, load   |
 | `get_terminal_info`            | Read  | UN/LOCODE lookup: name, type, country, address       |
 | `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for opportunities  |
