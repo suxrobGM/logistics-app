@@ -18,12 +18,12 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IAIDispatc
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        if (!Guid.TryParse(input["customer_id"]?.GetValue<string>(), out var customerId))
+        if (input.GetGuid("customer_id") is not { } customerId)
         {
             return ToolResult.Error("Missing or invalid customer_id");
         }
 
-        var currency = input["currency"]?.GetValue<string>();
+        var currency = input.GetString("currency");
         if (string.IsNullOrWhiteSpace(currency))
         {
             return ToolResult.Error("Missing currency");
@@ -45,11 +45,11 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IAIDispatc
 
             lineItems.Add(new PreviewInvoiceTaxLineItem
             {
-                Description = item["description"]?.GetValue<string>() ?? "Item",
-                Type = ParseLineItemType(item["type"]?.GetValue<string>()),
+                Description = item.GetString("description") ?? "Item",
+                Type = ParseLineItemType(item.GetString("type")),
                 Amount = amount,
-                Quantity = item["quantity"]?.GetValue<int>() ?? 1,
-                TaxCode = item["tax_code"]?.GetValue<string>()
+                Quantity = item.GetInt("quantity") ?? 1,
+                TaxCode = item.GetString("tax_code")
             });
         }
 

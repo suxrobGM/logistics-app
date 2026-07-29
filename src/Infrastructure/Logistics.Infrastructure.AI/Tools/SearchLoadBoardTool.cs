@@ -9,8 +9,8 @@ internal sealed class SearchLoadBoardTool : IAIDispatchTool
 
     public Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        var originCity = input["origin_city"]?.GetValue<string>();
-        var originState = input["origin_state"]?.GetValue<string>();
+        var originCity = input.GetString("origin_city");
+        var originState = input.GetString("origin_state");
 
         return Task.FromResult(JsonSerializer.Serialize(new
         {

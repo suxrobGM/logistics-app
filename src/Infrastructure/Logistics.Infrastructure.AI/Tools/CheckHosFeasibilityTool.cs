@@ -10,10 +10,10 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAI
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        if (!Guid.TryParse(input["driver_id"]?.GetValue<string>(), out var driverId))
+        if (input.GetGuid("driver_id") is not { } driverId)
             return ToolResult.Error("Invalid or missing driver_id");
 
-        var distanceKm = input["distance_km"]?.GetValue<double>() ?? 0;
+        var distanceKm = input.GetDouble("distance_km") ?? 0;
 
         var hos = await tenantUow.Repository<DriverHosStatus>()
             .GetAsync(h => h.EmployeeId == driverId, ct);

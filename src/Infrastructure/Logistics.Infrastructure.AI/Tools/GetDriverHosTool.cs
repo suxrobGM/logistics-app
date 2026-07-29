@@ -11,7 +11,7 @@ internal sealed class GetDriverHosTool(ITenantUnitOfWork tenantUow) : IAIDispatc
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        if (!Guid.TryParse(input["driver_id"]?.GetValue<string>(), out var driverId))
+        if (input.GetGuid("driver_id") is not { } driverId)
             return ToolResult.Error("Invalid or missing driver_id");
 
         var hos = await tenantUow.Repository<DriverHosStatus>()

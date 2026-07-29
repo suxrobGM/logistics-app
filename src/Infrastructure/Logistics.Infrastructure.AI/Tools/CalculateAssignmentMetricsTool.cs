@@ -40,8 +40,8 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
 
         foreach (var node in candidateNodes)
         {
-            if (!Guid.TryParse(node?["load_id"]?.GetValue<string>(), out var loadId) ||
-                !Guid.TryParse(node?["truck_id"]?.GetValue<string>(), out var truckId))
+            if (node?.GetGuid("load_id") is not { } loadId ||
+                node?.GetGuid("truck_id") is not { } truckId)
             {
                 errors.Add(new
                 {

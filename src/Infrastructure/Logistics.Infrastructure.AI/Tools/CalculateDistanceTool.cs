@@ -10,10 +10,10 @@ internal sealed class CalculateDistanceTool : IAIDispatchTool
 
     public Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        double? originLat = input["origin_lat"]?.GetValue<double>();
-        double? originLng = input["origin_lng"]?.GetValue<double>();
-        double? destLat = input["dest_lat"]?.GetValue<double>();
-        double? destLng = input["dest_lng"]?.GetValue<double>();
+        double? originLat = input.GetDouble("origin_lat");
+        double? originLng = input.GetDouble("origin_lng");
+        double? destLat = input.GetDouble("dest_lat");
+        double? destLng = input.GetDouble("dest_lng");
 
         if (originLat is null || originLng is null || destLat is null || destLng is null)
             return Task.FromResult(ToolResult.Error("Missing required coordinate parameters"));

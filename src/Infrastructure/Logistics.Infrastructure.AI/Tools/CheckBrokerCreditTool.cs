@@ -10,7 +10,7 @@ internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditSer
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        var mcNumber = input["mc_number"]?.GetValue<string>();
+        var mcNumber = input.GetString("mc_number");
         if (string.IsNullOrWhiteSpace(mcNumber))
         {
             return ToolResult.Error("Missing mc_number");

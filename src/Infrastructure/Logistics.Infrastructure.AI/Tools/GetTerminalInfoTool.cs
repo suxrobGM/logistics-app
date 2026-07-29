@@ -18,8 +18,8 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAIDisp
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        var code = input["code"]?.GetValue<string>()?.Trim();
-        var idRaw = input["terminal_id"]?.GetValue<string>();
+        var code = input.GetString("code")?.Trim();
+        var idRaw = input.GetString("terminal_id");
 
         Terminal? terminal;
 

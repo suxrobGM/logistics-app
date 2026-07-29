@@ -16,8 +16,8 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow) : IAID
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        var number = input["container_number"]?.GetValue<string>()?.Trim();
-        var idRaw = input["container_id"]?.GetValue<string>();
+        var number = input.GetString("container_number")?.Trim();
+        var idRaw = input.GetString("container_id");
 
         Container? container;
 

@@ -260,6 +260,34 @@ public class HosFeasibilityToolTests
             JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
     }
 
+    [Theory]
+    [InlineData("400")]
+    [InlineData("400.0")]
+    public async Task BothTools_DistanceEmittedAsString_CoercesInsteadOfThrowing(string distance)
+    {
+        var driverId = Guid.NewGuid();
+        SingleReturns(Hos(driverId, 600, 660));
+        BatchReturns(Hos(driverId, 600, 660));
+
+        var single = JsonDocument.Parse(await new CheckHosFeasibilityTool(tenantUow).ExecuteAsync(
+            new JsonObject { ["driver_id"] = driverId.ToString(), ["distance_km"] = distance },
+            CancellationToken.None)).RootElement;
+
+        var batch = JsonDocument.Parse(await new BatchCheckHosFeasibilityTool(tenantUow).ExecuteAsync(
+            new JsonObject
+            {
+                ["checks"] = new JsonArray(new JsonObject
+                {
+                    ["driver_id"] = driverId.ToString(),
+                    ["distance_km"] = distance
+                })
+            },
+            CancellationToken.None)).RootElement.GetProperty("results")[0];
+
+        Assert.Equal(300, single.GetProperty("estimated_driving_minutes").GetInt32());
+        Assert.Equal(300, batch.GetProperty("estimated_driving_minutes").GetInt32());
+    }
+
     [Fact]
     public async Task Batch_AllDriverIdsUnparseable_EmitsNoValidChecks()
     {

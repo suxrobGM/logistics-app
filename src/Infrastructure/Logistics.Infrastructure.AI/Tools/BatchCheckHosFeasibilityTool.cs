@@ -19,8 +19,8 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) 
             .Where(c => c is not null)
             .Select(c => new
             {
-                DriverId = Guid.TryParse(c!["driver_id"]?.GetValue<string>(), out var id) ? id : (Guid?)null,
-                DistanceKm = c["distance_km"]?.GetValue<double>() ?? 0
+                DriverId = c!.GetGuid("driver_id"),
+                DistanceKm = c.GetDouble("distance_km") ?? 0
             })
             .Where(c => c.DriverId is not null)
             .ToList();
