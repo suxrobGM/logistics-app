@@ -20,14 +20,6 @@ public class AgentLoopRunnerTests
     private readonly IAIDispatchToolExecutor toolExecutor = Substitute.For<IAIDispatchToolExecutor>();
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly AgentLoopRunner sut;
-    private readonly LlmOptions config = new()
-    {
-        MaxTokens = 1000,
-        Providers = new Dictionary<LlmProvider, LlmProviderOptions>
-        {
-            [LlmProvider.Anthropic] = new() { ApiKey = "sk-test", Model = "claude-haiku-4-5" }
-        }
-    };
 
     public AgentLoopRunnerTests()
     {
@@ -88,7 +80,7 @@ public class AgentLoopRunnerTests
         provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns(TextResponse("All done."));
 
-        await sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode), config, null, CancellationToken.None);
+        await sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode), null, CancellationToken.None);
 
         await provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
         Assert.Equal("All done.", session.Summary);
@@ -107,7 +99,7 @@ public class AgentLoopRunnerTests
             .Returns(ToolCallResponse("get_available_trucks"), TextResponse("Done."));
 
         var iterations = 0;
-        await sut.RunAsync(session, conversation, new ToolCallContext(session.Mode), config,
+        await sut.RunAsync(session, conversation, new ToolCallContext(session.Mode),
             () => { iterations++; return Task.CompletedTask; }, CancellationToken.None);
 
         await provider.Received(2).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
@@ -132,7 +124,7 @@ public class AgentLoopRunnerTests
                 return TextResponse("Recovered.");
             });
 
-        await sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode), config, null, CancellationToken.None);
+        await sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode), null, CancellationToken.None);
 
         Assert.Equal(2, calls);
         Assert.Equal("Recovered.", session.Summary);
@@ -151,7 +143,7 @@ public class AgentLoopRunnerTests
 
         var ex = await Assert.ThrowsAsync<LlmRateLimitedException>(() =>
             sut.RunAsync(Session(), Conversation(), new ToolCallContext(AIDispatchMode.Autonomous),
-                config, null, CancellationToken.None));
+                null, CancellationToken.None));
 
         // One initial attempt plus MaxRetries backoff attempts.
         Assert.Equal(4, calls);
@@ -189,9 +181,27 @@ public class AgentLoopRunnerTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode),
-                config, null, CancellationToken.None));
+                null, CancellationToken.None));
 
         Assert.Equal(220, session.TotalTokensUsed);
+
+        // Cost is recorded even though the run failed - the audit trail promises both, and quota
+        // that only counts successes would make a failing prompt free to retry.
+        Assert.Equal(LlmPricing.GetMultiplier("claude-haiku-4-5"), session.RequestCost);
+        Assert.True(session.EstimatedCostUsd > 0);
+    }
+
+    [Fact]
+    public async Task Run_Cancelled_StillRecordsCost()
+    {
+        var session = Session();
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode), null, cts.Token));
+
+        Assert.Equal(LlmPricing.GetMultiplier("claude-haiku-4-5"), session.RequestCost);
     }
 
     [Fact]
@@ -202,6 +212,6 @@ public class AgentLoopRunnerTests
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
             sut.RunAsync(Session(), Conversation(), new ToolCallContext(AIDispatchMode.Autonomous),
-                config, null, cts.Token));
+                null, cts.Token));
     }
 }

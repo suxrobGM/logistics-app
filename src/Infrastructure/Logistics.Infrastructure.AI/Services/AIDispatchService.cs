@@ -101,7 +101,7 @@ internal sealed class AIDispatchService(
 
         // Broadcast progress after each iteration (decisions already saved + broadcast by the processor)
         await loopRunner.RunAsync(
-            session, conversation, new ToolCallContext(request.Mode), config,
+            session, conversation, new ToolCallContext(request.Mode),
             () => BroadcastSessionUpdateAsync(session), ct);
     }
 

@@ -77,7 +77,7 @@ internal sealed class AICopilotService(
                     broadcastService.BroadcastDecisionAsync(request.TenantId, conversation.CreatedById, dto));
 
             await loopRunner.RunAsync(
-                session, state, toolContext, options.Value,
+                session, state, toolContext,
                 () => BroadcastTurnUpdateAsync(request, conversation, session), linkedCt);
 
             session.Complete(session.Summary);

@@ -25,7 +25,30 @@ internal sealed class AgentLoopRunner(
         AIDispatchSession session,
         LlmConversation conversation,
         ToolCallContext toolContext,
-        LlmOptions config,
+        Func<Task>? onIterationCompleted,
+        CancellationToken ct)
+    {
+        try
+        {
+            await RunIterationsAsync(session, conversation, toolContext, onIterationCompleted, ct);
+        }
+        finally
+        {
+            // In a finally so a failed or cancelled session still reports what it burned. The
+            // audit trail promises tokens *and* cost; recording 240k tokens at $0.00 is a lie, and
+            // quota that only counts successes is free retries on a failing prompt.
+            session.RequestCost = LlmPricing.GetMultiplier(conversation.Model);
+            session.EstimatedCostUsd = LlmPricing.Calculate(
+                conversation.Model,
+                session.InputTokensUsed, session.OutputTokensUsed,
+                session.CacheReadTokens, session.CacheCreationTokens);
+        }
+    }
+
+    private async Task RunIterationsAsync(
+        AIDispatchSession session,
+        LlmConversation conversation,
+        ToolCallContext toolContext,
         Func<Task>? onIterationCompleted,
         CancellationToken ct)
     {
@@ -72,13 +95,6 @@ internal sealed class AgentLoopRunner(
             if (onIterationCompleted is not null)
                 await onIterationCompleted();
         }
-
-        var modelUsed = session.ModelUsed ?? config.GetProviderConfig(config.DefaultProvider).Model;
-        session.RequestCost = LlmPricing.GetMultiplier(modelUsed);
-        session.EstimatedCostUsd = LlmPricing.Calculate(
-            modelUsed,
-            session.InputTokensUsed, session.OutputTokensUsed,
-            session.CacheReadTokens, session.CacheCreationTokens);
     }
 
     /// <summary>Strips provider auth details before the message lands on a tenant-visible session row.</summary>
