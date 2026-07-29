@@ -5,6 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Models;
 using Logistics.Infrastructure.AI.Providers;
+using Logistics.Infrastructure.AI.Tools;
 using Logistics.Mappings;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.AIDispatch;
@@ -145,20 +146,11 @@ internal sealed class AIDispatchDecisionProcessor(
         if (input is null)
             return;
 
-        if (input["load_id"] is JsonValue loadIdVal && Guid.TryParse(loadIdVal.GetValue<string>(), out var loadId))
-            decision.LoadId = loadId;
-
-        if (input["truck_id"] is JsonValue truckIdVal && Guid.TryParse(truckIdVal.GetValue<string>(), out var truckId))
-            decision.TruckId = truckId;
-
-        if (input["trip_id"] is JsonValue tripIdVal && Guid.TryParse(tripIdVal.GetValue<string>(), out var tripId))
-            decision.TripId = tripId;
-
-        if (input["invoice_id"] is JsonValue invoiceIdVal && Guid.TryParse(invoiceIdVal.GetValue<string>(), out var invoiceId))
-            decision.InvoiceId = invoiceId;
-
-        if (input["customer_id"] is JsonValue customerIdVal && Guid.TryParse(customerIdVal.GetValue<string>(), out var customerId))
-            decision.CustomerId = customerId;
+        decision.LoadId = input.GetGuid("load_id") ?? decision.LoadId;
+        decision.TruckId = input.GetGuid("truck_id") ?? decision.TruckId;
+        decision.TripId = input.GetGuid("trip_id") ?? decision.TripId;
+        decision.InvoiceId = input.GetGuid("invoice_id") ?? decision.InvoiceId;
+        decision.CustomerId = input.GetGuid("customer_id") ?? decision.CustomerId;
     }
 
     private async Task BroadcastDecisionAsync(AIDispatchDecision decision, ToolCallContext context)

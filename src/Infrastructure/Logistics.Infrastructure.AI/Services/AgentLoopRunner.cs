@@ -27,11 +27,6 @@ internal sealed class AgentLoopRunner(
         Func<Task>? onIterationCompleted,
         CancellationToken ct)
     {
-        var totalInputTokens = 0;
-        var totalOutputTokens = 0;
-        var totalCacheReadTokens = 0;
-        var totalCacheCreationTokens = 0;
-
         for (var iteration = 0; iteration < MaxIterations; iteration++)
         {
             ct.ThrowIfCancellationRequested();
@@ -49,15 +44,10 @@ internal sealed class AgentLoopRunner(
 
             var result = await SendWithRetryAsync(conversation.Provider, llmRequest, session, ct);
 
-            totalInputTokens += result.Usage.InputTokens;
-            totalOutputTokens += result.Usage.OutputTokens;
-            totalCacheReadTokens += result.Usage.CacheReadTokens;
-            totalCacheCreationTokens += result.Usage.CacheCreationTokens;
-
-            session.InputTokensUsed = totalInputTokens;
-            session.OutputTokensUsed = totalOutputTokens;
-            session.CacheReadTokens = totalCacheReadTokens;
-            session.CacheCreationTokens = totalCacheCreationTokens;
+            session.InputTokensUsed += result.Usage.InputTokens;
+            session.OutputTokensUsed += result.Usage.OutputTokens;
+            session.CacheReadTokens += result.Usage.CacheReadTokens;
+            session.CacheCreationTokens += result.Usage.CacheCreationTokens;
 
             conversation.Messages.Add(result.AssistantMessage);
 
@@ -85,8 +75,8 @@ internal sealed class AgentLoopRunner(
         session.RequestCost = LlmPricing.GetMultiplier(modelUsed);
         session.EstimatedCostUsd = LlmPricing.Calculate(
             modelUsed,
-            totalInputTokens, totalOutputTokens,
-            totalCacheReadTokens, totalCacheCreationTokens);
+            session.InputTokensUsed, session.OutputTokensUsed,
+            session.CacheReadTokens, session.CacheCreationTokens);
     }
 
     /// <summary>Strips provider auth details before the message lands on a tenant-visible session row.</summary>

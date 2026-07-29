@@ -24,18 +24,22 @@ public class CreateLoadInvoiceToolTests
 
     private static CustomerDto SomeCustomer => new() { Id = Guid.NewGuid(), Name = "Acme Logistics" };
 
-    private void SetupCreatedInvoiceLookup(long number = 7)
+    /// <summary>Stubs the create command and the read-back the tool does for number and currency.</summary>
+    private Guid SetupCreatedInvoice(long number = 7)
     {
-        mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())
-            .Returns(PagedResult<InvoiceDto>.Ok(
-                [new InvoiceDto
-                {
-                    Id = Guid.NewGuid(),
-                    Number = number,
-                    Subtotal = CopilotToolTestData.Usd(1500m),
-                    TaxTotal = CopilotToolTestData.Usd(0m),
-                    Total = CopilotToolTestData.Usd(1500m)
-                }], 1, 1));
+        var invoiceId = Guid.NewGuid();
+        mediator.Send(Arg.Any<CreateLoadInvoiceCommand>(), Arg.Any<CancellationToken>())
+            .Returns(Result<Guid>.Ok(invoiceId));
+        mediator.Send(Arg.Any<GetInvoiceByIdQuery>(), Arg.Any<CancellationToken>())
+            .Returns(Result<InvoiceDto>.Ok(new InvoiceDto
+            {
+                Id = invoiceId,
+                Number = number,
+                Subtotal = CopilotToolTestData.Usd(1500m),
+                TaxTotal = CopilotToolTestData.Usd(0m),
+                Total = CopilotToolTestData.Usd(1500m)
+            }));
+        return invoiceId;
     }
 
     [Fact]
@@ -97,9 +101,7 @@ public class CreateLoadInvoiceToolTests
         var load = CopilotToolTestData.CreateLoad(deliveryCost: 2350m, customer: customer);
         mediator.Send(Arg.Any<GetLoadByIdQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadDto>.Ok(load));
-        mediator.Send(Arg.Any<CreateLoadInvoiceCommand>(), Arg.Any<CancellationToken>())
-            .Returns(Result.Ok());
-        SetupCreatedInvoiceLookup();
+        var invoiceId = SetupCreatedInvoice();
 
         var result = await sut.ExecuteAsync(
             new JsonObject { ["load_id"] = load.Id.ToString() }, CancellationToken.None);
@@ -107,6 +109,7 @@ public class CreateLoadInvoiceToolTests
         var root = JsonDocument.Parse(result).RootElement;
         Assert.True(root.GetProperty("success").GetBoolean());
         Assert.Equal(2350m, root.GetProperty("amount").GetDecimal());
+        Assert.Equal(invoiceId, root.GetProperty("invoice_id").GetGuid());
 
         // The copilot must never mark the invoice paid on creation.
         await mediator.Received(1).Send(
@@ -124,9 +127,7 @@ public class CreateLoadInvoiceToolTests
         var load = CopilotToolTestData.CreateLoad(deliveryCost: 2350m, customer: SomeCustomer);
         mediator.Send(Arg.Any<GetLoadByIdQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadDto>.Ok(load));
-        mediator.Send(Arg.Any<CreateLoadInvoiceCommand>(), Arg.Any<CancellationToken>())
-            .Returns(Result.Ok());
-        SetupCreatedInvoiceLookup();
+        SetupCreatedInvoice();
 
         await sut.ExecuteAsync(
             new JsonObject { ["load_id"] = load.Id.ToString(), ["amount"] = 999m },

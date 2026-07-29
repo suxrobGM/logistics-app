@@ -169,7 +169,7 @@ internal static class Setup
                     {
                         var accessToken = context.Request.Query["access_token"];
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            context.HttpContext.Request.Path.StartsWithSegments("/hubs/copilot"))
+                            context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
                         {
                             context.Token = accessToken;
                         }

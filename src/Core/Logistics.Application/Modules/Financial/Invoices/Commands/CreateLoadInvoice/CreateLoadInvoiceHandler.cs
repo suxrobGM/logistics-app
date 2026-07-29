@@ -11,23 +11,23 @@ namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 internal sealed class CreateLoadInvoiceHandler(
     ITenantUnitOfWork tenantUow,
     IInvoiceTaxApplier taxApplier)
-    : IAppRequestHandler<CreateLoadInvoiceCommand, Result>
+    : IAppRequestHandler<CreateLoadInvoiceCommand, Result<Guid>>
 {
-    public async Task<Result> Handle(
+    public async Task<Result<Guid>> Handle(
         CreateLoadInvoiceCommand req, CancellationToken ct)
     {
-        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
+        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
 
         if (load is null)
         {
-            return Result.Fail($"Could not find a load with ID '{req.LoadId}'");
+            return Result<Guid>.Fail($"Could not find a load with ID '{req.LoadId}'");
         }
 
-        var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId);
+        var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId, ct);
 
         if (customer is null)
         {
-            return Result.Fail($"Could not find a customer with ID '{req.CustomerId}'");
+            return Result<Guid>.Fail($"Could not find a customer with ID '{req.CustomerId}'");
         }
 
         var tenant = tenantUow.GetCurrentTenant();
@@ -59,8 +59,8 @@ internal sealed class CreateLoadInvoiceHandler(
 
         await taxApplier.ApplyAsync(invoice, ct);
 
-        await tenantUow.Repository<Invoice>().AddAsync(invoice);
-        await tenantUow.SaveChangesAsync();
-        return Result.Ok();
+        await tenantUow.Repository<Invoice>().AddAsync(invoice, ct);
+        await tenantUow.SaveChangesAsync(ct);
+        return Result<Guid>.Ok(invoice.Id);
     }
 }

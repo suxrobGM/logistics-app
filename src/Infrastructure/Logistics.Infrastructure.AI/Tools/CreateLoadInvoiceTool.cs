@@ -4,7 +4,6 @@ using MediatR;
 using Logistics.Application.Modules.Financial.Invoices.Commands;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Application.Modules.Operations.Loads.Queries;
-using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
@@ -51,21 +50,14 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator) : IAIDispatchToo
         if (!result.IsSuccess)
             return JsonSerializer.Serialize(new { success = false, error = result.Error });
 
-        // The command returns no id; look it up so the conversation can reference the invoice.
-        var created = await mediator.Send(new GetInvoicesQuery
-        {
-            LoadId = loadId,
-            InvoiceType = InvoiceType.Load,
-            OrderBy = "-CreatedDate",
-            Page = 1,
-            PageSize = 1
-        }, ct);
+        // Read the created invoice back for its number and currency, which the command does not return.
+        var created = await mediator.Send(new GetInvoiceByIdQuery { Id = result.Value }, ct);
 
-        var invoice = created.Value?.FirstOrDefault();
+        var invoice = created.Value;
         return JsonSerializer.Serialize(new
         {
             success = true,
-            invoice_id = invoice?.Id,
+            invoice_id = result.Value,
             invoice_number = invoice?.Number,
             amount,
             currency = invoice?.Total.Currency,

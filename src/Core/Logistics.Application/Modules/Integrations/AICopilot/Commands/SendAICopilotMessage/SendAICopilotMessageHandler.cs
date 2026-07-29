@@ -58,13 +58,7 @@ internal sealed class SendAICopilotMessageHandler(
                 ErrorCodes.AIQuotaExceeded);
         }
 
-        var message = AICopilotMessage.TextMessage(
-            conversation.Id,
-            conversation.Messages.Count > 0 ? conversation.Messages.Max(m => m.Sequence) + 1 : 1,
-            AICopilotMessageRole.User,
-            request.Text.Trim());
-        conversation.Messages.Add(message);
-        conversation.LastMessageAt = DateTime.UtcNow;
+        var message = conversation.AddTextMessage(AICopilotMessageRole.User, request.Text.Trim());
         conversation.BeginTurn();
         await tenantUow.SaveChangesAsync(ct);
 

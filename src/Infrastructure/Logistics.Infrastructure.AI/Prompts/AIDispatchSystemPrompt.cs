@@ -273,7 +273,7 @@ internal static class AIDispatchSystemPrompt
         return DispatchPolicyText.KeepWholeLinesWithin(sanitized, maxChars);
     }
 
-    private static string SanitizeCompanyName(string name)
+    internal static string SanitizeCompanyName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return "Fleet";

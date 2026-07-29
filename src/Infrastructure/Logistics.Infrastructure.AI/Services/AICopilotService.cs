@@ -124,10 +124,7 @@ internal sealed class AICopilotService(
         AIDispatchSession session,
         IEnumerable<LlmMessage> appended)
     {
-        var repo = tenantUow.Repository<AICopilotMessage>();
-        var nextSequence = conversation.Messages.Count > 0
-            ? conversation.Messages.Max(m => m.Sequence) + 1
-            : 1;
+        var nextSequence = conversation.NextSequence();
 
         // The user message that triggered this turn was created before the session existed.
         var triggerMessage = conversation.Messages
@@ -184,12 +181,7 @@ internal sealed class AICopilotService(
         logger.LogInformation("LLM is disabled for tenant {TenantId}, skipping copilot turn", request.TenantId);
 
         const string notice = "AI is disabled for this company. Contact your administrator to enable it.";
-        var row = AICopilotMessage.TextMessage(
-            conversation.Id,
-            conversation.Messages.Count > 0 ? conversation.Messages.Max(m => m.Sequence) + 1 : 1,
-            AICopilotMessageRole.System,
-            notice);
-        conversation.Messages.Add(row);
+        var row = conversation.AddTextMessage(AICopilotMessageRole.System, notice);
         conversation.EndTurn();
         await tenantUow.SaveChangesAsync(ct);
         await BroadcastMessageAsync(request, conversation, row);

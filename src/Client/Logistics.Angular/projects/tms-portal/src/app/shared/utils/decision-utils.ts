@@ -108,118 +108,56 @@ export function parseToolOutput(json: string | null | undefined): ParsedToolOutp
   }
 }
 
+interface ToolMeta {
+  label: string;
+  icon: IconName;
+  /** Mirrors the IsWrite metadata on the backend AIDispatchToolDefinition. */
+  write?: true;
+}
+
+/**
+ * The display metadata for every agent tool, keyed by the backend's snake_case tool name. One
+ * table rather than three parallel lookups - the label, icon and write flag drifted apart when
+ * they were separate.
+ */
+const TOOL_META: Record<string, ToolMeta> = {
+  get_unassigned_loads: { label: "Unassigned Loads", icon: "box" },
+  get_available_trucks: { label: "Available Trucks & Fleet Overview", icon: "truck" },
+  get_driver_hos_status: { label: "Driver HOS Status", icon: "clock" },
+  check_hos_feasibility: { label: "HOS Feasibility Check", icon: "shield" },
+  batch_check_hos_feasibility: { label: "Batch HOS Feasibility Check", icon: "shield" },
+  calculate_distance: { label: "Distance Calculation", icon: "map" },
+  calculate_assignment_metrics: { label: "Assignment Metrics", icon: "chart-column" },
+  check_broker_credit: { label: "Broker Credit Check", icon: "circle" },
+  check_dispatch_eligibility: { label: "Dispatch Eligibility Check", icon: "circle" },
+  preview_tax_calculation: { label: "Tax Preview", icon: "circle" },
+  get_container_status: { label: "Container Status", icon: "circle" },
+  get_terminal_info: { label: "Terminal Info", icon: "circle" },
+  search_loadboard: { label: "Search Load Board", icon: "search" },
+  search_loads: { label: "Search Loads", icon: "search" },
+  get_load: { label: "Load Details", icon: "box" },
+  search_customers: { label: "Customer Lookup", icon: "users" },
+  get_invoices: { label: "Invoices", icon: "file-text" },
+  get_invoice: { label: "Invoice Details", icon: "file-text" },
+  search_expenses: { label: "Expenses", icon: "receipt" },
+  get_expense_stats: { label: "Expense Stats", icon: "chart-column" },
+  get_upcoming_maintenance: { label: "Upcoming Maintenance", icon: "wrench" },
+
+  assign_load_to_truck: { label: "Assign Load", icon: "link", write: true },
+  create_trip: { label: "Create Trip", icon: "circle-plus", write: true },
+  dispatch_trip: { label: "Dispatch Trip", icon: "send", write: true },
+  book_loadboard_load: { label: "Book Load", icon: "shopping-cart", write: true },
+  create_load_invoice: { label: "Create Invoice", icon: "file-text", write: true },
+  send_invoice: { label: "Send Invoice", icon: "mail", write: true },
+  create_payment_link: { label: "Create Payment Link", icon: "credit-card", write: true },
+};
+
 export function getToolLabel(toolName: string | null | undefined): string {
-  switch (toolName) {
-    case "get_unassigned_loads":
-      return "Unassigned Loads";
-    case "get_available_trucks":
-      return "Available Trucks & Fleet Overview";
-    case "get_driver_hos_status":
-      return "Driver HOS Status";
-    case "check_hos_feasibility":
-      return "HOS Feasibility Check";
-    case "batch_check_hos_feasibility":
-      return "Batch HOS Feasibility Check";
-    case "calculate_distance":
-      return "Distance Calculation";
-    case "calculate_assignment_metrics":
-      return "Assignment Metrics";
-    case "assign_load_to_truck":
-      return "Assign Load";
-    case "create_trip":
-      return "Create Trip";
-    case "dispatch_trip":
-      return "Dispatch Trip";
-    case "search_loadboard":
-      return "Search Load Board";
-    case "book_loadboard_load":
-      return "Book Load";
-    case "check_broker_credit":
-      return "Broker Credit Check";
-    case "check_dispatch_eligibility":
-      return "Dispatch Eligibility Check";
-    case "preview_tax_calculation":
-      return "Tax Preview";
-    case "get_container_status":
-      return "Container Status";
-    case "get_terminal_info":
-      return "Terminal Info";
-    case "search_loads":
-      return "Search Loads";
-    case "get_load":
-      return "Load Details";
-    case "search_customers":
-      return "Customer Lookup";
-    case "get_invoices":
-      return "Invoices";
-    case "get_invoice":
-      return "Invoice Details";
-    case "search_expenses":
-      return "Expenses";
-    case "get_expense_stats":
-      return "Expense Stats";
-    case "get_upcoming_maintenance":
-      return "Upcoming Maintenance";
-    case "create_load_invoice":
-      return "Create Invoice";
-    case "send_invoice":
-      return "Send Invoice";
-    case "create_payment_link":
-      return "Create Payment Link";
-    default:
-      return toolName ?? "Unknown";
-  }
+  return (toolName ? TOOL_META[toolName]?.label : null) ?? toolName ?? "Unknown";
 }
 
 export function getToolIcon(toolName: string | null | undefined): IconName {
-  switch (toolName) {
-    case "get_unassigned_loads":
-      return "box";
-    case "get_available_trucks":
-      return "truck";
-    case "get_driver_hos_status":
-      return "clock";
-    case "check_hos_feasibility":
-    case "batch_check_hos_feasibility":
-      return "shield";
-    case "calculate_distance":
-      return "map";
-    case "calculate_assignment_metrics":
-      return "chart-column";
-    case "assign_load_to_truck":
-      return "link";
-    case "create_trip":
-      return "circle-plus";
-    case "dispatch_trip":
-      return "send";
-    case "search_loadboard":
-      return "search";
-    case "book_loadboard_load":
-      return "shopping-cart";
-    case "search_loads":
-      return "search";
-    case "get_load":
-      return "box";
-    case "search_customers":
-      return "users";
-    case "get_invoices":
-    case "get_invoice":
-      return "file-text";
-    case "search_expenses":
-      return "receipt";
-    case "get_expense_stats":
-      return "chart-column";
-    case "get_upcoming_maintenance":
-      return "wrench";
-    case "create_load_invoice":
-      return "file-text";
-    case "send_invoice":
-      return "mail";
-    case "create_payment_link":
-      return "credit-card";
-    default:
-      return "circle";
-  }
+  return (toolName ? TOOL_META[toolName]?.icon : null) ?? "circle";
 }
 
 /** Builds a human-readable detail string for confirmation dialogs */
@@ -250,16 +188,7 @@ export function buildDecisionDetail(decision: {
 }
 
 export function isWriteTool(toolName: string | null | undefined): boolean {
-  // Mirrors the IsWrite metadata in the backend AIDispatchToolRegistry.
-  return [
-    "assign_load_to_truck",
-    "create_trip",
-    "dispatch_trip",
-    "book_loadboard_load",
-    "create_load_invoice",
-    "send_invoice",
-    "create_payment_link",
-  ].includes(toolName ?? "");
+  return toolName ? TOOL_META[toolName]?.write === true : false;
 }
 
 export function getToolMarkerClass(toolName: string | null | undefined): string {

@@ -5,6 +5,7 @@ using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using MediatR;
@@ -29,11 +30,10 @@ internal sealed class ApproveAICopilotDecisionHandler(
 
         var userId = currentUser.GetUserId();
         var guard = await AICopilotDecisionGuard.LoadAsync(tenantUow, request.DecisionId, userId, ct);
-        if (guard.Error is not null)
-            return Result.Fail(guard.Error);
+        if (!guard.IsSuccess)
+            return Result.Fail(guard.Error!);
 
-        var decision = guard.Decision!;
-        var conversation = guard.Conversation!;
+        var (decision, conversation) = guard.Value!;
 
         // Copilot.Manage alone is not enough to execute, say, an invoice write.
         if (toolRegistry.TryGetDefinition(decision.ToolName!)?.RequiredPermission is { } requiredPermission)
@@ -67,7 +67,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
             outcome = Result.Fail($"Failed to execute decision: {ex.Message}");
         }
 
-        var message = AICopilotDecisionGuard.AppendOutcomeNote(conversation, note);
+        var message = conversation.AddTextMessage(AICopilotMessageRole.System, note);
         await tenantUow.SaveChangesAsync(ct);
 
         await broadcastService.BroadcastMessageAsync(tenant.Id, conversation.CreatedById, message.ToDto());

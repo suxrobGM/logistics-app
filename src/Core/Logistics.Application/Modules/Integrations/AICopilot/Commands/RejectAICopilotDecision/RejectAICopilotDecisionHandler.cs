@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 
@@ -16,18 +17,17 @@ internal sealed class RejectAICopilotDecisionHandler(
     {
         var userId = currentUser.GetUserId();
         var guard = await AICopilotDecisionGuard.LoadAsync(tenantUow, request.DecisionId, userId, ct);
-        if (guard.Error is not null)
-            return Result.Fail(guard.Error);
+        if (!guard.IsSuccess)
+            return Result.Fail(guard.Error!);
 
-        var decision = guard.Decision!;
-        var conversation = guard.Conversation!;
+        var (decision, conversation) = guard.Value!;
 
         decision.Reject(userId!.Value, request.Reason);
 
         var note = string.IsNullOrWhiteSpace(request.Reason)
             ? $"Rejected: {decision.ToolName}"
             : $"Rejected: {decision.ToolName} - {request.Reason}";
-        var message = AICopilotDecisionGuard.AppendOutcomeNote(conversation, note);
+        var message = conversation.AddTextMessage(AICopilotMessageRole.System, note);
         await tenantUow.SaveChangesAsync(ct);
 
         var tenantId = tenantUow.GetCurrentTenant().Id;

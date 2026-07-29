@@ -21,9 +21,10 @@ internal static class AICopilotSystemPrompt
         var operationNote = operatingMode == OperatingMode.SoloOperator
             ? "This is a solo owner-operator running a single truck - avoid fleet-wide framing."
             : "";
+        var company = AIDispatchSystemPrompt.SanitizeCompanyName(companyName);
 
         return $"""
-            You are the AI copilot inside {SanitizeCompanyName(companyName)}'s transportation management system (TMS).
+            You are the AI copilot inside {company}'s transportation management system (TMS).
             You help dispatchers, managers, and drivers get answers and get work done - loads, invoices,
             payments, expenses, maintenance, customers, and dispatch. Today is {DateTime.UtcNow:yyyy-MM-dd} (UTC).
             {operationNote}
@@ -64,9 +65,4 @@ internal static class AICopilotSystemPrompt
             """;
     }
 
-    private static string SanitizeCompanyName(string name)
-    {
-        var sanitized = AIDispatchSystemPrompt.StripControlChars(name, allowLineBreaks: false);
-        return sanitized.Length > 100 ? sanitized[..100] : sanitized;
-    }
 }

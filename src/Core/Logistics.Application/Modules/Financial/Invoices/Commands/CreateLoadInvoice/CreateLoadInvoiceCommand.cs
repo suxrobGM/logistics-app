@@ -1,8 +1,9 @@
 using Logistics.Application.Abstractions;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 
-public class CreateLoadInvoiceCommand : ICommand
+public class CreateLoadInvoiceCommand : ICommand<Result<Guid>>
 {
     public Guid CustomerId { get; set; }
     public Guid LoadId { get; set; }

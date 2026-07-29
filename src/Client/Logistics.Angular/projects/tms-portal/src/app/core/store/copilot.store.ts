@@ -11,7 +11,7 @@ import {
   type AICopilotMessageDto,
   type AIDispatchDecisionDto,
 } from "@logistics/shared/api";
-import { ErrorCodes, isUpgradeError } from "@logistics/shared/errors";
+import { ErrorCodes, getApiError, isUpgradeError } from "@logistics/shared/errors";
 import { FeatureService, ToastService } from "@logistics/shared/services";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { CopilotHubService } from "@/core/services/copilot-hub.service";
@@ -154,10 +154,9 @@ export const CopilotStore = signalStore(
       };
 
       const handleSendError = (error: unknown): void => {
-        const errorCode = (error as { error?: { errorCode?: string } })?.error?.errorCode;
-        if (isUpgradeError(errorCode)) {
-          const message = (error as { error?: { error?: string } })?.error?.error ?? "";
-          upgradePrompt.showUpgradePrompt(errorCode!, message);
+        const apiError = getApiError(error);
+        if (isUpgradeError(apiError?.errorCode)) {
+          upgradePrompt.showUpgradePrompt(apiError!.errorCode!, apiError!.message);
         } else {
           toast.showError("Failed to send message");
         }

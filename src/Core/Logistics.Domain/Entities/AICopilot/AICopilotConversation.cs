@@ -24,6 +24,20 @@ public class AICopilotConversation : AuditableEntity, ITenantEntity
 
     public virtual List<AICopilotMessage> Messages { get; } = [];
 
+    /// <summary>
+    /// Appends a text row and bumps <see cref="LastMessageAt"/>. The only place sequence numbers
+    /// are allocated - callers must not build an <see cref="AICopilotMessage"/> themselves.
+    /// </summary>
+    public AICopilotMessage AddTextMessage(AICopilotMessageRole role, string text)
+    {
+        var message = AICopilotMessage.TextMessage(Id, NextSequence(), role, text);
+        Messages.Add(message);
+        LastMessageAt = DateTime.UtcNow;
+        return message;
+    }
+
+    public int NextSequence() => Messages.Count > 0 ? Messages.Max(m => m.Sequence) + 1 : 1;
+
     public void BeginTurn()
     {
         Status = AICopilotConversationStatus.Running;
