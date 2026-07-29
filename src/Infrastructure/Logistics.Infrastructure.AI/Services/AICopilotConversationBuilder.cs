@@ -17,10 +17,7 @@ namespace Logistics.Infrastructure.AI.Services;
 /// </summary>
 internal sealed class AICopilotConversationBuilder(
     IAIDispatchToolRegistry toolRegistry,
-    IFeatureService featureService,
-    LlmProviderFactory providerFactory,
-    LlmModelResolver modelResolver,
-    ITenantUnitOfWork tenantUow,
+    LlmSessionSetup sessionSetup,
     ILogger<AICopilotConversationBuilder> logger)
 {
     private const int MaxTranscriptMessages = 30;
@@ -31,16 +28,11 @@ internal sealed class AICopilotConversationBuilder(
         IReadOnlySet<string> callerPermissions,
         LlmOptions config)
     {
-        var tenant = tenantUow.GetCurrentTenant();
+        var setup = await sessionSetup.ResolveAsync(config);
+        var tenant = setup.Tenant;
+        var selection = setup.Selection;
 
-        var selection = await modelResolver.ResolveAsync(config);
-        var provider = providerFactory.Create(selection.Provider);
-
-        if (string.IsNullOrWhiteSpace(selection.ProviderConfig.ApiKey))
-            throw new InvalidOperationException("LLM API key is not configured.");
-
-        var enabledFeatures = (await featureService.GetEnabledFeaturesAsync(tenant.Id)).ToHashSet();
-        var tools = toolRegistry.GetToolDefinitions(enabledFeatures, callerPermissions);
+        var tools = toolRegistry.GetToolDefinitions(setup.EnabledFeatures, callerPermissions);
 
         var systemPrompt = AICopilotSystemPrompt.Build(
             tenant.Name ?? "Fleet",
@@ -58,7 +50,7 @@ internal sealed class AICopilotConversationBuilder(
         // Thinking stays off: thinking blocks are not persisted, and replaying prior assistant
         // turns without them violates provider requirements.
         return new LlmConversation(
-            provider, systemPrompt, messages, tools, selection.Model, config.MaxTokens, Thinking: null);
+            setup.Provider, systemPrompt, messages, tools, selection.Model, config.MaxTokens, Thinking: null);
     }
 
     private static List<LlmMessage> BuildMessages(IEnumerable<AICopilotMessage> transcript)

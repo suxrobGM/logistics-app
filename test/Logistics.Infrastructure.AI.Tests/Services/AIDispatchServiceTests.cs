@@ -57,8 +57,9 @@ public class AIDispatchServiceTests
 
         var systemSettings = Substitute.For<ISystemSettingsService>();
         var modelResolver = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);
+        var sessionSetup = new LlmSessionSetup(featureService, providerFactory, modelResolver, tenantUow);
         var conversationBuilder = new AIDispatchConversationBuilder(
-            toolRegistry, featureService, providerFactory, modelResolver, tenantUow, systemSettings,
+            toolRegistry, sessionSetup, tenantUow, systemSettings,
             NullLogger<AIDispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IAIDispatchToolExecutor>();

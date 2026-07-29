@@ -29,6 +29,7 @@ public static class Registrar
 
         // Agent services
         services.AddSingleton<AIDispatchSessionCancellationRegistry>();
+        services.AddScoped<LlmSessionSetup>();
         services.AddScoped<AgentLoopRunner>();
         services.AddScoped<IAIDispatchService, AIDispatchService>();
         services.AddScoped<AIDispatchConversationBuilder>();

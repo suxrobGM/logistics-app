@@ -52,7 +52,9 @@ public class AIDispatchConversationBuilderTests
         var providerFactory = new LlmProviderFactory(llmOptions);
         var modelResolver = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);
 
-        sut = new AIDispatchConversationBuilder(toolRegistry, featureService, providerFactory, modelResolver, tenantUow, systemSettings, logger);
+        var sessionSetup = new LlmSessionSetup(featureService, providerFactory, modelResolver, tenantUow);
+
+        sut = new AIDispatchConversationBuilder(toolRegistry, sessionSetup, tenantUow, systemSettings, logger);
     }
 
     private static LlmOptions ValidConfig => new()

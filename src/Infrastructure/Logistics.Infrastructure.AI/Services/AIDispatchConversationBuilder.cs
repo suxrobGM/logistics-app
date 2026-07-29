@@ -19,9 +19,7 @@ namespace Logistics.Infrastructure.AI.Services;
 /// </summary>
 internal sealed class AIDispatchConversationBuilder(
     IAIDispatchToolRegistry toolRegistry,
-    IFeatureService featureService,
-    LlmProviderFactory providerFactory,
-    LlmModelResolver modelResolver,
+    LlmSessionSetup sessionSetup,
     ITenantUnitOfWork tenantUow,
     ISystemSettingsService systemSettings,
     ILogger<AIDispatchConversationBuilder> logger)
@@ -31,22 +29,12 @@ internal sealed class AIDispatchConversationBuilder(
         AIDispatchRequest request,
         LlmOptions config)
     {
-        var tenant = tenantUow.GetCurrentTenant();
+        var setup = await sessionSetup.ResolveAsync(config);
+        var tenant = setup.Tenant;
         var companyName = tenant.Name ?? "Fleet";
+        var resolvedProvider = setup.Selection.Provider;
 
-        // Resolve the global model (admin-managed): system setting → appsettings default.
-        // The provider is derived from the model via the catalog, so it can't drift.
-        // No per-request override on purpose - `ILlmClient.ModelId` is for one-shot background calls.
-        var selection = await modelResolver.ResolveAsync(config);
-        var resolvedProvider = selection.Provider;
-        var provider = providerFactory.Create(resolvedProvider);
-        var providerConfig = selection.ProviderConfig;
-
-        if (string.IsNullOrWhiteSpace(providerConfig.ApiKey))
-            throw new InvalidOperationException("LLM API key is not configured.");
-
-        // One resolve for every gate - IsFeatureEnabledAsync costs master-DB round trips each time.
-        var enabledFeatures = (await featureService.GetEnabledFeaturesAsync(tenant.Id)).ToHashSet();
+        var enabledFeatures = setup.EnabledFeatures;
         var hasLoadBoard = enabledFeatures.Contains(TenantFeature.LoadBoard);
         var hasIntermodal = enabledFeatures.Contains(TenantFeature.IntermodalContainers);
 
@@ -57,7 +45,7 @@ internal sealed class AIDispatchConversationBuilder(
         // No caller permissions: a dispatch run is gated by the endpoint's policy, not per tool.
         var tools = toolRegistry.GetToolDefinitions(enabledFeatures, forDispatchAgent: true);
 
-        var model = selection.Model;
+        var model = setup.Selection.Model;
         session.ModelUsed = model;
 
         logger.LogInformation(
@@ -82,7 +70,7 @@ internal sealed class AIDispatchConversationBuilder(
         if (enableThinking)
             thinking = new LlmThinkingOptions(config.ThinkingBudgetTokens);
 
-        return new LlmConversation(provider, systemPrompt, messages, tools, model, config.MaxTokens, thinking);
+        return new LlmConversation(setup.Provider, systemPrompt, messages, tools, model, config.MaxTokens, thinking);
     }
 
     private static string BuildUserMessage(AIDispatchRequest request)
