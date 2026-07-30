@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Application.Abstractions.LoadBoard;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 
 internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditService) : IAIDispatchTool
 {

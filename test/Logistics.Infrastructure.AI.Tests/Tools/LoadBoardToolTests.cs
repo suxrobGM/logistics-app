@@ -1,3 +1,4 @@
+using Logistics.Infrastructure.AI.Tools.LoadBoard;
 using Logistics.Infrastructure.AI.Agents;
 using System.Text.Json;
 using System.Text.Json.Nodes;

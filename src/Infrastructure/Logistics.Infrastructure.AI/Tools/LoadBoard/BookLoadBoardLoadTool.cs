@@ -3,7 +3,7 @@ using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using MediatR;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 
 internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext runContext) : IAIDispatchTool
 {

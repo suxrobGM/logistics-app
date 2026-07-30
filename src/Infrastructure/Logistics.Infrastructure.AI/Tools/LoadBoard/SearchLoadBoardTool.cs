@@ -3,7 +3,7 @@ using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Domain.Primitives.ValueObjects;
 using MediatR;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 
 internal sealed class SearchLoadBoardTool(IMediator mediator) : IAIDispatchTool
 {
