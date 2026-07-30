@@ -21,7 +21,6 @@ public class AIDispatchSessionJob(
         Guid? triggeredByUserId,
         string? instructions,
         string? rejectionContext,
-        bool isOverage,
         CancellationToken ct)
     {
         using var scope = scopeFactory.CreateScope();
@@ -34,7 +33,6 @@ public class AIDispatchSessionJob(
         {
             await agentService.RunAsync(new AIDispatchRequest(
                 tenantId, mode, triggeredByUserId,
-                IsOverage: isOverage,
                 Instructions: instructions,
                 RejectionContext: rejectionContext), ct);
         }
@@ -58,7 +56,6 @@ public class HangfireAIDispatchJobRunner(IBackgroundJobClient jobClient) : IBack
             request.TriggeredByUserId,
             request.Instructions,
             request.RejectionContext,
-            request.IsOverage,
             CancellationToken.None));
     }
 }

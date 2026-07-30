@@ -18,6 +18,5 @@ public record AIDispatchRequest(
     Guid TenantId,
     AgentAutonomyMode Mode,
     Guid? TriggeredByUserId,
-    bool IsOverage = false,
     string? Instructions = null,
     string? RejectionContext = null);

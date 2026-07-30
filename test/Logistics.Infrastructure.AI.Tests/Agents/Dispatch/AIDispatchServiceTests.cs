@@ -24,6 +24,7 @@ public class AIDispatchServiceTests
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
 
     private readonly IStripeUsageService stripeUsageService = Substitute.For<IStripeUsageService>();
+    private readonly IAIQuotaService quotaService = Substitute.For<IAIQuotaService>();
 
     private readonly AIDispatchService sut;
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
@@ -74,26 +75,34 @@ public class AIDispatchServiceTests
 
         var cancellationRegistry = new AgentSessionCancellationRegistry();
 
+        SetQuotaStatus(isOverQuota: false);
+
         sut = new AIDispatchService(
             llmOptions, conversationBuilder, loopRunner, cancellationRegistry,
-            tenantUow, broadcastService, stripeUsageService, new AgentRunContext(),
+            tenantUow, broadcastService, quotaService, stripeUsageService, new AgentRunContext(),
             NullLogger<AIDispatchService>.Instance);
     }
 
-    private static AIDispatchRequest CreateRequest(bool isOverage = false)
+    private void SetQuotaStatus(bool isOverQuota)
+    {
+        quotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .Returns(new AIQuotaStatus(300, isOverQuota ? 300 : 0, isOverQuota ? 0 : 300, isOverQuota));
+    }
+
+    private static AIDispatchRequest CreateRequest()
     {
         return new AIDispatchRequest(
             Guid.NewGuid(),
             AgentAutonomyMode.Autonomous,
-            null,
-            isOverage);
+            null);
     }
 
     #region IsOverage flag on session
 
     [Fact]
-    public async Task RunAsync_SetsIsOverageTrue_WhenRequestIsOverage()
+    public async Task RunAsync_SetsIsOverageTrue_WhenTenantIsOverQuota()
     {
+        SetQuotaStatus(isOverQuota: true);
         AgentSession? capturedSession = null;
         sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
@@ -102,7 +111,7 @@ public class AIDispatchServiceTests
         // but the session should still be created with IsOverage set
         try
         {
-            await sut.RunAsync(CreateRequest(true));
+            await sut.RunAsync(CreateRequest());
         }
         catch
         {
@@ -114,7 +123,7 @@ public class AIDispatchServiceTests
     }
 
     [Fact]
-    public async Task RunAsync_SetsIsOverageFalse_WhenRequestIsNotOverage()
+    public async Task RunAsync_SetsIsOverageFalse_WhenTenantIsUnderQuota()
     {
         AgentSession? capturedSession = null;
         sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
@@ -142,7 +151,8 @@ public class AIDispatchServiceTests
     {
         // Create a session that will "complete" - we simulate by catching the API error
         // and checking that the overage was NOT reported (because session failed, not completed)
-        var request = CreateRequest(true);
+        SetQuotaStatus(isOverQuota: true);
+        var request = CreateRequest();
 
         try
         {
@@ -182,7 +192,8 @@ public class AIDispatchServiceTests
         stripeUsageService.ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new Exception("Stripe API error"));
 
-        var request = CreateRequest(true);
+        SetQuotaStatus(isOverQuota: true);
+        var request = CreateRequest();
 
         // Should not throw even if Stripe fails
         try

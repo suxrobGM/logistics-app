@@ -20,6 +20,7 @@ internal sealed class AIDispatchService(
     AgentSessionCancellationRegistry cancellationRegistry,
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
+    IAIQuotaService quotaService,
     IStripeUsageService stripeUsageService,
     IAgentRunContext runContext,
     ILogger<AIDispatchService> logger) : IAIDispatchService
@@ -32,12 +33,15 @@ internal sealed class AIDispatchService(
 
         runContext.SetTriggeredBy(request.TriggeredByUserId);
 
+        // Billed-not-blocked: over-quota sessions run, flagged and metered on completion.
+        var quota = await quotaService.GetQuotaStatusAsync(request.TenantId, ct);
+
         var session = new AgentSession
         {
             Mode = request.Mode,
             TriggeredByUserId = request.TriggeredByUserId,
             StartedAt = DateTime.UtcNow,
-            IsOverage = request.IsOverage,
+            IsOverage = quota.IsOverQuota,
             Instructions = request.Instructions
         };
 
