@@ -4,7 +4,6 @@ using Logistics.Infrastructure.AI.Llm;
 using Logistics.Infrastructure.AI.Agents;
 using Logistics.Infrastructure.AI.Agents.Copilot;
 using Logistics.Infrastructure.AI.Agents.Dispatch;
-using Logistics.Infrastructure.AI.Services;
 using Logistics.Infrastructure.AI.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

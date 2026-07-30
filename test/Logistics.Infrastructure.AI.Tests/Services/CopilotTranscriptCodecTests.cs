@@ -1,7 +1,6 @@
 using Logistics.Infrastructure.AI.Agents.Copilot;
 using System.Text.Json.Nodes;
 using Logistics.Infrastructure.AI.Llm.Contracts;
-using Logistics.Infrastructure.AI.Services;
 using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;

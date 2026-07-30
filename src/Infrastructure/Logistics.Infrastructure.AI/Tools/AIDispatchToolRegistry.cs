@@ -3,7 +3,7 @@ using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Tools;
 
 internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
 {

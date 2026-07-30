@@ -2,7 +2,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Infrastructure.AI;
-using Logistics.Infrastructure.AI.Services;
 using Logistics.Infrastructure.AI.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,5 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.AI.Services;
+using Logistics.Infrastructure.AI.Tools;
 using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;

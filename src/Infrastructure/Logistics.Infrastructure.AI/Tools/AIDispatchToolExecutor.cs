@@ -4,7 +4,7 @@ using Logistics.Infrastructure.AI.Tools;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.AIDispatch;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Tools;
 
 internal sealed class AIDispatchToolExecutor(
     IEnumerable<IAIDispatchTool> tools,
