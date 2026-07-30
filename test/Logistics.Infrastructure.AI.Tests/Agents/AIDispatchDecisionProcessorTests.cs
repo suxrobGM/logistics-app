@@ -25,7 +25,7 @@ public class AIDispatchDecisionProcessorTests
 
     private readonly AIDispatchDecisionProcessor sut;
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IAIDispatchToolExecutor toolExecutor = Substitute.For<IAIDispatchToolExecutor>();
+    private readonly IAgentToolExecutor toolExecutor = Substitute.For<IAgentToolExecutor>();
     private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
     private readonly IAgentToolRegistry toolRegistry = new AgentToolRegistry();
 

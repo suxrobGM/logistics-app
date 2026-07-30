@@ -13,7 +13,7 @@ namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
 internal sealed class ApproveAIDispatchDecisionHandler(
     ITenantUnitOfWork tenantUow,
-    IAIDispatchToolExecutor toolExecutor,
+    IAgentToolExecutor toolExecutor,
     ICurrentUserService currentUser,
     IOptions<LlmOptions> llmOptions) : IAppRequestHandler<ApproveAIDispatchDecisionCommand, Result>
 {

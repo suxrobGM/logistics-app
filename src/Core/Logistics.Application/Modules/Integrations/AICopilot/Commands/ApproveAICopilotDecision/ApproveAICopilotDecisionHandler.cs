@@ -16,7 +16,7 @@ namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
 internal sealed class ApproveAICopilotDecisionHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser,
-    IAIDispatchToolExecutor toolExecutor,
+    IAgentToolExecutor toolExecutor,
     IAgentToolRegistry toolRegistry,
     IAICopilotBroadcastService broadcastService,
     IMediator mediator,

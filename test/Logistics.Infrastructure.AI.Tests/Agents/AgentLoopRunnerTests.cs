@@ -19,7 +19,7 @@ namespace Logistics.Infrastructure.AI.Tests.Agents;
 public class AgentLoopRunnerTests
 {
     private readonly ILlmProvider provider = Substitute.For<ILlmProvider>();
-    private readonly IAIDispatchToolExecutor toolExecutor = Substitute.For<IAIDispatchToolExecutor>();
+    private readonly IAgentToolExecutor toolExecutor = Substitute.For<IAgentToolExecutor>();
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<AIDispatchSession, Guid> sessionRepo =
         Substitute.For<ITenantRepository<AIDispatchSession, Guid>>();

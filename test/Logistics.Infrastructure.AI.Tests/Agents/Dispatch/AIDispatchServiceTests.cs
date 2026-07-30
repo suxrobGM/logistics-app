@@ -65,7 +65,7 @@ public class AIDispatchServiceTests
             toolRegistry, sessionSetup, tenantUow, systemSettings,
             NullLogger<AIDispatchConversationBuilder>.Instance);
 
-        var toolExecutor = Substitute.For<IAIDispatchToolExecutor>();
+        var toolExecutor = Substitute.For<IAgentToolExecutor>();
         var decisionProcessor = new AIDispatchDecisionProcessor(
             toolExecutor, toolRegistry, tenantUow, broadcastService,
             NullLogger<AIDispatchDecisionProcessor>.Instance);

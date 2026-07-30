@@ -8,9 +8,9 @@ using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools;
 
-public class AIDispatchToolExecutorTests
+public class AgentToolExecutorTests
 {
-    private readonly ILogger<AIDispatchToolExecutor> logger = NullLogger<AIDispatchToolExecutor>.Instance;
+    private readonly ILogger<AgentToolExecutor> logger = NullLogger<AgentToolExecutor>.Instance;
 
     private static IAgentTool CreateMockTool(string name, string result)
     {
@@ -25,7 +25,7 @@ public class AIDispatchToolExecutorTests
     public async Task ExecuteToolAsync_KnownTool_DelegatesToTool()
     {
         var tool = CreateMockTool("test_tool", "{\"ok\": true}");
-        var sut = new AIDispatchToolExecutor([tool], logger);
+        var sut = new AgentToolExecutor([tool], logger);
 
         var result = await sut.ExecuteToolAsync("test_tool", "{}", CancellationToken.None);
 
@@ -36,7 +36,7 @@ public class AIDispatchToolExecutorTests
     [Fact]
     public async Task ExecuteToolAsync_UnknownTool_ReturnsError()
     {
-        var sut = new AIDispatchToolExecutor([], logger);
+        var sut = new AgentToolExecutor([], logger);
 
         var result = await sut.ExecuteToolAsync("nonexistent_tool", "{}", CancellationToken.None);
 
@@ -58,7 +58,7 @@ public class AIDispatchToolExecutorTests
                 return Task.FromResult("{}");
             });
 
-        var sut = new AIDispatchToolExecutor([tool], logger);
+        var sut = new AgentToolExecutor([tool], logger);
 
         await sut.ExecuteToolAsync("my_tool", """{"key": "value"}""", CancellationToken.None);
 
@@ -72,7 +72,7 @@ public class AIDispatchToolExecutorTests
         var tool1 = CreateMockTool("tool_a", "result_a");
         var tool2 = CreateMockTool("tool_b", "result_b");
 
-        var sut = new AIDispatchToolExecutor([tool1, tool2], logger);
+        var sut = new AgentToolExecutor([tool1, tool2], logger);
 
         var result = await sut.ExecuteToolAsync("tool_b", "{}", CancellationToken.None);
 

@@ -11,7 +11,7 @@ namespace Logistics.McpServer;
 
 /// <summary>
 /// An MCP tool that wraps a <see cref="AgentToolDefinition"/> and delegates execution
-/// to <see cref="IAIDispatchToolExecutor"/>. Generated dynamically from the tool registry
+/// to <see cref="IAgentToolExecutor"/>. Generated dynamically from the tool registry
 /// so tool names, descriptions, and schemas are defined in one place.
 /// </summary>
 internal sealed class AIDispatchMcpTool : McpServerTool
@@ -50,7 +50,7 @@ internal sealed class AIDispatchMcpTool : McpServerTool
         var services = request.Services!;
         var featureService = services.GetRequiredService<IFeatureService>();
         var tenantUow = services.GetRequiredService<ITenantUnitOfWork>();
-        var executor = services.GetRequiredService<IAIDispatchToolExecutor>();
+        var executor = services.GetRequiredService<IAgentToolExecutor>();
 
         // Feature gate: MCP Server
         var tenant = tenantUow.GetCurrentTenant();

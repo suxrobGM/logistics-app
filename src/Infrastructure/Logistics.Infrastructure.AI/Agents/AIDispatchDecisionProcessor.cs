@@ -19,7 +19,7 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// <see cref="AgentToolDefinition"/> metadata - there is no tool-name list here.
 /// </summary>
 internal sealed class AIDispatchDecisionProcessor(
-    IAIDispatchToolExecutor toolExecutor,
+    IAgentToolExecutor toolExecutor,
     IAgentToolRegistry toolRegistry,
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,

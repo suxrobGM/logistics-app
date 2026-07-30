@@ -6,9 +6,9 @@ using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class AIDispatchToolExecutor(
+internal sealed class AgentToolExecutor(
     IEnumerable<IAgentTool> tools,
-    ILogger<AIDispatchToolExecutor> logger) : IAIDispatchToolExecutor
+    ILogger<AgentToolExecutor> logger) : IAgentToolExecutor
 {
     private readonly Dictionary<string, IAgentTool> toolMap = tools.ToDictionary(t => t.Name);
 

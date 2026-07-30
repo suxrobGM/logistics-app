@@ -48,7 +48,7 @@ public static class Registrar
         services.AddScoped<IAIDispatchService, AIDispatchService>();
         services.AddScoped<AIDispatchConversationBuilder>();
         services.AddScoped<AIDispatchDecisionProcessor>();
-        services.AddScoped<IAIDispatchToolExecutor, AIDispatchToolExecutor>();
+        services.AddScoped<IAgentToolExecutor, AgentToolExecutor>();
         services.AddSingleton<IAgentToolRegistry, AgentToolRegistry>();
 
         // Copilot (conversational agent sharing the loop, tools, and decision machinery)
