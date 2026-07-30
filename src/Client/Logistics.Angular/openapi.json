@@ -1145,7 +1145,7 @@
             "name": "Status",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/AIDispatchSessionStatus"
+              "$ref": "#/components/schemas/AgentSessionStatus"
             }
           },
           {
@@ -1178,7 +1178,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AIDispatchSessionDtoPagedResponse"
+                  "$ref": "#/components/schemas/AgentSessionDtoPagedResponse"
                 }
               }
             }
@@ -1209,7 +1209,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AIDispatchSessionDto"
+                  "$ref": "#/components/schemas/AgentSessionDto"
                 }
               }
             }
@@ -1261,7 +1261,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AIDispatchDecisionDto"
+                    "$ref": "#/components/schemas/AgentDecisionDto"
                   }
                 }
               }
@@ -16226,7 +16226,7 @@
           "decisions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AIDispatchDecisionDto"
+              "$ref": "#/components/schemas/AgentDecisionDto"
             },
             "nullable": true
           }
@@ -16316,124 +16316,6 @@
         ],
         "type": "string"
       },
-      "AIDispatchDecisionDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "sessionId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "type": {
-            "$ref": "#/components/schemas/AIDispatchDecisionType"
-          },
-          "status": {
-            "$ref": "#/components/schemas/AIDispatchDecisionStatus"
-          },
-          "reasoning": {
-            "type": "string",
-            "nullable": true
-          },
-          "toolName": {
-            "type": "string",
-            "nullable": true
-          },
-          "toolInput": {
-            "type": "string",
-            "nullable": true
-          },
-          "toolOutput": {
-            "type": "string",
-            "nullable": true
-          },
-          "loadId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "loadName": {
-            "type": "string",
-            "nullable": true
-          },
-          "truckId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "truckNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "tripId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "invoiceId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "customerId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "executedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "approvedByUserId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "rejectionReason": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AIDispatchDecisionStatus": {
-        "enum": [
-          "suggested",
-          "approved",
-          "rejected",
-          "executed",
-          "failed"
-        ],
-        "type": "string"
-      },
-      "AIDispatchDecisionType": {
-        "enum": [
-          "query",
-          "assign_load",
-          "create_trip",
-          "dispatch_trip",
-          "book_load_board_load",
-          "reassign_load",
-          "create_invoice",
-          "send_invoice",
-          "create_payment_link"
-        ],
-        "type": "string"
-      },
-      "AIDispatchMode": {
-        "enum": [
-          "human_in_the_loop",
-          "autonomous"
-        ],
-        "type": "string"
-      },
       "AIDispatchPolicyDto": {
         "type": "object",
         "properties": {
@@ -16473,119 +16355,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "AIDispatchSessionDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "number": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "mode": {
-            "$ref": "#/components/schemas/AIDispatchMode"
-          },
-          "status": {
-            "$ref": "#/components/schemas/AIDispatchSessionStatus"
-          },
-          "triggeredByUserId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "completedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "totalTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "inputTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "outputTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cacheReadTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cacheCreationTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "estimatedCostUsd": {
-            "type": "number",
-            "format": "double"
-          },
-          "modelUsed": {
-            "type": "string",
-            "nullable": true
-          },
-          "decisionCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "summary": {
-            "type": "string",
-            "nullable": true
-          },
-          "instructions": {
-            "type": "string",
-            "nullable": true
-          },
-          "errorMessage": {
-            "type": "string",
-            "nullable": true
-          },
-          "isOverage": {
-            "type": "boolean"
-          },
-          "decisions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AIDispatchDecisionDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AIDispatchSessionDtoPagedResponse": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AIDispatchSessionDto"
-            },
-            "nullable": true
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationMeta"
-          }
-        },
-        "additionalProperties": false
-      },
-      "AIDispatchSessionStatus": {
-        "enum": [
-          "running",
-          "completed",
-          "failed",
-          "cancelled"
-        ],
-        "type": "string"
       },
       "AIQuotaStatusDto": {
         "type": "object",
@@ -17215,6 +16984,237 @@
           }
         },
         "additionalProperties": false
+      },
+      "AgentAutonomyMode": {
+        "enum": [
+          "human_in_the_loop",
+          "autonomous"
+        ],
+        "type": "string"
+      },
+      "AgentDecisionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AgentDecisionType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AgentDecisionStatus"
+          },
+          "reasoning": {
+            "type": "string",
+            "nullable": true
+          },
+          "toolName": {
+            "type": "string",
+            "nullable": true
+          },
+          "toolInput": {
+            "type": "string",
+            "nullable": true
+          },
+          "toolOutput": {
+            "type": "string",
+            "nullable": true
+          },
+          "loadId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "loadName": {
+            "type": "string",
+            "nullable": true
+          },
+          "truckId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "truckNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "tripId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "invoiceId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "executedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "approvedByUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentDecisionStatus": {
+        "enum": [
+          "suggested",
+          "approved",
+          "rejected",
+          "executed",
+          "failed"
+        ],
+        "type": "string"
+      },
+      "AgentDecisionType": {
+        "enum": [
+          "query",
+          "assign_load",
+          "create_trip",
+          "dispatch_trip",
+          "book_load_board_load",
+          "reassign_load",
+          "create_invoice",
+          "send_invoice",
+          "create_payment_link"
+        ],
+        "type": "string"
+      },
+      "AgentSessionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/AgentAutonomyMode"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AgentSessionStatus"
+          },
+          "triggeredByUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "totalTokensUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inputTokensUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outputTokensUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cacheReadTokens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cacheCreationTokens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estimatedCostUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "modelUsed": {
+            "type": "string",
+            "nullable": true
+          },
+          "decisionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOverage": {
+            "type": "boolean"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentDecisionDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentSessionDtoPagedResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentSessionDto"
+            },
+            "nullable": true
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentSessionStatus": {
+        "enum": [
+          "running",
+          "completed",
+          "failed",
+          "cancelled"
+        ],
+        "type": "string"
       },
       "ApiKeyCreatedDto": {
         "type": "object",
@@ -25804,7 +25804,7 @@
         "type": "object",
         "properties": {
           "mode": {
-            "$ref": "#/components/schemas/AIDispatchMode"
+            "$ref": "#/components/schemas/AgentAutonomyMode"
           },
           "instructions": {
             "type": "string",

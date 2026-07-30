@@ -51,15 +51,23 @@ public static class Registrar
         services.AddScoped<IAICopilotService, AICopilotService>();
         services.AddScoped<AICopilotConversationBuilder>();
 
-        // Every IAgentTool in this assembly, so adding a tool is one file rather than two.
-        // AgentToolRegistryParityTests fails loudly if this scan and the catalogue disagree.
-        foreach (var toolType in typeof(Registrar).Assembly.GetTypes()
-                     .Where(t => t is { IsClass: true, IsAbstract: false }
-                                 && typeof(IAgentTool).IsAssignableFrom(t)))
+        services.AddAgentTools();
+
+        return services;
+    }
+
+    /// <summary>
+    ///     Registers every <see cref="IAgentTool" /> in this assembly, so adding a tool is one file
+    ///     rather than two. AgentToolRegistryParityTests fails loudly if this scan and the catalogue disagree.
+    /// </summary>
+    private static void AddAgentTools(this IServiceCollection services)
+    {
+        var toolTypes = typeof(Registrar).Assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsAssignableTo(typeof(IAgentTool)));
+
+        foreach (var toolType in toolTypes)
         {
             services.AddScoped(typeof(IAgentTool), toolType);
         }
-
-        return services;
     }
 }
