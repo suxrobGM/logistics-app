@@ -23,11 +23,11 @@ The dispatcher and manager web interface for managing all fleet operations.
 | **Autonomous Dispatch**    | The agent looks at unassigned loads, truck locations, HOS hours, truck-type compatibility, and revenue per mile, then proposes load-to-truck assignments.                   |
 | **Human-in-the-Loop Mode** | The agent suggests assignments and a dispatcher approves, rejects, or asks for a re-plan. Rejection context is fed back so the next round of suggestions is more refined.   |
 | **Autonomous Mode**        | The agent runs without a human in the loop - it assigns loads, creates trips, and dispatches.                                                                               |
-| **Multi-Provider LLM**     | Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. The model can be picked per session.                                                         |
+| **Multi-Provider LLM**     | Anthropic (Claude Sonnet, Haiku), OpenAI (GPT-5.6 series), and DeepSeek. The model is global, selected by a platform admin.                                                 |
 | **Agent Tool Registry**    | 7+ tools: fleet search, HOS feasibility checks, assignment scoring, load board search, trip creation, dispatch execution.                                                   |
 | **Session Audit Trail**    | Every tool call, reasoning step, and decision is written to a visual timeline with timestamps. No black box.                                                                |
 | **Re-Planning**            | Reject a suggestion and the agent runs again with the rejection context, looking for an alternative.                                                                        |
-| **Quota Management**       | Weekly quotas use a multiplier per request, and tier-gated model access is set by subscription plan. Overages bill through Stripe.                                          |
+| **Quota Management**       | Weekly quotas use a multiplier per request (1× Standard, 2× Premium models). Plans differ by quota only; the model is global, admin-selected. Overages bill through Stripe. |
 | **MCP Server**             | Connect Claude Desktop, Cursor, Windsurf, and other MCP clients to fleet data. API keys are tenant-managed, shown once, stored as SHA-256 hashes, and rate-limited per key. |
 
 ### Operations

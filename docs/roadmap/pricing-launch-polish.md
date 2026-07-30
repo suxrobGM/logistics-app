@@ -1,6 +1,6 @@
 # Pricing Page & Billing Polish
 
-- **Status**: Planned
+- **Status**: In Progress
 - **Priority**: P1 - conventions every competitor pricing page has; cheap to add
 - **Effort**: S
 - **Category**: Launch hygiene
@@ -14,7 +14,7 @@ keep that property when changing prices). Missing: the standard trust signals ar
 ## What to build
 
 - **Annual billing discount** (~2 months free): annual Stripe Prices per plan, toggle on `website/pages/home/sections/pricing/`, handled in `StripeSubscriptionService`/`StripePlanService`.
-- **Free trial**: DataTruck advertises one on every plan. 14-day trial via Stripe `trial_period_days`; show "14-day free trial, no credit card" (or with card - decide) on pricing cards.
+- **Free trial**: DataTruck advertises one on every plan. 30 days was chosen (over the 14 originally sketched here) via Stripe trial settings; show "30-day free trial, no credit card" on pricing cards.
 - **"From $41/mo" framing**: 1 truck on Starter is the lowest credible number in the market - headline it on the website hero/pricing.
 - **DVIR/safety gating check**: DVIR is a federal legal requirement but lives in Professional (`SubscriptionPlanSeeder` puts `Safety` in Pro). Consider moving basic DVIR down to Starter, keep driver-behavior analytics + accident management in Pro - avoids "the cheap plan is non-compliant" perception.
 - **EUR display** when [eu-market-readiness](eu-market-readiness.md) starts - `Money` VO already supports currency.
@@ -27,4 +27,9 @@ Pricing page shows monthly/annual toggle, trial badge, and "from $41/mo"; plan f
 
 ## Notes
 
-_(add dated implementation notes here)_
+- **2026-07-30** - Partially shipped:
+  - 30-day no-card trial on every first subscription (`CreateSubscriptionHandler`; Stripe pauses at trial end if card-less).
+  - "From $41/mo" framing on the website pricing section.
+  - DVIR moved to Starter via the new `TenantFeature.Dvir` flag; Safety stays Professional.
+  - DataTruck rows added to the comparison page.
+  - **Annual billing deferred - revisit after testing with real companies.** EUR display still open.

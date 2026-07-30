@@ -286,7 +286,7 @@ LLM dispatch agent and tool registry.
 - `ILlmProvider` adapter pattern with `AnthropicLlmProvider` (Claude SDK) and `OpenAILlmProvider` (OpenAI-compatible: OpenAI, DeepSeek, GLM)
 - `AIDispatchService` agent loop (max 25 iterations, prompt caching, extended thinking)
 - `AgentToolRegistry` - one catalogue behind three surfaces: `GetDispatchAgentTools`, `GetCopilotTools` (permission-scoped), `GetAllTools` (MCP, gates per call)
-- Quota tracking with multiplier-based weekly limits (1x / 5x / 10x by the global model's cost tier)
+- Quota tracking with multiplier-based weekly limits (1x / 2x by the global model's cost tier)
 - Global, admin-selected dispatch model (`LlmModelCatalog` + `SystemSettings`); plans differ by quota only
 
 See [AI Dispatch](../ai-dispatch.md).

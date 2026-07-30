@@ -51,10 +51,10 @@ in its **Notes** section. Keep this index's Status column in sync.
 
 ## Launch hygiene
 
-| Feature                                         | Priority | Effort | Status  |
-| ----------------------------------------------- | -------- | ------ | ------- |
-| [AI cost guardrails](ai-cost-guardrails.md)     | P0       | S      | Planned |
-| [Pricing page polish](pricing-launch-polish.md) | P1       | S      | Planned |
+| Feature                                         | Priority | Effort | Status      |
+| ----------------------------------------------- | -------- | ------ | ----------- |
+| [AI cost guardrails](ai-cost-guardrails.md)     | P0       | S      | Done        |
+| [Pricing page polish](pricing-launch-polish.md) | P1       | S      | In Progress |
 
 ## Competitive cheat sheet
 

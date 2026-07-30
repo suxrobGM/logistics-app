@@ -328,7 +328,7 @@ stateDiagram-v2
     Cancelled --> [*]
 ```
 
-A session captures token usage (`InputTokensUsed`, `OutputTokensUsed`, `CacheReadTokens`, `CacheCreationTokens`), estimated USD cost, and the `RequestCost` multiplier (1 / 5 / 10) used by the AI quota system.
+A session captures token usage (`InputTokensUsed`, `OutputTokensUsed`, `CacheReadTokens`, `CacheCreationTokens`), estimated USD cost, and the `RequestCost` multiplier (1 / 2) used by the AI quota system.
 
 ## Invoice hierarchy (TPH)
 

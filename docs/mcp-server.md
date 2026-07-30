@@ -158,6 +158,7 @@ Key format: `logsx_{tenantId}_{random}` - the tenant ID is embedded so the serve
 - **Authentication**: API keys are hashed with SHA-256 before storage. Only the key prefix is stored for display.
 - **Tenant isolation**: Each key is scoped to a single tenant's database. Cross-tenant access is impossible.
 - **Rate limiting**: 100 requests per minute per API key.
+- **No AI quota**: MCP calls consume no platform LLM tokens (the caller brings their own model), so the weekly AI quota does not apply.
 - **Feature gating**: The MCP Server feature must be enabled on the tenant's subscription plan.
 - **Write confirmation**: Write tools instruct the AI to explain and confirm before executing.
 

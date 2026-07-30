@@ -169,8 +169,9 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAIRequestQuota`)
 - Application: `Application.Abstractions/AIDispatch/IAIQuotaService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (quota tracking), `Infrastructure.AI/Llm/LlmPricing.cs`
-- API/UI: (quota bar in `tms-portal/pages/ai-dispatch/`)
+- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (quota tracking), `Infrastructure.AI/Llm/LlmPricing.cs` (tiers: `Standard` ×1 / `Premium` ×2, overage units)
+- API/UI: (quota bar in `tms-portal/pages/ai-dispatch/`), `admin-portal/pages/ai-settings/tenant-quotas/` (per-tenant usage + revenue-vs-LLM-cost margin report)
+- Quota numbers live in `SubscriptionPlanSeeder` + admin portal only - never exposed to tenants (tenant API returns a percentage)
 
 ### Global AI settings
 
@@ -212,6 +213,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Safety/DvirReport.cs`, `DvirDefect.cs`
 - Application: `Modules/Compliance/Dvir/Commands/`, `Modules/Compliance/Dvir/Queries/`
 - API/UI: `DvirController.cs`, `tms-portal/pages/safety/`
+- Feature flag: `TenantFeature.Dvir` (Starter+; enabled by default; gates commands and queries - separate from `Safety`, which stays Professional)
 
 ### Vehicle inspections
 

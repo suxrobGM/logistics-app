@@ -88,12 +88,12 @@ Mapbox__AccessToken="pk.xxx"
 Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"
 ```
 
-| Variable                            | Description                                                                           |
-| ----------------------------------- | ------------------------------------------------------------------------------------- |
-| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key for AI dispatch agent                                               |
-| `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key (alternative provider)                                                 |
-| `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key (alternative provider)                                               |
-| `Llm__DefaultProvider`              | Default LLM provider: `Anthropic`, `OpenAI`, `DeepSeek`, `Glm` (default: `Anthropic`) |
+| Variable                            | Description                                                                        |
+| ----------------------------------- | ---------------------------------------------------------------------------------- |
+| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key for AI dispatch agent                                            |
+| `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key (alternative provider)                                              |
+| `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key (alternative provider)                                            |
+| `Llm__DefaultProvider`              | Default LLM provider: `Anthropic`, `OpenAI`, `DeepSeek`, `Glm` (default: `OpenAI`) |
 
 ### TMS Portal (Runtime)
 

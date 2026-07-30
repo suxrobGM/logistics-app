@@ -90,9 +90,10 @@ parameter), and each connection auto-joins its private `copilot:{tenantId}:{user
 ## Quota and cost
 
 Each turn is one `AgentSession`, so `AIQuotaService` counts copilot turns and dispatch runs
-against the same weekly plan quota with the same model multipliers. The send endpoint rejects
-messages with `AI_QUOTA_EXCEEDED` once the quota is exhausted. The model is the same
-admin-managed global model the dispatch agent uses.
+against the same weekly plan quota with the same model multipliers (1× Standard, 2× Premium). The
+send endpoint rejects messages with `AI_QUOTA_EXCEEDED` once the quota is exhausted - the copilot
+hard-blocks at quota, unlike dispatch runs, which keep executing past quota and are billed as
+metered overage. The model is the same admin-managed global model the dispatch agent uses.
 
 ## Adding a tool
 

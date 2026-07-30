@@ -8,13 +8,13 @@ The dispatcher looks at fleet state - unassigned loads, available trucks, driver
 
 You can switch LLM providers without code changes:
 
-| Provider      | Models                                 | Notes                                                  |
-| ------------- | -------------------------------------- | ------------------------------------------------------ |
-| **Anthropic** | Claude Sonnet 4.6, Haiku 4.5, Opus 4.8 | Default. Supports prompt caching and extended thinking |
-| **OpenAI**    | GPT-5.4 Mini, GPT-5.4, GPT-5.4 Nano    | Via official OpenAI SDK                                |
-| **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro     | OpenAI-compatible API                                  |
+| Provider      | Models                                | Notes                                         |
+| ------------- | ------------------------------------- | --------------------------------------------- |
+| **OpenAI**    | GPT-5.6 Luna (default), GPT-5.6 Terra | Default provider. Via official OpenAI SDK     |
+| **Anthropic** | Claude Haiku 4.5, Claude Sonnet 5     | Supports prompt caching and extended thinking |
+| **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro    | OpenAI-compatible API                         |
 
-Quota cost is multiplier-based: **DeepSeek V4 Flash and Pro, GPT-5.4 Mini, and Claude Haiku 4.5 are all 1×**; GPT-5.4 and Claude Sonnet 4.6 are 5×; Claude Opus 4.8 is 10×.
+Quota cost is multiplier-based, by cost tier: **Standard models (GPT-5.6 Luna, DeepSeek V4 Flash and Pro, Claude Haiku 4.5) are 1×**; Premium models (Claude Sonnet 5, GPT-5.6 Terra) are 2×. A session past quota bills one overage unit at $0.10 (Standard) or two ($0.20, Premium). Per-token prices live in `LlmPricing.cs` - read the current numbers there.
 
 ## Operating Modes
 
@@ -154,21 +154,21 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
 
 ### Environment Variables
 
-| Variable                            | Description                                                                   |
-| ----------------------------------- | ----------------------------------------------------------------------------- |
-| `Llm__DefaultProvider`              | LLM provider: `Anthropic`, `OpenAI`, `DeepSeek`, `Glm` (default: `Anthropic`) |
-| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key                                                             |
-| `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key                                                                |
-| `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key                                                              |
-| `Llm__MaxTokens`                    | Max tokens per response (default: 16384)                                      |
-| `Llm__PolicyLearningModel`          | Model for nightly policy learning (default: `deepseek-v4-flash`)              |
+| Variable                            | Description                                                                |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| `Llm__DefaultProvider`              | LLM provider: `Anthropic`, `OpenAI`, `DeepSeek`, `Glm` (default: `OpenAI`) |
+| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key                                                          |
+| `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key                                                             |
+| `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key                                                           |
+| `Llm__MaxTokens`                    | Max tokens per response (default: 16384)                                   |
+| `Llm__PolicyLearningModel`          | Model for nightly policy learning (default: `deepseek-v4-flash`)           |
 
 ### appsettings.json
 
 ```json
 {
   "Llm": {
-    "DefaultProvider": "Anthropic",
+    "DefaultProvider": "OpenAI",
     "MaxTokens": 16384,
     "ThinkingBudgetTokens": 16384,
     "Providers": {
@@ -178,7 +178,7 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
       },
       "OpenAI": {
         "ApiKey": "<key>",
-        "Model": "gpt-5.4-mini"
+        "Model": "gpt-5.6-luna"
       },
       "DeepSeek": {
         "ApiKey": "<key>",
@@ -198,6 +198,10 @@ which persists `AI.Model` / `AI.Provider` / `AI.ExtendedThinking` to `SystemSett
 the appsettings `Llm` defaults. The selectable models come from `LlmModelCatalog`. Tenants never select or
 see the model. Per tenant, an admin can still toggle `LlmEnabled` (Tenant Edit) to block AI for demo/test
 tenants.
+
+Never switch the global model to a Premium model (Sonnet 5, Terra) without re-running the quota
+economics: the ×2 Premium multiplier is a friendliness choice, not margin protection, so plan quotas
+sized against Standard-tier cost can lose money at full utilization on a Premium model.
 
 ### Feature Gating
 
@@ -247,7 +251,7 @@ Tool definitions are JSON Schema, which works with both Claude API tool schemas 
 
 1. **OpenAI-compatible** (most providers): Add a new `LlmProvider` enum value and configure with `BaseUrl` in appsettings
 2. **Custom SDK**: Create a new `ILlmProvider` implementation, add a case in `LlmProviderFactory`
-3. Add one `Pricing` entry in `LlmPricing.cs`, wrapped in `Base`/`Premium`/`Ultra` to set its tier
+3. Add one `Pricing` entry in `LlmPricing.cs`, wrapped in `Standard`/`Premium` to set its tier
 4. Add the model to `LlmModelCatalog` - it populates the admin AI Settings dropdown automatically
 
 See the `add-llm-provider` skill for the full checklist.

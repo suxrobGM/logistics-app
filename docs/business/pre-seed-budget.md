@@ -42,7 +42,8 @@ done. Remaining risk is distribution, which this raise directly addresses.
 - **No engineering payroll** - the founder builds and operates everything. This eliminates the single
   largest cost typical of a SaaS startup.
 - **Self-hosted infrastructure** on a low-cost VPS (~$100/yr) - keeps infra near-zero until tenant count grows.
-- **DeepSeek** is the default LLM (extremely low cost-per-token); the $50/mo line is a conservative ceiling.
+- The default LLM is a **low-cost Standard-tier model** (currently GPT-5.6 Luna, with DeepSeek as an
+  alternative - both extremely low cost-per-token); the $50/mo line is a conservative ceiling.
 - **Stripe fees** (~2.9% + 30¢ + Connect fees) come out of payment volume - they scale with revenue and
   are **not** a budgeted cash line.
 - **Cybersecurity review** is handled in-kind (no paid vendor at this stage).
@@ -68,7 +69,7 @@ done. Remaining risk is distribution, which this raise directly addresses.
 | Founder stipend                                        | $2,000          | $24,000     |
 | Sales specialist (base)                                | $2,000          | $24,000     |
 | Sales enablement & ads (CRM, outreach tools, ad tests) | $500            | $6,000      |
-| LLM / AI - DeepSeek (ceiling)                          | $50             | $600        |
+| LLM / AI (ceiling)                                     | $50             | $600        |
 | Resend (email)                                         | $20             | $240        |
 | VPS + domain                                           | ~$10            | $120        |
 | Mapbox                                                 | $0 (free tier)  | $0          |
@@ -112,7 +113,7 @@ from a founder who has already built the product and now needs to prove it sells
 ## 6. Costs that scale with revenue (flag, don't pre-fund)
 
 - **Stripe fees** - a percentage of payment volume; offset by subscription + usage revenue.
-- **LLM / infrastructure** - grow only as tenants are added; the $0.20/unit AI overage billing already
+- **LLM / infrastructure** - grow only as tenants are added; the $0.10/unit AI overage billing already
   passes premium usage through to tenants.
 - **Sales commissions** - funded by the deals they're paid on.
 

@@ -97,11 +97,11 @@ For OpenAI-compatible providers, instantiate `OpenAILlmProvider` with the right 
 private static readonly Dictionary<string, ModelPricing> Pricing = new()
 {
     // existing entries
-    ["new-model-1"] = Base(0.50m, 2.0m, 0.05m), // input, output, cache-read per M tokens
+    ["new-model-1"] = Standard(0.50m, 2.0m, 0.05m), // input, output, cache-read per M tokens
 };
 ```
 
-Pick the tier: `Base` (1× quota, 1 overage unit), `Premium` (5×, 2), or `Ultra` (10×, 4) — billing units are $0.20 each. The tier only affects quota cost; it does **not** gate which plans can use the model (the model is global).
+Pick the tier: `Standard` (1× quota, 1 overage unit) or `Premium` (2×, 2) — billing units are $0.10 each. The tier only affects quota cost; it does **not** gate which plans can use the model (the model is global).
 
 ### 6. Add the model to `LlmModelCatalog`
 
@@ -124,14 +124,14 @@ selected model in `UpdateAISettingsCommand`. The admin UI populates automaticall
 - [ ] Config section + appsettings entry + env var documented
 - [ ] (If custom SDK) Provider implementation, no SDK types leak
 - [ ] Factory resolves the new provider
-- [ ] **`LlmPricing.Pricing` entry added**, wrapped in `Base`/`Premium`/`Ultra`
+- [ ] **`LlmPricing.Pricing` entry added**, wrapped in `Standard`/`Premium`
 - [ ] `LlmModelCatalog` includes the model (id matches the `LlmPricing` keys)
 - [ ] Admin AI Settings page shows the new model in the dropdown
 - [ ] Selecting the model as the global model runs a dispatch session successfully
 
 ## Common mistakes
 
-- **Using `new(...)` instead of a tier factory** in `Pricing`: it will not compile, because the tier fields have no defaults. That is deliberate - forgetting the tier used to silently bill a Premium model at base rates.
+- **Using `new(...)` instead of a tier factory** in `Pricing`: it will not compile, because the tier fields have no defaults. That is deliberate - forgetting the tier used to silently bill a Premium model at Standard rates.
 - **`LlmModelCatalog` id ≠ `LlmPricing` key**: the catalog offers a model the pricing map doesn't know, so it falls back to default pricing/multiplier.
 - **Forgetting `BaseUrl`** for OpenAI-compatible providers - `OpenAILlmProvider` defaults to OpenAI's endpoint and 401s.
 - **SDK types leaking**: importing the provider SDK in any file other than `Llm/Providers/{X}LlmProvider.cs` breaks the abstraction.
