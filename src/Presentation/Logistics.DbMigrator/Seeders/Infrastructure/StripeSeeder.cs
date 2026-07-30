@@ -19,6 +19,14 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
     public override int Order => 35;
     public override IReadOnlyList<string> DependsOn => [nameof(SubscriptionPlanSeeder)];
 
+    private const string MeterDisplayName = "AI Agent Sessions (Dispatch & Copilot)";
+
+    /// <summary>
+    /// Identity, not a label. Stripe fixes a meter's event name at creation, and
+    /// <c>StripeOptions.AIOverageMeterEventName</c> must emit the same string or usage lands on no
+    /// meter at all. Changing it here only makes the lookup below miss the live meter and create a
+    /// second one.
+    /// </summary>
     private const string MeterEventName = "ai_dispatch_session";
 
     public override Task<bool> ShouldSkipAsync(SeederContext context, CancellationToken cancellationToken = default)
@@ -98,7 +106,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
         {
             var meter = await meterService.CreateAsync(new MeterCreateOptions
             {
-                DisplayName = "AI Dispatch Sessions",
+                DisplayName = MeterDisplayName,
                 EventName = MeterEventName,
                 DefaultAggregation = new MeterDefaultAggregationOptions { Formula = "sum" },
                 CustomerMapping = new MeterCustomerMappingOptions
@@ -117,6 +125,6 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
         }
 
         await settingService.SetAsync(StripeSettingKeys.AIOverageMeterId, meterId,
-            "Stripe Billing Meter ID for AI dispatch session overages", ct);
+            "Stripe Billing Meter ID for AI agent session overages (dispatch and copilot)", ct);
     }
 }
