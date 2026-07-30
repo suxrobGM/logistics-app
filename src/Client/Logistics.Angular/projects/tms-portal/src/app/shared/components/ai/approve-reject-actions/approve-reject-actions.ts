@@ -1,5 +1,5 @@
 import { Component, input, output } from "@angular/core";
-import type { AIDispatchDecisionDto } from "@logistics/shared/api";
+import type { AgentDecisionDto } from "@logistics/shared/api";
 import { UiButton } from "@logistics/shared/ui";
 
 @Component({
@@ -8,7 +8,7 @@ import { UiButton } from "@logistics/shared/ui";
   imports: [UiButton],
 })
 export class ApproveRejectActions {
-  public readonly decision = input.required<AIDispatchDecisionDto>();
-  public readonly approve = output<AIDispatchDecisionDto>();
-  public readonly reject = output<AIDispatchDecisionDto>();
+  public readonly decision = input.required<AgentDecisionDto>();
+  public readonly approve = output<AgentDecisionDto>();
+  public readonly reject = output<AgentDecisionDto>();
 }

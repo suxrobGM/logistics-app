@@ -5,7 +5,7 @@ import {
   approveCopilotDecision,
   rejectAIDispatchDecision,
   rejectCopilotDecision,
-  type AIDispatchDecisionDto,
+  type AgentDecisionDto,
 } from "@logistics/shared/api";
 import { ToastService } from "@logistics/shared/services";
 import { buildDecisionDetail } from "@/shared/utils";
@@ -24,7 +24,7 @@ export class DecisionActionsService {
   private readonly toast = inject(ToastService);
 
   public readonly showRejectDialog = signal(false);
-  public readonly pendingDecision = signal<AIDispatchDecisionDto | null>(null);
+  public readonly pendingDecision = signal<AgentDecisionDto | null>(null);
 
   private endpoint: DecisionEndpoint = "dispatch";
   private onComplete?: () => void | Promise<void>;
@@ -33,7 +33,7 @@ export class DecisionActionsService {
     this.endpoint = endpoint;
   }
 
-  approve(decision: AIDispatchDecisionDto, onComplete?: () => void | Promise<void>): void {
+  approve(decision: AgentDecisionDto, onComplete?: () => void | Promise<void>): void {
     this.onComplete = onComplete;
 
     this.toast.confirm({
@@ -56,7 +56,7 @@ export class DecisionActionsService {
   }
 
   /** Opens the reason dialog; the rejection itself happens in {@link confirmReject}. */
-  reject(decision: AIDispatchDecisionDto, onComplete?: () => void | Promise<void>): void {
+  reject(decision: AgentDecisionDto, onComplete?: () => void | Promise<void>): void {
     this.onComplete = onComplete;
     this.pendingDecision.set(decision);
     this.showRejectDialog.set(true);

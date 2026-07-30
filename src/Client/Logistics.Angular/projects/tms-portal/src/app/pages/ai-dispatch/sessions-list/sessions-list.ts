@@ -9,9 +9,9 @@ import {
   getPendingDecisions,
   getTrucks,
   runAIDispatch,
-  type AIDispatchDecisionDto,
-  type AIDispatchMode,
-  type AIDispatchSessionDto,
+  type AgentAutonomyMode,
+  type AgentDecisionDto,
+  type AgentSessionDto,
   type AIQuotaStatusDto,
   type TruckDto,
 } from "@logistics/shared/api";
@@ -85,18 +85,18 @@ export class SessionsListPage implements OnInit, OnDestroy {
   protected readonly Math = Math;
   protected readonly stripMarkdown = stripMarkdown;
 
-  protected readonly sessions = signal<AIDispatchSessionDto[]>([]);
+  protected readonly sessions = signal<AgentSessionDto[]>([]);
   protected readonly totalRecords = signal(0);
   protected readonly page = signal(1);
   protected readonly pageSize = signal(10);
   protected readonly first = signal(0);
-  protected readonly pendingDecisions = signal<AIDispatchDecisionDto[]>([]);
+  protected readonly pendingDecisions = signal<AgentDecisionDto[]>([]);
   protected readonly quotaStatus = signal<AIQuotaStatusDto | null>(null);
   protected readonly trucks = signal<TruckDto[]>([]);
   protected readonly isLoading = signal(false);
   protected readonly isRunning = signal(false);
   protected readonly showRunDialog = signal(false);
-  protected readonly runMode = signal<AIDispatchMode>("human_in_the_loop");
+  protected readonly runMode = signal<AgentAutonomyMode>("human_in_the_loop");
 
   /** Only write-tool decisions (assign, create trip, dispatch) that need approval */
   protected readonly writeDecisions = computed(() =>
@@ -185,7 +185,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  protected openRunDialog(mode: AIDispatchMode): void {
+  protected openRunDialog(mode: AgentAutonomyMode): void {
     this.runMode.set(mode);
     this.showRunDialog.set(true);
   }
@@ -205,15 +205,15 @@ export class SessionsListPage implements OnInit, OnDestroy {
     }
   }
 
-  protected approveDecision(decision: AIDispatchDecisionDto): void {
+  protected approveDecision(decision: AgentDecisionDto): void {
     this.decisionActions.approve(decision, () => this.loadData());
   }
 
-  protected rejectDecision(decision: AIDispatchDecisionDto): void {
+  protected rejectDecision(decision: AgentDecisionDto): void {
     this.decisionActions.reject(decision, () => this.loadData());
   }
 
-  protected viewSession(session: AIDispatchSessionDto): void {
+  protected viewSession(session: AgentSessionDto): void {
     this.router.navigate(["/ai-dispatch", session.id]);
   }
 }

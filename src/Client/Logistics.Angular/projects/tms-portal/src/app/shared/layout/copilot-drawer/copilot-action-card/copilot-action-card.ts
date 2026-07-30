@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from "@angular/core";
 import { Permission, PermissionGuard } from "@logistics/shared";
-import type { AIDispatchDecisionDto } from "@logistics/shared/api";
+import type { AgentDecisionDto } from "@logistics/shared/api";
 import { Badge, Icon } from "@logistics/shared/ui";
 import { ApproveRejectActions } from "@/shared/components";
 import { getToolIcon, getToolLabel, Labels } from "@/shared/utils";
@@ -15,9 +15,9 @@ import { getToolIcon, getToolLabel, Labels } from "@/shared/utils";
   imports: [ApproveRejectActions, Badge, Icon, PermissionGuard],
 })
 export class CopilotActionCard {
-  public readonly decision = input.required<AIDispatchDecisionDto>();
-  public readonly approve = output<AIDispatchDecisionDto>();
-  public readonly reject = output<AIDispatchDecisionDto>();
+  public readonly decision = input.required<AgentDecisionDto>();
+  public readonly approve = output<AgentDecisionDto>();
+  public readonly reject = output<AgentDecisionDto>();
 
   protected readonly Labels = Labels;
   protected readonly copilotManage = Permission.Copilot.Manage;

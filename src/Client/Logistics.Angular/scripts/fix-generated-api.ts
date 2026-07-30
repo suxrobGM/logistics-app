@@ -3,8 +3,8 @@
 /**
  * Post-processing for ng-openapi-gen output:
  * 1. Regular imports -> `import type`, for verbatimModuleSyntax.
- * 2. Restores `AI` casing - the generator camel-cases ids, so `AIDispatchSessionDto` comes back
- *    as `AiDispatchSessionDto` and stops matching the code that imports it.
+ * 2. Restores `AI` casing - the generator camel-cases ids, so `AIDispatchPolicyDto` comes back
+ *    as `AiDispatchPolicyDto` and stops matching the code that imports it.
  */
 /// <reference types="bun-types" />
 import { readdir } from "fs/promises";

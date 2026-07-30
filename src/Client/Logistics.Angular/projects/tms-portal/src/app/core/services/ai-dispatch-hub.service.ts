@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import type { AIDispatchDecisionDto } from "@logistics/shared/api";
+import type { AgentDecisionDto } from "@logistics/shared/api";
 import { BaseHubConnection } from "./base-hub-connection";
 
 export interface AIDispatchUpdate {
@@ -24,7 +24,7 @@ export class AIDispatchHubService extends BaseHubConnection {
     this.hubConnection.on("ReceiveAIDispatchUpdate", callback);
   }
 
-  set onReceiveAIDispatchDecision(callback: (decision: AIDispatchDecisionDto) => void) {
+  set onReceiveAIDispatchDecision(callback: (decision: AgentDecisionDto) => void) {
     this.hubConnection.off("ReceiveAIDispatchDecision");
     this.hubConnection.on("ReceiveAIDispatchDecision", callback);
   }

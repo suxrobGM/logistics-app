@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, viewChild, type ElementRef } from "@angular/core";
-import type { AICopilotMessageDto, AIDispatchDecisionDto } from "@logistics/shared/api";
+import type { AgentDecisionDto, AICopilotMessageDto } from "@logistics/shared/api";
 import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
 import { CopilotStore } from "@/core/store";
 import { DecisionActionsService, RejectDecisionDialog } from "@/shared/components";
@@ -10,7 +10,7 @@ import { CopilotMessage } from "./copilot-message/copilot-message";
 
 type StreamItem =
   | { kind: "message"; at: string; message: AICopilotMessageDto }
-  | { kind: "decision"; at: string; decision: AIDispatchDecisionDto };
+  | { kind: "decision"; at: string; decision: AgentDecisionDto };
 
 /**
  * The copilot chat drawer. Non-modal on purpose (`ui-drawer` is modal) so the page behind stays
@@ -83,11 +83,11 @@ export class CopilotDrawer {
     }
   }
 
-  protected approve(decision: AIDispatchDecisionDto): void {
+  protected approve(decision: AgentDecisionDto): void {
     this.actions.approve(decision, () => this.refreshConversation());
   }
 
-  protected reject(decision: AIDispatchDecisionDto): void {
+  protected reject(decision: AgentDecisionDto): void {
     this.actions.reject(decision, () => this.refreshConversation());
   }
 

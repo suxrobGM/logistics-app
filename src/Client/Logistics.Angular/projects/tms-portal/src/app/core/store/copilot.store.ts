@@ -7,9 +7,9 @@ import {
   getCopilotConversationById,
   getCopilotConversations,
   sendCopilotMessage,
+  type AgentDecisionDto,
   type AICopilotConversationDto,
   type AICopilotMessageDto,
-  type AIDispatchDecisionDto,
 } from "@logistics/shared/api";
 import { ErrorCodes, getApiError, isUpgradeError } from "@logistics/shared/errors";
 import { FeatureService, ToastService } from "@logistics/shared/services";
@@ -26,7 +26,7 @@ interface CopilotState {
   conversations: AICopilotConversationDto[];
   currentConversation: AICopilotConversationDto | null;
   messages: AICopilotMessageDto[];
-  decisions: AIDispatchDecisionDto[];
+  decisions: AgentDecisionDto[];
   turnStatus: TurnStatus;
   turnError: string | null;
   loading: boolean;

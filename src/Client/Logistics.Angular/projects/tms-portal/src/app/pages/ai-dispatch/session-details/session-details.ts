@@ -14,8 +14,8 @@ import {
   cancelAIDispatchSession,
   getAIDispatchSessionById,
   replanAIDispatchSession,
-  type AIDispatchDecisionDto,
-  type AIDispatchSessionDto,
+  type AgentDecisionDto,
+  type AgentSessionDto,
 } from "@logistics/shared/api";
 import {
   Badge,
@@ -83,7 +83,7 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
 
   public readonly id = input.required<string>();
 
-  protected readonly session = signal<AIDispatchSessionDto | null>(null);
+  protected readonly session = signal<AgentSessionDto | null>(null);
   protected readonly isLoading = signal(false);
 
   protected readonly Labels = Labels;
@@ -185,11 +185,11 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  protected approveDecision(decision: AIDispatchDecisionDto): void {
+  protected approveDecision(decision: AgentDecisionDto): void {
     this.decisionActions.approve(decision, () => this.loadSession());
   }
 
-  protected rejectDecision(decision: AIDispatchDecisionDto): void {
+  protected rejectDecision(decision: AgentDecisionDto): void {
     this.decisionActions.reject(decision, () => this.loadSession());
   }
 

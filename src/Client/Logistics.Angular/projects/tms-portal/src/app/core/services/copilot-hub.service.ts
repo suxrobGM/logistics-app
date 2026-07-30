@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { getAccessToken } from "@logistics/shared";
 import type {
+  AgentDecisionDto,
+  AgentSessionStatus,
   AICopilotMessageDto,
-  AIDispatchDecisionDto,
-  AIDispatchSessionStatus,
 } from "@logistics/shared/api";
 import { BaseHubConnection } from "./base-hub-connection";
 
@@ -11,7 +11,7 @@ import { BaseHubConnection } from "./base-hub-connection";
 export interface CopilotTurnUpdate {
   conversationId: string;
   sessionId: string;
-  status: AIDispatchSessionStatus;
+  status: AgentSessionStatus;
   totalTokensUsed: number;
   decisionCount: number;
   errorMessage: string | null;
@@ -38,7 +38,7 @@ export class CopilotHubService extends BaseHubConnection {
     this.hubConnection.on("ReceiveCopilotMessage", callback);
   }
 
-  set onReceiveCopilotDecision(callback: (decision: AIDispatchDecisionDto) => void) {
+  set onReceiveCopilotDecision(callback: (decision: AgentDecisionDto) => void) {
     this.hubConnection.off("ReceiveCopilotDecision");
     this.hubConnection.on("ReceiveCopilotDecision", callback);
   }
