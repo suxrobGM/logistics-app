@@ -6,7 +6,7 @@ namespace Logistics.Infrastructure.AI.Tools;
 /// A single dispatch agent tool that can be executed.
 /// Each tool handles one specific operation (e.g., get fleet overview, assign load).
 /// </summary>
-internal interface IAIDispatchTool
+internal interface IAgentTool
 {
     string Name { get; }
     Task<string> ExecuteAsync(JsonNode input, CancellationToken ct);

@@ -4,7 +4,7 @@ using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 
-internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditService) : IAIDispatchTool
+internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditService) : IAgentTool
 {
     public string Name => "check_broker_credit";
 

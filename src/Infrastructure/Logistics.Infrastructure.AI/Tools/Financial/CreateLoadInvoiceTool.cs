@@ -7,7 +7,7 @@ using Logistics.Application.Modules.Operations.Loads.Queries;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class CreateLoadInvoiceTool(IMediator mediator) : IAIDispatchTool
+internal sealed class CreateLoadInvoiceTool(IMediator mediator) : IAgentTool
 {
     public string Name => "create_load_invoice";
 

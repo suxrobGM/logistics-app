@@ -4,7 +4,7 @@ using Logistics.Application.Modules.IdentityAccess.Customers.Queries;
 
 namespace Logistics.Infrastructure.AI.Tools.Operations;
 
-internal sealed class SearchCustomersTool(IMediator mediator) : IAIDispatchTool
+internal sealed class SearchCustomersTool(IMediator mediator) : IAgentTool
 {
     public string Name => "search_customers";
 

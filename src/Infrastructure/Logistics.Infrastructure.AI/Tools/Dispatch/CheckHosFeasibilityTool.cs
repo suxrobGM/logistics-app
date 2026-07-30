@@ -4,7 +4,7 @@ using Logistics.Domain.Persistence;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
+internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAgentTool
 {
     public string Name => "check_hos_feasibility";
 

@@ -7,10 +7,10 @@ using Logistics.Application.Abstractions.AIDispatch;
 namespace Logistics.Infrastructure.AI.Tools;
 
 internal sealed class AIDispatchToolExecutor(
-    IEnumerable<IAIDispatchTool> tools,
+    IEnumerable<IAgentTool> tools,
     ILogger<AIDispatchToolExecutor> logger) : IAIDispatchToolExecutor
 {
-    private readonly Dictionary<string, IAIDispatchTool> toolMap = tools.ToDictionary(t => t.Name);
+    private readonly Dictionary<string, IAgentTool> toolMap = tools.ToDictionary(t => t.Name);
 
     public async Task<string> ExecuteToolAsync(string toolName, string toolInputJson, CancellationToken ct = default)
     {

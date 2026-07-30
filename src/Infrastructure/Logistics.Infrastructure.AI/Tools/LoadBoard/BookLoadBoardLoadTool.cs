@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 
-internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext runContext) : IAIDispatchTool
+internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext runContext) : IAgentTool
 {
     public string Name => "book_loadboard_load";
 

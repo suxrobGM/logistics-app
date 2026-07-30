@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class SearchExpensesTool(IMediator mediator) : IAIDispatchTool
+internal sealed class SearchExpensesTool(IMediator mediator) : IAgentTool
 {
     public string Name => "search_expenses";
 

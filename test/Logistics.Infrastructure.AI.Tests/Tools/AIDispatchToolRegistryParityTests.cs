@@ -26,22 +26,22 @@ public class AIDispatchToolRegistryParityTests
         services.AddAIInfrastructure(new ConfigurationBuilder().Build());
 
         return [.. services
-            .Where(d => d.ServiceType == typeof(IAIDispatchTool))
+            .Where(d => d.ServiceType == typeof(IAgentTool))
             .Select(d => d.ImplementationType)
             .OfType<Type>()];
     }
 
     private static List<Type> DeclaredToolTypes() =>
         [.. typeof(Registrar).Assembly.GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && typeof(IAIDispatchTool).IsAssignableFrom(t))];
+            .Where(t => t is { IsClass: true, IsAbstract: false } && typeof(IAgentTool).IsAssignableFrom(t))];
 
     /// <summary>
-    /// Reads <see cref="IAIDispatchTool.Name"/> without running a constructor. Every tool implements
+    /// Reads <see cref="IAgentTool.Name"/> without running a constructor. Every tool implements
     /// it as an expression-bodied literal that touches no injected state, so an uninitialized
     /// instance answers correctly and we avoid substituting 29 different dependency sets.
     /// </summary>
     private static string NameOf(Type toolType) =>
-        ((IAIDispatchTool)RuntimeHelpers.GetUninitializedObject(toolType)).Name;
+        ((IAgentTool)RuntimeHelpers.GetUninitializedObject(toolType)).Name;
 
     [Fact]
     public void EveryDeclaredTool_IsRegisteredInDi()
@@ -54,7 +54,7 @@ public class AIDispatchToolRegistryParityTests
 
         Assert.True(
             missing.Count == 0,
-            $"Tools implementing IAIDispatchTool but never registered in Registrar: {string.Join(", ", missing)}");
+            $"Tools implementing IAgentTool but never registered in Registrar: {string.Join(", ", missing)}");
     }
 
     [Fact]

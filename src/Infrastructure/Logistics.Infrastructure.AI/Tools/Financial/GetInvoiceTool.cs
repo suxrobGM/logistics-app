@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Financial.Invoices.Queries;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class GetInvoiceTool(IMediator mediator) : IAIDispatchTool
+internal sealed class GetInvoiceTool(IMediator mediator) : IAgentTool
 {
     public string Name => "get_invoice";
 

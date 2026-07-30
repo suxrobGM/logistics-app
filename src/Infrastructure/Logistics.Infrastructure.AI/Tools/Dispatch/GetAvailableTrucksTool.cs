@@ -6,7 +6,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
+internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IAgentTool
 {
     public string Name => "get_available_trucks";
 

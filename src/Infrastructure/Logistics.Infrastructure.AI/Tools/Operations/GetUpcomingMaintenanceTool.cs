@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Operations.Maintenance.Queries;
 
 namespace Logistics.Infrastructure.AI.Tools.Operations;
 
-internal sealed class GetUpcomingMaintenanceTool(IMediator mediator) : IAIDispatchTool
+internal sealed class GetUpcomingMaintenanceTool(IMediator mediator) : IAgentTool
 {
     public string Name => "get_upcoming_maintenance";
 

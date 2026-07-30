@@ -12,9 +12,9 @@ public class AIDispatchToolExecutorTests
 {
     private readonly ILogger<AIDispatchToolExecutor> logger = NullLogger<AIDispatchToolExecutor>.Instance;
 
-    private static IAIDispatchTool CreateMockTool(string name, string result)
+    private static IAgentTool CreateMockTool(string name, string result)
     {
-        var tool = Substitute.For<IAIDispatchTool>();
+        var tool = Substitute.For<IAgentTool>();
         tool.Name.Returns(name);
         tool.ExecuteAsync(Arg.Any<JsonNode>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(result));
@@ -49,7 +49,7 @@ public class AIDispatchToolExecutorTests
     public async Task ExecuteToolAsync_ParsesInputJsonAndPassesToTool()
     {
         JsonNode? capturedInput = null;
-        var tool = Substitute.For<IAIDispatchTool>();
+        var tool = Substitute.For<IAgentTool>();
         tool.Name.Returns("my_tool");
         tool.ExecuteAsync(Arg.Any<JsonNode>(), Arg.Any<CancellationToken>())
             .Returns(callInfo =>

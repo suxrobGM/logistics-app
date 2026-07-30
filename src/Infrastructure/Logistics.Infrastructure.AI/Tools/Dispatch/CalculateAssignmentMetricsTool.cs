@@ -5,7 +5,7 @@ using Logistics.Domain.Persistence;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
+internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow) : IAgentTool
 {
     /// <summary>
     /// One scored truck/load pairing. A record rather than an anonymous type so the sort can read

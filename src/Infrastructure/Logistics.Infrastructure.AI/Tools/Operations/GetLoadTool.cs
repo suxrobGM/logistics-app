@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Operations.Loads.Queries;
 
 namespace Logistics.Infrastructure.AI.Tools.Operations;
 
-internal sealed class GetLoadTool(IMediator mediator) : IAIDispatchTool
+internal sealed class GetLoadTool(IMediator mediator) : IAgentTool
 {
     public string Name => "get_load";
 

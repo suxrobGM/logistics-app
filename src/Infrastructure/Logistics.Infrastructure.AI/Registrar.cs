@@ -55,38 +55,38 @@ public static class Registrar
         services.AddScoped<IAICopilotService, AICopilotService>();
         services.AddScoped<AICopilotConversationBuilder>();
 
-        services.AddScoped<IAIDispatchTool, GetUnassignedLoadsTool>();
-        services.AddScoped<IAIDispatchTool, GetAvailableTrucksTool>();
-        services.AddScoped<IAIDispatchTool, GetDriverHosTool>();
-        services.AddScoped<IAIDispatchTool, CheckHosFeasibilityTool>();
-        services.AddScoped<IAIDispatchTool, BatchCheckHosFeasibilityTool>();
-        services.AddScoped<IAIDispatchTool, CheckDispatchEligibilityTool>();
-        services.AddScoped<IAIDispatchTool, CalculateDistanceTool>();
-        services.AddScoped<IAIDispatchTool, AssignLoadToTruckTool>();
-        services.AddScoped<IAIDispatchTool, CreateTripTool>();
-        services.AddScoped<IAIDispatchTool, DispatchTripTool>();
-        services.AddScoped<IAIDispatchTool, CalculateAssignmentMetricsTool>();
-        services.AddScoped<IAIDispatchTool, PreviewTaxCalculationTool>();
-        services.AddScoped<IAIDispatchTool, GetContainerStatusTool>();
-        services.AddScoped<IAIDispatchTool, GetTerminalInfoTool>();
+        services.AddScoped<IAgentTool, GetUnassignedLoadsTool>();
+        services.AddScoped<IAgentTool, GetAvailableTrucksTool>();
+        services.AddScoped<IAgentTool, GetDriverHosTool>();
+        services.AddScoped<IAgentTool, CheckHosFeasibilityTool>();
+        services.AddScoped<IAgentTool, BatchCheckHosFeasibilityTool>();
+        services.AddScoped<IAgentTool, CheckDispatchEligibilityTool>();
+        services.AddScoped<IAgentTool, CalculateDistanceTool>();
+        services.AddScoped<IAgentTool, AssignLoadToTruckTool>();
+        services.AddScoped<IAgentTool, CreateTripTool>();
+        services.AddScoped<IAgentTool, DispatchTripTool>();
+        services.AddScoped<IAgentTool, CalculateAssignmentMetricsTool>();
+        services.AddScoped<IAgentTool, PreviewTaxCalculationTool>();
+        services.AddScoped<IAgentTool, GetContainerStatusTool>();
+        services.AddScoped<IAgentTool, GetTerminalInfoTool>();
 
         // Load board tools (conditionally included in tool definitions based on tenant feature flag)
-        services.AddScoped<IAIDispatchTool, SearchLoadBoardTool>();
-        services.AddScoped<IAIDispatchTool, CheckBrokerCreditTool>();
-        services.AddScoped<IAIDispatchTool, BookLoadBoardLoadTool>();
+        services.AddScoped<IAgentTool, SearchLoadBoardTool>();
+        services.AddScoped<IAgentTool, CheckBrokerCreditTool>();
+        services.AddScoped<IAgentTool, BookLoadBoardLoadTool>();
 
         // Copilot tools (loads, customers, invoicing, expenses, maintenance)
-        services.AddScoped<IAIDispatchTool, SearchLoadsTool>();
-        services.AddScoped<IAIDispatchTool, GetLoadTool>();
-        services.AddScoped<IAIDispatchTool, SearchCustomersTool>();
-        services.AddScoped<IAIDispatchTool, GetInvoicesTool>();
-        services.AddScoped<IAIDispatchTool, GetInvoiceTool>();
-        services.AddScoped<IAIDispatchTool, SearchExpensesTool>();
-        services.AddScoped<IAIDispatchTool, GetExpenseStatsTool>();
-        services.AddScoped<IAIDispatchTool, GetUpcomingMaintenanceTool>();
-        services.AddScoped<IAIDispatchTool, CreateLoadInvoiceTool>();
-        services.AddScoped<IAIDispatchTool, SendInvoiceTool>();
-        services.AddScoped<IAIDispatchTool, CreatePaymentLinkTool>();
+        services.AddScoped<IAgentTool, SearchLoadsTool>();
+        services.AddScoped<IAgentTool, GetLoadTool>();
+        services.AddScoped<IAgentTool, SearchCustomersTool>();
+        services.AddScoped<IAgentTool, GetInvoicesTool>();
+        services.AddScoped<IAgentTool, GetInvoiceTool>();
+        services.AddScoped<IAgentTool, SearchExpensesTool>();
+        services.AddScoped<IAgentTool, GetExpenseStatsTool>();
+        services.AddScoped<IAgentTool, GetUpcomingMaintenanceTool>();
+        services.AddScoped<IAgentTool, CreateLoadInvoiceTool>();
+        services.AddScoped<IAgentTool, SendInvoiceTool>();
+        services.AddScoped<IAgentTool, CreatePaymentLinkTool>();
 
         return services;
     }

@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Financial.PaymentLinks.Commands;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class CreatePaymentLinkTool(IMediator mediator) : IAIDispatchTool
+internal sealed class CreatePaymentLinkTool(IMediator mediator) : IAgentTool
 {
     public string Name => "create_payment_link";
 

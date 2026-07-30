@@ -10,7 +10,7 @@ namespace Logistics.Infrastructure.AI.Tools.Intermodal;
 /// Looks up an intermodal container by ISO 6346 number (or id), so the agent knows where the box is
 /// before assigning the load that carries it.
 /// </summary>
-internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
+internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow) : IAgentTool
 {
     public string Name => "get_container_status";
 

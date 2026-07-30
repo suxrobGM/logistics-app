@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class GetInvoicesTool(IMediator mediator) : IAIDispatchTool
+internal sealed class GetInvoicesTool(IMediator mediator) : IAgentTool
 {
     public string Name => "get_invoices";
 

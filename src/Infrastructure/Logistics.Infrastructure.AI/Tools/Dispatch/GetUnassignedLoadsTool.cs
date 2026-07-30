@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Operations.Loads.Queries;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IAIDispatchTool
+internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IAgentTool
 {
     public string Name => "get_unassigned_loads";
 

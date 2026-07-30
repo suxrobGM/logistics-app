@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 
-internal sealed class SearchLoadBoardTool(IMediator mediator) : IAIDispatchTool
+internal sealed class SearchLoadBoardTool(IMediator mediator) : IAgentTool
 {
     private const int MaxResults = 20;
 

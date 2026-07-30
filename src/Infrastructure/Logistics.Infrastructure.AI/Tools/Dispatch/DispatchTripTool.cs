@@ -4,7 +4,7 @@ using Logistics.Application.Modules.Operations.Trips.Commands;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class DispatchTripTool(IMediator mediator) : IAIDispatchTool
+internal sealed class DispatchTripTool(IMediator mediator) : IAgentTool
 {
     public string Name => "dispatch_trip";
 

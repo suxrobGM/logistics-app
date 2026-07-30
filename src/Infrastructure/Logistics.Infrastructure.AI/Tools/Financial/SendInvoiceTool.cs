@@ -4,7 +4,7 @@ using Logistics.Application.Modules.Financial.Invoices.Commands;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class SendInvoiceTool(IMediator mediator) : IAIDispatchTool
+internal sealed class SendInvoiceTool(IMediator mediator) : IAgentTool
 {
     public string Name => "send_invoice";
 

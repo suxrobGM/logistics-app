@@ -5,7 +5,7 @@ using Logistics.Domain.Persistence;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class GetDriverHosTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
+internal sealed class GetDriverHosTool(ITenantUnitOfWork tenantUow) : IAgentTool
 {
     public string Name => "get_driver_hos_status";
 

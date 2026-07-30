@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Financial.Expenses.Queries;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class GetExpenseStatsTool(IMediator mediator) : IAIDispatchTool
+internal sealed class GetExpenseStatsTool(IMediator mediator) : IAgentTool
 {
     public string Name => "get_expense_stats";
 
