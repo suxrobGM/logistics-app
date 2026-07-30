@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
 internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
 {

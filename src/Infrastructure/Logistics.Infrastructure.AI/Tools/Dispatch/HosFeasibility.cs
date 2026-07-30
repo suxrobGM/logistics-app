@@ -1,6 +1,6 @@
 using Logistics.Domain.Entities;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
 /// <summary>
 /// Whether a driver's remaining Hours of Service can cover a trip. Shared by the single-shot and

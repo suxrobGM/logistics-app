@@ -4,7 +4,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
 internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IAIDispatchTool
 {

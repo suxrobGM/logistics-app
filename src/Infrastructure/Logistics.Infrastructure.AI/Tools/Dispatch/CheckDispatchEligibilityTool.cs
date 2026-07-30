@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Application.Abstractions.Dispatch;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
 internal sealed class CheckDispatchEligibilityTool(IDispatchEligibilityService eligibilityService)
     : IAIDispatchTool

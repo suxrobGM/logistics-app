@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
 internal sealed class AssignLoadToTruckTool(IMediator mediator) : IAIDispatchTool
 {
