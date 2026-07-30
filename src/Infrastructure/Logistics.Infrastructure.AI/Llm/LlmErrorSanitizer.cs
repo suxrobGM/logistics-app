@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Llm;
 
 /// <summary>
 /// Strips credential and infrastructure detail from exception text before it reaches a

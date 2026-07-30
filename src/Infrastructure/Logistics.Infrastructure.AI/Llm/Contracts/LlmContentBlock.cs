@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace Logistics.Infrastructure.AI.Models;
+namespace Logistics.Infrastructure.AI.Llm.Contracts;
 
 /// <summary>
 /// Base type for the polymorphic content blocks that make up an <see cref="LlmMessage"/>.

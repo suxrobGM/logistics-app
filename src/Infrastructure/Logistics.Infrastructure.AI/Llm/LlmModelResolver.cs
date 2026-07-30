@@ -2,10 +2,10 @@ using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.AI;
-using Logistics.Infrastructure.AI.Models;
+using Logistics.Infrastructure.AI.Llm.Contracts;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Llm;
 
 /// <summary>
 /// Resolves the global, admin-managed LLM model: system setting (<c>AI.Model</c>) → appsettings default.

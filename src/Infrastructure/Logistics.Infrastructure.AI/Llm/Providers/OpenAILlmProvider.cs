@@ -4,10 +4,10 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenAI;
 using OpenAI.Chat;
-using Logistics.Infrastructure.AI.Models;
+using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 
-namespace Logistics.Infrastructure.AI.Providers;
+namespace Logistics.Infrastructure.AI.Llm.Providers;
 
 /// <summary>
 /// LLM provider for OpenAI-compatible APIs (OpenAI, DeepSeek, GLM, Groq, Mistral, etc.).

@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions.AIDispatch;
 
-namespace Logistics.Infrastructure.AI.Models;
+namespace Logistics.Infrastructure.AI.Llm.Contracts;
 
 internal record LlmRequest
 {

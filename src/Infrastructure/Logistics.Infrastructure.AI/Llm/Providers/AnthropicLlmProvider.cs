@@ -1,13 +1,13 @@
 using System.Text.Json.Nodes;
 using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
-using Logistics.Infrastructure.AI.Models;
+using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Tool = Anthropic.SDK.Common.Tool;
 using Function = Anthropic.SDK.Common.Function;
 
-namespace Logistics.Infrastructure.AI.Providers;
+namespace Logistics.Infrastructure.AI.Llm.Providers;
 
 /// <summary>
 /// LLM provider implementation using the Anthropic (Claude) API.

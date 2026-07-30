@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.AI.Models;
+namespace Logistics.Infrastructure.AI.Llm.Contracts;
 
 /// <summary>
 /// A single conversation turn: a role plus its ordered content blocks.

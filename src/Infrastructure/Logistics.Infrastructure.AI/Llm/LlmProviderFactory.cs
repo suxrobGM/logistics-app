@@ -1,8 +1,9 @@
 using Logistics.Application.Abstractions.AI;
+using Logistics.Infrastructure.AI.Llm.Providers;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.AI.Providers;
+namespace Logistics.Infrastructure.AI.Llm;
 
 /// <summary>
 /// Creates <see cref="ILlmProvider"/> instances based on the configured or requested provider type.

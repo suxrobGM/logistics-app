@@ -1,6 +1,6 @@
-using Logistics.Infrastructure.AI.Models;
+using Logistics.Infrastructure.AI.Llm.Contracts;
 
-namespace Logistics.Infrastructure.AI.Providers;
+namespace Logistics.Infrastructure.AI.Llm;
 
 /// <summary>
 /// Provider-agnostic interface for LLM API calls.

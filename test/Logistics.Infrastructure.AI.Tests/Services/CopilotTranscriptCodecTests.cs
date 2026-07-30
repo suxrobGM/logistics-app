@@ -1,5 +1,5 @@
 using System.Text.Json.Nodes;
-using Logistics.Infrastructure.AI.Models;
+using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Infrastructure.AI.Services;
 using Xunit;
 

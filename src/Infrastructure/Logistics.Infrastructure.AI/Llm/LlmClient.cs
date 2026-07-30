@@ -1,11 +1,11 @@
 using Logistics.Application.Abstractions.AI;
-using Logistics.Infrastructure.AI.Models;
-using Logistics.Infrastructure.AI.Providers;
+using Logistics.Infrastructure.AI.Llm.Contracts;
+using Logistics.Infrastructure.AI.Llm;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Llm;
 
 /// <summary>
 /// One-shot LLM entry point. Resolves the global model, sends a single tool-less request

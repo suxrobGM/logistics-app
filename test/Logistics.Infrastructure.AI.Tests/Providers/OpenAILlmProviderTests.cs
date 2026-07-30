@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
-using Logistics.Infrastructure.AI.Models;
-using Logistics.Infrastructure.AI.Providers;
+using Logistics.Infrastructure.AI.Llm.Contracts;
+using Logistics.Infrastructure.AI.Llm;
+using Logistics.Infrastructure.AI.Llm.Providers;
 using OpenAI.Chat;
 using Xunit;
 

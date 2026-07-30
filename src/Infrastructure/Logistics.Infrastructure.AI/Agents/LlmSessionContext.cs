@@ -1,7 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.AI.Models;
-using Logistics.Infrastructure.AI.Providers;
+using Logistics.Infrastructure.AI.Llm.Contracts;
+using Logistics.Infrastructure.AI.Llm;
 
 namespace Logistics.Infrastructure.AI.Services;
 

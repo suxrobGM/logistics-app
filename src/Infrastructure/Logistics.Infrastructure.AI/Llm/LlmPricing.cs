@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Llm;
 
 /// <summary>
 /// Per-model cost, quota multiplier, and Stripe overage units. Pricing from provider documentation,

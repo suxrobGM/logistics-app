@@ -1,10 +1,10 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.AI.Models;
+using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.AI.Prompts;
-using Logistics.Infrastructure.AI.Providers;
+using Logistics.Infrastructure.AI.Llm;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Features;

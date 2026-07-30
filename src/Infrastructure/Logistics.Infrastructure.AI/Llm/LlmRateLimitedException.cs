@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Llm;
 
 /// <summary>
 /// The provider kept returning 429 after every retry. Distinct from a bare

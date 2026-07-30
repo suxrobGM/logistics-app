@@ -3,8 +3,8 @@ using System.Net;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.AI.Models;
-using Logistics.Infrastructure.AI.Providers;
+using Logistics.Infrastructure.AI.Llm.Contracts;
+using Logistics.Infrastructure.AI.Llm;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

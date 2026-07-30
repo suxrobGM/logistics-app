@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Domain.Persistence;
-using Logistics.Infrastructure.AI.Providers;
+using Logistics.Infrastructure.AI.Llm;
 
 namespace Logistics.Infrastructure.AI.Services;
 

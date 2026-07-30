@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.AI.Models;
+namespace Logistics.Infrastructure.AI.Llm.Contracts;
 
 internal enum LlmRole
 {

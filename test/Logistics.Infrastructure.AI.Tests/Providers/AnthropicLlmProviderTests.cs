@@ -1,7 +1,8 @@
 using System.Text.Json.Nodes;
 using Anthropic.SDK.Messaging;
-using Logistics.Infrastructure.AI.Models;
-using Logistics.Infrastructure.AI.Providers;
+using Logistics.Infrastructure.AI.Llm.Contracts;
+using Logistics.Infrastructure.AI.Llm;
+using Logistics.Infrastructure.AI.Llm.Providers;
 using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Providers;

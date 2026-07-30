@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Infrastructure.AI.Providers;
+using Logistics.Infrastructure.AI.Llm;
 
-namespace Logistics.Infrastructure.AI.Models;
+namespace Logistics.Infrastructure.AI.Llm.Contracts;
 
 /// <summary>
 /// Provider-agnostic conversation state. Produced by either conversation builder and consumed by

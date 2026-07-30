@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.AI.Models;
+namespace Logistics.Infrastructure.AI.Llm.Contracts;
 
 /// <summary>
 /// Token usage reported by an LLM call, used for cost and quota accounting.
