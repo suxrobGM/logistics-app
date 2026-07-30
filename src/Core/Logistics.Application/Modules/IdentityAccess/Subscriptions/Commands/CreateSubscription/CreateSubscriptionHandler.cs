@@ -14,6 +14,9 @@ internal sealed class CreateSubscriptionHandler(
     IStripeCustomerService stripeCustomerService,
     ILogger<CreateSubscriptionHandler> logger) : IAppRequestHandler<CreateSubscriptionCommand, Result>
 {
+    /// <summary>No-card trial granted on a tenant's first subscription. Marketed on the pricing page.</summary>
+    private const int FirstSubscriptionTrialDays = 30;
+
     public async Task<Result> Handle(
         CreateSubscriptionCommand req, CancellationToken ct)
     {
@@ -32,9 +35,12 @@ internal sealed class CreateSubscriptionHandler(
             return Result.Fail($"Could not find a subscription plan with ID '{req.PlanId}'");
         }
 
+        var isFirstSubscription = string.IsNullOrEmpty(tenant.Subscription?.StripeSubscriptionId);
+        var trialDays = req.TrialDays ?? (isFirstSubscription ? FirstSubscriptionTrialDays : null);
+
         // Create subscription in Stripe - the webhook will create the local record
         await stripeSubscriptionService.CreateSubscriptionAsync(
-            subscriptionPlan, tenant, truckCount, req.TrialDays);
+            subscriptionPlan, tenant, truckCount, trialDays);
 
         logger.LogInformation("Created Stripe subscription for tenant {TenantId}, truck count: {TruckCount}",
             tenant.Id, truckCount);

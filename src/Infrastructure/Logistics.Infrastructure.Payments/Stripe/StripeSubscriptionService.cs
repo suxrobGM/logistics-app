@@ -31,8 +31,16 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
 
         if (trialDays.HasValue && trialDays.Value > 0)
         {
-            createOptions.PaymentBehavior = "default_incomplete";
+            // The portal never collects a card, so the trial must start without one and
+            // pause - not error - when it ends card-less.
             createOptions.TrialEnd = DateTime.UtcNow.AddDays(trialDays.Value);
+            createOptions.TrialSettings = new SubscriptionTrialSettingsOptions
+            {
+                EndBehavior = new SubscriptionTrialSettingsEndBehaviorOptions
+                {
+                    MissingPaymentMethod = "pause"
+                }
+            };
         }
 
         var subscription = await new SubscriptionService().CreateAsync(createOptions);
