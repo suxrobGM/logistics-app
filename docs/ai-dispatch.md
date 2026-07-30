@@ -82,7 +82,7 @@ DELETE /ai/dispatch/policy                       Erase the learned policy and di
 
 ## Audit Trail
 
-Every agent run creates a **AIDispatchSession** with:
+Every agent run creates an **AgentSession** with:
 
 - Mode (HumanInTheLoop / Autonomous)
 - Who triggered it (user or background job)
@@ -91,7 +91,7 @@ Every agent run creates a **AIDispatchSession** with:
 - Model used and provider
 - Agent's summary
 
-Each decision within a session is a **AIDispatchDecision** with:
+Each decision within a session is an **AgentDecision** with:
 
 - Tool called and input parameters
 - Agent's reasoning
@@ -142,7 +142,7 @@ text is treated as untrusted (control characters stripped): it is LLM output der
 dispatcher-typed rejection reasons, which is a prompt-injection path.
 
 **Cost** - learning runs on `Llm:PolicyLearningModel` (default `deepseek-v4-flash`) via the optional
-`LlmCompletionRequest.ModelId` override, and creates **no** `AIDispatchSession` row, so it does not
+`LlmCompletionRequest.ModelId` override, and creates **no** `AgentSession` row, so it does not
 consume the tenant's weekly quota. Cost is recorded on the policy row (`GenerationCostUsd`) for
 platform observability and is never exposed to the tenant.
 

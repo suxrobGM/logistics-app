@@ -34,7 +34,7 @@ From the chat panel, "invoice load #123 and send the customer a payment link" pr
   (`ai/copilot/decisions/{id}/approve|reject`) because the dispatch ones are gated on
   `AgenticDispatch` + `Dispatch.Manage`; (3) `CreateLoadInvoiceCommand` gained a `RecordPayment`
   opt-out so the copilot can create _unpaid_ invoices - the existing flow marks them Paid at birth,
-  which would make a payment link meaningless. Each turn is an `AIDispatchSession` of new type
+  which would make a payment link meaningless. Each turn is an `AgentSession` of new type
   `Copilot`; the transcript (with tool_use ids) lives in `ai_copilot_messages`. Deep dive:
   [docs/ai-copilot.md](../ai-copilot.md).
 - **2026-07-28** - Frontend + website shipped: non-modal docked chat drawer in the tms-portal shell

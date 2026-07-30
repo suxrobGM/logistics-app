@@ -104,7 +104,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 - Domain: `Primitives/Enums/Tenant/OperatingMode.cs` (`Fleet` | `SoloOperator`), stored on the `TenantSettings` VO (`settings_operating_mode` on `tenants`, master DB)
 - Application: `Modules/IdentityAccess/Tenants/Commands/CreateTenant` + `UpdateTenant` carry it; `Modules/Platform/Onboarding/` drops the `inviteTeam` step in solo mode
-- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section (the `## Operating Mode` heading is already taken by `AIDispatchMode`)
+- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section (the `## Operating Mode` heading is already taken by `AgentAutonomyMode`)
 - API/UI: `tms-portal/core/services/tenant.service.ts` (`isSoloMode`), `core/services/sidebar-nav.service.ts` (`SOLO_HIDDEN_ITEMS`), `tms-portal/pages/settings/company-settings/`, `admin-portal/shared/components/tenant-form/`
 - Note: solo relies on Owner holding `Permission.Driver.*` (`Shared.Identity/Policies/TenantRolePermissions.cs`), and driver-facing queries keying off `Truck.MainDriverId`/`SecondaryDriverId` rather than the role. There is no multi-role model
 - Seed: `DbMigrator` tenant `solo` (`SeedData/solo.json`, `SeedDataKey`/`OperatingMode`/`DataScale` on `Models/DemoTenantConfig.cs`)
@@ -113,14 +113,14 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 ### Dispatch sessions
 
-- Domain: `Entities/AIDispatch/AIDispatchSession.cs`
+- Domain: `Entities/AIDispatch/AgentSession.cs`
 - Application: `Modules/Integrations/AIDispatch/Commands/`, `Modules/Integrations/AIDispatch/Queries/`
 - Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchService.cs`, `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (streams live agent updates, mounted at `/hubs/ai-dispatch`)
 - API/UI: `AIDispatchController.cs`, `tms-portal/pages/ai-dispatch/`
 
 ### Dispatch decisions
 
-- Domain: `Entities/AIDispatch/AIDispatchDecision.cs`
+- Domain: `Entities/AIDispatch/AgentDecision.cs`
 - Application: `Modules/Integrations/AIDispatch/Commands/Approve*`, `Reject*`
 - Infrastructure: `Infrastructure.AI/Agents/AgentDecisionProcessor.cs`
 - API/UI: (under `ai-dispatch/`)
@@ -151,7 +151,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Conversations & turns
 
-- Domain: `Entities/AICopilot/AICopilotConversation.cs`, `AICopilotMessage.cs` (transcript with tool_use ids); `AIDispatchSession.Type == Copilot` per turn
+- Domain: `Entities/AICopilot/AICopilotConversation.cs`, `AICopilotMessage.cs` (transcript with tool_use ids); `AgentSession.Type == Copilot` per turn
 - Application: `Modules/Integrations/AICopilot/Commands/`, `Queries/`
 - Infrastructure: `Infrastructure.AI/Agents/Copilot/` (`AICopilotService.cs`, `AICopilotConversationBuilder.cs`, `CopilotTranscriptCodec.cs`, `AICopilotSystemPrompt.cs`); `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
 - Jobs: `Logistics.API/Jobs/AICopilotTurnJob.cs`

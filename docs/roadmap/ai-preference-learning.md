@@ -7,7 +7,7 @@
 
 ## Why
 
-Every `AIDispatchDecision` carries an approve/reject outcome (+ rejection reason), yet session 100
+Every `AgentDecision` carries an approve/reject outcome (+ rejection reason), yet session 100
 is no smarter than session 1. Distilling this history into per-tenant dispatch policy makes the agent
 demonstrably improve weekly - no TMS competitor has a learning dispatcher, and the accumulated policy
 becomes switching-cost moat.
@@ -39,7 +39,7 @@ user-facing surface is **Dispatch Policy**. Decisions worth remembering:
 - **Two content columns, not a manual-edit flag.** `GeneratedContent` (job-owned) +
   `ManualContent` (dispatcher-owned). A single column plus a flag forces a choice between clobbering
   dispatcher text and freezing the loop on first edit.
-- **Off-quota, not quota-counted.** No `AIDispatchSession` row is created, so `AIQuotaService` never
+- **Off-quota, not quota-counted.** No `AgentSession` row is created, so `AIQuotaService` never
   sees it. Runs on `Llm:PolicyLearningModel` (`deepseek-v4-flash`) via the new optional
   `LlmCompletionRequest.ModelId`, which falls back to the global model when the id is unknown _or its
   provider has no API key_ - that second condition matters on single-provider installs.

@@ -95,7 +95,7 @@ new("get_something",
 {
     RequiredFeature = TenantFeature.Loads,                // omit when ungated
     RequiredPermission = Permission.Load.Manage,          // ALWAYS - copilot scoping depends on it
-    DecisionType = AIDispatchDecisionType.AssignLoad,     // write tools; makes IsWrite true
+    DecisionType = AgentDecisionType.AssignLoad,     // write tools; makes IsWrite true
     DispatchAgent = true                                  // fleet dispatch agent tools only
 },
 ```
@@ -110,7 +110,7 @@ Group with other read tools or other write tools (look at the `── Read Tools
   a fleet dispatch run; a copilot-only tool leaves it off. The copilot sees every tool the calling
   user has the permission for either way.
 - `DecisionType` both categorizes the tool in the audit trail and _is_ the write declaration;
-  append to the `AIDispatchDecisionType` enum when no existing value fits (append-only).
+  append to the `AgentDecisionType` enum when no existing value fits (append-only).
 - If the tool's ids should link into the decision audit (`load_id`, `invoice_id`, ...), check
   `AgentDecisionProcessor.ExtractEntityIds` covers the input field name.
 

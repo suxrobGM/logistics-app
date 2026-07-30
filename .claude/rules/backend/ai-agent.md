@@ -41,13 +41,13 @@ Three placement rules that get broken:
   project that owns the feature (`Infrastructure.Documents/PdfImport/DispatchSheetPrompt`).
 - **Shared machinery is named `Agent*`, not `AIDispatch*`.** The registry, executor, tool contract,
   decision processor and cancellation registry serve the dispatch agent, the copilot and MCP alike.
-  The `AIDispatch*` prefix that remains is the domain (`AIDispatchSession`, `AIDispatchDecision`,
-  `AIDispatchMode`, `AIDispatchPolicy`) and the dispatch-only service.
+  The `AIDispatch*` prefix that remains is the domain (`AgentSession`, `AgentDecision`,
+  `AgentAutonomyMode`, `AIDispatchPolicy`) and the dispatch-only service.
 
 `AIDispatchSystemPrompt.Build` also varies by `TenantSettings.OperatingMode`: `SoloOperator` swaps the
 fleet-framed lines (utilization, truck-to-truck comparison, the assignment table) and appends a
 `## Fleet Profile` block. That heading is deliberately not `## Operating Mode` - that one is already
-taken by `AIDispatchMode`, and reusing it makes the model conflate the two.
+taken by `AgentAutonomyMode`, and reusing it makes the model conflate the two.
 
 ## Provider abstraction
 
@@ -101,7 +101,7 @@ names; plans differ by **quota only** - there is no per-plan model tier.
   dictionary; `GetMultiplier` and `GetOverageBillingUnits` both read it, so they cannot disagree.
   The one thing to preserve: an **unknown** model falls back to base tier for quota and overage but
   to Sonnet rates for cost. That asymmetry is deliberate - see the comment on `DefaultPricing`.
-- Quota counting is multiplier-based, not flat session counts: `AIDispatchSession.RequestCost` comes
+- Quota counting is multiplier-based, not flat session counts: `AgentSession.RequestCost` comes
   from `GetMultiplier()`, `AIQuotaService` sums it for the week, and the tenant-facing API returns a
   percentage only.
 
@@ -130,5 +130,5 @@ Traps, all of which look fine in review:
 - Policy text is **untrusted** - it is LLM output derived from dispatcher-typed rejection reasons.
   `AIDispatchSystemPrompt` sanitises and truncates it. Keep that at the injection point, not in callers.
 - Truncation keeps **whole lines only**. A half-truncated rule reads as a different rule.
-- Learning creates no `AIDispatchSession` row, so it never consumes tenant quota. Cost lands on
+- Learning creates no `AgentSession` row, so it never consumes tenant quota. Cost lands on
   `AIDispatchPolicy.GenerationCostUsd` and is never exposed to the tenant.

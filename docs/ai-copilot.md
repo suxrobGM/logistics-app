@@ -15,7 +15,7 @@ agent loop (`AgentLoopRunner`), the same decision/approval machinery, and the sa
    - handler checks ownership, quota, and the concurrency guard, persists the
      user message, marks the conversation Running, enqueues a Hangfire job
 2. AICopilotTurnJob re-checks the feature flag and runs AICopilotService.RunTurnAsync
-3. The turn creates an AIDispatchSession (Type = Copilot) - quota, tokens, and
+3. The turn creates an AgentSession (Type = Copilot) - quota, tokens, and
    decisions ride the existing session machinery
 4. AICopilotConversationBuilder rebuilds the LLM messages from the persisted
    transcript and scopes the tool catalogue to the calling user's permissions
@@ -62,7 +62,7 @@ Write tools always create `Suggested` decisions rendered as action cards in the 
 (`POST ai/copilot/decisions/{id}/approve`) executes the tool and appends a System note
 ("Approved and executed: ...") to the transcript; rejection appends the reason. The next turn
 replays those notes, so the model knows what actually happened. Decisions stay in the same audit
-trail as dispatch (`ai_dispatch_decisions`, linked to the turn's session).
+trail as dispatch (`agent_decisions`, linked to the turn's session).
 
 ## API
 
@@ -89,7 +89,7 @@ parameter), and each connection auto-joins its private `copilot:{tenantId}:{user
 
 ## Quota and cost
 
-Each turn is one `AIDispatchSession`, so `AIQuotaService` counts copilot turns and dispatch runs
+Each turn is one `AgentSession`, so `AIQuotaService` counts copilot turns and dispatch runs
 against the same weekly plan quota with the same model multipliers. The send endpoint rejects
 messages with `AI_QUOTA_EXCEEDED` once the quota is exhausted. The model is the same
 admin-managed global model the dispatch agent uses.
