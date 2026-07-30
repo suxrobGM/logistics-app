@@ -53,24 +53,9 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
 
         foreach (var plan in plans)
         {
-            if (string.IsNullOrEmpty(plan.StripeProductId))
-            {
-                var created = await planService.CreatePlanAsync(plan);
-                plan.StripeProductId = created.Product.Id;
-                plan.StripePriceId = created.BasePrice.Id;
-                plan.StripePerTruckPriceId = created.PerTruckPrice.Id;
-                plan.StripeAIOveragePriceId = created.AIOveragePrice?.Id;
-
-                await context.MasterUnitOfWork.SaveChangesAsync(ct);
-                syncedCount++;
-                logger.LogInformation("Synced plan '{PlanName}' to Stripe (product: {ProductId})",
-                    plan.Name, plan.StripeProductId);
-                continue;
-            }
-
-            // UpdatePlanAsync writes the refreshed price ids onto the plan itself.
+            // SyncPlanAsync writes the resulting ids onto the plan itself.
             var previousOveragePriceId = plan.StripeAIOveragePriceId;
-            await planService.UpdatePlanAsync(plan);
+            await planService.SyncPlanAsync(plan);
             await context.MasterUnitOfWork.SaveChangesAsync(ct);
 
             if (plan.StripeAIOveragePriceId != previousOveragePriceId)
@@ -82,6 +67,8 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
             }
 
             syncedCount++;
+            logger.LogInformation("Synced plan '{PlanName}' to Stripe (product: {ProductId})",
+                plan.Name, plan.StripeProductId);
         }
 
         LogCompleted(syncedCount);

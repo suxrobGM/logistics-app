@@ -48,9 +48,9 @@ internal sealed class UpdateSubscriptionPlanHandler(
         }
         subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
 
-        // UpdatePlanAsync writes the refreshed price ids onto the plan itself.
+        // SyncPlanAsync writes the refreshed price ids onto the plan itself.
         var previousOveragePriceId = subscriptionPlan.StripeAIOveragePriceId;
-        await stripePlanService.UpdatePlanAsync(subscriptionPlan);
+        await stripePlanService.SyncPlanAsync(subscriptionPlan);
         masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
         await masterUow.SaveChangesAsync(ct);
 

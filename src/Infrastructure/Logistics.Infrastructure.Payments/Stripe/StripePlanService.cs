@@ -56,6 +56,42 @@ internal sealed class StripePlanService(
         return new StripePlanResult(product, basePrice, perTruckPrice, aiOveragePrice);
     }
 
+    public async Task<StripePlanResult> SyncPlanAsync(SubscriptionPlan plan)
+    {
+        if (!string.IsNullOrEmpty(plan.StripeProductId))
+        {
+            try
+            {
+                return await UpdatePlanAsync(plan);
+            }
+            catch (StripeException ex) when (IsMissingResource(ex))
+            {
+                // The stored ids belong to a Stripe account or test dataset that no longer has
+                // them. Rebuilding is the only way forward, and is safe: nothing can be billing
+                // against a product Stripe cannot find.
+                logger.LogWarning(
+                    "Stripe product {ProductId} for plan {PlanId} no longer exists ({Message}); recreating",
+                    plan.StripeProductId, plan.Id, ex.StripeError?.Message ?? ex.Message);
+
+                plan.StripeProductId = null;
+                plan.StripePriceId = null;
+                plan.StripePerTruckPriceId = null;
+                plan.StripeAIOveragePriceId = null;
+            }
+        }
+
+        var created = await CreatePlanAsync(plan);
+        plan.StripeProductId = created.Product.Id;
+        plan.StripePriceId = created.BasePrice.Id;
+        plan.StripePerTruckPriceId = created.PerTruckPrice.Id;
+        plan.StripeAIOveragePriceId = created.AIOveragePrice?.Id;
+        return created;
+    }
+
+    private static bool IsMissingResource(StripeException ex) =>
+        ex.HttpStatusCode == System.Net.HttpStatusCode.NotFound
+        || ex.StripeError?.Code == "resource_missing";
+
     public async Task<StripePlanResult> UpdatePlanAsync(SubscriptionPlan plan)
     {
         if (string.IsNullOrEmpty(plan.StripeProductId))
