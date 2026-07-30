@@ -1,3 +1,4 @@
+using Logistics.Shared.Identity.Policies;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Tools;
 using Xunit;
@@ -11,21 +12,24 @@ public class AgentToolRegistryTests
     /// <summary>A tenant with no gated features - the baseline every ungated tool must survive.</summary>
     private static readonly IReadOnlySet<TenantFeature> NoFeatures = new HashSet<TenantFeature>();
 
+    /// <summary>Every permission in the system - isolates the feature filter from the permission one.</summary>
+    private static readonly IReadOnlySet<string> EveryPermission = Permission.GetAll().ToHashSet();
+
     private static IReadOnlySet<TenantFeature> With(params TenantFeature[] features) =>
         new HashSet<TenantFeature>(features);
 
     [Fact]
-    public void GetToolDefinitions_ReturnsNonEmptyList()
+    public void GetCopilotTools_ReturnsNonEmptyList()
     {
-        var tools = sut.GetToolDefinitions(NoFeatures);
+        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
 
         Assert.NotEmpty(tools);
     }
 
     [Fact]
-    public void GetToolDefinitions_AllToolsHaveNameAndDescription()
+    public void GetCopilotTools_AllToolsHaveNameAndDescription()
     {
-        var tools = sut.GetToolDefinitions(NoFeatures);
+        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
 
         foreach (var tool in tools)
         {
@@ -36,27 +40,27 @@ public class AgentToolRegistryTests
     }
 
     [Fact]
-    public void GetToolDefinitions_ExcludesLoadBoardTools_ByDefault()
+    public void GetCopilotTools_ExcludesLoadBoardTools_ByDefault()
     {
-        var tools = sut.GetToolDefinitions(NoFeatures);
+        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
 
         Assert.DoesNotContain(tools, t => t.Name == "search_loadboard");
         Assert.DoesNotContain(tools, t => t.Name == "book_loadboard_load");
     }
 
     [Fact]
-    public void GetToolDefinitions_IncludesLoadBoardTools_WhenRequested()
+    public void GetCopilotTools_IncludesLoadBoardTools_WhenRequested()
     {
-        var tools = sut.GetAllToolDefinitions();
+        var tools = sut.GetAllTools();
 
         Assert.Contains(tools, t => t.Name == "search_loadboard");
         Assert.Contains(tools, t => t.Name == "book_loadboard_load");
     }
 
     [Fact]
-    public void GetToolDefinitions_ContainsCoreReadTools()
+    public void GetCopilotTools_ContainsCoreReadTools()
     {
-        var tools = sut.GetToolDefinitions(NoFeatures);
+        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
         var names = tools.Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_unassigned_loads", names);
@@ -72,9 +76,9 @@ public class AgentToolRegistryTests
     /// behind dispatcher approval and stall the agent.
     /// </summary>
     [Fact]
-    public void GetToolDefinitions_IntermodalToolsAreReadsNotWrites()
+    public void GetCopilotTools_IntermodalToolsAreReadsNotWrites()
     {
-        var names = sut.GetToolDefinitions(With(TenantFeature.IntermodalContainers)).Select(t => t.Name).ToHashSet();
+        var names = sut.GetCopilotTools(With(TenantFeature.IntermodalContainers), EveryPermission).Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_container_status", names);
         Assert.Contains("get_terminal_info", names);
@@ -84,9 +88,9 @@ public class AgentToolRegistryTests
     /// Their schemas cost tokens on every request, so a tenant without the feature must not get them.
     /// </summary>
     [Fact]
-    public void GetToolDefinitions_WithoutIntermodalFeature_OmitsTheIntermodalTools()
+    public void GetCopilotTools_WithoutIntermodalFeature_OmitsTheIntermodalTools()
     {
-        var names = sut.GetToolDefinitions(NoFeatures).Select(t => t.Name).ToHashSet();
+        var names = sut.GetCopilotTools(NoFeatures, EveryPermission).Select(t => t.Name).ToHashSet();
 
         Assert.DoesNotContain("get_container_status", names);
         Assert.DoesNotContain("get_terminal_info", names);
@@ -94,14 +98,14 @@ public class AgentToolRegistryTests
 
     /// <summary>The gated groups are independent - one feature may not pull in another's tools.</summary>
     [Fact]
-    public void GetToolDefinitions_GatedGroupsAreIndependent()
+    public void GetCopilotTools_GatedGroupsAreIndependent()
     {
-        var loadBoardOnly = sut.GetToolDefinitions(With(TenantFeature.LoadBoard))
+        var loadBoardOnly = sut.GetCopilotTools(With(TenantFeature.LoadBoard), EveryPermission)
             .Select(t => t.Name).ToHashSet();
         Assert.Contains("search_loadboard", loadBoardOnly);
         Assert.DoesNotContain("get_container_status", loadBoardOnly);
 
-        var intermodalOnly = sut.GetToolDefinitions(With(TenantFeature.IntermodalContainers))
+        var intermodalOnly = sut.GetCopilotTools(With(TenantFeature.IntermodalContainers), EveryPermission)
             .Select(t => t.Name).ToHashSet();
         Assert.Contains("get_container_status", intermodalOnly);
         Assert.DoesNotContain("search_loadboard", intermodalOnly);
@@ -113,9 +117,9 @@ public class AgentToolRegistryTests
     /// is how the old MCP copy silently lost `check_broker_credit`.
     /// </summary>
     [Fact]
-    public void GetAllToolDefinitions_CarriesTheFeatureEachGatedToolNeeds()
+    public void GetAllTools_CarriesTheFeatureEachGatedToolNeeds()
     {
-        var all = sut.GetAllToolDefinitions().ToDictionary(t => t.Name, t => t.RequiredFeature);
+        var all = sut.GetAllTools().ToDictionary(t => t.Name, t => t.RequiredFeature);
 
         Assert.Equal(TenantFeature.LoadBoard, all["search_loadboard"]);
         Assert.Equal(TenantFeature.LoadBoard, all["check_broker_credit"]);
@@ -127,19 +131,19 @@ public class AgentToolRegistryTests
 
     /// <summary>Every gated tool must be reachable - a feature nobody grants is a dead tool.</summary>
     [Fact]
-    public void GetToolDefinitions_WithEveryFeature_MatchesTheFullCatalogue()
+    public void GetCopilotTools_WithEveryFeature_MatchesTheFullCatalogue()
     {
         var everyFeature = With([.. Enum.GetValues<TenantFeature>()]);
 
         Assert.Equal(
-            sut.GetAllToolDefinitions().Select(t => t.Name),
-            sut.GetToolDefinitions(everyFeature).Select(t => t.Name));
+            sut.GetAllTools().Select(t => t.Name),
+            sut.GetCopilotTools(everyFeature, EveryPermission).Select(t => t.Name));
     }
 
     [Fact]
-    public void GetToolDefinitions_ContainsCoreWriteTools()
+    public void GetCopilotTools_ContainsCoreWriteTools()
     {
-        var tools = sut.GetToolDefinitions(NoFeatures);
+        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
         var names = tools.Select(t => t.Name).ToHashSet();
 
         Assert.Contains("assign_load_to_truck", names);
@@ -148,9 +152,9 @@ public class AgentToolRegistryTests
     }
 
     [Fact]
-    public void GetToolDefinitions_HasUniqueToolNames()
+    public void GetCopilotTools_HasUniqueToolNames()
     {
-        var tools = sut.GetAllToolDefinitions();
+        var tools = sut.GetAllTools();
 
         var names = tools.Select(t => t.Name).ToList();
         Assert.Equal(names.Count, names.Distinct().Count());
@@ -163,9 +167,9 @@ public class AgentToolRegistryTests
 
     /// <summary>In autonomous mode an exposed copilot write tool would execute unattended.</summary>
     [Fact]
-    public void GetToolDefinitions_ForDispatchAgent_ExcludesCopilotTools()
+    public void GetDispatchAgentTools_ExcludesCopilotTools()
     {
-        var names = sut.GetToolDefinitions(EveryFeature, forDispatchAgent: true)
+        var names = sut.GetDispatchAgentTools(EveryFeature)
             .Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_unassigned_loads", names);
@@ -180,13 +184,13 @@ public class AgentToolRegistryTests
     /// picking a non-Dispatch permission for a new dispatch tool would silently drop it.
     /// </summary>
     [Fact]
-    public void GetToolDefinitions_ForDispatchAgent_IsIndependentOfTheToolsPermission()
+    public void GetDispatchAgentTools_IsIndependentOfTheToolsPermission()
     {
-        var dispatchTools = sut.GetToolDefinitions(EveryFeature, forDispatchAgent: true);
+        var dispatchTools = sut.GetDispatchAgentTools(EveryFeature);
 
         Assert.All(dispatchTools, t => Assert.True(t.DispatchAgent));
         Assert.Equal(
-            sut.GetAllToolDefinitions().Where(t => t.DispatchAgent).Select(t => t.Name),
+            sut.GetAllTools().Where(t => t.DispatchAgent).Select(t => t.Name),
             dispatchTools.Select(t => t.Name));
     }
 
@@ -195,9 +199,9 @@ public class AgentToolRegistryTests
     /// one in is a deliberate act - this pins the current set.
     /// </summary>
     [Fact]
-    public void GetAllToolDefinitions_DispatchAgentWriteToolsAreAKnownSet()
+    public void GetAllTools_DispatchAgentWriteToolsAreAKnownSet()
     {
-        var writeTools = sut.GetAllToolDefinitions()
+        var writeTools = sut.GetAllTools()
             .Where(t => t is { DispatchAgent: true, IsWrite: true })
             .Select(t => t.Name)
             .OrderBy(n => n);
@@ -208,11 +212,11 @@ public class AgentToolRegistryTests
     }
 
     [Fact]
-    public void GetToolDefinitions_CallerWithInvoicePermissions_SeesInvoiceToolsOnly()
+    public void GetCopilotTools_CallerWithInvoicePermissions_SeesInvoiceToolsOnly()
     {
         var invoiceScope = new HashSet<string> { "Permission.Invoice.View", "Permission.Invoice.Manage" };
 
-        var names = sut.GetToolDefinitions(EveryFeature, invoiceScope).Select(t => t.Name).ToHashSet();
+        var names = sut.GetCopilotTools(EveryFeature, invoiceScope).Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_invoices", names);
         Assert.Contains("create_load_invoice", names);
@@ -221,19 +225,11 @@ public class AgentToolRegistryTests
         Assert.DoesNotContain("create_payment_link", names);
     }
 
-    [Fact]
-    public void GetToolDefinitions_NullPermissions_DisablesPermissionFiltering()
-    {
-        Assert.Equal(
-            sut.GetAllToolDefinitions().Select(t => t.Name),
-            sut.GetToolDefinitions(EveryFeature).Select(t => t.Name));
-    }
-
     /// <summary>Every tool must declare a permission - an undeclared one bypasses copilot scoping.</summary>
     [Fact]
-    public void GetAllToolDefinitions_EveryToolDeclaresARequiredPermission()
+    public void GetAllTools_EveryToolDeclaresARequiredPermission()
     {
-        Assert.All(sut.GetAllToolDefinitions(), t =>
+        Assert.All(sut.GetAllTools(), t =>
             Assert.False(string.IsNullOrWhiteSpace(t.RequiredPermission), $"Tool '{t.Name}' has no RequiredPermission"));
     }
 

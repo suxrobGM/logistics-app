@@ -61,7 +61,7 @@ public class AgentToolRegistryParityTests
     {
         var implemented = DiRegisteredToolTypes().Select(NameOf).ToHashSet();
 
-        var orphanDefinitions = Registry.GetAllToolDefinitions()
+        var orphanDefinitions = Registry.GetAllTools()
             .Select(d => d.Name)
             .Where(name => !implemented.Contains(name))
             .Order()
@@ -76,7 +76,7 @@ public class AgentToolRegistryParityTests
     [Fact]
     public void EveryImplementation_HasARegistryDefinition()
     {
-        var defined = Registry.GetAllToolDefinitions().Select(d => d.Name).ToHashSet();
+        var defined = Registry.GetAllTools().Select(d => d.Name).ToHashSet();
 
         var unreachable = DiRegisteredToolTypes()
             .Where(t => !defined.Contains(NameOf(t)))

@@ -33,10 +33,7 @@ public class AIDispatchConversationBuilderTests
 
     public AIDispatchConversationBuilderTests()
     {
-        toolRegistry.GetToolDefinitions(
-                Arg.Any<IReadOnlySet<TenantFeature>>(),
-                Arg.Any<IReadOnlySet<string>?>(),
-                Arg.Any<bool>())
+        toolRegistry.GetDispatchAgentTools(Arg.Any<IReadOnlySet<TenantFeature>>())
             .Returns([new AgentToolDefinition("test_tool", "A test tool", new JsonObject { ["type"] = "object" })]);
 
         SetTenant();

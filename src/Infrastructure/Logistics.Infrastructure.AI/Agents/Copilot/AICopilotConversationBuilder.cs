@@ -32,7 +32,7 @@ internal sealed class AICopilotConversationBuilder(
         var tenant = setup.Tenant;
         var selection = setup.Selection;
 
-        var tools = toolRegistry.GetToolDefinitions(setup.EnabledFeatures, callerPermissions);
+        var tools = toolRegistry.GetCopilotTools(setup.EnabledFeatures, callerPermissions);
 
         var systemPrompt = AICopilotSystemPrompt.Build(
             tenant.Name ?? "Fleet",

@@ -44,7 +44,7 @@ internal sealed class AIDispatchConversationBuilder(
             companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit, policy, hasIntermodal,
             tenant.Settings.OperatingMode);
         // No caller permissions: a dispatch run is gated by the endpoint's policy, not per tool.
-        var tools = toolRegistry.GetToolDefinitions(enabledFeatures, forDispatchAgent: true);
+        var tools = toolRegistry.GetDispatchAgentTools(enabledFeatures);
 
         var model = setup.Selection.Model;
         session.ModelUsed = model;

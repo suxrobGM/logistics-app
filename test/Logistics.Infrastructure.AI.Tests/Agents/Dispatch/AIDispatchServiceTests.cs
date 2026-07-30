@@ -42,7 +42,7 @@ public class AIDispatchServiceTests
         });
 
         var toolRegistry = Substitute.For<IAgentToolRegistry>();
-        toolRegistry.GetToolDefinitions(Arg.Any<IReadOnlySet<TenantFeature>>()).Returns([]);
+        toolRegistry.GetDispatchAgentTools(Arg.Any<IReadOnlySet<TenantFeature>>()).Returns([]);
 
         var featureService = Substitute.For<IFeatureService>();
 

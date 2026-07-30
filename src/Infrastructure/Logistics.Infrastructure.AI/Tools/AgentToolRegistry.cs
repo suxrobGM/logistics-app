@@ -18,9 +18,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                 ["type"] = "object",
                 ["properties"] = new JsonObject(),
                 ["required"] = new JsonArray()
-            },
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("get_available_trucks",
             "Get all trucks with Available status along with their driver info, HOS (Hours of Service) status, and a fleet summary (total trucks, available trucks, active trips, drivers in violation). Returns truck ID, number, type, current location, driver name, and remaining driving/on-duty hours.",
@@ -29,9 +31,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                 ["type"] = "object",
                 ["properties"] = new JsonObject(),
                 ["required"] = new JsonArray()
-            },
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("get_driver_hos_status",
             "Get detailed HOS (Hours of Service) status for a specific driver. Returns current duty status, driving minutes remaining, on-duty minutes remaining, cycle minutes remaining, violation status, and next mandatory break time.",
@@ -43,9 +47,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["driver_id"] = Prop("string", "The driver's employee ID (GUID)")
                 },
                 ["required"] = new JsonArray("driver_id")
-            },
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("check_hos_feasibility",
             "Check if a driver can feasibly complete a trip given the estimated driving distance. Returns whether the driver has enough HOS hours remaining and details about any constraints.",
@@ -58,9 +64,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["distance_km"] = Prop("number", "Estimated driving distance in kilometers")
                 },
                 ["required"] = new JsonArray("driver_id", "distance_km")
-            },
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("check_dispatch_eligibility",
             "Check if a truck (and optionally a specific driver) is eligible to carry a load based on driver license class + endorsements, US Hazmat / EU ADR rules, ADR cert validity, truck Hazmat-placarding, and DOT medical certificate. Returns is_eligible and a list of issues with reason codes (severity: error blocks dispatch, warning is informational). Call this BEFORE dispatch_trip or assign_load_to_truck on hazmat / ADR loads, and whenever the human asks 'can driver X carry load Y'.",
@@ -75,9 +83,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                         "Optional driver ID (GUID). When omitted, the truck's currently assigned main driver is used.")
                 },
                 ["required"] = new JsonArray("truck_id", "load_id")
-            },
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("batch_check_hos_feasibility",
             "Check HOS feasibility for multiple driver-distance pairs in a single call. More efficient than calling check_hos_feasibility multiple times. Returns feasibility result for each pair.",
@@ -103,9 +113,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     }
                 },
                 ["required"] = new JsonArray("checks")
-            },
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("calculate_distance",
             "Calculate the driving distance and estimated duration between two geographic points.",
@@ -120,9 +132,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["dest_lng"] = Prop("number", "Destination longitude")
                 },
                 ["required"] = new JsonArray("origin_lat", "origin_lng", "dest_lat", "dest_lng")
-            },
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("calculate_assignment_metrics",
             "Calculate revenue per mile/km, deadhead ratio, and profitability for candidate truck-load pairs. Use this when multiple trucks are candidates for a load to pick the most profitable option.",
@@ -148,9 +162,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     }
                 },
                 ["required"] = new JsonArray("candidates")
-            },
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("preview_tax_calculation",
             "Compute VAT / sales tax / GST for a hypothetical set of line items without persisting an invoice. Returns per-line tax amount, aggregate breakdown by jurisdiction, and reverse-charge / not-collecting flags. Use when quoting a customer or sanity-checking that tax setup will work before creating the invoice. Read-only.",
@@ -181,9 +197,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     }
                 },
                 ["required"] = new JsonArray("customer_id", "currency", "line_items")
-            },
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("get_container_status",
             "Look up an intermodal container by its ISO 6346 number. Returns status (Empty, Loaded, AtPort, InTransit, Delivered, Returned), ISO type, laden flag, gross weight, seal, booking reference, bill of lading, the terminal the box is currently at, and the load it is linked to. Call this for any load that reports a container_number before assigning it.",
@@ -196,10 +214,12 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["container_id"] = Prop("string", "Container ID (GUID) - use only when the number is unknown")
                 },
                 ["required"] = new JsonArray()
-            },
-            TenantFeature.IntermodalContainers,
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredFeature = TenantFeature.IntermodalContainers,
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("get_terminal_info",
             "Look up an intermodal terminal by UN/LOCODE. Returns name, type (SeaPort, RailTerminal, InlandDepot, AirCargo, BorderCrossing), country, street address, and how many containers are currently sitting there. Terminals carry no coordinates - keep using the load's origin_lat/origin_lng for deadhead math.",
@@ -212,10 +232,12 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["terminal_id"] = Prop("string", "Terminal ID (GUID) - use only when the code is unknown")
                 },
                 ["required"] = new JsonArray()
-            },
-            TenantFeature.IntermodalContainers,
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredFeature = TenantFeature.IntermodalContainers,
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("search_loadboard",
             "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.",
@@ -230,10 +252,12 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["destination_state"] = Prop("string", "Optional destination state filter (e.g., 'AZ')")
                 },
                 ["required"] = new JsonArray("origin_city", "origin_state")
-            },
-            TenantFeature.LoadBoard,
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredFeature = TenantFeature.LoadBoard,
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("check_broker_credit",
             "Check a load-board broker's credit standing (score 0-100, days-to-pay, FMCSA authority status) by MC number. Always call this before book_loadboard_load; never book when the score is below the tenant minimum or the authority is inactive.",
@@ -245,10 +269,12 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["mc_number"] = Prop("string", "The broker's MC number, e.g. 'MC123456' or '123456'")
                 },
                 ["required"] = new JsonArray("mc_number")
-            },
-            TenantFeature.LoadBoard,
-            RequiredPermission: Permission.Dispatch.View,
-            DispatchAgent: true),
+            })
+        {
+            RequiredFeature = TenantFeature.LoadBoard,
+            RequiredPermission = Permission.Dispatch.View,
+            DispatchAgent = true
+        },
 
         new("search_loads",
             "Search loads by status, type, customer, truck, date range, or free text. Returns up to 20 loads per page with number, status, origin/destination, delivery cost, and customer. Use for load history questions ('delivered loads last week', 'loads for customer X').",
@@ -277,9 +303,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["page"] = Prop("integer", "Page number when a previous call returned truncated: true")
                 },
                 ["required"] = new JsonArray()
-            },
-            TenantFeature.Loads,
-            RequiredPermission: Permission.Load.View),
+            })
+        {
+            RequiredFeature = TenantFeature.Loads,
+            RequiredPermission = Permission.Load.View
+        },
 
         new("get_load",
             "Get one load by ID: status, addresses, delivery cost, customer (with email), assigned truck, delivery timestamps, and whether it already has an invoice. ALWAYS call this before create_load_invoice - it supplies the delivery cost and shows whether the load is Delivered.",
@@ -291,9 +319,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["load_id"] = Prop("string", "The load ID (GUID)")
                 },
                 ["required"] = new JsonArray("load_id")
-            },
-            TenantFeature.Loads,
-            RequiredPermission: Permission.Load.View),
+            })
+        {
+            RequiredFeature = TenantFeature.Loads,
+            RequiredPermission = Permission.Load.View
+        },
 
         new("search_customers",
             "Search customers by name. The match is a case-sensitive substring - if nothing is found, retry with a shorter fragment (e.g. 'Acme' instead of 'acme logistics'). Returns up to 20 customers with ID, name, email, and phone.",
@@ -305,9 +335,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["search"] = Prop("string", "Customer name or name fragment (case-sensitive substring match)")
                 },
                 ["required"] = new JsonArray()
-            },
-            TenantFeature.Customers,
-            RequiredPermission: Permission.Customer.View),
+            })
+        {
+            RequiredFeature = TenantFeature.Customers,
+            RequiredPermission = Permission.Customer.View
+        },
 
         new("get_invoices",
             "List load invoices filtered by load, customer, status, overdue flag, or date range. Returns up to 20 per page with number, status, total, due date, and customer.",
@@ -325,9 +357,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["page"] = Prop("integer", "Page number when a previous call returned truncated: true")
                 },
                 ["required"] = new JsonArray()
-            },
-            TenantFeature.Invoices,
-            RequiredPermission: Permission.Invoice.View),
+            })
+        {
+            RequiredFeature = TenantFeature.Invoices,
+            RequiredPermission = Permission.Invoice.View
+        },
 
         new("get_invoice",
             "Get one invoice by ID: status, totals, amount paid, due date, send history, customer (with email), and the load it bills.",
@@ -339,9 +373,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["invoice_id"] = Prop("string", "The invoice ID (GUID)")
                 },
                 ["required"] = new JsonArray("invoice_id")
-            },
-            TenantFeature.Invoices,
-            RequiredPermission: Permission.Invoice.View),
+            })
+        {
+            RequiredFeature = TenantFeature.Invoices,
+            RequiredPermission = Permission.Invoice.View
+        },
 
         new("search_expenses",
             "List expense line items filtered by type (Company, Truck, BodyShop), status, truck, date range, or vendor/notes text. Returns up to 20 per page. There is no category filter - for spend-by-category questions use get_expense_stats instead.",
@@ -359,9 +395,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["page"] = Prop("integer", "Page number when a previous call returned truncated: true")
                 },
                 ["required"] = new JsonArray()
-            },
-            TenantFeature.Expenses,
-            RequiredPermission: Permission.Expense.View),
+            })
+        {
+            RequiredFeature = TenantFeature.Expenses,
+            RequiredPermission = Permission.Expense.View
+        },
 
         new("get_expense_stats",
             "Expense rollups for a date range: totals by approval status, by type, by company/truck category, 12-month trend, and top trucks by spend. Prefer this over search_expenses for 'how much did we spend on X' questions.",
@@ -374,9 +412,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["to_date"] = Prop("string", "End of the period (ISO 8601)")
                 },
                 ["required"] = new JsonArray()
-            },
-            TenantFeature.Expenses,
-            RequiredPermission: Permission.Expense.View),
+            })
+        {
+            RequiredFeature = TenantFeature.Expenses,
+            RequiredPermission = Permission.Expense.View
+        },
 
         new("get_upcoming_maintenance",
             "Trucks with maintenance due within the next N days (default 30), including overdue items. Date-based schedules only: mileage and engine-hour intervals are NOT evaluated - say so when answering maintenance questions.",
@@ -390,9 +430,11 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["include_overdue"] = Prop("boolean", "Include already-overdue schedules (default true)")
                 },
                 ["required"] = new JsonArray()
-            },
-            TenantFeature.Maintenance,
-            RequiredPermission: Permission.Maintenance.View),
+            })
+        {
+            RequiredFeature = TenantFeature.Maintenance,
+            RequiredPermission = Permission.Maintenance.View
+        },
 
         // ── Write Tools ──
 
@@ -408,11 +450,12 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["reasoning"] = Prop("string", "Brief explanation of why this assignment is optimal")
                 },
                 ["required"] = new JsonArray("load_id", "truck_id", "reasoning")
-            },
-            IsWrite: true,
-            RequiredPermission: Permission.Dispatch.Manage,
-            DecisionType: AIDispatchDecisionType.AssignLoad,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.Manage,
+            DecisionType = AIDispatchDecisionType.AssignLoad,
+            DispatchAgent = true
+        },
 
         new("create_trip",
             "Create a new trip from a set of loads assigned to a truck. Groups multiple loads into an optimized multi-stop trip. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -431,11 +474,12 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["name"] = Prop("string", "A descriptive name for the trip")
                 },
                 ["required"] = new JsonArray("truck_id", "load_ids", "name")
-            },
-            IsWrite: true,
-            RequiredPermission: Permission.Dispatch.Manage,
-            DecisionType: AIDispatchDecisionType.CreateTrip,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.Manage,
+            DecisionType = AIDispatchDecisionType.CreateTrip,
+            DispatchAgent = true
+        },
 
         new("dispatch_trip",
             "Dispatch a trip, transitioning it from Draft to Dispatched status. This notifies the driver and starts the trip. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -447,11 +491,12 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["trip_id"] = Prop("string", "The trip ID (GUID) to dispatch")
                 },
                 ["required"] = new JsonArray("trip_id")
-            },
-            IsWrite: true,
-            RequiredPermission: Permission.Dispatch.Manage,
-            DecisionType: AIDispatchDecisionType.DispatchTrip,
-            DispatchAgent: true),
+            })
+        {
+            RequiredPermission = Permission.Dispatch.Manage,
+            DecisionType = AIDispatchDecisionType.DispatchTrip,
+            DispatchAgent = true
+        },
 
         new("book_loadboard_load",
             "Book a load from a load board. This claims the load and creates it in the system. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -466,12 +511,13 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["notes"] = Prop("string", "Optional notes recorded against the booking")
                 },
                 ["required"] = new JsonArray("listing_id", "truck_id")
-            },
-            TenantFeature.LoadBoard,
-            IsWrite: true,
-            RequiredPermission: Permission.Dispatch.Manage,
-            DecisionType: AIDispatchDecisionType.BookLoadBoardLoad,
-            DispatchAgent: true),
+            })
+        {
+            RequiredFeature = TenantFeature.LoadBoard,
+            RequiredPermission = Permission.Dispatch.Manage,
+            DecisionType = AIDispatchDecisionType.BookLoadBoardLoad,
+            DispatchAgent = true
+        },
 
         new("create_load_invoice",
             "Create an UNPAID invoice for a load, billed to the load's customer. Call get_load first: the amount defaults to the load's delivery cost, and you should warn the user when the load is not yet Delivered. Fails if the load already has an invoice. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -485,11 +531,12 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["reasoning"] = Prop("string", "Brief explanation of why this invoice should be created")
                 },
                 ["required"] = new JsonArray("load_id", "reasoning")
-            },
-            TenantFeature.Invoices,
-            IsWrite: true,
-            RequiredPermission: Permission.Invoice.Manage,
-            DecisionType: AIDispatchDecisionType.CreateInvoice),
+            })
+        {
+            RequiredFeature = TenantFeature.Invoices,
+            RequiredPermission = Permission.Invoice.Manage,
+            DecisionType = AIDispatchDecisionType.CreateInvoice
+        },
 
         new("send_invoice",
             "Email an invoice to a recipient. This mints a 30-day payment link and includes it in the email - do NOT also call create_payment_link for the same invoice. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -504,11 +551,12 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["reasoning"] = Prop("string", "Brief explanation of why this invoice should be sent")
                 },
                 ["required"] = new JsonArray("invoice_id", "recipient_email", "reasoning")
-            },
-            TenantFeature.Invoices,
-            IsWrite: true,
-            RequiredPermission: Permission.Invoice.Manage,
-            DecisionType: AIDispatchDecisionType.SendInvoice),
+            })
+        {
+            RequiredFeature = TenantFeature.Invoices,
+            RequiredPermission = Permission.Invoice.Manage,
+            DecisionType = AIDispatchDecisionType.SendInvoice
+        },
 
         new("create_payment_link",
             "Create a public payment link URL for an invoice without emailing anything. Use when the user wants a link to share themselves; send_invoice already includes one. In human-in-the-loop mode, creates a suggestion for approval.",
@@ -522,31 +570,35 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                     ["reasoning"] = Prop("string", "Brief explanation of why this link should be created")
                 },
                 ["required"] = new JsonArray("invoice_id", "reasoning")
-            },
-            TenantFeature.Payments,
-            IsWrite: true,
-            RequiredPermission: Permission.Payment.Manage,
-            DecisionType: AIDispatchDecisionType.CreatePaymentLink)
+            })
+        {
+            RequiredFeature = TenantFeature.Payments,
+            RequiredPermission = Permission.Payment.Manage,
+            DecisionType = AIDispatchDecisionType.CreatePaymentLink
+        }
     ];
 
     private static readonly Dictionary<string, AgentToolDefinition> ToolsByName =
         Tools.ToDictionary(t => t.Name);
 
-    public IReadOnlyList<AgentToolDefinition> GetToolDefinitions(
+    public IReadOnlyList<AgentToolDefinition> GetDispatchAgentTools(
+        IReadOnlySet<TenantFeature> enabledFeatures) =>
+        [.. FeatureEnabled(enabledFeatures).Where(t => t.DispatchAgent)];
+
+    public IReadOnlyList<AgentToolDefinition> GetCopilotTools(
         IReadOnlySet<TenantFeature> enabledFeatures,
-        IReadOnlySet<string>? callerPermissions = null,
-        bool forDispatchAgent = false) =>
-        [.. Tools
-            .Where(t => !forDispatchAgent || t.DispatchAgent)
-            .Where(t => t.RequiredFeature is null || enabledFeatures.Contains(t.RequiredFeature.Value))
-            .Where(t => callerPermissions is null
-                || t.RequiredPermission is null
+        IReadOnlySet<string> callerPermissions) =>
+        [.. FeatureEnabled(enabledFeatures)
+            .Where(t => t.RequiredPermission is null
                 || callerPermissions.Contains(t.RequiredPermission))];
 
-    public IReadOnlyList<AgentToolDefinition> GetAllToolDefinitions() => Tools;
+    public IReadOnlyList<AgentToolDefinition> GetAllTools() => Tools;
 
     public AgentToolDefinition? TryGetDefinition(string name) =>
         ToolsByName.GetValueOrDefault(name);
+
+    private static IEnumerable<AgentToolDefinition> FeatureEnabled(IReadOnlySet<TenantFeature> enabled) =>
+        Tools.Where(t => t.RequiredFeature is null || enabled.Contains(t.RequiredFeature.Value));
 
     private static JsonObject Prop(string type, string description) =>
         new() { ["type"] = type, ["description"] = description };

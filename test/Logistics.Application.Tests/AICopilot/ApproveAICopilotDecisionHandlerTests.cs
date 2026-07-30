@@ -47,8 +47,11 @@ public class ApproveAICopilotDecisionHandlerTests
         currentUser.GetUserId().Returns(userId);
         SetCallerPermissions("Permission.Invoice.Manage");
         toolRegistry.TryGetDefinition("send_invoice").Returns(new AgentToolDefinition(
-            "send_invoice", "Send an invoice", new JsonObject(),
-            IsWrite: true, RequiredPermission: "Permission.Invoice.Manage"));
+            "send_invoice", "Send an invoice", new JsonObject())
+        {
+            RequiredPermission = "Permission.Invoice.Manage",
+            DecisionType = AIDispatchDecisionType.SendInvoice
+        });
 
         sut = new ApproveAICopilotDecisionHandler(
             tenantUow, currentUser, toolExecutor, toolRegistry, broadcastService, mediator,

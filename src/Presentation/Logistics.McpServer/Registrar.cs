@@ -28,7 +28,7 @@ public static class Registrar
 
                 options.ToolCollection ??= [];
                 // No tenant context at startup, so list every tool - AIDispatchMcpTool gates per call.
-                foreach (var definition in registry.GetAllToolDefinitions())
+                foreach (var definition in registry.GetAllTools())
                 {
                     options.ToolCollection.Add(new AIDispatchMcpTool(definition));
                 }
