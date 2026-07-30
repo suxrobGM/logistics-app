@@ -38,6 +38,8 @@ public class MasterDbContext : IdentityDbContext<
         this.auditableEntity = auditableEntity;
         connectionString = options.ConnectionString ?? ConnectionStrings.LocalMaster;
         this.logger = logger;
+
+        NavigationDiscoveryGuard.Attach(ChangeTracker);
     }
 
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }

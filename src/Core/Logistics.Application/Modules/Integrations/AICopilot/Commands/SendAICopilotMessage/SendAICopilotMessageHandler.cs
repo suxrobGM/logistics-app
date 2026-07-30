@@ -59,6 +59,7 @@ internal sealed class SendAICopilotMessageHandler(
         }
 
         var message = conversation.AddTextMessage(AICopilotMessageRole.User, request.Text.Trim());
+        await tenantUow.Repository<AICopilotMessage>().AddAsync(message, ct);
         conversation.BeginTurn();
         await tenantUow.SaveChangesAsync(ct);
 

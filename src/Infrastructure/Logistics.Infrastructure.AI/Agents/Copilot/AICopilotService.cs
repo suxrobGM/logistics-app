@@ -103,9 +103,9 @@ internal sealed class AICopilotService(
         }
 
         // Persist even on failure - the audit trail and the next turn's context both depend on it.
-        var newMessages = state is null
+        List<AICopilotMessage> newMessages = state is null
             ? []
-            : PersistTurnMessages(conversation, session, state.Messages.Skip(priorMessageCount));
+            : await PersistTurnMessagesAsync(conversation, session, state.Messages.Skip(priorMessageCount));
 
         conversation.Title ??= DeriveTitle(conversation);
         conversation.LastMessageAt = DateTime.UtcNow;
@@ -124,7 +124,7 @@ internal sealed class AICopilotService(
     /// Maps the turn's appended LLM messages onto transcript rows. Tool-result rows get a null
     /// DisplayText - replayed to the provider, never rendered.
     /// </summary>
-    private List<AICopilotMessage> PersistTurnMessages(
+    private async Task<List<AICopilotMessage>> PersistTurnMessagesAsync(
         AICopilotConversation conversation,
         AgentSession session,
         IEnumerable<LlmMessage> appended)
@@ -158,6 +158,7 @@ internal sealed class AICopilotService(
             };
 
             conversation.Messages.Add(row);
+            await tenantUow.Repository<AICopilotMessage>().AddAsync(row, CancellationToken.None);
             rows.Add(row);
         }
 
@@ -187,6 +188,7 @@ internal sealed class AICopilotService(
 
         const string notice = "AI is disabled for this company. Contact your administrator to enable it.";
         var row = conversation.AddTextMessage(AICopilotMessageRole.System, notice);
+        await tenantUow.Repository<AICopilotMessage>().AddAsync(row, ct);
         conversation.EndTurn();
         await tenantUow.SaveChangesAsync(ct);
         await BroadcastMessageAsync(request, conversation, row);

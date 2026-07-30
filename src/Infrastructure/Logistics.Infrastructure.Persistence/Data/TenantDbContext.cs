@@ -37,6 +37,8 @@ public class TenantDbContext : DbContext
 
         defaultConnectionString = tenantDbContextOptions?.ConnectionString
                                   ?? ConnectionStrings.LocalDefaultTenant;
+
+        NavigationDiscoveryGuard.Attach(ChangeTracker);
     }
 
     /// <summary>

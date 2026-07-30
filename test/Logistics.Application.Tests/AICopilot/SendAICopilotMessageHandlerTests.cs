@@ -22,6 +22,8 @@ public class SendAICopilotMessageHandlerTests
         Substitute.For<IBackgroundJobRunner<AICopilotTurnRequest>>();
     private readonly ITenantRepository<AICopilotConversation, Guid> conversationRepo =
         Substitute.For<ITenantRepository<AICopilotConversation, Guid>>();
+    private readonly ITenantRepository<AICopilotMessage, Guid> messageRepo =
+        Substitute.For<ITenantRepository<AICopilotMessage, Guid>>();
 
     private readonly Guid userId = Guid.NewGuid();
     private readonly SendAICopilotMessageHandler sut;
@@ -29,6 +31,7 @@ public class SendAICopilotMessageHandlerTests
     public SendAICopilotMessageHandlerTests()
     {
         tenantUow.Repository<AICopilotConversation>().Returns(conversationRepo);
+        tenantUow.Repository<AICopilotMessage>().Returns(messageRepo);
         tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
@@ -113,6 +116,8 @@ public class SendAICopilotMessageHandlerTests
         Assert.Equal(AICopilotConversationStatus.Running, conversation.Status);
         Assert.Equal(message.Id, result.Value!.UserMessageId);
 
+        // Load-bearing: without the explicit Add, EF saves the pre-generated-id message as an UPDATE.
+        await messageRepo.Received(1).AddAsync(message, Arg.Any<CancellationToken>());
         backgroundRunner.Received(1).Enqueue(Arg.Is<AICopilotTurnRequest>(r =>
             r.ConversationId == conversation.Id && r.UserId == userId));
         await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());

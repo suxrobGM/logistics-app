@@ -26,7 +26,9 @@ public class AICopilotConversation : AuditableEntity, ITenantEntity
 
     /// <summary>
     /// Appends a text row and bumps <see cref="LastMessageAt"/>. The only place sequence numbers
-    /// are allocated - callers must not build an <see cref="AICopilotMessage"/> themselves.
+    /// are allocated - callers must not build an <see cref="AICopilotMessage"/> themselves, and
+    /// MUST register the returned message via repository AddAsync (ids are pre-generated, so a
+    /// collection-only add saves as an UPDATE and fails).
     /// </summary>
     public AICopilotMessage AddTextMessage(AICopilotMessageRole role, string text)
     {
