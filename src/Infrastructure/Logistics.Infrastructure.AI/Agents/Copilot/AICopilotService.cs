@@ -13,7 +13,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
 /// <summary>
 /// Runs one conversational copilot turn as an <see cref="AIDispatchSession"/> of type Copilot, so

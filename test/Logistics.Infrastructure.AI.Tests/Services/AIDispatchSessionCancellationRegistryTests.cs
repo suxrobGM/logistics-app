@@ -1,4 +1,4 @@
-using Logistics.Infrastructure.AI.Services;
+using Logistics.Infrastructure.AI.Agents;
 using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;

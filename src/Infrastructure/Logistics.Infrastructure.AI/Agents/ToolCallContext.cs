@@ -1,7 +1,7 @@
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>How tool calls in an agent run are processed.</summary>
 /// <param name="Mode">HumanInTheLoop turns write tools into suggestions; Autonomous executes them.</param>

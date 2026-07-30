@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
 /// <summary>
 /// Serializes provider content blocks to the transcript's ContentJson and back. Tool_use ids must

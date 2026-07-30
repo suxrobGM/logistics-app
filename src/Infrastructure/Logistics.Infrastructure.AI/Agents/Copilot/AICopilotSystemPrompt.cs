@@ -1,11 +1,11 @@
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Infrastructure.AI.Prompts;
+namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
 /// <summary>
 /// System prompt for the TMS-wide copilot. Deliberately separate from
-/// <see cref="AIDispatchSystemPrompt"/>: it is conversational, covers the whole TMS, and never
-/// receives the learned dispatch policy or fleet-run workflow.
+/// <see cref="Dispatch.AIDispatchSystemPrompt"/>: it is conversational, covers the whole TMS, and
+/// never receives the learned dispatch policy or fleet-run workflow.
 /// </summary>
 internal static class AICopilotSystemPrompt
 {

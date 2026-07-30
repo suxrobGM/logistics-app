@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.AI.Prompts;
+namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
 /// Sanitisers shared by both agents' prompt builders. Separate from either prompt class so that

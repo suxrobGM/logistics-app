@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions.AIDispatch;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents;
 
 /// <inheritdoc />
 internal sealed class AgentRunContext : IAgentRunContext

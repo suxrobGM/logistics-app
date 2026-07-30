@@ -1,10 +1,11 @@
+using Logistics.Infrastructure.AI.Services;
+using Logistics.Infrastructure.AI.Agents;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Infrastructure.AI.Llm;
-using Logistics.Infrastructure.AI.Services;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

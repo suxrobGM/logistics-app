@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
 /// Singleton registry for managing CancellationTokenSources for active dispatch agent sessions.

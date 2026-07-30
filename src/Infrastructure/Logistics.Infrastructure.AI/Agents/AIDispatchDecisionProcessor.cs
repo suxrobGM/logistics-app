@@ -10,7 +10,7 @@ using Logistics.Mappings;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.AIDispatch;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
 /// Processes LLM tool calls into AIDispatchDecision entities.

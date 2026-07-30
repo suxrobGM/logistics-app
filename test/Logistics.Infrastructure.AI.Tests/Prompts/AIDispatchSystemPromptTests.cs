@@ -1,5 +1,5 @@
+using Logistics.Infrastructure.AI.Agents.Dispatch;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Infrastructure.AI.Prompts;
 using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Prompts;

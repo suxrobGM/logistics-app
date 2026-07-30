@@ -3,7 +3,7 @@ using Logistics.Application.Abstractions.Features;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.AI.Llm;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
 /// The setup both agent surfaces share: resolve the global model, build its provider, assert the

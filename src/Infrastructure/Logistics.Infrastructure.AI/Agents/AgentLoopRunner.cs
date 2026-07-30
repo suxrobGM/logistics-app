@@ -8,7 +8,7 @@ using Logistics.Infrastructure.AI.Llm;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
 /// The provider-agnostic agent iteration loop, shared by the dispatch agent and the copilot.

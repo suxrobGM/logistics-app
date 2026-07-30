@@ -1,7 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Infrastructure.AI.Prompts;
+namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 internal static class AIDispatchSystemPrompt
 {

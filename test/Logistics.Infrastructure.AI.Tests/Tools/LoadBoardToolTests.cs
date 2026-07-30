@@ -1,9 +1,9 @@
+using Logistics.Infrastructure.AI.Agents;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Infrastructure.AI.Services;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Shared.Models;
 using MediatR;

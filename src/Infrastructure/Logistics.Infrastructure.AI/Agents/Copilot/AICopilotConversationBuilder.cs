@@ -5,11 +5,10 @@ using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Features;
-using Logistics.Infrastructure.AI.Prompts;
 using Logistics.Infrastructure.AI.Llm;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
 /// <summary>
 /// Builds the LLM conversation for one copilot turn: system prompt, the caller-scoped tool

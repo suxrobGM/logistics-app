@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Infrastructure.AI.Llm;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>Everything both conversation builders need before they can shape their own prompt.</summary>
 internal sealed record LlmSessionContext(

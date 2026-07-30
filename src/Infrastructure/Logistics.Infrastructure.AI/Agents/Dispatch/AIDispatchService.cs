@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Payments.Stripe;
 
-namespace Logistics.Infrastructure.AI.Services;
+namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 internal sealed class AIDispatchService(
     IOptions<LlmOptions> options,
