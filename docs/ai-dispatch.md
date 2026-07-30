@@ -205,30 +205,41 @@ The feature is gated behind `TenantFeature.AgenticDispatch`, available on the En
 
 ## Architecture
 
+Folders are named for the capability they hold, not the layer.
+
 ```text
 src/Infrastructure/Logistics.Infrastructure.AI/
-├── Registrar.cs                         # DI registration
-├── Options/
-│   └── LlmOptions.cs                   # Multi-provider configuration
-├── Providers/
-│   ├── ILlmProvider.cs                  # Provider-agnostic interface
-│   ├── LlmTypes.cs                      # Request/response/message types
-│   ├── AnthropicLlmProvider.cs          # Anthropic SDK adapter
-│   ├── OpenAILlmProvider.cs             # OpenAI-compatible adapter
-│   └── LlmProviderFactory.cs            # Resolves provider from config
-├── Services/
-│   ├── AIDispatchService.cs          # Agent loop orchestration
-│   ├── AIDispatchConversationBuilder.cs   # Builds provider-agnostic conversation
-│   ├── AIDispatchDecisionProcessor.cs     # Tool call → decision entity processing
-│   ├── AIDispatchToolExecutor.cs          # Maps tool calls to MediatR
-│   ├── AIDispatchToolRegistry.cs          # Tool definitions (JSON Schema)
-│   └── LlmPricing.cs                   # Token → USD cost calculator
-├── Tools/                               # Individual IAIDispatchTool implementations
-└── Prompts/
-    └── AIDispatchSystemPrompt.cs          # Dynamic system prompt builder
+├── Registrar.cs                            # DI; discovers IAgentTool by scanning the assembly
+├── Llm/                                    # Provider-agnostic LLM layer
+│   ├── ILlmProvider.cs                     # The boundary SDK types may not cross
+│   ├── LlmProviderFactory.cs               # Resolves provider from config
+│   ├── LlmClient.cs                        # One-shot ILlmClient for non-agent features
+│   ├── LlmModelResolver.cs                 # Global admin-set model → provider
+│   ├── LlmPricing.cs                       # Token → USD, quota multiplier, overage units
+│   ├── LlmErrorSanitizer.cs                # Strips credentials before text reaches a tenant
+│   ├── Contracts/                          # LlmRequest/Response/Message/ContentBlock/...
+│   └── Providers/                          # AnthropicLlmProvider, OpenAILlmProvider
+├── Agents/                                 # Runtime shared by both agent surfaces
+│   ├── AgentLoopRunner.cs                  # The 25-iteration loop, retries, token accounting
+│   ├── AgentDecisionProcessor.cs           # Tool call → decision entity, execute vs suggest
+│   ├── AgentSessionCancellationRegistry.cs # Process-local cancellation, wall-clock deadline
+│   ├── LlmSessionSetup.cs                  # Model + provider + tenant features, once per run
+│   ├── PromptText.cs                       # Sanitisers both prompts share
+│   ├── Dispatch/                           # AIDispatchService, conversation builder, prompt
+│   └── Copilot/                            # AICopilotService, builder, prompt, transcript codec
+└── Tools/
+    ├── AgentToolRegistry.cs                # The catalogue: JSON Schema + behaviour metadata
+    ├── AgentToolExecutor.cs                # Name → IAgentTool dispatch
+    ├── ToolInput.cs / ToolResult.cs        # Lenient input coercion, the result wire format
+    └── {Dispatch,Financial,Operations,LoadBoard,Intermodal}/   # Tools by Application module
 ```
 
-`ILlmProvider` keeps SDK-specific code isolated to one file per provider. The agent loop, tools, and decision processor only deal with `LlmTypes`, the provider-agnostic records for requests, responses, messages, and tool calls.
+`ILlmProvider` keeps SDK-specific code isolated to one file per provider. The agent loop, tools, and decision processor only deal with the `Llm/Contracts/` records for requests, responses, messages, and tool calls.
+
+The ports these implement live in `Core/Logistics.Application.Abstractions/`: `Agents/`
+(`IAgentToolRegistry`, `IAgentToolExecutor`, `IAgentRunContext`, `AgentToolDefinition`), `AI/`
+(`ILlmClient`, `LlmOptions`, `LlmModelCatalog`, `AISettingsKeys`) and `AIDispatch/`
+(`IAIDispatchService` and the dispatch-only ports).
 
 Tool definitions are JSON Schema, which works with both Claude API tool schemas and OpenAI function calling.
 

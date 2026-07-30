@@ -104,7 +104,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 - Domain: `Primitives/Enums/Tenant/OperatingMode.cs` (`Fleet` | `SoloOperator`), stored on the `TenantSettings` VO (`settings_operating_mode` on `tenants`, master DB)
 - Application: `Modules/IdentityAccess/Tenants/Commands/CreateTenant` + `UpdateTenant` carry it; `Modules/Platform/Onboarding/` drops the `inviteTeam` step in solo mode
-- Infrastructure: `Infrastructure.AI/Prompts/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section (the `## Operating Mode` heading is already taken by `AIDispatchMode`)
+- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section (the `## Operating Mode` heading is already taken by `AIDispatchMode`)
 - API/UI: `tms-portal/core/services/tenant.service.ts` (`isSoloMode`), `core/services/sidebar-nav.service.ts` (`SOLO_HIDDEN_ITEMS`), `tms-portal/pages/settings/company-settings/`, `admin-portal/shared/components/tenant-form/`
 - Note: solo relies on Owner holding `Permission.Driver.*` (`Shared.Identity/Policies/TenantRolePermissions.cs`), and driver-facing queries keying off `Truck.MainDriverId`/`SecondaryDriverId` rather than the role. There is no multi-role model
 - Seed: `DbMigrator` tenant `solo` (`SeedData/solo.json`, `SeedDataKey`/`OperatingMode`/`DataScale` on `Models/DemoTenantConfig.cs`)
@@ -115,30 +115,30 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 - Domain: `Entities/AIDispatch/AIDispatchSession.cs`
 - Application: `Modules/Integrations/AIDispatch/Commands/`, `Modules/Integrations/AIDispatch/Queries/`
-- Infrastructure: `Infrastructure.AI/Services/AIDispatchService.cs`, `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (streams live agent updates, mounted at `/hubs/ai-dispatch`)
+- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchService.cs`, `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (streams live agent updates, mounted at `/hubs/ai-dispatch`)
 - API/UI: `AIDispatchController.cs`, `tms-portal/pages/ai-dispatch/`
 
 ### Dispatch decisions
 
 - Domain: `Entities/AIDispatch/AIDispatchDecision.cs`
 - Application: `Modules/Integrations/AIDispatch/Commands/Approve*`, `Reject*`
-- Infrastructure: `Infrastructure.AI/Services/AIDispatchDecisionProcessor.cs`
+- Infrastructure: `Infrastructure.AI/Agents/AgentDecisionProcessor.cs`
 - API/UI: (under `ai-dispatch/`)
 
 ### Dispatch policy (learned preferences)
 
 - Domain: `Entities/AIDispatch/AIDispatchPolicy.cs` (one row per tenant; `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned)
 - Application: `Modules/Integrations/AIDispatch/Services/AIDispatchPolicyLearner.cs` + `DecisionHistoryDigest.cs` + `AIDispatchPolicyPrompt.cs`; `Commands/{Update,Regenerate,Delete}AIDispatchPolicy/`, `Queries/GetAIDispatchPolicy/`
-- Infrastructure: injected into the prompt by `Infrastructure.AI/Prompts/AIDispatchSystemPrompt.cs` (`LearnedDispatchPolicy`), loaded in `AIDispatchConversationBuilder`
+- Infrastructure: injected into the prompt by `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` (`LearnedDispatchPolicy`), loaded in `AIDispatchConversationBuilder`
 - Jobs: `Logistics.API/Jobs/AIDispatchPolicyLearningJob.cs` (nightly, `Cron.Daily(4)`)
 - API/UI: `AIDispatchController` `ai/dispatch/policy`, `tms-portal/pages/ai-dispatch/dispatch-policy/`
 
 ### Tool registry
 
-- Infrastructure: `Infrastructure.AI/Services/AIDispatchToolRegistry.cs`, `Tools/`
+- Infrastructure: `Infrastructure.AI/Tools/AgentToolRegistry.cs` + `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/`
 - API/UI: shared with `Logistics.McpServer` and the AI copilot
 - Behavior metadata (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`) lives on
-  each `AIDispatchToolDefinition` - there is no separate write-tool list anywhere
+  each `AgentToolDefinition` - there is no separate write-tool list anywhere
 - Intermodal reads: `Tools/GetContainerStatusTool.cs` (ISO 6346), `Tools/GetTerminalInfoTool.cs` (UN/LOCODE).
   Gated by `TenantFeature.IntermodalContainers` - the schemas, the prompt section and the tools' own
   guard all move together; MCP lists every tool, so the guard inside each tool is the real gate.
@@ -153,7 +153,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/AICopilot/AICopilotConversation.cs`, `AICopilotMessage.cs` (transcript with tool_use ids); `AIDispatchSession.Type == Copilot` per turn
 - Application: `Modules/Integrations/AICopilot/Commands/`, `Queries/`
-- Infrastructure: `Infrastructure.AI/Services/AICopilotService.cs`, `AICopilotConversationBuilder.cs`, `CopilotTranscriptCodec.cs`, `Prompts/AICopilotSystemPrompt.cs`; `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
+- Infrastructure: `Infrastructure.AI/Agents/Copilot/` (`AICopilotService.cs`, `AICopilotConversationBuilder.cs`, `CopilotTranscriptCodec.cs`, `AICopilotSystemPrompt.cs`); `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
 - Jobs: `Logistics.API/Jobs/AICopilotTurnJob.cs`
 - API/UI: `AICopilotController.cs` (`ai/copilot`), `tms-portal/shared/layout/copilot-drawer/`
 
@@ -163,13 +163,13 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### LLM providers
 
-- Infrastructure: `Infrastructure.AI/Providers/` (Anthropic, OpenAI, factory)
+- Infrastructure: `Infrastructure.AI/Llm/` (`LlmProviderFactory`) and `Llm/Providers/` (Anthropic, OpenAI)
 
 ### Quota / pricing
 
 - Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAIRequestQuota`)
 - Application: `Application.Abstractions/AIDispatch/IAIQuotaService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (quota tracking), `Infrastructure.AI/Services/LlmPricing.cs`
+- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (quota tracking), `Infrastructure.AI/Llm/LlmPricing.cs`
 - API/UI: (quota bar in `tms-portal/pages/ai-dispatch/`)
 
 ### Global AI settings
@@ -184,7 +184,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### MCP server
 
-- API/UI: `Logistics.McpServer/` (uses `AIDispatchToolRegistry`)
+- API/UI: `Logistics.McpServer/` (uses `AgentToolRegistry`)
 
 ## Compliance & safety
 
@@ -241,7 +241,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Employee/DriverLicense.cs`
 - Application: `Modules/IdentityAccess/Employees/Commands/{Create,Update,Delete}DriverLicense/`, `Application.Abstractions/Dispatch/IDispatchEligibilityService`, `Modules/Compliance/Safety/Services/LicenseExpiryReminderService`
-- Infrastructure: `Infrastructure.AI/Tools/CheckDispatchEligibilityTool.cs`
+- Infrastructure: `Infrastructure.AI/Tools/Dispatch/CheckDispatchEligibilityTool.cs`
 - API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `screens/MyLicensesScreen.kt`, `Jobs/LicenseExpiryReminderJob.cs`
 
 ### ADR / Hazmat
@@ -480,7 +480,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/LoadBoard/BrokerCreditRecord.cs`, `LoadBoardListing.BrokerCredit*`, `TenantSettings.MinBrokerCreditScore`
 - Application: `Modules/Integrations/LoadBoard/Queries/GetBrokerCredit/`, booking gate in `Commands/BookLoadBoardLoad/`
-- Infrastructure: `Infrastructure.Integrations.LoadBoard/Credit/` (`BrokerCreditService`, `FmcsaClient`); `Infrastructure.AI/Tools/CheckBrokerCreditTool.cs`
+- Infrastructure: `Infrastructure.Integrations.LoadBoard/Credit/` (`BrokerCreditService`, `FmcsaClient`); `Infrastructure.AI/Tools/LoadBoard/CheckBrokerCreditTool.cs`
 - API/UI: `GET /loadboard/brokers/{mc}/credit`, credit badges on `tms-portal/pages/loadboard/`, threshold on `settings/company-settings/`
 
 ### Posted trucks
@@ -552,7 +552,7 @@ All under `test/` (singular):
 
 - `Logistics.Application.Tests/` - application handlers, services
 - `Logistics.Architecture.Tests/` - layering/dependency boundaries; discovers projects, never hard-code a list
-- `Logistics.Infrastructure.AI.Tests/` - AI agent, quota, tools, prompts, pricing
+- `Logistics.Infrastructure.AI.Tests/` - AI agent, tools, prompts, pricing (quota lives in `Logistics.Infrastructure.Persistence.Tests/`, next to `AIQuotaService`)
 - `Logistics.Infrastructure.{Documents,Payments,Persistence,Routing,Tax,Vin}.Tests/` - per-module
 
 ## Updating this map

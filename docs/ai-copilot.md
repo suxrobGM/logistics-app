@@ -41,7 +41,7 @@ agent loop (`AgentLoopRunner`), the same decision/approval machinery, and the sa
 
 ## Permission scoping
 
-Two layers, both driven by `AIDispatchToolDefinition.RequiredPermission`:
+Two layers, both driven by `AgentToolDefinition.RequiredPermission`:
 
 1. **Catalogue filtering** - the turn resolves the calling user's permission set
    (`GetCurrentUserPermissionsQuery`) and drops any tool they cannot use, so the model never sees it.

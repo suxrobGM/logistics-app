@@ -1,23 +1,33 @@
 ---
 name: add-dispatch-tool
-description: Add a new tool to the AI agents (dispatch and copilot). Use when the user wants to give an agent a new capability (e.g., "add a tool that returns load board listings older than 24h"). Walks through the four files that must change and the silently load-bearing IsWrite metadata.
+description: Add a new tool to the AI agents (dispatch and copilot). Use when the user wants to give an agent a new capability (e.g., "add a tool that returns load board listings older than 24h"). Walks through the three files that must change, the domain folder to pick, and the silently load-bearing registry metadata.
 ---
 
 # Add an Agent Tool
 
-Tools are auto-discovered via DI, and `AIDispatchToolRegistry` is shared by the dispatch agent, the
+Tools are auto-discovered via DI, and `AgentToolRegistry` is shared by the dispatch agent, the
 TMS copilot, and the MCP server - add a tool once and every surface exposes it (each filtered by
 its own feature + permission scope).
 
 ## Files that must change
 
-1. **`src/Infrastructure/Logistics.Infrastructure.AI/Tools/{ToolName}Tool.cs`** - the tool implementation
-2. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AIDispatchToolRegistry.cs`** - JSON schema + description **and the behavior metadata** (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`, `DispatchAgent`)
-3. **`src/Infrastructure/Logistics.Infrastructure.AI/Registrar.cs`** - DI registration
-4. **`test/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`** - unit test
+1. **`src/Infrastructure/Logistics.Infrastructure.AI/Tools/{Domain}/{ToolName}Tool.cs`** - the tool implementation
+2. **`src/Infrastructure/Logistics.Infrastructure.AI/Tools/AgentToolRegistry.cs`** - JSON schema + description **and the behavior metadata** (`RequiredPermission`, `DecisionType`, `RequiredFeature`, `DispatchAgent`)
+3. **`test/Logistics.Infrastructure.AI.Tests/Tools/{Domain}/{ToolName}ToolTests.cs`** - unit test
 
-There is no separate write-tool list anymore - `IsWrite` on the registry definition is the single
-registration point, read by the decision processor and the MCP description warning alike.
+**`Registrar.cs` is not on that list.** It scans the assembly for `IAgentTool`, so the tool
+registers by existing. The catalogue entry in step 2 is the one that has no safety net at authoring
+time - though `AgentToolRegistryParityTests` fails the build if a class and the catalogue disagree
+in either direction.
+
+Pick `{Domain}` by the Application module the tool dispatches into: `Dispatch/`, `Financial/`
+(invoices, payments, tax, expenses), `Operations/` (loads, customers, maintenance), `LoadBoard/`,
+`Intermodal/`. Which agent may call it is registry metadata, not folder membership - a `Financial/`
+tool can still set `DispatchAgent = true`.
+
+There is no separate write-tool list, and no `IsWrite` flag to set: a tool is a write exactly when
+its `DecisionType` is not `Query`. The decision processor and the MCP description warning both read
+that derived value.
 
 ## Step-by-step
 
@@ -26,20 +36,20 @@ registration point, read by the decision processor and the MCP description warni
 - **Read tool**: pure query - runs immediately in both Autonomous and HumanInTheLoop modes. Examples: `get_unassigned_loads`, `check_hos_feasibility`, `search_loads`.
 - **Write tool**: mutates state (assigns load, creates an invoice, books from load board). In HumanInTheLoop mode it creates a `Suggested` decision; in Autonomous mode it executes immediately.
 
-A write tool **must** carry `IsWrite: true` on its registry definition (step 3). Miss it and the
-tool auto-executes instead of creating a `Suggested` decision - approvals break silently.
+A write tool is declared by giving it a `DecisionType` other than `Query` on its registry
+definition (step 3). `IsWrite` is derived from that, so there is no second flag to forget.
 
 ### 2. Create the tool class
 
-`Tools/{ToolName}Tool.cs`. Tool names use `snake_case`. Pattern:
+`Tools/{Domain}/{ToolName}Tool.cs`. Tool names use `snake_case`. Pattern:
 
 ```csharp
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Operations;   // match the folder
 
-internal sealed class GetSomethingTool(IMediator mediator) : IAIDispatchTool
+internal sealed class GetSomethingTool(IMediator mediator) : IAgentTool
 {
     public string Name => "get_something";
 
@@ -68,7 +78,7 @@ Conventions:
 
 ### 3. Add the schema definition + metadata
 
-In `AIDispatchToolRegistry.cs`, append to the `Tools` list. The JSON schema is what the LLM sees - descriptions matter:
+In `AgentToolRegistry.cs`, append to the `Tools` list. The JSON schema is what the LLM sees - descriptions matter:
 
 ```csharp
 new("get_something",
@@ -81,12 +91,13 @@ new("get_something",
             ["some_id"] = Prop("string", "GUID of the entity")
         },
         ["required"] = new JsonArray("some_id")
-    },
-    TenantFeature.Loads,                                  // omit when ungated
-    IsWrite: true,                                        // write tools only
-    RequiredPermission: Permission.Load.Manage,           // ALWAYS - copilot scoping depends on it
-    DecisionType: AIDispatchDecisionType.AssignLoad,      // write tools; add an enum value if new
-    DispatchAgent: true),                                 // fleet dispatch agent tools only
+    })
+{
+    RequiredFeature = TenantFeature.Loads,                // omit when ungated
+    RequiredPermission = Permission.Load.Manage,          // ALWAYS - copilot scoping depends on it
+    DecisionType = AIDispatchDecisionType.AssignLoad,     // write tools; makes IsWrite true
+    DispatchAgent = true                                  // fleet dispatch agent tools only
+},
 ```
 
 Group with other read tools or other write tools (look at the `── Read Tools ──` / `── Write Tools ──` comments).
@@ -98,33 +109,25 @@ Group with other read tools or other write tools (look at the `── Read Tools
   unintended write tool executes with no dispatcher approval. Set it only for tools that belong in
   a fleet dispatch run; a copilot-only tool leaves it off. The copilot sees every tool the calling
   user has the permission for either way.
-- Write tools also declare `DecisionType` so the audit trail categorizes them; append to the
-  `AIDispatchDecisionType` enum when no existing value fits (append-only).
+- `DecisionType` both categorizes the tool in the audit trail and _is_ the write declaration;
+  append to the `AIDispatchDecisionType` enum when no existing value fits (append-only).
 - If the tool's ids should link into the decision audit (`load_id`, `invoice_id`, ...), check
-  `AIDispatchDecisionProcessor.ExtractEntityIds` covers the input field name.
+  `AgentDecisionProcessor.ExtractEntityIds` covers the input field name.
 
-### 4. Register in DI
+### 4. Write a unit test
 
-In `Registrar.cs`, add alongside the other tools:
-
-```csharp
-services.AddScoped<IAIDispatchTool, GetSomethingTool>();
-```
-
-### 5. Write a unit test
-
-`test/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`, using NSubstitute and
+`test/Logistics.Infrastructure.AI.Tests/Tools/{Domain}/{ToolName}ToolTests.cs`, using NSubstitute and
 `MockQueryable.NSubstitute` for `IQueryable`-returning repositories. Cover at least missing input
 (`JsonNode.Parse("""{}""")` → result contains `"error"`) and the happy path.
 
 ## Verification checklist
 
-- [ ] Tool class created, implements `IAIDispatchTool`, name is `snake_case`
-- [ ] Registered in `Registrar.cs` (otherwise DI won't find it and `AIDispatchToolExecutor` returns "Unknown tool")
-- [ ] Added to `AIDispatchToolRegistry.Tools` list (otherwise the LLM never knows it exists)
-- [ ] `RequiredPermission` set; **if write tool**: `IsWrite: true` + `DecisionType` set
-- [ ] `DispatchAgent: true` **only** if the fleet dispatch agent should call it
-- [ ] Unit test added under `test/Logistics.Infrastructure.AI.Tests/Tools/`
+- [ ] Tool class created, implements `IAgentTool`, name is `snake_case`
+- [ ] Placed in the `Tools/{Domain}/` folder matching the module it dispatches into
+- [ ] Added to `AgentToolRegistry.Tools` list (otherwise the LLM never knows it exists)
+- [ ] `RequiredPermission` set; **if write tool**: `DecisionType` set to a non-`Query` value
+- [ ] `DispatchAgent = true` **only** if the fleet dispatch agent should call it
+- [ ] Unit test added under `test/Logistics.Infrastructure.AI.Tests/Tools/{Domain}/`
 - [ ] `dotnet build` passes
 - [ ] `dotnet test --filter "{ToolName}ToolTests"` passes
 
@@ -132,9 +135,8 @@ services.AddScoped<IAIDispatchTool, GetSomethingTool>();
 
 - **Throwing instead of returning `{error}`**: the agent loop catches it, but the agent loses all context on what went wrong.
 - **Verbose tool names or descriptions**: every tool definition is sent on every API call - keep descriptions tight.
-- **Not registering in `Registrar.cs`**: `AIDispatchToolExecutor.toolMap` is built from DI; an unregistered tool is invisible at runtime.
 - **Forgetting `RequiredPermission`**: a tool without a permission leaks into every copilot conversation regardless of role.
-- **Forgetting `DispatchAgent: true` on a dispatch tool**: it is simply absent from the dispatch agent's catalogue, with no error - the agent just can't do the thing.
+- **Forgetting `DispatchAgent = true` on a dispatch tool**: it is simply absent from the dispatch agent's catalogue, with no error - the agent just can't do the thing.
 
 ## Related
 

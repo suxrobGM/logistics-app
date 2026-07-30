@@ -7,11 +7,12 @@ paths:
 
 ## Test Projects
 
-| Project                             | Tests For                                    | Extra Dependencies          |
-| ----------------------------------- | -------------------------------------------- | --------------------------- |
-| `Logistics.Application.Tests`       | Application layer (handlers, services)       | -                           |
-| `Logistics.Infrastructure.AI.Tests` | AI agent, quota, tools, prompts, LLM pricing | `MockQueryable.NSubstitute` |
-| `Logistics.Architecture.Tests`      | Layering / dependency boundaries             | `TngTech.ArchUnitNET.xUnit` |
+| Project                                      | Tests For                                             | Extra Dependencies          |
+| -------------------------------------------- | ----------------------------------------------------- | --------------------------- |
+| `Logistics.Application.Tests`                | Application layer (handlers, services)                | -                           |
+| `Logistics.Infrastructure.AI.Tests`          | AI agent, tools, prompts, LLM pricing                 | `MockQueryable.NSubstitute` |
+| `Logistics.Infrastructure.Persistence.Tests` | Persistence services, converters - including AI quota | `MockQueryable.NSubstitute` |
+| `Logistics.Architecture.Tests`               | Layering / dependency boundaries                      | `TngTech.ArchUnitNET.xUnit` |
 
 Other `Logistics.Infrastructure.*.Tests` projects cover their own infrastructure module.
 

@@ -13,7 +13,7 @@ drivers already hold.
 
 ## What to build
 
-- Driver-scoped agent: same loop, restricted tool set (my HOS via `GetDriverHosTool` pattern, my current/next assignment, submit DVIR, send message to dispatch). Tools must enforce driver identity - never tenant-wide reads.
+- Driver-scoped agent: same loop, restricted tool set (my HOS via `GetDriverHosStatusTool` pattern, my current/next assignment, submit DVIR, send message to dispatch). Tools must enforce driver identity - never tenant-wide reads.
 - Speech: on-device STT/TTS in the KMP app (`src/Client/Logistics.DriverApp/`) - platform APIs first (Android SpeechRecognizer / iOS Speech), streaming ASR later.
 - Voice DVIR: conversational walk-through mapping speech to `DvirReport`/`DvirDefect` fields; confirm summary before submit.
 - Hands-free/CDL compliance: audio-first UX, large single-tap trigger, never require reading while driving.

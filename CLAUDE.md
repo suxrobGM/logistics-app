@@ -70,5 +70,5 @@ Adding an infrastructure project: the csproj rule finds it automatically, but th
 - Endpoint: `/mcp` (Streamable HTTP)
 - Auth: API key header, format `logsx_{tenantId}_{random}`. Validated by `ApiKeyAuthenticationHandler`, which sets `HttpContext.Items["McpTenantId"]` so `CurrentTenantAccessor` resolves the tenant without an `X-Tenant` header
 - Rate limit: 100 req/min per key
-- Tools come from `AIDispatchToolRegistry` - single source of truth shared with the AI dispatch agent. Add a tool in one place, both surfaces pick it up
+- Tools come from `AgentToolRegistry` - single source of truth shared with the AI dispatch agent. Add a tool in one place, both surfaces pick it up
 - Project: `src/Presentation/Logistics.McpServer/`

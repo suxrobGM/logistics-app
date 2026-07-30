@@ -13,7 +13,7 @@ already integrate the first two for load search (`Infrastructure.Integrations.Lo
 
 ## What to build
 
-- `CheckBrokerCreditTool` in `src/Infrastructure/Logistics.Infrastructure.AI/Tools/` via the `add-dispatch-tool` skill - read tool, snake_case name `check_broker_credit`. Registry entry means both the dispatch agent and MCP server get it for free.
+- `CheckBrokerCreditTool` in `src/Infrastructure/Logistics.Infrastructure.AI/Tools/LoadBoard/` via the `add-dispatch-tool` skill - read tool, snake_case name `check_broker_credit`. Registry entry means both the dispatch agent and MCP server get it for free.
 - Backing port `IBrokerCreditService` in `Application.Abstractions`, implemented in `Infrastructure.Integrations.LoadBoard` (pull credit fields from DAT/Truckstop responses; FMCSA SAFER authority lookup as free fallback).
 - System prompt rule in `AIDispatchSystemPrompt`: never book a load-board load without a credit check; refuse below tenant-configurable threshold.
 - Surface credit score + days-to-pay on `tms-portal/pages/load-board/` listing cards for manual dispatching too.

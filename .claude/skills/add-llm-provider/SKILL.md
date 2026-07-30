@@ -20,10 +20,10 @@ Providers sit behind the `ILlmProvider` adapter.
 1. `src/Core/Logistics.Domain.Primitives/Enums/AIDispatch/LlmProvider.cs` - add enum value
 2. `src/Core/Logistics.Application.Abstractions/AI/LlmOptions.cs` - provider config section. Config is
    deliberately **not** in `Infrastructure.AI` (the application layer reads it) - see `.claude/rules/backend/ai-agent.md`
-3. `src/Infrastructure/Logistics.Infrastructure.AI/Providers/{X}LlmProvider.cs` - only for non-OpenAI-compatible
-4. `src/Infrastructure/Logistics.Infrastructure.AI/Providers/LlmProviderFactory.cs` - resolution case
-5. `src/Infrastructure/Logistics.Infrastructure.AI/Services/LlmPricing.cs` - pricing, multiplier, tier, billing units
-6. `src/Core/Logistics.Application.Abstractions/AIDispatch/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider }`
+3. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/Providers/{X}LlmProvider.cs` - only for non-OpenAI-compatible
+4. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/LlmProviderFactory.cs` - resolution case
+5. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/LlmPricing.cs` - pricing, multiplier, tier, billing units
+6. `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider }`
 
 ## Step-by-step
 
@@ -59,7 +59,7 @@ Binds from `Llm:Providers:{Name}` in `appsettings.json`; the API key comes from 
 
 If the provider is OpenAI-compatible (most modern providers are), **skip this step** - `OpenAILlmProvider` handles it via `BaseUrl`.
 
-If it requires a custom SDK, add `Providers/NewLlmProvider.cs`:
+If it requires a custom SDK, add `Llm/Providers/NewLlmProvider.cs`:
 
 ```csharp
 internal sealed class NewLlmProvider(IOptions<LlmProviderOptions> options) : ILlmProvider
@@ -67,12 +67,12 @@ internal sealed class NewLlmProvider(IOptions<LlmProviderOptions> options) : ILl
     public async Task<LlmResponse> SendMessageAsync(LlmRequest request, CancellationToken ct)
     {
         // Translate LlmRequest → provider SDK request
-        // Translate provider response → LlmResponse (LlmTypes only - no SDK types leak out)
+        // Translate provider response → LlmResponse (Llm/Contracts only - no SDK types leak out)
     }
 }
 ```
 
-Provider-specific SDK types **must not leak** outside this class. The agent loop uses only `LlmTypes` (`LlmRequest`, `LlmResponse`, `LlmToolUseBlock`).
+Provider-specific SDK types **must not leak** outside this class. The agent loop uses only the `Llm/Contracts/` records (`LlmRequest`, `LlmResponse`, `LlmToolUseBlock`).
 
 ### 4. Resolve in `LlmProviderFactory`
 
@@ -105,7 +105,7 @@ Pick the tier: `Base` (1× quota, 1 overage unit), `Premium` (5×, 2), or `Ultra
 
 ### 6. Add the model to `LlmModelCatalog`
 
-In `src/Core/Logistics.Application.Abstractions/AIDispatch/LlmModelCatalog.cs`:
+In `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs`:
 
 ```csharp
 public static readonly IReadOnlyList<LlmModelInfo> Models =
@@ -134,7 +134,7 @@ selected model in `UpdateAISettingsCommand`. The admin UI populates automaticall
 - **Using `new(...)` instead of a tier factory** in `Pricing`: it will not compile, because the tier fields have no defaults. That is deliberate - forgetting the tier used to silently bill a Premium model at base rates.
 - **`LlmModelCatalog` id ≠ `LlmPricing` key**: the catalog offers a model the pricing map doesn't know, so it falls back to default pricing/multiplier.
 - **Forgetting `BaseUrl`** for OpenAI-compatible providers - `OpenAILlmProvider` defaults to OpenAI's endpoint and 401s.
-- **SDK types leaking**: importing the provider SDK in any file other than `Providers/{X}LlmProvider.cs` breaks the abstraction.
+- **SDK types leaking**: importing the provider SDK in any file other than `Llm/Providers/{X}LlmProvider.cs` breaks the abstraction.
 
 ## Related
 

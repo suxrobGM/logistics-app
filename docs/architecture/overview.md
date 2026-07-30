@@ -285,7 +285,7 @@ LLM dispatch agent and tool registry.
 
 - `ILlmProvider` adapter pattern with `AnthropicLlmProvider` (Claude SDK) and `OpenAILlmProvider` (OpenAI-compatible: OpenAI, DeepSeek, GLM)
 - `AIDispatchService` agent loop (max 25 iterations, prompt caching, extended thinking)
-- `AIDispatchToolRegistry` - shared tool definitions used by both the agent and the MCP server
+- `AgentToolRegistry` - one catalogue behind three surfaces: `GetDispatchAgentTools`, `GetCopilotTools` (permission-scoped), `GetAllTools` (MCP, gates per call)
 - Quota tracking with multiplier-based weekly limits (1x / 5x / 10x by the global model's cost tier)
 - Global, admin-selected dispatch model (`LlmModelCatalog` + `SystemSettings`); plans differ by quota only
 
@@ -380,14 +380,14 @@ Accounting sync providers: QuickBooks Online and a Demo provider, selected throu
 
 ## Presentation Projects
 
-| Project                    | Role                                                                                                 |
-| -------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `Logistics.API`            | REST API, SignalR hubs, Hangfire background jobs, webhooks (Stripe, ELD)                             |
-| `Logistics.IdentityServer` | OAuth2 / OIDC via Duende IdentityServer, JWT issuance, user management                               |
-| `Logistics.McpServer`      | Library composed into the API: MCP over Streamable HTTP at `/mcp`, exposing `AIDispatchToolRegistry` |
-| `Logistics.TelegramBot`    | Library composed into the API: Telegram bot for driver / dispatcher commands                         |
-| `Logistics.DbMigrator`     | Console app: standalone EF Core migrations runner (master + tenant)                                  |
-| `Logistics.HostDefaults`   | Shared library: host bootstrap for the web hosts (`LogisticsHost.Run`, CORS, data protection)        |
+| Project                    | Role                                                                                            |
+| -------------------------- | ----------------------------------------------------------------------------------------------- |
+| `Logistics.API`            | REST API, SignalR hubs, Hangfire background jobs, webhooks (Stripe, ELD)                        |
+| `Logistics.IdentityServer` | OAuth2 / OIDC via Duende IdentityServer, JWT issuance, user management                          |
+| `Logistics.McpServer`      | Library composed into the API: MCP over Streamable HTTP at `/mcp`, exposing `AgentToolRegistry` |
+| `Logistics.TelegramBot`    | Library composed into the API: Telegram bot for driver / dispatcher commands                    |
+| `Logistics.DbMigrator`     | Console app: standalone EF Core migrations runner (master + tenant)                             |
+| `Logistics.HostDefaults`   | Shared library: host bootstrap for the web hosts (`LogisticsHost.Run`, CORS, data protection)   |
 
 Only **two** projects are independently runnable web hosts (API, IdentityServer). `McpServer` and `TelegramBot` are class libraries with no `Program.cs`; the API composes them (`AddMcpServerInfrastructure` + `MapMcpEndpoint`, `AddTelegramBotInfrastructure` + `MapTelegramWebhook`). `DbMigrator` is a console app. See [Hosts and cross-cutting concerns](#hosts-and-cross-cutting-concerns).
 

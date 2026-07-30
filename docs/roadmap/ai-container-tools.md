@@ -16,7 +16,7 @@ availability) is table stakes for the [drayage vertical](drayage-vertical.md) an
 - `GetContainerStatusTool` (`get_container_status`): ISO 6346 lookup → status, current terminal, seal, B/L, linked load. Read tool via the `add-dispatch-tool` skill.
 - `GetTerminalInfoTool` (`get_terminal_info`): UN/LOCODE lookup → name, type (port/rail/depot), address for deadhead calcs.
 - Update the "Container & Terminal entities" section of `AIDispatchSystemPrompt` to describe the tools and intermodal assignment rules (ContainerTruck-only, factor terminal location into deadhead).
-- Both tools appear on the MCP server automatically via `AIDispatchToolRegistry`.
+- Both tools appear on the MCP server automatically via `AgentToolRegistry`.
 - Later (with drayage vertical): demurrage-deadline awareness in assignment priority.
 
 ## Acceptance
