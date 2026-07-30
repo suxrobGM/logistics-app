@@ -56,7 +56,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
             }
 
             var weeklyQuota = plan.WeeklyAIRequestQuota!.Value;
-            var monthlyRevenue = plan.Price.Amount + plan.PerTruckPrice.Amount * usage.TruckCount;
+            var monthlyRevenue = MonthlyRevenueOf(plan, subscription, usage.TruckCount);
             usages.Add(new TenantQuotaUsageDto
             {
                 TenantId = tenant.Id,
@@ -89,6 +89,29 @@ internal sealed class GetTenantQuotaUsagesHandler(
             .ToArray();
 
         return PagedResult<TenantQuotaUsageDto>.Ok(paged, totalItems, request.PageSize);
+    }
+
+    /// <summary>
+    /// Subscription revenue normalised to a month, so it can be compared against the 30-day LLM
+    /// cost regardless of how the plan bills. A subscription that is not currently paying (trial,
+    /// paused, past due) contributes nothing - reporting its list price would show a healthy
+    /// margin for a tenant generating cost against no revenue at all.
+    /// </summary>
+    private static decimal MonthlyRevenueOf(SubscriptionPlan plan, Subscription subscription, int truckCount)
+    {
+        if (subscription.Status != SubscriptionStatus.Active)
+        {
+            return 0;
+        }
+
+        var perInterval = plan.Price.Amount + plan.PerTruckPrice.Amount * truckCount;
+        var monthsPerInterval = plan.Interval switch
+        {
+            BillingInterval.Year => 12 * plan.IntervalCount,
+            _ => plan.IntervalCount
+        };
+
+        return monthsPerInterval > 0 ? perInterval / monthsPerInterval : perInterval;
     }
 
     private sealed record TenantUsage(
@@ -134,9 +157,13 @@ internal sealed class GetTenantQuotaUsagesHandler(
 
             var weekSessions = sessions.Where(s => s.StartedAt >= countFrom).ToList();
 
+            // Quota counts completed sessions only, matching AIQuotaService - the tenant's own
+            // quota endpoint and this admin view must not disagree. Cost counts in-flight work too.
+            var weekCompleted = weekSessions.Where(s => s.Status == AgentSessionStatus.Completed).ToList();
+
             return new TenantUsage(
-                UsedThisWeek: weekSessions.Sum(s => s.RequestCost),
-                OverageSessions: weekSessions.Count(s => s.IsOverage && s.Status == AgentSessionStatus.Completed),
+                UsedThisWeek: weekCompleted.Sum(s => s.RequestCost),
+                OverageSessions: weekCompleted.Count(s => s.IsOverage),
                 TotalTokens: weekSessions.Sum(s => s.InputTokensUsed + s.OutputTokensUsed),
                 TotalCost: weekSessions.Sum(s => s.EstimatedCostUsd),
                 MonthlyLlmCost: sessions.Sum(s => s.EstimatedCostUsd),

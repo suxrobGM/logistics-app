@@ -13,8 +13,6 @@ internal sealed class StripePlanService(
     ISystemSettingsService settingService,
     ILogger<StripePlanService> logger) : IStripePlanService
 {
-    private const string MeterSettingKey = "Stripe:AIOverageMeterId";
-
     /// <summary>
     /// $0.10 per billing unit (standard=1 unit, premium=2). Changes propagate on the next
     /// UpdatePlanAsync/seeder run.
@@ -178,7 +176,7 @@ internal sealed class StripePlanService(
     private async Task<Price?> CreateMeteredOveragePriceAsync(
         PriceService priceService, string productId, SubscriptionPlan plan)
     {
-        var meterId = await settingService.GetAsync(MeterSettingKey);
+        var meterId = await settingService.GetAsync(StripeSettingKeys.AIOverageMeterId);
         if (string.IsNullOrEmpty(meterId))
         {
             logger.LogWarning("Cannot create AI overage price: billing meter not configured");

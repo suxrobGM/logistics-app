@@ -14,11 +14,10 @@ internal sealed class StripeUsageService(
     IOptions<StripeOptions> options,
     ILogger<StripeUsageService> logger) : IStripeUsageService
 {
-    private const string MeterSettingKey = "Stripe:AIOverageMeterId";
 
     public async Task ReportAISessionOverageAsync(Guid tenantId, int billingUnits = 1, CancellationToken ct = default)
     {
-        var meterId = await settingService.GetAsync(MeterSettingKey, ct);
+        var meterId = await settingService.GetAsync(StripeSettingKeys.AIOverageMeterId, ct);
         if (string.IsNullOrEmpty(meterId))
         {
             logger.LogWarning(

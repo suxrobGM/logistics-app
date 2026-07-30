@@ -98,6 +98,9 @@
         <td class="text-center">
           @if (usage.overageCount > 0) {
             <ui-badge [value]="'+' + usage.overageCount" severity="warn" />
+            <div class="text-muted-foreground mt-1 text-xs">
+              {{ usage.overageSessionsThisWeek }} billed
+            </div>
           } @else {
             <span class="text-muted-foreground">-</span>
           }

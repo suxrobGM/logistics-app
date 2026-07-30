@@ -20,7 +20,6 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
     public override IReadOnlyList<string> DependsOn => [nameof(SubscriptionPlanSeeder)];
 
     private const string MeterEventName = "ai_dispatch_session";
-    private const string MeterSettingKey = "Stripe:AIOverageMeterId";
 
     public override Task<bool> ShouldSkipAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
@@ -90,7 +89,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
 
     private async Task EnsureBillingMeterAsync(ISystemSettingsService settingService, CancellationToken ct)
     {
-        var existing = await settingService.GetAsync(MeterSettingKey, ct);
+        var existing = await settingService.GetAsync(StripeSettingKeys.AIOverageMeterId, ct);
         if (existing is not null)
         {
             logger.LogInformation("Billing meter already configured: {MeterId}", existing);
@@ -130,7 +129,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
             logger.LogInformation("Created Stripe billing meter: {MeterId}", meterId);
         }
 
-        await settingService.SetAsync(MeterSettingKey, meterId,
+        await settingService.SetAsync(StripeSettingKeys.AIOverageMeterId, meterId,
             "Stripe Billing Meter ID for AI dispatch session overages", ct);
     }
 }
