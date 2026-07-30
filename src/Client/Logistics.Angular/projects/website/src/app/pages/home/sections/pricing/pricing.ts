@@ -64,7 +64,7 @@ export class Pricing {
         "MCP Server",
         "QuickBooks accounting sync",
         "AI Dispatch - higher usage",
-        "TMS-wide AI copilot",
+        "AI Copilot - TMS-wide assistant",
         "Up to 30 trucks",
       ],
       highlighted: true,
@@ -77,7 +77,7 @@ export class Pricing {
       description: "The whole platform, for larger operations.",
       features: [
         "Everything in Professional",
-        "AI Dispatch - highest included usage",
+        "AI Dispatch & AI Copilot - highest included usage",
         "Unlimited trucks",
         "Priority support",
         "API access & documentation",
