@@ -49,7 +49,9 @@ internal sealed class GetTenantQuotaUsagesHandler(
             targets.Index(),
             new ParallelOptions { MaxDegreeOfParallelism = MaxTenantReadConcurrency, CancellationToken = ct },
             async (entry, token) =>
-                rows[entry.Index] = await BuildUsageRowAsync(entry.Item, weekStart, costWindowStart, token));
+            {
+                rows[entry.Index] = await BuildUsageRowAsync(entry.Item, weekStart, costWindowStart, token);
+            });
 
         var usages = rows.OfType<TenantQuotaUsageDto>().ToList();
 
