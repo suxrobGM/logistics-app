@@ -32,7 +32,7 @@ export class UpgradeDialog {
   protected getAIQuotaLabel(plan: SubscriptionPlanDto): string {
     switch (plan.tier) {
       case "enterprise":
-        return "Unlimited AI dispatch";
+        return "Highest included AI dispatch usage";
       case "professional":
         return "Higher AI dispatch usage";
       default:

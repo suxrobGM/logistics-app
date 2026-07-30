@@ -24,7 +24,7 @@ import { TenantService, ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { Labels } from "@/shared/utils";
 
-/** Display name mapping for tenant features */
+/** Display name for every tenant feature, in display order. `Record` keeps it exhaustive. */
 const featureLabels: Record<TenantFeature, string> = {
   dashboard: "Dashboard",
   employees: "Employees",
@@ -122,7 +122,7 @@ export class ViewPlansComponent implements OnInit {
   protected getAIDispatchLabel(plan: SubscriptionPlanDto): string {
     switch (plan.tier) {
       case "enterprise":
-        return "unlimited usage";
+        return "highest included usage";
       case "professional":
         return "higher usage";
       default:

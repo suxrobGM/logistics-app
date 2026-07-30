@@ -52,13 +52,6 @@ export class Compare {
           roseRocket: "-",
         },
         { name: "Human-in-the-loop AI", us: "✓", dataTruck: "-", alvys: "-", roseRocket: "-" },
-        {
-          name: "AI model choice (tenant selects)",
-          us: "✓",
-          dataTruck: "-",
-          alvys: "-",
-          roseRocket: "-",
-        },
       ],
     },
     {
@@ -165,6 +158,25 @@ export class Compare {
           name: "Multi-currency (USD / EUR)",
           us: "✓",
           dataTruck: "-",
+          alvys: "-",
+          roseRocket: "-",
+        },
+      ],
+    },
+    {
+      category: "Pricing & Billing",
+      rows: [
+        {
+          name: "Free trial (no credit card)",
+          us: "✓ 30 days",
+          dataTruck: "Demo only",
+          alvys: "Demo only",
+          roseRocket: "Demo only",
+        },
+        {
+          name: "AI included with pay-as-you-go overage",
+          us: "✓",
+          dataTruck: "$399+/mo AI add-on",
           alvys: "-",
           roseRocket: "-",
         },

@@ -69,7 +69,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 12m,
                 MaxTrucks = (int?)10,
                 Tier = PlanTier.Starter,
-                WeeklyAIRequestQuota = (int?)500,
+                WeeklyAIRequestQuota = (int?)300,
                 Features = StarterFeatures
             },
             new
@@ -80,7 +80,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 9m,
                 MaxTrucks = (int?)30,
                 Tier = PlanTier.Professional,
-                WeeklyAIRequestQuota = (int?)2500,
+                WeeklyAIRequestQuota = (int?)1500,
                 Features = ProfessionalFeatures
             },
             new
@@ -91,7 +91,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 6m,
                 MaxTrucks = (int?)null,
                 Tier = PlanTier.Enterprise,
-                WeeklyAIRequestQuota = (int?)null, // unlimited
+                // Soft cap - sessions beyond it are overage-metered (docs/roadmap/ai-cost-guardrails.md)
+                WeeklyAIRequestQuota = (int?)5000,
                 Features = EnterpriseFeatures
             }
         };

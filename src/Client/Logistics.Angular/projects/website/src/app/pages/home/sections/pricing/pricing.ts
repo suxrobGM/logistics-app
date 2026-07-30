@@ -77,7 +77,7 @@ export class Pricing {
       description: "The whole platform, for larger operations.",
       features: [
         "Everything in Professional",
-        "AI Dispatch - unlimited usage",
+        "AI Dispatch - highest included usage",
         "Unlimited trucks",
         "Priority support",
         "API access & documentation",
