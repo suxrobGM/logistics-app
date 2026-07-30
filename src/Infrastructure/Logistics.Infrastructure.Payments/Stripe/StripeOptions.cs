@@ -7,9 +7,9 @@ public class StripeOptions
     public string? WebhookSecret { get; set; }
 
     /// <summary>
-    /// Stripe Billing Meter event name for AI dispatch overages.
-    /// Must match the meter's event_name configuration in Stripe.
-    /// The meter ID itself is stored in the database (SystemSettings).
+    /// Stripe Billing Meter event name for AI agent overages (dispatch and copilot). The seeder
+    /// resolves the meter by it and <c>StripeUsageService</c> emits it, so both read it here.
+    /// Stripe fixes the name at meter creation: changing it builds a new meter and new prices.
     /// </summary>
-    public string AIOverageMeterEventName { get; set; } = "ai_dispatch_session";
+    public string AIOverageMeterEventName { get; set; } = "ai_agent_session";
 }

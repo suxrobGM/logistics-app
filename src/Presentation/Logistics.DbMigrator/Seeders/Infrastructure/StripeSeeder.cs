@@ -5,6 +5,8 @@ using Stripe;
 using Stripe.Billing;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Infrastructure.Payments.Stripe;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
 
@@ -19,15 +21,8 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
     public override int Order => 35;
     public override IReadOnlyList<string> DependsOn => [nameof(SubscriptionPlanSeeder)];
 
+    /// <summary>Label only; the meter's identity is its event name, which comes from config.</summary>
     private const string MeterDisplayName = "AI Agent Sessions (Dispatch & Copilot)";
-
-    /// <summary>
-    /// Identity, not a label. Stripe fixes a meter's event name at creation, and
-    /// <c>StripeOptions.AIOverageMeterEventName</c> must emit the same string or usage lands on no
-    /// meter at all. Changing it here only makes the lookup below miss the live meter and create a
-    /// second one.
-    /// </summary>
-    private const string MeterEventName = "ai_dispatch_session";
 
     public override Task<bool> ShouldSkipAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
@@ -51,8 +46,10 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
         var subscriptionService = context.ServiceProvider.GetRequiredService<IStripeSubscriptionService>();
         var planRepo = context.MasterUnitOfWork.Repository<SubscriptionPlan>();
 
+        var stripeOptions = context.ServiceProvider.GetRequiredService<IOptions<StripeOptions>>().Value;
+
         // 1. Ensure billing meter exists (one-time setup, stored in SystemSettings)
-        await EnsureBillingMeterAsync(settingService, ct);
+        await EnsureBillingMeterAsync(settingService, stripeOptions.AIOverageMeterEventName, ct);
 
         // 2. Create products/prices for new plans; reconcile already-synced plans so price
         //    changes propagate.
@@ -82,19 +79,17 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
         LogCompleted(syncedCount);
     }
 
-    private async Task EnsureBillingMeterAsync(ISystemSettingsService settingService, CancellationToken ct)
+    /// <summary>
+    /// Resolves by event name every run rather than trusting the stored id, which can outlive what
+    /// it points at. A meter that does not match the reported event name bills nothing, silently.
+    /// </summary>
+    private async Task EnsureBillingMeterAsync(
+        ISystemSettingsService settingService, string eventName, CancellationToken ct)
     {
-        var existing = await settingService.GetAsync(StripeSettingKeys.AIOverageMeterId, ct);
-        if (existing is not null)
-        {
-            logger.LogInformation("Billing meter already configured: {MeterId}", existing);
-            return;
-        }
-
-        // Search for existing meter by event name
         var meterService = new MeterService();
-        var meters = await meterService.ListAsync(cancellationToken: ct);
-        var existingMeter = meters.Data.FirstOrDefault(m => m.EventName == MeterEventName);
+        var meters = await meterService.ListAsync(new MeterListOptions { Limit = 100 }, cancellationToken: ct);
+        var existingMeter = meters.Data
+            .FirstOrDefault(m => m.EventName == eventName && m.Status == "active");
 
         string meterId;
         if (existingMeter is not null)
@@ -107,7 +102,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
             var meter = await meterService.CreateAsync(new MeterCreateOptions
             {
                 DisplayName = MeterDisplayName,
-                EventName = MeterEventName,
+                EventName = eventName,
                 DefaultAggregation = new MeterDefaultAggregationOptions { Formula = "sum" },
                 CustomerMapping = new MeterCustomerMappingOptions
                 {

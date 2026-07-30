@@ -156,7 +156,13 @@ internal sealed class StripePlanService(
             return await CreateMeteredOveragePriceAsync(priceService, plan.StripeProductId!, plan);
 
         var existing = await priceService.GetAsync(plan.StripeAIOveragePriceId);
-        if (!HasDrifted(existing, plan, AIOverageUnitAmountCents, plan.Price.Currency))
+        var meterId = await settingService.GetAsync(StripeSettingKeys.AIOverageMeterId);
+
+        // A price is bound to the meter it was created against, so a meter swap orphans it: usage
+        // goes to the new meter while the price still bills off the old one.
+        var meterChanged = !string.IsNullOrEmpty(meterId) && existing.Recurring?.Meter != meterId;
+
+        if (!meterChanged && !HasDrifted(existing, plan, AIOverageUnitAmountCents, plan.Price.Currency))
             return existing;
 
         var newPrice = await CreateMeteredOveragePriceAsync(priceService, plan.StripeProductId!, plan);
