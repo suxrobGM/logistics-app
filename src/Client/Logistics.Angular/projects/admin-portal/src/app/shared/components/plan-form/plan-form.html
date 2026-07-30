@@ -60,7 +60,10 @@
 
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-4">
-      <ui-form-field label="Weekly AI Request Quota" hint="Leave empty for unlimited">
+      <ui-form-field
+        label="Weekly AI Request Quota"
+        hint="Shared by dispatch and copilot. Empty means unlimited and unbillable."
+      >
         <ui-number-field
           [formField]="form.weeklyAIRequestQuota"
           [showButtons]="true"

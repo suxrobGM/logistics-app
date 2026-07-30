@@ -9,11 +9,12 @@
     <ui-grid container spacing="6">
       <ui-grid [size]="{ xs: 12, lg: 6 }">
         <!-- Model -->
-        <ui-card header="Dispatch Model">
+        <ui-card header="AI Model">
           <ui-stack gap="4">
             <ui-typography variant="body-sm" color="muted">
-              The model used by the AI dispatch agent for every tenant. Choose a cost-efficient
-              model; tenants never see or select the model.
+              The model used by both the AI dispatch agent and the AI copilot, for every tenant.
+              Choose a cost-efficient model; tenants never see or select the model. A premium model
+              costs each session twice as much quota as a standard one.
             </ui-typography>
             <ui-select-field
               [value]="selectedModel()"
@@ -33,7 +34,8 @@
               <label for="extendedThinking">Enable extended thinking</label>
             </ui-stack>
             <ui-alert intent="neutral">
-              Not all models support extended thinking; it is ignored by models that don't.
+              Extended thinking applies to the dispatch agent only - the copilot does not use it.
+              Not all models support it; it is ignored by models that don't.
             </ui-alert>
           </ui-stack>
         </ui-card>
@@ -44,9 +46,14 @@
         <ui-card header="Weekly AI Quotas">
           <ui-stack gap="4">
             <ui-typography variant="body-sm" color="muted">
-              Weekly AI dispatch request quota per plan. Leave empty for unlimited. Sessions beyond
-              the quota are billed as overages.
+              One weekly pool per plan, shared by dispatch and copilot sessions. Past the quota,
+              dispatch keeps running and is billed as overage, while the copilot is blocked until
+              the week resets.
             </ui-typography>
+            <ui-alert intent="warning">
+              Leaving a quota empty makes it unlimited <em>and</em> unbillable - nothing is metered,
+              so the plan carries unbounded AI cost. Every plan should have a number.
+            </ui-alert>
             @for (plan of plans(); track plan.planId) {
               <ui-stack direction="row" align="center" gap="3">
                 <label class="w-40" [for]="'quota-' + plan.planId">{{ plan.planName }}</label>
