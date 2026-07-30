@@ -130,7 +130,7 @@ internal sealed class AIDispatchConversationBuilder(
 
     private static string SanitizeInstructions(string input)
     {
-        var sanitized = AIDispatchSystemPrompt.StripControlChars(input, allowLineBreaks: true);
+        var sanitized = PromptText.StripControlChars(input, allowLineBreaks: true);
         return sanitized.Length > 500 ? sanitized[..500] : sanitized;
     }
 }

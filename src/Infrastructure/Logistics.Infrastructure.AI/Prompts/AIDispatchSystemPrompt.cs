@@ -62,7 +62,7 @@ internal static class AIDispatchSystemPrompt
             _ => ""
         };
 
-        var sanitizedName = SanitizeCompanyName(companyName);
+        var sanitizedName = PromptText.SanitizeCompanyName(companyName);
         var policySection = BuildPolicySection(policy);
 
         // ~310 tokens, and names tools a gated tenant never gets - so it travels with them.
@@ -270,26 +270,7 @@ internal static class AIDispatchSystemPrompt
             return null;
         }
 
-        var sanitized = StripControlChars(text, allowLineBreaks: true);
+        var sanitized = PromptText.StripControlChars(text, allowLineBreaks: true);
         return DispatchPolicyText.KeepWholeLinesWithin(sanitized, maxChars);
     }
-
-    internal static string SanitizeCompanyName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            return "Fleet";
-
-        var sanitized = StripControlChars(name, allowLineBreaks: false);
-        return sanitized.Length > 100 ? sanitized[..100] : sanitized;
-    }
-
-    /// <summary>
-    /// The shared prompt-injection defence for every untrusted value the prompt interpolates.
-    /// </summary>
-    /// <param name="allowLineBreaks">
-    /// True for multi-line documents, where newlines and tabs carry the markdown structure. False for
-    /// single-line values like a company name, where a newline could forge a new prompt section.
-    /// </param>
-    internal static string StripControlChars(string text, bool allowLineBreaks) =>
-        new([.. text.Where(c => !char.IsControl(c) || (allowLineBreaks && c is '\n' or '\t'))]);
 }

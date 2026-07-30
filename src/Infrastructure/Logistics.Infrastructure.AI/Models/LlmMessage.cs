@@ -1,11 +1,5 @@
 namespace Logistics.Infrastructure.AI.Models;
 
-internal enum LlmRole
-{
-    User,
-    Assistant
-}
-
 /// <summary>
 /// A single conversation turn: a role plus its ordered content blocks.
 /// </summary>

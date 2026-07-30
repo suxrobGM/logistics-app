@@ -21,7 +21,7 @@ internal static class AICopilotSystemPrompt
         var operationNote = operatingMode == OperatingMode.SoloOperator
             ? "This is a solo owner-operator running a single truck - avoid fleet-wide framing."
             : "";
-        var company = AIDispatchSystemPrompt.SanitizeCompanyName(companyName);
+        var company = PromptText.SanitizeCompanyName(companyName);
 
         return $"""
             You are the AI copilot inside {company}'s transportation management system (TMS).
