@@ -2,8 +2,8 @@
 
 A conversational agent in the TMS portal chat drawer. Users ask questions and delegate work across
 the whole TMS - loads, invoices, payments, expenses, maintenance, customers, and dispatch - and the
-copilot answers with real data or proposes actions for approval. Available on Professional and
-Enterprise plans (`TenantFeature.AICopilot`).
+copilot answers with real data or proposes actions for approval. Available on every plan from
+Starter up (`TenantFeature.AICopilot`), drawing on the same weekly quota as dispatch.
 
 It reuses the [AI dispatch](ai-dispatch.md) platform end to end: the same tool registry, the same
 agent loop (`AgentLoopRunner`), the same decision/approval machinery, and the same weekly quota.

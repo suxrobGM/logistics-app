@@ -45,7 +45,7 @@ export class Compare {
           roseRocket: "✓ (Rosie)",
         },
         {
-          name: "AI Copilot, TMS-wide (included, no add-on)",
+          name: "AI Copilot, TMS-wide (every plan, no add-on)",
           us: "✓",
           dataTruck: "$399+$99/mo add-ons",
           alvys: "-",
