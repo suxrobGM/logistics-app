@@ -13,42 +13,34 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
     // Scope-lifetime memo: without it every [RequiresFeature] check costs 3-5 master-DB round trips.
     // Holds entities, not snapshots, so a writer's tracked edits stay visible through the cache.
     private readonly Dictionary<Guid, List<TenantFeatureConfig>> tenantConfigCache = [];
-    private readonly Dictionary<Guid, HashSet<TenantFeature>?> planFeatureCache = [];
+    private readonly Dictionary<Guid, PlanAccess> planAccessCache = [];
     private List<DefaultFeatureConfig>? defaultConfigCache;
 
     public async Task<bool> IsFeatureEnabledAsync(Guid tenantId, TenantFeature feature)
     {
-        var (configMap, defaultMap) = await LoadFeatureMapsAsync(tenantId);
-        var planFeatures = await GetPlanFeaturesForTenantAsync(tenantId);
-
-        return IsFeatureEnabled(feature, configMap, defaultMap, planFeatures);
+        var context = await GetContextAsync(tenantId);
+        return context.IsEnabled(feature);
     }
 
     public async Task<IReadOnlyList<TenantFeature>> GetEnabledFeaturesAsync(Guid tenantId)
     {
-        var (configMap, defaultMap) = await LoadFeatureMapsAsync(tenantId);
-        var planFeatures = await GetPlanFeaturesForTenantAsync(tenantId);
-
-        return [.. AllFeatures.Where(f => IsFeatureEnabled(f, configMap, defaultMap, planFeatures))];
+        var context = await GetContextAsync(tenantId);
+        return [.. AllFeatures.Where(context.IsEnabled)];
     }
 
     public async Task InitializeFeaturesForTenantAsync(Guid tenantId)
     {
-        var existingConfigs = await GetTenantConfigsAsync(tenantId);
-        var existingFeatures = existingConfigs.Select(c => c.Feature).ToHashSet();
+        var context = await GetContextAsync(tenantId);
 
-        var defaults = await GetDefaultConfigsAsync();
-        var defaultMap = defaults.ToDictionary(d => d.Feature, d => d.IsEnabledByDefault);
-        var planFeatures = await GetPlanFeaturesForTenantAsync(tenantId);
-
+        // A feature without a config row initializes to whatever resolution already says for it,
+        // so the stored value and the computed one cannot disagree.
         var newConfigs = AllFeatures
-            .Where(f => !existingFeatures.Contains(f))
+            .Where(f => !context.ConfigMap.ContainsKey(f))
             .Select(f => new TenantFeatureConfig
             {
                 TenantId = tenantId,
                 Feature = f,
-                IsEnabled = (planFeatures is null || planFeatures.Contains(f))
-                    && defaultMap.GetValueOrDefault(f, true),
+                IsEnabled = context.IsEnabled(f),
                 IsAdminLocked = false,
                 UpdatedAt = DateTime.UtcNow
             });
@@ -66,24 +58,22 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
 
     public async Task<IReadOnlyList<FeatureStatusDto>> GetAllFeatureStatusAsync(Guid tenantId)
     {
-        var (configMap, defaultMap) = await LoadFeatureMapsAsync(tenantId);
-        var planFeatures = await GetPlanFeaturesForTenantAsync(tenantId);
+        var context = await GetContextAsync(tenantId);
 
         return
         [
             .. AllFeatures.Select(f => new FeatureStatusDto(
                 f,
                 f.GetDescription(),
-                IsFeatureEnabled(f, configMap, defaultMap, planFeatures),
-                configMap.GetValueOrDefault(f)?.IsAdminLocked ?? false,
-                planFeatures is null || planFeatures.Contains(f)))
+                context.IsEnabled(f),
+                context.IsAdminLocked(f),
+                context.IsInPlan(f)))
         ];
     }
 
     public async Task<IReadOnlyList<DefaultFeatureStatusDto>> GetDefaultFeaturesAsync()
     {
-        var defaults = await GetDefaultConfigsAsync();
-        var defaultMap = defaults.ToDictionary(d => d.Feature, d => d.IsEnabledByDefault);
+        var defaultMap = await GetDefaultMapAsync();
 
         return
         [
@@ -94,24 +84,32 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
         ];
     }
 
-    private async Task<HashSet<TenantFeature>?> GetPlanFeaturesForTenantAsync(Guid tenantId)
+    private async Task<FeatureContext> GetContextAsync(Guid tenantId)
     {
-        // null is a real answer ("all features allowed"), so probe on key presence.
-        if (planFeatureCache.TryGetValue(tenantId, out var cached))
+        var configs = await GetTenantConfigsAsync(tenantId);
+        return new FeatureContext(
+            configs.ToDictionary(c => c.Feature),
+            await GetDefaultMapAsync(),
+            await GetPlanAccessAsync(tenantId));
+    }
+
+    private async Task<PlanAccess> GetPlanAccessAsync(Guid tenantId)
+    {
+        if (planAccessCache.TryGetValue(tenantId, out var cached))
         {
             return cached;
         }
 
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId);
-        HashSet<TenantFeature>? features = null;
-
-        if (tenant is { IsSubscriptionRequired: true, Subscription: not null })
+        var access = tenant switch
         {
-            features = await GetPlanFeaturesAsync(tenant.Subscription.PlanId);
-        }
+            { IsSubscriptionRequired: false } => new PlanAccess(true, null),
+            { Subscription: not null } => new PlanAccess(false, await GetPlanFeaturesAsync(tenant.Subscription.PlanId)),
+            _ => new PlanAccess(false, null)
+        };
 
-        planFeatureCache[tenantId] = features;
-        return features;
+        planAccessCache[tenantId] = access;
+        return access;
     }
 
     private async Task<HashSet<TenantFeature>> GetPlanFeaturesAsync(Guid planId)
@@ -138,43 +136,51 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
     private async Task<List<DefaultFeatureConfig>> GetDefaultConfigsAsync() =>
         defaultConfigCache ??= await masterUow.Repository<DefaultFeatureConfig>().GetListAsync();
 
-    private async
-        Task<(Dictionary<TenantFeature, TenantFeatureConfig> configs, Dictionary<TenantFeature, bool> defaults)>
-        LoadFeatureMapsAsync(Guid tenantId)
+    private async Task<Dictionary<TenantFeature, bool>> GetDefaultMapAsync() =>
+        (await GetDefaultConfigsAsync()).ToDictionary(d => d.Feature, d => d.IsEnabledByDefault);
+
+    /// <summary>
+    ///     Plan-derived access for one tenant. <see cref="IsUnrestricted" /> is set when the tenant
+    ///     does not require a subscription - such tenants get every feature, like the top plan.
+    ///     <see cref="PlanFeatures" /> is null when no plan gates apply.
+    /// </summary>
+    private sealed record PlanAccess(bool IsUnrestricted, HashSet<TenantFeature>? PlanFeatures);
+
+    /// <summary>
+    ///     One tenant's full resolution state; owns the precedence chain:
+    ///     admin lock → plan gate → tenant override → platform default.
+    /// </summary>
+    private sealed record FeatureContext(
+        Dictionary<TenantFeature, TenantFeatureConfig> ConfigMap,
+        Dictionary<TenantFeature, bool> DefaultMap,
+        PlanAccess PlanAccess)
     {
-        var configs = await GetTenantConfigsAsync(tenantId);
-        var defaults = await GetDefaultConfigsAsync();
-
-        return (
-            configs.ToDictionary(c => c.Feature),
-            defaults.ToDictionary(d => d.Feature, d => d.IsEnabledByDefault)
-        );
-    }
-
-    private static bool IsFeatureEnabled(
-        TenantFeature feature,
-        Dictionary<TenantFeature, TenantFeatureConfig> configMap,
-        Dictionary<TenantFeature, bool> defaultMap,
-        HashSet<TenantFeature>? planFeatures)
-    {
-        // Admin-locked overrides take highest priority
-        if (configMap.TryGetValue(feature, out var config) && config.IsAdminLocked)
+        public bool IsEnabled(TenantFeature feature)
         {
-            return config.IsEnabled;
+            if (ConfigMap.TryGetValue(feature, out var config) && config.IsAdminLocked)
+            {
+                return config.IsEnabled;
+            }
+
+            if (!IsInPlan(feature))
+            {
+                return false;
+            }
+
+            if (config is not null)
+            {
+                return config.IsEnabled;
+            }
+
+            // Unrestricted tenants skip the platform defaults too: a default-off plan differentiator
+            // (e.g. AICopilot) would otherwise stay locked with no plan to ever grant it.
+            return PlanAccess.IsUnrestricted || DefaultMap.GetValueOrDefault(feature, true);
         }
 
-        // Plan-based gating (null planFeatures means all features allowed)
-        if (planFeatures is not null && !planFeatures.Contains(feature))
-        {
-            return false;
-        }
+        public bool IsAdminLocked(TenantFeature feature) =>
+            ConfigMap.GetValueOrDefault(feature)?.IsAdminLocked ?? false;
 
-        // Tenant-specific non-locked override
-        if (config is not null)
-        {
-            return config.IsEnabled;
-        }
-
-        return defaultMap.GetValueOrDefault(feature, true);
+        public bool IsInPlan(TenantFeature feature) =>
+            PlanAccess.PlanFeatures is null || PlanAccess.PlanFeatures.Contains(feature);
     }
 }

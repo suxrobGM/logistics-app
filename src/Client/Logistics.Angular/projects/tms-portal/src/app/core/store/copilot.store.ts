@@ -184,6 +184,15 @@ export const CopilotStore = signalStore(
         async openOrUpsell(): Promise<void> {
           if (featureService.isEnabled("ai_copilot")) {
             await this.toggle();
+            return;
+          }
+
+          const status = featureService.getAllFeatures().find((f) => f.feature === "ai_copilot");
+
+          // Upsell only when the plan actually lacks the feature; a tenant that has it in-plan
+          // (or needs no plan) but toggled it off gets pointed at settings instead.
+          if (!status || status.isIncludedInPlan) {
+            toast.showInfo("The AI Copilot is disabled. Enable it in Settings → Features.");
           } else {
             upgradePrompt.showUpgradePrompt(
               ErrorCodes.FeatureNotInPlan,
