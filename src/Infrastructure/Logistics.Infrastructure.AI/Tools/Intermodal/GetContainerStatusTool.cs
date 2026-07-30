@@ -4,7 +4,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Intermodal;
 
 /// <summary>
 /// Looks up an intermodal container by ISO 6346 number (or id), so the agent knows where the box is

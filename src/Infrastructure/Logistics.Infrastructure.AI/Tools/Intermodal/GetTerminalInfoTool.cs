@@ -5,7 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Intermodal;
 
 /// <summary>
 /// Looks up an intermodal terminal by UN/LOCODE (or id) for pickup / drop-off context.

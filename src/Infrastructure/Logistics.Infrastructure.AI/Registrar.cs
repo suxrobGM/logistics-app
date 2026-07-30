@@ -1,3 +1,4 @@
+using Logistics.Infrastructure.AI.Tools.Intermodal;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Infrastructure.AI.Llm;
