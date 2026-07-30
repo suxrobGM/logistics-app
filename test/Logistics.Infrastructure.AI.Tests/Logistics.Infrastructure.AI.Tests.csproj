@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.AI\Logistics.Infrastructure.AI.csproj"/>
-    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Persistence\Logistics.Infrastructure.Persistence.csproj"/>
   </ItemGroup>
 
 </Project>

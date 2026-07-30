@@ -5,7 +5,7 @@ using MockQueryable;
 using NSubstitute;
 using Xunit;
 
-namespace Logistics.Infrastructure.AI.Tests.Services;
+namespace Logistics.Infrastructure.Persistence.Tests.Services;
 
 public class AIQuotaServiceTests
 {

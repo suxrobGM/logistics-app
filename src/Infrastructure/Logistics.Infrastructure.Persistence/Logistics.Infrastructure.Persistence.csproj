@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Logistics.Infrastructure.AI.Tests" />
     <InternalsVisibleTo Include="Logistics.Infrastructure.Persistence.Tests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
