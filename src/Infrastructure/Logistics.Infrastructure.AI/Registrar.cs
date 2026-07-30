@@ -1,9 +1,4 @@
 using Logistics.Application.Abstractions.Agents;
-using Logistics.Infrastructure.AI.Tools.Dispatch;
-using Logistics.Infrastructure.AI.Tools.Operations;
-using Logistics.Infrastructure.AI.Tools.Financial;
-using Logistics.Infrastructure.AI.Tools.LoadBoard;
-using Logistics.Infrastructure.AI.Tools.Intermodal;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Infrastructure.AI.Llm;
@@ -56,38 +51,14 @@ public static class Registrar
         services.AddScoped<IAICopilotService, AICopilotService>();
         services.AddScoped<AICopilotConversationBuilder>();
 
-        services.AddScoped<IAgentTool, GetUnassignedLoadsTool>();
-        services.AddScoped<IAgentTool, GetAvailableTrucksTool>();
-        services.AddScoped<IAgentTool, GetDriverHosStatusTool>();
-        services.AddScoped<IAgentTool, CheckHosFeasibilityTool>();
-        services.AddScoped<IAgentTool, BatchCheckHosFeasibilityTool>();
-        services.AddScoped<IAgentTool, CheckDispatchEligibilityTool>();
-        services.AddScoped<IAgentTool, CalculateDistanceTool>();
-        services.AddScoped<IAgentTool, AssignLoadToTruckTool>();
-        services.AddScoped<IAgentTool, CreateTripTool>();
-        services.AddScoped<IAgentTool, DispatchTripTool>();
-        services.AddScoped<IAgentTool, CalculateAssignmentMetricsTool>();
-        services.AddScoped<IAgentTool, PreviewTaxCalculationTool>();
-        services.AddScoped<IAgentTool, GetContainerStatusTool>();
-        services.AddScoped<IAgentTool, GetTerminalInfoTool>();
-
-        // Load board tools (conditionally included in tool definitions based on tenant feature flag)
-        services.AddScoped<IAgentTool, SearchLoadBoardTool>();
-        services.AddScoped<IAgentTool, CheckBrokerCreditTool>();
-        services.AddScoped<IAgentTool, BookLoadBoardLoadTool>();
-
-        // Copilot tools (loads, customers, invoicing, expenses, maintenance)
-        services.AddScoped<IAgentTool, SearchLoadsTool>();
-        services.AddScoped<IAgentTool, GetLoadTool>();
-        services.AddScoped<IAgentTool, SearchCustomersTool>();
-        services.AddScoped<IAgentTool, GetInvoicesTool>();
-        services.AddScoped<IAgentTool, GetInvoiceTool>();
-        services.AddScoped<IAgentTool, SearchExpensesTool>();
-        services.AddScoped<IAgentTool, GetExpenseStatsTool>();
-        services.AddScoped<IAgentTool, GetUpcomingMaintenanceTool>();
-        services.AddScoped<IAgentTool, CreateLoadInvoiceTool>();
-        services.AddScoped<IAgentTool, SendInvoiceTool>();
-        services.AddScoped<IAgentTool, CreatePaymentLinkTool>();
+        // Every IAgentTool in this assembly, so adding a tool is one file rather than two.
+        // AgentToolRegistryParityTests fails loudly if this scan and the catalogue disagree.
+        foreach (var toolType in typeof(Registrar).Assembly.GetTypes()
+                     .Where(t => t is { IsClass: true, IsAbstract: false }
+                                 && typeof(IAgentTool).IsAssignableFrom(t)))
+        {
+            services.AddScoped(typeof(IAgentTool), toolType);
+        }
 
         return services;
     }

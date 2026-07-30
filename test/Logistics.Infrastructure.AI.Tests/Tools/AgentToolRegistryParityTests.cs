@@ -9,11 +9,15 @@ using Xunit;
 namespace Logistics.Infrastructure.AI.Tests.Tools;
 
 /// <summary>
-/// A tool only works when it appears in three places at once: the class, the DI roster in
-/// <see cref="Registrar"/>, and <c>AgentToolRegistry.Tools</c>. Nothing made those agree, and
-/// both directions fail silently - a definition with no implementation reaches the model and comes
-/// back "Unknown tool", while an implementation with no definition is never mentioned to the model
-/// at all, so no surface can ever reach it.
+/// A tool has to appear in two places at once: the class, and <c>AgentToolRegistry.Tools</c>.
+/// Nothing makes those agree, and both directions fail silently - a definition with no
+/// implementation reaches the model and comes back "Unknown tool", while an implementation with no
+/// definition is never mentioned to the model at all, so no surface can ever reach it.
+///
+/// DI used to be a third place, guarded by an EveryDeclaredTool_IsRegisteredInDi test. Registrar
+/// now discovers tools by scanning the assembly, so that test compared a reflection scan against
+/// itself and could never fail; it was deleted rather than left as a no-op. A broken scan predicate
+/// still fails loudly here - zero registrations makes every definition an orphan.
 /// </summary>
 public class AgentToolRegistryParityTests
 {
@@ -30,10 +34,6 @@ public class AgentToolRegistryParityTests
             .OfType<Type>()];
     }
 
-    private static List<Type> DeclaredToolTypes() =>
-        [.. typeof(Registrar).Assembly.GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && typeof(IAgentTool).IsAssignableFrom(t))];
-
     /// <summary>
     /// Reads <see cref="IAgentTool.Name"/> without running a constructor. Every tool implements
     /// it as an expression-bodied literal that touches no injected state, so an uninitialized
@@ -41,20 +41,6 @@ public class AgentToolRegistryParityTests
     /// </summary>
     private static string NameOf(Type toolType) =>
         ((IAgentTool)RuntimeHelpers.GetUninitializedObject(toolType)).Name;
-
-    [Fact]
-    public void EveryDeclaredTool_IsRegisteredInDi()
-    {
-        var missing = DeclaredToolTypes()
-            .Except(DiRegisteredToolTypes())
-            .Select(t => t.Name)
-            .Order()
-            .ToList();
-
-        Assert.True(
-            missing.Count == 0,
-            $"Tools implementing IAgentTool but never registered in Registrar: {string.Join(", ", missing)}");
-    }
 
     [Fact]
     public void EveryRegistryDefinition_HasAnImplementation()
