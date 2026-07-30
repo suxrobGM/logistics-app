@@ -25,8 +25,8 @@ internal sealed class AIQuotaService(
         var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
         var countFrom = quotaResetAt > weekStart ? quotaResetAt.Value : weekStart;
 
-        var usedThisWeek = await tenantUow.Repository<AIDispatchSession>().Query()
-            .Where(s => s.StartedAt >= countFrom && s.Status == AIDispatchSessionStatus.Completed)
+        var usedThisWeek = await tenantUow.Repository<AgentSession>().Query()
+            .Where(s => s.StartedAt >= countFrom && s.Status == AgentSessionStatus.Completed)
             .SumAsync(s => s.RequestCost, ct);
 
         var remaining = Math.Max(0, quota - usedThisWeek);

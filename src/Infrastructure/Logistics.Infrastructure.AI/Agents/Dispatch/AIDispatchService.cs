@@ -24,7 +24,7 @@ internal sealed class AIDispatchService(
     IAgentRunContext runContext,
     ILogger<AIDispatchService> logger) : IAIDispatchService
 {
-    public async Task<AIDispatchSession> RunAsync(AIDispatchRequest request, CancellationToken ct = default)
+    public async Task<AgentSession> RunAsync(AIDispatchRequest request, CancellationToken ct = default)
     {
         var blocked = await CheckLlmDisabledAsync(request, ct);
         if (blocked is not null)
@@ -32,7 +32,7 @@ internal sealed class AIDispatchService(
 
         runContext.SetTriggeredBy(request.TriggeredByUserId);
 
-        var session = new AIDispatchSession
+        var session = new AgentSession
         {
             Mode = request.Mode,
             TriggeredByUserId = request.TriggeredByUserId,
@@ -41,7 +41,7 @@ internal sealed class AIDispatchService(
             Instructions = request.Instructions
         };
 
-        await tenantUow.Repository<AIDispatchSession>().AddAsync(session, ct);
+        await tenantUow.Repository<AgentSession>().AddAsync(session, ct);
         await tenantUow.SaveChangesAsync(ct);
         await BroadcastSessionUpdateAsync(session);
 
@@ -83,11 +83,11 @@ internal sealed class AIDispatchService(
 
     public async Task<bool> CancelAsync(Guid sessionId, CancellationToken ct = default)
     {
-        var session = await tenantUow.Repository<AIDispatchSession>().GetByIdAsync(sessionId, ct);
+        var session = await tenantUow.Repository<AgentSession>().GetByIdAsync(sessionId, ct);
         if (session is null)
             return false;
 
-        if (session.Status != AIDispatchSessionStatus.Running)
+        if (session.Status != AgentSessionStatus.Running)
             return false;
 
         cancellationRegistry.TryCancel(sessionId);
@@ -97,7 +97,7 @@ internal sealed class AIDispatchService(
     }
 
     private async Task RunAgentLoopAsync(
-        AIDispatchSession session,
+        AgentSession session,
         AIDispatchRequest request,
         CancellationToken ct)
     {
@@ -110,7 +110,7 @@ internal sealed class AIDispatchService(
             () => BroadcastSessionUpdateAsync(session), ct);
     }
 
-    private async Task<AIDispatchSession?> CheckLlmDisabledAsync(
+    private async Task<AgentSession?> CheckLlmDisabledAsync(
         AIDispatchRequest request, CancellationToken ct)
     {
         if (options.Value.BypassLlmGate)
@@ -122,24 +122,24 @@ internal sealed class AIDispatchService(
 
         logger.LogInformation("LLM is disabled for tenant {TenantId}, skipping session", request.TenantId);
 
-        var session = new AIDispatchSession
+        var session = new AgentSession
         {
             Mode = request.Mode,
             TriggeredByUserId = request.TriggeredByUserId,
             StartedAt = DateTime.UtcNow
         };
         session.Fail("LLM is disabled for this tenant. Contact your administrator to enable it.");
-        await tenantUow.Repository<AIDispatchSession>().AddAsync(session, ct);
+        await tenantUow.Repository<AgentSession>().AddAsync(session, ct);
         await tenantUow.SaveChangesAsync(ct);
         return session;
     }
 
-    private async Task BroadcastSessionUpdateAsync(AIDispatchSession session)
+    private async Task BroadcastSessionUpdateAsync(AgentSession session)
     {
         try
         {
             var tenantId = tenantUow.GetCurrentTenant().Id;
-            await broadcastService.BroadcastSessionUpdateAsync(tenantId, new AIDispatchUpdateDto
+            await broadcastService.BroadcastSessionUpdateAsync(tenantId, new AgentSessionUpdateDto
             {
                 SessionId = session.Id,
                 Status = session.Status,
@@ -154,9 +154,9 @@ internal sealed class AIDispatchService(
         }
     }
 
-    private async Task ReportOverageIfNeededAsync(AIDispatchSession session, Guid tenantId)
+    private async Task ReportOverageIfNeededAsync(AgentSession session, Guid tenantId)
     {
-        if (!session.IsOverage || session.Status != AIDispatchSessionStatus.Completed)
+        if (!session.IsOverage || session.Status != AgentSessionStatus.Completed)
             return;
 
         try

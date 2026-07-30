@@ -14,7 +14,7 @@ using Logistics.Application.Abstractions.AIDispatch;
 namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
-/// Processes LLM tool calls into AIDispatchDecision entities.
+/// Processes LLM tool calls into AgentDecision entities.
 /// Handles mode-aware execution (HumanInTheLoop suggests, Autonomous executes).
 /// Write/permission/decision-type behavior comes from the tool's
 /// <see cref="AgentToolDefinition"/> metadata - there is no tool-name list here.
@@ -27,14 +27,14 @@ internal sealed class AgentDecisionProcessor(
     ILogger<AgentDecisionProcessor> logger)
 {
     public async Task<List<LlmToolResultBlock>> ProcessToolCallsAsync(
-        AIDispatchSession session,
+        AgentSession session,
         ToolCallContext context,
         List<LlmToolUseBlock> toolCalls,
         string? reasoning,
         CancellationToken ct)
     {
         var toolResults = new List<LlmToolResultBlock>();
-        var decisions = new List<AIDispatchDecision>();
+        var decisions = new List<AgentDecision>();
 
         foreach (var toolCall in toolCalls)
         {
@@ -43,7 +43,7 @@ internal sealed class AgentDecisionProcessor(
             var toolResult = await ExecuteOrSuggestAsync(session, decision, toolCall, definition, context, ct);
 
             ExtractEntityIds(decision, toolCall.Input);
-            await tenantUow.Repository<AIDispatchDecision>().AddAsync(decision, CancellationToken.None);
+            await tenantUow.Repository<AgentDecision>().AddAsync(decision, CancellationToken.None);
             session.DecisionCount++;
             decisions.Add(decision);
 
@@ -62,8 +62,8 @@ internal sealed class AgentDecisionProcessor(
     }
 
     private async Task<string> ExecuteOrSuggestAsync(
-        AIDispatchSession session,
-        AIDispatchDecision decision,
+        AgentSession session,
+        AgentDecision decision,
         LlmToolUseBlock toolCall,
         AgentToolDefinition? definition,
         ToolCallContext context,
@@ -88,9 +88,9 @@ internal sealed class AgentDecisionProcessor(
 
         var isWriteTool = definition?.IsWrite == true;
 
-        if (isWriteTool && context.Mode == AIDispatchMode.HumanInTheLoop)
+        if (isWriteTool && context.Mode == AgentAutonomyMode.HumanInTheLoop)
         {
-            decision.Status = AIDispatchDecisionStatus.Suggested;
+            decision.Status = AgentDecisionStatus.Suggested;
             var result = JsonSerializer.Serialize(new
             {
                 status = "suggested",
@@ -130,23 +130,23 @@ internal sealed class AgentDecisionProcessor(
         }
     }
 
-    private static AIDispatchDecision CreateDecision(
-        AIDispatchSession session,
+    private static AgentDecision CreateDecision(
+        AgentSession session,
         LlmToolUseBlock toolCall,
         AgentToolDefinition? definition,
         string? reasoning)
     {
-        return new AIDispatchDecision
+        return new AgentDecision
         {
             SessionId = session.Id,
-            Type = definition?.DecisionType ?? AIDispatchDecisionType.Query,
+            Type = definition?.DecisionType ?? AgentDecisionType.Query,
             ToolName = toolCall.Name,
             ToolInput = toolCall.Input?.ToJsonString() ?? "{}",
             Reasoning = reasoning ?? ""
         };
     }
 
-    private static void ExtractEntityIds(AIDispatchDecision decision, JsonNode? input)
+    private static void ExtractEntityIds(AgentDecision decision, JsonNode? input)
     {
         if (input is null)
             return;
@@ -158,7 +158,7 @@ internal sealed class AgentDecisionProcessor(
         decision.CustomerId = input.GetGuid("customer_id") ?? decision.CustomerId;
     }
 
-    private async Task BroadcastDecisionAsync(AIDispatchDecision decision, ToolCallContext context)
+    private async Task BroadcastDecisionAsync(AgentDecision decision, ToolCallContext context)
     {
         try
         {

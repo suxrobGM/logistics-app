@@ -61,11 +61,11 @@ internal sealed class GetTenantQuotaUsagesHandler(
                 var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
                 tenantUow.SetCurrentTenant(tenant);
 
-                var sessions = await tenantUow.Repository<AIDispatchSession>().Query()
+                var sessions = await tenantUow.Repository<AgentSession>().Query()
                     .Where(s =>
                         s.StartedAt >= countFrom &&
-                        (s.Status == AIDispatchSessionStatus.Running ||
-                         s.Status == AIDispatchSessionStatus.Completed))
+                        (s.Status == AgentSessionStatus.Running ||
+                         s.Status == AgentSessionStatus.Completed))
                     .Select(s => new
                     {
                         s.InputTokensUsed,

@@ -29,7 +29,7 @@ public record AgentToolDefinition(string Name, string Description, JsonNode Inpu
     /// How a call is categorized in the decision audit trail, and the single declaration of whether
     /// this tool writes - see <see cref="IsWrite"/>.
     /// </summary>
-    public AIDispatchDecisionType DecisionType { get; init; } = AIDispatchDecisionType.Query;
+    public AgentDecisionType DecisionType { get; init; } = AgentDecisionType.Query;
 
     /// <summary>
     /// Whether the fleet dispatch agent may call this tool. False by default: that agent can run
@@ -42,5 +42,5 @@ public record AgentToolDefinition(string Name, string Description, JsonNode Inpu
     /// executes them. Derived from <see cref="DecisionType"/> rather than declared separately, so the
     /// two cannot disagree - naming a tool's audit type *is* declaring it a write.
     /// </summary>
-    public bool IsWrite => DecisionType != AIDispatchDecisionType.Query;
+    public bool IsWrite => DecisionType != AgentDecisionType.Query;
 }

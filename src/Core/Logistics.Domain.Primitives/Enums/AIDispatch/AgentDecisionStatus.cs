@@ -1,6 +1,6 @@
 namespace Logistics.Domain.Primitives.Enums;
 
-public enum AIDispatchDecisionStatus
+public enum AgentDecisionStatus
 {
     Suggested,
     Approved,

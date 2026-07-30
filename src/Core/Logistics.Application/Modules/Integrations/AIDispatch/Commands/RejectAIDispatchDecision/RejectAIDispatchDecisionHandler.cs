@@ -23,7 +23,7 @@ internal sealed class RejectAIDispatchDecisionHandler(
         if (!bypassGate && tenant.Settings.LlmEnabled == false)
             return Result.Fail("AI dispatch is disabled for this tenant");
 
-        var decision = await tenantUow.Repository<AIDispatchDecision>()
+        var decision = await tenantUow.Repository<AgentDecision>()
             .Query()
             .DispatchOnly()
             .FirstOrDefaultAsync(d => d.Id == request.DecisionId, ct);
@@ -31,7 +31,7 @@ internal sealed class RejectAIDispatchDecisionHandler(
         if (decision is null)
             return Result.Fail("Decision not found");
 
-        if (decision.Status != AIDispatchDecisionStatus.Suggested)
+        if (decision.Status != AgentDecisionStatus.Suggested)
             return Result.Fail("Decision is not in a suggested state");
 
         var userId = currentUser.GetUserId() ?? Guid.Empty;

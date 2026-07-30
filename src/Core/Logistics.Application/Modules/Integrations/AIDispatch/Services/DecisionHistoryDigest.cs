@@ -10,7 +10,7 @@ namespace Logistics.Application.Modules.Integrations.AIDispatch.Services;
 /// <param name="Status">Rejected, or Executed for a human-approved action.</param>
 /// <param name="RejectionReason">The dispatcher's reason for rejecting. Null for approvals.</param>
 internal sealed record DecisionHistoryEntry(
-    AIDispatchDecisionStatus Status,
+    AgentDecisionStatus Status,
     string? ToolName,
     string? ToolInput,
     string? AgentReasoning,
@@ -55,13 +55,13 @@ internal static class DecisionHistoryDigest
         // Rejections first: they carry the only behaviour-changing signal, so approvals are the ones
         // squeezed out by the char cap.
         var rejections = decisions
-            .Where(d => d.Status == AIDispatchDecisionStatus.Rejected)
+            .Where(d => d.Status == AgentDecisionStatus.Rejected)
             .OrderByDescending(d => d.CreatedAt)
             .Take(MaxRejections)
             .ToList();
 
         var approvals = decisions
-            .Where(d => d.Status != AIDispatchDecisionStatus.Rejected)
+            .Where(d => d.Status != AgentDecisionStatus.Rejected)
             .OrderByDescending(d => d.CreatedAt)
             .Take(MaxApprovals)
             .ToList();
@@ -80,7 +80,7 @@ internal static class DecisionHistoryDigest
 
             builder.Append(line);
             included++;
-            if (decision.Status == AIDispatchDecisionStatus.Rejected)
+            if (decision.Status == AgentDecisionStatus.Rejected)
             {
                 includedRejections++;
             }
@@ -95,7 +95,7 @@ internal static class DecisionHistoryDigest
 
     private static string FormatLine(DecisionHistoryEntry decision)
     {
-        var verdict = decision.Status == AIDispatchDecisionStatus.Rejected ? "REJECTED" : "APPROVED";
+        var verdict = decision.Status == AgentDecisionStatus.Rejected ? "REJECTED" : "APPROVED";
         var line = new StringBuilder()
             .Append(verdict)
             .Append(" | ").Append(decision.ToolName ?? "unknown")

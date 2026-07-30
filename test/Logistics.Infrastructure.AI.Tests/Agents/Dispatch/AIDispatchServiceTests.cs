@@ -20,8 +20,8 @@ namespace Logistics.Infrastructure.AI.Tests.Agents.Dispatch;
 
 public class AIDispatchServiceTests
 {
-    private readonly ITenantRepository<AIDispatchSession, Guid> sessionRepo =
-        Substitute.For<ITenantRepository<AIDispatchSession, Guid>>();
+    private readonly ITenantRepository<AgentSession, Guid> sessionRepo =
+        Substitute.For<ITenantRepository<AgentSession, Guid>>();
 
     private readonly IStripeUsageService stripeUsageService = Substitute.For<IStripeUsageService>();
 
@@ -31,7 +31,7 @@ public class AIDispatchServiceTests
 
     public AIDispatchServiceTests()
     {
-        tenantUow.Repository<AIDispatchSession>().Returns(sessionRepo);
+        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
         tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
@@ -84,7 +84,7 @@ public class AIDispatchServiceTests
     {
         return new AIDispatchRequest(
             Guid.NewGuid(),
-            AIDispatchMode.Autonomous,
+            AgentAutonomyMode.Autonomous,
             null,
             isOverage);
     }
@@ -94,8 +94,8 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task RunAsync_SetsIsOverageTrue_WhenRequestIsOverage()
     {
-        AIDispatchSession? capturedSession = null;
-        sessionRepo.AddAsync(Arg.Do<AIDispatchSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
+        AgentSession? capturedSession = null;
+        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
         // The agent loop will fail because we don't have a real LLM API
@@ -116,8 +116,8 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task RunAsync_SetsIsOverageFalse_WhenRequestIsNotOverage()
     {
-        AIDispatchSession? capturedSession = null;
-        sessionRepo.AddAsync(Arg.Do<AIDispatchSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
+        AgentSession? capturedSession = null;
+        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
         try
@@ -224,7 +224,7 @@ public class AIDispatchServiceTests
     public async Task CancelAsync_SessionNotFound_ReturnsFalse()
     {
         sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns((AIDispatchSession?)null);
+            .Returns((AgentSession?)null);
 
         var result = await sut.CancelAsync(Guid.NewGuid());
 
@@ -234,7 +234,7 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task CancelAsync_SessionNotRunning_ReturnsFalse()
     {
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
         session.Complete("done");
 
         sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
@@ -248,7 +248,7 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task CancelAsync_RunningSession_ReturnsTrue()
     {
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(session);
@@ -256,7 +256,7 @@ public class AIDispatchServiceTests
         var result = await sut.CancelAsync(Guid.NewGuid());
 
         Assert.True(result);
-        Assert.Equal(AIDispatchSessionStatus.Cancelled, session.Status);
+        Assert.Equal(AgentSessionStatus.Cancelled, session.Status);
     }
 
     #endregion

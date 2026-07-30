@@ -25,7 +25,7 @@ internal sealed class AIDispatchConversationBuilder(
     ILogger<AIDispatchConversationBuilder> logger)
 {
     public async Task<LlmConversation> BuildAsync(
-        AIDispatchSession session,
+        AgentSession session,
         AIDispatchRequest request,
         LlmOptions config,
         CancellationToken ct)
@@ -75,7 +75,7 @@ internal sealed class AIDispatchConversationBuilder(
 
     private static string BuildUserMessage(AIDispatchRequest request)
     {
-        var modeLabel = request.Mode == AIDispatchMode.Autonomous ? "autonomous" : "suggestions";
+        var modeLabel = request.Mode == AgentAutonomyMode.Autonomous ? "autonomous" : "suggestions";
         var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm UTC");
 
         var message = $"Analyze the current fleet state and optimize dispatch assignments. " +
@@ -111,9 +111,9 @@ internal sealed class AIDispatchConversationBuilder(
 
     private async Task<string?> GetPreviousSessionContextAsync(CancellationToken ct)
     {
-        var lastSession = await tenantUow.Repository<AIDispatchSession>().Query()
+        var lastSession = await tenantUow.Repository<AgentSession>().Query()
             .DispatchOnly()
-            .Where(s => s.Status == AIDispatchSessionStatus.Completed && s.Summary != null)
+            .Where(s => s.Status == AgentSessionStatus.Completed && s.Summary != null)
             .OrderByDescending(s => s.CompletedAt)
             .Select(s => new { s.Number, s.CompletedAt, s.Summary })
             .FirstOrDefaultAsync(ct);

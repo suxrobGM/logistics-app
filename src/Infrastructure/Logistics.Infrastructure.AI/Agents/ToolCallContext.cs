@@ -13,6 +13,6 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// Replaces the dispatch-board broadcast; copilot turns route decisions to the conversation owner.
 /// </param>
 internal sealed record ToolCallContext(
-    AIDispatchMode Mode,
+    AgentAutonomyMode Mode,
     IReadOnlySet<string>? CallerPermissions = null,
-    Func<AIDispatchDecisionDto, Task>? DecisionBroadcastOverride = null);
+    Func<AgentDecisionDto, Task>? DecisionBroadcastOverride = null);

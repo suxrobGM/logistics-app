@@ -22,22 +22,22 @@ public class AgentLoopRunnerTests
     private readonly ILlmProvider provider = Substitute.For<ILlmProvider>();
     private readonly IAgentToolExecutor toolExecutor = Substitute.For<IAgentToolExecutor>();
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<AIDispatchSession, Guid> sessionRepo =
-        Substitute.For<ITenantRepository<AIDispatchSession, Guid>>();
+    private readonly ITenantRepository<AgentSession, Guid> sessionRepo =
+        Substitute.For<ITenantRepository<AgentSession, Guid>>();
     private readonly AgentLoopRunner sut;
 
     /// <summary>
     /// The loop re-reads the session's status from the database each iteration to honour a cancel
     /// issued on another instance. Point that query at <paramref name="rows"/>.
     /// </summary>
-    private void SessionInDatabase(params AIDispatchSession[] rows) =>
+    private void SessionInDatabase(params AgentSession[] rows) =>
         sessionRepo.Query().Returns(rows.ToList().BuildMock());
 
     public AgentLoopRunnerTests()
     {
-        tenantUow.Repository<AIDispatchDecision>()
-            .Returns(Substitute.For<ITenantRepository<AIDispatchDecision, Guid>>());
-        tenantUow.Repository<AIDispatchSession>().Returns(sessionRepo);
+        tenantUow.Repository<AgentDecision>()
+            .Returns(Substitute.For<ITenantRepository<AgentDecision, Guid>>());
+        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
         SessionInDatabase();
         tenantUow.GetCurrentTenant().Returns(new Tenant
         {
@@ -55,9 +55,9 @@ public class AgentLoopRunnerTests
         sut = new AgentLoopRunner(processor, tenantUow, NullLogger<AgentLoopRunner>.Instance);
     }
 
-    private static AIDispatchSession Session() => new()
+    private static AgentSession Session() => new()
     {
-        Mode = AIDispatchMode.Autonomous,
+        Mode = AgentAutonomyMode.Autonomous,
         StartedAt = DateTime.UtcNow,
         ModelUsed = "claude-haiku-4-5"
     };
@@ -156,7 +156,7 @@ public class AgentLoopRunnerTests
             });
 
         var ex = await Assert.ThrowsAsync<LlmRateLimitedException>(() =>
-            sut.RunAsync(Session(), Conversation(), new ToolCallContext(AIDispatchMode.Autonomous),
+            sut.RunAsync(Session(), Conversation(), new ToolCallContext(AgentAutonomyMode.Autonomous),
                 null, CancellationToken.None));
 
         // One initial attempt plus MaxRetries backoff attempts.
@@ -285,7 +285,7 @@ public class AgentLoopRunnerTests
         await cts.CancelAsync();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            sut.RunAsync(Session(), Conversation(), new ToolCallContext(AIDispatchMode.Autonomous),
+            sut.RunAsync(Session(), Conversation(), new ToolCallContext(AgentAutonomyMode.Autonomous),
                 null, cts.Token));
     }
 }

@@ -1,6 +1,6 @@
 namespace Logistics.Domain.Primitives.Enums;
 
-public enum AIDispatchDecisionType
+public enum AgentDecisionType
 {
     Query,
     AssignLoad,

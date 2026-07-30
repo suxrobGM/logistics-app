@@ -24,8 +24,8 @@ public class ApproveAICopilotDecisionHandlerTests
     private readonly IAgentToolRegistry toolRegistry = Substitute.For<IAgentToolRegistry>();
     private readonly IAICopilotBroadcastService broadcastService = Substitute.For<IAICopilotBroadcastService>();
     private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly ITenantRepository<AIDispatchDecision, Guid> decisionRepo =
-        Substitute.For<ITenantRepository<AIDispatchDecision, Guid>>();
+    private readonly ITenantRepository<AgentDecision, Guid> decisionRepo =
+        Substitute.For<ITenantRepository<AgentDecision, Guid>>();
     private readonly ITenantRepository<AICopilotConversation, Guid> conversationRepo =
         Substitute.For<ITenantRepository<AICopilotConversation, Guid>>();
 
@@ -34,7 +34,7 @@ public class ApproveAICopilotDecisionHandlerTests
 
     public ApproveAICopilotDecisionHandlerTests()
     {
-        tenantUow.Repository<AIDispatchDecision>().Returns(decisionRepo);
+        tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
         tenantUow.Repository<AICopilotConversation>().Returns(conversationRepo);
         tenantUow.GetCurrentTenant().Returns(new Tenant
         {
@@ -50,7 +50,7 @@ public class ApproveAICopilotDecisionHandlerTests
             "send_invoice", "Send an invoice", new JsonObject())
         {
             RequiredPermission = "Permission.Invoice.Manage",
-            DecisionType = AIDispatchDecisionType.SendInvoice
+            DecisionType = AgentDecisionType.SendInvoice
         });
 
         sut = new ApproveAICopilotDecisionHandler(
@@ -64,23 +64,23 @@ public class ApproveAICopilotDecisionHandlerTests
             .Returns(Result<string[]>.Ok(permissions));
     }
 
-    private (AIDispatchDecision Decision, AICopilotConversation Conversation) SetSuggestedDecision(
-        AIDispatchSessionType sessionType = AIDispatchSessionType.Copilot)
+    private (AgentDecision Decision, AICopilotConversation Conversation) SetSuggestedDecision(
+        AgentSessionType sessionType = AgentSessionType.Copilot)
     {
         var conversation = new AICopilotConversation { CreatedById = userId };
-        var session = new AIDispatchSession
+        var session = new AgentSession
         {
             Type = sessionType,
-            ConversationId = sessionType == AIDispatchSessionType.Copilot ? conversation.Id : null,
-            Mode = AIDispatchMode.HumanInTheLoop
+            ConversationId = sessionType == AgentSessionType.Copilot ? conversation.Id : null,
+            Mode = AgentAutonomyMode.HumanInTheLoop
         };
-        var decision = new AIDispatchDecision
+        var decision = new AgentDecision
         {
             SessionId = session.Id,
             Session = session,
             ToolName = "send_invoice",
             ToolInput = """{"invoice_id":"x"}""",
-            Status = AIDispatchDecisionStatus.Suggested
+            Status = AgentDecisionStatus.Suggested
         };
 
         decisionRepo.GetByIdAsync(decision.Id, Arg.Any<CancellationToken>()).Returns(decision);
@@ -91,7 +91,7 @@ public class ApproveAICopilotDecisionHandlerTests
     [Fact]
     public async Task Handle_DispatchDecision_IsNotApprovableViaCopilot()
     {
-        var (decision, _) = SetSuggestedDecision(AIDispatchSessionType.Dispatch);
+        var (decision, _) = SetSuggestedDecision(AgentSessionType.Dispatch);
 
         var result = await sut.Handle(
             new ApproveAICopilotDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
@@ -111,7 +111,7 @@ public class ApproveAICopilotDecisionHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Contains("Permission.Invoice.Manage", result.Error);
-        Assert.Equal(AIDispatchDecisionStatus.Suggested, decision.Status);
+        Assert.Equal(AgentDecisionStatus.Suggested, decision.Status);
         await toolExecutor.DidNotReceiveWithAnyArgs().ExecuteToolAsync(default!, default!, default);
     }
 
@@ -126,7 +126,7 @@ public class ApproveAICopilotDecisionHandlerTests
             new ApproveAICopilotDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(AIDispatchDecisionStatus.Executed, decision.Status);
+        Assert.Equal(AgentDecisionStatus.Executed, decision.Status);
         Assert.Equal(userId, decision.ApprovedByUserId);
 
         var note = Assert.Single(conversation.Messages);
@@ -136,7 +136,7 @@ public class ApproveAICopilotDecisionHandlerTests
         await broadcastService.Received(1).BroadcastMessageAsync(
             Arg.Any<Guid>(), conversation.CreatedById, Arg.Any<AICopilotMessageDto>());
         await broadcastService.Received(1).BroadcastDecisionAsync(
-            Arg.Any<Guid>(), conversation.CreatedById, Arg.Any<AIDispatchDecisionDto>());
+            Arg.Any<Guid>(), conversation.CreatedById, Arg.Any<AgentDecisionDto>());
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public class ApproveAICopilotDecisionHandlerTests
             new ApproveAICopilotDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        Assert.Equal(AIDispatchDecisionStatus.Failed, decision.Status);
+        Assert.Equal(AgentDecisionStatus.Failed, decision.Status);
         Assert.Contains("failed to execute", Assert.Single(conversation.Messages).DisplayText);
     }
 }

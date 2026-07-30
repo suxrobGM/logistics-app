@@ -22,7 +22,7 @@ internal sealed class AICopilotConversationBuilder(
     private const int MaxTranscriptMessages = 30;
 
     public async Task<LlmConversation> BuildAsync(
-        AIDispatchSession session,
+        AgentSession session,
         AICopilotConversation conversation,
         IReadOnlySet<string> callerPermissions,
         LlmOptions config,

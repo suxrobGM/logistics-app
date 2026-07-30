@@ -5,7 +5,7 @@ namespace Logistics.Domain.Entities;
 /// <summary>
 /// The tenant's learned dispatch policy - a short markdown document the nightly job derives from the
 /// dispatcher's approve/reject history and injects into the agent's system prompt. One row per tenant;
-/// <c>ai_dispatch_decisions</c> is already the append-only record it was derived from.
+/// <c>agent_decisions</c> is already the append-only record it was derived from.
 /// </summary>
 public class AIDispatchPolicy : AuditableEntity, ITenantEntity
 {

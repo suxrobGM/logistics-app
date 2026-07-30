@@ -8,6 +8,6 @@ namespace Logistics.Application.Abstractions.AIDispatch;
 /// </summary>
 public interface IAIDispatchBroadcastService
 {
-    Task BroadcastSessionUpdateAsync(Guid tenantId, AIDispatchUpdateDto update);
-    Task BroadcastDecisionAsync(Guid tenantId, AIDispatchDecisionDto decision);
+    Task BroadcastSessionUpdateAsync(Guid tenantId, AgentSessionUpdateDto update);
+    Task BroadcastDecisionAsync(Guid tenantId, AgentDecisionDto decision);
 }

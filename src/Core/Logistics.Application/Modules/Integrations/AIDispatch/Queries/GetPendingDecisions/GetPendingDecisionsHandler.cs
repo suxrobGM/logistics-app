@@ -8,16 +8,16 @@ using Microsoft.EntityFrameworkCore;
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
 internal sealed class GetPendingDecisionsHandler(
-    ITenantUnitOfWork tenantUow) : IAppRequestHandler<GetPendingDecisionsQuery, Result<List<AIDispatchDecisionDto>>>
+    ITenantUnitOfWork tenantUow) : IAppRequestHandler<GetPendingDecisionsQuery, Result<List<AgentDecisionDto>>>
 {
-    public async Task<Result<List<AIDispatchDecisionDto>>> Handle(
+    public async Task<Result<List<AgentDecisionDto>>> Handle(
         GetPendingDecisionsQuery request, CancellationToken ct)
     {
         // Copilot suggestions surface in the chat drawer, not on the dispatch board.
-        var decisions = await tenantUow.Repository<AIDispatchDecision>()
+        var decisions = await tenantUow.Repository<AgentDecision>()
             .Query()
             .DispatchOnly()
-            .Where(d => d.Status == AIDispatchDecisionStatus.Suggested)
+            .Where(d => d.Status == AgentDecisionStatus.Suggested)
             .ToListAsync(ct);
 
         // Batch-load load names and truck numbers to avoid N+1
@@ -36,7 +36,7 @@ internal sealed class GetPendingDecisionsHandler(
 
         var dtos = decisions
             .OrderByDescending(d => d.CreatedAt)
-            .Select(d => new AIDispatchDecisionDto
+            .Select(d => new AgentDecisionDto
             {
                 Id = d.Id,
                 SessionId = d.SessionId,
@@ -54,6 +54,6 @@ internal sealed class GetPendingDecisionsHandler(
             })
             .ToList();
 
-        return Result<List<AIDispatchDecisionDto>>.Ok(dtos);
+        return Result<List<AgentDecisionDto>>.Ok(dtos);
     }
 }

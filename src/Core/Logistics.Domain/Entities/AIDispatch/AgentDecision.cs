@@ -8,13 +8,13 @@ namespace Logistics.Domain.Entities;
 /// In HumanInTheLoop mode, decisions start as Suggested and await approval.
 /// In Autonomous mode, decisions are executed immediately.
 /// </summary>
-public class AIDispatchDecision : Entity, ITenantEntity
+public class AgentDecision : Entity, ITenantEntity
 {
     public Guid SessionId { get; set; }
-    public virtual AIDispatchSession Session { get; set; } = null!;
+    public virtual AgentSession Session { get; set; } = null!;
 
-    public AIDispatchDecisionType Type { get; set; }
-    public AIDispatchDecisionStatus Status { get; set; } = AIDispatchDecisionStatus.Suggested;
+    public AgentDecisionType Type { get; set; }
+    public AgentDecisionStatus Status { get; set; } = AgentDecisionStatus.Suggested;
 
     /// <summary>
     /// The agent's explanation for this decision.
@@ -49,26 +49,26 @@ public class AIDispatchDecision : Entity, ITenantEntity
 
     public void Approve(Guid userId)
     {
-        Status = AIDispatchDecisionStatus.Approved;
+        Status = AgentDecisionStatus.Approved;
         ApprovedByUserId = userId;
     }
 
     public void Reject(Guid userId, string? reason = null)
     {
-        Status = AIDispatchDecisionStatus.Rejected;
+        Status = AgentDecisionStatus.Rejected;
         ApprovedByUserId = userId;
         RejectionReason = reason;
     }
 
     public void MarkExecuted()
     {
-        Status = AIDispatchDecisionStatus.Executed;
+        Status = AgentDecisionStatus.Executed;
         ExecutedAt = DateTime.UtcNow;
     }
 
     public void MarkFailed(string? errorOutput = null)
     {
-        Status = AIDispatchDecisionStatus.Failed;
+        Status = AgentDecisionStatus.Failed;
         ToolOutput = errorOutput;
     }
 }

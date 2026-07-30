@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
 internal sealed class GetAIDispatchSessionsHandler(
-    ITenantUnitOfWork tenantUow) : IAppRequestHandler<GetAIDispatchSessionsQuery, PagedResult<AIDispatchSessionDto>>
+    ITenantUnitOfWork tenantUow) : IAppRequestHandler<GetAIDispatchSessionsQuery, PagedResult<AgentSessionDto>>
 {
-    public async Task<PagedResult<AIDispatchSessionDto>> Handle(
+    public async Task<PagedResult<AgentSessionDto>> Handle(
         GetAIDispatchSessionsQuery request, CancellationToken ct)
     {
-        var query = tenantUow.Repository<AIDispatchSession>().Query().DispatchOnly();
+        var query = tenantUow.Repository<AgentSession>().Query().DispatchOnly();
 
         if (request.Status.HasValue)
             query = query.Where(s => s.Status == request.Status.Value);
@@ -29,6 +29,6 @@ internal sealed class GetAIDispatchSessionsHandler(
 
         var dtos = sessions.Select(s => s.ToDto()).ToList();
 
-        return PagedResult<AIDispatchSessionDto>.Ok(dtos, totalItems, request.PageSize);
+        return PagedResult<AgentSessionDto>.Ok(dtos, totalItems, request.PageSize);
     }
 }

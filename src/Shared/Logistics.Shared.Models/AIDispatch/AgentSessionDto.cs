@@ -2,12 +2,12 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Shared.Models;
 
-public class AIDispatchSessionDto
+public class AgentSessionDto
 {
     public Guid Id { get; set; }
     public long Number { get; set; }
-    public AIDispatchMode Mode { get; set; }
-    public AIDispatchSessionStatus Status { get; set; }
+    public AgentAutonomyMode Mode { get; set; }
+    public AgentSessionStatus Status { get; set; }
     public Guid? TriggeredByUserId { get; set; }
     public DateTime StartedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
@@ -23,5 +23,5 @@ public class AIDispatchSessionDto
     public string? Instructions { get; set; }
     public string? ErrorMessage { get; set; }
     public bool IsOverage { get; set; }
-    public List<AIDispatchDecisionDto> Decisions { get; set; } = [];
+    public List<AgentDecisionDto> Decisions { get; set; } = [];
 }

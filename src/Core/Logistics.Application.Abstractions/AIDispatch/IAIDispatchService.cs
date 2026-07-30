@@ -10,13 +10,13 @@ namespace Logistics.Application.Abstractions.AIDispatch;
 /// </summary>
 public interface IAIDispatchService
 {
-    Task<AIDispatchSession> RunAsync(AIDispatchRequest request, CancellationToken ct = default);
+    Task<AgentSession> RunAsync(AIDispatchRequest request, CancellationToken ct = default);
     Task<bool> CancelAsync(Guid sessionId, CancellationToken ct = default);
 }
 
 public record AIDispatchRequest(
     Guid TenantId,
-    AIDispatchMode Mode,
+    AgentAutonomyMode Mode,
     Guid? TriggeredByUserId,
     bool IsOverage = false,
     string? Instructions = null,

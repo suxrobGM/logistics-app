@@ -14,8 +14,8 @@ public class AIQuotaServiceTests
     private readonly IMasterRepository<SubscriptionPlan, Guid> planRepo =
         Substitute.For<IMasterRepository<SubscriptionPlan, Guid>>();
 
-    private readonly ITenantRepository<AIDispatchSession, Guid> sessionRepo =
-        Substitute.For<ITenantRepository<AIDispatchSession, Guid>>();
+    private readonly ITenantRepository<AgentSession, Guid> sessionRepo =
+        Substitute.For<ITenantRepository<AgentSession, Guid>>();
 
     private readonly AIQuotaService sut;
     private readonly IMasterRepository<Tenant, Guid> tenantRepo = Substitute.For<IMasterRepository<Tenant, Guid>>();
@@ -25,7 +25,7 @@ public class AIQuotaServiceTests
     {
         masterUow.Repository<Tenant>().Returns(tenantRepo);
         masterUow.Repository<SubscriptionPlan>().Returns(planRepo);
-        tenantUow.Repository<AIDispatchSession>().Returns(sessionRepo);
+        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
         sut = new AIQuotaService(masterUow, tenantUow);
     }
 
@@ -55,7 +55,7 @@ public class AIQuotaServiceTests
             });
     }
 
-    private void SetupSessions(params AIDispatchSession[] sessions)
+    private void SetupSessions(params AgentSession[] sessions)
     {
         var mock = sessions.ToList().BuildMock();
         sessionRepo.Query().Returns(mock);
@@ -80,9 +80,9 @@ public class AIQuotaServiceTests
 
     #endregion
 
-    private static AIDispatchSession CreateCompletedSessionAt(DateTime startedAt)
+    private static AgentSession CreateCompletedSessionAt(DateTime startedAt)
     {
-        var session = new AIDispatchSession { StartedAt = startedAt };
+        var session = new AgentSession { StartedAt = startedAt };
         session.Complete("done");
         return session;
     }
@@ -144,12 +144,12 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, 25);
 
         var now = DateTime.UtcNow;
-        var completed = new AIDispatchSession { StartedAt = now };
+        var completed = new AgentSession { StartedAt = now };
         completed.Complete("done");
-        var running = new AIDispatchSession { StartedAt = now };
-        var failed = new AIDispatchSession { StartedAt = now };
+        var running = new AgentSession { StartedAt = now };
+        var failed = new AgentSession { StartedAt = now };
         failed.Fail("error");
-        var cancelled = new AIDispatchSession { StartedAt = now };
+        var cancelled = new AgentSession { StartedAt = now };
         cancelled.Cancel();
 
         SetupSessions(completed, running, failed, cancelled);

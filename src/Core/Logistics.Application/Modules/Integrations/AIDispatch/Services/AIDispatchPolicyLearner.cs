@@ -121,16 +121,16 @@ internal sealed class AIDispatchPolicyLearner(
     /// The labelled history: rejections, plus executions a human approved. Autonomous executions carry
     /// no human signal (null <c>ApprovedByUserId</c>) - including them would train the agent on itself.
     /// </summary>
-    private IQueryable<AIDispatchDecision> QualifyingHistory()
+    private IQueryable<AgentDecision> QualifyingHistory()
     {
         var cutoff = DateTime.UtcNow.AddDays(-LookbackDays);
 
-        return tenantUow.Repository<AIDispatchDecision>().Query()
+        return tenantUow.Repository<AgentDecision>().Query()
             .DispatchOnly()
-            .Where(d => d.Type != AIDispatchDecisionType.Query)
+            .Where(d => d.Type != AgentDecisionType.Query)
             .Where(d => d.CreatedAt >= cutoff)
-            .Where(d => d.Status == AIDispatchDecisionStatus.Rejected ||
-                        (d.Status == AIDispatchDecisionStatus.Executed && d.ApprovedByUserId != null));
+            .Where(d => d.Status == AgentDecisionStatus.Rejected ||
+                        (d.Status == AgentDecisionStatus.Executed && d.ApprovedByUserId != null));
     }
 
     private async Task<List<DecisionHistoryEntry>> LoadHistoryAsync(CancellationToken ct)

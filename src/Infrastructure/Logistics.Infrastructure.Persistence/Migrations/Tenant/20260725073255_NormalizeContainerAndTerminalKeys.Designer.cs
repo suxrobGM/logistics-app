@@ -95,7 +95,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("accounting_provider_configurations", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchDecision", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentDecision", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -258,7 +258,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("ai_dispatch_policies", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchSession", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentSession", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -5726,9 +5726,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasDiscriminator().HasValue("delivery");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchDecision", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentDecision", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.AIDispatchSession", "Session")
+                    b.HasOne("Logistics.Domain.Entities.AgentSession", "Session")
                         .WithMany("Decisions")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -6551,7 +6551,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("TripStop");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchSession", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentSession", b =>
                 {
                     b.Navigation("Decisions");
                 });

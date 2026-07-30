@@ -6,6 +6,6 @@ namespace Logistics.Infrastructure.Communications.SignalR.Clients;
 public interface IAICopilotHubClient
 {
     Task ReceiveCopilotMessage(AICopilotMessageDto message);
-    Task ReceiveCopilotDecision(AIDispatchDecisionDto decision);
+    Task ReceiveCopilotDecision(AgentDecisionDto decision);
     Task ReceiveCopilotTurnUpdate(AICopilotTurnUpdateDto update);
 }

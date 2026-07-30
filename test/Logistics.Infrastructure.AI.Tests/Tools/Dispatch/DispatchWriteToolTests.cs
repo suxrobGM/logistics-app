@@ -14,7 +14,7 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Dispatch;
 /// <summary>
 /// Pins the JSON emitted by the three dispatch write tools. The agent is instructed to read
 /// <c>success</c> and <c>error</c> by name, and the same payload is persisted on
-/// <c>AIDispatchDecision.ToolOutput</c> - so these key names are a contract, not an implementation
+/// <c>AgentDecision.ToolOutput</c> - so these key names are a contract, not an implementation
 /// detail.
 /// </summary>
 public class DispatchWriteToolTests

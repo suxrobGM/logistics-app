@@ -2,12 +2,12 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Shared.Models;
 
-public class AIDispatchDecisionDto
+public class AgentDecisionDto
 {
     public Guid Id { get; set; }
     public Guid SessionId { get; set; }
-    public AIDispatchDecisionType Type { get; set; }
-    public AIDispatchDecisionStatus Status { get; set; }
+    public AgentDecisionType Type { get; set; }
+    public AgentDecisionStatus Status { get; set; }
     public string Reasoning { get; set; } = "";
     public string? ToolName { get; set; }
     public string? ToolInput { get; set; }

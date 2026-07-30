@@ -5,7 +5,7 @@ namespace Logistics.Infrastructure.AI.Tools;
 
 /// <summary>
 /// The wire format every tool returns to the model. The <c>error</c>, <c>success</c>, and paging
-/// keys are named in both system prompts and persisted on <c>AIDispatchDecision.ToolOutput</c>, so
+/// keys are named in both system prompts and persisted on <c>AgentDecision.ToolOutput</c>, so
 /// they are a contract - keep them in one place rather than retyping the shell per tool.
 /// </summary>
 internal static class ToolResult

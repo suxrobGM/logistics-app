@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Persistence.Configurations;
 
-internal sealed class AIDispatchDecisionEntityConfiguration : IEntityTypeConfiguration<AIDispatchDecision>
+internal sealed class AgentDecisionEntityConfiguration : IEntityTypeConfiguration<AgentDecision>
 {
-    public void Configure(EntityTypeBuilder<AIDispatchDecision> builder)
+    public void Configure(EntityTypeBuilder<AgentDecision> builder)
     {
-        builder.ToTable("ai_dispatch_decisions");
+        builder.ToTable("agent_decisions");
 
         builder.Property(d => d.Reasoning)
             .HasMaxLength(4000);

@@ -17,8 +17,8 @@ public class AIDispatchPolicyLearnerTests
 {
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ILlmClient llmClient = Substitute.For<ILlmClient>();
-    private readonly ITenantRepository<AIDispatchDecision, Guid> decisionRepo =
-        Substitute.For<ITenantRepository<AIDispatchDecision, Guid>>();
+    private readonly ITenantRepository<AgentDecision, Guid> decisionRepo =
+        Substitute.For<ITenantRepository<AgentDecision, Guid>>();
     private readonly ITenantRepository<AIDispatchPolicy, Guid> policyRepo =
         Substitute.For<ITenantRepository<AIDispatchPolicy, Guid>>();
 
@@ -37,7 +37,7 @@ public class AIDispatchPolicyLearnerTests
             }
         });
 
-        tenantUow.Repository<AIDispatchDecision>().Returns(decisionRepo);
+        tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
         tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
 
         SetDecisions();
@@ -103,12 +103,12 @@ public class AIDispatchPolicyLearnerTests
     public async Task Learn_ExcludesAutonomousExecutionsAndQueries()
     {
         var autonomous = Enumerable.Range(0, 30)
-            .Select(_ => Decision(AIDispatchDecisionStatus.Executed, approvedBy: null, toolName: "auto_tool"))
+            .Select(_ => Decision(AgentDecisionStatus.Executed, approvedBy: null, toolName: "auto_tool"))
             .ToList();
         var queries = Enumerable.Range(0, 30)
             .Select(_ => Decision(
-                AIDispatchDecisionStatus.Executed, approvedBy: Guid.NewGuid(),
-                type: AIDispatchDecisionType.Query, toolName: "query_tool"))
+                AgentDecisionStatus.Executed, approvedBy: Guid.NewGuid(),
+                type: AgentDecisionType.Query, toolName: "query_tool"))
             .ToList();
 
         // Enough qualifying rows to clear the evidence gate, so only the filter can keep the noise out.
@@ -346,7 +346,7 @@ public class AIDispatchPolicyLearnerTests
 
     #region Helpers
 
-    private void SetDecisions(List<AIDispatchDecision>? decisions = null)
+    private void SetDecisions(List<AgentDecision>? decisions = null)
     {
         decisionRepo.Query().Returns((decisions ?? []).BuildMock());
     }
@@ -371,36 +371,36 @@ public class AIDispatchPolicyLearnerTests
             .GetArguments()[0]!;
     }
 
-    private static List<AIDispatchDecision> Rejections(int count)
+    private static List<AgentDecision> Rejections(int count)
     {
         return Enumerable.Range(0, count)
             .Select(i => Decision(
-                AIDispatchDecisionStatus.Rejected,
+                AgentDecisionStatus.Rejected,
                 approvedBy: Guid.NewGuid(),
                 rejectionReason: "Deadhead over 80 miles",
                 minutesAgo: i))
             .ToList();
     }
 
-    private static List<AIDispatchDecision> Approvals(int count)
+    private static List<AgentDecision> Approvals(int count)
     {
         return Enumerable.Range(0, count)
             .Select(i => Decision(
-                AIDispatchDecisionStatus.Executed,
+                AgentDecisionStatus.Executed,
                 approvedBy: Guid.NewGuid(),
                 minutesAgo: 100 + i))
             .ToList();
     }
 
-    private static AIDispatchDecision Decision(
-        AIDispatchDecisionStatus status,
+    private static AgentDecision Decision(
+        AgentDecisionStatus status,
         Guid? approvedBy,
-        AIDispatchDecisionType type = AIDispatchDecisionType.AssignLoad,
+        AgentDecisionType type = AgentDecisionType.AssignLoad,
         string toolName = "assign_load_to_truck",
         string? rejectionReason = null,
         int minutesAgo = 0)
     {
-        return new AIDispatchDecision
+        return new AgentDecision
         {
             Status = status,
             Type = type,
@@ -411,7 +411,7 @@ public class AIDispatchPolicyLearnerTests
             ApprovedByUserId = approvedBy,
             CreatedAt = DateTime.UtcNow.AddMinutes(-minutesAgo),
             // The learner filters on Session.Type - a null nav would NRE the mocked queryable.
-            Session = new AIDispatchSession { Mode = AIDispatchMode.HumanInTheLoop }
+            Session = new AgentSession { Mode = AgentAutonomyMode.HumanInTheLoop }
         };
     }
 

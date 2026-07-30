@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
 
 internal sealed record CopilotDecisionContext(
-    AIDispatchDecision Decision,
+    AgentDecision Decision,
     AICopilotConversation Conversation);
 
 /// <summary>
@@ -21,9 +21,9 @@ internal static class AICopilotDecisionGuard
         if (userId is null)
             return Result<CopilotDecisionContext>.Fail("User is not authenticated");
 
-        var decision = await tenantUow.Repository<AIDispatchDecision>().GetByIdAsync(decisionId, ct);
+        var decision = await tenantUow.Repository<AgentDecision>().GetByIdAsync(decisionId, ct);
         if (decision is null
-            || decision.Session.Type != AIDispatchSessionType.Copilot
+            || decision.Session.Type != AgentSessionType.Copilot
             || decision.Session.ConversationId is not { } conversationId)
         {
             return Result<CopilotDecisionContext>.Fail("Decision not found");
@@ -34,7 +34,7 @@ internal static class AICopilotDecisionGuard
         if (conversation is null || conversation.CreatedById != userId.Value)
             return Result<CopilotDecisionContext>.Fail("Decision not found");
 
-        if (decision.Status != AIDispatchDecisionStatus.Suggested)
+        if (decision.Status != AgentDecisionStatus.Suggested)
             return Result<CopilotDecisionContext>.Fail("Decision is not in a suggested state");
 
         return Result<CopilotDecisionContext>.Ok(new CopilotDecisionContext(decision, conversation));

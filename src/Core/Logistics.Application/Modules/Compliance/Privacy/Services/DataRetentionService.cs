@@ -40,7 +40,7 @@ internal sealed class DataRetentionService(
                     tenantUow.Repository<Notification>().Delete(notification);
                 }
 
-                var oldSessions = await tenantUow.Repository<AIDispatchSession>()
+                var oldSessions = await tenantUow.Repository<AgentSession>()
                     .Query()
                     .DispatchOnly()
                     .Where(s => s.StartedAt < dispatchCutoff)
@@ -48,7 +48,7 @@ internal sealed class DataRetentionService(
 
                 foreach (var session in oldSessions)
                 {
-                    tenantUow.Repository<AIDispatchSession>().Delete(session);
+                    tenantUow.Repository<AgentSession>().Delete(session);
                 }
 
                 if (oldNotifications.Count > 0 || oldSessions.Count > 0)

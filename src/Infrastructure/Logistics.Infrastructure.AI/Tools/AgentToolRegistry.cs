@@ -453,7 +453,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
             })
         {
             RequiredPermission = Permission.Dispatch.Manage,
-            DecisionType = AIDispatchDecisionType.AssignLoad,
+            DecisionType = AgentDecisionType.AssignLoad,
             DispatchAgent = true
         },
 
@@ -477,7 +477,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
             })
         {
             RequiredPermission = Permission.Dispatch.Manage,
-            DecisionType = AIDispatchDecisionType.CreateTrip,
+            DecisionType = AgentDecisionType.CreateTrip,
             DispatchAgent = true
         },
 
@@ -494,7 +494,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
             })
         {
             RequiredPermission = Permission.Dispatch.Manage,
-            DecisionType = AIDispatchDecisionType.DispatchTrip,
+            DecisionType = AgentDecisionType.DispatchTrip,
             DispatchAgent = true
         },
 
@@ -515,7 +515,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         {
             RequiredFeature = TenantFeature.LoadBoard,
             RequiredPermission = Permission.Dispatch.Manage,
-            DecisionType = AIDispatchDecisionType.BookLoadBoardLoad,
+            DecisionType = AgentDecisionType.BookLoadBoardLoad,
             DispatchAgent = true
         },
 
@@ -535,7 +535,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         {
             RequiredFeature = TenantFeature.Invoices,
             RequiredPermission = Permission.Invoice.Manage,
-            DecisionType = AIDispatchDecisionType.CreateInvoice
+            DecisionType = AgentDecisionType.CreateInvoice
         },
 
         new("send_invoice",
@@ -555,7 +555,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         {
             RequiredFeature = TenantFeature.Invoices,
             RequiredPermission = Permission.Invoice.Manage,
-            DecisionType = AIDispatchDecisionType.SendInvoice
+            DecisionType = AgentDecisionType.SendInvoice
         },
 
         new("create_payment_link",
@@ -574,7 +574,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         {
             RequiredFeature = TenantFeature.Payments,
             RequiredPermission = Permission.Payment.Manage,
-            DecisionType = AIDispatchDecisionType.CreatePaymentLink
+            DecisionType = AgentDecisionType.CreatePaymentLink
         }
     ];
 

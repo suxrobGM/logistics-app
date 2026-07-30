@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Domain.Entities;
 
 /// <summary>
-/// A multi-turn copilot chat owned by one user. Each turn is an <see cref="AIDispatchSession"/>
+/// A multi-turn copilot chat owned by one user. Each turn is an <see cref="AgentSession"/>
 /// of type Copilot.
 /// </summary>
 public class AICopilotConversation : AuditableEntity, ITenantEntity

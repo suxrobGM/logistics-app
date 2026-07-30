@@ -24,7 +24,7 @@ internal sealed class GetAICopilotConversationByIdHandler(
         if (conversation is null || conversation.CreatedById != userId)
             return Result<AICopilotConversationDto>.Fail("Conversation not found");
 
-        var decisions = await tenantUow.Repository<AIDispatchDecision>().Query()
+        var decisions = await tenantUow.Repository<AgentDecision>().Query()
             .Where(d => d.Session.ConversationId == conversation.Id)
             .OrderBy(d => d.CreatedAt)
             .ToListAsync(ct);

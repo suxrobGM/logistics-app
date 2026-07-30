@@ -19,8 +19,8 @@ namespace Logistics.Infrastructure.AI.Tests.Agents;
 
 public class AgentDecisionProcessorTests
 {
-    private readonly ITenantRepository<AIDispatchDecision, Guid> decisionRepo =
-        Substitute.For<ITenantRepository<AIDispatchDecision, Guid>>();
+    private readonly ITenantRepository<AgentDecision, Guid> decisionRepo =
+        Substitute.For<ITenantRepository<AgentDecision, Guid>>();
 
     private readonly ILogger<AgentDecisionProcessor> logger = NullLogger<AgentDecisionProcessor>.Instance;
 
@@ -32,7 +32,7 @@ public class AgentDecisionProcessorTests
 
     public AgentDecisionProcessorTests()
     {
-        tenantUow.Repository<AIDispatchDecision>().Returns(decisionRepo);
+        tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
         tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
@@ -44,9 +44,9 @@ public class AgentDecisionProcessorTests
         sut = new AgentDecisionProcessor(toolExecutor, toolRegistry, tenantUow, broadcastService, logger);
     }
 
-    private static AIDispatchSession CreateSession(AIDispatchMode mode = AIDispatchMode.Autonomous)
+    private static AgentSession CreateSession(AgentAutonomyMode mode = AgentAutonomyMode.Autonomous)
     {
-        return new AIDispatchSession { Mode = mode, StartedAt = DateTime.UtcNow };
+        return new AgentSession { Mode = mode, StartedAt = DateTime.UtcNow };
     }
 
     private static LlmToolUseBlock CreateToolUse(string name, JsonObject? input = null)
@@ -69,13 +69,13 @@ public class AgentDecisionProcessorTests
             .ThrowsAsync(new InvalidOperationException("Trip is not in Draft status"));
 
         var results = await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         Assert.Single(results);
 
         await decisionRepo.Received(1).AddAsync(
-            Arg.Is<AIDispatchDecision>(d =>
-                d.Status == AIDispatchDecisionStatus.Failed &&
+            Arg.Is<AgentDecision>(d =>
+                d.Status == AgentDecisionStatus.Failed &&
                 d.ToolOutput!.Contains("Trip is not in Draft status")),
             Arg.Any<CancellationToken>());
     }
@@ -92,7 +92,7 @@ public class AgentDecisionProcessorTests
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
             sut.ProcessToolCallsAsync(
-                session, new ToolCallContext(AIDispatchMode.Autonomous), [first, second], null,
+                session, new ToolCallContext(AgentAutonomyMode.Autonomous), [first, second], null,
                 CancellationToken.None));
 
         // A cancel must stop the batch, not degrade into a failed decision and carry on executing
@@ -115,15 +115,15 @@ public class AgentDecisionProcessorTests
                 "Login failed for user 'sa'; unauthorized at Host=db-prod-01;Password=hunter2"));
 
         var results = await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         // The decision row is tenant-visible and the same text is fed back to the model.
         Assert.DoesNotContain("hunter2", results[0].Content);
         Assert.DoesNotContain("db-prod-01", results[0].Content);
 
         await decisionRepo.Received(1).AddAsync(
-            Arg.Is<AIDispatchDecision>(d =>
-                d.Status == AIDispatchDecisionStatus.Failed &&
+            Arg.Is<AgentDecision>(d =>
+                d.Status == AgentDecisionStatus.Failed &&
                 !d.ToolOutput!.Contains("hunter2")),
             Arg.Any<CancellationToken>());
     }
@@ -133,26 +133,26 @@ public class AgentDecisionProcessorTests
     #region Decision type mapping
 
     [Theory]
-    [InlineData("assign_load_to_truck", AIDispatchDecisionType.AssignLoad)]
-    [InlineData("create_trip", AIDispatchDecisionType.CreateTrip)]
-    [InlineData("dispatch_trip", AIDispatchDecisionType.DispatchTrip)]
-    [InlineData("book_loadboard_load", AIDispatchDecisionType.BookLoadBoardLoad)]
-    [InlineData("get_available_trucks", AIDispatchDecisionType.Query)]
-    [InlineData("check_hos_feasibility", AIDispatchDecisionType.Query)]
-    [InlineData("unknown_tool", AIDispatchDecisionType.Query)]
-    public async Task ProcessToolCalls_MapsCorrectDecisionType(string toolName, AIDispatchDecisionType expectedType)
+    [InlineData("assign_load_to_truck", AgentDecisionType.AssignLoad)]
+    [InlineData("create_trip", AgentDecisionType.CreateTrip)]
+    [InlineData("dispatch_trip", AgentDecisionType.DispatchTrip)]
+    [InlineData("book_loadboard_load", AgentDecisionType.BookLoadBoardLoad)]
+    [InlineData("get_available_trucks", AgentDecisionType.Query)]
+    [InlineData("check_hos_feasibility", AgentDecisionType.Query)]
+    [InlineData("unknown_tool", AgentDecisionType.Query)]
+    public async Task ProcessToolCalls_MapsCorrectDecisionType(string toolName, AgentDecisionType expectedType)
     {
-        var session = CreateSession(AIDispatchMode.HumanInTheLoop);
+        var session = CreateSession(AgentAutonomyMode.HumanInTheLoop);
         var toolUse = CreateToolUse(toolName);
 
         toolExecutor.ExecuteToolAsync(toolName, Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
         await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.HumanInTheLoop), [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.HumanInTheLoop), [toolUse], null, CancellationToken.None);
 
         await decisionRepo.Received(1).AddAsync(
-            Arg.Is<AIDispatchDecision>(d => d.Type == expectedType),
+            Arg.Is<AgentDecision>(d => d.Type == expectedType),
             Arg.Any<CancellationToken>());
     }
 
@@ -180,9 +180,9 @@ public class AgentDecisionProcessorTests
     [Fact]
     public async Task ProcessToolCalls_CallerLacksToolPermission_FailsWithoutExecuting()
     {
-        var session = CreateSession(AIDispatchMode.HumanInTheLoop);
+        var session = CreateSession(AgentAutonomyMode.HumanInTheLoop);
         var toolUse = CreateToolUse("get_available_trucks");
-        var context = new ToolCallContext(AIDispatchMode.HumanInTheLoop, CallerPermissions: new HashSet<string>());
+        var context = new ToolCallContext(AgentAutonomyMode.HumanInTheLoop, CallerPermissions: new HashSet<string>());
 
         var results = await sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
 
@@ -190,17 +190,17 @@ public class AgentDecisionProcessorTests
         await toolExecutor.DidNotReceive().ExecuteToolAsync(
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
         await decisionRepo.Received(1).AddAsync(
-            Arg.Is<AIDispatchDecision>(d => d.Status == AIDispatchDecisionStatus.Failed),
+            Arg.Is<AgentDecision>(d => d.Status == AgentDecisionStatus.Failed),
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task ProcessToolCalls_CallerHasToolPermission_Executes()
     {
-        var session = CreateSession(AIDispatchMode.HumanInTheLoop);
+        var session = CreateSession(AgentAutonomyMode.HumanInTheLoop);
         var toolUse = CreateToolUse("get_available_trucks");
         var context = new ToolCallContext(
-            AIDispatchMode.HumanInTheLoop,
+            AgentAutonomyMode.HumanInTheLoop,
             CallerPermissions: new HashSet<string> { "Permission.Dispatch.View" });
 
         toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
@@ -217,9 +217,9 @@ public class AgentDecisionProcessorTests
     {
         var session = CreateSession();
         var toolUse = CreateToolUse("get_available_trucks");
-        var overridden = new List<AIDispatchDecisionDto>();
+        var overridden = new List<AgentDecisionDto>();
         var context = new ToolCallContext(
-            AIDispatchMode.Autonomous,
+            AgentAutonomyMode.Autonomous,
             DecisionBroadcastOverride: dto =>
             {
                 overridden.Add(dto);
@@ -233,7 +233,7 @@ public class AgentDecisionProcessorTests
 
         Assert.Single(overridden);
         await broadcastService.DidNotReceive().BroadcastDecisionAsync(
-            Arg.Any<Guid>(), Arg.Any<AIDispatchDecisionDto>());
+            Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 
     #endregion
@@ -243,7 +243,7 @@ public class AgentDecisionProcessorTests
     [Fact]
     public async Task ProcessToolCalls_WriteTool_HumanInTheLoop_CreatesSuggestion()
     {
-        var session = CreateSession(AIDispatchMode.HumanInTheLoop);
+        var session = CreateSession(AgentAutonomyMode.HumanInTheLoop);
         var toolUse = CreateToolUse("assign_load_to_truck", new JsonObject
         {
             ["load_id"] = Guid.NewGuid().ToString(),
@@ -251,7 +251,7 @@ public class AgentDecisionProcessorTests
         });
 
         var results = await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.HumanInTheLoop), [toolUse], "reasoning", CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.HumanInTheLoop), [toolUse], "reasoning", CancellationToken.None);
 
         Assert.Single(results);
 
@@ -261,8 +261,8 @@ public class AgentDecisionProcessorTests
 
         // Decision should be persisted
         await decisionRepo.Received(1).AddAsync(
-            Arg.Is<AIDispatchDecision>(d =>
-                d.Status == AIDispatchDecisionStatus.Suggested &&
+            Arg.Is<AgentDecision>(d =>
+                d.Status == AgentDecisionStatus.Suggested &&
                 d.ToolName == "assign_load_to_truck"),
             Arg.Any<CancellationToken>());
     }
@@ -281,7 +281,7 @@ public class AgentDecisionProcessorTests
             .Returns("{\"success\": true}");
 
         var results = await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         Assert.Single(results);
 
@@ -289,8 +289,8 @@ public class AgentDecisionProcessorTests
             "create_trip", Arg.Any<string>(), Arg.Any<CancellationToken>());
 
         await decisionRepo.Received(1).AddAsync(
-            Arg.Is<AIDispatchDecision>(d =>
-                d.Status == AIDispatchDecisionStatus.Executed &&
+            Arg.Is<AgentDecision>(d =>
+                d.Status == AgentDecisionStatus.Executed &&
                 d.ExecutedAt != null),
             Arg.Any<CancellationToken>());
     }
@@ -298,14 +298,14 @@ public class AgentDecisionProcessorTests
     [Fact]
     public async Task ProcessToolCalls_ReadTool_ExecutesRegardlessOfMode()
     {
-        var session = CreateSession(AIDispatchMode.HumanInTheLoop);
+        var session = CreateSession(AgentAutonomyMode.HumanInTheLoop);
         var toolUse = CreateToolUse("get_available_trucks");
 
         toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{\"total_trucks\": 5}");
 
         var results = await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.HumanInTheLoop), [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.HumanInTheLoop), [toolUse], null, CancellationToken.None);
 
         Assert.Single(results);
 
@@ -335,10 +335,10 @@ public class AgentDecisionProcessorTests
             .Returns("{\"success\": true}");
 
         await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         await decisionRepo.Received(1).AddAsync(
-            Arg.Is<AIDispatchDecision>(d =>
+            Arg.Is<AgentDecision>(d =>
                 d.LoadId == loadId && d.TruckId == truckId),
             Arg.Any<CancellationToken>());
     }
@@ -357,10 +357,10 @@ public class AgentDecisionProcessorTests
             .Returns("{\"success\": true}");
 
         await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         await decisionRepo.Received(1).AddAsync(
-            Arg.Is<AIDispatchDecision>(d =>
+            Arg.Is<AgentDecision>(d =>
                 d.LoadId == null && d.TruckId == null),
             Arg.Any<CancellationToken>());
     }
@@ -385,7 +385,7 @@ public class AgentDecisionProcessorTests
         };
 
         await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.Autonomous), tools, "analyzing fleet", CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.Autonomous), tools, "analyzing fleet", CancellationToken.None);
 
         Assert.Equal(3, session.DecisionCount);
     }
@@ -400,10 +400,10 @@ public class AgentDecisionProcessorTests
             .Returns("{}");
 
         await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], "Let me check the fleet status", CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.Autonomous), [toolUse], "Let me check the fleet status", CancellationToken.None);
 
         await decisionRepo.Received(1).AddAsync(
-            Arg.Is<AIDispatchDecision>(d => d.Reasoning == "Let me check the fleet status"),
+            Arg.Is<AgentDecision>(d => d.Reasoning == "Let me check the fleet status"),
             Arg.Any<CancellationToken>());
     }
 
@@ -425,10 +425,10 @@ public class AgentDecisionProcessorTests
             .Returns("{\"success\": true}");
 
         await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         await broadcastService.Received(1).BroadcastDecisionAsync(
-            Arg.Any<Guid>(), Arg.Any<AIDispatchDecisionDto>());
+            Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 
     [Fact]
@@ -441,10 +441,10 @@ public class AgentDecisionProcessorTests
             .Returns("{}");
 
         await sut.ProcessToolCallsAsync(
-            session, new ToolCallContext(AIDispatchMode.Autonomous), [toolUse], null, CancellationToken.None);
+            session, new ToolCallContext(AgentAutonomyMode.Autonomous), [toolUse], null, CancellationToken.None);
 
         await broadcastService.Received(1).BroadcastDecisionAsync(
-            Arg.Any<Guid>(), Arg.Any<AIDispatchDecisionDto>());
+            Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 
     #endregion

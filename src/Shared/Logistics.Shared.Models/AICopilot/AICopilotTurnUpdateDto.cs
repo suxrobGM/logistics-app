@@ -7,7 +7,7 @@ public record AICopilotTurnUpdateDto
 {
     public Guid ConversationId { get; set; }
     public Guid SessionId { get; set; }
-    public AIDispatchSessionStatus Status { get; set; }
+    public AgentSessionStatus Status { get; set; }
     public int TotalTokensUsed { get; set; }
     public int DecisionCount { get; set; }
     public string? ErrorMessage { get; set; }

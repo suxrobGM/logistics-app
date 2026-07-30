@@ -135,7 +135,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("ai_copilot_messages", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchDecision", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentDecision", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -306,7 +306,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("ai_dispatch_policies", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchSession", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentSession", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -5864,9 +5864,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Conversation");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchDecision", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentDecision", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.AIDispatchSession", "Session")
+                    b.HasOne("Logistics.Domain.Entities.AgentSession", "Session")
                         .WithMany("Decisions")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -5876,7 +5876,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Session");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchSession", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentSession", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.AICopilotConversation", "Conversation")
                         .WithMany()
@@ -6705,7 +6705,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Messages");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchSession", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentSession", b =>
                 {
                     b.Navigation("Decisions");
                 });

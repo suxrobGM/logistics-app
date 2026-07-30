@@ -1,6 +1,6 @@
 namespace Logistics.Domain.Primitives.Enums;
 
-public enum AIDispatchSessionStatus
+public enum AgentSessionStatus
 {
     Running,
     Completed,

@@ -25,7 +25,7 @@ internal sealed class AgentLoopRunner(
     private static readonly int[] RetryDelaysMs = [2000, 4000, 8000];
 
     public async Task RunAsync(
-        AIDispatchSession session,
+        AgentSession session,
         LlmConversation conversation,
         ToolCallContext toolContext,
         Func<Task>? onIterationCompleted,
@@ -49,7 +49,7 @@ internal sealed class AgentLoopRunner(
     }
 
     private async Task RunIterationsAsync(
-        AIDispatchSession session,
+        AgentSession session,
         LlmConversation conversation,
         ToolCallContext toolContext,
         Func<Task>? onIterationCompleted,
@@ -107,17 +107,17 @@ internal sealed class AgentLoopRunner(
     /// API instance the request landed on - there, TryCancel finds nothing and the worker would
     /// keep burning tokens against a session the database already shows as Cancelled.
     /// </summary>
-    private async Task ThrowIfCancelledElsewhereAsync(AIDispatchSession session, CancellationToken ct)
+    private async Task ThrowIfCancelledElsewhereAsync(AgentSession session, CancellationToken ct)
     {
         // Deliberately AsNoTracking and projected: reading session.Status off the tracked entity
         // returns this worker's own cached value, which is always Running.
-        var status = await tenantUow.Repository<AIDispatchSession>().Query()
+        var status = await tenantUow.Repository<AgentSession>().Query()
             .AsNoTracking()
             .Where(s => s.Id == session.Id)
-            .Select(s => (AIDispatchSessionStatus?)s.Status)
+            .Select(s => (AgentSessionStatus?)s.Status)
             .FirstOrDefaultAsync(ct);
 
-        if (status is null or AIDispatchSessionStatus.Running)
+        if (status is null or AgentSessionStatus.Running)
             return;
 
         logger.LogInformation(
@@ -129,7 +129,7 @@ internal sealed class AgentLoopRunner(
     private async Task<LlmResponse> SendWithRetryAsync(
         ILlmProvider provider,
         LlmRequest request,
-        AIDispatchSession session,
+        AgentSession session,
         CancellationToken ct)
     {
         for (var attempt = 0; attempt <= MaxRetries; attempt++)

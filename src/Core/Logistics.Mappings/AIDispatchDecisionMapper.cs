@@ -7,8 +7,8 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class AIDispatchDecisionMapper
 {
-    [MapperIgnoreSource(nameof(AIDispatchDecision.Session))]
-    [MapperIgnoreTarget(nameof(AIDispatchDecisionDto.LoadName))]
-    [MapperIgnoreTarget(nameof(AIDispatchDecisionDto.TruckNumber))]
-    public static partial AIDispatchDecisionDto ToDto(this AIDispatchDecision entity);
+    [MapperIgnoreSource(nameof(AgentDecision.Session))]
+    [MapperIgnoreTarget(nameof(AgentDecisionDto.LoadName))]
+    [MapperIgnoreTarget(nameof(AgentDecisionDto.TruckNumber))]
+    public static partial AgentDecisionDto ToDto(this AgentDecision entity);
 }

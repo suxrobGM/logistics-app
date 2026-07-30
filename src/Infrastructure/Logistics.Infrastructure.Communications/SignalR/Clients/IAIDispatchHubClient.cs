@@ -10,11 +10,11 @@ public interface IAIDispatchHubClient
     /// <summary>
     /// Receives AI dispatch agent session updates (started, completed, failed).
     /// </summary>
-    Task ReceiveAIDispatchUpdate(AIDispatchUpdateDto update);
+    Task ReceiveAIDispatchUpdate(AgentSessionUpdateDto update);
 
     /// <summary>
     /// Receives individual AI dispatch agent decision notifications.
     /// </summary>
-    Task ReceiveAIDispatchDecision(AIDispatchDecisionDto decision);
+    Task ReceiveAIDispatchDecision(AgentDecisionDto decision);
 
 }

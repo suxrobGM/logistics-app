@@ -33,16 +33,16 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("sessions", Name = "GetAIDispatchSessions")]
-    [ProducesResponseType(typeof(PagedResponse<AIDispatchSessionDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponse<AgentSessionDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Dispatch.View)]
     public async Task<IActionResult> GetSessions([FromQuery] GetAIDispatchSessionsQuery query)
     {
         var result = await mediator.Send(query);
-        return Ok(PagedResponse<AIDispatchSessionDto>.FromPagedResult(result, query.Page, query.PageSize));
+        return Ok(PagedResponse<AgentSessionDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
     [HttpGet("sessions/{sessionId:guid}", Name = "GetAIDispatchSessionById")]
-    [ProducesResponseType(typeof(AIDispatchSessionDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AgentSessionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permission.Dispatch.View)]
     public async Task<IActionResult> GetSession(Guid sessionId)
@@ -61,7 +61,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("pending", Name = "GetPendingDecisions")]
-    [ProducesResponseType(typeof(List<AIDispatchDecisionDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<AgentDecisionDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Dispatch.View)]
     public async Task<IActionResult> GetPendingDecisions()
     {

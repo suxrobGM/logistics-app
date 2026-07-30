@@ -1,6 +1,6 @@
 namespace Logistics.Domain.Primitives.Enums;
 
-public enum AIDispatchMode
+public enum AgentAutonomyMode
 {
     HumanInTheLoop,
     Autonomous

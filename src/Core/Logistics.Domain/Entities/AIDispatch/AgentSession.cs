@@ -7,16 +7,16 @@ namespace Logistics.Domain.Entities;
 /// Represents a single AI dispatch agent run.
 /// Tracks the agent's mode, status, token usage, and all decisions made.
 /// </summary>
-public class AIDispatchSession : AuditableEntity, ITenantEntity
+public class AgentSession : AuditableEntity, ITenantEntity
 {
     /// <summary>
     /// Sequential number of the session, unique within the tenant.
     /// </summary>
     public long Number { get; private set; }
 
-    public AIDispatchMode Mode { get; init; }
-    public AIDispatchSessionType Type { get; init; } = AIDispatchSessionType.Dispatch;
-    public AIDispatchSessionStatus Status { get; private set; } = AIDispatchSessionStatus.Running;
+    public AgentAutonomyMode Mode { get; init; }
+    public AgentSessionType Type { get; init; } = AgentSessionType.Dispatch;
+    public AgentSessionStatus Status { get; private set; } = AgentSessionStatus.Running;
 
     /// <summary>
     /// The copilot conversation this turn belongs to. Null for dispatch sessions.
@@ -99,25 +99,25 @@ public class AIDispatchSession : AuditableEntity, ITenantEntity
     /// </summary>
     public bool IsOverage { get; set; }
 
-    public virtual List<AIDispatchDecision> Decisions { get; } = [];
+    public virtual List<AgentDecision> Decisions { get; } = [];
 
     public void Complete(string? summary = null)
     {
-        Status = AIDispatchSessionStatus.Completed;
+        Status = AgentSessionStatus.Completed;
         CompletedAt = DateTime.UtcNow;
         Summary = summary;
     }
 
     public void Fail(string errorMessage)
     {
-        Status = AIDispatchSessionStatus.Failed;
+        Status = AgentSessionStatus.Failed;
         CompletedAt = DateTime.UtcNow;
         ErrorMessage = errorMessage;
     }
 
     public void Cancel()
     {
-        Status = AIDispatchSessionStatus.Cancelled;
+        Status = AgentSessionStatus.Cancelled;
         CompletedAt = DateTime.UtcNow;
     }
 }

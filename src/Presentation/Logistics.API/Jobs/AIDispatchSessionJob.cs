@@ -17,7 +17,7 @@ public class AIDispatchSessionJob(
     [AutomaticRetry(Attempts = 0)]
     public async Task RunAsync(
         Guid tenantId,
-        AIDispatchMode mode,
+        AgentAutonomyMode mode,
         Guid? triggeredByUserId,
         string? instructions,
         string? rejectionContext,

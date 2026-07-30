@@ -23,8 +23,8 @@ internal sealed class CancelAICopilotTurnHandler(
         if (conversation is null || conversation.CreatedById != userId)
             return Result.Fail("Conversation not found");
 
-        var runningSessionId = await tenantUow.Repository<AIDispatchSession>().Query()
-            .Where(s => s.ConversationId == conversation.Id && s.Status == AIDispatchSessionStatus.Running)
+        var runningSessionId = await tenantUow.Repository<AgentSession>().Query()
+            .Where(s => s.ConversationId == conversation.Id && s.Status == AgentSessionStatus.Running)
             .Select(s => (Guid?)s.Id)
             .FirstOrDefaultAsync(ct);
 

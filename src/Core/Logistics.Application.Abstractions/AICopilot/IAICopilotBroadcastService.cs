@@ -10,5 +10,5 @@ public interface IAICopilotBroadcastService
 {
     Task BroadcastMessageAsync(Guid tenantId, Guid userId, AICopilotMessageDto message);
     Task BroadcastTurnUpdateAsync(Guid tenantId, Guid userId, AICopilotTurnUpdateDto update);
-    Task BroadcastDecisionAsync(Guid tenantId, Guid userId, AIDispatchDecisionDto decision);
+    Task BroadcastDecisionAsync(Guid tenantId, Guid userId, AgentDecisionDto decision);
 }

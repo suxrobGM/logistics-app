@@ -22,7 +22,7 @@ internal static class AIDispatchSystemPrompt
     /// </param>
     public static string Build(
         string companyName,
-        AIDispatchMode mode,
+        AgentAutonomyMode mode,
         bool hasLoadBoardIntegration = false,
         DistanceUnit distanceUnit = DistanceUnit.Miles,
         LearnedDispatchPolicy? policy = null,
@@ -37,7 +37,7 @@ internal static class AIDispatchSystemPrompt
         var isSolo = operatingMode == OperatingMode.SoloOperator;
         var modeInstructions = mode switch
         {
-            AIDispatchMode.HumanInTheLoop => """
+            AgentAutonomyMode.HumanInTheLoop => """
                 ## Operating Mode: SUGGESTIONS
                 Every write action (assign_load_to_truck, create_trip, dispatch_trip) creates a **suggestion** for dispatcher approval - it is NOT executed immediately.
 
@@ -48,7 +48,7 @@ internal static class AIDispatchSystemPrompt
                 - Provide clear, concise reasoning for each suggestion so the dispatcher can make an informed decision.
                 - After processing all loads, provide your final summary. Do not attempt to create trips or dispatch - the dispatcher will handle sequencing after approving assignments.
                 """,
-            AIDispatchMode.Autonomous => """
+            AgentAutonomyMode.Autonomous => """
                 ## Operating Mode: AUTONOMOUS
                 Write actions are executed immediately without human approval. You are making real changes to the dispatch system.
 

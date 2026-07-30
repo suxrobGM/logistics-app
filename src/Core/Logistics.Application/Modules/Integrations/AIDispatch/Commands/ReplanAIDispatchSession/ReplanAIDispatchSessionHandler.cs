@@ -17,7 +17,7 @@ internal sealed class ReplanAIDispatchSessionHandler(
 {
     public async Task<Result<Guid>> Handle(ReplanAIDispatchSessionCommand request, CancellationToken ct)
     {
-        var originalSession = await tenantUow.Repository<AIDispatchSession>()
+        var originalSession = await tenantUow.Repository<AgentSession>()
             .Query()
             .DispatchOnly()
             .FirstOrDefaultAsync(s => s.Id == request.OriginalSessionId, ct);
@@ -26,7 +26,7 @@ internal sealed class ReplanAIDispatchSessionHandler(
             return Result<Guid>.Fail("Original session not found");
 
         var rejectedDecisions = originalSession.Decisions
-            .Where(d => d.Status == AIDispatchDecisionStatus.Rejected)
+            .Where(d => d.Status == AgentDecisionStatus.Rejected)
             .ToList();
 
         if (rejectedDecisions.Count == 0)

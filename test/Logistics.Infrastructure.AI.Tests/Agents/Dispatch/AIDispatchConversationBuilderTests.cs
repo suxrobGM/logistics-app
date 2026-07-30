@@ -38,11 +38,11 @@ public class AIDispatchConversationBuilderTests
 
         SetTenant();
 
-        // Mock the AIDispatchSession repository for GetPreviousSessionContextAsync
-        var sessionRepo = Substitute.For<ITenantRepository<AIDispatchSession, Guid>>();
-        var emptySessionList = new List<AIDispatchSession>().BuildMock();
+        // Mock the AgentSession repository for GetPreviousSessionContextAsync
+        var sessionRepo = Substitute.For<ITenantRepository<AgentSession, Guid>>();
+        var emptySessionList = new List<AgentSession>().BuildMock();
         sessionRepo.Query().Returns(emptySessionList);
-        tenantUow.Repository<AIDispatchSession>().Returns(sessionRepo);
+        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
 
         tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
         SetPolicies();
@@ -78,7 +78,7 @@ public class AIDispatchConversationBuilderTests
         }
     };
 
-    private static AIDispatchRequest CreateRequest(AIDispatchMode mode = AIDispatchMode.Autonomous)
+    private static AIDispatchRequest CreateRequest(AgentAutonomyMode mode = AgentAutonomyMode.Autonomous)
     {
         return new AIDispatchRequest(Guid.NewGuid(), mode, null);
     }
@@ -118,7 +118,7 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_NoPolicyRow_OmitsPolicySection()
     {
         SetPolicies();
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
@@ -130,7 +130,7 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_DisabledPolicy_OmitsPolicySection()
     {
         SetPolicies(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
@@ -144,7 +144,7 @@ public class AIDispatchConversationBuilderTests
         SetPolicies(CreatePolicy(
             learned: "## Learned preferences\n- Prefer short hauls (5 rejections)",
             directives: "- Never assign Truck 42 to hazmat"));
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
@@ -162,7 +162,7 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_PolicyWithOnlyDirectives_OmitsLearnedHeading()
     {
         SetPolicies(CreatePolicy(directives: "- Prefer flatbeds out of Dallas"));
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
@@ -178,7 +178,7 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_SoloOperatorTenant_BuildsTheSoloPrompt()
     {
         SetTenant(OperatingMode.SoloOperator);
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
@@ -189,7 +189,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_FleetTenant_BuildsTheFleetPrompt()
     {
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
@@ -202,7 +202,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_ValidConfig_ReturnsConversation()
     {
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
@@ -215,7 +215,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_IncludesToolsFromRegistry()
     {
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
@@ -225,7 +225,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_IncludesSystemPrompt()
     {
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 
@@ -236,7 +236,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_MissingApiKey_Throws()
     {
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => sut.BuildAsync(session, CreateRequest(), EmptyApiKeyConfig, CancellationToken.None));
@@ -247,7 +247,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_InitialMessage_ContainsFleetAnalysisInstruction()
     {
-        var session = new AIDispatchSession { Mode = AIDispatchMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
 

@@ -15,7 +15,7 @@ internal sealed class SignalRAICopilotBroadcastService(
     public Task BroadcastTurnUpdateAsync(Guid tenantId, Guid userId, AICopilotTurnUpdateDto update) =>
         Group(tenantId, userId).ReceiveCopilotTurnUpdate(update);
 
-    public Task BroadcastDecisionAsync(Guid tenantId, Guid userId, AIDispatchDecisionDto decision) =>
+    public Task BroadcastDecisionAsync(Guid tenantId, Guid userId, AgentDecisionDto decision) =>
         Group(tenantId, userId).ReceiveCopilotDecision(decision);
 
     private IAICopilotHubClient Group(Guid tenantId, Guid userId) =>

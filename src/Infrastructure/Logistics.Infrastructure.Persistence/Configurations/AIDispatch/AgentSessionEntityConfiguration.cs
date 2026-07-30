@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Persistence.Configurations;
 
-internal sealed class AIDispatchSessionEntityConfiguration : IEntityTypeConfiguration<AIDispatchSession>
+internal sealed class AgentSessionEntityConfiguration : IEntityTypeConfiguration<AgentSession>
 {
-    public void Configure(EntityTypeBuilder<AIDispatchSession> builder)
+    public void Configure(EntityTypeBuilder<AgentSession> builder)
     {
-        builder.ToTable("ai_dispatch_sessions");
+        builder.ToTable("agent_sessions");
 
         builder.Property(s => s.Number)
             .UseIdentityAlwaysColumn()

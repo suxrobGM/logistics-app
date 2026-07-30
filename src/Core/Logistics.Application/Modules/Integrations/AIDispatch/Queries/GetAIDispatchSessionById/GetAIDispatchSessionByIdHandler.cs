@@ -8,18 +8,18 @@ using Microsoft.EntityFrameworkCore;
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
 internal sealed class GetAIDispatchSessionByIdHandler(
-    ITenantUnitOfWork tenantUow) : IAppRequestHandler<GetAIDispatchSessionByIdQuery, Result<AIDispatchSessionDto>>
+    ITenantUnitOfWork tenantUow) : IAppRequestHandler<GetAIDispatchSessionByIdQuery, Result<AgentSessionDto>>
 {
-    public async Task<Result<AIDispatchSessionDto>> Handle(
+    public async Task<Result<AgentSessionDto>> Handle(
         GetAIDispatchSessionByIdQuery request, CancellationToken ct)
     {
-        var session = await tenantUow.Repository<AIDispatchSession>()
+        var session = await tenantUow.Repository<AgentSession>()
             .Query()
             .DispatchOnly()
             .FirstOrDefaultAsync(s => s.Id == request.SessionId, ct);
 
         if (session is null)
-            return Result<AIDispatchSessionDto>.Fail("Session not found");
+            return Result<AgentSessionDto>.Fail("Session not found");
 
         var dto = session.ToDtoWithDecisions();
 
@@ -45,6 +45,6 @@ internal sealed class GetAIDispatchSessionByIdHandler(
                 d.TruckNumber = tn;
         }
 
-        return Result<AIDispatchSessionDto>.Ok(dto);
+        return Result<AgentSessionDto>.Ok(dto);
     }
 }

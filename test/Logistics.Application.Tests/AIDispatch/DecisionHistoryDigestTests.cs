@@ -22,9 +22,9 @@ public class DecisionHistoryDigestTests
     {
         var entries = new List<DecisionHistoryEntry>
         {
-            Entry(AIDispatchDecisionStatus.Rejected, rejectionReason: "Deadhead too far"),
-            Entry(AIDispatchDecisionStatus.Executed),
-            Entry(AIDispatchDecisionStatus.Rejected, rejectionReason: "Rate too low")
+            Entry(AgentDecisionStatus.Rejected, rejectionReason: "Deadhead too far"),
+            Entry(AgentDecisionStatus.Executed),
+            Entry(AgentDecisionStatus.Rejected, rejectionReason: "Rate too low")
         };
 
         var result = DecisionHistoryDigest.Build(entries);
@@ -42,8 +42,8 @@ public class DecisionHistoryDigestTests
     {
         var entries = new List<DecisionHistoryEntry>
         {
-            Entry(AIDispatchDecisionStatus.Executed, toolName: "approved_tool", minutesAgo: 1),
-            Entry(AIDispatchDecisionStatus.Rejected, toolName: "rejected_tool", minutesAgo: 100)
+            Entry(AgentDecisionStatus.Executed, toolName: "approved_tool", minutesAgo: 1),
+            Entry(AgentDecisionStatus.Rejected, toolName: "rejected_tool", minutesAgo: 100)
         };
 
         var result = DecisionHistoryDigest.Build(entries);
@@ -62,7 +62,7 @@ public class DecisionHistoryDigestTests
     {
         var newest = DateTime.UtcNow;
         var entries = Enumerable.Range(0, 200)
-            .Select(i => Entry(AIDispatchDecisionStatus.Rejected, minutesAgo: i))
+            .Select(i => Entry(AgentDecisionStatus.Rejected, minutesAgo: i))
             .ToList();
 
         var result = DecisionHistoryDigest.Build(entries);
@@ -76,7 +76,7 @@ public class DecisionHistoryDigestTests
     public void Build_CapsRejectionsAtSixty()
     {
         var entries = Enumerable.Range(0, 100)
-            .Select(i => Entry(AIDispatchDecisionStatus.Rejected, minutesAgo: i))
+            .Select(i => Entry(AgentDecisionStatus.Rejected, minutesAgo: i))
             .ToList();
 
         var result = DecisionHistoryDigest.Build(entries);
@@ -89,7 +89,7 @@ public class DecisionHistoryDigestTests
     public void Build_NeverEmitsToolOutput()
     {
         var entries = Enumerable.Range(0, 5)
-            .Select(_ => Entry(AIDispatchDecisionStatus.Rejected, rejectionReason: "nope"))
+            .Select(_ => Entry(AgentDecisionStatus.Rejected, rejectionReason: "nope"))
             .ToList();
 
         var result = DecisionHistoryDigest.Build(entries);
@@ -105,7 +105,7 @@ public class DecisionHistoryDigestTests
         var entries = new List<DecisionHistoryEntry>
         {
             Entry(
-                AIDispatchDecisionStatus.Rejected,
+                AgentDecisionStatus.Rejected,
                 toolInput: new string('i', 500),
                 reasoning: new string('r', 500),
                 rejectionReason: new string('x', 900))
@@ -125,7 +125,7 @@ public class DecisionHistoryDigestTests
     {
         var entries = new List<DecisionHistoryEntry>
         {
-            Entry(AIDispatchDecisionStatus.Rejected, rejectionReason: "line one\nline two\nline three")
+            Entry(AgentDecisionStatus.Rejected, rejectionReason: "line one\nline two\nline three")
         };
 
         var result = DecisionHistoryDigest.Build(entries);
@@ -139,7 +139,7 @@ public class DecisionHistoryDigestTests
     {
         var entries = Enumerable.Range(0, 120)
             .Select(i => Entry(
-                AIDispatchDecisionStatus.Rejected,
+                AgentDecisionStatus.Rejected,
                 rejectionReason: new string('x', 300),
                 toolInput: new string('i', 200),
                 reasoning: new string('r', 200),
@@ -152,7 +152,7 @@ public class DecisionHistoryDigestTests
     }
 
     private static DecisionHistoryEntry Entry(
-        AIDispatchDecisionStatus status,
+        AgentDecisionStatus status,
         string toolName = "assign_load_to_truck",
         string? toolInput = """{"load_id":"abc"}""",
         string? reasoning = "Closest truck",

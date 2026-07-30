@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
 /// <summary>
-/// Runs one conversational copilot turn as an <see cref="AIDispatchSession"/> of type Copilot, so
+/// Runs one conversational copilot turn as an <see cref="AgentSession"/> of type Copilot, so
 /// quota, tokens, and decisions ride the existing session machinery.
 /// </summary>
 internal sealed class AICopilotService(
@@ -47,16 +47,16 @@ internal sealed class AICopilotService(
         runContext.SetTriggeredBy(request.UserId);
         var permissions = await ResolveCallerPermissionsAsync(request, ct);
 
-        var session = new AIDispatchSession
+        var session = new AgentSession
         {
-            Type = AIDispatchSessionType.Copilot,
+            Type = AgentSessionType.Copilot,
             ConversationId = conversation.Id,
-            Mode = AIDispatchMode.HumanInTheLoop,
+            Mode = AgentAutonomyMode.HumanInTheLoop,
             TriggeredByUserId = request.UserId,
             StartedAt = DateTime.UtcNow
         };
 
-        await tenantUow.Repository<AIDispatchSession>().AddAsync(session, ct);
+        await tenantUow.Repository<AgentSession>().AddAsync(session, ct);
         await tenantUow.SaveChangesAsync(ct);
 
         var linkedCt = cancellationRegistry.Register(
@@ -76,7 +76,7 @@ internal sealed class AICopilotService(
             priorMessageCount = state.Messages.Count;
 
             var toolContext = new ToolCallContext(
-                AIDispatchMode.HumanInTheLoop,
+                AgentAutonomyMode.HumanInTheLoop,
                 CallerPermissions: permissions,
                 DecisionBroadcastOverride: dto =>
                     broadcastService.BroadcastDecisionAsync(request.TenantId, conversation.CreatedById, dto));
@@ -126,7 +126,7 @@ internal sealed class AICopilotService(
     /// </summary>
     private List<AICopilotMessage> PersistTurnMessages(
         AICopilotConversation conversation,
-        AIDispatchSession session,
+        AgentSession session,
         IEnumerable<LlmMessage> appended)
     {
         var nextSequence = conversation.NextSequence();
@@ -223,7 +223,7 @@ internal sealed class AICopilotService(
     }
 
     private async Task BroadcastTurnUpdateAsync(
-        AICopilotTurnRequest request, AICopilotConversation conversation, AIDispatchSession session)
+        AICopilotTurnRequest request, AICopilotConversation conversation, AgentSession session)
     {
         try
         {
