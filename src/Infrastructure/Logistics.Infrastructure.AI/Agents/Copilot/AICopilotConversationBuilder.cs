@@ -1,9 +1,9 @@
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Infrastructure.AI.Llm;
 using Microsoft.Extensions.Logging;

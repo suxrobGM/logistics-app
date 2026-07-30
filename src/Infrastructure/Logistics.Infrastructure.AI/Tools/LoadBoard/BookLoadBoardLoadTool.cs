@@ -1,5 +1,5 @@
+using Logistics.Application.Abstractions.Agents;
 using System.Text.Json.Nodes;
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using MediatR;
 

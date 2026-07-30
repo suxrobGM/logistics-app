@@ -1,6 +1,6 @@
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Application.Abstractions.AIDispatch;
+namespace Logistics.Application.Abstractions.AI;
 
 /// <summary>
 /// Single source of truth for the LLM models an admin can select as the platform-wide

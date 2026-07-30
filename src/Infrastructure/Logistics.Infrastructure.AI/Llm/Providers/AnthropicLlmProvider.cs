@@ -1,9 +1,9 @@
+using Logistics.Application.Abstractions.Agents;
 using System.Text.Json.Nodes;
 using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
-using Logistics.Application.Abstractions.AIDispatch;
 using Tool = Anthropic.SDK.Common.Tool;
 using Function = Anthropic.SDK.Common.Function;
 

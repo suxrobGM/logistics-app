@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.Agents;
 
 namespace Logistics.Infrastructure.AI.Agents;
 

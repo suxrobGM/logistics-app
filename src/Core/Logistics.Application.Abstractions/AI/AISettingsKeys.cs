@@ -1,4 +1,4 @@
-namespace Logistics.Application.Abstractions.AIDispatch;
+namespace Logistics.Application.Abstractions.AI;
 
 /// <summary>
 /// <see cref="SystemSettings"/> keys for the platform-wide AI dispatch configuration.

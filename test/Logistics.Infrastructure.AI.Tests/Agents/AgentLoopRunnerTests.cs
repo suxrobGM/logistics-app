@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Infrastructure.AI.Agents;
 using System.Net;

@@ -1,4 +1,4 @@
-namespace Logistics.Application.Abstractions.AIDispatch;
+namespace Logistics.Application.Abstractions.Agents;
 
 /// <summary>
 /// Who an agent run is acting on behalf of. Tools receive only the model's JSON arguments, so a

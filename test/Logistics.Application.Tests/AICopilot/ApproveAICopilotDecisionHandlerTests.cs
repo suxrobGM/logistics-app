@@ -1,7 +1,7 @@
+using Logistics.Application.Abstractions.Agents;
 using System.Text.Json.Nodes;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 using Logistics.Application.Modules.Integrations.AICopilot.Commands;

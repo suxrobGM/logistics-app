@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Infrastructure.AI.Tools.Dispatch;
 using Logistics.Infrastructure.AI.Tools.Operations;
 using Logistics.Infrastructure.AI.Tools.Financial;

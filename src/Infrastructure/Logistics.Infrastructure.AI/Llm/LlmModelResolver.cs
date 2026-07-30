@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.AI;

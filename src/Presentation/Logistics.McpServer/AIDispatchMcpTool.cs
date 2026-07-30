@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using System.Text.Json;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -5,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.McpServer;
 

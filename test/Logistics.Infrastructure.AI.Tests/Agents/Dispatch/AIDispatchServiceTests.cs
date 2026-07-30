@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Infrastructure.AI.Agents;
 using Logistics.Infrastructure.AI.Agents.Dispatch;
 using Logistics.Domain.Entities;

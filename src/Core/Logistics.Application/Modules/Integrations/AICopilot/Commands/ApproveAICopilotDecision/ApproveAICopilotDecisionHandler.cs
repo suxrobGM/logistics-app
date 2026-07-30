@@ -1,7 +1,7 @@
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 using Logistics.Domain.Persistence;

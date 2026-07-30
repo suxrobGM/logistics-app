@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -6,7 +7,6 @@ using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.AI;
 using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Abstractions.AIDispatch;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
