@@ -19,95 +19,116 @@ internal sealed class GetTenantQuotaUsagesHandler(
     /// </summary>
     private const int MaxTenantReadConcurrency = 8;
 
+    /// <summary>Cost window, chosen to line up with the monthly revenue it is compared against.</summary>
+    private static readonly TimeSpan CostWindow = TimeSpan.FromDays(30);
+
+    private sealed record QuotaTenant(Tenant Tenant, Subscription Subscription, SubscriptionPlan Plan);
+
+    private sealed record TenantUsage(
+        int UsedThisWeek,
+        int OverageSessions,
+        int TotalTokens,
+        decimal TotalCost,
+        decimal MonthlyLlmCost,
+        int TruckCount,
+        string? LastModel);
+
     public async Task<PagedResult<TenantQuotaUsageDto>> Handle(
         GetTenantQuotaUsagesQuery request, CancellationToken ct)
     {
-        // Query subscriptions to find tenants with plans that have AI quotas
-        var subscriptions = await masterUow.Repository<Subscription>()
-            .GetListAsync(ct: ct);
-
-        var planIds = subscriptions.Select(s => s.PlanId).Distinct().ToList();
-        var plans = (await masterUow.Repository<SubscriptionPlan>()
-            .GetListAsync(p => planIds.Contains(p.Id) && p.WeeklyAIRequestQuota != null, ct))
-            .ToDictionary(p => p.Id);
-
-        // Only fetch tenants that have plans with AI quotas
-        var tenantIds = subscriptions
-            .Where(s => plans.ContainsKey(s.PlanId))
-            .Select(s => s.TenantId)
-            .ToList();
-
-        var tenants = await masterUow.Repository<Tenant>()
-            .GetListAsync(t => tenantIds.Contains(t.Id) && t.ConnectionString != null, ct);
-
-        var subscriptionByTenant = subscriptions.ToDictionary(s => s.TenantId);
-
+        var targets = await LoadQuotaTenantsAsync(ct);
         var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
-        var costWindowStart = DateTime.UtcNow.AddDays(-30);
-
-        var targets = tenants
-            .Select(t => subscriptionByTenant.TryGetValue(t.Id, out var subscription)
-                         && plans.TryGetValue(subscription.PlanId, out var plan)
-                ? new { Tenant = t, Subscription = subscription, Plan = plan }
-                : null)
-            .Where(x => x is not null)
-            .ToList();
+        var costWindowStart = DateTime.UtcNow - CostWindow;
 
         // The default sort is a computed column, so every tenant has to be read before the page can
-        // be picked. Each read opens its own scope and DbContext, so they are safe to overlap;
-        // the cap keeps a large tenant list from exhausting the connection pool.
-        var results = new TenantQuotaUsageDto?[targets.Count];
+        // be picked. Each read opens its own scope and DbContext, so they are safe to overlap; the
+        // cap keeps a large tenant list from exhausting the connection pool. Writing into a slot
+        // per target keeps the output order stable, which pagination needs when rows tie.
+        var rows = new TenantQuotaUsageDto?[targets.Count];
         await Parallel.ForEachAsync(
-            Enumerable.Range(0, targets.Count),
+            targets.Index(),
             new ParallelOptions { MaxDegreeOfParallelism = MaxTenantReadConcurrency, CancellationToken = ct },
-            async (index, token) =>
-            {
-                var (tenant, subscription, plan) =
-                    (targets[index]!.Tenant, targets[index]!.Subscription, targets[index]!.Plan);
+            async (entry, token) =>
+                rows[entry.Index] = await BuildUsageRowAsync(entry.Item, weekStart, costWindowStart, token));
 
-                var countFrom = tenant.QuotaResetAt > weekStart ? tenant.QuotaResetAt.Value : weekStart;
-                var usage = await ReadTenantUsageAsync(tenant, countFrom, costWindowStart, token);
-                if (usage is null)
-                {
-                    return;
-                }
+        var usages = rows.OfType<TenantQuotaUsageDto>().ToList();
 
-                var weeklyQuota = plan.WeeklyAIRequestQuota!.Value;
-                var monthlyRevenue = MonthlyRevenueOf(plan, subscription, usage.TruckCount);
-                results[index] = new TenantQuotaUsageDto
-                {
-                    TenantId = tenant.Id,
-                    TenantName = tenant.Name,
-                    CompanyName = tenant.CompanyName,
-                    PlanName = plan.Name,
-                    WeeklyQuota = weeklyQuota,
-                    UsedThisWeek = usage.UsedThisWeek,
-                    Remaining = Math.Max(0, weeklyQuota - usage.UsedThisWeek),
-                    IsOverQuota = usage.UsedThisWeek >= weeklyQuota,
-                    OverageCount = Math.Max(0, usage.UsedThisWeek - weeklyQuota),
-                    QuotaResetAt = tenant.QuotaResetAt,
-                    TotalTokensUsed = usage.TotalTokens,
-                    TotalEstimatedCostUsd = usage.TotalCost,
-                    LastModelUsed = usage.LastModel,
-                    MonthlyRevenueUsd = monthlyRevenue,
-                    MonthlyLlmCostUsd = usage.MonthlyLlmCost,
-                    CostToRevenuePercent = monthlyRevenue > 0
-                        ? Math.Round(usage.MonthlyLlmCost / monthlyRevenue * 100, 1)
-                        : null,
-                    OverageSessionsThisWeek = usage.OverageSessions
-                };
-            });
-
-        var usages = results.Where(x => x is not null).Select(x => x!).ToList();
-
-        // Apply sorting and pagination using existing extensions
-        var totalItems = usages.Count;
         var paged = usages.AsQueryable()
             .OrderBy(request.OrderBy ?? "-UsedThisWeek")
             .ApplyPaging(request.Page, request.PageSize)
             .ToArray();
 
-        return PagedResult<TenantQuotaUsageDto>.Ok(paged, totalItems, request.PageSize);
+        return PagedResult<TenantQuotaUsageDto>.Ok(paged, usages.Count, request.PageSize);
+    }
+
+    /// <summary>
+    /// The tenants this report covers: those on a plan that defines a weekly AI quota and whose
+    /// database is reachable. Ordered by id so that rows tying on the sort column - which many do,
+    /// since idle tenants all sit at zero - land on the same page from one request to the next.
+    /// </summary>
+    private async Task<List<QuotaTenant>> LoadQuotaTenantsAsync(CancellationToken ct)
+    {
+        var subscriptions = await masterUow.Repository<Subscription>().GetListAsync(ct: ct);
+
+        var planIds = subscriptions.Select(s => s.PlanId).Distinct().ToList();
+        var plans = (await masterUow.Repository<SubscriptionPlan>()
+                .GetListAsync(p => planIds.Contains(p.Id) && p.WeeklyAIRequestQuota != null, ct))
+            .ToDictionary(p => p.Id);
+
+        var quotaSubscriptions = subscriptions.Where(s => plans.ContainsKey(s.PlanId)).ToList();
+        var tenantIds = quotaSubscriptions.Select(s => s.TenantId).ToList();
+
+        var tenants = (await masterUow.Repository<Tenant>()
+                .GetListAsync(t => tenantIds.Contains(t.Id) && t.ConnectionString != null, ct))
+            .ToDictionary(t => t.Id);
+
+        return quotaSubscriptions
+            .Where(s => tenants.ContainsKey(s.TenantId))
+            .Select(s => new QuotaTenant(tenants[s.TenantId], s, plans[s.PlanId]))
+            .OrderBy(x => x.Tenant.Id)
+            .ToList();
+    }
+
+    /// <summary>
+    /// Builds one report row, or null when the tenant's usage could not be read.
+    /// </summary>
+    private async Task<TenantQuotaUsageDto?> BuildUsageRowAsync(
+        QuotaTenant target, DateTime weekStart, DateTime costWindowStart, CancellationToken ct)
+    {
+        var (tenant, subscription, plan) = target;
+
+        var countFrom = tenant.QuotaResetAt > weekStart ? tenant.QuotaResetAt.Value : weekStart;
+        var usage = await ReadTenantUsageAsync(tenant, countFrom, costWindowStart, ct);
+        if (usage is null)
+        {
+            return null;
+        }
+
+        var weeklyQuota = plan.WeeklyAIRequestQuota!.Value;
+        var monthlyRevenue = MonthlyRevenueOf(plan, subscription, usage.TruckCount);
+
+        return new TenantQuotaUsageDto
+        {
+            TenantId = tenant.Id,
+            TenantName = tenant.Name,
+            CompanyName = tenant.CompanyName,
+            PlanName = plan.Name,
+            WeeklyQuota = weeklyQuota,
+            UsedThisWeek = usage.UsedThisWeek,
+            Remaining = Math.Max(0, weeklyQuota - usage.UsedThisWeek),
+            IsOverQuota = usage.UsedThisWeek >= weeklyQuota,
+            OverageCount = Math.Max(0, usage.UsedThisWeek - weeklyQuota),
+            QuotaResetAt = tenant.QuotaResetAt,
+            TotalTokensUsed = usage.TotalTokens,
+            TotalEstimatedCostUsd = usage.TotalCost,
+            LastModelUsed = usage.LastModel,
+            MonthlyRevenueUsd = monthlyRevenue,
+            MonthlyLlmCostUsd = usage.MonthlyLlmCost,
+            CostToRevenuePercent = monthlyRevenue > 0
+                ? Math.Round(usage.MonthlyLlmCost / monthlyRevenue * 100, 1)
+                : null,
+            OverageSessionsThisWeek = usage.OverageSessions
+        };
     }
 
     /// <summary>
@@ -133,15 +154,6 @@ internal sealed class GetTenantQuotaUsagesHandler(
         return monthsPerInterval > 0 ? perInterval / monthsPerInterval : perInterval;
     }
 
-    private sealed record TenantUsage(
-        int UsedThisWeek,
-        int OverageSessions,
-        int TotalTokens,
-        decimal TotalCost,
-        decimal MonthlyLlmCost,
-        int TruckCount,
-        string? LastModel);
-
     /// <summary>
     /// Reads one tenant's session aggregates from its own database. Returns null when the tenant
     /// database is unreachable, so a single bad connection string cannot fail the whole listing.
@@ -149,7 +161,9 @@ internal sealed class GetTenantQuotaUsagesHandler(
     /// <remarks>
     /// The aggregation runs in the database rather than over materialised rows: a busy tenant can
     /// have tens of thousands of sessions in the 30-day cost window, and every one of them would
-    /// otherwise cross the wire only to be summed and discarded.
+    /// otherwise cross the wire only to be summed and discarded. The shapes are pinned by
+    /// <c>TenantQuotaUsageQueryTranslationTests</c> - EF only rejects an untranslatable aggregate
+    /// at execution time.
     /// </remarks>
     private async Task<TenantUsage?> ReadTenantUsageAsync(
         Tenant tenant, DateTime countFrom, DateTime costWindowStart, CancellationToken ct)
@@ -160,8 +174,6 @@ internal sealed class GetTenantQuotaUsagesHandler(
             var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
             tenantUow.SetCurrentTenant(tenant);
 
-            // Cost window is 30 days (margin vs monthly revenue); quota window stays weekly, so the
-            // week-scoped figures are conditional sums over the same one-pass scan.
             var sessions = tenantUow.Repository<AgentSession>().Query()
                 .Where(s =>
                     s.StartedAt >= costWindowStart &&
@@ -195,21 +207,15 @@ internal sealed class GetTenantQuotaUsagesHandler(
                 .Select(s => s.ModelUsed)
                 .FirstOrDefaultAsync(ct);
 
-            var truckCount = await tenantUow.Repository<Truck>().CountAsync(ct: ct);
-
-            // No sessions in the window at all - the tenant still belongs in the report.
-            if (totals is null)
-            {
-                return new TenantUsage(0, 0, 0, 0m, 0m, truckCount, null);
-            }
-
+            // totals is null only when the tenant ran nothing in the window; it still belongs in
+            // the report, with a truck count and therefore revenue.
             return new TenantUsage(
-                UsedThisWeek: totals.UsedThisWeek,
-                OverageSessions: totals.OverageSessions,
-                TotalTokens: totals.TotalTokens,
-                TotalCost: totals.TotalCost,
-                MonthlyLlmCost: totals.MonthlyLlmCost,
-                TruckCount: truckCount,
+                UsedThisWeek: totals?.UsedThisWeek ?? 0,
+                OverageSessions: totals?.OverageSessions ?? 0,
+                TotalTokens: totals?.TotalTokens ?? 0,
+                TotalCost: totals?.TotalCost ?? 0m,
+                MonthlyLlmCost: totals?.MonthlyLlmCost ?? 0m,
+                TruckCount: await tenantUow.Repository<Truck>().CountAsync(ct: ct),
                 LastModel: lastModel);
         }
         catch
