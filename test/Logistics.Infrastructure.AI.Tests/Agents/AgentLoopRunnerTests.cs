@@ -47,10 +47,10 @@ public class AgentLoopRunnerTests
             CompanyAddress = new() { Line1 = "1 Main", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" }
         });
 
-        var processor = new AIDispatchDecisionProcessor(
+        var processor = new AgentDecisionProcessor(
             toolExecutor, new AgentToolRegistry(), tenantUow,
             Substitute.For<IAIDispatchBroadcastService>(),
-            NullLogger<AIDispatchDecisionProcessor>.Instance);
+            NullLogger<AgentDecisionProcessor>.Instance);
         sut = new AgentLoopRunner(processor, tenantUow, NullLogger<AgentLoopRunner>.Instance);
     }
 

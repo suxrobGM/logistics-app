@@ -23,7 +23,7 @@ internal sealed class AICopilotService(
     IOptions<LlmOptions> options,
     AICopilotConversationBuilder conversationBuilder,
     AgentLoopRunner loopRunner,
-    AIDispatchSessionCancellationRegistry cancellationRegistry,
+    AgentSessionCancellationRegistry cancellationRegistry,
     ITenantUnitOfWork tenantUow,
     IAICopilotBroadcastService broadcastService,
     IAgentRunContext runContext,

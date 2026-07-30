@@ -42,12 +42,12 @@ public static class Registrar
         services.AddScoped<ILlmClient, LlmClient>();
 
         services.AddScoped<IAgentRunContext, AgentRunContext>();
-        services.AddSingleton<AIDispatchSessionCancellationRegistry>();
+        services.AddSingleton<AgentSessionCancellationRegistry>();
         services.AddScoped<LlmSessionSetup>();
         services.AddScoped<AgentLoopRunner>();
         services.AddScoped<IAIDispatchService, AIDispatchService>();
         services.AddScoped<AIDispatchConversationBuilder>();
-        services.AddScoped<AIDispatchDecisionProcessor>();
+        services.AddScoped<AgentDecisionProcessor>();
         services.AddScoped<IAgentToolExecutor, AgentToolExecutor>();
         services.AddSingleton<IAgentToolRegistry, AgentToolRegistry>();
 
@@ -57,7 +57,7 @@ public static class Registrar
 
         services.AddScoped<IAgentTool, GetUnassignedLoadsTool>();
         services.AddScoped<IAgentTool, GetAvailableTrucksTool>();
-        services.AddScoped<IAgentTool, GetDriverHosTool>();
+        services.AddScoped<IAgentTool, GetDriverHosStatusTool>();
         services.AddScoped<IAgentTool, CheckHosFeasibilityTool>();
         services.AddScoped<IAgentTool, BatchCheckHosFeasibilityTool>();
         services.AddScoped<IAgentTool, CheckDispatchEligibilityTool>();

@@ -6,7 +6,7 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// Singleton registry for managing CancellationTokenSources for active dispatch agent sessions.
 /// Enables cancellation of running sessions from external requests (API cancel endpoint).
 /// </summary>
-internal sealed class AIDispatchSessionCancellationRegistry
+internal sealed class AgentSessionCancellationRegistry
 {
     private readonly ConcurrentDictionary<Guid, CancellationTokenSource> sessions = new();
 

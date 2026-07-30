@@ -66,12 +66,12 @@ public class AIDispatchServiceTests
             NullLogger<AIDispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IAgentToolExecutor>();
-        var decisionProcessor = new AIDispatchDecisionProcessor(
+        var decisionProcessor = new AgentDecisionProcessor(
             toolExecutor, toolRegistry, tenantUow, broadcastService,
-            NullLogger<AIDispatchDecisionProcessor>.Instance);
+            NullLogger<AgentDecisionProcessor>.Instance);
         var loopRunner = new AgentLoopRunner(decisionProcessor, tenantUow, NullLogger<AgentLoopRunner>.Instance);
 
-        var cancellationRegistry = new AIDispatchSessionCancellationRegistry();
+        var cancellationRegistry = new AgentSessionCancellationRegistry();
 
         sut = new AIDispatchService(
             llmOptions, conversationBuilder, loopRunner, cancellationRegistry,

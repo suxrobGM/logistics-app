@@ -18,12 +18,12 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// Write/permission/decision-type behavior comes from the tool's
 /// <see cref="AgentToolDefinition"/> metadata - there is no tool-name list here.
 /// </summary>
-internal sealed class AIDispatchDecisionProcessor(
+internal sealed class AgentDecisionProcessor(
     IAgentToolExecutor toolExecutor,
     IAgentToolRegistry toolRegistry,
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
-    ILogger<AIDispatchDecisionProcessor> logger)
+    ILogger<AgentDecisionProcessor> logger)
 {
     public async Task<List<LlmToolResultBlock>> ProcessToolCallsAsync(
         AIDispatchSession session,

@@ -16,7 +16,7 @@ internal sealed class AIDispatchService(
     IOptions<LlmOptions> options,
     AIDispatchConversationBuilder conversationBuilder,
     AgentLoopRunner loopRunner,
-    AIDispatchSessionCancellationRegistry cancellationRegistry,
+    AgentSessionCancellationRegistry cancellationRegistry,
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
     IStripeUsageService stripeUsageService,

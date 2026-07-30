@@ -3,9 +3,9 @@ using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Agents;
 
-public class AIDispatchSessionCancellationRegistryTests
+public class AgentSessionCancellationRegistryTests
 {
-    private readonly AIDispatchSessionCancellationRegistry sut = new();
+    private readonly AgentSessionCancellationRegistry sut = new();
 
     [Fact]
     public void Register_ReturnsLinkedToken()

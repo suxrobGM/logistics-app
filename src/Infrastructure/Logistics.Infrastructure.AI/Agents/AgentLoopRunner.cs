@@ -16,7 +16,7 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// transcript read them from there after the run.
 /// </summary>
 internal sealed class AgentLoopRunner(
-    AIDispatchDecisionProcessor decisionProcessor,
+    AgentDecisionProcessor decisionProcessor,
     ITenantUnitOfWork tenantUow,
     ILogger<AgentLoopRunner> logger)
 {
@@ -102,7 +102,7 @@ internal sealed class AgentLoopRunner(
     }
 
     /// <summary>
-    /// Honours a cancel issued on a different instance. AIDispatchSessionCancellationRegistry is
+    /// Honours a cancel issued on a different instance. AgentSessionCancellationRegistry is
     /// process-local, but a session runs in a Hangfire worker while the cancel arrives at whichever
     /// API instance the request landed on - there, TryCancel finds nothing and the worker would
     /// keep burning tokens against a session the database already shows as Cancelled.

@@ -16,20 +16,20 @@ using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Infrastructure.AI.Tests.Agents;
 
-public class AIDispatchDecisionProcessorTests
+public class AgentDecisionProcessorTests
 {
     private readonly ITenantRepository<AIDispatchDecision, Guid> decisionRepo =
         Substitute.For<ITenantRepository<AIDispatchDecision, Guid>>();
 
-    private readonly ILogger<AIDispatchDecisionProcessor> logger = NullLogger<AIDispatchDecisionProcessor>.Instance;
+    private readonly ILogger<AgentDecisionProcessor> logger = NullLogger<AgentDecisionProcessor>.Instance;
 
-    private readonly AIDispatchDecisionProcessor sut;
+    private readonly AgentDecisionProcessor sut;
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IAgentToolExecutor toolExecutor = Substitute.For<IAgentToolExecutor>();
     private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
     private readonly IAgentToolRegistry toolRegistry = new AgentToolRegistry();
 
-    public AIDispatchDecisionProcessorTests()
+    public AgentDecisionProcessorTests()
     {
         tenantUow.Repository<AIDispatchDecision>().Returns(decisionRepo);
         tenantUow.GetCurrentTenant().Returns(new Tenant
@@ -40,7 +40,7 @@ public class AIDispatchDecisionProcessorTests
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });
-        sut = new AIDispatchDecisionProcessor(toolExecutor, toolRegistry, tenantUow, broadcastService, logger);
+        sut = new AgentDecisionProcessor(toolExecutor, toolRegistry, tenantUow, broadcastService, logger);
     }
 
     private static AIDispatchSession CreateSession(AIDispatchMode mode = AIDispatchMode.Autonomous)
