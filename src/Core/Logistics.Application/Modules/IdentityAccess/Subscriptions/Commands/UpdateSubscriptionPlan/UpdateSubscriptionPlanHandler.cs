@@ -11,6 +11,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 internal sealed class UpdateSubscriptionPlanHandler(
     IMasterUnitOfWork masterUow,
     IStripePlanService stripePlanService,
+    IStripeSubscriptionService stripeSubscriptionService,
     ILogger<UpdateSubscriptionPlanHandler> logger) : IAppRequestHandler<UpdateSubscriptionPlanCommand, Result>
 {
 
@@ -47,11 +48,17 @@ internal sealed class UpdateSubscriptionPlanHandler(
         }
         subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
 
-        var result = await stripePlanService.UpdatePlanAsync(subscriptionPlan);
-        subscriptionPlan.StripePriceId = result.BasePrice.Id;
-        subscriptionPlan.StripePerTruckPriceId = result.PerTruckPrice.Id;
+        // UpdatePlanAsync writes the refreshed price ids onto the plan itself.
+        var previousOveragePriceId = subscriptionPlan.StripeAIOveragePriceId;
+        await stripePlanService.UpdatePlanAsync(subscriptionPlan);
         masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
         await masterUow.SaveChangesAsync(ct);
+
+        // A recreated overage price leaves live subscriptions billing against the deactivated one.
+        if (subscriptionPlan.StripeAIOveragePriceId != previousOveragePriceId)
+        {
+            await stripeSubscriptionService.SyncAIOverageItemAsync(subscriptionPlan);
+        }
         logger.LogInformation("Updated subscription plan {SubscriptionPlanId}", subscriptionPlan.Id);
         return Result.Ok();
     }

@@ -41,33 +41,48 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
 
         var settingService = context.ServiceProvider.GetRequiredService<ISystemSettingsService>();
         var planService = context.ServiceProvider.GetRequiredService<IStripePlanService>();
+        var subscriptionService = context.ServiceProvider.GetRequiredService<IStripeSubscriptionService>();
         var planRepo = context.MasterUnitOfWork.Repository<SubscriptionPlan>();
 
         // 1. Ensure billing meter exists (one-time setup, stored in SystemSettings)
         await EnsureBillingMeterAsync(settingService, ct);
 
-        // 2. Create Stripe products and prices for plans without Stripe IDs
+        // 2. Create products/prices for new plans; reconcile already-synced plans so price
+        //    changes propagate.
         var plans = await planRepo.GetListAsync(ct: ct);
         var syncedCount = 0;
 
         foreach (var plan in plans)
         {
-            if (!string.IsNullOrEmpty(plan.StripeProductId))
+            if (string.IsNullOrEmpty(plan.StripeProductId))
             {
-                logger.LogInformation("Plan '{PlanName}' already synced to Stripe", plan.Name);
+                var created = await planService.CreatePlanAsync(plan);
+                plan.StripeProductId = created.Product.Id;
+                plan.StripePriceId = created.BasePrice.Id;
+                plan.StripePerTruckPriceId = created.PerTruckPrice.Id;
+                plan.StripeAIOveragePriceId = created.AIOveragePrice?.Id;
+
+                await context.MasterUnitOfWork.SaveChangesAsync(ct);
+                syncedCount++;
+                logger.LogInformation("Synced plan '{PlanName}' to Stripe (product: {ProductId})",
+                    plan.Name, plan.StripeProductId);
                 continue;
             }
 
-            var result = await planService.CreatePlanAsync(plan);
-            plan.StripeProductId = result.Product.Id;
-            plan.StripePriceId = result.BasePrice.Id;
-            plan.StripePerTruckPriceId = result.PerTruckPrice.Id;
-            plan.StripeAIOveragePriceId = result.AIOveragePrice?.Id;
-
+            // UpdatePlanAsync writes the refreshed price ids onto the plan itself.
+            var previousOveragePriceId = plan.StripeAIOveragePriceId;
+            await planService.UpdatePlanAsync(plan);
             await context.MasterUnitOfWork.SaveChangesAsync(ct);
+
+            if (plan.StripeAIOveragePriceId != previousOveragePriceId)
+            {
+                var swapped = await subscriptionService.SyncAIOverageItemAsync(plan);
+                logger.LogInformation(
+                    "Reconciled AI overage price for plan '{PlanName}' ({Swapped} subscriptions updated)",
+                    plan.Name, swapped);
+            }
+
             syncedCount++;
-            logger.LogInformation("Synced plan '{PlanName}' to Stripe (product: {ProductId})",
-                plan.Name, plan.StripeProductId);
         }
 
         LogCompleted(syncedCount);

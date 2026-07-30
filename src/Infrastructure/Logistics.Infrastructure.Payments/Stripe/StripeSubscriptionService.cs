@@ -163,6 +163,46 @@ internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionServic
         return updated;
     }
 
+    public async Task<int> SyncAIOverageItemAsync(SubscriptionPlan plan)
+    {
+        if (string.IsNullOrEmpty(plan.StripePriceId) || string.IsNullOrEmpty(plan.StripeAIOveragePriceId))
+            return 0;
+
+        var subSvc = new SubscriptionService();
+        var updatedCount = 0;
+
+        // The base price identifies the plan's subscribers; their overage item may be absent or stale.
+        var subscriptions = subSvc.ListAutoPagingAsync(new SubscriptionListOptions
+        {
+            Price = plan.StripePriceId,
+            Status = "active"
+        });
+
+        await foreach (var subscription in subscriptions)
+        {
+            if (subscription.Items.Data.Any(i => i.Price.Id == plan.StripeAIOveragePriceId))
+                continue;
+
+            var items = subscription.Items.Data
+                .Where(i => i.Price.Recurring?.UsageType == "metered")
+                .Select(i => new SubscriptionItemOptions { Id = i.Id, Deleted = true })
+                .ToList();
+            items.Add(new SubscriptionItemOptions { Price = plan.StripeAIOveragePriceId });
+
+            await subSvc.UpdateAsync(subscription.Id, new SubscriptionUpdateOptions
+            {
+                Items = items,
+                ProrationBehavior = "none"
+            });
+            updatedCount++;
+            logger.LogInformation(
+                "Synced AI overage price {PriceId} onto subscription {SubscriptionId}",
+                plan.StripeAIOveragePriceId, subscription.Id);
+        }
+
+        return updatedCount;
+    }
+
     private static List<SubscriptionItemOptions> BuildSubscriptionItems(SubscriptionPlan plan, int truckCount)
     {
         var items = new List<SubscriptionItemOptions>

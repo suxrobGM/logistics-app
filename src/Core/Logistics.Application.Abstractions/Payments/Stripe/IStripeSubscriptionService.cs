@@ -23,4 +23,10 @@ public interface IStripeSubscriptionService
 
     Task<StripeSubscription> ChangeSubscriptionPlanAsync(
         string stripeSubscriptionId, SubscriptionPlan newPlan, int truckCount);
+
+    /// <summary>
+    /// Ensures every active subscription on the plan carries its current metered AI overage
+    /// price - adds the missing item or replaces a stale one. Returns subscriptions updated.
+    /// </summary>
+    Task<int> SyncAIOverageItemAsync(SubscriptionPlan plan);
 }

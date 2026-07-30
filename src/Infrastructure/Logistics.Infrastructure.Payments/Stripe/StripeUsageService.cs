@@ -21,7 +21,9 @@ internal sealed class StripeUsageService(
         var meterId = await settingService.GetAsync(MeterSettingKey, ct);
         if (string.IsNullOrEmpty(meterId))
         {
-            logger.LogDebug("AI overage meter not configured in system settings, skipping usage report");
+            logger.LogWarning(
+                "AI overage meter not configured in system settings - overage for tenant {TenantId} will not be billed",
+                tenantId);
             return;
         }
 

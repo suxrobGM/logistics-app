@@ -15,6 +15,12 @@ internal sealed class StripePlanService(
 {
     private const string MeterSettingKey = "Stripe:AIOverageMeterId";
 
+    /// <summary>
+    /// $0.10 per billing unit (standard=1 unit, premium=2). Changes propagate on the next
+    /// UpdatePlanAsync/seeder run.
+    /// </summary>
+    private const decimal AIOverageUnitAmountCents = 10;
+
     public async Task<StripePlanResult> CreatePlanAsync(SubscriptionPlan plan)
     {
         var productService = new ProductService();
@@ -95,7 +101,55 @@ internal sealed class StripePlanService(
             plan.StripePerTruckPriceId = activePerTruckPrice.Id;
         }
 
-        return new StripePlanResult(product, activeBasePrice, activePerTruckPrice);
+        var activeOveragePrice = await ReconcileOveragePriceAsync(priceService, plan);
+        if (activeOveragePrice is not null && activeOveragePrice.Id != plan.StripeAIOveragePriceId)
+            plan.StripeAIOveragePriceId = activeOveragePrice.Id;
+
+        return new StripePlanResult(product, activeBasePrice, activePerTruckPrice, activeOveragePrice);
+    }
+
+    /// <summary>
+    /// Creates the metered AI overage price when missing and deactivate-recreates it on amount or
+    /// interval change (Stripe prices are immutable). Swapping subscription items is the caller's
+    /// job (SyncAIOverageItemAsync).
+    /// </summary>
+    private async Task<Price?> ReconcileOveragePriceAsync(PriceService priceService, SubscriptionPlan plan)
+    {
+        if (!plan.WeeklyAIRequestQuota.HasValue)
+            return null;
+
+        if (string.IsNullOrEmpty(plan.StripeAIOveragePriceId))
+            return await CreateMeteredOveragePriceAsync(priceService, plan.StripeProductId!, plan);
+
+        var existing = await priceService.GetAsync(plan.StripeAIOveragePriceId);
+        if (!HasDrifted(existing, plan, AIOverageUnitAmountCents, plan.Price.Currency))
+            return existing;
+
+        var newPrice = await CreateMeteredOveragePriceAsync(priceService, plan.StripeProductId!, plan);
+        if (newPrice is null)
+            return existing;
+
+        await priceService.UpdateAsync(existing.Id, new PriceUpdateOptions { Active = false });
+        logger.LogInformation("Recreated Stripe AI overage price for plan {PlanId} ({OldPriceId} -> {NewPriceId})",
+            plan.Id, existing.Id, newPrice.Id);
+        return newPrice;
+    }
+
+    /// <summary>
+    /// Whether a live Stripe price still matches the plan. Stripe prices are immutable, so a
+    /// mismatch means the price has to be recreated rather than edited.
+    /// </summary>
+    private static bool HasDrifted(
+        Price existing, SubscriptionPlan plan, decimal expectedAmountCents, string expectedCurrency)
+    {
+        if (existing.UnitAmountDecimal != expectedAmountCents)
+            return true;
+
+        if (!existing.Currency.Equals(expectedCurrency, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return !existing.Recurring.Interval.Equals(plan.Interval.ToString(), StringComparison.OrdinalIgnoreCase)
+               || existing.Recurring.IntervalCount != plan.IntervalCount;
     }
 
     private async Task<Price> CreateLicensedPriceAsync(
@@ -134,7 +188,7 @@ internal sealed class StripePlanService(
         var price = await priceService.CreateAsync(new PriceCreateOptions
         {
             Product = productId,
-            UnitAmountDecimal = 20, // $0.20 per billing unit (base=1, premium=2, ultra=4)
+            UnitAmountDecimal = AIOverageUnitAmountCents,
             Currency = plan.Price.Currency.ToLower(),
             Recurring = new PriceRecurringOptions
             {
@@ -159,14 +213,7 @@ internal sealed class StripePlanService(
         decimal expectedAmountCents, string expectedCurrency, string priceType)
     {
         var existing = await priceService.GetAsync(existingPriceId);
-        var amountChanged = existing.UnitAmountDecimal != expectedAmountCents;
-        var currencyChanged = !existing.Currency.Equals(expectedCurrency, StringComparison.OrdinalIgnoreCase);
-
-        var billingChanged = !existing.Recurring.Interval.Equals(
-            plan.Interval.ToString(), StringComparison.OrdinalIgnoreCase)
-            || existing.Recurring.IntervalCount != plan.IntervalCount;
-
-        if (!amountChanged && !currencyChanged && !billingChanged)
+        if (!HasDrifted(existing, plan, expectedAmountCents, expectedCurrency))
             return existing;
 
         var newPrice = await CreateLicensedPriceAsync(
