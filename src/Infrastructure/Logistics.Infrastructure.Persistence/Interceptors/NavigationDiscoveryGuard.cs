@@ -30,10 +30,12 @@ public sealed class NavigationDiscoveryGuard
         if (detectingChanges > 0 && !e.FromQuery && e.Entry.State == EntityState.Modified)
         {
             throw new InvalidOperationException(
-                $"A new '{e.Entry.Metadata.ClrType.Name}' entity was discovered via a navigation property " +
-                "and would be saved as an UPDATE affecting 0 rows, because its pre-generated id makes EF " +
-                "assume it already exists. Register new entities explicitly with repository.AddAsync " +
-                "before SaveChanges (adding them to the parent's collection alone is not enough).");
+                $"""
+                 A new '{e.Entry.Metadata.ClrType.Name}' entity was discovered via a navigation property
+                 and would be saved as an UPDATE affecting 0 rows, because its pre-generated id makes EF
+                 assume it already exists. Register new entities explicitly with repository.AddAsync
+                 before SaveChanges (adding them to the parent's collection alone is not enough).
+                 """);
         }
     }
 }
