@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Financial.Invoices.Commands;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Financial;
 
 internal sealed class CreateLoadInvoiceTool(IMediator mediator) : IAIDispatchTool
 {

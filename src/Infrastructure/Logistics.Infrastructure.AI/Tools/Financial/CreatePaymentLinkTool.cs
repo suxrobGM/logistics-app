@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Financial.PaymentLinks.Commands;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Financial;
 
 internal sealed class CreatePaymentLinkTool(IMediator mediator) : IAIDispatchTool
 {

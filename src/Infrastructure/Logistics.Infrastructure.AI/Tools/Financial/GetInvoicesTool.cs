@@ -3,7 +3,7 @@ using MediatR;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Financial;
 
 internal sealed class GetInvoicesTool(IMediator mediator) : IAIDispatchTool
 {

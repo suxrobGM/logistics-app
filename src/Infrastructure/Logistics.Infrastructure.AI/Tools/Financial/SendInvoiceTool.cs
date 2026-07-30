@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Financial.Invoices.Commands;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Financial;
 
 internal sealed class SendInvoiceTool(IMediator mediator) : IAIDispatchTool
 {

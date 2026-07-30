@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Financial.Expenses.Queries;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Financial;
 
 internal sealed class GetExpenseStatsTool(IMediator mediator) : IAIDispatchTool
 {

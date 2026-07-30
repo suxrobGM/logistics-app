@@ -1,3 +1,4 @@
+using Logistics.Infrastructure.AI.Tools.Financial;
 using Logistics.Infrastructure.AI.Tools.LoadBoard;
 using Logistics.Infrastructure.AI.Tools.Intermodal;
 using Logistics.Application.Abstractions.AI;

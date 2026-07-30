@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 using MediatR;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Financial;
 
 /// <summary>
 /// Computes per-line tax + breakdown for a hypothetical set of line items without persisting.

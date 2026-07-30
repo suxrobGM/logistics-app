@@ -3,7 +3,7 @@ using MediatR;
 using Logistics.Application.Modules.Financial.Expenses.Queries;
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Financial;
 
 internal sealed class SearchExpensesTool(IMediator mediator) : IAIDispatchTool
 {
