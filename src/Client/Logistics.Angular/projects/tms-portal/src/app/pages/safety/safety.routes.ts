@@ -1,5 +1,5 @@
 import type { Routes } from "@angular/router";
-import { Permission } from "@logistics/shared";
+import { featureGuardFromData, Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { AccidentAddPage } from "./accident-add/accident-add";
 import { AccidentDetailsPage } from "./accident-details/accident-details";
@@ -17,104 +17,115 @@ export const inspectionRoutes: Routes = [
   {
     path: "",
     component: InspectionsDashboardPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "",
       permission: Permission.Safety.View,
+      feature: "safety",
     },
   },
   // Condition Reports
   {
     path: "condition-reports",
     component: ConditionReportsListPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "Condition Reports",
       permission: Permission.Load.View,
+      feature: "safety",
     },
   },
   {
     path: "condition-reports/:id",
     component: ConditionReportDetailsPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "Details",
       permission: Permission.Load.View,
+      feature: "safety",
     },
   },
   // DVIR
   {
     path: "dvir",
     component: DvirListPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "DVIR Reports",
       permission: Permission.Safety.View,
+      feature: "dvir",
     },
   },
   {
     path: "dvir/:id",
     component: DvirDetailsPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "DVIR Details",
       permission: Permission.Safety.View,
+      feature: "dvir",
     },
   },
   {
     path: "dvir/:id/review",
     component: DvirReviewPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "Review DVIR",
       permission: Permission.Safety.Manage,
+      feature: "dvir",
     },
   },
   // Accidents
   {
     path: "accidents",
     component: AccidentsListPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "Accident Reports",
       permission: Permission.Safety.View,
+      feature: "safety",
     },
   },
   {
     path: "accidents/add",
     component: AccidentAddPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "Report Accident",
       permission: Permission.Safety.Manage,
+      feature: "safety",
     },
   },
   {
     path: "accidents/:id",
     component: AccidentDetailsPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "Accident Details",
       permission: Permission.Safety.View,
+      feature: "safety",
     },
   },
   {
     path: "accidents/:id/edit",
     component: AccidentEditPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "Edit Accident",
       permission: Permission.Safety.Manage,
+      feature: "safety",
     },
   },
   // Driver Behavior
   {
     path: "driver-behavior",
     component: DriverBehaviorListPage,
-    canActivate: [authGuard],
+    canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "Driver Behavior",
       permission: Permission.Safety.View,
+      feature: "safety",
     },
   },
 ];

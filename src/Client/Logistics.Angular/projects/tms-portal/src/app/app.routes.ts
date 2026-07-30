@@ -174,7 +174,8 @@ export const appRoutes: Routes = [
     canActivate: [featureGuardFromData],
     data: {
       breadcrumb: "Safety",
-      feature: "safety",
+      // DVIR is its own Starter-tier feature; each child re-declares which of the two admits it.
+      feature: ["safety", "dvir"],
     },
   },
   {

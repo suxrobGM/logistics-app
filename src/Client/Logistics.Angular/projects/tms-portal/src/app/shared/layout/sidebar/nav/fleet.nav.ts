@@ -42,6 +42,13 @@ export const fleetNav: NavSection = {
       ],
     },
     {
+      id: "dvir",
+      label: "DVIR Reports",
+      icon: "clipboard",
+      route: "/safety/dvir",
+      feature: "dvir",
+    },
+    {
       id: "safety",
       label: "Safety",
       icon: "shield",
@@ -51,11 +58,6 @@ export const fleetNav: NavSection = {
           id: "safety-overview",
           label: "Overview",
           route: "/safety",
-        },
-        {
-          id: "safety-dvir",
-          label: "DVIR Reports",
-          route: "/safety/dvir",
         },
         {
           id: "safety-accidents",

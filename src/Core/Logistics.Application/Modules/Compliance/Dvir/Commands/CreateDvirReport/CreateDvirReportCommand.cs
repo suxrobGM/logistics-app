@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Attributes;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Safety;
@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 
-[RequiresFeature(TenantFeature.Safety)]
+[RequiresFeature(TenantFeature.Dvir)]
 public record CreateDvirReportCommand : ICommand<Result<DvirReportDto>>
 {
     public required Guid TruckId { get; set; }

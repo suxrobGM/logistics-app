@@ -34,6 +34,7 @@ export class Pricing {
         "Trip & route optimization",
         "Fleet & driver management",
         "ELD / HOS compliance",
+        "DVIR inspections",
         "Invoicing & payments",
         "Expenses tracking",
         "Reports & analytics",

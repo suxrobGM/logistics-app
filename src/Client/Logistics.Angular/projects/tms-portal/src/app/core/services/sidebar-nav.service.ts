@@ -27,6 +27,7 @@ const ROLE_ITEM_ACCESS: Record<string, string[] | "*"> = {
     "trucks",
     "eld",
     "maintenance",
+    "dvir",
     "safety",
     "employees",
     "customers",

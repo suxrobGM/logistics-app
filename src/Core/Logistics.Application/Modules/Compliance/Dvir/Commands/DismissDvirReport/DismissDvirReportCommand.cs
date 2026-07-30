@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Attributes;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
@@ -8,7 +8,7 @@ namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 /// <summary>
 /// Command to dismiss a DVIR report (clears without full review, for DVIRs with no defects)
 /// </summary>
-[RequiresFeature(TenantFeature.Safety)]
+[RequiresFeature(TenantFeature.Dvir)]
 public record DismissDvirReportCommand : ICommand<Result<DvirReportDto>>
 {
     public required Guid ReportId { get; set; }

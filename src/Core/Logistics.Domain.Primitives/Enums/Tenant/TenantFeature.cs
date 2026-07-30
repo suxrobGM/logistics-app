@@ -22,6 +22,9 @@ public enum TenantFeature
     [Description("Safety & Compliance")]
     Safety,
 
+    [Description("DVIR Inspections")]
+    Dvir,
+
     Expenses,
     Payroll,
     Timesheets,
