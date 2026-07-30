@@ -9,15 +9,15 @@ namespace Logistics.Application.Abstractions.AI;
 /// </summary>
 public static class LlmModelCatalog
 {
+    // Models[0] is the UI fallback - keep the platform default (gpt-5.6-luna) first.
     public static readonly IReadOnlyList<LlmModelInfo> Models =
     [
+        new("gpt-5.6-luna", "GPT-5.6 Luna", LlmProvider.OpenAI),
         new("deepseek-v4-flash", "DeepSeek V4 Flash", LlmProvider.DeepSeek),
         new("deepseek-v4-pro", "DeepSeek V4 Pro", LlmProvider.DeepSeek),
-        new("gpt-5.4-mini", "GPT-5.4 Mini", LlmProvider.OpenAI),
-        new("gpt-5.4", "GPT-5.4", LlmProvider.OpenAI),
         new("claude-haiku-4-5", "Claude Haiku 4.5", LlmProvider.Anthropic),
-        new("claude-sonnet-4-6", "Claude Sonnet 4.6", LlmProvider.Anthropic),
-        new("claude-opus-4-8", "Claude Opus 4.8", LlmProvider.Anthropic),
+        new("claude-sonnet-5", "Claude Sonnet 5", LlmProvider.Anthropic),
+        new("gpt-5.6-terra", "GPT-5.6 Terra", LlmProvider.OpenAI),
     ];
 
     public static LlmModelInfo? Find(string? id) =>

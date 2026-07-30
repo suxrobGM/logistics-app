@@ -189,20 +189,20 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, 100);
 
         var now = DateTime.UtcNow;
-        // 3 sessions with RequestCost 5 each = 15 used, not 3
+        // 3 premium sessions with RequestCost 2 each = 6 used, not 3
         var s1 = CreateCompletedSessionAt(now);
-        s1.RequestCost = 5;
+        s1.RequestCost = 2;
         var s2 = CreateCompletedSessionAt(now);
-        s2.RequestCost = 5;
+        s2.RequestCost = 2;
         var s3 = CreateCompletedSessionAt(now);
-        s3.RequestCost = 5;
+        s3.RequestCost = 2;
 
         SetupSessions(s1, s2, s3);
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
-        Assert.Equal(15, status.UsedThisWeek);
-        Assert.Equal(85, status.Remaining);
+        Assert.Equal(6, status.UsedThisWeek);
+        Assert.Equal(94, status.Remaining);
         Assert.False(status.IsOverQuota);
     }
 
@@ -213,18 +213,18 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, 20);
 
         var now = DateTime.UtcNow;
-        var base1 = CreateCompletedSessionAt(now); // RequestCost = 1 (default)
-        var premium = CreateCompletedSessionAt(now);
-        premium.RequestCost = 5;
-        var ultra = CreateCompletedSessionAt(now);
-        ultra.RequestCost = 10;
+        var standard = CreateCompletedSessionAt(now); // RequestCost = 1 (default)
+        var premium1 = CreateCompletedSessionAt(now);
+        premium1.RequestCost = 2;
+        var premium2 = CreateCompletedSessionAt(now);
+        premium2.RequestCost = 2;
 
-        SetupSessions(base1, premium, ultra);
+        SetupSessions(standard, premium1, premium2);
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
-        Assert.Equal(16, status.UsedThisWeek); // 1 + 5 + 10
-        Assert.Equal(4, status.Remaining);
+        Assert.Equal(5, status.UsedThisWeek); // 1 + 2 + 2
+        Assert.Equal(15, status.Remaining);
         Assert.False(status.IsOverQuota);
     }
 

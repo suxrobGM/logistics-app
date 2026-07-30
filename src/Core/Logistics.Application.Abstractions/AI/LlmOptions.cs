@@ -13,7 +13,7 @@ public class LlmOptions
     /// <summary>
     /// The default provider to use when no tenant override is set.
     /// </summary>
-    public LlmProvider DefaultProvider { get; set; } = LlmProvider.DeepSeek;
+    public LlmProvider DefaultProvider { get; set; } = LlmProvider.OpenAI;
 
     /// <summary>
     /// Provider-specific configurations keyed by provider type.

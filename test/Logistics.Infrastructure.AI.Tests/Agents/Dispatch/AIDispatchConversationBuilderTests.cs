@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Agents;
+﻿using Logistics.Application.Abstractions.Agents;
 using Logistics.Infrastructure.AI.Agents;
 using Logistics.Infrastructure.AI.Agents.Dispatch;
 using System.Text.Json.Nodes;
@@ -64,7 +64,7 @@ public class AIDispatchConversationBuilderTests
         MaxTokens = 4096,
         Providers = new Dictionary<LlmProvider, LlmProviderOptions>
         {
-            [LlmProvider.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-sonnet-4-6" }
+            [LlmProvider.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-sonnet-5" }
         }
     };
 
@@ -209,7 +209,7 @@ public class AIDispatchConversationBuilderTests
         Assert.NotNull(conversation.Provider);
         Assert.Single(conversation.Messages);
         Assert.Equal(ValidConfig.MaxTokens, conversation.MaxTokens);
-        Assert.Equal("claude-sonnet-4-6", conversation.Model);
+        Assert.Equal("claude-sonnet-5", conversation.Model);
     }
 
     [Fact]

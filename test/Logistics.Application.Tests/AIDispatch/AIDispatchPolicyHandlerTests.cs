@@ -165,7 +165,7 @@ public class AIDispatchPolicyHandlerTests
     public void ToDto_OmitsModelAndCost()
     {
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("- Learned rule", 20, DateTime.UtcNow, "claude-opus-4-8", 12.34m);
+        policy.ApplyLearnedPolicy("- Learned rule", 20, DateTime.UtcNow, "claude-sonnet-5", 12.34m);
 
         var dto = policy.ToDto();
         var propertyNames = dto.GetType().GetProperties().Select(p => p.Name).ToList();

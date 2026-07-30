@@ -6,7 +6,7 @@ namespace Logistics.Application.Abstractions.AI;
 public static class AISettingsKeys
 {
     /// <summary>
-    /// The globally selected dispatch model id (e.g. "deepseek-v4-flash"). The provider is derived
+    /// The globally selected dispatch model id (e.g. "gpt-5.6-luna"). The provider is derived
     /// from the model via <c>LlmModelCatalog</c>, so it is not stored separately.
     /// </summary>
     public const string Model = "AI.Model";

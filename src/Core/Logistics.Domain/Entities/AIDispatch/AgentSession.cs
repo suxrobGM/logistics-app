@@ -89,7 +89,7 @@ public class AgentSession : AuditableEntity, ITenantEntity
 
     /// <summary>
     /// Quota cost multiplier for this session based on model tier.
-    /// Base models = 1, Premium (Sonnet/GPT-5.4) = 5, Ultra (Opus) = 10.
+    /// Standard models = 1, Premium (Sonnet 5 / GPT-5.6 Terra) = 2.
     /// </summary>
     public int RequestCost { get; set; } = 1;
 

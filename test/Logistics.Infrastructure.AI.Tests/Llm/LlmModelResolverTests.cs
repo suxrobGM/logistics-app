@@ -24,7 +24,7 @@ public class LlmModelResolverTests
         var providers = new Dictionary<LlmProvider, LlmProviderOptions>
         {
             [LlmProvider.Anthropic] = new() { ApiKey = "", Model = "claude-haiku-4-5" },
-            [LlmProvider.OpenAI] = new() { ApiKey = "", Model = "gpt-5.4-mini" },
+            [LlmProvider.OpenAI] = new() { ApiKey = "", Model = "gpt-5.6-luna" },
             [LlmProvider.DeepSeek] = new() { ApiKey = "", Model = "deepseek-v4-flash" }
         };
 
@@ -47,11 +47,11 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_NoOverride_UsesSystemSetting()
     {
         systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-opus-4-8");
+            .Returns("claude-sonnet-5");
 
         var selection = await sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic));
 
-        Assert.Equal("claude-opus-4-8", selection.Model);
+        Assert.Equal("claude-sonnet-5", selection.Model);
         Assert.Equal(LlmProvider.Anthropic, selection.Provider);
     }
 
@@ -74,7 +74,7 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_KnownOverrideWithApiKey_UsesItAndDerivesProvider()
     {
         systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-opus-4-8");
+            .Returns("claude-sonnet-5");
 
         var selection = await sut.ResolveAsync(
             ConfigWith(LlmProvider.Anthropic, LlmProvider.DeepSeek), "deepseek-v4-flash");
@@ -88,12 +88,12 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_UnknownOverride_FallsBackToGlobalModel()
     {
         systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-opus-4-8");
+            .Returns("claude-sonnet-5");
 
         var selection = await sut.ResolveAsync(
             ConfigWith(LlmProvider.Anthropic), "gpt-9-imaginary");
 
-        Assert.Equal("claude-opus-4-8", selection.Model);
+        Assert.Equal("claude-sonnet-5", selection.Model);
     }
 
     /// <summary>
@@ -104,12 +104,12 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_OverrideProviderHasNoApiKey_FallsBackToGlobalModel()
     {
         systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-opus-4-8");
+            .Returns("claude-sonnet-5");
 
         var selection = await sut.ResolveAsync(
             ConfigWith(LlmProvider.Anthropic), "deepseek-v4-flash");
 
-        Assert.Equal("claude-opus-4-8", selection.Model);
+        Assert.Equal("claude-sonnet-5", selection.Model);
         Assert.Equal(LlmProvider.Anthropic, selection.Provider);
     }
 
@@ -120,11 +120,11 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_BlankOverride_IsIgnored(string? modelId)
     {
         systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-opus-4-8");
+            .Returns("claude-sonnet-5");
 
         var selection = await sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic), modelId);
 
-        Assert.Equal("claude-opus-4-8", selection.Model);
+        Assert.Equal("claude-sonnet-5", selection.Model);
     }
 
     #endregion

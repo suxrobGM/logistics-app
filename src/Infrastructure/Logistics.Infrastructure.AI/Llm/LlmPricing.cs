@@ -7,9 +7,9 @@ namespace Logistics.Infrastructure.AI.Llm;
 internal static class LlmPricing
 {
     /// <param name="InputPerMToken">Dollars per 1 million tokens.</param>
-    /// <param name="QuotaMultiplier">Weekly-quota cost: 1 = base, 5 = premium, 10 = ultra.</param>
+    /// <param name="QuotaMultiplier">Weekly-quota cost: 1 = standard, 2 = premium.</param>
     /// <param name="OverageUnits">
-    /// Stripe billing units at $0.20/unit: base=1 ($0.20), premium=2 ($0.40), ultra=4 ($0.80).
+    /// Stripe billing units at $0.10/unit: standard=1 ($0.10), premium=2 ($0.20).
     /// </param>
     private record ModelPricing(
         decimal InputPerMToken,
@@ -19,33 +19,30 @@ internal static class LlmPricing
         int QuotaMultiplier,
         int OverageUnits);
 
-    private static ModelPricing Base(
+    private static ModelPricing Standard(
         decimal input, decimal output, decimal cacheRead = 0m, decimal cacheWrite = 0m) =>
         new(input, output, cacheRead, cacheWrite, QuotaMultiplier: 1, OverageUnits: 1);
 
     private static ModelPricing Premium(
         decimal input, decimal output, decimal cacheRead = 0m, decimal cacheWrite = 0m) =>
-        new(input, output, cacheRead, cacheWrite, QuotaMultiplier: 5, OverageUnits: 2);
+        new(input, output, cacheRead, cacheWrite, QuotaMultiplier: 2, OverageUnits: 2);
 
-    private static ModelPricing Ultra(
-        decimal input, decimal output, decimal cacheRead = 0m, decimal cacheWrite = 0m) =>
-        new(input, output, cacheRead, cacheWrite, QuotaMultiplier: 10, OverageUnits: 4);
-
-    // Prices as of April 2026
+    // Prices as of July 2026
     private static readonly Dictionary<string, ModelPricing> Pricing = new()
     {
         // Anthropic - https://platform.claude.com/docs/en/about-claude/pricing
-        ["claude-opus-4-8"] = Ultra(5m, 25m, 0.50m, 6.25m),
-        ["claude-sonnet-4-6"] = Premium(3m, 15m, 0.30m, 3.75m),
-        ["claude-haiku-4-5"] = Base(1m, 5m, 0.10m, 1.25m),
+        // Sonnet 5 intro pricing ends 2026-08-31 (reverts to 3 / 15 / 0.30 / 3.75);
+        // bump Premium OverageUnits to 3 then, or overage bills below cost.
+        ["claude-sonnet-5"] = Premium(2m, 10m, 0.20m, 2.50m),
+        ["claude-haiku-4-5"] = Standard(1m, 5m, 0.10m, 1.25m),
 
-        // OpenAI GPT-5.x - https://openai.com/api/pricing/
-        ["gpt-5.4"] = Premium(2.50m, 15m, 0.25m),
-        ["gpt-5.4-mini"] = Base(0.75m, 4.50m, 0.075m),
+        // OpenAI GPT-5.6 - https://openai.com/api/pricing/ (cache writes: 1.25x input)
+        ["gpt-5.6-terra"] = Premium(2m, 12m, 0.20m, 2.50m),
+        ["gpt-5.6-luna"] = Standard(0.20m, 1.20m, 0.02m, 0.25m),
 
         // DeepSeek - https://api-docs.deepseek.com/quick_start/pricing/
-        ["deepseek-v4-flash"] = Base(0.14m, 0.28m, 0.0028m),
-        ["deepseek-v4-pro"] = Base(0.435m, 0.87m, 0.003625m),
+        ["deepseek-v4-flash"] = Standard(0.14m, 0.28m, 0.0028m),
+        ["deepseek-v4-pro"] = Standard(0.435m, 0.87m, 0.003625m),
     };
 
     /// <summary>
@@ -54,16 +51,19 @@ internal static class LlmPricing
     /// Sonnet's tier would over-deduct quota and over-bill overage for what is most often a cheap
     /// or misconfigured model.
     /// </summary>
-    private static readonly ModelPricing DefaultPricing = Pricing["claude-sonnet-4-6"];
+    private static readonly ModelPricing DefaultPricing = Pricing["claude-sonnet-5"];
+
+    /// <summary>All model ids with a pricing entry. Used by parity tests against the catalog.</summary>
+    internal static IReadOnlyCollection<string> KnownModels => Pricing.Keys;
 
     /// <summary>
-    /// Weekly AI request quota cost. Unknown models count as base tier - see
+    /// Weekly AI request quota cost. Unknown models count as standard tier - see
     /// <see cref="DefaultPricing"/> for why this differs from the cost fallback.
     /// </summary>
     public static int GetMultiplier(string model) =>
         Pricing.TryGetValue(model, out var pricing) ? pricing.QuotaMultiplier : 1;
 
-    /// <summary>Stripe billing units for overage reporting. Unknown models count as base tier.</summary>
+    /// <summary>Stripe billing units for overage reporting. Unknown models count as standard tier.</summary>
     public static int GetOverageBillingUnits(string model) =>
         Pricing.TryGetValue(model, out var pricing) ? pricing.OverageUnits : 1;
 
