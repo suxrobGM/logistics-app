@@ -3,7 +3,7 @@ using MediatR;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Domain.Primitives.Enums;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Operations;
 
 internal sealed class SearchLoadsTool(IMediator mediator) : IAIDispatchTool
 {

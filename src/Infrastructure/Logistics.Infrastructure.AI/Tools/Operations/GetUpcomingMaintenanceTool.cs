@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Operations.Maintenance.Queries;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Infrastructure.AI.Tools.Operations;
 
 internal sealed class GetUpcomingMaintenanceTool(IMediator mediator) : IAIDispatchTool
 {
