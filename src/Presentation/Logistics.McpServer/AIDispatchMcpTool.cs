@@ -10,7 +10,7 @@ using Logistics.Application.Abstractions.AIDispatch;
 namespace Logistics.McpServer;
 
 /// <summary>
-/// An MCP tool that wraps a <see cref="AIDispatchToolDefinition"/> and delegates execution
+/// An MCP tool that wraps a <see cref="AgentToolDefinition"/> and delegates execution
 /// to <see cref="IAIDispatchToolExecutor"/>. Generated dynamically from the tool registry
 /// so tool names, descriptions, and schemas are defined in one place.
 /// </summary>
@@ -22,7 +22,7 @@ internal sealed class AIDispatchMcpTool : McpServerTool
     private readonly Tool protocolTool;
     private readonly TenantFeature? requiredFeature;
 
-    public AIDispatchMcpTool(AIDispatchToolDefinition definition)
+    public AIDispatchMcpTool(AgentToolDefinition definition)
     {
         requiredFeature = definition.RequiredFeature;
 

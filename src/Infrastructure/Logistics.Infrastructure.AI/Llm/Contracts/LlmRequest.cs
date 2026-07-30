@@ -6,7 +6,7 @@ internal record LlmRequest
 {
     public required string SystemPrompt { get; init; }
     public required List<LlmMessage> Messages { get; init; }
-    public required List<AIDispatchToolDefinition> Tools { get; init; }
+    public required List<AgentToolDefinition> Tools { get; init; }
     public required string Model { get; init; }
     public required int MaxTokens { get; init; }
     public decimal? Temperature { get; init; }

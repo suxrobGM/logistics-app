@@ -14,16 +14,16 @@ public interface IAgentToolRegistry
     /// tokens every request), as are tools the caller lacks the permission for, so the model never
     /// sees a tool it cannot use. Null <paramref name="callerPermissions"/> skips that filter.
     /// </summary>
-    IReadOnlyList<AIDispatchToolDefinition> GetToolDefinitions(
+    IReadOnlyList<AgentToolDefinition> GetToolDefinitions(
         IReadOnlySet<TenantFeature> enabledFeatures,
         IReadOnlySet<string>? callerPermissions = null,
         bool forDispatchAgent = false);
 
     /// <summary>Every tool, gated or not. For surfaces that gate per call rather than per catalogue.</summary>
-    IReadOnlyList<AIDispatchToolDefinition> GetAllToolDefinitions();
+    IReadOnlyList<AgentToolDefinition> GetAllToolDefinitions();
 
     /// <summary>Null for unknown (e.g. hallucinated) tool names.</summary>
-    AIDispatchToolDefinition? TryGetDefinition(string name);
+    AgentToolDefinition? TryGetDefinition(string name);
 }
 
 /// <summary>
@@ -46,7 +46,7 @@ public interface IAgentToolRegistry
 /// Whether the fleet dispatch agent may call this tool. False by default: that agent can run
 /// Autonomous, so a tool it should not have executes unattended. The copilot is unaffected.
 /// </param>
-public record AIDispatchToolDefinition(
+public record AgentToolDefinition(
     string Name,
     string Description,
     JsonNode InputSchema,

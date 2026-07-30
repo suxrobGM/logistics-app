@@ -16,7 +16,7 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// Processes LLM tool calls into AIDispatchDecision entities.
 /// Handles mode-aware execution (HumanInTheLoop suggests, Autonomous executes).
 /// Write/permission/decision-type behavior comes from the tool's
-/// <see cref="AIDispatchToolDefinition"/> metadata - there is no tool-name list here.
+/// <see cref="AgentToolDefinition"/> metadata - there is no tool-name list here.
 /// </summary>
 internal sealed class AIDispatchDecisionProcessor(
     IAIDispatchToolExecutor toolExecutor,
@@ -64,7 +64,7 @@ internal sealed class AIDispatchDecisionProcessor(
         AIDispatchSession session,
         AIDispatchDecision decision,
         LlmToolUseBlock toolCall,
-        AIDispatchToolDefinition? definition,
+        AgentToolDefinition? definition,
         ToolCallContext context,
         CancellationToken ct)
     {
@@ -132,7 +132,7 @@ internal sealed class AIDispatchDecisionProcessor(
     private static AIDispatchDecision CreateDecision(
         AIDispatchSession session,
         LlmToolUseBlock toolCall,
-        AIDispatchToolDefinition? definition,
+        AgentToolDefinition? definition,
         string? reasoning)
     {
         return new AIDispatchDecision

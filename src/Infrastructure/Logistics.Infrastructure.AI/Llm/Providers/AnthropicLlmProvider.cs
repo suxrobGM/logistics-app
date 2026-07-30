@@ -21,7 +21,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         var client = new AnthropicClient(new APIAuthentication(config.ApiKey), httpClient);
 
         var tools = request.Tools
-            .Select<AIDispatchToolDefinition, Tool>(t =>
+            .Select<AgentToolDefinition, Tool>(t =>
                 new Function(t.Name, t.Description, t.InputSchema))
             .ToList();
 

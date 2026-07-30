@@ -7,7 +7,7 @@ namespace Logistics.Infrastructure.AI.Tools;
 
 internal sealed class AgentToolRegistry : IAgentToolRegistry
 {
-    private static readonly List<AIDispatchToolDefinition> Tools =
+    private static readonly List<AgentToolDefinition> Tools =
     [
         // ── Read Tools ──
 
@@ -529,10 +529,10 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
             DecisionType: AIDispatchDecisionType.CreatePaymentLink)
     ];
 
-    private static readonly Dictionary<string, AIDispatchToolDefinition> ToolsByName =
+    private static readonly Dictionary<string, AgentToolDefinition> ToolsByName =
         Tools.ToDictionary(t => t.Name);
 
-    public IReadOnlyList<AIDispatchToolDefinition> GetToolDefinitions(
+    public IReadOnlyList<AgentToolDefinition> GetToolDefinitions(
         IReadOnlySet<TenantFeature> enabledFeatures,
         IReadOnlySet<string>? callerPermissions = null,
         bool forDispatchAgent = false) =>
@@ -543,9 +543,9 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
                 || t.RequiredPermission is null
                 || callerPermissions.Contains(t.RequiredPermission))];
 
-    public IReadOnlyList<AIDispatchToolDefinition> GetAllToolDefinitions() => Tools;
+    public IReadOnlyList<AgentToolDefinition> GetAllToolDefinitions() => Tools;
 
-    public AIDispatchToolDefinition? TryGetDefinition(string name) =>
+    public AgentToolDefinition? TryGetDefinition(string name) =>
         ToolsByName.GetValueOrDefault(name);
 
     private static JsonObject Prop(string type, string description) =>

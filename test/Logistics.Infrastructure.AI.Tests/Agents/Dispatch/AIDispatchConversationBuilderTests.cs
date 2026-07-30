@@ -36,7 +36,7 @@ public class AIDispatchConversationBuilderTests
                 Arg.Any<IReadOnlySet<TenantFeature>>(),
                 Arg.Any<IReadOnlySet<string>?>(),
                 Arg.Any<bool>())
-            .Returns([new AIDispatchToolDefinition("test_tool", "A test tool", new JsonObject { ["type"] = "object" })]);
+            .Returns([new AgentToolDefinition("test_tool", "A test tool", new JsonObject { ["type"] = "object" })]);
 
         SetTenant();
 

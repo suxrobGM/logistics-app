@@ -11,7 +11,7 @@ internal record LlmConversation(
     ILlmProvider Provider,
     string SystemPrompt,
     List<LlmMessage> Messages,
-    IReadOnlyList<AIDispatchToolDefinition> Tools,
+    IReadOnlyList<AgentToolDefinition> Tools,
     string Model,
     int MaxTokens,
     LlmThinkingOptions? Thinking);
