@@ -37,6 +37,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
         var subscriptionByTenant = subscriptions.ToDictionary(s => s.TenantId);
 
         var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
+        var costWindowStart = DateTime.UtcNow.AddDays(-30);
         var usages = new List<TenantQuotaUsageDto>();
 
         foreach (var tenant in tenants)
@@ -47,46 +48,15 @@ internal sealed class GetTenantQuotaUsagesHandler(
                 continue;
             }
 
-            var weeklyQuota = plan.WeeklyAIRequestQuota!.Value;
-
             var countFrom = tenant.QuotaResetAt > weekStart ? tenant.QuotaResetAt.Value : weekStart;
-            int usedThisWeek;
-            int totalTokens = 0;
-            decimal totalCost = 0;
-            string? lastModel = null;
-
-            try
-            {
-                using var scope = scopeFactory.CreateScope();
-                var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-                tenantUow.SetCurrentTenant(tenant);
-
-                var sessions = await tenantUow.Repository<AgentSession>().Query()
-                    .Where(s =>
-                        s.StartedAt >= countFrom &&
-                        (s.Status == AgentSessionStatus.Running ||
-                         s.Status == AgentSessionStatus.Completed))
-                    .Select(s => new
-                    {
-                        s.InputTokensUsed,
-                        s.OutputTokensUsed,
-                        s.EstimatedCostUsd,
-                        s.ModelUsed,
-                        s.RequestCost
-                    })
-                    .ToListAsync(ct);
-
-                usedThisWeek = sessions.Sum(s => s.RequestCost);
-                totalTokens = sessions.Sum(s => s.InputTokensUsed + s.OutputTokensUsed);
-                totalCost = sessions.Sum(s => s.EstimatedCostUsd);
-                lastModel = sessions.LastOrDefault()?.ModelUsed;
-            }
-            catch
+            var usage = await ReadTenantUsageAsync(tenant, countFrom, costWindowStart, ct);
+            if (usage is null)
             {
                 continue;
             }
 
-            var remaining = Math.Max(0, weeklyQuota - usedThisWeek);
+            var weeklyQuota = plan.WeeklyAIRequestQuota!.Value;
+            var monthlyRevenue = plan.Price.Amount + plan.PerTruckPrice.Amount * usage.TruckCount;
             usages.Add(new TenantQuotaUsageDto
             {
                 TenantId = tenant.Id,
@@ -94,14 +64,20 @@ internal sealed class GetTenantQuotaUsagesHandler(
                 CompanyName = tenant.CompanyName,
                 PlanName = plan.Name,
                 WeeklyQuota = weeklyQuota,
-                UsedThisWeek = usedThisWeek,
-                Remaining = remaining,
-                IsOverQuota = usedThisWeek >= weeklyQuota,
-                OverageCount = Math.Max(0, usedThisWeek - weeklyQuota),
+                UsedThisWeek = usage.UsedThisWeek,
+                Remaining = Math.Max(0, weeklyQuota - usage.UsedThisWeek),
+                IsOverQuota = usage.UsedThisWeek >= weeklyQuota,
+                OverageCount = Math.Max(0, usage.UsedThisWeek - weeklyQuota),
                 QuotaResetAt = tenant.QuotaResetAt,
-                TotalTokensUsed = totalTokens,
-                TotalEstimatedCostUsd = totalCost,
-                LastModelUsed = lastModel
+                TotalTokensUsed = usage.TotalTokens,
+                TotalEstimatedCostUsd = usage.TotalCost,
+                LastModelUsed = usage.LastModel,
+                MonthlyRevenueUsd = monthlyRevenue,
+                MonthlyLlmCostUsd = usage.MonthlyLlmCost,
+                CostToRevenuePercent = monthlyRevenue > 0
+                    ? Math.Round(usage.MonthlyLlmCost / monthlyRevenue * 100, 1)
+                    : null,
+                OverageSessionsThisWeek = usage.OverageSessions
             });
         }
 
@@ -113,5 +89,63 @@ internal sealed class GetTenantQuotaUsagesHandler(
             .ToArray();
 
         return PagedResult<TenantQuotaUsageDto>.Ok(paged, totalItems, request.PageSize);
+    }
+
+    private sealed record TenantUsage(
+        int UsedThisWeek,
+        int OverageSessions,
+        int TotalTokens,
+        decimal TotalCost,
+        decimal MonthlyLlmCost,
+        int TruckCount,
+        string? LastModel);
+
+    /// <summary>
+    /// Reads one tenant's session aggregates from its own database. Returns null when the tenant
+    /// database is unreachable, so a single bad connection string cannot fail the whole listing.
+    /// </summary>
+    private async Task<TenantUsage?> ReadTenantUsageAsync(
+        Tenant tenant, DateTime countFrom, DateTime costWindowStart, CancellationToken ct)
+    {
+        try
+        {
+            using var scope = scopeFactory.CreateScope();
+            var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
+            tenantUow.SetCurrentTenant(tenant);
+
+            // Cost window is 30 days (margin vs monthly revenue); quota window stays weekly.
+            var sessions = await tenantUow.Repository<AgentSession>().Query()
+                .Where(s =>
+                    s.StartedAt >= costWindowStart &&
+                    (s.Status == AgentSessionStatus.Running ||
+                     s.Status == AgentSessionStatus.Completed))
+                .Select(s => new
+                {
+                    s.StartedAt,
+                    s.InputTokensUsed,
+                    s.OutputTokensUsed,
+                    s.EstimatedCostUsd,
+                    s.ModelUsed,
+                    s.RequestCost,
+                    s.IsOverage,
+                    s.Status
+                })
+                .ToListAsync(ct);
+
+            var weekSessions = sessions.Where(s => s.StartedAt >= countFrom).ToList();
+
+            return new TenantUsage(
+                UsedThisWeek: weekSessions.Sum(s => s.RequestCost),
+                OverageSessions: weekSessions.Count(s => s.IsOverage && s.Status == AgentSessionStatus.Completed),
+                TotalTokens: weekSessions.Sum(s => s.InputTokensUsed + s.OutputTokensUsed),
+                TotalCost: weekSessions.Sum(s => s.EstimatedCostUsd),
+                MonthlyLlmCost: sessions.Sum(s => s.EstimatedCostUsd),
+                TruckCount: await tenantUow.Repository<Truck>().CountAsync(ct: ct),
+                LastModel: weekSessions.MaxBy(s => s.StartedAt)?.ModelUsed);
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

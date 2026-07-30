@@ -48,6 +48,9 @@ export class TenantQuotas {
 
   protected readonly Math = Math;
 
+  /** LLM cost above this share of subscription revenue flags the tenant for review. */
+  protected readonly marginAlertThresholdPercent = 30;
+
   protected toggleSelect(tenantId: string): void {
     this.selectedTenantIds.update((set) => {
       const next = new Set(set);

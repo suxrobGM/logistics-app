@@ -59,6 +59,9 @@
         <th>Usage</th>
         <th class="text-right">Tokens</th>
         <th class="text-right">Est. Cost</th>
+        <th class="text-right">Revenue/mo</th>
+        <th class="text-right">LLM Cost (30d)</th>
+        <th class="text-right">Margin</th>
         <th>Model</th>
         <th>Last Reset</th>
       </tr>
@@ -112,6 +115,27 @@
         <td class="text-right">
           <span class="font-mono text-sm">{{ usage.totalEstimatedCostUsd | currency }}</span>
         </td>
+        <td class="text-right">
+          <span class="font-mono text-sm">{{ usage.monthlyRevenueUsd | currency }}</span>
+        </td>
+        <td class="text-right">
+          <span class="font-mono text-sm">{{ usage.monthlyLlmCostUsd | currency }}</span>
+        </td>
+        <td class="text-right">
+          @let costPercent = usage.costToRevenuePercent;
+          @if (costPercent === null || costPercent === undefined) {
+            <span class="text-muted-foreground text-sm">-</span>
+          } @else {
+            @let overMargin = costPercent >= marginAlertThresholdPercent;
+            <span
+              class="font-mono text-sm"
+              [class.text-danger]="overMargin"
+              [class.font-semibold]="overMargin"
+            >
+              {{ costPercent }}%
+            </span>
+          }
+        </td>
         <td>
           @if (usage.lastModelUsed) {
             <span class="text-muted-foreground text-sm">{{ usage.lastModelUsed }}</span>
@@ -132,7 +156,7 @@
     </ng-template>
     <ng-template #empty>
       <tr>
-        <td colspan="11" class="py-8 text-center">
+        <td colspan="14" class="py-8 text-center">
           <ui-stack align="center" gap="2" class="text-muted-foreground">
             <ui-icon name="chart-column" size="xl" />
             <ui-typography variant="body">No tenants with AI quota configured.</ui-typography>

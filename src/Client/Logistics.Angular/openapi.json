@@ -26764,6 +26764,23 @@
           "lastModelUsed": {
             "type": "string",
             "nullable": true
+          },
+          "monthlyRevenueUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "monthlyLlmCostUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "costToRevenuePercent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "overageSessionsThisWeek": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
