@@ -48,7 +48,7 @@ public class AgentLoopRunnerTests
         });
 
         var processor = new AIDispatchDecisionProcessor(
-            toolExecutor, new AIDispatchToolRegistry(), tenantUow,
+            toolExecutor, new AgentToolRegistry(), tenantUow,
             Substitute.For<IAIDispatchBroadcastService>(),
             NullLogger<AIDispatchDecisionProcessor>.Instance);
         sut = new AgentLoopRunner(processor, tenantUow, NullLogger<AgentLoopRunner>.Instance);

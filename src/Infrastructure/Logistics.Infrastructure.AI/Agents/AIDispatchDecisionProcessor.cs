@@ -20,7 +20,7 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// </summary>
 internal sealed class AIDispatchDecisionProcessor(
     IAIDispatchToolExecutor toolExecutor,
-    IAIDispatchToolRegistry toolRegistry,
+    IAgentToolRegistry toolRegistry,
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
     ILogger<AIDispatchDecisionProcessor> logger)

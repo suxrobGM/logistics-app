@@ -40,7 +40,7 @@ public class AIDispatchServiceTests
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });
 
-        var toolRegistry = Substitute.For<IAIDispatchToolRegistry>();
+        var toolRegistry = Substitute.For<IAgentToolRegistry>();
         toolRegistry.GetToolDefinitions(Arg.Any<IReadOnlySet<TenantFeature>>()).Returns([]);
 
         var featureService = Substitute.For<IFeatureService>();

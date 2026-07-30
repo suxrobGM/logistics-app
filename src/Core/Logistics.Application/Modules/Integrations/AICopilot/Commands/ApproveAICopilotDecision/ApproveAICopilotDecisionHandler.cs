@@ -17,7 +17,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser,
     IAIDispatchToolExecutor toolExecutor,
-    IAIDispatchToolRegistry toolRegistry,
+    IAgentToolRegistry toolRegistry,
     IAICopilotBroadcastService broadcastService,
     IMediator mediator,
     IOptions<LlmOptions> llmOptions) : IAppRequestHandler<ApproveAICopilotDecisionCommand, Result>

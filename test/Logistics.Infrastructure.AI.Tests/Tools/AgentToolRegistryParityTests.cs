@@ -11,14 +11,14 @@ namespace Logistics.Infrastructure.AI.Tests.Tools;
 
 /// <summary>
 /// A tool only works when it appears in three places at once: the class, the DI roster in
-/// <see cref="Registrar"/>, and <c>AIDispatchToolRegistry.Tools</c>. Nothing made those agree, and
+/// <see cref="Registrar"/>, and <c>AgentToolRegistry.Tools</c>. Nothing made those agree, and
 /// both directions fail silently - a definition with no implementation reaches the model and comes
 /// back "Unknown tool", while an implementation with no definition is never mentioned to the model
 /// at all, so no surface can ever reach it.
 /// </summary>
-public class AIDispatchToolRegistryParityTests
+public class AgentToolRegistryParityTests
 {
-    private static readonly AIDispatchToolRegistry Registry = new();
+    private static readonly AgentToolRegistry Registry = new();
 
     private static List<Type> DiRegisteredToolTypes()
     {
@@ -87,7 +87,7 @@ public class AIDispatchToolRegistryParityTests
 
         Assert.True(
             unreachable.Count == 0,
-            "Tools registered in DI but absent from AIDispatchToolRegistry.Tools - unreachable from "
+            "Tools registered in DI but absent from AgentToolRegistry.Tools - unreachable from "
             + $"the dispatch agent, the copilot, and MCP alike: {string.Join(", ", unreachable)}");
     }
 

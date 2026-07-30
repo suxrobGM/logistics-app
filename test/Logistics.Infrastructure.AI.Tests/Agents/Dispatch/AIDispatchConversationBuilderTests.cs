@@ -23,7 +23,7 @@ public class AIDispatchConversationBuilderTests
     private readonly ILogger<AIDispatchConversationBuilder> logger = NullLogger<AIDispatchConversationBuilder>.Instance;
 
     private readonly AIDispatchConversationBuilder sut;
-    private readonly IAIDispatchToolRegistry toolRegistry = Substitute.For<IAIDispatchToolRegistry>();
+    private readonly IAgentToolRegistry toolRegistry = Substitute.For<IAgentToolRegistry>();
     private readonly IFeatureService featureService = Substitute.For<IFeatureService>();
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ISystemSettingsService systemSettings = Substitute.For<ISystemSettingsService>();

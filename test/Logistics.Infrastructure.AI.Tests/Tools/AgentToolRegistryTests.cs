@@ -4,9 +4,9 @@ using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools;
 
-public class AIDispatchToolRegistryTests
+public class AgentToolRegistryTests
 {
-    private readonly AIDispatchToolRegistry sut = new();
+    private readonly AgentToolRegistry sut = new();
 
     /// <summary>A tenant with no gated features - the baseline every ungated tool must survive.</summary>
     private static readonly IReadOnlySet<TenantFeature> NoFeatures = new HashSet<TenantFeature>();

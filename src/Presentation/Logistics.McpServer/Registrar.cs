@@ -19,10 +19,10 @@ public static class Registrar
 
         // Build the server instructions and MCP tools from the dispatch tool registry (single source
         // of truth) at options-build time. Deferred here so registration never builds an interim
-        // service provider; IAIDispatchToolRegistry is a singleton, resolvable when options build,
+        // service provider; IAgentToolRegistry is a singleton, resolvable when options build,
         // which also removes any ordering dependency on AddAIInfrastructure.
         services.AddOptions<McpServerOptions>()
-            .Configure<IAIDispatchToolRegistry>((options, registry) =>
+            .Configure<IAgentToolRegistry>((options, registry) =>
             {
                 options.ServerInstructions = McpServerInstructions.Text;
 

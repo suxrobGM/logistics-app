@@ -17,7 +17,7 @@ namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 /// Provider-agnostic - delegates SDK-specific work to <see cref="ILlmProvider"/>.
 /// </summary>
 internal sealed class AIDispatchConversationBuilder(
-    IAIDispatchToolRegistry toolRegistry,
+    IAgentToolRegistry toolRegistry,
     LlmSessionSetup sessionSetup,
     ITenantUnitOfWork tenantUow,
     ISystemSettingsService systemSettings,

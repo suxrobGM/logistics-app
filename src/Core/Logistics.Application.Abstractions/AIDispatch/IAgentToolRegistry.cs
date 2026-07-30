@@ -7,7 +7,7 @@ namespace Logistics.Application.Abstractions.AIDispatch;
 /// Registry of all tools available to the AI agents (dispatch and copilot).
 /// Tool definitions are declared once and reused by the agent loop and the MCP server.
 /// </summary>
-public interface IAIDispatchToolRegistry
+public interface IAgentToolRegistry
 {
     /// <summary>
     /// The catalogue for one agent run. Tools whose feature is off are dropped (their schemas cost

@@ -21,7 +21,7 @@ public class ApproveAICopilotDecisionHandlerTests
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
     private readonly IAIDispatchToolExecutor toolExecutor = Substitute.For<IAIDispatchToolExecutor>();
-    private readonly IAIDispatchToolRegistry toolRegistry = Substitute.For<IAIDispatchToolRegistry>();
+    private readonly IAgentToolRegistry toolRegistry = Substitute.For<IAgentToolRegistry>();
     private readonly IAICopilotBroadcastService broadcastService = Substitute.For<IAICopilotBroadcastService>();
     private readonly IMediator mediator = Substitute.For<IMediator>();
     private readonly ITenantRepository<AIDispatchDecision, Guid> decisionRepo =

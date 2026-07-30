@@ -5,7 +5,7 @@ using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class AIDispatchToolRegistry : IAIDispatchToolRegistry
+internal sealed class AgentToolRegistry : IAgentToolRegistry
 {
     private static readonly List<AIDispatchToolDefinition> Tools =
     [

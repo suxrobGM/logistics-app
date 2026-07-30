@@ -15,7 +15,7 @@ namespace Logistics.Infrastructure.AI.Agents.Copilot;
 /// catalogue, and the message sequence rebuilt from the persisted transcript.
 /// </summary>
 internal sealed class AICopilotConversationBuilder(
-    IAIDispatchToolRegistry toolRegistry,
+    IAgentToolRegistry toolRegistry,
     LlmSessionSetup sessionSetup,
     ILogger<AICopilotConversationBuilder> logger)
 {
