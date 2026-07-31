@@ -1,7 +1,9 @@
+<!-- Auto-grow makes the native resize gripper redundant; manual resize only fights it. -->
 <textarea
   hlmTextarea
   class="w-full"
   [class.max-h-40]="capAutoGrow()"
+  [class.resize-none]="capAutoGrow()"
   [id]="id()"
   [attr.name]="name() || null"
   [rows]="rows()"
