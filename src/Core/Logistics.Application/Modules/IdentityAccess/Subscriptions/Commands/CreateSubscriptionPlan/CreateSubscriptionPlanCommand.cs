@@ -11,7 +11,7 @@ public class CreateSubscriptionPlanCommand : ICommand
     public PlanTier Tier { get; set; }
     public decimal PerTruckPrice { get; set; }
     public int? MaxTrucks { get; set; }
-    public decimal? WeeklyAIBudgetUsd { get; set; }
+    public decimal WeeklyAIBudgetUsd { get; set; }
     public BillingInterval Interval { get; set; }
     public int IntervalCount { get; set; }
 }

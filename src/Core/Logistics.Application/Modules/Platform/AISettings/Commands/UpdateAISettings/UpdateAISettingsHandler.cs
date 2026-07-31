@@ -23,7 +23,6 @@ internal sealed class UpdateAISettingsHandler(
         await systemSettings.SetAsync(AISettingsKeys.ReasoningEffort, req.ReasoningEffort.ToString(),
             "Global reasoning effort for the dispatch agent and copilot", ct);
 
-        // Update per-plan weekly budgets (null = unlimited).
         var planRepo = masterUow.Repository<SubscriptionPlan>();
         var changed = false;
         foreach (var planUpdate in req.Plans)

@@ -12,7 +12,7 @@ internal sealed class UpdateAISettingsValidator : AbstractValidator<UpdateAISett
         RuleFor(i => i.ReasoningEffort).IsInEnum();
 
         RuleForEach(i => i.Plans)
-            .Must(p => WeeklyAIBudgetRules.IsValid(p.WeeklyAIBudgetUsd))
+            .Must(p => p.WeeklyAIBudgetUsd > 0)
             .WithMessage(WeeklyAIBudgetRules.Message);
     }
 }

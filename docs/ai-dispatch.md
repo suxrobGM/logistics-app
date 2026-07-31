@@ -15,7 +15,9 @@ You can switch LLM providers without code changes:
 | **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro    | OpenAI-compatible API                      |
 
 Quota is **cost-based**: every session's `AgentSession.EstimatedCostUsd` (failed and cancelled runs
-too) counts against the plan's `WeeklyAIBudgetUsd` (null = unlimited). Past the budget, sessions
+too) counts against the plan's `WeeklyAIBudgetUsd` - required on every plan, and falling back to the
+Enterprise one for tenants with no subscription (`AIWeeklyBudget` in
+`Application.Abstractions/AIDispatch/`). Nothing runs unmetered. Past the budget, sessions
 bill Stripe metered units (`AIOverageBilling` in `Application.Abstractions/Payments/Stripe/`:
 $0.10/unit, 3× markup, min one unit); the accrued amount is tenant-visible as
 `AIQuotaStatusDto.OverageChargesUsd`. `TenantSettings.BlockAIOverage` swaps billing for a hard

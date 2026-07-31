@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
@@ -22,7 +23,11 @@ internal sealed class GetTenantQuotaUsagesHandler(
     /// <summary>Cost window, chosen to line up with the monthly revenue it is compared against.</summary>
     private static readonly TimeSpan CostWindow = TimeSpan.FromDays(30);
 
-    private sealed record QuotaTenant(Tenant Tenant, Subscription Subscription, SubscriptionPlan Plan);
+    private sealed record QuotaTenant(
+        Tenant Tenant,
+        Subscription? Subscription,
+        SubscriptionPlan? Plan,
+        decimal WeeklyBudgetUsd);
 
     private sealed record TenantUsage(
         decimal SpentThisWeekUsd,
@@ -63,29 +68,31 @@ internal sealed class GetTenantQuotaUsagesHandler(
     }
 
     /// <summary>
-    /// The tenants this report covers: those on a plan that defines a weekly AI quota and whose
-    /// database is reachable. Ordered by id so that rows tying on the sort column - which many do,
-    /// since idle tenants all sit at zero - land on the same page from one request to the next.
+    /// Every tenant whose database is reachable, subscribed or not - an unsubscribed one burns
+    /// model cost too, and is metered against the fallback budget (<see cref="AIWeeklyBudget"/>).
+    /// Ordered by id so that rows tying on the sort column - which many do, since idle tenants all
+    /// sit at zero - land on the same page from one request to the next.
     /// </summary>
     private async Task<List<QuotaTenant>> LoadQuotaTenantsAsync(CancellationToken ct)
     {
-        var subscriptions = await masterUow.Repository<Subscription>().GetListAsync(ct: ct);
+        var tenants = await masterUow.Repository<Tenant>()
+            .GetListAsync(t => t.ConnectionString != null, ct);
 
-        var planIds = subscriptions.Select(s => s.PlanId).Distinct().ToList();
-        var plans = (await masterUow.Repository<SubscriptionPlan>()
-                .GetListAsync(p => planIds.Contains(p.Id) && p.WeeklyAIBudgetUsd != null, ct))
-            .ToDictionary(p => p.Id);
+        var subscriptions = (await masterUow.Repository<Subscription>().GetListAsync(ct: ct))
+            .DistinctBy(s => s.TenantId)
+            .ToDictionary(s => s.TenantId);
 
-        var quotaSubscriptions = subscriptions.Where(s => plans.ContainsKey(s.PlanId)).ToList();
-        var tenantIds = quotaSubscriptions.Select(s => s.TenantId).ToList();
+        var plans = await masterUow.Repository<SubscriptionPlan>().GetListAsync(ct: ct);
+        var plansById = plans.ToDictionary(p => p.Id);
+        var fallbackBudget = AIWeeklyBudget.FallbackFrom(plans);
 
-        var tenants = (await masterUow.Repository<Tenant>()
-                .GetListAsync(t => tenantIds.Contains(t.Id) && t.ConnectionString != null, ct))
-            .ToDictionary(t => t.Id);
-
-        return quotaSubscriptions
-            .Where(s => tenants.ContainsKey(s.TenantId))
-            .Select(s => new QuotaTenant(tenants[s.TenantId], s, plans[s.PlanId]))
+        return tenants
+            .Select(t =>
+            {
+                var subscription = subscriptions.GetValueOrDefault(t.Id);
+                var plan = subscription is not null ? plansById.GetValueOrDefault(subscription.PlanId) : null;
+                return new QuotaTenant(t, subscription, plan, plan?.WeeklyAIBudgetUsd ?? fallbackBudget);
+            })
             .OrderBy(x => x.Tenant.Id)
             .ToList();
     }
@@ -96,7 +103,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
     private async Task<TenantQuotaUsageDto?> BuildUsageRowAsync(
         QuotaTenant target, DateTime weekStart, DateTime costWindowStart, CancellationToken ct)
     {
-        var (tenant, subscription, plan) = target;
+        var (tenant, subscription, plan, weeklyBudget) = target;
 
         var countFrom = tenant.QuotaResetAt > weekStart ? tenant.QuotaResetAt.Value : weekStart;
         var usage = await ReadTenantUsageAsync(tenant, countFrom, costWindowStart, ct);
@@ -105,15 +112,16 @@ internal sealed class GetTenantQuotaUsagesHandler(
             return null;
         }
 
-        var weeklyBudget = plan.WeeklyAIBudgetUsd!.Value;
-        var monthlyRevenue = MonthlyRevenueOf(plan, subscription, usage.TruckCount);
+        var monthlyRevenue = plan is not null && subscription is not null
+            ? MonthlyRevenueOf(plan, subscription, usage.TruckCount)
+            : 0m;
 
         return new TenantQuotaUsageDto
         {
             TenantId = tenant.Id,
             TenantName = tenant.Name,
             CompanyName = tenant.CompanyName,
-            PlanName = plan.Name,
+            PlanName = plan?.Name,
             WeeklyBudgetUsd = weeklyBudget,
             SpentThisWeekUsd = usage.SpentThisWeekUsd,
             RemainingUsd = Math.Max(0m, weeklyBudget - usage.SpentThisWeekUsd),

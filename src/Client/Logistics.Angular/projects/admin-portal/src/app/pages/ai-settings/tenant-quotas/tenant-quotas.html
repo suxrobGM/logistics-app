@@ -2,8 +2,8 @@
   <!-- Actions bar -->
   <ui-stack direction="row" align="center" justify="between" class="mb-4">
     <ui-typography variant="body-sm" color="secondary">
-      Weekly AI spend per tenant against the shared budget. Resetting zeroes the current week's
-      spend.
+      Weekly AI spend per tenant against the shared budget. A tenant without a subscription is
+      metered against the Enterprise budget. Resetting zeroes the current week's spend.
     </ui-typography>
     <ui-stack direction="row" gap="2">
       <ui-button
@@ -84,7 +84,11 @@
           </div>
         </td>
         <td>
-          <ui-badge [value]="usage.planName ?? 'N/A'" severity="info" />
+          @if (usage.planName) {
+            <ui-badge [value]="usage.planName" severity="info" />
+          } @else {
+            <ui-badge value="No subscription" severity="secondary" />
+          }
         </td>
         <td class="text-center">
           <span class="font-mono font-medium" [class.text-danger]="usage.isOverQuota">
@@ -162,7 +166,7 @@
         <td colspan="13" class="py-8 text-center">
           <ui-stack align="center" gap="2" class="text-muted-foreground">
             <ui-icon name="chart-column" size="xl" />
-            <ui-typography variant="body">No tenants with an AI budget configured.</ui-typography>
+            <ui-typography variant="body">No tenants found.</ui-typography>
           </ui-stack>
         </td>
       </tr>

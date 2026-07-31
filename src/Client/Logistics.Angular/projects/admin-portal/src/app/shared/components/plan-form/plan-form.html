@@ -62,9 +62,10 @@
     <div class="col-span-12 md:col-span-4">
       <ui-form-field
         label="Weekly AI Budget (USD)"
-        hint="Model cost shared by dispatch and copilot. Empty means unlimited and unbillable."
+        [required]="true"
+        hint="Model cost shared by dispatch and copilot. Past it, sessions bill as overage."
       >
-        <ui-currency-field [formField]="form.weeklyAIBudgetUsd" placeholder="Unlimited" />
+        <ui-currency-field [formField]="form.weeklyAIBudgetUsd" />
       </ui-form-field>
     </div>
   </div>

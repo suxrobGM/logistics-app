@@ -78,13 +78,21 @@ export class AISettings implements OnInit {
     }
   }
 
+  /** The control clears to null; the DTO field is optional - hence the one conversion. */
   protected updatePlanBudget(planId: string | undefined, budgetUsd: number | null): void {
     this.plans.update((plans) =>
-      plans.map((p) => (p.planId === planId ? { ...p, weeklyAIBudgetUsd: budgetUsd } : p)),
+      plans.map((p) =>
+        p.planId === planId ? { ...p, weeklyAIBudgetUsd: budgetUsd ?? undefined } : p,
+      ),
     );
   }
 
   protected async save(): Promise<void> {
+    if (this.plans().some((p) => !p.weeklyAIBudgetUsd)) {
+      this.toastService.showError("Every plan needs a weekly AI budget greater than zero");
+      return;
+    }
+
     this.isSaving.set(true);
     try {
       await this.api.invoke(updateAISettings, {

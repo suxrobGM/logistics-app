@@ -26,10 +26,10 @@ public class SubscriptionPlan : AuditableEntity, IMasterEntity
     public string? StripeAIOveragePriceId { get; set; }
 
     /// <summary>
-    /// Weekly AI usage budget in USD of estimated model cost. Null means unlimited.
-    /// Sessions run past the budget are billed as overages via Stripe metered billing.
+    /// Weekly AI usage budget in USD of estimated model cost. Sessions run past it are billed as
+    /// overages via Stripe metered billing.
     /// </summary>
-    public decimal? WeeklyAIBudgetUsd { get; set; }
+    public required decimal WeeklyAIBudgetUsd { get; set; }
 
     /// <summary>
     /// Maximum number of trucks allowed on this plan. Null means unlimited.

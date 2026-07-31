@@ -5,7 +5,10 @@ public record TenantQuotaUsageDto
     public Guid TenantId { get; set; }
     public string? TenantName { get; set; }
     public string? CompanyName { get; set; }
+
+    /// <summary>Null when the tenant has no subscription; it is still metered.</summary>
     public string? PlanName { get; set; }
+
     public decimal WeeklyBudgetUsd { get; set; }
     public decimal SpentThisWeekUsd { get; set; }
     public decimal RemainingUsd { get; set; }

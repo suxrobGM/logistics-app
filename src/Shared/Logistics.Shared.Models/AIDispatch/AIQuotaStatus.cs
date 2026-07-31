@@ -5,6 +5,7 @@ namespace Logistics.Shared.Models;
 /// before leaving the API - tenants see a percentage, never budget dollars; only the billed
 /// <see cref="OverageChargesUsd"/> is deliberately tenant-visible.
 /// </summary>
+/// <param name="WeeklyBudgetUsd">Always set - unsubscribed tenants fall back per <c>AIWeeklyBudget</c>.</param>
 public record AIQuotaStatus(
     decimal WeeklyBudgetUsd,
     decimal SpentThisWeekUsd,

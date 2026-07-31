@@ -17,7 +17,7 @@ internal sealed class AIQuotaService(
     {
         var tenantInfo = await GetTenantQuotaInfoAsync(tenantId, ct);
 
-        // Unlimited budget (non-subscription tenants or plans without a budget)
+        // Only an unknown tenant reports nothing - an unsubscribed one still has spend to show.
         if (tenantInfo is null)
             return new AIQuotaStatus(0m, 0m, IsOverQuota: false);
 
@@ -32,20 +32,9 @@ internal sealed class AIQuotaService(
             .Where(s => s.StartedAt >= countFrom)
             .SumAsync(s => s.EstimatedCostUsd, ct);
 
-        // Units round per session in memory - the min-1 ceiling doesn't translate to SQL, and
-        // summing raw cost first would drift from the invoice.
-        // Runs unconditionally on purpose: gating it on IsOverQuota looks free (spend only grows
-        // within a window) but zeroes the figure after a mid-week plan upgrade - the one moment a
-        // tenant most wants it, since only ResetTenantQuotas moves countFrom, not a plan change.
-        var overageCosts = await tenantUow.Repository<AgentSession>().Query()
-            .Where(s => s.StartedAt >= countFrom)
-            .Where(AIOverageBilling.Billable)
-            .Select(s => s.EstimatedCostUsd)
-            .ToListAsync(ct);
-        var overageChargesUsd = overageCosts.Sum(AIOverageBilling.UnitsFor) * AIOverageBilling.UnitUsd;
-
         var resetsAt = countFrom.AddDays(7);
         var isOverQuota = spentThisWeek >= budget;
+        var overageChargesUsd = await SumOverageChargesAsync(countFrom, ct);
 
         return new AIQuotaStatus(budget, spentThisWeek, isOverQuota)
         {
@@ -56,23 +45,44 @@ internal sealed class AIQuotaService(
         };
     }
 
+    /// <summary>
+    /// Runs even when the tenant is under quota: gating it on IsOverQuota looks free but zeroes the
+    /// figure after a mid-week plan upgrade, since only ResetTenantQuotas moves countFrom.
+    /// </summary>
+    private async Task<decimal> SumOverageChargesAsync(DateTime countFrom, CancellationToken ct)
+    {
+        // Units round per session in memory - the min-1 ceiling doesn't translate to SQL, and
+        // summing raw cost first would drift from the invoice.
+        var overageCosts = await tenantUow.Repository<AgentSession>().Query()
+            .Where(s => s.StartedAt >= countFrom)
+            .Where(AIOverageBilling.Billable)
+            .Select(s => s.EstimatedCostUsd)
+            .ToListAsync(ct);
+
+        return overageCosts.Sum(AIOverageBilling.UnitsFor) * AIOverageBilling.UnitUsd;
+    }
+
+    /// <summary>Null only for an unknown tenant; the rest fall back per <see cref="AIWeeklyBudget"/>.</summary>
     private async Task<TenantQuotaInfo?> GetTenantQuotaInfoAsync(
         Guid tenantId, CancellationToken ct)
     {
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId, ct);
 
-        if (tenant is null || tenant.Subscription is null)
+        if (tenant is null)
             return null;
 
-        var plan = await masterUow.Repository<SubscriptionPlan>()
-            .GetByIdAsync(tenant.Subscription.PlanId, ct);
+        var planRepo = masterUow.Repository<SubscriptionPlan>();
+        var plan = tenant.Subscription is not null
+            ? await planRepo.GetByIdAsync(tenant.Subscription.PlanId, ct)
+            : null;
 
-        if (plan?.WeeklyAIBudgetUsd is null)
-            return null;
+        // Only the unsubscribed path pays for the catalogue read; this runs on every AI request.
+        var budget = plan?.WeeklyAIBudgetUsd
+                     ?? AIWeeklyBudget.FallbackFrom(await planRepo.GetListAsync(ct: ct));
 
         return new TenantQuotaInfo(
-            BudgetUsd: plan.WeeklyAIBudgetUsd.Value,
-            PlanName: plan.Name,
+            BudgetUsd: budget,
+            PlanName: plan?.Name,
             QuotaResetAt: tenant.QuotaResetAt,
             BlockOverage: tenant.Settings?.BlockAIOverage ?? false);
     }

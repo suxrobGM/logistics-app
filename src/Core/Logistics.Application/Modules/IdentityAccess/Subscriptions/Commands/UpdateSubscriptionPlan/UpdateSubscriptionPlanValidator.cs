@@ -12,7 +12,10 @@ internal sealed class UpdateSubscriptionPlanValidator : AbstractValidator<Update
         RuleFor(i => i.Id)
             .NotEmpty();
 
-        RuleFor(i => i.WeeklyAIBudgetUsd).ValidWeeklyAIBudget();
+        RuleFor(i => i.WeeklyAIBudgetUsd)
+            .GreaterThan(0)
+            .When(i => i.WeeklyAIBudgetUsd.HasValue)
+            .WithMessage(WeeklyAIBudgetRules.Message);
 
         RuleFor(i => i.IntervalCount)
             .GreaterThan(0)

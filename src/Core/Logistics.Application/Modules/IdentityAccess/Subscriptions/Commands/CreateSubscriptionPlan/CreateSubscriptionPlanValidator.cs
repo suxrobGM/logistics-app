@@ -12,7 +12,7 @@ internal sealed class CreateSubscriptionPlanValidator : AbstractValidator<Create
         RuleFor(i => i.Name).NotEmpty();
         RuleFor(i => i.Price).GreaterThanOrEqualTo(0);
 
-        RuleFor(i => i.WeeklyAIBudgetUsd).ValidWeeklyAIBudget();
+        RuleFor(i => i.WeeklyAIBudgetUsd).GreaterThan(0).WithMessage(WeeklyAIBudgetRules.Message);
 
         // Validate the billing interval count, maximum of three years interval allowed (3 years, 36 months, or 156 weeks)
         RuleFor(i => i.IntervalCount)

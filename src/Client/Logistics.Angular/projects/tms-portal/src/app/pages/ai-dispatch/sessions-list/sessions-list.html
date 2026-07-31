@@ -80,7 +80,7 @@
   <!-- AI Quota Usage -->
   @let quota = quotaStatus();
 
-  @if (quota && quota.usagePercent !== undefined) {
+  @if (quota) {
     <div class="mb-6">
       <app-ai-quota-usage [quota]="quota" />
     </div>

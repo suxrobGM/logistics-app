@@ -62,7 +62,7 @@ export class PlanEdit implements OnInit {
       price: plan.price ?? 0,
       perTruckPrice: plan.perTruckPrice ?? 0,
       maxTrucks: plan.maxTrucks ?? null,
-      weeklyAIBudgetUsd: plan.weeklyAIBudgetUsd ?? null,
+      weeklyAIBudgetUsd: plan.weeklyAIBudgetUsd ?? 0,
       interval: plan.interval ?? "month",
       intervalCount: plan.intervalCount ?? 1,
     };

@@ -95,8 +95,12 @@ reintroduce one.
   Unknown models charge at Sonnet 5 rates.
 - Quota is **cost-based**: `AgentSession.EstimatedCostUsd` (written in `AgentLoopRunner`'s finally,
   so failed and cancelled sessions count) summed weekly against
-  `SubscriptionPlan.WeeklyAIBudgetUsd` (null = unlimited). The tenant API exposes a percentage and
+  `SubscriptionPlan.WeeklyAIBudgetUsd`. The tenant API exposes a percentage and
   `OverageChargesUsd` - never budget dollars.
+- **No tenant runs unmetered**: `WeeklyAIBudgetUsd` is required on every plan, and an unsubscribed
+  tenant falls back to the Enterprise budget through `AIWeeklyBudget`
+  (`Application.Abstractions/AIDispatch/`) - resolve a budget elsewhere and unsubscribed tenants
+  vanish from the admin report.
 - Overage: billed-not-blocked by default. `AIOverageBilling`
   (`Application.Abstractions/Payments/Stripe/`) owns **both** halves of the rule - `Billable` /
   `IsBillable` (completed over-budget sessions only) and cost→units ($0.10/unit, 3× markup, min 1).

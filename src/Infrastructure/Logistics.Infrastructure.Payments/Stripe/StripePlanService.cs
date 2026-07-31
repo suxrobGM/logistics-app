@@ -46,12 +46,8 @@ internal sealed class StripePlanService(
         var perTruckPrice = await CreateLicensedPriceAsync(priceService, product.Id, plan,
             plan.PerTruckPrice * 100, plan.PerTruckPrice.Currency, "per_truck");
 
-        // 4. Create AI overage metered price if plan has a weekly budget
-        Price? aiOveragePrice = null;
-        if (plan.WeeklyAIBudgetUsd.HasValue)
-        {
-            aiOveragePrice = await CreateMeteredOveragePriceAsync(priceService, product.Id, plan);
-        }
+        // 4. Create the AI overage metered price - every plan has a budget to run past
+        var aiOveragePrice = await CreateMeteredOveragePriceAsync(priceService, product.Id, plan);
 
         logger.LogInformation("Created Stripe prices for plan {PlanId}", plan.Id);
         return new StripePlanResult(product, basePrice, perTruckPrice, aiOveragePrice);
@@ -150,9 +146,6 @@ internal sealed class StripePlanService(
     /// </summary>
     private async Task<Price?> ReconcileOveragePriceAsync(PriceService priceService, SubscriptionPlan plan)
     {
-        if (!plan.WeeklyAIBudgetUsd.HasValue)
-            return null;
-
         if (string.IsNullOrEmpty(plan.StripeAIOveragePriceId))
             return await CreateMeteredOveragePriceAsync(priceService, plan.StripeProductId!, plan);
 

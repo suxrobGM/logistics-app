@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;
@@ -70,7 +71,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 12m,
                 MaxTrucks = (int?)10,
                 Tier = PlanTier.Starter,
-                WeeklyAIBudgetUsd = (decimal?)5m,
+                WeeklyAIBudgetUsd = 5m,
                 Features = StarterFeatures
             },
             new
@@ -81,7 +82,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 9m,
                 MaxTrucks = (int?)30,
                 Tier = PlanTier.Professional,
-                WeeklyAIBudgetUsd = (decimal?)25m,
+                WeeklyAIBudgetUsd = 25m,
                 Features = ProfessionalFeatures
             },
             new
@@ -92,8 +93,9 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 6m,
                 MaxTrucks = (int?)null,
                 Tier = PlanTier.Enterprise,
-                // Soft cap - sessions beyond it are overage-metered (docs/roadmap/ai-cost-guardrails.md)
-                WeeklyAIBudgetUsd = (decimal?)75m,
+                // Soft cap - sessions beyond it are overage-metered (docs/roadmap/ai-cost-guardrails.md).
+                // Shared with AIWeeklyBudget, the fallback for tenants with no budget of their own.
+                WeeklyAIBudgetUsd = AIWeeklyBudget.DefaultUsd,
                 Features = EnterpriseFeatures
             }
         };

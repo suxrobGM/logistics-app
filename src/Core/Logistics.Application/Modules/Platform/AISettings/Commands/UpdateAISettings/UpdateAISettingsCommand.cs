@@ -15,6 +15,6 @@ public sealed class UpdateAISettingsCommand : ICommand
     /// <summary>Global reasoning depth. Ignored by models without a reasoning control.</summary>
     public ReasoningEffort ReasoningEffort { get; set; }
 
-    /// <summary>Per-plan weekly budget updates. A null budget means unlimited.</summary>
+    /// <summary>Per-plan weekly budget updates.</summary>
     public List<PlanQuotaDto> Plans { get; set; } = [];
 }

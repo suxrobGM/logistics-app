@@ -1,5 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Persistence.Services.AIDispatch;
 using MockQueryable;
 using NSubstitute;
@@ -29,7 +30,9 @@ public class AIQuotaServiceTests
         sut = new AIQuotaService(masterUow, tenantUow);
     }
 
-    private void SetupTenantWithPlan(Guid tenantId, decimal? weeklyBudgetUsd, bool blockOverage = false)
+    private const decimal EnterpriseBudget = 75m;
+
+    private void SetupTenantWithPlan(Guid tenantId, decimal weeklyBudgetUsd, bool blockOverage = false)
     {
         var planId = Guid.NewGuid();
         var tenant = new Tenant
@@ -44,16 +47,39 @@ public class AIQuotaServiceTests
             Settings = new() { BlockAIOverage = blockOverage }
         };
 
+        var plan = new SubscriptionPlan
+        {
+            Id = planId,
+            Name = "Test Plan",
+            Tier = PlanTier.Starter,
+            Price = new() { Amount = 29m, Currency = "USD" },
+            PerTruckPrice = new() { Amount = 12m, Currency = "USD" },
+            WeeklyAIBudgetUsd = weeklyBudgetUsd
+        };
+
         tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(tenant);
-        planRepo.GetByIdAsync(planId, Arg.Any<CancellationToken>())
-            .Returns(new SubscriptionPlan
+        planRepo.GetByIdAsync(planId, Arg.Any<CancellationToken>()).Returns(plan);
+        SetupPlanCatalogue(plan);
+    }
+
+    /// <summary>The given plans plus the Enterprise one the fallback resolves through.</summary>
+    private void SetupPlanCatalogue(params SubscriptionPlan[] plans)
+    {
+        List<SubscriptionPlan> catalogue =
+        [
+            ..plans,
+            new SubscriptionPlan
             {
-                Id = planId,
-                Name = "Test Plan",
-                Price = new() { Amount = 29m, Currency = "USD" },
-                PerTruckPrice = new() { Amount = 12m, Currency = "USD" },
-                WeeklyAIBudgetUsd = weeklyBudgetUsd
-            });
+                Id = Guid.NewGuid(),
+                Name = "Enterprise",
+                Tier = PlanTier.Enterprise,
+                Price = new() { Amount = 169m, Currency = "USD" },
+                PerTruckPrice = new() { Amount = 6m, Currency = "USD" },
+                WeeklyAIBudgetUsd = EnterpriseBudget
+            }
+        ];
+
+        planRepo.GetListAsync(ct: Arg.Any<CancellationToken>()).Returns(catalogue);
     }
 
     private void SetupSessions(params AgentSession[] sessions)
@@ -89,31 +115,56 @@ public class AIQuotaServiceTests
 
     #endregion
 
-    #region Non-subscription tenants
+    #region Tenants without a budget of their own
 
-    [Fact]
-    public async Task GetQuotaStatus_NonSubscriptionTenant_ReturnsUnlimited()
+    private void SetupTenantWithoutSubscription(Guid tenantId, bool blockOverage = false)
     {
-        var tenantId = Guid.NewGuid();
-        var tenant = new Tenant
+        tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(new Tenant
         {
             Id = tenantId,
             Name = "Free Tenant",
             ConnectionString = "test",
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" },
-            IsSubscriptionRequired = false
-        };
-        tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(tenant);
+            IsSubscriptionRequired = false,
+            Settings = new() { BlockAIOverage = blockOverage }
+        });
+        SetupPlanCatalogue();
+    }
+
+    [Fact]
+    public async Task GetQuotaStatus_NonSubscriptionTenant_MetersAgainstEnterpriseBudget()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithoutSubscription(tenantId);
+        SetupSessions();
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
         Assert.False(status.IsOverQuota);
-        Assert.Equal(0m, status.WeeklyBudgetUsd);
+        Assert.Equal(EnterpriseBudget, status.WeeklyBudgetUsd);
     }
 
     [Fact]
-    public async Task GetQuotaStatus_TenantNotFound_ReturnsUnlimited()
+    public async Task GetQuotaStatus_NonSubscriptionTenant_ReportsSpend()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithoutSubscription(tenantId);
+
+        var now = DateTime.UtcNow;
+        SetupSessions(
+            CreateCompletedSessionAt(now, 0.75m),
+            CreateCompletedSessionAt(now, 0.25m));
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        // Otherwise the usage panel reads as "never used AI".
+        Assert.Equal(1m, status.SpentThisWeekUsd);
+        Assert.NotNull(status.ResetsAt);
+    }
+
+    [Fact]
+    public async Task GetQuotaStatus_TenantNotFound_ReturnsEmptyStatus()
     {
         var tenantId = Guid.NewGuid();
         tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns((Tenant?)null);
@@ -121,18 +172,7 @@ public class AIQuotaServiceTests
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
         Assert.False(status.IsOverQuota);
-    }
-
-    [Fact]
-    public async Task GetQuotaStatus_NullBudgetOnPlan_ReturnsUnlimited()
-    {
-        var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, null);
-
-        var status = await sut.GetQuotaStatusAsync(tenantId);
-
-        Assert.False(status.IsOverQuota);
-        Assert.Equal(0m, status.WeeklyBudgetUsd);
+        Assert.Equal(0m, status.SpentThisWeekUsd);
     }
 
     #endregion
@@ -338,15 +378,16 @@ public class AIQuotaServiceTests
     }
 
     [Fact]
-    public async Task GetQuotaStatus_UnlimitedBudgetWithBlock_OverageBlockedFalse()
+    public async Task GetQuotaStatus_NonSubscriptionTenantWithBlock_BlocksOnTheFallbackBudget()
     {
         var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, null, blockOverage: true);
+        SetupTenantWithoutSubscription(tenantId, blockOverage: true);
+        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, EnterpriseBudget + 1m));
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
-        // No budget means nothing to block - the unlimited early-return path.
-        Assert.False(status.OverageBlocked);
+        Assert.True(status.IsOverQuota);
+        Assert.True(status.OverageBlocked);
     }
 
     #endregion

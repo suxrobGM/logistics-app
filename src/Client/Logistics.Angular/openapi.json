@@ -19416,8 +19416,7 @@
           },
           "weeklyAIBudgetUsd": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
           "interval": {
             "$ref": "#/components/schemas/BillingInterval"
@@ -24914,8 +24913,7 @@
           },
           "weeklyAIBudgetUsd": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -26565,8 +26563,7 @@
           },
           "weeklyAIBudgetUsd": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "format": "double"
           },
           "features": {
             "type": "array",
