@@ -91,17 +91,16 @@ For OpenAI-compatible providers, instantiate `OpenAILlmProvider` with the right 
 
 ### 5. Update `LlmPricing.cs`
 
-**One entry.** Wrap it in the tier factory - that sets quota multiplier and overage units together, so they cannot drift apart.
+**One entry** - per-token USD prices. The weekly budget and Stripe overage both derive from the
+cost this computes; there is no tier or multiplier to pick.
 
 ```csharp
 private static readonly Dictionary<string, ModelPricing> Pricing = new()
 {
     // existing entries
-    ["new-model-1"] = Standard(0.50m, 2.0m, 0.05m), // input, output, cache-read per M tokens
+    ["new-model-1"] = new(0.50m, 2.0m, 0.05m), // input, output, cache-read per M tokens
 };
 ```
-
-Pick the tier: `Standard` (1× quota, 1 overage unit) or `Premium` (2×, 2) — billing units are $0.10 each. The tier only affects quota cost; it does **not** gate which plans can use the model (the model is global).
 
 ### 6. Add the model to `LlmModelCatalog`
 
@@ -111,9 +110,20 @@ In `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs`:
 public static readonly IReadOnlyList<LlmModelInfo> Models =
 [
     // existing entries
-    new("new-model-1", "New Model 1", LlmProvider.NewProvider),
+    new("new-model-1", "New Model 1", LlmProvider.NewProvider, ReasoningStyle.OpenAIEffort),
 ];
 ```
+
+**Pick the `ReasoningStyle` deliberately** - it decides whether providers send a reasoning
+parameter for the admin-set effort level:
+
+- `OpenAIEffort` - the model takes `reasoning_effort` on chat completions. Reasoning models
+  **must** be flagged: without an explicit value their server-side default is rejected once
+  function tools are present (the GPT-5.6 Luna 400).
+- `AnthropicAdaptive` - Claude adaptive thinking + effort (Sonnet 5 class). Also suppresses
+  temperature, which these models reject.
+- `None` (default) - no reasoning parameter is ever sent. Use for models without a reasoning
+  control **and** for OpenAI-compatible endpoints that reject the parameter (DeepSeek).
 
 This is the **single source** for the admin AI Settings dropdown (`GET /ai/settings`) and for validating the
 selected model in `UpdateAISettingsCommand`. The admin UI populates automatically - no frontend change.
@@ -124,15 +134,15 @@ selected model in `UpdateAISettingsCommand`. The admin UI populates automaticall
 - [ ] Config section + appsettings entry + env var documented
 - [ ] (If custom SDK) Provider implementation, no SDK types leak
 - [ ] Factory resolves the new provider
-- [ ] **`LlmPricing.Pricing` entry added**, wrapped in `Standard`/`Premium`
-- [ ] `LlmModelCatalog` includes the model (id matches the `LlmPricing` keys)
+- [ ] **`LlmPricing.Pricing` entry added** (per-token USD prices)
+- [ ] `LlmModelCatalog` includes the model (id matches the `LlmPricing` keys) with the right `ReasoningStyle`
 - [ ] Admin AI Settings page shows the new model in the dropdown
 - [ ] Selecting the model as the global model runs a dispatch session successfully
 
 ## Common mistakes
 
-- **Using `new(...)` instead of a tier factory** in `Pricing`: it will not compile, because the tier fields have no defaults. That is deliberate - forgetting the tier used to silently bill a Premium model at Standard rates.
-- **`LlmModelCatalog` id ≠ `LlmPricing` key**: the catalog offers a model the pricing map doesn't know, so it falls back to default pricing/multiplier.
+- **Wrong `ReasoningStyle`**: an unflagged reasoning model 400s on every tool call (Luna); a flagged non-reasoning endpoint rejects the parameter outright. When unsure, start with `None` and test.
+- **`LlmModelCatalog` id ≠ `LlmPricing` key**: the catalog offers a model the pricing map doesn't know, so it silently falls back to Sonnet 5 cost rates.
 - **Forgetting `BaseUrl`** for OpenAI-compatible providers - `OpenAILlmProvider` defaults to OpenAI's endpoint and 401s.
 - **SDK types leaking**: importing the provider SDK in any file other than `Llm/Providers/{X}LlmProvider.cs` breaks the abstraction.
 

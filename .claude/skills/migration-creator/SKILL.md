@@ -44,6 +44,15 @@ dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.
 3. Generate the migration with a **concise descriptive name** (PascalCase) that summarizes what changed
 4. Review the generated migration file for correctness
 
+## Applying Migrations Locally
+
+```bash
+DOTNET_ENVIRONMENT=Development dotnet run --project src/Presentation/Logistics.DbMigrator --no-launch-profile -- --exit
+```
+
+`--exit` stops the host after migrate + seed (without it, it runs forever). **Always pin
+`DOTNET_ENVIRONMENT=Development`** - a missing environment silently targets the production DB.
+
 ## Migration Naming
 
 Use a short, descriptive PascalCase name that says what the migration does - EF Core auto-prefixes the timestamp, so do **not** add `Version_NNNN`, numeric suffixes, or a date.

@@ -27,7 +27,7 @@ The dispatcher and manager web interface for managing all fleet operations.
 | **Agent Tool Registry**    | 7+ tools: fleet search, HOS feasibility checks, assignment scoring, load board search, trip creation, dispatch execution.                                                   |
 | **Session Audit Trail**    | Every tool call, reasoning step, and decision is written to a visual timeline with timestamps. No black box.                                                                |
 | **Re-Planning**            | Reject a suggestion and the agent runs again with the rejection context, looking for an alternative.                                                                        |
-| **Quota Management**       | Weekly quotas use a multiplier per request (1× Standard, 2× Premium models). Plans differ by quota only; the model is global, admin-selected. Overages bill through Stripe. |
+| **Quota Management**       | Weekly USD budgets metered on each session's estimated model cost. Plans differ by budget only; the model is global, admin-selected. Overages bill through Stripe.          |
 | **MCP Server**             | Connect Claude Desktop, Cursor, Windsurf, and other MCP clients to fleet data. API keys are tenant-managed, shown once, stored as SHA-256 hashes, and rate-limited per key. |
 
 ### Operations

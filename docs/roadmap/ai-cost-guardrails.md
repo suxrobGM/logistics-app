@@ -33,3 +33,8 @@ No plan can lose money on AI at full quota utilization with the current global m
   - Admin margin report on tenant-quotas: revenue vs. 30-day LLM cost, highlighted ≥30%.
   - MCP left quota-free by decision (callers bring their own LLM; rate limit + feature gates bound abuse).
   - "Unlimited" gone from AI copy; quota numbers never shown to tenants.
+- **2026-07-31** - Superseded by cost-based budgets: the request-unit quota and tier multipliers
+  were replaced with `SubscriptionPlan.WeeklyAIBudgetUsd` (Starter $5 / Pro $25 / Enterprise $75
+  per week) metered directly on `AgentSession.EstimatedCostUsd` (all statuses count). Overage now
+  bills `ceil(session cost × 3 / $0.10)` Stripe units via `AIOverageBilling` - margin tracks real
+  spend automatically, so the "quota economics" re-check when switching models is no longer needed.

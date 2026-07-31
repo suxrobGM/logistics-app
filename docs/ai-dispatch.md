@@ -8,13 +8,17 @@ The dispatcher looks at fleet state - unassigned loads, available trucks, driver
 
 You can switch LLM providers without code changes:
 
-| Provider      | Models                                | Notes                                         |
-| ------------- | ------------------------------------- | --------------------------------------------- |
-| **OpenAI**    | GPT-5.6 Luna (default), GPT-5.6 Terra | Default provider. Via official OpenAI SDK     |
-| **Anthropic** | Claude Haiku 4.5, Claude Sonnet 5     | Supports prompt caching and extended thinking |
-| **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro    | OpenAI-compatible API                         |
+| Provider      | Models                                | Notes                                      |
+| ------------- | ------------------------------------- | ------------------------------------------ |
+| **OpenAI**    | GPT-5.6 Luna (default), GPT-5.6 Terra | Default provider. Via official OpenAI SDK  |
+| **Anthropic** | Claude Haiku 4.5, Claude Sonnet 5     | Prompt caching; Sonnet 5 adaptive thinking |
+| **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro    | OpenAI-compatible API                      |
 
-Quota cost is multiplier-based, by cost tier: **Standard models (GPT-5.6 Luna, DeepSeek V4 Flash and Pro, Claude Haiku 4.5) are 1×**; Premium models (Claude Sonnet 5, GPT-5.6 Terra) are 2×. A session past quota bills one overage unit at $0.10 (Standard) or two ($0.20, Premium). Per-token prices live in `LlmPricing.cs` - read the current numbers there.
+Quota is **cost-based**: every session's estimated model cost (`AgentSession.EstimatedCostUsd`,
+recorded for failed and cancelled runs too) counts against the plan's weekly USD budget
+(`SubscriptionPlan.WeeklyAIBudgetUsd`, null = unlimited). A completed dispatch session past the
+budget bills Stripe metered units derived from its raw cost (`AIOverageBilling`: $0.10/unit, 3×
+markup, minimum one unit). Per-token prices live in `LlmPricing.cs` - read the current numbers there.
 
 ## Operating Modes
 
@@ -170,7 +174,7 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
   "Llm": {
     "DefaultProvider": "OpenAI",
     "MaxTokens": 16384,
-    "ThinkingBudgetTokens": 16384,
+    "DefaultReasoningEffort": "None",
     "Providers": {
       "Anthropic": {
         "ApiKey": "<key>",
@@ -192,16 +196,17 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
 
 ### Global model (admin-managed)
 
-The dispatch model is global, not per-tenant. An admin sets it in the Admin Portal → AI Settings page,
-which persists `AI.Model` / `AI.Provider` / `AI.ExtendedThinking` to `SystemSettings` (keys in
-`AISettingsKeys`). `AIDispatchConversationBuilder` resolves the model from those settings, falling back to
-the appsettings `Llm` defaults. The selectable models come from `LlmModelCatalog`. Tenants never select or
-see the model. Per tenant, an admin can still toggle `LlmEnabled` (Tenant Edit) to block AI for demo/test
-tenants.
+The dispatch model and reasoning effort are global, not per-tenant. An admin sets them in the Admin
+Portal → AI Settings page, which persists `AI.Model` / `AI.ReasoningEffort` to `SystemSettings`
+(keys in `AISettingsKeys`). `LlmSessionSetup` resolves both from those settings, falling back to
+the appsettings `Llm` defaults. The selectable models come from `LlmModelCatalog`, which also
+declares each model's reasoning style (OpenAI `reasoning_effort`, Anthropic adaptive thinking, or
+none). Tenants never select or see the model. Per tenant, an admin can still toggle `LlmEnabled`
+(Tenant Edit) to block AI for demo/test tenants.
 
-Never switch the global model to a Premium model (Sonnet 5, Terra) without re-running the quota
-economics: the ×2 Premium multiplier is a friendliness choice, not margin protection, so plan quotas
-sized against Standard-tier cost can lose money at full utilization on a Premium model.
+Because quota is metered in USD of model cost, switching to a more expensive model makes each
+session consume proportionally more of every plan's weekly budget - no re-tiering needed, but
+expect tenants to hit their budgets sooner.
 
 ### Feature Gating
 
@@ -219,7 +224,7 @@ src/Infrastructure/Logistics.Infrastructure.AI/
 │   ├── LlmProviderFactory.cs               # Resolves provider from config
 │   ├── LlmClient.cs                        # One-shot ILlmClient for non-agent features
 │   ├── LlmModelResolver.cs                 # Global admin-set model → provider
-│   ├── LlmPricing.cs                       # Token → USD, quota multiplier, overage units
+│   ├── LlmPricing.cs                       # Token → USD cost (the budget/overage currency)
 │   ├── LlmErrorSanitizer.cs                # Strips credentials before text reaches a tenant
 │   ├── Contracts/                          # LlmRequest/Response/Message/ContentBlock/...
 │   └── Providers/                          # AnthropicLlmProvider, OpenAILlmProvider
@@ -251,8 +256,10 @@ Tool definitions are JSON Schema, which works with both Claude API tool schemas 
 
 1. **OpenAI-compatible** (most providers): Add a new `LlmProvider` enum value and configure with `BaseUrl` in appsettings
 2. **Custom SDK**: Create a new `ILlmProvider` implementation, add a case in `LlmProviderFactory`
-3. Add one `Pricing` entry in `LlmPricing.cs`, wrapped in `Standard`/`Premium` to set its tier
-4. Add the model to `LlmModelCatalog` - it populates the admin AI Settings dropdown automatically
+3. Add one `Pricing` entry in `LlmPricing.cs` (per-token USD prices)
+4. Add the model to `LlmModelCatalog` with its `ReasoningStyle` - it populates the admin AI
+   Settings dropdown automatically, and the style decides whether the providers send a
+   reasoning parameter
 
 See the `add-llm-provider` skill for the full checklist.
 

@@ -91,25 +91,35 @@ The agent loop (`AgentLoopRunner`, shared by dispatch and copilot) caps at **25 
 
 ## Model selection and cost
 
-The dispatch model is **global**, set by an admin. Tenants never pick a model and never see model
-names; plans differ by **quota only** - there is no per-plan model tier.
+The dispatch model and reasoning effort are **global**, set by an admin (`AI.Model` /
+`AI.ReasoningEffort` in SystemSettings, resolved once per session by `LlmSessionSetup`). Tenants
+never pick a model and never see model names; plans differ by **weekly budget only** - there is no
+per-plan model tier and **no multiplier/tier system**. Do not reintroduce one.
 
-- `LlmModelCatalog` (`Application.Abstractions/AI`) is the single source of selectable models.
-- `LlmPricing` is the single source of pricing, cost multipliers, and overage units, keyed by the same
-  ids. **Read the current numbers there** - do not copy them into docs, they change every model refresh.
-- Tier is declared once per model, via the `Standard`/`Premium` factory used in the `Pricing`
-  dictionary (Standard: ×1 quota, 1 overage unit; Premium: ×2, 2 units; a unit bills at $0.10);
-  `GetMultiplier` and `GetOverageBillingUnits` both read it, so they cannot disagree.
-  The one thing to preserve: an **unknown** model falls back to the Standard tier for quota and
-  overage but to Sonnet 5 rates for cost. That asymmetry is deliberate - see the comment on
-  `DefaultPricing`.
-- Quota counting is multiplier-based, not flat session counts: `AgentSession.RequestCost` comes
-  from `GetMultiplier()`, `AIQuotaService` sums it for the week, and the tenant-facing API returns a
-  percentage only.
+- `LlmModelCatalog` (`Application.Abstractions/AI`) is the single source of selectable models and
+  of each model's `ReasoningStyle` (`None` / `OpenAIEffort` / `AnthropicAdaptive`). Reasoning-flagged
+  OpenAI models **must always receive an explicit `reasoning_effort`** (None maps to `"none"`) -
+  their server default 400s with function tools on chat completions. `AnthropicAdaptive` models
+  never receive a temperature (Sonnet 5 rejects non-default sampling) and replay thinking blocks
+  in-turn via `LlmThinkingBlock`. Style-`None` models (DeepSeek, Haiku, unknown ids) never receive
+  a reasoning parameter.
+- `LlmPricing` is the single source of per-token pricing, keyed by the same ids. **Read the current
+  numbers there** - do not copy them into docs, they change every model refresh. An **unknown**
+  model is charged at Sonnet 5 rates (conservative fallback - see `DefaultPricing`).
+- Quota is **cost-based**: `AgentSession.EstimatedCostUsd` (written in `AgentLoopRunner`'s finally,
+  so failed/cancelled sessions count too) is summed by `AIQuotaService` for the week against
+  `SubscriptionPlan.WeeklyAIBudgetUsd` (null = unlimited). The tenant-facing API returns a
+  percentage only - never dollars or tokens.
+- Overage: over-budget **completed dispatch** sessions report their raw cost to
+  `IStripeUsageService`; `AIOverageBilling` (Infrastructure.Payments) owns the cost→Stripe-units
+  conversion ($0.10/unit, `CostMarkup` 3×, min 1 unit). The copilot is hard-blocked instead and
+  never bills overage.
 
-Resolution order in `AIDispatchConversationBuilder`: `SystemSettings["AI.Model"]` (admin-set; provider
-is derived from the catalog, never stored) → `LlmOptions.DefaultProvider` + `Model` from appsettings.
-Extended thinking follows the same shape via `SystemSettings["AI.ExtendedThinking"]`.
+Resolution order, once per session in `LlmSessionSetup`: `SystemSettings["AI.Model"]` (admin-set;
+provider is derived from the catalog, never stored) → `LlmOptions.DefaultProvider` + `Model` from
+appsettings. Reasoning effort follows the same shape via `SystemSettings["AI.ReasoningEffort"]` →
+`LlmOptions.DefaultReasoningEffort`; both halves resolve through one owner each (`LlmModelResolver`
+and `AISettingsResolver`) so the admin screen cannot report a setting the agents are not using.
 
 **Per-request override is for one-shot calls only.** `LlmCompletionRequest.ModelId` lets an
 `ILlmClient` call pin a cheap model (the nightly policy learning pass does this). `LlmModelResolver`

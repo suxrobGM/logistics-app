@@ -92,7 +92,7 @@ erDiagram
         PlanTier Tier
         Money BaseFee
         Money PerTruckFee
-        int WeeklyAIRequestQuota
+        decimal WeeklyAIBudgetUsd
     }
     USER {
         guid Id
@@ -109,7 +109,7 @@ The master DB also stores `SuperAdmin`, `BlogPost`, `ContactSubmission`, `DemoRe
 
 Every customer company is one `Tenant` row. The connection string for that company's tenant DB is stored in `Tenant.ConnectionString`, which is generated from `TenantDatabaseDefaults.NameTemplate` at provisioning time (see [Multi-Tenancy](multi-tenancy.md)).
 
-Subscriptions are 1:1 with tenants and reference a `SubscriptionPlan`. Plan tiers (Starter / Professional / Enterprise) gate features through the `PlanFeature` join table and set the weekly AI dispatch quota via `WeeklyAIRequestQuota` (the dispatch model itself is global, set by an admin - not per plan).
+Subscriptions are 1:1 with tenants and reference a `SubscriptionPlan`. Plan tiers (Starter / Professional / Enterprise) gate features through the `PlanFeature` join table and set the weekly AI budget via `WeeklyAIBudgetUsd` (USD of estimated model cost; the dispatch model itself is global, set by an admin - not per plan).
 
 ## Tenant database
 
@@ -328,7 +328,7 @@ stateDiagram-v2
     Cancelled --> [*]
 ```
 
-A session captures token usage (`InputTokensUsed`, `OutputTokensUsed`, `CacheReadTokens`, `CacheCreationTokens`), estimated USD cost, and the `RequestCost` multiplier (1 / 2) used by the AI quota system.
+A session captures token usage (`InputTokensUsed`, `OutputTokensUsed`, `CacheReadTokens`, `CacheCreationTokens`) and `EstimatedCostUsd`, which the AI quota system sums against the plan's weekly budget.
 
 ## Invoice hierarchy (TPH)
 

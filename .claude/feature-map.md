@@ -167,16 +167,16 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Quota / pricing
 
-- Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAIRequestQuota`)
+- Domain: `Entities/Subscription/SubscriptionPlan.cs` (`WeeklyAIBudgetUsd`, null = unlimited)
 - Application: `Application.Abstractions/AIDispatch/IAIQuotaService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (quota tracking), `Infrastructure.AI/Llm/LlmPricing.cs` (tiers: `Standard` ×1 / `Premium` ×2, overage units)
+- Infrastructure: `Infrastructure.Persistence/Services/AIDispatch/AIQuotaService.cs` (cost-based quota tracking), `Infrastructure.AI/Llm/LlmPricing.cs` (per-token pricing), `Infrastructure.Payments/Stripe/AIOverageBilling.cs` (cost → Stripe metered units)
 - API/UI: (quota bar in `tms-portal/pages/ai-dispatch/`), `admin-portal/pages/ai-settings/tenant-quotas/` (per-tenant usage + revenue-vs-LLM-cost margin report)
 - Quota numbers live in `SubscriptionPlanSeeder` + admin portal only - never exposed to tenants (tenant API returns a percentage)
 
 ### Global AI settings
 
 - Application: `Modules/Platform/AISettings/` (`GetAISettings`, `UpdateAISettings`); `Abstractions/AIDispatch/LlmModelCatalog.cs`
-- Infrastructure: `SystemSettingsService` (`AI.Model`/`AI.ExtendedThinking` keys)
+- Infrastructure: `SystemSettingsService` (`AI.Model`/`AI.ReasoningEffort` keys)
 - API/UI: `AISettingsController.cs`, `admin-portal/pages/ai-settings/`
 
 ### Background runner

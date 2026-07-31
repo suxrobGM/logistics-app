@@ -36,8 +36,9 @@ agent loop (`AgentLoopRunner`), the same decision/approval machinery, and the sa
   the UI renders. Tool-result rows have no `DisplayText` and never leave the server.
 - Replay truncates to the last 30 rows, cutting only at a plain user chat message - starting
   mid-turn would orphan a tool_use/tool_result pair and the provider rejects the request.
-- Extended thinking stays off for copilot turns: thinking blocks are not persisted, and replaying
-  prior assistant turns without them violates provider requirements.
+- The copilot follows the same admin-set reasoning effort as the dispatch agent. Thinking blocks
+  are replayed within a turn's tool loop (`LlmThinkingBlock`), but the persisted transcript drops
+  them - prior turns replay fine without them, only in-turn replay is required.
 
 ## Permission scoping
 
@@ -90,10 +91,10 @@ parameter), and each connection auto-joins its private `copilot:{tenantId}:{user
 ## Quota and cost
 
 Each turn is one `AgentSession`, so `AIQuotaService` counts copilot turns and dispatch runs
-against the same weekly plan quota with the same model multipliers (1× Standard, 2× Premium). The
-send endpoint rejects messages with `AI_QUOTA_EXCEEDED` once the quota is exhausted - the copilot
-hard-blocks at quota, unlike dispatch runs, which keep executing past quota and are billed as
-metered overage. The model is the same admin-managed global model the dispatch agent uses.
+against the same weekly plan budget, in USD of estimated model cost. The send endpoint rejects
+messages with `AI_QUOTA_EXCEEDED` once the budget is exhausted - the copilot hard-blocks at the
+budget, unlike dispatch runs, which keep executing past it and are billed as metered overage.
+The model is the same admin-managed global model the dispatch agent uses.
 
 ## Adding a tool
 
