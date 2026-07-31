@@ -1,7 +1,6 @@
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 
 namespace Logistics.Domain.Persistence;
 
@@ -29,31 +28,32 @@ public static class QueryableExtensions
     /// <param name="orderBy">the string to determine the order.</param>
     public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, string? orderBy)
     {
-        if (!string.IsNullOrEmpty(orderBy))
+        if (string.IsNullOrEmpty(orderBy))
         {
-            var orderByQuery = CreateOrderQuery<T>(orderBy);
-            return DynamicQueryableExtensions.OrderBy(query, orderByQuery);
+            return query;
         }
 
-        return query;
+        var orderByQuery = CreateOrderQuery<T>(orderBy);
+        return orderByQuery is null ? query : DynamicQueryableExtensions.OrderBy(query, orderByQuery);
     }
 
-    private static string CreateOrderQuery<T>(string orderBy)
+    /// <summary>
+    ///     Null when the field does not exist on <typeparamref name="T" />, leaving the order
+    ///     untouched. Sort strings name an <b>entity</b> property, but callers reach for the DTO's
+    ///     name often enough (<c>CreatedDate</c> for <c>CreatedAt</c>) that an unknown field must
+    ///     degrade quietly - appending a dangling direction builds "descending" on its own, which
+    ///     surfaces to the caller as an unrelated parse error deep inside dynamic LINQ.
+    /// </summary>
+    private static string? CreateOrderQuery<T>(string orderBy)
     {
         var desc = orderBy[0] == '-';
         var prop = desc ? orderBy[1..] : orderBy;
 
-        var orderByQueryBuilder = new StringBuilder();
-        var orderProps = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-        var matched = orderProps
+        var matched = typeof(T)
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .FirstOrDefault(p => p.Name.Equals(prop.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
-        var dir = desc ? "descending" : "ascending";
-        orderByQueryBuilder.Append($"{matched?.Name} {dir}");
-
-        var orderQuery = orderByQueryBuilder.ToString().Trim();
-        return orderQuery;
+        return matched is null ? null : $"{matched.Name} {(desc ? "descending" : "ascending")}";
     }
 
     /// <summary>

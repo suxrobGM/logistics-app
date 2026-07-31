@@ -20,7 +20,8 @@ internal sealed class GetInvoicesTool(IMediator mediator) : IAgentTool
             StartDate = input.GetDate("start_date"),
             EndDate = input.GetDate("end_date"),
             InvoiceType = InvoiceType.Load,
-            OrderBy = "-CreatedDate",
+            // Entity property name, not the DTO's CreatedDate - the sort is applied to the query.
+            OrderBy = "-CreatedAt",
             Page = input.GetInt("page") ?? 1,
             PageSize = ToolResult.MaxResults
         };

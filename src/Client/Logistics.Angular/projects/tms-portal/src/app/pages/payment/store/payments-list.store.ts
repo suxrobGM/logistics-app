@@ -7,11 +7,11 @@ import { PredefinedDateRanges } from "@/shared/utils";
  * Filters payments to the past 90 days by default.
  */
 export const PaymentsListStore = createListStore<PaymentDto>(getPayments, {
-  defaultSortField: "-CreatedDate",
+  defaultSortField: "-CreatedAt",
   defaultPageSize: 10,
   buildParams: (state) => {
     const past90days = PredefinedDateRanges.getPast90Days();
-    const orderBy = formatSortField(state.sortField, state.sortOrder) || "-CreatedDate";
+    const orderBy = formatSortField(state.sortField, state.sortOrder) || "-CreatedAt";
 
     return {
       Page: state.page,
