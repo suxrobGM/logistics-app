@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.AICopilot;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 using Logistics.Domain.Entities;
@@ -26,6 +27,8 @@ internal sealed class AICopilotService(
     AgentSessionCancellationRegistry cancellationRegistry,
     ITenantUnitOfWork tenantUow,
     IAICopilotBroadcastService broadcastService,
+    IAIQuotaService quotaService,
+    AgentOverageReporter overageReporter,
     IAgentRunContext runContext,
     IMediator mediator,
     ILogger<AICopilotService> logger) : IAICopilotService
@@ -47,13 +50,18 @@ internal sealed class AICopilotService(
         runContext.SetTriggeredBy(request.UserId);
         var permissions = await ResolveCallerPermissionsAsync(request, ct);
 
+        // Billed-not-blocked, same as dispatch: a tenant past its budget keeps working and the
+        // turn is metered on completion.
+        var quota = await quotaService.GetQuotaStatusAsync(request.TenantId, ct);
+
         var session = new AgentSession
         {
             Type = AgentSessionType.Copilot,
             ConversationId = conversation.Id,
             Mode = AgentAutonomyMode.HumanInTheLoop,
             TriggeredByUserId = request.UserId,
-            StartedAt = DateTime.UtcNow
+            StartedAt = DateTime.UtcNow,
+            IsOverage = quota.IsOverQuota
         };
 
         await tenantUow.Repository<AgentSession>().AddAsync(session, ct);
@@ -119,6 +127,7 @@ internal sealed class AICopilotService(
         }
 
         await BroadcastTurnUpdateAsync(request, conversation, session);
+        await overageReporter.ReportIfOverBudgetAsync(session, request.TenantId);
     }
 
     /// <summary>

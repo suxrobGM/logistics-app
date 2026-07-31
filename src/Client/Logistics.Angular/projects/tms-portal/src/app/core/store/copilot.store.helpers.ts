@@ -17,7 +17,8 @@ export const persistDrawerWidth = (width: number): void =>
   localStorage.setItem(DrawerWidthKey, String(width));
 
 export interface QuotaNotice {
-  blocked: boolean;
+  /** Past budget - the turn still runs, it just bills. Styles the notice, never gates the composer. */
+  overBudget: boolean;
   text: string;
 }
 
@@ -26,15 +27,15 @@ export function buildQuotaNotice(quota: AIQuotaStatusDto | null): QuotaNotice | 
   if (!quota) return null;
   if (quota.isOverQuota) {
     return {
-      blocked: true,
+      overBudget: true,
       text:
-        "Weekly AI quota exhausted" +
-        (quota.resetsAt ? ` - resets ${new Date(quota.resetsAt).toLocaleDateString()}.` : "."),
+        "Weekly AI allowance used - further messages are billed as overage" +
+        (quota.resetsAt ? ` until ${new Date(quota.resetsAt).toLocaleDateString()}.` : "."),
     };
   }
   const percent = Math.round((quota.usagePercent ?? 0) * 100);
   return percent >= 80
-    ? { blocked: false, text: `AI usage at ${percent}% of your weekly allowance.` }
+    ? { overBudget: false, text: `AI usage at ${percent}% of your weekly allowance.` }
     : null;
 }
 

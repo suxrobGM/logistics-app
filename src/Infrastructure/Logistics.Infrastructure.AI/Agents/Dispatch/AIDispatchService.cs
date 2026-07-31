@@ -21,7 +21,7 @@ internal sealed class AIDispatchService(
     ITenantUnitOfWork tenantUow,
     IAIDispatchBroadcastService broadcastService,
     IAIQuotaService quotaService,
-    IStripeUsageService stripeUsageService,
+    AgentOverageReporter overageReporter,
     IAgentRunContext runContext,
     ILogger<AIDispatchService> logger) : IAIDispatchService
 {
@@ -81,7 +81,7 @@ internal sealed class AIDispatchService(
 
         await tenantUow.SaveChangesAsync(CancellationToken.None);
         await BroadcastSessionUpdateAsync(session);
-        await ReportOverageIfNeededAsync(session, request.TenantId);
+        await overageReporter.ReportIfOverBudgetAsync(session, request.TenantId);
         return session;
     }
 
@@ -158,20 +158,4 @@ internal sealed class AIDispatchService(
         }
     }
 
-    private async Task ReportOverageIfNeededAsync(AgentSession session, Guid tenantId)
-    {
-        if (!session.IsOverage || session.Status != AgentSessionStatus.Completed)
-            return;
-
-        try
-        {
-            await stripeUsageService.ReportAISessionOverageAsync(tenantId, session.EstimatedCostUsd);
-            logger.LogInformation("Reported AI session overage for session {SessionId} (${CostUsd} model cost)",
-                session.Id, session.EstimatedCostUsd);
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Failed to report AI session overage for session {SessionId}", session.Id);
-        }
-    }
 }

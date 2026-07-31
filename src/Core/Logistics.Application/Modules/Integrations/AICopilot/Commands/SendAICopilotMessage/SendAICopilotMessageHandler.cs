@@ -14,7 +14,6 @@ namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
 internal sealed class SendAICopilotMessageHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser,
-    IAIQuotaService quotaService,
     IBackgroundJobRunner<AICopilotTurnRequest> backgroundRunner,
     ILogger<SendAICopilotMessageHandler> logger)
     : IAppRequestHandler<SendAICopilotMessageCommand, Result<SendAICopilotMessageResultDto>>
@@ -48,15 +47,9 @@ internal sealed class SendAICopilotMessageHandler(
                 conversation.Id, conversation.TurnStartedAt);
         }
 
+        // No budget gate here - an over-budget turn runs and is metered as overage by
+        // AICopilotService, which owns the session the charge attaches to.
         var tenant = tenantUow.GetCurrentTenant();
-        var quota = await quotaService.GetQuotaStatusAsync(tenant.Id, ct);
-        if (quota.IsOverQuota)
-        {
-            return Result<SendAICopilotMessageResultDto>.Fail(
-                "Your weekly AI usage limit is reached. It resets " +
-                (quota.ResetsAt is { } resetsAt ? $"on {resetsAt:yyyy-MM-dd}." : "next week."),
-                ErrorCodes.AIQuotaExceeded);
-        }
 
         var message = conversation.AddTextMessage(AICopilotMessageRole.User, request.Text.Trim());
         await tenantUow.Repository<AICopilotMessage>().AddAsync(message, ct);

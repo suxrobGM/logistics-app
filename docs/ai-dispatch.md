@@ -16,9 +16,10 @@ You can switch LLM providers without code changes:
 
 Quota is **cost-based**: every session's estimated model cost (`AgentSession.EstimatedCostUsd`,
 recorded for failed and cancelled runs too) counts against the plan's weekly USD budget
-(`SubscriptionPlan.WeeklyAIBudgetUsd`, null = unlimited). A completed dispatch session past the
-budget bills Stripe metered units derived from its raw cost (`AIOverageBilling`: $0.10/unit, 3×
-markup, minimum one unit). Per-token prices live in `LlmPricing.cs` - read the current numbers there.
+(`SubscriptionPlan.WeeklyAIBudgetUsd`, null = unlimited). Neither the dispatch agent nor the copilot
+blocks at the budget - a completed session started past it bills Stripe metered units derived from
+its raw cost (`AIOverageBilling`: $0.10/unit, 3× markup, minimum one unit). Per-token prices live in
+`LlmPricing.cs` - read the current numbers there.
 
 ## Operating Modes
 

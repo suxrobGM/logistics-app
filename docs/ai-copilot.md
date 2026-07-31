@@ -12,8 +12,8 @@ agent loop (`AgentLoopRunner`), the same decision/approval machinery, and the sa
 
 ```text
 1. User sends a message (POST ai/copilot/conversations/{id}/messages → 202)
-   - handler checks ownership, quota, and the concurrency guard, persists the
-     user message, marks the conversation Running, enqueues a Hangfire job
+   - handler checks ownership and the concurrency guard, persists the user
+     message, marks the conversation Running, enqueues a Hangfire job
 2. AICopilotTurnJob re-checks the feature flag and runs AICopilotService.RunTurnAsync
 3. The turn creates an AgentSession (Type = Copilot) - quota, tokens, and
    decisions ride the existing session machinery
@@ -90,11 +90,10 @@ parameter), and each connection auto-joins its private `copilot:{tenantId}:{user
 
 ## Quota and cost
 
-Each turn is one `AgentSession`, so `AIQuotaService` counts copilot turns and dispatch runs
-against the same weekly plan budget, in USD of estimated model cost. The send endpoint rejects
-messages with `AI_QUOTA_EXCEEDED` once the budget is exhausted - the copilot hard-blocks at the
-budget, unlike dispatch runs, which keep executing past it and are billed as metered overage.
-The model is the same admin-managed global model the dispatch agent uses.
+Each turn is one `AgentSession`, so copilot turns and dispatch runs draw on the same weekly plan
+budget in USD of estimated model cost. Neither blocks at the budget: a turn started past it is
+stamped `IsOverage` and metered to Stripe on completion by `AgentOverageReporter`. The composer
+warns from 80% of the allowance. The model is the same admin-managed global one dispatch uses.
 
 ## Adding a tool
 

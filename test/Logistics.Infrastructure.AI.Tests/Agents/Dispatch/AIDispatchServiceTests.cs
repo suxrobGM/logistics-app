@@ -79,9 +79,12 @@ public class AIDispatchServiceTests
 
         SetQuotaStatus(isOverQuota: false);
 
+        var overageReporter = new AgentOverageReporter(
+            stripeUsageService, NullLogger<AgentOverageReporter>.Instance);
+
         sut = new AIDispatchService(
             llmOptions, conversationBuilder, loopRunner, cancellationRegistry,
-            tenantUow, broadcastService, quotaService, stripeUsageService, new AgentRunContext(),
+            tenantUow, broadcastService, quotaService, overageReporter, new AgentRunContext(),
             NullLogger<AIDispatchService>.Instance);
     }
 

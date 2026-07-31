@@ -13,8 +13,8 @@ internal static class AIOverageBilling
     public const decimal UnitUsd = 0.10m;
 
     /// <summary>
-    /// Markup on raw model cost. Tunable; covers never-metered budget burn (failed/cancelled/
-    /// copilot sessions), Stripe fees, and margin.
+    /// Markup on raw model cost. Tunable; covers never-metered budget burn (failed and cancelled
+    /// sessions, and the run that crosses the budget), Stripe fees, and margin.
     /// </summary>
     public const decimal CostMarkup = 3m;
 

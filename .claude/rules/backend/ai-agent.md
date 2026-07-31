@@ -97,9 +97,10 @@ reintroduce one.
 - Quota is **cost-based**: `AgentSession.EstimatedCostUsd` (written in `AgentLoopRunner`'s finally,
   so failed and cancelled sessions count) summed for the week against
   `SubscriptionPlan.WeeklyAIBudgetUsd` (null = unlimited). The tenant API returns a percentage only.
-- Overage: over-budget **completed dispatch** sessions report raw cost to `IStripeUsageService`;
-  `AIOverageBilling` owns the cost→units conversion ($0.10/unit, 3× markup, min 1). The copilot is
-  hard-blocked instead and never bills overage.
+- Overage: neither surface blocks on budget. **Completed** over-budget sessions bill through
+  `AgentOverageReporter`; `AIOverageBilling` converts cost→units ($0.10/unit, 3× markup, min 1).
+  `IsOverage` is stamped at session start, so the run that crosses the line is free, and
+  failed/cancelled runs spend budget without billing - both priced into the markup.
 
 Resolution is setting → appsettings default for both halves, each through one owner
 (`LlmModelResolver`, `AISettingsResolver`) so the admin screen cannot report a setting the agents

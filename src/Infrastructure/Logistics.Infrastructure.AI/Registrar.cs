@@ -41,6 +41,7 @@ public static class Registrar
         services.AddSingleton<AgentSessionCancellationRegistry>();
         services.AddScoped<LlmSessionSetup>();
         services.AddScoped<AgentLoopRunner>();
+        services.AddScoped<AgentOverageReporter>();
         services.AddScoped<IAIDispatchService, AIDispatchService>();
         services.AddScoped<AIDispatchConversationBuilder>();
         services.AddScoped<AgentDecisionProcessor>();

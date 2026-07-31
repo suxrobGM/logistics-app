@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions.AICopilot;
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Integrations.AICopilot.Commands;
@@ -17,7 +16,6 @@ public class SendAICopilotMessageHandlerTests
 {
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
-    private readonly IAIQuotaService quotaService = Substitute.For<IAIQuotaService>();
     private readonly IBackgroundJobRunner<AICopilotTurnRequest> backgroundRunner =
         Substitute.For<IBackgroundJobRunner<AICopilotTurnRequest>>();
     private readonly ITenantRepository<AICopilotConversation, Guid> conversationRepo =
@@ -41,18 +39,10 @@ public class SendAICopilotMessageHandlerTests
             CompanyAddress = new() { Line1 = "1 Main", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" }
         });
         currentUser.GetUserId().Returns(userId);
-        SetQuota(isOverQuota: false);
 
         sut = new SendAICopilotMessageHandler(
-            tenantUow, currentUser, quotaService, backgroundRunner,
+            tenantUow, currentUser, backgroundRunner,
             NullLogger<SendAICopilotMessageHandler>.Instance);
-    }
-
-    private void SetQuota(bool isOverQuota)
-    {
-        quotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(new AIQuotaStatus(5m, isOverQuota ? 5m : 0.10m,
-                isOverQuota, "Starter", DateTime.UtcNow.AddDays(3)));
     }
 
     private AICopilotConversation SetConversation(Guid? ownerId = null)
@@ -73,19 +63,6 @@ public class SendAICopilotMessageHandlerTests
         var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
-    }
-
-    [Fact]
-    public async Task Handle_QuotaExhausted_FailsWithQuotaErrorCode()
-    {
-        var conversation = SetConversation();
-        SetQuota(isOverQuota: true);
-
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal(ErrorCodes.AIQuotaExceeded, result.ErrorCode);
         backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
     }
 
