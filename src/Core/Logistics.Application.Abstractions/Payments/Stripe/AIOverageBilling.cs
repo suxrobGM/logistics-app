@@ -1,8 +1,13 @@
+using System.Linq.Expressions;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
+
 namespace Logistics.Application.Abstractions.Payments.Stripe;
 
 /// <summary>
-/// Converts a session's raw model cost into Stripe metered billing units. Single source of
-/// billed-unit math for Stripe metering and the tenant-visible accrued overage figure.
+/// Owns both halves of overage billing - which sessions bill and what they cost - for Stripe
+/// metering and the tenant-visible accrued figure alike. Split them and the number a tenant reads
+/// stops matching the invoice they get.
 /// </summary>
 public static class AIOverageBilling
 {
@@ -21,4 +26,17 @@ public static class AIOverageBilling
     /// <summary>Whole units, rounded up, minimum one.</summary>
     public static int UnitsFor(decimal sessionCostUsd) =>
         Math.Max(1, (int)decimal.Ceiling(sessionCostUsd * CostMarkup / UnitUsd));
+
+    /// <summary>
+    /// Which sessions bill. A failed or cancelled run still spent its budget, but billing for a
+    /// turn that produced no answer is not defensible - that gap is priced into
+    /// <see cref="CostMarkup"/>. Query form, so EF can translate it.
+    /// </summary>
+    public static readonly Expression<Func<AgentSession, bool>> Billable =
+        session => session.IsOverage && session.Status == AgentSessionStatus.Completed;
+
+    private static readonly Func<AgentSession, bool> BillableFn = Billable.Compile();
+
+    /// <summary><see cref="Billable"/> for a session already in hand.</summary>
+    public static bool IsBillable(AgentSession session) => BillableFn(session);
 }

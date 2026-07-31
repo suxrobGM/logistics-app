@@ -14,13 +14,12 @@ internal sealed class AgentOverageReporter(
     ILogger<AgentOverageReporter> logger)
 {
     /// <summary>
-    /// Completed sessions only. A failed or cancelled run still spent its budget, but billing for
-    /// a turn that produced no answer is not defensible - that gap is priced into
-    /// <c>AIOverageBilling.CostMarkup</c>.
+    /// Eligibility is <see cref="AIOverageBilling.Billable"/>, shared with the tenant-visible
+    /// accrued figure so the meter and the displayed number cannot drift apart.
     /// </summary>
     public async Task ReportIfOverBudgetAsync(AgentSession session, Guid tenantId)
     {
-        if (!session.IsOverage || session.Status != AgentSessionStatus.Completed)
+        if (!AIOverageBilling.IsBillable(session))
         {
             return;
         }

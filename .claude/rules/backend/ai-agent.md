@@ -97,10 +97,12 @@ reintroduce one.
   so failed and cancelled sessions count) summed weekly against
   `SubscriptionPlan.WeeklyAIBudgetUsd` (null = unlimited). The tenant API exposes a percentage and
   `OverageChargesUsd` - never budget dollars.
-- Overage: billed-not-blocked by default. **Completed** over-budget sessions bill through
-  `AgentOverageReporter`; `AIOverageBilling` (`Application.Abstractions/Payments/Stripe/`, shared
-  with `AIQuotaService`'s tenant-visible `OverageChargesUsd` sum) converts cost→units ($0.10/unit,
-  3× markup, min 1). `IsOverage` is stamped at session start - the crossing run is free and
+- Overage: billed-not-blocked by default. `AIOverageBilling`
+  (`Application.Abstractions/Payments/Stripe/`) owns **both** halves of the rule - `Billable` /
+  `IsBillable` (completed over-budget sessions only) and cost→units ($0.10/unit, 3× markup, min 1).
+  `AgentOverageReporter` meters Stripe through it and `AIQuotaService` sums the tenant-visible
+  `OverageChargesUsd` through it; re-deriving either half makes the displayed number contradict the
+  invoice. `IsOverage` is stamped at session start - the crossing run is free and
   failed/cancelled runs never bill; both priced into the markup. `TenantSettings.BlockAIOverage`
   swaps billing for a hard pause: `OverageBlocked` gates copilot sends (`AIBudgetReached`, not an
   upgrade code) and fail-fasts dispatch sessions, which must keep `IsOverage` false or they'd bill.

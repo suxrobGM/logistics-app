@@ -32,15 +32,14 @@ internal sealed class AIQuotaService(
             .Where(s => s.StartedAt >= countFrom)
             .SumAsync(s => s.EstimatedCostUsd, ct);
 
-        // Filter mirrors AgentOverageReporter's billing gate; units round per session (in memory -
-        // the min-1 ceiling doesn't translate to SQL), or the figure drifts from the invoice.
+        // Units round per session in memory - the min-1 ceiling doesn't translate to SQL, and
+        // summing raw cost first would drift from the invoice.
         // Runs unconditionally on purpose: gating it on IsOverQuota looks free (spend only grows
         // within a window) but zeroes the figure after a mid-week plan upgrade - the one moment a
         // tenant most wants it, since only ResetTenantQuotas moves countFrom, not a plan change.
         var overageCosts = await tenantUow.Repository<AgentSession>().Query()
-            .Where(s => s.StartedAt >= countFrom
-                        && s.IsOverage
-                        && s.Status == AgentSessionStatus.Completed)
+            .Where(s => s.StartedAt >= countFrom)
+            .Where(AIOverageBilling.Billable)
             .Select(s => s.EstimatedCostUsd)
             .ToListAsync(ct);
         var overageChargesUsd = overageCosts.Sum(AIOverageBilling.UnitsFor) * AIOverageBilling.UnitUsd;

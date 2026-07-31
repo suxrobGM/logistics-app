@@ -1,7 +1,8 @@
 using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Domain.Entities;
 using Xunit;
 
-namespace Logistics.Infrastructure.Payments.Tests.Stripe;
+namespace Logistics.Application.Tests.Payments;
 
 public class AIOverageBillingTests
 {
@@ -28,5 +29,32 @@ public class AIOverageBillingTests
     {
         // $50 of model cost at 3x markup over $0.10 units.
         Assert.Equal(1500, AIOverageBilling.UnitsFor(50m));
+    }
+
+    [Fact]
+    public void IsBillable_CompletedOverageSession_Bills()
+    {
+        var session = new AgentSession { IsOverage = true };
+        session.Complete();
+
+        Assert.True(AIOverageBilling.IsBillable(session));
+    }
+
+    [Fact]
+    public void IsBillable_FailedOverageSession_DoesNotBill()
+    {
+        var session = new AgentSession { IsOverage = true };
+        session.Fail("boom");
+
+        Assert.False(AIOverageBilling.IsBillable(session));
+    }
+
+    [Fact]
+    public void IsBillable_CompletedSessionUnderBudget_DoesNotBill()
+    {
+        var session = new AgentSession { IsOverage = false };
+        session.Complete();
+
+        Assert.False(AIOverageBilling.IsBillable(session));
     }
 }
