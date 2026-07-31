@@ -21,7 +21,7 @@ public class HosLimitsEndpointTests
     }
 
     [Fact]
-    public async Task Handle_UsTenant_ReturnsFmcsaLimits()
+    public async Task Handle_USTenant_ReturnsFmcsaLimits()
     {
         WireTenantRegion(Region.US);
 
@@ -37,14 +37,14 @@ public class HosLimitsEndpointTests
     }
 
     [Fact]
-    public async Task Handle_EuTenant_ReturnsEu561Limits()
+    public async Task Handle_EUTenant_ReturnsEU561Limits()
     {
         WireTenantRegion(Region.EU);
 
         var result = await sut.Handle(new GetHosLimitsQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(HosLimits.Eu561Code, result.Value!.RuleSetCode);
+        Assert.Equal(HosLimits.EU561Code, result.Value!.RuleSetCode);
         Assert.Equal(9 * 60, result.Value.MaxDailyDrivingMinutes);
         Assert.Equal(56 * 60, result.Value.MaxWeeklyDrivingMinutes);
         Assert.Equal(90 * 60, result.Value.MaxBiweeklyDrivingMinutes);
@@ -57,7 +57,7 @@ public class HosLimitsEndpointTests
 
     [Theory]
     [InlineData(Region.US, HosLimits.FmcsaCode)]
-    [InlineData(Region.EU, HosLimits.Eu561Code)]
+    [InlineData(Region.EU, HosLimits.EU561Code)]
     public void RuleSetSelector_CodeFor_ReturnsExpectedCode(Region region, string expected)
     {
         Assert.Equal(expected, RuleSetSelector.CodeFor(region));

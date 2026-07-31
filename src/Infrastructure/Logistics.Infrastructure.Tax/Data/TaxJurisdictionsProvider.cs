@@ -12,15 +12,15 @@ internal sealed class TaxJurisdictionsProvider : ITaxJurisdictionsProvider
     {
         var result = new List<TaxJurisdictionInfo>();
 
-        foreach (var country in EuVatRules.EuMemberStates.Concat(["NO", "IS", "CH", "LI", "GB"]))
+        foreach (var country in EUVatRules.EUMemberStates.Concat(["NO", "IS", "CH", "LI", "GB"]))
         {
             result.Add(new TaxJurisdictionInfo(
                 country, null, country,
-                EuVatRates.GetStandardRate(country),
+                EUVatRates.GetStandardRate(country),
                 "eu_vat"));
         }
 
-        foreach (var (state, rate) in UsStateNames())
+        foreach (var (state, rate) in USStateNames())
         {
             result.Add(new TaxJurisdictionInfo("US", state, $"US-{state}", rate, "us_sales_tax"));
         }
@@ -36,7 +36,7 @@ internal sealed class TaxJurisdictionsProvider : ITaxJurisdictionsProvider
         return result;
     }
 
-    private static IEnumerable<(string State, decimal? Rate)> UsStateNames()
+    private static IEnumerable<(string State, decimal? Rate)> USStateNames()
     {
         string[] states =
         [
@@ -45,6 +45,6 @@ internal sealed class TaxJurisdictionsProvider : ITaxJurisdictionsProvider
             "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT",
             "VA","WA","WV","WI","WY","DC"
         ];
-        return states.Select(s => (s, UsSalesTaxRates.GetStateBaseRate(s)));
+        return states.Select(s => (s, USSalesTaxRates.GetStateBaseRate(s)));
     }
 }

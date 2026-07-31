@@ -34,8 +34,8 @@ internal sealed class TenantTaxRateSeeder(ILogger<TenantTaxRateSeeder> logger) :
         var effectiveFrom = new DateTime(2026, 5, 1, 0, 0, 0, DateTimeKind.Utc);
         var added = 0;
 
-        foreach (var (countryCode, ratePercent) in EuVatRates.StandardRates
-                     .Where(r => EuVatRules.IsEuMember(r.Key)))
+        foreach (var (countryCode, ratePercent) in EUVatRates.StandardRates
+                     .Where(r => EUVatRules.IsEUMember(r.Key)))
         {
             var countryRateExists = existingRates.Any(r =>
                 string.IsNullOrEmpty(r.Jurisdiction.Region) &&

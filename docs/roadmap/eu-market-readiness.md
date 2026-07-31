@@ -7,7 +7,7 @@
 
 ## Why
 
-Already shipped and rare: EU 561/2006 HOS rule set (`RuleSetSelector`), VAT engine (`EuVatRates`,
+Already shipped and rare: EU 561/2006 HOS rule set (`RuleSetSelector`), VAT engine (`EUVatRates`,
 VAT invoice PDF block), ADR/hazmat dispatch gating, GDPR tooling (data export/deletion/retention jobs),
 SEPA/iDEAL/Bacs payouts (`StripeCapabilities`), international address forms, VAT/EORI validation.
 European small carriers are stuck with legacy software; positioning there avoids fighting five funded

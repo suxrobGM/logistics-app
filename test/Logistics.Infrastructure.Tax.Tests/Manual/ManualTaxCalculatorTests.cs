@@ -50,7 +50,7 @@ public class ManualTaxCalculatorTests
     #region Reverse charge (EU B2B)
 
     [Fact]
-    public async Task Calculate_EuCrossBorderB2B_TriggersReverseCharge()
+    public async Task Calculate_EUCrossBorderB2B_TriggersReverseCharge()
     {
         var request = Request(
             country: "FR",
@@ -70,7 +70,7 @@ public class ManualTaxCalculatorTests
     }
 
     [Fact]
-    public async Task Calculate_EuSameCountry_AppliesStandardVat()
+    public async Task Calculate_EUSameCountry_AppliesStandardVat()
     {
         var request = Request(
             country: "DE",
@@ -86,7 +86,7 @@ public class ManualTaxCalculatorTests
     }
 
     [Fact]
-    public async Task Calculate_EuB2C_NoVatId_NoReverseCharge_AppliesDestinationVat()
+    public async Task Calculate_EUB2C_NoVatId_NoReverseCharge_AppliesDestinationVat()
     {
         var request = Request(
             country: "FR",
@@ -101,7 +101,7 @@ public class ManualTaxCalculatorTests
     }
 
     [Fact]
-    public async Task Calculate_UsTenantUsCustomer_NeverReverseCharge()
+    public async Task Calculate_USTenantUSCustomer_NeverReverseCharge()
     {
         // Reverse charge is EU-only; same conditions in US should not trigger it.
         var request = Request(
@@ -136,7 +136,7 @@ public class ManualTaxCalculatorTests
     #region Rate fallback chain
 
     [Fact]
-    public async Task Calculate_UsTenantToUsState_AppliesStateBaseRate_WithLocalTaxWarning()
+    public async Task Calculate_USTenantToUSState_AppliesStateBaseRate_WithLocalTaxWarning()
     {
         var request = Request(country: "US", state: "CA", tenantRegion: Region.US, lineAmounts: [100m]);
 
@@ -149,7 +149,7 @@ public class ManualTaxCalculatorTests
     }
 
     [Fact]
-    public async Task Calculate_UsTenantToUnknownState_FallsThroughToZero()
+    public async Task Calculate_USTenantToUnknownState_FallsThroughToZero()
     {
         var request = Request(country: "US", state: "ZZ", tenantRegion: Region.US, lineAmounts: [100m]);
 
@@ -190,7 +190,7 @@ public class ManualTaxCalculatorTests
     #region Tenant-managed rate precedence
 
     [Fact]
-    public async Task Calculate_TenantRateActive_BeatsEuDefault()
+    public async Task Calculate_TenantRateActive_BeatsEUDefault()
     {
         var tenantId = Guid.NewGuid();
         var sutWithRate = WithRates(TenantRate(tenantId, country: "DE", ratePercent: 7.00m, taxCode: "txcd_custom"));

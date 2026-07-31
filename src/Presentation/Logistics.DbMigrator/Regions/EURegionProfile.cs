@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.DbMigrator.Regions;
 
-internal sealed class EuRegionProfile : IRegionProfile
+internal sealed class EURegionProfile : IRegionProfile
 {
     private readonly Random random = new();
 

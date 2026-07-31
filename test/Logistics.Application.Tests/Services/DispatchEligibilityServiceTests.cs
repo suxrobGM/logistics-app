@@ -33,9 +33,9 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_NonHazmatLoad_ValidUsCdl_ReturnsEligible()
+    public async Task CheckAsync_NonHazmatLoad_ValidUSCdl_ReturnsEligible()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA));
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
         var truck = CreateTruck(driver);
         var load = CreateLoad(isHazmat: false);
 
@@ -48,9 +48,9 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_HazmatLoad_UsDriverWithoutHazmatEndorsement_Blocked()
+    public async Task CheckAsync_HazmatLoad_USDriverWithoutHazmatEndorsement_Blocked()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA));
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
         var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3, originCountry: "US", destCountry: "US");
 
@@ -63,9 +63,9 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_HazmatLoad_UsDriverWithHazmatAndPlacardedTruck_Eligible()
+    public async Task CheckAsync_HazmatLoad_USDriverWithHazmatAndPlacardedTruck_Eligible()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA, LicenseEndorsement.Hazmat));
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
         var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3, originCountry: "US", destCountry: "US");
 
@@ -77,9 +77,9 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_AdrLoad_EuDriverWithBasicAdr_Class7Load_Blocked()
+    public async Task CheckAsync_AdrLoad_EUDriverWithBasicAdr_Class7Load_Blocked()
     {
-        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EuCE,
+        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE,
             LicenseEndorsement.Adr));
         var truck = CreateAdrTruck(driver, allowedClasses: HazmatClassFlags.Class7,
             certExpiry: DateTime.UtcNow.AddYears(1));
@@ -95,9 +95,9 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_AdrLoad_EuTruckNotCertifiedForClass_Blocked()
+    public async Task CheckAsync_AdrLoad_EUTruckNotCertifiedForClass_Blocked()
     {
-        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EuCE,
+        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE,
             LicenseEndorsement.Adr));
         var truck = CreateAdrTruck(driver, allowedClasses: HazmatClassFlags.Class3,
             certExpiry: DateTime.UtcNow.AddYears(1));
@@ -115,7 +115,7 @@ public class DispatchEligibilityServiceTests
     [Fact]
     public async Task CheckAsync_AdrCertExpired_Blocked()
     {
-        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EuCE,
+        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE,
             LicenseEndorsement.Adr));
         var truck = CreateAdrTruck(driver, allowedClasses: HazmatClassFlags.Class3,
             certExpiry: DateTime.UtcNow.AddDays(-1));
@@ -133,7 +133,7 @@ public class DispatchEligibilityServiceTests
     [Fact]
     public async Task CheckAsync_LicenseExpired_Blocked()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA,
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
             expiresAt: DateTime.UtcNow.AddDays(-1),
             status: DriverLicenseStatus.Active));
         var truck = CreateTruck(driver);
@@ -152,7 +152,7 @@ public class DispatchEligibilityServiceTests
     [Fact]
     public async Task CheckAsync_MedicalCertExpired_Blocked()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA,
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
             medicalCertExpiresAt: DateTime.UtcNow.AddDays(-1)));
         var truck = CreateTruck(driver);
         var load = CreateLoad(isHazmat: false);
@@ -180,9 +180,9 @@ public class DispatchEligibilityServiceTests
     #region US-specific scenarios
 
     [Fact]
-    public async Task CheckAsync_UsHazmatRoute_DriverHasHazmat_TruckNotPlacarded_Blocked()
+    public async Task CheckAsync_USHazmatRoute_DriverHasHazmat_TruckNotPlacarded_Blocked()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA, LicenseEndorsement.Hazmat));
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
         // Truck not placarded Ã¢â‚¬â€ required for US Hazmat transport.
         var truck = CreateTruck(driver, isHazmatPlacarded: false);
         var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
@@ -197,11 +197,11 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_UsHazmatRoute_DoesNotRequireAdrCertOnTruck()
+    public async Task CheckAsync_USHazmatRoute_DoesNotRequireAdrCertOnTruck()
     {
         // US-issued license with Hazmat + a non-ADR-certified but placarded truck Ã¢â€ â€™
         // should pass even though truck.AdrEquipment.IsAdrCertified == false.
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA, LicenseEndorsement.Hazmat));
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
         // Explicitly assert no ADR equipment.
         Assert.False(truck.AdrEquipment.IsAdrCertified);
@@ -219,10 +219,10 @@ public class DispatchEligibilityServiceTests
     }
 
     [Theory]
-    [InlineData(LicenseClass.UsClassA)]
-    [InlineData(LicenseClass.UsClassB)]
-    [InlineData(LicenseClass.UsClassC)]
-    public async Task CheckAsync_NonHazmatUsLoad_AnyCdlClass_Eligible(LicenseClass cls)
+    [InlineData(LicenseClass.USClassA)]
+    [InlineData(LicenseClass.USClassB)]
+    [InlineData(LicenseClass.USClassC)]
+    public async Task CheckAsync_NonHazmatUSLoad_AnyCdlClass_Eligible(LicenseClass cls)
     {
         var driver = CreateDriver(license: BuildLicense("US", cls));
         var truck = CreateTruck(driver);
@@ -236,9 +236,9 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_UsRoute_TruckHasNoMainDriver_AndNoOverride_Blocked()
+    public async Task CheckAsync_USRoute_TruckHasNoMainDriver_AndNoOverride_Blocked()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA));
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
         var truck = CreateTruck(driver);
         truck.MainDriver = null;
         truck.MainDriverId = null;
@@ -253,11 +253,11 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_UsRoute_ExplicitDriverIdOverride_UsesProvidedDriver()
+    public async Task CheckAsync_USRoute_ExplicitDriverIdOverride_UsesProvidedDriver()
     {
         // Truck has no main driver assigned but caller passes driverId explicitly
         // (e.g., simulating "would secondary driver X be eligible?" planning).
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA, LicenseEndorsement.Hazmat));
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
         truck.MainDriver = null;
         truck.MainDriverId = null;
@@ -272,14 +272,14 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_UsRoute_DriverHasOnlyEuLicense_NoUsCdl_Blocked()
+    public async Task CheckAsync_USRoute_DriverHasOnlyEULicense_NoUSCdl_Blocked()
     {
         // Driver only holds an EU license; load is US domestic. No US CDL on file Ã¢â€ â€™
         // primary-license picker still selects the EU license (it's the only active one),
         // and the US Hazmat-endorsement gate doesn't apply (license is non-US), so on a
         // non-hazmat US load this passes. But on a US Hazmat load, the EU branch fires
         // and demands ADR Ã¢â‚¬â€ which the truck doesn't have Ã¢â€ â€™ blocked.
-        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EuCE));
+        var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
         var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
             originCountry: "US", destCountry: "US");
@@ -293,13 +293,13 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_UsRoute_MultipleLicenses_PrefersUsIssuedForUsRoute()
+    public async Task CheckAsync_USRoute_MultipleLicenses_PrefersUSIssuedForUSRoute()
     {
         // Driver holds both an EU CE license (no Hazmat) and a US CDL with Hazmat.
         // For a US route + Hazmat load, the picker should prefer the US license Ã¢â‚¬â€ and so
         // the US Hazmat-endorsement gate should pass.
-        var euLicense = BuildLicense("DE", LicenseClass.EuCE, LicenseEndorsement.Adr);
-        var usLicense = BuildLicense("US", LicenseClass.UsClassA, LicenseEndorsement.Hazmat);
+        var euLicense = BuildLicense("DE", LicenseClass.EUCE, LicenseEndorsement.Adr);
+        var usLicense = BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat);
         var driver = new Employee
         {
             Id = DriverId,
@@ -320,9 +320,9 @@ public class DispatchEligibilityServiceTests
     }
 
     [Fact]
-    public async Task CheckAsync_UsCdl_MedicalCertExpiringWithin7Days_WarningNotError()
+    public async Task CheckAsync_USCdl_MedicalCertExpiringWithin7Days_WarningNotError()
     {
-        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA,
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
             medicalCertExpiresAt: DateTime.UtcNow.AddDays(3)));
         var truck = CreateTruck(driver);
         var load = CreateLoad(isHazmat: false, originCountry: "US", destCountry: "US");

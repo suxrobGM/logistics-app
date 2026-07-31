@@ -23049,12 +23049,12 @@
           "us_class_a",
           "us_class_b",
           "us_class_c",
-          "eu_c",
-          "eu_ce",
-          "eu_d",
-          "eu_de",
-          "eu_c1",
-          "eu_c1_e"
+          "euc",
+          "euce",
+          "eud",
+          "eude",
+          "euc1",
+          "euc1_e"
         ],
         "type": "string"
       },

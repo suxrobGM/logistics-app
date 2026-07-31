@@ -2,6 +2,7 @@ using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
@@ -59,7 +60,7 @@ internal sealed class DemoTenantsSeeder(
             var connectionString = ResolveConnectionString(config, context.Configuration)
                 ?? throw new InvalidOperationException(
                     $"No connection string for tenant '{config.Name}'. Set Tenants[].ConnectionString " +
-                    $"or ConnectionStrings:{config.Name}TenantDatabase.");
+                    $"or ConnectionStrings:{ConnectionStringKey(config.Name)}.");
             var existing = await repo.GetAsync(t => t.Name == config.Name, cancellationToken);
 
             if (existing is null)
@@ -129,10 +130,22 @@ internal sealed class DemoTenantsSeeder(
         {
             return config.ConnectionString;
         }
-        // Fallback: ConnectionStrings:{Name}TenantDatabase - populated by Aspire's WithReference()
-        // (e.g. "us" → "ConnectionStrings:UsTenantDatabase").
-        var key = char.ToUpperInvariant(config.Name[0]) + config.Name[1..] + "TenantDatabase";
-        return configuration.GetConnectionString(key);
+        return configuration.GetConnectionString(ConnectionStringKey(config.Name));
+    }
+
+    /// <summary>
+    /// The <c>ConnectionStrings:*TenantDatabase</c> slot for a tenant, set by <c>deploy/.env</c> in a
+    /// container deployment.
+    /// </summary>
+    private static string ConnectionStringKey(string name)
+    {
+        // A region code is an acronym ("us" -> USTenantDatabase); any other name is a word.
+        if (Enum.TryParse<Region>(name, ignoreCase: true, out var region))
+        {
+            return $"{region}TenantDatabase";
+        }
+
+        return $"{char.ToUpperInvariant(name[0])}{name[1..]}TenantDatabase";
     }
 
     private static void ApplyRegionalSettings(Tenant tenant, IRegionProfile profile)

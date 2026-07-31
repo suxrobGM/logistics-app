@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.DbMigrator.Regions;
 
-internal sealed class UsRegionProfile : IRegionProfile
+internal sealed class USRegionProfile : IRegionProfile
 {
     private readonly Random random = new();
 
@@ -127,7 +127,7 @@ internal sealed class UsRegionProfile : IRegionProfile
 
     public IReadOnlyList<string> ContainerOwnerCodes { get; } = ["MSCU", "APLU", "HLXU", "TCLU", "CMAU"];
 
-    private static readonly string[] UsStates =
+    private static readonly string[] USStates =
     [
         "TX", "CA", "FL", "GA", "IL", "OH", "PA", "NC", "MI", "NJ",
         "VA", "AZ", "TN", "IN", "MO", "WI", "CO", "AL", "SC", "LA"
@@ -144,7 +144,7 @@ internal sealed class UsRegionProfile : IRegionProfile
     {
         var letters = GenerateLetters(3);
         var numbers = random.Next(1000, 9999);
-        var state = UsStates[random.Next(UsStates.Length)];
+        var state = USStates[random.Next(USStates.Length)];
         return new LicensePlate($"{letters}-{numbers}", state);
     }
 

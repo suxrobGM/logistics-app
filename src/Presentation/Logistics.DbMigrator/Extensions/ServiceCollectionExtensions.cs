@@ -16,8 +16,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddSeeders(this IServiceCollection services)
     {
         // Region profiles + factory
-        services.AddSingleton<IRegionProfile, UsRegionProfile>();
-        services.AddSingleton<IRegionProfile, EuRegionProfile>();
+        services.AddSingleton<IRegionProfile, USRegionProfile>();
+        services.AddSingleton<IRegionProfile, EURegionProfile>();
         services.AddSingleton<IRegionProfileFactory, RegionProfileFactory>();
 
         // Infrastructure seeders (master DB unless IsTenantScoped is overridden)

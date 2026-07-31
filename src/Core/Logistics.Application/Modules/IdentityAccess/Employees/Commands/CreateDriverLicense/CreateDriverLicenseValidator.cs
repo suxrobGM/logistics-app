@@ -31,7 +31,7 @@ internal sealed class CreateDriverLicenseValidator : AbstractValidator<CreateDri
 
     private static bool IsClassCountryCompatible(LicenseClass cls, string country)
     {
-        var isUsClass = cls is LicenseClass.UsClassA or LicenseClass.UsClassB or LicenseClass.UsClassC;
-        return isUsClass ? country == "US" : country != "US";
+        var isUSClass = cls is LicenseClass.USClassA or LicenseClass.USClassB or LicenseClass.USClassC;
+        return isUSClass ? country == "US" : country != "US";
     }
 }

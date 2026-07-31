@@ -50,7 +50,7 @@ public class MapboxGeocodingServiceTests
     };
 
     [Fact]
-    public async Task GeocodeAddressAsync_UsTenant_AddsCountryUsAndEnglishLanguage()
+    public async Task GeocodeAddressAsync_USTenant_AddsCountryUSAndEnglishLanguage()
     {
         tenantAccessor.GetCurrentTenant().Returns(TenantWith(
             new TenantSettings { Region = Region.US, Language = "en" }));
@@ -66,7 +66,7 @@ public class MapboxGeocodingServiceTests
     }
 
     [Fact]
-    public async Task GeocodeAddressAsync_EuTenant_AddsCappedCountryListAndTenantLanguage()
+    public async Task GeocodeAddressAsync_EUTenant_AddsCappedCountryListAndTenantLanguage()
     {
         tenantAccessor.GetCurrentTenant().Returns(TenantWith(
             new TenantSettings { Region = Region.EU, Language = "de" }));

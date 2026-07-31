@@ -34,7 +34,7 @@ services:
   # One-shot DB migrate + seed. Metadata comes from the DbMigrator's appsettings.json; here we
   # only force Development (so the image-baked appsettings.Production.json can't load) and point
   # the DB hosts at `postgres`. Tenant hosts must use Tenants__N__ConnectionString (seeder reads
-  # it before the ConnectionStrings:{Name}TenantDatabase fallback).
+  # it before the ConnectionStrings:*TenantDatabase fallback).
   migrator:
     build:
       context: ..

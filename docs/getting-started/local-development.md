@@ -39,7 +39,7 @@ Edit `src/Presentation/Logistics.API/appsettings.json`:
 {
   "ConnectionStrings": {
     "MasterDatabase": "Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=YOUR_PASSWORD",
-    "UsTenantDatabase": "Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=YOUR_PASSWORD"
+    "USTenantDatabase": "Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=YOUR_PASSWORD"
   },
   "TenantDatabaseDefaults": {
     "NameTemplate": "{tenant}_logisticsx",
@@ -51,7 +51,7 @@ Edit `src/Presentation/Logistics.API/appsettings.json`:
 ```
 
 Per-request the API reads the tenant's own connection string out of the master database, so it needs
-no entry for `eu` or `solo`. `UsTenantDatabase` is only the fallback the `TenantDbContext` is
+no entry for `eu` or `solo`. `USTenantDatabase` is only the fallback the `TenantDbContext` is
 registered with when no tenant has been resolved yet, and `TenantDatabaseDefaults` is what the API
 uses to provision a database for a newly created tenant.
 

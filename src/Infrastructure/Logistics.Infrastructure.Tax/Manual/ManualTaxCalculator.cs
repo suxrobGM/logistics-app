@@ -29,7 +29,7 @@ internal sealed class ManualTaxCalculator(
             return ZeroResult(request, TaxBehavior.Exclusive, "Customer is VAT/tax exempt");
         }
 
-        if (IsEuReverseCharge(request))
+        if (IsEUReverseCharge(request))
         {
             return ZeroResult(request, TaxBehavior.ReverseCharge,
                 $"Reverse charge - VAT to be accounted by recipient ({request.CustomerAddress.Country})");
@@ -41,14 +41,14 @@ internal sealed class ManualTaxCalculator(
             : ApplyRate(request, resolution);
     }
 
-    private static bool IsEuReverseCharge(TaxCalculationRequest request)
+    private static bool IsEUReverseCharge(TaxCalculationRequest request)
     {
         if (request.TenantRegion != Region.EU)
         {
             return false;
         }
         var sellerCountry = request.TenantTaxResidencyCountry ?? request.TenantAddress.Country;
-        return EuVatRules.IsReverseCharge(sellerCountry, request.CustomerAddress.Country, request.CustomerTaxId);
+        return EUVatRules.IsReverseCharge(sellerCountry, request.CustomerAddress.Country, request.CustomerTaxId);
     }
 
     private async Task<RateResolution> ResolveRateAsync(TaxCalculationRequest request, CancellationToken ct)
@@ -63,8 +63,8 @@ internal sealed class ManualTaxCalculator(
         }
 
         if (request.TenantRegion == Region.EU &&
-            EuVatRules.IsEuMember(request.CustomerAddress.Country) &&
-            EuVatRates.GetStandardRate(request.CustomerAddress.Country) is { } euRate)
+            EUVatRules.IsEUMember(request.CustomerAddress.Country) &&
+            EUVatRates.GetStandardRate(request.CustomerAddress.Country) is { } euRate)
         {
             return new RateResolution(euRate, null,
                 $"VAT {euRate:0.##}% - {request.CustomerAddress.Country} (default)");
@@ -72,7 +72,7 @@ internal sealed class ManualTaxCalculator(
 
         if (request.TenantRegion == Region.US &&
             string.Equals(request.CustomerAddress.Country, "US", StringComparison.OrdinalIgnoreCase) &&
-            UsSalesTaxRates.GetStateBaseRate(request.CustomerAddress.State) is { } usRate)
+            USSalesTaxRates.GetStateBaseRate(request.CustomerAddress.State) is { } usRate)
         {
             return new RateResolution(usRate, null,
                 $"State sales tax {usRate:0.##}% - {request.CustomerAddress.State}",

@@ -8,29 +8,29 @@ namespace Logistics.Domain.Primitives.Enums;
 public enum LicenseClass
 {
     [Description("US CDL Class A")]
-    UsClassA,
+    USClassA,
 
     [Description("US CDL Class B")]
-    UsClassB,
+    USClassB,
 
     [Description("US CDL Class C")]
-    UsClassC,
+    USClassC,
 
     [Description("EU Category C")]
-    EuC,
+    EUC,
 
     [Description("EU Category C+E")]
-    EuCE,
+    EUCE,
 
     [Description("EU Category D")]
-    EuD,
+    EUD,
 
     [Description("EU Category D+E")]
-    EuDE,
+    EUDE,
 
     [Description("EU Category C1")]
-    EuC1,
+    EUC1,
 
     [Description("EU Category C1+E")]
-    EuC1E
+    EUC1E
 }

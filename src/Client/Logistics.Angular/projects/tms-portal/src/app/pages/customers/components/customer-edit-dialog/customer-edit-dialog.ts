@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
 import { form, FormField, FormRoot, required } from "@angular/forms/signals";
-import { isEuCountry, regionAllowedCountries } from "@logistics/shared";
+import { isEUCountry, regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
   updateCustomer,
@@ -91,7 +91,7 @@ export class CustomerEditDialog {
       required(p.status, { message: "Status is required." });
       // Tax ID is mandatory once the billing country is an EU member (reverse-charge B2B).
       required(p.taxId, {
-        when: ({ valueOf }) => isEuCountry(valueOf(p.address)?.country),
+        when: ({ valueOf }) => isEUCountry(valueOf(p.address)?.country),
         message: "Tax ID is required for EU customers.",
       });
     },
@@ -126,7 +126,7 @@ export class CustomerEditDialog {
 
   /** True when the customer's billing country is an EU member - drives the
    *  Tax-ID required hint + validator. */
-  protected readonly customerIsEu = computed(() => isEuCountry(this.model().address?.country));
+  protected readonly customerIsEu = computed(() => isEUCountry(this.model().address?.country));
 
   constructor() {
     effect(() => {

@@ -147,8 +147,8 @@ internal sealed class DispatchEligibilityService(
             return;
         }
 
-        var isUsLicense = license.IssuingCountry == "US";
-        if (isUsLicense)
+        var isUSLicense = license.IssuingCountry == "US";
+        if (isUSLicense)
         {
             if (!license.HasEndorsement(LicenseEndorsement.Hazmat))
             {
@@ -199,10 +199,10 @@ internal sealed class DispatchEligibilityService(
             return;
         }
 
-        var isUsRoute = (load.OriginAddress.Country is "US" or "USA")
+        var isUSRoute = (load.OriginAddress.Country is "US" or "USA")
                         || (load.DestinationAddress.Country is "US" or "USA");
 
-        if (isUsRoute)
+        if (isUSRoute)
         {
             if (!truck.IsHazmatPlacarded)
             {

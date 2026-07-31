@@ -56,7 +56,7 @@ const EUROPEAN_COUNTRIES = [
 ];
 
 // Subset of EUROPEAN_COUNTRIES that are EU-27 member states. Mirrors
-// EuVatRules.EuMemberStates in Logistics.Infrastructure.Tax. Reverse-charge
+// EUVatRules.EUMemberStates in Logistics.Infrastructure.Tax. Reverse-charge
 // for cross-border B2B applies only to this set.
 const EU_MEMBER_STATES = new Set([
   "AT",
@@ -100,6 +100,6 @@ export function regionAllowedCountries(region: Region | null | undefined): reado
  * True when the country is an EU-27 member state. Used by tax forms to decide
  * whether a customer Tax ID is required for VAT reverse-charge eligibility.
  */
-export function isEuCountry(countryCode: string | null | undefined): boolean {
+export function isEUCountry(countryCode: string | null | undefined): boolean {
   return !!countryCode && EU_MEMBER_STATES.has(countryCode.toUpperCase());
 }

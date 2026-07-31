@@ -272,7 +272,7 @@ public class StripeTaxCalculatorTests
     }
 
     [Fact]
-    public async Task Calculate_LayeredUsBreakdown_PreservesEachJurisdiction()
+    public async Task Calculate_LayeredUSBreakdown_PreservesEachJurisdiction()
     {
         var request = Request(country: "US", state: "CA", tenantRegion: Region.US);
 

@@ -19,7 +19,7 @@ public record HosLimits(
     int CycleDays)
 {
     public const string FmcsaCode = "FMCSA";
-    public const string Eu561Code = "EU_561_2006";
+    public const string EU561Code = "EU_561_2006";
 
     public static HosLimits Fmcsa() => new(
         RuleSetCode: FmcsaCode,
@@ -33,8 +33,8 @@ public record HosLimits(
         RequiredBreakAfterMinutes: 8 * 60,
         CycleDays: 8);
 
-    public static HosLimits Eu561_2006() => new(
-        RuleSetCode: Eu561Code,
+    public static HosLimits EU561_2006() => new(
+        RuleSetCode: EU561Code,
         MaxDailyDrivingMinutes: 9 * 60,
         MaxDailyOnDutyMinutes: 13 * 60,
         MaxWeeklyDrivingMinutes: 56 * 60,

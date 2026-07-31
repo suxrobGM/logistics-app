@@ -6,7 +6,7 @@ namespace Logistics.Infrastructure.Tax.Data;
 /// Stripe Tax. The manual calculator surfaces a warning so the UI can flag this.
 /// Origin: Tax Foundation / state DOR sites.
 /// </summary>
-internal static class UsSalesTaxRates
+internal static class USSalesTaxRates
 {
     public static readonly DateOnly LastUpdated = new(2026, 5, 1);
 

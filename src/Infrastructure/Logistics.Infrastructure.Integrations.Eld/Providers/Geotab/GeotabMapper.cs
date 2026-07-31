@@ -107,13 +107,13 @@ internal static class GeotabMapper
         {
             return key switch
             {
-                "continuousdriving" or "continuous_driving" or "4_5_hour" => HosViolationType.EuContinuousDriving4_5h,
-                "dailydriving" or "daily_driving" or "9_hour" => HosViolationType.EuDailyDriving9h,
-                "weeklydriving" or "weekly_driving" or "56_hour" => HosViolationType.EuWeeklyDriving56h,
-                "biweeklydriving" or "biweekly_driving" or "90_hour" => HosViolationType.EuBiweeklyDriving90h,
-                "dailyrest" or "daily_rest" or "11_hour_rest" => HosViolationType.EuDailyRest11h,
-                "weeklyrest" or "weekly_rest" or "45_hour_rest" => HosViolationType.EuWeeklyRest45h,
-                _ => HosViolationType.EuFormAndManner
+                "continuousdriving" or "continuous_driving" or "4_5_hour" => HosViolationType.EUContinuousDriving4_5h,
+                "dailydriving" or "daily_driving" or "9_hour" => HosViolationType.EUDailyDriving9h,
+                "weeklydriving" or "weekly_driving" or "56_hour" => HosViolationType.EUWeeklyDriving56h,
+                "biweeklydriving" or "biweekly_driving" or "90_hour" => HosViolationType.EUBiweeklyDriving90h,
+                "dailyrest" or "daily_rest" or "11_hour_rest" => HosViolationType.EUDailyRest11h,
+                "weeklyrest" or "weekly_rest" or "45_hour_rest" => HosViolationType.EUWeeklyRest45h,
+                _ => HosViolationType.EUFormAndManner
             };
         }
 

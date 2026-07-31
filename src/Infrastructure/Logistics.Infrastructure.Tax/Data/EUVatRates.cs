@@ -5,7 +5,7 @@ namespace Logistics.Infrastructure.Tax.Data;
 /// Used by <c>ManualTaxCalculator</c> when no tenant-specific <c>TenantTaxRate</c> matches.
 /// Stripe Tax is the recommended path for EU; this is a fallback so non-Stripe tenants don't crash.
 /// </summary>
-public static class EuVatRates
+public static class EUVatRates
 {
     public static readonly DateOnly LastUpdated = new(2026, 5, 1);
 

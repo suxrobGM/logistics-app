@@ -13,13 +13,13 @@ public static class RuleSetSelector
 {
     public static string CodeFor(Region region) => region switch
     {
-        Region.EU => HosLimits.Eu561Code,
+        Region.EU => HosLimits.EU561Code,
         _ => HosLimits.FmcsaCode
     };
 
     public static HosLimits LimitsFor(Region region) => region switch
     {
-        Region.EU => HosLimits.Eu561_2006(),
+        Region.EU => HosLimits.EU561_2006(),
         _ => HosLimits.Fmcsa()
     };
 }

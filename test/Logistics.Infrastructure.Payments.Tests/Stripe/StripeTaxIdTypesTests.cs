@@ -26,7 +26,7 @@ public class StripeTaxIdTypesTests
     [InlineData("DE", "DE123456789", "eu_vat")]
     [InlineData("FR", "FR12345678901", "eu_vat")]
     [InlineData("NL", "NL123456789B01", "eu_vat")]
-    public void Infer_EuMembers_ReturnEuVat(string country, string taxId, string expected)
+    public void Infer_EUMembers_ReturnEUVat(string country, string taxId, string expected)
     {
         Assert.Equal(expected, StripeTaxIdTypes.Infer(country, taxId));
     }
@@ -40,7 +40,7 @@ public class StripeTaxIdTypesTests
     }
 
     [Fact]
-    public void Infer_UnknownCountryAndPrefix_DefaultsToEuVat()
+    public void Infer_UnknownCountryAndPrefix_DefaultsToEUVat()
     {
         Assert.Equal("eu_vat", StripeTaxIdTypes.Infer("XX", "ABC123"));
     }

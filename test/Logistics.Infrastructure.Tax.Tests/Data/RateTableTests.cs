@@ -12,9 +12,9 @@ public class RateTableTests
     [InlineData("LU", 17.00)] // lowest standard EU VAT
     [InlineData("GB", 20.00)] // post-Brexit UK
     [InlineData("CH", 8.10)]  // Swiss
-    public void EuVatRates_KnownCountries_ReturnExpectedRate(string country, decimal expected)
+    public void EUVatRates_KnownCountries_ReturnExpectedRate(string country, decimal expected)
     {
-        Assert.Equal(expected, EuVatRates.GetStandardRate(country));
+        Assert.Equal(expected, EUVatRates.GetStandardRate(country));
     }
 
     [Theory]
@@ -22,9 +22,9 @@ public class RateTableTests
     [InlineData("XX")]
     [InlineData("")]
     [InlineData(null)]
-    public void EuVatRates_UnknownCountries_ReturnNull(string? country)
+    public void EUVatRates_UnknownCountries_ReturnNull(string? country)
     {
-        Assert.Null(EuVatRates.GetStandardRate(country));
+        Assert.Null(EUVatRates.GetStandardRate(country));
     }
 
     [Theory]
@@ -34,18 +34,18 @@ public class RateTableTests
     [InlineData("AK", 0.00)] // no statewide sales tax
     [InlineData("DE", 0.00)] // Delaware, not Germany
     [InlineData("DC", 6.00)]
-    public void UsSalesTaxRates_KnownStates_ReturnExpectedRate(string state, decimal expected)
+    public void USSalesTaxRates_KnownStates_ReturnExpectedRate(string state, decimal expected)
     {
-        Assert.Equal(expected, UsSalesTaxRates.GetStateBaseRate(state));
+        Assert.Equal(expected, USSalesTaxRates.GetStateBaseRate(state));
     }
 
     [Theory]
     [InlineData("XX")]
     [InlineData("")]
     [InlineData(null)]
-    public void UsSalesTaxRates_UnknownStates_ReturnNull(string? state)
+    public void USSalesTaxRates_UnknownStates_ReturnNull(string? state)
     {
-        Assert.Null(UsSalesTaxRates.GetStateBaseRate(state));
+        Assert.Null(USSalesTaxRates.GetStateBaseRate(state));
     }
 
     [Theory]
@@ -61,8 +61,8 @@ public class RateTableTests
     }
 
     [Theory]
-    [InlineData("US")]   // not in 'other' table - handled by UsSalesTaxRates
-    [InlineData("DE")]   // EU member - handled by EuVatRates
+    [InlineData("US")]   // not in 'other' table - handled by USSalesTaxRates
+    [InlineData("DE")]   // EU member - handled by EUVatRates
     [InlineData("XX")]
     [InlineData("")]
     [InlineData(null)]
@@ -75,8 +75,8 @@ public class RateTableTests
     public void RateTables_HaveLastUpdatedDates()
     {
         // Sanity check that the freshness markers are populated.
-        Assert.True(EuVatRates.LastUpdated.Year >= 2026);
-        Assert.True(UsSalesTaxRates.LastUpdated.Year >= 2026);
+        Assert.True(EUVatRates.LastUpdated.Year >= 2026);
+        Assert.True(USSalesTaxRates.LastUpdated.Year >= 2026);
         Assert.True(OtherCountryRates.LastUpdated.Year >= 2026);
     }
 }

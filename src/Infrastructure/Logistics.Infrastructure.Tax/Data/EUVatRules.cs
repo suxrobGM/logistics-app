@@ -6,18 +6,18 @@ namespace Logistics.Infrastructure.Tax.Data;
 /// only true EU member states get reverse-charge under Article 196 of Directive 2006/112/EC.
 /// EEA/UK/Western-Balkans countries handled separately as they are not in the EU VAT area.
 /// </summary>
-public static class EuVatRules
+public static class EUVatRules
 {
     /// <summary>EU-27 member states (ISO-2).</summary>
-    public static readonly HashSet<string> EuMemberStates =
+    public static readonly HashSet<string> EUMemberStates =
     [
         "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
         "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL",
         "PL", "PT", "RO", "SK", "SI", "ES", "SE"
     ];
 
-    public static bool IsEuMember(string? countryCode) =>
-        !string.IsNullOrEmpty(countryCode) && EuMemberStates.Contains(countryCode.ToUpperInvariant());
+    public static bool IsEUMember(string? countryCode) =>
+        !string.IsNullOrEmpty(countryCode) && EUMemberStates.Contains(countryCode.ToUpperInvariant());
 
     /// <summary>
     /// EU cross-border B2B reverse charge applies when:
@@ -29,7 +29,7 @@ public static class EuVatRules
     {
         if (string.IsNullOrWhiteSpace(sellerCountry) || string.IsNullOrWhiteSpace(buyerCountry)) return false;
         if (string.IsNullOrWhiteSpace(buyerVatId)) return false;
-        if (!IsEuMember(sellerCountry) || !IsEuMember(buyerCountry)) return false;
+        if (!IsEUMember(sellerCountry) || !IsEUMember(buyerCountry)) return false;
         return !sellerCountry.Equals(buyerCountry, StringComparison.OrdinalIgnoreCase);
     }
 }

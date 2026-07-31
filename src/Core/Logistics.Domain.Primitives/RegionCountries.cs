@@ -8,7 +8,7 @@ namespace Logistics.Domain.Primitives;
 /// </summary>
 public static class RegionCountries
 {
-    private static readonly HashSet<string> UsCountries = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> USCountries = new(StringComparer.OrdinalIgnoreCase)
     {
         "US"
     };
@@ -39,7 +39,7 @@ public static class RegionCountries
     public static bool IsAllowed(Region region, string? countryCode) =>
         region switch
         {
-            Region.US => UsCountries.Contains(countryCode ?? string.Empty),
+            Region.US => USCountries.Contains(countryCode ?? string.Empty),
             Region.EU => EuropeanCountries.Contains(countryCode ?? string.Empty),
             _ => false
         };
@@ -48,5 +48,5 @@ public static class RegionCountries
     /// Returns the set of allowed ISO 3166-1 alpha-2 country codes for the region.
     /// </summary>
     public static IReadOnlyCollection<string> GetAllowed(Region region) =>
-        region == Region.US ? UsCountries : EuropeanCountries;
+        region == Region.US ? USCountries : EuropeanCountries;
 }

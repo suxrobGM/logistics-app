@@ -14,21 +14,21 @@ public class GeotabMapperTests
     [InlineData("cycle", HosViolationType.Cycle70Hour)]
     [InlineData("restart", HosViolationType.RestartRequired)]
     [InlineData("unknown", HosViolationType.FormAndMannerViolation)]
-    public void MapViolationType_UsRegion_ReturnsFmcsaValue(string input, HosViolationType expected)
+    public void MapViolationType_USRegion_ReturnsFmcsaValue(string input, HosViolationType expected)
     {
         Assert.Equal(expected, GeotabMapper.MapViolationType(input, Region.US));
     }
 
     [Theory]
-    [InlineData("continuousdriving", HosViolationType.EuContinuousDriving4_5h)]
-    [InlineData("4_5_hour", HosViolationType.EuContinuousDriving4_5h)]
-    [InlineData("dailydriving", HosViolationType.EuDailyDriving9h)]
-    [InlineData("weeklydriving", HosViolationType.EuWeeklyDriving56h)]
-    [InlineData("biweeklydriving", HosViolationType.EuBiweeklyDriving90h)]
-    [InlineData("dailyrest", HosViolationType.EuDailyRest11h)]
-    [InlineData("weeklyrest", HosViolationType.EuWeeklyRest45h)]
-    [InlineData("unknown", HosViolationType.EuFormAndManner)]
-    public void MapViolationType_EuRegion_ReturnsEuValue(string input, HosViolationType expected)
+    [InlineData("continuousdriving", HosViolationType.EUContinuousDriving4_5h)]
+    [InlineData("4_5_hour", HosViolationType.EUContinuousDriving4_5h)]
+    [InlineData("dailydriving", HosViolationType.EUDailyDriving9h)]
+    [InlineData("weeklydriving", HosViolationType.EUWeeklyDriving56h)]
+    [InlineData("biweeklydriving", HosViolationType.EUBiweeklyDriving90h)]
+    [InlineData("dailyrest", HosViolationType.EUDailyRest11h)]
+    [InlineData("weeklyrest", HosViolationType.EUWeeklyRest45h)]
+    [InlineData("unknown", HosViolationType.EUFormAndManner)]
+    public void MapViolationType_EURegion_ReturnsEUValue(string input, HosViolationType expected)
     {
         Assert.Equal(expected, GeotabMapper.MapViolationType(input, Region.EU));
     }

@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
 import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
-import { isEuCountry, regionAllowedCountries } from "@logistics/shared";
+import { isEUCountry, regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
   createCustomer,
@@ -98,7 +98,7 @@ export class CustomerForm {
       required(p.address, { message: "Address is required." });
       // Tax ID is mandatory once the billing country is an EU member (reverse-charge B2B).
       required(p.taxId, {
-        when: ({ valueOf }) => isEuCountry(valueOf(p.address)?.country),
+        when: ({ valueOf }) => isEUCountry(valueOf(p.address)?.country),
         message: "Tax ID is required for EU customers.",
       });
     },
@@ -149,7 +149,7 @@ export class CustomerForm {
 
   /** True when the customer's billing country is an EU member - drives the
    *  Tax-ID required hint + validator. Updates as the address sub-form changes. */
-  protected readonly customerIsEu = computed(() => isEuCountry(this.model().address?.country));
+  protected readonly customerIsEu = computed(() => isEUCountry(this.model().address?.country));
 
   constructor() {
     effect(() => {

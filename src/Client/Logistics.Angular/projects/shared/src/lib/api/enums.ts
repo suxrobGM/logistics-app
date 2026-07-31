@@ -269,12 +269,12 @@ export const licenseClassOptions: SelectOption<LicenseClass>[] = [
   { label: "US CDL Class A", value: "us_class_a" },
   { label: "US CDL Class B", value: "us_class_b" },
   { label: "US CDL Class C", value: "us_class_c" },
-  { label: "EU Category C", value: "eu_c" },
-  { label: "EU Category C+E", value: "eu_ce" },
-  { label: "EU Category D", value: "eu_d" },
-  { label: "EU Category D+E", value: "eu_de" },
-  { label: "EU Category C1", value: "eu_c1" },
-  { label: "EU Category C1+E", value: "eu_c1_e" },
+  { label: "EU Category C", value: "euc" },
+  { label: "EU Category C+E", value: "euce" },
+  { label: "EU Category D", value: "eud" },
+  { label: "EU Category D+E", value: "eude" },
+  { label: "EU Category C1", value: "euc1" },
+  { label: "EU Category C1+E", value: "euc1_e" },
 ];
 
 export const driverLicenseStatusOptions: SelectOption<DriverLicenseStatus>[] = [
