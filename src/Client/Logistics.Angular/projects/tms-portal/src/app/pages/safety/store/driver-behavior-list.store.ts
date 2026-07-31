@@ -7,7 +7,7 @@ import { createListStore } from "@logistics/shared/stores";
 export const DriverBehaviorListStore = createListStore<DriverBehaviorEventDto>(
   getDriverBehaviorEvents,
   {
-    defaultSortField: "OccurredAt",
+    defaultSortField: "-OccurredAt",
     defaultPageSize: 25,
   },
 );

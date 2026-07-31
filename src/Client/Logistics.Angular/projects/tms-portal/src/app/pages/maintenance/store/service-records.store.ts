@@ -5,6 +5,6 @@ import { createListStore } from "@logistics/shared/stores";
  * Store for the maintenance service records list page.
  */
 export const ServiceRecordsStore = createListStore<MaintenanceRecordDto>(getMaintenanceRecords, {
-  defaultSortField: "ServiceDate",
+  defaultSortField: "-ServiceDate",
   defaultPageSize: 10,
 });

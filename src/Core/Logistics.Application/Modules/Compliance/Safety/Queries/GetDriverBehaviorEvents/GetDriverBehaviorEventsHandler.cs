@@ -43,7 +43,7 @@ internal sealed class GetDriverBehaviorEventsHandler(ITenantUnitOfWork tenantUow
             baseQuery = baseQuery.Where(e => e.OccurredAt <= req.ToDate);
         }
 
-        baseQuery = baseQuery.OrderBy(e => e.OccurredAt, descending: true);
+        baseQuery = baseQuery.OrderBy(req.OrderBy ?? "-OccurredAt");
 
         var totalItems = baseQuery.Count();
         baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);

@@ -43,7 +43,7 @@ internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(r => r.AccidentDateTime <= req.ToDate);
         }
 
-        baseQuery = baseQuery.OrderBy(r => r.AccidentDateTime, descending: true);
+        baseQuery = baseQuery.OrderBy(req.OrderBy ?? "-AccidentDateTime");
 
         var totalItems = baseQuery.Count();
         baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);

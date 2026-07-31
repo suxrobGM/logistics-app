@@ -5,6 +5,6 @@ import { createListStore } from "@logistics/shared/stores";
  * Store for the DVIR reports list page.
  */
 export const DvirListStore = createListStore<DvirReportDto>(getDvirReports, {
-  defaultSortField: "InspectionDate",
+  defaultSortField: "-InspectionDate",
   defaultPageSize: 10,
 });

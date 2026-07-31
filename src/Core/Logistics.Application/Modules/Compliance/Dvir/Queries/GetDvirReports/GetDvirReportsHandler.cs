@@ -43,7 +43,7 @@ internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(r => r.InspectionDate <= req.ToDate);
         }
 
-        baseQuery = baseQuery.OrderBy(r => r.InspectionDate, descending: true);
+        baseQuery = baseQuery.OrderBy(req.OrderBy ?? "-InspectionDate");
 
         var totalItems = baseQuery.Count();
         baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
