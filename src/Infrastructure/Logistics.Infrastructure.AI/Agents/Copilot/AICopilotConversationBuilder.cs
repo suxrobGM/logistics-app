@@ -6,6 +6,7 @@ using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Infrastructure.AI.Llm;
+using Logistics.Shared.Identity.Policies;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Agents.Copilot;
@@ -26,6 +27,7 @@ internal sealed class AICopilotConversationBuilder(
         AICopilotConversation conversation,
         IReadOnlySet<string> callerPermissions,
         LlmOptions config,
+        string? pageContext,
         CancellationToken ct)
     {
         var setup = await sessionSetup.ResolveAsync(config, ct);
@@ -34,10 +36,16 @@ internal sealed class AICopilotConversationBuilder(
 
         var tools = toolRegistry.GetCopilotTools(setup.EnabledFeatures, callerPermissions);
 
-        var systemPrompt = AICopilotSystemPrompt.Build(
-            tenant.Name ?? "Fleet",
-            tenant.Settings.DistanceUnit,
-            tenant.Settings.OperatingMode);
+        var systemPrompt = AICopilotSystemPrompt.Build(new(tenant.Name ?? "Fleet")
+        {
+            DistanceUnit = tenant.Settings.DistanceUnit,
+            OperatingMode = tenant.Settings.OperatingMode,
+            // Metadata, not a name list: a new dispatch write tool must not silently lose the
+            // guardrails section just because nobody remembered to extend a hardcoded pair.
+            HasDispatchTools =
+                tools.Any(t => t.IsWrite && t.RequiredPermission == Permission.Dispatch.Manage),
+            PageContext = pageContext
+        });
 
         session.ModelUsed = selection.Model;
 

@@ -40,9 +40,14 @@ internal sealed class AIDispatchConversationBuilder(
         var hasIntermodal = enabledFeatures.Contains(TenantFeature.IntermodalContainers);
 
         var policy = await GetLearnedPolicyAsync(ct);
-        var systemPrompt = AIDispatchSystemPrompt.Build(
-            companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit, policy, hasIntermodal,
-            tenant.Settings.OperatingMode);
+        var systemPrompt = AIDispatchSystemPrompt.Build(new(companyName, request.Mode)
+        {
+            DistanceUnit = tenant.Settings.DistanceUnit,
+            OperatingMode = tenant.Settings.OperatingMode,
+            HasLoadBoardIntegration = hasLoadBoard,
+            HasIntermodal = hasIntermodal,
+            Policy = policy
+        });
         // No caller permissions: a dispatch run is gated by the endpoint's policy, not per tool.
         var tools = toolRegistry.GetDispatchAgentTools(enabledFeatures);
 

@@ -6,36 +6,20 @@ namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 internal static class AIDispatchSystemPrompt
 {
     /// <summary>
-    /// Builds a comprehensive system prompt for the AI dispatch agent,
-    /// tailored to the company's name, operating mode, load board integration, and distance unit preference.
+    /// Builds a comprehensive system prompt for the AI dispatch agent, tailored to the tenant's name,
+    /// operating mode, load board integration, and distance unit preference - see
+    /// <see cref="DispatchPromptContext"/> for what it varies on.
     /// The prompt includes detailed instructions on priorities, rules, workflow, token efficiency, and edge case handling to guide the agent's decision-making process effectively.
     /// </summary>
-    /// <param name="policy">
-    /// The tenant's learned dispatch policy, or null to omit the section - see <see cref="BuildPolicySection"/>.
-    /// </param>
-    /// <param name="hasIntermodal">
-    /// Whether the tenant has <c>TenantFeature.IntermodalContainers</c>. The section costs ~310 tokens
-    /// per request and names tools a gated tenant is not given, so it must move in lockstep with them.
-    /// </param>
-    /// <param name="operatingMode">
-    /// <c>SoloOperator</c> swaps the fleet-wide framing for one-truck framing.
-    /// </param>
-    public static string Build(
-        string companyName,
-        AgentAutonomyMode mode,
-        bool hasLoadBoardIntegration = false,
-        DistanceUnit distanceUnit = DistanceUnit.Miles,
-        LearnedDispatchPolicy? policy = null,
-        bool hasIntermodal = false,
-        OperatingMode operatingMode = OperatingMode.Fleet)
+    public static string Build(DispatchPromptContext context)
     {
-        var unitLabel = distanceUnit == DistanceUnit.Kilometers ? "km" : "miles";
-        var perUnitLabel = distanceUnit == DistanceUnit.Kilometers ? "km" : "mile";
-        var conversionNote = distanceUnit == DistanceUnit.Miles
+        var unitLabel = context.DistanceUnit == DistanceUnit.Kilometers ? "km" : "miles";
+        var perUnitLabel = context.DistanceUnit == DistanceUnit.Kilometers ? "km" : "mile";
+        var conversionNote = context.DistanceUnit == DistanceUnit.Miles
             ? "Tool data is in kilometers - convert to miles (× 0.621) for all output."
             : "";
-        var isSolo = operatingMode == OperatingMode.SoloOperator;
-        var modeInstructions = mode switch
+        var isSolo = context.IsSolo;
+        var modeInstructions = context.Mode switch
         {
             AgentAutonomyMode.HumanInTheLoop => """
                 ## Operating Mode: SUGGESTIONS
@@ -62,11 +46,11 @@ internal static class AIDispatchSystemPrompt
             _ => ""
         };
 
-        var sanitizedName = PromptText.SanitizeCompanyName(companyName);
-        var policySection = BuildPolicySection(policy);
+        var sanitizedName = PromptText.SanitizeCompanyName(context.CompanyName);
+        var policySection = BuildPolicySection(context.Policy);
 
         // ~310 tokens, and names tools a gated tenant never gets - so it travels with them.
-        var intermodalSection = hasIntermodal
+        var intermodalSection = context.HasIntermodal
             ? """
 
               ## Intermodal Loads (containers & terminals)
@@ -127,7 +111,7 @@ internal static class AIDispatchSystemPrompt
               """
             : "";
 
-        var loadBoardStep = hasLoadBoardIntegration
+        var loadBoardStep = context.HasLoadBoardIntegration
             ? """
 
               9. If trucks have no loads after assignments, search load boards with `search_loadboard`
@@ -138,6 +122,7 @@ internal static class AIDispatchSystemPrompt
 
         return $$"""
             You are an AI dispatch agent for **{{sanitizedName}}**, a trucking company. Your job is to optimize load-to-truck assignments across the fleet.
+            Today is {{DateTime.UtcNow:yyyy-MM-dd}} (UTC).
 
             ## Units & Formatting
             - **Distance unit**: {{unitLabel}}. {{conversionNote}}
@@ -171,7 +156,6 @@ internal static class AIDispatchSystemPrompt
             - Long-haul loads often exceed a single driving window. Drivers take a mandatory 10h rest after ~11h driving, then resume with a fresh 11h window.
             - A load IS feasible as a multi-day trip if the driver can legally reach the destination across multiple drive-rest cycles.
             - When assigning multi-day loads, note the estimated total transit time (driving + rest stops) in your reasoning.
-            - Example: a load needing 16h driving → driver uses their remaining 8h, rests 10h, then drives 8h more. Total transit: ~26h.
 
             **Hard rule**: Do NOT assign a load if the driver's remaining hours are so low they cannot make meaningful progress (< 2h remaining). Use `batch_check_hos_feasibility` for authoritative confirmation when the margin is tight.
             {{policySection}}
@@ -186,12 +170,9 @@ internal static class AIDispatchSystemPrompt
             8. In autonomous mode: after assignments, group loads into trips with `create_trip` and dispatch with `dispatch_trip`{{loadBoardStep}}
 
             ## Token Efficiency Rules
-            - Gather all data in the FEWEST tool calls possible
-            - Use `batch_check_hos_feasibility` instead of individual `check_hos_feasibility` calls
-            - Do NOT call tools for information you can compute from data you already have
-            - Do NOT check HOS for type-incompatible trucks
-            - Be concise in reasoning - state the decision, not the data
-            - Do not repeat data from tool results
+            - Gather all data in the FEWEST tool calls possible; never call a tool for information you can compute from data you already have
+            - Use `batch_check_hos_feasibility` instead of individual `check_hos_feasibility` calls, and never check HOS for type-incompatible trucks
+            - Be concise in reasoning - state the decision, not the data, and do not repeat tool results
 
             ## Edge Cases
             - **No unassigned loads**: Report nothing to dispatch and finish immediately
@@ -201,7 +182,7 @@ internal static class AIDispatchSystemPrompt
             {{soloSection}}
 
             ## Final Summary
-            After completing all work, provide a concise markdown summary. Use **{{unitLabel}}** for distances and human-readable durations (e.g., "10h 20m") for time - never raw minutes.
+            After completing all work, provide a concise markdown summary, formatted per the units rules above.
 
             ### Status
             One line: `COMPLETED - X of Y loads assigned` or `NO ACTION - [reason]`
