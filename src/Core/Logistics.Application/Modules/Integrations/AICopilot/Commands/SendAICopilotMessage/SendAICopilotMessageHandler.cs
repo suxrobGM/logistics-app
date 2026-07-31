@@ -63,7 +63,8 @@ internal sealed class SendAICopilotMessageHandler(
         conversation.BeginTurn();
         await tenantUow.SaveChangesAsync(ct);
 
-        backgroundRunner.Enqueue(new AICopilotTurnRequest(tenant.Id, conversation.Id, userId.Value));
+        backgroundRunner.Enqueue(new AICopilotTurnRequest(
+            tenant.Id, conversation.Id, userId.Value, request.PageContext));
 
         return Result<SendAICopilotMessageResultDto>.Ok(new SendAICopilotMessageResultDto
         {

@@ -59,6 +59,16 @@ public class AICopilotController(IMediator mediator) : ControllerBase
             : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpGet("quota", Name = "GetCopilotQuotaStatus")]
+    [ProducesResponseType(typeof(AIQuotaStatusDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Copilot.View)]
+    public async Task<IActionResult> GetQuotaStatus()
+    {
+        var result = await mediator.Send(new GetAICopilotQuotaStatusQuery());
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("conversations/{conversationId:guid}/cancel", Name = "CancelCopilotTurn")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -66,6 +76,18 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CancelTurn(Guid conversationId)
     {
         var result = await mediator.Send(new CancelAICopilotTurnCommand { ConversationId = conversationId });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("conversations/{conversationId:guid}", Name = "RenameCopilotConversation")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Copilot.Manage)]
+    public async Task<IActionResult> RenameConversation(
+        Guid conversationId, [FromBody] RenameAICopilotConversationCommand request)
+    {
+        request.ConversationId = conversationId;
+        var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Infrastructure.Communications.Captcha;
 using Logistics.Infrastructure.Communications.Email;
@@ -25,8 +27,13 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // SignalR real-time communication
-        services.AddSignalR();
+        // Hub payloads must match the REST wire contract (snake_case string enums) - the generated
+        // frontend types are string unions, so numeric enums silently fail every status comparison.
+        services.AddSignalR().AddJsonProtocol(options =>
+        {
+            options.PayloadSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
+        });
         services.AddSingleton<TrackingHubContext>();
         services.AddSingleton<ChatHubContext>();
 

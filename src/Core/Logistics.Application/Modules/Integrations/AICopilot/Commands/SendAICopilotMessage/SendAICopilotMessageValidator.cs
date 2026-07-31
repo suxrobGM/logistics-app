@@ -7,5 +7,6 @@ internal sealed class SendAICopilotMessageValidator : AbstractValidator<SendAICo
     public SendAICopilotMessageValidator()
     {
         RuleFor(x => x.Text).NotEmpty().MaximumLength(4000);
+        RuleFor(x => x.PageContext).MaximumLength(300);
     }
 }

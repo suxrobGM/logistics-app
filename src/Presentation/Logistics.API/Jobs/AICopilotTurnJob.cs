@@ -16,7 +16,8 @@ public class AICopilotTurnJob(
     ILogger<AICopilotTurnJob> logger)
 {
     [AutomaticRetry(Attempts = 0)]
-    public async Task RunAsync(Guid tenantId, Guid conversationId, Guid userId, CancellationToken ct)
+    public async Task RunAsync(
+        Guid tenantId, Guid conversationId, Guid userId, string? pageContext, CancellationToken ct)
     {
         using var scope = scopeFactory.CreateScope();
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
@@ -36,7 +37,8 @@ public class AICopilotTurnJob(
 
         try
         {
-            await copilotService.RunTurnAsync(new AICopilotTurnRequest(tenantId, conversationId, userId), ct);
+            await copilotService.RunTurnAsync(
+                new AICopilotTurnRequest(tenantId, conversationId, userId, pageContext), ct);
         }
         catch (Exception ex)
         {
@@ -54,6 +56,7 @@ public class HangfireAICopilotTurnRunner(IBackgroundJobClient jobClient) : IBack
             request.TenantId,
             request.ConversationId,
             request.UserId,
+            request.PageContext,
             CancellationToken.None));
     }
 }
