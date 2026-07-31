@@ -51,7 +51,7 @@ taken by `AgentAutonomyMode`, and reusing it makes the model conflate the two.
 
 ## Provider abstraction
 
-`AnthropicLlmProvider` (Claude via `Anthropic.SDK` - prompt caching, extended thinking) and
+`AnthropicLlmProvider` (Claude via `Anthropic.SDK` - prompt caching, adaptive thinking) and
 `OpenAILlmProvider` (any OpenAI-compatible endpoint via configurable `BaseUrl`) both sit behind
 `ILlmProvider`, resolved by `LlmProviderFactory`.
 
@@ -144,3 +144,24 @@ Traps, all of which look fine in review:
 - Truncation keeps **whole lines only**. A half-truncated rule reads as a different rule.
 - Learning creates no `AgentSession` row, so it never consumes tenant quota. Cost lands on
   `AIDispatchPolicy.GenerationCostUsd` and is never exposed to the tenant.
+
+## Anthropic prompt caching
+
+`AnthropicLlmProvider.BuildMessages` puts an ephemeral cache breakpoint on the **last content
+block of the newest message**, alongside the one on the system prompt. Two things about it look
+droppable and are not:
+
+- **It must be re-placed on every call.** A breakpoint searches back only 20 content blocks for an
+  existing entry, and one iteration with several parallel tool calls can add more than that. Set it
+  once at the front of the transcript and long sessions silently stop hitting the cache.
+- **It has to be the _last_ block.** The prefix caches up to the breakpoint, so marking an earlier
+  block in a multi-result tool turn leaves the rest re-billed at full input price.
+
+Caching flows straight into the budget: `LlmPricing` charges cache reads at a tenth of input, so a
+hit lowers `EstimatedCostUsd` and therefore what the tenant's weekly budget and Stripe overage see.
+Verify with `AgentSession.CacheReadTokens` - a session that stays at zero across iterations means
+something invalidated the prefix (tool list changed, model switched, or the prompt is below the
+per-model minimum: 1024 tokens on Sonnet 5, 4096 on Haiku 4.5, silently skipped below that).
+
+OpenAI and DeepSeek cache automatically server-side with no breakpoints, which is why this lives in
+the Anthropic provider rather than the shared loop.

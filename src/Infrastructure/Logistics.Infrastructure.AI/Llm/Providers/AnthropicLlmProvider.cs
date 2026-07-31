@@ -28,7 +28,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
             .ToList();
 
         var parameters = BuildParameters(request);
-        parameters.Messages = request.Messages.Select(ToAnthropicMessage).ToList();
+        parameters.Messages = BuildMessages(request.Messages);
         parameters.Tools = tools;
 
         var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
@@ -69,8 +69,9 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
                     {
                         ReasoningEffort.Low => SdkEffort.low,
                         ReasoningEffort.Medium => SdkEffort.medium,
-                        // The SDK's effort scale has no xhigh member - clamp it to high.
                         ReasoningEffort.Max => SdkEffort.max,
+                        // Anthropic's own scale has an xhigh level, but Anthropic.SDK 5.10 has no
+                        // member for it - XHigh rides on high until the SDK exposes it.
                         _ => SdkEffort.high
                     }
                 };
@@ -117,6 +118,31 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
                 response.Usage?.CacheReadInputTokens ?? 0,
                 response.Usage?.CacheCreationInputTokens ?? 0)
         };
+    }
+
+    /// <summary>
+    /// Maps the transcript and caches it, not just the system prompt. The agent loop resends the
+    /// whole conversation every iteration, so without a breakpoint here each of up to 25 iterations
+    /// re-bills the growing history at full input price; a cache read costs a tenth of that.
+    /// </summary>
+    /// <remarks>
+    /// The breakpoint has to land on the newest message on every call rather than being set once:
+    /// a breakpoint only searches back 20 content blocks for an existing entry, and a single
+    /// iteration with several parallel tool calls can add more than that. Short conversations may
+    /// still not cache - the minimum cacheable prefix is per-model (1024 tokens on Sonnet 5, 4096
+    /// on Haiku 4.5) and the API silently skips anything below it.
+    /// </remarks>
+    internal static List<Message> BuildMessages(IEnumerable<LlmMessage> messages)
+    {
+        var mapped = messages.Select(ToAnthropicMessage).ToList();
+
+        // Always a user turn (the prompt, or tool results), so never a thinking block.
+        if (mapped.LastOrDefault()?.Content.LastOrDefault() is { } lastBlock)
+        {
+            lastBlock.CacheControl = new CacheControl { Type = CacheControlType.ephemeral };
+        }
+
+        return mapped;
     }
 
     internal static Message ToAnthropicMessage(LlmMessage message)

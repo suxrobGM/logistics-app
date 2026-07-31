@@ -82,7 +82,7 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient ht
                 ReasoningEffort.None => new ChatReasoningEffortLevel("none"),
                 ReasoningEffort.Low => ChatReasoningEffortLevel.Low,
                 ReasoningEffort.Medium => ChatReasoningEffortLevel.Medium,
-                // OpenAI's effort scale tops out at "high" - clamp the Anthropic-only levels.
+                // The SDK's effort scale tops out at High - XHigh and Max both clamp to it.
                 _ => ChatReasoningEffortLevel.High
             };
 #pragma warning restore OPENAI001

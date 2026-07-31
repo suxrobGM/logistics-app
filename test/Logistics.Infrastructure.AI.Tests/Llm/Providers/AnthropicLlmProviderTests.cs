@@ -123,6 +123,59 @@ public class AnthropicLlmProviderTests
 
     #endregion
 
+    #region Prompt caching
+
+    [Fact]
+    public void BuildMessages_MarksOnlyTheNewestMessageForCaching()
+    {
+        // The breakpoint has to move each iteration: it only looks back 20 content blocks for an
+        // existing entry, and one turn with several parallel tool calls can add more than that.
+        var messages = new List<LlmMessage>
+        {
+            LlmMessage.FromUser("first"),
+            LlmMessage.FromUser("second"),
+            LlmMessage.FromToolResults([new LlmToolResultBlock("call_1", "done")])
+        };
+
+        var mapped = AnthropicLlmProvider.BuildMessages(messages);
+
+        Assert.Null(mapped[0].Content[^1].CacheControl);
+        Assert.Null(mapped[1].Content[^1].CacheControl);
+        Assert.Equal(CacheControlType.ephemeral, mapped[^1].Content[^1].CacheControl?.Type);
+    }
+
+    [Fact]
+    public void BuildMessages_CachesTheLastBlockOfAMultiBlockTurn()
+    {
+        // A tool-results turn carries one block per call; the prefix only caches up to the
+        // breakpoint, so marking anything but the last block leaves the rest re-billed.
+        var toolResults = LlmMessage.FromToolResults(
+        [
+            new LlmToolResultBlock("call_1", "a"),
+            new LlmToolResultBlock("call_2", "b")
+        ]);
+
+        var mapped = AnthropicLlmProvider.BuildMessages([toolResults]);
+
+        Assert.Null(mapped[0].Content[0].CacheControl);
+        Assert.Equal(CacheControlType.ephemeral, mapped[0].Content[1].CacheControl?.Type);
+    }
+
+    [Fact]
+    public void SystemPromptAndTranscript_StayWithinTheFourBreakpointLimit()
+    {
+        var parameters = AnthropicLlmProvider.BuildParameters(
+            Request("claude-sonnet-5", ReasoningEffort.High));
+        var mapped = AnthropicLlmProvider.BuildMessages([LlmMessage.FromUser("go")]);
+
+        var breakpoints = parameters.System.Count(s => s.CacheControl is not null)
+            + mapped.Sum(m => m.Content.Count(c => c.CacheControl is not null));
+
+        Assert.Equal(2, breakpoints);
+    }
+
+    #endregion
+
     #region Reasoning effort
 
     private static LlmRequest Request(string model, ReasoningEffort effort) => new()
