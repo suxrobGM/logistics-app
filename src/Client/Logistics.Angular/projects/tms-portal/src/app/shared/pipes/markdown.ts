@@ -1,15 +1,16 @@
-import { inject, Pipe, type PipeTransform } from "@angular/core";
-import { DomSanitizer, type SafeHtml } from "@angular/platform-browser";
+import { inject, Pipe, SecurityContext, type PipeTransform } from "@angular/core";
+import { DomSanitizer } from "@angular/platform-browser";
 import { marked } from "marked";
 
 @Pipe({ name: "markdown" })
 export class MarkdownPipe implements PipeTransform {
   private readonly sanitizer = inject(DomSanitizer);
 
-  transform(value?: string | null): SafeHtml {
+  transform(value?: string | null): string {
     if (!value) return "";
+    // LLM output is untrusted - sanitize, never bypass.
     const html = marked.parse(value, { async: false }) as string;
-    return this.sanitizer.bypassSecurityTrustHtml(html);
+    return this.sanitizer.sanitize(SecurityContext.HTML, html) ?? "";
   }
 }
 

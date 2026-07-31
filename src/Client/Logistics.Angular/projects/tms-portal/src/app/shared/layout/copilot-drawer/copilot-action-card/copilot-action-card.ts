@@ -2,20 +2,22 @@ import { Component, computed, input, output } from "@angular/core";
 import { Permission, PermissionGuard } from "@logistics/shared";
 import type { AgentDecisionDto } from "@logistics/shared/api";
 import { Badge, Icon } from "@logistics/shared/ui";
-import { ApproveRejectActions } from "@/shared/components";
-import { getToolIcon, getToolLabel, Labels } from "@/shared/utils";
+import { ApproveRejectActions, ToolOutputSummary } from "@/shared/components";
+import { getDecisionRefs, getToolIcon, getToolLabel, isWriteTool, Labels } from "@/shared/utils";
 
 /**
- * A suggested (or resolved) write action rendered inline in the chat stream. The approve/reject
- * buttons are permission-gated here; the API re-checks the tool's own permission on approval.
+ * One agent decision in the stream: read tools render as a compact activity row, write tools as
+ * the full approval card. Approve/reject is permission-gated here; the API re-checks on approval.
  */
 @Component({
   selector: "app-copilot-action-card",
   templateUrl: "./copilot-action-card.html",
-  imports: [ApproveRejectActions, Badge, Icon, PermissionGuard],
+  imports: [ApproveRejectActions, Badge, Icon, PermissionGuard, ToolOutputSummary],
 })
 export class CopilotActionCard {
   public readonly decision = input.required<AgentDecisionDto>();
+  /** True while this decision's approve/reject request is in flight. */
+  public readonly busy = input(false);
   public readonly approve = output<AgentDecisionDto>();
   public readonly reject = output<AgentDecisionDto>();
 
@@ -24,4 +26,6 @@ export class CopilotActionCard {
   protected readonly icon = computed(() => getToolIcon(this.decision().toolName));
   protected readonly label = computed(() => getToolLabel(this.decision().toolName));
   protected readonly isPending = computed(() => this.decision().status === "suggested");
+  protected readonly isWrite = computed(() => isWriteTool(this.decision().toolName));
+  protected readonly refs = computed(() => getDecisionRefs(this.decision()));
 }

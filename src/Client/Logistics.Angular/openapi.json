@@ -847,6 +847,57 @@
           }
         }
       },
+      "put": {
+        "tags": [
+          "AICopilot"
+        ],
+        "operationId": "RenameCopilotConversation",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameAICopilotConversationCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameAICopilotConversationCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameAICopilotConversationCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "AICopilot"
@@ -923,6 +974,36 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SendAICopilotMessageResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/copilot/quota": {
+      "get": {
+        "tags": [
+          "AICopilot"
+        ],
+        "operationId": "GetCopilotQuotaStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIQuotaStatusDto"
                 }
               }
             }
@@ -25599,6 +25680,20 @@
         },
         "additionalProperties": false
       },
+      "RenameAICopilotConversationCommand": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RenewSubscriptionCommand": {
         "type": "object",
         "properties": {
@@ -26157,6 +26252,10 @@
             "format": "uuid"
           },
           "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "pageContext": {
             "type": "string",
             "nullable": true
           }

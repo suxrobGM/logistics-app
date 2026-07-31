@@ -7,27 +7,31 @@
     </div>
   </div>
 } @else if (showLayout()) {
-  <!-- Mobile Header (visible only on mobile) -->
-  <app-mobile-header />
-
   <!-- Mobile Drawer (slides in from left) -->
   <app-mobile-drawer />
 
-  <div class="flex h-screen">
-    <!-- Desktop Sidebar (hidden on mobile) -->
-    <div class="hidden md:block">
-      <app-sidebar />
-    </div>
+  <!-- overflow-hidden: the document must never scroll; the content column is the only scroller -->
+  <div class="flex h-dvh flex-col overflow-hidden">
+    <!-- Mobile Header (visible only on mobile) -->
+    <app-mobile-header />
 
-    <!-- Main Content -->
-    <div class="w-full overflow-y-auto pb-10">
-      <div [class.p-2]="layoutService.isMobile()" [class.p-4]="!layoutService.isMobile()">
-        <router-outlet />
+    <div class="flex min-h-0 flex-1">
+      <!-- Desktop Sidebar (hidden on mobile) -->
+      <div class="hidden md:block">
+        <app-sidebar />
       </div>
-    </div>
 
-    <!-- Copilot chat drawer (docked; pushes content instead of covering it) -->
-    <app-copilot-drawer />
+      <!-- relative is load-bearing: without it, absolute descendants (ui-toggle-field's sr-only
+           inputs) escape the scroll clip and stretch the document -->
+      <div class="relative min-w-0 flex-1 overflow-y-auto pb-10">
+        <div [class.p-2]="layoutService.isMobile()" [class.p-4]="!layoutService.isMobile()">
+          <router-outlet />
+        </div>
+      </div>
+
+      <!-- Copilot chat drawer (docked; pushes content instead of covering it) -->
+      <app-copilot-drawer />
+    </div>
   </div>
 } @else {
   <router-outlet />

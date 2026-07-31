@@ -1,4 +1,4 @@
-import { inject } from "@angular/core";
+import { inject, signal } from "@angular/core";
 import {
   HttpTransportType,
   HubConnection,
@@ -7,6 +7,8 @@ import {
 } from "@microsoft/signalr";
 import { environment } from "@/env";
 import { TenantService } from "./tenant.service";
+
+export type HubConnectionStatus = "disconnected" | "connecting" | "connected" | "reconnecting";
 
 export interface HubConnectionOptions {
   /** JWT for authorized hubs; SignalR sends it as the access_token query parameter. */
@@ -22,7 +24,11 @@ export interface HubConnectionOptions {
 export abstract class BaseHubConnection {
   private readonly tenantService = inject(TenantService);
   private readonly registerTenant: boolean;
+  private readonly state = signal<HubConnectionStatus>("disconnected");
   protected readonly hubConnection: HubConnection;
+
+  /** Live connection status for offline/reconnecting UI. */
+  readonly connectionState = this.state.asReadonly();
 
   constructor(
     private readonly hubName: string,
@@ -37,6 +43,10 @@ export abstract class BaseHubConnection {
       })
       .withAutomaticReconnect()
       .build();
+
+    this.hubConnection.onreconnecting(() => this.state.set("reconnecting"));
+    this.hubConnection.onreconnected(() => this.state.set("connected"));
+    this.hubConnection.onclose(() => this.state.set("disconnected"));
   }
 
   get isConnected(): boolean {
@@ -49,8 +59,10 @@ export abstract class BaseHubConnection {
       return;
     }
 
+    this.state.set("connecting");
     try {
       await this.hubConnection.start();
+      this.state.set("connected");
 
       if (this.registerTenant) {
         const tenant = this.tenantService.getTenantData();
@@ -61,6 +73,7 @@ export abstract class BaseHubConnection {
         await this.hubConnection.invoke("RegisterTenant", tenant.id);
       }
     } catch (error) {
+      this.state.set("disconnected");
       console.error(`Failed to connect to the ${this.hubName} hub`, error);
     }
   }

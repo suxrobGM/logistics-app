@@ -37,4 +37,44 @@
       message="Start a chat and it will show up here."
     />
   }
+
+  @if (hasMore()) {
+    <ui-button
+      label="Load more"
+      appearance="text"
+      intent="secondary"
+      size="sm"
+      (click)="loadMore.emit()"
+    />
+  }
 </div>
+
+<ui-dialog
+  header="Rename conversation"
+  width="22rem"
+  [open]="renameTarget() !== null"
+  (closed)="closeRenameDialog()"
+>
+  <ui-text-field
+    id="copilot-rename-title"
+    [(value)]="renameTitle"
+    [maxlength]="120"
+    placeholder="Conversation title"
+    (keydown.enter)="confirmRename()"
+  />
+  <div class="mt-4 flex justify-end gap-2">
+    <ui-button
+      label="Cancel"
+      appearance="outlined"
+      intent="secondary"
+      size="sm"
+      (click)="closeRenameDialog()"
+    />
+    <ui-button
+      label="Rename"
+      size="sm"
+      [disabled]="!renameTitle().trim()"
+      (click)="confirmRename()"
+    />
+  </div>
+</ui-dialog>

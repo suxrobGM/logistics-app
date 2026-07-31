@@ -110,3 +110,26 @@
     animation: shimmer 1.5s infinite;
   }
 }
+
+/* Copilot drawer `animate.enter`. Must always run (Angular waits for animationend), so reduced
+   motion shortens it instead of removing it. */
+@keyframes copilot-drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.copilot-drawer-enter {
+  animation: copilot-drawer-in 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copilot-drawer-enter {
+    animation-duration: 1ms;
+  }
+}

@@ -3,6 +3,7 @@
     [(value)]="text"
     [rows]="2"
     [maxlength]="4000"
+    capAutoGrow
     placeholder="Ask about loads, invoices, expenses..."
     (keydown)="onKeydown($event)"
     class="block min-w-0 flex-1 text-sm"
@@ -20,7 +21,7 @@
     <ui-button
       icon="send"
       [rounded]="true"
-      [disabled]="disabled()"
+      [loading]="disabled()"
       ariaLabel="Send message"
       (click)="submit()"
     />
