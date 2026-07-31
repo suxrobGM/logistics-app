@@ -15,7 +15,6 @@ public record TenantQuotaUsageDto
     public decimal OverageUsd { get; set; }
     public DateTime? QuotaResetAt { get; set; }
     public int TotalTokensUsed { get; set; }
-    public decimal TotalEstimatedCostUsd { get; set; }
     public string? LastModelUsed { get; set; }
 
     /// <summary>Subscription revenue per month: plan base price + per-truck price × truck count.</summary>

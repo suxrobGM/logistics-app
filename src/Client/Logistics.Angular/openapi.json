@@ -26867,10 +26867,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "totalEstimatedCostUsd": {
-            "type": "number",
-            "format": "double"
-          },
           "lastModelUsed": {
             "type": "string",
             "nullable": true

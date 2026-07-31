@@ -47,15 +47,13 @@ Mode` - `AgentAutonomyMode` owns that one, and reusing it makes the model confla
 OpenAI-compatible endpoint via `BaseUrl`) sit behind `ILlmProvider`, resolved by `LlmProviderFactory`.
 **Provider SDK types must not leak past the provider class** - everything else sees `Llm/Contracts/`.
 
-**Anthropic caching.** `BuildMessages` puts an ephemeral breakpoint on the last content block of the
-newest message, alongside the system-prompt one. Both halves look droppable and are not: it must be
-re-placed every call (a breakpoint searches back only 20 content blocks, and one iteration with
-parallel tool calls can add more), and it must be the _last_ block (the prefix caches only up to it).
-Cache reads bill at a tenth of input, so hits lower `EstimatedCostUsd` and therefore the tenant's
-budget and overage. Verify with `AgentSession.CacheReadTokens`; a steady zero means the prefix was
-invalidated (tools changed, model switched) or the prompt is under the per-model minimum - 1024
-tokens on Sonnet 5, 4096 on Haiku 4.5, silently skipped below. OpenAI and DeepSeek cache
-server-side, which is why this lives in the provider and not the loop.
+**Anthropic caching.** `BuildMessages` breakpoints the newest message's last block, plus the system
+prompt. Both details are load-bearing: **newest** (a breakpoint searches back only 20 blocks, and one
+parallel-tool turn can exceed that) and **last** (the prefix caches only up to it). Reads bill at a
+tenth of input, so hits lower `EstimatedCostUsd` and the budget with it. `CacheReadTokens` stuck at
+zero means an invalidated prefix (tools or model changed) or a prompt under the per-model minimum -
+1024 tokens on Sonnet 5, 4096 on Haiku 4.5, silently skipped. OpenAI and DeepSeek cache server-side,
+hence provider-level and not in the loop.
 
 ## Tools
 

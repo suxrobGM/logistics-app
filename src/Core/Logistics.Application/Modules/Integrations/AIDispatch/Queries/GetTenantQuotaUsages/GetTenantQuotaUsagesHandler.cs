@@ -121,7 +121,6 @@ internal sealed class GetTenantQuotaUsagesHandler(
             OverageUsd = Math.Max(0m, usage.SpentThisWeekUsd - weeklyBudget),
             QuotaResetAt = tenant.QuotaResetAt,
             TotalTokensUsed = usage.TotalTokens,
-            TotalEstimatedCostUsd = usage.SpentThisWeekUsd,
             LastModelUsed = usage.LastModel,
             MonthlyRevenueUsd = monthlyRevenue,
             MonthlyLlmCostUsd = usage.MonthlyLlmCost,

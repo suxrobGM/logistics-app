@@ -58,7 +58,6 @@
         <th uiSortHeader="OverageUsd" class="text-center">Overage</th>
         <th>Usage</th>
         <th class="text-right">Tokens</th>
-        <th class="text-right">Est. Cost</th>
         <th class="text-right">Revenue/mo</th>
         <th class="text-right">LLM Cost (30d)</th>
         <th class="text-right">Margin</th>
@@ -120,9 +119,6 @@
           <span class="font-mono text-sm">{{ (usage.totalTokensUsed ?? 0).toLocaleString() }}</span>
         </td>
         <td class="text-right">
-          <span class="font-mono text-sm">{{ usage.totalEstimatedCostUsd | currency }}</span>
-        </td>
-        <td class="text-right">
           <span class="font-mono text-sm">{{ usage.monthlyRevenueUsd | currency }}</span>
         </td>
         <td class="text-right">
@@ -163,7 +159,7 @@
     </ng-template>
     <ng-template #empty>
       <tr>
-        <td colspan="14" class="py-8 text-center">
+        <td colspan="13" class="py-8 text-center">
           <ui-stack align="center" gap="2" class="text-muted-foreground">
             <ui-icon name="chart-column" size="xl" />
             <ui-typography variant="body">No tenants with an AI budget configured.</ui-typography>
