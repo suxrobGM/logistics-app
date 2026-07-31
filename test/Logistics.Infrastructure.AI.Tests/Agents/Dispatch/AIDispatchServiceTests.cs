@@ -88,10 +88,13 @@ public class AIDispatchServiceTests
             NullLogger<AIDispatchService>.Instance);
     }
 
-    private void SetQuotaStatus(bool isOverQuota)
+    private void SetQuotaStatus(bool isOverQuota, bool overageBlocked = false)
     {
         quotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(new AIQuotaStatus(5m, isOverQuota ? 5m : 0m, isOverQuota));
+            .Returns(new AIQuotaStatus(5m, isOverQuota ? 5m : 0m, isOverQuota)
+            {
+                OverageBlocked = overageBlocked
+            });
     }
 
     private static AIDispatchRequest CreateRequest()
@@ -145,6 +148,52 @@ public class AIDispatchServiceTests
 
         Assert.NotNull(capturedSession);
         Assert.False(capturedSession!.IsOverage);
+    }
+
+    #endregion
+
+    #region Overage blocking
+
+    [Fact]
+    public async Task RunAsync_OverageBlocked_FailsSessionWithoutRunning()
+    {
+        SetQuotaStatus(isOverQuota: true, overageBlocked: true);
+        AgentSession? capturedSession = null;
+        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
+
+        // No try/catch: the loop never runs, so no LLM API error can escape.
+        var session = await sut.RunAsync(CreateRequest());
+
+        Assert.NotNull(capturedSession);
+        Assert.Same(capturedSession, session);
+        Assert.Equal(AgentSessionStatus.Failed, session.Status);
+        Assert.Contains("budget", session.ErrorMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.False(session.IsOverage);
+        await stripeUsageService.DidNotReceive()
+            .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task RunAsync_OverQuotaWithoutBlock_StillRuns()
+    {
+        SetQuotaStatus(isOverQuota: true, overageBlocked: false);
+        AgentSession? capturedSession = null;
+        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
+
+        try
+        {
+            await sut.RunAsync(CreateRequest());
+        }
+        catch
+        {
+            // Expected - no real LLM API
+        }
+
+        // The session was created for a real run (overage-stamped), not fail-fasted by the gate.
+        Assert.NotNull(capturedSession);
+        Assert.True(capturedSession!.IsOverage);
     }
 
     #endregion

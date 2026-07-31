@@ -15,6 +15,8 @@ public static class AIQuotaStatusMapper
             : 0,
         IsOverQuota = status.IsOverQuota,
         PlanName = status.PlanName,
-        ResetsAt = status.ResetsAt
+        ResetsAt = status.ResetsAt,
+        OverageChargesUsd = status.OverageChargesUsd,
+        OverageBlocked = status.OverageBlocked
     };
 }

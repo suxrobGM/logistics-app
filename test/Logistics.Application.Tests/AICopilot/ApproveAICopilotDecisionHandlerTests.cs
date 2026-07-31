@@ -55,7 +55,7 @@ public class ApproveAICopilotDecisionHandlerTests
 
         sut = new ApproveAICopilotDecisionHandler(
             tenantUow, currentUser, toolExecutor, toolRegistry, broadcastService, mediator,
-            Options.Create(new LlmOptions { BypassLlmGate = true }));
+            Options.Create(new LlmOptions { BypassAIGate = true }));
     }
 
     private void SetCallerPermissions(params string[] permissions)

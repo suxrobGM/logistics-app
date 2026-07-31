@@ -262,6 +262,24 @@
           </ui-surface>
         </ui-stack>
 
+        <!-- AI Settings Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="zap" color="secondary" />
+            <ui-typography variant="overline" color="secondary">AI Settings</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-form-field
+              label="Pause AI when weekly budget is reached"
+              for="blockAIOverage"
+              hint="When on, AI dispatch and the copilot stop until the weekly budget resets. When off, they keep working and extra usage is billed as overage."
+              class="mb-0"
+            >
+              <ui-toggle-field id="blockAIOverage" [formField]="form.blockAIOverage" />
+            </ui-form-field>
+          </ui-surface>
+        </ui-stack>
+
         <!-- Actions -->
         <ui-stack direction="row" gap="2">
           <ui-button

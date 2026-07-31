@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
@@ -20,7 +21,7 @@ internal sealed class AIQuotaService(
         if (tenantInfo is null)
             return new AIQuotaStatus(0m, 0m, IsOverQuota: false);
 
-        var (budget, planName, quotaResetAt) = tenantInfo;
+        var (budget, planName, quotaResetAt, blockOverage) = tenantInfo;
 
         // If tenant has a quota reset this week, count from that date; otherwise use ISO week start
         var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
@@ -31,14 +32,29 @@ internal sealed class AIQuotaService(
             .Where(s => s.StartedAt >= countFrom)
             .SumAsync(s => s.EstimatedCostUsd, ct);
 
-        var resetsAt = countFrom.AddDays(7);
+        // Filter mirrors AgentOverageReporter's billing gate; units round per session (in memory -
+        // the min-1 ceiling doesn't translate to SQL), or the figure drifts from the invoice.
+        // Runs unconditionally on purpose: gating it on IsOverQuota looks free (spend only grows
+        // within a window) but zeroes the figure after a mid-week plan upgrade - the one moment a
+        // tenant most wants it, since only ResetTenantQuotas moves countFrom, not a plan change.
+        var overageCosts = await tenantUow.Repository<AgentSession>().Query()
+            .Where(s => s.StartedAt >= countFrom
+                        && s.IsOverage
+                        && s.Status == AgentSessionStatus.Completed)
+            .Select(s => s.EstimatedCostUsd)
+            .ToListAsync(ct);
+        var overageChargesUsd = overageCosts.Sum(AIOverageBilling.UnitsFor) * AIOverageBilling.UnitUsd;
 
-        return new AIQuotaStatus(
-            WeeklyBudgetUsd: budget,
-            SpentThisWeekUsd: spentThisWeek,
-            IsOverQuota: spentThisWeek >= budget,
-            PlanName: planName,
-            ResetsAt: resetsAt);
+        var resetsAt = countFrom.AddDays(7);
+        var isOverQuota = spentThisWeek >= budget;
+
+        return new AIQuotaStatus(budget, spentThisWeek, isOverQuota)
+        {
+            PlanName = planName,
+            ResetsAt = resetsAt,
+            OverageChargesUsd = overageChargesUsd,
+            OverageBlocked = blockOverage && isOverQuota
+        };
     }
 
     private async Task<TenantQuotaInfo?> GetTenantQuotaInfoAsync(
@@ -58,7 +74,8 @@ internal sealed class AIQuotaService(
         return new TenantQuotaInfo(
             BudgetUsd: plan.WeeklyAIBudgetUsd.Value,
             PlanName: plan.Name,
-            QuotaResetAt: tenant.QuotaResetAt);
+            QuotaResetAt: tenant.QuotaResetAt,
+            BlockOverage: tenant.Settings?.BlockAIOverage ?? false);
     }
 
     #region Internal records
@@ -66,7 +83,8 @@ internal sealed class AIQuotaService(
     public record TenantQuotaInfo(
         decimal BudgetUsd,
         string? PlanName,
-        DateTime? QuotaResetAt);
+        DateTime? QuotaResetAt,
+        bool BlockOverage);
 
     #endregion
 }

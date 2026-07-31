@@ -16455,6 +16455,13 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "overageChargesUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "overageBlocked": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -26942,7 +26949,7 @@
             "type": "string",
             "nullable": true
           },
-          "llmEnabled": {
+          "aiEnabled": {
             "type": "boolean",
             "nullable": true
           },
@@ -26950,6 +26957,9 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "blockAIOverage": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

@@ -46,7 +46,8 @@
           <ui-stack gap="4">
             <ui-typography variant="body-sm" color="muted">
               One weekly budget per plan (USD of model cost), shared by dispatch and copilot. Past
-              it, dispatch bills as overage; the copilot is blocked until the week resets.
+              it, both keep working and bill as overage - unless the tenant switched on "pause AI
+              at budget" in its company settings, in which case both pause until the week resets.
             </ui-typography>
             <ui-alert intent="warning">
               An empty budget is unlimited <em>and</em> unbillable - every plan should have a

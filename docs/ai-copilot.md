@@ -90,10 +90,11 @@ parameter), and each connection auto-joins its private `copilot:{tenantId}:{user
 
 ## Quota and cost
 
-Each turn is one `AgentSession`, so copilot turns and dispatch runs draw on the same weekly plan
-budget in USD of estimated model cost. Neither blocks at the budget: a turn started past it is
-stamped `IsOverage` and metered to Stripe on completion by `AgentOverageReporter`. The composer
-warns from 80% of the allowance. The model is the same admin-managed global one dispatch uses.
+Each turn is one `AgentSession`, drawing on the same weekly budget as dispatch. Past the budget a
+turn is stamped `IsOverage` and metered to Stripe by `AgentOverageReporter`; the composer notice
+shows the accrued amount (`AIQuotaStatusDto.OverageChargesUsd`) and warns from 80%. With
+`TenantSettings.BlockAIOverage` on, over-budget sends fail with `AI_BUDGET_REACHED` and the
+composer disables. The model is the admin-managed global one dispatch uses.
 
 ## Adding a tool
 

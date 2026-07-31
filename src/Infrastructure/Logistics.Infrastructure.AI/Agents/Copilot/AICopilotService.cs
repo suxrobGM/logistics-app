@@ -44,15 +44,29 @@ internal sealed class AICopilotService(
             return;
         }
 
-        if (await AppendLlmDisabledNoticeAsync(request, conversation, ct))
+        if (!options.Value.BypassAIGate && tenantUow.GetCurrentTenant().Settings.AIEnabled == false)
+        {
+            logger.LogInformation("LLM is disabled for tenant {TenantId}, skipping copilot turn", request.TenantId);
+            await AppendSystemNoticeAsync(
+                request, conversation,
+                "AI is disabled for this company. Contact your administrator to enable it.", ct);
             return;
+        }
+
+        // Billed-not-blocked by default. The send handler already gates; this catches turns
+        // enqueued just before the budget line or the toggle flip.
+        var quota = await quotaService.GetQuotaStatusAsync(request.TenantId, ct);
+        if (quota.OverageBlocked)
+        {
+            logger.LogInformation(
+                "Weekly AI budget reached and overage is blocked for tenant {TenantId}, skipping copilot turn",
+                request.TenantId);
+            await AppendSystemNoticeAsync(request, conversation, ErrorCodes.AIBudgetReachedMessage, ct);
+            return;
+        }
 
         runContext.SetTriggeredBy(request.UserId);
         var permissions = await ResolveCallerPermissionsAsync(request, ct);
-
-        // Billed-not-blocked, same as dispatch: a tenant past its budget keeps working and the
-        // turn is metered on completion.
-        var quota = await quotaService.GetQuotaStatusAsync(request.TenantId, ct);
 
         var session = new AgentSession
         {
@@ -187,22 +201,18 @@ internal sealed class AICopilotService(
         return result.Value?.ToHashSet() ?? [];
     }
 
-    /// <summary>Returns true when the tenant's LLM access is switched off and the turn must not run.</summary>
-    private async Task<bool> AppendLlmDisabledNoticeAsync(
-        AICopilotTurnRequest request, AICopilotConversation conversation, CancellationToken ct)
+    /// <summary>
+    /// Refusal path: ends the turn with a transcript notice and no session, so nothing bills.
+    /// </summary>
+    private async Task AppendSystemNoticeAsync(
+        AICopilotTurnRequest request, AICopilotConversation conversation, string notice,
+        CancellationToken ct)
     {
-        if (options.Value.BypassLlmGate || tenantUow.GetCurrentTenant().Settings.LlmEnabled != false)
-            return false;
-
-        logger.LogInformation("LLM is disabled for tenant {TenantId}, skipping copilot turn", request.TenantId);
-
-        const string notice = "AI is disabled for this company. Contact your administrator to enable it.";
         var row = conversation.AddTextMessage(AICopilotMessageRole.System, notice);
         await tenantUow.Repository<AICopilotMessage>().AddAsync(row, ct);
         conversation.EndTurn();
         await tenantUow.SaveChangesAsync(ct);
         await BroadcastMessageAsync(request, conversation, row);
-        return true;
     }
 
     private static string? DeriveTitle(AICopilotConversation conversation)

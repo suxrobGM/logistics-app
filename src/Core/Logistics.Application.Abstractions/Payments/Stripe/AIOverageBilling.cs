@@ -1,14 +1,14 @@
-namespace Logistics.Infrastructure.Payments.Stripe;
+namespace Logistics.Application.Abstractions.Payments.Stripe;
 
 /// <summary>
-/// Converts a session's raw model cost into Stripe metered billing units. Lives in Payments
-/// because the unit price is a billing concern - the AI layer reports raw cost only.
+/// Converts a session's raw model cost into Stripe metered billing units. Single source of
+/// billed-unit math for Stripe metering and the tenant-visible accrued overage figure.
 /// </summary>
-internal static class AIOverageBilling
+public static class AIOverageBilling
 {
     /// <summary>
-    /// Dollars per metered unit. <see cref="StripePlanService"/> derives the Stripe price from
-    /// this - changing it recreates the price on the next reconcile.
+    /// Dollars per metered unit. StripePlanService derives the Stripe price from this - changing
+    /// it recreates the price on the next reconcile.
     /// </summary>
     public const decimal UnitUsd = 0.10m;
 

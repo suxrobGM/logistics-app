@@ -87,20 +87,23 @@ SystemSettings), resolved once per session by `LlmSessionSetup`. Tenants never p
 model names; plans differ by **weekly budget only** - there is no tier or multiplier system. Do not
 reintroduce one.
 
-- `LlmModelCatalog` owns the selectable models and each one's `ReasoningStyle`. `OpenAIEffort`
-  models **must always get an explicit `reasoning_effort`** (`None` → `"none"`) - the server default
-  400s with function tools. `AnthropicAdaptive` models never get a temperature (Sonnet 5 rejects
-  non-default sampling) and replay thinking blocks in-turn via `LlmThinkingBlock`. `None` models
-  (DeepSeek, Haiku, unknown ids) never get a reasoning parameter.
-- `LlmPricing` owns per-token prices, keyed by the same ids. **Read the numbers there** - do not copy
-  them into docs. An unknown model is charged at Sonnet 5 rates (conservative fallback).
+- `LlmModelCatalog` owns the selectable models and each `ReasoningStyle`: `OpenAIEffort` models
+  **always get an explicit `reasoning_effort`** (`None` → `"none"`; the server default 400s with
+  function tools); `AnthropicAdaptive` models never get a temperature and replay thinking blocks
+  via `LlmThinkingBlock`; `None` models get no reasoning parameter.
+- `LlmPricing` owns per-token prices - **read the numbers there**, never copy them into docs.
+  Unknown models charge at Sonnet 5 rates.
 - Quota is **cost-based**: `AgentSession.EstimatedCostUsd` (written in `AgentLoopRunner`'s finally,
-  so failed and cancelled sessions count) summed for the week against
-  `SubscriptionPlan.WeeklyAIBudgetUsd` (null = unlimited). The tenant API returns a percentage only.
-- Overage: neither surface blocks on budget. **Completed** over-budget sessions bill through
-  `AgentOverageReporter`; `AIOverageBilling` converts cost→units ($0.10/unit, 3× markup, min 1).
-  `IsOverage` is stamped at session start, so the run that crosses the line is free, and
-  failed/cancelled runs spend budget without billing - both priced into the markup.
+  so failed and cancelled sessions count) summed weekly against
+  `SubscriptionPlan.WeeklyAIBudgetUsd` (null = unlimited). The tenant API exposes a percentage and
+  `OverageChargesUsd` - never budget dollars.
+- Overage: billed-not-blocked by default. **Completed** over-budget sessions bill through
+  `AgentOverageReporter`; `AIOverageBilling` (`Application.Abstractions/Payments/Stripe/`, shared
+  with `AIQuotaService`'s tenant-visible `OverageChargesUsd` sum) converts cost→units ($0.10/unit,
+  3× markup, min 1). `IsOverage` is stamped at session start - the crossing run is free and
+  failed/cancelled runs never bill; both priced into the markup. `TenantSettings.BlockAIOverage`
+  swaps billing for a hard pause: `OverageBlocked` gates copilot sends (`AIBudgetReached`, not an
+  upgrade code) and fail-fasts dispatch sessions, which must keep `IsOverage` false or they'd bill.
 
 Resolution is setting → appsettings default for both halves, each through one owner
 (`LlmModelResolver`, `AISettingsResolver`) so the admin screen cannot report a setting the agents

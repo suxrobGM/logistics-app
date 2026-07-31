@@ -6,7 +6,12 @@
       The agent will execute assignments immediately without approval.
     }
   </p>
-  @if (isOverQuota()) {
+  @if (overageBlocked()) {
+    <ui-alert intent="danger" class="mb-4 w-full">
+      AI is paused until your weekly budget resets. An owner can allow overage billing in Company
+      Settings.
+    </ui-alert>
+  } @else if (isOverQuota()) {
     <ui-alert intent="warning" class="mb-4 w-full">
       Your weekly AI usage allowance is used up. Running a session will incur additional charges.
     </ui-alert>
@@ -21,6 +26,12 @@
   />
   <ng-template #footer>
     <ui-button intent="secondary" appearance="text" label="Cancel" (click)="cancel()" />
-    <ui-button [label]="modeLabel" [icon]="modeIcon" [intent]="modeIntent" (click)="confirm()" />
+    <ui-button
+      [label]="modeLabel"
+      [icon]="modeIcon"
+      [intent]="modeIntent"
+      [disabled]="overageBlocked()"
+      (click)="confirm()"
+    />
   </ng-template>
 </ui-dialog>

@@ -11,9 +11,10 @@ import {
 import type { AgentDecisionDto, AICopilotMessageDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
 import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
-import { CopilotStore } from "@/core/store";
+import { CopilotStore, type QuotaNotice } from "@/core/store";
 import { DecisionActionsService, RejectDecisionDialog } from "@/shared/components";
 import { CopilotActionCard } from "./copilot-action-card/copilot-action-card";
+import type { CopilotCommandAction } from "./copilot-composer/copilot-commands";
 import { CopilotComposer } from "./copilot-composer/copilot-composer";
 import { CopilotHistory } from "./copilot-history/copilot-history";
 import { CopilotMessage } from "./copilot-message/copilot-message";
@@ -68,6 +69,12 @@ export class CopilotDrawer {
   /** False while the user has scrolled up to read back - new messages must not yank them down. */
   protected readonly pinnedToBottom = signal(true);
 
+  protected readonly noticeClasses: Record<QuotaNotice["severity"], string> = {
+    blocked: "border-danger/30 bg-danger/10 text-danger",
+    overage: "border-warning/30 bg-warning/15 text-warning",
+    info: "border-border bg-warning/10 text-muted-foreground",
+  };
+
   protected readonly suggestedPrompts = [
     "Which loads were delivered last week?",
     "Show unpaid invoices",
@@ -75,7 +82,7 @@ export class CopilotDrawer {
     "What did we spend on fuel this month?",
   ];
 
-  /** Messages and action cards interleaved chronologically, optimistic entries last. */
+  /** Messages and action cards interleaved chronologically; "9999" catches missing createdAt. */
   protected readonly stream = computed<StreamItem[]>(() => {
     const items: StreamItem[] = [
       ...this.store
@@ -87,7 +94,7 @@ export class CopilotDrawer {
         decision,
       })),
     ];
-    return items.sort((a, b) => a.at.localeCompare(b.at));
+    return items.sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
   });
 
   /** Feeds the aria-live region. */
@@ -191,6 +198,14 @@ export class CopilotDrawer {
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
       this.store.setDrawerWidth(this.store.drawerWidth() - ResizeKeyStepPx);
+    }
+  }
+
+  protected onComposerCommand(action: CopilotCommandAction): void {
+    if (action === "startNewChat") {
+      this.store.startNewChat();
+    } else {
+      this.store.showHistory();
     }
   }
 

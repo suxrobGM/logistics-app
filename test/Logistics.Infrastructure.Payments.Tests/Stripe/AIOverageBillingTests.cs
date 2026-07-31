@@ -1,4 +1,4 @@
-using Logistics.Infrastructure.Payments.Stripe;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using Xunit;
 
 namespace Logistics.Infrastructure.Payments.Tests.Stripe;

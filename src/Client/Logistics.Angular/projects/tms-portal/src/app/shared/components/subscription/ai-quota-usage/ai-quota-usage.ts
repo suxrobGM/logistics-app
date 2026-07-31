@@ -1,12 +1,13 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import type { AIQuotaStatusDto } from "@logistics/shared/api";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { Badge, Icon, Progress } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-ai-quota-usage",
   templateUrl: "./ai-quota-usage.html",
-  imports: [Badge, DatePipe, Icon, Progress],
+  imports: [Badge, CurrencyFormatPipe, DatePipe, Icon, Progress],
 })
 export class AIQuotaUsage {
   readonly quota = input.required<AIQuotaStatusDto>();

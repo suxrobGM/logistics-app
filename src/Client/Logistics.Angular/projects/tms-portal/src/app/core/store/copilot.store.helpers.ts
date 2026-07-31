@@ -1,4 +1,5 @@
 import type { AIQuotaStatusDto } from "@logistics/shared/api";
+import { DateUtils } from "@logistics/shared/utils";
 
 const DrawerWidthKey = "copilot.width";
 export const DefaultDrawerWidth = 400;
@@ -17,25 +18,38 @@ export const persistDrawerWidth = (width: number): void =>
   localStorage.setItem(DrawerWidthKey, String(width));
 
 export interface QuotaNotice {
-  /** Past budget - the turn still runs, it just bills. Styles the notice, never gates the composer. */
-  overBudget: boolean;
+  /** "blocked" = hard pause (composer disables); "overage" = billing through; "info" = nearing budget. */
+  severity: "info" | "overage" | "blocked";
   text: string;
 }
 
-/** Usage notice shown near the composer from 80% up; null hides it. */
-export function buildQuotaNotice(quota: AIQuotaStatusDto | null): QuotaNotice | null {
+/**
+ * Usage notice shown near the composer from 80% up; null hides it. `formatCurrency` comes from
+ * the caller so the accrued figure follows tenant currency like every other money display.
+ */
+export function buildQuotaNotice(
+  quota: AIQuotaStatusDto | null,
+  formatCurrency: (value: number) => string,
+): QuotaNotice | null {
   if (!quota) return null;
+  const until = quota.resetsAt ? ` until ${DateUtils.toLocaleDate(quota.resetsAt)}.` : ".";
+
+  if (quota.overageBlocked) {
+    return { severity: "blocked", text: `Weekly AI budget reached - AI is paused${until}` };
+  }
   if (quota.isOverQuota) {
+    const accrued =
+      (quota.overageChargesUsd ?? 0) > 0
+        ? ` - ${formatCurrency(quota.overageChargesUsd!)} so far this week`
+        : "";
     return {
-      overBudget: true,
-      text:
-        "Weekly AI allowance used - further messages are billed as overage" +
-        (quota.resetsAt ? ` until ${new Date(quota.resetsAt).toLocaleDateString()}.` : "."),
+      severity: "overage",
+      text: `Weekly AI allowance used - further messages are billed as overage${accrued}${until}`,
     };
   }
   const percent = Math.round((quota.usagePercent ?? 0) * 100);
   return percent >= 80
-    ? { overBudget: false, text: `AI usage at ${percent}% of your weekly allowance.` }
+    ? { severity: "info", text: `AI usage at ${percent}% of your weekly allowance.` }
     : null;
 }
 

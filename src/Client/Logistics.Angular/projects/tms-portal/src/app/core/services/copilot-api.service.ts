@@ -51,7 +51,7 @@ export class CopilotApiService {
     );
   }
 
-  /** Silent - the quota line is advisory; the send path enforces the limit server-side. */
+  /** Silent - the quota notice and composer block are advisory; the send path enforces server-side. */
   fetchQuota(): Promise<AIQuotaStatusDto | null> {
     return this.orNull(this.api.invoke(getCopilotQuotaStatus, undefined, silentErrors()));
   }

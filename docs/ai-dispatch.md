@@ -14,12 +14,13 @@ You can switch LLM providers without code changes:
 | **Anthropic** | Claude Haiku 4.5, Claude Sonnet 5     | Prompt caching; Sonnet 5 adaptive thinking |
 | **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro    | OpenAI-compatible API                      |
 
-Quota is **cost-based**: every session's estimated model cost (`AgentSession.EstimatedCostUsd`,
-recorded for failed and cancelled runs too) counts against the plan's weekly USD budget
-(`SubscriptionPlan.WeeklyAIBudgetUsd`, null = unlimited). Neither the dispatch agent nor the copilot
-blocks at the budget - a completed session started past it bills Stripe metered units derived from
-its raw cost (`AIOverageBilling`: $0.10/unit, 3× markup, minimum one unit). Per-token prices live in
-`LlmPricing.cs` - read the current numbers there.
+Quota is **cost-based**: every session's `AgentSession.EstimatedCostUsd` (failed and cancelled runs
+too) counts against the plan's `WeeklyAIBudgetUsd` (null = unlimited). Past the budget, sessions
+bill Stripe metered units (`AIOverageBilling` in `Application.Abstractions/Payments/Stripe/`:
+$0.10/unit, 3× markup, min one unit); the accrued amount is tenant-visible as
+`AIQuotaStatusDto.OverageChargesUsd`. `TenantSettings.BlockAIOverage` swaps billing for a hard
+pause until the weekly reset (copilot sends fail with `AI_BUDGET_REACHED`; dispatch records a
+failed session). Per-token prices live in `LlmPricing.cs`.
 
 ## Operating Modes
 
@@ -129,7 +130,7 @@ last condition matters - `Approve()` is immediately overwritten by `MarkExecuted
 transient status, and autonomous-mode executions have no approver and no human signal. Counting them
 would train the agent on its own output.
 
-**Skip conditions** (each returns a reason for the job log): learning switched off; `LlmEnabled` false
+**Skip conditions** (each returns a reason for the job log): learning switched off; `AIEnabled` false
 for the tenant; fewer than 15 qualifying decisions or fewer than 3 rejections; no new decisions since
 the `LastDecisionAt` watermark; a manual regenerate within 10 minutes of the last run. `force: true`
 (the regenerate endpoint) bypasses only the last two. The watermark is what makes the job's
@@ -202,7 +203,7 @@ Portal → AI Settings page, which persists `AI.Model` / `AI.ReasoningEffort` to
 (keys in `AISettingsKeys`). `LlmSessionSetup` resolves both from those settings, falling back to
 the appsettings `Llm` defaults. The selectable models come from `LlmModelCatalog`, which also
 declares each model's reasoning style (OpenAI `reasoning_effort`, Anthropic adaptive thinking, or
-none). Tenants never select or see the model. Per tenant, an admin can still toggle `LlmEnabled`
+none). Tenants never select or see the model. Per tenant, an admin can still toggle `AIEnabled`
 (Tenant Edit) to block AI for demo/test tenants.
 
 Because quota is metered in USD of model cost, switching to a more expensive model makes each

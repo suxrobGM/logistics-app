@@ -8,7 +8,9 @@
       }
     </div>
     <div class="flex items-center gap-2">
-      @if (quota().isOverQuota) {
+      @if (quota().overageBlocked) {
+        <ui-badge value="AI paused - budget reached" severity="danger" />
+      } @else if (quota().isOverQuota) {
         <ui-badge value="Overage charges apply" severity="warn" />
       }
       @if (quota().resetsAt) {
@@ -24,4 +26,9 @@
     [showValue]="true"
     [color]="progressBarColor()"
   />
+  @if ((quota().overageChargesUsd ?? 0) > 0) {
+    <p class="text-muted-foreground mt-2 mb-0 text-sm">
+      Overage billed this week: {{ quota().overageChargesUsd | currencyFormat }}
+    </p>
+  }
 </div>

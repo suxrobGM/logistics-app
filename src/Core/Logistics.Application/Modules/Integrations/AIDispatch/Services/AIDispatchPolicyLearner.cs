@@ -31,9 +31,9 @@ internal sealed class AIDispatchPolicyLearner(
         CancellationToken ct = default)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        var bypassGate = llmOptions.Value.BypassLlmGate;
+        var bypassGate = llmOptions.Value.BypassAIGate;
 
-        if (!bypassGate && tenant.Settings.LlmEnabled == false)
+        if (!bypassGate && tenant.Settings.AIEnabled == false)
         {
             return Skipped("AI is disabled for this tenant");
         }

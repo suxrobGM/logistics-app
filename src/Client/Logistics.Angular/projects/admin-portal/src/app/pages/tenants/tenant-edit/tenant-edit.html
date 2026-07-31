@@ -47,21 +47,21 @@
           <ui-stack direction="row" align="center" gap="3">
             <input
               type="checkbox"
-              id="llmEnabled"
-              [formField]="llmSettingsForm.llmEnabled"
+              id="aiEnabled"
+              [formField]="aiSettingsForm.aiEnabled"
               class="h-4 w-4"
             />
-            <label for="llmEnabled">LLM Enabled</label>
+            <label for="aiEnabled">AI Enabled</label>
             <ui-typography variant="caption" color="muted">
-              (uncheck to block LLM usage for demo/test tenants)
+              (uncheck to block AI usage for demo/test tenants)
             </ui-typography>
           </ui-stack>
 
           <ui-button
             icon="save"
-            label="Save LLM Settings"
-            [loading]="isSavingLlmSettings()"
-            (click)="saveLlmSettings()"
+            label="Save AI Settings"
+            [loading]="isSavingAiSettings()"
+            (click)="saveAiSettings()"
           />
         </ui-stack>
       </ui-card>

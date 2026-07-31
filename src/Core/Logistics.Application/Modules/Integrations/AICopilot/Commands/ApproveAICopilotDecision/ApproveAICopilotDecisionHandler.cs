@@ -25,7 +25,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
     public async Task<Result> Handle(ApproveAICopilotDecisionCommand request, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        if (!llmOptions.Value.BypassLlmGate && tenant.Settings.LlmEnabled == false)
+        if (!llmOptions.Value.BypassAIGate && tenant.Settings.AIEnabled == false)
             return Result.Fail("AI is disabled for this tenant");
 
         var userId = currentUser.GetUserId();

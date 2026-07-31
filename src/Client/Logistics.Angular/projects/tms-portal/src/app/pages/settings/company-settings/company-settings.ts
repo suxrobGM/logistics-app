@@ -34,6 +34,7 @@ import {
   UiNumberField,
   UiSelectField,
   UiTextField,
+  UiToggleField,
 } from "@logistics/shared/ui";
 import { TenantService, ToastService } from "@/core/services";
 import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
@@ -57,6 +58,8 @@ interface CompanySettingsModel {
   operatingMode: OperatingMode;
   // Dispatch settings
   minBrokerCreditScore: number | null;
+  // AI settings
+  blockAIOverage: boolean;
 }
 
 const EMPTY: CompanySettingsModel = {
@@ -76,6 +79,7 @@ const EMPTY: CompanySettingsModel = {
   timezone: "America/New_York",
   operatingMode: "fleet",
   minBrokerCreditScore: null,
+  blockAIOverage: false,
 };
 
 @Component({
@@ -98,6 +102,7 @@ const EMPTY: CompanySettingsModel = {
     UiNumberField,
     UiSelectField,
     UiTextField,
+    UiToggleField,
     ValidatedForm,
   ],
 })
@@ -187,7 +192,7 @@ export class CompanySettingsComponent implements OnInit {
             taxResidencyCountry: value.taxResidencyCountry || null,
             companyAddress: value.companyAddress ?? undefined,
             // Whole-object replace on the server: without the spread, every setting this form does
-            // not own (region, language, llmEnabled, volume/temperature units) is wiped on save.
+            // not own (region, language, aiEnabled, volume/temperature units) is wiped on save.
             settings: {
               ...this.tenant()?.settings,
               distanceUnit: value.distanceUnit,
@@ -196,6 +201,7 @@ export class CompanySettingsComponent implements OnInit {
               timezone: value.timezone,
               operatingMode: value.operatingMode,
               minBrokerCreditScore: value.minBrokerCreditScore,
+              blockAIOverage: value.blockAIOverage,
             },
           };
 
@@ -302,6 +308,7 @@ export class CompanySettingsComponent implements OnInit {
           timezone: tenant.settings?.timezone ?? "America/New_York",
           operatingMode: tenant.settings?.operatingMode ?? "fleet",
           minBrokerCreditScore: tenant.settings?.minBrokerCreditScore ?? null,
+          blockAIOverage: tenant.settings?.blockAIOverage ?? false,
         });
 
         if (tenant.logoUrl) {

@@ -9,7 +9,6 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
@@ -33,8 +32,16 @@ internal sealed class AIDispatchService(
 
         runContext.SetTriggeredBy(request.TriggeredByUserId);
 
-        // Billed-not-blocked: over-quota sessions run, flagged and metered on completion.
+        // Billed-not-blocked by default: over-quota sessions run and meter on completion, unless
+        // the owner opted into a hard pause.
         var quota = await quotaService.GetQuotaStatusAsync(request.TenantId, ct);
+        if (quota.OverageBlocked)
+        {
+            logger.LogInformation(
+                "Weekly AI budget reached and overage is blocked for tenant {TenantId}, skipping session",
+                request.TenantId);
+            return await FailSessionAsync(request, ErrorCodes.AIBudgetReachedMessage, ct);
+        }
 
         var session = new AgentSession
         {
@@ -117,22 +124,32 @@ internal sealed class AIDispatchService(
     private async Task<AgentSession?> CheckLlmDisabledAsync(
         AIDispatchRequest request, CancellationToken ct)
     {
-        if (options.Value.BypassLlmGate)
+        if (options.Value.BypassAIGate)
             return null;
 
         var tenant = tenantUow.GetCurrentTenant();
-        if (tenant.Settings.LlmEnabled != false)
+        if (tenant.Settings.AIEnabled != false)
             return null;
 
         logger.LogInformation("LLM is disabled for tenant {TenantId}, skipping session", request.TenantId);
+        return await FailSessionAsync(
+            request, "LLM is disabled for this tenant. Contact your administrator to enable it.", ct);
+    }
 
+    /// <summary>
+    /// Records a refusal as a failed session so the sessions list shows why nothing ran. IsOverage
+    /// stays false - a session that never ran must not bill.
+    /// </summary>
+    private async Task<AgentSession> FailSessionAsync(
+        AIDispatchRequest request, string reason, CancellationToken ct)
+    {
         var session = new AgentSession
         {
             Mode = request.Mode,
             TriggeredByUserId = request.TriggeredByUserId,
             StartedAt = DateTime.UtcNow
         };
-        session.Fail("LLM is disabled for this tenant. Contact your administrator to enable it.");
+        session.Fail(reason);
         await tenantUow.Repository<AgentSession>().AddAsync(session, ct);
         await tenantUow.SaveChangesAsync(ct);
         return session;

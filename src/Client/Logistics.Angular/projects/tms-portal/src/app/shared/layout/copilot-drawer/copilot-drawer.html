@@ -77,7 +77,7 @@
         <div class="relative min-h-0 flex-1">
           <div
             #messagesContainer
-            class="h-full space-y-3 overflow-y-auto p-3"
+            class="h-full space-y-4 overflow-y-auto px-4 py-4"
             [attr.aria-busy]="store.isRunning()"
             (scroll)="onMessagesScroll()"
           >
@@ -167,11 +167,7 @@
         @if (store.quotaNotice(); as notice) {
           <div
             class="flex items-center gap-2 border-t px-3 py-1.5 text-xs"
-            [class]="
-              notice.overBudget
-                ? 'border-warning/30 bg-warning/15 text-warning'
-                : 'border-border bg-warning/10 text-muted-foreground'
-            "
+            [class]="noticeClasses[notice.severity]"
           >
             <ui-icon name="chart-column" size="inherit" class="shrink-0" />
             <span>{{ notice.text }}</span>
@@ -193,11 +189,14 @@
           </div>
         }
 
+        <!-- Blocked = hard budget pause; the server would reject the send anyway. -->
         <app-copilot-composer
           [isRunning]="store.isRunning()"
           [disabled]="store.sending()"
+          [blocked]="store.quotaBlocked()"
           (sendMessage)="store.sendMessage($event)"
           (stopTurn)="store.cancelTurn()"
+          (commandSelected)="onComposerCommand($event)"
         />
       }
     }

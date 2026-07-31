@@ -42,9 +42,9 @@ public class LlmOptions
     public int SessionTimeoutMinutes { get; set; } = 30;
 
     /// <summary>
-    /// When true, skips the per-tenant LlmEnabled check. Set to true in development environments.
+    /// When true, skips the per-tenant AIEnabled check. Set to true in development environments.
     /// </summary>
-    public bool BypassLlmGate { get; set; }
+    public bool BypassAIGate { get; set; }
 
     /// <summary>
     /// Cheap-tier model for background learning passes. Falls back to the global model when unset,

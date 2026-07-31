@@ -20,9 +20,9 @@ internal sealed class ApproveAIDispatchDecisionHandler(
     public async Task<Result> Handle(ApproveAIDispatchDecisionCommand request, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        var bypassGate = llmOptions.Value.BypassLlmGate;
+        var bypassGate = llmOptions.Value.BypassAIGate;
 
-        if (!bypassGate && tenant.Settings.LlmEnabled == false)
+        if (!bypassGate && tenant.Settings.AIEnabled == false)
             return Result.Fail("AI dispatch is disabled for this tenant");
 
         var decision = await tenantUow.Repository<AgentDecision>()

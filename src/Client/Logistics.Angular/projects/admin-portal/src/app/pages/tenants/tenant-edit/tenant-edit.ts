@@ -36,14 +36,14 @@ export class TenantEdit implements OnInit {
 
   protected readonly isLoading = signal<boolean>(false);
   protected readonly isFetching = signal<boolean>(true);
-  protected readonly isSavingLlmSettings = signal(false);
+  protected readonly isSavingAiSettings = signal(false);
   protected readonly tenant = signal<TenantDto | null>(null);
 
-  protected readonly llmSettingsModel = signal({
-    llmEnabled: true,
+  protected readonly aiSettingsModel = signal({
+    aiEnabled: true,
   });
 
-  protected readonly llmSettingsForm = form(this.llmSettingsModel);
+  protected readonly aiSettingsForm = form(this.aiSettingsModel);
 
   ngOnInit(): void {
     this.fetchTenant();
@@ -66,8 +66,8 @@ export class TenantEdit implements OnInit {
     }
 
     this.tenant.set(tenant);
-    this.llmSettingsModel.set({
-      llmEnabled: tenant.settings?.llmEnabled !== false,
+    this.aiSettingsModel.set({
+      aiEnabled: tenant.settings?.aiEnabled !== false,
     });
     this.isFetching.set(false);
   }
@@ -114,27 +114,27 @@ export class TenantEdit implements OnInit {
     this.isLoading.set(false);
   }
 
-  protected async saveLlmSettings(): Promise<void> {
+  protected async saveAiSettings(): Promise<void> {
     const tenant = this.tenant();
     if (!tenant) return;
 
-    this.isSavingLlmSettings.set(true);
+    this.isSavingAiSettings.set(true);
     try {
-      const settings = this.llmSettingsForm().value();
+      const settings = this.aiSettingsForm().value();
       const command: UpdateTenantCommand = {
         id: tenant.id!,
         settings: {
           ...tenant.settings,
-          llmEnabled: settings.llmEnabled,
+          aiEnabled: settings.aiEnabled,
         },
       };
 
       await this.api.invoke(updateTenant, { id: tenant.id!, body: command });
-      this.toastService.showSuccess("LLM settings updated");
+      this.toastService.showSuccess("AI settings updated");
     } catch {
-      this.toastService.showError("Failed to update LLM settings");
+      this.toastService.showError("Failed to update AI settings");
     } finally {
-      this.isSavingLlmSettings.set(false);
+      this.isSavingAiSettings.set(false);
     }
   }
 

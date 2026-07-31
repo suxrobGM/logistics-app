@@ -38,3 +38,9 @@ No plan can lose money on AI at full quota utilization with the current global m
   per week) metered directly on `AgentSession.EstimatedCostUsd` (all statuses count). Overage now
   bills `ceil(session cost × 3 / $0.10)` Stripe units via `AIOverageBilling` - margin tracks real
   spend automatically, so the "quota economics" re-check when switching models is no longer needed.
+- **2026-07-31 (later)** - Overage UX: the accrued billed amount became tenant-visible
+  (`AIQuotaStatusDto.OverageChargesUsd`, shown in the quota widget and copilot notice), and owners
+  got a per-tenant hard stop (`TenantSettings.BlockAIOverage`) that pauses both surfaces at the
+  budget instead of billing (`AI_BUDGET_REACHED`). `AIOverageBilling` moved to
+  `Application.Abstractions/Payments/Stripe/` so the quota service and Stripe metering share one
+  formula.

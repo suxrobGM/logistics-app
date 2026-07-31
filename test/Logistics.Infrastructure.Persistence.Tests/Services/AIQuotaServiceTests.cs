@@ -29,7 +29,7 @@ public class AIQuotaServiceTests
         sut = new AIQuotaService(masterUow, tenantUow);
     }
 
-    private void SetupTenantWithPlan(Guid tenantId, decimal? weeklyBudgetUsd)
+    private void SetupTenantWithPlan(Guid tenantId, decimal? weeklyBudgetUsd, bool blockOverage = false)
     {
         var planId = Guid.NewGuid();
         var tenant = new Tenant
@@ -40,7 +40,8 @@ public class AIQuotaServiceTests
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" },
             IsSubscriptionRequired = true,
-            Subscription = new Subscription { PlanId = planId, TenantId = tenantId, Tenant = null!, Plan = null! }
+            Subscription = new Subscription { PlanId = planId, TenantId = tenantId, Tenant = null!, Plan = null! },
+            Settings = new() { BlockAIOverage = blockOverage }
         };
 
         tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(tenant);
@@ -61,9 +62,10 @@ public class AIQuotaServiceTests
         sessionRepo.Query().Returns(mock);
     }
 
-    private static AgentSession CreateCompletedSessionAt(DateTime startedAt, decimal costUsd)
+    private static AgentSession CreateCompletedSessionAt(
+        DateTime startedAt, decimal costUsd, bool isOverage = false)
     {
-        var session = new AgentSession { StartedAt = startedAt, EstimatedCostUsd = costUsd };
+        var session = new AgentSession { StartedAt = startedAt, EstimatedCostUsd = costUsd, IsOverage = isOverage };
         session.Complete("done");
         return session;
     }
@@ -253,6 +255,98 @@ public class AIQuotaServiceTests
 
         Assert.True(status.IsOverQuota);
         Assert.Equal(3.50m, status.SpentThisWeekUsd);
+    }
+
+    #endregion
+
+    #region Overage charges
+
+    [Fact]
+    public async Task GetQuotaStatus_OverageCharges_SumBilledUnitsPerCompletedOverageSession()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithPlan(tenantId, 1m);
+
+        var now = DateTime.UtcNow;
+        var failedOverage = new AgentSession { StartedAt = now, EstimatedCostUsd = 0.50m, IsOverage = true };
+        failedOverage.Fail("error");
+
+        SetupSessions(
+            CreateCompletedSessionAt(now, 0.04m, isOverage: true),  // 0.12 marked up -> 2 units
+            CreateCompletedSessionAt(now, 0.01m, isOverage: true),  // 0.03 -> min-rounds to 1 unit
+            failedOverage,                                          // failed: never billed
+            CreateCompletedSessionAt(now, 0.90m),                   // completed but not overage
+            CreateCompletedSessionAt(now.AddDays(-14), 0.30m, isOverage: true)); // last week
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        // 3 units x $0.10 - per-session rounding, matching what Stripe actually invoices.
+        Assert.Equal(0.30m, status.OverageChargesUsd);
+    }
+
+    [Fact]
+    public async Task GetQuotaStatus_NoOverageSessions_ChargesAreZero()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithPlan(tenantId, 10m);
+        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 1m));
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        Assert.Equal(0m, status.OverageChargesUsd);
+    }
+
+    #endregion
+
+    #region Overage blocking
+
+    [Fact]
+    public async Task GetQuotaStatus_BlockOverageAndOverBudget_OverageBlockedTrue()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithPlan(tenantId, 2m, blockOverage: true);
+        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 3m));
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        Assert.True(status.OverageBlocked);
+    }
+
+    [Fact]
+    public async Task GetQuotaStatus_BlockOverageUnderBudget_OverageBlockedFalse()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithPlan(tenantId, 10m, blockOverage: true);
+        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 1m));
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        Assert.False(status.OverageBlocked);
+    }
+
+    [Fact]
+    public async Task GetQuotaStatus_OverBudgetWithoutBlock_OverageBlockedFalse()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithPlan(tenantId, 2m);
+        SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 3m));
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        Assert.True(status.IsOverQuota);
+        Assert.False(status.OverageBlocked);
+    }
+
+    [Fact]
+    public async Task GetQuotaStatus_UnlimitedBudgetWithBlock_OverageBlockedFalse()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithPlan(tenantId, null, blockOverage: true);
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        // No budget means nothing to block - the unlimited early-return path.
+        Assert.False(status.OverageBlocked);
     }
 
     #endregion

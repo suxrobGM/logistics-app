@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    partial class MasterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260731072511_AddBlockAIOverageTenantSetting")]
+    partial class AddBlockAIOverageTenantSetting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1545,10 +1548,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         {
                             b1.IsRequired();
 
-                            b1.Property<bool?>("AIEnabled")
-                                .HasColumnType("boolean")
-                                .HasColumnName("settings_ai_enabled");
-
                             b1.Property<bool>("BlockAIOverage")
                                 .HasColumnType("boolean")
                                 .HasColumnName("settings_block_ai_overage");
@@ -1572,6 +1571,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("settings_language");
+
+                            b1.Property<bool?>("LlmEnabled")
+                                .HasColumnType("boolean")
+                                .HasColumnName("settings_llm_enabled");
 
                             b1.Property<int?>("MinBrokerCreditScore")
                                 .HasColumnType("integer")

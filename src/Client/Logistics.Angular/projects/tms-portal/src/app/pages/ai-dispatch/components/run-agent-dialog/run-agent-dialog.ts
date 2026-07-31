@@ -28,6 +28,7 @@ export class RunAgentDialog {
   protected readonly instructions = model("");
 
   protected readonly isOverQuota = computed(() => this.quotaStatus()?.isOverQuota === true);
+  protected readonly overageBlocked = computed(() => this.quotaStatus()?.overageBlocked === true);
 
   protected get modeLabel(): string {
     return this.mode() === "human_in_the_loop" ? "Run (Suggestions)" : "Run (Autonomous)";

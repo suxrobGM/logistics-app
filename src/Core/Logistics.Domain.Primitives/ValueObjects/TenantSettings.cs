@@ -27,15 +27,20 @@ public record TenantSettings
     public string Language { get; set; } = "en";
 
     /// <summary>
-    /// Whether LLM API calls are enabled for this tenant. Null/true = enabled, false = blocked.
+    /// Whether AI (LLM API calls) is enabled for this tenant. Null/true = enabled, false = blocked.
     /// Used to prevent LLM usage on demo/test tenants in production.
     /// Bypassed in development environments.
     /// </summary>
-    public bool? LlmEnabled { get; set; }
+    public bool? AIEnabled { get; set; }
 
     /// <summary>
     /// Minimum broker credit score (0-100) required to book a load-board load.
     /// Null disables the gate. A missing score never blocks; inactive FMCSA authority always does.
     /// </summary>
     public int? MinBrokerCreditScore { get; set; }
+
+    /// <summary>
+    /// Owner-set: pause AI at the weekly budget instead of billing metered overage (default).
+    /// </summary>
+    public bool BlockAIOverage { get; set; }
 }

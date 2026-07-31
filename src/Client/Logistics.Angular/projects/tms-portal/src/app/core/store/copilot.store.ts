@@ -8,7 +8,12 @@ import type {
   AIQuotaStatusDto,
 } from "@logistics/shared/api";
 import { ErrorCodes } from "@logistics/shared/errors";
-import { FeatureService, PermissionService, ToastService } from "@logistics/shared/services";
+import {
+  FeatureService,
+  LocalizationService,
+  PermissionService,
+  ToastService,
+} from "@logistics/shared/services";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { CopilotApiService } from "@/core/services/copilot-api.service";
 import { CopilotHubService } from "@/core/services/copilot-hub.service";
@@ -85,6 +90,7 @@ export const CopilotStore = signalStore(
       featureService = inject(FeatureService),
       permissionService = inject(PermissionService),
       copilotHub = inject(CopilotHubService),
+      localization = inject(LocalizationService),
     ) => ({
       isRunning: computed(() => store.turnStatus() === "running"),
       hasUnread: computed(() => store.unreadCount() > 0),
@@ -98,7 +104,11 @@ export const CopilotStore = signalStore(
         const state = copilotHub.connectionState();
         return store.open() && (state === "disconnected" || state === "reconnecting");
       }),
-      quotaNotice: computed(() => buildQuotaNotice(store.quota())),
+      quotaNotice: computed(() =>
+        buildQuotaNotice(store.quota(), (value) => localization.formatCurrency(value)),
+      ),
+      /** Owner opted for a hard pause and the budget is spent - the composer disables. */
+      quotaBlocked: computed(() => store.quota()?.overageBlocked === true),
     }),
   ),
 
@@ -318,11 +328,14 @@ export const CopilotStore = signalStore(
               patchState(store, { currentConversation: conversation });
             }
 
+            // createdAt keeps it above the reply in the stream sort; untimestamped entries sort
+            // last forever (the id-swap never backfills it).
             const optimistic: AICopilotMessageDto = {
               id: `optimistic-${conversation.id}-${store.messages().length}`,
               conversationId: conversation.id,
               role: "user",
               text: trimmed,
+              createdAt: new Date().toISOString(),
             };
             patchState(store, { messages: [...store.messages(), optimistic] });
             beginTurn();
