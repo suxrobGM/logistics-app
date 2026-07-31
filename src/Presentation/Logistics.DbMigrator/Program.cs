@@ -41,4 +41,10 @@ builder.Services.AddHostedService<MigrateDatabaseWorker>();
 builder.Services.AddHostedService<SeederOrchestrationWorker>();
 builder.Services.AddHostedService<CreateSqlFunctionsWorker>();
 
+// `--exit` stops the host once the workers above have completed, for one-shot runs
+if (args.Contains("--exit"))
+{
+    builder.Services.AddHostedService<StopApplicationWorker>();
+}
+
 builder.Build().Run();
