@@ -121,16 +121,12 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
     }
 
     /// <summary>
-    /// Maps the transcript and caches it, not just the system prompt. The agent loop resends the
-    /// whole conversation every iteration, so without a breakpoint here each of up to 25 iterations
-    /// re-bills the growing history at full input price; a cache read costs a tenth of that.
+    /// Maps the transcript and caches its prefix - the loop resends the whole conversation every
+    /// iteration, and a cache read costs a tenth of full input.
     /// </summary>
     /// <remarks>
-    /// The breakpoint has to land on the newest message on every call rather than being set once:
-    /// a breakpoint only searches back 20 content blocks for an existing entry, and a single
-    /// iteration with several parallel tool calls can add more than that. Short conversations may
-    /// still not cache - the minimum cacheable prefix is per-model (1024 tokens on Sonnet 5, 4096
-    /// on Haiku 4.5) and the API silently skips anything below it.
+    /// Breakpoint placement is load-bearing: newest message because a breakpoint only searches back
+    /// 20 content blocks, last block because the prefix caches only up to it.
     /// </remarks>
     internal static List<Message> BuildMessages(IEnumerable<LlmMessage> messages)
     {
