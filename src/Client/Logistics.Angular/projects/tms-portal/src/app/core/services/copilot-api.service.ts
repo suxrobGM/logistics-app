@@ -60,15 +60,11 @@ export class CopilotApiService {
     return this.orNull(this.api.invoke(createCopilotConversation));
   }
 
-  sendMessage(
-    conversationId: string,
-    text: string,
-    pageContext: string,
-  ): Promise<SendAICopilotMessageResultDto | null> {
+  sendMessage(conversationId: string, text: string): Promise<SendAICopilotMessageResultDto | null> {
     return this.orNull(
       this.api.invoke(sendCopilotMessage, {
         conversationId,
-        body: { conversationId, text, pageContext },
+        body: { conversationId, text },
       }),
     );
   }

@@ -27,7 +27,6 @@ internal sealed class AICopilotConversationBuilder(
         AICopilotConversation conversation,
         IReadOnlySet<string> callerPermissions,
         LlmOptions config,
-        string? pageContext,
         CancellationToken ct)
     {
         var setup = await sessionSetup.ResolveAsync(config, ct);
@@ -43,8 +42,7 @@ internal sealed class AICopilotConversationBuilder(
             // Metadata, not a name list: a new dispatch write tool must not silently lose the
             // guardrails section just because nobody remembered to extend a hardcoded pair.
             HasDispatchTools =
-                tools.Any(t => t.IsWrite && t.RequiredPermission == Permission.Dispatch.Manage),
-            PageContext = pageContext
+                tools.Any(t => t.IsWrite && t.RequiredPermission == Permission.Dispatch.Manage)
         });
 
         session.ModelUsed = selection.Model;

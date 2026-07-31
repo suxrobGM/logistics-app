@@ -33,7 +33,7 @@ const initialState: PendingInvitationsState = {
   page: 1,
   pageSize: 10,
   first: 0,
-  sortField: "CreatedDate",
+  sortField: "CreatedAt",
   sortOrder: -1,
   search: "",
 };
@@ -87,7 +87,7 @@ export const PendingInvitationsStore = signalStore(
           page,
           pageSize: event.rows ?? 10,
           first: event.first ?? 0,
-          sortField: (event.sortField as string) ?? "CreatedDate",
+          sortField: (event.sortField as string) ?? "CreatedAt",
           sortOrder: event.sortOrder ?? -1,
         });
         fetchData();

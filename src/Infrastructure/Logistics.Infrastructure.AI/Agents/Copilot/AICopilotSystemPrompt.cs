@@ -9,8 +9,6 @@ namespace Logistics.Infrastructure.AI.Agents.Copilot;
 /// </summary>
 internal static class AICopilotSystemPrompt
 {
-    private const int MaxPageContextChars = 300;
-
     public static string Build(CopilotPromptContext context)
     {
         var unitLabel = context.DistanceUnit == DistanceUnit.Kilometers ? "kilometers" : "miles";
@@ -21,7 +19,6 @@ internal static class AICopilotSystemPrompt
             ? "This is a solo owner-operator running a single truck - avoid fleet-wide framing."
             : "";
         var company = PromptText.SanitizeCompanyName(context.CompanyName);
-        var pageContextNote = BuildPageContextNote(context.PageContext);
 
         // Travels with the dispatch tools - callers without them never pay these tokens.
         var dispatchActionsSection = context.HasDispatchTools
@@ -38,7 +35,7 @@ internal static class AICopilotSystemPrompt
             You are the AI copilot inside {company}'s transportation management system (TMS).
             You help dispatchers, managers, and drivers get answers and get work done - loads, invoices,
             payments, expenses, maintenance, customers, and dispatch. Today is {DateTime.UtcNow:yyyy-MM-dd} (UTC).
-            {operationNote}{pageContextNote}
+            {operationNote}
 
             ## Ground Rules
             - Every factual claim must come from a tool result in THIS conversation. Never fabricate data,
@@ -81,18 +78,5 @@ internal static class AICopilotSystemPrompt
             - Refer to loads, invoices, and trucks by their number, never by GUID.
             - Show money with its currency and dates as yyyy-MM-dd. Distances in {unitLabel}.{conversionNote}
             """;
-    }
-
-    /// <summary>Untrusted client input - sanitized and clamped at the injection point.</summary>
-    private static string BuildPageContextNote(string? pageContext)
-    {
-        if (string.IsNullOrWhiteSpace(pageContext))
-            return "";
-
-        var sanitized = PromptText.StripControlChars(pageContext.Trim(), allowLineBreaks: false);
-        if (sanitized.Length > MaxPageContextChars)
-            sanitized = sanitized[..MaxPageContextChars];
-
-        return $"\nThe user is currently viewing this TMS page: {sanitized}";
     }
 }

@@ -10,7 +10,4 @@ public class SendAICopilotMessageCommand : ICommand<Result<SendAICopilotMessageR
 {
     public Guid ConversationId { get; set; }
     public string Text { get; set; } = "";
-
-    /// <summary>The sender's TMS route; injected into the current turn only, never persisted.</summary>
-    public string? PageContext { get; set; }
 }

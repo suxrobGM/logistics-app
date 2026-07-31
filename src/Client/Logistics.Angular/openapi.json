@@ -26272,10 +26272,6 @@
           "text": {
             "type": "string",
             "nullable": true
-          },
-          "pageContext": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -26290,6 +26286,10 @@
           "userMessageId": {
             "type": "string",
             "format": "uuid"
+          },
+          "userMessageCreatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

@@ -352,7 +352,7 @@ export class UiTableState<T = unknown> {
 
   /**
    * Dev-only. A sort path that resolves `undefined` for every row is a silent no-op sort - usually
-   * a server-side column name ("CreatedDate") pasted into a client-side table.
+   * a server-side column name ("CreatedAt") pasted into a client-side table.
    */
   private warnIfSortFieldUnresolvable(field: string): void {
     if (!isDevMode() || this.lazy() || this.warnedSortFields.has(field)) {

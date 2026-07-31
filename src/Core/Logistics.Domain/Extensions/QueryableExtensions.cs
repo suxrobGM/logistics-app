@@ -38,22 +38,43 @@ public static class QueryableExtensions
     }
 
     /// <summary>
-    ///     Null when the field does not exist on <typeparamref name="T" />, leaving the order
-    ///     untouched. Sort strings name an <b>entity</b> property, but callers reach for the DTO's
-    ///     name often enough (<c>CreatedDate</c> for <c>CreatedAt</c>) that an unknown field must
-    ///     degrade quietly - appending a dangling direction builds "descending" on its own, which
-    ///     surfaces to the caller as an unrelated parse error deep inside dynamic LINQ.
+    ///     Null leaves the order untouched. Sort strings name an entity property, but callers reach
+    ///     for the DTO's (<c>CreatedDate</c> for <c>CreatedAt</c>) often enough that an unknown one
+    ///     must not become a dynamic-LINQ parse error.
     /// </summary>
     private static string? CreateOrderQuery<T>(string orderBy)
     {
         var desc = orderBy[0] == '-';
-        var prop = desc ? orderBy[1..] : orderBy;
+        var path = ResolvePropertyPath(typeof(T), (desc ? orderBy[1..] : orderBy).Trim());
 
-        var matched = typeof(T)
-            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .FirstOrDefault(p => p.Name.Equals(prop.Trim(), StringComparison.InvariantCultureIgnoreCase));
+        return path is null ? null : $"{path} {(desc ? "descending" : "ascending")}";
+    }
 
-        return matched is null ? null : $"{matched.Name} {(desc ? "descending" : "ascending")}";
+    /// <summary>
+    ///     Resolves a dotted path (<c>Customer.Name</c>) segment by segment, in each property's own
+    ///     casing. Matching the whole path as a single name resolves no nested sort at all.
+    /// </summary>
+    private static string? ResolvePropertyPath(Type type, string path)
+    {
+        var canonical = new List<string>();
+        var current = type;
+
+        foreach (var segment in path.Split('.'))
+        {
+            var property = current
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .FirstOrDefault(p => p.Name.Equals(segment, StringComparison.InvariantCultureIgnoreCase));
+
+            if (property is null)
+            {
+                return null;
+            }
+
+            canonical.Add(property.Name);
+            current = property.PropertyType;
+        }
+
+        return string.Join('.', canonical);
     }
 
     /// <summary>

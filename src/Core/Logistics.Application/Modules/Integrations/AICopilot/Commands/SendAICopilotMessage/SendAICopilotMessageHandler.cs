@@ -67,13 +67,13 @@ internal sealed class SendAICopilotMessageHandler(
         conversation.BeginTurn();
         await tenantUow.SaveChangesAsync(ct);
 
-        backgroundRunner.Enqueue(new AICopilotTurnRequest(
-            tenant.Id, conversation.Id, userId.Value, request.PageContext));
+        backgroundRunner.Enqueue(new AICopilotTurnRequest(tenant.Id, conversation.Id, userId.Value));
 
         return Result<SendAICopilotMessageResultDto>.Ok(new SendAICopilotMessageResultDto
         {
             ConversationId = conversation.Id,
-            UserMessageId = message.Id
+            UserMessageId = message.Id,
+            UserMessageCreatedAt = message.CreatedAt
         });
     }
 }

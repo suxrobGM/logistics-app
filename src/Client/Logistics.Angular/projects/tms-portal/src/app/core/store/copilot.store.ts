@@ -1,5 +1,4 @@
 import { computed, inject } from "@angular/core";
-import { Router } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import type {
   AgentDecisionDto,
@@ -121,7 +120,6 @@ export const CopilotStore = signalStore(
       permissionService = inject(PermissionService),
       upgradePrompt = inject(UpgradePromptService),
       toast = inject(ToastService),
-      router = inject(Router),
     ) => {
       const watchdog = new TurnWatchdog(
         () => void reconcileConversation(),
@@ -155,6 +153,16 @@ export const CopilotStore = signalStore(
         } else if (store.turnStatus() === "running") {
           endTurn("idle");
         }
+      };
+
+      /** Conversations are created lazily, on the first send rather than on drawer open. */
+      const currentOrNewConversation = async (): Promise<AICopilotConversationDto | null> => {
+        const existing = store.currentConversation();
+        if (existing) return existing;
+
+        const created = await copilotApi.createConversation();
+        if (created) patchState(store, { currentConversation: created });
+        return created;
       };
 
       /** Re-fetches the open conversation to recover state the hub failed to deliver. */
@@ -321,38 +329,39 @@ export const CopilotStore = signalStore(
 
           patchState(store, { sending: true });
           try {
-            let conversation = store.currentConversation();
-            if (!conversation) {
-              conversation = await copilotApi.createConversation();
-              if (!conversation) return;
-              patchState(store, { currentConversation: conversation });
-            }
+            const conversation = await currentOrNewConversation();
+            if (!conversation) return;
 
-            // createdAt keeps it above the reply in the stream sort; untimestamped entries sort
-            // last forever (the id-swap never backfills it).
+            // Deliberately untimestamped: it sorts last until the server's clock arrives, which is
+            // where a just-sent message belongs anyway. A browser clock here would lose to the
+            // server's on the reply and park the message below its own answer.
             const optimistic: AICopilotMessageDto = {
               id: `optimistic-${conversation.id}-${store.messages().length}`,
               conversationId: conversation.id,
               role: "user",
               text: trimmed,
-              createdAt: new Date().toISOString(),
             };
             patchState(store, { messages: [...store.messages(), optimistic] });
             beginTurn();
 
-            const result = await copilotApi.sendMessage(conversation.id!, trimmed, router.url);
-            if (result) {
-              patchState(store, {
-                messages: store
-                  .messages()
-                  .map((m) => (m.id === optimistic.id ? { ...m, id: result.userMessageId } : m)),
-              });
-            } else {
+            const result = await copilotApi.sendMessage(conversation.id!, trimmed);
+            if (!result) {
               patchState(store, {
                 messages: store.messages().filter((m) => m.id !== optimistic.id),
               });
               endTurn("idle");
+              return;
             }
+
+            patchState(store, {
+              messages: store
+                .messages()
+                .map((m) =>
+                  m.id === optimistic.id
+                    ? { ...m, id: result.userMessageId, createdAt: result.userMessageCreatedAt }
+                    : m,
+                ),
+            });
           } finally {
             patchState(store, { sending: false });
           }
@@ -361,9 +370,10 @@ export const CopilotStore = signalStore(
         /** Resends the last user message after a failed turn. */
         async retryTurn(): Promise<void> {
           if (store.sending() || store.isRunning()) return;
-          const lastUserText = [...store.messages()]
-            .reverse()
-            .find((m) => m.role === "user" && m.text)?.text;
+          const lastUserText = store
+            .messages()
+            .filter((m) => m.role === "user" && m.text)
+            .at(-1)?.text;
           if (!lastUserText) return;
           endTurn("idle");
           await this.sendMessage(lastUserText);

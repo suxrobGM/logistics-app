@@ -22,7 +22,4 @@ internal sealed record CopilotPromptContext(string CompanyName)
     /// travels with them, so callers without them never pay those tokens.
     /// </summary>
     public bool HasDispatchTools { get; init; }
-
-    /// <summary>The TMS page the user is viewing. Untrusted - sanitized at the injection point.</summary>
-    public string? PageContext { get; init; }
 }
