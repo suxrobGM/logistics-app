@@ -34,6 +34,11 @@ internal sealed class AgentSessionEntityConfiguration : IEntityTypeConfiguration
 
         builder.HasIndex(s => s.ConversationId);
 
+        // The quota check sums this week's cost before every dispatch run and copilot turn.
+        // Covering, so that sum never leaves the index.
+        builder.HasIndex(s => s.StartedAt)
+            .IncludeProperties(s => s.EstimatedCostUsd);
+
         // A conversation is the user's own audit surface, so deleting it takes its turn sessions
         // (and transitively their decisions) with it.
         builder.HasOne(s => s.Conversation)
