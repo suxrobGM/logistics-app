@@ -54,6 +54,9 @@ export class AISettings implements OnInit {
 
   protected readonly effortOptions = reasoningEffortOptions;
 
+  /** One wording for the rule, shown on the offending field and on a blocked save alike. */
+  protected readonly BudgetRequiredMessage = "Weekly AI budget must be greater than zero.";
+
   ngOnInit(): void {
     this.load();
   }
@@ -88,8 +91,9 @@ export class AISettings implements OnInit {
   }
 
   protected async save(): Promise<void> {
+    // The fields flag themselves; the toast only says why the save did not go through.
     if (this.plans().some((p) => !p.weeklyAIBudgetUsd)) {
-      this.toastService.showError("Every plan needs a weekly AI budget greater than zero");
+      this.toastService.showError(this.BudgetRequiredMessage);
       return;
     }
 

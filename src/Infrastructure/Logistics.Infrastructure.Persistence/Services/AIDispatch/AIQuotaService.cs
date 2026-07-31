@@ -21,7 +21,7 @@ internal sealed class AIQuotaService(
         if (tenantInfo is null)
             return new AIQuotaStatus(0m, 0m, IsOverQuota: false);
 
-        var (budget, planName, quotaResetAt, blockOverage) = tenantInfo;
+        var (budget, planName, quotaResetAt, blockOverage, overageBillable) = tenantInfo;
 
         // If tenant has a quota reset this week, count from that date; otherwise use ISO week start
         var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
@@ -34,14 +34,20 @@ internal sealed class AIQuotaService(
 
         var resetsAt = countFrom.AddDays(7);
         var isOverQuota = spentThisWeek >= budget;
-        var overageChargesUsd = await SumOverageChargesAsync(countFrom, ct);
+
+        // Zero spend means nothing to bill: IsOverage is stamped only once spend passed the budget
+        // in this same window, and spend only grows within one.
+        var overageChargesUsd = spentThisWeek > 0
+            ? await SumOverageChargesAsync(countFrom, ct)
+            : 0m;
 
         return new AIQuotaStatus(budget, spentThisWeek, isOverQuota)
         {
             PlanName = planName,
             ResetsAt = resetsAt,
             OverageChargesUsd = overageChargesUsd,
-            OverageBlocked = blockOverage && isOverQuota
+            OverageBlocked = blockOverage && isOverQuota,
+            OverageBillable = overageBillable
         };
     }
 
@@ -84,7 +90,8 @@ internal sealed class AIQuotaService(
             BudgetUsd: budget,
             PlanName: plan?.Name,
             QuotaResetAt: tenant.QuotaResetAt,
-            BlockOverage: tenant.Settings?.BlockAIOverage ?? false);
+            BlockOverage: tenant.Settings?.BlockAIOverage ?? false,
+            OverageBillable: AIOverageBilling.CanBill(tenant));
     }
 
     #region Internal records
@@ -93,7 +100,8 @@ internal sealed class AIQuotaService(
         decimal BudgetUsd,
         string? PlanName,
         DateTime? QuotaResetAt,
-        bool BlockOverage);
+        bool BlockOverage,
+        bool OverageBillable);
 
     #endregion
 }

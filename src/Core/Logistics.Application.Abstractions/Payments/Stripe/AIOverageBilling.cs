@@ -23,6 +23,13 @@ public static class AIOverageBilling
     /// </summary>
     public const decimal CostMarkup = 3m;
 
+    /// <summary>
+    /// Whether overage can reach an invoice at all. Gates the <c>IsOverage</c> stamp as well as the
+    /// meter call, so a tenant Stripe cannot bill is never shown charges.
+    /// </summary>
+    public static bool CanBill(Tenant tenant) =>
+        tenant.Subscription is not null && !string.IsNullOrEmpty(tenant.StripeCustomerId);
+
     /// <summary>Whole units, rounded up, minimum one.</summary>
     public static int UnitsFor(decimal sessionCostUsd) =>
         Math.Max(1, (int)decimal.Ceiling(sessionCostUsd * CostMarkup / UnitUsd));

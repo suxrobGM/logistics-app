@@ -75,7 +75,7 @@ internal sealed class AICopilotService(
             Mode = AgentAutonomyMode.HumanInTheLoop,
             TriggeredByUserId = request.UserId,
             StartedAt = DateTime.UtcNow,
-            IsOverage = quota.IsOverQuota
+            IsOverage = quota.IsOverQuota && quota.OverageBillable
         };
 
         await tenantUow.Repository<AgentSession>().AddAsync(session, ct);

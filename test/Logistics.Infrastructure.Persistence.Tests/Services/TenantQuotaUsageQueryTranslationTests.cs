@@ -18,16 +18,11 @@ public class TenantQuotaUsageQueryTranslationTests
         db.Set<AgentSession>()
             .Where(s => s.StartedAt >= costWindowStart);
 
-    [Fact]
-    public void SessionAggregates_TranslateToASingleSqlAggregate()
-    {
-        using var db = new TenantDbContext();
-        var costWindowStart = new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc);
-        var countFrom = new DateTime(2026, 7, 27, 0, 0, 0, DateTimeKind.Utc);
-
-        var sql = WindowedSessions(db, costWindowStart)
+    private static IQueryable<TenantUsageShape> UsageAggregate(
+        TenantDbContext db, DateTime costWindowStart, DateTime countFrom) =>
+        WindowedSessions(db, costWindowStart)
             .GroupBy(_ => 1)
-            .Select(g => new
+            .Select(g => new TenantUsageShape
             {
                 SpentThisWeekUsd = g.Sum(s =>
                     s.StartedAt >= countFrom ? s.EstimatedCostUsd : 0m),
@@ -37,9 +32,30 @@ public class TenantQuotaUsageQueryTranslationTests
                         : 0),
                 TotalTokens = g.Sum(s =>
                     s.StartedAt >= countFrom ? s.InputTokensUsed + s.OutputTokensUsed : 0),
-                MonthlyLlmCost = g.Sum(s => s.EstimatedCostUsd)
-            })
-            .ToQueryString();
+                MonthlyLlmCost = g.Sum(s => s.EstimatedCostUsd),
+                LastModel = g.Where(s => s.StartedAt >= countFrom)
+                    .OrderByDescending(s => s.StartedAt)
+                    .Select(s => s.ModelUsed)
+                    .FirstOrDefault()
+            });
+
+    private sealed record TenantUsageShape
+    {
+        public decimal SpentThisWeekUsd { get; init; }
+        public int OverageSessions { get; init; }
+        public int TotalTokens { get; init; }
+        public decimal MonthlyLlmCost { get; init; }
+        public string? LastModel { get; init; }
+    }
+
+    [Fact]
+    public void SessionAggregates_TranslateToASingleSqlAggregate()
+    {
+        using var db = new TenantDbContext();
+        var costWindowStart = new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc);
+        var countFrom = new DateTime(2026, 7, 27, 0, 0, 0, DateTimeKind.Utc);
+
+        var sql = UsageAggregate(db, costWindowStart, countFrom).ToQueryString();
 
         // Reduction happens server-side: aggregates, and no bare column projection to materialise.
         Assert.Contains("sum(", sql, StringComparison.OrdinalIgnoreCase);
@@ -47,22 +63,17 @@ public class TenantQuotaUsageQueryTranslationTests
     }
 
     [Fact]
-    public void LastModelUsed_TranslatesToAnOrderedSingleRowRead()
+    public void LastModelUsed_RidesAlongAsASubqueryInTheSameStatement()
     {
         using var db = new TenantDbContext();
         var costWindowStart = new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc);
         var countFrom = new DateTime(2026, 7, 27, 0, 0, 0, DateTimeKind.Utc);
 
-        // Take(1) stands in for the FirstOrDefaultAsync the handler calls - the limit is applied at
-        // execution, so it is not visible in ToQueryString without it.
-        var sql = WindowedSessions(db, costWindowStart)
-            .Where(s => s.StartedAt >= countFrom)
-            .OrderByDescending(s => s.StartedAt)
-            .Select(s => s.ModelUsed)
-            .Take(1)
-            .ToQueryString();
+        var sql = UsageAggregate(db, costWindowStart, countFrom).ToQueryString();
 
+        // Nested in the aggregate, not a second round trip - and the report reads every tenant DB.
         Assert.Contains("ORDER BY", sql, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("LIMIT", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("LIMIT 1", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("model_used", sql, StringComparison.OrdinalIgnoreCase);
     }
 }

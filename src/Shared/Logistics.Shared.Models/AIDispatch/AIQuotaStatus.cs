@@ -17,6 +17,12 @@ public record AIQuotaStatus(
     /// <summary>Billed (marked-up) overage accrued this week - what Stripe will invoice.</summary>
     public decimal OverageChargesUsd { get; init; }
 
+    /// <summary>
+    /// Whether over-budget sessions can be invoiced (<c>AIOverageBilling.CanBill</c>). False for an
+    /// unsubscribed tenant, which runs past the budget free rather than accruing unbillable charges.
+    /// </summary>
+    public bool OverageBillable { get; init; }
+
     /// <summary>True when the budget is spent and the tenant opted to pause AI over billing overage.</summary>
     public bool OverageBlocked { get; init; }
 }

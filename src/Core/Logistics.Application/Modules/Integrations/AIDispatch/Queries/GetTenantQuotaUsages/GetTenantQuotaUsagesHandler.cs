@@ -185,8 +185,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
             var sessions = tenantUow.Repository<AgentSession>().Query()
                 .Where(s => s.StartedAt >= costWindowStart);
 
-            // Spend counts every status, matching AIQuotaService - this admin view and the
-            // tenant's own quota endpoint must not disagree. Overage stays Completed-only (metered).
+            // aggregate the sessions and the truck count in one round trip, so a busy tenant does not cross the wire tens of thousands of times
             var totals = await sessions
                 .GroupBy(_ => 1)
                 .Select(g => new
@@ -199,14 +198,12 @@ internal sealed class GetTenantQuotaUsagesHandler(
                             : 0),
                     TotalTokens = g.Sum(s =>
                         s.StartedAt >= countFrom ? s.InputTokensUsed + s.OutputTokensUsed : 0),
-                    MonthlyLlmCost = g.Sum(s => s.EstimatedCostUsd)
+                    MonthlyLlmCost = g.Sum(s => s.EstimatedCostUsd),
+                    LastModel = g.Where(s => s.StartedAt >= countFrom)
+                        .OrderByDescending(s => s.StartedAt)
+                        .Select(s => s.ModelUsed)
+                        .FirstOrDefault()
                 })
-                .FirstOrDefaultAsync(ct);
-
-            var lastModel = await sessions
-                .Where(s => s.StartedAt >= countFrom)
-                .OrderByDescending(s => s.StartedAt)
-                .Select(s => s.ModelUsed)
                 .FirstOrDefaultAsync(ct);
 
             // totals is null only when the tenant ran nothing in the window; it still belongs in
@@ -217,7 +214,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
                 TotalTokens: totals?.TotalTokens ?? 0,
                 MonthlyLlmCost: totals?.MonthlyLlmCost ?? 0m,
                 TruckCount: await tenantUow.Repository<Truck>().CountAsync(ct: ct),
-                LastModel: lastModel);
+                LastModel: totals?.LastModel);
         }
         catch
         {

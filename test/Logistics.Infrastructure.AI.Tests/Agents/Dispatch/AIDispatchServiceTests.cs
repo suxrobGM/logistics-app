@@ -88,12 +88,13 @@ public class AIDispatchServiceTests
             NullLogger<AIDispatchService>.Instance);
     }
 
-    private void SetQuotaStatus(bool isOverQuota, bool overageBlocked = false)
+    private void SetQuotaStatus(bool isOverQuota, bool overageBlocked = false, bool overageBillable = true)
     {
         quotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(new AIQuotaStatus(5m, isOverQuota ? 5m : 0m, isOverQuota)
             {
-                OverageBlocked = overageBlocked
+                OverageBlocked = overageBlocked,
+                OverageBillable = overageBillable
             });
     }
 
@@ -146,6 +147,28 @@ public class AIDispatchServiceTests
             // Expected
         }
 
+        Assert.NotNull(capturedSession);
+        Assert.False(capturedSession!.IsOverage);
+    }
+
+    [Fact]
+    public async Task RunAsync_SetsIsOverageFalse_WhenOverQuotaButNotBillable()
+    {
+        SetQuotaStatus(isOverQuota: true, overageBillable: false);
+        AgentSession? capturedSession = null;
+        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
+
+        try
+        {
+            await sut.RunAsync(CreateRequest());
+        }
+        catch
+        {
+            // Expected
+        }
+
+        // Stamping it would accrue a charge Stripe cannot invoice for a tenant with no subscription.
         Assert.NotNull(capturedSession);
         Assert.False(capturedSession!.IsOverage);
     }

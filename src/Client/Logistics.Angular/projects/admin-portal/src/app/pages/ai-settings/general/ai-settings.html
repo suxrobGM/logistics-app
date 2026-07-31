@@ -54,14 +54,22 @@
               against the Enterprise one.
             </ui-alert>
             @for (plan of plans(); track plan.planId) {
+              @let invalid = !plan.weeklyAIBudgetUsd;
               <ui-stack direction="row" align="center" gap="3">
                 <label class="w-40" [for]="'budget-' + plan.planId">{{ plan.planName }}</label>
-                <ui-currency-field
-                  [inputId]="'budget-' + plan.planId"
-                  [value]="plan.weeklyAIBudgetUsd ?? null"
-                  (valueChange)="updatePlanBudget(plan.planId, $event)"
-                  [min]="0.01"
-                />
+                <div class="flex flex-col gap-1">
+                  <ui-currency-field
+                    [inputId]="'budget-' + plan.planId"
+                    [value]="plan.weeklyAIBudgetUsd ?? null"
+                    (valueChange)="updatePlanBudget(plan.planId, $event)"
+                    [min]="0.01"
+                    [required]="true"
+                    [invalid]="invalid"
+                  />
+                  @if (invalid) {
+                    <span class="text-danger text-sm">{{ BudgetRequiredMessage }}</span>
+                  }
+                </div>
               </ui-stack>
             }
           </ui-stack>

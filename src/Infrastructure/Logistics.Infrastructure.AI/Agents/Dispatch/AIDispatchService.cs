@@ -48,7 +48,7 @@ internal sealed class AIDispatchService(
             Mode = request.Mode,
             TriggeredByUserId = request.TriggeredByUserId,
             StartedAt = DateTime.UtcNow,
-            IsOverage = quota.IsOverQuota,
+            IsOverage = quota.IsOverQuota && quota.OverageBillable,
             Instructions = request.Instructions
         };
 

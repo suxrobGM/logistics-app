@@ -28,7 +28,7 @@ internal sealed class StripeUsageService(
 
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId, ct);
 
-        if (tenant?.Subscription is null || string.IsNullOrEmpty(tenant.StripeCustomerId))
+        if (tenant is null || !AIOverageBilling.CanBill(tenant))
         {
             logger.LogWarning("Cannot report AI overage: tenant {TenantId} has no subscription or Stripe customer",
                 tenantId);
@@ -43,7 +43,8 @@ internal sealed class StripeUsageService(
             EventName = options.Value.AIOverageMeterEventName,
             Payload = new Dictionary<string, string>
             {
-                ["stripe_customer_id"] = tenant.StripeCustomerId,
+                // Non-null by CanBill above.
+                ["stripe_customer_id"] = tenant.StripeCustomerId!,
                 ["value"] = billingUnits.ToString()
             }
         }, cancellationToken: ct);
