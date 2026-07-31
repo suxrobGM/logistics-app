@@ -55,10 +55,10 @@ internal sealed class AICopilotConversationBuilder(
 
         var messages = BuildMessages(conversation.Messages);
 
-        // Thinking stays off: thinking blocks are not persisted, and replaying prior assistant
-        // turns without them violates provider requirements.
+        // Same admin-set effort as dispatch. Thinking blocks replay in-turn; the persisted
+        // transcript drops them, which is fine - prior turns replay without them.
         return new LlmConversation(
-            setup.Provider, systemPrompt, messages, tools, selection.Model, config.MaxTokens, Thinking: null);
+            setup.Provider, systemPrompt, messages, tools, selection.Model, config.MaxTokens, setup.Effort);
     }
 
     private static List<LlmMessage> BuildMessages(IEnumerable<AICopilotMessage> transcript)

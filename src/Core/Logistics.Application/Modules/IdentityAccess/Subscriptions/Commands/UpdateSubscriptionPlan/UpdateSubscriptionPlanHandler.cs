@@ -38,14 +38,9 @@ internal sealed class UpdateSubscriptionPlanHandler(
         subscriptionPlan.Interval = PropertyUpdater.UpdateIfChanged(req.Interval, subscriptionPlan.Interval);
         subscriptionPlan.IntervalCount =
             PropertyUpdater.UpdateIfChanged(req.IntervalCount, subscriptionPlan.IntervalCount);
-        if (req.MaxTrucks.HasValue)
-        {
-            subscriptionPlan.MaxTrucks = req.MaxTrucks;
-        }
-        if (req.WeeklyAIRequestQuota.HasValue)
-        {
-            subscriptionPlan.WeeklyAIRequestQuota = req.WeeklyAIRequestQuota;
-        }
+        // Unconditional: the edit form posts full state, so null means "set unlimited".
+        subscriptionPlan.MaxTrucks = req.MaxTrucks;
+        subscriptionPlan.WeeklyAIBudgetUsd = req.WeeklyAIBudgetUsd;
         subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
 
         // SyncPlanAsync writes the refreshed price ids onto the plan itself.

@@ -60,39 +60,6 @@ public class LlmPricingTests
         Assert.Equal(0.002m, result);
     }
 
-    #region GetMultiplier
-
-    [Theory]
-    [InlineData("deepseek-v4-flash", 1)]
-    [InlineData("deepseek-v4-pro", 1)]
-    [InlineData("gpt-5.6-luna", 1)]
-    [InlineData("claude-haiku-4-5", 1)]
-    [InlineData("gpt-5.6-terra", 2)]
-    [InlineData("claude-sonnet-5", 2)]
-    [InlineData("unknown-model", 1)]
-    public void GetMultiplier_ReturnsCorrectValue(string model, int expected)
-    {
-        Assert.Equal(expected, LlmPricing.GetMultiplier(model));
-    }
-
-    #endregion
-
-    #region GetOverageBillingUnits
-
-    [Theory]
-    [InlineData("deepseek-v4-flash", 1)]
-    [InlineData("claude-haiku-4-5", 1)]
-    [InlineData("gpt-5.6-luna", 1)]
-    [InlineData("gpt-5.6-terra", 2)]
-    [InlineData("claude-sonnet-5", 2)]
-    [InlineData("unknown-model", 1)]
-    public void GetOverageBillingUnits_ReturnsCorrectUnits(string model, int expected)
-    {
-        Assert.Equal(expected, LlmPricing.GetOverageBillingUnits(model));
-    }
-
-    #endregion
-
     #region Catalog parity
 
     [Fact]

@@ -20,19 +20,19 @@ internal sealed class UpdateAISettingsHandler(
         // Persist the global model selection (provider is derived from the model via the catalog).
         await systemSettings.SetAsync(AISettingsKeys.Model, modelInfo.Id,
             "Platform-wide AI dispatch model", ct);
-        await systemSettings.SetAsync(AISettingsKeys.ExtendedThinking, req.ExtendedThinking.ToString(),
-            "Whether extended thinking is enabled for the dispatch agent", ct);
+        await systemSettings.SetAsync(AISettingsKeys.ReasoningEffort, req.ReasoningEffort.ToString(),
+            "Global reasoning effort for the dispatch agent and copilot", ct);
 
-        // Update per-plan weekly quotas (null = unlimited).
+        // Update per-plan weekly budgets (null = unlimited).
         var planRepo = masterUow.Repository<SubscriptionPlan>();
         var changed = false;
         foreach (var planUpdate in req.Plans)
         {
             var plan = await planRepo.GetByIdAsync(planUpdate.PlanId, ct);
-            if (plan is null || plan.WeeklyAIRequestQuota == planUpdate.WeeklyAIRequestQuota)
+            if (plan is null || plan.WeeklyAIBudgetUsd == planUpdate.WeeklyAIBudgetUsd)
                 continue;
 
-            plan.WeeklyAIRequestQuota = planUpdate.WeeklyAIRequestQuota;
+            plan.WeeklyAIBudgetUsd = planUpdate.WeeklyAIBudgetUsd;
             planRepo.Update(plan);
             changed = true;
         }

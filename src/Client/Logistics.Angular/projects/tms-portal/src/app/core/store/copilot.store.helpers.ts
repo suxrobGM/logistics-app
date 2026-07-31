@@ -34,18 +34,19 @@ export function buildQuotaNotice(quota: AIQuotaStatusDto | null): QuotaNotice | 
   }
   const percent = Math.round((quota.usagePercent ?? 0) * 100);
   return percent >= 80
-    ? { blocked: false, text: `AI usage at ${percent}% of your weekly quota.` }
+    ? { blocked: false, text: `AI usage at ${percent}% of your weekly allowance.` }
     : null;
 }
 
 /** Safety net for turns whose terminal hub event never arrives (hub down, job silently skipped). */
 const TurnPollIntervalMs = 45_000;
 const LongRunningAfterMs = 180_000;
+const LongRunningAfterTicks = Math.ceil(LongRunningAfterMs / TurnPollIntervalMs);
 
-/** The two watchdog timers of an active turn: the reconcile poll and the "taking long" marker. */
+/** One interval per active turn: reconciles every tick, flags long-running once past the threshold. */
 export class TurnWatchdog {
   private pollHandle: ReturnType<typeof setInterval> | null = null;
-  private longRunningHandle: ReturnType<typeof setTimeout> | null = null;
+  private ticks = 0;
 
   constructor(
     private readonly onPoll: () => void,
@@ -53,18 +54,20 @@ export class TurnWatchdog {
   ) {}
 
   start(): void {
-    this.pollHandle ??= setInterval(this.onPoll, TurnPollIntervalMs);
-    this.longRunningHandle ??= setTimeout(this.onLongRunning, LongRunningAfterMs);
+    this.pollHandle ??= setInterval(() => {
+      this.ticks++;
+      if (this.ticks === LongRunningAfterTicks) {
+        this.onLongRunning();
+      }
+      this.onPoll();
+    }, TurnPollIntervalMs);
   }
 
   stop(): void {
     if (this.pollHandle !== null) {
       clearInterval(this.pollHandle);
       this.pollHandle = null;
-    }
-    if (this.longRunningHandle !== null) {
-      clearTimeout(this.longRunningHandle);
-      this.longRunningHandle = null;
+      this.ticks = 0;
     }
   }
 }

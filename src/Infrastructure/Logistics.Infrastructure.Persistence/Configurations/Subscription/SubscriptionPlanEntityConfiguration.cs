@@ -22,6 +22,9 @@ internal sealed class SubscriptionPlanEntityConfiguration : IEntityTypeConfigura
             money.Property(m => m.Currency).HasMaxLength(3);
         });
 
+        builder.Property(i => i.WeeklyAIBudgetUsd)
+            .HasPrecision(10, 2);
+
         builder.HasIndex(i => i.Tier).IsUnique();
 
         builder.HasMany(i => i.Subscriptions)

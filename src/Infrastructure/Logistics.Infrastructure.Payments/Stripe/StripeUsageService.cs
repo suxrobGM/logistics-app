@@ -15,7 +15,7 @@ internal sealed class StripeUsageService(
     ILogger<StripeUsageService> logger) : IStripeUsageService
 {
 
-    public async Task ReportAISessionOverageAsync(Guid tenantId, int billingUnits = 1, CancellationToken ct = default)
+    public async Task ReportAISessionOverageAsync(Guid tenantId, decimal sessionCostUsd, CancellationToken ct = default)
     {
         var meterId = await settingService.GetAsync(StripeSettingKeys.AIOverageMeterId, ct);
         if (string.IsNullOrEmpty(meterId))
@@ -35,6 +35,8 @@ internal sealed class StripeUsageService(
             return;
         }
 
+        var billingUnits = AIOverageBilling.UnitsFor(sessionCostUsd);
+
         var meterEventService = new MeterEventService();
         await meterEventService.CreateAsync(new MeterEventCreateOptions
         {
@@ -47,6 +49,7 @@ internal sealed class StripeUsageService(
         }, cancellationToken: ct);
 
         logger.LogInformation(
-            "Reported AI session overage meter event for tenant {TenantId}", tenantId);
+            "Reported AI session overage meter event for tenant {TenantId}: ${CostUsd} model cost -> {Units} unit(s)",
+            tenantId, sessionCostUsd, billingUnits);
     }
 }

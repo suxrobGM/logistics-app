@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Anthropic.SDK" Version="5.10.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.5" />
-    <PackageReference Include="OpenAI" Version="2.9.1" />
+    <PackageReference Include="OpenAI" Version="2.12.0" />
   </ItemGroup>
 
   <ItemGroup>

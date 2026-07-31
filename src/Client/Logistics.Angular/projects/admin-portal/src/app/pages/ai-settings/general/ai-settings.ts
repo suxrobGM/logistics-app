@@ -1,25 +1,27 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
-import { Api, getAISettings, updateAISettings, type PlanQuotaDto } from "@logistics/shared/api";
+import {
+  Api,
+  getAISettings,
+  updateAISettings,
+  type PlanQuotaDto,
+  type ReasoningEffort,
+} from "@logistics/shared/api";
+import { reasoningEffortOptions } from "@logistics/shared/api/enums";
+import type { SelectOption } from "@logistics/shared/models";
 import {
   Alert,
   Card,
+  CurrencyField,
   Grid,
   PageHeader,
   Spinner,
   Stack,
   Typography,
   UiButton,
-  UiCheckboxField,
-  UiNumberField,
   UiSelectField,
 } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { TenantQuotas } from "../tenant-quotas/tenant-quotas";
-
-interface ModelOption {
-  label: string;
-  value: string;
-}
 
 @Component({
   selector: "adm-ai-settings",
@@ -27,6 +29,7 @@ interface ModelOption {
   imports: [
     Alert,
     Card,
+    CurrencyField,
     Grid,
     PageHeader,
     Spinner,
@@ -34,8 +37,6 @@ interface ModelOption {
     TenantQuotas,
     Typography,
     UiButton,
-    UiCheckboxField,
-    UiNumberField,
     UiSelectField,
   ],
 })
@@ -47,9 +48,11 @@ export class AISettings implements OnInit {
   protected readonly isSaving = signal(false);
 
   protected readonly selectedModel = signal("");
-  protected readonly extendedThinking = signal(false);
-  protected readonly modelOptions = signal<ModelOption[]>([]);
+  protected readonly reasoningEffort = signal<ReasoningEffort>("none");
+  protected readonly modelOptions = signal<SelectOption<string>[]>([]);
   protected readonly plans = signal<PlanQuotaDto[]>([]);
+
+  protected readonly effortOptions = reasoningEffortOptions;
 
   ngOnInit(): void {
     this.load();
@@ -60,7 +63,7 @@ export class AISettings implements OnInit {
     try {
       const settings = await this.api.invoke(getAISettings);
       this.selectedModel.set(settings.model ?? "");
-      this.extendedThinking.set(settings.extendedThinking ?? false);
+      this.reasoningEffort.set(settings.reasoningEffort ?? "none");
       this.modelOptions.set(
         (settings.availableModels ?? []).map((m) => ({
           label: m.displayName ?? m.id ?? "",
@@ -75,9 +78,9 @@ export class AISettings implements OnInit {
     }
   }
 
-  protected updatePlanQuota(planId: string | undefined, quota: number | null): void {
+  protected updatePlanBudget(planId: string | undefined, budgetUsd: number | null): void {
     this.plans.update((plans) =>
-      plans.map((p) => (p.planId === planId ? { ...p, weeklyAIRequestQuota: quota } : p)),
+      plans.map((p) => (p.planId === planId ? { ...p, weeklyAIBudgetUsd: budgetUsd } : p)),
     );
   }
 
@@ -87,10 +90,10 @@ export class AISettings implements OnInit {
       await this.api.invoke(updateAISettings, {
         body: {
           model: this.selectedModel(),
-          extendedThinking: this.extendedThinking(),
+          reasoningEffort: this.reasoningEffort(),
           plans: this.plans().map((p) => ({
             planId: p.planId,
-            weeklyAIRequestQuota: p.weeklyAIRequestQuota,
+            weeklyAIBudgetUsd: p.weeklyAIBudgetUsd,
           })),
         },
       });

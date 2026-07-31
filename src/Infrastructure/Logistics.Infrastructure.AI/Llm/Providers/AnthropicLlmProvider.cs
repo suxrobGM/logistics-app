@@ -2,10 +2,12 @@ using Logistics.Application.Abstractions.Agents;
 using System.Text.Json.Nodes;
 using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 using Tool = Anthropic.SDK.Common.Tool;
 using Function = Anthropic.SDK.Common.Function;
+using SdkEffort = Anthropic.SDK.Messaging.ThinkingEffort;
 
 namespace Logistics.Infrastructure.AI.Llm.Providers;
 
@@ -25,11 +27,23 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
                 new Function(t.Name, t.Description, t.InputSchema))
             .ToList();
 
-        var messages = request.Messages.Select(ToAnthropicMessage).ToList();
+        var parameters = BuildParameters(request);
+        parameters.Messages = request.Messages.Select(ToAnthropicMessage).ToList();
+        parameters.Tools = tools;
 
+        var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
+        return MapResponse(response);
+    }
+
+    /// <summary>
+    /// Adaptive-thinking models never get a temperature (they reject non-default sampling); for
+    /// effort None the thinking parameter is omitted (the SDK has no disabled type). Other models
+    /// get no thinking parameter at all.
+    /// </summary>
+    internal static MessageParameters BuildParameters(LlmRequest request)
+    {
         var parameters = new MessageParameters
         {
-            Messages = messages,
             MaxTokens = request.MaxTokens,
             Model = request.Model,
             Stream = false,
@@ -40,23 +54,30 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
                 {
                     CacheControl = new CacheControl { Type = CacheControlType.ephemeral }
                 }
-            ],
-            Tools = tools
+            ]
         };
 
-        if (request.Thinking is not null)
+        if (LlmModelCatalog.ReasoningStyleOf(request.Model) == ReasoningStyle.AnthropicAdaptive)
         {
             parameters.Temperature = null;
-            parameters.Thinking = new ThinkingParameters
+            if (request.Effort != ReasoningEffort.None)
             {
-                Type = ThinkingType.enabled,
-                BudgetTokens = request.Thinking.BudgetTokens
-            };
-            parameters.MaxTokens = Math.Max(request.MaxTokens, request.Thinking.BudgetTokens + 4096);
+                parameters.Thinking = new ThinkingParameters
+                {
+                    Type = ThinkingType.adaptive,
+                    Effort = request.Effort switch
+                    {
+                        ReasoningEffort.Low => SdkEffort.low,
+                        ReasoningEffort.Medium => SdkEffort.medium,
+                        // The SDK's effort scale has no xhigh member - clamp it to high.
+                        ReasoningEffort.Max => SdkEffort.max,
+                        _ => SdkEffort.high
+                    }
+                };
+            }
         }
 
-        var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
-        return MapResponse(response);
+        return parameters;
     }
 
     /// <summary>
@@ -75,6 +96,9 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
                     break;
                 case ToolUseContent toolUse:
                     assistantContent.Add(new LlmToolUseBlock(toolUse.Id, toolUse.Name, toolUse.Input));
+                    break;
+                case ThinkingContent thinking:
+                    assistantContent.Add(new LlmThinkingBlock(thinking.Thinking, thinking.Signature));
                     break;
             }
         }
@@ -95,7 +119,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         };
     }
 
-    private static Message ToAnthropicMessage(LlmMessage message)
+    internal static Message ToAnthropicMessage(LlmMessage message)
     {
         var role = message.Role == LlmRole.User ? RoleType.User : RoleType.Assistant;
         var content = new List<ContentBase>();
@@ -104,6 +128,9 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         {
             switch (block)
             {
+                case LlmThinkingBlock thinking:
+                    content.Add(new ThinkingContent { Thinking = thinking.Thinking, Signature = thinking.Signature });
+                    break;
                 case LlmTextBlock text:
                     content.Add(new TextContent { Text = text.Text });
                     break;

@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Application.Abstractions.SystemSettings;
 
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
@@ -21,7 +20,6 @@ internal sealed class AIDispatchConversationBuilder(
     IAgentToolRegistry toolRegistry,
     LlmSessionSetup sessionSetup,
     ITenantUnitOfWork tenantUow,
-    ISystemSettingsService systemSettings,
     ILogger<AIDispatchConversationBuilder> logger)
 {
     public async Task<LlmConversation> BuildAsync(
@@ -65,17 +63,8 @@ internal sealed class AIDispatchConversationBuilder(
 
         var messages = new List<LlmMessage> { LlmMessage.FromUser(userMessage) };
 
-        // Build thinking options: global system setting → appsettings default.
-        // Only honored by providers/models that support it; others ignore it.
-        LlmThinkingOptions? thinking = null;
-        var thinkingSetting = await systemSettings.GetAsync(AISettingsKeys.ExtendedThinking, ct);
-        var enableThinking = bool.TryParse(thinkingSetting, out var parsedThinking)
-            ? parsedThinking
-            : config.EnableExtendedThinking;
-        if (enableThinking)
-            thinking = new LlmThinkingOptions(config.ThinkingBudgetTokens);
-
-        return new LlmConversation(setup.Provider, systemPrompt, messages, tools, model, config.MaxTokens, thinking);
+        return new LlmConversation(
+            setup.Provider, systemPrompt, messages, tools, model, config.MaxTokens, setup.Effort);
     }
 
     private static string BuildUserMessage(AIDispatchRequest request)

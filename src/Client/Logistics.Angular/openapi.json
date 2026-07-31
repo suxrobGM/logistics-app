@@ -16470,8 +16470,8 @@
             "type": "string",
             "nullable": true
           },
-          "extendedThinking": {
-            "type": "boolean"
+          "reasoningEffort": {
+            "$ref": "#/components/schemas/ReasoningEffort"
           },
           "availableModels": {
             "type": "array",
@@ -19407,9 +19407,9 @@
             "format": "int32",
             "nullable": true
           },
-          "weeklyAIRequestQuota": {
-            "type": "integer",
-            "format": "int32",
+          "weeklyAIBudgetUsd": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "interval": {
@@ -24905,9 +24905,9 @@
             "type": "string",
             "nullable": true
           },
-          "weeklyAIRequestQuota": {
-            "type": "integer",
-            "format": "int32",
+          "weeklyAIBudgetUsd": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },
@@ -25565,6 +25565,17 @@
           }
         },
         "additionalProperties": false
+      },
+      "ReasoningEffort": {
+        "enum": [
+          "none",
+          "low",
+          "medium",
+          "high",
+          "x_high",
+          "max"
+        ],
+        "type": "string"
       },
       "RecordConsentRequest": {
         "type": "object",
@@ -26545,9 +26556,9 @@
             "type": "integer",
             "format": "int32"
           },
-          "weeklyAIRequestQuota": {
-            "type": "integer",
-            "format": "int32",
+          "weeklyAIBudgetUsd": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "features": {
@@ -26828,24 +26839,24 @@
             "type": "string",
             "nullable": true
           },
-          "weeklyQuota": {
-            "type": "integer",
-            "format": "int32"
+          "weeklyBudgetUsd": {
+            "type": "number",
+            "format": "double"
           },
-          "usedThisWeek": {
-            "type": "integer",
-            "format": "int32"
+          "spentThisWeekUsd": {
+            "type": "number",
+            "format": "double"
           },
-          "remaining": {
-            "type": "integer",
-            "format": "int32"
+          "remainingUsd": {
+            "type": "number",
+            "format": "double"
           },
           "isOverQuota": {
             "type": "boolean"
           },
-          "overageCount": {
-            "type": "integer",
-            "format": "int32"
+          "overageUsd": {
+            "type": "number",
+            "format": "double"
           },
           "quotaResetAt": {
             "type": "string",
@@ -27800,8 +27811,8 @@
             "type": "string",
             "nullable": true
           },
-          "extendedThinking": {
-            "type": "boolean"
+          "reasoningEffort": {
+            "$ref": "#/components/schemas/ReasoningEffort"
           },
           "plans": {
             "type": "array",
@@ -28649,9 +28660,9 @@
             "format": "int32",
             "nullable": true
           },
-          "weeklyAIRequestQuota": {
-            "type": "integer",
-            "format": "int32",
+          "weeklyAIBudgetUsd": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "interval": {

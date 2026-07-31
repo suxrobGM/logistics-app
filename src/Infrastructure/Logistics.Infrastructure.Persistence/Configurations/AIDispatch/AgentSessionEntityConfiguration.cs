@@ -21,9 +21,6 @@ internal sealed class AgentSessionEntityConfiguration : IEntityTypeConfiguration
 
         builder.Ignore(s => s.TotalTokensUsed);
 
-        builder.Property(s => s.RequestCost)
-            .HasDefaultValue(1);
-
         builder.Property(s => s.Summary)
             .HasMaxLength(4000);
 

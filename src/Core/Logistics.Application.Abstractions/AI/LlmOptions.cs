@@ -21,11 +21,14 @@ public class LlmOptions
     public Dictionary<LlmProvider, LlmProviderOptions> Providers { get; set; } = [];
 
     public int MaxTokens { get; set; } = 16384;
-    public bool EnableExtendedThinking { get; set; }
-    public int ThinkingBudgetTokens { get; set; } = 16384;
 
     /// <summary>
-    /// Per-call ceiling on an LLM HTTP request. Generous because extended thinking on a large
+    /// Reasoning depth used when the admin has not set <c>AI.ReasoningEffort</c> yet.
+    /// </summary>
+    public ReasoningEffort DefaultReasoningEffort { get; set; } = ReasoningEffort.None;
+
+    /// <summary>
+    /// Per-call ceiling on an LLM HTTP request. Generous because a high reasoning effort on a large
     /// prompt legitimately takes minutes - this is a backstop against a wedged connection, not a
     /// latency target. The agent loop runs up to 25 iterations, so without it a single stuck
     /// session can hang for 25x the SDK default.

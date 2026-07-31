@@ -16,28 +16,27 @@ internal sealed class AIQuotaService(
     {
         var tenantInfo = await GetTenantQuotaInfoAsync(tenantId, ct);
 
-        // Unlimited quota (non-subscription tenants or plans without quota)
+        // Unlimited budget (non-subscription tenants or plans without a budget)
         if (tenantInfo is null)
-            return new AIQuotaStatus(0, 0, 0, IsOverQuota: false);
+            return new AIQuotaStatus(0m, 0m, IsOverQuota: false);
 
-        var (quota, planName, quotaResetAt) = tenantInfo;
+        var (budget, planName, quotaResetAt) = tenantInfo;
 
         // If tenant has a quota reset this week, count from that date; otherwise use ISO week start
         var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
         var countFrom = quotaResetAt > weekStart ? quotaResetAt.Value : weekStart;
 
-        var usedThisWeek = await tenantUow.Repository<AgentSession>().Query()
-            .Where(s => s.StartedAt >= countFrom && s.Status == AgentSessionStatus.Completed)
-            .SumAsync(s => s.RequestCost, ct);
+        // Every status counts - failed and cancelled runs still consumed paid tokens.
+        var spentThisWeek = await tenantUow.Repository<AgentSession>().Query()
+            .Where(s => s.StartedAt >= countFrom)
+            .SumAsync(s => s.EstimatedCostUsd, ct);
 
-        var remaining = Math.Max(0, quota - usedThisWeek);
         var resetsAt = countFrom.AddDays(7);
 
         return new AIQuotaStatus(
-            WeeklyQuota: quota,
-            UsedThisWeek: usedThisWeek,
-            Remaining: remaining,
-            IsOverQuota: usedThisWeek >= quota,
+            WeeklyBudgetUsd: budget,
+            SpentThisWeekUsd: spentThisWeek,
+            IsOverQuota: spentThisWeek >= budget,
             PlanName: planName,
             ResetsAt: resetsAt);
     }
@@ -53,11 +52,11 @@ internal sealed class AIQuotaService(
         var plan = await masterUow.Repository<SubscriptionPlan>()
             .GetByIdAsync(tenant.Subscription.PlanId, ct);
 
-        if (plan?.WeeklyAIRequestQuota is null)
+        if (plan?.WeeklyAIBudgetUsd is null)
             return null;
 
         return new TenantQuotaInfo(
-            Quota: plan.WeeklyAIRequestQuota.Value,
+            BudgetUsd: plan.WeeklyAIBudgetUsd.Value,
             PlanName: plan.Name,
             QuotaResetAt: tenant.QuotaResetAt);
     }
@@ -65,7 +64,7 @@ internal sealed class AIQuotaService(
     #region Internal records
 
     public record TenantQuotaInfo(
-        int Quota,
+        decimal BudgetUsd,
         string? PlanName,
         DateTime? QuotaResetAt);
 

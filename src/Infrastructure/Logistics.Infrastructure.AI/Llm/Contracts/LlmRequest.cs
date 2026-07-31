@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Agents;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Llm.Contracts;
 
@@ -10,5 +11,7 @@ internal record LlmRequest
     public required string Model { get; init; }
     public required int MaxTokens { get; init; }
     public decimal? Temperature { get; init; }
-    public LlmThinkingOptions? Thinking { get; init; }
+
+    /// <summary>Reasoning depth; providers map it per the catalog's reasoning style.</summary>
+    public ReasoningEffort Effort { get; init; } = ReasoningEffort.None;
 }

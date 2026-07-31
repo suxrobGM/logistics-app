@@ -63,9 +63,10 @@ public class AIDispatchServiceTests
 
         var systemSettings = Substitute.For<ISystemSettingsService>();
         var modelResolver = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);
-        var sessionSetup = new LlmSessionSetup(featureService, providerFactory, modelResolver, tenantUow);
+        var sessionSetup = new LlmSessionSetup(
+            featureService, providerFactory, modelResolver, systemSettings, tenantUow);
         var conversationBuilder = new AIDispatchConversationBuilder(
-            toolRegistry, sessionSetup, tenantUow, systemSettings,
+            toolRegistry, sessionSetup, tenantUow,
             NullLogger<AIDispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IAgentToolExecutor>();
@@ -87,7 +88,7 @@ public class AIDispatchServiceTests
     private void SetQuotaStatus(bool isOverQuota)
     {
         quotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(new AIQuotaStatus(300, isOverQuota ? 300 : 0, isOverQuota ? 0 : 300, isOverQuota));
+            .Returns(new AIQuotaStatus(5m, isOverQuota ? 5m : 0m, isOverQuota));
     }
 
     private static AIDispatchRequest CreateRequest()
@@ -166,7 +167,7 @@ public class AIDispatchServiceTests
 
         // Session failed (API error), not completed - overage should NOT be reported
         await stripeUsageService.DidNotReceive()
-            .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
+            .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -184,13 +185,13 @@ public class AIDispatchServiceTests
         }
 
         await stripeUsageService.DidNotReceive()
-            .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
+            .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task ReportOverageIfNeeded_DoesNotThrow_WhenStripeServiceFails()
     {
-        stripeUsageService.ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+        stripeUsageService.ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new Exception("Stripe API error"));
 
         SetQuotaStatus(isOverQuota: true);

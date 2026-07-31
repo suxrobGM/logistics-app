@@ -26,11 +26,7 @@ internal sealed class GetAISettingsHandler(
 
         var modelInfo = LlmModelCatalog.Find(model) ?? LlmModelCatalog.Models[0];
 
-        // Extended thinking: system setting → appsettings default
-        var thinkingSetting = await systemSettings.GetAsync(AISettingsKeys.ExtendedThinking, ct);
-        var extendedThinking = bool.TryParse(thinkingSetting, out var parsedThinking)
-            ? parsedThinking
-            : config.EnableExtendedThinking;
+        var reasoningEffort = await systemSettings.ResolveReasoningEffortAsync(config, ct);
 
         var plans = await masterUow.Repository<SubscriptionPlan>().GetListAsync(ct: ct);
 
@@ -38,7 +34,7 @@ internal sealed class GetAISettingsHandler(
         {
             Model = modelInfo.Id,
             Provider = modelInfo.Provider.ToString(),
-            ExtendedThinking = extendedThinking,
+            ReasoningEffort = reasoningEffort,
             AvailableModels = [.. LlmModelCatalog.Models.Select(m => new LlmModelOptionDto
             {
                 Id = m.Id,
@@ -51,7 +47,7 @@ internal sealed class GetAISettingsHandler(
                 {
                     PlanId = p.Id,
                     PlanName = p.Name,
-                    WeeklyAIRequestQuota = p.WeeklyAIRequestQuota
+                    WeeklyAIBudgetUsd = p.WeeklyAIBudgetUsd
                 })]
         });
     }

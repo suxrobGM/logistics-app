@@ -59,6 +59,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         var planRepo = context.MasterUnitOfWork.Repository<SubscriptionPlan>();
         var featureRepo = context.MasterUnitOfWork.Repository<PlanFeature>();
 
+        // Weekly budgets are in USD of model cost. The seeder overwrites these three plans on every run.
         var plans = new[]
         {
             new
@@ -69,7 +70,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 12m,
                 MaxTrucks = (int?)10,
                 Tier = PlanTier.Starter,
-                WeeklyAIRequestQuota = (int?)300,
+                WeeklyAIBudgetUsd = (decimal?)5m,
                 Features = StarterFeatures
             },
             new
@@ -80,7 +81,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 9m,
                 MaxTrucks = (int?)30,
                 Tier = PlanTier.Professional,
-                WeeklyAIRequestQuota = (int?)1500,
+                WeeklyAIBudgetUsd = (decimal?)25m,
                 Features = ProfessionalFeatures
             },
             new
@@ -92,7 +93,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 MaxTrucks = (int?)null,
                 Tier = PlanTier.Enterprise,
                 // Soft cap - sessions beyond it are overage-metered (docs/roadmap/ai-cost-guardrails.md)
-                WeeklyAIRequestQuota = (int?)5000,
+                WeeklyAIBudgetUsd = (decimal?)75m,
                 Features = EnterpriseFeatures
             }
         };
@@ -111,7 +112,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     PerTruckPrice = new() { Amount = planDef.PerTruckPrice, Currency = "USD" },
                     MaxTrucks = planDef.MaxTrucks,
                     Tier = planDef.Tier,
-                    WeeklyAIRequestQuota = planDef.WeeklyAIRequestQuota
+                    WeeklyAIBudgetUsd = planDef.WeeklyAIBudgetUsd
                 };
 
                 await planRepo.AddAsync(newPlan, cancellationToken);
@@ -166,9 +167,9 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     updated = true;
                 }
 
-                if (existingPlan.WeeklyAIRequestQuota != planDef.WeeklyAIRequestQuota)
+                if (existingPlan.WeeklyAIBudgetUsd != planDef.WeeklyAIBudgetUsd)
                 {
-                    existingPlan.WeeklyAIRequestQuota = planDef.WeeklyAIRequestQuota;
+                    existingPlan.WeeklyAIBudgetUsd = planDef.WeeklyAIBudgetUsd;
                     updated = true;
                 }
 

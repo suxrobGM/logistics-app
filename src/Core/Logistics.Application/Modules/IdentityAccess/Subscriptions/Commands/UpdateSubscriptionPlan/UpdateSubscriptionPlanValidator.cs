@@ -1,5 +1,6 @@
 using FluentValidation;
 
+using Logistics.Application.Validators;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
@@ -10,6 +11,8 @@ internal sealed class UpdateSubscriptionPlanValidator : AbstractValidator<Update
     {
         RuleFor(i => i.Id)
             .NotEmpty();
+
+        RuleFor(i => i.WeeklyAIBudgetUsd).ValidWeeklyAIBudget();
 
         RuleFor(i => i.IntervalCount)
             .GreaterThan(0)

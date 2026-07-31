@@ -12,9 +12,8 @@
         <ui-card header="AI Model">
           <ui-stack gap="4">
             <ui-typography variant="body-sm" color="muted">
-              The model used by both the AI dispatch agent and the AI copilot, for every tenant.
-              Choose a cost-efficient model; tenants never see or select the model. A premium model
-              costs each session twice as much quota as a standard one.
+              Used by the dispatch agent and copilot for every tenant; tenants never see it.
+              Usage counts against each plan's weekly budget at the model's actual cost.
             </ui-typography>
             <ui-select-field
               [value]="selectedModel()"
@@ -25,45 +24,42 @@
               placeholder="Select a model"
             />
 
-            <ui-stack direction="row" align="center" gap="3">
-              <ui-checkbox-field
-                inputId="extendedThinking"
-                [value]="extendedThinking()"
-                (valueChange)="extendedThinking.set($event)"
-              />
-              <label for="extendedThinking">Enable extended thinking</label>
-            </ui-stack>
+            <ui-select-field
+              [value]="reasoningEffort()"
+              (selectionChange)="reasoningEffort.set($event ?? 'none')"
+              [options]="effortOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Reasoning effort"
+            />
             <ui-alert intent="neutral">
-              Extended thinking applies to the dispatch agent only - the copilot does not use it.
-              Not all models support it; it is ignored by models that don't.
+              Higher reasoning effort is smarter but slower and costs more budget. Ignored by
+              models without a reasoning control.
             </ui-alert>
           </ui-stack>
         </ui-card>
       </ui-grid>
 
       <ui-grid [size]="{ xs: 12, lg: 6 }">
-        <!-- Weekly quotas -->
-        <ui-card header="Weekly AI Quotas">
+        <!-- Weekly budgets -->
+        <ui-card header="Weekly AI Budgets">
           <ui-stack gap="4">
             <ui-typography variant="body-sm" color="muted">
-              One weekly pool per plan, shared by dispatch and copilot sessions. Past the quota,
-              dispatch keeps running and is billed as overage, while the copilot is blocked until
-              the week resets.
+              One weekly budget per plan (USD of model cost), shared by dispatch and copilot. Past
+              it, dispatch bills as overage; the copilot is blocked until the week resets.
             </ui-typography>
             <ui-alert intent="warning">
-              Leaving a quota empty makes it unlimited <em>and</em> unbillable - nothing is metered,
-              so the plan carries unbounded AI cost. Every plan should have a number.
+              An empty budget is unlimited <em>and</em> unbillable - every plan should have a
+              number.
             </ui-alert>
             @for (plan of plans(); track plan.planId) {
               <ui-stack direction="row" align="center" gap="3">
-                <label class="w-40" [for]="'quota-' + plan.planId">{{ plan.planName }}</label>
-                <ui-number-field
-                  [inputId]="'quota-' + plan.planId"
-                  [value]="plan.weeklyAIRequestQuota ?? null"
-                  (valueChange)="updatePlanQuota(plan.planId, $event)"
-                  [min]="1"
-                  [showButtons]="true"
-                  [fluid]="false"
+                <label class="w-40" [for]="'budget-' + plan.planId">{{ plan.planName }}</label>
+                <ui-currency-field
+                  [inputId]="'budget-' + plan.planId"
+                  [value]="plan.weeklyAIBudgetUsd ?? null"
+                  (valueChange)="updatePlanBudget(plan.planId, $event)"
+                  [min]="0.01"
                   placeholder="Unlimited"
                 />
               </ui-stack>

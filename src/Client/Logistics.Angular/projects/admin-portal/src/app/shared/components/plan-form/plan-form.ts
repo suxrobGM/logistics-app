@@ -21,7 +21,7 @@ export interface PlanFormValue {
   price: number;
   perTruckPrice: number;
   maxTrucks: number | null;
-  weeklyAIRequestQuota: number | null;
+  weeklyAIBudgetUsd: number | null;
   interval: BillingInterval;
   intervalCount: number;
 }
@@ -46,7 +46,7 @@ const EMPTY: PlanFormValue = {
   price: 0,
   perTruckPrice: 0,
   maxTrucks: null,
-  weeklyAIRequestQuota: null,
+  weeklyAIBudgetUsd: null,
   interval: "month",
   intervalCount: 1,
 };
@@ -93,7 +93,7 @@ export class PlanForm {
       required(p.perTruckPrice, { message: "Per truck fee is required." });
       min(p.perTruckPrice, 0, { message: "Per truck fee cannot be negative." });
       min(p.maxTrucks, 1, { message: "Max trucks must be at least 1." });
-      min(p.weeklyAIRequestQuota, 1, { message: "Weekly AI request quota must be at least 1." });
+      min(p.weeklyAIBudgetUsd, 0.01, { message: "Weekly AI budget must be greater than zero." });
       required(p.interval, { message: "Billing interval is required." });
       required(p.intervalCount, { message: "Interval count is required." });
       min(p.intervalCount, 1, { message: "Interval count must be at least 1." });

@@ -23,6 +23,7 @@ import type {
   OperatingMode,
   PaymentMethodType,
   PaymentStatus,
+  ReasoningEffort,
   Region,
   SalaryType,
   SubscriptionStatus,
@@ -34,6 +35,15 @@ import type {
 } from "./generated";
 
 // Options arrays for select dropdowns
+export const reasoningEffortOptions: SelectOption<ReasoningEffort>[] = [
+  { label: "Off", value: "none" },
+  { label: "Low", value: "low" },
+  { label: "Medium", value: "medium" },
+  { label: "High", value: "high" },
+  { label: "Extra high", value: "x_high" },
+  { label: "Max", value: "max" },
+];
+
 export const paymentMethodTypeOptions: SelectOption<PaymentMethodType>[] = [
   { label: "Cash", value: "cash" },
   { label: "Check", value: "check" },

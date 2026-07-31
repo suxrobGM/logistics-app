@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Agents;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm;
 
 namespace Logistics.Infrastructure.AI.Llm.Contracts;
@@ -14,4 +15,4 @@ internal record LlmConversation(
     IReadOnlyList<AgentToolDefinition> Tools,
     string Model,
     int MaxTokens,
-    LlmThinkingOptions? Thinking);
+    ReasoningEffort Effort);

@@ -31,7 +31,7 @@ export class PlanAdd {
       price: formValue.price,
       perTruckPrice: formValue.perTruckPrice,
       maxTrucks: formValue.maxTrucks,
-      weeklyAIRequestQuota: formValue.weeklyAIRequestQuota,
+      weeklyAIBudgetUsd: formValue.weeklyAIBudgetUsd,
       interval: formValue.interval,
       intervalCount: formValue.intervalCount,
     };

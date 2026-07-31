@@ -37,10 +37,8 @@ internal sealed class AgentLoopRunner(
         }
         finally
         {
-            // In a finally so a failed or cancelled session still reports what it burned. The
-            // audit trail promises tokens *and* cost; recording 240k tokens at $0.00 is a lie, and
-            // quota that only counts successes is free retries on a failing prompt.
-            session.RequestCost = LlmPricing.GetMultiplier(conversation.Model);
+            // In a finally so failed/cancelled sessions still record what they burned - the
+            // budget counts every session, else failing prompts would be free retries.
             session.EstimatedCostUsd = LlmPricing.Calculate(
                 conversation.Model,
                 session.InputTokensUsed, session.OutputTokensUsed,
@@ -67,8 +65,7 @@ internal sealed class AgentLoopRunner(
                 Tools = [.. conversation.Tools],
                 Model = conversation.Model,
                 MaxTokens = conversation.MaxTokens,
-                Temperature = conversation.Thinking is not null ? null : 0m,
-                Thinking = conversation.Thinking
+                Effort = conversation.Effort
             };
 
             var result = await SendWithRetryAsync(conversation.Provider, llmRequest, session, ct);

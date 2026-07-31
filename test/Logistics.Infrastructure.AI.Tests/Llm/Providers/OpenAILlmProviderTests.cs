@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Infrastructure.AI.Llm;
 using Logistics.Infrastructure.AI.Llm.Providers;
@@ -93,4 +94,53 @@ public class OpenAILlmProviderTests
 
         Assert.IsType<AssistantChatMessage>(result);
     }
+
+    #region Reasoning effort
+
+    private static LlmRequest Request(string model, ReasoningEffort effort) => new()
+    {
+        SystemPrompt = "system",
+        Messages = [LlmMessage.FromUser("go")],
+        Tools = [],
+        Model = model,
+        MaxTokens = 1000,
+        Effort = effort
+    };
+
+    [Fact]
+    public void BuildOptions_ReasoningModelWithEffortNone_SendsExplicitNone()
+    {
+        // Reasoning models must always get an explicit reasoning_effort: their server-side
+        // default is rejected on chat completions once function tools are present.
+        var options = OpenAILlmProvider.BuildOptions(Request("gpt-5.6-luna", ReasoningEffort.None));
+
+        Assert.Equal(new ChatReasoningEffortLevel("none"), options.ReasoningEffortLevel);
+    }
+
+    [Theory]
+    [InlineData(ReasoningEffort.Low, "low")]
+    [InlineData(ReasoningEffort.Medium, "medium")]
+    [InlineData(ReasoningEffort.High, "high")]
+    [InlineData(ReasoningEffort.XHigh, "high")]
+    [InlineData(ReasoningEffort.Max, "high")]
+    public void BuildOptions_ReasoningModel_MapsAndClampsEffortLevels(ReasoningEffort effort, string expected)
+    {
+        var options = OpenAILlmProvider.BuildOptions(Request("gpt-5.6-terra", effort));
+
+        Assert.Equal(new ChatReasoningEffortLevel(expected), options.ReasoningEffortLevel);
+    }
+
+    [Theory]
+    [InlineData("deepseek-v4-flash")]
+    [InlineData("deepseek-v4-pro")]
+    [InlineData("unknown-model")]
+    public void BuildOptions_NonReasoningModel_NeverSendsTheParameter(string model)
+    {
+        // Some OpenAI-compatible endpoints reject reasoning_effort outright.
+        var options = OpenAILlmProvider.BuildOptions(Request(model, ReasoningEffort.High));
+
+        Assert.Null(options.ReasoningEffortLevel);
+    }
+
+    #endregion
 }

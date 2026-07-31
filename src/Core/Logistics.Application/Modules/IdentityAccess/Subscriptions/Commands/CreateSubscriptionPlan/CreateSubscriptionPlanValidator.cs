@@ -1,5 +1,6 @@
 using FluentValidation;
 
+using Logistics.Application.Validators;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
@@ -10,6 +11,8 @@ internal sealed class CreateSubscriptionPlanValidator : AbstractValidator<Create
     {
         RuleFor(i => i.Name).NotEmpty();
         RuleFor(i => i.Price).GreaterThanOrEqualTo(0);
+
+        RuleFor(i => i.WeeklyAIBudgetUsd).ValidWeeklyAIBudget();
 
         // Validate the billing interval count, maximum of three years interval allowed (3 years, 36 months, or 156 weeks)
         RuleFor(i => i.IntervalCount)

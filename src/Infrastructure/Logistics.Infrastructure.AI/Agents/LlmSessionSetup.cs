@@ -1,18 +1,20 @@
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.AI.Llm;
 
 namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
-/// The setup both agent surfaces share: resolve the global model, build its provider, assert the
-/// API key exists, and read the tenant's feature set once.
+/// The setup both agent surfaces share: resolve the global model and reasoning effort, build the
+/// model's provider, assert the API key exists, and read the tenant's feature set once.
 /// </summary>
 internal sealed class LlmSessionSetup(
     IFeatureService featureService,
     LlmProviderFactory providerFactory,
     LlmModelResolver modelResolver,
+    ISystemSettingsService systemSettings,
     ITenantUnitOfWork tenantUow)
 {
     public async Task<LlmSessionContext> ResolveAsync(LlmOptions config, CancellationToken ct)
@@ -33,6 +35,8 @@ internal sealed class LlmSessionSetup(
         // One resolve for every gate - IsFeatureEnabledAsync costs master-DB round trips each time.
         var enabledFeatures = (await featureService.GetEnabledFeaturesAsync(tenant.Id)).ToHashSet();
 
-        return new LlmSessionContext(tenant, provider, selection, enabledFeatures);
+        var effort = await systemSettings.ResolveReasoningEffortAsync(config, ct);
+
+        return new LlmSessionContext(tenant, provider, selection, enabledFeatures, effort);
     }
 }

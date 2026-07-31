@@ -12,8 +12,8 @@ public static class AISettingsKeys
     public const string Model = "AI.Model";
 
     /// <summary>
-    /// Whether extended thinking is enabled for the dispatch agent ("true"/"false").
-    /// Only honored by providers/models that support it (e.g. Anthropic); ignored otherwise.
+    /// The global <c>ReasoningEffort</c> level for both agents, stored as the enum name
+    /// (e.g. "None", "High"). Models without a reasoning control ignore it.
     /// </summary>
-    public const string ExtendedThinking = "AI.ExtendedThinking";
+    public const string ReasoningEffort = "AI.ReasoningEffort";
 }

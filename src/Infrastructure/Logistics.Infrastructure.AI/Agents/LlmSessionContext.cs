@@ -10,4 +10,5 @@ internal sealed record LlmSessionContext(
     Tenant Tenant,
     ILlmProvider Provider,
     LlmModelSelection Selection,
-    IReadOnlySet<TenantFeature> EnabledFeatures);
+    IReadOnlySet<TenantFeature> EnabledFeatures,
+    ReasoningEffort Effort);

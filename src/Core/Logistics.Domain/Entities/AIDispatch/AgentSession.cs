@@ -88,12 +88,6 @@ public class AgentSession : AuditableEntity, ITenantEntity
     public string? ErrorMessage { get; set; }
 
     /// <summary>
-    /// Quota cost multiplier for this session based on model tier.
-    /// Standard models = 1, Premium (Sonnet 5 / GPT-5.6 Terra) = 2.
-    /// </summary>
-    public int RequestCost { get; set; } = 1;
-
-    /// <summary>
     /// Whether this session exceeded the tenant's weekly AI request quota.
     /// Overage sessions are billed at the plan's overage rate.
     /// </summary>

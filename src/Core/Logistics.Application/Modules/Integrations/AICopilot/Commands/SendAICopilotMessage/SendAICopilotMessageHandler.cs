@@ -53,7 +53,7 @@ internal sealed class SendAICopilotMessageHandler(
         if (quota.IsOverQuota)
         {
             return Result<SendAICopilotMessageResultDto>.Fail(
-                "Your weekly AI request quota is exhausted. It resets " +
+                "Your weekly AI usage limit is reached. It resets " +
                 (quota.ResetsAt is { } resetsAt ? $"on {resetsAt:yyyy-MM-dd}." : "next week."),
                 ErrorCodes.AIQuotaExceeded);
         }

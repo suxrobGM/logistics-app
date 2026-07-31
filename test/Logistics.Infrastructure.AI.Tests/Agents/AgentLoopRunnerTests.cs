@@ -63,7 +63,8 @@ public class AgentLoopRunnerTests
     };
 
     private LlmConversation Conversation() => new(
-        provider, "system prompt", [LlmMessage.FromUser("go")], [], "claude-haiku-4-5", 1000, null);
+        provider, "system prompt", [LlmMessage.FromUser("go")], [], "claude-haiku-4-5", 1000,
+        ReasoningEffort.None);
 
     private static LlmResponse TextResponse(string text, int inputTokens = 100, int outputTokens = 50) => new()
     {
@@ -99,7 +100,7 @@ public class AgentLoopRunnerTests
         await provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
         Assert.Equal("All done.", session.Summary);
         Assert.Equal(150, session.TotalTokensUsed);
-        Assert.Equal(LlmPricing.GetMultiplier("claude-haiku-4-5"), session.RequestCost);
+        Assert.Equal(LlmPricing.Calculate("claude-haiku-4-5", 100, 50), session.EstimatedCostUsd);
     }
 
     [Fact]
@@ -221,9 +222,8 @@ public class AgentLoopRunnerTests
 
         Assert.Equal(220, session.TotalTokensUsed);
 
-        // Cost is recorded even though the run failed - the audit trail promises both, and quota
-        // that only counts successes would make a failing prompt free to retry.
-        Assert.Equal(LlmPricing.GetMultiplier("claude-haiku-4-5"), session.RequestCost);
+        // Cost is recorded even though the run failed - the audit trail promises both, and a
+        // budget that only counted successes would make a failing prompt free to retry.
         Assert.True(session.EstimatedCostUsd > 0);
     }
 
@@ -275,7 +275,8 @@ public class AgentLoopRunnerTests
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
             sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode), null, cts.Token));
 
-        Assert.Equal(LlmPricing.GetMultiplier("claude-haiku-4-5"), session.RequestCost);
+        // The finally block ran: a cancel before any provider call burned nothing, so $0 exactly.
+        Assert.Equal(0m, session.EstimatedCostUsd);
     }
 
     [Fact]

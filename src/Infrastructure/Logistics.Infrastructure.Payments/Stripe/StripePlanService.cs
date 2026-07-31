@@ -14,10 +14,11 @@ internal sealed class StripePlanService(
     ILogger<StripePlanService> logger) : IStripePlanService
 {
     /// <summary>
-    /// $0.10 per billing unit (standard=1 unit, premium=2). Changes propagate on the next
-    /// UpdatePlanAsync/seeder run.
+    /// Cents per metered billing unit, derived from <see cref="AIOverageBilling.UnitUsd"/> so the
+    /// Stripe price and the cost-to-units conversion cannot disagree. Changes propagate on the
+    /// next UpdatePlanAsync/seeder run.
     /// </summary>
-    private const decimal AIOverageUnitAmountCents = 10;
+    private const decimal AIOverageUnitAmountCents = AIOverageBilling.UnitUsd * 100;
 
     public async Task<StripePlanResult> CreatePlanAsync(SubscriptionPlan plan)
     {
@@ -45,9 +46,9 @@ internal sealed class StripePlanService(
         var perTruckPrice = await CreateLicensedPriceAsync(priceService, product.Id, plan,
             plan.PerTruckPrice * 100, plan.PerTruckPrice.Currency, "per_truck");
 
-        // 4. Create AI overage metered price if plan has a weekly quota
+        // 4. Create AI overage metered price if plan has a weekly budget
         Price? aiOveragePrice = null;
-        if (plan.WeeklyAIRequestQuota.HasValue)
+        if (plan.WeeklyAIBudgetUsd.HasValue)
         {
             aiOveragePrice = await CreateMeteredOveragePriceAsync(priceService, product.Id, plan);
         }
@@ -149,7 +150,7 @@ internal sealed class StripePlanService(
     /// </summary>
     private async Task<Price?> ReconcileOveragePriceAsync(PriceService priceService, SubscriptionPlan plan)
     {
-        if (!plan.WeeklyAIRequestQuota.HasValue)
+        if (!plan.WeeklyAIBudgetUsd.HasValue)
             return null;
 
         if (string.IsNullOrEmpty(plan.StripeAIOveragePriceId))

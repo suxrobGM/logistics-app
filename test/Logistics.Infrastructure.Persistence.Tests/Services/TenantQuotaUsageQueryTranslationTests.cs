@@ -16,10 +16,7 @@ public class TenantQuotaUsageQueryTranslationTests
 {
     private static IQueryable<AgentSession> WindowedSessions(TenantDbContext db, DateTime costWindowStart) =>
         db.Set<AgentSession>()
-            .Where(s =>
-                s.StartedAt >= costWindowStart &&
-                (s.Status == AgentSessionStatus.Running ||
-                 s.Status == AgentSessionStatus.Completed));
+            .Where(s => s.StartedAt >= costWindowStart);
 
     [Fact]
     public void SessionAggregates_TranslateToASingleSqlAggregate()
@@ -32,17 +29,14 @@ public class TenantQuotaUsageQueryTranslationTests
             .GroupBy(_ => 1)
             .Select(g => new
             {
-                UsedThisWeek = g.Sum(s =>
-                    s.StartedAt >= countFrom && s.Status == AgentSessionStatus.Completed
-                        ? s.RequestCost
-                        : 0),
+                SpentThisWeekUsd = g.Sum(s =>
+                    s.StartedAt >= countFrom ? s.EstimatedCostUsd : 0m),
                 OverageSessions = g.Sum(s =>
                     s.StartedAt >= countFrom && s.Status == AgentSessionStatus.Completed && s.IsOverage
                         ? 1
                         : 0),
                 TotalTokens = g.Sum(s =>
                     s.StartedAt >= countFrom ? s.InputTokensUsed + s.OutputTokensUsed : 0),
-                TotalCost = g.Sum(s => s.StartedAt >= countFrom ? s.EstimatedCostUsd : 0m),
                 MonthlyLlmCost = g.Sum(s => s.EstimatedCostUsd)
             })
             .ToQueryString();

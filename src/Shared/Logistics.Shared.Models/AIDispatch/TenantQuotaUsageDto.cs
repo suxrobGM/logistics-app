@@ -6,11 +6,13 @@ public record TenantQuotaUsageDto
     public string? TenantName { get; set; }
     public string? CompanyName { get; set; }
     public string? PlanName { get; set; }
-    public int WeeklyQuota { get; set; }
-    public int UsedThisWeek { get; set; }
-    public int Remaining { get; set; }
+    public decimal WeeklyBudgetUsd { get; set; }
+    public decimal SpentThisWeekUsd { get; set; }
+    public decimal RemainingUsd { get; set; }
     public bool IsOverQuota { get; set; }
-    public int OverageCount { get; set; }
+
+    /// <summary>Raw model cost beyond the budget this week (pre-markup; not what Stripe bills).</summary>
+    public decimal OverageUsd { get; set; }
     public DateTime? QuotaResetAt { get; set; }
     public int TotalTokensUsed { get; set; }
     public decimal TotalEstimatedCostUsd { get; set; }

@@ -29,7 +29,7 @@ public class AIQuotaServiceTests
         sut = new AIQuotaService(masterUow, tenantUow);
     }
 
-    private void SetupTenantWithPlan(Guid tenantId, int? weeklyQuota)
+    private void SetupTenantWithPlan(Guid tenantId, decimal? weeklyBudgetUsd)
     {
         var planId = Guid.NewGuid();
         var tenant = new Tenant
@@ -51,7 +51,7 @@ public class AIQuotaServiceTests
                 Name = "Test Plan",
                 Price = new() { Amount = 29m, Currency = "USD" },
                 PerTruckPrice = new() { Amount = 12m, Currency = "USD" },
-                WeeklyAIRequestQuota = weeklyQuota
+                WeeklyAIBudgetUsd = weeklyBudgetUsd
             });
     }
 
@@ -61,31 +61,31 @@ public class AIQuotaServiceTests
         sessionRepo.Query().Returns(mock);
     }
 
-    #region Quota from plan
+    private static AgentSession CreateCompletedSessionAt(DateTime startedAt, decimal costUsd)
+    {
+        var session = new AgentSession { StartedAt = startedAt, EstimatedCostUsd = costUsd };
+        session.Complete("done");
+        return session;
+    }
+
+    #region Budget from plan
 
     [Theory]
+    [InlineData(5)]
     [InlineData(25)]
-    [InlineData(100)]
-    [InlineData(250)]
-    public async Task GetQuotaStatus_ReturnsCorrectQuotaFromPlan(int quota)
+    [InlineData(75.50)]
+    public async Task GetQuotaStatus_ReturnsCorrectBudgetFromPlan(decimal budget)
     {
         var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, quota);
+        SetupTenantWithPlan(tenantId, budget);
         SetupSessions();
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
-        Assert.Equal(quota, status.WeeklyQuota);
+        Assert.Equal(budget, status.WeeklyBudgetUsd);
     }
 
     #endregion
-
-    private static AgentSession CreateCompletedSessionAt(DateTime startedAt)
-    {
-        var session = new AgentSession { StartedAt = startedAt };
-        session.Complete("done");
-        return session;
-    }
 
     #region Non-subscription tenants
 
@@ -107,7 +107,7 @@ public class AIQuotaServiceTests
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
         Assert.False(status.IsOverQuota);
-        Assert.Equal(0, status.WeeklyQuota);
+        Assert.Equal(0m, status.WeeklyBudgetUsd);
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class AIQuotaServiceTests
     }
 
     [Fact]
-    public async Task GetQuotaStatus_NullQuotaOnPlan_ReturnsUnlimited()
+    public async Task GetQuotaStatus_NullBudgetOnPlan_ReturnsUnlimited()
     {
         var tenantId = Guid.NewGuid();
         SetupTenantWithPlan(tenantId, null);
@@ -130,164 +130,129 @@ public class AIQuotaServiceTests
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
         Assert.False(status.IsOverQuota);
-        Assert.Equal(0, status.WeeklyQuota);
+        Assert.Equal(0m, status.WeeklyBudgetUsd);
     }
 
     #endregion
 
-    #region Session counting
+    #region Cost counting
 
     [Fact]
-    public async Task GetQuotaStatus_CountsOnlyCompletedSessions()
+    public async Task GetQuotaStatus_CountsCostFromEveryStatus()
     {
         var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 25);
+        SetupTenantWithPlan(tenantId, 10m);
 
         var now = DateTime.UtcNow;
-        var completed = new AgentSession { StartedAt = now };
+        var completed = new AgentSession { StartedAt = now, EstimatedCostUsd = 0.50m };
         completed.Complete("done");
-        var running = new AgentSession { StartedAt = now };
-        var failed = new AgentSession { StartedAt = now };
+        var running = new AgentSession { StartedAt = now, EstimatedCostUsd = 0m };
+        var failed = new AgentSession { StartedAt = now, EstimatedCostUsd = 0.25m };
         failed.Fail("error");
-        var cancelled = new AgentSession { StartedAt = now };
+        var cancelled = new AgentSession { StartedAt = now, EstimatedCostUsd = 0.10m };
         cancelled.Cancel();
 
         SetupSessions(completed, running, failed, cancelled);
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
-        // Only Completed sessions count toward quota
-        Assert.Equal(1, status.UsedThisWeek);
-        Assert.Equal(24, status.Remaining);
+        // Failed and cancelled sessions burned real tokens, so their cost counts too.
+        Assert.Equal(0.85m, status.SpentThisWeekUsd);
+    }
+
+    [Fact]
+    public async Task GetQuotaStatus_ZeroCostSessions_AddNothing()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithPlan(tenantId, 10m);
+
+        var now = DateTime.UtcNow;
+        // A session that died before the loop (or an in-flight one) carries zero cost.
+        var preLoopFailure = new AgentSession { StartedAt = now, EstimatedCostUsd = 0m };
+        preLoopFailure.Fail("setup error");
+        var running = new AgentSession { StartedAt = now, EstimatedCostUsd = 0m };
+
+        SetupSessions(preLoopFailure, running);
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        Assert.Equal(0m, status.SpentThisWeekUsd);
+        Assert.False(status.IsOverQuota);
     }
 
     [Fact]
     public async Task GetQuotaStatus_ExcludesSessionsFromPreviousWeek()
     {
         var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 25);
+        SetupTenantWithPlan(tenantId, 10m);
 
         var now = DateTime.UtcNow;
-        var thisWeek = CreateCompletedSessionAt(now);
-        var lastWeek = CreateCompletedSessionAt(now.AddDays(-14));
+        var thisWeek = CreateCompletedSessionAt(now, 1m);
+        var lastWeek = CreateCompletedSessionAt(now.AddDays(-14), 5m);
 
         SetupSessions(thisWeek, lastWeek);
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
-        Assert.Equal(1, status.UsedThisWeek);
+        Assert.Equal(1m, status.SpentThisWeekUsd);
     }
 
     #endregion
 
-    #region Weighted request cost
+    #region Over budget detection
 
     [Fact]
-    public async Task GetQuotaStatus_SumsRequestCostNotSessionCount()
+    public async Task GetQuotaStatus_UnderBudget_IsOverQuotaFalse()
     {
         var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 100);
-
-        var now = DateTime.UtcNow;
-        // 3 premium sessions with RequestCost 2 each = 6 used, not 3
-        var s1 = CreateCompletedSessionAt(now);
-        s1.RequestCost = 2;
-        var s2 = CreateCompletedSessionAt(now);
-        s2.RequestCost = 2;
-        var s3 = CreateCompletedSessionAt(now);
-        s3.RequestCost = 2;
-
-        SetupSessions(s1, s2, s3);
-
-        var status = await sut.GetQuotaStatusAsync(tenantId);
-
-        Assert.Equal(6, status.UsedThisWeek);
-        Assert.Equal(94, status.Remaining);
-        Assert.False(status.IsOverQuota);
-    }
-
-    [Fact]
-    public async Task GetQuotaStatus_MixedRequestCosts_SumsCorrectly()
-    {
-        var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 20);
-
-        var now = DateTime.UtcNow;
-        var standard = CreateCompletedSessionAt(now); // RequestCost = 1 (default)
-        var premium1 = CreateCompletedSessionAt(now);
-        premium1.RequestCost = 2;
-        var premium2 = CreateCompletedSessionAt(now);
-        premium2.RequestCost = 2;
-
-        SetupSessions(standard, premium1, premium2);
-
-        var status = await sut.GetQuotaStatusAsync(tenantId);
-
-        Assert.Equal(5, status.UsedThisWeek); // 1 + 2 + 2
-        Assert.Equal(15, status.Remaining);
-        Assert.False(status.IsOverQuota);
-    }
-
-    #endregion
-
-    #region Over quota detection
-
-    [Fact]
-    public async Task GetQuotaStatus_UnderQuota_IsOverQuotaFalse()
-    {
-        var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 25);
+        SetupTenantWithPlan(tenantId, 10m);
         var now = DateTime.UtcNow;
         SetupSessions(
-            CreateCompletedSessionAt(now),
-            CreateCompletedSessionAt(now)
+            CreateCompletedSessionAt(now, 1m),
+            CreateCompletedSessionAt(now, 0.50m)
         );
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
         Assert.False(status.IsOverQuota);
-        Assert.Equal(23, status.Remaining);
+        Assert.Equal(1.50m, status.SpentThisWeekUsd);
     }
 
     [Fact]
-    public async Task GetQuotaStatus_AtQuota_IsOverQuotaTrue()
+    public async Task GetQuotaStatus_AtExactBudget_IsOverQuotaTrue()
     {
         var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 3);
+        SetupTenantWithPlan(tenantId, 3m);
 
         var now = DateTime.UtcNow;
         SetupSessions(
-            CreateCompletedSessionAt(now),
-            CreateCompletedSessionAt(now),
-            CreateCompletedSessionAt(now)
+            CreateCompletedSessionAt(now, 1m),
+            CreateCompletedSessionAt(now, 1m),
+            CreateCompletedSessionAt(now, 1m)
         );
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
         Assert.True(status.IsOverQuota);
-        Assert.Equal(0, status.Remaining);
+        Assert.Equal(3m, status.SpentThisWeekUsd);
     }
 
     [Fact]
-    public async Task GetQuotaStatus_OverQuota_RemainingIsZero()
+    public async Task GetQuotaStatus_OverBudget_IsOverQuotaTrue()
     {
         var tenantId = Guid.NewGuid();
-        SetupTenantWithPlan(tenantId, 2);
+        SetupTenantWithPlan(tenantId, 2m);
 
         var now = DateTime.UtcNow;
         SetupSessions(
-            CreateCompletedSessionAt(now),
-            CreateCompletedSessionAt(now),
-            CreateCompletedSessionAt(now),
-            CreateCompletedSessionAt(now),
-            CreateCompletedSessionAt(now)
+            CreateCompletedSessionAt(now, 1.75m),
+            CreateCompletedSessionAt(now, 1.75m)
         );
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
         Assert.True(status.IsOverQuota);
-        Assert.Equal(0, status.Remaining);
-        Assert.Equal(5, status.UsedThisWeek);
+        Assert.Equal(3.50m, status.SpentThisWeekUsd);
     }
 
     #endregion

@@ -51,7 +51,7 @@ public class SendAICopilotMessageHandlerTests
     private void SetQuota(bool isOverQuota)
     {
         quotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(new AIQuotaStatus(500, isOverQuota ? 500 : 10, isOverQuota ? 0 : 490,
+            .Returns(new AIQuotaStatus(5m, isOverQuota ? 5m : 0.10m,
                 isOverQuota, "Starter", DateTime.UtcNow.AddDays(3)));
     }
 

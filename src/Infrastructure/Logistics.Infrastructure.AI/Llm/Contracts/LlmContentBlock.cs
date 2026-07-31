@@ -16,3 +16,9 @@ internal record LlmToolResultBlock(string ToolUseId, string Content) : LlmConten
 
 /// <summary>An inline document such as a PDF (base64-encoded). Mapped to provider-native document content.</summary>
 internal record LlmDocumentBlock(string MediaType, string Base64Data) : LlmContentBlock;
+
+/// <summary>
+/// An Anthropic thinking block, kept so the tool loop can echo it back - with thinking on, an
+/// assistant turn replayed without it is rejected. Only in-turn replay is required.
+/// </summary>
+internal record LlmThinkingBlock(string Thinking, string? Signature) : LlmContentBlock;

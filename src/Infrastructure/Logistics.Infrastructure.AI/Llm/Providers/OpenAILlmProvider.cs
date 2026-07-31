@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenAI;
 using OpenAI.Chat;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 
@@ -48,11 +49,7 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient ht
             tools.Add(ChatTool.CreateFunctionTool(tool.Name, tool.Description, schema));
         }
 
-        var options = new ChatCompletionOptions
-        {
-            MaxOutputTokenCount = request.MaxTokens,
-            Temperature = request.Temperature.HasValue ? (float)request.Temperature.Value : null
-        };
+        var options = BuildOptions(request);
 
         foreach (var tool in tools)
         {
@@ -61,6 +58,37 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient ht
 
         var completion = await chatClient.CompleteChatAsync(messages, options, ct);
         return MapResponse(completion.Value);
+    }
+
+    /// <summary>
+    /// Reasoning models always get an explicit <c>reasoning_effort</c> - their server default is
+    /// rejected once function tools are present. Other models never get the parameter, since some
+    /// OpenAI-compatible endpoints reject it outright.
+    /// </summary>
+    internal static ChatCompletionOptions BuildOptions(LlmRequest request)
+    {
+        var options = new ChatCompletionOptions
+        {
+            MaxOutputTokenCount = request.MaxTokens,
+            Temperature = request.Temperature.HasValue ? (float)request.Temperature.Value : null
+        };
+
+        if (LlmModelCatalog.ReasoningStyleOf(request.Model) == ReasoningStyle.OpenAIEffort)
+        {
+            // OPENAI001: the SDK still marks reasoning_effort [Experimental]; the wire field is stable.
+#pragma warning disable OPENAI001
+            options.ReasoningEffortLevel = request.Effort switch
+            {
+                ReasoningEffort.None => new ChatReasoningEffortLevel("none"),
+                ReasoningEffort.Low => ChatReasoningEffortLevel.Low,
+                ReasoningEffort.Medium => ChatReasoningEffortLevel.Medium,
+                // OpenAI's effort scale tops out at "high" - clamp the Anthropic-only levels.
+                _ => ChatReasoningEffortLevel.High
+            };
+#pragma warning restore OPENAI001
+        }
+
+        return options;
     }
 
     /// <summary>
@@ -95,8 +123,7 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient ht
 
             foreach (var document in documents)
             {
-                // CreateFilePart is annotated [Experimental(OPENAI001)] in the current SDK; the file
-                // content-part wire format is stable enough for our use, so opt in explicitly.
+                // OPENAI001: file content parts are still marked [Experimental] by the SDK.
 #pragma warning disable OPENAI001
                 parts.Add(ChatMessageContentPart.CreateFilePart(
                     BinaryData.FromBytes(Convert.FromBase64String(document.Base64Data)),

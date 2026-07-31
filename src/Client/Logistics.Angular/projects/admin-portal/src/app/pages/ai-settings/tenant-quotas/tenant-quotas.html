@@ -2,8 +2,8 @@
   <!-- Actions bar -->
   <ui-stack direction="row" align="center" justify="between" class="mb-4">
     <ui-typography variant="body-sm" color="secondary">
-      Weekly usage per tenant, counting dispatch and copilot sessions against the one shared pool.
-      Resetting a tenant's quota zeroes their usage count for the current week.
+      Weekly AI spend per tenant against the shared budget. Resetting zeroes the current week's
+      spend.
     </ui-typography>
     <ui-stack direction="row" gap="2">
       <ui-button
@@ -53,9 +53,9 @@
         </th>
         <th uiSortHeader="TenantName">Tenant</th>
         <th uiSortHeader="PlanName">Plan</th>
-        <th uiSortHeader="UsedThisWeek" class="text-center">Used / Quota</th>
+        <th uiSortHeader="SpentThisWeekUsd" class="text-center">Spent / Budget</th>
         <th class="text-center">Remaining</th>
-        <th uiSortHeader="OverageCount" class="text-center">Overage</th>
+        <th uiSortHeader="OverageUsd" class="text-center">Overage</th>
         <th>Usage</th>
         <th class="text-right">Tokens</th>
         <th class="text-right">Est. Cost</th>
@@ -89,15 +89,15 @@
         </td>
         <td class="text-center">
           <span class="font-mono font-medium" [class.text-danger]="usage.isOverQuota">
-            {{ usage.usedThisWeek }} / {{ usage.weeklyQuota }}
+            {{ usage.spentThisWeekUsd | currency }} / {{ usage.weeklyBudgetUsd | currency }}
           </span>
         </td>
         <td class="text-center">
-          <span class="font-mono">{{ usage.remaining }}</span>
+          <span class="font-mono">{{ usage.remainingUsd | currency }}</span>
         </td>
         <td class="text-center">
-          @if (usage.overageCount > 0) {
-            <ui-badge [value]="'+' + usage.overageCount" severity="warn" />
+          @if (usage.overageUsd > 0) {
+            <ui-badge [value]="'+' + (usage.overageUsd | currency)" severity="warn" />
             <div class="text-muted-foreground mt-1 text-xs">
               {{ usage.overageSessionsThisWeek }} billed
             </div>
@@ -108,7 +108,11 @@
         <td class="w-40">
           <ui-progress
             height="0.5rem"
-            [value]="Math.min((usage.usedThisWeek / usage.weeklyQuota) * 100, 100)"
+            [value]="
+              usage.weeklyBudgetUsd > 0
+                ? Math.min((usage.spentThisWeekUsd / usage.weeklyBudgetUsd) * 100, 100)
+                : 0
+            "
             [showValue]="false"
           />
         </td>
@@ -162,7 +166,7 @@
         <td colspan="14" class="py-8 text-center">
           <ui-stack align="center" gap="2" class="text-muted-foreground">
             <ui-icon name="chart-column" size="xl" />
-            <ui-typography variant="body">No tenants with AI quota configured.</ui-typography>
+            <ui-typography variant="body">No tenants with an AI budget configured.</ui-typography>
           </ui-stack>
         </td>
       </tr>

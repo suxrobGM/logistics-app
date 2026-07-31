@@ -165,10 +165,9 @@ internal sealed class AIDispatchService(
 
         try
         {
-            var billingUnits = LlmPricing.GetOverageBillingUnits(session.ModelUsed ?? "");
-            await stripeUsageService.ReportAISessionOverageAsync(tenantId, billingUnits);
-            logger.LogInformation("Reported AI session overage for session {SessionId} ({BillingUnits} units)",
-                session.Id, billingUnits);
+            await stripeUsageService.ReportAISessionOverageAsync(tenantId, session.EstimatedCostUsd);
+            logger.LogInformation("Reported AI session overage for session {SessionId} (${CostUsd} model cost)",
+                session.Id, session.EstimatedCostUsd);
         }
         catch (Exception ex)
         {

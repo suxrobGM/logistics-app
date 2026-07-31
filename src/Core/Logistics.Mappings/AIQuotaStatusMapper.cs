@@ -10,8 +10,8 @@ public static class AIQuotaStatusMapper
 {
     public static AIQuotaStatusDto ToDto(this AIQuotaStatus status) => new()
     {
-        UsagePercent = status.WeeklyQuota > 0
-            ? (double)status.UsedThisWeek / status.WeeklyQuota
+        UsagePercent = status.WeeklyBudgetUsd > 0
+            ? (double)(status.SpentThisWeekUsd / status.WeeklyBudgetUsd)
             : 0,
         IsOverQuota = status.IsOverQuota,
         PlanName = status.PlanName,
