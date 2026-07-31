@@ -35,6 +35,7 @@ import {
   ApproveRejectActions,
   DecisionActionsService,
   RejectDecisionDialog,
+  ToolOutputSummary,
 } from "@/shared/components";
 import { MarkdownPipe } from "@/shared/pipes";
 import {
@@ -46,7 +47,6 @@ import {
   Labels,
 } from "@/shared/utils";
 import { ModeBadge } from "../components/mode-badge/mode-badge";
-import { ToolOutputSummary } from "../components/tool-output-summary/tool-output-summary";
 
 @Component({
   selector: "app-session-details",

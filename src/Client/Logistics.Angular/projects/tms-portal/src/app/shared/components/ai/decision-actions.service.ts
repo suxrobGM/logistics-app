@@ -25,6 +25,8 @@ export class DecisionActionsService {
 
   public readonly showRejectDialog = signal(false);
   public readonly pendingDecision = signal<AgentDecisionDto | null>(null);
+  /** Id of the decision whose approve/reject request is in flight, for per-card busy state. */
+  public readonly busyDecisionId = signal<string | null>(null);
 
   private endpoint: DecisionEndpoint = "dispatch";
   private onComplete?: () => void | Promise<void>;
@@ -41,17 +43,16 @@ export class DecisionActionsService {
       header: "Approve Decision",
       icon: "success",
       severity: "success",
-      accept: async () => {
-        try {
-          const operation =
-            this.endpoint === "copilot" ? approveCopilotDecision : approveAIDispatchDecision;
-          await this.api.invoke(operation, { decisionId: decision.id! });
-          this.toast.showSuccess("Decision approved and executed");
-          await this.onComplete?.();
-        } catch {
-          this.toast.showError("Failed to approve decision");
-        }
-      },
+      accept: () =>
+        this.run(
+          decision,
+          () =>
+            this.api.invoke(
+              this.endpoint === "copilot" ? approveCopilotDecision : approveAIDispatchDecision,
+              { decisionId: decision.id! },
+            ),
+          "Decision approved and executed",
+        ),
     });
   }
 
@@ -66,17 +67,35 @@ export class DecisionActionsService {
     const decision = this.pendingDecision();
     if (!decision) return;
 
+    await this.run(
+      decision,
+      () =>
+        this.api.invoke(
+          this.endpoint === "copilot" ? rejectCopilotDecision : rejectAIDispatchDecision,
+          { decisionId: decision.id!, body: { reason } },
+        ),
+      "Decision rejected",
+    );
+  }
+
+  /**
+   * Owns the in-flight bookkeeping both verbs share. The failure toast comes from the global
+   * errorHandlerInterceptor, so this only reports success and clears the busy marker.
+   */
+  private async run(
+    decision: AgentDecisionDto,
+    operation: () => Promise<unknown>,
+    successMessage: string,
+  ): Promise<void> {
+    this.busyDecisionId.set(decision.id ?? null);
     try {
-      const operation =
-        this.endpoint === "copilot" ? rejectCopilotDecision : rejectAIDispatchDecision;
-      await this.api.invoke(operation, {
-        decisionId: decision.id!,
-        body: { reason },
-      });
-      this.toast.showSuccess("Decision rejected");
+      await operation();
+      this.toast.showSuccess(successMessage);
       await this.onComplete?.();
     } catch {
-      this.toast.showError("Failed to reject decision");
+      // Already surfaced by the global error interceptor.
+    } finally {
+      this.busyDecisionId.set(null);
     }
   }
 }

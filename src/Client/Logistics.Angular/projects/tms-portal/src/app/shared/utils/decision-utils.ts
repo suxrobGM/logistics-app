@@ -160,29 +160,51 @@ export function getToolIcon(toolName: string | null | undefined): IconName {
   return (toolName ? TOOL_META[toolName]?.icon : null) ?? "circle";
 }
 
-/** Builds a human-readable detail string for confirmation dialogs */
-export function buildDecisionDetail(decision: {
-  toolName?: string | null;
+/** A decision's resolved references, as rendered by the cards and the confirm dialog. */
+export interface DecisionRefs {
+  load?: string;
+  truck?: string;
+  reasoning?: string;
+}
+
+interface DecisionRefSource {
+  loadId?: string | null;
+  truckId?: string | null;
   loadName?: string | null;
   truckNumber?: string | null;
-  reasoning?: string | null;
   toolInput?: string | null;
-}): string {
+}
+
+/**
+ * Resolves a decision's load/truck labels, preferring the server-resolved name over the raw id
+ * from the tool input. Single owner of that precedence rule - the dispatch card, the copilot card
+ * and the confirm dialog all read it here so they cannot label the same decision differently.
+ */
+export function getDecisionRefs(decision: DecisionRefSource): DecisionRefs {
   const parsed = parseToolInput(decision.toolInput);
-  const lines: string[] = [];
+  return {
+    load:
+      decision.loadId || decision.loadName || parsed.loadId
+        ? (decision.loadName ?? parsed.loadId)
+        : undefined,
+    truck:
+      decision.truckId || decision.truckNumber || parsed.truckId
+        ? (decision.truckNumber ?? parsed.truckId)
+        : undefined,
+    reasoning: parsed.reasoning,
+  };
+}
 
-  const action = getToolLabel(decision.toolName);
-  lines.push(`Action: ${action}`);
+/** Builds a human-readable detail string for confirmation dialogs */
+export function buildDecisionDetail(
+  decision: DecisionRefSource & { toolName?: string | null },
+): string {
+  const refs = getDecisionRefs(decision);
+  const lines: string[] = [`Action: ${getToolLabel(decision.toolName)}`];
 
-  if (decision.loadName || parsed.loadId) {
-    lines.push(`Load: ${decision.loadName ?? parsed.loadId}`);
-  }
-  if (decision.truckNumber || parsed.truckId) {
-    lines.push(`Truck: ${decision.truckNumber ?? parsed.truckId}`);
-  }
-  if (parsed.reasoning) {
-    lines.push(`AI Reasoning: ${parsed.reasoning}`);
-  }
+  if (refs.load) lines.push(`Load: ${refs.load}`);
+  if (refs.truck) lines.push(`Truck: ${refs.truck}`);
+  if (refs.reasoning) lines.push(`AI Reasoning: ${refs.reasoning}`);
 
   return lines.join("\n");
 }
@@ -193,7 +215,7 @@ export function isWriteTool(toolName: string | null | undefined): boolean {
 
 export function getToolMarkerClass(toolName: string | null | undefined): string {
   if (isWriteTool(toolName)) {
-    return "bg-blue-500 text-white";
+    return "bg-primary text-primary-foreground";
   }
-  return "bg-surface-400 text-white";
+  return "bg-muted text-muted-foreground";
 }

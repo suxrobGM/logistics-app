@@ -3,7 +3,7 @@ import { RouterLink } from "@angular/router";
 import type { AgentDecisionDto } from "@logistics/shared/api";
 import { Badge, Icon, Stack, Surface, UiButton } from "@logistics/shared/ui";
 import { stripMarkdown } from "@/shared/pipes";
-import { getToolLabel, Labels, parseToolInput } from "@/shared/utils";
+import { getDecisionRefs, getToolLabel, Labels } from "@/shared/utils";
 
 @Component({
   selector: "app-decision-card",
@@ -21,7 +21,7 @@ export class DecisionCard {
   protected readonly isApproving = signal(false);
 
   protected readonly toolLabel = computed(() => getToolLabel(this.decision().toolName));
-  protected readonly parsedInput = computed(() => parseToolInput(this.decision().toolInput));
+  protected readonly refs = computed(() => getDecisionRefs(this.decision()));
 
   protected onApprove(): void {
     this.approve.emit(this.decision());

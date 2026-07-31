@@ -152,6 +152,7 @@
               <div class="mt-2">
                 <app-approve-reject-actions
                   [decision]="decision"
+                  [busy]="decisionActions.busyDecisionId() === decision.id"
                   (approve)="approveDecision(decision)"
                   (reject)="rejectDecision(decision)"
                 />

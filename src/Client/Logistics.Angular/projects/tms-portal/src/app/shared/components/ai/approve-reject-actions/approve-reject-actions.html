@@ -5,6 +5,7 @@
     size="sm"
     label="Approve"
     icon="check"
+    [loading]="busy()"
     (click)="approve.emit(decision())"
   />
   <ui-button
@@ -13,6 +14,7 @@
     size="sm"
     label="Reject"
     icon="x"
+    [disabled]="busy()"
     (click)="reject.emit(decision())"
   />
 </div>

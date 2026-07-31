@@ -19,24 +19,22 @@
   }
 
   <!-- Tool input details -->
-  @if (decision().loadId || parsedInput().loadId) {
+  @if (refs().load) {
     <div class="bg-subtle mb-3 rounded-md p-3 text-sm">
       <ui-stack direction="row" align="center" gap="2">
         <ui-icon name="box" size="xs" color="muted" />
         <span class="text-muted-foreground">Load:</span>
-        <span class="font-semibold">{{ decision().loadName ?? parsedInput().loadId }}</span>
+        <span class="font-semibold">{{ refs().load }}</span>
       </ui-stack>
-      @if (decision().truckId || parsedInput().truckId) {
+      @if (refs().truck) {
         <ui-stack direction="row" align="center" gap="2" class="mt-1">
           <ui-icon name="truck" size="xs" color="muted" />
           <span class="text-muted-foreground">Truck:</span>
-          <span class="font-semibold">{{ decision().truckNumber ?? parsedInput().truckId }}</span>
+          <span class="font-semibold">{{ refs().truck }}</span>
         </ui-stack>
       }
-      @if (parsedInput().reasoning) {
-        <div class="text-subtle-foreground mt-2 text-xs italic">
-          "{{ parsedInput().reasoning }}"
-        </div>
+      @if (refs().reasoning) {
+        <div class="text-subtle-foreground mt-2 text-xs italic">"{{ refs().reasoning }}"</div>
       }
     </div>
   }
