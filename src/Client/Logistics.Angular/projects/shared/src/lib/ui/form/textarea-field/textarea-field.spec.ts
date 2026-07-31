@@ -47,6 +47,7 @@ class HostSignalTextarea {
       [maxlength]="max()"
       [showCounter]="show()"
       [counterWarnAt]="warnAt()"
+      [capAutoGrow]="capAutoGrow()"
     />
   `,
 })
@@ -55,6 +56,7 @@ class HostCounterTextarea {
   readonly max = signal<number | null>(500);
   readonly show = signal(true);
   readonly warnAt = signal(50);
+  readonly capAutoGrow = signal(false);
 }
 
 async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
@@ -185,6 +187,18 @@ describe("UiTextareaField - a FormValueControl-only wrapper", () => {
 
       expect(counter(fixture)?.className).toContain("text-destructive");
       expect(counter(fixture)?.className).not.toContain("text-red");
+    });
+
+    it("capAutoGrow bounds the always-on content sizing with a max height", async () => {
+      const fixture = TestBed.createComponent(HostCounterTextarea);
+      await settle(fixture);
+      // The spartan base always sizes to content; the cap is the opt-in part.
+      expect(textarea(fixture).className).toContain("field-sizing-content");
+      expect(textarea(fixture).className).not.toContain("max-h-40");
+
+      fixture.componentInstance.capAutoGrow.set(true);
+      await settle(fixture);
+      expect(textarea(fixture).className).toContain("max-h-40");
     });
 
     it("honours a caller's warn threshold", async () => {

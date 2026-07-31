@@ -60,6 +60,12 @@ export class UiTextareaField implements FormValueControl<string> {
   /** Renders a "remaining / max" counter under the textarea. Ignored without a `maxlength`. */
   public readonly showCounter = input(false, { transform: booleanAttribute });
 
+  /**
+   * Caps the always-on content sizing (hlmTextarea's `field-sizing-content`) at `max-h-40`, so a
+   * long draft scrolls instead of eating the panel.
+   */
+  public readonly capAutoGrow = input(false, { transform: booleanAttribute });
+
   /** Remaining characters at or below which the counter turns destructive. */
   public readonly counterWarnAt = input<number>(50);
 

@@ -1,6 +1,7 @@
 <textarea
   hlmTextarea
   class="w-full"
+  [class.max-h-40]="capAutoGrow()"
   [id]="id()"
   [attr.name]="name() || null"
   [rows]="rows()"
