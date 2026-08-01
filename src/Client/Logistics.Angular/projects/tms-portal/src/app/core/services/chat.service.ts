@@ -27,6 +27,9 @@ export interface MessageReadEvent {
   readBy: string;
 }
 
+/** Only one conversation is open at a time, so joining a new one supersedes the previous join. */
+const ConversationGroup = "conversation";
+
 @Injectable({ providedIn: "root" })
 export class ChatService extends BaseHubConnection {
   private readonly api = inject(Api);
@@ -52,12 +55,12 @@ export class ChatService extends BaseHubConnection {
     super("chat");
   }
 
-  async joinConversation(conversationId: string): Promise<void> {
-    await this.hubConnection.invoke("JoinConversation", conversationId);
+  joinConversation(conversationId: string): Promise<void> {
+    return this.joinGroup(ConversationGroup, "JoinConversation", conversationId);
   }
 
-  async leaveConversation(conversationId: string): Promise<void> {
-    await this.hubConnection.invoke("LeaveConversation", conversationId);
+  leaveConversation(conversationId: string): Promise<void> {
+    return this.leaveGroup(ConversationGroup, "LeaveConversation", conversationId);
   }
 
   async sendTypingIndicator(conversationId: string, isTyping: boolean): Promise<void> {

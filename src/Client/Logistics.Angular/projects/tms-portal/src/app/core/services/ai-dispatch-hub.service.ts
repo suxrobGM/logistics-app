@@ -10,6 +10,8 @@ export interface AIDispatchUpdate {
   summary: string | null;
 }
 
+const DispatchBoardGroup = "dispatch-board";
+
 /**
  * Service for managing real-time AI dispatch agent operations via SignalR.
  */
@@ -32,30 +34,10 @@ export class AIDispatchHubService extends BaseHubConnection {
       return;
     }
 
+    destroyRef.onDestroy(
+      () => void this.leaveGroup(DispatchBoardGroup, "UnsubscribeFromDispatchBoard", tenantId),
+    );
     await this.acquire(destroyRef);
-    destroyRef.onDestroy(() => void this.unsubscribeFromDispatchBoard(tenantId));
-    await this.subscribeToDispatchBoard(tenantId);
-  }
-
-  async subscribeToDispatchBoard(tenantId: string): Promise<void> {
-    if (!this.isConnected) {
-      return;
-    }
-    try {
-      await this.hubConnection.invoke("SubscribeToDispatchBoard", tenantId);
-    } catch (error) {
-      console.error("Failed to subscribe to dispatch board", error);
-    }
-  }
-
-  async unsubscribeFromDispatchBoard(tenantId: string): Promise<void> {
-    if (!this.isConnected) {
-      return;
-    }
-    try {
-      await this.hubConnection.invoke("UnsubscribeFromDispatchBoard", tenantId);
-    } catch (error) {
-      console.error("Failed to unsubscribe from dispatch board", error);
-    }
+    await this.joinGroup(DispatchBoardGroup, "SubscribeToDispatchBoard", tenantId);
   }
 }

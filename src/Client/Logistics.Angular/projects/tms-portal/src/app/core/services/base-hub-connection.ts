@@ -16,8 +16,8 @@ export interface HubConnectionOptions {
   accessTokenFactory?: () => string | Promise<string>;
 
   /**
-   * Whether to run the RegisterTenant/UnregisterTenant handshake. Authorized hubs derive identity
-   * from JWT claims and skip it. Default true.
+   * Runs the RegisterTenant/UnregisterTenant handshake. Authorized hubs take identity from JWT
+   * claims and skip it. Default true.
    */
   registerTenant?: boolean;
 }
@@ -27,15 +27,12 @@ const DisconnectLingerMs = 5000;
 
 /**
  * Hub subclasses are root singletons shared by every consumer, so no single component may own the
- * connection lifecycle. Consumers call {@link acquire}, handing over their `DestroyRef` so the claim
- * dies with them; the connection stops once the last claim is gone. App-lifetime consumers acquire
- * without a `DestroyRef` and simply never release. There is deliberately no public disconnect - it
- * would kill the hub for every other consumer.
+ * connection lifecycle. Consumers {@link acquire} with their `DestroyRef` and the hub stops once the
+ * last claim is gone. There is no public disconnect - it would kill the hub for everyone else.
  *
- * Subclasses declare each server event with {@link event} / {@link mappedEvent} as a field
- * initializer, which registers the handler once and hands consumers an observable. A settable
- * callback would let one consumer steal or stack another's subscription - that bug class is why
- * this contract exists.
+ * Declare events with {@link event} / {@link mappedEvent} as field initializers and join groups
+ * through {@link joinGroup}: a settable callback lets one consumer steal another's subscription,
+ * and a raw group invoke is lost on reconnect (see {@link groupJoins}).
  */
 export abstract class BaseHubConnection {
   protected readonly tenantService = inject(TenantService);
@@ -47,6 +44,13 @@ export abstract class BaseHubConnection {
   private lingerTimer: ReturnType<typeof setTimeout> | null = null;
   /** Serializes start/stop so a release-then-acquire (route change) cannot interleave. */
   private lifecycle: Promise<void> = Promise.resolve();
+
+  /**
+   * Replayed after every connect. SignalR keys groups by connection id and `withAutomaticReconnect`
+   * hands out a new one, so a reconnect silently drops every membership - the socket comes back up
+   * and no event ever arrives again.
+   */
+  private readonly groupJoins = new Map<string, { method: string; args: unknown[] }>();
 
   /** Live connection status for offline/reconnecting UI. */
   readonly connectionState = this.state.asReadonly();
@@ -66,7 +70,10 @@ export abstract class BaseHubConnection {
       .build();
 
     this.hubConnection.onreconnecting(() => this.state.set("reconnecting"));
-    this.hubConnection.onreconnected(() => this.state.set("connected"));
+    this.hubConnection.onreconnected(() => {
+      this.state.set("connected");
+      void this.rejoinGroups();
+    });
     this.hubConnection.onclose(() => this.state.set("disconnected"));
   }
 
@@ -74,10 +81,7 @@ export abstract class BaseHubConnection {
     return this.hubConnection.state === HubConnectionState.Connected;
   }
 
-  /**
-   * Claims the connection and ensures it is started. Pass the consumer's `DestroyRef` so the claim
-   * is released with it; omit it only for app-lifetime consumers that never release.
-   */
+  /** Claims the connection and starts it. Pass a `DestroyRef` unless the consumer is app-lifetime. */
   acquire(destroyRef?: DestroyRef): Promise<void> {
     if (this.lingerTimer) {
       clearTimeout(this.lingerTimer);
@@ -89,9 +93,8 @@ export abstract class BaseHubConnection {
   }
 
   /**
-   * Releases a claim taken by {@link acquire} - unnecessary if you passed a `DestroyRef`. When the
-   * last claim goes, the connection stops after a short linger (cancelled if someone re-acquires,
-   * e.g. on a route change).
+   * Unnecessary if {@link acquire} was given a `DestroyRef`. The last release stops the hub after a
+   * linger, cancelled by a re-acquire (e.g. a route change).
    */
   release(): void {
     if (this.claims > 0) {
@@ -106,12 +109,27 @@ export abstract class BaseHubConnection {
     }, DisconnectLingerMs);
   }
 
-  /** Registers a server event once and exposes its single payload as an observable. */
+  /**
+   * Joins now if connected, and again after every reconnect. `key` is local to the client: a later
+   * join under the same key replaces it (one dispatch board, one open conversation).
+   */
+  protected async joinGroup(key: string, method: string, ...args: unknown[]): Promise<void> {
+    this.groupJoins.set(key, { method, args });
+    await this.invokeGroup(method, args);
+  }
+
+  /** Leaves a {@link joinGroup} membership and stops replaying it. */
+  protected async leaveGroup(key: string, method: string, ...args: unknown[]): Promise<void> {
+    this.groupJoins.delete(key);
+    await this.invokeGroup(method, args);
+  }
+
+  /** Registers a server event once and exposes its payload as an observable. */
   protected event<T>(method: string): Observable<T> {
     return this.mappedEvent(method, (payload: T) => payload);
   }
 
-  /** {@link event} for hub methods that push several arguments, projected into one payload. */
+  /** {@link event} for hub methods that send several arguments. */
   protected mappedEvent<TArgs extends unknown[], T>(
     method: string,
     project: (...args: TArgs) => T,
@@ -126,6 +144,25 @@ export abstract class BaseHubConnection {
   private enqueue(operation: () => Promise<void>): Promise<void> {
     this.lifecycle = this.lifecycle.then(operation);
     return this.lifecycle;
+  }
+
+  /** No-ops while disconnected - {@link rejoinGroups} replays the membership once the hub is up. */
+  private async invokeGroup(method: string, args: unknown[]): Promise<void> {
+    if (!this.isConnected) {
+      return;
+    }
+
+    try {
+      await this.hubConnection.invoke(method, ...args);
+    } catch (error) {
+      console.error(`Failed to invoke ${method} on the ${this.hubName} hub`, error);
+    }
+  }
+
+  private async rejoinGroups(): Promise<void> {
+    for (const { method, args } of this.groupJoins.values()) {
+      await this.invokeGroup(method, args);
+    }
   }
 
   private async start(): Promise<void> {
@@ -144,8 +181,10 @@ export abstract class BaseHubConnection {
           console.error(`Failed to connect to the ${this.hubName} hub, tenant ID is null`);
           return;
         }
-        await this.hubConnection.invoke("RegisterTenant", tenant.id);
+        this.groupJoins.set("tenant", { method: "RegisterTenant", args: [tenant.id] });
       }
+
+      await this.rejoinGroups();
     } catch (error) {
       this.state.set("disconnected");
       console.error(`Failed to connect to the ${this.hubName} hub`, error);
@@ -165,6 +204,8 @@ export abstract class BaseHubConnection {
         }
       }
 
+      // Stopping drops every membership server-side; a later start rebuilds what is still wanted.
+      this.groupJoins.clear();
       await this.hubConnection.stop();
     } catch (error) {
       console.error(`Failed to disconnect from the ${this.hubName} hub`, error);

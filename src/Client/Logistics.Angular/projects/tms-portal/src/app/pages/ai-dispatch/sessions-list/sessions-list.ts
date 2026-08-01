@@ -28,6 +28,7 @@ import {
   UiDataTable,
   UiTooltip,
 } from "@logistics/shared/ui";
+import { debounceTime } from "rxjs";
 import { AIDispatchHubService, DispatchBadgeService, ToastService } from "@/core/services";
 import {
   AIQuotaUsage,
@@ -123,9 +124,13 @@ export class SessionsListPage implements OnInit {
   }
 
   private setupSignalR(): void {
-    this.aiDispatchHub.updateReceived$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.loadData();
-    });
+    // The board group is tenant-wide and a single agent run broadcasts several updates, each of
+    // which would otherwise fan out into four parallel refetches.
+    this.aiDispatchHub.updateReceived$
+      .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loadData();
+      });
 
     this.aiDispatchHub.decisionReceived$
       .pipe(takeUntilDestroyed(this.destroyRef))

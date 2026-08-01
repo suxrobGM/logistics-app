@@ -9,7 +9,6 @@ import {
   viewChild,
   type OnInit,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterLink } from "@angular/router";
 import type { NotificationDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
@@ -44,19 +43,16 @@ export class NotificationBell implements OnInit {
   /** Whether the sidebar is expanded (shows label) or collapsed (icon only) */
   public readonly expanded = input(true);
 
-  protected readonly notifications = signal<NotificationDto[]>([]);
+  protected readonly notifications = this.notificationService.notifications;
+  protected readonly unreadCount = this.notificationService.unreadCount;
   protected readonly isLoading = signal(false);
   protected readonly selectedNotification = signal<NotificationDto | null>(null);
-
-  protected readonly unreadCount = computed(
-    () => this.notifications().filter((n) => !n.isRead).length,
-  );
 
   protected readonly displayedNotifications = computed(() => this.notifications().slice(0, 8));
 
   ngOnInit(): void {
     this.fetchNotifications();
-    this.setupRealTimeNotifications();
+    void this.notificationService.acquire(this.destroyRef);
   }
 
   protected togglePopover(event: Event): void {
@@ -75,37 +71,24 @@ export class NotificationBell implements OnInit {
   }
 
   protected markAllAsRead(): void {
-    const unreadNotifications = this.notifications().filter((n) => !n.isRead);
-    for (const notification of unreadNotifications) {
-      this.markAsRead(notification);
-    }
-  }
-
-  private setupRealTimeNotifications(): void {
-    void this.notificationService.acquire(this.destroyRef);
-    this.notificationService.notificationReceived$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((notification) => {
-        this.notifications.update((current) => [notification, ...current]);
-      });
+    const unreadIds = this.notifications()
+      .filter((n) => !n.isRead && n.id)
+      .map((n) => n.id!);
+    void this.notificationService.markAsRead(...unreadIds);
   }
 
   private async fetchNotifications(): Promise<void> {
     this.isLoading.set(true);
-
-    const result = await this.notificationService.getPastTwoWeeksNotifications();
-    if (result) {
-      this.notifications.set(result);
+    try {
+      await this.notificationService.load();
+    } finally {
+      this.isLoading.set(false);
     }
-
-    this.isLoading.set(false);
   }
 
   private markAsRead(notification: NotificationDto): void {
-    notification.isRead = true;
-    this.notifications.update((current) => [...current]);
     if (notification.id) {
-      this.notificationService.markAsRead(notification.id);
+      void this.notificationService.markAsRead(notification.id);
     }
   }
 }

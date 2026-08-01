@@ -1,13 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, DestroyRef, inject, signal, type OnInit } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SearchField } from "@logistics/shared";
-import {
-  Api,
-  getNotifications,
-  updateNotification,
-  type NotificationDto,
-} from "@logistics/shared/api";
+import type { NotificationDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
 import {
   Badge,
@@ -53,12 +47,12 @@ interface FilterOption {
   ],
 })
 export class NotificationsComponent implements OnInit {
-  private readonly api = inject(Api);
   private readonly notificationService = inject(NotificationService);
   private readonly toastService = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly notifications = signal<NotificationDto[]>([]);
+  protected readonly notifications = this.notificationService.notifications;
+  protected readonly unreadCount = this.notificationService.unreadCount;
   protected readonly isLoading = signal(false);
   protected readonly searchQuery = signal("");
   protected readonly filterType = signal<FilterType>("all");
@@ -92,10 +86,6 @@ export class NotificationsComponent implements OnInit {
     return result;
   });
 
-  protected readonly unreadCount = computed(
-    () => this.notifications().filter((n) => !n.isRead).length,
-  );
-
   protected readonly hasSelection = computed(() => this.selectedIds().size > 0);
 
   protected readonly allSelected = computed(() => {
@@ -106,27 +96,16 @@ export class NotificationsComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.fetchNotifications();
-    this.setupRealTimeNotifications();
+    void this.notificationService.acquire(this.destroyRef);
   }
 
   protected async fetchNotifications(): Promise<void> {
     this.isLoading.set(true);
-
-    // Fetch last 30 days of notifications
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 30);
-
-    const result = await this.api.invoke(getNotifications, {
-      StartDate: startDate.toISOString(),
-      EndDate: endDate.toISOString(),
-    });
-
-    if (result) {
-      this.notifications.set(result);
+    try {
+      await this.notificationService.load();
+    } finally {
+      this.isLoading.set(false);
     }
-
-    this.isLoading.set(false);
   }
 
   protected toggleSelection(notification: NotificationDto): void {
@@ -165,58 +144,25 @@ export class NotificationsComponent implements OnInit {
   protected async markAsRead(notification: NotificationDto): Promise<void> {
     if (!notification.id || notification.isRead) return;
 
-    await this.api.invoke(updateNotification, {
-      id: notification.id,
-      body: { isRead: true },
-    });
-
-    this.notifications.update((list) =>
-      list.map((n) => (n.id === notification.id ? { ...n, isRead: true } : n)),
-    );
+    await this.notificationService.markAsRead(notification.id);
   }
 
   protected async markSelectedAsRead(): Promise<void> {
     const ids = Array.from(this.selectedIds());
     if (ids.length === 0) return;
 
-    for (const id of ids) {
-      await this.api.invoke(updateNotification, {
-        id,
-        body: { isRead: true },
-      });
-    }
-
-    this.notifications.update((list) =>
-      list.map((n) => (n.id && ids.includes(n.id) ? { ...n, isRead: true } : n)),
-    );
-
+    await this.notificationService.markAsRead(...ids);
     this.selectedIds.set(new Set());
     this.toastService.showSuccess(`Marked ${ids.length} notification(s) as read`);
   }
 
   protected async markAllAsRead(): Promise<void> {
-    const unread = this.notifications().filter((n) => !n.isRead && n.id);
-    if (unread.length === 0) return;
+    const unreadIds = this.notifications()
+      .filter((n) => !n.isRead && n.id)
+      .map((n) => n.id!);
+    if (unreadIds.length === 0) return;
 
-    for (const notification of unread) {
-      if (notification.id) {
-        await this.api.invoke(updateNotification, {
-          id: notification.id,
-          body: { isRead: true },
-        });
-      }
-    }
-
-    this.notifications.update((list) => list.map((n) => ({ ...n, isRead: true })));
-    this.toastService.showSuccess(`Marked ${unread.length} notification(s) as read`);
-  }
-
-  private setupRealTimeNotifications(): void {
-    void this.notificationService.acquire(this.destroyRef);
-    this.notificationService.notificationReceived$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((notification) => {
-        this.notifications.update((current) => [notification, ...current]);
-      });
+    await this.notificationService.markAsRead(...unreadIds);
+    this.toastService.showSuccess(`Marked ${unreadIds.length} notification(s) as read`);
   }
 }
