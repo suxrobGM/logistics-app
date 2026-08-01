@@ -35,11 +35,12 @@
     </div>
   }
 
-  <!-- The scroll box. Inert by default (`visible` / no flex), so a plain card is unchanged; the TMS
-       dashboard switches it on through the variables - see home.css. -->
+  <!-- Scroll box, inert by default. The knob takes the two-value `overflow` shorthand (`x y`), so
+       both axes are always stated - CSS coerces a lone `visible` axis to `auto` once the other
+       scrolls, which would wrap a second scroller around ui-data-table. -->
   <div
     data-slot="card-content"
-    class="min-h-[var(--ui-card-content-min-h,auto)] [flex:var(--ui-card-content-flex,0_1_auto)] [overflow-y:var(--ui-card-content-overflow,visible)] [overscroll-behavior:var(--ui-card-content-overscroll,auto)]"
+    class="min-h-[var(--ui-card-content-min-h,auto)] [flex:var(--ui-card-content-flex,0_1_auto)] [overflow:var(--ui-card-content-overflow,visible)] [overscroll-behavior:var(--ui-card-content-overscroll,auto)]"
   >
     <ng-content />
   </div>

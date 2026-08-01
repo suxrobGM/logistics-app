@@ -47,6 +47,8 @@ export interface DashboardPanelConfig {
   hiddenByDefaultIn?: readonly OperatingMode[];
   /** The user's explicit choice. Overrides {@link hiddenByDefaultIn} once set. */
   hidden?: boolean;
+  /** Content sizes to its parent (map, chart, table), so the stacked layout gives it a fixed box. */
+  fillsParent?: boolean;
 }
 
 /**
@@ -97,6 +99,7 @@ export const DEFAULT_PANELS: DashboardPanelConfig[] = [
     rows: 5,
     minItemCols: 4,
     minItemRows: 3,
+    fillsParent: true,
   },
   {
     id: "attention-panel",
@@ -136,6 +139,7 @@ export const DEFAULT_PANELS: DashboardPanelConfig[] = [
     minItemCols: 4,
     minItemRows: 2,
     mode: "fleet",
+    fillsParent: true,
   },
   {
     id: "financial-health",
@@ -162,6 +166,7 @@ export const DEFAULT_PANELS: DashboardPanelConfig[] = [
     minItemCols: 3,
     minItemRows: 2,
     roles: [UserRole.Owner],
+    fillsParent: true,
   },
   {
     id: "kpi-today-gross",
@@ -201,6 +206,7 @@ export const DEFAULT_PANELS: DashboardPanelConfig[] = [
     minItemCols: 3,
     minItemRows: 2,
     hiddenByDefaultIn: ALL_MODES,
+    fillsParent: true,
   },
   {
     id: "daily-gross-chart",
@@ -213,5 +219,6 @@ export const DEFAULT_PANELS: DashboardPanelConfig[] = [
     minItemCols: 6,
     minItemRows: 2,
     hiddenByDefaultIn: ALL_MODES,
+    fillsParent: true,
   },
 ];

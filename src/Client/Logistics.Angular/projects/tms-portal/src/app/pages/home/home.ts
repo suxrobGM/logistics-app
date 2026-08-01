@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { Component, computed, effect, inject, signal, untracked, type OnInit } from "@angular/core";
 import {
   Api,
@@ -9,6 +10,7 @@ import {
   type LoadDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { LayoutService } from "@logistics/shared/services";
 import {
   Card,
   Divider,
@@ -60,6 +62,7 @@ import { summarizeDailyGrosses, weeklyGrossStartDate } from "./utils/weekly-gros
     HomeSkeleton,
     HosRemaining,
     Icon,
+    NgTemplateOutlet,
     OnboardingChecklist,
     PageHeader,
     RecentActivityComponent,
@@ -78,6 +81,7 @@ export class Home implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly tenantService = inject(TenantService);
   protected readonly dashboardSettings = inject(DashboardSettingsService);
+  private readonly layout = inject(LayoutService);
 
   private readonly dailyGrosses = signal<DailyGrossesDto | null>(null);
   protected readonly weeklyKpis = computed(() => summarizeDailyGrosses(this.dailyGrosses()));
@@ -91,6 +95,9 @@ export class Home implements OnInit {
   protected readonly currentDate = new Date();
 
   protected readonly dashboardPanels = this.dashboardSettings.visiblePanels;
+
+  /** Too narrow for a 12-column grid beside the sidebar - render the panels as a plain stack. */
+  protected readonly stackPanels = this.layout.isCompact;
 
   protected readonly activeLoadsTitle = computed(() =>
     this.tenantService.isSoloMode() ? "Your Loads" : "Active Loads",
@@ -106,7 +113,8 @@ export class Home implements OnInit {
     maxRows: 100,
     margin: 8,
     outerMargin: false,
-    mobileBreakpoint: 768,
+    // Off - it measures the grid's width, not the viewport. `stackPanels` is the sole authority.
+    mobileBreakpoint: 0,
     pushItems: true,
     swap: false,
     draggable: {

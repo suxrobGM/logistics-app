@@ -3,57 +3,51 @@
   min-height: 600px;
 }
 
-/* -------------------------------------------------------------------------------------------------
- * MAKE THE CARD FILL ITS GRIDSTER PANEL AND SCROLL ITS CONTENT.
- *
- * `ui-card` exposes the same four boxes as CUSTOM PROPERTIES, and custom properties inherit straight
- * THROUGH component boundaries - so setting them here on `.dashboard-panel` reaches the `<ui-card>`
- * nested inside `<app-stat-card>` / `<app-attention-panel>` without piercing anything and without
- * those children having to opt in. `::ng-deep` is deprecated precisely because it pierces
- * encapsulation that way; inheritance is the supported mechanism, and it is also the simpler one.
- * ----------------------------------------------------------------------------------------------- */
+/* Fill the gridster panel and scroll the content. `ui-card`'s boxes are custom properties, which
+   inherit through component boundaries - so these reach the `<ui-card>` nested inside
+   `<app-stat-card>` without `::ng-deep` and without the children opting in. */
 .dashboard-panel {
   border-radius: var(--radius-sm);
   overflow: hidden;
 
-  /* ui-card is already a flex column, so only the height needs saying here. */
   --ui-card-h: 100%;
 
   --ui-card-body-flex: 1 1 auto;
   --ui-card-body-min-h: 0;
 
-  /* Content scrolls inside the card body, and scroll chaining to the page is contained. */
   --ui-card-content-flex: 1 1 auto;
   --ui-card-content-min-h: 0;
-  --ui-card-content-overflow: auto;
   --ui-card-content-overscroll: contain;
+
+  /* `x y` - a lone `visible` axis gets coerced to `auto`, double-scrolling ui-data-table. */
+  --ui-card-content-overflow: hidden auto;
 }
 
-/* A tighter box to fit the shorter stat row. Overrides the 1.25rem default that shared/theme.css
-   sets on :root. */
 .dashboard-panel app-stat-card {
   --ui-card-body-padding: 0.625rem 1rem;
 }
 
+/* Stacked: panels size to their content instead of to a grid cell. Tall panels keep the values
+   above, so they are excluded rather than overridden back. */
+.dashboard-stack .dashboard-panel:not(.is-tall) {
+  --ui-card-h: auto;
+  --ui-card-body-flex: 0 1 auto;
+  --ui-card-content-flex: 0 1 auto;
+  --ui-card-content-overflow: visible;
+}
+
+/* Maps, charts and tables size themselves to their parent and would collapse against an auto
+   height, so they keep a definite box and scroll inside it. */
+.dashboard-stack .dashboard-panel.is-tall {
+  height: 20rem;
+}
+
 :host {
-  /* Override gridster default styles for better theme integration */
   ::ng-deep gridster {
     background: transparent !important;
   }
 
   ::ng-deep gridster-item {
     background: transparent !important;
-  }
-
-  /* These two DO still need `::ng-deep`: unlike the card rules above, they reach into
-     `<app-stat-card>`'s own template to shrink the value text and close the label/value gap, and
-     there is no custom property to inherit. They are stat-card internals. */
-  ::ng-deep .dashboard-panel app-stat-card .stat-icon-ring + div > :first-child {
-    margin-bottom: 0;
-  }
-
-  ::ng-deep .dashboard-panel app-stat-card .stat-icon-ring + div > :first-child ui-typography {
-    font-size: 0.75rem;
-    line-height: 1rem;
   }
 }

@@ -1,35 +1,43 @@
 <div class="mb-3" [class.text-center]="centered()">
-  <div class="flex items-center" [class.justify-center]="centered()">
-    @if (backLink()) {
-      <ui-button
-        appearance="text"
-        buttonClass="mr-2"
-        ariaLabel="Go back"
-        icon="arrow-left"
-        [rounded]="true"
-        [routerLink]="[backLink()]"
-        uiTooltip="Go back"
-      />
-    }
-    <h1 class="mb-0 min-w-0 flex-1">{{ title() }}</h1>
+  <div
+    class="flex flex-wrap items-center gap-x-2 max-md:flex-col max-md:items-start max-md:gap-y-3"
+    [class.justify-center]="centered()"
+  >
+    <div class="flex min-w-0 flex-1 flex-col max-md:w-full">
+      <div class="flex items-center" [class.justify-center]="centered()">
+        @if (backLink()) {
+          <ui-button
+            appearance="text"
+            buttonClass="mr-2"
+            ariaLabel="Go back"
+            icon="arrow-left"
+            [rounded]="true"
+            [routerLink]="[backLink()]"
+            uiTooltip="Go back"
+          />
+        }
+        <h1 class="mb-0 min-w-0 flex-1">{{ title() }}</h1>
 
-    @if (addRoute()) {
-      <ui-button
-        appearance="text"
-        size="lg"
-        buttonClass="ml-2"
-        [ariaLabel]="addTooltip()"
-        icon="circle-plus"
-        [rounded]="true"
-        [uiTooltip]="addTooltip()"
-        [routerLink]="[addRoute()]"
-      />
-    }
-    <div class="ml-auto flex flex-wrap items-center gap-2">
+        @if (addRoute()) {
+          <ui-button
+            appearance="text"
+            size="lg"
+            buttonClass="ml-2"
+            [ariaLabel]="addTooltip()"
+            icon="circle-plus"
+            [rounded]="true"
+            [uiTooltip]="addTooltip()"
+            [routerLink]="[addRoute()]"
+          />
+        }
+      </div>
+      @if (subtitle()) {
+        <p class="text-muted-foreground mb-0">{{ subtitle() }}</p>
+      }
+    </div>
+
+    <div class="ml-auto flex flex-wrap items-center gap-2 max-md:ml-0 max-md:w-full">
       <ng-content />
     </div>
   </div>
-  @if (subtitle()) {
-    <p class="mb-0 text-gray-500">{{ subtitle() }}</p>
-  }
 </div>

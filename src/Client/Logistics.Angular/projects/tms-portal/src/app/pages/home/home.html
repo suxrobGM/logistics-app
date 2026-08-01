@@ -41,126 +41,135 @@
     <ui-menu #menu [items]="quickActions" />
   </ui-page-header>
 
-  <!-- Skeleton during initial load (mirrors panel grid coordinates) -->
+  <!-- Narrow, gridster sizes items by aspect ratio - ~180px of panel for ~70px of KPI - and drag
+       is disabled anyway, so the panels stack instead. -->
   @if (!initialLoadComplete()) {
     <app-home-skeleton />
-  }
-
-  <!-- Gridster Dashboard -->
-  @if (gridsterOptions && initialLoadComplete()) {
+  } @else if (stackPanels()) {
+    <div class="dashboard-stack flex flex-col gap-3">
+      @for (panel of dashboardPanels(); track panel.id) {
+        <div class="dashboard-panel" [class.is-tall]="panel.fillsParent">
+          <ng-container *ngTemplateOutlet="panelBody; context: { $implicit: panel }" />
+        </div>
+      }
+    </div>
+  } @else {
     <gridster [options]="gridsterOptions" class="dashboard-grid">
       @for (panel of dashboardPanels(); track panel.id) {
         <gridster-item [item]="panel" class="dashboard-panel">
-          @switch (panel.id) {
-            @case ("kpi-weekly-gross") {
-              <app-stat-card
-                class="h-full"
-                icon="dollar-sign"
-                label="Weekly Gross"
-                [value]="(weeklyKpis().totalGross | currencyFormat) ?? '$0'"
-                color="green"
-                tooltip="Total gross for the past 7 days"
-              />
-            }
-            @case ("kpi-billed-miles") {
-              <app-stat-card
-                class="h-full"
-                icon="map"
-                label="Billed Miles"
-                [value]="(weeklyKpis().totalDistance | distanceUnit) ?? '0 mi'"
-                color="blue"
-                tooltip="Billable miles driven in the past 7 days"
-              />
-            }
-            @case ("kpi-rate-per-mile") {
-              <app-stat-card
-                class="h-full"
-                icon="chart-line"
-                label="Rate Per Mile"
-                [value]="(weeklyKpis().ratePerMile | currencyFormat) ?? '$0'"
-                color="purple"
-                tooltip="Weekly gross divided by billed miles"
-              />
-            }
-            @case ("kpi-today-gross") {
-              <app-stat-card
-                class="h-full"
-                icon="calendar"
-                label="Today's Gross"
-                [value]="(weeklyKpis().todayGross | currencyFormat) ?? '$0'"
-                color="orange"
-                tooltip="Gross earned today"
-              />
-            }
-            @case ("active-loads") {
-              <app-active-loads-panel
-                class="h-full"
-                [title]="activeLoadsTitle()"
-                [loads]="loads()"
-                [isLoading]="isLoadingLoadsData()"
-              />
-            }
-            @case ("attention-panel") {
-              <app-attention-panel
-                class="h-full"
-                [unassignedLoadsCount]="companyStats()?.unassignedLoadsCount ?? 0"
-                [idleTrucksCount]="companyStats()?.idleTrucksCount ?? 0"
-                [isLoading]="isLoadingCompanyStats()"
-              />
-            }
-            @case ("hos-remaining") {
-              <app-hos-remaining class="h-full" />
-            }
-            @case ("onboarding-checklist") {
-              <app-onboarding-checklist class="h-full" />
-            }
-            @case ("financial-health") {
-              <app-financial-health-widget
-                class="h-full"
-                [outstandingInvoiceTotal]="companyStats()?.outstandingInvoiceTotal ?? 0"
-                [paymentsReceivedThisWeek]="companyStats()?.paymentsReceivedThisWeek ?? 0"
-                [overdueInvoiceCount]="companyStats()?.overdueInvoiceCount ?? 0"
-                [isLoading]="isLoadingCompanyStats()"
-              />
-            }
-            @case ("top-performers") {
-              <app-top-performers-widget
-                class="h-full"
-                [topTrucks]="companyStats()?.topTrucks ?? []"
-                [isLoading]="isLoadingCompanyStats()"
-              />
-            }
-            @case ("recent-activity") {
-              <app-recent-activity
-                class="h-full"
-                [loads]="recentLoads()"
-                [isLoading]="isLoadingLoadsData()"
-              />
-            }
-            @case ("fleet-map") {
-              <ui-card class="h-full">
-                <ng-template #header>
-                  <ui-stack direction="row" align="center" gap="2" class="py-3 pr-2 pl-4">
-                    <span class="text-primary">
-                      <ui-icon name="map-pin" color="inherit" />
-                    </span>
-                    <ui-typography variant="h4" tag="h4" color="primary">
-                      Fleet Overview
-                    </ui-typography>
-                  </ui-stack>
-                  <ui-divider class="m-0" />
-                </ng-template>
-                <div class="no-drag h-full">
-                  <app-trucks-map height="100%" />
-                </div>
-              </ui-card>
-            }
-            @case ("daily-gross-chart") {
-              <app-daily-gross-chart chartClass="no-drag" />
-            }
-          }
+          <ng-container *ngTemplateOutlet="panelBody; context: { $implicit: panel }" />
         </gridster-item>
       }
     </gridster>
   }
+
+  <!-- One switch, both branches - duplicating it is how the two layouts drift apart. -->
+  <ng-template #panelBody let-panel>
+    @switch (panel.id) {
+      @case ("kpi-weekly-gross") {
+        <app-stat-card
+          class="h-full"
+          icon="dollar-sign"
+          label="Weekly Gross"
+          [value]="(weeklyKpis().totalGross | currencyFormat) ?? '$0'"
+          color="green"
+          tooltip="Total gross for the past 7 days"
+        />
+      }
+      @case ("kpi-billed-miles") {
+        <app-stat-card
+          class="h-full"
+          icon="map"
+          label="Billed Miles"
+          [value]="(weeklyKpis().totalDistance | distanceUnit) ?? '0 mi'"
+          color="blue"
+          tooltip="Billable miles driven in the past 7 days"
+        />
+      }
+      @case ("kpi-rate-per-mile") {
+        <app-stat-card
+          class="h-full"
+          icon="chart-line"
+          label="Rate Per Mile"
+          [value]="(weeklyKpis().ratePerMile | currencyFormat) ?? '$0'"
+          color="purple"
+          tooltip="Weekly gross divided by billed miles"
+        />
+      }
+      @case ("kpi-today-gross") {
+        <app-stat-card
+          class="h-full"
+          icon="calendar"
+          label="Today's Gross"
+          [value]="(weeklyKpis().todayGross | currencyFormat) ?? '$0'"
+          color="orange"
+          tooltip="Gross earned today"
+        />
+      }
+      @case ("active-loads") {
+        <app-active-loads-panel
+          class="h-full"
+          [title]="activeLoadsTitle()"
+          [loads]="loads()"
+          [isLoading]="isLoadingLoadsData()"
+        />
+      }
+      @case ("attention-panel") {
+        <app-attention-panel
+          class="h-full"
+          [unassignedLoadsCount]="companyStats()?.unassignedLoadsCount ?? 0"
+          [idleTrucksCount]="companyStats()?.idleTrucksCount ?? 0"
+          [isLoading]="isLoadingCompanyStats()"
+        />
+      }
+      @case ("hos-remaining") {
+        <app-hos-remaining class="h-full" />
+      }
+      @case ("onboarding-checklist") {
+        <app-onboarding-checklist class="h-full" />
+      }
+      @case ("financial-health") {
+        <app-financial-health-widget
+          class="h-full"
+          [outstandingInvoiceTotal]="companyStats()?.outstandingInvoiceTotal ?? 0"
+          [paymentsReceivedThisWeek]="companyStats()?.paymentsReceivedThisWeek ?? 0"
+          [overdueInvoiceCount]="companyStats()?.overdueInvoiceCount ?? 0"
+          [isLoading]="isLoadingCompanyStats()"
+        />
+      }
+      @case ("top-performers") {
+        <app-top-performers-widget
+          class="h-full"
+          [topTrucks]="companyStats()?.topTrucks ?? []"
+          [isLoading]="isLoadingCompanyStats()"
+        />
+      }
+      @case ("recent-activity") {
+        <app-recent-activity
+          class="h-full"
+          [loads]="recentLoads()"
+          [isLoading]="isLoadingLoadsData()"
+        />
+      }
+      @case ("fleet-map") {
+        <ui-card class="h-full">
+          <ng-template #header>
+            <ui-stack direction="row" align="center" gap="2" class="py-3 pr-2 pl-4">
+              <span class="text-primary">
+                <ui-icon name="map-pin" color="inherit" />
+              </span>
+              <ui-typography variant="h4" tag="h4" color="primary">Fleet Overview</ui-typography>
+            </ui-stack>
+            <ui-divider class="m-0" />
+          </ng-template>
+          <div class="no-drag h-full">
+            <app-trucks-map height="100%" />
+          </div>
+        </ui-card>
+      }
+      @case ("daily-gross-chart") {
+        <app-daily-gross-chart chartClass="no-drag" />
+      }
+    }
+  </ng-template>
 </div>

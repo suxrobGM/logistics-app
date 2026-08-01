@@ -174,7 +174,7 @@ const justifyClasses: ResponsiveClassTable<StackJustify> = {
   selector: "ui-stack",
   templateUrl: "./stack.html",
   imports: [NgTemplateOutlet],
-  host: { class: "block" },
+  host: { class: "block", "[class.h-full]": "fill()" },
 })
 export class Stack {
   public readonly direction = input<Responsive<StackDirection>>("col");
@@ -184,8 +184,12 @@ export class Stack {
   public readonly wrap = input<boolean, unknown>(false, { transform: booleanAttribute });
   public readonly tag = input<StackTag>("div");
 
+  /** Stretch to the parent's height. The flex box is an inner element, so `h-full` alone can't. */
+  public readonly fill = input<boolean, unknown>(false, { transform: booleanAttribute });
+
   protected readonly classes = computed(() => {
     const parts: string[] = ["flex"];
+    if (this.fill()) parts.push("h-full");
     parts.push(...resolveResponsive(this.direction(), directionClasses));
     parts.push(...resolveResponsive(this.gap(), gapClasses));
     parts.push(...resolveResponsive(this.align(), alignClasses));

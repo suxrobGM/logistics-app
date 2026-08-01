@@ -1,10 +1,12 @@
 <ui-card class="h-full border-0 shadow-sm">
-  <ui-stack direction="row" align="center" gap="4">
+  <!-- `fill`: on the dashboard the card body stretches to the panel, and an unfilled row would
+       keep its natural height and pin to the top of it. -->
+  <ui-stack direction="row" align="center" gap="4" fill>
     <div class="stat-icon-ring flex h-14 w-14 shrink-0 items-center justify-center rounded-full">
       <ui-icon [name]="icon()" size="xl" color="inherit" />
     </div>
-    <div class="min-w-0 grow">
-      <ui-stack direction="row" align="center" gap="1" class="mb-1">
+    <div class="flex min-w-0 grow flex-col items-start gap-0.5">
+      <ui-stack direction="row" align="center" gap="1" class="max-w-full">
         <ui-typography variant="h6" color="muted" tag="div" class="m-0 truncate">
           {{ label() }}
         </ui-typography>
@@ -18,7 +20,12 @@
           />
         }
       </ui-stack>
-      <ui-typography variant="h3" color="primary" tag="div" class="m-0 truncate font-mono">
+      <ui-typography
+        variant="h3"
+        color="primary"
+        tag="div"
+        class="m-0 max-w-full truncate font-mono"
+      >
         {{ value() }}
       </ui-typography>
       @if (trend()) {
