@@ -217,7 +217,10 @@
                 />
               </ui-grid>
               <ui-grid [size]="{ xs: 6, md: 3 }">
-                <ui-stat-item label="RPM (30 days)" [value]="(rpmCurrent() | currencyFormat) ?? ''" />
+                <ui-stat-item
+                  label="RPM (30 days)"
+                  [value]="(rpmCurrent() | currencyFormat) ?? ''"
+                />
               </ui-grid>
             </ui-grid>
           </ui-detail-section>

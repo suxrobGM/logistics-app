@@ -181,9 +181,7 @@
       }
 
       @if (selectedEvent()!.durationSeconds) {
-        <ui-info-item label="Duration">
-          {{ selectedEvent()!.durationSeconds }} seconds
-        </ui-info-item>
+        <ui-info-item label="Duration">{{ selectedEvent()!.durationSeconds }} seconds</ui-info-item>
       }
 
       <ui-info-item label="Source">{{ selectedEvent()!.providerTypeDisplay }}</ui-info-item>

@@ -53,7 +53,9 @@
                 uiTooltip="Broker credit score (0-100)"
               />
               @if (listing.brokerDaysToPay !== null && listing.brokerDaysToPay !== undefined) {
-                <span class="text-muted-foreground text-xs">{{ listing.brokerDaysToPay }}d to pay</span>
+                <span class="text-muted-foreground text-xs">
+                  {{ listing.brokerDaysToPay }}d to pay
+                </span>
               }
             </div>
           } @else if (listing.brokerMcNumber) {

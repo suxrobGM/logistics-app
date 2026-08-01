@@ -156,7 +156,10 @@
                   </ui-info-item>
                   @if (report()!.tripId) {
                     <ui-info-item label="Associated Trip">
-                      <a [routerLink]="['/trips', report()!.tripId]" class="text-foreground text-sm">
+                      <a
+                        [routerLink]="['/trips', report()!.tripId]"
+                        class="text-foreground text-sm"
+                      >
                         View Trip
                       </a>
                     </ui-info-item>

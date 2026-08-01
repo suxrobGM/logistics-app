@@ -82,8 +82,8 @@
             The agent hasn't learned anything yet.
           </ui-typography>
           <ui-typography variant="caption" color="secondary">
-            It needs at least 15 reviewed decisions, including 3 rejections. Reject a suggestion with
-            a reason to teach it something.
+            It needs at least 15 reviewed decisions, including 3 rejections. Reject a suggestion
+            with a reason to teach it something.
           </ui-typography>
           <ui-button
             size="sm"
@@ -98,7 +98,10 @@
     </ui-card>
 
     <!-- Dispatcher directives (editable) -->
-    <ui-card header="Your directives" subheader="Rules you write yourself. Never overwritten by nightly learning, and they outrank the learned preferences above.">
+    <ui-card
+      header="Your directives"
+      subheader="Rules you write yourself. Never overwritten by nightly learning, and they outrank the learned preferences above."
+    >
       <form [formRoot]="directivesForm" (ngSubmit)="submitDirectives()">
         <ui-stack direction="row" align="center" justify="between" gap="2" class="mb-2">
           <ui-typography variant="caption" color="secondary">Markdown supported</ui-typography>
@@ -119,7 +122,10 @@
             [innerHTML]="model().manualContent | markdown"
           ></div>
         } @else {
-          <ui-form-field for="manualContent" hint="e.g. - Never assign hazmat loads to team drivers">
+          <ui-form-field
+            for="manualContent"
+            hint="e.g. - Never assign hazmat loads to team drivers"
+          >
             <ui-textarea-field
               id="manualContent"
               [formField]="directivesForm.manualContent"

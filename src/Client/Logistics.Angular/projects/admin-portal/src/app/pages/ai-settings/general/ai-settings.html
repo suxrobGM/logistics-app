@@ -12,8 +12,8 @@
         <ui-card header="AI Model">
           <ui-stack gap="4">
             <ui-typography variant="body-sm" color="muted">
-              Used by the dispatch agent and copilot for every tenant; tenants never see it.
-              Usage counts against each plan's weekly budget at the model's actual cost.
+              Used by the dispatch agent and copilot for every tenant; tenants never see it. Usage
+              counts against each plan's weekly budget at the model's actual cost.
             </ui-typography>
             <ui-select-field
               [value]="selectedModel()"
@@ -33,8 +33,8 @@
               placeholder="Reasoning effort"
             />
             <ui-alert intent="neutral">
-              Higher reasoning effort is smarter but slower and costs more budget. Ignored by
-              models without a reasoning control.
+              Higher reasoning effort is smarter but slower and costs more budget. Ignored by models
+              without a reasoning control.
             </ui-alert>
           </ui-stack>
         </ui-card>
@@ -46,8 +46,8 @@
           <ui-stack gap="4">
             <ui-typography variant="body-sm" color="muted">
               One weekly budget per plan (USD of model cost), shared by dispatch and copilot. Past
-              it, both keep working and bill as overage - unless the tenant switched on "pause AI
-              at budget" in its company settings, in which case both pause until the week resets.
+              it, both keep working and bill as overage - unless the tenant switched on "pause AI at
+              budget" in its company settings, in which case both pause until the week resets.
             </ui-typography>
             <ui-alert intent="warning">
               Every plan needs a budget greater than zero. A tenant with no subscription is metered

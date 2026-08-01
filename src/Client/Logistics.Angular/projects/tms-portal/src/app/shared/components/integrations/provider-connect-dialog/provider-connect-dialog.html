@@ -12,6 +12,11 @@
 
   <ng-template #footer>
     <ui-button appearance="text" label="Cancel" (click)="close()" />
-    <ui-button [label]="submitLabel()" icon="check" (click)="requestSubmit()" [loading]="saving()" />
+    <ui-button
+      [label]="submitLabel()"
+      icon="check"
+      (click)="requestSubmit()"
+      [loading]="saving()"
+    />
   </ng-template>
 </ui-dialog>

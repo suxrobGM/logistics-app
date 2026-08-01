@@ -148,7 +148,10 @@
                   }
 
                   @if (load()!.assignedDispatcherName) {
-                    <ui-info-row label="Dispatcher" [value]="load()!.assignedDispatcherName ?? null" />
+                    <ui-info-row
+                      label="Dispatcher"
+                      [value]="load()!.assignedDispatcherName ?? null"
+                    />
                   }
 
                   @if (load()!.tripId) {
@@ -228,14 +231,18 @@
               @if (load()!.deliveredAt) {
                 <ui-grid [size]="{ xs: 6, md: 3 }">
                   <ui-info-item label="Delivered">
-                    <span class="text-success">{{ load()!.deliveredAt | dateFormat: "medium" }}</span>
+                    <span class="text-success">
+                      {{ load()!.deliveredAt | dateFormat: "medium" }}
+                    </span>
                   </ui-info-item>
                 </ui-grid>
               }
               @if (load()!.cancelledAt) {
                 <ui-grid [size]="{ xs: 6, md: 3 }">
                   <ui-info-item label="Cancelled">
-                    <span class="text-danger">{{ load()!.cancelledAt | dateFormat: "medium" }}</span>
+                    <span class="text-danger">
+                      {{ load()!.cancelledAt | dateFormat: "medium" }}
+                    </span>
                   </ui-info-item>
                 </ui-grid>
               }
