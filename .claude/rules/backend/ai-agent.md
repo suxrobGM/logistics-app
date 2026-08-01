@@ -43,9 +43,25 @@ Mode` - `AgentAutonomyMode` owns that one, and reusing it makes the model confla
 
 ## Providers
 
-`AnthropicLlmProvider` (prompt caching, adaptive thinking) and `OpenAILlmProvider` (any
-OpenAI-compatible endpoint via `BaseUrl`) sit behind `ILlmProvider`, resolved by `LlmProviderFactory`.
-**Provider SDK types must not leak past the provider class** - everything else sees `Llm/Contracts/`.
+Three sit behind `ILlmProvider`, picked by `LlmProviderFactory` **on the `LlmProvider` enum, never
+on the model** - the wire protocol belongs to the endpoint, not the model's reasoning style.
+**SDK types must not leak past the provider class**; everything else sees `Llm/Contracts/`.
+
+| Provider                      | Surface                                 | Serves                        |
+| ----------------------------- | --------------------------------------- | ----------------------------- |
+| `AnthropicLlmProvider`        | Anthropic SDK (caching, adaptive think) | `Anthropic`                   |
+| `OpenAIResponsesLlmProvider`  | `/v1/responses`                         | `OpenAI`                      |
+| `OpenAICompatibleLlmProvider` | `/v1/chat/completions` via `BaseUrl`    | the rest (DeepSeek, GLM, ...) |
+
+- **Don't move OpenAI back onto chat completions.** Function tools plus any non-`none`
+  `reasoning_effort` is a hard 400 there; that was the outage this split fixed.
+- **Don't collapse the two OpenAI classes** without re-checking DeepSeek: as of Aug 2026 it serves
+  Responses for `deepseek-v4-flash` but not `deepseek-v4-pro`, and its Responses base URL drops the
+  `/v1` the chat one carries.
+- Responses defaults to `store: true`, so `StoredOutputEnabled = false` is load-bearing - tool
+  outputs carry driver names, loads and HOS data.
+- Reasoning items are **not** replayed across tool turns. Responses tolerates their absence but
+  rejects one not immediately followed by its `function_call`. `LlmThinkingBlock` is Anthropic-only.
 
 **Anthropic caching.** `BuildMessages` breakpoints the newest message's last block, plus the system
 prompt. Both details are load-bearing: **newest** (a breakpoint searches back only 20 blocks, and one
@@ -54,6 +70,11 @@ tenth of input, so hits lower `EstimatedCostUsd` and the budget with it. `CacheR
 zero means an invalidated prefix (tools or model changed) or a prompt under the per-model minimum -
 1024 tokens on Sonnet 5, 4096 on Haiku 4.5, silently skipped. OpenAI and DeepSeek cache server-side,
 hence provider-level and not in the loop.
+
+**The two vendors report cached tokens differently.** OpenAI's `input_tokens` **includes**
+`cached_tokens`; Anthropic's **excludes** cache reads. `LlmPricing.Calculate` adds the input and
+cache-read buckets, so both OpenAI-shaped providers must subtract before filling `LlmTokenUsage` -
+that is what `OpenAIUsage.From` is for. Forward the raw counts and every cached token bills twice.
 
 ## Tools
 
@@ -88,9 +109,11 @@ model names; plans differ by **weekly budget only** - there is no tier or multip
 reintroduce one.
 
 - `LlmModelCatalog` owns the selectable models and each `ReasoningStyle`: `OpenAIEffort` models
-  **always get an explicit `reasoning_effort`** (`None` → `"none"`; the server default 400s with
-  function tools); `AnthropicAdaptive` models never get a temperature and replay thinking blocks
-  via `LlmThinkingBlock`; `None` models get no reasoning parameter.
+  **always get an explicit reasoning effort** (`None` → `"none"`) and are the reason OpenAI routes
+  to `/v1/responses` - the same combination on chat completions is a 400 once function tools are
+  present; `AnthropicAdaptive` models never get a temperature and replay thinking blocks via
+  `LlmThinkingBlock` (**including redacted ones** - drop one and the next turn is rejected);
+  `None` models get no reasoning parameter.
 - `LlmPricing` owns per-token prices - **read the numbers there**, never copy them into docs.
   Unknown models charge at Sonnet 5 rates.
 - Quota is **cost-based**: `AgentSession.EstimatedCostUsd` (written in `AgentLoopRunner`'s finally,

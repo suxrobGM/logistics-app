@@ -7,7 +7,7 @@ namespace Logistics.Infrastructure.AI.Llm;
 
 /// <summary>
 /// Creates <see cref="ILlmProvider"/> instances based on the configured or requested provider type.
-/// Anthropic uses its native SDK; all other providers use the OpenAI-compatible SDK.
+/// Routing is on the enum, never the model - the wire protocol belongs to the endpoint.
 /// </summary>
 internal sealed class LlmProviderFactory(IOptions<LlmOptions> options, IHttpClientFactory httpClientFactory)
 {
@@ -26,7 +26,8 @@ internal sealed class LlmProviderFactory(IOptions<LlmOptions> options, IHttpClie
         return type switch
         {
             LlmProvider.Anthropic => new AnthropicLlmProvider(config, httpClient),
-            _ => new OpenAILlmProvider(config, httpClient)
+            LlmProvider.OpenAI => new OpenAIResponsesLlmProvider(config, httpClient),
+            _ => new OpenAICompatibleLlmProvider(config, httpClient)
         };
     }
 }

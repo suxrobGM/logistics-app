@@ -35,6 +35,17 @@ public class LlmPricingTests
     }
 
     [Fact]
+    public void Calculate_CachedInput_CostsLessThanUncached()
+    {
+        // Catches the OpenAI cache overcharge: cached tokens sit inside input_tokens, so a
+        // provider that forwards both raw prices a cache hit at full rate or higher.
+        var cached = LlmPricing.Calculate("gpt-5.6-luna", 200, 0, cacheReadTokens: 800);
+        var uncached = LlmPricing.Calculate("gpt-5.6-luna", 1000, 0);
+
+        Assert.True(cached < uncached, $"cached {cached} should undercut uncached {uncached}");
+    }
+
+    [Fact]
     public void Calculate_UnknownModel_UsesSonnetDefaults()
     {
         var unknown = LlmPricing.Calculate("unknown-model", 1_000_000, 0);

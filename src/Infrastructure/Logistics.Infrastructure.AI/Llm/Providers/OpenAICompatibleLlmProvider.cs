@@ -1,20 +1,21 @@
 using System.ClientModel;
 using System.ClientModel.Primitives;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using OpenAI;
 using OpenAI.Chat;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 
 namespace Logistics.Infrastructure.AI.Llm.Providers;
 
 /// <summary>
-/// LLM provider for OpenAI-compatible APIs (OpenAI, DeepSeek, GLM, Groq, Mistral, etc.).
-/// Uses the official OpenAI .NET SDK with configurable base URL for alternative providers.
+/// LLM provider for OpenAI-compatible chat-completions APIs (DeepSeek, GLM, Groq, Mistral, etc.),
+/// via the official OpenAI .NET SDK with a configurable base URL.
 /// </summary>
-internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient httpClient) : ILlmProvider
+/// <remarks>
+/// Deliberately not OpenAI itself - those go through <see cref="OpenAIResponsesLlmProvider"/>,
+/// because function tools plus a non-<c>none</c> reasoning effort is a hard 400 here.
+/// </remarks>
+internal sealed class OpenAICompatibleLlmProvider(LlmProviderOptions config, HttpClient httpClient) : ILlmProvider
 {
     public async Task<LlmResponse> SendAsync(LlmRequest request, CancellationToken ct)
     {
@@ -41,54 +42,22 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient ht
             messages.AddRange(ToOpenAIMessages(message));
         }
 
-        var tools = new List<ChatTool>();
-        foreach (var tool in request.Tools)
-        {
-            var schema = BinaryData.FromString(tool.InputSchema.ToJsonString());
-
-            tools.Add(ChatTool.CreateFunctionTool(tool.Name, tool.Description, schema));
-        }
-
-        var options = BuildOptions(request);
-
-        foreach (var tool in tools)
-        {
-            options.Tools.Add(tool);
-        }
-
-        var completion = await chatClient.CompleteChatAsync(messages, options, ct);
-        return MapResponse(completion.Value);
-    }
-
-    /// <summary>
-    /// Reasoning models always get an explicit <c>reasoning_effort</c> - their server default is
-    /// rejected once function tools are present. Other models never get the parameter, since some
-    /// OpenAI-compatible endpoints reject it outright.
-    /// </summary>
-    internal static ChatCompletionOptions BuildOptions(LlmRequest request)
-    {
+        // No reasoning_effort: compatible endpoints reject it, and the models that take one route
+        // to OpenAIResponsesLlmProvider instead.
         var options = new ChatCompletionOptions
         {
             MaxOutputTokenCount = request.MaxTokens,
             Temperature = request.Temperature.HasValue ? (float)request.Temperature.Value : null
         };
 
-        if (LlmModelCatalog.ReasoningStyleOf(request.Model) == ReasoningStyle.OpenAIEffort)
+        foreach (var tool in request.Tools)
         {
-            // OPENAI001: the SDK still marks reasoning_effort [Experimental]; the wire field is stable.
-#pragma warning disable OPENAI001
-            options.ReasoningEffortLevel = request.Effort switch
-            {
-                ReasoningEffort.None => new ChatReasoningEffortLevel("none"),
-                ReasoningEffort.Low => ChatReasoningEffortLevel.Low,
-                ReasoningEffort.Medium => ChatReasoningEffortLevel.Medium,
-                // The SDK's effort scale tops out at High - XHigh and Max both clamp to it.
-                _ => ChatReasoningEffortLevel.High
-            };
-#pragma warning restore OPENAI001
+            options.Tools.Add(ChatTool.CreateFunctionTool(
+                tool.Name, tool.Description, BinaryData.FromString(tool.InputSchema.ToJsonString())));
         }
 
-        return options;
+        var completion = await chatClient.CompleteChatAsync(messages, options, ct);
+        return MapResponse(completion.Value);
     }
 
     /// <summary>
@@ -176,11 +145,10 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient ht
 
         foreach (var toolCall in completion.ToolCalls)
         {
-            var input = string.IsNullOrEmpty(toolCall.FunctionArguments?.ToString())
-                ? null
-                : JsonNode.Parse(toolCall.FunctionArguments.ToString());
-
-            var block = new LlmToolUseBlock(toolCall.Id, toolCall.FunctionName, input);
+            var block = new LlmToolUseBlock(
+                toolCall.Id,
+                toolCall.FunctionName,
+                OpenAIToolArguments.Parse(toolCall.FunctionArguments));
             content.Add(block);
             toolCalls.Add(block);
         }
@@ -197,8 +165,9 @@ internal sealed class OpenAILlmProvider(LlmProviderOptions config, HttpClient ht
             TextContent = textContent,
             StopReason = stopReason,
             ToolCalls = toolCalls,
-            Usage = new LlmTokenUsage(
+            Usage = OpenAIUsage.From(
                 completion.Usage?.InputTokenCount ?? 0,
+                completion.Usage?.InputTokenDetails?.CachedTokenCount ?? 0,
                 completion.Usage?.OutputTokenCount ?? 0)
         };
     }

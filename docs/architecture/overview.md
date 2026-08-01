@@ -283,7 +283,7 @@ Real-time and outbound messaging.
 
 LLM dispatch agent and tool registry.
 
-- `ILlmProvider` adapter pattern with `AnthropicLlmProvider` (Claude SDK) and `OpenAILlmProvider` (OpenAI-compatible: OpenAI, DeepSeek, GLM)
+- `ILlmProvider` adapter pattern with `AnthropicLlmProvider` (Claude SDK), `OpenAIResponsesLlmProvider` (OpenAI, `/v1/responses`) and `OpenAICompatibleLlmProvider` (chat completions: DeepSeek, GLM)
 - `AIDispatchService` agent loop (max 25 iterations, prompt caching, adaptive reasoning effort)
 - `AgentToolRegistry` - one catalogue behind three surfaces: `GetDispatchAgentTools`, `GetCopilotTools` (permission-scoped), `GetAllTools` (MCP, gates per call)
 - Quota tracking against weekly USD budgets, metered on each session's estimated model cost

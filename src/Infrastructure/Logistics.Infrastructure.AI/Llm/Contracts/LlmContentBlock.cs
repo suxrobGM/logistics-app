@@ -22,3 +22,6 @@ internal record LlmDocumentBlock(string MediaType, string Base64Data) : LlmConte
 /// assistant turn replayed without it is rejected. Only in-turn replay is required.
 /// </summary>
 internal record LlmThinkingBlock(string Thinking, string? Signature) : LlmContentBlock;
+
+/// <summary>Safety-redacted reasoning. Opaque, but still has to be echoed back.</summary>
+internal record LlmRedactedThinkingBlock(string Data) : LlmContentBlock;

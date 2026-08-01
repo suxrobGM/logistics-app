@@ -9,7 +9,7 @@ Providers sit behind the `ILlmProvider` adapter.
 
 ## Decide the path
 
-- **New OpenAI-compatible provider** (DeepSeek-style): no SDK code - `OpenAILlmProvider` handles it via `BaseUrl`. Skip step 3.
+- **New OpenAI-compatible provider** (DeepSeek-style): no SDK code - `OpenAICompatibleLlmProvider` handles it via `BaseUrl`. Skip step 3.
 - **New custom-SDK provider** (e.g. Gemini, Mistral): new `ILlmProvider` implementation in step 3.
 - **New model from an existing provider** (e.g. a new Claude version): steps 4–6 only.
 
@@ -57,7 +57,7 @@ Binds from `Llm:Providers:{Name}` in `appsettings.json`; the API key comes from 
 
 ### 3. (Custom SDK only) Create `ILlmProvider` implementation
 
-If the provider is OpenAI-compatible (most modern providers are), **skip this step** - `OpenAILlmProvider` handles it via `BaseUrl`.
+If the provider is OpenAI-compatible (most modern providers are), **skip this step** - `OpenAICompatibleLlmProvider` handles it via `BaseUrl`.
 
 If it requires a custom SDK, add `Llm/Providers/NewLlmProvider.cs`:
 
@@ -87,7 +87,7 @@ public ILlmProvider GetProvider(LlmProvider provider) => provider switch
 };
 ```
 
-For OpenAI-compatible providers, instantiate `OpenAILlmProvider` with the right `BaseUrl` from options.
+For OpenAI-compatible providers, instantiate `OpenAICompatibleLlmProvider` with the right `BaseUrl` from options.
 
 ### 5. Update `LlmPricing.cs`
 
@@ -117,13 +117,13 @@ public static readonly IReadOnlyList<LlmModelInfo> Models =
 **Pick the `ReasoningStyle` deliberately** - it decides whether providers send a reasoning
 parameter for the admin-set effort level:
 
-- `OpenAIEffort` - the model takes `reasoning_effort` on chat completions. Reasoning models
-  **must** be flagged: without an explicit value their server-side default is rejected once
-  function tools are present (the GPT-5.6 Luna 400).
+- `OpenAIEffort` - takes a reasoning effort, which OpenAI only accepts alongside function tools on
+  `/v1/responses` (the GPT-5.6 Luna 400). Put these under `LlmProvider.OpenAI` - that enum value is
+  what selects the Responses provider.
 - `AnthropicAdaptive` - Claude adaptive thinking + effort (Sonnet 5 class). Also suppresses
   temperature, which these models reject.
-- `None` (default) - no reasoning parameter is ever sent. Use for models without a reasoning
-  control **and** for OpenAI-compatible endpoints that reject the parameter (DeepSeek).
+- `None` (default) - no reasoning parameter is ever sent. For models without a reasoning control,
+  and for compatible endpoints that reject it (DeepSeek).
 
 This is the **single source** for the admin AI Settings dropdown (`GET /ai/settings`) and for validating the
 selected model in `UpdateAISettingsCommand`. The admin UI populates automatically - no frontend change.
@@ -141,9 +141,11 @@ selected model in `UpdateAISettingsCommand`. The admin UI populates automaticall
 
 ## Common mistakes
 
-- **Wrong `ReasoningStyle`**: an unflagged reasoning model 400s on every tool call (Luna); a flagged non-reasoning endpoint rejects the parameter outright. When unsure, start with `None` and test.
-- **`LlmModelCatalog` id ≠ `LlmPricing` key**: the catalog offers a model the pricing map doesn't know, so it silently falls back to Sonnet 5 cost rates.
-- **Forgetting `BaseUrl`** for OpenAI-compatible providers - `OpenAILlmProvider` defaults to OpenAI's endpoint and 401s.
+- **Wrong `ReasoningStyle`**: a flagged non-reasoning endpoint rejects the parameter. Unsure? Start with `None`.
+- **`LlmProvider.OpenAI` for a non-OpenAI endpoint**: that value selects the Responses provider, and only OpenAI/Azure serve `/v1/responses`. Everything else 404s.
+- **Catalog id ≠ `LlmPricing` key**: silently falls back to Sonnet 5 rates.
+- **No `BaseUrl`** on a compatible provider: defaults to OpenAI's endpoint and 401s.
+- **Raw token counts**: OpenAI folds cached tokens into `input_tokens`, so fill `LlmTokenUsage` via `OpenAIUsage.From` or every cache hit bills twice.
 - **SDK types leaking**: importing the provider SDK in any file other than `Llm/Providers/{X}LlmProvider.cs` breaks the abstraction.
 
 ## Related

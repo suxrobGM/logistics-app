@@ -121,6 +121,29 @@ public class AnthropicLlmProviderTests
         Assert.Equal("sig123", thinking.Signature);
     }
 
+    [Fact]
+    public void RedactedThinkingBlock_RoundTripsAsRedacted()
+    {
+        // A safety-redacted block still has to be echoed back. Dropping it leaves a hole in the
+        // replayed turn that the API rejects, and replaying it as a plain thinking block sends
+        // the opaque payload in the wrong field.
+        var response = new MessageResponse
+        {
+            Content =
+            [
+                new RedactedThinkingContent { Data = "encrypted-payload" },
+                new ToolUseContent { Id = "call_1", Name = "get_load", Input = JsonNode.Parse("{}") }
+            ],
+            StopReason = "tool_use"
+        };
+
+        var mapped = AnthropicLlmProvider.MapResponse(response);
+        var replayed = AnthropicLlmProvider.ToAnthropicMessage(mapped.AssistantMessage);
+
+        Assert.IsType<LlmRedactedThinkingBlock>(mapped.AssistantMessage.Content[0]);
+        Assert.Equal("encrypted-payload", Assert.IsType<RedactedThinkingContent>(replayed.Content[0]).Data);
+    }
+
     #endregion
 
     #region Prompt caching

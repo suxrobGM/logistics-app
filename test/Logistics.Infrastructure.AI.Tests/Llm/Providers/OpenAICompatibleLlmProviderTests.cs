@@ -1,7 +1,5 @@
 using System.Text.Json.Nodes;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
-using Logistics.Infrastructure.AI.Llm;
 using Logistics.Infrastructure.AI.Llm.Providers;
 using OpenAI.Chat;
 using Xunit;
@@ -9,10 +7,10 @@ using Xunit;
 namespace Logistics.Infrastructure.AI.Tests.Llm.Providers;
 
 /// <summary>
-/// Fails at the API boundary, not the build: OpenAI 400s unless every tool_call_id gets its own tool
-/// message. The agent loop hands over one message holding all results (Anthropic's shape).
+/// Fails at the API boundary, not the build: compatible endpoints 400 unless every tool_call_id
+/// gets its own tool message, while the agent loop hands over one message holding all results.
 /// </summary>
-public class OpenAILlmProviderTests
+public class OpenAICompatibleLlmProviderTests
 {
     private static LlmMessage AssistantWithToolCalls(params string[] ids) =>
         new(LlmRole.Assistant,
@@ -28,7 +26,7 @@ public class OpenAILlmProviderTests
             new LlmToolResultBlock("call_3", """{"violations":1}""")
         ]);
 
-        var result = OpenAILlmProvider.ToOpenAIMessages(message).ToList();
+        var result = OpenAICompatibleLlmProvider.ToOpenAIMessages(message).ToList();
 
         Assert.Equal(3, result.Count);
         Assert.All(result, m => Assert.IsType<ToolChatMessage>(m));
@@ -45,8 +43,8 @@ public class OpenAILlmProviderTests
         var results = LlmMessage.FromToolResults(
             [new LlmToolResultBlock("call_1", "{}"), new LlmToolResultBlock("call_2", "{}")]);
 
-        var assistantMessages = OpenAILlmProvider.ToOpenAIMessages(assistant).ToList();
-        var toolMessages = OpenAILlmProvider.ToOpenAIMessages(results).ToList();
+        var assistantMessages = OpenAICompatibleLlmProvider.ToOpenAIMessages(assistant).ToList();
+        var toolMessages = OpenAICompatibleLlmProvider.ToOpenAIMessages(results).ToList();
 
         var issued = Assert.IsType<AssistantChatMessage>(Assert.Single(assistantMessages)).ToolCalls;
         var answered = toolMessages.Cast<ToolChatMessage>().Select(m => m.ToolCallId).ToList();
@@ -59,7 +57,7 @@ public class OpenAILlmProviderTests
     {
         var message = LlmMessage.FromToolResults([new LlmToolResultBlock("call_1", "{}")]);
 
-        var result = Assert.Single(OpenAILlmProvider.ToOpenAIMessages(message));
+        var result = Assert.Single(OpenAICompatibleLlmProvider.ToOpenAIMessages(message));
 
         Assert.Equal("call_1", Assert.IsType<ToolChatMessage>(result).ToolCallId);
     }
@@ -69,7 +67,7 @@ public class OpenAILlmProviderTests
     {
         var message = LlmMessage.FromUser("Dispatch the unassigned loads.");
 
-        var result = Assert.Single(OpenAILlmProvider.ToOpenAIMessages(message));
+        var result = Assert.Single(OpenAICompatibleLlmProvider.ToOpenAIMessages(message));
 
         var user = Assert.IsType<UserChatMessage>(result);
         Assert.Equal("Dispatch the unassigned loads.", Assert.Single(user.Content).Text);
@@ -78,7 +76,8 @@ public class OpenAILlmProviderTests
     [Fact]
     public void ToOpenAIMessages_MapsAssistantToolCallsToOneMessageCarryingEveryCall()
     {
-        var result = Assert.Single(OpenAILlmProvider.ToOpenAIMessages(
+        // Contrast with the Responses provider, where each call is its own top-level item.
+        var result = Assert.Single(OpenAICompatibleLlmProvider.ToOpenAIMessages(
             AssistantWithToolCalls("call_1", "call_2")));
 
         var assistant = Assert.IsType<AssistantChatMessage>(result);
@@ -90,56 +89,42 @@ public class OpenAILlmProviderTests
     {
         var message = new LlmMessage(LlmRole.Assistant, [new LlmTextBlock("All loads are assigned.")]);
 
-        var result = Assert.Single(OpenAILlmProvider.ToOpenAIMessages(message));
+        var result = Assert.Single(OpenAICompatibleLlmProvider.ToOpenAIMessages(message));
 
         Assert.IsType<AssistantChatMessage>(result);
     }
 
-    #region Reasoning effort
-
-    private static LlmRequest Request(string model, ReasoningEffort effort) => new()
-    {
-        SystemPrompt = "system",
-        Messages = [LlmMessage.FromUser("go")],
-        Tools = [],
-        Model = model,
-        MaxTokens = 1000,
-        Effort = effort
-    };
+    #region Token usage
 
     [Fact]
-    public void BuildOptions_ReasoningModelWithEffortNone_SendsExplicitNone()
+    public void Usage_SubtractsCachedTokensFromInput()
     {
-        // Reasoning models must always get an explicit reasoning_effort: their server-side
-        // default is rejected on chat completions once function tools are present.
-        var options = OpenAILlmProvider.BuildOptions(Request("gpt-5.6-luna", ReasoningEffort.None));
+        // OpenAI's input_tokens INCLUDES cached_tokens and LlmPricing adds the two buckets, so
+        // passing both through raw bills the cache twice.
+        var usage = OpenAIUsage.From(inputTokens: 1000, cachedTokens: 800, outputTokens: 50);
 
-        Assert.Equal(new ChatReasoningEffortLevel("none"), options.ReasoningEffortLevel);
+        Assert.Equal(200, usage.InputTokens);
+        Assert.Equal(800, usage.CacheReadTokens);
+        Assert.Equal(50, usage.OutputTokens);
+        Assert.Equal(0, usage.CacheCreationTokens);
     }
 
-    [Theory]
-    [InlineData(ReasoningEffort.Low, "low")]
-    [InlineData(ReasoningEffort.Medium, "medium")]
-    [InlineData(ReasoningEffort.High, "high")]
-    [InlineData(ReasoningEffort.XHigh, "high")]
-    [InlineData(ReasoningEffort.Max, "high")]
-    public void BuildOptions_ReasoningModel_MapsAndClampsEffortLevels(ReasoningEffort effort, string expected)
+    [Fact]
+    public void Usage_NoCachedTokens_LeavesInputIntact()
     {
-        var options = OpenAILlmProvider.BuildOptions(Request("gpt-5.6-terra", effort));
+        var usage = OpenAIUsage.From(inputTokens: 1000, cachedTokens: 0, outputTokens: 50);
 
-        Assert.Equal(new ChatReasoningEffortLevel(expected), options.ReasoningEffortLevel);
+        Assert.Equal(1000, usage.InputTokens);
+        Assert.Equal(0, usage.CacheReadTokens);
     }
 
-    [Theory]
-    [InlineData("deepseek-v4-flash")]
-    [InlineData("deepseek-v4-pro")]
-    [InlineData("unknown-model")]
-    public void BuildOptions_NonReasoningModel_NeverSendsTheParameter(string model)
+    [Fact]
+    public void Usage_CachedExceedsInput_DoesNotGoNegative()
     {
-        // Some OpenAI-compatible endpoints reject reasoning_effort outright.
-        var options = OpenAILlmProvider.BuildOptions(Request(model, ReasoningEffort.High));
+        var usage = OpenAIUsage.From(inputTokens: 100, cachedTokens: 500, outputTokens: 10);
 
-        Assert.Null(options.ReasoningEffortLevel);
+        Assert.Equal(0, usage.InputTokens);
+        Assert.Equal(100, usage.CacheReadTokens);
     }
 
     #endregion

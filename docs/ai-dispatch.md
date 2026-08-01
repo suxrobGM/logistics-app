@@ -8,11 +8,11 @@ The dispatcher looks at fleet state - unassigned loads, available trucks, driver
 
 You can switch LLM providers without code changes:
 
-| Provider      | Models                                | Notes                                      |
-| ------------- | ------------------------------------- | ------------------------------------------ |
-| **OpenAI**    | GPT-5.6 Luna (default), GPT-5.6 Terra | Default provider. Via official OpenAI SDK  |
-| **Anthropic** | Claude Haiku 4.5, Claude Sonnet 5     | Prompt caching; Sonnet 5 adaptive thinking |
-| **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro    | OpenAI-compatible API                      |
+| Provider      | Models                                | Notes                                         |
+| ------------- | ------------------------------------- | --------------------------------------------- |
+| **OpenAI**    | GPT-5.6 Luna (default), GPT-5.6 Terra | Default provider. OpenAI SDK, `/v1/responses` |
+| **Anthropic** | Claude Haiku 4.5, Claude Sonnet 5     | Prompt caching; Sonnet 5 adaptive thinking    |
+| **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro    | OpenAI-compatible chat-completions API        |
 
 Quota is **cost-based**: every session's `AgentSession.EstimatedCostUsd` (failed and cancelled runs
 too) counts against the plan's `WeeklyAIBudgetUsd` - required on every plan, and falling back to the
@@ -204,8 +204,8 @@ The dispatch model and reasoning effort are global, not per-tenant. An admin set
 Portal → AI Settings page, which persists `AI.Model` / `AI.ReasoningEffort` to `SystemSettings`
 (keys in `AISettingsKeys`). `LlmSessionSetup` resolves both from those settings, falling back to
 the appsettings `Llm` defaults. The selectable models come from `LlmModelCatalog`, which also
-declares each model's reasoning style (OpenAI `reasoning_effort`, Anthropic adaptive thinking, or
-none). Tenants never select or see the model. Per tenant, an admin can still toggle `AIEnabled`
+declares each model's reasoning style (OpenAI reasoning effort on `/v1/responses`, Anthropic
+adaptive thinking, or none). Tenants never select or see the model. Per tenant, an admin can still toggle `AIEnabled`
 (Tenant Edit) to block AI for demo/test tenants.
 
 Because quota is metered in USD of model cost, switching to a more expensive model makes each
@@ -231,7 +231,7 @@ src/Infrastructure/Logistics.Infrastructure.AI/
 │   ├── LlmPricing.cs                       # Token → USD cost (the budget/overage currency)
 │   ├── LlmErrorSanitizer.cs                # Strips credentials before text reaches a tenant
 │   ├── Contracts/                          # LlmRequest/Response/Message/ContentBlock/...
-│   └── Providers/                          # AnthropicLlmProvider, OpenAILlmProvider
+│   └── Providers/                          # Anthropic, OpenAIResponses, OpenAICompatible
 ├── Agents/                                 # Runtime shared by both agent surfaces
 │   ├── AgentLoopRunner.cs                  # The 25-iteration loop, retries, token accounting
 │   ├── AgentDecisionProcessor.cs           # Tool call → decision entity, execute vs suggest
@@ -258,7 +258,7 @@ Tool definitions are JSON Schema, which works with both Claude API tool schemas 
 
 ## Adding a New Provider
 
-1. **OpenAI-compatible** (most providers): Add a new `LlmProvider` enum value and configure with `BaseUrl` in appsettings
+1. **OpenAI-compatible** (most providers): Add a new `LlmProvider` enum value and configure with `BaseUrl` in appsettings - these route to `OpenAICompatibleLlmProvider` (chat completions). Only `LlmProvider.OpenAI` uses the Responses API
 2. **Custom SDK**: Create a new `ILlmProvider` implementation, add a case in `LlmProviderFactory`
 3. Add one `Pricing` entry in `LlmPricing.cs` (per-token USD prices)
 4. Add the model to `LlmModelCatalog` with its `ReasoningStyle` - it populates the admin AI

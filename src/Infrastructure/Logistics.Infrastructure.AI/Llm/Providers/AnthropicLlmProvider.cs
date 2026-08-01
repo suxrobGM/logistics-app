@@ -101,6 +101,11 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
                 case ThinkingContent thinking:
                     assistantContent.Add(new LlmThinkingBlock(thinking.Thinking, thinking.Signature));
                     break;
+                // Redacted blocks replay too - dropping one leaves a hole the API rejects next
+                // iteration.
+                case RedactedThinkingContent redacted:
+                    assistantContent.Add(new LlmRedactedThinkingBlock(redacted.Data));
+                    break;
             }
         }
 
@@ -150,6 +155,9 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         {
             switch (block)
             {
+                case LlmRedactedThinkingBlock redacted:
+                    content.Add(new RedactedThinkingContent { Data = redacted.Data });
+                    break;
                 case LlmThinkingBlock thinking:
                     content.Add(new ThinkingContent { Thinking = thinking.Thinking, Signature = thinking.Signature });
                     break;
