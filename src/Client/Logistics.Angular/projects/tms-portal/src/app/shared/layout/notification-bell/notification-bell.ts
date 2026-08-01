@@ -2,18 +2,19 @@ import { CommonModule } from "@angular/common";
 import {
   Component,
   computed,
+  DestroyRef,
   inject,
   input,
   signal,
   viewChild,
-  type OnDestroy,
   type OnInit,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterLink } from "@angular/router";
 import type { NotificationDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
 import { Divider, Icon, OverlayBadge, Spinner, UiPopover, UiTooltip } from "@logistics/shared/ui";
-import { NotificationService, ToastService } from "@/core/services";
+import { NotificationService } from "@/core/services";
 
 @Component({
   selector: "app-notification-bell",
@@ -34,9 +35,9 @@ import { NotificationService, ToastService } from "@/core/services";
     UiTooltip,
   ],
 })
-export class NotificationBell implements OnInit, OnDestroy {
+export class NotificationBell implements OnInit {
   private readonly notificationService = inject(NotificationService);
-  private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly popover = viewChild<UiPopover>("popover");
 
@@ -56,10 +57,6 @@ export class NotificationBell implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.fetchNotifications();
     this.setupRealTimeNotifications();
-  }
-
-  ngOnDestroy(): void {
-    this.notificationService.disconnect();
   }
 
   protected togglePopover(event: Event): void {
@@ -85,11 +82,12 @@ export class NotificationBell implements OnInit, OnDestroy {
   }
 
   private setupRealTimeNotifications(): void {
-    this.notificationService.connect();
-    this.notificationService.onReceiveNotification = (notification) => {
-      this.toastService.showSuccess(notification.message ?? "", notification.title ?? undefined);
-      this.notifications.update((current) => [notification, ...current]);
-    };
+    void this.notificationService.acquire(this.destroyRef);
+    this.notificationService.notificationReceived$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((notification) => {
+        this.notifications.update((current) => [notification, ...current]);
+      });
   }
 
   private async fetchNotifications(): Promise<void> {

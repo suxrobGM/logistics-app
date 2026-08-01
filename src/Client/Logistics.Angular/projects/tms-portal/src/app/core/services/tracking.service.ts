@@ -7,12 +7,9 @@ import { BaseHubConnection } from "./base-hub-connection";
  */
 @Injectable({ providedIn: "root" })
 export class TrackingService extends BaseHubConnection {
+  readonly geolocationReceived$ = this.event<TruckGeolocationDto>("ReceiveGeolocationData");
+
   constructor() {
     super("tracking");
-  }
-
-  set onReceiveGeolocationData(callback: (geolocation: TruckGeolocationDto) => void) {
-    this.hubConnection.off("ReceiveGeolocationData");
-    this.hubConnection.on("ReceiveGeolocationData", callback);
   }
 }

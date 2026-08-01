@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { DestroyRef, Injectable } from "@angular/core";
 import type { AgentDecisionDto } from "@logistics/shared/api";
 import { BaseHubConnection } from "./base-hub-connection";
 
@@ -15,18 +15,26 @@ export interface AIDispatchUpdate {
  */
 @Injectable({ providedIn: "root" })
 export class AIDispatchHubService extends BaseHubConnection {
+  readonly updateReceived$ = this.event<AIDispatchUpdate>("ReceiveAIDispatchUpdate");
+  readonly decisionReceived$ = this.event<AgentDecisionDto>("ReceiveAIDispatchDecision");
+
   constructor() {
     super("ai-dispatch");
   }
 
-  set onReceiveAIDispatchUpdate(callback: (update: AIDispatchUpdate) => void) {
-    this.hubConnection.off("ReceiveAIDispatchUpdate");
-    this.hubConnection.on("ReceiveAIDispatchUpdate", callback);
-  }
+  /**
+   * Claims the connection and joins the tenant's dispatch board group, both for as long as
+   * `destroyRef` lives. Board pages need nothing else to receive updates.
+   */
+  async acquireDispatchBoard(destroyRef: DestroyRef): Promise<void> {
+    const tenantId = this.tenantService.getTenantData()?.id;
+    if (!tenantId) {
+      return;
+    }
 
-  set onReceiveAIDispatchDecision(callback: (decision: AgentDecisionDto) => void) {
-    this.hubConnection.off("ReceiveAIDispatchDecision");
-    this.hubConnection.on("ReceiveAIDispatchDecision", callback);
+    await this.acquire(destroyRef);
+    destroyRef.onDestroy(() => void this.unsubscribeFromDispatchBoard(tenantId));
+    await this.subscribeToDispatchBoard(tenantId);
   }
 
   async subscribeToDispatchBoard(tenantId: string): Promise<void> {

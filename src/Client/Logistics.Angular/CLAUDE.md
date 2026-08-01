@@ -118,6 +118,19 @@ ELD / load board / fuel card "add provider" dialogs all use `<app-provider-conne
 the `<form [formRoot]>`, the submit and the footer; project the fields, keep the typed form in the
 feature, reset from `(opened)`. Don't copy it for a fourth integration.
 
+## Real-time (SignalR hubs)
+
+Hub services extend `BaseHubConnection` and are root singletons shared by every consumer
+(full contract on the base class):
+
+- Components call `acquire(destroyRef)`; the claim dies with them and the connection stops once the
+  last one goes. There is no `disconnect()` - it would kill the hub for everyone else.
+- Declare events with the base's `event()` / `mappedEvent()` helpers as field initializers - they
+  register the handler once and hand back an `xxx$` observable; consume with `takeUntilDestroyed`.
+  Never a settable callback - consumers steal/stack each other.
+- Events stay RxJS: SignalR can dispatch bursts synchronously and a signal would coalesce them.
+  Signals are for hub _state_ (`connectionState`, unread counts).
+
 ## API errors
 
 Branch on `error.error?.errorCode` (set by `Result.Fail(message, ErrorCodes.X)`), never on message

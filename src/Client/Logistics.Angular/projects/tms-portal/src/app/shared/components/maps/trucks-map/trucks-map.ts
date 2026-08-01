@@ -1,4 +1,5 @@
-import { Component, computed, inject, input, output, signal, type OnDestroy } from "@angular/core";
+import { Component, computed, DestroyRef, inject, input, output, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Api, getTrucks } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { TrackingService } from "@/core/services";
@@ -10,9 +11,10 @@ import type { MapChrome } from "../types";
   templateUrl: "./trucks-map.html",
   imports: [GeolocationMap],
 })
-export class TrucksMap implements OnDestroy {
+export class TrucksMap {
   private readonly api = inject(Api);
   private readonly liveTrackingService = inject(TrackingService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly truckLocations = signal<TruckGeolocationDto[]>([]);
 
@@ -42,10 +44,6 @@ export class TrucksMap implements OnDestroy {
     this.connectToLiveTracking();
   }
 
-  ngOnDestroy(): void {
-    this.liveTrackingService.disconnect();
-  }
-
   /** Retry fetching truck data after an error */
   public retry(): void {
     this.fetchTrucksData();
@@ -56,21 +54,21 @@ export class TrucksMap implements OnDestroy {
   }
 
   private connectToLiveTracking(): void {
-    this.liveTrackingService.connect();
+    void this.liveTrackingService.acquire(this.destroyRef);
 
-    this.liveTrackingService.onReceiveGeolocationData = (data: TruckGeolocationDto) => {
-      const index = this.truckLocations().findIndex((loc) => loc.truckId === data.truckId);
-
-      if (index !== -1) {
+    this.liveTrackingService.geolocationReceived$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => {
         this.truckLocations.update((prev) => {
-          const updatedLocations = [...prev];
-          updatedLocations[index] = data;
-          return updatedLocations;
+          const index = prev.findIndex((loc) => loc.truckId === data.truckId);
+          if (index === -1) {
+            return [...prev, data];
+          }
+          const updated = [...prev];
+          updated[index] = data;
+          return updated;
         });
-      } else {
-        this.truckLocations.update((prev) => [...prev, data]);
-      }
-    };
+      });
   }
 
   private async fetchTrucksData(): Promise<void> {

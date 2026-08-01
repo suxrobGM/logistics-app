@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   effect,
   ElementRef,
   inject,
@@ -44,6 +45,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly messagingService = inject(ChatService);
   private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly store = inject(MessagesStore);
 
   readonly id = input.required<string>();
@@ -66,7 +68,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    await this.messagingService.connect();
+    await this.messagingService.acquire(this.destroyRef);
 
     const userData = this.authService.getUserData();
     if (userData) {

@@ -75,8 +75,9 @@ const initialState: CopilotState = {
 
 /**
  * Root-provided: the drawer body unmounts when closed and the launchers need the open/unread
- * state, so none of this can live in a component. Also the sole subscriber of CopilotHubService -
- * its setters are single-subscriber, a second registrant would steal them.
+ * state, so none of this can live in a component. The sole intended subscriber of
+ * CopilotHubService - components read the store, never the hub. Being app-lifetime, it acquires the
+ * hub without a DestroyRef and never releases.
  * HTTP lives in CopilotApiService; this store only orchestrates state.
  */
 export const CopilotStore = signalStore(
@@ -179,17 +180,18 @@ export const CopilotStore = signalStore(
         if (quota) patchState(store, { quota });
       };
 
-      // Registered once at store creation; the hub connects lazily on first drawer open.
-      copilotHub.onReceiveCopilotMessage = (message) => {
+      // Subscribed once at store creation (root store, never destroyed); the hub connects lazily
+      // on first drawer open.
+      copilotHub.messageReceived$.subscribe((message) => {
         if (message.conversationId !== store.currentConversation()?.id) return;
 
         patchState(store, { messages: [...store.messages(), message] });
         if (!store.open()) {
           patchState(store, { unreadCount: store.unreadCount() + 1 });
         }
-      };
+      });
 
-      copilotHub.onReceiveCopilotDecision = (decision) => {
+      copilotHub.decisionReceived$.subscribe((decision) => {
         const existing = store.decisions();
         const index = existing.findIndex((d) => d.id === decision.id);
         patchState(store, {
@@ -198,9 +200,9 @@ export const CopilotStore = signalStore(
               ? existing.map((d) => (d.id === decision.id ? decision : d))
               : [...existing, decision],
         });
-      };
+      });
 
-      copilotHub.onReceiveCopilotTurnUpdate = (update) => {
+      copilotHub.turnUpdateReceived$.subscribe((update) => {
         if (update.conversationId !== store.currentConversation()?.id) return;
 
         if (update.status === "running") {
@@ -213,7 +215,7 @@ export const CopilotStore = signalStore(
 
         endTurn(update.status === "failed" ? "failed" : "idle", update.errorMessage);
         void loadQuota();
-      };
+      });
 
       const loadHistoryPage = async (page: number): Promise<void> => {
         const result = await copilotApi.fetchHistoryPage(page, HistoryPageSize);
@@ -248,12 +250,12 @@ export const CopilotStore = signalStore(
 
         // The transcript needs nothing from the hub, so the handshake RTT must not gate it.
         if (store.currentConversation()) {
-          await copilotHub.connect();
+          await copilotHub.acquire();
           return;
         }
 
         patchState(store, { loading: true });
-        await Promise.all([copilotHub.connect(), loadConversations()]);
+        await Promise.all([copilotHub.acquire(), loadConversations()]);
         const mostRecent = store.conversations()[0];
         if (mostRecent?.id) {
           await openConversation(mostRecent.id);
@@ -381,7 +383,7 @@ export const CopilotStore = signalStore(
 
         /** Manual retry for a dead hub connection; also catches up on missed events. */
         async reconnect(): Promise<void> {
-          await copilotHub.connect();
+          await copilotHub.acquire();
           if (copilotHub.isConnected) {
             await reconcileConversation();
           }

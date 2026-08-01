@@ -22,6 +22,11 @@ export interface TypingIndicatorDto {
   isTyping: boolean;
 }
 
+export interface MessageReadEvent {
+  messageId: string;
+  readBy: string;
+}
+
 @Injectable({ providedIn: "root" })
 export class ChatService extends BaseHubConnection {
   private readonly api = inject(Api);
@@ -29,25 +34,22 @@ export class ChatService extends BaseHubConnection {
   public readonly unreadCount = signal(0);
   public readonly typingUsers = signal<Map<string, Set<string>>>(new Map());
 
+  readonly messageReceived$ = this.event<MessageDto>("ReceiveMessage");
+  readonly messageRead$ = this.mappedEvent(
+    "MessageRead",
+    (messageId: string, readBy: string): MessageReadEvent => ({ messageId, readBy }),
+  );
+  readonly typingIndicator$ = this.mappedEvent(
+    "TypingIndicator",
+    (conversationId: string, userId: string, isTyping: boolean): TypingIndicatorDto => ({
+      conversationId,
+      userId,
+      isTyping,
+    }),
+  );
+
   constructor() {
     super("chat");
-  }
-
-  set onReceiveMessage(callback: (message: MessageDto) => void) {
-    this.hubConnection.on("ReceiveMessage", callback);
-  }
-
-  set onMessageRead(callback: (messageId: string, readBy: string) => void) {
-    this.hubConnection.on("MessageRead", callback);
-  }
-
-  set onTypingIndicator(callback: (dto: TypingIndicatorDto) => void) {
-    this.hubConnection.on(
-      "TypingIndicator",
-      (conversationId: string, userId: string, isTyping: boolean) => {
-        callback({ conversationId, userId, isTyping });
-      },
-    );
   }
 
   async joinConversation(conversationId: string): Promise<void> {

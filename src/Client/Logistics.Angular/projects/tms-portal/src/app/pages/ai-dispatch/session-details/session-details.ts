@@ -1,13 +1,6 @@
 ﻿import { DatePipe } from "@angular/common";
-import {
-  Component,
-  computed,
-  inject,
-  input,
-  signal,
-  type OnDestroy,
-  type OnInit,
-} from "@angular/core";
+import { Component, computed, DestroyRef, inject, input, signal, type OnInit } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PageHeader } from "@logistics/shared";
 import {
   Api,
@@ -30,7 +23,7 @@ import {
   UiTimelineMarker,
   UiTooltip,
 } from "@logistics/shared/ui";
-import { AIDispatchHubService, TenantService, ToastService } from "@/core/services";
+import { AIDispatchHubService, ToastService } from "@/core/services";
 import {
   ApproveRejectActions,
   DecisionActionsService,
@@ -74,11 +67,11 @@ import { ModeBadge } from "../components/mode-badge/mode-badge";
     UiTooltip,
   ],
 })
-export class SessionDetailsPage implements OnInit, OnDestroy {
+export class SessionDetailsPage implements OnInit {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly aiDispatchHub = inject(AIDispatchHubService);
-  private readonly tenantService = inject(TenantService);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly decisionActions = inject(DecisionActionsService);
 
   public readonly id = input.required<string>();
@@ -142,35 +135,28 @@ export class SessionDetailsPage implements OnInit, OnDestroy {
     this.setupSignalR();
   }
 
-  ngOnDestroy(): void {
-    const tenant = this.tenantService.getTenantData();
-    if (tenant?.id) {
-      this.aiDispatchHub.unsubscribeFromDispatchBoard(tenant.id);
-    }
-  }
+  private setupSignalR(): void {
+    this.aiDispatchHub.updateReceived$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((update) => {
+        if (update.sessionId === this.id()) {
+          this.loadSession();
+        }
+      });
 
-  private async setupSignalR(): Promise<void> {
-    const tenant = this.tenantService.getTenantData();
-    if (!tenant?.id) return;
+    this.aiDispatchHub.decisionReceived$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((decision) => {
+        if (decision.sessionId === this.id()) {
+          this.session.update((s) => {
+            if (!s) return s;
+            const decisions = [...(s.decisions ?? []), decision];
+            return { ...s, decisions, decisionCount: decisions.length };
+          });
+        }
+      });
 
-    this.aiDispatchHub.onReceiveAIDispatchUpdate = (update) => {
-      if (update.sessionId === this.id()) {
-        this.loadSession();
-      }
-    };
-
-    this.aiDispatchHub.onReceiveAIDispatchDecision = (decision) => {
-      if (decision.sessionId === this.id()) {
-        this.session.update((s) => {
-          if (!s) return s;
-          const decisions = [...(s.decisions ?? []), decision];
-          return { ...s, decisions, decisionCount: decisions.length };
-        });
-      }
-    };
-
-    await this.aiDispatchHub.connect();
-    await this.aiDispatchHub.subscribeToDispatchBoard(tenant.id);
+    void this.aiDispatchHub.acquireDispatchBoard(this.destroyRef);
   }
 
   protected async loadSession(): Promise<void> {

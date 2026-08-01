@@ -1,4 +1,5 @@
 import { inject, Injectable } from "@angular/core";
+import { ToastService } from "@logistics/shared";
 import {
   Api,
   getNotifications,
@@ -11,13 +12,19 @@ import { BaseHubConnection } from "./base-hub-connection";
 @Injectable({ providedIn: "root" })
 export class NotificationService extends BaseHubConnection {
   private readonly api = inject(Api);
+  private readonly toastService = inject(ToastService);
+
+  /**
+   * Every notification pushed over the hub. The service already showed the toast (exactly once,
+   * however many consumers are mounted) - subscribers only update their own lists.
+   */
+  readonly notificationReceived$ = this.event<NotificationDto>("ReceiveNotification");
 
   constructor() {
     super("notification");
-  }
-
-  set onReceiveNotification(callback: OnReceiveNotifictionFn) {
-    this.hubConnection.on("ReceiveNotification", callback);
+    this.notificationReceived$.subscribe((notification) => {
+      this.toastService.showSuccess(notification.message ?? "", notification.title ?? undefined);
+    });
   }
 
   async getPastTwoWeeksNotifications(): Promise<NotificationDto[]> {
@@ -35,5 +42,3 @@ export class NotificationService extends BaseHubConnection {
     });
   }
 }
-
-type OnReceiveNotifictionFn = (notification: NotificationDto) => void;

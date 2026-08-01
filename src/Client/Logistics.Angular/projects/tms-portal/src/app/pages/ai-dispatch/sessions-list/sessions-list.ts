@@ -1,5 +1,6 @@
 ﻿import { DatePipe } from "@angular/common";
-import { Component, computed, inject, signal, type OnDestroy, type OnInit } from "@angular/core";
+import { Component, computed, DestroyRef, inject, signal, type OnInit } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterLink } from "@angular/router";
 import { PageHeader } from "@logistics/shared";
 import {
@@ -27,12 +28,7 @@ import {
   UiDataTable,
   UiTooltip,
 } from "@logistics/shared/ui";
-import {
-  AIDispatchHubService,
-  DispatchBadgeService,
-  TenantService,
-  ToastService,
-} from "@/core/services";
+import { AIDispatchHubService, DispatchBadgeService, ToastService } from "@/core/services";
 import {
   AIQuotaUsage,
   DecisionActionsService,
@@ -72,13 +68,13 @@ import {
     UiTooltip,
   ],
 })
-export class SessionsListPage implements OnInit, OnDestroy {
+export class SessionsListPage implements OnInit {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
   private readonly aiDispatchHub = inject(AIDispatchHubService);
-  private readonly tenantService = inject(TenantService);
   private readonly dispatchBadgeService = inject(DispatchBadgeService);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly decisionActions = inject(DecisionActionsService);
 
   protected readonly Labels = Labels;
@@ -126,29 +122,20 @@ export class SessionsListPage implements OnInit, OnDestroy {
     this.setupSignalR();
   }
 
-  ngOnDestroy(): void {
-    const tenant = this.tenantService.getTenantData();
-    if (tenant?.id) {
-      this.aiDispatchHub.unsubscribeFromDispatchBoard(tenant.id);
-    }
-  }
-
-  private async setupSignalR(): Promise<void> {
-    const tenant = this.tenantService.getTenantData();
-    if (!tenant?.id) return;
-
-    this.aiDispatchHub.onReceiveAIDispatchUpdate = () => {
+  private setupSignalR(): void {
+    this.aiDispatchHub.updateReceived$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.loadData();
-    };
+    });
 
-    this.aiDispatchHub.onReceiveAIDispatchDecision = (decision) => {
-      if (decision.status === "suggested") {
-        this.pendingDecisions.update((list) => [...list, decision]);
-      }
-    };
+    this.aiDispatchHub.decisionReceived$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((decision) => {
+        if (decision.status === "suggested") {
+          this.pendingDecisions.update((list) => [...list, decision]);
+        }
+      });
 
-    await this.aiDispatchHub.connect();
-    await this.aiDispatchHub.subscribeToDispatchBoard(tenant.id);
+    void this.aiDispatchHub.acquireDispatchBoard(this.destroyRef);
   }
 
   protected async loadData(): Promise<void> {

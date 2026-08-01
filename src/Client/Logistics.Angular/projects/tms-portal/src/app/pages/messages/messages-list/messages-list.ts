@@ -1,5 +1,5 @@
 import { DatePipe } from "@angular/common";
-import { Component, inject, type OnDestroy, type OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, type OnDestroy, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { ConversationDto } from "@logistics/shared/api";
 import {
@@ -27,13 +27,16 @@ export class MessagesListComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly messagingService = inject(ChatService);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly store = inject(MessagesStore);
 
   async ngOnInit(): Promise<void> {
-    await this.messagingService.connect();
+    void this.messagingService.acquire(this.destroyRef);
     const currentUserId = this.authService.getUserData()?.id;
-    await this.store.loadConversations(currentUserId);
-    await this.messagingService.getUnreadCount();
+    await Promise.all([
+      this.store.loadConversations(currentUserId),
+      this.messagingService.getUnreadCount(),
+    ]);
   }
 
   async ngOnDestroy(): Promise<void> {

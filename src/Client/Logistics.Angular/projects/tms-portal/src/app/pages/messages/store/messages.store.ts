@@ -1,4 +1,5 @@
 import { computed, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import type { ConversationDto, MessageDto } from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { ChatService } from "@/core/services";
@@ -11,7 +12,6 @@ interface MessagesState {
   error: string | null;
   hasMore: boolean;
   typingUsers: Set<string>;
-  initialized: boolean;
 }
 
 const initialState: MessagesState = {
@@ -22,7 +22,6 @@ const initialState: MessagesState = {
   error: null,
   hasMore: true,
   typingUsers: new Set(),
-  initialized: false,
 };
 
 const MESSAGE_LOAD_BATCH_SIZE = 10;
@@ -37,59 +36,49 @@ export const MessagesStore = signalStore(
   })),
 
   withMethods((store, messagingService = inject(ChatService)) => {
-    const setupRealtimeHandlers = () => {
-      if (store.initialized()) return;
+    // The store is component-provided; takeUntilDestroyed drops these with the page.
+    messagingService.messageReceived$.pipe(takeUntilDestroyed()).subscribe((message) => {
+      // Update current conversation messages
+      if (store.currentConversation()?.id === message.conversationId) {
+        patchState(store, { messages: [...store.messages(), message] });
+      }
 
-      messagingService.onReceiveMessage = (message: MessageDto) => {
-        // Update current conversation messages
-        if (store.currentConversation()?.id === message.conversationId) {
-          patchState(store, { messages: [...store.messages(), message] });
-        }
-
-        // Update conversation list
-        patchState(store, {
-          conversations: store.conversations().map((c) => {
-            if (c.id === message.conversationId) {
-              return {
-                ...c,
-                lastMessage: message,
-                lastMessageAt: message.sentAt,
-                unreadCount: (c.unreadCount ?? 0) + 1,
-              };
-            }
-            return c;
-          }),
-        });
-      };
-
-      messagingService.onMessageRead = (messageId) => {
-        patchState(store, {
-          messages: store.messages().map((m) => (m.id === messageId ? { ...m, isRead: true } : m)),
-        });
-      };
-
-      messagingService.onTypingIndicator = (dto) => {
-        if (dto.conversationId === store.currentConversation()?.id) {
-          const newUsers = new Set(store.typingUsers());
-          if (dto.isTyping) {
-            newUsers.add(dto.userId);
-          } else {
-            newUsers.delete(dto.userId);
+      // Update conversation list
+      patchState(store, {
+        conversations: store.conversations().map((c) => {
+          if (c.id === message.conversationId) {
+            return {
+              ...c,
+              lastMessage: message,
+              lastMessageAt: message.sentAt,
+              unreadCount: (c.unreadCount ?? 0) + 1,
+            };
           }
-          patchState(store, { typingUsers: newUsers });
-        }
-      };
+          return c;
+        }),
+      });
+    });
 
-      patchState(store, { initialized: true });
-    };
+    messagingService.messageRead$.pipe(takeUntilDestroyed()).subscribe(({ messageId }) => {
+      patchState(store, {
+        messages: store.messages().map((m) => (m.id === messageId ? { ...m, isRead: true } : m)),
+      });
+    });
+
+    messagingService.typingIndicator$.pipe(takeUntilDestroyed()).subscribe((dto) => {
+      if (dto.conversationId === store.currentConversation()?.id) {
+        const newUsers = new Set(store.typingUsers());
+        if (dto.isTyping) {
+          newUsers.add(dto.userId);
+        } else {
+          newUsers.delete(dto.userId);
+        }
+        patchState(store, { typingUsers: newUsers });
+      }
+    });
 
     return {
-      init(): void {
-        setupRealtimeHandlers();
-      },
-
       async loadConversations(participantId?: string): Promise<void> {
-        setupRealtimeHandlers();
         patchState(store, { loading: true, error: null });
 
         try {

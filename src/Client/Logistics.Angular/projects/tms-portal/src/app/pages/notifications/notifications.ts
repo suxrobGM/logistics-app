@@ -1,5 +1,6 @@
 import { DatePipe } from "@angular/common";
-import { Component, computed, inject, signal, type OnDestroy, type OnInit } from "@angular/core";
+import { Component, computed, DestroyRef, inject, signal, type OnInit } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SearchField } from "@logistics/shared";
 import {
   Api,
@@ -51,10 +52,11 @@ interface FilterOption {
     UiTooltip,
   ],
 })
-export class NotificationsComponent implements OnInit, OnDestroy {
+export class NotificationsComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly notificationService = inject(NotificationService);
   private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly notifications = signal<NotificationDto[]>([]);
   protected readonly isLoading = signal(false);
@@ -105,10 +107,6 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     await this.fetchNotifications();
     this.setupRealTimeNotifications();
-  }
-
-  ngOnDestroy(): void {
-    this.notificationService.disconnect();
   }
 
   protected async fetchNotifications(): Promise<void> {
@@ -214,10 +212,11 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   private setupRealTimeNotifications(): void {
-    this.notificationService.connect();
-    this.notificationService.onReceiveNotification = (notification) => {
-      this.toastService.showSuccess(notification.message ?? "", notification.title ?? undefined);
-      this.notifications.update((current) => [notification, ...current]);
-    };
+    void this.notificationService.acquire(this.destroyRef);
+    this.notificationService.notificationReceived$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((notification) => {
+        this.notifications.update((current) => [notification, ...current]);
+      });
   }
 }
