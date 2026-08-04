@@ -7,6 +7,11 @@ Configuration reference for LogisticsX Docker deployment.
 The `.env` file alongside `deploy/docker-compose.yml` (copied from `deploy/.env.example`)
 configures all services. In CI it is created from the `DOCKER_ENV` GitHub secret.
 
+There are no `appsettings.Production.json` files - `.env` (plus the few literals in
+`docker-compose.yml`) is the only source of production configuration. The `appsettings.json`
+committed with each service holds development defaults; everything environment-specific is
+layered on top as `Section__Key` variables.
+
 ### Images and Ports
 
 Images are selected by `GITHUB_REPOSITORY` and `IMAGE_TAG`, which the deploy workflow
@@ -33,15 +38,15 @@ Production uses an external (installed) PostgreSQL instance instead of a contain
 ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
 ConnectionStrings__USTenantDatabase="Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=your-secure-password"
 ConnectionStrings__EUTenantDatabase="Host=localhost;Port=5432;Database=eu_logisticsx;Username=postgres;Password=your-secure-password"
-ConnectionStrings__SoloTenantDatabase="Host=localhost;Port=5432;Database=solo_logisticsx;Username=postgres;Password=your-secure-password"
+#ConnectionStrings__SoloTenantDatabase="Host=localhost;Port=5432;Database=solo_logisticsx;Username=postgres;Password=your-secure-password"
 ```
 
-| Variable                                | Description                                                       |
-| --------------------------------------- | ----------------------------------------------------------------- |
-| `ConnectionStrings__MasterDatabase`     | Full connection string for the master database                    |
-| `ConnectionStrings__USTenantDatabase`   | Fallback tenant database the API registers `TenantDbContext` with |
-| `ConnectionStrings__EUTenantDatabase`   | EU demo tenant database - read by the migrator only               |
-| `ConnectionStrings__SoloTenantDatabase` | Owner-operator demo tenant database - read by the migrator only   |
+| Variable                                | Description                                                            |
+| --------------------------------------- | ---------------------------------------------------------------------- |
+| `ConnectionStrings__MasterDatabase`     | Full connection string for the master database                         |
+| `ConnectionStrings__USTenantDatabase`   | Fallback tenant database the API registers `TenantDbContext` with      |
+| `ConnectionStrings__EUTenantDatabase`   | EU demo tenant database - read by the migrator only                    |
+| `ConnectionStrings__SoloTenantDatabase` | Optional. Owner-operator demo tenant - only needed if `solo` is seeded |
 
 ### Stripe Integration
 
@@ -97,7 +102,7 @@ Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"
 
 ### TMS Portal (Runtime)
 
-The TMS portal Docker image uses runtime environment variable substitution for secrets. These are injected at container startup via the entrypoint script.
+The TMS portal Docker image uses runtime environment variable substitution for secrets. These are injected at container startup by the shared SPA entrypoint script (`src/Client/Logistics.Angular/deploy/docker-entrypoint-spa.sh`), which all three portals run.
 
 ```bash
 # Mapped from Mapbox__AccessToken in docker-compose.yml
@@ -126,6 +131,31 @@ TenantDatabaseDefaults__Password="your-secure-tenant-db-password"
 | ---------------------------------- | ------------------------------------------------------------ |
 | `SuperAdmin__*`                    | Initial super admin account credentials (synced on each run) |
 | `TenantDatabaseDefaults__Password` | Password used when provisioning new tenant databases         |
+
+#### Running the migrator against production
+
+`deploy/Run-ProdMigrator.ps1` is the supported way to migrate production. It exists so a
+production migration is never one stray `dotnet run` away: the migrator has no
+`appsettings.Production.json` to fall back on, and its committed `appsettings.json` points at
+`localhost`.
+
+```powershell
+powershell -NoProfile -File .\deploy\Run-ProdMigrator.ps1
+```
+
+The script (PowerShell 5.1 compatible, resolves everything from its own folder):
+
+1. Parses `deploy/.env` and exports every entry as a process-scoped environment variable.
+2. Forces `DOTNET_ENVIRONMENT=Production` and `ASPNETCORE_ENVIRONMENT=Production`.
+3. Prints a red banner naming the target database **host** (parsed out of
+   `ConnectionStrings__MasterDatabase`; the password is never echoed) and waits for you to type
+   `migrate-prod`. Any other input aborts before a connection is opened.
+4. Runs `dotnet run --project src/Presentation/Logistics.DbMigrator -- --exit` and exits with
+   the migrator's exit code.
+
+Because it reads `.env`, the production values for `ConnectionStrings__MasterDatabase`,
+`TenantDatabaseDefaults__*`, `SuperAdmin__*` and the `Tenants__N__ConnectionString` overrides
+below must all be present there - `.env.example` marks which ones the migrator needs.
 
 #### Demo tenants (`Tenants[]`)
 
@@ -161,6 +191,12 @@ Tenants__2__ConnectionString: "Host=postgres;Port=5432;Database=solo_logisticsx;
 is why `deploy/docker-compose.dev.yml` uses it: the containerized run needs `Host=postgres`, not the
 `Host=localhost` baked into `appsettings.json`.
 
+The same applies to a production run through `deploy/Run-ProdMigrator.ps1`. Every entry in the
+committed `Tenants[]` array carries an explicit `ConnectionString`, so setting
+`ConnectionStrings__*TenantDatabase` alone will **not** redirect the demo tenants - put
+`Tenants__0__ConnectionString` / `Tenants__1__ConnectionString` / `Tenants__2__ConnectionString`
+in `.env` (or drop the explicit strings from `appsettings.json`).
+
 ### ASP.NET Core
 
 ```bash
@@ -178,7 +214,7 @@ IDENTITY_SERVER_PORT=7001
 ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
 ConnectionStrings__USTenantDatabase="Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=your-secure-password"
 ConnectionStrings__EUTenantDatabase="Host=localhost;Port=5432;Database=eu_logisticsx;Username=postgres;Password=your-secure-password"
-ConnectionStrings__SoloTenantDatabase="Host=localhost;Port=5432;Database=solo_logisticsx;Username=postgres;Password=your-secure-password"
+#ConnectionStrings__SoloTenantDatabase="Host=localhost;Port=5432;Database=solo_logisticsx;Username=postgres;Password=your-secure-password"
 
 # Stripe
 Stripe__SecretKey="sk_live_xxx"
@@ -205,7 +241,10 @@ Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"
 
 ## API Configuration (appsettings.json)
 
-For local development, configure `src/Presentation/Logistics.API/appsettings.json`:
+For local development, configure `src/Presentation/Logistics.API/appsettings.json` (keep secrets
+in the git-ignored `appsettings.Development.json` or user-secrets). In production the same
+sections are supplied as `Section__Key` variables from `.env` - there is no
+`appsettings.Production.json`:
 
 ### Database Connections
 
@@ -224,11 +263,15 @@ For local development, configure `src/Presentation/Logistics.API/appsettings.jso
 }
 ```
 
-### Identity Server
+### JWT bearer validation
+
+The API validates tokens from the `Jwt` section. This is separate from the `IdentityServer`
+section it also binds (`IdentityServerOptions.ExternalAuthority`, the public issuer URL used in
+user-facing links) - putting `Audience` or `ValidIssuers` under `IdentityServer` is silently ignored.
 
 ```json
 {
-  "IdentityServer": {
+  "Jwt": {
     "Authority": "http://localhost:7001",
     "Audience": "logisticsx.api",
     "ValidIssuers": [

@@ -8,8 +8,9 @@ LogisticsX deploys as a set of containers defined by a hand-maintained Docker Co
 deploy/
   docker-compose.yml            # main production stack
   docker-compose.dev.yml        # local dev infra (Postgres + migrator)
-  docker-compose.portainer.yml  # standalone Portainer (separate project)
+  docker-compose.portainer.yml  # Portainer (separate stack, one-time manual deploy)
   .env.example                  # template for the DOCKER_ENV secret / .env
+  Run-ProdMigrator.ps1          # deliberate prod DB migrate+seed (loads .env, typed confirmation)
   nginx/logisticsx.conf         # host nginx reverse proxy (subdomains -> 127.0.0.1:port)
 ```
 
@@ -61,23 +62,25 @@ curl http://127.0.0.1:7001/.well-known/openid-configuration
 docker compose ps
 ```
 
-## Subdomains
+## Subdomains and ports
 
-| Subdomain                  | Container port (loopback) |
-| -------------------------- | ------------------------- |
-| `api.logisticsx.app`       | 7000                      |
-| `id.logisticsx.app`        | 7001                      |
-| `admin.logisticsx.app`     | 7002                      |
-| `tms.logisticsx.app`       | 7003                      |
-| `customer.logisticsx.app`  | 7004                      |
-| `logisticsx.app` (website) | 7005                      |
-| `portainer.logisticsx.app` | 9000 (separate stack)     |
+This table is the canonical port reference - `deploy/docker-compose.yml` and `deploy/nginx/logisticsx.conf` must both agree with it.
 
-All app ports bind to `127.0.0.1`, so the containers are reachable only through nginx.
+| Subdomain                  | Host port (loopback)  | Override variable      |
+| -------------------------- | --------------------- | ---------------------- |
+| `api.logisticsx.app`       | 7000                  | `API_PORT`             |
+| `id.logisticsx.app`        | 7001                  | `IDENTITY_SERVER_PORT` |
+| `admin.logisticsx.app`     | 7002                  | `ADMIN_PORTAL_PORT`    |
+| `tms.logisticsx.app`       | 7003                  | `TMS_PORTAL_PORT`      |
+| `customer.logisticsx.app`  | 7004                  | `CUSTOMER_PORTAL_PORT` |
+| `logisticsx.app` (website) | 7005                  | `WEBSITE_PORT`         |
+| `portainer.logisticsx.app` | 9000 (separate stack) | -                      |
+
+All app ports bind to `127.0.0.1`, so the containers are reachable only through nginx. The override variables are optional; compose falls back to the defaults above when they are absent from `.env`. Changing one means editing the matching `proxy_pass` in the nginx config too.
 
 ## Database migrations
 
-Migrations are not run automatically in production. Apply them with the `Logistics.DbMigrator` project (or its image) pointed at the production connection strings before/after a release.
+Migrations are not run automatically in production. Apply them with `deploy/Run-ProdMigrator.ps1`, which loads `deploy/.env`, forces the Production environment, shows the target database host and requires you to type `migrate-prod` before running `Logistics.DbMigrator` once (`--exit`). See [Environment Variables](../configuration/environment-variables.md#running-the-migrator-against-production) for the variables it needs.
 
 ## Service management
 
@@ -90,7 +93,7 @@ docker compose pull && docker compose up -d   # update images
 
 ## Portainer
 
-Portainer runs as its own compose project so a main-stack redeploy (`--remove-orphans`) never removes it. It is deployed once, manually - see [VPS Setup](vps-setup.md). Access is via `https://portainer.logisticsx.app` (nginx → `127.0.0.1:9000`); the port is never exposed publicly.
+Portainer runs as its own compose project (`deploy/docker-compose.portainer.yml`) so a main-stack redeploy (`--remove-orphans`) never removes it. It is deployed once, manually - see [VPS Setup](vps-setup.md). Access is via `https://portainer.logisticsx.app` (nginx → `127.0.0.1:9000`); the port is never exposed publicly.
 
 ## Troubleshooting
 

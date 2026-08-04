@@ -91,17 +91,17 @@ sudo certbot --nginx \
   -d portainer.yourdomain.com -d yourdomain.com
 ```
 
-## Step 10: Deploy Portainer (once)
+## Step 10: Portainer (manual, one-time)
 
-Portainer runs as its own compose project so main-stack redeploys never remove it:
+Portainer runs as its own compose project, kept out of the main stack so that
+`docker compose up --remove-orphans` on the app never removes it:
 
 ```bash
-mkdir -p ~/deploy/portainer && cd ~/deploy/portainer
-# Copy deploy/docker-compose.portainer.yml here, then:
-docker compose -f docker-compose.portainer.yml up -d
+docker compose -f deploy/docker-compose.portainer.yml up -d
 ```
 
-It is reachable only via `https://portainer.yourdomain.com` (nginx -> 127.0.0.1:9000).
+Port 9000 is bound to loopback only; it is reachable solely through the
+`portainer.logisticsx.app` server block in `deploy/nginx/logisticsx.conf`.
 
 ## Security Recommendations
 

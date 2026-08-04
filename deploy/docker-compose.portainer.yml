@@ -1,12 +1,5 @@
-# Standalone Portainer stack - deployed ONCE, manually, and intentionally kept out
-# of the main stack so `docker compose up --remove-orphans` on the app never touches it.
-#
-# One-time setup on the VPS (copy this file there, then):
-#   docker compose -f docker-compose.portainer.yml up -d
-#
-# Access is via https://portainer.logisticsx.app (host nginx → 127.0.0.1:9000).
-# Port 9000 is bound to loopback only, so Portainer is never exposed publicly.
-
+# Portainer as its own compose project so an app-stack `--remove-orphans` never removes it.
+# Port 9000 is loopback-only, fronted by portainer.logisticsx.app in deploy/nginx/logisticsx.conf.
 name: portainer
 
 services:
@@ -20,11 +13,4 @@ services:
       - portainer-data:/data
 
 volumes:
-  portainer-data:
-    # Reuses the volume from the previous combined Aspire stack so Portainer keeps its
-    # admin user and settings (no first-run re-onboarding).
-    # On a brand-new host with no such volume, either run
-    #   docker volume create logistics_portainer-data
-    # first, or replace the two lines below with a managed volume (just `portainer-data: {}`).
-    external: true
-    name: logistics_portainer-data
+  portainer-data: {}
