@@ -23,13 +23,25 @@ public static class Registrar
     }
 
     /// <summary>
+    ///     Whether <see cref="AddStorageInfrastructure"/> registers the local file provider for this
+    ///     configuration, so a host can decide whether to serve the uploads folder as static files.
+    /// </summary>
+    public static bool IsFileBlobStorage(IConfiguration configuration)
+    {
+        return GetStorageType(configuration) is not ("azure" or "r2" or "cloudflare");
+    }
+
+    private static string? GetStorageType(IConfiguration configuration)
+    {
+        return configuration.GetValue<string>("BlobStorage:Type")?.ToLowerInvariant();
+    }
+
+    /// <summary>
     ///     Add Blob Storage service based on configuration
     /// </summary>
     private static void AddBlobStorage(IServiceCollection services, IConfiguration configuration)
     {
-        var storageType = configuration.GetValue<string>("BlobStorage:Type")?.ToLowerInvariant();
-
-        switch (storageType)
+        switch (GetStorageType(configuration))
         {
             case "azure":
             {

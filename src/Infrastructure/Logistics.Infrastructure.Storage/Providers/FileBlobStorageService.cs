@@ -96,12 +96,7 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
 
     public string GetPublicUrl(string containerName, string blobName, Guid tenantId)
     {
-        if (!string.IsNullOrEmpty(options.BaseUrl))
-        {
-            return $"{options.BaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
-        }
-
-        return $"/uploads/{tenantId}/{containerName}/{blobName}";
+        return $"{options.BaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
     }
 
     /// <summary>
@@ -197,8 +192,8 @@ public class FileBlobStorageOptions
 {
     public const string SectionName = "FileBlobStorage";
     public string RootPath { get; set; } = "wwwroot/uploads";
-    public string? BaseUrl { get; set; }
-    public string? RequestPath { get; set; }
+    public string BaseUrl { get; set; } = "http://localhost:7000";
+    public string RequestPath { get; set; } = "/uploads";
     public int CacheSeconds { get; set; } = 3600;
 }
 

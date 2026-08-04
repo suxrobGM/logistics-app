@@ -99,7 +99,6 @@ internal static class Setup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        // Impersonation configuration (TmsPortalUrl is also reused by privacy emails)
         services.Configure<ImpersonationOptions>(configuration.GetSection(ImpersonationOptions.SectionName));
 
         // Rate limiting configuration
@@ -144,11 +143,11 @@ internal static class Setup
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                configuration.Bind("IdentityServer", options);
+                // Bind supplies RequireHttpsMetadata when configured; it otherwise stays true,
+                // so only Development relaxes it.
+                configuration.Bind("Jwt", options);
 
-                // Disable HTTPS requirement in development or when configured (e.g., behind reverse proxy)
-                if (builder.Environment.IsDevelopment() ||
-                    !configuration.GetValue<bool>("IdentityServer:RequireHttpsMetadata"))
+                if (builder.Environment.IsDevelopment() && configuration["Jwt:RequireHttpsMetadata"] is null)
                 {
                     options.RequireHttpsMetadata = false;
                 }
@@ -157,8 +156,8 @@ internal static class Setup
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    ValidIssuers = configuration.GetSection("IdentityServer:ValidIssuers").Get<string[]>(),
-                    ValidAudience = configuration["IdentityServer:Audience"]
+                    ValidIssuers = configuration.GetSection("Jwt:ValidIssuers").Get<string[]>(),
+                    ValidAudience = configuration["Jwt:Audience"]
                 };
 
                 // Browser websockets cannot set an Authorization header, so SignalR passes the

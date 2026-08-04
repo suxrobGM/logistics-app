@@ -4,10 +4,10 @@ LogisticsX uses OAuth 2.0 / OpenID Connect via Duende IdentityServer.
 
 ## Identity Server URLs
 
-| Environment | URL |
-|-------------|-----|
-| Development | <https://localhost:7001> |
-| Production | <https://id.yourdomain.com> |
+| Environment | URL                         |
+| ----------- | --------------------------- |
+| Development | <https://localhost:7001>    |
+| Production  | <https://id.yourdomain.com> |
 
 ## OpenID Configuration
 
@@ -88,13 +88,13 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
 
 Access tokens contain:
 
-| Claim | Description |
-|-------|-------------|
-| `sub` | User ID |
-| `email` | User email |
-| `name` | Display name |
-| `role` | User role(s) |
-| `tenant` | Tenant ID |
+| Claim    | Description  |
+| -------- | ------------ |
+| `sub`    | User ID      |
+| `email`  | User email   |
+| `name`   | Display name |
+| `role`   | User role(s) |
+| `tenant` | Tenant ID    |
 
 Example decoded token:
 
@@ -122,13 +122,13 @@ public async Task<IActionResult> CreateLoad(...)
 
 ### Role Hierarchy
 
-| Role | Permissions |
-|------|------------|
-| SuperAdmin | System-wide access |
-| Owner | Full tenant access |
-| Manager | Operational access |
+| Role       | Permissions          |
+| ---------- | -------------------- |
+| SuperAdmin | System-wide access   |
+| Owner      | Full tenant access   |
+| Manager    | Operational access   |
 | Dispatcher | Load/trip management |
-| Driver | View assigned loads |
+| Driver     | View assigned loads  |
 
 ## API Configuration
 
@@ -136,13 +136,10 @@ In `appsettings.json`:
 
 ```json
 {
-  "IdentityServer": {
+  "Jwt": {
     "Authority": "https://id.yourdomain.com",
     "Audience": "logisticsx.api",
-    "ValidIssuers": [
-      "https://id.yourdomain.com",
-      "https://localhost:7001"
-    ]
+    "ValidIssuers": ["https://id.yourdomain.com", "https://localhost:7001"]
   }
 }
 ```
@@ -154,9 +151,9 @@ In `appsettings.json`:
 ```typescript
 // environment.ts
 export const environment = {
-  identityUrl: 'https://id.yourdomain.com',
-  apiUrl: 'https://api.yourdomain.com',
-  clientId: 'logisticsx.office'
+  identityUrl: "https://id.yourdomain.com",
+  apiUrl: "https://api.yourdomain.com",
+  clientId: "logisticsx.office",
 };
 ```
 
@@ -172,11 +169,11 @@ object AuthConfig {
 
 ## Token Storage
 
-| Platform | Recommended Storage |
-|----------|-------------------|
-| Browser | Memory (not localStorage) |
-| Mobile | Secure storage (Keychain/Keystore) |
-| Server | Environment variables |
+| Platform | Recommended Storage                |
+| -------- | ---------------------------------- |
+| Browser  | Memory (not localStorage)          |
+| Mobile   | Secure storage (Keychain/Keystore) |
+| Server   | Environment variables              |
 
 ## Troubleshooting
 

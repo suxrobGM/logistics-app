@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Events;
+using Serilog.Formatting.Compact;
 
 namespace Logistics.HostDefaults;
 
@@ -26,10 +29,31 @@ public static class LogisticsHost
             builder.Services.AddHealthChecks();
             builder.Services.ConfigureHttpClientDefaults(http => http.AddStandardResilienceHandler());
 
-            builder.Host.UseSerilog((ctx, lc) => lc
-                .WriteTo.Console()
-                .Enrich.FromLogContext()
-                .ReadFrom.Configuration(ctx.Configuration));
+            builder.Host.UseSerilog((ctx, lc) =>
+            {
+                // ReadFrom.Configuration stays last so Serilog__MinimumLevel__* overrides these
+                // defaults. It is additive for sinks, though, so a configured Serilog:WriteTo
+                // replaces the defaults here rather than stacking a second copy on top.
+                lc.MinimumLevel.Information()
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+                    .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                    .MinimumLevel.Override("Microsoft.AspNetCore.DataProtection", LogEventLevel.Warning)
+                    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
+                    .MinimumLevel.Override("System", LogEventLevel.Warning)
+                    .Enrich.FromLogContext();
+
+                if (!ctx.Configuration.GetSection("Serilog:WriteTo").Exists())
+                {
+                    lc.WriteTo.Console()
+                        .WriteTo.File(
+                            new CompactJsonFormatter(),
+                            $"Logs/{ctx.HostingEnvironment.ApplicationName}-.log",
+                            rollingInterval: RollingInterval.Month);
+                }
+
+                lc.ReadFrom.Configuration(ctx.Configuration);
+            });
 
             var app = buildApp(builder);
             app.MapHealthChecks("/health");

@@ -1,43 +1,38 @@
+using Logistics.Infrastructure.Storage;
+using Logistics.Infrastructure.Storage.Providers;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.API.Extensions;
 
 public static class LocalStorageStaticFilesExtensions
 {
     /// <summary>
-    /// Serves files for local/file storage type from a configurable root.
-    /// Reads:
-    ///   BlobStorage:Type -> "file" | "local" | null (default)
-    ///   FileBlobStorage:RootPath -> relative or absolute path (default: "wwwroot/uploads")
-    ///   FileBlobStorage:RequestPath -> request base path (default: "/uploads")
-    ///   FileBlobStorage:CacheSeconds -> Cache-Control max-age seconds (default: 3600)
+    /// Serves local file-storage uploads as static files, whenever
+    /// <see cref="Registrar.AddStorageInfrastructure"/> picked the file provider.
     /// </summary>
     public static IApplicationBuilder UseLocalStorageStaticFiles(this IApplicationBuilder app)
     {
         var config = app.ApplicationServices.GetRequiredService<IConfiguration>();
-        var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
-
-        var storageType = config.GetValue<string>("BlobStorage:Type")?.ToLowerInvariant();
-        // Only enable when using local/file storage
-        if (storageType is not ("file" or "local" or null))
+        if (!Registrar.IsFileBlobStorage(config))
         {
             return app;
         }
 
-        var uploadsPath = config.GetValue<string>("FileBlobStorage:RootPath") ?? "wwwroot/uploads";
-        var requestPath = new PathString(config.GetValue<string>("FileBlobStorage:RequestPath") ?? "/uploads");
-        var cacheSeconds = config.GetValue<int?>("FileBlobStorage:CacheSeconds") ?? 3600;
+        var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
+        var options = app.ApplicationServices.GetRequiredService<IOptions<FileBlobStorageOptions>>().Value;
+        var cacheSeconds = options.CacheSeconds;
 
-        var absoluteUploadsPath = Path.IsPathRooted(uploadsPath)
-            ? uploadsPath
-            : Path.Combine(env.ContentRootPath, uploadsPath);
+        var absoluteUploadsPath = Path.IsPathRooted(options.RootPath)
+            ? options.RootPath
+            : Path.Combine(env.ContentRootPath, options.RootPath);
 
         Directory.CreateDirectory(absoluteUploadsPath);
 
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(absoluteUploadsPath),
-            RequestPath = requestPath,
+            RequestPath = new PathString(options.RequestPath),
             OnPrepareResponse = ctx =>
             {
                 ctx.Context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
