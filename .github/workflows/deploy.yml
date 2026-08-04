@@ -37,13 +37,16 @@ jobs:
             file: ./src/Presentation/Logistics.IdentityServer/Dockerfile
           - image: admin-portal
             context: .
-            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.admin
+            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.spa
+            build_args: APP_NAME=admin-portal
           - image: tms-portal
             context: .
-            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.tms
+            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.spa
+            build_args: APP_NAME=tms-portal
           - image: customer-portal
             context: .
-            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.customer
+            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.spa
+            build_args: APP_NAME=customer-portal
           - image: website
             context: .
             file: ./src/Client/Logistics.Angular/deploy/Dockerfile.website
@@ -78,6 +81,7 @@ jobs:
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.file }}
+          build-args: ${{ matrix.build_args }}
           push: true
           tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/${{ matrix.image }}:latest
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/${{ matrix.image }}:buildcache

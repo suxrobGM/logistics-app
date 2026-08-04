@@ -75,7 +75,10 @@ on:
         required: false
 
 env:
-  DEFAULT_PACKAGES: "logistics-api,logistics-identityserver,logistics-adminapp,logistics-tms-portal,logistics-customer-portal"
+  # Image names from deploy.yml's matrix. It pushes to ghcr.io/<owner>/<repo>/<image>, so the
+  # package name is "<repo>/<image>" - the repo half is derived below, since every failure here
+  # is swallowed and a hardcoded one would 404 silently after a rename.
+  DEFAULT_IMAGES: "api,identity,admin-portal,tms-portal,customer-portal,website"
 
 jobs:
   cleanup:
@@ -90,7 +93,8 @@ jobs:
           if [ -n "${{ inputs.package-name }}" ]; then
             echo "packages=${{ inputs.package-name }}" >> $GITHUB_OUTPUT
           else
-            echo "packages=${{ env.DEFAULT_PACKAGES }}" >> $GITHUB_OUTPUT
+            REPO_NAME="${GITHUB_REPOSITORY##*/}"
+            echo "packages=$(echo "${DEFAULT_IMAGES}" | tr ',' '\n' | sed "s|^|${REPO_NAME,,}/|" | paste -sd,)" >> $GITHUB_OUTPUT
           fi
 
       - name: Delete untagged container images
@@ -125,16 +129,20 @@ jobs:
             PKG=$(echo "$PKG" | xargs)  # trim whitespace
             echo "Processing package: ${PKG}"
 
+            # Nested package names (logistics-app/api) are one path segment to the
+            # packages API - an unescaped slash 404s.
+            PKG_PATH="${PKG//\//%2F}"
+
             # List all versions
             VERSIONS=$(gh api \
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
-              "/orgs/${OWNER}/packages/container/${PKG}/versions" \
+              "/orgs/${OWNER}/packages/container/${PKG_PATH}/versions" \
               --paginate 2>/dev/null || \
               gh api \
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
-              "/users/${OWNER}/packages/container/${PKG}/versions" \
+              "/users/${OWNER}/packages/container/${PKG_PATH}/versions" \
               --paginate 2>/dev/null || echo "[]")
 
             # Filter and delete old untagged versions
@@ -158,12 +166,12 @@ jobs:
                   --method DELETE \
                   -H "Accept: application/vnd.github+json" \
                   -H "X-GitHub-Api-Version: 2022-11-28" \
-                  "/orgs/${OWNER}/packages/container/${PKG}/versions/${VERSION_ID}" 2>/dev/null || \
+                  "/orgs/${OWNER}/packages/container/${PKG_PATH}/versions/${VERSION_ID}" 2>/dev/null || \
                   gh api \
                   --method DELETE \
                   -H "Accept: application/vnd.github+json" \
                   -H "X-GitHub-Api-Version: 2022-11-28" \
-                  "/users/${OWNER}/packages/container/${PKG}/versions/${VERSION_ID}" 2>/dev/null || \
+                  "/users/${OWNER}/packages/container/${PKG_PATH}/versions/${VERSION_ID}" 2>/dev/null || \
                   echo "Warning: Failed to delete version ${VERSION_ID}"
               fi
             done

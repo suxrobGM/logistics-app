@@ -1,5 +1,7 @@
 ﻿**/.dockerignore
 **/.env
+**/appsettings.Production.json
+**/appsettings.Local.json
 **/.git
 **/.gitignore
 **/.project
@@ -22,6 +24,6 @@
 **/values.dev.yaml
 LICENSE
 README.md
-dist/
+**/dist/
 node_modules/
 **/.angular
