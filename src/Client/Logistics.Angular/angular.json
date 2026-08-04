@@ -85,8 +85,8 @@
               ],
               "fileReplacements": [
                 {
-                  "replace": "projects/tms-portal/src/environments/environment.ts",
-                  "with": "projects/tms-portal/src/environments/environment.prod.ts"
+                  "replace": "projects/shared/src/lib/config/app-env.ts",
+                  "with": "projects/shared/src/lib/config/app-env.prod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -184,8 +184,8 @@
               ],
               "fileReplacements": [
                 {
-                  "replace": "projects/customer-portal/src/environments/environment.ts",
-                  "with": "projects/customer-portal/src/environments/environment.prod.ts"
+                  "replace": "projects/shared/src/lib/config/app-env.ts",
+                  "with": "projects/shared/src/lib/config/app-env.prod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -278,8 +278,8 @@
               ],
               "fileReplacements": [
                 {
-                  "replace": "projects/admin-portal/src/environments/environment.ts",
-                  "with": "projects/admin-portal/src/environments/environment.prod.ts"
+                  "replace": "projects/shared/src/lib/config/app-env.ts",
+                  "with": "projects/shared/src/lib/config/app-env.prod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -377,8 +377,8 @@
               ],
               "fileReplacements": [
                 {
-                  "replace": "projects/website/src/environments/environment.ts",
-                  "with": "projects/website/src/environments/environment.prod.ts"
+                  "replace": "projects/shared/src/lib/config/app-env.ts",
+                  "with": "projects/shared/src/lib/config/app-env.prod.ts"
                 }
               ],
               "outputHashing": "all"

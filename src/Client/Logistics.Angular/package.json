@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "ng": "ng",
-    "start:tms": "ng serve tms-portal",
+    "start:tms": "bun run --env-file=.env serve:tms",
+    "serve:tms": "ng serve tms-portal --define NG_MAPBOX_TOKEN=\"'$MAPBOX_TOKEN'\"",
     "start:customer": "ng serve customer-portal",
     "start:admin": "ng serve admin-portal",
     "start:website": "ng serve website",

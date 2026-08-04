@@ -4,7 +4,7 @@
     "outDir": "../../out-tsc/customer-portal",
     "paths": {
       "@/*": ["./src/app/*"],
-      "@/env": ["./src/environments/environment"],
+      "@/env": ["../../projects/shared/src/lib/config/app-env"],
       "@logistics/shared": ["../../projects/shared/src/public-api.ts"],
       "@logistics/shared/*": ["../../projects/shared/src/lib/*"]
     }

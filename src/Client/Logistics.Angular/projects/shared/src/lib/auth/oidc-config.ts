@@ -6,7 +6,9 @@ import type { OpenIdConfiguration } from "angular-auth-oidc-client";
  */
 export interface AppOidcOptions {
   authority: string;
+  /** Must mirror the matching `Clients[]` entry in `Logistics.IdentityServer/appsettings.json`. */
   clientId: string;
+  /** Must mirror the matching `Clients[]` entry in `Logistics.IdentityServer/appsettings.json`. */
   scope: string;
   postLoginRoute: string;
   unauthorizedRoute: string;

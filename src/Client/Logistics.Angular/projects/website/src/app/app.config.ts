@@ -8,7 +8,7 @@ import {
 } from "@angular/router";
 import { provideSpartanHlm } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
-import { environment } from "../environments/environment";
+import { environment } from "@/env";
 import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {

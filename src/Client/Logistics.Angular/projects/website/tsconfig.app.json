@@ -5,7 +5,7 @@
     "types": ["node"],
     "paths": {
       "@/*": ["./src/app/*"],
-      "@/env": ["./src/environments/environment"],
+      "@/env": ["../../projects/shared/src/lib/config/app-env"],
       "@logistics/shared": ["../../projects/shared/src/public-api.ts"],
       "@logistics/shared/*": ["../../projects/shared/src/lib/*"]
     }
