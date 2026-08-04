@@ -1,6 +1,6 @@
 #include "Config.xcconfig"
 
-// Dev environment (iOS Simulator - localhost)
+// Dev (iOS Simulator). Keep URLs in sync with the "dev" flavor in androidApp/build.gradle.kts.
 API_BASE_URL = http:/$()/localhost:7000
 IDENTITY_SERVER_URL = http:/$()/localhost:7001
 IS_PRODUCTION = NO

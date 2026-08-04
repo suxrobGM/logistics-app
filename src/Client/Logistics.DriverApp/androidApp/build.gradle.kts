@@ -5,6 +5,28 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+// Env-only release signing; the config is registered only when the secrets exist so IDE sync
+// and debug builds work without them.
+val releaseStorePassword: String? = System.getenv("KEYSTORE_PASSWORD")
+val releaseKeyPassword: String? = System.getenv("KEY_PASSWORD")
+val hasReleaseSigningSecrets = releaseStorePassword != null && releaseKeyPassword != null
+
+if (!hasReleaseSigningSecrets) {
+    // Checked against the resolved graph, not the typed task names: `./gradlew build` packages a
+    // release too, and :composeApp's iOS `link*Release*` tasks need no keystore.
+    gradle.taskGraph.whenReady {
+        val packagesRelease = allTasks.any {
+            it.project == project && it.name.startsWith("package") && it.name.endsWith("Release")
+        }
+        if (packagesRelease) {
+            error(
+                "KEYSTORE_PASSWORD and KEY_PASSWORD must be set in the environment to build a signed " +
+                    "release of :androidApp"
+            )
+        }
+    }
+}
+
 android {
     namespace = "com.logisticsx.driver"
     compileSdk = 37
@@ -22,6 +44,7 @@ android {
     }
 
     flavorDimensions += "environment"
+    // Keep URLs in sync with iosApp/Configuration/{Dev,Prod}.xcconfig.
     productFlavors {
         create("dev") {
             dimension = "environment"
@@ -39,11 +62,13 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            storeFile = rootProject.file("release-keystore.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "logisticsx"
-            keyAlias = "release"
-            keyPassword = System.getenv("KEY_PASSWORD") ?: "logisticsx"
+        if (hasReleaseSigningSecrets) {
+            create("release") {
+                storeFile = rootProject.file("release-keystore.jks")
+                storePassword = releaseStorePassword
+                keyAlias = "release"
+                keyPassword = releaseKeyPassword
+            }
         }
     }
 
@@ -51,7 +76,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.findByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
