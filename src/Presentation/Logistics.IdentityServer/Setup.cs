@@ -78,7 +78,18 @@ internal static class Setup
             .AddInMemoryApiScopes(Config.ApiScopes())
             .AddInMemoryApiResources(Config.ApiResources())
             .AddInMemoryClients(Config.Clients(configuration))
-            .AddAspNetIdentity<User>();
+            .AddAspNetIdentity<User>()
+            // Persists automatic-key-management signing keys ("keys" table) and grants/refresh
+            // tokens ("persisted_grants") in the master DB. Without this both live in the
+            // container (file system / memory) and every redeploy invalidates all sessions.
+            // Keys are encrypted at rest via Data Protection, whose key ring is already DB-backed.
+            .AddOperationalStore(options =>
+            {
+                options.ConfigureDbContext = b => DuendeOperationalStore.ConfigureDbContext(
+                    b, configuration.GetConnectionString("MasterDatabase"));
+                options.EnableTokenCleanup = true;
+                options.RemoveConsumedTokens = true;
+            });
 
         services.AddAuthentication()
             .AddGoogle(options =>
