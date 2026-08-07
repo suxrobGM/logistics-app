@@ -12,8 +12,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "duende");
+
             migrationBuilder.CreateTable(
-                name: "DeviceCodes",
+                name: "device_codes",
+                schema: "duende",
                 columns: table => new
                 {
                     user_code = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
@@ -32,7 +36,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
                 });
 
             migrationBuilder.CreateTable(
-                name: "Keys",
+                name: "keys",
+                schema: "duende",
                 columns: table => new
                 {
                     id = table.Column<string>(type: "text", nullable: false),
@@ -50,7 +55,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
                 });
 
             migrationBuilder.CreateTable(
-                name: "PersistedGrants",
+                name: "persisted_grants",
+                schema: "duende",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
@@ -72,7 +78,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
                 });
 
             migrationBuilder.CreateTable(
-                name: "PushedAuthorizationRequests",
+                name: "pushed_authorization_requests",
+                schema: "duende",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
@@ -87,7 +94,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
                 });
 
             migrationBuilder.CreateTable(
-                name: "ServerSideSessions",
+                name: "server_side_sessions",
+                schema: "duende",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
@@ -109,81 +117,96 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
 
             migrationBuilder.CreateIndex(
                 name: "ix_device_codes_device_code",
-                table: "DeviceCodes",
+                schema: "duende",
+                table: "device_codes",
                 column: "device_code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_device_codes_expiration",
-                table: "DeviceCodes",
+                schema: "duende",
+                table: "device_codes",
                 column: "expiration");
 
             migrationBuilder.CreateIndex(
                 name: "ix_keys_use",
-                table: "Keys",
+                schema: "duende",
+                table: "keys",
                 column: "use");
 
             migrationBuilder.CreateIndex(
                 name: "ix_persisted_grants_consumed_time",
-                table: "PersistedGrants",
+                schema: "duende",
+                table: "persisted_grants",
                 column: "consumed_time");
 
             migrationBuilder.CreateIndex(
                 name: "ix_persisted_grants_expiration",
-                table: "PersistedGrants",
+                schema: "duende",
+                table: "persisted_grants",
                 column: "expiration");
 
             migrationBuilder.CreateIndex(
                 name: "ix_persisted_grants_key",
-                table: "PersistedGrants",
+                schema: "duende",
+                table: "persisted_grants",
                 column: "key",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_persisted_grants_subject_id_client_id_type",
-                table: "PersistedGrants",
+                schema: "duende",
+                table: "persisted_grants",
                 columns: new[] { "subject_id", "client_id", "type" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_persisted_grants_subject_id_session_id_type",
-                table: "PersistedGrants",
+                schema: "duende",
+                table: "persisted_grants",
                 columns: new[] { "subject_id", "session_id", "type" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_pushed_authorization_requests_expires_at_utc",
-                table: "PushedAuthorizationRequests",
+                schema: "duende",
+                table: "pushed_authorization_requests",
                 column: "expires_at_utc");
 
             migrationBuilder.CreateIndex(
                 name: "ix_pushed_authorization_requests_reference_value_hash",
-                table: "PushedAuthorizationRequests",
+                schema: "duende",
+                table: "pushed_authorization_requests",
                 column: "reference_value_hash",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_server_side_sessions_display_name",
-                table: "ServerSideSessions",
+                schema: "duende",
+                table: "server_side_sessions",
                 column: "display_name");
 
             migrationBuilder.CreateIndex(
                 name: "ix_server_side_sessions_expires",
-                table: "ServerSideSessions",
+                schema: "duende",
+                table: "server_side_sessions",
                 column: "expires");
 
             migrationBuilder.CreateIndex(
                 name: "ix_server_side_sessions_key",
-                table: "ServerSideSessions",
+                schema: "duende",
+                table: "server_side_sessions",
                 column: "key",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_server_side_sessions_session_id",
-                table: "ServerSideSessions",
+                schema: "duende",
+                table: "server_side_sessions",
                 column: "session_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_server_side_sessions_subject_id",
-                table: "ServerSideSessions",
+                schema: "duende",
+                table: "server_side_sessions",
                 column: "subject_id");
         }
 
@@ -191,19 +214,24 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DeviceCodes");
+                name: "device_codes",
+                schema: "duende");
 
             migrationBuilder.DropTable(
-                name: "Keys");
+                name: "keys",
+                schema: "duende");
 
             migrationBuilder.DropTable(
-                name: "PersistedGrants");
+                name: "persisted_grants",
+                schema: "duende");
 
             migrationBuilder.DropTable(
-                name: "PushedAuthorizationRequests");
+                name: "pushed_authorization_requests",
+                schema: "duende");
 
             migrationBuilder.DropTable(
-                name: "ServerSideSessions");
+                name: "server_side_sessions",
+                schema: "duende");
         }
     }
 }

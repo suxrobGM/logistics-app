@@ -17,6 +17,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("duende")
                 .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -80,7 +81,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
                     b.HasIndex("Expiration")
                         .HasDatabaseName("ix_device_codes_expiration");
 
-                    b.ToTable("DeviceCodes", (string)null);
+                    b.ToTable("device_codes", "duende");
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.Key", b =>
@@ -126,7 +127,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
                     b.HasIndex("Use")
                         .HasDatabaseName("ix_keys_use");
 
-                    b.ToTable("Keys", (string)null);
+                    b.ToTable("keys", "duende");
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PersistedGrant", b =>
@@ -207,7 +208,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
                     b.HasIndex("SubjectId", "SessionId", "Type")
                         .HasDatabaseName("ix_persisted_grants_subject_id_session_id_type");
 
-                    b.ToTable("PersistedGrants", (string)null);
+                    b.ToTable("persisted_grants", "duende");
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PushedAuthorizationRequest", b =>
@@ -244,7 +245,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
                         .IsUnique()
                         .HasDatabaseName("ix_pushed_authorization_requests_reference_value_hash");
 
-                    b.ToTable("PushedAuthorizationRequests", (string)null);
+                    b.ToTable("pushed_authorization_requests", "duende");
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ServerSideSession", b =>
@@ -320,7 +321,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Duende
                     b.HasIndex("SubjectId")
                         .HasDatabaseName("ix_server_side_sessions_subject_id");
 
-                    b.ToTable("ServerSideSessions", (string)null);
+                    b.ToTable("server_side_sessions", "duende");
                 });
 #pragma warning restore 612, 618
         }

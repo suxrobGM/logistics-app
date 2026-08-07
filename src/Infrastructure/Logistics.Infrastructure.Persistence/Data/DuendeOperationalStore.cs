@@ -1,3 +1,4 @@
+using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Persistence.Data;
@@ -12,10 +13,27 @@ public static class DuendeOperationalStore
     public const string MigrationsAssembly = "Logistics.Infrastructure.Persistence";
 
     /// <summary>
-    ///     Own history table: this context shares the master DB with <c>MasterDbContext</c>, and one
-    ///     shared <c>__EFMigrationsHistory</c> would make `ef migrations list` and rollbacks ambiguous.
+    ///     Own schema: this context shares the master DB with <c>MasterDbContext</c>, so its tables
+    ///     and its <c>__EFMigrationsHistory</c> would otherwise sit in public alongside the domain
+    ///     ones, leaving `ef migrations list` and rollbacks unable to tell the two sets apart.
     /// </summary>
-    public const string MigrationsHistoryTable = "__EFMigrationsHistoryDuende";
+    public const string Schema = "duende";
+
+    /// <summary>
+    ///     Duende names its tables through <see cref="OperationalStoreOptions"/> rather than by
+    ///     convention, so UseSnakeCaseNamingConvention reaches their columns but not the table
+    ///     names. Set them here or they land as PascalCase beside otherwise snake_case tables.
+    /// </summary>
+    public static OperationalStoreOptions ConfigureStoreOptions(OperationalStoreOptions options)
+    {
+        options.DefaultSchema = Schema;
+        options.PersistedGrants.Name = "persisted_grants";
+        options.DeviceFlowCodes.Name = "device_codes";
+        options.Keys.Name = "keys";
+        options.ServerSideSessions.Name = "server_side_sessions";
+        options.PushedAuthorizationRequests.Name = "pushed_authorization_requests";
+        return options;
+    }
 
     public static void ConfigureDbContext(DbContextOptionsBuilder options, string? connectionString)
     {
@@ -24,7 +42,7 @@ public static class DuendeOperationalStore
             {
                 o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
                 o.MigrationsAssembly(MigrationsAssembly);
-                o.MigrationsHistoryTable(MigrationsHistoryTable);
+                o.MigrationsHistoryTable("__EFMigrationsHistory", Schema);
             })
             .UseSnakeCaseNamingConvention();
     }

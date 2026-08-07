@@ -32,7 +32,7 @@ builder.Services.AddPersistenceInfrastructure(builder.Configuration)
     .AddIdentity();
 
 // Duende operational store (signing keys + grants) in the master DB, migrated before IdentityServer needs it
-builder.Services.AddSingleton(new OperationalStoreOptions());
+builder.Services.AddSingleton(DuendeOperationalStore.ConfigureStoreOptions(new OperationalStoreOptions()));
 builder.Services.AddDbContext<PersistedGrantDbContext>(options =>
     DuendeOperationalStore.ConfigureDbContext(
         options, builder.Configuration.GetConnectionString("MasterDatabase")));

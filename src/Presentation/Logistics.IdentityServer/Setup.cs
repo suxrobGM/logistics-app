@@ -83,6 +83,7 @@ internal static class Setup
             // container and every redeploy invalidates all sessions
             .AddOperationalStore(options =>
             {
+                DuendeOperationalStore.ConfigureStoreOptions(options);
                 options.ConfigureDbContext = b => DuendeOperationalStore.ConfigureDbContext(
                     b, configuration.GetConnectionString("MasterDatabase"));
                 options.EnableTokenCleanup = true;

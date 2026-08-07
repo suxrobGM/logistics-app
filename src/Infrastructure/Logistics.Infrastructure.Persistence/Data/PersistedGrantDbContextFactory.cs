@@ -13,7 +13,7 @@ public class PersistedGrantDbContextFactory : IDesignTimeDbContextFactory<Persis
         DuendeOperationalStore.ConfigureDbContext(builder, null);
         return new PersistedGrantDbContext(builder.Options)
         {
-            StoreOptions = new OperationalStoreOptions()
+            StoreOptions = DuendeOperationalStore.ConfigureStoreOptions(new OperationalStoreOptions())
         };
     }
 }
