@@ -3,7 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
 namespace Logistics.API.Jobs;
 
@@ -53,7 +53,7 @@ public class LoadBoardSyncJob(
     private async Task RefreshTenantTrucksAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-        var providerFactory = scope.ServiceProvider.GetRequiredService<ILoadBoardProviderFactory>();
+        var tokenService = scope.ServiceProvider.GetRequiredService<ILoadBoardTokenService>();
 
         tenantUow.SetCurrentTenant(tenant);
 
@@ -86,7 +86,15 @@ public class LoadBoardSyncJob(
                 continue;
             }
 
-            var provider = providerFactory.GetProvider(config);
+            var providerResult = await tokenService.GetReadyProviderAsync(config, ct);
+            if (!providerResult.IsSuccess || providerResult.Value is null)
+            {
+                logger.LogWarning("Could not authenticate with {ProviderType} for tenant {TenantName}: {Error}",
+                    providerGroup.Key, tenant.Name, providerResult.Error);
+                continue;
+            }
+
+            var provider = providerResult.Value;
 
             foreach (var postedTruck in providerGroup)
             {

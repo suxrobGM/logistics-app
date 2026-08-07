@@ -5,12 +5,13 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class RemovePostedTruckHandler(
     ITenantUnitOfWork tenantUow,
-    ILoadBoardProviderFactory providerFactory,
+    ILoadBoardTokenService tokenService,
     ILogger<RemovePostedTruckHandler> logger)
     : IAppRequestHandler<RemovePostedTruckCommand, Result>
 {
@@ -37,8 +38,9 @@ internal sealed class RemovePostedTruckHandler(
         if (providerConfig is not null && !string.IsNullOrEmpty(postedTruck.ExternalPostId))
         {
             // Try to remove from the load board provider
-            var provider = providerFactory.GetProvider(providerConfig);
-            var removed = await provider.RemoveTruckPostAsync(postedTruck.ExternalPostId);
+            var providerResult = await tokenService.GetReadyProviderAsync(providerConfig, ct);
+            var removed = providerResult is { IsSuccess: true, Value: not null } &&
+                          await providerResult.Value.RemoveTruckPostAsync(postedTruck.ExternalPostId);
 
             if (!removed)
             {

@@ -31,16 +31,6 @@ internal sealed class CreateLoadBoardConfigurationHandler(
                 $"Configuration for {req.ProviderType} already exists. Please update the existing configuration.");
         }
 
-        // Validate credentials with the provider
-        var providerService = providerFactory.GetProvider(req.ProviderType);
-        var isValid = await providerService.ValidateCredentialsAsync(req.ApiKey, req.ApiSecret);
-
-        if (!isValid)
-        {
-            return Result.Fail("Invalid API credentials. Please verify your API key and try again.");
-        }
-
-        // Create the configuration
         var config = new LoadBoardConfiguration
         {
             ProviderType = req.ProviderType,
@@ -51,6 +41,26 @@ internal sealed class CreateLoadBoardConfigurationHandler(
             CompanyMcNumber = req.CompanyMcNumber,
             IsActive = true
         };
+
+        // OAuth providers validate by acquiring a token, which must be stored or every
+        // later call goes out unauthenticated. Key-based providers just validate.
+        var providerService = providerFactory.GetProvider(req.ProviderType);
+        if (providerService.RequiresOAuthToken)
+        {
+            var token = await providerService.AcquireTokenAsync(req.ApiKey, req.ApiSecret);
+            if (token is null)
+            {
+                return Result.Fail("Invalid API credentials. Please verify your API key and try again.");
+            }
+
+            config.AccessToken = token.AccessToken;
+            config.RefreshToken = token.RefreshToken;
+            config.TokenExpiresAt = token.ExpiresAt;
+        }
+        else if (!await providerService.ValidateCredentialsAsync(req.ApiKey, req.ApiSecret))
+        {
+            return Result.Fail("Invalid API credentials. Please verify your API key and try again.");
+        }
 
         await tenantUow.Repository<LoadBoardConfiguration>().AddAsync(config, ct);
         await tenantUow.SaveChangesAsync(ct);

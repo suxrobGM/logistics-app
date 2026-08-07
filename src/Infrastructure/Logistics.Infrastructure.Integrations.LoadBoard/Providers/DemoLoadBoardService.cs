@@ -42,6 +42,8 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
 
     public LoadBoardProviderType ProviderType => LoadBoardProviderType.Demo;
 
+    public bool RequiresOAuthToken => false;
+
     public void Initialize(LoadBoardConfiguration configuration)
     {
         logger.LogInformation("Initialized Demo Load Board provider");
@@ -51,6 +53,11 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
     {
         // Demo provider always validates successfully with any non-empty key
         return Task.FromResult(!string.IsNullOrEmpty(apiKey));
+    }
+
+    public Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret)
+    {
+        return Task.FromResult<OAuthTokenResultDto?>(null);
     }
 
     public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)

@@ -25,22 +25,19 @@ internal class DatLoadBoardService(
     : ILoadBoardProviderService
 {
     private readonly DatOptions options = options.Value.Dat ?? new DatOptions();
-    private string? accessToken;
-    private DateTime tokenExpiry = DateTime.MinValue;
 
     public LoadBoardProviderType ProviderType => LoadBoardProviderType.Dat;
 
+    public bool RequiresOAuthToken => true;
+
     public void Initialize(LoadBoardConfiguration configuration)
     {
-        accessToken = configuration.AccessToken;
-        tokenExpiry = configuration.TokenExpiresAt ?? DateTime.MinValue;
-
         httpClient.BaseAddress = new Uri(options.BaseUrl);
 
-        if (!string.IsNullOrEmpty(accessToken))
+        if (!string.IsNullOrEmpty(configuration.AccessToken))
         {
             httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", accessToken);
+                new AuthenticationHeaderValue("Bearer", configuration.AccessToken);
         }
 
         logger.LogInformation("Initialized DAT Load Board provider");
@@ -48,29 +45,45 @@ internal class DatLoadBoardService(
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
     {
+        return await AcquireTokenAsync(apiKey, apiSecret) != null;
+    }
+
+    public async Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret)
+    {
         try
         {
             var authClient = httpClientFactory.CreateClient();
-            var response = await authClient.PostAsJsonAsync(options.AuthUrl, new { clientId = apiKey, clientSecret = apiSecret });
-            if (response.IsSuccessStatusCode)
+            var response = await authClient.PostAsJsonAsync(options.AuthUrl,
+                new { clientId = apiKey, clientSecret = apiSecret });
+            if (!response.IsSuccessStatusCode)
             {
-                logger.LogInformation("DAT credentials validated successfully");
-                return true;
+                logger.LogWarning("DAT token acquisition failed: {StatusCode}", response.StatusCode);
+                return null;
             }
 
-            logger.LogWarning("DAT credential validation failed: {StatusCode}", response.StatusCode);
-            return false;
+            var token = await response.Content.ReadFromJsonAsync<DatTokenResponse>();
+            if (string.IsNullOrEmpty(token?.AccessToken))
+            {
+                logger.LogWarning("DAT token response contained no access token");
+                return null;
+            }
+
+            return new OAuthTokenResultDto
+            {
+                AccessToken = token.AccessToken,
+                ExpiresAt = token.ExpiresWhen ?? DateTime.UtcNow.AddMinutes(50)
+            };
         }
-        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+        catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException)
         {
-            logger.LogError(ex, "Error validating DAT credentials");
-            return false;
+            logger.LogError(ex, "Error acquiring DAT token");
+            return null;
         }
     }
 
     public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
     {
-        logger.LogDebug("DAT does not support token refresh - use client credentials to obtain new token");
+        // DAT has no refresh grant; callers fall through to AcquireTokenAsync (client credentials).
         return Task.FromResult<OAuthTokenResultDto?>(null);
     }
 

@@ -1,5 +1,13 @@
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 
+internal record DatTokenResponse
+{
+    public string? AccessToken { get; set; }
+
+    // DAT org tokens carry an absolute expiry timestamp, not expires_in seconds
+    public DateTime? ExpiresWhen { get; set; }
+}
+
 internal record DatSearchResponse
 {
     public List<DatLoad>? Loads { get; set; }
