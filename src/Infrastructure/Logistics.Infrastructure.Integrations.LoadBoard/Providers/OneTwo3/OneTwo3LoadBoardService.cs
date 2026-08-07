@@ -69,7 +69,6 @@ internal class OneTwo3LoadBoardService(
 
     public Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret)
     {
-        // API-key auth: the key itself is sent on every request, no token to acquire
         return Task.FromResult<OAuthTokenResultDto?>(null);
     }
 

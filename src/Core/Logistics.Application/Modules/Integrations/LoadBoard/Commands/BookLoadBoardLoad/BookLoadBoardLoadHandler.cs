@@ -44,8 +44,7 @@ internal sealed class BookLoadBoardLoadHandler(
                 $"No active provider configuration found for {listing.ProviderType}");
         }
 
-        // Resolve the provider before any other entities are staged: a token acquisition
-        // saves the tenant scope, which must not flush an unrelated half-built booking.
+        // Resolve before staging entities: a token acquisition saves the scope mid-handler
         var providerResult = await tokenService.GetReadyProviderAsync(providerConfig, ct);
         if (!providerResult.IsSuccess || providerResult.Value is null)
         {

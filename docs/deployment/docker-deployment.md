@@ -82,7 +82,7 @@ All app ports bind to `127.0.0.1`, so the containers are reachable only through 
 
 Migrations are not run automatically in production. Apply them with `deploy/Run-ProdMigrator.ps1`, which loads `deploy/.env`, forces the Production environment, shows the target database host and requires you to type `migrate-prod` before running `Logistics.DbMigrator` once (`--exit`). See [Environment Variables](../configuration/environment-variables.md#running-the-migrator-against-production) for the variables it needs.
 
-The migrator also applies the **Duende operational store** schema to the master DB (`Keys`, `PersistedGrants`, `DeviceCodes`, `ServerSideSessions`, `PushedAuthorizationRequests`). The IdentityServer persists its token-signing keys and refresh tokens there, which is what lets user sessions survive `docker compose up --force-recreate` - always run the migrator **before** deploying an IdentityServer image that expects those tables. The first deploy after introducing this store still logs everyone out once (the previous signing key and in-memory refresh tokens die with the old container); every redeploy after that keeps sessions alive.
+The migrator also applies the **Duende operational store** schema to the master DB (`Keys`, `PersistedGrants`, ...), where the IdentityServer persists signing keys and refresh tokens so sessions survive redeploys. Run the migrator **before** deploying an IdentityServer image that expects those tables. The first deploy after introducing this store still logs everyone out once; later redeploys keep sessions alive.
 
 ## Service management
 

@@ -26,8 +26,7 @@ public static class Registrar
         services.AddHttpClient<OneTwo3LoadBoardService>();
         services.AddScoped<DemoLoadBoardService>();
 
-        // Singleton: 123Loadboard meters per account, but the typed-client service above is
-        // transient - counters must live here or they reset on every resolution
+        // Singleton: the typed-client service above is transient, counters would reset every resolution
         services.TryAddSingleton(TimeProvider.System);
         services.AddSingleton<IOneTwo3SearchRateLimiter, InMemoryOneTwo3SearchRateLimiter>();
 

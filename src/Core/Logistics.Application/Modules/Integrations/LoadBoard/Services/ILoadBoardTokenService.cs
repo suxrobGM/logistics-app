@@ -6,10 +6,8 @@ using Logistics.Application.Abstractions.LoadBoard;
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
 /// <summary>
-/// Returns a provider service whose OAuth token is valid, refreshing or re-acquiring and
-/// persisting it on the tenant configuration when needed. Call before mutating other entities
-/// in the scope - a successful token acquisition saves immediately so it survives a failed
-/// vendor call afterwards.
+/// Returns a provider whose OAuth token is valid, persisting refreshed tokens on the tenant
+/// configuration. Saves the scope immediately on acquisition - call before staging other changes.
 /// </summary>
 public interface ILoadBoardTokenService : IApplicationService
 {

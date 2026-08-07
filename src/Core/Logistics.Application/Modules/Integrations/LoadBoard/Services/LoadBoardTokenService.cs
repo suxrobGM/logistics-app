@@ -12,11 +12,9 @@ internal sealed class LoadBoardTokenService(
     ILoadBoardProviderFactory providerFactory,
     ILogger<LoadBoardTokenService> logger) : ILoadBoardTokenService
 {
-    /// <summary>Tokens are considered expired this long before their actual expiry.</summary>
     private static readonly TimeSpan ExpirySkew = TimeSpan.FromMinutes(2);
 
-    // Serializes refreshes per configuration on this instance so parallel searches don't
-    // burn the same refresh token twice. Multi-instance would need a distributed lock instead.
+    // Serializes refreshes per config; multi-instance would need a distributed lock
     private static readonly ConcurrentDictionary<Guid, SemaphoreSlim> RefreshLocks = new();
 
     public async Task<Result<ILoadBoardProviderService>> GetReadyProviderAsync(

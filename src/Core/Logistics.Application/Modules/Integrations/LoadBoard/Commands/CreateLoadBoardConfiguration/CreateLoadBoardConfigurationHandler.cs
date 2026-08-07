@@ -42,8 +42,7 @@ internal sealed class CreateLoadBoardConfigurationHandler(
             IsActive = true
         };
 
-        // OAuth providers validate by acquiring a token, which must be stored or every
-        // later call goes out unauthenticated. Key-based providers just validate.
+        // OAuth providers validate by acquiring; the token must be stored or later calls are unauthenticated
         var providerService = providerFactory.GetProvider(req.ProviderType);
         if (providerService.RequiresOAuthToken)
         {

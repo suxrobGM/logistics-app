@@ -5,9 +5,8 @@ using Microsoft.Extensions.Options;
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 
 /// <summary>
-///     Tracks 123Loadboard search usage. The vendor meters per account, so counters are keyed by
-///     tenant configuration id and must outlive the transient provider service - register the
-///     implementation as a singleton. Check and increment happen atomically in one call.
+///     Tracks 123Loadboard search quota per tenant configuration. Counters must outlive the
+///     transient provider service - register the implementation as a singleton.
 /// </summary>
 internal interface IOneTwo3SearchRateLimiter
 {

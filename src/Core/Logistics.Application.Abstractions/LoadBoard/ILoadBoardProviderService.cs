@@ -22,9 +22,8 @@ public interface ILoadBoardProviderService
     void Initialize(LoadBoardConfiguration configuration);
 
     /// <summary>
-    /// Whether the provider authenticates API calls with an OAuth access token that must be
-    /// acquired and persisted on the tenant configuration before <see cref="Initialize"/> is useful.
-    /// False for providers that send the API key directly on each request.
+    /// True when API calls need an OAuth token stored on the tenant configuration;
+    /// false when the API key itself is sent on each request
     /// </summary>
     bool RequiresOAuthToken { get; }
 
@@ -34,8 +33,7 @@ public interface ILoadBoardProviderService
     Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret);
 
     /// <summary>
-    /// Acquire a new OAuth access token from the stored credentials.
-    /// Returns null when the provider does not use OAuth tokens or acquisition fails.
+    /// Acquire a new OAuth access token; null when unsupported or acquisition fails
     /// </summary>
     Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret);
 

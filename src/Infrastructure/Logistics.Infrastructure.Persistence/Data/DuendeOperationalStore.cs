@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Logistics.Infrastructure.Persistence.Data;
 
 /// <summary>
-///     Single source of truth for configuring Duende's <c>PersistedGrantDbContext</c> against the
-///     master database. Used by the IdentityServer runtime, the DbMigrator, and EF design-time -
-///     the model must be built identically in all three or migrations drift.
-///     Persisting signing keys and grants here is what lets user sessions survive container
-///     redeploys (the containers themselves are stateless, no volumes).
+///     Shared config for Duende's <c>PersistedGrantDbContext</c> on the master DB. The
+///     IdentityServer runtime, DbMigrator, and EF design-time must build the model identically.
 /// </summary>
 public static class DuendeOperationalStore
 {
@@ -16,8 +13,7 @@ public static class DuendeOperationalStore
 
     public static void ConfigureDbContext(DbContextOptionsBuilder options, string? connectionString)
     {
-        // No UseLazyLoadingProxies: Duende's operational entities have no navigation properties,
-        // and keeping proxies out of this model keeps it byte-identical at design time.
+        // No lazy-loading proxies: Duende's entities have no navigations
         options.UseNpgsql(connectionString ?? ConnectionStrings.LocalMaster, o =>
             {
                 o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);

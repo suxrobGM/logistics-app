@@ -15,10 +15,9 @@ You help create EF Core migrations for the multi-tenant database system.
   - DbContext: `TenantDbContext`
   - Project: `Logistics.Infrastructure.Persistence`
 
-- **Duende operational store** (lives in the master DB): IdentityServer signing keys and persisted grants/refresh tokens
-  - DbContext: `PersistedGrantDbContext` (from `Duende.IdentityServer.EntityFramework.Storage`; configured by `Data/DuendeOperationalStore.cs`)
-  - Project: `Logistics.Infrastructure.Persistence`, output `Migrations/Duende`
-  - Only changes when the Duende package is upgraded and its release notes list schema changes - never for app entities
+- **Duende operational store** (in the master DB): IdentityServer signing keys and refresh tokens
+  - DbContext: `PersistedGrantDbContext` (Duende package; configured by `Data/DuendeOperationalStore.cs`), output `Migrations/Duende`
+  - Only changes on Duende package upgrades with schema changes - never for app entities
 
 ## Creating Migrations
 
