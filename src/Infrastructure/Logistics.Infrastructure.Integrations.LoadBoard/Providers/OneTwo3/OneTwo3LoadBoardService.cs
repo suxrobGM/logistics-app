@@ -18,27 +18,25 @@ internal class OneTwo3LoadBoardService(
     HttpClient httpClient,
     IHttpClientFactory httpClientFactory,
     IOptions<LoadBoardOptions> options,
+    IOneTwo3SearchRateLimiter rateLimiter,
     ILogger<OneTwo3LoadBoardService> logger)
     : ILoadBoardProviderService
 {
     private readonly OneTwo3LoadboardOptions options = options.Value.OneTwo3Loadboard ?? new OneTwo3LoadboardOptions();
-    private readonly Lock rateLimitLock = new();
-    private int dailySearchCount;
-    private int hourlySearchCount;
-    private DateTime lastDayReset = DateTime.UtcNow;
-    private DateTime lastHourReset = DateTime.UtcNow;
-    private string? serviceApiKey;
+    private Guid configurationId;
 
     public LoadBoardProviderType ProviderType => LoadBoardProviderType.OneTwo3Loadboard;
 
+    public bool RequiresOAuthToken => false;
+
     public void Initialize(LoadBoardConfiguration configuration)
     {
-        serviceApiKey = configuration.ApiKey;
+        configurationId = configuration.Id;
         httpClient.BaseAddress = new Uri(options.BaseUrl);
 
-        if (!string.IsNullOrEmpty(serviceApiKey))
+        if (!string.IsNullOrEmpty(configuration.ApiKey))
         {
-            httpClient.DefaultRequestHeaders.Add("X-API-Key", serviceApiKey);
+            httpClient.DefaultRequestHeaders.Add("X-API-Key", configuration.ApiKey);
         }
 
         logger.LogInformation("Initialized 123Loadboard provider");
@@ -69,6 +67,11 @@ internal class OneTwo3LoadBoardService(
         }
     }
 
+    public Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret)
+    {
+        return Task.FromResult<OAuthTokenResultDto?>(null);
+    }
+
     public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
     {
         logger.LogDebug("123Loadboard uses API key authentication - token refresh not applicable");
@@ -77,9 +80,8 @@ internal class OneTwo3LoadBoardService(
 
     public async Task<IEnumerable<LoadBoardListingDto>> SearchLoadsAsync(LoadBoardSearchCriteria criteria)
     {
-        if (!CheckRateLimit())
+        if (!rateLimiter.TryAcquireSearch(configurationId))
         {
-            logger.LogWarning("123Loadboard rate limit exceeded");
             return [];
         }
 
@@ -111,7 +113,6 @@ internal class OneTwo3LoadBoardService(
         var result = await httpClient.TryPostAsJsonAsync<object, OneTwo3SearchResponse>(
             "/v1/loads/search", searchRequest, logger, "123Loadboard search loads");
 
-        IncrementSearchCount();
         return result.Value?.Loads?.Select(OneTwo3Mapper.ToListingDto) ?? [];
     }
 
@@ -254,51 +255,6 @@ internal class OneTwo3LoadBoardService(
             {
                 IsValid = false, EventType = LoadBoardWebhookEventType.Unknown, ErrorMessage = ex.Message
             });
-        }
-    }
-
-    private bool CheckRateLimit()
-    {
-        lock (rateLimitLock)
-        {
-            var now = DateTime.UtcNow;
-
-            if ((now - lastHourReset).TotalHours >= 1)
-            {
-                hourlySearchCount = 0;
-                lastHourReset = now;
-            }
-
-            if ((now - lastDayReset).TotalDays >= 1)
-            {
-                dailySearchCount = 0;
-                lastDayReset = now;
-            }
-
-            if (hourlySearchCount >= options.MaxSearchesPerHour)
-            {
-                logger.LogWarning("123Loadboard hourly rate limit reached: {Count}/{Max}",
-                    hourlySearchCount, options.MaxSearchesPerHour);
-                return false;
-            }
-
-            if (dailySearchCount >= options.MaxSearchesPerDay)
-            {
-                logger.LogWarning("123Loadboard daily rate limit reached: {Count}/{Max}",
-                    dailySearchCount, options.MaxSearchesPerDay);
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    private void IncrementSearchCount()
-    {
-        lock (rateLimitLock)
-        {
-            hourlySearchCount++;
-            dailySearchCount++;
         }
     }
 }

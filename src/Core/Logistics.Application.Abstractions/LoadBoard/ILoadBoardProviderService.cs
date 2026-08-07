@@ -22,9 +22,20 @@ public interface ILoadBoardProviderService
     void Initialize(LoadBoardConfiguration configuration);
 
     /// <summary>
+    /// True when API calls need an OAuth token stored on the tenant configuration;
+    /// false when the API key itself is sent on each request
+    /// </summary>
+    bool RequiresOAuthToken { get; }
+
+    /// <summary>
     /// Validate that the provided credentials are correct
     /// </summary>
     Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret);
+
+    /// <summary>
+    /// Acquire a new OAuth access token; null when unsupported or acquisition fails
+    /// </summary>
+    Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret);
 
     /// <summary>
     /// Refresh an OAuth access token using a refresh token

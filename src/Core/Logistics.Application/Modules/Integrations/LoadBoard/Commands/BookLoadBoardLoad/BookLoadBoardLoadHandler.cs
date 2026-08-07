@@ -6,12 +6,13 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class BookLoadBoardLoadHandler(
     ITenantUnitOfWork tenantUow,
-    ILoadBoardProviderFactory providerFactory,
+    ILoadBoardTokenService tokenService,
     IBrokerCreditService brokerCreditService,
     ILogger<BookLoadBoardLoadHandler> logger)
     : IAppRequestHandler<BookLoadBoardLoadCommand, Result<LoadBoardBookingResultDto>>
@@ -42,6 +43,16 @@ internal sealed class BookLoadBoardLoadHandler(
             return Result<LoadBoardBookingResultDto>.Fail(
                 $"No active provider configuration found for {listing.ProviderType}");
         }
+
+        // Resolve before staging entities: a token acquisition saves the scope mid-handler
+        var providerResult = await tokenService.GetReadyProviderAsync(providerConfig, ct);
+        if (!providerResult.IsSuccess || providerResult.Value is null)
+        {
+            return Result<LoadBoardBookingResultDto>.Fail(
+                providerResult.Error ?? $"Could not authenticate with {listing.ProviderType}");
+        }
+
+        var provider = providerResult.Value;
 
         // Get truck
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
@@ -117,7 +128,6 @@ internal sealed class BookLoadBoardLoadHandler(
         }
 
         // Book the load with the provider
-        var provider = providerFactory.GetProvider(providerConfig);
         var bookingResult = await provider.BookLoadAsync(listing.ExternalListingId, new LoadBoardBookingRequest
         {
             TruckId = req.TruckId,

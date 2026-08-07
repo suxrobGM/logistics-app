@@ -100,6 +100,16 @@ Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"
 | `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key (alternative provider)                                            |
 | `Llm__DefaultProvider`              | Default LLM provider: `Anthropic`, `OpenAI`, `DeepSeek`, `Glm` (default: `OpenAI`) |
 
+### FMCSA Broker Credit Lookup (Optional)
+
+```bash
+Fmcsa__WebKey="your-fmcsa-webkey"
+```
+
+| Variable        | Description                                                                                                               |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `Fmcsa__WebKey` | Free webKey from <https://mobile.fmcsa.dot.gov/QCDevsite/>. Load board broker vetting skips FMCSA checks when it's unset. |
+
 ### TMS Portal (Runtime)
 
 The TMS portal Docker image uses runtime environment variable substitution for secrets. These are injected at container startup by the shared SPA entrypoint script (`src/Client/Logistics.Angular/deploy/docker-entrypoint-spa.sh`), which all three portals run.

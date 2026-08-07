@@ -5,12 +5,14 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class PostTruckToLoadBoardHandler(
     ITenantUnitOfWork tenantUow,
     ILoadBoardProviderFactory providerFactory,
+    ILoadBoardTokenService tokenService,
     ILogger<PostTruckToLoadBoardHandler> logger)
     : IAppRequestHandler<PostTruckToLoadBoardCommand, Result<PostTruckResultDto>>
 {
@@ -54,8 +56,14 @@ internal sealed class PostTruckToLoadBoardHandler(
         }
 
         // Post to the load board provider
-        var provider = providerFactory.GetProvider(providerConfig);
-        var postResult = await provider.PostTruckAsync(new PostTruckRequest
+        var providerResult = await tokenService.GetReadyProviderAsync(providerConfig, ct);
+        if (!providerResult.IsSuccess || providerResult.Value is null)
+        {
+            return Result<PostTruckResultDto>.Fail(
+                providerResult.Error ?? $"Could not authenticate with {req.ProviderType}");
+        }
+
+        var postResult = await providerResult.Value.PostTruckAsync(new PostTruckRequest
         {
             TruckId = req.TruckId,
             ProviderType = req.ProviderType,

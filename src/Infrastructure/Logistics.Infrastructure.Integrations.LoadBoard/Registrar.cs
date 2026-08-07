@@ -6,6 +6,7 @@ using Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Truckstop;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard;
@@ -24,6 +25,10 @@ public static class Registrar
         services.AddHttpClient<TruckstopLoadBoardService>();
         services.AddHttpClient<OneTwo3LoadBoardService>();
         services.AddScoped<DemoLoadBoardService>();
+
+        // Singleton: the typed-client service above is transient, counters would reset every resolution
+        services.TryAddSingleton(TimeProvider.System);
+        services.AddSingleton<IOneTwo3SearchRateLimiter, InMemoryOneTwo3SearchRateLimiter>();
 
         // Options binding + factory pattern for provider selection
         services.AddProviderIntegration<LoadBoardOptions, ILoadBoardProviderFactory, LoadBoardProviderFactory>(

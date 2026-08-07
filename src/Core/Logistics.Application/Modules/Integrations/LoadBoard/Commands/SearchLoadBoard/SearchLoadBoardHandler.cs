@@ -6,12 +6,13 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class SearchLoadBoardHandler(
     ITenantUnitOfWork tenantUow,
-    ILoadBoardProviderFactory providerFactory,
+    ILoadBoardTokenService tokenService,
     ILogger<SearchLoadBoardHandler> logger)
     : IAppRequestHandler<SearchLoadBoardCommand, Result<LoadBoardSearchResultDto>>
 {
@@ -58,8 +59,15 @@ internal sealed class SearchLoadBoardHandler(
         {
             try
             {
-                var provider = providerFactory.GetProvider(config);
-                var listings = await provider.SearchLoadsAsync(criteria);
+                var providerResult = await tokenService.GetReadyProviderAsync(config, ct);
+                if (!providerResult.IsSuccess || providerResult.Value is null)
+                {
+                    errors[config.ProviderType] = providerResult.Error;
+                    countByProvider[config.ProviderType] = 0;
+                    continue;
+                }
+
+                var listings = await providerResult.Value.SearchLoadsAsync(criteria);
                 var listingsList = listings.ToList();
 
                 allListings.AddRange(listingsList);

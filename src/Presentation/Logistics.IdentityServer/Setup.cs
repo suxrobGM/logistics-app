@@ -78,7 +78,16 @@ internal static class Setup
             .AddInMemoryApiScopes(Config.ApiScopes())
             .AddInMemoryApiResources(Config.ApiResources())
             .AddInMemoryClients(Config.Clients(configuration))
-            .AddAspNetIdentity<User>();
+            .AddAspNetIdentity<User>()
+            // Signing keys + refresh tokens in the master DB; without this both live in the
+            // container and every redeploy invalidates all sessions
+            .AddOperationalStore(options =>
+            {
+                options.ConfigureDbContext = b => DuendeOperationalStore.ConfigureDbContext(
+                    b, configuration.GetConnectionString("MasterDatabase"));
+                options.EnableTokenCleanup = true;
+                options.RemoveConsumedTokens = true;
+            });
 
         services.AddAuthentication()
             .AddGoogle(options =>

@@ -1,5 +1,8 @@
+using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Options;
 using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.DbMigrator.Data;
+using Logistics.Infrastructure.Persistence.Data;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Services;
 using Logistics.DbMigrator.Workers;
@@ -27,6 +30,12 @@ builder.Services.AddPersistenceInfrastructure(builder.Configuration)
     .AddMasterDatabase()
     .AddTenantDatabase()
     .AddIdentity();
+
+// Duende operational store (signing keys + grants) in the master DB, migrated before IdentityServer needs it
+builder.Services.AddSingleton(new OperationalStoreOptions());
+builder.Services.AddDbContext<PersistedGrantDbContext>(options =>
+    DuendeOperationalStore.ConfigureDbContext(
+        options, builder.Configuration.GetConnectionString("MasterDatabase")));
 
 builder.Services.AddApplicationTaxServices();
 builder.Services.AddApplicationFuelCardServices();

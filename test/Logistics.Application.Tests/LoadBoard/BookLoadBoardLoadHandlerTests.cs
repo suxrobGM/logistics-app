@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -14,7 +15,7 @@ namespace Logistics.Application.Tests.LoadBoard;
 public class BookLoadBoardLoadHandlerTests
 {
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ILoadBoardProviderFactory providerFactory = Substitute.For<ILoadBoardProviderFactory>();
+    private readonly ILoadBoardTokenService tokenService = Substitute.For<ILoadBoardTokenService>();
     private readonly ILoadBoardProviderService provider = Substitute.For<ILoadBoardProviderService>();
     private readonly IBrokerCreditService brokerCreditService = Substitute.For<IBrokerCreditService>();
 
@@ -74,12 +75,13 @@ public class BookLoadBoardLoadHandlerTests
         customerRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<Customer, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Customer?)null);
 
-        providerFactory.GetProvider(config).Returns(provider);
+        tokenService.GetReadyProviderAsync(config, Arg.Any<CancellationToken>())
+            .Returns(Result<ILoadBoardProviderService>.Ok(provider));
         provider.BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>())
             .Returns(new LoadBoardBookingResultDto { Success = true, ExternalConfirmationId = "CONF-1" });
 
         sut = new BookLoadBoardLoadHandler(
-            tenantUow, providerFactory, brokerCreditService, NullLogger<BookLoadBoardLoadHandler>.Instance);
+            tenantUow, tokenService, brokerCreditService, NullLogger<BookLoadBoardLoadHandler>.Instance);
     }
 
     private static LoadBoardListing CreateListing()
