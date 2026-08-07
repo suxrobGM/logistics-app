@@ -4,10 +4,6 @@ using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 
-/// <summary>
-///     Tracks 123Loadboard search quota per tenant configuration. Counters must outlive the
-///     transient provider service - register the implementation as a singleton.
-/// </summary>
 internal interface IOneTwo3SearchRateLimiter
 {
     bool TryAcquireSearch(Guid configurationId);

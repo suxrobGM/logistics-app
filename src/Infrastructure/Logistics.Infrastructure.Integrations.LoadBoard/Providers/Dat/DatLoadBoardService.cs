@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using Logistics.Infrastructure.Integrations.Common;
-using System.Net.Http.Json;
 using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
@@ -50,35 +49,21 @@ internal class DatLoadBoardService(
 
     public async Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret)
     {
-        try
-        {
-            var authClient = httpClientFactory.CreateClient();
-            var response = await authClient.PostAsJsonAsync(options.AuthUrl,
-                new { clientId = apiKey, clientSecret = apiSecret });
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("DAT token acquisition failed: {StatusCode}", response.StatusCode);
-                return null;
-            }
+        var authClient = httpClientFactory.CreateClient();
+        var result = await authClient.TryPostAsJsonAsync<object, DatTokenResponse>(
+            options.AuthUrl, new { clientId = apiKey, clientSecret = apiSecret }, logger, "DAT token acquisition");
 
-            var token = await response.Content.ReadFromJsonAsync<DatTokenResponse>();
-            if (string.IsNullOrEmpty(token?.AccessToken))
-            {
-                logger.LogWarning("DAT token response contained no access token");
-                return null;
-            }
-
-            return new OAuthTokenResultDto
-            {
-                AccessToken = token.AccessToken,
-                ExpiresAt = token.ExpiresWhen ?? DateTime.UtcNow.AddMinutes(50)
-            };
-        }
-        catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException)
+        var token = result.Value;
+        if (string.IsNullOrEmpty(token?.AccessToken))
         {
-            logger.LogError(ex, "Error acquiring DAT token");
             return null;
         }
+
+        return new OAuthTokenResultDto
+        {
+            AccessToken = token.AccessToken,
+            ExpiresAt = token.ExpiresWhen ?? DateTime.UtcNow.AddMinutes(50)
+        };
     }
 
     public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)

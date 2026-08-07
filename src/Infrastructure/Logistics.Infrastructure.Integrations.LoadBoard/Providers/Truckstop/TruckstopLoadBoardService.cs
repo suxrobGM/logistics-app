@@ -49,43 +49,18 @@ internal class TruckstopLoadBoardService(
 
     public async Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret)
     {
-        try
+        return ToTokenResult(await RequestTokenAsync("acquisition", new Dictionary<string, string>
         {
-            var result = await GetTokenAsync(apiKey, apiSecret);
-            return ToTokenResult(result);
-        }
-        catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException)
-        {
-            logger.LogError(ex, "Error acquiring Truckstop token");
-            return null;
-        }
+            ["grant_type"] = "password", ["username"] = apiKey, ["password"] = apiSecret ?? string.Empty
+        }));
     }
 
     public async Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
     {
-        try
+        return ToTokenResult(await RequestTokenAsync("refresh", new Dictionary<string, string>
         {
-            var authClient = httpClientFactory.CreateClient();
-            var tokenRequest = new Dictionary<string, string>
-            {
-                ["grant_type"] = "refresh_token", ["refresh_token"] = refreshToken
-            };
-
-            var response = await authClient.PostAsync(options.TokenUrl, new FormUrlEncodedContent(tokenRequest));
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("Truckstop token refresh failed: {StatusCode}", response.StatusCode);
-                return null;
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<TruckstopTokenResponse>();
-            return ToTokenResult(result);
-        }
-        catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException)
-        {
-            logger.LogError(ex, "Error refreshing Truckstop token");
-            return null;
-        }
+            ["grant_type"] = "refresh_token", ["refresh_token"] = refreshToken
+        }));
     }
 
     private static OAuthTokenResultDto? ToTokenResult(TruckstopTokenResponse? result)
@@ -107,7 +82,6 @@ internal class TruckstopLoadBoardService(
     {
         logger.LogInformation("Searching Truckstop loads: Origin={Origin}, Dest={Dest}",
             criteria.OriginAddress?.City, criteria.DestinationAddress?.City);
-
 
         var searchRequest = new
         {
@@ -171,7 +145,6 @@ internal class TruckstopLoadBoardService(
     public async Task<PostTruckResultDto> PostTruckAsync(PostTruckRequest request)
     {
         logger.LogInformation("Posting truck {TruckId} to Truckstop", request.TruckId);
-
 
         var postRequest = new
         {
@@ -280,20 +253,24 @@ internal class TruckstopLoadBoardService(
         }
     }
 
-    private async Task<TruckstopTokenResponse?> GetTokenAsync(string username, string? password)
+    private async Task<TruckstopTokenResponse?> RequestTokenAsync(string action, Dictionary<string, string> form)
     {
-        var authClient = httpClientFactory.CreateClient();
-        var tokenRequest = new Dictionary<string, string>
+        try
         {
-            ["grant_type"] = "password", ["username"] = username, ["password"] = password ?? string.Empty
-        };
+            var authClient = httpClientFactory.CreateClient();
+            var response = await authClient.PostAsync(options.TokenUrl, new FormUrlEncodedContent(form));
+            if (!response.IsSuccessStatusCode)
+            {
+                logger.LogWarning("Truckstop token {Action} failed: {StatusCode}", action, response.StatusCode);
+                return null;
+            }
 
-        var response = await authClient.PostAsync(options.TokenUrl, new FormUrlEncodedContent(tokenRequest));
-        if (!response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<TruckstopTokenResponse>();
+        }
+        catch (Exception ex) when (ex is HttpRequestException or JsonException or TaskCanceledException)
         {
+            logger.LogError(ex, "Error during Truckstop token {Action}", action);
             return null;
         }
-
-        return await response.Content.ReadFromJsonAsync<TruckstopTokenResponse>();
     }
 }

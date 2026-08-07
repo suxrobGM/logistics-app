@@ -39,14 +39,15 @@ internal sealed class RemovePostedTruckHandler(
         {
             // Try to remove from the load board provider
             var providerResult = await tokenService.GetReadyProviderAsync(providerConfig, ct);
-            var removed = providerResult is { IsSuccess: true, Value: not null } &&
-                          await providerResult.Value.RemoveTruckPostAsync(postedTruck.ExternalPostId);
+            var provider = providerResult.IsSuccess ? providerResult.Value : null;
+            var removed = provider is not null &&
+                          await provider.RemoveTruckPostAsync(postedTruck.ExternalPostId);
 
             if (!removed)
             {
                 logger.LogWarning(
-                    "Failed to remove truck post {ExternalPostId} from {Provider}, removing local record anyway",
-                    postedTruck.ExternalPostId, postedTruck.ProviderType);
+                    "Failed to remove truck post {ExternalPostId} from {Provider}, removing local record anyway: {Error}",
+                    postedTruck.ExternalPostId, postedTruck.ProviderType, providerResult.Error);
             }
         }
 
