@@ -30,11 +30,11 @@ describe("messageSortKey", () => {
 });
 
 describe("firstMessageSequenceBySession", () => {
-  it("takes the lowest sequence per session", () => {
+  it("takes the lowest assistant sequence per session", () => {
     const messages = [
-      message({ sessionId: "s1", sequence: 10 }),
-      message({ sessionId: "s1", sequence: 3 }),
-      message({ sessionId: "s1", sequence: 20 }),
+      message({ role: "assistant", sessionId: "s1", sequence: 10 }),
+      message({ role: "assistant", sessionId: "s1", sequence: 3 }),
+      message({ role: "assistant", sessionId: "s1", sequence: 20 }),
     ];
 
     expect(firstMessageSequenceBySession(messages)).toEqual(new Map([["s1", 3]]));
@@ -42,8 +42,8 @@ describe("firstMessageSequenceBySession", () => {
 
   it("keeps sessions independent", () => {
     const messages = [
-      message({ sessionId: "s1", sequence: 10 }),
-      message({ sessionId: "s2", sequence: 1 }),
+      message({ role: "assistant", sessionId: "s1", sequence: 10 }),
+      message({ role: "assistant", sessionId: "s2", sequence: 1 }),
     ];
 
     expect(firstMessageSequenceBySession(messages)).toEqual(
@@ -55,13 +55,22 @@ describe("firstMessageSequenceBySession", () => {
   });
 
   it("ignores messages with no sessionId", () => {
-    const messages = [message({ sessionId: undefined, sequence: 1 })];
+    const messages = [message({ role: "assistant", sessionId: undefined, sequence: 1 })];
 
     expect(firstMessageSequenceBySession(messages)).toEqual(new Map());
   });
 
+  it("skips the user message that triggered the turn, so tools sort between question and reply", () => {
+    const messages = [
+      message({ role: "user", sessionId: "s1", sequence: 1 }),
+      message({ role: "assistant", sessionId: "s1", sequence: 2 }),
+    ];
+
+    expect(firstMessageSequenceBySession(messages)).toEqual(new Map([["s1", 2]]));
+  });
+
   it("a session whose only message has no sequence records the tail key", () => {
-    const messages = [message({ sessionId: "s1", sequence: undefined })];
+    const messages = [message({ role: "assistant", sessionId: "s1", sequence: undefined })];
 
     expect(firstMessageSequenceBySession(messages)).toEqual(new Map([["s1", AgentStreamTailKey]]));
   });

@@ -15,13 +15,17 @@ export function messageSortKey(message: AgentMessageDto): number {
   return message.sequence ?? AgentStreamTailKey;
 }
 
-/** Lowest message sequence per session - where that session's turn begins. */
+/**
+ * Lowest ASSISTANT message sequence per session - where that session's reply begins. The user
+ * message that triggered the turn carries the same sessionId; anchoring on it would float the
+ * tool activity above the question instead of between question and reply.
+ */
 export function firstMessageSequenceBySession(
   messages: readonly AgentMessageDto[],
 ): Map<string, number> {
   const first = new Map<string, number>();
   for (const message of messages) {
-    if (!message.sessionId) continue;
+    if (!message.sessionId || message.role === "user") continue;
     const sortKey = messageSortKey(message);
     first.set(message.sessionId, Math.min(first.get(message.sessionId) ?? sortKey, sortKey));
   }
