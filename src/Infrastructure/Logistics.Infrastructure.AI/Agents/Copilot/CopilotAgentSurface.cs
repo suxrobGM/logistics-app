@@ -1,11 +1,10 @@
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
-using Logistics.Application.Modules.IdentityAccess.Users.Queries;
+using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
-using MediatR;
 
 namespace Logistics.Infrastructure.AI.Agents.Copilot;
 
@@ -17,7 +16,7 @@ namespace Logistics.Infrastructure.AI.Agents.Copilot;
 internal sealed class CopilotAgentSurface(
     AICopilotConversationBuilder conversationBuilder,
     IAICopilotBroadcastService broadcastService,
-    IMediator mediator) : IAgentSurface
+    IUserPermissionService userPermissions) : IAgentSurface
 {
     public AgentSessionType SessionType => AgentSessionType.Copilot;
 
@@ -60,12 +59,6 @@ internal sealed class CopilotAgentSurface(
         if (request.TriggeredByUserId is not { } userId)
             return new HashSet<string>();
 
-        var result = await mediator.Send(new GetCurrentUserPermissionsQuery
-        {
-            UserId = userId,
-            TenantId = request.TenantId
-        }, ct);
-
-        return result.Value?.ToHashSet() ?? [];
+        return await userPermissions.GetPermissionsAsync(userId, request.TenantId, ct);
     }
 }

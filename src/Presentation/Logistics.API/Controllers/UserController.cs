@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.IdentityAccess.Users.Commands;
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
+using Logistics.Application.Modules.IdentityAccess.Users.Services;
 
 namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("users")]
 [Produces("application/json")]
-public class UserController(IMediator mediator) : ControllerBase
+public class UserController(IMediator mediator, IUserPermissionService userPermissions) : ControllerBase
 {
     [HttpGet("me/permissions", Name = "GetCurrentUserPermissions")]
     [ProducesResponseType(typeof(string[]), StatusCodes.Status200OK)]
@@ -31,13 +32,9 @@ public class UserController(IMediator mediator) : ControllerBase
         var tenantClaim = User.FindFirst(CustomClaimTypes.Tenant)?.Value;
         var tenantId = Guid.TryParse(tenantClaim, out var tid) ? tid : (Guid?)null;
 
-        var result = await mediator.Send(new GetCurrentUserPermissionsQuery
-        {
-            UserId = userId.Value,
-            TenantId = tenantId
-        });
+        var permissions = await userPermissions.GetPermissionsAsync(userId.Value, tenantId);
 
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+        return Ok(permissions);
     }
 
     [HttpGet("{id}", Name = "GetUserById")]

@@ -3,7 +3,6 @@ using Logistics.Domain.Entities;
 
 namespace Logistics.Application.Modules.Integrations.Agents.Services;
 
-/// <summary>Which conversations a surface may read or act on, in one place.</summary>
 internal interface IAgentConversationAccess : IApplicationService
 {
     /// <summary>

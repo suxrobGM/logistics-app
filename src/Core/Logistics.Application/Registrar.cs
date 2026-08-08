@@ -77,6 +77,9 @@ public static class Registrar
 
     private static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        // UserPermissionService caches on it; idempotent, so a host registering it too is fine.
+        services.AddMemoryCache();
+
         services.Scan(scan => scan
             .FromAssemblies(typeof(Registrar).Assembly)
             .AddClasses(c => c.AssignableTo<IApplicationService>(), publicOnly: false)

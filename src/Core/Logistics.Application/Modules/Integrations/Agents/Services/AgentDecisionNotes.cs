@@ -15,8 +15,8 @@ internal sealed class AgentDecisionNotes(ITenantUnitOfWork tenantUow) : IAgentDe
             : $"Rejected: {decision.ToolName} - {reason}";
 
     public Task<AgentConversation> LoadConversationAsync(AgentDecision decision, CancellationToken ct) =>
-        // Projected through the session rather than read off decision.Session, which would lazy-load
-        // the whole session row for one FK. Required FK, so a live decision always has its row.
+        // Projected off the session query, not decision.Session, which lazy-loads the whole row
+        // for one FK. Required FK, so a live decision always has its conversation.
         tenantUow.Repository<AgentSession>().Query()
             .Where(s => s.Id == decision.SessionId)
             .Select(s => s.Conversation)
