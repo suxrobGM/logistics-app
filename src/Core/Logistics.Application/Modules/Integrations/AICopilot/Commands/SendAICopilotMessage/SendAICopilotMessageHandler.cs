@@ -17,7 +17,7 @@ internal sealed class SendAICopilotMessageHandler(
     IAIQuotaService quotaService,
     IBackgroundJobRunner<AICopilotTurnRequest> backgroundRunner,
     ILogger<SendAICopilotMessageHandler> logger)
-    : IAppRequestHandler<SendAICopilotMessageCommand, Result<SendAICopilotMessageResultDto>>
+    : IAppRequestHandler<SendAICopilotMessageCommand, Result<SendAgentMessageResultDto>>
 {
     /// <summary>
     /// A Running conversation older than this is assumed crashed and may be taken over, rather
@@ -25,12 +25,12 @@ internal sealed class SendAICopilotMessageHandler(
     /// </summary>
     private static readonly TimeSpan StaleTurnWindow = TimeSpan.FromMinutes(15);
 
-    public async Task<Result<SendAICopilotMessageResultDto>> Handle(
+    public async Task<Result<SendAgentMessageResultDto>> Handle(
         SendAICopilotMessageCommand request, CancellationToken ct)
     {
         var userId = currentUser.GetUserId();
         if (userId is null)
-            return Result<SendAICopilotMessageResultDto>.Fail("User is not authenticated");
+            return Result<SendAgentMessageResultDto>.Fail("User is not authenticated");
 
         var conversation = await tenantUow.Repository<AgentConversation>()
             .GetByIdAsync(request.ConversationId, ct);
@@ -39,13 +39,13 @@ internal sealed class SendAICopilotMessageHandler(
             || conversation.CreatedById != userId.Value
             || conversation.Kind != AgentConversationKind.Copilot)
         {
-            return Result<SendAICopilotMessageResultDto>.Fail("Conversation not found");
+            return Result<SendAgentMessageResultDto>.Fail("Conversation not found");
         }
 
         if (conversation.Status == AgentConversationStatus.Running)
         {
             if (conversation.TurnStartedAt > DateTime.UtcNow - StaleTurnWindow)
-                return Result<SendAICopilotMessageResultDto>.Fail("A copilot turn is already in progress");
+                return Result<SendAgentMessageResultDto>.Fail("A copilot turn is already in progress");
 
             logger.LogWarning(
                 "Copilot conversation {ConversationId} stuck Running since {TurnStartedAt}; taking over",
@@ -61,7 +61,7 @@ internal sealed class SendAICopilotMessageHandler(
             var quota = await quotaService.GetQuotaStatusAsync(tenant.Id, ct);
             if (quota.OverageBlocked)
             {
-                return Result<SendAICopilotMessageResultDto>.Fail(
+                return Result<SendAgentMessageResultDto>.Fail(
                     ErrorCodes.AIBudgetReachedMessage, ErrorCodes.AIBudgetReached);
             }
         }
@@ -73,7 +73,7 @@ internal sealed class SendAICopilotMessageHandler(
 
         backgroundRunner.Enqueue(new AICopilotTurnRequest(tenant.Id, conversation.Id, userId.Value));
 
-        return Result<SendAICopilotMessageResultDto>.Ok(new SendAICopilotMessageResultDto
+        return Result<SendAgentMessageResultDto>.Ok(new SendAgentMessageResultDto
         {
             ConversationId = conversation.Id,
             UserMessageId = message.Id,

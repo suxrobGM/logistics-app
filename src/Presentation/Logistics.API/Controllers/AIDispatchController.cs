@@ -47,7 +47,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     ///     progress and the reply arrive over the dispatch SignalR hub for every connected client.
     /// </summary>
     [HttpPost("conversations/{conversationId:guid}/messages", Name = "SendAIDispatchMessage")]
-    [ProducesResponseType(typeof(SendAIDispatchMessageResultDto), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(typeof(SendAgentMessageResultDto), StatusCodes.Status202Accepted)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Dispatch.Manage)]
     public async Task<IActionResult> SendMessage(Guid conversationId, [FromBody] SendAIDispatchMessageCommand request)

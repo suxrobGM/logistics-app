@@ -47,7 +47,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     ///     over the copilot SignalR hub.
     /// </summary>
     [HttpPost("conversations/{conversationId:guid}/messages", Name = "SendCopilotMessage")]
-    [ProducesResponseType(typeof(SendAICopilotMessageResultDto), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(typeof(SendAgentMessageResultDto), StatusCodes.Status202Accepted)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Copilot.Manage)]
     public async Task<IActionResult> SendMessage(Guid conversationId, [FromBody] SendAICopilotMessageCommand request)

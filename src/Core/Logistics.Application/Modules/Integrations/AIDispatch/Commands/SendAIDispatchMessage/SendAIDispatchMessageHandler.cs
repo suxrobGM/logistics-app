@@ -21,7 +21,7 @@ internal sealed class SendAIDispatchMessageHandler(
     IAIQuotaService quotaService,
     IBackgroundJobRunner<AIDispatchTurnRequest> backgroundRunner,
     ILogger<SendAIDispatchMessageHandler> logger)
-    : IAppRequestHandler<SendAIDispatchMessageCommand, Result<SendAIDispatchMessageResultDto>>
+    : IAppRequestHandler<SendAIDispatchMessageCommand, Result<SendAgentMessageResultDto>>
 {
     /// <summary>
     /// A Running conversation older than this is assumed crashed and may be taken over, rather
@@ -29,23 +29,23 @@ internal sealed class SendAIDispatchMessageHandler(
     /// </summary>
     private static readonly TimeSpan StaleTurnWindow = TimeSpan.FromMinutes(15);
 
-    public async Task<Result<SendAIDispatchMessageResultDto>> Handle(
+    public async Task<Result<SendAgentMessageResultDto>> Handle(
         SendAIDispatchMessageCommand request, CancellationToken ct)
     {
         var userId = currentUser.GetUserId();
         if (userId is null)
-            return Result<SendAIDispatchMessageResultDto>.Fail("User is not authenticated");
+            return Result<SendAgentMessageResultDto>.Fail("User is not authenticated");
 
         var conversation = await tenantUow.Repository<AgentConversation>()
             .GetByIdAsync(request.ConversationId, ct);
 
         if (conversation is null || conversation.Kind != AgentConversationKind.Dispatch)
-            return Result<SendAIDispatchMessageResultDto>.Fail("Conversation not found");
+            return Result<SendAgentMessageResultDto>.Fail("Conversation not found");
 
         if (conversation.Status == AgentConversationStatus.Running)
         {
             if (conversation.TurnStartedAt > DateTime.UtcNow - StaleTurnWindow)
-                return Result<SendAIDispatchMessageResultDto>.Fail("A dispatch turn is already in progress");
+                return Result<SendAgentMessageResultDto>.Fail("A dispatch turn is already in progress");
 
             logger.LogWarning(
                 "Dispatch conversation {ConversationId} stuck Running since {TurnStartedAt}; taking over",
@@ -61,7 +61,7 @@ internal sealed class SendAIDispatchMessageHandler(
             var quota = await quotaService.GetQuotaStatusAsync(tenant.Id, ct);
             if (quota.OverageBlocked)
             {
-                return Result<SendAIDispatchMessageResultDto>.Fail(
+                return Result<SendAgentMessageResultDto>.Fail(
                     ErrorCodes.AIBudgetReachedMessage, ErrorCodes.AIBudgetReached);
             }
         }
@@ -73,7 +73,7 @@ internal sealed class SendAIDispatchMessageHandler(
 
         backgroundRunner.Enqueue(new AIDispatchTurnRequest(tenant.Id, conversation.Id, userId.Value));
 
-        return Result<SendAIDispatchMessageResultDto>.Ok(new SendAIDispatchMessageResultDto
+        return Result<SendAgentMessageResultDto>.Ok(new SendAgentMessageResultDto
         {
             ConversationId = conversation.Id,
             UserMessageId = message.Id,
