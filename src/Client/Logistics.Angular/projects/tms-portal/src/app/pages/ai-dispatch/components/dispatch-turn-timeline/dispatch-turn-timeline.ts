@@ -1,5 +1,5 @@
 import { DatePipe } from "@angular/common";
-import { Component, computed, input, output, signal } from "@angular/core";
+import { Component, computed, inject, input, signal } from "@angular/core";
 import { Permission, PermissionGuard } from "@logistics/shared";
 import type { AgentDecisionDto, AgentSessionDto } from "@logistics/shared/api";
 import {
@@ -14,9 +14,14 @@ import {
   UiTimelineContent,
   UiTimelineMarker,
 } from "@logistics/shared/ui";
-import { ApproveRejectActions, ToolOutputSummary } from "@/shared/components";
+import {
+  ApproveRejectActions,
+  DecisionActionsService,
+  ToolOutputSummary,
+} from "@/shared/components";
 import { MarkdownPipe } from "@/shared/pipes";
 import { getToolIcon, getToolLabel, getToolMarkerClass, isWriteTool, Labels } from "@/shared/utils";
+import { DispatchChatStore } from "../../store/dispatch-chat.store";
 
 /**
  * One agent turn's tool activity, ported from the old session-details "Agent Timeline": a
@@ -47,10 +52,9 @@ import { getToolIcon, getToolLabel, getToolMarkerClass, isWriteTool, Labels } fr
 export class DispatchTurnTimeline {
   public readonly session = input.required<AgentSessionDto>();
   public readonly decisions = input.required<AgentDecisionDto[]>();
-  /** Id of the decision whose approve/reject request is in flight. */
-  public readonly busyDecisionId = input<string | null>(null);
-  public readonly approve = output<AgentDecisionDto>();
-  public readonly reject = output<AgentDecisionDto>();
+
+  private readonly store = inject(DispatchChatStore);
+  protected readonly actions = inject(DecisionActionsService);
 
   protected readonly Labels = Labels;
   protected readonly getToolLabel = getToolLabel;
@@ -78,5 +82,13 @@ export class DispatchTurnTimeline {
 
   protected isExpanded(decisionId: string): boolean {
     return this.expandedDecisions().has(decisionId);
+  }
+
+  protected approve(decision: AgentDecisionDto): void {
+    this.actions.approve(decision, () => this.store.onDecisionResolved());
+  }
+
+  protected reject(decision: AgentDecisionDto): void {
+    this.actions.reject(decision, () => this.store.onDecisionResolved());
   }
 }

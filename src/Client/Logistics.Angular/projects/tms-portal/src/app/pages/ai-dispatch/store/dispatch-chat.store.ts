@@ -27,7 +27,7 @@ const initialBoardState: DispatchBoardState = {
   sessions: [],
   pendingDecisions: [],
   trucks: [],
-  sidebarCollapsed: false,
+  sidebarCollapsed: true,
   rightPanelCollapsed: readStoredRightPanelCollapsed(),
 };
 
@@ -86,6 +86,12 @@ export const DispatchChatStore = signalStore(
       const loadTrucksIfPanelOpen = async (): Promise<void> => {
         if (store.rightPanelCollapsed() || store.trucks().length > 0) return;
         patchState(store, { trucks: await dispatchApi.fetchAvailableTrucks() });
+      };
+
+      const setRightPanelCollapsed = (collapsed: boolean): void => {
+        patchState(store, { rightPanelCollapsed: collapsed });
+        persistRightPanelCollapsed(collapsed);
+        void loadTrucksIfPanelOpen();
       };
 
       /**
@@ -173,6 +179,11 @@ export const DispatchChatStore = signalStore(
         /** Refreshes the tenant-wide pending decisions (and the right panel + nav badge with them). */
         refreshPendingDecisions,
 
+        /** A decision resolved from either the transcript timeline or the right panel - refresh both. */
+        async onDecisionResolved(): Promise<void> {
+          await Promise.all([store.reconcile(), refreshPendingDecisions()]);
+        },
+
         toggleSidebar(): void {
           patchState(store, { sidebarCollapsed: !store.sidebarCollapsed() });
         },
@@ -181,11 +192,10 @@ export const DispatchChatStore = signalStore(
           patchState(store, { sidebarCollapsed: collapsed });
         },
 
+        setRightPanelCollapsed,
+
         toggleRightPanel(): void {
-          const collapsed = !store.rightPanelCollapsed();
-          patchState(store, { rightPanelCollapsed: collapsed });
-          persistRightPanelCollapsed(collapsed);
-          void loadTrucksIfPanelOpen();
+          setRightPanelCollapsed(!store.rightPanelCollapsed());
         },
       };
     },

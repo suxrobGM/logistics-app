@@ -4,28 +4,32 @@
       <ui-icon name="map" color="primary" />
       <ui-typography variant="body-sm" weight="medium">Fleet Map</ui-typography>
       <ui-typography variant="caption" color="muted">
-        {{ truckLocations().length }} trucks tracked
+        {{ store.truckLocations().length }} trucks tracked
       </ui-typography>
     </ui-stack>
     <div class="h-64">
-      <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="4" height="100%" />
+      <app-geolocation-map [geolocationData]="store.truckLocations()" [zoom]="4" height="100%" />
     </div>
   </ui-surface>
 
   <div>
     <ui-typography variant="h6" tag="h2" class="mb-2 flex items-center gap-2">
       Pending Decisions
-      <ui-badge [value]="pendingDecisions().length.toString()" severity="warn" [rounded]="true" />
+      <ui-badge
+        [value]="store.writeDecisions().length.toString()"
+        severity="warn"
+        [rounded]="true"
+      />
     </ui-typography>
 
-    @if (pendingDecisions().length) {
+    @if (store.writeDecisions().length) {
       <ui-stack gap="3">
-        @for (decision of pendingDecisions(); track decision.id) {
+        @for (decision of store.writeDecisions(); track decision.id) {
           <app-decision-card
             [decision]="decision"
-            [busy]="busyDecisionId() === decision.id"
-            (approve)="approve.emit($event)"
-            (reject)="reject.emit($event)"
+            [busy]="actions.busyDecisionId() === decision.id"
+            (approve)="approve($event)"
+            (reject)="reject($event)"
           />
         }
       </ui-stack>
@@ -41,7 +45,7 @@
     }
   </div>
 
-  @if (quota(); as q) {
+  @if (store.quota(); as q) {
     <app-ai-quota-usage [quota]="q" />
   }
 </ui-stack>

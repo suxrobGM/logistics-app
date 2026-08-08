@@ -2,10 +2,10 @@
   <div
     #messagesContainer
     class="mx-auto h-full max-w-3xl space-y-5 overflow-y-auto px-4 py-6 sm:px-6"
-    [attr.aria-busy]="isRunning()"
+    [attr.aria-busy]="store.isRunning()"
     (scroll)="onMessagesScroll()"
   >
-    @if (loading()) {
+    @if (store.loading()) {
       <ui-stack direction="row" align="center" gap="2" class="text-muted-foreground text-sm">
         <ui-spinner size="1em" ariaLabel="Loading conversation" />
         Loading conversation...
@@ -25,7 +25,7 @@
               intent="secondary"
               size="sm"
               [rounded]="true"
-              (click)="sendPrompt.emit(prompt)"
+              (click)="store.sendMessage(prompt)"
             />
           }
         </ui-stack>
@@ -36,26 +36,20 @@
       @if (item.kind === "message") {
         <app-chat-message [message]="item.message" />
       } @else {
-        <app-dispatch-turn-timeline
-          [session]="item.session"
-          [decisions]="item.decisions"
-          [busyDecisionId]="busyDecisionId()"
-          (approve)="approve.emit($event)"
-          (reject)="reject.emit($event)"
-        />
+        <app-dispatch-turn-timeline [session]="item.session" [decisions]="item.decisions" />
       }
     }
 
-    @if (isRunning() && !realtimeDown()) {
+    @if (store.isRunning() && !store.realtimeDown()) {
       <ui-stack direction="row" align="center" gap="2" class="text-muted-foreground text-sm">
         <ui-spinner size="1em" ariaLabel="Dispatcher agent is working" />
-        @if (turnProgress(); as toolsRun) {
+        @if (store.turnProgress(); as toolsRun) {
           Working... {{ toolsRun }} {{ toolsRun === 1 ? "tool" : "tools" }} run
         } @else {
           Dispatcher agent is working...
         }
       </ui-stack>
-      @if (longRunning()) {
+      @if (store.longRunning()) {
         <ui-typography variant="caption" color="muted">
           Still working - this is taking longer than usual.
         </ui-typography>
@@ -65,13 +59,13 @@
     @if (turnFailed()) {
       <ui-alert intent="danger">
         <ui-stack direction="row" align="center" justify="between" gap="2">
-          <span>{{ turnError() || "The dispatch turn failed. Try again." }}</span>
+          <span>{{ store.turnError() || "The dispatch turn failed. Try again." }}</span>
           <ui-button
             label="Retry"
             size="sm"
             appearance="outlined"
             intent="danger"
-            (click)="retryTurn.emit()"
+            (click)="store.retryTurn()"
           />
         </ui-stack>
       </ui-alert>

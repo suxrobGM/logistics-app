@@ -1,32 +1,56 @@
-<div class="flex h-[calc(100vh-10rem)] flex-col">
+<!-- The app shell already clips the document; this fits the page inside the content column's own
+     padding (p-4 + pb-10 on md+, p-2 + pb-10 under a mobile header below it) so nothing scrolls twice. -->
+<div class="flex h-[calc(100dvh-7.5rem)] flex-col md:h-[calc(100dvh-4.5rem)]">
   <ui-stack
     direction="row"
     align="center"
     justify="between"
     gap="2"
     tag="header"
-    class="border-border mb-3 shrink-0 border-b pb-3"
+    class="border-border mb-3 shrink-0 border-b pb-2"
   >
-    <ui-stack direction="row" align="center" gap="2" class="min-w-0">
+    <ui-stack direction="row" align="center" gap="1" class="min-w-0">
       <ui-button
-        icon="panel-left"
+        icon="history"
         appearance="text"
         intent="secondary"
         size="sm"
-        ariaLabel="Toggle conversations"
-        uiTooltip="Toggle conversations"
+        ariaLabel="Conversations"
+        uiTooltip="Conversations"
         (click)="store.toggleSidebar()"
       />
-      <ui-icon name="sparkles" size="inherit" class="text-primary" />
-      <ui-typography variant="h5" tag="h1" class="truncate">AI Dispatch</ui-typography>
+      <ui-button
+        label="New chat"
+        icon="square-pen"
+        appearance="text"
+        intent="secondary"
+        size="sm"
+        ariaLabel="New chat"
+        buttonClass="max-sm:[&>span]:hidden"
+        (click)="newChat()"
+      />
+      <ui-icon name="sparkles" size="inherit" class="text-primary ml-1" />
+      <ui-typography variant="h6" tag="h1" class="truncate">AI Dispatch</ui-typography>
     </ui-stack>
+
     <ui-stack direction="row" align="center" gap="2" class="shrink-0">
       <ui-button
+        label="Plan assignments"
+        icon="zap"
+        size="sm"
+        ariaLabel="Plan assignments"
+        buttonClass="max-sm:[&>span]:hidden"
+        [disabled]="store.isRunning() || store.quotaBlocked()"
+        (click)="store.sendMessage(planAssignmentsPrompt)"
+      />
+      <ui-button
+        label="Dispatch Policy"
+        icon="sparkles"
         appearance="outlined"
         intent="secondary"
         size="sm"
-        label="Dispatch Policy"
-        icon="sparkles"
+        ariaLabel="Dispatch Policy"
+        buttonClass="max-sm:[&>span]:hidden"
         [routerLink]="['/ai-dispatch', 'policy']"
       />
       <ui-button
@@ -41,143 +65,96 @@
     </ui-stack>
   </ui-stack>
 
-  <div class="border-border bg-card relative flex min-h-0 flex-1 overflow-hidden rounded-xl border">
-    @if (!store.sidebarCollapsed()) {
-      <aside
-        class="border-border bg-card flex w-72 shrink-0 flex-col border-r max-md:fixed max-md:inset-0 max-md:z-40 max-md:w-full"
+  <div class="flex min-h-0 flex-1 gap-4">
+    <div class="flex min-w-0 flex-1 flex-col">
+      <app-dispatch-transcript />
+
+      <div
+        class="border-border bg-card mx-auto mt-3 w-full max-w-3xl overflow-hidden rounded-xl border shadow-sm"
       >
-        <ui-stack
-          direction="row"
-          align="center"
-          justify="between"
-          class="border-border border-b p-2 md:hidden"
-        >
-          <ui-typography variant="body-sm" weight="semibold" class="px-1">
-            Conversations
-          </ui-typography>
-          <ui-button
-            icon="x"
-            appearance="text"
-            intent="secondary"
-            size="sm"
-            ariaLabel="Close conversations"
-            (click)="store.toggleSidebar()"
-          />
-        </ui-stack>
-        <div class="min-h-0 flex-1 overflow-y-auto">
-          <app-conversation-list
-            [conversations]="store.conversations()"
-            [currentConversationId]="store.currentConversation()?.id ?? null"
-            [hasMore]="store.hasMoreHistory()"
-            [loading]="store.loading()"
-            (open)="selectConversation($event)"
-            (newChat)="newChat()"
-            (rename)="store.renameConversation($event.id, $event.title)"
-            (delete)="store.deleteConversation($event)"
-            (loadMore)="store.loadMoreConversations()"
+        @if (store.quotaNotice(); as notice) {
+          <ui-stack
+            direction="row"
+            align="center"
+            gap="2"
+            class="border-b px-4 py-1.5 text-xs"
+            [class]="noticeClasses[notice.severity]"
+          >
+            <ui-icon name="chart-column" size="inherit" class="shrink-0" />
+            <span>{{ notice.text }}</span>
+          </ui-stack>
+        }
+
+        @if (store.realtimeDown()) {
+          <ui-stack
+            direction="row"
+            align="center"
+            justify="between"
+            gap="2"
+            class="border-border bg-muted/60 text-muted-foreground border-b px-4 py-2 text-xs"
+          >
+            <span>Live updates unavailable.</span>
+            <ui-button
+              label="Retry"
+              size="sm"
+              appearance="outlined"
+              intent="secondary"
+              (click)="store.reconnect()"
+            />
+          </ui-stack>
+        }
+
+        <div class="px-3 py-2">
+          <app-chat-composer
+            [isRunning]="store.isRunning()"
+            [disabled]="store.sending()"
+            [blocked]="store.quotaBlocked()"
+            placeholder="Ask the dispatcher agent to plan assignments, check hours, or find loads..."
+            (sendMessage)="store.sendMessage($event)"
+            (stopTurn)="store.cancelTurn()"
           />
         </div>
-      </aside>
-    }
-
-    <div class="flex min-w-0 flex-1 flex-col">
-      <app-dispatch-transcript
-        [messages]="store.messages()"
-        [decisions]="store.decisions()"
-        [sessions]="store.sessions()"
-        [loading]="store.loading()"
-        [isRunning]="store.isRunning()"
-        [turnProgress]="store.turnProgress()"
-        [longRunning]="store.longRunning()"
-        [turnFailed]="store.turnStatus() === 'failed'"
-        [turnError]="store.turnError()"
-        [realtimeDown]="store.realtimeDown()"
-        [busyDecisionId]="actions.busyDecisionId()"
-        (approve)="approve($event)"
-        (reject)="reject($event)"
-        (retryTurn)="store.retryTurn()"
-        (sendPrompt)="store.sendMessage($event)"
-      />
-
-      @if (store.quotaNotice(); as notice) {
-        <ui-stack
-          direction="row"
-          align="center"
-          gap="2"
-          class="border-t px-4 py-1.5 text-xs"
-          [class]="noticeClasses[notice.severity]"
-        >
-          <ui-icon name="chart-column" size="inherit" class="shrink-0" />
-          <span>{{ notice.text }}</span>
-        </ui-stack>
-      }
-
-      @if (store.realtimeDown()) {
-        <ui-stack
-          direction="row"
-          align="center"
-          justify="between"
-          gap="2"
-          class="border-border bg-muted/60 text-muted-foreground border-t px-4 py-2 text-xs"
-        >
-          <span>Live updates unavailable.</span>
-          <ui-button
-            label="Retry"
-            size="sm"
-            appearance="outlined"
-            intent="secondary"
-            (click)="store.reconnect()"
-          />
-        </ui-stack>
-      }
-
-      <div class="border-border mx-auto w-full max-w-3xl border-t px-4 sm:px-6">
-        <app-chat-composer
-          [isRunning]="store.isRunning()"
-          [disabled]="store.sending()"
-          [blocked]="store.quotaBlocked()"
-          placeholder="Ask the dispatcher agent to plan assignments, check hours, or find loads..."
-          (sendMessage)="store.sendMessage($event)"
-          (stopTurn)="store.cancelTurn()"
-        />
       </div>
     </div>
 
-    @if (!store.rightPanelCollapsed()) {
-      <aside
-        class="border-border bg-card flex w-80 shrink-0 flex-col border-l max-md:fixed max-md:inset-0 max-md:z-40 max-md:w-full"
-      >
-        <ui-stack
-          direction="row"
-          align="center"
-          justify="between"
-          class="border-border border-b p-2 md:hidden"
-        >
-          <ui-typography variant="body-sm" weight="semibold" class="px-1">
-            Fleet &amp; Decisions
-          </ui-typography>
-          <ui-button
-            icon="x"
-            appearance="text"
-            intent="secondary"
-            size="sm"
-            ariaLabel="Close side panel"
-            (click)="store.toggleRightPanel()"
-          />
-        </ui-stack>
-        <div class="min-h-0 flex-1">
-          <app-dispatch-right-panel
-            [truckLocations]="store.truckLocations()"
-            [pendingDecisions]="store.writeDecisions()"
-            [quota]="store.quota()"
-            [busyDecisionId]="actions.busyDecisionId()"
-            (approve)="approve($event)"
-            (reject)="reject($event)"
-          />
-        </div>
+    @if (!layoutService.isMobile() && !store.rightPanelCollapsed()) {
+      <aside class="w-80 shrink-0 xl:w-88">
+        <app-dispatch-right-panel />
       </aside>
     }
   </div>
 </div>
+
+<ui-drawer
+  position="left"
+  width="320px"
+  header="Conversations"
+  [visible]="!store.sidebarCollapsed()"
+  (visibleChange)="store.setSidebarCollapsed(!$event)"
+>
+  <app-conversation-list
+    [conversations]="store.conversations()"
+    [currentConversationId]="store.currentConversation()?.id ?? null"
+    [hasMore]="store.hasMoreHistory()"
+    [loading]="store.loading()"
+    (open)="selectConversation($event)"
+    (newChat)="newChat()"
+    (rename)="store.renameConversation($event.id, $event.title)"
+    (delete)="store.deleteConversation($event)"
+    (loadMore)="store.loadMoreConversations()"
+  />
+</ui-drawer>
+
+@if (layoutService.isMobile()) {
+  <ui-drawer
+    position="right"
+    width="360px"
+    header="Fleet & decisions"
+    [visible]="!store.rightPanelCollapsed()"
+    (visibleChange)="store.setRightPanelCollapsed(!$event)"
+  >
+    <app-dispatch-right-panel />
+  </ui-drawer>
+}
 
 <app-reject-decision-dialog />

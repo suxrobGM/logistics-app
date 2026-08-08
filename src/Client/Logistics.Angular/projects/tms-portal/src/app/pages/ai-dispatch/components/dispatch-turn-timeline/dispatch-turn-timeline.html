@@ -54,9 +54,9 @@
           <div class="mt-2">
             <app-approve-reject-actions
               [decision]="decision"
-              [busy]="busyDecisionId() === decision.id"
-              (approve)="approve.emit(decision)"
-              (reject)="reject.emit(decision)"
+              [busy]="actions.busyDecisionId() === decision.id"
+              (approve)="approve(decision)"
+              (reject)="reject(decision)"
             />
           </div>
         </ui-permission-guard>

@@ -2,15 +2,14 @@ import {
   Component,
   computed,
   effect,
-  input,
-  output,
+  inject,
   signal,
   viewChild,
   type ElementRef,
 } from "@angular/core";
-import type { AgentDecisionDto, AgentMessageDto, AgentSessionDto } from "@logistics/shared/api";
 import { Alert, EmptyState, Spinner, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { ChatMessage } from "@/shared/components";
+import { DispatchChatStore } from "../../store/dispatch-chat.store";
 import { DispatchTurnTimeline } from "../dispatch-turn-timeline/dispatch-turn-timeline";
 import { buildTranscriptStream, type TranscriptItem } from "./dispatch-transcript.utils";
 
@@ -46,36 +45,23 @@ const SUGGESTED_PROMPTS = [
 export class DispatchTranscript {
   private readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
 
-  public readonly messages = input.required<AgentMessageDto[]>();
-  public readonly decisions = input.required<AgentDecisionDto[]>();
-  public readonly sessions = input.required<AgentSessionDto[]>();
-  public readonly loading = input(false);
-  public readonly isRunning = input(false);
-  public readonly turnProgress = input<number | null>(null);
-  public readonly longRunning = input(false);
-  public readonly turnFailed = input(false);
-  public readonly turnError = input<string | null>(null);
-  public readonly realtimeDown = input(false);
-  public readonly busyDecisionId = input<string | null>(null);
-
-  public readonly approve = output<AgentDecisionDto>();
-  public readonly reject = output<AgentDecisionDto>();
-  public readonly retryTurn = output<void>();
-  public readonly sendPrompt = output<string>();
+  protected readonly store = inject(DispatchChatStore);
 
   protected readonly suggestedPrompts = SUGGESTED_PROMPTS;
+
+  protected readonly turnFailed = computed(() => this.store.turnStatus() === "failed");
 
   /** False while the user has scrolled up to read back - new items must not yank them down. */
   protected readonly pinnedToBottom = signal(true);
 
   protected readonly stream = computed<TranscriptItem[]>(() =>
-    buildTranscriptStream(this.messages(), this.decisions(), this.sessions()),
+    buildTranscriptStream(this.store.messages(), this.store.decisions(), this.store.sessions()),
   );
 
   constructor() {
     effect(() => {
       this.stream();
-      this.isRunning();
+      this.store.isRunning();
       if (!this.pinnedToBottom()) return;
       const container = this.messagesContainer()?.nativeElement;
       if (container) {

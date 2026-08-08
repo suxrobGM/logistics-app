@@ -1,8 +1,8 @@
-import { Component, input, output } from "@angular/core";
-import type { AgentDecisionDto, AIQuotaStatusDto } from "@logistics/shared/api";
-import type { TruckGeolocationDto } from "@logistics/shared/api/models";
+import { Component, inject } from "@angular/core";
+import type { AgentDecisionDto } from "@logistics/shared/api";
 import { Badge, EmptyState, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { AIQuotaUsage, GeolocationMap } from "@/shared/components";
+import { AIQuotaUsage, DecisionActionsService, GeolocationMap } from "@/shared/components";
+import { DispatchChatStore } from "../../store/dispatch-chat.store";
 import { DecisionCard } from "../decision-card/decision-card";
 
 /**
@@ -25,11 +25,14 @@ import { DecisionCard } from "../decision-card/decision-card";
   ],
 })
 export class DispatchRightPanel {
-  public readonly truckLocations = input.required<TruckGeolocationDto[]>();
-  public readonly pendingDecisions = input.required<AgentDecisionDto[]>();
-  public readonly quota = input<AIQuotaStatusDto | null>(null);
-  public readonly busyDecisionId = input<string | null>(null);
+  protected readonly store = inject(DispatchChatStore);
+  protected readonly actions = inject(DecisionActionsService);
 
-  public readonly approve = output<AgentDecisionDto>();
-  public readonly reject = output<AgentDecisionDto>();
+  protected approve(decision: AgentDecisionDto): void {
+    this.actions.approve(decision, () => this.store.onDecisionResolved());
+  }
+
+  protected reject(decision: AgentDecisionDto): void {
+    this.actions.reject(decision, () => this.store.onDecisionResolved());
+  }
 }
