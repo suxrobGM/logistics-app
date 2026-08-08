@@ -12,12 +12,15 @@ public static partial class AIDispatchSessionMapper
     [MapperIgnoreSource(nameof(AgentSession.Type))]
     [MapperIgnoreSource(nameof(AgentSession.ConversationId))]
     [MapperIgnoreSource(nameof(AgentSession.Conversation))]
+    [MapperIgnoreSource(nameof(AgentSession.Number))]
+    [MapperIgnoreSource(nameof(AgentSession.TriggeredByUserId))]
+    [MapperIgnoreSource(nameof(AgentSession.InputTokensUsed))]
+    [MapperIgnoreSource(nameof(AgentSession.OutputTokensUsed))]
+    [MapperIgnoreSource(nameof(AgentSession.CacheReadTokens))]
+    [MapperIgnoreSource(nameof(AgentSession.CacheCreationTokens))]
+    [MapperIgnoreSource(nameof(AgentSession.EstimatedCostUsd))]
+    [MapperIgnoreSource(nameof(AgentSession.ModelUsed))]
+    [MapperIgnoreSource(nameof(AgentSession.Summary))]
+    [MapperIgnoreSource(nameof(AgentSession.IsOverage))]
     public static partial AgentSessionDto ToDto(this AgentSession entity);
-
-    public static AgentSessionDto ToDtoWithDecisions(this AgentSession entity)
-    {
-        var dto = entity.ToDto();
-        dto.Decisions = entity.Decisions.Select(d => d.ToDto()).ToList();
-        return dto;
-    }
 }
