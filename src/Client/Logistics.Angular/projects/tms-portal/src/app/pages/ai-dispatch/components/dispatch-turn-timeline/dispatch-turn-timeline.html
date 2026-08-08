@@ -27,9 +27,9 @@
           *ngTemplateOutlet="reasoning; context: { $implicit: entry.decision }"
         ></ng-container>
 
-        @if (entry.decision.toolOutput) {
+        @if (entry.decision.toolResult) {
           <ui-surface variant="subtle" padding="sm" radius="md" [border]="false" class="text-xs">
-            <app-tool-output-summary [toolOutput]="entry.decision.toolOutput" />
+            <app-tool-output-summary [result]="entry.decision.toolResult" />
           </ui-surface>
         }
 
@@ -94,7 +94,7 @@
                   *ngTemplateOutlet="reasoning; context: { $implicit: read }"
                 ></ng-container>
 
-                @if (read.toolOutput) {
+                @if (read.toolResult) {
                   <ui-surface
                     variant="subtle"
                     padding="sm"
@@ -102,11 +102,11 @@
                     [border]="false"
                     class="text-xs"
                   >
-                    <app-tool-output-summary [toolOutput]="read.toolOutput" />
+                    <app-tool-output-summary [result]="read.toolResult" />
                   </ui-surface>
                 }
 
-                <app-tool-result-details [toolOutput]="read.toolOutput" class="mt-2 block" />
+                <app-tool-result-details [result]="read.toolResult" class="mt-2 block" />
               </div>
             }
           </div>

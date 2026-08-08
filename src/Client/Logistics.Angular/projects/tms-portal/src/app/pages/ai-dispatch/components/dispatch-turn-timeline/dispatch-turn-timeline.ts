@@ -69,8 +69,7 @@ export class DispatchTurnTimeline {
 
   protected readonly timeline = computed(() => groupTurnEntries(this.decisions()));
 
-  // A reads group's id is its first decision's id, so the two kinds of disclosure need
-  // distinct keys to avoid toggling each other.
+  // A reads group's id is its first decision's id, so the two disclosures need distinct keys.
   private readonly expanded = signal<ReadonlySet<string>>(new Set());
 
   protected markerFor(entry: TurnEntry): { class: string; icon: IconName } {

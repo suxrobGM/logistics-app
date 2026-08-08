@@ -1,6 +1,6 @@
 import type { AgentDecisionDto } from "@logistics/shared/api";
 import type { IconName } from "@logistics/shared/ui";
-import { getToolIcon, getToolLabel, isWriteDecision, parseToolOutput } from "@/shared/utils";
+import { getToolIcon, getToolLabel, isWriteDecision } from "@/shared/utils";
 
 export type TurnEntry =
   | {
@@ -64,25 +64,25 @@ export function readGroupSummary(decisions: readonly AgentDecisionDto[]): ReadGr
   let totalTrucks: number | undefined;
 
   for (const decision of decisions) {
-    const output = parseToolOutput(decision.toolOutput);
+    const output = decision.toolResult;
     const toolName = decision.toolName ?? "";
     const chip = chipsByTool.get(toolName);
 
     if (chip) {
       chip.count += 1;
-      chip.failed = chip.failed || !!output.error;
+      chip.failed = chip.failed || !!output?.error;
     } else {
       chipsByTool.set(toolName, {
         label: getToolLabel(decision.toolName),
         icon: getToolIcon(decision.toolName),
         count: 1,
-        failed: !!output.error,
+        failed: !!output?.error,
       });
     }
 
-    loadCount ??= output.loads?.length;
-    availableTrucks ??= output.availableTrucks;
-    totalTrucks ??= output.totalTrucks;
+    loadCount ??= output?.loads?.length;
+    availableTrucks ??= output?.fleetSummary?.availableTrucks;
+    totalTrucks ??= output?.fleetSummary?.totalTrucks;
   }
 
   const figures: string[] = [];

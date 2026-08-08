@@ -17114,9 +17114,8 @@
             "type": "string",
             "nullable": true
           },
-          "toolOutput": {
-            "type": "string",
-            "nullable": true
+          "toolResult": {
+            "$ref": "#/components/schemas/AgentToolResultDto"
           },
           "loadId": {
             "type": "string",
@@ -17279,6 +17278,290 @@
           "cancelled"
         ],
         "type": "string"
+      },
+      "AgentToolDriverDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "hos": {
+            "$ref": "#/components/schemas/AgentToolHosDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolFleetSummaryDto": {
+        "type": "object",
+        "properties": {
+          "totalTrucks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "availableTrucks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeTrips": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "driversInViolation": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolHosCheckDto": {
+        "type": "object",
+        "properties": {
+          "driverId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "distanceKm": {
+            "type": "number",
+            "format": "double"
+          },
+          "feasible": {
+            "type": "boolean"
+          },
+          "feasibleMultiDay": {
+            "type": "boolean"
+          },
+          "estimatedDrivingMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "drivingMinutesRemaining": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "onDutyMinutesRemaining": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolHosDto": {
+        "type": "object",
+        "properties": {
+          "drivingMinutesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onDutyMinutesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cycleMinutesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isInViolation": {
+            "type": "boolean"
+          },
+          "isAvailable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolLoadDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "nullable": true
+          },
+          "destination": {
+            "type": "string",
+            "nullable": true
+          },
+          "originLat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "originLng": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "destLat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "destLng": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "distanceKm": {
+            "type": "number",
+            "format": "double"
+          },
+          "deliveryCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "customer": {
+            "type": "string",
+            "nullable": true
+          },
+          "containerNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "containerIsoType": {
+            "type": "string",
+            "nullable": true
+          },
+          "originTerminal": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationTerminal": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolResultDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "feasible": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "feasibleMultiDay": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "estimatedDrivingMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "drivingMinutesRemaining": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "onDutyMinutesRemaining": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isInViolation": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "fleetSummary": {
+            "$ref": "#/components/schemas/AgentToolFleetSummaryDto"
+          },
+          "loads": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentToolLoadDto"
+            },
+            "nullable": true
+          },
+          "trucks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentToolTruckDto"
+            },
+            "nullable": true
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentToolHosCheckDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolTruckDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentLat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currentLng": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currentAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "mainDriver": {
+            "$ref": "#/components/schemas/AgentToolDriverDto"
+          }
+        },
+        "additionalProperties": false
       },
       "ApiKeyCreatedDto": {
         "type": "object",

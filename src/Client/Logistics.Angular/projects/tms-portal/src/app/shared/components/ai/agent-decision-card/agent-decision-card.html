@@ -56,9 +56,9 @@
       <p class="text-muted-foreground mt-2 mb-0 line-clamp-3 text-xs">{{ d.reasoning }}</p>
     }
 
-    @if (d.status === "executed" && d.toolOutput) {
+    @if (d.status === "executed" && d.toolResult) {
       <div class="mt-2 text-xs">
-        <app-tool-output-summary [toolOutput]="d.toolOutput" />
+        <app-tool-output-summary [result]="d.toolResult" />
       </div>
     }
     @if (d.status === "rejected" && d.rejectionReason) {

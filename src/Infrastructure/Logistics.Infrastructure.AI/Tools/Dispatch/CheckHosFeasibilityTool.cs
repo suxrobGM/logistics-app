@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
@@ -20,23 +21,23 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAg
 
         // Deliberately a shorter payload than the batch tool's no-data arm.
         if (hos is null)
-            return ToolResult.Ok(new
+            return ToolResult.Typed(new AgentToolResultDto
             {
-                feasible = false,
-                reason = HosFeasibility.Unknown(distanceKm).Reason
+                Feasible = false,
+                Reason = HosFeasibility.Unknown(distanceKm).Reason
             });
 
         var verdict = HosFeasibility.Evaluate(hos, distanceKm);
 
-        return ToolResult.Ok(new
+        return ToolResult.Typed(new AgentToolResultDto
         {
-            feasible = verdict.Feasible,
-            feasible_multi_day = verdict.FeasibleMultiDay,
-            estimated_driving_minutes = verdict.EstimatedDrivingMinutes,
-            driving_minutes_remaining = hos.DrivingMinutesRemaining,
-            on_duty_minutes_remaining = hos.OnDutyMinutesRemaining,
-            is_in_violation = hos.IsInViolation,
-            reason = verdict.Reason
+            Feasible = verdict.Feasible,
+            FeasibleMultiDay = verdict.FeasibleMultiDay,
+            EstimatedDrivingMinutes = verdict.EstimatedDrivingMinutes,
+            DrivingMinutesRemaining = hos.DrivingMinutesRemaining,
+            OnDutyMinutesRemaining = hos.OnDutyMinutesRemaining,
+            IsInViolation = hos.IsInViolation,
+            Reason = verdict.Reason
         });
     }
 }

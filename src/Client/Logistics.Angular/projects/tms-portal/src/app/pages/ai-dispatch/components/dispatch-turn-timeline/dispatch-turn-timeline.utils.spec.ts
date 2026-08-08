@@ -1,8 +1,20 @@
-import type { AgentDecisionDto } from "@logistics/shared/api";
+import type {
+  AgentDecisionDto,
+  AgentToolFleetSummaryDto,
+  AgentToolLoadDto,
+} from "@logistics/shared/api";
 import { groupTurnEntries, readGroupSummary } from "./dispatch-turn-timeline.utils";
 
 function decision(overrides: Partial<AgentDecisionDto> = {}): AgentDecisionDto {
   return { id: "d1", toolName: "get_unassigned_loads", type: "query", ...overrides };
+}
+
+function load(): AgentToolLoadDto {
+  return {};
+}
+
+function fleet(availableTrucks: number, totalTrucks: number): AgentToolFleetSummaryDto {
+  return { availableTrucks, totalTrucks, activeTrips: 0, driversInViolation: 0 };
 }
 
 describe("groupTurnEntries", () => {
@@ -79,9 +91,9 @@ describe("groupTurnEntries", () => {
 describe("readGroupSummary", () => {
   it("dedupes repeated tool calls into one chip with an accumulated count", () => {
     const decisions = [
-      decision({ id: "d1", toolName: "get_unassigned_loads", toolOutput: "{}" }),
-      decision({ id: "d2", toolName: "get_unassigned_loads", toolOutput: "{}" }),
-      decision({ id: "d3", toolName: "get_available_trucks", toolOutput: "{}" }),
+      decision({ id: "d1", toolName: "get_unassigned_loads", toolResult: {} }),
+      decision({ id: "d2", toolName: "get_unassigned_loads", toolResult: {} }),
+      decision({ id: "d3", toolName: "get_available_trucks", toolResult: {} }),
     ];
 
     const summary = readGroupSummary(decisions);
@@ -98,10 +110,10 @@ describe("readGroupSummary", () => {
       decision({
         id: "d1",
         toolName: "get_unassigned_loads",
-        toolOutput: JSON.stringify({ error: "boom" }),
+        toolResult: { error: "boom" },
       }),
-      decision({ id: "d2", toolName: "get_unassigned_loads", toolOutput: "{}" }),
-      decision({ id: "d3", toolName: "get_available_trucks", toolOutput: "{}" }),
+      decision({ id: "d2", toolName: "get_unassigned_loads", toolResult: {} }),
+      decision({ id: "d3", toolName: "get_available_trucks", toolResult: {} }),
     ];
 
     const summary = readGroupSummary(decisions);
@@ -117,12 +129,12 @@ describe("readGroupSummary", () => {
       decision({
         id: "d1",
         toolName: "get_unassigned_loads",
-        toolOutput: JSON.stringify({ loads: [{}, {}, {}] }),
+        toolResult: { loads: [load(), load(), load()] },
       }),
       decision({
         id: "d2",
         toolName: "get_available_trucks",
-        toolOutput: JSON.stringify({ fleet_summary: { available_trucks: 3, total_trucks: 5 } }),
+        toolResult: { fleetSummary: fleet(3, 5) },
       }),
     ];
 
@@ -136,7 +148,7 @@ describe("readGroupSummary", () => {
       decision({
         id: "d1",
         toolName: "get_unassigned_loads",
-        toolOutput: JSON.stringify({ loads: [{}] }),
+        toolResult: { loads: [load()] },
       }),
     ];
 
@@ -146,7 +158,7 @@ describe("readGroupSummary", () => {
   });
 
   it("returns an empty key-figures string when no decision carries recognized figures", () => {
-    const decisions = [decision({ id: "d1", toolName: "get_driver_hos_status", toolOutput: "{}" })];
+    const decisions = [decision({ id: "d1", toolName: "get_driver_hos_status", toolResult: {} })];
 
     const summary = readGroupSummary(decisions);
 

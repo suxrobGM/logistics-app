@@ -1,7 +1,7 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using MediatR;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Shared.Models;
+using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
@@ -17,29 +17,27 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IAgentTool
             return ToolResult.Error(result.Error);
 
         var items = result.Value?.ToList() ?? [];
-        var loads = items.Select(l => new
+        var loads = items.Select(l => new AgentToolLoadDto
         {
-            id = l.Id,
-            name = l.Name,
-            type = l.Type.ToString(),
-            origin = l.OriginAddress?.ToString(),
-            destination = l.DestinationAddress?.ToString(),
-            origin_lat = l.OriginLocation?.Latitude,
-            origin_lng = l.OriginLocation?.Longitude,
-            dest_lat = l.DestinationLocation?.Latitude,
-            dest_lng = l.DestinationLocation?.Longitude,
-            distance_km = Math.Round(DispatchUnits.MetersToKm(l.Distance), 1),
-            delivery_cost = l.DeliveryCost,
-            customer = l.Customer?.Name,
-            // Intermodal metadata. Without it the agent never calls get_container_status /
-            // get_terminal_info, because it cannot tell a load has a container.
-            container_number = l.ContainerNumber,
-            container_iso_type = l.ContainerIsoType?.ToString(),
-            origin_terminal = FormatTerminal(l.OriginTerminalName, l.OriginTerminalCode),
-            destination_terminal = FormatTerminal(l.DestinationTerminalName, l.DestinationTerminalCode)
-        });
+            Id = l.Id,
+            Name = l.Name,
+            Type = l.Type.ToString(),
+            Origin = l.OriginAddress?.ToString(),
+            Destination = l.DestinationAddress?.ToString(),
+            OriginLat = l.OriginLocation?.Latitude,
+            OriginLng = l.OriginLocation?.Longitude,
+            DestLat = l.DestinationLocation?.Latitude,
+            DestLng = l.DestinationLocation?.Longitude,
+            DistanceKm = Math.Round(DispatchUnits.MetersToKm(l.Distance), 1),
+            DeliveryCost = l.DeliveryCost,
+            Customer = l.Customer?.Name,
+            ContainerNumber = l.ContainerNumber,
+            ContainerIsoType = l.ContainerIsoType?.ToString(),
+            OriginTerminal = FormatTerminal(l.OriginTerminalName, l.OriginTerminalCode),
+            DestinationTerminal = FormatTerminal(l.DestinationTerminalName, l.DestinationTerminalCode)
+        }).ToList();
 
-        return JsonSerializer.Serialize(new { loads, count = items.Count });
+        return ToolResult.Typed(new AgentToolResultDto { Loads = loads, Count = items.Count });
     }
 
     /// <summary>"Los Angeles (USLAX)" - null when the load has no terminal, so it stays out of the JSON.</summary>
