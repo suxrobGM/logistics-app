@@ -1,6 +1,5 @@
-import { inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import {
-  Api,
   cancelAIDispatchTurn,
   createAIDispatchConversation,
   deleteAIDispatchConversation,
@@ -12,54 +11,26 @@ import {
   renameAIDispatchConversation,
   sendAIDispatchMessage,
   silentErrors,
-  type AgentConversationDto,
-  type AgentConversationDtoPagedResult,
   type AgentDecisionDto,
-  type AIQuotaStatusDto,
-  type SendAIDispatchMessageResultDto,
   type TruckDto,
 } from "@logistics/shared/api";
-import { orNull, succeeded } from "./agent-api.utils";
+import { orNull } from "./agent-api.utils";
+import { AgentChatApiBase, type AgentChatEndpoints } from "./agent-chat-api.base";
 
-/**
- * HTTP for the AI dispatch chat page. Calls resolve to null/false instead of throwing (mirrors
- * CopilotApiService), and never toast - the global errorHandlerInterceptor already does.
- */
+/** HTTP for the AI dispatch chat page. */
 @Injectable({ providedIn: "root" })
-export class DispatchApiService {
-  private readonly api = inject(Api);
-
-  /** `silent` for reconcile polls - a transient failure must not toast every 45s. */
-  fetchConversation(
-    conversationId: string,
-    options?: { silent?: boolean },
-  ): Promise<AgentConversationDto | null> {
-    return orNull(
-      this.api.invoke(
-        getAIDispatchConversationById,
-        { conversationId },
-        options?.silent ? silentErrors() : undefined,
-      ),
-    );
-  }
-
-  fetchHistoryPage(
-    page: number,
-    pageSize: number,
-  ): Promise<AgentConversationDtoPagedResult | null> {
-    return orNull(
-      this.api.invoke(getAIDispatchConversations, {
-        Page: page,
-        PageSize: pageSize,
-        OrderBy: "-LastMessageAt",
-      }),
-    );
-  }
-
-  /** Silent - the quota notice and composer block are advisory; the send path enforces server-side. */
-  fetchQuota(): Promise<AIQuotaStatusDto | null> {
-    return orNull(this.api.invoke(getAIQuotaStatus, undefined, silentErrors()));
-  }
+export class DispatchApiService extends AgentChatApiBase {
+  protected readonly endpoints: AgentChatEndpoints = {
+    getConversationById: getAIDispatchConversationById,
+    getConversations: getAIDispatchConversations,
+    getQuotaStatus: getAIQuotaStatus,
+    createConversation: createAIDispatchConversation,
+    sendMessage: sendAIDispatchMessage,
+    cancelTurn: cancelAIDispatchTurn,
+    renameConversation: renameAIDispatchConversation,
+    deleteConversation: deleteAIDispatchConversation,
+    historyOrderBy: "-LastMessageAt",
+  };
 
   /** Tenant-wide write decisions awaiting approval, for the right panel + sidebar badge. */
   fetchPendingDecisions(options?: { silent?: boolean }): Promise<AgentDecisionDto[] | null> {
@@ -74,38 +45,5 @@ export class DispatchApiService {
       this.api.invoke(getTrucks, { Statuses: ["available"], PageSize: 100 }, silentErrors()),
     );
     return result?.items ?? [];
-  }
-
-  createConversation(): Promise<AgentConversationDto | null> {
-    return orNull(this.api.invoke(createAIDispatchConversation));
-  }
-
-  sendMessage(
-    conversationId: string,
-    text: string,
-  ): Promise<SendAIDispatchMessageResultDto | null> {
-    return orNull(
-      this.api.invoke(sendAIDispatchMessage, {
-        conversationId,
-        body: { conversationId, text },
-      }),
-    );
-  }
-
-  cancelTurn(conversationId: string): Promise<boolean> {
-    return succeeded(this.api.invoke(cancelAIDispatchTurn, { conversationId }));
-  }
-
-  renameConversation(conversationId: string, title: string): Promise<boolean> {
-    return succeeded(
-      this.api.invoke(renameAIDispatchConversation, {
-        conversationId,
-        body: { conversationId, title },
-      }),
-    );
-  }
-
-  deleteConversation(conversationId: string): Promise<boolean> {
-    return succeeded(this.api.invoke(deleteAIDispatchConversation, { conversationId }));
   }
 }

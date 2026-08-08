@@ -6,14 +6,10 @@ import type {
 } from "@logistics/shared/api";
 
 /**
- * The HTTP surface every agent chat shares. `CopilotApiService` and `DispatchApiService` implement
- * it structurally, which is what lets `withAgentChat` drive either one.
- *
- * Every call resolves to null (or false for the commands whose only output is success) rather than
- * throwing, so the stores stay pure state orchestration and never touch try/catch.
+ * The HTTP surface every agent chat shares, which is what lets `withAgentChat` drive either
+ * surface. `AgentChatApiBase` implements it for both.
  */
 export interface AgentChatApi {
-  /** `silent` for reconcile polls - a transient failure must not toast every 45s. */
   fetchConversation(
     conversationId: string,
     options?: { silent?: boolean },
