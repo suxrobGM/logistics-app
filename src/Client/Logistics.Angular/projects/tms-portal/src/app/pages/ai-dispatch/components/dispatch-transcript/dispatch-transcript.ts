@@ -15,6 +15,7 @@ import { buildTranscriptStream, type TranscriptItem } from "./dispatch-transcrip
 @Component({
   selector: "app-dispatch-transcript",
   templateUrl: "./dispatch-transcript.html",
+  host: { class: "flex min-h-0 flex-1 flex-col" },
   imports: [
     Alert,
     ChatMessage,
