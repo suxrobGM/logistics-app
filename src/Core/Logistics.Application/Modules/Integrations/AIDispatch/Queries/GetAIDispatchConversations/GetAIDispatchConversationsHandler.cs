@@ -1,10 +1,7 @@
 using Logistics.Application.Abstractions;
-using Logistics.Domain.Entities;
+using Logistics.Application.Modules.Integrations.Agents;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
-using Logistics.Mappings;
 using Logistics.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
@@ -13,21 +10,8 @@ internal sealed class GetAIDispatchConversationsHandler(
     ITenantUnitOfWork tenantUow)
     : IAppRequestHandler<GetAIDispatchConversationsQuery, PagedResult<AgentConversationDto>>
 {
-    public async Task<PagedResult<AgentConversationDto>> Handle(
-        GetAIDispatchConversationsQuery request, CancellationToken ct)
-    {
-        var query = tenantUow.Repository<AgentConversation>().Query()
-            .Where(c => c.Kind == AgentConversationKind.Dispatch);
-
-        var totalItems = await query.CountAsync(ct);
-
-        var conversations = await query
-            .OrderByDescending(c => c.LastMessageAt)
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .ToListAsync(ct);
-
-        var dtos = conversations.Select(c => c.ToDto()).ToList();
-        return PagedResult<AgentConversationDto>.Ok(dtos, totalItems, request.PageSize);
-    }
+    public Task<PagedResult<AgentConversationDto>> Handle(
+        GetAIDispatchConversationsQuery request, CancellationToken ct) =>
+        AgentConversationQueries.ListAsync(
+            tenantUow, AgentConversationScope.Dispatch, request.Page, request.PageSize, ct);
 }
