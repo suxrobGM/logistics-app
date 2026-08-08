@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Modules.IdentityAccess.Users.Queries;
+using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Application.Modules.Integrations.AICopilot.Services;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Modules.Integrations.Agents.Services;
@@ -19,10 +19,8 @@ using NSubstitute;
 namespace Logistics.Application.Tests.TestKit;
 
 /// <summary>
-/// Shared substitute rig for AI dispatch/copilot handler tests: the tenant unit of work, current
-/// user, and the Agent* repositories pre-wired to it, plus the real shared agent services built on
-/// top of them and builders for the fixtures nearly every handler needs (a conversation, a
-/// suggested decision, the caller's permissions).
+/// Shared substitute rig for the AI dispatch/copilot handler tests: the unit of work, current user
+/// and Agent* repositories, the real shared services built over them, and fixture builders.
 /// </summary>
 internal sealed class AgentTestContext
 {
@@ -31,6 +29,7 @@ internal sealed class AgentTestContext
     public IAgentToolExecutor ToolExecutor { get; } = Substitute.For<IAgentToolExecutor>();
     public IAgentToolRegistry ToolRegistry { get; } = Substitute.For<IAgentToolRegistry>();
     public IMediator Mediator { get; } = Substitute.For<IMediator>();
+    public IUserPermissionService UserPermissions { get; } = Substitute.For<IUserPermissionService>();
     public IAIQuotaService QuotaService { get; } = Substitute.For<IAIQuotaService>();
     public IAIDispatchService DispatchService { get; } = Substitute.For<IAIDispatchService>();
 
@@ -43,7 +42,6 @@ internal sealed class AgentTestContext
     public ITenantRepository<AgentSession, Guid> SessionRepo { get; } =
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
 
-    /// <summary>The real shared services, so a handler test still exercises the logic it delegates to.</summary>
     public IAgentConversationAccess Access { get; }
     public IAgentConversationCommands Commands { get; }
     public IAgentConversationQueries Queries { get; }
@@ -80,17 +78,23 @@ internal sealed class AgentTestContext
         Queries = new AgentConversationQueries(TenantUow, Access);
         Notes = new AgentDecisionNotes(TenantUow);
         Execution = new AgentDecisionExecution(ToolExecutor);
-        Authorization = new AgentDecisionAuthorization(ToolRegistry, Mediator);
+        Authorization = new AgentDecisionAuthorization(ToolRegistry, UserPermissions);
         CopilotGuard = new AICopilotDecisionGuard(TenantUow, Access);
     }
 
-    /// <summary>The dispatch guard, whose AI-enabled gate the caller may want to exercise.</summary>
+    /// <summary><paramref name="bypassAIGate"/> is the knob the AI-disabled tests turn.</summary>
     public IAIDispatchDecisionGuard DispatchGuard(bool bypassAIGate = true) =>
         new AIDispatchDecisionGuard(TenantUow, Options.Create(new LlmOptions { BypassAIGate = bypassAIGate }));
 
-    public void SetCallerPermissions(params string[] permissions) =>
-        Mediator.Send(Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Result<string[]>.Ok(permissions));
+    public void SetCallerPermissions(params string[] permissions)
+    {
+        var granted = permissions.ToHashSet();
+        UserPermissions.GetPermissionsAsync(Arg.Any<Guid>(), Arg.Any<Guid?>(), Arg.Any<CancellationToken>())
+            .Returns(granted);
+        UserPermissions.HasPermissionAsync(
+                Arg.Any<Guid>(), Arg.Any<Guid?>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(call => granted.Contains(call.ArgAt<string>(2)));
+    }
 
     /// <summary>Registers a tool definition the way <c>AgentToolRegistry</c> would - name, required permission, decision type.</summary>
     public void SetToolDefinition(
@@ -143,8 +147,8 @@ internal sealed class AgentTestContext
     }
 
     /// <summary>
-    /// A decision with its session and conversation linked both ways: the notes service reaches the
-    /// conversation by projecting off the session query, not through the decision's navigation.
+    /// Linked both ways: the notes service reaches the conversation by projecting off the session
+    /// query, not through the decision's navigation.
     /// </summary>
     private AgentDecision SuggestedDecision(
         AgentConversation conversation, AgentSessionType sessionType, string toolName, string toolInput)
