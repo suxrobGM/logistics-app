@@ -157,11 +157,11 @@ export function withAgentChat<Extra extends object>(config: AgentChatConfig<Extr
       const loadHistoryPage = async (page: number): Promise<void> => {
         const result = await api.fetchHistoryPage(page, config.historyPageSize);
         if (!result) return;
+        const items = result.items ?? [];
         patchState(store, {
-          conversations:
-            page === 1 ? (result.value ?? []) : [...store.conversations(), ...(result.value ?? [])],
+          conversations: page === 1 ? items : [...store.conversations(), ...items],
           historyPage: page,
-          hasMoreHistory: page < (result.totalPages ?? page),
+          hasMoreHistory: page < (result.pagination?.totalPages ?? page),
         });
       };
 
@@ -217,13 +217,16 @@ export function withAgentChat<Extra extends object>(config: AgentChatConfig<Extr
           }
 
           patchState(store, {
-            messages: store
-              .messages()
-              .map((m) =>
-                m.id === optimistic.id
-                  ? { ...m, id: result.userMessageId, createdAt: result.userMessageCreatedAt }
-                  : m,
-              ),
+            messages: store.messages().map((m) =>
+              m.id === optimistic.id
+                ? {
+                    ...m,
+                    id: result.userMessageId,
+                    createdAt: result.userMessageCreatedAt,
+                    sequence: result.userMessageSequence,
+                  }
+                : m,
+            ),
           });
         } finally {
           patchState(store, { sending: false });

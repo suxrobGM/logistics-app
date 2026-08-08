@@ -1,6 +1,6 @@
-import type {
+﻿import type {
   AgentConversationDto,
-  AgentConversationDtoPagedResult,
+  AgentConversationDtoPagedResponse,
   AgentSessionStatus,
   AIQuotaStatusDto,
 } from "@logistics/shared/api";
@@ -14,7 +14,10 @@ export interface AgentChatApi {
     conversationId: string,
     options?: { silent?: boolean },
   ): Promise<AgentConversationDto | null>;
-  fetchHistoryPage(page: number, pageSize: number): Promise<AgentConversationDtoPagedResult | null>;
+  fetchHistoryPage(
+    page: number,
+    pageSize: number,
+  ): Promise<AgentConversationDtoPagedResponse | null>;
   fetchQuota(): Promise<AIQuotaStatusDto | null>;
   createConversation(): Promise<AgentConversationDto | null>;
   sendMessage(conversationId: string, text: string): Promise<SentAgentMessage | null>;
@@ -27,11 +30,12 @@ export interface AgentChatApi {
 export interface SentAgentMessage {
   userMessageId?: string;
   userMessageCreatedAt?: string;
+  userMessageSequence?: number;
 }
 
 /**
  * Progress of an in-flight turn, pushed over SignalR. Hand-written because SignalR payloads are not
- * in the OpenAPI spec; mirrors the backend's AICopilotTurnUpdateDto / AIDispatchTurnUpdateDto.
+ * in the OpenAPI spec; mirrors the backend's AgentTurnUpdateDto.
  */
 export interface AgentTurnUpdate {
   conversationId: string;

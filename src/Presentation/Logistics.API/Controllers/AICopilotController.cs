@@ -24,7 +24,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("conversations", Name = "GetCopilotConversations")]
-    [ProducesResponseType(typeof(PagedResult<AgentConversationDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponse<AgentConversationDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Copilot.View)]
     public async Task<IActionResult> GetConversations([FromQuery] GetAICopilotConversationsQuery query)
     {

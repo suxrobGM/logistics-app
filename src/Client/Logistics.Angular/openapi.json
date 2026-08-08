@@ -799,7 +799,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentConversationDtoPagedResult"
+                  "$ref": "#/components/schemas/AgentConversationDtoPagedResponse"
                 }
               }
             }
@@ -1207,7 +1207,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentConversationDtoPagedResult"
+                  "$ref": "#/components/schemas/AgentConversationDtoPagedResponse"
                 }
               }
             }
@@ -17062,36 +17062,18 @@
         },
         "additionalProperties": false
       },
-      "AgentConversationDtoPagedResult": {
+      "AgentConversationDtoPagedResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "errorCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "isSuccess": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "value": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AgentConversationDto"
             },
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
           }
         },
         "additionalProperties": false
@@ -26283,6 +26265,10 @@
           "userMessageCreatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "userMessageSequence": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

@@ -24,7 +24,7 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("conversations", Name = "GetAIDispatchConversations")]
-    [ProducesResponseType(typeof(PagedResult<AgentConversationDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponse<AgentConversationDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Dispatch.View)]
     public async Task<IActionResult> GetConversations([FromQuery] GetAIDispatchConversationsQuery query)
     {

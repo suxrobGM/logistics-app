@@ -1,10 +1,10 @@
-import type { HttpClient, HttpContext } from "@angular/common/http";
+﻿import type { HttpClient, HttpContext } from "@angular/common/http";
 import { inject } from "@angular/core";
 import {
   Api,
   silentErrors,
   type AgentConversationDto,
-  type AgentConversationDtoPagedResult,
+  type AgentConversationDtoPagedResponse,
   type AIQuotaStatusDto,
   type StrictHttpResponse,
 } from "@logistics/shared/api";
@@ -31,7 +31,7 @@ export interface AgentChatEndpoints {
   getConversationById: AgentChatApiFn<ConversationParams, AgentConversationDto>;
   getConversations: AgentChatApiFn<
     { Page?: number; PageSize?: number; OrderBy?: string },
-    AgentConversationDtoPagedResult
+    AgentConversationDtoPagedResponse
   >;
   getQuotaStatus: AgentChatApiFn<NoParams, AIQuotaStatusDto>;
   createConversation: AgentChatApiFn<NoParams, AgentConversationDto>;
@@ -80,7 +80,7 @@ export abstract class AgentChatApiBase implements AgentChatApi {
   fetchHistoryPage(
     page: number,
     pageSize: number,
-  ): Promise<AgentConversationDtoPagedResult | null> {
+  ): Promise<AgentConversationDtoPagedResponse | null> {
     return orNull(
       this.api.invoke(this.endpoints.getConversations, {
         Page: page,

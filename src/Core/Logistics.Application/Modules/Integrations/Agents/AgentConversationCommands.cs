@@ -161,7 +161,8 @@ internal static class AgentConversationCommands
         {
             ConversationId = conversation.Id,
             UserMessageId = message.Id,
-            UserMessageCreatedAt = message.CreatedAt
+            UserMessageCreatedAt = message.CreatedAt,
+            UserMessageSequence = message.Sequence
         });
     }
 }
