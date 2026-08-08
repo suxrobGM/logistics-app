@@ -6,7 +6,8 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
 [RequiresFeature(TenantFeature.AgenticDispatch)]
-public class RunAIDispatchCommand : ICommand<Result<Guid>>
+public class SendAIDispatchMessageCommand : ICommand<Result<SendAIDispatchMessageResultDto>>
 {
-    public string? Instructions { get; set; }
+    public Guid ConversationId { get; set; }
+    public string Text { get; set; } = "";
 }

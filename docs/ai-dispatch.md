@@ -38,15 +38,32 @@ Separately from those two, the system prompt varies by `TenantSettings.Operating
 
 ## How It Works
 
+Dispatch is a **tenant-shared, multi-turn conversation** - any user with `Permission.Dispatch.View`
+can open and read one; anyone with `Permission.Dispatch.Manage` can send messages, cancel a running
+turn, rename, or delete. It reuses the same conversation/turn machinery as the
+[AI copilot](ai-copilot.md) (`AgentConversation`/`AgentMessage`, `AgentTurnService`,
+`AgentTranscriptReplay`), scoped by `AgentConversationKind.Dispatch` - a dispatch conversation never
+leaks into the copilot's per-user list, and vice versa.
+
 ```text
-1. Gather fleet state (loads, trucks, drivers, HOS)
-2. Send context + tools to LLM provider
-3. Agent reasons about optimal assignments
-4. Agent calls tools (assign load, create trip, etc.)
-   - Human mode: tools create suggestions
-   - Autonomous mode: tools execute immediately
-5. Agent searches load boards for capacity gaps
-6. Session completes with summary
+1. A user sends a message (POST ai/dispatch/conversations/{id}/messages -> 202)
+   - handler checks the concurrency guard (no ownership check - the conversation is
+     tenant-shared), persists the user message, marks the conversation Running,
+     enqueues a Hangfire job
+2. AIDispatchTurnJob re-checks the AgenticDispatch feature flag and runs
+   IAIDispatchService.RunTurnAsync, a thin adapter onto AgentTurnService with the
+   DispatchAgentSurface
+3. The turn creates an AgentSession (Type = Dispatch) - quota, tokens, and decisions
+   ride the same session machinery copilot turns use
+4. DispatchAgentSurface builds the system prompt (learned policy, operating mode),
+   replays the persisted transcript, and appends a fresh fleet-state snapshot notice
+   to only this turn's final user message - never persisted, so it cannot replay stale
+   on a later turn. The full dispatch tool catalogue applies; there is no per-caller
+   tool scoping, since the endpoint's policy is the gate
+5. AgentLoopRunner iterates: read tools execute; write tools become Suggested decisions
+6. Every appended message is persisted to agent_messages and broadcast tenant-wide over
+   /hubs/ai-dispatch; approving or rejecting a decision appends a system note to the
+   same transcript
 ```
 
 ## Agent Tools
@@ -72,20 +89,27 @@ Write tools create suggestions in Human-in-the-Loop mode and execute immediately
 
 ## API Endpoints
 
-All endpoints require `Permission.Dispatch.View` or `Permission.Dispatch.Manage` and the `AgenticDispatch` feature to be enabled.
+All endpoints require the `AgenticDispatch` feature to be enabled. Reads take
+`Permission.Dispatch.View`; every write (send, cancel, rename, delete, approve, reject, policy
+edits) takes `Permission.Dispatch.Manage`. Handlers do not check conversation ownership -
+conversations are tenant-shared, so the endpoint policy is the only gate.
 
 ```text
-POST   /ai/dispatch/run                         Trigger on-demand agent run
-POST   /ai/dispatch/cancel/{sessionId}           Cancel a running session
-GET    /ai/dispatch/sessions                     List sessions (paged)
-GET    /ai/dispatch/sessions/{sessionId}         Session detail with decisions
-GET    /ai/dispatch/pending                      All pending decisions
-POST   /ai/dispatch/decisions/{id}/approve       Approve a suggestion
-POST   /ai/dispatch/decisions/{id}/reject        Reject a suggestion (body carries the reason)
-GET    /ai/dispatch/policy                       Learned dispatch policy
-PUT    /ai/dispatch/policy                       Edit directives / pause learning
-POST   /ai/dispatch/policy/regenerate            Learn now instead of waiting for the nightly pass
-DELETE /ai/dispatch/policy                       Erase the learned policy and directives
+POST   /ai/dispatch/conversations               Create a conversation
+GET    /ai/dispatch/conversations               List conversations (paged, tenant-wide)
+GET    /ai/dispatch/conversations/{id}          Detail: messages + decisions + per-turn session stats
+POST   /ai/dispatch/conversations/{id}/messages Send a message (202; turn runs async)
+POST   /ai/dispatch/conversations/{id}/cancel   Cancel the running turn
+PUT    /ai/dispatch/conversations/{id}          Rename
+DELETE /ai/dispatch/conversations/{id}          Delete (cascades messages, sessions, decisions)
+GET    /ai/dispatch/quota                       Weekly AI quota status
+GET    /ai/dispatch/pending                     All pending decisions
+POST   /ai/dispatch/decisions/{id}/approve      Approve a suggestion
+POST   /ai/dispatch/decisions/{id}/reject       Reject a suggestion (body carries the reason)
+GET    /ai/dispatch/policy                      Learned dispatch policy
+PUT    /ai/dispatch/policy                      Edit directives / pause learning
+POST   /ai/dispatch/policy/regenerate           Learn now instead of waiting for the nightly pass
+DELETE /ai/dispatch/policy                      Erase the learned policy and directives
 ```
 
 ## Audit Trail

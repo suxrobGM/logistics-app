@@ -42,14 +42,17 @@ public static class Registrar
         services.AddScoped<LlmSessionSetup>();
         services.AddScoped<AgentLoopRunner>();
         services.AddScoped<AgentOverageReporter>();
-        services.AddScoped<IAIDispatchService, AIDispatchService>();
-        services.AddScoped<AIDispatchConversationBuilder>();
         services.AddScoped<AgentDecisionProcessor>();
         services.AddScoped<IAgentToolExecutor, AgentToolExecutor>();
         services.AddSingleton<IAgentToolRegistry, AgentToolRegistry>();
 
-        // Shared conversational turn lifecycle (copilot today, dispatch conversations from Phase 3)
+        // Shared conversational turn lifecycle (copilot and dispatch conversations alike)
         services.AddScoped<AgentTurnService>();
+
+        // Dispatch (tenant-shared conversation sharing the loop, tools, and decision machinery)
+        services.AddScoped<IAIDispatchService, AIDispatchService>();
+        services.AddScoped<DispatchAgentSurface>();
+        services.AddScoped<AIDispatchConversationBuilder>();
 
         // Copilot (conversational agent sharing the loop, tools, and decision machinery)
         services.AddScoped<IAICopilotService, AICopilotService>();

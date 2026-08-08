@@ -13,42 +13,82 @@ namespace Logistics.API.Controllers;
 [Produces("application/json")]
 public class AIDispatchController(IMediator mediator) : ControllerBase
 {
-    [HttpPost("run", Name = "RunAIDispatch")]
-    [ProducesResponseType(typeof(Result<Guid>), StatusCodes.Status200OK)]
+    [HttpPost("conversations", Name = "CreateAIDispatchConversation")]
+    [ProducesResponseType(typeof(AgentConversationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Dispatch.Manage)]
-    public async Task<IActionResult> Run([FromBody] RunAIDispatchCommand command)
+    public async Task<IActionResult> CreateConversation()
     {
-        var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
+        var result = await mediator.Send(new CreateAIDispatchConversationCommand());
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPost("cancel/{sessionId:guid}", Name = "CancelAIDispatchSession")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
-    public async Task<IActionResult> Cancel(Guid sessionId)
-    {
-        await mediator.Send(new CancelAIDispatchSessionCommand { SessionId = sessionId });
-        return NoContent();
-    }
-
-    [HttpGet("sessions", Name = "GetAIDispatchSessions")]
-    [ProducesResponseType(typeof(PagedResponse<AgentSessionDto>), StatusCodes.Status200OK)]
+    [HttpGet("conversations", Name = "GetAIDispatchConversations")]
+    [ProducesResponseType(typeof(PagedResult<AgentConversationDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Dispatch.View)]
-    public async Task<IActionResult> GetSessions([FromQuery] GetAIDispatchSessionsQuery query)
+    public async Task<IActionResult> GetConversations([FromQuery] GetAIDispatchConversationsQuery query)
     {
         var result = await mediator.Send(query);
-        return Ok(PagedResponse<AgentSessionDto>.FromPagedResult(result, query.Page, query.PageSize));
+        return Ok(PagedResponse<AgentConversationDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
-    [HttpGet("sessions/{sessionId:guid}", Name = "GetAIDispatchSessionById")]
-    [ProducesResponseType(typeof(AgentSessionDto), StatusCodes.Status200OK)]
+    [HttpGet("conversations/{conversationId:guid}", Name = "GetAIDispatchConversationById")]
+    [ProducesResponseType(typeof(AgentConversationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permission.Dispatch.View)]
-    public async Task<IActionResult> GetSession(Guid sessionId)
+    public async Task<IActionResult> GetConversationById(Guid conversationId)
     {
-        var result = await mediator.Send(new GetAIDispatchSessionByIdQuery { SessionId = sessionId });
+        var result = await mediator.Send(new GetAIDispatchConversationByIdQuery { Id = conversationId });
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    ///     Send a message to a tenant-shared dispatch conversation. The turn runs in the background;
+    ///     progress and the reply arrive over the dispatch SignalR hub for every connected client.
+    /// </summary>
+    [HttpPost("conversations/{conversationId:guid}/messages", Name = "SendAIDispatchMessage")]
+    [ProducesResponseType(typeof(SendAIDispatchMessageResultDto), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> SendMessage(Guid conversationId, [FromBody] SendAIDispatchMessageCommand request)
+    {
+        request.ConversationId = conversationId;
+        var result = await mediator.Send(request);
+        return result.IsSuccess
+            ? Accepted(result.Value)
+            : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("conversations/{conversationId:guid}/cancel", Name = "CancelAIDispatchTurn")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> CancelTurn(Guid conversationId)
+    {
+        var result = await mediator.Send(new CancelAIDispatchTurnCommand { ConversationId = conversationId });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("conversations/{conversationId:guid}", Name = "RenameAIDispatchConversation")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> RenameConversation(
+        Guid conversationId, [FromBody] RenameAIDispatchConversationCommand request)
+    {
+        request.ConversationId = conversationId;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpDelete("conversations/{conversationId:guid}", Name = "DeleteAIDispatchConversation")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> DeleteConversation(Guid conversationId)
+    {
+        var result = await mediator.Send(new DeleteAIDispatchConversationCommand { ConversationId = conversationId });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpGet("quota", Name = "GetAIQuotaStatus")]
@@ -79,15 +119,15 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPost("sessions/{sessionId:guid}/replan", Name = "ReplanAIDispatchSession")]
-    [ProducesResponseType(typeof(Result<Guid>), StatusCodes.Status200OK)]
+    [HttpPost("decisions/{decisionId:guid}/reject", Name = "RejectAIDispatchDecision")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Dispatch.Manage)]
-    public async Task<IActionResult> Replan(Guid sessionId, [FromBody] ReplanAIDispatchSessionCommand command)
+    public async Task<IActionResult> RejectDecision(Guid decisionId, [FromBody] RejectAIDispatchDecisionCommand command)
     {
-        command.OriginalSessionId = sessionId;
+        command.DecisionId = decisionId;
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpGet("policy", Name = "GetAIDispatchPolicy")]
@@ -127,17 +167,6 @@ public class AIDispatchController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> DeletePolicy()
     {
         var result = await mediator.Send(new DeleteAIDispatchPolicyCommand());
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    [HttpPost("decisions/{decisionId:guid}/reject", Name = "RejectAIDispatchDecision")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
-    public async Task<IActionResult> RejectDecision(Guid decisionId, [FromBody] RejectAIDispatchDecisionCommand command)
-    {
-        command.DecisionId = decisionId;
-        var result = await mediator.Send(command);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }

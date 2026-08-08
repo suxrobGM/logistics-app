@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
 [RequiresFeature(TenantFeature.AgenticDispatch)]
-public sealed class GetAIDispatchSessionByIdQuery : IQuery<Result<AgentSessionDto>>
+public class GetAIDispatchConversationByIdQuery : IQuery<Result<AgentConversationDto>>, IHaveId
 {
-    public Guid SessionId { get; set; }
+    public Guid Id { get; set; }
 }

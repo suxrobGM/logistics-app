@@ -8,6 +8,7 @@ using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.AI.Llm;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
+using MockQueryable;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
@@ -19,29 +20,46 @@ using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Agents.Dispatch;
 
+/// <summary>
+/// Covers <see cref="AIDispatchService"/> (the thin turn adapter + shared cancellation) and
+/// <see cref="DispatchAgentSurface"/> (tenant-wide broadcasts, no per-caller tool scoping) together,
+/// since the adapter only has meaning wired to the surface it drives. Fleet-snapshot injection,
+/// transcript replay, and the dispatch tool catalogue are covered by
+/// <see cref="AIDispatchConversationBuilderTests"/> - this file exercises the turn lifecycle around
+/// them, not the prompt content itself.
+/// </summary>
 public class AIDispatchServiceTests
 {
     private readonly ITenantRepository<AgentSession, Guid> sessionRepo =
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
+    private readonly ITenantRepository<AgentConversation, Guid> conversationRepo =
+        Substitute.For<ITenantRepository<AgentConversation, Guid>>();
+    private readonly ITenantRepository<AgentMessage, Guid> messageRepo =
+        Substitute.For<ITenantRepository<AgentMessage, Guid>>();
 
     private readonly IStripeUsageService stripeUsageService = Substitute.For<IStripeUsageService>();
     private readonly IAIQuotaService quotaService = Substitute.For<IAIQuotaService>();
+    private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
 
     private readonly AIDispatchService sut;
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
+    private readonly Tenant tenant;
 
     public AIDispatchServiceTests()
     {
-        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
-        tenantUow.GetCurrentTenant().Returns(new Tenant
+        tenant = new Tenant
         {
             Id = Guid.NewGuid(),
             Name = "Test",
             ConnectionString = "test",
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
-        });
+        };
+
+        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
+        tenantUow.Repository<AgentConversation>().Returns(conversationRepo);
+        tenantUow.Repository<AgentMessage>().Returns(messageRepo);
+        tenantUow.GetCurrentTenant().Returns(tenant);
 
         var toolRegistry = Substitute.For<IAgentToolRegistry>();
         toolRegistry.GetDispatchAgentTools(Arg.Any<IReadOnlySet<TenantFeature>>()).Returns([]);
@@ -65,9 +83,13 @@ public class AIDispatchServiceTests
         var modelResolver = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);
         var sessionSetup = new LlmSessionSetup(
             featureService, providerFactory, modelResolver, systemSettings, tenantUow);
+
+        var policyRepo = Substitute.For<ITenantRepository<AIDispatchPolicy, Guid>>();
+        policyRepo.Query().Returns(new List<AIDispatchPolicy>().BuildMock());
+        tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
+
         var conversationBuilder = new AIDispatchConversationBuilder(
-            toolRegistry, sessionSetup, tenantUow,
-            NullLogger<AIDispatchConversationBuilder>.Instance);
+            toolRegistry, sessionSetup, tenantUow, NullLogger<AIDispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IAgentToolExecutor>();
         var decisionProcessor = new AgentDecisionProcessor(
@@ -82,10 +104,12 @@ public class AIDispatchServiceTests
         var overageReporter = new AgentOverageReporter(
             stripeUsageService, NullLogger<AgentOverageReporter>.Instance);
 
-        sut = new AIDispatchService(
-            llmOptions, conversationBuilder, loopRunner, cancellationRegistry,
-            tenantUow, broadcastService, quotaService, overageReporter, new AgentRunContext(),
-            NullLogger<AIDispatchService>.Instance);
+        var surface = new DispatchAgentSurface(conversationBuilder, broadcastService);
+        var turnService = new AgentTurnService(
+            llmOptions, loopRunner, cancellationRegistry, tenantUow, quotaService, overageReporter,
+            new AgentRunContext(), NullLogger<AgentTurnService>.Instance);
+
+        sut = new AIDispatchService(turnService, surface, cancellationRegistry, tenantUow);
     }
 
     private void SetQuotaStatus(bool isOverQuota, bool overageBlocked = false, bool overageBillable = true)
@@ -98,26 +122,83 @@ public class AIDispatchServiceTests
             });
     }
 
-    private static AIDispatchRequest CreateRequest()
+    private AgentConversation SetConversation()
     {
-        return new AIDispatchRequest(Guid.NewGuid(), null);
+        var conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch };
+        conversationRepo.GetByIdAsync(conversation.Id, Arg.Any<CancellationToken>()).Returns(conversation);
+        return conversation;
     }
+
+    private AIDispatchTurnRequest CreateRequest(AgentConversation conversation) =>
+        new(tenant.Id, conversation.Id, null);
+
+    #region Turn adapter wiring (no network - the LLM-disabled early exit)
+
+    /// <summary>
+    /// Proves the adapter threads TenantId/ConversationId through to AgentTurnService and that
+    /// DispatchAgentSurface broadcasts tenant-wide, without needing a real LLM call: the
+    /// AI-disabled path short-circuits before the agent loop runs.
+    /// </summary>
+    [Fact]
+    public async Task RunTurnAsync_AIDisabled_AppendsNoticeToTheRightConversationAndBroadcastsTenantWide()
+    {
+        tenant.Settings.AIEnabled = false;
+        var conversation = SetConversation();
+
+        await sut.RunTurnAsync(CreateRequest(conversation));
+
+        var note = Assert.Single(conversation.Messages);
+        Assert.Equal(AgentMessageRole.System, note.Role);
+        Assert.Contains("AI is disabled", note.DisplayText);
+
+        await broadcastService.Received(1).BroadcastMessageAsync(
+            tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversation.Id));
+        await sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+    }
+
+    [Fact]
+    public async Task RunTurnAsync_OverageBlocked_AppendsBudgetNoticeWithoutCreatingASession()
+    {
+        SetQuotaStatus(isOverQuota: true, overageBlocked: true);
+        var conversation = SetConversation();
+
+        await sut.RunTurnAsync(CreateRequest(conversation));
+
+        var note = Assert.Single(conversation.Messages);
+        Assert.Contains("budget", note.DisplayText, StringComparison.OrdinalIgnoreCase);
+        await sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+    }
+
+    [Fact]
+    public async Task RunTurnAsync_ConversationNotFound_DoesNothing()
+    {
+        var request = new AIDispatchTurnRequest(tenant.Id, Guid.NewGuid(), null);
+
+        await sut.RunTurnAsync(request);
+
+        await sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);
+    }
+
+    #endregion
 
     #region IsOverage flag on session
 
     [Fact]
-    public async Task RunAsync_SetsIsOverageTrue_WhenTenantIsOverQuota()
+    public async Task RunTurnAsync_SetsIsOverageTrue_WhenTenantIsOverQuota()
     {
         SetQuotaStatus(isOverQuota: true);
+        var conversation = SetConversation();
         AgentSession? capturedSession = null;
         sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
-        // The agent loop will fail because we don't have a real LLM API
-        // but the session should still be created with IsOverage set
+        // The agent loop will fail because we don't have a real LLM API, but the session should
+        // still be created with IsOverage set - AgentTurnService never rethrows, so no try/catch
+        // is strictly required, kept only for defense against an unexpected synchronous throw.
         try
         {
-            await sut.RunAsync(CreateRequest());
+            await sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch
         {
@@ -125,19 +206,22 @@ public class AIDispatchServiceTests
         }
 
         Assert.NotNull(capturedSession);
-        Assert.True(capturedSession!.IsOverage);
+        Assert.Equal(AgentSessionType.Dispatch, capturedSession!.Type);
+        Assert.Equal(conversation.Id, capturedSession.ConversationId);
+        Assert.True(capturedSession.IsOverage);
     }
 
     [Fact]
-    public async Task RunAsync_SetsIsOverageFalse_WhenTenantIsUnderQuota()
+    public async Task RunTurnAsync_SetsIsOverageFalse_WhenTenantIsUnderQuota()
     {
+        var conversation = SetConversation();
         AgentSession? capturedSession = null;
         sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
         try
         {
-            await sut.RunAsync(CreateRequest());
+            await sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch
         {
@@ -146,74 +230,6 @@ public class AIDispatchServiceTests
 
         Assert.NotNull(capturedSession);
         Assert.False(capturedSession!.IsOverage);
-    }
-
-    [Fact]
-    public async Task RunAsync_SetsIsOverageFalse_WhenOverQuotaButNotBillable()
-    {
-        SetQuotaStatus(isOverQuota: true, overageBillable: false);
-        AgentSession? capturedSession = null;
-        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
-            .Returns(Task.CompletedTask);
-
-        try
-        {
-            await sut.RunAsync(CreateRequest());
-        }
-        catch
-        {
-            // Expected
-        }
-
-        // Stamping it would accrue a charge Stripe cannot invoice for a tenant with no subscription.
-        Assert.NotNull(capturedSession);
-        Assert.False(capturedSession!.IsOverage);
-    }
-
-    #endregion
-
-    #region Overage blocking
-
-    [Fact]
-    public async Task RunAsync_OverageBlocked_FailsSessionWithoutRunning()
-    {
-        SetQuotaStatus(isOverQuota: true, overageBlocked: true);
-        AgentSession? capturedSession = null;
-        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
-            .Returns(Task.CompletedTask);
-
-        // No try/catch: the loop never runs, so no LLM API error can escape.
-        var session = await sut.RunAsync(CreateRequest());
-
-        Assert.NotNull(capturedSession);
-        Assert.Same(capturedSession, session);
-        Assert.Equal(AgentSessionStatus.Failed, session.Status);
-        Assert.Contains("budget", session.ErrorMessage, StringComparison.OrdinalIgnoreCase);
-        Assert.False(session.IsOverage);
-        await stripeUsageService.DidNotReceive()
-            .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task RunAsync_OverQuotaWithoutBlock_StillRuns()
-    {
-        SetQuotaStatus(isOverQuota: true, overageBlocked: false);
-        AgentSession? capturedSession = null;
-        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
-            .Returns(Task.CompletedTask);
-
-        try
-        {
-            await sut.RunAsync(CreateRequest());
-        }
-        catch
-        {
-            // Expected - no real LLM API
-        }
-
-        // The session was created for a real run (overage-stamped), not fail-fasted by the gate.
-        Assert.NotNull(capturedSession);
-        Assert.True(capturedSession!.IsOverage);
     }
 
     #endregion
@@ -221,35 +237,13 @@ public class AIDispatchServiceTests
     #region Overage reporting
 
     [Fact]
-    public async Task RunAsync_ReportsOverage_WhenSessionIsOverageAndCompleted()
+    public async Task RunTurnAsync_DoesNotReportOverage_WhenNotOverage()
     {
-        // Create a session that will "complete" - we simulate by catching the API error
-        // and checking that the overage was NOT reported (because session failed, not completed)
-        SetQuotaStatus(isOverQuota: true);
-        var request = CreateRequest();
+        var conversation = SetConversation();
 
         try
         {
-            await sut.RunAsync(request);
-        }
-        catch
-        {
-            // Expected
-        }
-
-        // Session failed (API error), not completed - overage should NOT be reported
-        await stripeUsageService.DidNotReceive()
-            .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task RunAsync_DoesNotReportOverage_WhenNotOverage()
-    {
-        var request = CreateRequest();
-
-        try
-        {
-            await sut.RunAsync(request);
+            await sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch
         {
@@ -267,20 +261,17 @@ public class AIDispatchServiceTests
             .ThrowsAsync(new Exception("Stripe API error"));
 
         SetQuotaStatus(isOverQuota: true);
-        var request = CreateRequest();
+        var conversation = SetConversation();
 
         // Should not throw even if Stripe fails
         try
         {
-            await sut.RunAsync(request);
+            await sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch (Exception ex) when (ex.Message != "Stripe API error")
         {
             // Expected - API error from LLM, not from Stripe
         }
-
-        // The important thing: the Stripe error doesn't propagate
-        // (the session fails due to LLM API, not Stripe)
     }
 
     #endregion
@@ -288,22 +279,25 @@ public class AIDispatchServiceTests
     #region Session lifecycle
 
     [Fact]
-    public async Task RunAsync_SavesSessionWithCancellationTokenNone_OnFailure()
+    public async Task RunTurnAsync_SavesSessionWithCancellationTokenNone_OnFailure()
     {
-        var request = CreateRequest();
+        var conversation = SetConversation();
 
         try
         {
-            await sut.RunAsync(request);
+            await sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch
         {
             // Expected
         }
 
-        // The final save should use CancellationToken.None (fix from earlier review)
         await tenantUow.Received().SaveChangesAsync(CancellationToken.None);
     }
+
+    #endregion
+
+    #region Cancellation (shared across session types, unchanged by the Phase 3 rework)
 
     [Fact]
     public async Task CancelAsync_SessionNotFound_ReturnsFalse()

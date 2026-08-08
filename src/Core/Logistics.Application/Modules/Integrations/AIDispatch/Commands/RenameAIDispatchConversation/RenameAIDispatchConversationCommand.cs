@@ -1,13 +1,12 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Attributes;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
 [RequiresFeature(TenantFeature.AgenticDispatch)]
-public class ReplanAIDispatchSessionCommand : ICommand<Result<Guid>>
+public class RenameAIDispatchConversationCommand : ICommand
 {
-    public Guid OriginalSessionId { get; set; }
-    public string? AdditionalInstructions { get; set; }
+    public Guid ConversationId { get; set; }
+    public string Title { get; set; } = "";
 }

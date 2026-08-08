@@ -15,4 +15,10 @@ public record AgentConversationDto
 
     /// <summary>Across all of the conversation's turns. Populated by the detail query only.</summary>
     public List<AgentDecisionDto>? Decisions { get; set; }
+
+    /// <summary>
+    /// One row per turn (status, decision count, token/cost fields). Populated by the detail query
+    /// only; dispatch conversations use this today, copilot leaves it null.
+    /// </summary>
+    public List<AgentSessionDto>? Sessions { get; set; }
 }

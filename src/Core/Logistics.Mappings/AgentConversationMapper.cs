@@ -17,6 +17,7 @@ public static partial class AgentConversationMapper
     [MapperIgnoreSource(nameof(AgentConversation.UpdatedBy))]
     [MapperIgnoreTarget(nameof(AgentConversationDto.Messages))]
     [MapperIgnoreTarget(nameof(AgentConversationDto.Decisions))]
+    [MapperIgnoreTarget(nameof(AgentConversationDto.Sessions))]
     public static partial AgentConversationDto ToDto(this AgentConversation entity);
 
     [MapperIgnoreSource(nameof(AgentMessage.DomainEvents))]
