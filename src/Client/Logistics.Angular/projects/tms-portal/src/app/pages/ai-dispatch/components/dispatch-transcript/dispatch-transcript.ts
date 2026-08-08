@@ -1,6 +1,12 @@
 import { Component, computed, inject, viewChild, type ElementRef } from "@angular/core";
-import { Alert, Spinner, Stack, UiButton } from "@logistics/shared/ui";
-import { ChatMessage, pinnedScroll, TurnStatus } from "@/shared/components";
+import { Spinner, Stack } from "@logistics/shared/ui";
+import {
+  ChatMessage,
+  pinnedScroll,
+  ScrollToBottom,
+  TurnError,
+  TurnStatus,
+} from "@/shared/components";
 import { DispatchChatStore } from "../../store/dispatch-chat.store";
 import { DispatchReportMessage } from "../dispatch-report-message/dispatch-report-message";
 import { DispatchTurnTimeline } from "../dispatch-turn-timeline/dispatch-turn-timeline";
@@ -17,15 +23,15 @@ import { buildTranscriptStream, type TranscriptItem } from "./dispatch-transcrip
   templateUrl: "./dispatch-transcript.html",
   host: { class: "flex min-h-0 flex-1 flex-col" },
   imports: [
-    Alert,
     ChatMessage,
     DispatchReportMessage,
     DispatchTurnTimeline,
     DispatchWelcome,
+    ScrollToBottom,
     Spinner,
     Stack,
+    TurnError,
     TurnStatus,
-    UiButton,
   ],
 })
 export class DispatchTranscript {

@@ -13,6 +13,7 @@ import {
   UiTimeline,
   UiTimelineContent,
   UiTimelineMarker,
+  type IconName,
 } from "@logistics/shared/ui";
 import {
   ApproveRejectActions,
@@ -23,11 +24,7 @@ import { MarkdownPipe } from "@/shared/pipes";
 import { getToolIcon, getToolLabel, getToolMarkerClass, Labels } from "@/shared/utils";
 import { DispatchChatStore } from "../../store/dispatch-chat.store";
 import { ToolResultDetails } from "../tool-result-details/tool-result-details";
-import {
-  groupTurnEntries,
-  readGroupSummary,
-  type ReadGroupSummary,
-} from "./dispatch-turn-timeline.utils";
+import { groupTurnEntries, type TurnEntry } from "./dispatch-turn-timeline.utils";
 
 /**
  * One agent turn's tool activity: a `ui-timeline` where consecutive read tools collapse into a
@@ -65,8 +62,6 @@ export class DispatchTurnTimeline {
 
   protected readonly Labels = Labels;
   protected readonly getToolLabel = getToolLabel;
-  protected readonly getToolIcon = getToolIcon;
-  protected readonly getToolMarkerClass = getToolMarkerClass;
   protected readonly dispatchManage = Permission.Dispatch.Manage;
 
   /** Marks which past turn is the one currently in progress, alongside the transcript's own spinner. */
@@ -74,31 +69,26 @@ export class DispatchTurnTimeline {
 
   protected readonly timeline = computed(() => groupTurnEntries(this.decisions()));
 
-  protected readonly readSummaries = computed(() => {
-    const summaries = new Map<string, ReadGroupSummary>();
-    for (const entry of this.timeline()) {
-      if (entry.kind === "reads") summaries.set(entry.id, readGroupSummary(entry.decisions));
-    }
-    return summaries;
-  });
+  // A reads group's id is its first decision's id, so the two kinds of disclosure need
+  // distinct keys to avoid toggling each other.
+  private readonly expanded = signal<ReadonlySet<string>>(new Set());
 
-  protected readonly expandedGroups = signal<ReadonlySet<string>>(new Set());
-  protected readonly expandedDecisions = signal<ReadonlySet<string>>(new Set());
-
-  protected toggleGroup(groupId: string): void {
-    this.expandedGroups.update((set) => toggled(set, groupId));
+  protected markerFor(entry: TurnEntry): { class: string; icon: IconName } {
+    return entry.kind === "write"
+      ? { class: getToolMarkerClass(entry.decision), icon: getToolIcon(entry.decision.toolName) }
+      : { class: "bg-muted text-muted-foreground", icon: "search" };
   }
 
-  protected isGroupExpanded(groupId: string): boolean {
-    return this.expandedGroups().has(groupId);
+  protected toggle(key: string): void {
+    this.expanded.update((set) => {
+      const next = new Set(set);
+      if (!next.delete(key)) next.add(key);
+      return next;
+    });
   }
 
-  protected toggleExpand(decisionId: string): void {
-    this.expandedDecisions.update((set) => toggled(set, decisionId));
-  }
-
-  protected isExpanded(decisionId: string): boolean {
-    return this.expandedDecisions().has(decisionId);
+  protected isExpanded(key: string): boolean {
+    return this.expanded().has(key);
   }
 
   protected approve(decision: AgentDecisionDto): void {
@@ -108,10 +98,4 @@ export class DispatchTurnTimeline {
   protected reject(decision: AgentDecisionDto): void {
     this.actions.reject(decision, () => this.store.onDecisionResolved());
   }
-}
-
-function toggled(set: ReadonlySet<string>, id: string): ReadonlySet<string> {
-  const next = new Set(set);
-  if (!next.delete(id)) next.add(id);
-  return next;
 }

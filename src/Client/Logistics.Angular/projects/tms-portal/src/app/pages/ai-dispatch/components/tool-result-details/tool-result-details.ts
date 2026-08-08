@@ -21,10 +21,8 @@ export class ToolResultDetails {
 
   private readonly output = computed<ParsedToolOutput>(() => parseToolOutput(this.toolOutput()));
 
-  protected readonly trucks = computed<ParsedTruck[] | undefined>(() => this.output().trucks);
-  protected readonly loads = computed<ParsedLoad[] | undefined>(() =>
-    this.trucks() ? undefined : this.output().loads,
-  );
+  protected readonly trucks = computed<ParsedTruck[] | null>(() => this.output().trucks ?? null);
+  protected readonly loads = computed<ParsedLoad[] | null>(() => this.output().loads ?? null);
 
   protected readonly hasContent = computed(
     () => (this.trucks()?.length ?? 0) > 0 || (this.loads()?.length ?? 0) > 0,

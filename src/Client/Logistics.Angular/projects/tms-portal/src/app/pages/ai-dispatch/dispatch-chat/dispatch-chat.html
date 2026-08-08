@@ -72,18 +72,7 @@
       <div
         class="border-border bg-card mx-auto mt-3 w-full max-w-3xl overflow-hidden rounded-xl border shadow-sm"
       >
-        @if (store.quotaNotice(); as notice) {
-          <ui-stack
-            direction="row"
-            align="center"
-            gap="2"
-            class="border-b px-4 py-1.5 text-xs"
-            [class]="noticeClasses[notice.severity]"
-          >
-            <ui-icon name="chart-column" size="inherit" class="shrink-0" />
-            <span>{{ notice.text }}</span>
-          </ui-stack>
-        }
+        <app-quota-notice class="border-b" [notice]="store.quotaNotice()" />
 
         <app-realtime-banner
           class="border-border border-b"

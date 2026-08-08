@@ -4,7 +4,13 @@ import { PermissionGuard, type PermissionValue } from "@logistics/shared";
 import type { AgentDecisionDto } from "@logistics/shared/api";
 import { Badge, Icon, Surface } from "@logistics/shared/ui";
 import { stripMarkdown } from "@/shared/pipes";
-import { getDecisionRefs, getToolIcon, getToolLabel, isWriteTool, Labels } from "@/shared/utils";
+import {
+  getDecisionRefs,
+  getToolIcon,
+  getToolLabel,
+  isWriteDecision,
+  Labels,
+} from "@/shared/utils";
 import { ApproveRejectActions } from "../approve-reject-actions/approve-reject-actions";
 import { ToolOutputSummary } from "../tool-output-summary/tool-output-summary";
 
@@ -43,11 +49,11 @@ export class AgentDecisionCard {
   public readonly reject = output<AgentDecisionDto>();
 
   protected readonly Labels = Labels;
-  protected readonly stripMarkdown = stripMarkdown;
 
   protected readonly icon = computed(() => getToolIcon(this.decision().toolName));
   protected readonly label = computed(() => getToolLabel(this.decision().toolName));
   protected readonly isPending = computed(() => this.decision().status === "suggested");
-  protected readonly isWrite = computed(() => isWriteTool(this.decision().toolName));
+  protected readonly isWrite = computed(() => isWriteDecision(this.decision()));
+  protected readonly summary = computed(() => stripMarkdown(this.decision().reasoning ?? ""));
   protected readonly refs = computed(() => getDecisionRefs(this.decision()));
 }

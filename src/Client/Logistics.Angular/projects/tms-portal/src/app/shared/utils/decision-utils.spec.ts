@@ -1,4 +1,9 @@
-import { getDecisionRefs, isWriteTool, parseToolInput, parseToolOutput } from "./decision-utils";
+import {
+  getDecisionRefs,
+  isWriteDecision,
+  parseToolInput,
+  parseToolOutput,
+} from "./decision-utils";
 
 describe("parseToolInput", () => {
   it("maps every snake_case field to its camelCase counterpart", () => {
@@ -231,25 +236,22 @@ describe("getDecisionRefs", () => {
   });
 });
 
-describe("isWriteTool", () => {
-  it("is true for known write tools", () => {
-    expect(isWriteTool("assign_load_to_truck")).toBe(true);
-    expect(isWriteTool("create_trip")).toBe(true);
-    expect(isWriteTool("dispatch_trip")).toBe(true);
-    expect(isWriteTool("book_loadboard_load")).toBe(true);
-    expect(isWriteTool("create_load_invoice")).toBe(true);
-    expect(isWriteTool("send_invoice")).toBe(true);
-    expect(isWriteTool("create_payment_link")).toBe(true);
+describe("isWriteDecision", () => {
+  it("is true for every non-query decision type", () => {
+    expect(isWriteDecision({ type: "assign_load" })).toBe(true);
+    expect(isWriteDecision({ type: "create_trip" })).toBe(true);
+    expect(isWriteDecision({ type: "dispatch_trip" })).toBe(true);
+    expect(isWriteDecision({ type: "book_load_board_load" })).toBe(true);
+    expect(isWriteDecision({ type: "create_invoice" })).toBe(true);
+    expect(isWriteDecision({ type: "send_invoice" })).toBe(true);
+    expect(isWriteDecision({ type: "create_payment_link" })).toBe(true);
   });
 
-  it("is false for known read tools", () => {
-    expect(isWriteTool("get_unassigned_loads")).toBe(false);
-    expect(isWriteTool("get_available_trucks")).toBe(false);
+  it("is false for a query decision", () => {
+    expect(isWriteDecision({ type: "query" })).toBe(false);
   });
 
-  it("is false for an unknown or missing tool name", () => {
-    expect(isWriteTool("some_future_tool")).toBe(false);
-    expect(isWriteTool(null)).toBe(false);
-    expect(isWriteTool(undefined)).toBe(false);
+  it("is false when the server sent no type", () => {
+    expect(isWriteDecision({})).toBe(false);
   });
 });

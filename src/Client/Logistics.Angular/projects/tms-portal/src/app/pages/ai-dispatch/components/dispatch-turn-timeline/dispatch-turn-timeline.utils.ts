@@ -1,9 +1,14 @@
 import type { AgentDecisionDto } from "@logistics/shared/api";
 import type { IconName } from "@logistics/shared/ui";
-import { getToolIcon, getToolLabel, isWriteTool, parseToolOutput } from "@/shared/utils";
+import { getToolIcon, getToolLabel, isWriteDecision, parseToolOutput } from "@/shared/utils";
 
 export type TurnEntry =
-  | { readonly kind: "reads"; readonly id: string; readonly decisions: AgentDecisionDto[] }
+  | {
+      readonly kind: "reads";
+      readonly id: string;
+      readonly decisions: AgentDecisionDto[];
+      readonly summary: ReadGroupSummary;
+    }
   | { readonly kind: "write"; readonly id: string; readonly decision: AgentDecisionDto };
 
 export interface ReadChip {
@@ -24,24 +29,31 @@ export interface ReadGroupSummary {
  * tools break the run - each stays standalone so its approve/reject stays prominent.
  */
 export function groupTurnEntries(decisions: readonly AgentDecisionDto[]): TurnEntry[] {
-  const entries: TurnEntry[] = [];
+  const groups: (AgentDecisionDto[] | AgentDecisionDto)[] = [];
   let openGroup: AgentDecisionDto[] | undefined;
 
   for (const decision of decisions) {
-    if (isWriteTool(decision.toolName)) {
+    if (isWriteDecision(decision)) {
       openGroup = undefined;
-      entries.push({ kind: "write", id: decision.id ?? "", decision });
-      continue;
-    }
-    if (openGroup) {
+      groups.push(decision);
+    } else if (openGroup) {
       openGroup.push(decision);
     } else {
       openGroup = [decision];
-      entries.push({ kind: "reads", id: decision.id ?? "", decisions: openGroup });
+      groups.push(openGroup);
     }
   }
 
-  return entries;
+  return groups.map((group) =>
+    Array.isArray(group)
+      ? {
+          kind: "reads" as const,
+          id: group[0].id ?? "",
+          decisions: group,
+          summary: readGroupSummary(group),
+        }
+      : { kind: "write" as const, id: group.id ?? "", decision: group },
+  );
 }
 
 /** Deduped tool chips plus a one-line figure summary for a collapsed `reads` group. */

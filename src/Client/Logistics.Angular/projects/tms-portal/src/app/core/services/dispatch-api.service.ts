@@ -29,7 +29,6 @@ export class DispatchApiService extends AgentChatApiBase {
     cancelTurn: cancelAIDispatchTurn,
     renameConversation: renameAIDispatchConversation,
     deleteConversation: deleteAIDispatchConversation,
-    historyOrderBy: "-LastMessageAt",
   };
 
   /** Tenant-wide write decisions awaiting approval, for the right panel + sidebar badge. */

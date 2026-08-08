@@ -33,30 +33,18 @@
     }
 
     @if (turnFailed()) {
-      <ui-alert intent="danger">
-        <ui-stack direction="row" align="center" justify="between" gap="2">
-          <span>{{ store.turnError() || "The dispatch turn failed. Try again." }}</span>
-          <ui-button
-            label="Retry"
-            size="sm"
-            appearance="outlined"
-            intent="danger"
-            (click)="store.retryTurn()"
-          />
-        </ui-stack>
-      </ui-alert>
+      <app-turn-error
+        [message]="store.turnError()"
+        fallback="The dispatch turn failed. Try again."
+        (retry)="store.retryTurn()"
+      />
     }
   </div>
 
   @if (!scroll.pinnedToBottom()) {
-    <ui-button
-      icon="arrow-down"
-      [rounded]="true"
-      intent="secondary"
-      size="sm"
-      class="absolute right-6 bottom-4 shadow-md"
-      ariaLabel="Scroll to latest messages"
-      (click)="scroll.scrollToBottom()"
+    <app-scroll-to-bottom
+      class="absolute right-6 bottom-4"
+      (scrollToBottom)="scroll.scrollToBottom()"
     />
   }
 </div>

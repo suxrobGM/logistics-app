@@ -2,7 +2,7 @@ import type { AgentDecisionDto } from "@logistics/shared/api";
 import { groupTurnEntries, readGroupSummary } from "./dispatch-turn-timeline.utils";
 
 function decision(overrides: Partial<AgentDecisionDto> = {}): AgentDecisionDto {
-  return { id: "d1", toolName: "get_unassigned_loads", ...overrides };
+  return { id: "d1", toolName: "get_unassigned_loads", type: "query", ...overrides };
 }
 
 describe("groupTurnEntries", () => {
@@ -23,20 +23,25 @@ describe("groupTurnEntries", () => {
   it("keeps write tools standalone, never merged with a read group", () => {
     const decisions = [
       decision({ id: "d1", toolName: "get_unassigned_loads" }),
-      decision({ id: "d2", toolName: "assign_load_to_truck" }),
+      decision({ id: "d2", toolName: "assign_load_to_truck", type: "assign_load" }),
     ];
 
     const entries = groupTurnEntries(decisions);
 
     expect(entries).toHaveLength(2);
-    expect(entries[0]).toEqual({ kind: "reads", id: "d1", decisions: [decisions[0]] });
+    expect(entries[0]).toEqual({
+      kind: "reads",
+      id: "d1",
+      decisions: [decisions[0]],
+      summary: readGroupSummary([decisions[0]]),
+    });
     expect(entries[1]).toEqual({ kind: "write", id: "d2", decision: decisions[1] });
   });
 
   it("keeps consecutive write tools as separate standalone entries, not merged", () => {
     const decisions = [
-      decision({ id: "d1", toolName: "assign_load_to_truck" }),
-      decision({ id: "d2", toolName: "dispatch_trip" }),
+      decision({ id: "d1", toolName: "assign_load_to_truck", type: "assign_load" }),
+      decision({ id: "d2", toolName: "dispatch_trip", type: "dispatch_trip" }),
     ];
 
     const entries = groupTurnEntries(decisions);
@@ -51,9 +56,9 @@ describe("groupTurnEntries", () => {
     const decisions = [
       decision({ id: "d1", toolName: "get_unassigned_loads" }),
       decision({ id: "d2", toolName: "get_available_trucks" }),
-      decision({ id: "d3", toolName: "assign_load_to_truck" }),
+      decision({ id: "d3", toolName: "assign_load_to_truck", type: "assign_load" }),
       decision({ id: "d4", toolName: "get_driver_hos_status" }),
-      decision({ id: "d5", toolName: "dispatch_trip" }),
+      decision({ id: "d5", toolName: "dispatch_trip", type: "dispatch_trip" }),
     ];
 
     const entries = groupTurnEntries(decisions);

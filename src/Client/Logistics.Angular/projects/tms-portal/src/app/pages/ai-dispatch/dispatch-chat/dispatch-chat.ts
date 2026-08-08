@@ -2,11 +2,11 @@ import { Component, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LayoutService } from "@logistics/shared/services";
 import { Icon, Stack, Typography, UiButton, UiDrawer, UiTooltip } from "@logistics/shared/ui";
-import { QuotaNoticeClasses } from "@/core/store";
 import {
   ChatComposer,
   ConversationList,
   DecisionActionsService,
+  QuotaNotice,
   RealtimeBanner,
   RejectDecisionDialog,
 } from "@/shared/components";
@@ -29,6 +29,7 @@ import { DispatchChatStore } from "../store/dispatch-chat.store";
     DispatchRightPanel,
     DispatchTranscript,
     Icon,
+    QuotaNotice,
     RealtimeBanner,
     RejectDecisionDialog,
     RouterLink,
@@ -43,7 +44,6 @@ export class DispatchChat {
   protected readonly store = inject(DispatchChatStore);
   protected readonly layoutService = inject(LayoutService);
 
-  protected readonly noticeClasses = QuotaNoticeClasses;
   protected readonly planAssignmentsPrompt = PLAN_ASSIGNMENTS_PROMPT;
 
   constructor() {

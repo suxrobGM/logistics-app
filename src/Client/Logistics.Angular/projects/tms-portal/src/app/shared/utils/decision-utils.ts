@@ -1,3 +1,4 @@
+import type { AgentDecisionType } from "@logistics/shared/api";
 import type { IconName } from "@logistics/shared/ui";
 
 /** Parsed tool input for display in decision cards and timeline */
@@ -149,14 +150,12 @@ function parseTruck(t: any): NonNullable<ParsedToolOutput["trucks"]>[number] {
 interface ToolMeta {
   label: string;
   icon: IconName;
-  /** Mirrors the IsWrite metadata on the backend AIDispatchToolDefinition. */
-  write?: true;
 }
 
 /**
  * The display metadata for every agent tool, keyed by the backend's snake_case tool name. One
- * table rather than three parallel lookups - the label, icon and write flag drifted apart when
- * they were separate.
+ * table rather than two parallel lookups - the label and icon drifted apart when they were
+ * separate. Whether a tool writes is NOT here: that is the decision's own `type`.
  */
 const TOOL_META: Record<string, ToolMeta> = {
   get_unassigned_loads: { label: "Unassigned Loads", icon: "box" },
@@ -181,13 +180,13 @@ const TOOL_META: Record<string, ToolMeta> = {
   get_expense_stats: { label: "Expense Stats", icon: "chart-column" },
   get_upcoming_maintenance: { label: "Upcoming Maintenance", icon: "wrench" },
 
-  assign_load_to_truck: { label: "Assign Load", icon: "link", write: true },
-  create_trip: { label: "Create Trip", icon: "circle-plus", write: true },
-  dispatch_trip: { label: "Dispatch Trip", icon: "send", write: true },
-  book_loadboard_load: { label: "Book Load", icon: "shopping-cart", write: true },
-  create_load_invoice: { label: "Create Invoice", icon: "file-text", write: true },
-  send_invoice: { label: "Send Invoice", icon: "mail", write: true },
-  create_payment_link: { label: "Create Payment Link", icon: "credit-card", write: true },
+  assign_load_to_truck: { label: "Assign Load", icon: "link" },
+  create_trip: { label: "Create Trip", icon: "circle-plus" },
+  dispatch_trip: { label: "Dispatch Trip", icon: "send" },
+  book_loadboard_load: { label: "Book Load", icon: "shopping-cart" },
+  create_load_invoice: { label: "Create Invoice", icon: "file-text" },
+  send_invoice: { label: "Send Invoice", icon: "mail" },
+  create_payment_link: { label: "Create Payment Link", icon: "credit-card" },
 };
 
 export function getToolLabel(toolName: string | null | undefined): string {
@@ -247,13 +246,17 @@ export function buildDecisionDetail(
   return lines.join("\n");
 }
 
-export function isWriteTool(toolName: string | null | undefined): boolean {
-  return toolName ? TOOL_META[toolName]?.write === true : false;
+/**
+ * Read tools execute immediately; write tools become decisions awaiting approval. The backend
+ * derives this the same way (`AgentToolDefinition.IsWrite` is `DecisionType != Query`), so reading
+ * the decision's own type keeps a newly added tool from silently rendering as a read.
+ */
+export function isWriteDecision(decision: { type?: AgentDecisionType }): boolean {
+  return !!decision.type && decision.type !== "query";
 }
 
-export function getToolMarkerClass(toolName: string | null | undefined): string {
-  if (isWriteTool(toolName)) {
-    return "bg-primary text-primary-foreground";
-  }
-  return "bg-muted text-muted-foreground";
+export function getToolMarkerClass(decision: { type?: AgentDecisionType }): string {
+  return isWriteDecision(decision)
+    ? "bg-primary text-primary-foreground"
+    : "bg-muted text-muted-foreground";
 }

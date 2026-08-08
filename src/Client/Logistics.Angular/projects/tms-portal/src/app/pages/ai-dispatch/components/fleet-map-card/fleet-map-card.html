@@ -28,7 +28,11 @@
 </ui-surface>
 
 <ui-dialog [(open)]="expanded" header="Fleet Map" width="min(72rem, 95vw)">
-  <div class="h-[70vh]">
-    <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="5" height="100%" />
-  </div>
+  <!-- Projected content is created with this component, not with the dialog, so without the @if
+       a second Mapbox context is built and never shown. -->
+  @if (expanded()) {
+    <div class="h-[70vh]">
+      <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="5" height="100%" />
+    </div>
+  }
 </ui-dialog>

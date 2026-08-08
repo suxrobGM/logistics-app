@@ -4,7 +4,7 @@ import { Permission } from "@logistics/shared";
 import type { AgentDecisionDto, AgentMessageDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
 import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
-import { CopilotStore, QuotaNoticeClasses } from "@/core/store";
+import { CopilotStore } from "@/core/store";
 import {
   AgentDecisionCard,
   ChatComposer,
@@ -12,8 +12,11 @@ import {
   ConversationList,
   DecisionActionsService,
   pinnedScroll,
+  QuotaNotice,
   RealtimeBanner,
   RejectDecisionDialog,
+  ScrollToBottom,
+  TurnError,
   TurnStatus,
 } from "@/shared/components";
 import {
@@ -55,8 +58,11 @@ const ResizeKeyStepPx = 16;
     ChatMessage,
     ConversationList,
     Icon,
+    QuotaNotice,
     RealtimeBanner,
     RejectDecisionDialog,
+    ScrollToBottom,
+    TurnError,
     TurnStatus,
     UiButton,
     UiTooltip,
@@ -74,8 +80,6 @@ export class CopilotDrawer {
   protected readonly copilotManage = Permission.Copilot.Manage;
 
   private previouslyFocused: HTMLElement | null = null;
-
-  protected readonly noticeClasses = QuotaNoticeClasses;
 
   protected readonly suggestedPrompts = [
     "Which loads were delivered last week?",

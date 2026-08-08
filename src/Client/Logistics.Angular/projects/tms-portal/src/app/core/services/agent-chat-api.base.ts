@@ -1,4 +1,4 @@
-﻿import type { HttpClient, HttpContext } from "@angular/common/http";
+import type { HttpClient, HttpContext } from "@angular/common/http";
 import { inject } from "@angular/core";
 import {
   Api,
@@ -45,8 +45,6 @@ export interface AgentChatEndpoints {
     void
   >;
   deleteConversation: AgentChatApiFn<ConversationParams, void>;
-  /** Sort passed to the history query; omitted when the endpoint already orders sensibly. */
-  historyOrderBy?: string;
 }
 
 /**
@@ -82,11 +80,7 @@ export abstract class AgentChatApiBase implements AgentChatApi {
     pageSize: number,
   ): Promise<AgentConversationDtoPagedResponse | null> {
     return orNull(
-      this.api.invoke(this.endpoints.getConversations, {
-        Page: page,
-        PageSize: pageSize,
-        OrderBy: this.endpoints.historyOrderBy,
-      }),
+      this.api.invoke(this.endpoints.getConversations, { Page: page, PageSize: pageSize }),
     );
   }
 
