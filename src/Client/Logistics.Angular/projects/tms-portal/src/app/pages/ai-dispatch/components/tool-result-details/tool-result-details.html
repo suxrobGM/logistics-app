@@ -1,0 +1,49 @@
+@if (trucks(); as t) {
+  <ui-data-table [value]="t" size="small" styleClass="text-xs">
+    <ng-template #header>
+      <tr>
+        <th>Truck</th>
+        <th>Driver</th>
+        <th>HOS remaining</th>
+        <th>Status</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-truck>
+      <tr>
+        <td>{{ truck.number }}</td>
+        <td>{{ truck.mainDriver?.name ?? "-" }}</td>
+        <td>{{ localization.formatHosDuration(truck.mainDriver?.hos?.drivingMinutesRemaining) }}</td>
+        <td>
+          @if (truck.mainDriver?.hos?.isInViolation) {
+            <span class="text-danger">Violation</span>
+          } @else if (truck.mainDriver?.hos?.isAvailable) {
+            <span class="text-success">Available</span>
+          } @else {
+            <span class="text-muted-foreground">-</span>
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </ui-data-table>
+} @else if (loads(); as l) {
+  <ui-data-table [value]="l" size="small" styleClass="text-xs">
+    <ng-template #header>
+      <tr>
+        <th>Load</th>
+        <th>Route</th>
+        <th>Distance</th>
+        <th>Rate</th>
+        <th>Customer</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-load>
+      <tr>
+        <td>{{ load.name }}</td>
+        <td>{{ load.origin }} → {{ load.destination }}</td>
+        <td>{{ load.distanceKm }} km</td>
+        <td>{{ load.deliveryCost | currency }}</td>
+        <td>{{ load.customer }}</td>
+      </tr>
+    </ng-template>
+  </ui-data-table>
+}
