@@ -8,18 +8,19 @@ import {
   viewChild,
   type ElementRef,
 } from "@angular/core";
+import { Permission } from "@logistics/shared";
 import type { AgentDecisionDto, AgentMessageDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
 import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
 import { CopilotStore, QuotaNoticeClasses } from "@/core/store";
 import {
+  AgentDecisionCard,
   ChatComposer,
   ChatMessage,
   ConversationList,
   DecisionActionsService,
   RejectDecisionDialog,
 } from "@/shared/components";
-import { CopilotActionCard } from "./copilot-action-card/copilot-action-card";
 import { COPILOT_COMMANDS } from "./copilot-commands";
 
 type StreamItem =
@@ -48,11 +49,11 @@ const ResizeKeyStepPx = 16;
     "(document:keydown)": "onGlobalKeydown($event)",
   },
   imports: [
+    AgentDecisionCard,
     CdkTrapFocus,
     ChatComposer,
     ChatMessage,
     ConversationList,
-    CopilotActionCard,
     Icon,
     RejectDecisionDialog,
     UiButton,
@@ -68,6 +69,7 @@ export class CopilotDrawer {
   private readonly composer = viewChild(ChatComposer);
 
   protected readonly copilotCommands = COPILOT_COMMANDS;
+  protected readonly copilotManage = Permission.Copilot.Manage;
 
   private previouslyFocused: HTMLElement | null = null;
 

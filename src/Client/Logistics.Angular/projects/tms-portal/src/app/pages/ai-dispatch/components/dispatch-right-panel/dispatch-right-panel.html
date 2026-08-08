@@ -19,8 +19,10 @@
       @if (store.writeDecisions().length) {
         <ui-stack gap="3">
           @for (decision of store.writeDecisions(); track decision.id) {
-            <app-decision-card
+            <app-agent-decision-card
               [decision]="decision"
+              [managePermission]="dispatchManage"
+              variant="compact"
               [busy]="actions.busyDecisionId() === decision.id"
               (approve)="approve($event)"
               (reject)="reject($event)"

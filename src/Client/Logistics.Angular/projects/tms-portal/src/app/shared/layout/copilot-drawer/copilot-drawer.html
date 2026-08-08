@@ -112,8 +112,9 @@
               @if (item.kind === "message") {
                 <app-chat-message [message]="item.message" />
               } @else {
-                <app-copilot-action-card
+                <app-agent-decision-card
                   [decision]="item.decision"
+                  [managePermission]="copilotManage"
                   [busy]="actions.busyDecisionId() === item.decision.id"
                   (approve)="approve($event)"
                   (reject)="reject($event)"

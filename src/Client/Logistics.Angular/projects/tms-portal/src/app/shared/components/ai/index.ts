@@ -1,4 +1,5 @@
 export * from "./decision-actions.service";
+export * from "./agent-decision-card/agent-decision-card";
 export * from "./approve-reject-actions/approve-reject-actions";
 export * from "./chat-composer/chat-composer";
 export * from "./chat-message/chat-message";

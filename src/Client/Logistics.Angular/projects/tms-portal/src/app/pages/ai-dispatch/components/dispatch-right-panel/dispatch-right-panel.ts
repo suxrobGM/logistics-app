@@ -1,9 +1,9 @@
 import { Component, inject } from "@angular/core";
+import { Permission } from "@logistics/shared";
 import type { AgentDecisionDto } from "@logistics/shared/api";
 import { CountBadge, EmptyState, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { AIQuotaUsage, DecisionActionsService } from "@/shared/components";
+import { AgentDecisionCard, AIQuotaUsage, DecisionActionsService } from "@/shared/components";
 import { DispatchChatStore } from "../../store/dispatch-chat.store";
-import { DecisionCard } from "../decision-card/decision-card";
 import { FleetMapCard } from "../fleet-map-card/fleet-map-card";
 
 /**
@@ -14,9 +14,9 @@ import { FleetMapCard } from "../fleet-map-card/fleet-map-card";
   selector: "app-dispatch-right-panel",
   templateUrl: "./dispatch-right-panel.html",
   imports: [
+    AgentDecisionCard,
     AIQuotaUsage,
     CountBadge,
-    DecisionCard,
     EmptyState,
     FleetMapCard,
     Icon,
@@ -28,6 +28,8 @@ import { FleetMapCard } from "../fleet-map-card/fleet-map-card";
 export class DispatchRightPanel {
   protected readonly store = inject(DispatchChatStore);
   protected readonly actions = inject(DecisionActionsService);
+
+  protected readonly dispatchManage = Permission.Dispatch.Manage;
 
   protected approve(decision: AgentDecisionDto): void {
     this.actions.approve(decision, () => this.store.onDecisionResolved());
