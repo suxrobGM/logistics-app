@@ -22,15 +22,11 @@ internal static class AICopilotDecisionGuard
             return Result<CopilotDecisionContext>.Fail("User is not authenticated");
 
         var decision = await tenantUow.Repository<AgentDecision>().GetByIdAsync(decisionId, ct);
-        if (decision is null
-            || decision.Session.Type != AgentSessionType.Copilot
-            || decision.Session.ConversationId is not { } conversationId)
-        {
+        if (decision is null || decision.Session.Type != AgentSessionType.Copilot)
             return Result<CopilotDecisionContext>.Fail("Decision not found");
-        }
 
         var conversation = await tenantUow.Repository<AgentConversation>()
-            .GetByIdAsync(conversationId, ct);
+            .GetByIdAsync(decision.Session.ConversationId, ct);
         if (conversation is null
             || conversation.CreatedById != userId.Value
             || conversation.Kind != AgentConversationKind.Copilot)

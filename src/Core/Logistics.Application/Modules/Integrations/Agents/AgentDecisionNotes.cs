@@ -17,33 +17,21 @@ internal static class AgentDecisionNotes
             ? $"Rejected: {decision.ToolName}"
             : $"Rejected: {decision.ToolName} - {reason}";
 
-    /// <summary>
-    /// The conversation a decision's outcome belongs in, or null when its session predates
-    /// conversations - old dispatch sessions have no transcript to note.
-    /// </summary>
-    public static Task<AgentConversation?> LoadConversationAsync(
+    /// <summary>The conversation a decision's outcome belongs in.</summary>
+    public static async Task<AgentConversation> LoadConversationAsync(
         ITenantUnitOfWork tenantUow, AgentDecision decision, CancellationToken ct) =>
-        decision.Session.ConversationId is { } conversationId
-            ? tenantUow.Repository<AgentConversation>().GetByIdAsync(conversationId, ct)
-            : Task.FromResult<AgentConversation?>(null);
+        // Required FK cascading from the conversation, so a live decision always has its row.
+        (await tenantUow.Repository<AgentConversation>()
+            .GetByIdAsync(decision.Session.ConversationId, ct))!;
 
-    /// <summary>
-    /// Appends <paramref name="note"/> to the transcript and saves. With no conversation there is
-    /// nothing to append, only the decision's own state change to persist.
-    /// </summary>
+    /// <summary>Appends <paramref name="note"/> to the transcript and saves.</summary>
     public static async Task AppendAsync(
         ITenantUnitOfWork tenantUow,
-        AgentConversation? conversation,
+        AgentConversation conversation,
         string note,
         Func<AgentMessageDto, Task> broadcastMessageAsync,
         CancellationToken ct)
     {
-        if (conversation is null)
-        {
-            await tenantUow.SaveChangesAsync(ct);
-            return;
-        }
-
         var message = conversation.AddTextMessage(AgentMessageRole.System, note);
         await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         await tenantUow.SaveChangesAsync(ct);

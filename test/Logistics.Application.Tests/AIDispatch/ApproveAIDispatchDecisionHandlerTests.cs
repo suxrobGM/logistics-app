@@ -26,26 +26,10 @@ public class ApproveAIDispatchDecisionHandlerTests
             Options.Create(new LlmOptions { BypassAIGate = true }));
     }
 
-    /// <summary>Old sessions may predate conversations - approval must still execute without a note.</summary>
-    [Fact]
-    public async Task Handle_SessionHasNoConversation_ExecutesWithoutAppendingANote()
-    {
-        var decision = ctx.SetDispatchSuggestedDecision(conversationId: null);
-        ctx.ToolExecutor.ExecuteToolAsync("assign_load_to_truck", Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("""{"success":true}""");
-
-        var result = await sut.Handle(
-            new ApproveAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        Assert.Equal(AgentDecisionStatus.Executed, decision.Status);
-        await broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);
-    }
-
     [Fact]
     public async Task Handle_ApproverLacksToolPermission_FailsWithoutExecuting()
     {
-        var decision = ctx.SetDispatchSuggestedDecision(conversationId: null);
+        var decision = ctx.SetDispatchSuggestedDecision();
         ctx.SetCallerPermissions("Permission.Load.View");
 
         var result = await sut.Handle(
@@ -58,7 +42,7 @@ public class ApproveAIDispatchDecisionHandlerTests
     }
 
     [Fact]
-    public async Task Handle_SessionHasConversation_AppendsApprovedNoteAndBroadcastsTenantWide()
+    public async Task Handle_ToolSucceeds_AppendsApprovedNoteAndBroadcastsTenantWide()
     {
         var conversationId = Guid.NewGuid();
         var decision = ctx.SetDispatchSuggestedDecision(conversationId);
@@ -82,7 +66,7 @@ public class ApproveAIDispatchDecisionHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ToolThrows_AppendsFailureNoteWhenConversationPresent()
+    public async Task Handle_ToolThrows_AppendsFailureNote()
     {
         var conversationId = Guid.NewGuid();
         var decision = ctx.SetDispatchSuggestedDecision(conversationId);

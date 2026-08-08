@@ -12,7 +12,6 @@ public static partial class AIDispatchSessionMapper
     [MapperIgnoreSource(nameof(AgentSession.Type))]
     [MapperIgnoreSource(nameof(AgentSession.ConversationId))]
     [MapperIgnoreSource(nameof(AgentSession.Conversation))]
-    [MapperIgnoreSource(nameof(AgentSession.Number))]
     [MapperIgnoreSource(nameof(AgentSession.TriggeredByUserId))]
     [MapperIgnoreSource(nameof(AgentSession.InputTokensUsed))]
     [MapperIgnoreSource(nameof(AgentSession.OutputTokensUsed))]

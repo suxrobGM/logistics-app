@@ -88,11 +88,7 @@ internal sealed class AgentTestContext
         AgentSessionType sessionType = AgentSessionType.Copilot)
     {
         var conversation = new AgentConversation { CreatedById = UserId };
-        var session = new AgentSession
-        {
-            Type = sessionType,
-            ConversationId = sessionType == AgentSessionType.Copilot ? conversation.Id : null
-        };
+        var session = new AgentSession { Type = sessionType, ConversationId = conversation.Id };
         var decision = new AgentDecision
         {
             SessionId = session.Id,
@@ -113,7 +109,11 @@ internal sealed class AgentTestContext
         string toolName = "assign_load_to_truck",
         string toolInput = """{"load_id":"x"}""")
     {
-        var session = new AgentSession { Type = AgentSessionType.Dispatch, ConversationId = conversationId };
+        var session = new AgentSession
+        {
+            Type = AgentSessionType.Dispatch,
+            ConversationId = conversationId ?? Guid.NewGuid()
+        };
         var decision = new AgentDecision
         {
             SessionId = session.Id,

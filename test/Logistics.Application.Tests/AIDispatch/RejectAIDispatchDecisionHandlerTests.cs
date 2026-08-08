@@ -24,21 +24,7 @@ public class RejectAIDispatchDecisionHandlerTests
     }
 
     [Fact]
-    public async Task Handle_SessionHasNoConversation_RejectsWithoutAppendingANote()
-    {
-        var decision = ctx.SetDispatchSuggestedDecision(conversationId: null);
-
-        var result = await sut.Handle(
-            new RejectAIDispatchDecisionCommand { DecisionId = decision.Id, Reason = "wrong truck" },
-            CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        Assert.Equal(AgentDecisionStatus.Rejected, decision.Status);
-        await broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);
-    }
-
-    [Fact]
-    public async Task Handle_SessionHasConversation_AppendsRejectionNoteAndBroadcastsTenantWide()
+    public async Task Handle_ReasonGiven_AppendsRejectionNoteAndBroadcastsTenantWide()
     {
         var conversationId = Guid.NewGuid();
         var decision = ctx.SetDispatchSuggestedDecision(conversationId);

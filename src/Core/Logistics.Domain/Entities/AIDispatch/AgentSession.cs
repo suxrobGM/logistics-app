@@ -9,20 +9,14 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public class AgentSession : AuditableEntity, ITenantEntity
 {
-    /// <summary>
-    /// Sequential number of the session, unique within the tenant.
-    /// </summary>
-    public long Number { get; private set; }
-
     public AgentSessionType Type { get; init; } = AgentSessionType.Dispatch;
     public AgentSessionStatus Status { get; private set; } = AgentSessionStatus.Running;
 
     /// <summary>
-    /// The conversation this turn belongs to. Null only for legacy sessions created before
-    /// conversations existed.
+    /// The conversation this turn belongs to.
     /// </summary>
-    public Guid? ConversationId { get; init; }
-    public virtual AgentConversation? Conversation { get; init; }
+    public Guid ConversationId { get; init; }
+    public virtual AgentConversation Conversation { get; init; } = null!;
 
     /// <summary>
     /// The user who triggered this session. Null if triggered by background job.
