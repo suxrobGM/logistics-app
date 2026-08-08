@@ -1,23 +1,31 @@
 import { DestroyRef, Injectable } from "@angular/core";
-import type { AgentDecisionDto } from "@logistics/shared/api";
+import type { AgentDecisionDto, AgentMessageDto, AgentSessionStatus } from "@logistics/shared/api";
 import { BaseHubConnection } from "./base-hub-connection";
 
-export interface AIDispatchUpdate {
+/** Mirror of the backend AIDispatchTurnUpdateDto (SignalR payloads are not in the OpenAPI spec). */
+export interface DispatchTurnUpdate {
+  conversationId: string;
   sessionId: string;
-  status: string;
-  mode: string;
+  status: AgentSessionStatus;
+  totalTokensUsed: number;
   decisionCount: number;
-  summary: string | null;
+  errorMessage: string | null;
 }
 
 const DispatchBoardGroup = "dispatch-board";
 
 /**
- * Service for managing real-time AI dispatch agent operations via SignalR.
+ * Real-time AI dispatch events. Tenant-shared - unlike the copilot hub, every event goes to the
+ * whole tenant's dispatch board group, so a decision approved by one dispatcher is reflected for
+ * everyone watching the same (or a different) conversation.
+ *
+ * DispatchChatStore is the only intended subscriber - components read the store, never this
+ * service.
  */
 @Injectable({ providedIn: "root" })
 export class AIDispatchHubService extends BaseHubConnection {
-  readonly updateReceived$ = this.event<AIDispatchUpdate>("ReceiveAIDispatchUpdate");
+  readonly messageReceived$ = this.event<AgentMessageDto>("ReceiveDispatchMessage");
+  readonly turnUpdateReceived$ = this.event<DispatchTurnUpdate>("ReceiveDispatchTurnUpdate");
   readonly decisionReceived$ = this.event<AgentDecisionDto>("ReceiveAIDispatchDecision");
 
   constructor() {
@@ -26,7 +34,7 @@ export class AIDispatchHubService extends BaseHubConnection {
 
   /**
    * Claims the connection and joins the tenant's dispatch board group, both for as long as
-   * `destroyRef` lives. Board pages need nothing else to receive updates.
+   * `destroyRef` lives. The dispatch page needs nothing else to receive updates.
    */
   async acquireDispatchBoard(destroyRef: DestroyRef): Promise<void> {
     const tenantId = this.tenantService.getTenantData()?.id;

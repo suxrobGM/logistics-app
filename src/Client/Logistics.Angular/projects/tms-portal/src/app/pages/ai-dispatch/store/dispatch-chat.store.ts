@@ -1,43 +1,35 @@
-import { computed, inject } from "@angular/core";
-import { Permission } from "@logistics/shared";
+import { computed, DestroyRef, effect, inject } from "@angular/core";
 import type {
   AgentConversationDto,
   AgentDecisionDto,
   AgentMessageDto,
+  AgentSessionDto,
   AIQuotaStatusDto,
+  TruckDto,
 } from "@logistics/shared/api";
-import { ErrorCodes } from "@logistics/shared/errors";
-import {
-  FeatureService,
-  LocalizationService,
-  PermissionService,
-  ToastService,
-} from "@logistics/shared/services";
+import type { TruckGeolocationDto } from "@logistics/shared/api/models";
+import { LocalizationService } from "@logistics/shared/services";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import { CopilotApiService } from "@/core/services/copilot-api.service";
-import { CopilotHubService } from "@/core/services/copilot-hub.service";
-import { UpgradePromptService } from "@/core/services/upgrade-prompt.service";
+import { AIDispatchHubService } from "@/core/services/ai-dispatch-hub.service";
+import { DispatchApiService } from "@/core/services/dispatch-api.service";
+import { DispatchBadgeService } from "@/core/services/dispatch-badge.service";
 import {
   buildQuotaNotice,
-  clampDrawerWidth,
-  DefaultDrawerWidth,
-  persistDrawerWidth,
-  readStoredDrawerWidth,
+  persistRightPanelCollapsed,
+  readStoredRightPanelCollapsed,
   TurnWatchdog,
-} from "./copilot.store.helpers";
+} from "./dispatch-chat.store.helpers";
 
-type CopilotView = "chat" | "history";
 type TurnStatus = "idle" | "running" | "failed";
 
-const HistoryPageSize = 20;
+const HistoryPageSize = 30;
 
-interface CopilotState {
-  open: boolean;
-  view: CopilotView;
+interface DispatchChatState {
   conversations: AgentConversationDto[];
   currentConversation: AgentConversationDto | null;
   messages: AgentMessageDto[];
   decisions: AgentDecisionDto[];
+  sessions: AgentSessionDto[];
   turnStatus: TurnStatus;
   turnError: string | null;
   /** Tools run so far in the active turn (from the per-iteration hub updates). */
@@ -46,86 +38,93 @@ interface CopilotState {
   longRunning: boolean;
   loading: boolean;
   sending: boolean;
-  unreadCount: number;
   historyPage: number;
   hasMoreHistory: boolean;
-  drawerWidth: number;
+  /** Tenant-wide write decisions awaiting approval - the right panel + sidebar nav badge. */
+  pendingDecisions: AgentDecisionDto[];
+  trucks: TruckDto[];
   quota: AIQuotaStatusDto | null;
+  sidebarCollapsed: boolean;
+  rightPanelCollapsed: boolean;
 }
 
-const initialState: CopilotState = {
-  open: false,
-  view: "chat",
+const initialState: DispatchChatState = {
   conversations: [],
   currentConversation: null,
   messages: [],
   decisions: [],
+  sessions: [],
   turnStatus: "idle",
   turnError: null,
   turnProgress: null,
   longRunning: false,
   loading: false,
   sending: false,
-  unreadCount: 0,
   historyPage: 1,
   hasMoreHistory: false,
-  drawerWidth: readStoredDrawerWidth(),
+  pendingDecisions: [],
+  trucks: [],
   quota: null,
+  sidebarCollapsed: false,
+  rightPanelCollapsed: readStoredRightPanelCollapsed(),
 };
 
 /**
- * Root-provided: the drawer body unmounts when closed and the launchers need the open/unread
- * state, so none of this can live in a component. The sole intended subscriber of
- * CopilotHubService - components read the store, never the hub. Being app-lifetime, it acquires the
- * hub without a DestroyRef and never releases.
- * HTTP lives in CopilotApiService; this store only orchestrates state.
+ * Page-scoped (provided by the `DispatchChat` page component, not root): unlike the copilot drawer
+ * there is no persistent launcher badge that needs this state outside the page, and the page-scoped
+ * lifetime means the dispatch board hub connection releases as soon as the dispatcher navigates away.
+ * HTTP lives in `DispatchApiService`; this store only orchestrates state.
  */
-export const CopilotStore = signalStore(
-  { providedIn: "root" },
+export const DispatchChatStore = signalStore(
   withState(initialState),
 
   withComputed(
-    (
-      store,
-      featureService = inject(FeatureService),
-      permissionService = inject(PermissionService),
-      copilotHub = inject(CopilotHubService),
-      localization = inject(LocalizationService),
-    ) => ({
+    (store, localization = inject(LocalizationService), hub = inject(AIDispatchHubService)) => ({
       isRunning: computed(() => store.turnStatus() === "running"),
-      hasUnread: computed(() => store.unreadCount() > 0),
-      launcherVisible: computed(
-        () =>
-          !featureService.isLocked("ai_copilot") &&
-          permissionService.hasPermission(Permission.Copilot.View),
-      ),
       /** "connecting" is not "down" - the banner should only show for lost/failed connections. */
       realtimeDown: computed(() => {
-        const state = copilotHub.connectionState();
-        return store.open() && (state === "disconnected" || state === "reconnecting");
+        const state = hub.connectionState();
+        return state === "disconnected" || state === "reconnecting";
       }),
       quotaNotice: computed(() =>
         buildQuotaNotice(store.quota(), (value) => localization.formatCurrency(value)),
       ),
       /** Owner opted for a hard pause and the budget is spent - the composer disables. */
       quotaBlocked: computed(() => store.quota()?.overageBlocked === true),
+      /** Only write-tool decisions (assign, create trip, dispatch...) need approval - queries never do. */
+      writeDecisions: computed(() => store.pendingDecisions().filter((d) => d.type !== "query")),
+      truckLocations: computed<TruckGeolocationDto[]>(() =>
+        store
+          .trucks()
+          .filter((t) => t.currentLocation?.latitude && t.currentLocation?.longitude)
+          .map((t) => ({
+            truckId: t.id,
+            truckNumber: t.number,
+            driversName: [t.mainDriver?.fullName, t.secondaryDriver?.fullName]
+              .filter(Boolean)
+              .join(", "),
+            currentLocation: t.currentLocation,
+            currentAddress: t.currentAddress,
+          })),
+      ),
     }),
   ),
 
   withMethods(
     (
       store,
-      copilotApi = inject(CopilotApiService),
-      copilotHub = inject(CopilotHubService),
-      featureService = inject(FeatureService),
-      permissionService = inject(PermissionService),
-      upgradePrompt = inject(UpgradePromptService),
-      toast = inject(ToastService),
+      dispatchApi = inject(DispatchApiService),
+      hub = inject(AIDispatchHubService),
+      dispatchBadge = inject(DispatchBadgeService),
+      destroyRef = inject(DestroyRef),
     ) => {
       const watchdog = new TurnWatchdog(
         () => void reconcileConversation(),
         () => patchState(store, { longRunning: true }),
       );
+
+      // Keeps the sidebar nav badge in step with the right panel's pending write decisions.
+      effect(() => dispatchBadge.pendingCount.set(store.writeDecisions().length));
 
       const beginTurn = (): void => {
         patchState(store, { turnStatus: "running", turnError: null, longRunning: false });
@@ -143,10 +142,16 @@ export const CopilotStore = signalStore(
       };
 
       const applyConversation = (conversation: AgentConversationDto): void => {
+        const inSidebar = store.conversations().some((c) => c.id === conversation.id);
         patchState(store, {
           currentConversation: conversation,
           messages: conversation.messages ?? [],
           decisions: conversation.decisions ?? [],
+          sessions: conversation.sessions ?? [],
+          // Keeps the sidebar's title/last-message-time in step once the backend fills them in.
+          conversations: inSidebar
+            ? store.conversations().map((c) => (c.id === conversation.id ? conversation : c))
+            : store.conversations(),
         });
         // Guarded: re-running beginTurn mid-turn would reset the longRunning marker.
         if (conversation.status === "running") {
@@ -156,12 +161,12 @@ export const CopilotStore = signalStore(
         }
       };
 
-      /** Conversations are created lazily, on the first send rather than on drawer open. */
+      /** Conversations are created lazily, on the first send rather than on page load. */
       const currentOrNewConversation = async (): Promise<AgentConversationDto | null> => {
         const existing = store.currentConversation();
         if (existing) return existing;
 
-        const created = await copilotApi.createConversation();
+        const created = await dispatchApi.createConversation();
         if (created) patchState(store, { currentConversation: created });
         return created;
       };
@@ -170,39 +175,57 @@ export const CopilotStore = signalStore(
       const reconcileConversation = async (): Promise<void> => {
         const conversationId = store.currentConversation()?.id;
         if (!conversationId) return;
-        const conversation = await copilotApi.fetchConversation(conversationId, { silent: true });
+        const conversation = await dispatchApi.fetchConversation(conversationId, { silent: true });
         if (!conversation || store.currentConversation()?.id !== conversationId) return;
         applyConversation(conversation);
       };
 
       const loadQuota = async (): Promise<void> => {
-        const quota = await copilotApi.fetchQuota();
+        const quota = await dispatchApi.fetchQuota();
         if (quota) patchState(store, { quota });
       };
 
-      // Subscribed once at store creation (root store, never destroyed); the hub connects lazily
-      // on first drawer open.
-      copilotHub.messageReceived$.subscribe((message) => {
-        if (message.conversationId !== store.currentConversation()?.id) return;
+      const refreshPendingDecisions = async (): Promise<void> => {
+        const pending = await dispatchApi.fetchPendingDecisions({ silent: true });
+        if (pending) patchState(store, { pendingDecisions: pending });
+      };
 
+      const loadTrucks = async (): Promise<void> => {
+        patchState(store, { trucks: await dispatchApi.fetchAvailableTrucks() });
+      };
+
+      // Subscribed once at store creation (page-scoped: created and destroyed with the page).
+      hub.messageReceived$.subscribe((message) => {
+        if (message.conversationId !== store.currentConversation()?.id) return;
         patchState(store, { messages: [...store.messages(), message] });
-        if (!store.open()) {
-          patchState(store, { unreadCount: store.unreadCount() + 1 });
-        }
       });
 
-      copilotHub.decisionReceived$.subscribe((decision) => {
+      hub.decisionReceived$.subscribe((decision) => {
+        // Tenant-wide pending list, independent of which conversation is open.
+        const pending = store.pendingDecisions();
+        const index = pending.findIndex((d) => d.id === decision.id);
+        patchState(store, {
+          pendingDecisions:
+            decision.status === "suggested"
+              ? index >= 0
+                ? pending.map((d) => (d.id === decision.id ? decision : d))
+                : [...pending, decision]
+              : pending.filter((d) => d.id !== decision.id),
+        });
+
+        // Also patch the open conversation's transcript if the decision belongs to one of its turns.
+        if (!store.sessions().some((s) => s.id === decision.sessionId)) return;
         const existing = store.decisions();
-        const index = existing.findIndex((d) => d.id === decision.id);
+        const existingIndex = existing.findIndex((d) => d.id === decision.id);
         patchState(store, {
           decisions:
-            index >= 0
+            existingIndex >= 0
               ? existing.map((d) => (d.id === decision.id ? decision : d))
               : [...existing, decision],
         });
       });
 
-      copilotHub.turnUpdateReceived$.subscribe((update) => {
+      hub.turnUpdateReceived$.subscribe((update) => {
         if (update.conversationId !== store.currentConversation()?.id) return;
 
         if (update.status === "running") {
@@ -215,10 +238,11 @@ export const CopilotStore = signalStore(
 
         endTurn(update.status === "failed" ? "failed" : "idle", update.errorMessage);
         void loadQuota();
+        void reconcileConversation();
       });
 
       const loadHistoryPage = async (page: number): Promise<void> => {
-        const result = await copilotApi.fetchHistoryPage(page, HistoryPageSize);
+        const result = await dispatchApi.fetchHistoryPage(page, HistoryPageSize);
         if (!result) return;
         patchState(store, {
           conversations:
@@ -230,85 +254,37 @@ export const CopilotStore = signalStore(
 
       const loadConversations = (): Promise<void> => loadHistoryPage(1);
 
-      const openConversation = async (conversationId: string): Promise<void> => {
-        patchState(store, { loading: true, view: "chat" });
-        const conversation = await copilotApi.fetchConversation(conversationId);
-        if (conversation) {
-          patchState(store, { turnError: null, turnProgress: null });
-          applyConversation(conversation);
-        } else {
-          patchState(store, { view: "history" });
-        }
-        patchState(store, { loading: false });
-      };
-
-      const openDrawer = async (): Promise<void> => {
-        if (!permissionService.hasPermission(Permission.Copilot.View)) return;
-
-        patchState(store, { open: true, unreadCount: 0 });
-        void loadQuota();
-
-        // The transcript needs nothing from the hub, so the handshake RTT must not gate it.
-        if (store.currentConversation()) {
-          await copilotHub.acquire();
-          return;
-        }
-
-        patchState(store, { loading: true });
-        await Promise.all([copilotHub.acquire(), loadConversations()]);
-        const mostRecent = store.conversations()[0];
-        if (mostRecent?.id) {
-          await openConversation(mostRecent.id);
-        }
-        patchState(store, { loading: false });
-      };
-
       return {
+        /** Page bootstrap: connects the hub, loads the sidebar + right panel + most recent chat. */
+        async init(): Promise<void> {
+          void hub.acquireDispatchBoard(destroyRef);
+          void loadQuota();
+          void loadTrucks();
+          void refreshPendingDecisions();
+
+          patchState(store, { loading: true });
+          await loadConversations();
+          const mostRecent = store.conversations()[0];
+          if (mostRecent?.id) {
+            await this.openConversation(mostRecent.id);
+          }
+          patchState(store, { loading: false });
+        },
+
         loadConversations,
-        openConversation,
-        openDrawer,
 
-        /** Re-syncs the open conversation in place, without the load spinner or a view switch. */
+        async openConversation(conversationId: string): Promise<void> {
+          patchState(store, { loading: true });
+          const conversation = await dispatchApi.fetchConversation(conversationId);
+          if (conversation) {
+            patchState(store, { turnError: null, turnProgress: null });
+            applyConversation(conversation);
+          }
+          patchState(store, { loading: false });
+        },
+
+        /** Re-syncs the open conversation in place, without the load spinner. */
         reconcile: reconcileConversation,
-
-        closeDrawer(): void {
-          // Turn timers keep running while closed so the finished turn still reconciles.
-          patchState(store, { open: false });
-        },
-
-        async toggle(): Promise<void> {
-          if (store.open()) {
-            this.closeDrawer();
-          } else {
-            await openDrawer();
-          }
-        },
-
-        /** Launcher entry point: opens the drawer, or upsells when the plan lacks the feature. */
-        async openOrUpsell(): Promise<void> {
-          if (featureService.isEnabled("ai_copilot")) {
-            await this.toggle();
-            return;
-          }
-
-          const status = featureService.getAllFeatures().find((f) => f.feature === "ai_copilot");
-
-          // Upsell only when the plan actually lacks the feature; a tenant that has it in-plan
-          // (or needs no plan) but toggled it off gets pointed at settings instead.
-          if (!status || status.isIncludedInPlan) {
-            toast.showInfo("The AI Copilot is disabled. Enable it in Settings → Features.");
-          } else {
-            upgradePrompt.showUpgradePrompt(
-              ErrorCodes.FeatureNotInPlan,
-              "The AI Copilot is not included in your current plan.",
-            );
-          }
-        },
-
-        showHistory(): void {
-          patchState(store, { view: "history" });
-          void loadConversations();
-        },
 
         loadMoreConversations(): Promise<void> {
           return loadHistoryPage(store.historyPage() + 1);
@@ -318,10 +294,10 @@ export const CopilotStore = signalStore(
           // The conversation is created lazily on first send - no empty rows.
           endTurn("idle");
           patchState(store, {
-            view: "chat",
             currentConversation: null,
             messages: [],
             decisions: [],
+            sessions: [],
           });
         },
 
@@ -334,9 +310,13 @@ export const CopilotStore = signalStore(
             const conversation = await currentOrNewConversation();
             if (!conversation) return;
 
+            const isNewConversation = !store.conversations().some((c) => c.id === conversation.id);
+            if (isNewConversation) {
+              patchState(store, { conversations: [conversation, ...store.conversations()] });
+            }
+
             // Deliberately untimestamped: it sorts last until the server's clock arrives, which is
-            // where a just-sent message belongs anyway. A browser clock here would lose to the
-            // server's on the reply and park the message below its own answer.
+            // where a just-sent message belongs anyway.
             const optimistic: AgentMessageDto = {
               id: `optimistic-${conversation.id}-${store.messages().length}`,
               conversationId: conversation.id,
@@ -346,7 +326,7 @@ export const CopilotStore = signalStore(
             patchState(store, { messages: [...store.messages(), optimistic] });
             beginTurn();
 
-            const result = await copilotApi.sendMessage(conversation.id!, trimmed);
+            const result = await dispatchApi.sendMessage(conversation.id!, trimmed);
             if (!result) {
               patchState(store, {
                 messages: store.messages().filter((m) => m.id !== optimistic.id),
@@ -383,23 +363,24 @@ export const CopilotStore = signalStore(
 
         /** Manual retry for a dead hub connection; also catches up on missed events. */
         async reconnect(): Promise<void> {
-          await copilotHub.acquire();
-          if (copilotHub.isConnected) {
+          await hub.acquireDispatchBoard(destroyRef);
+          if (hub.isConnected) {
             await reconcileConversation();
+            await refreshPendingDecisions();
           }
         },
 
         async cancelTurn(): Promise<void> {
           const conversationId = store.currentConversation()?.id;
           if (!conversationId) return;
-          if (await copilotApi.cancelTurn(conversationId)) {
+          if (await dispatchApi.cancelTurn(conversationId)) {
             endTurn("idle");
           }
         },
 
         async renameConversation(conversationId: string, title: string): Promise<void> {
           const trimmed = title.trim();
-          if (!trimmed || !(await copilotApi.renameConversation(conversationId, trimmed))) return;
+          if (!trimmed || !(await dispatchApi.renameConversation(conversationId, trimmed))) return;
 
           const current = store.currentConversation();
           patchState(store, {
@@ -412,7 +393,7 @@ export const CopilotStore = signalStore(
         },
 
         async deleteConversation(conversationId: string): Promise<void> {
-          if (!(await copilotApi.deleteConversation(conversationId))) return;
+          if (!(await dispatchApi.deleteConversation(conversationId))) return;
 
           patchState(store, {
             conversations: store.conversations().filter((c) => c.id !== conversationId),
@@ -422,27 +403,21 @@ export const CopilotStore = signalStore(
           }
         },
 
-        /** Drag-time update. Deliberately does not persist - see {@link commitDrawerWidth}. */
-        resizeDrawerTo(width: number): void {
-          patchState(store, { drawerWidth: clampDrawerWidth(width) });
+        /** Refreshes the tenant-wide pending decisions (and the right panel + nav badge with them). */
+        refreshPendingDecisions,
+
+        toggleSidebar(): void {
+          patchState(store, { sidebarCollapsed: !store.sidebarCollapsed() });
         },
 
-        /**
-         * Persists the width a drag settled on. Separate from the move handler because
-         * `localStorage.setItem` is a synchronous disk-backed write and pointermove fires several
-         * times per frame.
-         */
-        commitDrawerWidth(): void {
-          persistDrawerWidth(store.drawerWidth());
+        setSidebarCollapsed(collapsed: boolean): void {
+          patchState(store, { sidebarCollapsed: collapsed });
         },
 
-        setDrawerWidth(width: number): void {
-          this.resizeDrawerTo(width);
-          this.commitDrawerWidth();
-        },
-
-        resetDrawerWidth(): void {
-          this.setDrawerWidth(DefaultDrawerWidth);
+        toggleRightPanel(): void {
+          const collapsed = !store.rightPanelCollapsed();
+          patchState(store, { rightPanelCollapsed: collapsed });
+          persistRightPanelCollapsed(collapsed);
         },
       };
     },

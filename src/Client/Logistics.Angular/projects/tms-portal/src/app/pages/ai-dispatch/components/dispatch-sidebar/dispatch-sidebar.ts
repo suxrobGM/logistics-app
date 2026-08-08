@@ -12,22 +12,29 @@ import {
   type UiMenuItem,
 } from "@logistics/shared/ui";
 
-/** Conversation list shown by the drawer's history view. */
+/**
+ * Persistent left sidebar of dispatch conversations - tenant-shared, so every dispatcher sees the
+ * same list. Modeled on the copilot drawer's history view, but always visible rather than a
+ * switched-to mode.
+ */
 @Component({
-  selector: "app-copilot-history",
-  templateUrl: "./copilot-history.html",
+  selector: "app-dispatch-sidebar",
+  templateUrl: "./dispatch-sidebar.html",
   imports: [DatePipe, EmptyState, Icon, UiButton, UiDialog, UiMenu, UiTextField],
 })
-export class CopilotHistory {
+export class DispatchSidebar {
   private readonly toast = inject(ToastService);
 
   public readonly conversations = input.required<AgentConversationDto[]>();
+  public readonly currentConversationId = input<string | null>(null);
   public readonly hasMore = input(false);
-  public readonly open = output<string>();
+  public readonly loading = input(false);
+
+  public readonly conversationSelected = output<string>();
   public readonly newChat = output<void>();
+  public readonly rename = output<{ id: string; title: string }>();
   public readonly delete = output<string>();
   public readonly loadMore = output<void>();
-  public readonly rename = output<{ id: string; title: string }>();
 
   protected readonly renameTarget = signal<AgentConversationDto | null>(null);
   protected readonly renameTitle = signal("");

@@ -39,17 +39,6 @@
     </div>
   }
 
-  <!-- Session link -->
-  @if (showSessionLink()) {
-    <a
-      [routerLink]="['/ai-dispatch', decision().sessionId]"
-      class="text-foreground mb-3 inline-flex items-center gap-1 text-xs hover:underline"
-    >
-      <ui-icon name="external-link" size="inherit" class="text-xs" />
-      View session
-    </a>
-  }
-
   <!-- Actions -->
   @if (decision().status === "suggested") {
     <ui-stack direction="row" gap="2">
@@ -59,6 +48,7 @@
         size="sm"
         label="Approve"
         icon="check"
+        [loading]="busy()"
         (click)="onApprove()"
       />
       <ui-button
@@ -67,6 +57,7 @@
         size="sm"
         label="Reject"
         icon="x"
+        [disabled]="busy()"
         (click)="onReject()"
       />
     </ui-stack>

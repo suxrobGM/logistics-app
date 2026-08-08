@@ -10,8 +10,8 @@ import {
   renameCopilotConversation,
   sendCopilotMessage,
   silentErrors,
-  type AICopilotConversationDto,
-  type AICopilotConversationDtoPagedResult,
+  type AgentConversationDto,
+  type AgentConversationDtoPagedResult,
   type AIQuotaStatusDto,
   type SendAICopilotMessageResultDto,
 } from "@logistics/shared/api";
@@ -32,7 +32,7 @@ export class CopilotApiService {
   fetchConversation(
     conversationId: string,
     options?: { silent?: boolean },
-  ): Promise<AICopilotConversationDto | null> {
+  ): Promise<AgentConversationDto | null> {
     return this.orNull(
       this.api.invoke(
         getCopilotConversationById,
@@ -45,7 +45,7 @@ export class CopilotApiService {
   fetchHistoryPage(
     page: number,
     pageSize: number,
-  ): Promise<AICopilotConversationDtoPagedResult | null> {
+  ): Promise<AgentConversationDtoPagedResult | null> {
     return this.orNull(
       this.api.invoke(getCopilotConversations, { Page: page, PageSize: pageSize }),
     );
@@ -56,7 +56,7 @@ export class CopilotApiService {
     return this.orNull(this.api.invoke(getCopilotQuotaStatus, undefined, silentErrors()));
   }
 
-  createConversation(): Promise<AICopilotConversationDto | null> {
+  createConversation(): Promise<AgentConversationDto | null> {
     return this.orNull(this.api.invoke(createCopilotConversation));
   }
 

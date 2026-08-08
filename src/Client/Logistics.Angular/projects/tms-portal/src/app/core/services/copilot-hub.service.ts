@@ -1,10 +1,6 @@
 import { Injectable } from "@angular/core";
 import { getAccessToken } from "@logistics/shared";
-import type {
-  AgentDecisionDto,
-  AgentSessionStatus,
-  AICopilotMessageDto,
-} from "@logistics/shared/api";
+import type { AgentDecisionDto, AgentMessageDto, AgentSessionStatus } from "@logistics/shared/api";
 import { BaseHubConnection } from "./base-hub-connection";
 
 /** Mirror of the backend AICopilotTurnUpdateDto (SignalR payloads are not in the OpenAPI spec). */
@@ -25,7 +21,7 @@ export interface CopilotTurnUpdate {
  */
 @Injectable({ providedIn: "root" })
 export class CopilotHubService extends BaseHubConnection {
-  readonly messageReceived$ = this.event<AICopilotMessageDto>("ReceiveCopilotMessage");
+  readonly messageReceived$ = this.event<AgentMessageDto>("ReceiveCopilotMessage");
   readonly decisionReceived$ = this.event<AgentDecisionDto>("ReceiveCopilotDecision");
   readonly turnUpdateReceived$ = this.event<CopilotTurnUpdate>("ReceiveCopilotTurnUpdate");
 

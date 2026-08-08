@@ -1,0 +1,91 @@
+<div class="flex h-full flex-col gap-2 overflow-y-auto p-3">
+  <ui-button
+    label="New chat"
+    icon="plus"
+    appearance="outlined"
+    size="sm"
+    (click)="newChat.emit()"
+  />
+
+  @if (loading() && conversations().length === 0) {
+    <div class="text-muted-foreground flex items-center gap-2 px-1 py-2 text-xs">
+      <ui-icon name="loader-circle" size="inherit" spin />
+      Loading conversations...
+    </div>
+  }
+
+  @for (conversation of conversations(); track conversation.id) {
+    <button
+      type="button"
+      class="border-border hover:bg-hover group flex w-full cursor-pointer items-center gap-2 rounded-md border bg-transparent p-2 text-left"
+      [class.bg-hover]="conversation.id === currentConversationId()"
+      [class.border-primary]="conversation.id === currentConversationId()"
+      (click)="conversationSelected.emit(conversation.id!)"
+    >
+      <ui-icon name="bot-message-square" size="inherit" class="text-muted-foreground shrink-0" />
+      <div class="min-w-0 flex-1">
+        <p class="m-0 truncate text-sm">{{ conversation.title || "New conversation" }}</p>
+        <p class="text-muted-foreground m-0 text-xs">
+          {{ conversation.lastMessageAt | date: "MMM d, HH:mm" }}
+        </p>
+      </div>
+      <ui-menu #menu [items]="menuItems(conversation)" />
+      <ui-button
+        icon="ellipsis-vertical"
+        appearance="text"
+        intent="secondary"
+        size="sm"
+        ariaLabel="Conversation actions"
+        (click)="$event.stopPropagation(); menu.toggle($event)"
+      />
+    </button>
+  } @empty {
+    @if (!loading()) {
+      <ui-empty-state
+        icon="bot-message-square"
+        title="No conversations yet"
+        message="Start a chat and it will show up here."
+      />
+    }
+  }
+
+  @if (hasMore()) {
+    <ui-button
+      label="Load more"
+      appearance="text"
+      intent="secondary"
+      size="sm"
+      (click)="loadMore.emit()"
+    />
+  }
+</div>
+
+<ui-dialog
+  header="Rename conversation"
+  width="22rem"
+  [open]="renameTarget() !== null"
+  (closed)="closeRenameDialog()"
+>
+  <ui-text-field
+    id="dispatch-rename-title"
+    [(value)]="renameTitle"
+    [maxlength]="120"
+    placeholder="Conversation title"
+    (keydown.enter)="confirmRename()"
+  />
+  <div class="mt-4 flex justify-end gap-2">
+    <ui-button
+      label="Cancel"
+      appearance="outlined"
+      intent="secondary"
+      size="sm"
+      (click)="closeRenameDialog()"
+    />
+    <ui-button
+      label="Rename"
+      size="sm"
+      [disabled]="!renameTitle().trim()"
+      (click)="confirmRename()"
+    />
+  </div>
+</ui-dialog>

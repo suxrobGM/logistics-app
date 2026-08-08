@@ -1,0 +1,77 @@
+@if (isTurnRunning()) {
+  <div class="text-muted-foreground mb-2 flex items-center gap-2 text-xs">
+    <ui-icon name="loader-circle" size="inherit" spin />
+    <span>This turn is in progress</span>
+  </div>
+}
+
+<ui-timeline [value]="decisions()">
+  <ng-template uiTimelineContent let-decision>
+    <div class="animate-slide-in mb-4 pb-2">
+      <!-- Tool name + time + status -->
+      <div class="mb-1 flex flex-wrap items-center gap-2">
+        <span class="text-sm font-medium">{{ getToolLabel(decision.toolName) }}</span>
+        <span class="text-muted-foreground text-xs">
+          {{ decision.createdAt | date: "MMM d, h:mm a" }}
+        </span>
+        @if (isWriteTool(decision.toolName)) {
+          <ui-badge
+            size="sm"
+            [value]="decision.status"
+            [severity]="Labels.dispatchStatusSeverity(decision.status)"
+          />
+        }
+      </div>
+
+      <!-- Reasoning (expandable markdown) -->
+      @if (decision.reasoning) {
+        <div class="mb-2">
+          <div
+            class="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed"
+            [class.line-clamp-3]="!isExpanded(decision.id!)"
+            [innerHTML]="decision.reasoning | markdown"
+          ></div>
+          @if (decision.reasoning.length > 150) {
+            <button
+              type="button"
+              class="text-foreground mt-1 cursor-pointer border-none bg-transparent p-0 text-xs hover:underline"
+              (click)="toggleExpand(decision.id!); $event.stopPropagation()"
+            >
+              {{ isExpanded(decision.id!) ? "Show less" : "Show more" }}
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Tool output -->
+      @if (decision.toolOutput) {
+        <div class="bg-subtle rounded-md p-3 text-xs">
+          <app-tool-output-summary [toolOutput]="decision.toolOutput" />
+        </div>
+      }
+
+      <!-- Approve/reject for suggested write-tool decisions -->
+      @if (decision.status === "suggested" && isWriteTool(decision.toolName)) {
+        <ui-permission-guard [permissions]="dispatchManage">
+          <div class="mt-2">
+            <app-approve-reject-actions
+              [decision]="decision"
+              [busy]="busyDecisionId() === decision.id"
+              (approve)="approve.emit(decision)"
+              (reject)="reject.emit(decision)"
+            />
+          </div>
+        </ui-permission-guard>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template uiTimelineMarker let-decision>
+    <span
+      class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
+      [class]="getToolMarkerClass(decision.toolName)"
+    >
+      <ui-icon [name]="getToolIcon(decision.toolName)" size="inherit" class="text-xs" />
+    </span>
+  </ng-template>
+</ui-timeline>

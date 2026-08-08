@@ -1,0 +1,51 @@
+<div class="flex h-full flex-col gap-4 overflow-y-auto p-3">
+  <!-- Fleet Map -->
+  <ui-surface variant="elevated" [border]="true" padding="none" class="overflow-hidden">
+    <ui-stack direction="row" align="center" gap="2" class="border-default border-b p-3">
+      <ui-icon name="map" color="primary" />
+      <span class="text-sm font-medium">Fleet Map</span>
+      <span class="text-muted-foreground text-xs">{{ truckLocations().length }} trucks tracked</span>
+    </ui-stack>
+    <div class="h-64">
+      <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="4" height="100%" />
+    </div>
+  </ui-surface>
+
+  <!-- Pending Decisions -->
+  <div>
+    <ui-typography variant="h6" tag="h2" class="mb-2 flex items-center gap-2">
+      Pending Decisions
+      <ui-badge [value]="pendingDecisions().length.toString()" severity="warn" [rounded]="true" />
+    </ui-typography>
+
+    @if (pendingDecisions().length) {
+      <ui-stack gap="3">
+        @for (decision of pendingDecisions(); track decision.id) {
+          <app-decision-card
+            [decision]="decision"
+            [busy]="busyDecisionId() === decision.id"
+            (approve)="approve.emit($event)"
+            (reject)="reject.emit($event)"
+          />
+        }
+      </ui-stack>
+    } @else {
+      <ui-surface
+        variant="elevated"
+        [border]="true"
+        class="flex flex-col items-center justify-center p-6 text-center"
+      >
+        <ui-icon name="circle-check" size="xl" color="muted" class="mb-2" />
+        <p class="text-subtle-foreground m-0 text-sm font-medium">No pending decisions</p>
+        <p class="text-muted-foreground m-0 text-xs">
+          Ask the agent to plan assignments to see suggestions here.
+        </p>
+      </ui-surface>
+    }
+  </div>
+
+  <!-- AI Quota Usage -->
+  @if (quota(); as q) {
+    <app-ai-quota-usage [quota]="q" />
+  }
+</div>

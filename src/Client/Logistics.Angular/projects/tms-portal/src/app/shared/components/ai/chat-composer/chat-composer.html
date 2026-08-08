@@ -3,7 +3,7 @@
     <div
       class="border-border bg-elevated absolute right-3 bottom-full left-3 z-10 mb-1 overflow-hidden rounded-md border shadow-md"
       role="listbox"
-      aria-label="Copilot commands"
+      aria-label="Chat commands"
     >
       @for (cmd of commandSuggestions(); track cmd.name; let i = $index) {
         <button
@@ -26,8 +26,8 @@
     [rows]="2"
     [maxlength]="4000"
     [disabled]="blocked()"
+    [placeholder]="placeholder()"
     capAutoGrow
-    placeholder="Ask about loads, invoices, expenses... (/ for commands)"
     (keydown)="onKeydown($event)"
     (touch)="dismissSuggestions()"
     class="block min-w-0 flex-1 text-sm"

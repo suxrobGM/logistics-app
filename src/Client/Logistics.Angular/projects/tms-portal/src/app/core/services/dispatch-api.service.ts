@@ -1,0 +1,131 @@
+import { inject, Injectable } from "@angular/core";
+import {
+  Api,
+  cancelAIDispatchTurn,
+  createAIDispatchConversation,
+  deleteAIDispatchConversation,
+  getAIDispatchConversationById,
+  getAIDispatchConversations,
+  getAIQuotaStatus,
+  getPendingDecisions,
+  getTrucks,
+  renameAIDispatchConversation,
+  sendAIDispatchMessage,
+  silentErrors,
+  type AgentConversationDto,
+  type AgentConversationDtoPagedResult,
+  type AgentDecisionDto,
+  type AIQuotaStatusDto,
+  type SendAIDispatchMessageResultDto,
+  type TruckDto,
+} from "@logistics/shared/api";
+
+/**
+ * HTTP for the AI dispatch chat page: every call resolves to null (or false for the commands whose
+ * only output is success) instead of throwing, so DispatchChatStore stays pure state orchestration -
+ * mirrors CopilotApiService's contract.
+ *
+ * Failure toasts and upgrade prompts are NOT raised here - the global errorHandlerInterceptor
+ * already does both for every request. Toasting again would show two toasts per failure.
+ */
+@Injectable({ providedIn: "root" })
+export class DispatchApiService {
+  private readonly api = inject(Api);
+
+  /** `silent` for reconcile polls - a transient failure must not toast every 45s. */
+  fetchConversation(
+    conversationId: string,
+    options?: { silent?: boolean },
+  ): Promise<AgentConversationDto | null> {
+    return this.orNull(
+      this.api.invoke(
+        getAIDispatchConversationById,
+        { conversationId },
+        options?.silent ? silentErrors() : undefined,
+      ),
+    );
+  }
+
+  fetchHistoryPage(
+    page: number,
+    pageSize: number,
+  ): Promise<AgentConversationDtoPagedResult | null> {
+    return this.orNull(
+      this.api.invoke(getAIDispatchConversations, {
+        Page: page,
+        PageSize: pageSize,
+        OrderBy: "-LastMessageAt",
+      }),
+    );
+  }
+
+  /** Silent - the quota notice and composer block are advisory; the send path enforces server-side. */
+  fetchQuota(): Promise<AIQuotaStatusDto | null> {
+    return this.orNull(this.api.invoke(getAIQuotaStatus, undefined, silentErrors()));
+  }
+
+  /** Tenant-wide write decisions awaiting approval, for the right panel + sidebar badge. */
+  fetchPendingDecisions(options?: { silent?: boolean }): Promise<AgentDecisionDto[] | null> {
+    return this.orNull(
+      this.api.invoke(getPendingDecisions, undefined, options?.silent ? silentErrors() : undefined),
+    );
+  }
+
+  /** Trucks with a known location, for the fleet map. Silent - the map is a secondary panel. */
+  async fetchAvailableTrucks(): Promise<TruckDto[]> {
+    const result = await this.orNull(
+      this.api.invoke(getTrucks, { Statuses: ["available"], PageSize: 100 }, silentErrors()),
+    );
+    return result?.items ?? [];
+  }
+
+  createConversation(): Promise<AgentConversationDto | null> {
+    return this.orNull(this.api.invoke(createAIDispatchConversation));
+  }
+
+  sendMessage(
+    conversationId: string,
+    text: string,
+  ): Promise<SendAIDispatchMessageResultDto | null> {
+    return this.orNull(
+      this.api.invoke(sendAIDispatchMessage, {
+        conversationId,
+        body: { conversationId, text },
+      }),
+    );
+  }
+
+  cancelTurn(conversationId: string): Promise<boolean> {
+    return this.succeeded(this.api.invoke(cancelAIDispatchTurn, { conversationId }));
+  }
+
+  renameConversation(conversationId: string, title: string): Promise<boolean> {
+    return this.succeeded(
+      this.api.invoke(renameAIDispatchConversation, {
+        conversationId,
+        body: { conversationId, title },
+      }),
+    );
+  }
+
+  deleteConversation(conversationId: string): Promise<boolean> {
+    return this.succeeded(this.api.invoke(deleteAIDispatchConversation, { conversationId }));
+  }
+
+  private async orNull<T>(call: Promise<T>): Promise<T | null> {
+    try {
+      return await call;
+    } catch {
+      return null;
+    }
+  }
+
+  private async succeeded(call: Promise<unknown>): Promise<boolean> {
+    try {
+      await call;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
