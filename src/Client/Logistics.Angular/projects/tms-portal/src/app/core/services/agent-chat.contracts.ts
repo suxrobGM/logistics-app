@@ -30,9 +30,8 @@ export interface SentAgentMessage {
 }
 
 /**
- * Progress of an in-flight turn, pushed over SignalR. Mirrors the backend's
- * AICopilotTurnUpdateDto / AIDispatchTurnUpdateDto - identical shapes, and SignalR payloads are
- * not in the OpenAPI spec.
+ * Progress of an in-flight turn, pushed over SignalR. Hand-written because SignalR payloads are not
+ * in the OpenAPI spec; mirrors the backend's AICopilotTurnUpdateDto / AIDispatchTurnUpdateDto.
  */
 export interface AgentTurnUpdate {
   conversationId: string;

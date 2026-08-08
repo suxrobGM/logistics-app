@@ -1,16 +1,7 @@
 import { DestroyRef, Injectable } from "@angular/core";
-import type { AgentDecisionDto, AgentMessageDto, AgentSessionStatus } from "@logistics/shared/api";
+import type { AgentDecisionDto, AgentMessageDto } from "@logistics/shared/api";
+import type { AgentTurnUpdate } from "./agent-chat.contracts";
 import { BaseHubConnection } from "./base-hub-connection";
-
-/** Mirror of the backend AIDispatchTurnUpdateDto (SignalR payloads are not in the OpenAPI spec). */
-export interface DispatchTurnUpdate {
-  conversationId: string;
-  sessionId: string;
-  status: AgentSessionStatus;
-  totalTokensUsed: number;
-  decisionCount: number;
-  errorMessage: string | null;
-}
 
 const DispatchBoardGroup = "dispatch-board";
 
@@ -21,11 +12,12 @@ const DispatchBoardGroup = "dispatch-board";
 @Injectable({ providedIn: "root" })
 export class AIDispatchHubService extends BaseHubConnection {
   readonly messageReceived$ = this.event<AgentMessageDto>("ReceiveDispatchMessage");
-  readonly turnUpdateReceived$ = this.event<DispatchTurnUpdate>("ReceiveDispatchTurnUpdate");
+  readonly turnUpdateReceived$ = this.event<AgentTurnUpdate>("ReceiveDispatchTurnUpdate");
   readonly decisionReceived$ = this.event<AgentDecisionDto>("ReceiveAIDispatchDecision");
 
   constructor() {
-    super("ai-dispatch");
+    // The hub has no bare-tenant group: everything is published to the dispatch board group.
+    super("ai-dispatch", { registerTenant: false });
   }
 
   /** Claims the connection and joins the tenant's board group for as long as `destroyRef` lives. */
