@@ -42,7 +42,7 @@ internal sealed class SendAICopilotMessageHandler(
             return Result<SendAICopilotMessageResultDto>.Fail("Conversation not found");
         }
 
-        if (conversation.Status == AICopilotConversationStatus.Running)
+        if (conversation.Status == AgentConversationStatus.Running)
         {
             if (conversation.TurnStartedAt > DateTime.UtcNow - StaleTurnWindow)
                 return Result<SendAICopilotMessageResultDto>.Fail("A copilot turn is already in progress");

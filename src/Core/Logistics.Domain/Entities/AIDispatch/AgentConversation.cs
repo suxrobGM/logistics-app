@@ -20,7 +20,7 @@ public class AgentConversation : AuditableEntity, ITenantEntity
     /// <summary>Derived from the first user message.</summary>
     public string? Title { get; set; }
 
-    public AICopilotConversationStatus Status { get; private set; } = AICopilotConversationStatus.Idle;
+    public AgentConversationStatus Status { get; private set; } = AgentConversationStatus.Idle;
 
     /// <summary>Lets a crashed turn be taken over after a staleness window.</summary>
     public DateTime? TurnStartedAt { get; private set; }
@@ -46,13 +46,13 @@ public class AgentConversation : AuditableEntity, ITenantEntity
 
     public void BeginTurn()
     {
-        Status = AICopilotConversationStatus.Running;
+        Status = AgentConversationStatus.Running;
         TurnStartedAt = DateTime.UtcNow;
     }
 
     public void EndTurn()
     {
-        Status = AICopilotConversationStatus.Idle;
+        Status = AgentConversationStatus.Idle;
         TurnStartedAt = null;
     }
 }

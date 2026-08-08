@@ -33,11 +33,6 @@ public class AgentSession : AuditableEntity, ITenantEntity
     public DateTime? CompletedAt { get; set; }
 
     /// <summary>
-    /// User-provided instructions for this session.
-    /// </summary>
-    public string? Instructions { get; set; }
-
-    /// <summary>
     /// Total Claude API tokens consumed during this session.
     /// </summary>
     public int TotalTokensUsed => InputTokensUsed + OutputTokensUsed;

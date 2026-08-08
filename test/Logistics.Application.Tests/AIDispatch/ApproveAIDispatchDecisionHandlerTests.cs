@@ -24,6 +24,8 @@ public class ApproveAIDispatchDecisionHandlerTests
         Substitute.For<ITenantRepository<AgentDecision, Guid>>();
     private readonly ITenantRepository<AgentConversation, Guid> conversationRepo =
         Substitute.For<ITenantRepository<AgentConversation, Guid>>();
+    private readonly ITenantRepository<AgentMessage, Guid> messageRepo =
+        Substitute.For<ITenantRepository<AgentMessage, Guid>>();
 
     private readonly Guid userId = Guid.NewGuid();
     private readonly Tenant tenant;
@@ -42,7 +44,7 @@ public class ApproveAIDispatchDecisionHandlerTests
 
         tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
         tenantUow.Repository<AgentConversation>().Returns(conversationRepo);
-        tenantUow.Repository<AgentMessage>().Returns(Substitute.For<ITenantRepository<AgentMessage, Guid>>());
+        tenantUow.Repository<AgentMessage>().Returns(messageRepo);
         tenantUow.GetCurrentTenant().Returns(tenant);
         currentUser.GetUserId().Returns(userId);
 
@@ -106,6 +108,9 @@ public class ApproveAIDispatchDecisionHandlerTests
         var note = Assert.Single(conversation.Messages);
         Assert.Equal(AgentMessageRole.System, note.Role);
         Assert.StartsWith("Approved and executed: assign_load_to_truck", note.DisplayText);
+
+        // Adding to the navigation alone saves as an UPDATE affecting 0 rows - see ef-persistence.md.
+        await messageRepo.Received(1).AddAsync(note, Arg.Any<CancellationToken>());
 
         await broadcastService.Received(1).BroadcastMessageAsync(
             tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversationId));

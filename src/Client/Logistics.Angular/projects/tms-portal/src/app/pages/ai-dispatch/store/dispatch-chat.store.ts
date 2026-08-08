@@ -10,7 +10,10 @@ import type {
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { LocalizationService } from "@logistics/shared/services";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import { AIDispatchHubService } from "@/core/services/ai-dispatch-hub.service";
+import {
+  AIDispatchHubService,
+  type DispatchTurnUpdate,
+} from "@/core/services/ai-dispatch-hub.service";
 import { DispatchApiService } from "@/core/services/dispatch-api.service";
 import { DispatchBadgeService } from "@/core/services/dispatch-badge.service";
 import { buildQuotaNotice, TurnWatchdog } from "@/core/store/agent-chat.helpers";
@@ -215,6 +218,25 @@ export const DispatchChatStore = signalStore(
         });
       });
 
+      /**
+       * The turn's session must land in `sessions` from the update itself, not from a later
+       * refetch: `decisionReceived$` drops any decision whose session it has never seen, so a
+       * turn's tool activity would stay invisible until the turn ended.
+       */
+      const upsertSession = (update: DispatchTurnUpdate): AgentSessionDto[] => {
+        const patch: AgentSessionDto = {
+          id: update.sessionId,
+          status: update.status,
+          totalTokensUsed: update.totalTokensUsed,
+          decisionCount: update.decisionCount,
+          errorMessage: update.errorMessage,
+        };
+        const existing = store.sessions();
+        return existing.some((s) => s.id === update.sessionId)
+          ? existing.map((s) => (s.id === update.sessionId ? { ...s, ...patch } : s))
+          : [...existing, patch];
+      };
+
       hub.turnUpdateReceived$.subscribe((update) => {
         if (update.conversationId !== store.currentConversation()?.id) return;
 
@@ -222,13 +244,17 @@ export const DispatchChatStore = signalStore(
           if (store.turnStatus() !== "running") {
             beginTurn();
           }
-          patchState(store, { turnProgress: update.decisionCount, turnError: null });
+          patchState(store, {
+            sessions: upsertSession(update),
+            turnProgress: update.decisionCount,
+            turnError: null,
+          });
           return;
         }
 
+        patchState(store, { sessions: upsertSession(update) });
         endTurn(update.status === "failed" ? "failed" : "idle", update.errorMessage);
         void loadQuota();
-        void reconcileConversation();
       });
 
       const loadHistoryPage = async (page: number): Promise<void> => {

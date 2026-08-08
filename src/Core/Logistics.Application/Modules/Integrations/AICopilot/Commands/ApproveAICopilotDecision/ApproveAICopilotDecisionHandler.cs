@@ -4,6 +4,7 @@ using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
@@ -68,6 +69,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
         }
 
         var message = conversation.AddTextMessage(AgentMessageRole.System, note);
+        await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         await tenantUow.SaveChangesAsync(ct);
 
         await broadcastService.BroadcastMessageAsync(tenant.Id, conversation.CreatedById, message.ToDto());

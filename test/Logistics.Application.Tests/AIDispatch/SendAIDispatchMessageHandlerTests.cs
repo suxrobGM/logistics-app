@@ -120,7 +120,7 @@ public class SendAIDispatchMessageHandlerTests
         Assert.Equal("assign what you can", message.DisplayText);
         Assert.Equal(AgentMessageRole.User, message.Role);
         Assert.Equal(1, message.Sequence);
-        Assert.Equal(AICopilotConversationStatus.Running, conversation.Status);
+        Assert.Equal(AgentConversationStatus.Running, conversation.Status);
         Assert.Equal(message.Id, result.Value!.UserMessageId);
 
         // Load-bearing: without the explicit Add, EF saves the pre-generated-id message as an UPDATE.
@@ -141,7 +141,7 @@ public class SendAIDispatchMessageHandlerTests
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.AIBudgetReached, result.ErrorCode);
         Assert.Empty(conversation.Messages);
-        Assert.NotEqual(AICopilotConversationStatus.Running, conversation.Status);
+        Assert.NotEqual(AgentConversationStatus.Running, conversation.Status);
         backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
     }
 

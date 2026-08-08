@@ -16340,7 +16340,7 @@
   },
   "components": {
     "schemas": {
-      "AICopilotConversationStatus": {
+      "AgentConversationStatus": {
         "enum": [
           "idle",
           "running"
@@ -17035,7 +17035,7 @@
             "nullable": true
           },
           "status": {
-            "$ref": "#/components/schemas/AICopilotConversationStatus"
+            "$ref": "#/components/schemas/AgentConversationStatus"
           },
           "lastMessageAt": {
             "type": "string",
@@ -17317,10 +17317,6 @@
             "format": "int32"
           },
           "summary": {
-            "type": "string",
-            "nullable": true
-          },
-          "instructions": {
             "type": "string",
             "nullable": true
           },

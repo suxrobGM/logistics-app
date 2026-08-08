@@ -17,7 +17,7 @@ internal sealed class DeleteAIDispatchConversationHandler(
         if (conversation is null || conversation.Kind != AgentConversationKind.Dispatch)
             return Result.Fail("Conversation not found");
 
-        if (conversation.Status == AICopilotConversationStatus.Running)
+        if (conversation.Status == AgentConversationStatus.Running)
             return Result.Fail("Cannot delete a conversation while a turn is running");
 
         // Cascades to messages, turn sessions, and their decisions.

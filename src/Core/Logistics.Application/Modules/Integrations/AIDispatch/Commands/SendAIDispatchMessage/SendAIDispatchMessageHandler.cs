@@ -42,7 +42,7 @@ internal sealed class SendAIDispatchMessageHandler(
         if (conversation is null || conversation.Kind != AgentConversationKind.Dispatch)
             return Result<SendAIDispatchMessageResultDto>.Fail("Conversation not found");
 
-        if (conversation.Status == AICopilotConversationStatus.Running)
+        if (conversation.Status == AgentConversationStatus.Running)
         {
             if (conversation.TurnStartedAt > DateTime.UtcNow - StaleTurnWindow)
                 return Result<SendAIDispatchMessageResultDto>.Fail("A dispatch turn is already in progress");

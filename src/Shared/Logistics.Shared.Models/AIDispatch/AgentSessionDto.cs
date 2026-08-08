@@ -19,7 +19,6 @@ public class AgentSessionDto
     public string? ModelUsed { get; set; }
     public int DecisionCount { get; set; }
     public string? Summary { get; set; }
-    public string? Instructions { get; set; }
     public string? ErrorMessage { get; set; }
     public bool IsOverage { get; set; }
     public List<AgentDecisionDto> Decisions { get; set; } = [];
