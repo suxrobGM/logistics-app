@@ -63,7 +63,7 @@ export class Faq {
     {
       question: "How does AI Dispatch work?",
       answer:
-        "The agent looks at unassigned loads, available trucks, HOS compliance, truck-type compatibility, and revenue per mile, and proposes assignments. In human-in-the-loop mode it suggests; in autonomous mode it acts. Either way, every decision is logged with the reasoning.",
+        "The agent looks at unassigned loads, available trucks, HOS compliance, truck-type compatibility, and revenue per mile, and proposes assignments in a chat session. You approve, reject, or send it back with feedback - nothing dispatches until you say so. Every decision is logged with the reasoning.",
     },
     {
       question: "What happens if I reject an AI suggestion?",
@@ -73,7 +73,7 @@ export class Faq {
     {
       question: "Is AI Dispatch safe to use?",
       answer:
-        "Yes. Human-in-the-loop is the default - you review every decision before it runs. Each action is in the audit trail with the agent's reasoning. Autonomous mode is opt-in, and a per-session iteration cap keeps it from running away.",
+        "Yes. Nothing is dispatched without your approval - you review every suggestion before it runs. Each decision is in the audit trail with the agent's reasoning.",
     },
     {
       question: "What can the AI copilot do?",

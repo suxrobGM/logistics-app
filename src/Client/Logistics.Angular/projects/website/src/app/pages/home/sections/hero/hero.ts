@@ -19,7 +19,7 @@ export class Hero {
   protected readonly showVideo = signal(false);
 
   protected readonly stats: StatItem[] = [
-    { value: "2 Modes", label: "Suggestions & Autonomous" },
+    { value: "100%", label: "Dispatcher-Approved" },
     { value: "7+", label: "Agent Tools" },
     { value: "3", label: "AI Providers" },
     { value: "24/7", label: "Always-On Dispatch" },

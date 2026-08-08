@@ -16,8 +16,8 @@ export function SceneAIDispatch(): ReactElement {
     <AbsoluteFill className="bg-base">
       <Part
         screenshotSrc="screenshots/tms-ai-dispatch.png"
-        headline="AI That Thinks, Decides, and Dispatches."
-        subline="Review AI suggestions or let it run autonomously"
+        headline="AI That Thinks. You Decide."
+        subline="Chat with the agent and approve every suggestion"
         startFrame={0}
         endFrame={PART2_START}
         kenBurns={{ startScale: 1.06, endScale: 1.0, panY: -5 }}

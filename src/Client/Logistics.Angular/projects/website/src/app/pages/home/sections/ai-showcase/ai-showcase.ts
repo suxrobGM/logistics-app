@@ -43,8 +43,8 @@ export class AIShowcase {
       icon: "calculator",
     },
     {
-      title: "Assign and dispatch",
-      description: "Sends suggestions for approval, or runs them itself",
+      title: "Propose assignments",
+      description: "Sends ranked suggestions to the dispatcher, who approves or rejects each one",
       icon: "circle-check",
     },
   ];
@@ -57,10 +57,10 @@ export class AIShowcase {
       icon: "user-pen",
     },
     {
-      title: "Autonomous",
+      title: "Learns your preferences",
       description:
-        "The agent runs on its own - assigns loads, creates trips, and dispatches without a human in the loop.",
-      icon: "zap",
+        "Every approval and rejection feeds back into the agent's suggestions, so it tracks how your dispatchers actually decide.",
+      icon: "trending-up",
     },
     {
       title: "TMS-wide copilot",
