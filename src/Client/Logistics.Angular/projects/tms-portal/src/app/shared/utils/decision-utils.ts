@@ -99,14 +99,52 @@ export function parseToolOutput(json: string | null | undefined): ParsedToolOutp
       unassignedLoads: summary?.unassigned_loads ?? parsed.unassigned_loads,
       activeTrips: summary?.active_trips ?? parsed.active_trips,
       driversInViolation: summary?.drivers_in_violation ?? parsed.drivers_in_violation,
-      loads: parsed.loads,
-      trucks: parsed.trucks,
+      loads: parsed.loads?.map(parseLoad),
+      trucks: parsed.trucks?.map(parseTruck),
       batchResults: parsed.results,
     };
   } catch {
     return {};
   }
 }
+
+/* eslint-disable @typescript-eslint/no-explicit-any -- raw tool JSON has no generated types */
+function parseLoad(l: any): NonNullable<ParsedToolOutput["loads"]>[number] {
+  return {
+    id: l.id,
+    name: l.name,
+    type: l.type,
+    origin: l.origin,
+    destination: l.destination,
+    distanceKm: l.distance_km,
+    deliveryCost: l.delivery_cost,
+    customer: l.customer,
+  };
+}
+
+function parseTruck(t: any): NonNullable<ParsedToolOutput["trucks"]>[number] {
+  return {
+    id: t.id,
+    number: t.number,
+    type: t.type,
+    currentAddress: t.current_address,
+    mainDriver: t.main_driver
+      ? {
+          id: t.main_driver.id,
+          name: t.main_driver.name,
+          hos: t.main_driver.hos
+            ? {
+                drivingMinutesRemaining: t.main_driver.hos.driving_minutes_remaining,
+                onDutyMinutesRemaining: t.main_driver.hos.on_duty_minutes_remaining,
+                isInViolation: t.main_driver.hos.is_in_violation,
+                isAvailable: t.main_driver.hos.is_available,
+              }
+            : undefined,
+        }
+      : undefined,
+  };
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 interface ToolMeta {
   label: string;

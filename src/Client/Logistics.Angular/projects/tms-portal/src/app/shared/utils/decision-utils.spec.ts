@@ -105,6 +105,70 @@ describe("parseToolOutput", () => {
     expect(parsed.availableTrucks).toBe(4);
   });
 
+  it("maps nested snake_case truck and load fields to the declared camelCase shapes", () => {
+    const output = JSON.stringify({
+      trucks: [
+        {
+          id: "t1",
+          number: "104",
+          type: "FreightTruck",
+          current_address: "Dallas, TX",
+          main_driver: {
+            id: "d1",
+            name: "Tyler Brooks",
+            hos: {
+              driving_minutes_remaining: 589,
+              on_duty_minutes_remaining: 807,
+              is_in_violation: false,
+              is_available: true,
+            },
+          },
+        },
+      ],
+      loads: [
+        {
+          id: "l1",
+          name: "LD-100",
+          type: "GeneralFreight",
+          origin: "Dallas, TX",
+          destination: "Memphis, TN",
+          distance_km: 727.4,
+          delivery_cost: 1850,
+          customer: "Acme Co",
+        },
+      ],
+    });
+
+    const parsed = parseToolOutput(output);
+
+    expect(parsed.trucks?.[0]).toEqual({
+      id: "t1",
+      number: "104",
+      type: "FreightTruck",
+      currentAddress: "Dallas, TX",
+      mainDriver: {
+        id: "d1",
+        name: "Tyler Brooks",
+        hos: {
+          drivingMinutesRemaining: 589,
+          onDutyMinutesRemaining: 807,
+          isInViolation: false,
+          isAvailable: true,
+        },
+      },
+    });
+    expect(parsed.loads?.[0]).toEqual({
+      id: "l1",
+      name: "LD-100",
+      type: "GeneralFreight",
+      origin: "Dallas, TX",
+      destination: "Memphis, TN",
+      distanceKm: 727.4,
+      deliveryCost: 1850,
+      customer: "Acme Co",
+    });
+  });
+
   it("returns an empty object for null/undefined/empty input", () => {
     expect(parseToolOutput(null)).toEqual({});
     expect(parseToolOutput(undefined)).toEqual({});
