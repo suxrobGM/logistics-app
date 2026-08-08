@@ -1,9 +1,10 @@
 import { Component, inject } from "@angular/core";
 import type { AgentDecisionDto } from "@logistics/shared/api";
-import { Badge, EmptyState, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { AIQuotaUsage, DecisionActionsService, GeolocationMap } from "@/shared/components";
+import { CountBadge, EmptyState, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
+import { AIQuotaUsage, DecisionActionsService } from "@/shared/components";
 import { DispatchChatStore } from "../../store/dispatch-chat.store";
 import { DecisionCard } from "../decision-card/decision-card";
+import { FleetMapCard } from "../fleet-map-card/fleet-map-card";
 
 /**
  * Right panel of the dispatch chat page: fleet map, tenant-wide pending write decisions, and the
@@ -14,10 +15,10 @@ import { DecisionCard } from "../decision-card/decision-card";
   templateUrl: "./dispatch-right-panel.html",
   imports: [
     AIQuotaUsage,
-    Badge,
+    CountBadge,
     DecisionCard,
     EmptyState,
-    GeolocationMap,
+    FleetMapCard,
     Icon,
     Stack,
     Surface,

@@ -1,51 +1,44 @@
-<ui-stack gap="4" fill class="overflow-y-auto p-3">
-  <ui-surface variant="elevated" [border]="true" padding="none" class="overflow-hidden">
-    <ui-stack direction="row" align="center" gap="2" class="border-default border-b p-3">
-      <ui-icon name="map" color="primary" />
-      <ui-typography variant="body-sm" weight="medium">Fleet Map</ui-typography>
-      <ui-typography variant="caption" color="muted">
-        {{ store.truckLocations().length }} trucks tracked
-      </ui-typography>
+<div class="flex h-full min-h-0 flex-col gap-3 p-3">
+  <app-fleet-map-card [truckLocations]="store.truckLocations()" class="min-h-56 flex-1" />
+
+  <ui-surface variant="elevated" padding="none" class="shrink-0 overflow-hidden">
+    <ui-stack
+      direction="row"
+      align="center"
+      gap="2"
+      class="border-border shrink-0 border-b px-3 py-2"
+    >
+      <ui-icon name="triangle-alert" color="warning" />
+      <ui-typography variant="body-sm" weight="semibold">Pending decisions</ui-typography>
+      @if (store.writeDecisions().length > 0) {
+        <ui-count-badge [value]="store.writeDecisions().length" severity="warn" size="small" />
+      }
     </ui-stack>
-    <div class="h-64">
-      <app-geolocation-map [geolocationData]="store.truckLocations()" [zoom]="4" height="100%" />
-    </div>
-  </ui-surface>
 
-  <div>
-    <ui-typography variant="h6" tag="h2" class="mb-2 flex items-center gap-2">
-      Pending Decisions
-      <ui-badge
-        [value]="store.writeDecisions().length.toString()"
-        severity="warn"
-        [rounded]="true"
-      />
-    </ui-typography>
-
-    @if (store.writeDecisions().length) {
-      <ui-stack gap="3">
-        @for (decision of store.writeDecisions(); track decision.id) {
-          <app-decision-card
-            [decision]="decision"
-            [busy]="actions.busyDecisionId() === decision.id"
-            (approve)="approve($event)"
-            (reject)="reject($event)"
-          />
-        }
-      </ui-stack>
-    } @else {
-      <ui-surface variant="elevated" [border]="true" padding="none">
+    <div class="max-h-[40vh] overflow-y-auto p-3">
+      @if (store.writeDecisions().length) {
+        <ui-stack gap="3">
+          @for (decision of store.writeDecisions(); track decision.id) {
+            <app-decision-card
+              [decision]="decision"
+              [busy]="actions.busyDecisionId() === decision.id"
+              (approve)="approve($event)"
+              (reject)="reject($event)"
+            />
+          }
+        </ui-stack>
+      } @else {
         <ui-empty-state
           icon="circle-check"
           severity="success"
           title="No pending decisions"
           message="Ask the agent to plan assignments to see suggestions here."
         />
-      </ui-surface>
-    }
-  </div>
+      }
+    </div>
+  </ui-surface>
 
   @if (store.quota(); as q) {
-    <app-ai-quota-usage [quota]="q" />
+    <app-ai-quota-usage [quota]="q" class="shrink-0" />
   }
-</ui-stack>
+</div>
