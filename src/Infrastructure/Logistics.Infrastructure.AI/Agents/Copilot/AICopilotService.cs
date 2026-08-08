@@ -72,7 +72,6 @@ internal sealed class AICopilotService(
         {
             Type = AgentSessionType.Copilot,
             ConversationId = conversation.Id,
-            Mode = AgentAutonomyMode.HumanInTheLoop,
             TriggeredByUserId = request.UserId,
             StartedAt = DateTime.UtcNow,
             IsOverage = quota.IsOverQuota && quota.OverageBillable
@@ -99,7 +98,6 @@ internal sealed class AICopilotService(
             priorMessageCount = state.Messages.Count;
 
             var toolContext = new ToolCallContext(
-                AgentAutonomyMode.HumanInTheLoop,
                 CallerPermissions: permissions,
                 DecisionBroadcastOverride: dto =>
                     broadcastService.BroadcastDecisionAsync(request.TenantId, conversation.CreatedById, dto));

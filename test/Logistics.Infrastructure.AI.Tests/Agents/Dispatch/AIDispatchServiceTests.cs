@@ -100,10 +100,7 @@ public class AIDispatchServiceTests
 
     private static AIDispatchRequest CreateRequest()
     {
-        return new AIDispatchRequest(
-            Guid.NewGuid(),
-            AgentAutonomyMode.Autonomous,
-            null);
+        return new AIDispatchRequest(Guid.NewGuid(), null);
     }
 
     #region IsOverage flag on session
@@ -322,7 +319,7 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task CancelAsync_SessionNotRunning_ReturnsFalse()
     {
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
         session.Complete("done");
 
         sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
@@ -336,7 +333,7 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task CancelAsync_RunningSession_ReturnsTrue()
     {
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
         sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(session);

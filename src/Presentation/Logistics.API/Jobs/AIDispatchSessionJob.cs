@@ -1,6 +1,5 @@
 using Hangfire;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.AIDispatch;
 
@@ -17,7 +16,6 @@ public class AIDispatchSessionJob(
     [AutomaticRetry(Attempts = 0)]
     public async Task RunAsync(
         Guid tenantId,
-        AgentAutonomyMode mode,
         Guid? triggeredByUserId,
         string? instructions,
         string? rejectionContext,
@@ -32,7 +30,7 @@ public class AIDispatchSessionJob(
         try
         {
             await agentService.RunAsync(new AIDispatchRequest(
-                tenantId, mode, triggeredByUserId,
+                tenantId, triggeredByUserId,
                 Instructions: instructions,
                 RejectionContext: rejectionContext), ct);
         }
@@ -52,7 +50,6 @@ public class HangfireAIDispatchJobRunner(IBackgroundJobClient jobClient) : IBack
     {
         jobClient.Enqueue<AIDispatchSessionJob>(job => job.RunAsync(
             request.TenantId,
-            request.Mode,
             request.TriggeredByUserId,
             request.Instructions,
             request.RejectionContext,

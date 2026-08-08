@@ -18,7 +18,6 @@ internal sealed class RunAIDispatchHandler(
 
         backgroundRunner.Enqueue(new AIDispatchRequest(
             TenantId: tenant.Id,
-            Mode: request.Mode,
             TriggeredByUserId: currentUser.GetUserId(),
             Instructions: request.Instructions));
 

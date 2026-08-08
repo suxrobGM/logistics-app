@@ -32,15 +32,16 @@ public record AgentToolDefinition(string Name, string Description, JsonNode Inpu
     public AgentDecisionType DecisionType { get; init; } = AgentDecisionType.Query;
 
     /// <summary>
-    /// Whether the fleet dispatch agent may call this tool. False by default: that agent can run
-    /// Autonomous, so a tool it should not have executes unattended. The copilot is unaffected.
+    /// Whether the fleet dispatch agent may call this tool. False by default: a tool it should not
+    /// have runs unattended against the whole fleet the moment it is added to the catalogue. The
+    /// copilot is unaffected.
     /// </summary>
     public bool DispatchAgent { get; init; }
 
     /// <summary>
-    /// Write tools mutate state: HumanInTheLoop turns them into Suggested decisions, Autonomous
-    /// executes them. Derived from <see cref="DecisionType"/> rather than declared separately, so the
-    /// two cannot disagree - naming a tool's audit type *is* declaring it a write.
+    /// Write tools mutate state: every call becomes a Suggested decision awaiting dispatcher
+    /// approval, never executed inline. Derived from <see cref="DecisionType"/> rather than declared
+    /// separately, so the two cannot disagree - naming a tool's audit type *is* declaring it a write.
     /// </summary>
     public bool IsWrite => DecisionType != AgentDecisionType.Query;
 }

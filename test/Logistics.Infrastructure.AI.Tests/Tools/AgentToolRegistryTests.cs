@@ -165,7 +165,7 @@ public class AgentToolRegistryTests
     private static readonly IReadOnlySet<TenantFeature> EveryFeature =
         With([.. Enum.GetValues<TenantFeature>()]);
 
-    /// <summary>In autonomous mode an exposed copilot write tool would execute unattended.</summary>
+    /// <summary>An exposed copilot write tool would run against the whole fleet, not one caller's turn.</summary>
     [Fact]
     public void GetDispatchAgentTools_ExcludesCopilotTools()
     {
@@ -195,8 +195,8 @@ public class AgentToolRegistryTests
     }
 
     /// <summary>
-    /// A write tool the dispatch agent may call executes unattended in Autonomous mode, so opting
-    /// one in is a deliberate act - this pins the current set.
+    /// A write tool the dispatch agent may call runs unattended against the whole fleet the moment
+    /// it opts in, so doing so is a deliberate act - this pins the current set.
     /// </summary>
     [Fact]
     public void GetAllTools_DispatchAgentWriteToolsAreAKnownSet()

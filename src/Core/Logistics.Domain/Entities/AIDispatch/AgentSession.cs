@@ -5,7 +5,7 @@ namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Represents a single AI dispatch agent run.
-/// Tracks the agent's mode, status, token usage, and all decisions made.
+/// Tracks the agent's status, token usage, and all decisions made.
 /// </summary>
 public class AgentSession : AuditableEntity, ITenantEntity
 {
@@ -14,7 +14,6 @@ public class AgentSession : AuditableEntity, ITenantEntity
     /// </summary>
     public long Number { get; private set; }
 
-    public AgentAutonomyMode Mode { get; init; }
     public AgentSessionType Type { get; init; } = AgentSessionType.Dispatch;
     public AgentSessionStatus Status { get; private set; } = AgentSessionStatus.Running;
 

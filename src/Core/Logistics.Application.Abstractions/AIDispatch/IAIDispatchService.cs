@@ -1,5 +1,4 @@
 using Logistics.Domain.Entities;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Application.Abstractions.AIDispatch;
@@ -16,7 +15,6 @@ public interface IAIDispatchService
 
 public record AIDispatchRequest(
     Guid TenantId,
-    AgentAutonomyMode Mode,
     Guid? TriggeredByUserId,
     string? Instructions = null,
     string? RejectionContext = null);

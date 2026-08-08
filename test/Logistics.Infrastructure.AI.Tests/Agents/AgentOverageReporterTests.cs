@@ -29,7 +29,6 @@ public class AgentOverageReporterTests
         var session = new AgentSession
         {
             Type = type,
-            Mode = AgentAutonomyMode.HumanInTheLoop,
             StartedAt = DateTime.UtcNow,
             IsOverage = isOverage,
             EstimatedCostUsd = cost

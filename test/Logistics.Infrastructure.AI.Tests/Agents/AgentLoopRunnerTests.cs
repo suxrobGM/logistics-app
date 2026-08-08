@@ -57,7 +57,6 @@ public class AgentLoopRunnerTests
 
     private static AgentSession Session() => new()
     {
-        Mode = AgentAutonomyMode.Autonomous,
         StartedAt = DateTime.UtcNow,
         ModelUsed = "claude-haiku-4-5"
     };
@@ -95,7 +94,7 @@ public class AgentLoopRunnerTests
         provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns(TextResponse("All done."));
 
-        await sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode), null, CancellationToken.None);
+        await sut.RunAsync(session, Conversation(), new ToolCallContext(), null, CancellationToken.None);
 
         await provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
         Assert.Equal("All done.", session.Summary);
@@ -114,7 +113,7 @@ public class AgentLoopRunnerTests
             .Returns(ToolCallResponse("get_available_trucks"), TextResponse("Done."));
 
         var iterations = 0;
-        await sut.RunAsync(session, conversation, new ToolCallContext(session.Mode),
+        await sut.RunAsync(session, conversation, new ToolCallContext(),
             () => { iterations++; return Task.CompletedTask; }, CancellationToken.None);
 
         await provider.Received(2).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
@@ -139,7 +138,7 @@ public class AgentLoopRunnerTests
                 return TextResponse("Recovered.");
             });
 
-        await sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode), null, CancellationToken.None);
+        await sut.RunAsync(session, Conversation(), new ToolCallContext(), null, CancellationToken.None);
 
         Assert.Equal(2, calls);
         Assert.Equal("Recovered.", session.Summary);
@@ -157,7 +156,7 @@ public class AgentLoopRunnerTests
             });
 
         var ex = await Assert.ThrowsAsync<LlmRateLimitedException>(() =>
-            sut.RunAsync(Session(), Conversation(), new ToolCallContext(AgentAutonomyMode.Autonomous),
+            sut.RunAsync(Session(), Conversation(), new ToolCallContext(),
                 null, CancellationToken.None));
 
         // One initial attempt plus MaxRetries backoff attempts.
@@ -217,7 +216,7 @@ public class AgentLoopRunnerTests
             });
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode),
+            sut.RunAsync(session, Conversation(), new ToolCallContext(),
                 null, CancellationToken.None));
 
         Assert.Equal(220, session.TotalTokensUsed);
@@ -242,7 +241,7 @@ public class AgentLoopRunnerTests
             .Returns(TextResponse("should never run"));
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode),
+            sut.RunAsync(session, Conversation(), new ToolCallContext(),
                 null, CancellationToken.None));
 
         await provider.DidNotReceive().SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
@@ -259,7 +258,7 @@ public class AgentLoopRunnerTests
         provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns(TextResponse("All done."));
 
-        await sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode),
+        await sut.RunAsync(session, Conversation(), new ToolCallContext(),
             null, CancellationToken.None);
 
         await provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
@@ -273,7 +272,7 @@ public class AgentLoopRunnerTests
         await cts.CancelAsync();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            sut.RunAsync(session, Conversation(), new ToolCallContext(session.Mode), null, cts.Token));
+            sut.RunAsync(session, Conversation(), new ToolCallContext(), null, cts.Token));
 
         // The finally block ran: a cancel before any provider call burned nothing, so $0 exactly.
         Assert.Equal(0m, session.EstimatedCostUsd);
@@ -286,7 +285,7 @@ public class AgentLoopRunnerTests
         await cts.CancelAsync();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            sut.RunAsync(Session(), Conversation(), new ToolCallContext(AgentAutonomyMode.Autonomous),
+            sut.RunAsync(Session(), Conversation(), new ToolCallContext(),
                 null, cts.Token));
     }
 }

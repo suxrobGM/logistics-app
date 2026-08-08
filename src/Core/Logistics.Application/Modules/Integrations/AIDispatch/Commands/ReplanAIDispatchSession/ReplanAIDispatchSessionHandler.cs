@@ -42,7 +42,6 @@ internal sealed class ReplanAIDispatchSessionHandler(
 
         backgroundRunner.Enqueue(new AIDispatchRequest(
             TenantId: tenant.Id,
-            Mode: originalSession.Mode,
             TriggeredByUserId: currentUser.GetUserId(),
             Instructions: request.AdditionalInstructions,
             RejectionContext: rejectionContext));

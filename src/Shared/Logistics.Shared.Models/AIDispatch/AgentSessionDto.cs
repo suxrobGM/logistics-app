@@ -6,7 +6,6 @@ public class AgentSessionDto
 {
     public Guid Id { get; set; }
     public long Number { get; set; }
-    public AgentAutonomyMode Mode { get; set; }
     public AgentSessionStatus Status { get; set; }
     public Guid? TriggeredByUserId { get; set; }
     public DateTime StartedAt { get; set; }

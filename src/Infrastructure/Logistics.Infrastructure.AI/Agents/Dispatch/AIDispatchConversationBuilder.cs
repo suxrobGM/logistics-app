@@ -38,7 +38,7 @@ internal sealed class AIDispatchConversationBuilder(
         var hasIntermodal = enabledFeatures.Contains(TenantFeature.IntermodalContainers);
 
         var policy = await GetLearnedPolicyAsync(ct);
-        var systemPrompt = AIDispatchSystemPrompt.Build(new(companyName, request.Mode)
+        var systemPrompt = AIDispatchSystemPrompt.Build(new(companyName)
         {
             DistanceUnit = tenant.Settings.DistanceUnit,
             OperatingMode = tenant.Settings.OperatingMode,
@@ -69,11 +69,10 @@ internal sealed class AIDispatchConversationBuilder(
 
     private static string BuildUserMessage(AIDispatchRequest request)
     {
-        var modeLabel = request.Mode == AgentAutonomyMode.Autonomous ? "autonomous" : "suggestions";
         var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm UTC");
 
         var message = $"Analyze the current fleet state and optimize dispatch assignments. " +
-            $"Current time: {timestamp}. Mode: {modeLabel}. " +
+            $"Current time: {timestamp}. " +
             $"Start by calling get_unassigned_loads and get_available_trucks together, then process all loads efficiently.";
 
         if (!string.IsNullOrWhiteSpace(request.Instructions))

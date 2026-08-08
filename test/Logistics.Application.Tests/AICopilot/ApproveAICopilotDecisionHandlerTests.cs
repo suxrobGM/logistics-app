@@ -71,8 +71,7 @@ public class ApproveAICopilotDecisionHandlerTests
         var session = new AgentSession
         {
             Type = sessionType,
-            ConversationId = sessionType == AgentSessionType.Copilot ? conversation.Id : null,
-            Mode = AgentAutonomyMode.HumanInTheLoop
+            ConversationId = sessionType == AgentSessionType.Copilot ? conversation.Id : null
         };
         var decision = new AgentDecision
         {

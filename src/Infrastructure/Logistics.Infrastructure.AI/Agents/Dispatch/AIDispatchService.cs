@@ -45,7 +45,6 @@ internal sealed class AIDispatchService(
 
         var session = new AgentSession
         {
-            Mode = request.Mode,
             TriggeredByUserId = request.TriggeredByUserId,
             StartedAt = DateTime.UtcNow,
             IsOverage = quota.IsOverQuota && quota.OverageBillable,
@@ -60,8 +59,8 @@ internal sealed class AIDispatchService(
             session.Id, ct, TimeSpan.FromMinutes(options.Value.SessionTimeoutMinutes));
 
         logger.LogInformation(
-            "Starting dispatch agent session {SessionId} in {Mode} mode (triggered by {UserId})",
-            session.Id, request.Mode, request.TriggeredByUserId?.ToString() ?? "background-job");
+            "Starting dispatch agent session {SessionId} (triggered by {UserId})",
+            session.Id, request.TriggeredByUserId?.ToString() ?? "background-job");
 
         try
         {
@@ -117,7 +116,7 @@ internal sealed class AIDispatchService(
 
         // Broadcast progress after each iteration (decisions already saved + broadcast by the processor)
         await loopRunner.RunAsync(
-            session, conversation, new ToolCallContext(request.Mode),
+            session, conversation, new ToolCallContext(),
             () => BroadcastSessionUpdateAsync(session), ct);
     }
 
@@ -145,7 +144,6 @@ internal sealed class AIDispatchService(
     {
         var session = new AgentSession
         {
-            Mode = request.Mode,
             TriggeredByUserId = request.TriggeredByUserId,
             StartedAt = DateTime.UtcNow
         };
@@ -164,7 +162,6 @@ internal sealed class AIDispatchService(
             {
                 SessionId = session.Id,
                 Status = session.Status,
-                Mode = session.Mode,
                 DecisionCount = session.DecisionCount,
                 Summary = session.Summary
             });
