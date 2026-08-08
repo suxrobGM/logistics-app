@@ -6,6 +6,7 @@ import { Alert, Stack, UiButton } from "@logistics/shared/ui";
   selector: "app-turn-error",
   templateUrl: "./turn-error.html",
   imports: [Stack, Alert, UiButton],
+  host: { class: "block" },
 })
 export class TurnError {
   public readonly message = input<string | null>(null);

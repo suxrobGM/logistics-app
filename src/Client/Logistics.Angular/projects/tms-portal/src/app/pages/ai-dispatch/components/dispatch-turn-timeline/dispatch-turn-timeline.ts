@@ -52,6 +52,7 @@ import { groupTurnEntries, type TurnEntry } from "./dispatch-turn-timeline.utils
     UiTimelineContent,
     UiTimelineMarker,
   ],
+  host: { class: "block" },
 })
 export class DispatchTurnTimeline {
   public readonly session = input.required<AgentSessionDto>();

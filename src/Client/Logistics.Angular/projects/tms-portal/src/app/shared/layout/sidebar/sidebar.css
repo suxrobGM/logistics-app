@@ -151,7 +151,7 @@
   padding: 0.625rem 0.5rem;
 }
 
-/* Notification bell + theme toggle */
+/* Notification bell + copilot + theme toggle */
 .sidebar-footer-actions {
   display: flex;
   align-items: stretch;
@@ -161,6 +161,42 @@
 .sidebar-footer-actions > * {
   flex: 1 1 0;
   min-width: 0;
+}
+
+/* The copilot launcher sits between two components that draw this box themselves; encapsulation
+   keeps them from sharing one class, so the three declarations must stay in step by hand. */
+.sidebar-footer-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.5625rem;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.sidebar-footer-action:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+.sidebar-footer-action:focus {
+  outline: none;
+}
+.sidebar-footer-action:focus-visible {
+  box-shadow: 0 0 0 2px var(--primary-500);
+}
+.sidebar-footer-action:active {
+  transform: scale(0.98);
+}
+.sidebar-footer-action ui-icon {
+  font-size: 1.125rem;
+}
+.sidebar-footer-action:hover ui-icon {
+  color: var(--primary-500);
 }
 
 /* Stacked when collapsed: side by side they need ~80px, the 72px rail has 56px of content box. */

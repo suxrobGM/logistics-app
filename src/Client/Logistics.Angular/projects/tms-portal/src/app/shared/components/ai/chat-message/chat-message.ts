@@ -12,6 +12,7 @@ import { MarkdownPipe } from "@/shared/pipes";
   selector: "app-chat-message",
   templateUrl: "./chat-message.html",
   imports: [Icon, MarkdownPipe],
+  host: { class: "block" },
 })
 export class ChatMessage {
   public readonly message = input.required<AgentMessageDto>();

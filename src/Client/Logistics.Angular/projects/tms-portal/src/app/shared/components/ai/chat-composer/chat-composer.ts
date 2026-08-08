@@ -15,6 +15,7 @@ export interface ChatComposerCommand {
   selector: "app-chat-composer",
   templateUrl: "./chat-composer.html",
   imports: [UiButton, UiTextareaField],
+  host: { class: "block" },
 })
 export class ChatComposer {
   private readonly textarea = viewChild(UiTextareaField);

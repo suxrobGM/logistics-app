@@ -9,6 +9,7 @@ import { MarkdownPipe } from "@/shared/pipes";
   selector: "app-dispatch-report-message",
   templateUrl: "./dispatch-report-message.html",
   imports: [DecimalPipe, Icon, MarkdownPipe, Surface],
+  host: { class: "block" },
 })
 export class DispatchReportMessage {
   public readonly message = input.required<AgentMessageDto>();

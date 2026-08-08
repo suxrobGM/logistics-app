@@ -157,6 +157,7 @@
 
         <!-- Blocked = hard budget pause; the server would reject the send anyway. -->
         <app-chat-composer
+          class="border-border border-t"
           [isRunning]="store.isRunning()"
           [disabled]="store.sending()"
           [blocked]="store.quotaBlocked()"
