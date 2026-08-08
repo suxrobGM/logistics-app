@@ -973,7 +973,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SendAICopilotMessageResultDto"
+                  "$ref": "#/components/schemas/SendAgentMessageResultDto"
                 }
               }
             }
@@ -1381,7 +1381,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SendAIDispatchMessageResultDto"
+                  "$ref": "#/components/schemas/SendAgentMessageResultDto"
                 }
               }
             }
@@ -16340,13 +16340,6 @@
   },
   "components": {
     "schemas": {
-      "AgentConversationStatus": {
-        "enum": [
-          "idle",
-          "running"
-        ],
-        "type": "string"
-      },
       "AIDispatchPolicyDto": {
         "type": "object",
         "properties": {
@@ -17103,6 +17096,13 @@
         },
         "additionalProperties": false
       },
+      "AgentConversationStatus": {
+        "enum": [
+          "idle",
+          "running"
+        ],
+        "type": "string"
+      },
       "AgentDecisionDto": {
         "type": "object",
         "properties": {
@@ -17207,7 +17207,6 @@
           "create_trip",
           "dispatch_trip",
           "book_load_board_load",
-          "reassign_load",
           "create_invoice",
           "send_invoice",
           "create_payment_link"
@@ -17263,17 +17262,8 @@
             "type": "string",
             "format": "uuid"
           },
-          "number": {
-            "type": "integer",
-            "format": "int64"
-          },
           "status": {
             "$ref": "#/components/schemas/AgentSessionStatus"
-          },
-          "triggeredByUserId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
           },
           "startedAt": {
             "type": "string",
@@ -17284,55 +17274,17 @@
             "format": "date-time",
             "nullable": true
           },
-          "totalTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "inputTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "outputTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cacheReadTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cacheCreationTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "estimatedCostUsd": {
-            "type": "number",
-            "format": "double"
-          },
-          "modelUsed": {
-            "type": "string",
-            "nullable": true
-          },
           "decisionCount": {
             "type": "integer",
             "format": "int32"
-          },
-          "summary": {
-            "type": "string",
-            "nullable": true
           },
           "errorMessage": {
             "type": "string",
             "nullable": true
           },
-          "isOverage": {
-            "type": "boolean"
-          },
-          "decisions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AgentDecisionDto"
-            },
-            "nullable": true
+          "totalTokensUsed": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -26303,24 +26255,6 @@
         },
         "additionalProperties": false
       },
-      "SendAICopilotMessageResultDto": {
-        "type": "object",
-        "properties": {
-          "conversationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "userMessageId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "userMessageCreatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
       "SendAIDispatchMessageCommand": {
         "type": "object",
         "properties": {
@@ -26335,7 +26269,7 @@
         },
         "additionalProperties": false
       },
-      "SendAIDispatchMessageResultDto": {
+      "SendAgentMessageResultDto": {
         "type": "object",
         "properties": {
           "conversationId": {
