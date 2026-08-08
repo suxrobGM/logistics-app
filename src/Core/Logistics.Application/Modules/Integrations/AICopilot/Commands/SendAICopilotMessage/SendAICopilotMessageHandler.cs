@@ -1,21 +1,17 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AICopilot;
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Integrations.Agents;
-using Logistics.Domain.Persistence;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
 
 internal sealed class SendAICopilotMessageHandler(
-    ITenantUnitOfWork tenantUow,
+    IAgentConversationCommands commands,
     ICurrentUserService currentUser,
-    IAIQuotaService quotaService,
-    IBackgroundJobRunner<AICopilotTurnRequest> backgroundRunner,
-    ILogger<SendAICopilotMessageHandler> logger)
+    IBackgroundJobRunner<AICopilotTurnRequest> backgroundRunner)
     : IAppRequestHandler<SendAICopilotMessageCommand, Result<SendAgentMessageResultDto>>
 {
     public Task<Result<SendAgentMessageResultDto>> Handle(
@@ -23,10 +19,7 @@ internal sealed class SendAICopilotMessageHandler(
     {
         var userId = currentUser.GetUserId();
 
-        return AgentConversationCommands.SendMessageAsync(
-            tenantUow,
-            quotaService,
-            logger,
+        return commands.SendMessageAsync(
             AgentConversationScope.Copilot(userId),
             request.ConversationId,
             request.Text,

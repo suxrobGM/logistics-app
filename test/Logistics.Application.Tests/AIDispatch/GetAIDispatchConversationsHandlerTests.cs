@@ -1,6 +1,6 @@
 using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using MockQueryable;
@@ -11,16 +11,12 @@ namespace Logistics.Application.Tests.AIDispatch;
 
 public class GetAIDispatchConversationsHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<AgentConversation, Guid> conversationRepo =
-        Substitute.For<ITenantRepository<AgentConversation, Guid>>();
-
+    private readonly AgentTestContext ctx = new();
     private readonly GetAIDispatchConversationsHandler sut;
 
     public GetAIDispatchConversationsHandlerTests()
     {
-        tenantUow.Repository<AgentConversation>().Returns(conversationRepo);
-        sut = new GetAIDispatchConversationsHandler(tenantUow);
+        sut = new GetAIDispatchConversationsHandler(ctx.Queries);
     }
 
     /// <summary>Dispatch conversations are tenant-shared - every user's rows come back, not just the caller's.</summary>
@@ -29,7 +25,7 @@ public class GetAIDispatchConversationsHandlerTests
     {
         var mine = new AgentConversation { CreatedById = Guid.NewGuid(), Kind = AgentConversationKind.Dispatch };
         var someoneElses = new AgentConversation { CreatedById = Guid.NewGuid(), Kind = AgentConversationKind.Dispatch };
-        conversationRepo.Query().Returns(new List<AgentConversation> { mine, someoneElses }.BuildMock());
+        ctx.ConversationRepo.Query().Returns(new List<AgentConversation> { mine, someoneElses }.BuildMock());
 
         var result = await sut.Handle(new GetAIDispatchConversationsQuery { Page = 1, PageSize = 20 }, CancellationToken.None);
 
@@ -43,7 +39,7 @@ public class GetAIDispatchConversationsHandlerTests
     {
         var dispatchConversation = new AgentConversation { CreatedById = Guid.NewGuid(), Kind = AgentConversationKind.Dispatch };
         var copilotConversation = new AgentConversation { CreatedById = Guid.NewGuid(), Kind = AgentConversationKind.Copilot };
-        conversationRepo.Query().Returns(new List<AgentConversation> { dispatchConversation, copilotConversation }.BuildMock());
+        ctx.ConversationRepo.Query().Returns(new List<AgentConversation> { dispatchConversation, copilotConversation }.BuildMock());
 
         var result = await sut.Handle(new GetAIDispatchConversationsQuery { Page = 1, PageSize = 20 }, CancellationToken.None);
 

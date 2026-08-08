@@ -3,9 +3,8 @@ using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Integrations.Agents;
-using Logistics.Domain.Persistence;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
@@ -15,19 +14,14 @@ namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 /// created the conversation, for audit only.
 /// </summary>
 internal sealed class SendAIDispatchMessageHandler(
-    ITenantUnitOfWork tenantUow,
+    IAgentConversationCommands commands,
     ICurrentUserService currentUser,
-    IAIQuotaService quotaService,
-    IBackgroundJobRunner<AIDispatchTurnRequest> backgroundRunner,
-    ILogger<SendAIDispatchMessageHandler> logger)
+    IBackgroundJobRunner<AIDispatchTurnRequest> backgroundRunner)
     : IAppRequestHandler<SendAIDispatchMessageCommand, Result<SendAgentMessageResultDto>>
 {
     public Task<Result<SendAgentMessageResultDto>> Handle(
         SendAIDispatchMessageCommand request, CancellationToken ct) =>
-        AgentConversationCommands.SendMessageAsync(
-            tenantUow,
-            quotaService,
-            logger,
+        commands.SendMessageAsync(
             AgentConversationScope.Dispatch,
             request.ConversationId,
             request.Text,

@@ -4,20 +4,18 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
-namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
+namespace Logistics.Application.Modules.Integrations.AIDispatch.Services;
 
-/// <summary>
-/// Shared by dispatch decision approval and rejection: AI must be enabled for the tenant, and the
-/// decision must exist, belong to a dispatch turn, and still be Suggested.
-/// </summary>
-internal static class AIDispatchDecisionGuard
+internal sealed class AIDispatchDecisionGuard(
+    ITenantUnitOfWork tenantUow,
+    IOptions<LlmOptions> llmOptions) : IAIDispatchDecisionGuard
 {
-    public static async Task<Result<AgentDecision>> LoadAsync(
-        ITenantUnitOfWork tenantUow, LlmOptions llmOptions, Guid decisionId, CancellationToken ct)
+    public async Task<Result<AgentDecision>> LoadAsync(Guid decisionId, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        if (!llmOptions.BypassAIGate && tenant.Settings.AIEnabled == false)
+        if (!llmOptions.Value.BypassAIGate && tenant.Settings.AIEnabled == false)
             return Result<AgentDecision>.Fail("AI dispatch is disabled for this tenant");
 
         var decision = await tenantUow.Repository<AgentDecision>()

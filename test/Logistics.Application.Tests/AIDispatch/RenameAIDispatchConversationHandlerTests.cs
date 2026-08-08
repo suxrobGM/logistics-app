@@ -13,7 +13,7 @@ public class RenameAIDispatchConversationHandlerTests
 
     public RenameAIDispatchConversationHandlerTests()
     {
-        sut = new RenameAIDispatchConversationHandler(ctx.TenantUow);
+        sut = new RenameAIDispatchConversationHandler(ctx.Commands);
     }
 
     [Fact]

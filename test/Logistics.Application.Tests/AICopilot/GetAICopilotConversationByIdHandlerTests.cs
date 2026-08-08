@@ -15,7 +15,7 @@ public class GetAICopilotConversationByIdHandlerTests
 
     public GetAICopilotConversationByIdHandlerTests()
     {
-        sut = new GetAICopilotConversationByIdHandler(ctx.TenantUow, ctx.CurrentUser);
+        sut = new GetAICopilotConversationByIdHandler(ctx.Queries, ctx.CurrentUser);
         ctx.DecisionRepo.Query().Returns(new List<AgentDecision>().BuildMock());
         ctx.MessageRepo.Query().Returns(new List<AgentMessage>().BuildMock());
     }

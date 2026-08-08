@@ -1,35 +1,34 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Modules.Integrations.Agents;
+using Logistics.Application.Modules.Integrations.AIDispatch.Services;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
 internal sealed class RejectAIDispatchDecisionHandler(
     ITenantUnitOfWork tenantUow,
+    IAIDispatchDecisionGuard guard,
+    IAgentDecisionNotes notes,
     ICurrentUserService currentUser,
-    IAIDispatchBroadcastService broadcastService,
-    IOptions<LlmOptions> llmOptions) : IAppRequestHandler<RejectAIDispatchDecisionCommand, Result>
+    IAIDispatchBroadcastService broadcastService) : IAppRequestHandler<RejectAIDispatchDecisionCommand, Result>
 {
     public async Task<Result> Handle(RejectAIDispatchDecisionCommand request, CancellationToken ct)
     {
-        var guard = await AIDispatchDecisionGuard.LoadAsync(
-            tenantUow, llmOptions.Value, request.DecisionId, ct);
-        if (!guard.IsSuccess)
-            return Result.Fail(guard.Error!);
+        var loaded = await guard.LoadAsync(request.DecisionId, ct);
+        if (!loaded.IsSuccess)
+            return Result.Fail(loaded.Error!);
 
-        var decision = guard.Value!;
+        var decision = loaded.Value!;
         decision.Reject(currentUser.GetUserId() ?? Guid.Empty, request.Reason);
 
         var tenantId = tenantUow.GetCurrentTenant().Id;
-        var conversation = await AgentDecisionNotes.LoadConversationAsync(tenantUow, decision, ct);
+        var conversation = await notes.LoadConversationAsync(decision, ct);
 
-        await AgentDecisionNotes.AppendAsync(
-            tenantUow, conversation, AgentDecisionNotes.RejectionNote(decision, request.Reason),
+        await notes.AppendAsync(
+            conversation, notes.RejectionNote(decision, request.Reason),
             message => broadcastService.BroadcastMessageAsync(tenantId, message), ct);
 
         return Result.Ok();

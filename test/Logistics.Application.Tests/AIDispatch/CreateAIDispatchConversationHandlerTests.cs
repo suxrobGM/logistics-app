@@ -14,7 +14,7 @@ public class CreateAIDispatchConversationHandlerTests
 
     public CreateAIDispatchConversationHandlerTests()
     {
-        sut = new CreateAIDispatchConversationHandler(ctx.TenantUow, ctx.CurrentUser);
+        sut = new CreateAIDispatchConversationHandler(ctx.Commands, ctx.CurrentUser);
     }
 
     [Fact]

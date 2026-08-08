@@ -1,4 +1,3 @@
-using Logistics.Application.Modules.Integrations.AICopilot.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
@@ -14,8 +13,8 @@ public class AICopilotDecisionGuardTests
     [Fact]
     public async Task LoadAsync_UserNotAuthenticated_Fails()
     {
-        var result = await AICopilotDecisionGuard.LoadAsync(
-            ctx.TenantUow, Guid.NewGuid(), userId: null, CancellationToken.None);
+        var result = await ctx.CopilotGuard.LoadAsync(
+            Guid.NewGuid(), userId: null, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }
@@ -23,8 +22,8 @@ public class AICopilotDecisionGuardTests
     [Fact]
     public async Task LoadAsync_DecisionNotFound_Fails()
     {
-        var result = await AICopilotDecisionGuard.LoadAsync(
-            ctx.TenantUow, Guid.NewGuid(), ctx.UserId, CancellationToken.None);
+        var result = await ctx.CopilotGuard.LoadAsync(
+            Guid.NewGuid(), ctx.UserId, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Decision not found", result.Error);
@@ -43,8 +42,8 @@ public class AICopilotDecisionGuardTests
         };
         ctx.DecisionRepo.GetByIdAsync(dispatchDecision.Id, Arg.Any<CancellationToken>()).Returns(dispatchDecision);
 
-        var result = await AICopilotDecisionGuard.LoadAsync(
-            ctx.TenantUow, dispatchDecision.Id, ctx.UserId, CancellationToken.None);
+        var result = await ctx.CopilotGuard.LoadAsync(
+            dispatchDecision.Id, ctx.UserId, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Decision not found", result.Error);
@@ -57,8 +56,8 @@ public class AICopilotDecisionGuardTests
         ctx.ConversationRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(new AgentConversation { CreatedById = Guid.NewGuid(), Kind = AgentConversationKind.Copilot });
 
-        var result = await AICopilotDecisionGuard.LoadAsync(
-            ctx.TenantUow, decision.Id, ctx.UserId, CancellationToken.None);
+        var result = await ctx.CopilotGuard.LoadAsync(
+            decision.Id, ctx.UserId, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Decision not found", result.Error);
@@ -70,8 +69,8 @@ public class AICopilotDecisionGuardTests
         var (decision, _) = ctx.SetCopilotSuggestedDecision();
         decision.Approve(ctx.UserId);
 
-        var result = await AICopilotDecisionGuard.LoadAsync(
-            ctx.TenantUow, decision.Id, ctx.UserId, CancellationToken.None);
+        var result = await ctx.CopilotGuard.LoadAsync(
+            decision.Id, ctx.UserId, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("suggested state", result.Error);
@@ -82,8 +81,8 @@ public class AICopilotDecisionGuardTests
     {
         var (decision, conversation) = ctx.SetCopilotSuggestedDecision();
 
-        var result = await AICopilotDecisionGuard.LoadAsync(
-            ctx.TenantUow, decision.Id, ctx.UserId, CancellationToken.None);
+        var result = await ctx.CopilotGuard.LoadAsync(
+            decision.Id, ctx.UserId, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(decision.Id, result.Value!.Decision.Id);

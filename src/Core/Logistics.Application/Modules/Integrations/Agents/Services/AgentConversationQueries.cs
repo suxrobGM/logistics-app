@@ -4,25 +4,19 @@ using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Logistics.Application.Modules.Integrations.Agents;
+namespace Logistics.Application.Modules.Integrations.Agents.Services;
 
-/// <summary>
-/// The conversation read path shared by the dispatch and copilot surfaces. Each surface keeps only
-/// its own query, permission policy and feature gate.
-/// </summary>
-internal static class AgentConversationQueries
+internal sealed class AgentConversationQueries(
+    ITenantUnitOfWork tenantUow,
+    IAgentConversationAccess access) : IAgentConversationQueries
 {
-    public static async Task<PagedResult<AgentConversationDto>> ListAsync(
-        ITenantUnitOfWork tenantUow,
-        AgentConversationScope scope,
-        int page,
-        int pageSize,
-        CancellationToken ct)
+    public async Task<PagedResult<AgentConversationDto>> ListAsync(
+        AgentConversationScope scope, int page, int pageSize, CancellationToken ct)
     {
         if (scope.RequireOwner && scope.CallerId is null)
             return PagedResult<AgentConversationDto>.Fail("User is not authenticated");
 
-        var query = AgentConversationAccess.Restrict(tenantUow.Repository<AgentConversation>().Query(), scope);
+        var query = access.Restrict(tenantUow.Repository<AgentConversation>().Query(), scope);
 
         var totalItems = await query.CountAsync(ct);
 
@@ -36,18 +30,10 @@ internal static class AgentConversationQueries
         return PagedResult<AgentConversationDto>.Ok(dtos, totalItems, pageSize);
     }
 
-    /// <summary>
-    /// Loads a conversation with its transcript. <paramref name="includeSessions"/> adds the
-    /// per-turn sessions the dispatch board reports on; the copilot drawer never renders them.
-    /// </summary>
-    public static async Task<Result<AgentConversationDto>> GetByIdAsync(
-        ITenantUnitOfWork tenantUow,
-        AgentConversationScope scope,
-        Guid conversationId,
-        bool includeSessions,
-        CancellationToken ct)
+    public async Task<Result<AgentConversationDto>> GetByIdAsync(
+        AgentConversationScope scope, Guid conversationId, bool includeSessions, CancellationToken ct)
     {
-        var conversation = await AgentConversationAccess.LoadAsync(tenantUow, conversationId, scope, ct);
+        var conversation = await access.LoadAsync(conversationId, scope, ct);
         if (conversation is null)
             return Result<AgentConversationDto>.Fail("Conversation not found");
 

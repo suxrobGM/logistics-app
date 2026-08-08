@@ -1,10 +1,8 @@
-using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
 
@@ -19,16 +17,14 @@ public class RejectAIDispatchDecisionHandlerTests
     public RejectAIDispatchDecisionHandlerTests()
     {
         sut = new RejectAIDispatchDecisionHandler(
-            ctx.TenantUow, ctx.CurrentUser, broadcastService,
-            Options.Create(new LlmOptions { BypassAIGate = true }));
+            ctx.TenantUow, ctx.DispatchGuard(), ctx.Notes, ctx.CurrentUser, broadcastService);
     }
 
     [Fact]
     public async Task Handle_ReasonGiven_AppendsRejectionNoteAndBroadcastsTenantWide()
     {
-        var conversationId = Guid.NewGuid();
-        var decision = ctx.SetDispatchSuggestedDecision(conversationId);
-        var conversation = ctx.SetConversation(id: conversationId, kind: AgentConversationKind.Dispatch);
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var decision = ctx.SetDispatchSuggestedDecision(conversation);
 
         var result = await sut.Handle(
             new RejectAIDispatchDecisionCommand { DecisionId = decision.Id, Reason = "wrong truck" },
@@ -40,15 +36,14 @@ public class RejectAIDispatchDecisionHandlerTests
         Assert.Equal("Rejected: assign_load_to_truck - wrong truck", note.DisplayText);
 
         await broadcastService.Received(1).BroadcastMessageAsync(
-            ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversationId));
+            ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversation.Id));
     }
 
     [Fact]
     public async Task Handle_NoReasonGiven_NoteOmitsTheDash()
     {
-        var conversationId = Guid.NewGuid();
-        var decision = ctx.SetDispatchSuggestedDecision(conversationId);
-        var conversation = ctx.SetConversation(id: conversationId, kind: AgentConversationKind.Dispatch);
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var decision = ctx.SetDispatchSuggestedDecision(conversation);
 
         await sut.Handle(
             new RejectAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);

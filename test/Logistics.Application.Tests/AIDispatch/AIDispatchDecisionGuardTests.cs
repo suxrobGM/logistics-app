@@ -1,5 +1,3 @@
-using Logistics.Application.Abstractions.AI;
-using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
@@ -18,8 +16,8 @@ public class AIDispatchDecisionGuardTests
     {
         ctx.Tenant.Settings.AIEnabled = false;
 
-        var result = await AIDispatchDecisionGuard.LoadAsync(
-            ctx.TenantUow, new LlmOptions { BypassAIGate = false }, Guid.NewGuid(), CancellationToken.None);
+        var result = await ctx.DispatchGuard(bypassAIGate: false)
+            .LoadAsync(Guid.NewGuid(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("disabled", result.Error);
@@ -30,8 +28,7 @@ public class AIDispatchDecisionGuardTests
     {
         ctx.DecisionRepo.Query().Returns(new List<AgentDecision>().BuildMock());
 
-        var result = await AIDispatchDecisionGuard.LoadAsync(
-            ctx.TenantUow, new LlmOptions { BypassAIGate = true }, Guid.NewGuid(), CancellationToken.None);
+        var result = await ctx.DispatchGuard().LoadAsync(Guid.NewGuid(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Decision not found", result.Error);
@@ -50,8 +47,7 @@ public class AIDispatchDecisionGuardTests
         };
         ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { copilotDecision }.BuildMock());
 
-        var result = await AIDispatchDecisionGuard.LoadAsync(
-            ctx.TenantUow, new LlmOptions { BypassAIGate = true }, copilotDecision.Id, CancellationToken.None);
+        var result = await ctx.DispatchGuard().LoadAsync(copilotDecision.Id, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Decision not found", result.Error);
@@ -63,8 +59,7 @@ public class AIDispatchDecisionGuardTests
         var decision = ctx.SetDispatchSuggestedDecision();
         decision.Approve(ctx.UserId);
 
-        var result = await AIDispatchDecisionGuard.LoadAsync(
-            ctx.TenantUow, new LlmOptions { BypassAIGate = true }, decision.Id, CancellationToken.None);
+        var result = await ctx.DispatchGuard().LoadAsync(decision.Id, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("suggested state", result.Error);
@@ -75,8 +70,7 @@ public class AIDispatchDecisionGuardTests
     {
         var decision = ctx.SetDispatchSuggestedDecision();
 
-        var result = await AIDispatchDecisionGuard.LoadAsync(
-            ctx.TenantUow, new LlmOptions { BypassAIGate = true }, decision.Id, CancellationToken.None);
+        var result = await ctx.DispatchGuard().LoadAsync(decision.Id, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(decision.Id, result.Value!.Id);

@@ -16,7 +16,8 @@ public class RejectAICopilotDecisionHandlerTests
 
     public RejectAICopilotDecisionHandlerTests()
     {
-        sut = new RejectAICopilotDecisionHandler(ctx.TenantUow, ctx.CurrentUser, broadcastService);
+        sut = new RejectAICopilotDecisionHandler(
+            ctx.TenantUow, ctx.CopilotGuard, ctx.Notes, ctx.CurrentUser, broadcastService);
     }
 
     [Fact]

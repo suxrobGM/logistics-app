@@ -14,7 +14,7 @@ public class CreateAICopilotConversationHandlerTests
 
     public CreateAICopilotConversationHandlerTests()
     {
-        sut = new CreateAICopilotConversationHandler(ctx.TenantUow, ctx.CurrentUser);
+        sut = new CreateAICopilotConversationHandler(ctx.Commands, ctx.CurrentUser);
     }
 
     [Fact]

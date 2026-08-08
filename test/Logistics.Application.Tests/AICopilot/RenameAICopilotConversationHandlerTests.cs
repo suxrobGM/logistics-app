@@ -13,7 +13,7 @@ public class RenameAICopilotConversationHandlerTests
 
     public RenameAICopilotConversationHandlerTests()
     {
-        sut = new RenameAICopilotConversationHandler(ctx.TenantUow, ctx.CurrentUser);
+        sut = new RenameAICopilotConversationHandler(ctx.Commands, ctx.CurrentUser);
     }
 
     [Fact]

@@ -1,11 +1,18 @@
+using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
+using Logistics.Application.Modules.Integrations.AICopilot.Services;
+using Logistics.Application.Modules.Integrations.AIDispatch.Services;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using MediatR;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using MockQueryable;
 using NSubstitute;
 
@@ -13,8 +20,9 @@ namespace Logistics.Application.Tests.TestKit;
 
 /// <summary>
 /// Shared substitute rig for AI dispatch/copilot handler tests: the tenant unit of work, current
-/// user, and the Agent* repositories pre-wired to it, plus builders for the fixtures nearly every
-/// handler needs (a conversation, a suggested decision, the caller's permissions).
+/// user, and the Agent* repositories pre-wired to it, plus the real shared agent services built on
+/// top of them and builders for the fixtures nearly every handler needs (a conversation, a
+/// suggested decision, the caller's permissions).
 /// </summary>
 internal sealed class AgentTestContext
 {
@@ -23,6 +31,8 @@ internal sealed class AgentTestContext
     public IAgentToolExecutor ToolExecutor { get; } = Substitute.For<IAgentToolExecutor>();
     public IAgentToolRegistry ToolRegistry { get; } = Substitute.For<IAgentToolRegistry>();
     public IMediator Mediator { get; } = Substitute.For<IMediator>();
+    public IAIQuotaService QuotaService { get; } = Substitute.For<IAIQuotaService>();
+    public IAIDispatchService DispatchService { get; } = Substitute.For<IAIDispatchService>();
 
     public ITenantRepository<AgentDecision, Guid> DecisionRepo { get; } =
         Substitute.For<ITenantRepository<AgentDecision, Guid>>();
@@ -32,6 +42,15 @@ internal sealed class AgentTestContext
         Substitute.For<ITenantRepository<AgentMessage, Guid>>();
     public ITenantRepository<AgentSession, Guid> SessionRepo { get; } =
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
+
+    /// <summary>The real shared services, so a handler test still exercises the logic it delegates to.</summary>
+    public IAgentConversationAccess Access { get; }
+    public IAgentConversationCommands Commands { get; }
+    public IAgentConversationQueries Queries { get; }
+    public IAgentDecisionNotes Notes { get; }
+    public IAgentDecisionExecution Execution { get; }
+    public IAgentDecisionAuthorization Authorization { get; }
+    public IAICopilotDecisionGuard CopilotGuard { get; }
 
     public Guid UserId { get; } = Guid.NewGuid();
 
@@ -52,7 +71,22 @@ internal sealed class AgentTestContext
         TenantUow.Repository<AgentSession>().Returns(SessionRepo);
         TenantUow.GetCurrentTenant().Returns(Tenant);
         CurrentUser.GetUserId().Returns(UserId);
+        SessionRepo.Query().Returns(_ => new List<AgentSession>().BuildMock());
+
+        Access = new AgentConversationAccess(TenantUow);
+        Commands = new AgentConversationCommands(
+            TenantUow, Access, QuotaService, DispatchService,
+            NullLogger<AgentConversationCommands>.Instance);
+        Queries = new AgentConversationQueries(TenantUow, Access);
+        Notes = new AgentDecisionNotes(TenantUow);
+        Execution = new AgentDecisionExecution(ToolExecutor);
+        Authorization = new AgentDecisionAuthorization(ToolRegistry, Mediator);
+        CopilotGuard = new AICopilotDecisionGuard(TenantUow, Access);
     }
+
+    /// <summary>The dispatch guard, whose AI-enabled gate the caller may want to exercise.</summary>
+    public IAIDispatchDecisionGuard DispatchGuard(bool bypassAIGate = true) =>
+        new AIDispatchDecisionGuard(TenantUow, Options.Create(new LlmOptions { BypassAIGate = bypassAIGate }));
 
     public void SetCallerPermissions(params string[] permissions) =>
         Mediator.Send(Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>())
@@ -88,15 +122,7 @@ internal sealed class AgentTestContext
         AgentSessionType sessionType = AgentSessionType.Copilot)
     {
         var conversation = new AgentConversation { CreatedById = UserId };
-        var session = new AgentSession { Type = sessionType, ConversationId = conversation.Id };
-        var decision = new AgentDecision
-        {
-            SessionId = session.Id,
-            Session = session,
-            ToolName = toolName,
-            ToolInput = toolInput,
-            Status = AgentDecisionStatus.Suggested
-        };
+        var decision = SuggestedDecision(conversation, sessionType, toolName, toolInput);
 
         DecisionRepo.GetByIdAsync(decision.Id, Arg.Any<CancellationToken>()).Returns(decision);
         ConversationRepo.GetByIdAsync(conversation.Id, Arg.Any<CancellationToken>()).Returns(conversation);
@@ -105,16 +131,33 @@ internal sealed class AgentTestContext
 
     /// <summary>Wires a Suggested decision the way <c>AIDispatchDecisionGuard</c> loads it: via <c>Query().DispatchOnly()</c>.</summary>
     public AgentDecision SetDispatchSuggestedDecision(
-        Guid? conversationId = null,
+        AgentConversation? conversation = null,
         string toolName = "assign_load_to_truck",
         string toolInput = """{"load_id":"x"}""")
     {
+        conversation ??= new AgentConversation { CreatedById = UserId, Kind = AgentConversationKind.Dispatch };
+        var decision = SuggestedDecision(conversation, AgentSessionType.Dispatch, toolName, toolInput);
+
+        DecisionRepo.Query().Returns(_ => new List<AgentDecision> { decision }.BuildMock());
+        return decision;
+    }
+
+    /// <summary>
+    /// A decision with its session and conversation linked both ways: the notes service reaches the
+    /// conversation by projecting off the session query, not through the decision's navigation.
+    /// </summary>
+    private AgentDecision SuggestedDecision(
+        AgentConversation conversation, AgentSessionType sessionType, string toolName, string toolInput)
+    {
         var session = new AgentSession
         {
-            Type = AgentSessionType.Dispatch,
-            ConversationId = conversationId ?? Guid.NewGuid()
+            Type = sessionType,
+            ConversationId = conversation.Id,
+            Conversation = conversation
         };
-        var decision = new AgentDecision
+        SessionRepo.Query().Returns(_ => new List<AgentSession> { session }.BuildMock());
+
+        return new AgentDecision
         {
             SessionId = session.Id,
             Session = session,
@@ -122,8 +165,5 @@ internal sealed class AgentTestContext
             ToolInput = toolInput,
             Status = AgentDecisionStatus.Suggested
         };
-
-        DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
-        return decision;
     }
 }

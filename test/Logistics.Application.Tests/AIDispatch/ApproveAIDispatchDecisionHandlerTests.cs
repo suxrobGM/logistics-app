@@ -1,10 +1,8 @@
-using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
 
@@ -22,8 +20,8 @@ public class ApproveAIDispatchDecisionHandlerTests
         ctx.SetToolDefinition("assign_load_to_truck", "Permission.Dispatch.Manage", AgentDecisionType.AssignLoad);
 
         sut = new ApproveAIDispatchDecisionHandler(
-            ctx.TenantUow, ctx.ToolExecutor, ctx.ToolRegistry, ctx.CurrentUser, broadcastService, ctx.Mediator,
-            Options.Create(new LlmOptions { BypassAIGate = true }));
+            ctx.TenantUow, ctx.DispatchGuard(), ctx.Authorization, ctx.Execution, ctx.Notes,
+            ctx.CurrentUser, broadcastService);
     }
 
     [Fact]
@@ -44,9 +42,8 @@ public class ApproveAIDispatchDecisionHandlerTests
     [Fact]
     public async Task Handle_ToolSucceeds_AppendsApprovedNoteAndBroadcastsTenantWide()
     {
-        var conversationId = Guid.NewGuid();
-        var decision = ctx.SetDispatchSuggestedDecision(conversationId);
-        var conversation = ctx.SetConversation(id: conversationId, kind: AgentConversationKind.Dispatch);
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var decision = ctx.SetDispatchSuggestedDecision(conversation);
         ctx.ToolExecutor.ExecuteToolAsync("assign_load_to_truck", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("""{"success":true}""");
 
@@ -62,15 +59,14 @@ public class ApproveAIDispatchDecisionHandlerTests
         await ctx.MessageRepo.Received(1).AddAsync(note, Arg.Any<CancellationToken>());
 
         await broadcastService.Received(1).BroadcastMessageAsync(
-            ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversationId));
+            ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversation.Id));
     }
 
     [Fact]
     public async Task Handle_ToolThrows_AppendsFailureNote()
     {
-        var conversationId = Guid.NewGuid();
-        var decision = ctx.SetDispatchSuggestedDecision(conversationId);
-        var conversation = ctx.SetConversation(id: conversationId, kind: AgentConversationKind.Dispatch);
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var decision = ctx.SetDispatchSuggestedDecision(conversation);
         ctx.ToolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns<Task<string>>(_ => throw new InvalidOperationException("boom"));
 

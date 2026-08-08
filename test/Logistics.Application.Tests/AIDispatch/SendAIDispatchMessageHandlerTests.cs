@@ -4,7 +4,6 @@ using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
@@ -13,7 +12,6 @@ namespace Logistics.Application.Tests.AIDispatch;
 public class SendAIDispatchMessageHandlerTests
 {
     private readonly AgentTestContext ctx = new();
-    private readonly IAIQuotaService quotaService = Substitute.For<IAIQuotaService>();
     private readonly IBackgroundJobRunner<AIDispatchTurnRequest> backgroundRunner =
         Substitute.For<IBackgroundJobRunner<AIDispatchTurnRequest>>();
 
@@ -23,15 +21,13 @@ public class SendAIDispatchMessageHandlerTests
     {
         SetQuota(overageBlocked: false);
 
-        sut = new SendAIDispatchMessageHandler(
-            ctx.TenantUow, ctx.CurrentUser, quotaService, backgroundRunner,
-            NullLogger<SendAIDispatchMessageHandler>.Instance);
+        sut = new SendAIDispatchMessageHandler(ctx.Commands, ctx.CurrentUser, backgroundRunner);
     }
 
     private void SetQuota(bool overageBlocked, bool isOverQuota = false)
     {
         ctx.Tenant.Settings.BlockAIOverage = overageBlocked;
-        quotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        ctx.QuotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(new AIQuotaStatus(5m, isOverQuota || overageBlocked ? 5m : 0m,
                 isOverQuota || overageBlocked)
             {

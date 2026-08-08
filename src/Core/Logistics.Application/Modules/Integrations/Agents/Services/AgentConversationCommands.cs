@@ -7,13 +7,14 @@ using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Application.Modules.Integrations.Agents;
+namespace Logistics.Application.Modules.Integrations.Agents.Services;
 
-/// <summary>
-/// The conversation write path shared by the dispatch and copilot surfaces. Each surface keeps only
-/// its own command, permission policy and feature gate; what the command then does lives here.
-/// </summary>
-internal static class AgentConversationCommands
+internal sealed class AgentConversationCommands(
+    ITenantUnitOfWork tenantUow,
+    IAgentConversationAccess access,
+    IAIQuotaService quotaService,
+    IAIDispatchService dispatchService,
+    ILogger<AgentConversationCommands> logger) : IAgentConversationCommands
 {
     /// <summary>
     /// A Running conversation older than this is assumed crashed and may be taken over, rather
@@ -21,11 +22,8 @@ internal static class AgentConversationCommands
     /// </summary>
     private static readonly TimeSpan StaleTurnWindow = TimeSpan.FromMinutes(15);
 
-    public static async Task<Result<AgentConversationDto>> CreateAsync(
-        ITenantUnitOfWork tenantUow,
-        AgentConversationKind kind,
-        Guid? userId,
-        CancellationToken ct)
+    public async Task<Result<AgentConversationDto>> CreateAsync(
+        AgentConversationKind kind, Guid? userId, CancellationToken ct)
     {
         if (userId is null)
             return Result<AgentConversationDto>.Fail("User is not authenticated");
@@ -37,14 +35,10 @@ internal static class AgentConversationCommands
         return Result<AgentConversationDto>.Ok(conversation.ToDto());
     }
 
-    public static async Task<Result> RenameAsync(
-        ITenantUnitOfWork tenantUow,
-        AgentConversationScope scope,
-        Guid conversationId,
-        string title,
-        CancellationToken ct)
+    public async Task<Result> RenameAsync(
+        AgentConversationScope scope, Guid conversationId, string title, CancellationToken ct)
     {
-        var conversation = await AgentConversationAccess.LoadAsync(tenantUow, conversationId, scope, ct);
+        var conversation = await access.LoadAsync(conversationId, scope, ct);
         if (conversation is null)
             return Result.Fail("Conversation not found");
 
@@ -53,13 +47,10 @@ internal static class AgentConversationCommands
         return Result.Ok();
     }
 
-    public static async Task<Result> DeleteAsync(
-        ITenantUnitOfWork tenantUow,
-        AgentConversationScope scope,
-        Guid conversationId,
-        CancellationToken ct)
+    public async Task<Result> DeleteAsync(
+        AgentConversationScope scope, Guid conversationId, CancellationToken ct)
     {
-        var conversation = await AgentConversationAccess.LoadAsync(tenantUow, conversationId, scope, ct);
+        var conversation = await access.LoadAsync(conversationId, scope, ct);
         if (conversation is null)
             return Result.Fail("Conversation not found");
 
@@ -72,14 +63,10 @@ internal static class AgentConversationCommands
         return Result.Ok();
     }
 
-    public static async Task<Result> CancelTurnAsync(
-        ITenantUnitOfWork tenantUow,
-        IAIDispatchService dispatchService,
-        AgentConversationScope scope,
-        Guid conversationId,
-        CancellationToken ct)
+    public async Task<Result> CancelTurnAsync(
+        AgentConversationScope scope, Guid conversationId, CancellationToken ct)
     {
-        var conversation = await AgentConversationAccess.LoadAsync(tenantUow, conversationId, scope, ct);
+        var conversation = await access.LoadAsync(conversationId, scope, ct);
         if (conversation is null)
             return Result.Fail("Conversation not found");
 
@@ -101,14 +88,7 @@ internal static class AgentConversationCommands
         return Result.Ok();
     }
 
-    /// <summary>
-    /// Appends the user message, opens the turn and hands it to the surface's background runner via
-    /// <paramref name="enqueueTurn"/> (tenant id, conversation id, caller id).
-    /// </summary>
-    public static async Task<Result<SendAgentMessageResultDto>> SendMessageAsync(
-        ITenantUnitOfWork tenantUow,
-        IAIQuotaService quotaService,
-        ILogger logger,
+    public async Task<Result<SendAgentMessageResultDto>> SendMessageAsync(
         AgentConversationScope scope,
         Guid conversationId,
         string text,
@@ -119,7 +99,7 @@ internal static class AgentConversationCommands
         if (userId is null)
             return Result<SendAgentMessageResultDto>.Fail("User is not authenticated");
 
-        var conversation = await AgentConversationAccess.LoadAsync(tenantUow, conversationId, scope, ct);
+        var conversation = await access.LoadAsync(conversationId, scope, ct);
         if (conversation is null)
             return Result<SendAgentMessageResultDto>.Fail("Conversation not found");
 

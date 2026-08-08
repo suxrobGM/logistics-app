@@ -15,7 +15,7 @@ public class GetAIDispatchConversationByIdHandlerTests
 
     public GetAIDispatchConversationByIdHandlerTests()
     {
-        sut = new GetAIDispatchConversationByIdHandler(ctx.TenantUow);
+        sut = new GetAIDispatchConversationByIdHandler(ctx.Queries);
         ctx.DecisionRepo.Query().Returns(new List<AgentDecision>().BuildMock());
         ctx.SessionRepo.Query().Returns(new List<AgentSession>().BuildMock());
         ctx.MessageRepo.Query().Returns(new List<AgentMessage>().BuildMock());

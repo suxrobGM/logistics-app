@@ -13,7 +13,7 @@ public class DeleteAIDispatchConversationHandlerTests
 
     public DeleteAIDispatchConversationHandlerTests()
     {
-        sut = new DeleteAIDispatchConversationHandler(ctx.TenantUow);
+        sut = new DeleteAIDispatchConversationHandler(ctx.Commands);
     }
 
     [Fact]

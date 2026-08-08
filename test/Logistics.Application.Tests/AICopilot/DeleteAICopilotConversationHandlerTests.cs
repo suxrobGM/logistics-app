@@ -13,7 +13,7 @@ public class DeleteAICopilotConversationHandlerTests
 
     public DeleteAICopilotConversationHandlerTests()
     {
-        sut = new DeleteAICopilotConversationHandler(ctx.TenantUow, ctx.CurrentUser);
+        sut = new DeleteAICopilotConversationHandler(ctx.Commands, ctx.CurrentUser);
     }
 
     [Fact]
