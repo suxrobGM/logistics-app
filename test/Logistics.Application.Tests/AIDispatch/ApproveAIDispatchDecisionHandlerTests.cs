@@ -1,12 +1,15 @@
 using Logistics.Application.Abstractions.Agents;
+using System.Text.Json.Nodes;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using MediatR;
 using MockQueryable;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -19,7 +22,9 @@ public class ApproveAIDispatchDecisionHandlerTests
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
     private readonly IAgentToolExecutor toolExecutor = Substitute.For<IAgentToolExecutor>();
+    private readonly IAgentToolRegistry toolRegistry = Substitute.For<IAgentToolRegistry>();
     private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
+    private readonly IMediator mediator = Substitute.For<IMediator>();
     private readonly ITenantRepository<AgentDecision, Guid> decisionRepo =
         Substitute.For<ITenantRepository<AgentDecision, Guid>>();
     private readonly ITenantRepository<AgentConversation, Guid> conversationRepo =
@@ -47,10 +52,23 @@ public class ApproveAIDispatchDecisionHandlerTests
         tenantUow.Repository<AgentMessage>().Returns(messageRepo);
         tenantUow.GetCurrentTenant().Returns(tenant);
         currentUser.GetUserId().Returns(userId);
+        SetCallerPermissions("Permission.Dispatch.Manage");
+        toolRegistry.TryGetDefinition("assign_load_to_truck").Returns(new AgentToolDefinition(
+            "assign_load_to_truck", "Assign a load to a truck", new JsonObject())
+        {
+            RequiredPermission = "Permission.Dispatch.Manage",
+            DecisionType = AgentDecisionType.AssignLoad
+        });
 
         sut = new ApproveAIDispatchDecisionHandler(
-            tenantUow, toolExecutor, currentUser, broadcastService,
+            tenantUow, toolExecutor, toolRegistry, currentUser, broadcastService, mediator,
             Options.Create(new LlmOptions { BypassAIGate = true }));
+    }
+
+    private void SetCallerPermissions(params string[] permissions)
+    {
+        mediator.Send(Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>())
+            .Returns(Result<string[]>.Ok(permissions));
     }
 
     private AgentDecision SetSuggestedDecision(Guid? conversationId = null)
@@ -90,6 +108,21 @@ public class ApproveAIDispatchDecisionHandlerTests
         Assert.True(result.IsSuccess);
         Assert.Equal(AgentDecisionStatus.Executed, decision.Status);
         await broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);
+    }
+
+    [Fact]
+    public async Task Handle_ApproverLacksToolPermission_FailsWithoutExecuting()
+    {
+        var decision = SetSuggestedDecision(conversationId: null);
+        SetCallerPermissions("Permission.Load.View");
+
+        var result = await sut.Handle(
+            new ApproveAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Contains("Permission.Dispatch.Manage", result.Error);
+        Assert.Equal(AgentDecisionStatus.Suggested, decision.Status);
+        await toolExecutor.DidNotReceiveWithAnyArgs().ExecuteToolAsync(default!, default!, default);
     }
 
     [Fact]
