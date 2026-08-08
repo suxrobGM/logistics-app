@@ -11,32 +11,16 @@
         Loading conversation...
       </ui-stack>
     } @else if (stream().length === 0) {
-      <ui-stack align="center" justify="center" fill class="px-2">
-        <ui-empty-state
-          icon="bot-message-square"
-          title="What should the dispatcher agent work on?"
-          message="Ask it to plan assignments, check driver hours, or search for loads - it will suggest write actions for you to approve."
-        />
-        <ui-stack direction="row" justify="center" gap="2" wrap>
-          @for (prompt of suggestedPrompts; track prompt) {
-            <ui-button
-              [label]="prompt"
-              appearance="outlined"
-              intent="secondary"
-              size="sm"
-              [rounded]="true"
-              (click)="store.sendMessage(prompt)"
-            />
-          }
-        </ui-stack>
-      </ui-stack>
+      <app-dispatch-welcome (action)="store.sendMessage($event)" />
     }
 
     @for (item of stream(); track trackItem(item)) {
-      @if (item.kind === "message") {
-        <app-chat-message [message]="item.message" />
-      } @else {
+      @if (item.kind !== "message") {
         <app-dispatch-turn-timeline [session]="item.session" [decisions]="item.decisions" />
+      } @else if (item.isReport) {
+        <app-dispatch-report-message [message]="item.message" [session]="item.session" />
+      } @else {
+        <app-chat-message [message]="item.message" />
       }
     }
 

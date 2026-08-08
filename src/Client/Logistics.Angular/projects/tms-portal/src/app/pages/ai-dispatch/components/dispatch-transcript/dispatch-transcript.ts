@@ -7,21 +7,16 @@ import {
   viewChild,
   type ElementRef,
 } from "@angular/core";
-import { Alert, EmptyState, Spinner, Stack, Typography, UiButton } from "@logistics/shared/ui";
+import { Alert, Spinner, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { ChatMessage } from "@/shared/components";
 import { DispatchChatStore } from "../../store/dispatch-chat.store";
+import { DispatchReportMessage } from "../dispatch-report-message/dispatch-report-message";
 import { DispatchTurnTimeline } from "../dispatch-turn-timeline/dispatch-turn-timeline";
+import { DispatchWelcome } from "../dispatch-welcome/dispatch-welcome";
 import { buildTranscriptStream, type TranscriptItem } from "./dispatch-transcript.utils";
 
 /** Scroll distance from the bottom under which auto-scroll stays engaged. */
 const ScrollPinThresholdPx = 48;
-
-const SUGGESTED_PROMPTS = [
-  "Plan assignments for all unassigned loads",
-  "Find loads for my idle trucks",
-  "Review today's HOS risks",
-  "Any trucks free tomorrow?",
-] as const;
 
 /**
  * The chat transcript: user bubbles, assistant markdown, system notes, and per-turn tool-activity
@@ -34,8 +29,9 @@ const SUGGESTED_PROMPTS = [
   imports: [
     Alert,
     ChatMessage,
+    DispatchReportMessage,
     DispatchTurnTimeline,
-    EmptyState,
+    DispatchWelcome,
     Spinner,
     Stack,
     Typography,
@@ -46,8 +42,6 @@ export class DispatchTranscript {
   private readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
 
   protected readonly store = inject(DispatchChatStore);
-
-  protected readonly suggestedPrompts = SUGGESTED_PROMPTS;
 
   protected readonly turnFailed = computed(() => this.store.turnStatus() === "failed");
 

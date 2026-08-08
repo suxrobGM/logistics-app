@@ -13,6 +13,9 @@ export interface TranscriptMessage {
   readonly kind: "message";
   readonly message: AgentMessageDto;
   readonly sortKey: number;
+  /** The turn's closing assistant message - rendered as the dispatch report card. */
+  readonly isReport: boolean;
+  readonly session?: AgentSessionDto;
 }
 
 export type TranscriptItem = TranscriptTurn | TranscriptMessage;
@@ -27,6 +30,7 @@ const messageSortKey = (message: AgentMessageDto): number =>
  *   activity reads before the assistant's reply summarizing it. A turn with no message yet (still
  *   running) sorts at the very end, right where the "working..." indicator belongs.
  * - A session with no decisions renders no timeline - nothing to show.
+ * - A session's last assistant message is its report; a message with no `sessionId` never is.
  */
 export function buildTranscriptStream(
   messages: readonly AgentMessageDto[],
@@ -35,16 +39,27 @@ export function buildTranscriptStream(
 ): TranscriptItem[] {
   const messageItems: TranscriptMessage[] = [];
   const firstSeqBySession = new Map<string, number>();
+  const reportIndexBySession = new Map<string, number>();
 
   for (const message of messages) {
     const sortKey = messageSortKey(message);
-    messageItems.push({ kind: "message", message, sortKey });
+    const index = messageItems.push({ kind: "message", message, sortKey, isReport: false }) - 1;
     if (message.sessionId) {
       firstSeqBySession.set(
         message.sessionId,
         Math.min(firstSeqBySession.get(message.sessionId) ?? Number.MAX_SAFE_INTEGER, sortKey),
       );
+      if (message.role === "assistant") reportIndexBySession.set(message.sessionId, index);
     }
+  }
+
+  const sessionById = new Map(sessions.filter((s) => s.id).map((s) => [s.id!, s]));
+  for (const [sessionId, index] of reportIndexBySession) {
+    messageItems[index] = {
+      ...messageItems[index],
+      isReport: true,
+      session: sessionById.get(sessionId),
+    };
   }
 
   const decisionsBySession = new Map<string, AgentDecisionDto[]>();
