@@ -1,6 +1,5 @@
 using Logistics.Application.Modules.Integrations.AICopilot.Commands;
 using Logistics.Application.Modules.Integrations.AICopilot.Queries;
-using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using MediatR;
@@ -66,7 +65,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Copilot.View)]
     public async Task<IActionResult> GetQuotaStatus()
     {
-        var result = await mediator.Send(new GetAIQuotaStatusQuery());
+        var result = await mediator.Send(new GetAICopilotQuotaStatusQuery());
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
