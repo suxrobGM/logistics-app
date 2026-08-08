@@ -1,16 +1,9 @@
-using Logistics.Application.Abstractions.Agents;
-using System.Text.Json.Nodes;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 using Logistics.Application.Modules.Integrations.AIDispatch.Commands;
-using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using MediatR;
-using MockQueryable;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
@@ -19,87 +12,26 @@ namespace Logistics.Application.Tests.AIDispatch;
 
 public class ApproveAIDispatchDecisionHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
-    private readonly IAgentToolExecutor toolExecutor = Substitute.For<IAgentToolExecutor>();
-    private readonly IAgentToolRegistry toolRegistry = Substitute.For<IAgentToolRegistry>();
+    private readonly AgentTestContext ctx = new();
     private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly ITenantRepository<AgentDecision, Guid> decisionRepo =
-        Substitute.For<ITenantRepository<AgentDecision, Guid>>();
-    private readonly ITenantRepository<AgentConversation, Guid> conversationRepo =
-        Substitute.For<ITenantRepository<AgentConversation, Guid>>();
-    private readonly ITenantRepository<AgentMessage, Guid> messageRepo =
-        Substitute.For<ITenantRepository<AgentMessage, Guid>>();
-
-    private readonly Guid userId = Guid.NewGuid();
-    private readonly Tenant tenant;
     private readonly ApproveAIDispatchDecisionHandler sut;
 
     public ApproveAIDispatchDecisionHandlerTests()
     {
-        tenant = new Tenant
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test Tenant",
-            ConnectionString = "test-connection",
-            BillingEmail = "test@test.com",
-            CompanyAddress = new() { Line1 = "1 Main", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" }
-        };
-
-        tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
-        tenantUow.Repository<AgentConversation>().Returns(conversationRepo);
-        tenantUow.Repository<AgentMessage>().Returns(messageRepo);
-        tenantUow.GetCurrentTenant().Returns(tenant);
-        currentUser.GetUserId().Returns(userId);
-        SetCallerPermissions("Permission.Dispatch.Manage");
-        toolRegistry.TryGetDefinition("assign_load_to_truck").Returns(new AgentToolDefinition(
-            "assign_load_to_truck", "Assign a load to a truck", new JsonObject())
-        {
-            RequiredPermission = "Permission.Dispatch.Manage",
-            DecisionType = AgentDecisionType.AssignLoad
-        });
+        ctx.SetCallerPermissions("Permission.Dispatch.Manage");
+        ctx.SetToolDefinition("assign_load_to_truck", "Permission.Dispatch.Manage", AgentDecisionType.AssignLoad);
 
         sut = new ApproveAIDispatchDecisionHandler(
-            tenantUow, toolExecutor, toolRegistry, currentUser, broadcastService, mediator,
+            ctx.TenantUow, ctx.ToolExecutor, ctx.ToolRegistry, ctx.CurrentUser, broadcastService, ctx.Mediator,
             Options.Create(new LlmOptions { BypassAIGate = true }));
-    }
-
-    private void SetCallerPermissions(params string[] permissions)
-    {
-        mediator.Send(Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Result<string[]>.Ok(permissions));
-    }
-
-    private AgentDecision SetSuggestedDecision(Guid? conversationId = null)
-    {
-        var session = new AgentSession { Type = AgentSessionType.Dispatch, ConversationId = conversationId };
-        var decision = new AgentDecision
-        {
-            SessionId = session.Id,
-            Session = session,
-            ToolName = "assign_load_to_truck",
-            ToolInput = """{"load_id":"x"}""",
-            Status = AgentDecisionStatus.Suggested
-        };
-
-        decisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
-        return decision;
-    }
-
-    private AgentConversation SetConversation(Guid conversationId)
-    {
-        var conversation = new AgentConversation { Id = conversationId, Kind = AgentConversationKind.Dispatch };
-        conversationRepo.GetByIdAsync(conversationId, Arg.Any<CancellationToken>()).Returns(conversation);
-        return conversation;
     }
 
     /// <summary>Old sessions may predate conversations - approval must still execute without a note.</summary>
     [Fact]
     public async Task Handle_SessionHasNoConversation_ExecutesWithoutAppendingANote()
     {
-        var decision = SetSuggestedDecision(conversationId: null);
-        toolExecutor.ExecuteToolAsync("assign_load_to_truck", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        var decision = ctx.SetDispatchSuggestedDecision(conversationId: null);
+        ctx.ToolExecutor.ExecuteToolAsync("assign_load_to_truck", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("""{"success":true}""");
 
         var result = await sut.Handle(
@@ -113,8 +45,8 @@ public class ApproveAIDispatchDecisionHandlerTests
     [Fact]
     public async Task Handle_ApproverLacksToolPermission_FailsWithoutExecuting()
     {
-        var decision = SetSuggestedDecision(conversationId: null);
-        SetCallerPermissions("Permission.Load.View");
+        var decision = ctx.SetDispatchSuggestedDecision(conversationId: null);
+        ctx.SetCallerPermissions("Permission.Load.View");
 
         var result = await sut.Handle(
             new ApproveAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
@@ -122,16 +54,16 @@ public class ApproveAIDispatchDecisionHandlerTests
         Assert.False(result.IsSuccess);
         Assert.Contains("Permission.Dispatch.Manage", result.Error);
         Assert.Equal(AgentDecisionStatus.Suggested, decision.Status);
-        await toolExecutor.DidNotReceiveWithAnyArgs().ExecuteToolAsync(default!, default!, default);
+        await ctx.ToolExecutor.DidNotReceiveWithAnyArgs().ExecuteToolAsync(default!, default!, default);
     }
 
     [Fact]
     public async Task Handle_SessionHasConversation_AppendsApprovedNoteAndBroadcastsTenantWide()
     {
         var conversationId = Guid.NewGuid();
-        var decision = SetSuggestedDecision(conversationId);
-        var conversation = SetConversation(conversationId);
-        toolExecutor.ExecuteToolAsync("assign_load_to_truck", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        var decision = ctx.SetDispatchSuggestedDecision(conversationId);
+        var conversation = ctx.SetConversation(id: conversationId, kind: AgentConversationKind.Dispatch);
+        ctx.ToolExecutor.ExecuteToolAsync("assign_load_to_truck", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("""{"success":true}""");
 
         var result = await sut.Handle(
@@ -143,19 +75,19 @@ public class ApproveAIDispatchDecisionHandlerTests
         Assert.StartsWith("Approved and executed: assign_load_to_truck", note.DisplayText);
 
         // Adding to the navigation alone saves as an UPDATE affecting 0 rows - see ef-persistence.md.
-        await messageRepo.Received(1).AddAsync(note, Arg.Any<CancellationToken>());
+        await ctx.MessageRepo.Received(1).AddAsync(note, Arg.Any<CancellationToken>());
 
         await broadcastService.Received(1).BroadcastMessageAsync(
-            tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversationId));
+            ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversationId));
     }
 
     [Fact]
     public async Task Handle_ToolThrows_AppendsFailureNoteWhenConversationPresent()
     {
         var conversationId = Guid.NewGuid();
-        var decision = SetSuggestedDecision(conversationId);
-        var conversation = SetConversation(conversationId);
-        toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        var decision = ctx.SetDispatchSuggestedDecision(conversationId);
+        var conversation = ctx.SetConversation(id: conversationId, kind: AgentConversationKind.Dispatch);
+        ctx.ToolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns<Task<string>>(_ => throw new InvalidOperationException("boom"));
 
         var result = await sut.Handle(
