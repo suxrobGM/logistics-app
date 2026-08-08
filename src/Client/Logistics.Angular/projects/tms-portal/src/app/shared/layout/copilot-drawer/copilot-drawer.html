@@ -81,7 +81,7 @@
             #messagesContainer
             class="h-full space-y-4 overflow-y-auto px-4 py-4"
             [attr.aria-busy]="store.isRunning()"
-            (scroll)="onMessagesScroll()"
+            (scroll)="scroll.onScroll()"
           >
             @if (store.loading()) {
               <div class="text-muted-foreground flex items-center gap-2 text-sm">
@@ -123,19 +123,11 @@
             }
 
             @if (store.isRunning() && !store.realtimeDown()) {
-              <div class="text-muted-foreground flex items-center gap-2 text-sm">
-                <ui-icon name="loader-circle" size="inherit" spin />
-                @if (store.turnProgress(); as toolsRun) {
-                  Working... {{ toolsRun }} {{ toolsRun === 1 ? "tool" : "tools" }} run
-                } @else {
-                  Copilot is working...
-                }
-              </div>
-              @if (store.longRunning()) {
-                <p class="text-muted-foreground m-0 text-xs">
-                  Still working - this is taking longer than usual.
-                </p>
-              }
+              <app-turn-status
+                workingLabel="Copilot is working..."
+                [toolsRun]="store.turnProgress()"
+                [longRunning]="store.longRunning()"
+              />
             }
 
             @if (store.turnStatus() === "failed") {
@@ -154,7 +146,7 @@
             }
           </div>
 
-          @if (!pinnedToBottom()) {
+          @if (!scroll.pinnedToBottom()) {
             <ui-button
               icon="arrow-down"
               [rounded]="true"
@@ -162,7 +154,7 @@
               size="sm"
               class="absolute right-3 bottom-3 shadow-md"
               ariaLabel="Scroll to latest messages"
-              (click)="scrollToBottom()"
+              (click)="scroll.scrollToBottom()"
             />
           }
         </div>
@@ -177,20 +169,11 @@
           </div>
         }
 
-        @if (store.realtimeDown()) {
-          <div
-            class="border-border bg-muted/60 text-muted-foreground flex items-center justify-between gap-2 border-t px-3 py-2 text-xs"
-          >
-            <span>Live updates unavailable.</span>
-            <ui-button
-              label="Retry"
-              size="sm"
-              appearance="outlined"
-              intent="secondary"
-              (click)="store.reconnect()"
-            />
-          </div>
-        }
+        <app-realtime-banner
+          class="border-border border-t"
+          [visible]="store.realtimeDown()"
+          (retry)="store.reconnect()"
+        />
 
         <!-- Blocked = hard budget pause; the server would reject the send anyway. -->
         <app-chat-composer

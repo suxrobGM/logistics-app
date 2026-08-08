@@ -1,0 +1,14 @@
+<ui-stack direction="row" align="center" gap="2" class="text-muted-foreground text-sm">
+  <ui-spinner size="1em" [ariaLabel]="workingLabel()" />
+  @if (toolsRun(); as count) {
+    Working... {{ count }} {{ count === 1 ? "tool" : "tools" }} run
+  } @else {
+    {{ workingLabel() }}
+  }
+</ui-stack>
+
+@if (longRunning()) {
+  <ui-typography variant="caption" color="muted" class="mt-1 block">
+    Still working - this is taking longer than usual.
+  </ui-typography>
+}

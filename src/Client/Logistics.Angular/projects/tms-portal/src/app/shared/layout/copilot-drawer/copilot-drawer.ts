@@ -1,13 +1,5 @@
 import { CdkTrapFocus } from "@angular/cdk/a11y";
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-  viewChild,
-  type ElementRef,
-} from "@angular/core";
+import { Component, computed, effect, inject, viewChild, type ElementRef } from "@angular/core";
 import { Permission } from "@logistics/shared";
 import type { AgentDecisionDto, AgentMessageDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
@@ -19,16 +11,24 @@ import {
   ChatMessage,
   ConversationList,
   DecisionActionsService,
+  pinnedScroll,
+  RealtimeBanner,
   RejectDecisionDialog,
+  TurnStatus,
 } from "@/shared/components";
+import {
+  firstMessageSequenceBySession,
+  groupDecisionsBySession,
+  messageSortKey,
+  sessionSortKey,
+} from "@/shared/utils";
 import { COPILOT_COMMANDS } from "./copilot-commands";
 
-type StreamItem =
-  | { kind: "message"; at: string; message: AgentMessageDto }
-  | { kind: "decision"; at: string; decision: AgentDecisionDto };
+type StreamItem = { sortKey: number } & (
+  | { kind: "message"; message: AgentMessageDto }
+  | { kind: "decision"; decision: AgentDecisionDto }
+);
 
-/** Scroll distance from the bottom under which auto-scroll stays engaged. */
-const ScrollPinThresholdPx = 48;
 const ResizeKeyStepPx = 16;
 
 /**
@@ -55,7 +55,9 @@ const ResizeKeyStepPx = 16;
     ChatMessage,
     ConversationList,
     Icon,
+    RealtimeBanner,
     RejectDecisionDialog,
+    TurnStatus,
     UiButton,
     UiTooltip,
   ],
@@ -73,9 +75,6 @@ export class CopilotDrawer {
 
   private previouslyFocused: HTMLElement | null = null;
 
-  /** False while the user has scrolled up to read back - new messages must not yank them down. */
-  protected readonly pinnedToBottom = signal(true);
-
   protected readonly noticeClasses = QuotaNoticeClasses;
 
   protected readonly suggestedPrompts = [
@@ -85,19 +84,24 @@ export class CopilotDrawer {
     "What did we spend on fuel this month?",
   ];
 
-  /** Messages and action cards interleaved chronologically; "9999" catches missing createdAt. */
+  /** Messages and action cards interleaved by message sequence, not by wall clock. */
   protected readonly stream = computed<StreamItem[]>(() => {
-    const items: StreamItem[] = [
-      ...this.store
-        .messages()
-        .map((message) => ({ kind: "message" as const, at: message.createdAt ?? "9999", message })),
-      ...this.store.decisions().map((decision) => ({
-        kind: "decision" as const,
-        at: decision.createdAt ?? "9999",
-        decision,
-      })),
-    ];
-    return items.sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
+    const messages = this.store.messages();
+    const firstSequence = firstMessageSequenceBySession(messages);
+
+    const items: StreamItem[] = messages.map((message) => ({
+      kind: "message" as const,
+      sortKey: messageSortKey(message),
+      message,
+    }));
+
+    for (const [sessionId, bucket] of groupDecisionsBySession(this.store.decisions())) {
+      const sortKey = sessionSortKey(firstSequence.get(sessionId));
+      // Ties keep insertion order, which is the bucket's createdAt order.
+      for (const decision of bucket) items.push({ kind: "decision", sortKey, decision });
+    }
+
+    return items.sort((a, b) => a.sortKey - b.sortKey);
   });
 
   /** Feeds the aria-live region. */
@@ -109,18 +113,13 @@ export class CopilotDrawer {
     return last?.role === "assistant" ? "Copilot replied" : "";
   });
 
+  protected readonly scroll = pinnedScroll(this.messagesContainer, () => {
+    this.stream();
+    this.store.turnStatus();
+  });
+
   constructor() {
     this.actions.configure("copilot");
-
-    effect(() => {
-      this.stream();
-      this.store.turnStatus();
-      if (!this.pinnedToBottom()) return;
-      const container = this.messagesContainer()?.nativeElement;
-      if (container) {
-        queueMicrotask(() => container.scrollTo({ top: container.scrollHeight }));
-      }
-    });
 
     effect(() => {
       if (this.store.open()) {
@@ -157,21 +156,6 @@ export class CopilotDrawer {
     if (event.key === "Escape" && this.store.open() && !this.actions.showRejectDialog()) {
       this.store.closeDrawer();
     }
-  }
-
-  protected onMessagesScroll(): void {
-    const el = this.messagesContainer()?.nativeElement;
-    if (!el) return;
-    this.pinnedToBottom.set(
-      el.scrollHeight - el.scrollTop - el.clientHeight < ScrollPinThresholdPx,
-    );
-  }
-
-  protected scrollToBottom(): void {
-    const el = this.messagesContainer()?.nativeElement;
-    if (!el) return;
-    el.scrollTo({ top: el.scrollHeight });
-    this.pinnedToBottom.set(true);
   }
 
   protected startResize(event: PointerEvent): void {

@@ -1,4 +1,10 @@
 import type { AgentDecisionDto, AgentMessageDto, AgentSessionDto } from "@logistics/shared/api";
+import {
+  firstMessageSequenceBySession,
+  groupDecisionsBySession,
+  messageSortKey,
+  sessionSortKey,
+} from "@/shared/utils";
 
 /** One agent turn's tool activity, grouped by session and rendered as a `ui-timeline`. */
 export interface TranscriptTurn {
@@ -20,15 +26,9 @@ export interface TranscriptMessage {
 
 export type TranscriptItem = TranscriptTurn | TranscriptMessage;
 
-const messageSortKey = (message: AgentMessageDto): number =>
-  message.sequence ?? Number.MAX_SAFE_INTEGER;
-
 /**
- * Merges messages and per-turn tool-activity timelines into one chronological stream:
- * - Messages sort by `sequence` (falls back to the end for an optimistic send with none yet).
- * - A turn (one session's decisions) sorts just before that session's first message, so the tool
- *   activity reads before the assistant's reply summarizing it. A turn with no message yet (still
- *   running) sorts at the very end, right where the "working..." indicator belongs.
+ * Merges messages and per-turn tool-activity timelines into one stream ordered by message sequence
+ * (see `agent-stream.ts`):
  * - A session with no decisions renders no timeline - nothing to show.
  * - A session's last assistant message is its report; a message with no `sessionId` never is.
  */
@@ -38,18 +38,13 @@ export function buildTranscriptStream(
   sessions: readonly AgentSessionDto[],
 ): TranscriptItem[] {
   const messageItems: TranscriptMessage[] = [];
-  const firstSeqBySession = new Map<string, number>();
   const reportIndexBySession = new Map<string, number>();
 
   for (const message of messages) {
     const sortKey = messageSortKey(message);
     const index = messageItems.push({ kind: "message", message, sortKey, isReport: false }) - 1;
-    if (message.sessionId) {
-      firstSeqBySession.set(
-        message.sessionId,
-        Math.min(firstSeqBySession.get(message.sessionId) ?? Number.MAX_SAFE_INTEGER, sortKey),
-      );
-      if (message.role === "assistant") reportIndexBySession.set(message.sessionId, index);
+    if (message.sessionId && message.role === "assistant") {
+      reportIndexBySession.set(message.sessionId, index);
     }
   }
 
@@ -62,34 +57,19 @@ export function buildTranscriptStream(
     };
   }
 
-  const decisionsBySession = new Map<string, AgentDecisionDto[]>();
-  for (const decision of decisions) {
-    if (!decision.sessionId) continue;
-    const bucket = decisionsBySession.get(decision.sessionId);
-    if (bucket) {
-      bucket.push(decision);
-    } else {
-      decisionsBySession.set(decision.sessionId, [decision]);
-    }
-  }
-  for (const bucket of decisionsBySession.values()) {
-    bucket.sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
-  }
+  const firstSequence = firstMessageSequenceBySession(messages);
+  const decisionsBySession = groupDecisionsBySession(decisions);
 
   const turnItems: TranscriptTurn[] = [];
   for (const session of sessions) {
     const sessionDecisions = session.id ? decisionsBySession.get(session.id) : undefined;
     if (!sessionDecisions?.length) continue;
 
-    const firstMessageSeq = firstSeqBySession.get(session.id!) ?? Number.MAX_SAFE_INTEGER;
     turnItems.push({
       kind: "turn",
       session,
       decisions: sessionDecisions,
-      sortKey:
-        firstMessageSeq === Number.MAX_SAFE_INTEGER
-          ? Number.MAX_SAFE_INTEGER
-          : firstMessageSeq - 0.5,
+      sortKey: sessionSortKey(firstSequence.get(session.id!)),
     });
   }
 

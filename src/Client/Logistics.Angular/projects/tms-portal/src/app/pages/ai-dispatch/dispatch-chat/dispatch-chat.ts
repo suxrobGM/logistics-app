@@ -7,6 +7,7 @@ import {
   ChatComposer,
   ConversationList,
   DecisionActionsService,
+  RealtimeBanner,
   RejectDecisionDialog,
 } from "@/shared/components";
 import { DispatchRightPanel } from "../components/dispatch-right-panel/dispatch-right-panel";
@@ -28,6 +29,7 @@ import { DispatchChatStore } from "../store/dispatch-chat.store";
     DispatchRightPanel,
     DispatchTranscript,
     Icon,
+    RealtimeBanner,
     RejectDecisionDialog,
     RouterLink,
     Stack,

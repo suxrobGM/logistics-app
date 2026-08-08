@@ -3,7 +3,7 @@
     #messagesContainer
     class="mx-auto h-full max-w-3xl space-y-5 overflow-y-auto px-4 py-6 sm:px-6"
     [attr.aria-busy]="store.isRunning()"
-    (scroll)="onMessagesScroll()"
+    (scroll)="scroll.onScroll()"
   >
     @if (store.loading()) {
       <ui-stack direction="row" align="center" gap="2" class="text-muted-foreground text-sm">
@@ -25,19 +25,11 @@
     }
 
     @if (store.isRunning() && !store.realtimeDown()) {
-      <ui-stack direction="row" align="center" gap="2" class="text-muted-foreground text-sm">
-        <ui-spinner size="1em" ariaLabel="Dispatcher agent is working" />
-        @if (store.turnProgress(); as toolsRun) {
-          Working... {{ toolsRun }} {{ toolsRun === 1 ? "tool" : "tools" }} run
-        } @else {
-          Dispatcher agent is working...
-        }
-      </ui-stack>
-      @if (store.longRunning()) {
-        <ui-typography variant="caption" color="muted">
-          Still working - this is taking longer than usual.
-        </ui-typography>
-      }
+      <app-turn-status
+        workingLabel="Dispatcher agent is working..."
+        [toolsRun]="store.turnProgress()"
+        [longRunning]="store.longRunning()"
+      />
     }
 
     @if (turnFailed()) {
@@ -56,7 +48,7 @@
     }
   </div>
 
-  @if (!pinnedToBottom()) {
+  @if (!scroll.pinnedToBottom()) {
     <ui-button
       icon="arrow-down"
       [rounded]="true"
@@ -64,7 +56,7 @@
       size="sm"
       class="absolute right-6 bottom-4 shadow-md"
       ariaLabel="Scroll to latest messages"
-      (click)="scrollToBottom()"
+      (click)="scroll.scrollToBottom()"
     />
   }
 </div>
