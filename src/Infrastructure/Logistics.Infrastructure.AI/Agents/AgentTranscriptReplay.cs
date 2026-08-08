@@ -5,8 +5,8 @@ using Logistics.Infrastructure.AI.Llm.Contracts;
 namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
-/// Rebuilds the LLM message sequence from a persisted transcript, shared by every agent surface
-/// that replays an <see cref="AgentConversation"/> (copilot today, dispatch from Phase 3).
+/// Rebuilds the LLM message sequence from a persisted <see cref="AgentConversation"/> transcript;
+/// shared by every agent surface.
 /// </summary>
 internal static class AgentTranscriptReplay
 {

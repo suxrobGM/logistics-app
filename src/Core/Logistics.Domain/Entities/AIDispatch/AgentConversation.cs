@@ -4,13 +4,15 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Domain.Entities;
 
 /// <summary>
-/// A multi-turn agent chat. Today this is always a copilot conversation owned by one user; Phase 3
-/// adds tenant-shared dispatch conversations distinguished by <see cref="Kind"/>. Each turn is an
-/// <see cref="AgentSession"/> of the matching type.
+/// A multi-turn agent chat; each turn is an <see cref="AgentSession"/> of the matching type.
+/// <see cref="Kind"/> separates per-user copilot conversations from tenant-shared dispatch ones.
 /// </summary>
 public class AgentConversation : AuditableEntity, ITenantEntity
 {
-    /// <summary>Conversations are private - every handler must verify the caller matches.</summary>
+    /// <summary>
+    /// For Copilot conversations this is an ownership boundary every handler must verify;
+    /// Dispatch conversations are tenant-shared and keep it for audit only.
+    /// </summary>
     public Guid CreatedById { get; init; }
 
     public AgentConversationKind Kind { get; init; } = AgentConversationKind.Copilot;
@@ -28,10 +30,9 @@ public class AgentConversation : AuditableEntity, ITenantEntity
     public virtual List<AgentMessage> Messages { get; } = [];
 
     /// <summary>
-    /// Appends a text row and bumps <see cref="LastMessageAt"/>. The only place sequence numbers
-    /// are allocated - callers must not build an <see cref="AgentMessage"/> themselves, and
-    /// MUST register the returned message via repository AddAsync (ids are pre-generated, so a
-    /// collection-only add saves as an UPDATE and fails).
+    /// The only allocator of sequence numbers - never build an <see cref="AgentMessage"/> directly.
+    /// Callers MUST also register the returned row via repository AddAsync (pre-generated ids make
+    /// a collection-only add save as an UPDATE and fail).
     /// </summary>
     public AgentMessage AddTextMessage(AgentMessageRole role, string text)
     {

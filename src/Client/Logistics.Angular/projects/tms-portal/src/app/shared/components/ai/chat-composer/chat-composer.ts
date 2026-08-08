@@ -8,10 +8,8 @@ export interface ChatComposerCommand {
 }
 
 /**
- * Shared chat composer for the copilot drawer and the AI dispatch page: textarea autosize, Enter to
- * send, Shift+Enter newline, disabled/blocked states, an optional stop button while a turn runs, and
- * an optional slash-command panel. `commands` defaults to empty, so a consumer with no commands (the
- * dispatch composer) gets no panel at all - the command vocabulary itself stays with the caller.
+ * Shared chat composer for the copilot drawer and the AI dispatch page. The slash-command panel
+ * only exists when `commands` is non-empty - the command vocabulary stays with the caller.
  */
 @Component({
   selector: "app-chat-composer",

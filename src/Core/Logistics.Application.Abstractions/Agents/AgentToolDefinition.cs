@@ -32,9 +32,8 @@ public record AgentToolDefinition(string Name, string Description, JsonNode Inpu
     public AgentDecisionType DecisionType { get; init; } = AgentDecisionType.Query;
 
     /// <summary>
-    /// Whether the fleet dispatch agent may call this tool. False by default: a tool it should not
-    /// have runs unattended against the whole fleet the moment it is added to the catalogue. The
-    /// copilot is unaffected.
+    /// Whether the dispatch agent's catalogue includes this tool. False by default so copilot-only
+    /// tools (invoicing, payments) never surface in dispatch conversations. The copilot is unaffected.
     /// </summary>
     public bool DispatchAgent { get; init; }
 

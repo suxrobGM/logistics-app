@@ -14,10 +14,8 @@ using Microsoft.Extensions.Options;
 namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
-/// Owns the full agent-turn lifecycle: AI-enabled and quota gates, session creation, cancellation,
-/// running the agent loop, persisting the transcript, and broadcasting - parameterized by
-/// <see cref="IAgentSurface"/> so every conversational agent (copilot today, dispatch from Phase 3)
-/// runs through exactly one turn implementation.
+/// The one turn lifecycle every conversational agent runs through - gates, session, agent loop,
+/// transcript persistence, broadcasts. Per-agent behavior comes from <see cref="IAgentSurface"/>.
 /// </summary>
 internal sealed class AgentTurnService(
     IOptions<LlmOptions> options,

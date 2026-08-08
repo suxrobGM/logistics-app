@@ -157,7 +157,7 @@ public class AgentDecisionProcessorTests
 
     #region Write-tool metadata
 
-    // Lose IsWrite on any of these and HumanInTheLoop auto-executes it instead of suggesting it.
+    // Lose IsWrite on any of these and the tool executes inline instead of becoming a suggestion.
     [Theory]
     [InlineData("assign_load_to_truck", true)]
     [InlineData("create_trip", true)]
@@ -262,8 +262,6 @@ public class AgentDecisionProcessorTests
             Arg.Any<CancellationToken>());
     }
 
-    // Same as above with a second write tool - there is no mode under which a write tool
-    // short-circuits straight to Executed.
     [Fact]
     public async Task ProcessToolCalls_WriteTool_NeverExecutesInline()
     {

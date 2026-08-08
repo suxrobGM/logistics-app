@@ -6,11 +6,9 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 /// <summary>
-/// Thin adapter from the dispatch port to the shared turn lifecycle: maps the dispatch turn request
-/// onto <see cref="AgentTurnRequest"/> and runs it through <see cref="AgentTurnService"/> with
-/// <see cref="DispatchAgentSurface"/>, exactly like <c>AICopilotService</c>. Cancellation is generic
-/// across session types (dispatch and copilot both cancel through the same registry), so it stays
-/// here rather than moving into the surface.
+/// Adapter from the dispatch port to <see cref="AgentTurnService"/> + <see cref="DispatchAgentSurface"/>,
+/// like <c>AICopilotService</c>. Cancellation stays here, not in the surface - both session types
+/// cancel through the same registry.
 /// </summary>
 internal sealed class AIDispatchService(
     AgentTurnService turnService,

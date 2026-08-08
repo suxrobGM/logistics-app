@@ -70,10 +70,8 @@ const initialState: DispatchChatState = {
 };
 
 /**
- * Page-scoped (provided by the `DispatchChat` page component, not root): unlike the copilot drawer
- * there is no persistent launcher badge that needs this state outside the page, and the page-scoped
- * lifetime means the dispatch board hub connection releases as soon as the dispatcher navigates away.
- * HTTP lives in `DispatchApiService`; this store only orchestrates state.
+ * Page-scoped (provided by `DispatchChat`, not root) so the dispatch-board hub claim releases on
+ * navigation - nothing outside the page needs this state. HTTP lives in `DispatchApiService`.
  */
 export const DispatchChatStore = signalStore(
   withState(initialState),
@@ -123,7 +121,6 @@ export const DispatchChatStore = signalStore(
         () => patchState(store, { longRunning: true }),
       );
 
-      // Keeps the sidebar nav badge in step with the right panel's pending write decisions.
       effect(() => dispatchBadge.pendingCount.set(store.writeDecisions().length));
 
       const beginTurn = (): void => {
@@ -194,7 +191,7 @@ export const DispatchChatStore = signalStore(
         patchState(store, { trucks: await dispatchApi.fetchAvailableTrucks() });
       };
 
-      // Subscribed once at store creation (page-scoped: created and destroyed with the page).
+      // No takeUntilDestroyed: the store is page-scoped, so these die with the page.
       hub.messageReceived$.subscribe((message) => {
         if (message.conversationId !== store.currentConversation()?.id) return;
         patchState(store, { messages: [...store.messages(), message] });

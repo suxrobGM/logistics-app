@@ -15,12 +15,8 @@ export interface DispatchTurnUpdate {
 const DispatchBoardGroup = "dispatch-board";
 
 /**
- * Real-time AI dispatch events. Tenant-shared - unlike the copilot hub, every event goes to the
- * whole tenant's dispatch board group, so a decision approved by one dispatcher is reflected for
- * everyone watching the same (or a different) conversation.
- *
- * DispatchChatStore is the only intended subscriber - components read the store, never this
- * service.
+ * Real-time AI dispatch events. Unlike the copilot hub, every event goes to the whole tenant's
+ * dispatch board group - one dispatcher's approval is reflected for everyone.
  */
 @Injectable({ providedIn: "root" })
 export class AIDispatchHubService extends BaseHubConnection {
@@ -32,10 +28,7 @@ export class AIDispatchHubService extends BaseHubConnection {
     super("ai-dispatch");
   }
 
-  /**
-   * Claims the connection and joins the tenant's dispatch board group, both for as long as
-   * `destroyRef` lives. The dispatch page needs nothing else to receive updates.
-   */
+  /** Claims the connection and joins the tenant's board group for as long as `destroyRef` lives. */
   async acquireDispatchBoard(destroyRef: DestroyRef): Promise<void> {
     const tenantId = this.tenantService.getTenantData()?.id;
     if (!tenantId) {

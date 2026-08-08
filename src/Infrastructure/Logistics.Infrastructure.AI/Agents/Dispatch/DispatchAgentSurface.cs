@@ -7,9 +7,8 @@ using Logistics.Shared.Models;
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 /// <summary>
-/// The dispatch agent as an <see cref="IAgentSurface"/>: no per-caller tool scoping (the endpoint's
-/// policy is the gate, as with the pre-conversation dispatch runs), and every broadcast goes to the
-/// whole tenant's dispatch board - conversations here are tenant-shared, not per-user like copilot.
+/// The dispatch agent's <see cref="IAgentSurface"/>: tenant-shared conversations, so broadcasts go
+/// to the whole dispatch board and tools are gated by the endpoint policy, not per caller.
 /// </summary>
 internal sealed class DispatchAgentSurface(
     AIDispatchConversationBuilder conversationBuilder,

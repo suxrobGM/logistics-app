@@ -16,11 +16,8 @@ export interface QuotaNotice {
 }
 
 /**
- * Usage notice shown near the composer from 80% up; null hides it. `formatCurrency` comes from
- * the caller so the accrued figure follows tenant currency like every other money display.
- *
- * Mirrors `CopilotStore`'s `buildQuotaNotice` - duplicated rather than shared, since the extraction
- * rule for this phase scopes to components, not store helpers.
+ * Usage notice shown near the composer from 80% up; null hides it. Deliberate near-copy of
+ * `CopilotStore`'s `buildQuotaNotice` - keep the two in sync.
  */
 export function buildQuotaNotice(
   quota: AIQuotaStatusDto | null,

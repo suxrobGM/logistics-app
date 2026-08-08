@@ -21,12 +21,9 @@ using MsOptions = Microsoft.Extensions.Options;
 namespace Logistics.Infrastructure.AI.Tests.Agents.Dispatch;
 
 /// <summary>
-/// Covers <see cref="AIDispatchService"/> (the thin turn adapter + shared cancellation) and
-/// <see cref="DispatchAgentSurface"/> (tenant-wide broadcasts, no per-caller tool scoping) together,
-/// since the adapter only has meaning wired to the surface it drives. Fleet-snapshot injection,
-/// transcript replay, and the dispatch tool catalogue are covered by
-/// <see cref="AIDispatchConversationBuilderTests"/> - this file exercises the turn lifecycle around
-/// them, not the prompt content itself.
+/// Covers <see cref="AIDispatchService"/> and <see cref="DispatchAgentSurface"/> together - the
+/// adapter only has meaning wired to its surface. Prompt content (snapshot, replay, catalogue)
+/// belongs to <see cref="AIDispatchConversationBuilderTests"/>; this file is the turn lifecycle.
 /// </summary>
 public class AIDispatchServiceTests
 {

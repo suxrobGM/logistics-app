@@ -6,9 +6,8 @@ using Logistics.Shared.Models;
 namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
-/// The per-kind seam <see cref="AgentTurnService"/> runs every turn through. Copilot supplies
-/// today's behavior (permission-scoped catalogue, per-user broadcasts); Phase 3 adds a dispatch
-/// surface here without touching the turn lifecycle itself.
+/// What distinguishes one conversational agent from another inside
+/// <see cref="AgentTurnService"/>: prompt/tool setup and where broadcasts go.
 /// </summary>
 internal interface IAgentSurface
 {

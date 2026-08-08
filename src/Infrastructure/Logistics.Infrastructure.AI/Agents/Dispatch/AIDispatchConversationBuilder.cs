@@ -13,10 +13,8 @@ using Logistics.Application.Abstractions.AIDispatch;
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 /// <summary>
-/// Builds the LLM conversation for one dispatch turn: provider, system prompt, tools, and the
-/// message sequence rebuilt from the persisted transcript, with a fresh fleet-state snapshot
-/// appended to this turn's final user message. Provider-agnostic - delegates SDK-specific work to
-/// <see cref="ILlmProvider"/>.
+/// Builds the LLM conversation for one dispatch turn: system prompt (with learned policy), dispatch
+/// tool catalogue, and the replayed transcript with a fleet-freshness note on the final user message.
 /// </summary>
 internal sealed class AIDispatchConversationBuilder(
     IAgentToolRegistry toolRegistry,
@@ -66,10 +64,8 @@ internal sealed class AIDispatchConversationBuilder(
     }
 
     /// <summary>
-    /// Appends a freshness notice to this turn's final user message so the agent re-gathers fleet
-    /// state instead of trusting anything from earlier in the conversation. In-memory only - the
-    /// persisted <c>ContentJson</c> for that row keeps only the user's typed text, so the notice
-    /// never replays on a later turn; each turn gets exactly one, built fresh here.
+    /// Makes the agent re-gather fleet state instead of trusting earlier turns. In-memory only -
+    /// never persisted to the row's <c>ContentJson</c>, so a stale notice cannot replay later.
     /// </summary>
     private static void InjectFleetSnapshot(List<LlmMessage> messages)
     {

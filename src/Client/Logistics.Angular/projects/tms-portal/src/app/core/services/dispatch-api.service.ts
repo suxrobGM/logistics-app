@@ -21,12 +21,8 @@ import {
 } from "@logistics/shared/api";
 
 /**
- * HTTP for the AI dispatch chat page: every call resolves to null (or false for the commands whose
- * only output is success) instead of throwing, so DispatchChatStore stays pure state orchestration -
- * mirrors CopilotApiService's contract.
- *
- * Failure toasts and upgrade prompts are NOT raised here - the global errorHandlerInterceptor
- * already does both for every request. Toasting again would show two toasts per failure.
+ * HTTP for the AI dispatch chat page. Calls resolve to null/false instead of throwing (mirrors
+ * CopilotApiService), and never toast - the global errorHandlerInterceptor already does.
  */
 @Injectable({ providedIn: "root" })
 export class DispatchApiService {
