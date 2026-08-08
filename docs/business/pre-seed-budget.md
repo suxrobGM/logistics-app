@@ -22,15 +22,15 @@ SaaS platform, because the founder does all engineering and the stack is self-ho
 
 ## What's already built (de-risks the technical bet)
 
-| Area              | Delivered                                                                                                                                                                  |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Core platform     | Multi-tenant TMS - master DB + isolated database per tenant; .NET (DDD + CQRS), PostgreSQL                                                                                 |
-| Web portals       | 4 Angular apps: Admin, TMS (dispatcher), Customer, and marketing Website                                                                                                   |
-| Mobile            | Kotlin Multiplatform driver app (Android + iOS)                                                                                                                            |
-| AI Dispatch agent | Multi-provider LLM agent (Claude / OpenAI / DeepSeek) with tool-calling, human-in-the-loop & autonomous modes, weekly quota system, and Stripe usage-based overage billing |
-| Billing           | Stripe Connect - subscriptions + usage-based billing                                                                                                                       |
-| Integrations      | ELD providers (Samsara, Motive, TT ELD), Mapbox, Resend, Firebase push, Cloudflare R2                                                                                      |
-| Platform extras   | Self-hosted MCP server, Identity Server (auth), Docker + nginx deploy, GitHub Actions CI/CD                                                                                |
+| Area              | Delivered                                                                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Core platform     | Multi-tenant TMS - master DB + isolated database per tenant; .NET (DDD + CQRS), PostgreSQL                                                                         |
+| Web portals       | 4 Angular apps: Admin, TMS (dispatcher), Customer, and marketing Website                                                                                           |
+| Mobile            | Kotlin Multiplatform driver app (Android + iOS)                                                                                                                    |
+| AI Dispatch agent | Multi-provider LLM agent (Claude / OpenAI / DeepSeek) with tool-calling, approval-gated write actions, weekly quota system, and Stripe usage-based overage billing |
+| Billing           | Stripe Connect - subscriptions + usage-based billing                                                                                                               |
+| Integrations      | ELD providers (Samsara, Motive, TT ELD), Mapbox, Resend, Firebase push, Cloudflare R2                                                                              |
+| Platform extras   | Self-hosted MCP server, Identity Server (auth), Docker + nginx deploy, GitHub Actions CI/CD                                                                        |
 
 **Takeaway for investors:** the hard, expensive part - building a production-grade, integrated TMS - is
 done. Remaining risk is distribution, which this raise directly addresses.

@@ -34,12 +34,12 @@ picture is [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
   `ILlmClient` features are not agent code - prompt and workflow service live together, in
   `Logistics.Application/Modules/{Module}/.../Services/` or the infrastructure project owning it.
 - **Shared machinery is `Agent*`, not `AIDispatch*`.** Registry, executor, tool contract, decision
-  processor and cancellation serve dispatch, copilot and MCP alike. `AIDispatch*` is the domain
-  (`AgentSession`, `AgentDecision`, `AgentAutonomyMode`, `AIDispatchPolicy`) and the dispatch service.
+  processor, turn service and cancellation serve dispatch, copilot and MCP alike (`AgentSession`,
+  `AgentDecision`, `AgentConversation`, `AgentMessage`, `AgentTurnService`). `AIDispatch*` is what's
+  left dispatch-only: `AIDispatchPolicy` and the dispatch service/surface.
 
 `AIDispatchSystemPrompt.Build` varies by `TenantSettings.OperatingMode`: `SoloOperator` swaps the
-fleet-framed lines and appends `## Fleet Profile`. That heading is deliberately not `## Operating
-Mode` - `AgentAutonomyMode` owns that one, and reusing it makes the model conflate the two.
+fleet-framed lines and appends `## Fleet Profile: SOLO OWNER-OPERATOR`.
 
 ## Providers
 
@@ -86,8 +86,8 @@ Claude and OpenAI function calling. Class name mirrors the tool name (`get_drive
 `AgentToolRegistry.Tools` catalogue entry (shared with the MCP server) is the one thing you must not
 forget; `AgentToolRegistryParityTests` fails if class and catalogue disagree either way.
 
-- Read tools always execute immediately. Write tools become `Suggested` decisions under
-  `HumanInTheLoop` and execute under `Autonomous`.
+- Read tools always execute immediately. Write tools always become `Suggested` decisions awaiting
+  dispatcher/user approval - there is no unattended-execution path (`AgentDecisionProcessor`).
 - **Behaviour metadata lives on the registry definition** as named init properties:
   `RequiredPermission`, `DecisionType`, `RequiredFeature`, `DispatchAgent`. `IsWrite` is **derived**
   (`DecisionType != Query`), so there is no separate flag to forget. Miss `RequiredPermission` and
@@ -95,9 +95,10 @@ forget; `AgentToolRegistryParityTests` fails if class and catalogue disagree eit
 - One registry method per surface: `GetDispatchAgentTools`, `GetCopilotTools` (permission set is a
   required parameter, not a nullable flag - see `docs/ai-copilot.md`), `GetAllTools` for MCP, which
   gates per call instead.
-- **`DispatchAgent` defaults to false, and that is the safe default** - the dispatch agent can run
-  `Autonomous`, so a tool it should not have executes with no approval. Do not re-derive it from
-  `RequiredPermission`; a dispatch tool may legitimately require `Permission.Trip.Manage`.
+- **`DispatchAgent` defaults to false** - it scopes the dispatch conversation's catalogue to
+  fleet-relevant tools, keeping copilot-only write tools (e.g. `create_load_invoice`) out of dispatch
+  runs. Do not re-derive it from `RequiredPermission`; a dispatch tool may legitimately require
+  `Permission.Trip.Manage`.
 
 `AgentLoopRunner` (shared by both surfaces) caps at **25 iterations per session**.
 
@@ -150,8 +151,8 @@ install with a single configured provider fails every night. The agent loop has 
 between `## HOS Rules` and `## Workflow` as defaults ranking below the hard constraints. Traps:
 
 - The human-approved population is `Status == Executed && ApprovedByUserId != null`. `Approve()` is
-  immediately overwritten by `MarkExecuted()`, so **filtering on `Approved` finds nothing** - and
-  autonomous executions carry no human signal at all.
+  immediately overwritten by `MarkExecuted()`, so **filtering on `Approved` finds nothing** - every
+  executed write went through approval, so this filter is the whole population, not a carve-out.
 - `GeneratedContent` is job-owned, `ManualContent` is dispatcher-owned. Never merge them.
 - Policy text is **untrusted** (LLM output derived from dispatcher-typed rejection reasons).
   `AIDispatchSystemPrompt` sanitises and truncates at the injection point, not in callers.

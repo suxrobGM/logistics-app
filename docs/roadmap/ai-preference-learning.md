@@ -30,12 +30,12 @@ After a week of consistent rejections for a pattern (e.g. deadhead > 80 mi), new
 user-facing surface is **Dispatch Policy**. Decisions worth remembering:
 
 - **Prerequisite found during planning:** `RejectionReason` was null in every tenant DB. Both reject
-  buttons sent `body: {}`, and `ReplanAIDispatchSessionHandler` had been printing "no reason given"
+  buttons sent `body: {}`, and the reject handler of the day had been printing "no reason given"
   for every rejection. Shipped `reject-decision-dialog` (required reason + quick picks) first; without
   it there is no labelled signal and the acceptance criterion is unreachable.
 - **`Approved` is a transient status.** `Approve()` is immediately overwritten by `MarkExecuted()`, so
-  the human-approved population is `Executed && ApprovedByUserId != null`. Autonomous executions have
-  no approver - including them would train the agent on its own output.
+  the human-approved population is `Executed && ApprovedByUserId != null`. Every executed write goes
+  through approval today, so this filter is the whole population, not a carve-out for a mode that skips it.
 - **Two content columns, not a manual-edit flag.** `GeneratedContent` (job-owned) +
   `ManualContent` (dispatcher-owned). A single column plus a flag forces a choice between clobbering
   dispatcher text and freezing the loop on first edit.

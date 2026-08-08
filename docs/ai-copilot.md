@@ -22,8 +22,8 @@ agent loop (`AgentLoopRunner`), the same decision/approval machinery, and the sa
 4. CopilotAgentSurface resolves the caller's permissions and AICopilotConversationBuilder
    rebuilds the LLM messages from the persisted transcript, scoping the tool catalogue to
    those permissions
-5. AgentLoopRunner iterates: read tools execute; write tools become Suggested
-   decisions (always HumanInTheLoop - the copilot has no autonomous mode)
+5. AgentLoopRunner iterates: read tools execute; write tools always become Suggested
+   decisions awaiting dispatcher/user approval - there is no unattended execution path
 6. Every appended message (tool_use ids included) is persisted to
    agent_messages; progress streams over /hubs/copilot
 ```
@@ -61,8 +61,8 @@ Approving a suggestion re-checks again: the approver needs `Permission.Copilot.M
 endpoint **and** the tool's own permission (e.g. `Permission.Invoice.Manage`).
 
 The dispatch agent's catalogue is a separate axis: it keeps only tools declaring
-`DispatchAgent: true`, which is what keeps copilot write tools (invoicing) out of autonomous
-dispatch runs. It is deliberately **not** derived from `RequiredPermission` - a dispatch tool may
+`DispatchAgent: true`, which is what keeps copilot-only write tools (invoicing) out of dispatch
+conversations. It is deliberately **not** derived from `RequiredPermission` - a dispatch tool may
 legitimately require a non-`Dispatch.*` permission, and coupling the two would hide it silently.
 
 ## Approvals
