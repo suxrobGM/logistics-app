@@ -26,8 +26,8 @@ public class ApproveAICopilotDecisionHandlerTests
     private readonly IMediator mediator = Substitute.For<IMediator>();
     private readonly ITenantRepository<AgentDecision, Guid> decisionRepo =
         Substitute.For<ITenantRepository<AgentDecision, Guid>>();
-    private readonly ITenantRepository<AICopilotConversation, Guid> conversationRepo =
-        Substitute.For<ITenantRepository<AICopilotConversation, Guid>>();
+    private readonly ITenantRepository<AgentConversation, Guid> conversationRepo =
+        Substitute.For<ITenantRepository<AgentConversation, Guid>>();
 
     private readonly Guid userId = Guid.NewGuid();
     private readonly ApproveAICopilotDecisionHandler sut;
@@ -35,7 +35,7 @@ public class ApproveAICopilotDecisionHandlerTests
     public ApproveAICopilotDecisionHandlerTests()
     {
         tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
-        tenantUow.Repository<AICopilotConversation>().Returns(conversationRepo);
+        tenantUow.Repository<AgentConversation>().Returns(conversationRepo);
         tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
@@ -64,10 +64,10 @@ public class ApproveAICopilotDecisionHandlerTests
             .Returns(Result<string[]>.Ok(permissions));
     }
 
-    private (AgentDecision Decision, AICopilotConversation Conversation) SetSuggestedDecision(
+    private (AgentDecision Decision, AgentConversation Conversation) SetSuggestedDecision(
         AgentSessionType sessionType = AgentSessionType.Copilot)
     {
-        var conversation = new AICopilotConversation { CreatedById = userId };
+        var conversation = new AgentConversation { CreatedById = userId };
         var session = new AgentSession
         {
             Type = sessionType,
@@ -129,11 +129,11 @@ public class ApproveAICopilotDecisionHandlerTests
         Assert.Equal(userId, decision.ApprovedByUserId);
 
         var note = Assert.Single(conversation.Messages);
-        Assert.Equal(AICopilotMessageRole.System, note.Role);
+        Assert.Equal(AgentMessageRole.System, note.Role);
         Assert.StartsWith("Approved and executed: send_invoice", note.DisplayText);
 
         await broadcastService.Received(1).BroadcastMessageAsync(
-            Arg.Any<Guid>(), conversation.CreatedById, Arg.Any<AICopilotMessageDto>());
+            Arg.Any<Guid>(), conversation.CreatedById, Arg.Any<AgentMessageDto>());
         await broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), conversation.CreatedById, Arg.Any<AgentDecisionDto>());
     }

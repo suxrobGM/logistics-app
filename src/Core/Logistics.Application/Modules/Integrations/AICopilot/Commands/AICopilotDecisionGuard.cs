@@ -7,7 +7,7 @@ namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
 
 internal sealed record CopilotDecisionContext(
     AgentDecision Decision,
-    AICopilotConversation Conversation);
+    AgentConversation Conversation);
 
 /// <summary>
 /// Shared by copilot decision approval and rejection: the decision must exist, belong to a copilot
@@ -29,10 +29,14 @@ internal static class AICopilotDecisionGuard
             return Result<CopilotDecisionContext>.Fail("Decision not found");
         }
 
-        var conversation = await tenantUow.Repository<AICopilotConversation>()
+        var conversation = await tenantUow.Repository<AgentConversation>()
             .GetByIdAsync(conversationId, ct);
-        if (conversation is null || conversation.CreatedById != userId.Value)
+        if (conversation is null
+            || conversation.CreatedById != userId.Value
+            || conversation.Kind != AgentConversationKind.Copilot)
+        {
             return Result<CopilotDecisionContext>.Fail("Decision not found");
+        }
 
         if (decision.Status != AgentDecisionStatus.Suggested)
             return Result<CopilotDecisionContext>.Fail("Decision is not in a suggested state");

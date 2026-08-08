@@ -5,18 +5,18 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Domain.Entities;
 
 /// <summary>
-/// One transcript row of a copilot conversation. <see cref="ContentJson"/> is replayed to the
+/// One transcript row of an agent conversation. <see cref="ContentJson"/> is replayed to the
 /// provider; <see cref="DisplayText"/> is what the UI renders.
 /// </summary>
-public class AICopilotMessage : Entity, ITenantEntity
+public class AgentMessage : Entity, ITenantEntity
 {
     public Guid ConversationId { get; set; }
-    public virtual AICopilotConversation Conversation { get; set; } = null!;
+    public virtual AgentConversation Conversation { get; set; } = null!;
 
     /// <summary>Unique per conversation.</summary>
     public int Sequence { get; set; }
 
-    public AICopilotMessageRole Role { get; set; }
+    public AgentMessageRole Role { get; set; }
 
     /// <summary>Serialized content blocks (text / tool_use / tool_result). Never exposed to clients raw.</summary>
     public string ContentJson { get; set; } = "";
@@ -33,10 +33,10 @@ public class AICopilotMessage : Entity, ITenantEntity
     /// A plain text row in the transcript block format (<c>[{"type":"text","text":...}]</c>).
     /// The only place that shape is written outside the AI infrastructure's codec - keep both in sync.
     /// </summary>
-    public static AICopilotMessage TextMessage(
-        Guid conversationId, int sequence, AICopilotMessageRole role, string text)
+    public static AgentMessage TextMessage(
+        Guid conversationId, int sequence, AgentMessageRole role, string text)
     {
-        return new AICopilotMessage
+        return new AgentMessage
         {
             ConversationId = conversationId,
             Sequence = sequence,

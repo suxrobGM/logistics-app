@@ -12,17 +12,21 @@ namespace Logistics.Application.Modules.Integrations.AICopilot.Queries;
 internal sealed class GetAICopilotConversationByIdHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser)
-    : IAppRequestHandler<GetAICopilotConversationByIdQuery, Result<AICopilotConversationDto>>
+    : IAppRequestHandler<GetAICopilotConversationByIdQuery, Result<AgentConversationDto>>
 {
-    public async Task<Result<AICopilotConversationDto>> Handle(
+    public async Task<Result<AgentConversationDto>> Handle(
         GetAICopilotConversationByIdQuery request, CancellationToken ct)
     {
         var userId = currentUser.GetUserId();
-        var conversation = await tenantUow.Repository<AICopilotConversation>()
+        var conversation = await tenantUow.Repository<AgentConversation>()
             .GetByIdAsync(request.Id, ct);
 
-        if (conversation is null || conversation.CreatedById != userId)
-            return Result<AICopilotConversationDto>.Fail("Conversation not found");
+        if (conversation is null
+            || conversation.CreatedById != userId
+            || conversation.Kind != AgentConversationKind.Copilot)
+        {
+            return Result<AgentConversationDto>.Fail("Conversation not found");
+        }
 
         var decisions = await tenantUow.Repository<AgentDecision>().Query()
             .Where(d => d.Session.ConversationId == conversation.Id)
@@ -38,6 +42,6 @@ internal sealed class GetAICopilotConversationByIdHandler(
             .ToList();
         dto.Decisions = decisions.Select(d => d.ToDto()).ToList();
 
-        return Result<AICopilotConversationDto>.Ok(dto);
+        return Result<AgentConversationDto>.Ok(dto);
     }
 }

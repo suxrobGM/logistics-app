@@ -1,15 +1,15 @@
-using Logistics.Infrastructure.AI.Agents.Copilot;
+using Logistics.Infrastructure.AI.Agents;
 using System.Text.Json.Nodes;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Xunit;
 
-namespace Logistics.Infrastructure.AI.Tests.Agents.Copilot;
+namespace Logistics.Infrastructure.AI.Tests.Agents;
 
 /// <summary>
 /// Tool_use ids must round-trip exactly - the provider rejects any replayed tool_result whose id
 /// no longer matches.
 /// </summary>
-public class CopilotTranscriptCodecTests
+public class AgentTranscriptCodecTests
 {
     [Fact]
     public void EncodeDecode_RoundTripsInterleavedBlocksWithToolUseIds()
@@ -21,7 +21,7 @@ public class CopilotTranscriptCodecTests
             new LlmTextBlock("Found it.")
         };
 
-        var decoded = CopilotTranscriptCodec.Decode(CopilotTranscriptCodec.Encode(blocks));
+        var decoded = AgentTranscriptCodec.Decode(AgentTranscriptCodec.Encode(blocks));
 
         Assert.Collection(decoded,
             b => Assert.Equal("Let me look that up.", Assert.IsType<LlmTextBlock>(b).Text),
@@ -43,7 +43,7 @@ public class CopilotTranscriptCodecTests
             new LlmToolResultBlock("toolu_abc123", """{"loads":[],"count":0}""")
         };
 
-        var decoded = CopilotTranscriptCodec.Decode(CopilotTranscriptCodec.Encode(blocks));
+        var decoded = AgentTranscriptCodec.Decode(AgentTranscriptCodec.Encode(blocks));
 
         var result = Assert.IsType<LlmToolResultBlock>(Assert.Single(decoded));
         Assert.Equal("toolu_abc123", result.ToolUseId);
@@ -53,11 +53,11 @@ public class CopilotTranscriptCodecTests
     [Fact]
     public void Decode_UnknownBlockTypesAndMalformedJson_AreSkippedNotThrown()
     {
-        Assert.Empty(CopilotTranscriptCodec.Decode("not json at all"));
-        Assert.Empty(CopilotTranscriptCodec.Decode("""{"type":"text"}"""));
+        Assert.Empty(AgentTranscriptCodec.Decode("not json at all"));
+        Assert.Empty(AgentTranscriptCodec.Decode("""{"type":"text"}"""));
 
         var withUnknown = """[{"type":"thinking","text":"..."},{"type":"text","text":"kept"}]""";
-        var block = Assert.Single(CopilotTranscriptCodec.Decode(withUnknown));
+        var block = Assert.Single(AgentTranscriptCodec.Decode(withUnknown));
         Assert.Equal("kept", Assert.IsType<LlmTextBlock>(block).Text);
     }
 
@@ -70,7 +70,7 @@ public class CopilotTranscriptCodecTests
             new LlmDocumentBlock("application/pdf", "base64data")
         };
 
-        var decoded = CopilotTranscriptCodec.Decode(CopilotTranscriptCodec.Encode(blocks));
+        var decoded = AgentTranscriptCodec.Decode(AgentTranscriptCodec.Encode(blocks));
 
         Assert.Single(decoded);
         Assert.IsType<LlmTextBlock>(decoded[0]);

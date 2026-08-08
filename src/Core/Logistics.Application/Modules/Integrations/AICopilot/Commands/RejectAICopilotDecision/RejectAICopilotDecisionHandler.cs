@@ -27,7 +27,7 @@ internal sealed class RejectAICopilotDecisionHandler(
         var note = string.IsNullOrWhiteSpace(request.Reason)
             ? $"Rejected: {decision.ToolName}"
             : $"Rejected: {decision.ToolName} - {request.Reason}";
-        var message = conversation.AddTextMessage(AICopilotMessageRole.System, note);
+        var message = conversation.AddTextMessage(AgentMessageRole.System, note);
         await tenantUow.SaveChangesAsync(ct);
 
         var tenantId = tenantUow.GetCurrentTenant().Id;

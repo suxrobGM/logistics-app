@@ -9,7 +9,7 @@ namespace Logistics.Infrastructure.Communications.SignalR.Services;
 internal sealed class SignalRAICopilotBroadcastService(
     IHubContext<CopilotHub, IAICopilotHubClient> hubContext) : IAICopilotBroadcastService
 {
-    public Task BroadcastMessageAsync(Guid tenantId, Guid userId, AICopilotMessageDto message) =>
+    public Task BroadcastMessageAsync(Guid tenantId, Guid userId, AgentMessageDto message) =>
         Group(tenantId, userId).ReceiveCopilotMessage(message);
 
     public Task BroadcastTurnUpdateAsync(Guid tenantId, Guid userId, AICopilotTurnUpdateDto update) =>

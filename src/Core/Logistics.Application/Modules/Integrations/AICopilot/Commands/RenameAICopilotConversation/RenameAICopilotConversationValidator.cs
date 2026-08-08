@@ -7,7 +7,7 @@ internal sealed class RenameAICopilotConversationValidator
 {
     public RenameAICopilotConversationValidator()
     {
-        // 120 matches the auto-derived title cap in AICopilotService.DeriveTitle.
+        // 120 matches the auto-derived title cap in AgentTurnService.DeriveTitle.
         RuleFor(x => x.Title).NotEmpty().MaximumLength(120);
     }
 }

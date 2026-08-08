@@ -9,19 +9,19 @@ namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
 
 internal sealed class CreateAICopilotConversationHandler(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUser) : IAppRequestHandler<CreateAICopilotConversationCommand, Result<AICopilotConversationDto>>
+    ICurrentUserService currentUser) : IAppRequestHandler<CreateAICopilotConversationCommand, Result<AgentConversationDto>>
 {
-    public async Task<Result<AICopilotConversationDto>> Handle(
+    public async Task<Result<AgentConversationDto>> Handle(
         CreateAICopilotConversationCommand request, CancellationToken ct)
     {
         var userId = currentUser.GetUserId();
         if (userId is null)
-            return Result<AICopilotConversationDto>.Fail("User is not authenticated");
+            return Result<AgentConversationDto>.Fail("User is not authenticated");
 
-        var conversation = new AICopilotConversation { CreatedById = userId.Value };
-        await tenantUow.Repository<AICopilotConversation>().AddAsync(conversation, ct);
+        var conversation = new AgentConversation { CreatedById = userId.Value };
+        await tenantUow.Repository<AgentConversation>().AddAsync(conversation, ct);
         await tenantUow.SaveChangesAsync(ct);
 
-        return Result<AICopilotConversationDto>.Ok(conversation.ToDto());
+        return Result<AgentConversationDto>.Ok(conversation.ToDto());
     }
 }

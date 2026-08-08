@@ -18,10 +18,11 @@ public class AgentSession : AuditableEntity, ITenantEntity
     public AgentSessionStatus Status { get; private set; } = AgentSessionStatus.Running;
 
     /// <summary>
-    /// The copilot conversation this turn belongs to. Null for dispatch sessions.
+    /// The conversation this turn belongs to. Null for a dispatch session that runs outside a
+    /// conversation (today, every dispatch session - Phase 3 adds tenant-shared ones).
     /// </summary>
     public Guid? ConversationId { get; init; }
-    public virtual AICopilotConversation? Conversation { get; init; }
+    public virtual AgentConversation? Conversation { get; init; }
 
     /// <summary>
     /// The user who triggered this session. Null if triggered by background job.

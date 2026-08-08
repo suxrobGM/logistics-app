@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Persistence.Configurations;
 
-internal sealed class AICopilotMessageEntityConfiguration : IEntityTypeConfiguration<AICopilotMessage>
+internal sealed class AgentMessageEntityConfiguration : IEntityTypeConfiguration<AgentMessage>
 {
-    public void Configure(EntityTypeBuilder<AICopilotMessage> builder)
+    public void Configure(EntityTypeBuilder<AgentMessage> builder)
     {
-        builder.ToTable("ai_copilot_messages");
+        builder.ToTable("agent_messages");
 
         builder.Property(m => m.DisplayText)
             .HasMaxLength(4000);

@@ -14,11 +14,15 @@ internal sealed class DeleteAICopilotConversationHandler(
     public async Task<Result> Handle(DeleteAICopilotConversationCommand request, CancellationToken ct)
     {
         var userId = currentUser.GetUserId();
-        var repo = tenantUow.Repository<AICopilotConversation>();
+        var repo = tenantUow.Repository<AgentConversation>();
         var conversation = await repo.GetByIdAsync(request.ConversationId, ct);
 
-        if (conversation is null || conversation.CreatedById != userId)
+        if (conversation is null
+            || conversation.CreatedById != userId
+            || conversation.Kind != AgentConversationKind.Copilot)
+        {
             return Result.Fail("Conversation not found");
+        }
 
         if (conversation.Status == AICopilotConversationStatus.Running)
             return Result.Fail("Cannot delete a conversation while a turn is running");

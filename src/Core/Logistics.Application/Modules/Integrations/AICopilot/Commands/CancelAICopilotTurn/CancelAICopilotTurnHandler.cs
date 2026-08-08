@@ -17,11 +17,15 @@ internal sealed class CancelAICopilotTurnHandler(
     public async Task<Result> Handle(CancelAICopilotTurnCommand request, CancellationToken ct)
     {
         var userId = currentUser.GetUserId();
-        var conversation = await tenantUow.Repository<AICopilotConversation>()
+        var conversation = await tenantUow.Repository<AgentConversation>()
             .GetByIdAsync(request.ConversationId, ct);
 
-        if (conversation is null || conversation.CreatedById != userId)
+        if (conversation is null
+            || conversation.CreatedById != userId
+            || conversation.Kind != AgentConversationKind.Copilot)
+        {
             return Result.Fail("Conversation not found");
+        }
 
         var runningSessionId = await tenantUow.Repository<AgentSession>().Query()
             .Where(s => s.ConversationId == conversation.Id && s.Status == AgentSessionStatus.Running)

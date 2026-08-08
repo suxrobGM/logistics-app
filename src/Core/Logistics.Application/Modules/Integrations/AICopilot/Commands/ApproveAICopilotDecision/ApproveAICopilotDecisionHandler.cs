@@ -67,7 +67,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
             outcome = Result.Fail($"Failed to execute decision: {ex.Message}");
         }
 
-        var message = conversation.AddTextMessage(AICopilotMessageRole.System, note);
+        var message = conversation.AddTextMessage(AgentMessageRole.System, note);
         await tenantUow.SaveChangesAsync(ct);
 
         await broadcastService.BroadcastMessageAsync(tenant.Id, conversation.CreatedById, message.ToDto());

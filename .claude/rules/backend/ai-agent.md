@@ -16,15 +16,15 @@ picture is [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 `Logistics.Infrastructure.AI/` is grouped by capability, not layer. There is no `Services/`,
 `Models/` or `Prompts/` folder - if you are about to create one, you want one of these:
 
-| Folder                                                        | Holds                                                                                |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `Llm/`                                                        | `ILlmProvider`, factory, one-shot `LlmClient`, model resolution, pricing, sanitising |
-| `Llm/Contracts/`                                              | The `Llm*` wire records the rest of the project sees                                 |
-| `Llm/Providers/`                                              | The only files allowed to touch a vendor SDK                                         |
-| `Agents/`                                                     | Shared runtime: loop runner, decision processor, cancellation, tool-call context     |
-| `Agents/Dispatch/`, `Agents/Copilot/`                         | One folder per agent surface                                                         |
-| `Tools/`                                                      | Tool contract, `ToolInput`/`ToolResult`, `DispatchUnits`, the catalogue              |
-| `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/` | Tools grouped by the Application module they dispatch into                           |
+| Folder                                                        | Holds                                                                                                                                                                                                                            |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Llm/`                                                        | `ILlmProvider`, factory, one-shot `LlmClient`, model resolution, pricing, sanitising                                                                                                                                             |
+| `Llm/Contracts/`                                              | The `Llm*` wire records the rest of the project sees                                                                                                                                                                             |
+| `Llm/Providers/`                                              | The only files allowed to touch a vendor SDK                                                                                                                                                                                     |
+| `Agents/`                                                     | Shared runtime: loop runner, decision processor, cancellation, tool-call context, `AgentTurnService` (the one turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`), transcript codec/replay |
+| `Agents/Dispatch/`, `Agents/Copilot/`                         | One folder per agent surface (each implements `IAgentSurface` for `AgentTurnService`)                                                                                                                                            |
+| `Tools/`                                                      | Tool contract, `ToolInput`/`ToolResult`, `DispatchUnits`, the catalogue                                                                                                                                                          |
+| `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/` | Tools grouped by the Application module they dispatch into                                                                                                                                                                       |
 
 - **Config is not here.** `LlmOptions`, `LlmModelCatalog` and `AISettingsKeys` live in
   `Application.Abstractions/AI/` (the application layer reads them); the agent ports

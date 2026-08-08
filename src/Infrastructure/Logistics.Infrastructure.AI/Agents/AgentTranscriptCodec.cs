@@ -2,14 +2,15 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 
-namespace Logistics.Infrastructure.AI.Agents.Copilot;
+namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
-/// Serializes provider content blocks to the transcript's ContentJson and back. Tool_use ids must
-/// round-trip exactly or the API rejects the replayed transcript. Unknown block types are skipped
-/// on decode so old rows survive future block additions.
+/// Serializes provider content blocks to the transcript's ContentJson and back. Shared by every
+/// agent surface (copilot today, dispatch from Phase 3). Tool_use ids must round-trip exactly or
+/// the API rejects the replayed transcript. Unknown block types are skipped on decode so old rows
+/// survive future block additions.
 /// </summary>
-internal static class CopilotTranscriptCodec
+internal static class AgentTranscriptCodec
 {
     public static string Encode(IReadOnlyList<LlmContentBlock> blocks)
     {
