@@ -5,71 +5,151 @@
   </ui-stack>
 }
 
-<ui-timeline [value]="decisions()">
-  <ng-template uiTimelineContent let-decision>
-    <div class="animate-slide-in mb-4 pb-2">
-      <ui-stack direction="row" align="center" gap="2" wrap class="mb-1">
-        <ui-typography variant="body-sm" weight="medium">
-          {{ getToolLabel(decision.toolName) }}
-        </ui-typography>
-        <ui-typography variant="caption" color="muted">
-          {{ decision.createdAt | date: "MMM d, h:mm a" }}
-        </ui-typography>
-        @if (isWriteTool(decision.toolName)) {
+<ui-timeline [value]="timeline()">
+  <ng-template uiTimelineContent let-entry>
+    @if (entry.kind === "write") {
+      <div class="animate-slide-in mb-4 pb-2">
+        <ui-stack direction="row" align="center" gap="2" wrap class="mb-1">
+          <ui-typography variant="body-sm" weight="medium">
+            {{ getToolLabel(entry.decision.toolName) }}
+          </ui-typography>
+          <ui-typography variant="caption" color="muted">
+            {{ entry.decision.createdAt | date: "MMM d, h:mm a" }}
+          </ui-typography>
           <ui-badge
             size="sm"
-            [value]="decision.status"
-            [severity]="Labels.dispatchStatusSeverity(decision.status)"
+            [value]="entry.decision.status"
+            [severity]="Labels.dispatchStatusSeverity(entry.decision.status)"
           />
+        </ui-stack>
+
+        <ng-container
+          *ngTemplateOutlet="reasoning; context: { $implicit: entry.decision }"
+        ></ng-container>
+
+        @if (entry.decision.toolOutput) {
+          <ui-surface variant="subtle" padding="sm" radius="md" [border]="false" class="text-xs">
+            <app-tool-output-summary [toolOutput]="entry.decision.toolOutput" />
+          </ui-surface>
         }
-      </ui-stack>
 
-      @if (decision.reasoning) {
-        <div class="mb-2">
-          <div
-            class="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed"
-            [class.line-clamp-3]="!isExpanded(decision.id!)"
-            [innerHTML]="decision.reasoning | markdown"
-          ></div>
-          @if (decision.reasoning.length > 150) {
-            <ui-button
-              appearance="text"
-              intent="secondary"
-              size="sm"
-              [label]="isExpanded(decision.id!) ? 'Show less' : 'Show more'"
-              (click)="toggleExpand(decision.id!); $event.stopPropagation()"
-            />
+        @if (entry.decision.status === "suggested") {
+          <ui-permission-guard [permissions]="dispatchManage">
+            <div class="mt-2">
+              <app-approve-reject-actions
+                [decision]="entry.decision"
+                [busy]="actions.busyDecisionId() === entry.decision.id"
+                (approve)="approve(entry.decision)"
+                (reject)="reject(entry.decision)"
+              />
+            </div>
+          </ui-permission-guard>
+        }
+      </div>
+    } @else if (readSummaries().get(entry.id); as summary) {
+      <div class="mb-4 pb-2">
+        <ui-stack direction="row" align="center" gap="2" wrap>
+          <span class="text-muted-foreground text-xs">Checked:</span>
+          @for (chip of summary.chips; track chip.label) {
+            <span
+              class="bg-muted inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs"
+              [class]="chip.failed ? 'text-danger' : 'text-muted-foreground'"
+            >
+              <ui-icon [name]="chip.icon" size="inherit" />
+              <span>{{ chip.label }}</span>
+              @if (chip.count > 1) {
+                <span>x{{ chip.count }}</span>
+              }
+            </span>
           }
-        </div>
-      }
+          <ui-button
+            icon="chevron-down"
+            appearance="text"
+            intent="secondary"
+            size="sm"
+            ariaLabel="Toggle tool details"
+            [buttonClass]="isGroupExpanded(entry.id) ? 'rotate-180' : ''"
+            (click)="toggleGroup(entry.id)"
+          />
+        </ui-stack>
 
-      @if (decision.toolOutput) {
-        <ui-surface variant="subtle" padding="sm" radius="md" [border]="false" class="text-xs">
-          <app-tool-output-summary [toolOutput]="decision.toolOutput" />
-        </ui-surface>
-      }
+        @if (summary.keyFigures) {
+          <div class="text-muted-foreground text-xs">{{ summary.keyFigures }}</div>
+        }
 
-      @if (decision.status === "suggested" && isWriteTool(decision.toolName)) {
-        <ui-permission-guard [permissions]="dispatchManage">
-          <div class="mt-2">
-            <app-approve-reject-actions
-              [decision]="decision"
-              [busy]="actions.busyDecisionId() === decision.id"
-              (approve)="approve(decision)"
-              (reject)="reject(decision)"
-            />
+        @if (isGroupExpanded(entry.id)) {
+          <div class="mt-3 space-y-3">
+            @for (read of entry.decisions; track read.id) {
+              <div>
+                <ui-stack direction="row" align="center" gap="2" wrap class="mb-1">
+                  <ui-typography variant="body-sm" weight="medium">
+                    {{ getToolLabel(read.toolName) }}
+                  </ui-typography>
+                  <ui-typography variant="caption" color="muted">
+                    {{ read.createdAt | date: "MMM d, h:mm a" }}
+                  </ui-typography>
+                </ui-stack>
+
+                <ng-container
+                  *ngTemplateOutlet="reasoning; context: { $implicit: read }"
+                ></ng-container>
+
+                @if (read.toolOutput) {
+                  <ui-surface
+                    variant="subtle"
+                    padding="sm"
+                    radius="md"
+                    [border]="false"
+                    class="text-xs"
+                  >
+                    <app-tool-output-summary [toolOutput]="read.toolOutput" />
+                  </ui-surface>
+                }
+
+                <app-tool-result-details [toolOutput]="read.toolOutput" class="mt-2 block" />
+              </div>
+            }
           </div>
-        </ui-permission-guard>
-      }
-    </div>
+        }
+      </div>
+    }
   </ng-template>
 
-  <ng-template uiTimelineMarker let-decision>
+  <ng-template uiTimelineMarker let-entry>
     <span
       class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
-      [class]="getToolMarkerClass(decision.toolName)"
+      [class]="
+        entry.kind === 'write'
+          ? getToolMarkerClass(entry.decision.toolName)
+          : 'bg-muted text-muted-foreground'
+      "
     >
-      <ui-icon [name]="getToolIcon(decision.toolName)" size="inherit" class="text-xs" />
+      <ui-icon
+        [name]="entry.kind === 'write' ? getToolIcon(entry.decision.toolName) : 'search'"
+        size="inherit"
+        class="text-xs"
+      />
     </span>
   </ng-template>
 </ui-timeline>
+
+<ng-template #reasoning let-decision>
+  @if (decision.reasoning) {
+    <div class="mb-2">
+      <div
+        class="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed"
+        [class.line-clamp-3]="!isExpanded(decision.id)"
+        [innerHTML]="decision.reasoning | markdown"
+      ></div>
+      @if (decision.reasoning.length > 150) {
+        <ui-button
+          appearance="text"
+          intent="secondary"
+          size="sm"
+          [label]="isExpanded(decision.id) ? 'Show less' : 'Show more'"
+          (click)="toggleExpand(decision.id); $event.stopPropagation()"
+        />
+      }
+    </div>
+  }
+</ng-template>

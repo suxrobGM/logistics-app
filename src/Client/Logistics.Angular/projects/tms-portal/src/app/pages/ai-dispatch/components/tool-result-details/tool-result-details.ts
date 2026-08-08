@@ -12,6 +12,7 @@ type ParsedLoad = NonNullable<ParsedToolOutput["loads"]>[number];
   selector: "app-tool-result-details",
   templateUrl: "./tool-result-details.html",
   imports: [CurrencyPipe, UiDataTable],
+  host: { "[class.hidden]": "!hasContent()" },
 })
 export class ToolResultDetails {
   public readonly toolOutput = input<string | null | undefined>();
