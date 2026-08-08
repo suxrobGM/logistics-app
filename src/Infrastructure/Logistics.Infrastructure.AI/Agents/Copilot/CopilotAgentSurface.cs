@@ -44,7 +44,7 @@ internal sealed class CopilotAgentSurface(
         broadcastService.BroadcastMessageAsync(request.TenantId, conversation.CreatedById, message);
 
     public Task BroadcastTurnUpdateAsync(AgentTurnRequest request, AgentConversation conversation, AgentSession session) =>
-        broadcastService.BroadcastTurnUpdateAsync(request.TenantId, conversation.CreatedById, new AICopilotTurnUpdateDto
+        broadcastService.BroadcastTurnUpdateAsync(request.TenantId, conversation.CreatedById, new AgentTurnUpdateDto
         {
             ConversationId = conversation.Id,
             SessionId = session.Id,

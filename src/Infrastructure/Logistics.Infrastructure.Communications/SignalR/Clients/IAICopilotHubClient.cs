@@ -7,5 +7,5 @@ public interface IAICopilotHubClient
 {
     Task ReceiveCopilotMessage(AgentMessageDto message);
     Task ReceiveCopilotDecision(AgentDecisionDto decision);
-    Task ReceiveCopilotTurnUpdate(AICopilotTurnUpdateDto update);
+    Task ReceiveCopilotTurnUpdate(AgentTurnUpdateDto update);
 }

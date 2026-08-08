@@ -34,7 +34,7 @@ internal sealed class DispatchAgentSurface(
         broadcastService.BroadcastMessageAsync(request.TenantId, message);
 
     public Task BroadcastTurnUpdateAsync(AgentTurnRequest request, AgentConversation conversation, AgentSession session) =>
-        broadcastService.BroadcastTurnUpdateAsync(request.TenantId, new AIDispatchTurnUpdateDto
+        broadcastService.BroadcastTurnUpdateAsync(request.TenantId, new AgentTurnUpdateDto
         {
             ConversationId = conversation.Id,
             SessionId = session.Id,

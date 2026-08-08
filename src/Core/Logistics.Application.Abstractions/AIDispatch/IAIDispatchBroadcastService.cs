@@ -10,6 +10,6 @@ namespace Logistics.Application.Abstractions.AIDispatch;
 public interface IAIDispatchBroadcastService
 {
     Task BroadcastMessageAsync(Guid tenantId, AgentMessageDto message);
-    Task BroadcastTurnUpdateAsync(Guid tenantId, AIDispatchTurnUpdateDto update);
+    Task BroadcastTurnUpdateAsync(Guid tenantId, AgentTurnUpdateDto update);
     Task BroadcastDecisionAsync(Guid tenantId, AgentDecisionDto decision);
 }

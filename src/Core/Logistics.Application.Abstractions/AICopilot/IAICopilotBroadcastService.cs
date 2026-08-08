@@ -9,6 +9,6 @@ namespace Logistics.Application.Abstractions.AICopilot;
 public interface IAICopilotBroadcastService
 {
     Task BroadcastMessageAsync(Guid tenantId, Guid userId, AgentMessageDto message);
-    Task BroadcastTurnUpdateAsync(Guid tenantId, Guid userId, AICopilotTurnUpdateDto update);
+    Task BroadcastTurnUpdateAsync(Guid tenantId, Guid userId, AgentTurnUpdateDto update);
     Task BroadcastDecisionAsync(Guid tenantId, Guid userId, AgentDecisionDto decision);
 }

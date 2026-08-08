@@ -12,7 +12,7 @@ public interface IAIDispatchHubClient
     Task ReceiveDispatchMessage(AgentMessageDto message);
 
     /// <summary>Receives progress of the in-flight turn (status, tokens, decisions).</summary>
-    Task ReceiveDispatchTurnUpdate(AIDispatchTurnUpdateDto update);
+    Task ReceiveDispatchTurnUpdate(AgentTurnUpdateDto update);
 
     /// <summary>Receives individual AI dispatch agent decision notifications.</summary>
     Task ReceiveAIDispatchDecision(AgentDecisionDto decision);

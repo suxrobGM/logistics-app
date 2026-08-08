@@ -14,7 +14,7 @@ internal sealed class SignalRAIDispatchBroadcastService(
     public Task BroadcastMessageAsync(Guid tenantId, AgentMessageDto message) =>
         Group(tenantId).ReceiveDispatchMessage(message);
 
-    public Task BroadcastTurnUpdateAsync(Guid tenantId, AIDispatchTurnUpdateDto update) =>
+    public Task BroadcastTurnUpdateAsync(Guid tenantId, AgentTurnUpdateDto update) =>
         Group(tenantId).ReceiveDispatchTurnUpdate(update);
 
     public Task BroadcastDecisionAsync(Guid tenantId, AgentDecisionDto decision) =>

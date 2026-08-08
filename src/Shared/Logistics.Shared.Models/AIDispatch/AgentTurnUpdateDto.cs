@@ -2,8 +2,8 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Shared.Models;
 
-/// <summary>Progress of an in-flight copilot turn, pushed over SignalR while the agent works.</summary>
-public record AICopilotTurnUpdateDto
+/// <summary>Progress of an in-flight agent turn, pushed over SignalR while the agent works.</summary>
+public record AgentTurnUpdateDto
 {
     public Guid ConversationId { get; set; }
     public Guid SessionId { get; set; }
