@@ -3,8 +3,7 @@ import type { AgentDecisionDto, AgentMessageDto, AgentSessionDto } from "@logist
 /** One agent turn's tool activity, grouped by session and rendered as a `ui-timeline`. */
 export interface TranscriptTurn {
   readonly kind: "turn";
-  readonly sessionId: string;
-  readonly session: AgentSessionDto | undefined;
+  readonly session: AgentSessionDto;
   /** Sorted ascending by `createdAt`, per the turn-grouping contract. */
   readonly decisions: AgentDecisionDto[];
   readonly sortKey: number;
@@ -34,36 +33,50 @@ export function buildTranscriptStream(
   decisions: readonly AgentDecisionDto[],
   sessions: readonly AgentSessionDto[],
 ): TranscriptItem[] {
-  const messageItems: TranscriptMessage[] = messages.map((message) => ({
-    kind: "message",
-    message,
-    sortKey: messageSortKey(message),
-  }));
+  const messageItems: TranscriptMessage[] = [];
+  const firstSeqBySession = new Map<string, number>();
 
-  const turnItems: TranscriptTurn[] = sessions
-    .map((session): TranscriptTurn | null => {
-      const sessionDecisions = decisions
-        .filter((d) => d.sessionId === session.id)
-        .sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
-      if (sessionDecisions.length === 0) return null;
+  for (const message of messages) {
+    const sortKey = messageSortKey(message);
+    messageItems.push({ kind: "message", message, sortKey });
+    if (message.sessionId) {
+      firstSeqBySession.set(
+        message.sessionId,
+        Math.min(firstSeqBySession.get(message.sessionId) ?? Number.MAX_SAFE_INTEGER, sortKey),
+      );
+    }
+  }
 
-      const firstMessageSeq = messages
-        .filter((m) => m.sessionId === session.id)
-        .map(messageSortKey)
-        .reduce((min, seq) => Math.min(min, seq), Number.MAX_SAFE_INTEGER);
+  const decisionsBySession = new Map<string, AgentDecisionDto[]>();
+  for (const decision of decisions) {
+    if (!decision.sessionId) continue;
+    const bucket = decisionsBySession.get(decision.sessionId);
+    if (bucket) {
+      bucket.push(decision);
+    } else {
+      decisionsBySession.set(decision.sessionId, [decision]);
+    }
+  }
+  for (const bucket of decisionsBySession.values()) {
+    bucket.sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
+  }
 
-      return {
-        kind: "turn",
-        sessionId: session.id!,
-        session,
-        decisions: sessionDecisions,
-        sortKey:
-          firstMessageSeq === Number.MAX_SAFE_INTEGER
-            ? Number.MAX_SAFE_INTEGER
-            : firstMessageSeq - 0.5,
-      };
-    })
-    .filter((turn): turn is TranscriptTurn => turn !== null);
+  const turnItems: TranscriptTurn[] = [];
+  for (const session of sessions) {
+    const sessionDecisions = session.id ? decisionsBySession.get(session.id) : undefined;
+    if (!sessionDecisions?.length) continue;
+
+    const firstMessageSeq = firstSeqBySession.get(session.id!) ?? Number.MAX_SAFE_INTEGER;
+    turnItems.push({
+      kind: "turn",
+      session,
+      decisions: sessionDecisions,
+      sortKey:
+        firstMessageSeq === Number.MAX_SAFE_INTEGER
+          ? Number.MAX_SAFE_INTEGER
+          : firstMessageSeq - 0.5,
+    });
+  }
 
   return [...messageItems, ...turnItems].sort((a, b) => a.sortKey - b.sortKey);
 }

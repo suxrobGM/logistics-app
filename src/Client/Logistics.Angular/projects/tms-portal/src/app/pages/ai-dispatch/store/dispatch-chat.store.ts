@@ -13,12 +13,11 @@ import { patchState, signalStore, withComputed, withMethods, withState } from "@
 import { AIDispatchHubService } from "@/core/services/ai-dispatch-hub.service";
 import { DispatchApiService } from "@/core/services/dispatch-api.service";
 import { DispatchBadgeService } from "@/core/services/dispatch-badge.service";
+import { buildQuotaNotice, TurnWatchdog } from "@/core/store/agent-chat.helpers";
 import {
-  buildQuotaNotice,
   persistRightPanelCollapsed,
   readStoredRightPanelCollapsed,
-  TurnWatchdog,
-} from "./dispatch-chat.store.helpers";
+} from "./dispatch-chat-store.utils";
 
 type TurnStatus = "idle" | "running" | "failed";
 
@@ -187,7 +186,9 @@ export const DispatchChatStore = signalStore(
         if (pending) patchState(store, { pendingDecisions: pending });
       };
 
-      const loadTrucks = async (): Promise<void> => {
+      /** The fleet map is the only consumer, so a collapsed right panel must not pay for 100 trucks. */
+      const loadTrucksIfPanelOpen = async (): Promise<void> => {
+        if (store.rightPanelCollapsed() || store.trucks().length > 0) return;
         patchState(store, { trucks: await dispatchApi.fetchAvailableTrucks() });
       };
 
@@ -197,28 +198,20 @@ export const DispatchChatStore = signalStore(
         patchState(store, { messages: [...store.messages(), message] });
       });
 
+      const upsert = (list: AgentDecisionDto[], decision: AgentDecisionDto): AgentDecisionDto[] =>
+        list.some((d) => d.id === decision.id)
+          ? list.map((d) => (d.id === decision.id ? decision : d))
+          : [...list, decision];
+
       hub.decisionReceived$.subscribe((decision) => {
-        // Tenant-wide pending list, independent of which conversation is open.
-        const pending = store.pendingDecisions();
-        const index = pending.findIndex((d) => d.id === decision.id);
+        const inOpenConversation = store.sessions().some((s) => s.id === decision.sessionId);
         patchState(store, {
+          // Tenant-wide pending list, independent of which conversation is open.
           pendingDecisions:
             decision.status === "suggested"
-              ? index >= 0
-                ? pending.map((d) => (d.id === decision.id ? decision : d))
-                : [...pending, decision]
-              : pending.filter((d) => d.id !== decision.id),
-        });
-
-        // Also patch the open conversation's transcript if the decision belongs to one of its turns.
-        if (!store.sessions().some((s) => s.id === decision.sessionId)) return;
-        const existing = store.decisions();
-        const existingIndex = existing.findIndex((d) => d.id === decision.id);
-        patchState(store, {
-          decisions:
-            existingIndex >= 0
-              ? existing.map((d) => (d.id === decision.id ? decision : d))
-              : [...existing, decision],
+              ? upsert(store.pendingDecisions(), decision)
+              : store.pendingDecisions().filter((d) => d.id !== decision.id),
+          decisions: inOpenConversation ? upsert(store.decisions(), decision) : store.decisions(),
         });
       });
 
@@ -256,7 +249,7 @@ export const DispatchChatStore = signalStore(
         async init(): Promise<void> {
           void hub.acquireDispatchBoard(destroyRef);
           void loadQuota();
-          void loadTrucks();
+          void loadTrucksIfPanelOpen();
           void refreshPendingDecisions();
 
           patchState(store, { loading: true });
@@ -415,6 +408,7 @@ export const DispatchChatStore = signalStore(
           const collapsed = !store.rightPanelCollapsed();
           patchState(store, { rightPanelCollapsed: collapsed });
           persistRightPanelCollapsed(collapsed);
+          void loadTrucksIfPanelOpen();
         },
       };
     },

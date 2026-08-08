@@ -72,7 +72,7 @@ public class SendAIDispatchMessageHandlerTests
     private SendAIDispatchMessageCommand Command(Guid conversationId, string text = "hello") =>
         new() { ConversationId = conversationId, Text = text };
 
-    /// <summary>A copilot-kind conversation (Phase 2/1) must never accept a dispatch send.</summary>
+    /// <summary>A copilot-kind conversation must never accept a dispatch send.</summary>
     [Fact]
     public async Task Handle_CopilotKindConversation_Fails()
     {

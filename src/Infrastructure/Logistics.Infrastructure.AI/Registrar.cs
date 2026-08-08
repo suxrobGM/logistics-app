@@ -46,15 +46,12 @@ public static class Registrar
         services.AddScoped<IAgentToolExecutor, AgentToolExecutor>();
         services.AddSingleton<IAgentToolRegistry, AgentToolRegistry>();
 
-        // Shared conversational turn lifecycle (copilot and dispatch conversations alike)
         services.AddScoped<AgentTurnService>();
 
-        // Dispatch (tenant-shared conversation sharing the loop, tools, and decision machinery)
         services.AddScoped<IAIDispatchService, AIDispatchService>();
         services.AddScoped<DispatchAgentSurface>();
         services.AddScoped<AIDispatchConversationBuilder>();
 
-        // Copilot (conversational agent sharing the loop, tools, and decision machinery)
         services.AddScoped<IAICopilotService, AICopilotService>();
         services.AddScoped<CopilotAgentSurface>();
         services.AddScoped<AICopilotConversationBuilder>();

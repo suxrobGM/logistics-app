@@ -11,7 +11,7 @@ import {
 import type { AgentDecisionDto, AgentMessageDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
 import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
-import { CopilotStore, type QuotaNotice } from "@/core/store";
+import { CopilotStore, QuotaNoticeClasses } from "@/core/store";
 import {
   ChatComposer,
   ChatMessage,
@@ -74,11 +74,7 @@ export class CopilotDrawer {
   /** False while the user has scrolled up to read back - new messages must not yank them down. */
   protected readonly pinnedToBottom = signal(true);
 
-  protected readonly noticeClasses: Record<QuotaNotice["severity"], string> = {
-    blocked: "border-danger/30 bg-danger/10 text-danger",
-    overage: "border-warning/30 bg-warning/15 text-warning",
-    info: "border-border bg-warning/10 text-muted-foreground",
-  };
+  protected readonly noticeClasses = QuotaNoticeClasses;
 
   protected readonly suggestedPrompts = [
     "Which loads were delivered last week?",

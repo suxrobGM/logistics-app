@@ -2,13 +2,13 @@ import { Component, effect, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { AgentDecisionDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
-import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
+import { Icon, Stack, Typography, UiButton, UiTooltip } from "@logistics/shared/ui";
+import { QuotaNoticeClasses } from "@/core/store";
 import { ChatComposer, DecisionActionsService, RejectDecisionDialog } from "@/shared/components";
 import { DispatchRightPanel } from "../components/dispatch-right-panel/dispatch-right-panel";
 import { DispatchSidebar } from "../components/dispatch-sidebar/dispatch-sidebar";
 import { DispatchTranscript } from "../components/dispatch-transcript/dispatch-transcript";
 import { DispatchChatStore } from "../store/dispatch-chat.store";
-import type { QuotaNotice } from "../store/dispatch-chat.store.helpers";
 
 /**
  * Full-page, Claude-Code-style AI dispatch chat: a persistent conversation sidebar, the transcript
@@ -27,6 +27,8 @@ import type { QuotaNotice } from "../store/dispatch-chat.store.helpers";
     Icon,
     RejectDecisionDialog,
     RouterLink,
+    Stack,
+    Typography,
     UiButton,
     UiTooltip,
   ],
@@ -36,11 +38,7 @@ export class DispatchChat {
   protected readonly actions = inject(DecisionActionsService);
   protected readonly layoutService = inject(LayoutService);
 
-  protected readonly noticeClasses: Record<QuotaNotice["severity"], string> = {
-    blocked: "border-danger/30 bg-danger/10 text-danger",
-    overage: "border-warning/30 bg-warning/15 text-warning",
-    info: "border-border bg-warning/10 text-muted-foreground",
-  };
+  protected readonly noticeClasses = QuotaNoticeClasses;
 
   constructor() {
     // Sidebar starts collapsed on mobile; a later manual toggle is left alone.

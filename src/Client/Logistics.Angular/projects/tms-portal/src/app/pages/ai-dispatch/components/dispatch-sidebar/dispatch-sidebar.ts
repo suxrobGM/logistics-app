@@ -1,10 +1,13 @@
 import { DatePipe } from "@angular/common";
-import { Component, inject, input, output, signal } from "@angular/core";
+import { Component, computed, inject, input, output, signal } from "@angular/core";
 import type { AgentConversationDto } from "@logistics/shared/api";
 import { ToastService } from "@logistics/shared/services";
 import {
   EmptyState,
   Icon,
+  Spinner,
+  Stack,
+  Typography,
   UiButton,
   UiDialog,
   UiMenu,
@@ -20,7 +23,18 @@ import {
 @Component({
   selector: "app-dispatch-sidebar",
   templateUrl: "./dispatch-sidebar.html",
-  imports: [DatePipe, EmptyState, Icon, UiButton, UiDialog, UiMenu, UiTextField],
+  imports: [
+    DatePipe,
+    EmptyState,
+    Icon,
+    Spinner,
+    Stack,
+    Typography,
+    UiButton,
+    UiDialog,
+    UiMenu,
+    UiTextField,
+  ],
 })
 export class DispatchSidebar {
   private readonly toast = inject(ToastService);
@@ -39,7 +53,13 @@ export class DispatchSidebar {
   protected readonly renameTarget = signal<AgentConversationDto | null>(null);
   protected readonly renameTitle = signal("");
 
-  protected menuItems(conversation: AgentConversationDto): UiMenuItem[] {
+  /** Set by the row kebab before it opens the one shared menu - see `UiMenu`'s trigger contract. */
+  protected readonly menuTarget = signal<AgentConversationDto | null>(null);
+
+  protected readonly menuItems = computed<UiMenuItem[]>(() => {
+    const conversation = this.menuTarget();
+    if (!conversation) return [];
+
     return [
       {
         label: "Rename",
@@ -54,7 +74,7 @@ export class DispatchSidebar {
           this.toast.confirmDelete("conversation", () => this.delete.emit(conversation.id!)),
       },
     ];
-  }
+  });
 
   protected openRenameDialog(conversation: AgentConversationDto): void {
     this.renameTarget.set(conversation);

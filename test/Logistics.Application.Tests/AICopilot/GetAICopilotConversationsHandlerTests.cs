@@ -28,7 +28,7 @@ public class GetAICopilotConversationsHandlerTests
     }
 
     /// <summary>
-    /// A future Phase 3 dispatch conversation owned by the same user must never surface on the
+    /// A dispatch conversation owned by the same user must never surface on the
     /// copilot list - only Kind == Copilot rows count.
     /// </summary>
     [Fact]

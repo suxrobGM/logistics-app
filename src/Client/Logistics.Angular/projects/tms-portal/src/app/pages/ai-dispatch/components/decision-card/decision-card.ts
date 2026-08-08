@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from "@angular/core";
 import type { AgentDecisionDto } from "@logistics/shared/api";
-import { Badge, Icon, Stack, Surface, UiButton } from "@logistics/shared/ui";
+import { Badge, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { stripMarkdown } from "@/shared/pipes";
 import { getDecisionRefs, getToolLabel, Labels } from "@/shared/utils";
 
@@ -8,7 +8,7 @@ import { getDecisionRefs, getToolLabel, Labels } from "@/shared/utils";
 @Component({
   selector: "app-decision-card",
   templateUrl: "./decision-card.html",
-  imports: [Badge, Icon, Stack, Surface, UiButton],
+  imports: [Badge, Icon, Stack, Surface, Typography, UiButton],
 })
 export class DecisionCard {
   public readonly decision = input.required<AgentDecisionDto>();

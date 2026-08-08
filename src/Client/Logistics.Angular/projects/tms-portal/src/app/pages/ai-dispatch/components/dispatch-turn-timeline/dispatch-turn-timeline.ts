@@ -2,7 +2,18 @@ import { DatePipe } from "@angular/common";
 import { Component, computed, input, output, signal } from "@angular/core";
 import { Permission, PermissionGuard } from "@logistics/shared";
 import type { AgentDecisionDto, AgentSessionDto } from "@logistics/shared/api";
-import { Badge, Icon, UiTimeline, UiTimelineContent, UiTimelineMarker } from "@logistics/shared/ui";
+import {
+  Badge,
+  Icon,
+  Spinner,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+  UiTimeline,
+  UiTimelineContent,
+  UiTimelineMarker,
+} from "@logistics/shared/ui";
 import { ApproveRejectActions, ToolOutputSummary } from "@/shared/components";
 import { MarkdownPipe } from "@/shared/pipes";
 import { getToolIcon, getToolLabel, getToolMarkerClass, isWriteTool, Labels } from "@/shared/utils";
@@ -22,14 +33,19 @@ import { getToolIcon, getToolLabel, getToolMarkerClass, isWriteTool, Labels } fr
     Icon,
     MarkdownPipe,
     PermissionGuard,
+    Spinner,
+    Stack,
+    Surface,
     ToolOutputSummary,
+    Typography,
+    UiButton,
     UiTimeline,
     UiTimelineContent,
     UiTimelineMarker,
   ],
 })
 export class DispatchTurnTimeline {
-  public readonly session = input<AgentSessionDto | undefined>(undefined);
+  public readonly session = input.required<AgentSessionDto>();
   public readonly decisions = input.required<AgentDecisionDto[]>();
   /** Id of the decision whose approve/reject request is in flight. */
   public readonly busyDecisionId = input<string | null>(null);
@@ -44,7 +60,7 @@ export class DispatchTurnTimeline {
   protected readonly dispatchManage = Permission.Dispatch.Manage;
 
   /** Marks which past turn is the one currently in progress, alongside the transcript's own spinner. */
-  protected readonly isTurnRunning = computed(() => this.session()?.status === "running");
+  protected readonly isTurnRunning = computed(() => this.session().status === "running");
 
   protected readonly expandedDecisions = signal<Set<string>>(new Set());
 

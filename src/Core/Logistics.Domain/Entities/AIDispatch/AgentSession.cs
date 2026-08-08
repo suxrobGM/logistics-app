@@ -18,8 +18,8 @@ public class AgentSession : AuditableEntity, ITenantEntity
     public AgentSessionStatus Status { get; private set; } = AgentSessionStatus.Running;
 
     /// <summary>
-    /// The conversation this turn belongs to. Null for a dispatch session that runs outside a
-    /// conversation (today, every dispatch session - Phase 3 adds tenant-shared ones).
+    /// The conversation this turn belongs to. Null only for legacy sessions created before
+    /// conversations existed.
     /// </summary>
     public Guid? ConversationId { get; init; }
     public virtual AgentConversation? Conversation { get; init; }

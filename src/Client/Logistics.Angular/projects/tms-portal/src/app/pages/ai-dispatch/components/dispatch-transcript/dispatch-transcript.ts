@@ -9,10 +9,10 @@ import {
   type ElementRef,
 } from "@angular/core";
 import type { AgentDecisionDto, AgentMessageDto, AgentSessionDto } from "@logistics/shared/api";
-import { Icon, UiButton } from "@logistics/shared/ui";
+import { Alert, EmptyState, Spinner, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { ChatMessage } from "@/shared/components";
 import { DispatchTurnTimeline } from "../dispatch-turn-timeline/dispatch-turn-timeline";
-import { buildTranscriptStream, type TranscriptItem } from "./dispatch-transcript.helpers";
+import { buildTranscriptStream, type TranscriptItem } from "./dispatch-transcript.utils";
 
 /** Scroll distance from the bottom under which auto-scroll stays engaged. */
 const ScrollPinThresholdPx = 48;
@@ -32,7 +32,16 @@ const SUGGESTED_PROMPTS = [
 @Component({
   selector: "app-dispatch-transcript",
   templateUrl: "./dispatch-transcript.html",
-  imports: [ChatMessage, DispatchTurnTimeline, Icon, UiButton],
+  imports: [
+    Alert,
+    ChatMessage,
+    DispatchTurnTimeline,
+    EmptyState,
+    Spinner,
+    Stack,
+    Typography,
+    UiButton,
+  ],
 })
 export class DispatchTranscript {
   private readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
@@ -76,7 +85,7 @@ export class DispatchTranscript {
   }
 
   protected trackItem(item: TranscriptItem): string {
-    return item.kind === "message" ? (item.message.id ?? "") : item.sessionId;
+    return item.kind === "message" ? (item.message.id ?? "") : (item.session.id ?? "");
   }
 
   protected onMessagesScroll(): void {

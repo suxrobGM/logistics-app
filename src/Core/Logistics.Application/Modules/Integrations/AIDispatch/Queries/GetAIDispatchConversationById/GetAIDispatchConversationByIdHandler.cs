@@ -31,13 +31,16 @@ internal sealed class GetAIDispatchConversationByIdHandler(
             .OrderBy(d => d.CreatedAt)
             .ToListAsync(ct);
 
-        var dto = conversation.ToDto();
-        // Null DisplayText marks a tool-result row: provider replay data, not chat content.
-        dto.Messages = conversation.Messages
-            .Where(m => m.DisplayText != null)
+        // Null DisplayText marks a tool-result row: provider replay data, not chat content. Queried
+        // rather than filtered off the navigation, which would materialize every excluded row's
+        // ContentJson - the fleet snapshots and HOS payloads that dwarf the transcript itself.
+        var messages = await tenantUow.Repository<AgentMessage>().Query()
+            .Where(m => m.ConversationId == conversation.Id && m.DisplayText != null)
             .OrderBy(m => m.Sequence)
-            .Select(m => m.ToDto())
-            .ToList();
+            .ToListAsync(ct);
+
+        var dto = conversation.ToDto();
+        dto.Messages = messages.Select(m => m.ToDto()).ToList();
         dto.Decisions = decisions.Select(d => d.ToDto()).ToList();
         dto.Sessions = sessions.Select(s => s.ToDto()).ToList();
 

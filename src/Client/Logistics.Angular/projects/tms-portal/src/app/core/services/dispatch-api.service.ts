@@ -19,6 +19,7 @@ import {
   type SendAIDispatchMessageResultDto,
   type TruckDto,
 } from "@logistics/shared/api";
+import { orNull, succeeded } from "./agent-api.utils";
 
 /**
  * HTTP for the AI dispatch chat page. Calls resolve to null/false instead of throwing (mirrors
@@ -33,7 +34,7 @@ export class DispatchApiService {
     conversationId: string,
     options?: { silent?: boolean },
   ): Promise<AgentConversationDto | null> {
-    return this.orNull(
+    return orNull(
       this.api.invoke(
         getAIDispatchConversationById,
         { conversationId },
@@ -46,7 +47,7 @@ export class DispatchApiService {
     page: number,
     pageSize: number,
   ): Promise<AgentConversationDtoPagedResult | null> {
-    return this.orNull(
+    return orNull(
       this.api.invoke(getAIDispatchConversations, {
         Page: page,
         PageSize: pageSize,
@@ -57,33 +58,33 @@ export class DispatchApiService {
 
   /** Silent - the quota notice and composer block are advisory; the send path enforces server-side. */
   fetchQuota(): Promise<AIQuotaStatusDto | null> {
-    return this.orNull(this.api.invoke(getAIQuotaStatus, undefined, silentErrors()));
+    return orNull(this.api.invoke(getAIQuotaStatus, undefined, silentErrors()));
   }
 
   /** Tenant-wide write decisions awaiting approval, for the right panel + sidebar badge. */
   fetchPendingDecisions(options?: { silent?: boolean }): Promise<AgentDecisionDto[] | null> {
-    return this.orNull(
+    return orNull(
       this.api.invoke(getPendingDecisions, undefined, options?.silent ? silentErrors() : undefined),
     );
   }
 
   /** Trucks with a known location, for the fleet map. Silent - the map is a secondary panel. */
   async fetchAvailableTrucks(): Promise<TruckDto[]> {
-    const result = await this.orNull(
+    const result = await orNull(
       this.api.invoke(getTrucks, { Statuses: ["available"], PageSize: 100 }, silentErrors()),
     );
     return result?.items ?? [];
   }
 
   createConversation(): Promise<AgentConversationDto | null> {
-    return this.orNull(this.api.invoke(createAIDispatchConversation));
+    return orNull(this.api.invoke(createAIDispatchConversation));
   }
 
   sendMessage(
     conversationId: string,
     text: string,
   ): Promise<SendAIDispatchMessageResultDto | null> {
-    return this.orNull(
+    return orNull(
       this.api.invoke(sendAIDispatchMessage, {
         conversationId,
         body: { conversationId, text },
@@ -92,11 +93,11 @@ export class DispatchApiService {
   }
 
   cancelTurn(conversationId: string): Promise<boolean> {
-    return this.succeeded(this.api.invoke(cancelAIDispatchTurn, { conversationId }));
+    return succeeded(this.api.invoke(cancelAIDispatchTurn, { conversationId }));
   }
 
   renameConversation(conversationId: string, title: string): Promise<boolean> {
-    return this.succeeded(
+    return succeeded(
       this.api.invoke(renameAIDispatchConversation, {
         conversationId,
         body: { conversationId, title },
@@ -105,23 +106,6 @@ export class DispatchApiService {
   }
 
   deleteConversation(conversationId: string): Promise<boolean> {
-    return this.succeeded(this.api.invoke(deleteAIDispatchConversation, { conversationId }));
-  }
-
-  private async orNull<T>(call: Promise<T>): Promise<T | null> {
-    try {
-      return await call;
-    } catch {
-      return null;
-    }
-  }
-
-  private async succeeded(call: Promise<unknown>): Promise<boolean> {
-    try {
-      await call;
-      return true;
-    } catch {
-      return false;
-    }
+    return succeeded(this.api.invoke(deleteAIDispatchConversation, { conversationId }));
   }
 }

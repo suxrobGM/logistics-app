@@ -1,23 +1,21 @@
 import type { AIQuotaStatusDto } from "@logistics/shared/api";
 import { DateUtils } from "@logistics/shared/utils";
 
-const RightPanelCollapsedKey = "dispatch-chat.right-panel-collapsed";
-
-export const readStoredRightPanelCollapsed = (): boolean =>
-  localStorage.getItem(RightPanelCollapsedKey) === "true";
-
-export const persistRightPanelCollapsed = (collapsed: boolean): void =>
-  localStorage.setItem(RightPanelCollapsedKey, String(collapsed));
-
 export interface QuotaNotice {
   /** "blocked" = hard pause (composer disables); "overage" = billing through; "info" = nearing budget. */
   severity: "info" | "overage" | "blocked";
   text: string;
 }
 
+export const QuotaNoticeClasses: Record<QuotaNotice["severity"], string> = {
+  blocked: "border-danger/30 bg-danger/10 text-danger",
+  overage: "border-warning/30 bg-warning/15 text-warning",
+  info: "border-border bg-warning/10 text-muted-foreground",
+};
+
 /**
- * Usage notice shown near the composer from 80% up; null hides it. Deliberate near-copy of
- * `CopilotStore`'s `buildQuotaNotice` - keep the two in sync.
+ * Usage notice shown near the composer from 80% up; null hides it. `formatCurrency` comes from
+ * the caller so the accrued figure follows tenant currency like every other money display.
  */
 export function buildQuotaNotice(
   quota: AIQuotaStatusDto | null,

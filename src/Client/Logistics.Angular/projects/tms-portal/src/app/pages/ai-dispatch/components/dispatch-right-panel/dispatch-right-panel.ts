@@ -1,7 +1,7 @@
 import { Component, input, output } from "@angular/core";
 import type { AgentDecisionDto, AIQuotaStatusDto } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
-import { Badge, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
+import { Badge, EmptyState, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { AIQuotaUsage, GeolocationMap } from "@/shared/components";
 import { DecisionCard } from "../decision-card/decision-card";
 
@@ -12,7 +12,17 @@ import { DecisionCard } from "../decision-card/decision-card";
 @Component({
   selector: "app-dispatch-right-panel",
   templateUrl: "./dispatch-right-panel.html",
-  imports: [AIQuotaUsage, Badge, DecisionCard, GeolocationMap, Icon, Stack, Surface, Typography],
+  imports: [
+    AIQuotaUsage,
+    Badge,
+    DecisionCard,
+    EmptyState,
+    GeolocationMap,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
+  ],
 })
 export class DispatchRightPanel {
   public readonly truckLocations = input.required<TruckGeolocationDto[]>();

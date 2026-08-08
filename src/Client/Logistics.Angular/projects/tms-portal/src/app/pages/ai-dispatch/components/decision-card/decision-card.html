@@ -8,19 +8,19 @@
         [severity]="Labels.dispatchStatusSeverity(decision().status ?? '')"
       />
     </ui-stack>
-    <span class="text-muted-foreground text-xs">{{ toolLabel() }}</span>
+    <ui-typography variant="caption" color="muted">{{ toolLabel() }}</ui-typography>
   </ui-stack>
 
   <!-- Reasoning -->
   @if (decision().reasoning) {
-    <p class="text-subtle-foreground mb-3 line-clamp-3 text-sm leading-relaxed">
+    <ui-typography variant="body-sm" color="secondary" class="mb-3 line-clamp-3 leading-relaxed">
       {{ stripMarkdown(decision().reasoning) }}
-    </p>
+    </ui-typography>
   }
 
   <!-- Tool input details -->
   @if (refs().load) {
-    <div class="bg-subtle mb-3 rounded-md p-3 text-sm">
+    <ui-surface variant="subtle" padding="sm" radius="md" [border]="false" class="mb-3 text-sm">
       <ui-stack direction="row" align="center" gap="2">
         <ui-icon name="box" size="xs" color="muted" />
         <span class="text-muted-foreground">Load:</span>
@@ -34,9 +34,11 @@
         </ui-stack>
       }
       @if (refs().reasoning) {
-        <div class="text-subtle-foreground mt-2 text-xs italic">"{{ refs().reasoning }}"</div>
+        <ui-typography variant="caption" color="secondary" class="mt-2 block italic">
+          "{{ refs().reasoning }}"
+        </ui-typography>
       }
-    </div>
+    </ui-surface>
   }
 
   <!-- Actions -->

@@ -17,14 +17,13 @@ import { patchState, signalStore, withComputed, withMethods, withState } from "@
 import { CopilotApiService } from "@/core/services/copilot-api.service";
 import { CopilotHubService } from "@/core/services/copilot-hub.service";
 import { UpgradePromptService } from "@/core/services/upgrade-prompt.service";
+import { buildQuotaNotice, TurnWatchdog } from "./agent-chat.helpers";
 import {
-  buildQuotaNotice,
   clampDrawerWidth,
   DefaultDrawerWidth,
   persistDrawerWidth,
   readStoredDrawerWidth,
-  TurnWatchdog,
-} from "./copilot.store.helpers";
+} from "./copilot-store.utils";
 
 type CopilotView = "chat" | "history";
 type TurnStatus = "idle" | "running" | "failed";

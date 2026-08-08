@@ -88,7 +88,7 @@ public class SendAICopilotMessageHandlerTests
         backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
     }
 
-    /// <summary>A dispatch-kind conversation (Phase 3) must never accept a copilot send.</summary>
+    /// <summary>A dispatch-kind conversation must never accept a copilot send.</summary>
     [Fact]
     public async Task Handle_DispatchKindConversation_Fails()
     {

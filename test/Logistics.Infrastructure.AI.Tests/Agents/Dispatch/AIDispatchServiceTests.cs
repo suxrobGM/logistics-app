@@ -294,7 +294,7 @@ public class AIDispatchServiceTests
 
     #endregion
 
-    #region Cancellation (shared across session types, unchanged by the Phase 3 rework)
+    #region Cancellation (shared across session types)
 
     [Fact]
     public async Task CancelAsync_SessionNotFound_ReturnsFalse()

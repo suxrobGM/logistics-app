@@ -1,7 +1,13 @@
 <div class="flex h-[calc(100vh-10rem)] flex-col">
-  <!-- Header -->
-  <div class="border-border mb-3 flex shrink-0 items-center justify-between gap-2 border-b pb-3">
-    <div class="flex min-w-0 items-center gap-2">
+  <ui-stack
+    direction="row"
+    align="center"
+    justify="between"
+    gap="2"
+    tag="header"
+    class="border-border mb-3 shrink-0 border-b pb-3"
+  >
+    <ui-stack direction="row" align="center" gap="2" class="min-w-0">
       <ui-button
         icon="panel-left"
         appearance="text"
@@ -12,9 +18,9 @@
         (click)="store.toggleSidebar()"
       />
       <ui-icon name="sparkles" size="inherit" class="text-primary" />
-      <h1 class="m-0 truncate text-lg font-semibold">AI Dispatch</h1>
-    </div>
-    <div class="flex shrink-0 items-center gap-2">
+      <ui-typography variant="h5" tag="h1" class="truncate">AI Dispatch</ui-typography>
+    </ui-stack>
+    <ui-stack direction="row" align="center" gap="2" class="shrink-0">
       <ui-button
         appearance="outlined"
         intent="secondary"
@@ -32,17 +38,23 @@
         uiTooltip="Toggle side panel"
         (click)="store.toggleRightPanel()"
       />
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
 
-  <!-- Body -->
   <div class="border-border bg-card relative flex min-h-0 flex-1 overflow-hidden rounded-xl border">
     @if (!store.sidebarCollapsed()) {
       <aside
         class="border-border bg-card flex w-72 shrink-0 flex-col border-r max-md:fixed max-md:inset-0 max-md:z-40 max-md:w-full"
       >
-        <div class="border-border flex items-center justify-between border-b p-2 md:hidden">
-          <span class="px-1 text-sm font-semibold">Conversations</span>
+        <ui-stack
+          direction="row"
+          align="center"
+          justify="between"
+          class="border-border border-b p-2 md:hidden"
+        >
+          <ui-typography variant="body-sm" weight="semibold" class="px-1">
+            Conversations
+          </ui-typography>
           <ui-button
             icon="x"
             appearance="text"
@@ -51,7 +63,7 @@
             ariaLabel="Close conversations"
             (click)="store.toggleSidebar()"
           />
-        </div>
+        </ui-stack>
         <div class="min-h-0 flex-1">
           <app-dispatch-sidebar
             [conversations]="store.conversations()"
@@ -88,18 +100,25 @@
       />
 
       @if (store.quotaNotice(); as notice) {
-        <div
-          class="flex items-center gap-2 border-t px-4 py-1.5 text-xs"
+        <ui-stack
+          direction="row"
+          align="center"
+          gap="2"
+          class="border-t px-4 py-1.5 text-xs"
           [class]="noticeClasses[notice.severity]"
         >
           <ui-icon name="chart-column" size="inherit" class="shrink-0" />
           <span>{{ notice.text }}</span>
-        </div>
+        </ui-stack>
       }
 
       @if (store.realtimeDown()) {
-        <div
-          class="border-border bg-muted/60 text-muted-foreground flex items-center justify-between gap-2 border-t px-4 py-2 text-xs"
+        <ui-stack
+          direction="row"
+          align="center"
+          justify="between"
+          gap="2"
+          class="border-border bg-muted/60 text-muted-foreground border-t px-4 py-2 text-xs"
         >
           <span>Live updates unavailable.</span>
           <ui-button
@@ -109,7 +128,7 @@
             intent="secondary"
             (click)="store.reconnect()"
           />
-        </div>
+        </ui-stack>
       }
 
       <div class="border-border mx-auto w-full max-w-3xl border-t px-4 sm:px-6">
@@ -128,8 +147,15 @@
       <aside
         class="border-border bg-card flex w-80 shrink-0 flex-col border-l max-md:fixed max-md:inset-0 max-md:z-40 max-md:w-full"
       >
-        <div class="border-border flex items-center justify-between border-b p-2 md:hidden">
-          <span class="px-1 text-sm font-semibold">Fleet & Decisions</span>
+        <ui-stack
+          direction="row"
+          align="center"
+          justify="between"
+          class="border-border border-b p-2 md:hidden"
+        >
+          <ui-typography variant="body-sm" weight="semibold" class="px-1">
+            Fleet &amp; Decisions
+          </ui-typography>
           <ui-button
             icon="x"
             appearance="text"
@@ -138,7 +164,7 @@
             ariaLabel="Close side panel"
             (click)="store.toggleRightPanel()"
           />
-        </div>
+        </ui-stack>
         <div class="min-h-0 flex-1">
           <app-dispatch-right-panel
             [truckLocations]="store.truckLocations()"
