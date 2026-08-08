@@ -1,10 +1,11 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.AI;
-using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Integrations.Agents;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
@@ -24,11 +25,13 @@ internal sealed class RejectAIDispatchDecisionHandler(
         var decision = guard.Value!;
         decision.Reject(currentUser.GetUserId() ?? Guid.Empty, request.Reason);
 
-        var note = string.IsNullOrWhiteSpace(request.Reason)
-            ? $"Rejected: {decision.ToolName}"
-            : $"Rejected: {decision.ToolName} - {request.Reason}";
+        var tenantId = tenantUow.GetCurrentTenant().Id;
+        var conversation = await AgentDecisionNotes.LoadConversationAsync(tenantUow, decision, ct);
 
-        await AIDispatchDecisionNotes.AppendAsync(tenantUow, broadcastService, decision, note, ct);
+        await AgentDecisionNotes.AppendAsync(
+            tenantUow, conversation, AgentDecisionNotes.RejectionNote(decision, request.Reason),
+            message => broadcastService.BroadcastMessageAsync(tenantId, message), ct);
+
         return Result.Ok();
     }
 }

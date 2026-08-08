@@ -44,7 +44,7 @@ public class RejectAICopilotDecisionHandlerTests
         Assert.Contains("suggested state", result.Error);
     }
 
-    /// <summary>Copilot rejection appends the note inline, not through AIDispatchDecisionNotes.</summary>
+    /// <summary>Copilot rejection notes go to the owner's private group, not the tenant board.</summary>
     [Fact]
     public async Task Handle_HappyPath_AppendsRejectionNoteInlineAndBroadcasts()
     {

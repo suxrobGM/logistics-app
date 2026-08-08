@@ -1,9 +1,8 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.CurrentUser;
-using Logistics.Domain.Entities;
+using Logistics.Application.Modules.Integrations.Agents;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 
@@ -22,18 +21,14 @@ internal sealed class RejectAICopilotDecisionHandler(
             return Result.Fail(guard.Error!);
 
         var (decision, conversation) = guard.Value!;
-
         decision.Reject(userId!.Value, request.Reason);
 
-        var note = string.IsNullOrWhiteSpace(request.Reason)
-            ? $"Rejected: {decision.ToolName}"
-            : $"Rejected: {decision.ToolName} - {request.Reason}";
-        var message = conversation.AddTextMessage(AgentMessageRole.System, note);
-        await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
-        await tenantUow.SaveChangesAsync(ct);
-
         var tenantId = tenantUow.GetCurrentTenant().Id;
-        await broadcastService.BroadcastMessageAsync(tenantId, conversation.CreatedById, message.ToDto());
+
+        await AgentDecisionNotes.AppendAsync(
+            tenantUow, conversation, AgentDecisionNotes.RejectionNote(decision, request.Reason),
+            message => broadcastService.BroadcastMessageAsync(tenantId, conversation.CreatedById, message), ct);
+
         await broadcastService.BroadcastDecisionAsync(tenantId, conversation.CreatedById, decision.ToDto());
         return Result.Ok();
     }

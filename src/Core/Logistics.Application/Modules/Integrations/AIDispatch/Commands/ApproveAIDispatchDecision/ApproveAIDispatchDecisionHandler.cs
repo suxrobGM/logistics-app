@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.AI;
-using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
+using Logistics.Application.Modules.Integrations.Agents;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
 using MediatR;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
@@ -29,6 +30,7 @@ internal sealed class ApproveAIDispatchDecisionHandler(
 
         var decision = guard.Value!;
         var userId = currentUser.GetUserId() ?? Guid.Empty;
+        var tenantId = tenantUow.GetCurrentTenant().Id;
 
         // Dispatch.Manage alone is not enough to execute, say, an invoice write.
         if (toolRegistry.TryGetDefinition(decision.ToolName!)?.RequiredPermission is { } requiredPermission)
@@ -36,7 +38,7 @@ internal sealed class ApproveAIDispatchDecisionHandler(
             var permissions = await mediator.Send(new GetCurrentUserPermissionsQuery
             {
                 UserId = userId,
-                TenantId = tenantUow.GetCurrentTenant().Id
+                TenantId = tenantId
             }, ct);
 
             if (permissions.Value?.Contains(requiredPermission) != true)
@@ -45,28 +47,14 @@ internal sealed class ApproveAIDispatchDecisionHandler(
 
         decision.Approve(userId);
 
-        string note;
-        Result outcome;
-        try
-        {
-            var result = await toolExecutor.ExecuteToolAsync(
-                decision.ToolName!, decision.ToolInput!, ct);
-            decision.ToolOutput = result;
-            decision.MarkExecuted();
-            note = $"Approved and executed: {decision.ToolName} - {Compact(result)}";
-            outcome = Result.Ok();
-        }
-        catch (Exception ex)
-        {
-            decision.MarkFailed(ex.Message);
-            note = $"Approved but failed to execute: {decision.ToolName} - {Compact(ex.Message)}";
-            outcome = Result.Fail($"Failed to execute decision: {ex.Message}");
-        }
+        var conversation = await AgentDecisionNotes.LoadConversationAsync(tenantUow, decision, ct);
 
-        await AIDispatchDecisionNotes.AppendAsync(tenantUow, broadcastService, decision, note, ct);
-        return outcome;
+        return await AgentDecisionExecution.ExecuteAndNoteAsync(
+            toolExecutor,
+            decision,
+            note => AgentDecisionNotes.AppendAsync(
+                tenantUow, conversation, note,
+                message => broadcastService.BroadcastMessageAsync(tenantId, message), ct),
+            ct);
     }
-
-    private static string Compact(string text) =>
-        text.Length > 500 ? text[..500] : text;
 }
