@@ -1,34 +1,33 @@
-<div class="border-default bg-elevated rounded-lg border p-4">
-  <div class="mb-3 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <ui-icon name="zap" class="text-foreground" />
-      <span class="font-semibold">AI Dispatch Usage</span>
-      @if (quota().planName) {
-        <ui-badge size="sm" [value]="quota().planName!" severity="info" />
-      }
-    </div>
-    <div class="flex items-center gap-2">
+<ui-surface variant="elevated" [border]="true">
+  <div class="flex items-center gap-2">
+    <ui-icon name="zap" class="text-foreground" />
+    <span class="font-semibold">AI Dispatch Usage</span>
+    @if (quota().planName) {
+      <ui-badge size="sm" [value]="quota().planName!" severity="info" />
+    }
+  </div>
+  @if (quota().overageBlocked || quota().isOverQuota) {
+    <div class="mt-2">
       @if (quota().overageBlocked) {
         <ui-badge value="AI paused - budget reached" severity="danger" />
-      } @else if (quota().isOverQuota) {
+      } @else {
         <ui-badge value="Overage charges apply" severity="warn" />
       }
-      @if (quota().resetsAt) {
-        <span class="text-muted-foreground text-sm">
-          Resets {{ quota().resetsAt | date: "EEE, MMM d, h:mm a" }}
-        </span>
-      }
     </div>
+  }
+  <div class="mt-3">
+    <span class="text-2xl font-semibold">{{ usagePercentRounded() }}%</span>
+    <p class="text-muted-foreground mt-0.5 mb-0 text-xs">of weekly AI budget used</p>
   </div>
-  <ui-progress
-    height="1.5rem"
-    [value]="Math.round(Math.min((quota().usagePercent ?? 0) * 100, 100))"
-    [showValue]="true"
-    [color]="progressBarColor()"
-  />
+  <ui-progress class="mt-2" height="0.5rem" [value]="usagePercentRounded()" [color]="progressBarColor()" />
+  @if (quota().resetsAt) {
+    <p class="text-muted-foreground mt-2 mb-0 text-xs">
+      Resets {{ quota().resetsAt | date: "EEE, MMM d, h:mm a" }}
+    </p>
+  }
   @if ((quota().overageChargesUsd ?? 0) > 0) {
-    <p class="text-muted-foreground mt-2 mb-0 text-sm">
+    <p class="text-muted-foreground mt-2 mb-0 text-xs">
       Overage billed this week: {{ quota().overageChargesUsd | currencyFormat }}
     </p>
   }
-</div>
+</ui-surface>
