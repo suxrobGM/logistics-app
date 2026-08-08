@@ -64,13 +64,13 @@
             (click)="store.toggleSidebar()"
           />
         </ui-stack>
-        <div class="min-h-0 flex-1">
-          <app-dispatch-sidebar
+        <div class="min-h-0 flex-1 overflow-y-auto">
+          <app-conversation-list
             [conversations]="store.conversations()"
             [currentConversationId]="store.currentConversation()?.id ?? null"
             [hasMore]="store.hasMoreHistory()"
             [loading]="store.loading()"
-            (conversationSelected)="selectConversation($event)"
+            (open)="selectConversation($event)"
             (newChat)="newChat()"
             (rename)="store.renameConversation($event.id, $event.title)"
             (delete)="store.deleteConversation($event)"

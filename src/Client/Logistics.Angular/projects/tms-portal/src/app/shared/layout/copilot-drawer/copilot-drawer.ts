@@ -15,12 +15,12 @@ import { CopilotStore, QuotaNoticeClasses } from "@/core/store";
 import {
   ChatComposer,
   ChatMessage,
+  ConversationList,
   DecisionActionsService,
   RejectDecisionDialog,
 } from "@/shared/components";
 import { CopilotActionCard } from "./copilot-action-card/copilot-action-card";
 import { COPILOT_COMMANDS } from "./copilot-commands";
-import { CopilotHistory } from "./copilot-history/copilot-history";
 
 type StreamItem =
   | { kind: "message"; at: string; message: AgentMessageDto }
@@ -51,8 +51,8 @@ const ResizeKeyStepPx = 16;
     CdkTrapFocus,
     ChatComposer,
     ChatMessage,
+    ConversationList,
     CopilotActionCard,
-    CopilotHistory,
     Icon,
     RejectDecisionDialog,
     UiButton,

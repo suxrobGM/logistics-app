@@ -4,9 +4,13 @@ import type { AgentDecisionDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
 import { Icon, Stack, Typography, UiButton, UiTooltip } from "@logistics/shared/ui";
 import { QuotaNoticeClasses } from "@/core/store";
-import { ChatComposer, DecisionActionsService, RejectDecisionDialog } from "@/shared/components";
+import {
+  ChatComposer,
+  ConversationList,
+  DecisionActionsService,
+  RejectDecisionDialog,
+} from "@/shared/components";
 import { DispatchRightPanel } from "../components/dispatch-right-panel/dispatch-right-panel";
-import { DispatchSidebar } from "../components/dispatch-sidebar/dispatch-sidebar";
 import { DispatchTranscript } from "../components/dispatch-transcript/dispatch-transcript";
 import { DispatchChatStore } from "../store/dispatch-chat.store";
 
@@ -21,8 +25,8 @@ import { DispatchChatStore } from "../store/dispatch-chat.store";
   providers: [DispatchChatStore, DecisionActionsService],
   imports: [
     ChatComposer,
+    ConversationList,
     DispatchRightPanel,
-    DispatchSidebar,
     DispatchTranscript,
     Icon,
     RejectDecisionDialog,

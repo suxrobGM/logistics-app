@@ -15,14 +15,19 @@ import {
   type UiMenuItem,
 } from "@logistics/shared/ui";
 
+// The copilot drawer and the dispatch page can both be on screen, so the rename field's id -
+// the one thing in here that must be document-unique - is per instance.
+let nextInstanceId = 0;
+
 /**
- * Persistent left sidebar of dispatch conversations - tenant-shared, so every dispatcher sees the
- * same list. Modeled on the copilot drawer's history view, but always visible rather than a
- * switched-to mode.
+ * The conversation history list both agent chats show: new-chat button, rows with a rename/delete
+ * kebab, and paging. The host supplies chrome - the drawer renders it in its history view, the
+ * dispatch page as a permanent sidebar - so this owns no height or scrolling of its own.
  */
 @Component({
-  selector: "app-dispatch-sidebar",
-  templateUrl: "./dispatch-sidebar.html",
+  selector: "app-conversation-list",
+  templateUrl: "./conversation-list.html",
+  host: { class: "block" },
   imports: [
     DatePipe,
     EmptyState,
@@ -36,19 +41,22 @@ import {
     UiTextField,
   ],
 })
-export class DispatchSidebar {
+export class ConversationList {
   private readonly toast = inject(ToastService);
 
   public readonly conversations = input.required<AgentConversationDto[]>();
+  /** Highlights the open conversation; null leaves every row unmarked. */
   public readonly currentConversationId = input<string | null>(null);
   public readonly hasMore = input(false);
   public readonly loading = input(false);
 
-  public readonly conversationSelected = output<string>();
+  public readonly open = output<string>();
   public readonly newChat = output<void>();
   public readonly rename = output<{ id: string; title: string }>();
   public readonly delete = output<string>();
   public readonly loadMore = output<void>();
+
+  protected readonly renameFieldId = `conversation-rename-title-${nextInstanceId++}`;
 
   protected readonly renameTarget = signal<AgentConversationDto | null>(null);
   protected readonly renameTitle = signal("");

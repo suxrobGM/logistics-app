@@ -62,9 +62,11 @@
     @switch (store.view()) {
       @case ("history") {
         <div class="min-h-0 flex-1 overflow-y-auto">
-          <app-copilot-history
+          <app-conversation-list
             [conversations]="store.conversations()"
+            [currentConversationId]="store.currentConversation()?.id ?? null"
             [hasMore]="store.hasMoreHistory()"
+            [loading]="store.loading()"
             (open)="store.openConversation($event)"
             (newChat)="store.startNewChat()"
             (delete)="store.deleteConversation($event)"
