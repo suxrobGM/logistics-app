@@ -33,7 +33,7 @@ public class AgentSession : AuditableEntity, ITenantEntity
     public DateTime? CompletedAt { get; set; }
 
     /// <summary>
-    /// Total Claude API tokens consumed during this session.
+    /// Total LLM tokens consumed during this session.
     /// </summary>
     public int TotalTokensUsed => InputTokensUsed + OutputTokensUsed;
 
@@ -63,7 +63,7 @@ public class AgentSession : AuditableEntity, ITenantEntity
     public decimal EstimatedCostUsd { get; set; }
 
     /// <summary>
-    /// The Claude model used for this session.
+    /// The model used for the turn.
     /// </summary>
     public string? ModelUsed { get; set; }
 

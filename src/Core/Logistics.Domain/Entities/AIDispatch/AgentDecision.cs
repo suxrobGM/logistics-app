@@ -22,7 +22,7 @@ public class AgentDecision : Entity, ITenantEntity
     public string Reasoning { get; set; } = "";
 
     /// <summary>
-    /// The Claude tool that was called.
+    /// The agent tool that was called.
     /// </summary>
     public string? ToolName { get; set; }
 

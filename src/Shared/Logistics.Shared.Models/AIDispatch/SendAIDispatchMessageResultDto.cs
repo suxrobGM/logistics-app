@@ -6,9 +6,6 @@ public record SendAIDispatchMessageResultDto
     public Guid ConversationId { get; set; }
     public Guid UserMessageId { get; set; }
 
-    /// <summary>
-    /// Server clock. The client stamps its optimistic echo from the browser clock, which sorts the
-    /// message below its own reply whenever the two clocks disagree - this is what it swaps in.
-    /// </summary>
+    /// <summary>Server-assigned timestamp for the user message, to reconcile the optimistic echo.</summary>
     public DateTime UserMessageCreatedAt { get; set; }
 }
