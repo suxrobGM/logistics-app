@@ -35,9 +35,9 @@ export class Home implements OnInit {
     this.metaService.updateMeta({
       title: "AI-Powered Fleet Management Platform",
       description:
-        "AI-powered fleet dispatch that autonomously matches loads to trucks, verifies HOS compliance, and optimizes routes. Real-time GPS tracking, invoicing, and payroll for modern trucking companies.",
+        "AI-powered fleet dispatch that analyzes loads and trucks, verifies HOS compliance, and proposes assignments for dispatcher approval. Real-time GPS tracking, invoicing, and payroll for modern trucking companies.",
       keywords:
-        "AI dispatch, AI fleet management, autonomous dispatching, TMS, trucking software, GPS tracking, load matching, HOS compliance, logistics",
+        "AI dispatch, AI fleet management, human-in-the-loop dispatch, TMS, trucking software, GPS tracking, load matching, HOS compliance, logistics",
       canonicalUrl: "https://logisticsx.app/",
     });
 
@@ -78,7 +78,7 @@ export class Home implements OnInit {
       {
         question: "How does AI Dispatch work?",
         answer:
-          "The AI agent analyzes unassigned loads, available trucks, HOS compliance, truck type compatibility, and revenue per mile to find optimal assignments. In human-in-the-loop mode it suggests assignments for your approval; in autonomous mode it executes immediately.",
+          "The AI agent analyzes unassigned loads, available trucks, HOS compliance, truck type compatibility, and revenue per mile, then proposes assignments in a chat-based dispatch session. A dispatcher reviews and approves each suggestion before anything is dispatched.",
       },
       {
         question: "What happens if I reject an AI suggestion?",
@@ -88,7 +88,7 @@ export class Home implements OnInit {
       {
         question: "Is AI Dispatch safe to use?",
         answer:
-          "Yes. Human-in-the-loop mode lets you review every decision before execution. Every action has a full audit trail with reasoning. Autonomous mode is opt-in only.",
+          "Yes. Every suggestion goes through you before it's dispatched, and every action has a full audit trail with the agent's reasoning.",
       },
     ]);
   }

@@ -8,19 +8,22 @@ import {
   viewChild,
   type ElementRef,
 } from "@angular/core";
-import type { AgentDecisionDto, AICopilotMessageDto } from "@logistics/shared/api";
+import type { AgentDecisionDto, AgentMessageDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
 import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
-import { CopilotStore, type QuotaNotice } from "@/core/store";
-import { DecisionActionsService, RejectDecisionDialog } from "@/shared/components";
+import { CopilotStore, QuotaNoticeClasses } from "@/core/store";
+import {
+  ChatComposer,
+  ChatMessage,
+  ConversationList,
+  DecisionActionsService,
+  RejectDecisionDialog,
+} from "@/shared/components";
 import { CopilotActionCard } from "./copilot-action-card/copilot-action-card";
-import type { CopilotCommandAction } from "./copilot-composer/copilot-commands";
-import { CopilotComposer } from "./copilot-composer/copilot-composer";
-import { CopilotHistory } from "./copilot-history/copilot-history";
-import { CopilotMessage } from "./copilot-message/copilot-message";
+import { COPILOT_COMMANDS } from "./copilot-commands";
 
 type StreamItem =
-  | { kind: "message"; at: string; message: AICopilotMessageDto }
+  | { kind: "message"; at: string; message: AgentMessageDto }
   | { kind: "decision"; at: string; decision: AgentDecisionDto };
 
 /** Scroll distance from the bottom under which auto-scroll stays engaged. */
@@ -46,10 +49,10 @@ const ResizeKeyStepPx = 16;
   },
   imports: [
     CdkTrapFocus,
+    ChatComposer,
+    ChatMessage,
+    ConversationList,
     CopilotActionCard,
-    CopilotComposer,
-    CopilotHistory,
-    CopilotMessage,
     Icon,
     RejectDecisionDialog,
     UiButton,
@@ -62,18 +65,16 @@ export class CopilotDrawer {
   protected readonly layoutService = inject(LayoutService);
 
   private readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
-  private readonly composer = viewChild(CopilotComposer);
+  private readonly composer = viewChild(ChatComposer);
+
+  protected readonly copilotCommands = COPILOT_COMMANDS;
 
   private previouslyFocused: HTMLElement | null = null;
 
   /** False while the user has scrolled up to read back - new messages must not yank them down. */
   protected readonly pinnedToBottom = signal(true);
 
-  protected readonly noticeClasses: Record<QuotaNotice["severity"], string> = {
-    blocked: "border-danger/30 bg-danger/10 text-danger",
-    overage: "border-warning/30 bg-warning/15 text-warning",
-    info: "border-border bg-warning/10 text-muted-foreground",
-  };
+  protected readonly noticeClasses = QuotaNoticeClasses;
 
   protected readonly suggestedPrompts = [
     "Which loads were delivered last week?",
@@ -201,8 +202,11 @@ export class CopilotDrawer {
     }
   }
 
-  protected onComposerCommand(action: CopilotCommandAction): void {
-    if (action === "startNewChat") {
+  protected onComposerCommand(commandName: string): void {
+    const command = COPILOT_COMMANDS.find((c) => c.name === commandName);
+    if (!command) return;
+
+    if (command.action === "startNewChat") {
       this.store.startNewChat();
     } else {
       this.store.showHistory();

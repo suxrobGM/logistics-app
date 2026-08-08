@@ -6,11 +6,11 @@ namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 /// Everything <see cref="AIDispatchSystemPrompt.Build"/> varies on.
 /// </summary>
 /// <remarks>
-/// Only the company name and autonomy mode are positional. Everything else is an init property so
-/// each flag is named at the call site - the builder previously took four trailing optionals, where
-/// swapping the two <c>bool</c>s or the two enums compiled cleanly and silently changed the prompt.
+/// Only the company name is positional. Everything else is an init property so each flag is named
+/// at the call site - the builder previously took several trailing optionals, where swapping two
+/// <c>bool</c>s or two enums compiled cleanly and silently changed the prompt.
 /// </remarks>
-internal sealed record DispatchPromptContext(string CompanyName, AgentAutonomyMode Mode)
+internal sealed record DispatchPromptContext(string CompanyName)
 {
     public DistanceUnit DistanceUnit { get; init; } = DistanceUnit.Miles;
 

@@ -42,14 +42,18 @@ public static class Registrar
         services.AddScoped<LlmSessionSetup>();
         services.AddScoped<AgentLoopRunner>();
         services.AddScoped<AgentOverageReporter>();
-        services.AddScoped<IAIDispatchService, AIDispatchService>();
-        services.AddScoped<AIDispatchConversationBuilder>();
         services.AddScoped<AgentDecisionProcessor>();
         services.AddScoped<IAgentToolExecutor, AgentToolExecutor>();
         services.AddSingleton<IAgentToolRegistry, AgentToolRegistry>();
 
-        // Copilot (conversational agent sharing the loop, tools, and decision machinery)
+        services.AddScoped<AgentTurnService>();
+
+        services.AddScoped<IAIDispatchService, AIDispatchService>();
+        services.AddScoped<DispatchAgentSurface>();
+        services.AddScoped<AIDispatchConversationBuilder>();
+
         services.AddScoped<IAICopilotService, AICopilotService>();
+        services.AddScoped<CopilotAgentSurface>();
         services.AddScoped<AICopilotConversationBuilder>();
 
         services.AddAgentTools();

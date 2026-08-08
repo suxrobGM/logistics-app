@@ -62,9 +62,11 @@
     @switch (store.view()) {
       @case ("history") {
         <div class="min-h-0 flex-1 overflow-y-auto">
-          <app-copilot-history
+          <app-conversation-list
             [conversations]="store.conversations()"
+            [currentConversationId]="store.currentConversation()?.id ?? null"
             [hasMore]="store.hasMoreHistory()"
+            [loading]="store.loading()"
             (open)="store.openConversation($event)"
             (newChat)="store.startNewChat()"
             (delete)="store.deleteConversation($event)"
@@ -108,7 +110,7 @@
               track item.kind === "message" ? item.message.id : item.decision.id
             ) {
               @if (item.kind === "message") {
-                <app-copilot-message [message]="item.message" />
+                <app-chat-message [message]="item.message" />
               } @else {
                 <app-copilot-action-card
                   [decision]="item.decision"
@@ -190,10 +192,12 @@
         }
 
         <!-- Blocked = hard budget pause; the server would reject the send anyway. -->
-        <app-copilot-composer
+        <app-chat-composer
           [isRunning]="store.isRunning()"
           [disabled]="store.sending()"
           [blocked]="store.quotaBlocked()"
+          [commands]="copilotCommands"
+          placeholder="Ask about loads, invoices, expenses... (/ for commands)"
           (sendMessage)="store.sendMessage($event)"
           (stopTurn)="store.cancelTurn()"
           (commandSelected)="onComposerCommand($event)"

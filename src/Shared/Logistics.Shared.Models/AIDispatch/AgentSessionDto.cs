@@ -6,7 +6,6 @@ public class AgentSessionDto
 {
     public Guid Id { get; set; }
     public long Number { get; set; }
-    public AgentAutonomyMode Mode { get; set; }
     public AgentSessionStatus Status { get; set; }
     public Guid? TriggeredByUserId { get; set; }
     public DateTime StartedAt { get; set; }
@@ -20,7 +19,6 @@ public class AgentSessionDto
     public string? ModelUsed { get; set; }
     public int DecisionCount { get; set; }
     public string? Summary { get; set; }
-    public string? Instructions { get; set; }
     public string? ErrorMessage { get; set; }
     public bool IsOverage { get; set; }
     public List<AgentDecisionDto> Decisions { get; set; } = [];

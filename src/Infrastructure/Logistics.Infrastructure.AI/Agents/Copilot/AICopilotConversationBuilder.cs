@@ -1,7 +1,5 @@
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.Features;
@@ -20,11 +18,9 @@ internal sealed class AICopilotConversationBuilder(
     LlmSessionSetup sessionSetup,
     ILogger<AICopilotConversationBuilder> logger)
 {
-    private const int MaxTranscriptMessages = 30;
-
     public async Task<LlmConversation> BuildAsync(
         AgentSession session,
-        AICopilotConversation conversation,
+        AgentConversation conversation,
         IReadOnlySet<string> callerPermissions,
         LlmOptions config,
         CancellationToken ct)
@@ -51,58 +47,11 @@ internal sealed class AICopilotConversationBuilder(
             "Copilot turn {SessionId} initialized with {ToolCount} tools, model {Model}, provider {Provider}",
             session.Id, tools.Count, selection.Model, selection.Provider);
 
-        var messages = BuildMessages(conversation.Messages);
+        var messages = AgentTranscriptReplay.BuildMessages(conversation.Messages);
 
         // Same admin-set effort as dispatch. Thinking blocks replay in-turn; the persisted
         // transcript drops them, which is fine - prior turns replay without them.
         return new LlmConversation(
             setup.Provider, systemPrompt, messages, tools, selection.Model, config.MaxTokens, setup.Effort);
     }
-
-    private static List<LlmMessage> BuildMessages(IEnumerable<AICopilotMessage> transcript)
-    {
-        var ordered = transcript.OrderBy(m => m.Sequence).ToList();
-        var (window, truncated) = TakeRecentWindow(ordered);
-
-        var messages = new List<LlmMessage>();
-        foreach (var row in window)
-        {
-            var blocks = row.Role == AICopilotMessageRole.System
-                ? [new LlmTextBlock($"[system note] {row.DisplayText}")]
-                : CopilotTranscriptCodec.Decode(row.ContentJson);
-
-            if (blocks.Count == 0)
-                continue;
-
-            // System rows replay as user-role notes - providers only accept user/assistant mid-conversation.
-            var role = row.Role == AICopilotMessageRole.Assistant ? LlmRole.Assistant : LlmRole.User;
-            messages.Add(new LlmMessage(role, blocks));
-        }
-
-        if (truncated && messages.Count > 0 && messages[0].Role == LlmRole.User)
-            messages[0].Content.Insert(0, new LlmTextBlock("[Earlier conversation omitted.]"));
-
-        return messages;
-    }
-
-    /// <summary>
-    /// Cuts only at a plain user chat message: starting the window mid-turn orphans a
-    /// tool_use/tool_result pair and the provider rejects the request.
-    /// </summary>
-    private static (List<AICopilotMessage> Window, bool Truncated) TakeRecentWindow(
-        List<AICopilotMessage> ordered)
-    {
-        if (ordered.Count <= MaxTranscriptMessages)
-            return (ordered, false);
-
-        var start = ordered.Count - MaxTranscriptMessages;
-        while (start < ordered.Count && !IsChatBoundary(ordered[start]))
-            start++;
-
-        // No boundary in the window - replay everything rather than corrupt it.
-        return start >= ordered.Count ? (ordered, false) : (ordered[start..], start > 0);
-    }
-
-    private static bool IsChatBoundary(AICopilotMessage row) =>
-        row.Role != AICopilotMessageRole.Assistant && row.DisplayText is not null;
 }

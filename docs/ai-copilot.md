@@ -14,28 +14,36 @@ agent loop (`AgentLoopRunner`), the same decision/approval machinery, and the sa
 1. User sends a message (POST ai/copilot/conversations/{id}/messages → 202)
    - handler checks ownership and the concurrency guard, persists the user
      message, marks the conversation Running, enqueues a Hangfire job
-2. AICopilotTurnJob re-checks the feature flag and runs AICopilotService.RunTurnAsync
+2. AICopilotTurnJob re-checks the feature flag and runs AICopilotService.RunTurnAsync,
+   a thin adapter onto AgentTurnService (the shared turn lifecycle every conversational
+   agent runs through) with the CopilotAgentSurface
 3. The turn creates an AgentSession (Type = Copilot) - quota, tokens, and
    decisions ride the existing session machinery
-4. AICopilotConversationBuilder rebuilds the LLM messages from the persisted
-   transcript and scopes the tool catalogue to the calling user's permissions
-5. AgentLoopRunner iterates: read tools execute; write tools become Suggested
-   decisions (always HumanInTheLoop - the copilot has no autonomous mode)
+4. CopilotAgentSurface resolves the caller's permissions and AICopilotConversationBuilder
+   rebuilds the LLM messages from the persisted transcript, scoping the tool catalogue to
+   those permissions
+5. AgentLoopRunner iterates: read tools execute; write tools always become Suggested
+   decisions awaiting dispatcher/user approval - there is no unattended execution path
 6. Every appended message (tool_use ids included) is persisted to
-   ai_copilot_messages; progress streams over /hubs/copilot
+   agent_messages; progress streams over /hubs/copilot
 ```
 
 ## Conversations and transcript
 
-- `AICopilotConversation` (tenant DB, `ai_copilot_conversations`): owned by one user
-  (`CreatedById` - every handler verifies the caller), with an `Idle`/`Running` status acting as a
-  concurrency guard. A Running conversation older than 15 minutes is assumed crashed and may be
-  taken over.
-- `AICopilotMessage` (`ai_copilot_messages`): sequenced rows storing the provider content blocks as
-  JSON (`ContentJson`, including `tool_use` ids so the exact sequence replays) plus a `DisplayText`
-  the UI renders. Tool-result rows have no `DisplayText` and never leave the server.
-- Replay truncates to the last 30 rows, cutting only at a plain user chat message - starting
-  mid-turn would orphan a tool_use/tool_result pair and the provider rejects the request.
+Conversations and messages are kind-agnostic entities shared with Phase 3's dispatch surface, not
+copilot-only types:
+
+- `AgentConversation` (tenant DB, `agent_conversations`): owned by one user (`CreatedById` - every
+  handler verifies the caller), with an `Idle`/`Running` status acting as a concurrency guard, and
+  a `Kind` (`Copilot` / `Dispatch`). Every copilot command/query filters `Kind == Copilot` so a
+  future dispatch conversation never leaks into this surface. A Running conversation older than 15
+  minutes is assumed crashed and may be taken over.
+- `AgentMessage` (`agent_messages`): sequenced rows storing the provider content blocks as JSON
+  (`ContentJson`, including `tool_use` ids so the exact sequence replays) plus a `DisplayText` the
+  UI renders. Tool-result rows have no `DisplayText` and never leave the server.
+- Replay (`AgentTranscriptReplay`, shared with the dispatch builder) truncates to the last 30 rows,
+  cutting only at a plain user chat message - starting mid-turn would orphan a
+  tool_use/tool_result pair and the provider rejects the request.
 - The copilot follows the same admin-set reasoning effort as the dispatch agent. Thinking blocks
   are replayed within a turn's tool loop (`LlmThinkingBlock`), but the persisted transcript drops
   them - prior turns replay fine without them, only in-turn replay is required.
@@ -53,8 +61,8 @@ Approving a suggestion re-checks again: the approver needs `Permission.Copilot.M
 endpoint **and** the tool's own permission (e.g. `Permission.Invoice.Manage`).
 
 The dispatch agent's catalogue is a separate axis: it keeps only tools declaring
-`DispatchAgent: true`, which is what keeps copilot write tools (invoicing) out of autonomous
-dispatch runs. It is deliberately **not** derived from `RequiredPermission` - a dispatch tool may
+`DispatchAgent: true`, which is what keeps copilot-only write tools (invoicing) out of dispatch
+conversations. It is deliberately **not** derived from `RequiredPermission` - a dispatch tool may
 legitimately require a non-`Dispatch.*` permission, and coupling the two would hide it silently.
 
 ## Approvals

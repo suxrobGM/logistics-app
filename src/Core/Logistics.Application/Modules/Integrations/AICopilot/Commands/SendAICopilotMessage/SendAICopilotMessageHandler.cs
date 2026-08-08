@@ -32,13 +32,17 @@ internal sealed class SendAICopilotMessageHandler(
         if (userId is null)
             return Result<SendAICopilotMessageResultDto>.Fail("User is not authenticated");
 
-        var conversation = await tenantUow.Repository<AICopilotConversation>()
+        var conversation = await tenantUow.Repository<AgentConversation>()
             .GetByIdAsync(request.ConversationId, ct);
 
-        if (conversation is null || conversation.CreatedById != userId.Value)
+        if (conversation is null
+            || conversation.CreatedById != userId.Value
+            || conversation.Kind != AgentConversationKind.Copilot)
+        {
             return Result<SendAICopilotMessageResultDto>.Fail("Conversation not found");
+        }
 
-        if (conversation.Status == AICopilotConversationStatus.Running)
+        if (conversation.Status == AgentConversationStatus.Running)
         {
             if (conversation.TurnStartedAt > DateTime.UtcNow - StaleTurnWindow)
                 return Result<SendAICopilotMessageResultDto>.Fail("A copilot turn is already in progress");
@@ -62,8 +66,8 @@ internal sealed class SendAICopilotMessageHandler(
             }
         }
 
-        var message = conversation.AddTextMessage(AICopilotMessageRole.User, request.Text.Trim());
-        await tenantUow.Repository<AICopilotMessage>().AddAsync(message, ct);
+        var message = conversation.AddTextMessage(AgentMessageRole.User, request.Text.Trim());
+        await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         conversation.BeginTurn();
         await tenantUow.SaveChangesAsync(ct);
 

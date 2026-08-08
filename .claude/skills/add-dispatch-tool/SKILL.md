@@ -33,8 +33,8 @@ that derived value.
 
 ### 1. Decide read vs write
 
-- **Read tool**: pure query - runs immediately in both Autonomous and HumanInTheLoop modes. Examples: `get_unassigned_loads`, `check_hos_feasibility`, `search_loads`.
-- **Write tool**: mutates state (assigns load, creates an invoice, books from load board). In HumanInTheLoop mode it creates a `Suggested` decision; in Autonomous mode it executes immediately.
+- **Read tool**: pure query - always executes immediately. Examples: `get_unassigned_loads`, `check_hos_feasibility`, `search_loads`.
+- **Write tool**: mutates state (assigns load, creates an invoice, books from load board). Always creates a `Suggested` decision awaiting dispatcher/user approval - it never executes inline.
 
 A write tool is declared by giving it a `DecisionType` other than `Query` on its registry
 definition (step 3). `IsWrite` is derived from that, so there is no second flag to forget.
@@ -105,10 +105,11 @@ Group with other read tools or other write tools (look at the `── Read Tools
 - **Every tool declares `RequiredPermission`** - the copilot filters its catalogue by the calling
   user's permissions, and an undeclared permission bypasses that scoping (a registry test enforces this).
 - **`DispatchAgent` decides whether the _fleet dispatch agent_ sees the tool**, independently of
-  which permission it names. It defaults to false because that agent can run `Autonomous`, where an
-  unintended write tool executes with no dispatcher approval. Set it only for tools that belong in
-  a fleet dispatch run; a copilot-only tool leaves it off. The copilot sees every tool the calling
-  user has the permission for either way.
+  which permission it names. It defaults to false because it scopes the dispatch conversation's
+  catalogue to fleet-relevant tools - an unset copilot-only write tool (e.g. `create_load_invoice`)
+  simply never reaches a dispatch conversation. Set it only for tools that belong in a fleet dispatch
+  run; a copilot-only tool leaves it off. The copilot sees every tool the calling user has the
+  permission for either way.
 - `DecisionType` both categorizes the tool in the audit trail and _is_ the write declaration;
   append to the `AgentDecisionType` enum when no existing value fits (append-only).
 - If the tool's ids should link into the decision audit (`load_id`, `invoice_id`, ...), check

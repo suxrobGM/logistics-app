@@ -5,14 +5,13 @@ import { authGuard } from "@/core/auth";
 export const aiDispatchRoutes: Routes = [
   {
     path: "",
-    loadComponent: () => import("./sessions-list/sessions-list").then((m) => m.SessionsListPage),
+    loadComponent: () => import("./dispatch-chat/dispatch-chat").then((m) => m.DispatchChat),
     canActivate: [authGuard],
     data: {
       breadcrumb: "",
       permission: Permission.Dispatch.View,
     },
   },
-  // Must stay above ":id" - routing is first-match-wins, or "policy" reads as a session id.
   {
     path: "policy",
     loadComponent: () =>
@@ -20,16 +19,6 @@ export const aiDispatchRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Policy",
-      permission: Permission.Dispatch.View,
-    },
-  },
-  {
-    path: ":id",
-    loadComponent: () =>
-      import("./session-details/session-details").then((m) => m.SessionDetailsPage),
-    canActivate: [authGuard],
-    data: {
-      breadcrumb: "Session",
       permission: Permission.Dispatch.View,
     },
   },

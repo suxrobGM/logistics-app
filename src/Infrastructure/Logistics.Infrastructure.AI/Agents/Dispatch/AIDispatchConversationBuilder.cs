@@ -13,8 +13,8 @@ using Logistics.Application.Abstractions.AIDispatch;
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 /// <summary>
-/// Builds the LLM conversation: provider, system prompt, tools, and initial message.
-/// Provider-agnostic - delegates SDK-specific work to <see cref="ILlmProvider"/>.
+/// Builds the LLM conversation for one dispatch turn: system prompt (with learned policy), dispatch
+/// tool catalogue, and the replayed transcript with a fleet-freshness note on the final user message.
 /// </summary>
 internal sealed class AIDispatchConversationBuilder(
     IAgentToolRegistry toolRegistry,
@@ -24,7 +24,7 @@ internal sealed class AIDispatchConversationBuilder(
 {
     public async Task<LlmConversation> BuildAsync(
         AgentSession session,
-        AIDispatchRequest request,
+        AgentConversation conversation,
         LlmOptions config,
         CancellationToken ct)
     {
@@ -38,7 +38,7 @@ internal sealed class AIDispatchConversationBuilder(
         var hasIntermodal = enabledFeatures.Contains(TenantFeature.IntermodalContainers);
 
         var policy = await GetLearnedPolicyAsync(ct);
-        var systemPrompt = AIDispatchSystemPrompt.Build(new(companyName, request.Mode)
+        var systemPrompt = AIDispatchSystemPrompt.Build(new(companyName)
         {
             DistanceUnit = tenant.Settings.DistanceUnit,
             OperatingMode = tenant.Settings.OperatingMode,
@@ -46,49 +46,37 @@ internal sealed class AIDispatchConversationBuilder(
             HasIntermodal = hasIntermodal,
             Policy = policy
         });
-        // No caller permissions: a dispatch run is gated by the endpoint's policy, not per tool.
+        // No caller permissions: a dispatch turn is gated by the endpoint's policy, not per tool.
         var tools = toolRegistry.GetDispatchAgentTools(enabledFeatures);
 
         var model = setup.Selection.Model;
         session.ModelUsed = model;
 
         logger.LogInformation(
-            "Agent session {SessionId} initialized with {ToolCount} tools, model {Model}, provider {Provider}",
+            "Dispatch turn {SessionId} initialized with {ToolCount} tools, model {Model}, provider {Provider}",
             session.Id, tools.Count, model, resolvedProvider);
 
-        var userMessage = BuildUserMessage(request);
-        var previousContext = await GetPreviousSessionContextAsync(ct);
-        if (previousContext is not null)
-            userMessage = $"{previousContext}\n\n{userMessage}";
-
-        var messages = new List<LlmMessage> { LlmMessage.FromUser(userMessage) };
+        var messages = AgentTranscriptReplay.BuildMessages(conversation.Messages);
+        InjectFleetSnapshot(messages);
 
         return new LlmConversation(
             setup.Provider, systemPrompt, messages, tools, model, config.MaxTokens, setup.Effort);
     }
 
-    private static string BuildUserMessage(AIDispatchRequest request)
+    /// <summary>
+    /// Makes the agent re-gather fleet state instead of trusting earlier turns. In-memory only -
+    /// never persisted to the row's <c>ContentJson</c>, so a stale notice cannot replay later.
+    /// </summary>
+    private static void InjectFleetSnapshot(List<LlmMessage> messages)
     {
-        var modeLabel = request.Mode == AgentAutonomyMode.Autonomous ? "autonomous" : "suggestions";
+        if (messages.Count == 0 || messages[^1].Role != LlmRole.User)
+            return;
+
         var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm UTC");
-
-        var message = $"Analyze the current fleet state and optimize dispatch assignments. " +
-            $"Current time: {timestamp}. Mode: {modeLabel}. " +
-            $"Start by calling get_unassigned_loads and get_available_trucks together, then process all loads efficiently.";
-
-        if (!string.IsNullOrWhiteSpace(request.Instructions))
-        {
-            var sanitized = SanitizeInstructions(request.Instructions);
-            message += $"\n\nDispatcher instructions: {sanitized}";
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.RejectionContext))
-        {
-            var sanitized = SanitizeInstructions(request.RejectionContext);
-            message += $"\n\nContext from rejected decisions: {sanitized}";
-        }
-
-        return message;
+        messages[^1].Content.Add(new LlmTextBlock(
+            $"[Fleet state as of {timestamp}] Treat anything gathered earlier in this conversation as " +
+            "potentially stale - call get_unassigned_loads and get_available_trucks together before " +
+            "proposing or taking any action."));
     }
 
     /// <summary>
@@ -101,30 +89,5 @@ internal sealed class AIDispatchConversationBuilder(
             .Where(p => p.IsEnabled)
             .Select(p => new LearnedDispatchPolicy(p.ManualContent, p.GeneratedContent))
             .FirstOrDefaultAsync(ct);
-    }
-
-    private async Task<string?> GetPreviousSessionContextAsync(CancellationToken ct)
-    {
-        var lastSession = await tenantUow.Repository<AgentSession>().Query()
-            .DispatchOnly()
-            .Where(s => s.Status == AgentSessionStatus.Completed && s.Summary != null)
-            .OrderByDescending(s => s.CompletedAt)
-            .Select(s => new { s.Number, s.CompletedAt, s.Summary })
-            .FirstOrDefaultAsync(ct);
-
-        if (lastSession is null)
-            return null;
-
-        var summary = lastSession.Summary!.Length > 1000
-            ? lastSession.Summary[..1000]
-            : lastSession.Summary;
-
-        return $"Context from previous session (#{lastSession.Number}, {lastSession.CompletedAt:yyyy-MM-dd HH:mm UTC}): {summary}";
-    }
-
-    private static string SanitizeInstructions(string input)
-    {
-        var sanitized = PromptText.StripControlChars(input, allowLineBreaks: true);
-        return sanitized.Length > 500 ? sanitized[..500] : sanitized;
     }
 }

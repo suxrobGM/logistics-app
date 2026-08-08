@@ -49,7 +49,7 @@ export class ProductShowcase {
         },
       ],
       features: [
-        "Autonomous or human-in-the-loop",
+        "Chat-based suggestions",
         "Agent reasoning timeline",
         "Approve or reject each suggestion",
       ],

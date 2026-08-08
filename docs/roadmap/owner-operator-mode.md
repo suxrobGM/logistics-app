@@ -58,8 +58,9 @@ switchable later in Settings → Company. Decisions worth remembering:
   Everything else is the fleet product. The dashboard simplification that landed alongside
   (fewer default panels, real empty states) applies to both modes.
 - **The solo prompt section is `## Fleet Profile`, not `## Operating Mode`.** That heading was
-  already taken by the suggestions/autonomous switch, and two same-named sections in one system
-  prompt is a good way to have the model obey the wrong one.
+  already taken by the dispatch mode switch at the time (since removed - dispatch is approval-only
+  now), and two same-named sections in one system prompt is a good way to have the model obey the
+  wrong one.
 - **A third demo tenant beats a flag on `us`.** `solo` / Rodriguez Trucking LLC seeds one employee,
   one truck, two customers and 12 loads. Seed data had been keyed by region, so a second US tenant
   would have made `UserSeeder` skip and `EmployeeSeeder` re-home every existing `us` login onto it.

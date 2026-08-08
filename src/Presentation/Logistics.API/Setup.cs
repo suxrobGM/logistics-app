@@ -129,7 +129,7 @@ internal static class Setup
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
-        services.AddScoped<IBackgroundJobRunner<AIDispatchRequest>, HangfireAIDispatchJobRunner>();
+        services.AddScoped<IBackgroundJobRunner<AIDispatchTurnRequest>, HangfireAIDispatchTurnRunner>();
         services.AddScoped<IBackgroundJobRunner<AICopilotTurnRequest>, HangfireAICopilotTurnRunner>();
         services.AddScoped<ICommandEnqueuer, HangfireCommandEnqueuer>();
         services.AddHangfireServer();

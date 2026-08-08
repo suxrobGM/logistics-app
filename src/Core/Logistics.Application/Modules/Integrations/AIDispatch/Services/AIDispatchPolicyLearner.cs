@@ -118,8 +118,8 @@ internal sealed class AIDispatchPolicyLearner(
     }
 
     /// <summary>
-    /// The labelled history: rejections, plus executions a human approved. Autonomous executions carry
-    /// no human signal (null <c>ApprovedByUserId</c>) - including them would train the agent on itself.
+    /// The labelled history: rejections, plus executions a human approved. Executions with no
+    /// approver carry no human signal - including them would train the agent on its own output.
     /// </summary>
     private IQueryable<AgentDecision> QualifyingHistory()
     {

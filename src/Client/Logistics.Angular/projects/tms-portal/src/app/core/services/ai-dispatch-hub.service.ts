@@ -1,33 +1,34 @@
 import { DestroyRef, Injectable } from "@angular/core";
-import type { AgentDecisionDto } from "@logistics/shared/api";
+import type { AgentDecisionDto, AgentMessageDto, AgentSessionStatus } from "@logistics/shared/api";
 import { BaseHubConnection } from "./base-hub-connection";
 
-export interface AIDispatchUpdate {
+/** Mirror of the backend AIDispatchTurnUpdateDto (SignalR payloads are not in the OpenAPI spec). */
+export interface DispatchTurnUpdate {
+  conversationId: string;
   sessionId: string;
-  status: string;
-  mode: string;
+  status: AgentSessionStatus;
+  totalTokensUsed: number;
   decisionCount: number;
-  summary: string | null;
+  errorMessage: string | null;
 }
 
 const DispatchBoardGroup = "dispatch-board";
 
 /**
- * Service for managing real-time AI dispatch agent operations via SignalR.
+ * Real-time AI dispatch events. Unlike the copilot hub, every event goes to the whole tenant's
+ * dispatch board group - one dispatcher's approval is reflected for everyone.
  */
 @Injectable({ providedIn: "root" })
 export class AIDispatchHubService extends BaseHubConnection {
-  readonly updateReceived$ = this.event<AIDispatchUpdate>("ReceiveAIDispatchUpdate");
+  readonly messageReceived$ = this.event<AgentMessageDto>("ReceiveDispatchMessage");
+  readonly turnUpdateReceived$ = this.event<DispatchTurnUpdate>("ReceiveDispatchTurnUpdate");
   readonly decisionReceived$ = this.event<AgentDecisionDto>("ReceiveAIDispatchDecision");
 
   constructor() {
     super("ai-dispatch");
   }
 
-  /**
-   * Claims the connection and joins the tenant's dispatch board group, both for as long as
-   * `destroyRef` lives. Board pages need nothing else to receive updates.
-   */
+  /** Claims the connection and joins the tenant's board group for as long as `destroyRef` lives. */
   async acquireDispatchBoard(destroyRef: DestroyRef): Promise<void> {
     const tenantId = this.tenantService.getTenantData()?.id;
     if (!tenantId) {

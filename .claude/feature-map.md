@@ -104,24 +104,32 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 - Domain: `Primitives/Enums/Tenant/OperatingMode.cs` (`Fleet` | `SoloOperator`), stored on the `TenantSettings` VO (`settings_operating_mode` on `tenants`, master DB)
 - Application: `Modules/IdentityAccess/Tenants/Commands/CreateTenant` + `UpdateTenant` carry it; `Modules/Platform/Onboarding/` drops the `inviteTeam` step in solo mode
-- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section (the `## Operating Mode` heading is already taken by `AgentAutonomyMode`)
+- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section
 - API/UI: `tms-portal/core/services/tenant.service.ts` (`isSoloMode`), `core/services/sidebar-nav.service.ts` (`SOLO_HIDDEN_ITEMS`), `tms-portal/pages/settings/company-settings/`, `admin-portal/shared/components/tenant-form/`
 - Note: solo relies on Owner holding `Permission.Driver.*` (`Shared.Identity/Policies/TenantRolePermissions.cs`), and driver-facing queries keying off `Truck.MainDriverId`/`SecondaryDriverId` rather than the role. There is no multi-role model
 - Seed: `DbMigrator` tenant `solo` (`SeedData/solo.json`, `SeedDataKey`/`OperatingMode`/`DataScale` on `Models/DemoTenantConfig.cs`)
 
 ## AI dispatch
 
-### Dispatch sessions
+### Dispatch conversations & turns
 
-- Domain: `Entities/AIDispatch/AgentSession.cs`
-- Application: `Modules/Integrations/AIDispatch/Commands/`, `Modules/Integrations/AIDispatch/Queries/`
-- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchService.cs`, `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (streams live agent updates, mounted at `/hubs/ai-dispatch`)
-- API/UI: `AIDispatchController.cs`, `tms-portal/pages/ai-dispatch/`
+Tenant-shared, not per-user: any user with `Permission.Dispatch.View` can list/read a conversation;
+`Permission.Dispatch.Manage` sends/cancels/renames/deletes. Handlers do not check ownership -
+`CreatedById` is audit-only. Shares the conversation/turn machinery with the
+[AI copilot](../docs/ai-copilot.md) (`AgentConversation`/`AgentMessage`, `AgentTurnService`,
+`AgentTranscriptReplay`), scoped by `AgentConversationKind.Dispatch`; each turn is an `AgentSession`
+with `Type == Dispatch`.
+
+- Domain: `Entities/AIDispatch/AgentSession.cs`, `AgentConversation.cs`, `AgentMessage.cs`
+- Application: `Modules/Integrations/AIDispatch/Commands/` (`Create`/`Rename`/`Delete`AIDispatchConversation, `SendAIDispatchMessage` - concurrency guard + quota gate, mirrors `SendAICopilotMessage`; `CancelAIDispatchTurn`), `Modules/Integrations/AIDispatch/Queries/` (`GetAIDispatchConversations` - no owner filter, `GetAIDispatchConversationById` - messages + decisions + per-turn `AgentSessionDto` stats)
+- Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchService.cs` (thin adapter onto the shared `AgentTurnService`) + `DispatchAgentSurface.cs` (`IAgentSurface`: no per-caller tool scoping, tenant-wide broadcasts, injects a fresh fleet-state snapshot into only the current turn's final user message - never persisted) + `AIDispatchConversationBuilder.cs` (system prompt, transcript replay, snapshot injection); `Infrastructure.Communications/SignalR/Hubs/AIDispatchHub.cs` (tenant-wide `dispatch-board:{tenantId}` group, mounted at `/hubs/ai-dispatch`)
+- Jobs: `Logistics.API/Jobs/AIDispatchTurnJob.cs` (re-checks `AgenticDispatch` inside the job, mirrors `AICopilotTurnJob`)
+- API/UI: `AIDispatchController.cs` (`ai/dispatch/conversations` CRUD + messages + cancel, mirroring `AICopilotController`'s route style), `tms-portal/pages/ai-dispatch/`
 
 ### Dispatch decisions
 
 - Domain: `Entities/AIDispatch/AgentDecision.cs`
-- Application: `Modules/Integrations/AIDispatch/Commands/Approve*`, `Reject*`
+- Application: `Modules/Integrations/AIDispatch/Commands/Approve*`, `Reject*` - append a System note to the decision's conversation transcript and broadcast it tenant-wide, but only when the session has a `ConversationId` (old sessions may predate conversations)
 - Infrastructure: `Infrastructure.AI/Agents/AgentDecisionProcessor.cs`
 - API/UI: (under `ai-dispatch/`)
 
@@ -151,9 +159,9 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Conversations & turns
 
-- Domain: `Entities/AICopilot/AICopilotConversation.cs`, `AICopilotMessage.cs` (transcript with tool_use ids); `AgentSession.Type == Copilot` per turn
+- Domain: `Entities/AIDispatch/AgentConversation.cs`, `AgentMessage.cs` (transcript with tool_use ids; `Kind` distinguishes the per-user Copilot conversations here from the tenant-shared Dispatch ones above - every copilot query/list/get filters `Kind == Copilot`); `AgentSession.Type == Copilot` per turn
 - Application: `Modules/Integrations/AICopilot/Commands/` (send returns the server-stamped `UserMessageCreatedAt` so the client's optimistic echo never sorts by a browser clock; rename via `RenameAICopilotConversation`), `Queries/` (incl. `GetAICopilotQuotaStatus` - the shared AI quota behind `Permission.Copilot.View` for tenants without AgenticDispatch)
-- Infrastructure: `Infrastructure.AI/Agents/Copilot/` (`AICopilotService.cs`, `AICopilotConversationBuilder.cs`, `CopilotTranscriptCodec.cs`, `AICopilotSystemPrompt.cs` - dispatch-action guardrails render only when the caller's tool catalogue includes the dispatch write tools); `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
+- Infrastructure: `Infrastructure.AI/Agents/` (`AgentTurnService.cs` - the shared turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`; `AgentTranscriptCodec.cs`, `AgentTranscriptReplay.cs`) and `Agents/Copilot/` (`AICopilotService.cs` - thin adapter onto `AgentTurnService` + `CopilotAgentSurface.cs`, `AICopilotConversationBuilder.cs`, `AICopilotSystemPrompt.cs` - dispatch-action guardrails render only when the caller's tool catalogue includes the dispatch write tools); `Infrastructure.Communications/SignalR/Hubs/CopilotHub.cs` (`/hubs/copilot`, authorized, per-user groups)
 - Jobs: `Logistics.API/Jobs/AICopilotTurnJob.cs`
 - API/UI: `AICopilotController.cs` (`ai/copilot` - conversations CRUD + rename, messages, cancel, `quota`, decisions approve/reject), `tms-portal/shared/layout/copilot-drawer/`; state in `core/store/copilot.store.ts` (persists drawer width, polls stuck Running turns, gates the launcher on `Copilot.View`)
 
@@ -181,7 +189,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Background runner
 
-- API/UI: `Jobs/AIDispatchSessionJob.cs`
+- API/UI: `Jobs/AIDispatchTurnJob.cs`
 
 ### MCP server
 

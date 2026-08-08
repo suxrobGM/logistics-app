@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Infrastructure.AI.Agents;
 using Logistics.Infrastructure.AI.Agents.Dispatch;
 using System.Text.Json.Nodes;
@@ -38,12 +38,6 @@ public class AIDispatchConversationBuilderTests
 
         SetTenant();
 
-        // Mock the AgentSession repository for GetPreviousSessionContextAsync
-        var sessionRepo = Substitute.For<ITenantRepository<AgentSession, Guid>>();
-        var emptySessionList = new List<AgentSession>().BuildMock();
-        sessionRepo.Query().Returns(emptySessionList);
-        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
-
         tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
         SetPolicies();
 
@@ -79,9 +73,11 @@ public class AIDispatchConversationBuilderTests
         }
     };
 
-    private static AIDispatchRequest CreateRequest(AgentAutonomyMode mode = AgentAutonomyMode.Autonomous)
+    private static AgentConversation CreateConversation(string text = "Assign what you can")
     {
-        return new AIDispatchRequest(Guid.NewGuid(), mode, null);
+        var conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch };
+        conversation.AddTextMessage(AgentMessageRole.User, text);
+        return conversation;
     }
 
     private void SetTenant(OperatingMode operatingMode = OperatingMode.Fleet)
@@ -119,9 +115,9 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_NoPolicyRow_OmitsPolicySection()
     {
         SetPolicies();
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
     }
@@ -131,9 +127,9 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_DisabledPolicy_OmitsPolicySection()
     {
         SetPolicies(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
         Assert.DoesNotContain("Prefer short hauls", conversation.SystemPrompt);
@@ -145,9 +141,9 @@ public class AIDispatchConversationBuilderTests
         SetPolicies(CreatePolicy(
             learned: "## Learned preferences\n- Prefer short hauls (5 rejections)",
             directives: "- Never assign Truck 42 to hazmat"));
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.Contains("Dispatcher Preferences", conversation.SystemPrompt);
         Assert.Contains("Prefer short hauls", conversation.SystemPrompt);
@@ -163,9 +159,9 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_PolicyWithOnlyDirectives_OmitsLearnedHeading()
     {
         SetPolicies(CreatePolicy(directives: "- Prefer flatbeds out of Dallas"));
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.Contains("Dispatcher directives", conversation.SystemPrompt);
         Assert.DoesNotContain("### Learned preferences", conversation.SystemPrompt);
@@ -179,9 +175,9 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_SoloOperatorTenant_BuildsTheSoloPrompt()
     {
         SetTenant(OperatingMode.SoloOperator);
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.Contains("## Fleet Profile: SOLO OWNER-OPERATOR", conversation.SystemPrompt);
         Assert.DoesNotContain("Maximize fleet utilization", conversation.SystemPrompt);
@@ -190,9 +186,9 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_FleetTenant_BuildsTheFleetPrompt()
     {
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.DoesNotContain("SOLO OWNER-OPERATOR", conversation.SystemPrompt);
         Assert.Contains("Maximize fleet utilization", conversation.SystemPrompt);
@@ -203,9 +199,9 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_ValidConfig_ReturnsConversation()
     {
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.NotNull(conversation.Provider);
         Assert.Single(conversation.Messages);
@@ -216,9 +212,9 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_IncludesToolsFromRegistry()
     {
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.Single(conversation.Tools);
     }
@@ -226,9 +222,9 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_IncludesSystemPrompt()
     {
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.NotNull(conversation.SystemPrompt);
         Assert.NotEmpty(conversation.SystemPrompt);
@@ -237,22 +233,59 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_MissingApiKey_Throws()
     {
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => sut.BuildAsync(session, CreateRequest(), EmptyApiKeyConfig, CancellationToken.None));
+            () => sut.BuildAsync(session, CreateConversation(), EmptyApiKeyConfig, CancellationToken.None));
 
         Assert.Contains("API key", ex.Message);
     }
 
+    #region Fleet snapshot injection
+
     [Fact]
-    public async Task BuildAsync_InitialMessage_ContainsFleetAnalysisInstruction()
+    public async Task BuildAsync_RebuildsMessagesFromTranscript()
     {
-        var session = new AgentSession { Mode = AgentAutonomyMode.Autonomous, StartedAt = DateTime.UtcNow };
+        var conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch };
+        conversation.AddTextMessage(AgentMessageRole.User, "Assign truck 5 to load 42");
+        conversation.AddTextMessage(AgentMessageRole.Assistant, "Done - see summary.");
+        conversation.AddTextMessage(AgentMessageRole.User, "Now do the rest");
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig, CancellationToken.None);
+        var llmConversation = await sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
-        Assert.Single(conversation.Messages);
-        Assert.NotEmpty(conversation.Messages[0].Content);
+        Assert.Equal(3, llmConversation.Messages.Count);
     }
+
+    /// <summary>The snapshot text lands only on the final user message, appended in-memory.</summary>
+    [Fact]
+    public async Task BuildAsync_AppendsFreshSnapshotToFinalUserMessage()
+    {
+        var conversation = CreateConversation("Now do the rest");
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+
+        var llmConversation = await sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
+
+        var lastMessage = llmConversation.Messages[^1];
+        Assert.True(lastMessage.Content.Count >= 2);
+        Assert.Contains(lastMessage.Content, block =>
+            block is Logistics.Infrastructure.AI.Llm.Contracts.LlmTextBlock text &&
+            text.Text.Contains("Fleet state as of", StringComparison.Ordinal));
+    }
+
+    /// <summary>Persisted rows keep only the user's typed text - the snapshot must never leak in.</summary>
+    [Fact]
+    public async Task BuildAsync_DoesNotMutateThePersistedTranscript()
+    {
+        var conversation = CreateConversation("Assign what you can");
+        var originalContentJson = conversation.Messages[0].ContentJson;
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+
+        await sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
+
+        Assert.Equal(originalContentJson, conversation.Messages[0].ContentJson);
+        Assert.DoesNotContain("Fleet state as of", conversation.Messages[0].ContentJson);
+    }
+
+    #endregion
 }

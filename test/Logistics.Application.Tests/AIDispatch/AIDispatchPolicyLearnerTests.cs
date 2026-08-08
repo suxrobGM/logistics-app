@@ -96,13 +96,13 @@ public class AIDispatchPolicyLearnerTests
     #region Which decisions count
 
     /// <summary>
-    /// Autonomous executions would train the agent on its own output; Query decisions are read tool
-    /// calls carrying no verdict at all.
+    /// Executions with no approver would train the agent on its own output; Query decisions are read
+    /// tool calls carrying no verdict at all.
     /// </summary>
     [Fact]
-    public async Task Learn_ExcludesAutonomousExecutionsAndQueries()
+    public async Task Learn_ExcludesUnapprovedExecutionsAndQueries()
     {
-        var autonomous = Enumerable.Range(0, 30)
+        var unapproved = Enumerable.Range(0, 30)
             .Select(_ => Decision(AgentDecisionStatus.Executed, approvedBy: null, toolName: "auto_tool"))
             .ToList();
         var queries = Enumerable.Range(0, 30)
@@ -112,7 +112,7 @@ public class AIDispatchPolicyLearnerTests
             .ToList();
 
         // Enough qualifying rows to clear the evidence gate, so only the filter can keep the noise out.
-        SetDecisions([.. Rejections(5), .. Approvals(15), .. autonomous, .. queries]);
+        SetDecisions([.. Rejections(5), .. Approvals(15), .. unapproved, .. queries]);
         SetLlmResponse("## Learned preferences\n- Prefer short hauls (5 rejections)");
 
         await sut.LearnForCurrentTenantAsync();
@@ -411,7 +411,7 @@ public class AIDispatchPolicyLearnerTests
             ApprovedByUserId = approvedBy,
             CreatedAt = DateTime.UtcNow.AddMinutes(-minutesAgo),
             // The learner filters on Session.Type - a null nav would NRE the mocked queryable.
-            Session = new AgentSession { Mode = AgentAutonomyMode.HumanInTheLoop }
+            Session = new AgentSession()
         };
     }
 

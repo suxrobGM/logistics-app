@@ -15,8 +15,8 @@ namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
 /// Processes LLM tool calls into AgentDecision entities.
-/// Handles mode-aware execution (HumanInTheLoop suggests, Autonomous executes).
-/// Write/permission/decision-type behavior comes from the tool's
+/// Write tools always become Suggested decisions awaiting dispatcher approval; read tools execute
+/// immediately. Write/permission/decision-type behavior comes from the tool's
 /// <see cref="AgentToolDefinition"/> metadata - there is no tool-name list here.
 /// </summary>
 internal sealed class AgentDecisionProcessor(
@@ -88,7 +88,7 @@ internal sealed class AgentDecisionProcessor(
 
         var isWriteTool = definition?.IsWrite == true;
 
-        if (isWriteTool && context.Mode == AgentAutonomyMode.HumanInTheLoop)
+        if (isWriteTool)
         {
             decision.Status = AgentDecisionStatus.Suggested;
             var result = JsonSerializer.Serialize(new
@@ -106,14 +106,6 @@ internal sealed class AgentDecisionProcessor(
         {
             var result = await toolExecutor.ExecuteToolAsync(toolCall.Name, toolInputJson, ct);
             decision.ToolOutput = result;
-
-            if (isWriteTool)
-            {
-                decision.MarkExecuted();
-                logger.LogInformation("Session {SessionId}: write tool {ToolName} executed successfully",
-                    session.Id, toolCall.Name);
-            }
-
             return result;
         }
         catch (Exception ex) when (ex is not OperationCanceledException)

@@ -14,8 +14,8 @@ public interface IAgentToolRegistry
 {
     /// <summary>
     /// The catalogue for a fleet dispatch run: only tools that opt in via
-    /// <see cref="AgentToolDefinition.DispatchAgent"/>, because this agent can execute autonomously.
-    /// Tools whose feature is off are dropped - their schemas cost tokens on every request.
+    /// <see cref="AgentToolDefinition.DispatchAgent"/>. Tools whose feature is off are dropped -
+    /// their schemas cost tokens on every request.
     /// </summary>
     IReadOnlyList<AgentToolDefinition> GetDispatchAgentTools(IReadOnlySet<TenantFeature> enabledFeatures);
 

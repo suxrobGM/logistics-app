@@ -439,7 +439,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         // ── Write Tools ──
 
         new("assign_load_to_truck",
-            "Assign a specific load to a specific truck. In human-in-the-loop mode, this creates a suggestion for dispatcher approval. In autonomous mode, the assignment is executed immediately.",
+            "Assign a specific load to a specific truck. This creates a suggestion for dispatcher approval - it is not executed immediately.",
             new JsonObject
             {
                 ["type"] = "object",
@@ -458,7 +458,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         },
 
         new("create_trip",
-            "Create a new trip from a set of loads assigned to a truck. Groups multiple loads into an optimized multi-stop trip. In human-in-the-loop mode, creates a suggestion for approval.",
+            "Create a new trip from a set of loads assigned to a truck. Groups multiple loads into an optimized multi-stop trip. Creates a suggestion for approval.",
             new JsonObject
             {
                 ["type"] = "object",
@@ -482,7 +482,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         },
 
         new("dispatch_trip",
-            "Dispatch a trip, transitioning it from Draft to Dispatched status. This notifies the driver and starts the trip. In human-in-the-loop mode, creates a suggestion for approval.",
+            "Dispatch a trip, transitioning it from Draft to Dispatched status. This notifies the driver and starts the trip. Creates a suggestion for approval.",
             new JsonObject
             {
                 ["type"] = "object",
@@ -499,7 +499,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         },
 
         new("book_loadboard_load",
-            "Book a load from a load board. This claims the load and creates it in the system. In human-in-the-loop mode, creates a suggestion for approval.",
+            "Book a load from a load board. This claims the load and creates it in the system. Creates a suggestion for approval.",
             new JsonObject
             {
                 ["type"] = "object",
@@ -520,7 +520,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         },
 
         new("create_load_invoice",
-            "Create an UNPAID invoice for a load, billed to the load's customer. Call get_load first: the amount defaults to the load's delivery cost, and you should warn the user when the load is not yet Delivered. Fails if the load already has an invoice. In human-in-the-loop mode, creates a suggestion for approval.",
+            "Create an UNPAID invoice for a load, billed to the load's customer. Call get_load first: the amount defaults to the load's delivery cost, and you should warn the user when the load is not yet Delivered. Fails if the load already has an invoice. Creates a suggestion for approval.",
             new JsonObject
             {
                 ["type"] = "object",
@@ -539,7 +539,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         },
 
         new("send_invoice",
-            "Email an invoice to a recipient. This mints a 30-day payment link and includes it in the email - do NOT also call create_payment_link for the same invoice. In human-in-the-loop mode, creates a suggestion for approval.",
+            "Email an invoice to a recipient. This mints a 30-day payment link and includes it in the email - do NOT also call create_payment_link for the same invoice. Creates a suggestion for approval.",
             new JsonObject
             {
                 ["type"] = "object",
@@ -559,7 +559,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
         },
 
         new("create_payment_link",
-            "Create a public payment link URL for an invoice without emailing anything. Use when the user wants a link to share themselves; send_invoice already includes one. In human-in-the-loop mode, creates a suggestion for approval.",
+            "Create a public payment link URL for an invoice without emailing anything. Use when the user wants a link to share themselves; send_invoice already includes one. Creates a suggestion for approval.",
             new JsonObject
             {
                 ["type"] = "object",

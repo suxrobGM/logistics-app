@@ -5,8 +5,8 @@ namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Represents an individual decision made by the AI dispatch agent within a session.
-/// In HumanInTheLoop mode, decisions start as Suggested and await approval.
-/// In Autonomous mode, decisions are executed immediately.
+/// Write-tool decisions start as Suggested and await dispatcher approval; read-tool decisions
+/// execute immediately and are recorded for the audit trail.
 /// </summary>
 public class AgentDecision : Entity, ITenantEntity
 {

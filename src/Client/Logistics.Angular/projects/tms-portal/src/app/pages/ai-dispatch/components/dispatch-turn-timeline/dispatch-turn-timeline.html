@@ -1,0 +1,75 @@
+@if (isTurnRunning()) {
+  <ui-stack direction="row" align="center" gap="2" class="text-muted-foreground mb-2 text-xs">
+    <ui-spinner size="1em" ariaLabel="Turn in progress" />
+    <span>This turn is in progress</span>
+  </ui-stack>
+}
+
+<ui-timeline [value]="decisions()">
+  <ng-template uiTimelineContent let-decision>
+    <div class="animate-slide-in mb-4 pb-2">
+      <ui-stack direction="row" align="center" gap="2" wrap class="mb-1">
+        <ui-typography variant="body-sm" weight="medium">
+          {{ getToolLabel(decision.toolName) }}
+        </ui-typography>
+        <ui-typography variant="caption" color="muted">
+          {{ decision.createdAt | date: "MMM d, h:mm a" }}
+        </ui-typography>
+        @if (isWriteTool(decision.toolName)) {
+          <ui-badge
+            size="sm"
+            [value]="decision.status"
+            [severity]="Labels.dispatchStatusSeverity(decision.status)"
+          />
+        }
+      </ui-stack>
+
+      @if (decision.reasoning) {
+        <div class="mb-2">
+          <div
+            class="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed"
+            [class.line-clamp-3]="!isExpanded(decision.id!)"
+            [innerHTML]="decision.reasoning | markdown"
+          ></div>
+          @if (decision.reasoning.length > 150) {
+            <ui-button
+              appearance="text"
+              intent="secondary"
+              size="sm"
+              [label]="isExpanded(decision.id!) ? 'Show less' : 'Show more'"
+              (click)="toggleExpand(decision.id!); $event.stopPropagation()"
+            />
+          }
+        </div>
+      }
+
+      @if (decision.toolOutput) {
+        <ui-surface variant="subtle" padding="sm" radius="md" [border]="false" class="text-xs">
+          <app-tool-output-summary [toolOutput]="decision.toolOutput" />
+        </ui-surface>
+      }
+
+      @if (decision.status === "suggested" && isWriteTool(decision.toolName)) {
+        <ui-permission-guard [permissions]="dispatchManage">
+          <div class="mt-2">
+            <app-approve-reject-actions
+              [decision]="decision"
+              [busy]="busyDecisionId() === decision.id"
+              (approve)="approve.emit(decision)"
+              (reject)="reject.emit(decision)"
+            />
+          </div>
+        </ui-permission-guard>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template uiTimelineMarker let-decision>
+    <span
+      class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
+      [class]="getToolMarkerClass(decision.toolName)"
+    >
+      <ui-icon [name]="getToolIcon(decision.toolName)" size="inherit" class="text-xs" />
+    </span>
+  </ng-template>
+</ui-timeline>

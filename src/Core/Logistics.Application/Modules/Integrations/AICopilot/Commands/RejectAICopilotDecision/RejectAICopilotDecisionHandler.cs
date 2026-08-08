@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
@@ -27,7 +28,8 @@ internal sealed class RejectAICopilotDecisionHandler(
         var note = string.IsNullOrWhiteSpace(request.Reason)
             ? $"Rejected: {decision.ToolName}"
             : $"Rejected: {decision.ToolName} - {request.Reason}";
-        var message = conversation.AddTextMessage(AICopilotMessageRole.System, note);
+        var message = conversation.AddTextMessage(AgentMessageRole.System, note);
+        await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         await tenantUow.SaveChangesAsync(ct);
 
         var tenantId = tenantUow.GetCurrentTenant().Id;

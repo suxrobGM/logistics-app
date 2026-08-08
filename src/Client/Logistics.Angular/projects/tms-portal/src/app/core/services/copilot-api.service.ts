@@ -10,11 +10,12 @@ import {
   renameCopilotConversation,
   sendCopilotMessage,
   silentErrors,
-  type AICopilotConversationDto,
-  type AICopilotConversationDtoPagedResult,
+  type AgentConversationDto,
+  type AgentConversationDtoPagedResult,
   type AIQuotaStatusDto,
   type SendAICopilotMessageResultDto,
 } from "@logistics/shared/api";
+import { orNull, succeeded } from "./agent-api.utils";
 
 /**
  * HTTP for the copilot drawer: every call resolves to null (or false for the commands whose only
@@ -32,8 +33,8 @@ export class CopilotApiService {
   fetchConversation(
     conversationId: string,
     options?: { silent?: boolean },
-  ): Promise<AICopilotConversationDto | null> {
-    return this.orNull(
+  ): Promise<AgentConversationDto | null> {
+    return orNull(
       this.api.invoke(
         getCopilotConversationById,
         { conversationId },
@@ -45,23 +46,21 @@ export class CopilotApiService {
   fetchHistoryPage(
     page: number,
     pageSize: number,
-  ): Promise<AICopilotConversationDtoPagedResult | null> {
-    return this.orNull(
-      this.api.invoke(getCopilotConversations, { Page: page, PageSize: pageSize }),
-    );
+  ): Promise<AgentConversationDtoPagedResult | null> {
+    return orNull(this.api.invoke(getCopilotConversations, { Page: page, PageSize: pageSize }));
   }
 
   /** Silent - the quota notice and composer block are advisory; the send path enforces server-side. */
   fetchQuota(): Promise<AIQuotaStatusDto | null> {
-    return this.orNull(this.api.invoke(getCopilotQuotaStatus, undefined, silentErrors()));
+    return orNull(this.api.invoke(getCopilotQuotaStatus, undefined, silentErrors()));
   }
 
-  createConversation(): Promise<AICopilotConversationDto | null> {
-    return this.orNull(this.api.invoke(createCopilotConversation));
+  createConversation(): Promise<AgentConversationDto | null> {
+    return orNull(this.api.invoke(createCopilotConversation));
   }
 
   sendMessage(conversationId: string, text: string): Promise<SendAICopilotMessageResultDto | null> {
-    return this.orNull(
+    return orNull(
       this.api.invoke(sendCopilotMessage, {
         conversationId,
         body: { conversationId, text },
@@ -70,11 +69,11 @@ export class CopilotApiService {
   }
 
   cancelTurn(conversationId: string): Promise<boolean> {
-    return this.succeeded(this.api.invoke(cancelCopilotTurn, { conversationId }));
+    return succeeded(this.api.invoke(cancelCopilotTurn, { conversationId }));
   }
 
   renameConversation(conversationId: string, title: string): Promise<boolean> {
-    return this.succeeded(
+    return succeeded(
       this.api.invoke(renameCopilotConversation, {
         conversationId,
         body: { conversationId, title },
@@ -83,23 +82,6 @@ export class CopilotApiService {
   }
 
   deleteConversation(conversationId: string): Promise<boolean> {
-    return this.succeeded(this.api.invoke(deleteCopilotConversation, { conversationId }));
-  }
-
-  private async orNull<T>(call: Promise<T>): Promise<T | null> {
-    try {
-      return await call;
-    } catch {
-      return null;
-    }
-  }
-
-  private async succeeded(call: Promise<unknown>): Promise<boolean> {
-    try {
-      await call;
-      return true;
-    } catch {
-      return false;
-    }
+    return succeeded(this.api.invoke(deleteCopilotConversation, { conversationId }));
   }
 }
