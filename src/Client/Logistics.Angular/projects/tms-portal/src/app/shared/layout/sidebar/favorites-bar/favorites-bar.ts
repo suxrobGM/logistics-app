@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, output } from "@angular/core";
 import { Router } from "@angular/router";
 import { Icon, UiPopover, UiTooltip } from "@logistics/shared/ui";
-import { SidebarFavoritesService } from "@/core/services";
+import { SidebarFavoritesService, SidebarNavService } from "@/core/services";
 import type { NavItem, NavSection } from "../../nav-menu";
 
 @Component({
@@ -12,23 +12,27 @@ import type { NavItem, NavSection } from "../../nav-menu";
 export class FavoritesBar {
   private readonly router = inject(Router);
   private readonly favoritesService = inject(SidebarFavoritesService);
+  private readonly sidebarNavService = inject(SidebarNavService);
 
-  public readonly sections = input.required<NavSection[]>();
   public readonly collapsed = input(false);
   public readonly navigate = output<string>();
 
+  /** The full tree, hidden children included - a favorite may point at a `menuHidden` child. */
+  private readonly allItems = computed(() =>
+    this.flattenItems(this.sidebarNavService.fullSections()),
+  );
+
   protected readonly favoriteItems = computed(() => {
-    const ids = this.favoritesService.favoriteIds();
-    const allItems = this.flattenItems(this.sections());
-    return ids
+    const allItems = this.allItems();
+    return this.favoritesService
+      .favoriteIds()
       .map((id) => allItems.find((item) => item.id === id))
       .filter((item): item is NavItem => item != null);
   });
 
   protected readonly availableItems = computed(() => {
     const ids = this.favoritesService.favoriteIds();
-    const allItems = this.flattenItems(this.sections());
-    return allItems.filter((item) => item.route && !ids.includes(item.id));
+    return this.allItems().filter((item) => item.route && !ids.includes(item.id));
   });
 
   protected readonly isFull = computed(() => this.favoritesService.isFull());

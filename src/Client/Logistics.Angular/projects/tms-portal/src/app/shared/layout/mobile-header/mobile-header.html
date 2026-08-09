@@ -19,15 +19,7 @@
   </a>
 
   <div class="flex items-center gap-1">
-    @if (copilotStore.launcherVisible()) {
-      <ui-button
-        icon="bot-message-square"
-        appearance="text"
-        size="lg"
-        ariaLabel="Open AI Copilot"
-        (click)="copilotStore.openOrUpsell()"
-      />
-    }
-    <app-notification-bell [expanded]="false" />
+    <app-copilot-launcher />
+    <app-notification-bell />
   </div>
 </header>

@@ -4,7 +4,6 @@ import {
   computed,
   DestroyRef,
   inject,
-  input,
   signal,
   viewChild,
   type OnInit,
@@ -19,9 +18,6 @@ import { NotificationService } from "@/core/services";
   selector: "app-notification-bell",
   templateUrl: "./notification-bell.html",
   styleUrl: "./notification-bell.css",
-  host: {
-    "[class.icon-only]": "!expanded()",
-  },
   imports: [
     CommonModule,
     Divider,
@@ -39,9 +35,6 @@ export class NotificationBell implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly popover = viewChild<UiPopover>("popover");
-
-  /** Whether the sidebar is expanded (shows label) or collapsed (icon only) */
-  public readonly expanded = input(true);
 
   protected readonly notifications = this.notificationService.notifications;
   protected readonly unreadCount = this.notificationService.unreadCount;

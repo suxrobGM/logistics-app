@@ -1,0 +1,56 @@
+@if (userFullName(); as fullName) {
+  <button class="account-trigger" (click)="userPopover.toggle($event)" type="button">
+    <span class="account-avatar">
+      <ui-icon name="user" size="inherit" />
+    </span>
+
+    @if (!labelsHidden()) {
+      <span class="min-w-0 flex-1">
+        <span class="account-name">{{ fullName }}</span>
+        @if (userRole(); as role) {
+          <span class="account-role">{{ role }}</span>
+        }
+      </span>
+      <ui-icon name="ellipsis-vertical" size="inherit" class="text-muted-foreground text-xs" />
+    }
+  </button>
+}
+
+<ui-popover #userPopover>
+  <div class="w-52">
+    @if (userFullName(); as fullName) {
+      <div class="border-subtle border-b px-3.5 py-2.5">
+        <div class="text-foreground text-sm font-semibold">{{ fullName }}</div>
+        @if (userRole(); as role) {
+          <div class="text-primary text-[0.6875rem] font-medium">{{ role }}</div>
+        }
+      </div>
+    }
+    <div class="p-1">
+      <button
+        class="account-menu-item"
+        (click)="openAccountUrl(); userPopover.hide()"
+        type="button"
+      >
+        <ui-icon name="user-pen" />
+        <span>Manage Profile</span>
+      </button>
+      <button
+        class="account-menu-item"
+        (click)="openPrivacyUrl(); userPopover.hide()"
+        type="button"
+      >
+        <ui-icon name="shield" />
+        <span>Privacy &amp; Data</span>
+      </button>
+      <button
+        class="account-menu-item account-menu-item-danger"
+        (click)="logout(); userPopover.hide()"
+        type="button"
+      >
+        <ui-icon name="log-out" />
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </div>
+</ui-popover>

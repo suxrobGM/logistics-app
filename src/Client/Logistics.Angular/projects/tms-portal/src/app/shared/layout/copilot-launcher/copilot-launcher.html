@@ -1,0 +1,15 @@
+@if (store.launcherVisible()) {
+  <button
+    class="copilot-launcher"
+    uiTooltip="AI Copilot (Ctrl+I)"
+    uiTooltipPosition="right"
+    aria-label="Open AI Copilot"
+    (click)="open()"
+    type="button"
+  >
+    <ui-icon name="bot-message-square" size="inherit" />
+    @if (store.hasUnread()) {
+      <span class="bg-primary absolute top-0.5 right-0.5 size-2 rounded-full"></span>
+    }
+  </button>
+}

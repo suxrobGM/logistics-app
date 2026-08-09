@@ -1,7 +1,7 @@
 <button
   class="notification-bell"
   (click)="togglePopover($event)"
-  [uiTooltip]="expanded() ? '' : 'Notifications'"
+  uiTooltip="Notifications"
   uiTooltipPosition="right"
   aria-label="Open notifications"
   type="button"
@@ -11,13 +11,8 @@
     severity="danger"
     badgeSize="small"
   >
-    <!-- `notification-bell-icon` exists because the glyph is an <svg> now: a CSS selector can no
-         longer key off the icon's own class name. Sizing and the ring animation hang off it. -->
     <ui-icon name="bell" size="inherit" class="notification-bell-icon" />
   </ui-overlay-badge>
-  @if (expanded()) {
-    <span>Notifications</span>
-  }
 </button>
 
 <ui-popover #popover width="380px">

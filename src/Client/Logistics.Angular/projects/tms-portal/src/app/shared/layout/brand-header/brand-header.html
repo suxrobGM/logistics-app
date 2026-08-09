@@ -1,0 +1,5 @@
+<img [src]="companyLogoUrl() ?? 'images/logo.svg'" class="brand-logo" alt="Company logo" />
+
+@if (!collapsed() && companyName(); as name) {
+  <h4 class="brand-company">{{ name }}</h4>
+}

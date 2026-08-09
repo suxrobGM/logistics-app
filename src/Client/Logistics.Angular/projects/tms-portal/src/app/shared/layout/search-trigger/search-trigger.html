@@ -1,0 +1,13 @@
+<button
+  class="search-trigger"
+  (click)="open()"
+  [uiTooltip]="collapsed() ? 'Search (Ctrl+K)' : ''"
+  uiTooltipPosition="right"
+  type="button"
+>
+  <ui-icon name="search" size="inherit" class="shrink-0 text-sm" />
+  @if (!collapsed()) {
+    <span class="flex-1 text-left">Search...</span>
+    <kbd class="kbd">Ctrl+K</kbd>
+  }
+</button>

@@ -1,41 +1,28 @@
+/* Bare ghost button; `.nav-footer-actions` adds the bordered box where there is one.
+   `notification-bell-icon` exists because the glyph is an <svg> now: a CSS selector can no
+   longer key off the icon's own class name. */
 .notification-bell {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.5625rem 0.875rem;
+  justify-content: center;
+  padding: 0.5rem;
   background: transparent;
-  border: 1px solid var(--border-subtle);
+  border: none;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  font-family: var(--font-sans);
+  font-size: 1.125rem;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 .notification-bell:hover {
-  background-color: var(--bg-hover);
-  color: var(--text-primary);
-  border-color: var(--border-default);
-}
-.notification-bell:focus {
-  outline: none;
-}
-.notification-bell:focus-visible {
-  box-shadow: 0 0 0 2px var(--primary-500);
-}
-.notification-bell:active {
-  transform: scale(0.98);
+  color: var(--primary-500);
 }
 .notification-bell-icon {
-  font-size: 1.125rem;
   transition:
     transform var(--transition-fast),
     color var(--transition-fast);
 }
 .notification-bell:hover .notification-bell-icon {
-  color: var(--primary-500);
   animation: bell-ring 0.5s ease-in-out;
 }
 
@@ -56,20 +43,6 @@
   80% {
     transform: rotate(5deg);
   }
-}
-
-/* Icon-only: no label to left-align against. Width stays 100% so the footer sizes both buttons. */
-:host(.icon-only) .notification-bell {
-  justify-content: center;
-  padding: 0.5625rem;
-}
-:host-context(header) .notification-bell {
-  width: auto;
-  padding: 0.5rem;
-  border: none;
-}
-:host-context(header) .notification-bell:hover {
-  background-color: transparent;
 }
 
 .mark-all-read {

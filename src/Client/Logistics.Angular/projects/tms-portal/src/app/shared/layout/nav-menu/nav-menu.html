@@ -11,169 +11,111 @@
       }
 
       @for (item of section.items; track item.id) {
-        @if (item.children) {
-          <!-- Expandable group -->
-          <button
-            class="nav-item"
-            [class.nav-item-active]="isGroupActive(item)"
-            [class.nav-item-collapsed]="collapsed()"
-            (click)="toggleGroup(item)"
-            (contextmenu)="onItemContextMenu($event, item)"
-            (mouseenter)="onItemMouseEnter($event, item)"
-            (mouseleave)="onItemMouseLeave()"
-            (focus)="onItemFocus($event, item)"
-            (blur)="onItemBlur()"
-            type="button"
-          >
-            <div class="flex min-w-0 items-center gap-3">
-              @if (item.icon; as icon) {
-                <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
-              }
-              @if (!collapsed()) {
-                <span class="truncate">{{ item.label }}</span>
-              }
-            </div>
-            @if (!collapsed()) {
-              <ui-icon
-                name="chevron-down"
-                size="inherit"
-                class="text-muted-foreground shrink-0 text-xs transition-transform duration-200"
-                [class.rotate-180]="isGroupExpanded(item)"
-                [class.text-primary]="isGroupExpanded(item)"
-              />
-            }
-          </button>
-
-          <!-- Children (animated expand/collapse) -->
-          @if (!collapsed()) {
-            <div class="nav-children-wrapper" [class.expanded]="isGroupExpanded(item)">
-              <div class="nav-children-inner border-subtle ml-7 border-l">
-                @for (child of item.children; track child.id) {
-                  <a
-                    class="nav-child"
-                    [routerLink]="child.route"
-                    routerLinkActive="nav-child-active"
-                    [routerLinkActiveOptions]="{ exact: true }"
-                    (click)="navigateTo(child)"
-                    (contextmenu)="onChildContextMenu($event, child)"
-                  >
-                    <span>{{ child.label }}</span>
-                    @if (child.badge && child.badge()! > 0) {
-                      <ui-count-badge [value]="child.badge()!.toString()" severity="danger" />
-                    }
-                  </a>
-                }
-              </div>
-            </div>
-          }
-        } @else {
-          <!-- Direct link -->
-          <a
-            class="nav-item"
-            [class.nav-item-collapsed]="collapsed()"
-            [routerLink]="item.route"
-            routerLinkActive="nav-item-active"
-            (click)="navigateTo(item)"
-            (contextmenu)="onItemContextMenu($event, item)"
-            [uiTooltip]="collapsed() ? item.label : ''"
-            uiTooltipPosition="right"
-          >
-            <div class="flex min-w-0 items-center gap-3">
-              @if (item.icon; as icon) {
-                <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
-              }
-              @if (!collapsed()) {
-                <span class="truncate">{{ item.label }}</span>
-              }
-            </div>
-            @if (!collapsed() && item.badge && item.badge()! > 0) {
-              <ui-count-badge [value]="item.badge()!.toString()" severity="danger" />
-            }
-            @if (collapsed() && item.badge && item.badge()! > 0) {
-              <span class="bg-danger absolute top-1 right-1 size-2 rounded-full"></span>
-            }
-          </a>
-        }
+        <ng-container *ngTemplateOutlet="navEntry; context: { $implicit: item }"></ng-container>
       }
     </div>
   }
 </div>
 
-<!-- Bottom sections (Settings) -->
+<!-- Bottom sections (Settings). Same entry template, so this can't drift into a degraded copy. -->
 @if (bottomSections().length > 0) {
   <div class="border-subtle border-t py-2">
     @for (section of bottomSections(); track section.id) {
       @for (item of section.items; track item.id) {
-        @if (item.children) {
-          <button
-            class="nav-item"
-            [class.nav-item-active]="isGroupActive(item)"
-            [class.nav-item-collapsed]="collapsed()"
-            (click)="toggleGroup(item)"
-            (mouseenter)="onItemMouseEnter($event, item)"
-            (mouseleave)="onItemMouseLeave()"
-            (focus)="onItemFocus($event, item)"
-            (blur)="onItemBlur()"
-            type="button"
-          >
-            <div class="flex min-w-0 items-center gap-3">
-              @if (item.icon; as icon) {
-                <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
-              }
-              @if (!collapsed()) {
-                <span class="truncate">{{ item.label }}</span>
-              }
-            </div>
-            @if (!collapsed()) {
-              <ui-icon
-                name="chevron-down"
-                size="inherit"
-                class="text-muted-foreground shrink-0 text-xs transition-transform duration-200"
-                [class.rotate-180]="isGroupExpanded(item)"
-                [class.text-primary]="isGroupExpanded(item)"
-              />
-            }
-          </button>
-
-          @if (!collapsed()) {
-            <div class="nav-children-wrapper" [class.expanded]="isGroupExpanded(item)">
-              <div class="nav-children-inner border-subtle ml-7 border-l">
-                @for (child of item.children; track child.id) {
-                  <a
-                    class="nav-child"
-                    [routerLink]="child.route"
-                    routerLinkActive="nav-child-active"
-                    [routerLinkActiveOptions]="{ exact: true }"
-                    (click)="navigateTo(child)"
-                  >
-                    <span>{{ child.label }}</span>
-                  </a>
-                }
-              </div>
-            </div>
-          }
-        } @else {
-          <a
-            class="nav-item"
-            [class.nav-item-collapsed]="collapsed()"
-            [routerLink]="item.route"
-            routerLinkActive="nav-item-active"
-            (click)="navigateTo(item)"
-          >
-            <div class="flex min-w-0 items-center gap-3">
-              @if (item.icon; as icon) {
-                <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
-              }
-              @if (!collapsed()) {
-                <span class="truncate">{{ item.label }}</span>
-              }
-            </div>
-          </a>
-        }
+        <ng-container *ngTemplateOutlet="navEntry; context: { $implicit: item }"></ng-container>
       }
     }
   </div>
 }
+
+<ng-template #navEntry let-item>
+  @if (item.children) {
+    <!-- Expandable group. A button, not a link, so routerLinkActive cannot mark it - hence isGroupActive. -->
+    <button
+      class="nav-item"
+      [class.nav-item-active]="isGroupActive(item)"
+      [class.nav-item-collapsed]="collapsed()"
+      (click)="toggleGroup(item)"
+      (contextmenu)="onItemContextMenu($event, item)"
+      (mouseenter)="onItemMouseEnter($event, item)"
+      (mouseleave)="onItemMouseLeave()"
+      (focus)="onItemFocus($event, item)"
+      (blur)="onItemBlur()"
+      [uiTooltip]="collapsed() ? item.label : ''"
+      uiTooltipPosition="right"
+      type="button"
+    >
+      <div class="flex min-w-0 items-center gap-3">
+        @if (item.icon; as icon) {
+          <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
+        }
+        @if (!collapsed()) {
+          <span class="truncate">{{ item.label }}</span>
+        }
+      </div>
+      @if (!collapsed()) {
+        <ui-icon
+          name="chevron-down"
+          size="inherit"
+          class="text-muted-foreground shrink-0 text-xs transition-transform duration-200"
+          [class.rotate-180]="isGroupExpanded(item)"
+          [class.text-primary]="isGroupExpanded(item)"
+        />
+      }
+    </button>
+
+    <!-- Children (animated expand/collapse) -->
+    @if (!collapsed()) {
+      <div class="nav-children-wrapper" [class.expanded]="isGroupExpanded(item)">
+        <div class="nav-children-inner border-subtle ml-7 border-l">
+          @for (child of item.children; track child.id) {
+            <a
+              class="nav-child"
+              [routerLink]="child.route"
+              routerLinkActive="nav-child-active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              (click)="itemClick.emit(child)"
+              (contextmenu)="onItemContextMenu($event, child)"
+            >
+              <span>{{ child.label }}</span>
+              @if (child.badge && child.badge()! > 0) {
+                <ui-count-badge [value]="child.badge()!.toString()" severity="danger" />
+              }
+            </a>
+          }
+        </div>
+      </div>
+    }
+  } @else {
+    <!-- Direct link. routerLink already navigates; the click only reports it to the host. -->
+    <a
+      class="nav-item"
+      [class.nav-item-collapsed]="collapsed()"
+      [routerLink]="item.route"
+      routerLinkActive="nav-item-active"
+      (click)="itemClick.emit(item)"
+      (contextmenu)="onItemContextMenu($event, item)"
+      [uiTooltip]="collapsed() ? item.label : ''"
+      uiTooltipPosition="right"
+    >
+      <div class="flex min-w-0 items-center gap-3">
+        @if (item.icon; as icon) {
+          <ui-icon [name]="icon" size="inherit" class="nav-icon text-[1.125rem]" />
+        }
+        @if (!collapsed()) {
+          <span class="truncate">{{ item.label }}</span>
+        }
+      </div>
+      @if (item.badge && item.badge()! > 0) {
+        @if (collapsed()) {
+          <span class="bg-danger absolute top-1 right-1 size-2 rounded-full"></span>
+        } @else {
+          <ui-count-badge [value]="item.badge()!.toString()" severity="danger" />
+        }
+      }
+    </a>
+  }
+</ng-template>
 
 <!-- Flyout for collapsed mode -->
 @if (collapsed() && hoveredItem()) {

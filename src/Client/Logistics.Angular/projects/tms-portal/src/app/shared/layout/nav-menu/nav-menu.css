@@ -113,7 +113,7 @@
 /* Flyout (collapsed mode hover panel) - requires fixed positioning */
 .nav-flyout {
   position: fixed;
-  left: 72px;
+  left: var(--sidebar-width-collapsed);
   z-index: 1000;
   min-width: 200px;
   max-width: 260px;
