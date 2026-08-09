@@ -1,0 +1,26 @@
+@if (userFullName(); as fullName) {
+  <button class="account-trigger" (click)="userMenu.toggle($event)" type="button">
+    <span class="account-avatar">
+      <ui-icon name="user" size="inherit" />
+    </span>
+
+    @if (!labelsHidden()) {
+      <span class="min-w-0 flex-1">
+        <span class="account-name">{{ fullName }}</span>
+        @if (userRole(); as role) {
+          <span class="account-role">{{ role }}</span>
+        }
+      </span>
+      <ui-icon name="ellipsis-vertical" size="inherit" class="text-muted-foreground text-xs" />
+    }
+  </button>
+}
+
+<ui-menu #userMenu [items]="menuItems" ariaLabel="Account">
+  <div menuHeader role="presentation" class="border-subtle -mx-1 -mt-1 mb-1 border-b px-3.5 py-2.5">
+    <div class="text-foreground text-sm font-semibold">{{ userFullName() }}</div>
+    @if (userRole(); as role) {
+      <div class="text-primary text-[0.6875rem] font-medium">{{ role }}</div>
+    }
+  </div>
+</ui-menu>

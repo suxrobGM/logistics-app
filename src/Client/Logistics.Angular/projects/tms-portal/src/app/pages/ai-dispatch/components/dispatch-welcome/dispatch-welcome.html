@@ -1,0 +1,45 @@
+<div class="mx-auto w-full max-w-2xl text-center">
+  <span
+    class="bg-primary/10 text-primary ring-primary/20 mx-auto mb-3 flex size-12 items-center justify-center rounded-full ring-1"
+  >
+    <ui-icon name="sparkles" size="lg" />
+  </span>
+  <ui-typography variant="h4" tag="h2">What should the dispatcher agent work on?</ui-typography>
+  <ui-typography variant="body-sm" color="muted" class="mt-1">
+    Ask in plain English - it inspects your fleet and proposes actions for you to approve.
+  </ui-typography>
+</div>
+
+<ui-surface variant="subtle" padding="md" class="mx-auto w-full max-w-2xl">
+  <div class="flex gap-3">
+    <ui-icon name="info" size="sm" class="text-muted-foreground mt-0.5 shrink-0" />
+    <ol class="text-muted-foreground m-0 list-decimal space-y-1.5 pl-4 text-xs leading-relaxed">
+      <li>
+        It analyzes unassigned loads, truck locations, HOS hours, truck-type compatibility and
+        revenue per mile.
+      </li>
+      <li>
+        Write actions - assign, create trip, dispatch, invoice - are proposed as decisions you
+        approve or reject before anything executes.
+      </li>
+      <li>Guide it with plain instructions like "Prioritize Customer X" or "Skip Truck 42".</li>
+    </ol>
+  </div>
+</ui-surface>
+
+<div class="mx-auto grid w-full max-w-2xl gap-2 sm:grid-cols-2">
+  @for (quick of quickActions; track quick.prompt) {
+    <button
+      type="button"
+      class="border-default hover:bg-hover flex items-start gap-3 rounded-lg border p-3 text-left transition-colors"
+      [class.border-primary]="$first"
+      (click)="action.emit(quick.prompt)"
+    >
+      <ui-icon [name]="quick.icon" size="sm" class="text-primary mt-0.5 shrink-0" />
+      <span class="min-w-0">
+        <span class="block text-sm font-medium">{{ quick.title }}</span>
+        <span class="text-muted-foreground block text-xs">{{ quick.description }}</span>
+      </span>
+    </button>
+  }
+</div>

@@ -1,6 +1,0 @@
-/*
- * The old `::ng-deep .p-timeline-*` rules are GONE - ported by CONSTRUCTION into `<ui-timeline>`
- * rather than renamed. The old rule hiding a spacer element on the unused side of each event is no
- * longer needed: ui-timeline emits no such element. `flex: 1` on the content column is ui-timeline's
- * own `flex-1`.
- */

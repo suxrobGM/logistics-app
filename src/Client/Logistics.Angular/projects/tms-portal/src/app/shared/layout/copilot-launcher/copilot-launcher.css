@@ -1,0 +1,19 @@
+/* Bare ghost button. Inside `.nav-footer-actions` the portal chrome adds the bordered box; in the
+   mobile header there is no such container and it stays flat. */
+.copilot-launcher {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.copilot-launcher:hover {
+  color: var(--primary-500);
+}

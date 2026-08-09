@@ -95,21 +95,4 @@ export const Labels = {
         return "secondary";
     }
   },
-
-  decisionTypeLabel(type: string): string {
-    switch (type) {
-      case "assign_load":
-        return "Assign Load";
-      case "create_trip":
-        return "Create Trip";
-      case "dispatch_trip":
-        return "Dispatch Trip";
-      case "book_load_board_load":
-        return "Book Load";
-      case "reassign_load":
-        return "Reassign";
-      default:
-        return type;
-    }
-  },
 } as const;

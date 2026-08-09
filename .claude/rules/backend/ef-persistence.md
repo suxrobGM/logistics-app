@@ -15,7 +15,7 @@ saves an UPDATE affecting 0 rows - a misleading `DbUpdateConcurrencyException`.
 
 ```csharp
 var message = conversation.AddTextMessage(role, text);
-await tenantUow.Repository<AICopilotMessage>().AddAsync(message, ct); // without this, save throws
+await tenantUow.Repository<AgentMessage>().AddAsync(message, ct); // without this, save throws
 await tenantUow.SaveChangesAsync(ct);
 ```
 

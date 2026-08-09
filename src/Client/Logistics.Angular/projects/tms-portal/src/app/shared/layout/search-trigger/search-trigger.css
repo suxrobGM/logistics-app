@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.search-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: calc(100% - 1.25rem);
+  margin: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font: 0.8125rem var(--font-sans);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.search-trigger:hover {
+  border-color: var(--primary-500);
+  color: var(--text-secondary);
+}
+
+:host(.collapsed) .search-trigger {
+  justify-content: center;
+  width: calc(100% - 1rem);
+  margin: 0.5rem;
+  padding: 0.625rem;
+}

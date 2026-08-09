@@ -5,15 +5,12 @@
     [attr.aria-label]="ariaLabel()"
     (focusout)="onFocusOut($event)"
   >
+    <ng-content select="[menuHeader]" />
+
     @for (item of visibleItems(); track $index) {
       @if (item.separator) {
         <div hlmDropdownMenuSeparator></div>
       } @else if (item.routerLink) {
-        <!--
-          A real <a>, not a button: it keeps ctrl/middle-click and "open in new tab" working.
-          Safe with CdkMenuItem - its keydown handler skips preventDefault() when the node is an
-          'A' or a 'BUTTON', so Enter still dispatches the native click that RouterLink listens for.
-        -->
         <a
           hlmDropdownMenuItem
           [routerLink]="item.routerLink"

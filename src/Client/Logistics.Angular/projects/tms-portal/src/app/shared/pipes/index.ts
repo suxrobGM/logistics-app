@@ -1,3 +1,2 @@
-// Re-export from shared library for backwards compatibility
-export { DistanceUnitPipe, CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
-export * from "./markdown";
+// Re-export from the shared library for the `@/shared/pipes` consumers.
+export { DistanceUnitPipe, stripMarkdown } from "@logistics/shared/pipes";

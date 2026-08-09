@@ -7,7 +7,6 @@ public enum AgentDecisionType
     CreateTrip,
     DispatchTrip,
     BookLoadBoardLoad,
-    ReassignLoad,
     CreateInvoice,
     SendInvoice,
     CreatePaymentLink

@@ -2,7 +2,13 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/spec",
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "@/*": ["./src/app/*"],
+      "@/env": ["../../projects/shared/src/lib/config/app-env"],
+      "@logistics/shared": ["../../projects/shared/src/public-api.ts"],
+      "@logistics/shared/*": ["../../projects/shared/src/lib/*"]
+    }
   },
   "include": ["src/**/*.d.ts", "src/**/*.spec.ts"]
 }

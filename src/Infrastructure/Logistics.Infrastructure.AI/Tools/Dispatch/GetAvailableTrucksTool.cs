@@ -1,8 +1,8 @@
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
@@ -47,40 +47,40 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IAge
             var driver = truck.MainDriverId is not null
                 && drivers.TryGetValue(truck.MainDriverId.Value, out var found) ? found : null;
 
-            return new
+            return new AgentToolTruckDto
             {
-                id = truck.Id,
-                number = truck.Number,
-                type = truck.Type.ToString(),
-                current_lat = truck.CurrentLocation?.Latitude,
-                current_lng = truck.CurrentLocation?.Longitude,
-                current_address = truck.CurrentAddress?.ToString(),
-                main_driver = driver is not null ? new
+                Id = truck.Id,
+                Number = truck.Number,
+                Type = truck.Type.ToString(),
+                CurrentLat = truck.CurrentLocation?.Latitude,
+                CurrentLng = truck.CurrentLocation?.Longitude,
+                CurrentAddress = truck.CurrentAddress?.ToString(),
+                MainDriver = driver is null ? null : new AgentToolDriverDto
                 {
-                    id = driver.Id,
-                    name = driver.GetFullName(),
-                    hos = hosStatus is not null ? new
+                    Id = driver.Id,
+                    Name = driver.GetFullName(),
+                    Hos = hosStatus is null ? null : new AgentToolHosDto
                     {
-                        driving_minutes_remaining = hosStatus.DrivingMinutesRemaining,
-                        on_duty_minutes_remaining = hosStatus.OnDutyMinutesRemaining,
-                        cycle_minutes_remaining = hosStatus.CycleMinutesRemaining,
-                        is_in_violation = hosStatus.IsInViolation,
-                        is_available = hosStatus.IsAvailableForDispatch()
-                    } : (object?)null
-                } : (object?)null
+                        DrivingMinutesRemaining = hosStatus.DrivingMinutesRemaining,
+                        OnDutyMinutesRemaining = hosStatus.OnDutyMinutesRemaining,
+                        CycleMinutesRemaining = hosStatus.CycleMinutesRemaining,
+                        IsInViolation = hosStatus.IsInViolation,
+                        IsAvailable = hosStatus.IsAvailableForDispatch()
+                    }
+                }
             };
         }).ToList();
 
-        return JsonSerializer.Serialize(new
+        return ToolResult.Typed(new AgentToolResultDto
         {
-            trucks = truckData,
-            count = trucks.Count,
-            fleet_summary = new
+            Trucks = truckData,
+            Count = trucks.Count,
+            FleetSummary = new AgentToolFleetSummaryDto
             {
-                total_trucks = totalTrucks,
-                available_trucks = trucks.Count,
-                active_trips = activeTrips,
-                drivers_in_violation = driversInViolation
+                TotalTrucks = totalTrucks,
+                AvailableTrucks = trucks.Count,
+                ActiveTrips = activeTrips,
+                DriversInViolation = driversInViolation
             }
         });
     }

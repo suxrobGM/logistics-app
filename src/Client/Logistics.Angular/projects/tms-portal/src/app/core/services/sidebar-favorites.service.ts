@@ -54,6 +54,14 @@ export class SidebarFavoritesService {
     this.persist();
   }
 
+  toggle(itemId: string): void {
+    if (this.isFavorite(itemId)) {
+      this.remove(itemId);
+    } else {
+      this.add(itemId);
+    }
+  }
+
   isFavorite(itemId: string): boolean {
     return this._favoriteIds().includes(itemId);
   }

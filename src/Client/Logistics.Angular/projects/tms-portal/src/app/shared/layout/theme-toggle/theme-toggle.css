@@ -1,53 +1,30 @@
+/* Bare ghost button; `.nav-footer-actions` adds the bordered box where there is one.
+   `theme-toggle-sun` / `theme-toggle-moon` exist because the glyph is an <svg> now: a CSS
+   selector can no longer key off the icon's own class name. */
 .theme-toggle {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.5625rem 0.875rem;
+  justify-content: center;
+  padding: 0.5rem;
   background: transparent;
-  border: 1px solid var(--border-subtle);
+  border: none;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  font-family: var(--font-sans);
+  font-size: 1.125rem;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 .theme-toggle:hover {
-  background-color: var(--bg-hover);
-  color: var(--text-primary);
-  border-color: var(--border-default);
-}
-.theme-toggle:focus {
-  outline: none;
-}
-.theme-toggle:focus-visible {
-  box-shadow: 0 0 0 2px var(--primary-500);
-}
-.theme-toggle:active {
-  transform: scale(0.98);
+  color: var(--primary-500);
 }
 .theme-toggle-icon {
-  font-size: 1.125rem;
   transition:
     transform var(--transition-base),
     color var(--transition-fast);
-}
-.theme-toggle:hover .theme-toggle-icon {
-  color: var(--primary-500);
 }
 .theme-toggle:hover .theme-toggle-sun {
   transform: rotate(45deg) scale(1.1);
 }
 .theme-toggle:hover .theme-toggle-moon {
   transform: rotate(-15deg) scale(1.1);
-}
-.theme-toggle-label {
-  font-weight: 500;
-}
-/* Icon-only: same box as the notification bell beside it in the sidebar footer. */
-:host(.icon-only) .theme-toggle {
-  justify-content: center;
-  padding: 0.5625rem;
 }

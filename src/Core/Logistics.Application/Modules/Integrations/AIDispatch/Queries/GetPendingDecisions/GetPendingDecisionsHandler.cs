@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,21 +37,12 @@ internal sealed class GetPendingDecisionsHandler(
 
         var dtos = decisions
             .OrderByDescending(d => d.CreatedAt)
-            .Select(d => new AgentDecisionDto
+            .Select(d =>
             {
-                Id = d.Id,
-                SessionId = d.SessionId,
-                Type = d.Type,
-                Status = d.Status,
-                Reasoning = d.Reasoning,
-                ToolName = d.ToolName,
-                ToolInput = d.ToolInput,
-                LoadId = d.LoadId,
-                LoadName = d.LoadId is not null && loadNames.TryGetValue(d.LoadId.Value, out var ln) ? ln : null,
-                TruckId = d.TruckId,
-                TruckNumber = d.TruckId is not null && truckNumbers.TryGetValue(d.TruckId.Value, out var tn) ? tn : null,
-                TripId = d.TripId,
-                CreatedAt = d.CreatedAt
+                var dto = d.ToDto();
+                dto.LoadName = d.LoadId is not null && loadNames.TryGetValue(d.LoadId.Value, out var ln) ? ln : null;
+                dto.TruckNumber = d.TruckId is not null && truckNumbers.TryGetValue(d.TruckId.Value, out var tn) ? tn : null;
+                return dto;
             })
             .ToList();
 

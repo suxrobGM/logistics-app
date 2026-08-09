@@ -1,0 +1,12 @@
+@if (notice(); as n) {
+  <ui-stack
+    direction="row"
+    align="center"
+    gap="2"
+    class="px-4 py-1.5 text-xs"
+    [class]="noticeClasses[n.severity]"
+  >
+    <ui-icon name="chart-column" size="inherit" class="shrink-0" />
+    <span>{{ n.text }}</span>
+  </ui-stack>
+}

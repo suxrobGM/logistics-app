@@ -151,4 +151,22 @@
       </ui-typography>
     </div>
   </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-markdown</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    The pipe sanitizes, so the script tag below must render as inert text, never execute.
+  </ui-typography>
+  <div data-lab="markdown" class="mt-2 grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <ui-card header="scale=chat (headings rescaled)">
+      <ui-markdown data-lab="markdown-chat" scale="chat" [content]="markdownSample" />
+    </ui-card>
+
+    <ui-card header="scale=document">
+      <ui-markdown data-lab="markdown-document" scale="document" [content]="markdownSample" />
+    </ui-card>
+
+    <ui-card header="clamped">
+      <ui-markdown data-lab="markdown-clamped" [content]="markdownSample" [clamped]="true" />
+    </ui-card>
+  </div>
 </section>

@@ -1,59 +1,45 @@
-using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions;
-using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.AI;
-using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
-using Microsoft.EntityFrameworkCore;
+using Logistics.Application.Modules.Integrations.AIDispatch.Services;
+using Logistics.Application.Modules.Integrations.Agents.Services;
+using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
 internal sealed class ApproveAIDispatchDecisionHandler(
     ITenantUnitOfWork tenantUow,
-    IAgentToolExecutor toolExecutor,
+    IAIDispatchDecisionGuard guard,
+    IAgentDecisionAuthorization authorization,
+    IAgentDecisionExecution execution,
+    IAgentDecisionNotes notes,
     ICurrentUserService currentUser,
-    IOptions<LlmOptions> llmOptions) : IAppRequestHandler<ApproveAIDispatchDecisionCommand, Result>
+    IAIDispatchBroadcastService broadcastService) : IAppRequestHandler<ApproveAIDispatchDecisionCommand, Result>
 {
     public async Task<Result> Handle(ApproveAIDispatchDecisionCommand request, CancellationToken ct)
     {
-        var tenant = tenantUow.GetCurrentTenant();
-        var bypassGate = llmOptions.Value.BypassAIGate;
+        var loaded = await guard.LoadAsync(request.DecisionId, ct);
+        if (!loaded.IsSuccess)
+            return Result.Fail(loaded.Error!);
 
-        if (!bypassGate && tenant.Settings.AIEnabled == false)
-            return Result.Fail("AI dispatch is disabled for this tenant");
-
-        var decision = await tenantUow.Repository<AgentDecision>()
-            .Query()
-            .DispatchOnly()
-            .FirstOrDefaultAsync(d => d.Id == request.DecisionId, ct);
-
-        if (decision is null)
-            return Result.Fail("Decision not found");
-
-        if (decision.Status != AgentDecisionStatus.Suggested)
-            return Result.Fail("Decision is not in a suggested state");
-
+        var decision = loaded.Value!;
         var userId = currentUser.GetUserId() ?? Guid.Empty;
+        var tenantId = tenantUow.GetCurrentTenant().Id;
+
+        var allowed = await authorization.EnsureToolPermissionAsync(decision, userId, tenantId, ct);
+        if (!allowed.IsSuccess)
+            return allowed;
+
         decision.Approve(userId);
 
-        // Execute the tool action
-        try
-        {
-            var result = await toolExecutor.ExecuteToolAsync(
-                decision.ToolName!, decision.ToolInput!, ct);
-            decision.ToolOutput = result;
-            decision.MarkExecuted();
-            await tenantUow.SaveChangesAsync(ct);
-            return Result.Ok();
-        }
-        catch (Exception ex)
-        {
-            decision.MarkFailed(ex.Message);
-            await tenantUow.SaveChangesAsync(ct);
-            return Result.Fail($"Failed to execute decision: {ex.Message}");
-        }
+        var conversation = await notes.LoadConversationAsync(decision, ct);
+
+        return await execution.ExecuteAndNoteAsync(
+            decision,
+            note => notes.AppendAsync(
+                conversation, note,
+                message => broadcastService.BroadcastMessageAsync(tenantId, message), ct),
+            ct);
     }
 }

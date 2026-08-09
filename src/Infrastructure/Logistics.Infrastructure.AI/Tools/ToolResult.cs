@@ -22,6 +22,13 @@ internal static class ToolResult
         JsonSerializer.Serialize(payload);
 
     /// <summary>
+    /// The declared result shape, for the tools whose output the dispatch UI renders. The same type
+    /// reaches the client, so renaming a key for the model is a compile error, not a blank panel.
+    /// </summary>
+    public static string Typed(AgentToolResultDto result) =>
+        AgentToolResultJson.Serialize(result);
+
+    /// <summary>
     /// Result of a write tool. <paramref name="successPayload"/> carries its own
     /// <c>success = true</c> plus whatever identifiers reference the mutated entity; the failure
     /// arm is uniform, which is the half worth sharing.

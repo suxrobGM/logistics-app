@@ -1,22 +1,26 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { CountBadge, Icon, UiTooltip } from "@logistics/shared/ui";
-import type { NavItem, NavSection } from "./nav-menu.types";
+import { SidebarFavoritesService, SidebarNavService } from "@/core/services";
+import type { NavItem } from "./nav-menu.types";
 
 @Component({
   selector: "app-nav-menu",
   templateUrl: "./nav-menu.html",
   styleUrl: "./nav-menu.css",
-  imports: [CountBadge, Icon, RouterLink, RouterLinkActive, UiTooltip],
+  imports: [CountBadge, Icon, NgTemplateOutlet, RouterLink, RouterLinkActive, UiTooltip],
   host: { class: "flex flex-col flex-1 min-h-0" },
 })
 export class NavMenu {
   private readonly router = inject(Router);
+  private readonly sidebarNavService = inject(SidebarNavService);
+  private readonly favoritesService = inject(SidebarFavoritesService);
 
-  public readonly sections = input.required<NavSection[]>();
   public readonly collapsed = input(false);
   public readonly itemClick = output<NavItem>();
-  public readonly itemContextMenu = output<{ event: MouseEvent; item: NavItem }>();
+
+  private readonly sections = this.sidebarNavService.menuSections;
 
   protected readonly expandedItemId = signal<string | null>(null);
   protected readonly hoveredItem = signal<NavItem | null>(null);
@@ -42,21 +46,10 @@ export class NavMenu {
     this.expandedItemId.set(this.expandedItemId() === item.id ? null : item.id);
   }
 
-  protected navigateTo(item: NavItem): void {
-    if (item.route) {
-      this.router.navigateByUrl(item.route);
-      this.itemClick.emit(item);
-    }
-  }
-
+  /** Right-click toggles the favourites bar entry, on both the rail and the drawer. */
   protected onItemContextMenu(event: MouseEvent, item: NavItem): void {
     event.preventDefault();
-    this.itemContextMenu.emit({ event, item });
-  }
-
-  protected onChildContextMenu(event: MouseEvent, child: NavItem): void {
-    event.preventDefault();
-    this.itemContextMenu.emit({ event, item: child });
+    this.favoritesService.toggle(item.id);
   }
 
   protected isGroupExpanded(item: NavItem): boolean {
@@ -124,7 +117,7 @@ export class NavMenu {
 
   protected onFlyoutItemClick(child: NavItem): void {
     this.hoveredItem.set(null);
-    this.navigateTo(child);
+    this.itemClick.emit(child);
   }
 
   protected onItemFocus(event: FocusEvent, item: NavItem): void {

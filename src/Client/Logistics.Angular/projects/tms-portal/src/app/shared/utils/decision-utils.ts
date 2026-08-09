@@ -1,65 +1,14 @@
+import type { AgentDecisionType } from "@logistics/shared/api";
 import type { IconName } from "@logistics/shared/ui";
 
-/** Parsed tool input for display in decision cards and timeline */
-export interface ParsedToolInput {
+/**
+ * Parsed tool input for the decision cards and timeline. Unlike the result this stays a raw string
+ * on the wire - it is the model's own arguments, so there is no server type to project it through.
+ */
+interface ParsedToolInput {
   loadId?: string;
   truckId?: string;
-  tripId?: string;
   reasoning?: string;
-  driverId?: string;
-  distanceKm?: number;
-  loadIds?: string[];
-  tripName?: string;
-}
-
-/** Parsed tool output for display */
-export interface ParsedToolOutput {
-  success?: boolean;
-  error?: string;
-  feasible?: boolean;
-  reason?: string;
-  estimatedDrivingMinutes?: number;
-  drivingMinutesRemaining?: number;
-  totalTrucks?: number;
-  availableTrucks?: number;
-  unassignedLoads?: number;
-  activeTrips?: number;
-  driversInViolation?: number;
-  loads?: {
-    id: string;
-    name: string;
-    type: string;
-    origin: string;
-    destination: string;
-    distanceKm: number;
-    deliveryCost: number;
-    customer: string;
-  }[];
-  trucks?: {
-    id: string;
-    number: string;
-    type: string;
-    currentAddress: string;
-    mainDriver?: {
-      id: string;
-      name: string;
-      hos?: {
-        drivingMinutesRemaining: number;
-        onDutyMinutesRemaining: number;
-        isInViolation: boolean;
-        isAvailable: boolean;
-      };
-    };
-  }[];
-  batchResults?: {
-    driver_id: string;
-    distance_km: number;
-    feasible: boolean;
-    estimated_driving_minutes: number;
-    driving_minutes_remaining: number | null;
-    on_duty_minutes_remaining: number | null;
-    reason: string;
-  }[];
 }
 
 export function parseToolInput(json: string | null | undefined): ParsedToolInput {
@@ -69,39 +18,7 @@ export function parseToolInput(json: string | null | undefined): ParsedToolInput
     return {
       loadId: parsed.load_id,
       truckId: parsed.truck_id,
-      tripId: parsed.trip_id,
       reasoning: parsed.reasoning,
-      driverId: parsed.driver_id,
-      distanceKm: parsed.distance_km,
-      loadIds: parsed.load_ids,
-      tripName: parsed.name,
-    };
-  } catch {
-    return {};
-  }
-}
-
-export function parseToolOutput(json: string | null | undefined): ParsedToolOutput {
-  if (!json) return {};
-  try {
-    const parsed = JSON.parse(json);
-    // get_available_trucks now includes fleet_summary
-    const summary = parsed.fleet_summary;
-    return {
-      success: parsed.success,
-      error: parsed.error,
-      feasible: parsed.feasible,
-      reason: parsed.reason,
-      estimatedDrivingMinutes: parsed.estimated_driving_minutes,
-      drivingMinutesRemaining: parsed.driving_minutes_remaining,
-      totalTrucks: summary?.total_trucks ?? parsed.total_trucks,
-      availableTrucks: summary?.available_trucks ?? parsed.available_trucks,
-      unassignedLoads: summary?.unassigned_loads ?? parsed.unassigned_loads,
-      activeTrips: summary?.active_trips ?? parsed.active_trips,
-      driversInViolation: summary?.drivers_in_violation ?? parsed.drivers_in_violation,
-      loads: parsed.loads,
-      trucks: parsed.trucks,
-      batchResults: parsed.results,
     };
   } catch {
     return {};
@@ -111,14 +28,11 @@ export function parseToolOutput(json: string | null | undefined): ParsedToolOutp
 interface ToolMeta {
   label: string;
   icon: IconName;
-  /** Mirrors the IsWrite metadata on the backend AIDispatchToolDefinition. */
-  write?: true;
 }
 
 /**
- * The display metadata for every agent tool, keyed by the backend's snake_case tool name. One
- * table rather than three parallel lookups - the label, icon and write flag drifted apart when
- * they were separate.
+ * Display metadata per tool, keyed by the backend's snake_case name. One table because the label
+ * and icon drifted apart as two. Whether a tool writes is not here - that is the decision's `type`.
  */
 const TOOL_META: Record<string, ToolMeta> = {
   get_unassigned_loads: { label: "Unassigned Loads", icon: "box" },
@@ -143,13 +57,13 @@ const TOOL_META: Record<string, ToolMeta> = {
   get_expense_stats: { label: "Expense Stats", icon: "chart-column" },
   get_upcoming_maintenance: { label: "Upcoming Maintenance", icon: "wrench" },
 
-  assign_load_to_truck: { label: "Assign Load", icon: "link", write: true },
-  create_trip: { label: "Create Trip", icon: "circle-plus", write: true },
-  dispatch_trip: { label: "Dispatch Trip", icon: "send", write: true },
-  book_loadboard_load: { label: "Book Load", icon: "shopping-cart", write: true },
-  create_load_invoice: { label: "Create Invoice", icon: "file-text", write: true },
-  send_invoice: { label: "Send Invoice", icon: "mail", write: true },
-  create_payment_link: { label: "Create Payment Link", icon: "credit-card", write: true },
+  assign_load_to_truck: { label: "Assign Load", icon: "link" },
+  create_trip: { label: "Create Trip", icon: "circle-plus" },
+  dispatch_trip: { label: "Dispatch Trip", icon: "send" },
+  book_loadboard_load: { label: "Book Load", icon: "shopping-cart" },
+  create_load_invoice: { label: "Create Invoice", icon: "file-text" },
+  send_invoice: { label: "Send Invoice", icon: "mail" },
+  create_payment_link: { label: "Create Payment Link", icon: "credit-card" },
 };
 
 export function getToolLabel(toolName: string | null | undefined): string {
@@ -161,7 +75,7 @@ export function getToolIcon(toolName: string | null | undefined): IconName {
 }
 
 /** A decision's resolved references, as rendered by the cards and the confirm dialog. */
-export interface DecisionRefs {
+interface DecisionRefs {
   load?: string;
   truck?: string;
   reasoning?: string;
@@ -209,13 +123,16 @@ export function buildDecisionDetail(
   return lines.join("\n");
 }
 
-export function isWriteTool(toolName: string | null | undefined): boolean {
-  return toolName ? TOOL_META[toolName]?.write === true : false;
+/**
+ * Mirrors the backend's own derivation (`AgentToolDefinition.IsWrite` is `DecisionType != Query`),
+ * so a newly added write tool cannot silently render as a read.
+ */
+export function isWriteDecision(decision: { type?: AgentDecisionType }): boolean {
+  return !!decision.type && decision.type !== "query";
 }
 
-export function getToolMarkerClass(toolName: string | null | undefined): string {
-  if (isWriteTool(toolName)) {
-    return "bg-primary text-primary-foreground";
-  }
-  return "bg-muted text-muted-foreground";
+export function getToolMarkerClass(decision: { type?: AgentDecisionType }): string {
+  return isWriteDecision(decision)
+    ? "bg-primary text-primary-foreground"
+    : "bg-muted text-muted-foreground";
 }

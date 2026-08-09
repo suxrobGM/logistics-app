@@ -1,77 +1,39 @@
-import { Component, computed, inject, signal } from "@angular/core";
-import { openIdentityAccountPage } from "@logistics/shared/auth";
-import { Icon, UiPopover, UiTooltip } from "@logistics/shared/ui";
-import { AuthService } from "@/core/auth";
-import {
-  CommandPaletteService,
-  SidebarFavoritesService,
-  SidebarNavService,
-  TenantService,
-} from "@/core/services";
-import { CopilotStore } from "@/core/store";
-import { environment } from "@/env";
-import { NavMenu, type NavItem } from "../nav-menu";
+import { Component, computed, inject } from "@angular/core";
+import { LayoutService } from "@logistics/shared/services";
+import { Icon, UiTooltip } from "@logistics/shared/ui";
+import { BrandHeader } from "../brand-header/brand-header";
+import { CopilotLauncher } from "../copilot-launcher/copilot-launcher";
+import { NavMenu } from "../nav-menu";
 import { NotificationBell } from "../notification-bell";
+import { SearchTrigger } from "../search-trigger/search-trigger";
 import { ThemeToggle } from "../theme-toggle/theme-toggle";
+import { UserMenu } from "../user-menu/user-menu";
 import { FavoritesBar } from "./favorites-bar/favorites-bar";
 
 @Component({
   selector: "app-sidebar",
   templateUrl: "./sidebar.html",
   styleUrl: "./sidebar.css",
-  imports: [FavoritesBar, Icon, NavMenu, NotificationBell, UiPopover, ThemeToggle, UiTooltip],
+  imports: [
+    BrandHeader,
+    CopilotLauncher,
+    FavoritesBar,
+    Icon,
+    NavMenu,
+    NotificationBell,
+    SearchTrigger,
+    ThemeToggle,
+    UiTooltip,
+    UserMenu,
+  ],
 })
 export class Sidebar {
-  protected readonly copilotStore = inject(CopilotStore);
-  private readonly authService = inject(AuthService);
-  private readonly tenantService = inject(TenantService);
-  private readonly favoritesService = inject(SidebarFavoritesService);
-  private readonly commandPaletteService = inject(CommandPaletteService);
-  private readonly sidebarNavService = inject(SidebarNavService);
+  private readonly layoutService = inject(LayoutService);
 
-  protected readonly isOpened = signal(true);
-  protected readonly companyName = computed(
-    () => this.tenantService.tenantData()?.companyName ?? null,
-  );
-  protected readonly companyLogoUrl = computed(
-    () => this.tenantService.tenantData()?.logoUrl ?? null,
-  );
-  protected readonly userRole = computed(() => this.authService.getUserRoleName());
-  protected readonly userFullName = computed(
-    () => this.authService.getUserData()?.getFullName() ?? null,
-  );
-
-  /** Rendered menu (hidden children stripped). */
-  protected readonly menuSections = this.sidebarNavService.menuSections;
-  /** Full tree (hidden children intact) - drives the favorites bar. */
-  protected readonly fullSections = this.sidebarNavService.fullSections;
-
-  protected openCommandPalette(): void {
-    this.commandPaletteService.open();
-  }
-
-  protected onNavContextMenu({ item }: { event: MouseEvent; item: NavItem }): void {
-    // Toggle favorite on right-click
-    if (this.favoritesService.isFavorite(item.id)) {
-      this.favoritesService.remove(item.id);
-    } else {
-      this.favoritesService.add(item.id);
-    }
-  }
+  protected readonly collapsed = this.layoutService.navRailCollapsed;
+  protected readonly isOpened = computed(() => !this.collapsed());
 
   protected toggle(): void {
-    this.isOpened.set(!this.isOpened());
-  }
-
-  protected logout(): void {
-    this.authService.logout();
-  }
-
-  protected openAccountUrl(): void {
-    openIdentityAccountPage(environment.identityServerUrl, "profile");
-  }
-
-  protected openPrivacyUrl(): void {
-    openIdentityAccountPage(environment.identityServerUrl, "privacy");
+    this.layoutService.toggleNavRail();
   }
 }

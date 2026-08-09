@@ -1,156 +1,36 @@
-<div class="sidebar" [class.minimized]="!isOpened()">
-  <!-- Logo Section -->
-  <div class="sidebar-header">
-    @if (companyLogoUrl()) {
-      <img [src]="companyLogoUrl()" class="sidebar-logo" alt="Company logo" />
-    } @else {
-      <img src="images/logo.svg" class="sidebar-logo" alt="logo" />
-    }
-    @if (isOpened()) {
-      <h4
-        class="text-foreground m-0 max-w-full animate-[fade-slide-in_200ms_ease-out] truncate text-[0.8125rem] leading-tight font-semibold"
-      >
-        {{ companyName() }}
-      </h4>
-    }
-  </div>
+<div class="sidebar" [class.minimized]="collapsed()">
+  <app-brand-header [collapsed]="collapsed()" />
 
-  <!-- Search Trigger -->
-  <button
-    class="sidebar-search-trigger"
-    (click)="openCommandPalette()"
-    [uiTooltip]="isOpened() ? '' : 'Search (Ctrl+K)'"
-    uiTooltipPosition="right"
-    type="button"
-  >
-    <ui-icon name="search" size="inherit" class="shrink-0 text-sm" />
-    @if (isOpened()) {
-      <span class="flex-1 text-left">Search...</span>
-      <kbd
-        class="bg-surface border-subtle text-muted-foreground inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[0.625rem]"
-      >
-        Ctrl+K
-      </kbd>
-    }
-  </button>
+  <app-search-trigger [collapsed]="collapsed()" />
 
-  <!-- Favorites -->
-  <app-favorites-bar [sections]="fullSections()" [collapsed]="!isOpened()" />
+  <app-favorites-bar [collapsed]="collapsed()" />
 
-  <!-- Navigation -->
-  <app-nav-menu
-    [sections]="menuSections()"
-    [collapsed]="!isOpened()"
-    (itemContextMenu)="onNavContextMenu($event)"
-  />
+  <app-nav-menu [collapsed]="collapsed()" />
 
-  <!-- Collapse Toggle -->
   <button
     class="sidebar-toggle"
     (click)="toggle()"
-    [uiTooltip]="isOpened() ? 'Minimize menu' : 'Maximize menu'"
+    [uiTooltip]="collapsed() ? 'Maximize menu' : 'Minimize menu'"
     uiTooltipPosition="right"
     type="button"
   >
     <ui-icon
-      [name]="isOpened() ? 'chevron-left' : 'chevron-right'"
+      [name]="collapsed() ? 'chevron-right' : 'chevron-left'"
       size="inherit"
       class="text-xs"
     />
-    @if (isOpened()) {
+    @if (!collapsed()) {
       <span>Collapse</span>
     }
   </button>
 
-  <!-- Footer -->
-  <div class="sidebar-footer" [class.sidebar-footer-collapsed]="!isOpened()">
-    <!-- Notifications + Copilot + Theme -->
-    <div class="sidebar-footer-actions">
-      <app-notification-bell [expanded]="false" />
-      @if (copilotStore.launcherVisible()) {
-        <button
-          class="text-subtle-foreground hover:bg-hover hover:text-foreground relative flex cursor-pointer items-center justify-center rounded-md border-none bg-transparent p-1.5 transition-all"
-          uiTooltip="AI Copilot (Ctrl+I)"
-          aria-label="Open AI Copilot"
-          (click)="copilotStore.openOrUpsell()"
-        >
-          <ui-icon name="bot-message-square" />
-          @if (copilotStore.hasUnread()) {
-            <span class="bg-primary absolute top-0.5 right-0.5 size-2 rounded-full"></span>
-          }
-        </button>
-      }
-      <app-theme-toggle [showLabel]="false" />
+  <div class="sidebar-footer" [class.sidebar-footer-collapsed]="collapsed()">
+    <div class="nav-footer-actions">
+      <app-notification-bell />
+      <app-copilot-launcher />
+      <app-theme-toggle />
     </div>
 
-    <!-- User profile button -->
-    @if (userFullName()) {
-      <button
-        class="text-subtle-foreground hover:bg-hover hover:text-foreground flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent py-1.5 text-left text-[0.8125rem] font-medium transition-all"
-        [class.justify-center]="!isOpened()"
-        [class.px-2]="isOpened()"
-        (click)="userPopover.toggle($event)"
-        type="button"
-      >
-        <div
-          class="bg-primary/12 border-accent/20 flex size-7 shrink-0 items-center justify-center rounded-full border"
-        >
-          <ui-icon name="user" size="inherit" class="text-primary text-xs" />
-        </div>
-        @if (isOpened()) {
-          <div class="min-w-0 flex-1">
-            <span class="block truncate text-[0.8125rem] font-medium">{{ userFullName() }}</span>
-            @if (userRole()) {
-              <span
-                class="text-primary block text-[0.625rem] font-semibold tracking-wider uppercase"
-              >
-                {{ userRole() }}
-              </span>
-            }
-          </div>
-          <ui-icon name="ellipsis-vertical" size="inherit" class="text-muted-foreground text-xs" />
-        }
-      </button>
-    }
+    <app-user-menu compact [labelsHidden]="collapsed()" />
   </div>
 </div>
-
-<!-- User profile popover -->
-<ui-popover #userPopover>
-  <div class="w-52">
-    @if (userFullName()) {
-      <div class="border-subtle border-b px-3.5 py-2.5">
-        <div class="text-foreground text-sm font-semibold">{{ userFullName() }}</div>
-        @if (userRole()) {
-          <div class="text-primary text-[0.6875rem] font-medium">{{ userRole() }}</div>
-        }
-      </div>
-    }
-    <div class="p-1">
-      <button
-        class="text-subtle-foreground hover:bg-hover hover:text-foreground flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
-        (click)="openAccountUrl(); userPopover.hide()"
-        type="button"
-      >
-        <ui-icon name="user-pen" class="text-muted-foreground w-5 text-center" />
-        <span>Manage Profile</span>
-      </button>
-      <button
-        class="text-subtle-foreground hover:bg-hover hover:text-foreground flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
-        (click)="openPrivacyUrl(); userPopover.hide()"
-        type="button"
-      >
-        <ui-icon name="shield" class="text-muted-foreground w-5 text-center" />
-        <span>Privacy &amp; Data</span>
-      </button>
-      <button
-        class="text-danger hover:bg-danger/10 flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
-        (click)="logout(); userPopover.hide()"
-        type="button"
-      >
-        <ui-icon name="log-out" class="w-5 text-center" />
-        <span>Sign Out</span>
-      </button>
-    </div>
-  </div>
-</ui-popover>

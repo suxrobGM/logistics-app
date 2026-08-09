@@ -4,4 +4,5 @@ export * from "./timeline/timeline";
 export * from "./chart/chart";
 export * from "./money-with-tax/money-with-tax";
 export * from "./alert/alert";
+export * from "./markdown/markdown";
 export * from "./pdf-viewer/pdf-viewer";

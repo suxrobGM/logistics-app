@@ -1,13 +1,15 @@
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.AIDispatch;
 
 namespace Logistics.Application.Abstractions.AIDispatch;
 
 /// <summary>
-/// Service for broadcasting AI dispatch agent updates to connected clients.
+/// Pushes dispatch conversation events to every connected client for a tenant. Unlike the copilot's
+/// per-user groups, dispatch conversations are tenant-shared, so every broadcast targets the whole
+/// tenant.
 /// </summary>
 public interface IAIDispatchBroadcastService
 {
-    Task BroadcastSessionUpdateAsync(Guid tenantId, AgentSessionUpdateDto update);
+    Task BroadcastMessageAsync(Guid tenantId, AgentMessageDto message);
+    Task BroadcastTurnUpdateAsync(Guid tenantId, AgentTurnUpdateDto update);
     Task BroadcastDecisionAsync(Guid tenantId, AgentDecisionDto decision);
 }

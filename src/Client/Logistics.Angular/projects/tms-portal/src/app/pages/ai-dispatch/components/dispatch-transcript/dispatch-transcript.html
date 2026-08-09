@@ -1,0 +1,50 @@
+<div class="relative min-h-0 flex-1">
+  <div
+    #messagesContainer
+    class="mx-auto h-full max-w-3xl space-y-5 overflow-y-auto px-4 py-6 sm:px-6"
+    [attr.aria-busy]="store.isRunning()"
+    (scroll)="scroll.onScroll()"
+  >
+    @if (store.loading()) {
+      <ui-stack direction="row" align="center" gap="2" class="text-muted-foreground text-sm">
+        <ui-spinner size="1em" ariaLabel="Loading conversation" />
+        Loading conversation...
+      </ui-stack>
+    } @else if (stream().length === 0) {
+      <app-dispatch-welcome (action)="store.sendMessage($event)" />
+    }
+
+    @for (item of stream(); track trackItem(item)) {
+      @if (item.kind !== "message") {
+        <app-dispatch-turn-timeline [session]="item.session" [decisions]="item.decisions" />
+      } @else if (item.isReport) {
+        <app-dispatch-report-message [message]="item.message" [session]="item.session" />
+      } @else {
+        <app-chat-message [message]="item.message" />
+      }
+    }
+
+    @if (store.isRunning() && !store.realtimeDown()) {
+      <app-turn-status
+        workingLabel="Dispatcher agent is working..."
+        [toolsRun]="store.turnProgress()"
+        [longRunning]="store.longRunning()"
+      />
+    }
+
+    @if (turnFailed()) {
+      <app-turn-error
+        [message]="store.turnError()"
+        fallback="The dispatch turn failed. Try again."
+        (retry)="store.retryTurn()"
+      />
+    }
+  </div>
+
+  @if (!scroll.pinnedToBottom()) {
+    <app-scroll-to-bottom
+      class="absolute right-6 bottom-4"
+      (scrollToBottom)="scroll.scrollToBottom()"
+    />
+  }
+</div>

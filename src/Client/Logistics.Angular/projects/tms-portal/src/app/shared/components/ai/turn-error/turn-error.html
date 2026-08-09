@@ -1,0 +1,12 @@
+<ui-alert intent="danger">
+  <ui-stack direction="row" align="center" justify="between" gap="2">
+    <span>{{ message() || fallback() }}</span>
+    <ui-button
+      label="Retry"
+      size="sm"
+      appearance="outlined"
+      intent="danger"
+      (click)="retry.emit()"
+    />
+  </ui-stack>
+</ui-alert>

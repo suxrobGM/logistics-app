@@ -1,17 +1,13 @@
 using System.Security.Claims;
+using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Shared.Identity.Claims;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Caching.Memory;
-using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 
 namespace Logistics.API.Authorization;
 
-internal class PermissionHandler(IServiceProvider serviceProvider, IMemoryCache cache)
+internal class PermissionHandler(IServiceProvider serviceProvider)
     : AuthorizationHandler<PermissionRequirement>
 {
-    private static readonly TimeSpan CacheExpiry = TimeSpan.FromMinutes(5);
-
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         PermissionRequirement requirement)
@@ -25,31 +21,15 @@ internal class PermissionHandler(IServiceProvider serviceProvider, IMemoryCache 
         }
 
         var tenantId = Guid.TryParse(tenantClaim, out var tid) ? tid : (Guid?)null;
-        var cacheKey = $"permissions:{userId}:{tenantId?.ToString() ?? "no-tenant"}";
 
-        if (!cache.TryGetValue(cacheKey, out HashSet<string>? permissions))
-        {
-            permissions = await FetchPermissionsAsync(userId, tenantId);
-            cache.Set(cacheKey, permissions, CacheExpiry);
-        }
+        // The handler is a singleton, so the scoped permission service needs its own scope. The
+        // cache behind it is a singleton, which is what makes the lookup shared across requests.
+        using var scope = serviceProvider.CreateScope();
+        var userPermissions = scope.ServiceProvider.GetRequiredService<IUserPermissionService>();
 
-        if (permissions?.Contains(requirement.Permission) == true)
+        if (await userPermissions.HasPermissionAsync(userId, tenantId, requirement.Permission))
         {
             context.Succeed(requirement);
         }
-    }
-
-    private async Task<HashSet<string>> FetchPermissionsAsync(Guid userId, Guid? tenantId)
-    {
-        using var scope = serviceProvider.CreateScope();
-        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-
-        var result = await mediator.Send(new GetCurrentUserPermissionsQuery
-        {
-            UserId = userId,
-            TenantId = tenantId
-        });
-
-        return result.IsSuccess ? result.Value!.ToHashSet() : [];
     }
 }

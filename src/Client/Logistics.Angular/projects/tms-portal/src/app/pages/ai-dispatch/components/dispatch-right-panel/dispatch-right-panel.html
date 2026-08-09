@@ -1,0 +1,46 @@
+<div class="flex h-full min-h-0 flex-col gap-3 p-3">
+  <app-fleet-map-card [truckLocations]="store.truckLocations()" class="min-h-56 flex-1" />
+
+  <ui-surface variant="elevated" padding="none" class="shrink-0 overflow-hidden">
+    <ui-stack
+      direction="row"
+      align="center"
+      gap="2"
+      class="border-border shrink-0 border-b px-3 py-2"
+    >
+      <ui-icon name="triangle-alert" color="warning" />
+      <ui-typography variant="body-sm" weight="semibold">Pending decisions</ui-typography>
+      @if (store.writeDecisions().length > 0) {
+        <ui-count-badge [value]="store.writeDecisions().length" severity="warn" size="small" />
+      }
+    </ui-stack>
+
+    <div class="max-h-[40vh] overflow-y-auto p-3">
+      @if (store.writeDecisions().length) {
+        <ui-stack gap="3">
+          @for (decision of store.writeDecisions(); track decision.id) {
+            <app-agent-decision-card
+              [decision]="decision"
+              [managePermission]="dispatchManage"
+              variant="compact"
+              [busy]="actions.busyDecisionId() === decision.id"
+              (approve)="approve($event)"
+              (reject)="reject($event)"
+            />
+          }
+        </ui-stack>
+      } @else {
+        <ui-empty-state
+          icon="circle-check"
+          severity="success"
+          title="No pending decisions"
+          message="Ask the agent to plan assignments to see suggestions here."
+        />
+      }
+    </div>
+  </ui-surface>
+
+  @if (store.quota(); as q) {
+    <app-ai-quota-usage [quota]="q" class="shrink-0" />
+  }
+</div>

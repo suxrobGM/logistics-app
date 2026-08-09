@@ -20,6 +20,11 @@
 
   --shimmer-base: #e2e8f0;
   --shimmer-highlight: #f1f5f9;
+
+  /* Read by sidebar.css for the rail itself and by nav-menu.css to park the flyout beside it.
+     They live in different components, so a literal would have to be kept in step by hand. */
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 72px;
 }
 
 .dark-theme {
@@ -37,6 +42,60 @@
 
   --shimmer-base: #242b3d;
   --shimmer-highlight: #2d3548;
+}
+
+/* The keycap chip. Global because the command palette and the sidebar search trigger are separate
+   components showing the same Ctrl+K hint. */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.375rem;
+  padding: 0 0.375rem;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+/**
+ * The bell, the theme toggle and the copilot launcher are three separate components, so no
+ * component-scoped class can give all three the same box. The container styles them instead of
+ * each one naming a class it doesn't own - which also means the bell in the mobile header, which
+ * is not in this row, needs no override to opt back out.
+ */
+.nav-footer-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 0.375rem;
+  width: 100%;
+}
+.nav-footer-actions > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.nav-footer-actions button {
+  width: 100%;
+  padding: 0.5625rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+.nav-footer-actions button:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+.nav-footer-actions button:focus-visible {
+  box-shadow: 0 0 0 2px var(--primary-500);
+}
+.nav-footer-actions button:active {
+  transform: scale(0.98);
+}
+.nav-footer-actions button:hover ui-icon {
+  color: var(--primary-500);
 }
 
 @keyframes stagger-fade-in {

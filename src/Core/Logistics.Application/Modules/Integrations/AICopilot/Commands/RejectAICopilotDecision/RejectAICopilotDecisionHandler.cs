@@ -1,8 +1,9 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Integrations.AICopilot.Services;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 
@@ -10,28 +11,27 @@ namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
 
 internal sealed class RejectAICopilotDecisionHandler(
     ITenantUnitOfWork tenantUow,
+    IAICopilotDecisionGuard guard,
+    IAgentDecisionNotes notes,
     ICurrentUserService currentUser,
     IAICopilotBroadcastService broadcastService) : IAppRequestHandler<RejectAICopilotDecisionCommand, Result>
 {
     public async Task<Result> Handle(RejectAICopilotDecisionCommand request, CancellationToken ct)
     {
         var userId = currentUser.GetUserId();
-        var guard = await AICopilotDecisionGuard.LoadAsync(tenantUow, request.DecisionId, userId, ct);
-        if (!guard.IsSuccess)
-            return Result.Fail(guard.Error!);
+        var loaded = await guard.LoadAsync(request.DecisionId, userId, ct);
+        if (!loaded.IsSuccess)
+            return Result.Fail(loaded.Error!);
 
-        var (decision, conversation) = guard.Value!;
-
+        var (decision, conversation) = loaded.Value!;
         decision.Reject(userId!.Value, request.Reason);
 
-        var note = string.IsNullOrWhiteSpace(request.Reason)
-            ? $"Rejected: {decision.ToolName}"
-            : $"Rejected: {decision.ToolName} - {request.Reason}";
-        var message = conversation.AddTextMessage(AICopilotMessageRole.System, note);
-        await tenantUow.SaveChangesAsync(ct);
-
         var tenantId = tenantUow.GetCurrentTenant().Id;
-        await broadcastService.BroadcastMessageAsync(tenantId, conversation.CreatedById, message.ToDto());
+
+        await notes.AppendAsync(
+            conversation, notes.RejectionNote(decision, request.Reason),
+            message => broadcastService.BroadcastMessageAsync(tenantId, conversation.CreatedById, message), ct);
+
         await broadcastService.BroadcastDecisionAsync(tenantId, conversation.CreatedById, decision.ToDto());
         return Result.Ok();
     }

@@ -4,16 +4,15 @@ import { NavigationEnd, Router, RouterLink } from "@angular/router";
 import { LayoutService } from "@logistics/shared/services";
 import { UiButton } from "@logistics/shared/ui";
 import { filter, map, startWith } from "rxjs";
-import { CopilotStore } from "@/core/store";
+import { CopilotLauncher } from "../copilot-launcher/copilot-launcher";
 import { NotificationBell } from "../notification-bell";
 
 @Component({
   selector: "app-mobile-header",
   templateUrl: "./mobile-header.html",
-  imports: [NotificationBell, RouterLink, UiButton],
+  imports: [CopilotLauncher, NotificationBell, RouterLink, UiButton],
 })
 export class MobileHeader {
-  protected readonly copilotStore = inject(CopilotStore);
   private readonly layoutService = inject(LayoutService);
   private readonly router = inject(Router);
 

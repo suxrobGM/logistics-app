@@ -1,6 +1,5 @@
 using Logistics.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Persistence.Configurations;
@@ -10,14 +9,6 @@ internal sealed class AgentSessionEntityConfiguration : IEntityTypeConfiguration
     public void Configure(EntityTypeBuilder<AgentSession> builder)
     {
         builder.ToTable("agent_sessions");
-
-        builder.Property(s => s.Number)
-            .UseIdentityAlwaysColumn()
-            .IsRequired()
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
-
-        builder.HasIndex(s => s.Number)
-            .IsUnique();
 
         builder.Ignore(s => s.TotalTokensUsed);
 

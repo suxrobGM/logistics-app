@@ -5,24 +5,18 @@ namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Represents a single AI dispatch agent run.
-/// Tracks the agent's mode, status, token usage, and all decisions made.
+/// Tracks the agent's status, token usage, and all decisions made.
 /// </summary>
 public class AgentSession : AuditableEntity, ITenantEntity
 {
-    /// <summary>
-    /// Sequential number of the session, unique within the tenant.
-    /// </summary>
-    public long Number { get; private set; }
-
-    public AgentAutonomyMode Mode { get; init; }
     public AgentSessionType Type { get; init; } = AgentSessionType.Dispatch;
     public AgentSessionStatus Status { get; private set; } = AgentSessionStatus.Running;
 
     /// <summary>
-    /// The copilot conversation this turn belongs to. Null for dispatch sessions.
+    /// The conversation this turn belongs to.
     /// </summary>
-    public Guid? ConversationId { get; init; }
-    public virtual AICopilotConversation? Conversation { get; init; }
+    public Guid ConversationId { get; init; }
+    public virtual AgentConversation Conversation { get; init; } = null!;
 
     /// <summary>
     /// The user who triggered this session. Null if triggered by background job.
@@ -33,12 +27,7 @@ public class AgentSession : AuditableEntity, ITenantEntity
     public DateTime? CompletedAt { get; set; }
 
     /// <summary>
-    /// User-provided instructions for this session.
-    /// </summary>
-    public string? Instructions { get; set; }
-
-    /// <summary>
-    /// Total Claude API tokens consumed during this session.
+    /// Total LLM tokens consumed during this session.
     /// </summary>
     public int TotalTokensUsed => InputTokensUsed + OutputTokensUsed;
 
@@ -68,7 +57,7 @@ public class AgentSession : AuditableEntity, ITenantEntity
     public decimal EstimatedCostUsd { get; set; }
 
     /// <summary>
-    /// The Claude model used for this session.
+    /// The model used for the turn.
     /// </summary>
     public string? ModelUsed { get; set; }
 

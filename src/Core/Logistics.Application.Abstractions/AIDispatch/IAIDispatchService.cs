@@ -1,22 +1,16 @@
-using Logistics.Domain.Entities;
-using Logistics.Domain.Primitives.Enums;
-using Logistics.Application.Abstractions.AIDispatch;
-
 namespace Logistics.Application.Abstractions.AIDispatch;
 
 /// <summary>
-/// Core orchestration service for the AI dispatch agent.
-/// Manages the agent loop: context gathering → Claude reasoning → tool execution → response.
+///     One dispatch turn: the tenant-shared conversation and the user who triggered it (null for a
+///     background trigger). Serialized as a Hangfire job argument - keep it flat.
 /// </summary>
+public record AIDispatchTurnRequest(Guid TenantId, Guid ConversationId, Guid? TriggeredByUserId);
+
+/// <summary>Runs dispatch turns through the shared agent-turn lifecycle and persists the transcript.</summary>
 public interface IAIDispatchService
 {
-    Task<AgentSession> RunAsync(AIDispatchRequest request, CancellationToken ct = default);
+    Task RunTurnAsync(AIDispatchTurnRequest request, CancellationToken ct = default);
+
+    /// <summary>Cancels a running session (dispatch or copilot - both share <c>AgentSession</c>).</summary>
     Task<bool> CancelAsync(Guid sessionId, CancellationToken ct = default);
 }
-
-public record AIDispatchRequest(
-    Guid TenantId,
-    AgentAutonomyMode Mode,
-    Guid? TriggeredByUserId,
-    string? Instructions = null,
-    string? RejectionContext = null);

@@ -1,0 +1,38 @@
+<ui-surface variant="elevated" padding="none" class="grid min-h-0 flex-1 overflow-hidden">
+  <ui-stack fill class="min-h-0">
+    <ui-stack
+      direction="row"
+      align="center"
+      gap="2"
+      class="border-border shrink-0 border-b px-3 py-2"
+    >
+      <ui-icon name="map" color="primary" />
+      <ui-typography variant="body-sm" weight="semibold">Fleet Map</ui-typography>
+      <ui-count-badge [value]="truckLocations().length" severity="secondary" size="small" />
+      <span class="flex-1"></span>
+      <ui-button
+        icon="maximize-2"
+        appearance="text"
+        intent="secondary"
+        size="sm"
+        ariaLabel="Expand"
+        uiTooltip="Expand"
+        (click)="expanded.set(true)"
+      />
+    </ui-stack>
+
+    <div class="min-h-0 flex-1">
+      <app-geolocation-map [geolocationData]="truckLocations()" height="100%" />
+    </div>
+  </ui-stack>
+</ui-surface>
+
+<ui-dialog [(open)]="expanded" header="Fleet Map" width="min(72rem, 95vw)">
+  <!-- Projected content is created with this component, not the dialog: without the @if a second
+       Mapbox context is built and never shown. -->
+  @if (expanded()) {
+    <div class="h-[70vh]">
+      <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="5" height="100%" />
+    </div>
+  }
+</ui-dialog>

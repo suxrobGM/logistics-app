@@ -14,7 +14,7 @@ namespace Logistics.API.Controllers;
 public class AICopilotController(IMediator mediator) : ControllerBase
 {
     [HttpPost("conversations", Name = "CreateCopilotConversation")]
-    [ProducesResponseType(typeof(AICopilotConversationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AgentConversationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Copilot.Manage)]
     public async Task<IActionResult> CreateConversation()
@@ -24,7 +24,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("conversations", Name = "GetCopilotConversations")]
-    [ProducesResponseType(typeof(PagedResult<AICopilotConversationDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponse<AgentConversationDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Copilot.View)]
     public async Task<IActionResult> GetConversations([FromQuery] GetAICopilotConversationsQuery query)
     {
@@ -33,7 +33,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("conversations/{conversationId:guid}", Name = "GetCopilotConversationById")]
-    [ProducesResponseType(typeof(AICopilotConversationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AgentConversationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Copilot.View)]
     public async Task<IActionResult> GetConversationById(Guid conversationId)
@@ -47,7 +47,7 @@ public class AICopilotController(IMediator mediator) : ControllerBase
     ///     over the copilot SignalR hub.
     /// </summary>
     [HttpPost("conversations/{conversationId:guid}/messages", Name = "SendCopilotMessage")]
-    [ProducesResponseType(typeof(SendAICopilotMessageResultDto), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(typeof(SendAgentMessageResultDto), StatusCodes.Status202Accepted)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Copilot.Manage)]
     public async Task<IActionResult> SendMessage(Guid conversationId, [FromBody] SendAICopilotMessageCommand request)

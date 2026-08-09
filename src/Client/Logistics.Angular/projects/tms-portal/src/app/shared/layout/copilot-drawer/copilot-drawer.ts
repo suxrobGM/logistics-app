@@ -1,30 +1,28 @@
 import { CdkTrapFocus } from "@angular/cdk/a11y";
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-  viewChild,
-  type ElementRef,
-} from "@angular/core";
-import type { AgentDecisionDto, AICopilotMessageDto } from "@logistics/shared/api";
+import { Component, computed, effect, inject, viewChild, type ElementRef } from "@angular/core";
+import { Permission } from "@logistics/shared";
+import type { AgentDecisionDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
-import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
-import { CopilotStore, type QuotaNotice } from "@/core/store";
-import { DecisionActionsService, RejectDecisionDialog } from "@/shared/components";
-import { CopilotActionCard } from "./copilot-action-card/copilot-action-card";
-import type { CopilotCommandAction } from "./copilot-composer/copilot-commands";
-import { CopilotComposer } from "./copilot-composer/copilot-composer";
-import { CopilotHistory } from "./copilot-history/copilot-history";
-import { CopilotMessage } from "./copilot-message/copilot-message";
+import { Icon, Spinner, Stack, UiButton, UiTooltip } from "@logistics/shared/ui";
+import { CopilotStore } from "@/core/store";
+import {
+  AgentDecisionCard,
+  ChatComposer,
+  ChatMessage,
+  ConversationList,
+  DecisionActionsService,
+  pinnedScroll,
+  QuotaNotice,
+  RealtimeBanner,
+  RejectDecisionDialog,
+  ScrollToBottom,
+  TurnError,
+  TurnStatus,
+} from "@/shared/components";
+import { COPILOT_COMMANDS } from "./copilot-commands";
+import { buildCopilotStream } from "./copilot-stream.utils";
+import { CopilotWelcome } from "./copilot-welcome/copilot-welcome";
 
-type StreamItem =
-  | { kind: "message"; at: string; message: AICopilotMessageDto }
-  | { kind: "decision"; at: string; decision: AgentDecisionDto };
-
-/** Scroll distance from the bottom under which auto-scroll stays engaged. */
-const ScrollPinThresholdPx = 48;
 const ResizeKeyStepPx = 16;
 
 /**
@@ -45,13 +43,21 @@ const ResizeKeyStepPx = 16;
     "(document:keydown)": "onGlobalKeydown($event)",
   },
   imports: [
+    AgentDecisionCard,
     CdkTrapFocus,
-    CopilotActionCard,
-    CopilotComposer,
-    CopilotHistory,
-    CopilotMessage,
+    ChatComposer,
+    ChatMessage,
+    ConversationList,
+    CopilotWelcome,
     Icon,
+    QuotaNotice,
+    RealtimeBanner,
     RejectDecisionDialog,
+    ScrollToBottom,
+    Spinner,
+    Stack,
+    TurnError,
+    TurnStatus,
     UiButton,
     UiTooltip,
   ],
@@ -62,40 +68,16 @@ export class CopilotDrawer {
   protected readonly layoutService = inject(LayoutService);
 
   private readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
-  private readonly composer = viewChild(CopilotComposer);
+  private readonly composer = viewChild(ChatComposer);
+
+  protected readonly copilotCommands = COPILOT_COMMANDS;
+  protected readonly copilotManage = Permission.Copilot.Manage;
 
   private previouslyFocused: HTMLElement | null = null;
 
-  /** False while the user has scrolled up to read back - new messages must not yank them down. */
-  protected readonly pinnedToBottom = signal(true);
-
-  protected readonly noticeClasses: Record<QuotaNotice["severity"], string> = {
-    blocked: "border-danger/30 bg-danger/10 text-danger",
-    overage: "border-warning/30 bg-warning/15 text-warning",
-    info: "border-border bg-warning/10 text-muted-foreground",
-  };
-
-  protected readonly suggestedPrompts = [
-    "Which loads were delivered last week?",
-    "Show unpaid invoices",
-    "Any trucks free tomorrow?",
-    "What did we spend on fuel this month?",
-  ];
-
-  /** Messages and action cards interleaved chronologically; "9999" catches missing createdAt. */
-  protected readonly stream = computed<StreamItem[]>(() => {
-    const items: StreamItem[] = [
-      ...this.store
-        .messages()
-        .map((message) => ({ kind: "message" as const, at: message.createdAt ?? "9999", message })),
-      ...this.store.decisions().map((decision) => ({
-        kind: "decision" as const,
-        at: decision.createdAt ?? "9999",
-        decision,
-      })),
-    ];
-    return items.sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
-  });
+  protected readonly stream = computed(() =>
+    buildCopilotStream(this.store.messages(), this.store.decisions()),
+  );
 
   /** Feeds the aria-live region. */
   protected readonly liveAnnouncement = computed(() => {
@@ -106,18 +88,13 @@ export class CopilotDrawer {
     return last?.role === "assistant" ? "Copilot replied" : "";
   });
 
+  protected readonly scroll = pinnedScroll(this.messagesContainer, () => {
+    this.stream();
+    this.store.turnStatus();
+  });
+
   constructor() {
     this.actions.configure("copilot");
-
-    effect(() => {
-      this.stream();
-      this.store.turnStatus();
-      if (!this.pinnedToBottom()) return;
-      const container = this.messagesContainer()?.nativeElement;
-      if (container) {
-        queueMicrotask(() => container.scrollTo({ top: container.scrollHeight }));
-      }
-    });
 
     effect(() => {
       if (this.store.open()) {
@@ -156,21 +133,6 @@ export class CopilotDrawer {
     }
   }
 
-  protected onMessagesScroll(): void {
-    const el = this.messagesContainer()?.nativeElement;
-    if (!el) return;
-    this.pinnedToBottom.set(
-      el.scrollHeight - el.scrollTop - el.clientHeight < ScrollPinThresholdPx,
-    );
-  }
-
-  protected scrollToBottom(): void {
-    const el = this.messagesContainer()?.nativeElement;
-    if (!el) return;
-    el.scrollTo({ top: el.scrollHeight });
-    this.pinnedToBottom.set(true);
-  }
-
   protected startResize(event: PointerEvent): void {
     event.preventDefault();
     const startX = event.clientX;
@@ -201,8 +163,11 @@ export class CopilotDrawer {
     }
   }
 
-  protected onComposerCommand(action: CopilotCommandAction): void {
-    if (action === "startNewChat") {
+  protected onComposerCommand(commandName: string): void {
+    const command = COPILOT_COMMANDS.find((c) => c.name === commandName);
+    if (!command) return;
+
+    if (command.action === "startNewChat") {
       this.store.startNewChat();
     } else {
       this.store.showHistory();

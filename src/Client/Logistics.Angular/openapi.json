@@ -746,7 +746,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AICopilotConversationDto"
+                  "$ref": "#/components/schemas/AgentConversationDto"
                 }
               }
             }
@@ -799,7 +799,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AICopilotConversationDtoPagedResult"
+                  "$ref": "#/components/schemas/AgentConversationDtoPagedResponse"
                 }
               }
             }
@@ -830,7 +830,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AICopilotConversationDto"
+                  "$ref": "#/components/schemas/AgentConversationDto"
                 }
               }
             }
@@ -973,7 +973,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SendAICopilotMessageResultDto"
+                  "$ref": "#/components/schemas/SendAgentMessageResultDto"
                 }
               }
             }
@@ -1142,38 +1142,19 @@
         }
       }
     },
-    "/ai/dispatch/run": {
+    "/ai/dispatch/conversations": {
       "post": {
         "tags": [
           "AIDispatch"
         ],
-        "operationId": "RunAIDispatch",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RunAIDispatchCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RunAIDispatchCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/RunAIDispatchCommand"
-              }
-            }
-          }
-        },
+        "operationId": "CreateAIDispatchConversation",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GuidResult"
+                  "$ref": "#/components/schemas/AgentConversationDto"
                 }
               }
             }
@@ -1189,46 +1170,13 @@
             }
           }
         }
-      }
-    },
-    "/ai/dispatch/cancel/{sessionId}": {
-      "post": {
-        "tags": [
-          "AIDispatch"
-        ],
-        "operationId": "CancelAIDispatchSession",
-        "parameters": [
-          {
-            "name": "sessionId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        }
-      }
-    },
-    "/ai/dispatch/sessions": {
+      },
       "get": {
         "tags": [
           "AIDispatch"
         ],
-        "operationId": "GetAIDispatchSessions",
+        "operationId": "GetAIDispatchConversations",
         "parameters": [
-          {
-            "name": "Status",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/AgentSessionStatus"
-            }
-          },
           {
             "name": "OrderBy",
             "in": "query",
@@ -1259,7 +1207,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentSessionDtoPagedResponse"
+                  "$ref": "#/components/schemas/AgentConversationDtoPagedResponse"
                 }
               }
             }
@@ -1267,15 +1215,15 @@
         }
       }
     },
-    "/ai/dispatch/sessions/{sessionId}": {
+    "/ai/dispatch/conversations/{conversationId}": {
       "get": {
         "tags": [
           "AIDispatch"
         ],
-        "operationId": "GetAIDispatchSessionById",
+        "operationId": "GetAIDispatchConversationById",
         "parameters": [
           {
-            "name": "sessionId",
+            "name": "conversationId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1290,13 +1238,190 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentSessionDto"
+                  "$ref": "#/components/schemas/AgentConversationDto"
                 }
               }
             }
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AIDispatch"
+        ],
+        "operationId": "RenameAIDispatchConversation",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameAIDispatchConversationCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameAIDispatchConversationCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameAIDispatchConversationCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AIDispatch"
+        ],
+        "operationId": "DeleteAIDispatchConversation",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/dispatch/conversations/{conversationId}/messages": {
+      "post": {
+        "tags": [
+          "AIDispatch"
+        ],
+        "operationId": "SendAIDispatchMessage",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendAIDispatchMessageCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendAIDispatchMessageCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendAIDispatchMessageCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendAgentMessageResultDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/dispatch/conversations/{conversationId}/cancel": {
+      "post": {
+        "tags": [
+          "AIDispatch"
+        ],
+        "operationId": "CancelAIDispatchTurn",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
@@ -1385,15 +1510,15 @@
         }
       }
     },
-    "/ai/dispatch/sessions/{sessionId}/replan": {
+    "/ai/dispatch/decisions/{decisionId}/reject": {
       "post": {
         "tags": [
           "AIDispatch"
         ],
-        "operationId": "ReplanAIDispatchSession",
+        "operationId": "RejectAIDispatchDecision",
         "parameters": [
           {
-            "name": "sessionId",
+            "name": "decisionId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1406,31 +1531,24 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReplanAIDispatchSessionCommand"
+                "$ref": "#/components/schemas/RejectAIDispatchDecisionCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReplanAIDispatchSessionCommand"
+                "$ref": "#/components/schemas/RejectAIDispatchDecisionCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ReplanAIDispatchSessionCommand"
+                "$ref": "#/components/schemas/RejectAIDispatchDecisionCommand"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GuidResult"
-                }
-              }
-            }
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -1552,59 +1670,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ai/dispatch/decisions/{decisionId}/reject": {
-      "post": {
-        "tags": [
-          "AIDispatch"
-        ],
-        "operationId": "RejectAIDispatchDecision",
-        "parameters": [
-          {
-            "name": "decisionId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RejectAIDispatchDecisionCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RejectAIDispatchDecisionCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/RejectAIDispatchDecisionCommand"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -16275,128 +16340,6 @@
   },
   "components": {
     "schemas": {
-      "AICopilotConversationDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "$ref": "#/components/schemas/AICopilotConversationStatus"
-          },
-          "lastMessageAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "messages": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AICopilotMessageDto"
-            },
-            "nullable": true
-          },
-          "decisions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AgentDecisionDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AICopilotConversationDtoPagedResult": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "nullable": true
-          },
-          "errorCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "isSuccess": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "value": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AICopilotConversationDto"
-            },
-            "nullable": true,
-            "readOnly": true
-          },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "AICopilotConversationStatus": {
-        "enum": [
-          "idle",
-          "running"
-        ],
-        "type": "string"
-      },
-      "AICopilotMessageDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "conversationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "sequence": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "role": {
-            "$ref": "#/components/schemas/AICopilotMessageRole"
-          },
-          "text": {
-            "type": "string",
-            "nullable": true
-          },
-          "sessionId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "AICopilotMessageRole": {
-        "enum": [
-          "user",
-          "assistant",
-          "system"
-        ],
-        "type": "string"
-      },
       "AIDispatchPolicyDto": {
         "type": "object",
         "properties": {
@@ -17073,10 +17016,72 @@
         },
         "additionalProperties": false
       },
-      "AgentAutonomyMode": {
+      "AgentConversationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/AgentConversationStatus"
+          },
+          "lastMessageAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentMessageDto"
+            },
+            "nullable": true
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentDecisionDto"
+            },
+            "nullable": true
+          },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentSessionDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentConversationDtoPagedResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentConversationDto"
+            },
+            "nullable": true
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentConversationStatus": {
         "enum": [
-          "human_in_the_loop",
-          "autonomous"
+          "idle",
+          "running"
         ],
         "type": "string"
       },
@@ -17109,9 +17114,8 @@
             "type": "string",
             "nullable": true
           },
-          "toolOutput": {
-            "type": "string",
-            "nullable": true
+          "toolResult": {
+            "$ref": "#/components/schemas/AgentToolResultDto"
           },
           "loadId": {
             "type": "string",
@@ -17184,10 +17188,51 @@
           "create_trip",
           "dispatch_trip",
           "book_load_board_load",
-          "reassign_load",
           "create_invoice",
           "send_invoice",
           "create_payment_link"
+        ],
+        "type": "string"
+      },
+      "AgentMessageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conversationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "role": {
+            "$ref": "#/components/schemas/AgentMessageRole"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentMessageRole": {
+        "enum": [
+          "user",
+          "assistant",
+          "system"
         ],
         "type": "string"
       },
@@ -17198,20 +17243,8 @@
             "type": "string",
             "format": "uuid"
           },
-          "number": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "mode": {
-            "$ref": "#/components/schemas/AgentAutonomyMode"
-          },
           "status": {
             "$ref": "#/components/schemas/AgentSessionStatus"
-          },
-          "triggeredByUserId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
           },
           "startedAt": {
             "type": "string",
@@ -17222,75 +17255,17 @@
             "format": "date-time",
             "nullable": true
           },
-          "totalTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "inputTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "outputTokensUsed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cacheReadTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cacheCreationTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "estimatedCostUsd": {
-            "type": "number",
-            "format": "double"
-          },
-          "modelUsed": {
-            "type": "string",
-            "nullable": true
-          },
           "decisionCount": {
             "type": "integer",
             "format": "int32"
-          },
-          "summary": {
-            "type": "string",
-            "nullable": true
-          },
-          "instructions": {
-            "type": "string",
-            "nullable": true
           },
           "errorMessage": {
             "type": "string",
             "nullable": true
           },
-          "isOverage": {
-            "type": "boolean"
-          },
-          "decisions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AgentDecisionDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AgentSessionDtoPagedResponse": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AgentSessionDto"
-            },
-            "nullable": true
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationMeta"
+          "totalTokensUsed": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -17303,6 +17278,290 @@
           "cancelled"
         ],
         "type": "string"
+      },
+      "AgentToolDriverDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "hos": {
+            "$ref": "#/components/schemas/AgentToolHosDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolFleetSummaryDto": {
+        "type": "object",
+        "properties": {
+          "totalTrucks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "availableTrucks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeTrips": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "driversInViolation": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolHosCheckDto": {
+        "type": "object",
+        "properties": {
+          "driverId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "distanceKm": {
+            "type": "number",
+            "format": "double"
+          },
+          "feasible": {
+            "type": "boolean"
+          },
+          "feasibleMultiDay": {
+            "type": "boolean"
+          },
+          "estimatedDrivingMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "drivingMinutesRemaining": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "onDutyMinutesRemaining": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolHosDto": {
+        "type": "object",
+        "properties": {
+          "drivingMinutesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onDutyMinutesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cycleMinutesRemaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isInViolation": {
+            "type": "boolean"
+          },
+          "isAvailable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolLoadDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "nullable": true
+          },
+          "destination": {
+            "type": "string",
+            "nullable": true
+          },
+          "originLat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "originLng": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "destLat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "destLng": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "distanceKm": {
+            "type": "number",
+            "format": "double"
+          },
+          "deliveryCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "customer": {
+            "type": "string",
+            "nullable": true
+          },
+          "containerNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "containerIsoType": {
+            "type": "string",
+            "nullable": true
+          },
+          "originTerminal": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationTerminal": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolResultDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "feasible": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "feasibleMultiDay": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "estimatedDrivingMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "drivingMinutesRemaining": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "onDutyMinutesRemaining": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isInViolation": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "fleetSummary": {
+            "$ref": "#/components/schemas/AgentToolFleetSummaryDto"
+          },
+          "loads": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentToolLoadDto"
+            },
+            "nullable": true
+          },
+          "trucks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentToolTruckDto"
+            },
+            "nullable": true
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentToolHosCheckDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AgentToolTruckDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentLat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currentLng": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currentAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "mainDriver": {
+            "$ref": "#/components/schemas/AgentToolDriverDto"
+          }
+        },
+        "additionalProperties": false
       },
       "ApiKeyCreatedDto": {
         "type": "object",
@@ -25710,26 +25969,26 @@
         },
         "additionalProperties": false
       },
+      "RenameAIDispatchConversationCommand": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RenewSubscriptionCommand": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ReplanAIDispatchSessionCommand": {
-        "type": "object",
-        "properties": {
-          "originalSessionId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "additionalInstructions": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -25907,19 +26166,6 @@
           },
           "pagination": {
             "$ref": "#/components/schemas/PaginationMeta"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RunAIDispatchCommand": {
-        "type": "object",
-        "properties": {
-          "mode": {
-            "$ref": "#/components/schemas/AgentAutonomyMode"
-          },
-          "instructions": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -26274,7 +26520,21 @@
         },
         "additionalProperties": false
       },
-      "SendAICopilotMessageResultDto": {
+      "SendAIDispatchMessageCommand": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SendAgentMessageResultDto": {
         "type": "object",
         "properties": {
           "conversationId": {
@@ -26288,6 +26548,10 @@
           "userMessageCreatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "userMessageSequence": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

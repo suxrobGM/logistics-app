@@ -11,16 +11,15 @@ internal sealed class SignalRAIDispatchBroadcastService(
 {
     private const string DispatchBoardGroupPrefix = "dispatch-board:";
 
-    public async Task BroadcastSessionUpdateAsync(Guid tenantId, AgentSessionUpdateDto update)
-    {
-        var group = $"{DispatchBoardGroupPrefix}{tenantId}";
-        await hubContext.Clients.Group(group).ReceiveAIDispatchUpdate(update);
-    }
+    public Task BroadcastMessageAsync(Guid tenantId, AgentMessageDto message) =>
+        Group(tenantId).ReceiveDispatchMessage(message);
 
-    public async Task BroadcastDecisionAsync(Guid tenantId, AgentDecisionDto decision)
-    {
-        var group = $"{DispatchBoardGroupPrefix}{tenantId}";
-        await hubContext.Clients.Group(group).ReceiveAIDispatchDecision(decision);
-    }
+    public Task BroadcastTurnUpdateAsync(Guid tenantId, AgentTurnUpdateDto update) =>
+        Group(tenantId).ReceiveDispatchTurnUpdate(update);
 
+    public Task BroadcastDecisionAsync(Guid tenantId, AgentDecisionDto decision) =>
+        Group(tenantId).ReceiveAIDispatchDecision(decision);
+
+    private IAIDispatchHubClient Group(Guid tenantId) =>
+        hubContext.Clients.Group($"{DispatchBoardGroupPrefix}{tenantId}");
 }

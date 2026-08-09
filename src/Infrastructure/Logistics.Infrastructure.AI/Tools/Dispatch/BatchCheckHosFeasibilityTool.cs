@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
@@ -40,19 +41,19 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) 
                 ? HosFeasibility.Unknown(check.DistanceKm)
                 : HosFeasibility.Evaluate(hos, check.DistanceKm);
 
-            return new
+            return new AgentToolHosCheckDto
             {
-                driver_id = driverId.ToString(),
-                distance_km = check.DistanceKm,
-                feasible = verdict.Feasible,
-                feasible_multi_day = verdict.FeasibleMultiDay,
-                estimated_driving_minutes = verdict.EstimatedDrivingMinutes,
-                driving_minutes_remaining = (int?)hos?.DrivingMinutesRemaining,
-                on_duty_minutes_remaining = (int?)hos?.OnDutyMinutesRemaining,
-                reason = verdict.Reason
+                DriverId = driverId,
+                DistanceKm = check.DistanceKm,
+                Feasible = verdict.Feasible,
+                FeasibleMultiDay = verdict.FeasibleMultiDay,
+                EstimatedDrivingMinutes = verdict.EstimatedDrivingMinutes,
+                DrivingMinutesRemaining = hos?.DrivingMinutesRemaining,
+                OnDutyMinutesRemaining = hos?.OnDutyMinutesRemaining,
+                Reason = verdict.Reason
             };
         }).ToList();
 
-        return ToolResult.Ok(new { results, count = results.Count });
+        return ToolResult.Typed(new AgentToolResultDto { Results = results, Count = results.Count });
     }
 }

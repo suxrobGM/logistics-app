@@ -6,4 +6,4 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Integrations.AICopilot.Queries;
 
 [RequiresFeature(TenantFeature.AICopilot)]
-public class GetAICopilotConversationsQuery : PagedQuery, IQuery<PagedResult<AICopilotConversationDto>>;
+public class GetAICopilotConversationsQuery : PagedQuery, IQuery<PagedResult<AgentConversationDto>>;

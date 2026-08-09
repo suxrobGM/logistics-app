@@ -1,0 +1,145 @@
+@if (isTurnRunning()) {
+  <ui-stack direction="row" align="center" gap="2" class="text-muted-foreground mb-2 text-xs">
+    <ui-spinner size="1em" ariaLabel="Turn in progress" />
+    <span>This turn is in progress</span>
+  </ui-stack>
+}
+
+<ui-timeline [value]="timeline()">
+  <ng-template uiTimelineContent let-entry>
+    @if (entry.kind === "write") {
+      <div class="animate-slide-in mb-4 pb-2">
+        <ui-stack direction="row" align="center" gap="2" wrap class="mb-1">
+          <ui-typography variant="body-sm" weight="medium">
+            {{ getToolLabel(entry.decision.toolName) }}
+          </ui-typography>
+          <ui-typography variant="caption" color="muted">
+            {{ entry.decision.createdAt | date: "MMM d, h:mm a" }}
+          </ui-typography>
+          <ui-badge
+            size="sm"
+            [value]="entry.decision.status"
+            [severity]="Labels.dispatchStatusSeverity(entry.decision.status)"
+          />
+        </ui-stack>
+
+        <ng-container
+          *ngTemplateOutlet="reasoning; context: { $implicit: entry.decision }"
+        ></ng-container>
+
+        <ng-container
+          *ngTemplateOutlet="toolOutput; context: { $implicit: entry.decision }"
+        ></ng-container>
+
+        @if (entry.decision.status === "suggested") {
+          <ui-permission-guard [permissions]="dispatchManage">
+            <div class="mt-2">
+              <app-approve-reject-actions
+                [decision]="entry.decision"
+                [busy]="actions.busyDecisionId() === entry.decision.id"
+                (approve)="approve(entry.decision)"
+                (reject)="reject(entry.decision)"
+              />
+            </div>
+          </ui-permission-guard>
+        }
+      </div>
+    } @else {
+      <div class="mb-4 pb-2">
+        <ui-stack direction="row" align="center" gap="2" wrap>
+          <ui-typography variant="caption" color="muted">Checked:</ui-typography>
+          @for (chip of entry.summary.chips; track chip.label) {
+            <ui-badge
+              size="sm"
+              rounded
+              [icon]="chip.icon"
+              [severity]="chip.failed ? 'danger' : 'secondary'"
+              [value]="chip.count > 1 ? chip.label + ' x' + chip.count : chip.label"
+            />
+          }
+          <ui-button
+            icon="chevron-down"
+            appearance="text"
+            intent="secondary"
+            size="sm"
+            ariaLabel="Toggle tool details"
+            [buttonClass]="isExpanded('group:' + entry.id) ? 'rotate-180' : ''"
+            (click)="toggle('group:' + entry.id)"
+          />
+        </ui-stack>
+
+        @if (entry.summary.keyFigures) {
+          <ui-typography variant="caption" color="muted">
+            {{ entry.summary.keyFigures }}
+          </ui-typography>
+        }
+
+        @if (isExpanded("group:" + entry.id)) {
+          <div class="mt-3 space-y-3">
+            @for (read of entry.decisions; track read.id) {
+              <div>
+                <ui-stack direction="row" align="center" gap="2" wrap class="mb-1">
+                  <ui-typography variant="body-sm" weight="medium">
+                    {{ getToolLabel(read.toolName) }}
+                  </ui-typography>
+                  <ui-typography variant="caption" color="muted">
+                    {{ read.createdAt | date: "MMM d, h:mm a" }}
+                  </ui-typography>
+                </ui-stack>
+
+                <ng-container
+                  *ngTemplateOutlet="reasoning; context: { $implicit: read }"
+                ></ng-container>
+
+                <ng-container
+                  *ngTemplateOutlet="toolOutput; context: { $implicit: read }"
+                ></ng-container>
+
+                <app-tool-result-details [result]="read.toolResult" class="mt-2 block" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </ng-template>
+
+  <ng-template uiTimelineMarker let-entry>
+    @let marker = markerFor(entry);
+    <span
+      class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
+      [class]="marker.class"
+    >
+      <ui-icon [name]="marker.icon" size="inherit" class="text-xs" />
+    </span>
+  </ng-template>
+</ui-timeline>
+
+<ng-template #toolOutput let-decision>
+  @if (decision.toolResult) {
+    <ui-surface variant="subtle" padding="sm" radius="md" [border]="false" class="text-xs">
+      <app-tool-output-summary [result]="decision.toolResult" />
+    </ui-surface>
+  }
+</ng-template>
+
+<ng-template #reasoning let-decision>
+  @if (decision.reasoning) {
+    <div class="mb-2">
+      <ui-markdown
+        class="text-sm leading-relaxed"
+        [content]="decision.reasoning"
+        [clamped]="!isExpanded('reason:' + decision.id)"
+      />
+      @if (decision.reasoning.length > 150) {
+        <ui-button
+          appearance="text"
+          intent="secondary"
+          size="sm"
+          [label]="isExpanded('reason:' + decision.id) ? 'Show less' : 'Show more'"
+          (click)="toggle('reason:' + decision.id); $event.stopPropagation()"
+        />
+      }
+    </div>
+  }
+</ng-template>

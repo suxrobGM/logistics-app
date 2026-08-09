@@ -26,112 +26,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AICopilotConversation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("created_by");
-
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by_id");
-
-                    b.Property<DateTime>("LastMessageAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_message_at");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("title");
-
-                    b.Property<DateTime?>("TurnStartedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("turn_started_at");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("updated_by");
-
-                    b.HasKey("Id")
-                        .HasName("pk_ai_copilot_conversations");
-
-                    b.HasIndex("CreatedById")
-                        .HasDatabaseName("ix_ai_copilot_conversations_created_by_id");
-
-                    b.ToTable("ai_copilot_conversations", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.AICopilotMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ContentJson")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content_json");
-
-                    b.Property<Guid>("ConversationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("conversation_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("DisplayText")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
-                        .HasColumnName("display_text");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("role");
-
-                    b.Property<int>("Sequence")
-                        .HasColumnType("integer")
-                        .HasColumnName("sequence");
-
-                    b.Property<Guid?>("SessionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("session_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_ai_copilot_messages");
-
-                    b.HasIndex("ConversationId", "Sequence")
-                        .IsUnique()
-                        .HasDatabaseName("ix_ai_copilot_messages_conversation_id_sequence");
-
-                    b.ToTable("ai_copilot_messages", (string)null);
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.AIDispatchPolicy", b =>
                 {
                     b.Property<Guid>("Id")
@@ -280,6 +174,69 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("accounting_provider_configurations", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentConversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("kind");
+
+                    b.Property<DateTime>("LastMessageAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_message_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime?>("TurnStartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("turn_started_at");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_agent_conversations");
+
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("ix_agent_conversations_created_by_id");
+
+                    b.ToTable("agent_conversations", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.AgentDecision", b =>
                 {
                     b.Property<Guid>("Id")
@@ -369,6 +326,54 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("agent_decisions", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content_json");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("conversation_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("DisplayText")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("display_text");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("role");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("integer")
+                        .HasColumnName("sequence");
+
+                    b.Property<Guid?>("SessionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("session_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_agent_messages");
+
+                    b.HasIndex("ConversationId", "Sequence")
+                        .IsUnique()
+                        .HasDatabaseName("ix_agent_messages_conversation_id_sequence");
+
+                    b.ToTable("agent_messages", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.AgentSession", b =>
                 {
                     b.Property<Guid>("Id")
@@ -388,7 +393,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("completed_at");
 
-                    b.Property<Guid?>("ConversationId")
+                    b.Property<Guid>("ConversationId")
                         .HasColumnType("uuid")
                         .HasColumnName("conversation_id");
 
@@ -420,29 +425,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("integer")
                         .HasColumnName("input_tokens_used");
 
-                    b.Property<string>("Instructions")
-                        .HasColumnType("text")
-                        .HasColumnName("instructions");
-
                     b.Property<bool>("IsOverage")
                         .HasColumnType("boolean")
                         .HasColumnName("is_overage");
 
-                    b.Property<string>("Mode")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("mode");
-
                     b.Property<string>("ModelUsed")
                         .HasColumnType("text")
                         .HasColumnName("model_used");
-
-                    b.Property<long>("Number")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("number");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
 
                     b.Property<int>("OutputTokensUsed")
                         .HasColumnType("integer")
@@ -485,10 +474,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                     b.HasIndex("ConversationId")
                         .HasDatabaseName("ix_agent_sessions_conversation_id");
-
-                    b.HasIndex("Number")
-                        .IsUnique()
-                        .HasDatabaseName("ix_agent_sessions_number");
 
                     b.HasIndex("StartedAt")
                         .HasDatabaseName("ix_agent_sessions_started_at");
@@ -5848,18 +5833,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasDiscriminator().HasValue("delivery");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AICopilotMessage", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.AICopilotConversation", "Conversation")
-                        .WithMany("Messages")
-                        .HasForeignKey("ConversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_ai_copilot_messages_ai_copilot_conversations_conversation_id");
-
-                    b.Navigation("Conversation");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.AgentDecision", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.AgentSession", "Session")
@@ -5872,13 +5845,26 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Session");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentMessage", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.AgentConversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_agent_messages_agent_conversations_conversation_id");
+
+                    b.Navigation("Conversation");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.AgentSession", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.AICopilotConversation", "Conversation")
+                    b.HasOne("Logistics.Domain.Entities.AgentConversation", "Conversation")
                         .WithMany()
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("fk_agent_sessions_ai_copilot_conversation_conversation_id");
+                        .IsRequired()
+                        .HasConstraintName("fk_agent_sessions_agent_conversations_conversation_id");
 
                     b.Navigation("Conversation");
                 });
@@ -6696,7 +6682,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("TripStop");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.AICopilotConversation", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.AgentConversation", b =>
                 {
                     b.Navigation("Messages");
                 });

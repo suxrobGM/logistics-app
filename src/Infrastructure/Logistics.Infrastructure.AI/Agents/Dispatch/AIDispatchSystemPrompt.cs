@@ -5,6 +5,18 @@ namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 internal static class AIDispatchSystemPrompt
 {
+    private const string SuggestionWorkflowInstructions = """
+        ## Suggestion Workflow
+        Every write action (assign_load_to_truck, create_trip, dispatch_trip) creates a **suggestion** for dispatcher approval - it is NOT executed immediately.
+
+        CRITICAL RULES:
+        - When a write tool returns `{"status":"suggested"}`, the action has NOT been executed yet.
+        - Do NOT chain write actions that depend on a suggested action. For example, do NOT call `create_trip` for loads that were only *suggested* for assignment - they are not actually assigned yet.
+        - Process each load independently: suggest the assignment, then move on to the next load.
+        - Provide clear, concise reasoning for each suggestion so the dispatcher can make an informed decision.
+        - After processing all loads, provide your final summary. Do not attempt to create trips or dispatch - the dispatcher will handle sequencing after approving assignments.
+        """;
+
     /// <summary>
     /// Builds a comprehensive system prompt for the AI dispatch agent, tailored to the tenant's name,
     /// operating mode, load board integration, and distance unit preference - see
@@ -19,32 +31,6 @@ internal static class AIDispatchSystemPrompt
             ? "Tool data is in kilometers - convert to miles (× 0.621) for all output."
             : "";
         var isSolo = context.IsSolo;
-        var modeInstructions = context.Mode switch
-        {
-            AgentAutonomyMode.HumanInTheLoop => """
-                ## Operating Mode: SUGGESTIONS
-                Every write action (assign_load_to_truck, create_trip, dispatch_trip) creates a **suggestion** for dispatcher approval - it is NOT executed immediately.
-
-                CRITICAL RULES FOR SUGGESTION MODE:
-                - When a write tool returns `{"status":"suggested"}`, the action has NOT been executed yet.
-                - Do NOT chain write actions that depend on a suggested action. For example, do NOT call `create_trip` for loads that were only *suggested* for assignment - they are not actually assigned yet.
-                - Process each load independently: suggest the assignment, then move on to the next load.
-                - Provide clear, concise reasoning for each suggestion so the dispatcher can make an informed decision.
-                - After processing all loads, provide your final summary. Do not attempt to create trips or dispatch - the dispatcher will handle sequencing after approving assignments.
-                """,
-            AgentAutonomyMode.Autonomous => """
-                ## Operating Mode: AUTONOMOUS
-                Write actions are executed immediately without human approval. You are making real changes to the dispatch system.
-
-                CRITICAL RULES FOR AUTONOMOUS MODE:
-                - Be conservative - only make assignments you are highly confident about.
-                - ALWAYS verify HOS feasibility before every assignment - self-compute from available data or use `batch_check_hos_feasibility` for confirmation.
-                - If HOS check fails, do NOT assign the load to that driver. Try the next best truck.
-                - After assigning loads, group them into trips with `create_trip`, then dispatch with `dispatch_trip`.
-                - If any step fails, stop and report the error in your summary rather than continuing blindly.
-                """,
-            _ => ""
-        };
 
         var sanitizedName = PromptText.SanitizeCompanyName(context.CompanyName);
         var policySection = BuildPolicySection(context.Policy);
@@ -114,9 +100,9 @@ internal static class AIDispatchSystemPrompt
         var loadBoardStep = context.HasLoadBoardIntegration
             ? """
 
-              9. If trucks have no loads after assignments, search load boards with `search_loadboard`
-              10. Before booking any load-board load, check the broker with `check_broker_credit`. NEVER call `book_loadboard_load` when the broker's credit score is below the tenant's minimum or their FMCSA authority is inactive - skip the load and note why in your summary. If no credit data exists, you may proceed but must flag the missing data.
-              11. Book with the `listing_id` from the `search_loadboard` results, never a broker's own reference - those are not stable between searches. Search again if you no longer have it.
+              8. If trucks have no loads after assignments, search load boards with `search_loadboard`
+              9. Before booking any load-board load, check the broker with `check_broker_credit`. NEVER call `book_loadboard_load` when the broker's credit score is below the tenant's minimum or their FMCSA authority is inactive - skip the load and note why in your summary. If no credit data exists, you may proceed but must flag the missing data.
+              10. Book with the `listing_id` from the `search_loadboard` results, never a broker's own reference - those are not stable between searches. Search again if you no longer have it.
               """
             : "";
 
@@ -166,8 +152,7 @@ internal static class AIDispatchSystemPrompt
             4. If a candidate is clearly feasible (driving time well under remaining hours), assign directly with `assign_load_to_truck`
             5. If borderline or you need confirmation, use `batch_check_hos_feasibility` with all candidates at once
             6. Use `calculate_distance` only when trucks have location data and you need to compare deadhead miles
-            {{metricsStep}}
-            8. In autonomous mode: after assignments, group loads into trips with `create_trip` and dispatch with `dispatch_trip`{{loadBoardStep}}
+            {{metricsStep}}{{loadBoardStep}}
 
             ## Token Efficiency Rules
             - Gather all data in the FEWEST tool calls possible; never call a tool for information you can compute from data you already have
@@ -195,7 +180,7 @@ internal static class AIDispatchSystemPrompt
             ### Recommendations
             Actionable next steps (e.g., "Re-run after HOS reset in ~Xh Ym")
 
-            {{modeInstructions}}
+            {{SuggestionWorkflowInstructions}}
             """;
     }
 

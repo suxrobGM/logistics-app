@@ -1,6 +1,7 @@
 ﻿# AI Dispatch
 
-Load-to-truck dispatch driven by an LLM agent. Runs in two modes: human-in-the-loop or autonomous. Available on the Enterprise plan.
+Load-to-truck dispatch driven by an LLM agent, in a tenant-shared chat. The agent always suggests -
+a dispatcher approves or rejects every write action. Available from the Starter plan up.
 
 ## Overview
 
@@ -24,29 +25,45 @@ $0.10/unit, 3× markup, min one unit); the accrued amount is tenant-visible as
 pause until the weekly reset (copilot sends fail with `AI_BUDGET_REACHED`; dispatch records a
 failed session). Per-token prices live in `LlmPricing.cs`.
 
-## Operating Modes
+## Approval Model
 
-### Human-in-the-Loop (default)
+The agent looks at the fleet and produces suggestions in the conversation. Each suggestion comes
+with the agent's reasoning. A dispatcher approves or rejects one at a time; rejecting requires a
+reason, which the next turn sees as a transcript note. There is no unattended mode - every write
+tool call becomes a `Suggested` decision, never an immediate execution.
 
-The agent looks at the fleet and produces suggestions a dispatcher reviews in the TMS portal. Each suggestion comes with the agent's reasoning. Dispatchers approve or reject one at a time, or in bulk.
-
-### Autonomous (experimental)
-
-The agent assigns loads on its own, no human approval. I'd only flip this on after running in human-in-the-loop for a while and trusting what the agent picks. The UI flags it as experimental.
-
-Separately from those two, the system prompt varies by `TenantSettings.OperatingMode`. A `SoloOperator` tenant gets a "Fleet Profile" section that drops fleet utilization, the truck-to-truck comparison and the assignment table, since there is one truck and the owner is the driver.
+The system prompt separately varies by `TenantSettings.OperatingMode`. A `SoloOperator` tenant gets
+a "Fleet Profile" section that drops fleet utilization, the truck-to-truck comparison and the
+assignment table, since there is one truck and the owner is the driver.
 
 ## How It Works
 
+Dispatch is a **tenant-shared, multi-turn conversation** - any user with `Permission.Dispatch.View`
+can open and read one; anyone with `Permission.Dispatch.Manage` can send messages, cancel a running
+turn, rename, or delete. It reuses the same conversation/turn machinery as the
+[AI copilot](ai-copilot.md) (`AgentConversation`/`AgentMessage`, `AgentTurnService`,
+`AgentTranscriptReplay`), scoped by `AgentConversationKind.Dispatch` - a dispatch conversation never
+leaks into the copilot's per-user list, and vice versa.
+
 ```text
-1. Gather fleet state (loads, trucks, drivers, HOS)
-2. Send context + tools to LLM provider
-3. Agent reasons about optimal assignments
-4. Agent calls tools (assign load, create trip, etc.)
-   - Human mode: tools create suggestions
-   - Autonomous mode: tools execute immediately
-5. Agent searches load boards for capacity gaps
-6. Session completes with summary
+1. A user sends a message (POST ai/dispatch/conversations/{id}/messages -> 202)
+   - handler checks the concurrency guard (no ownership check - the conversation is
+     tenant-shared), persists the user message, marks the conversation Running,
+     enqueues a Hangfire job
+2. AIDispatchTurnJob re-checks the AgenticDispatch feature flag and runs
+   IAIDispatchService.RunTurnAsync, a thin adapter onto AgentTurnService with the
+   DispatchAgentSurface
+3. The turn creates an AgentSession (Type = Dispatch) - quota, tokens, and decisions
+   ride the same session machinery copilot turns use
+4. DispatchAgentSurface builds the system prompt (learned policy, operating mode),
+   replays the persisted transcript, and appends a fresh fleet-state snapshot notice
+   to only this turn's final user message - never persisted, so it cannot replay stale
+   on a later turn. The full dispatch tool catalogue applies; there is no per-caller
+   tool scoping, since the endpoint's policy is the gate
+5. AgentLoopRunner iterates: read tools execute; write tools become Suggested decisions
+6. Every appended message is persisted to agent_messages and broadcast tenant-wide over
+   /hubs/ai-dispatch; approving or rejecting a decision appends a system note to the
+   same transcript
 ```
 
 ## Agent Tools
@@ -68,31 +85,37 @@ Separately from those two, the system prompt varies by `TenantSettings.Operating
 | `dispatch_trip`                | Write | Transition trip to Dispatched status                 |
 | `book_loadboard_load`          | Write | Book a load from a load board                        |
 
-Write tools create suggestions in Human-in-the-Loop mode and execute immediately in Autonomous mode.
+Write tools always create `Suggested` decisions; read tools execute immediately.
 
 ## API Endpoints
 
-All endpoints require `Permission.Dispatch.View` or `Permission.Dispatch.Manage` and the `AgenticDispatch` feature to be enabled.
+All endpoints require the `AgenticDispatch` feature to be enabled. Reads take
+`Permission.Dispatch.View`; every write (send, cancel, rename, delete, approve, reject, policy
+edits) takes `Permission.Dispatch.Manage`. Handlers do not check conversation ownership -
+conversations are tenant-shared, so the endpoint policy is the only gate.
 
 ```text
-POST   /ai/dispatch/run                         Trigger on-demand agent run
-POST   /ai/dispatch/cancel/{sessionId}           Cancel a running session
-GET    /ai/dispatch/sessions                     List sessions (paged)
-GET    /ai/dispatch/sessions/{sessionId}         Session detail with decisions
-GET    /ai/dispatch/pending                      All pending decisions
-POST   /ai/dispatch/decisions/{id}/approve       Approve a suggestion
-POST   /ai/dispatch/decisions/{id}/reject        Reject a suggestion (body carries the reason)
-GET    /ai/dispatch/policy                       Learned dispatch policy
-PUT    /ai/dispatch/policy                       Edit directives / pause learning
-POST   /ai/dispatch/policy/regenerate            Learn now instead of waiting for the nightly pass
-DELETE /ai/dispatch/policy                       Erase the learned policy and directives
+POST   /ai/dispatch/conversations               Create a conversation
+GET    /ai/dispatch/conversations               List conversations (paged, tenant-wide)
+GET    /ai/dispatch/conversations/{id}          Detail: messages + decisions + per-turn session stats
+POST   /ai/dispatch/conversations/{id}/messages Send a message (202; turn runs async)
+POST   /ai/dispatch/conversations/{id}/cancel   Cancel the running turn
+PUT    /ai/dispatch/conversations/{id}          Rename
+DELETE /ai/dispatch/conversations/{id}          Delete (cascades messages, sessions, decisions)
+GET    /ai/dispatch/quota                       Weekly AI quota status
+GET    /ai/dispatch/pending                     All pending decisions
+POST   /ai/dispatch/decisions/{id}/approve      Approve a suggestion
+POST   /ai/dispatch/decisions/{id}/reject       Reject a suggestion (body carries the reason)
+GET    /ai/dispatch/policy                      Learned dispatch policy
+PUT    /ai/dispatch/policy                      Edit directives / pause learning
+POST   /ai/dispatch/policy/regenerate           Learn now instead of waiting for the nightly pass
+DELETE /ai/dispatch/policy                      Erase the learned policy and directives
 ```
 
 ## Audit Trail
 
 Every agent run creates an **AgentSession** with:
 
-- Mode (HumanInTheLoop / Autonomous)
 - Who triggered it (user or background job)
 - Start/end timestamps
 - Total tokens consumed and estimated cost (USD)
@@ -129,8 +152,8 @@ freezing the moment someone edits it.
 **What it reads** (`AIDispatchPolicyLearner`, in `Logistics.Application`): non-`Query` decisions from
 the last 60 days that are either `Rejected` or `Executed` **with a non-null `ApprovedByUserId`**. That
 last condition matters - `Approve()` is immediately overwritten by `MarkExecuted()`, so `Approved` is a
-transient status, and autonomous-mode executions have no approver and no human signal. Counting them
-would train the agent on its own output.
+transient status, and only the approver-stamped rows carry a real human signal. Every executed write
+goes through approval, so this is the whole population, not a fallback for a mode that skips it.
 
 **Skip conditions** (each returns a reason for the job log): learning switched off; `AIEnabled` false
 for the tenant; fewer than 15 qualifying decisions or fewer than 3 rejections; no new decisions since
@@ -214,7 +237,7 @@ expect tenants to hit their budgets sooner.
 
 ### Feature Gating
 
-The feature is gated behind `TenantFeature.AgenticDispatch`, available on the Enterprise plan only. Enable via the admin portal's feature management or by adding a `PlanFeature` entry.
+The feature is gated behind `TenantFeature.AgenticDispatch`, granted from the Starter plan up (`SubscriptionPlanSeeder`). Enable via the admin portal's feature management or by adding a `PlanFeature` entry.
 
 ## Architecture
 
@@ -233,13 +256,18 @@ src/Infrastructure/Logistics.Infrastructure.AI/
 │   ├── Contracts/                          # LlmRequest/Response/Message/ContentBlock/...
 │   └── Providers/                          # Anthropic, OpenAIResponses, OpenAICompatible
 ├── Agents/                                 # Runtime shared by both agent surfaces
+│   ├── AgentTurnService.cs                 # The one turn lifecycle every conversational agent runs through
+│   ├── IAgentSurface.cs                    # Per-kind seam: PrepareAsync + broadcast hooks
 │   ├── AgentLoopRunner.cs                  # The 25-iteration loop, retries, token accounting
 │   ├── AgentDecisionProcessor.cs           # Tool call → decision entity, execute vs suggest
+│   ├── AgentTranscriptCodec.cs             # Content-block <-> JSON wire encoding
+│   ├── AgentTranscriptReplay.cs            # Shared replay/truncation, both surfaces
 │   ├── AgentSessionCancellationRegistry.cs # Process-local cancellation, wall-clock deadline
+│   ├── AgentOverageReporter.cs             # Meters a session past budget to Stripe
 │   ├── LlmSessionSetup.cs                  # Model + provider + tenant features, once per run
 │   ├── PromptText.cs                       # Sanitisers both prompts share
-│   ├── Dispatch/                           # AIDispatchService, conversation builder, prompt
-│   └── Copilot/                            # AICopilotService, builder, prompt, transcript codec
+│   ├── Dispatch/                           # DispatchAgentSurface, AIDispatchService, conversation builder, prompt
+│   └── Copilot/                            # CopilotAgentSurface, AICopilotService, conversation builder, prompt
 └── Tools/
     ├── AgentToolRegistry.cs                # The catalogue: JSON Schema + behaviour metadata
     ├── AgentToolExecutor.cs                # Name → IAgentTool dispatch
@@ -270,9 +298,11 @@ See the `add-llm-provider` skill for the full checklist.
 ## Roadmap
 
 - Telegram bot for drivers and dispatchers - accept/reject loads, status updates, fleet summaries.
-- Graduated autonomy - use per-action-type approval rates from the same decision history to widen what the agent may execute unattended.
+- Graduated autonomy - use per-action-type approval rates from the same decision history to let a
+  tenant relax the per-action approval requirement for actions it has a long clean approval streak
+  on. Not current behavior: every write today is `Suggested` and gated, with no path that skips it.
 
 ## Related
 
-- [AI Copilot](ai-copilot.md) - the conversational agent in the TMS portal built on the same tool registry, agent loop, decision machinery, and quota. Its catalogue is permission-scoped per user; the dispatch agent's is scoped to `Permission.Dispatch.*`.
+- [AI Copilot](ai-copilot.md) - the conversational agent in the TMS portal built on the same tool registry, agent loop, decision machinery, and quota. Its catalogue is permission-scoped per user; the dispatch agent's keeps only tools declaring `DispatchAgent: true` (plus feature gating).
 - [MCP Server](mcp-server.md) - connect Claude Desktop, Cursor, and other MCP clients to your fleet using the same dispatch tools.

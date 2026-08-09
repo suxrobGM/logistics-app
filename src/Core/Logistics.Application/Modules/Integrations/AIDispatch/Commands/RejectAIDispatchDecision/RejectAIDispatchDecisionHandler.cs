@@ -1,42 +1,36 @@
 using Logistics.Application.Abstractions;
-using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.AI;
-using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
-using Microsoft.EntityFrameworkCore;
+using Logistics.Application.Modules.Integrations.AIDispatch.Services;
+using Logistics.Application.Modules.Integrations.Agents.Services;
+using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
 internal sealed class RejectAIDispatchDecisionHandler(
     ITenantUnitOfWork tenantUow,
+    IAIDispatchDecisionGuard guard,
+    IAgentDecisionNotes notes,
     ICurrentUserService currentUser,
-    IOptions<LlmOptions> llmOptions) : IAppRequestHandler<RejectAIDispatchDecisionCommand, Result>
+    IAIDispatchBroadcastService broadcastService) : IAppRequestHandler<RejectAIDispatchDecisionCommand, Result>
 {
     public async Task<Result> Handle(RejectAIDispatchDecisionCommand request, CancellationToken ct)
     {
-        var tenant = tenantUow.GetCurrentTenant();
-        var bypassGate = llmOptions.Value.BypassAIGate;
+        var loaded = await guard.LoadAsync(request.DecisionId, ct);
+        if (!loaded.IsSuccess)
+            return Result.Fail(loaded.Error!);
 
-        if (!bypassGate && tenant.Settings.AIEnabled == false)
-            return Result.Fail("AI dispatch is disabled for this tenant");
+        var decision = loaded.Value!;
+        decision.Reject(currentUser.GetUserId() ?? Guid.Empty, request.Reason);
 
-        var decision = await tenantUow.Repository<AgentDecision>()
-            .Query()
-            .DispatchOnly()
-            .FirstOrDefaultAsync(d => d.Id == request.DecisionId, ct);
+        var tenantId = tenantUow.GetCurrentTenant().Id;
+        var conversation = await notes.LoadConversationAsync(decision, ct);
 
-        if (decision is null)
-            return Result.Fail("Decision not found");
+        await notes.AppendAsync(
+            conversation, notes.RejectionNote(decision, request.Reason),
+            message => broadcastService.BroadcastMessageAsync(tenantId, message), ct);
 
-        if (decision.Status != AgentDecisionStatus.Suggested)
-            return Result.Fail("Decision is not in a suggested state");
-
-        var userId = currentUser.GetUserId() ?? Guid.Empty;
-        decision.Reject(userId, request.Reason);
-        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

@@ -1,2 +1,2 @@
 export * from "./copilot.store";
-export type { QuotaNotice } from "./copilot.store.helpers";
+export { QuotaNoticeClasses, type QuotaNotice } from "./agent-chat.helpers";
