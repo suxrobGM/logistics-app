@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { EventTypes, OidcSecurityService, PublicEventsService } from "angular-auth-oidc-client";
 import { filter, from, map, Observable, switchMap } from "rxjs";
 import { UserData, userRoleOptions } from "../models";
@@ -40,6 +41,17 @@ export class AuthService {
    */
   public readonly authInitialized = this._authInitialized.asReadonly();
 
+  constructor() {
+    // This service keeps `userData` current, not whoever happens to subscribe below. Before, the
+    // signal was only populated as a side effect of `onUserDataChanged()`, so dropping the last
+    // subscriber - a nav service, in one portal - silently emptied it.
+    this.oidcService.userData$.pipe(takeUntilDestroyed()).subscribe(({ userData }) => {
+      if (userData) {
+        this._userData.set(new UserData(userData));
+      }
+    });
+  }
+
   /**
    * Register for the event that is emitted when the user is authenticated
    * @returns An observable that emits a boolean value indicating whether the user is authenticated
@@ -53,15 +65,7 @@ export class AuthService {
    * @returns An observable that emits the user
    */
   onUserDataChanged(): Observable<UserData | null> {
-    return this.oidcService.userData$.pipe(
-      map(({ userData }) => {
-        if (userData) {
-          this._userData.set(new UserData(userData));
-        }
-
-        return this._userData();
-      }),
-    );
+    return this.oidcService.userData$.pipe(map(() => this._userData()));
   }
 
   /**

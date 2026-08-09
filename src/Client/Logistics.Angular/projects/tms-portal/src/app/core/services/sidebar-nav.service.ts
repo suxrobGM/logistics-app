@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal } from "@angular/core";
+import { computed, effect, inject, Injectable } from "@angular/core";
 import { UserRole } from "@logistics/shared";
 import { FeatureService } from "@logistics/shared/services";
 import { AuthService, PermissionService } from "@/core/auth";
@@ -7,7 +7,6 @@ import { sidebarSections } from "@/shared/layout/sidebar/sidebar-items";
 import { ChatService } from "./chat.service";
 import { CommandPaletteService } from "./command-palette.service";
 import { DispatchBadgeService } from "./dispatch-badge.service";
-import { TmsFeatureProvider } from "./feature.provider";
 import { SidebarFavoritesService } from "./sidebar-favorites.service";
 import { TenantService } from "./tenant.service";
 
@@ -57,16 +56,13 @@ export class SidebarNavService {
   private readonly authService = inject(AuthService);
   private readonly featureService = inject(FeatureService);
   private readonly permissionService = inject(PermissionService);
-  private readonly featureProvider = inject(TmsFeatureProvider);
   private readonly tenantService = inject(TenantService);
   private readonly chatService = inject(ChatService);
   private readonly dispatchBadgeService = inject(DispatchBadgeService);
   private readonly favoritesService = inject(SidebarFavoritesService);
   private readonly commandPaletteService = inject(CommandPaletteService);
 
-  private readonly role = signal<string | null>(null);
-  /** Bumped after features refresh so the filtering computeds recompute. */
-  private readonly featuresVersion = signal(0);
+  private readonly role = computed(() => this.authService.userData()?.role ?? null);
 
   /** Role + feature filtered, hidden children intact. Fed to the palette index + favorites bar. */
   public readonly fullSections = computed<NavSection[]>(() => this.buildSections());
@@ -79,22 +75,6 @@ export class SidebarNavService {
   );
 
   constructor() {
-    this.role.set(this.authService.getUserData()?.role ?? null);
-
-    // Refresh nav items when tenant/features change.
-    effect(() => {
-      this.tenantService.tenantData();
-      this.featureProvider.refreshFeatures().then(() => {
-        this.featuresVersion.update((v) => v + 1);
-        this.role.set(this.authService.getUserData()?.role ?? null);
-      });
-    });
-
-    // Update the role when the user changes (login/logout/role switch).
-    this.authService.onUserDataChanged().subscribe((userData) => {
-      this.role.set(userData?.role ?? null);
-    });
-
     // Favorites defaults + command-palette index track the full (hidden-inclusive) tree.
     effect(() => {
       const role = this.role();
@@ -107,14 +87,12 @@ export class SidebarNavService {
   }
 
   private buildSections(): NavSection[] {
-    this.featuresVersion();
     const role = this.role();
     if (!role) return [];
 
     const allowedItems = ROLE_ITEM_ACCESS[role];
-    const sections = this.wireBadges(structuredClone(sidebarSections));
 
-    return sections
+    return this.wireBadges(sidebarSections)
       .map((section) => ({
         ...section,
         items: this.filterItems(section.items, allowedItems),
@@ -158,7 +136,7 @@ export class SidebarNavService {
 
   /**
    * Derives the rendered-menu tree from {@link fullSections} by dropping `menuHidden` children,
-   * so the full pipeline (clone + role/feature filter + badge wiring) runs only once.
+   * so the full pipeline (role/feature filter + badge wiring) runs only once.
    */
   private stripHiddenChildren(items: NavItem[]): NavItem[] {
     return items
@@ -184,24 +162,23 @@ export class SidebarNavService {
     return { ...item, children };
   }
 
-  private wireBadges(sections: NavSection[]): NavSection[] {
-    for (const section of sections) {
-      for (const item of section.items) {
-        if (item.id === "messages") {
-          item.badge = () => {
-            const count = this.chatService.unreadCount();
-            return count > 0 ? count : null;
-          };
-        }
+  /** Copies rather than mutates, so the static `sidebarSections` never needs cloning first. */
+  private wireBadges(sections: readonly NavSection[]): NavSection[] {
+    return sections.map((section) => ({
+      ...section,
+      items: section.items.map((item) => {
+        const badge = this.badgeFor(item.id);
+        return badge ? { ...item, badge } : item;
+      }),
+    }));
+  }
 
-        if (item.id === "ai-dispatch") {
-          item.badge = () => {
-            const count = this.dispatchBadgeService.pendingCount();
-            return count > 0 ? count : null;
-          };
-        }
-      }
-    }
-    return sections;
+  private badgeFor(itemId: string): (() => number | null) | null {
+    const source = {
+      messages: this.chatService.unreadCount,
+      "ai-dispatch": this.dispatchBadgeService.pendingCount,
+    }[itemId];
+
+    return source ? () => source() || null : null;
   }
 }
