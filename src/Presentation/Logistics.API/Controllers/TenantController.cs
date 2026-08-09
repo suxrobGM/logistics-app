@@ -36,9 +36,10 @@ public class TenantController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
+    // Reads the master DB unfiltered, so it returns every tenant on the platform. Admin portal only.
     [HttpGet(Name = "GetTenants")]
     [ProducesResponseType(typeof(PagedResponse<TenantDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Tenant.View)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetTenantList([FromQuery] GetTenantsQuery query)
     {
         if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin))
