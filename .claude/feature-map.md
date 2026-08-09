@@ -273,7 +273,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Privacy/`
 - Application: `Modules/Compliance/Privacy/` (Commands, Queries, Services)
 - Infrastructure: `Infrastructure.Documents/Privacy/`, `Infrastructure.Persistence/Privacy/DataAnonymizer.cs`
-- API/UI: `PrivacyController.cs`, `Jobs/Data{Export,Deletion,Retention,ExportExpiry}Job.cs`, `<ui-cookie-banner>`, `tms-portal/settings/privacy-settings/`, `admin-portal/data-requests/`
+- API/UI: `PrivacyController.cs`, `Jobs/Data{Export,Deletion,Retention,ExportExpiry}Job.cs`, `<ui-cookie-banner>`, `admin-portal/data-requests/`
 
 ## Financial
 
@@ -288,7 +288,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/TenantTaxRate.cs`, `Invoice.TaxBehavior`, `Invoice.TaxBreakdownJson`, `ValueObjects/TaxJurisdiction.cs` - build jurisdictions with `TaxJurisdiction.Create(country, region)` on every write path; it upper-cases and normalizes a blank region to null, which is what the equality comparisons rely on
 - Application: `Application.Abstractions/Tax/ITaxCalculator`, `Modules/Financial/Tax/Services/IInvoiceTaxApplier`, `Modules/Financial/Tax/Commands/`, `Modules/Financial/Tax/Queries/`, `Modules/Financial/Invoices/Queries/PreviewInvoiceTax/`
 - Infrastructure: `Infrastructure.Tax/` (`StripeTaxCalculator`, `ManualTaxCalculator`, `StripeTaxConfigService`, `EUVatRates`/`USSalesTaxRates`/`OtherCountryRates`); `Infrastructure.Documents/Pdf/Invoice/` VAT block
-- API/UI: `TaxController.cs`, `TaxRatesController.cs`, `tms-portal/pages/settings/tax-rates-settings/`, `<ui-money-with-tax>`
+- API/UI: `TaxController.cs`, `TaxRatesController.cs`, `tms-portal/pages/settings/components/tenant-tax-rates-card/`, `<ui-money-with-tax>`
 
 ### Payments
 
@@ -322,7 +322,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Tenant.cs` (`StripeConnectedAccountId`), `Entities/Employee.cs` (`Address`, `StripeConnectedAccountId`)
 - Application: `Modules/Financial/StripeConnect/Commands/`, `Modules/Financial/StripeConnect/Queries/`, `Modules/Financial/Payroll/Commands/SetupEmployeePayout/`
 - Infrastructure: `Infrastructure.Payments/Stripe/StripeConnectService.cs`, `StripeCapabilities.cs` (country-aware capability map: SEPA/iDEAL/Bacs/ACH)
-- API/UI: `StripeConnectController.cs`, `tms-portal/pages/settings/billing/`
+- API/UI: `StripeConnectController.cs`, `tms-portal/pages/settings/billing-settings/`
 
 ### Stripe webhooks
 
@@ -355,7 +355,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Accounting/` (`AccountingProviderConfiguration`, `QboEntityMapping`)
 - Application: `Modules/Integrations/Accounting/` (Commands: Connect/DisconnectQuickBooks; Queries: GetQuickBooksConnection/AuthUrl), `Application.Abstractions/Accounting/` (`IAccountingProviderService`, `IAccountingProviderFactory`, `IOAuthStateProtector`)
 - Infrastructure: `Infrastructure.Integrations.Accounting/` (QBO OAuth2 + REST push: Customer/Invoice/Payment/Purchase); token cols encrypted via `Persistence/Converters/EncryptedStringConverter`
-- API/UI: `AccountingController.cs` (+ `/accounting/quickbooks/callback`), `Jobs/AccountingSyncJob.cs`, `tms-portal/pages/settings/accounting-settings/`
+- API/UI: `AccountingController.cs` (+ `/accounting/quickbooks/callback`), `Jobs/AccountingSyncJob.cs`, `tms-portal/pages/settings/integrations-settings/` + `components/quickbooks-card/`
 
 ## Communication
 
