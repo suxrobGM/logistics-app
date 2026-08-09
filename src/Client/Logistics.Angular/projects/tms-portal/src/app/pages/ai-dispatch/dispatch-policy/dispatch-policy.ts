@@ -24,7 +24,7 @@ import {
   ValidatedForm,
 } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
-import { MarkdownPipe } from "@/shared/pipes";
+import { Markdown } from "@/shared/components";
 
 /** Mirrors `DispatchPolicyText.MaxContentChars` on the server. */
 const MAX_DIRECTIVES_LENGTH = 4000;
@@ -38,7 +38,7 @@ const MAX_DIRECTIVES_LENGTH = 4000;
     FormField,
     FormRoot,
     Icon,
-    MarkdownPipe,
+    Markdown,
     PageHeader,
     Spinner,
     Stack,

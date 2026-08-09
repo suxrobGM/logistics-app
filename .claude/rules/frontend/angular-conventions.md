@@ -72,7 +72,7 @@ onKeydown(event: KeyboardEvent) {}
   - **Forms**: `ui-form-field` (label/hint/error wrapper - auto-resolves the projected `[formField]`), `ui-text-field`, `ui-textarea-field`, `ui-select-field`, `ui-multiselect-field`, `ui-number-field`, `ui-currency-field`, `ui-unit-field`, `ui-date-field`, `ui-date-range-picker`, `ui-checkbox-field`, `ui-toggle-field`, `ui-password-field`, `ui-autocomplete-field`, `ui-search-field`, `ui-phone-field`, `ui-editor` (lazy Quill), `ui-file-upload`, the composites `ui-address-form` / `ui-language-picker`, and the `ValidatedForm` directive (auto-applies to `form[formRoot]`)
   - **Table**: `ui-data-table` with `<th uiSortHeader="Field">`, `ui-table-paginator`, `<tr uiSelectableRow>`, `[uiRowToggler]`, `ui-table-checkbox`, `ui-table-header-checkbox`
   - **Badges**: `ui-badge`, `ui-status-badge`, `ui-count-badge`, `ui-overlay-badge`
-  - **Display**: `ui-typography`, `ui-avatar`, `ui-timeline`, `ui-chart`, `ui-money-with-tax`, `ui-pdf-viewer`, `ui-alert`
+  - **Display**: `ui-typography`, `ui-avatar`, `ui-timeline`, `ui-chart`, `ui-money-with-tax`, `ui-pdf-viewer`, `ui-alert`, `ui-markdown`
   - **Overlay**: `ui-dialog`, `ui-confirm-dialog`, `ui-confirm-delete-dialog`, `ui-popover`, `[uiTooltip]`, `ui-drawer`, `ui-menu`, `ui-lightbox`, `ui-toaster`, `ui-cookie-banner`
   - **Status**: `ui-spinner`, `ui-skeleton`, `ui-loading-skeleton`, `ui-progress`, `ui-empty-state`, `ui-error-state`, `ui-data-container`
   - **Layout**: `ui-stack`, `ui-surface`, `ui-container`, `ui-grid`, `ui-divider`, `ui-toolbar` (+ responsive helpers)

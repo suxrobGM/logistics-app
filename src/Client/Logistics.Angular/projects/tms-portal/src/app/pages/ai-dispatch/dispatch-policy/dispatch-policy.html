@@ -64,10 +64,7 @@
     <!-- Learned preferences (read-only) -->
     <ui-card header="Learned preferences" class="mb-6">
       @if (hasLearned()) {
-        <div
-          class="prose prose-sm dark:prose-invert max-w-none"
-          [innerHTML]="policy().generatedContent | markdown"
-        ></div>
+        <ui-markdown [content]="policy().generatedContent" />
         <ui-typography variant="caption" color="secondary" class="mt-4 block">
           Learned from {{ policy().decisionsAnalyzed ?? 0 }} reviewed
           {{ (policy().decisionsAnalyzed ?? 0) === 1 ? "decision" : "decisions" }}
@@ -117,10 +114,10 @@
         </ui-stack>
 
         @if (showPreview()) {
-          <div
-            class="prose prose-sm dark:prose-invert border-border min-h-[16rem] max-w-none rounded-md border p-3"
-            [innerHTML]="model().manualContent | markdown"
-          ></div>
+          <ui-markdown
+            class="border-border min-h-[16rem] rounded-md border p-3"
+            [content]="model().manualContent"
+          />
         } @else {
           <ui-form-field
             for="manualContent"

@@ -27,11 +27,9 @@
           *ngTemplateOutlet="reasoning; context: { $implicit: entry.decision }"
         ></ng-container>
 
-        @if (entry.decision.toolResult) {
-          <ui-surface variant="subtle" padding="sm" radius="md" [border]="false" class="text-xs">
-            <app-tool-output-summary [result]="entry.decision.toolResult" />
-          </ui-surface>
-        }
+        <ng-container
+          *ngTemplateOutlet="toolOutput; context: { $implicit: entry.decision }"
+        ></ng-container>
 
         @if (entry.decision.status === "suggested") {
           <ui-permission-guard [permissions]="dispatchManage">
@@ -49,18 +47,15 @@
     } @else {
       <div class="mb-4 pb-2">
         <ui-stack direction="row" align="center" gap="2" wrap>
-          <span class="text-muted-foreground text-xs">Checked:</span>
+          <ui-typography variant="caption" color="muted">Checked:</ui-typography>
           @for (chip of entry.summary.chips; track chip.label) {
-            <span
-              class="bg-muted inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs"
-              [class]="chip.failed ? 'text-danger' : 'text-muted-foreground'"
-            >
-              <ui-icon [name]="chip.icon" size="inherit" />
-              <span>{{ chip.label }}</span>
-              @if (chip.count > 1) {
-                <span>x{{ chip.count }}</span>
-              }
-            </span>
+            <ui-badge
+              size="sm"
+              rounded
+              [icon]="chip.icon"
+              [severity]="chip.failed ? 'danger' : 'secondary'"
+              [value]="chip.count > 1 ? chip.label + ' x' + chip.count : chip.label"
+            />
           }
           <ui-button
             icon="chevron-down"
@@ -74,10 +69,12 @@
         </ui-stack>
 
         @if (entry.summary.keyFigures) {
-          <div class="text-muted-foreground text-xs">{{ entry.summary.keyFigures }}</div>
+          <ui-typography variant="caption" color="muted">
+            {{ entry.summary.keyFigures }}
+          </ui-typography>
         }
 
-        @if (isExpanded('group:' + entry.id)) {
+        @if (isExpanded("group:" + entry.id)) {
           <div class="mt-3 space-y-3">
             @for (read of entry.decisions; track read.id) {
               <div>
@@ -94,17 +91,9 @@
                   *ngTemplateOutlet="reasoning; context: { $implicit: read }"
                 ></ng-container>
 
-                @if (read.toolResult) {
-                  <ui-surface
-                    variant="subtle"
-                    padding="sm"
-                    radius="md"
-                    [border]="false"
-                    class="text-xs"
-                  >
-                    <app-tool-output-summary [result]="read.toolResult" />
-                  </ui-surface>
-                }
+                <ng-container
+                  *ngTemplateOutlet="toolOutput; context: { $implicit: read }"
+                ></ng-container>
 
                 <app-tool-result-details [result]="read.toolResult" class="mt-2 block" />
               </div>
@@ -126,14 +115,22 @@
   </ng-template>
 </ui-timeline>
 
+<ng-template #toolOutput let-decision>
+  @if (decision.toolResult) {
+    <ui-surface variant="subtle" padding="sm" radius="md" [border]="false" class="text-xs">
+      <app-tool-output-summary [result]="decision.toolResult" />
+    </ui-surface>
+  }
+</ng-template>
+
 <ng-template #reasoning let-decision>
   @if (decision.reasoning) {
     <div class="mb-2">
-      <div
-        class="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed"
-        [class.line-clamp-3]="!isExpanded('reason:' + decision.id)"
-        [innerHTML]="decision.reasoning | markdown"
-      ></div>
+      <ui-markdown
+        class="text-sm leading-relaxed"
+        [content]="decision.reasoning"
+        [clamped]="!isExpanded('reason:' + decision.id)"
+      />
       @if (decision.reasoning.length > 150) {
         <ui-button
           appearance="text"

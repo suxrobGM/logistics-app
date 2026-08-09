@@ -21,11 +21,7 @@
       >
         <ui-icon name="bot" size="inherit" class="text-xs" />
       </div>
-      <!-- Rescale prose headings/margins to chat scale - document-scale h1/h2 dwarf a chat pane. -->
-      <div
-        class="prose prose-sm dark:prose-invert prose-h1:text-lg prose-h2:text-base prose-h3:text-sm prose-headings:font-semibold prose-headings:mt-4 prose-headings:mb-1.5 prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5 max-w-none min-w-0 flex-1 text-sm"
-        [innerHTML]="message().text | markdown"
-      ></div>
+      <ui-markdown class="flex-1" scale="chat" [content]="message().text" />
     </div>
   }
 }

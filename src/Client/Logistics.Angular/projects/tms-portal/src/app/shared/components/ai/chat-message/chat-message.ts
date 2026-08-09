@@ -1,7 +1,6 @@
 import { Component, input } from "@angular/core";
 import type { AgentMessageDto } from "@logistics/shared/api";
-import { Icon } from "@logistics/shared/ui";
-import { MarkdownPipe } from "@/shared/pipes";
+import { Icon, Markdown } from "@logistics/shared/ui";
 
 /**
  * One transcript row, shared by the copilot drawer and the AI dispatch chat page: assistant
@@ -11,7 +10,7 @@ import { MarkdownPipe } from "@/shared/pipes";
 @Component({
   selector: "app-chat-message",
   templateUrl: "./chat-message.html",
-  imports: [Icon, MarkdownPipe],
+  imports: [Icon, Markdown],
   host: { class: "block" },
 })
 export class ChatMessage {

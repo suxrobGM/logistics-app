@@ -3,6 +3,7 @@ import {
   Avatar,
   Card,
   CountBadge,
+  Markdown,
   OverlayBadge,
   Progress,
   Skeleton,
@@ -29,9 +30,32 @@ import {
 @Component({
   selector: "app-ui-lab-cosmetics",
   templateUrl: "./cosmetics-section.html",
-  imports: [Card, Spinner, Skeleton, Avatar, Progress, CountBadge, OverlayBadge, Typography],
+  imports: [
+    Card,
+    Spinner,
+    Skeleton,
+    Avatar,
+    Markdown,
+    Progress,
+    CountBadge,
+    OverlayBadge,
+    Typography,
+  ],
 })
 export class UiLabCosmeticsSection {
+  /** Carries a script tag on purpose: the pipe must sanitize it away, not render it live. */
+  protected readonly markdownSample = [
+    "# Heading 1",
+    "## Heading 2",
+    "",
+    "A paragraph with **bold**, *italic* and a [link](https://example.com).",
+    "",
+    "- First bullet",
+    "- Second bullet",
+    "",
+    "<script>alert('xss')</script>",
+  ].join("\n");
+
   /** Driven off the exported vocabulary, so a tone added to the union appears here by itself. */
   protected readonly tones = UI_BADGE_INTENTS;
 

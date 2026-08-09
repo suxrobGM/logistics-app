@@ -18,9 +18,9 @@ import {
 import {
   ApproveRejectActions,
   DecisionActionsService,
+  Markdown,
   ToolOutputSummary,
 } from "@/shared/components";
-import { MarkdownPipe } from "@/shared/pipes";
 import { getToolIcon, getToolLabel, getToolMarkerClass, Labels } from "@/shared/utils";
 import { DispatchChatStore } from "../../store/dispatch-chat.store";
 import { ToolResultDetails } from "../tool-result-details/tool-result-details";
@@ -38,7 +38,7 @@ import { groupTurnEntries, type TurnEntry } from "./dispatch-turn-timeline.utils
     Badge,
     DatePipe,
     Icon,
-    MarkdownPipe,
+    Markdown,
     NgTemplateOutlet,
     PermissionGuard,
     Spinner,
