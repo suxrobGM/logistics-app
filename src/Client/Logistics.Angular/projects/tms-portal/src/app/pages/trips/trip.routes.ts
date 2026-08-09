@@ -1,4 +1,5 @@
 import type { Routes } from "@angular/router";
+import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { TripAddPage } from "./trip-add/trip-add";
 import { TripDetailsPage } from "./trip-details/trip-details";
@@ -12,6 +13,7 @@ export const tripRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Trips",
+      permission: Permission.Load.View,
     },
   },
   {
@@ -20,6 +22,7 @@ export const tripRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add Trip",
+      permission: Permission.Load.Manage,
     },
   },
   {
@@ -28,6 +31,7 @@ export const tripRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit Trip",
+      permission: Permission.Load.Manage,
     },
   },
   {
@@ -36,6 +40,7 @@ export const tripRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Trip Details",
+      permission: Permission.Load.View,
     },
   },
 ];

@@ -11,10 +11,7 @@ export const systemNav: NavSection = {
       label: "Settings",
       icon: "settings",
       route: "/settings",
-      // Single source of truth for the settings tab bar - `settings-layout` derives it from these,
-      // so the two can't drift. Each is `menuHidden`, so the sidebar shows Settings as one link
-      // while the command palette and favorites still index them. `permission` mirrors the matching
-      // route's `data.permission`: the route enforces, this hides.
+      permission: Permission.Tenant.View,
       children: [
         {
           id: "settings-company",

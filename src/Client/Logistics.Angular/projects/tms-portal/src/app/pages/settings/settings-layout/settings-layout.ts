@@ -2,7 +2,7 @@ import { Component, computed, inject } from "@angular/core";
 import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { FeatureService } from "@logistics/shared/services";
 import { PermissionService } from "@/core/auth";
-import { isNavItemVisible } from "@/shared/layout/nav-menu";
+import { passesAccessGate } from "@/shared/layout/nav-menu";
 import { systemNav } from "@/shared/layout/sidebar/nav/system.nav";
 
 /**
@@ -24,7 +24,7 @@ export class SettingsLayoutComponent {
 
   protected readonly tabs = computed(() =>
     (systemNav.items.find((item) => item.id === "settings")?.children ?? [])
-      .filter((child) => isNavItemVisible(child, this.featureService, this.permissionService))
+      .filter((child) => passesAccessGate(child, this.featureService, this.permissionService))
       .map((child) => ({ label: child.label, route: child.route! })),
   );
 }

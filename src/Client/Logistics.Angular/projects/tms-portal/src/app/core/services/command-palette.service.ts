@@ -1,5 +1,7 @@
 import { inject, Injectable, signal } from "@angular/core";
+import { Permission } from "@logistics/shared";
 import type { IconName } from "@logistics/shared/ui";
+import { PermissionService } from "@/core/auth";
 import type { NavSection } from "@/shared/layout/nav-menu";
 import { RecentPagesService } from "./recent-pages.service";
 
@@ -14,7 +16,8 @@ export interface SearchableItem {
   keywords?: string[];
 }
 
-const QUICK_ACTIONS: SearchableItem[] = [
+/** Page rows inherit their gate from the `NavItem`; these have no nav entry, so they carry their own. */
+const QUICK_ACTIONS: (SearchableItem & { permission: string })[] = [
   {
     id: "action-create-load",
     label: "Create Load",
@@ -23,6 +26,7 @@ const QUICK_ACTIONS: SearchableItem[] = [
     route: "/loads/add",
     type: "action",
     keywords: ["new", "add", "load"],
+    permission: Permission.Load.Manage,
   },
   {
     id: "action-add-employee",
@@ -32,6 +36,7 @@ const QUICK_ACTIONS: SearchableItem[] = [
     route: "/employees/add",
     type: "action",
     keywords: ["new", "hire", "driver"],
+    permission: Permission.Employee.Manage,
   },
   {
     id: "action-add-customer",
@@ -41,6 +46,7 @@ const QUICK_ACTIONS: SearchableItem[] = [
     route: "/customers/add",
     type: "action",
     keywords: ["new", "client"],
+    permission: Permission.Customer.Manage,
   },
   {
     id: "action-add-expense",
@@ -50,6 +56,7 @@ const QUICK_ACTIONS: SearchableItem[] = [
     route: "/expenses/add",
     type: "action",
     keywords: ["new", "cost"],
+    permission: Permission.Expense.Manage,
   },
   {
     id: "action-add-truck",
@@ -59,16 +66,19 @@ const QUICK_ACTIONS: SearchableItem[] = [
     route: "/trucks/add",
     type: "action",
     keywords: ["new", "vehicle", "fleet"],
+    permission: Permission.Truck.Manage,
   },
 ];
 
 @Injectable({ providedIn: "root" })
 export class CommandPaletteService {
   private readonly recentPagesService = inject(RecentPagesService);
+  private readonly permissionService = inject(PermissionService);
 
   public readonly isOpen = signal(false);
 
   private searchIndex: SearchableItem[] = [];
+  private quickActions: SearchableItem[] = [];
 
   open(): void {
     this.isOpen.set(true);
@@ -118,7 +128,10 @@ export class CommandPaletteService {
       }
     }
 
-    this.searchIndex = [...items, ...QUICK_ACTIONS];
+    this.quickActions = QUICK_ACTIONS.filter((action) =>
+      this.permissionService.hasPermission(action.permission),
+    );
+    this.searchIndex = [...items, ...this.quickActions];
     this.recentPagesService.setRouteLabels(routeLabels);
   }
 
@@ -148,6 +161,6 @@ export class CommandPaletteService {
       icon: "history",
     }));
 
-    return [...recent, ...QUICK_ACTIONS.slice(0, 3)];
+    return [...recent, ...this.quickActions.slice(0, 3)];
   }
 }

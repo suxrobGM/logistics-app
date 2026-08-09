@@ -52,7 +52,7 @@ export const inspectionRoutes: Routes = [
     canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "DVIR Reports",
-      permission: Permission.Safety.View,
+      permission: Permission.Dvir.View,
       feature: "dvir",
     },
   },
@@ -62,7 +62,7 @@ export const inspectionRoutes: Routes = [
     canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "DVIR Details",
-      permission: Permission.Safety.View,
+      permission: Permission.Dvir.View,
       feature: "dvir",
     },
   },
@@ -72,7 +72,7 @@ export const inspectionRoutes: Routes = [
     canActivate: [authGuard, featureGuardFromData],
     data: {
       breadcrumb: "Review DVIR",
-      permission: Permission.Safety.Manage,
+      permission: Permission.Dvir.Review,
       feature: "dvir",
     },
   },

@@ -1,33 +1,18 @@
-import { inject, Injectable, signal } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
 import { Api } from "../api/generated/api";
 import { getCurrentUserPermissions } from "../api/generated/functions";
 import type { PermissionChecker } from "../permission/permission-checker";
 
 /**
- * Service for managing user permissions.
- * Fetches permissions from the API and provides methods to check them.
- *
- * @example
- * ```typescript
- * // In app.config.ts
- * providers: [
- *   { provide: PERMISSION_CHECKER, useExisting: PermissionService }
- * ]
- *
- * // In a component
- * const permissionService = inject(PermissionService);
- * await permissionService.loadPermissions();
- * if (permissionService.hasPermission('users.view')) {
- *   // Show users section
- * }
- * ```
+ * Loads the current user's permissions once and answers checks against them.
+ * Provide it as `PERMISSION_CHECKER` in the portal's `app.config.ts`.
  */
 @Injectable({ providedIn: "root" })
 export class PermissionService implements PermissionChecker {
   private readonly api = inject(Api);
 
   private readonly _permissions = signal<string[]>([]);
-  private loaded = false;
+  private readonly state = signal<"idle" | "loaded" | "failed">("idle");
 
   /**
    * Readonly signal of the current permissions array.
@@ -35,22 +20,27 @@ export class PermissionService implements PermissionChecker {
   public readonly permissions = this._permissions.asReadonly();
 
   /**
+   * Whether the first {@link loadPermissions} attempt has finished, successfully or not. Anything
+   * that persists permission-derived state must wait: until then every check answers false.
+   */
+  public readonly resolved = computed(() => this.state() !== "idle");
+
+  /**
    * Load permissions from the API.
    * Caches the result and won't reload unless clearPermissions() is called first.
    */
   async loadPermissions(): Promise<void> {
-    if (this.loaded) {
+    if (this.state() === "loaded") {
       return;
     }
 
     try {
-      const permissions = await this.api.invoke(getCurrentUserPermissions);
-      this._permissions.set(permissions);
-      this.loaded = true;
+      this._permissions.set(await this.api.invoke(getCurrentUserPermissions));
+      this.state.set("loaded");
     } catch {
-      // If loading permissions fails (e.g., 401), use empty permissions
-      // Authorization is still validated server-side
+      // Fail closed (e.g. on a 401) and allow a later retry; the API re-checks every permission.
       this._permissions.set([]);
+      this.state.set("failed");
     }
   }
 
@@ -80,6 +70,6 @@ export class PermissionService implements PermissionChecker {
    */
   clearPermissions(): void {
     this._permissions.set([]);
-    this.loaded = false;
+    this.state.set("idle");
   }
 }
