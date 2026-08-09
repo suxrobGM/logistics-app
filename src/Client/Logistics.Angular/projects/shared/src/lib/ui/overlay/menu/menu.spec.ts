@@ -1,26 +1,3 @@
-/**
- * `<ui-menu>`'s contract. Everything pinned here is something the 19 call sites depend on and that NO
- * other gate would catch - each one stays green through `build:all`, `lint` and every other spec while
- * shipping a broken menu:
- *
- *   1. IT CLOSES. This is the whole reason the component owns its overlay. `CdkMenu` decides it is
- *      "inline" when there is no `CdkMenuTrigger` above it (`isInline = !this._parentTrigger`), and an
- *      inline menu never pushes itself onto the menu stack - so its Escape handler calls
- *      `menuStack.close(this)`, which begins with an `indexOf(this) >= 0` test that is false, and does
- *      NOTHING. Leaning on CDK here ships a menu that opens and never closes on Escape, silently.
- *      Escape, outside-click and item-activation are therefore each pinned below.
- *   2. THE TRIGGER TOGGLES. A pointerdown on the trigger is "outside" the overlay, so a naive
- *      outside-click handler closes the menu a beat before the trigger's own click reopens it, leaving
- *      the kebab unable to close what it opened. Clicking twice must end closed.
- *   3. `visible: false` REMOVES an item (not disables it) - `MenuItem.visible` semantics, which four
- *      call sites use to hide actions per row status.
- *   4. `command` FIRES, and fires with the row the trigger set. The call sites run
- *      `selectedRow.set(row); menu.toggle($event)`, so a menu built from a stale row would navigate to
- *      the wrong record - the single most dangerous failure available to this component.
- *   5. A `separator` renders as a separator and NOT as a clickable, empty menu item.
- *   6. The overlay anchors to the ELEMENT THAT WAS CLICKED, not to the <ui-menu> tag (which sits at the
- *      bottom of the template, far from the row).
- */
 import { Component, provideZonelessChangeDetection, signal } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import { UiMenu } from "./menu";
@@ -181,5 +158,76 @@ describe("ui-menu", () => {
     // The CDK bounding box is positioned from the origin element; assert it is not at 0,0 fallback
     // and that the overlay is attached to the document rather than nested inside <ui-menu>.
     expect(document.querySelector("ui-menu")!.contains(panel())).toBe(false);
+  });
+});
+
+@Component({
+  selector: "ui-test-header-host",
+  imports: [UiMenu],
+  template: `
+    <button type="button" id="kebab" (click)="menu.toggle($event)">open</button>
+    <ui-menu #menu [items]="items">
+      <div menuHeader role="presentation" id="header">{{ name() }}</div>
+    </ui-menu>
+  `,
+})
+class HeaderHost {
+  public readonly name = signal("Ada Lovelace");
+  public readonly items: UiMenuItem[] = [{ label: "View", command: () => undefined }];
+}
+
+// (7)
+describe("ui-menu with a projected header", () => {
+  let fixture: ComponentFixture<HeaderHost>;
+  let host: HeaderHost;
+
+  const header = () => document.getElementById("header");
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HeaderHost],
+      providers: [provideZonelessChangeDetection()],
+    }).compileComponents();
+    fixture = TestBed.createComponent(HeaderHost);
+    host = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  afterEach(() => fixture.destroy());
+
+  const toggle = async () => {
+    click("kebab");
+    await fixture.whenStable();
+  };
+
+  it("renders the header inside the panel, above the items", async () => {
+    await toggle();
+    expect(header()).not.toBeNull();
+    expect(panel()!.contains(header())).toBe(true);
+    expect(header()!.compareDocumentPosition(itemsOf()[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+  });
+
+  // The header is a plain div, so CdkMenu's key manager must not treat it as a focus target.
+  it("keeps the header out of the menu items", async () => {
+    await toggle();
+    expect(itemsOf().length).toBe(1);
+    expect(header()!.matches('[data-slot="dropdown-menu-item"]')).toBe(false);
+  });
+
+  it("still renders the header on a REOPEN, and re-renders on a change while closed", async () => {
+    await toggle();
+    expect(header()!.textContent!.trim()).toBe("Ada Lovelace");
+
+    await toggle();
+    expect(panel()).toBeNull();
+
+    host.name.set("Grace Hopper");
+    await fixture.whenStable();
+
+    await toggle();
+    expect(header()).not.toBeNull();
+    expect(header()!.textContent!.trim()).toBe("Grace Hopper");
   });
 });

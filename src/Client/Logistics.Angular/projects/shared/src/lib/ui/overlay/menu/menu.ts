@@ -10,31 +10,13 @@ import {
 import type { UiMenuItem } from "./menu-item";
 
 /**
- * The popup menu - the same row-kebab pattern at every call site, and the only consumer of the Helm
- * dropdown-menu primitive.
+ * The popup menu. `CdkMenu` supplies arrow keys, type-ahead and Home/End; this class supplies the
+ * overlay and every close path.
  *
- * THE TRIGGER CONTRACT:
- *   <ui-button icon="ellipsis-vertical" (click)="selectedRow.set(row); menu.toggle($event)" />
- *   <ui-menu #menu [items]="actionMenuItems()" />
- *
- * The imperative `toggle($event)` is not a stylistic hangover, it is load-bearing. The call sites run
- * `selectedRow.set(row)` and *then* open, and `actionMenuItems()` is computed from that row. Swapping
- * in a declarative `[uiMenuTriggerFor]` directive would put CDK's own click handler in a race with
- * that setter on the same element, and a menu built from a stale row navigates to the wrong record.
- * See `AnchoredOverlay` for why that also rules out `CdkMenuTrigger` and its overlay.
- *
- * WHY THE CLOSE PATHS ARE OURS
- * `CdkMenu` sets `isInline = !this._parentTrigger`. With no `CdkMenuTrigger` above it there is no
- * `MENU_TRIGGER`, so it considers itself "inline" - and an inline menu NEVER PUSHES ITSELF ONTO THE
- * MENU STACK (`ngAfterContentInit`: `if (!this.isInline) this.menuStack.push(this)`). Its Escape
- * handler then calls `menuStack.close(this)`, whose first act is an `indexOf(this) >= 0` test that is
- * false, so it is a SILENT NO-OP: trusting CDK's stack here gives a menu that opens and never closes on
- * Escape, with no error anywhere. `AnchoredOverlay` owns Escape / outside-click / navigation /
- * scroll-away; this class adds the two menu-specific ones (item activation, tab-out).
- *
- * What `CdkMenu` still gives us is the genuinely hard part: roving-tabindex arrow keys, type-ahead and
- * Home/End. Focusing the menu container on open is enough to start it - `CdkMenuBase._handleFocus()`
- * calls `focusFirstItem()` for any non-mouse focus origin.
+ * ```html
+ * <ui-button icon="ellipsis-vertical" (click)="selectedRow.set(row); menu.toggle($event)" />
+ * <ui-menu #menu [items]="actionMenuItems()" />
+ * ```
  */
 @Component({
   selector: "ui-menu",

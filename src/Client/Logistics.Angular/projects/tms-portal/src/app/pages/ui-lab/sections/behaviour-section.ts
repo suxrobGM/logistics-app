@@ -55,6 +55,13 @@ export class UiLabBehaviourSection {
   /** Mirrors the real row-kebab menus: separator, a hidden item, a disabled item, a destructive one. */
   protected readonly actionMenuItems = signal<UiMenuItem[]>([]);
 
+  /** The account shape: the same items, under a projected `[menuHeader]`. */
+  protected readonly accountMenuItems: UiMenuItem[] = [
+    { label: "Manage Profile", icon: "user-pen", command: () => this.run("profile") },
+    { label: "Privacy & Data", icon: "shield", command: () => this.run("privacy") },
+    { label: "Sign Out", icon: "log-out", variant: "destructive", command: () => this.run("out") },
+  ];
+
   protected readonly activeTab = signal(0);
   protected readonly activeStep = signal(1);
   protected readonly drawerOpen = signal(false);
