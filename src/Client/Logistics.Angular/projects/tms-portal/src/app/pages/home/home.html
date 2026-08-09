@@ -38,7 +38,7 @@
       icon="plus"
       (click)="menu.toggle($event)"
     />
-    <ui-menu #menu [items]="quickActions" />
+    <ui-menu #menu [items]="quickActions()" />
   </ui-page-header>
 
   <!-- Narrow, gridster sizes items by aspect ratio - ~180px of panel for ~70px of KPI - and drag

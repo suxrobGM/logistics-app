@@ -1,6 +1,7 @@
-import { UserRole } from "@logistics/shared";
-import type { OperatingMode, TenantFeature } from "@logistics/shared/api";
+import { Permission } from "@logistics/shared";
+import type { OperatingMode } from "@logistics/shared/api";
 import type { IconName } from "@logistics/shared/ui";
+import type { AccessGate } from "@/shared/layout/nav-menu";
 
 export type PanelType =
   | "kpi-weekly-gross"
@@ -27,7 +28,7 @@ export const STATS_BACKED_PANEL_IDS: ReadonlySet<PanelType> = new Set<PanelType>
 /** Lets `hiddenByDefaultIn` cover "hidden everywhere" without a second flag. */
 const ALL_MODES: readonly OperatingMode[] = ["fleet", "solo_operator"];
 
-export interface DashboardPanelConfig {
+export interface DashboardPanelConfig extends AccessGate {
   id: PanelType;
   label: string;
   icon: IconName;
@@ -37,10 +38,6 @@ export interface DashboardPanelConfig {
   rows: number;
   minItemCols?: number;
   minItemRows?: number;
-  /** Panel is shown only if the user's role is in this list. Absent = universal. */
-  roles?: UserRole[];
-  /** Panel is shown only if this tenant feature is enabled. Absent = universal. */
-  feature?: TenantFeature;
   /** Panel is shown only in this operating mode. Absent = both modes. */
   mode?: OperatingMode;
   /** Modes where the panel starts in the "Add Panel" menu. Re-applied from the defaults on load. */
@@ -111,7 +108,7 @@ export const DEFAULT_PANELS: DashboardPanelConfig[] = [
     rows: 5,
     minItemCols: 3,
     minItemRows: 2,
-    roles: [UserRole.Owner],
+    permission: Permission.Load.Manage,
     feature: "dashboard",
     mode: "fleet",
   },
@@ -151,7 +148,7 @@ export const DEFAULT_PANELS: DashboardPanelConfig[] = [
     rows: 5,
     minItemCols: 3,
     minItemRows: 2,
-    roles: [UserRole.Owner],
+    permission: Permission.Accounting.View,
     feature: "dashboard",
     hiddenByDefaultIn: ["fleet"],
   },
@@ -165,7 +162,8 @@ export const DEFAULT_PANELS: DashboardPanelConfig[] = [
     rows: 5,
     minItemCols: 3,
     minItemRows: 2,
-    roles: [UserRole.Owner],
+    // Company setup steps - the same gate the tenant settings pages use, so Owner only.
+    permission: Permission.Tenant.Manage,
     fillsParent: true,
   },
   {
@@ -190,7 +188,7 @@ export const DEFAULT_PANELS: DashboardPanelConfig[] = [
     rows: 5,
     minItemCols: 3,
     minItemRows: 2,
-    roles: [UserRole.Owner],
+    permission: Permission.Load.Manage,
     feature: "dashboard",
     mode: "fleet",
     hiddenByDefaultIn: ALL_MODES,

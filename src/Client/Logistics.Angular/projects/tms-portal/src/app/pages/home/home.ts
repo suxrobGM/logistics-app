@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from "@angular/common";
 import { Component, computed, effect, inject, signal, untracked, type OnInit } from "@angular/core";
+import { Permission } from "@logistics/shared";
 import {
   Api,
   getCompanyStats,
@@ -10,7 +11,7 @@ import {
   type LoadDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
-import { LayoutService } from "@logistics/shared/services";
+import { FeatureService, LayoutService } from "@logistics/shared/services";
 import {
   Card,
   Divider,
@@ -23,13 +24,14 @@ import {
   type UiMenuItem,
 } from "@logistics/shared/ui";
 import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
-import { AuthService } from "@/core/auth";
+import { AuthService, PermissionService } from "@/core/auth";
 import {
   DashboardSettingsService,
   TenantService,
   type DashboardPanelConfig,
 } from "@/core/services";
 import { PageHeader, StatCard, TrucksMap } from "@/shared/components";
+import { passesAccessGate, type AccessGate } from "@/shared/layout/nav-menu";
 import {
   ActiveLoadsPanel,
   AttentionPanelComponent,
@@ -79,6 +81,8 @@ import { summarizeDailyGrosses, weeklyGrossStartDate } from "./utils/weekly-gros
 export class Home implements OnInit {
   private readonly api = inject(Api);
   private readonly authService = inject(AuthService);
+  private readonly permissionService = inject(PermissionService);
+  private readonly featureService = inject(FeatureService);
   private readonly tenantService = inject(TenantService);
   protected readonly dashboardSettings = inject(DashboardSettingsService);
   private readonly layout = inject(LayoutService);
@@ -141,13 +145,38 @@ export class Home implements OnInit {
     return `Good evening, ${name}`;
   });
 
-  protected readonly quickActions: UiMenuItem[] = [
-    { label: "Create Load", icon: "plus", routerLink: "/loads/add" },
-    { label: "View All Loads", icon: "list", routerLink: "/loads" },
+  /** Same gates the sidebar applies, so the menu never offers a page the nav hides. */
+  protected readonly quickActions = computed<UiMenuItem[]>(() => [
+    {
+      label: "Create Load",
+      icon: "plus",
+      routerLink: "/loads/add",
+      visible: this.canReach({ permission: Permission.Load.Manage, feature: "loads" }),
+    },
+    {
+      label: "View All Loads",
+      icon: "list",
+      routerLink: "/loads",
+      visible: this.canReach({ permission: Permission.Load.View, feature: "loads" }),
+    },
     { separator: true },
-    { label: "View Trucks", icon: "truck", routerLink: "/trucks" },
-    { label: "Messages", icon: "mail", routerLink: "/messages" },
-  ];
+    {
+      label: "View Trucks",
+      icon: "truck",
+      routerLink: "/trucks",
+      visible: this.canReach({ permission: Permission.Truck.View, feature: "trucks" }),
+    },
+    {
+      label: "Messages",
+      icon: "mail",
+      routerLink: "/messages",
+      visible: this.canReach({ permission: Permission.Message.View, feature: "messages" }),
+    },
+  ]);
+
+  private canReach(gate: AccessGate): boolean {
+    return passesAccessGate(gate, this.featureService, this.permissionService);
+  }
 
   protected readonly panelMenuItems = computed<UiMenuItem[]>(() => {
     const additions = this.dashboardSettings.availablePanels().map<UiMenuItem>((panel) => ({

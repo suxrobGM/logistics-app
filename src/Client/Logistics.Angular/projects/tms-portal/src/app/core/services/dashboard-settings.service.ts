@@ -1,9 +1,9 @@
 import { isPlatformBrowser } from "@angular/common";
 import { computed, inject, Injectable, PLATFORM_ID, signal } from "@angular/core";
-import { UserRole } from "@logistics/shared";
 import type { OperatingMode } from "@logistics/shared/api";
 import { FeatureService } from "@logistics/shared/services";
-import { AuthService } from "@/core/auth";
+import { PermissionService } from "@/core/auth";
+import { passesAccessGate } from "@/shared/layout/nav-menu";
 import {
   DEFAULT_PANELS,
   STATS_BACKED_PANEL_IDS,
@@ -28,21 +28,20 @@ function bottomOf(panels: readonly DashboardPanelConfig[]): number {
 @Injectable({ providedIn: "root" })
 export class DashboardSettingsService {
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly authService = inject(AuthService);
   private readonly featureService = inject(FeatureService);
+  private readonly permissionService = inject(PermissionService);
   private readonly tenantService = inject(TenantService);
 
   private readonly _panels = signal<DashboardPanelConfig[]>(DEFAULT_PANELS);
 
   /** Panels the current user may see, split by whether they are on the grid or in the Add menu. */
   private readonly gatedPanels = computed(() => {
-    const role = this.authService.getUserData()?.role ?? null;
     const mode = this.tenantService.operatingMode();
     const visible: DashboardPanelConfig[] = [];
     const available: DashboardPanelConfig[] = [];
 
     for (const panel of this._panels()) {
-      if (!this.passesGates(panel, role, mode)) {
+      if (!this.passesGates(panel, mode)) {
         continue;
       }
       (this.isHidden(panel, mode) ? available : visible).push(panel);
@@ -93,15 +92,9 @@ export class DashboardSettingsService {
     this.persistSettings();
   }
 
-  private passesGates(
-    panel: DashboardPanelConfig,
-    role: string | null,
-    mode: OperatingMode,
-  ): boolean {
-    if (panel.roles?.length && !panel.roles.includes(role as UserRole)) return false;
-    if (panel.feature && !this.featureService.isEnabled(panel.feature)) return false;
+  private passesGates(panel: DashboardPanelConfig, mode: OperatingMode): boolean {
     if (panel.mode && panel.mode !== mode) return false;
-    return true;
+    return passesAccessGate(panel, this.featureService, this.permissionService);
   }
 
   private isHidden(panel: DashboardPanelConfig, mode: OperatingMode): boolean {
@@ -136,9 +129,8 @@ export class DashboardSettingsService {
   }
 
   /**
-   * Stored ids that no longer ship are dropped - the template has no `@case` for them, so gridster
-   * would render a silent empty tile. Only geometry and `hidden` survive; the rest is re-read from
-   * the defaults, so gate metadata can change between versions.
+   * Drops stored ids that no longer ship - the template has no `@case`, so gridster would render a
+   * silent empty tile. Only geometry and `hidden` survive, so gate metadata can change per version.
    */
   private mergeWithDefaults(storedPanels: DashboardPanelConfig[]): DashboardPanelConfig[] {
     const defaults = new Map(DEFAULT_PANELS.map((d) => [d.id, d]));
@@ -153,7 +145,7 @@ export class DashboardSettingsService {
         hidden: stored.hidden,
       }));
 
-    // New panels stack underneath - their default coordinates would overlap a stored one. Hidden
+    // New panels stack underneath; their default coordinates would overlap a stored one. Hidden
     // panels keep stale coordinates and gridster never compacts, so they don't count toward it.
     const mode = this.tenantService.operatingMode();
     const keptIds = new Set(kept.map((p) => p.id));
