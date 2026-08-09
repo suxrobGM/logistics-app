@@ -8,6 +8,8 @@
   } @else {
     <form [formRoot]="form">
       <ui-stack gap="6">
+        <app-read-only-notice [permission]="managePermission" />
+
         <!-- Branding Section -->
         <ui-stack tag="section" gap="3">
           <ui-stack direction="row" gap="2" align="center">
@@ -44,6 +46,7 @@
                     label="Upload Logo"
                     (click)="logoInput.click()"
                     [loading]="isUploadingLogo()"
+                    [disabled]="!canManage()"
                   />
                   <ui-typography variant="caption" color="muted" class="mt-1">
                     PNG, JPG or GIF. Max 5MB.
@@ -281,14 +284,16 @@
         </ui-stack>
 
         <!-- Actions -->
-        <ui-stack direction="row" gap="2">
-          <ui-button
-            type="submit"
-            icon="save"
-            label="Save Changes"
-            [loading]="form().submitting()"
-          />
-        </ui-stack>
+        @if (canManage()) {
+          <ui-stack direction="row" gap="2">
+            <ui-button
+              type="submit"
+              icon="save"
+              label="Save Changes"
+              [loading]="form().submitting()"
+            />
+          </ui-stack>
+        }
       </ui-stack>
     </form>
   }

@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import {
+  disabled,
   email,
   form,
   FormField,
@@ -9,7 +10,7 @@ import {
   min,
   required,
 } from "@angular/forms/signals";
-import { AddressForm, PhoneField, regionAllowedCountries } from "@logistics/shared";
+import { AddressForm, Permission, PhoneField, regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
   getTenantById,
@@ -36,8 +37,10 @@ import {
   UiTextField,
   UiToggleField,
 } from "@logistics/shared/ui";
+import { PermissionService } from "@/core/auth";
 import { TenantService, ToastService } from "@/core/services";
 import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
+import { ReadOnlyNotice } from "../components";
 
 interface CompanySettingsModel {
   companyName: string;
@@ -93,6 +96,7 @@ const EMPTY: CompanySettingsModel = {
     Icon,
     PageHeader,
     PhoneField,
+    ReadOnlyNotice,
     Spinner,
     Stack,
     Surface,
@@ -110,6 +114,13 @@ export class CompanySettingsComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly tenantService = inject(TenantService);
   private readonly toastService = inject(ToastService);
+  private readonly permissionService = inject(PermissionService);
+
+  /** Manager holds `Tenant.View` and reaches this tab, but every write needs `Tenant.Manage`. */
+  protected readonly managePermission = Permission.Tenant.Manage;
+  protected readonly canManage = computed(() =>
+    this.permissionService.hasPermission(this.managePermission),
+  );
 
   protected readonly isLoading = signal(false);
   protected readonly isUploadingLogo = signal(false);
@@ -160,6 +171,7 @@ export class CompanySettingsComponent implements OnInit {
   protected readonly form = form(
     this.model,
     (p) => {
+      disabled(p, { when: () => !this.canManage() });
       required(p.companyName, { message: "Company name is required." });
       maxLength(p.companyName, 200, {
         message: "Company name must be 200 characters or fewer.",
@@ -225,7 +237,7 @@ export class CompanySettingsComponent implements OnInit {
   async onLogoSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (!file) {
+    if (!file || !this.canManage()) {
       return;
     }
 

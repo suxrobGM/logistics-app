@@ -1,4 +1,5 @@
-import { Component, inject, signal, type OnInit } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
+import { Permission } from "@logistics/shared";
 import {
   Api,
   getCurrentTenantFeatures,
@@ -17,8 +18,10 @@ import {
   Typography,
   UiToggleField,
 } from "@logistics/shared/ui";
+import { PermissionService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
+import { ReadOnlyNotice } from "../components";
 
 @Component({
   selector: "app-feature-settings",
@@ -29,6 +32,7 @@ import { PageHeader } from "@/shared/components";
     FeatureRow,
     Icon,
     PageHeader,
+    ReadOnlyNotice,
     Spinner,
     Stack,
     Typography,
@@ -38,10 +42,17 @@ import { PageHeader } from "@/shared/components";
 export class FeatureSettingsComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
+  private readonly permissionService = inject(PermissionService);
 
   protected readonly isLoading = signal(true);
   protected readonly isSaving = signal<TenantFeature | null>(null);
   protected readonly features = signal<FeatureStatusDto[]>([]);
+
+  /** Manager holds `Tenant.View` and reaches this tab, but every toggle needs `Tenant.Manage`. */
+  protected readonly managePermission = Permission.Tenant.Manage;
+  protected readonly canManage = computed(() =>
+    this.permissionService.hasPermission(this.managePermission),
+  );
 
   ngOnInit(): void {
     this.loadFeatures();
@@ -60,6 +71,8 @@ export class FeatureSettingsComponent implements OnInit {
   }
 
   protected async toggleFeature(feature: FeatureStatusDto): Promise<void> {
+    if (!this.canManage()) return;
+
     if (feature.isAdminLocked) {
       this.toastService.showWarning(
         "This feature is locked by the administrator and cannot be changed",

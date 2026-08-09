@@ -12,6 +12,8 @@
         users and inaccessible via API.
       </ui-typography>
 
+      <app-read-only-notice [permission]="managePermission" class="mb-6 block" />
+
       <ui-stack gap="2">
         @for (feature of features(); track feature.feature) {
           <ui-feature-row
@@ -22,7 +24,9 @@
           >
             <ui-toggle-field
               [value]="feature.isEnabled ?? false"
-              [disabled]="(feature.isAdminLocked ?? false) || isSaving() === feature.feature"
+              [disabled]="
+                !canManage() || (feature.isAdminLocked ?? false) || isSaving() === feature.feature
+              "
               (valueChange)="toggleFeature(feature)"
             />
           </ui-feature-row>
