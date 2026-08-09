@@ -14295,7 +14295,7 @@
         }
       }
     },
-    "/tenantfeatures": {
+    "/tenants/features": {
       "get": {
         "tags": [
           "TenantFeatures"
@@ -14318,7 +14318,7 @@
         }
       }
     },
-    "/tenantfeatures/{feature}": {
+    "/tenants/features/{feature}": {
       "put": {
         "tags": [
           "TenantFeatures"

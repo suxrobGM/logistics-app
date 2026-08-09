@@ -10,19 +10,19 @@ using Logistics.Application.Modules.IdentityAccess.Features.Queries;
 namespace Logistics.API.Controllers;
 
 /// <summary>
-/// API controller for tenant-specific feature toggles (tenant owner operations).
+/// Feature toggles for the calling user's own tenant. Admin-wide toggles live in <see cref="FeaturesController"/>.
 /// </summary>
 [ApiController]
-[Route("tenantfeatures")]
+[Route("tenants/features")]
 [Produces("application/json")]
 public class TenantFeaturesController(IMediator mediator) : ControllerBase
 {
-    /// <summary>
-    /// Gets all feature statuses for the current tenant.
-    /// </summary>
+    // Every role needs this to render the UI, and it only ever returns the caller's own tenant.
+    // Gating it on Tenant.View 403'd dispatchers and drivers, and the client's feature check fails
+    // open - so disabled features silently stayed visible for exactly those roles.
     [HttpGet(Name = "GetCurrentTenantFeatures")]
     [ProducesResponseType(typeof(IReadOnlyList<FeatureStatusDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Tenant.View)]
+    [Authorize]
     public async Task<IActionResult> GetFeatures()
     {
         var result = await mediator.Send(new GetTenantFeaturesQuery());
@@ -30,12 +30,8 @@ public class TenantFeaturesController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Toggles a specific feature for the current tenant.
+    /// Toggles one feature for the current tenant. Admin-locked features cannot be changed.
     /// </summary>
-    /// <remarks>
-    /// This endpoint is used by tenant owners to enable/disable features.
-    /// Features locked by admin cannot be changed.
-    /// </remarks>
     [HttpPut("{feature}", Name = "UpdateCurrentTenantFeature")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -52,7 +48,4 @@ public class TenantFeaturesController(IMediator mediator) : ControllerBase
     }
 }
 
-/// <summary>
-/// Request model for updating a tenant feature.
-/// </summary>
 public record UpdateTenantFeatureRequest(bool IsEnabled);
