@@ -11,7 +11,7 @@ import { ToastService } from "@logistics/shared/services";
 import { buildDecisionDetail } from "@/shared/utils";
 
 /** Which decision endpoints the consumer's suggestions live behind. */
-export type DecisionEndpoint = "dispatch" | "copilot";
+type DecisionEndpoint = "dispatch" | "copilot";
 
 /**
  * Approve/reject for agent decisions, shared by the dispatch pages and the copilot drawer, so the

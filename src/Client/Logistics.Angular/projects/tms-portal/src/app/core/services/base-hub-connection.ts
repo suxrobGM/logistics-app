@@ -1,4 +1,4 @@
-import { DestroyRef, inject, signal } from "@angular/core";
+import { computed, DestroyRef, inject, signal } from "@angular/core";
 import {
   HttpTransportType,
   HubConnection,
@@ -54,6 +54,14 @@ export abstract class BaseHubConnection {
 
   /** Live connection status for offline/reconnecting UI. */
   readonly connectionState = this.state.asReadonly();
+
+  /**
+   * Whether to tell the user live updates are gone. "connecting" is the first connect and is not
+   * "down" - showing the banner there would flash it on every page load.
+   */
+  readonly realtimeDown = computed(
+    () => this.state() === "disconnected" || this.state() === "reconnecting",
+  );
 
   constructor(
     private readonly hubName: string,

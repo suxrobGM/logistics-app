@@ -15,7 +15,12 @@
     <span class="text-2xl font-semibold">{{ usagePercentRounded() }}%</span>
     <p class="text-muted-foreground mt-0.5 mb-0 text-xs">of weekly AI budget used</p>
   </div>
-  <ui-progress class="mt-2" height="0.5rem" [value]="usagePercentRounded()" [color]="progressBarColor()" />
+  <ui-progress
+    class="mt-2"
+    height="0.5rem"
+    [value]="usagePercentRounded()"
+    [color]="progressBarColor()"
+  />
   @if (quota().resetsAt) {
     <p class="text-muted-foreground mt-2 mb-0 text-xs">
       Resets {{ quota().resetsAt | date: "EEE, MMM d, h:mm a" }}

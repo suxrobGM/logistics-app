@@ -3,7 +3,7 @@ import type { IconName } from "@logistics/shared/ui";
 export const PLAN_ASSIGNMENTS_PROMPT =
   "Plan assignments for all unassigned loads: check HOS feasibility and suggest load-truck assignments for my approval.";
 
-export interface QuickAction {
+interface QuickAction {
   icon: IconName;
   title: string;
   description: string;

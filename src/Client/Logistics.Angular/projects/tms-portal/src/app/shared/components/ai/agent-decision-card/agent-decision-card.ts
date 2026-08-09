@@ -19,7 +19,7 @@ import { ToolOutputSummary } from "../tool-output-summary/tool-output-summary";
  * activity row, write tools open the full approval card. `compact` is the standalone card a side
  * panel lists pending writes with.
  */
-export type AgentDecisionCardVariant = "stream" | "compact";
+type AgentDecisionCardVariant = "stream" | "compact";
 
 /**
  * One agent decision, wherever it is shown. Approve/reject is permission-gated here for the UI's

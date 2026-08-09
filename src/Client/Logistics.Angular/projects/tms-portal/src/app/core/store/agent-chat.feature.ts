@@ -38,7 +38,7 @@ export interface AgentChatState {
   quota: AIQuotaStatusDto | null;
 }
 
-export const initialAgentChatState: AgentChatState = {
+const initialAgentChatState: AgentChatState = {
   conversations: [],
   currentConversation: null,
   messages: [],

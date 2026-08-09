@@ -2,7 +2,7 @@ import { Component, computed, input, linkedSignal, output, signal, viewChild } f
 import { UiButton, UiTextareaField } from "@logistics/shared/ui";
 
 /** A slash command the composer can suggest. `name` is compared without the leading "/". */
-export interface ChatComposerCommand {
+interface ChatComposerCommand {
   readonly name: string;
   readonly description: string;
 }

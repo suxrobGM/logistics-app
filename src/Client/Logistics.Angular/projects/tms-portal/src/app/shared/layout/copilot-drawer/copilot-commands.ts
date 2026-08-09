@@ -1,5 +1,5 @@
 /** Store-level action a slash command maps to; the drawer translates it into a store call. */
-export type CopilotCommandAction = "startNewChat" | "showHistory";
+type CopilotCommandAction = "startNewChat" | "showHistory";
 
 export interface CopilotCommand {
   /** Command name without the leading slash. */

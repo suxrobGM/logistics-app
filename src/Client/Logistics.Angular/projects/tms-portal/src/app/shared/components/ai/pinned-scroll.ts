@@ -3,7 +3,7 @@ import { effect, signal, type ElementRef, type Signal } from "@angular/core";
 /** Scroll distance from the bottom under which auto-scroll stays engaged. */
 const ScrollPinThresholdPx = 48;
 
-export interface PinnedScroll {
+interface PinnedScroll {
   /** False while the user has scrolled up to read back - new content must not yank them down. */
   readonly pinnedToBottom: Signal<boolean>;
   onScroll(): void;

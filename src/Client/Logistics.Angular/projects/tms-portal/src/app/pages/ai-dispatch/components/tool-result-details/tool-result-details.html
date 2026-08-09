@@ -12,7 +12,9 @@
       <tr>
         <td>{{ truck.number }}</td>
         <td>{{ truck.mainDriver?.name ?? "-" }}</td>
-        <td>{{ localization.formatHosDuration(truck.mainDriver?.hos?.drivingMinutesRemaining) }}</td>
+        <td>
+          {{ localization.formatHosDuration(truck.mainDriver?.hos?.drivingMinutesRemaining) }}
+        </td>
         <td>
           @if (truck.mainDriver?.hos?.isInViolation) {
             <span class="text-danger">Violation</span>

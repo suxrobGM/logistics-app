@@ -1,9 +1,9 @@
 import { CdkTrapFocus } from "@angular/cdk/a11y";
 import { Component, computed, effect, inject, viewChild, type ElementRef } from "@angular/core";
 import { Permission } from "@logistics/shared";
-import type { AgentDecisionDto, AgentMessageDto } from "@logistics/shared/api";
+import type { AgentDecisionDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
-import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
+import { Icon, Spinner, Stack, UiButton, UiTooltip } from "@logistics/shared/ui";
 import { CopilotStore } from "@/core/store";
 import {
   AgentDecisionCard,
@@ -19,18 +19,9 @@ import {
   TurnError,
   TurnStatus,
 } from "@/shared/components";
-import {
-  firstMessageSequenceBySession,
-  groupDecisionsBySession,
-  messageSortKey,
-  sessionSortKey,
-} from "@/shared/utils";
 import { COPILOT_COMMANDS } from "./copilot-commands";
-
-type StreamItem = { sortKey: number } & (
-  | { kind: "message"; message: AgentMessageDto }
-  | { kind: "decision"; decision: AgentDecisionDto }
-);
+import { buildCopilotStream } from "./copilot-stream.utils";
+import { CopilotWelcome } from "./copilot-welcome/copilot-welcome";
 
 const ResizeKeyStepPx = 16;
 
@@ -57,11 +48,14 @@ const ResizeKeyStepPx = 16;
     ChatComposer,
     ChatMessage,
     ConversationList,
+    CopilotWelcome,
     Icon,
     QuotaNotice,
     RealtimeBanner,
     RejectDecisionDialog,
     ScrollToBottom,
+    Spinner,
+    Stack,
     TurnError,
     TurnStatus,
     UiButton,
@@ -81,32 +75,9 @@ export class CopilotDrawer {
 
   private previouslyFocused: HTMLElement | null = null;
 
-  protected readonly suggestedPrompts = [
-    "Which loads were delivered last week?",
-    "Show unpaid invoices",
-    "Any trucks free tomorrow?",
-    "What did we spend on fuel this month?",
-  ];
-
-  /** Messages and action cards interleaved by message sequence, not by wall clock. */
-  protected readonly stream = computed<StreamItem[]>(() => {
-    const messages = this.store.messages();
-    const firstSequence = firstMessageSequenceBySession(messages);
-
-    const items: StreamItem[] = messages.map((message) => ({
-      kind: "message" as const,
-      sortKey: messageSortKey(message),
-      message,
-    }));
-
-    for (const [sessionId, bucket] of groupDecisionsBySession(this.store.decisions())) {
-      const sortKey = sessionSortKey(firstSequence.get(sessionId));
-      // Ties keep insertion order, which is the bucket's createdAt order.
-      for (const decision of bucket) items.push({ kind: "decision", sortKey, decision });
-    }
-
-    return items.sort((a, b) => a.sortKey - b.sortKey);
-  });
+  protected readonly stream = computed(() =>
+    buildCopilotStream(this.store.messages(), this.store.decisions()),
+  );
 
   /** Feeds the aria-live region. */
   protected readonly liveAnnouncement = computed(() => {

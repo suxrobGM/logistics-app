@@ -56,11 +56,8 @@ export const CopilotStore = signalStore(
           !featureService.isLocked("ai_copilot") &&
           permissionService.hasPermission(Permission.Copilot.View),
       ),
-      /** "connecting" is not "down" - the banner should only show for lost/failed connections. */
-      realtimeDown: computed(() => {
-        const state = copilotHub.connectionState();
-        return store.open() && (state === "disconnected" || state === "reconnecting");
-      }),
+      /** Only while the drawer is open - a closed drawer has no banner to show it in. */
+      realtimeDown: computed(() => store.open() && copilotHub.realtimeDown()),
     }),
   ),
 

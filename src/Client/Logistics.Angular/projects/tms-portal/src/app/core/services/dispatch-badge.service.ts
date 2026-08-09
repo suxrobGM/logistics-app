@@ -1,9 +1,11 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { Api, getPendingDecisions, type AgentDecisionDto } from "@logistics/shared/api";
+import { Api, getPendingDecisions } from "@logistics/shared/api";
+import { isWriteDecision } from "@/shared/utils";
 
 /**
- * Lightweight global service that tracks the pending dispatch decisions count
- * for the sidebar badge. Call `refresh()` after any change to pending decisions.
+ * Owns the pending-decisions count behind the sidebar badge. `refresh()` seeds it at startup; while
+ * the dispatch page is open its store pushes the same count in, so the badge tracks live hub events
+ * without this service polling.
  */
 @Injectable({ providedIn: "root" })
 export class DispatchBadgeService {
@@ -14,8 +16,7 @@ export class DispatchBadgeService {
   async refresh(): Promise<void> {
     try {
       const pending = await this.api.invoke(getPendingDecisions);
-      const writeDecisions = (pending ?? []).filter((d: AgentDecisionDto) => d.type !== "query");
-      this.pendingCount.set(writeDecisions.length);
+      this.pendingCount.set((pending ?? []).filter(isWriteDecision).length);
     } catch {
       // Silently fail - badge is non-critical
     }

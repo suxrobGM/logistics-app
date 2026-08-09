@@ -5,23 +5,23 @@ describe("parseToolInput", () => {
     const input = JSON.stringify({
       load_id: "load-1",
       truck_id: "truck-1",
-      trip_id: "trip-1",
       reasoning: "closest truck",
-      driver_id: "driver-1",
-      distance_km: 12.5,
-      load_ids: ["load-1", "load-2"],
-      name: "Trip A",
     });
 
     expect(parseToolInput(input)).toEqual({
       loadId: "load-1",
       truckId: "truck-1",
-      tripId: "trip-1",
       reasoning: "closest truck",
-      driverId: "driver-1",
-      distanceKm: 12.5,
-      loadIds: ["load-1", "load-2"],
-      tripName: "Trip A",
+    });
+  });
+
+  it("ignores tool-input fields nothing renders", () => {
+    const input = JSON.stringify({ load_id: "load-1", trip_id: "trip-1", distance_km: 12.5 });
+
+    expect(parseToolInput(input)).toEqual({
+      loadId: "load-1",
+      truckId: undefined,
+      reasoning: undefined,
     });
   });
 

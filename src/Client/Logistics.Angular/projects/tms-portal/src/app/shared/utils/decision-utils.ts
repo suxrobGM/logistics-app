@@ -5,15 +5,10 @@ import type { IconName } from "@logistics/shared/ui";
  * Parsed tool input for the decision cards and timeline. Unlike the result this stays a raw string
  * on the wire - it is the model's own arguments, so there is no server type to project it through.
  */
-export interface ParsedToolInput {
+interface ParsedToolInput {
   loadId?: string;
   truckId?: string;
-  tripId?: string;
   reasoning?: string;
-  driverId?: string;
-  distanceKm?: number;
-  loadIds?: string[];
-  tripName?: string;
 }
 
 export function parseToolInput(json: string | null | undefined): ParsedToolInput {
@@ -23,12 +18,7 @@ export function parseToolInput(json: string | null | undefined): ParsedToolInput
     return {
       loadId: parsed.load_id,
       truckId: parsed.truck_id,
-      tripId: parsed.trip_id,
       reasoning: parsed.reasoning,
-      driverId: parsed.driver_id,
-      distanceKm: parsed.distance_km,
-      loadIds: parsed.load_ids,
-      tripName: parsed.name,
     };
   } catch {
     return {};
@@ -85,7 +75,7 @@ export function getToolIcon(toolName: string | null | undefined): IconName {
 }
 
 /** A decision's resolved references, as rendered by the cards and the confirm dialog. */
-export interface DecisionRefs {
+interface DecisionRefs {
   load?: string;
   truck?: string;
   reasoning?: string;

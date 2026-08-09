@@ -1,16 +1,16 @@
 import { computed, DestroyRef, effect, inject } from "@angular/core";
 import type { AgentDecisionDto, AgentSessionDto, TruckDto } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
+import { persistValue, readStoredBoolean } from "@logistics/shared/utils";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import type { AgentTurnUpdate } from "@/core/services/agent-chat.contracts";
 import { AIDispatchHubService } from "@/core/services/ai-dispatch-hub.service";
 import { DispatchApiService } from "@/core/services/dispatch-api.service";
 import { DispatchBadgeService } from "@/core/services/dispatch-badge.service";
 import { withAgentChat } from "@/core/store/agent-chat.feature";
-import {
-  persistRightPanelCollapsed,
-  readStoredRightPanelCollapsed,
-} from "./dispatch-chat-store.utils";
+import { isWriteDecision } from "@/shared/utils";
+
+const RightPanelCollapsedKey = "dispatch-chat.right-panel-collapsed";
 
 /** Board chrome and fleet context; the conversation itself lives in {@link withAgentChat}. */
 interface DispatchBoardState {
@@ -28,7 +28,7 @@ const initialBoardState: DispatchBoardState = {
   pendingDecisions: [],
   trucks: [],
   sidebarCollapsed: true,
-  rightPanelCollapsed: readStoredRightPanelCollapsed(),
+  rightPanelCollapsed: readStoredBoolean(RightPanelCollapsedKey),
 };
 
 /**
@@ -44,13 +44,9 @@ export const DispatchChatStore = signalStore(
   }),
 
   withComputed((store, hub = inject(AIDispatchHubService)) => ({
-    /** "connecting" is not "down" - the banner should only show for lost/failed connections. */
-    realtimeDown: computed(() => {
-      const state = hub.connectionState();
-      return state === "disconnected" || state === "reconnecting";
-    }),
+    realtimeDown: hub.realtimeDown,
     /** Only write-tool decisions (assign, create trip, dispatch...) need approval - queries never do. */
-    writeDecisions: computed(() => store.pendingDecisions().filter((d) => d.type !== "query")),
+    writeDecisions: computed(() => store.pendingDecisions().filter(isWriteDecision)),
     truckLocations: computed<TruckGeolocationDto[]>(() =>
       store
         .trucks()
@@ -90,7 +86,7 @@ export const DispatchChatStore = signalStore(
 
       const setRightPanelCollapsed = (collapsed: boolean): void => {
         patchState(store, { rightPanelCollapsed: collapsed });
-        persistRightPanelCollapsed(collapsed);
+        persistValue(RightPanelCollapsedKey, collapsed);
         void loadTrucksIfPanelOpen();
       };
 

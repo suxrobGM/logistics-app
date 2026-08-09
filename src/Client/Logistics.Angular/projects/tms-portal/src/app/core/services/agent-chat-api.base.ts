@@ -12,7 +12,12 @@ import type { Observable } from "rxjs";
 import { orNull, succeeded } from "./agent-api.utils";
 import type { AgentChatApi, SentAgentMessage } from "./agent-chat.contracts";
 
-/** One ng-openapi-gen operation constant. The generated barrel exports the functions, not this. */
+/**
+ * One ng-openapi-gen operation constant. The generated barrel exports the functions, not this.
+ * Spelled out rather than derived from a generated operation on purpose: a derived type would
+ * always match whatever the generator emits, so a change in calling convention would slip through
+ * the endpoint maps below instead of failing here.
+ */
 type AgentChatApiFn<TParams, TResult> = (
   http: HttpClient,
   rootUrl: string,
