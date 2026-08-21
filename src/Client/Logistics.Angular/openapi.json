@@ -12259,47 +12259,6 @@
         }
       }
     },
-    "/ratefloors/effective/{listingId}": {
-      "get": {
-        "tags": [
-          "RateFloor"
-        ],
-        "operationId": "GetEffectiveRateFloor",
-        "parameters": [
-          {
-            "name": "listingId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EffectiveRateFloorDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/ratefloors/{id}": {
       "put": {
         "tags": [
@@ -19057,7 +19016,7 @@
             "type": "string",
             "nullable": true
           },
-          "htmlBody": {
+          "message": {
             "type": "string",
             "nullable": true
           },
