@@ -58,6 +58,12 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     public virtual List<NegotiationMessage> Messages { get; } = [];
 
     /// <summary>
+    /// Highest sequence handed out so far. Held here so allocating the next one never reads the
+    /// Messages navigation, which lazy-loads every stored RawBody.
+    /// </summary>
+    public int LastSequence { get; private set; }
+
+    /// <summary>
     /// Reference quoted in the email subject. Derived from the listing rather than the thread so a
     /// preview rendered before the thread exists carries the same reference the sent mail will.
     /// </summary>
@@ -203,7 +209,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         ClosedAt = DateTime.UtcNow;
     }
 
-    public int NextSequence() => Messages.Count > 0 ? Messages.Max(m => m.Sequence) + 1 : 1;
+    public int NextSequence() => ++LastSequence;
 
     /// <summary>
     /// 128 bits of entropy as 32 lowercase hex characters. Lowercase hex rather than base64url

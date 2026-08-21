@@ -10,6 +10,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
@@ -89,11 +90,13 @@ internal sealed class ProposeCounterOfferHandler(
                 $"This negotiation already used all {RateNegotiation.MaxRounds} rounds. Close it or book at the broker's last offer.");
         }
 
-        var priorMessageIds = negotiation.Messages
+        // Projected rather than read off the navigation: only the header ids are needed, and the
+        // rows carry up to 64KB of stored body each.
+        var priorMessageIds = await tenantUow.Repository<NegotiationMessage>().Query()
+            .Where(m => m.NegotiationId == negotiation.Id && m.ProviderMessageId != null)
             .OrderBy(m => m.Sequence)
-            .Select(m => m.ProviderMessageId)
-            .Where(id => !string.IsNullOrWhiteSpace(id))
-            .ToArray();
+            .Select(m => m.ProviderMessageId!)
+            .ToArrayAsync(ct);
 
         var replyToAddress = NegotiationReplyAddress.Format(negotiation.ReplyToken, emailSender.ReplyDomain);
         var tenant = tenantUow.GetCurrentTenant();

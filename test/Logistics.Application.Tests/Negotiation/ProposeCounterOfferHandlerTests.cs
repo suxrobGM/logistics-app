@@ -10,6 +10,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Shared.Models;
+using MockQueryable;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
@@ -55,6 +56,7 @@ public class ProposeCounterOfferHandlerTests
         tenantUow.Repository<LoadBoardListing>().Returns(listingRepo);
         tenantUow.Repository<RateNegotiation>().Returns(negotiationRepo);
         tenantUow.Repository<NegotiationMessage>().Returns(messageRepo);
+        messageRepo.Query().Returns(new List<NegotiationMessage>().BuildMock());
         tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
         tenantUow.GetCurrentTenant().Returns(tenant);
 
@@ -335,6 +337,7 @@ public class ProposeCounterOfferHandlerTests
         var first = existing.AddOutboundMessage("first offer");
         first.ProviderMessageId = "resend-0";
         SetupActiveNegotiation(existing);
+        messageRepo.Query().Returns(new List<NegotiationMessage> { first }.BuildMock());
 
         var result = await sut.Handle(command, CancellationToken.None);
 
