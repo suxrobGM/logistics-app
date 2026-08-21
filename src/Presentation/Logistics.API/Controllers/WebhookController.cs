@@ -27,6 +27,32 @@ public class WebhookController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
+    /// <summary>
+    /// Inbound mail from Resend. A 500 is deliberate on a transient failure - it is what makes
+    /// Resend retry a delivery we could not finish.
+    /// </summary>
+    [HttpPost("resend", Name = "ProcessResendWebhook")]
+    [RequestSizeLimit(512 * 1024)]
+    public async Task<IActionResult> Resend()
+    {
+        var requestBodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+
+        var result = await mediator.Send(new ProcessResendWebhookCommand
+        {
+            RawBody = requestBodyJson,
+            SvixId = Request.Headers["svix-id"].ToString(),
+            SvixTimestamp = Request.Headers["svix-timestamp"].ToString(),
+            SvixSignature = Request.Headers["svix-signature"].ToString()
+        });
+
+        return result.Value switch
+        {
+            ResendWebhookOutcome.BadSignature => BadRequest(),
+            ResendWebhookOutcome.Transient => StatusCode(StatusCodes.Status500InternalServerError),
+            _ => Ok()
+        };
+    }
+
     [HttpPost("eld/samsara", Name = "ProcessSamsaraWebhook")]
     public async Task<IActionResult> SamsaraWebhook()
     {

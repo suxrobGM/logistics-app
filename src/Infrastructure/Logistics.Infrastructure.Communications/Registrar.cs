@@ -57,6 +57,8 @@ public static class Registrar
         services.AddTransient<IResend, ResendClient>();
         services.AddScoped<IEmailSender, ResendEmailSender>();
         services.AddScoped<IThreadedEmailSender, ResendThreadedEmailSender>();
+        services.AddHttpClient<IInboundEmailReader, ResendInboundEmailReader>();
+        services.AddScoped<IInboundEmailWebhookVerifier, ResendWebhookVerifier>();
         services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
 
         // Push notifications
