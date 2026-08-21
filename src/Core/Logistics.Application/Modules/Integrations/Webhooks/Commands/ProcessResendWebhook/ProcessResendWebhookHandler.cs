@@ -68,9 +68,10 @@ internal sealed class ProcessResendWebhookHandler(
         var route = await masterUow.Repository<InboundEmailRoute>()
             .GetAsync(r => r.ThreadToken == token, ct);
 
-        if (route is null || route.RevokedAt is not null || route.Purpose != InboundEmailPurpose.RateNegotiation)
+        if (route is null || !route.AcceptsMailAt(DateTime.UtcNow))
         {
-            logger.LogInformation("Reply token on Resend webhook {EventKey} is unknown or revoked", eventKey);
+            logger.LogInformation(
+                "Reply token on Resend webhook {EventKey} is unknown, revoked, or past its window", eventKey);
             return Ok(ResendWebhookOutcome.Accepted);
         }
 

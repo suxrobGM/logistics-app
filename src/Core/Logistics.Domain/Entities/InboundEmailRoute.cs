@@ -15,4 +15,14 @@ public class InboundEmailRoute : Entity, IMasterEntity
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? ExpiresAt { get; set; }
     public DateTime? RevokedAt { get; set; }
+
+    /// <summary>
+    /// Whether inbound mail on this address should still be routed. Both halves matter: the sweep
+    /// that revokes a lapsed thread runs on an interval, so between the window closing and the
+    /// sweep firing only <see cref="ExpiresAt"/> keeps the address shut.
+    /// </summary>
+    public bool AcceptsMailAt(DateTime utcNow) =>
+        RevokedAt is null &&
+        Purpose == InboundEmailPurpose.RateNegotiation &&
+        (ExpiresAt is null || ExpiresAt > utcNow);
 }

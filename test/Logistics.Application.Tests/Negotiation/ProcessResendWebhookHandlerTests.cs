@@ -158,6 +158,22 @@ public class ProcessResendWebhookHandlerTests
     }
 
     [Fact]
+    public async Task Handle_RouteFromLapsedThread_IsAcceptedWithoutProcessing()
+    {
+        SetupRoute(new InboundEmailRoute
+        {
+            ThreadToken = Token,
+            TenantId = tenantId,
+            ExpiresAt = DateTime.UtcNow.AddMinutes(-1)
+        });
+
+        var result = await sut.Handle(Command(), CancellationToken.None);
+
+        Assert.Equal(ResendWebhookOutcome.Accepted, result.Value);
+        await AssertNoInnerCommand();
+    }
+
+    [Fact]
     public async Task Handle_InnerCommandFails_IsTransientAndWritesNoLedgerRow()
     {
         mediator.Send(Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>())
