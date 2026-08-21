@@ -41,8 +41,6 @@ export class Pricing {
         "Real-time messaging",
         "AI Dispatch",
         "AI Copilot - TMS-wide assistant",
-        "Load board integrations",
-        "Broker credit checks",
         "Up to 10 trucks",
       ],
       highlighted: false,
@@ -55,6 +53,8 @@ export class Pricing {
       description: "More features as fleets grow.",
       features: [
         "Everything in Starter",
+        "Load board integrations",
+        "Broker credit checks",
         "AI rate negotiation - email counter-offers to brokers",
         "Intermodal containers & terminals",
         "Fuel card sync (WEX, EFS)",

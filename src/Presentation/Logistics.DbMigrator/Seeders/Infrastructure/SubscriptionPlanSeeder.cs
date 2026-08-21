@@ -33,13 +33,13 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         // DVIR is a federal requirement; the broader Safety suite stays Professional
         TenantFeature.Dvir,
         TenantFeature.AgenticDispatch,
-        TenantFeature.AICopilot,
-        TenantFeature.LoadBoard
+        TenantFeature.AICopilot
     ];
 
     private static readonly TenantFeature[] ProfessionalFeatures =
     [
         ..StarterFeatures,
+        TenantFeature.LoadBoard,
         TenantFeature.Payroll,
         TenantFeature.Timesheets,
         TenantFeature.Safety,
