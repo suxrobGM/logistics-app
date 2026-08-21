@@ -21,12 +21,6 @@ public class GetLoadToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("get_load", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_MissingLoadId_ReturnsError()
     {
         var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);

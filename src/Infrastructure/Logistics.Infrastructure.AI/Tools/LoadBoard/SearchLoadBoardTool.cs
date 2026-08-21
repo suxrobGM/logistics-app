@@ -1,30 +1,52 @@
+using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
-using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Identity.Policies;
 using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 
-internal sealed class SearchLoadBoardTool(IMediator mediator) : IAgentTool
+internal sealed class SearchLoadBoardTool(IMediator mediator)
+    : AgentTool<SearchLoadBoardTool.Input>, IAgentToolMetadata
 {
     private const int MaxResults = 20;
 
-    public string Name => "search_loadboard";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        var originCity = input.GetString("origin_city");
-        var originState = input.GetString("origin_state");
+        [Description("Origin city name")]
+        public required string OriginCity { get; init; }
 
-        if (string.IsNullOrWhiteSpace(originCity) || string.IsNullOrWhiteSpace(originState))
+        [Description("Origin state code (e.g., 'TX', 'CA')")]
+        public required string OriginState { get; init; }
+
+        [Description("Search radius in miles from origin (default: 100)")]
+        public int? RadiusMiles { get; init; }
+
+        [Description("Optional destination state filter (e.g., 'AZ')")]
+        public string? DestinationState { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "search_loadboard",
+        "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.")
+    {
+        RequiredFeature = TenantFeature.LoadBoard,
+        RequiredPermission = Permission.Dispatch.View,
+        DispatchAgent = true
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(input.OriginCity) || string.IsNullOrWhiteSpace(input.OriginState))
             return ToolResult.Error("Both origin_city and origin_state are required");
 
         var command = new SearchLoadBoardCommand
         {
-            OriginAddress = CityState(originCity, originState),
-            OriginRadius = input.GetInt("radius_miles") ?? 100,
-            DestinationAddress = input.GetString("destination_state") is { } destinationState
+            OriginAddress = CityState(input.OriginCity, input.OriginState),
+            OriginRadius = input.RadiusMiles ?? 100,
+            DestinationAddress = input.DestinationState is { } destinationState
                 ? CityState(city: "", destinationState)
                 : null,
             MaxResults = MaxResults

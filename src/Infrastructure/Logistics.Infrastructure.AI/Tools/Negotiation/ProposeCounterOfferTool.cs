@@ -1,33 +1,55 @@
-using System.Text.Json.Nodes;
+using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Integrations.Negotiation.Commands;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
 using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Negotiation;
 
-internal sealed class ProposeCounterOfferTool(IMediator mediator, IAgentRunContext runContext) : IAgentTool
+internal sealed class ProposeCounterOfferTool(IMediator mediator, IAgentRunContext runContext)
+    : AgentTool<ProposeCounterOfferTool.Input>, IAgentToolMetadata
 {
-    public string Name => "propose_counter_offer";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("listing_id") is not { } listingId)
-            return ToolResult.Error("Invalid or missing listing_id - use the listing_id returned by search_loadboard");
+        [Description("The listing_id (GUID) returned by search_loadboard")]
+        public required Guid ListingId { get; init; }
 
-        if (input.GetDecimal("proposed_total_rate") is not { } proposedTotalRate)
-            return ToolResult.Error("Invalid or missing proposed_total_rate");
+        [Description("The total rate to offer, at or above the floor from get_rate_floor")]
+        public required decimal ProposedTotalRate { get; init; }
 
-        var message = input.GetString("message");
-        if (string.IsNullOrWhiteSpace(message))
+        [Description("One short professional paragraph for the broker. State the offer and one reason for it. No greeting, no signature - the template adds those.")]
+        public required string Message { get; init; }
+
+        [Description("Brief explanation for the dispatcher of why this offer makes sense. Never sent to the broker.")]
+        public required string Reasoning { get; init; }
+
+        [Description("Optional per-mile equivalent of the offer")]
+        public decimal? ProposedRatePerMile { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "propose_counter_offer",
+        "Email a counter-offer to the broker behind a load board listing. Call get_rate_floor first: the offer is rejected if it is below the floor, if no floor covers the lane, or if the round budget is spent. You write only the broker-facing paragraph - the address, the rate line and the rest of the email are filled in by the system.")
+    {
+        RequiredFeature = TenantFeature.AIRateNegotiation,
+        RequiredPermission = Permission.Negotiation.Manage,
+        DecisionType = AgentDecisionType.ProposeCounterOffer,
+        DispatchAgent = true
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(input.Message))
             return ToolResult.Error("message is required - it is the paragraph the broker reads");
 
         // The broker address is never a model input: the handler reads it off the listing.
         var command = new ProposeCounterOfferCommand
         {
-            ListingId = listingId,
-            ProposedTotalRate = proposedTotalRate,
-            ProposedRatePerMile = input.GetDecimal("proposed_rate_per_mile"),
-            Message = message,
+            ListingId = input.ListingId,
+            ProposedTotalRate = input.ProposedTotalRate,
+            ProposedRatePerMile = input.ProposedRatePerMile,
+            Message = input.Message,
             ConversationId = runContext.ConversationId,
             DecisionId = runContext.DecisionId
         };

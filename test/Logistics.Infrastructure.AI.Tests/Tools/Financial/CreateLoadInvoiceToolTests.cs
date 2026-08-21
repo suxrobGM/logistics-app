@@ -44,12 +44,6 @@ public class CreateLoadInvoiceToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("create_load_invoice", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_MissingLoadId_ReturnsError()
     {
         var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
@@ -66,7 +60,8 @@ public class CreateLoadInvoiceToolTests
             .Returns(Result<LoadDto>.Ok(load));
 
         var result = await sut.ExecuteAsync(
-            new JsonObject { ["load_id"] = load.Id.ToString() }, CancellationToken.None);
+            new JsonObject { ["load_id"] = load.Id.ToString(), ["reasoning"] = "Load delivered" },
+            CancellationToken.None);
 
         Assert.Contains("no customer", result);
         await mediator.DidNotReceive().Send(Arg.Any<CreateLoadInvoiceCommand>(), Arg.Any<CancellationToken>());
@@ -88,7 +83,8 @@ public class CreateLoadInvoiceToolTests
             .Returns(Result<LoadDto>.Ok(load));
 
         var result = await sut.ExecuteAsync(
-            new JsonObject { ["load_id"] = load.Id.ToString() }, CancellationToken.None);
+            new JsonObject { ["load_id"] = load.Id.ToString(), ["reasoning"] = "Load delivered" },
+            CancellationToken.None);
 
         Assert.Contains("already has an invoice", result);
         Assert.Contains(invoice.Id.ToString(), result);
@@ -105,7 +101,8 @@ public class CreateLoadInvoiceToolTests
         var invoiceId = SetupCreatedInvoice();
 
         var result = await sut.ExecuteAsync(
-            new JsonObject { ["load_id"] = load.Id.ToString() }, CancellationToken.None);
+            new JsonObject { ["load_id"] = load.Id.ToString(), ["reasoning"] = "Load delivered" },
+            CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.True(root.GetProperty("success").GetBoolean());
@@ -131,7 +128,12 @@ public class CreateLoadInvoiceToolTests
         SetupCreatedInvoice();
 
         await sut.ExecuteAsync(
-            new JsonObject { ["load_id"] = load.Id.ToString(), ["amount"] = 999m },
+            new JsonObject
+            {
+                ["load_id"] = load.Id.ToString(),
+                ["amount"] = 999m,
+                ["reasoning"] = "Load delivered"
+            },
             CancellationToken.None);
 
         await mediator.Received(1).Send(

@@ -1,28 +1,63 @@
+using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
-using System.Text.Json.Nodes;
-using MediatR;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
+using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Operations;
 
-internal sealed class SearchLoadsTool(IMediator mediator) : IAgentTool
+internal sealed class SearchLoadsTool(IMediator mediator)
+    : AgentTool<SearchLoadsTool.Input>, IAgentToolMetadata
 {
-    public string Name => "search_loads";
+    internal sealed record Input
+    {
+        [Description("Free-text search over load name and reference fields")]
+        public string? Search { get; init; }
 
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+        [Description("Filter by load status")]
+        public LoadStatus[]? Statuses { get; init; }
+
+        [Description("Filter by load type")]
+        public LoadType[]? Types { get; init; }
+
+        [Description("Filter by customer ID (GUID) - find it with search_customers")]
+        public Guid? CustomerId { get; init; }
+
+        [Description("Filter by assigned truck ID (GUID)")]
+        public Guid? TruckId { get; init; }
+
+        [Description("Loads created on or after this date (ISO 8601)")]
+        public DateTime? StartDate { get; init; }
+
+        [Description("Loads created on or before this date (ISO 8601)")]
+        public DateTime? EndDate { get; init; }
+
+        [Description("Page number when a previous call returned truncated: true")]
+        public int? Page { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "search_loads",
+        "Search loads by status, type, customer, truck, date range, or free text. Returns up to 20 loads per page with number, status, origin/destination, delivery cost, and customer. Use for load history questions ('delivered loads last week', 'loads for customer X').")
+    {
+        RequiredFeature = TenantFeature.Loads,
+        RequiredPermission = Permission.Load.View
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {
         var query = new GetLoadsQuery
         {
-            Search = input.GetString("search"),
-            Statuses = input.GetEnumArray<LoadStatus>("statuses"),
-            Types = input.GetEnumArray<LoadType>("types"),
-            CustomerId = input.GetGuid("customer_id"),
-            TruckId = input.GetGuid("truck_id"),
-            StartDate = input.GetDate("start_date"),
-            EndDate = input.GetDate("end_date"),
+            Search = input.Search,
+            Statuses = input.Statuses,
+            Types = input.Types,
+            CustomerId = input.CustomerId,
+            TruckId = input.TruckId,
+            StartDate = input.StartDate,
+            EndDate = input.EndDate,
             OrderBy = "-CreatedAt",
-            Page = input.GetInt("page") ?? 1,
+            Page = input.Page ?? 1,
             PageSize = ToolResult.MaxResults
         };
 

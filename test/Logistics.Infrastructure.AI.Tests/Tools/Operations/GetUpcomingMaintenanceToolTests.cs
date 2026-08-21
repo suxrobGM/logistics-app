@@ -21,12 +21,6 @@ public class GetUpcomingMaintenanceToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("get_upcoming_maintenance", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_DefaultsWindowTo30Days()
     {
         mediator.Send(Arg.Any<GetUpcomingMaintenanceQuery>(), Arg.Any<CancellationToken>())

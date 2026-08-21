@@ -1,83 +1,59 @@
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using Logistics.Infrastructure.AI.Tools;
-using Microsoft.Extensions.Logging;
+using Logistics.Infrastructure.AI.Tools.Dispatch;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using NSubstitute;
 using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools;
 
 public class AgentToolExecutorTests
 {
-    private readonly ILogger<AgentToolExecutor> logger = NullLogger<AgentToolExecutor>.Instance;
-
-    private static IAgentTool CreateMockTool(string name, string result)
+    /// <summary>calculate_distance has no dependencies, so the whole path can run for real.</summary>
+    private static AgentToolExecutor Executor()
     {
-        var tool = Substitute.For<IAgentTool>();
-        tool.Name.Returns(name);
-        tool.ExecuteAsync(Arg.Any<JsonNode>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(result));
-        return tool;
+        var services = new ServiceCollection().AddScoped<CalculateDistanceTool>();
+        return new AgentToolExecutor(services.BuildServiceProvider(), NullLogger<AgentToolExecutor>.Instance);
     }
 
     [Fact]
-    public async Task ExecuteToolAsync_KnownTool_DelegatesToTool()
+    public async Task ExecuteToolAsync_KnownTool_ResolvesItAndPassesTheArguments()
     {
-        var tool = CreateMockTool("test_tool", "{\"ok\": true}");
-        var sut = new AgentToolExecutor([tool], logger);
+        var result = await Executor().ExecuteToolAsync(
+            "calculate_distance",
+            """{"origin_lat": 34.05, "origin_lng": -118.24, "dest_lat": 32.71, "dest_lng": -117.16}""",
+            CancellationToken.None);
 
-        var result = await sut.ExecuteToolAsync("test_tool", "{}", CancellationToken.None);
-
-        Assert.Equal("{\"ok\": true}", result);
-        await tool.Received(1).ExecuteAsync(Arg.Any<JsonNode>(), Arg.Any<CancellationToken>());
+        var json = JsonDocument.Parse(result).RootElement;
+        Assert.True(json.GetProperty("straight_line_km").GetDouble() > 150);
+        Assert.True(json.GetProperty("estimated_minutes").GetInt32() > 0);
     }
 
     [Fact]
     public async Task ExecuteToolAsync_UnknownTool_ReturnsError()
     {
-        var sut = new AgentToolExecutor([], logger);
+        var result = await Executor().ExecuteToolAsync("nonexistent_tool", "{}", CancellationToken.None);
 
-        var result = await sut.ExecuteToolAsync("nonexistent_tool", "{}", CancellationToken.None);
-
-        var json = JsonDocument.Parse(result);
-        Assert.True(json.RootElement.TryGetProperty("error", out var error));
-        Assert.Contains("nonexistent_tool", error.GetString());
+        Assert.Contains("nonexistent_tool", ErrorOf(result));
     }
 
     [Fact]
-    public async Task ExecuteToolAsync_ParsesInputJsonAndPassesToTool()
+    public async Task ExecuteToolAsync_MalformedJson_ReturnsErrorRatherThanThrowing()
     {
-        JsonNode? capturedInput = null;
-        var tool = Substitute.For<IAgentTool>();
-        tool.Name.Returns("my_tool");
-        tool.ExecuteAsync(Arg.Any<JsonNode>(), Arg.Any<CancellationToken>())
-            .Returns(callInfo =>
-            {
-                capturedInput = callInfo.ArgAt<JsonNode>(0);
-                return Task.FromResult("{}");
-            });
+        var result = await Executor().ExecuteToolAsync("calculate_distance", "{not json", CancellationToken.None);
 
-        var sut = new AgentToolExecutor([tool], logger);
-
-        await sut.ExecuteToolAsync("my_tool", """{"key": "value"}""", CancellationToken.None);
-
-        Assert.NotNull(capturedInput);
-        Assert.Equal("value", capturedInput!["key"]?.GetValue<string>());
+        Assert.Contains("valid JSON", ErrorOf(result));
     }
 
     [Fact]
-    public async Task ExecuteToolAsync_MultipleTool_DispatchesToCorrectOne()
+    public async Task ExecuteToolAsync_MissingRequiredArgument_NamesIt()
     {
-        var tool1 = CreateMockTool("tool_a", "result_a");
-        var tool2 = CreateMockTool("tool_b", "result_b");
+        var result = await Executor().ExecuteToolAsync(
+            "calculate_distance", """{"origin_lat": 34.05}""", CancellationToken.None);
 
-        var sut = new AgentToolExecutor([tool1, tool2], logger);
-
-        var result = await sut.ExecuteToolAsync("tool_b", "{}", CancellationToken.None);
-
-        Assert.Equal("result_b", result);
-        await tool1.DidNotReceive().ExecuteAsync(Arg.Any<JsonNode>(), Arg.Any<CancellationToken>());
-        await tool2.Received(1).ExecuteAsync(Arg.Any<JsonNode>(), Arg.Any<CancellationToken>());
+        Assert.Contains("origin_lng", ErrorOf(result));
     }
+
+    private static string ErrorOf(string result) =>
+        JsonDocument.Parse(result).RootElement.GetProperty("error").GetString()!;
 }

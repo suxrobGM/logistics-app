@@ -4,7 +4,7 @@ namespace Logistics.Application.Abstractions.Agents;
 
 /// <summary>
 /// Registry of all tools available to the AI agents (dispatch and copilot).
-/// Tool definitions are declared once and reused by the agent loop and the MCP server.
+/// Tool definitions are declared once, next to the tool, and reused by every surface.
 /// </summary>
 /// <remarks>
 /// One member per surface rather than one filtered query with flags: the permission set is then
@@ -28,7 +28,13 @@ public interface IAgentToolRegistry
         IReadOnlySet<TenantFeature> enabledFeatures,
         IReadOnlySet<string> callerPermissions);
 
-    /// <summary>Every tool, gated or not. For surfaces that gate per call rather than per catalogue.</summary>
+    /// <summary>
+    /// The catalogue an MCP client is shown: filtered on features, minus the tools that need a
+    /// human origin. Permissions do not apply - an API key authenticates a tenant, not a person.
+    /// </summary>
+    IReadOnlyList<AgentToolDefinition> GetMcpTools(IReadOnlySet<TenantFeature> enabledFeatures);
+
+    /// <summary>Every tool, gated or not, with no surface-specific wording applied.</summary>
     IReadOnlyList<AgentToolDefinition> GetAllTools();
 
     /// <summary>Null for unknown (e.g. hallucinated) tool names.</summary>

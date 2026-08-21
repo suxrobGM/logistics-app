@@ -34,7 +34,12 @@ public class DispatchWriteToolTests
             .Returns(Result.Ok());
 
         var result = await new AssignLoadToTruckTool(mediator).ExecuteAsync(
-            new JsonObject { ["load_id"] = loadId.ToString(), ["truck_id"] = truckId.ToString() },
+            new JsonObject
+            {
+                ["load_id"] = loadId.ToString(),
+                ["truck_id"] = truckId.ToString(),
+                ["reasoning"] = "Closest available truck"
+            },
             CancellationToken.None);
 
         var root = Parse(result);
@@ -53,7 +58,8 @@ public class DispatchWriteToolTests
             new JsonObject
             {
                 ["load_id"] = Guid.NewGuid().ToString(),
-                ["truck_id"] = Guid.NewGuid().ToString()
+                ["truck_id"] = Guid.NewGuid().ToString(),
+                ["reasoning"] = "Closest available truck"
             },
             CancellationToken.None);
 
@@ -63,14 +69,15 @@ public class DispatchWriteToolTests
     }
 
     [Theory]
-    [InlineData("load_id", "Invalid or missing load_id")]
-    [InlineData("truck_id", "Invalid or missing truck_id")]
+    [InlineData("load_id", "Missing required input: load_id")]
+    [InlineData("truck_id", "Missing required input: truck_id")]
     public async Task AssignLoad_MissingId_EmitsBareErrorWithoutSuccessKey(string missing, string expected)
     {
         var input = new JsonObject
         {
             ["load_id"] = Guid.NewGuid().ToString(),
-            ["truck_id"] = Guid.NewGuid().ToString()
+            ["truck_id"] = Guid.NewGuid().ToString(),
+            ["reasoning"] = "Closest available truck"
         };
         input.Remove(missing);
 
@@ -113,12 +120,9 @@ public class DispatchWriteToolTests
     }
 
     [Fact]
-    public async Task CreateTrip_NoName_DefaultsToAiGeneratedTrip()
+    public async Task CreateTrip_NoName_EmitsErrorWithoutCreatingATrip()
     {
-        mediator.Send(Arg.Any<CreateTripCommand>(), Arg.Any<CancellationToken>())
-            .Returns(Result<Guid>.Ok(Guid.NewGuid()));
-
-        await new CreateTripTool(mediator).ExecuteAsync(
+        var result = await new CreateTripTool(mediator).ExecuteAsync(
             new JsonObject
             {
                 ["truck_id"] = Guid.NewGuid().ToString(),
@@ -126,9 +130,8 @@ public class DispatchWriteToolTests
             },
             CancellationToken.None);
 
-        await mediator.Received(1).Send(
-            Arg.Is<CreateTripCommand>(c => c.Name == "AI-Generated Trip"),
-            Arg.Any<CancellationToken>());
+        Assert.Equal("Missing required input: name", Parse(result).GetProperty("error").GetString());
+        await mediator.DidNotReceive().Send(Arg.Any<CreateTripCommand>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -138,7 +141,8 @@ public class DispatchWriteToolTests
             new JsonObject
             {
                 ["truck_id"] = Guid.NewGuid().ToString(),
-                ["load_ids"] = new JsonArray()
+                ["load_ids"] = new JsonArray(),
+                ["name"] = "Overnight run"
             },
             CancellationToken.None);
 
@@ -146,17 +150,18 @@ public class DispatchWriteToolTests
     }
 
     [Fact]
-    public async Task CreateTrip_UnparseableLoadId_EmitsErrorNamingTheValue()
+    public async Task CreateTrip_UnparseableLoadId_EmitsErrorNamingTheProperty()
     {
         var result = await new CreateTripTool(mediator).ExecuteAsync(
             new JsonObject
             {
                 ["truck_id"] = Guid.NewGuid().ToString(),
-                ["load_ids"] = new JsonArray("not-a-guid")
+                ["load_ids"] = new JsonArray("not-a-guid"),
+                ["name"] = "Overnight run"
             },
             CancellationToken.None);
 
-        Assert.Contains("not-a-guid", Parse(result).GetProperty("error").GetString());
+        Assert.Contains("load_ids", Parse(result).GetProperty("error").GetString());
     }
 
     #endregion
@@ -198,7 +203,7 @@ public class DispatchWriteToolTests
         var result = await new DispatchTripTool(mediator).ExecuteAsync(
             new JsonObject(), CancellationToken.None);
 
-        Assert.Equal("Invalid or missing trip_id", Parse(result).GetProperty("error").GetString());
+        Assert.Equal("Missing required input: trip_id", Parse(result).GetProperty("error").GetString());
         await mediator.DidNotReceive().Send(Arg.Any<DispatchTripCommand>(), Arg.Any<CancellationToken>());
     }
 
@@ -213,9 +218,10 @@ public class DispatchWriteToolTests
         // as a readable {error} the agent can act on, not an InvalidOperationException that the
         // decision processor turns into an opaque failed decision.
         var result = await new AssignLoadToTruckTool(mediator).ExecuteAsync(
-            new JsonObject { ["load_id"] = 12345, ["truck_id"] = 67890 }, CancellationToken.None);
+            new JsonObject { ["load_id"] = 12345, ["truck_id"] = 67890, ["reasoning"] = "why" },
+            CancellationToken.None);
 
-        Assert.Equal("Invalid or missing load_id", Parse(result).GetProperty("error").GetString());
+        Assert.Contains("load_id", Parse(result).GetProperty("error").GetString());
     }
 
     [Fact]
@@ -224,7 +230,7 @@ public class DispatchWriteToolTests
         var result = await new DispatchTripTool(mediator).ExecuteAsync(
             new JsonObject { ["trip_id"] = 42 }, CancellationToken.None);
 
-        Assert.Equal("Invalid or missing trip_id", Parse(result).GetProperty("error").GetString());
+        Assert.Contains("trip_id", Parse(result).GetProperty("error").GetString());
     }
 
     [Fact]
@@ -253,21 +259,15 @@ public class DispatchWriteToolTests
             new JsonObject
             {
                 ["truck_id"] = Guid.NewGuid().ToString(),
-                ["load_ids"] = new JsonArray(12345)
+                ["load_ids"] = new JsonArray(12345),
+                ["name"] = "Overnight run"
             },
             CancellationToken.None);
 
-        Assert.Contains("12345", Parse(result).GetProperty("error").GetString());
+        Assert.Contains("load_ids", Parse(result).GetProperty("error").GetString());
         await mediator.DidNotReceive().Send(Arg.Any<CreateTripCommand>(), Arg.Any<CancellationToken>());
     }
 
     #endregion
 
-    [Fact]
-    public void Names_AreSnakeCase()
-    {
-        Assert.Equal("assign_load_to_truck", new AssignLoadToTruckTool(mediator).Name);
-        Assert.Equal("create_trip", new CreateTripTool(mediator).Name);
-        Assert.Equal("dispatch_trip", new DispatchTripTool(mediator).Name);
-    }
 }

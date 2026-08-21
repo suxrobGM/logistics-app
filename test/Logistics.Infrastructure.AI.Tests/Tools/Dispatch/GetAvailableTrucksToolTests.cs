@@ -96,12 +96,6 @@ public class GetAvailableTrucksToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("get_available_trucks", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_TruckWithDriverAndHos_ShapesNestedDriverAndHos()
     {
         var driver = Driver(Guid.NewGuid());

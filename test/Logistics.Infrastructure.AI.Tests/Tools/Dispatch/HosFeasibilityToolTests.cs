@@ -246,7 +246,7 @@ public class HosFeasibilityToolTests
             new JsonObject(), CancellationToken.None);
 
         Assert.Equal(
-            "Invalid or missing driver_id",
+            "Missing required input: driver_id, distance_km",
             JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
     }
 
@@ -257,7 +257,7 @@ public class HosFeasibilityToolTests
             new JsonObject { ["checks"] = new JsonArray() }, CancellationToken.None);
 
         Assert.Equal(
-            "Missing or empty 'checks' array",
+            "No valid checks provided",
             JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
     }
 
@@ -290,26 +290,24 @@ public class HosFeasibilityToolTests
     }
 
     [Fact]
-    public async Task Batch_AllDriverIdsUnparseable_EmitsNoValidChecks()
+    public async Task Batch_UnparseableDriverId_EmitsErrorNamingTheProperty()
     {
         var result = await new BatchCheckHosFeasibilityTool(tenantUow).ExecuteAsync(
             new JsonObject
             {
-                ["checks"] = new JsonArray(new JsonObject { ["driver_id"] = "not-a-guid" })
+                ["checks"] = new JsonArray(new JsonObject
+                {
+                    ["driver_id"] = "not-a-guid",
+                    ["distance_km"] = 400
+                })
             },
             CancellationToken.None);
 
-        Assert.Equal(
-            "No valid checks provided",
+        Assert.Contains(
+            "driver_id",
             JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
     }
 
     #endregion
 
-    [Fact]
-    public void Names_AreSnakeCase()
-    {
-        Assert.Equal("check_hos_feasibility", new CheckHosFeasibilityTool(tenantUow).Name);
-        Assert.Equal("batch_check_hos_feasibility", new BatchCheckHosFeasibilityTool(tenantUow).Name);
-    }
 }

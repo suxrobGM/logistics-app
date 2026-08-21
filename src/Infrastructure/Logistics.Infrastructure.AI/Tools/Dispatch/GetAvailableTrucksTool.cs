@@ -1,16 +1,24 @@
-using System.Text.Json.Nodes;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IAgentTool
+internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
+    : AgentTool<NoToolInput>, IAgentToolMetadata
 {
-    public string Name => "get_available_trucks";
+    public static AgentToolDefinition Definition => new(
+        "get_available_trucks",
+        "Get all trucks with Available status along with their driver info, HOS (Hours of Service) status, and a fleet summary (total trucks, available trucks, active trips, drivers in violation). Returns truck ID, number, type, current location, driver name, and remaining driving/on-duty hours.")
+    {
+        RequiredPermission = Permission.Dispatch.View,
+        DispatchAgent = true
+    };
 
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    protected override async Task<string> ExecuteAsync(NoToolInput input, CancellationToken ct)
     {
         var trucks = await tenantUow.Repository<Truck>()
             .GetListAsync(t => t.Status == TruckStatus.Available, ct);

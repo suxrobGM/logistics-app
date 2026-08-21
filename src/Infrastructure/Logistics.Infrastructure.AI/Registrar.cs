@@ -62,17 +62,14 @@ public static class Registrar
     }
 
     /// <summary>
-    ///     Registers every <see cref="IAgentTool" /> in this assembly, so adding a tool is one file
-    ///     rather than two. AgentToolRegistryParityTests fails loudly if this scan and the catalogue disagree.
+    ///     Registers every tool the catalogue discovered, by its own type: the executor resolves the
+    ///     one tool a call names instead of building all of them to find it.
     /// </summary>
     private static void AddAgentTools(this IServiceCollection services)
     {
-        var toolTypes = typeof(Registrar).Assembly.GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsAssignableTo(typeof(IAgentTool)));
-
-        foreach (var toolType in toolTypes)
+        foreach (var toolType in AgentToolCatalog.ToolTypes)
         {
-            services.AddScoped(typeof(IAgentTool), toolType);
+            services.AddScoped(toolType);
         }
     }
 }

@@ -1,16 +1,23 @@
 using Logistics.Application.Abstractions.Agents;
-using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IAgentTool
+internal sealed class GetUnassignedLoadsTool(IMediator mediator)
+    : AgentTool<NoToolInput>, IAgentToolMetadata
 {
-    public string Name => "get_unassigned_loads";
+    public static AgentToolDefinition Definition => new(
+        "get_unassigned_loads",
+        "Get all Draft loads that are not assigned to any trip. Returns load ID, name, type, origin, destination, distance, delivery cost, and customer.")
+    {
+        RequiredPermission = Permission.Dispatch.View,
+        DispatchAgent = true
+    };
 
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    protected override async Task<string> ExecuteAsync(NoToolInput input, CancellationToken ct)
     {
         var result = await mediator.Send(new GetUnassignedLoadsQuery(), ct);
 

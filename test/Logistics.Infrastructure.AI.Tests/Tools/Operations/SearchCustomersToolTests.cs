@@ -21,12 +21,6 @@ public class SearchCustomersToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("search_customers", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_ReturnsCompactCustomerList()
     {
         mediator.Send(Arg.Any<GetCustomersQuery>(), Arg.Any<CancellationToken>())

@@ -24,9 +24,6 @@ public class GetRateFloorToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase() => Assert.Equal("get_rate_floor", sut.Name);
-
-    [Fact]
     public async Task Execute_MissingListingId_ReturnsError()
     {
         var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
@@ -106,9 +103,6 @@ public class GetNegotiationThreadToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase() => Assert.Equal("get_negotiation_thread", sut.Name);
-
-    [Fact]
     public async Task Execute_MissingNegotiationId_ReturnsError()
     {
         var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
@@ -181,15 +175,13 @@ public class ProposeCounterOfferToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase() => Assert.Equal("propose_counter_offer", sut.Name);
-
-    [Fact]
     public async Task Execute_MissingRate_ReturnsError()
     {
         var input = new JsonObject
         {
             ["listing_id"] = Guid.NewGuid().ToString(),
-            ["message"] = "We can cover this at a better rate."
+            ["message"] = "We can cover this at a better rate.",
+            ["reasoning"] = "Listing is below the TX-IL floor."
         };
 
         var result = await sut.ExecuteAsync(input, CancellationToken.None);
@@ -205,7 +197,8 @@ public class ProposeCounterOfferToolTests
         var input = new JsonObject
         {
             ["listing_id"] = Guid.NewGuid().ToString(),
-            ["proposed_total_rate"] = 2200
+            ["proposed_total_rate"] = 2200,
+            ["reasoning"] = "Listing is below the TX-IL floor."
         };
 
         var result = await sut.ExecuteAsync(input, CancellationToken.None);
@@ -269,7 +262,8 @@ public class ProposeCounterOfferToolTests
         {
             ["listing_id"] = Guid.NewGuid().ToString(),
             ["proposed_total_rate"] = 100,
-            ["message"] = "Low offer."
+            ["message"] = "Low offer.",
+            ["reasoning"] = "Listing is below the TX-IL floor."
         };
 
         var result = await sut.ExecuteAsync(input, CancellationToken.None);

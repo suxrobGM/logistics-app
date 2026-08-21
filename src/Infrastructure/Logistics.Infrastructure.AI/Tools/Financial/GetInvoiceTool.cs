@@ -1,21 +1,33 @@
-using Logistics.Application.Abstractions.Agents;
+using System.ComponentModel;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using MediatR;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
+using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class GetInvoiceTool(IMediator mediator) : IAgentTool
+internal sealed class GetInvoiceTool(IMediator mediator)
+    : AgentTool<GetInvoiceTool.Input>, IAgentToolMetadata
 {
-    public string Name => "get_invoice";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("invoice_id") is not { } invoiceId)
-            return ToolResult.Error("Invalid or missing invoice_id");
+        [Description("The invoice ID (GUID)")]
+        public required Guid InvoiceId { get; init; }
+    }
 
-        var result = await mediator.Send(new GetInvoiceByIdQuery { Id = invoiceId }, ct);
+    public static AgentToolDefinition Definition => new(
+        "get_invoice",
+        "Get one invoice by ID: status, totals, amount paid, due date, send history, customer (with email), and the load it bills.")
+    {
+        RequiredFeature = TenantFeature.Invoices,
+        RequiredPermission = Permission.Invoice.View
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        var result = await mediator.Send(new GetInvoiceByIdQuery { Id = input.InvoiceId }, ct);
 
         if (!result.IsSuccess || result.Value is null)
             return ToolResult.Error(result.Error ?? "Invoice not found");

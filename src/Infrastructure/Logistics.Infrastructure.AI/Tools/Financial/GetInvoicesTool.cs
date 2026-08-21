@@ -1,29 +1,61 @@
+using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
-using System.Text.Json.Nodes;
-using MediatR;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
+using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class GetInvoicesTool(IMediator mediator) : IAgentTool
+internal sealed class GetInvoicesTool(IMediator mediator)
+    : AgentTool<GetInvoicesTool.Input>, IAgentToolMetadata
 {
-    public string Name => "get_invoices";
+    internal sealed record Input
+    {
+        [Description("Filter by load ID (GUID)")]
+        public Guid? LoadId { get; init; }
 
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+        [Description("Filter by customer ID (GUID)")]
+        public Guid? CustomerId { get; init; }
+
+        [Description("Filter by invoice status")]
+        public InvoiceStatus? Status { get; init; }
+
+        [Description("Only invoices past their due date")]
+        public bool? OverdueOnly { get; init; }
+
+        [Description("Invoices created on or after this date (ISO 8601)")]
+        public DateTime? StartDate { get; init; }
+
+        [Description("Invoices created on or before this date (ISO 8601)")]
+        public DateTime? EndDate { get; init; }
+
+        [Description("Page number when a previous call returned truncated: true")]
+        public int? Page { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "get_invoices",
+        "List load invoices filtered by load, customer, status, overdue flag, or date range. Returns up to 20 per page with number, status, total, due date, and customer.")
+    {
+        RequiredFeature = TenantFeature.Invoices,
+        RequiredPermission = Permission.Invoice.View
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {
         var query = new GetInvoicesQuery
         {
-            LoadId = input.GetGuid("load_id"),
-            CustomerId = input.GetGuid("customer_id"),
-            Status = input.GetEnum<InvoiceStatus>("status"),
-            OverdueOnly = input.GetBool("overdue_only"),
-            StartDate = input.GetDate("start_date"),
-            EndDate = input.GetDate("end_date"),
+            LoadId = input.LoadId,
+            CustomerId = input.CustomerId,
+            Status = input.Status,
+            OverdueOnly = input.OverdueOnly,
+            StartDate = input.StartDate,
+            EndDate = input.EndDate,
             InvoiceType = InvoiceType.Load,
             // Entity property name, not the DTO's CreatedDate - the sort is applied to the query.
             OrderBy = "-CreatedAt",
-            Page = input.GetInt("page") ?? 1,
+            Page = input.Page ?? 1,
             PageSize = ToolResult.MaxResults
         };
 

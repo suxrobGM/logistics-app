@@ -1,22 +1,33 @@
-using Logistics.Application.Abstractions.Agents;
+using System.ComponentModel;
 using System.Text.Json;
-using System.Text.Json.Nodes;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class GetDriverHosStatusTool(ITenantUnitOfWork tenantUow) : IAgentTool
+internal sealed class GetDriverHosStatusTool(ITenantUnitOfWork tenantUow)
+    : AgentTool<GetDriverHosStatusTool.Input>, IAgentToolMetadata
 {
-    public string Name => "get_driver_hos_status";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("driver_id") is not { } driverId)
-            return ToolResult.Error("Invalid or missing driver_id");
+        [Description("The driver's employee ID (GUID)")]
+        public required Guid DriverId { get; init; }
+    }
 
+    public static AgentToolDefinition Definition => new(
+        "get_driver_hos_status",
+        "Get detailed HOS (Hours of Service) status for a specific driver. Returns current duty status, driving minutes remaining, on-duty minutes remaining, cycle minutes remaining, violation status, and next mandatory break time.")
+    {
+        RequiredPermission = Permission.Dispatch.View,
+        DispatchAgent = true
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
         var hos = await tenantUow.Repository<DriverHosStatus>()
-            .GetAsync(h => h.EmployeeId == driverId, ct);
+            .GetAsync(h => h.EmployeeId == input.DriverId, ct);
 
         if (hos is null)
             return ToolResult.Error("No HOS data found for this driver");

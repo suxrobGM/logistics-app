@@ -67,7 +67,7 @@ public class CalculateDistanceToolTests
         var json = JsonDocument.Parse(result);
 
         Assert.True(json.RootElement.TryGetProperty("error", out var error));
-        Assert.Contains("Missing required coordinate", error.GetString());
+        Assert.Contains("Missing required input", error.GetString());
     }
 
     [Fact]
@@ -79,9 +79,4 @@ public class CalculateDistanceToolTests
         Assert.True(json.RootElement.TryGetProperty("error", out _));
     }
 
-    [Fact]
-    public void Name_ReturnsCorrectToolName()
-    {
-        Assert.Equal("calculate_distance", sut.Name);
-    }
 }

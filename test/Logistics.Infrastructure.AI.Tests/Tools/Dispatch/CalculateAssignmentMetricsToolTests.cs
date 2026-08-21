@@ -82,12 +82,6 @@ public class CalculateAssignmentMetricsToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("calculate_assignment_metrics", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_NoCandidates_ReturnsError()
     {
         var result = await sut.ExecuteAsync(
@@ -140,22 +134,20 @@ public class CalculateAssignmentMetricsToolTests
     }
 
     [Fact]
-    public async Task Execute_UnparseableIds_EmitsErrorRowAndKeepsGoing()
+    public async Task Execute_UnparseableId_FailsTheCallNamingTheProperty()
     {
-        var loadId = Guid.NewGuid();
-        var truckId = Guid.NewGuid();
-        Setup([CreateLoad(loadId, "Good", 100_000, 1000m)], [CreateTruck(truckId, "T-1")]);
+        // One bad id fails the whole call: the agent picks a winner from these numbers, and a
+        // silently dropped candidate is one it never compares.
+        var result = await sut.ExecuteAsync(
+            new JsonObject
+            {
+                ["candidates"] = new JsonArray(
+                    new JsonObject { ["load_id"] = "not-a-guid", ["truck_id"] = "also-bad" })
+            },
+            CancellationToken.None);
 
-        var root = await Run(
-            new JsonObject { ["load_id"] = "not-a-guid", ["truck_id"] = "also-bad" },
-            Candidate(loadId, truckId));
-
-        var candidates = root.GetProperty("candidates");
-        Assert.Equal(2, root.GetProperty("count").GetInt32());
-
-        // Scoreable pairings come first; unscoreable ones trail them.
-        Assert.Equal("Good", candidates[0].GetProperty("load_name").GetString());
-        Assert.Equal("Invalid load_id or truck_id", candidates[1].GetProperty("error").GetString());
+        var error = JsonDocument.Parse(result).RootElement.GetProperty("error").GetString();
+        Assert.Contains("load_id", error);
     }
 
     [Fact]

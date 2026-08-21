@@ -100,8 +100,7 @@ internal sealed class AgentTestContext
     /// <summary>Registers a tool definition the way <c>AgentToolRegistry</c> would - name, required permission, decision type.</summary>
     public void SetToolDefinition(
         string toolName, string requiredPermission, AgentDecisionType decisionType = AgentDecisionType.AssignLoad) =>
-        ToolRegistry.TryGetDefinition(toolName).Returns(new AgentToolDefinition(
-            toolName, toolName, new System.Text.Json.Nodes.JsonObject())
+        ToolRegistry.TryGetDefinition(toolName).Returns(new AgentToolDefinition(toolName, toolName)
         {
             RequiredPermission = requiredPermission,
             DecisionType = decisionType

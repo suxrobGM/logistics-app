@@ -22,12 +22,6 @@ public class GetInvoiceToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("get_invoice", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_MissingInvoiceId_ReturnsError()
     {
         var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);

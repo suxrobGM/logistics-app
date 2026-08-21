@@ -1,20 +1,33 @@
+using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
-using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Integrations.Negotiation.Queries;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
 using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Negotiation;
 
-internal sealed class GetRateFloorTool(IMediator mediator) : IAgentTool
+internal sealed class GetRateFloorTool(IMediator mediator)
+    : AgentTool<GetRateFloorTool.Input>, IAgentToolMetadata
 {
-    public string Name => "get_rate_floor";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("listing_id") is not { } listingId)
-            return ToolResult.Error("Invalid or missing listing_id - use the listing_id returned by search_loadboard");
+        [Description("The listing_id (GUID) returned by search_loadboard")]
+        public required Guid ListingId { get; init; }
+    }
 
-        var result = await mediator.Send(new GetRateFloorContextQuery { ListingId = listingId }, ct);
+    public static AgentToolDefinition Definition => new(
+        "get_rate_floor",
+        "The minimum rate this carrier accepts on a listing's lane, and how the listing compares to it. Returns has_floor, the floor per mile and total, below_floor, the gap, whether the listing has a broker email, and any negotiation already running on it. Call this before proposing a counter-offer - without a floor there is no basis to negotiate.")
+    {
+        RequiredFeature = TenantFeature.AIRateNegotiation,
+        RequiredPermission = Permission.Negotiation.View,
+        DispatchAgent = true
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        var result = await mediator.Send(new GetRateFloorContextQuery { ListingId = input.ListingId }, ct);
 
         if (!result.IsSuccess || result.Value is null)
             return ToolResult.Error(result.Error ?? "Could not resolve a rate floor for this listing");

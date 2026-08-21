@@ -1,28 +1,41 @@
-using Logistics.Application.Abstractions.Agents;
+using System.ComponentModel;
 using System.Text.Json;
-using System.Text.Json.Nodes;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 
-internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditService) : IAgentTool
+internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditService)
+    : AgentTool<CheckBrokerCreditTool.Input>, IAgentToolMetadata
 {
-    public string Name => "check_broker_credit";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        var mcNumber = input.GetString("mc_number");
-        if (string.IsNullOrWhiteSpace(mcNumber))
-        {
-            return ToolResult.Error("Missing mc_number");
-        }
+        [Description("The broker's MC number, e.g. 'MC123456' or '123456'")]
+        public required string McNumber { get; init; }
+    }
 
-        var credit = await brokerCreditService.GetBrokerCreditAsync(mcNumber, ct);
+    public static AgentToolDefinition Definition => new(
+        "check_broker_credit",
+        "Check a load-board broker's credit standing (score 0-100, days-to-pay, FMCSA authority status) by MC number. Always call this before book_loadboard_load; never book when the score is below the tenant minimum or the authority is inactive.")
+    {
+        RequiredFeature = TenantFeature.LoadBoard,
+        RequiredPermission = Permission.Dispatch.View,
+        DispatchAgent = true
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(input.McNumber))
+            return ToolResult.Error("Missing mc_number");
+
+        var credit = await brokerCreditService.GetBrokerCreditAsync(input.McNumber, ct);
         if (credit is null)
         {
             return JsonSerializer.Serialize(new
             {
-                mc_number = mcNumber,
+                mc_number = input.McNumber,
                 credit_score = (int?)null,
                 warning = "No credit data available for this broker. Booking is allowed but flag the missing data to the dispatcher."
             });

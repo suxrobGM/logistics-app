@@ -1,10 +1,11 @@
-using Logistics.Application.Abstractions.Agents;
+using System.ComponentModel;
 using System.Text.Json;
-using System.Text.Json.Nodes;
+using Logistics.Application.Abstractions.Agents;
+using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using MediatR;
-using Logistics.Application.Modules.Financial.Invoices.Queries;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
@@ -13,67 +14,79 @@ namespace Logistics.Infrastructure.AI.Tools.Financial;
 /// Read tool: safe to call in any mode. Backed by <c>PreviewInvoiceTaxQuery</c>, which routes
 /// through the configured <c>ITaxCalculator</c> (Stripe Tax in production, Manual fallback).
 /// </summary>
-internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IAgentTool
+internal sealed class PreviewTaxCalculationTool(IMediator mediator)
+    : AgentTool<PreviewTaxCalculationTool.Input>, IAgentToolMetadata
 {
-    public string Name => "preview_tax_calculation";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("customer_id") is not { } customerId)
-        {
-            return ToolResult.Error("Missing or invalid customer_id");
-        }
+        [Description("The customer ID (GUID) - drives jurisdiction + reverse-charge")]
+        public required Guid CustomerId { get; init; }
 
-        var currency = input.GetString("currency");
-        if (string.IsNullOrWhiteSpace(currency))
-        {
-            return ToolResult.Error("Missing currency");
-        }
+        [Description("ISO-4217 currency code, e.g. 'USD' or 'EUR'")]
+        public required string Currency { get; init; }
 
-        if (input["line_items"] is not JsonArray itemsArray || itemsArray.Count == 0)
-        {
+        [Description("Line items to score")]
+        public required LineItem[] LineItems { get; init; }
+    }
+
+    internal sealed record LineItem
+    {
+        [Description("Human-readable label for the line")]
+        public required string Description { get; init; }
+
+        [Description("Per-unit net amount in the invoice currency")]
+        public required decimal Amount { get; init; }
+
+        [Description("The kind of charge this line represents")]
+        public InvoiceLineItemType? Type { get; init; }
+
+        [Description("Quantity (defaults to 1)")]
+        public int? Quantity { get; init; }
+
+        [Description("Optional Stripe Tax product code (txcd_*); leave blank to use the tenant default")]
+        public string? TaxCode { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "preview_tax_calculation",
+        "Compute VAT / sales tax / GST for a hypothetical set of line items without persisting an invoice. Returns per-line tax amount, aggregate breakdown by jurisdiction, and reverse-charge / not-collecting flags. Use when quoting a customer or sanity-checking that tax setup will work before creating the invoice. Read-only.")
+    {
+        RequiredPermission = Permission.Dispatch.View,
+        DispatchAgent = true
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        if (input.LineItems.Length == 0)
             return ToolResult.Error("Missing or empty line_items");
-        }
 
-        var lineItems = new List<PreviewInvoiceTaxLineItem>(itemsArray.Count);
-        foreach (var item in itemsArray)
+        var lineItems = input.LineItems.Select(item => new PreviewInvoiceTaxLineItem
         {
-            if (item is null) continue;
-            if (!decimal.TryParse(item["amount"]?.ToString(), out var amount))
-            {
-                return ToolResult.Error("Each line_item requires a numeric amount");
-            }
-
-            lineItems.Add(new PreviewInvoiceTaxLineItem
-            {
-                Description = item.GetString("description") ?? "Item",
-                Type = ParseLineItemType(item.GetString("type")),
-                Amount = amount,
-                Quantity = item.GetInt("quantity") ?? 1,
-                TaxCode = item.GetString("tax_code")
-            });
-        }
+            Description = item.Description,
+            Type = item.Type ?? InvoiceLineItemType.Other,
+            Amount = item.Amount,
+            Quantity = item.Quantity ?? 1,
+            TaxCode = item.TaxCode
+        }).ToList();
 
         var result = await mediator.Send(new PreviewInvoiceTaxQuery
         {
             Request = new PreviewInvoiceTaxRequest
             {
-                CustomerId = customerId,
-                Currency = currency,
+                CustomerId = input.CustomerId,
+                Currency = input.Currency,
                 LineItems = lineItems
             }
         }, ct);
 
         if (!result.IsSuccess || result.Value is null)
-        {
             return ToolResult.Error(result.Error ?? "Unknown error");
-        }
 
         var response = result.Value;
         return JsonSerializer.Serialize(new
         {
             tax_behavior = response.TaxBehavior.ToString(),
-            currency,
+            currency = input.Currency,
             subtotal = response.Subtotal.Amount,
             tax_total = response.TaxTotal.Amount,
             total = response.Total.Amount,
@@ -97,9 +110,4 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IAgentTool
             })
         });
     }
-
-    private static InvoiceLineItemType ParseLineItemType(string? raw) =>
-        Enum.TryParse<InvoiceLineItemType>(raw, ignoreCase: true, out var parsed)
-            ? parsed
-            : InvoiceLineItemType.Other;
 }

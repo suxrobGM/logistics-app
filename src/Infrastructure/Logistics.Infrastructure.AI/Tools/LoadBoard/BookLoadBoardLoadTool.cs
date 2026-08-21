@@ -1,36 +1,61 @@
+using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
-using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
 using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 
-internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext runContext) : IAgentTool
+internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext runContext)
+    : AgentTool<BookLoadBoardLoadTool.Input>, IAgentToolMetadata
 {
-    public string Name => "book_loadboard_load";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("listing_id") is not { } listingId)
-            return ToolResult.Error("Invalid or missing listing_id - use the listing_id returned by search_loadboard");
+        [Description("The listing_id (GUID) returned by search_loadboard. Not the load board's own external id, which is not stable between searches.")]
+        public required Guid ListingId { get; init; }
 
-        if (input.GetGuid("truck_id") is not { } truckId)
-            return ToolResult.Error("Invalid or missing truck_id");
+        [Description("The truck ID (GUID) to assign the booked load to")]
+        public required Guid TruckId { get; init; }
 
-        // The booking is attributed to a real dispatcher, so a run with no human origin cannot
-        // make one. The model is never asked for this - it has no reliable source for a user id.
+        [Description("Optional customer name, when booking creates a new customer from the broker")]
+        public string? CustomerName { get; init; }
+
+        [Description("The rate the broker agreed to in a negotiation thread. Only set this when a negotiation on this listing reached agreement - otherwise the listing's own rate is used.")]
+        public decimal? NegotiatedTotalRate { get; init; }
+
+        [Description("Optional notes recorded against the booking")]
+        public string? Notes { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "book_loadboard_load",
+        "Book a load from a load board. This claims the load and creates it in the system.")
+    {
+        RequiredFeature = TenantFeature.LoadBoard,
+        RequiredPermission = Permission.Dispatch.Manage,
+        DecisionType = AgentDecisionType.BookLoadBoardLoad,
+        DispatchAgent = true,
+        // The booking is attributed to a real dispatcher, so a surface with no human behind it
+        // cannot offer this at all. The model is never asked for the user id - it has no reliable
+        // source for one.
+        RequiresHumanOrigin = true
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
         if (runContext.TriggeredByUserId is not { } dispatcherId)
             return ToolResult.Error(
                 "Booking requires a dispatcher. This run has no user attached, so the booking must be made by a person.");
 
         var command = new BookLoadBoardLoadCommand
         {
-            ListingId = listingId,
-            TruckId = truckId,
+            ListingId = input.ListingId,
+            TruckId = input.TruckId,
             DispatcherId = dispatcherId,
-            CustomerName = input.GetString("customer_name"),
-            NegotiatedTotalRate = input.GetDecimal("negotiated_total_rate"),
-            Notes = input.GetString("notes"),
+            CustomerName = input.CustomerName,
+            NegotiatedTotalRate = input.NegotiatedTotalRate,
+            Notes = input.Notes,
             // Deliberately not exposed to the agent: overriding a failed broker credit check is a
             // dispatcher's judgement call, and the prompt tells the agent never to book below the
             // tenant minimum.
@@ -47,8 +72,8 @@ internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext
             ? ToolResult.Ok(new
             {
                 success = true,
-                listing_id = listingId,
-                truck_id = truckId,
+                listing_id = input.ListingId,
+                truck_id = input.TruckId,
                 load_id = booking.CreatedLoadId,
                 load_number = booking.CreatedLoadNumber,
                 confirmation_id = booking.ExternalConfirmationId

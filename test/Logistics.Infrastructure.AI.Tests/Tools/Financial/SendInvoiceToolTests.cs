@@ -20,16 +20,11 @@ public class SendInvoiceToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("send_invoice", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_MissingInvoiceId_ReturnsError()
     {
         var result = await sut.ExecuteAsync(
-            new JsonObject { ["recipient_email"] = "a@b.com" }, CancellationToken.None);
+            new JsonObject { ["recipient_email"] = "a@b.com", ["reasoning"] = "why" },
+            CancellationToken.None);
 
         Assert.Contains("invoice_id", result);
         await mediator.DidNotReceiveWithAnyArgs().Send<Result>(default!, default);
@@ -39,7 +34,8 @@ public class SendInvoiceToolTests
     public async Task Execute_MissingRecipientEmail_ReturnsError()
     {
         var result = await sut.ExecuteAsync(
-            new JsonObject { ["invoice_id"] = Guid.NewGuid().ToString() }, CancellationToken.None);
+            new JsonObject { ["invoice_id"] = Guid.NewGuid().ToString(), ["reasoning"] = "why" },
+            CancellationToken.None);
 
         Assert.Contains("recipient_email", result);
     }
@@ -55,7 +51,8 @@ public class SendInvoiceToolTests
         {
             ["invoice_id"] = invoiceId.ToString(),
             ["recipient_email"] = "billing@acme.com",
-            ["personal_message"] = "Thanks for your business"
+            ["personal_message"] = "Thanks for your business",
+            ["reasoning"] = "Load delivered last week"
         }, CancellationToken.None);
 
         Assert.Contains("\"success\":true", result);
@@ -76,7 +73,8 @@ public class SendInvoiceToolTests
         var result = await sut.ExecuteAsync(new JsonObject
         {
             ["invoice_id"] = Guid.NewGuid().ToString(),
-            ["recipient_email"] = "billing@acme.com"
+            ["recipient_email"] = "billing@acme.com",
+            ["reasoning"] = "Load delivered last week"
         }, CancellationToken.None);
 
         Assert.Contains("Invoice is cancelled", result);

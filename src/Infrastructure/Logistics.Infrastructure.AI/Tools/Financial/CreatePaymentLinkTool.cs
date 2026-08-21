@@ -1,24 +1,43 @@
-using Logistics.Application.Abstractions.Agents;
+using System.ComponentModel;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using MediatR;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Financial.PaymentLinks.Commands;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
+using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class CreatePaymentLinkTool(IMediator mediator) : IAgentTool
+internal sealed class CreatePaymentLinkTool(IMediator mediator)
+    : AgentTool<CreatePaymentLinkTool.Input>, IAgentToolMetadata
 {
-    public string Name => "create_payment_link";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("invoice_id") is not { } invoiceId)
-            return ToolResult.Error("Invalid or missing invoice_id");
+        [Description("The invoice ID (GUID) to create the link for")]
+        public required Guid InvoiceId { get; init; }
 
+        [Description("Brief explanation of why this link should be created")]
+        public required string Reasoning { get; init; }
+
+        [Description("Days until the link expires (default 30)")]
+        public int? ExpirationDays { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "create_payment_link",
+        "Create a public payment link URL for an invoice without emailing anything. Use when the user wants a link to share themselves; send_invoice already includes one.")
+    {
+        RequiredFeature = TenantFeature.Payments,
+        RequiredPermission = Permission.Payment.Manage,
+        DecisionType = AgentDecisionType.CreatePaymentLink
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
         var result = await mediator.Send(new CreatePaymentLinkCommand
         {
-            InvoiceId = invoiceId,
-            ExpirationDays = input.GetInt("expiration_days") ?? 30
+            InvoiceId = input.InvoiceId,
+            ExpirationDays = input.ExpirationDays ?? 30
         }, ct);
 
         if (!result.IsSuccess || result.Value is null)
@@ -28,7 +47,7 @@ internal sealed class CreatePaymentLinkTool(IMediator mediator) : IAgentTool
         return JsonSerializer.Serialize(new
         {
             success = true,
-            invoice_id = invoiceId,
+            invoice_id = input.InvoiceId,
             url = link.Url,
             expires_at = link.ExpiresAt.ToString("yyyy-MM-dd")
         });
