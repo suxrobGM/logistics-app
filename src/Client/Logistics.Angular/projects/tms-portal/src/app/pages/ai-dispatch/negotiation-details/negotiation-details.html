@@ -42,20 +42,39 @@
       <div>
         <ui-typography variant="body-sm" color="muted">Floor when opened</ui-typography>
         <ui-typography variant="body">
-          {{ thread.floorTotalRate?.amount ?? thread.floorRatePerMile ?? "-" }}
+          {{
+            (thread.floorTotalRate?.amount | currencyFormat: thread.floorTotalRate?.currency) ??
+              (thread.floorRatePerMile | currencyFormat) ??
+              "-"
+          }}
         </ui-typography>
       </div>
       <div>
         <ui-typography variant="body-sm" color="muted">Listing rate</ui-typography>
-        <ui-typography variant="body">{{ thread.listingTotalRate?.amount ?? "-" }}</ui-typography>
+        <ui-typography variant="body">
+          {{
+            (thread.listingTotalRate?.amount | currencyFormat: thread.listingTotalRate?.currency) ??
+              "-"
+          }}
+        </ui-typography>
       </div>
       <div>
         <ui-typography variant="body-sm" color="muted">Our latest offer</ui-typography>
-        <ui-typography variant="body">{{ thread.latestCounterOffer?.amount ?? "-" }}</ui-typography>
+        <ui-typography variant="body">
+          {{
+            (thread.latestCounterOffer?.amount
+              | currencyFormat: thread.latestCounterOffer?.currency) ?? "-"
+          }}
+        </ui-typography>
       </div>
       <div>
         <ui-typography variant="body-sm" color="muted">Their latest offer</ui-typography>
-        <ui-typography variant="body">{{ thread.latestBrokerOffer?.amount ?? "-" }}</ui-typography>
+        <ui-typography variant="body">
+          {{
+            (thread.latestBrokerOffer?.amount
+              | currencyFormat: thread.latestBrokerOffer?.currency) ?? "-"
+          }}
+        </ui-typography>
       </div>
     </div>
 
@@ -84,7 +103,11 @@
           </ui-typography>
           @if (message.proposedTotalRate?.amount) {
             <ui-typography variant="body-sm">
-              Rate: {{ message.proposedTotalRate?.amount }}
+              Rate:
+              {{
+                message.proposedTotalRate?.amount
+                  | currencyFormat: message.proposedTotalRate?.currency
+              }}
             </ui-typography>
           }
         </ui-stack>

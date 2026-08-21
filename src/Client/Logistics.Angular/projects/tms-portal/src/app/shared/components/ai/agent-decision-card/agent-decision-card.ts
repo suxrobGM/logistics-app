@@ -8,6 +8,7 @@ import {
   getDecisionRefs,
   getToolIcon,
   getToolLabel,
+  hasEmailPreview,
   isWriteDecision,
   Labels,
 } from "@/shared/utils";
@@ -55,6 +56,7 @@ export class AgentDecisionCard {
   protected readonly icon = computed(() => getToolIcon(this.decision().toolName));
   protected readonly label = computed(() => getToolLabel(this.decision().toolName));
   protected readonly isPending = computed(() => this.decision().status === "suggested");
+  protected readonly hasEmailPreview = hasEmailPreview;
   protected readonly isWrite = computed(() => isWriteDecision(this.decision()));
   protected readonly summary = computed(() => stripMarkdown(this.decision().reasoning ?? ""));
   protected readonly refs = computed(() => getDecisionRefs(this.decision()));

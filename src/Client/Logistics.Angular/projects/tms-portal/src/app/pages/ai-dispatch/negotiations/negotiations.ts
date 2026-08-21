@@ -2,13 +2,8 @@ import { Component, DestroyRef, inject, signal, type OnInit } from "@angular/cor
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterLink } from "@angular/router";
 import { PageHeader } from "@logistics/shared";
-import {
-  Api,
-  getNegotiations,
-  type RateNegotiationDto,
-  type RateNegotiationStatus,
-} from "@logistics/shared/api";
-import { DateFormatPipe } from "@logistics/shared/pipes";
+import { Api, getNegotiations, type RateNegotiationDto } from "@logistics/shared/api";
+import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import {
   Card,
   EmptyState,
@@ -19,12 +14,14 @@ import {
   UiDataTable,
 } from "@logistics/shared/ui";
 import { AIDispatchHubService } from "@/core/services";
+import { isOpenNegotiation } from "@/shared/utils";
 
 @Component({
   selector: "app-negotiations",
   templateUrl: "./negotiations.html",
   imports: [
     Card,
+    CurrencyFormatPipe,
     DateFormatPipe,
     PageHeader,
     RouterLink,
@@ -71,19 +68,15 @@ export class Negotiations implements OnInit {
     return [city, state].filter(Boolean).join(", ");
   }
 
-  private isActive(status?: RateNegotiationStatus): boolean {
-    return status === "awaiting_broker" || status === "broker_replied";
-  }
-
   private merge(updated: RateNegotiationDto): void {
     this.negotiations.update((rows) => {
       const index = rows.findIndex((r) => r.id === updated.id);
 
       if (index < 0) {
-        return this.activeOnly() && !this.isActive(updated.status) ? rows : [updated, ...rows];
+        return this.activeOnly() && !isOpenNegotiation(updated.status) ? rows : [updated, ...rows];
       }
 
-      if (this.activeOnly() && !this.isActive(updated.status)) {
+      if (this.activeOnly() && !isOpenNegotiation(updated.status)) {
         return rows.filter((r) => r.id !== updated.id);
       }
 

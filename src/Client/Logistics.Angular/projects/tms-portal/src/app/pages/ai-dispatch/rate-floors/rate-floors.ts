@@ -9,6 +9,7 @@ import {
   updateLaneRateFloor,
   type LaneRateFloorDto,
 } from "@logistics/shared/api";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   Alert,
   Card,
@@ -52,6 +53,7 @@ const EMPTY: LaneRateFloorModel = {
   imports: [
     Alert,
     Card,
+    CurrencyFormatPipe,
     FormField,
     FormRoot,
     PageHeader,

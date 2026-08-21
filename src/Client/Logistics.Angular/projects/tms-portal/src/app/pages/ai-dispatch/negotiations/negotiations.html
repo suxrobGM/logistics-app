@@ -43,11 +43,19 @@
           <td class="font-mono text-xs">{{ negotiation.reference }}</td>
           <td>{{ lane(negotiation) }}</td>
           <td>{{ negotiation.brokerName || negotiation.brokerEmail }}</td>
-          <td class="text-right">{{ negotiation.latestCounterOffer?.amount ?? "-" }}</td>
-          <td class="text-right">{{ negotiation.latestBrokerOffer?.amount ?? "-" }}</td>
-          <td class="text-center">
-            {{ negotiation.roundCount }} / {{ negotiation.maxRounds }}
+          <td class="text-right">
+            {{
+              (negotiation.latestCounterOffer?.amount
+                | currencyFormat: negotiation.latestCounterOffer?.currency) ?? "-"
+            }}
           </td>
+          <td class="text-right">
+            {{
+              (negotiation.latestBrokerOffer?.amount
+                | currencyFormat: negotiation.latestBrokerOffer?.currency) ?? "-"
+            }}
+          </td>
+          <td class="text-center">{{ negotiation.roundCount }} / {{ negotiation.maxRounds }}</td>
           <td>
             <ui-status-badge [status]="negotiation.status" kind="negotiation" />
           </td>

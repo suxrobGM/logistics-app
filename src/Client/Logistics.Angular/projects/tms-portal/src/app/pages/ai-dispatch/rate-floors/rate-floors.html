@@ -44,8 +44,12 @@
         <ng-template #body let-floor>
           <tr>
             <td>{{ lane(floor) }}</td>
-            <td class="text-right">{{ floor.minRatePerMile }}</td>
-            <td class="text-right">{{ floor.minTotalRate?.amount ?? "-" }}</td>
+            <td class="text-right">{{ floor.minRatePerMile | currencyFormat }}</td>
+            <td class="text-right">
+              {{
+                (floor.minTotalRate?.amount | currencyFormat: floor.minTotalRate?.currency) ?? "-"
+              }}
+            </td>
             <td>{{ floor.notes || "-" }}</td>
             @if (canManage()) {
               <td>

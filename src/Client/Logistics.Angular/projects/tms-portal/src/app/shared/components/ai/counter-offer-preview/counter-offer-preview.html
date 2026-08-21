@@ -23,8 +23,10 @@
     </div>
     <div class="mb-2">
       <span class="text-muted-foreground">Offer:</span>
-      <span class="font-semibold">{{ email.proposedTotalRate }} {{ email.currency }}</span>
+      <span class="font-semibold">
+        {{ email.proposedTotalRate | currencyFormat: email.currency }}
+      </span>
     </div>
-    <p class="border-border mt-0 mb-0 border-t pt-2 whitespace-pre-wrap">{{ bodyText() }}</p>
+    <p class="border-border mt-0 mb-0 border-t pt-2 whitespace-pre-wrap">{{ email.message }}</p>
   </div>
 }

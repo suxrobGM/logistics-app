@@ -7,7 +7,7 @@ import {
   getNegotiationById,
   type RateNegotiationDto,
 } from "@logistics/shared/api";
-import { DateFormatPipe } from "@logistics/shared/pipes";
+import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import {
   Alert,
   Card,
@@ -20,6 +20,7 @@ import {
 } from "@logistics/shared/ui";
 import { PermissionService } from "@/core/auth";
 import { AIDispatchHubService, ToastService } from "@/core/services";
+import { isOpenNegotiation } from "@/shared/utils";
 
 @Component({
   selector: "app-negotiation-details",
@@ -27,6 +28,7 @@ import { AIDispatchHubService, ToastService } from "@/core/services";
   imports: [
     Alert,
     Card,
+    CurrencyFormatPipe,
     DateFormatPipe,
     Icon,
     PageHeader,
@@ -54,10 +56,7 @@ export class NegotiationDetails implements OnInit {
   protected readonly isClosing = signal(false);
   protected readonly negotiation = signal<RateNegotiationDto | null>(null);
 
-  protected readonly isOpen = computed(() => {
-    const status = this.negotiation()?.status;
-    return status === "awaiting_broker" || status === "broker_replied";
-  });
+  protected readonly isOpen = computed(() => isOpenNegotiation(this.negotiation()?.status));
 
   ngOnInit(): void {
     this.load();

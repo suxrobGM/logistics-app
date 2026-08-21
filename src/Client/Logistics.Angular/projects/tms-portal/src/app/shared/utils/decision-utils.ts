@@ -28,6 +28,9 @@ export function parseToolInput(json: string | null | undefined): ParsedToolInput
 interface ToolMeta {
   label: string;
   icon: IconName;
+
+  /** Renders the email preview on a pending decision, so the approver reads what will be sent. */
+  emailPreview?: true;
 }
 
 /**
@@ -66,7 +69,7 @@ const TOOL_META: Record<string, ToolMeta> = {
   create_load_invoice: { label: "Create Invoice", icon: "file-text" },
   send_invoice: { label: "Send Invoice", icon: "mail" },
   create_payment_link: { label: "Create Payment Link", icon: "credit-card" },
-  propose_counter_offer: { label: "Send Counter-Offer", icon: "mail" },
+  propose_counter_offer: { label: "Send Counter-Offer", icon: "mail", emailPreview: true },
 };
 
 export function getToolLabel(toolName: string | null | undefined): string {
@@ -75,6 +78,10 @@ export function getToolLabel(toolName: string | null | undefined): string {
 
 export function getToolIcon(toolName: string | null | undefined): IconName {
   return (toolName ? TOOL_META[toolName]?.icon : null) ?? "circle";
+}
+
+export function hasEmailPreview(toolName: string | null | undefined): boolean {
+  return toolName ? TOOL_META[toolName]?.emailPreview === true : false;
 }
 
 /** A decision's resolved references, as rendered by the cards and the confirm dialog. */
