@@ -138,6 +138,10 @@ export const Permission = {
     View: "Permission.Terminal.View",
     Manage: "Permission.Terminal.Manage",
   },
+  Negotiation: {
+    View: "Permission.Negotiation.View",
+    Manage: "Permission.Negotiation.Manage",
+  },
 } as const;
 
 /**

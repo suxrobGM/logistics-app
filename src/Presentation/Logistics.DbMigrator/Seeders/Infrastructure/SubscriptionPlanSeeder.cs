@@ -33,13 +33,13 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         // DVIR is a federal requirement; the broader Safety suite stays Professional
         TenantFeature.Dvir,
         TenantFeature.AgenticDispatch,
-        TenantFeature.AICopilot
+        TenantFeature.AICopilot,
+        TenantFeature.LoadBoard
     ];
 
     private static readonly TenantFeature[] ProfessionalFeatures =
     [
         ..StarterFeatures,
-        TenantFeature.LoadBoard,
         TenantFeature.Payroll,
         TenantFeature.Timesheets,
         TenantFeature.Safety,
@@ -49,7 +49,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.Accounting,
         TenantFeature.FuelCards,
         TenantFeature.Ifta,
-        TenantFeature.IntermodalContainers
+        TenantFeature.IntermodalContainers,
+        TenantFeature.AIRateNegotiation
     ];
 
     private static readonly TenantFeature[] EnterpriseFeatures = Enum.GetValues<TenantFeature>();
