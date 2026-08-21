@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using System.Text.Json.Serialization;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;

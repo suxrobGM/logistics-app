@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Integrations.Negotiation;
 using Logistics.Application.Modules.Integrations.Negotiation.Queries;

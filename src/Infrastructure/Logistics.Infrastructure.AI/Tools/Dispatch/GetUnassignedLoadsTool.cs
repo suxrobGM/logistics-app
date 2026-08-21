@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Shared.Models;

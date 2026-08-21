@@ -1,5 +1,7 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
@@ -67,40 +69,39 @@ internal sealed class PreviewCounterOfferHandler(
         });
     }
 
+    /// <summary>
+    /// Read with the same lenient accessors the tool wrote the input with. A strict reader rejects
+    /// the numbers-as-strings the models actually emit, so the preview would fail on offers the
+    /// tool itself accepted.
+    /// </summary>
     private static bool TryReadInput(string toolInput, out CounterOfferInput input)
     {
         input = default;
 
+        JsonNode? root;
         try
         {
-            using var document = JsonDocument.Parse(toolInput);
-            var root = document.RootElement;
-
-            if (root.ValueKind != JsonValueKind.Object ||
-                !root.TryGetProperty("listing_id", out var listingId) ||
-                !Guid.TryParse(listingId.GetString(), out var parsedListingId) ||
-                !root.TryGetProperty("proposed_total_rate", out var totalRate) ||
-                !totalRate.TryGetDecimal(out var parsedTotalRate))
-            {
-                return false;
-            }
-
-            decimal? perMile = root.TryGetProperty("proposed_rate_per_mile", out var perMileElement)
-                && perMileElement.TryGetDecimal(out var parsedPerMile)
-                    ? parsedPerMile
-                    : null;
-
-            var message = root.TryGetProperty("message", out var messageElement)
-                ? messageElement.GetString() ?? ""
-                : "";
-
-            input = new CounterOfferInput(parsedListingId, parsedTotalRate, perMile, message);
-            return true;
+            root = JsonNode.Parse(toolInput);
         }
         catch (JsonException)
         {
             return false;
         }
+
+        if (root is null ||
+            root.GetGuid("listing_id") is not { } listingId ||
+            root.GetDecimal("proposed_total_rate") is not { } totalRate)
+        {
+            return false;
+        }
+
+        input = new CounterOfferInput(
+            listingId,
+            totalRate,
+            root.GetDecimal("proposed_rate_per_mile"),
+            root.GetString("message") ?? "");
+
+        return true;
     }
 
     private readonly record struct CounterOfferInput(

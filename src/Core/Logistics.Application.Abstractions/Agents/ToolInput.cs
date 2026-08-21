@@ -1,12 +1,12 @@
 using System.Text.Json.Nodes;
 
-namespace Logistics.Infrastructure.AI.Tools;
+namespace Logistics.Application.Abstractions.Agents;
 
 /// <summary>
 /// Lenient accessors for LLM-authored tool input. Models emit inconsistent JSON (numbers as
 /// strings, wrong casing), so every accessor coerces where it can and returns null instead of throwing.
 /// </summary>
-internal static class ToolInput
+public static class ToolInput
 {
     public static string? GetString(this JsonNode input, string key) =>
         input[key] is JsonValue value ? value.ToString() : null;

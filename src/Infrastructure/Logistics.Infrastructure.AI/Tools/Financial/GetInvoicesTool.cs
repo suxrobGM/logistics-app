@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using System.Text.Json.Nodes;
 using MediatR;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
