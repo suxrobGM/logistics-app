@@ -18,5 +18,21 @@ public interface IAgentRunContext
     /// </summary>
     Guid? TriggeredByUserId { get; }
 
+    /// <summary>
+    /// The conversation the run belongs to, for tools that must link what they create back to the
+    /// thread that asked for it. Also set on the approval path, which has no run of its own.
+    /// </summary>
+    Guid? ConversationId { get; }
+
+    /// <summary>
+    /// The decision being executed, set only on the approval path. A tool called during a live turn
+    /// has no decision id yet - the decision row is written from its result.
+    /// </summary>
+    Guid? DecisionId { get; }
+
     void SetTriggeredBy(Guid? userId);
+
+    void SetConversation(Guid? conversationId);
+
+    void SetDecision(Guid? decisionId);
 }

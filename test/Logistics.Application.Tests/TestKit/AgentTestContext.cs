@@ -28,6 +28,7 @@ internal sealed class AgentTestContext
     public ICurrentUserService CurrentUser { get; } = Substitute.For<ICurrentUserService>();
     public IAgentToolExecutor ToolExecutor { get; } = Substitute.For<IAgentToolExecutor>();
     public IAgentToolRegistry ToolRegistry { get; } = Substitute.For<IAgentToolRegistry>();
+    public IAgentRunContext RunContext { get; } = Substitute.For<IAgentRunContext>();
     public IMediator Mediator { get; } = Substitute.For<IMediator>();
     public IUserPermissionService UserPermissions { get; } = Substitute.For<IUserPermissionService>();
     public IAIQuotaService QuotaService { get; } = Substitute.For<IAIQuotaService>();

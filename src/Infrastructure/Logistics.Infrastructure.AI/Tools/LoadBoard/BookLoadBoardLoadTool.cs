@@ -29,6 +29,7 @@ internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext
             TruckId = truckId,
             DispatcherId = dispatcherId,
             CustomerName = input.GetString("customer_name"),
+            NegotiatedTotalRate = input.GetDecimal("negotiated_total_rate"),
             Notes = input.GetString("notes"),
             // Deliberately not exposed to the agent: overriding a failed broker credit check is a
             // dispatcher's judgement call, and the prompt tells the agent never to book below the

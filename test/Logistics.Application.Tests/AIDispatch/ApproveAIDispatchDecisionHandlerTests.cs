@@ -21,7 +21,7 @@ public class ApproveAIDispatchDecisionHandlerTests
 
         sut = new ApproveAIDispatchDecisionHandler(
             ctx.TenantUow, ctx.DispatchGuard(), ctx.Authorization, ctx.Execution, ctx.Notes,
-            ctx.CurrentUser, broadcastService);
+            ctx.CurrentUser, ctx.RunContext, broadcastService);
     }
 
     [Fact]

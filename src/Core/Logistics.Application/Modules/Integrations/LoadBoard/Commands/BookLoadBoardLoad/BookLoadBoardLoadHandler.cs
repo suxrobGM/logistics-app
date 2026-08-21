@@ -76,6 +76,18 @@ internal sealed class BookLoadBoardLoadHandler(
             return Result<LoadBoardBookingResultDto>.Fail(creditGate.Error!, creditGate.ErrorCode!);
         }
 
+        var negotiation = await tenantUow.Repository<RateNegotiation>().GetAsync(
+            n => n.LoadBoardListingId == listing.Id &&
+                 (n.Status == RateNegotiationStatus.AwaitingBroker ||
+                  n.Status == RateNegotiationStatus.BrokerReplied), ct);
+
+        var negotiatedRateCheck = CheckNegotiatedRate(req.NegotiatedTotalRate, negotiation);
+        if (!negotiatedRateCheck.IsSuccess)
+        {
+            return Result<LoadBoardBookingResultDto>.Fail(
+                negotiatedRateCheck.Error!, negotiatedRateCheck.ErrorCode!);
+        }
+
         // Get or create customer
         Customer? customer;
         if (req.CustomerId.HasValue)
@@ -134,7 +146,7 @@ internal sealed class BookLoadBoardLoadHandler(
         var load = Load.Create(
             name: $"Load Board - {listing.BrokerName ?? listing.ProviderType.ToString()}",
             type: loadType,
-            deliveryCost: listing.TotalRate?.Amount ?? 0,
+            deliveryCost: req.NegotiatedTotalRate ?? listing.TotalRate?.Amount ?? 0,
             originAddress: listing.OriginAddress,
             originLocation: listing.OriginLocation,
             destinationAddress: listing.DestinationAddress,
@@ -157,6 +169,9 @@ internal sealed class BookLoadBoardLoadHandler(
         listing.LoadId = load.Id;
         listing.Notes = req.Notes;
 
+        // Booking the listing settles any open negotiation on it, whatever rate it ends at.
+        negotiation?.MarkAccepted(load.Id);
+
         await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation(
@@ -170,5 +185,33 @@ internal sealed class BookLoadBoardLoadHandler(
             CreatedLoadId = load.Id,
             CreatedLoadNumber = load.Number
         });
+    }
+
+    /// <summary>
+    /// A negotiated rate is only meaningful against the thread that produced it, and it may never
+    /// undercut the floor that thread opened at - the floor snapshot, not a fresh lookup, since the
+    /// lane floor may have moved since the offer went out.
+    /// </summary>
+    private static Result CheckNegotiatedRate(decimal? negotiatedRate, RateNegotiation? negotiation)
+    {
+        if (negotiatedRate is not { } rate)
+        {
+            return Result.Ok();
+        }
+
+        if (negotiation is null)
+        {
+            return Result.Fail(
+                "There is no open rate negotiation on this listing, so there is no negotiated rate to book at.");
+        }
+
+        if (negotiation.FloorTotalRate is { } floor && rate < floor.Amount)
+        {
+            return Result.Fail(
+                $"The negotiated rate {rate:N2} is below the floor of {floor.Amount:N2} this negotiation opened against.",
+                ErrorCodes.NegotiationBelowFloor);
+        }
+
+        return Result.Ok();
     }
 }

@@ -62,6 +62,7 @@ internal sealed class AgentTurnService(
         }
 
         runContext.SetTriggeredBy(request.TriggeredByUserId);
+        runContext.SetConversation(conversation.Id);
 
         var session = new AgentSession
         {

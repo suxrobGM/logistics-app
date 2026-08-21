@@ -36,6 +36,7 @@ internal sealed class AIDispatchConversationBuilder(
         var enabledFeatures = setup.EnabledFeatures;
         var hasLoadBoard = enabledFeatures.Contains(TenantFeature.LoadBoard);
         var hasIntermodal = enabledFeatures.Contains(TenantFeature.IntermodalContainers);
+        var hasRateNegotiation = hasLoadBoard && enabledFeatures.Contains(TenantFeature.AIRateNegotiation);
 
         var policy = await GetLearnedPolicyAsync(ct);
         var systemPrompt = AIDispatchSystemPrompt.Build(new(companyName)
@@ -44,6 +45,7 @@ internal sealed class AIDispatchConversationBuilder(
             OperatingMode = tenant.Settings.OperatingMode,
             HasLoadBoardIntegration = hasLoadBoard,
             HasIntermodal = hasIntermodal,
+            HasRateNegotiation = hasRateNegotiation,
             Policy = policy
         });
         // No caller permissions: a dispatch turn is gated by the endpoint's policy, not per tool.

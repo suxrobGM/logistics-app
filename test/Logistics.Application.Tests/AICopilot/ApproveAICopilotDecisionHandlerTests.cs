@@ -23,7 +23,8 @@ public class ApproveAICopilotDecisionHandlerTests
 
         sut = new ApproveAICopilotDecisionHandler(
             ctx.TenantUow, ctx.CopilotGuard, ctx.Authorization, ctx.Execution, ctx.Notes,
-            ctx.CurrentUser, broadcastService, Options.Create(new LlmOptions { BypassAIGate = true }));
+            ctx.CurrentUser, ctx.RunContext, broadcastService,
+            Options.Create(new LlmOptions { BypassAIGate = true }));
     }
 
     [Fact]

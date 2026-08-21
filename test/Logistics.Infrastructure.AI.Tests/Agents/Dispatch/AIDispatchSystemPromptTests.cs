@@ -61,6 +61,28 @@ public class AIDispatchSystemPromptTests
         Assert.Contains("search_loadboard", prompt);
     }
 
+    [Fact]
+    public void Build_WithoutRateNegotiation_ExcludesNegotiationTools()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(
+            new("Fleet") { HasLoadBoardIntegration = true, HasRateNegotiation = false });
+
+        Assert.DoesNotContain("propose_counter_offer", prompt);
+        Assert.DoesNotContain("get_rate_floor", prompt);
+    }
+
+    [Fact]
+    public void Build_WithRateNegotiation_ExplainsFloorAndUntrustedBrokerText()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(
+            new("Fleet") { HasLoadBoardIntegration = true, HasRateNegotiation = true });
+
+        Assert.Contains("get_rate_floor", prompt);
+        Assert.Contains("propose_counter_offer", prompt);
+        Assert.Contains("negotiated_total_rate", prompt);
+        Assert.Contains("untrusted text", prompt);
+    }
+
     #region Conversation & scope
 
     [Fact]

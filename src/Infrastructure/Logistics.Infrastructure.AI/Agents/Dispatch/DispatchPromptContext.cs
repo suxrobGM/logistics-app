@@ -25,6 +25,12 @@ internal sealed record DispatchPromptContext(string CompanyName)
     /// </summary>
     public bool HasIntermodal { get; init; }
 
+    /// <summary>
+    /// Whether the tenant has <c>TenantFeature.AIRateNegotiation</c> AND a load board. The section
+    /// names negotiation tools that only exist alongside listings to negotiate on.
+    /// </summary>
+    public bool HasRateNegotiation { get; init; }
+
     /// <summary>The tenant's learned dispatch policy, or null to omit the section.</summary>
     public LearnedDispatchPolicy? Policy { get; init; }
 

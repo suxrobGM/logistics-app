@@ -207,7 +207,8 @@ public class AgentToolRegistryTests
             .OrderBy(n => n);
 
         Assert.Equal(
-            ["assign_load_to_truck", "book_loadboard_load", "create_trip", "dispatch_trip"],
+            ["assign_load_to_truck", "book_loadboard_load", "create_trip", "dispatch_trip",
+             "propose_counter_offer"],
             writeTools);
     }
 

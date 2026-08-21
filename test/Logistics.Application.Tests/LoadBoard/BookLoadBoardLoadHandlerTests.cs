@@ -31,6 +31,8 @@ public class BookLoadBoardLoadHandlerTests
         Substitute.For<ITenantRepository<Customer, Guid>>();
     private readonly ITenantRepository<Load, Guid> loadRepo =
         Substitute.For<ITenantRepository<Load, Guid>>();
+    private readonly ITenantRepository<RateNegotiation, Guid> negotiationRepo =
+        Substitute.For<ITenantRepository<RateNegotiation, Guid>>();
 
     private readonly Tenant tenant;
     private readonly LoadBoardListing listing;
@@ -65,6 +67,7 @@ public class BookLoadBoardLoadHandlerTests
         tenantUow.Repository<Employee>().Returns(employeeRepo);
         tenantUow.Repository<Customer>().Returns(customerRepo);
         tenantUow.Repository<Load>().Returns(loadRepo);
+        tenantUow.Repository<RateNegotiation>().Returns(negotiationRepo);
         tenantUow.GetCurrentTenant().Returns(tenant);
 
         listingRepo.GetByIdAsync(listing.Id, Arg.Any<CancellationToken>()).Returns(listing);
@@ -204,6 +207,64 @@ public class BookLoadBoardLoadHandlerTests
         var result = await sut.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
+    }
+
+    #endregion
+
+    #region Negotiated rate
+
+    private RateNegotiation SetupNegotiation(decimal? floorTotal)
+    {
+        var negotiation = RateNegotiation.Create(listing.Id, "broker@example.com");
+        negotiation.FloorTotalRate = floorTotal.HasValue
+            ? new Money { Amount = floorTotal.Value, Currency = "USD" }
+            : null;
+
+        negotiationRepo.GetAsync(
+                Arg.Any<System.Linq.Expressions.Expression<Func<RateNegotiation, bool>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns(negotiation);
+
+        return negotiation;
+    }
+
+    [Fact]
+    public async Task Handle_NegotiatedRateWithoutThread_Fails()
+    {
+        command.NegotiatedTotalRate = 2200m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+    }
+
+    [Fact]
+    public async Task Handle_NegotiatedRateBelowThreadFloor_Fails()
+    {
+        SetupNegotiation(floorTotal: 2000m);
+        command.NegotiatedTotalRate = 1900m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
+        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+    }
+
+    [Fact]
+    public async Task Handle_NegotiatedRateAtOrAboveFloor_BooksAndAcceptsThread()
+    {
+        var negotiation = SetupNegotiation(floorTotal: 2000m);
+        command.NegotiatedTotalRate = 2200m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(RateNegotiationStatus.Accepted, negotiation.Status);
+        Assert.Equal(result.Value!.CreatedLoadId, negotiation.LoadId);
+        await loadRepo.Received(1).AddAsync(
+            Arg.Is<Load>(l => l.DeliveryCost.Amount == 2200m), Arg.Any<CancellationToken>());
     }
 
     #endregion

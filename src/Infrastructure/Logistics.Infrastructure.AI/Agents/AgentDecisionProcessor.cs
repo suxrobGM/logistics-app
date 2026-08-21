@@ -148,6 +148,7 @@ internal sealed class AgentDecisionProcessor(
         decision.TripId = input.GetGuid("trip_id") ?? decision.TripId;
         decision.InvoiceId = input.GetGuid("invoice_id") ?? decision.InvoiceId;
         decision.CustomerId = input.GetGuid("customer_id") ?? decision.CustomerId;
+        decision.NegotiationId = input.GetGuid("negotiation_id") ?? decision.NegotiationId;
     }
 
     private async Task BroadcastDecisionAsync(AgentDecision decision, ToolCallContext context)
