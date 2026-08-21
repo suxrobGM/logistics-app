@@ -34,7 +34,7 @@ internal sealed class SearchLoadBoardTool(IMediator mediator)
     {
         RequiredFeature = TenantFeature.LoadBoard,
         RequiredPermission = Permission.Dispatch.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

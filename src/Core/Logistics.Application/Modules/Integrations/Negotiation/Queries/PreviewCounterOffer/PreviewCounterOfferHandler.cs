@@ -70,9 +70,9 @@ internal sealed class PreviewCounterOfferHandler(
     }
 
     /// <summary>
-    /// Read with the same lenient accessors the tool wrote the input with. A strict reader rejects
-    /// the numbers-as-strings the models actually emit, so the preview would fail on offers the
-    /// tool itself accepted.
+    /// <c>ToolInput</c> is the model's own JSON, not what the tool bound, so it is read leniently.
+    /// A strict reader rejects the numbers-as-strings the models actually emit, and the preview
+    /// would then fail on offers the tool itself accepted.
     /// </summary>
     private static bool TryReadInput(string toolInput, out CounterOfferInput input)
     {

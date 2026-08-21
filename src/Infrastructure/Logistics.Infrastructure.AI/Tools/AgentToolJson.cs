@@ -91,6 +91,21 @@ internal static class AgentToolJson
     }
 
     /// <summary>
+    /// The wire key of every <see cref="AgentEntityIdAttribute"/> property, read off the same
+    /// contract the schema and the binder use - so the key cannot be spelled one way here and
+    /// another there.
+    /// </summary>
+    public static IReadOnlyList<(AgentEntityKind Kind, string Key)> EntityIdsIn(Type inputType) =>
+        [.. Options.GetTypeInfo(inputType).Properties
+            .Select(p => (
+                Marker: p.AttributeProvider?
+                    .GetCustomAttributes(typeof(AgentEntityIdAttribute), inherit: true)
+                    .FirstOrDefault() as AgentEntityIdAttribute,
+                p.Name))
+            .Where(p => p.Marker is not null)
+            .Select(p => (p.Marker!.Kind, p.Name))];
+
+    /// <summary>
     /// Checked before deserializing, because the exception for a missing <c>required</c> member does
     /// not name it in terms the model can act on.
     /// </summary>

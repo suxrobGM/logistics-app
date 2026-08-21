@@ -22,9 +22,11 @@ internal sealed class SearchLoadsTool(IMediator mediator)
         public LoadType[]? Types { get; init; }
 
         [Description("Filter by customer ID (GUID) - find it with search_customers")]
+        [AgentEntityId(AgentEntityKind.Customer)]
         public Guid? CustomerId { get; init; }
 
         [Description("Filter by assigned truck ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Truck)]
         public Guid? TruckId { get; init; }
 
         [Description("Loads created on or after this date (ISO 8601)")]
@@ -42,8 +44,10 @@ internal sealed class SearchLoadsTool(IMediator mediator)
         "Search loads by status, type, customer, truck, date range, or free text. Returns up to 20 loads per page with number, status, origin/destination, delivery cost, and customer. Use for load history questions ('delivered loads last week', 'loads for customer X').")
     {
         RequiredFeature = TenantFeature.Loads,
-        RequiredPermission = Permission.Load.View
+        RequiredPermission = Permission.Load.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
     };
+
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {

@@ -14,7 +14,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
         "Get all Draft loads that are not assigned to any trip. Returns load ID, name, type, origin, destination, distance, delivery cost, and customer.")
     {
         RequiredPermission = Permission.Dispatch.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(NoToolInput input, CancellationToken ct)

@@ -24,8 +24,10 @@ internal sealed class GetExpenseStatsTool(IMediator mediator)
         "Expense rollups for a date range: totals by approval status, by type, by company/truck category, 12-month trend, and top trucks by spend. Prefer this over search_expenses for 'how much did we spend on X' questions.")
     {
         RequiredFeature = TenantFeature.Expenses,
-        RequiredPermission = Permission.Expense.View
+        RequiredPermission = Permission.Expense.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
     };
+
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {

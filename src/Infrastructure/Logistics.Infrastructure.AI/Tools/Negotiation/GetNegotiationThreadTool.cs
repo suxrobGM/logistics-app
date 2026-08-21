@@ -18,6 +18,7 @@ internal sealed class GetNegotiationThreadTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("The negotiation ID (GUID) from get_rate_floor or propose_counter_offer")]
+        [AgentEntityId(AgentEntityKind.Negotiation)]
         public required Guid NegotiationId { get; init; }
     }
 
@@ -27,7 +28,7 @@ internal sealed class GetNegotiationThreadTool(IMediator mediator)
     {
         RequiredFeature = TenantFeature.AIRateNegotiation,
         RequiredPermission = Permission.Negotiation.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

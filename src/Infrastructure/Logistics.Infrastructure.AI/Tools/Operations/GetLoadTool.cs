@@ -13,6 +13,7 @@ internal sealed class GetLoadTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("The load ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Load)]
         public required Guid LoadId { get; init; }
     }
 
@@ -21,8 +22,10 @@ internal sealed class GetLoadTool(IMediator mediator)
         "Get one load by ID: status, addresses, delivery cost, customer (with email), assigned truck, delivery timestamps, and whether it already has an invoice. ALWAYS call this before create_load_invoice - it supplies the delivery cost and shows whether the load is Delivered.")
     {
         RequiredFeature = TenantFeature.Loads,
-        RequiredPermission = Permission.Load.View
+        RequiredPermission = Permission.Load.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
     };
+
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {

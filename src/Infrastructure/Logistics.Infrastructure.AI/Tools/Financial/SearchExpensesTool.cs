@@ -19,6 +19,7 @@ internal sealed class SearchExpensesTool(IMediator mediator)
         public ExpenseStatus? Status { get; init; }
 
         [Description("Filter by truck ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Truck)]
         public Guid? TruckId { get; init; }
 
         [Description("Expenses on or after this date (ISO 8601)")]
@@ -39,8 +40,10 @@ internal sealed class SearchExpensesTool(IMediator mediator)
         "List expense line items filtered by type (Company, Truck, BodyShop), status, truck, date range, or vendor/notes text. Returns up to 20 per page. There is no category filter - for spend-by-category questions use get_expense_stats instead.")
     {
         RequiredFeature = TenantFeature.Expenses,
-        RequiredPermission = Permission.Expense.View
+        RequiredPermission = Permission.Expense.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
     };
+
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {

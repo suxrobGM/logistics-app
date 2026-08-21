@@ -13,6 +13,7 @@ internal sealed class SendInvoiceTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("The invoice ID (GUID) to send")]
+        [AgentEntityId(AgentEntityKind.Invoice)]
         public required Guid InvoiceId { get; init; }
 
         [Description("Recipient email address - use the customer's email from get_load or get_invoice unless the user gives another")]

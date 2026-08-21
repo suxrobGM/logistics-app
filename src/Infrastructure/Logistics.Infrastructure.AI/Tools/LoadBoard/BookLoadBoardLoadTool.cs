@@ -16,6 +16,7 @@ internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext
         public required Guid ListingId { get; init; }
 
         [Description("The truck ID (GUID) to assign the booked load to")]
+        [AgentEntityId(AgentEntityKind.Truck)]
         public required Guid TruckId { get; init; }
 
         [Description("Optional customer name, when booking creates a new customer from the broker")]
@@ -35,11 +36,9 @@ internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext
         RequiredFeature = TenantFeature.LoadBoard,
         RequiredPermission = Permission.Dispatch.Manage,
         DecisionType = AgentDecisionType.BookLoadBoardLoad,
-        DispatchAgent = true,
-        // The booking is attributed to a real dispatcher, so a surface with no human behind it
-        // cannot offer this at all. The model is never asked for the user id - it has no reliable
-        // source for one.
-        RequiresHumanOrigin = true
+        // No MCP: the booking is attributed to a real dispatcher, and an API key names a tenant. The
+        // model is never asked for the user id - it has no reliable source for one.
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

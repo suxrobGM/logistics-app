@@ -24,7 +24,7 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow)
         "Check if a driver can feasibly complete a trip given the estimated driving distance. Returns whether the driver has enough HOS hours remaining and details about any constraints.")
     {
         RequiredPermission = Permission.Dispatch.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

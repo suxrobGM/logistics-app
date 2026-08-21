@@ -31,7 +31,7 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow)
     {
         RequiredFeature = TenantFeature.IntermodalContainers,
         RequiredPermission = Permission.Dispatch.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

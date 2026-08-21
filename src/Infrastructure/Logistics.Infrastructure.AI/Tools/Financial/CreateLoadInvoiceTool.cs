@@ -15,6 +15,7 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("The load ID (GUID) to invoice")]
+        [AgentEntityId(AgentEntityKind.Load)]
         public required Guid LoadId { get; init; }
 
         [Description("Brief explanation of why this invoice should be created")]

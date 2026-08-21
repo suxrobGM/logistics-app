@@ -23,9 +23,19 @@ internal static class AgentToolCatalog
     private static readonly Dictionary<string, AgentToolDefinition> DefinitionsByName =
         Entries.ToDictionary(e => e.Definition.Name, e => e.Definition);
 
+    private static readonly Dictionary<string, IReadOnlyList<(AgentEntityKind Kind, string Key)>> EntityIdsByName =
+        Entries.ToDictionary(e => e.Definition.Name, e => AgentToolJson.EntityIdsIn(InputTypeOf(e.Type)));
+
     public static Type? ImplementationFor(string name) => TypesByName.GetValueOrDefault(name);
 
     public static AgentToolDefinition? DefinitionFor(string name) => DefinitionsByName.GetValueOrDefault(name);
+
+    /// <summary>
+    /// The entity links a call to this tool can fill on its decision row. Empty for an unknown
+    /// name, so a hallucinated tool records nothing rather than throwing.
+    /// </summary>
+    public static IReadOnlyList<(AgentEntityKind Kind, string Key)> EntityIdsFor(string name) =>
+        EntityIdsByName.GetValueOrDefault(name, []);
 
     private static (Type Type, AgentToolDefinition Definition)[] Discover() =>
         [.. typeof(AgentToolCatalog).Assembly.GetTypes()

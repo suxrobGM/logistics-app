@@ -30,7 +30,7 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow)
         "Check HOS feasibility for multiple driver-distance pairs in a single call. More efficient than calling check_hos_feasibility multiple times. Returns feasibility result for each pair.")
     {
         RequiredPermission = Permission.Dispatch.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

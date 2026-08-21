@@ -39,21 +39,25 @@ public record AgentToolDefinition(string Name, string Description)
     public AgentDecisionType DecisionType { get; init; } = AgentDecisionType.Query;
 
     /// <summary>
-    /// Whether the dispatch agent's catalogue includes this tool. False by default so copilot-only
-    /// tools (invoicing, payments) never surface in dispatch conversations. The copilot is unaffected.
+    /// Which catalogues publish this tool. Defaults to the copilot alone, so a tool nobody widened
+    /// is under-exposed rather than over-exposed - the dispatch run and MCP both call writes with no
+    /// individual behind them, in different ways, and each has to be asked for by name.
     /// </summary>
-    public bool DispatchAgent { get; init; }
+    public AgentSurfaces Surfaces { get; init; } = AgentSurfaces.Copilot;
 
     /// <summary>
-    /// The tool attributes its work to the user who triggered the run. An MCP key authenticates a
-    /// tenant rather than a person, so these stay out of that catalogue entirely.
+    /// The tool can overwrite or undo something the caller did not name. MCP clients read this to
+    /// decide whether a call may be auto-approved, so it belongs to the tool rather than being
+    /// asserted once for the whole catalogue.
     /// </summary>
-    public bool RequiresHumanOrigin { get; init; }
+    public bool Destructive { get; init; }
 
     /// <summary>
-    /// Write tools mutate state: every call becomes a Suggested decision awaiting dispatcher
-    /// approval, never executed inline. Derived from <see cref="DecisionType"/> rather than declared
-    /// separately, so the two cannot disagree - naming a tool's audit type *is* declaring it a write.
+    /// Write tools mutate state. On the agent surfaces every call becomes a Suggested decision
+    /// awaiting approval; over MCP there is no approval step, which is why a write must name
+    /// <see cref="AgentSurfaces.Mcp"/> to get there. Derived from <see cref="DecisionType"/> rather
+    /// than declared separately, so the two cannot disagree - naming a tool's audit type *is*
+    /// declaring it a write.
     /// </summary>
     public bool IsWrite => DecisionType != AgentDecisionType.Query;
 }

@@ -29,10 +29,18 @@ public interface IAgentToolRegistry
         IReadOnlySet<string> callerPermissions);
 
     /// <summary>
-    /// The catalogue an MCP client is shown: filtered on features, minus the tools that need a
-    /// human origin. Permissions do not apply - an API key authenticates a tenant, not a person.
+    /// The catalogue an MCP client is shown: the tools that name <see cref="AgentSurfaces.Mcp"/>,
+    /// filtered on features. Permissions do not apply - an API key authenticates a tenant, not a
+    /// person.
     /// </summary>
     IReadOnlyList<AgentToolDefinition> GetMcpTools(IReadOnlySet<TenantFeature> enabledFeatures);
+
+    /// <summary>
+    /// Why MCP must refuse to run <paramref name="toolName"/>, or null if it may. The catalogue
+    /// already hides a denied tool, but a client can call any name it likes, so both paths ask this
+    /// one question rather than each applying the rules itself.
+    /// </summary>
+    string? McpDenialReason(string toolName, IReadOnlySet<TenantFeature> enabledFeatures);
 
     /// <summary>Null for unknown (e.g. hallucinated) tool names.</summary>
     AgentToolDefinition? TryGetDefinition(string name);

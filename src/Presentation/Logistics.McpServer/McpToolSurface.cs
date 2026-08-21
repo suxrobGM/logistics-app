@@ -33,22 +33,12 @@ internal sealed class McpToolSurface(
 
     public async ValueTask<CallToolResult> CallToolAsync(CallToolRequestParams? request, CancellationToken ct)
     {
-        if (request?.Name is not { Length: > 0 } name || registry.TryGetDefinition(name) is not { } definition)
-            return Error($"Unknown tool: {request?.Name}");
+        if (request is not { Name: { Length: > 0 } name })
+            return Error("Unknown tool: the call named none.");
 
-        // The catalogue hides these, but a client can call any name it likes.
-        if (definition.RequiresHumanOrigin)
-        {
-            return Error(
-                $"The {name} tool is not available over MCP: it records the person responsible for "
-                + "the action, and an API key identifies a tenant rather than a user.");
-        }
-
-        if (definition.RequiredFeature is { } feature &&
-            !await featureService.IsFeatureEnabledAsync(TenantId, feature))
-        {
-            return Error($"The {feature.GetDescription()} feature is not enabled for this tenant.");
-        }
+        // The catalogue hides a denied tool, but a client can call any name it likes.
+        if (registry.McpDenialReason(name, await EnabledFeaturesAsync()) is { } reason)
+            return Error(reason);
 
         var arguments = request.Arguments is { } args ? JsonSerializer.Serialize(args) : "{}";
         var result = await executor.ExecuteToolAsync(name, arguments, ct);
@@ -70,8 +60,7 @@ internal sealed class McpToolSurface(
             Annotations = new ToolAnnotations
             {
                 ReadOnlyHint = !definition.IsWrite,
-                // Writes create or send; nothing overwrites or deletes what the client did not name.
-                DestructiveHint = false,
+                DestructiveHint = definition.Destructive,
                 OpenWorldHint = false
             }
         });

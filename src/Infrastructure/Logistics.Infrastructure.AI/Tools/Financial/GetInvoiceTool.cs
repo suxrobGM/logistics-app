@@ -13,6 +13,7 @@ internal sealed class GetInvoiceTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("The invoice ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Invoice)]
         public required Guid InvoiceId { get; init; }
     }
 
@@ -21,8 +22,10 @@ internal sealed class GetInvoiceTool(IMediator mediator)
         "Get one invoice by ID: status, totals, amount paid, due date, send history, customer (with email), and the load it bills.")
     {
         RequiredFeature = TenantFeature.Invoices,
-        RequiredPermission = Permission.Invoice.View
+        RequiredPermission = Permission.Invoice.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
     };
+
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {

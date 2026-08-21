@@ -13,9 +13,11 @@ internal sealed class GetInvoicesTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("Filter by load ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Load)]
         public Guid? LoadId { get; init; }
 
         [Description("Filter by customer ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Customer)]
         public Guid? CustomerId { get; init; }
 
         [Description("Filter by invoice status")]
@@ -39,8 +41,10 @@ internal sealed class GetInvoicesTool(IMediator mediator)
         "List load invoices filtered by load, customer, status, overdue flag, or date range. Returns up to 20 per page with number, status, total, due date, and customer.")
     {
         RequiredFeature = TenantFeature.Invoices,
-        RequiredPermission = Permission.Invoice.View
+        RequiredPermission = Permission.Invoice.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
     };
+
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {

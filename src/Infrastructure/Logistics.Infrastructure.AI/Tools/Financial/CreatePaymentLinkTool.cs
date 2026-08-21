@@ -13,6 +13,7 @@ internal sealed class CreatePaymentLinkTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("The invoice ID (GUID) to create the link for")]
+        [AgentEntityId(AgentEntityKind.Invoice)]
         public required Guid InvoiceId { get; init; }
 
         [Description("Brief explanation of why this link should be created")]

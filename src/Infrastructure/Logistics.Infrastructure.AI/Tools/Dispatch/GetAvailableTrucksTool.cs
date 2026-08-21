@@ -15,7 +15,7 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
         "Get all trucks with Available status along with their driver info, HOS (Hours of Service) status, and a fleet summary (total trucks, available trucks, active trips, drivers in violation). Returns truck ID, number, type, current location, driver name, and remaining driving/on-duty hours.")
     {
         RequiredPermission = Permission.Dispatch.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(NoToolInput input, CancellationToken ct)

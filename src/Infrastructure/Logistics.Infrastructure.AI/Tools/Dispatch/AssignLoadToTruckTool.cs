@@ -13,9 +13,11 @@ internal sealed class AssignLoadToTruckTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("The load ID (GUID) to assign")]
+        [AgentEntityId(AgentEntityKind.Load)]
         public required Guid LoadId { get; init; }
 
         [Description("The truck ID (GUID) to assign the load to")]
+        [AgentEntityId(AgentEntityKind.Truck)]
         public required Guid TruckId { get; init; }
 
         [Description("Brief explanation of why this assignment is optimal")]
@@ -28,7 +30,7 @@ internal sealed class AssignLoadToTruckTool(IMediator mediator)
     {
         RequiredPermission = Permission.Dispatch.Manage,
         DecisionType = AgentDecisionType.AssignLoad,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

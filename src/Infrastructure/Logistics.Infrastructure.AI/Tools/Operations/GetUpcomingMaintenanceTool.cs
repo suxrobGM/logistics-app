@@ -16,6 +16,7 @@ internal sealed class GetUpcomingMaintenanceTool(IMediator mediator)
         public int? DaysAhead { get; init; }
 
         [Description("Limit to one truck (GUID)")]
+        [AgentEntityId(AgentEntityKind.Truck)]
         public Guid? TruckId { get; init; }
 
         [Description("Include already-overdue schedules (default true)")]
@@ -27,8 +28,10 @@ internal sealed class GetUpcomingMaintenanceTool(IMediator mediator)
         "Trucks with maintenance due within the next N days (default 30), including overdue items. Date-based schedules only: mileage and engine-hour intervals are NOT evaluated - say so when answering maintenance questions.")
     {
         RequiredFeature = TenantFeature.Maintenance,
-        RequiredPermission = Permission.Maintenance.View
+        RequiredPermission = Permission.Maintenance.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
     };
+
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {

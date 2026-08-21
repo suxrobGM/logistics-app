@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Tools;
@@ -188,9 +189,9 @@ public class AgentToolRegistryTests
     {
         var dispatchTools = sut.GetDispatchAgentTools(EveryFeature);
 
-        Assert.All(dispatchTools, t => Assert.True(t.DispatchAgent));
+        Assert.All(dispatchTools, t => Assert.True(t.Surfaces.HasFlag(AgentSurfaces.Dispatch)));
         Assert.Equal(
-            AgentToolCatalog.Definitions.Where(t => t.DispatchAgent).Select(t => t.Name),
+            AgentToolCatalog.Definitions.Where(t => t.Surfaces.HasFlag(AgentSurfaces.Dispatch)).Select(t => t.Name),
             dispatchTools.Select(t => t.Name));
     }
 
@@ -202,7 +203,7 @@ public class AgentToolRegistryTests
     public void Catalog_DispatchAgentWriteToolsAreAKnownSet()
     {
         var writeTools = AgentToolCatalog.Definitions
-            .Where(t => t is { DispatchAgent: true, IsWrite: true })
+            .Where(t => t.IsWrite && t.Surfaces.HasFlag(AgentSurfaces.Dispatch))
             .Select(t => t.Name)
             .OrderBy(n => n);
 
@@ -239,17 +240,48 @@ public class AgentToolRegistryTests
     #region MCP surface
 
     /// <summary>
-    /// An MCP key authenticates a tenant, so a tool that records who is responsible has no one to
-    /// name - it must not reach the catalogue in the first place.
+    /// An MCP call runs unattended from an API key, with nobody to attribute it to and no approval
+    /// step. Reads are fine; the writes that email a third party, move money or record a responsible
+    /// person are not, and this pins that set rather than leaving it to a forgotten flag.
     /// </summary>
     [Fact]
-    public void GetMcpTools_DropsHumanOriginTools_AndKeepsTheRest()
+    public void GetMcpTools_WriteToolsAreAKnownSet()
+    {
+        var writes = sut.GetMcpTools(EveryFeature)
+            .Where(t => t.IsWrite)
+            .Select(t => t.Name)
+            .OrderBy(n => n, StringComparer.Ordinal);
+
+        Assert.Equal(["assign_load_to_truck", "create_trip", "dispatch_trip"], writes);
+    }
+
+    [Fact]
+    public void GetMcpTools_PublishesReadsTheAgentsCannotSee()
     {
         var names = sut.GetMcpTools(EveryFeature).Select(t => t.Name).ToHashSet();
 
-        Assert.DoesNotContain("book_loadboard_load", names);
         Assert.Contains("search_loadboard", names);
         Assert.Contains("get_unassigned_loads", names);
+        Assert.Contains("search_loads", names);
+    }
+
+    /// <summary>
+    /// A client can call any name it likes, so the refusal has to hold for a tool the catalogue
+    /// never showed it.
+    /// </summary>
+    [Fact]
+    public void McpDenialReason_MatchesWhatTheCatalogueHides()
+    {
+        var published = sut.GetMcpTools(EveryFeature).Select(t => t.Name).ToHashSet();
+
+        Assert.All(AgentToolCatalog.Definitions, t =>
+            Assert.Equal(published.Contains(t.Name), sut.McpDenialReason(t.Name, EveryFeature) is null));
+    }
+
+    [Fact]
+    public void McpDenialReason_UnknownName()
+    {
+        Assert.NotNull(sut.McpDenialReason("hallucinated_tool", EveryFeature));
     }
 
     [Fact]

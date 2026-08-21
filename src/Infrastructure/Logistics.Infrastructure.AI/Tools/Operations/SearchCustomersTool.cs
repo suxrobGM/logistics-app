@@ -21,8 +21,10 @@ internal sealed class SearchCustomersTool(IMediator mediator)
         "Search customers by name. The match is a case-sensitive substring - if nothing is found, retry with a shorter fragment (e.g. 'Acme' instead of 'acme logistics'). Returns up to 20 customers with ID, name, email, and phone.")
     {
         RequiredFeature = TenantFeature.Customers,
-        RequiredPermission = Permission.Customer.View
+        RequiredPermission = Permission.Customer.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
     };
+
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {

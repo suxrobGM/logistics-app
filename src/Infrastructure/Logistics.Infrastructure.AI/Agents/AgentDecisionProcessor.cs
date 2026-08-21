@@ -138,17 +138,30 @@ internal sealed class AgentDecisionProcessor(
         };
     }
 
+    /// <summary>
+    /// The keys come from the tool's own input type, so renaming a property moves the audit link
+    /// with it rather than dropping it here without a word.
+    /// </summary>
     private static void ExtractEntityIds(AgentDecision decision, JsonNode? input)
     {
         if (input is null)
             return;
 
-        decision.LoadId = input.GetGuid("load_id") ?? decision.LoadId;
-        decision.TruckId = input.GetGuid("truck_id") ?? decision.TruckId;
-        decision.TripId = input.GetGuid("trip_id") ?? decision.TripId;
-        decision.InvoiceId = input.GetGuid("invoice_id") ?? decision.InvoiceId;
-        decision.CustomerId = input.GetGuid("customer_id") ?? decision.CustomerId;
-        decision.NegotiationId = input.GetGuid("negotiation_id") ?? decision.NegotiationId;
+        foreach (var (kind, key) in AgentToolCatalog.EntityIdsFor(decision.ToolName!))
+        {
+            if (input.GetGuid(key) is not { } id)
+                continue;
+
+            switch (kind)
+            {
+                case AgentEntityKind.Load: decision.LoadId = id; break;
+                case AgentEntityKind.Truck: decision.TruckId = id; break;
+                case AgentEntityKind.Trip: decision.TripId = id; break;
+                case AgentEntityKind.Invoice: decision.InvoiceId = id; break;
+                case AgentEntityKind.Customer: decision.CustomerId = id; break;
+                case AgentEntityKind.Negotiation: decision.NegotiationId = id; break;
+            }
+        }
     }
 
     private async Task BroadcastDecisionAsync(AgentDecision decision, ToolCallContext context)

@@ -19,6 +19,7 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("The customer ID (GUID) - drives jurisdiction + reverse-charge")]
+        [AgentEntityId(AgentEntityKind.Customer)]
         public required Guid CustomerId { get; init; }
 
         [Description("ISO-4217 currency code, e.g. 'USD' or 'EUR'")]
@@ -51,7 +52,7 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator)
         "Compute VAT / sales tax / GST for a hypothetical set of line items without persisting an invoice. Returns per-line tax amount, aggregate breakdown by jurisdiction, and reverse-charge / not-collecting flags. Use when quoting a customer or sanity-checking that tax setup will work before creating the invoice. Read-only.")
     {
         RequiredPermission = Permission.Dispatch.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

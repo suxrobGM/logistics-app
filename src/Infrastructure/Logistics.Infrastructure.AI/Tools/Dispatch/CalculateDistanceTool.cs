@@ -27,7 +27,7 @@ internal sealed class CalculateDistanceTool : AgentTool<CalculateDistanceTool.In
         "Calculate the driving distance and estimated duration between two geographic points.")
     {
         RequiredPermission = Permission.Dispatch.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override Task<string> ExecuteAsync(Input input, CancellationToken ct)

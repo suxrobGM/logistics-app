@@ -22,7 +22,7 @@ internal sealed class GetRateFloorTool(IMediator mediator)
     {
         RequiredFeature = TenantFeature.AIRateNegotiation,
         RequiredPermission = Permission.Negotiation.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

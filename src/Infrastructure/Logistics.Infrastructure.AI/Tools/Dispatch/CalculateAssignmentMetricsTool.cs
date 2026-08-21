@@ -19,9 +19,11 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
     internal sealed record Candidate
     {
         [Description("The load ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Load)]
         public required Guid LoadId { get; init; }
 
         [Description("The truck ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Truck)]
         public required Guid TruckId { get; init; }
     }
 
@@ -47,7 +49,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
         "Calculate revenue per mile/km, deadhead ratio, and profitability for candidate truck-load pairs. Use this when multiple trucks are candidates for a load to pick the most profitable option.")
     {
         RequiredPermission = Permission.Dispatch.View,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

@@ -13,6 +13,7 @@ internal sealed class DispatchTripTool(IMediator mediator)
     internal sealed record Input
     {
         [Description("The trip ID (GUID) to dispatch")]
+        [AgentEntityId(AgentEntityKind.Trip)]
         public required Guid TripId { get; init; }
     }
 
@@ -22,7 +23,7 @@ internal sealed class DispatchTripTool(IMediator mediator)
     {
         RequiredPermission = Permission.Dispatch.Manage,
         DecisionType = AgentDecisionType.DispatchTrip,
-        DispatchAgent = true
+        Surfaces = AgentSurfaces.All
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

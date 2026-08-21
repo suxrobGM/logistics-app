@@ -94,6 +94,29 @@ public class AgentToolCatalogTests
         Assert.True(untyped.Count == 0, $"Properties with no type: {string.Join(", ", untyped)}");
     }
 
+    /// <summary>
+    /// An unmarked entity id costs nothing at the call and everything afterwards: the decision row
+    /// records no link, so the load or truck the agent acted on cannot be traced back to it, and
+    /// nothing anywhere fails.
+    /// </summary>
+    [Fact]
+    public void EntityIdInputs_AreMarkedForTheAuditTrail()
+    {
+        string[] linkKeys =
+            ["load_id", "truck_id", "trip_id", "invoice_id", "customer_id", "negotiation_id"];
+
+        var unmarked = AgentToolCatalog.Definitions
+            .SelectMany(d => ((JsonObject)d.InputSchema["properties"]!)
+                .Select(p => (Tool: d.Name, Key: p.Key)))
+            .Where(p => linkKeys.Contains(p.Key))
+            .Where(p => !AgentToolCatalog.EntityIdsFor(p.Tool).Any(e => e.Key == p.Key))
+            .Select(p => $"{p.Tool}.{p.Key}")
+            .ToList();
+
+        Assert.True(unmarked.Count == 0,
+            $"Entity ids with no [AgentEntityId]: {string.Join(", ", unmarked)}");
+    }
+
     /// <summary>Compared case-insensitively: search_loadboard is SearchLoadBoardTool.</summary>
     private static string ExpectedClassName(string toolName) =>
         toolName.Replace("_", "") + "Tool";

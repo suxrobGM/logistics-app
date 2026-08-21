@@ -35,7 +35,9 @@ internal sealed class ProposeCounterOfferTool(IMediator mediator, IAgentRunConte
         RequiredFeature = TenantFeature.AIRateNegotiation,
         RequiredPermission = Permission.Negotiation.Manage,
         DecisionType = AgentDecisionType.ProposeCounterOffer,
-        DispatchAgent = true
+        // No MCP: this emails a real broker. Off the agent surfaces there is no approval step and
+        // no conversation or decision to link the offer back to.
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
