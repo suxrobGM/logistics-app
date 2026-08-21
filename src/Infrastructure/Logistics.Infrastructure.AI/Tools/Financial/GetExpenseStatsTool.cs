@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Financial.Expenses.Queries;
 using Logistics.Domain.Primitives.Enums;
@@ -42,7 +41,7 @@ internal sealed class GetExpenseStatsTool(IMediator mediator)
             return ToolResult.Error(result.Error ?? "No expense data");
 
         var s = result.Value;
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             total_amount = s.TotalAmount,
             total_count = s.TotalCount,

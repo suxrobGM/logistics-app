@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
@@ -33,8 +32,6 @@ internal static class AgentToolJson
         TreatNullObliviousAsNonNullable = true,
         TransformSchemaNode = Describe
     };
-
-    private static readonly ConcurrentDictionary<Type, string[]> RequiredKeysByType = new();
 
     /// <summary>
     /// A tool's input schema: snake_case names, <c>[Description]</c> as the description, and
@@ -99,23 +96,15 @@ internal static class AgentToolJson
     /// </summary>
     private static List<string> MissingRequiredKeys(Type inputType, JsonNode input)
     {
-        var required = RequiredKeysByType.GetOrAdd(inputType, static type =>
-            SchemaFor(type)["required"] is JsonArray keys
-                ? [.. keys.Select(k => k!.GetValue<string>())]
-                : []);
-
-        if (required.Length == 0)
-            return [];
-
+        // Case-insensitive to match the binder, but not underscore-insensitive.
         var present = input is JsonObject obj
-            ? obj.Select(p => Normalize(p.Key)).ToHashSet()
-            : [];
+            ? obj.Select(p => p.Key).ToHashSet(StringComparer.OrdinalIgnoreCase)
+            : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        return [.. required.Where(key => !present.Contains(Normalize(key)))];
+        return [.. Options.GetTypeInfo(inputType).Properties
+            .Where(p => p.IsRequired && !present.Contains(p.Name))
+            .Select(p => p.Name)];
     }
-
-    /// <summary>Matches the binder: case-insensitive, but not underscore-insensitive.</summary>
-    private static string Normalize(string key) => key.ToLowerInvariant();
 
     private static JsonNode Describe(JsonSchemaExporterContext context, JsonNode schema)
     {

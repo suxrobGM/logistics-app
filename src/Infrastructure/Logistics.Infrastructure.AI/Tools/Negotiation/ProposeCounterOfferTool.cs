@@ -41,7 +41,7 @@ internal sealed class ProposeCounterOfferTool(IMediator mediator, IAgentRunConte
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(input.Message))
-            return ToolResult.Error("message is required - it is the paragraph the broker reads");
+            return ToolResult.Error("message is blank - it is the paragraph the broker reads.");
 
         // The broker address is never a model input: the handler reads it off the listing.
         var command = new ProposeCounterOfferCommand

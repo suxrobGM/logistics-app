@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Domain.Primitives.Enums;
@@ -34,7 +33,7 @@ internal sealed class GetInvoiceTool(IMediator mediator)
 
         var i = result.Value;
         var payments = i.Payments.ToList();
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             id = i.Id,
             number = i.Number,

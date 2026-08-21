@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Operations.Maintenance.Queries;
 using Logistics.Domain.Primitives.Enums;
@@ -56,6 +55,6 @@ internal sealed class GetUpcomingMaintenanceTool(IMediator mediator)
             days_until_due = s.DaysUntilDue
         });
 
-        return JsonSerializer.Serialize(new { schedules, count = result.Value.Count });
+        return ToolResult.Ok(new { schedules, count = result.Value.Count });
     }
 }

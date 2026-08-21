@@ -34,9 +34,6 @@ public interface IAgentToolRegistry
     /// </summary>
     IReadOnlyList<AgentToolDefinition> GetMcpTools(IReadOnlySet<TenantFeature> enabledFeatures);
 
-    /// <summary>Every tool, gated or not, with no surface-specific wording applied.</summary>
-    IReadOnlyList<AgentToolDefinition> GetAllTools();
-
     /// <summary>Null for unknown (e.g. hallucinated) tool names.</summary>
     AgentToolDefinition? TryGetDefinition(string name);
 }

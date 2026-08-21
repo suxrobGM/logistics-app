@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -60,7 +59,7 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow)
         if (terminal is null)
             return ToolResult.Error($"No terminal found for {code ?? input.TerminalId?.ToString()}");
 
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             id = terminal.Id,
             name = terminal.Name,

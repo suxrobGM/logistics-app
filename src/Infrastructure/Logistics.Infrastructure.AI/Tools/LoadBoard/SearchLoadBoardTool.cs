@@ -40,7 +40,7 @@ internal sealed class SearchLoadBoardTool(IMediator mediator)
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(input.OriginCity) || string.IsNullOrWhiteSpace(input.OriginState))
-            return ToolResult.Error("Both origin_city and origin_state are required");
+            return ToolResult.Error("origin_city and origin_state must not be blank.");
 
         var command = new SearchLoadBoardCommand
         {

@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Domain.Primitives.Enums;
@@ -33,7 +32,7 @@ internal sealed class GetLoadTool(IMediator mediator)
             return ToolResult.Error(result.Error ?? "Load not found");
 
         var l = result.Value;
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             id = l.Id,
             number = l.Number,

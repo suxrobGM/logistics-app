@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Domain.Primitives.Enums;
@@ -83,7 +82,7 @@ internal sealed class PreviewTaxCalculationTool(IMediator mediator)
             return ToolResult.Error(result.Error ?? "Unknown error");
 
         var response = result.Value;
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             tax_behavior = response.TaxBehavior.ToString(),
             currency = input.Currency,

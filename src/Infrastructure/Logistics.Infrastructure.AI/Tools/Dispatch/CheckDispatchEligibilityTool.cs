@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Shared.Identity.Policies;
@@ -33,7 +32,7 @@ internal sealed class CheckDispatchEligibilityTool(IDispatchEligibilityService e
     {
         var result = await eligibilityService.CheckAsync(input.TruckId, input.LoadId, input.DriverId, ct);
 
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             is_eligible = result.IsEligible,
             issues = result.Issues

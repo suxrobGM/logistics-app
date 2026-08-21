@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Financial.Invoices.Commands;
 using Logistics.Application.Modules.Financial.Invoices.Queries;
@@ -46,7 +45,7 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
 
         if (load.Invoice is not null)
         {
-            return JsonSerializer.Serialize(new
+            return ToolResult.Ok(new
             {
                 error = "The load already has an invoice",
                 invoice_id = load.Invoice.Id,
@@ -74,7 +73,7 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
         var created = await mediator.Send(new GetInvoiceByIdQuery { Id = result.Value }, ct);
 
         var invoice = created.Value;
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             success = true,
             invoice_id = result.Value,

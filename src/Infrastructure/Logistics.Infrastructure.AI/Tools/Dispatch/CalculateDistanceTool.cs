@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Policies;
@@ -39,7 +38,7 @@ internal sealed class CalculateDistanceTool : AgentTool<CalculateDistanceTool.In
         var drivingDistanceKm = straightLineKm * 1.3;
         var estimatedMinutes = (int)(drivingDistanceKm / 80.0 * 60);
 
-        return Task.FromResult(JsonSerializer.Serialize(new
+        return Task.FromResult(ToolResult.Ok(new
         {
             straight_line_km = Math.Round(straightLineKm, 1),
             estimated_driving_km = Math.Round(drivingDistanceKm, 1),

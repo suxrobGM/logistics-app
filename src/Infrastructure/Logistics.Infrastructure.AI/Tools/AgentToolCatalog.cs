@@ -27,18 +27,14 @@ internal static class AgentToolCatalog
 
     public static AgentToolDefinition? DefinitionFor(string name) => DefinitionsByName.GetValueOrDefault(name);
 
-    private static (Type, AgentToolDefinition)[] Discover()
-    {
-        var entries = typeof(AgentToolCatalog).Assembly.GetTypes()
+    private static (Type Type, AgentToolDefinition Definition)[] Discover() =>
+        [.. typeof(AgentToolCatalog).Assembly.GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsAssignableTo(typeof(IAgentTool)))
             .Select(t => (Type: t, Definition: DefinitionOf(t)))
             // Reflection order is not guaranteed, and the catalogue sits in the cached prompt
             // prefix - it has to come out the same way every time.
             .OrderBy(e => e.Definition.IsWrite)
-            .ThenBy(e => e.Definition.Name, StringComparer.Ordinal);
-
-        return [.. entries.Select(e => (e.Type, e.Definition))];
-    }
+            .ThenBy(e => e.Definition.Name, StringComparer.Ordinal)];
 
     private static AgentToolDefinition DefinitionOf(Type toolType)
     {

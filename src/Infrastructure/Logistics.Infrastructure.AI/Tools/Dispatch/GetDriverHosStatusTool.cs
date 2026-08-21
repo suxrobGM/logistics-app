@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -32,7 +31,7 @@ internal sealed class GetDriverHosStatusTool(ITenantUnitOfWork tenantUow)
         if (hos is null)
             return ToolResult.Error("No HOS data found for this driver");
 
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             driver_id = hos.EmployeeId,
             current_duty_status = hos.CurrentDutyStatus.ToString(),

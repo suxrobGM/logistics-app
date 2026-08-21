@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Domain.Primitives.Enums;
@@ -28,12 +27,12 @@ internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditSer
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(input.McNumber))
-            return ToolResult.Error("Missing mc_number");
+            return ToolResult.Error("mc_number is blank - send the broker's MC number.");
 
         var credit = await brokerCreditService.GetBrokerCreditAsync(input.McNumber, ct);
         if (credit is null)
         {
-            return JsonSerializer.Serialize(new
+            return ToolResult.Ok(new
             {
                 mc_number = input.McNumber,
                 credit_score = (int?)null,
@@ -41,7 +40,7 @@ internal sealed class CheckBrokerCreditTool(IBrokerCreditService brokerCreditSer
             });
         }
 
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             mc_number = credit.McNumber,
             credit_score = credit.CreditScore,

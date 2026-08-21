@@ -10,6 +10,10 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
     private const string ApprovalNote =
         " Creates a suggestion for dispatcher approval - it is not executed immediately.";
 
+    /// <summary>The MCP counterpart: there is no approval step behind an API key.</summary>
+    private const string McpWriteWarning =
+        " WRITE OPERATION: this takes effect immediately. Explain what you are about to do and get explicit user confirmation before calling it.";
+
     public IReadOnlyList<AgentToolDefinition> GetDispatchAgentTools(
         IReadOnlySet<TenantFeature> enabledFeatures) =>
         [.. Available(enabledFeatures).Where(t => t.DispatchAgent).Select(ForAgent)];
@@ -22,9 +26,7 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
             .Select(ForAgent)];
 
     public IReadOnlyList<AgentToolDefinition> GetMcpTools(IReadOnlySet<TenantFeature> enabledFeatures) =>
-        [.. Available(enabledFeatures).Where(t => !t.RequiresHumanOrigin)];
-
-    public IReadOnlyList<AgentToolDefinition> GetAllTools() => AgentToolCatalog.Definitions;
+        [.. Available(enabledFeatures).Where(t => !t.RequiresHumanOrigin).Select(ForMcp)];
 
     public AgentToolDefinition? TryGetDefinition(string name) => AgentToolCatalog.DefinitionFor(name);
 
@@ -33,7 +35,13 @@ internal sealed class AgentToolRegistry : IAgentToolRegistry
             .Where(t => t.RequiredFeature is null || enabled.Contains(t.RequiredFeature.Value));
 
     private static AgentToolDefinition ForAgent(AgentToolDefinition definition) =>
+        WithWriteNote(definition, ApprovalNote);
+
+    private static AgentToolDefinition ForMcp(AgentToolDefinition definition) =>
+        WithWriteNote(definition, McpWriteWarning);
+
+    private static AgentToolDefinition WithWriteNote(AgentToolDefinition definition, string note) =>
         definition.IsWrite
-            ? definition with { Description = definition.Description + ApprovalNote }
+            ? definition with { Description = definition.Description + note }
             : definition;
 }

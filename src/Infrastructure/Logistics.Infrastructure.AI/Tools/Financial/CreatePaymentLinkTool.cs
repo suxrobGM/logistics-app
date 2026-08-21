@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Financial.PaymentLinks.Commands;
 using Logistics.Domain.Primitives.Enums;
@@ -44,7 +43,7 @@ internal sealed class CreatePaymentLinkTool(IMediator mediator)
             return ToolResult.WriteFailed(result);
 
         var link = result.Value;
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             success = true,
             invoice_id = input.InvoiceId,

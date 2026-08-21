@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -65,7 +64,7 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow)
 
         var terminal = container.CurrentTerminal;
 
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             id = container.Id,
             number = container.Number,

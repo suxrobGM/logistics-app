@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.Features;
@@ -17,9 +18,11 @@ internal sealed class McpToolSurface(
     IFeatureService featureService,
     ITenantUnitOfWork tenantUow)
 {
-    /// <summary>A write over MCP runs immediately: there is no approval step behind an API key.</summary>
-    private const string WriteWarning =
-        " WRITE OPERATION: this takes effect immediately. Explain what you are about to do and get explicit user confirmation before calling it.";
+    /// <summary>
+    /// The catalogue is fixed at startup, so each entry converts once. Rebuilding it per request
+    /// re-serialized and reparsed every tool's schema to reach <see cref="JsonElement"/>.
+    /// </summary>
+    private static readonly ConcurrentDictionary<string, Tool> ProtocolTools = new();
 
     public async ValueTask<ListToolsResult> ListToolsAsync(CancellationToken ct)
     {
@@ -30,9 +33,8 @@ internal sealed class McpToolSurface(
 
     public async ValueTask<CallToolResult> CallToolAsync(CallToolRequestParams? request, CancellationToken ct)
     {
-        var name = request?.Name;
-        if (string.IsNullOrEmpty(name) || registry.TryGetDefinition(name) is not { } definition)
-            return Error($"Unknown tool: {name}");
+        if (request?.Name is not { Length: > 0 } name || registry.TryGetDefinition(name) is not { } definition)
+            return Error($"Unknown tool: {request?.Name}");
 
         // The catalogue hides these, but a client can call any name it likes.
         if (definition.RequiresHumanOrigin)
@@ -48,7 +50,7 @@ internal sealed class McpToolSurface(
             return Error($"The {feature.GetDescription()} feature is not enabled for this tenant.");
         }
 
-        var arguments = request!.Arguments is { } args ? JsonSerializer.Serialize(args) : "{}";
+        var arguments = request.Arguments is { } args ? JsonSerializer.Serialize(args) : "{}";
         var result = await executor.ExecuteToolAsync(name, arguments, ct);
 
         return new CallToolResult { Content = [new TextContentBlock { Text = result }] };
@@ -59,19 +61,20 @@ internal sealed class McpToolSurface(
     private async Task<IReadOnlySet<TenantFeature>> EnabledFeaturesAsync() =>
         (await featureService.GetEnabledFeaturesAsync(TenantId)).ToHashSet();
 
-    private static Tool ToProtocolTool(AgentToolDefinition definition) => new()
-    {
-        Name = definition.Name,
-        Description = definition.IsWrite ? definition.Description + WriteWarning : definition.Description,
-        InputSchema = definition.InputSchema.Deserialize<JsonElement>(),
-        Annotations = new ToolAnnotations
+    private static Tool ToProtocolTool(AgentToolDefinition definition) =>
+        ProtocolTools.GetOrAdd(definition.Name, _ => new Tool
         {
-            ReadOnlyHint = !definition.IsWrite,
-            // Writes create or send; nothing overwrites or deletes what the client did not name.
-            DestructiveHint = false,
-            OpenWorldHint = false
-        }
-    };
+            Name = definition.Name,
+            Description = definition.Description,
+            InputSchema = definition.InputSchema.Deserialize<JsonElement>(),
+            Annotations = new ToolAnnotations
+            {
+                ReadOnlyHint = !definition.IsWrite,
+                // Writes create or send; nothing overwrites or deletes what the client did not name.
+                DestructiveHint = false,
+                OpenWorldHint = false
+            }
+        });
 
     private static CallToolResult Error(string message) => new()
     {

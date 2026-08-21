@@ -76,6 +76,24 @@ public class AgentToolCatalogTests
         Assert.True(firstWrite > lastRead);
     }
 
+    /// <summary>
+    /// A lenient converter blinds the schema exporter for its type, and the property then publishes
+    /// as "anything". Registering one without teaching <c>AgentToolJson.ConverterSchema</c> about it
+    /// otherwise fails silently: the model just stops being told what the argument is.
+    /// </summary>
+    [Fact]
+    public void EveryInputProperty_StatesItsType()
+    {
+        var untyped = AgentToolCatalog.Definitions
+            .SelectMany(d => ((JsonObject)d.InputSchema["properties"]!)
+                .Select(p => (Tool: d.Name, Property: p.Key, Schema: p.Value as JsonObject)))
+            .Where(p => p.Schema?["type"] is null && p.Schema?["enum"] is null)
+            .Select(p => $"{p.Tool}.{p.Property}")
+            .ToList();
+
+        Assert.True(untyped.Count == 0, $"Properties with no type: {string.Join(", ", untyped)}");
+    }
+
     /// <summary>Compared case-insensitively: search_loadboard is SearchLoadBoardTool.</summary>
     private static string ExpectedClassName(string toolName) =>
         toolName.Replace("_", "") + "Tool";
