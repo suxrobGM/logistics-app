@@ -96,20 +96,27 @@ property. `ToolInput`'s accessors are only for reading a **persisted** `AgentDec
   `Suggested` decisions awaiting dispatcher/user approval - there is no unattended-execution path
   (`AgentDecisionProcessor`).
 - **Behaviour metadata lives on the tool's static `Definition`** as named init properties:
-  `RequiredPermission`, `DecisionType`, `RequiredFeature`, `DispatchAgent`. `IsWrite` is **derived**
-  (`DecisionType != Query`), so there is no separate flag to forget. Miss `RequiredPermission` and
-  the tool leaks into every copilot conversation regardless of the caller's role.
+  `RequiredPermission`, `DecisionType`, `RequiredFeature`, `Surfaces`, `Destructive`. `IsWrite` is
+  **derived** (`DecisionType != Query`), so there is no separate flag to forget. Miss
+  `RequiredPermission` and the tool leaks into every copilot conversation regardless of the caller's
+  role.
+- **`Surfaces` is opt-in and defaults to `Copilot` alone.** A tool nobody widened is under-exposed,
+  never over-exposed. Naming `Dispatch` puts it in fleet dispatch runs, which have no caller to scope
+  by; naming `Mcp` lets an API key run it with nobody to attribute it to and no approval step. Both
+  are deliberate acts. Do not re-derive either from `RequiredPermission` - a dispatch tool may
+  legitimately require `Permission.Trip.Manage`.
 - One registry method per surface: `GetDispatchAgentTools`, `GetCopilotTools` (permission set is a
-  required parameter, not a nullable flag - see `docs/ai-copilot.md`), `GetMcpTools`, which filters
-  on features and drops `RequiresHumanOrigin` tools. Permissions do not apply to MCP: an API key
-  authenticates a tenant, not a person.
+  required parameter, not a nullable flag - see `docs/ai-copilot.md`), `GetMcpTools`. Permissions do
+  not apply to MCP: an API key authenticates a tenant, not a person.
+- **`McpDenialReason` is the one MCP admission rule.** `GetMcpTools` is built from it rather than
+  repeating it, because a client can call a name the catalogue never showed it. Put a new rule there
+  and both paths get it.
 - **Only the agent surfaces turn a write into a suggestion.** Over MCP a write executes immediately.
   Never write either promise into a tool's own description: `AgentToolRegistry` appends the approval
   sentence for the agents and the immediate-execution warning for MCP, one per surface method.
-- **`DispatchAgent` defaults to false** - it scopes the dispatch conversation's catalogue to
-  fleet-relevant tools, keeping copilot-only write tools (e.g. `create_load_invoice`) out of dispatch
-  runs. Do not re-derive it from `RequiredPermission`; a dispatch tool may legitimately require
-  `Permission.Trip.Manage`.
+- **Mark an entity id with `[AgentEntityId]`** and `AgentDecisionProcessor` links the decision row to
+  it. The wire key comes from the property, so a rename carries the audit link along. Skip the
+  attribute and the link is simply never written - nothing fails.
 
 `AgentLoopRunner` (shared by both surfaces) caps at **25 iterations per session**.
 

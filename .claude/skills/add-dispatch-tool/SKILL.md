@@ -19,8 +19,8 @@ catalogue are both driven by the assembly scan, so a tool joins every surface by
 
 Pick `{Domain}` by the Application module the tool dispatches into: `Dispatch/`, `Financial/`
 (invoices, payments, tax, expenses), `Operations/` (loads, customers, maintenance), `LoadBoard/`,
-`Intermodal/`. Which agent may call it is metadata, not folder membership - a `Financial/` tool can
-still set `DispatchAgent = true`.
+`Intermodal/`. Which surfaces may call it is metadata, not folder membership - a `Financial/` tool can
+still name `AgentSurfaces.Dispatch`.
 
 There is no separate write-tool list and no `IsWrite` flag: a tool is a write exactly when its
 `DecisionType` is not `Query`.
@@ -67,7 +67,7 @@ internal sealed class GetSomethingTool(IMediator mediator)
         RequiredFeature = TenantFeature.Loads,          // omit when ungated
         RequiredPermission = Permission.Load.View,      // ALWAYS - copilot scoping depends on it
         DecisionType = AgentDecisionType.AssignLoad,    // write tools only; makes IsWrite true
-        DispatchAgent = true                            // fleet dispatch agent tools only
+        Surfaces = AgentSurfaces.All                    // omit to stay on the copilot alone
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
@@ -96,19 +96,21 @@ Other conventions:
 
 - **Every tool declares `RequiredPermission`** - the copilot filters its catalogue by the calling
   user's permissions, and an undeclared permission bypasses that scoping (a test enforces this).
-- **`DispatchAgent` decides whether the _fleet dispatch agent_ sees the tool**, independently of
-  which permission it names. It defaults to false so copilot-only write tools (e.g.
-  `create_load_invoice`) never reach a dispatch conversation. The copilot sees every tool the calling
-  user has the permission for either way.
+- **`Surfaces` decides which catalogues publish the tool**, independently of which permission it
+  names. It defaults to `Copilot`, so a tool you say nothing about reaches only a named user with the
+  right permission. Add `Dispatch` for fleet dispatch runs. Add `Mcp` only if an API key may run it
+  with nobody to attribute it to and no approval step - `AgentSurfaces.All` is both.
 - `DecisionType` both categorizes the tool in the audit trail and _is_ the write declaration; append
   to the `AgentDecisionType` enum when no existing value fits (append-only).
-- **`RequiresHumanOrigin = true`** when the tool attributes its work to `IAgentRunContext
-.TriggeredByUserId`. MCP keys authenticate a tenant, not a person, so such tools are kept out of
-  the MCP catalogue entirely rather than failing at the end of a call.
+- **Leave `Mcp` off** when the tool attributes its work to `IAgentRunContext.TriggeredByUserId`, or
+  when it emails a third party or moves money. An API key names a tenant, not a person, and there is
+  no dispatcher to approve the call.
+- **`Destructive = true`** when the tool can overwrite or undo something the caller did not name.
+  MCP clients read it to decide whether a call may be auto-approved.
 - **Do not promise approval in the description.** The registry appends that sentence for the agent
   surfaces, because it is not true of MCP.
-- If the tool's ids should link into the decision audit (`load_id`, `invoice_id`, ...), check
-  `AgentDecisionProcessor.ExtractEntityIds` covers the input field name.
+- Mark an entity id input with `[AgentEntityId(AgentEntityKind.Load)]` and the decision row links to
+  it. A catalogue test fails if a known link key is left unmarked.
 
 ### 4. Write a unit test
 
@@ -125,7 +127,8 @@ catalogue tests already pin naming.
 - [ ] Placed in the `Tools/{Domain}/` folder matching the module it dispatches into
 - [ ] Every input property carries a `[Description]`; required ones use the `required` keyword
 - [ ] `RequiredPermission` set; **if write tool**: `DecisionType` set to a non-`Query` value
-- [ ] `DispatchAgent = true` **only** if the fleet dispatch agent should call it
+- [ ] `Surfaces` names `Dispatch` and/or `Mcp` **only** if those surfaces should call it
+- [ ] Entity id inputs carry `[AgentEntityId]`
 - [ ] Unit test added under `test/Logistics.Infrastructure.AI.Tests/Tools/{Domain}/`
 - [ ] `dotnet build` passes
 - [ ] `dotnet test --filter "{ToolName}ToolTests"` passes
@@ -136,7 +139,7 @@ catalogue tests already pin naming.
 - **Throwing instead of returning `ToolResult.Error`**: the agent loop catches it, but the agent loses all context on what went wrong.
 - **Verbose tool names or descriptions**: every definition is sent on every API call - keep descriptions tight.
 - **Forgetting `RequiredPermission`**: the tool leaks into every copilot conversation regardless of role.
-- **Forgetting `DispatchAgent = true` on a dispatch tool**: it is simply absent from the dispatch agent's catalogue, with no error - the agent just can't do the thing.
+- **Forgetting `Surfaces` on a dispatch tool**: it is simply absent from the dispatch agent's catalogue, with no error - the agent just can't do the thing.
 
 ## Related
 

@@ -327,5 +327,5 @@ See the `add-llm-provider` skill for the full checklist.
 ## Related
 
 - [Broker Email Negotiation](broker-email-negotiation.md) - the rate-negotiation channel: floors, reply routing, and what keeps inbound mail from steering the agent.
-- [AI Copilot](ai-copilot.md) - the conversational agent in the TMS portal built on the same tool registry, agent loop, decision machinery, and quota. Its catalogue is permission-scoped per user; the dispatch agent's keeps only tools declaring `DispatchAgent: true` (plus feature gating).
+- [AI Copilot](ai-copilot.md) - the conversational agent in the TMS portal built on the same tool registry, agent loop, decision machinery, and quota. Its catalogue is permission-scoped per user; the dispatch agent's keeps only tools naming `AgentSurfaces.Dispatch` (plus feature gating).
 - [MCP Server](mcp-server.md) - connect Claude Desktop, Cursor, and other MCP clients to your fleet using the same dispatch tools.

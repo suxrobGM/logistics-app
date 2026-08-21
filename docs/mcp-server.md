@@ -162,7 +162,7 @@ Key format: `logsx_{tenantId}_{random}` - the tenant ID is embedded so the serve
 - **Feature gating**: The MCP Server feature must be enabled on the tenant's subscription plan. Without it the endpoint answers 403 rather than exposing a working handshake.
 - **Per-tenant catalogue**: `tools/list` returns only the tools the tenant's features allow, so a client never sees a tool it cannot call.
 - **Write confirmation**: A write called over MCP executes immediately - there is no dispatcher approval step behind an API key - and its description says so, instructing the client to confirm with its user first.
-- **No tools that need a person**: tools that attribute their work to a user (`book_loadboard_load`) are absent from the MCP catalogue, because a key identifies a tenant rather than a person.
+- **Writes are opt-in**: a tool reaches MCP only by naming `AgentSurfaces.Mcp`. The dispatch writes (`assign_load_to_truck`, `create_trip`, `dispatch_trip`) do. The ones that attribute work to a person (`book_loadboard_load`), email a third party (`send_invoice`, `propose_counter_offer`) or move money (`create_payment_link`) do not, and `tools/call` refuses them by name even though the catalogue never listed them.
 
 ## Architecture
 
@@ -181,7 +181,7 @@ MCP Client (Claude Desktop, Cursor, etc.)
   │
   └── McpToolSurface
         ├── tools/list → IAgentToolRegistry.GetMcpTools(enabled features)
-        └── tools/call → per-tool feature gate → IAgentToolExecutor.ExecuteToolAsync()
+        └── tools/call → IAgentToolRegistry.McpDenialReason() → IAgentToolExecutor.ExecuteToolAsync()
               └── the same tool class the AI agent runs
 ```
 
