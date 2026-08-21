@@ -30,20 +30,26 @@ export type TranscriptItem = TranscriptTurn | TranscriptMessage;
  * Merges messages and per-turn tool-activity timelines into one stream ordered by message sequence
  * (see `agent-stream.ts`):
  * - A session with no decisions renders no timeline - nothing to show.
- * - A session's last assistant message is its report; a message with no `sessionId` never is.
+ * - A session's last assistant message is its report only when the turn ran tools; a tool-free
+ *   (conversational) turn renders as a plain chat message. A message with no `sessionId` never is.
  */
 export function buildTranscriptStream(
   messages: readonly AgentMessageDto[],
   decisions: readonly AgentDecisionDto[],
   sessions: readonly AgentSessionDto[],
 ): TranscriptItem[] {
+  const decisionsBySession = groupDecisionsBySession(decisions);
   const messageItems: TranscriptMessage[] = [];
   const reportIndexBySession = new Map<string, number>();
 
   for (const message of messages) {
     const sortKey = messageSortKey(message);
     const index = messageItems.push({ kind: "message", message, sortKey, isReport: false }) - 1;
-    if (message.sessionId && message.role === "assistant") {
+    if (
+      message.sessionId &&
+      message.role === "assistant" &&
+      decisionsBySession.has(message.sessionId)
+    ) {
       reportIndexBySession.set(message.sessionId, index);
     }
   }
@@ -58,7 +64,6 @@ export function buildTranscriptStream(
   }
 
   const firstSequence = firstMessageSequenceBySession(messages);
-  const decisionsBySession = groupDecisionsBySession(decisions);
 
   const turnItems: TranscriptTurn[] = [];
   for (const session of sessions) {

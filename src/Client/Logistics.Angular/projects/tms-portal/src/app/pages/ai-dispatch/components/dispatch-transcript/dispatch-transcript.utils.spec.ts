@@ -60,8 +60,9 @@ describe("buildTranscriptStream", () => {
     const first = message({ id: "m1", role: "assistant", sequence: 10, sessionId: "s1" });
     const second = message({ id: "m2", role: "assistant", sequence: 20, sessionId: "s1" });
     const s1 = session({ id: "s1", totalTokensUsed: 500 });
+    const d1 = decision({ id: "d1", sessionId: "s1" });
 
-    const stream = buildTranscriptStream([first, second], [], [s1]);
+    const stream = buildTranscriptStream([first, second], [d1], [s1]);
     const messages = stream.filter((item) => item.kind === "message") as TranscriptMessage[];
     const firstOut = messages.find((m) => m.message.id === "m1")!;
     const secondOut = messages.find((m) => m.message.id === "m2")!;
@@ -104,11 +105,24 @@ describe("buildTranscriptStream", () => {
       sequence: 5,
       sessionId: "s-missing",
     });
+    const orphanDecision = decision({ id: "d-orphan", sessionId: "s-missing" });
 
-    const stream = buildTranscriptStream([orphanSessionReply], [], []);
-    const [out] = stream as [TranscriptMessage];
+    const stream = buildTranscriptStream([orphanSessionReply], [orphanDecision], []);
+    const messages = stream.filter((item) => item.kind === "message") as TranscriptMessage[];
+    const [out] = messages;
 
     expect(out.isReport).toBe(true);
+    expect(out.session).toBeUndefined();
+  });
+
+  it("a tool-free session's assistant reply renders as a plain message, not a report", () => {
+    const reply = message({ id: "m-chat", role: "assistant", sequence: 10, sessionId: "s1" });
+    const s1 = session({ id: "s1", totalTokensUsed: 200 });
+
+    const stream = buildTranscriptStream([reply], [], [s1]);
+    const [out] = stream as [TranscriptMessage];
+
+    expect(out.isReport).toBe(false);
     expect(out.session).toBeUndefined();
   });
 });

@@ -18,29 +18,23 @@
         (click)="store.toggleSidebar()"
       />
       <ui-button
-        label="New chat"
         icon="square-pen"
         appearance="text"
         intent="secondary"
         size="sm"
         ariaLabel="New chat"
-        buttonClass="max-sm:[&>span]:hidden"
+        uiTooltip="New chat"
         (click)="newChat()"
       />
       <ui-icon name="sparkles" size="inherit" class="text-primary ml-1" />
-      <ui-typography variant="h6" tag="h1" class="shrink-0 [&>h1]:mb-0">AI Dispatch</ui-typography>
-
-      @if (store.currentConversation()?.title; as title) {
-        <ui-typography
-          variant="body-sm"
-          color="muted"
-          tag="span"
-          class="border-border ml-2 truncate border-l pl-3 leading-5 max-sm:hidden"
-          [uiTooltip]="title"
-        >
-          {{ title }}
-        </ui-typography>
-      }
+      <ui-typography
+        variant="h6"
+        tag="h1"
+        class="min-w-0 [&>h1]:mb-0 [&>h1]:truncate"
+        [uiTooltip]="store.currentConversation()?.title ?? undefined"
+      >
+        {{ store.currentConversation()?.title || "AI Dispatch" }}
+      </ui-typography>
     </ui-stack>
 
     <ui-stack direction="row" align="center" gap="2" class="shrink-0">
@@ -54,13 +48,12 @@
         (click)="store.sendMessage(planAssignmentsPrompt)"
       />
       <ui-button
-        label="Dispatch Policy"
-        icon="sparkles"
+        icon="sliders-horizontal"
         appearance="outlined"
         intent="secondary"
         size="sm"
-        ariaLabel="Dispatch Policy"
-        buttonClass="max-sm:[&>span]:hidden"
+        ariaLabel="Dispatch policy"
+        uiTooltip="Dispatch policy"
         [routerLink]="['/ai-dispatch', 'policy']"
       />
       <ui-button

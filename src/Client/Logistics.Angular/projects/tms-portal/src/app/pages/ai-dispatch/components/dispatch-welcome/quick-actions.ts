@@ -35,4 +35,10 @@ export const QUICK_ACTIONS: readonly QuickAction[] = [
     description: "See which trucks free up tomorrow.",
     prompt: "Any trucks free tomorrow?",
   },
+  {
+    icon: "circle-help",
+    title: "What can you do?",
+    description: "Learn what the dispatch agent can help with.",
+    prompt: "What can you help me with?",
+  },
 ];
