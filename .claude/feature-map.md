@@ -151,6 +151,18 @@ with `Type == Dispatch`.
   Gated by `TenantFeature.IntermodalContainers` - the schemas, the prompt section and the tools' own
   guard all move together; MCP lists every tool, so the guard inside each tool is the real gate.
 
+### Broker rate negotiation (email)
+
+See [docs/broker-email-negotiation.md](../docs/broker-email-negotiation.md). Gated by
+`TenantFeature.AIRateNegotiation` + `Permission.Negotiation.View/Manage`. Every outbound offer is an
+approved `AgentDecision`; inbound mail can only append a message and ask for a turn.
+
+- Domain: `Entities/Negotiation/RateNegotiation.cs` (owns the reply token and the round cap), `NegotiationMessage.cs`, `LaneRateFloor.cs`; `Entities/InboundEmailRoute.cs` (**master** DB - maps a reply token to a tenant); `AgentDecision.NegotiationId`, `TenantSettings.DefaultRateFloorPerMile`
+- Application: `Modules/Integrations/Negotiation/` - `Services/` (`LaneRateFloorResolver`, `NegotiationEmailComposer` - the one owner of broker-facing formatting and sanitization, `NegotiationTurnStarter`, `EmailReplyParser`), `Commands/` (`ProposeCounterOffer` - credit gate then floor gate then send-before-persist; `CloseNegotiation`; `ProcessInboundNegotiationEmail`; lane-floor CRUD), `Queries/` (`GetNegotiations`, `GetNegotiationById`, `PreviewCounterOffer`, `GetRateFloorContext`, `GetEffectiveRateFloor`, `GetLaneRateFloors`); `Modules/Integrations/Webhooks/Commands/ProcessResendWebhook/`; shared credit gate in `Modules/Integrations/LoadBoard/Services/BrokerCreditGate.cs`
+- Infrastructure: `Infrastructure.Communications/Email/` (`ResendThreadedEmailSender` - reply-to plus `In-Reply-To`/`References`, `ResendInboundEmailReader` - the Received Emails API, `ResendWebhookVerifier`, `Templates/BrokerCounterOffer.liquid`); `Infrastructure.Integrations.Common/WebhookSignature.VerifySvix`; `Infrastructure.AI/Tools/Negotiation/` (`get_rate_floor`, `get_negotiation_thread`, `propose_counter_offer`)
+- Jobs: `Logistics.API/Jobs/NegotiationExpirySweepJob.cs` (hourly - expires lapsed threads and revokes their routes), `NegotiationWakeJob.cs` (delayed retry when a reply lands mid-turn)
+- API/UI: `NegotiationController.cs` (`negotiations` - list, detail, close, decision preview; sending is deliberately absent), `RateFloorController.cs` (`ratefloors`), `POST /webhooks/resend`, `tms-portal/pages/ai-dispatch/negotiations/` + `negotiation-details/` + `rate-floors/`
+
 ## AI copilot
 
 See [docs/ai-copilot.md](../docs/ai-copilot.md). Conversational agent sharing the dispatch tool

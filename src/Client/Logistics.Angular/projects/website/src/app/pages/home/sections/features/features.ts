@@ -53,6 +53,12 @@ export class Features {
         "Credit score, days-to-pay, and FMCSA authority on every listing. Low-credit bookings are blocked before you haul for a broker who won't pay.",
     },
     {
+      icon: "mail",
+      title: "AI Rate Negotiation",
+      description:
+        "Set a rate floor per lane. When a listing pays less, the agent drafts a counter-offer email to the broker - you approve it before it sends, and replies come back into the dispatch conversation.",
+    },
+    {
       icon: "globe",
       title: "US and Europe",
       description:

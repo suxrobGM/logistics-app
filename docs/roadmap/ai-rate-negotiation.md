@@ -1,6 +1,6 @@
 # AI Rate Negotiation
 
-- **Status**: Planned
+- **Status**: Done (email channel)
 - **Priority**: P2 - head-to-head answer to DataTruck's flagship AI Dispatcher ($399/mo add-on); bundled in our plans
 - **Effort**: L
 - **Category**: AI differentiation
@@ -25,4 +25,25 @@ For a load-board listing below floor, the agent produces a credit-checked, dispa
 
 ## Notes
 
-_(add dated implementation notes here)_
+### 2026-08-21 - Email channel shipped
+
+See [broker-email-negotiation.md](../broker-email-negotiation.md) for the pipeline, the threat model
+and the Resend setup.
+
+What landed:
+
+- `TenantFeature.AIRateNegotiation`, Professional and above. New `Permission.Negotiation.View/Manage`.
+- Per-lane floors (`LaneRateFloor`) from day one rather than a global number, resolved exact lane →
+  origin-state-to-anywhere → anywhere-to-destination-state → `TenantSettings.DefaultRateFloorPerMile`.
+  No floor means the agent refuses to negotiate.
+- Tools `get_rate_floor`, `get_negotiation_thread`, `propose_counter_offer`; `book_loadboard_load`
+  gained `negotiated_total_rate`.
+- Replies arrive on `offer-{token}@{sender domain}` and route through a master-DB `InboundEmailRoute`
+  row, so no tenant id is exposed in an address and a thread can be revoked.
+- Three rounds per listing, a 48-hour reply window per outbound message, and an hourly sweep that
+  expires lapsed threads and revokes their reply addresses.
+
+Deliberately out of scope: voice/phone negotiation, attachment ingestion (rate confirmations), and
+LLM extraction of the broker's number into `ProposedTotalRate` - the amount is read by a human from
+the thread today. Auto-approval of offers stays gated on
+[ai-graduated-autonomy](ai-graduated-autonomy.md).

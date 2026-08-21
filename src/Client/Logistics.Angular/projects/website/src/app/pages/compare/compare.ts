@@ -51,6 +51,13 @@ export class Compare {
           alvys: "-",
           roseRocket: "-",
         },
+        {
+          name: "AI broker rate negotiation by email",
+          us: "✓ (Professional+)",
+          dataTruck: "$399+/mo add-on",
+          alvys: "-",
+          roseRocket: "-",
+        },
         { name: "Human-in-the-loop AI", us: "✓", dataTruck: "-", alvys: "-", roseRocket: "-" },
       ],
     },
