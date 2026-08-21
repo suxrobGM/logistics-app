@@ -17513,6 +17513,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "negotiationId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"

@@ -25,6 +25,7 @@ public class AgentDecisionDto
     public Guid? TripId { get; set; }
     public Guid? InvoiceId { get; set; }
     public Guid? CustomerId { get; set; }
+    public Guid? NegotiationId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ExecutedAt { get; set; }
     public Guid? ApprovedByUserId { get; set; }
