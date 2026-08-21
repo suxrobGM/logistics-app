@@ -21,21 +21,23 @@ public class NegotiationEmailComposerTests
         sut = new NegotiationEmailComposer(emailTemplateService);
     }
 
-    private static ComposeNegotiationEmailRequest Request(string agentMessage) => new(
-        OriginCity: "Chicago",
-        OriginState: "IL",
-        DestinationCity: "Dallas",
-        DestinationState: "TX",
-        PickupDate: new DateTime(2026, 9, 1),
-        EquipmentType: "Dry Van",
-        OfferAmount: 2150m,
-        Currency: "USD",
-        OfferPerMile: 2.15m,
-        AgentMessage: agentMessage,
-        CompanyName: "Acme Trucking",
-        CompanyMcNumber: "123456",
-        ThreadReference: "RN-9F2A",
-        ReplyToAddress: "offer-abc123@reply.logisticsx.app");
+    private static ComposeNegotiationEmailRequest Request(string agentMessage) => new()
+    {
+        OriginCity = "Chicago",
+        OriginState = "IL",
+        DestinationCity = "Dallas",
+        DestinationState = "TX",
+        PickupDate = new DateTime(2026, 9, 1),
+        EquipmentType = "Dry Van",
+        OfferAmount = 2150m,
+        Currency = "USD",
+        OfferPerMile = 2.15m,
+        AgentMessage = agentMessage,
+        CompanyName = "Acme Trucking",
+        CompanyMcNumber = "123456",
+        ThreadReference = "RN-9F2A",
+        ReplyToAddress = "offer-abc123@reply.logisticsx.app"
+    };
 
     #region Sanitization
 

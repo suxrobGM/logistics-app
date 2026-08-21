@@ -21,9 +21,6 @@ public class ProposeCounterOfferCommand : ICommand<Result<RateNegotiationDto>>
     /// <summary>The broker-facing paragraph. Sanitized and length-clamped before it is rendered.</summary>
     public string Message { get; set; } = "";
 
-    /// <summary>Why the agent is countering, kept for the audit trail and never sent to the broker.</summary>
-    public string Reasoning { get; set; } = "";
-
     /// <summary>Dispatch conversation to wake when the broker replies.</summary>
     public Guid? ConversationId { get; set; }
 

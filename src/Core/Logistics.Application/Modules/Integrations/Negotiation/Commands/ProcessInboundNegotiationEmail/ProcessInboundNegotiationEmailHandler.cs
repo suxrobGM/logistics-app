@@ -44,7 +44,7 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
             return Result.Ok();
         }
 
-        if (negotiation.Status is not (RateNegotiationStatus.AwaitingBroker or RateNegotiationStatus.BrokerReplied))
+        if (!negotiation.IsOpen)
         {
             logger.LogInformation(
                 "Negotiation {NegotiationId} is {Status}; inbound reply ignored",
@@ -62,7 +62,8 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
             return Result.Fail($"Could not fetch the body of inbound email '{req.ProviderEmailId}'");
         }
 
-        var rawBody = Clamp(email.TextBody ?? email.HtmlBody ?? "");
+        var rawBody = NegotiationText.Truncate(
+            email.TextBody ?? email.HtmlBody ?? "", MaxRawBodyChars, ellipsis: "");
         var strippedText = EmailReplyParser.Strip(email.TextBody ?? email.HtmlBody ?? "");
 
         var message = negotiation.AddInboundMessage(
@@ -111,7 +112,4 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
         var address = start >= 0 && end > start ? value[(start + 1)..end] : value;
         return address.Trim();
     }
-
-    private static string Clamp(string text) =>
-        text.Length <= MaxRawBodyChars ? text : text[..MaxRawBodyChars];
 }

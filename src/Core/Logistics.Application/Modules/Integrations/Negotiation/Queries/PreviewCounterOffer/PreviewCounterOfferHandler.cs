@@ -4,7 +4,6 @@ using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Queries;
@@ -41,41 +40,25 @@ internal sealed class PreviewCounterOfferHandler(
             return Result<CounterOfferPreviewDto>.Fail("The listing this offer refers to no longer exists.");
         }
 
-        var negotiation = await tenantUow.Repository<RateNegotiation>().GetAsync(
-            n => n.LoadBoardListingId == listing.Id &&
-                 (n.Status == RateNegotiationStatus.AwaitingBroker ||
-                  n.Status == RateNegotiationStatus.BrokerReplied), ct);
+        var negotiation = await tenantUow.Repository<RateNegotiation>()
+            .GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
 
         // A first-round offer has no thread yet, so there is no reply token to show. The address is
         // display-only here - the template body never contains it, so the preview still matches.
-        var replyToAddress = negotiation is null
-            ? $"offer-<assigned on send>@{emailSender.ReplyDomain}"
-            : $"offer-{negotiation.ReplyToken}@{emailSender.ReplyDomain}";
+        var replyToAddress = NegotiationReplyAddress.Format(
+            negotiation?.ReplyToken ?? NegotiationReplyAddress.UnassignedToken, emailSender.ReplyDomain);
 
         var tenant = tenantUow.GetCurrentTenant();
-        var currency = listing.TotalRate?.Currency ?? "USD";
+        var currency = listing.TotalRate?.Currency ?? ComposeNegotiationEmailRequest.DefaultCurrency;
 
-        var composed = await composer.ComposeAsync(new ComposeNegotiationEmailRequest(
-            OriginCity: listing.OriginAddress.City,
-            OriginState: listing.OriginAddress.State,
-            DestinationCity: listing.DestinationAddress.City,
-            DestinationState: listing.DestinationAddress.State,
-            PickupDate: listing.PickupDateStart ?? listing.ExpiresAt,
-            EquipmentType: listing.EquipmentType ?? "Not specified",
-            OfferAmount: input.ProposedTotalRate,
-            Currency: currency,
-            OfferPerMile: input.ProposedRatePerMile,
-            AgentMessage: input.Message,
-            CompanyName: tenant.CompanyName ?? tenant.Name,
-            CompanyMcNumber: tenant.McNumber,
-            ThreadReference: RateNegotiation.ReferenceFor(listing.Id),
-            ReplyToAddress: replyToAddress,
-            BrokerName: listing.BrokerName), ct);
+        var composed = await composer.ComposeAsync(ComposeNegotiationEmailRequest.For(
+            listing, tenant, input.ProposedTotalRate, input.ProposedRatePerMile,
+            input.Message, replyToAddress), ct);
 
         return Result<CounterOfferPreviewDto>.Ok(new CounterOfferPreviewDto
         {
             Subject = composed.Subject,
-            HtmlBody = composed.HtmlBody,
+            Message = composed.SanitizedMessage,
             ToEmail = listing.BrokerEmail ?? "",
             ReplyToAddress = replyToAddress,
             ProposedTotalRate = input.ProposedTotalRate,

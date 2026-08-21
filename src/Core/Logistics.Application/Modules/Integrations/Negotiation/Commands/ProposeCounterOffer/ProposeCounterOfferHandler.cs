@@ -16,7 +16,7 @@ namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
 
 internal sealed class ProposeCounterOfferHandler(
     ITenantUnitOfWork tenantUow,
-    IMasterUnitOfWork masterUow,
+    IInboundEmailRouteRegistry routeRegistry,
     IBrokerCreditService brokerCreditService,
     ILaneRateFloorResolver floorResolver,
     INegotiationEmailComposer composer,
@@ -50,6 +50,15 @@ internal sealed class ProposeCounterOfferHandler(
                 "This listing has no broker email address, so a counter-offer cannot be sent.");
         }
 
+        // Floor first: it is a local read that rejects most bad offers, whereas the credit gate
+        // costs a vendor API call and a write.
+        var floor = await floorResolver.ResolveAsync(listing, ct);
+        var floorCheck = CheckAgainstFloor(req, floor, listing);
+        if (!floorCheck.IsSuccess)
+        {
+            return Result<RateNegotiationDto>.Fail(floorCheck.Error!, floorCheck.ErrorCode!);
+        }
+
         var creditGate = await BrokerCreditGate.EvaluateAsync(
             tenantUow, brokerCreditService, listing, overrideCheck: false, ct);
 
@@ -58,34 +67,23 @@ internal sealed class ProposeCounterOfferHandler(
             return Result<RateNegotiationDto>.Fail(creditGate.Error!, creditGate.ErrorCode!);
         }
 
-        var floor = await floorResolver.ResolveAsync(listing, ct);
-        var floorCheck = CheckAgainstFloor(req, floor, listing);
-        if (!floorCheck.IsSuccess)
-        {
-            return Result<RateNegotiationDto>.Fail(floorCheck.Error!, floorCheck.ErrorCode!);
-        }
-
         var negotiationRepo = tenantUow.Repository<RateNegotiation>();
-        var negotiation = await negotiationRepo.GetAsync(
-            n => n.LoadBoardListingId == listing.Id &&
-                 (n.Status == RateNegotiationStatus.AwaitingBroker ||
-                  n.Status == RateNegotiationStatus.BrokerReplied), ct);
+        var negotiation = await negotiationRepo.GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
 
         var isNewThread = negotiation is null;
-        var currency = listing.TotalRate?.Currency ?? "USD";
+        var currency = listing.TotalRate?.Currency ?? ComposeNegotiationEmailRequest.DefaultCurrency;
 
         if (negotiation is null)
         {
             negotiation = RateNegotiation.Create(
-                listing.Id, listing.BrokerEmail!, listing.BrokerName, listing.BrokerMcNumber, req.ConversationId);
-
-            negotiation.FloorRatePerMile = floor.MinRatePerMile;
-            negotiation.FloorTotalRate = floor.MinTotalRate ?? (floor.EffectiveFloorTotal is { } total
-                ? new Money { Amount = total, Currency = currency }
-                : null);
-            negotiation.FloorSource = floor.Source;
+                listing.Id,
+                listing.BrokerEmail!,
+                floor.ToSnapshot(currency),
+                listing.BrokerName,
+                listing.BrokerMcNumber,
+                req.ConversationId);
         }
-        else if (negotiation.RoundCount >= RateNegotiation.MaxRounds)
+        else if (!negotiation.CanCounter)
         {
             return Result<RateNegotiationDto>.Fail(
                 $"This negotiation already used all {RateNegotiation.MaxRounds} rounds. Close it or book at the broker's last offer.");
@@ -97,25 +95,11 @@ internal sealed class ProposeCounterOfferHandler(
             .Where(id => !string.IsNullOrWhiteSpace(id))
             .ToArray();
 
-        var replyToAddress = $"offer-{negotiation.ReplyToken}@{emailSender.ReplyDomain}";
+        var replyToAddress = NegotiationReplyAddress.Format(negotiation.ReplyToken, emailSender.ReplyDomain);
         var tenant = tenantUow.GetCurrentTenant();
 
-        var composed = await composer.ComposeAsync(new ComposeNegotiationEmailRequest(
-            OriginCity: listing.OriginAddress.City,
-            OriginState: listing.OriginAddress.State,
-            DestinationCity: listing.DestinationAddress.City,
-            DestinationState: listing.DestinationAddress.State,
-            PickupDate: listing.PickupDateStart ?? listing.ExpiresAt,
-            EquipmentType: listing.EquipmentType ?? "Not specified",
-            OfferAmount: req.ProposedTotalRate,
-            Currency: currency,
-            OfferPerMile: req.ProposedRatePerMile,
-            AgentMessage: req.Message,
-            CompanyName: tenant.CompanyName ?? tenant.Name,
-            CompanyMcNumber: tenant.McNumber,
-            ThreadReference: negotiation.Reference,
-            ReplyToAddress: replyToAddress,
-            BrokerName: listing.BrokerName), ct);
+        var composed = await composer.ComposeAsync(ComposeNegotiationEmailRequest.For(
+            listing, tenant, req.ProposedTotalRate, req.ProposedRatePerMile, req.Message, replyToAddress), ct);
 
         var sendResult = await emailSender.SendAsync(new ThreadedEmail(
             To: listing.BrokerEmail!,
@@ -165,7 +149,16 @@ internal sealed class ProposeCounterOfferHandler(
         }
 
         await tenantUow.SaveChangesAsync(ct);
-        await UpsertInboundRouteAsync(negotiation, tenant.Id, isNewThread, ct);
+
+        // The route's expiry tracks the thread's reply window, so it is refreshed on every send.
+        if (isNewThread)
+        {
+            await routeRegistry.OpenAsync(negotiation.ReplyToken, tenant.Id, negotiation.ExpiresAt, ct);
+        }
+        else
+        {
+            await routeRegistry.RefreshAsync(negotiation.ReplyToken, negotiation.ExpiresAt, ct);
+        }
 
         logger.LogInformation(
             "Sent counter-offer round {Round} on negotiation {NegotiationId} for listing {ListingId}",
@@ -211,38 +204,5 @@ internal sealed class ProposeCounterOfferHandler(
             $"The listing has no distance and your floor for {lane} is per-mile only, so this offer cannot be checked. " +
             "Set a minimum total rate on the lane floor, or offer a per-mile rate.",
             ErrorCodes.NegotiationFloorMissing);
-    }
-
-    /// <summary>
-    /// The master-database route is what lets inbound mail find this tenant. Its expiry tracks the
-    /// thread's reply window, so it is refreshed on every send, not just the first.
-    /// </summary>
-    private async Task UpsertInboundRouteAsync(
-        RateNegotiation negotiation, Guid tenantId, bool isNewThread, CancellationToken ct)
-    {
-        var routeRepo = masterUow.Repository<InboundEmailRoute>();
-
-        if (isNewThread)
-        {
-            await routeRepo.AddAsync(new InboundEmailRoute
-            {
-                ThreadToken = negotiation.ReplyToken,
-                TenantId = tenantId,
-                Purpose = InboundEmailPurpose.RateNegotiation,
-                ExpiresAt = negotiation.ExpiresAt
-            }, ct);
-        }
-        else
-        {
-            var route = await routeRepo.GetAsync(r => r.ThreadToken == negotiation.ReplyToken, ct);
-            if (route is null)
-            {
-                return;
-            }
-
-            route.ExpiresAt = negotiation.ExpiresAt;
-        }
-
-        await masterUow.SaveChangesAsync(ct);
     }
 }

@@ -76,10 +76,8 @@ internal sealed class BookLoadBoardLoadHandler(
             return Result<LoadBoardBookingResultDto>.Fail(creditGate.Error!, creditGate.ErrorCode!);
         }
 
-        var negotiation = await tenantUow.Repository<RateNegotiation>().GetAsync(
-            n => n.LoadBoardListingId == listing.Id &&
-                 (n.Status == RateNegotiationStatus.AwaitingBroker ||
-                  n.Status == RateNegotiationStatus.BrokerReplied), ct);
+        var negotiation = await tenantUow.Repository<RateNegotiation>()
+            .GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
 
         var negotiatedRateCheck = CheckNegotiatedRate(req.NegotiatedTotalRate, negotiation);
         if (!negotiatedRateCheck.IsSuccess)

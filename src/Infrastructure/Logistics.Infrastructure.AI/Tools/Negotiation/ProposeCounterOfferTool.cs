@@ -28,7 +28,6 @@ internal sealed class ProposeCounterOfferTool(IMediator mediator, IAgentRunConte
             ProposedTotalRate = proposedTotalRate,
             ProposedRatePerMile = input.GetDecimal("proposed_rate_per_mile"),
             Message = message,
-            Reasoning = input.GetString("reasoning") ?? "",
             ConversationId = runContext.ConversationId,
             DecisionId = runContext.DecisionId
         };

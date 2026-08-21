@@ -56,7 +56,7 @@ internal static partial class EmailReplyParser
             text = body.Trim();
         }
 
-        return text.Length <= MaxLength ? text : text[..MaxLength].TrimEnd() + "...";
+        return NegotiationText.Truncate(text, MaxLength);
     }
 
     private static bool IsCutPoint(string line) =>

@@ -2,7 +2,6 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Queries;
@@ -21,10 +20,8 @@ internal sealed class GetRateFloorContextHandler(
         }
 
         var floor = await resolver.ResolveAsync(listing, ct);
-        var negotiation = await tenantUow.Repository<RateNegotiation>().GetAsync(
-            n => n.LoadBoardListingId == listing.Id &&
-                 (n.Status == RateNegotiationStatus.AwaitingBroker ||
-                  n.Status == RateNegotiationStatus.BrokerReplied), ct);
+        var negotiation = await tenantUow.Repository<RateNegotiation>()
+            .GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
 
         return Result<RateFloorContextDto>.Ok(new RateFloorContextDto
         {
@@ -37,7 +34,7 @@ internal sealed class GetRateFloorContextHandler(
             ListingTotalRate = listing.TotalRate?.Amount,
             ListingRatePerMile = listing.RatePerMile,
             DistanceMiles = listing.Distance,
-            Currency = listing.TotalRate?.Currency ?? "USD"
+            Currency = listing.TotalRate?.Currency ?? ComposeNegotiationEmailRequest.DefaultCurrency
         });
     }
 }

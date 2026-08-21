@@ -4,6 +4,7 @@ using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Integrations.Negotiation.Commands;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -35,18 +36,10 @@ public class ProcessInboundNegotiationEmailHandlerTests
 
     public ProcessInboundNegotiationEmailHandlerTests()
     {
-        tenant = new Tenant
-        {
-            Name = "test",
-            ConnectionString = "test",
-            BillingEmail = "billing@test.com",
-            CompanyAddress = new Address
-            {
-                Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US"
-            }
-        };
+        tenant = TestTenant.Create();
 
-        negotiation = RateNegotiation.Create(Guid.NewGuid(), "broker@example.com", conversationId: Guid.NewGuid());
+        negotiation = RateNegotiation.Create(
+            Guid.NewGuid(), "broker@example.com", RateFloorSnapshot.None, conversationId: Guid.NewGuid());
         negotiation.AddOutboundMessage("first offer");
 
         tenantUow.Repository<RateNegotiation>().Returns(negotiationRepo);

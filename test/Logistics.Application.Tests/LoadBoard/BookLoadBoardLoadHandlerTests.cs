@@ -215,7 +215,7 @@ public class BookLoadBoardLoadHandlerTests
 
     private RateNegotiation SetupNegotiation(decimal? floorTotal)
     {
-        var negotiation = RateNegotiation.Create(listing.Id, "broker@example.com");
+        var negotiation = RateNegotiation.Create(listing.Id, "broker@example.com", RateFloorSnapshot.None);
         negotiation.FloorTotalRate = floorTotal.HasValue
             ? new Money { Amount = floorTotal.Value, Currency = "USD" }
             : null;

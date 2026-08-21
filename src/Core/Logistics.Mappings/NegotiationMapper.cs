@@ -9,9 +9,10 @@ public static partial class NegotiationMapper
 {
     /// <summary>
     /// Lane and listing rate come from the caller: reading them off the listing navigation would
-    /// lazy-load one listing per row.
+    /// lazy-load one listing per row. Required rather than optional so a caller cannot quietly
+    /// broadcast a row with the lane blanked out.
     /// </summary>
-    public static RateNegotiationDto ToDto(this RateNegotiation entity, LoadBoardListing? listing = null)
+    public static RateNegotiationDto ToDto(this RateNegotiation entity, LoadBoardListing? listing)
     {
         var dto = Map(entity);
         return dto with
@@ -49,4 +50,11 @@ public static partial class NegotiationMapper
     [MapperIgnoreSource(nameof(NegotiationMessage.ProviderMessageId))]
     [MapperIgnoreSource(nameof(NegotiationMessage.InReplyToMessageId))]
     public static partial NegotiationMessageDto ToDto(this NegotiationMessage entity);
+
+    /// <summary>
+    /// Projects in SQL rather than materializing entities: RawBody holds up to 64KB per row and no
+    /// consumer of the DTO reads it.
+    /// </summary>
+    public static partial IQueryable<NegotiationMessageDto> ProjectToDto(
+        this IQueryable<NegotiationMessage> query);
 }

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email;
+using Logistics.Application.Modules.Integrations.Negotiation;
 using Logistics.Application.Modules.Integrations.Negotiation.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -21,7 +22,12 @@ internal sealed class ProcessResendWebhookHandler(
 {
     private const string Provider = "Resend";
     private const string ReceivedEventType = "email.received";
-    private const string ReplyAddressPrefix = "offer-";
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        PropertyNameCaseInsensitive = true
+    };
 
     public async Task<Result<ResendWebhookOutcome>> Handle(
         ProcessResendWebhookCommand req, CancellationToken ct)
@@ -44,7 +50,7 @@ internal sealed class ProcessResendWebhookHandler(
             return Ok(ResendWebhookOutcome.Accepted);
         }
 
-        var eventKey = payload.EmailId ?? req.SvixId!;
+        var eventKey = payload.Data?.EmailId ?? req.SvixId!;
         var ledger = masterUow.Repository<ProcessedWebhookEvent>();
 
         if (await ledger.GetAsync(e => e.Provider == Provider && e.EventKey == eventKey, ct) is not null)
@@ -82,10 +88,10 @@ internal sealed class ProcessResendWebhookHandler(
         var inner = await mediator.Send(new ProcessInboundNegotiationEmailCommand
         {
             ThreadToken = token,
-            ProviderEmailId = payload.EmailId ?? eventKey,
-            From = payload.From ?? "",
-            Subject = payload.Subject,
-            MessageId = payload.MessageId
+            ProviderEmailId = payload.Data?.EmailId ?? eventKey,
+            From = payload.Data?.From ?? "",
+            Subject = payload.Data?.Subject,
+            MessageId = payload.Data?.MessageId
         }, ct);
 
         // Ledger last: a transient failure must stay retryable, and a recorded key would kill the retry.
@@ -106,69 +112,41 @@ internal sealed class ProcessResendWebhookHandler(
         Result<ResendWebhookOutcome>.Ok(outcome);
 
     /// <summary>
-    /// The thread token rides in the local part of the reply address. <c>received_for</c> holds the
-    /// address the mail was actually delivered to, which survives forwarding; <c>to</c> is checked
-    /// too because a direct reply lands there.
+    /// <c>received_for</c> holds the address the mail was actually delivered to, which survives
+    /// forwarding; <c>to</c> is checked too because a direct reply lands there.
     /// </summary>
-    private static string? ExtractThreadToken(ResendEvent payload)
-    {
-        var candidates = (payload.ReceivedFor ?? []).Concat(payload.To ?? []);
-
-        foreach (var address in candidates)
-        {
-            var localPart = address.Split('@')[0].Trim();
-            if (localPart.StartsWith(ReplyAddressPrefix, StringComparison.OrdinalIgnoreCase) &&
-                localPart.Length > ReplyAddressPrefix.Length)
-            {
-                return localPart[ReplyAddressPrefix.Length..];
-            }
-        }
-
-        return null;
-    }
+    private static string? ExtractThreadToken(ResendEvent payload) =>
+        (payload.Data?.ReceivedFor ?? []).Concat(payload.Data?.To ?? [])
+            .Select(NegotiationReplyAddress.TryParseToken)
+            .FirstOrDefault(token => token is not null);
 
     private static bool TryReadEvent(string rawBody, out ResendEvent payload)
     {
-        payload = new ResendEvent();
-
         try
         {
-            using var document = JsonDocument.Parse(rawBody);
-            var root = document.RootElement;
-
-            payload.Type = root.TryGetProperty("type", out var type) ? type.GetString() : null;
-
-            if (root.TryGetProperty("data", out var data) && data.ValueKind == JsonValueKind.Object)
-            {
-                payload.EmailId = data.TryGetProperty("email_id", out var id) ? id.GetString() : null;
-                payload.From = data.TryGetProperty("from", out var from) ? from.GetString() : null;
-                payload.Subject = data.TryGetProperty("subject", out var subject) ? subject.GetString() : null;
-                payload.MessageId = data.TryGetProperty("message_id", out var mid) ? mid.GetString() : null;
-                payload.To = ReadStrings(data, "to");
-                payload.ReceivedFor = ReadStrings(data, "received_for");
-            }
-
+            payload = JsonSerializer.Deserialize<ResendEvent>(rawBody, JsonOptions) ?? new ResendEvent();
             return payload.Type is not null;
         }
         catch (JsonException)
         {
+            payload = new ResendEvent();
             return false;
         }
     }
 
-    private static List<string> ReadStrings(JsonElement data, string property) =>
-        data.TryGetProperty(property, out var array) && array.ValueKind == JsonValueKind.Array
-            ? [.. array.EnumerateArray().Select(e => e.GetString()).OfType<string>()]
-            : [];
-
-    private sealed class ResendEvent
+    private sealed record ResendEvent
     {
-        public string? Type { get; set; }
-        public string? EmailId { get; set; }
-        public string? From { get; set; }
-        public string? Subject { get; set; }
-        public string? MessageId { get; set; }
-        public List<string>? To { get; set; }
-        public List<string>? ReceivedFor { get; set; }
+        public string? Type { get; init; }
+        public ResendEventData? Data { get; init; }
+    }
+
+    private sealed record ResendEventData
+    {
+        public string? EmailId { get; init; }
+        public string? From { get; init; }
+        public string? Subject { get; init; }
+        public string? MessageId { get; init; }
+        public List<string>? To { get; init; }
+        public List<string>? ReceivedFor { get; init; }
     }
 }

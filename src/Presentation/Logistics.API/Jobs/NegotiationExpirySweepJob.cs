@@ -1,6 +1,7 @@
 using Hangfire;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -21,7 +22,7 @@ public class NegotiationExpirySweepJob(
         RecurringJob.AddOrUpdate<NegotiationExpirySweepJob>(
             "negotiation-expiry-sweep",
             job => job.ExpireStaleNegotiationsAsync(CancellationToken.None),
-            Cron.Hourly());
+            Cron.HourInterval(6));
     }
 
     [AutomaticRetry(Attempts = 2)]
@@ -56,41 +57,29 @@ public class NegotiationExpirySweepJob(
         }
 
         await tenantUow.SaveChangesAsync(ct);
-        await RevokeRoutesAsync(scope, stale, ct);
+
+        var routeRegistry = scope.ServiceProvider.GetRequiredService<IInboundEmailRouteRegistry>();
+        await routeRegistry.RevokeAsync(stale.Select(n => n.ReplyToken), ct);
 
         logger.LogInformation(
             "Expired {Count} negotiations for tenant {TenantName}", stale.Count, tenant.Name);
 
         var broadcastService = scope.ServiceProvider.GetRequiredService<IAIDispatchBroadcastService>();
-        foreach (var negotiation in stale)
-        {
-            await broadcastService.BroadcastNegotiationAsync(tenant.Id, negotiation.ToDto());
-        }
+        var listings = await GetListingsAsync(tenantUow, stale, ct);
+
+        await Task.WhenAll(stale.Select(n => broadcastService.BroadcastNegotiationAsync(
+            tenant.Id, n.ToDto(listings.GetValueOrDefault(n.LoadBoardListingId)))));
     }
 
-    /// <summary>
-    /// The reply address outlives the thread unless it is revoked here, and an address that still
-    /// routes is an open door into a tenant's inbox.
-    /// </summary>
-    private static async Task RevokeRoutesAsync(
-        IServiceScope scope, List<RateNegotiation> expired, CancellationToken ct)
+    /// <summary>One query for the batch - the listing navigation would lazy-load per row.</summary>
+    private static async Task<Dictionary<Guid, LoadBoardListing>> GetListingsAsync(
+        ITenantUnitOfWork tenantUow, List<RateNegotiation> negotiations, CancellationToken ct)
     {
-        var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
-        var tokens = expired.Select(n => n.ReplyToken).ToArray();
+        var ids = negotiations.Select(n => n.LoadBoardListingId).Distinct().ToArray();
 
-        var routes = await masterUow.Repository<InboundEmailRoute>()
-            .GetListAsync(r => tokens.Contains(r.ThreadToken) && r.RevokedAt == null, ct);
+        var listings = await tenantUow.Repository<LoadBoardListing>()
+            .GetListAsync(l => ids.Contains(l.Id), ct);
 
-        if (routes.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var route in routes)
-        {
-            route.RevokedAt = DateTime.UtcNow;
-        }
-
-        await masterUow.SaveChangesAsync(ct);
+        return listings.ToDictionary(l => l.Id);
     }
 }

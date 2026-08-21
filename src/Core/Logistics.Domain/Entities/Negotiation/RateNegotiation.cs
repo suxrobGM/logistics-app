@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.Enums;
@@ -16,7 +17,6 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     /// <summary>Outbound counters allowed before the thread must be closed.</summary>
     public const int MaxRounds = 3;
 
-    private const string Base32Alphabet = "abcdefghijklmnopqrstuvwxyz234567";
     private static readonly TimeSpan ReplyWindow = TimeSpan.FromHours(48);
 
     public required Guid LoadBoardListingId { get; set; }
@@ -64,12 +64,40 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     [NotMapped]
     public string Reference => ReferenceFor(LoadBoardListingId);
 
+    /// <summary>The thread is still live: the broker can reply and the agent can still counter.</summary>
+    [NotMapped]
+    public bool IsOpen =>
+        Status is RateNegotiationStatus.AwaitingBroker or RateNegotiationStatus.BrokerReplied;
+
+    /// <summary>Rounds remain and the thread is open, so another counter may be sent.</summary>
+    [NotMapped]
+    public bool CanCounter => IsOpen && RoundCount < MaxRounds;
+
     public static string ReferenceFor(Guid loadBoardListingId) =>
         "NEG-" + loadBoardListingId.ToString("N")[..8].ToUpperInvariant();
 
+    /// <summary>
+    /// Matches the single open thread on a listing. Kept here rather than inlined at each call site
+    /// so a new open status cannot be added without every query picking it up.
+    /// </summary>
+    public static Expression<Func<RateNegotiation, bool>> OpenForListing(Guid loadBoardListingId) =>
+        n => n.LoadBoardListingId == loadBoardListingId &&
+             (n.Status == RateNegotiationStatus.AwaitingBroker ||
+              n.Status == RateNegotiationStatus.BrokerReplied);
+
+    /// <inheritdoc cref="OpenForListing"/>
+    public static Expression<Func<RateNegotiation, bool>> Open() =>
+        n => n.Status == RateNegotiationStatus.AwaitingBroker ||
+             n.Status == RateNegotiationStatus.BrokerReplied;
+
+    /// <param name="floor">
+    /// Snapshotted onto the thread here rather than assigned by the caller: every downstream check
+    /// reads a missing floor as "no limit", so a floorless thread must be unrepresentable.
+    /// </param>
     public static RateNegotiation Create(
         Guid loadBoardListingId,
         string brokerEmail,
+        RateFloorSnapshot floor,
         string? brokerName = null,
         string? brokerMcNumber = null,
         Guid? conversationId = null)
@@ -81,7 +109,10 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
             BrokerName = brokerName,
             BrokerMcNumber = brokerMcNumber,
             ConversationId = conversationId,
-            ReplyToken = GenerateReplyToken()
+            ReplyToken = GenerateReplyToken(),
+            FloorRatePerMile = floor.MinRatePerMile,
+            FloorTotalRate = floor.MinTotalRate,
+            FloorSource = floor.Source
         };
     }
 
@@ -174,27 +205,10 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
 
     public int NextSequence() => Messages.Count > 0 ? Messages.Max(m => m.Sequence) + 1 : 1;
 
-    /// <summary>160 bits of entropy as unpadded lowercase base32 - 32 address-safe characters.</summary>
-    private static string GenerateReplyToken()
-    {
-        var bytes = RandomNumberGenerator.GetBytes(20);
-        var token = new char[32];
-        var buffer = 0;
-        var bits = 0;
-        var index = 0;
-
-        foreach (var b in bytes)
-        {
-            buffer = (buffer << 8) | b;
-            bits += 8;
-
-            while (bits >= 5)
-            {
-                bits -= 5;
-                token[index++] = Base32Alphabet[(buffer >> bits) & 31];
-            }
-        }
-
-        return new string(token);
-    }
+    /// <summary>
+    /// 128 bits of entropy as 32 lowercase hex characters. Lowercase hex rather than base64url
+    /// because the token goes in an email local-part, which is case-insensitive in practice.
+    /// </summary>
+    private static string GenerateReplyToken() =>
+        Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(16));
 }

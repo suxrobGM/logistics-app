@@ -8,6 +8,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -18,7 +19,7 @@ namespace Logistics.Application.Tests.Negotiation;
 public class ProposeCounterOfferHandlerTests
 {
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly IInboundEmailRouteRegistry routeRegistry = Substitute.For<IInboundEmailRouteRegistry>();
     private readonly IBrokerCreditService brokerCreditService = Substitute.For<IBrokerCreditService>();
     private readonly ILaneRateFloorResolver floorResolver = Substitute.For<ILaneRateFloorResolver>();
     private readonly INegotiationEmailComposer composer = Substitute.For<INegotiationEmailComposer>();
@@ -33,9 +34,6 @@ public class ProposeCounterOfferHandlerTests
         Substitute.For<ITenantRepository<NegotiationMessage, Guid>>();
     private readonly ITenantRepository<AgentDecision, Guid> decisionRepo =
         Substitute.For<ITenantRepository<AgentDecision, Guid>>();
-    private readonly IMasterRepository<InboundEmailRoute, Guid> routeRepo =
-        Substitute.For<IMasterRepository<InboundEmailRoute, Guid>>();
-
     private readonly Tenant tenant;
     private readonly LoadBoardListing listing;
     private readonly ProposeCounterOfferCommand command;
@@ -43,18 +41,7 @@ public class ProposeCounterOfferHandlerTests
 
     public ProposeCounterOfferHandlerTests()
     {
-        tenant = new Tenant
-        {
-            Name = "test",
-            CompanyName = "Test Carrier",
-            McNumber = "MC999",
-            ConnectionString = "test",
-            BillingEmail = "billing@test.com",
-            CompanyAddress = new Address
-            {
-                Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US"
-            }
-        };
+        tenant = TestTenant.Create(companyName: "Test Carrier", mcNumber: "MC999");
 
         listing = CreateListing();
         command = new ProposeCounterOfferCommand
@@ -62,8 +49,7 @@ public class ProposeCounterOfferHandlerTests
             ListingId = listing.Id,
             ProposedTotalRate = 2200m,
             ProposedRatePerMile = 2.20m,
-            Message = "We can cover this at $2,200.",
-            Reasoning = "Listing is below our TX-IL floor."
+            Message = "We can cover this at $2,200."
         };
 
         tenantUow.Repository<LoadBoardListing>().Returns(listingRepo);
@@ -71,7 +57,6 @@ public class ProposeCounterOfferHandlerTests
         tenantUow.Repository<NegotiationMessage>().Returns(messageRepo);
         tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
         tenantUow.GetCurrentTenant().Returns(tenant);
-        masterUow.Repository<InboundEmailRoute>().Returns(routeRepo);
 
         listingRepo.GetByIdAsync(listing.Id, Arg.Any<CancellationToken>()).Returns(listing);
         SetupActiveNegotiation(null);
@@ -101,7 +86,7 @@ public class ProposeCounterOfferHandlerTests
                 ci.Arg<ComposeNegotiationEmailRequest>().AgentMessage));
 
         sut = new ProposeCounterOfferHandler(
-            tenantUow, masterUow, brokerCreditService, floorResolver, composer, emailSender,
+            tenantUow, routeRegistry, brokerCreditService, floorResolver, composer, emailSender,
             broadcastService, NullLogger<ProposeCounterOfferHandler>.Instance);
     }
 
@@ -281,7 +266,7 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_RoundCapReached_FailsWithoutSending()
     {
-        var existing = RateNegotiation.Create(listing.Id, "broker@example.com");
+        var existing = RateNegotiation.Create(listing.Id, "broker@example.com", RateFloorSnapshot.None);
         existing.RoundCount = RateNegotiation.MaxRounds;
         SetupActiveNegotiation(existing);
 
@@ -303,7 +288,7 @@ public class ProposeCounterOfferHandlerTests
         Assert.False(result.IsSuccess);
         await negotiationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
         await messageRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await routeRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await routeRegistry.DidNotReceiveWithAnyArgs().OpenAsync(default!, default, default);
         await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -323,9 +308,9 @@ public class ProposeCounterOfferHandlerTests
                 m.ProviderMessageId == "resend-1" &&
                 m.ProposedTotalRate!.Amount == 2200m),
             Arg.Any<CancellationToken>());
-        await routeRepo.Received(1).AddAsync(Arg.Any<InboundEmailRoute>(), Arg.Any<CancellationToken>());
+        await routeRegistry.Received(1).OpenAsync(
+            Arg.Any<string>(), tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
         await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
-        await masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
         await broadcastService.Received(1).BroadcastNegotiationAsync(tenant.Id, Arg.Any<RateNegotiationDto>());
     }
 
@@ -346,12 +331,10 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_SecondOffer_ChainsThreadHeadersAndReusesRoute()
     {
-        var existing = RateNegotiation.Create(listing.Id, "broker@example.com");
+        var existing = RateNegotiation.Create(listing.Id, "broker@example.com", RateFloorSnapshot.None);
         var first = existing.AddOutboundMessage("first offer");
         first.ProviderMessageId = "resend-0";
         SetupActiveNegotiation(existing);
-        routeRepo.GetAsync(Arg.Any<Expression<Func<InboundEmailRoute, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(new InboundEmailRoute { ThreadToken = existing.ReplyToken, TenantId = tenant.Id });
 
         var result = await sut.Handle(command, CancellationToken.None);
 
@@ -360,7 +343,9 @@ public class ProposeCounterOfferHandlerTests
             Arg.Is<ThreadedEmail>(e => e.InReplyToMessageId == "resend-0" && e.References == "resend-0"),
             Arg.Any<CancellationToken>());
         await negotiationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await routeRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await routeRegistry.DidNotReceiveWithAnyArgs().OpenAsync(default!, default, default);
+        await routeRegistry.Received(1).RefreshAsync(
+            existing.ReplyToken, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

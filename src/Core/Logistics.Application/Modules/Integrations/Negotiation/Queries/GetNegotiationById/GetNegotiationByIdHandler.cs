@@ -24,10 +24,11 @@ internal sealed class GetNegotiationByIdHandler(ITenantUnitOfWork tenantUow)
         var messages = await tenantUow.Repository<NegotiationMessage>().Query()
             .Where(m => m.NegotiationId == negotiation.Id)
             .OrderBy(m => m.Sequence)
+            .ProjectToDto()
             .ToListAsync(ct);
 
         var dto = negotiation.ToDto(listing);
-        dto.Messages = messages.Select(m => m.ToDto()).ToList();
+        dto.Messages = messages;
         return Result<RateNegotiationDto>.Ok(dto);
     }
 }

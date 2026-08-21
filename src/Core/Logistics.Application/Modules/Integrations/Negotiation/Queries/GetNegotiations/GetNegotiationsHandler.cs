@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +20,7 @@ internal sealed class GetNegotiationsHandler(ITenantUnitOfWork tenantUow)
         }
         else if (req.ActiveOnly)
         {
-            query = query.Where(n =>
-                n.Status == RateNegotiationStatus.AwaitingBroker ||
-                n.Status == RateNegotiationStatus.BrokerReplied);
+            query = query.Where(RateNegotiation.Open());
         }
 
         var totalItems = await query.CountAsync(ct);

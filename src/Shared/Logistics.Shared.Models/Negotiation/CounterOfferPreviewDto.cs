@@ -7,7 +7,13 @@ namespace Logistics.Shared.Models;
 public record CounterOfferPreviewDto
 {
     public string Subject { get; set; } = "";
-    public string HtmlBody { get; set; } = "";
+
+    /// <summary>
+    /// The agent's paragraph after the same sanitization the sent mail gets. Sent instead of the
+    /// rendered HTML so the client does not have to strip markup back off to display it.
+    /// </summary>
+    public string Message { get; set; } = "";
+
     public string ToEmail { get; set; } = "";
     public string ReplyToAddress { get; set; } = "";
     public decimal ProposedTotalRate { get; set; }

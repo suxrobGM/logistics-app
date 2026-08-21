@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.Negotiation;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -34,19 +35,11 @@ public class NegotiationTurnStarterTests
 
     public NegotiationTurnStarterTests()
     {
-        tenant = new Tenant
-        {
-            Name = "test",
-            ConnectionString = "test",
-            BillingEmail = "billing@test.com",
-            CompanyAddress = new Address
-            {
-                Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US"
-            }
-        };
+        tenant = TestTenant.Create();
 
         conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch };
-        negotiation = RateNegotiation.Create(Guid.NewGuid(), "broker@example.com", conversationId: conversation.Id);
+        negotiation = RateNegotiation.Create(
+            Guid.NewGuid(), "broker@example.com", RateFloorSnapshot.None, conversationId: conversation.Id);
 
         tenantUow.Repository<AgentConversation>().Returns(conversationRepo);
         tenantUow.Repository<AgentMessage>().Returns(messageRepo);
@@ -103,7 +96,7 @@ public class NegotiationTurnStarterTests
     [Fact]
     public async Task NotifyBrokerReply_NoConversationLinked_DoesNothing()
     {
-        var orphan = RateNegotiation.Create(Guid.NewGuid(), "broker@example.com");
+        var orphan = RateNegotiation.Create(Guid.NewGuid(), "broker@example.com", RateFloorSnapshot.None);
 
         await sut.NotifyBrokerReplyAsync(orphan, "We can do 2100.", CancellationToken.None);
 

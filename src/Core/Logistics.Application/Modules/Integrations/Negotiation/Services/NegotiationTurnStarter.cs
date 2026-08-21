@@ -110,9 +110,7 @@ internal sealed class NegotiationTurnStarter(
     /// </summary>
     private static string BuildEnvelope(RateNegotiation negotiation, string brokerText)
     {
-        var clamped = brokerText.Length <= MaxBrokerTextChars
-            ? brokerText
-            : brokerText[..MaxBrokerTextChars].TrimEnd() + "...";
+        var clamped = NegotiationText.Truncate(brokerText, MaxBrokerTextChars);
 
         return $"""
             [Broker reply on negotiation {negotiation.Reference}]

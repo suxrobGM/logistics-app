@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Logistics.Application.Modules.Integrations.Negotiation;
 using Logistics.Application.Modules.Integrations.Negotiation.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
@@ -66,9 +67,6 @@ internal sealed class GetNegotiationThreadTool(IMediator mediator) : IAgentTool
         quarantined = message.Quarantined,
         text = message.Quarantined
             ? "[quarantined: sender did not match the broker address on this thread]"
-            : Clamp(message.TextBody)
+            : NegotiationText.Truncate(message.TextBody, MaxMessageChars)
     };
-
-    private static string Clamp(string text) =>
-        text.Length <= MaxMessageChars ? text : text[..MaxMessageChars] + "...";
 }

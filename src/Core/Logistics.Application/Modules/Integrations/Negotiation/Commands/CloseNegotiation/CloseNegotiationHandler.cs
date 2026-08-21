@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
 
 internal sealed class CloseNegotiationHandler(
     ITenantUnitOfWork tenantUow,
-    IMasterUnitOfWork masterUow,
+    IInboundEmailRouteRegistry routeRegistry,
     IAIDispatchBroadcastService broadcastService)
     : IAppRequestHandler<CloseNegotiationCommand, Result>
 {
@@ -22,7 +23,7 @@ internal sealed class CloseNegotiationHandler(
             return Result.Fail($"Could not find a negotiation with ID '{req.Id}'");
         }
 
-        if (negotiation.Status is not (RateNegotiationStatus.AwaitingBroker or RateNegotiationStatus.BrokerReplied))
+        if (!negotiation.IsOpen)
         {
             return Result.Fail($"This negotiation is already {negotiation.Status.GetDescription().ToLowerInvariant()}.");
         }
@@ -33,14 +34,7 @@ internal sealed class CloseNegotiationHandler(
 
         await tenantUow.SaveChangesAsync(ct);
 
-        var route = await masterUow.Repository<InboundEmailRoute>()
-            .GetAsync(r => r.ThreadToken == negotiation.ReplyToken, ct);
-
-        if (route is { RevokedAt: null })
-        {
-            route.RevokedAt = DateTime.UtcNow;
-            await masterUow.SaveChangesAsync(ct);
-        }
+        await routeRegistry.RevokeAsync([negotiation.ReplyToken], ct);
 
         var listing = await tenantUow.Repository<LoadBoardListing>()
             .GetByIdAsync(negotiation.LoadBoardListingId, ct);
