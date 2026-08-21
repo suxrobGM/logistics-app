@@ -159,8 +159,10 @@ Key format: `logsx_{tenantId}_{random}` - the tenant ID is embedded so the serve
 - **Tenant isolation**: Each key is scoped to a single tenant's database. Cross-tenant access is impossible.
 - **Rate limiting**: 100 requests per minute per API key.
 - **No AI quota**: MCP calls consume no platform LLM tokens (the caller brings their own model), so the weekly AI quota does not apply.
-- **Feature gating**: The MCP Server feature must be enabled on the tenant's subscription plan.
-- **Write confirmation**: Write tools instruct the AI to explain and confirm before executing.
+- **Feature gating**: The MCP Server feature must be enabled on the tenant's subscription plan. Without it the endpoint answers 403 rather than exposing a working handshake.
+- **Per-tenant catalogue**: `tools/list` returns only the tools the tenant's features allow, so a client never sees a tool it cannot call.
+- **Write confirmation**: A write called over MCP executes immediately - there is no dispatcher approval step behind an API key - and its description says so, instructing the client to confirm with its user first.
+- **No tools that need a person**: tools that attribute their work to a user (`book_loadboard_load`) are absent from the MCP catalogue, because a key identifies a tenant rather than a person.
 
 ## Architecture
 
@@ -174,20 +176,24 @@ MCP Client (Claude Desktop, Cursor, etc.)
   ├── ApiKeyAuthenticationHandler
   │     Parse tenant ID from key → resolve tenant → validate hash
   │
-  └── AIDispatchMcpTool (one per tool definition)
-        ├── Feature gate check (MCP Server + Load Board)
-        └── IAgentToolExecutor.ExecuteToolAsync()
-              └── IAgentTool implementation (same as AI agent)
+  ├── McpFeatureGate (endpoint filter)
+  │     MCP Server feature enabled for this tenant?
+  │
+  └── McpToolSurface
+        ├── tools/list → IAgentToolRegistry.GetMcpTools(enabled features)
+        └── tools/call → per-tool feature gate → IAgentToolExecutor.ExecuteToolAsync()
+              └── the same tool class the AI agent runs
 ```
 
-Tool definitions - names, descriptions, schemas - live in one registry (`AgentToolRegistry`) shared by the AI dispatch agent and the MCP server. Add a tool to the registry and it shows up in both.
+Tool definitions - names, descriptions, schemas - are declared on the tool classes themselves and discovered by `AgentToolCatalog`, which the AI dispatch agent, the copilot and the MCP server all read through `IAgentToolRegistry`. Add a tool and it shows up on every surface.
 
 ### Project Structure
 
 ```text
 src/Presentation/Logistics.McpServer/
 ├── Registrar.cs                              # DI + MCP SDK + auth + rate limit
-├── AIDispatchMcpTool.cs                        # McpServerTool subclass wrapping AgentToolDefinition
+├── McpToolSurface.cs                         # tools/list + tools/call over the shared registry
+├── McpFeatureGate.cs                         # endpoint filter for the MCP Server feature
 └── Authentication/
     ├── ApiKeyDefaults.cs                     # Scheme constants
     └── ApiKeyAuthenticationHandler.cs        # API key validation + tenant resolution

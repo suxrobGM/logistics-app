@@ -143,7 +143,7 @@ with `Type == Dispatch`.
 
 ### Tool registry
 
-- Infrastructure: `Infrastructure.AI/Tools/AgentToolRegistry.cs` + `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/`
+- Infrastructure: `Infrastructure.AI/Tools/` (catalogue, schema/binding) + `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/`
 - API/UI: shared with `Logistics.McpServer` and the AI copilot
 - Behavior metadata (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`) lives on
   each `AgentToolDefinition` - there is no separate write-tool list anywhere
@@ -179,7 +179,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Copilot tools (loads, customers, invoicing, expenses, maintenance)
 
-- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `GetUpcomingMaintenanceTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `ToolInput.cs` parsing)
+- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `GetUpcomingMaintenanceTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `AgentToolJson.cs` schema and binding)
 
 ### LLM providers
 
@@ -205,7 +205,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### MCP server
 
-- API/UI: `Logistics.McpServer/` (uses `AgentToolRegistry`)
+- API/UI: `Logistics.McpServer/` (`McpToolSurface` over `IAgentToolRegistry`)
 
 ## Compliance & safety
 

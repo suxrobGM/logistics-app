@@ -23,7 +23,7 @@ picture is [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 | `Llm/Providers/`                                              | The only files allowed to touch a vendor SDK                                                                                                                                                                                     |
 | `Agents/`                                                     | Shared runtime: loop runner, decision processor, cancellation, tool-call context, `AgentTurnService` (the one turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`), transcript codec/replay |
 | `Agents/Dispatch/`, `Agents/Copilot/`                         | One folder per agent surface (each implements `IAgentSurface` for `AgentTurnService`)                                                                                                                                            |
-| `Tools/`                                                      | Tool contract, `ToolInput`/`ToolResult`, `DispatchUnits`, the catalogue                                                                                                                                                          |
+| `Tools/`                                                      | Tool base class, schema/binding (`AgentToolJson`), `ToolResult`, `DispatchUnits`, the catalogue                                                                                                                                  |
 | `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/` | Tools grouped by the Application module they dispatch into                                                                                                                                                                       |
 
 - **Config is not here.** `LlmOptions`, `LlmModelCatalog` and `AISettingsKeys` live in
@@ -78,23 +78,34 @@ that is what `OpenAIUsage.From` is for. Forward the raw counts and every cached 
 
 ## Tools
 
-`internal sealed`, implementing `IAgentTool`, **snake_case** `Name`, JSON Schema valid for both
-Claude and OpenAI function calling. Class name mirrors the tool name (`get_driver_hos_status` →
+`internal sealed`, deriving from `AgentTool<TInput>` and implementing `IAgentToolMetadata`,
+**snake_case** name. Class name mirrors the tool name (`get_driver_hos_status` →
 `GetDriverHosStatusTool`) so a transcript leads to the file.
 
-**DI needs no edit** - `Registrar` scans for `IAgentTool`, so a tool registers by existing. The
-`AgentToolRegistry.Tools` catalogue entry (shared with the MCP server) is the one thing you must not
-forget; `AgentToolRegistryParityTests` fails if class and catalogue disagree either way.
+**A tool is one file.** `AgentToolCatalog` scans the assembly at startup, reads each tool's static
+`Definition`, generates its schema and feeds both DI and `AgentToolRegistry` - there is no catalogue
+list and no registration to keep in step.
 
-- Read tools always execute immediately. Write tools always become `Suggested` decisions awaiting
-  dispatcher/user approval - there is no unattended-execution path (`AgentDecisionProcessor`).
-- **Behaviour metadata lives on the registry definition** as named init properties:
+**The input type is the schema.** `AgentToolJson` exports `TInput` (snake_case names,
+`[Description]` as the description, `required` members, enum value lists) and binds the reply back.
+Never hand-write JSON Schema, and never read the raw `JsonNode` in a tool. Binding forgives quoted
+numbers, unquoted text and casing, but a wrong type or unknown enum name fails the call naming the
+property. `ToolInput`'s accessors are only for reading a **persisted** `AgentDecision.ToolInput`.
+
+- On the agent surfaces, read tools always execute immediately and write tools always become
+  `Suggested` decisions awaiting dispatcher/user approval - there is no unattended-execution path
+  (`AgentDecisionProcessor`).
+- **Behaviour metadata lives on the tool's static `Definition`** as named init properties:
   `RequiredPermission`, `DecisionType`, `RequiredFeature`, `DispatchAgent`. `IsWrite` is **derived**
   (`DecisionType != Query`), so there is no separate flag to forget. Miss `RequiredPermission` and
   the tool leaks into every copilot conversation regardless of the caller's role.
 - One registry method per surface: `GetDispatchAgentTools`, `GetCopilotTools` (permission set is a
-  required parameter, not a nullable flag - see `docs/ai-copilot.md`), `GetAllTools` for MCP, which
-  gates per call instead.
+  required parameter, not a nullable flag - see `docs/ai-copilot.md`), `GetMcpTools`, which filters
+  on features and drops `RequiresHumanOrigin` tools. Permissions do not apply to MCP: an API key
+  authenticates a tenant, not a person.
+- **Only the agent surfaces turn a write into a suggestion.** Over MCP a write executes immediately.
+  Never write either promise into a tool's own description: `AgentToolRegistry` appends the approval
+  sentence for the agents and the immediate-execution warning for MCP, one per surface method.
 - **`DispatchAgent` defaults to false** - it scopes the dispatch conversation's catalogue to
   fleet-relevant tools, keeping copilot-only write tools (e.g. `create_load_invoice`) out of dispatch
   runs. Do not re-derive it from `RequiredPermission`; a dispatch tool may legitimately require

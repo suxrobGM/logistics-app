@@ -264,7 +264,7 @@ Folders are named for the capability they hold, not the layer.
 
 ```text
 src/Infrastructure/Logistics.Infrastructure.AI/
-├── Registrar.cs                            # DI; discovers IAgentTool by scanning the assembly
+├── Registrar.cs                            # DI; registers the tools AgentToolCatalog discovered
 ├── Llm/                                    # Provider-agnostic LLM layer
 │   ├── ILlmProvider.cs                     # The boundary SDK types may not cross
 │   ├── LlmProviderFactory.cs               # Resolves provider from config
@@ -288,9 +288,12 @@ src/Infrastructure/Logistics.Infrastructure.AI/
 │   ├── Dispatch/                           # DispatchAgentSurface, AIDispatchService, conversation builder, prompt
 │   └── Copilot/                            # CopilotAgentSurface, AICopilotService, conversation builder, prompt
 └── Tools/
-    ├── AgentToolRegistry.cs                # The catalogue: JSON Schema + behaviour metadata
-    ├── AgentToolExecutor.cs                # Name → IAgentTool dispatch
-    ├── ToolInput.cs / ToolResult.cs        # Lenient input coercion, the result wire format
+    ├── AgentTool.cs                        # Base class: binds model arguments into the tool's input type
+    ├── AgentToolCatalog.cs                 # Discovers the tools and generates their schemas at startup
+    ├── AgentToolRegistry.cs                # Filters the catalogue per surface
+    ├── AgentToolJson.cs                    # Input type → JSON Schema, and the lenient binder back
+    ├── AgentToolExecutor.cs                # Name → tool dispatch
+    ├── ToolResult.cs                       # The result wire format
     └── {Dispatch,Financial,Operations,LoadBoard,Intermodal}/   # Tools by Application module
 ```
 
