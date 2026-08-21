@@ -7,6 +7,7 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
@@ -14,6 +15,7 @@ internal sealed class BookLoadBoardLoadHandler(
     ITenantUnitOfWork tenantUow,
     ILoadBoardTokenService tokenService,
     IBrokerCreditService brokerCreditService,
+    IInboundEmailRouteRegistry routeRegistry,
     ILogger<BookLoadBoardLoadHandler> logger)
     : IAppRequestHandler<BookLoadBoardLoadCommand, Result<LoadBoardBookingResultDto>>
 {
@@ -172,6 +174,12 @@ internal sealed class BookLoadBoardLoadHandler(
 
         await tenantUow.SaveChangesAsync(ct);
 
+        // A won thread still owns a live reply address; leaving it routing is an open door.
+        if (negotiation is not null)
+        {
+            await routeRegistry.RevokeAsync([negotiation.ReplyToken], ct);
+        }
+
         logger.LogInformation(
             "Booked load board listing {ListingId} from {Provider}, created load {LoadId}",
             listing.Id, listing.ProviderType, load.Id);
@@ -203,7 +211,17 @@ internal sealed class BookLoadBoardLoadHandler(
                 "There is no open rate negotiation on this listing, so there is no negotiated rate to book at.");
         }
 
-        if (negotiation.FloorTotalRate is { } floor && rate < floor.Amount)
+        if (negotiation.FloorTotalRate is not { } floor)
+        {
+            // The thread opened on a per-mile floor with no distance to convert it, so there is no
+            // total to compare against. Refuse rather than book an unchecked rate.
+            return Result.Fail(
+                "This negotiation opened against a per-mile floor on a listing with no distance, so " +
+                "the negotiated rate cannot be checked. Set a minimum total rate on the lane floor.",
+                ErrorCodes.NegotiationFloorMissing);
+        }
+
+        if (rate < floor.Amount)
         {
             return Result.Fail(
                 $"The negotiated rate {rate:N2} is below the floor of {floor.Amount:N2} this negotiation opened against.",

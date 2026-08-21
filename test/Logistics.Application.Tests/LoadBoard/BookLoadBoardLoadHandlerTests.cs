@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -18,6 +19,7 @@ public class BookLoadBoardLoadHandlerTests
     private readonly ILoadBoardTokenService tokenService = Substitute.For<ILoadBoardTokenService>();
     private readonly ILoadBoardProviderService provider = Substitute.For<ILoadBoardProviderService>();
     private readonly IBrokerCreditService brokerCreditService = Substitute.For<IBrokerCreditService>();
+    private readonly IInboundEmailRouteRegistry routeRegistry = Substitute.For<IInboundEmailRouteRegistry>();
 
     private readonly ITenantRepository<LoadBoardListing, Guid> listingRepo =
         Substitute.For<ITenantRepository<LoadBoardListing, Guid>>();
@@ -84,7 +86,8 @@ public class BookLoadBoardLoadHandlerTests
             .Returns(new LoadBoardBookingResultDto { Success = true, ExternalConfirmationId = "CONF-1" });
 
         sut = new BookLoadBoardLoadHandler(
-            tenantUow, tokenService, brokerCreditService, NullLogger<BookLoadBoardLoadHandler>.Instance);
+            tenantUow, tokenService, brokerCreditService, routeRegistry,
+            NullLogger<BookLoadBoardLoadHandler>.Instance);
     }
 
     private static LoadBoardListing CreateListing()
@@ -265,6 +268,33 @@ public class BookLoadBoardLoadHandlerTests
         Assert.Equal(result.Value!.CreatedLoadId, negotiation.LoadId);
         await loadRepo.Received(1).AddAsync(
             Arg.Is<Load>(l => l.DeliveryCost.Amount == 2200m), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_AcceptedThread_RevokesItsReplyRoute()
+    {
+        var negotiation = SetupNegotiation(floorTotal: 2000m);
+        command.NegotiatedTotalRate = 2200m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await routeRegistry.Received(1).RevokeAsync(
+            Arg.Is<IEnumerable<string>>(t => t.Single() == negotiation.ReplyToken),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ThreadWithPerMileOnlyFloor_RefusesUncheckedRate()
+    {
+        SetupNegotiation(floorTotal: null);
+        command.NegotiatedTotalRate = 2200m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationFloorMissing, result.ErrorCode);
+        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
     }
 
     #endregion
