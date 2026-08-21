@@ -15,5 +15,10 @@ internal sealed class TenantEntityConfiguration : IEntityTypeConfiguration<Tenan
         builder.Property(t => t.EoriNumber).HasMaxLength(20);
         builder.Property(t => t.CompanyRegistrationNumber).HasMaxLength(50);
         builder.Property(t => t.TaxResidencyCountry).HasMaxLength(2);
+
+        builder.ComplexProperty(t => t.Settings, settings =>
+        {
+            settings.Property(s => s.DefaultRateFloorPerMile).HasPrecision(18, 2);
+        });
     }
 }

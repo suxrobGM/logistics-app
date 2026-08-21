@@ -41,6 +41,7 @@ public class AgentDecision : Entity, ITenantEntity
     public Guid? TripId { get; set; }
     public Guid? InvoiceId { get; set; }
     public Guid? CustomerId { get; set; }
+    public Guid? NegotiationId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? ExecutedAt { get; set; }
