@@ -2,10 +2,10 @@
 
 [![Build Status](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml)
 [![Deploy](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml)
-[![FSL-1.1-Apache-2.0][fsl-shield]][fsl]
+[![PolyForm-Noncommercial-1.0.0][license-shield]][license]
 
-[fsl]: https://fsl.software/
-[fsl-shield]: https://img.shields.io/badge/License-FSL--1.1--Apache--2.0-blue.svg
+[license]: https://polyformproject.org/licenses/noncommercial/1.0.0/
+[license-shield]: https://img.shields.io/badge/License-PolyForm--Noncommercial--1.0.0-blue.svg
 
 > Fleet management platform for trucking companies. AI runs through it: a dispatch agent matches loads to trucks, checks HOS compliance, plans routes, and pulls leads from load boards, while a TMS-wide copilot answers questions and handles invoicing, expenses, and maintenance from a chat drawer - every decision logged so a human can review or override it.
 
@@ -190,9 +190,9 @@ Pull requests welcome. Fork, branch off `main`, open a PR. See the [development 
 
 ## License
 
-[Functional Source License, Version 1.1, Apache 2.0 Future License][fsl] (FSL-1.1-Apache-2.0).
+[PolyForm Noncommercial License 1.0.0][license] (PolyForm-Noncommercial-1.0.0).
 
-Free for internal use, non-commercial use, and professional services. Commercial use that competes with LogisticsX (e.g. offering it as a hosted TMS) is not permitted during the 2-year change period. The license auto-converts to **Apache 2.0** on the second anniversary of each release. For earlier commercial licensing, contact the author.
+The source is public and free for noncommercial use: personal projects, research, education, and evaluation. Any commercial use requires a paid commercial license from the author, with no time limit or automatic conversion. This includes running LogisticsX inside a for-profit company and offering it to others as a product or hosted service. To buy a commercial license, email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
 
 ## Contact
 
