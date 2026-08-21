@@ -13,14 +13,13 @@ public static class Registrar
 {
     public static IServiceCollection AddMcpServerInfrastructure(this IServiceCollection services)
     {
-        // MCP server with Streamable HTTP transport.
+        // Stateless is v2's default; pinned so an SDK default change can't silently re-add
+        // per-session transport state this API-key-per-request server never needed.
         services.AddMcpServer()
-            .WithHttpTransport();
+            .WithHttpTransport(options => options.Stateless = true);
 
-        // Build the server instructions and MCP tools from the dispatch tool registry (single source
-        // of truth) at options-build time. Deferred here so registration never builds an interim
-        // service provider; IAgentToolRegistry is a singleton, resolvable when options build,
-        // which also removes any ordering dependency on AddAIInfrastructure.
+        // Tools and instructions come from the shared registry at options-build time: no interim
+        // service provider at registration, no ordering dependency on AddAIInfrastructure.
         services.AddOptions<McpServerOptions>()
             .Configure<IAgentToolRegistry>((options, registry) =>
             {

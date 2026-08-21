@@ -36,7 +36,15 @@ internal sealed class AIDispatchMcpTool : McpServerTool
         {
             Name = definition.Name,
             Description = description,
-            InputSchema = inputSchema
+            InputSchema = inputSchema,
+            Annotations = new ToolAnnotations
+            {
+                ReadOnlyHint = !definition.IsWrite,
+                // Writes only ever create Suggested decisions awaiting approval - nothing is undone
+                // or overwritten, so they are additive, not destructive.
+                DestructiveHint = false,
+                OpenWorldHint = false
+            }
         };
     }
 
