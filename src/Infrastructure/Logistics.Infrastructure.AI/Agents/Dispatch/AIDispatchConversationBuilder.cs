@@ -14,7 +14,7 @@ namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 /// <summary>
 /// Builds the LLM conversation for one dispatch turn: system prompt (with learned policy), dispatch
-/// tool catalogue, and the replayed transcript with a fleet-freshness note on the final user message.
+/// tool catalogue, and the replayed transcript with a turn-context note on the final user message.
 /// </summary>
 internal sealed class AIDispatchConversationBuilder(
     IAgentToolRegistry toolRegistry,
@@ -57,26 +57,28 @@ internal sealed class AIDispatchConversationBuilder(
             session.Id, tools.Count, model, resolvedProvider);
 
         var messages = AgentTranscriptReplay.BuildMessages(conversation.Messages);
-        InjectFleetSnapshot(messages);
+        InjectTurnContext(messages);
 
         return new LlmConversation(
             setup.Provider, systemPrompt, messages, tools, model, config.MaxTokens, setup.Effort);
     }
 
     /// <summary>
-    /// Makes the agent re-gather fleet state instead of trusting earlier turns. In-memory only -
-    /// never persisted to the row's <c>ContentJson</c>, so a stale notice cannot replay later.
+    /// Stamps the current time and makes the agent re-gather fleet state before acting, without
+    /// forcing tool calls on conversational messages. In-memory only - never persisted to the row's
+    /// <c>ContentJson</c>, so a stale notice cannot replay later.
     /// </summary>
-    private static void InjectFleetSnapshot(List<LlmMessage> messages)
+    private static void InjectTurnContext(List<LlmMessage> messages)
     {
         if (messages.Count == 0 || messages[^1].Role != LlmRole.User)
             return;
 
         var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm UTC");
         messages[^1].Content.Add(new LlmTextBlock(
-            $"[Fleet state as of {timestamp}] Treat anything gathered earlier in this conversation as " +
-            "potentially stale - call get_unassigned_loads and get_available_trucks together before " +
-            "proposing or taking any action."));
+            $"[Current time: {timestamp}] This timestamp is authoritative for any date or time reasoning. " +
+            "Fleet data gathered in earlier turns may be stale: if you are about to propose or take any " +
+            "dispatch action, call get_unassigned_loads and get_available_trucks together first. If this " +
+            "message needs no dispatch action, just answer it - no tool calls."));
     }
 
     /// <summary>

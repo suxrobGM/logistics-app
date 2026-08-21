@@ -241,7 +241,7 @@ public class AIDispatchConversationBuilderTests
         Assert.Contains("API key", ex.Message);
     }
 
-    #region Fleet snapshot injection
+    #region Turn context injection
 
     [Fact]
     public async Task BuildAsync_RebuildsMessagesFromTranscript()
@@ -257,9 +257,9 @@ public class AIDispatchConversationBuilderTests
         Assert.Equal(3, llmConversation.Messages.Count);
     }
 
-    /// <summary>The snapshot text lands only on the final user message, appended in-memory.</summary>
+    /// <summary>The turn-context text lands only on the final user message, appended in-memory.</summary>
     [Fact]
-    public async Task BuildAsync_AppendsFreshSnapshotToFinalUserMessage()
+    public async Task BuildAsync_AppendsTurnContextToFinalUserMessage()
     {
         var conversation = CreateConversation("Now do the rest");
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
@@ -270,10 +270,26 @@ public class AIDispatchConversationBuilderTests
         Assert.True(lastMessage.Content.Count >= 2);
         Assert.Contains(lastMessage.Content, block =>
             block is Logistics.Infrastructure.AI.Llm.Contracts.LlmTextBlock text &&
-            text.Text.Contains("Fleet state as of", StringComparison.Ordinal));
+            text.Text.Contains("Current time:", StringComparison.Ordinal));
     }
 
-    /// <summary>Persisted rows keep only the user's typed text - the snapshot must never leak in.</summary>
+    /// <summary>Chit-chat must not be ordered to call fleet tools - the directive is conditional.</summary>
+    [Fact]
+    public async Task BuildAsync_TurnContext_MakesFleetChecksConditional()
+    {
+        var conversation = CreateConversation("hi");
+        var session = new AgentSession { StartedAt = DateTime.UtcNow };
+
+        var llmConversation = await sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
+
+        var lastMessage = llmConversation.Messages[^1];
+        var injected = Assert.IsType<Logistics.Infrastructure.AI.Llm.Contracts.LlmTextBlock>(
+            lastMessage.Content[^1]);
+        Assert.Contains("about to propose or take any", injected.Text);
+        Assert.Contains("no tool calls", injected.Text);
+    }
+
+    /// <summary>Persisted rows keep only the user's typed text - the turn context must never leak in.</summary>
     [Fact]
     public async Task BuildAsync_DoesNotMutateThePersistedTranscript()
     {
@@ -284,7 +300,7 @@ public class AIDispatchConversationBuilderTests
         await sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
         Assert.Equal(originalContentJson, conversation.Messages[0].ContentJson);
-        Assert.DoesNotContain("Fleet state as of", conversation.Messages[0].ContentJson);
+        Assert.DoesNotContain("Current time:", conversation.Messages[0].ContentJson);
     }
 
     #endregion

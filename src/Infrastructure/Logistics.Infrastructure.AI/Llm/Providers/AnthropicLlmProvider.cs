@@ -22,17 +22,27 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         // must not dispose it, so it is never wrapped in a using.
         var client = new AnthropicClient(new APIAuthentication(config.ApiKey), httpClient);
 
+        var parameters = BuildParameters(request);
+        parameters.Messages = BuildMessages(request.Messages);
+        parameters.Tools = BuildTools(request);
+
+        var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
+        return MapResponse(response);
+    }
+
+    /// <summary>
+    /// Function tools plus Anthropic's server-side web-search tool. The search runs inside one API
+    /// call, so the agent loop never executes it; max_uses bounds the per-call spend.
+    /// </summary>
+    internal static List<Tool> BuildTools(LlmRequest request)
+    {
         var tools = request.Tools
             .Select<AgentToolDefinition, Tool>(t =>
                 new Function(t.Name, t.Description, t.InputSchema))
             .ToList();
 
-        var parameters = BuildParameters(request);
-        parameters.Messages = BuildMessages(request.Messages);
-        parameters.Tools = tools;
-
-        var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
-        return MapResponse(response);
+        tools.Add(ServerTools.GetWebSearchTool(maxUses: 3));
+        return tools;
     }
 
     /// <summary>

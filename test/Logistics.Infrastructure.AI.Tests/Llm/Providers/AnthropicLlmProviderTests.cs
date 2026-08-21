@@ -257,4 +257,18 @@ public class AnthropicLlmProviderTests
     }
 
     #endregion
+
+    #region Web search
+
+    [Fact]
+    public void BuildTools_AlwaysAppendsTheServerWebSearchTool()
+    {
+        var request = Request("claude-sonnet-5", ReasoningEffort.None);
+
+        var tools = AnthropicLlmProvider.BuildTools(request);
+
+        Assert.Single(tools);
+    }
+
+    #endregion
 }

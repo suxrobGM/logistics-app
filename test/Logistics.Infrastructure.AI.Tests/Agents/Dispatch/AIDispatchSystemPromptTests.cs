@@ -61,6 +61,50 @@ public class AIDispatchSystemPromptTests
         Assert.Contains("search_loadboard", prompt);
     }
 
+    #region Conversation & scope
+
+    [Fact]
+    public void Build_IncludesConversationScopeSection()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
+
+        Assert.Contains("## Conversation & Scope", prompt);
+        Assert.Contains("Do NOT call tools", prompt);
+        Assert.Contains("Never fabricate fleet data", prompt);
+    }
+
+    /// <summary>The routing decision must precede the workflow it can opt out of.</summary>
+    [Fact]
+    public void Build_ScopeSection_PrecedesTheWorkflow()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
+
+        var scope = prompt.IndexOf("## Conversation & Scope", StringComparison.Ordinal);
+        var workflow = prompt.IndexOf("## Workflow", StringComparison.Ordinal);
+
+        Assert.True(scope >= 0 && workflow > scope);
+    }
+
+    [Fact]
+    public void Build_FinalSummary_IsConditionalOnDispatchWork()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
+
+        Assert.Contains("After completing a dispatch run", prompt);
+        Assert.Contains("Conversational replies skip this format", prompt);
+    }
+
+    [Fact]
+    public void Build_DateStamp_IsDeclaredAuthoritative()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
+
+        Assert.Contains("authoritative current date", prompt);
+        Assert.Contains("[Current time: ...]", prompt);
+    }
+
+    #endregion
+
     #region Company name sanitization
 
     [Fact]

@@ -34,16 +34,7 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
         var client = new ResponsesClient(new ApiKeyCredential(config.ApiKey), clientOptions);
 
         var options = BuildOptions(request);
-
-        foreach (var tool in request.Tools)
-        {
-            options.Tools.Add(ResponseTool.CreateFunctionTool(
-                functionName: tool.Name,
-                functionDescription: tool.Description,
-                functionParameters: BinaryData.FromString(tool.InputSchema.ToJsonString()),
-                // Hand-written schemas don't satisfy strict mode's additionalProperties:false rule.
-                strictModeEnabled: false));
-        }
+        AddTools(options, request);
 
         foreach (var item in BuildInputItems(request))
         {
@@ -86,6 +77,25 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
         }
 
         return options;
+    }
+
+    /// <summary>
+    /// Function tools plus OpenAI's hosted web-search tool. The search runs server-side within one
+    /// response, so the agent loop never executes it.
+    /// </summary>
+    internal static void AddTools(CreateResponseOptions options, LlmRequest request)
+    {
+        foreach (var tool in request.Tools)
+        {
+            options.Tools.Add(ResponseTool.CreateFunctionTool(
+                functionName: tool.Name,
+                functionDescription: tool.Description,
+                functionParameters: BinaryData.FromString(tool.InputSchema.ToJsonString()),
+                // Hand-written schemas don't satisfy strict mode's additionalProperties:false rule.
+                strictModeEnabled: false));
+        }
+
+        options.Tools.Add(ResponseTool.CreateWebSearchTool());
     }
 
     /// <summary>Flattens the system prompt and transcript into one ordered input-item list.</summary>

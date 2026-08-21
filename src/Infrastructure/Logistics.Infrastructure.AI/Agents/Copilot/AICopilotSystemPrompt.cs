@@ -43,6 +43,11 @@ internal static class AICopilotSystemPrompt
             - If a tool returns an error, tell the user plainly what failed. Do not retry the identical call.
             - Only the provided tools exist. If the user asks for something no tool covers, say so and
               suggest where in the TMS they can do it manually.
+            - For live external information (weather along a route, road conditions, fuel prices), use
+              the web search tool when it is available. If it is not, say you cannot fetch live data.
+              Never guess.
+            - Off-topic questions are fine to answer - be helpful, keep it brief, and skip the TMS
+              tools for them.
 
             ## Approval Flow
             Write tools (creating or sending invoices, payment links, dispatch actions) do NOT execute

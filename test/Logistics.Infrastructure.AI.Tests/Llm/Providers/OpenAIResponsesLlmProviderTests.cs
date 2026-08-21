@@ -196,4 +196,20 @@ public class OpenAIResponsesLlmProviderTests
     }
 
     #endregion
+
+    #region Web search
+
+    [Fact]
+    public void AddTools_AlwaysAppendsTheHostedWebSearchTool()
+    {
+        var request = Request("gpt-5.6-luna", ReasoningEffort.Low);
+        var options = OpenAIResponsesLlmProvider.BuildOptions(request);
+
+        OpenAIResponsesLlmProvider.AddTools(options, request);
+
+        var tool = Assert.Single(options.Tools);
+        Assert.IsType<WebSearchTool>(tool);
+    }
+
+    #endregion
 }
