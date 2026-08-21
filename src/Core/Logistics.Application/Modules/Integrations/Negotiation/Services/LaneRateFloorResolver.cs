@@ -8,15 +8,20 @@ namespace Logistics.Application.Modules.Integrations.Negotiation.Services;
 
 internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILaneRateFloorResolver
 {
+    // A dispatch turn resolves a floor per candidate listing within one scope, and the table is
+    // small enough to filter in memory - so read it once instead of once per listing.
+    private IReadOnlyList<LaneRateFloor>? cachedFloors;
+
     public async Task<EffectiveRateFloorDto> ResolveAsync(LoadBoardListing listing, CancellationToken ct = default)
     {
-        var originCountry = NormalizeCountry(listing.OriginAddress.Country);
-        var originState = NormalizeState(listing.OriginAddress.State);
-        var destinationCountry = NormalizeCountry(listing.DestinationAddress.Country);
-        var destinationState = NormalizeState(listing.DestinationAddress.State);
+        var originCountry = LaneKey.Country(listing.OriginAddress.Country);
+        var originState = LaneKey.State(listing.OriginAddress.State);
+        var destinationCountry = LaneKey.Country(listing.DestinationAddress.Country);
+        var destinationState = LaneKey.State(listing.DestinationAddress.State);
 
-        var candidates = await tenantUow.Repository<LaneRateFloor>().GetListAsync(
-            f => f.OriginCountry == originCountry && f.DestinationCountry == destinationCountry, ct);
+        var candidates = (await GetFloorsAsync(ct))
+            .Where(f => f.OriginCountry == originCountry && f.DestinationCountry == destinationCountry)
+            .ToArray();
 
         var matched = candidates.FirstOrDefault(f =>
                 f.OriginState == originState && f.DestinationState == destinationState)
@@ -42,6 +47,9 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
 
         return new EffectiveRateFloorDto { HasFloor = false, Source = RateFloorSource.None };
     }
+
+    private async Task<IReadOnlyList<LaneRateFloor>> GetFloorsAsync(CancellationToken ct) =>
+        cachedFloors ??= await tenantUow.Repository<LaneRateFloor>().GetListAsync(specification: null, ct);
 
     private static EffectiveRateFloorDto Build(
         decimal minRatePerMile,
@@ -101,9 +109,4 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
 
         return (floorTotal, false, null);
     }
-
-    private static string NormalizeCountry(string country) => country.Trim().ToUpperInvariant();
-
-    private static string? NormalizeState(string? state) =>
-        string.IsNullOrWhiteSpace(state) ? null : state.Trim().ToUpperInvariant();
 }

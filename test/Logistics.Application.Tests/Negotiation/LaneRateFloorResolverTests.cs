@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Specifications;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using NSubstitute;
@@ -59,7 +60,7 @@ public class LaneRateFloorResolverTests
     };
 
     private void SetupLanes(params LaneRateFloor[] lanes) =>
-        floorRepo.GetListAsync(Arg.Any<Expression<Func<LaneRateFloor, bool>>>(), Arg.Any<CancellationToken>())
+        floorRepo.GetListAsync(Arg.Any<ISpecification<LaneRateFloor>?>(), Arg.Any<CancellationToken>())
             .Returns(lanes.ToList());
 
     [Fact]
