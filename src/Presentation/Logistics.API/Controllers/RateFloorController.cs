@@ -22,16 +22,6 @@ public class RateFloorController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpGet("effective/{listingId:guid}", Name = "GetEffectiveRateFloor")]
-    [ProducesResponseType(typeof(EffectiveRateFloorDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Negotiation.View)]
-    public async Task<IActionResult> GetEffectiveRateFloor(Guid listingId)
-    {
-        var result = await mediator.Send(new GetEffectiveRateFloorQuery { ListingId = listingId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
-    }
-
     [HttpPost(Name = "CreateLaneRateFloor")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
