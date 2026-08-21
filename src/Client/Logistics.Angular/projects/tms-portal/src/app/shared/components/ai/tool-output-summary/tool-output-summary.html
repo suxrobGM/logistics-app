@@ -83,6 +83,33 @@
   }
 } @else if (o.loads) {
   <span>{{ o.loads.length }} unassigned loads found</span>
+} @else if (hasFloorCheck()) {
+  @if (!o.hasFloor) {
+    <div class="text-muted-foreground flex items-center gap-1">
+      <ui-icon name="circle-x" size="inherit" class="text-xs" />
+      <span>No rate floor covers this lane</span>
+    </div>
+  } @else {
+    <div class="flex flex-wrap items-center gap-2">
+      @if (o.belowFloor) {
+        <ui-icon name="circle-x" class="text-danger" />
+        <span class="text-danger">Below floor</span>
+      } @else {
+        <ui-icon name="circle-check" class="text-success" />
+        <span class="text-success">At or above floor</span>
+      }
+      @if (o.effectiveFloorTotal) {
+        <span class="text-muted-foreground">
+          Floor: {{ o.effectiveFloorTotal | number: "1.0-2" }}
+        </span>
+      }
+      @if (o.gapPerMile) {
+        <span class="text-muted-foreground">
+          Gap: {{ o.gapPerMile | number: "1.2-2" }}/mi
+        </span>
+      }
+    </div>
+  }
 } @else if (hasOutcome()) {
   <div class="flex items-center gap-1">
     @if (o.success) {

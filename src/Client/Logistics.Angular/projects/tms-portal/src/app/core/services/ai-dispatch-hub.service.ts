@@ -1,5 +1,5 @@
 import { DestroyRef, Injectable } from "@angular/core";
-import type { AgentDecisionDto, AgentMessageDto } from "@logistics/shared/api";
+import type { AgentDecisionDto, AgentMessageDto, RateNegotiationDto } from "@logistics/shared/api";
 import type { AgentTurnUpdate } from "./agent-chat.contracts";
 import { BaseHubConnection } from "./base-hub-connection";
 
@@ -14,6 +14,7 @@ export class AIDispatchHubService extends BaseHubConnection {
   readonly messageReceived$ = this.event<AgentMessageDto>("ReceiveDispatchMessage");
   readonly turnUpdateReceived$ = this.event<AgentTurnUpdate>("ReceiveDispatchTurnUpdate");
   readonly decisionReceived$ = this.event<AgentDecisionDto>("ReceiveAIDispatchDecision");
+  readonly negotiationReceived$ = this.event<RateNegotiationDto>("ReceiveNegotiationUpdate");
 
   constructor() {
     // The hub has no bare-tenant group: everything is published to the dispatch board group.

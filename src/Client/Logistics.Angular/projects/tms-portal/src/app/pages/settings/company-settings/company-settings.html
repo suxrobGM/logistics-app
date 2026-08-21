@@ -261,6 +261,20 @@
                   [fluid]="true"
                 />
               </ui-form-field>
+
+              <ui-form-field
+                label="Default Rate Floor (per mile)"
+                for="defaultRateFloorPerMile"
+                hint="Used by AI rate negotiation when no lane floor covers a load's route. Leave empty and the agent will not negotiate on uncovered lanes."
+                class="mb-0"
+              >
+                <ui-number-field
+                  id="defaultRateFloorPerMile"
+                  [formField]="form.defaultRateFloorPerMile"
+                  [maxFractionDigits]="2"
+                  [fluid]="true"
+                />
+              </ui-form-field>
             </div>
           </ui-surface>
         </ui-stack>

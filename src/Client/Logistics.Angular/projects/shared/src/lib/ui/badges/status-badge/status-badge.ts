@@ -41,7 +41,8 @@ export class StatusBadge {
 
   protected readonly severity = computed(() => resolveStatusSeverity(this.kind(), this.status()));
 
-  protected readonly displayValue = computed(() => this.status() ?? "");
+  /** Snake-cased statuses reach the badge verbatim, so the separator is spelled out here. */
+  protected readonly displayValue = computed(() => (this.status() ?? "").replace(/_/g, " "));
 
   protected readonly resolvedIcon = computed((): IconName | null => {
     const explicit = this.icon();

@@ -12,6 +12,7 @@ import {
   Labels,
 } from "@/shared/utils";
 import { ApproveRejectActions } from "../approve-reject-actions/approve-reject-actions";
+import { CounterOfferPreview } from "../counter-offer-preview/counter-offer-preview";
 import { ToolOutputSummary } from "../tool-output-summary/tool-output-summary";
 
 /**
@@ -31,6 +32,7 @@ type AgentDecisionCardVariant = "stream" | "compact";
   imports: [
     ApproveRejectActions,
     Badge,
+    CounterOfferPreview,
     Icon,
     NgTemplateOutlet,
     PermissionGuard,

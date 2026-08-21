@@ -56,6 +56,8 @@ const TOOL_META: Record<string, ToolMeta> = {
   search_expenses: { label: "Expenses", icon: "receipt" },
   get_expense_stats: { label: "Expense Stats", icon: "chart-column" },
   get_upcoming_maintenance: { label: "Upcoming Maintenance", icon: "wrench" },
+  get_rate_floor: { label: "Rate Floor", icon: "chart-column" },
+  get_negotiation_thread: { label: "Negotiation Thread", icon: "mail" },
 
   assign_load_to_truck: { label: "Assign Load", icon: "link" },
   create_trip: { label: "Create Trip", icon: "circle-plus" },
@@ -64,6 +66,7 @@ const TOOL_META: Record<string, ToolMeta> = {
   create_load_invoice: { label: "Create Invoice", icon: "file-text" },
   send_invoice: { label: "Send Invoice", icon: "mail" },
   create_payment_link: { label: "Create Payment Link", icon: "credit-card" },
+  propose_counter_offer: { label: "Send Counter-Offer", icon: "mail" },
 };
 
 export function getToolLabel(toolName: string | null | undefined): string {

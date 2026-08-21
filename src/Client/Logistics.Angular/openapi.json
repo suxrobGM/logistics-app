@@ -10835,6 +10835,200 @@
         }
       }
     },
+    "/negotiations": {
+      "get": {
+        "tags": [
+          "Negotiation"
+        ],
+        "operationId": "GetNegotiations",
+        "parameters": [
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/RateNegotiationStatus"
+            }
+          },
+          {
+            "name": "ActiveOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateNegotiationDtoPagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/negotiations/{id}": {
+      "get": {
+        "tags": [
+          "Negotiation"
+        ],
+        "operationId": "GetNegotiationById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateNegotiationDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/negotiations/decisions/{decisionId}/preview": {
+      "get": {
+        "tags": [
+          "Negotiation"
+        ],
+        "operationId": "PreviewCounterOffer",
+        "parameters": [
+          {
+            "name": "decisionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CounterOfferPreviewDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/negotiations/{id}/close": {
+      "post": {
+        "tags": [
+          "Negotiation"
+        ],
+        "operationId": "CloseNegotiation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloseNegotiationCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloseNegotiationCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloseNegotiationCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notifications": {
       "get": {
         "tags": [
@@ -11980,6 +12174,203 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ratefloors": {
+      "get": {
+        "tags": [
+          "RateFloor"
+        ],
+        "operationId": "GetLaneRateFloors",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LaneRateFloorDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "RateFloor"
+        ],
+        "operationId": "CreateLaneRateFloor",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLaneRateFloorCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLaneRateFloorCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLaneRateFloorCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ratefloors/effective/{listingId}": {
+      "get": {
+        "tags": [
+          "RateFloor"
+        ],
+        "operationId": "GetEffectiveRateFloor",
+        "parameters": [
+          {
+            "name": "listingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EffectiveRateFloorDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ratefloors/{id}": {
+      "put": {
+        "tags": [
+          "RateFloor"
+        ],
+        "operationId": "UpdateLaneRateFloor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLaneRateFloorCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLaneRateFloorCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLaneRateFloorCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "RateFloor"
+        ],
+        "operationId": "DeleteLaneRateFloor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -16246,6 +16637,19 @@
         }
       }
     },
+    "/webhooks/resend": {
+      "post": {
+        "tags": [
+          "Webhook"
+        ],
+        "operationId": "ProcessResendWebhook",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/webhooks/eld/samsara": {
       "post": {
         "tags": [
@@ -17190,7 +17594,8 @@
           "book_load_board_load",
           "create_invoice",
           "send_invoice",
-          "create_payment_link"
+          "create_payment_link",
+          "propose_counter_offer"
         ],
         "type": "string"
       },
@@ -17499,6 +17904,44 @@
           },
           "isInViolation": {
             "type": "boolean",
+            "nullable": true
+          },
+          "hasFloor": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "belowFloor": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "effectiveFloorTotal": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "gapPerMile": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "offeredTotalRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "negotiationId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "roundsUsed": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxRounds": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "fleetSummary": {
@@ -18004,6 +18447,23 @@
           "newPlanId": {
             "type": "string",
             "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CloseNegotiationCommand": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "declined": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -18586,6 +19046,41 @@
           },
           "isMuted": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CounterOfferPreviewDto": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "htmlBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "toEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "replyToAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "proposedTotalRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "proposedRatePerMile": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -19300,6 +19795,45 @@
           "expirationDays": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateLaneRateFloorCommand": {
+        "type": "object",
+        "properties": {
+          "originCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "originState": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationState": {
+            "type": "string",
+            "nullable": true
+          },
+          "minRatePerMile": {
+            "type": "number",
+            "format": "double"
+          },
+          "minTotalRateAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "minTotalRateCurrency": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -21375,6 +21909,44 @@
         ],
         "type": "string"
       },
+      "EffectiveRateFloorDto": {
+        "type": "object",
+        "properties": {
+          "hasFloor": {
+            "type": "boolean"
+          },
+          "minRatePerMile": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "minTotalRate": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "source": {
+            "$ref": "#/components/schemas/RateFloorSource"
+          },
+          "matchedLaneId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "effectiveFloorTotal": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "listingBelowFloor": {
+            "type": "boolean"
+          },
+          "gapPerMile": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "EldDriverDto": {
         "required": [
           "externalDriverId",
@@ -23303,6 +23875,47 @@
         ],
         "type": "string"
       },
+      "LaneRateFloorDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "originCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "originState": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationState": {
+            "type": "string",
+            "nullable": true
+          },
+          "minRatePerMile": {
+            "type": "number",
+            "format": "double"
+          },
+          "minTotalRate": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "LicenseClass": {
         "enum": [
           "us_class_a",
@@ -24713,6 +25326,58 @@
         },
         "additionalProperties": false
       },
+      "NegotiationMessageDirection": {
+        "enum": [
+          "outbound",
+          "inbound"
+        ],
+        "type": "string"
+      },
+      "NegotiationMessageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "direction": {
+            "$ref": "#/components/schemas/NegotiationMessageDirection"
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "textBody": {
+            "type": "string",
+            "nullable": true
+          },
+          "proposedTotalRate": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "proposedRatePerMile": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "agentDecisionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "quarantined": {
+            "type": "boolean"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "NotificationDto": {
         "type": "object",
         "properties": {
@@ -25829,6 +26494,155 @@
           }
         },
         "additionalProperties": false
+      },
+      "RateFloorSource": {
+        "enum": [
+          "none",
+          "lane_exact",
+          "lane_origin_any",
+          "lane_destination_any",
+          "tenant_default"
+        ],
+        "type": "string"
+      },
+      "RateNegotiationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "loadBoardListingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "loadId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "conversationId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "brokerEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "brokerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "brokerMcNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "floorRatePerMile": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "floorTotalRate": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "floorSource": {
+            "$ref": "#/components/schemas/RateFloorSource"
+          },
+          "latestCounterOffer": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "latestBrokerOffer": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "roundCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxRounds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RateNegotiationStatus"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "closeReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "originCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "originState": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationState": {
+            "type": "string",
+            "nullable": true
+          },
+          "listingTotalRate": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NegotiationMessageDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RateNegotiationDtoPagedResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateNegotiationDto"
+            },
+            "nullable": true
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RateNegotiationStatus": {
+        "enum": [
+          "awaiting_broker",
+          "broker_replied",
+          "accepted",
+          "declined",
+          "expired",
+          "closed"
+        ],
+        "type": "string"
       },
       "ReasoningEffort": {
         "enum": [
@@ -27084,7 +27898,8 @@
           "fuel_cards",
           "ifta",
           "intermodal_containers",
-          "ai_copilot"
+          "ai_copilot",
+          "ai_rate_negotiation"
         ],
         "type": "string"
       },
@@ -27221,6 +28036,11 @@
           },
           "blockAIOverage": {
             "type": "boolean"
+          },
+          "defaultRateFloorPerMile": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -28619,6 +29439,49 @@
         },
         "additionalProperties": false
       },
+      "UpdateLaneRateFloorCommand": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "originCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "originState": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationState": {
+            "type": "string",
+            "nullable": true
+          },
+          "minRatePerMile": {
+            "type": "number",
+            "format": "double"
+          },
+          "minTotalRateAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "minTotalRateCurrency": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateLineItemRequest": {
         "type": "object",
         "properties": {
@@ -29552,6 +30415,9 @@
       "name": "Message"
     },
     {
+      "name": "Negotiation"
+    },
+    {
       "name": "Notification"
     },
     {
@@ -29568,6 +30434,9 @@
     },
     {
       "name": "PublicPayment"
+    },
+    {
+      "name": "RateFloor"
     },
     {
       "name": "Report"

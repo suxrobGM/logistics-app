@@ -143,4 +143,6 @@ export const FEATURE_DESCRIPTIONS: Record<TenantFeature, string> = {
     "Track intermodal containers and terminals, and let the AI dispatch agent reason about them",
   ai_copilot:
     "Chat assistant across the whole TMS - answers from live data, write actions wait for approval",
+  ai_rate_negotiation:
+    "Let the AI agent counter brokers by email on below-floor load-board loads, with every offer approved by a dispatcher",
 };
