@@ -17,11 +17,15 @@ public interface IThreadedEmailSender
     string ReplyDomain { get; }
 }
 
+/// <summary>
+/// A null <paramref name="ReplyTo"/> sends from the configured sender address with no per-thread
+/// reply route, which is what a one-off transactional email needs.
+/// </summary>
 public record ThreadedEmail(
     string To,
     string Subject,
     string HtmlBody,
-    string ReplyTo,
+    string? ReplyTo,
     string? InReplyToMessageId = null,
     string? References = null);
 

@@ -9,6 +9,9 @@ namespace Logistics.Infrastructure.Integrations.Common;
 /// </summary>
 public static class WebhookSignature
 {
+    /// <summary>How far a Svix-signed timestamp may be from now, in either direction.</summary>
+    private static readonly TimeSpan SvixTolerance = TimeSpan.FromMinutes(5);
+
     /// <summary>
     /// Verifies that <paramref name="signatureHex"/> equals the lowercase hex
     /// HMAC-SHA256 of <paramref name="payload"/> using <paramref name="secret"/>.
@@ -35,16 +38,12 @@ public static class WebhookSignature
     /// <c>{id}.{timestamp}.{payload}</c>, keyed by the base64-decoded secret with its
     /// <c>whsec_</c> prefix removed. Fails closed on anything missing, malformed, or stale.
     /// </summary>
-    /// <param name="tolerance">
-    /// How far the signed timestamp may be from now, in either direction. Svix recommends 5 minutes.
-    /// </param>
     public static bool VerifySvix(
         string payload,
         string? svixId,
         string? svixTimestamp,
         string? svixSignatureHeader,
-        string? secret,
-        TimeSpan? tolerance = null)
+        string? secret)
     {
         if (string.IsNullOrEmpty(svixId) ||
             string.IsNullOrEmpty(svixTimestamp) ||
@@ -59,9 +58,8 @@ public static class WebhookSignature
             return false;
         }
 
-        var window = tolerance ?? TimeSpan.FromMinutes(5);
         var age = DateTimeOffset.UtcNow - DateTimeOffset.FromUnixTimeSeconds(unixSeconds);
-        if (age.Duration() > window)
+        if (age.Duration() > SvixTolerance)
         {
             return false;
         }

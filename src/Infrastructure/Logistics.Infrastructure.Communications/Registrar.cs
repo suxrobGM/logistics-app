@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Logistics.Application.Abstractions.Email;
@@ -8,6 +9,7 @@ using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Infrastructure.Communications.SignalR.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Resend;
 using Logistics.Application.Abstractions.Captcha;
 using Logistics.Application.Abstractions.Notifications;
@@ -57,7 +59,12 @@ public static class Registrar
         services.AddTransient<IResend, ResendClient>();
         services.AddScoped<IEmailSender, ResendEmailSender>();
         services.AddScoped<IThreadedEmailSender, ResendThreadedEmailSender>();
-        services.AddHttpClient<IInboundEmailReader, ResendInboundEmailReader>();
+        services.AddHttpClient<IInboundEmailReader, ResendInboundEmailReader>((sp, client) =>
+        {
+            var resendOptions = sp.GetRequiredService<IOptions<ResendOptions>>().Value;
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", resendOptions.ApiKey);
+        });
         services.AddScoped<IInboundEmailWebhookVerifier, ResendWebhookVerifier>();
         services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
 

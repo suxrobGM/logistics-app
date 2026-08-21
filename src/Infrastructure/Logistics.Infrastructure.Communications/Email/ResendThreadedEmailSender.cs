@@ -17,7 +17,6 @@ internal sealed class ResendThreadedEmailSender(
         ArgumentException.ThrowIfNullOrEmpty(email.To);
         ArgumentException.ThrowIfNullOrEmpty(email.Subject);
         ArgumentException.ThrowIfNullOrEmpty(email.HtmlBody);
-        ArgumentException.ThrowIfNullOrEmpty(email.ReplyTo);
 
         try
         {
@@ -28,6 +27,7 @@ internal sealed class ResendThreadedEmailSender(
                 HtmlBody = email.HtmlBody,
                 ReplyTo = email.ReplyTo
             };
+
             message.To.Add(email.To);
 
             if (!string.IsNullOrEmpty(email.InReplyToMessageId))
