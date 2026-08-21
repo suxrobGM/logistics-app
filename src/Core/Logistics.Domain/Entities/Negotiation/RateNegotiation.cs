@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.Enums;
@@ -55,6 +56,16 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     public string? CloseReason { get; set; }
 
     public virtual List<NegotiationMessage> Messages { get; } = [];
+
+    /// <summary>
+    /// Reference quoted in the email subject. Derived from the listing rather than the thread so a
+    /// preview rendered before the thread exists carries the same reference the sent mail will.
+    /// </summary>
+    [NotMapped]
+    public string Reference => ReferenceFor(LoadBoardListingId);
+
+    public static string ReferenceFor(Guid loadBoardListingId) =>
+        "NEG-" + loadBoardListingId.ToString("N")[..8].ToUpperInvariant();
 
     public static RateNegotiation Create(
         Guid loadBoardListingId,

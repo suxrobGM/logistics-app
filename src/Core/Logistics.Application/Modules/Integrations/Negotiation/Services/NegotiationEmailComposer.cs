@@ -30,7 +30,15 @@ public record ComposeNegotiationEmailRequest(
     string ReplyToAddress,
     string? BrokerName = null);
 
-public record ComposedNegotiationEmail(string Subject, string HtmlBody, string ReplyToAddress);
+/// <summary>
+/// <paramref name="SanitizedMessage"/> is the agent paragraph after sanitization, so the caller can
+/// store what the broker actually reads instead of re-running the same cleanup.
+/// </summary>
+public record ComposedNegotiationEmail(
+    string Subject,
+    string HtmlBody,
+    string ReplyToAddress,
+    string SanitizedMessage);
 
 /// <summary>
 /// Sole owner of broker-facing negotiation email formatting: sanitizes the agent's free-text
@@ -53,6 +61,8 @@ internal sealed class NegotiationEmailComposer(IEmailTemplateService emailTempla
     public async Task<ComposedNegotiationEmail> ComposeAsync(
         ComposeNegotiationEmailRequest request, CancellationToken ct = default)
     {
+        var sanitizedMessage = SanitizeMessage(request.AgentMessage);
+
         var model = new BrokerCounterOfferEmailModel
         {
             BrokerName = request.BrokerName,
@@ -66,7 +76,7 @@ internal sealed class NegotiationEmailComposer(IEmailTemplateService emailTempla
             OfferPerMile = request.OfferPerMile is { } perMile
                 ? FormatCurrency(perMile, request.Currency)
                 : null,
-            Message = SanitizeMessage(request.AgentMessage),
+            Message = sanitizedMessage,
             CompanyName = request.CompanyName,
             CompanyMcNumber = request.CompanyMcNumber,
             ReferenceNumber = request.ThreadReference,
@@ -77,7 +87,7 @@ internal sealed class NegotiationEmailComposer(IEmailTemplateService emailTempla
                        $"{request.DestinationCity}, {request.DestinationState} - {request.ThreadReference}";
         var htmlBody = await emailTemplateService.RenderAsync("BrokerCounterOffer", model);
 
-        return new ComposedNegotiationEmail(subject, htmlBody, request.ReplyToAddress);
+        return new ComposedNegotiationEmail(subject, htmlBody, request.ReplyToAddress, sanitizedMessage);
     }
 
     private static string FormatCurrency(decimal amount, string currency)

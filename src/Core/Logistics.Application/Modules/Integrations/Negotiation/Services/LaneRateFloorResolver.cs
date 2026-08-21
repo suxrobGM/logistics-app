@@ -50,7 +50,7 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
         Guid? matchedLaneId,
         LoadBoardListing listing)
     {
-        var (belowFloor, gapPerMile) = Evaluate(minRatePerMile, minTotalRate, listing);
+        var (floorTotal, belowFloor, gapPerMile) = Evaluate(minRatePerMile, minTotalRate, listing);
 
         return new EffectiveRateFloorDto
         {
@@ -59,6 +59,7 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
             MinTotalRate = minTotalRate,
             Source = source,
             MatchedLaneId = matchedLaneId,
+            EffectiveFloorTotal = floorTotal,
             ListingBelowFloor = belowFloor,
             GapPerMile = gapPerMile
         };
@@ -72,7 +73,7 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
     /// stands alone (it needs no conversion) and a per-mile floor falls back to a direct per-mile
     /// comparison against the listing's rate per mile.
     /// </summary>
-    private static (bool belowFloor, decimal? gapPerMile) Evaluate(
+    private static (decimal? floorTotal, bool belowFloor, decimal? gapPerMile) Evaluate(
         decimal minRatePerMile, Money? minTotalRate, LoadBoardListing listing)
     {
         var distanceMiles = listing.Distance;
@@ -89,16 +90,16 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
         {
             var gapTotal = floorTotal.Value - listingTotal.Value;
             var gapPerMile = distanceMiles is > 0 ? gapTotal / (decimal)distanceMiles.Value : (decimal?)null;
-            return (gapTotal > 0, gapPerMile);
+            return (floorTotal, gapTotal > 0, gapPerMile);
         }
 
         if (listing.RatePerMile.HasValue)
         {
             var gap = minRatePerMile - listing.RatePerMile.Value;
-            return (gap > 0, gap);
+            return (floorTotal, gap > 0, gap);
         }
 
-        return (false, null);
+        return (floorTotal, false, null);
     }
 
     private static string NormalizeCountry(string country) => country.Trim().ToUpperInvariant();
