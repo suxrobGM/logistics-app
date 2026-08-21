@@ -93,6 +93,10 @@ Inbound mail is the untrusted edge of the feature. What holds it:
   `rate_negotiations(load_board_listing_id)` over the active statuses.
 - `NegotiationExpirySweepJob` runs every 6 hours, closes `AwaitingBroker` threads past `ExpiresAt` as
   `Expired`, and revokes their routes. It starts no agent turn: silence is not news.
+- The route carries its own `ExpiresAt`, so a reply arriving between the window closing and the
+  next sweep is dropped at the webhook rather than routed to a lapsed thread.
+- Booking a listing revokes the won thread's route: nothing else closes it, since the thread ends
+  `Accepted` rather than swept.
 
 ## Resend setup
 
