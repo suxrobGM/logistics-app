@@ -53,7 +53,7 @@ Distances on `LoadBoardListing` are miles.
 
 ## Reply addressing
 
-Each thread gets a `ReplyToken`: 20 random bytes as 32 lowercase base32 characters. The outbound
+Each thread gets a `ReplyToken`: 16 random bytes as 32 lowercase hex characters. The outbound
 mail sets `Reply-To: offer-{token}@{sender domain}` and chains `In-Reply-To` / `References` from the
 previous provider message ids.
 
@@ -91,7 +91,7 @@ Inbound mail is the untrusted edge of the feature. What holds it:
 - Each outbound message sets `ExpiresAt` to 48 hours out.
 - One active thread per listing, enforced by a filtered unique index on
   `rate_negotiations(load_board_listing_id)` over the active statuses.
-- `NegotiationExpirySweepJob` runs hourly, closes `AwaitingBroker` threads past `ExpiresAt` as
+- `NegotiationExpirySweepJob` runs every 6 hours, closes `AwaitingBroker` threads past `ExpiresAt` as
   `Expired`, and revokes their routes. It starts no agent turn: silence is not news.
 
 ## Resend setup
