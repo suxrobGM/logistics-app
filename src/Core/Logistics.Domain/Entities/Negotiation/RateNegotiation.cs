@@ -132,9 +132,10 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     }
 
     /// <summary>
-    /// Records a counter sent to the broker: consumes a round and restarts the reply window.
-    /// Callers MUST also register the returned row via repository AddAsync (pre-generated ids make
-    /// a collection-only add save as an UPDATE and fail).
+    /// Records a counter sent to the broker: consumes a round and restarts the reply window. The
+    /// returned row is not added to <see cref="Messages"/> - touching that navigation lazy-loads
+    /// every stored RawBody. Callers MUST register it via repository AddAsync instead (pre-generated
+    /// ids make a collection-only add save as an UPDATE and fail anyway).
     /// </summary>
     public NegotiationMessage AddOutboundMessage(
         string textBody,
@@ -155,7 +156,6 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
             AgentDecisionId = agentDecisionId
         };
 
-        Messages.Add(message);
         RoundCount++;
         LatestCounterOffer = proposedTotalRate ?? LatestCounterOffer;
         Status = RateNegotiationStatus.AwaitingBroker;
@@ -164,9 +164,10 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     }
 
     /// <summary>
-    /// Records a broker reply. A quarantined message is stored for audit but moves nothing.
-    /// Callers MUST also register the returned row via repository AddAsync (pre-generated ids make
-    /// a collection-only add save as an UPDATE and fail).
+    /// Records a broker reply. A quarantined message is stored for audit but moves nothing. The
+    /// returned row is not added to <see cref="Messages"/> - touching that navigation lazy-loads
+    /// every stored RawBody. Callers MUST register it via repository AddAsync instead (pre-generated
+    /// ids make a collection-only add save as an UPDATE and fail anyway).
     /// </summary>
     public NegotiationMessage AddInboundMessage(
         string textBody,
@@ -174,7 +175,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         string? rawBody = null,
         Money? proposedTotalRate = null,
         decimal? proposedRatePerMile = null,
-        string? providerMessageId = null,
+        string? rfcMessageId = null,
         string? inReplyToMessageId = null,
         bool quarantined = false)
     {
@@ -188,12 +189,10 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
             RawBody = rawBody,
             ProposedTotalRate = proposedTotalRate,
             ProposedRatePerMile = proposedRatePerMile,
-            ProviderMessageId = providerMessageId,
+            RfcMessageId = rfcMessageId,
             InReplyToMessageId = inReplyToMessageId,
             Quarantined = quarantined
         };
-
-        Messages.Add(message);
 
         if (!quarantined)
         {

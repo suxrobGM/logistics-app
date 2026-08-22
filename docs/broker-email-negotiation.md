@@ -55,7 +55,13 @@ Distances on `LoadBoardListing` are miles.
 
 Each thread gets a `ReplyToken`: 16 random bytes as 32 lowercase hex characters. The outbound
 mail sets `Reply-To: offer-{token}@{sender domain}` and chains `In-Reply-To` / `References` from the
-previous provider message ids.
+RFC 5322 Message-IDs of the earlier mails in the thread.
+
+Those ids are `NegotiationMessage.RfcMessageId`, and both directions store the real header value:
+inbound takes it off the provider payload, outbound generates it before the send
+(`NegotiationMessageId.Create`, `<neg-{unique}@{sender domain}>`) and sends it as the `Message-ID`
+header. The provider's own send id is not a msg-id - it goes to the log for support lookups and
+nowhere else.
 
 A master-database `InboundEmailRoute` row maps the token to a tenant. That is the whole routing
 table:

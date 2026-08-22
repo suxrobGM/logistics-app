@@ -149,6 +149,20 @@ public class ProposeCounterOfferHandlerTests
     private Task AssertNothingSent() =>
         emailSender.DidNotReceiveWithAnyArgs().SendAsync(default!, default);
 
+    private ThreadedEmail SentEmail() =>
+        (ThreadedEmail)emailSender.ReceivedCalls()
+            .Single(c => c.GetMethodInfo().Name == nameof(IThreadedEmailSender.SendAsync))
+            .GetArguments()[0]!;
+
+    private NegotiationMessage StoredMessage() =>
+        (NegotiationMessage)messageRepo.ReceivedCalls()
+            .Single(c => c.GetMethodInfo().Name == nameof(ITenantRepository<NegotiationMessage, Guid>.AddAsync))
+            .GetArguments()[0]!;
+
+    /// <summary>RFC 5322 msg-id: angle-bracketed, exactly one @, no whitespace inside.</summary>
+    private static void AssertMsgId(string? value) =>
+        Assert.Matches(@"^<[^<>@\s]+@[^<>@\s]+>$", value);
+
     #region Listing guards
 
     [Fact]
@@ -394,7 +408,6 @@ public class ProposeCounterOfferHandlerTests
         await messageRepo.Received(1).AddAsync(
             Arg.Is<NegotiationMessage>(m =>
                 m.Direction == NegotiationMessageDirection.Outbound &&
-                m.ProviderMessageId == "resend-1" &&
                 m.ProposedTotalRate!.Amount == 2200m),
             Arg.Any<CancellationToken>());
         await routeRegistry.Received(1).OpenAsync(
@@ -418,19 +431,45 @@ public class ProposeCounterOfferHandlerTests
     }
 
     [Fact]
+    public async Task Handle_FirstOffer_SendsUnderAWellFormedMessageId()
+    {
+        await sut.Handle(command, CancellationToken.None);
+
+        var sent = SentEmail();
+        AssertMsgId(sent.MessageId);
+        Assert.EndsWith("@mail.test.com>", sent.MessageId);
+    }
+
+    /// <summary>
+    /// The provider's id is a bare handle, not a msg-id; storing it unthreads every later round.
+    /// </summary>
+    [Fact]
+    public async Task Handle_FirstOffer_StoresTheSentMessageIdNotTheProviderId()
+    {
+        await sut.Handle(command, CancellationToken.None);
+
+        var stored = StoredMessage();
+        Assert.Equal(SentEmail().MessageId, stored.RfcMessageId);
+        Assert.NotEqual("resend-1", stored.RfcMessageId);
+    }
+
+    [Fact]
     public async Task Handle_SecondOffer_ChainsThreadHeadersAndReusesRoute()
     {
         var existing = ExistingThread(floorTotal: 2000m);
         var first = existing.AddOutboundMessage("first offer");
-        first.ProviderMessageId = "resend-0";
-        messageRepo.Query().Returns(new List<NegotiationMessage> { first }.BuildMock());
+        first.RfcMessageId = "<neg-0@mail.test.com>";
+        var reply = existing.AddInboundMessage("we want more", rfcMessageId: "<CAF-1@broker.example.com>");
+        messageRepo.Query().Returns(new List<NegotiationMessage> { first, reply }.BuildMock());
 
         var result = await sut.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await emailSender.Received(1).SendAsync(
-            Arg.Is<ThreadedEmail>(e => e.InReplyToMessageId == "resend-0" && e.References == "resend-0"),
-            Arg.Any<CancellationToken>());
+        var sent = SentEmail();
+        Assert.Equal("<CAF-1@broker.example.com>", sent.InReplyToMessageId);
+        Assert.Equal("<neg-0@mail.test.com> <CAF-1@broker.example.com>", sent.References);
+        AssertMsgId(sent.InReplyToMessageId);
+        Assert.All(sent.References!.Split(' '), AssertMsgId);
         await negotiationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
         await routeRegistry.DidNotReceiveWithAnyArgs().OpenAsync(default!, default, default);
         await routeRegistry.Received(1).RefreshAsync(

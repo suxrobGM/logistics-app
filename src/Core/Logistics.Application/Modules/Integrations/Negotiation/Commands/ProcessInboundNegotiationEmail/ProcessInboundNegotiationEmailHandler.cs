@@ -69,7 +69,7 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
             textBody: senderMatches ? strippedText : "",
             subject: email.Subject ?? req.Subject,
             rawBody: rawBody,
-            providerMessageId: email.MessageId ?? req.MessageId,
+            rfcMessageId: email.MessageId ?? req.MessageId,
             quarantined: !senderMatches);
 
         await tenantUow.Repository<NegotiationMessage>().AddAsync(message, ct);

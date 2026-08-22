@@ -98,12 +98,13 @@ internal sealed class ProposeCounterOfferHandler(
         // Projected rather than read off the navigation: only the header ids are needed, and the
         // rows carry up to 64KB of stored body each.
         var priorMessageIds = await tenantUow.Repository<NegotiationMessage>().Query()
-            .Where(m => m.NegotiationId == negotiation.Id && m.ProviderMessageId != null)
+            .Where(m => m.NegotiationId == negotiation.Id && m.RfcMessageId != null)
             .OrderBy(m => m.Sequence)
-            .Select(m => m.ProviderMessageId!)
+            .Select(m => m.RfcMessageId!)
             .ToArrayAsync(ct);
 
         var replyToAddress = NegotiationReplyAddress.Format(negotiation.ReplyToken, emailSender.ReplyDomain);
+        var messageId = NegotiationMessageId.Create(emailSender.ReplyDomain);
         var tenant = tenantUow.GetCurrentTenant();
 
         var composed = await composer.ComposeAsync(ComposeNegotiationEmailRequest.For(
@@ -121,6 +122,7 @@ internal sealed class ProposeCounterOfferHandler(
             Subject: composed.Subject,
             HtmlBody: composed.HtmlBody,
             ReplyTo: replyToAddress,
+            MessageId: messageId,
             InReplyToMessageId: priorMessageIds.LastOrDefault(),
             References: priorMessageIds.Length > 0 ? string.Join(' ', priorMessageIds) : null), ct);
 
@@ -144,7 +146,7 @@ internal sealed class ProposeCounterOfferHandler(
             proposedRatePerMile: req.ProposedRatePerMile,
             agentDecisionId: req.DecisionId);
 
-        message.ProviderMessageId = sendResult.ProviderMessageId;
+        message.RfcMessageId = messageId;
         message.InReplyToMessageId = priorMessageIds.LastOrDefault();
 
         if (req.ConversationId.HasValue)

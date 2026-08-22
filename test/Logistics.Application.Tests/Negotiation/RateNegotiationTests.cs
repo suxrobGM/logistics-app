@@ -23,17 +23,17 @@ public class RateNegotiationTests
     }
 
     /// <summary>
-    /// The counter, not the Messages collection, is what allocates. A thread rehydrated without its
-    /// messages must still hand out the next number rather than restart at 1.
+    /// The counter allocates on its own: the Messages navigation is never written, because reading
+    /// it on a tracked thread lazy-loads every stored RawBody.
     /// </summary>
     [Fact]
-    public void AddMessage_ThreadLoadedWithoutMessages_ContinuesFromTheCounter()
+    public void AddMessage_LeavesTheMessagesNavigationUntouchedAndKeepsCounting()
     {
         var negotiation = NewThread();
         negotiation.AddOutboundMessage("offer");
         negotiation.AddInboundMessage("reply");
-        negotiation.Messages.Clear();
 
+        Assert.Empty(negotiation.Messages);
         Assert.Equal(3, negotiation.AddOutboundMessage("counter").Sequence);
     }
 

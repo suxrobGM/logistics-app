@@ -23,7 +23,7 @@ internal sealed class NegotiationMessageEntityConfiguration : IEntityTypeConfigu
         builder.Property(m => m.RawBody)
             .HasMaxLength(65536);
 
-        builder.Property(m => m.ProviderMessageId)
+        builder.Property(m => m.RfcMessageId)
             .HasMaxLength(200);
 
         builder.Property(m => m.InReplyToMessageId)

@@ -28,8 +28,12 @@ public class NegotiationMessage : Entity, ITenantEntity
     public Money? ProposedTotalRate { get; set; }
     public decimal? ProposedRatePerMile { get; set; }
 
-    /// <summary>Provider-assigned id, used to thread replies and to drop duplicate deliveries.</summary>
-    public string? ProviderMessageId { get; set; }
+    /// <summary>
+    /// RFC 5322 Message-ID of this email, angle brackets included: taken from the provider payload
+    /// inbound, generated before the send outbound. Quoted as In-Reply-To/References by later
+    /// rounds, so it must be the header value a mail server saw, never the provider's own id.
+    /// </summary>
+    public string? RfcMessageId { get; set; }
     public string? InReplyToMessageId { get; set; }
 
     /// <summary>The agent decision that produced an outbound message.</summary>

@@ -30,6 +30,11 @@ internal sealed class ResendThreadedEmailSender(
 
             message.To.Add(email.To);
 
+            if (!string.IsNullOrEmpty(email.MessageId))
+            {
+                message.Headers["Message-ID"] = email.MessageId;
+            }
+
             if (!string.IsNullOrEmpty(email.InReplyToMessageId))
             {
                 message.Headers["In-Reply-To"] = email.InReplyToMessageId;

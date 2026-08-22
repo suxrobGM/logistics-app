@@ -19,14 +19,21 @@ public interface IThreadedEmailSender
 
 /// <summary>
 /// A null <c>ReplyTo</c> sends from the configured sender address with no per-thread reply route,
-/// which is what a one-off transactional email needs.
+/// which is what a one-off transactional email needs. <c>MessageId</c> is the RFC 5322 Message-ID to
+/// send under, angle brackets included; null lets the provider assign one, which only a mail that
+/// nothing will ever reply into can afford.
 /// </summary>
 public record ThreadedEmail(
     string To,
     string Subject,
     string HtmlBody,
     string? ReplyTo,
+    string? MessageId = null,
     string? InReplyToMessageId = null,
     string? References = null);
 
+/// <param name="ProviderMessageId">
+/// The provider's own handle on the send, for support lookups. Not an RFC 5322 Message-ID and never
+/// usable as one - threading headers must quote <see cref="ThreadedEmail.MessageId"/>.
+/// </param>
 public record ThreadedEmailResult(bool Success, string? ProviderMessageId);

@@ -47,7 +47,7 @@ public static partial class NegotiationMapper
     [MapperIgnoreSource(nameof(NegotiationMessage.Negotiation))]
     [MapperIgnoreSource(nameof(NegotiationMessage.NegotiationId))]
     [MapperIgnoreSource(nameof(NegotiationMessage.RawBody))]
-    [MapperIgnoreSource(nameof(NegotiationMessage.ProviderMessageId))]
+    [MapperIgnoreSource(nameof(NegotiationMessage.RfcMessageId))]
     [MapperIgnoreSource(nameof(NegotiationMessage.InReplyToMessageId))]
     private static partial NegotiationMessageDto Map(NegotiationMessage entity);
 
