@@ -40,7 +40,7 @@ What landed:
   gained `negotiated_total_rate`.
 - Replies arrive on `offer-{token}@{sender domain}` and route through a master-DB `InboundEmailRoute`
   row, so no tenant id is exposed in an address and a thread can be revoked.
-- Three rounds per listing, a 48-hour reply window per outbound message, and an hourly sweep that
+- Three rounds per listing, a 48-hour reply window per outbound message, and a six-hourly sweep that
   expires lapsed threads and revokes their reply addresses.
 
 Deliberately out of scope: voice/phone negotiation, attachment ingestion (rate confirmations), and

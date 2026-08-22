@@ -22,6 +22,8 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 | `get_container_status`         | Read  | ISO 6346 lookup: status, terminal, seal, B/L, linked load |
 | `get_terminal_info`            | Read  | UN/LOCODE lookup: name, type, country, street address     |
 | `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for available loads     |
+| `get_rate_floor`               | Read  | Rate floor on a listing's lane, and the gap to its rate   |
+| `get_negotiation_thread`       | Read  | One negotiation: status, rounds, floor, recent messages   |
 | `search_loads`                 | Read  | Search loads by status, type, customer, or date range     |
 | `get_load`                     | Read  | One load: status, cost, customer, invoice state           |
 | `search_customers`             | Read  | Look up customers by name                                 |

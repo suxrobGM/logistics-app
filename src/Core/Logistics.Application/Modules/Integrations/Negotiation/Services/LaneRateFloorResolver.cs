@@ -8,8 +8,10 @@ namespace Logistics.Application.Modules.Integrations.Negotiation.Services;
 
 internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILaneRateFloorResolver
 {
-    // A dispatch turn resolves a floor per candidate listing within one scope, and the table is
-    // small enough to filter in memory - so read it once instead of once per listing.
+    /// <summary>
+    /// A dispatch turn resolves a floor per candidate listing within one scope, and the table is
+    /// small enough to filter in memory - so read it once instead of once per listing.
+    /// </summary>
     private IReadOnlyList<LaneRateFloor>? cachedFloors;
 
     public async Task<EffectiveRateFloorDto> ResolveAsync(LoadBoardListing listing, CancellationToken ct = default)
@@ -36,13 +38,13 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
                     ? RateFloorSource.LaneOriginAny
                     : RateFloorSource.LaneDestinationAny;
 
-            return Build(matched.MinRatePerMile, matched.MinTotalRate, source, matched.Id, listing);
+            return Build(matched.MinRatePerMile, matched.MinTotalRate, source, listing);
         }
 
         var defaultRatePerMile = tenantUow.GetCurrentTenant().Settings.DefaultRateFloorPerMile;
         if (defaultRatePerMile.HasValue)
         {
-            return Build(defaultRatePerMile.Value, null, RateFloorSource.TenantDefault, null, listing);
+            return Build(defaultRatePerMile.Value, null, RateFloorSource.TenantDefault, listing);
         }
 
         return new EffectiveRateFloorDto { HasFloor = false, Source = RateFloorSource.None };
@@ -55,7 +57,6 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
         decimal minRatePerMile,
         Money? minTotalRate,
         RateFloorSource source,
-        Guid? matchedLaneId,
         LoadBoardListing listing)
     {
         var (floorTotal, belowFloor, gapPerMile) = Evaluate(minRatePerMile, minTotalRate, listing);
@@ -66,7 +67,6 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
             MinRatePerMile = minRatePerMile,
             MinTotalRate = minTotalRate,
             Source = source,
-            MatchedLaneId = matchedLaneId,
             EffectiveFloorTotal = floorTotal,
             ListingBelowFloor = belowFloor,
             GapPerMile = gapPerMile

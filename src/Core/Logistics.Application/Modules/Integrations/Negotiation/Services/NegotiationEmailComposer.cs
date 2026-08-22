@@ -69,13 +69,12 @@ public record ComposeNegotiationEmailRequest
 }
 
 /// <summary>
-/// <paramref name="SanitizedMessage"/> is the agent paragraph after sanitization, so the caller can
-/// store what the broker actually reads instead of re-running the same cleanup.
+/// <c>SanitizedMessage</c> is the agent paragraph after sanitization, so the caller can store what
+/// the broker actually reads instead of re-running the same cleanup.
 /// </summary>
 public record ComposedNegotiationEmail(
     string Subject,
     string HtmlBody,
-    string ReplyToAddress,
     string SanitizedMessage);
 
 /// <summary>
@@ -125,7 +124,7 @@ internal sealed class NegotiationEmailComposer(IEmailTemplateService emailTempla
                        $"{request.DestinationCity}, {request.DestinationState} - {request.ThreadReference}";
         var htmlBody = await emailTemplateService.RenderAsync("BrokerCounterOffer", model);
 
-        return new ComposedNegotiationEmail(subject, htmlBody, request.ReplyToAddress, sanitizedMessage);
+        return new ComposedNegotiationEmail(subject, htmlBody, sanitizedMessage);
     }
 
     private static string FormatCurrency(decimal amount, string currency)

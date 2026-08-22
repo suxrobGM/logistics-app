@@ -91,7 +91,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
              (n.Status == RateNegotiationStatus.AwaitingBroker ||
               n.Status == RateNegotiationStatus.BrokerReplied);
 
-    /// <inheritdoc cref="OpenForListing"/>
+    /// <summary>Matches every open thread, across all listings.</summary>
     public static Expression<Func<RateNegotiation, bool>> Open() =>
         n => n.Status == RateNegotiationStatus.AwaitingBroker ||
              n.Status == RateNegotiationStatus.BrokerReplied;
@@ -209,7 +209,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         ClosedAt = DateTime.UtcNow;
     }
 
-    public int NextSequence() => ++LastSequence;
+    private int NextSequence() => ++LastSequence;
 
     /// <summary>
     /// 128 bits of entropy as 32 lowercase hex characters. Lowercase hex rather than base64url

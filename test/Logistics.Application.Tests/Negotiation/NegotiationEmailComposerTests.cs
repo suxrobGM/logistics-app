@@ -100,13 +100,5 @@ public class NegotiationEmailComposerTests
         Assert.Equal("Rate offer: Chicago, IL -> Dallas, TX - RN-9F2A", result.Subject);
     }
 
-    [Fact]
-    public async Task ComposeAsync_PassesThroughCallerSuppliedReplyAddress()
-    {
-        var result = await sut.ComposeAsync(Request("Sounds good."));
-
-        Assert.Equal("offer-abc123@reply.logisticsx.app", result.ReplyToAddress);
-    }
-
     #endregion
 }

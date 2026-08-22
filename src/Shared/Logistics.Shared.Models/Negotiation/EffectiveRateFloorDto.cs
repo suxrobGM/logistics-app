@@ -13,7 +13,6 @@ public record EffectiveRateFloorDto
     public decimal? MinRatePerMile { get; set; }
     public Money? MinTotalRate { get; set; }
     public RateFloorSource Source { get; set; } = RateFloorSource.None;
-    public Guid? MatchedLaneId { get; set; }
 
     /// <summary>
     /// The per-mile and flat-total floor combined into one number for this listing's distance.

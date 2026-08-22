@@ -13,7 +13,4 @@ public record RateFloorSnapshot(
     RateFloorSource Source)
 {
     public static readonly RateFloorSnapshot None = new(null, null, RateFloorSource.None);
-
-    public bool HasFloor =>
-        Source != RateFloorSource.None && (MinRatePerMile ?? MinTotalRate?.Amount) is not null;
 }

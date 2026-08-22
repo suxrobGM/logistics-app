@@ -18,8 +18,8 @@ public interface IThreadedEmailSender
 }
 
 /// <summary>
-/// A null <paramref name="ReplyTo"/> sends from the configured sender address with no per-thread
-/// reply route, which is what a one-off transactional email needs.
+/// A null <c>ReplyTo</c> sends from the configured sender address with no per-thread reply route,
+/// which is what a one-off transactional email needs.
 /// </summary>
 public record ThreadedEmail(
     string To,

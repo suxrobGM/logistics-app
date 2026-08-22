@@ -49,7 +49,7 @@ public static partial class NegotiationMapper
     [MapperIgnoreSource(nameof(NegotiationMessage.RawBody))]
     [MapperIgnoreSource(nameof(NegotiationMessage.ProviderMessageId))]
     [MapperIgnoreSource(nameof(NegotiationMessage.InReplyToMessageId))]
-    public static partial NegotiationMessageDto ToDto(this NegotiationMessage entity);
+    private static partial NegotiationMessageDto Map(NegotiationMessage entity);
 
     /// <summary>
     /// Projects in SQL rather than materializing entities: RawBody holds up to 64KB per row and no

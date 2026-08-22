@@ -75,7 +75,6 @@ public class LaneRateFloorResolverTests
 
         Assert.True(result.HasFloor);
         Assert.Equal(RateFloorSource.LaneExact, result.Source);
-        Assert.Equal(exact.Id, result.MatchedLaneId);
         Assert.Equal(3.00m, result.MinRatePerMile);
     }
 
@@ -89,7 +88,6 @@ public class LaneRateFloorResolverTests
         var result = await sut.ResolveAsync(Listing(), CancellationToken.None);
 
         Assert.Equal(RateFloorSource.LaneOriginAny, result.Source);
-        Assert.Equal(originAny.Id, result.MatchedLaneId);
     }
 
     [Fact]
@@ -101,7 +99,6 @@ public class LaneRateFloorResolverTests
         var result = await sut.ResolveAsync(Listing(), CancellationToken.None);
 
         Assert.Equal(RateFloorSource.LaneDestinationAny, result.Source);
-        Assert.Equal(destinationAny.Id, result.MatchedLaneId);
     }
 
     [Fact]
@@ -114,7 +111,6 @@ public class LaneRateFloorResolverTests
             Listing(originState: " tx ", destinationState: " il "), CancellationToken.None);
 
         Assert.Equal(RateFloorSource.LaneExact, result.Source);
-        Assert.Equal(exact.Id, result.MatchedLaneId);
     }
 
     [Fact]
@@ -127,7 +123,6 @@ public class LaneRateFloorResolverTests
 
         Assert.True(result.HasFloor);
         Assert.Equal(RateFloorSource.TenantDefault, result.Source);
-        Assert.Null(result.MatchedLaneId);
         Assert.Equal(1.75m, result.MinRatePerMile);
         Assert.Null(result.MinTotalRate);
     }

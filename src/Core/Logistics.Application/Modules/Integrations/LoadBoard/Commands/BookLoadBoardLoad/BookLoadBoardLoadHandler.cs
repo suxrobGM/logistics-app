@@ -23,7 +23,6 @@ internal sealed class BookLoadBoardLoadHandler(
         BookLoadBoardLoadCommand req,
         CancellationToken ct)
     {
-        // Get the listing
         var listing = await tenantUow.Repository<LoadBoardListing>().GetByIdAsync(req.ListingId, ct);
         if (listing is null)
         {
@@ -36,7 +35,6 @@ internal sealed class BookLoadBoardLoadHandler(
                 $"Load board listing is not available (current status: {listing.Status})");
         }
 
-        // Get provider configuration
         var providerConfig = await tenantUow.Repository<LoadBoardConfiguration>()
             .GetAsync(c => c.ProviderType == listing.ProviderType && c.IsActive, ct);
 
@@ -56,14 +54,12 @@ internal sealed class BookLoadBoardLoadHandler(
 
         var provider = providerResult.Value;
 
-        // Get truck
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
             return Result<LoadBoardBookingResultDto>.Fail("Truck not found");
         }
 
-        // Get dispatcher
         var dispatcher = await tenantUow.Repository<Employee>().GetByIdAsync(req.DispatcherId, ct);
         if (dispatcher is null)
         {
@@ -88,7 +84,6 @@ internal sealed class BookLoadBoardLoadHandler(
                 negotiatedRateCheck.Error!, negotiatedRateCheck.ErrorCode!);
         }
 
-        // Get or create customer
         Customer? customer;
         if (req.CustomerId.HasValue)
         {
@@ -100,7 +95,6 @@ internal sealed class BookLoadBoardLoadHandler(
         }
         else
         {
-            // Create customer from broker info
             var customerName = req.CustomerName ?? listing.BrokerName ?? "Unknown Broker";
             customer = await tenantUow.Repository<Customer>()
                 .GetAsync(c => c.Name == customerName, ct);
@@ -115,7 +109,6 @@ internal sealed class BookLoadBoardLoadHandler(
             }
         }
 
-        // Book the load with the provider
         var bookingResult = await provider.BookLoadAsync(listing.ExternalListingId, new LoadBoardBookingRequest
         {
             TruckId = req.TruckId,
@@ -131,7 +124,6 @@ internal sealed class BookLoadBoardLoadHandler(
                 bookingResult.ErrorMessage ?? "Failed to book load with provider");
         }
 
-        // Determine load type based on equipment type
         var loadType = listing.EquipmentType?.ToLowerInvariant() switch
         {
             "flatbed" => LoadType.GeneralFreight,
@@ -142,7 +134,6 @@ internal sealed class BookLoadBoardLoadHandler(
             _ => LoadType.GeneralFreight
         };
 
-        // Create the TMS Load
         var load = Load.Create(
             name: $"Load Board - {listing.BrokerName ?? listing.ProviderType.ToString()}",
             type: loadType,
@@ -156,14 +147,12 @@ internal sealed class BookLoadBoardLoadHandler(
             assignedDispatcher: dispatcher
         );
 
-        // Set external source info
         load.ExternalSourceProvider = listing.ProviderType;
         load.ExternalSourceId = listing.ExternalListingId;
         load.ExternalBrokerReference = bookingResult.ExternalConfirmationId;
 
         await tenantUow.Repository<Load>().AddAsync(load, ct);
 
-        // Update the listing
         listing.Status = LoadBoardListingStatus.Booked;
         listing.BookedAt = DateTime.UtcNow;
         listing.LoadId = load.Id;

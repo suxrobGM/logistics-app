@@ -84,7 +84,6 @@ public class ProposeCounterOfferHandlerTests
             .Returns(ci => new ComposedNegotiationEmail(
                 "Rate offer: Dallas, TX -> Chicago, IL - NEG-1",
                 "<p>offer</p>",
-                ci.Arg<ComposeNegotiationEmailRequest>().ReplyToAddress,
                 ci.Arg<ComposeNegotiationEmailRequest>().AgentMessage));
 
         sut = new ProposeCounterOfferHandler(
