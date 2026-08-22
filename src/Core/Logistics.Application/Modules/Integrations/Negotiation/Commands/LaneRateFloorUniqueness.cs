@@ -1,7 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 
-namespace Logistics.Application.Modules.Integrations.Negotiation;
+namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
 
 /// <summary>
 /// (OriginCountry, OriginState, DestinationCountry, DestinationState) uniqueness for lane rate

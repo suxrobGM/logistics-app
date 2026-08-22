@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -5,6 +6,15 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Services;
+
+/// <summary>
+/// Resolves the rate floor that applies to a load board listing's lane, falling back from the
+/// most specific configured <see cref="LaneRateFloor"/> row down to the tenant-wide default.
+/// </summary>
+public interface ILaneRateFloorResolver : IApplicationService
+{
+    Task<EffectiveRateFloorDto> ResolveAsync(LoadBoardListing listing, CancellationToken ct = default);
+}
 
 internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILaneRateFloorResolver
 {

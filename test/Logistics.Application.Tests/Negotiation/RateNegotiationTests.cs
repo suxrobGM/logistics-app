@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Logistics.Application.Tests.Negotiation;
 
-public class NegotiationSequenceTests
+public class RateNegotiationTests
 {
     private static RateNegotiation NewThread() =>
         RateNegotiation.Create(Guid.NewGuid(), "broker@example.com", RateFloorSnapshot.None);

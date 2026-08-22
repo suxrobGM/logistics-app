@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
 
-namespace Logistics.Application.Tests.Negotiation;
+namespace Logistics.Application.Tests.Webhooks;
 
 public class ProcessResendWebhookHandlerTests
 {

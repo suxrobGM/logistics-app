@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Core\Logistics.Application\Logistics.Application.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Accounting\Logistics.Infrastructure.Integrations.Accounting.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Common\Logistics.Infrastructure.Integrations.Common.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Eld\Logistics.Infrastructure.Integrations.Eld.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.LoadBoard\Logistics.Infrastructure.Integrations.LoadBoard.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.FuelCards\Logistics.Infrastructure.Integrations.FuelCards.csproj" />

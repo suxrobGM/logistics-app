@@ -1,7 +1,7 @@
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Modules.Integrations.Negotiation;
+namespace Logistics.Application.Modules.Integrations.Negotiation.Services;
 
 public static class RateFloorSnapshotExtensions
 {

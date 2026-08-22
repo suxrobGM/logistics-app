@@ -1,7 +1,5 @@
 using Hangfire;
-using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Abstractions.Negotiation;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -40,16 +38,5 @@ public class NegotiationWakeJob(
             logger.LogError(ex, "Could not wake the dispatch agent for negotiation {NegotiationId}",
                 negotiationId);
         }
-    }
-}
-
-public class HangfireNegotiationWakeRunner(IBackgroundJobClient jobClient)
-    : IDelayedBackgroundJobRunner<NegotiationWakeRequest>
-{
-    public void Schedule(NegotiationWakeRequest request, TimeSpan delay)
-    {
-        jobClient.Schedule<NegotiationWakeJob>(
-            job => job.RunAsync(request.TenantId, request.NegotiationId, CancellationToken.None),
-            delay);
     }
 }
