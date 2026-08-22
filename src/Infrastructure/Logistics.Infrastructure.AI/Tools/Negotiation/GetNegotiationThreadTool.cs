@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Integrations.Negotiation;
 using Logistics.Application.Modules.Integrations.Negotiation.Queries;
@@ -69,18 +70,29 @@ internal sealed class GetNegotiationThreadTool(IMediator mediator)
     }
 
     /// <summary>
+    /// One message as the model sees it. A record rather than an anonymous type so the shape the
+    /// agent reads is declared - the keys stay snake_case because the prompt names them, hence the
+    /// explicit attributes.
+    /// </summary>
+    private sealed record MessageSummary(
+        [property: JsonPropertyName("sequence")] int Sequence,
+        [property: JsonPropertyName("direction")] string Direction,
+        [property: JsonPropertyName("occurred_at")] DateTime OccurredAt,
+        [property: JsonPropertyName("proposed_total_rate")] decimal? ProposedTotalRate,
+        [property: JsonPropertyName("quarantined")] bool Quarantined,
+        [property: JsonPropertyName("text")] string Text);
+
+    /// <summary>
     /// Quarantined mail failed the sender check, so its body never reaches the model - only the fact
     /// that something arrived and was rejected.
     /// </summary>
-    private static object Summarize(NegotiationMessageDto message) => new
-    {
-        sequence = message.Sequence,
-        direction = message.Direction == NegotiationMessageDirection.Inbound ? "inbound" : "outbound",
-        occurred_at = message.OccurredAt,
-        proposed_total_rate = message.ProposedTotalRate?.Amount,
-        quarantined = message.Quarantined,
-        text = message.Quarantined
+    private static MessageSummary Summarize(NegotiationMessageDto message) => new(
+        Sequence: message.Sequence,
+        Direction: message.Direction == NegotiationMessageDirection.Inbound ? "inbound" : "outbound",
+        OccurredAt: message.OccurredAt,
+        ProposedTotalRate: message.ProposedTotalRate?.Amount,
+        Quarantined: message.Quarantined,
+        Text: message.Quarantined
             ? "[quarantined: sender did not match the broker address on this thread]"
-            : NegotiationText.Truncate(message.TextBody, MaxMessageChars)
-    };
+            : NegotiationText.Truncate(message.TextBody, MaxMessageChars));
 }

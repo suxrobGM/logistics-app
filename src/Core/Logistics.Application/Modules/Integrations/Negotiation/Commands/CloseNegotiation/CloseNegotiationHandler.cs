@@ -4,7 +4,6 @@ using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Mappings;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
@@ -36,11 +35,7 @@ internal sealed class CloseNegotiationHandler(
 
         await routeRegistry.RevokeAsync([negotiation.ReplyToken], ct);
 
-        var listing = await tenantUow.Repository<LoadBoardListing>()
-            .GetByIdAsync(negotiation.LoadBoardListingId, ct);
-
-        await broadcastService.BroadcastNegotiationAsync(
-            tenantUow.GetCurrentTenant().Id, negotiation.ToDto(listing));
+        await NegotiationBroadcast.PublishAsync(tenantUow, broadcastService, negotiation, ct);
 
         return Result.Ok();
     }

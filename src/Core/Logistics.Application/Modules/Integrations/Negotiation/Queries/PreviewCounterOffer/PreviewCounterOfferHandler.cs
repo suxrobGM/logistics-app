@@ -51,7 +51,7 @@ internal sealed class PreviewCounterOfferHandler(
             negotiation?.ReplyToken ?? NegotiationReplyAddress.UnassignedToken, emailSender.ReplyDomain);
 
         var tenant = tenantUow.GetCurrentTenant();
-        var currency = listing.TotalRate?.Currency ?? ComposeNegotiationEmailRequest.DefaultCurrency;
+        var currency = ListingCurrency.Of(listing);
 
         var composed = await composer.ComposeAsync(ComposeNegotiationEmailRequest.For(
             listing, tenant, input.ProposedTotalRate, input.ProposedRatePerMile,

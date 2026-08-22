@@ -11,8 +11,6 @@ namespace Logistics.Application.Modules.Integrations.Negotiation.Services;
 /// </summary>
 public record ComposeNegotiationEmailRequest
 {
-    public const string DefaultCurrency = "USD";
-
     public required string OriginCity { get; init; }
     public required string OriginState { get; init; }
     public required string DestinationCity { get; init; }
@@ -51,7 +49,7 @@ public record ComposeNegotiationEmailRequest
             PickupDate = listing.PickupDateStart ?? listing.ExpiresAt,
             EquipmentType = listing.EquipmentType ?? "Not specified",
             OfferAmount = offerAmount,
-            Currency = listing.TotalRate?.Currency ?? DefaultCurrency,
+            Currency = ListingCurrency.Of(listing),
             OfferPerMile = offerPerMile,
             AgentMessage = agentMessage,
             CompanyName = tenant.CompanyName ?? tenant.Name,

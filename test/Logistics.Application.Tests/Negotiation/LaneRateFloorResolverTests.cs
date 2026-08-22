@@ -5,6 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Specifications;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Application.Tests.TestKit;
 using NSubstitute;
 using Xunit;
 
@@ -15,13 +16,7 @@ public class LaneRateFloorResolverTests
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<LaneRateFloor, Guid> floorRepo =
         Substitute.For<ITenantRepository<LaneRateFloor, Guid>>();
-    private readonly Tenant tenant = new()
-    {
-        Name = "test",
-        ConnectionString = "test",
-        BillingEmail = "billing@test.com",
-        CompanyAddress = new Address { Line1 = "1 St", City = "Test", State = "TX", ZipCode = "00000", Country = "US" }
-    };
+    private readonly Tenant tenant = TestTenant.Create();
 
     private readonly LaneRateFloorResolver sut;
 

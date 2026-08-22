@@ -1,7 +1,7 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,26 +30,8 @@ internal sealed class GetNegotiationsHandler(ITenantUnitOfWork tenantUow)
             .ApplyPaging(req.Page, req.PageSize)
             .ToListAsync(ct);
 
-        var listings = await GetListingsAsync(negotiations.Select(n => n.LoadBoardListingId), ct);
-        var dtos = negotiations
-            .Select(n => n.ToDto(listings.GetValueOrDefault(n.LoadBoardListingId)))
-            .ToArray();
+        var dtos = await NegotiationDtoBatch.MapAsync(tenantUow, negotiations, ct);
 
         return PagedResult<RateNegotiationDto>.Ok(dtos, totalItems, req.PageSize);
-    }
-
-    /// <summary>One query for the whole page - the listing navigation would lazy-load per row.</summary>
-    private async Task<Dictionary<Guid, LoadBoardListing>> GetListingsAsync(
-        IEnumerable<Guid> listingIds, CancellationToken ct)
-    {
-        var ids = listingIds.Distinct().ToArray();
-        if (ids.Length == 0)
-        {
-            return [];
-        }
-
-        return await tenantUow.Repository<LoadBoardListing>().Query()
-            .Where(l => ids.Contains(l.Id))
-            .ToDictionaryAsync(l => l.Id, ct);
     }
 }

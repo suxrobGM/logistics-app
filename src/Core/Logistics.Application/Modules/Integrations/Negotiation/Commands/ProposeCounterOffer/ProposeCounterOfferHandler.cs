@@ -45,7 +45,8 @@ internal sealed class ProposeCounterOfferHandler(
                 $"Load board listing is not available (current status: {listing.Status})");
         }
 
-        if (string.IsNullOrWhiteSpace(listing.BrokerEmail))
+        var brokerEmail = listing.BrokerEmail;
+        if (string.IsNullOrWhiteSpace(brokerEmail))
         {
             return Result<RateNegotiationDto>.Fail(
                 "This listing has no broker email address, so a counter-offer cannot be sent.");
@@ -55,7 +56,7 @@ internal sealed class ProposeCounterOfferHandler(
         var negotiation = await negotiationRepo.GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
 
         var isNewThread = negotiation is null;
-        var currency = listing.TotalRate?.Currency ?? ComposeNegotiationEmailRequest.DefaultCurrency;
+        var currency = ListingCurrency.Of(listing);
 
         // Floor first: it is a local read that rejects most bad offers, whereas the credit gate
         // costs a vendor API call and a write. Round 1 resolves the lane floor and freezes it on the
@@ -65,10 +66,9 @@ internal sealed class ProposeCounterOfferHandler(
             ? await floorResolver.ResolveAsync(listing, ct)
             : negotiation.ToEffectiveFloor();
 
-        var floorCheck = CheckAgainstFloor(req, floor, listing);
-        if (!floorCheck.IsSuccess)
+        if (FloorRejection(req, floor, listing) is { } rejection)
         {
-            return Result<RateNegotiationDto>.Fail(floorCheck.Error!, floorCheck.ErrorCode!);
+            return Result<RateNegotiationDto>.Fail(rejection.Error, rejection.Code);
         }
 
         var creditGate = await BrokerCreditGate.EvaluateAsync(
@@ -83,7 +83,7 @@ internal sealed class ProposeCounterOfferHandler(
         {
             negotiation = RateNegotiation.Create(
                 listing.Id,
-                listing.BrokerEmail!,
+                brokerEmail,
                 floor.ToSnapshot(currency),
                 listing.BrokerName,
                 listing.BrokerMcNumber,
@@ -117,7 +117,7 @@ internal sealed class ProposeCounterOfferHandler(
         }
 
         var sendResult = await emailSender.SendAsync(new ThreadedEmail(
-            To: listing.BrokerEmail!,
+            To: brokerEmail,
             Subject: composed.Subject,
             HtmlBody: composed.HtmlBody,
             ReplyTo: replyToAddress,
@@ -182,14 +182,17 @@ internal sealed class ProposeCounterOfferHandler(
         return Result<RateNegotiationDto>.Ok(dto);
     }
 
-    private static Result CheckAgainstFloor(
+    /// <summary>
+    /// Why this offer may not be sent, or <c>null</c> when it clears the floor.
+    /// </summary>
+    private static (string Error, string Code)? FloorRejection(
         ProposeCounterOfferCommand req, EffectiveRateFloorDto floor, LoadBoardListing listing)
     {
         var lane = $"{listing.OriginAddress.State} to {listing.DestinationAddress.State}";
 
         if (!floor.HasFloor)
         {
-            return Result.Fail(
+            return (
                 $"No rate floor covers {lane} and your company has no default floor, so this offer cannot be checked. " +
                 "Add a lane rate floor before negotiating.",
                 ErrorCodes.NegotiationFloorMissing);
@@ -198,22 +201,20 @@ internal sealed class ProposeCounterOfferHandler(
         if (floor.EffectiveFloorTotal is { } floorTotal)
         {
             return req.ProposedTotalRate < floorTotal
-                ? Result.Fail(
-                    $"The offer of {req.ProposedTotalRate:N2} is below your floor of {floorTotal:N2} for {lane}.",
+                ? ($"The offer of {req.ProposedTotalRate:N2} is below your floor of {floorTotal:N2} for {lane}.",
                     ErrorCodes.NegotiationBelowFloor)
-                : Result.Ok();
+                : null;
         }
 
         if (req.ProposedRatePerMile is { } perMile && floor.MinRatePerMile is { } minPerMile)
         {
             return perMile < minPerMile
-                ? Result.Fail(
-                    $"The offer of {perMile:N2} per mile is below your floor of {minPerMile:N2} per mile for {lane}.",
+                ? ($"The offer of {perMile:N2} per mile is below your floor of {minPerMile:N2} per mile for {lane}.",
                     ErrorCodes.NegotiationBelowFloor)
-                : Result.Ok();
+                : null;
         }
 
-        return Result.Fail(
+        return (
             $"The listing has no distance and your floor for {lane} is per-mile only, so this offer cannot be checked. " +
             "Set a minimum total rate on the lane floor, or offer a per-mile rate.",
             ErrorCodes.NegotiationFloorMissing);

@@ -6,7 +6,6 @@ using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -76,9 +75,7 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
         await tenantUow.Repository<NegotiationMessage>().AddAsync(message, ct);
         await tenantUow.SaveChangesAsync(ct);
 
-        var listing = await tenantUow.Repository<LoadBoardListing>()
-            .GetByIdAsync(negotiation.LoadBoardListingId, ct);
-        await broadcastService.BroadcastNegotiationAsync(tenant.Id, negotiation.ToDto(listing));
+        await NegotiationBroadcast.PublishAsync(tenantUow, broadcastService, negotiation, ct);
 
         if (!senderMatches)
         {
