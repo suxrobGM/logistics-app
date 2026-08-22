@@ -61,6 +61,7 @@ interface CompanySettingsModel {
   operatingMode: OperatingMode;
   // Dispatch settings
   minBrokerCreditScore: number | null;
+  defaultRateFloorPerMile: number | null;
   // AI settings
   blockAIOverage: boolean;
 }
@@ -82,6 +83,7 @@ const EMPTY: CompanySettingsModel = {
   timezone: "America/New_York",
   operatingMode: "fleet",
   minBrokerCreditScore: null,
+  defaultRateFloorPerMile: null,
   blockAIOverage: false,
 };
 
@@ -181,6 +183,8 @@ export class CompanySettingsComponent implements OnInit {
       required(p.companyAddress, { message: "Company address is required." });
       min(p.minBrokerCreditScore, 0, { message: "Score must be between 0 and 100." });
       max(p.minBrokerCreditScore, 100, { message: "Score must be between 0 and 100." });
+      min(p.defaultRateFloorPerMile, 0, { message: "The floor must be between 0 and 100." });
+      max(p.defaultRateFloorPerMile, 100, { message: "The floor must be between 0 and 100." });
     },
     {
       submission: {
@@ -213,6 +217,7 @@ export class CompanySettingsComponent implements OnInit {
               timezone: value.timezone,
               operatingMode: value.operatingMode,
               minBrokerCreditScore: value.minBrokerCreditScore,
+              defaultRateFloorPerMile: value.defaultRateFloorPerMile,
               blockAIOverage: value.blockAIOverage,
             },
           };
@@ -320,6 +325,7 @@ export class CompanySettingsComponent implements OnInit {
           timezone: tenant.settings?.timezone ?? "America/New_York",
           operatingMode: tenant.settings?.operatingMode ?? "fleet",
           minBrokerCreditScore: tenant.settings?.minBrokerCreditScore ?? null,
+          defaultRateFloorPerMile: tenant.settings?.defaultRateFloorPerMile ?? null,
           blockAIOverage: tenant.settings?.blockAIOverage ?? false,
         });
 

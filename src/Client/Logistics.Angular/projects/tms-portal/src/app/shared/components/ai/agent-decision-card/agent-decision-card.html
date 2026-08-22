@@ -56,6 +56,17 @@
       <p class="text-muted-foreground mt-2 mb-0 line-clamp-3 text-xs">{{ d.reasoning }}</p>
     }
 
+    @if (isPending() && d.id && hasEmailPreview(d.toolName)) {
+      <!-- Each preview costs a render on the server, so fetch only the cards actually looked at. -->
+      @defer (on viewport) {
+        <app-counter-offer-preview [decisionId]="d.id" />
+      } @placeholder {
+        <div class="text-muted-foreground mt-2 text-xs">
+          Email preview loads when scrolled into view.
+        </div>
+      }
+    }
+
     @if (d.status === "executed" && d.toolResult) {
       <div class="mt-2 text-xs">
         <app-tool-output-summary [result]="d.toolResult" />

@@ -1,0 +1,79 @@
+<ui-page-header
+  title="Broker Negotiations"
+  subtitle="Rate threads the AI agent opened with brokers, and what came back."
+/>
+
+<ui-card>
+  <ui-stack direction="row" align="center" justify="end" class="mb-4">
+    <ui-button
+      appearance="outlined"
+      size="sm"
+      [label]="activeOnly() ? 'Show all threads' : 'Show open threads only'"
+      (click)="toggleActiveOnly()"
+    />
+  </ui-stack>
+
+  @if (isLoading()) {
+    <ui-stack align="center" justify="center" class="py-8">
+      <ui-spinner />
+    </ui-stack>
+  } @else if (error()) {
+    <ui-error-state [message]="error()!" (retry)="load()" />
+  } @else if (negotiations().length === 0) {
+    <ui-empty-state
+      icon="mail"
+      title="No negotiations"
+      message="When the agent counters a below-floor load-board listing and you approve it, the thread shows up here."
+    />
+  } @else {
+    <ui-data-table [value]="negotiations()" stripedRows>
+      <ng-template #header>
+        <tr>
+          <th class="w-36">Reference</th>
+          <th>Lane</th>
+          <th>Broker</th>
+          <th class="w-32 text-right">Our offer</th>
+          <th class="w-32 text-right">Their offer</th>
+          <th class="w-24 text-center">Rounds</th>
+          <th class="w-36">Status</th>
+          <th class="w-36">Expires</th>
+          <th class="w-20"></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-negotiation>
+        <tr>
+          <td class="font-mono text-xs">{{ negotiation.reference }}</td>
+          <td>{{ lane(negotiation) }}</td>
+          <td>{{ negotiation.brokerName || negotiation.brokerEmail }}</td>
+          <td class="text-right">
+            {{
+              (negotiation.latestCounterOffer?.amount
+                | currencyFormat: negotiation.latestCounterOffer?.currency) ?? "-"
+            }}
+          </td>
+          <td class="text-right">
+            {{
+              (negotiation.latestBrokerOffer?.amount
+                | currencyFormat: negotiation.latestBrokerOffer?.currency) ?? "-"
+            }}
+          </td>
+          <td class="text-center">{{ negotiation.roundCount }} / {{ negotiation.maxRounds }}</td>
+          <td>
+            <ui-status-badge [status]="negotiation.status" kind="negotiation" />
+          </td>
+          <td class="text-xs">{{ negotiation.expiresAt | dateFormat: "short" }}</td>
+          <td>
+            <ui-button
+              intent="secondary"
+              appearance="text"
+              size="sm"
+              icon="eye"
+              [routerLink]="['/ai-dispatch/negotiations', negotiation.id]"
+              ariaLabel="Open thread"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </ui-data-table>
+  }
+</ui-card>

@@ -21,6 +21,7 @@ using Logistics.Infrastructure.Integrations.FuelCards;
 using Logistics.Infrastructure.Integrations.LoadBoard;
 using Logistics.Application.Abstractions.Accounting;
 using Logistics.Application.Abstractions.AICopilot;
+using Logistics.Application.Abstractions.Negotiation;
 using Logistics.HostDefaults;
 using Logistics.Infrastructure.Persistence.Data;
 using Logistics.Infrastructure.Persistence.Services.Accounting;
@@ -130,6 +131,7 @@ internal static class Setup
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
         services.AddScoped<IBackgroundJobRunner<AIDispatchTurnRequest>, HangfireAIDispatchTurnRunner>();
+        services.AddScoped<IDelayedBackgroundJobRunner<NegotiationWakeRequest>, HangfireNegotiationWakeRunner>();
         services.AddScoped<IBackgroundJobRunner<AICopilotTurnRequest>, HangfireAICopilotTurnRunner>();
         services.AddScoped<ICommandEnqueuer, HangfireCommandEnqueuer>();
         services.AddHangfireServer();
@@ -267,6 +269,7 @@ internal static class Setup
         DataExportExpiryJob.ScheduleJobs();
         WebhookEventCleanupJob.ScheduleJobs();
         AIDispatchPolicyLearningJob.ScheduleJobs();
+        NegotiationExpirySweepJob.ScheduleJobs();
 
         // Remove old stale dispatch agent job if it exists
         RecurringJob.RemoveIfExists("ai-dispatch");

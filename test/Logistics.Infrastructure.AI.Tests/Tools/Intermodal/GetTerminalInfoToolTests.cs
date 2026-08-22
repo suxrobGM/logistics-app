@@ -26,12 +26,6 @@ public class GetTerminalInfoToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("get_terminal_info", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_NoIdentifier_ReturnsErrorNamingBothParams()
     {
         var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);

@@ -4,7 +4,7 @@ namespace Logistics.Application.Abstractions.Agents;
 
 /// <summary>
 /// Registry of all tools available to the AI agents (dispatch and copilot).
-/// Tool definitions are declared once and reused by the agent loop and the MCP server.
+/// Tool definitions are declared once, next to the tool, and reused by every surface.
 /// </summary>
 /// <remarks>
 /// One member per surface rather than one filtered query with flags: the permission set is then
@@ -28,8 +28,19 @@ public interface IAgentToolRegistry
         IReadOnlySet<TenantFeature> enabledFeatures,
         IReadOnlySet<string> callerPermissions);
 
-    /// <summary>Every tool, gated or not. For surfaces that gate per call rather than per catalogue.</summary>
-    IReadOnlyList<AgentToolDefinition> GetAllTools();
+    /// <summary>
+    /// The catalogue an MCP client is shown: the tools that name <see cref="AgentSurfaces.Mcp"/>,
+    /// filtered on features. Permissions do not apply - an API key authenticates a tenant, not a
+    /// person.
+    /// </summary>
+    IReadOnlyList<AgentToolDefinition> GetMcpTools(IReadOnlySet<TenantFeature> enabledFeatures);
+
+    /// <summary>
+    /// Why MCP must refuse to run <paramref name="toolName"/>, or null if it may. The catalogue
+    /// already hides a denied tool, but a client can call any name it likes, so both paths ask this
+    /// one question rather than each applying the rules itself.
+    /// </summary>
+    string? McpDenialReason(string toolName, IReadOnlySet<TenantFeature> enabledFeatures);
 
     /// <summary>Null for unknown (e.g. hallucinated) tool names.</summary>
     AgentToolDefinition? TryGetDefinition(string name);

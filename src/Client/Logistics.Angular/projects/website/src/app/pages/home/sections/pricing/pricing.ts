@@ -55,6 +55,8 @@ export class Pricing {
         "Everything in Starter",
         "Load board integrations",
         "Broker credit checks",
+        "AI rate negotiation - email counter-offers to brokers",
+        "Intermodal containers & terminals",
         "Fuel card sync (WEX, EFS)",
         "IFTA fuel tax reporting",
         "Payroll management",

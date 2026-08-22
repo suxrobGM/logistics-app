@@ -1,20 +1,40 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using MediatR;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Financial.Expenses.Queries;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
+using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 
-internal sealed class GetExpenseStatsTool(IMediator mediator) : IAgentTool
+internal sealed class GetExpenseStatsTool(IMediator mediator)
+    : AgentTool<GetExpenseStatsTool.Input>, IAgentToolMetadata
 {
-    public string Name => "get_expense_stats";
+    internal sealed record Input
+    {
+        [Description("Start of the period (ISO 8601)")]
+        public DateTime? FromDate { get; init; }
 
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+        [Description("End of the period (ISO 8601)")]
+        public DateTime? ToDate { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "get_expense_stats",
+        "Expense rollups for a date range: totals by approval status, by type, by company/truck category, 12-month trend, and top trucks by spend. Prefer this over search_expenses for 'how much did we spend on X' questions.")
+    {
+        RequiredFeature = TenantFeature.Expenses,
+        RequiredPermission = Permission.Expense.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
+    };
+
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {
         var query = new GetExpenseStatsQuery
         {
-            FromDate = input.GetDate("from_date"),
-            ToDate = input.GetDate("to_date")
+            FromDate = input.FromDate,
+            ToDate = input.ToDate
         };
 
         var result = await mediator.Send(query, ct);
@@ -23,7 +43,7 @@ internal sealed class GetExpenseStatsTool(IMediator mediator) : IAgentTool
             return ToolResult.Error(result.Error ?? "No expense data");
 
         var s = result.Value;
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             total_amount = s.TotalAmount,
             total_count = s.TotalCount,

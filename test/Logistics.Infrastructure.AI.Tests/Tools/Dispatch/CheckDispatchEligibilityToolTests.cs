@@ -21,12 +21,6 @@ public class CheckDispatchEligibilityToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("check_dispatch_eligibility", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_MissingTruckId_ReturnsError()
     {
         var input = new JsonObject

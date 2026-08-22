@@ -28,6 +28,9 @@ export function parseToolInput(json: string | null | undefined): ParsedToolInput
 interface ToolMeta {
   label: string;
   icon: IconName;
+
+  /** Renders the email preview on a pending decision, so the approver reads what will be sent. */
+  emailPreview?: true;
 }
 
 /**
@@ -56,6 +59,8 @@ const TOOL_META: Record<string, ToolMeta> = {
   search_expenses: { label: "Expenses", icon: "receipt" },
   get_expense_stats: { label: "Expense Stats", icon: "chart-column" },
   get_upcoming_maintenance: { label: "Upcoming Maintenance", icon: "wrench" },
+  get_rate_floor: { label: "Rate Floor", icon: "chart-column" },
+  get_negotiation_thread: { label: "Negotiation Thread", icon: "mail" },
 
   assign_load_to_truck: { label: "Assign Load", icon: "link" },
   create_trip: { label: "Create Trip", icon: "circle-plus" },
@@ -64,6 +69,7 @@ const TOOL_META: Record<string, ToolMeta> = {
   create_load_invoice: { label: "Create Invoice", icon: "file-text" },
   send_invoice: { label: "Send Invoice", icon: "mail" },
   create_payment_link: { label: "Create Payment Link", icon: "credit-card" },
+  propose_counter_offer: { label: "Send Counter-Offer", icon: "mail", emailPreview: true },
 };
 
 export function getToolLabel(toolName: string | null | undefined): string {
@@ -72,6 +78,10 @@ export function getToolLabel(toolName: string | null | undefined): string {
 
 export function getToolIcon(toolName: string | null | undefined): IconName {
   return (toolName ? TOOL_META[toolName]?.icon : null) ?? "circle";
+}
+
+export function hasEmailPreview(toolName: string | null | undefined): boolean {
+  return toolName ? TOOL_META[toolName]?.emailPreview === true : false;
 }
 
 /** A decision's resolved references, as rendered by the cards and the confirm dialog. */

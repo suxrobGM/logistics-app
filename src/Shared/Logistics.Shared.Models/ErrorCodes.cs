@@ -27,6 +27,24 @@ public static class ErrorCodes
     public const string BrokerCreditBelowThreshold = "BROKER_CREDIT_BELOW_THRESHOLD";
 
     /// <summary>
+    ///     No rate floor covers the listing's lane and the tenant has no default floor, so a
+    ///     counter-offer cannot be checked against anything. Fixed by adding a lane floor.
+    /// </summary>
+    public const string NegotiationFloorMissing = "NEGOTIATION_FLOOR_MISSING";
+
+    /// <summary>
+    ///     The proposed counter-offer is below the tenant's rate floor for that lane.
+    /// </summary>
+    public const string NegotiationBelowFloor = "NEGOTIATION_BELOW_FLOOR";
+
+    /// <summary>
+    ///     The webhook request itself is unusable - a bad signature or a body we cannot read. The
+    ///     endpoint answers 4xx on this so the provider stops retrying; every other failure is
+    ///     transient and must answer 5xx to keep the retry.
+    /// </summary>
+    public const string WebhookRejected = "WEBHOOK_REJECTED";
+
+    /// <summary>
     ///     Weekly AI budget spent and the owner opted to pause AI instead of billing overage
     ///     (TenantSettings.BlockAIOverage). Self-imposed - deliberately not an upgrade-prompt code.
     /// </summary>

@@ -34,6 +34,23 @@ public class AgentToolResultDto
     public bool? IsInViolation { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? HasFloor { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? BelowFloor { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public decimal? EffectiveFloorTotal { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public decimal? GapPerMile { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public decimal? OfferedTotalRate { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Guid? NegotiationId { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? RoundsUsed { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? MaxRounds { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public AgentToolFleetSummaryDto? FleetSummary { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public List<AgentToolLoadDto>? Loads { get; set; }
@@ -132,7 +149,7 @@ public static class AgentToolResultJson
     /// all-null object, since unknown properties are simply skipped.
     /// </summary>
     private static readonly string[] RenderedKeys =
-        ["error", "success", "feasible", "loads", "trucks", "results", "fleet_summary"];
+        ["error", "success", "feasible", "loads", "trucks", "results", "fleet_summary", "has_floor"];
 
     /// <summary>
     /// A persisted tool output as the typed shape, or null when this union does not model it -

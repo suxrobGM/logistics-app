@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Tools;
@@ -49,9 +50,9 @@ public class AgentToolRegistryTests
     }
 
     [Fact]
-    public void GetCopilotTools_IncludesLoadBoardTools_WhenRequested()
+    public void Catalog_IncludesLoadBoardTools()
     {
-        var tools = sut.GetAllTools();
+        var tools = AgentToolCatalog.Definitions;
 
         Assert.Contains(tools, t => t.Name == "search_loadboard");
         Assert.Contains(tools, t => t.Name == "book_loadboard_load");
@@ -112,14 +113,14 @@ public class AgentToolRegistryTests
     }
 
     /// <summary>
-    /// The gate is metadata on the definition, so the MCP surface - which publishes every tool and
-    /// checks per call - reads the same value the schema filter does. Two copies of a tool-name list
-    /// is how the old MCP copy silently lost `check_broker_credit`.
+    /// The gate is metadata on the definition, so every surface filter and the MCP call-time check
+    /// read the same value. Two copies of a tool-name list is how the old MCP copy silently lost
+    /// `check_broker_credit`.
     /// </summary>
     [Fact]
-    public void GetAllTools_CarriesTheFeatureEachGatedToolNeeds()
+    public void Catalog_CarriesTheFeatureEachGatedToolNeeds()
     {
-        var all = sut.GetAllTools().ToDictionary(t => t.Name, t => t.RequiredFeature);
+        var all = AgentToolCatalog.Definitions.ToDictionary(t => t.Name, t => t.RequiredFeature);
 
         Assert.Equal(TenantFeature.LoadBoard, all["search_loadboard"]);
         Assert.Equal(TenantFeature.LoadBoard, all["check_broker_credit"]);
@@ -136,7 +137,7 @@ public class AgentToolRegistryTests
         var everyFeature = With([.. Enum.GetValues<TenantFeature>()]);
 
         Assert.Equal(
-            sut.GetAllTools().Select(t => t.Name),
+            AgentToolCatalog.Definitions.Select(t => t.Name),
             sut.GetCopilotTools(everyFeature, EveryPermission).Select(t => t.Name));
     }
 
@@ -152,9 +153,9 @@ public class AgentToolRegistryTests
     }
 
     [Fact]
-    public void GetCopilotTools_HasUniqueToolNames()
+    public void Catalog_HasUniqueToolNames()
     {
-        var tools = sut.GetAllTools();
+        var tools = AgentToolCatalog.Definitions;
 
         var names = tools.Select(t => t.Name).ToList();
         Assert.Equal(names.Count, names.Distinct().Count());
@@ -188,9 +189,9 @@ public class AgentToolRegistryTests
     {
         var dispatchTools = sut.GetDispatchAgentTools(EveryFeature);
 
-        Assert.All(dispatchTools, t => Assert.True(t.DispatchAgent));
+        Assert.All(dispatchTools, t => Assert.True(t.Surfaces.HasFlag(AgentSurfaces.Dispatch)));
         Assert.Equal(
-            sut.GetAllTools().Where(t => t.DispatchAgent).Select(t => t.Name),
+            AgentToolCatalog.Definitions.Where(t => t.Surfaces.HasFlag(AgentSurfaces.Dispatch)).Select(t => t.Name),
             dispatchTools.Select(t => t.Name));
     }
 
@@ -199,15 +200,16 @@ public class AgentToolRegistryTests
     /// it opts in, so doing so is a deliberate act - this pins the current set.
     /// </summary>
     [Fact]
-    public void GetAllTools_DispatchAgentWriteToolsAreAKnownSet()
+    public void Catalog_DispatchAgentWriteToolsAreAKnownSet()
     {
-        var writeTools = sut.GetAllTools()
-            .Where(t => t is { DispatchAgent: true, IsWrite: true })
+        var writeTools = AgentToolCatalog.Definitions
+            .Where(t => t.IsWrite && t.Surfaces.HasFlag(AgentSurfaces.Dispatch))
             .Select(t => t.Name)
             .OrderBy(n => n);
 
         Assert.Equal(
-            ["assign_load_to_truck", "book_loadboard_load", "create_trip", "dispatch_trip"],
+            ["assign_load_to_truck", "book_loadboard_load", "create_trip", "dispatch_trip",
+             "propose_counter_offer"],
             writeTools);
     }
 
@@ -227,10 +229,84 @@ public class AgentToolRegistryTests
 
     /// <summary>Every tool must declare a permission - an undeclared one bypasses copilot scoping.</summary>
     [Fact]
-    public void GetAllTools_EveryToolDeclaresARequiredPermission()
+    public void Catalog_EveryToolDeclaresARequiredPermission()
     {
-        Assert.All(sut.GetAllTools(), t =>
+        Assert.All(AgentToolCatalog.Definitions, t =>
             Assert.False(string.IsNullOrWhiteSpace(t.RequiredPermission), $"Tool '{t.Name}' has no RequiredPermission"));
+    }
+
+    #endregion
+
+    #region MCP surface
+
+    /// <summary>
+    /// An MCP call runs unattended from an API key, with nobody to attribute it to and no approval
+    /// step. Reads are fine; the writes that email a third party, move money or record a responsible
+    /// person are not, and this pins that set rather than leaving it to a forgotten flag.
+    /// </summary>
+    [Fact]
+    public void GetMcpTools_WriteToolsAreAKnownSet()
+    {
+        var writes = sut.GetMcpTools(EveryFeature)
+            .Where(t => t.IsWrite)
+            .Select(t => t.Name)
+            .OrderBy(n => n, StringComparer.Ordinal);
+
+        Assert.Equal(["assign_load_to_truck", "create_trip", "dispatch_trip"], writes);
+    }
+
+    [Fact]
+    public void GetMcpTools_PublishesReadsTheAgentsCannotSee()
+    {
+        var names = sut.GetMcpTools(EveryFeature).Select(t => t.Name).ToHashSet();
+
+        Assert.Contains("search_loadboard", names);
+        Assert.Contains("get_unassigned_loads", names);
+        Assert.Contains("search_loads", names);
+    }
+
+    /// <summary>
+    /// A client can call any name it likes, so the refusal has to hold for a tool the catalogue
+    /// never showed it.
+    /// </summary>
+    [Fact]
+    public void McpDenialReason_MatchesWhatTheCatalogueHides()
+    {
+        var published = sut.GetMcpTools(EveryFeature).Select(t => t.Name).ToHashSet();
+
+        Assert.All(AgentToolCatalog.Definitions, t =>
+            Assert.Equal(published.Contains(t.Name), sut.McpDenialReason(t.Name, EveryFeature) is null));
+    }
+
+    [Fact]
+    public void McpDenialReason_UnknownName()
+    {
+        Assert.NotNull(sut.McpDenialReason("hallucinated_tool", EveryFeature));
+    }
+
+    [Fact]
+    public void GetMcpTools_WithoutTheFeature_OmitsItsTools()
+    {
+        var names = sut.GetMcpTools(NoFeatures).Select(t => t.Name).ToHashSet();
+
+        Assert.DoesNotContain("search_loadboard", names);
+        Assert.DoesNotContain("get_container_status", names);
+        Assert.Contains("get_unassigned_loads", names);
+    }
+
+    /// <summary>
+    /// MCP runs a write for real, so its warning replaces the agents' approval promise - carrying
+    /// the wrong one tells the client the opposite of what will happen.
+    /// </summary>
+    [Fact]
+    public void GetMcpTools_WriteToolsCarryTheImmediateExecutionWarning()
+    {
+        var createTrip = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "create_trip");
+        var readTool = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "get_unassigned_loads");
+
+        Assert.Contains("takes effect immediately", createTrip.Description);
+        Assert.DoesNotContain("dispatcher approval", createTrip.Description);
+        Assert.DoesNotContain("takes effect immediately", readTool.Description);
     }
 
     [Fact]

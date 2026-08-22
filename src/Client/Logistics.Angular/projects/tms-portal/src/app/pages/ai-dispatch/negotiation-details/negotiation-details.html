@@ -1,0 +1,130 @@
+@if (isLoading() && !negotiation()) {
+  <ui-stack align="center" justify="center" class="py-12">
+    <ui-spinner />
+  </ui-stack>
+} @else if (negotiation(); as thread) {
+  <ui-page-header [title]="'Negotiation ' + thread.reference" subtitle="Broker rate thread">
+    @if (canManage() && isOpen()) {
+      <ui-button
+        intent="danger"
+        appearance="outlined"
+        icon="x"
+        label="Close thread"
+        [loading]="isClosing()"
+        (click)="confirmClose()"
+      />
+    }
+  </ui-page-header>
+
+  <ui-card class="mb-4">
+    <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div>
+        <ui-typography variant="body-sm" color="muted">Status</ui-typography>
+        <ui-status-badge [status]="thread.status" kind="negotiation" />
+      </div>
+      <div>
+        <ui-typography variant="body-sm" color="muted">Broker</ui-typography>
+        <ui-typography variant="body">{{ thread.brokerName || "-" }}</ui-typography>
+        <ui-typography variant="body-sm" color="muted">{{ thread.brokerEmail }}</ui-typography>
+      </div>
+      <div>
+        <ui-typography variant="body-sm" color="muted">Rounds used</ui-typography>
+        <ui-typography variant="body">
+          {{ thread.roundCount }} of {{ thread.maxRounds }}
+        </ui-typography>
+      </div>
+      <div>
+        <ui-typography variant="body-sm" color="muted">Reply window ends</ui-typography>
+        <ui-typography variant="body">
+          {{ thread.expiresAt ? (thread.expiresAt | dateFormat: "short") : "-" }}
+        </ui-typography>
+      </div>
+      <div>
+        <ui-typography variant="body-sm" color="muted">Floor when opened</ui-typography>
+        <ui-typography variant="body">
+          {{
+            (thread.floorTotalRate?.amount | currencyFormat: thread.floorTotalRate?.currency) ??
+              (thread.floorRatePerMile | currencyFormat) ??
+              "-"
+          }}
+        </ui-typography>
+      </div>
+      <div>
+        <ui-typography variant="body-sm" color="muted">Listing rate</ui-typography>
+        <ui-typography variant="body">
+          {{
+            (thread.listingTotalRate?.amount | currencyFormat: thread.listingTotalRate?.currency) ??
+              "-"
+          }}
+        </ui-typography>
+      </div>
+      <div>
+        <ui-typography variant="body-sm" color="muted">Our latest offer</ui-typography>
+        <ui-typography variant="body">
+          {{
+            (thread.latestCounterOffer?.amount
+              | currencyFormat: thread.latestCounterOffer?.currency) ?? "-"
+          }}
+        </ui-typography>
+      </div>
+      <div>
+        <ui-typography variant="body-sm" color="muted">Their latest offer</ui-typography>
+        <ui-typography variant="body">
+          {{
+            (thread.latestBrokerOffer?.amount
+              | currencyFormat: thread.latestBrokerOffer?.currency) ?? "-"
+          }}
+        </ui-typography>
+      </div>
+    </div>
+
+    @if (thread.closeReason) {
+      <ui-typography variant="body-sm" color="muted" class="mt-4">
+        Closed: {{ thread.closeReason }}
+      </ui-typography>
+    }
+  </ui-card>
+
+  <ui-card>
+    <ui-typography variant="h5" tag="h2" class="mb-4">Messages</ui-typography>
+
+    @for (message of thread.messages; track message.id) {
+      <div
+        class="border-border mb-3 rounded-lg border p-4"
+        [class.bg-muted]="message.direction === 'inbound'"
+      >
+        <ui-stack direction="row" align="center" gap="2" class="mb-2">
+          <ui-icon [name]="message.direction === 'inbound' ? 'mail' : 'send'" size="inherit" />
+          <ui-typography variant="body-sm">
+            {{ message.direction === "inbound" ? "From the broker" : "Sent to the broker" }}
+          </ui-typography>
+          <ui-typography variant="body-sm" color="muted">
+            {{ message.occurredAt | dateFormat: "short" }}
+          </ui-typography>
+          @if (message.proposedTotalRate?.amount) {
+            <ui-typography variant="body-sm">
+              Rate:
+              {{
+                message.proposedTotalRate?.amount
+                  | currencyFormat: message.proposedTotalRate?.currency
+              }}
+            </ui-typography>
+          }
+        </ui-stack>
+
+        @if (message.quarantined) {
+          <ui-alert intent="warning" title="Quarantined">
+            This mail arrived on the thread's reply address but was not sent by
+            {{ thread.brokerEmail }}. It was stored for the record and never shown to the agent.
+          </ui-alert>
+        } @else {
+          <p class="whitespace-pre-wrap">{{ message.textBody }}</p>
+        }
+      </div>
+    } @empty {
+      <ui-typography variant="body-sm" color="muted">No messages yet.</ui-typography>
+    }
+  </ui-card>
+} @else {
+  <ui-error-state [message]="error() ?? 'The negotiation could not be loaded.'" (retry)="load()" />
+}

@@ -36,6 +36,11 @@ export class Faq {
         "Yes - Samsara and Motive (KeepTruckin). Hours of service tracking and FMCSA compliance pull through automatically.",
     },
     {
+      question: "Does the AI really negotiate with brokers?",
+      answer:
+        "It drafts the counter-offer; you send it. Set a minimum rate per lane, and when a load board listing pays less, the agent writes an email to the broker and puts it in front of a dispatcher. You read the exact message before it goes out. Broker replies land back in the dispatch conversation, and booking is still a separate approval. It's included from the Professional plan up.",
+    },
+    {
       question: "Is there a mobile app for drivers?",
       answer:
         "Yes, native apps for iOS and Android. Drivers can capture proof of delivery, scan documents, navigate, and chat with dispatch from their phone.",

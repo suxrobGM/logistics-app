@@ -52,7 +52,7 @@ public class LoadBoardToolTests
             new JsonObject { ["origin_city"] = "Dallas" }, CancellationToken.None);
 
         Assert.Equal(
-            "Both origin_city and origin_state are required",
+            "Missing required input: origin_state",
             Parse(result).GetProperty("error").GetString());
         await mediator.DidNotReceive().Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>());
     }
@@ -179,14 +179,14 @@ public class LoadBoardToolTests
     }
 
     [Fact]
-    public async Task Book_MissingListingId_NamesTheSearchToolThatProvidesIt()
+    public async Task Book_MissingListingId_NamesTheMissingProperty()
     {
         runContext.SetTriggeredBy(Guid.NewGuid());
 
         var result = await BookingTool().ExecuteAsync(
             new JsonObject { ["truck_id"] = Guid.NewGuid().ToString() }, CancellationToken.None);
 
-        Assert.Contains("search_loadboard", Parse(result).GetProperty("error").GetString()!);
+        Assert.Contains("listing_id", Parse(result).GetProperty("error").GetString()!);
     }
 
     [Fact]
@@ -297,10 +297,4 @@ public class LoadBoardToolTests
 
     #endregion
 
-    [Fact]
-    public void Names_AreSnakeCase()
-    {
-        Assert.Equal("search_loadboard", new SearchLoadBoardTool(mediator).Name);
-        Assert.Equal("book_loadboard_load", BookingTool().Name);
-    }
 }

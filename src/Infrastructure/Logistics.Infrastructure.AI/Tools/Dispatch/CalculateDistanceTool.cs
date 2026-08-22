@@ -1,30 +1,44 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class CalculateDistanceTool : IAgentTool
+internal sealed class CalculateDistanceTool : AgentTool<CalculateDistanceTool.Input>, IAgentToolMetadata
 {
-    public string Name => "calculate_distance";
-
-    public Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        double? originLat = input.GetDouble("origin_lat");
-        double? originLng = input.GetDouble("origin_lng");
-        double? destLat = input.GetDouble("dest_lat");
-        double? destLng = input.GetDouble("dest_lng");
+        [Description("Origin latitude")]
+        public required double OriginLat { get; init; }
 
-        if (originLat is null || originLng is null || destLat is null || destLng is null)
-            return Task.FromResult(ToolResult.Error("Missing required coordinate parameters"));
+        [Description("Origin longitude")]
+        public required double OriginLng { get; init; }
 
-        var origin = new GeoPoint(originLng.Value, originLat.Value);
-        var destination = new GeoPoint(destLng.Value, destLat.Value);
+        [Description("Destination latitude")]
+        public required double DestLat { get; init; }
+
+        [Description("Destination longitude")]
+        public required double DestLng { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "calculate_distance",
+        "Calculate the driving distance and estimated duration between two geographic points.")
+    {
+        RequiredPermission = Permission.Dispatch.View,
+        Surfaces = AgentSurfaces.All
+    };
+
+    protected override Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        var origin = new GeoPoint(input.OriginLng, input.OriginLat);
+        var destination = new GeoPoint(input.DestLng, input.DestLat);
         var straightLineKm = DispatchUnits.MetersToKm(origin.DistanceTo(destination));
         var drivingDistanceKm = straightLineKm * 1.3;
         var estimatedMinutes = (int)(drivingDistanceKm / 80.0 * 60);
 
-        return Task.FromResult(JsonSerializer.Serialize(new
+        return Task.FromResult(ToolResult.Ok(new
         {
             straight_line_km = Math.Round(straightLineKm, 1),
             estimated_driving_km = Math.Round(drivingDistanceKm, 1),

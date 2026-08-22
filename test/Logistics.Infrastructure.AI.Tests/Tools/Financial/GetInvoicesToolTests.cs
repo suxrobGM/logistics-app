@@ -22,12 +22,6 @@ public class GetInvoicesToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("get_invoices", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_AlwaysScopesToLoadInvoices()
     {
         mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())

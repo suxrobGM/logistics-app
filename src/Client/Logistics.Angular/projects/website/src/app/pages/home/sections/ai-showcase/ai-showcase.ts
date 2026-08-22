@@ -63,6 +63,12 @@ export class AIShowcase {
       icon: "trending-up",
     },
     {
+      title: "Negotiates by email",
+      description:
+        "When a load board listing pays below your lane floor, the agent drafts a counter-offer to the broker. You approve it before it sends, and the reply comes back into the same conversation.",
+      icon: "mail",
+    },
+    {
       title: "TMS-wide copilot",
       description:
         "A chat drawer across the whole TMS. Ask about loads, spend, or maintenance - or have it invoice delivered loads and send payment links. Writes wait for your approval.",

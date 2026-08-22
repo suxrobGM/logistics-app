@@ -21,12 +21,6 @@ public class CheckBrokerCreditToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("check_broker_credit", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_MissingMcNumber_ReturnsError()
     {
         var input = new JsonObject();

@@ -1,20 +1,35 @@
-using System.Text.Json.Nodes;
-using MediatR;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Operations.Trips.Commands;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
+using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class DispatchTripTool(IMediator mediator) : IAgentTool
+internal sealed class DispatchTripTool(IMediator mediator)
+    : AgentTool<DispatchTripTool.Input>, IAgentToolMetadata
 {
-    public string Name => "dispatch_trip";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("trip_id") is not { } tripId)
-            return ToolResult.Error("Invalid or missing trip_id");
+        [Description("The trip ID (GUID) to dispatch")]
+        [AgentEntityId(AgentEntityKind.Trip)]
+        public required Guid TripId { get; init; }
+    }
 
-        var result = await mediator.Send(new DispatchTripCommand { TripId = tripId }, ct);
+    public static AgentToolDefinition Definition => new(
+        "dispatch_trip",
+        "Dispatch a trip, transitioning it from Draft to Dispatched status. This notifies the driver and starts the trip.")
+    {
+        RequiredPermission = Permission.Dispatch.Manage,
+        DecisionType = AgentDecisionType.DispatchTrip,
+        Surfaces = AgentSurfaces.All
+    };
 
-        return ToolResult.Written(result, new { success = true, trip_id = tripId });
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        var result = await mediator.Send(new DispatchTripCommand { TripId = input.TripId }, ct);
+
+        return ToolResult.Written(result, new { success = true, trip_id = input.TripId });
     }
 }

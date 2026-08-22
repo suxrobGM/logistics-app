@@ -43,4 +43,10 @@ public record TenantSettings
     /// Owner-set: pause AI at the weekly budget instead of billing metered overage (default).
     /// </summary>
     public bool BlockAIOverage { get; set; }
+
+    /// <summary>
+    /// Fallback minimum rate per mile the rate-negotiation agent may accept when no lane rule matches.
+    /// Null leaves the agent without a floor.
+    /// </summary>
+    public decimal? DefaultRateFloorPerMile { get; set; }
 }

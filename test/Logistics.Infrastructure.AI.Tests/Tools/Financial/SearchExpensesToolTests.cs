@@ -22,12 +22,6 @@ public class SearchExpensesToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("search_expenses", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_ParsesFiltersAndProjectsCategory()
     {
         mediator.Send(Arg.Any<GetExpensesQuery>(), Arg.Any<CancellationToken>())

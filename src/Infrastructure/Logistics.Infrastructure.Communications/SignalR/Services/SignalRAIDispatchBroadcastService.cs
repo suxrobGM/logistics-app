@@ -20,6 +20,9 @@ internal sealed class SignalRAIDispatchBroadcastService(
     public Task BroadcastDecisionAsync(Guid tenantId, AgentDecisionDto decision) =>
         Group(tenantId).ReceiveAIDispatchDecision(decision);
 
+    public Task BroadcastNegotiationAsync(Guid tenantId, RateNegotiationDto negotiation) =>
+        Group(tenantId).ReceiveNegotiationUpdate(negotiation);
+
     private IAIDispatchHubClient Group(Guid tenantId) =>
         hubContext.Clients.Group($"{DispatchBoardGroupPrefix}{tenantId}");
 }

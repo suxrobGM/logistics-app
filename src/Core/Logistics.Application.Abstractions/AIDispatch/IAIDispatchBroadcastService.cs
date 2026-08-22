@@ -12,4 +12,5 @@ public interface IAIDispatchBroadcastService
     Task BroadcastMessageAsync(Guid tenantId, AgentMessageDto message);
     Task BroadcastTurnUpdateAsync(Guid tenantId, AgentTurnUpdateDto update);
     Task BroadcastDecisionAsync(Guid tenantId, AgentDecisionDto decision);
+    Task BroadcastNegotiationAsync(Guid tenantId, RateNegotiationDto negotiation);
 }

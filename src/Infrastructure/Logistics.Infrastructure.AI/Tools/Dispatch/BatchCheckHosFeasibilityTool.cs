@@ -1,49 +1,58 @@
-using System.Text.Json.Nodes;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAgentTool
+internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow)
+    : AgentTool<BatchCheckHosFeasibilityTool.Input>, IAgentToolMetadata
 {
-    public string Name => "batch_check_hos_feasibility";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        var checksNode = input["checks"]?.AsArray();
-        if (checksNode is null || checksNode.Count == 0)
-            return ToolResult.Error("Missing or empty 'checks' array");
+        [Description("Array of driver/distance pairs to check")]
+        public required Check[] Checks { get; init; }
+    }
 
-        var checks = checksNode
-            .Where(c => c is not null)
-            .Select(c => new
-            {
-                DriverId = c!.GetGuid("driver_id"),
-                DistanceKm = c.GetDouble("distance_km") ?? 0
-            })
-            .Where(c => c.DriverId is not null)
-            .ToList();
+    internal sealed record Check
+    {
+        [Description("The driver's employee ID (GUID)")]
+        public required Guid DriverId { get; init; }
 
-        if (checks.Count == 0)
+        [Description("Estimated driving distance in kilometers")]
+        public required double DistanceKm { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "batch_check_hos_feasibility",
+        "Check HOS feasibility for multiple driver-distance pairs in a single call. More efficient than calling check_hos_feasibility multiple times. Returns feasibility result for each pair.")
+    {
+        RequiredPermission = Permission.Dispatch.View,
+        Surfaces = AgentSurfaces.All
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        if (input.Checks.Length == 0)
             return ToolResult.Error("No valid checks provided");
 
-        var driverIds = checks.Select(c => c.DriverId!.Value).Distinct().ToList();
+        var driverIds = input.Checks.Select(c => c.DriverId).Distinct().ToList();
         var hosStatuses = (await tenantUow.Repository<DriverHosStatus>()
             .GetListAsync(h => driverIds.Contains(h.EmployeeId), ct))
             .ToDictionary(h => h.EmployeeId);
 
-        var results = checks.Select(check =>
+        var results = input.Checks.Select(check =>
         {
-            var driverId = check.DriverId!.Value;
-            var hos = hosStatuses.GetValueOrDefault(driverId);
+            var hos = hosStatuses.GetValueOrDefault(check.DriverId);
             var verdict = hos is null
                 ? HosFeasibility.Unknown(check.DistanceKm)
                 : HosFeasibility.Evaluate(hos, check.DistanceKm);
 
             return new AgentToolHosCheckDto
             {
-                DriverId = driverId,
+                DriverId = check.DriverId,
                 DistanceKm = check.DistanceKm,
                 Feasible = verdict.Feasible,
                 FeasibleMultiDay = verdict.FeasibleMultiDay,

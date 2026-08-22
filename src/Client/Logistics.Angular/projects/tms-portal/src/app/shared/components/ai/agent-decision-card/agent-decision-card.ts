@@ -8,10 +8,12 @@ import {
   getDecisionRefs,
   getToolIcon,
   getToolLabel,
+  hasEmailPreview,
   isWriteDecision,
   Labels,
 } from "@/shared/utils";
 import { ApproveRejectActions } from "../approve-reject-actions/approve-reject-actions";
+import { CounterOfferPreview } from "../counter-offer-preview/counter-offer-preview";
 import { ToolOutputSummary } from "../tool-output-summary/tool-output-summary";
 
 /**
@@ -31,6 +33,7 @@ type AgentDecisionCardVariant = "stream" | "compact";
   imports: [
     ApproveRejectActions,
     Badge,
+    CounterOfferPreview,
     Icon,
     NgTemplateOutlet,
     PermissionGuard,
@@ -53,6 +56,7 @@ export class AgentDecisionCard {
   protected readonly icon = computed(() => getToolIcon(this.decision().toolName));
   protected readonly label = computed(() => getToolLabel(this.decision().toolName));
   protected readonly isPending = computed(() => this.decision().status === "suggested");
+  protected readonly hasEmailPreview = hasEmailPreview;
   protected readonly isWrite = computed(() => isWriteDecision(this.decision()));
   protected readonly summary = computed(() => stripMarkdown(this.decision().reasoning ?? ""));
   protected readonly refs = computed(() => getDecisionRefs(this.decision()));

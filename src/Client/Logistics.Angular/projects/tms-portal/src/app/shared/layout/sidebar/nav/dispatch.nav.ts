@@ -30,6 +30,22 @@ export const dispatchNav: NavSection = {
       permission: Permission.Dispatch.View,
     },
     {
+      id: "negotiations",
+      label: "Negotiations",
+      icon: "mail",
+      route: "/ai-dispatch/negotiations",
+      feature: "ai_rate_negotiation",
+      permission: Permission.Negotiation.View,
+    },
+    {
+      id: "rate-floors",
+      label: "Rate Floors",
+      icon: "chart-column",
+      route: "/ai-dispatch/rate-floors",
+      feature: "ai_rate_negotiation",
+      permission: Permission.Negotiation.View,
+    },
+    {
       id: "loadboard",
       label: "Load Board",
       icon: "search",

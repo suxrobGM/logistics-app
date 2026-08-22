@@ -143,13 +143,25 @@ with `Type == Dispatch`.
 
 ### Tool registry
 
-- Infrastructure: `Infrastructure.AI/Tools/AgentToolRegistry.cs` + `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/`
+- Infrastructure: `Infrastructure.AI/Tools/` (catalogue, schema/binding) + `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/`
 - API/UI: shared with `Logistics.McpServer` and the AI copilot
 - Behavior metadata (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`) lives on
   each `AgentToolDefinition` - there is no separate write-tool list anywhere
 - Intermodal reads: `Tools/GetContainerStatusTool.cs` (ISO 6346), `Tools/GetTerminalInfoTool.cs` (UN/LOCODE).
   Gated by `TenantFeature.IntermodalContainers` - the schemas, the prompt section and the tools' own
   guard all move together; MCP lists every tool, so the guard inside each tool is the real gate.
+
+### Broker rate negotiation (email)
+
+See [docs/broker-email-negotiation.md](../docs/broker-email-negotiation.md). Gated by
+`TenantFeature.AIRateNegotiation` + `Permission.Negotiation.View/Manage`. Every outbound offer is an
+approved `AgentDecision`; inbound mail can only append a message and ask for a turn.
+
+- Domain: `Entities/Negotiation/RateNegotiation.cs` (owns the reply token and the round cap), `NegotiationMessage.cs`, `LaneRateFloor.cs`; `Entities/InboundEmailRoute.cs` (**master** DB - maps a reply token to a tenant); `AgentDecision.NegotiationId`, `TenantSettings.DefaultRateFloorPerMile`
+- Application: `Modules/Integrations/Negotiation/` - `Services/` (`LaneRateFloorResolver`, `NegotiationEmailComposer` - the one owner of broker-facing formatting and sanitization, `NegotiationTurnStarter`, `EmailReplyParser`), `Commands/` (`ProposeCounterOffer` - floor gate then credit gate then send-before-persist; `CloseNegotiation`; `ProcessInboundNegotiationEmail`; lane-floor CRUD), `Queries/` (`GetNegotiations`, `GetNegotiationById`, `PreviewCounterOffer`, `GetRateFloorContext`, `GetLaneRateFloors`); `Modules/Integrations/Webhooks/Commands/ProcessResendWebhook/`; shared credit gate in `Modules/Integrations/LoadBoard/Services/BrokerCreditGate.cs`
+- Infrastructure: `Infrastructure.Communications/Email/` (`ResendThreadedEmailSender` - reply-to plus `In-Reply-To`/`References`, `ResendInboundEmailReader` - the Received Emails API, `ResendWebhookVerifier`, `Templates/BrokerCounterOffer.liquid`); `Infrastructure.Integrations.Common/WebhookSignature.VerifySvix`; `Infrastructure.AI/Tools/Negotiation/` (`get_rate_floor`, `get_negotiation_thread`, `propose_counter_offer`)
+- Jobs: `Logistics.API/Jobs/NegotiationExpirySweepJob.cs` (every 6 hours - expires lapsed threads and revokes their routes), `NegotiationWakeJob.cs` (delayed retry when a reply lands mid-turn)
+- API/UI: `NegotiationController.cs` (`negotiations` - list, detail, close, decision preview; sending is deliberately absent), `RateFloorController.cs` (`ratefloors`), `POST /webhooks/resend`, `tms-portal/pages/ai-dispatch/negotiations/` + `negotiation-details/` + `rate-floors/`
 
 ## AI copilot
 
@@ -167,7 +179,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Copilot tools (loads, customers, invoicing, expenses, maintenance)
 
-- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `GetUpcomingMaintenanceTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `ToolInput.cs` parsing)
+- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `GetUpcomingMaintenanceTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `AgentToolJson.cs` schema and binding)
 
 ### LLM providers
 
@@ -193,7 +205,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### MCP server
 
-- API/UI: `Logistics.McpServer/` (uses `AgentToolRegistry`)
+- API/UI: `Logistics.McpServer/` (`McpToolSurface` over `IAgentToolRegistry`)
 
 ## Compliance & safety
 

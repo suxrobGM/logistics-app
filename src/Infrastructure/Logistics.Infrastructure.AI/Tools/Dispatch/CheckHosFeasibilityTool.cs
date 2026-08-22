@@ -1,33 +1,46 @@
-using System.Text.Json.Nodes;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IAgentTool
+internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow)
+    : AgentTool<CheckHosFeasibilityTool.Input>, IAgentToolMetadata
 {
-    public string Name => "check_hos_feasibility";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("driver_id") is not { } driverId)
-            return ToolResult.Error("Invalid or missing driver_id");
+        [Description("The driver's employee ID (GUID)")]
+        public required Guid DriverId { get; init; }
 
-        var distanceKm = input.GetDouble("distance_km") ?? 0;
+        [Description("Estimated driving distance in kilometers")]
+        public required double DistanceKm { get; init; }
+    }
 
+    public static AgentToolDefinition Definition => new(
+        "check_hos_feasibility",
+        "Check if a driver can feasibly complete a trip given the estimated driving distance. Returns whether the driver has enough HOS hours remaining and details about any constraints.")
+    {
+        RequiredPermission = Permission.Dispatch.View,
+        Surfaces = AgentSurfaces.All
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
         var hos = await tenantUow.Repository<DriverHosStatus>()
-            .GetAsync(h => h.EmployeeId == driverId, ct);
+            .GetAsync(h => h.EmployeeId == input.DriverId, ct);
 
         // Deliberately a shorter payload than the batch tool's no-data arm.
         if (hos is null)
             return ToolResult.Typed(new AgentToolResultDto
             {
                 Feasible = false,
-                Reason = HosFeasibility.Unknown(distanceKm).Reason
+                Reason = HosFeasibility.Unknown(input.DistanceKm).Reason
             });
 
-        var verdict = HosFeasibility.Evaluate(hos, distanceKm);
+        var verdict = HosFeasibility.Evaluate(hos, input.DistanceKm);
 
         return ToolResult.Typed(new AgentToolResultDto
         {

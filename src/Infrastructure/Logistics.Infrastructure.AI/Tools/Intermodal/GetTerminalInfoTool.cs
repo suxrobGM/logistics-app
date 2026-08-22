@@ -1,9 +1,10 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Intermodal;
 
@@ -12,15 +13,30 @@ namespace Logistics.Infrastructure.AI.Tools.Intermodal;
 /// Terminals carry no coordinates, so this cannot feed <c>calculate_distance</c> - the deadhead
 /// anchor stays the load's origin latitude / longitude.
 /// </summary>
-internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAgentTool
+internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow)
+    : AgentTool<GetTerminalInfoTool.Input>, IAgentToolMetadata
 {
-    public string Name => "get_terminal_info";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        var code = input.GetString("code")?.Trim();
-        var idRaw = input.GetString("terminal_id");
+        [Description("UN/LOCODE, e.g. 'USLAX' (Los Angeles), 'BEANR' (Antwerp)")]
+        public string? Code { get; init; }
 
+        [Description("Terminal ID (GUID) - use only when the code is unknown")]
+        public Guid? TerminalId { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "get_terminal_info",
+        "Look up an intermodal terminal by UN/LOCODE. Returns name, type (SeaPort, RailTerminal, InlandDepot, AirCargo, BorderCrossing), country, street address, and how many containers are currently sitting there. Terminals carry no coordinates - keep using the load's origin_lat/origin_lng for deadhead math.")
+    {
+        RequiredFeature = TenantFeature.IntermodalContainers,
+        RequiredPermission = Permission.Dispatch.View,
+        Surfaces = AgentSurfaces.All
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        var code = input.Code?.Trim();
         Terminal? terminal;
 
         if (!string.IsNullOrEmpty(code))
@@ -31,27 +47,19 @@ internal sealed class GetTerminalInfoTool(ITenantUnitOfWork tenantUow) : IAgentT
             terminal = await tenantUow.Repository<Terminal>()
                 .GetAsync(t => t.Code == normalized, ct);
         }
-        else if (Guid.TryParse(idRaw, out var terminalId))
+        else if (input.TerminalId is { } terminalId)
         {
             terminal = await tenantUow.Repository<Terminal>().GetByIdAsync(terminalId, ct);
         }
         else
         {
-            return JsonSerializer.Serialize(new
-            {
-                error = "Provide code (UN/LOCODE) or terminal_id"
-            });
+            return ToolResult.Error("Provide code (UN/LOCODE) or terminal_id");
         }
 
         if (terminal is null)
-        {
-            return JsonSerializer.Serialize(new
-            {
-                error = $"No terminal found for {(string.IsNullOrEmpty(code) ? idRaw : code)}"
-            });
-        }
+            return ToolResult.Error($"No terminal found for {code ?? input.TerminalId?.ToString()}");
 
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             id = terminal.Id,
             name = terminal.Name,

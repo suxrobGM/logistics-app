@@ -1,6 +1,13 @@
 import type { UiBadgeIntent } from "../badge/badge-intent";
 
-export type StatusKind = "load" | "truck" | "container" | "subscription" | "invoice" | "employee";
+export type StatusKind =
+  | "load"
+  | "truck"
+  | "container"
+  | "subscription"
+  | "invoice"
+  | "employee"
+  | "negotiation";
 
 type SeverityMap = Record<string, UiBadgeIntent>;
 
@@ -59,6 +66,15 @@ const employeeSeverity: SeverityMap = {
   terminated: "danger",
 };
 
+const negotiationSeverity: SeverityMap = {
+  awaiting_broker: "info",
+  broker_replied: "warn",
+  accepted: "success",
+  declined: "danger",
+  expired: "secondary",
+  closed: "secondary",
+};
+
 const severityMaps: Record<StatusKind, SeverityMap> = {
   load: loadSeverity,
   truck: truckSeverity,
@@ -66,6 +82,7 @@ const severityMaps: Record<StatusKind, SeverityMap> = {
   subscription: subscriptionSeverity,
   invoice: invoiceSeverity,
   employee: employeeSeverity,
+  negotiation: negotiationSeverity,
 };
 
 /**

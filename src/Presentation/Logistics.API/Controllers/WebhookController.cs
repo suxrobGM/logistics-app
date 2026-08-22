@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.Compliance.Eld.Commands;
 using Logistics.Application.Modules.Integrations.Webhooks.Commands;
+using Logistics.Shared.Models;
 
 namespace Logistics.API.Controllers;
 
@@ -25,6 +26,34 @@ public class WebhookController(IMediator mediator) : ControllerBase
             StripeSignature = stripeSignature
         });
         return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+
+    /// <summary>
+    /// Inbound mail from Resend. A 500 is deliberate on a transient failure - it is what makes
+    /// Resend retry a delivery we could not finish.
+    /// </summary>
+    [HttpPost("resend", Name = "ProcessResendWebhook")]
+    [RequestSizeLimit(512 * 1024)]
+    public async Task<IActionResult> Resend()
+    {
+        var requestBodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+
+        var result = await mediator.Send(new ProcessResendWebhookCommand
+        {
+            RawBody = requestBodyJson,
+            SvixId = Request.Headers["svix-id"].ToString(),
+            SvixTimestamp = Request.Headers["svix-timestamp"].ToString(),
+            SvixSignature = Request.Headers["svix-signature"].ToString()
+        });
+
+        if (result.IsSuccess)
+        {
+            return Ok();
+        }
+
+        return result.ErrorCode == ErrorCodes.WebhookRejected
+            ? BadRequest()
+            : StatusCode(StatusCodes.Status500InternalServerError);
     }
 
     [HttpPost("eld/samsara", Name = "ProcessSamsaraWebhook")]
@@ -79,28 +108,21 @@ public class WebhookController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok() : BadRequest();
     }
 
-    #region Load Board Webhooks
-
     [HttpPost("loadboard/dat", Name = "ProcessDatWebhook")]
     public Task<IActionResult> DatWebhook()
     {
-        // TODO: Implement DAT webhook processing when provider is implemented
         return Task.FromResult<IActionResult>(Ok());
     }
 
     [HttpPost("loadboard/truckstop", Name = "ProcessTruckstopWebhook")]
     public Task<IActionResult> TruckstopWebhook()
     {
-        // TODO: Implement Truckstop webhook processing when provider is implemented
         return Task.FromResult<IActionResult>(Ok());
     }
 
     [HttpPost("loadboard/123loadboard", Name = "Process123LoadboardWebhook")]
     public Task<IActionResult> OneTwo3LoadboardWebhook()
     {
-        // TODO: Implement 123Loadboard webhook processing when provider is implemented
         return Task.FromResult<IActionResult>(Ok());
     }
-
-    #endregion
 }

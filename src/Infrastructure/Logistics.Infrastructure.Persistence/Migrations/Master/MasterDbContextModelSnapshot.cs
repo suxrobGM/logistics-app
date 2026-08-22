@@ -710,6 +710,53 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("impersonation_tokens", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.InboundEmailRoute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("purpose");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("revoked_at");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<string>("ThreadToken")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("thread_token");
+
+                    b.HasKey("Id")
+                        .HasName("pk_inbound_email_routes");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_inbound_email_routes_tenant_id");
+
+                    b.HasIndex("ThreadToken")
+                        .IsUnique()
+                        .HasDatabaseName("ix_inbound_email_routes_thread_token");
+
+                    b.ToTable("inbound_email_routes", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Invitation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1562,6 +1609,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("settings_date_format");
+
+                            b1.Property<decimal?>("DefaultRateFloorPerMile")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("settings_default_rate_floor_per_mile");
 
                             b1.Property<string>("DistanceUnit")
                                 .IsRequired()

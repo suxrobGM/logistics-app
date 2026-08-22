@@ -7,5 +7,6 @@ export * from "./number-utils";
 export * from "./date-range";
 export * from "./predefined-date-ranges";
 export * from "./labels";
+export * from "./negotiation-utils";
 export * from "./select-utils";
 export * from "./performance-utils";

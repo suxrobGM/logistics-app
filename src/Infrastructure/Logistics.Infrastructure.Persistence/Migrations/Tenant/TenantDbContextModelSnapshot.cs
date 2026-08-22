@@ -205,6 +205,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_message_at");
 
+                    b.Property<int>("LastSequence")
+                        .HasColumnType("integer")
+                        .HasColumnName("last_sequence");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text")
@@ -267,6 +271,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<Guid?>("LoadId")
                         .HasColumnType("uuid")
                         .HasColumnName("load_id");
+
+                    b.Property<Guid?>("NegotiationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("negotiation_id");
 
                     b.Property<string>("Reasoning")
                         .IsRequired()
@@ -2238,6 +2246,91 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("invoice_line_items", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.LaneRateFloor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("DestinationCountry")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("destination_country");
+
+                    b.Property<string>("DestinationState")
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("destination_state");
+
+                    b.Property<decimal>("MinRatePerMile")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("min_rate_per_mile");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("OriginCountry")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("origin_country");
+
+                    b.Property<string>("OriginState")
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("origin_state");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("updated_by");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "MinTotalRate", "Logistics.Domain.Entities.LaneRateFloor.MinTotalRate#Money", b1 =>
+                        {
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("min_total_rate_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("min_total_rate_currency");
+                        });
+
+                    b.HasKey("Id")
+                        .HasName("pk_lane_rate_floors");
+
+                    b.HasIndex("OriginCountry", "OriginState", "DestinationCountry", "DestinationState")
+                        .IsUnique()
+                        .HasDatabaseName("ix_lane_rate_floors_origin_country_origin_state_destination_co");
+
+                    NpgsqlIndexBuilderExtensions.AreNullsDistinct(b.HasIndex("OriginCountry", "OriginState", "DestinationCountry", "DestinationState"), false);
+
+                    b.ToTable("lane_rate_floors", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3468,6 +3561,93 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("message_read_receipts", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.NegotiationMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("AgentDecisionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("agent_decision_id");
+
+                    b.Property<string>("Direction")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("direction");
+
+                    b.Property<string>("InReplyToMessageId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("in_reply_to_message_id");
+
+                    b.Property<Guid>("NegotiationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("negotiation_id");
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at");
+
+                    b.Property<decimal?>("ProposedRatePerMile")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("proposed_rate_per_mile");
+
+                    b.Property<bool>("Quarantined")
+                        .HasColumnType("boolean")
+                        .HasColumnName("quarantined");
+
+                    b.Property<string>("RawBody")
+                        .HasMaxLength(65536)
+                        .HasColumnType("character varying(65536)")
+                        .HasColumnName("raw_body");
+
+                    b.Property<string>("RfcMessageId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("rfc_message_id");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("integer")
+                        .HasColumnName("sequence");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("subject");
+
+                    b.Property<string>("TextBody")
+                        .IsRequired()
+                        .HasMaxLength(32000)
+                        .HasColumnType("character varying(32000)")
+                        .HasColumnName("text_body");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "ProposedTotalRate", "Logistics.Domain.Entities.NegotiationMessage.ProposedTotalRate#Money", b1 =>
+                        {
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("proposed_total_rate_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("proposed_total_rate_currency");
+                        });
+
+                    b.HasKey("Id")
+                        .HasName("pk_negotiation_messages");
+
+                    b.HasIndex("NegotiationId", "Sequence")
+                        .IsUnique()
+                        .HasDatabaseName("ix_negotiation_messages_negotiation_id_sequence");
+
+                    b.ToTable("negotiation_messages", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Notification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3945,6 +4125,169 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasDatabaseName("ix_qbo_entity_mappings_local_entity_type_local_id");
 
                     b.ToTable("qbo_entity_mappings", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.RateNegotiation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("BrokerEmail")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("broker_email");
+
+                    b.Property<string>("BrokerMcNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("broker_mc_number");
+
+                    b.Property<string>("BrokerName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("broker_name");
+
+                    b.Property<string>("CloseReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("close_reason");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("closed_at");
+
+                    b.Property<Guid?>("ConversationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("conversation_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<decimal?>("FloorRatePerMile")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("floor_rate_per_mile");
+
+                    b.Property<string>("FloorSource")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("floor_source");
+
+                    b.Property<int>("LastSequence")
+                        .HasColumnType("integer")
+                        .HasColumnName("last_sequence");
+
+                    b.Property<Guid>("LoadBoardListingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("load_board_listing_id");
+
+                    b.Property<Guid?>("LoadId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("load_id");
+
+                    b.Property<string>("ReplyToken")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("reply_token");
+
+                    b.Property<int>("RoundCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("round_count");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("updated_by");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "FloorTotalRate", "Logistics.Domain.Entities.RateNegotiation.FloorTotalRate#Money", b1 =>
+                        {
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("floor_total_rate_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("floor_total_rate_currency");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "LatestBrokerOffer", "Logistics.Domain.Entities.RateNegotiation.LatestBrokerOffer#Money", b1 =>
+                        {
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("latest_broker_offer_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("latest_broker_offer_currency");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "LatestCounterOffer", "Logistics.Domain.Entities.RateNegotiation.LatestCounterOffer#Money", b1 =>
+                        {
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("latest_counter_offer_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("latest_counter_offer_currency");
+                        });
+
+                    b.HasKey("Id")
+                        .HasName("pk_rate_negotiations");
+
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("ix_rate_negotiations_expires_at");
+
+                    b.HasIndex("LoadBoardListingId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_rate_negotiations_load_board_listing_id")
+                        .HasFilter("status IN ('awaiting_broker', 'broker_replied')");
+
+                    b.HasIndex("LoadId")
+                        .HasDatabaseName("ix_rate_negotiations_load_id");
+
+                    b.HasIndex("ReplyToken")
+                        .IsUnique()
+                        .HasDatabaseName("ix_rate_negotiations_reply_token");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_rate_negotiations_status");
+
+                    b.ToTable("rate_negotiations", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentReport", b =>
@@ -6262,6 +6605,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("ReadBy");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.NegotiationMessage", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.RateNegotiation", "Negotiation")
+                        .WithMany("Messages")
+                        .HasForeignKey("NegotiationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_negotiation_messages_rate_negotiation_negotiation_id");
+
+                    b.Navigation("Negotiation");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Payment", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Invoice", null)
@@ -6292,6 +6647,26 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasConstraintName("fk_posted_trucks_truck_truck_id");
 
                     b.Navigation("Truck");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.RateNegotiation", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.LoadBoardListing", "LoadBoardListing")
+                        .WithMany()
+                        .HasForeignKey("LoadBoardListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_rate_negotiations_load_board_listings_load_board_listing_id");
+
+                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
+                        .WithMany()
+                        .HasForeignKey("LoadId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_rate_negotiations_loads_load_id");
+
+                    b.Navigation("Load");
+
+                    b.Navigation("LoadBoardListing");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentReport", b =>
@@ -6754,6 +7129,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
             modelBuilder.Entity("Logistics.Domain.Entities.Messaging.Message", b =>
                 {
                     b.Navigation("ReadReceipts");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.RateNegotiation", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Safety.AccidentReport", b =>

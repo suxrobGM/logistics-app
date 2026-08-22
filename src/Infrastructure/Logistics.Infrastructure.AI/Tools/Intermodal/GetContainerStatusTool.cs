@@ -1,8 +1,10 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
+using Container = Logistics.Domain.Entities.Container;
 
 namespace Logistics.Infrastructure.AI.Tools.Intermodal;
 
@@ -10,15 +12,30 @@ namespace Logistics.Infrastructure.AI.Tools.Intermodal;
 /// Looks up an intermodal container by ISO 6346 number (or id), so the agent knows where the box is
 /// before assigning the load that carries it.
 /// </summary>
-internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow) : IAgentTool
+internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow)
+    : AgentTool<GetContainerStatusTool.Input>, IAgentToolMetadata
 {
-    public string Name => "get_container_status";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        var number = input.GetString("container_number")?.Trim();
-        var idRaw = input.GetString("container_id");
+        [Description("ISO 6346 container number, e.g. 'MSCU1234567'")]
+        public string? ContainerNumber { get; init; }
 
+        [Description("Container ID (GUID) - use only when the number is unknown")]
+        public Guid? ContainerId { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "get_container_status",
+        "Look up an intermodal container by its ISO 6346 number. Returns status (Empty, Loaded, AtPort, InTransit, Delivered, Returned), ISO type, laden flag, gross weight, seal, booking reference, bill of lading, the terminal the box is currently at, and the load it is linked to. Call this for any load that reports a container_number before assigning it.")
+    {
+        RequiredFeature = TenantFeature.IntermodalContainers,
+        RequiredPermission = Permission.Dispatch.View,
+        Surfaces = AgentSurfaces.All
+    };
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        var number = input.ContainerNumber?.Trim();
         Container? container;
 
         if (!string.IsNullOrEmpty(number))
@@ -29,25 +46,17 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow) : IAge
             container = await tenantUow.Repository<Container>()
                 .GetAsync(c => c.Number == normalized, ct);
         }
-        else if (Guid.TryParse(idRaw, out var containerId))
+        else if (input.ContainerId is { } containerId)
         {
             container = await tenantUow.Repository<Container>().GetByIdAsync(containerId, ct);
         }
         else
         {
-            return JsonSerializer.Serialize(new
-            {
-                error = "Provide container_number (ISO 6346) or container_id"
-            });
+            return ToolResult.Error("Provide container_number (ISO 6346) or container_id");
         }
 
         if (container is null)
-        {
-            return JsonSerializer.Serialize(new
-            {
-                error = $"No container found for {(string.IsNullOrEmpty(number) ? idRaw : number)}"
-            });
-        }
+            return ToolResult.Error($"No container found for {number ?? input.ContainerId?.ToString()}");
 
         // Container has no Loads collection - the link is one-way from Load.ContainerId.
         var load = await tenantUow.Repository<Load>()
@@ -55,7 +64,7 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow) : IAge
 
         var terminal = container.CurrentTerminal;
 
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             id = container.Id,
             number = container.Number,

@@ -9,6 +9,8 @@ export const ErrorCodes = {
   FeatureDisabledByAdmin: "FEATURE_DISABLED_BY_ADMIN",
   ResourceLimitReached: "RESOURCE_LIMIT_REACHED",
   BrokerCreditBelowThreshold: "BROKER_CREDIT_BELOW_THRESHOLD",
+  NegotiationFloorMissing: "NEGOTIATION_FLOOR_MISSING",
+  NegotiationBelowFloor: "NEGOTIATION_BELOW_FLOOR",
   // Self-imposed AI pause (owner toggle) - deliberately NOT in isUpgradeError.
   AIBudgetReached: "AI_BUDGET_REACHED",
 } as const;

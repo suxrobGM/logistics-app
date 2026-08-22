@@ -29,7 +29,7 @@ in its **Notes** section. Keep this index's Status column in sync.
 | [AI eval harness](ai-eval-harness.md)                  | P1       | M      | Planned |
 | [Container & terminal AI tools](ai-container-tools.md) | P1       | S      | Done    |
 | [TMS-wide AI copilot](ai-tms-copilot.md)               | P1       | L      | Done    |
-| [AI rate negotiation](ai-rate-negotiation.md)          | P2       | L      | Planned |
+| [AI rate negotiation](ai-rate-negotiation.md)          | P2       | L      | Done    |
 | [Voice driver assistant](ai-voice-driver-assistant.md) | P2       | XL     | Planned |
 | [MCP client (outbound)](mcp-client-integrations.md)    | P2       | L      | Planned |
 
@@ -51,10 +51,10 @@ in its **Notes** section. Keep this index's Status column in sync.
 
 ## Launch hygiene
 
-| Feature                                         | Priority | Effort | Status      |
-| ----------------------------------------------- | -------- | ------ | ----------- |
-| [AI cost guardrails](ai-cost-guardrails.md)     | P0       | S      | Done        |
-| [Pricing page polish](pricing-launch-polish.md) | P1       | S      | In Progress |
+| Feature                                         | Priority | Effort | Status |
+| ----------------------------------------------- | -------- | ------ | ------ |
+| [AI cost guardrails](ai-cost-guardrails.md)     | P0       | S      | Done   |
+| [Pricing page polish](pricing-launch-polish.md) | P1       | S      | Done   |
 
 ## Competitive cheat sheet
 

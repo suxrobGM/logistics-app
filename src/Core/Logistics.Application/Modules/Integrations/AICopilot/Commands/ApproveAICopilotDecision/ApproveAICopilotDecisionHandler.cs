@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Integrations.AICopilot.Services;
 using Logistics.Application.Modules.Integrations.Agents.Services;
@@ -18,6 +19,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
     IAgentDecisionExecution execution,
     IAgentDecisionNotes notes,
     ICurrentUserService currentUser,
+    IAgentRunContext runContext,
     IAICopilotBroadcastService broadcastService,
     IOptions<LlmOptions> llmOptions) : IAppRequestHandler<ApproveAICopilotDecisionCommand, Result>
 {
@@ -40,6 +42,11 @@ internal sealed class ApproveAICopilotDecisionHandler(
             return allowed;
 
         decision.Approve(userId!.Value);
+
+        // Approval runs in an HTTP scope with no agent run behind it, so a tool that needs to know
+        // which conversation and decision it belongs to has no other source.
+        runContext.SetConversation(conversation.Id);
+        runContext.SetDecision(decision.Id);
 
         var outcome = await execution.ExecuteAndNoteAsync(
             decision,

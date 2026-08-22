@@ -1,3 +1,4 @@
+import { DecimalPipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import type { AgentToolResultDto } from "@logistics/shared/api";
 import { Icon } from "@logistics/shared/ui";
@@ -5,7 +6,7 @@ import { Icon } from "@logistics/shared/ui";
 @Component({
   selector: "app-tool-output-summary",
   templateUrl: "./tool-output-summary.html",
-  imports: [Icon],
+  imports: [DecimalPipe, Icon],
 })
 export class ToolOutputSummary {
   public readonly result = input.required<AgentToolResultDto | null | undefined>();
@@ -14,6 +15,7 @@ export class ToolOutputSummary {
 
   protected readonly hasVerdict = computed(() => typeof this.output().feasible === "boolean");
   protected readonly hasOutcome = computed(() => typeof this.output().success === "boolean");
+  protected readonly hasFloorCheck = computed(() => typeof this.output().hasFloor === "boolean");
 
   protected readonly allBatchFailed = computed(() => {
     const results = this.output().results;

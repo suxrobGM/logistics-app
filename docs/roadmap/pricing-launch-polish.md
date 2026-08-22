@@ -1,6 +1,6 @@
 # Pricing Page & Billing Polish
 
-- **Status**: In Progress
+- **Status**: Done
 - **Priority**: P1 - conventions every competitor pricing page has; cheap to add
 - **Effort**: S
 - **Category**: Launch hygiene
@@ -33,3 +33,15 @@ Pricing page shows monthly/annual toggle, trial badge, and "from $41/mo"; plan f
   - DVIR moved to Starter via the new `TenantFeature.Dvir` flag; Safety stays Professional.
   - DataTruck rows added to the comparison page.
   - **Annual billing deferred - revisit after testing with real companies.** EUR display still open.
+
+- **2026-08-21** - Closed. The pricing page and `SubscriptionPlanSeeder` agree again: load board
+  integrations and broker credit checks are listed under Professional, and Professional gained
+  intermodal containers and AI rate negotiation.
+
+  Two items were dropped rather than built. **Annual billing** stays deferred until there are real
+  companies to test the discount against. **EUR display** rides with
+  [eu-market-readiness](eu-market-readiness.md) and is tracked there, not here.
+
+  The three-sources-of-truth problem is unchanged: the seeder, `pricing.ts`, and the Stripe Prices
+  are still edited by hand and still drift. Generating the website tiers from the API is the real
+  fix and is not in this item.

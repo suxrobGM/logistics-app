@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -7,6 +8,8 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
+using Logistics.Mappings;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
@@ -14,6 +17,8 @@ internal sealed class BookLoadBoardLoadHandler(
     ITenantUnitOfWork tenantUow,
     ILoadBoardTokenService tokenService,
     IBrokerCreditService brokerCreditService,
+    IInboundEmailRouteRegistry routeRegistry,
+    IAIDispatchBroadcastService broadcastService,
     ILogger<BookLoadBoardLoadHandler> logger)
     : IAppRequestHandler<BookLoadBoardLoadCommand, Result<LoadBoardBookingResultDto>>
 {
@@ -21,7 +26,6 @@ internal sealed class BookLoadBoardLoadHandler(
         BookLoadBoardLoadCommand req,
         CancellationToken ct)
     {
-        // Get the listing
         var listing = await tenantUow.Repository<LoadBoardListing>().GetByIdAsync(req.ListingId, ct);
         if (listing is null)
         {
@@ -34,7 +38,6 @@ internal sealed class BookLoadBoardLoadHandler(
                 $"Load board listing is not available (current status: {listing.Status})");
         }
 
-        // Get provider configuration
         var providerConfig = await tenantUow.Repository<LoadBoardConfiguration>()
             .GetAsync(c => c.ProviderType == listing.ProviderType && c.IsActive, ct);
 
@@ -54,53 +57,38 @@ internal sealed class BookLoadBoardLoadHandler(
 
         var provider = providerResult.Value;
 
-        // Get truck
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
             return Result<LoadBoardBookingResultDto>.Fail("Truck not found");
         }
 
-        // Get dispatcher
         var dispatcher = await tenantUow.Repository<Employee>().GetByIdAsync(req.DispatcherId, ct);
         if (dispatcher is null)
         {
             return Result<LoadBoardBookingResultDto>.Fail("Dispatcher not found");
         }
 
-        // Broker credit gate: fetch + stamp credit either way (audit trail of what was
-        // known at booking time); enforce only when the dispatcher hasn't overridden.
-        var credit = await brokerCreditService.GetBrokerCreditAsync(listing.BrokerMcNumber, ct);
-        if (credit is not null)
+        var creditGate = await BrokerCreditGate.EvaluateAsync(
+            tenantUow, brokerCreditService, listing, req.OverrideCreditCheck, ct);
+
+        if (!creditGate.IsSuccess)
         {
-            listing.BrokerCreditScore = credit.CreditScore ?? listing.BrokerCreditScore;
-            listing.BrokerDaysToPay = credit.DaysToPay ?? listing.BrokerDaysToPay;
-            listing.BrokerCreditCheckedAt = credit.CheckedAt;
-            await tenantUow.SaveChangesAsync(ct);
+            return Result<LoadBoardBookingResultDto>.Fail(creditGate.Error!, creditGate.ErrorCode!);
         }
 
-        if (!req.OverrideCreditCheck)
+        var negotiation = await tenantUow.Repository<RateNegotiation>()
+            .GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
+
+        var bookedRate = req.NegotiatedTotalRate ?? listing.TotalRate?.Amount ?? 0;
+
+        var bookingRateCheck = CheckBookingRate(req.NegotiatedTotalRate, bookedRate, negotiation);
+        if (!bookingRateCheck.IsSuccess)
         {
-            if (credit?.AuthorityActive == false)
-            {
-                return Result<LoadBoardBookingResultDto>.Fail(
-                    $"Broker '{listing.BrokerName}' (MC {listing.BrokerMcNumber}) has inactive FMCSA operating authority.",
-                    ErrorCodes.BrokerCreditBelowThreshold);
-            }
-
-            var minScore = tenantUow.GetCurrentTenant().Settings.MinBrokerCreditScore;
-            var effectiveScore = credit?.CreditScore ?? listing.BrokerCreditScore;
-
-            // A missing score never blocks; only a known score below the tenant threshold does.
-            if (minScore.HasValue && effectiveScore < minScore)
-            {
-                return Result<LoadBoardBookingResultDto>.Fail(
-                    $"Broker '{listing.BrokerName}' (MC {listing.BrokerMcNumber}) credit score {effectiveScore} is below your minimum of {minScore}.",
-                    ErrorCodes.BrokerCreditBelowThreshold);
-            }
+            return Result<LoadBoardBookingResultDto>.Fail(
+                bookingRateCheck.Error!, bookingRateCheck.ErrorCode!);
         }
 
-        // Get or create customer
         Customer? customer;
         if (req.CustomerId.HasValue)
         {
@@ -112,7 +100,6 @@ internal sealed class BookLoadBoardLoadHandler(
         }
         else
         {
-            // Create customer from broker info
             var customerName = req.CustomerName ?? listing.BrokerName ?? "Unknown Broker";
             customer = await tenantUow.Repository<Customer>()
                 .GetAsync(c => c.Name == customerName, ct);
@@ -127,7 +114,6 @@ internal sealed class BookLoadBoardLoadHandler(
             }
         }
 
-        // Book the load with the provider
         var bookingResult = await provider.BookLoadAsync(listing.ExternalListingId, new LoadBoardBookingRequest
         {
             TruckId = req.TruckId,
@@ -143,7 +129,6 @@ internal sealed class BookLoadBoardLoadHandler(
                 bookingResult.ErrorMessage ?? "Failed to book load with provider");
         }
 
-        // Determine load type based on equipment type
         var loadType = listing.EquipmentType?.ToLowerInvariant() switch
         {
             "flatbed" => LoadType.GeneralFreight,
@@ -154,11 +139,10 @@ internal sealed class BookLoadBoardLoadHandler(
             _ => LoadType.GeneralFreight
         };
 
-        // Create the TMS Load
         var load = Load.Create(
             name: $"Load Board - {listing.BrokerName ?? listing.ProviderType.ToString()}",
             type: loadType,
-            deliveryCost: listing.TotalRate?.Amount ?? 0,
+            deliveryCost: bookedRate,
             originAddress: listing.OriginAddress,
             originLocation: listing.OriginLocation,
             destinationAddress: listing.DestinationAddress,
@@ -168,20 +152,29 @@ internal sealed class BookLoadBoardLoadHandler(
             assignedDispatcher: dispatcher
         );
 
-        // Set external source info
         load.ExternalSourceProvider = listing.ProviderType;
         load.ExternalSourceId = listing.ExternalListingId;
         load.ExternalBrokerReference = bookingResult.ExternalConfirmationId;
 
         await tenantUow.Repository<Load>().AddAsync(load, ct);
 
-        // Update the listing
         listing.Status = LoadBoardListingStatus.Booked;
         listing.BookedAt = DateTime.UtcNow;
         listing.LoadId = load.Id;
         listing.Notes = req.Notes;
 
+        // Booking the listing settles any open negotiation on it, whatever rate it ends at.
+        negotiation?.MarkAccepted(load.Id);
+
         await tenantUow.SaveChangesAsync(ct);
+
+        // A won thread still owns a live reply address; leaving it routing is an open door.
+        if (negotiation is not null)
+        {
+            await routeRegistry.RevokeAsync([negotiation.ReplyToken], ct);
+            await broadcastService.BroadcastNegotiationAsync(
+                tenantUow.GetCurrentTenant().Id, negotiation.ToDto(listing));
+        }
 
         logger.LogInformation(
             "Booked load board listing {ListingId} from {Provider}, created load {LoadId}",
@@ -194,5 +187,43 @@ internal sealed class BookLoadBoardLoadHandler(
             CreatedLoadId = load.Id,
             CreatedLoadNumber = load.Number
         });
+    }
+
+    /// <summary>
+    /// A negotiated rate is only meaningful against the thread that produced it, and the rate the
+    /// load is actually booked at may never undercut the floor that thread opened at - the floor
+    /// snapshot, not a fresh lookup, since the lane floor may have moved since the offer went out.
+    /// Omitting <paramref name="negotiatedRate"/> books at the listing's own rate, which is checked
+    /// the same way rather than skipping the floor.
+    /// </summary>
+    private static Result CheckBookingRate(
+        decimal? negotiatedRate, decimal bookedRate, RateNegotiation? negotiation)
+    {
+        if (negotiation is null)
+        {
+            return negotiatedRate is null
+                ? Result.Ok()
+                : Result.Fail(
+                    "There is no open rate negotiation on this listing, so there is no negotiated rate to book at.");
+        }
+
+        if (negotiation.FloorTotalRate is not { } floor)
+        {
+            // The thread opened on a per-mile floor with no distance to convert it, so there is no
+            // total to compare against. Refuse rather than book an unchecked rate.
+            return Result.Fail(
+                "This negotiation opened against a per-mile floor on a listing with no distance, so " +
+                "the booking rate cannot be checked. Set a minimum total rate on the lane floor.",
+                ErrorCodes.NegotiationFloorMissing);
+        }
+
+        if (bookedRate < floor.Amount)
+        {
+            return Result.Fail(
+                $"The booking rate {bookedRate:N2} is below the floor of {floor.Amount:N2} this negotiation opened against.",
+                ErrorCodes.NegotiationBelowFloor);
+        }
+
+        return Result.Ok();
     }
 }

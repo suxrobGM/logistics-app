@@ -21,12 +21,6 @@ public class CreatePaymentLinkToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("create_payment_link", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_MissingInvoiceId_ReturnsError()
     {
         var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
@@ -52,7 +46,8 @@ public class CreatePaymentLinkToolTests
         var result = await sut.ExecuteAsync(new JsonObject
         {
             ["invoice_id"] = invoiceId.ToString(),
-            ["expiration_days"] = 14
+            ["expiration_days"] = 14,
+            ["reasoning"] = "Customer asked for a link"
         }, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;

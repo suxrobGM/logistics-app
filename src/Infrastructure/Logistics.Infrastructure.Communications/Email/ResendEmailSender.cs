@@ -1,41 +1,18 @@
 using Logistics.Application.Abstractions.Email;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Resend;
 
 namespace Logistics.Infrastructure.Communications.Email;
 
-internal sealed class ResendEmailSender(
-    IResend resend,
-    IOptions<ResendOptions> options,
-    ILogger<ResendEmailSender> logger) : IEmailSender
+/// <summary>
+/// A one-off email is a threaded email with no reply address and no threading headers, so this
+/// delegates rather than assembling a second Resend message of its own.
+/// </summary>
+internal sealed class ResendEmailSender(IThreadedEmailSender threadedEmailSender) : IEmailSender
 {
     public async Task<bool> SendEmailAsync(string recipient, string subject, string htmlBody)
     {
-        ArgumentException.ThrowIfNullOrEmpty(recipient);
-        ArgumentException.ThrowIfNullOrEmpty(subject);
-        ArgumentException.ThrowIfNullOrEmpty(htmlBody);
+        var result = await threadedEmailSender.SendAsync(
+            new ThreadedEmail(To: recipient, Subject: subject, HtmlBody: htmlBody, ReplyTo: null));
 
-        try
-        {
-            var message = new EmailMessage
-            {
-                From = $"{options.Value.SenderName} <{options.Value.SenderEmail}>",
-                Subject = subject,
-                HtmlBody = htmlBody
-            };
-            message.To.Add(recipient);
-
-            await resend.EmailSendAsync(message);
-            logger.LogInformation("Email has been sent to {Mail}, subject: '{Subject}'", recipient, subject);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(
-                "Could not send email to {Mail}, subject: '{Subject}'. \nThrown exception: {Exception}",
-                recipient, subject, ex.ToString());
-            return false;
-        }
+        return result.Success;
     }
 }

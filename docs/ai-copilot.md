@@ -61,7 +61,7 @@ Approving a suggestion re-checks again: the approver needs `Permission.Copilot.M
 endpoint **and** the tool's own permission (e.g. `Permission.Invoice.Manage`).
 
 The dispatch agent's catalogue is a separate axis: it keeps only tools declaring
-`DispatchAgent: true`, which is what keeps copilot-only write tools (invoicing) out of dispatch
+`AgentSurfaces.Dispatch`, which is what keeps copilot-only write tools (invoicing) out of dispatch
 conversations. It is deliberately **not** derived from `RequiredPermission` - a dispatch tool may
 legitimately require a non-`Dispatch.*` permission, and coupling the two would hide it silently.
 

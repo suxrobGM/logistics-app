@@ -55,6 +55,7 @@ const featureLabels: Record<TenantFeature, string> = {
   ifta: "IFTA Reporting",
   intermodal_containers: "Intermodal Containers",
   ai_copilot: "AI Copilot",
+  ai_rate_negotiation: "AI Rate Negotiation",
 };
 
 const allFeatures = Object.keys(featureLabels) as TenantFeature[];

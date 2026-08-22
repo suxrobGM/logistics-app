@@ -22,6 +22,8 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 | `get_container_status`         | Read  | ISO 6346 lookup: status, terminal, seal, B/L, linked load |
 | `get_terminal_info`            | Read  | UN/LOCODE lookup: name, type, country, street address     |
 | `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for available loads     |
+| `get_rate_floor`               | Read  | Rate floor on a listing's lane, and the gap to its rate   |
+| `get_negotiation_thread`       | Read  | One negotiation: status, rounds, floor, recent messages   |
 | `search_loads`                 | Read  | Search loads by status, type, customer, or date range     |
 | `get_load`                     | Read  | One load: status, cost, customer, invoice state           |
 | `search_customers`             | Read  | Look up customers by name                                 |
@@ -159,8 +161,10 @@ Key format: `logsx_{tenantId}_{random}` - the tenant ID is embedded so the serve
 - **Tenant isolation**: Each key is scoped to a single tenant's database. Cross-tenant access is impossible.
 - **Rate limiting**: 100 requests per minute per API key.
 - **No AI quota**: MCP calls consume no platform LLM tokens (the caller brings their own model), so the weekly AI quota does not apply.
-- **Feature gating**: The MCP Server feature must be enabled on the tenant's subscription plan.
-- **Write confirmation**: Write tools instruct the AI to explain and confirm before executing.
+- **Feature gating**: The MCP Server feature must be enabled on the tenant's subscription plan. Without it the endpoint answers 403 rather than exposing a working handshake.
+- **Per-tenant catalogue**: `tools/list` returns only the tools the tenant's features allow, so a client never sees a tool it cannot call.
+- **Write confirmation**: A write called over MCP executes immediately - there is no dispatcher approval step behind an API key - and its description says so, instructing the client to confirm with its user first.
+- **Writes are opt-in**: a tool reaches MCP only by naming `AgentSurfaces.Mcp`. The dispatch writes (`assign_load_to_truck`, `create_trip`, `dispatch_trip`) do. The ones that attribute work to a person (`book_loadboard_load`), email a third party (`send_invoice`, `propose_counter_offer`) or move money (`create_payment_link`) do not, and `tools/call` refuses them by name even though the catalogue never listed them.
 
 ## Architecture
 
@@ -174,20 +178,24 @@ MCP Client (Claude Desktop, Cursor, etc.)
   ├── ApiKeyAuthenticationHandler
   │     Parse tenant ID from key → resolve tenant → validate hash
   │
-  └── AIDispatchMcpTool (one per tool definition)
-        ├── Feature gate check (MCP Server + Load Board)
-        └── IAgentToolExecutor.ExecuteToolAsync()
-              └── IAgentTool implementation (same as AI agent)
+  ├── McpFeatureGate (endpoint filter)
+  │     MCP Server feature enabled for this tenant?
+  │
+  └── McpToolSurface
+        ├── tools/list → IAgentToolRegistry.GetMcpTools(enabled features)
+        └── tools/call → IAgentToolRegistry.McpDenialReason() → IAgentToolExecutor.ExecuteToolAsync()
+              └── the same tool class the AI agent runs
 ```
 
-Tool definitions - names, descriptions, schemas - live in one registry (`AgentToolRegistry`) shared by the AI dispatch agent and the MCP server. Add a tool to the registry and it shows up in both.
+Tool definitions - names, descriptions, schemas - are declared on the tool classes themselves and discovered by `AgentToolCatalog`, which the AI dispatch agent, the copilot and the MCP server all read through `IAgentToolRegistry`. Add a tool and it shows up on every surface.
 
 ### Project Structure
 
 ```text
 src/Presentation/Logistics.McpServer/
 ├── Registrar.cs                              # DI + MCP SDK + auth + rate limit
-├── AIDispatchMcpTool.cs                        # McpServerTool subclass wrapping AgentToolDefinition
+├── McpToolSurface.cs                         # tools/list + tools/call over the shared registry
+├── McpFeatureGate.cs                         # endpoint filter for the MCP Server feature
 └── Authentication/
     ├── ApiKeyDefaults.cs                     # Scheme constants
     └── ApiKeyAuthenticationHandler.cs        # API key validation + tenant resolution

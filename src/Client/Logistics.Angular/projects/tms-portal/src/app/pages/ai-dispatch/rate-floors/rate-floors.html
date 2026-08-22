@@ -1,0 +1,162 @@
+<ui-page-header
+  title="Rate Floors"
+  subtitle="The lowest rate the AI agent may offer a broker on a lane."
+/>
+
+<ui-card>
+  <div class="mb-4">
+    <ui-typography variant="body-sm" color="muted">
+      The agent checks these before it counters a load-board listing. An exact state-to-state lane
+      wins, then origin-state-to-anywhere, then anywhere-to-destination-state, then your company
+      default. With no floor at all the agent will not negotiate.
+    </ui-typography>
+  </div>
+
+  @if (isLoading()) {
+    <ui-stack align="center" justify="center" class="py-8">
+      <ui-spinner />
+    </ui-stack>
+  } @else {
+    <ui-stack direction="row" align="center" justify="between" class="mb-4">
+      <ui-typography variant="h5" tag="h3">Lanes ({{ floors().length }})</ui-typography>
+      @if (canManage()) {
+        <ui-button icon="plus" label="Add lane" (click)="openCreate()" />
+      }
+    </ui-stack>
+
+    @if (floors().length === 0) {
+      <ui-empty-state
+        icon="route"
+        title="No lane floors yet"
+        message="Add a lane, or set a company-wide default in Settings, before asking the agent to negotiate."
+      />
+    } @else {
+      <ui-data-table [value]="floors()" stripedRows>
+        <ng-template #header>
+          <tr>
+            <th>Lane</th>
+            <th class="w-36 text-right">Min per mile</th>
+            <th class="w-36 text-right">Min total</th>
+            <th>Notes</th>
+            @if (canManage()) {
+              <th class="w-32"></th>
+            }
+          </tr>
+        </ng-template>
+        <ng-template #body let-floor>
+          <tr>
+            <td>{{ lane(floor) }}</td>
+            <td class="text-right">{{ floor.minRatePerMile | currencyFormat }}</td>
+            <td class="text-right">
+              {{
+                (floor.minTotalRate?.amount | currencyFormat: floor.minTotalRate?.currency) ?? "-"
+              }}
+            </td>
+            <td>{{ floor.notes || "-" }}</td>
+            @if (canManage()) {
+              <td>
+                <ui-stack direction="row" gap="2">
+                  <ui-button
+                    intent="secondary"
+                    appearance="text"
+                    size="sm"
+                    icon="pencil"
+                    (click)="openEdit(floor)"
+                    ariaLabel="Edit"
+                  />
+                  <ui-button
+                    intent="danger"
+                    appearance="text"
+                    size="sm"
+                    icon="trash"
+                    (click)="askDelete(floor)"
+                    ariaLabel="Delete"
+                  />
+                </ui-stack>
+              </td>
+            }
+          </tr>
+        </ng-template>
+      </ui-data-table>
+    }
+  }
+</ui-card>
+
+<ui-dialog
+  [header]="editingId() ? 'Edit lane rate floor' : 'Add lane rate floor'"
+  [(open)]="dialogOpen"
+  [modal]="true"
+  width="600px"
+  [closable]="true"
+  [draggable]="false"
+>
+  <form [formRoot]="form">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <ui-form-field label="Origin country" for="originCountry" [required]="true">
+        <ui-text-field id="originCountry" [formField]="form.originCountry" placeholder="US" />
+      </ui-form-field>
+
+      <ui-form-field label="Origin state" for="originState" hint="Leave empty to match any state">
+        <ui-text-field id="originState" [formField]="form.originState" placeholder="TX" />
+      </ui-form-field>
+
+      <ui-form-field label="Destination country" for="destinationCountry" [required]="true">
+        <ui-text-field
+          id="destinationCountry"
+          [formField]="form.destinationCountry"
+          placeholder="US"
+        />
+      </ui-form-field>
+
+      <ui-form-field
+        label="Destination state"
+        for="destinationState"
+        hint="Leave empty to match any state"
+      >
+        <ui-text-field id="destinationState" [formField]="form.destinationState" placeholder="IL" />
+      </ui-form-field>
+    </div>
+
+    <ui-form-field
+      label="Minimum rate per mile"
+      for="minRatePerMile"
+      [required]="true"
+      hint="Multiplied by the listing's distance to get the floor for that load."
+      class="mt-4"
+    >
+      <ui-number-field
+        inputId="minRatePerMile"
+        [formField]="form.minRatePerMile"
+        [maxFractionDigits]="2"
+        [fluid]="true"
+      />
+    </ui-form-field>
+
+    <ui-form-field
+      label="Minimum total rate"
+      for="minTotalRateAmount"
+      hint="Optional. The higher of this and the per-mile floor applies."
+      class="mt-4"
+    >
+      <ui-number-field
+        inputId="minTotalRateAmount"
+        [formField]="form.minTotalRateAmount"
+        [maxFractionDigits]="2"
+        [fluid]="true"
+      />
+    </ui-form-field>
+
+    <ui-form-field label="Notes" for="notes" class="mt-4">
+      <ui-text-field
+        id="notes"
+        [formField]="form.notes"
+        placeholder="e.g. Reefer lane, tolls included"
+      />
+    </ui-form-field>
+
+    <ui-stack direction="row" justify="end" gap="2" class="mt-6">
+      <ui-button appearance="outlined" type="button" label="Cancel" (click)="closeDialog()" />
+      <ui-button type="submit" icon="check" label="Save" [loading]="form().submitting()" />
+    </ui-stack>
+  </form>
+</ui-dialog>

@@ -4,6 +4,7 @@ export * from "./approve-reject-actions/approve-reject-actions";
 export * from "./chat-composer/chat-composer";
 export * from "./chat-message/chat-message";
 export * from "./conversation-list/conversation-list";
+export * from "./counter-offer-preview/counter-offer-preview";
 export * from "./pinned-scroll";
 export * from "./quota-notice/quota-notice";
 export * from "./realtime-banner/realtime-banner";

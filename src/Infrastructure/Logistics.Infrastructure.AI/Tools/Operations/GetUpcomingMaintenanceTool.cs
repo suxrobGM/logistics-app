@@ -1,21 +1,45 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using MediatR;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Operations.Maintenance.Queries;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
+using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Operations;
 
-internal sealed class GetUpcomingMaintenanceTool(IMediator mediator) : IAgentTool
+internal sealed class GetUpcomingMaintenanceTool(IMediator mediator)
+    : AgentTool<GetUpcomingMaintenanceTool.Input>, IAgentToolMetadata
 {
-    public string Name => "get_upcoming_maintenance";
+    internal sealed record Input
+    {
+        [Description("Look-ahead window in days (default 30)")]
+        public int? DaysAhead { get; init; }
 
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+        [Description("Limit to one truck (GUID)")]
+        [AgentEntityId(AgentEntityKind.Truck)]
+        public Guid? TruckId { get; init; }
+
+        [Description("Include already-overdue schedules (default true)")]
+        public bool? IncludeOverdue { get; init; }
+    }
+
+    public static AgentToolDefinition Definition => new(
+        "get_upcoming_maintenance",
+        "Trucks with maintenance due within the next N days (default 30), including overdue items. Date-based schedules only: mileage and engine-hour intervals are NOT evaluated - say so when answering maintenance questions.")
+    {
+        RequiredFeature = TenantFeature.Maintenance,
+        RequiredPermission = Permission.Maintenance.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
+    };
+
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {
         var query = new GetUpcomingMaintenanceQuery
         {
-            DaysAhead = input.GetInt("days_ahead") ?? 30,
-            TruckId = input.GetGuid("truck_id"),
-            IncludeOverdue = input.GetBool("include_overdue") ?? true
+            DaysAhead = input.DaysAhead ?? 30,
+            TruckId = input.TruckId,
+            IncludeOverdue = input.IncludeOverdue ?? true
         };
 
         var result = await mediator.Send(query, ct);
@@ -34,6 +58,6 @@ internal sealed class GetUpcomingMaintenanceTool(IMediator mediator) : IAgentToo
             days_until_due = s.DaysUntilDue
         });
 
-        return JsonSerializer.Serialize(new { schedules, count = result.Value.Count });
+        return ToolResult.Ok(new { schedules, count = result.Value.Count });
     }
 }

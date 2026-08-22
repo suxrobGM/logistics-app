@@ -30,6 +30,12 @@ public class AgentConversation : AuditableEntity, ITenantEntity
     public virtual List<AgentMessage> Messages { get; } = [];
 
     /// <summary>
+    /// Highest sequence handed out so far. Held here so allocating the next one never reads the
+    /// Messages navigation, which lazy-loads the whole transcript.
+    /// </summary>
+    public int LastSequence { get; private set; }
+
+    /// <summary>
     /// The only allocator of sequence numbers - never build an <see cref="AgentMessage"/> directly.
     /// Callers MUST also register the returned row via repository AddAsync (pre-generated ids make
     /// a collection-only add save as an UPDATE and fail).
@@ -42,7 +48,7 @@ public class AgentConversation : AuditableEntity, ITenantEntity
         return message;
     }
 
-    public int NextSequence() => Messages.Count > 0 ? Messages.Max(m => m.Sequence) + 1 : 1;
+    public int NextSequence() => ++LastSequence;
 
     public void BeginTurn()
     {

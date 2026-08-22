@@ -10,14 +10,14 @@ export class CurrencyFormatPipe implements PipeTransform {
   /**
    * Formats a numeric value as currency using tenant settings.
    * @param value The numeric value to format.
-   * @param currencyCode Optional currency code override. Uses tenant settings if not provided.
+   * @param currencyCode Optional currency code override. Uses tenant settings when null or omitted.
    * @param display Currency display format: 'symbol', 'code', or 'symbol-narrow'. Defaults to 'symbol'.
    * @param digitsInfo Decimal representation. Defaults to '1.2-2'.
    * @returns Formatted currency string or null if value is null/undefined.
    */
   transform(
     value?: number | null,
-    currencyCode?: string,
+    currencyCode?: string | null,
     display: "code" | "symbol" | "symbol-narrow" = "symbol",
     digitsInfo = "1.2-2",
   ): string | null {

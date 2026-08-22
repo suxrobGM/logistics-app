@@ -1,26 +1,41 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using MediatR;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
+using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools.Operations;
 
-internal sealed class GetLoadTool(IMediator mediator) : IAgentTool
+internal sealed class GetLoadTool(IMediator mediator)
+    : AgentTool<GetLoadTool.Input>, IAgentToolMetadata
 {
-    public string Name => "get_load";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("load_id") is not { } loadId)
-            return ToolResult.Error("Invalid or missing load_id");
+        [Description("The load ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Load)]
+        public required Guid LoadId { get; init; }
+    }
 
-        var result = await mediator.Send(new GetLoadByIdQuery { Id = loadId }, ct);
+    public static AgentToolDefinition Definition => new(
+        "get_load",
+        "Get one load by ID: status, addresses, delivery cost, customer (with email), assigned truck, delivery timestamps, and whether it already has an invoice. ALWAYS call this before create_load_invoice - it supplies the delivery cost and shows whether the load is Delivered.")
+    {
+        RequiredFeature = TenantFeature.Loads,
+        RequiredPermission = Permission.Load.View,
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
+    };
+
+
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        var result = await mediator.Send(new GetLoadByIdQuery { Id = input.LoadId }, ct);
 
         if (!result.IsSuccess || result.Value is null)
             return ToolResult.Error(result.Error ?? "Load not found");
 
         var l = result.Value;
-        return JsonSerializer.Serialize(new
+        return ToolResult.Ok(new
         {
             id = l.Id,
             number = l.Number,

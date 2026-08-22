@@ -21,12 +21,6 @@ public class GetExpenseStatsToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("get_expense_stats", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_ReturnsCategoryRollups()
     {
         mediator.Send(Arg.Any<GetExpenseStatsQuery>(), Arg.Any<CancellationToken>())

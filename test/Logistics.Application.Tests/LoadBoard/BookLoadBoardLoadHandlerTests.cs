@@ -1,6 +1,8 @@
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -18,6 +20,8 @@ public class BookLoadBoardLoadHandlerTests
     private readonly ILoadBoardTokenService tokenService = Substitute.For<ILoadBoardTokenService>();
     private readonly ILoadBoardProviderService provider = Substitute.For<ILoadBoardProviderService>();
     private readonly IBrokerCreditService brokerCreditService = Substitute.For<IBrokerCreditService>();
+    private readonly IInboundEmailRouteRegistry routeRegistry = Substitute.For<IInboundEmailRouteRegistry>();
+    private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
 
     private readonly ITenantRepository<LoadBoardListing, Guid> listingRepo =
         Substitute.For<ITenantRepository<LoadBoardListing, Guid>>();
@@ -31,6 +35,8 @@ public class BookLoadBoardLoadHandlerTests
         Substitute.For<ITenantRepository<Customer, Guid>>();
     private readonly ITenantRepository<Load, Guid> loadRepo =
         Substitute.For<ITenantRepository<Load, Guid>>();
+    private readonly ITenantRepository<RateNegotiation, Guid> negotiationRepo =
+        Substitute.For<ITenantRepository<RateNegotiation, Guid>>();
 
     private readonly Tenant tenant;
     private readonly LoadBoardListing listing;
@@ -65,6 +71,7 @@ public class BookLoadBoardLoadHandlerTests
         tenantUow.Repository<Employee>().Returns(employeeRepo);
         tenantUow.Repository<Customer>().Returns(customerRepo);
         tenantUow.Repository<Load>().Returns(loadRepo);
+        tenantUow.Repository<RateNegotiation>().Returns(negotiationRepo);
         tenantUow.GetCurrentTenant().Returns(tenant);
 
         listingRepo.GetByIdAsync(listing.Id, Arg.Any<CancellationToken>()).Returns(listing);
@@ -81,7 +88,8 @@ public class BookLoadBoardLoadHandlerTests
             .Returns(new LoadBoardBookingResultDto { Success = true, ExternalConfirmationId = "CONF-1" });
 
         sut = new BookLoadBoardLoadHandler(
-            tenantUow, tokenService, brokerCreditService, NullLogger<BookLoadBoardLoadHandler>.Instance);
+            tenantUow, tokenService, brokerCreditService, routeRegistry, broadcastService,
+            NullLogger<BookLoadBoardLoadHandler>.Instance);
     }
 
     private static LoadBoardListing CreateListing()
@@ -204,6 +212,131 @@ public class BookLoadBoardLoadHandlerTests
         var result = await sut.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
+    }
+
+    #endregion
+
+    #region Negotiated rate
+
+    private RateNegotiation SetupNegotiation(decimal? floorTotal)
+    {
+        var negotiation = RateNegotiation.Create(listing.Id, "broker@example.com", RateFloorSnapshot.None);
+        negotiation.FloorTotalRate = floorTotal.HasValue
+            ? new Money { Amount = floorTotal.Value, Currency = "USD" }
+            : null;
+
+        negotiationRepo.GetAsync(
+                Arg.Any<System.Linq.Expressions.Expression<Func<RateNegotiation, bool>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns(negotiation);
+
+        return negotiation;
+    }
+
+    [Fact]
+    public async Task Handle_NegotiatedRateWithoutThread_Fails()
+    {
+        command.NegotiatedTotalRate = 2200m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+    }
+
+    [Fact]
+    public async Task Handle_NegotiatedRateBelowThreadFloor_Fails()
+    {
+        SetupNegotiation(floorTotal: 2000m);
+        command.NegotiatedTotalRate = 1900m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
+        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+    }
+
+    [Fact]
+    public async Task Handle_NegotiatedRateAtOrAboveFloor_BooksAndAcceptsThread()
+    {
+        var negotiation = SetupNegotiation(floorTotal: 2000m);
+        command.NegotiatedTotalRate = 2200m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(RateNegotiationStatus.Accepted, negotiation.Status);
+        Assert.Equal(result.Value!.CreatedLoadId, negotiation.LoadId);
+        await loadRepo.Received(1).AddAsync(
+            Arg.Is<Load>(l => l.DeliveryCost.Amount == 2200m), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_AcceptedThread_RevokesItsReplyRoute()
+    {
+        var negotiation = SetupNegotiation(floorTotal: 2000m);
+        command.NegotiatedTotalRate = 2200m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await routeRegistry.Received(1).RevokeAsync(
+            Arg.Is<IEnumerable<string>>(t => t.Single() == negotiation.ReplyToken),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_OmittedNegotiatedRateBelowThreadFloor_Fails()
+    {
+        SetupNegotiation(floorTotal: 2000m);
+        listing.TotalRate = new Money { Amount = 1800m, Currency = "USD" };
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
+        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+    }
+
+    [Fact]
+    public async Task Handle_OmittedNegotiatedRateAboveThreadFloor_BooksAtTheListingRate()
+    {
+        SetupNegotiation(floorTotal: 2000m);
+        listing.TotalRate = new Money { Amount = 2500m, Currency = "USD" };
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await loadRepo.Received(1).AddAsync(
+            Arg.Is<Load>(l => l.DeliveryCost.Amount == 2500m), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_AcceptedThread_BroadcastsTheClosedThread()
+    {
+        var negotiation = SetupNegotiation(floorTotal: 2000m);
+        command.NegotiatedTotalRate = 2200m;
+
+        await sut.Handle(command, CancellationToken.None);
+
+        await broadcastService.Received(1).BroadcastNegotiationAsync(
+            tenant.Id,
+            Arg.Is<RateNegotiationDto>(d =>
+                d.Id == negotiation.Id && d.Status == RateNegotiationStatus.Accepted));
+    }
+
+    [Fact]
+    public async Task Handle_ThreadWithPerMileOnlyFloor_RefusesUncheckedRate()
+    {
+        SetupNegotiation(floorTotal: null);
+        command.NegotiatedTotalRate = 2200m;
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationFloorMissing, result.ErrorCode);
+        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
     }
 
     #endregion

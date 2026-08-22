@@ -39,6 +39,14 @@ public class BookLoadBoardLoadCommand : ICommand<Result<LoadBoardBookingResultDt
     public string? Notes { get; set; }
 
     /// <summary>
+    /// Rate agreed through a broker rate negotiation. Replaces the listing's rate on the created
+    /// load. When a negotiation is open on the listing, the rate the load is booked at - this one,
+    /// or the listing's own rate when it is omitted - is rejected if it falls below the floor the
+    /// negotiation opened against.
+    /// </summary>
+    public decimal? NegotiatedTotalRate { get; set; }
+
+    /// <summary>
     /// Dispatcher override: book even when the broker's credit is below the tenant's
     /// minimum score or the broker's authority is inactive.
     /// </summary>

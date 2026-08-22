@@ -13,6 +13,34 @@ export const aiDispatchRoutes: Routes = [
     },
   },
   {
+    path: "rate-floors",
+    loadComponent: () => import("./rate-floors/rate-floors").then((m) => m.RateFloors),
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Rate Floors",
+      permission: Permission.Negotiation.View,
+    },
+  },
+  {
+    path: "negotiations",
+    loadComponent: () => import("./negotiations/negotiations").then((m) => m.Negotiations),
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Negotiations",
+      permission: Permission.Negotiation.View,
+    },
+  },
+  {
+    path: "negotiations/:id",
+    loadComponent: () =>
+      import("./negotiation-details/negotiation-details").then((m) => m.NegotiationDetails),
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Thread",
+      permission: Permission.Negotiation.View,
+    },
+  },
+  {
     path: "policy",
     loadComponent: () =>
       import("./dispatch-policy/dispatch-policy").then((m) => m.DispatchPolicyPage),

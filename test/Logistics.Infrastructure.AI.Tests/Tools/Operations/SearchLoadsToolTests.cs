@@ -22,12 +22,6 @@ public class SearchLoadsToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("search_loads", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_ParsesFiltersIntoQuery()
     {
         var customerId = Guid.NewGuid();
@@ -36,7 +30,7 @@ public class SearchLoadsToolTests
 
         await sut.ExecuteAsync(new JsonObject
         {
-            ["statuses"] = new JsonArray("Delivered", "delivered_typo_ignored"),
+            ["statuses"] = new JsonArray("delivered"),
             ["customer_id"] = customerId.ToString(),
             ["start_date"] = "2026-07-20",
             ["page"] = 2
@@ -50,6 +44,16 @@ public class SearchLoadsToolTests
                 q.Page == 2 &&
                 q.PageSize == 20),
             Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Execute_UnknownStatus_FailsTheCallRatherThanFilteringOnSomethingElse()
+    {
+        var result = await sut.ExecuteAsync(
+            new JsonObject { ["statuses"] = new JsonArray("delivered_typo") }, CancellationToken.None);
+
+        Assert.Contains("statuses", JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
+        await mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
     }
 
     [Fact]

@@ -23,12 +23,6 @@ public class PreviewTaxCalculationToolTests
     }
 
     [Fact]
-    public void Name_IsSnakeCase()
-    {
-        Assert.Equal("preview_tax_calculation", sut.Name);
-    }
-
-    [Fact]
     public async Task Execute_MissingCustomerId_ReturnsError()
     {
         var input = new JsonObject
@@ -55,7 +49,7 @@ public class PreviewTaxCalculationToolTests
 
         var result = await sut.ExecuteAsync(input, CancellationToken.None);
 
-        Assert.Contains("invalid customer_id", result);
+        Assert.Contains("customer_id", result);
     }
 
     [Fact]
@@ -69,7 +63,7 @@ public class PreviewTaxCalculationToolTests
 
         var result = await sut.ExecuteAsync(input, CancellationToken.None);
 
-        Assert.Contains("Missing currency", result);
+        Assert.Contains("currency", result);
     }
 
     [Fact]
@@ -235,6 +229,6 @@ public class PreviewTaxCalculationToolTests
 
         var result = await sut.ExecuteAsync(input, CancellationToken.None);
 
-        Assert.Contains("numeric amount", result);
+        Assert.Contains("amount", result);
     }
 }

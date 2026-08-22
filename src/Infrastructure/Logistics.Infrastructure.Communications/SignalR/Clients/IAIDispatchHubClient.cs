@@ -16,4 +16,7 @@ public interface IAIDispatchHubClient
 
     /// <summary>Receives individual AI dispatch agent decision notifications.</summary>
     Task ReceiveAIDispatchDecision(AgentDecisionDto decision);
+
+    /// <summary>Receives a broker negotiation thread whose state just changed.</summary>
+    Task ReceiveNegotiationUpdate(RateNegotiationDto negotiation);
 }

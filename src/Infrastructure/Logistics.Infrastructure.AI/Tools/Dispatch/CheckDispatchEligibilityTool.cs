@@ -1,40 +1,40 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using System.ComponentModel;
+using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.Dispatch;
+using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
 internal sealed class CheckDispatchEligibilityTool(IDispatchEligibilityService eligibilityService)
-    : IAgentTool
+    : AgentTool<CheckDispatchEligibilityTool.Input>, IAgentToolMetadata
 {
-    public string Name => "check_dispatch_eligibility";
-
-    public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
+    internal sealed record Input
     {
-        if (input.GetGuid("truck_id") is not { } truckId)
-        {
-            return ToolResult.Error("Invalid or missing truck_id");
-        }
+        [Description("The truck ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Truck)]
+        public required Guid TruckId { get; init; }
 
-        if (input.GetGuid("load_id") is not { } loadId)
-        {
-            return ToolResult.Error("Invalid or missing load_id");
-        }
+        [Description("The load ID (GUID)")]
+        [AgentEntityId(AgentEntityKind.Load)]
+        public required Guid LoadId { get; init; }
 
-        Guid? driverId = null;
-        var driverIdRaw = input.GetString("driver_id");
-        if (!string.IsNullOrEmpty(driverIdRaw))
-        {
-            if (!Guid.TryParse(driverIdRaw, out var parsedDriverId))
-            {
-                return ToolResult.Error("Invalid driver_id");
-            }
-            driverId = parsedDriverId;
-        }
+        [Description("Optional driver ID (GUID). When omitted, the truck's currently assigned main driver is used.")]
+        public Guid? DriverId { get; init; }
+    }
 
-        var result = await eligibilityService.CheckAsync(truckId, loadId, driverId, ct);
+    public static AgentToolDefinition Definition => new(
+        "check_dispatch_eligibility",
+        "Check if a truck (and optionally a specific driver) is eligible to carry a load based on driver license class + endorsements, US Hazmat / EU ADR rules, ADR cert validity, truck Hazmat-placarding, and DOT medical certificate. Returns is_eligible and a list of issues with reason codes (severity: error blocks dispatch, warning is informational). Call this BEFORE dispatch_trip or assign_load_to_truck on hazmat / ADR loads, and whenever the human asks 'can driver X carry load Y'.")
+    {
+        RequiredPermission = Permission.Dispatch.View,
+        Surfaces = AgentSurfaces.All
+    };
 
-        return JsonSerializer.Serialize(new
+    protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
+    {
+        var result = await eligibilityService.CheckAsync(input.TruckId, input.LoadId, input.DriverId, ct);
+
+        return ToolResult.Ok(new
         {
             is_eligible = result.IsEligible,
             issues = result.Issues

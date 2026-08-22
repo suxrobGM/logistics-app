@@ -60,5 +60,8 @@ public enum TenantFeature
     IntermodalContainers,
 
     [Description("AI Copilot")]
-    AICopilot
+    AICopilot,
+
+    [Description("AI Rate Negotiation")]
+    AIRateNegotiation
 }

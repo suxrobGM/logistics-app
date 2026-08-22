@@ -1,0 +1,32 @@
+@if (isLoading()) {
+  <div class="mt-2 flex items-center gap-2 text-xs">
+    <ui-spinner size="sm" />
+    <span class="text-muted-foreground">Loading the email…</span>
+  </div>
+} @else if (failed()) {
+  <div class="text-muted-foreground mt-2 text-xs">
+    The email preview could not be loaded. Approving still sends the offer the agent proposed.
+  </div>
+} @else if (preview(); as email) {
+  <div class="bg-subtle mt-2 rounded-md p-3 text-xs">
+    <div class="mb-1">
+      <span class="text-muted-foreground">To:</span>
+      <span class="font-semibold">{{ email.toEmail }}</span>
+    </div>
+    <div class="mb-1">
+      <span class="text-muted-foreground">Replies go to:</span>
+      <span class="font-mono">{{ email.replyToAddress }}</span>
+    </div>
+    <div class="mb-1">
+      <span class="text-muted-foreground">Subject:</span>
+      <span class="font-semibold">{{ email.subject }}</span>
+    </div>
+    <div class="mb-2">
+      <span class="text-muted-foreground">Offer:</span>
+      <span class="font-semibold">
+        {{ email.proposedTotalRate | currencyFormat: email.currency }}
+      </span>
+    </div>
+    <p class="border-border mt-0 mb-0 border-t pt-2 whitespace-pre-wrap">{{ email.message }}</p>
+  </div>
+}

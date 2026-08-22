@@ -1,10 +1,9 @@
-using Logistics.Application.Abstractions.Agents;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Logistics.McpServer.Authentication;
-using ModelContextProtocol.Server;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.McpServer;
@@ -13,25 +12,18 @@ public static class Registrar
 {
     public static IServiceCollection AddMcpServerInfrastructure(this IServiceCollection services)
     {
+        services.AddScoped<McpToolSurface>();
+
         // Stateless is v2's default; pinned so an SDK default change can't silently re-add
         // per-session transport state this API-key-per-request server never needed.
-        services.AddMcpServer()
-            .WithHttpTransport(options => options.Stateless = true);
-
-        // Tools and instructions come from the shared registry at options-build time: no interim
-        // service provider at registration, no ordering dependency on AddAIInfrastructure.
-        services.AddOptions<McpServerOptions>()
-            .Configure<IAgentToolRegistry>((options, registry) =>
-            {
-                options.ServerInstructions = McpServerInstructions.Text;
-
-                options.ToolCollection ??= [];
-                // No tenant context at startup, so list every tool - AIDispatchMcpTool gates per call.
-                foreach (var definition in registry.GetAllTools())
-                {
-                    options.ToolCollection.Add(new AIDispatchMcpTool(definition));
-                }
-            });
+        services.AddMcpServer(options => options.ServerInstructions = McpServerInstructions.Text)
+            .WithHttpTransport(options => options.Stateless = true)
+            // No tool collection: the catalogue depends on the calling tenant's features, which
+            // are only known per request.
+            .WithListToolsHandler((request, ct) =>
+                request.Services!.GetRequiredService<McpToolSurface>().ListToolsAsync(ct))
+            .WithCallToolHandler((request, ct) =>
+                request.Services!.GetRequiredService<McpToolSurface>().CallToolAsync(request.Params, ct));
 
         // API key authentication scheme
         services.AddAuthentication()
@@ -68,9 +60,14 @@ public static class Registrar
 
     public static WebApplication MapMcpEndpoint(this WebApplication app)
     {
-        app.MapMcp("/mcp")
+        // Grouped only so the feature gate can be an endpoint filter: MapMcp returns a plain
+        // convention builder, which takes no filters.
+        var mcp = app.MapGroup("")
             .RequireAuthorization("mcp")
-            .RequireRateLimiting("mcp");
+            .RequireRateLimiting("mcp")
+            .AddEndpointFilter<McpFeatureGate>();
+
+        mcp.MapMcp("/mcp");
         return app;
     }
 }
