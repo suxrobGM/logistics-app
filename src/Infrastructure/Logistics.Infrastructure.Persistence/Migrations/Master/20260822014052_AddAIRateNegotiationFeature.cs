@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     /// <inheritdoc />
-    public partial class AddInboundEmailRouteAndDefaultRateFloor : Migration
+    public partial class AddAIRateNegotiationFeature : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

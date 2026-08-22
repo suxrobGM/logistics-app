@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20260821042844_AddInboundEmailRouteAndDefaultRateFloor")]
-    partial class AddInboundEmailRouteAndDefaultRateFloor
+    [Migration("20260822014052_AddAIRateNegotiationFeature")]
+    partial class AddAIRateNegotiationFeature
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

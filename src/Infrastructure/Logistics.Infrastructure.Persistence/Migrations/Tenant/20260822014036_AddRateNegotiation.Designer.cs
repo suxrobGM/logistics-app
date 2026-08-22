@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20260821042732_AddRateNegotiation")]
+    [Migration("20260822014036_AddRateNegotiation")]
     partial class AddRateNegotiation
     {
         /// <inheritdoc />
@@ -207,6 +207,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime>("LastMessageAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_message_at");
+
+                    b.Property<int>("LastSequence")
+                        .HasColumnType("integer")
+                        .HasColumnName("last_sequence");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -3594,11 +3598,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("proposed_rate_per_mile");
 
-                    b.Property<string>("ProviderMessageId")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("provider_message_id");
-
                     b.Property<bool>("Quarantined")
                         .HasColumnType("boolean")
                         .HasColumnName("quarantined");
@@ -3607,6 +3606,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(65536)
                         .HasColumnType("character varying(65536)")
                         .HasColumnName("raw_body");
+
+                    b.Property<string>("RfcMessageId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("rfc_message_id");
 
                     b.Property<int>("Sequence")
                         .HasColumnType("integer")
@@ -4186,6 +4190,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("floor_source");
+
+                    b.Property<int>("LastSequence")
+                        .HasColumnType("integer")
+                        .HasColumnName("last_sequence");
 
                     b.Property<Guid>("LoadBoardListingId")
                         .HasColumnType("uuid")

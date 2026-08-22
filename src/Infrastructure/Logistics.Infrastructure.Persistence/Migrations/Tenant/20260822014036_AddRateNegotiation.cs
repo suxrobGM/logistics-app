@@ -17,6 +17,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 type: "uuid",
                 nullable: true);
 
+            migrationBuilder.AddColumn<int>(
+                name: "last_sequence",
+                table: "agent_conversations",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateTable(
                 name: "lane_rate_floors",
                 columns: table => new
@@ -59,6 +66,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     closed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     close_reason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    last_sequence = table.Column<int>(type: "integer", nullable: false),
                     floor_total_rate_amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
                     floor_total_rate_currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: true),
                     latest_broker_offer_amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
@@ -99,7 +107,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     text_body = table.Column<string>(type: "character varying(32000)", maxLength: 32000, nullable: false),
                     raw_body = table.Column<string>(type: "character varying(65536)", maxLength: 65536, nullable: true),
                     proposed_rate_per_mile = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
-                    provider_message_id = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    rfc_message_id = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     in_reply_to_message_id = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     agent_decision_id = table.Column<Guid>(type: "uuid", nullable: true),
                     quarantined = table.Column<bool>(type: "boolean", nullable: false),
@@ -175,6 +183,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
             migrationBuilder.DropColumn(
                 name: "negotiation_id",
                 table: "agent_decisions");
+
+            migrationBuilder.DropColumn(
+                name: "last_sequence",
+                table: "agent_conversations");
         }
     }
 }
