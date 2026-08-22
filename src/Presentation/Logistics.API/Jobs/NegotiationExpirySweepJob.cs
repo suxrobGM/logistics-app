@@ -41,15 +41,18 @@ public class NegotiationExpirySweepJob(
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         tenantUow.SetCurrentTenant(tenant);
 
-        var now = DateTime.UtcNow;
-        var stale = await tenantUow.Repository<RateNegotiation>().GetListAsync(
-            n => n.Status == RateNegotiationStatus.AwaitingBroker && n.ExpiresAt != null && n.ExpiresAt < now,
-            ct);
+        var stale = await tenantUow.Repository<RateNegotiation>()
+            .GetListAsync(RateNegotiation.LapsedAt(DateTime.UtcNow), ct);
 
         if (stale.Count == 0)
         {
             return;
         }
+
+        // Before the close, not after: a retry re-queries open threads only, so a revocation left
+        // until after the status flips would never run on the second attempt.
+        var routeRegistry = scope.ServiceProvider.GetRequiredService<IInboundEmailRouteRegistry>();
+        await routeRegistry.RevokeAsync(stale.Select(n => n.ReplyToken), ct);
 
         foreach (var negotiation in stale)
         {
@@ -57,9 +60,6 @@ public class NegotiationExpirySweepJob(
         }
 
         await tenantUow.SaveChangesAsync(ct);
-
-        var routeRegistry = scope.ServiceProvider.GetRequiredService<IInboundEmailRouteRegistry>();
-        await routeRegistry.RevokeAsync(stale.Select(n => n.ReplyToken), ct);
 
         logger.LogInformation(
             "Expired {Count} negotiations for tenant {TenantName}", stale.Count, tenant.Name);

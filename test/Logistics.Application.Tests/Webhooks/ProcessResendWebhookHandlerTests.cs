@@ -87,14 +87,25 @@ public class ProcessResendWebhookHandlerTests
             Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>());
 
     [Fact]
-    public async Task Handle_BadSignature_ReturnsBadSignatureWithoutParsing()
+    public async Task Handle_BadSignature_FailsAsRejectedWithoutParsing()
     {
         verifier.Verify(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>())
             .Returns(false);
 
         var result = await sut.Handle(Command(), CancellationToken.None);
 
-        Assert.Equal(ResendWebhookOutcome.BadSignature, result.Value);
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.WebhookRejected, result.ErrorCode);
+        await AssertNoInnerCommand();
+    }
+
+    [Fact]
+    public async Task Handle_UnparseableBody_FailsAsRejected()
+    {
+        var result = await sut.Handle(Command("not json"), CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.WebhookRejected, result.ErrorCode);
         await AssertNoInnerCommand();
     }
 
@@ -103,7 +114,7 @@ public class ProcessResendWebhookHandlerTests
     {
         var result = await sut.Handle(Command(Body(type: "email.delivered")), CancellationToken.None);
 
-        Assert.Equal(ResendWebhookOutcome.Accepted, result.Value);
+        Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
     }
 
@@ -114,7 +125,7 @@ public class ProcessResendWebhookHandlerTests
 
         var result = await sut.Handle(Command(), CancellationToken.None);
 
-        Assert.Equal(ResendWebhookOutcome.Accepted, result.Value);
+        Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
         await ledgerRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
@@ -125,7 +136,7 @@ public class ProcessResendWebhookHandlerTests
         var result = await sut.Handle(
             Command(Body(receivedFor: "hello@mail.test.com")), CancellationToken.None);
 
-        Assert.Equal(ResendWebhookOutcome.Accepted, result.Value);
+        Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
     }
 
@@ -136,7 +147,7 @@ public class ProcessResendWebhookHandlerTests
 
         var result = await sut.Handle(Command(), CancellationToken.None);
 
-        Assert.Equal(ResendWebhookOutcome.Accepted, result.Value);
+        Assert.True(result.IsSuccess);
         await tenantUow.DidNotReceiveWithAnyArgs().SetCurrentTenantByIdAsync(default);
         await AssertNoInnerCommand();
     }
@@ -153,7 +164,7 @@ public class ProcessResendWebhookHandlerTests
 
         var result = await sut.Handle(Command(), CancellationToken.None);
 
-        Assert.Equal(ResendWebhookOutcome.Accepted, result.Value);
+        Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
     }
 
@@ -169,19 +180,21 @@ public class ProcessResendWebhookHandlerTests
 
         var result = await sut.Handle(Command(), CancellationToken.None);
 
-        Assert.Equal(ResendWebhookOutcome.Accepted, result.Value);
+        Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
     }
 
     [Fact]
-    public async Task Handle_InnerCommandFails_IsTransientAndWritesNoLedgerRow()
+    public async Task Handle_InnerCommandFails_FailsWithoutRejectedCodeAndWritesNoLedgerRow()
     {
         mediator.Send(Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Fail("provider unavailable"));
 
         var result = await sut.Handle(Command(), CancellationToken.None);
 
-        Assert.Equal(ResendWebhookOutcome.Transient, result.Value);
+        // No rejection code: the endpoint must answer 500 so the provider retries the delivery.
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.ErrorCode);
         await ledgerRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
@@ -190,7 +203,7 @@ public class ProcessResendWebhookHandlerTests
     {
         var result = await sut.Handle(Command(), CancellationToken.None);
 
-        Assert.Equal(ResendWebhookOutcome.Accepted, result.Value);
+        Assert.True(result.IsSuccess);
         await tenantUow.Received(1).SetCurrentTenantByIdAsync(tenantId);
         await mediator.Received(1).Send(
             Arg.Is<ProcessInboundNegotiationEmailCommand>(c =>

@@ -121,6 +121,19 @@ public class ProposeCounterOfferHandlerTests
         negotiationRepo.GetAsync(Arg.Any<Expression<Func<RateNegotiation, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(negotiation);
 
+    /// <summary>A thread already in flight, carrying the floor snapshot it opened against.</summary>
+    private RateNegotiation ExistingThread(decimal floorTotal)
+    {
+        var existing = RateNegotiation.Create(
+            listing.Id,
+            "broker@example.com",
+            new RateFloorSnapshot(
+                2.00m, new Money { Amount = floorTotal, Currency = "USD" }, RateFloorSource.LaneExact));
+
+        SetupActiveNegotiation(existing);
+        return existing;
+    }
+
     private void SetupCredit(int? score, bool? authorityActive = true) =>
         brokerCreditService.GetBrokerCreditAsync(listing.BrokerMcNumber, Arg.Any<CancellationToken>())
             .Returns(new BrokerCreditDto
@@ -260,6 +273,57 @@ public class ProposeCounterOfferHandlerTests
         Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
     }
 
+    [Fact]
+    public async Task Handle_LaterRound_ChecksTheThreadSnapshotNotAFreshFloor()
+    {
+        ExistingThread(floorTotal: 2000m);
+        SetupFloor(new EffectiveRateFloorDto
+        {
+            HasFloor = true,
+            MinRatePerMile = 3.00m,
+            Source = RateFloorSource.LaneExact,
+            EffectiveFloorTotal = 3000m
+        });
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await floorResolver.DidNotReceiveWithAnyArgs().ResolveAsync(default!, default);
+    }
+
+    [Fact]
+    public async Task Handle_LaterRoundBelowThreadSnapshot_FailsWithBelowFloor()
+    {
+        ExistingThread(floorTotal: 2500m);
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
+        await AssertNothingSent();
+    }
+
+    [Fact]
+    public async Task Handle_FirstOffer_SnapshotsTheFloorItWasCheckedAgainst()
+    {
+        // Per-mile x distance (2000) beats the flat total (1000), so 2000 is what was enforced.
+        SetupFloor(new EffectiveRateFloorDto
+        {
+            HasFloor = true,
+            MinRatePerMile = 2.00m,
+            MinTotalRate = new Money { Amount = 1000m, Currency = "USD" },
+            Source = RateFloorSource.LaneExact,
+            EffectiveFloorTotal = 2000m
+        });
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await negotiationRepo.Received(1).AddAsync(
+            Arg.Is<RateNegotiation>(n => n.FloorTotalRate!.Amount == 2000m && n.FloorRatePerMile == 2.00m),
+            Arg.Any<CancellationToken>());
+    }
+
     #endregion
 
     #region Thread lifecycle
@@ -267,9 +331,8 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_RoundCapReached_FailsWithoutSending()
     {
-        var existing = RateNegotiation.Create(listing.Id, "broker@example.com", RateFloorSnapshot.None);
+        var existing = ExistingThread(floorTotal: 2000m);
         existing.RoundCount = RateNegotiation.MaxRounds;
-        SetupActiveNegotiation(existing);
 
         var result = await sut.Handle(command, CancellationToken.None);
 
@@ -289,8 +352,33 @@ public class ProposeCounterOfferHandlerTests
         Assert.False(result.IsSuccess);
         await negotiationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
         await messageRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await routeRegistry.DidNotReceiveWithAnyArgs().OpenAsync(default!, default, default);
         await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_EmailSendFails_RevokesTheRouteItOpened()
+    {
+        emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>())
+            .Returns(new ThreadedEmailResult(false, null));
+
+        var result = await sut.Handle(command, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        await routeRegistry.Received(1).RevokeAsync(
+            Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_FirstOffer_OpensTheReplyRouteBeforeSending()
+    {
+        await sut.Handle(command, CancellationToken.None);
+
+        Received.InOrder(() =>
+        {
+            routeRegistry.OpenAsync(
+                Arg.Any<string>(), tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
+            emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>());
+        });
     }
 
     [Fact]
@@ -332,10 +420,9 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_SecondOffer_ChainsThreadHeadersAndReusesRoute()
     {
-        var existing = RateNegotiation.Create(listing.Id, "broker@example.com", RateFloorSnapshot.None);
+        var existing = ExistingThread(floorTotal: 2000m);
         var first = existing.AddOutboundMessage("first offer");
         first.ProviderMessageId = "resend-0";
-        SetupActiveNegotiation(existing);
         messageRepo.Query().Returns(new List<NegotiationMessage> { first }.BuildMock());
 
         var result = await sut.Handle(command, CancellationToken.None);
@@ -347,7 +434,7 @@ public class ProposeCounterOfferHandlerTests
         await negotiationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
         await routeRegistry.DidNotReceiveWithAnyArgs().OpenAsync(default!, default, default);
         await routeRegistry.Received(1).RefreshAsync(
-            existing.ReplyToken, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
+            existing.ReplyToken, tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

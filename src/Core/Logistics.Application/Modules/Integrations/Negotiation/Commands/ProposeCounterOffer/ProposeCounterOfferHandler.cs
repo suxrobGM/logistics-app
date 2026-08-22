@@ -51,9 +51,20 @@ internal sealed class ProposeCounterOfferHandler(
                 "This listing has no broker email address, so a counter-offer cannot be sent.");
         }
 
+        var negotiationRepo = tenantUow.Repository<RateNegotiation>();
+        var negotiation = await negotiationRepo.GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
+
+        var isNewThread = negotiation is null;
+        var currency = listing.TotalRate?.Currency ?? ComposeNegotiationEmailRequest.DefaultCurrency;
+
         // Floor first: it is a local read that rejects most bad offers, whereas the credit gate
-        // costs a vendor API call and a write.
-        var floor = await floorResolver.ResolveAsync(listing, ct);
+        // costs a vendor API call and a write. Round 1 resolves the lane floor and freezes it on the
+        // thread; every later round is checked against that snapshot, so an edit to the lane floor
+        // cannot move the bar mid-negotiation - and the booking check reads the same number.
+        var floor = negotiation is null
+            ? await floorResolver.ResolveAsync(listing, ct)
+            : negotiation.ToEffectiveFloor();
+
         var floorCheck = CheckAgainstFloor(req, floor, listing);
         if (!floorCheck.IsSuccess)
         {
@@ -67,12 +78,6 @@ internal sealed class ProposeCounterOfferHandler(
         {
             return Result<RateNegotiationDto>.Fail(creditGate.Error!, creditGate.ErrorCode!);
         }
-
-        var negotiationRepo = tenantUow.Repository<RateNegotiation>();
-        var negotiation = await negotiationRepo.GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
-
-        var isNewThread = negotiation is null;
-        var currency = listing.TotalRate?.Currency ?? ComposeNegotiationEmailRequest.DefaultCurrency;
 
         if (negotiation is null)
         {
@@ -104,6 +109,13 @@ internal sealed class ProposeCounterOfferHandler(
         var composed = await composer.ComposeAsync(ComposeNegotiationEmailRequest.For(
             listing, tenant, req.ProposedTotalRate, req.ProposedRatePerMile, req.Message, replyToAddress), ct);
 
+        // The broker can reply the moment the mail lands, so a new thread's route has to exist
+        // before the send - opening it afterwards drops any reply that beats the save.
+        if (isNewThread)
+        {
+            await routeRegistry.OpenAsync(negotiation.ReplyToken, tenant.Id, negotiation.ExpiresAt, ct);
+        }
+
         var sendResult = await emailSender.SendAsync(new ThreadedEmail(
             To: listing.BrokerEmail!,
             Subject: composed.Subject,
@@ -116,6 +128,11 @@ internal sealed class ProposeCounterOfferHandler(
         // thread exactly as it was and the agent can be asked to try again.
         if (!sendResult.Success)
         {
+            if (isNewThread)
+            {
+                await routeRegistry.RevokeAsync([negotiation.ReplyToken], ct);
+            }
+
             return Result<RateNegotiationDto>.Fail(
                 "Could not send the counter-offer email to the broker. Nothing was changed.");
         }
@@ -153,15 +170,8 @@ internal sealed class ProposeCounterOfferHandler(
 
         await tenantUow.SaveChangesAsync(ct);
 
-        // The route's expiry tracks the thread's reply window, so it is refreshed on every send.
-        if (isNewThread)
-        {
-            await routeRegistry.OpenAsync(negotiation.ReplyToken, tenant.Id, negotiation.ExpiresAt, ct);
-        }
-        else
-        {
-            await routeRegistry.RefreshAsync(negotiation.ReplyToken, negotiation.ExpiresAt, ct);
-        }
+        // The route's expiry tracks the thread's reply window, so it is restamped on every send.
+        await routeRegistry.RefreshAsync(negotiation.ReplyToken, tenant.Id, negotiation.ExpiresAt, ct);
 
         logger.LogInformation(
             "Sent counter-offer round {Round} on negotiation {NegotiationId} for listing {ListingId}",

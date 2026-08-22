@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
-public class ProcessResendWebhookCommand : ICommand<Result<ResendWebhookOutcome>>
+public class ProcessResendWebhookCommand : ICommand<Result>
 {
     public required string RawBody { get; set; }
     public string? SvixId { get; set; }

@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
+using Logistics.Mappings;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
@@ -16,6 +18,7 @@ internal sealed class BookLoadBoardLoadHandler(
     ILoadBoardTokenService tokenService,
     IBrokerCreditService brokerCreditService,
     IInboundEmailRouteRegistry routeRegistry,
+    IAIDispatchBroadcastService broadcastService,
     ILogger<BookLoadBoardLoadHandler> logger)
     : IAppRequestHandler<BookLoadBoardLoadCommand, Result<LoadBoardBookingResultDto>>
 {
@@ -77,11 +80,13 @@ internal sealed class BookLoadBoardLoadHandler(
         var negotiation = await tenantUow.Repository<RateNegotiation>()
             .GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
 
-        var negotiatedRateCheck = CheckNegotiatedRate(req.NegotiatedTotalRate, negotiation);
-        if (!negotiatedRateCheck.IsSuccess)
+        var bookedRate = req.NegotiatedTotalRate ?? listing.TotalRate?.Amount ?? 0;
+
+        var bookingRateCheck = CheckBookingRate(req.NegotiatedTotalRate, bookedRate, negotiation);
+        if (!bookingRateCheck.IsSuccess)
         {
             return Result<LoadBoardBookingResultDto>.Fail(
-                negotiatedRateCheck.Error!, negotiatedRateCheck.ErrorCode!);
+                bookingRateCheck.Error!, bookingRateCheck.ErrorCode!);
         }
 
         Customer? customer;
@@ -137,7 +142,7 @@ internal sealed class BookLoadBoardLoadHandler(
         var load = Load.Create(
             name: $"Load Board - {listing.BrokerName ?? listing.ProviderType.ToString()}",
             type: loadType,
-            deliveryCost: req.NegotiatedTotalRate ?? listing.TotalRate?.Amount ?? 0,
+            deliveryCost: bookedRate,
             originAddress: listing.OriginAddress,
             originLocation: listing.OriginLocation,
             destinationAddress: listing.DestinationAddress,
@@ -167,6 +172,8 @@ internal sealed class BookLoadBoardLoadHandler(
         if (negotiation is not null)
         {
             await routeRegistry.RevokeAsync([negotiation.ReplyToken], ct);
+            await broadcastService.BroadcastNegotiationAsync(
+                tenantUow.GetCurrentTenant().Id, negotiation.ToDto(listing));
         }
 
         logger.LogInformation(
@@ -183,21 +190,21 @@ internal sealed class BookLoadBoardLoadHandler(
     }
 
     /// <summary>
-    /// A negotiated rate is only meaningful against the thread that produced it, and it may never
-    /// undercut the floor that thread opened at - the floor snapshot, not a fresh lookup, since the
-    /// lane floor may have moved since the offer went out.
+    /// A negotiated rate is only meaningful against the thread that produced it, and the rate the
+    /// load is actually booked at may never undercut the floor that thread opened at - the floor
+    /// snapshot, not a fresh lookup, since the lane floor may have moved since the offer went out.
+    /// Omitting <paramref name="negotiatedRate"/> books at the listing's own rate, which is checked
+    /// the same way rather than skipping the floor.
     /// </summary>
-    private static Result CheckNegotiatedRate(decimal? negotiatedRate, RateNegotiation? negotiation)
+    private static Result CheckBookingRate(
+        decimal? negotiatedRate, decimal bookedRate, RateNegotiation? negotiation)
     {
-        if (negotiatedRate is not { } rate)
-        {
-            return Result.Ok();
-        }
-
         if (negotiation is null)
         {
-            return Result.Fail(
-                "There is no open rate negotiation on this listing, so there is no negotiated rate to book at.");
+            return negotiatedRate is null
+                ? Result.Ok()
+                : Result.Fail(
+                    "There is no open rate negotiation on this listing, so there is no negotiated rate to book at.");
         }
 
         if (negotiation.FloorTotalRate is not { } floor)
@@ -206,14 +213,14 @@ internal sealed class BookLoadBoardLoadHandler(
             // total to compare against. Refuse rather than book an unchecked rate.
             return Result.Fail(
                 "This negotiation opened against a per-mile floor on a listing with no distance, so " +
-                "the negotiated rate cannot be checked. Set a minimum total rate on the lane floor.",
+                "the booking rate cannot be checked. Set a minimum total rate on the lane floor.",
                 ErrorCodes.NegotiationFloorMissing);
         }
 
-        if (rate < floor.Amount)
+        if (bookedRate < floor.Amount)
         {
             return Result.Fail(
-                $"The negotiated rate {rate:N2} is below the floor of {floor.Amount:N2} this negotiation opened against.",
+                $"The booking rate {bookedRate:N2} is below the floor of {floor.Amount:N2} this negotiation opened against.",
                 ErrorCodes.NegotiationBelowFloor);
         }
 

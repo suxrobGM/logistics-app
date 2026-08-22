@@ -37,6 +37,7 @@ public class NegotiationWakeJob(
         {
             logger.LogError(ex, "Could not wake the dispatch agent for negotiation {NegotiationId}",
                 negotiationId);
+            throw;
         }
     }
 }

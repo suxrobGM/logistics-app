@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.Compliance.Eld.Commands;
 using Logistics.Application.Modules.Integrations.Webhooks.Commands;
+using Logistics.Shared.Models;
 
 namespace Logistics.API.Controllers;
 
@@ -45,12 +46,14 @@ public class WebhookController(IMediator mediator) : ControllerBase
             SvixSignature = Request.Headers["svix-signature"].ToString()
         });
 
-        return result.Value switch
+        if (result.IsSuccess)
         {
-            ResendWebhookOutcome.BadSignature => BadRequest(),
-            ResendWebhookOutcome.Transient => StatusCode(StatusCodes.Status500InternalServerError),
-            _ => Ok()
-        };
+            return Ok();
+        }
+
+        return result.ErrorCode == ErrorCodes.WebhookRejected
+            ? BadRequest()
+            : StatusCode(StatusCodes.Status500InternalServerError);
     }
 
     [HttpPost("eld/samsara", Name = "ProcessSamsaraWebhook")]

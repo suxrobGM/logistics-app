@@ -22,7 +22,7 @@ internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext
         [Description("Optional customer name, when booking creates a new customer from the broker")]
         public string? CustomerName { get; init; }
 
-        [Description("The rate the broker agreed to in a negotiation thread. Only set this when a negotiation on this listing reached agreement - otherwise the listing's own rate is used.")]
+        [Description("The rate the broker agreed to in a negotiation thread. Set it whenever a negotiation on this listing reached agreement - leaving it out books at the listing's own rate, which is still refused when it falls below the floor that negotiation opened against.")]
         public decimal? NegotiatedTotalRate { get; init; }
 
         [Description("Optional notes recorded against the booking")]

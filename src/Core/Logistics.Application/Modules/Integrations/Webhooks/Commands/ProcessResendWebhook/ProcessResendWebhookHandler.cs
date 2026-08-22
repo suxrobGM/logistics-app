@@ -18,7 +18,7 @@ internal sealed class ProcessResendWebhookHandler(
     ITenantUnitOfWork tenantUow,
     IMediator mediator,
     ILogger<ProcessResendWebhookHandler> logger)
-    : IAppRequestHandler<ProcessResendWebhookCommand, Result<ResendWebhookOutcome>>
+    : IAppRequestHandler<ProcessResendWebhookCommand, Result>
 {
     private const string Provider = "Resend";
     private const string ReceivedEventType = "email.received";
@@ -29,25 +29,24 @@ internal sealed class ProcessResendWebhookHandler(
         PropertyNameCaseInsensitive = true
     };
 
-    public async Task<Result<ResendWebhookOutcome>> Handle(
-        ProcessResendWebhookCommand req, CancellationToken ct)
+    public async Task<Result> Handle(ProcessResendWebhookCommand req, CancellationToken ct)
     {
         if (!verifier.Verify(req.RawBody, req.SvixId, req.SvixTimestamp, req.SvixSignature))
         {
             logger.LogWarning("Resend webhook signature verification failed");
-            return Ok(ResendWebhookOutcome.BadSignature);
+            return Result.Fail("Resend webhook signature verification failed", ErrorCodes.WebhookRejected);
         }
 
         if (!TryReadEvent(req.RawBody, out var payload))
         {
             logger.LogWarning("Resend webhook body could not be parsed");
-            return Ok(ResendWebhookOutcome.BadSignature);
+            return Result.Fail("Resend webhook body could not be parsed", ErrorCodes.WebhookRejected);
         }
 
         if (payload.Type != ReceivedEventType)
         {
             logger.LogInformation("Ignoring Resend webhook of type {Type}", payload.Type);
-            return Ok(ResendWebhookOutcome.Accepted);
+            return Result.Ok();
         }
 
         var eventKey = payload.Data?.EmailId ?? req.SvixId!;
@@ -56,13 +55,13 @@ internal sealed class ProcessResendWebhookHandler(
         if (await ledger.GetAsync(e => e.Provider == Provider && e.EventKey == eventKey, ct) is not null)
         {
             logger.LogInformation("Duplicate Resend webhook '{EventKey}' ignored", eventKey);
-            return Ok(ResendWebhookOutcome.Accepted);
+            return Result.Ok();
         }
 
         if (ExtractThreadToken(payload) is not { } token)
         {
             logger.LogInformation("Resend webhook {EventKey} is not addressed to a negotiation thread", eventKey);
-            return Ok(ResendWebhookOutcome.Accepted);
+            return Result.Ok();
         }
 
         var route = await masterUow.Repository<InboundEmailRoute>()
@@ -72,7 +71,7 @@ internal sealed class ProcessResendWebhookHandler(
         {
             logger.LogInformation(
                 "Reply token on Resend webhook {EventKey} is unknown, revoked, or past its window", eventKey);
-            return Ok(ResendWebhookOutcome.Accepted);
+            return Result.Ok();
         }
 
         try
@@ -83,7 +82,7 @@ internal sealed class ProcessResendWebhookHandler(
         {
             logger.LogError(ex, "Could not open tenant {TenantId} for Resend webhook {EventKey}",
                 route.TenantId, eventKey);
-            return Ok(ResendWebhookOutcome.Transient);
+            return Result.Fail($"Could not open tenant {route.TenantId} for Resend webhook {eventKey}");
         }
 
         var inner = await mediator.Send(new ProcessInboundNegotiationEmailCommand
@@ -100,17 +99,14 @@ internal sealed class ProcessResendWebhookHandler(
         {
             logger.LogWarning("Resend webhook {EventKey} could not be processed yet: {Error}",
                 eventKey, inner.Error);
-            return Ok(ResendWebhookOutcome.Transient);
+            return Result.Fail(inner.Error ?? $"Resend webhook {eventKey} could not be processed yet");
         }
 
         await ledger.AddAsync(new ProcessedWebhookEvent { Provider = Provider, EventKey = eventKey }, ct);
         await masterUow.SaveChangesAsync(ct);
 
-        return Ok(ResendWebhookOutcome.Accepted);
+        return Result.Ok();
     }
-
-    private static Result<ResendWebhookOutcome> Ok(ResendWebhookOutcome outcome) =>
-        Result<ResendWebhookOutcome>.Ok(outcome);
 
     /// <summary>
     /// <c>received_for</c> holds the address the mail was actually delivered to, which survives

@@ -14,7 +14,11 @@ public interface IInboundEmailRouteRegistry : IApplicationService
 {
     Task OpenAsync(string threadToken, Guid tenantId, DateTime? expiresAt, CancellationToken ct = default);
 
-    Task RefreshAsync(string threadToken, DateTime? expiresAt, CancellationToken ct = default);
+    /// <summary>
+    /// Restamps the reply window on an existing route, creating it when the row is missing - a
+    /// thread whose route vanished would otherwise silently drop every reply for its whole life.
+    /// </summary>
+    Task RefreshAsync(string threadToken, Guid tenantId, DateTime? expiresAt, CancellationToken ct = default);
 
     Task RevokeAsync(IEnumerable<string> threadTokens, CancellationToken ct = default);
 }
@@ -35,13 +39,15 @@ internal sealed class InboundEmailRouteRegistry(IMasterUnitOfWork masterUow) : I
         await masterUow.SaveChangesAsync(ct);
     }
 
-    public async Task RefreshAsync(string threadToken, DateTime? expiresAt, CancellationToken ct = default)
+    public async Task RefreshAsync(
+        string threadToken, Guid tenantId, DateTime? expiresAt, CancellationToken ct = default)
     {
         var route = await masterUow.Repository<InboundEmailRoute>()
             .GetAsync(r => r.ThreadToken == threadToken, ct);
 
         if (route is null)
         {
+            await OpenAsync(threadToken, tenantId, expiresAt, ct);
             return;
         }
 

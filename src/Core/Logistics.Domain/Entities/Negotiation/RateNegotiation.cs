@@ -96,6 +96,15 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         n => n.Status == RateNegotiationStatus.AwaitingBroker ||
              n.Status == RateNegotiationStatus.BrokerReplied;
 
+    /// <summary>
+    /// Matches every open thread whose reply window has already lapsed. A thread the broker replied
+    /// to is still open and still lapses, so the sweep must see it too.
+    /// </summary>
+    public static Expression<Func<RateNegotiation, bool>> LapsedAt(DateTime utcNow) =>
+        n => (n.Status == RateNegotiationStatus.AwaitingBroker ||
+              n.Status == RateNegotiationStatus.BrokerReplied) &&
+             n.ExpiresAt != null && n.ExpiresAt < utcNow;
+
     /// <param name="floor">
     /// Snapshotted onto the thread here rather than assigned by the caller: every downstream check
     /// reads a missing floor as "no limit", so a floorless thread must be unrepresentable.
