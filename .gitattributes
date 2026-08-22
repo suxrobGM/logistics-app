@@ -34,3 +34,11 @@ package-lock.json text eol=lf
 
 # Generated Angular API client: collapse in diffs/reviews.
 src/Client/Logistics.Angular/projects/shared/src/lib/api/generated/** linguist-generated
+
+# EF Core migrations: generated, collapse in diffs/reviews.
+src/Infrastructure/Logistics.Infrastructure.Persistence/Migrations/** linguist-generated
+
+# Model snapshots and designer files carry no reviewable intent.
+# -diff also keeps them out of the PR line counts.
+src/Infrastructure/Logistics.Infrastructure.Persistence/Migrations/**/*.Designer.cs -diff
+src/Infrastructure/Logistics.Infrastructure.Persistence/Migrations/**/*ModelSnapshot.cs -diff
