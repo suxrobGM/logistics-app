@@ -1,12 +1,13 @@
 import { Component, DestroyRef, inject, signal, type OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { RouterLink } from "@angular/router";
-import { PageHeader } from "@logistics/shared";
+import { getApiErrorMessage, PageHeader } from "@logistics/shared";
 import { Api, getNegotiations, type RateNegotiationDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import {
   Card,
   EmptyState,
+  ErrorState,
   Spinner,
   Stack,
   StatusBadge,
@@ -14,7 +15,7 @@ import {
   UiDataTable,
 } from "@logistics/shared/ui";
 import { AIDispatchHubService } from "@/core/services";
-import { isOpenNegotiation } from "@/shared/utils";
+import { formatNegotiationLane, isOpenNegotiation } from "@/shared/utils";
 
 @Component({
   selector: "app-negotiations",
@@ -30,6 +31,7 @@ import { isOpenNegotiation } from "@/shared/utils";
     UiButton,
     UiDataTable,
     EmptyState,
+    ErrorState,
     StatusBadge,
   ],
 })
@@ -41,9 +43,10 @@ export class Negotiations implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly negotiations = signal<RateNegotiationDto[]>([]);
   protected readonly activeOnly = signal(true);
+  protected readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.load();
+    void this.load();
     void this.hub.acquireDispatchBoard(this.destroyRef);
 
     // A broker reply, the expiry sweep and another dispatcher's close all land here, so rows are
@@ -55,17 +58,27 @@ export class Negotiations implements OnInit {
 
   protected toggleActiveOnly(): void {
     this.activeOnly.update((v) => !v);
-    this.load();
+    void this.load();
   }
 
   protected lane(negotiation: RateNegotiationDto): string {
-    const origin = this.place(negotiation.originCity, negotiation.originState);
-    const destination = this.place(negotiation.destinationCity, negotiation.destinationState);
-    return origin && destination ? `${origin} to ${destination}` : "-";
+    return formatNegotiationLane(negotiation);
   }
 
-  private place(city?: string | null, state?: string | null): string {
-    return [city, state].filter(Boolean).join(", ");
+  protected async load(): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    try {
+      const result = await this.api.invoke(getNegotiations, {
+        ActiveOnly: this.activeOnly(),
+        PageSize: 50,
+      });
+      this.negotiations.set(result.items ?? []);
+    } catch (error) {
+      this.error.set(getApiErrorMessage(error, "Failed to load the negotiations"));
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   private merge(updated: RateNegotiationDto): void {
@@ -84,18 +97,5 @@ export class Negotiations implements OnInit {
       next[index] = updated;
       return next;
     });
-  }
-
-  private async load(): Promise<void> {
-    this.isLoading.set(true);
-    try {
-      const result = await this.api.invoke(getNegotiations, {
-        ActiveOnly: this.activeOnly(),
-        PageSize: 50,
-      });
-      this.negotiations.set(result.items ?? []);
-    } finally {
-      this.isLoading.set(false);
-    }
   }
 }

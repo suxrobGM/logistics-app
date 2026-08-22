@@ -17,6 +17,8 @@
     <ui-stack align="center" justify="center" class="py-8">
       <ui-spinner />
     </ui-stack>
+  } @else if (error()) {
+    <ui-error-state [message]="error()!" (retry)="load()" />
   } @else if (negotiations().length === 0) {
     <ui-empty-state
       icon="mail"
@@ -27,15 +29,15 @@
     <ui-data-table [value]="negotiations()" stripedRows>
       <ng-template #header>
         <tr>
-          <th style="width: 140px">Reference</th>
+          <th class="w-36">Reference</th>
           <th>Lane</th>
           <th>Broker</th>
-          <th class="text-right" style="width: 120px">Our offer</th>
-          <th class="text-right" style="width: 120px">Their offer</th>
-          <th class="text-center" style="width: 90px">Rounds</th>
-          <th style="width: 150px">Status</th>
-          <th style="width: 140px">Expires</th>
-          <th style="width: 80px"></th>
+          <th class="w-32 text-right">Our offer</th>
+          <th class="w-32 text-right">Their offer</th>
+          <th class="w-24 text-center">Rounds</th>
+          <th class="w-36">Status</th>
+          <th class="w-36">Expires</th>
+          <th class="w-20"></th>
         </tr>
       </ng-template>
       <ng-template #body let-negotiation>

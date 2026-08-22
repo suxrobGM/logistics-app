@@ -11,6 +11,7 @@ import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import {
   Alert,
   Card,
+  ErrorState,
   Icon,
   Spinner,
   Stack,
@@ -30,6 +31,7 @@ import { isOpenNegotiation } from "@/shared/utils";
     Card,
     CurrencyFormatPipe,
     DateFormatPipe,
+    ErrorState,
     Icon,
     PageHeader,
     Spinner,
@@ -55,11 +57,12 @@ export class NegotiationDetails implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly isClosing = signal(false);
   protected readonly negotiation = signal<RateNegotiationDto | null>(null);
+  protected readonly error = signal<string | null>(null);
 
   protected readonly isOpen = computed(() => isOpenNegotiation(this.negotiation()?.status));
 
   ngOnInit(): void {
-    this.load();
+    void this.load();
     void this.hub.acquireDispatchBoard(this.destroyRef);
 
     // The broadcast carries no messages, so a status change refreshes the timeline from the API.
@@ -82,6 +85,18 @@ export class NegotiationDetails implements OnInit {
     });
   }
 
+  protected async load(): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    try {
+      this.negotiation.set(await this.api.invoke(getNegotiationById, { id: this.id() }));
+    } catch (error) {
+      this.error.set(getApiErrorMessage(error, "Failed to load the negotiation"));
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
   private async close(): Promise<void> {
     this.isClosing.set(true);
     try {
@@ -91,21 +106,10 @@ export class NegotiationDetails implements OnInit {
       });
       this.toastService.showSuccess("Negotiation closed");
       await this.load();
-    } catch (error: unknown) {
+    } catch (error) {
       this.toastService.showError(getApiErrorMessage(error, "Failed to close the negotiation"));
     } finally {
       this.isClosing.set(false);
-    }
-  }
-
-  private async load(): Promise<void> {
-    this.isLoading.set(true);
-    try {
-      this.negotiation.set(await this.api.invoke(getNegotiationById, { id: this.id() }));
-    } catch {
-      this.toastService.showError("Failed to load the negotiation");
-    } finally {
-      this.isLoading.set(false);
     }
   }
 }

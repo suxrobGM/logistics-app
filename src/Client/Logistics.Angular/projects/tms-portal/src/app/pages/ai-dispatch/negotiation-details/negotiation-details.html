@@ -125,4 +125,6 @@
       <ui-typography variant="body-sm" color="muted">No messages yet.</ui-typography>
     }
   </ui-card>
+} @else {
+  <ui-error-state [message]="error() ?? 'The negotiation could not be loaded.'" (retry)="load()" />
 }

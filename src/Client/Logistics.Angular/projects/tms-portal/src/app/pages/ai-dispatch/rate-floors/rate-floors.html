@@ -25,19 +25,21 @@
     </ui-stack>
 
     @if (floors().length === 0) {
-      <ui-alert intent="info" title="No lane floors yet">
-        Add a lane, or set a company-wide default in Settings, before asking the agent to negotiate.
-      </ui-alert>
+      <ui-empty-state
+        icon="route"
+        title="No lane floors yet"
+        message="Add a lane, or set a company-wide default in Settings, before asking the agent to negotiate."
+      />
     } @else {
       <ui-data-table [value]="floors()" stripedRows>
         <ng-template #header>
           <tr>
             <th>Lane</th>
-            <th class="text-right" style="width: 140px">Min per mile</th>
-            <th class="text-right" style="width: 140px">Min total</th>
+            <th class="w-36 text-right">Min per mile</th>
+            <th class="w-36 text-right">Min total</th>
             <th>Notes</th>
             @if (canManage()) {
-              <th style="width: 120px"></th>
+              <th class="w-32"></th>
             }
           </tr>
         </ng-template>

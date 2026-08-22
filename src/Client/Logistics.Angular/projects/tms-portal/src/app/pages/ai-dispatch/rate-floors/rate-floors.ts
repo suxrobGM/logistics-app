@@ -1,5 +1,13 @@
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
-import { form, FormField, FormRoot, min, required } from "@angular/forms/signals";
+import {
+  form,
+  FormField,
+  FormRoot,
+  maxLength,
+  min,
+  minLength,
+  required,
+} from "@angular/forms/signals";
 import { getApiErrorMessage, PageHeader, Permission } from "@logistics/shared";
 import {
   Api,
@@ -11,8 +19,8 @@ import {
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
-  Alert,
   Card,
+  EmptyState,
   Spinner,
   Stack,
   Typography,
@@ -25,7 +33,8 @@ import {
   ValidatedForm,
 } from "@logistics/shared/ui";
 import { PermissionService } from "@/core/auth";
-import { ToastService } from "@/core/services";
+import { TenantService, ToastService } from "@/core/services";
+import { formatRateFloorLane } from "@/shared/utils";
 
 interface LaneRateFloorModel {
   originCountry: string;
@@ -37,7 +46,7 @@ interface LaneRateFloorModel {
   notes: string;
 }
 
-const EMPTY: LaneRateFloorModel = {
+const EMPTY_FLOOR: LaneRateFloorModel = {
   originCountry: "US",
   originState: "",
   destinationCountry: "US",
@@ -51,9 +60,9 @@ const EMPTY: LaneRateFloorModel = {
   selector: "app-rate-floors",
   templateUrl: "./rate-floors.html",
   imports: [
-    Alert,
     Card,
     CurrencyFormatPipe,
+    EmptyState,
     FormField,
     FormRoot,
     PageHeader,
@@ -73,6 +82,7 @@ export class RateFloors implements OnInit {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly permissionService = inject(PermissionService);
+  private readonly tenantService = inject(TenantService);
 
   protected readonly canManage = computed(() =>
     this.permissionService.hasPermission(Permission.Negotiation.Manage),
@@ -83,15 +93,42 @@ export class RateFloors implements OnInit {
   protected readonly editingId = signal<string | null>(null);
   protected readonly dialogOpen = signal(false);
 
-  protected readonly model = signal<LaneRateFloorModel>({ ...EMPTY });
+  protected readonly model = signal<LaneRateFloorModel>({ ...EMPTY_FLOOR });
 
   protected readonly form = form(
     this.model,
     (p) => {
       required(p.originCountry, { message: "Origin country is required." });
+      minLength(p.originCountry, 2, { message: "Origin country must be a 2-letter code." });
+      maxLength(p.originCountry, 2, { message: "Origin country must be a 2-letter code." });
+
+      minLength(p.originState, 2, {
+        when: ({ value }) => value().length > 0,
+        message: "Origin state must be a 2-letter code.",
+      });
+      maxLength(p.originState, 2, { message: "Origin state must be a 2-letter code." });
+
       required(p.destinationCountry, { message: "Destination country is required." });
+      minLength(p.destinationCountry, 2, {
+        message: "Destination country must be a 2-letter code.",
+      });
+      maxLength(p.destinationCountry, 2, {
+        message: "Destination country must be a 2-letter code.",
+      });
+
+      minLength(p.destinationState, 2, {
+        when: ({ value }) => value().length > 0,
+        message: "Destination state must be a 2-letter code.",
+      });
+      maxLength(p.destinationState, 2, { message: "Destination state must be a 2-letter code." });
+
       required(p.minRatePerMile, { message: "A minimum rate per mile is required." });
-      min(p.minRatePerMile, 0, { message: "The minimum rate cannot be negative." });
+      min(p.minRatePerMile, 0.01, { message: "The minimum rate per mile must be greater than 0." });
+
+      min(p.minTotalRateAmount, 0.01, {
+        when: ({ value }) => value() !== null,
+        message: "The minimum total rate must be greater than 0.",
+      });
     },
     {
       submission: {
@@ -109,7 +146,7 @@ export class RateFloors implements OnInit {
 
   protected openCreate(): void {
     this.editingId.set(null);
-    this.form().reset({ ...EMPTY });
+    this.form().reset({ ...EMPTY_FLOOR });
     this.dialogOpen.set(true);
   }
 
@@ -133,22 +170,17 @@ export class RateFloors implements OnInit {
   }
 
   protected lane(floor: LaneRateFloorDto): string {
-    const origin = this.place(floor.originCountry, floor.originState);
-    const destination = this.place(floor.destinationCountry, floor.destinationState);
-    return `${origin} to ${destination}`;
+    return formatRateFloorLane(floor);
   }
 
   protected askDelete(floor: LaneRateFloorDto): void {
-    if (!floor.id) return;
+    const id = floor.id;
+    if (!id) return;
+
     this.toastService.confirm({
       message: `Delete the rate floor for ${this.lane(floor)}?`,
-      accept: () => this.delete(floor.id!),
+      accept: () => this.delete(id),
     });
-  }
-
-  /** "Any state" is what a null state column means to the resolver, so it reads that way here too. */
-  private place(country?: string | null, state?: string | null): string {
-    return state ? `${country}-${state}` : `${country} (any state)`;
   }
 
   private async save(): Promise<void> {
@@ -158,9 +190,9 @@ export class RateFloors implements OnInit {
       originState: value.originState.trim() || null,
       destinationCountry: value.destinationCountry.trim(),
       destinationState: value.destinationState.trim() || null,
-      minRatePerMile: value.minRatePerMile!,
+      minRatePerMile: value.minRatePerMile ?? undefined,
       minTotalRateAmount: value.minTotalRateAmount,
-      minTotalRateCurrency: "USD",
+      minTotalRateCurrency: this.tenantService.tenantCurrency(),
       notes: value.notes.trim() || null,
     };
 
@@ -176,7 +208,7 @@ export class RateFloors implements OnInit {
       }
       this.closeDialog();
       await this.load();
-    } catch (error: unknown) {
+    } catch (error) {
       // A duplicate lane comes back as a 400 naming the conflicting row - show it, it says what to fix.
       this.toastService.showError(getApiErrorMessage(error, "Failed to save the rate floor"));
     }
@@ -187,8 +219,8 @@ export class RateFloors implements OnInit {
       await this.api.invoke(deleteLaneRateFloor, { id });
       this.toastService.showSuccess("Rate floor deleted");
       await this.load();
-    } catch {
-      this.toastService.showError("Failed to delete the rate floor");
+    } catch (error) {
+      this.toastService.showError(getApiErrorMessage(error, "Failed to delete the rate floor"));
     }
   }
 
