@@ -102,7 +102,7 @@
               track item.kind === "message" ? item.message.id : item.decision.id
             ) {
               @if (item.kind === "message") {
-                <app-chat-message [message]="item.message" />
+                <app-chat-message [message]="item.message" [currentUserId]="currentUserId()" />
               } @else {
                 <app-agent-decision-card
                   [decision]="item.decision"

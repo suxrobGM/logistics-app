@@ -27,6 +27,13 @@ public class AgentMessage : Entity, ITenantEntity
     /// <summary>Null only for a user message created before its turn's session exists.</summary>
     public Guid? SessionId { get; set; }
 
+    /// <summary>
+    /// The person this row is attributable to - the dispatcher who typed it, or who approved or
+    /// rejected the decision a system note reports. Null for the agent's own messages, for notices
+    /// no person caused, and for the broker-reply envelope, which comes from outside the tenant.
+    /// </summary>
+    public Guid? SentByUserId { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
@@ -34,13 +41,14 @@ public class AgentMessage : Entity, ITenantEntity
     /// The only place that shape is written outside the AI infrastructure's codec - keep both in sync.
     /// </summary>
     public static AgentMessage TextMessage(
-        Guid conversationId, int sequence, AgentMessageRole role, string text)
+        Guid conversationId, int sequence, AgentMessageRole role, string text, Guid? sentByUserId = null)
     {
         return new AgentMessage
         {
             ConversationId = conversationId,
             Sequence = sequence,
             Role = role,
+            SentByUserId = sentByUserId,
             ContentJson = new JsonArray(
                 new JsonObject { ["type"] = "text", ["text"] = text }).ToJsonString(),
             DisplayText = text.Length > 4000 ? text[..4000] : text

@@ -20,7 +20,7 @@
       } @else if (item.isReport) {
         <app-dispatch-report-message [message]="item.message" [session]="item.session" />
       } @else {
-        <app-chat-message [message]="item.message" />
+        <app-chat-message [message]="item.message" [currentUserId]="currentUserId()" />
       }
     }
 

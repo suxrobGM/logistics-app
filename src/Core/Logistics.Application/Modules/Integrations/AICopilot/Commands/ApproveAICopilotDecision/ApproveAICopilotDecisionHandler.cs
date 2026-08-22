@@ -51,7 +51,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
         var outcome = await execution.ExecuteAndNoteAsync(
             decision,
             note => notes.AppendAsync(
-                conversation, note,
+                conversation, note, userId,
                 message => broadcastService.BroadcastMessageAsync(tenant.Id, conversation.CreatedById, message), ct),
             ct);
 

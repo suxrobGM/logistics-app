@@ -23,6 +23,14 @@ public static partial class AgentConversationMapper
     [MapperIgnoreSource(nameof(AgentMessage.DomainEvents))]
     [MapperIgnoreSource(nameof(AgentMessage.Conversation))]
     [MapperIgnoreSource(nameof(AgentMessage.ContentJson))]
+    [MapperIgnoreTarget(nameof(AgentMessageDto.SentByName))]
     [MapProperty(nameof(AgentMessage.DisplayText), nameof(AgentMessageDto.Text))]
     public static partial AgentMessageDto ToDto(this AgentMessage entity);
+
+    public static AgentMessageDto ToDto(this AgentMessage entity, string? senderName)
+    {
+        var dto = entity.ToDto();
+        dto.SentByName = senderName;
+        return dto;
+    }
 }

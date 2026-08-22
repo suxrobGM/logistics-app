@@ -15,13 +15,17 @@ public class SendAIDispatchMessageHandlerTests
     private readonly IBackgroundJobRunner<AIDispatchTurnRequest> backgroundRunner =
         Substitute.For<IBackgroundJobRunner<AIDispatchTurnRequest>>();
 
+    private readonly IAIDispatchBroadcastService broadcastService =
+        Substitute.For<IAIDispatchBroadcastService>();
+
     private readonly SendAIDispatchMessageHandler sut;
 
     public SendAIDispatchMessageHandlerTests()
     {
         SetQuota(overageBlocked: false);
 
-        sut = new SendAIDispatchMessageHandler(ctx.Commands, ctx.CurrentUser, backgroundRunner);
+        sut = new SendAIDispatchMessageHandler(
+            ctx.Commands, ctx.CurrentUser, backgroundRunner, broadcastService);
     }
 
     private void SetQuota(bool overageBlocked, bool isOverQuota = false)
@@ -96,6 +100,44 @@ public class SendAIDispatchMessageHandlerTests
         await ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
+    /// <summary>A shared board needs the author: the transcript is read by people who did not type it.</summary>
+    [Fact]
+    public async Task Handle_HappyPath_StampsSenderOnTheMessage()
+    {
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+
+        await sut.Handle(Command(conversation.Id), CancellationToken.None);
+
+        var message = Assert.Single(conversation.Messages);
+        Assert.Equal(ctx.UserId, message.SentByUserId);
+    }
+
+    /// <summary>Without this the other dispatchers see the agent's answer but never the question.</summary>
+    [Fact]
+    public async Task Handle_HappyPath_BroadcastsTheMessageWithTheSendersName()
+    {
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        ctx.SetEmployees((ctx.UserId, "Sarah", "Thompson"));
+
+        await sut.Handle(Command(conversation.Id), CancellationToken.None);
+
+        await broadcastService.Received(1).BroadcastMessageAsync(
+            ctx.Tenant.Id,
+            Arg.Is<AgentMessageDto>(m =>
+                m.SentByUserId == ctx.UserId && m.SentByName == "Sarah Thompson"));
+    }
+
+    [Fact]
+    public async Task Handle_SenderHasNoEmployeeRow_BroadcastsWithoutAName()
+    {
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+
+        await sut.Handle(Command(conversation.Id), CancellationToken.None);
+
+        await broadcastService.Received(1).BroadcastMessageAsync(
+            ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.SentByName == null));
+    }
+
     [Fact]
     public async Task Handle_OverageBlocked_FailsWithBudgetErrorCode()
     {
@@ -109,6 +151,7 @@ public class SendAIDispatchMessageHandlerTests
         Assert.Empty(conversation.Messages);
         Assert.NotEqual(AgentConversationStatus.Running, conversation.Status);
         backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
+        await broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);
     }
 
     [Fact]

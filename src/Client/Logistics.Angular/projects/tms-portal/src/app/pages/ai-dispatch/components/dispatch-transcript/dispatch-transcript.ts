@@ -1,5 +1,6 @@
 import { Component, computed, inject, viewChild, type ElementRef } from "@angular/core";
 import { Spinner, Stack } from "@logistics/shared/ui";
+import { AuthService } from "@/core/auth";
 import {
   ChatMessage,
   pinnedScroll,
@@ -38,6 +39,9 @@ export class DispatchTranscript {
   private readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
 
   protected readonly store = inject(DispatchChatStore);
+
+  /** The conversation is tenant-shared, so each bubble says who wrote it. */
+  protected readonly currentUserId = inject(AuthService).userId;
 
   protected readonly turnFailed = computed(() => this.store.turnStatus() === "failed");
 

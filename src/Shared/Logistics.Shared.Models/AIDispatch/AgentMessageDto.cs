@@ -15,5 +15,14 @@ public record AgentMessageDto
     /// <summary>The turn that produced this message.</summary>
     public Guid? SessionId { get; set; }
 
+    /// <summary>
+    /// The person this row is attributable to. Null for the agent's own messages and for anything
+    /// no person caused - a shared dispatch transcript renders no author for those.
+    /// </summary>
+    public Guid? SentByUserId { get; set; }
+
+    /// <summary>Resolved at read time; null when the sender has no employee row any more.</summary>
+    public string? SentByName { get; set; }
+
     public DateTime CreatedAt { get; set; }
 }

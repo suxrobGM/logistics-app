@@ -15,10 +15,14 @@ internal interface IAgentDecisionNotes : IApplicationService
     /// <summary>The conversation a decision's outcome belongs in.</summary>
     Task<AgentConversation> LoadConversationAsync(AgentDecision decision, CancellationToken ct);
 
-    /// <summary>Appends <paramref name="note"/> to the transcript and saves.</summary>
+    /// <summary>
+    /// Appends <paramref name="note"/> to the transcript and saves.
+    /// <paramref name="actedByUserId"/> is the approver or rejecter, which a shared transcript names.
+    /// </summary>
     Task AppendAsync(
         AgentConversation conversation,
         string note,
+        Guid? actedByUserId,
         Func<AgentMessageDto, Task> broadcastMessageAsync,
         CancellationToken ct);
 }

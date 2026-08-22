@@ -40,9 +40,9 @@ public class AgentConversation : AuditableEntity, ITenantEntity
     /// Callers MUST also register the returned row via repository AddAsync (pre-generated ids make
     /// a collection-only add save as an UPDATE and fail).
     /// </summary>
-    public AgentMessage AddTextMessage(AgentMessageRole role, string text)
+    public AgentMessage AddTextMessage(AgentMessageRole role, string text, Guid? sentByUserId = null)
     {
-        var message = AgentMessage.TextMessage(Id, NextSequence(), role, text);
+        var message = AgentMessage.TextMessage(Id, NextSequence(), role, text, sentByUserId);
         Messages.Add(message);
         LastMessageAt = DateTime.UtcNow;
         return message;

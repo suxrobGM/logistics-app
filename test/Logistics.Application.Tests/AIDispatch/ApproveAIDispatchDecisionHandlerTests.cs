@@ -63,6 +63,23 @@ public class ApproveAIDispatchDecisionHandlerTests
     }
 
     [Fact]
+    public async Task Handle_ToolSucceeds_AttributesTheNoteToTheApprover()
+    {
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var decision = ctx.SetDispatchSuggestedDecision(conversation);
+        ctx.SetEmployees((ctx.UserId, "Sarah", "Thompson"));
+        ctx.ToolExecutor.ExecuteToolAsync("assign_load_to_truck", Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns("""{"success":true}""");
+
+        await sut.Handle(
+            new ApproveAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
+
+        Assert.Equal(ctx.UserId, Assert.Single(conversation.Messages).SentByUserId);
+        await broadcastService.Received(1).BroadcastMessageAsync(
+            ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.SentByName == "Sarah Thompson"));
+    }
+
+    [Fact]
     public async Task Handle_ToolThrows_AppendsFailureNote()
     {
         var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);

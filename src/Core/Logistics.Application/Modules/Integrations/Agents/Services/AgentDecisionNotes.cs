@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.Agents.Services;
 
-internal sealed class AgentDecisionNotes(ITenantUnitOfWork tenantUow) : IAgentDecisionNotes
+internal sealed class AgentDecisionNotes(
+    ITenantUnitOfWork tenantUow,
+    IAgentSenderDirectory senderDirectory) : IAgentDecisionNotes
 {
     public string RejectionNote(AgentDecision decision, string? reason) =>
         string.IsNullOrWhiteSpace(reason)
@@ -25,13 +27,15 @@ internal sealed class AgentDecisionNotes(ITenantUnitOfWork tenantUow) : IAgentDe
     public async Task AppendAsync(
         AgentConversation conversation,
         string note,
+        Guid? actedByUserId,
         Func<AgentMessageDto, Task> broadcastMessageAsync,
         CancellationToken ct)
     {
-        var message = conversation.AddTextMessage(AgentMessageRole.System, note);
+        var message = conversation.AddTextMessage(AgentMessageRole.System, note, actedByUserId);
         await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         await tenantUow.SaveChangesAsync(ct);
 
-        await broadcastMessageAsync(message.ToDto());
+        var actorName = await senderDirectory.GetNameAsync(actedByUserId, ct);
+        await broadcastMessageAsync(message.ToDto(actorName));
     }
 }

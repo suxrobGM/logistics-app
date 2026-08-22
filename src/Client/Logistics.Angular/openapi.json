@@ -17590,6 +17590,15 @@
             "format": "uuid",
             "nullable": true
           },
+          "sentByUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "sentByName": {
+            "type": "string",
+            "nullable": true
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"

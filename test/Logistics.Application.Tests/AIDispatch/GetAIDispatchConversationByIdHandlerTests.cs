@@ -56,6 +56,46 @@ public class GetAIDispatchConversationByIdHandlerTests
     }
 
     [Fact]
+    public async Task Handle_Success_NamesTheSenderOfEachMessage()
+    {
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var otherUserId = Guid.NewGuid();
+        ctx.SetEmployees((ctx.UserId, "Sarah", "Thompson"), (otherUserId, "Marcus", "Johnson"));
+        ctx.MessageRepo.Query().Returns(new List<AgentMessage>
+        {
+            new() { ConversationId = conversation.Id, Sequence = 1, DisplayText = "mine", SentByUserId = ctx.UserId },
+            new() { ConversationId = conversation.Id, Sequence = 2, DisplayText = "theirs", SentByUserId = otherUserId },
+            new() { ConversationId = conversation.Id, Sequence = 3, DisplayText = "the agent" }
+        }.BuildMock());
+
+        var result = await sut.Handle(new GetAIDispatchConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
+
+        var messages = result.Value!.Messages!;
+        Assert.Equal("Sarah Thompson", messages[0].SentByName);
+        Assert.Equal("Marcus Johnson", messages[1].SentByName);
+        Assert.Null(messages[2].SentByName);
+        Assert.Null(messages[2].SentByUserId);
+    }
+
+    /// <summary>An employee who has left keeps their id on the row, so the UI just shows no name.</summary>
+    [Fact]
+    public async Task Handle_SenderHasNoEmployeeRow_ReturnsIdWithoutName()
+    {
+        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var goneUserId = Guid.NewGuid();
+        ctx.MessageRepo.Query().Returns(new List<AgentMessage>
+        {
+            new() { ConversationId = conversation.Id, Sequence = 1, DisplayText = "hi", SentByUserId = goneUserId }
+        }.BuildMock());
+
+        var result = await sut.Handle(new GetAIDispatchConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
+
+        var message = Assert.Single(result.Value!.Messages!);
+        Assert.Equal(goneUserId, message.SentByUserId);
+        Assert.Null(message.SentByName);
+    }
+
+    [Fact]
     public async Task Handle_Success_IncludesSessionsAndDecisionsForTheConversation()
     {
         var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);

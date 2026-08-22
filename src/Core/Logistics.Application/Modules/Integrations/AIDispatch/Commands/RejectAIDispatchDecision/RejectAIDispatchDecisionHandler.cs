@@ -22,13 +22,14 @@ internal sealed class RejectAIDispatchDecisionHandler(
             return Result.Fail(loaded.Error!);
 
         var decision = loaded.Value!;
-        decision.Reject(currentUser.GetUserId() ?? Guid.Empty, request.Reason);
+        var userId = currentUser.GetUserId() ?? Guid.Empty;
+        decision.Reject(userId, request.Reason);
 
         var tenantId = tenantUow.GetCurrentTenant().Id;
         var conversation = await notes.LoadConversationAsync(decision, ct);
 
         await notes.AppendAsync(
-            conversation, notes.RejectionNote(decision, request.Reason),
+            conversation, notes.RejectionNote(decision, request.Reason), userId,
             message => broadcastService.BroadcastMessageAsync(tenantId, message), ct);
 
         return Result.Ok();

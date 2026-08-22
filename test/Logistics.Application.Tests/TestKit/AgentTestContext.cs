@@ -42,10 +42,13 @@ internal sealed class AgentTestContext
         Substitute.For<ITenantRepository<AgentMessage, Guid>>();
     public ITenantRepository<AgentSession, Guid> SessionRepo { get; } =
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
+    public ITenantRepository<Employee, Guid> EmployeeRepo { get; } =
+        Substitute.For<ITenantRepository<Employee, Guid>>();
 
     public IAgentConversationAccess Access { get; }
     public IAgentConversationCommands Commands { get; }
     public IAgentConversationQueries Queries { get; }
+    public IAgentSenderDirectory SenderDirectory { get; }
     public IAgentDecisionNotes Notes { get; }
     public IAgentDecisionExecution Execution { get; }
     public IAgentDecisionAuthorization Authorization { get; }
@@ -68,16 +71,19 @@ internal sealed class AgentTestContext
         TenantUow.Repository<AgentConversation>().Returns(ConversationRepo);
         TenantUow.Repository<AgentMessage>().Returns(MessageRepo);
         TenantUow.Repository<AgentSession>().Returns(SessionRepo);
+        TenantUow.Repository<Employee>().Returns(EmployeeRepo);
         TenantUow.GetCurrentTenant().Returns(Tenant);
         CurrentUser.GetUserId().Returns(UserId);
         SessionRepo.Query().Returns(_ => new List<AgentSession>().BuildMock());
+        EmployeeRepo.Query().Returns(_ => new List<Employee>().BuildMock());
 
         Access = new AgentConversationAccess(TenantUow);
+        SenderDirectory = new AgentSenderDirectory(TenantUow);
         Commands = new AgentConversationCommands(
-            TenantUow, Access, QuotaService, DispatchService,
+            TenantUow, Access, QuotaService, DispatchService, SenderDirectory,
             NullLogger<AgentConversationCommands>.Instance);
-        Queries = new AgentConversationQueries(TenantUow, Access);
-        Notes = new AgentDecisionNotes(TenantUow);
+        Queries = new AgentConversationQueries(TenantUow, Access, SenderDirectory);
+        Notes = new AgentDecisionNotes(TenantUow, SenderDirectory);
         Execution = new AgentDecisionExecution(ToolExecutor);
         Authorization = new AgentDecisionAuthorization(ToolRegistry, UserPermissions);
         CopilotGuard = new AICopilotDecisionGuard(TenantUow, Access);
@@ -86,6 +92,22 @@ internal sealed class AgentTestContext
     /// <summary><paramref name="bypassAIGate"/> is the knob the AI-disabled tests turn.</summary>
     public IAIDispatchDecisionGuard DispatchGuard(bool bypassAIGate = true) =>
         new AIDispatchDecisionGuard(TenantUow, Options.Create(new LlmOptions { BypassAIGate = bypassAIGate }));
+
+    /// <summary>An employee row per sender, which is how the sender directory resolves names.</summary>
+    public void SetEmployees(params (Guid UserId, string FirstName, string LastName)[] employees)
+    {
+        var rows = employees
+            .Select(e => new Employee
+            {
+                Id = e.UserId,
+                Email = $"{e.FirstName}.{e.LastName}@test.com".ToLowerInvariant(),
+                FirstName = e.FirstName,
+                LastName = e.LastName
+            })
+            .ToList();
+
+        EmployeeRepo.Query().Returns(_ => rows.BuildMock());
+    }
 
     public void SetCallerPermissions(params string[] permissions)
     {

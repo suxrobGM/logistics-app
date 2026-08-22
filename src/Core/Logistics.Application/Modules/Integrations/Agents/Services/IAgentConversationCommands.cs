@@ -24,6 +24,9 @@ internal interface IAgentConversationCommands : IApplicationService
     /// <summary>
     /// Appends the user message, opens the turn and hands it to the surface's background runner via
     /// <paramref name="enqueueTurn"/> (tenant id, conversation id, caller id).
+    /// <paramref name="broadcastMessage"/> is for surfaces with more than one reader: a dispatch
+    /// conversation is tenant-shared, so the other dispatchers need the message too. Copilot leaves
+    /// it null - its one reader already has the message on screen.
     /// </summary>
     Task<Result<SendAgentMessageResultDto>> SendMessageAsync(
         AgentConversationScope scope,
@@ -31,5 +34,6 @@ internal interface IAgentConversationCommands : IApplicationService
         string text,
         Guid? userId,
         Action<Guid, Guid, Guid> enqueueTurn,
-        CancellationToken ct);
+        CancellationToken ct,
+        Func<Guid, AgentMessageDto, Task>? broadcastMessage = null);
 }

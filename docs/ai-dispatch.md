@@ -45,11 +45,16 @@ turn, rename, or delete. It reuses the same conversation/turn machinery as the
 `AgentTranscriptReplay`), scoped by `AgentConversationKind.Dispatch` - a dispatch conversation never
 leaks into the copilot's per-user list, and vice versa.
 
+Every row a person caused carries that person on `AgentMessage.SentByUserId` - the dispatcher who
+typed a message, and the one who approved or rejected a decision. The read path resolves the names
+off the tenant's own employees, so the transcript says who asked for what. The agent's own messages
+and the broker-reply envelope carry no sender and render unattributed.
+
 ```text
 1. A user sends a message (POST ai/dispatch/conversations/{id}/messages -> 202)
    - handler checks the concurrency guard (no ownership check - the conversation is
-     tenant-shared), persists the user message, marks the conversation Running,
-     enqueues a Hangfire job
+     tenant-shared), persists the user message stamped with the sender, broadcasts it
+     to the board, marks the conversation Running, enqueues a Hangfire job
 2. AIDispatchTurnJob re-checks the AgenticDispatch feature flag and runs
    IAIDispatchService.RunTurnAsync, a thin adapter onto AgentTurnService with the
    DispatchAgentSurface
@@ -63,7 +68,7 @@ leaks into the copilot's per-user list, and vice versa.
 5. AgentLoopRunner iterates: read tools execute; write tools become Suggested decisions
 6. Every appended message is persisted to agent_messages and broadcast tenant-wide over
    /hubs/ai-dispatch; approving or rejecting a decision appends a system note to the
-   same transcript
+   same transcript, stamped with the approver or rejecter
 ```
 
 ## Agent Tools

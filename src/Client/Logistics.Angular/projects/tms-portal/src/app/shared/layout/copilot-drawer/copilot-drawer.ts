@@ -4,6 +4,7 @@ import { Permission } from "@logistics/shared";
 import type { AgentDecisionDto } from "@logistics/shared/api";
 import { LayoutService } from "@logistics/shared/services";
 import { Icon, Spinner, Stack, UiButton, UiTooltip } from "@logistics/shared/ui";
+import { AuthService } from "@/core/auth";
 import { CopilotStore } from "@/core/store";
 import {
   AgentDecisionCard,
@@ -66,6 +67,8 @@ export class CopilotDrawer {
   protected readonly store = inject(CopilotStore);
   protected readonly actions = inject(DecisionActionsService);
   protected readonly layoutService = inject(LayoutService);
+
+  protected readonly currentUserId = inject(AuthService).userId;
 
   private readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
   private readonly composer = viewChild(ChatComposer);

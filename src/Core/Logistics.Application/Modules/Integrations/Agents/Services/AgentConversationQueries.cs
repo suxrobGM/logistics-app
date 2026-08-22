@@ -8,7 +8,8 @@ namespace Logistics.Application.Modules.Integrations.Agents.Services;
 
 internal sealed class AgentConversationQueries(
     ITenantUnitOfWork tenantUow,
-    IAgentConversationAccess access) : IAgentConversationQueries
+    IAgentConversationAccess access,
+    IAgentSenderDirectory senderDirectory) : IAgentConversationQueries
 {
     public async Task<PagedResult<AgentConversationDto>> ListAsync(
         AgentConversationScope scope, int page, int pageSize, CancellationToken ct)
@@ -50,8 +51,17 @@ internal sealed class AgentConversationQueries(
             .OrderBy(m => m.Sequence)
             .ToListAsync(ct);
 
+        var senderIds = messages
+            .Select(m => m.SentByUserId)
+            .OfType<Guid>()
+            .Distinct()
+            .ToList();
+        var senderNames = await senderDirectory.GetNamesAsync(senderIds, ct);
+
         var dto = conversation.ToDto();
-        dto.Messages = messages.Select(m => m.ToDto()).ToList();
+        dto.Messages = messages
+            .Select(m => m.ToDto(m.SentByUserId is { } id ? senderNames.GetValueOrDefault(id) : null))
+            .ToList();
         dto.Decisions = decisions.Select(d => d.ToDto()).ToList();
 
         if (includeSessions)

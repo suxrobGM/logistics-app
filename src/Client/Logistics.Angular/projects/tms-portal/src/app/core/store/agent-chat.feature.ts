@@ -14,6 +14,7 @@ import {
   withState,
   type WritableStateSource,
 } from "@ngrx/signals";
+import { AuthService } from "@/core/auth";
 import type { AgentChatApi, AgentTurnUpdate } from "@/core/services/agent-chat.contracts";
 import { buildQuotaNotice, TurnWatchdog } from "./agent-chat.helpers";
 
@@ -93,7 +94,7 @@ export function withAgentChat<Extra extends object>(config: AgentChatConfig<Extr
       quotaBlocked: computed(() => store.quota()?.overageBlocked === true),
     })),
 
-    withMethods((store, api = inject(config.api)) => {
+    withMethods((store, api = inject(config.api), auth = inject(AuthService)) => {
       // The host owns these keys, so they are outside this feature's state type by construction.
       const patchExtras = (conversation: AgentConversationDto | null): void => {
         const extras = config.conversationExtras?.(conversation);
@@ -203,6 +204,7 @@ export function withAgentChat<Extra extends object>(config: AgentChatConfig<Extr
             conversationId: conversation.id,
             role: "user",
             text: trimmed,
+            sentByUserId: auth.userId() ?? undefined,
           };
           patchState(store, { messages: [...store.messages(), optimistic] });
           beginTurn();
@@ -259,7 +261,12 @@ export function withAgentChat<Extra extends object>(config: AgentChatConfig<Extr
         },
 
         appendMessage(message: AgentMessageDto): void {
-          patchState(store, { messages: [...store.messages(), message] });
+          const existing = store.messages();
+          patchState(store, {
+            messages: existing.some((m) => m.id === message.id)
+              ? existing.map((m) => (m.id === message.id ? message : m))
+              : [...existing, message],
+          });
         },
 
         upsertDecision(decision: AgentDecisionDto): void {

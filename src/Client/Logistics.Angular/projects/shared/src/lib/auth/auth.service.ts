@@ -36,6 +36,11 @@ export class AuthService {
   public readonly userName = computed(() => this._userData()?.name ?? null);
 
   /**
+   * Signal containing the current user's id, or `null` when unknown.
+   */
+  public readonly userId = computed(() => this._userData()?.id ?? null);
+
+  /**
    * Signal indicating whether the initial auth check has completed.
    * This includes loading user data and (when enabled) permissions.
    */

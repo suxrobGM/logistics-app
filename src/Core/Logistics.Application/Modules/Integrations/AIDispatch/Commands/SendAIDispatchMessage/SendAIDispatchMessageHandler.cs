@@ -16,7 +16,8 @@ namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 internal sealed class SendAIDispatchMessageHandler(
     IAgentConversationCommands commands,
     ICurrentUserService currentUser,
-    IBackgroundJobRunner<AIDispatchTurnRequest> backgroundRunner)
+    IBackgroundJobRunner<AIDispatchTurnRequest> backgroundRunner,
+    IAIDispatchBroadcastService broadcastService)
     : IAppRequestHandler<SendAIDispatchMessageCommand, Result<SendAgentMessageResultDto>>
 {
     public Task<Result<SendAgentMessageResultDto>> Handle(
@@ -28,5 +29,7 @@ internal sealed class SendAIDispatchMessageHandler(
             currentUser.GetUserId(),
             (tenantId, conversationId, userId) =>
                 backgroundRunner.Enqueue(new AIDispatchTurnRequest(tenantId, conversationId, userId)),
-            ct);
+            ct,
+            // The board is shared: without this the others see the agent's answer but not the question.
+            (tenantId, message) => broadcastService.BroadcastMessageAsync(tenantId, message));
 }

@@ -14,6 +14,7 @@ internal sealed class AgentConversationCommands(
     IAgentConversationAccess access,
     IAIQuotaService quotaService,
     IAIDispatchService dispatchService,
+    IAgentSenderDirectory senderDirectory,
     ILogger<AgentConversationCommands> logger) : IAgentConversationCommands
 {
     /// <summary>
@@ -94,7 +95,8 @@ internal sealed class AgentConversationCommands(
         string text,
         Guid? userId,
         Action<Guid, Guid, Guid> enqueueTurn,
-        CancellationToken ct)
+        CancellationToken ct,
+        Func<Guid, AgentMessageDto, Task>? broadcastMessage = null)
     {
         if (userId is null)
             return Result<SendAgentMessageResultDto>.Fail("User is not authenticated");
@@ -130,10 +132,16 @@ internal sealed class AgentConversationCommands(
             }
         }
 
-        var message = conversation.AddTextMessage(AgentMessageRole.User, text.Trim());
+        var message = conversation.AddTextMessage(AgentMessageRole.User, text.Trim(), userId);
         await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         conversation.BeginTurn();
         await tenantUow.SaveChangesAsync(ct);
+
+        if (broadcastMessage is not null)
+        {
+            var senderName = await senderDirectory.GetNameAsync(userId, ct);
+            await BroadcastSafeAsync(broadcastMessage, tenant.Id, message.ToDto(senderName));
+        }
 
         enqueueTurn(tenant.Id, conversation.Id, userId.Value);
 
@@ -144,5 +152,19 @@ internal sealed class AgentConversationCommands(
             UserMessageCreatedAt = message.CreatedAt,
             UserMessageSequence = message.Sequence
         });
+    }
+
+    /// <summary>The message is already saved - a dead hub must not fail the send.</summary>
+    private async Task BroadcastSafeAsync(
+        Func<Guid, AgentMessageDto, Task> broadcast, Guid tenantId, AgentMessageDto message)
+    {
+        try
+        {
+            await broadcast(tenantId, message);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to broadcast user message {MessageId}", message.Id);
+        }
     }
 }

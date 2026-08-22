@@ -3,6 +3,7 @@ import type { AgentDecisionDto, AgentSessionDto, TruckDto } from "@logistics/sha
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { persistValue, readStoredBoolean } from "@logistics/shared/utils";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
+import { AuthService } from "@/core/auth";
 import type { AgentTurnUpdate } from "@/core/services/agent-chat.contracts";
 import { AIDispatchHubService } from "@/core/services/ai-dispatch-hub.service";
 import { DispatchApiService } from "@/core/services/dispatch-api.service";
@@ -69,6 +70,7 @@ export const DispatchChatStore = signalStore(
       dispatchApi = inject(DispatchApiService),
       hub = inject(AIDispatchHubService),
       dispatchBadge = inject(DispatchBadgeService),
+      auth = inject(AuthService),
       destroyRef = inject(DestroyRef),
     ) => {
       effect(() => dispatchBadge.pendingCount.set(store.writeDecisions().length));
@@ -112,6 +114,11 @@ export const DispatchChatStore = signalStore(
       // No takeUntilDestroyed: the store is page-scoped, so these die with the page.
       hub.messageReceived$.subscribe((message) => {
         if (message.conversationId !== store.currentConversation()?.id) return;
+
+        // appendMessage dedups by id, but this tab's own optimistic bubble may still carry the
+        // placeholder id when the board's echo beats the send response, so match on the sender too.
+        if (message.role === "user" && message.sentByUserId === auth.userId()) return;
+
         store.appendMessage(message);
       });
 
