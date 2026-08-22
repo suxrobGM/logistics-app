@@ -13,6 +13,10 @@ public interface IRegionProfile
     string DisplayName { get; }
     Address CompanyAddress { get; }
     CurrencyCode Currency { get; }
+
+    /// <summary>Seeded onto a demo tenant, where it is the rate floor resolver's last fallback.</summary>
+    decimal DefaultRateFloorPerMile { get; }
+
     DistanceUnit DistanceUnit { get; }
     WeightUnit WeightUnit { get; }
     VolumeUnit VolumeUnit { get; }
@@ -32,7 +36,9 @@ public interface IRegionProfile
     IReadOnlyList<string> TankCargoTypes { get; }
     IReadOnlyList<VehicleMakeModel> CarHaulerCargoVehicles { get; }
     IReadOnlyList<string> ContainerOwnerCodes { get; }
+    IReadOnlyList<string> BrokerNames { get; }
 
     string GenerateVin(string make);
     LicensePlate GeneratePlate();
+    string GenerateBrokerPhone();
 }

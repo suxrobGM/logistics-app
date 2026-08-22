@@ -1,9 +1,13 @@
 import { NgTemplateOutlet } from "@angular/common";
 import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
-import { Router, RouterLink, RouterLinkActive } from "@angular/router";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { CountBadge, Icon, UiTooltip } from "@logistics/shared/ui";
+import { filter } from "rxjs";
 import { SidebarFavoritesService, SidebarNavService } from "@/core/services";
 import type { NavItem } from "./nav-menu.types";
+
+const PREFIX_MATCH = { exact: false };
 
 @Component({
   selector: "app-nav-menu",
@@ -29,14 +33,55 @@ export class NavMenu {
 
   private flyoutTimeout: ReturnType<typeof setTimeout> | null = null;
 
+  /** `router.isActive` is not reactive, so group highlighting needs a navigation tick to read it. */
+  private readonly navigationEnd = toSignal(
+    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)),
+  );
+
   protected readonly mainSections = computed(() => this.sections().filter((s) => !s.pinToBottom));
 
   protected readonly bottomSections = computed(() => this.sections().filter((s) => s.pinToBottom));
 
+  private readonly allItems = computed(() => this.sections().flatMap((section) => section.items));
+
+  /**
+   * Exact only when a sibling nests under this child's route - otherwise a parent route such as
+   * `/ai-dispatch` would light up on every sibling page. Everything else matches by prefix, so a
+   * detail page keeps its list item marked. Derived once per nav change rather than per binding:
+   * a fresh options object every tick re-runs `RouterLinkActive` on every link in the menu.
+   */
+  private readonly linkOptions = computed(() => {
+    const options = new Map<string, { exact: boolean }>();
+
+    for (const item of this.allItems()) {
+      const children = item.children ?? [];
+      for (const child of children) {
+        const route = child.route;
+        const exact =
+          !!route && children.some((c) => c !== child && c.route?.startsWith(`${route}/`));
+        options.set(child.id, exact ? { exact } : PREFIX_MATCH);
+      }
+    }
+
+    return options;
+  });
+
+  protected readonly activeGroupId = computed(() => {
+    this.navigationEnd();
+    return this.allItems().find((item) => this.isGroupActive(item))?.id ?? null;
+  });
+
   constructor() {
+    // Deep-linking to a child route must open its group, or the active row is hidden.
     effect(() => {
       if (this.collapsed()) {
         this.expandedItemId.set(null);
+        return;
+      }
+
+      const active = this.activeGroupId();
+      if (active) {
+        this.expandedItemId.set(active);
       }
     });
   }
@@ -56,21 +101,22 @@ export class NavMenu {
     return this.expandedItemId() === item.id;
   }
 
-  protected isItemActive(item: NavItem): boolean {
-    if (item.route) {
-      return this.router.isActive(item.route, {
-        paths: "exact",
-        queryParams: "ignored",
-        matrixParams: "ignored",
-        fragment: "ignored",
-      });
-    }
-    return false;
+  protected childLinkOptions(child: NavItem): { exact: boolean } {
+    return this.linkOptions().get(child.id) ?? PREFIX_MATCH;
   }
 
-  protected isGroupActive(item: NavItem): boolean {
+  private isGroupActive(item: NavItem): boolean {
     if (!item.children) return false;
-    return item.children.some((child) => child.route && this.isItemActive(child));
+    return item.children.some((child) => child.route && this.isChildActive(child));
+  }
+
+  private isChildActive(child: NavItem): boolean {
+    return this.router.isActive(child.route!, {
+      paths: this.childLinkOptions(child).exact ? "exact" : "subset",
+      queryParams: "ignored",
+      matrixParams: "ignored",
+      fragment: "ignored",
+    });
   }
 
   // -- Flyout logic for collapsed state --

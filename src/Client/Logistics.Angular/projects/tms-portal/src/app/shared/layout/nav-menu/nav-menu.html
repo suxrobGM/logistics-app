@@ -28,12 +28,22 @@
   </div>
 }
 
+<ng-template #itemBadge let-item>
+  @if (item.badge && item.badge()! > 0) {
+    @if (collapsed()) {
+      <span class="bg-danger absolute top-1 right-1 size-2 rounded-full"></span>
+    } @else {
+      <ui-count-badge [value]="item.badge()!.toString()" severity="danger" />
+    }
+  }
+</ng-template>
+
 <ng-template #navEntry let-item>
   @if (item.children) {
-    <!-- Expandable group. A button, not a link, so routerLinkActive cannot mark it - hence isGroupActive. -->
+    <!-- Expandable group. A button, not a link, so routerLinkActive cannot mark it - hence activeGroupId. -->
     <button
       class="nav-item"
-      [class.nav-item-active]="isGroupActive(item)"
+      [class.nav-item-active]="activeGroupId() === item.id"
       [class.nav-item-collapsed]="collapsed()"
       (click)="toggleGroup(item)"
       (contextmenu)="onItemContextMenu($event, item)"
@@ -53,6 +63,7 @@
           <span class="truncate">{{ item.label }}</span>
         }
       </div>
+      <ng-container *ngTemplateOutlet="itemBadge; context: { $implicit: item }"></ng-container>
       @if (!collapsed()) {
         <ui-icon
           name="chevron-down"
@@ -73,7 +84,7 @@
               class="nav-child"
               [routerLink]="child.route"
               routerLinkActive="nav-child-active"
-              [routerLinkActiveOptions]="{ exact: true }"
+              [routerLinkActiveOptions]="childLinkOptions(child)"
               (click)="itemClick.emit(child)"
               (contextmenu)="onItemContextMenu($event, child)"
             >
@@ -106,13 +117,7 @@
           <span class="truncate">{{ item.label }}</span>
         }
       </div>
-      @if (item.badge && item.badge()! > 0) {
-        @if (collapsed()) {
-          <span class="bg-danger absolute top-1 right-1 size-2 rounded-full"></span>
-        } @else {
-          <ui-count-badge [value]="item.badge()!.toString()" severity="danger" />
-        }
-      }
+      <ng-container *ngTemplateOutlet="itemBadge; context: { $implicit: item }"></ng-container>
     </a>
   }
 </ng-template>

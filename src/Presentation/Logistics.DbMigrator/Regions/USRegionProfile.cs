@@ -10,6 +10,7 @@ internal sealed class USRegionProfile : IRegionProfile
     public Region Region => Region.US;
     public string DisplayName => "US Demo";
     public CurrencyCode Currency => CurrencyCode.USD;
+    public decimal DefaultRateFloorPerMile => 2.10m;
     public DistanceUnit DistanceUnit => DistanceUnit.Miles;
     public WeightUnit WeightUnit => WeightUnit.Pounds;
     public VolumeUnit VolumeUnit => VolumeUnit.Gallons;
@@ -28,16 +29,16 @@ internal sealed class USRegionProfile : IRegionProfile
 
     public IReadOnlyList<RoutePoint> RoutePoints { get; } =
     [
-        new(new Address { Line1 = "233 S Wacker Dr", City = "Chicago", State = "IL", ZipCode = "60606", Country = "US" }, -87.6298, 41.8781),
-        new(new Address { Line1 = "1 Monument Cir", City = "Indianapolis", State = "IN", ZipCode = "46204", Country = "US" }, -86.1581, 39.7684),
-        new(new Address { Line1 = "100 N Capitol Ave", City = "Lansing", State = "MI", ZipCode = "48933", Country = "US" }, -84.5555, 42.7325),
-        new(new Address { Line1 = "600 Woodward Ave", City = "Detroit", State = "MI", ZipCode = "48226", Country = "US" }, -83.0458, 42.3314),
-        new(new Address { Line1 = "151 W Jefferson", City = "Louisville", State = "KY", ZipCode = "40202", Country = "US" }, -85.7585, 38.2527),
-        new(new Address { Line1 = "600 Commerce St", City = "Nashville", State = "TN", ZipCode = "37203", Country = "US" }, -86.7816, 36.1627),
-        new(new Address { Line1 = "1100 Congress Ave", City = "Austin", State = "TX", ZipCode = "78701", Country = "US" }, -97.7431, 30.2672),
-        new(new Address { Line1 = "55 Trinity Ave SW", City = "Atlanta", State = "GA", ZipCode = "30303", Country = "US" }, -84.3902, 33.7490),
-        new(new Address { Line1 = "1500 Marilla St", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" }, -96.7970, 32.7767),
-        new(new Address { Line1 = "1411 Market St", City = "St. Louis", State = "MO", ZipCode = "63103", Country = "US" }, -90.1994, 38.6270)
+        new(new Address { Line1 = "233 S Wacker Dr", City = "Chicago", State = "IL", ZipCode = "60606", Country = "US" }, -87.6298, 41.8781, "IL"),
+        new(new Address { Line1 = "1 Monument Cir", City = "Indianapolis", State = "IN", ZipCode = "46204", Country = "US" }, -86.1581, 39.7684, "IN"),
+        new(new Address { Line1 = "100 N Capitol Ave", City = "Lansing", State = "MI", ZipCode = "48933", Country = "US" }, -84.5555, 42.7325, "MI"),
+        new(new Address { Line1 = "600 Woodward Ave", City = "Detroit", State = "MI", ZipCode = "48226", Country = "US" }, -83.0458, 42.3314, "MI"),
+        new(new Address { Line1 = "151 W Jefferson", City = "Louisville", State = "KY", ZipCode = "40202", Country = "US" }, -85.7585, 38.2527, "KY"),
+        new(new Address { Line1 = "600 Commerce St", City = "Nashville", State = "TN", ZipCode = "37203", Country = "US" }, -86.7816, 36.1627, "TN"),
+        new(new Address { Line1 = "1100 Congress Ave", City = "Austin", State = "TX", ZipCode = "78701", Country = "US" }, -97.7431, 30.2672, "TX"),
+        new(new Address { Line1 = "55 Trinity Ave SW", City = "Atlanta", State = "GA", ZipCode = "30303", Country = "US" }, -84.3902, 33.7490, "GA"),
+        new(new Address { Line1 = "1500 Marilla St", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" }, -96.7970, 32.7767, "TX"),
+        new(new Address { Line1 = "1411 Market St", City = "St. Louis", State = "MO", ZipCode = "63103", Country = "US" }, -90.1994, 38.6270, "MO")
     ];
 
     public IReadOnlyList<TerminalSeed> Terminals { get; } =
@@ -127,6 +128,9 @@ internal sealed class USRegionProfile : IRegionProfile
 
     public IReadOnlyList<string> ContainerOwnerCodes { get; } = ["MSCU", "APLU", "HLXU", "TCLU", "CMAU"];
 
+    public IReadOnlyList<string> BrokerNames { get; } =
+        ["Ridgeline Logistics", "Cardinal Freight Group", "Blue Harbor Transport", "Sunbelt Brokerage"];
+
     private static readonly string[] USStates =
     [
         "TX", "CA", "FL", "GA", "IL", "OH", "PA", "NC", "MI", "NJ",
@@ -139,6 +143,8 @@ internal sealed class USRegionProfile : IRegionProfile
             .FirstOrDefault(m => m.Make == make)?.VinWmi ?? "1XX";
         return wmi + GenerateAlphanumeric(14);
     }
+
+    public string GenerateBrokerPhone() => $"+1 (312) 555-{random.Next(1000, 9999)}";
 
     public LicensePlate GeneratePlate()
     {

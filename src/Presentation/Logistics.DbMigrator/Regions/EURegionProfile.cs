@@ -10,6 +10,7 @@ internal sealed class EURegionProfile : IRegionProfile
     public Region Region => Region.EU;
     public string DisplayName => "EU Demo";
     public CurrencyCode Currency => CurrencyCode.EUR;
+    public decimal DefaultRateFloorPerMile => 1.35m;
     public DistanceUnit DistanceUnit => DistanceUnit.Kilometers;
     public WeightUnit WeightUnit => WeightUnit.Kilograms;
     public VolumeUnit VolumeUnit => VolumeUnit.Liters;
@@ -28,16 +29,16 @@ internal sealed class EURegionProfile : IRegionProfile
 
     public IReadOnlyList<RoutePoint> RoutePoints { get; } =
     [
-        new(new Address { Line1 = "Wilhelminakade 909", City = "Rotterdam", State = "South Holland", ZipCode = "3072 AP", Country = "NL" }, 4.4818, 51.9067),
-        new(new Address { Line1 = "Brouwersvliet 33", City = "Antwerp", State = "Antwerp", ZipCode = "2000", Country = "BE" }, 4.4025, 51.2194),
-        new(new Address { Line1 = "Bei St. Annen 1", City = "Hamburg", State = "Hamburg", ZipCode = "20457", Country = "DE" }, 9.9937, 53.5511),
-        new(new Address { Line1 = "Schifferstraße 24", City = "Duisburg", State = "North Rhine-Westphalia", ZipCode = "47059", Country = "DE" }, 6.7623, 51.4344),
-        new(new Address { Line1 = "1 Pl. Bellecour", City = "Lyon", State = "Auvergne-Rhône-Alpes", ZipCode = "69002", Country = "FR" }, 4.8357, 45.7640),
-        new(new Address { Line1 = "Via Manzoni 12", City = "Milano", State = "Lombardy", ZipCode = "20121", Country = "IT" }, 9.1900, 45.4642),
-        new(new Address { Line1 = "Carrer de Mallorca 401", City = "Barcelona", State = "Catalonia", ZipCode = "08013", Country = "ES" }, 2.1734, 41.3851),
-        new(new Address { Line1 = "Plac Defilad 1", City = "Warszawa", State = "Masovian", ZipCode = "00-901", Country = "PL" }, 21.0118, 52.2297),
-        new(new Address { Line1 = "Marienplatz 1", City = "München", State = "Bavaria", ZipCode = "80331", Country = "DE" }, 11.5755, 48.1374),
-        new(new Address { Line1 = "Place Charles de Gaulle", City = "Paris", State = "Île-de-France", ZipCode = "75008", Country = "FR" }, 2.3522, 48.8566)
+        new(new Address { Line1 = "Wilhelminakade 909", City = "Rotterdam", State = "South Holland", ZipCode = "3072 AP", Country = "NL" }, 4.4818, 51.9067, "ZH"),
+        new(new Address { Line1 = "Brouwersvliet 33", City = "Antwerp", State = "Antwerp", ZipCode = "2000", Country = "BE" }, 4.4025, 51.2194, "VAN"),
+        new(new Address { Line1 = "Bei St. Annen 1", City = "Hamburg", State = "Hamburg", ZipCode = "20457", Country = "DE" }, 9.9937, 53.5511, "HH"),
+        new(new Address { Line1 = "Schifferstraße 24", City = "Duisburg", State = "North Rhine-Westphalia", ZipCode = "47059", Country = "DE" }, 6.7623, 51.4344, "NW"),
+        new(new Address { Line1 = "1 Pl. Bellecour", City = "Lyon", State = "Auvergne-Rhône-Alpes", ZipCode = "69002", Country = "FR" }, 4.8357, 45.7640, "ARA"),
+        new(new Address { Line1 = "Via Manzoni 12", City = "Milano", State = "Lombardy", ZipCode = "20121", Country = "IT" }, 9.1900, 45.4642, "LOM"),
+        new(new Address { Line1 = "Carrer de Mallorca 401", City = "Barcelona", State = "Catalonia", ZipCode = "08013", Country = "ES" }, 2.1734, 41.3851, "CT"),
+        new(new Address { Line1 = "Plac Defilad 1", City = "Warszawa", State = "Masovian", ZipCode = "00-901", Country = "PL" }, 21.0118, 52.2297, "MZ"),
+        new(new Address { Line1 = "Marienplatz 1", City = "München", State = "Bavaria", ZipCode = "80331", Country = "DE" }, 11.5755, 48.1374, "BY"),
+        new(new Address { Line1 = "Place Charles de Gaulle", City = "Paris", State = "Île-de-France", ZipCode = "75008", Country = "FR" }, 2.3522, 48.8566, "IDF")
     ];
 
     public IReadOnlyList<TerminalSeed> Terminals { get; } =
@@ -128,6 +129,9 @@ internal sealed class EURegionProfile : IRegionProfile
 
     public IReadOnlyList<string> ContainerOwnerCodes { get; } = ["MAEU", "CMAU", "HLBU", "MSCU", "MSKU"];
 
+    public IReadOnlyList<string> BrokerNames { get; } =
+        ["Vandermeer Expeditie", "Rhein-Cargo Spedition", "Adriatica Trasporti", "Nord Freight Partners"];
+
     // Country code → weight (more weight = more frequent in plate generation).
     // Roughly mirrors EU truck-registration share: DE/PL/NL/IT/FR/ES/BE largest.
     private static readonly (string Country, int Weight)[] PlateCountries =
@@ -144,6 +148,8 @@ internal sealed class EURegionProfile : IRegionProfile
             .FirstOrDefault(m => m.Make == make)?.VinWmi ?? "WXX";
         return wmi + GenerateAlphanumeric(14);
     }
+
+    public string GenerateBrokerPhone() => $"+31 10 555 {random.Next(1000, 9999)}";
 
     public LicensePlate GeneratePlate()
     {

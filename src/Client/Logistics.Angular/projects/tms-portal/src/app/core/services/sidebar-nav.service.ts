@@ -38,7 +38,7 @@ export class SidebarNavService {
   /** Nav item id -> the count signal its badge renders. Built once; `wireBadges` only reads it. */
   private readonly badgeSources: Record<string, () => number> = {
     messages: this.chatService.unreadCount,
-    "ai-dispatch": this.dispatchBadgeService.pendingCount,
+    "ai-dispatch-assistant": this.dispatchBadgeService.pendingCount,
   };
 
   private readonly role = computed(() => this.authService.userData()?.role ?? null);
@@ -136,11 +136,26 @@ export class SidebarNavService {
     return { ...item, children };
   }
 
-  /** Copies rather than mutates, so the static `sidebarSections` never needs cloning first. */
+  /**
+   * Copies rather than mutates, so the static `sidebarSections` never needs cloning first. A group
+   * with no source of its own sums its children, so a count stays visible while the group is shut.
+   */
   private wireBadges(items: NavItem[]): NavItem[] {
     return items.map((item) => {
+      const children = item.children ? this.wireBadges(item.children) : undefined;
       const source = this.badgeSources[item.id];
-      return source ? { ...item, badge: () => source() || null } : item;
+
+      if (source) {
+        return { ...item, children, badge: () => source() || null };
+      }
+
+      if (children?.some((child) => child.badge)) {
+        const badge = () =>
+          children.reduce((total, child) => total + (child.badge?.() ?? 0), 0) || null;
+        return { ...item, children, badge };
+      }
+
+      return children ? { ...item, children } : item;
     });
   }
 }

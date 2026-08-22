@@ -50,6 +50,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, FuelCardSeeder>();
         services.AddScoped<ISeeder, IftaMileageSeeder>();
         services.AddScoped<ISeeder, TripSeeder>();
+        services.AddScoped<ISeeder, NegotiationSeeder>();
         services.AddScoped<ISeeder, InvoiceVatSeeder>();
         services.AddScoped<ISeeder, NotificationSeeder>();
         services.AddScoped<ISeeder, PayrollSeeder>();
