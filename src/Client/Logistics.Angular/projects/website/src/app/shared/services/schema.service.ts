@@ -36,7 +36,7 @@ export class SchemaService {
       "@type": "Organization",
       name: "LogisticsX",
       url: this.baseUrl,
-      logo: `${this.baseUrl}/images/logo.png`,
+      logo: `${this.baseUrl}/images/logo.svg`,
       description: "Modern fleet management platform for trucking companies",
       contactPoint: {
         "@type": "ContactPoint",
@@ -64,7 +64,7 @@ export class SchemaService {
         name: "LogisticsX",
         logo: {
           "@type": "ImageObject",
-          url: `${this.baseUrl}/images/logo.png`,
+          url: `${this.baseUrl}/images/logo.svg`,
         },
       },
     });

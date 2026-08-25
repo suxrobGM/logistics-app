@@ -20,7 +20,7 @@ export class Hero {
 
   protected readonly stats: StatItem[] = [
     { value: "100%", label: "Dispatcher-Approved" },
-    { value: "7+", label: "Agent Tools" },
+    { value: "30+", label: "Agent Tools" },
     { value: "3", label: "AI Providers" },
     { value: "24/7", label: "Always-On Dispatch" },
   ];

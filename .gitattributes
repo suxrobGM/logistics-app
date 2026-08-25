@@ -25,6 +25,8 @@ package-lock.json text eol=lf
 *.ttf binary
 *.eot binary
 *.pdf binary
+*.mp4 binary
+*.webm binary
 *.zip binary
 *.dll binary
 *.exe binary

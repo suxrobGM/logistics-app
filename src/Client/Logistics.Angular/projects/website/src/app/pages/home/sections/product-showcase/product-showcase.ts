@@ -30,51 +30,81 @@ export class ProductShowcase {
     {
       title: "AI Dispatch",
       description:
-        "Watch the agent read your fleet, match loads to trucks, run compliance checks, and plan routes - live, with the reasoning behind every decision visible.",
+        "Ask the agent to plan the day. It reads your unassigned loads, checks each driver's hours, and comes back with load-truck pairings - showing every tool it called and the reasoning behind each one. Nothing moves until you approve it.",
       screenshots: [
         {
-          src: "images/screenshots/ai-dispatch-sessions.png",
-          alt: "AI Dispatch sessions list with fleet map and pending decision cards",
-          label: "Sessions & Decisions",
-        },
-        {
-          src: "images/screenshots/ai-dispatch-session-detail.png",
-          alt: "AI Dispatch session detail with summary, assignments, and reasoning",
-          label: "Session Summary",
-        },
-        {
           src: "images/screenshots/ai-dispatch-timeline.png",
-          alt: "AI Dispatch agent timeline with tool calls, HOS checks, and decisions",
+          alt: "AI Dispatch chat showing the tools the agent called and two suggested assignments",
           label: "Agent Timeline",
+        },
+        {
+          src: "images/screenshots/ai-dispatch-chat.png",
+          alt: "AI Dispatch plan with an assignments table, open issues, and recommendations",
+          label: "Dispatch Plan",
+        },
+        {
+          src: "images/screenshots/ai-dispatch-decisions.png",
+          alt: "Pending decision cards with approve and reject buttons beside the fleet map",
+          label: "Pending Decisions",
         },
       ],
       features: [
-        "Chat-based suggestions",
-        "Agent reasoning timeline",
+        "Hours of service checked per driver",
+        "Every tool call and reason on the record",
         "Approve or reject each suggestion",
+        "AI Copilot in a drawer on every screen",
       ],
       icon: "sparkles",
     },
     {
-      title: "TMS Dashboard",
+      title: "Broker Negotiation",
       description:
-        "One screen for the whole operation - live metrics, fleet map, active loads, and the financial state of the business.",
+        "The agent emails brokers about rates and works the thread for you. Set a floor per lane and it will not counter below it. You read the whole exchange, message by message, with the rate on each one.",
       screenshots: [
         {
-          src: "images/screenshots/tms-dashboard.png",
-          alt: "TMS Dashboard showing fleet overview, revenue metrics, and active loads",
-          label: "Dashboard Overview",
+          src: "images/screenshots/ai-dispatch-negotiation-thread.png",
+          alt: "Broker rate thread showing four emails and the rate proposed in each",
+          label: "Rate Thread",
         },
         {
-          src: "images/screenshots/tms-drivers-report.png",
-          alt: "Drivers report dashboard with performance stats and charts",
-          label: "Drivers Report",
+          src: "images/screenshots/ai-dispatch-negotiations.png",
+          alt: "Negotiation list with lane, broker, offers, rounds used, and status",
+          label: "All Threads",
+        },
+        {
+          src: "images/screenshots/ai-dispatch-rate-floors.png",
+          alt: "Lane rate floors table showing dollars per mile per lane",
+          label: "Rate Floors",
         },
       ],
       features: [
-        "Live fleet map with GPS",
-        "Revenue and performance metrics",
-        "Driver stats and top performers",
+        "Rate emails sent and parsed for you",
+        "A dollars-per-mile floor per lane",
+        "Round limits and a reply deadline",
+        "Every message kept on the thread",
+      ],
+      icon: "mail",
+    },
+    {
+      title: "TMS Dashboard",
+      description:
+        "One screen for the whole operation - weekly gross, billed miles, rate per mile, what needs attention, and where the fleet is.",
+      screenshots: [
+        {
+          src: "images/screenshots/tms-home.png",
+          alt: "TMS dashboard with revenue metrics, active loads, and the fleet map",
+          label: "Dashboard Overview",
+        },
+        {
+          src: "images/screenshots/tms-home-lower.png",
+          alt: "Dashboard panels for fleet overview and setup progress",
+          label: "Panels",
+        },
+      ],
+      features: [
+        "Drag panels into the layout you want",
+        "Live fleet map",
+        "Unassigned loads and idle trucks up front",
       ],
       icon: "chart-column",
     },
@@ -85,7 +115,7 @@ export class ProductShowcase {
       screenshots: [
         {
           src: "images/screenshots/tms-loads.png",
-          alt: "Load management list view with filters and status tracking",
+          alt: "Load list with filters, status badges, revenue, and assigned trucks",
           label: "Loads List",
         },
         {
@@ -104,57 +134,58 @@ export class ProductShowcase {
     {
       title: "Trips & Route Optimization",
       description:
-        "Plan trips with multi-stop routing, assign trucks and drivers, and see the route on an interactive map.",
+        "Plan trips with multi-stop routing, assign trucks and drivers, and watch the route and every stop on an interactive map.",
       screenshots: [
         {
           src: "images/screenshots/tms-trips.png",
-          alt: "Trips list view with status, routes, and truck assignments",
+          alt: "Trips list with status, routes, and truck assignments",
           label: "Trips List",
         },
         {
           src: "images/screenshots/tms-trip-details.png",
-          alt: "Trip details with interactive map, stops timeline, and assignment",
+          alt: "Trip details with a numbered route on the map, stops table, and event timeline",
           label: "Trip Details",
         },
       ],
       features: [
         "Multi-stop route planning",
-        "Interactive map with stop visualization",
-        "Truck & driver assignment per trip",
+        "Numbered stops drawn on the map",
+        "A timeline of dispatch, pickup, and delivery",
       ],
       icon: "map",
     },
     {
-      title: "Fleet Overview",
+      title: "Fleet & Compliance",
       description:
-        "Trucks, drivers, license plates, and availability in one place. See which trucks are free and who's driving them.",
+        "Trucks, drivers, and the paperwork that keeps them legal. Hours of service, inspection reports, driver behaviour, and service records in one place.",
       screenshots: [
         {
           src: "images/screenshots/tms-fleet.png",
-          alt: "Fleet management view showing trucks, drivers, and availability",
+          alt: "Fleet view showing trucks, drivers, and availability",
           label: "Fleet List",
         },
         {
-          src: "images/screenshots/tms-reports.png",
-          alt: "Reports dashboard with charts, metrics, and performance analytics",
-          label: "Reports & Analytics",
+          src: "images/screenshots/tms-eld.png",
+          alt: "ELD hours-of-service dashboard listing remaining hours per driver",
+          label: "ELD / HOS",
         },
       ],
       features: [
-        "Vehicle and driver assignments",
-        "Availability tracking",
-        "Reports and analytics",
+        "Hours of service per driver",
+        "DVIR inspections and defects",
+        "Driver behaviour events",
+        "Service records and upcoming maintenance",
       ],
       icon: "truck",
     },
     {
       title: "Accounting",
       description:
-        "Load invoices, payroll, and payments in one place. Track what's outstanding, approve payroll, and sync it all to QuickBooks Online so your accountant's books stay current.",
+        "Load invoices, payroll, fuel cards, and IFTA in one place. Track what is outstanding, approve payroll, and sync it all to QuickBooks Online so your accountant's books stay current.",
       screenshots: [
         {
           src: "images/screenshots/tms-invoice-dashboard.png",
-          alt: "Load Invoice Dashboard with stats, quick actions, and recent invoices",
+          alt: "Invoice dashboard with draft, overdue, paid, and outstanding totals",
           label: "Invoice Dashboard",
         },
         {
@@ -162,11 +193,17 @@ export class ProductShowcase {
           alt: "Payroll dashboard with recent payrolls and employee payments",
           label: "Payroll",
         },
+        {
+          src: "images/screenshots/tms-ifta-report.png",
+          alt: "IFTA fuel tax report with a per-jurisdiction miles and tax breakdown",
+          label: "IFTA Report",
+        },
       ],
       features: [
         "Load invoice tracking",
         "Payroll processing and approval",
-        "Payment recording and history",
+        "Fuel card transactions matched to trucks",
+        "Quarterly IFTA, exportable as CSV or PDF",
         "QuickBooks Online sync",
       ],
       icon: "wallet",

@@ -9,7 +9,7 @@
 
 > Fleet management platform for trucking companies. AI runs through it: a dispatch agent matches loads to trucks, checks HOS compliance, plans routes, and pulls leads from load boards, while a TMS-wide copilot answers questions and handles invoicing, expenses, and maintenance from a chat drawer - every decision logged so a human can review or override it.
 
-![AI Dispatch - Sessions & Decisions](docs/images/tms-portal/ai-dispatch-sessions.png)
+![AI Dispatch - the agent plans assignments and waits for approval](docs/images/tms-portal/ai-dispatch-timeline.png)
 
 <!-- markdownlint-disable MD033 -->
 <p align="center">
@@ -133,9 +133,13 @@ Architecture: DDD + CQRS with MediatR, multi-tenant with one database per compan
 
 ## Screenshots
 
-|                     Sessions & Decisions                     |                        Agent Timeline                        |
-| :----------------------------------------------------------: | :----------------------------------------------------------: |
-| ![Sessions](docs/images/tms-portal/ai-dispatch-sessions.png) | ![Timeline](docs/images/tms-portal/ai-dispatch-timeline.png) |
+|                        Agent Timeline                        |                    Dispatch Plan                     |
+| :----------------------------------------------------------: | :--------------------------------------------------: |
+| ![Timeline](docs/images/tms-portal/ai-dispatch-timeline.png) | ![Plan](docs/images/tms-portal/ai-dispatch-chat.png) |
+
+|                          Broker Rate Thread                          |                       Pending Decisions                        |
+| :------------------------------------------------------------------: | :------------------------------------------------------------: |
+| ![Thread](docs/images/tms-portal/ai-dispatch-negotiation-thread.png) | ![Decisions](docs/images/tms-portal/ai-dispatch-decisions.png) |
 
 ### Driver Mobile App
 
@@ -150,9 +154,13 @@ Architecture: DDD + CQRS with MediatR, multi-tenant with one database per compan
 | :-----------------------------------------------: | :--------------------------------------------: | :--------------------------------------------: |
 | ![Dashboard](docs/images/tms-portal/tms-home.png) | ![Loads](docs/images/tms-portal/tms-loads.png) | ![Trips](docs/images/tms-portal/tms-trips.png) |
 
-|                     Fleet                      |                      Reports                       |                           Invoicing                           |
-| :--------------------------------------------: | :------------------------------------------------: | :-----------------------------------------------------------: |
-| ![Fleet](docs/images/tms-portal/tms-fleet.png) | ![Reports](docs/images/tms-portal/tms-reports.png) | ![Invoices](docs/images/tms-portal/tms-invoice-dashboard.png) |
+|                     Fleet                      |                 ELD / HOS                  |                        Maintenance                         |
+| :--------------------------------------------: | :----------------------------------------: | :--------------------------------------------------------: |
+| ![Fleet](docs/images/tms-portal/tms-fleet.png) | ![ELD](docs/images/tms-portal/tms-eld.png) | ![Maintenance](docs/images/tms-portal/tms-maintenance.png) |
+
+|                           Invoicing                           |                      Payroll                       |                        IFTA                         |
+| :-----------------------------------------------------------: | :------------------------------------------------: | :-------------------------------------------------: |
+| ![Invoices](docs/images/tms-portal/tms-invoice-dashboard.png) | ![Payroll](docs/images/tms-portal/tms-payroll.png) | ![IFTA](docs/images/tms-portal/tms-ifta-report.png) |
 
 ### Customer Portal
 
