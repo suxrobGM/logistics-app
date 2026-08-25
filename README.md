@@ -9,7 +9,9 @@
 
 > Fleet management platform for trucking companies. AI runs through it: a dispatch agent matches loads to trucks, checks HOS compliance, plans routes, and pulls leads from load boards, while a TMS-wide copilot answers questions and handles invoicing, expenses, and maintenance from a chat drawer - every decision logged so a human can review or override it.
 
-![AI Dispatch - the agent plans assignments and waits for approval](docs/images/tms-portal/ai-dispatch-timeline.png)
+![The dispatch agent plans assignments and waits for approval](docs/images/teaser.gif)
+
+_The AI dispatch agent planning a day's assignments. [Watch the full 60s tour](https://logisticsx.app)._
 
 <!-- markdownlint-disable MD033 -->
 <p align="center">
