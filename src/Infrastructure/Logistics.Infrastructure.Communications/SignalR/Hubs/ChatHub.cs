@@ -1,18 +1,38 @@
+using System.Security.Claims;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
+using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Models.Messaging;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 /// <summary>
-///     SignalR hub for real-time messaging between dispatchers and drivers.
+///     SignalR hub for real-time messaging between dispatchers and drivers. Authorized, and both
+///     the tenant group and the acting user id are taken from the caller's JWT claims - never from
+///     client-supplied ids - so a client cannot join another tenant's group or act as another user.
+///     Mirrors <see cref="CopilotHub"/>.
 /// </summary>
+[Authorize]
 public class ChatHub(ChatHubContext hubContext) : Hub<IChatHubClient>
 {
-    public override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
+        var tenantId = Context.User?.FindFirst(CustomClaimTypes.Tenant)?.Value;
+        var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? Context.User?.FindFirst("sub")?.Value;
+
+        if (tenantId is null || !Guid.TryParse(userId, out var parsedUserId))
+        {
+            Context.Abort();
+            return;
+        }
+
         hubContext.AddClient(Context.ConnectionId);
-        return base.OnConnectedAsync();
+        hubContext.SetTenantId(Context.ConnectionId, tenantId);
+        hubContext.SetUserId(Context.ConnectionId, parsedUserId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
+        await base.OnConnectedAsync();
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
@@ -21,31 +41,13 @@ public class ChatHub(ChatHubContext hubContext) : Hub<IChatHubClient>
         return base.OnDisconnectedAsync(exception);
     }
 
-    /// <summary>
-    ///     Register the connection with a tenant for multi-tenant message routing.
-    /// </summary>
-    public async Task RegisterTenant(string tenantId)
-    {
-        hubContext.SetTenantId(Context.ConnectionId, tenantId);
-        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
-    }
+    // Tenant and user are established from claims on connect; these are kept for client
+    // compatibility but deliberately ignore the client-supplied ids.
+    public Task RegisterTenant(string tenantId) => Task.CompletedTask;
 
-    /// <summary>
-    ///     Unregister from a tenant group.
-    /// </summary>
-    public async Task UnregisterTenant(string tenantId)
-    {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
-    }
+    public Task UnregisterTenant(string tenantId) => Task.CompletedTask;
 
-    /// <summary>
-    ///     Register the current user ID for the connection.
-    /// </summary>
-    public Task RegisterUser(Guid userId)
-    {
-        hubContext.SetUserId(Context.ConnectionId, userId);
-        return Task.CompletedTask;
-    }
+    public Task RegisterUser(Guid userId) => Task.CompletedTask;
 
     /// <summary>
     ///     Join a conversation to receive messages.

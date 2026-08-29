@@ -53,20 +53,27 @@ public class GeotabWebhookTests
     }
 
     [Fact]
-    public async Task ProcessWebhook_NoSecretConfigured_AcceptsPayload()
+    public async Task ProcessWebhook_NoSecretConfigured_RejectsPayload()
     {
-        // When the tenant has not configured a webhook secret, signature is not enforced
-        // (parity with Samsara/Motive); secret is required to opt into HMAC verification.
+        // Fail closed (security fix, finding #10): with no webhook secret configured, an anonymous
+        // webhook has no authenticity check, so it must be REJECTED - not processed unverified.
+        // Parity with Samsara/Motive.
         var result = await sut.ProcessWebhookAsync(payload, signature: null, webhookSecret: null);
 
-        Assert.True(result.IsValid);
-        Assert.Equal(EldWebhookEventType.ViolationCreated, result.EventType);
+        Assert.False(result.IsValid);
+        Assert.NotNull(result.ErrorMessage);
     }
 
     [Fact]
     public async Task ProcessWebhook_MalformedJson_ReturnsInvalid()
     {
-        var result = await sut.ProcessWebhookAsync("{not json", signature: null, webhookSecret: null);
+        // Sign the malformed body with the real secret so it passes the signature gate and the
+        // JSON-parse path this test is named for is actually exercised (a null signature would be
+        // rejected fail-closed before parsing ever runs).
+        const string payload = "{not json";
+        var signature = ComputeHex(payload, secret);
+
+        var result = await sut.ProcessWebhookAsync(payload, signature, secret);
 
         Assert.False(result.IsValid);
         Assert.NotNull(result.ErrorMessage);
