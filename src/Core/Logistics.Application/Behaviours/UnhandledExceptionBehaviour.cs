@@ -1,3 +1,4 @@
+using Logistics.Domain.Exceptions;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,13 @@ public sealed class UnhandledExceptionBehaviour<TRequest, TResponse>(
         try
         {
             return await next(cancellationToken);
+        }
+        catch (TenantAccessDeniedException)
+        {
+            // An authorization failure must NOT be softened into an empty/failed Result (some
+            // controllers return those as 200). Let it propagate to the exception middleware,
+            // which maps it to 403 - so a cross-tenant access attempt is denied, not silently empty.
+            throw;
         }
         catch (Exception ex)
         {

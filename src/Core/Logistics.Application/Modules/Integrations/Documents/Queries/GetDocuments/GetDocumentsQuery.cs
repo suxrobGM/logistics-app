@@ -19,4 +19,10 @@ public class GetDocumentsQuery : IQuery<Result<IEnumerable<DocumentDto>>>
 
     public DocumentStatus? Status { get; set; }
     public DocumentType? Type { get; set; }
+
+    /// <summary>
+    ///     The authenticated caller, set server-side from the token for per-record authorization.
+    ///     Never bind this from the client.
+    /// </summary>
+    public Guid RequestedById { get; set; }
 }

@@ -25,11 +25,12 @@ internal sealed class DownloadDocumentHandler(
             return Result<DocumentDownloadDto>.Fail("Document has been deleted");
         }
 
-        // Verify requester exists (audit)
-        var requester = await tenantUow.Repository<Employee>().GetByIdAsync(req.RequestedById, ct);
-        if (requester is null)
+        // Per-record authorization: without this any authenticated user could pull any document by
+        // id (employee PII, all customers' BOLs/PODs). Management sees all; a driver only documents
+        // tied to them; anyone else is denied here.
+        if (!await DocumentAccess.CanAccessAsync(tenantUow, req.RequestedById, document, ct))
         {
-            return Result<DocumentDownloadDto>.Fail($"Could not find employee with ID '{req.RequestedById}'");
+            return Result<DocumentDownloadDto>.Fail("Document not found or access denied.");
         }
 
         try

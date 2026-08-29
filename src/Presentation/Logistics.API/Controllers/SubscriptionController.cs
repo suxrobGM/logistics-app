@@ -101,7 +101,9 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpGet("plans/{id:guid}", Name = "GetSubscriptionPlanById")]
     [ProducesResponseType(typeof(SubscriptionPlanDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
+    // Plans are pricing tiers any authenticated tenant needs to view to upgrade - require auth, but
+    // not admin. (Was a dangling commented-out attribute; made explicit.)
+    [Authorize]
     public async Task<IActionResult> GetSubscriptionPlanById(Guid id)
     {
         var result = await mediator.Send(new GetSubscriptionPlanQuery { Id = id });
@@ -110,7 +112,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
 
     [HttpGet("plans", Name = "GetSubscriptionPlans")]
     [ProducesResponseType(typeof(PagedResponse<SubscriptionPlanDto>), StatusCodes.Status200OK)]
-    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
+    [Authorize]
     public async Task<IActionResult> GetSubscriptionPlans([FromQuery] GetSubscriptionPlansQuery request)
     {
         var result = await mediator.Send(request);

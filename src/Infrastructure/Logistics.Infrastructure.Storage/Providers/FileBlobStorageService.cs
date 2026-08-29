@@ -17,7 +17,8 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         var containerPath = GetContainerPath(containerName);
         EnsureDirectoryExists(containerPath);
 
-        var filePath = Path.Combine(containerPath, blobName);
+        // Route through GetFilePath so the path-traversal guard applies to writes too.
+        var filePath = GetFilePath(containerName, blobName);
         var fileDirectory = Path.GetDirectoryName(filePath);
 
         if (!string.IsNullOrEmpty(fileDirectory))
@@ -119,8 +120,22 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
 
     private string GetFilePath(string containerName, string blobName)
     {
-        var containerPath = GetContainerPath(containerName);
-        return Path.Combine(containerPath, blobName);
+        var containerPath = Path.GetFullPath(GetContainerPath(containerName));
+        var resolved = Path.GetFullPath(Path.Combine(containerPath, blobName));
+
+        // Defense-in-depth (finding #14): the storage boundary must not rely on every caller
+        // sanitizing blobName. Reject any path that escapes the tenant/container root
+        // (e.g. blobName = "../../../etc/passwd") instead of reading/writing arbitrary files.
+        var root = containerPath.EndsWith(Path.DirectorySeparatorChar)
+            ? containerPath
+            : containerPath + Path.DirectorySeparatorChar;
+        if (!resolved.Equals(containerPath, StringComparison.Ordinal)
+            && !resolved.StartsWith(root, StringComparison.Ordinal))
+        {
+            throw new UnauthorizedAccessException($"Invalid blob path '{blobName}'.");
+        }
+
+        return resolved;
     }
 
     private static string GetMetadataPath(string filePath)

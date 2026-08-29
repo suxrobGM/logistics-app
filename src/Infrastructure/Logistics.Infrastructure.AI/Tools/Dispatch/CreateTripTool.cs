@@ -29,7 +29,8 @@ internal sealed class CreateTripTool(IMediator mediator)
     {
         RequiredPermission = Permission.Dispatch.Manage,
         DecisionType = AgentDecisionType.CreateTrip,
-        Surfaces = AgentSurfaces.All
+        // Write tool: must NOT be on the Mcp surface (no person to attribute to, no approval step).
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

@@ -23,6 +23,17 @@ internal sealed class CreateLoadInvoiceHandler(
             return Result<Guid>.Fail($"Could not find a load with ID '{req.LoadId}'");
         }
 
+        // Dedup (finding #4): a load has one invoice. Without this a double-click or retried request
+        // creates a second invoice for the same load - real double-billing.
+        var existingInvoice = await tenantUow.Repository<LoadInvoice>()
+            .GetAsync(i => i.LoadId == req.LoadId, ct);
+        if (existingInvoice is not null)
+        {
+            return Result<Guid>.Fail(
+                $"An invoice already exists for load '{load.Number}'.",
+                "LOAD_INVOICE_EXISTS");
+        }
+
         var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId, ct);
 
         if (customer is null)

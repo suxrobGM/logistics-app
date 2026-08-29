@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
@@ -43,10 +44,61 @@ internal class CurrentTenantAccessor(
         var tenantId = ResolveTenantIdFromHttpContext();
         var tenant = await FindTenantAsync(tenantId, ct);
 
+        if (tenant is null)
+        {
+            throw new InvalidTenantException($"Could not find tenant with ID/name '{tenantId}'.");
+        }
+
+        await EnsureAuthenticatedUserHasAccessAsync(tenant, ct);
+
         CheckSubscription(tenant);
 
-        return cachedTenant = tenant ?? throw new InvalidTenantException(
-            $"Could not find tenant with ID/name '{tenantId}'.");
+        return cachedTenant = tenant;
+    }
+
+    /// <summary>
+    /// The <see cref="TenantHeader"/> is honoured so multi-tenant users (and the portals) can switch
+    /// context, but it must not let an authenticated caller target a tenant they don't belong to.
+    /// A request whose resolved tenant differs from the caller's own JWT tenant claim is allowed only
+    /// when an active <see cref="UserTenantAccess"/> row grants that user access to it. Anonymous
+    /// requests (webhooks, MCP - secured by signature / API key / route) carry no tenant claim and
+    /// are not subject to this check.
+    /// </summary>
+    private async Task EnsureAuthenticatedUserHasAccessAsync(Tenant tenant, CancellationToken ct)
+    {
+        var claimTenant = httpContext!.User.Claims
+            .FirstOrDefault(c => c.Type == CustomClaimTypes.Tenant)?.Value;
+
+        // No tenant claim => not an authenticated end-user request (anonymous webhook / MCP key).
+        if (string.IsNullOrWhiteSpace(claimTenant))
+        {
+            return;
+        }
+
+        // Home tenant: the resolved tenant matches the caller's own claim - always allowed.
+        if (Guid.TryParse(claimTenant, out var claimTenantId) && claimTenantId == tenant.Id)
+        {
+            return;
+        }
+
+        var userIdValue = httpContext.User.Claims
+            .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier
+                                 || c.Type == CustomClaimTypes.Subject)?.Value;
+
+        if (Guid.TryParse(userIdValue, out var userId))
+        {
+            var hasAccess = await masterUow.Repository<UserTenantAccess>()
+                .GetAsync(a => a.UserId == userId && a.TenantId == tenant.Id && a.IsActive, ct)
+                is not null;
+
+            if (hasAccess)
+            {
+                return;
+            }
+        }
+
+        throw new TenantAccessDeniedException(
+            $"You do not have access to tenant '{tenant.Name}'.");
     }
 
     private async Task<Tenant?> FindTenantAsync(string tenantId, CancellationToken ct = default)

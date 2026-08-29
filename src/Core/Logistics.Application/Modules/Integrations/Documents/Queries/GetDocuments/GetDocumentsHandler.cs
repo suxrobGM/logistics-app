@@ -41,7 +41,10 @@ internal sealed class
         }
 
 
-        // Fetch and filter by owner + optional status/type
+        // Fetch and filter by owner + optional status/type. Every branch is then passed through
+        // DocumentAccess so the caller only sees documents they're entitled to - without this a
+        // driver or customer-portal user could enumerate every document in the tenant (the
+        // unfiltered `else` branch below returns all of them), including employee licence PII.
         List<DocumentDto> dtos;
         if (req is { OwnerType: DocumentOwnerType.Load, OwnerId: not null })
         {
@@ -51,7 +54,8 @@ internal sealed class
                     (!req.Status.HasValue || d.Status == req.Status) &&
                     (!req.Type.HasValue || d.Type == req.Type), ct);
 
-            dtos = docs.Select(d => d.ToDto()).ToList();
+            var allowed = await DocumentAccess.FilterAccessibleAsync(tenantUow, req.RequestedById, docs, ct);
+            dtos = allowed.Select(d => d.ToDto()).ToList();
         }
         else if (req is { OwnerType: DocumentOwnerType.Employee, OwnerId: not null })
         {
@@ -61,7 +65,8 @@ internal sealed class
                     (!req.Status.HasValue || d.Status == req.Status) &&
                     (!req.Type.HasValue || d.Type == req.Type), ct);
 
-            dtos = docs.Select(d => d.ToDto()).ToList();
+            var allowed = await DocumentAccess.FilterAccessibleAsync(tenantUow, req.RequestedById, docs, ct);
+            dtos = allowed.Select(d => d.ToDto()).ToList();
         }
         else if (req is { OwnerType: DocumentOwnerType.Truck, OwnerId: not null })
         {
@@ -71,7 +76,8 @@ internal sealed class
                     (!req.Status.HasValue || d.Status == req.Status) &&
                     (!req.Type.HasValue || d.Type == req.Type), ct);
 
-            dtos = docs.Select(d => d.ToDto()).ToList();
+            var allowed = await DocumentAccess.FilterAccessibleAsync(tenantUow, req.RequestedById, docs, ct);
+            dtos = allowed.Select(d => d.ToDto()).ToList();
         }
         else
         {
@@ -80,7 +86,8 @@ internal sealed class
                     (!req.Status.HasValue || d.Status == req.Status) &&
                     (!req.Type.HasValue || d.Type == req.Type), ct);
 
-            dtos = docs.Select(d => d.ToDto()).ToList();
+            var allowed = await DocumentAccess.FilterAccessibleAsync(tenantUow, req.RequestedById, docs, ct);
+            dtos = allowed.Select(d => d.ToDto()).ToList();
         }
 
         return Result<IEnumerable<DocumentDto>>.Ok(dtos);

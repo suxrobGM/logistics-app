@@ -30,7 +30,9 @@ internal sealed class AssignLoadToTruckTool(IMediator mediator)
     {
         RequiredPermission = Permission.Dispatch.Manage,
         DecisionType = AgentDecisionType.AssignLoad,
-        Surfaces = AgentSurfaces.All
+        // Write tool: must NOT be on the Mcp surface (an API key has no person to attribute the
+        // action to and no approval step). Copilot + Dispatch only.
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

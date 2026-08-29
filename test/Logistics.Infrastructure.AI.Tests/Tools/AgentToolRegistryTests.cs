@@ -241,18 +241,23 @@ public class AgentToolRegistryTests
 
     /// <summary>
     /// An MCP call runs unattended from an API key, with nobody to attribute it to and no approval
-    /// step. Reads are fine; the writes that email a third party, move money or record a responsible
-    /// person are not, and this pins that set rather than leaving it to a forgotten flag.
+    /// step - unlike Copilot/Dispatch, which produce a suggestion a human approves in-app. So NO
+    /// write tool may be published on the Mcp surface (audit finding #29); reads are fine. This guards
+    /// against a write tool leaking back onto MCP via a forgotten <c>AgentSurfaces</c> flag.
     /// </summary>
     [Fact]
-    public void GetMcpTools_WriteToolsAreAKnownSet()
+    public void GetMcpTools_PublishesNoWriteTools()
     {
         var writes = sut.GetMcpTools(EveryFeature)
             .Where(t => t.IsWrite)
             .Select(t => t.Name)
-            .OrderBy(n => n, StringComparer.Ordinal);
+            .ToList();
 
-        Assert.Equal(["assign_load_to_truck", "create_trip", "dispatch_trip"], writes);
+        Assert.Empty(writes);
+
+        // And a read tool must NOT carry the immediate-execution warning (that copy is write-only).
+        var readTool = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "get_unassigned_loads");
+        Assert.DoesNotContain("takes effect immediately", readTool.Description);
     }
 
     [Fact]
@@ -294,20 +299,9 @@ public class AgentToolRegistryTests
         Assert.Contains("get_unassigned_loads", names);
     }
 
-    /// <summary>
-    /// MCP runs a write for real, so its warning replaces the agents' approval promise - carrying
-    /// the wrong one tells the client the opposite of what will happen.
-    /// </summary>
-    [Fact]
-    public void GetMcpTools_WriteToolsCarryTheImmediateExecutionWarning()
-    {
-        var createTrip = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "create_trip");
-        var readTool = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "get_unassigned_loads");
-
-        Assert.Contains("takes effect immediately", createTrip.Description);
-        Assert.DoesNotContain("dispatcher approval", createTrip.Description);
-        Assert.DoesNotContain("takes effect immediately", readTool.Description);
-    }
+    // (Removed GetMcpTools_WriteToolsCarryTheImmediateExecutionWarning: its subject - a write tool
+    // published on MCP - no longer exists after #29. Its still-meaningful assertion, that a read
+    // tool does NOT carry the immediate-execution warning, moved into GetMcpTools_PublishesNoWriteTools.)
 
     [Fact]
     public void TryGetDefinition_KnownAndUnknownNames()

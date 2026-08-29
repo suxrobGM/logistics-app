@@ -23,6 +23,15 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetDocuments([FromQuery] GetDocumentsQuery query)
     {
+        var userId = User.GetUserId();
+        if (userId is null)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
+
+        // Set server-side so the per-record authorization filter can't be bypassed by the client.
+        query.RequestedById = userId.Value;
+
         var result = await mediator.Send(query);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
@@ -34,7 +43,17 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetDocumentById(Guid documentId)
     {
-        var result = await mediator.Send(new GetDocumentByIdQuery { DocumentId = documentId });
+        var userId = User.GetUserId();
+        if (userId is null)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
+
+        var result = await mediator.Send(new GetDocumentByIdQuery
+        {
+            DocumentId = documentId,
+            RequestedById = userId.Value
+        });
         if (!result.IsSuccess || result.Value is null)
         {
             return NotFound(ErrorResponse.FromResult(result));

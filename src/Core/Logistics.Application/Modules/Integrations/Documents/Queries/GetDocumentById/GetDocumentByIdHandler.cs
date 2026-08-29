@@ -32,6 +32,13 @@ internal sealed class GetDocumentByIdHandler : IAppRequestHandler<GetDocumentByI
             return Result<DocumentDto>.Fail("Document has been deleted");
         }
 
+        // Per-record authorization (see DocumentAccess) - don't hand document metadata to any
+        // authenticated caller by id.
+        if (!await DocumentAccess.CanAccessAsync(_tenantUow, req.RequestedById, document, ct))
+        {
+            return Result<DocumentDto>.Fail("Document not found or access denied.");
+        }
+
         var dto = document.ToDto();
         return Result<DocumentDto>.Ok(dto);
     }

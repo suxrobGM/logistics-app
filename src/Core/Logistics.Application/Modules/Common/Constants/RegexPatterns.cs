@@ -2,7 +2,11 @@ namespace Logistics.Application.Modules.Common.Constants;
 
 public static class RegexPatterns
 {
-    public const string TenantName = @"^[a-z]+\d*";
+    // Anchored at BOTH ends: the tenant name is interpolated into a database identifier
+    // ("{tenant}_logisticsx") and into raw DROP DATABASE / pg_terminate_backend SQL in
+    // TenantDatabaseService, so it must be constrained to [a-z] + trailing digits end-to-end.
+    // Without the trailing $, only the prefix was validated and the rest was free (SQL-injectable).
+    public const string TenantName = @"^[a-z]+\d*$";
     public const string CreditCardNumber = @"^(\d{4} \d{4} \d{4} \d{4})$"; // "^[0-9]{16}$";
     public const string CardExpirationDate = "(0[1-9]|1[0-2])/[0-9]{2}"; // MM/YY format
     public const string CardCvc = "^[0-9]{3,4}$"; // CVC 3 or 4 digits

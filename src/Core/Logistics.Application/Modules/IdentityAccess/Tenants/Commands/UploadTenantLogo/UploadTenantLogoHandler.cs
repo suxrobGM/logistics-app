@@ -22,6 +22,21 @@ internal sealed class UploadTenantLogoHandler(
             return Result<string>.Fail("File must be an image");
         }
 
+        // Restrict to raster image extensions/types (finding #15). SVG is excluded: it can carry
+        // script, and the logo is served from a public container, so an .svg/.html logo is a
+        // stored-XSS vector. Bounds both the stored extension and the content type.
+        var extension = Path.GetExtension(req.FileName)?.ToLowerInvariant();
+        string[] allowedExtensions = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
+        if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
+        {
+            return Result<string>.Fail("Logo must be a PNG, JPG, WEBP, or GIF image.");
+        }
+
+        if (req.ContentType.Contains("svg", StringComparison.OrdinalIgnoreCase))
+        {
+            return Result<string>.Fail("SVG images are not allowed for logos.");
+        }
+
         // Validate file size
         if (req.FileSizeBytes > MaxFileSizeBytes)
         {
@@ -49,8 +64,7 @@ internal sealed class UploadTenantLogoHandler(
                 }
             }
 
-            // Generate unique blob path
-            var extension = Path.GetExtension(req.FileName);
+            // Generate unique blob path (extension validated above)
             var blobPath = $"tenants/{req.TenantId}/logo{extension}";
 
             await blobStorageService.UploadAsync(

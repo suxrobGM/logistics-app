@@ -1,5 +1,6 @@
 using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,14 @@ public class LoadController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Load.View)]
     public async Task<IActionResult> GetList([FromQuery] GetLoadsQuery query)
     {
+        // A Driver holds tenant-wide Load.View but must only see their own assignments. Force the
+        // self-scope from the token (ignoring any client-supplied UserId) so the driver app can't
+        // enumerate the whole tenant load book. Dispatch/management roles keep full visibility.
+        if (User.HasOneTheseRoles(TenantRoles.Driver))
+        {
+            query.UserId = User.GetUserId();
+        }
+
         var result = await mediator.Send(query);
         return Ok(PagedResponse<LoadDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
