@@ -67,6 +67,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> UpdateTenant(Guid id, [FromBody] UpdateTenantCommand request)
     {
+        User.EnsureOwnsTenant(id);
         request.Id = id;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
@@ -78,6 +79,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> DeleteTenant(Guid id)
     {
+        User.EnsureOwnsTenant(id);
         var result = await mediator.Send(new DeleteTenantCommand { Id = id });
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
@@ -88,6 +90,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> ResendWelcome(Guid id)
     {
+        User.EnsureOwnsTenant(id);
         var result = await mediator.Send(new ResendTenantWelcomeCommand(id));
         return result.IsSuccess ? Ok() : BadRequest(ErrorResponse.FromResult(result));
     }
@@ -99,6 +102,8 @@ public class TenantController(IMediator mediator) : ControllerBase
     [RequestSizeLimit(5 * 1024 * 1024)] // 5 MB
     public async Task<IActionResult> UploadTenantLogo(Guid id, IFormFile file)
     {
+        User.EnsureOwnsTenant(id);
+
         if (file.Length == 0)
         {
             return BadRequest(new ErrorResponse("No file provided"));
@@ -120,18 +125,23 @@ public class TenantController(IMediator mediator) : ControllerBase
 
     #region AI Quota Management
 
+    // Reads every tenant's usage in one report - there is no single target tenant to compare the
+    // caller against, so (unlike the single-tenant actions above) this has to be platform-admin-only
+    // outright, the same way GetTenants is, rather than an ownership check.
     [HttpGet("quotas", Name = "GetTenantQuotaUsages")]
     [ProducesResponseType(typeof(PagedResponse<TenantQuotaUsageDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Tenant.Manage)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetQuotaUsages([FromQuery] GetTenantQuotaUsagesQuery query)
     {
         var result = await mediator.Send(query);
         return Ok(PagedResponse<TenantQuotaUsageDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
+    // Same reasoning as GetQuotaUsages: resets every tenant (or an arbitrary caller-supplied list of
+    // tenant ids) with no target-tenant concept to check ownership against - platform-admin-only.
     [HttpPost("quotas/reset", Name = "ResetTenantQuotas")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Authorize(Policy = Permission.Tenant.Manage)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> ResetQuotas([FromBody] ResetTenantQuotasCommand command)
     {
         var result = await mediator.Send(command);

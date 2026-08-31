@@ -1,6 +1,7 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,11 @@ internal sealed class RenewSubscriptionHandler(
         if (subscription is null)
         {
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
+        }
+
+        if (!req.IsPlatformAdmin && subscription.TenantId != req.CallerTenantId)
+        {
+            throw new TenantAccessDeniedException("You do not have access to this subscription.");
         }
 
         await tenantUow.SetCurrentTenantByIdAsync(subscription.TenantId);

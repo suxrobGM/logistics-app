@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using MediatR;
@@ -44,12 +45,19 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    // No [Authorize(Roles = ...)] here on purpose - unlike the platform-admin-only actions in this
+    // controller, a tenant Owner legitimately cancels/changes/renews their OWN subscription. The
+    // handler enforces the actual ownership check once it has loaded the subscription and knows its
+    // TenantId; CallerTenantId/IsPlatformAdmin below is how it learns who's asking.
     [HttpPut("{id:guid}/cancel", Name = "CancelSubscription")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize]
     public async Task<IActionResult> CancelSubscription(Guid id, [FromBody] CancelSubscriptionCommand request)
     {
         request.Id = id;
+        request.CallerTenantId = User.GetTenantId();
+        request.IsPlatformAdmin = User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
@@ -57,9 +65,12 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}/change-plan", Name = "ChangeSubscriptionPlan")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize]
     public async Task<IActionResult> ChangeSubscriptionPlan(Guid id, [FromBody] ChangeSubscriptionPlanCommand request)
     {
         request.SubscriptionId = id;
+        request.CallerTenantId = User.GetTenantId();
+        request.IsPlatformAdmin = User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
@@ -67,9 +78,12 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}/renew", Name = "RenewSubscription")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize]
     public async Task<IActionResult> RenewSubscription(Guid id, [FromBody] RenewSubscriptionCommand request)
     {
         request.Id = id;
+        request.CallerTenantId = User.GetTenantId();
+        request.IsPlatformAdmin = User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }

@@ -1,6 +1,7 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
@@ -23,6 +24,11 @@ internal sealed class ChangeSubscriptionPlanHandler(
         if (subscription is null)
         {
             return Result.Fail($"Could not find a subscription with ID '{req.SubscriptionId}'");
+        }
+
+        if (!req.IsPlatformAdmin && subscription.TenantId != req.CallerTenantId)
+        {
+            throw new TenantAccessDeniedException("You do not have access to this subscription.");
         }
 
         if (subscription.Status is not (SubscriptionStatus.Active or SubscriptionStatus.Trialing))

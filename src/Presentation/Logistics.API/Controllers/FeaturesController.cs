@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using MediatR;
@@ -56,6 +57,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> GetTenantFeatures(Guid tenantId)
     {
+        User.EnsureOwnsTenant(tenantId);
         var result = await mediator.Send(new GetTenantFeaturesQuery { TenantId = tenantId });
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
@@ -69,6 +71,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> UpdateTenantFeatures(Guid tenantId, [FromBody] UpdateTenantFeaturesAdminCommand request)
     {
+        User.EnsureOwnsTenant(tenantId);
         request.TenantId = tenantId;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
