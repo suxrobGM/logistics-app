@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
+import { Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
+import { Permission, PermissionService } from "@logistics/shared";
 import {
   Api,
   deleteDocument,
@@ -32,6 +33,7 @@ import { Converters } from "@/shared/utils";
 export class DocumentManager implements OnInit {
   private readonly api = inject(Api);
   private readonly toast = inject(ToastService);
+  private readonly permissions = inject(PermissionService);
 
   public readonly employeeId = input<string>();
   public readonly loadId = input<string>();
@@ -43,6 +45,11 @@ export class DocumentManager implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly rows = signal<DocumentDto[]>([]);
   protected readonly uploadProgress = signal<Record<string, number>>({});
+
+  /** Without Document.Manage the upload and delete calls come back 403, so hide them. */
+  protected readonly canManage = computed(() =>
+    this.permissions.hasPermission(Permission.Document.Manage),
+  );
 
   ngOnInit(): void {
     this.refresh();

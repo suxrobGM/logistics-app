@@ -40,7 +40,7 @@ export const truckRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Documents",
-      permission: Permission.Truck.Manage,
+      permission: [Permission.Truck.View, Permission.Document.View],
     },
   },
   {
