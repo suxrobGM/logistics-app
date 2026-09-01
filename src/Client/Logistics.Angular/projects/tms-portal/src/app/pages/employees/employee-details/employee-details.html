@@ -48,13 +48,15 @@
           <ui-icon name="user" class="mr-2" />
           Overview
         </ui-tab>
-        <ui-tab value="1">
-          <ui-icon name="folder" class="mr-2" />
-          Documents
-          @if (store.documentsCount()) {
-            <ui-count-badge [value]="store.documentsCount()" severity="info" class="ml-1" />
-          }
-        </ui-tab>
+        @if (canViewDocuments()) {
+          <ui-tab value="1">
+            <ui-icon name="folder" class="mr-2" />
+            Documents
+            @if (store.documentsCount()) {
+              <ui-count-badge [value]="store.documentsCount()" severity="info" class="ml-1" />
+            }
+          </ui-tab>
+        }
         <ui-tab value="2">
           <ui-icon name="box" class="mr-2" />
           Loads
@@ -174,11 +176,13 @@
         </ui-tab-panel>
 
         <!-- Documents Tab -->
-        <ui-tab-panel value="1">
-          <div class="pt-4">
-            <app-document-manager [employeeId]="id()" [types]="employeeDocTypes" />
-          </div>
-        </ui-tab-panel>
+        @if (canViewDocuments()) {
+          <ui-tab-panel value="1">
+            <div class="pt-4">
+              <app-document-manager [employeeId]="id()" [types]="employeeDocTypes" />
+            </div>
+          </ui-tab-panel>
+        }
 
         <!-- Loads Tab -->
         <ui-tab-panel value="2">

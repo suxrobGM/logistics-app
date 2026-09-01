@@ -82,16 +82,18 @@ handles timestamp tolerance and constant-time compare for you.
 
 ### 4. Handler: validate, idempotency, dispatch
 
-Idempotency lives in the **master DB** via the `ProcessedWebhookEvent` ledger (entity in
-`Logistics.Domain.Entities`): columns `Provider`, `EventKey`, `ReceivedAt`, with a unique index on
-`(Provider, EventKey)`. It is a dedupe ledger, not a raw-body store. `EventKey` is the provider's event id when
-present, otherwise a SHA-256 hash of the raw body so a re-sent payload maps to the same key.
+Do not hand-roll idempotency. Inject `IWebhookEventTracker`
+(`Logistics.Application/Modules/Integrations/Webhooks/Services/`) and call `WasAlreadyHandledAsync`
+then `MarkHandledAsync`. It owns the master-DB `ProcessedWebhookEvent` row (`Provider`, `EventKey`,
+`ReceivedAt`, unique on `(Provider, EventKey)`) and its own `SaveChangesAsync`. `EventKey` is the
+provider's event id when present, otherwise `BuildKeyFromBody(rawBody)` so a re-sent payload maps to
+the same key.
 
 ```csharp
 internal sealed class ProviderWebhookHandler(
     IProviderWebhookService webhookService,
     ITenantUnitOfWork tenantUow,
-    IMasterUnitOfWork masterUow,
+    IWebhookEventTracker webhookEvents,
     ILogger<ProviderWebhookHandler> logger)
     : IRequestHandler<ProviderWebhookCommand, Result>
 {
@@ -110,12 +112,9 @@ internal sealed class ProviderWebhookHandler(
 
         // 3. Idempotency: providers retry. Provider event id, else a hash of the raw body.
         const string provider = "Provider";
-        var eventKey = payload.Id
-            ?? Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(cmd.RawBody)));
+        var eventKey = payload.Id ?? webhookEvents.BuildKeyFromBody(cmd.RawBody);
 
-        var alreadyProcessed = await masterUow.Repository<ProcessedWebhookEvent>()
-            .GetAsync(e => e.Provider == provider && e.EventKey == eventKey, ct);
-        if (alreadyProcessed is not null)
+        if (await webhookEvents.WasAlreadyHandledAsync(provider, eventKey, ct))
         {
             logger.LogInformation("Duplicate {Provider} webhook '{EventKey}' ignored", provider, eventKey);
             return Result.Ok();   // 200 - provider stops retrying
@@ -135,9 +134,7 @@ internal sealed class ProviderWebhookHandler(
         await tenantUow.SaveChangesAsync(ct);
 
         // 5. Record the delivery so a retry of the same event becomes a no-op
-        await masterUow.Repository<ProcessedWebhookEvent>()
-            .AddAsync(new ProcessedWebhookEvent { Provider = provider, EventKey = eventKey }, ct);
-        await masterUow.SaveChangesAsync(ct);
+        await webhookEvents.MarkHandledAsync(provider, eventKey, ct);
 
         return Result.Ok();
     }
@@ -168,7 +165,7 @@ running once; unknown event type → logged, 200, no crash; happy path → comma
 - [ ] Endpoint added to `WebhookController` with `[AllowAnonymous]` and raw-body reading
 - [ ] Signature verified with `WebhookSignature.VerifyHmacSha256` (or provider SDK's verify) - fails closed
 - [ ] Signature verified **before** payload parsing
-- [ ] Idempotency via `ProcessedWebhookEvent` `(Provider, EventKey)`; `EventKey` = provider event id, else SHA-256 body hash
+- [ ] Idempotency via `IWebhookEventTracker`; `EventKey` = provider event id, else `BuildKeyFromBody`
 - [ ] Event key recorded in the master-DB ledger after the work runs
 - [ ] Unknown event types log and return 200
 - [ ] Webhook secret loaded from env var, not appsettings.json

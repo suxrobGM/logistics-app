@@ -56,8 +56,11 @@ export function createRoleGuard(options: RoleGuardOptions): CanActivateFn {
         }
 
         if (options.checkRoutePermission !== false) {
-          const permission = route.data["permission"] as string | undefined;
-          if (permission && !permissionService.hasPermission(permission)) {
+          // A route may name several permissions, and then needs all of them.
+          const required = route.data["permission"] as string | string[] | null;
+          const permissions = required ? [required].flat() : [];
+
+          if (permissions.length > 0 && !permissionService.hasAllPermissions(...permissions)) {
             return router.parseUrl(unauthorizedRedirect);
           }
         }

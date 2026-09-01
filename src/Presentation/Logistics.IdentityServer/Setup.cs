@@ -119,11 +119,31 @@ internal static class Setup
             // Rate limit for impersonation token validation
             options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
 
-            options.OnRejected = async (context, _) =>
+            // Duende's token endpoint is middleware-generated, so rate-limit it globally by path.
+            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                context.Request.Path.StartsWithSegments("/connect/token")
+                    ? RateLimitPartition.GetFixedWindowLimiter(
+                        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 30,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 0
+                        })
+                    : RateLimitPartition.GetNoLimiter("unlimited"));
+
+            options.OnRejected = async (context, ct) =>
             {
                 context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-                context.HttpContext.Response.Redirect("/Account/Login?error=TooManyAttempts");
-                await Task.CompletedTask;
+
+                if (context.HttpContext.Request.Path.StartsWithSegments("/connect/token"))
+                {
+                    await context.HttpContext.Response.WriteAsync("Too many requests. Please retry later.", ct);
+                }
+                else
+                {
+                    context.HttpContext.Response.Redirect("/Account/Login?error=TooManyAttempts");
+                }
             };
         });
 

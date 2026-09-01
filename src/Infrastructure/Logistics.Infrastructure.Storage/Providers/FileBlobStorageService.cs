@@ -14,16 +14,8 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
     public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType,
         CancellationToken ct = default)
     {
-        var containerPath = GetContainerPath(containerName);
-        EnsureDirectoryExists(containerPath);
-
-        var filePath = Path.Combine(containerPath, blobName);
-        var fileDirectory = Path.GetDirectoryName(filePath);
-
-        if (!string.IsNullOrEmpty(fileDirectory))
-        {
-            EnsureDirectoryExists(fileDirectory);
-        }
+        var filePath = GetFilePath(containerName, blobName);
+        EnsureDirectoryExists(Path.GetDirectoryName(filePath) ?? GetContainerPath(containerName));
 
         await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         await content.CopyToAsync(fileStream, ct);
@@ -119,8 +111,19 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
 
     private string GetFilePath(string containerName, string blobName)
     {
-        var containerPath = GetContainerPath(containerName);
-        return Path.Combine(containerPath, blobName);
+        var containerPath = Path.GetFullPath(GetContainerPath(containerName));
+        var resolved = Path.GetFullPath(Path.Combine(containerPath, blobName));
+
+        var root = containerPath.EndsWith(Path.DirectorySeparatorChar)
+            ? containerPath
+            : containerPath + Path.DirectorySeparatorChar;
+        if (!resolved.Equals(containerPath, StringComparison.Ordinal)
+            && !resolved.StartsWith(root, StringComparison.Ordinal))
+        {
+            throw new UnauthorizedAccessException($"Invalid blob path '{blobName}'.");
+        }
+
+        return resolved;
     }
 
     private static string GetMetadataPath(string filePath)

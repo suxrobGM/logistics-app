@@ -1,4 +1,6 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -8,13 +10,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
-internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetLoadsHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
     : IAppRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
 {
     public async Task<PagedResult<LoadDto>> Handle(
         GetLoadsQuery req,
         CancellationToken ct)
     {
+        var isDriver = currentUserService.IsTenantDriver();
+        var userId = isDriver ? currentUserService.GetUserId() : req.UserId;
+
+        if (isDriver && userId is null)
+        {
+            return PagedResult<LoadDto>.Ok([], 0, req.PageSize);
+        }
+
         var baseQuery = tenantUow.Repository<Load>().Query();
 
         if (!string.IsNullOrEmpty(req.Search))
@@ -35,11 +47,11 @@ internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
                 i.Status == LoadStatus.Dispatched || i.Status == LoadStatus.PickedUp);
         }
 
-        if (req.UserId.HasValue)
+        if (userId.HasValue)
         {
             baseQuery = baseQuery.Where(i => i.AssignedTruck != null &&
-                                             (i.AssignedTruck.MainDriverId == req.UserId ||
-                                              i.AssignedTruck.SecondaryDriverId == req.UserId));
+                                             (i.AssignedTruck.MainDriverId == userId ||
+                                              i.AssignedTruck.SecondaryDriverId == userId));
         }
 
         if (req.TruckId.HasValue)

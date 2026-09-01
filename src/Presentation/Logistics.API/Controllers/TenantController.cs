@@ -36,7 +36,6 @@ public class TenantController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
-    // Reads the master DB unfiltered, so it returns every tenant on the platform. Admin portal only.
     [HttpGet(Name = "GetTenants")]
     [ProducesResponseType(typeof(PagedResponse<TenantDto>), StatusCodes.Status200OK)]
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
@@ -67,6 +66,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> UpdateTenant(Guid id, [FromBody] UpdateTenantCommand request)
     {
+        User.EnsureOwnsTenant(id);
         request.Id = id;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
@@ -78,6 +78,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> DeleteTenant(Guid id)
     {
+        User.EnsureOwnsTenant(id);
         var result = await mediator.Send(new DeleteTenantCommand { Id = id });
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
@@ -88,6 +89,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> ResendWelcome(Guid id)
     {
+        User.EnsureOwnsTenant(id);
         var result = await mediator.Send(new ResendTenantWelcomeCommand(id));
         return result.IsSuccess ? Ok() : BadRequest(ErrorResponse.FromResult(result));
     }
@@ -99,6 +101,8 @@ public class TenantController(IMediator mediator) : ControllerBase
     [RequestSizeLimit(5 * 1024 * 1024)] // 5 MB
     public async Task<IActionResult> UploadTenantLogo(Guid id, IFormFile file)
     {
+        User.EnsureOwnsTenant(id);
+
         if (file.Length == 0)
         {
             return BadRequest(new ErrorResponse("No file provided"));
@@ -122,7 +126,7 @@ public class TenantController(IMediator mediator) : ControllerBase
 
     [HttpGet("quotas", Name = "GetTenantQuotaUsages")]
     [ProducesResponseType(typeof(PagedResponse<TenantQuotaUsageDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Tenant.Manage)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetQuotaUsages([FromQuery] GetTenantQuotaUsagesQuery query)
     {
         var result = await mediator.Send(query);
@@ -131,7 +135,7 @@ public class TenantController(IMediator mediator) : ControllerBase
 
     [HttpPost("quotas/reset", Name = "ResetTenantQuotas")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [Authorize(Policy = Permission.Tenant.Manage)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> ResetQuotas([FromBody] ResetTenantQuotasCommand command)
     {
         var result = await mediator.Send(command);

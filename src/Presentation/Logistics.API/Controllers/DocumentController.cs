@@ -1,5 +1,5 @@
-using Logistics.API.Extensions;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +20,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [HttpGet(Name = "GetDocuments")]
     [ProducesResponseType(typeof(IEnumerable<DocumentDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize]
+    [Authorize(Policy = Permission.Document.View)]
     public async Task<IActionResult> GetDocuments([FromQuery] GetDocumentsQuery query)
     {
         var result = await mediator.Send(query);
@@ -31,7 +31,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [HttpGet("{documentId:guid}", Name = "GetDocumentById")]
     [ProducesResponseType(typeof(DocumentDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize]
+    [Authorize(Policy = Permission.Document.View)]
     public async Task<IActionResult> GetDocumentById(Guid documentId)
     {
         var result = await mediator.Send(new GetDocumentByIdQuery { DocumentId = documentId });
@@ -47,7 +47,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [HttpPost("upload", Name = "UploadDocument")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize]
+    [Authorize(Policy = Permission.Document.Manage)]
     [RequestSizeLimit(MaxUploadSizeBytes)]
     public async Task<IActionResult> UploadDocument([FromForm] UploadDocumentRequest request)
     {
@@ -55,8 +55,6 @@ public class DocumentController(IMediator mediator) : ControllerBase
         {
             return BadRequest(new ErrorResponse("No file provided"));
         }
-
-        var userId = User.GetUserId()!;
 
         var cmd = new UploadDocumentCommand
         {
@@ -67,8 +65,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
             ContentType = request.File.ContentType,
             FileSizeBytes = request.File.Length,
             Type = request.Type,
-            Description = request.Description,
-            UploadedById = userId.Value
+            Description = request.Description
         };
 
         var result = await mediator.Send(cmd);
@@ -79,20 +76,10 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [HttpGet("{documentId:guid}/download", Name = "DownloadDocument")]
     [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize]
+    [Authorize(Policy = Permission.Document.View)]
     public async Task<IActionResult> DownloadDocument(Guid documentId)
     {
-        var userId = User.GetUserId();
-        if (userId is null)
-        {
-            return BadRequest(new ErrorResponse("User not authenticated"));
-        }
-
-        var result = await mediator.Send(new DownloadDocumentQuery
-        {
-            DocumentId = documentId,
-            RequestedById = userId.Value
-        });
+        var result = await mediator.Send(new DownloadDocumentQuery { DocumentId = documentId });
 
         if (!result.IsSuccess || result.Value is null)
         {
@@ -106,17 +93,10 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [HttpPut("{documentId:guid}", Name = "UpdateDocument")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize]
+    [Authorize(Policy = Permission.Document.Manage)]
     public async Task<IActionResult> UpdateDocument(Guid documentId, [FromBody] UpdateDocumentCommand request)
     {
-        var userId = User.GetUserId();
-        if (userId is null)
-        {
-            return BadRequest(new ErrorResponse("User not authenticated"));
-        }
-
         request.DocumentId = documentId;
-        request.UpdatedById = userId.Value;
 
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
@@ -126,7 +106,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [HttpDelete("{documentId:guid}", Name = "DeleteDocument")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize]
+    [Authorize(Policy = Permission.Document.Manage)]
     public async Task<IActionResult> DeleteDocument(Guid documentId)
     {
         var result = await mediator.Send(new DeleteDocumentCommand
@@ -141,16 +121,10 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [HttpPost("pod", Name = "CaptureProofOfDelivery")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize]
+    [Authorize(Policy = Permission.Document.Manage)]
     [RequestSizeLimit(MaxUploadSizeBytes)] // 20MB limit for multiple photos
     public async Task<IActionResult> CaptureProofOfDelivery([FromForm] CaptureProofOfDeliveryRequest request)
     {
-        var userId = User.GetUserId();
-        if (userId is null)
-        {
-            return BadRequest(new ErrorResponse("User not authenticated"));
-        }
-
         var photos = new List<FileUpload>();
         if (request.Photos != null)
         {
@@ -178,8 +152,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
             RecipientName = request.RecipientName,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
-            Notes = request.Notes,
-            CapturedById = userId.Value
+            Notes = request.Notes
         };
 
         var result = await mediator.Send(cmd);
@@ -190,16 +163,10 @@ public class DocumentController(IMediator mediator) : ControllerBase
     [HttpPost("bol", Name = "CaptureBillOfLading")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize]
+    [Authorize(Policy = Permission.Document.Manage)]
     [RequestSizeLimit(MaxUploadSizeBytes)] // 20MB limit for multiple photos
     public async Task<IActionResult> CaptureBillOfLading([FromForm] CaptureProofOfDeliveryRequest request)
     {
-        var userId = User.GetUserId();
-        if (userId is null)
-        {
-            return BadRequest(new ErrorResponse("User not authenticated"));
-        }
-
         var photos = new List<FileUpload>();
         if (request.Photos != null)
         {
@@ -227,8 +194,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
             RecipientName = request.RecipientName,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
-            Notes = request.Notes,
-            CapturedById = userId.Value
+            Notes = request.Notes
         };
 
         var result = await mediator.Send(cmd);

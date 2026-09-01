@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, input, signal, viewChild, type OnInit } from "@angular/core";
+import { Component, computed, inject, input, signal, viewChild, type OnInit } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
+import { Permission, PermissionService } from "@logistics/shared";
 import {
   Api,
   getLoadById,
@@ -77,6 +78,12 @@ import {
 })
 export class LoadDetailsPage implements OnInit {
   private readonly api = inject(Api);
+  private readonly permissions = inject(PermissionService);
+
+  /** The documents endpoints answer an empty list without this, so hide the tab instead. */
+  protected readonly canViewDocuments = computed(() =>
+    this.permissions.hasPermission(Permission.Document.View),
+  );
   private readonly router = inject(Router);
 
   private readonly exceptionsContent = viewChild(LoadExceptionsContent);

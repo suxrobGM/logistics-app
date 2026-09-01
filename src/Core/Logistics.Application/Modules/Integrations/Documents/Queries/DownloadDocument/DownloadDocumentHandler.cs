@@ -1,15 +1,19 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Queries;
 
 internal sealed class DownloadDocumentHandler(
     ITenantUnitOfWork tenantUow,
-    IBlobStorageService blobStorageService)
+    IBlobStorageService blobStorageService,
+    IDocumentAccessService documentAccess,
+    ILogger<DownloadDocumentHandler> logger)
     : IAppRequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
 {
     public async Task<Result<DocumentDownloadDto>> Handle(DownloadDocumentQuery req, CancellationToken ct)
@@ -25,11 +29,10 @@ internal sealed class DownloadDocumentHandler(
             return Result<DocumentDownloadDto>.Fail("Document has been deleted");
         }
 
-        // Verify requester exists (audit)
-        var requester = await tenantUow.Repository<Employee>().GetByIdAsync(req.RequestedById, ct);
-        if (requester is null)
+        var caller = await documentAccess.ResolveCallerAsync(ct);
+        if (caller is null || !await documentAccess.CanAccessAsync(caller, document, ct))
         {
-            return Result<DocumentDownloadDto>.Fail($"Could not find employee with ID '{req.RequestedById}'");
+            return Result<DocumentDownloadDto>.Fail("Document not found or access denied.");
         }
 
         try
@@ -55,7 +58,8 @@ internal sealed class DownloadDocumentHandler(
         }
         catch (Exception ex)
         {
-            return Result<DocumentDownloadDto>.Fail($"Failed to download document: {ex.Message}");
+            logger.LogError(ex, "Failed to download document {DocumentId}", req.DocumentId);
+            return Result<DocumentDownloadDto>.Fail("Failed to download document.");
         }
     }
 }

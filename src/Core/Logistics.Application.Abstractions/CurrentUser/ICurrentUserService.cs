@@ -17,6 +17,12 @@ public interface ICurrentUserService
     /// <returns>The user's full name if available, "Unknown" otherwise.</returns>
     string GetUserName();
 
+    /// <summary>Gets the tenant claim from the current user.</summary>
+    Guid? GetTenantId();
+
+    /// <summary>Checks whether the current user holds any supplied role.</summary>
+    bool IsInRole(params string[] roles);
+
     /// <summary>
     /// Gets the IP address of the current request, or null when no HTTP context is present
     /// (e.g., background jobs, the DbMigrator).

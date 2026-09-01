@@ -1,4 +1,6 @@
+using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -18,12 +20,10 @@ public class FeaturesController(IMediator mediator) : ControllerBase
 {
     #region Default Features
 
-    /// <summary>
-    /// Gets the default feature configuration for new tenants.
-    /// </summary>
+    /// <summary>Gets the default feature configuration for new tenants.</summary>
     [HttpGet("defaults", Name = "GetDefaultFeatures")]
     [ProducesResponseType(typeof(IReadOnlyList<DefaultFeatureStatusDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Tenant.Manage)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetDefaultFeatures()
     {
         var result = await mediator.Send(new GetDefaultFeaturesQuery());
@@ -36,7 +36,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     [HttpPut("defaults", Name = "UpdateDefaultFeatures")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Tenant.Manage)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> UpdateDefaultFeatures([FromBody] UpdateDefaultFeaturesCommand request)
     {
         var result = await mediator.Send(request);
@@ -56,6 +56,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> GetTenantFeatures(Guid tenantId)
     {
+        User.EnsureOwnsTenant(tenantId);
         var result = await mediator.Send(new GetTenantFeaturesQuery { TenantId = tenantId });
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
@@ -69,6 +70,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> UpdateTenantFeatures(Guid tenantId, [FromBody] UpdateTenantFeaturesAdminCommand request)
     {
+        User.EnsureOwnsTenant(tenantId);
         request.TenantId = tenantId;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));

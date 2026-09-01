@@ -3,31 +3,19 @@ using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 
 internal sealed class UploadTenantLogoHandler(
     IMasterUnitOfWork masterUow,
-    IBlobStorageService blobStorageService)
+    IBlobStorageService blobStorageService,
+    ILogger<UploadTenantLogoHandler> logger)
     : IAppRequestHandler<UploadTenantLogoCommand, Result<string>>
 {
-    private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
-
     public async Task<Result<string>> Handle(UploadTenantLogoCommand req, CancellationToken ct)
     {
-        // Validate file is an image
-        if (!req.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
-        {
-            return Result<string>.Fail("File must be an image");
-        }
-
-        // Validate file size
-        if (req.FileSizeBytes > MaxFileSizeBytes)
-        {
-            return Result<string>.Fail("File size exceeds the maximum allowed (5 MB)");
-        }
-
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId, ct);
         if (tenant is null)
         {
@@ -49,8 +37,7 @@ internal sealed class UploadTenantLogoHandler(
                 }
             }
 
-            // Generate unique blob path
-            var extension = Path.GetExtension(req.FileName);
+            var extension = Path.GetExtension(req.FileName).ToLowerInvariant();
             var blobPath = $"tenants/{req.TenantId}/logo{extension}";
 
             await blobStorageService.UploadAsync(
@@ -69,7 +56,8 @@ internal sealed class UploadTenantLogoHandler(
         }
         catch (Exception ex)
         {
-            return Result<string>.Fail($"Failed to upload logo: {ex.Message}");
+            logger.LogError(ex, "Failed to upload logo for tenant {TenantId}", req.TenantId);
+            return Result<string>.Fail("Failed to upload logo.");
         }
     }
 }

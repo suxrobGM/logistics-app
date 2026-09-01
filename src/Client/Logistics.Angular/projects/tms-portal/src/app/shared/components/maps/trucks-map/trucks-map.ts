@@ -54,7 +54,7 @@ export class TrucksMap {
   }
 
   private connectToLiveTracking(): void {
-    void this.liveTrackingService.acquire(this.destroyRef);
+    void this.liveTrackingService.connect(this.destroyRef);
 
     this.liveTrackingService.geolocationReceived$
       .pipe(takeUntilDestroyed(this.destroyRef))

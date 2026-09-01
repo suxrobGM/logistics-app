@@ -239,20 +239,18 @@ public class AgentToolRegistryTests
 
     #region MCP surface
 
-    /// <summary>
-    /// An MCP call runs unattended from an API key, with nobody to attribute it to and no approval
-    /// step. Reads are fine; the writes that email a third party, move money or record a responsible
-    /// person are not, and this pins that set rather than leaving it to a forgotten flag.
-    /// </summary>
     [Fact]
-    public void GetMcpTools_WriteToolsAreAKnownSet()
+    public void GetMcpTools_PublishesNoWriteTools()
     {
         var writes = sut.GetMcpTools(EveryFeature)
             .Where(t => t.IsWrite)
             .Select(t => t.Name)
-            .OrderBy(n => n, StringComparer.Ordinal);
+            .ToList();
 
-        Assert.Equal(["assign_load_to_truck", "create_trip", "dispatch_trip"], writes);
+        Assert.Empty(writes);
+
+        var readTool = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "get_unassigned_loads");
+        Assert.DoesNotContain("takes effect immediately", readTool.Description);
     }
 
     [Fact]
@@ -292,21 +290,6 @@ public class AgentToolRegistryTests
         Assert.DoesNotContain("search_loadboard", names);
         Assert.DoesNotContain("get_container_status", names);
         Assert.Contains("get_unassigned_loads", names);
-    }
-
-    /// <summary>
-    /// MCP runs a write for real, so its warning replaces the agents' approval promise - carrying
-    /// the wrong one tells the client the opposite of what will happen.
-    /// </summary>
-    [Fact]
-    public void GetMcpTools_WriteToolsCarryTheImmediateExecutionWarning()
-    {
-        var createTrip = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "create_trip");
-        var readTool = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "get_unassigned_loads");
-
-        Assert.Contains("takes effect immediately", createTrip.Description);
-        Assert.DoesNotContain("dispatcher approval", createTrip.Description);
-        Assert.DoesNotContain("takes effect immediately", readTool.Description);
     }
 
     [Fact]

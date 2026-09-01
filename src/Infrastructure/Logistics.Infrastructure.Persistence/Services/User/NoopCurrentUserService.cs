@@ -11,13 +11,11 @@ public sealed class NoopCurrentUserService : ICurrentUserService
 
     public string? UserAgent => null;
 
-    public Guid? GetUserId()
-    {
-        return null;
-    }
+    public Guid? GetUserId() => null;
 
-    public string GetUserName()
-    {
-        return "System";
-    }
+    public string GetUserName() => "System";
+
+    public Guid? GetTenantId() => null;
+
+    public bool IsInRole(params string[] roles) => false;
 }

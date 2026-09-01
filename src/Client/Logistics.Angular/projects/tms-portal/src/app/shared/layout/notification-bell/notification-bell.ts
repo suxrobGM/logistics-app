@@ -45,7 +45,7 @@ export class NotificationBell implements OnInit {
 
   ngOnInit(): void {
     this.fetchNotifications();
-    void this.notificationService.acquire(this.destroyRef);
+    void this.notificationService.connect(this.destroyRef);
   }
 
   protected togglePopover(event: Event): void {

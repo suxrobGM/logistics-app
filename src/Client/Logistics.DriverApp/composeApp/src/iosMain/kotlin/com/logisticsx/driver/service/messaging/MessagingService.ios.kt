@@ -57,7 +57,6 @@ actual class MessagingService(
         try {
             val token = preferencesManager.getAccessToken() ?: ""
             val tenantId = preferencesManager.getTenantId() ?: ""
-            val userId = preferencesManager.getUserId() ?: ""
 
             val wsClient = SignalRWebSocketClient(
                 hubUrl = hubUrl,
@@ -69,14 +68,6 @@ actual class MessagingService(
 
             client = wsClient
             wsClient.connect()
-
-            // Register tenant and user before marking as connected
-            if (tenantId.isNotEmpty()) {
-                wsClient.send("RegisterTenant", JsonPrimitive(tenantId))
-            }
-            if (userId.isNotEmpty()) {
-                wsClient.send("RegisterUser", JsonPrimitive(userId))
-            }
 
             _connectionState.value = MessagingConnectionState.CONNECTED
             Logger.d("MessagingService iOS: Connected successfully")

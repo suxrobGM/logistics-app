@@ -53,7 +53,7 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
 
             if (req.Status.HasValue)
             {
-                load.UpdateStatus(req.Status.Value, true);
+                load.UpdateStatus(req.Status.Value, force: false);
             }
 
             // Raise LoadUpdatedEvent for existing truck (if not changing truck)

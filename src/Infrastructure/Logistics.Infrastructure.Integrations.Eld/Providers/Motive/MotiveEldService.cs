@@ -127,17 +127,10 @@ internal class MotiveEldService(
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
     {
-        if (!string.IsNullOrEmpty(webhookSecret))
+        if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
         {
-            if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
-            {
-                logger.LogWarning("Rejected Motive webhook with invalid signature");
-                return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
-            }
-        }
-        else
-        {
-            logger.LogWarning("Motive webhook processed without signature verification - no webhook secret configured");
+            logger.LogWarning("Rejected Motive webhook with invalid or unverifiable signature");
+            return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
         }
 
         try

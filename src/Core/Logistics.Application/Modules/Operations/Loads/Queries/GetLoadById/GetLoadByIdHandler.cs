@@ -1,3 +1,6 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -5,9 +8,26 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
-internal sealed class GetLoadByIdHandler(ITenantUnitOfWork tenantUow)
-    : GetTenantEntityByIdHandler<GetLoadByIdQuery, Load, LoadDto>(tenantUow)
+internal sealed class GetLoadByIdHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
+    : IAppRequestHandler<GetLoadByIdQuery, Result<LoadDto>>
 {
-    // Single row, so there is no N+1 to batch away - the nav properties lazy-load at most twice.
-    protected override LoadDto MapToDto(Load entity) => entity.ToDto(LoadIntermodalLookup.Empty);
+    public async Task<Result<LoadDto>> Handle(GetLoadByIdQuery req, CancellationToken ct)
+    {
+        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.Id, ct);
+
+        if (load is null || !CanRead(load))
+        {
+            return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
+        }
+
+        return Result<LoadDto>.Ok(load.ToDto(LoadIntermodalLookup.Empty));
+    }
+
+    private bool CanRead(Load load)
+    {
+        return !currentUserService.IsTenantDriver() ||
+               (currentUserService.GetUserId() is { } callerId && load.IsDrivenBy(callerId));
+    }
 }

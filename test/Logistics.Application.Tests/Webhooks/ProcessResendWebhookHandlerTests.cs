@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Modules.Integrations.Negotiation.Commands;
 using Logistics.Application.Modules.Integrations.Webhooks.Commands;
+using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -21,8 +22,7 @@ public class ProcessResendWebhookHandlerTests
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IMediator mediator = Substitute.For<IMediator>();
 
-    private readonly IMasterRepository<ProcessedWebhookEvent, Guid> ledgerRepo =
-        Substitute.For<IMasterRepository<ProcessedWebhookEvent, Guid>>();
+    private readonly IWebhookEventTracker webhookEvents = Substitute.For<IWebhookEventTracker>();
     private readonly IMasterRepository<InboundEmailRoute, Guid> routeRepo =
         Substitute.For<IMasterRepository<InboundEmailRoute, Guid>>();
 
@@ -31,20 +31,19 @@ public class ProcessResendWebhookHandlerTests
 
     public ProcessResendWebhookHandlerTests()
     {
-        masterUow.Repository<ProcessedWebhookEvent>().Returns(ledgerRepo);
         masterUow.Repository<InboundEmailRoute>().Returns(routeRepo);
 
         verifier.Verify(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>())
             .Returns(true);
 
-        SetupLedger(null);
+        SetupAlreadyHandled(false);
         SetupRoute(new InboundEmailRoute { ThreadToken = Token, TenantId = tenantId });
 
         mediator.Send(Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Ok());
 
         sut = new ProcessResendWebhookHandler(
-            verifier, masterUow, tenantUow, mediator,
+            verifier, masterUow, tenantUow, mediator, webhookEvents,
             NullLogger<ProcessResendWebhookHandler>.Instance);
     }
 
@@ -74,9 +73,9 @@ public class ProcessResendWebhookHandlerTests
         SvixSignature = "v1,sig"
     };
 
-    private void SetupLedger(ProcessedWebhookEvent? existing) =>
-        ledgerRepo.GetAsync(Arg.Any<Expression<Func<ProcessedWebhookEvent, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(existing);
+    private void SetupAlreadyHandled(bool handled) =>
+        webhookEvents.WasAlreadyHandledAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(handled);
 
     private void SetupRoute(InboundEmailRoute? route) =>
         routeRepo.GetAsync(Arg.Any<Expression<Func<InboundEmailRoute, bool>>>(), Arg.Any<CancellationToken>())
@@ -121,13 +120,13 @@ public class ProcessResendWebhookHandlerTests
     [Fact]
     public async Task Handle_Replay_IsAcceptedAndDoesNothing()
     {
-        SetupLedger(new ProcessedWebhookEvent { Provider = "Resend", EventKey = "email-1" });
+        SetupAlreadyHandled(true);
 
         var result = await sut.Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
-        await ledgerRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await webhookEvents.DidNotReceiveWithAnyArgs().MarkHandledAsync(default!, default!, default);
     }
 
     [Fact]
@@ -195,7 +194,7 @@ public class ProcessResendWebhookHandlerTests
         // No rejection code: the endpoint must answer 500 so the provider retries the delivery.
         Assert.False(result.IsSuccess);
         Assert.Null(result.ErrorCode);
-        await ledgerRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await webhookEvents.DidNotReceiveWithAnyArgs().MarkHandledAsync(default!, default!, default);
     }
 
     [Fact]
@@ -211,9 +210,9 @@ public class ProcessResendWebhookHandlerTests
                 c.ProviderEmailId == "email-1" &&
                 c.From == "broker@example.com"),
             Arg.Any<CancellationToken>());
-        await ledgerRepo.Received(1).AddAsync(
-            Arg.Is<ProcessedWebhookEvent>(e => e.Provider == "Resend" && e.EventKey == "email-1"),
+        await webhookEvents.Received(1).MarkHandledAsync(
+            "Resend",
+            "email-1",
             Arg.Any<CancellationToken>());
-        await masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

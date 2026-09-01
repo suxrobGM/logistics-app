@@ -38,11 +38,11 @@ export class ChatService extends BaseHubConnection {
   public readonly typingUsers = signal<Map<string, Set<string>>>(new Map());
 
   readonly messageReceived$ = this.event<MessageDto>("ReceiveMessage");
-  readonly messageRead$ = this.mappedEvent(
+  readonly messageRead$ = this.eventWithArgs(
     "MessageRead",
     (messageId: string, readBy: string): MessageReadEvent => ({ messageId, readBy }),
   );
-  readonly typingIndicator$ = this.mappedEvent(
+  readonly typingIndicator$ = this.eventWithArgs(
     "TypingIndicator",
     (conversationId: string, userId: string, isTyping: boolean): TypingIndicatorDto => ({
       conversationId,

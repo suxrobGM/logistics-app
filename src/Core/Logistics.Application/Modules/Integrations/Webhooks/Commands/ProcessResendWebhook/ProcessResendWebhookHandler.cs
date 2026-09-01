@@ -3,6 +3,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Modules.Integrations.Negotiation;
 using Logistics.Application.Modules.Integrations.Negotiation.Commands;
+using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -17,6 +18,7 @@ internal sealed class ProcessResendWebhookHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     IMediator mediator,
+    IWebhookEventTracker webhookEvents,
     ILogger<ProcessResendWebhookHandler> logger)
     : IAppRequestHandler<ProcessResendWebhookCommand, Result>
 {
@@ -50,9 +52,7 @@ internal sealed class ProcessResendWebhookHandler(
         }
 
         var eventKey = payload.Data?.EmailId ?? req.SvixId!;
-        var ledger = masterUow.Repository<ProcessedWebhookEvent>();
-
-        if (await ledger.GetAsync(e => e.Provider == Provider && e.EventKey == eventKey, ct) is not null)
+        if (await webhookEvents.WasAlreadyHandledAsync(Provider, eventKey, ct))
         {
             logger.LogInformation("Duplicate Resend webhook '{EventKey}' ignored", eventKey);
             return Result.Ok();
@@ -94,7 +94,7 @@ internal sealed class ProcessResendWebhookHandler(
             MessageId = payload.Data?.MessageId
         }, ct);
 
-        // Ledger last: a transient failure must stay retryable, and a recorded key would kill the retry.
+        // Record last: a transient failure must stay retryable, and a recorded key would kill the retry.
         if (!inner.IsSuccess)
         {
             logger.LogWarning("Resend webhook {EventKey} could not be processed yet: {Error}",
@@ -102,8 +102,7 @@ internal sealed class ProcessResendWebhookHandler(
             return Result.Fail(inner.Error ?? $"Resend webhook {eventKey} could not be processed yet");
         }
 
-        await ledger.AddAsync(new ProcessedWebhookEvent { Provider = Provider, EventKey = eventKey }, ct);
-        await masterUow.SaveChangesAsync(ct);
+        await webhookEvents.MarkHandledAsync(Provider, eventKey, ct);
 
         return Result.Ok();
     }

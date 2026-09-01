@@ -1,5 +1,7 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -14,6 +16,7 @@ internal sealed class RenewSubscriptionHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     IStripeSubscriptionService stripeSubscriptionService,
+    ICurrentUserService currentUserService,
     ILogger<RenewSubscriptionHandler> logger) : IAppRequestHandler<RenewSubscriptionCommand, Result>
 {
     public async Task<Result> Handle(
@@ -25,6 +28,8 @@ internal sealed class RenewSubscriptionHandler(
         {
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
+
+        currentUserService.EnsureOwnsTenant(subscription.TenantId, "subscription");
 
         await tenantUow.SetCurrentTenantByIdAsync(subscription.TenantId);
         var truckCount = await tenantUow.Repository<Truck>().CountAsync(ct: ct);
@@ -54,7 +59,7 @@ internal sealed class RenewSubscriptionHandler(
                 "resource_missing" => "No payment method on file. Please add a payment method in Manage Billing before resuming.",
                 _ when ex.Message.Contains("payment source or default payment method") =>
                     "No payment method on file. Please add a payment method in Manage Billing before resuming.",
-                _ => $"Failed to resume subscription: {ex.Message}"
+                _ => "Failed to resume subscription. Please try again."
             };
 
             return Result.Fail(message);

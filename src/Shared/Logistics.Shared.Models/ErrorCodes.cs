@@ -44,6 +44,9 @@ public static class ErrorCodes
     /// </summary>
     public const string WebhookRejected = "WEBHOOK_REJECTED";
 
+    /// <summary>The load already has an invoice.</summary>
+    public const string LoadInvoiceExists = "LOAD_INVOICE_EXISTS";
+
     /// <summary>
     ///     Weekly AI budget spent and the owner opted to pause AI instead of billing overage
     ///     (TenantSettings.BlockAIOverage). Self-imposed - deliberately not an upgrade-prompt code.

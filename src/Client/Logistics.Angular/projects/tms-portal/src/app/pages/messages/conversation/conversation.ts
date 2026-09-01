@@ -68,7 +68,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    await this.messagingService.acquire(this.destroyRef);
+    await this.messagingService.connect(this.destroyRef);
 
     const userData = this.authService.getUserData();
     if (userData) {

@@ -63,7 +63,7 @@ export class NegotiationDetails implements OnInit {
 
   ngOnInit(): void {
     void this.load();
-    void this.hub.acquireDispatchBoard(this.destroyRef);
+    void this.hub.connect(this.destroyRef);
 
     // The broadcast carries no messages, so a status change refreshes the timeline from the API.
     this.hub.negotiationReceived$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((updated) => {

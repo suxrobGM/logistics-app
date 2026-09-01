@@ -10,10 +10,6 @@ internal sealed class UpdateDocumentValidator : AbstractValidator<UpdateDocument
             .NotEmpty()
             .WithMessage("Document ID is required");
 
-        RuleFor(x => x.UpdatedById)
-            .NotEmpty()
-            .WithMessage("Updater ID is required");
-
         RuleFor(x => x.Type)
             .IsInEnum()
             .When(x => x.Type.HasValue)

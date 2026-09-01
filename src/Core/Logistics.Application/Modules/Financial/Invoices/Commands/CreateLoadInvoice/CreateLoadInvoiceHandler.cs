@@ -23,6 +23,15 @@ internal sealed class CreateLoadInvoiceHandler(
             return Result<Guid>.Fail($"Could not find a load with ID '{req.LoadId}'");
         }
 
+        var existingInvoice = await tenantUow.Repository<LoadInvoice>()
+            .GetAsync(i => i.LoadId == req.LoadId, ct);
+        if (existingInvoice is not null)
+        {
+            return Result<Guid>.Fail(
+                $"An invoice already exists for load '{load.Number}'.",
+                ErrorCodes.LoadInvoiceExists);
+        }
+
         var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId, ct);
 
         if (customer is null)

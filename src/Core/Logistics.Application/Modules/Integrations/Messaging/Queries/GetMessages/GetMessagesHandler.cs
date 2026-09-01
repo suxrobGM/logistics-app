@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -7,7 +8,9 @@ using Logistics.Shared.Models.Messaging;
 
 namespace Logistics.Application.Modules.Integrations.Messaging.Queries;
 
-internal sealed class GetMessagesHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetMessagesHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
     : IAppRequestHandler<GetMessagesQuery, Result<MessageDto[]>>
 {
     public async Task<Result<MessageDto[]>> Handle(GetMessagesQuery req, CancellationToken ct)
@@ -19,6 +22,19 @@ internal sealed class GetMessagesHandler(ITenantUnitOfWork tenantUow)
         if (conversation is null)
         {
             return Result<MessageDto[]>.Fail($"Conversation with ID '{req.ConversationId}' not found");
+        }
+
+        if (!conversation.IsTenantChat)
+        {
+            var callerId = currentUserService.GetUserId();
+            var isParticipant = callerId is not null && await tenantUow.Repository<ConversationParticipant>()
+                .GetAsync(p => p.ConversationId == req.ConversationId && p.EmployeeId == callerId.Value, ct)
+                is not null;
+
+            if (!isParticipant)
+            {
+                return Result<MessageDto[]>.Fail("Conversation not found or access denied.");
+            }
         }
 
         var messages = await tenantUow.Repository<Message>()

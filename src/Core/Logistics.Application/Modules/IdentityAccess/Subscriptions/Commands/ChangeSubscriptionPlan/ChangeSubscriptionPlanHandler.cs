@@ -1,5 +1,7 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -13,6 +15,7 @@ internal sealed class ChangeSubscriptionPlanHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     IStripeSubscriptionService stripeSubscriptionService,
+    ICurrentUserService currentUserService,
     ILogger<ChangeSubscriptionPlanHandler> logger) : IAppRequestHandler<ChangeSubscriptionPlanCommand, Result>
 {
     public async Task<Result> Handle(
@@ -24,6 +27,8 @@ internal sealed class ChangeSubscriptionPlanHandler(
         {
             return Result.Fail($"Could not find a subscription with ID '{req.SubscriptionId}'");
         }
+
+        currentUserService.EnsureOwnsTenant(subscription.TenantId, "subscription");
 
         if (subscription.Status is not (SubscriptionStatus.Active or SubscriptionStatus.Trialing))
         {

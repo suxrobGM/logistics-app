@@ -23,7 +23,7 @@ internal sealed class DispatchTripTool(IMediator mediator)
     {
         RequiredPermission = Permission.Dispatch.Manage,
         DecisionType = AgentDecisionType.DispatchTrip,
-        Surfaces = AgentSurfaces.All
+        Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)

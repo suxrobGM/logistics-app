@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.Compliance.Privacy.Commands;
 using Logistics.Application.Modules.Compliance.Privacy.Queries;
+using Logistics.Shared.Identity.Claims;
 
 namespace Logistics.API.Controllers;
 

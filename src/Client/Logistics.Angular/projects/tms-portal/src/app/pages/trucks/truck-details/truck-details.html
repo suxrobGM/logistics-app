@@ -37,9 +37,11 @@
       </ui-surface>
     </ui-grid>
 
-    <ui-grid [size]="{ xs: 12, lg: 6 }">
-      <app-document-status-overview [documents]="documents()" />
-    </ui-grid>
+    @if (canViewDocuments()) {
+      <ui-grid [size]="{ xs: 12, lg: 6 }">
+        <app-document-status-overview [documents]="documents()" />
+      </ui-grid>
+    }
   </ui-grid>
 
   <ui-card>
@@ -56,10 +58,12 @@
             <ui-count-badge [value]="truck()!.loads!.length" severity="info" class="ml-1" />
           }
         </ui-tab>
-        <ui-tab value="2">
-          <ui-icon name="folder" class="mr-2" />
-          Documents
-        </ui-tab>
+        @if (canViewDocuments()) {
+          <ui-tab value="2">
+            <ui-icon name="folder" class="mr-2" />
+            Documents
+          </ui-tab>
+        }
         <ui-tab value="3">
           <ui-icon name="chart-line" class="mr-2" />
           Analytics
@@ -234,11 +238,13 @@
         </ui-tab-panel>
 
         <!-- Documents Tab -->
-        <ui-tab-panel value="2">
-          <div class="pt-4">
-            <app-document-manager [truckId]="id()" [types]="truckDocTypes" />
-          </div>
-        </ui-tab-panel>
+        @if (canViewDocuments()) {
+          <ui-tab-panel value="2">
+            <div class="pt-4">
+              <app-document-manager [truckId]="id()" [types]="truckDocTypes" />
+            </div>
+          </ui-tab-panel>
+        }
 
         <!-- Analytics Tab -->
         <ui-tab-panel value="3">

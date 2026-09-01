@@ -8,5 +8,4 @@ public class UpdateDocumentCommand : ICommand
     public Guid DocumentId { get; set; }
     public DocumentType? Type { get; set; }
     public string? Description { get; set; }
-    public Guid UpdatedById { get; set; }
 }

@@ -49,14 +49,16 @@
           <ui-icon name="info" class="mr-2" />
           Details
         </ui-tab>
-        <ui-tab value="1">
-          <ui-icon name="folder" class="mr-2" />
-          Documents
-        </ui-tab>
-        <ui-tab value="2">
-          <ui-icon name="file-check" class="mr-2" />
-          POD / BOL
-        </ui-tab>
+        @if (canViewDocuments()) {
+          <ui-tab value="1">
+            <ui-icon name="folder" class="mr-2" />
+            Documents
+          </ui-tab>
+          <ui-tab value="2">
+            <ui-icon name="file-check" class="mr-2" />
+            POD / BOL
+          </ui-tab>
+        }
         <ui-tab value="3">
           <ui-icon name="triangle-alert" class="mr-2" />
           Exceptions
@@ -250,19 +252,20 @@
           </ui-detail-section>
         </ui-tab-panel>
 
-        <!-- Documents Tab -->
-        <ui-tab-panel value="1">
-          <div class="pt-4">
-            <app-document-manager [loadId]="id()" [types]="loadDocTypes" />
-          </div>
-        </ui-tab-panel>
+        <!-- Documents and POD/BOL Tabs -->
+        @if (canViewDocuments()) {
+          <ui-tab-panel value="1">
+            <div class="pt-4">
+              <app-document-manager [loadId]="id()" [types]="loadDocTypes" />
+            </div>
+          </ui-tab-panel>
 
-        <!-- POD/BOL Tab -->
-        <ui-tab-panel value="2">
-          <div class="pt-4">
-            <app-load-pod-content [loadId]="id()" />
-          </div>
-        </ui-tab-panel>
+          <ui-tab-panel value="2">
+            <div class="pt-4">
+              <app-load-pod-content [loadId]="id()" />
+            </div>
+          </ui-tab-panel>
+        }
 
         <!-- Exceptions Tab -->
         <ui-tab-panel value="3">

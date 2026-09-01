@@ -9,8 +9,6 @@ namespace Logistics.Infrastructure.Communications.SignalR.Services;
 internal sealed class SignalRAIDispatchBroadcastService(
     IHubContext<AIDispatchHub, IAIDispatchHubClient> hubContext) : IAIDispatchBroadcastService
 {
-    private const string DispatchBoardGroupPrefix = "dispatch-board:";
-
     public Task BroadcastMessageAsync(Guid tenantId, AgentMessageDto message) =>
         Group(tenantId).ReceiveDispatchMessage(message);
 
@@ -24,5 +22,5 @@ internal sealed class SignalRAIDispatchBroadcastService(
         Group(tenantId).ReceiveNegotiationUpdate(negotiation);
 
     private IAIDispatchHubClient Group(Guid tenantId) =>
-        hubContext.Clients.Group($"{DispatchBoardGroupPrefix}{tenantId}");
+        hubContext.Clients.Group(AIDispatchHub.GroupName(tenantId));
 }

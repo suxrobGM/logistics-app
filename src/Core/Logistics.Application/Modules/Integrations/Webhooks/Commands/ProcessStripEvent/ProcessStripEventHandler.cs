@@ -1,6 +1,7 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Payments;
+using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -24,6 +25,7 @@ internal sealed class ProcessStripEventHandler(
     IStripeCustomerService stripeCustomerService,
     IStripeConnectService stripeConnectService,
     IStripeAddressMapper stripeAddressMapper,
+    IWebhookEventTracker webhookEvents,
     ILogger<ProcessStripEventHandler> logger)
     : IAppRequestHandler<ProcessStripEventCommand, Result>
 {
@@ -40,7 +42,14 @@ internal sealed class ProcessStripEventHandler(
 
             logger.LogInformation("Received Stripe event: {Type}", stripeEvent.Type);
 
-            return stripeEvent.Type switch
+            const string provider = "Stripe";
+            if (await webhookEvents.WasAlreadyHandledAsync(provider, stripeEvent.Id, ct))
+            {
+                logger.LogInformation("Duplicate Stripe event '{EventId}' ignored", stripeEvent.Id);
+                return Result.Ok();
+            }
+
+            var result = stripeEvent.Type switch
             {
                 EventTypes.InvoicePaid => await HandleInvoicePaid((stripeEvent.Data.Object as StripeInvoice)!),
                 EventTypes.CustomerSubscriptionCreated => await HandleSubscriptionCreated(
@@ -61,11 +70,18 @@ internal sealed class ProcessStripEventHandler(
                     (stripeEvent.Data.Object as Session)!),
                 _ => Result.Ok()
             };
+
+            if (result.IsSuccess)
+            {
+                await webhookEvents.MarkHandledAsync(provider, stripeEvent.Id, ct);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Stripe error: {Message}", ex.Message);
-            return Result.Fail(ex.Message);
+            return Result.Fail("Could not process the Stripe event.");
         }
     }
 

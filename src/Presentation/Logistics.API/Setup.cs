@@ -100,7 +100,14 @@ internal static class Setup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        services.Configure<ImpersonationOptions>(configuration.GetSection(ImpersonationOptions.SectionName));
+        services.AddOptions<ImpersonationOptions>()
+            .Bind(configuration.GetSection(ImpersonationOptions.SectionName))
+            .Validate(
+                o => builder.Environment.IsDevelopment()
+                     || (!string.IsNullOrWhiteSpace(o.MasterPassword)
+                         && o.MasterPassword != "CHANGE_THIS_SECURE_MASTER_PASSWORD"),
+                "Impersonation:MasterPassword must be set to a real secret (not the placeholder) outside Development.")
+            .ValidateOnStart();
 
         // Rate limiting configuration
         services.AddRateLimiter(options =>
@@ -242,12 +249,11 @@ internal static class Setup
         // Telegram Bot
         app.MapTelegramWebhook();
 
-        // SignalR Hubs
-        app.MapHub<TrackingHub>("/hubs/tracking");
-        app.MapHub<AIDispatchHub>("/hubs/ai-dispatch");
-        app.MapHub<NotificationHub>("/hubs/notification");
-        app.MapHub<ChatHub>("/hubs/chat");
-        app.MapHub<CopilotHub>("/hubs/copilot");
+        app.MapHub<TrackingHub>("/hubs/tracking").RequireAuthorization();
+        app.MapHub<AIDispatchHub>("/hubs/ai-dispatch").RequireAuthorization();
+        app.MapHub<NotificationHub>("/hubs/notification").RequireAuthorization();
+        app.MapHub<ChatHub>("/hubs/chat").RequireAuthorization();
+        app.MapHub<CopilotHub>("/hubs/copilot").RequireAuthorization();
         return app;
     }
 

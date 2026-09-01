@@ -4,47 +4,21 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
-/// <summary>
-///     SignalR hub for real-time messaging between dispatchers and drivers.
-/// </summary>
-public class ChatHub(ChatHubContext hubContext) : Hub<IChatHubClient>
+/// <summary>Provides tenant-scoped messaging between dispatchers and drivers.</summary>
+public class ChatHub(ChatHubContext hubContext) : TenantHub<IChatHubClient>
 {
-    public override Task OnConnectedAsync()
+    protected override Task OnTenantConnectedAsync(Guid tenantId, Guid userId)
     {
         hubContext.AddClient(Context.ConnectionId);
-        return base.OnConnectedAsync();
+        hubContext.SetTenantId(Context.ConnectionId, tenantId.ToString());
+        hubContext.SetUserId(Context.ConnectionId, userId);
+        return Task.CompletedTask;
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
         hubContext.RemoveClient(Context.ConnectionId);
         return base.OnDisconnectedAsync(exception);
-    }
-
-    /// <summary>
-    ///     Register the connection with a tenant for multi-tenant message routing.
-    /// </summary>
-    public async Task RegisterTenant(string tenantId)
-    {
-        hubContext.SetTenantId(Context.ConnectionId, tenantId);
-        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
-    }
-
-    /// <summary>
-    ///     Unregister from a tenant group.
-    /// </summary>
-    public async Task UnregisterTenant(string tenantId)
-    {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
-    }
-
-    /// <summary>
-    ///     Register the current user ID for the connection.
-    /// </summary>
-    public Task RegisterUser(Guid userId)
-    {
-        hubContext.SetUserId(Context.ConnectionId, userId);
-        return Task.CompletedTask;
     }
 
     /// <summary>

@@ -1,62 +1,64 @@
 <div class="document-manager mb-4">
-  <!-- Upload Section -->
-  <ui-card class="border-default mb-4 border p-2">
-    <ng-template #header>
-      <div class="flex items-center gap-2">
-        <ui-icon name="upload" class="text-foreground" />
-        <h3 class="m-0 text-lg font-semibold">Upload Documents</h3>
-      </div>
-    </ng-template>
-
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      @for (type of types(); track type) {
-        <div
-          class="group upload-card hover:border-primary border-default rounded-lg border p-4 transition-all duration-200 hover:shadow-md"
-        >
-          <div class="flex flex-col items-center gap-3">
-            <div
-              class="upload-icon group bg-hover flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200 hover:shadow-md"
-            >
-              <ui-icon name="file" class="text-subtle-foreground" />
-            </div>
-            <div class="text-center">
-              <h4 class="mb-1 text-sm font-medium">{{ getTypeLabel(type) }}</h4>
-              <p class="text-muted-foreground mb-4 text-xs">Max 20MB</p>
-            </div>
-            <div class="w-full">
-              <input
-                type="file"
-                class="hidden"
-                #fileInput
-                (change)="onFileChange($event, type)"
-                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
-              />
-              <ui-button
-                appearance="outlined"
-                size="sm"
-                block
-                label="Choose File"
-                icon="plus"
-                (click)="fileInput.click()"
-              />
-            </div>
-
-            @if (uploadProgress()[type] > 0) {
-              <div class="w-full">
-                <div class="bg-active h-2 w-full rounded-full">
-                  <div
-                    class="bg-primary h-2 rounded-full transition-all duration-300"
-                    [style.width.%]="uploadProgress()[type]"
-                  ></div>
-                </div>
-                <p class="mt-1 text-center text-xs">{{ uploadProgress()[type] }}%</p>
-              </div>
-            }
-          </div>
+  @if (canManage()) {
+    <!-- Upload Section -->
+    <ui-card class="border-default mb-4 border p-2">
+      <ng-template #header>
+        <div class="flex items-center gap-2">
+          <ui-icon name="upload" class="text-foreground" />
+          <h3 class="m-0 text-lg font-semibold">Upload Documents</h3>
         </div>
-      }
-    </div>
-  </ui-card>
+      </ng-template>
+
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        @for (type of types(); track type) {
+          <div
+            class="group upload-card hover:border-primary border-default rounded-lg border p-4 transition-all duration-200 hover:shadow-md"
+          >
+            <div class="flex flex-col items-center gap-3">
+              <div
+                class="upload-icon group bg-hover flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200 hover:shadow-md"
+              >
+                <ui-icon name="file" class="text-subtle-foreground" />
+              </div>
+              <div class="text-center">
+                <h4 class="mb-1 text-sm font-medium">{{ getTypeLabel(type) }}</h4>
+                <p class="text-muted-foreground mb-4 text-xs">Max 20MB</p>
+              </div>
+              <div class="w-full">
+                <input
+                  type="file"
+                  class="hidden"
+                  #fileInput
+                  (change)="onFileChange($event, type)"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
+                />
+                <ui-button
+                  appearance="outlined"
+                  size="sm"
+                  block
+                  label="Choose File"
+                  icon="plus"
+                  (click)="fileInput.click()"
+                />
+              </div>
+
+              @if (uploadProgress()[type] > 0) {
+                <div class="w-full">
+                  <div class="bg-active h-2 w-full rounded-full">
+                    <div
+                      class="bg-primary h-2 rounded-full transition-all duration-300"
+                      [style.width.%]="uploadProgress()[type]"
+                    ></div>
+                  </div>
+                  <p class="mt-1 text-center text-xs">{{ uploadProgress()[type] }}%</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </ui-card>
+  }
 
   <!-- Documents List -->
   <ui-card class="border-default border p-2">
@@ -135,15 +137,17 @@
                   (click)="download(doc)"
                   uiTooltip="Download"
                 />
-                <ui-button
-                  intent="danger"
-                  appearance="text"
-                  size="sm"
-                  ariaLabel="Delete"
-                  icon="trash"
-                  (click)="delete(doc)"
-                  uiTooltip="Delete"
-                />
+                @if (canManage()) {
+                  <ui-button
+                    intent="danger"
+                    appearance="text"
+                    size="sm"
+                    ariaLabel="Delete"
+                    icon="trash"
+                    (click)="delete(doc)"
+                    uiTooltip="Delete"
+                  />
+                }
               </div>
             </td>
           </tr>
@@ -156,7 +160,9 @@
                 <ui-icon name="folder-open" size="inherit" class="text-4xl" />
                 <div>
                   <p class="font-medium">No documents found</p>
-                  <p class="text-sm">Upload documents using the form above</p>
+                  @if (canManage()) {
+                    <p class="text-sm">Upload documents using the form above</p>
+                  }
                 </div>
               </div>
             </td>

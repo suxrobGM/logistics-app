@@ -13,7 +13,6 @@ internal sealed class SignalRTripTrackingService(IHubContext<TrackingHub, ITrack
     : ITripTrackingService
 {
     private const string TripGroupPrefix = "trip:";
-    private const string DispatchBoardGroupPrefix = "dispatch-board:";
 
     public async Task BroadcastTripStatusUpdateAsync(Guid tenantId, TripStatusUpdateDto update)
     {
@@ -38,7 +37,7 @@ internal sealed class SignalRTripTrackingService(IHubContext<TrackingHub, ITrack
     public async Task BroadcastDispatchBoardUpdateAsync(Guid tenantId, DispatchBoardUpdateDto update)
     {
         // Broadcast to dispatch board subscribers
-        var dispatchBoardGroup = $"{DispatchBoardGroupPrefix}{tenantId}";
+        var dispatchBoardGroup = AIDispatchHub.GroupName(tenantId);
         await hubContext.Clients.Group(dispatchBoardGroup).ReceiveDispatchBoardUpdate(update);
     }
 

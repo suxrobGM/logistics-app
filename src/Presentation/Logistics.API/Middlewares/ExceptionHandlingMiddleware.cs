@@ -1,5 +1,6 @@
 using System.Text.Json;
 using FluentValidation;
+using Logistics.Domain.Exceptions;
 using Logistics.Shared.Models;
 using Serilog;
 
@@ -76,25 +77,24 @@ public class ExceptionHandlingMiddleware(
         return exception switch
         {
             ValidationException => StatusCodes.Status422UnprocessableEntity,
+            TenantAccessDeniedException => StatusCodes.Status403Forbidden,
             _ => StatusCodes.Status500InternalServerError
         };
     }
 
     private static ErrorResponse CreateErrorResponse(Exception exception)
     {
-        if (exception is ValidationException validationException)
+        return exception switch
         {
-            var details = validationException.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(e => e.ErrorMessage).ToArray()
-                );
-
-            return new ErrorResponse("Validation failed", Details: details);
-        }
-
-        return new ErrorResponse(exception.Message);
+            ValidationException validationException => new ErrorResponse(
+                "Validation failed",
+                Details: validationException.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())),
+            TenantAccessDeniedException => new ErrorResponse(exception.Message),
+            _ => new ErrorResponse(
+                "An unexpected error occurred. Please try again, or contact support if it persists.")
+        };
     }
 }
 

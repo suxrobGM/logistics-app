@@ -128,17 +128,10 @@ internal class SamsaraEldService(
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
     {
-        if (!string.IsNullOrEmpty(webhookSecret))
+        if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
         {
-            if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
-            {
-                logger.LogWarning("Rejected Samsara webhook with invalid signature");
-                return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
-            }
-        }
-        else
-        {
-            logger.LogWarning("Samsara webhook processed without signature verification - no webhook secret configured");
+            logger.LogWarning("Rejected Samsara webhook with invalid or unverifiable signature");
+            return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
         }
 
         try

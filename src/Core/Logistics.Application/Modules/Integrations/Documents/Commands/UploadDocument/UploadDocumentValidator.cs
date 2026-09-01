@@ -49,10 +49,6 @@ internal sealed class UploadDocumentValidator : AbstractValidator<UploadDocument
             .IsInEnum()
             .WithMessage("Invalid document type");
 
-        RuleFor(x => x.UploadedById)
-            .NotEmpty()
-            .WithMessage("Uploader ID is required");
-
         RuleFor(x => x.Description)
             .MaximumLength(1000)
             .WithMessage("Description cannot exceed 1000 characters");

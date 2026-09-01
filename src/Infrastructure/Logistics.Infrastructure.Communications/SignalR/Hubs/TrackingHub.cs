@@ -1,17 +1,19 @@
 using Logistics.Application.Abstractions.Realtime;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
-using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
+/// <summary>Streams and records tenant-scoped truck geolocation.</summary>
 public class TrackingHub(
     ITruckGeolocationUpdater geolocationUpdater,
-    TrackingHubContext hubContext) : Hub<ITrackingHubClient>
+    TrackingHubContext hubContext) : TenantHub<ITrackingHubClient>
 {
     private const string TripGroupPrefix = "trip:";
 
-    public override Task OnConnectedAsync()
+    protected override Task OnTenantConnectedAsync(Guid tenantId, Guid userId)
     {
         hubContext.AddClient(Context.ConnectionId, null);
         return Task.CompletedTask;
@@ -29,49 +31,39 @@ public class TrackingHub(
         hubContext.RemoveClient(Context.ConnectionId);
     }
 
-    #region Geolocation Methods
-
+    /// <summary>Records a position report for a truck assigned to the caller.</summary>
+    [Authorize(Roles = TenantRoles.Driver)]
     public async Task SendGeolocationData(TruckGeolocationDto truckGeolocation)
     {
+        if (Context.TenantIdFromClaim() is not { } tenantId ||
+            Context.UserIdFromClaim() is not { } driverId)
+        {
+            return;
+        }
+
+        if (!await geolocationUpdater.CanDriverReportForTruckAsync(
+                tenantId, truckGeolocation.TruckId, driverId))
+        {
+            return;
+        }
+
+        truckGeolocation.TenantId = tenantId;
+
         await Clients
-            .Group(truckGeolocation.TenantId.ToString())
+            .Group(tenantId.ToString())
             .ReceiveGeolocationData(truckGeolocation);
         hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }
 
-    #endregion
-
-    #region Tenant Subscription
-
-    public async Task RegisterTenant(string tenantId)
+    /// <summary>Subscribe to updates for a specific trip.</summary>
+    public Task SubscribeToTrip(string tripId)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
+        return Groups.AddToGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
     }
 
-    public async Task UnregisterTenant(string tenantId)
+    /// <summary>Unsubscribe from updates for a specific trip.</summary>
+    public Task UnsubscribeFromTrip(string tripId)
     {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
+        return Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
     }
-
-    #endregion
-
-    #region Trip Subscription
-
-    /// <summary>
-    ///     Subscribe to updates for a specific trip.
-    /// </summary>
-    public async Task SubscribeToTrip(string tripId)
-    {
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
-    }
-
-    /// <summary>
-    ///     Unsubscribe from updates for a specific trip.
-    /// </summary>
-    public async Task UnsubscribeFromTrip(string tripId)
-    {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
-    }
-
-    #endregion
 }

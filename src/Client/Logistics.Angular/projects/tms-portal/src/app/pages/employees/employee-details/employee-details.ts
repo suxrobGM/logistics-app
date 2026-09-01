@@ -1,6 +1,7 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
+import { Permission, PermissionService } from "@logistics/shared";
 import {
   Api,
   getEmployeePayoutOnboardingLink,
@@ -70,6 +71,12 @@ export class EmployeeDetails implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly currencyFormatPipe = inject(CurrencyFormatPipe);
   private readonly api = inject(Api);
+  private readonly permissions = inject(PermissionService);
+
+  /** The documents endpoints answer an empty list without this, so hide the tab instead. */
+  protected readonly canViewDocuments = computed(() =>
+    this.permissions.hasPermission(Permission.Document.View),
+  );
 
   protected readonly isPayoutLoading = signal(false);
 

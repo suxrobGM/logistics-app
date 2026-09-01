@@ -8,6 +8,7 @@ using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 using Logistics.Application.Modules.Operations.Containers.Commands;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Shared.Identity.Claims;
 
 namespace Logistics.API.Controllers;
 
@@ -37,7 +38,7 @@ public class LoadController(IMediator mediator) : ControllerBase
 
     [HttpGet("unassigned", Name = "GetUnassignedLoads")]
     [ProducesResponseType(typeof(PagedResponse<LoadDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Load.View)]
+    [Authorize(Policy = Permission.Dispatch.View)]
     public async Task<IActionResult> GetUnassignedLoads([FromQuery] GetUnassignedLoadsQuery query)
     {
         var result = await mediator.Send(query);

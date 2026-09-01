@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
@@ -7,6 +8,7 @@ using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Options;
 using Logistics.Shared.Identity.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Infrastructure.Persistence.Services;
@@ -14,7 +16,8 @@ namespace Logistics.Infrastructure.Persistence.Services;
 internal class CurrentTenantAccessor(
     IMasterUnitOfWork masterUow,
     TenantDbContextOptions? dbContextContextOptions = null,
-    IHttpContextAccessor? contextAccessor = null)
+    IHttpContextAccessor? contextAccessor = null,
+    ILogger<CurrentTenantAccessor>? logger = null)
     : ICurrentTenantAccessor
 {
     private const string TenantHeader = "X-Tenant";
@@ -43,10 +46,46 @@ internal class CurrentTenantAccessor(
         var tenantId = ResolveTenantIdFromHttpContext();
         var tenant = await FindTenantAsync(tenantId, ct);
 
+        if (tenant is null)
+        {
+            throw new InvalidTenantException($"Could not find tenant with ID/name '{tenantId}'.");
+        }
+
+        await EnsureAuthenticatedUserHasAccessAsync(tenant, ct);
+
         CheckSubscription(tenant);
 
-        return cachedTenant = tenant ?? throw new InvalidTenantException(
-            $"Could not find tenant with ID/name '{tenantId}'.");
+        return cachedTenant = tenant;
+    }
+
+    private async Task EnsureAuthenticatedUserHasAccessAsync(Tenant tenant, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(httpContext!.User.FindFirstValue(CustomClaimTypes.Tenant)))
+        {
+            return;
+        }
+
+        if (httpContext.User.GetTenantId() == tenant.Id)
+        {
+            return;
+        }
+
+        var userId = httpContext.User.GetUserId();
+
+        if (userId is not null)
+        {
+            var hasAccess = await masterUow.Repository<UserTenantAccess>()
+                .GetAsync(a => a.UserId == userId && a.TenantId == tenant.Id && a.IsActive, ct)
+                is not null;
+
+            if (hasAccess)
+            {
+                return;
+            }
+        }
+
+        logger?.LogWarning("Denied access to tenant {TenantId} for user {UserId}", tenant.Id, userId);
+        throw new TenantAccessDeniedException("You do not have access to this tenant.");
     }
 
     private async Task<Tenant?> FindTenantAsync(string tenantId, CancellationToken ct = default)
@@ -83,8 +122,7 @@ internal class CurrentTenantAccessor(
         }
 
         // 2) Claim
-        var claimValue = httpContext.User.Claims
-            .FirstOrDefault(c => c.Type == CustomClaimTypes.Tenant)?.Value;
+        var claimValue = httpContext.User.FindFirstValue(CustomClaimTypes.Tenant);
 
         if (!string.IsNullOrWhiteSpace(claimValue))
         {

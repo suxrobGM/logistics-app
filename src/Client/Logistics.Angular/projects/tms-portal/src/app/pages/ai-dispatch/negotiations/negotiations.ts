@@ -47,7 +47,7 @@ export class Negotiations implements OnInit {
 
   ngOnInit(): void {
     void this.load();
-    void this.hub.acquireDispatchBoard(this.destroyRef);
+    void this.hub.connect(this.destroyRef);
 
     // A broker reply, the expiry sweep and another dispatcher's close all land here, so rows are
     // replaced in place rather than re-fetching the whole page per event.

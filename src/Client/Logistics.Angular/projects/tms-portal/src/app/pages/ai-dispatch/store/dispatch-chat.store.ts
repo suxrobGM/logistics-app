@@ -148,7 +148,7 @@ export const DispatchChatStore = signalStore(
       return {
         /** Page bootstrap: connects the hub, loads the sidebar + right panel + most recent chat. */
         async init(): Promise<void> {
-          void hub.acquireDispatchBoard(destroyRef);
+          void hub.connect(destroyRef);
           void store.loadQuota();
           void loadTrucksIfPanelOpen();
           void refreshPendingDecisions();
@@ -172,7 +172,7 @@ export const DispatchChatStore = signalStore(
 
         /** Manual retry for a dead hub connection; also catches up on missed events. */
         async reconnect(): Promise<void> {
-          await hub.acquireDispatchBoard(destroyRef);
+          await hub.connect(destroyRef);
           if (hub.isConnected) {
             await store.reconcile();
             await refreshPendingDecisions();

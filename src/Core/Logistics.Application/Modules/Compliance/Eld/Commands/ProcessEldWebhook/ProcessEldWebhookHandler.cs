@@ -1,6 +1,5 @@
-using System.Security.Cryptography;
-using System.Text;
 using Logistics.Application.Modules.Compliance.Eld.Services;
+using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -12,8 +11,8 @@ namespace Logistics.Application.Modules.Compliance.Eld.Commands;
 
 internal sealed class ProcessEldWebhookHandler(
     ITenantUnitOfWork tenantUow,
-    IMasterUnitOfWork masterUow,
     IEldProviderFactory eldProviderFactory,
+    IWebhookEventTracker webhookEvents,
     ILogger<ProcessEldWebhookHandler> logger)
     : IAppRequestHandler<ProcessEldWebhookCommand, Result>
 {
@@ -46,12 +45,9 @@ internal sealed class ProcessEldWebhookHandler(
         // Idempotency (master DB): providers retry deliveries. Prefer a provider-supplied event id;
         // otherwise fall back to a hash of the raw body so a re-sent payload maps to the same key.
         var provider = req.ProviderType.ToString();
-        var eventKey = webhookResult.ExternalEventId
-                       ?? Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(req.RequestBodyJson)));
+        var eventKey = webhookResult.ExternalEventId ?? webhookEvents.BuildKeyFromBody(req.RequestBodyJson);
 
-        var alreadyProcessed = await masterUow.Repository<ProcessedWebhookEvent>()
-            .GetAsync(e => e.Provider == provider && e.EventKey == eventKey, ct);
-        if (alreadyProcessed is not null)
+        if (await webhookEvents.WasAlreadyHandledAsync(provider, eventKey, ct))
         {
             logger.LogInformation("Duplicate {Provider} webhook '{EventKey}' ignored", provider, eventKey);
             return Result.Ok();
@@ -79,10 +75,7 @@ internal sealed class ProcessEldWebhookHandler(
 
         await tenantUow.SaveChangesAsync(ct);
 
-        // Record the event so provider retries of the same delivery become no-ops.
-        await masterUow.Repository<ProcessedWebhookEvent>()
-            .AddAsync(new ProcessedWebhookEvent { Provider = provider, EventKey = eventKey }, ct);
-        await masterUow.SaveChangesAsync(ct);
+        await webhookEvents.MarkHandledAsync(provider, eventKey, ct);
 
         return Result.Ok();
     }

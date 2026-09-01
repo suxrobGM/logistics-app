@@ -1,5 +1,7 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -12,6 +14,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 internal sealed class CancelSubscriptionHandler(
     IMasterUnitOfWork masterUow,
     IStripeSubscriptionService stripeSubscriptionService,
+    ICurrentUserService currentUserService,
     ILogger<DeleteSubscriptionHandler> logger) : IAppRequestHandler<CancelSubscriptionCommand, Result>
 {
     public async Task<Result> Handle(
@@ -24,6 +27,8 @@ internal sealed class CancelSubscriptionHandler(
         {
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
+
+        currentUserService.EnsureOwnsTenant(subscription.TenantId, "subscription");
 
         if (!string.IsNullOrEmpty(subscription.StripeSubscriptionId))
         {
