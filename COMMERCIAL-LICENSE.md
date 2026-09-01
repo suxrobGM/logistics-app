@@ -14,15 +14,7 @@ Commercial use includes running LogisticsX inside a for-profit company, hosting 
 
 ## Pricing
 
-Starting points. Volume, term length, and support needs change the quote.
-
-| Type              | Model                                               | Starts at                                                                       |
-| ----------------- | --------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Internal Use      | Per truck per month, billed yearly                  | $4 per truck per month, minimum $3,000 per year                                 |
-| Hosted / Reseller | Flat yearly fee by tenant count                     | $10,000 per year for up to 25 tenants, $25,000 for up to 100, $50,000 unlimited |
-| Perpetual Source  | One-time fee plus optional updates                  | $25,000 once, updates at 25% of the fee per year                                |
-| Support add-on    | Yearly, email, 2 business day response              | $2,500 per year                                                                 |
-| Name license      | Yearly, permits use of the LogisticsX name and logo | $1,500 per year                                                                 |
+Prices live on [logisticsx.app/license](https://logisticsx.app/license), including the support and name-license add-ons. They are starting points: volume, term length, and support needs change the quote.
 
 Hosted / Reseller keys carry the tenant cap. Growing past it means moving to the next band; the difference is charged for the rest of the year and a new key is issued. The daily heartbeat reports the tenant count, so no revenue reporting is needed.
 

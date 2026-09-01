@@ -50,9 +50,10 @@
           rel="noopener noreferrer"
           class="text-blue-600 hover:underline"
         >
-          PolyForm Noncommercial License 1.0.0</a
-        >. Personal projects, research, education, and evaluation are free. Any commercial use
-        needs a commercial license from the author.
+          PolyForm Noncommercial License 1.0.0
+        </a>
+        . Personal projects, research, education, and evaluation are free. Any commercial use needs
+        a commercial license from the author.
       </p>
       <p class="mt-4 text-gray-600">
         Commercial use includes running LogisticsX inside a for-profit company, hosting it for
@@ -61,8 +62,8 @@
       </p>
       <p class="mt-4 text-gray-600">
         The hosted service on this site is a separate product with its own
-        <a routerLink="/" fragment="pricing" class="text-blue-600 hover:underline">plans</a>. You
-        do not need a source license to subscribe to it.
+        <a routerLink="/" fragment="pricing" class="text-blue-600 hover:underline">plans</a>
+        . You do not need a source license to subscribe to it.
       </p>
     </section>
 
@@ -119,8 +120,8 @@
         </table>
       </div>
       <p class="mt-4 text-gray-600">
-        Hosted / Reseller keys carry the tenant cap. Growing past it means moving to the next
-        band; the difference is charged for the rest of the year and a new key is issued. The daily
+        Hosted / Reseller keys carry the tenant cap. Growing past it means moving to the next band;
+        the difference is charged for the rest of the year and a new key is issued. The daily
         heartbeat reports the tenant count, so no revenue reporting is needed.
       </p>
     </section>
@@ -139,11 +140,12 @@
     <section [id]="sections[4].id" class="mb-12" webScrollAnimate="fade-up">
       <h2 class="text-2xl font-bold text-gray-900">{{ sections[4].title }}</h2>
       <p class="mt-4 text-gray-600">
-        A license key is a signed token issued for one legal entity. A SuperAdmin installs it on
-        the admin portal License page, or the operator sets the
-        <code>License__Key</code> environment variable. Until a valid key is installed, every
-        portal shows a one-line noncommercial notice. Nothing else changes: no feature is locked,
-        and an expired key only brings the notice back.
+        A license key is a signed token issued for one legal entity. A SuperAdmin installs it on the
+        admin portal License page, or the operator sets the
+        <code>License__Key</code>
+        environment variable. Until a valid key is installed, every portal shows a one-line
+        noncommercial notice. Nothing else changes: no feature is locked, and an expired key only
+        brings the notice back.
       </p>
       <p class="mt-4 text-gray-600">
         Once a day each deployment posts a small report to the author. It contains exactly these
@@ -156,8 +158,9 @@
       </ul>
       <p class="mt-4 text-gray-600">
         No tenant data, user data, or business data is sent. Noncommercial operators can turn the
-        heartbeat off with <code>License__HeartbeatEnabled=false</code>. Under a commercial license
-        it stays on.
+        heartbeat off with
+        <code>License__HeartbeatEnabled=false</code>
+        . Under a commercial license it stays on.
       </p>
       <p class="mt-4 text-gray-600">
         Removing, disabling, or working around the key check, the notice, or the heartbeat grants no
@@ -177,15 +180,17 @@
         clears.
       </p>
       <p class="mt-4 text-gray-600">
-        The same summary lives in the repository as
+        Prices on this page are the current ones. The terms and key mechanics also live in the
+        repository as
         <a
           [href]="licenseFileUrl"
           target="_blank"
           rel="noopener noreferrer"
           class="text-blue-600 hover:underline"
         >
-          COMMERCIAL-LICENSE.md</a
-        >.
+          COMMERCIAL-LICENSE.md
+        </a>
+        .
       </p>
     </section>
   </div>
