@@ -7,10 +7,6 @@ using Xunit;
 
 namespace Logistics.Architecture.Tests;
 
-/// <summary>
-/// Endpoints whose authorization cannot be covered by a handler test, because the handler is never
-/// reached when the attribute is right and the attribute is what a refactor drops.
-/// </summary>
 public class ControllerAuthorizationTests
 {
     private static string[] RolesOn(Type controller, string action)
@@ -21,11 +17,6 @@ public class ControllerAuthorizationTests
         return attribute?.Roles?.Split(',', StringSplitOptions.TrimEntries) ?? [];
     }
 
-    /// <summary>
-    /// A bare [Authorize] here is not enough: the API installs a global AuthorizeFilter that already
-    /// requires an authenticated user, so every tenant role - Driver and Customer included - would
-    /// be able to cancel a paid subscription.
-    /// </summary>
     [Theory]
     [InlineData(nameof(SubscriptionController.CancelSubscription))]
     [InlineData(nameof(SubscriptionController.ChangeSubscriptionPlan))]
@@ -41,10 +32,6 @@ public class ControllerAuthorizationTests
         Assert.DoesNotContain(TenantRoles.Customer, roles);
     }
 
-    /// <summary>
-    /// Defaults apply to every future tenant, and Permission.Tenant.Manage is granted to every
-    /// tenant's own Owner, so these two must be role-gated rather than policy-gated.
-    /// </summary>
     [Theory]
     [InlineData(nameof(FeaturesController.GetDefaultFeatures))]
     [InlineData(nameof(FeaturesController.UpdateDefaultFeatures))]
@@ -55,10 +42,6 @@ public class ControllerAuthorizationTests
         Assert.Equal([AppRoles.SuperAdmin, AppRoles.Admin], roles);
     }
 
-    /// <summary>
-    /// Drivers hold Load.View for their own assignments, so the unassigned board is gated on
-    /// Dispatch.View - the same permission its AI tool requires.
-    /// </summary>
     [Fact]
     public void Unassigned_loads_require_dispatch_view()
     {

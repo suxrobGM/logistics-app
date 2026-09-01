@@ -17,7 +17,6 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         var containerPath = GetContainerPath(containerName);
         EnsureDirectoryExists(containerPath);
 
-        // Route through GetFilePath so the path-traversal guard applies to writes too.
         var filePath = GetFilePath(containerName, blobName);
         var fileDirectory = Path.GetDirectoryName(filePath);
 
@@ -123,8 +122,6 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         var containerPath = Path.GetFullPath(GetContainerPath(containerName));
         var resolved = Path.GetFullPath(Path.Combine(containerPath, blobName));
 
-        // The storage boundary cannot rely on every caller sanitizing blobName, so a path that
-        // escapes the container root ("../../../etc/passwd") is rejected here.
         var root = containerPath.EndsWith(Path.DirectorySeparatorChar)
             ? containerPath
             : containerPath + Path.DirectorySeparatorChar;

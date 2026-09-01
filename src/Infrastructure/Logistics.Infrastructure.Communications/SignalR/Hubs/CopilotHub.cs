@@ -4,10 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
-/// <summary>
-///     Copilot conversations are private, so the group is per-user rather than per-tenant. Both
-///     ids come from the caller's JWT claims.
-/// </summary>
+/// <summary>Streams private copilot events to the authenticated user.</summary>
 [Authorize]
 public class CopilotHub : Hub<IAICopilotHubClient>
 {
@@ -24,6 +21,6 @@ public class CopilotHub : Hub<IAICopilotHubClient>
         await base.OnConnectedAsync();
     }
 
-    /// <summary>The single source of the group-name shape, shared with the broadcaster.</summary>
+    /// <summary>Returns the private copilot group for a tenant user.</summary>
     public static string GroupName(Guid tenantId, Guid userId) => $"copilot:{tenantId}:{userId}";
 }

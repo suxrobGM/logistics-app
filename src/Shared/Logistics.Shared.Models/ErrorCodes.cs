@@ -44,10 +44,7 @@ public static class ErrorCodes
     /// </summary>
     public const string WebhookRejected = "WEBHOOK_REJECTED";
 
-    /// <summary>
-    ///     The load already has an invoice. The Load/LoadInvoice relationship is one-to-one, so the
-    ///     database rejects a second one regardless; this turns that into a message a client can act on.
-    /// </summary>
+    /// <summary>The load already has an invoice.</summary>
     public const string LoadInvoiceExists = "LOAD_INVOICE_EXISTS";
 
     /// <summary>

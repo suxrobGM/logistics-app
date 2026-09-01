@@ -3,10 +3,7 @@ import type { AgentDecisionDto, AgentMessageDto, RateNegotiationDto } from "@log
 import type { AgentTurnUpdate } from "./agent-chat.contracts";
 import { BaseHubConnection } from "./base-hub-connection";
 
-/**
- * Real-time AI dispatch events. Unlike the copilot hub, every event goes to the whole tenant's
- * dispatch board group - one dispatcher's approval is reflected for everyone.
- */
+/** Streams AI dispatch events to the tenant's dispatch board. */
 @Injectable({ providedIn: "root" })
 export class AIDispatchHubService extends BaseHubConnection {
   readonly messageReceived$ = this.event<AgentMessageDto>("ReceiveDispatchMessage");
@@ -18,10 +15,7 @@ export class AIDispatchHubService extends BaseHubConnection {
     super("ai-dispatch");
   }
 
-  /**
-   * Claims the connection for as long as `destroyRef` lives. The server joins the board group
-   * from the JWT tenant claim on connect, so there is no group call to make here.
-   */
+  /** Keeps the dispatch-board connection alive for the consumer's lifetime. */
   acquireDispatchBoard(destroyRef: DestroyRef): Promise<void> {
     return this.acquire(destroyRef);
   }

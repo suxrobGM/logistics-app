@@ -24,7 +24,6 @@ internal sealed class UpdateEmployeeHandler(
             return Result.Fail("Could not find the specified user");
         }
 
-        // Without a rank check any Employee.Manage holder could promote themselves to Owner.
         if (tenantRole is not null && tenantRole.Name != employeeEntity.Role?.Name)
         {
             var guard = await CheckRoleChangeAllowedAsync(req.UserId, employeeEntity, tenantRole, ct);
@@ -65,6 +64,11 @@ internal sealed class UpdateEmployeeHandler(
     private async Task<Result> CheckRoleChangeAllowedAsync(
         Guid targetUserId, Employee target, TenantRole newRole, CancellationToken ct)
     {
+        if (currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin))
+        {
+            return Result.Ok();
+        }
+
         var callerId = currentUserService.GetUserId();
         if (callerId is null)
         {
@@ -77,36 +81,26 @@ internal sealed class UpdateEmployeeHandler(
         }
 
         var caller = await tenantUow.Repository<Employee>().GetByIdAsync(callerId.Value, ct);
-
-        // A custom role's name says nothing about the permissions behind it, so a guessed rank
-        // could hand out more authority than the caller has. Refuse anything unranked.
-        if (RoleRank(newRole.Name) is not { } newRoleRank ||
-            RoleRank(caller?.Role?.Name) is not { } callerRank ||
-            RoleRank(target.Role?.Name) is not { } targetRank)
+        if (caller?.Role is null)
         {
             return Result.Fail("This role cannot be assigned here.");
         }
 
-        // Also blocks acting on someone who already outranks you, e.g. a Manager demoting an Owner.
-        if (newRoleRank > callerRank || targetRank > callerRank)
+        var callerClaims = caller.Role.Claims
+            .Select(c => (c.ClaimType, c.ClaimValue))
+            .ToHashSet();
+
+        if (HasClaimsOutside(newRole, callerClaims) ||
+            target.Role is not null && HasClaimsOutside(target.Role, callerClaims))
         {
-            return Result.Fail("You cannot assign a role higher than your own.");
+            return Result.Fail("You cannot assign a role with permissions beyond your own.");
         }
 
         return Result.Ok();
     }
 
-    /// <summary>
-    /// Privilege ordering of the built-in tenant roles, highest first. Null for anything else,
-    /// including a custom role, whose authority cannot be inferred from its name.
-    /// </summary>
-    private static int? RoleRank(string? roleName) => roleName switch
-    {
-        TenantRoles.Owner => 4,
-        TenantRoles.Manager => 3,
-        TenantRoles.Dispatcher => 2,
-        TenantRoles.Driver => 1,
-        TenantRoles.Customer => 0,
-        _ => null
-    };
+    private static bool HasClaimsOutside(
+        TenantRole role,
+        HashSet<(string ClaimType, string ClaimValue)> allowedClaims) =>
+        role.Claims.Any(c => !allowedClaims.Contains((c.ClaimType, c.ClaimValue)));
 }

@@ -4,10 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
-/// <summary>
-///     Dispatch-board updates. The board group is derived from the caller's JWT tenant claim,
-///     never from a client-supplied id.
-/// </summary>
+/// <summary>Streams dispatch-board updates to the caller's tenant.</summary>
 [Authorize]
 public class AIDispatchHub : Hub<IAIDispatchHubClient>
 {
@@ -23,7 +20,7 @@ public class AIDispatchHub : Hub<IAIDispatchHubClient>
         await base.OnConnectedAsync();
     }
 
-    /// <summary>The single source of the group-name shape, shared with the broadcaster.</summary>
+    /// <summary>Returns the dispatch-board group for a tenant.</summary>
     public static string GroupName(Guid tenantId) => $"dispatch-board:{tenantId}";
 
     [Obsolete("The board group is joined from the JWT on connect; this call does nothing.")]

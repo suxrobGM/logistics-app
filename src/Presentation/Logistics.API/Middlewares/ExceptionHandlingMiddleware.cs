@@ -96,13 +96,11 @@ public class ExceptionHandlingMiddleware(
             return new ErrorResponse("Validation failed", Details: details);
         }
 
-        // Only exceptions with a message written for an end user reach the client verbatim.
         if (exception is TenantAccessDeniedException)
         {
             return new ErrorResponse(exception.Message);
         }
 
-        // Anything else could carry filesystem paths, SQL, or connection detail. Logged above.
         return new ErrorResponse("An unexpected error occurred. Please try again, or contact support if it persists.");
     }
 }

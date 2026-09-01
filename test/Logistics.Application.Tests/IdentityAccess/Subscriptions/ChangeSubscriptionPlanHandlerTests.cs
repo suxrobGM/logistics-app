@@ -14,9 +14,6 @@ using Xunit;
 
 namespace Logistics.Application.Tests.IdentityAccess.Subscriptions;
 
-/// <summary>
-/// A plan may only be changed by a platform admin or by the subscription's own tenant.
-/// </summary>
 public class ChangeSubscriptionPlanHandlerTests
 {
     private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
@@ -90,9 +87,6 @@ public class ChangeSubscriptionPlanHandlerTests
     {
         var tenantId = Guid.NewGuid();
         var planId = Guid.NewGuid();
-        // Same plan requested as already active - reaches the existing "already on this plan"
-        // failure with no further mocking, which only happens if the new ownership check let it
-        // through in the first place.
         var subscription = CreateSubscription(tenantId, planId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
         currentUserService.GetTenantId().Returns(tenantId);

@@ -40,8 +40,6 @@ internal sealed class ProcessStripEventHandler(
 
             logger.LogInformation("Received Stripe event: {Type}", stripeEvent.Type);
 
-            // Stripe retries deliveries and invoice.paid writes a Payment with no natural dedup
-            // key, so a retry would double-record. Mirrors the ELD and Resend ledgers.
             const string provider = "Stripe";
             var alreadyProcessed = await masterUow.Repository<ProcessedWebhookEvent>()
                 .GetAsync(e => e.Provider == provider && e.EventKey == stripeEvent.Id, ct);
@@ -73,7 +71,6 @@ internal sealed class ProcessStripEventHandler(
                 _ => Result.Ok()
             };
 
-            // Only on success: a recorded key would kill the retry a transient failure needs.
             if (result.IsSuccess)
             {
                 await masterUow.Repository<ProcessedWebhookEvent>()

@@ -55,8 +55,6 @@ public class GeotabWebhookTests
     [Fact]
     public async Task ProcessWebhook_NoSecretConfigured_RejectsPayload()
     {
-        // With no secret configured an anonymous webhook has no authenticity check at all, so it
-        // is rejected rather than processed unverified.
         var result = await sut.ProcessWebhookAsync(payload, signature: null, webhookSecret: null);
 
         Assert.False(result.IsValid);
@@ -66,9 +64,6 @@ public class GeotabWebhookTests
     [Fact]
     public async Task ProcessWebhook_MalformedJson_ReturnsInvalid()
     {
-        // Sign the malformed body with the real secret so it passes the signature gate and the
-        // JSON-parse path this test is named for is actually exercised (a null signature would be
-        // rejected fail-closed before parsing ever runs).
         const string payload = "{not json";
         var signature = ComputeHex(payload, secret);
 

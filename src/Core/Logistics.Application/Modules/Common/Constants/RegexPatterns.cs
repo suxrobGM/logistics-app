@@ -2,8 +2,6 @@ namespace Logistics.Application.Modules.Common.Constants;
 
 public static class RegexPatterns
 {
-    // Anchored at both ends: TenantDatabaseService interpolates this into a database identifier
-    // and into raw DROP DATABASE SQL, so an unanchored pattern leaves the tail injectable.
     public const string TenantName = @"^[a-z]+\d*$";
     public const string CreditCardNumber = @"^(\d{4} \d{4} \d{4} \d{4})$"; // "^[0-9]{16}$";
     public const string CardExpirationDate = "(0[1-9]|1[0-2])/[0-9]{2}"; // MM/YY format

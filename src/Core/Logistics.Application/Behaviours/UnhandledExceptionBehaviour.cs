@@ -21,8 +21,6 @@ public sealed class UnhandledExceptionBehaviour<TRequest, TResponse>(
         }
         catch (Exception ex)
         {
-            // Rethrow rather than fold into a failed Result: controllers surface a Result error
-            // verbatim, so ex.Message would reach the client. The middleware sanitizes it instead.
             logger.LogError(ex, "Unhandled Exception for Request {Name} {@Request}",
                 typeof(TRequest).Name, request);
             throw;

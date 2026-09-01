@@ -23,8 +23,6 @@ internal sealed class UploadTenantLogoHandler(
             return Result<string>.Fail("File must be an image");
         }
 
-        // The logo is served from a public container, so an SVG would be stored XSS. Extension and
-        // content type are both checked: "logo.png" sent as image/svg+xml passes the first one.
         var extension = Path.GetExtension(req.FileName).ToLowerInvariant();
         string[] allowedExtensions = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
         if (!allowedExtensions.Contains(extension))

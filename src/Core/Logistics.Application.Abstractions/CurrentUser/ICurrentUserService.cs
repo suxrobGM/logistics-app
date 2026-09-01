@@ -17,13 +17,10 @@ public interface ICurrentUserService
     /// <returns>The user's full name if available, "Unknown" otherwise.</returns>
     string GetUserName();
 
-    /// <summary>
-    /// The caller's own tenant from their token, which is not necessarily the tenant the request
-    /// resolved to - a multi-tenant user may target another via the <c>X-Tenant</c> header.
-    /// </summary>
+    /// <summary>Gets the tenant claim from the current user.</summary>
     Guid? GetTenantId();
 
-    /// <summary>Whether the caller holds any of these roles. False when there is no HTTP context.</summary>
+    /// <summary>Checks whether the current user holds any supplied role.</summary>
     bool IsInRole(params string[] roles);
 
     /// <summary>

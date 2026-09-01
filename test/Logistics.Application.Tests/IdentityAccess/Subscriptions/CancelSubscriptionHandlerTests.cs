@@ -14,9 +14,6 @@ using Xunit;
 
 namespace Logistics.Application.Tests.IdentityAccess.Subscriptions;
 
-/// <summary>
-/// A subscription may only be cancelled by a platform admin or by its own tenant.
-/// </summary>
 public class CancelSubscriptionHandlerTests
 {
     private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();

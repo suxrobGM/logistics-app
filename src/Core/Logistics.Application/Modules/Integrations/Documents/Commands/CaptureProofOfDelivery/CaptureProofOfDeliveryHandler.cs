@@ -20,13 +20,6 @@ internal sealed class CaptureProofOfDeliveryHandler(
 {
     public async Task<Result<Guid>> Handle(CaptureProofOfDeliveryCommand req, CancellationToken ct)
     {
-        // Verify load exists
-        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId, ct);
-        if (load is null)
-        {
-            return Result<Guid>.Fail($"Load with ID '{req.LoadId}' not found");
-        }
-
         var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
         if (access is null ||
             !await DocumentAccess.CanAccessOwnerAsync(
@@ -35,7 +28,6 @@ internal sealed class CaptureProofOfDeliveryHandler(
             return Result<Guid>.Fail("Load not found or access denied.");
         }
 
-        // Verify trip stop if provided
         if (req.TripStopId.HasValue)
         {
             var tripStop = await tenantUow.Repository<TripStop>().GetByIdAsync(req.TripStopId.Value, ct);
@@ -51,7 +43,6 @@ internal sealed class CaptureProofOfDeliveryHandler(
 
         try
         {
-            // Upload signature if provided
             if (!string.IsNullOrEmpty(req.SignatureBase64))
             {
                 var signatureBytes = Convert.FromBase64String(req.SignatureBase64);
@@ -67,7 +58,6 @@ internal sealed class CaptureProofOfDeliveryHandler(
                     ct);
             }
 
-            // Upload photos
             var photoIndex = 0;
             foreach (var photo in req.Photos)
             {
@@ -103,13 +93,11 @@ internal sealed class CaptureProofOfDeliveryHandler(
                 uploadedDocIds.Add(doc.Id);
             }
 
-            // If no photos but we have signature/recipient info, create a single POD record
             if (req.Photos.Count == 0 && (!string.IsNullOrEmpty(req.SignatureBase64) || !string.IsNullOrEmpty(req.RecipientName)))
             {
                 var podFileName = BlobPathHelper.GeneratePlaceholderFileName("pod");
                 var blobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "pod", podFileName);
 
-                // Create a placeholder document for the signature-only POD
                 var doc = DeliveryDocument.Create(
                     podFileName,
                     "proof_of_delivery.json",
@@ -148,13 +136,7 @@ internal sealed class CaptureProofOfDeliveryHandler(
         {
             logger.LogError(ex, "Failed to capture POD for load {LoadId}", req.LoadId);
 
-            // Cleanup any uploaded blobs on failure
-            foreach (var docId in uploadedDocIds)
-            {
-                // Note: In production, you might want to track blob paths for cleanup
-            }
-
-            return Result<Guid>.Fail($"Failed to capture proof of delivery: {ex.Message}");
+            return Result<Guid>.Fail("Failed to capture proof of delivery.");
         }
     }
 }

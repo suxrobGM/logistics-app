@@ -64,7 +64,7 @@ internal sealed class RenewSubscriptionHandler(
                 "resource_missing" => "No payment method on file. Please add a payment method in Manage Billing before resuming.",
                 _ when ex.Message.Contains("payment source or default payment method") =>
                     "No payment method on file. Please add a payment method in Manage Billing before resuming.",
-                _ => $"Failed to resume subscription: {ex.Message}"
+                _ => "Failed to resume subscription. Please try again."
             };
 
             return Result.Fail(message);

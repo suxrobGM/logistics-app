@@ -6,9 +6,6 @@ using Logistics.Shared.Identity.Roles;
 
 namespace Logistics.Application.Modules.Integrations.Documents;
 
-/// <summary>
-/// The caller's role, resolved once so a handler does not re-query it per document.
-/// </summary>
 internal sealed record DocumentAccessContext(Guid CallerId, string? RoleName)
 {
     public bool IsManagement =>
@@ -17,14 +14,8 @@ internal sealed record DocumentAccessContext(Guid CallerId, string? RoleName)
     public bool IsDriver => RoleName == TenantRoles.Driver;
 }
 
-/// <summary>
-/// Per-record authorization for the staff-facing DocumentController, reads and writes alike.
-/// Management handles every document in the tenant, a driver only those tied to them. Everyone
-/// else is denied here and must use a properly-scoped portal endpoint.
-/// </summary>
 internal static class DocumentAccess
 {
-    /// <summary>Null when the caller is not an employee of this tenant, which denies them.</summary>
     public static async Task<DocumentAccessContext?> ResolveAsync(
         ITenantUnitOfWork tenantUow, ICurrentUserService currentUserService, CancellationToken ct)
     {
@@ -61,10 +52,6 @@ internal static class DocumentAccess
         };
     }
 
-    /// <summary>
-    /// The create path: an upload names its owner before any document exists, so a driver is
-    /// checked against the target load, truck, or employee record instead.
-    /// </summary>
     public static async Task<bool> CanAccessOwnerAsync(
         ITenantUnitOfWork tenantUow,
         DocumentAccessContext ctx,
@@ -72,29 +59,21 @@ internal static class DocumentAccess
         Guid ownerId,
         CancellationToken ct)
     {
-        if (ctx.IsManagement)
-        {
-            return true;
-        }
-
-        if (!ctx.IsDriver)
-        {
-            return false;
-        }
-
         return ownerType switch
         {
-            DocumentOwnerType.Employee => ownerId == ctx.CallerId,
-            DocumentOwnerType.Truck => await DrivesTruckAsync(tenantUow, ctx.CallerId, ownerId, ct),
-            DocumentOwnerType.Load => await DrivesLoadAsync(tenantUow, ctx.CallerId, ownerId, ct),
+            DocumentOwnerType.Employee =>
+                await tenantUow.Repository<Employee>().GetByIdAsync(ownerId, ct) is not null &&
+                (ctx.IsManagement || ctx.IsDriver && ownerId == ctx.CallerId),
+            DocumentOwnerType.Truck => ctx.IsManagement
+                ? await tenantUow.Repository<Truck>().GetByIdAsync(ownerId, ct) is not null
+                : ctx.IsDriver && await DrivesTruckAsync(tenantUow, ctx.CallerId, ownerId, ct),
+            DocumentOwnerType.Load => ctx.IsManagement
+                ? await tenantUow.Repository<Load>().GetByIdAsync(ownerId, ct) is not null
+                : ctx.IsDriver && await DrivesLoadAsync(tenantUow, ctx.CallerId, ownerId, ct),
             _ => false
         };
     }
 
-    /// <summary>
-    /// Reads a driver's truck and load sets once rather than per document, which is why this does
-    /// not just loop <see cref="CanAccessAsync"/>.
-    /// </summary>
     public static async Task<List<TDocument>> FilterAccessibleAsync<TDocument>(
         ITenantUnitOfWork tenantUow,
         DocumentAccessContext ctx,

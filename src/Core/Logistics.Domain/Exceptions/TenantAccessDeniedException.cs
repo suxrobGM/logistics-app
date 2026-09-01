@@ -1,12 +1,6 @@
 namespace Logistics.Domain.Exceptions;
 
-/// <summary>
-/// Thrown when an authenticated caller resolves to a tenant they are not a member of - e.g. a
-/// spoofed <c>X-Tenant</c> header naming another company's tenant. Distinct from
-/// <see cref="InvalidTenantException"/> (which means "no/unknown tenant") so that behaviours which
-/// legitimately tolerate a missing tenant do not also swallow an access-denied, and so it maps to
-/// HTTP 403 rather than 500.
-/// </summary>
+/// <summary>Thrown when a caller attempts to access another tenant.</summary>
 [Serializable]
 public class TenantAccessDeniedException : Exception
 {

@@ -24,7 +24,6 @@ internal sealed class GetMessagesHandler(
             return Result<MessageDto[]>.Fail($"Conversation with ID '{req.ConversationId}' not found");
         }
 
-        // A private conversation is readable only by its participants; tenant chat is open to all.
         if (!conversation.IsTenantChat)
         {
             var callerId = currentUserService.GetUserId();

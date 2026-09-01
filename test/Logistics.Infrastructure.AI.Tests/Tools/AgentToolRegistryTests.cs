@@ -239,12 +239,6 @@ public class AgentToolRegistryTests
 
     #region MCP surface
 
-    /// <summary>
-    /// An MCP call runs unattended from an API key, with nobody to attribute it to and no approval
-    /// step - unlike Copilot and Dispatch, which produce a suggestion a human approves in-app. So no
-    /// write tool may be published on the Mcp surface; reads are fine. Guards against one leaking
-    /// back via a forgotten <c>AgentSurfaces</c> flag.
-    /// </summary>
     [Fact]
     public void GetMcpTools_PublishesNoWriteTools()
     {
@@ -255,7 +249,6 @@ public class AgentToolRegistryTests
 
         Assert.Empty(writes);
 
-        // And a read tool must NOT carry the immediate-execution warning (that copy is write-only).
         var readTool = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "get_unassigned_loads");
         Assert.DoesNotContain("takes effect immediately", readTool.Description);
     }

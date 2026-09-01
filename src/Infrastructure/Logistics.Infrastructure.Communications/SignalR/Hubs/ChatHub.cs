@@ -5,10 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
-/// <summary>
-///     Real-time messaging between dispatchers and drivers. The tenant group and the acting user
-///     id come from the caller's JWT claims, never from a client-supplied id.
-/// </summary>
+/// <summary>Provides tenant-scoped messaging between dispatchers and drivers.</summary>
 [Authorize]
 public class ChatHub(ChatHubContext hubContext) : Hub<IChatHubClient>
 {

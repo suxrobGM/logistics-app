@@ -10,7 +10,6 @@ internal sealed class AddLineItemValidator : AbstractValidator<AddLineItemComman
             .NotEmpty()
             .MaximumLength(500);
 
-        // A negative amount is a credit or discount, so only the quantity has a floor.
         RuleFor(i => i.Quantity)
             .GreaterThan(0);
     }

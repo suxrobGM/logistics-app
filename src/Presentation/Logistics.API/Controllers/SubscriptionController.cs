@@ -45,9 +45,6 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    // A tenant Owner or Manager manages their own subscription, so this is not platform-admin-only.
-    // The handler still checks the subscription's TenantId against the caller's, since the role
-    // alone does not say which subscription is theirs.
     [HttpPut("{id:guid}/cancel", Name = "CancelSubscription")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -108,7 +105,6 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpGet("plans/{id:guid}", Name = "GetSubscriptionPlanById")]
     [ProducesResponseType(typeof(SubscriptionPlanDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    // Any authenticated tenant needs to read the pricing tiers to upgrade.
     [Authorize]
     public async Task<IActionResult> GetSubscriptionPlanById(Guid id)
     {

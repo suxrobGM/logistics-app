@@ -10,10 +10,6 @@ using Xunit;
 
 namespace Logistics.Application.Tests.Operations.Loads;
 
-/// <summary>
-/// Drivers hold tenant-wide Load.View, so the scope lives here rather than in the controller:
-/// GetLoadTool and CreateLoadInvoiceTool send this same query from the AI surface.
-/// </summary>
 public class GetLoadByIdHandlerTests
 {
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
@@ -80,6 +76,19 @@ public class GetLoadByIdHandlerTests
     public async Task Handle_DispatcherAsksForAnyLoad_ReturnsIt()
     {
         currentUserService.IsInRole(TenantRoles.Driver).Returns(false);
+        var load = CreateLoad(CreateTruck(Guid.NewGuid()));
+        loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+
+        var result = await sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task Handle_PlatformAdminWithDriverRole_ReturnsAnyLoad()
+    {
+        currentUserService.IsInRole(TenantRoles.Driver).Returns(true);
+        currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
         var load = CreateLoad(CreateTruck(Guid.NewGuid()));
         loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
 

@@ -20,10 +20,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
 {
     #region Default Features
 
-    /// <summary>
-    /// Gets the default feature configuration for new tenants. Platform-admin only: these apply
-    /// to every future tenant, so there is no target tenant to check a caller's ownership against.
-    /// </summary>
+    /// <summary>Gets the default feature configuration for new tenants.</summary>
     [HttpGet("defaults", Name = "GetDefaultFeatures")]
     [ProducesResponseType(typeof(IReadOnlyList<DefaultFeatureStatusDto>), StatusCodes.Status200OK)]
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]

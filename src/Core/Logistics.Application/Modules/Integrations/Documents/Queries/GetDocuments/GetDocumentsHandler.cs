@@ -16,40 +16,30 @@ internal sealed class GetDocumentsHandler(
     public async Task<Result<IEnumerable<DocumentDto>>> Handle(
         GetDocumentsQuery req, CancellationToken ct)
     {
-        if (await OwnerMissingAsync(req, ct) is { } ownerError)
-        {
-            return Result<IEnumerable<DocumentDto>>.Fail(ownerError);
-        }
-
         var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
         if (access is null)
         {
             return Result<IEnumerable<DocumentDto>>.Ok([]);
         }
 
-        var documents = await FetchAsync(req, ct);
-        var allowed = await DocumentAccess.FilterAccessibleAsync(tenantUow, access, documents, ct);
-
-        return Result<IEnumerable<DocumentDto>>.Ok(allowed.Select(d => d.ToDto()).ToList());
-    }
-
-    private async Task<string?> OwnerMissingAsync(GetDocumentsQuery req, CancellationToken ct)
-    {
-        if (req.OwnerId is not { } ownerId)
+        if (req.OwnerId.HasValue != req.OwnerType.HasValue)
         {
-            return null;
+            return Result<IEnumerable<DocumentDto>>.Ok([]);
         }
 
-        return req.OwnerType switch
+        if (req is { OwnerId: { } ownerId, OwnerType: { } ownerType } &&
+            !await DocumentAccess.CanAccessOwnerAsync(
+                tenantUow, access, ownerType, ownerId, ct))
         {
-            DocumentOwnerType.Load when await tenantUow.Repository<Load>().GetByIdAsync(ownerId, ct) is null
-                => $"Could not find load with ID '{ownerId}'",
-            DocumentOwnerType.Employee when await tenantUow.Repository<Employee>().GetByIdAsync(ownerId, ct) is null
-                => $"Could not find employee with ID '{ownerId}'",
-            DocumentOwnerType.Truck when await tenantUow.Repository<Truck>().GetByIdAsync(ownerId, ct) is null
-                => $"Could not find truck with ID '{ownerId}'",
-            _ => null
-        };
+            return Result<IEnumerable<DocumentDto>>.Ok([]);
+        }
+
+        var documents = await FetchAsync(req, ct);
+        var allowed = req is { OwnerId: not null, OwnerType: not null }
+            ? documents
+            : await DocumentAccess.FilterAccessibleAsync(tenantUow, access, documents, ct);
+
+        return Result<IEnumerable<DocumentDto>>.Ok(allowed.Select(d => d.ToDto()).ToList());
     }
 
     private async Task<List<Document>> FetchAsync(GetDocumentsQuery req, CancellationToken ct)

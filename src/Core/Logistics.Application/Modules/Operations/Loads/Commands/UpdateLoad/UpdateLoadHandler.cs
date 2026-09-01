@@ -53,9 +53,6 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
 
             if (req.Status.HasValue)
             {
-                // Unforced, so the state machine still validates the transition. Transitions with
-                // side effects belong to DispatchLoad and ConfirmLoadStatus, which run the
-                // invoicing and notification work this path does not.
                 load.UpdateStatus(req.Status.Value, force: false);
             }
 

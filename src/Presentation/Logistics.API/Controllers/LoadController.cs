@@ -37,8 +37,6 @@ public class LoadController(IMediator mediator) : ControllerBase
 
     [HttpGet("unassigned", Name = "GetUnassignedLoads")]
     [ProducesResponseType(typeof(PagedResponse<LoadDto>), StatusCodes.Status200OK)]
-    // Dispatch.View, not Load.View: drivers hold Load.View but have no business enumerating the
-    // unassigned board. Matches what GetUnassignedLoadsTool already requires on the AI surface.
     [Authorize(Policy = Permission.Dispatch.View)]
     public async Task<IActionResult> GetUnassignedLoads([FromQuery] GetUnassignedLoadsQuery query)
     {

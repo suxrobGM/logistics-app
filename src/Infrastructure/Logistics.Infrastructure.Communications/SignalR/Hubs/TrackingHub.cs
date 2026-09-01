@@ -9,10 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
-/// <summary>
-///     Live truck geolocation. The tenant group comes from the caller's JWT claim, never from a
-///     client-supplied id.
-/// </summary>
+/// <summary>Streams and records tenant-scoped truck geolocation.</summary>
 [Authorize]
 public class TrackingHub(
     ITruckGeolocationUpdater geolocationUpdater,
@@ -48,14 +45,7 @@ public class TrackingHub(
 
     #region Geolocation Methods
 
-    /// <summary>
-    ///     Records a position report from a driver's device.
-    /// </summary>
-    /// <remarks>
-    ///     The cached report is persisted on disconnect, and its <c>TenantId</c> is what
-    ///     SetTruckGeolocationHandler opens the database with. So the claim must overwrite the
-    ///     client's value, and only the sanitized record may be broadcast or cached.
-    /// </remarks>
+    /// <summary>Records a position report for a truck assigned to the caller.</summary>
     [Authorize(Roles = TenantRoles.Driver)]
     public async Task SendGeolocationData(TruckGeolocationDto truckGeolocation)
     {

@@ -19,9 +19,6 @@ using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Tests.IdentityAccess.Subscriptions;
 
-/// <summary>
-/// A subscription may only be renewed by a platform admin or by its own tenant.
-/// </summary>
 public class RenewSubscriptionHandlerTests
 {
     private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
@@ -101,8 +98,6 @@ public class RenewSubscriptionHandlerTests
         var subscription = CreateSubscription(tenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
         currentUserService.GetTenantId().Returns(tenantId);
-        // Fails downstream at the real Stripe call - proves the ownership gate let it through,
-        // without needing to fully mock a successful Stripe renewal.
         stripeSubscriptionService
             .RenewSubscriptionAsync(Arg.Any<Subscription?>(), Arg.Any<SubscriptionPlan>(), Arg.Any<Tenant>(), Arg.Any<int>())
             .ThrowsAsync(new StripeException("no payment method"));

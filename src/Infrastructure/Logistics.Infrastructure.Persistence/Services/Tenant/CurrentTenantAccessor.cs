@@ -58,24 +58,16 @@ internal class CurrentTenantAccessor(
         return cachedTenant = tenant;
     }
 
-    /// <summary>
-    /// The <see cref="TenantHeader"/> lets multi-tenant users switch context, so a resolved tenant
-    /// that differs from the caller's own claim needs an active <see cref="UserTenantAccess"/> row.
-    /// Anonymous requests (webhooks, MCP) carry no tenant claim and are secured by signature or
-    /// API key instead.
-    /// </summary>
     private async Task EnsureAuthenticatedUserHasAccessAsync(Tenant tenant, CancellationToken ct)
     {
         var claimTenant = httpContext!.User.Claims
             .FirstOrDefault(c => c.Type == CustomClaimTypes.Tenant)?.Value;
 
-        // No tenant claim => not an authenticated end-user request (anonymous webhook / MCP key).
         if (string.IsNullOrWhiteSpace(claimTenant))
         {
             return;
         }
 
-        // Home tenant: the resolved tenant matches the caller's own claim - always allowed.
         if (Guid.TryParse(claimTenant, out var claimTenantId) && claimTenantId == tenant.Id)
         {
             return;
@@ -97,8 +89,6 @@ internal class CurrentTenantAccessor(
             }
         }
 
-        // Static message: naming the tenant would turn this endpoint into a GUID-to-name oracle
-        // for anyone probing the X-Tenant header.
         logger?.LogWarning("Denied access to tenant {TenantId} for user {UserId}", tenant.Id, userIdValue);
         throw new TenantAccessDeniedException("You do not have access to this tenant.");
     }

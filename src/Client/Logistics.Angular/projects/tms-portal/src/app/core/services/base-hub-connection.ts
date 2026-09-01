@@ -13,25 +13,14 @@ import { TenantService } from "./tenant.service";
 export type HubConnectionStatus = "disconnected" | "connecting" | "connected" | "reconnecting";
 
 export interface HubConnectionOptions {
-  /**
-   * Overrides the portal access token. Every hub is authorized and derives tenant and user from
-   * the JWT, so the default is the only thing that keeps a connection from being rejected.
-   */
+  /** Overrides the portal access token. */
   accessTokenFactory?: () => string | Promise<string>;
 }
 
 /** How long a hub lingers after its last consumer releases, so route changes don't churn it. */
 const DisconnectLingerMs = 5000;
 
-/**
- * Hub subclasses are root singletons shared by every consumer, so no single component may own the
- * connection lifecycle. Consumers {@link acquire} with their `DestroyRef` and the hub stops once the
- * last claim is gone. There is no public disconnect - it would kill the hub for everyone else.
- *
- * Declare events with {@link event} / {@link mappedEvent} as field initializers and join groups
- * through {@link joinGroup}: a settable callback lets one consumer steal another's subscription,
- * and a raw group invoke is lost on reconnect (see {@link groupJoins}).
- */
+/** Shared SignalR connection with reference-counted lifecycle and reconnect-safe group membership. */
 export abstract class BaseHubConnection {
   protected readonly tenantService = inject(TenantService);
   private readonly state = signal<HubConnectionStatus>("disconnected");
@@ -39,23 +28,16 @@ export abstract class BaseHubConnection {
 
   private claims = 0;
   private lingerTimer: ReturnType<typeof setTimeout> | null = null;
-  /** Serializes start/stop so a release-then-acquire (route change) cannot interleave. */
+  /** Serializes connection lifecycle changes. */
   private lifecycle: Promise<void> = Promise.resolve();
 
-  /**
-   * Replayed after every connect. SignalR keys groups by connection id and `withAutomaticReconnect`
-   * hands out a new one, so a reconnect silently drops every membership - the socket comes back up
-   * and no event ever arrives again.
-   */
+  /** Group joins replayed after reconnecting with a new connection ID. */
   private readonly groupJoins = new Map<string, { method: string; args: unknown[] }>();
 
   /** Live connection status for offline/reconnecting UI. */
   readonly connectionState = this.state.asReadonly();
 
-  /**
-   * Whether to tell the user live updates are gone. "connecting" is the first connect and is not
-   * "down" - showing the banner there would flash it on every page load.
-   */
+  /** Whether live updates are currently unavailable. */
   readonly realtimeDown = computed(
     () => this.state() === "disconnected" || this.state() === "reconnecting",
   );
@@ -85,7 +67,7 @@ export abstract class BaseHubConnection {
     return this.hubConnection.state === HubConnectionState.Connected;
   }
 
-  /** Claims the connection and starts it. Pass a `DestroyRef` unless the consumer is app-lifetime. */
+  /** Acquires and starts the connection for a consumer's lifetime. */
   acquire(destroyRef?: DestroyRef): Promise<void> {
     if (this.lingerTimer) {
       clearTimeout(this.lingerTimer);
@@ -96,10 +78,7 @@ export abstract class BaseHubConnection {
     return this.enqueue(() => this.start());
   }
 
-  /**
-   * Unnecessary if {@link acquire} was given a `DestroyRef`. The last release stops the hub after a
-   * linger, cancelled by a re-acquire (e.g. a route change).
-   */
+  /** Releases a claim and stops the connection after the final consumer leaves. */
   release(): void {
     if (this.claims > 0) {
       this.claims--;
@@ -113,10 +92,7 @@ export abstract class BaseHubConnection {
     }, DisconnectLingerMs);
   }
 
-  /**
-   * Joins now if connected, and again after every reconnect. `key` is local to the client: a later
-   * join under the same key replaces it (one dispatch board, one open conversation).
-   */
+  /** Joins a group now and after each reconnect. */
   protected async joinGroup(key: string, method: string, ...args: unknown[]): Promise<void> {
     this.groupJoins.set(key, { method, args });
     await this.invokeGroup(method, args);

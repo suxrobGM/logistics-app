@@ -20,31 +20,6 @@ internal sealed class UploadDocumentHandler(
 {
     public async Task<Result<Guid>> Handle(UploadDocumentCommand req, CancellationToken ct)
     {
-        switch (req.OwnerType)
-        {
-            case DocumentOwnerType.Load:
-                if (await tenantUow.Repository<Load>().GetByIdAsync(req.OwnerId, ct) is null)
-                {
-                    return Result<Guid>.Fail($"Could not find load with ID '{req.OwnerId}'");
-                }
-
-                break;
-            case DocumentOwnerType.Employee:
-                if (await tenantUow.Repository<Employee>().GetByIdAsync(req.OwnerId, ct) is null)
-                {
-                    return Result<Guid>.Fail($"Could not find employee with ID '{req.OwnerId}'");
-                }
-
-                break;
-            case DocumentOwnerType.Truck:
-                if (await tenantUow.Repository<Truck>().GetByIdAsync(req.OwnerId, ct) is null)
-                {
-                    return Result<Guid>.Fail($"Could not find truck with ID '{req.OwnerId}'");
-                }
-
-                break;
-        }
-
         var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
         if (access is null ||
             !await DocumentAccess.CanAccessOwnerAsync(tenantUow, access, req.OwnerType, req.OwnerId, ct))
@@ -64,7 +39,6 @@ internal sealed class UploadDocumentHandler(
             };
             var blobPath = BlobPathHelper.GetOwnerDocumentBlobPath(ownerSegment, req.OwnerId, uniqueFileName);
 
-            // Upload to blob
             _ = await blobStorageService.UploadAsync(
                 BlobConstants.DocumentsContainerName,
                 blobPath,
@@ -72,7 +46,6 @@ internal sealed class UploadDocumentHandler(
                 req.ContentType,
                 ct);
 
-            // Create the entity (derived)
             Guid newId;
             if (req.OwnerType == DocumentOwnerType.Load)
             {
@@ -135,7 +108,6 @@ internal sealed class UploadDocumentHandler(
                 return Result<Guid>.Ok(newId);
             }
 
-            // rollback blob if DB save failed
             logger.LogWarning(
                 "Failed to save document to database, rolling back blob: {BlobPath}", blobPath);
             await blobStorageService.DeleteAsync(BlobConstants.DocumentsContainerName, blobPath, ct);
@@ -144,7 +116,7 @@ internal sealed class UploadDocumentHandler(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to upload document for {OwnerType}/{OwnerId}", req.OwnerType, req.OwnerId);
-            return Result<Guid>.Fail($"Failed to upload document: {ex.Message}");
+            return Result<Guid>.Fail("Failed to upload document.");
         }
     }
 }

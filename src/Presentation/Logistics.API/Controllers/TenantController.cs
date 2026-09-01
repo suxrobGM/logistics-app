@@ -36,7 +36,6 @@ public class TenantController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
-    // Reads the master DB unfiltered, so it returns every tenant on the platform. Admin portal only.
     [HttpGet(Name = "GetTenants")]
     [ProducesResponseType(typeof(PagedResponse<TenantDto>), StatusCodes.Status200OK)]
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
@@ -125,9 +124,6 @@ public class TenantController(IMediator mediator) : ControllerBase
 
     #region AI Quota Management
 
-    // Reads every tenant's usage in one report - there is no single target tenant to compare the
-    // caller against, so (unlike the single-tenant actions above) this has to be platform-admin-only
-    // outright, the same way GetTenants is, rather than an ownership check.
     [HttpGet("quotas", Name = "GetTenantQuotaUsages")]
     [ProducesResponseType(typeof(PagedResponse<TenantQuotaUsageDto>), StatusCodes.Status200OK)]
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
@@ -137,8 +133,6 @@ public class TenantController(IMediator mediator) : ControllerBase
         return Ok(PagedResponse<TenantQuotaUsageDto>.FromPagedResult(result, query.Page, query.PageSize));
     }
 
-    // Same reasoning as GetQuotaUsages: resets every tenant (or an arbitrary caller-supplied list of
-    // tenant ids) with no target-tenant concept to check ownership against - platform-admin-only.
     [HttpPost("quotas/reset", Name = "ResetTenantQuotas")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]

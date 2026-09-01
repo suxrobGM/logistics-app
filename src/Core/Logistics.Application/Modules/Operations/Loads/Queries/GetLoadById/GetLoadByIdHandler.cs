@@ -23,14 +23,13 @@ internal sealed class GetLoadByIdHandler(
             return notFound;
         }
 
-        // Scoped here and not in the controller: GetLoadTool and CreateLoadInvoiceTool send this
-        // same query, and a driver holds both Load.View and the Copilot permissions.
-        if (currentUserService.IsInRole(TenantRoles.Driver) && !DrivenByCaller(load))
+        var isDriver = currentUserService.IsInRole(TenantRoles.Driver) &&
+                       !currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin);
+        if (isDriver && !DrivenByCaller(load))
         {
             return notFound;
         }
 
-        // Single row, so there is no N+1 to batch away - the nav properties lazy-load at most twice.
         return Result<LoadDto>.Ok(load.ToDto(LoadIntermodalLookup.Empty));
     }
 

@@ -4,10 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
-/// <summary>
-///     Tenant-wide notifications. Group membership comes from the caller's JWT tenant claim,
-///     never from a client-supplied id.
-/// </summary>
+/// <summary>Streams notifications to the caller's tenant.</summary>
 [Authorize]
 public class NotificationHub : Hub<INotificationHubClient>
 {

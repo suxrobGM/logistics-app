@@ -14,10 +14,6 @@ using Xunit;
 
 namespace Logistics.Infrastructure.Communications.Tests.SignalR;
 
-/// <summary>
-/// The cached report is persisted on disconnect and its TenantId selects the database, so a
-/// client-supplied one would be a cross-tenant write.
-/// </summary>
 public class TrackingHubTests
 {
     private const string ConnectionId = "conn-1";

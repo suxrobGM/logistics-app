@@ -100,8 +100,6 @@ internal static class Setup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        // A break-glass secret that is still the committed placeholder is public knowledge.
-        // Development keeps the default so local runs work.
         services.AddOptions<ImpersonationOptions>()
             .Bind(configuration.GetSection(ImpersonationOptions.SectionName))
             .Validate(
@@ -251,8 +249,6 @@ internal static class Setup
         // Telegram Bot
         app.MapTelegramWebhook();
 
-        // The global MVC AuthorizeFilter does not reach SignalR endpoints, so the hubs need their
-        // own authorization.
         app.MapHub<TrackingHub>("/hubs/tracking").RequireAuthorization();
         app.MapHub<AIDispatchHub>("/hubs/ai-dispatch").RequireAuthorization();
         app.MapHub<NotificationHub>("/hubs/notification").RequireAuthorization();

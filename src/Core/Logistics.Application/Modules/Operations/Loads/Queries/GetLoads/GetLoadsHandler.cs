@@ -19,13 +19,16 @@ internal sealed class GetLoadsHandler(
         GetLoadsQuery req,
         CancellationToken ct)
     {
-        var baseQuery = tenantUow.Repository<Load>().Query();
+        var isDriver = currentUserService.IsInRole(TenantRoles.Driver) &&
+                       !currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin);
+        var userId = isDriver ? currentUserService.GetUserId() : req.UserId;
 
-        // A driver holds tenant-wide Load.View, so their own id replaces whatever the caller asked
-        // for. Enforced here and not in the controller because SearchLoadsTool sends this query too.
-        var userId = currentUserService.IsInRole(TenantRoles.Driver)
-            ? currentUserService.GetUserId()
-            : req.UserId;
+        if (isDriver && userId is null)
+        {
+            return PagedResult<LoadDto>.Ok([], 0, req.PageSize);
+        }
+
+        var baseQuery = tenantUow.Repository<Load>().Query();
 
         if (!string.IsNullOrEmpty(req.Search))
         {
