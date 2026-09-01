@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Realtime;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Shared.Models.Messaging;
 using Microsoft.AspNetCore.SignalR;
@@ -5,7 +6,8 @@ using Microsoft.AspNetCore.SignalR;
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 /// <summary>Provides tenant-scoped messaging between dispatchers and drivers.</summary>
-public class ChatHub(ChatHubContext hubContext) : TenantHub<IChatHubClient>
+public class ChatHub(ChatHubContext hubContext, IConversationAccess conversationAccess)
+    : TenantHub<IChatHubClient>
 {
     protected override Task OnTenantConnectedAsync(Guid tenantId, Guid userId)
     {
@@ -26,14 +28,22 @@ public class ChatHub(ChatHubContext hubContext) : TenantHub<IChatHubClient>
     /// </summary>
     public async Task JoinConversation(string conversationId)
     {
+        if (Context.TenantIdFromClaim() is not { } tenantId ||
+            Context.UserIdFromClaim() is not { } userId ||
+            !Guid.TryParse(conversationId, out var conversationGuid))
+        {
+            return;
+        }
+
+        if (!await conversationAccess.CanUserJoinConversationAsync(tenantId, conversationGuid, userId))
+        {
+            return;
+        }
+
         await Groups.AddToGroupAsync(Context.ConnectionId, $"conversation-{conversationId}");
 
-        var userId = hubContext.GetUserId(Context.ConnectionId);
-        if (userId.HasValue)
-        {
-            await Clients.Group($"conversation-{conversationId}")
-                .UserJoinedConversation(Guid.Parse(conversationId), userId.Value, null);
-        }
+        await Clients.Group($"conversation-{conversationId}")
+            .UserJoinedConversation(conversationGuid, userId, null);
     }
 
     /// <summary>

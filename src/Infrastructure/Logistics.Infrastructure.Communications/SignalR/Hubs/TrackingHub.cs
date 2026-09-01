@@ -9,6 +9,7 @@ namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 /// <summary>Streams and records tenant-scoped truck geolocation.</summary>
 public class TrackingHub(
     ITruckGeolocationUpdater geolocationUpdater,
+    ITripAccess tripAccess,
     TrackingHubContext hubContext) : TenantHub<ITrackingHubClient>
 {
     private const string TripGroupPrefix = "trip:";
@@ -55,10 +56,21 @@ public class TrackingHub(
         hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }
 
-    /// <summary>Subscribe to updates for a specific trip.</summary>
-    public Task SubscribeToTrip(string tripId)
+    /// <summary>Subscribe to updates for a trip in the caller's own tenant.</summary>
+    public async Task SubscribeToTrip(string tripId)
     {
-        return Groups.AddToGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
+        if (Context.TenantIdFromClaim() is not { } tenantId ||
+            !Guid.TryParse(tripId, out var tripGuid))
+        {
+            return;
+        }
+
+        if (!await tripAccess.CanUserViewTripAsync(tenantId, tripGuid))
+        {
+            return;
+        }
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
     }
 
     /// <summary>Unsubscribe from updates for a specific trip.</summary>

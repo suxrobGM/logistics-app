@@ -16,26 +16,33 @@ public class TrackingHubTests
     private const string ConnectionId = "conn-1";
 
     private readonly ITruckGeolocationUpdater updater = Substitute.For<ITruckGeolocationUpdater>();
+    private readonly ITripAccess tripAccess = Substitute.For<ITripAccess>();
     private readonly TrackingHubContext hubContext = new();
     private readonly ITrackingHubClient groupClient = Substitute.For<ITrackingHubClient>();
+    private readonly IGroupManager groups = Substitute.For<IGroupManager>();
 
     private readonly Guid callerTenantId = Guid.NewGuid();
     private readonly Guid driverId = Guid.NewGuid();
     private readonly Guid truckId = Guid.NewGuid();
+    private readonly Guid tripId = Guid.NewGuid();
 
     private readonly TrackingHub sut;
 
     public TrackingHubTests()
     {
-        sut = new TrackingHub(updater, hubContext);
+        sut = new TrackingHub(updater, tripAccess, hubContext);
 
         var clients = Substitute.For<IHubCallerClients<ITrackingHubClient>>();
         clients.Group(Arg.Any<string>()).Returns(groupClient);
 
         sut.Clients = clients;
-        sut.Groups = Substitute.For<IGroupManager>();
+        sut.Groups = groups;
         sut.Context = CallerContext(callerTenantId, driverId);
     }
+
+    private void AllowTripAccess(bool allowed) =>
+        tripAccess.CanUserViewTripAsync(callerTenantId, tripId, Arg.Any<CancellationToken>())
+            .Returns(allowed);
 
     private void AllowReporting(bool allowed) =>
         updater.CanDriverReportForTruckAsync(
@@ -93,6 +100,52 @@ public class TrackingHubTests
 
         await groupClient.Received(1).ReceiveGeolocationData(
             Arg.Is<TruckGeolocationDto>(g => g.TenantId == callerTenantId));
+    }
+
+    /// <summary>
+    /// The bypass this guards: any authenticated user could previously subscribe to any trip group
+    /// by id, including another tenant's, and receive its status and geolocation updates.
+    /// </summary>
+    [Fact]
+    public async Task SubscribeToTrip_TripOutsideTheCallersTenant_DoesNotJoinTheGroup()
+    {
+        AllowTripAccess(false);
+
+        await sut.SubscribeToTrip(tripId.ToString());
+
+        await groups.DidNotReceive().AddToGroupAsync(
+            Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task SubscribeToTrip_TripInTheCallersTenant_JoinsTheGroup()
+    {
+        AllowTripAccess(true);
+
+        await sut.SubscribeToTrip(tripId.ToString());
+
+        await groups.Received(1).AddToGroupAsync(
+            ConnectionId, $"trip:{tripId}", Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task SubscribeToTrip_ChecksAccessForTheCallersOwnTenant()
+    {
+        AllowTripAccess(true);
+
+        await sut.SubscribeToTrip(tripId.ToString());
+
+        await tripAccess.Received(1).CanUserViewTripAsync(
+            callerTenantId, tripId, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task SubscribeToTrip_MalformedTripId_DoesNotThrowOrJoin()
+    {
+        await sut.SubscribeToTrip("not-a-guid");
+
+        await groups.DidNotReceive().AddToGroupAsync(
+            Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
