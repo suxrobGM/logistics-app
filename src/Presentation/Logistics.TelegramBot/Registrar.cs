@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Logistics.Application.Abstractions.Notifications;
@@ -79,6 +80,13 @@ public static class Registrar
         // Production mode: register webhook with Telegram
         if (app.Environment.IsProduction() && !string.IsNullOrEmpty(options.WebhookUrl))
         {
+            if (string.IsNullOrEmpty(options.SecretToken))
+            {
+                // Nothing can authenticate an anonymous endpoint without a secret, so it is not exposed at all.
+                app.Logger.LogError("TelegramBot:SecretToken is not configured; the Telegram webhook was not registered.");
+                return app;
+            }
+
             var capturedOptions = options;
             app.MapPost("/webhooks/telegram",
                 (HttpContext context, IServiceScopeFactory scopeFactory) =>
