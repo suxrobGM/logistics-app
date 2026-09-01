@@ -60,6 +60,37 @@ public class ChatHubContext
     }
 
     /// <summary>
+    ///     Records that a connection passed the join check for a conversation.
+    /// </summary>
+    public void AddAuthorizedConversation(string connectionId, Guid conversationId)
+    {
+        if (connectedClients.TryGetValue(connectionId, out var connection))
+        {
+            connection.AuthorizedConversations.TryAdd(conversationId, 0);
+        }
+    }
+
+    /// <summary>
+    ///     Whether a connection already passed the join check for a conversation.
+    /// </summary>
+    public bool IsAuthorizedForConversation(string connectionId, Guid conversationId)
+    {
+        return connectedClients.TryGetValue(connectionId, out var connection) &&
+               connection.AuthorizedConversations.ContainsKey(conversationId);
+    }
+
+    /// <summary>
+    ///     Drops a conversation's authorization when the connection leaves it.
+    /// </summary>
+    public void RemoveAuthorizedConversation(string connectionId, Guid conversationId)
+    {
+        if (connectedClients.TryGetValue(connectionId, out var connection))
+        {
+            connection.AuthorizedConversations.TryRemove(conversationId, out _);
+        }
+    }
+
+    /// <summary>
     ///     Removes a client connection.
     /// </summary>
     public void RemoveClient(string connectionId)
@@ -91,5 +122,8 @@ public class ChatHubContext
         public Guid? UserId { get; set; }
         public string? TenantId { get; set; }
         public DateTime ConnectedAt { get; init; }
+
+        /// <summary>Conversations this connection has passed the join check for. Used as a set.</summary>
+        public ConcurrentDictionary<Guid, byte> AuthorizedConversations { get; } = new();
     }
 }

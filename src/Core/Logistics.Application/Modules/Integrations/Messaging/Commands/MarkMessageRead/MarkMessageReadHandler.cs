@@ -22,6 +22,23 @@ internal sealed class MarkMessageReadHandler(
             return Result.Fail($"Message with ID '{req.MessageId}' not found");
         }
 
+        // Only a participant may leave a receipt, mirroring SendMessageHandler's gate on the send side.
+        var conversation = await tenantUow.Repository<Conversation>()
+            .GetByIdAsync(message.ConversationId, ct);
+
+        if (conversation is null)
+        {
+            return Result.Fail($"Conversation with ID '{message.ConversationId}' not found");
+        }
+
+        var participant = await tenantUow.Repository<ConversationParticipant>()
+            .GetAsync(p => p.ConversationId == message.ConversationId && p.EmployeeId == req.ReadById, ct);
+
+        if (participant is null && !conversation.IsTenantChat)
+        {
+            return Result.Fail("Reader is not a participant of this conversation");
+        }
+
         // Check if already read by this user
         var existingReceipt = await tenantUow.Repository<MessageReadReceipt>()
             .GetAsync(r => r.MessageId == req.MessageId && r.ReadById == req.ReadById, ct);
@@ -41,9 +58,6 @@ internal sealed class MarkMessageReadHandler(
         await tenantUow.Repository<MessageReadReceipt>().AddAsync(readReceipt, ct);
 
         // Update participant's last read timestamp
-        var participant = await tenantUow.Repository<ConversationParticipant>()
-            .GetAsync(p => p.ConversationId == message.ConversationId && p.EmployeeId == req.ReadById, ct);
-
         if (participant is not null)
         {
             participant.LastReadAt = DateTime.UtcNow;

@@ -103,14 +103,8 @@ await connection.invoke("JoinConversation", conversationId);
 await connection.invoke("LeaveConversation", conversationId);
 ```
 
-**SendMessage**: Send a message to a conversation
-
-```typescript
-await connection.invoke("SendMessage", {
-  conversationId: "conv-123",
-  content: "Hello!",
-});
-```
+Messages are sent over the REST API (`POST /messages`), not the hub. The API persists the
+message and then broadcasts it to the conversation group.
 
 **MarkAsRead**: Mark a message as read
 
