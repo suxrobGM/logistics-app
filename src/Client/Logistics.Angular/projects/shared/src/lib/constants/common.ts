@@ -39,3 +39,7 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   weightUnit: "pounds",
   operatingMode: "fleet",
 };
+
+/** Licensing enquiries, linked from the noncommercial banner and the website license page. */
+export const LICENSE_CONTACT_HREF =
+  "mailto:suxrobgm@gmail.com?subject=LogisticsX%20commercial%20license";

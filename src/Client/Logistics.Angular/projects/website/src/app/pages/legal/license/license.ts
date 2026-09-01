@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { LICENSE_CONTACT_HREF } from "@logistics/shared";
 import { Icon } from "@logistics/shared/ui";
 import { SectionContainer } from "@/shared/components";
 import { GITHUB_REPO_URL } from "@/shared/constants";
@@ -23,8 +24,7 @@ export class License {
   protected readonly lastUpdated = "September 1, 2026";
   protected readonly githubUrl = GITHUB_REPO_URL;
   protected readonly licenseFileUrl = `${GITHUB_REPO_URL}/blob/main/COMMERCIAL-LICENSE.md`;
-  protected readonly contactHref =
-    "mailto:suxrobgm@gmail.com?subject=LogisticsX%20commercial%20license";
+  protected readonly contactHref = LICENSE_CONTACT_HREF;
 
   protected readonly sections = [
     { id: "overview", title: "Overview" },

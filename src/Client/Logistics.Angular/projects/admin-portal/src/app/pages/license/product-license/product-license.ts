@@ -1,11 +1,12 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { form, FormField, FormRoot, required } from "@angular/forms/signals";
-import { ProductLicenseService, ToastService } from "@logistics/shared";
+import { getApiErrorMessage, ProductLicenseService, ToastService } from "@logistics/shared";
 import {
   Api,
   getProductLicenseStatus,
   setProductLicenseKey,
+  type ProductLicenseKeySource,
   type ProductLicenseStatusDto,
   type ProductLicenseTier,
 } from "@logistics/shared/api";
@@ -28,6 +29,12 @@ const TIER_LABELS: Record<ProductLicenseTier, string> = {
   internal_use: "Internal use",
   hosted: "Hosted / reseller",
   perpetual_source: "Perpetual source",
+};
+
+const SOURCE_LABELS: Record<ProductLicenseKeySource, string> = {
+  none: "None",
+  configuration: "License__Key setting",
+  system_settings: "Database",
 };
 
 @Component({
@@ -66,6 +73,11 @@ export class ProductLicense implements OnInit {
     return tier ? TIER_LABELS[tier] : null;
   });
 
+  protected readonly sourceLabel = computed(() => {
+    const source = this.status()?.source;
+    return source ? SOURCE_LABELS[source] : SOURCE_LABELS.none;
+  });
+
   protected readonly model = signal({ key: "" });
 
   protected readonly form = form(
@@ -85,7 +97,9 @@ export class ProductLicense implements OnInit {
             await this.license.refresh();
             this.toastService.showSuccess("License key installed");
           } catch (err) {
-            this.toastService.showError(this.describe(err, "Failed to install the license key"));
+            this.toastService.showError(
+              getApiErrorMessage(err, "Failed to install the license key"),
+            );
           }
           return undefined;
         },
@@ -106,11 +120,5 @@ export class ProductLicense implements OnInit {
     } finally {
       this.isLoading.set(false);
     }
-  }
-
-  /** The API answers a rejected key with the reason in `error`; fall back to a generic line. */
-  private describe(err: unknown, fallback: string): string {
-    const message = (err as { error?: { error?: string } } | null)?.error?.error;
-    return message ?? fallback;
   }
 }

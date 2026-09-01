@@ -12,5 +12,5 @@ public interface IProductLicenseHeartbeatService
     /// <summary>When the last heartbeat was accepted, or null if none was.</summary>
     Task<DateTime?> GetLastSentAtAsync(CancellationToken ct = default);
 
-    Task MarkSentAsync(DateTime sentAtUtc, CancellationToken ct = default);
+    Task MarkSentAsync(CancellationToken ct = default);
 }

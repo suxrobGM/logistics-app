@@ -1,6 +1,7 @@
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace Logistics.HostDefaults;
 
@@ -12,15 +13,13 @@ public static class ProductVersionHeaderExtensions
 {
     public const string HeaderName = "X-LogisticsX-Version";
 
+    private static readonly StringValues Version = ProductInfo.Version;
+
     public static WebApplication UseLogisticsProductVersionHeader(this WebApplication app)
     {
         app.Use((context, next) =>
         {
-            context.Response.OnStarting(() =>
-            {
-                context.Response.Headers[HeaderName] = ProductInfo.Version;
-                return Task.CompletedTask;
-            });
+            context.Response.Headers[HeaderName] = Version;
             return next(context);
         });
 

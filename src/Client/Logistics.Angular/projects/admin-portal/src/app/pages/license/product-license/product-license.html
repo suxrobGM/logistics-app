@@ -39,7 +39,7 @@
             <dt class="text-muted-foreground">Key id</dt>
             <dd>{{ s.keyId ?? "-" }}</dd>
             <dt class="text-muted-foreground">Key source</dt>
-            <dd>{{ s.source === "configuration" ? "License__Key setting" : s.source === "system_settings" ? "Database" : "None" }}</dd>
+            <dd>{{ sourceLabel() }}</dd>
             <dt class="text-muted-foreground">Version</dt>
             <dd>{{ s.version }}</dd>
             <dt class="text-muted-foreground">Instance id</dt>
@@ -61,8 +61,8 @@
           <form [formRoot]="form">
             <ui-stack gap="4">
               <ui-typography variant="body-sm" color="muted">
-                Paste the key from your commercial license email. It is checked against the
-                author's signing key before it is stored.
+                Paste the key from your commercial license email. It is checked against the author's
+                signing key before it is stored.
               </ui-typography>
               <ui-form-field label="License key" [required]="true">
                 <ui-textarea-field

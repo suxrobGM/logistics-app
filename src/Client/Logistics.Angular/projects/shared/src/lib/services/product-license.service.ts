@@ -15,16 +15,11 @@ export class ProductLicenseService {
   private readonly state = signal<ProductLicenseDiscoveryDto | null>(null);
   private pending: Promise<void> | null = null;
 
-  /** True once the server has answered. Nothing is shown before that, to avoid a flash. */
-  public readonly loaded = computed(() => this.state() !== null);
-
-  public readonly licensed = computed(() => this.state()?.licensed ?? false);
-
-  public readonly licensee = computed(() => this.state()?.licensee ?? null);
-
-  public readonly version = computed(() => this.state()?.version ?? null);
-
-  public readonly showBanner = computed(() => this.loaded() && !this.licensed());
+  /** Nothing is shown before the server has answered, to avoid a flash. */
+  public readonly showBanner = computed(() => {
+    const state = this.state();
+    return state !== null && !state.licensed;
+  });
 
   /** Fetches the discovery document once; later calls share the same request. */
   public load(): Promise<void> {

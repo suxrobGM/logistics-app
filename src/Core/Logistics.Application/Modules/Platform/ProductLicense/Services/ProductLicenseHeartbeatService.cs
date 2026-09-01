@@ -29,18 +29,13 @@ internal sealed class ProductLicenseHeartbeatService(
         };
     }
 
-    public async Task<DateTime?> GetLastSentAtAsync(CancellationToken ct = default)
-    {
-        var value = await systemSettings.GetAsync(ProductLicenseSettingsKeys.LastHeartbeatAt, ct);
-        return DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var at)
-            ? at.ToUniversalTime()
-            : null;
-    }
+    public async Task<DateTime?> GetLastSentAtAsync(CancellationToken ct = default) =>
+        (await license.GetStatusAsync(ct)).LastHeartbeatAt;
 
-    public async Task MarkSentAsync(DateTime sentAtUtc, CancellationToken ct = default)
+    public async Task MarkSentAsync(CancellationToken ct = default)
     {
         await systemSettings.SetAsync(ProductLicenseSettingsKeys.LastHeartbeatAt,
-            sentAtUtc.ToString("o", CultureInfo.InvariantCulture),
+            DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
             "When the license heartbeat receiver last accepted a report", ct);
         license.InvalidateCache();
     }

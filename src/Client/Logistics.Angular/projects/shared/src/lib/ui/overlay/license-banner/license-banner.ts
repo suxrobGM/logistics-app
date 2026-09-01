@@ -1,4 +1,5 @@
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { LICENSE_CONTACT_HREF } from "../../../constants/common";
 import { ProductLicenseService } from "../../../services/product-license.service";
 import { Icon } from "../../icons/icon/icon";
 
@@ -11,10 +12,15 @@ import { Icon } from "../../icons/icon/icon";
   selector: "ui-license-banner",
   templateUrl: "./license-banner.html",
   imports: [Icon],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LicenseBanner {
   protected readonly license = inject(ProductLicenseService);
 
-  protected readonly contactHref =
-    "mailto:suxrobgm@gmail.com?subject=LogisticsX%20commercial%20license";
+  protected readonly contactHref = LICENSE_CONTACT_HREF;
+
+  constructor() {
+    // The banner is the only consumer of the discovery document, so it owns the fetch.
+    void this.license.load();
+  }
 }

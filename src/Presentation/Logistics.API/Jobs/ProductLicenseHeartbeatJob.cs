@@ -61,7 +61,7 @@ public class ProductLicenseHeartbeatJob(
                 return;
             }
 
-            await heartbeats.MarkSentAsync(DateTime.UtcNow, ct);
+            await heartbeats.MarkSentAsync(ct);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
