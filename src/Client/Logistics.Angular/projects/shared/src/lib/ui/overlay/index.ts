@@ -9,3 +9,4 @@ export * from "./menu/menu-item";
 export * from "./lightbox/lightbox";
 export * from "./toaster/toaster";
 export * from "./cookie-banner/cookie-banner";
+export * from "./license-banner/license-banner";

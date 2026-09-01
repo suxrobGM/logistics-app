@@ -15,7 +15,11 @@ import {
   tenantInterceptor,
 } from "@logistics/shared";
 import { provideAppAuth } from "@logistics/shared/auth";
-import { I18nService, TENANT_SETTINGS_PROVIDER } from "@logistics/shared/services";
+import {
+  I18nService,
+  ProductLicenseService,
+  TENANT_SETTINGS_PROVIDER,
+} from "@logistics/shared/services";
 import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import { authOidcOptions } from "@/core/auth";
@@ -45,6 +49,10 @@ export const appConfig: ApplicationConfig = {
     provideTranslateHttpLoader({ prefix: "/assets/i18n/", suffix: ".json" }),
     provideAppInitializer(() => {
       inject(I18nService).init({ supportedLanguages: ["en"] });
+    }),
+    // Fire-and-forget: the banner waits for the answer, the app does not.
+    provideAppInitializer(() => {
+      void inject(ProductLicenseService).load();
     }),
 
     { provide: TENANT_ID_PROVIDER, useExisting: TenantContextService },

@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { NavigationEnd, Router, RouterOutlet } from "@angular/router";
-import { UiToaster } from "@logistics/shared/ui";
+import { LicenseBanner, UiToaster } from "@logistics/shared/ui";
 import { filter } from "rxjs";
 import { AuthService } from "@/core/auth";
 import { Sidebar } from "@/shared/layout";
@@ -13,7 +13,7 @@ const STANDALONE_ROUTES = ["/", "/unauthorized"];
 @Component({
   selector: "adm-root",
   templateUrl: "./app.html",
-  imports: [UiToaster, RouterOutlet, Sidebar, MobileHeader, MobileDrawer],
+  imports: [LicenseBanner, UiToaster, RouterOutlet, Sidebar, MobileHeader, MobileDrawer],
 })
 export class App {
   private readonly authService = inject(AuthService);

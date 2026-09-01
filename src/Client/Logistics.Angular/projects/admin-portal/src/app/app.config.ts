@@ -1,11 +1,18 @@
 import {
   importProvidersFrom,
+  inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   type ApplicationConfig,
 } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding, withRouterConfig } from "@angular/router";
-import { getAccessToken, PERMISSION_CHECKER, provideSpartanHlm } from "@logistics/shared";
+import {
+  getAccessToken,
+  PERMISSION_CHECKER,
+  ProductLicenseService,
+  provideSpartanHlm,
+} from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
 import { provideAppAuth } from "@logistics/shared/auth";
 import { authOidcOptions, PermissionService } from "@/core/auth";
@@ -28,6 +35,10 @@ export const appConfig: ApplicationConfig = {
     provideApi({
       baseUrl: environment.apiUrl,
       tokenGetter: () => getAccessToken("adminportal"),
+    }),
+    // Fire-and-forget: the banner waits for the answer, the app does not.
+    provideAppInitializer(() => {
+      void inject(ProductLicenseService).load();
     }),
     { provide: PERMISSION_CHECKER, useExisting: PermissionService },
   ],

@@ -10,6 +10,7 @@ import { provideRouter, withComponentInputBinding, withRouterConfig } from "@ang
 import {
   getAccessToken,
   PERMISSION_CHECKER,
+  ProductLicenseService,
   provideSpartanHlm,
   UPGRADE_HANDLER,
 } from "@logistics/shared";
@@ -54,6 +55,10 @@ export const appConfig: ApplicationConfig = {
     provideTranslateHttpLoader({ prefix: "/assets/i18n/", suffix: ".json" }),
     provideAppInitializer(() => {
       inject(I18nService).init({ supportedLanguages: ["en"] });
+    }),
+    // Fire-and-forget: the banner waits for the answer, the app does not.
+    provideAppInitializer(() => {
+      void inject(ProductLicenseService).load();
     }),
 
     { provide: PERMISSION_CHECKER, useExisting: PermissionService },

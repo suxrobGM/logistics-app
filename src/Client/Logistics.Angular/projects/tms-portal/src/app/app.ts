@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { NavigationEnd, Router, RouterOutlet } from "@angular/router";
 import { LayoutService } from "@logistics/shared/services";
-import { Spinner, UiToaster } from "@logistics/shared/ui";
+import { LicenseBanner, Spinner, UiToaster } from "@logistics/shared/ui";
 import { filter } from "rxjs";
 import { AuthService } from "@/core/auth";
 import { UpgradeDialog } from "@/shared/components/subscription/upgrade-dialog/upgrade-dialog";
@@ -16,6 +16,7 @@ const STANDALONE_ROUTES = ["/", "/unauthorized", "/404"];
   templateUrl: "./app.html",
   styleUrl: "./app.css",
   imports: [
+    LicenseBanner,
     UiToaster,
     CommandPalette,
     CopilotDrawer,

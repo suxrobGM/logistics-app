@@ -1,0 +1,14 @@
+@if (license.showBanner()) {
+  <div
+    role="status"
+    class="bg-subtle text-muted-foreground flex items-center justify-center gap-2 border-b border-[var(--warning)]/40 px-3 py-1 text-center text-xs"
+  >
+    <ui-icon name="triangle-alert" size="sm" color="warning" />
+    <span>
+      Running under the PolyForm Noncommercial license. Not for commercial use.
+      <a [href]="contactHref" class="text-foreground ml-1 underline underline-offset-2">
+        Get a commercial license
+      </a>
+    </span>
+  </div>
+}

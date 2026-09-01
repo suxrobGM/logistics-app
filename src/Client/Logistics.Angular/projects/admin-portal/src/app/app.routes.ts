@@ -58,6 +58,11 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "license",
+    loadChildren: () => import("./pages/license/license.routes").then((m) => m.licenseRoutes),
+    canActivate: [authGuard],
+  },
+  {
     path: "ai-settings",
     loadChildren: () =>
       import("./pages/ai-settings/ai-settings.routes").then((m) => m.aiSettingsRoutes),

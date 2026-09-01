@@ -16699,6 +16699,147 @@
           }
         }
       }
+    },
+    "/license": {
+      "get": {
+        "tags": [
+          "ProductLicense"
+        ],
+        "operationId": "GetProductLicenseStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductLicenseStatusDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/license/key": {
+      "put": {
+        "tags": [
+          "ProductLicense"
+        ],
+        "operationId": "SetProductLicenseKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetProductLicenseKeyCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetProductLicenseKeyCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetProductLicenseKeyCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductLicenseStatusDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/license/heartbeat": {
+      "post": {
+        "tags": [
+          "ProductLicense"
+        ],
+        "operationId": "RecordProductLicenseHeartbeat",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordProductLicenseHeartbeatCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordProductLicenseHeartbeatCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordProductLicenseHeartbeatCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/logisticsx.json": {
+      "get": {
+        "tags": [
+          "ProductLicense"
+        ],
+        "operationId": "GetProductLicenseDiscovery",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductLicenseDiscoveryDto"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -26316,6 +26457,94 @@
         },
         "additionalProperties": false
       },
+      "ProductLicenseDiscoveryDto": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "licensed": {
+            "type": "boolean"
+          },
+          "licensee": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductLicenseKeySource": {
+        "enum": [
+          "none",
+          "configuration",
+          "system_settings"
+        ],
+        "type": "string"
+      },
+      "ProductLicenseStatusDto": {
+        "type": "object",
+        "properties": {
+          "isLicensed": {
+            "type": "boolean"
+          },
+          "licensee": {
+            "type": "string",
+            "nullable": true
+          },
+          "tier": {
+            "$ref": "#/components/schemas/ProductLicenseTier"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxTenants": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "keyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/ProductLicenseKeySource"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "instanceId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "lastHeartbeatAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductLicenseTier": {
+        "enum": [
+          "internal_use",
+          "hosted",
+          "perpetual_source"
+        ],
+        "type": "string"
+      },
       "PublicCheckoutSessionDto": {
         "required": [
           "url"
@@ -26666,6 +26895,36 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RecordProductLicenseHeartbeatCommand": {
+        "type": "object",
+        "properties": {
+          "instanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "hostname": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "keyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "licensee": {
+            "type": "string",
+            "nullable": true
+          },
+          "tenantCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -27399,6 +27658,16 @@
             "format": "uuid"
           },
           "deviceToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SetProductLicenseKeyCommand": {
+        "type": "object",
+        "properties": {
+          "key": {
             "type": "string",
             "nullable": true
           }
@@ -30404,6 +30673,9 @@
     },
     {
       "name": "Privacy"
+    },
+    {
+      "name": "ProductLicense"
     },
     {
       "name": "PublicPayment"

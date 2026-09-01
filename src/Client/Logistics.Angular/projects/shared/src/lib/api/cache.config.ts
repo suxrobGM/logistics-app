@@ -17,6 +17,7 @@ const cacheRules: CacheRule[] = [
   { pattern: /\/invoices/, ttl: 0 }, // Invoices change often with payments, don't cache
   { pattern: /\/privacy/, ttl: 0 }, // Export status polled while job runs; signed URL must be fresh
   { pattern: /\/onboarding/, ttl: 0 }, // Checklist reflects writes to trucks/loads/customers - other base paths never invalidate it
+  { pattern: /\/license(\/|$)|\/\.well-known\//, ttl: 0 }, // License status must reflect a just-pasted key; does not match /employees/{id}/licenses
 
   // Reference/static data - longer TTL
   { pattern: /\/settings/, ttl: 30 * 60 * 1000 }, // 30 min

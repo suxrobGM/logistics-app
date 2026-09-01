@@ -79,6 +79,17 @@ export const sidebarSections: AdminNavSection[] = [
     ],
   },
   {
+    label: "System",
+    items: [
+      {
+        label: "License",
+        icon: "key",
+        route: "/license",
+        permission: Permission.ProductLicense.View,
+      },
+    ],
+  },
+  {
     label: "Inbox",
     items: [
       { label: "Demo Requests", icon: "inbox", route: "/demo-requests" },
