@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { Permission, PermissionService } from "@logistics/shared";
 import {
   Api,
   getDocuments,
@@ -85,6 +86,7 @@ import {
 })
 export class TruckDetailsComponent implements OnInit {
   private readonly api = inject(Api);
+  private readonly permissions = inject(PermissionService);
   private readonly localizationService = inject(LocalizationService, { optional: true });
 
   protected readonly id = input<string>();
@@ -101,6 +103,11 @@ export class TruckDetailsComponent implements OnInit {
   protected readonly truckLocations = signal<TruckGeolocationDto[]>([]);
   protected readonly documents = signal<DocumentDto[]>([]);
   protected readonly activeTab = signal(0);
+
+  /** The documents endpoints answer an empty list without this, so hide the tab instead. */
+  protected readonly canViewDocuments = computed(() =>
+    this.permissions.hasPermission(Permission.Document.View),
+  );
 
   protected readonly truckDocTypes: DocumentType[] = [
     "vehicle_registration",
@@ -163,7 +170,7 @@ export class TruckDetailsComponent implements OnInit {
 
   private async fetchDocuments(): Promise<void> {
     const id = this.id();
-    if (!id) {
+    if (!id || !this.canViewDocuments()) {
       return;
     }
 
