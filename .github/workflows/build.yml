@@ -34,6 +34,9 @@ jobs:
       - name: Build Identity Server
         run: dotnet build ${{ env.PRESENTATION_PROJECTS_DIR }}/Logistics.IdentityServer/Logistics.IdentityServer.csproj
 
+      - name: Build License Issuer
+        run: dotnet build tools/Logistics.LicenseIssuer/Logistics.LicenseIssuer.csproj
+
   build-angular-apps:
     runs-on: ubuntu-latest
 

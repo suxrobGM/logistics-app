@@ -42,6 +42,9 @@
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Vin/Logistics.Infrastructure.Vin.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Integrations.FuelCards/Logistics.Infrastructure.Integrations.FuelCards.csproj" />
   </Folder>
+  <Folder Name="/Tools/">
+    <Project Path="tools/Logistics.LicenseIssuer/Logistics.LicenseIssuer.csproj" />
+  </Folder>
   <Folder Name="/Presentation/">
     <Project Path="src/Presentation/Logistics.API/Logistics.API.csproj" />
     <Project Path="src/Presentation/Logistics.HostDefaults/Logistics.HostDefaults.csproj" />
