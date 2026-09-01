@@ -1,8 +1,5 @@
 using System.Security.Claims;
 using Logistics.Application.Abstractions.Realtime;
-using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
@@ -19,8 +16,6 @@ public class TrackingHubTests
     private const string ConnectionId = "conn-1";
 
     private readonly ITruckGeolocationUpdater updater = Substitute.For<ITruckGeolocationUpdater>();
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
     private readonly TrackingHubContext hubContext = new();
     private readonly ITrackingHubClient groupClient = Substitute.For<ITrackingHubClient>();
 
@@ -32,8 +27,7 @@ public class TrackingHubTests
 
     public TrackingHubTests()
     {
-        tenantUow.Repository<Truck>().Returns(truckRepo);
-        sut = new TrackingHub(updater, tenantUow, hubContext);
+        sut = new TrackingHub(updater, hubContext);
 
         var clients = Substitute.For<IHubCallerClients<ITrackingHubClient>>();
         clients.Group(Arg.Any<string>()).Returns(groupClient);
@@ -42,6 +36,11 @@ public class TrackingHubTests
         sut.Groups = Substitute.For<IGroupManager>();
         sut.Context = CallerContext(callerTenantId, driverId);
     }
+
+    private void AllowReporting(bool allowed) =>
+        updater.CanDriverReportForTruckAsync(
+                callerTenantId, truckId, driverId, Arg.Any<CancellationToken>())
+            .Returns(allowed);
 
     private static HubCallerContext CallerContext(Guid tenantId, Guid userId)
     {
@@ -55,14 +54,6 @@ public class TrackingHubTests
         return context;
     }
 
-    private Truck DriversTruck() => new()
-    {
-        Id = truckId,
-        Number = "101",
-        Type = TruckType.FreightTruck,
-        MainDriverId = driverId
-    };
-
     private static TruckGeolocationDto Report(Guid truckId, Guid tenantId) => new()
     {
         TruckId = truckId,
@@ -73,10 +64,9 @@ public class TrackingHubTests
     [Fact]
     public async Task SendGeolocationData_SpoofedTenantId_CachesTheCallersOwnTenant()
     {
-        truckRepo.GetByIdAsync(truckId, Arg.Any<CancellationToken>()).Returns(DriversTruck());
-        var spoofed = Report(truckId, Guid.NewGuid());
+        AllowReporting(true);
 
-        await sut.SendGeolocationData(spoofed);
+        await sut.SendGeolocationData(Report(truckId, Guid.NewGuid()));
 
         var cached = hubContext.GetGeolocationData(ConnectionId);
         Assert.NotNull(cached);
@@ -86,11 +76,7 @@ public class TrackingHubTests
     [Fact]
     public async Task SendGeolocationData_TruckTheCallerDoesNotDrive_IsIgnored()
     {
-        var someoneElsesTruck = new Truck
-        {
-            Id = truckId, Number = "102", Type = TruckType.FreightTruck, MainDriverId = Guid.NewGuid()
-        };
-        truckRepo.GetByIdAsync(truckId, Arg.Any<CancellationToken>()).Returns(someoneElsesTruck);
+        AllowReporting(false);
 
         await sut.SendGeolocationData(Report(truckId, callerTenantId));
 
@@ -101,7 +87,7 @@ public class TrackingHubTests
     [Fact]
     public async Task SendGeolocationData_OwnTruck_BroadcastsToTheCallersTenantGroup()
     {
-        truckRepo.GetByIdAsync(truckId, Arg.Any<CancellationToken>()).Returns(DriversTruck());
+        AllowReporting(true);
 
         await sut.SendGeolocationData(Report(truckId, callerTenantId));
 
@@ -115,6 +101,20 @@ public class TrackingHubTests
         var context = Substitute.For<HubCallerContext>();
         context.ConnectionId.Returns(ConnectionId);
         context.User.Returns(new ClaimsPrincipal(new ClaimsIdentity()));
+        sut.Context = context;
+
+        await sut.OnConnectedAsync();
+
+        context.Received(1).Abort();
+    }
+
+    [Fact]
+    public async Task OnConnectedAsync_WithoutAUserClaim_AbortsTheConnection()
+    {
+        var context = Substitute.For<HubCallerContext>();
+        context.ConnectionId.Returns(ConnectionId);
+        context.User.Returns(new ClaimsPrincipal(new ClaimsIdentity(
+            [new Claim(CustomClaimTypes.Tenant, callerTenantId.ToString())])));
         sut.Context = context;
 
         await sut.OnConnectedAsync();

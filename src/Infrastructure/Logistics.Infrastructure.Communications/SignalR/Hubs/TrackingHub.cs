@@ -1,34 +1,22 @@
 using Logistics.Application.Abstractions.Realtime;
-using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 /// <summary>Streams and records tenant-scoped truck geolocation.</summary>
-[Authorize]
 public class TrackingHub(
     ITruckGeolocationUpdater geolocationUpdater,
-    ITenantUnitOfWork tenantUow,
-    TrackingHubContext hubContext) : Hub<ITrackingHubClient>
+    TrackingHubContext hubContext) : TenantHub<ITrackingHubClient>
 {
     private const string TripGroupPrefix = "trip:";
 
-    public override async Task OnConnectedAsync()
+    protected override Task OnTenantConnectedAsync(Guid tenantId, Guid userId)
     {
-        if (Context.TenantIdFromClaim() is not { } tenantId)
-        {
-            Context.Abort();
-            return;
-        }
-
         hubContext.AddClient(Context.ConnectionId, null);
-        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId.ToString());
-        await base.OnConnectedAsync();
+        return Task.CompletedTask;
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -43,8 +31,6 @@ public class TrackingHub(
         hubContext.RemoveClient(Context.ConnectionId);
     }
 
-    #region Geolocation Methods
-
     /// <summary>Records a position report for a truck assigned to the caller.</summary>
     [Authorize(Roles = TenantRoles.Driver)]
     public async Task SendGeolocationData(TruckGeolocationDto truckGeolocation)
@@ -55,10 +41,8 @@ public class TrackingHub(
             return;
         }
 
-        var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckGeolocation.TruckId);
-
-        if (truck is null ||
-            (truck.MainDriverId != driverId && truck.SecondaryDriverId != driverId))
+        if (!await geolocationUpdater.CanDriverReportForTruckAsync(
+                tenantId, truckGeolocation.TruckId, driverId))
         {
             return;
         }
@@ -71,35 +55,15 @@ public class TrackingHub(
         hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }
 
-    #endregion
-
-    #region Tenant Subscription
-
-    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
-    public Task RegisterTenant(string tenantId) => Task.CompletedTask;
-
-    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
-    public Task UnregisterTenant(string tenantId) => Task.CompletedTask;
-
-    #endregion
-
-    #region Trip Subscription
-
-    /// <summary>
-    ///     Subscribe to updates for a specific trip.
-    /// </summary>
-    public async Task SubscribeToTrip(string tripId)
+    /// <summary>Subscribe to updates for a specific trip.</summary>
+    public Task SubscribeToTrip(string tripId)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
+        return Groups.AddToGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
     }
 
-    /// <summary>
-    ///     Unsubscribe from updates for a specific trip.
-    /// </summary>
-    public async Task UnsubscribeFromTrip(string tripId)
+    /// <summary>Unsubscribe from updates for a specific trip.</summary>
+    public Task UnsubscribeFromTrip(string tripId)
     {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
+        return Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
     }
-
-    #endregion
 }

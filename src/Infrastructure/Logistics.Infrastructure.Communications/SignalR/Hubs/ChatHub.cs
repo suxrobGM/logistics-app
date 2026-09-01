@@ -1,28 +1,18 @@
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Shared.Models.Messaging;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 /// <summary>Provides tenant-scoped messaging between dispatchers and drivers.</summary>
-[Authorize]
-public class ChatHub(ChatHubContext hubContext) : Hub<IChatHubClient>
+public class ChatHub(ChatHubContext hubContext) : TenantHub<IChatHubClient>
 {
-    public override async Task OnConnectedAsync()
+    protected override Task OnTenantConnectedAsync(Guid tenantId, Guid userId)
     {
-        if (Context.TenantIdFromClaim() is not { } tenantId ||
-            Context.UserIdFromClaim() is not { } userId)
-        {
-            Context.Abort();
-            return;
-        }
-
         hubContext.AddClient(Context.ConnectionId);
         hubContext.SetTenantId(Context.ConnectionId, tenantId.ToString());
         hubContext.SetUserId(Context.ConnectionId, userId);
-        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId.ToString());
-        await base.OnConnectedAsync();
+        return Task.CompletedTask;
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
@@ -30,15 +20,6 @@ public class ChatHub(ChatHubContext hubContext) : Hub<IChatHubClient>
         hubContext.RemoveClient(Context.ConnectionId);
         return base.OnDisconnectedAsync(exception);
     }
-
-    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
-    public Task RegisterTenant(string tenantId) => Task.CompletedTask;
-
-    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
-    public Task UnregisterTenant(string tenantId) => Task.CompletedTask;
-
-    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
-    public Task RegisterUser(Guid userId) => Task.CompletedTask;
 
     /// <summary>
     ///     Join a conversation to receive messages.

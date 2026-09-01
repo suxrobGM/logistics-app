@@ -14,32 +14,8 @@ internal sealed class UploadTenantLogoHandler(
     ILogger<UploadTenantLogoHandler> logger)
     : IAppRequestHandler<UploadTenantLogoCommand, Result<string>>
 {
-    private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
-
     public async Task<Result<string>> Handle(UploadTenantLogoCommand req, CancellationToken ct)
     {
-        if (!req.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
-        {
-            return Result<string>.Fail("File must be an image");
-        }
-
-        var extension = Path.GetExtension(req.FileName).ToLowerInvariant();
-        string[] allowedExtensions = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
-        if (!allowedExtensions.Contains(extension))
-        {
-            return Result<string>.Fail("Logo must be a PNG, JPG, WEBP, or GIF image.");
-        }
-
-        if (req.ContentType.Contains("svg", StringComparison.OrdinalIgnoreCase))
-        {
-            return Result<string>.Fail("SVG images are not allowed for logos.");
-        }
-
-        if (req.FileSizeBytes > MaxFileSizeBytes)
-        {
-            return Result<string>.Fail("File size exceeds the maximum allowed (5 MB)");
-        }
-
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId, ct);
         if (tenant is null)
         {
@@ -61,6 +37,7 @@ internal sealed class UploadTenantLogoHandler(
                 }
             }
 
+            var extension = Path.GetExtension(req.FileName).ToLowerInvariant();
             var blobPath = $"tenants/{req.TenantId}/logo{extension}";
 
             await blobStorageService.UploadAsync(

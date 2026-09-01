@@ -44,7 +44,6 @@ actual class MessagingService(
             try {
                 val token = preferencesManager.getAccessToken()
                 val tenantId = preferencesManager.getTenantId()
-                val userId = preferencesManager.getUserId()
 
                 hubConnection = HubConnectionBuilder.create(hubUrl)
                     .withAccessTokenProvider(Single.just(token ?: ""))
@@ -56,10 +55,6 @@ actual class MessagingService(
 
                 hubConnection?.start()?.blockingAwait()
                 _connectionState.value = MessagingConnectionState.CONNECTED
-
-                // Register tenant and user after connection
-                tenantId?.let { registerTenant(it) }
-                userId?.let { registerUser(it) }
             } catch (e: Exception) {
                 _connectionState.value = MessagingConnectionState.DISCONNECTED
                 Logger.e("MessagingService: Failed to connect", e)
@@ -136,22 +131,6 @@ actual class MessagingService(
             if (exception != null) {
                 Logger.e("MessagingService: Connection closed with error", exception)
             }
-        }
-    }
-
-    private fun registerTenant(tenantId: String) {
-        try {
-            hubConnection?.send("RegisterTenant", tenantId)
-        } catch (e: Exception) {
-            Logger.e("MessagingService: Failed to register tenant", e)
-        }
-    }
-
-    private fun registerUser(userId: String) {
-        try {
-            hubConnection?.send("RegisterUser", userId)
-        } catch (e: Exception) {
-            Logger.e("MessagingService: Failed to register user", e)
         }
     }
 

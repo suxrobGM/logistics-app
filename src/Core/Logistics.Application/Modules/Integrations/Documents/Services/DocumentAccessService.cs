@@ -11,21 +11,26 @@ internal sealed class DocumentAccessService(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUserService) : IDocumentAccessService
 {
-    public async Task<DocumentCaller?> ResolveCallerAsync(CancellationToken ct = default)
+    public Task<DocumentCaller?> ResolveCallerAsync(CancellationToken ct = default)
     {
         if (currentUserService.GetUserId() is not { } callerId)
         {
-            return null;
+            return Task.FromResult<DocumentCaller?>(null);
         }
 
-        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(callerId, ct);
+        // The role travels in the JWT, so this costs no query. A platform admin outranks the
+        // driver role the same way it does for loads.
+        var isManagement = currentUserService.IsInRole(
+            AppRoles.SuperAdmin, AppRoles.Admin,
+            TenantRoles.Owner, TenantRoles.Manager, TenantRoles.Dispatcher);
 
-        return employee?.Role?.Name is { } roleName
-            ? new DocumentCaller(
-                callerId,
-                IsManagement: roleName is TenantRoles.Owner or TenantRoles.Manager or TenantRoles.Dispatcher,
-                IsDriver: roleName == TenantRoles.Driver)
-            : null;
+        var caller = new DocumentCaller(
+            callerId,
+            IsManagement: isManagement,
+            IsDriver: !isManagement && currentUserService.IsInRole(TenantRoles.Driver));
+
+        return Task.FromResult<DocumentCaller?>(
+            caller is { IsManagement: false, IsDriver: false } ? null : caller);
     }
 
     public async Task<bool> CanAccessAsync(
