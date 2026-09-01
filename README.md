@@ -1,6 +1,6 @@
 ﻿# LogisticsX
 
-[![Build Status](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml)
+[![Build Status](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml)
 [![Deploy](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml)
 [![PolyForm-Noncommercial-1.0.0][license-shield]][license]
 
@@ -198,11 +198,13 @@ Architecture: DDD + CQRS with MediatR, multi-tenant with one database per compan
 
 Pull requests welcome. Fork, branch off `main`, open a PR. See the [development guides](docs/development/backend-guide.md) for coding conventions.
 
+Contributions are accepted only under the [Contributor License Agreement](CLA.md). A bot asks you to sign it on your first pull request. It lets the author offer the project under both the noncommercial and the commercial licenses while you keep your copyright.
+
 ## License
 
 [PolyForm Noncommercial License 1.0.0][license]
 
-The source is public and free for noncommercial use: personal projects, research, education, and evaluation. Any commercial use requires a paid commercial license from the author, with no time limit or automatic conversion. This includes running LogisticsX inside a for-profit company and offering it to others as a product or hosted service. To buy a commercial license, email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
+Free for noncommercial use: personal projects, research, education, and evaluation. Commercial use, including running it inside a for-profit company or hosting it for others, requires a commercial license. Options, prices, and terms are in [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md), or email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
 
 ## Contact
 
