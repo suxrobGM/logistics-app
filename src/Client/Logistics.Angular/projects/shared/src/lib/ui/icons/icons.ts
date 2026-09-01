@@ -145,7 +145,7 @@ import {
   lucideZap,
   lucideZoomIn,
 } from "@ng-icons/lucide";
-import { brandFacebook, brandLinkedin, brandX } from "./brand-icons";
+import { brandFacebook, brandGithub, brandLinkedin, brandX } from "./brand-icons";
 
 /**
  * Every icon the app can render, keyed by its canonical lucide (or hand-vendored `brand-*`) kebab
@@ -168,6 +168,7 @@ export const UI_ICONS = {
   "bot-message-square": lucideBotMessageSquare,
   box: lucideBox,
   "brand-facebook": brandFacebook,
+  "brand-github": brandGithub,
   "brand-linkedin": brandLinkedin,
   "brand-x": brandX,
   briefcase: lucideBriefcase,

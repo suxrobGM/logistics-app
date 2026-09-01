@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Icon, UiButton } from "@logistics/shared/ui";
+import { GITHUB_REPO_URL } from "@/shared/constants";
 import { DemoDialogService } from "@/shared/services";
 
 @Component({
@@ -15,6 +16,7 @@ export class Navbar {
   private readonly router = inject(Router);
   private readonly demoDialogService = inject(DemoDialogService);
 
+  protected readonly githubUrl = GITHUB_REPO_URL;
   protected readonly scrolled = signal(false);
   protected readonly mobileMenuOpen = signal(false);
 

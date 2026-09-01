@@ -61,6 +61,11 @@ export class Faq {
         "Email and in-app chat on every plan, Starter included. Enterprise adds priority support. The people answering have worked in trucking, so you won't be explaining what a BOL is.",
     },
     {
+      question: "Is LogisticsX open source?",
+      answer:
+        "The source is public on GitHub under the PolyForm Noncommercial license: free to read, run, and change for personal projects, research, and evaluation. Running it for a business, hosting it for others, or selling a product built on it needs a commercial license. See the Source License page for the options and prices.",
+    },
+    {
       question: "Is my data secure?",
       answer:
         "Yes. Encryption at rest and in transit, regular security audits, daily backups, and data stored in secure data centers.",

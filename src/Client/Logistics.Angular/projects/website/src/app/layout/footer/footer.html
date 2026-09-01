@@ -31,6 +31,16 @@
               For Owner-Operators
             </a>
           </li>
+          <li>
+            <a
+              [href]="githubUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-accent transition-colors"
+            >
+              Source Code
+            </a>
+          </li>
           <!-- <li>
             <a href="#" class="transition-colors hover:text-accent">Integrations</a>
           </li> -->
@@ -70,6 +80,11 @@
             <a routerLink="/cookies" class="hover:text-accent transition-colors">Cookie Policy</a>
           </li>
           <li>
+            <a routerLink="/license" class="hover:text-accent transition-colors">
+              Source License
+            </a>
+          </li>
+          <li>
             <a routerLink="/account-deletion" class="hover:text-accent transition-colors">
               Delete Account
             </a>
@@ -84,6 +99,15 @@
     >
       <p class="text-steel text-sm">&copy; {{ currentYear }} LogisticsX. All rights reserved.</p>
       <div class="mt-4 flex gap-4 md:mt-0">
+        <a
+          [href]="githubUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LogisticsX on GitHub"
+          class="text-steel hover:text-accent transition-colors"
+        >
+          <ui-icon name="brand-github" size="inherit" class="text-lg" />
+        </a>
         <a
           href="https://www.linkedin.com/in/suxrobgm"
           target="_blank"

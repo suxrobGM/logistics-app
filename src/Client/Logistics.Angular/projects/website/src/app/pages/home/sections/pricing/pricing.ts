@@ -1,6 +1,8 @@
 import { Component, inject } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { Icon, UiButton } from "@logistics/shared/ui";
 import { SectionContainer, SectionHeader } from "@/shared/components";
+import { GITHUB_REPO_URL } from "@/shared/constants";
 import { ScrollAnimateDirective } from "@/shared/directives";
 import { DemoDialogService } from "@/shared/services";
 
@@ -17,10 +19,12 @@ interface PricingTier {
 @Component({
   selector: "web-pricing",
   templateUrl: "./pricing.html",
-  imports: [Icon, ScrollAnimateDirective, SectionContainer, SectionHeader, UiButton],
+  imports: [Icon, RouterLink, ScrollAnimateDirective, SectionContainer, SectionHeader, UiButton],
 })
 export class Pricing {
   private readonly demoDialogService = inject(DemoDialogService);
+
+  protected readonly githubUrl = GITHUB_REPO_URL;
 
   protected readonly tiers: PricingTier[] = [
     {

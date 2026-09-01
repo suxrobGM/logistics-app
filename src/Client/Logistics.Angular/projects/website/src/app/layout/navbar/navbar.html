@@ -55,7 +55,18 @@
       </div>
 
       <!-- CTA Button -->
-      <div class="hidden md:block">
+      <div class="hidden items-center gap-4 md:flex">
+        <a
+          [href]="githubUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LogisticsX on GitHub"
+          class="hover:text-accent transition-colors"
+          [class.text-steel]="!showSolidNavbar()"
+          [class.text-ink]="showSolidNavbar()"
+        >
+          <ui-icon name="brand-github" size="inherit" class="text-xl" />
+        </a>
         <ui-button
           buttonClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
           label="Request a Demo"
@@ -112,6 +123,16 @@
         (click)="mobileMenuOpen.set(false)"
       >
         FAQ
+      </a>
+      <a
+        [href]="githubUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-display text-ink hover:bg-paper-dark flex items-center gap-2 rounded-lg px-3 py-2"
+        (click)="mobileMenuOpen.set(false)"
+      >
+        <ui-icon name="brand-github" size="inherit" />
+        GitHub
       </a>
       <div class="pt-2">
         <ui-button
