@@ -21,7 +21,7 @@ public class DeliveryDocumentBlobCleanupTests
 
     public DeliveryDocumentBlobCleanupTests()
     {
-        var caller = new DocumentCaller(Guid.NewGuid(), IsManagement: true, IsDriver: false);
+        var caller = new DocumentCaller(Guid.NewGuid(), IsReviewer: true);
 
         tenantUow.Repository<DeliveryDocument>()
             .Returns(Substitute.For<ITenantRepository<DeliveryDocument, Guid>>());

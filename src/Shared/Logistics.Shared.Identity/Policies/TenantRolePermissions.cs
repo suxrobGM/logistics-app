@@ -73,6 +73,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.FuelCard)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Tenant)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dvir)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Document)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Safety)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Maintenance)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dispatch)));
@@ -107,6 +108,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.LoadBoard)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.FuelCard)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dvir)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Document)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Safety)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Maintenance)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dispatch)));
@@ -138,6 +140,7 @@ public static class TenantRolePermissions
         list.Add(Permission.LoadBoard.Post);
         list.Add(Permission.FuelCard.View);
         list.Add(Permission.FuelCard.Manage);
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Document)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dispatch)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Container)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Terminal)));
@@ -155,9 +158,10 @@ public static class TenantRolePermissions
         list.Add(Permission.Truck.View);
         list.Add(Permission.Load.View);
         list.Add(Permission.Stat.View);
-        // Drivers file their own DVIRs; Dvir.Review stays with the roles that supervise them.
         list.Add(Permission.Dvir.View);
         list.Add(Permission.Dvir.Manage);
+        list.Add(Permission.Document.View);
+        list.Add(Permission.Document.Manage);
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Copilot)));
         return list;
     }

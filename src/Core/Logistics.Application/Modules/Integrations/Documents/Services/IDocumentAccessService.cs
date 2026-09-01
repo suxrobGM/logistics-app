@@ -4,17 +4,24 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Modules.Integrations.Documents.Services;
 
 /// <summary>
-///     The caller a document request is being answered for. Management sees every document in the
-///     tenant; a driver sees only their own record, their trucks and the loads they drive.
+///     The caller a document request is being answered for.
 /// </summary>
-public sealed record DocumentCaller(Guid CallerId, bool IsManagement, bool IsDriver);
+/// <param name="CallerId">The caller's user ID.</param>
+/// <param name="IsReviewer">
+///     Holds <c>Permission.Document.Review</c>, so the whole tenant's documents are in reach.
+///     Without it the caller reaches only their own record, their trucks and the loads they drive.
+/// </param>
+public sealed record DocumentCaller(Guid CallerId, bool IsReviewer);
 
 /// <summary>
 ///     Decides which documents the current user may read or change.
 /// </summary>
 public interface IDocumentAccessService : IApplicationService
 {
-    /// <summary>Reads the current user's identity and role, or null when neither can be resolved.</summary>
+    /// <summary>
+    ///     Reads the caller's identity and document permissions. Null when they are unauthenticated
+    ///     or hold no document permission at all.
+    /// </summary>
     Task<DocumentCaller?> ResolveCallerAsync(CancellationToken ct = default);
 
     /// <summary>Checks whether the caller may reach one document.</summary>

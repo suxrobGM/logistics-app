@@ -108,6 +108,11 @@ export const Permission = {
     View: "Permission.IftaRate.View",
     Manage: "Permission.IftaRate.Manage",
   },
+  Document: {
+    View: "Permission.Document.View",
+    Manage: "Permission.Document.Manage",
+    Review: "Permission.Document.Review",
+  },
   Dvir: {
     View: "Permission.Dvir.View",
     Manage: "Permission.Dvir.Manage",

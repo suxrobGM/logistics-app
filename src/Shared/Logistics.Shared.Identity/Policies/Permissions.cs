@@ -182,6 +182,18 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(IftaRate)}.Manage";
     }
 
+    public static class Document
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Document)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Document)}.Manage";
+
+        /// <summary>
+        /// Buys reaching documents that are not your own. Without it a holder of
+        /// <see cref="View" /> sees only their own record, their trucks and the loads they drive.
+        /// </summary>
+        public const string Review = $"{nameof(Permission)}.{nameof(Document)}.Review";
+    }
+
     public static class Dvir
     {
         public const string View = $"{nameof(Permission)}.{nameof(Dvir)}.View";

@@ -1,49 +1,44 @@
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Identity.Roles;
+using Logistics.Shared.Identity.Policies;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Services;
 
 internal sealed class DocumentAccessService(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUserService) : IDocumentAccessService
+    ICurrentUserService currentUserService,
+    IUserPermissionService userPermissions) : IDocumentAccessService
 {
-    public Task<DocumentCaller?> ResolveCallerAsync(CancellationToken ct = default)
+    public async Task<DocumentCaller?> ResolveCallerAsync(CancellationToken ct = default)
     {
         if (currentUserService.GetUserId() is not { } callerId)
         {
-            return Task.FromResult<DocumentCaller?>(null);
+            return null;
         }
 
-        // The role travels in the JWT, so this costs no query. A platform admin outranks the
-        // driver role the same way it does for loads.
-        var isManagement = currentUserService.IsInRole(
-            AppRoles.SuperAdmin, AppRoles.Admin,
-            TenantRoles.Owner, TenantRoles.Manager, TenantRoles.Dispatcher);
+        // Permissions, not role names: a tenant can rename its roles or add its own, and the
+        // effective set is cached per user, so this costs no query on the common path.
+        var granted = await userPermissions.GetPermissionsAsync(
+            callerId, currentUserService.GetTenantId(), ct);
 
-        var caller = new DocumentCaller(
-            callerId,
-            IsManagement: isManagement,
-            IsDriver: !isManagement && currentUserService.IsInRole(TenantRoles.Driver));
+        if (!granted.Contains(Permission.Document.View) && !granted.Contains(Permission.Document.Manage))
+        {
+            return null;
+        }
 
-        return Task.FromResult<DocumentCaller?>(
-            caller is { IsManagement: false, IsDriver: false } ? null : caller);
+        return new DocumentCaller(callerId, granted.Contains(Permission.Document.Review));
     }
 
     public async Task<bool> CanAccessAsync(
         DocumentCaller caller, Document document, CancellationToken ct = default)
     {
-        if (caller.IsManagement)
+        if (caller.IsReviewer)
         {
             return true;
-        }
-
-        if (!caller.IsDriver)
-        {
-            return false;
         }
 
         return document switch
@@ -61,14 +56,14 @@ internal sealed class DocumentAccessService(
         return ownerType switch
         {
             DocumentOwnerType.Employee =>
-                await tenantUow.Repository<Employee>().GetByIdAsync(ownerId, ct) is not null &&
-                (caller.IsManagement || (caller.IsDriver && ownerId == caller.CallerId)),
-            DocumentOwnerType.Truck => caller.IsManagement
+                (caller.IsReviewer || ownerId == caller.CallerId) &&
+                await tenantUow.Repository<Employee>().GetByIdAsync(ownerId, ct) is not null,
+            DocumentOwnerType.Truck => caller.IsReviewer
                 ? await tenantUow.Repository<Truck>().GetByIdAsync(ownerId, ct) is not null
-                : caller.IsDriver && await DrivesTruckAsync(caller.CallerId, ownerId, ct),
-            DocumentOwnerType.Load => caller.IsManagement
+                : await DrivesTruckAsync(caller.CallerId, ownerId, ct),
+            DocumentOwnerType.Load => caller.IsReviewer
                 ? await tenantUow.Repository<Load>().GetByIdAsync(ownerId, ct) is not null
-                : caller.IsDriver && await DrivesLoadAsync(caller.CallerId, ownerId, ct),
+                : await DrivesLoadAsync(caller.CallerId, ownerId, ct),
             _ => false
         };
     }
@@ -77,12 +72,12 @@ internal sealed class DocumentAccessService(
         DocumentCaller caller, List<TDocument> documents, CancellationToken ct = default)
         where TDocument : Document
     {
-        if (caller.IsManagement)
+        if (caller.IsReviewer)
         {
             return documents;
         }
 
-        if (!caller.IsDriver || documents.Count == 0)
+        if (documents.Count == 0)
         {
             return [];
         }
