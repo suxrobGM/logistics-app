@@ -1,4 +1,3 @@
-using Logistics.API.Extensions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using MediatR;
