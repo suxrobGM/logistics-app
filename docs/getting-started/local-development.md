@@ -5,7 +5,7 @@ Step-by-step guide to run LogisticsX without Docker.
 ## Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/suxrobgm/logistics-app.git
+git clone https://github.com/suxrobGM/logistics-app.git
 cd logistics-app
 ```
 
