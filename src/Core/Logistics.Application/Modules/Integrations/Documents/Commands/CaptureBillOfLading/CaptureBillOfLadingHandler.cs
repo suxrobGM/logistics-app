@@ -38,6 +38,7 @@ internal sealed class CaptureBillOfLadingHandler(
         }
 
         var uploadedDocIds = new List<Guid>();
+        var uploadedBlobPaths = new List<string>();
         var capturedAt = DateTime.UtcNow;
         string? signatureBlobPath = null;
 
@@ -48,6 +49,7 @@ internal sealed class CaptureBillOfLadingHandler(
                 var signatureBytes = Convert.FromBase64String(req.SignatureBase64);
                 var signatureFileName = BlobPathHelper.GenerateSignatureFileName();
                 signatureBlobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "bol", signatureFileName);
+                uploadedBlobPaths.Add(signatureBlobPath);
 
                 using var signatureStream = new MemoryStream(signatureBytes);
                 await blobStorage.UploadAsync(
@@ -63,6 +65,7 @@ internal sealed class CaptureBillOfLadingHandler(
             {
                 var uniqueFileName = BlobPathHelper.GenerateUniqueFileName(photo.FileName, photoIndex++);
                 var blobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "bol", uniqueFileName);
+                uploadedBlobPaths.Add(blobPath);
 
                 await blobStorage.UploadAsync(
                     BlobConstants.DocumentsContainerName,
@@ -130,11 +133,13 @@ internal sealed class CaptureBillOfLadingHandler(
                 return Result<Guid>.Ok(uploadedDocIds.First());
             }
 
+            await DocumentBlobCleanup.DeleteAsync(blobStorage, uploadedBlobPaths, logger);
             return Result<Guid>.Fail("No documents were created");
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to capture BOL for load {LoadId}", req.LoadId);
+            await DocumentBlobCleanup.DeleteAsync(blobStorage, uploadedBlobPaths, logger);
 
             return Result<Guid>.Fail("Failed to capture bill of lading.");
         }
