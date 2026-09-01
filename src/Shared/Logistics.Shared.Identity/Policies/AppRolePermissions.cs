@@ -50,12 +50,13 @@ public static class AppRolePermissions
     }
 
     /// <summary>
-    ///     Admins get every feature permission except managing app-level admins,
-    ///     which is reserved for <see cref="AppRoles.SuperAdmin" />. New permission
-    ///     modules are picked up automatically.
+    ///     Admins get every feature permission except managing app-level admins and the
+    ///     commercial license key, which are reserved for <see cref="AppRoles.SuperAdmin" />.
+    ///     New permission modules are picked up automatically.
     /// </summary>
     private static IEnumerable<string> GetAdminPermissions()
     {
-        return Permission.GetAll().Where(p => p != Permission.AppRole.Manage);
+        return Permission.GetAll()
+            .Where(p => p != Permission.AppRole.Manage && p != Permission.ProductLicense.Manage);
     }
 }

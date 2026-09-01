@@ -243,6 +243,16 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(Negotiation)}.Manage";
     }
 
+    public static class ProductLicense
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(ProductLicense)}.View";
+
+        /// <summary>
+        /// Installs the commercial license key. Held by SuperAdmin only, like <see cref="AppRole.Manage"/>.
+        /// </summary>
+        public const string Manage = $"{nameof(Permission)}.{nameof(ProductLicense)}.Manage";
+    }
+
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();

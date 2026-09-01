@@ -152,6 +152,7 @@ internal static class Setup
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
+        app.UseLogisticsProductVersionHeader();
         app.UseSerilogRequestLogging();
 
         if (app.Environment.IsDevelopment())
