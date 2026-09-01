@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Integrations.Accounting\Logistics.Infrastructure.Integrations.Accounting.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Integrations.Eld\Logistics.Infrastructure.Integrations.Eld.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Integrations.LoadBoard\Logistics.Infrastructure.Integrations.LoadBoard.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Licensing\Logistics.Infrastructure.Licensing.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Payments\Logistics.Infrastructure.Payments.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Persistence\Logistics.Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Tax\Logistics.Infrastructure.Tax.csproj" />

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Logistics.Application.Modules.Platform.ProductLicense.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
 using NSubstitute;
 using Xunit;
 
@@ -10,28 +11,28 @@ namespace Logistics.Application.Tests.Platform.ProductLicense;
 public class RecordProductLicenseHeartbeatHandlerTests
 {
     private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
-    private readonly IMasterRepository<LicenseHeartbeat, Guid> repo = Substitute.For<IMasterRepository<LicenseHeartbeat, Guid>>();
+    private readonly IMasterRepository<ProductLicenseHeartbeat, Guid> repo = Substitute.For<IMasterRepository<ProductLicenseHeartbeat, Guid>>();
     private readonly RecordProductLicenseHeartbeatHandler sut;
 
     public RecordProductLicenseHeartbeatHandlerTests()
     {
-        masterUow.Repository<LicenseHeartbeat>().Returns(repo);
+        masterUow.Repository<ProductLicenseHeartbeat>().Returns(repo);
         sut = new RecordProductLicenseHeartbeatHandler(masterUow);
     }
 
     [Fact]
     public async Task Handle_NewInstance_AddsRow()
     {
-        repo.GetAsync(Arg.Any<Expression<Func<LicenseHeartbeat, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns((LicenseHeartbeat?)null);
+        repo.GetAsync(Arg.Any<Expression<Func<ProductLicenseHeartbeat, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((ProductLicenseHeartbeat?)null);
         var command = Command();
 
         var result = await sut.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         await repo.Received(1).AddAsync(
-            Arg.Is<LicenseHeartbeat>(h =>
-                h.InstanceId == command.InstanceId
+            Arg.Is<ProductLicenseHeartbeat>(h =>
+                h.InstanceId == command.Report.InstanceId
                 && h.Hostname == "box-1"
                 && h.Version == "1.2.3"
                 && h.TenantCount == 4
@@ -44,7 +45,7 @@ public class RecordProductLicenseHeartbeatHandlerTests
     public async Task Handle_KnownInstance_UpdatesLastSeenOnly()
     {
         var firstSeen = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        var existing = new LicenseHeartbeat
+        var existing = new ProductLicenseHeartbeat
         {
             InstanceId = Guid.NewGuid(),
             Hostname = "old",
@@ -52,7 +53,7 @@ public class RecordProductLicenseHeartbeatHandlerTests
             FirstSeenAt = firstSeen,
             LastSeenAt = firstSeen
         };
-        repo.GetAsync(Arg.Any<Expression<Func<LicenseHeartbeat, bool>>>(), Arg.Any<CancellationToken>())
+        repo.GetAsync(Arg.Any<Expression<Func<ProductLicenseHeartbeat, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(existing);
         var command = Command(existing.InstanceId);
 
@@ -69,13 +70,14 @@ public class RecordProductLicenseHeartbeatHandlerTests
         await masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
-    private static RecordProductLicenseHeartbeatCommand Command(Guid? instanceId = null) => new()
-    {
-        InstanceId = instanceId ?? Guid.NewGuid(),
-        Hostname = "box-1",
-        Version = "1.2.3",
-        KeyId = "2026-09",
-        Licensee = "Acme",
-        TenantCount = 4
-    };
+    private static RecordProductLicenseHeartbeatCommand Command(Guid? instanceId = null) => new(
+        new ProductLicenseHeartbeatDto
+        {
+            InstanceId = instanceId ?? Guid.NewGuid(),
+            Hostname = "box-1",
+            Version = "1.2.3",
+            KeyId = "2026-09",
+            Licensee = "Acme",
+            TenantCount = 4
+        });
 }

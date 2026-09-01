@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     /// <inheritdoc />
-    public partial class AddLicenseHeartbeats : Migration
+    public partial class AddProductLicenseHeartbeats : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "license_heartbeats",
+                name: "product_license_heartbeats",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -27,18 +27,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_license_heartbeats", x => x.id);
+                    table.PrimaryKey("pk_product_license_heartbeats", x => x.id);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_license_heartbeats_instance_id",
-                table: "license_heartbeats",
+                name: "ix_product_license_heartbeats_instance_id",
+                table: "product_license_heartbeats",
                 column: "instance_id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_license_heartbeats_last_seen_at",
-                table: "license_heartbeats",
+                name: "ix_product_license_heartbeats_last_seen_at",
+                table: "product_license_heartbeats",
                 column: "last_seen_at");
         }
 
@@ -46,7 +46,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "license_heartbeats");
+                name: "product_license_heartbeats");
         }
     }
 }

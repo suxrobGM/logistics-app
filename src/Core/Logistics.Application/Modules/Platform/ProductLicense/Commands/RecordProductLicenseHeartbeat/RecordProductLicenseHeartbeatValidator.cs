@@ -6,11 +6,12 @@ internal sealed class RecordProductLicenseHeartbeatValidator : AbstractValidator
 {
     public RecordProductLicenseHeartbeatValidator()
     {
-        RuleFor(i => i.InstanceId).NotEmpty();
-        RuleFor(i => i.Hostname).NotEmpty().MaximumLength(256);
-        RuleFor(i => i.Version).NotEmpty().MaximumLength(64);
-        RuleFor(i => i.KeyId).MaximumLength(64);
-        RuleFor(i => i.Licensee).MaximumLength(256);
-        RuleFor(i => i.TenantCount).GreaterThanOrEqualTo(0);
+        RuleFor(i => i.Report).NotNull();
+        RuleFor(i => i.Report.InstanceId).NotEmpty();
+        RuleFor(i => i.Report.Hostname).NotEmpty().MaximumLength(256);
+        RuleFor(i => i.Report.Version).NotEmpty().MaximumLength(64);
+        RuleFor(i => i.Report.KeyId).MaximumLength(64);
+        RuleFor(i => i.Report.Licensee).MaximumLength(256);
+        RuleFor(i => i.Report.TenantCount).GreaterThanOrEqualTo(0);
     }
 }

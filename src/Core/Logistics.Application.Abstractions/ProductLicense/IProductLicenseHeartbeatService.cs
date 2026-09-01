@@ -1,16 +1,13 @@
-using Logistics.Shared.Models;
-
 namespace Logistics.Application.Abstractions.ProductLicense;
 
 /// <summary>
-/// Builds the daily heartbeat payload and records when the receiver accepted it.
+/// Sends the daily heartbeat for this deployment. Runs as a global Hangfire job, no tenant fan-out.
 /// </summary>
 public interface IProductLicenseHeartbeatService
 {
-    Task<ProductLicenseHeartbeatDto> BuildHeartbeatAsync(CancellationToken ct = default);
-
-    /// <summary>When the last heartbeat was accepted, or null if none was.</summary>
-    Task<DateTime?> GetLastSentAtAsync(CancellationToken ct = default);
-
-    Task MarkSentAsync(CancellationToken ct = default);
+    /// <summary>
+    /// Builds the report, posts it, and records the send when the receiver accepted it.
+    /// Does nothing when the heartbeat is turned off.
+    /// </summary>
+    Task SendHeartbeatAsync(CancellationToken ct = default);
 }

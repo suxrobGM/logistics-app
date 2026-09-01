@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using Logistics.Application.Abstractions.ProductLicense;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Logistics.Application.Tests.Platform.ProductLicense;
@@ -24,27 +23,14 @@ internal sealed class LicenseKeyFactory : IDisposable
         string? keyId = "2026-09",
         SigningCredentials? credentials = null)
     {
-        var claims = new Dictionary<string, object> { [ProductLicenseClaims.Licensee] = licensee };
-        if (tier is not null)
-        {
-            claims[ProductLicenseClaims.Tier] = tier;
-        }
-
-        if (maxTenants is { } cap)
-        {
-            claims[ProductLicenseClaims.MaxTenants] = cap;
-        }
-
-        return new JsonWebTokenHandler().CreateToken(new SecurityTokenDescriptor
-        {
-            Issuer = issuer,
-            Audience = audience,
-            Expires = expires ?? DateTime.UtcNow.AddYears(1),
-            Claims = claims,
-            SigningCredentials = credentials ?? new SigningCredentials(
-                new ECDsaSecurityKey(signer) { KeyId = keyId },
-                SecurityAlgorithms.EcdsaSha256)
-        });
+        return ProductLicenseToken.Sign(
+            credentials ?? ProductLicenseToken.CreateSigningCredentials(signer, keyId),
+            licensee,
+            tier,
+            expires ?? DateTime.UtcNow.AddYears(1),
+            maxTenants,
+            issuer,
+            audience);
     }
 
     public void Dispose() => signer.Dispose();

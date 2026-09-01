@@ -20,6 +20,7 @@ using Logistics.Infrastructure.Integrations.Accounting;
 using Logistics.Infrastructure.Integrations.Eld;
 using Logistics.Infrastructure.Integrations.FuelCards;
 using Logistics.Infrastructure.Integrations.LoadBoard;
+using Logistics.Infrastructure.Licensing;
 using Logistics.Application.Abstractions.Accounting;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.Negotiation;
@@ -67,6 +68,7 @@ internal static class Setup
         services.AddCommunicationsInfrastructure(configuration);
         services.AddDocumentsInfrastructure();
         services.AddVinInfrastructure();
+        services.AddLicensingInfrastructure();
         services.AddEldIntegrations(configuration);
         services.AddLoadBoardIntegrations(configuration);
         services.AddAccountingIntegrations(configuration);
@@ -124,8 +126,6 @@ internal static class Setup
                 o => !o.HeartbeatEnabled || Uri.IsWellFormedUriString(o.HeartbeatUrl, UriKind.Absolute),
                 "License:HeartbeatUrl must be an absolute URL while License:HeartbeatEnabled is true.")
             .ValidateOnStart();
-        services.AddHttpClient(ProductLicenseHeartbeatJob.HttpClientName,
-            client => client.Timeout = TimeSpan.FromSeconds(15));
 
         // Rate limiting configuration
         services.AddRateLimiter(options =>
@@ -300,9 +300,6 @@ internal static class Setup
         AIDispatchPolicyLearningJob.ScheduleJobs();
         NegotiationExpirySweepJob.ScheduleJobs();
         ProductLicenseHeartbeatJob.ScheduleJobs();
-
-        // A fresh install reports within minutes; the job's own 20-hour guard makes restarts cheap.
-        RecurringJob.TriggerJob(ProductLicenseHeartbeatJob.JobId);
 
         // Remove old stale dispatch agent job if it exists
         RecurringJob.RemoveIfExists("ai-dispatch");

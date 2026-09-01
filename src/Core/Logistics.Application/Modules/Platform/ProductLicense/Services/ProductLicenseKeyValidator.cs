@@ -12,8 +12,6 @@ namespace Logistics.Application.Modules.Platform.ProductLicense.Services;
 /// </summary>
 internal sealed class ProductLicenseKeyValidator
 {
-    private static readonly TimeSpan ClockSkew = TimeSpan.FromMinutes(5);
-
     private readonly JsonWebTokenHandler handler = new();
     private readonly TokenValidationParameters parameters;
 
@@ -22,17 +20,7 @@ internal sealed class ProductLicenseKeyValidator
         var ecdsa = ECDsa.Create();
         ecdsa.ImportSubjectPublicKeyInfo(Convert.FromBase64String(spkiBase64), out _);
 
-        parameters = new TokenValidationParameters
-        {
-            ValidIssuer = ProductLicenseClaims.Issuer,
-            ValidAudience = ProductLicenseClaims.Audience,
-            IssuerSigningKey = new ECDsaSecurityKey(ecdsa),
-            ValidAlgorithms = [SecurityAlgorithms.EcdsaSha256],
-            RequireSignedTokens = true,
-            RequireExpirationTime = true,
-            ValidateLifetime = false,
-            ClockSkew = ClockSkew
-        };
+        parameters = ProductLicenseToken.CreateValidationParameters(ecdsa);
     }
 
     public async Task<ProductLicenseValidationResult> ValidateAsync(string key, DateTime? nowUtc = null)
@@ -54,7 +42,7 @@ internal sealed class ProductLicenseKeyValidator
             return ProductLicenseValidationResult.Invalid($"unknown tier '{tierName}'");
         }
 
-        var expired = jwt.ValidTo.Add(ClockSkew) < (nowUtc ?? DateTime.UtcNow);
+        var expired = jwt.ValidTo.Add(ProductLicenseToken.ClockSkew) < (nowUtc ?? DateTime.UtcNow);
 
         return new ProductLicenseValidationResult(
             IsValid: !expired,

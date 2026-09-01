@@ -41,9 +41,9 @@ public class ProductLicenseController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [AllowAnonymous]
     [EnableRateLimiting(HeartbeatRateLimitPolicy)]
-    public async Task<IActionResult> RecordProductLicenseHeartbeat([FromBody] RecordProductLicenseHeartbeatCommand command)
+    public async Task<IActionResult> RecordProductLicenseHeartbeat([FromBody] ProductLicenseHeartbeatDto report)
     {
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(new RecordProductLicenseHeartbeatCommand(report));
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 

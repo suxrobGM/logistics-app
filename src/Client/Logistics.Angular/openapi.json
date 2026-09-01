@@ -16789,17 +16789,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RecordProductLicenseHeartbeatCommand"
+                "$ref": "#/components/schemas/ProductLicenseHeartbeatDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/RecordProductLicenseHeartbeatCommand"
+                "$ref": "#/components/schemas/ProductLicenseHeartbeatDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/RecordProductLicenseHeartbeatCommand"
+                "$ref": "#/components/schemas/ProductLicenseHeartbeatDto"
               }
             }
           }
@@ -26478,6 +26478,36 @@
         },
         "additionalProperties": false
       },
+      "ProductLicenseHeartbeatDto": {
+        "type": "object",
+        "properties": {
+          "instanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "hostname": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "keyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "licensee": {
+            "type": "string",
+            "nullable": true
+          },
+          "tenantCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "ProductLicenseKeySource": {
         "enum": [
           "none",
@@ -26895,36 +26925,6 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "RecordProductLicenseHeartbeatCommand": {
-        "type": "object",
-        "properties": {
-          "instanceId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "hostname": {
-            "type": "string",
-            "nullable": true
-          },
-          "version": {
-            "type": "string",
-            "nullable": true
-          },
-          "keyId": {
-            "type": "string",
-            "nullable": true
-          },
-          "licensee": {
-            "type": "string",
-            "nullable": true
-          },
-          "tenantCount": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false

@@ -10,20 +10,21 @@ internal sealed class RecordProductLicenseHeartbeatHandler(IMasterUnitOfWork mas
 {
     public async Task<Result> Handle(RecordProductLicenseHeartbeatCommand req, CancellationToken ct)
     {
-        var repo = masterUow.Repository<LicenseHeartbeat>();
+        var report = req.Report;
+        var repo = masterUow.Repository<ProductLicenseHeartbeat>();
         var now = DateTime.UtcNow;
-        var row = await repo.GetAsync(x => x.InstanceId == req.InstanceId, ct);
+        var row = await repo.GetAsync(x => x.InstanceId == report.InstanceId, ct);
 
         if (row is null)
         {
-            row = new LicenseHeartbeat
+            row = new ProductLicenseHeartbeat
             {
-                InstanceId = req.InstanceId,
-                Hostname = req.Hostname,
-                Version = req.Version,
-                KeyId = req.KeyId,
-                Licensee = req.Licensee,
-                TenantCount = req.TenantCount,
+                InstanceId = report.InstanceId,
+                Hostname = report.Hostname,
+                Version = report.Version,
+                KeyId = report.KeyId,
+                Licensee = report.Licensee,
+                TenantCount = report.TenantCount,
                 FirstSeenAt = now,
                 LastSeenAt = now
             };
@@ -31,7 +32,7 @@ internal sealed class RecordProductLicenseHeartbeatHandler(IMasterUnitOfWork mas
         }
         else
         {
-            row.Touch(req.Hostname, req.Version, req.KeyId, req.Licensee, req.TenantCount, now);
+            row.Touch(report.Hostname, report.Version, report.KeyId, report.Licensee, report.TenantCount, now);
             repo.Update(row);
         }
 

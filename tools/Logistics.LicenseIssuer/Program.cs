@@ -77,43 +77,28 @@ static int Issue(Dictionary<string, string> options)
         return 1;
     }
 
-    var claims = new Dictionary<string, object>
-    {
-        [ProductLicenseClaims.Licensee] = licensee,
-        [ProductLicenseClaims.Tier] = tier.ToString()
-    };
-
+    int? maxTenants = null;
     if (options.TryGetValue("max-tenants", out var maxTenantsText))
     {
-        if (!int.TryParse(maxTenantsText, out var maxTenants) || maxTenants <= 0)
+        if (!int.TryParse(maxTenantsText, out var cap) || cap <= 0)
         {
             Console.Error.WriteLine("--max-tenants must be a positive integer.");
             return 1;
         }
 
-        claims[ProductLicenseClaims.MaxTenants] = maxTenants;
+        maxTenants = cap;
     }
 
     using var ecdsa = ECDsa.Create();
     ecdsa.ImportPkcs8PrivateKey(Convert.FromBase64String(privateKey), out _);
-    var signingKey = new ECDsaSecurityKey(ecdsa)
-    {
-        KeyId = options.GetValueOrDefault("key-id", DateTime.UtcNow.ToString("yyyy-MM", CultureInfo.InvariantCulture))
-    };
+    var keyId = options.GetValueOrDefault("key-id", DateTime.UtcNow.ToString("yyyy-MM", CultureInfo.InvariantCulture));
 
-    var now = DateTime.UtcNow;
-    var token = new JsonWebTokenHandler().CreateToken(new SecurityTokenDescriptor
-    {
-        Issuer = ProductLicenseClaims.Issuer,
-        Audience = ProductLicenseClaims.Audience,
-        IssuedAt = now,
-        NotBefore = now,
-        Expires = expires,
-        Claims = claims,
-        SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.EcdsaSha256)
-    });
-
-    Console.WriteLine(token);
+    Console.WriteLine(ProductLicenseToken.Sign(
+        ProductLicenseToken.CreateSigningCredentials(ecdsa, keyId),
+        licensee,
+        tier.ToString(),
+        expires,
+        maxTenants));
     return 0;
 }
 
@@ -128,16 +113,8 @@ static async Task<int> InspectAsync(string token, Dictionary<string, string> opt
     using var ecdsa = ECDsa.Create();
     ecdsa.ImportSubjectPublicKeyInfo(Convert.FromBase64String(publicKey), out _);
 
-    var result = await new JsonWebTokenHandler().ValidateTokenAsync(token, new TokenValidationParameters
-    {
-        ValidIssuer = ProductLicenseClaims.Issuer,
-        ValidAudience = ProductLicenseClaims.Audience,
-        IssuerSigningKey = new ECDsaSecurityKey(ecdsa),
-        ValidAlgorithms = [SecurityAlgorithms.EcdsaSha256],
-        RequireSignedTokens = true,
-        RequireExpirationTime = true,
-        ValidateLifetime = false
-    });
+    var result = await new JsonWebTokenHandler().ValidateTokenAsync(
+        token, ProductLicenseToken.CreateValidationParameters(ecdsa));
 
     if (!result.IsValid)
     {
