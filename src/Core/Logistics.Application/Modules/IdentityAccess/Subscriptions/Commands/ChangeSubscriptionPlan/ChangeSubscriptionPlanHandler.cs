@@ -1,11 +1,10 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -29,11 +28,7 @@ internal sealed class ChangeSubscriptionPlanHandler(
             return Result.Fail($"Could not find a subscription with ID '{req.SubscriptionId}'");
         }
 
-        if (!currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin) &&
-            subscription.TenantId != currentUserService.GetTenantId())
-        {
-            throw new TenantAccessDeniedException("You do not have access to this subscription.");
-        }
+        currentUserService.EnsureOwnsTenant(subscription.TenantId, "subscription");
 
         if (subscription.Status is not (SubscriptionStatus.Active or SubscriptionStatus.Trialing))
         {

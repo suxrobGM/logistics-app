@@ -99,6 +99,11 @@ public class Truck : Entity, ITenantEntity
         };
     }
 
+    public bool IsDrivenBy(Guid driverId)
+    {
+        return MainDriverId == driverId || SecondaryDriverId == driverId;
+    }
+
     public IEnumerable<string> GetDriversNames()
     {
         if (MainDriver is { } mainDriver)

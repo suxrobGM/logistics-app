@@ -84,24 +84,17 @@ public class ExceptionHandlingMiddleware(
 
     private static ErrorResponse CreateErrorResponse(Exception exception)
     {
-        if (exception is ValidationException validationException)
+        return exception switch
         {
-            var details = validationException.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(e => e.ErrorMessage).ToArray()
-                );
-
-            return new ErrorResponse("Validation failed", Details: details);
-        }
-
-        if (exception is TenantAccessDeniedException)
-        {
-            return new ErrorResponse(exception.Message);
-        }
-
-        return new ErrorResponse("An unexpected error occurred. Please try again, or contact support if it persists.");
+            ValidationException validationException => new ErrorResponse(
+                "Validation failed",
+                Details: validationException.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())),
+            TenantAccessDeniedException => new ErrorResponse(exception.Message),
+            _ => new ErrorResponse(
+                "An unexpected error occurred. Please try again, or contact support if it persists.")
+        };
     }
 }
 

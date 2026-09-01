@@ -19,18 +19,6 @@ public static class ClaimsPrincipalExtensions
             return userIdentity.Claims.FirstOrDefault(i => i.Type == ClaimTypes.Role)?.Value;
         }
 
-        public Guid? GetUserId()
-        {
-            var userIdClaim = userIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
-        }
-
-        public Guid? GetTenantId()
-        {
-            var tenantClaim = userIdentity.FindFirst(CustomClaimTypes.Tenant)?.Value;
-            return Guid.TryParse(tenantClaim, out var tenantId) ? tenantId : null;
-        }
-
         /// <summary>Rejects access to another tenant unless the caller is a platform admin.</summary>
         public void EnsureOwnsTenant(Guid tenantId)
         {

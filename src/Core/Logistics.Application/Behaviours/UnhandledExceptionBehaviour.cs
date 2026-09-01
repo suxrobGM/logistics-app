@@ -21,8 +21,7 @@ public sealed class UnhandledExceptionBehaviour<TRequest, TResponse>(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unhandled Exception for Request {Name} {@Request}",
-                typeof(TRequest).Name, request);
+            logger.LogError(ex, "Unhandled exception for request {Name}", typeof(TRequest).Name);
             throw;
         }
     }

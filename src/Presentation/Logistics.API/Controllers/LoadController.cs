@@ -8,6 +8,7 @@ using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 using Logistics.Application.Modules.Operations.Containers.Commands;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Shared.Identity.Claims;
 
 namespace Logistics.API.Controllers;
 

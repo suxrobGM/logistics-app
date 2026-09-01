@@ -96,7 +96,7 @@ export class NotificationsComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.fetchNotifications();
-    void this.notificationService.acquire(this.destroyRef);
+    void this.notificationService.connect(this.destroyRef);
   }
 
   protected async fetchNotifications(): Promise<void> {

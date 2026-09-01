@@ -15,18 +15,12 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
 
     public Guid? GetUserId()
     {
-        var user = httpContextAccessor.HttpContext?.User;
-
-        var userIdClaim = user?.FindFirstValue(ClaimTypes.NameIdentifier)
-                          ?? user?.FindFirstValue(CustomClaimTypes.Subject);
-
-        return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
+        return httpContextAccessor.HttpContext?.User.GetUserId();
     }
 
     public Guid? GetTenantId()
     {
-        var tenantClaim = httpContextAccessor.HttpContext?.User.FindFirstValue(CustomClaimTypes.Tenant);
-        return Guid.TryParse(tenantClaim, out var tenantId) ? tenantId : null;
+        return httpContextAccessor.HttpContext?.User.GetTenantId();
     }
 
     public bool IsInRole(params string[] roles)

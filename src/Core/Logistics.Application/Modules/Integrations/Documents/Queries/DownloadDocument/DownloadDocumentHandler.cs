@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -12,7 +12,7 @@ namespace Logistics.Application.Modules.Integrations.Documents.Queries;
 internal sealed class DownloadDocumentHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorageService,
-    ICurrentUserService currentUserService,
+    IDocumentAccessService documentAccess,
     ILogger<DownloadDocumentHandler> logger)
     : IAppRequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
 {
@@ -29,8 +29,8 @@ internal sealed class DownloadDocumentHandler(
             return Result<DocumentDownloadDto>.Fail("Document has been deleted");
         }
 
-        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
-        if (access is null || !await DocumentAccess.CanAccessAsync(tenantUow, access, document, ct))
+        var caller = await documentAccess.ResolveCallerAsync(ct);
+        if (caller is null || !await documentAccess.CanAccessAsync(caller, document, ct))
         {
             return Result<DocumentDownloadDto>.Fail("Document not found or access denied.");
         }

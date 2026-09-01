@@ -2,9 +2,9 @@ using Logistics.Application.Abstractions.Storage;
 using Logistics.Application.Modules.Common.Constants;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Application.Modules.Integrations.Documents.Commands;
+namespace Logistics.Application.Modules.Integrations.Documents.Services;
 
-internal static class DocumentBlobCleanup
+public static class DocumentBlobCleanup
 {
     public static async Task DeleteAsync(
         IBlobStorageService blobStorage,

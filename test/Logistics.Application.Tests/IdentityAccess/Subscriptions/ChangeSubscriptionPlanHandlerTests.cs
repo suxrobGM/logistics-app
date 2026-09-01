@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
@@ -33,40 +34,12 @@ public class ChangeSubscriptionPlanHandlerTests
         sut = new ChangeSubscriptionPlanHandler(masterUow, tenantUow, stripeSubscriptionService, currentUserService, logger);
     }
 
-    private static Tenant CreateTenant() => new()
-    {
-        Name = "test-tenant",
-        ConnectionString = "test",
-        BillingEmail = "test@test.com",
-        CompanyAddress = new Address
-        {
-            Line1 = "123 Main St", City = "NYC", State = "NY", ZipCode = "10001", Country = "US"
-        }
-    };
-
-    private static SubscriptionPlan CreatePlan() => new()
-    {
-        Name = "Starter",
-        Price = new Money { Amount = 100m, Currency = "USD" },
-        PerTruckPrice = new Money { Amount = 10m, Currency = "USD" },
-        WeeklyAIBudgetUsd = 50m
-    };
-
-    private static Subscription CreateSubscription(Guid tenantId, Guid planId) => new()
-    {
-        TenantId = tenantId,
-        Tenant = CreateTenant(),
-        PlanId = planId,
-        Plan = CreatePlan(),
-        Status = SubscriptionStatus.Active
-    };
-
     [Fact]
     public async Task Handle_CrossTenantCaller_ThrowsTenantAccessDeniedException()
     {
         var ownerTenantId = Guid.NewGuid();
         var callerTenantId = Guid.NewGuid();
-        var subscription = CreateSubscription(ownerTenantId, Guid.NewGuid());
+        var subscription = TestSubscription.Create(ownerTenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
         currentUserService.GetTenantId().Returns(callerTenantId);
 
@@ -87,7 +60,7 @@ public class ChangeSubscriptionPlanHandlerTests
     {
         var tenantId = Guid.NewGuid();
         var planId = Guid.NewGuid();
-        var subscription = CreateSubscription(tenantId, planId);
+        var subscription = TestSubscription.Create(tenantId, planId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
         currentUserService.GetTenantId().Returns(tenantId);
 
@@ -108,7 +81,7 @@ public class ChangeSubscriptionPlanHandlerTests
     {
         var ownerTenantId = Guid.NewGuid();
         var planId = Guid.NewGuid();
-        var subscription = CreateSubscription(ownerTenantId, planId);
+        var subscription = TestSubscription.Create(ownerTenantId, planId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
         currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
 

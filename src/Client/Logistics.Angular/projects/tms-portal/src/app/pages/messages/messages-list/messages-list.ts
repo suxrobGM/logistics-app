@@ -31,7 +31,7 @@ export class MessagesListComponent implements OnInit, OnDestroy {
   protected readonly store = inject(MessagesStore);
 
   async ngOnInit(): Promise<void> {
-    void this.messagingService.acquire(this.destroyRef);
+    void this.messagingService.connect(this.destroyRef);
     const currentUserId = this.authService.getUserData()?.id;
     await Promise.all([
       this.store.loadConversations(currentUserId),

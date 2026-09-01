@@ -1,4 +1,4 @@
-import { DestroyRef, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import type { AgentDecisionDto, AgentMessageDto, RateNegotiationDto } from "@logistics/shared/api";
 import type { AgentTurnUpdate } from "./agent-chat.contracts";
 import { BaseHubConnection } from "./base-hub-connection";
@@ -13,10 +13,5 @@ export class AIDispatchHubService extends BaseHubConnection {
 
   constructor() {
     super("ai-dispatch");
-  }
-
-  /** Keeps the dispatch-board connection alive for the consumer's lifetime. */
-  acquireDispatchBoard(destroyRef: DestroyRef): Promise<void> {
-    return this.acquire(destroyRef);
   }
 }

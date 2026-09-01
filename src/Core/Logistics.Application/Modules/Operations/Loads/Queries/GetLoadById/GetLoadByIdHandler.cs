@@ -1,9 +1,9 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
-using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
@@ -16,28 +16,18 @@ internal sealed class GetLoadByIdHandler(
     public async Task<Result<LoadDto>> Handle(GetLoadByIdQuery req, CancellationToken ct)
     {
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.Id, ct);
-        var notFound = Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
 
-        if (load is null)
+        if (load is null || !CanRead(load))
         {
-            return notFound;
-        }
-
-        var isDriver = currentUserService.IsInRole(TenantRoles.Driver) &&
-                       !currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin);
-        if (isDriver && !DrivenByCaller(load))
-        {
-            return notFound;
+            return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
         }
 
         return Result<LoadDto>.Ok(load.ToDto(LoadIntermodalLookup.Empty));
     }
 
-    private bool DrivenByCaller(Load load)
+    private bool CanRead(Load load)
     {
-        var callerId = currentUserService.GetUserId();
-        return callerId is not null &&
-               load.AssignedTruck is { } truck &&
-               (truck.MainDriverId == callerId || truck.SecondaryDriverId == callerId);
+        return !currentUserService.IsTenantDriver() ||
+               (currentUserService.GetUserId() is { } callerId && load.IsDrivenBy(callerId));
     }
 }

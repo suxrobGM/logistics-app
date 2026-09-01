@@ -141,6 +141,11 @@ public partial class Load : AuditableEntity, ITenantEntity
     /// </summary>
     public string? ExternalBrokerReference { get; set; }
 
+    public bool IsDrivenBy(Guid driverId)
+    {
+        return AssignedTruck?.IsDrivenBy(driverId) == true;
+    }
+
     public decimal CalcDriverShare()
     {
         return DeliveryCost * (decimal)(AssignedTruck?.GetDriversShareRatio() ?? 0);

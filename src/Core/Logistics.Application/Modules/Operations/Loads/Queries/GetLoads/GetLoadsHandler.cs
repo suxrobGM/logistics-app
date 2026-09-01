@@ -1,10 +1,10 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
-using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,8 +19,7 @@ internal sealed class GetLoadsHandler(
         GetLoadsQuery req,
         CancellationToken ct)
     {
-        var isDriver = currentUserService.IsInRole(TenantRoles.Driver) &&
-                       !currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin);
+        var isDriver = currentUserService.IsTenantDriver();
         var userId = isDriver ? currentUserService.GetUserId() : req.UserId;
 
         if (isDriver && userId is null)

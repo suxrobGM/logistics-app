@@ -14,16 +14,8 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
     public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType,
         CancellationToken ct = default)
     {
-        var containerPath = GetContainerPath(containerName);
-        EnsureDirectoryExists(containerPath);
-
         var filePath = GetFilePath(containerName, blobName);
-        var fileDirectory = Path.GetDirectoryName(filePath);
-
-        if (!string.IsNullOrEmpty(fileDirectory))
-        {
-            EnsureDirectoryExists(fileDirectory);
-        }
+        EnsureDirectoryExists(Path.GetDirectoryName(filePath) ?? GetContainerPath(containerName));
 
         await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         await content.CopyToAsync(fileStream, ct);

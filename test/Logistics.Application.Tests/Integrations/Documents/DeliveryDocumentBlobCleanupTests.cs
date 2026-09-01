@@ -1,10 +1,9 @@
-using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Storage;
 using Logistics.Application.Modules.Common.Constants;
-using Logistics.Application.Modules.Integrations.Documents.Commands;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Identity.Roles;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -17,29 +16,19 @@ public class DeliveryDocumentBlobCleanupTests
 {
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IBlobStorageService blobStorage = Substitute.For<IBlobStorageService>();
-    private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
+    private readonly IDocumentAccessService documentAccess = Substitute.For<IDocumentAccessService>();
+    private readonly DeliveryDocumentService sut;
 
     public DeliveryDocumentBlobCleanupTests()
     {
-        var callerId = Guid.NewGuid();
-        var employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
-        var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
-        var documentRepo = Substitute.For<ITenantRepository<DeliveryDocument, Guid>>();
+        var caller = new DocumentCaller(Guid.NewGuid(), IsManagement: true, IsDriver: false);
 
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
-        tenantUow.Repository<Load>().Returns(loadRepo);
-        tenantUow.Repository<DeliveryDocument>().Returns(documentRepo);
-        currentUser.GetUserId().Returns(callerId);
-        employeeRepo.GetByIdAsync(callerId, Arg.Any<CancellationToken>()).Returns(new Employee
-        {
-            Id = callerId,
-            Email = "manager@test.com",
-            FirstName = "Test",
-            LastName = "Manager",
-            Role = new TenantRole(TenantRoles.Manager)
-        });
-        loadRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(Substitute.For<Load>());
+        tenantUow.Repository<DeliveryDocument>()
+            .Returns(Substitute.For<ITenantRepository<DeliveryDocument, Guid>>());
+        documentAccess.ResolveCallerAsync(Arg.Any<CancellationToken>()).Returns(caller);
+        documentAccess.CanAccessOwnerAsync(
+                caller, DocumentOwnerType.Load, Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .Returns(true);
         blobStorage.UploadAsync(
                 Arg.Any<string>(),
                 Arg.Any<string>(),
@@ -47,44 +36,31 @@ public class DeliveryDocumentBlobCleanupTests
                 Arg.Any<string>(),
                 Arg.Any<CancellationToken>())
             .Returns("https://storage.test/document");
+
+        sut = new DeliveryDocumentService(
+            tenantUow, blobStorage, documentAccess, NullLogger<DeliveryDocumentService>.Instance);
     }
 
     [Fact]
-    public async Task CapturePod_DatabaseWritesNoRows_DeletesUploadedPhoto()
+    public async Task Capture_DatabaseWritesNoRows_DeletesUploadedPhoto()
     {
         tenantUow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(0);
-        var handler = new CaptureProofOfDeliveryHandler(
-            tenantUow,
-            blobStorage,
-            currentUser,
-            NullLogger<CaptureProofOfDeliveryHandler>.Instance);
 
-        var result = await handler.Handle(new CaptureProofOfDeliveryCommand
-        {
-            LoadId = Guid.NewGuid(),
-            Photos = [Photo()]
-        }, CancellationToken.None);
+        var result = await sut.CaptureAsync(
+            DeliveryDocumentKind.ProofOfDelivery, CaptureWithOnePhoto(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         await ReceivedOneDeleteAsync();
     }
 
     [Fact]
-    public async Task CaptureBol_DatabaseSaveThrows_DeletesUploadedPhoto()
+    public async Task Capture_DatabaseSaveThrows_DeletesUploadedPhoto()
     {
         tenantUow.SaveChangesAsync(Arg.Any<CancellationToken>())
             .ThrowsAsync(new InvalidOperationException("Database unavailable"));
-        var handler = new CaptureBillOfLadingHandler(
-            tenantUow,
-            blobStorage,
-            currentUser,
-            NullLogger<CaptureBillOfLadingHandler>.Instance);
 
-        var result = await handler.Handle(new CaptureBillOfLadingCommand
-        {
-            LoadId = Guid.NewGuid(),
-            Photos = [Photo()]
-        }, CancellationToken.None);
+        var result = await sut.CaptureAsync(
+            DeliveryDocumentKind.BillOfLading, CaptureWithOnePhoto(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         await ReceivedOneDeleteAsync();
@@ -96,11 +72,22 @@ public class DeliveryDocumentBlobCleanupTests
             Arg.Any<string>(),
             CancellationToken.None);
 
-    private static FileUpload Photo() => new()
-    {
-        Content = new MemoryStream([1, 2, 3]),
-        FileName = "photo.jpg",
-        ContentType = "image/jpeg",
-        FileSizeBytes = 3
-    };
+    private static CaptureDeliveryDocumentParameters CaptureWithOnePhoto() => new(
+        LoadId: Guid.NewGuid(),
+        TripStopId: null,
+        Photos:
+        [
+            new FileUpload
+            {
+                Content = new MemoryStream([1, 2, 3]),
+                FileName = "photo.jpg",
+                ContentType = "image/jpeg",
+                FileSizeBytes = 3
+            }
+        ],
+        SignatureBase64: null,
+        RecipientName: null,
+        Latitude: null,
+        Longitude: null,
+        Notes: null);
 }

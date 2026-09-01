@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
@@ -32,41 +33,12 @@ public class CancelSubscriptionHandlerTests
         sut = new CancelSubscriptionHandler(masterUow, stripeSubscriptionService, currentUserService, logger);
     }
 
-    private static Tenant CreateTenant() => new()
-    {
-        Name = "test-tenant",
-        ConnectionString = "test",
-        BillingEmail = "test@test.com",
-        CompanyAddress = new Address
-        {
-            Line1 = "123 Main St", City = "NYC", State = "NY", ZipCode = "10001", Country = "US"
-        }
-    };
-
-    private static SubscriptionPlan CreatePlan() => new()
-    {
-        Name = "Starter",
-        Price = new Money { Amount = 100m, Currency = "USD" },
-        PerTruckPrice = new Money { Amount = 10m, Currency = "USD" },
-        WeeklyAIBudgetUsd = 50m
-    };
-
-    private static Subscription CreateSubscription(Guid tenantId, string? stripeSubscriptionId = null) => new()
-    {
-        TenantId = tenantId,
-        Tenant = CreateTenant(),
-        PlanId = Guid.NewGuid(),
-        Plan = CreatePlan(),
-        Status = SubscriptionStatus.Active,
-        StripeSubscriptionId = stripeSubscriptionId
-    };
-
     [Fact]
     public async Task Handle_CrossTenantCaller_ThrowsTenantAccessDeniedException()
     {
         var ownerTenantId = Guid.NewGuid();
         var callerTenantId = Guid.NewGuid();
-        var subscription = CreateSubscription(ownerTenantId);
+        var subscription = TestSubscription.Create(ownerTenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
         currentUserService.GetTenantId().Returns(callerTenantId);
 
@@ -85,7 +57,7 @@ public class CancelSubscriptionHandlerTests
     public async Task Handle_OwnTenantCaller_Succeeds()
     {
         var tenantId = Guid.NewGuid();
-        var subscription = CreateSubscription(tenantId);
+        var subscription = TestSubscription.Create(tenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
         currentUserService.GetTenantId().Returns(tenantId);
 
@@ -104,7 +76,7 @@ public class CancelSubscriptionHandlerTests
     public async Task Handle_PlatformAdmin_SucceedsRegardlessOfTenant()
     {
         var ownerTenantId = Guid.NewGuid();
-        var subscription = CreateSubscription(ownerTenantId);
+        var subscription = TestSubscription.Create(ownerTenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
         currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
 

@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
@@ -14,15 +14,15 @@ namespace Logistics.Application.Modules.Integrations.Documents.Commands;
 internal sealed class UploadDocumentHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorageService,
-    ICurrentUserService currentUserService,
+    IDocumentAccessService documentAccess,
     ILogger<UploadDocumentHandler> logger)
     : IAppRequestHandler<UploadDocumentCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(UploadDocumentCommand req, CancellationToken ct)
     {
-        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
-        if (access is null ||
-            !await DocumentAccess.CanAccessOwnerAsync(tenantUow, access, req.OwnerType, req.OwnerId, ct))
+        var caller = await documentAccess.ResolveCallerAsync(ct);
+        if (caller is null ||
+            !await documentAccess.CanAccessOwnerAsync(caller, req.OwnerType, req.OwnerId, ct))
         {
             return Result<Guid>.Fail("Owner not found or access denied.");
         }
@@ -58,7 +58,7 @@ internal sealed class UploadDocumentHandler(
                     BlobConstants.DocumentsContainerName,
                     req.Type,
                     req.OwnerId,
-                    access.CallerId,
+                    caller.CallerId,
                     req.Description);
 
                 await tenantUow.Repository<LoadDocument>().AddAsync(entity, ct);
@@ -75,7 +75,7 @@ internal sealed class UploadDocumentHandler(
                     BlobConstants.DocumentsContainerName,
                     req.Type,
                     req.OwnerId,
-                    access.CallerId,
+                    caller.CallerId,
                     req.Description);
 
                 await tenantUow.Repository<TruckDocument>().AddAsync(entity, ct);
@@ -92,7 +92,7 @@ internal sealed class UploadDocumentHandler(
                     BlobConstants.DocumentsContainerName,
                     req.Type,
                     req.OwnerId,
-                    access.CallerId,
+                    caller.CallerId,
                     req.Description);
 
                 await tenantUow.Repository<EmployeeDocument>().AddAsync(entity, ct);
@@ -110,7 +110,7 @@ internal sealed class UploadDocumentHandler(
 
             logger.LogWarning(
                 "Failed to save document to database, rolling back blob: {BlobPath}", blobPath);
-            await blobStorageService.DeleteAsync(BlobConstants.DocumentsContainerName, blobPath, ct);
+            await DocumentBlobCleanup.DeleteAsync(blobStorageService, [blobPath], logger);
             return Result<Guid>.Fail("Failed to save document information to database");
         }
         catch (Exception ex)

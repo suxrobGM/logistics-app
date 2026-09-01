@@ -60,24 +60,19 @@ internal class CurrentTenantAccessor(
 
     private async Task EnsureAuthenticatedUserHasAccessAsync(Tenant tenant, CancellationToken ct)
     {
-        var claimTenant = httpContext!.User.Claims
-            .FirstOrDefault(c => c.Type == CustomClaimTypes.Tenant)?.Value;
-
-        if (string.IsNullOrWhiteSpace(claimTenant))
+        if (string.IsNullOrWhiteSpace(httpContext!.User.FindFirstValue(CustomClaimTypes.Tenant)))
         {
             return;
         }
 
-        if (Guid.TryParse(claimTenant, out var claimTenantId) && claimTenantId == tenant.Id)
+        if (httpContext.User.GetTenantId() == tenant.Id)
         {
             return;
         }
 
-        var userIdValue = httpContext.User.Claims
-            .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier
-                                 || c.Type == CustomClaimTypes.Subject)?.Value;
+        var userId = httpContext.User.GetUserId();
 
-        if (Guid.TryParse(userIdValue, out var userId))
+        if (userId is not null)
         {
             var hasAccess = await masterUow.Repository<UserTenantAccess>()
                 .GetAsync(a => a.UserId == userId && a.TenantId == tenant.Id && a.IsActive, ct)
@@ -89,7 +84,7 @@ internal class CurrentTenantAccessor(
             }
         }
 
-        logger?.LogWarning("Denied access to tenant {TenantId} for user {UserId}", tenant.Id, userIdValue);
+        logger?.LogWarning("Denied access to tenant {TenantId} for user {UserId}", tenant.Id, userId);
         throw new TenantAccessDeniedException("You do not have access to this tenant.");
     }
 
@@ -127,8 +122,7 @@ internal class CurrentTenantAccessor(
         }
 
         // 2) Claim
-        var claimValue = httpContext.User.Claims
-            .FirstOrDefault(c => c.Type == CustomClaimTypes.Tenant)?.Value;
+        var claimValue = httpContext.User.FindFirstValue(CustomClaimTypes.Tenant);
 
         if (!string.IsNullOrWhiteSpace(claimValue))
         {

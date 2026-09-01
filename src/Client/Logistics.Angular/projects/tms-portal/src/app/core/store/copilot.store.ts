@@ -103,12 +103,12 @@ export const CopilotStore = signalStore(
 
         // The transcript needs nothing from the hub, so the handshake RTT must not gate it.
         if (store.currentConversation()) {
-          await copilotHub.acquire();
+          await copilotHub.connect();
           return;
         }
 
         patchState(store, { loading: true });
-        await Promise.all([copilotHub.acquire(), store.loadConversations()]);
+        await Promise.all([copilotHub.connect(), store.loadConversations()]);
         const mostRecent = store.conversations()[0];
         if (mostRecent?.id) {
           await openConversation(mostRecent.id);
@@ -166,7 +166,7 @@ export const CopilotStore = signalStore(
 
         /** Manual retry for a dead hub connection; also catches up on missed events. */
         async reconnect(): Promise<void> {
-          await copilotHub.acquire();
+          await copilotHub.connect();
           if (copilotHub.isConnected) {
             await store.reconcile();
           }

@@ -26,7 +26,7 @@ internal sealed class UpdateEmployeeHandler(
 
         if (tenantRole is not null && tenantRole.Name != employeeEntity.Role?.Name)
         {
-            var guard = await CheckRoleChangeAllowedAsync(req.UserId, employeeEntity, tenantRole, ct);
+            var guard = await CheckRoleChangeAllowedAsync(employeeEntity, tenantRole, ct);
             if (!guard.IsSuccess)
             {
                 return guard;
@@ -62,7 +62,7 @@ internal sealed class UpdateEmployeeHandler(
     }
 
     private async Task<Result> CheckRoleChangeAllowedAsync(
-        Guid targetUserId, Employee target, TenantRole newRole, CancellationToken ct)
+        Employee target, TenantRole newRole, CancellationToken ct)
     {
         if (currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin))
         {
@@ -75,7 +75,7 @@ internal sealed class UpdateEmployeeHandler(
             return Result.Fail("User not authenticated.");
         }
 
-        if (callerId.Value == targetUserId)
+        if (callerId.Value == target.Id)
         {
             return Result.Fail("You cannot change your own role.");
         }

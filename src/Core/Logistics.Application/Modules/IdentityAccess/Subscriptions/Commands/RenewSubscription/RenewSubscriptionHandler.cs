@@ -1,10 +1,9 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
-using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Stripe;
@@ -30,11 +29,7 @@ internal sealed class RenewSubscriptionHandler(
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
 
-        if (!currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin) &&
-            subscription.TenantId != currentUserService.GetTenantId())
-        {
-            throw new TenantAccessDeniedException("You do not have access to this subscription.");
-        }
+        currentUserService.EnsureOwnsTenant(subscription.TenantId, "subscription");
 
         await tenantUow.SetCurrentTenantByIdAsync(subscription.TenantId);
         var truckCount = await tenantUow.Repository<Truck>().CountAsync(ct: ct);

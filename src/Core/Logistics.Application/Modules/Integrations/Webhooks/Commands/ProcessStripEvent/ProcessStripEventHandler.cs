@@ -1,6 +1,7 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Payments;
+using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -24,6 +25,7 @@ internal sealed class ProcessStripEventHandler(
     IStripeCustomerService stripeCustomerService,
     IStripeConnectService stripeConnectService,
     IStripeAddressMapper stripeAddressMapper,
+    IWebhookEventTracker webhookEvents,
     ILogger<ProcessStripEventHandler> logger)
     : IAppRequestHandler<ProcessStripEventCommand, Result>
 {
@@ -41,9 +43,7 @@ internal sealed class ProcessStripEventHandler(
             logger.LogInformation("Received Stripe event: {Type}", stripeEvent.Type);
 
             const string provider = "Stripe";
-            var alreadyProcessed = await masterUow.Repository<ProcessedWebhookEvent>()
-                .GetAsync(e => e.Provider == provider && e.EventKey == stripeEvent.Id, ct);
-            if (alreadyProcessed is not null)
+            if (await webhookEvents.WasAlreadyHandledAsync(provider, stripeEvent.Id, ct))
             {
                 logger.LogInformation("Duplicate Stripe event '{EventId}' ignored", stripeEvent.Id);
                 return Result.Ok();
@@ -73,9 +73,7 @@ internal sealed class ProcessStripEventHandler(
 
             if (result.IsSuccess)
             {
-                await masterUow.Repository<ProcessedWebhookEvent>()
-                    .AddAsync(new ProcessedWebhookEvent { Provider = provider, EventKey = stripeEvent.Id }, ct);
-                await masterUow.SaveChangesAsync(ct);
+                await webhookEvents.MarkHandledAsync(provider, stripeEvent.Id, ct);
             }
 
             return result;

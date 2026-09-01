@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -10,7 +10,7 @@ namespace Logistics.Application.Modules.Integrations.Documents.Queries;
 
 internal sealed class GetDocumentByIdHandler(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUserService)
+    IDocumentAccessService documentAccess)
     : IAppRequestHandler<GetDocumentByIdQuery, Result<DocumentDto>>
 {
     public async Task<Result<DocumentDto>> Handle(GetDocumentByIdQuery req, CancellationToken ct)
@@ -29,8 +29,8 @@ internal sealed class GetDocumentByIdHandler(
             return Result<DocumentDto>.Fail("Document has been deleted");
         }
 
-        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
-        if (access is null || !await DocumentAccess.CanAccessAsync(tenantUow, access, document, ct))
+        var caller = await documentAccess.ResolveCallerAsync(ct);
+        if (caller is null || !await documentAccess.CanAccessAsync(caller, document, ct))
         {
             return Result<DocumentDto>.Fail("Document not found or access denied.");
         }

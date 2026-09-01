@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -10,14 +10,14 @@ namespace Logistics.Application.Modules.Integrations.Documents.Queries;
 
 internal sealed class GetDocumentsHandler(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUserService)
+    IDocumentAccessService documentAccess)
     : IAppRequestHandler<GetDocumentsQuery, Result<IEnumerable<DocumentDto>>>
 {
     public async Task<Result<IEnumerable<DocumentDto>>> Handle(
         GetDocumentsQuery req, CancellationToken ct)
     {
-        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
-        if (access is null)
+        var caller = await documentAccess.ResolveCallerAsync(ct);
+        if (caller is null)
         {
             return Result<IEnumerable<DocumentDto>>.Ok([]);
         }
@@ -27,17 +27,20 @@ internal sealed class GetDocumentsHandler(
             return Result<IEnumerable<DocumentDto>>.Ok([]);
         }
 
-        if (req is { OwnerId: { } ownerId, OwnerType: { } ownerType } &&
-            !await DocumentAccess.CanAccessOwnerAsync(
-                tenantUow, access, ownerType, ownerId, ct))
+        var owner = req is { OwnerId: { } ownerId, OwnerType: { } ownerType }
+            ? (Id: ownerId, Type: ownerType)
+            : ((Guid Id, DocumentOwnerType Type)?)null;
+
+        if (owner is { } scope &&
+            !await documentAccess.CanAccessOwnerAsync(caller, scope.Type, scope.Id, ct))
         {
             return Result<IEnumerable<DocumentDto>>.Ok([]);
         }
 
         var documents = await FetchAsync(req, ct);
-        var allowed = req is { OwnerId: not null, OwnerType: not null }
+        var allowed = owner is not null
             ? documents
-            : await DocumentAccess.FilterAccessibleAsync(tenantUow, access, documents, ct);
+            : await documentAccess.FilterAccessibleAsync(caller, documents, ct);
 
         return Result<IEnumerable<DocumentDto>>.Ok(allowed.Select(d => d.ToDto()).ToList());
     }

@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -11,7 +11,7 @@ namespace Logistics.Application.Modules.Integrations.Documents.Commands;
 internal sealed class DeleteDocumentHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorageService,
-    ICurrentUserService currentUserService,
+    IDocumentAccessService documentAccess,
     ILogger<DeleteDocumentHandler> logger)
     : IAppRequestHandler<DeleteDocumentCommand, Result>
 {
@@ -26,8 +26,8 @@ internal sealed class DeleteDocumentHandler(
             return Result.Fail($"Could not find document with ID '{req.DocumentId}'");
         }
 
-        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
-        if (access is null || !await DocumentAccess.CanAccessAsync(tenantUow, access, document, ct))
+        var caller = await documentAccess.ResolveCallerAsync(ct);
+        if (caller is null || !await documentAccess.CanAccessAsync(caller, document, ct))
         {
             return Result.Fail("Document not found or access denied.");
         }
