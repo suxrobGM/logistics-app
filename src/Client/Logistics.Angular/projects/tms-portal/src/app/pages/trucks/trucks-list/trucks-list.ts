@@ -62,11 +62,6 @@ export class TrucksList {
       icon: "pencil",
       command: () => this.router.navigateByUrl(`/trucks/${this.selectedRow()!.id}/edit`),
     },
-    {
-      label: "Manage documents",
-      icon: "folder",
-      command: () => this.router.navigateByUrl(`/trucks/${this.selectedRow()!.id}/documents`),
-    },
   ];
 
   protected onSearchChanged(value: string): void {
