@@ -3,13 +3,15 @@ using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 
 internal sealed class UploadTenantLogoHandler(
     IMasterUnitOfWork masterUow,
-    IBlobStorageService blobStorageService)
+    IBlobStorageService blobStorageService,
+    ILogger<UploadTenantLogoHandler> logger)
     : IAppRequestHandler<UploadTenantLogoCommand, Result<string>>
 {
     private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
@@ -83,7 +85,8 @@ internal sealed class UploadTenantLogoHandler(
         }
         catch (Exception ex)
         {
-            return Result<string>.Fail($"Failed to upload logo: {ex.Message}");
+            logger.LogError(ex, "Failed to upload logo for tenant {TenantId}", req.TenantId);
+            return Result<string>.Fail("Failed to upload logo.");
         }
     }
 }

@@ -1,14 +1,18 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
-internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
+internal sealed class GetLoadsHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
     : IAppRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
 {
     public async Task<PagedResult<LoadDto>> Handle(
@@ -16,6 +20,12 @@ internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
         CancellationToken ct)
     {
         var baseQuery = tenantUow.Repository<Load>().Query();
+
+        // A driver holds tenant-wide Load.View, so their own id replaces whatever the caller asked
+        // for. Enforced here and not in the controller because SearchLoadsTool sends this query too.
+        var userId = currentUserService.IsInRole(TenantRoles.Driver)
+            ? currentUserService.GetUserId()
+            : req.UserId;
 
         if (!string.IsNullOrEmpty(req.Search))
         {
@@ -35,11 +45,11 @@ internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
                 i.Status == LoadStatus.Dispatched || i.Status == LoadStatus.PickedUp);
         }
 
-        if (req.UserId.HasValue)
+        if (userId.HasValue)
         {
             baseQuery = baseQuery.Where(i => i.AssignedTruck != null &&
-                                             (i.AssignedTruck.MainDriverId == req.UserId ||
-                                              i.AssignedTruck.SecondaryDriverId == req.UserId));
+                                             (i.AssignedTruck.MainDriverId == userId ||
+                                              i.AssignedTruck.SecondaryDriverId == userId));
         }
 
         if (req.TruckId.HasValue)

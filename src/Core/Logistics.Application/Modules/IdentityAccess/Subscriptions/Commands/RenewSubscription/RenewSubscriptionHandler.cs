@@ -1,8 +1,10 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Stripe;
@@ -15,6 +17,7 @@ internal sealed class RenewSubscriptionHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     IStripeSubscriptionService stripeSubscriptionService,
+    ICurrentUserService currentUserService,
     ILogger<RenewSubscriptionHandler> logger) : IAppRequestHandler<RenewSubscriptionCommand, Result>
 {
     public async Task<Result> Handle(
@@ -27,7 +30,8 @@ internal sealed class RenewSubscriptionHandler(
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
 
-        if (!req.IsPlatformAdmin && subscription.TenantId != req.CallerTenantId)
+        if (!currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin) &&
+            subscription.TenantId != currentUserService.GetTenantId())
         {
             throw new TenantAccessDeniedException("You do not have access to this subscription.");
         }

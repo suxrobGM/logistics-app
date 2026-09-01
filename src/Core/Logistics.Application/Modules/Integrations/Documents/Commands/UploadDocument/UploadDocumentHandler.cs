@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
@@ -13,6 +14,7 @@ namespace Logistics.Application.Modules.Integrations.Documents.Commands;
 internal sealed class UploadDocumentHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorageService,
+    ICurrentUserService currentUserService,
     ILogger<UploadDocumentHandler> logger)
     : IAppRequestHandler<UploadDocumentCommand, Result<Guid>>
 {
@@ -43,10 +45,11 @@ internal sealed class UploadDocumentHandler(
                 break;
         }
 
-        // Verify uploader exists
-        if (await tenantUow.Repository<Employee>().GetByIdAsync(req.UploadedById, ct) is null)
+        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
+        if (access is null ||
+            !await DocumentAccess.CanAccessOwnerAsync(tenantUow, access, req.OwnerType, req.OwnerId, ct))
         {
-            return Result<Guid>.Fail($"Could not find employee with ID '{req.UploadedById}'");
+            return Result<Guid>.Fail("Owner not found or access denied.");
         }
 
         try
@@ -82,7 +85,7 @@ internal sealed class UploadDocumentHandler(
                     BlobConstants.DocumentsContainerName,
                     req.Type,
                     req.OwnerId,
-                    req.UploadedById,
+                    access.CallerId,
                     req.Description);
 
                 await tenantUow.Repository<LoadDocument>().AddAsync(entity, ct);
@@ -99,7 +102,7 @@ internal sealed class UploadDocumentHandler(
                     BlobConstants.DocumentsContainerName,
                     req.Type,
                     req.OwnerId,
-                    req.UploadedById,
+                    access.CallerId,
                     req.Description);
 
                 await tenantUow.Repository<TruckDocument>().AddAsync(entity, ct);
@@ -116,7 +119,7 @@ internal sealed class UploadDocumentHandler(
                     BlobConstants.DocumentsContainerName,
                     req.Type,
                     req.OwnerId,
-                    req.UploadedById,
+                    access.CallerId,
                     req.Description);
 
                 await tenantUow.Repository<EmployeeDocument>().AddAsync(entity, ct);

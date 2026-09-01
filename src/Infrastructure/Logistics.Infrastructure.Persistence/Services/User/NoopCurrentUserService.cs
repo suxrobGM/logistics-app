@@ -20,4 +20,14 @@ public sealed class NoopCurrentUserService : ICurrentUserService
     {
         return "System";
     }
+
+    public Guid? GetTenantId()
+    {
+        return null;
+    }
+
+    public bool IsInRole(params string[] roles)
+    {
+        return false;
+    }
 }

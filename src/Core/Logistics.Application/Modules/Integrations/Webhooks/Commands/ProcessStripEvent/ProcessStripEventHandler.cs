@@ -88,7 +88,7 @@ internal sealed class ProcessStripEventHandler(
         catch (Exception ex)
         {
             logger.LogError(ex, "Stripe error: {Message}", ex.Message);
-            return Result.Fail(ex.Message);
+            return Result.Fail("Could not process the Stripe event.");
         }
     }
 

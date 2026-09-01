@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -6,7 +7,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Commands;
 
-internal sealed class UpdateDocumentHandler(ITenantUnitOfWork tenantUow)
+internal sealed class UpdateDocumentHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
     : IAppRequestHandler<UpdateDocumentCommand, Result>
 {
     public async Task<Result> Handle(
@@ -23,10 +26,10 @@ internal sealed class UpdateDocumentHandler(ITenantUnitOfWork tenantUow)
             return Result.Fail("Cannot update deleted document");
         }
 
-        var updater = await tenantUow.Repository<Employee>().GetByIdAsync(req.UpdatedById, ct);
-        if (updater is null)
+        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
+        if (access is null || !await DocumentAccess.CanAccessAsync(tenantUow, access, document, ct))
         {
-            return Result.Fail($"Could not find employee with ID '{req.UpdatedById}'");
+            return Result.Fail("Document not found or access denied.");
         }
 
         if (req.Type.HasValue)

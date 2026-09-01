@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -7,19 +8,15 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Queries;
 
-internal sealed class GetDocumentByIdHandler : IAppRequestHandler<GetDocumentByIdQuery, Result<DocumentDto>>
+internal sealed class GetDocumentByIdHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
+    : IAppRequestHandler<GetDocumentByIdQuery, Result<DocumentDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetDocumentByIdHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<DocumentDto>> Handle(GetDocumentByIdQuery req, CancellationToken ct)
     {
         // Query the base type; EF will materialize derived type (TPH)
-        var document = await _tenantUow.Repository<Document>()
+        var document = await tenantUow.Repository<Document>()
             .GetAsync(d => d.Id == req.DocumentId, ct);
 
         if (document is null)
@@ -32,9 +29,8 @@ internal sealed class GetDocumentByIdHandler : IAppRequestHandler<GetDocumentByI
             return Result<DocumentDto>.Fail("Document has been deleted");
         }
 
-        // Per-record authorization (see DocumentAccess) - don't hand document metadata to any
-        // authenticated caller by id.
-        if (!await DocumentAccess.CanAccessAsync(_tenantUow, req.RequestedById, document, ct))
+        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
+        if (access is null || !await DocumentAccess.CanAccessAsync(tenantUow, access, document, ct))
         {
             return Result<DocumentDto>.Fail("Document not found or access denied.");
         }

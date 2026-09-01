@@ -45,19 +45,16 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    // No [Authorize(Roles = ...)] here on purpose - unlike the platform-admin-only actions in this
-    // controller, a tenant Owner legitimately cancels/changes/renews their OWN subscription. The
-    // handler enforces the actual ownership check once it has loaded the subscription and knows its
-    // TenantId; CallerTenantId/IsPlatformAdmin below is how it learns who's asking.
+    // A tenant Owner or Manager manages their own subscription, so this is not platform-admin-only.
+    // The handler still checks the subscription's TenantId against the caller's, since the role
+    // alone does not say which subscription is theirs.
     [HttpPut("{id:guid}/cancel", Name = "CancelSubscription")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{TenantRoles.Owner},{TenantRoles.Manager}")]
     public async Task<IActionResult> CancelSubscription(Guid id, [FromBody] CancelSubscriptionCommand request)
     {
         request.Id = id;
-        request.CallerTenantId = User.GetTenantId();
-        request.IsPlatformAdmin = User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
@@ -65,12 +62,10 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}/change-plan", Name = "ChangeSubscriptionPlan")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{TenantRoles.Owner},{TenantRoles.Manager}")]
     public async Task<IActionResult> ChangeSubscriptionPlan(Guid id, [FromBody] ChangeSubscriptionPlanCommand request)
     {
         request.SubscriptionId = id;
-        request.CallerTenantId = User.GetTenantId();
-        request.IsPlatformAdmin = User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
@@ -78,12 +73,10 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}/renew", Name = "RenewSubscription")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{TenantRoles.Owner},{TenantRoles.Manager}")]
     public async Task<IActionResult> RenewSubscription(Guid id, [FromBody] RenewSubscriptionCommand request)
     {
         request.Id = id;
-        request.CallerTenantId = User.GetTenantId();
-        request.IsPlatformAdmin = User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
@@ -115,8 +108,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpGet("plans/{id:guid}", Name = "GetSubscriptionPlanById")]
     [ProducesResponseType(typeof(SubscriptionPlanDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    // Plans are pricing tiers any authenticated tenant needs to view to upgrade - require auth, but
-    // not admin. (Was a dangling commented-out attribute; made explicit.)
+    // Any authenticated tenant needs to read the pricing tiers to upgrade.
     [Authorize]
     public async Task<IActionResult> GetSubscriptionPlanById(Guid id)
     {

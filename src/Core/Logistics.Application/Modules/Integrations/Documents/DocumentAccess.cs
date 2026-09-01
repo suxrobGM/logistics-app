@@ -1,87 +1,124 @@
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Roles;
 
 namespace Logistics.Application.Modules.Integrations.Documents;
 
 /// <summary>
-/// Per-record authorization for documents on the staff-facing DocumentController. Without it, any
-/// authenticated user could pull any document in the tenant by id (employee driver-license PII,
-/// every customer's BOLs/PODs). Management sees all; a driver sees only documents tied to them
-/// (their own employee record, their assigned trucks, and loads on those trucks); anyone else is
+/// The caller's role, resolved once so a handler does not re-query it per document.
+/// </summary>
+internal sealed record DocumentAccessContext(Guid CallerId, string? RoleName)
+{
+    public bool IsManagement =>
+        RoleName is TenantRoles.Owner or TenantRoles.Manager or TenantRoles.Dispatcher;
+
+    public bool IsDriver => RoleName == TenantRoles.Driver;
+}
+
+/// <summary>
+/// Per-record authorization for documents on the staff-facing DocumentController, covering reads
+/// and writes alike. Management handles every document in the tenant; a driver only the ones tied
+/// to them (their employee record, their trucks, and the loads on those trucks). Everyone else is
 /// denied here and must use a properly-scoped portal endpoint.
 /// </summary>
 internal static class DocumentAccess
 {
-    public static async Task<bool> CanAccessAsync(
-        ITenantUnitOfWork tenantUow, Guid? callerId, Document document, CancellationToken ct)
+    /// <summary>
+    /// Resolves the caller once. Returns null when the caller is not an employee of this tenant,
+    /// which is the deny case on this surface.
+    /// </summary>
+    public static async Task<DocumentAccessContext?> ResolveAsync(
+        ITenantUnitOfWork tenantUow, ICurrentUserService currentUserService, CancellationToken ct)
     {
-        if (callerId is not { } caller)
+        if (currentUserService.GetUserId() is not { } callerId)
         {
-            return false;
+            return null;
         }
 
-        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(caller, ct);
-        var roleName = employee?.Role?.Name;
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(callerId, ct);
+        return employee?.Role?.Name is { } roleName
+            ? new DocumentAccessContext(callerId, roleName)
+            : null;
+    }
 
-        // Not an employee of this tenant (e.g. a customer-portal user) - deny on the staff controller.
-        if (roleName is null)
-        {
-            return false;
-        }
-
-        // Owner / Manager / Dispatcher legitimately manage all documents.
-        if (roleName is TenantRoles.Owner or TenantRoles.Manager or TenantRoles.Dispatcher)
+    public static async Task<bool> CanAccessAsync(
+        ITenantUnitOfWork tenantUow, DocumentAccessContext ctx, Document document, CancellationToken ct)
+    {
+        if (ctx.IsManagement)
         {
             return true;
         }
 
-        // Driver: only documents tied to them.
-        if (roleName == TenantRoles.Driver)
+        if (!ctx.IsDriver)
         {
-            return document switch
-            {
-                EmployeeDocument ed => ed.EmployeeId == caller,
-                TruckDocument td => await IsDriverOfTruckAsync(tenantUow, caller, td.TruckId, ct),
-                LoadDocument ld => await IsDriverOfLoadAsync(tenantUow, caller, ld.LoadId, ct),
-                _ => false
-            };
+            return false;
         }
 
-        return false;
+        return document switch
+        {
+            EmployeeDocument ed => ed.EmployeeId == ctx.CallerId,
+            TruckDocument td => await DrivesTruckAsync(tenantUow, ctx.CallerId, td.TruckId, ct),
+            LoadDocument ld => await DrivesLoadAsync(tenantUow, ctx.CallerId, ld.LoadId, ct),
+            _ => false
+        };
     }
 
     /// <summary>
-    /// Filters a document list down to what the caller may see. Management sees everything; a driver
-    /// sees only documents tied to them; anyone else sees nothing on this staff-facing surface.
-    /// Resolves the caller's role once and (for drivers) their truck/load set once, rather than
-    /// re-querying per document.
+    /// The create-path check: an upload names its owner before any document exists, so a driver
+    /// must be checked against the target load, truck, or employee record instead.
     /// </summary>
-    public static async Task<List<TDocument>> FilterAccessibleAsync<TDocument>(
-        ITenantUnitOfWork tenantUow, Guid? callerId, List<TDocument> documents, CancellationToken ct)
-        where TDocument : Document
+    public static async Task<bool> CanAccessOwnerAsync(
+        ITenantUnitOfWork tenantUow,
+        DocumentAccessContext ctx,
+        DocumentOwnerType ownerType,
+        Guid ownerId,
+        CancellationToken ct)
     {
-        if (callerId is not { } caller || documents.Count == 0)
+        if (ctx.IsManagement)
         {
-            return [];
+            return true;
         }
 
-        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(caller, ct);
-        var roleName = employee?.Role?.Name;
+        if (!ctx.IsDriver)
+        {
+            return false;
+        }
 
-        if (roleName is TenantRoles.Owner or TenantRoles.Manager or TenantRoles.Dispatcher)
+        return ownerType switch
+        {
+            DocumentOwnerType.Employee => ownerId == ctx.CallerId,
+            DocumentOwnerType.Truck => await DrivesTruckAsync(tenantUow, ctx.CallerId, ownerId, ct),
+            DocumentOwnerType.Load => await DrivesLoadAsync(tenantUow, ctx.CallerId, ownerId, ct),
+            _ => false
+        };
+    }
+
+    /// <summary>
+    /// Filters a list down to what the caller may see. A driver's truck and load sets are read
+    /// once here rather than per document, which is why this does not reuse
+    /// <see cref="CanAccessAsync"/>.
+    /// </summary>
+    public static async Task<List<TDocument>> FilterAccessibleAsync<TDocument>(
+        ITenantUnitOfWork tenantUow,
+        DocumentAccessContext ctx,
+        List<TDocument> documents,
+        CancellationToken ct)
+        where TDocument : Document
+    {
+        if (ctx.IsManagement)
         {
             return documents;
         }
 
-        if (roleName != TenantRoles.Driver)
+        if (!ctx.IsDriver || documents.Count == 0)
         {
             return [];
         }
 
-        // Driver: resolve their trucks (and the loads on them) once, then filter in memory.
         var truckIds = (await tenantUow.Repository<Truck>()
-                .GetListAsync(t => t.MainDriverId == caller || t.SecondaryDriverId == caller, ct))
+                .GetListAsync(t => t.MainDriverId == ctx.CallerId || t.SecondaryDriverId == ctx.CallerId, ct))
             .Select(t => t.Id)
             .ToHashSet();
 
@@ -94,14 +131,14 @@ internal static class DocumentAccess
 
         return documents.Where(d => d switch
         {
-            EmployeeDocument ed => ed.EmployeeId == caller,
+            EmployeeDocument ed => ed.EmployeeId == ctx.CallerId,
             TruckDocument td => truckIds.Contains(td.TruckId),
             LoadDocument ld => loadIds.Contains(ld.LoadId),
             _ => false
         }).ToList();
     }
 
-    private static async Task<bool> IsDriverOfTruckAsync(
+    private static async Task<bool> DrivesTruckAsync(
         ITenantUnitOfWork tenantUow, Guid driverId, Guid truckId, CancellationToken ct)
     {
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckId, ct);
@@ -109,15 +146,11 @@ internal static class DocumentAccess
                (truck.MainDriverId == driverId || truck.SecondaryDriverId == driverId);
     }
 
-    private static async Task<bool> IsDriverOfLoadAsync(
+    private static async Task<bool> DrivesLoadAsync(
         ITenantUnitOfWork tenantUow, Guid driverId, Guid loadId, CancellationToken ct)
     {
         var load = await tenantUow.Repository<Load>().GetByIdAsync(loadId, ct);
-        if (load?.AssignedTruckId is not { } truckId)
-        {
-            return false;
-        }
-
-        return await IsDriverOfTruckAsync(tenantUow, driverId, truckId, ct);
+        return load?.AssignedTruckId is { } truckId &&
+               await DrivesTruckAsync(tenantUow, driverId, truckId, ct);
     }
 }

@@ -15,5 +15,4 @@ public class UploadDocumentCommand : ICommand<Result<Guid>>
     public long FileSizeBytes { get; set; }
     public DocumentType Type { get; set; }
     public string? Description { get; set; }
-    public Guid UploadedById { get; set; }
 }

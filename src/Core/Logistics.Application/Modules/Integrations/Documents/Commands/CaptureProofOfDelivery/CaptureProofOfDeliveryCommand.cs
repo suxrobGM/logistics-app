@@ -23,7 +23,4 @@ public class CaptureProofOfDeliveryCommand : ICommand<Result<Guid>>
 
     // Additional notes
     public string? Notes { get; set; }
-
-    // Who is capturing this POD
-    public required Guid CapturedById { get; set; }
 }

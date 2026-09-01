@@ -1,5 +1,6 @@
 using Logistics.API.Extensions;
 using Logistics.Shared.Identity.Policies;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -20,11 +21,12 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     #region Default Features
 
     /// <summary>
-    /// Gets the default feature configuration for new tenants.
+    /// Gets the default feature configuration for new tenants. Platform-admin only: these apply
+    /// to every future tenant, so there is no target tenant to check a caller's ownership against.
     /// </summary>
     [HttpGet("defaults", Name = "GetDefaultFeatures")]
     [ProducesResponseType(typeof(IReadOnlyList<DefaultFeatureStatusDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Tenant.Manage)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetDefaultFeatures()
     {
         var result = await mediator.Send(new GetDefaultFeaturesQuery());
@@ -37,7 +39,7 @@ public class FeaturesController(IMediator mediator) : ControllerBase
     [HttpPut("defaults", Name = "UpdateDefaultFeatures")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Tenant.Manage)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> UpdateDefaultFeatures([FromBody] UpdateDefaultFeaturesCommand request)
     {
         var result = await mediator.Send(request);

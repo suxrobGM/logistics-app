@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
@@ -13,6 +14,7 @@ namespace Logistics.Application.Modules.Integrations.Documents.Commands;
 internal sealed class CaptureProofOfDeliveryHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorage,
+    ICurrentUserService currentUserService,
     ILogger<CaptureProofOfDeliveryHandler> logger)
     : IAppRequestHandler<CaptureProofOfDeliveryCommand, Result<Guid>>
 {
@@ -25,11 +27,12 @@ internal sealed class CaptureProofOfDeliveryHandler(
             return Result<Guid>.Fail($"Load with ID '{req.LoadId}' not found");
         }
 
-        // Verify employee exists
-        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(req.CapturedById, ct);
-        if (employee is null)
+        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
+        if (access is null ||
+            !await DocumentAccess.CanAccessOwnerAsync(
+                tenantUow, access, DocumentOwnerType.Load, req.LoadId, ct))
         {
-            return Result<Guid>.Fail($"Employee with ID '{req.CapturedById}' not found");
+            return Result<Guid>.Fail("Load not found or access denied.");
         }
 
         // Verify trip stop if provided
@@ -87,7 +90,7 @@ internal sealed class CaptureProofOfDeliveryHandler(
                     BlobConstants.DocumentsContainerName,
                     DocumentType.ProofOfDelivery,
                     req.LoadId,
-                    req.CapturedById,
+                    access.CallerId,
                     req.RecipientName,
                     signatureBlobPath,
                     req.Latitude,
@@ -116,7 +119,7 @@ internal sealed class CaptureProofOfDeliveryHandler(
                     BlobConstants.DocumentsContainerName,
                     DocumentType.ProofOfDelivery,
                     req.LoadId,
-                    req.CapturedById,
+                    access.CallerId,
                     req.RecipientName,
                     signatureBlobPath,
                     req.Latitude,

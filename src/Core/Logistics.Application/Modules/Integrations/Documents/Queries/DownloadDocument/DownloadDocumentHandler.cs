@@ -1,15 +1,19 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Queries;
 
 internal sealed class DownloadDocumentHandler(
     ITenantUnitOfWork tenantUow,
-    IBlobStorageService blobStorageService)
+    IBlobStorageService blobStorageService,
+    ICurrentUserService currentUserService,
+    ILogger<DownloadDocumentHandler> logger)
     : IAppRequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
 {
     public async Task<Result<DocumentDownloadDto>> Handle(DownloadDocumentQuery req, CancellationToken ct)
@@ -25,10 +29,8 @@ internal sealed class DownloadDocumentHandler(
             return Result<DocumentDownloadDto>.Fail("Document has been deleted");
         }
 
-        // Per-record authorization: without this any authenticated user could pull any document by
-        // id (employee PII, all customers' BOLs/PODs). Management sees all; a driver only documents
-        // tied to them; anyone else is denied here.
-        if (!await DocumentAccess.CanAccessAsync(tenantUow, req.RequestedById, document, ct))
+        var access = await DocumentAccess.ResolveAsync(tenantUow, currentUserService, ct);
+        if (access is null || !await DocumentAccess.CanAccessAsync(tenantUow, access, document, ct))
         {
             return Result<DocumentDownloadDto>.Fail("Document not found or access denied.");
         }
@@ -56,7 +58,8 @@ internal sealed class DownloadDocumentHandler(
         }
         catch (Exception ex)
         {
-            return Result<DocumentDownloadDto>.Fail($"Failed to download document: {ex.Message}");
+            logger.LogError(ex, "Failed to download document {DocumentId}", req.DocumentId);
+            return Result<DocumentDownloadDto>.Fail("Failed to download document.");
         }
     }
 }

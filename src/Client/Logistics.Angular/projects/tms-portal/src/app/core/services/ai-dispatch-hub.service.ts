@@ -3,8 +3,6 @@ import type { AgentDecisionDto, AgentMessageDto, RateNegotiationDto } from "@log
 import type { AgentTurnUpdate } from "./agent-chat.contracts";
 import { BaseHubConnection } from "./base-hub-connection";
 
-const DispatchBoardGroup = "dispatch-board";
-
 /**
  * Real-time AI dispatch events. Unlike the copilot hub, every event goes to the whole tenant's
  * dispatch board group - one dispatcher's approval is reflected for everyone.
@@ -17,21 +15,14 @@ export class AIDispatchHubService extends BaseHubConnection {
   readonly negotiationReceived$ = this.event<RateNegotiationDto>("ReceiveNegotiationUpdate");
 
   constructor() {
-    // The hub has no bare-tenant group: everything is published to the dispatch board group.
-    super("ai-dispatch", { registerTenant: false });
+    super("ai-dispatch");
   }
 
-  /** Claims the connection and joins the tenant's board group for as long as `destroyRef` lives. */
-  async acquireDispatchBoard(destroyRef: DestroyRef): Promise<void> {
-    const tenantId = this.tenantService.getTenantData()?.id;
-    if (!tenantId) {
-      return;
-    }
-
-    destroyRef.onDestroy(
-      () => void this.leaveGroup(DispatchBoardGroup, "UnsubscribeFromDispatchBoard", tenantId),
-    );
-    await this.acquire(destroyRef);
-    await this.joinGroup(DispatchBoardGroup, "SubscribeToDispatchBoard", tenantId);
+  /**
+   * Claims the connection for as long as `destroyRef` lives. The server joins the board group
+   * from the JWT tenant claim on connect, so there is no group call to make here.
+   */
+  acquireDispatchBoard(destroyRef: DestroyRef): Promise<void> {
+    return this.acquire(destroyRef);
   }
 }

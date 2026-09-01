@@ -1,9 +1,11 @@
 using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -14,6 +16,7 @@ internal sealed class ChangeSubscriptionPlanHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     IStripeSubscriptionService stripeSubscriptionService,
+    ICurrentUserService currentUserService,
     ILogger<ChangeSubscriptionPlanHandler> logger) : IAppRequestHandler<ChangeSubscriptionPlanCommand, Result>
 {
     public async Task<Result> Handle(
@@ -26,7 +29,8 @@ internal sealed class ChangeSubscriptionPlanHandler(
             return Result.Fail($"Could not find a subscription with ID '{req.SubscriptionId}'");
         }
 
-        if (!req.IsPlatformAdmin && subscription.TenantId != req.CallerTenantId)
+        if (!currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin) &&
+            subscription.TenantId != currentUserService.GetTenantId())
         {
             throw new TenantAccessDeniedException("You do not have access to this subscription.");
         }

@@ -8,6 +8,7 @@ using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Options;
 using Logistics.Shared.Identity.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Infrastructure.Persistence.Services;
@@ -15,7 +16,8 @@ namespace Logistics.Infrastructure.Persistence.Services;
 internal class CurrentTenantAccessor(
     IMasterUnitOfWork masterUow,
     TenantDbContextOptions? dbContextContextOptions = null,
-    IHttpContextAccessor? contextAccessor = null)
+    IHttpContextAccessor? contextAccessor = null,
+    ILogger<CurrentTenantAccessor>? logger = null)
     : ICurrentTenantAccessor
 {
     private const string TenantHeader = "X-Tenant";
@@ -57,12 +59,10 @@ internal class CurrentTenantAccessor(
     }
 
     /// <summary>
-    /// The <see cref="TenantHeader"/> is honoured so multi-tenant users (and the portals) can switch
-    /// context, but it must not let an authenticated caller target a tenant they don't belong to.
-    /// A request whose resolved tenant differs from the caller's own JWT tenant claim is allowed only
-    /// when an active <see cref="UserTenantAccess"/> row grants that user access to it. Anonymous
-    /// requests (webhooks, MCP - secured by signature / API key / route) carry no tenant claim and
-    /// are not subject to this check.
+    /// The <see cref="TenantHeader"/> lets multi-tenant users switch context, so a resolved tenant
+    /// that differs from the caller's own claim needs an active <see cref="UserTenantAccess"/> row.
+    /// Anonymous requests (webhooks, MCP) carry no tenant claim and are secured by signature or
+    /// API key instead.
     /// </summary>
     private async Task EnsureAuthenticatedUserHasAccessAsync(Tenant tenant, CancellationToken ct)
     {
@@ -97,8 +97,10 @@ internal class CurrentTenantAccessor(
             }
         }
 
-        throw new TenantAccessDeniedException(
-            $"You do not have access to tenant '{tenant.Name}'.");
+        // Static message: naming the tenant would turn this endpoint into a GUID-to-name oracle
+        // for anyone probing the X-Tenant header.
+        logger?.LogWarning("Denied access to tenant {TenantId} for user {UserId}", tenant.Id, userIdValue);
+        throw new TenantAccessDeniedException("You do not have access to this tenant.");
     }
 
     private async Task<Tenant?> FindTenantAsync(string tenantId, CancellationToken ct = default)

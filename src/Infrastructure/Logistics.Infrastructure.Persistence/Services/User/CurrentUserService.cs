@@ -23,6 +23,18 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
         return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
     }
 
+    public Guid? GetTenantId()
+    {
+        var tenantClaim = httpContextAccessor.HttpContext?.User.FindFirstValue(CustomClaimTypes.Tenant);
+        return Guid.TryParse(tenantClaim, out var tenantId) ? tenantId : null;
+    }
+
+    public bool IsInRole(params string[] roles)
+    {
+        var user = httpContextAccessor.HttpContext?.User;
+        return user is not null && roles.Any(user.IsInRole);
+    }
+
     public string GetUserName()
     {
         var user = httpContextAccessor.HttpContext?.User;

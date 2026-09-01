@@ -1,4 +1,5 @@
 import { computed, DestroyRef, inject, signal } from "@angular/core";
+import { getAccessToken } from "@logistics/shared";
 import {
   HttpTransportType,
   HubConnection,
@@ -12,14 +13,11 @@ import { TenantService } from "./tenant.service";
 export type HubConnectionStatus = "disconnected" | "connecting" | "connected" | "reconnecting";
 
 export interface HubConnectionOptions {
-  /** JWT for authorized hubs; SignalR sends it as the access_token query parameter. */
-  accessTokenFactory?: () => string | Promise<string>;
-
   /**
-   * Runs the RegisterTenant/UnregisterTenant handshake. Authorized hubs take identity from JWT
-   * claims and skip it. Default true.
+   * Overrides the portal access token. Every hub is authorized and derives tenant and user from
+   * the JWT, so the default is the only thing that keeps a connection from being rejected.
    */
-  registerTenant?: boolean;
+  accessTokenFactory?: () => string | Promise<string>;
 }
 
 /** How long a hub lingers after its last consumer releases, so route changes don't churn it. */
@@ -36,7 +34,6 @@ const DisconnectLingerMs = 5000;
  */
 export abstract class BaseHubConnection {
   protected readonly tenantService = inject(TenantService);
-  private readonly registerTenant: boolean;
   private readonly state = signal<HubConnectionStatus>("disconnected");
   protected readonly hubConnection: HubConnection;
 
@@ -67,12 +64,11 @@ export abstract class BaseHubConnection {
     private readonly hubName: string,
     options: HubConnectionOptions = {},
   ) {
-    this.registerTenant = options.registerTenant ?? true;
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.apiUrl}/hubs/${hubName}`, {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
-        accessTokenFactory: options.accessTokenFactory,
+        accessTokenFactory: options.accessTokenFactory ?? (() => getAccessToken("tmsportal") ?? ""),
       })
       .withAutomaticReconnect()
       .build();
@@ -182,16 +178,6 @@ export abstract class BaseHubConnection {
     try {
       await this.hubConnection.start();
       this.state.set("connected");
-
-      if (this.registerTenant) {
-        const tenant = this.tenantService.getTenantData();
-        if (!tenant) {
-          console.error(`Failed to connect to the ${this.hubName} hub, tenant ID is null`);
-          return;
-        }
-        this.groupJoins.set("tenant", { method: "RegisterTenant", args: [tenant.id] });
-      }
-
       await this.rejoinGroups();
     } catch (error) {
       this.state.set("disconnected");
@@ -205,13 +191,6 @@ export abstract class BaseHubConnection {
     }
 
     try {
-      if (this.registerTenant) {
-        const tenant = this.tenantService.getTenantData();
-        if (tenant) {
-          await this.hubConnection.invoke("UnregisterTenant", tenant.id);
-        }
-      }
-
       // Stopping drops every membership server-side; a later start rebuilds what is still wanted.
       this.groupJoins.clear();
       await this.hubConnection.stop();

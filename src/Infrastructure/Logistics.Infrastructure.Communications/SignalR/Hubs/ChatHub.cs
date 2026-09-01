@@ -1,6 +1,4 @@
-using System.Security.Claims;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
-using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Models.Messaging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -8,30 +6,25 @@ using Microsoft.AspNetCore.SignalR;
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 /// <summary>
-///     SignalR hub for real-time messaging between dispatchers and drivers. Authorized, and both
-///     the tenant group and the acting user id are taken from the caller's JWT claims - never from
-///     client-supplied ids - so a client cannot join another tenant's group or act as another user.
-///     Mirrors <see cref="CopilotHub"/>.
+///     Real-time messaging between dispatchers and drivers. The tenant group and the acting user
+///     id come from the caller's JWT claims, never from a client-supplied id.
 /// </summary>
 [Authorize]
 public class ChatHub(ChatHubContext hubContext) : Hub<IChatHubClient>
 {
     public override async Task OnConnectedAsync()
     {
-        var tenantId = Context.User?.FindFirst(CustomClaimTypes.Tenant)?.Value;
-        var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? Context.User?.FindFirst("sub")?.Value;
-
-        if (tenantId is null || !Guid.TryParse(userId, out var parsedUserId))
+        if (Context.TenantIdFromClaim() is not { } tenantId ||
+            Context.UserIdFromClaim() is not { } userId)
         {
             Context.Abort();
             return;
         }
 
         hubContext.AddClient(Context.ConnectionId);
-        hubContext.SetTenantId(Context.ConnectionId, tenantId);
-        hubContext.SetUserId(Context.ConnectionId, parsedUserId);
-        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
+        hubContext.SetTenantId(Context.ConnectionId, tenantId.ToString());
+        hubContext.SetUserId(Context.ConnectionId, userId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId.ToString());
         await base.OnConnectedAsync();
     }
 
@@ -41,12 +34,13 @@ public class ChatHub(ChatHubContext hubContext) : Hub<IChatHubClient>
         return base.OnDisconnectedAsync(exception);
     }
 
-    // Tenant and user are established from claims on connect; these are kept for client
-    // compatibility but deliberately ignore the client-supplied ids.
+    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
     public Task RegisterTenant(string tenantId) => Task.CompletedTask;
 
+    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
     public Task UnregisterTenant(string tenantId) => Task.CompletedTask;
 
+    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
     public Task RegisterUser(Guid userId) => Task.CompletedTask;
 
     /// <summary>

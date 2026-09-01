@@ -1,6 +1,8 @@
 using Logistics.Application.Abstractions.Realtime;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
-using Logistics.Shared.Identity.Claims;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -8,28 +10,27 @@ using Microsoft.AspNetCore.SignalR;
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 /// <summary>
-///     Live truck geolocation. Authorized, and the tenant group is derived from the caller's JWT
-///     tenant claim - never from a client-supplied id - so a client can only ever receive (or
-///     broadcast to) its own tenant's group. Mirrors <see cref="CopilotHub"/>.
+///     Live truck geolocation. The tenant group comes from the caller's JWT claim, never from a
+///     client-supplied id.
 /// </summary>
 [Authorize]
 public class TrackingHub(
     ITruckGeolocationUpdater geolocationUpdater,
+    ITenantUnitOfWork tenantUow,
     TrackingHubContext hubContext) : Hub<ITrackingHubClient>
 {
     private const string TripGroupPrefix = "trip:";
 
     public override async Task OnConnectedAsync()
     {
-        var tenantId = TenantIdFromClaim();
-        if (tenantId is null)
+        if (Context.TenantIdFromClaim() is not { } tenantId)
         {
             Context.Abort();
             return;
         }
 
         hubContext.AddClient(Context.ConnectionId, null);
-        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId.ToString());
         await base.OnConnectedAsync();
     }
 
@@ -47,18 +48,35 @@ public class TrackingHub(
 
     #region Geolocation Methods
 
+    /// <summary>
+    ///     Records a position report from a driver's device.
+    /// </summary>
+    /// <remarks>
+    ///     The cached report is persisted on disconnect, and its <c>TenantId</c> is what
+    ///     SetTruckGeolocationHandler opens the database with. So the claim must overwrite the
+    ///     client's value, and only the sanitized record may be broadcast or cached.
+    /// </remarks>
+    [Authorize(Roles = TenantRoles.Driver)]
     public async Task SendGeolocationData(TruckGeolocationDto truckGeolocation)
     {
-        var tenantId = TenantIdFromClaim();
-        if (tenantId is null)
+        if (Context.TenantIdFromClaim() is not { } tenantId ||
+            Context.UserIdFromClaim() is not { } driverId)
         {
             return;
         }
 
-        // Broadcast to the caller's own tenant group from the claim, not to a client-supplied
-        // TenantId, so a client cannot inject geolocation into another tenant's stream.
+        var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckGeolocation.TruckId);
+
+        if (truck is null ||
+            (truck.MainDriverId != driverId && truck.SecondaryDriverId != driverId))
+        {
+            return;
+        }
+
+        truckGeolocation.TenantId = tenantId;
+
         await Clients
-            .Group(tenantId)
+            .Group(tenantId.ToString())
             .ReceiveGeolocationData(truckGeolocation);
         hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }
@@ -67,10 +85,10 @@ public class TrackingHub(
 
     #region Tenant Subscription
 
-    // Kept for client compatibility; membership is established from the claim on connect and the
-    // client-supplied id is deliberately ignored so a client cannot join another tenant's group.
+    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
     public Task RegisterTenant(string tenantId) => Task.CompletedTask;
 
+    [Obsolete("Identity comes from JWT claims; remove once the driver app stops calling it.")]
     public Task UnregisterTenant(string tenantId) => Task.CompletedTask;
 
     #endregion
@@ -94,7 +112,4 @@ public class TrackingHub(
     }
 
     #endregion
-
-    private string? TenantIdFromClaim() =>
-        Context.User?.FindFirst(CustomClaimTypes.Tenant)?.Value;
 }

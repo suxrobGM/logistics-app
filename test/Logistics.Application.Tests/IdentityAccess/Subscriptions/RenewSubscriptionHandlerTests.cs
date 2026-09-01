@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 using Logistics.Domain.Entities;
@@ -6,6 +7,7 @@ using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Identity.Roles;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -27,6 +29,7 @@ public class RenewSubscriptionHandlerTests
     private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IStripeSubscriptionService stripeSubscriptionService = Substitute.For<IStripeSubscriptionService>();
+    private readonly ICurrentUserService currentUserService = Substitute.For<ICurrentUserService>();
     private readonly ILogger<RenewSubscriptionHandler> logger = NullLogger<RenewSubscriptionHandler>.Instance;
 
     private readonly IMasterRepository<Subscription, Guid> subscriptionRepo =
@@ -42,7 +45,7 @@ public class RenewSubscriptionHandlerTests
         masterUow.Repository<Subscription>().Returns(subscriptionRepo);
         tenantUow.Repository<Truck>().Returns(truckRepo);
         truckRepo.CountAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>()).Returns(0);
-        sut = new RenewSubscriptionHandler(masterUow, tenantUow, stripeSubscriptionService, logger);
+        sut = new RenewSubscriptionHandler(masterUow, tenantUow, stripeSubscriptionService, currentUserService, logger);
     }
 
     private static Tenant CreateTenant() => new()
@@ -80,12 +83,11 @@ public class RenewSubscriptionHandlerTests
         var callerTenantId = Guid.NewGuid();
         var subscription = CreateSubscription(ownerTenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
+        currentUserService.GetTenantId().Returns(callerTenantId);
 
         var command = new RenewSubscriptionCommand
         {
-            Id = subscription.Id,
-            CallerTenantId = callerTenantId,
-            IsPlatformAdmin = false
+            Id = subscription.Id
         };
 
         await Assert.ThrowsAsync<TenantAccessDeniedException>(
@@ -100,6 +102,7 @@ public class RenewSubscriptionHandlerTests
         var tenantId = Guid.NewGuid();
         var subscription = CreateSubscription(tenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
+        currentUserService.GetTenantId().Returns(tenantId);
         // Fails downstream at the real Stripe call - proves the ownership gate let it through,
         // without needing to fully mock a successful Stripe renewal.
         stripeSubscriptionService
@@ -108,9 +111,7 @@ public class RenewSubscriptionHandlerTests
 
         var command = new RenewSubscriptionCommand
         {
-            Id = subscription.Id,
-            CallerTenantId = tenantId,
-            IsPlatformAdmin = false
+            Id = subscription.Id
         };
 
         var result = await sut.Handle(command, CancellationToken.None);
@@ -125,15 +126,14 @@ public class RenewSubscriptionHandlerTests
         var ownerTenantId = Guid.NewGuid();
         var subscription = CreateSubscription(ownerTenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
+        currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
         stripeSubscriptionService
             .RenewSubscriptionAsync(Arg.Any<Subscription?>(), Arg.Any<SubscriptionPlan>(), Arg.Any<Tenant>(), Arg.Any<int>())
             .ThrowsAsync(new StripeException("no payment method"));
 
         var command = new RenewSubscriptionCommand
         {
-            Id = subscription.Id,
-            CallerTenantId = null,
-            IsPlatformAdmin = true
+            Id = subscription.Id
         };
 
         var result = await sut.Handle(command, CancellationToken.None);

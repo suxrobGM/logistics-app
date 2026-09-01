@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 using Logistics.Domain.Entities;
@@ -5,6 +6,7 @@ using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Identity.Roles;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -21,6 +23,7 @@ public class CancelSubscriptionHandlerTests
 {
     private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
     private readonly IStripeSubscriptionService stripeSubscriptionService = Substitute.For<IStripeSubscriptionService>();
+    private readonly ICurrentUserService currentUserService = Substitute.For<ICurrentUserService>();
     private readonly ILogger<DeleteSubscriptionHandler> logger = NullLogger<DeleteSubscriptionHandler>.Instance;
 
     private readonly IMasterRepository<Subscription, Guid> subscriptionRepo =
@@ -31,7 +34,7 @@ public class CancelSubscriptionHandlerTests
     public CancelSubscriptionHandlerTests()
     {
         masterUow.Repository<Subscription>().Returns(subscriptionRepo);
-        sut = new CancelSubscriptionHandler(masterUow, stripeSubscriptionService, logger);
+        sut = new CancelSubscriptionHandler(masterUow, stripeSubscriptionService, currentUserService, logger);
     }
 
     private static Tenant CreateTenant() => new()
@@ -70,12 +73,11 @@ public class CancelSubscriptionHandlerTests
         var callerTenantId = Guid.NewGuid();
         var subscription = CreateSubscription(ownerTenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
+        currentUserService.GetTenantId().Returns(callerTenantId);
 
         var command = new CancelSubscriptionCommand
         {
-            Id = subscription.Id,
-            CallerTenantId = callerTenantId,
-            IsPlatformAdmin = false
+            Id = subscription.Id
         };
 
         await Assert.ThrowsAsync<TenantAccessDeniedException>(
@@ -90,12 +92,11 @@ public class CancelSubscriptionHandlerTests
         var tenantId = Guid.NewGuid();
         var subscription = CreateSubscription(tenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
+        currentUserService.GetTenantId().Returns(tenantId);
 
         var command = new CancelSubscriptionCommand
         {
-            Id = subscription.Id,
-            CallerTenantId = tenantId,
-            IsPlatformAdmin = false
+            Id = subscription.Id
         };
 
         var result = await sut.Handle(command, CancellationToken.None);
@@ -110,12 +111,11 @@ public class CancelSubscriptionHandlerTests
         var ownerTenantId = Guid.NewGuid();
         var subscription = CreateSubscription(ownerTenantId);
         subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
+        currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
 
         var command = new CancelSubscriptionCommand
         {
-            Id = subscription.Id,
-            CallerTenantId = null,
-            IsPlatformAdmin = true
+            Id = subscription.Id
         };
 
         var result = await sut.Handle(command, CancellationToken.None);

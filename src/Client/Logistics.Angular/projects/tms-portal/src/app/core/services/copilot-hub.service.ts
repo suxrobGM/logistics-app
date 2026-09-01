@@ -1,12 +1,11 @@
 import { Injectable } from "@angular/core";
-import { getAccessToken } from "@logistics/shared";
 import type { AgentDecisionDto, AgentMessageDto } from "@logistics/shared/api";
 import type { AgentTurnUpdate } from "./agent-chat.contracts";
 import { BaseHubConnection } from "./base-hub-connection";
 
 /**
- * Real-time copilot events. The hub is authorized: identity comes from the JWT and the server
- * auto-joins the connection to its private per-user group - no RegisterTenant handshake.
+ * Real-time copilot events. The server auto-joins the connection to its private per-user group,
+ * derived from the JWT.
  *
  * CopilotStore is the only intended subscriber - components read the store, never this service.
  */
@@ -17,9 +16,6 @@ export class CopilotHubService extends BaseHubConnection {
   readonly turnUpdateReceived$ = this.event<AgentTurnUpdate>("ReceiveCopilotTurnUpdate");
 
   constructor() {
-    super("copilot", {
-      accessTokenFactory: () => getAccessToken("tmsportal") ?? "",
-      registerTenant: false,
-    });
+    super("copilot");
   }
 }
