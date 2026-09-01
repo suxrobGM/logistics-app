@@ -1,5 +1,6 @@
 using System.Text.Json;
 using FluentValidation;
+using Logistics.Domain.Exceptions;
 using Logistics.Shared.Models;
 using Serilog;
 
@@ -76,7 +77,7 @@ public class ExceptionHandlingMiddleware(
         return exception switch
         {
             ValidationException => StatusCodes.Status422UnprocessableEntity,
-            Logistics.Domain.Exceptions.TenantAccessDeniedException => StatusCodes.Status403Forbidden,
+            TenantAccessDeniedException => StatusCodes.Status403Forbidden,
             _ => StatusCodes.Status500InternalServerError
         };
     }
@@ -95,15 +96,13 @@ public class ExceptionHandlingMiddleware(
             return new ErrorResponse("Validation failed", Details: details);
         }
 
-        // Known, safe-to-surface exceptions keep their message (e.g. a tenant-access denial).
-        if (exception is Logistics.Domain.Exceptions.TenantAccessDeniedException)
+        // Only exceptions with a message written for an end user reach the client verbatim.
+        if (exception is TenantAccessDeniedException)
         {
             return new ErrorResponse(exception.Message);
         }
 
-        // Unexpected (500) errors (finding #17): return a generic message rather than the raw
-        // exception text, which can leak filesystem paths, SQL, or connection detail. The full
-        // exception is still logged server-side above.
+        // Anything else could carry filesystem paths, SQL, or connection detail. Logged above.
         return new ErrorResponse("An unexpected error occurred. Please try again, or contact support if it persists.");
     }
 }

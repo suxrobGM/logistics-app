@@ -13,12 +13,6 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
     {
         builder.ToTable("invoices");
 
-        // NOTE (audit finding #19 - optimistic concurrency): invoice totals/status are money-bearing,
-        // so a concurrent read-modify-write can silently lose an update. See the matching note in
-        // PaymentEntityConfiguration: the xmin-token approach is unavailable in Npgsql 10 and the
-        // hand-rolled version makes EF try to create the xmin system column. Left unimplemented
-        // deliberately rather than risking the money path.
-
         builder.HasDiscriminator(i => i.Type)
             .HasValue<LoadInvoice>(InvoiceType.Load)
             .HasValue<SubscriptionInvoice>(InvoiceType.Subscription)

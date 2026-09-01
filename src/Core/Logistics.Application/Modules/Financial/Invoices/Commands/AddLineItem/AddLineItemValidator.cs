@@ -10,15 +10,8 @@ internal sealed class AddLineItemValidator : AbstractValidator<AddLineItemComman
             .NotEmpty()
             .MaximumLength(500);
 
-        // Guard the money fields that flow into the invoice total and tax math. A negative amount is
-        // valid (credits/discounts), but bound the magnitude and require a positive quantity so an
-        // unbounded/zero value can't corrupt the total or produce nonsensical tax.
-        RuleFor(i => i.Amount)
-            .GreaterThanOrEqualTo(-1_000_000m)
-            .LessThanOrEqualTo(1_000_000m);
-
+        // A negative amount is a credit or discount, so only the quantity has a floor.
         RuleFor(i => i.Quantity)
-            .GreaterThan(0)
-            .LessThanOrEqualTo(100_000);
+            .GreaterThan(0);
     }
 }

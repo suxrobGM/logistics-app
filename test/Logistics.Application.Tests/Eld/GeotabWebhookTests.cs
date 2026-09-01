@@ -55,9 +55,8 @@ public class GeotabWebhookTests
     [Fact]
     public async Task ProcessWebhook_NoSecretConfigured_RejectsPayload()
     {
-        // Fail closed (security fix, finding #10): with no webhook secret configured, an anonymous
-        // webhook has no authenticity check, so it must be REJECTED - not processed unverified.
-        // Parity with Samsara/Motive.
+        // With no secret configured an anonymous webhook has no authenticity check at all, so it
+        // is rejected rather than processed unverified.
         var result = await sut.ProcessWebhookAsync(payload, signature: null, webhookSecret: null);
 
         Assert.False(result.IsValid);

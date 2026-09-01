@@ -30,8 +30,7 @@ internal sealed class AssignLoadToTruckTool(IMediator mediator)
     {
         RequiredPermission = Permission.Dispatch.Manage,
         DecisionType = AgentDecisionType.AssignLoad,
-        // Write tool: must NOT be on the Mcp surface (an API key has no person to attribute the
-        // action to and no approval step). Copilot + Dispatch only.
+        // Not on Mcp: an API key call has nobody to attribute the write to and no approval step.
         Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };
 

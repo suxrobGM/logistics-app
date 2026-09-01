@@ -29,7 +29,7 @@ internal sealed class CreateTripTool(IMediator mediator)
     {
         RequiredPermission = Permission.Dispatch.Manage,
         DecisionType = AgentDecisionType.CreateTrip,
-        // Write tool: must NOT be on the Mcp surface (no person to attribute to, no approval step).
+        // Not on Mcp: an API key call has nobody to attribute the write to and no approval step.
         Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Dispatch
     };
 

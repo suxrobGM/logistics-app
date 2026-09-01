@@ -119,11 +119,9 @@ internal static class Setup
             // Rate limit for impersonation token validation
             options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
 
-            // Per-IP limit on the token endpoint (finding #23). The "login" policy only covers the
-            // interactive Razor page; /connect/token (the ROPC password grant) had no IP throttle,
-            // leaving password-spraying and lockout-DoS unbounded. Per-account lockout still applies;
-            // this bounds the spray. 30/min/IP leaves room for legitimate token refresh (tokens live
-            // 1h) while slowing an attacker. Other paths are unlimited.
+            // A global limiter, not the named "login" policy: Duende generates /connect/token in
+            // middleware, so there is no endpoint to hang [EnableRateLimiting] on. 30/min/IP leaves
+            // room for silent renew on a 1-hour token while bounding a password spray.
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
                 context.Request.Path.StartsWithSegments("/connect/token")
                     ? RateLimitPartition.GetFixedWindowLimiter(

@@ -24,9 +24,7 @@ internal sealed class UpdateEmployeeHandler(
             return Result.Fail("Could not find the specified user");
         }
 
-        // Role changes are privilege-sensitive: guard against self-escalation and against assigning
-        // a role that outranks the caller's own. Without this, any Employee.Manage holder (e.g. a
-        // Manager) could promote themselves - or anyone - to Owner and gain the whole tenant.
+        // Without a rank check any Employee.Manage holder could promote themselves to Owner.
         if (tenantRole is not null && tenantRole.Name != employeeEntity.Role?.Name)
         {
             var guard = await CheckRoleChangeAllowedAsync(req.UserId, employeeEntity, tenantRole, ct);
@@ -73,20 +71,24 @@ internal sealed class UpdateEmployeeHandler(
             return Result.Fail("User not authenticated.");
         }
 
-        // No one may change their own role - that is the self-escalation path.
         if (callerId.Value == targetUserId)
         {
             return Result.Fail("You cannot change your own role.");
         }
 
         var caller = await tenantUow.Repository<Employee>().GetByIdAsync(callerId.Value, ct);
-        var callerRank = RoleRank(caller?.Role?.Name);
-        var newRoleRank = RoleRank(newRole.Name);
-        var targetCurrentRank = RoleRank(target.Role?.Name);
 
-        // A caller can neither grant a role above their own level nor act on someone who already
-        // outranks them (which would let a Manager demote an Owner).
-        if (newRoleRank > callerRank || targetCurrentRank > callerRank)
+        // A custom role's name says nothing about the permissions behind it, so a guessed rank
+        // could hand out more authority than the caller has. Refuse anything unranked.
+        if (RoleRank(newRole.Name) is not { } newRoleRank ||
+            RoleRank(caller?.Role?.Name) is not { } callerRank ||
+            RoleRank(target.Role?.Name) is not { } targetRank)
+        {
+            return Result.Fail("This role cannot be assigned here.");
+        }
+
+        // Also blocks acting on someone who already outranks you, e.g. a Manager demoting an Owner.
+        if (newRoleRank > callerRank || targetRank > callerRank)
         {
             return Result.Fail("You cannot assign a role higher than your own.");
         }
@@ -95,16 +97,16 @@ internal sealed class UpdateEmployeeHandler(
     }
 
     /// <summary>
-    /// Privilege ordering of the built-in tenant roles. Higher wins. Unknown/custom roles rank
-    /// lowest so they can never be used to out-rank a built-in role.
+    /// Privilege ordering of the built-in tenant roles, highest first. Null for anything else,
+    /// including a custom role, whose authority cannot be inferred from its name.
     /// </summary>
-    private static int RoleRank(string? roleName) => roleName switch
+    private static int? RoleRank(string? roleName) => roleName switch
     {
         TenantRoles.Owner => 4,
         TenantRoles.Manager => 3,
         TenantRoles.Dispatcher => 2,
         TenantRoles.Driver => 1,
         TenantRoles.Customer => 0,
-        _ => -1
+        _ => null
     };
 }

@@ -132,9 +132,8 @@ internal class GeotabEldService(
     {
         // Geotab does not natively push HOS events; integrators sign Add-In / IOX
         // forwarder calls with HMAC-SHA256 of the body using the configured secret.
-        // Fail closed: VerifyHmacSha256 returns false on a null/empty secret, so an unconfigured
-        // secret rejects the payload rather than accepting it unverified. This endpoint is anonymous,
-        // so signature verification is the only authenticity check.
+        // Fail closed: VerifyHmacSha256 is false on an empty secret, and this endpoint is
+        // anonymous, so the signature is the only authenticity check there is.
         if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
         {
             logger.LogWarning("Rejected Geotab webhook with invalid or unverifiable signature");

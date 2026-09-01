@@ -18,17 +18,13 @@ internal sealed record DocumentAccessContext(Guid CallerId, string? RoleName)
 }
 
 /// <summary>
-/// Per-record authorization for documents on the staff-facing DocumentController, covering reads
-/// and writes alike. Management handles every document in the tenant; a driver only the ones tied
-/// to them (their employee record, their trucks, and the loads on those trucks). Everyone else is
-/// denied here and must use a properly-scoped portal endpoint.
+/// Per-record authorization for the staff-facing DocumentController, reads and writes alike.
+/// Management handles every document in the tenant, a driver only those tied to them. Everyone
+/// else is denied here and must use a properly-scoped portal endpoint.
 /// </summary>
 internal static class DocumentAccess
 {
-    /// <summary>
-    /// Resolves the caller once. Returns null when the caller is not an employee of this tenant,
-    /// which is the deny case on this surface.
-    /// </summary>
+    /// <summary>Null when the caller is not an employee of this tenant, which denies them.</summary>
     public static async Task<DocumentAccessContext?> ResolveAsync(
         ITenantUnitOfWork tenantUow, ICurrentUserService currentUserService, CancellationToken ct)
     {
@@ -66,8 +62,8 @@ internal static class DocumentAccess
     }
 
     /// <summary>
-    /// The create-path check: an upload names its owner before any document exists, so a driver
-    /// must be checked against the target load, truck, or employee record instead.
+    /// The create path: an upload names its owner before any document exists, so a driver is
+    /// checked against the target load, truck, or employee record instead.
     /// </summary>
     public static async Task<bool> CanAccessOwnerAsync(
         ITenantUnitOfWork tenantUow,
@@ -96,9 +92,8 @@ internal static class DocumentAccess
     }
 
     /// <summary>
-    /// Filters a list down to what the caller may see. A driver's truck and load sets are read
-    /// once here rather than per document, which is why this does not reuse
-    /// <see cref="CanAccessAsync"/>.
+    /// Reads a driver's truck and load sets once rather than per document, which is why this does
+    /// not just loop <see cref="CanAccessAsync"/>.
     /// </summary>
     public static async Task<List<TDocument>> FilterAccessibleAsync<TDocument>(
         ITenantUnitOfWork tenantUow,

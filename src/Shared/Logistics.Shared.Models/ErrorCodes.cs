@@ -45,6 +45,12 @@ public static class ErrorCodes
     public const string WebhookRejected = "WEBHOOK_REJECTED";
 
     /// <summary>
+    ///     The load already has an invoice. The Load/LoadInvoice relationship is one-to-one, so the
+    ///     database rejects a second one regardless; this turns that into a message a client can act on.
+    /// </summary>
+    public const string LoadInvoiceExists = "LOAD_INVOICE_EXISTS";
+
+    /// <summary>
     ///     Weekly AI budget spent and the owner opted to pause AI instead of billing overage
     ///     (TenantSettings.BlockAIOverage). Self-imposed - deliberately not an upgrade-prompt code.
     /// </summary>

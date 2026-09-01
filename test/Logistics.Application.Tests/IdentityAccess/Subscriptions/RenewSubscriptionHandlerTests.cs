@@ -20,9 +20,7 @@ using Subscription = Logistics.Domain.Entities.Subscription;
 namespace Logistics.Application.Tests.IdentityAccess.Subscriptions;
 
 /// <summary>
-/// Covers the tenant-ownership check added to close finding #6 - RenewSubscription previously
-/// had no authorization at all, so any tenant's user could force a renewal (with a real Stripe
-/// side effect) on any other tenant's subscription.
+/// A subscription may only be renewed by a platform admin or by its own tenant.
 /// </summary>
 public class RenewSubscriptionHandlerTests
 {

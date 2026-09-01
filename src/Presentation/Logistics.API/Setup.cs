@@ -100,9 +100,8 @@ internal static class Setup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        // Fail fast if the impersonation master password was never changed from its committed
-        // placeholder (finding #20): a publicly-known break-glass secret is no protection. Only
-        // enforced outside Development so local dev keeps working with the default.
+        // A break-glass secret that is still the committed placeholder is public knowledge.
+        // Development keeps the default so local runs work.
         services.AddOptions<ImpersonationOptions>()
             .Bind(configuration.GetSection(ImpersonationOptions.SectionName))
             .Validate(
@@ -252,9 +251,8 @@ internal static class Setup
         // Telegram Bot
         app.MapTelegramWebhook();
 
-        // SignalR Hubs. RequireAuthorization is belt-and-suspenders alongside each hub's own
-        // [Authorize]: the MVC global AuthorizeFilter does not cover SignalR endpoints, so an
-        // unauthenticated client must be rejected at the hub mapping too.
+        // The global MVC AuthorizeFilter does not reach SignalR endpoints, so the hubs need their
+        // own authorization.
         app.MapHub<TrackingHub>("/hubs/tracking").RequireAuthorization();
         app.MapHub<AIDispatchHub>("/hubs/ai-dispatch").RequireAuthorization();
         app.MapHub<NotificationHub>("/hubs/notification").RequireAuthorization();

@@ -53,11 +53,9 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
 
             if (req.Status.HasValue)
             {
-                // Do NOT force (finding #24): forcing let the general edit endpoint jump a load to
-                // any status, bypassing the state machine. force:false validates the transition (a
-                // no-op when the status is unchanged). Side-effect-bearing transitions (dispatch,
-                // pickup/delivery) should still go through the dedicated DispatchLoad/ConfirmLoadStatus
-                // commands, which run the invoicing/notification side effects this path does not.
+                // Unforced, so the state machine still validates the transition. Transitions with
+                // side effects belong to DispatchLoad and ConfirmLoadStatus, which run the
+                // invoicing and notification work this path does not.
                 load.UpdateStatus(req.Status.Value, force: false);
             }
 

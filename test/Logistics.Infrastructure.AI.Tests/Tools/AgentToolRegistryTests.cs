@@ -241,9 +241,9 @@ public class AgentToolRegistryTests
 
     /// <summary>
     /// An MCP call runs unattended from an API key, with nobody to attribute it to and no approval
-    /// step - unlike Copilot/Dispatch, which produce a suggestion a human approves in-app. So NO
-    /// write tool may be published on the Mcp surface (audit finding #29); reads are fine. This guards
-    /// against a write tool leaking back onto MCP via a forgotten <c>AgentSurfaces</c> flag.
+    /// step - unlike Copilot and Dispatch, which produce a suggestion a human approves in-app. So no
+    /// write tool may be published on the Mcp surface; reads are fine. Guards against one leaking
+    /// back via a forgotten <c>AgentSurfaces</c> flag.
     /// </summary>
     [Fact]
     public void GetMcpTools_PublishesNoWriteTools()
@@ -298,10 +298,6 @@ public class AgentToolRegistryTests
         Assert.DoesNotContain("get_container_status", names);
         Assert.Contains("get_unassigned_loads", names);
     }
-
-    // (Removed GetMcpTools_WriteToolsCarryTheImmediateExecutionWarning: its subject - a write tool
-    // published on MCP - no longer exists after #29. Its still-meaningful assertion, that a read
-    // tool does NOT carry the immediate-execution warning, moved into GetMcpTools_PublishesNoWriteTools.)
 
     [Fact]
     public void TryGetDefinition_KnownAndUnknownNames()

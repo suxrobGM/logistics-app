@@ -18,17 +18,12 @@ public interface ICurrentUserService
     string GetUserName();
 
     /// <summary>
-    /// Gets the tenant the current user belongs to, from their token. This is the caller's own
-    /// tenant, which is not necessarily the tenant the request resolved to - a multi-tenant user
-    /// may target another via the <c>X-Tenant</c> header.
+    /// The caller's own tenant from their token, which is not necessarily the tenant the request
+    /// resolved to - a multi-tenant user may target another via the <c>X-Tenant</c> header.
     /// </summary>
-    /// <returns>The tenant's GUID if the token carries the claim, null otherwise.</returns>
     Guid? GetTenantId();
 
-    /// <summary>
-    /// Whether the current user holds any of the given roles.
-    /// </summary>
-    /// <returns>False when there is no HTTP context (background jobs, the DbMigrator).</returns>
+    /// <summary>Whether the caller holds any of these roles. False when there is no HTTP context.</summary>
     bool IsInRole(params string[] roles);
 
     /// <summary>

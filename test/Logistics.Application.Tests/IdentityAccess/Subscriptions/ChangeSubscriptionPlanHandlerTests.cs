@@ -15,9 +15,7 @@ using Xunit;
 namespace Logistics.Application.Tests.IdentityAccess.Subscriptions;
 
 /// <summary>
-/// Covers the tenant-ownership check added to close finding #6 - ChangeSubscriptionPlan
-/// previously had no authorization at all, so any tenant's user could force a plan change on
-/// any other tenant's subscription.
+/// A plan may only be changed by a platform admin or by the subscription's own tenant.
 /// </summary>
 public class ChangeSubscriptionPlanHandlerTests
 {

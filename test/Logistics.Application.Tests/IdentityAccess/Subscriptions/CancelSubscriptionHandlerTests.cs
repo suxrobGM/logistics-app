@@ -15,9 +15,7 @@ using Xunit;
 namespace Logistics.Application.Tests.IdentityAccess.Subscriptions;
 
 /// <summary>
-/// Covers the tenant-ownership check added to close finding #6 (subscription/billing
-/// manipulation) - CancelSubscription previously had no authorization at all beyond "is logged
-/// in", so any tenant's user could cancel any other tenant's paid subscription.
+/// A subscription may only be cancelled by a platform admin or by its own tenant.
 /// </summary>
 public class CancelSubscriptionHandlerTests
 {

@@ -123,9 +123,8 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         var containerPath = Path.GetFullPath(GetContainerPath(containerName));
         var resolved = Path.GetFullPath(Path.Combine(containerPath, blobName));
 
-        // Defense-in-depth (finding #14): the storage boundary must not rely on every caller
-        // sanitizing blobName. Reject any path that escapes the tenant/container root
-        // (e.g. blobName = "../../../etc/passwd") instead of reading/writing arbitrary files.
+        // The storage boundary cannot rely on every caller sanitizing blobName, so a path that
+        // escapes the container root ("../../../etc/passwd") is rejected here.
         var root = containerPath.EndsWith(Path.DirectorySeparatorChar)
             ? containerPath
             : containerPath + Path.DirectorySeparatorChar;
