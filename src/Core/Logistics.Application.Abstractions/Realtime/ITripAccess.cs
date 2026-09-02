@@ -10,8 +10,10 @@ namespace Logistics.Application.Abstractions.Realtime;
 public interface ITripAccess : IApplicationService
 {
     /// <summary>
-    /// True when the trip exists in the caller's own tenant. Every trip subscription must go
-    /// through this, so the rule lives in one place rather than per adapter.
+    /// True when the trip exists in the caller's own tenant AND the caller is either dispatch or a
+    /// driver of the trip's assigned truck. Every trip subscription must go through this, so the
+    /// rule lives in one place rather than per adapter.
     /// </summary>
-    Task<bool> CanUserViewTripAsync(Guid tenantId, Guid tripId, CancellationToken ct = default);
+    Task<bool> CanUserViewTripAsync(
+        Guid tenantId, Guid tripId, Guid userId, CancellationToken ct = default);
 }

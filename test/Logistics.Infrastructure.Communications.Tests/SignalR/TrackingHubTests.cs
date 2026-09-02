@@ -41,7 +41,7 @@ public class TrackingHubTests
     }
 
     private void AllowTripAccess(bool allowed) =>
-        tripAccess.CanUserViewTripAsync(callerTenantId, tripId, Arg.Any<CancellationToken>())
+        tripAccess.CanUserViewTripAsync(callerTenantId, tripId, driverId, Arg.Any<CancellationToken>())
             .Returns(allowed);
 
     private void AllowReporting(bool allowed) =>
@@ -104,10 +104,11 @@ public class TrackingHubTests
 
     /// <summary>
     /// The bypass this guards: any authenticated user could previously subscribe to any trip group
-    /// by id, including another tenant's, and receive its status and geolocation updates.
+    /// by id, including another tenant's, and receive its status and geolocation updates. The check
+    /// now also refuses a caller inside the tenant who neither dispatches nor drives the trip.
     /// </summary>
     [Fact]
-    public async Task SubscribeToTrip_TripOutsideTheCallersTenant_DoesNotJoinTheGroup()
+    public async Task SubscribeToTrip_CallerNotAuthorizedForTheTrip_DoesNotJoinTheGroup()
     {
         AllowTripAccess(false);
 
@@ -118,7 +119,7 @@ public class TrackingHubTests
     }
 
     [Fact]
-    public async Task SubscribeToTrip_TripInTheCallersTenant_JoinsTheGroup()
+    public async Task SubscribeToTrip_AuthorizedCaller_JoinsTheGroup()
     {
         AllowTripAccess(true);
 
@@ -129,14 +130,32 @@ public class TrackingHubTests
     }
 
     [Fact]
-    public async Task SubscribeToTrip_ChecksAccessForTheCallersOwnTenant()
+    public async Task SubscribeToTrip_ChecksAccessForTheCallersOwnTenantAndIdentity()
     {
         AllowTripAccess(true);
 
         await sut.SubscribeToTrip(tripId.ToString());
 
+        // Both come from the caller's own claims - neither the tenant nor the identity is
+        // client-supplied.
         await tripAccess.Received(1).CanUserViewTripAsync(
-            callerTenantId, tripId, Arg.Any<CancellationToken>());
+            callerTenantId, tripId, driverId, Arg.Any<CancellationToken>());
+    }
+
+    /// <summary>
+    /// The broadcast side formats the group name from a Guid, so joining under the caller's raw
+    /// string put a braced or upper-case subscriber in a group nothing ever targets - connected
+    /// successfully, silently receiving nothing. Same shape as the ChatHub fix on this branch.
+    /// </summary>
+    [Fact]
+    public async Task SubscribeToTrip_NonCanonicalTripId_JoinsTheGroupBroadcastsActuallyTarget()
+    {
+        AllowTripAccess(true);
+
+        await sut.SubscribeToTrip(tripId.ToString("B").ToUpperInvariant());
+
+        await groups.Received(1).AddToGroupAsync(
+            ConnectionId, $"trip:{tripId}", Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -145,6 +164,24 @@ public class TrackingHubTests
         await sut.SubscribeToTrip("not-a-guid");
 
         await groups.DidNotReceive().AddToGroupAsync(
+            Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task UnsubscribeFromTrip_NonCanonicalTripId_LeavesTheGroupItActuallyJoined()
+    {
+        await sut.UnsubscribeFromTrip(tripId.ToString("B").ToUpperInvariant());
+
+        await groups.Received(1).RemoveFromGroupAsync(
+            ConnectionId, $"trip:{tripId}", Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task UnsubscribeFromTrip_MalformedTripId_DoesNothing()
+    {
+        await sut.UnsubscribeFromTrip("not-a-guid");
+
+        await groups.DidNotReceive().RemoveFromGroupAsync(
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 

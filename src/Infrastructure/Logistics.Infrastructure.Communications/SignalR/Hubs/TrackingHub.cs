@@ -56,26 +56,33 @@ public class TrackingHub(
         hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }
 
-    /// <summary>Subscribe to updates for a trip in the caller's own tenant.</summary>
+    /// <summary>Subscribe to a trip the caller dispatches or drives.</summary>
     public async Task SubscribeToTrip(string tripId)
     {
         if (Context.TenantIdFromClaim() is not { } tenantId ||
+            Context.UserIdFromClaim() is not { } userId ||
             !Guid.TryParse(tripId, out var tripGuid))
         {
             return;
         }
 
-        if (!await tripAccess.CanUserViewTripAsync(tenantId, tripGuid))
+        if (!await tripAccess.CanUserViewTripAsync(tenantId, tripGuid, userId))
         {
             return;
         }
 
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
+        await Groups.AddToGroupAsync(Context.ConnectionId, TripGroup(tripGuid));
     }
 
     /// <summary>Unsubscribe from updates for a specific trip.</summary>
     public Task UnsubscribeFromTrip(string tripId)
     {
-        return Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
+        return Guid.TryParse(tripId, out var tripGuid)
+            ? Groups.RemoveFromGroupAsync(Context.ConnectionId, TripGroup(tripGuid))
+            : Task.CompletedTask;
     }
+
+    // Built from the Guid, not the caller's raw string: the broadcast side formats the group the
+    // same way, so a braced or upper-case id would join a group nothing ever targets.
+    private static string TripGroup(Guid tripId) => $"{TripGroupPrefix}{tripId}";
 }
