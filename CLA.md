@@ -2,7 +2,7 @@
 
 Thank you for contributing to LogisticsX ("the Project"). This agreement clarifies the rights you grant to Sukhrob Ilyosbekov ("the Author") for your contributions. It protects you, the Author, and users of the Project, and it lets the Author offer the Project under both the PolyForm Noncommercial license and commercial licenses.
 
-By signing this agreement (by commenting on your pull request as the CLA bot instructs, or by email to suxrobgm@gmail.com), you accept the terms below for every contribution you submit, past and future.
+By signing this agreement (by commenting on your pull request as the CLA bot instructs, or by email to <suxrobgm@gmail.com>), you accept the terms below for every contribution you submit, past and future.
 
 ## 1. Definitions
 
@@ -34,4 +34,4 @@ The Author may release the Project, including your contribution, under different
 
 ## 7. Signing
 
-Sign by posting the sentence the CLA bot requests on your pull request, or by sending "I have read the CLA at CLA.md and I hereby sign it" from your own email address to suxrobgm@gmail.com. One signature covers all of your contributions.
+Sign by posting the sentence the CLA bot requests on your pull request, or by sending "I have read the CLA at CLA.md and I hereby sign it" from your own email address to <suxrobgm@gmail.com>. One signature covers all of your contributions.

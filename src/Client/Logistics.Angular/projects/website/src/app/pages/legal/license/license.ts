@@ -66,7 +66,7 @@ export class License {
   protected readonly addOns = [
     {
       name: "Support add-on",
-      model: "Yearly, email, 2 business day response",
+      model: "Yearly, email, 3 business day response",
       startsAt: "$2,500 per year",
     },
     {
