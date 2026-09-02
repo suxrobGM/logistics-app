@@ -42,7 +42,7 @@ export class HowItWorks {
       number: 4,
       title: "Let the agent dispatch",
       description:
-        "It weighs HOS, deadhead miles, and rate per mile, then proposes the assignment. Approve it, or hand the agent the keys.",
+        "It weighs HOS, deadhead miles, and rate per mile, then proposes the assignment. Approve it, or send it back with a note and it plans again.",
       icon: "sparkles",
     },
   ];

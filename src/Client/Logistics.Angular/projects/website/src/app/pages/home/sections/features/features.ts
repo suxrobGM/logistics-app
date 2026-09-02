@@ -26,7 +26,7 @@ export class Features {
       icon: "map-pin",
       title: "Live GPS Tracking",
       description:
-        "See the whole fleet on a live map: driver locations, route lines, geofencing alerts. Updates over SignalR.",
+        "See the whole fleet on a live map with driver locations and route lines. A load updates itself when the truck reaches the pickup or the delivery.",
     },
     {
       icon: "credit-card",
@@ -83,7 +83,7 @@ export class Features {
       icon: "wallet",
       title: "Payroll & Timesheets",
       description:
-        "Pay drivers by miles, percentage, or flat rate. Track timesheets. Generate payroll reports.",
+        "Pay drivers per mile, by share of gross, hourly, or a fixed salary. Track timesheets and run payroll reports.",
     },
     {
       icon: "receipt",
@@ -113,13 +113,13 @@ export class Features {
       icon: "clock",
       title: "ELD / HOS",
       description:
-        "Hooks into Samsara and Motive for hours-of-service tracking and FMCSA compliance.",
+        "Connects to Samsara, Motive, Geotab, and TT ELD for hours of service and FMCSA compliance.",
     },
     {
       icon: "shield",
       title: "Safety & Compliance",
       description:
-        "Digital DVIR inspections with photo documentation, incident reporting, and safety records you can pull for an audit.",
+        "DVIR inspections with photos, accident reports, driver behaviour events, license expiry reminders, and a hazmat check before a load is dispatched.",
     },
     {
       icon: "chart-column",
@@ -141,15 +141,15 @@ export class Features {
     },
     {
       icon: "inbox",
-      title: "Intermodal Containers",
+      title: "Intermodal Containers & Terminals",
       description:
-        "ISO 6346 tracking across multiple loads. State machine handles the lifecycle: Empty → Loaded → At Port → In Transit → Delivered → Returned.",
+        "Track a container across several loads by its ISO 6346 number, from empty to returned. Pick stops from a UN/LOCODE directory of ports, rail terminals, and depots.",
     },
     {
-      icon: "building-2",
-      title: "Terminals & Depots",
+      icon: "file-text",
+      title: "Import Loads from PDF",
       description:
-        "UN/LOCODE directory of sea ports, rail terminals, inland depots, air cargo facilities, and border crossings - usable as pickup or drop-off points.",
+        "Upload a rate confirmation and the load fills itself in. Scanned pages go through an AI vision model.",
     },
     {
       icon: "car",

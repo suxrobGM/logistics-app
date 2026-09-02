@@ -1,4 +1,4 @@
-﻿# LogisticsX
+# LogisticsX
 
 [![Build Status](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml)
 [![Deploy](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml)
@@ -7,11 +7,11 @@
 [license]: https://polyformproject.org/licenses/noncommercial/1.0.0/
 [license-shield]: https://img.shields.io/badge/License-PolyForm--Noncommercial--1.0.0-blue.svg
 
-> Fleet management platform for trucking companies. AI runs through it: a dispatch agent matches loads to trucks, checks HOS compliance, plans routes, and pulls leads from load boards, while a TMS-wide copilot answers questions and handles invoicing, expenses, and maintenance from a chat drawer - every decision logged so a human can review or override it.
+LogisticsX is a fleet management system for trucking companies. It handles dispatch, driver trips, customer tracking, invoicing, and payroll in one place. An AI dispatcher can plan the day for you, and you approve or change what it suggests.
 
 ![The dispatch agent plans assignments and waits for approval](docs/images/teaser.gif)
 
-_The AI dispatch agent planning a day's assignments. [Watch the full 60s tour](https://logisticsx.app)._
+_The AI dispatcher planning a day of assignments. [Watch the 60 second tour](https://logisticsx.app)._
 
 <!-- markdownlint-disable MD033 -->
 <p align="center">
@@ -19,138 +19,191 @@ _The AI dispatch agent planning a day's assignments. [Watch the full 60s tour](h
   <a href="https://tms.logisticsx.app"><img src="https://img.shields.io/badge/Live_Demo-Try_It_Now-10b981?style=for-the-badge&logo=rocket&logoColor=white" alt="Live Demo"></a>
 </p>
 
-## Try it
+## Try the demo
 
-| Portal          | URL                                                        |
-| --------------- | ---------------------------------------------------------- |
-| TMS Portal      | [tms.logisticsx.app](https://tms.logisticsx.app)           |
-| Customer Portal | [customer.logisticsx.app](https://customer.logisticsx.app) |
+No signup needed. Open a portal and log in with one of the demo accounts below. The password for every account is `Test12345#`.
 
-**US tenant** (Heartland Logistics LLC):
+| Portal                                                     | Who uses it                   |
+| ---------------------------------------------------------- | ----------------------------- |
+| [tms.logisticsx.app](https://tms.logisticsx.app)           | Owners, managers, dispatchers |
+| [customer.logisticsx.app](https://customer.logisticsx.app) | Customers                     |
 
-| Role       | Email                  | Password   |
-| ---------- | ---------------------- | ---------- |
-| Owner      | `owner@test.com`       | Test12345# |
-| Manager    | `manager1@test.com`    | Test12345# |
-| Dispatcher | `dispatcher1@test.com` | Test12345# |
-| Driver     | `driver1@test.com`     | Test12345# |
-| Customer   | `customer1@test.com`   | Test12345# |
+The demo company is Heartland Logistics LLC, a US carrier with 10 employees:
 
-**EU tenant** (EuroFreight GmbH - EUR billing, metric units, Europe/Berlin):
+| Role       | Email                  |
+| ---------- | ---------------------- |
+| Owner      | `owner@test.com`       |
+| Manager    | `manager1@test.com`    |
+| Dispatcher | `dispatcher1@test.com` |
+| Driver     | `driver1@test.com`     |
+| Customer   | `customer1@test.com`   |
 
-| Role       | Email                     | Password   |
-| ---------- | ------------------------- | ---------- |
-| Owner      | `eu_owner@test.com`       | Test12345# |
-| Manager    | `eu_manager@test.com`     | Test12345# |
-| Dispatcher | `eu_dispatcher1@test.com` | Test12345# |
-| Driver     | `eu_driver1@test.com`     | Test12345# |
-| Customer   | `eu_customer1@test.com`   | Test12345# |
+<details>
+<summary>Two more demo companies</summary>
 
-**Solo tenant** (Rodriguez Trucking LLC - owner-operator mode, one person and one truck):
+**EuroFreight GmbH** is a European carrier. It bills in euros, uses metric units, and runs on Berlin time.
 
-| Role     | Email                     | Password   |
-| -------- | ------------------------- | ---------- |
-| Owner    | `solo@test.com`           | Test12345# |
-| Customer | `solo_customer1@test.com` | Test12345# |
+| Role       | Email                     |
+| ---------- | ------------------------- |
+| Owner      | `eu_owner@test.com`       |
+| Manager    | `eu_manager@test.com`     |
+| Dispatcher | `eu_dispatcher1@test.com` |
+| Driver     | `eu_driver1@test.com`     |
+| Customer   | `eu_customer1@test.com`   |
 
-`solo@test.com` is the only employee - they own the company and drive the truck, so the same login works in the TMS portal and the driver app.
+**Rodriguez Trucking LLC** is a one-person company in solo mode. The owner also drives the truck, so the same login works in the TMS portal and the driver app.
 
-[All test credentials](docs/getting-started/test-credentials.md)
+| Role     | Email                     |
+| -------- | ------------------------- |
+| Owner    | `solo@test.com`           |
+| Customer | `solo_customer1@test.com` |
 
-## Who it's for
+</details>
 
-LogisticsX is built first-class for **freight, vehicle transport, and intermodal drayage** operations. Other fleet types (refrigerated, flatbed, tanker, etc.) are supported experimentally and may need workflow tweaks. The platform replaces the patchwork of spreadsheets, group chats, and standalone TMS/accounting tools - dispatch, driver mobile app, customer tracking, invoicing, and payroll all run from the same system, in real time. Works across both **US and EU** operations, with multi-tenant isolation so each company gets its own database.
+The full list of demo accounts is in [test-credentials.md](docs/getting-started/test-credentials.md).
 
-Roles:
+## What it does
 
-- **Dispatchers** create loads, assign drivers, search load boards, and watch deliveries - or hand it off to the agent.
-- **Drivers** get assignments, navigate routes, capture proof of delivery, and message dispatch from the mobile app.
-- **Customers** track shipments, download documents, and pay invoices through the customer portal.
-- **Owners** see financials, driver metrics, payroll, and operational reports.
+Most small carriers run on spreadsheets, group chats, and a few separate tools for accounting and tracking. LogisticsX puts all of that in one system. When a dispatcher assigns a load, the driver sees it on their phone, the customer can track it, and the invoice is ready when the load is delivered.
 
-One person can be several of these. An owner-operator switches the company to **solo mode**, which hides the team screens (employees, payroll, messaging), trims the setup checklist, and points the AI agent at a one-truck operation. The same Owner login runs the TMS portal and the driver app.
+It is built for freight, vehicle transport, and container drayage. Other fleet types such as reefer, flatbed, and tanker work too, but you may need to adjust some workflows. Companies in the US and in Europe are both supported, with the right currency, units, and address formats for each.
 
-## AI agents
+Each role gets its own view:
 
-**Dispatch agent** - looks at fleet state, picks a truck for a load, checks HOS compliance, plans a trip, and watches load boards for revenue. Two modes:
+- Dispatchers create loads, assign drivers, search load boards, and follow deliveries. They can also hand the work to the AI dispatcher.
+- Drivers get their assignments, follow the route, take proof of delivery photos, and message dispatch from the mobile app.
+- Customers track shipments, download documents, and pay invoices in the customer portal.
+- Owners see the money, driver performance, payroll, and reports.
 
-- **Human-in-the-loop** - the agent suggests assignments; a dispatcher approves them.
-- **Autonomous** - the agent acts on its own.
+If you are an owner-operator, turn on solo mode. It hides the team screens (employees, payroll, messaging), shortens the setup checklist, and tells the AI dispatcher it is working with one truck.
 
-**TMS-wide copilot** - a chat drawer across the whole portal. Ask it about loads, spend, or which trucks are due for service, or have it invoice delivered loads and send payment links. It only sees the tools your role permits, and every write action waits for your approval.
+## How the AI helps
 
-Every decision either agent makes is logged with the reasoning that produced it, so you approve, reject, or re-plan instead of staring at a black box. See [AI Dispatch](docs/ai-dispatch.md), [AI Copilot](docs/ai-copilot.md), and [MCP Server](docs/mcp-server.md) for connecting Claude Desktop, Cursor, and other AI tools to your fleet.
+There are two assistants, and both show their reasoning for every action so you can check the work.
+
+The **dispatch agent** looks at your trucks and loads, picks a truck for each load, checks that the driver has enough hours left, plans the trip, and watches load boards for new work. It suggests, and a dispatcher approves or rejects each assignment with a reason.
+
+The **copilot** is a chat panel available on every page of the portal. Ask it which trucks are due for service, how much you spent on fuel last month, or tell it to invoice the loads delivered today. It only sees the parts of the system your role can access, and it asks before it changes anything.
+
+You can also connect Claude Desktop, Cursor, or other AI tools to your fleet through the built-in MCP server.
+
+Read more in [AI Dispatch](docs/ai-dispatch.md), [AI Copilot](docs/ai-copilot.md), and [MCP Server](docs/mcp-server.md).
 
 ## Features
 
-| Operations                               | Financial                          | Compliance                      | Communication                |
-| :--------------------------------------- | :--------------------------------- | :------------------------------ | :--------------------------- |
-| AI-powered dispatching                   | Invoicing & Stripe payments        | ELD / HOS (Samsara, Motive)     | Real-time messaging          |
-| TMS-wide AI copilot                      | Stripe Connect direct payouts      | Safety & DVIR inspections       | Push notifications           |
-| MCP server for AI tools                  | Multi-currency billing (USD / EUR) | Document management (POD, BOL)  | Customer self-service portal |
-| Trip planning & route optimization       | Payroll & timesheets               | Region-aware address validation | Driver mobile app            |
-| Intermodal container tracking (ISO 6346) | Expense tracking                   | Role-based access control       |                              |
-| Terminals & depots (UN/LOCODE)           | Reports & analytics                |                                 |                              |
-| Fleet & maintenance tracking             |                                    |                                 |                              |
-| Load board integration (DAT, Truckstop)  |                                    |                                 |                              |
+### Dispatch and operations
 
-[Complete feature list](docs/features.md)
+- Loads, multi-stop trips, and route planning on Mapbox.
+- A live map of your drivers, and tracking links you can share with anyone.
+- Search DAT, Truckstop, and 123Loadboard from one screen. Book a load or post an open truck.
+- A broker credit check on every listing. Bookings below your minimum score are blocked unless a dispatcher overrides.
+- Import a load from a rate confirmation PDF.
+- Container tracking (ISO 6346) and a terminal directory keyed by UN/LOCODE.
+- Trucks, trailers, maintenance schedules, and VIN lookup.
 
-## Quick start
+### AI
+
+- A dispatch agent that assigns loads, checks hours of service, and plans trips. It suggests, you approve.
+- A copilot chat on every page for questions, invoicing, expenses, and maintenance.
+- Counter-offer emails to brokers when a load pays below your lane floor. You approve each one before it sends.
+- The agent learns your dispatch preferences from the decisions you approve and reject.
+- An MCP server so Claude Desktop, Cursor, and other AI tools can work with your fleet.
+
+### Money
+
+- Invoices per load, with tax from Stripe Tax or your own rates (US sales tax, EU VAT).
+- Card and bank payments through Stripe, with payment links and partial payments.
+- Direct payouts to your bank account through Stripe Connect.
+- Payroll by mile, share of gross, hourly, or a fixed salary, with timesheets and pay stubs.
+- Expense tracking. WEX and EFS fuel card transactions import every night.
+- QuickBooks Online sync for customers, invoices, payments, and expenses.
+- Billing in USD or EUR.
+
+### Compliance and safety
+
+- Hours of service from Samsara, Motive, Geotab, and TT ELD.
+- Quarterly IFTA fuel tax reports with PDF and CSV export.
+- Driver inspections (DVIR), accident reports, and driver behavior events.
+- Driver license tracking with expiry reminders.
+- Hazmat loads only go to trucks with the right ADR equipment.
+- Documents such as proof of delivery and bills of lading.
+- GDPR tools: data export, deletion requests, and retention rules.
+
+### Reports
+
+- Revenue, financials, loads, drivers, team, payroll, maintenance, safety, and IFTA.
+
+### Communication
+
+- Chat between dispatch and drivers with read receipts.
+- Push, email, and in-app notifications.
+- A customer portal for tracking, documents, and paying invoices.
+- A driver app for Android and iOS.
+
+### Teams and access
+
+- Seven roles, from super admin to customer, each with its own permissions.
+- Email invitations for new team members.
+- Solo mode for owner-operators.
+
+The full list is in [features.md](docs/features.md).
+
+## Run it on your machine
+
+You need the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), [Bun](https://bun.sh), and Docker Desktop.
 
 ```bash
-# Start local infrastructure (Postgres, runs the DB migrator once)
+git clone https://github.com/suxrobGM/logistics-app.git
+cd logistics-app
+
+# Start Postgres and seed the demo companies
 docker compose -f deploy/docker-compose.dev.yml up -d
 
-# Then run the backend + a frontend
+# Start the backend (two terminals)
 dotnet run --project src/Presentation/Logistics.IdentityServer
 dotnet run --project src/Presentation/Logistics.API
+
+# Start the TMS portal
+bun install
 bun start:tms
 ```
 
-For full setup details, see the [Local Development Guide](docs/getting-started/local-development.md).
+Open <http://localhost:7003> and log in as `owner@test.com` with password `Test12345#`.
 
-## Tech stack
+The [Docker guide](docs/getting-started/docker-development.md) lists every service and port. If you would rather run Postgres yourself, follow the [local setup guide](docs/getting-started/local-development.md).
 
-| Layer              | Technologies                                                                |
-| ------------------ | --------------------------------------------------------------------------- |
-| **Backend**        | .NET 10, ASP.NET Core, EF Core, MediatR, SignalR, Duende IdentityServer     |
-| **Frontend**       | Angular 22, spartan/ui, Tailwind CSS                                        |
-| **Mobile**         | Kotlin Multiplatform, Compose Multiplatform                                 |
-| **Database**       | PostgreSQL 18                                                               |
-| **Payments**       | Stripe, Stripe Connect                                                      |
-| **Infrastructure** | Docker, Docker Compose, Nginx, GitHub Actions                               |
-| **Integrations**   | Mapbox, Firebase, Samsara, Motive, DAT, Truckstop, 123Loadboard, Claude API |
+## Built with
 
-Architecture: DDD + CQRS with MediatR, multi-tenant with one database per company. See [architecture overview](docs/architecture/overview.md).
+| Part         | Stack                                                                       |
+| ------------ | --------------------------------------------------------------------------- |
+| Backend      | .NET 10, ASP.NET Core, EF Core, SignalR, Duende IdentityServer              |
+| Web portals  | Angular 22, spartan/ui, Tailwind CSS                                        |
+| Driver app   | Kotlin Multiplatform, Compose Multiplatform                                 |
+| Database     | PostgreSQL 18, one database per company                                     |
+| Payments     | Stripe, Stripe Connect                                                      |
+| Hosting      | Docker Compose, Nginx, GitHub Actions                                       |
+| Integrations | Mapbox, Firebase, Samsara, Motive, DAT, Truckstop, 123Loadboard, Claude API |
 
-| App             | Port |
-| --------------- | ---- |
-| API             | 7000 |
-| Identity Server | 7001 |
-| Admin Portal    | 7002 |
-| TMS Portal      | 7003 |
-| Customer Portal | 7004 |
-| Website         | 7005 |
+The [architecture overview](docs/architecture/overview.md) explains how the pieces fit together.
 
 ## Screenshots
 
-|                        Agent Timeline                        |                    Dispatch Plan                     |
+|                        Agent timeline                        |                    Dispatch plan                     |
 | :----------------------------------------------------------: | :--------------------------------------------------: |
 | ![Timeline](docs/images/tms-portal/ai-dispatch-timeline.png) | ![Plan](docs/images/tms-portal/ai-dispatch-chat.png) |
 
-|                          Broker Rate Thread                          |                       Pending Decisions                        |
+|                          Broker rate thread                          |                       Pending decisions                        |
 | :------------------------------------------------------------------: | :------------------------------------------------------------: |
 | ![Thread](docs/images/tms-portal/ai-dispatch-negotiation-thread.png) | ![Decisions](docs/images/tms-portal/ai-dispatch-decisions.png) |
 
-### Driver Mobile App
+### Driver app
 
 ![Feature graphic](docs/store-assets/feature-graphic.png)
 
 <details>
 <summary>More screenshots</summary>
 
-### TMS Portal
+### TMS portal
 
 |                     Dashboard                     |                     Loads                      |                     Trips                      |
 | :-----------------------------------------------: | :--------------------------------------------: | :--------------------------------------------: |
@@ -164,51 +217,51 @@ Architecture: DDD + CQRS with MediatR, multi-tenant with one database per compan
 | :-----------------------------------------------------------: | :------------------------------------------------: | :-------------------------------------------------: |
 | ![Invoices](docs/images/tms-portal/tms-invoice-dashboard.png) | ![Payroll](docs/images/tms-portal/tms-payroll.png) | ![IFTA](docs/images/tms-portal/tms-ifta-report.png) |
 
-### Customer Portal
+### Customer portal
 
-|                            Dashboard                             |                        Shipment Details                        |
+|                            Dashboard                             |                        Shipment details                        |
 | :--------------------------------------------------------------: | :------------------------------------------------------------: |
 | ![Dashboard](docs/images/customer-portal/customer-dashboard.png) | ![Shipment](docs/images/customer-portal/customer-shipment.png) |
 
-### Driver Mobile App Screens
+### Driver app screens
 
-|                           Trips                            |                              Trip Detail                               |                              Load Detail                               |
+|                           Trips                            |                              Trip detail                               |                              Load detail                               |
 | :--------------------------------------------------------: | :--------------------------------------------------------------------: | :--------------------------------------------------------------------: |
 | ![Trips](docs/store-assets/screenshots/phone/01-trips.png) | ![Trip Detail](docs/store-assets/screenshots/phone/02-trip-detail.png) | ![Load Detail](docs/store-assets/screenshots/phone/04-load-detail.png) |
 
 </details>
 
-[All screenshots](docs/screenshots.md)
+More in [screenshots.md](docs/screenshots.md).
 
 ## Documentation
 
-| Guide                                                    | Description                                                   |
-| -------------------------------------------------------- | ------------------------------------------------------------- |
-| [Features](docs/features.md)                             | Complete feature list                                         |
-| [Getting Started](docs/getting-started/prerequisites.md) | Prerequisites, local setup, Docker                            |
-| [Architecture](docs/architecture/overview.md)            | System design, patterns, domain model                         |
-| [API Reference](docs/api/overview.md)                    | Authentication, endpoints, webhooks                           |
-| [Deployment](docs/deployment/overview.md)                | VPS setup, Docker Compose, Nginx, SSL                         |
-| [AI Dispatch](docs/ai-dispatch.md)                       | Agentic dispatcher architecture & API                         |
-| [AI Copilot](docs/ai-copilot.md)                         | Conversational TMS agent: transcript, approvals, permissions  |
-| [MCP Server](docs/mcp-server.md)                         | Connect Claude Desktop, Cursor & other AI tools to your fleet |
-| [Development](docs/development/backend-guide.md)         | Backend, Angular, mobile guides                               |
+| Guide                                                    | What is in it                                                |
+| -------------------------------------------------------- | ------------------------------------------------------------ |
+| [Features](docs/features.md)                             | Everything the system can do                                 |
+| [Getting started](docs/getting-started/prerequisites.md) | Tools to install, local setup, Docker                        |
+| [Architecture](docs/architecture/overview.md)            | How the system is put together                               |
+| [API reference](docs/api/overview.md)                    | Login, endpoints, webhooks                                   |
+| [Deployment](docs/deployment/overview.md)                | Running it on your own server with Docker and SSL            |
+| [AI Dispatch](docs/ai-dispatch.md)                       | How the dispatch agent works                                 |
+| [AI Copilot](docs/ai-copilot.md)                         | How the copilot works, approvals, permissions                |
+| [MCP Server](docs/mcp-server.md)                         | Connecting Claude Desktop, Cursor, and other AI tools        |
+| [Development](docs/development/backend-guide.md)         | Guides for the backend, the Angular apps, and the mobile app |
 
 ## Contributing
 
-Pull requests welcome. Fork, branch off `main`, open a PR. See the [development guides](docs/development/backend-guide.md) for coding conventions.
+Pull requests are welcome. Fork the repo, branch off `main`, and open a PR. Coding conventions are in the [development guides](docs/development/backend-guide.md).
 
-Contributions are accepted only under the [Contributor License Agreement](CLA.md). A bot asks you to sign it on your first pull request. It lets the author offer the project under both the noncommercial and the commercial licenses while you keep your copyright.
+You will be asked to sign the [Contributor License Agreement](CLA.md) on your first pull request. You keep your copyright. The agreement lets the project be offered under both the noncommercial and the commercial license.
 
 ## License
 
-[PolyForm Noncommercial License 1.0.0][license]
+LogisticsX is released under the [PolyForm Noncommercial License 1.0.0][license].
 
-Free for noncommercial use: personal projects, research, education, and evaluation. Commercial use, including running it inside a for-profit company or hosting it for others, requires a commercial license. Options, prices, and terms are in [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md), or email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
+It is free for personal projects, research, education, and evaluation. If you want to run it inside a business or host it for others, you need a commercial license. See [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md) for the options and prices, or email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
 
 ## Contact
 
-Created by **Sukhrob Ilyosbekov**
+Built by Sukhrob Ilyosbekov.
 
 - Email: [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com)
 - LinkedIn: [linkedin.com/in/suxrobgm](https://www.linkedin.com/in/suxrobgm)

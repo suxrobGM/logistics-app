@@ -80,7 +80,7 @@ export class Compare {
       category: "ELD / HOS",
       rows: [
         {
-          name: "ELD/HOS (Samsara, Motive+)",
+          name: "ELD/HOS (Samsara, Motive, Geotab, TT ELD)",
           us: "✓",
           dataTruck: "✓",
           alvys: "✓",
