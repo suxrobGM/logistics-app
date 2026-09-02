@@ -26,6 +26,7 @@ internal static class AssemblyAnchors
     public static readonly Assembly InfrastructureDocuments = typeof(Logistics.Infrastructure.Documents.Registrar).Assembly;
     public static readonly Assembly InfrastructureEld = typeof(Logistics.Infrastructure.Integrations.Eld.Registrar).Assembly;
     public static readonly Assembly InfrastructureFuelCards = typeof(Logistics.Infrastructure.Integrations.FuelCards.Registrar).Assembly;
+    public static readonly Assembly InfrastructureLicensing = typeof(Logistics.Infrastructure.Licensing.Registrar).Assembly;
     public static readonly Assembly InfrastructureLoadBoard = typeof(Logistics.Infrastructure.Integrations.LoadBoard.Registrar).Assembly;
     public static readonly Assembly InfrastructurePayments = typeof(Logistics.Infrastructure.Payments.Registrar).Assembly;
     public static readonly Assembly InfrastructurePersistence = typeof(Logistics.Infrastructure.Persistence.Registrar).Assembly;
@@ -43,6 +44,7 @@ internal static class AssemblyAnchors
         InfrastructureDocuments,
         InfrastructureEld,
         InfrastructureFuelCards,
+        InfrastructureLicensing,
         InfrastructureLoadBoard,
         InfrastructurePayments,
         InfrastructurePersistence,

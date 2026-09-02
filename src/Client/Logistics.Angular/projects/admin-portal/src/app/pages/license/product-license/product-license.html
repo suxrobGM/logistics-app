@@ -1,0 +1,89 @@
+<ui-page-header title="License" />
+
+@if (isLoading()) {
+  <div class="flex justify-center p-8">
+    <ui-spinner />
+  </div>
+} @else if (status(); as s) {
+  <ui-grid container spacing="6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <ui-card header="Status">
+        <ui-stack gap="4">
+          <ui-stack direction="row" align="center" gap="3">
+            @if (s.isLicensed) {
+              <ui-badge severity="success" value="Licensed" icon="circle-check" />
+            } @else {
+              <ui-badge severity="warn" value="Unlicensed" icon="triangle-alert" />
+            }
+            @if (!s.isLicensed && s.error) {
+              <ui-typography variant="body-sm" color="muted">{{ s.error }}</ui-typography>
+            }
+          </ui-stack>
+
+          @if (!s.isLicensed) {
+            <ui-alert intent="warning">
+              This deployment runs under the PolyForm Noncommercial license. Commercial use needs a
+              key. Every portal shows a notice until one is installed.
+            </ui-alert>
+          }
+
+          <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-sm">
+            <dt class="text-muted-foreground">Licensee</dt>
+            <dd>{{ s.licensee ?? "-" }}</dd>
+            <dt class="text-muted-foreground">Type</dt>
+            <dd>{{ tierLabel() ?? "-" }}</dd>
+            <dt class="text-muted-foreground">Expires</dt>
+            <dd>{{ s.expiresAt ? (s.expiresAt | date: "mediumDate") : "-" }}</dd>
+            <dt class="text-muted-foreground">Tenant cap</dt>
+            <dd>{{ s.maxTenants ?? "Unlimited" }}</dd>
+            <dt class="text-muted-foreground">Key id</dt>
+            <dd>{{ s.keyId ?? "-" }}</dd>
+            <dt class="text-muted-foreground">Key source</dt>
+            <dd>{{ sourceLabel() }}</dd>
+            <dt class="text-muted-foreground">Version</dt>
+            <dd>{{ s.version }}</dd>
+            <dt class="text-muted-foreground">Instance id</dt>
+            <dd class="font-mono text-xs">{{ s.instanceId ?? "Assigned on first heartbeat" }}</dd>
+            <dt class="text-muted-foreground">Last heartbeat</dt>
+            <dd>{{ s.lastHeartbeatAt ? (s.lastHeartbeatAt | date: "medium") : "Never" }}</dd>
+          </dl>
+        </ui-stack>
+      </ui-card>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <ui-card header="Install a key">
+        @if (keyManagedByConfig()) {
+          <ui-alert intent="info">
+            The key comes from the License__Key setting. Change it there and restart the API.
+          </ui-alert>
+        } @else {
+          <form [formRoot]="form">
+            <ui-stack gap="4">
+              <ui-typography variant="body-sm" color="muted">
+                Paste the key from your commercial license email. It is checked against the author's
+                signing key before it is stored.
+              </ui-typography>
+              <ui-form-field label="License key" [required]="true">
+                <ui-textarea-field
+                  [formField]="form.key"
+                  [rows]="6"
+                  placeholder="eyJhbGciOiJFUzI1NiIs..."
+                />
+              </ui-form-field>
+              <div>
+                <ui-button
+                  label="Install key"
+                  icon="key"
+                  type="submit"
+                  [loading]="form().submitting()"
+                  [disabled]="form().submitting()"
+                />
+              </div>
+            </ui-stack>
+          </form>
+        }
+      </ui-card>
+    </ui-grid>
+  </ui-grid>
+}

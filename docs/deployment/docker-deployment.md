@@ -1,6 +1,6 @@
 # Docker Compose Deployment
 
-LogisticsX deploys as a set of containers defined by a hand-maintained Docker Compose file under [`deploy/`](https://github.com/suxrobgm/logistics-app/tree/main/deploy). The host runs plain `docker compose`; nginx (on the host) terminates TLS and reverse-proxies each subdomain to a loopback-bound container port.
+LogisticsX deploys as a set of containers defined by a hand-maintained Docker Compose file under [`deploy/`](https://github.com/suxrobGM/logistics-app/tree/main/deploy). The host runs plain `docker compose`; nginx (on the host) terminates TLS and reverse-proxies each subdomain to a loopback-bound container port.
 
 ## Layout
 
@@ -18,7 +18,7 @@ The main stack contains `identity-server`, `api`, `admin-portal`, `tms-portal`, 
 
 ## Automated deployment (recommended)
 
-Deployment is handled by the [`deploy.yml`](https://github.com/suxrobgm/logistics-app/blob/main/.github/workflows/deploy.yml) GitHub Actions workflow. Pushing to the `prod` branch (or running it manually) will:
+Deployment is handled by the [`deploy.yml`](https://github.com/suxrobGM/logistics-app/blob/main/.github/workflows/deploy.yml) GitHub Actions workflow. Pushing to the `prod` branch (or running it manually) will:
 
 1. Build and push all six images to GHCR.
 2. Copy `deploy/docker-compose.yml` to `~/deploy/logistics/` on the VPS.

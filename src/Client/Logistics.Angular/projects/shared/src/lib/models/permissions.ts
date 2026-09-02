@@ -147,6 +147,10 @@ export const Permission = {
     View: "Permission.Negotiation.View",
     Manage: "Permission.Negotiation.Manage",
   },
+  ProductLicense: {
+    View: "Permission.ProductLicense.View",
+    Manage: "Permission.ProductLicense.Manage",
+  },
 } as const;
 
 /**

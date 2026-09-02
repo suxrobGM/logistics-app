@@ -1,0 +1,197 @@
+<!-- Hero Section -->
+<web-section-container background="dark">
+  <div class="text-center" webScrollAnimate="fade-up">
+    <h1 class="text-4xl font-bold text-white sm:text-5xl">Source License</h1>
+    <p class="mt-4 text-lg text-purple-200">
+      Free for noncommercial use. Commercial use needs a license.
+    </p>
+    <p class="mt-2 text-sm text-purple-200">Last updated: {{ lastUpdated }}</p>
+  </div>
+</web-section-container>
+
+<!-- Content Section -->
+<web-section-container background="white" maxWidth="3xl">
+  <!-- Table of Contents -->
+  <nav class="mb-12 rounded-lg bg-slate-50 p-6" webScrollAnimate="fade-up">
+    <h2 class="mb-4 text-lg font-semibold text-gray-900">Table of Contents</h2>
+    <ul class="space-y-2">
+      @for (section of sections; track section.id) {
+        <li>
+          <a
+            [href]="'#' + section.id"
+            class="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+          >
+            {{ section.title }}
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <div class="prose prose-lg max-w-none">
+    <!-- Overview -->
+    <section [id]="sections[0].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[0].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        The LogisticsX source code is public on
+        <a
+          [href]="githubUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1 text-blue-600 hover:underline"
+        >
+          <ui-icon name="brand-github" size="inherit" />
+          GitHub
+        </a>
+        under the
+        <a
+          href="https://polyformproject.org/licenses/noncommercial/1.0.0"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-blue-600 hover:underline"
+        >
+          PolyForm Noncommercial License 1.0.0
+        </a>
+        . Personal projects, research, education, and evaluation are free. Any commercial use needs
+        a commercial license from the author.
+      </p>
+      <p class="mt-4 text-gray-600">
+        Commercial use includes running LogisticsX inside a for-profit company, hosting it for
+        others, and selling a product built on it. This page summarizes the options. The signed
+        agreement governs; this page is informational.
+      </p>
+      <p class="mt-4 text-gray-600">
+        The hosted service on this site is a separate product with its own
+        <a routerLink="/" fragment="pricing" class="text-blue-600 hover:underline">plans</a>
+        . You do not need a source license to subscribe to it.
+      </p>
+    </section>
+
+    <!-- License Types -->
+    <section [id]="sections[1].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[1].title }}</h2>
+      <div class="mt-6 grid gap-6">
+        @for (type of types; track type.name) {
+          <div class="rounded-xl border border-gray-200 p-6">
+            <h3 class="text-xl font-semibold text-gray-900">{{ type.name }}</h3>
+            <p class="mt-2 text-gray-600">{{ type.audience }}</p>
+            <dl class="mt-4 grid gap-2 text-sm sm:grid-cols-[max-content_1fr] sm:gap-x-6">
+              <dt class="font-medium text-gray-900">You get</dt>
+              <dd class="text-gray-600">{{ type.grant }}</dd>
+              <dt class="font-medium text-gray-900">Not included</dt>
+              <dd class="text-gray-600">{{ type.excluded }}</dd>
+            </dl>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section [id]="sections[2].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[2].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        Starting points. Volume, term length, and support needs change the quote.
+      </p>
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="border-b border-gray-200 text-gray-900">
+              <th class="py-3 pr-4 font-semibold">License</th>
+              <th class="py-3 pr-4 font-semibold">Model</th>
+              <th class="py-3 font-semibold">Starts at</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-600">
+            @for (type of types; track type.name) {
+              <tr class="border-b border-gray-100">
+                <td class="py-3 pr-4 font-medium text-gray-900">{{ type.name }}</td>
+                <td class="py-3 pr-4">{{ type.model }}</td>
+                <td class="py-3">{{ type.startsAt }}</td>
+              </tr>
+            }
+            @for (addOn of addOns; track addOn.name) {
+              <tr class="border-b border-gray-100">
+                <td class="py-3 pr-4 font-medium text-gray-900">{{ addOn.name }}</td>
+                <td class="py-3 pr-4">{{ addOn.model }}</td>
+                <td class="py-3">{{ addOn.startsAt }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-gray-600">
+        Hosted / Reseller keys carry the tenant cap. Growing past it means moving to the next band;
+        the difference is charged for the rest of the year and a new key is issued. The daily
+        heartbeat reports the tenant count, so no revenue reporting is needed.
+      </p>
+    </section>
+
+    <!-- Common Terms -->
+    <section [id]="sections[3].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[3].title }}</h2>
+      <ol class="mt-4 list-decimal space-y-2 pl-6 text-gray-600">
+        @for (term of terms; track term) {
+          <li>{{ term }}</li>
+        }
+      </ol>
+    </section>
+
+    <!-- License Key and Heartbeat -->
+    <section [id]="sections[4].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[4].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        A license key is a signed token issued for one legal entity. A SuperAdmin installs it on the
+        admin portal License page, or the operator sets the
+        <code>License__Key</code>
+        environment variable. Until a valid key is installed, every portal shows a one-line
+        noncommercial notice. Nothing else changes: no feature is locked, and an expired key only
+        brings the notice back.
+      </p>
+      <p class="mt-4 text-gray-600">
+        Once a day each deployment posts a small report to the author. It contains exactly these
+        fields:
+      </p>
+      <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+        @for (field of heartbeatFields; track field) {
+          <li>{{ field }}</li>
+        }
+      </ul>
+      <p class="mt-4 text-gray-600">
+        No tenant data, user data, or business data is sent. Noncommercial operators can turn the
+        heartbeat off with
+        <code>License__HeartbeatEnabled=false</code>
+        . Under a commercial license it stays on.
+      </p>
+      <p class="mt-4 text-gray-600">
+        Removing, disabling, or working around the key check, the notice, or the heartbeat grants no
+        commercial rights. Commercial use without a valid key stays unlicensed, and a deliberate
+        bypass is willful infringement.
+      </p>
+    </section>
+
+    <!-- How to Buy -->
+    <section [id]="sections[5].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[5].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        Email
+        <a [href]="contactHref" class="text-blue-600 hover:underline">suxrobgm&#64;gmail.com</a>
+        with your company name, the license type, and your fleet or tenant count. You receive a
+        quote, an agreement to sign, and an invoice. The key is issued when the first payment
+        clears.
+      </p>
+      <p class="mt-4 text-gray-600">
+        Prices on this page are the current ones. The terms and key mechanics also live in the
+        repository as
+        <a
+          [href]="licenseFileUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-blue-600 hover:underline"
+        >
+          COMMERCIAL-LICENSE.md
+        </a>
+        .
+      </p>
+    </section>
+  </div>
+</web-section-container>

@@ -5,6 +5,7 @@ using System.Threading.RateLimiting;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Logistics.API.Authorization;
+using Logistics.API.Controllers;
 using Logistics.API.Converters;
 using Logistics.API.Extensions;
 using Logistics.API.Jobs;
@@ -19,6 +20,7 @@ using Logistics.Infrastructure.Integrations.Accounting;
 using Logistics.Infrastructure.Integrations.Eld;
 using Logistics.Infrastructure.Integrations.FuelCards;
 using Logistics.Infrastructure.Integrations.LoadBoard;
+using Logistics.Infrastructure.Licensing;
 using Logistics.Application.Abstractions.Accounting;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.Negotiation;
@@ -66,6 +68,7 @@ internal static class Setup
         services.AddCommunicationsInfrastructure(configuration);
         services.AddDocumentsInfrastructure();
         services.AddVinInfrastructure();
+        services.AddLicensingInfrastructure();
         services.AddEldIntegrations(configuration);
         services.AddLoadBoardIntegrations(configuration);
         services.AddAccountingIntegrations(configuration);
@@ -109,6 +112,21 @@ internal static class Setup
                 "Impersonation:MasterPassword must be set to a real secret (not the placeholder) outside Development.")
             .ValidateOnStart();
 
+        services.AddOptions<ProductLicenseOptions>()
+            .Bind(configuration.GetSection(ProductLicenseOptions.SectionName))
+            // Local runs are not deployments: keep them out of the heartbeat table unless asked.
+            .PostConfigure(o =>
+            {
+                if (builder.Environment.IsDevelopment() && configuration["License:HeartbeatEnabled"] is null)
+                {
+                    o.HeartbeatEnabled = false;
+                }
+            })
+            .Validate(
+                o => !o.HeartbeatEnabled || Uri.IsWellFormedUriString(o.HeartbeatUrl, UriKind.Absolute),
+                "License:HeartbeatUrl must be an absolute URL while License:HeartbeatEnabled is true.")
+            .ValidateOnStart();
+
         // Rate limiting configuration
         services.AddRateLimiter(options =>
         {
@@ -124,6 +142,9 @@ internal static class Setup
 
             // Strict rate limit for impersonation endpoint
             options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
+
+            // Anonymous heartbeat receiver: one instance reports once a day, so this is generous.
+            options.AddIpFixedWindowPolicy(ProductLicenseController.HeartbeatRateLimitPolicy, 10, TimeSpan.FromMinutes(10));
 
             options.OnRejected = async (context, cancellationToken) =>
             {
@@ -218,6 +239,8 @@ internal static class Setup
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
+        app.UseLogisticsProductVersionHeader();
+
         // Serilog must wrap the exception handler so it logs AFTER error body is captured
         app.UseSerilogRequestLoggingWithErrorDetails();
         app.UseCustomExceptionHandler();
@@ -276,6 +299,7 @@ internal static class Setup
         WebhookEventCleanupJob.ScheduleJobs();
         AIDispatchPolicyLearningJob.ScheduleJobs();
         NegotiationExpirySweepJob.ScheduleJobs();
+        ProductLicenseHeartbeatJob.ScheduleJobs();
 
         // Remove old stale dispatch agent job if it exists
         RecurringJob.RemoveIfExists("ai-dispatch");

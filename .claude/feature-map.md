@@ -200,6 +200,14 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Infrastructure: `SystemSettingsService` (`AI.Model`/`AI.ReasoningEffort` keys)
 - API/UI: `AISettingsController.cs`, `admin-portal/pages/ai-settings/`
 
+### Commercial license
+
+- Domain: `ProductLicenseHeartbeat` (master), `Options/ProductLicenseOptions.cs` (`License__Key`, `License__HeartbeatUrl`, `License__HeartbeatEnabled`)
+- Application: `Modules/Platform/ProductLicense/` - `Services/ProductLicenseKeyValidator` (ES256 JWT against the embedded public key), `ProductLicenseService` (env var wins over `SystemSettings`, 5 min cache), `ProductLicenseHeartbeatService` (builds the report, sends it through `IProductLicenseHeartbeatSender`); commands `SetProductLicenseKey`, `RecordProductLicenseHeartbeat`; queries `GetProductLicenseStatus`, `GetProductLicenseDiscovery`
+- Infrastructure: `Logistics.Infrastructure.Licensing` - `ProductLicenseHeartbeatSender` posts the daily report
+- API/UI: `ProductLicenseController.cs` (`/license`, `/license/key`, anonymous `/license/heartbeat` and `/.well-known/logisticsx.json`), `Jobs/ProductLicenseHeartbeatJob.cs`, `HostDefaults/ProductVersionHeaderExtensions.cs` (`X-LogisticsX-Version`), `shared/services/product-license.service.ts` + `ui-license-banner` (all three portals), `admin-portal/pages/license/`
+- Keys are issued with `tools/Logistics.LicenseIssuer` (`keygen`, `issue`, `inspect`); legal text in `COMMERCIAL-LICENSE.md`, `CLA.md`
+
 ### Background runner
 
 - API/UI: `Jobs/AIDispatchTurnJob.cs`

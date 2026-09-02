@@ -105,8 +105,8 @@
             <ui-typography variant="body-sm">
               Rate:
               {{
-                message.proposedTotalRate?.amount
-                  | currencyFormat: message.proposedTotalRate?.currency
+                message.proposedTotalRate.amount
+                  | currencyFormat: message.proposedTotalRate.currency
               }}
             </ui-typography>
           }

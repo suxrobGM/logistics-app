@@ -11,7 +11,7 @@ Run local infrastructure (PostgreSQL + the database migrator) in Docker, then ru
 ## Quick Start
 
 ```bash
-git clone https://github.com/suxrobgm/logistics-app.git
+git clone https://github.com/suxrobGM/logistics-app.git
 cd logistics-app
 
 # Start Postgres and run the migrator once (creates DBs + seeds dev data)

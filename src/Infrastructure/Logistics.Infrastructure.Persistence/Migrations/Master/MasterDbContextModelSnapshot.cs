@@ -1200,6 +1200,64 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("processed_webhook_events", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.ProductLicenseHeartbeat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("FirstSeenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_seen_at");
+
+                    b.Property<string>("Hostname")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("hostname");
+
+                    b.Property<Guid>("InstanceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("instance_id");
+
+                    b.Property<string>("KeyId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("key_id");
+
+                    b.Property<DateTime>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_seen_at");
+
+                    b.Property<string>("Licensee")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("licensee");
+
+                    b.Property<int>("TenantCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("tenant_count");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("version");
+
+                    b.HasKey("Id")
+                        .HasName("pk_product_license_heartbeats");
+
+                    b.HasIndex("InstanceId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_product_license_heartbeats_instance_id");
+
+                    b.HasIndex("LastSeenAt")
+                        .HasDatabaseName("ix_product_license_heartbeats_last_seen_at");
+
+                    b.ToTable("product_license_heartbeats", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
                 {
                     b.Property<Guid>("Id")

@@ -6,6 +6,7 @@ using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Abstractions.Dispatch;
+using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Abstractions.Realtime;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -28,6 +29,8 @@ public class ApplicationLayerRegistrationTests
     [InlineData(typeof(IDataRetentionService))]
     [InlineData(typeof(IDataExportExpiryService))]
     [InlineData(typeof(IInvoiceTaxApplier))]
+    [InlineData(typeof(IProductLicenseService))]
+    [InlineData(typeof(IProductLicenseHeartbeatService))]
     public void AddApplicationLayer_RegistersService(Type serviceType)
     {
         var services = new ServiceCollection();

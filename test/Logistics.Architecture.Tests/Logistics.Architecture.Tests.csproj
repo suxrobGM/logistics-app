@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Eld\Logistics.Infrastructure.Integrations.Eld.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.FuelCards\Logistics.Infrastructure.Integrations.FuelCards.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.LoadBoard\Logistics.Infrastructure.Integrations.LoadBoard.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Licensing\Logistics.Infrastructure.Licensing.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Payments\Logistics.Infrastructure.Payments.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Persistence\Logistics.Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Routing\Logistics.Infrastructure.Routing.csproj" />
