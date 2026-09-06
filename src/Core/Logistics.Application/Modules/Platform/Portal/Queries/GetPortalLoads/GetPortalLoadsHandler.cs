@@ -22,7 +22,7 @@ internal sealed class GetPortalLoadsHandler(ITenantUnitOfWork tenantUow)
         {
             var search = req.Search.ToLower();
             baseQuery = baseQuery.Where(l =>
-                l.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase) ||
+                l.Name.ToLower().Contains(search) ||
                 l.Number.ToString().Contains(search));
         }
 

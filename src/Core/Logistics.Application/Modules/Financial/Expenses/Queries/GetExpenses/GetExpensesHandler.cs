@@ -50,8 +50,8 @@ internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow)
         {
             var search = req.Search.ToLower();
             query = query.Where(e =>
-                (e.VendorName ?? "").Contains(search, StringComparison.CurrentCultureIgnoreCase) ||
-                (e.Notes ?? "").Contains(search, StringComparison.CurrentCultureIgnoreCase));
+                (e.VendorName ?? "").ToLower().Contains(search) ||
+                (e.Notes ?? "").ToLower().Contains(search));
         }
 
         var totalItems = await query.CountAsync(ct);

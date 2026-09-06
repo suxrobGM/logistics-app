@@ -23,7 +23,7 @@ internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
             var search = req.Search.ToLower();
             baseQuery = baseQuery.Where(i =>
                 i.Number.ToString().Contains(search) ||
-                (i.Load != null && i.Load.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase)));
+                (i.Load != null && i.Load.Name.ToLower().Contains(search)));
         }
 
         // Apply date filters
