@@ -95,8 +95,8 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IAppRe
         var totalCount = driverStats.Count();
 
         // A driver appears once per truck they are assigned to, so the row key is the pair, and
-        // both halves are needed for a total order. Without one, the Union below reaches the
-        // database as an OFFSET/FETCH over an unordered set - and the Drivers report sends an
+        // both halves are needed for a total order. Without one, the Union above reaches the
+        // database as a LIMIT/OFFSET over an unordered set - and the Drivers report sends an
         // empty OrderBy on its first page, which is exactly when the string overload no-ops.
         var items = driverStats.OrderBy(req.OrderBy, d => d.DriverId)
             .ThenBy(d => d.TruckNumber)
