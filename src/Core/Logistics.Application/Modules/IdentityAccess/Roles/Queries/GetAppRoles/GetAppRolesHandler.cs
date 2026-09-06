@@ -24,6 +24,8 @@ internal sealed class GetAppRolesHandler(IMasterUnitOfWork masterUow)
         var totalItems = query.Count();
 
         var rolesDto = query
+            .OrderBy(i => i.Name)
+            .ThenBy(i => i.Id)
             .ApplyPaging(req.Page, req.PageSize)
             .Select(i => i.ToDto())
             .ToArray();
