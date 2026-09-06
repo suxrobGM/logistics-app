@@ -83,4 +83,49 @@ public class QueryableExtensionsTests
 
         Assert.Equal([Oldest, Newest], ordered);
     }
+
+    /// <summary>
+    /// The no-op above is safe on its own and unsafe in front of Skip/Take: paging an unordered
+    /// query lets the database repeat a row on one page and drop another. List screens send an
+    /// empty sort on their first page, so this is the default path, not an edge case.
+    /// </summary>
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("NotAProperty")]
+    public void OrderByWithTieBreaker_NoUsableSortField_OrdersByTheTieBreaker(string? orderBy)
+    {
+        // Source() yields Oldest first, so falling through unordered would fail this.
+        var ordered = Source().OrderBy(orderBy, r => r.Name).ToList();
+
+        Assert.Equal([Newest, Oldest], ordered);
+    }
+
+    [Fact]
+    public void OrderByWithTieBreaker_UsableSortField_KeepsTheRequestedOrder()
+    {
+        // Ordering by Name would put Newest first, so this fails if the tie-breaker took over.
+        var ordered = Source().OrderBy("CreatedAt", r => r.Name).ToList();
+
+        Assert.Equal([Oldest, Newest], ordered);
+    }
+
+    /// <summary>
+    /// A requested sort is usually not unique - two drivers with the same load count, two rows
+    /// created the same day - and a non-unique sort is not a stable page boundary either, so the
+    /// tie-breaker has to apply on the success path as well as the fallback.
+    /// </summary>
+    [Fact]
+    public void OrderByWithTieBreaker_RequestedSortHasTies_BreaksThemByTheTieBreaker()
+    {
+        var sameDay = new DateTime(2026, 2, 1);
+        var second = new Row("b", sameDay, new Customer("x"));
+        var first = new Row("a", sameDay, new Customer("x"));
+
+        var ordered = new[] { second, first }.AsQueryable()
+            .OrderBy("CreatedAt", r => r.Name)
+            .ToList();
+
+        Assert.Equal([first, second], ordered);
+    }
 }

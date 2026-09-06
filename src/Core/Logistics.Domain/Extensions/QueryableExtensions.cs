@@ -38,6 +38,30 @@ public static class QueryableExtensions
     }
 
     /// <summary>
+    ///     Orders by a caller-supplied sort string and always appends <paramref name="tieBreaker" />
+    ///     as the final key, falling back to it entirely when the string names nothing sortable.
+    ///     Use this overload, not the one above, whenever <see cref="ApplyPaging{TSource}" /> or a
+    ///     hand-rolled Skip/Take follows: the string overload deliberately no-ops on an empty or
+    ///     unknown field, and paging a query with no total order lets the database repeat a row on
+    ///     one page and drop another. A requested sort that is merely non-unique has the same
+    ///     effect, so the tie-breaker applies on the success path too.
+    /// </summary>
+    /// <param name="query">The queryable source to order.</param>
+    /// <param name="orderBy">The string to determine the order. May be null, empty, or unknown.</param>
+    /// <param name="tieBreaker">A key that is unique per row, used last and as the fallback.</param>
+    public static IOrderedQueryable<T> OrderBy<T, TKey>(
+        this IQueryable<T> query,
+        string? orderBy,
+        Expression<Func<T, TKey>> tieBreaker)
+    {
+        var orderByQuery = string.IsNullOrEmpty(orderBy) ? null : CreateOrderQuery<T>(orderBy);
+
+        return orderByQuery is null
+            ? query.OrderBy(tieBreaker)
+            : DynamicQueryableExtensions.OrderBy(query, orderByQuery).ThenBy(tieBreaker);
+    }
+
+    /// <summary>
     ///     Null leaves the order untouched. Sort strings name an entity property, but callers reach
     ///     for the DTO's (<c>CreatedDate</c> for <c>CreatedAt</c>) often enough that an unknown one
     ///     must not become a dynamic-LINQ parse error.
