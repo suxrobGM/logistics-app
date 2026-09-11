@@ -31,16 +31,16 @@ android {
     namespace = "com.logisticsx.driver"
     compileSdk = 37
 
+    // Pinned because `ndk { debugSymbolLevel }` below needs an NDK; without this AGP picks its
+    // own default, which differs per AGP release and may not be installed on a build agent.
+    ndkVersion = "27.1.12297006"
+
     defaultConfig {
         applicationId = "com.logisticsx.driver"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 4
         versionName = "1.0.0"
-
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     flavorDimensions += "environment"
@@ -103,27 +103,18 @@ android {
 }
 
 dependencies {
-    // Depend on the shared KMP library module
     implementation(project(":composeApp"))
 
-    // Android Compose
     implementation(libs.androidx.activity.compose)
-
-    // AndroidX Core
     implementation(libs.androidx.core.ktx)
 
-    // Koin Android
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
-    // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.messaging)
-
-    // Google Play Services & Maps
     implementation(libs.play.services.location)
-    implementation(libs.bundles.maps)
 }

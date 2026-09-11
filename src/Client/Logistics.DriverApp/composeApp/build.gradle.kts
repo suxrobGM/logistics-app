@@ -9,9 +9,8 @@ plugins {
     alias(libs.plugins.openApiGenerator)
 }
 
-// OpenAPI Generator Configuration
-// Default: generate from the checked-in spec in the Angular project (no running API needed).
-// Override with -PopenApiSpecUrl=<url> to regenerate against a live API instance.
+// Generates from the checked-in Angular spec by default, so no running API is needed.
+// Pass -PopenApiSpecUrl=<url> to regenerate against a live instance instead.
 openApiGenerate {
     generatorName.set("kotlin")
     val specUrl = providers.gradleProperty("openApiSpecUrl").orNull
@@ -52,13 +51,13 @@ tasks.named("openApiGenerate") {
             val original = file.readText()
             var content = original
 
-            // Fix 1: `append(File)` -> `append(file)` (uppercase File references java.io.File, not the parameter)
+            // Uppercase `File` resolves to java.io.File, not the parameter.
             content = content.replace("append(File)", "append(file)")
 
-            // Fix 2: Double constructor call `()()` on HashMap inheritance
+            // A doubled constructor call on the HashMap supertype.
             content = content.replace(">()() {", ">() {")
 
-            // Fix 3: Remove HashMap inheritance (final class in Kotlin, generated for additionalProperties)
+            // additionalProperties generates a HashMap supertype, which is final in Kotlin.
             content = hashMapPattern.replace(content, ") {")
 
             if (content != original) {
@@ -83,13 +82,6 @@ kotlin {
         androidResources.enable = true
     }
 
-    sourceSets.all {
-        languageSettings {
-            optIn("kotlin.time.ExperimentalTime")
-            optIn("io.ktor.utils.io.InternalAPI")
-        }
-    }
-
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -100,33 +92,25 @@ kotlin {
         }
     }
 
-    // Add generated OpenAPI sources to commonMain
     sourceSets.commonMain {
         kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
     }
 
     sourceSets {
         commonMain.dependencies {
-            // Compose Multiplatform (direct artifacts - 'compose.X' shortcuts deprecated in 1.11)
             implementation(libs.bundles.compose)
-            implementation(libs.compose.material.icons.extended)
 
-            // JetBrains Compose Multiplatform (Lifecycle, ViewModel, Navigation)
             implementation(libs.bundles.jetbrains.compose.multiplatform)
 
-            // Kotlin Libraries
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
 
-            // DataStore
             implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.preferences)
 
-            // Ktor Client (bundles)
             implementation(libs.bundles.ktor.common)
 
-            // Koin (multiplatform)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -139,7 +123,7 @@ kotlin {
             implementation(libs.androidx.core.ktx)
             implementation(libs.koin.androidx.compose)
 
-            // Google Play Services Location (for LocationTracker.android.kt)
+            // Used by LocationTracker.android.kt.
             implementation(libs.play.services.location)
 
             implementation(libs.signalr.client)
@@ -153,7 +137,13 @@ kotlin {
     }
 }
 
-// Ensure OpenAPI sources are generated before any Kotlin compilation
+// Everything downstream of the generated sources has to wait for them. AGP also treats the
+// generated `src/main` folder as a source-set root and scans a sibling baselineProfiles path,
+// so its ART profile tasks need the same ordering or Gradle fails validation.
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    dependsOn(tasks.named("openApiGenerate"))
+}
+
+tasks.matching { it.name.endsWith("ArtProfile") }.configureEach {
     dependsOn(tasks.named("openApiGenerate"))
 }

@@ -1,70 +1,43 @@
 [versions]
-# Kotlin & Gradle
-kotlin = "2.3.21"
-agp = "9.2.1"
-compose-plugin = "1.11.0"
+kotlin = "2.4.20"
+agp = "9.4.0"
+compose-plugin = "1.12.0"
 
-# Kotlin Libraries
 kotlinx-coroutines = "1.11.0"
 kotlinx-serialization = "1.11.0"
 kotlinx-datetime = "0.8.0"
 androidx-datastore = "1.2.1"
 
-# Compose & UI
 compose-activity = "1.13.0"
-# Compose Multiplatform decouples some artifact versions from the plugin (compose-plugin) version.
-# material3 ships at 1.9.0, material-icons-extended is frozen at 1.7.3.
-# See https://kotlinlang.org/docs/multiplatform/whats-new-compose-180.html
+# material3 ships on its own train, decoupled from compose-plugin: 1.9.0 is the newest stable,
+# and the 1.12 line is still alpha.
 compose-material3 = "1.9.0"
-compose-material-icons = "1.7.3"
 
-# JetBrains Compose Multiplatform Libraries
-jetbrains-lifecycle = "2.10.0"
+jetbrains-lifecycle = "2.11.0"
 jetbrains-navigation3 = "1.1.1"
 
-# Networking
-ktor = "3.5.0"
-
-# Code Generation
-openapi-generator = "7.22.0"
-
-# Dependency Injection
-koin-bom = "4.2.1"
-
-# Android-specific
-androidx-core = "1.18.0"
-
-# Firebase
-firebase-bom = "34.13.0"
-firebase-crashlytics-plugin = "3.0.7"
-google-services = "4.4.4"
-
-# Google Play Services
-play-services-location = "21.3.0"
-play-services-maps = "20.0.0"
-maps-compose = "8.3.0"
-
-# SignalR
-signalr = "10.0.8"
-
-# CameraX
-camerax = "1.6.1"
-
-# ML Kit
+ktor = "3.5.2"
+openapi-generator = "7.25.0"
+koin-bom = "4.2.2"
+androidx-core = "1.19.0"
+firebase-bom = "34.19.0"
+firebase-crashlytics-plugin = "3.0.8"
+google-services = "4.5.0"
+play-services-location = "21.4.0"
+signalr = "10.0.12"
+camerax = "1.6.2"
 mlkit-barcode = "17.3.0"
 
 [libraries]
-# Kotlin Extensions
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
-# DataStore
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidx-datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 
-# Ktor Client
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
@@ -72,7 +45,6 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 
-# Koin
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
@@ -80,48 +52,36 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-android = { module = "io.insert-koin:koin-android" }
 
-# JetBrains Compose Multiplatform
 jetbrains-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle" }
 jetbrains-lifecycle-runtime = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jetbrains-lifecycle" }
 jetbrains-lifecycle-viewmodel-navigation3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "jetbrains-lifecycle" }
 jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "jetbrains-navigation3" }
 
-# AndroidX Core
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 
-# Android Activity Compose
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
 
-# Compose Multiplatform (direct artifacts — 'compose.X' shortcuts are deprecated in Compose 1.11)
+# Direct artifacts: the 'compose.X' plugin shortcuts are deprecated since Compose 1.11.
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-plugin" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-plugin" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-material3" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-plugin" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-plugin" }
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-plugin" }
-compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "compose-material-icons" }
 
-# Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 
-# Google Play Services
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "play-services-location" }
-play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "play-services-maps" }
-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose" }
-maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "maps-compose" }
 
-# SignalR
 signalr-client = { module = "com.microsoft.signalr:signalr", version.ref = "signalr" }
 
-# CameraX
 camerax-core = { module = "androidx.camera:camera-core", version.ref = "camerax" }
 camerax-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
 camerax-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
 camerax-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
 
-# ML Kit Barcode Scanning
 mlkit-barcode = { module = "com.google.mlkit:barcode-scanning", version.ref = "mlkit-barcode" }
 
 [plugins]
@@ -147,6 +107,7 @@ compose = [
 
 ktor-common = [
     "ktor-client-core",
+    "ktor-client-auth",
     "ktor-client-content-negotiation",
     "ktor-serialization-json",
     "ktor-client-logging",
@@ -158,12 +119,6 @@ jetbrains-compose-multiplatform = [
     "jetbrains-lifecycle-runtime",
     "jetbrains-lifecycle-viewmodel-navigation3",
     "jetbrains-navigation3-ui"
-]
-
-maps = [
-    "play-services-maps",
-    "maps-compose",
-    "maps-compose-utils"
 ]
 
 camerax = [

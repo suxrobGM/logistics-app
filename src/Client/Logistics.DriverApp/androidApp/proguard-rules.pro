@@ -1,8 +1,6 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# Everything kept here is reached reflectively, so R8 cannot see the usage and would strip it.
+# Adding a serialized type outside the packages below means adding a keep for it too.
 
-# Kotlin Serialization
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.AnnotationsKt
 -keepclassmembers class kotlinx.serialization.json.** {
@@ -12,33 +10,29 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 
-# Keep all @Serializable classes and their serializers
 -keepclassmembers @kotlinx.serialization.Serializable class ** {
     *** Companion;
     kotlinx.serialization.KSerializer serializer(...);
 }
 
-# Ktor
 -keep class io.ktor.** { *; }
 -keep class kotlinx.coroutines.** { *; }
 -dontwarn kotlinx.atomicfu.**
+
+# Ktor's shared modules reference its server engines, which this app never links.
 -dontwarn io.netty.**
 -dontwarn com.typesafe.**
 -dontwarn org.slf4j.**
 -dontwarn java.lang.management.ManagementFactory
 -dontwarn java.lang.management.RuntimeMXBean
 
-# OpenAPI generated API models
 -keep class com.logisticsx.driver.api.models.** { *; }
-
-# App models
 -keep class com.logisticsx.driver.model.** { *; }
 
-# Service models
+# Serialized payloads that sit outside the two packages above.
 -keep class com.logisticsx.driver.service.realtime.TruckGeolocation { *; }
 -keep class com.logisticsx.driver.service.auth.TokenResponse { *; }
 -keep class com.logisticsx.driver.service.auth.TokenErrorResponse { *; }
 
-# SignalR client
 -keep class com.microsoft.signalr.** { *; }
 -dontwarn com.microsoft.signalr.**
