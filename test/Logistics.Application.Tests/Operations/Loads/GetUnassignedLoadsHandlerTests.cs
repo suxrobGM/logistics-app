@@ -24,8 +24,8 @@ public class GetUnassignedLoadsHandlerTests
         sut = new GetUnassignedLoadsHandler(tenantUow);
     }
 
-    // No container or terminal ids, so LoadIntermodalResolver short-circuits both of its lookups
-    // and this test needs no repository beyond Load.
+    // No container or terminal ids, so LoadIntermodalResolver short-circuits both lookups
+    // and these tests need no repository beyond Load.
     private static Load CreateDraftLoad(string name, DateTime createdAt) => new()
     {
         Name = name,
@@ -39,10 +39,7 @@ public class GetUnassignedLoadsHandlerTests
         CreatedAt = createdAt
     };
 
-    /// <summary>
-    /// The source is stored oldest-first, so a handler that paged the unordered set would return
-    /// it unchanged and fail this. Newest-first follows the portal handlers' own default arm.
-    /// </summary>
+    // Stored oldest-first, so paging the unordered set would fail this.
     [Fact]
     public async Task Handle_DraftLoadsStoredOldestFirst_ReturnsThemNewestFirst()
     {
@@ -57,11 +54,7 @@ public class GetUnassignedLoadsHandlerTests
         Assert.Equal(["newer", "older"], result.Value!.Select(l => l.Name).ToArray());
     }
 
-    /// <summary>
-    /// Two loads created at the same instant sort equally, so only the Id tie-breaker decides
-    /// which one page 1 contains - without it LINQ's stable sort returns the source order, which
-    /// is the opposite of what this asserts.
-    /// </summary>
+    // Both loads share a CreatedAt, so only the Id tie-breaker decides page 1.
     [Fact]
     public async Task Handle_LoadsShareACreatedAt_TheIdTieBreakerDecidesThePageBoundary()
     {

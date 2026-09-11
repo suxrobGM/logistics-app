@@ -20,10 +20,7 @@ public class GetAppRolesHandlerTests
         sut = new GetAppRolesHandler(masterUow);
     }
 
-    /// <summary>
-    /// The source is deliberately stored in reverse name order, so a handler that paged the
-    /// unordered set would return it unchanged and fail this.
-    /// </summary>
+    // Stored in reverse name order, so paging the unordered set would fail this.
     [Fact]
     public async Task Handle_RolesStoredOutOfNameOrder_ReturnsThemOrderedByName()
     {
@@ -36,12 +33,20 @@ public class GetAppRolesHandlerTests
         Assert.Equal(["app.alpha", "app.zeta"], result.Value!.Select(r => r.Name).ToArray());
     }
 
-    /// <summary>
-    /// Paging is only safe over a total order, and a name is not unique. Both roles here sort
-    /// equally by name, so only the Id tie-breaker decides which one page 1 contains - without it
-    /// LINQ's stable sort returns the source order and this asserts the opposite.
-    /// DisplayName carries the identity because RoleDto does not expose Id.
-    /// </summary>
+    [Fact]
+    public async Task Handle_OrderByIsSupplied_HonoursIt()
+    {
+        var alpha = new AppRole("alpha");
+        var zeta = new AppRole("zeta");
+        roleRepo.Query().Returns(new[] { alpha, zeta }.AsQueryable());
+
+        var result = await sut.Handle(new GetAppRolesQuery { OrderBy = "-Name" }, CancellationToken.None);
+
+        Assert.Equal(["app.zeta", "app.alpha"], result.Value!.Select(r => r.Name).ToArray());
+    }
+
+    // Both roles sort equally by name, so only the Id tie-breaker decides page 1.
+    // DisplayName carries the identity because RoleDto does not expose Id.
     [Fact]
     public async Task Handle_RolesShareAName_TheIdTieBreakerDecidesThePageBoundary()
     {

@@ -84,11 +84,7 @@ public class QueryableExtensionsTests
         Assert.Equal([Oldest, Newest], ordered);
     }
 
-    /// <summary>
-    /// The no-op above is safe on its own and unsafe in front of Skip/Take: paging an unordered
-    /// query lets the database repeat a row on one page and drop another. List screens send an
-    /// empty sort on their first page, so this is the default path, not an edge case.
-    /// </summary>
+    // List screens send an empty sort on their first page, so this is the default path.
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -110,11 +106,7 @@ public class QueryableExtensionsTests
         Assert.Equal([Oldest, Newest], ordered);
     }
 
-    /// <summary>
-    /// A requested sort is usually not unique - two drivers with the same load count, two rows
-    /// created the same day - and a non-unique sort is not a stable page boundary either, so the
-    /// tie-breaker has to apply on the success path as well as the fallback.
-    /// </summary>
+    // A requested sort is rarely unique, so the tie-breaker applies on the success path too.
     [Fact]
     public void OrderByWithTieBreaker_RequestedSortHasTies_BreaksThemByTheTieBreaker()
     {

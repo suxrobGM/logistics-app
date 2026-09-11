@@ -20,10 +20,7 @@ public class GetTenantRolesHandlerTests
         sut = new GetTenantRolesHandler(tenantUow);
     }
 
-    /// <summary>
-    /// The source is deliberately stored in reverse name order, so a handler that paged the
-    /// unordered set would return it unchanged and fail this.
-    /// </summary>
+    // Stored in reverse name order, so paging the unordered set would fail this.
     [Fact]
     public async Task Handle_RolesStoredOutOfNameOrder_ReturnsThemOrderedByName()
     {
@@ -36,11 +33,7 @@ public class GetTenantRolesHandlerTests
         Assert.Equal(["tenant.alpha", "tenant.zeta"], result.Value!.Select(r => r.Name).ToArray());
     }
 
-    /// <summary>
-    /// Same total-order argument as the app-roles case: two roles that sort equally by name need
-    /// the Id tie-breaker to sit on a stable page boundary. Without it LINQ's stable sort returns
-    /// the source order, which is the opposite of what this asserts.
-    /// </summary>
+    // Both roles sort equally by name, so only the Id tie-breaker decides page 1.
     [Fact]
     public async Task Handle_RolesShareAName_TheIdTieBreakerDecidesThePageBoundary()
     {

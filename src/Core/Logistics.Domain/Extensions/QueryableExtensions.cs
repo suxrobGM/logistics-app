@@ -38,13 +38,10 @@ public static class QueryableExtensions
     }
 
     /// <summary>
-    ///     Orders by a caller-supplied sort string and always appends <paramref name="tieBreaker" />
-    ///     as the final key, falling back to it entirely when the string names nothing sortable.
-    ///     Use this overload, not the one above, whenever <see cref="ApplyPaging{TSource}" /> or a
-    ///     hand-rolled Skip/Take follows: the string overload deliberately no-ops on an empty or
-    ///     unknown field, and paging a query with no total order lets the database repeat a row on
-    ///     one page and drop another. A requested sort that is merely non-unique has the same
-    ///     effect, so the tie-breaker applies on the success path too.
+    ///     Orders by a sort string and always appends <paramref name="tieBreaker" /> as the final
+    ///     key, falling back to it entirely when the string names nothing sortable. Use this
+    ///     overload, not the one above, whenever paging follows: the string overload no-ops on an
+    ///     empty or unknown field, and paging without a total order repeats and drops rows.
     /// </summary>
     /// <param name="query">The queryable source to order.</param>
     /// <param name="orderBy">The string to determine the order. May be null, empty, or unknown.</param>
