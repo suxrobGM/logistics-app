@@ -10,17 +10,16 @@ namespace Logistics.TelegramBot.Handlers;
 internal static class TelegramWebhookHandler
 {
     /// <summary>
-    /// Handles incoming Telegram webhook updates.
-    /// Rejects the request unless the secret token is configured and matches, then processes the update in a background scope to avoid blocking Telegram's request.
-    /// The update is dispatched to the TelegramUpdateDispatcher for handling.
+    /// Handles incoming Telegram webhook updates. Rejects the request unless the secret token is
+    /// configured and matches, then dispatches the update in a background scope.
     /// </summary>
     public static async Task HandleAsync(
         HttpContext context,
         IServiceScopeFactory scopeFactory,
         TelegramBotOptions options)
     {
-        // Validate secret token. An unconfigured secret rejects everything rather than accepting
-        // everything: this endpoint is anonymous, so the header is the only proof the caller is Telegram.
+        // The endpoint is anonymous, so this header is the only proof the caller is Telegram.
+        // An unset secret therefore rejects everything rather than accepting everything.
         var secretHeader = context.Request.Headers["X-Telegram-Bot-Api-Secret-Token"].FirstOrDefault();
         if (string.IsNullOrEmpty(options.SecretToken) ||
             !ConstantTimeEquals(secretHeader, options.SecretToken))

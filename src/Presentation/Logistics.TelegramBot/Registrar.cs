@@ -82,7 +82,7 @@ public static class Registrar
         {
             if (string.IsNullOrEmpty(options.SecretToken))
             {
-                // Nothing can authenticate an anonymous endpoint without a secret, so it is not exposed at all.
+                // An anonymous endpoint with no secret cannot be authenticated, so it is not exposed.
                 app.Logger.LogError("TelegramBot:SecretToken is not configured; the Telegram webhook was not registered.");
                 return app;
             }
