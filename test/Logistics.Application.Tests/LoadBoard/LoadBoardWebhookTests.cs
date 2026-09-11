@@ -14,9 +14,8 @@ using Xunit;
 namespace Logistics.Application.Tests.LoadBoard;
 
 /// <summary>
-/// The three real load board providers must reject a webhook they cannot verify, matching the
-/// ELD providers. The <c>webhooks/loadboard/*</c> endpoints are anonymous, so the HMAC signature
-/// is the only authenticity check available to them.
+/// The <c>webhooks/loadboard/*</c> endpoints are anonymous, so the HMAC signature is the only
+/// authenticity check. Every provider must reject a webhook it cannot verify.
 /// </summary>
 public class LoadBoardWebhookTests
 {
@@ -37,10 +36,6 @@ public class LoadBoardWebhookTests
         Assert.Equal(LoadBoardWebhookEventType.Unknown, result.EventType);
     }
 
-    /// <summary>
-    /// The bypass this guards: a caller supplying any signature was previously trusted outright
-    /// whenever no secret happened to be configured.
-    /// </summary>
     [Theory]
     [MemberData(nameof(Providers))]
     public async Task ProcessWebhook_SignaturePresentButNoSecretConfigured_RejectsPayload(string provider)
@@ -95,7 +90,7 @@ public class LoadBoardWebhookTests
 
     private static string PayloadFor(string provider) => provider switch
     {
-        // Truckstop names the field "Event"; the other two use "EventType".
+        // Truckstop names the field "Event". The other two use "EventType".
         "truckstop" => """{"Event":"load_posted","LoadId":"L-1"}""",
         _ => """{"EventType":"load.posted","LoadId":"L-1"}"""
     };
