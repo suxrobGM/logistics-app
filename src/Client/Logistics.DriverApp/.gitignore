@@ -51,5 +51,3 @@ GoogleService-Info.plist
 *.mobileprovision
 *.jks
 *.keystore
-
-gradle/
