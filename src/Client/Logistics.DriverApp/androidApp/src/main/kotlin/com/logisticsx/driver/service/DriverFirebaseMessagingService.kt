@@ -33,7 +33,6 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
         Logger.d("New FCM token: $token")
 
-        // Send token to server
         serviceScope.launch {
             try {
                 val userId = preferencesManager.getUserId()
@@ -57,14 +56,12 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
         Logger.d("FCM message received from: ${message.from}")
 
-        // Handle notification payload
         message.notification?.let { notification ->
             val title = notification.title ?: "LogisticsX Driver"
             val body = notification.body ?: "New notification"
             showNotification(title, body)
         }
 
-        // Handle data payload
         message.data.isNotEmpty().let {
             Logger.d("Message data payload: ${message.data}")
             handleDataPayload(message.data)
@@ -72,12 +69,10 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun handleDataPayload(data: Map<String, String>) {
-        // Handle different notification types
         when (data["type"]) {
             "load_update" -> {
+                // The app refetches loads on resume, so the notification itself is enough.
                 Logger.d("Load update notification received")
-                // Trigger load refresh in the app
-                // You can use a broadcast receiver or shared flow to notify the app
             }
 
             "new_load" -> {
@@ -121,10 +116,10 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "LogisticsX Notifications",
+            getString(R.string.notification_channel_name),
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = "Notifications for load updates and assignments"
+            description = getString(R.string.notification_channel_description)
         }
 
         val notificationManager = getSystemService(NotificationManager::class.java)
