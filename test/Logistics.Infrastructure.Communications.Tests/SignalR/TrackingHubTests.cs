@@ -102,11 +102,7 @@ public class TrackingHubTests
             Arg.Is<TruckGeolocationDto>(g => g.TenantId == callerTenantId));
     }
 
-    /// <summary>
-    /// The bypass this guards: any authenticated user could previously subscribe to any trip group
-    /// by id, including another tenant's, and receive its status and geolocation updates. The check
-    /// now also refuses a caller inside the tenant who neither dispatches nor drives the trip.
-    /// </summary>
+    // Any authenticated user could previously subscribe to any trip group by id.
     [Fact]
     public async Task SubscribeToTrip_CallerNotAuthorizedForTheTrip_DoesNotJoinTheGroup()
     {
@@ -136,17 +132,12 @@ public class TrackingHubTests
 
         await sut.SubscribeToTrip(tripId.ToString());
 
-        // Both come from the caller's own claims - neither the tenant nor the identity is
-        // client-supplied.
+        // Both come from the caller's own claims, not from the client.
         await tripAccess.Received(1).CanUserViewTripAsync(
             callerTenantId, tripId, driverId, Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    /// The broadcast side formats the group name from a Guid, so joining under the caller's raw
-    /// string put a braced or upper-case subscriber in a group nothing ever targets - connected
-    /// successfully, silently receiving nothing. Same shape as the ChatHub fix on this branch.
-    /// </summary>
+    // Broadcasts format the group name from a Guid, so a raw string joins a group nothing targets.
     [Fact]
     public async Task SubscribeToTrip_NonCanonicalTripId_JoinsTheGroupBroadcastsActuallyTarget()
     {

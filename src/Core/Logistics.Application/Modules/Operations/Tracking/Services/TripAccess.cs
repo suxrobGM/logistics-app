@@ -13,8 +13,7 @@ internal sealed class TripAccess(
     public async Task<bool> CanUserViewTripAsync(
         Guid tenantId, Guid tripId, Guid userId, CancellationToken ct = default)
     {
-        // Resolving against the caller's own tenant database is what makes another tenant's trip
-        // id unfindable rather than merely unauthorized.
+        // Resolving against the caller's own tenant database makes a cross-tenant id unfindable.
         await tenantUow.SetCurrentTenantByIdAsync(tenantId);
 
         var trip = await tenantUow.Repository<Trip>().GetByIdAsync(tripId, ct);
@@ -23,14 +22,14 @@ internal sealed class TripAccess(
             return false;
         }
 
-        // Load.Manage is the dispatch desk: TripController gates its write endpoints on it and the
-        // Driver role ships with Load.View only.
+        // Load.Manage is the dispatch desk. TripController gates its writes on it, and the Driver
+        // role ships with Load.View only.
         if (await userPermissions.HasPermissionAsync(userId, tenantId, Permission.Load.Manage, ct))
         {
             return true;
         }
 
-        // An unassigned trip has no driver yet, so nobody outside dispatch qualifies.
+        // An unassigned trip has no driver, so nobody outside dispatch qualifies.
         if (trip.TruckId is not { } truckId)
         {
             return false;

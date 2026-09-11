@@ -9,9 +9,7 @@ using Xunit;
 namespace Logistics.Application.Tests.Integrations.Messaging;
 
 /// <summary>
-/// The handler wrote a read receipt for whatever message id it was handed, with no check that the
-/// caller belonged to that message's conversation. <c>SendMessageHandler</c> already gated the send
-/// side this way; this is the read side.
+/// The read side of the participant gate <c>SendMessageHandler</c> already applies on send.
 /// </summary>
 public class MarkMessageReadHandlerTests
 {
@@ -47,8 +45,7 @@ public class MarkMessageReadHandlerTests
 
         Conversation(isTenantChat: false);
 
-        // Run the handler's real predicate against the rows that exist rather than stubbing the
-        // answer, so a predicate filtering on the wrong field would fail here.
+        // Run the handler's real predicate against the rows, so a wrong field fails here.
         var participants = new List<ConversationParticipant>
         {
             new() { ConversationId = ConversationId, EmployeeId = ParticipantId }
@@ -108,10 +105,7 @@ public class MarkMessageReadHandlerTests
             ConversationId, MessageId, ParticipantId.ToString(), Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    /// Tenant chat has no participant row until someone first posts, so gating on one would break
-    /// marking a team-chat message read. Matches <c>ConversationAccess</c>'s carve-out.
-    /// </summary>
+    // Tenant chat has no participant row until someone posts, so it carves out of the gate.
     [Fact]
     public async Task Handle_TenantChatWithNoParticipantRow_IsStillAllowed()
     {
@@ -145,9 +139,7 @@ public class MarkMessageReadHandlerTests
             Arg.Any<MessageReadReceipt>(), Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    /// Re-marking must stay idempotent: a client can re-send after a reconnect.
-    /// </summary>
+    // Clients re-send after a reconnect, so re-marking stays idempotent.
     [Fact]
     public async Task Handle_AlreadyMarkedRead_SucceedsWithoutWritingASecondReceipt()
     {

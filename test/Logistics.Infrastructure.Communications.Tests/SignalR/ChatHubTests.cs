@@ -38,14 +38,13 @@ public class ChatHubTests
         sut.Groups = groups;
         sut.Context = CallerContext(callerTenantId, callerUserId);
 
-        // Model a real connected client. Without this the pre-fix hub bailed out of the broadcast
-        // methods for the wrong reason (no registered connection), which would have let the
-        // negative tests below pass against the unfixed code.
+        // Model a real connected client. Without it the negative tests below would pass against
+        // the unfixed hub for the wrong reason.
         hubContext.AddClient(ConnectionId);
         hubContext.SetUserId(ConnectionId, callerUserId);
     }
 
-    /// <summary>Passes the real join check, which is what authorizes the other methods.</summary>
+    /// <summary>Passes the real join check, which authorizes the other methods.</summary>
     private async Task JoinAsync()
     {
         AllowJoin(true);
@@ -70,10 +69,7 @@ public class ChatHubTests
         return context;
     }
 
-    /// <summary>
-    /// The bypass this guards: any authenticated user could previously join any conversation group
-    /// by id, including one belonging to another tenant, and receive every message broadcast to it.
-    /// </summary>
+    // Any authenticated user could previously join any conversation group by id.
     [Fact]
     public async Task JoinConversation_CallerIsNotAParticipant_DoesNotJoinTheGroup()
     {
@@ -99,10 +95,7 @@ public class ChatHubTests
         await groupClient.Received(1).UserJoinedConversation(conversationId, callerUserId, null);
     }
 
-    /// <summary>
-    /// The authorization check is asked about the caller's own claimed tenant and user, never
-    /// about anything the client supplied, so a caller cannot ask on someone else's behalf.
-    /// </summary>
+    // The check is asked about the caller's own claims, never about client-supplied values.
     [Fact]
     public async Task JoinConversation_ChecksAccessForTheCallersOwnTenantAndUser()
     {
@@ -130,10 +123,7 @@ public class ChatHubTests
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    /// A non-GUID id previously reached <c>Guid.Parse</c> after the connection had already been
-    /// added to the group, so the caller kept a subscription the throw never undid.
-    /// </summary>
+    // A non-GUID id previously reached Guid.Parse after the group add, leaving the caller joined.
     [Fact]
     public async Task JoinConversation_MalformedConversationId_DoesNotThrowOrJoin()
     {
@@ -143,12 +133,7 @@ public class ChatHubTests
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    /// The group name is built from the parsed <see cref="Guid"/>, not the caller's spelling of it.
-    /// Echoing the raw string put a caller who sent a braced or upper-case id into a group the
-    /// server's own broadcasts — which always format canonically — never target, so the connection
-    /// joined successfully and then silently received nothing.
-    /// </summary>
+    // Broadcasts format the group name from a Guid, so a raw string joins a group nothing targets.
     [Fact]
     public async Task JoinConversation_NonCanonicalConversationId_JoinsTheCanonicalGroup()
     {
@@ -160,9 +145,7 @@ public class ChatHubTests
             ConnectionId, $"conversation-{conversationId}", Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    /// Read receipts were broadcast into any conversation group by id, with no check at all.
-    /// </summary>
+    // Read receipts were broadcast into any conversation group by id, with no check.
     [Fact]
     public async Task MarkAsRead_WithoutHavingJoined_DoesNotBroadcast()
     {
@@ -171,9 +154,7 @@ public class ChatHubTests
         await groupClient.DidNotReceive().MessageRead(Arg.Any<Guid>(), Arg.Any<Guid>());
     }
 
-    /// <summary>
-    /// Trusting the supplied reader id let any caller pin a read on somebody else.
-    /// </summary>
+    // Trusting the supplied reader id let any caller pin a read on somebody else.
     [Fact]
     public async Task MarkAsRead_AttributesTheReceiptToTheCallerNotTheSuppliedReaderId()
     {
@@ -187,10 +168,7 @@ public class ChatHubTests
         await groupClient.DidNotReceive().MessageRead(messageId, someoneElse);
     }
 
-    /// <summary>
-    /// Typing indicators were broadcast into any conversation group by id, leaking presence into
-    /// another tenant's thread and letting a caller impersonate one.
-    /// </summary>
+    // Typing indicators were broadcast into any conversation group by id.
     [Fact]
     public async Task SendTypingIndicator_WithoutHavingJoined_DoesNotBroadcast()
     {
@@ -220,9 +198,7 @@ public class ChatHubTests
         await groupExceptClient.DidNotReceive().TypingIndicator(Arg.Any<TypingIndicatorDto>());
     }
 
-    /// <summary>
-    /// The web client fires a typing indicator on every keystroke, so this must not query.
-    /// </summary>
+    // The web client fires a typing indicator on every keystroke, so this must not query.
     [Fact]
     public async Task SendTypingIndicator_DoesNotHitTheDatabase()
     {
@@ -235,11 +211,7 @@ public class ChatHubTests
             Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    /// Dropping your own connection is always safe and stays ungated; announcing the departure to
-    /// the conversation is a broadcast, so it does not. A caller could previously spoof a "user
-    /// left" event into any conversation they had never joined.
-    /// </summary>
+    // A caller could previously spoof a "user left" event into a conversation never joined.
     [Fact]
     public async Task LeaveConversation_WithoutHavingJoined_StillLeavesButDoesNotAnnounce()
     {
@@ -262,9 +234,7 @@ public class ChatHubTests
         await groupClient.Received(1).UserLeftConversation(conversationId, callerUserId);
     }
 
-    /// <summary>
-    /// Leaving drops the authorization, so a later broadcast has to rejoin to earn it back.
-    /// </summary>
+    // Leaving drops the authorization, so a later broadcast must rejoin to earn it back.
     [Fact]
     public async Task LeaveConversation_ThenTyping_DoesNotBroadcast()
     {
@@ -276,10 +246,7 @@ public class ChatHubTests
         await groupExceptClient.DidNotReceive().TypingIndicator(Arg.Any<TypingIndicatorDto>());
     }
 
-    /// <summary>
-    /// A non-GUID id previously reached <c>Guid.Parse</c> inside the announcement, throwing out of
-    /// the hub method before the connection was ever removed from the group.
-    /// </summary>
+    // A non-GUID id previously threw inside the announcement, before the group removal ran.
     [Fact]
     public async Task LeaveConversation_MalformedConversationId_DoesNotThrow()
     {

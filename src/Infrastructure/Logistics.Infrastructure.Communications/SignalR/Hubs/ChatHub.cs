@@ -57,8 +57,8 @@ public class ChatHub(ChatHubContext hubContext, IConversationAccess conversation
             return;
         }
 
-        // Dropping your own connection from a group is always safe, so it is not gated.
-        // Announcing the departure to everyone in the conversation is a broadcast, so it is.
+        // Dropping your own connection is safe and stays ungated. The announcement below is a
+        // broadcast, so it is gated.
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, GroupName(conversationGuid));
 
         if (Caller(conversationGuid) is { } userId)
@@ -73,10 +73,8 @@ public class ChatHub(ChatHubContext hubContext, IConversationAccess conversation
     /// <summary>
     ///     Notify that a message has been read.
     /// </summary>
-    /// <param name="readById">
-    ///     Ignored. Kept because the mobile client wrappers still send it. The receipt is always
-    ///     attributed to the caller's own identity.
-    /// </param>
+    /// <param name="readById">Ignored. The mobile clients still send it, but the receipt is
+    /// always attributed to the caller's own identity.</param>
     public async Task MarkAsRead(Guid conversationId, Guid messageId, Guid readById)
     {
         if (Caller(conversationId) is not { } userId)
@@ -109,9 +107,8 @@ public class ChatHub(ChatHubContext hubContext, IConversationAccess conversation
 
     /// <summary>
     ///     The caller's user id if this connection may broadcast into the conversation, else null.
-    ///     Authorization is established once by <see cref="JoinConversation" /> and cached against the
-    ///     connection, so it lives exactly as long as the group membership it guards: a reconnect
-    ///     drops both and the client rejoins. Keeps typing indicators off the database.
+    ///     <see cref="JoinConversation" /> establishes this once and caches it against the connection,
+    ///     so it lives exactly as long as the group membership it guards. A reconnect drops both.
     /// </summary>
     private Guid? Caller(Guid conversationId)
     {
@@ -122,7 +119,7 @@ public class ChatHub(ChatHubContext hubContext, IConversationAccess conversation
 
     /// <summary>
     ///     Built from the parsed Guid, not the caller's string, so a braced or upper-case id cannot
-    ///     land the caller in a group the server's own broadcasts never target.
+    ///     land the caller in a group the server never broadcasts to.
     /// </summary>
     private static string GroupName(Guid conversationId) => $"conversation-{conversationId}";
 }

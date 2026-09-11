@@ -54,7 +54,6 @@ public class TripAccessTests
     [Fact]
     public async Task CanUserViewTrip_ResolvesAgainstTheCallersOwnTenant()
     {
-        // This is what makes another tenant's trip id unfindable rather than merely unauthorized.
         GivenTrip(TruckId);
         GivenDispatchPermission(true);
 
@@ -104,7 +103,7 @@ public class TripAccessTests
     [Fact]
     public async Task CanUserViewTrip_SecondDriverOfTheAssignedTruck_IsAllowed()
     {
-        // Team driving is a real, anticipated case on this entity - both seats run the trip.
+        // Team driving is a real case on this entity. Both seats run the trip.
         GivenTrip(TruckId);
         GivenTruck(mainDriverId: Guid.NewGuid(), secondaryDriverId: CallerId);
         GivenDispatchPermission(false);
@@ -112,9 +111,7 @@ public class TripAccessTests
         Assert.True(await sut.CanUserViewTripAsync(TenantId, TripId, CallerId));
     }
 
-    /// <summary>
-    /// The narrowing itself: before this, any employee of the tenant passed.
-    /// </summary>
+    // Before this, any employee of the tenant passed.
     [Fact]
     public async Task CanUserViewTrip_EmployeeWhoNeitherDispatchesNorDrivesIt_IsDenied()
     {
@@ -128,7 +125,6 @@ public class TripAccessTests
     [Fact]
     public async Task CanUserViewTrip_NonDispatchCallerOnAnUnassignedTrip_IsDenied()
     {
-        // Nobody is driving it yet, so there is no driver for it to be.
         GivenTrip(truckId: null);
         GivenDispatchPermission(false);
 
@@ -149,7 +145,7 @@ public class TripAccessTests
     [Fact]
     public async Task CanUserViewTrip_ChecksThePermissionAgainstTheCallersOwnTenant()
     {
-        // A permission set resolved against the wrong tenant would be the whole bug again.
+        // Permissions resolved against the wrong tenant would be the bug again.
         GivenTrip(TruckId);
         GivenTruck(mainDriverId: CallerId);
         GivenDispatchPermission(false);

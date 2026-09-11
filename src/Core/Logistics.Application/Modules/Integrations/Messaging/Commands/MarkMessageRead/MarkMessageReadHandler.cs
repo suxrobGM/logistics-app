@@ -13,7 +13,6 @@ internal sealed class MarkMessageReadHandler(
 {
     public async Task<Result> Handle(MarkMessageReadCommand req, CancellationToken ct)
     {
-        // Get the message
         var message = await tenantUow.Repository<Message>()
             .GetByIdAsync(req.MessageId, ct);
 
@@ -22,7 +21,7 @@ internal sealed class MarkMessageReadHandler(
             return Result.Fail($"Message with ID '{req.MessageId}' not found");
         }
 
-        // Only a participant may leave a receipt, mirroring SendMessageHandler's gate on the send side.
+        // Only a participant may leave a receipt, mirroring SendMessageHandler's gate.
         var conversation = await tenantUow.Repository<Conversation>()
             .GetByIdAsync(message.ConversationId, ct);
 
@@ -39,7 +38,6 @@ internal sealed class MarkMessageReadHandler(
             return Result.Fail("Reader is not a participant of this conversation");
         }
 
-        // Check if already read by this user
         var existingReceipt = await tenantUow.Repository<MessageReadReceipt>()
             .GetAsync(r => r.MessageId == req.MessageId && r.ReadById == req.ReadById, ct);
 
@@ -48,7 +46,6 @@ internal sealed class MarkMessageReadHandler(
             return Result.Ok(); // Already marked as read
         }
 
-        // Create read receipt
         var readReceipt = new MessageReadReceipt
         {
             MessageId = req.MessageId,
@@ -57,7 +54,6 @@ internal sealed class MarkMessageReadHandler(
 
         await tenantUow.Repository<MessageReadReceipt>().AddAsync(readReceipt, ct);
 
-        // Update participant's last read timestamp
         if (participant is not null)
         {
             participant.LastReadAt = DateTime.UtcNow;
@@ -65,7 +61,6 @@ internal sealed class MarkMessageReadHandler(
 
         await tenantUow.SaveChangesAsync(ct);
 
-        // Notify via SignalR
         await messagingService.BroadcastMessageReadAsync(
             message.ConversationId,
             req.MessageId,
