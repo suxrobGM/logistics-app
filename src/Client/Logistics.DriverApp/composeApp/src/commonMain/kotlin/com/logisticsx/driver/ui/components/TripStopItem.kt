@@ -36,7 +36,7 @@ fun TripStopItem(
         verticalAlignment = Alignment.Top
     ) {
         val isArrived = stop.arrivedAt != null
-        val icon = if (isArrived) AppIcons.CheckCircle else AppIcons.Place
+        val icon = if (isArrived) AppIcons.CheckCircle else AppIcons.LocationOn
         val iconTint = when {
             isArrived -> MaterialTheme.colorScheme.secondary
             stop.type == TripStopType.PICK_UP -> MaterialTheme.colorScheme.primary

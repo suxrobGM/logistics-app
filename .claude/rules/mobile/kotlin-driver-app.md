@@ -50,7 +50,10 @@ for expect/actual. The folder layout and the library set are self-evident from `
 
 - Icons come from `AppIcons`, vendored in `ui/icons/`. There is no `material-icons` dependency -
   don't add one.
-- To add an icon, copy its source file from compose-material-icons 1.7.3 into `ui/icons/` and add a
-  line to `AppIcons`. Never hand-write path data.
+- To add an icon, copy its path data from compose-material-icons 1.7.3 into a new file in
+  `ui/icons/`, declare it as `internal val icon<Name>: ImageVector by lazy { materialIcon(...) }`
+  (copy a neighbouring file's shape), then add a line to `AppIcons`. Never hand-write path data.
+- Two Material names that share one glyph get one file. `AppIcons.Clear` and `AppIcons.Place` were
+  dropped for this reason; use `Close` and `LocationOn`.
 - An icon that must flip in right-to-left layouts has to come from the upstream `automirrored` set;
   `autoMirror = true` in the copied file is what flips it.

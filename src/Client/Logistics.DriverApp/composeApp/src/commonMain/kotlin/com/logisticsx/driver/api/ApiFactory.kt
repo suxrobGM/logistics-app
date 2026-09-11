@@ -83,9 +83,11 @@ class ApiFactory(
         }
     }
 
+    // The refresh token stays null: refreshTokens ignores the old pair and lets AuthService read
+    // the stored token itself, so carrying it here would only cost an extra DataStore read.
     private suspend fun bearerTokens(): BearerTokens? =
         preferencesManager.getAccessToken()?.let { accessToken ->
-            BearerTokens(accessToken, preferencesManager.getRefreshToken())
+            BearerTokens(accessToken, null)
         }
 }
 

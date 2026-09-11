@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Vendored verbatim from compose-material-icons 1.7.3, Filled.AccountCircle.
+ * Path data from compose-material-icons 1.7.3, Filled.AccountCircle.
  */
 
 package com.logisticsx.driver.ui.icons

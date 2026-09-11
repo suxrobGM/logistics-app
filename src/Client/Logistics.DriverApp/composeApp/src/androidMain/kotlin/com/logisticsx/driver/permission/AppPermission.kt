@@ -25,21 +25,18 @@ sealed class AppPermission(
     /** Fine location for GPS tracking */
     data object FineLocation : AppPermission(
         permission = Manifest.permission.ACCESS_FINE_LOCATION,
-        minSdkVersion = 1,
         displayName = "Location"
     )
 
     /** Coarse location as fallback */
     data object CoarseLocation : AppPermission(
         permission = Manifest.permission.ACCESS_COARSE_LOCATION,
-        minSdkVersion = 1,
         displayName = "Approximate Location"
     )
 
     /** Camera for document scanning */
     data object Camera : AppPermission(
         permission = Manifest.permission.CAMERA,
-        minSdkVersion = 1,
         displayName = "Camera"
     )
 
@@ -60,20 +57,6 @@ sealed class AppPermission(
         /** Foreground location permissions, requested from the disclosure screen. */
         val locationPermissions: List<AppPermission> by lazy {
             listOf(FineLocation, CoarseLocation)
-        }
-
-        /** All defined permissions */
-        val all: List<AppPermission> by lazy {
-            val permissions = mutableListOf(
-                FineLocation,
-                CoarseLocation,
-                Camera
-            )
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                permissions.add(PostNotifications)
-            }
-            permissions
         }
     }
 }

@@ -19,16 +19,13 @@ import platform.AVFoundation.AVMetadataObjectTypeDataMatrixCode
 import platform.AVFoundation.AVMetadataObjectTypeQRCode
 import platform.AVFoundation.authorizationStatusForMediaType
 import platform.AVFoundation.requestAccessForMediaType
-import platform.CoreGraphics.CGRectMake
 import platform.UIKit.UIAlertAction
 import platform.UIKit.UIAlertActionStyleCancel
 import platform.UIKit.UIAlertController
 import platform.UIKit.UIAlertControllerStyleAlert
 import platform.UIKit.UIApplication
 import platform.UIKit.UIColor
-import platform.UIKit.UIView
 import platform.UIKit.UIViewController
-import platform.darwin.NSObject
 import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_async
 

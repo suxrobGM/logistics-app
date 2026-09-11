@@ -2,8 +2,6 @@ package com.logisticsx.driver.util
 
 import com.logisticsx.driver.ui.components.PathData
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.addressOf
-import kotlinx.cinterop.usePinned
 import platform.CoreGraphics.CGPointMake
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake

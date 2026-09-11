@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -35,10 +34,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.EmployeeDto
 import com.logisticsx.driver.model.fullName
 import com.logisticsx.driver.ui.components.AppTopBar
+import com.logisticsx.driver.ui.components.Avatar
 import com.logisticsx.driver.ui.components.EmptyStateView
 import com.logisticsx.driver.ui.components.ErrorView
 import com.logisticsx.driver.ui.icons.AppIcons
-import com.logisticsx.driver.util.getInitials
 import com.logisticsx.driver.viewmodel.EmployeeSelectViewModel
 import com.logisticsx.driver.viewmodel.base.ActionState
 import com.logisticsx.driver.viewmodel.base.UiState
@@ -94,7 +93,7 @@ fun EmployeeSelectScreen(
                         IconButton(onClick = {
                             viewModel.setSearchQuery("")
                         }) {
-                            Icon(AppIcons.Clear, contentDescription = "Clear")
+                            Icon(AppIcons.Close, contentDescription = "Clear")
                         }
                     }
                 },
@@ -180,19 +179,13 @@ private fun EmployeeListItem(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                modifier = Modifier.size(40.dp),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        text = employee.fullName().getInitials(),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            }
+            Avatar(
+                name = employee.fullName(),
+                size = 40.dp,
+                backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                textStyle = MaterialTheme.typography.titleSmall
+            )
 
             Spacer(modifier = Modifier.width(12.dp))
 

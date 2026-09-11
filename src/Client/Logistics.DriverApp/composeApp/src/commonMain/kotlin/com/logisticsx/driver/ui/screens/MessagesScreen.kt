@@ -33,8 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.ConversationListItem
 import com.logisticsx.driver.ui.components.EmptyStateView
-import com.logisticsx.driver.ui.components.ErrorView
-import com.logisticsx.driver.ui.components.LoadingIndicator
+import com.logisticsx.driver.ui.components.UiStateContent
 import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.ConversationListViewModel
 import com.logisticsx.driver.viewmodel.DispatcherInfo
@@ -121,83 +120,69 @@ fun MessagesScreen(
             onRefresh = { viewModel.refresh() },
             modifier = Modifier.padding(paddingValues)
         ) {
-            when (val state = uiState) {
-                is UiState.Loading -> {
-                    LoadingIndicator()
-                }
+            UiStateContent(uiState, onRetry = { viewModel.refresh() }) { conversations ->
+                val isLoadingTeamChat = teamChatState is ActionState.Loading
 
-                is UiState.Success -> {
-                    val conversations = state.data
-                    val isLoadingTeamChat = teamChatState is ActionState.Loading
-
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            AssistChip(
-                                onClick = { viewModel.openTeamChat() },
-                                label = { Text("Company Chat") },
-                                leadingIcon = {
-                                    if (isLoadingTeamChat) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(18.dp),
-                                            strokeWidth = 2.dp
-                                        )
-                                    } else {
-                                        Icon(
-                                            AppIcons.Groups,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(AssistChipDefaults.IconSize)
-                                        )
-                                    }
-                                },
-                                enabled = !isLoadingTeamChat
-                            )
-
-                            AssistChip(
-                                onClick = onNewMessage,
-                                label = { Text("New Message") },
-                                leadingIcon = {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        AssistChip(
+                            onClick = { viewModel.openTeamChat() },
+                            label = { Text("Company Chat") },
+                            leadingIcon = {
+                                if (isLoadingTeamChat) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(18.dp),
+                                        strokeWidth = 2.dp
+                                    )
+                                } else {
                                     Icon(
-                                        AppIcons.PersonAdd,
+                                        AppIcons.Groups,
                                         contentDescription = null,
                                         modifier = Modifier.size(AssistChipDefaults.IconSize)
                                     )
                                 }
-                            )
-                        }
+                            },
+                            enabled = !isLoadingTeamChat
+                        )
 
-                        if (conversations.isEmpty()) {
-                            EmptyMessagesView(
-                                dispatcherInfo = dispatcherInfo,
-                                isCreating = isCreating,
-                                onStartConversation = { viewModel.startConversationWithDispatcher() }
-                            )
-                        } else {
-                            LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                items(conversations) { conversation ->
-                                    ConversationListItem(
-                                        conversation = conversation,
-                                        onClick = { conversation.id?.let { onConversationClick(it) } }
-                                    )
-                                }
+                        AssistChip(
+                            onClick = onNewMessage,
+                            label = { Text("New Message") },
+                            leadingIcon = {
+                                Icon(
+                                    AppIcons.PersonAdd,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(AssistChipDefaults.IconSize)
+                                )
+                            }
+                        )
+                    }
+
+                    if (conversations.isEmpty()) {
+                        EmptyMessagesView(
+                            dispatcherInfo = dispatcherInfo,
+                            isCreating = isCreating,
+                            onStartConversation = { viewModel.startConversationWithDispatcher() }
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(conversations) { conversation ->
+                                ConversationListItem(
+                                    conversation = conversation,
+                                    onClick = { conversation.id?.let { onConversationClick(it) } }
+                                )
                             }
                         }
                     }
-                }
-
-                is UiState.Error -> {
-                    ErrorView(
-                        message = state.message,
-                        onRetry = { viewModel.refresh() }
-                    )
                 }
             }
         }

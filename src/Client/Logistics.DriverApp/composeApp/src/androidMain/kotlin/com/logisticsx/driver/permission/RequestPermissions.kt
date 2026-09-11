@@ -20,7 +20,6 @@ fun RequestPermissions(
     val context = LocalContext.current
     var hasRequested by remember { mutableStateOf(false) }
 
-    // Filter to only permissions that need to be requested
     val permissionsToRequest = remember(permissions) {
         val toRequest = permissions.filter { permission ->
             val shouldRequest = context.shouldRequestPermission(permission)
@@ -50,7 +49,6 @@ fun RequestPermissions(
                 Logger.d("Requesting ${permissionsToRequest.size} permissions")
                 launcher.launch(permissionsToRequest.map { it.permission }.toTypedArray())
             } else {
-                // All permissions already granted
                 val results = permissions.map { PermissionResult(it, true) }
                 onAllResults(results)
             }

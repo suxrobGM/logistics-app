@@ -39,9 +39,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.MessageDto
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.EmptyStateView
-import com.logisticsx.driver.ui.components.ErrorView
-import com.logisticsx.driver.ui.components.LoadingIndicator
 import com.logisticsx.driver.ui.components.MessageBubble
+import com.logisticsx.driver.ui.components.UiStateContent
 import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.ChatData
 import com.logisticsx.driver.viewmodel.ChatViewModel
@@ -93,60 +92,45 @@ fun ConversationScreen(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
             ) {
-                when (val state = uiState) {
-                    is UiState.Loading -> {
-                        LoadingIndicator()
-                    }
-
-                    is UiState.Success -> {
-                        val chatData = state.data
-
-                        if (chatData.messages.isEmpty()) {
-                            EmptyStateView(
-                                icon = AppIcons.ChatBubbleOutline,
-                                title = "No messages yet",
-                                message = "Start the conversation!"
-                            )
-                        } else {
-                            LazyColumn(
-                                state = listState,
-                                modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                if (chatData.hasMore) {
-                                    item {
-                                        Box(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            TextButton(onClick = { viewModel.loadMessages(append = true) }) {
-                                                Text("Load earlier messages")
-                                            }
+                UiStateContent(uiState, onRetry = { viewModel.loadMessages() }) { chatData ->
+                    if (chatData.messages.isEmpty()) {
+                        EmptyStateView(
+                            icon = AppIcons.ChatBubbleOutline,
+                            title = "No messages yet",
+                            message = "Start the conversation!"
+                        )
+                    } else {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            if (chatData.hasMore) {
+                                item {
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        TextButton(onClick = { viewModel.loadMessages(append = true) }) {
+                                            Text("Load earlier messages")
                                         }
                                     }
                                 }
+                            }
 
-                                items(chatData.messages) { message: MessageDto ->
-                                    MessageBubble(
-                                        message = message,
-                                        isOwnMessage = viewModel.isOwnMessage(message),
-                                        onMessageVisible = {
-                                            if (message.isRead != true && !viewModel.isOwnMessage(message)) {
-                                                message.id?.let { viewModel.markAsRead(it) }
-                                            }
+                            items(chatData.messages) { message: MessageDto ->
+                                MessageBubble(
+                                    message = message,
+                                    isOwnMessage = viewModel.isOwnMessage(message),
+                                    onMessageVisible = {
+                                        if (message.isRead != true && !viewModel.isOwnMessage(message)) {
+                                            message.id?.let { viewModel.markAsRead(it) }
                                         }
-                                    )
-                                }
+                                    }
+                                )
                             }
                         }
-                    }
-
-                    is UiState.Error -> {
-                        ErrorView(
-                            message = state.message,
-                            onRetry = { viewModel.loadMessages() }
-                        )
                     }
                 }
             }

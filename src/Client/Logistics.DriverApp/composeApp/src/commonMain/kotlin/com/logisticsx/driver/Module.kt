@@ -17,8 +17,6 @@ import com.logisticsx.driver.api.TripApi
 import com.logisticsx.driver.api.TruckApi
 import com.logisticsx.driver.api.UserApi
 import com.logisticsx.driver.api.VinsApi
-import com.logisticsx.driver.api.models.DvirType
-import com.logisticsx.driver.api.models.InspectionType
 import com.logisticsx.driver.service.DutyStatusManager
 import com.logisticsx.driver.service.LoadProximityWatcher
 import com.logisticsx.driver.service.PreferencesManager
@@ -28,7 +26,6 @@ import com.logisticsx.driver.viewmodel.ChatViewModel
 import com.logisticsx.driver.viewmodel.ConditionReportViewModel
 import com.logisticsx.driver.viewmodel.ConversationListViewModel
 import com.logisticsx.driver.viewmodel.DashboardViewModel
-import com.logisticsx.driver.viewmodel.DocumentCaptureType
 import com.logisticsx.driver.viewmodel.DvirFormViewModel
 import com.logisticsx.driver.viewmodel.EmployeeSelectViewModel
 import com.logisticsx.driver.viewmodel.LoadDetailViewModel
