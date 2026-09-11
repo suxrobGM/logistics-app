@@ -2,7 +2,7 @@ package com.logisticsx.driver.config
 
 import platform.Foundation.NSBundle
 
-/** iOS AppConfig, read from Info.plist (filled in from iosApp/Configuration/*.xcconfig). */
+/** iOS AppConfig, read from Info.plist (filled in from the xcconfig files in iosApp/Configuration). */
 actual object AppConfig {
     actual var apiBaseUrl: String =
         NSBundle.mainBundle.objectForInfoDictionaryKey("API_BASE_URL") as? String
