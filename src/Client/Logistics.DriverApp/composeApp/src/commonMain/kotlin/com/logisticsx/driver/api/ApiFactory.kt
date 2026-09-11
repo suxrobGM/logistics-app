@@ -5,22 +5,19 @@ import com.logisticsx.driver.service.auth.AuthEventBus
 import com.logisticsx.driver.service.auth.AuthService
 import com.logisticsx.driver.util.Logger
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.plugin
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 
 /**
- * Factory for API clients generated from OpenAPI spec.
+ * Builds the API clients that `openApiGenerate` produces from the backend's OpenAPI spec.
  *
- * The API clients (LoadApi, EmployeeApi, etc.) are auto-generated from the
- * backend's swagger.json.
- *
- * Generated APIs are in: com.logisticsx.driver.api
- * Generated models (DTOs) are in: com.logisticsx.driver.api.models
+ * Regenerate those clients rather than editing them.
  */
 class ApiFactory(
     private val baseUrl: String,
@@ -30,7 +27,6 @@ class ApiFactory(
 
     val httpClient: HttpClient by lazy { createHttpClient() }
 
-    // Generated API clients (from OpenAPI spec)
     val customerApi: CustomerApi by lazy { CustomerApi(baseUrl, httpClient) }
     val documentApi: DocumentApi by lazy { DocumentApi(baseUrl, httpClient) }
     val driverApi: DriverApi by lazy { DriverApi(baseUrl, httpClient) }
@@ -47,45 +43,62 @@ class ApiFactory(
     val userApi: UserApi by lazy { UserApi(baseUrl, httpClient) }
     val vinsApi: VinsApi by lazy { VinsApi(baseUrl, httpClient) }
 
-    private fun createHttpClient(): HttpClient {
-        val client = HttpClientFactory.create {
-            defaultRequest {
-                url(baseUrl)
-                contentType(ContentType.Application.Json)
-            }
+    private fun createHttpClient(): HttpClient = HttpClientFactory.create {
+        defaultRequest {
+            url(baseUrl)
+            contentType(ContentType.Application.Json)
         }
 
-        // Intercept requests to inject auth headers and handle token refresh
-        client.plugin(HttpSend).intercept { request ->
-            preferencesManager.getAccessToken()?.let { token ->
-                request.header("Authorization", "Bearer $token")
-            }
-            preferencesManager.getTenantId()?.let { tenantId ->
-                request.header("X-Tenant", tenantId)
-            }
+        install(tenantHeaderPlugin(preferencesManager))
 
-            val originalCall = execute(request)
+        install(Auth) {
+            bearer {
+                // DataStore owns the tokens, so a cached copy would survive a re-login and
+                // authenticate the new driver as the previous one.
+                cacheTokens = false
 
-            // On 401, attempt token refresh and retry once
-            if (originalCall.response.status == HttpStatusCode.Unauthorized) {
-                val refreshResult = authService.refreshToken()
-                if (refreshResult.isSuccess) {
+                // A screen being torn down must not cancel a refresh: the server may already have
+                // rotated the refresh token, and losing the response would end the session for good.
+                nonCancellableRefresh = true
+
+                loadTokens { bearerTokens() }
+
+                refreshTokens {
+                    // Refresh goes through AuthService, which owns a separate HttpClient. Using
+                    // this one would re-enter the plugin and deadlock.
+                    if (authService.refreshToken().isFailure) {
+                        Logger.e("ApiFactory: Token refresh failed, emitting unauthorized")
+                        AuthEventBus.emitUnauthorized()
+                        return@refreshTokens null
+                    }
                     Logger.d("ApiFactory: Token refreshed, retrying request")
-                    // Retry with new token
-                    val newToken = preferencesManager.getAccessToken()
-                    request.headers.remove("Authorization")
-                    newToken?.let { request.header("Authorization", "Bearer $it") }
-                    execute(request)
-                } else {
-                    Logger.e("ApiFactory: Token refresh failed, emitting unauthorized")
-                    AuthEventBus.emitUnauthorized()
-                    originalCall
+                    bearerTokens()
                 }
-            } else {
-                originalCall
+
+                // Must stay true: the plugin only tracks a request's token version for providers
+                // that authenticate preemptively, and that version is what suppresses duplicate
+                // refreshes when several calls get a 401 at once.
+                sendWithoutRequest { true }
             }
         }
-
-        return client
     }
+
+    private suspend fun bearerTokens(): BearerTokens? =
+        preferencesManager.getAccessToken()?.let { accessToken ->
+            BearerTokens(accessToken, preferencesManager.getRefreshToken())
+        }
 }
+
+/**
+ * Adds the `X-Tenant` header every API call needs.
+ *
+ * This cannot live in `defaultRequest`, whose block is not a suspend context while the tenant id
+ * comes from DataStore. `onRequest` runs once per call, before the send pipeline, so a 401 retry
+ * inherits the header from the original request builder.
+ */
+private fun tenantHeaderPlugin(preferencesManager: PreferencesManager) =
+    createClientPlugin("TenantHeader") {
+        onRequest { request, _ ->
+            preferencesManager.getTenantId()?.let { request.header("X-Tenant", it) }
+        }
+    }

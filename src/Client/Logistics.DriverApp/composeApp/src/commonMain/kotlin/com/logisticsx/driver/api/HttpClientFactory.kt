@@ -14,11 +14,13 @@ import kotlinx.serialization.json.Json
 /**
  * Shared HttpClient configuration used by both ApiFactory and AuthService.
  * Avoids duplicating JSON, logging, and timeout setup.
+ *
+ * Never install the Auth plugin here. AuthService uses this factory for its own client to call
+ * /connect/token, so an Auth plugin at this level would make token refresh re-enter itself.
  */
 object HttpClientFactory {
 
     val jsonConfig = Json {
-        prettyPrint = true
         isLenient = true
         ignoreUnknownKeys = true
     }
