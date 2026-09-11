@@ -12,13 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Badge
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Shield
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,19 +24,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.UserDto
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.CardContainer
 import com.logisticsx.driver.ui.components.ErrorView
 import com.logisticsx.driver.ui.components.LoadingIndicator
 import com.logisticsx.driver.ui.components.phone.PhoneNumberInput
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.AccountViewModel
 import com.logisticsx.driver.viewmodel.base.ActionState
 import com.logisticsx.driver.viewmodel.base.UiState
@@ -59,8 +53,8 @@ fun AccountScreen(
     onNavigateToMyLicenses: () -> Unit,
     viewModel: AccountViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val saveState by viewModel.saveState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val saveState by viewModel.saveState.collectAsStateWithLifecycle()
 
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -82,7 +76,6 @@ fun AccountScreen(
 
     LaunchedEffect(saveState) {
         if (saveState is ActionState.Success) {
-            // Show success message and reset after a delay
             delay(2000)
             viewModel.resetSaveState()
         }
@@ -108,7 +101,7 @@ fun AccountScreen(
                             },
                             enabled = saveState !is ActionState.Loading
                         ) {
-                            Icon(Icons.Default.Save, "Save")
+                            Icon(AppIcons.Save, "Save")
                         }
                     }
                 }
@@ -185,26 +178,25 @@ fun AccountScreen(
                         else -> {}
                     }
 
-                    // Quick Links Section
                     CardContainer {
                         Column {
                             MenuRow(
-                                icon = Icons.Default.BarChart,
+                                icon = AppIcons.BarChart,
                                 title = "Statistics",
                                 onClick = onNavigateToStats
                             )
                             MenuRow(
-                                icon = Icons.Default.Badge,
+                                icon = AppIcons.Badge,
                                 title = "My Licenses",
                                 onClick = onNavigateToMyLicenses
                             )
                             MenuRow(
-                                icon = Icons.Default.Settings,
+                                icon = AppIcons.Settings,
                                 title = "Settings",
                                 onClick = onNavigateToSettings
                             )
                             MenuRow(
-                                icon = Icons.Default.Shield,
+                                icon = AppIcons.Shield,
                                 title = "Privacy",
                                 onClick = onNavigateToPrivacy
                             )
@@ -250,7 +242,7 @@ private fun MenuRow(
             )
         }
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            imageVector = AppIcons.KeyboardArrowRight,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )

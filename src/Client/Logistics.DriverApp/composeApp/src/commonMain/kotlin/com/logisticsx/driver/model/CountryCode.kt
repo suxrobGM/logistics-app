@@ -36,9 +36,9 @@ enum class CountryCode(
         }
 
         /**
-         * Parses a full phone number and extracts the country code and local number.
-         * @param fullPhoneNumber The full phone number including country code (e.g., "+1234567890")
-         * @return Pair of CountryCode and local number, or null if not parseable
+         * Splits a number such as "+1234567890" into its country code and local part.
+         *
+         * An unparseable number falls back to the default country.
          */
         fun parsePhoneNumber(fullPhoneNumber: String?): Pair<CountryCode, String> {
             if (fullPhoneNumber.isNullOrBlank()) {

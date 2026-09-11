@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Badge
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,12 +16,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.DriverLicenseDto
 import com.logisticsx.driver.api.models.DriverLicenseStatus
 import com.logisticsx.driver.ui.components.AppTopBar
@@ -34,18 +30,18 @@ import com.logisticsx.driver.ui.components.Chip
 import com.logisticsx.driver.ui.components.DetailRow
 import com.logisticsx.driver.ui.components.EmptyStateView
 import com.logisticsx.driver.ui.components.UiStateContent
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.formatShort
 import com.logisticsx.driver.viewmodel.MyLicensesViewModel
 import org.koin.compose.viewmodel.koinViewModel
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyLicensesScreen(
     onNavigateBack: () -> Unit,
     viewModel: MyLicensesViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -53,12 +49,12 @@ fun MyLicensesScreen(
                 title = "My Licenses",
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(AppIcons.ArrowBack, "Back")
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.refresh() }) {
-                        Icon(Icons.Default.Refresh, "Refresh")
+                        Icon(AppIcons.Refresh, "Refresh")
                     }
                 }
             )
@@ -67,7 +63,7 @@ fun MyLicensesScreen(
         UiStateContent(uiState, viewModel::refresh) { licenses ->
             if (licenses.isEmpty()) {
                 EmptyStateView(
-                    icon = Icons.Default.Badge,
+                    icon = AppIcons.Badge,
                     title = "No licenses on file",
                     message = "Licenses are added from the TMS portal, under your employee " +
                         "profile. Once one is on file it shows up here.",
@@ -90,7 +86,6 @@ fun MyLicensesScreen(
     }
 }
 
-@OptIn(ExperimentalTime::class)
 @Composable
 private fun LicenseCard(license: DriverLicenseDto) {
     val (chipText, chipColor) = expiryChip(license)
@@ -134,7 +129,6 @@ private fun LicenseCard(license: DriverLicenseDto) {
     }
 }
 
-@OptIn(ExperimentalTime::class)
 @Composable
 private fun expiryChip(license: DriverLicenseDto): Pair<String, Color> {
     val status = license.status

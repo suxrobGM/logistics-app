@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -20,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.logisticsx.driver.ui.icons.AppIcons
 
 /**
  * VIN input section with scan and decode functionality.
@@ -62,7 +61,7 @@ fun VinInputSection(
             Spacer(modifier = Modifier.width(8.dp))
 
             IconButton(onClick = onScanVin) {
-                Icon(Icons.Default.Search, "Scan VIN")
+                Icon(AppIcons.Search, "Scan VIN")
             }
         }
 

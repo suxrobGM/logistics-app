@@ -96,7 +96,6 @@ class SignalRWebSocketClient(
                     Logger.d("SignalR WS: Connected and handshake complete")
                     flushPendingSends()
                     startMessageLoop()
-                    // Connection closed normally
                     _connectionState.value = false
                     Logger.d("SignalR WS: Connection closed")
                 }
@@ -106,7 +105,6 @@ class SignalRWebSocketClient(
             }
         }
 
-        // Wait for connection using StateFlow instead of polling
         val connected = withTimeoutOrNull(CONNECTION_TIMEOUT_MS) {
             _connectionState.first { it }
         }
@@ -153,8 +151,6 @@ class SignalRWebSocketClient(
         scope = null
         Logger.d("SignalR WS: Disconnected")
     }
-
-    // --- Private helpers ---
 
     private suspend fun negotiateConnection(): String {
         val negotiateUrl = hubUrl.trimEnd('/') + "/negotiate"

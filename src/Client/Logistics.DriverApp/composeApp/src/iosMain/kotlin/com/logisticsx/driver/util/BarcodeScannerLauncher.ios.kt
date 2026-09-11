@@ -42,7 +42,6 @@ actual class BarcodeScannerLauncher {
     actual fun launchScanner(onResult: (ScanResult?) -> Unit) {
         pendingResult = onResult
 
-        // Check camera permission
         val status = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
 
         when (status) {
@@ -131,7 +130,6 @@ private class BarcodeScannerViewController(
         view.backgroundColor = UIColor.blackColor
 
         setupCamera()
-        setupCancelButton()
     }
 
     override fun viewWillAppear(animated: Boolean) {
@@ -193,17 +191,6 @@ private class BarcodeScannerViewController(
         }
     }
 
-    private fun setupCancelButton() {
-        val alert = UIAlertController.alertControllerWithTitle(
-            title = "Scan VIN Barcode",
-            message = "Point camera at barcode",
-            preferredStyle = UIAlertControllerStyleAlert
-        )
-
-        // Note: In a real implementation, you'd add a cancel button overlay to the camera view
-        // For simplicity, we'll add a gesture recognizer or navigation bar
-    }
-
     private fun showError(message: String) {
         val alert = UIAlertController.alertControllerWithTitle(
             title = "Error",
@@ -249,7 +236,6 @@ private class BarcodeScannerViewController(
 
     override fun touchesBegan(touches: Set<*>, withEvent: platform.UIKit.UIEvent?) {
         super.touchesBegan(touches, withEvent)
-        // Tap to dismiss
         dismissViewControllerAnimated(true) {
             onDismiss()
         }

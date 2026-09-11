@@ -18,10 +18,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,12 +35,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.MessageDto
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.EmptyStateView
 import com.logisticsx.driver.ui.components.ErrorView
 import com.logisticsx.driver.ui.components.LoadingIndicator
 import com.logisticsx.driver.ui.components.MessageBubble
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.ChatData
 import com.logisticsx.driver.viewmodel.ChatViewModel
 import com.logisticsx.driver.viewmodel.base.UiState
@@ -58,11 +55,10 @@ fun ConversationScreen(
     onBack: () -> Unit = {},
     viewModel: ChatViewModel = koinViewModel(key = conversationId) { parametersOf(conversationId) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var messageText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
-    // Scroll to bottom when new messages arrive
     LaunchedEffect(uiState) {
         val state = uiState
         if (state is UiState.Success) {
@@ -79,7 +75,7 @@ fun ConversationScreen(
                 title = uiState.getConversationTitle(),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(AppIcons.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -91,7 +87,6 @@ fun ConversationScreen(
                 .padding(paddingValues)
                 .imePadding()
         ) {
-            // Messages area
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -108,7 +103,7 @@ fun ConversationScreen(
 
                         if (chatData.messages.isEmpty()) {
                             EmptyStateView(
-                                icon = Icons.Default.ChatBubbleOutline,
+                                icon = AppIcons.ChatBubbleOutline,
                                 title = "No messages yet",
                                 message = "Start the conversation!"
                             )
@@ -156,7 +151,6 @@ fun ConversationScreen(
                 }
             }
 
-            // Input area
             MessageInput(
                 messageText = messageText,
                 onMessageTextChange = { messageText = it },
@@ -206,7 +200,7 @@ private fun MessageInput(
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        imageVector = AppIcons.Send,
                         contentDescription = "Send",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
@@ -223,15 +217,12 @@ private fun UiState<ChatData>.getConversationTitle(): String {
     return when (this) {
         is UiState.Success -> {
             val chatData = this.data
-            // Try conversation name first
             chatData.conversation?.name?.takeIf { it.isNotBlank() }
-            // Then try participant names
                 ?: chatData.conversation?.participants
                     ?.mapNotNull { it.employeeName }
                     ?.filter { it.isNotBlank() }
                     ?.takeIf { it.isNotEmpty() }
                     ?.joinToString(", ")
-                // Fallback to unique sender names from messages (excluding current user)
                 ?: chatData.messages
                     .filter { it.senderId != chatData.currentUserId }
                     .mapNotNull { it.senderName }
@@ -239,7 +230,6 @@ private fun UiState<ChatData>.getConversationTitle(): String {
                     .distinct()
                     .takeIf { it.isNotEmpty() }
                     ?.joinToString(", ")
-                // Final fallback
                 ?: "Chat"
         }
         else -> "Chat"

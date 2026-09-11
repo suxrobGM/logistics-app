@@ -18,11 +18,9 @@ import com.logisticsx.driver.ui.components.settings.SelectableItem
 import kotlinx.coroutines.launch
 
 /**
- * A bottom sheet picker for selecting a country code.
+ * Bottom sheet for picking a country code.
  *
- * @param selectedCountry The currently selected country code
- * @param onCountrySelected Callback when a country is selected (sheet will be hidden automatically)
- * @param onDismiss Callback when the sheet is dismissed
+ * Choosing a country hides the sheet, so the caller need not dismiss it.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

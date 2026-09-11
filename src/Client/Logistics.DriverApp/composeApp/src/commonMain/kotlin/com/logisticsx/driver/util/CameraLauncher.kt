@@ -27,25 +27,12 @@ data class CaptureResult(
 }
 
 /**
- * Multiplatform camera launcher interface.
- * Provides photo capture functionality using platform-specific implementations.
- *
- * Uses platform-specific implementations:
- * - Android: ActivityResultContracts.TakePicture() or CameraX
- * - iOS: UIImagePickerController
+ * Photo capture, backed by the Activity Result API on Android and UIImagePickerController on iOS.
  */
 expect class CameraLauncher {
-    /**
-     * Launches the camera to capture a photo.
-     *
-     * @param onResult Callback with the captured photo result, or null if cancelled/failed
-     */
+    /** Captures a photo. Reports null if the user cancels or capture fails. */
     fun launchCamera(onResult: (CaptureResult?) -> Unit)
 
-    /**
-     * Launches the photo picker to select from gallery.
-     *
-     * @param onResult Callback with the selected photo result, or null if cancelled/failed
-     */
+    /** Picks a photo from the gallery. Reports null if the user cancels or the pick fails. */
     fun launchGallery(onResult: (CaptureResult?) -> Unit)
 }

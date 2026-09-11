@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -14,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.DvirType
 import com.logisticsx.driver.ui.components.SectionCard
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.displayName
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -38,7 +37,7 @@ fun DvirInspectionTypeSelector(
                     leadingIcon = if (selectedType == type) {
                         {
                             Icon(
-                                Icons.Filled.Check,
+                                AppIcons.Check,
                                 contentDescription = null,
                                 Modifier.size(18.dp)
                             )

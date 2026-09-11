@@ -12,12 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.filled.Assignment
-import androidx.compose.material.icons.filled.LocalShipping
-import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -28,12 +22,12 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.TripDto
 import com.logisticsx.driver.api.models.TripLoadDto
 import com.logisticsx.driver.api.models.TripStopDto
@@ -47,6 +41,7 @@ import com.logisticsx.driver.ui.components.SectionCard
 import com.logisticsx.driver.ui.components.TripStatusChip
 import com.logisticsx.driver.ui.components.TripStopItem
 import com.logisticsx.driver.ui.components.UiStateContent
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.formatCurrency
 import com.logisticsx.driver.util.formatDistance
 import com.logisticsx.driver.util.formatShort
@@ -62,7 +57,7 @@ fun TripDetailScreen(
     viewModel: TripDetailViewModel
 ) {
     val userSettings = LocalUserSettings.current
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -70,7 +65,7 @@ fun TripDetailScreen(
                 title = "Trip Details",
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(AppIcons.ArrowBack, "Back")
                     }
                 }
             )
@@ -95,22 +90,20 @@ fun TripDetailScreen(
                         distanceUnit = userSettings.distanceUnit
                     )
 
-                    // View Route on Maps Button
                     Button(
                         onClick = { onOpenMaps(viewModel.getMapsUrl(trip)) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.Map, "Map")
+                        Icon(AppIcons.Map, "Map")
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("View Full Route on Maps")
                     }
 
-                    // DVIR Inspection Button
                     OutlinedButton(
                         onClick = { trip.id?.let { onDvirClick(it) } },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.AutoMirrored.Filled.Assignment, "Truck DVIR")
+                        Icon(AppIcons.Assignment, "Truck DVIR")
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("Truck DVIR (Post-Trip)")
                     }
@@ -247,7 +240,7 @@ private fun TripLoadsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.LocalShipping,
+                    imageVector = AppIcons.LocalShipping,
                     contentDescription = "Load",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)

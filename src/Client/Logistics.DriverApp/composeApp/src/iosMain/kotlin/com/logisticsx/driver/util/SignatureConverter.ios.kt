@@ -36,14 +36,11 @@ actual object SignatureConverter {
             val renderer = UIGraphicsImageRenderer(size = size, format = format)
 
             val image = renderer.imageWithActions { context ->
-                // Fill white background
                 UIColor.whiteColor.setFill()
                 context?.fillRect(CGRectMake(0.0, 0.0, width.toDouble(), height.toDouble()))
 
-                // Configure stroke
                 UIColor.blackColor.setStroke()
 
-                // Draw each path
                 for (pathData in paths) {
                     if (pathData.points.size < 2) continue
 
@@ -62,14 +59,12 @@ actual object SignatureConverter {
                 }
             }
 
-            // Convert to PNG data
             val pngData: NSData? = UIImagePNGRepresentation(image)
             if (pngData == null) {
                 Logger.e("SignatureConverter", "Failed to create PNG data")
                 return null
             }
 
-            // Encode to Base64
             pngData.base64EncodedStringWithOptions(0u)
         } catch (e: Exception) {
             Logger.e("SignatureConverter", "Failed to convert signature to Base64: ${e.message}")

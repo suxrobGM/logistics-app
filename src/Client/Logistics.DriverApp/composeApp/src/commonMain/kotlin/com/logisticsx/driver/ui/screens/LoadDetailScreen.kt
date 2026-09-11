@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package com.logisticsx.driver.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,11 +20,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.LoadStatus
 import com.logisticsx.driver.model.LocalUserSettings
 import com.logisticsx.driver.model.getMapsUrl
@@ -40,11 +33,11 @@ import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.CardContainer
 import com.logisticsx.driver.ui.components.DetailRow
 import com.logisticsx.driver.ui.components.UiStateContent
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.formatCurrency
 import com.logisticsx.driver.util.formatDistance
 import com.logisticsx.driver.util.formatShort
 import com.logisticsx.driver.viewmodel.LoadDetailViewModel
-import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +51,7 @@ fun LoadDetailScreen(
     viewModel: LoadDetailViewModel
 ) {
     val userSettings = LocalUserSettings.current
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -66,7 +59,7 @@ fun LoadDetailScreen(
                 title = "Load Details",
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(AppIcons.ArrowBack, "Back")
                     }
                 }
             )
@@ -81,7 +74,6 @@ fun LoadDetailScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Load Header
                     CardContainer {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
@@ -98,7 +90,6 @@ fun LoadDetailScreen(
                         }
                     }
 
-                    // Route Information
                     CardContainer {
                         Column(modifier = Modifier.padding(16.dp)) {
                             DetailRow("Origin", load.originAddress.toDisplayString())
@@ -129,7 +120,6 @@ fun LoadDetailScreen(
                         }
                     }
 
-                    // Container (intermodal loads)
                     if (load.containerNumber != null) {
                         CardContainer {
                             Column(modifier = Modifier.padding(16.dp)) {
@@ -148,7 +138,6 @@ fun LoadDetailScreen(
                         }
                     }
 
-                    // Schedule
                     if (load.requestedPickupDate != null || load.requestedDeliveryDate != null) {
                         CardContainer {
                             Column(modifier = Modifier.padding(16.dp)) {
@@ -169,7 +158,6 @@ fun LoadDetailScreen(
                         }
                     }
 
-                    // Load Details
                     CardContainer {
                         Column(modifier = Modifier.padding(16.dp)) {
                             DetailRow("Status", load.status?.name?.replace("_", " ") ?: "Unknown")
@@ -192,25 +180,23 @@ fun LoadDetailScreen(
                         }
                     }
 
-                    // Map Button - always show since coordinates are required
+                    // A load always carries coordinates, so this button needs no null check.
                     Button(
                         onClick = { onOpenMaps(load.getMapsUrl()) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.Map, "Map")
+                        Icon(AppIcons.Map, "Map")
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("View Route on Maps")
                     }
 
-                    // Status-specific Action Buttons
                     when (load.status) {
                         LoadStatus.DISPATCHED -> {
-                            // Capture BOL button
                             OutlinedButton(
                                 onClick = { load.id?.let { onCaptureBol(it) } },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Icon(Icons.Default.Description, "BOL")
+                                Icon(AppIcons.Description, "BOL")
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Capture Bill of Lading")
                             }
@@ -227,12 +213,11 @@ fun LoadDetailScreen(
                         }
 
                         LoadStatus.PICKED_UP -> {
-                            // Capture POD button
                             OutlinedButton(
                                 onClick = { load.id?.let { onCapturePod(it) } },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Icon(Icons.Default.CameraAlt, "POD")
+                                Icon(AppIcons.CameraAlt, "POD")
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Capture Proof of Delivery")
                             }
@@ -251,7 +236,6 @@ fun LoadDetailScreen(
                         else -> {}
                     }
 
-                    // Vehicle Inspection Section - Always visible for active loads
                     if (load.status in listOf(
                             LoadStatus.DISPATCHED,
                             LoadStatus.PICKED_UP,
@@ -267,24 +251,22 @@ fun LoadDetailScreen(
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
 
-                                // Pickup Inspection button
                                 OutlinedButton(
                                     onClick = { load.id?.let { onPickupInspection(it) } },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Icon(Icons.Default.Description, "Pickup Inspection")
+                                    Icon(AppIcons.Description, "Pickup Inspection")
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text("Pickup Inspection")
                                 }
 
                                 Spacer(modifier = Modifier.height(8.dp))
 
-                                // Delivery Inspection button
                                 OutlinedButton(
                                     onClick = { load.id?.let { onDeliveryInspection(it) } },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Icon(Icons.Default.Description, "Delivery Inspection")
+                                    Icon(AppIcons.Description, "Delivery Inspection")
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text("Delivery Inspection")
                                 }

@@ -46,7 +46,6 @@ class ConversationStateManager(
             }
         }
 
-        // Observe new messages
         scope.launch {
             messagingService.newMessages.collect { message ->
                 Logger.d("ConversationStateManager: Received message from ${message.senderName}")

@@ -3,22 +3,15 @@ package com.logisticsx.driver.util
 import com.logisticsx.driver.ui.components.PathData
 
 /**
- * Multiplatform signature converter utility.
  * Converts drawn signature paths to Base64-encoded PNG images.
  *
- * Uses platform-specific implementations:
- * - Android: android.graphics.Bitmap + Canvas
- * - iOS: UIGraphicsImageRenderer
+ * Android draws with Bitmap and Canvas, iOS with UIGraphicsImageRenderer.
  */
 expect object SignatureConverter {
     /**
-     * Converts signature paths to a Base64-encoded PNG image.
+     * Renders signature strokes to a Base64-encoded PNG, or null if rendering fails.
      *
-     * @param paths List of PathData containing signature stroke points
-     * @param width Width of the output image in pixels
-     * @param height Height of the output image in pixels
-     * @param strokeWidth Width of the signature strokes in pixels
-     * @return Base64-encoded PNG image string, or null if conversion fails
+     * All sizes are in pixels.
      */
     fun pathsToBase64Png(
         paths: List<PathData>,

@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +15,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,12 +22,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.model.DistanceUnit
 import com.logisticsx.driver.model.Language
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.CardContainer
 import com.logisticsx.driver.ui.components.settings.SelectableItem
 import com.logisticsx.driver.ui.components.settings.SettingsItem
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -41,7 +39,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel()
 ) {
-    val settings by viewModel.settings.collectAsState()
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
     var showDistanceUnitSheet by remember { mutableStateOf(false) }
     var showLanguageSheet by remember { mutableStateOf(false) }
 
@@ -62,7 +60,6 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Units Section
             Text(
                 text = "Preferences",
                 style = MaterialTheme.typography.titleMedium,
@@ -72,7 +69,7 @@ fun SettingsScreen(
             CardContainer {
                 Column {
                     SettingsItem(
-                        icon = Icons.Default.Straighten,
+                        icon = AppIcons.Straighten,
                         title = "Distance Unit",
                         value = settings.distanceUnit.displayName,
                         onClick = { showDistanceUnitSheet = true }
@@ -84,7 +81,7 @@ fun SettingsScreen(
                     )
 
                     SettingsItem(
-                        icon = Icons.Default.Language,
+                        icon = AppIcons.Language,
                         title = "Language",
                         value = settings.language.displayName,
                         onClick = { showLanguageSheet = true }
@@ -94,7 +91,6 @@ fun SettingsScreen(
         }
     }
 
-    // Distance Unit Bottom Sheet
     if (showDistanceUnitSheet) {
         ModalBottomSheet(
             onDismissRequest = { showDistanceUnitSheet = false },
@@ -129,7 +125,6 @@ fun SettingsScreen(
         }
     }
 
-    // Language Bottom Sheet
     if (showLanguageSheet) {
         ModalBottomSheet(
             onDismissRequest = { showLanguageSheet = false },

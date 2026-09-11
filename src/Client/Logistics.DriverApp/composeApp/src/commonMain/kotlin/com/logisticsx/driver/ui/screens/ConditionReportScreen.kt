@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.InspectionType
 import com.logisticsx.driver.api.models.LoadType
 import com.logisticsx.driver.ui.components.capture.CaptureScreenScaffold
@@ -42,7 +42,7 @@ fun ConditionReportScreen(
     val onCapturePhoto = rememberCameraCapture(onPhotoCaptured = viewModel::addPhoto)
     val barcodeScannerLauncher: BarcodeScannerLauncher? = getKoin().getOrNull()
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showAddDefectDialog by remember { mutableStateOf(false) }
 
     val title = uiState.inspectionType.displayTitle(uiState.cargoType)
@@ -54,7 +54,6 @@ fun ConditionReportScreen(
         onClearError = viewModel::clearError,
         onNavigateBack = onNavigateBack
     ) {
-        // Cargo-type-aware identifier block
         when {
             uiState.cargoType == LoadType.VEHICLE -> {
                 item {
@@ -93,7 +92,7 @@ fun ConditionReportScreen(
             }
 
             else -> {
-                // Generic freight: no identifier section, just defects + photos + signature
+                // Generic freight carries no identifier, so this branch is deliberately empty.
             }
         }
 

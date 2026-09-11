@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.logisticsx.driver.ui.icons.AppIcons
 
 /**
  * Identifier section shown when inspecting container cargo (intermodal /
@@ -58,7 +57,7 @@ fun ContainerInputSection(
             Spacer(modifier = Modifier.width(8.dp))
 
             IconButton(onClick = onScanContainer) {
-                Icon(Icons.Default.Search, "Scan container number")
+                Icon(AppIcons.Search, "Scan container number")
             }
         }
 

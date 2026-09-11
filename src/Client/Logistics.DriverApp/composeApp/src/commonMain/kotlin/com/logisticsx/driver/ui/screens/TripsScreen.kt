@@ -6,22 +6,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalShipping
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.EmptyStateView
 import com.logisticsx.driver.ui.components.TripCard
 import com.logisticsx.driver.ui.components.UiStateContent
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.TripsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -31,7 +29,7 @@ fun TripsScreen(
     onTripClick: (String) -> Unit,
     viewModel: TripsViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -39,7 +37,7 @@ fun TripsScreen(
                 title = "Trips",
                 actions = {
                     IconButton(onClick = { viewModel.refresh() }) {
-                        Icon(Icons.Default.Refresh, "Refresh")
+                        Icon(AppIcons.Refresh, "Refresh")
                     }
                 }
             )
@@ -48,7 +46,7 @@ fun TripsScreen(
         UiStateContent(uiState, viewModel::refresh) { trips ->
             if (trips.isEmpty()) {
                 EmptyStateView(
-                    icon = Icons.Default.LocalShipping,
+                    icon = AppIcons.LocalShipping,
                     title = "No trips found",
                     message = "Pull to refresh or check back later",
                     modifier = Modifier.padding(paddingValues)

@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -23,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.model.ChartData
 import com.logisticsx.driver.model.LocalUserSettings
 import com.logisticsx.driver.model.toChartData
@@ -41,6 +39,7 @@ import com.logisticsx.driver.ui.components.LoadingIndicator
 import com.logisticsx.driver.ui.components.UiStateContent
 import com.logisticsx.driver.ui.components.charts.bar.BarChart
 import com.logisticsx.driver.ui.components.charts.line.LineChart
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.formatCurrency
 import com.logisticsx.driver.util.formatDistance
 import com.logisticsx.driver.viewmodel.ChartUiState
@@ -58,9 +57,9 @@ fun StatsScreen(
     viewModel: StatsViewModel = koinViewModel()
 ) {
     val userSettings = LocalUserSettings.current
-    val statsState by viewModel.statsState.collectAsState()
-    val chartState by viewModel.chartState.collectAsState()
-    val selectedRange by viewModel.selectedRange.collectAsState()
+    val statsState by viewModel.statsState.collectAsStateWithLifecycle()
+    val chartState by viewModel.chartState.collectAsStateWithLifecycle()
+    val selectedRange by viewModel.selectedRange.collectAsStateWithLifecycle()
     val dateRanges = remember { viewModel.dateRanges }
     var showRangePicker by remember { mutableStateOf(false) }
     var selectedChartType by remember { mutableStateOf(ChartType.BAR) }
@@ -71,7 +70,7 @@ fun StatsScreen(
                 title = "My Stats",
                 actions = {
                     IconButton(onClick = { viewModel.refresh() }) {
-                        Icon(Icons.Default.Refresh, "Refresh")
+                        Icon(AppIcons.Refresh, "Refresh")
                     }
                 }
             )
@@ -85,7 +84,6 @@ fun StatsScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Weekly Stats Card
                     item {
                         Text(
                             text = "Weekly Stats",
@@ -111,7 +109,6 @@ fun StatsScreen(
                         }
                     }
 
-                    // Monthly Stats Card
                     item {
                         Text(
                             text = "Monthly Stats",
@@ -137,7 +134,6 @@ fun StatsScreen(
                         }
                     }
 
-                    // Chart Section Header
                     item {
                         Column {
                             Row(
@@ -157,7 +153,6 @@ fun StatsScreen(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            // Chart type selector
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
@@ -172,7 +167,6 @@ fun StatsScreen(
                         }
                     }
 
-                    // Chart Content
                     item {
                         CardContainer {
                             when (val chart = chartState) {
@@ -194,7 +188,6 @@ fun StatsScreen(
                                     }
 
                                     Column(modifier = Modifier.padding(16.dp)) {
-                                        // Summary row
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -231,7 +224,6 @@ fun StatsScreen(
                                             }
                                         }
 
-                                        // Chart display
                                         when (selectedChartType) {
                                             ChartType.BAR -> {
                                                 BarChart(

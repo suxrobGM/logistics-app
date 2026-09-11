@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.DataExportRequestDto
 import com.logisticsx.driver.api.models.DataExportStatus
 import com.logisticsx.driver.ui.components.AppTopBar
@@ -42,6 +40,7 @@ import com.logisticsx.driver.ui.components.Chip
 import com.logisticsx.driver.ui.components.DetailRow
 import com.logisticsx.driver.ui.components.LoadingIndicator
 import com.logisticsx.driver.ui.components.SectionCard
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.PrivacyViewModel
 import com.logisticsx.driver.viewmodel.base.ActionState
 import org.koin.compose.viewmodel.koinViewModel
@@ -52,11 +51,11 @@ fun PrivacyScreen(
     onNavigateBack: () -> Unit,
     viewModel: PrivacyViewModel = koinViewModel(),
 ) {
-    val isLoading by viewModel.isLoading.collectAsState()
-    val exports by viewModel.exports.collectAsState()
-    val deletions by viewModel.deletions.collectAsState()
-    val exportAction by viewModel.exportAction.collectAsState()
-    val deleteAction by viewModel.deleteAction.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val exports by viewModel.exports.collectAsStateWithLifecycle()
+    val deletions by viewModel.deletions.collectAsStateWithLifecycle()
+    val exportAction by viewModel.exportAction.collectAsStateWithLifecycle()
+    val deleteAction by viewModel.deleteAction.collectAsStateWithLifecycle()
 
     var showDeleteDialog by remember { mutableStateOf(false) }
     var deleteReason by remember { mutableStateOf("") }
@@ -69,7 +68,7 @@ fun PrivacyScreen(
                 title = "Privacy",
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(AppIcons.ArrowBack, "Back")
                     }
                 },
             )

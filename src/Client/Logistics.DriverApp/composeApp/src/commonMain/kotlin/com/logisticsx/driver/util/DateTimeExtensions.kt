@@ -9,7 +9,6 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 fun Instant.formatShort(): String {
@@ -22,7 +21,6 @@ fun Instant.formatShort(): String {
  * Formats an instant for display in message lists.
  * Shows relative time for recent messages, date for older ones.
  */
-@OptIn(ExperimentalTime::class)
 fun Instant.formatMessageTime(): String {
     val now = Clock.System.now()
     val diff = now - this

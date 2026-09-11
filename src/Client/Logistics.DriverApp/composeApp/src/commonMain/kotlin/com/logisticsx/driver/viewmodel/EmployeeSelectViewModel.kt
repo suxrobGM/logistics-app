@@ -87,7 +87,6 @@ class EmployeeSelectViewModel(
         }) {
             _createState.value = ActionState.Loading
 
-            // Check if conversation already exists
             val conversations = messageApi.getConversations(participantId = userId).bodyOrThrow()
             val existingConversation = conversations.find { conversation ->
                 conversation.isTenantChat != true &&
@@ -100,7 +99,6 @@ class EmployeeSelectViewModel(
                 return@launchSafely
             }
 
-            // Create new conversation
             val conversation = messageApi.createConversation(
                 CreateConversationRequest(participantIds = listOf(userId, employeeId))
             ).bodyOrThrow()

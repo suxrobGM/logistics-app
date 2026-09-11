@@ -35,7 +35,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         val HAS_ACCEPTED_LOCATION_DISCLOSURE = booleanPreferencesKey("has_accepted_location_disclosure")
     }
 
-    // Access Token
     suspend fun saveAccessToken(token: String) {
         dataStore.edit { prefs -> prefs[ACCESS_TOKEN] = token }
     }
@@ -44,7 +43,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[ACCESS_TOKEN]
     }
 
-    // Refresh Token
     suspend fun saveRefreshToken(token: String) {
         dataStore.edit { prefs -> prefs[REFRESH_TOKEN] = token }
     }
@@ -53,7 +51,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[REFRESH_TOKEN]
     }
 
-    // ID Token
     suspend fun saveIdToken(token: String) {
         dataStore.edit { prefs -> prefs[ID_TOKEN] = token }
     }
@@ -62,7 +59,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[ID_TOKEN]
     }
 
-    // Tenant ID
     suspend fun saveTenantId(tenantId: String) {
         dataStore.edit { prefs -> prefs[TENANT_ID] = tenantId }
     }
@@ -71,7 +67,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[TENANT_ID]
     }
 
-    // User ID
     suspend fun saveUserId(userId: String) {
         dataStore.edit { prefs -> prefs[USER_ID] = userId }
     }
@@ -80,7 +75,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[USER_ID]
     }
 
-    // Truck ID
     suspend fun saveTruckId(truckId: String) {
         dataStore.edit { prefs -> prefs[TRUCK_ID] = truckId }
     }
@@ -89,7 +83,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[TRUCK_ID]
     }
 
-    // Truck Number
     suspend fun saveTruckNumber(truckNumber: String) {
         dataStore.edit { prefs -> prefs[TRUCK_NUMBER] = truckNumber }
     }
@@ -98,7 +91,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[TRUCK_NUMBER]
     }
 
-    // Token Expiry
     suspend fun saveTokenExpiry(expiry: Long) {
         dataStore.edit { prefs -> prefs[TOKEN_EXPIRY] = expiry }
     }
@@ -107,7 +99,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[TOKEN_EXPIRY]
     }
 
-    // Driver Name
     suspend fun saveDriverName(name: String) {
         dataStore.edit { prefs -> prefs[DRIVER_NAME] = name }
     }
@@ -116,7 +107,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[DRIVER_NAME]
     }
 
-    // Distance Unit
     suspend fun saveDistanceUnit(unit: DistanceUnit) {
         dataStore.edit { prefs -> prefs[DISTANCE_UNIT] = unit.code }
     }
@@ -126,7 +116,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return DistanceUnit.fromCode(code ?: DistanceUnit.MILES.code)
     }
 
-    // Language
     suspend fun saveLanguage(language: Language) {
         dataStore.edit { prefs -> prefs[LANGUAGE] = language.code }
     }
@@ -136,7 +125,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return Language.fromCode(code ?: Language.ENGLISH.code)
     }
 
-    // Duty Status
     suspend fun saveIsOnDuty(isOnDuty: Boolean) {
         dataStore.edit { prefs -> prefs[IS_ON_DUTY] = isOnDuty }
     }
@@ -145,7 +133,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[IS_ON_DUTY] ?: false
     }
 
-    // Location Disclosure
     suspend fun saveHasAcceptedLocationDisclosure(accepted: Boolean) {
         dataStore.edit { prefs -> prefs[HAS_ACCEPTED_LOCATION_DISCLOSURE] = accepted }
     }
@@ -154,7 +141,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         return dataStore.data.first()[HAS_ACCEPTED_LOCATION_DISCLOSURE] ?: false
     }
 
-    // User Settings (combined)
     fun getUserSettingsFlow(): Flow<UserSettings> {
         return dataStore.data.map { prefs ->
             UserSettings(
@@ -166,7 +152,6 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-    // Clear all data
     suspend fun clearAll() {
         dataStore.edit { prefs -> prefs.clear() }
     }

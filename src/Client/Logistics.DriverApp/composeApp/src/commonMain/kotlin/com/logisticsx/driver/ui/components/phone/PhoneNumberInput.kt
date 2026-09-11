@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -22,15 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.model.CountryCode
+import com.logisticsx.driver.ui.icons.AppIcons
 
 /**
- * A phone number input component with country code selector.
+ * Phone number input with a country-code selector.
  *
- * @param fullPhoneNumber The full phone number including country code (e.g., "+12025551234")
- * @param onPhoneNumberChange Callback when the full phone number changes
- * @param modifier Modifier for the component
- * @param label Label for the text field
- * @param enabled Whether the input is enabled
+ * [fullPhoneNumber] carries the country code, as in "+12025551234", and the callback reports the
+ * same combined form.
  */
 @Composable
 fun PhoneNumberInput(
@@ -62,7 +58,6 @@ fun PhoneNumberInput(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
     ) {
-        // Country Code Selector
         Box(
             modifier = Modifier
                 .width(120.dp)
@@ -77,7 +72,7 @@ fun PhoneNumberInput(
                 singleLine = true,
                 trailingIcon = {
                     Icon(
-                        Icons.Default.ArrowDropDown,
+                        AppIcons.ArrowDropDown,
                         contentDescription = "Select country"
                     )
                 },
@@ -94,7 +89,6 @@ fun PhoneNumberInput(
             }
         }
 
-        // Phone Number Input
         OutlinedTextField(
             value = phoneDigits,
             onValueChange = { newValue ->
@@ -112,7 +106,6 @@ fun PhoneNumberInput(
         )
     }
 
-    // Country Picker Bottom Sheet
     if (showCountryPicker) {
         CountryCodePicker(
             selectedCountry = selectedCountry,

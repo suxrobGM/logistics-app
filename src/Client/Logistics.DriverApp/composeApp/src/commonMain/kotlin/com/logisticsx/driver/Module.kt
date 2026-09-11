@@ -49,13 +49,10 @@ import org.koin.dsl.module
 fun commonModule() = module {
     singleOf(::PreferencesManager)
 
-    // Register ApiFactory as a singleton
     single { ApiFactory(AppConfig.apiBaseUrl, get(), get()) }
 
-    // HttpClient for file upload operations
     single<HttpClient> { get<ApiFactory>().httpClient }
 
-    // Generated API instances from ApiFactory
     single<CustomerApi> { get<ApiFactory>().customerApi }
     single<DocumentApi> { get<ApiFactory>().documentApi }
     single<DriverApi> { get<ApiFactory>().driverApi }
@@ -72,10 +69,9 @@ fun commonModule() = module {
     single<UserApi> { get<ApiFactory>().userApi }
     single<VinsApi> { get<ApiFactory>().vinsApi }
 
-    // ConversationStateManager service for shared messaging state
     singleOf(::ConversationStateManager)
 
-    // Duty status + proximity watcher (drives location tracking lifecycle)
+    // These two own the location-tracking lifecycle.
     singleOf(::LoadProximityWatcher)
     singleOf(::DutyStatusManager)
 

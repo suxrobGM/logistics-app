@@ -7,10 +7,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.ui.components.capture.CaptureScreenScaffold
 import com.logisticsx.driver.ui.components.capture.LocationDisplay
 import com.logisticsx.driver.ui.components.capture.NotesTextField
@@ -28,7 +28,7 @@ fun PodCaptureScreen(
     viewModel: PodCaptureViewModel
 ) {
     val onCapturePhoto = rememberCameraCapture(onPhotoCaptured = viewModel::addPhoto)
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val title = when (uiState.captureType) {
         DocumentCaptureType.POD -> "Capture Proof of Delivery"

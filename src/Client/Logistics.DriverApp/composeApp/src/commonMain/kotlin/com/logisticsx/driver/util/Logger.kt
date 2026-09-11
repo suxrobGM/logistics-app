@@ -1,12 +1,9 @@
 package com.logisticsx.driver.util
 
 /**
- * Multiplatform logging utility.
- * Uses platform-specific implementations:
- * - Android: android.util.Log
- * - iOS: NSLog / print
+ * Logging that writes to android.util.Log on Android and NSLog on iOS.
  *
- * Supports auto-discovery of TAG from calling class or function.
+ * The tag is derived from the calling class or function when none is given.
  */
 expect object Logger {
     /** Log debug message with explicit tag */

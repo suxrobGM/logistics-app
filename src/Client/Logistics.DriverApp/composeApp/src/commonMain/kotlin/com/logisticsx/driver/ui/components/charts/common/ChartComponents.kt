@@ -20,21 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/**
- * Represents a single item in a chart legend.
- *
- * @property label The text label for the legend item
- * @property color The color associated with this data series
- */
+/** One entry in a chart legend. */
 data class LegendItem(val label: String, val color: Color)
 
-/**
- * Displays a horizontal legend for chart data series.
- * Shows colored indicators with labels for each data series in the chart.
- *
- * @param items List of legend items to display
- * @param modifier Optional modifier for the legend container
- */
+/** Horizontal legend: a colour swatch and label per data series. */
 @Composable
 fun ChartLegend(
     items: List<LegendItem>,
@@ -67,13 +56,9 @@ fun ChartLegend(
 }
 
 /**
- * Displays a tooltip with detailed information for a selected chart data point.
+ * Tooltip shown when a chart element is tapped.
  *
- * Shows the label and associated values when a user taps on a chart element.
- *
- * @param label The primary label for the tooltip (e.g., date)
- * @param values List of name-value pairs to display (e.g., "Gross" to "$1,500")
- * @param modifier Optional modifier for the tooltip container
+ * [values] are name-value pairs, such as "Gross" to "$1,500".
  */
 @Composable
 fun ChartTooltip(
@@ -108,13 +93,7 @@ fun ChartTooltip(
     }
 }
 
-/**
- * Displays a placeholder when chart has no data to show.
- *
- * @param modifier Optional modifier for the placeholder container
- * @param height Height of the placeholder area
- * @param message Message to display in the placeholder
- */
+/** Placeholder shown in place of a chart that has no data. */
 @Composable
 fun EmptyChartPlaceholder(
     modifier: Modifier = Modifier,

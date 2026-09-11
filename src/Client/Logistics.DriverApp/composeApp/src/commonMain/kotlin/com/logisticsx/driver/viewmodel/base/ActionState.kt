@@ -1,12 +1,10 @@
 package com.logisticsx.driver.viewmodel.base
 
 /**
- * Generic state for one-shot actions (save, create, delete).
- * Use this instead of defining per-ViewModel sealed classes like
- * CreateConversationState, TeamChatState, SaveState, etc.
+ * State of a one-shot action such as save, create or delete.
  *
- * @param T the result type on success (use [Unit] for actions with no result,
- *          or [String] for actions returning an ID, etc.)
+ * Use this rather than adding another per-ViewModel sealed class. [T] is the success result, or
+ * [Unit] when the action returns nothing.
  */
 sealed class ActionState<out T> {
     data object Idle : ActionState<Nothing>()

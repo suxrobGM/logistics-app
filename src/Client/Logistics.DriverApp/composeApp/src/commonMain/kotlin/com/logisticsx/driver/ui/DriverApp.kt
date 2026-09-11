@@ -2,12 +2,6 @@ package com.logisticsx.driver.ui
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Route
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -16,11 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -42,6 +36,7 @@ import com.logisticsx.driver.service.PreferencesManager
 import com.logisticsx.driver.service.auth.AuthEvent
 import com.logisticsx.driver.service.auth.AuthEventBus
 import com.logisticsx.driver.service.auth.AuthService
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.ui.theme.LogisticsDriverTheme
 import org.koin.compose.koinInject
 
@@ -53,16 +48,13 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
     val authService = koinInject<AuthService>()
     val preferencesManager = koinInject<PreferencesManager>()
 
-    val userSettings by preferencesManager.getUserSettingsFlow().collectAsState(UserSettings())
+    val userSettings by preferencesManager.getUserSettingsFlow().collectAsStateWithLifecycle(UserSettings())
 
-    // Saveable single back stack with Dashboard as start (survives config change / process death)
     val backStack = rememberNavBackStack(navSavedStateConfiguration, DashboardRoute)
     val navigator = remember { Navigator(backStack) }
 
-    // Create the entry provider for all screens (stable across recompositions)
     val entryProvider = remember(navigator, onOpenUrl) { createEntryProvider(navigator, onOpenUrl) }
 
-    // Check auth status once and navigate if not logged in
     LaunchedEffect(Unit) {
         try {
             val isLoggedIn = authService.isLoggedIn()
@@ -74,7 +66,6 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
         }
     }
 
-    // Listen for 401 Unauthorized responses and redirect to login
     LaunchedEffect(Unit) {
         AuthEventBus.events.collect { event ->
             when (event) {
@@ -87,14 +78,13 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
     }
 
     val bottomNavItems = listOf(
-        BottomNavItem("Dashboard", DashboardRoute, Icons.Default.Dashboard),
-        BottomNavItem("Trips", TripsRoute, Icons.Default.Route),
-        BottomNavItem("Messages", MessagesRoute, Icons.Default.Email),
-        BottomNavItem("Loads", PastLoadsRoute, Icons.AutoMirrored.Filled.List),
-        BottomNavItem("Account", AccountRoute, Icons.Default.AccountCircle),
+        BottomNavItem("Dashboard", DashboardRoute, AppIcons.Dashboard),
+        BottomNavItem("Trips", TripsRoute, AppIcons.Route),
+        BottomNavItem("Messages", MessagesRoute, AppIcons.Email),
+        BottomNavItem("Loads", PastLoadsRoute, AppIcons.List),
+        BottomNavItem("Account", AccountRoute, AppIcons.AccountCircle),
     )
 
-    // Bottom bar shows only on top-level destinations.
     val currentDestination = navigator.currentDestination
     val showBottomBar = currentDestination in topLevelRoutes
 

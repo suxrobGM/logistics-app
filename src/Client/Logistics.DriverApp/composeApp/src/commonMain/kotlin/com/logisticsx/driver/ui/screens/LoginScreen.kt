@@ -15,9 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,7 +23,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,8 +37,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.service.PreferencesManager
 import com.logisticsx.driver.ui.components.LoadingIndicator
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.LoginUiState
 import com.logisticsx.driver.viewmodel.LoginViewModel
 import logisticsdriver.composeapp.generated.resources.Res
@@ -55,9 +53,9 @@ import org.koin.compose.koinInject
 fun LoginScreen(onLoginSuccess: (hasAcceptedDisclosure: Boolean) -> Unit = {}) {
     val viewModel: LoginViewModel = koinInject()
     val preferencesManager: PreferencesManager = koinInject()
-    val uiState by viewModel.uiState.collectAsState()
-    val username by viewModel.username.collectAsState()
-    val password by viewModel.password.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val username by viewModel.username.collectAsStateWithLifecycle()
+    val password by viewModel.password.collectAsStateWithLifecycle()
 
     var passwordVisible by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -120,7 +118,6 @@ fun LoginScreen(onLoginSuccess: (hasAcceptedDisclosure: Boolean) -> Unit = {}) {
 
                     Spacer(modifier = Modifier.height(48.dp))
 
-                    // Error message
                     if (state is LoginUiState.Error) {
                         Text(
                             text = state.message,
@@ -130,7 +127,6 @@ fun LoginScreen(onLoginSuccess: (hasAcceptedDisclosure: Boolean) -> Unit = {}) {
                         )
                     }
 
-                    // Username field
                     OutlinedTextField(
                         value = username,
                         onValueChange = { viewModel.onUsernameChange(it) },
@@ -148,7 +144,6 @@ fun LoginScreen(onLoginSuccess: (hasAcceptedDisclosure: Boolean) -> Unit = {}) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Password field
                     OutlinedTextField(
                         value = password,
                         onValueChange = { viewModel.onPasswordChange(it) },
@@ -174,9 +169,9 @@ fun LoginScreen(onLoginSuccess: (hasAcceptedDisclosure: Boolean) -> Unit = {}) {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                                 Icon(
                                     imageVector = if (passwordVisible) {
-                                        Icons.Default.VisibilityOff
+                                        AppIcons.VisibilityOff
                                     } else {
-                                        Icons.Default.Visibility
+                                        AppIcons.Visibility
                                     },
                                     contentDescription = if (passwordVisible) {
                                         "Hide password"
@@ -190,7 +185,6 @@ fun LoginScreen(onLoginSuccess: (hasAcceptedDisclosure: Boolean) -> Unit = {}) {
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    // Login button
                     Button(
                         onClick = {
                             focusManager.clearFocus()

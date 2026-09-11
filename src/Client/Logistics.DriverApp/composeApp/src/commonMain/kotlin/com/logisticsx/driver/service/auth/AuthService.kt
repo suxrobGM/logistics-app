@@ -10,7 +10,6 @@ import io.ktor.http.Parameters
 import io.ktor.http.isSuccess
 import kotlin.time.Clock
 
-
 class AuthService(
     private val authorityUrl: String,
     private val preferencesManager: PreferencesManager
@@ -137,7 +136,6 @@ class AuthService(
             Clock.System.now().toEpochMilliseconds() + (tokenResponse.expiresIn * 1000L)
         preferencesManager.saveTokenExpiry(expiryTime)
 
-        // Extract user info from token
         extractAndSaveUserInfo(tokenResponse.accessToken)
     }
 

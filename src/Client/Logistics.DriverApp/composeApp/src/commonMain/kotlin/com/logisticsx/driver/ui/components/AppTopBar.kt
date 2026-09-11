@@ -6,12 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 
-/**
- * Shared TopAppBar component with common configuration.
- * @param title The title to display in the top app bar.
- * @param navigationIcon Composable for the navigation icon (e.g., back button).
- * @param actions Composable for action icons on the right side of the app bar.
- */
+/** Shared TopAppBar. Callers supply the navigation icon and trailing actions as slots. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(

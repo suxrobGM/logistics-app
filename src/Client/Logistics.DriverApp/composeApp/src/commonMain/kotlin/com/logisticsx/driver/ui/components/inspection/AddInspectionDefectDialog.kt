@@ -32,14 +32,12 @@ import com.logisticsx.driver.api.models.DefectSeverity
 import com.logisticsx.driver.util.displayName
 
 /**
- * Generic "add defect" dialog used by both DVIR and cargo Condition Report.
+ * Add-defect dialog shared by DVIR and the cargo Condition Report.
  *
- * The caller supplies:
- *  - [groupedCategories]: section name -> list of category values valid for
- *    the inspection type (DVIR uses [com.logisticsx.driver.api.models.DvirInspectionCategory.Companion.grouped],
- *    Condition Report uses [com.logisticsx.driver.util.cargoPartCatalogGrouped]).
- *  - [categoryDisplay]: how to render a single category value as a chip label.
- *  - [onConfirm]: called with the chosen category, description, and severity.
+ * The caller picks the category catalog through [groupedCategories], which maps a section name to
+ * the values valid for that inspection type. DVIR passes
+ * [com.logisticsx.driver.api.models.DvirInspectionCategory.Companion.grouped], the Condition Report
+ * passes [com.logisticsx.driver.util.cargoPartCatalogGrouped].
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

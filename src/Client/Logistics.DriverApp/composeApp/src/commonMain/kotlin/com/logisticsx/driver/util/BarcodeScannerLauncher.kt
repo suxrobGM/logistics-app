@@ -20,18 +20,9 @@ enum class BarcodeFormat {
 }
 
 /**
- * Multiplatform barcode scanner launcher interface.
- * Provides barcode/VIN scanning functionality using platform-specific implementations.
- *
- * Uses platform-specific implementations:
- * - Android: ML Kit Barcode Scanning or ZXing
- * - iOS: AVFoundation barcode scanning
+ * Barcode and VIN scanning, backed by ML Kit on Android and AVFoundation on iOS.
  */
 expect class BarcodeScannerLauncher {
-    /**
-     * Launches the barcode scanner to scan a VIN or other barcode.
-     *
-     * @param onResult Callback with the scanned barcode result, or null if cancelled/failed
-     */
+    /** Scans a VIN or other barcode. Reports null if the user cancels or the scan fails. */
     fun launchScanner(onResult: (ScanResult?) -> Unit)
 }

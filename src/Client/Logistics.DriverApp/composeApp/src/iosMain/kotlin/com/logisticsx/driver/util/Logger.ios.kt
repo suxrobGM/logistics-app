@@ -18,7 +18,6 @@ actual object Logger {
         // Find the caller frame (skip Logger frames)
         for (line in lines) {
             if (line.contains("com.logisticsx.driver") && !line.contains("Logger")) {
-                // Extract class/function name from the stack trace line
                 val match = Regex("""at\s+([^\s(]+)""").find(line)
                 if (match != null) {
                     val fullName = match.groupValues[1]

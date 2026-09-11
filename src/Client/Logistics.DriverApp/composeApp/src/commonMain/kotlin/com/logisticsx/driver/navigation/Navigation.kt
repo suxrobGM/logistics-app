@@ -40,7 +40,6 @@ fun createEntryProvider(
     navigator: Navigator,
     onOpenUrl: (String) -> Unit
 ): (NavKey) -> NavEntry<NavKey> = entryProvider {
-    // Login Screen
     entry<LoginRoute> {
         LoginScreen(
             onLoginSuccess = { hasAcceptedDisclosure ->
@@ -65,7 +64,6 @@ fun createEntryProvider(
         )
     }
 
-    // Dashboard Screen (Start destination after login)
     entry<DashboardRoute> {
         DashboardScreen(
             onLoadClick = { loadId ->
@@ -83,12 +81,10 @@ fun createEntryProvider(
         )
     }
 
-    // Stats Screen
     entry<StatsRoute> {
         StatsScreen()
     }
 
-    // Past Loads Screen
     entry<PastLoadsRoute> {
         PastLoadsScreen(
             onLoadClick = { loadId ->
@@ -97,7 +93,6 @@ fun createEntryProvider(
         )
     }
 
-    // Trips Screen
     entry<TripsRoute> {
         TripsScreen(
             onTripClick = { tripId ->
@@ -106,7 +101,6 @@ fun createEntryProvider(
         )
     }
 
-    // Trip Detail Screen
     entry<TripDetailRoute> { key ->
         val viewModel: TripDetailViewModel = koinViewModel { parametersOf(key.tripId) }
 
@@ -123,7 +117,6 @@ fun createEntryProvider(
         )
     }
 
-    // Load Detail Screen
     entry<LoadDetailRoute> { key ->
         val viewModel: LoadDetailViewModel = koinViewModel { parametersOf(key.loadId) }
 
@@ -146,7 +139,6 @@ fun createEntryProvider(
         )
     }
 
-    // Messages Screen
     entry<MessagesRoute> {
         MessagesScreen(
             onConversationClick = { conversationId ->
@@ -159,7 +151,6 @@ fun createEntryProvider(
         )
     }
 
-    // Employee Select Screen (New Message)
     entry<EmployeeSelectRoute> {
         EmployeeSelectScreen(
             onConversationCreated = { conversationId ->
@@ -170,7 +161,6 @@ fun createEntryProvider(
         )
     }
 
-    // Conversation Screen
     entry<ConversationRoute> { key ->
         ConversationScreen(
             conversationId = key.conversationId,
@@ -178,7 +168,6 @@ fun createEntryProvider(
         )
     }
 
-    // POD Capture Screen
     entry<PodCaptureRoute> { key ->
         val viewModel: PodCaptureViewModel =
             koinViewModel { parametersOf(key.loadId, key.tripStopId ?: "", key.captureType) }
@@ -189,7 +178,6 @@ fun createEntryProvider(
         )
     }
 
-    // Condition Report Screen
     entry<ConditionReportRoute> { key ->
         val viewModel: ConditionReportViewModel =
             koinViewModel { parametersOf(key.loadId, key.inspectionType) }
@@ -200,7 +188,6 @@ fun createEntryProvider(
         )
     }
 
-    // DVIR Form Screen
     entry<DvirFormRoute> { key ->
         val viewModel: DvirFormViewModel =
             koinViewModel { parametersOf(key.truckId, key.tripId, key.dvirType) }
@@ -211,7 +198,6 @@ fun createEntryProvider(
         )
     }
 
-    // Account Screen
     entry<AccountRoute> {
         AccountScreen(
             onNavigateToStats = { navigator.navigate(StatsRoute) },
@@ -221,22 +207,18 @@ fun createEntryProvider(
         )
     }
 
-    // Settings Screen
     entry<SettingsRoute> {
         SettingsScreen()
     }
 
-    // About Screen
     entry<AboutRoute> {
         AboutScreen()
     }
 
-    // Privacy Screen
     entry<PrivacyRoute> {
         PrivacyScreen(onNavigateBack = { navigator.goBack() })
     }
 
-    // My Licenses Screen
     entry<MyLicensesRoute> {
         MyLicensesScreen(onNavigateBack = { navigator.goBack() })
     }

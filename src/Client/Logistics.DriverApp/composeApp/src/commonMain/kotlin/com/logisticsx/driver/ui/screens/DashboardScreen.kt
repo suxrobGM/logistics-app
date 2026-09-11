@@ -12,11 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Assignment
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.Assignment
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.LoadDto
 import com.logisticsx.driver.api.models.TripDto
 import com.logisticsx.driver.model.driversList
@@ -46,6 +41,7 @@ import com.logisticsx.driver.ui.components.DutyStatusCard
 import com.logisticsx.driver.ui.components.LoadCard
 import com.logisticsx.driver.ui.components.TripCard
 import com.logisticsx.driver.ui.components.UiStateContent
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.DashboardViewModel
 import com.logisticsx.driver.viewmodel.base.UiState
 import org.koin.compose.viewmodel.koinViewModel
@@ -59,9 +55,9 @@ fun DashboardScreen(
     onLogout: () -> Unit,
     viewModel: DashboardViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing = uiState is UiState.Loading
-    val isOnDuty by viewModel.isOnDuty.collectAsState()
+    val isOnDuty by viewModel.isOnDuty.collectAsStateWithLifecycle()
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -70,10 +66,10 @@ fun DashboardScreen(
                 title = "Dashboard",
                 actions = {
                     IconButton(onClick = { viewModel.refresh() }) {
-                        Icon(Icons.Default.Refresh, "Refresh")
+                        Icon(AppIcons.Refresh, "Refresh")
                     }
                     IconButton(onClick = { showLogoutDialog = true }) {
-                        Icon(Icons.AutoMirrored.Filled.ExitToApp, "Logout")
+                        Icon(AppIcons.ExitToApp, "Logout")
                     }
                 }
             )
@@ -92,7 +88,6 @@ fun DashboardScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        // Duty Status Card
                         item {
                             DutyStatusCard(
                                 isOnDuty = isOnDuty,
@@ -102,7 +97,6 @@ fun DashboardScreen(
                             )
                         }
 
-                        // Truck Info Card
                         item {
                             CardContainer {
                                 Column(modifier = Modifier.padding(16.dp)) {
@@ -130,7 +124,7 @@ fun DashboardScreen(
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
                                         Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.Assignment,
+                                            imageVector = AppIcons.Assignment,
                                             contentDescription = null
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
@@ -140,7 +134,6 @@ fun DashboardScreen(
                             }
                         }
 
-                        // Active Loads Section
                         item {
                             Text(
                                 text = "Active Loads",
@@ -172,7 +165,6 @@ fun DashboardScreen(
                             }
                         }
 
-                        // Active Trips Section
                         item {
                             Text(
                                 text = "Active Trips",

@@ -12,12 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.Groups
-import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
@@ -32,15 +26,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.ConversationListItem
 import com.logisticsx.driver.ui.components.EmptyStateView
 import com.logisticsx.driver.ui.components.ErrorView
 import com.logisticsx.driver.ui.components.LoadingIndicator
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.viewmodel.ConversationListViewModel
 import com.logisticsx.driver.viewmodel.DispatcherInfo
 import com.logisticsx.driver.viewmodel.base.ActionState
@@ -55,14 +50,13 @@ fun MessagesScreen(
     onBack: () -> Unit = {},
     viewModel: ConversationListViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val dispatcherInfo by viewModel.dispatcherInfo.collectAsState()
-    val createState by viewModel.createState.collectAsState()
-    val teamChatState by viewModel.teamChatState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val dispatcherInfo by viewModel.dispatcherInfo.collectAsStateWithLifecycle()
+    val createState by viewModel.createState.collectAsStateWithLifecycle()
+    val teamChatState by viewModel.teamChatState.collectAsStateWithLifecycle()
     val isRefreshing = uiState is UiState.Loading
     val isCreating = createState is ActionState.Loading
 
-    // Handle successful conversation creation - navigate to the new conversation
     LaunchedEffect(createState) {
         val state = createState
         if (state is ActionState.Success) {
@@ -71,7 +65,6 @@ fun MessagesScreen(
         }
     }
 
-    // Handle successful team chat open - navigate to the team chat conversation
     LaunchedEffect(teamChatState) {
         val state = teamChatState
         if (state is ActionState.Success) {
@@ -86,18 +79,17 @@ fun MessagesScreen(
                 title = "Messages",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(AppIcons.ArrowBack, "Back")
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.refresh() }) {
-                        Icon(Icons.Default.Refresh, "Refresh")
+                        Icon(AppIcons.Refresh, "Refresh")
                     }
                 }
             )
         },
         floatingActionButton = {
-            // Show FAB to message dispatcher if dispatcher info is available and has conversations
             val state = uiState
             val dispatcher = dispatcherInfo
             if (dispatcher != null && state is UiState.Success) {
@@ -115,7 +107,7 @@ fun MessagesScreen(
                             )
                         } else {
                             Icon(
-                                Icons.AutoMirrored.Filled.Chat,
+                                AppIcons.Chat,
                                 contentDescription = "Message ${dispatcher.name}"
                             )
                         }
@@ -139,7 +131,6 @@ fun MessagesScreen(
                     val isLoadingTeamChat = teamChatState is ActionState.Loading
 
                     Column(modifier = Modifier.fillMaxSize()) {
-                        // Action buttons row
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -157,7 +148,7 @@ fun MessagesScreen(
                                         )
                                     } else {
                                         Icon(
-                                            Icons.Default.Groups,
+                                            AppIcons.Groups,
                                             contentDescription = null,
                                             modifier = Modifier.size(AssistChipDefaults.IconSize)
                                         )
@@ -171,7 +162,7 @@ fun MessagesScreen(
                                 label = { Text("New Message") },
                                 leadingIcon = {
                                     Icon(
-                                        Icons.Default.PersonAdd,
+                                        AppIcons.PersonAdd,
                                         contentDescription = null,
                                         modifier = Modifier.size(AssistChipDefaults.IconSize)
                                     )
@@ -226,7 +217,7 @@ private fun EmptyMessagesView(
     }
 
     EmptyStateView(
-        icon = Icons.AutoMirrored.Filled.Chat,
+        icon = AppIcons.Chat,
         title = "No conversations yet",
         message = message,
         action = if (dispatcherInfo != null) {

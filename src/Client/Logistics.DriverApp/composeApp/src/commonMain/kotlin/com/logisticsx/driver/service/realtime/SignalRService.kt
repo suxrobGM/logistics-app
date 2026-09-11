@@ -35,10 +35,7 @@ expect class SignalRService {
      */
     suspend fun disconnect()
 
-    /**
-     * Sends a location update to the server.
-     * @param location The location data to send.
-     */
+    /** Sends a location update to the server. */
     suspend fun sendLocationUpdate(location: TruckGeolocation)
 
     /**

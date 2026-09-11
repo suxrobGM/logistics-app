@@ -11,12 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.logisticsx.driver.util.Logger
 
-/**
- * Composable that handles requesting a single permission.
- *
- * @param permission The permission to request
- * @param onResult Callback with the result of the permission request
- */
+/** Requests a single permission. */
 @Composable
 fun RequestPermission(
     permission: AppPermission,

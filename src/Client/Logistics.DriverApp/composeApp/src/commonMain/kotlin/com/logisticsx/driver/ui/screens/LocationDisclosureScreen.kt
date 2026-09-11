@@ -15,11 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +39,7 @@ import com.logisticsx.driver.service.PreferencesManager
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.CardContainer
 import com.logisticsx.driver.ui.components.capture.SubmitButton
+import com.logisticsx.driver.ui.icons.AppIcons
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -120,14 +116,14 @@ fun LocationDisclosureScreen(
             Spacer(modifier = Modifier.height(4.dp))
 
             InfoCard(
-                icon = Icons.Filled.LocationOn,
+                icon = AppIcons.LocationOn,
                 title = "What we share",
                 body = "Your truck's GPS coordinates and approximate street address. " +
                     "No other data from your phone is collected."
             )
 
             InfoCard(
-                icon = Icons.Filled.Schedule,
+                icon = AppIcons.Schedule,
                 title = "When we share",
                 body = "Only while you're On Duty. Sharing continues while the " +
                     "app is open in the background or your screen is off, until " +
@@ -135,7 +131,7 @@ fun LocationDisclosureScreen(
             )
 
             InfoCard(
-                icon = Icons.Filled.Group,
+                icon = AppIcons.Group,
                 title = "Who sees it",
                 body = "The dispatchers and managers on your trucking company's account, " +
                     "and the customer of your currently active load. Not shared with " +
@@ -143,7 +139,7 @@ fun LocationDisclosureScreen(
             )
 
             InfoCard(
-                icon = Icons.Filled.Notifications,
+                icon = AppIcons.Notifications,
                 title = "How you know it's on",
                 body = "While you are On Duty, a persistent notification appears " +
                     "in your status bar showing your truck number. Pull it down " +

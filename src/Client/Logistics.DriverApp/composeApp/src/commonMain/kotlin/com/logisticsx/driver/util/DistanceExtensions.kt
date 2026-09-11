@@ -50,10 +50,5 @@ fun Double.formatKmDistance(): String {
     return formatDistance(DistanceUnit.KILOMETERS)
 }
 
-/**
- * Formats a distance in meters to a string based on the specified unit.
- * The actual implementation is platform-specific.
- * @param unit The distance unit to format the distance in.
- * @return The formatted distance string.
- */
+/** Formats a distance in metres as [unit], using the platform's own formatter. */
 expect fun Double.formatDistance(unit: DistanceUnit): String

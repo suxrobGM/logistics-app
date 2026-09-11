@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,15 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.logisticsx.driver.ui.icons.AppIcons
 
-/**
- * A settings item component with an icon, title, value, and a forward arrow.
- * @param icon The icon to be displayed on the left.
- * @param title The title of the settings item.
- * @param value The current value of the settings item.
- * @param onClick The callback to be invoked when the item is clicked.
- * @param modifier The modifier to be applied to the item.
- */
+/** A settings row: leading icon, title, current value, and a forward arrow. */
 @Composable
 fun SettingsItem(
     icon: ImageVector,
@@ -64,7 +56,7 @@ fun SettingsItem(
         }
 
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+            imageVector = AppIcons.ArrowForwardIos,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -75,7 +67,7 @@ fun SettingsItem(
 @Composable
 private fun SettingsItemPreview() {
     SettingsItem(
-        icon = Icons.AutoMirrored.Filled.ArrowForwardIos,
+        icon = AppIcons.ArrowForwardIos,
         title = "Distance Unit",
         value = "Miles"
     )

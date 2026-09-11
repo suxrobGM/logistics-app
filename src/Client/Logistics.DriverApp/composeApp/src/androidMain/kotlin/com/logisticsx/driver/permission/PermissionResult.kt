@@ -1,11 +1,6 @@
 package com.logisticsx.driver.permission
 
-/**
- * Result of a permission request.
- *
- * @param permission The permission that was requested.
- * @param isGranted Whether the permission was granted.
- */
+/** Result of a permission request. */
 data class PermissionResult(
     val permission: AppPermission,
     val isGranted: Boolean

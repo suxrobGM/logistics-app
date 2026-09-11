@@ -7,13 +7,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 private val jsonParser = Json { ignoreUnknownKeys = true }
 
-/**
- * Decodes a JWT token and extracts the payload claims as a map.
- * Returns an empty map if the token is invalid.
- *
- * @param jwt The JWT token string.
- * @return A map of claim names to their string values.
- */
+/** Decodes a JWT payload into claim name to string value. An invalid token yields an empty map. */
 fun decodeJwtPayload(jwt: String): Map<String, String> {
     val parts = jwt.split(".")
     if (parts.size != 3) return emptyMap()
@@ -25,13 +19,11 @@ fun decodeJwtPayload(jwt: String): Map<String, String> {
 
 @OptIn(ExperimentalEncodingApi::class)
 private fun decodeBase64Url(input: String): String {
-    // Add padding if necessary
     val padded = when (input.length % 4) {
         2 -> "$input=="
         3 -> "$input="
         else -> input
     }
-    // Convert base64url to base64
     val base64 = padded.replace('-', '+').replace('_', '/')
     val decoded = kotlin.io.encoding.Base64.decode(base64)
     return decoded.decodeToString()

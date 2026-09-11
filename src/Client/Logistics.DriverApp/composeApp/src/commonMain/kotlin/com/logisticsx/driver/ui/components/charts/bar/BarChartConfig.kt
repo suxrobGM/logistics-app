@@ -1,12 +1,10 @@
 package com.logisticsx.driver.ui.components.charts.bar
 
 /**
- * Configuration options for customizing [BarChart] appearance and behavior.
+ * Appearance options for [BarChart].
  *
- * @property showSecondaryBars Whether to display the secondary data series
- * @property animationDuration Duration of the bar growth animation in milliseconds
- * @property cornerRadius Radius for rounded bar corners in pixels
- * @property barSpacing Spacing between bar groups as a fraction of group width (0.0-1.0)
+ * [animationDuration] is in milliseconds and [cornerRadius] in pixels. [barSpacing] is a fraction
+ * of the group width, from 0.0 to 1.0.
  */
 data class BarChartConfig(
     val showSecondaryBars: Boolean = true,

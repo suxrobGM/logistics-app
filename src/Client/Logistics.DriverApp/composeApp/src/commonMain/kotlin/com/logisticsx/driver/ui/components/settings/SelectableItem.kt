@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,15 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.logisticsx.driver.ui.icons.AppIcons
 
-/**
- * A selectable item component with a title, optional subtitle, and a check icon if selected.
- * @param text The main text of the item.
- * @param subtitle The optional subtitle of the item.
- * @param isSelected Whether the item is selected.
- * @param onClick The callback to be invoked when the item is clicked.
- * @param modifier The modifier to be applied to the item.
- */
+/** A selectable row: text, optional subtitle, and a check mark when selected. */
 @Composable
 fun SelectableItem(
     text: String,
@@ -62,7 +54,7 @@ fun SelectableItem(
 
         if (isSelected) {
             Icon(
-                imageVector = Icons.Default.Check,
+                imageVector = AppIcons.Check,
                 contentDescription = "Selected",
                 tint = MaterialTheme.colorScheme.primary
             )

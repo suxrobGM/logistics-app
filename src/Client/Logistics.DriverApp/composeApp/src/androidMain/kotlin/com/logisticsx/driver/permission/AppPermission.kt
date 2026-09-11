@@ -5,12 +5,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 
 /**
- * Represents a permission that can be requested at runtime.
- * Add new permissions here as needed.
+ * A runtime permission this app can request.
  *
- * @param permission The Android permission string.
- * @param minSdkVersion The minimum SDK version required for this permission. Defaults to 1.
- * @param displayName A user-friendly name for the permission.
+ * [minSdkVersion] defaults to 1, so set it only for permissions introduced in a later release.
  */
 sealed class AppPermission(
     val permission: String,

@@ -16,11 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,17 +26,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.EmployeeDto
 import com.logisticsx.driver.model.fullName
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.EmptyStateView
 import com.logisticsx.driver.ui.components.ErrorView
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.getInitials
 import com.logisticsx.driver.viewmodel.EmployeeSelectViewModel
 import com.logisticsx.driver.viewmodel.base.ActionState
@@ -54,11 +50,10 @@ fun EmployeeSelectScreen(
     onBack: () -> Unit = {},
     viewModel: EmployeeSelectViewModel = koinViewModel()
 ) {
-    val searchQuery by viewModel.searchQuery.collectAsState()
-    val searchState by viewModel.searchState.collectAsState()
-    val createState by viewModel.createState.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
+    val createState by viewModel.createState.collectAsStateWithLifecycle()
 
-    // Handle successful conversation creation
     LaunchedEffect(createState) {
         val state = createState
         if (state is ActionState.Success) {
@@ -73,7 +68,7 @@ fun EmployeeSelectScreen(
                 title = "New Message",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(AppIcons.ArrowBack, "Back")
                     }
                 }
             )
@@ -84,7 +79,6 @@ fun EmployeeSelectScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Search field
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { viewModel.setSearchQuery(it) },
@@ -93,14 +87,14 @@ fun EmployeeSelectScreen(
                     .padding(16.dp),
                 placeholder = { Text("Search by name...") },
                 leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null)
+                    Icon(AppIcons.Search, contentDescription = null)
                 },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = {
                             viewModel.setSearchQuery("")
                         }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear")
+                            Icon(AppIcons.Clear, contentDescription = "Clear")
                         }
                     }
                 },
@@ -108,12 +102,11 @@ fun EmployeeSelectScreen(
                 shape = RoundedCornerShape(12.dp)
             )
 
-            // Search results
             when (val state = searchState) {
                 null -> {
                     if (searchQuery.isEmpty()) {
                         EmptyStateView(
-                            icon = Icons.Default.Search,
+                            icon = AppIcons.Search,
                             title = "Who do you want to message?",
                             message = "Type at least 2 characters of a name to search " +
                                 "your company."
@@ -134,7 +127,7 @@ fun EmployeeSelectScreen(
                     val employees = state.data
                     if (employees.isEmpty()) {
                         EmptyStateView(
-                            icon = Icons.Default.Person,
+                            icon = AppIcons.Person,
                             title = "Nobody to message",
                             message = "No one else on your company's account matched that " +
                                 "name. If you're the only person on the account, there's " +
@@ -187,7 +180,6 @@ private fun EmployeeListItem(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar
             Surface(
                 modifier = Modifier.size(40.dp),
                 shape = CircleShape,
@@ -204,7 +196,6 @@ private fun EmployeeListItem(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Employee info
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = employee.fullName(),
@@ -221,7 +212,6 @@ private fun EmployeeListItem(
                 }
             }
 
-            // Loading indicator when creating conversation
             if (isCreating) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),

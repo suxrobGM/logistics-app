@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.DefectSeverity
 import com.logisticsx.driver.ui.components.CardContainer
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.displayName
 
 /**
@@ -81,7 +78,7 @@ fun InspectionDefectsSection(
                     fontWeight = FontWeight.Bold
                 )
                 TextButton(onClick = onAddDefect) {
-                    Icon(Icons.Filled.Add, contentDescription = null)
+                    Icon(AppIcons.Add, contentDescription = null)
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(addButtonText)
                 }
@@ -111,7 +108,7 @@ fun InspectionDefectsSection(
 private fun DefectItem(defect: InspectionDefectView, onRemove: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
         Icon(
-            imageVector = Icons.Filled.Warning,
+            imageVector = AppIcons.Warning,
             contentDescription = null,
             tint = severityColor(defect.severity),
             modifier = Modifier.size(20.dp)
@@ -131,7 +128,7 @@ private fun DefectItem(defect: InspectionDefectView, onRemove: () -> Unit) {
             )
         }
         IconButton(onClick = onRemove) {
-            Icon(Icons.Filled.Close, contentDescription = "Remove")
+            Icon(AppIcons.Close, contentDescription = "Remove")
         }
     }
 }

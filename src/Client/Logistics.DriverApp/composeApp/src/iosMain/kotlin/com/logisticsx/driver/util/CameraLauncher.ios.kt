@@ -96,7 +96,6 @@ actual class CameraLauncher {
         }
 
         try {
-            // Convert UIImage to JPEG data
             val jpegData: NSData? = UIImageJPEGRepresentation(image, 0.8)
             if (jpegData == null) {
                 Logger.e("CameraLauncher", "Failed to convert image to JPEG")
@@ -104,7 +103,6 @@ actual class CameraLauncher {
                 return
             }
 
-            // Convert NSData to ByteArray
             val bytes = jpegData.toByteArray()
             val fileName = "photo_${NSUUID().UUIDString}.jpg"
 

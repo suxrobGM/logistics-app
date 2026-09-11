@@ -15,16 +15,10 @@ enum class XAxisLabelStyle {
 }
 
 /**
- * Formats a date string for display on the X-axis of a chart.
+ * Formats a date string for a chart X-axis.
  *
- * Supports the following input formats:
- * - Full date: "2024-01-15" -> formatted based on [style]
- * - Month only: "2024-01" -> always returns month abbreviation
- * - Other: returns first 6 characters
- *
- * @param label The date string to format
- * @param style The desired output format style
- * @return Formatted label string for chart display
+ * A full date such as "2024-01-15" follows [style]. A month such as "2024-01" always becomes a
+ * month abbreviation. Anything else is truncated to its first six characters.
  */
 fun formatXAxisLabel(label: String, style: XAxisLabelStyle = XAxisLabelStyle.MONTH_DAY): String {
     return when {
@@ -44,7 +38,6 @@ fun formatXAxisLabel(label: String, style: XAxisLabelStyle = XAxisLabelStyle.MON
             val parts = label.split("-")
             getMonthAbbreviation(parts[1].toIntOrNull() ?: 1)
         }
-        // Fallback
         else -> label.take(6)
     }
 }

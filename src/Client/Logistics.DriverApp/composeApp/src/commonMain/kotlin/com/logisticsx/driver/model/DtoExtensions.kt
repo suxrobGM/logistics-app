@@ -9,7 +9,6 @@ import com.logisticsx.driver.api.models.TruckDto
 import com.logisticsx.driver.util.buildDirectionsUrl
 import kotlin.time.Instant
 
-// Address extensions
 fun Address.toDisplayString(): String {
     val parts = listOfNotNull(line1, line2, city, state, zipCode).filter { it.isNotBlank() }
     return parts.joinToString(", ")
@@ -21,17 +20,13 @@ fun LoadDto.getMapsUrl(): String {
     return buildDirectionsUrl(origin, destination)
 }
 
-// TruckDto extensions
 val TruckDto.driversList: List<EmployeeDto>
     get() = listOfNotNull(mainDriver, secondaryDriver)
 
-
-// EmployeeDto extensions
 fun EmployeeDto.fullName(): String {
     return listOfNotNull(firstName, lastName).joinToString(" ")
 }
 
-// Chart data extensions for DailyGrossDto and MonthlyGrossDto
 fun DailyGrossDto.toChartData(): ChartData = ChartData(
     label = this.date?.toString()?.substring(0, 10) ?: "",
     gross = this.gross ?: 0.0,

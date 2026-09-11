@@ -108,7 +108,6 @@ fun SignaturePad(
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val strokeWidth = 3.dp.toPx()
 
-                // Draw completed paths
                 paths.forEach { pathData ->
                     if (pathData.points.size > 1) {
                         val path = Path().apply {
@@ -129,7 +128,6 @@ fun SignaturePad(
                     }
                 }
 
-                // Draw current path
                 currentPath?.let { pathData ->
                     if (pathData.points.size > 1) {
                         val path = Path().apply {

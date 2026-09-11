@@ -7,11 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -24,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.TripStopDto
 import com.logisticsx.driver.api.models.TripStopType
 import com.logisticsx.driver.model.toDisplayString
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.formatShort
 
 /**
@@ -39,9 +35,8 @@ fun TripStopItem(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
     ) {
-        // Stop icon based on type and arrival status
         val isArrived = stop.arrivedAt != null
-        val icon = if (isArrived) Icons.Default.CheckCircle else Icons.Default.Place
+        val icon = if (isArrived) AppIcons.CheckCircle else AppIcons.Place
         val iconTint = when {
             isArrived -> MaterialTheme.colorScheme.secondary
             stop.type == TripStopType.PICK_UP -> MaterialTheme.colorScheme.primary
@@ -72,12 +67,11 @@ fun TripStopItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Show arrival time if arrived
             stop.arrivedAt?.let { arrivedAt ->
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = Icons.Default.Schedule,
+                        imageVector = AppIcons.Schedule,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.size(16.dp)
@@ -94,7 +88,7 @@ fun TripStopItem(
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedButton(onClick = onNavigateClick) {
                 Icon(
-                    imageVector = Icons.Default.Map,
+                    imageVector = AppIcons.Map,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp)
                 )

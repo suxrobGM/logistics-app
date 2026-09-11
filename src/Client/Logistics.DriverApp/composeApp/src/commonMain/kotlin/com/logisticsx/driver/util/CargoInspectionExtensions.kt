@@ -10,7 +10,6 @@ import com.logisticsx.driver.api.models.LoadType
  */
 val CargoInspectionPartCategory.displayName: String
     get() = when (this) {
-        // Vehicle cargo
         CargoInspectionPartCategory.VEHICLE_FRONT_BUMPER -> "Front Bumper"
         CargoInspectionPartCategory.VEHICLE_REAR_BUMPER -> "Rear Bumper"
         CargoInspectionPartCategory.VEHICLE_HOOD -> "Hood"
@@ -29,7 +28,6 @@ val CargoInspectionPartCategory.displayName: String
         CargoInspectionPartCategory.VEHICLE_BODY_PANELS -> "Body Panels"
         CargoInspectionPartCategory.VEHICLE_INTERIOR -> "Interior"
 
-        // Container cargo
         CargoInspectionPartCategory.CONTAINER_FRONT_WALL -> "Front Wall"
         CargoInspectionPartCategory.CONTAINER_REAR_DOORS -> "Rear Doors"
         CargoInspectionPartCategory.CONTAINER_LEFT_WALL -> "Left Wall"
@@ -40,7 +38,6 @@ val CargoInspectionPartCategory.displayName: String
         CargoInspectionPartCategory.CONTAINER_CORNER_CASTINGS -> "Corner Castings"
         CargoInspectionPartCategory.CONTAINER_SEAL -> "Seal"
 
-        // Generic freight
         CargoInspectionPartCategory.GENERIC_WALLS -> "Walls"
         CargoInspectionPartCategory.GENERIC_DOORS -> "Doors"
         CargoInspectionPartCategory.GENERIC_FLOOR -> "Floor"

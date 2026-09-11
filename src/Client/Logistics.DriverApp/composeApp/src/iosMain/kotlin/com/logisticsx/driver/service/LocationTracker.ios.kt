@@ -126,7 +126,6 @@ private class LocationTrackerDelegate(
         // without depending on platform location types.
         LocationUpdateBus.tryEmit(LocationFix(latitude, longitude))
 
-        // Reverse geocode and send via SignalR
         geocoder.reverseGeocodeLocation(location) { placemarks, error ->
             if (error != null) {
                 Logger.w("iOS Location: Geocode error: ${error.localizedDescription}")

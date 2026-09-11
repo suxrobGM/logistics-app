@@ -8,7 +8,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.logisticsx.driver.api.models.DvirInspectionCategory
 import com.logisticsx.driver.api.models.DvirType
 import com.logisticsx.driver.ui.components.SectionCard
@@ -42,7 +42,7 @@ fun DvirFormScreen(
     viewModel: DvirFormViewModel
 ) {
     val onCapturePhoto = rememberCameraCapture(onPhotoCaptured = viewModel::addPhoto)
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showAddDefectDialog by remember { mutableStateOf(false) }
 
     val title = when (uiState.dvirType) {

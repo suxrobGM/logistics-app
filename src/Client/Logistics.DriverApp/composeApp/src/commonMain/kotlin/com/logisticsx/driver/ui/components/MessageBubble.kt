@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -26,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.MessageDto
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.ui.theme.LocalExtendedColors
 import com.logisticsx.driver.ui.theme.Spacing
 import com.logisticsx.driver.util.formatTime
@@ -111,7 +109,6 @@ private fun MessageContent(
 
         Spacer(modifier = Modifier.height(Spacing.xs))
 
-        // Timestamp and read status row
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
@@ -127,11 +124,10 @@ private fun MessageContent(
                 )
             }
 
-            // Read status indicator (only for own messages)
             if (isOwnMessage) {
                 Spacer(modifier = Modifier.width(Spacing.xs))
                 Icon(
-                    imageVector = if (message.isRead == true) Icons.Default.DoneAll else Icons.Default.Check,
+                    imageVector = if (message.isRead == true) AppIcons.DoneAll else AppIcons.Check,
                     contentDescription = if (message.isRead == true) "Read" else "Sent",
                     modifier = Modifier.size(14.dp),
                     tint = if (message.isRead == true)

@@ -1,5 +1,3 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
-
 package com.logisticsx.driver.service.messaging
 
 import com.logisticsx.driver.api.models.MessageDto

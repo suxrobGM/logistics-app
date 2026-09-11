@@ -51,7 +51,6 @@ class ChatViewModel(
     }
 
     private fun observeRealTimeMessages() {
-        // Observe new messages from other users
         launchSafely {
             conversationStateManager.newMessageReceived.collect { message ->
                 if (message.conversationId != conversationId || message.senderId == currentUserId) {
@@ -72,7 +71,6 @@ class ChatViewModel(
             }
         }
 
-        // Observe message read notifications
         launchSafely {
             messagingService.messageReadNotifications.collect { notification ->
                 val currentState = _uiState.value

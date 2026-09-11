@@ -42,13 +42,9 @@ import com.logisticsx.driver.util.formatCurrency
 import kotlin.math.abs
 
 /**
- * A line chart composable that displays financial data with animated lines.
- * Displays two data series (Gross and Driver Share) as connected lines with optional
- * gradient fill and data point indicators. Supports touch interaction for tooltips.
+ * Animated line chart of Gross and Driver Share, with optional gradient fill and point markers.
  *
- * @param data List of [ChartData] points to display
- * @param modifier Optional modifier for the chart container
- * @param config Configuration options for chart appearance
+ * Tapping a point shows a tooltip.
  */
 @Composable
 fun LineChart(
@@ -181,7 +177,6 @@ fun LineChart(
                 }
             }
 
-            // X-axis labels
             val labelStep = when {
                 data.size <= 7 -> 1
                 data.size <= 14 -> 2
@@ -233,18 +228,7 @@ private fun DrawScope.drawSinglePoint(
     }
 }
 
-/**
- * Draws a complete data line with optional fill gradient and point indicators.
- *
- * @param data List of chart data points
- * @param getValue Function to extract the value from each data point
- * @param maxValue Maximum value for Y-axis scaling
- * @param dimensions Chart dimensions for positioning
- * @param pointSpacing Horizontal spacing between points
- * @param lineColor Color for the line and points
- * @param config Line chart configuration
- * @param selectedIndex Currently selected point index (if any)
- */
+/** Draws one data series, with its optional fill gradient and point markers. */
 private fun DrawScope.drawDataLine(
     data: List<ChartData>,
     getValue: (ChartData) -> Double,
@@ -274,7 +258,6 @@ private fun DrawScope.drawDataLine(
         }
     }
 
-    // Fill gradient
     if (config.showFill && data.size > 1) {
         val lastX = dimensions.leftPadding + (data.size - 1) * pointSpacing
         fillPath.lineTo(lastX, dimensions.chartHeight)
@@ -291,14 +274,12 @@ private fun DrawScope.drawDataLine(
         )
     }
 
-    // Line
     drawPath(
         path = path,
         color = lineColor,
         style = Stroke(width = config.lineWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
     )
 
-    // Points
     if (config.showPoints) {
         data.forEachIndexed { index, item ->
             val x = dimensions.leftPadding + index * pointSpacing

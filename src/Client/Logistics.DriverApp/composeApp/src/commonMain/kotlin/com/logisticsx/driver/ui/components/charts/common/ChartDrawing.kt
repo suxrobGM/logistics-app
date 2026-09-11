@@ -8,16 +8,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.sp
 
-/**
- * Holds calculated dimensions for chart drawing.
- * Provides computed properties for the actual drawable chart area
- * after accounting for padding used by axis labels.
- *
- * @property canvasWidth Total width of the canvas
- * @property canvasHeight Total height of the canvas
- * @property leftPadding Space reserved on the left for Y-axis labels
- * @property bottomPadding Space reserved at the bottom for X-axis labels
- */
+/** Canvas size plus the padding reserved for axis labels, and the drawable area left over. */
 data class ChartDimensions(
     val canvasWidth: Float,
     val canvasHeight: Float,
@@ -32,15 +23,9 @@ data class ChartDimensions(
 }
 
 /**
- * Draws Y-axis labels on the left side of the chart.
- * Labels are evenly distributed from 0 to [maxValue] across [steps] intervals.
- * Values are formatted with "k" suffix for thousands (e.g., "5k" for 5000).
+ * Draws Y-axis labels, evenly spaced from 0 to [maxValue] across [steps] intervals.
  *
- * @param maxValue The maximum value represented on the Y-axis
- * @param dimensions Chart dimensions for positioning
- * @param textMeasurer Text measurer for label sizing
- * @param textColor Color for the label text
- * @param steps Number of intervals to display (default: 4)
+ * Thousands are abbreviated, so 5000 renders as "5k".
  */
 fun DrawScope.drawYAxisLabels(
     maxValue: Double,
@@ -66,15 +51,7 @@ fun DrawScope.drawYAxisLabels(
     }
 }
 
-/**
- * Draws horizontal grid lines across the chart area.
- * Grid lines help users read values by providing visual reference points.
- * Lines are drawn with reduced opacity for subtle appearance.
- *
- * @param dimensions Chart dimensions for positioning
- * @param lineColor Color for the grid lines (will be drawn at 50% opacity)
- * @param steps Number of grid lines to draw (default: 4)
- */
+/** Draws [steps] horizontal grid lines across the chart, at 50% of [lineColor]. */
 fun DrawScope.drawGridLines(
     dimensions: ChartDimensions,
     lineColor: Color,
@@ -91,17 +68,7 @@ fun DrawScope.drawGridLines(
     }
 }
 
-/**
- * Draws a centered X-axis label at the specified position.
- * The label is horizontally centered on the given X coordinate
- * and positioned below the chart area.
- *
- * @param label Text to display
- * @param x X coordinate for the center of the label
- * @param chartHeight Height of the chart area (label draws below this)
- * @param textMeasurer Text measurer for label sizing
- * @param textColor Color for the label text
- */
+/** Draws an X-axis label centred on [x], below [chartHeight]. */
 fun DrawScope.drawXAxisLabel(
     label: String,
     x: Float,
@@ -124,12 +91,7 @@ fun DrawScope.drawXAxisLabel(
     )
 }
 
-/**
- * Formats a numeric value for Y-axis display.
- *
- * @param value The value to format
- * @return Formatted string: "5k" for 5000, "500" for 500, "" for values < 1
- */
+/** Formats a Y-axis value: 5000 becomes "5k", 500 stays "500", anything below 1 becomes "". */
 private fun formatYAxisValue(value: Double): String {
     return when {
         value >= 1000 -> "${(value / 1000).toInt()}k"

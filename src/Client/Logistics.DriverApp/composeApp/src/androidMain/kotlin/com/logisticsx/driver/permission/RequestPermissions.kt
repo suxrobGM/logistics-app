@@ -11,12 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.logisticsx.driver.util.Logger
 
-/**
- * Composable that handles requesting multiple permissions.
- *
- * @param permissions List of permissions to request
- * @param onAllResults Callback when all permission results are available
- */
+/** Requests several permissions and reports once every result is in. */
 @Composable
 fun RequestPermissions(
     permissions: List<AppPermission>,
@@ -63,12 +58,7 @@ fun RequestPermissions(
     }
 }
 
-/**
- * Composable that requests all startup permissions.
- * Call this from the root of your app's composition.
- *
- * @param onComplete Callback when all permission results are available
- */
+/** Requests every startup permission. Call this from the root composable. */
 @Composable
 fun RequestStartupPermissions(
     onComplete: (List<PermissionResult>) -> Unit = {}

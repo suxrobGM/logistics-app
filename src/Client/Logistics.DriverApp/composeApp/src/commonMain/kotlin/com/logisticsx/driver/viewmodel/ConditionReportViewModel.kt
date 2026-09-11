@@ -41,12 +41,10 @@ data class ConditionReportUiState(
     val cargoType: LoadType = LoadType.GENERAL_FREIGHT,
     val isLoadingLoad: Boolean = true,
 
-    // Vehicle-cargo identifier
     val vin: String = "",
     val vehicleInfo: VehicleInfoDto? = null,
     val isDecodingVin: Boolean = false,
 
-    // Container-cargo identifier
     val containerNumber: String = "",
     val sealNumber: String = "",
 

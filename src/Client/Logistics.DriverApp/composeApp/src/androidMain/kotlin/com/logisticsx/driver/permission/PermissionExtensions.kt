@@ -5,11 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 
-/**
- * Checks if a permission is granted.
- * @param permission The permission to check.
- * @return True if the permission is granted, false otherwise.
- */
+/** Whether [permission] is granted, treating it as granted below its minimum SDK version. */
 fun Context.isPermissionGranted(permission: AppPermission): Boolean {
     // Skip check if below minimum SDK version (permission not needed)
     if (Build.VERSION.SDK_INT < permission.minSdkVersion) {
@@ -21,11 +17,7 @@ fun Context.isPermissionGranted(permission: AppPermission): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 
-/**
- * Checks if a permission should be requested (not granted and meets SDK requirements).
- * @param permission The permission to check.
- * @return True if the permission should be requested, false otherwise.
- */
+/** Whether [permission] still needs requesting: not granted, and required on this SDK version. */
 fun Context.shouldRequestPermission(permission: AppPermission): Boolean {
     if (Build.VERSION.SDK_INT < permission.minSdkVersion) {
         return false

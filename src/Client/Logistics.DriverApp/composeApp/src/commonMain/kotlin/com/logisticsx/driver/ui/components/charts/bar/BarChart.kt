@@ -36,13 +36,9 @@ import com.logisticsx.driver.ui.components.charts.common.formatXAxisLabel
 import com.logisticsx.driver.util.formatCurrency
 
 /**
- * A bar chart composable that displays financial data with animated bars.
- * Displays two data (Gross and Driver Share) series as grouped bars for each data point.
- * Supports touch interaction to show detailed tooltips for selected bars.
+ * Animated bar chart pairing Gross and Driver Share as grouped bars.
  *
- * @param data List of [ChartData] points to display
- * @param modifier Optional modifier for the chart container
- * @param config Configuration options for chart appearance
+ * Tapping a bar shows a tooltip.
  */
 @Composable
 fun BarChart(
@@ -130,7 +126,6 @@ fun BarChart(
             data.forEachIndexed { index, item ->
                 val groupStartX = dimensions.leftPadding + index * groupWidth + spacing
 
-                // Primary bar (Gross)
                 val primaryBarHeight = ((item.gross / maxValue) * dimensions.chartHeight * animationProgress.value).toFloat()
                 drawRoundRect(
                     color = if (selectedIndex == index) primaryColor.copy(alpha = 0.8f) else primaryColor,
@@ -139,7 +134,6 @@ fun BarChart(
                     cornerRadius = CornerRadius(config.cornerRadius, config.cornerRadius)
                 )
 
-                // Secondary bar (Driver Share)
                 if (config.showSecondaryBars) {
                     val secondaryBarHeight = ((item.driverShare / maxValue) * dimensions.chartHeight * animationProgress.value).toFloat()
                     drawRoundRect(
@@ -150,7 +144,6 @@ fun BarChart(
                     )
                 }
 
-                // X-axis label
                 val labelText = formatXAxisLabel(item.label, XAxisLabelStyle.MONTH_DAY)
                 drawXAxisLabel(
                     label = labelText,

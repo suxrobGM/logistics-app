@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.LoadDto
 import com.logisticsx.driver.model.LocalUserSettings
 import com.logisticsx.driver.model.toDisplayString
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.formatCurrency
 import com.logisticsx.driver.util.formatDistance
 
@@ -46,7 +45,7 @@ fun LoadCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.LocalShipping,
+                imageVector = AppIcons.LocalShipping,
                 contentDescription = "Load",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(48.dp)

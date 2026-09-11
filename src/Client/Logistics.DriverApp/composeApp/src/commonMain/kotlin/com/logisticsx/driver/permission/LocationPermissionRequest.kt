@@ -3,18 +3,12 @@ package com.logisticsx.driver.permission
 import androidx.compose.runtime.Composable
 
 /**
- * Cross-platform location-permission requester used by the disclosure screen.
+ * Location-permission requester used by the disclosure screen.
  *
- * On Android this fires the OS runtime prompt for `ACCESS_FINE_LOCATION` and
- * `ACCESS_COARSE_LOCATION` and invokes [onComplete] with whether either was
- * granted.
+ * Android shows the runtime prompt for fine and coarse location and reports whether either was
+ * granted. iOS reports true immediately: its own prompt appears later, when the tracker starts.
  *
- * On iOS this is a no-op that immediately invokes `onComplete(true)`; the
- * actual `CLLocationManager` authorization prompt is shown later, when
- * `DutyStatusManager.goOnDuty()` starts the tracker.
- *
- * @param trigger Set to true to launch the permission request once. After the
- *   request completes the caller should reset this back to false.
+ * Set [trigger] to true to request once, then reset it to false when [onComplete] fires.
  */
 @Composable
 expect fun RequestLocationPermissionFlow(

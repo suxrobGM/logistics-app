@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Route
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +22,7 @@ import com.logisticsx.driver.api.models.TripDto
 import com.logisticsx.driver.api.models.TripStatus
 import com.logisticsx.driver.model.LocalUserSettings
 import com.logisticsx.driver.model.toDisplayString
+import com.logisticsx.driver.ui.icons.AppIcons
 import com.logisticsx.driver.util.formatDistance
 
 @Composable
@@ -46,7 +45,7 @@ fun TripCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.Route,
+                imageVector = AppIcons.Route,
                 contentDescription = "Trip",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(48.dp)

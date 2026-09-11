@@ -27,15 +27,12 @@ class Navigator(private val backStack: MutableList<NavKey>) {
      * Useful for login/logout flows.
      */
     fun navigateAndClear(route: NavKey, clearUpTo: NavKey) {
-        // Remove entries until we find clearUpTo (inclusive)
         while (backStack.isNotEmpty() && backStack.last() != clearUpTo) {
             backStack.removeLastOrNull()
         }
-        // Remove clearUpTo itself
         if (backStack.lastOrNull() == clearUpTo) {
             backStack.removeLastOrNull()
         }
-        // Add the new route
         backStack.add(route)
     }
 
@@ -52,9 +49,7 @@ class Navigator(private val backStack: MutableList<NavKey>) {
      * Navigates to a top-level route (for bottom nav), clearing duplicates.
      */
     fun navigateToTopLevel(route: NavKey) {
-        // Remove any existing instance of this route to avoid duplicates
         backStack.removeAll { it == route }
-        // Keep only the root, then add the new route
         if (backStack.size > 1) {
             val root = backStack.first()
             backStack.clear()

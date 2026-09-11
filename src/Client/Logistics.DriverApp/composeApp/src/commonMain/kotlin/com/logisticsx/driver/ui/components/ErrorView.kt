@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.service.auth.AuthEventBus
+import com.logisticsx.driver.ui.icons.AppIcons
 
 @Composable
 fun ErrorView(
@@ -43,7 +41,7 @@ fun ErrorView(
             modifier = Modifier.padding(32.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.Error,
+                imageVector = AppIcons.Error,
                 contentDescription = "Error",
                 tint = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(64.dp)
@@ -65,7 +63,7 @@ fun ErrorView(
                 if (showLogout) {
                     OutlinedButton(onClick = { AuthEventBus.emitUnauthorized() }) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ExitToApp,
+                            AppIcons.ExitToApp,
                             contentDescription = null,
                             modifier = Modifier.size(18.dp)
                         )
