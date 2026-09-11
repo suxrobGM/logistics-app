@@ -16,8 +16,12 @@ for expect/actual. The folder layout and the library set are self-evident from `
   anything under `com.logisticsx.driver.api` - regenerate.
 - Reach them through `ApiFactory` (Koin singletons). Calls return `Response<T>`; `.body()` unwraps.
 - Every request must carry the **`X-Tenant` header** sourced from `PreferencesManager`. Without it the
-  API resolves no tenant and the call fails on the server, not the client.
-- A 401 goes through `AuthEventBus` so logout happens once, centrally - do not handle it per-call.
+  API resolves no tenant and the call fails on the server, not the client. It is added by the
+  `TenantHeader` plugin in `ApiFactory`, not by `defaultRequest` - that block is not suspend.
+- Ktor's `Auth` bearer plugin owns token refresh: one refresh per 401, de-duplicated across
+  concurrent calls, and `AuthEventBus` on failure so logout happens once. Don't handle 401 per-call.
+- Install `Auth` in `ApiFactory` only. `AuthService` shares `HttpClientFactory` for `/connect/token`,
+  so installing it there makes refresh re-enter itself.
 - Sort params use the API's `-PropertyName` syntax (see `.claude/rules/backend/csharp-conventions.md`).
 
 ## Koin DI
@@ -41,3 +45,12 @@ for expect/actual. The folder layout and the library set are self-evident from `
 - Reuse `CardContainer`, `SectionCard`, `DetailRow`, `EmptyStateView`, `AppTopBar` before writing new chrome.
 - Currency/distance formatting is expect/actual (`formatCurrency()`, `formatDistance()`) - don't inline
   platform formatting in a composable.
+
+## Icons
+
+- Icons come from `AppIcons`, vendored in `ui/icons/`. There is no `material-icons` dependency -
+  don't add one.
+- To add an icon, copy its source file from compose-material-icons 1.7.3 into `ui/icons/` and add a
+  line to `AppIcons`. Never hand-write path data.
+- An icon that must flip in right-to-left layouts has to come from the upstream `automirrored` set;
+  `autoMirror = true` in the copied file is what flips it.

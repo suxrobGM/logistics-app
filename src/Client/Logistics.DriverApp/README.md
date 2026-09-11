@@ -19,7 +19,7 @@ A cross-platform driver application built with **Kotlin Multiplatform (KMP)** an
 - **Real-time Updates**: SignalR for live load status updates
 - **Real-time Location Tracking**: Background location service with proximity detection
 - **Push Notifications**: Firebase Cloud Messaging for load updates
-- **Maps Integration**: Google Maps for route visualization
+- **Maps Integration**: Routes open in the device's own maps app
 
 ## Report
 
@@ -31,19 +31,16 @@ The complete project report can be found in the [report.pdf](docs/report.pdf) fi
 
 - **Android Studio**: Latest version with Kotlin and Compose support
 - **Xcode**: Version 15.0+ for iOS development
-- **Kotlin Multiplatform Mobile Plugin**: Installed in Android Studio
-- **CocoaPods**: For iOS dependency management
-- **Simulator/Device**: Android device/emulator (API 26+) and iOS device/simulator (iOS 15.0+)
+- **Kotlin Multiplatform Plugin**: Installed in Android Studio
+- **Simulator/Device**: Android device/emulator (API 26+) and iOS device/simulator (iOS 16.0+)
 
 ### Setup Instructions
 
 1. **Run Backend Services**:
-
    - Ensure the Logistics backend services (API and Identity servers) are running and accessible.
      Refer to the main project [README](../../../README.md) for backend setup.
 
 2. **Run Android App**:
-
    - Open the `Logistics.DriverApp` folder in Android Studio.
    - Connect an Android device or start an emulator.
    - Click "Run" to build and deploy the app. Ensure the `composeApp` module is selected.
@@ -64,17 +61,17 @@ The complete project report can be found in the [report.pdf](docs/report.pdf) fi
 - Kotlinx Serialization for JSON serialization and deserialization
 - Kotlinx Coroutines for asynchronous programming
 - Material 3 design system
-- JetBrains Navigation Compose for navigation
+- Navigation 3 for navigation
 - OpenAPI Generator for API client generation
 
 ### Android Platform
 
 - **Min SDK**: 26 (Android 8.0)
-- **Target SDK**: 36 (Android 16)
+- **Target SDK**: 37 (Android 17)
 
 ### iOS Platform
 
-- **iOS Version**: 15.0+
+- **iOS Version**: 16.0+
 - **Xcode**: 15.0+
 - **Swift Interop**: Native iOS integration
 
@@ -99,11 +96,8 @@ Logistics.DriverApp/
 │   │   ├── androidMain/            # Android-specific code
 │   │   │   └── kotlin/             # Platform implementations
 │   │   │
-│   │   ├── iosMain/                # iOS-specific code
-│   │   │   └── kotlin/             # Platform implementations
-│   │   │
-│   │   └── openapi/                # OpenAPI spec for code generation
-│   │       └── api-spec.json
+│   │   └── iosMain/                # iOS-specific code
+│   │       └── kotlin/             # Platform implementations
 │   │
 │   └── build.gradle.kts
 │
@@ -131,7 +125,7 @@ The app follows **Clean Architecture** with **MVVM** pattern:
 - **ViewModel Layer**: State management with JetBrains Lifecycle ViewModel
 - **Service Layer**: Business logic and data orchestration
 - **API Layer**: Ktor-based HTTP clients with OpenAPI-generated models
-- **Navigation**: JetBrains Navigation Compose for type-safe navigation
+- **Navigation**: Navigation 3 with `@Serializable` route keys
 
 ### Dependency Injection
 
