@@ -26,10 +26,11 @@ export class Team {
       linkedIn: "https://www.linkedin.com/in/suxrobgm",
     },
     {
-      name: "Co-Founder",
-      role: "Co-Founder",
-      bio: "Details coming soon.",
-      initials: "CF",
+      name: "Olim Gulomov",
+      role: "Co-Founder, Sales & Growth",
+      bio: "Leads sales and growth. Works with carriers to bring LogisticsX to more fleets.",
+      initials: "OG",
+      linkedIn: "https://www.linkedin.com/in/olimgulomov",
     },
   ];
 }
