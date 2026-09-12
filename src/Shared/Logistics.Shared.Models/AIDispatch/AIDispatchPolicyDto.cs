@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Models;
+namespace Logistics.Shared.Models;
 
 /// <summary>
 /// The tenant's learned dispatch policy. Carries no model name and no generation cost: plans differ

@@ -32,7 +32,7 @@ internal sealed class CreateTripHandler(
         var (newLoads, tempIdToLoadMap) = await CreateNewLoads(req);
 
         // List of all loads for the trip
-        var loads = new List<Load>([..existingLoads, ..newLoads]);
+        var loads = new List<Load>([.. existingLoads, .. newLoads]);
 
         // Convert optimized stops DTOs to domain entities if provided
         if (req.OptimizedStops != null && req.OptimizedStops.Any())

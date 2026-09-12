@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -33,7 +33,11 @@ public class AIDispatchPolicyLearnerTests
             BillingEmail = "billing@test.com",
             CompanyAddress = new Address
             {
-                Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US"
+                Line1 = "1 Test St",
+                City = "Test",
+                State = "TX",
+                ZipCode = "00000",
+                Country = "US"
             }
         });
 

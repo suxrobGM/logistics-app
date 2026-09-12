@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Logistics.Infrastructure.Routing.Geocoding;

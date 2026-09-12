@@ -144,12 +144,20 @@ public class GetContainerStatusToolTests
             Customer = null!,
             OriginAddress = new Address
             {
-                Line1 = "1 Origin", City = "City", State = "ST", ZipCode = "00000", Country = "US"
+                Line1 = "1 Origin",
+                City = "City",
+                State = "ST",
+                ZipCode = "00000",
+                Country = "US"
             },
             OriginLocation = new GeoPoint(0, 0),
             DestinationAddress = new Address
             {
-                Line1 = "1 Dest", City = "City", State = "ST", ZipCode = "00000", Country = "US"
+                Line1 = "1 Dest",
+                City = "City",
+                State = "ST",
+                ZipCode = "00000",
+                Country = "US"
             },
             DestinationLocation = new GeoPoint(0, 0),
             DeliveryCost = Money.Zero("USD")

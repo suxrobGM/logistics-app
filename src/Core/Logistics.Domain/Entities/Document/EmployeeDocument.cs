@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Events;
+using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;

@@ -185,7 +185,11 @@ public class PayPayrollInvoiceHandlerTests
             TenantId = Guid.NewGuid(),
             BillingAddress = new Address
             {
-                Line1 = "N/A", City = "N/A", State = "N/A", ZipCode = "00000", Country = "US"
+                Line1 = "N/A",
+                City = "N/A",
+                State = "N/A",
+                ZipCode = "00000",
+                Country = "US"
             }
         });
 

@@ -6,7 +6,7 @@ public record PagedResult<T> : Result<IEnumerable<T>>
     {
     }
 
-    public PagedResult(IEnumerable<T>? value, int totalItems, int pageSize): base(value)
+    public PagedResult(IEnumerable<T>? value, int totalItems, int pageSize) : base(value)
     {
         TotalItems = totalItems;
         TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);

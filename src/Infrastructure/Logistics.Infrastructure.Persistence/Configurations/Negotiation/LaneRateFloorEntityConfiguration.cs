@@ -13,9 +13,12 @@ internal sealed class LaneRateFloorEntityConfiguration : IEntityTypeConfiguratio
         // A null state is the "any state" wildcard and must collide with another wildcard row,
         // so the index has to treat NULLs as equal (PostgreSQL 15+).
         builder.HasIndex(f => new
-            {
-                f.OriginCountry, f.OriginState, f.DestinationCountry, f.DestinationState
-            })
+        {
+            f.OriginCountry,
+            f.OriginState,
+            f.DestinationCountry,
+            f.DestinationState
+        })
             .IsUnique()
             .AreNullsDistinct(false);
 

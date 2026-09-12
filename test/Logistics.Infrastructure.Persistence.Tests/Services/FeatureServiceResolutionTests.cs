@@ -58,7 +58,11 @@ public class FeatureServiceResolutionTests
             BillingEmail = "test@test.com",
             CompanyAddress = new()
             {
-                Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US"
+                Line1 = "123 Test St",
+                City = "Test",
+                State = "TX",
+                ZipCode = "12345",
+                Country = "US"
             },
             IsSubscriptionRequired = isSubscriptionRequired
         };
@@ -103,7 +107,9 @@ public class FeatureServiceResolutionTests
         SetTenant(isSubscriptionRequired: false);
         SetTenantConfigs(new TenantFeatureConfig
         {
-            TenantId = tenantId, Feature = TenantFeature.AICopilot, IsEnabled = false
+            TenantId = tenantId,
+            Feature = TenantFeature.AICopilot,
+            IsEnabled = false
         });
 
         Assert.False(await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AICopilot));

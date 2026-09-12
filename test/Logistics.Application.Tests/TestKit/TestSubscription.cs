@@ -19,12 +19,12 @@ internal static class TestSubscription
         Guid? planId = null,
         SubscriptionStatus status = SubscriptionStatus.Active,
         string? stripeSubscriptionId = null) => new()
-    {
-        TenantId = tenantId,
-        Tenant = TestTenant.Create(),
-        PlanId = planId ?? Guid.NewGuid(),
-        Plan = CreatePlan(),
-        Status = status,
-        StripeSubscriptionId = stripeSubscriptionId
-    };
+        {
+            TenantId = tenantId,
+            Tenant = TestTenant.Create(),
+            PlanId = planId ?? Guid.NewGuid(),
+            Plan = CreatePlan(),
+            Status = status,
+            StripeSubscriptionId = stripeSubscriptionId
+        };
 }

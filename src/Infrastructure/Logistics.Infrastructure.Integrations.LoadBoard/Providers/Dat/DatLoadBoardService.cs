@@ -124,7 +124,9 @@ internal class DatLoadBoardService(
 
         var bookRequest = new
         {
-            loadId = externalListingId, truckId = request.TruckId.ToString(), notes = request.Notes
+            loadId = externalListingId,
+            truckId = request.TruckId.ToString(),
+            notes = request.Notes
         };
 
         var result = await httpClient.TryPostAsJsonAsync<object, DatBookingResponse>(
@@ -178,7 +180,9 @@ internal class DatLoadBoardService(
         return result.IsSuccess
             ? new PostTruckResultDto
             {
-                Success = true, ExternalPostId = result.Value?.PostId, ExpiresAt = result.Value?.ExpiresAt
+                Success = true,
+                ExternalPostId = result.Value?.PostId,
+                ExpiresAt = result.Value?.ExpiresAt
             }
             : new PostTruckResultDto { Success = false, ErrorMessage = $"DAT post truck failed: {result.ErrorBody}" };
     }

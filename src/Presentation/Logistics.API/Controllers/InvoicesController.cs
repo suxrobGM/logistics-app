@@ -140,7 +140,9 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new SendInvoiceCommand
         {
-            InvoiceId = id, RecipientEmail = request.Email, PersonalMessage = request.PersonalMessage
+            InvoiceId = id,
+            RecipientEmail = request.Email,
+            PersonalMessage = request.PersonalMessage
         });
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }

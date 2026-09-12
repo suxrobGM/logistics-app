@@ -1,4 +1,4 @@
-﻿namespace Logistics.Infrastructure.AI.Agents.Dispatch;
+namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 /// <summary>
 /// The tenant's dispatch policy as the system prompt consumes it. Two raw parts rather than one

@@ -52,7 +52,9 @@ internal class TruckstopLoadBoardService(
     {
         return ToTokenResult(await RequestTokenAsync("acquisition", new Dictionary<string, string>
         {
-            ["grant_type"] = "password", ["username"] = apiKey, ["password"] = apiSecret ?? string.Empty
+            ["grant_type"] = "password",
+            ["username"] = apiKey,
+            ["password"] = apiSecret ?? string.Empty
         }));
     }
 
@@ -60,7 +62,8 @@ internal class TruckstopLoadBoardService(
     {
         return ToTokenResult(await RequestTokenAsync("refresh", new Dictionary<string, string>
         {
-            ["grant_type"] = "refresh_token", ["refresh_token"] = refreshToken
+            ["grant_type"] = "refresh_token",
+            ["refresh_token"] = refreshToken
         }));
     }
 
@@ -178,7 +181,9 @@ internal class TruckstopLoadBoardService(
         return result.IsSuccess
             ? new PostTruckResultDto
             {
-                Success = true, ExternalPostId = result.Value?.TruckId, ExpiresAt = result.Value?.ExpiresAt
+                Success = true,
+                ExternalPostId = result.Value?.TruckId,
+                ExpiresAt = result.Value?.ExpiresAt
             }
             : new PostTruckResultDto { Success = false, ErrorMessage = $"Truckstop post truck failed: {result.ErrorBody}" };
     }

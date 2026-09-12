@@ -1,4 +1,4 @@
-﻿namespace Logistics.Domain.Entities;
+namespace Logistics.Domain.Entities;
 
 internal class LoadComparer : IEqualityComparer<Load>
 {

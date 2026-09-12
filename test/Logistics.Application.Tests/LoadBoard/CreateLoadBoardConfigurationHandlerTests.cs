@@ -48,7 +48,9 @@ public class CreateLoadBoardConfigurationHandlerTests
         var expiresAt = DateTime.UtcNow.AddMinutes(20);
         provider.AcquireTokenAsync("key", "secret").Returns(new OAuthTokenResultDto
         {
-            AccessToken = "access-1", RefreshToken = "refresh-1", ExpiresAt = expiresAt
+            AccessToken = "access-1",
+            RefreshToken = "refresh-1",
+            ExpiresAt = expiresAt
         });
         LoadBoardConfiguration? added = null;
         await configRepo.AddAsync(Arg.Do<LoadBoardConfiguration>(c => added = c), Arg.Any<CancellationToken>());

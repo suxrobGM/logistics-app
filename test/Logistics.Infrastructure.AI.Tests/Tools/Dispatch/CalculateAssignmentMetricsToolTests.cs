@@ -30,7 +30,11 @@ public class CalculateAssignmentMetricsToolTests
 
     private static Address SomeAddress => new()
     {
-        Line1 = "1 Depot", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US"
+        Line1 = "1 Depot",
+        City = "Dallas",
+        State = "TX",
+        ZipCode = "75201",
+        Country = "US"
     };
 
     /// <param name="distanceMeters">Load.Distance is stored in metres.</param>

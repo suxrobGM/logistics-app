@@ -1,4 +1,4 @@
-﻿namespace Logistics.Shared.Models;
+namespace Logistics.Shared.Models;
 
 public record OptimizedTripStopsDto
 {

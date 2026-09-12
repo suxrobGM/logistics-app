@@ -1,4 +1,4 @@
-﻿using Logistics.Infrastructure.Payments.Stripe;
+using Logistics.Infrastructure.Payments.Stripe;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Abstractions.Payments;

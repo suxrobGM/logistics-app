@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
-internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<LoadsReportQuery,Result<LoadsReportDto>>
+internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<LoadsReportQuery, Result<LoadsReportDto>>
 {
     public async Task<Result<LoadsReportDto>> Handle(LoadsReportQuery req, CancellationToken ct)
     {

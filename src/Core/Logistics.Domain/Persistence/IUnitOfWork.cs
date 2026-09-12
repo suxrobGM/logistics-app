@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Core;
+using Logistics.Domain.Core;
 
 namespace Logistics.Domain.Persistence;
 

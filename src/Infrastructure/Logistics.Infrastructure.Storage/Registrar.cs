@@ -1,4 +1,4 @@
-﻿using Amazon.Runtime;
+using Amazon.Runtime;
 using Amazon.S3;
 using Azure.Storage.Blobs;
 using Logistics.Infrastructure.Storage.Providers;
@@ -44,21 +44,21 @@ public static class Registrar
         switch (GetStorageType(configuration))
         {
             case "azure":
-            {
-                AddAzureBlobStorage(services, configuration);
-                break;
-            }
+                {
+                    AddAzureBlobStorage(services, configuration);
+                    break;
+                }
             case "r2":
             case "cloudflare":
-            {
-                AddR2BlobStorage(services, configuration);
-                break;
-            }
+                {
+                    AddR2BlobStorage(services, configuration);
+                    break;
+                }
             default:
-            {
-                AddFileBlobStorage(services, configuration);
-                break;
-            }
+                {
+                    AddFileBlobStorage(services, configuration);
+                    break;
+                }
         }
     }
 

@@ -208,8 +208,8 @@ public class ManualTaxCalculatorTests
     {
         var tenantId = Guid.NewGuid();
         var sutWithRate = WithRates(
-            TenantRate(tenantId, country: "US", region: null,    ratePercent: 5.00m, description: "country"),
-            TenantRate(tenantId, country: "US", region: "CA",   ratePercent: 9.50m, description: "state"));
+            TenantRate(tenantId, country: "US", region: null, ratePercent: 5.00m, description: "country"),
+            TenantRate(tenantId, country: "US", region: "CA", ratePercent: 9.50m, description: "state"));
 
         var request = Request(country: "US", state: "CA", tenantRegion: Region.US, tenantId: tenantId, lineAmounts: [100m]);
 

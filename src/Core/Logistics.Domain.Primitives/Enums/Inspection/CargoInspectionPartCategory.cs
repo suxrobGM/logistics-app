@@ -12,16 +12,16 @@ public enum CargoInspectionPartCategory
 {
     // ── Vehicle cargo (auto-haul) ────────────────────────────────────────
     [Description("Front Bumper")] VehicleFrontBumper,
-    [Description("Rear Bumper")]  VehicleRearBumper,
+    [Description("Rear Bumper")] VehicleRearBumper,
     VehicleHood,
     VehicleRoof,
 
     [Description("Trunk / Liftgate")] VehicleTrunkLiftgate,
 
-    [Description("Front Left Door")]  VehicleFrontLeftDoor,
+    [Description("Front Left Door")] VehicleFrontLeftDoor,
     [Description("Front Right Door")] VehicleFrontRightDoor,
-    [Description("Rear Left Door")]   VehicleRearLeftDoor,
-    [Description("Rear Right Door")]  VehicleRearRightDoor,
+    [Description("Rear Left Door")] VehicleRearLeftDoor,
+    [Description("Rear Right Door")] VehicleRearRightDoor,
 
     VehicleFenders,
     VehicleWheels,
@@ -39,14 +39,14 @@ public enum CargoInspectionPartCategory
     // ── Container cargo (ISO 6346 parts) ─────────────────────────────────
     [Description("Front Wall")] ContainerFrontWall,
     [Description("Rear Doors")] ContainerRearDoors,
-    [Description("Left Wall")]  ContainerLeftWall,
+    [Description("Left Wall")] ContainerLeftWall,
     [Description("Right Wall")] ContainerRightWall,
 
     ContainerRoof,
     ContainerFloor,
 
     [Description("Locking Rods / Hinges")] ContainerLockingHardware,
-    [Description("Corner Castings")]       ContainerCornerCastings,
+    [Description("Corner Castings")] ContainerCornerCastings,
 
     ContainerSeal,
 

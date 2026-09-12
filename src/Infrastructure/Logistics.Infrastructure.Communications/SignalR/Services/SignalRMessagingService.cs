@@ -1,4 +1,4 @@
-﻿using Logistics.Infrastructure.Communications.SignalR.Clients;
+using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Shared.Models.Messaging;
 using Microsoft.AspNetCore.SignalR;
@@ -41,7 +41,9 @@ internal sealed class SignalRMessagingService(IHubContext<ChatHub, IChatHubClien
     {
         var indicator = new TypingIndicatorDto
         {
-            ConversationId = conversationId, UserId = Guid.Parse(userId), IsTyping = isTyping
+            ConversationId = conversationId,
+            UserId = Guid.Parse(userId),
+            IsTyping = isTyping
         };
 
         await hubContext.Clients

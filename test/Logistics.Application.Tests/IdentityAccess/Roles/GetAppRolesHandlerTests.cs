@@ -52,11 +52,13 @@ public class GetAppRolesHandlerTests
     {
         var second = new AppRole("same")
         {
-            Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), DisplayName = "second"
+            Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            DisplayName = "second"
         };
         var first = new AppRole("same")
         {
-            Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), DisplayName = "first"
+            Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+            DisplayName = "first"
         };
         roleRepo.Query().Returns(new[] { second, first }.AsQueryable());
 

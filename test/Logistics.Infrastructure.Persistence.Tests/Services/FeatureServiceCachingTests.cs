@@ -47,7 +47,11 @@ public class FeatureServiceCachingTests
                 BillingEmail = "test@test.com",
                 CompanyAddress = new()
                 {
-                    Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US"
+                    Line1 = "123 Test St",
+                    City = "Test",
+                    State = "TX",
+                    ZipCode = "12345",
+                    Country = "US"
                 },
                 IsSubscriptionRequired = false
             });

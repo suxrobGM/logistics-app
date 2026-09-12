@@ -372,17 +372,17 @@ public class StripeTaxCalculatorTests
 
     private static CalculationTaxBreakdown BreakdownLine(
         string country, string? state, string taxType, string percentage, long taxable, long amount) => new()
-    {
-        Amount = amount,
-        TaxableAmount = taxable,
-        TaxRateDetails = new CalculationTaxBreakdownTaxRateDetails
         {
-            Country = country,
-            State = state,
-            TaxType = taxType,
-            PercentageDecimal = percentage
-        }
-    };
+            Amount = amount,
+            TaxableAmount = taxable,
+            TaxRateDetails = new CalculationTaxBreakdownTaxRateDetails
+            {
+                Country = country,
+                State = state,
+                TaxType = taxType,
+                PercentageDecimal = percentage
+            }
+        };
 
     #endregion
 }

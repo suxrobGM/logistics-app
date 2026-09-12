@@ -35,24 +35,32 @@ public class LaneRateFloorResolverTests
         double? distance = 900,
         decimal? ratePerMile = 2.00m,
         Money? totalRate = null) => new()
-    {
-        ExternalListingId = "EXT-1",
-        ProviderType = LoadBoardProviderType.Demo,
-        OriginAddress = new Address
         {
-            Line1 = "1 St", City = "Dallas", State = originState, ZipCode = "75001", Country = originCountry
-        },
-        OriginLocation = new GeoPoint(-96.8, 32.8),
-        DestinationAddress = new Address
-        {
-            Line1 = "2 St", City = "Chicago", State = destinationState, ZipCode = "60601", Country = destinationCountry
-        },
-        DestinationLocation = new GeoPoint(-87.6, 41.9),
-        RatePerMile = ratePerMile,
-        TotalRate = totalRate,
-        Distance = distance,
-        ExpiresAt = DateTime.UtcNow.AddDays(1)
-    };
+            ExternalListingId = "EXT-1",
+            ProviderType = LoadBoardProviderType.Demo,
+            OriginAddress = new Address
+            {
+                Line1 = "1 St",
+                City = "Dallas",
+                State = originState,
+                ZipCode = "75001",
+                Country = originCountry
+            },
+            OriginLocation = new GeoPoint(-96.8, 32.8),
+            DestinationAddress = new Address
+            {
+                Line1 = "2 St",
+                City = "Chicago",
+                State = destinationState,
+                ZipCode = "60601",
+                Country = destinationCountry
+            },
+            DestinationLocation = new GeoPoint(-87.6, 41.9),
+            RatePerMile = ratePerMile,
+            TotalRate = totalRate,
+            Distance = distance,
+            ExpiresAt = DateTime.UtcNow.AddDays(1)
+        };
 
     private void SetupLanes(params LaneRateFloor[] lanes) =>
         floorRepo.GetListAsync(Arg.Any<ISpecification<LaneRateFloor>?>(), Arg.Any<CancellationToken>())
@@ -177,7 +185,9 @@ public class LaneRateFloorResolverTests
     {
         var lane = new LaneRateFloor
         {
-            OriginState = "TX", DestinationState = "IL", MinRatePerMile = 3.00m,
+            OriginState = "TX",
+            DestinationState = "IL",
+            MinRatePerMile = 3.00m,
             MinTotalRate = new Money { Amount = 1000m, Currency = "USD" }
         };
         SetupLanes(lane);

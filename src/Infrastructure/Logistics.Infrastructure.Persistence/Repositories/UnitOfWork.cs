@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
 using Microsoft.EntityFrameworkCore;

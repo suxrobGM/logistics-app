@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Models;
+using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Routing;
 

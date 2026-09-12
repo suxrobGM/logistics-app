@@ -22,7 +22,11 @@ public class LoadBoardToolTests
 
     private static Address SomeAddress => new()
     {
-        Line1 = "1 Depot", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US"
+        Line1 = "1 Depot",
+        City = "Dallas",
+        State = "TX",
+        ZipCode = "75201",
+        Country = "US"
     };
 
     private static LoadBoardListingDto Listing(Guid id) => new()

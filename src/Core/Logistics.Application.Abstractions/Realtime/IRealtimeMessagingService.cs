@@ -1,4 +1,4 @@
-﻿using Logistics.Shared.Models.Messaging;
+using Logistics.Shared.Models.Messaging;
 using Logistics.Application.Abstractions.Realtime;
 
 namespace Logistics.Application.Abstractions.Realtime;

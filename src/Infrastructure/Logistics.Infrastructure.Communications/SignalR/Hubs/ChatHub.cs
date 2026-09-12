@@ -64,7 +64,9 @@ public class ChatHub(IConversationAccess conversationAccess) : TenantHub<IChatHu
 
         var indicator = new TypingIndicatorDto
         {
-            ConversationId = conversationGuid, UserId = UserId, IsTyping = isTyping
+            ConversationId = conversationGuid,
+            UserId = UserId,
+            IsTyping = isTyping
         };
 
         await Clients.GroupExcept(GroupName(conversationGuid), Context.ConnectionId)

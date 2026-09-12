@@ -31,7 +31,8 @@ internal sealed class PayrollPaidNotificationHandler(
 
         var data = new Dictionary<string, string>
         {
-            ["payrollId"] = @event.PayrollId.ToString(), ["type"] = "payroll_paid"
+            ["payrollId"] = @event.PayrollId.ToString(),
+            ["type"] = "payroll_paid"
         };
 
         var title = @event.IsFullyPaid ? "Payroll Paid" : "Payroll Payment Received";

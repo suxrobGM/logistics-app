@@ -36,7 +36,11 @@ public class GetOnboardingProgressHandlerTests
             Name = "acme",
             CompanyAddress = new Address
             {
-                Line1 = "", City = "", State = "", ZipCode = "", Country = ""
+                Line1 = "",
+                City = "",
+                State = "",
+                ZipCode = "",
+                Country = ""
             },
             ConnectionString = "Host=localhost",
             BillingEmail = "billing@acme.test"
@@ -101,7 +105,11 @@ public class GetOnboardingProgressHandlerTests
     {
         tenant.CompanyAddress = new Address
         {
-            Line1 = "1 Main St", City = "Dallas", State = "TX", ZipCode = "75001", Country = "US"
+            Line1 = "1 Main St",
+            City = "Dallas",
+            State = "TX",
+            ZipCode = "75001",
+            Country = "US"
         };
         tenant.ConnectStatus = StripeConnectStatus.Active;
         truckRepo.Query().Returns(QueryOf<Truck>(3));
@@ -166,7 +174,11 @@ public class GetOnboardingProgressHandlerTests
     {
         tenant.CompanyAddress = new Address
         {
-            Line1 = "1 Main St", City = "Dallas", State = "TX", ZipCode = "", Country = "US"
+            Line1 = "1 Main St",
+            City = "Dallas",
+            State = "TX",
+            ZipCode = "",
+            Country = "US"
         };
 
         var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);

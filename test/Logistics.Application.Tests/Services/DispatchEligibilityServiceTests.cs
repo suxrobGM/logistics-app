@@ -422,12 +422,20 @@ public class DispatchEligibilityServiceTests
             Customer = null!,
             OriginAddress = new Address
             {
-                Line1 = "1 Origin", City = "City", State = "ST", ZipCode = "00000", Country = originCountry
+                Line1 = "1 Origin",
+                City = "City",
+                State = "ST",
+                ZipCode = "00000",
+                Country = originCountry
             },
             OriginLocation = new GeoPoint(0, 0),
             DestinationAddress = new Address
             {
-                Line1 = "1 Dest", City = "City", State = "ST", ZipCode = "00000", Country = destCountry
+                Line1 = "1 Dest",
+                City = "City",
+                State = "ST",
+                ZipCode = "00000",
+                Country = destCountry
             },
             DestinationLocation = new GeoPoint(0, 0),
             DeliveryCost = Money.Zero("USD"),

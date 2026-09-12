@@ -97,12 +97,20 @@ public class ProposeCounterOfferHandlerTests
         ProviderType = LoadBoardProviderType.Demo,
         OriginAddress = new Address
         {
-            Line1 = "1 St", City = "Dallas", State = "TX", ZipCode = "75001", Country = "US"
+            Line1 = "1 St",
+            City = "Dallas",
+            State = "TX",
+            ZipCode = "75001",
+            Country = "US"
         },
         OriginLocation = new GeoPoint(-96.8, 32.8),
         DestinationAddress = new Address
         {
-            Line1 = "2 St", City = "Chicago", State = "IL", ZipCode = "60601", Country = "US"
+            Line1 = "2 St",
+            City = "Chicago",
+            State = "IL",
+            ZipCode = "60601",
+            Country = "US"
         },
         DestinationLocation = new GeoPoint(-87.6, 41.9),
         Distance = 1000,

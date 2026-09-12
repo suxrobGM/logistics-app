@@ -1,4 +1,4 @@
-﻿namespace Logistics.Application.Modules.Integrations.AIDispatch.Services;
+namespace Logistics.Application.Modules.Integrations.AIDispatch.Services;
 
 /// <summary>
 /// The prompt that turns decision history into a policy. Most of it exists to stop the model

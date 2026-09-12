@@ -4,72 +4,71 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Logistics.IdentityServer.Pages.Account.Manage.SetPassword
-{
-    public class SetPasswordModel : PageModel
-    {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+namespace Logistics.IdentityServer.Pages.Account.Manage.SetPassword;
 
-        public SetPasswordModel(
-            UserManager<User> userManager,
-            SignInManager<User> signInManager)
+public class SetPasswordModel : PageModel
+{
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+
+    public SetPasswordModel(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager)
+    {
+        _userManager = userManager;
+        _signInManager = signInManager;
+    }
+
+    [BindProperty]
+    public InputModel Input { get; set; }
+
+    [TempData]
+    public string StatusMessage { get; set; }
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
         }
 
-        [BindProperty]
-        public InputModel Input { get; set; }
+        var hasPassword = await _userManager.HasPasswordAsync(user);
 
-        [TempData]
-        public string StatusMessage { get; set; }
-
-        public async Task<IActionResult> OnGetAsync()
+        if (hasPassword)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+            return RedirectToPage("../ChangePassword/Index");
+        }
 
-            var hasPassword = await _userManager.HasPasswordAsync(user);
+        return Page();
+    }
 
-            if (hasPassword)
-            {
-                return RedirectToPage("../ChangePassword/Index");
-            }
-
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
+        {
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            var addPasswordResult = await _userManager.AddPasswordAsync(user, Input.NewPassword);
-            if (!addPasswordResult.Succeeded)
-            {
-                foreach (var error in addPasswordResult.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-                return Page();
-            }
-
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your password has been set.";
-
-            return RedirectToPage();
+            return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
         }
+
+        var addPasswordResult = await _userManager.AddPasswordAsync(user, Input.NewPassword);
+        if (!addPasswordResult.Succeeded)
+        {
+            foreach (var error in addPasswordResult.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return Page();
+        }
+
+        await _signInManager.RefreshSignInAsync(user);
+        StatusMessage = "Your password has been set.";
+
+        return RedirectToPage();
     }
 }

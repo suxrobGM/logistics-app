@@ -43,7 +43,9 @@ public class PushNotificationService : IPushNotificationService
         {
             var message = new Message
             {
-                Token = deviceToken, Notification = new Notification { Title = title, Body = body }, Data = data
+                Token = deviceToken,
+                Notification = new Notification { Title = title, Body = body },
+                Data = data
             };
             await FirebaseMessaging.GetMessaging(firebaseApp).SendAsync(message);
         }

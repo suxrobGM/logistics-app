@@ -184,7 +184,9 @@ internal class OneTwo3LoadBoardService(
         return result.IsSuccess
             ? new PostTruckResultDto
             {
-                Success = true, ExternalPostId = result.Value?.TruckPostId, ExpiresAt = result.Value?.ExpiresAt
+                Success = true,
+                ExternalPostId = result.Value?.TruckPostId,
+                ExpiresAt = result.Value?.ExpiresAt
             }
             : new PostTruckResultDto { Success = false, ErrorMessage = $"123Loadboard post truck failed: {result.ErrorBody}" };
     }

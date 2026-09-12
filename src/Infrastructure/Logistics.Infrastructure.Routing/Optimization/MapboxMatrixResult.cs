@@ -1,4 +1,4 @@
-﻿namespace Logistics.Infrastructure.Routing.Optimization;
+namespace Logistics.Infrastructure.Routing.Optimization;
 
 public sealed record MapboxMatrixResult(double?[][] Durations, double?[][] Distances)
 {

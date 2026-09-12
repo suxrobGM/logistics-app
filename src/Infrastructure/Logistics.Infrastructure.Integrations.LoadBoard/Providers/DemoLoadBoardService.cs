@@ -92,7 +92,8 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
 
         return Task.FromResult(new LoadBoardBookingResultDto
         {
-            Success = true, ExternalConfirmationId = $"DEMO-CONF-{Guid.NewGuid():N}"[..20].ToUpper()
+            Success = true,
+            ExternalConfirmationId = $"DEMO-CONF-{Guid.NewGuid():N}"[..20].ToUpper()
         });
     }
 

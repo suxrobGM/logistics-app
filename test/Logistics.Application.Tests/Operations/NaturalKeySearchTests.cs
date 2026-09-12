@@ -46,7 +46,11 @@ public class NaturalKeySearchTests
         Type = TerminalType.SeaPort,
         Address = new Address
         {
-            Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US"
+            Line1 = "1 Test St",
+            City = "Test",
+            State = "TX",
+            ZipCode = "00000",
+            Country = "US"
         }
     };
 

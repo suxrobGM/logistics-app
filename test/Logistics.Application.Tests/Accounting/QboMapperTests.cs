@@ -16,7 +16,11 @@ public class QboMapperTests
             Phone = "+1-555-0100",
             BillingAddress = new QboAddressPayload
             {
-                Line1 = "1 Dock St", City = "Newark", State = "NJ", ZipCode = "07102", Country = "US"
+                Line1 = "1 Dock St",
+                City = "Newark",
+                State = "NJ",
+                ZipCode = "07102",
+                Country = "US"
             }
         };
 

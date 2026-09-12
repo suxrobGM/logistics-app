@@ -31,7 +31,8 @@ internal sealed class PayrollRejectedNotificationHandler(
 
         var data = new Dictionary<string, string>
         {
-            ["payrollId"] = @event.PayrollId.ToString(), ["type"] = "payroll_rejected"
+            ["payrollId"] = @event.PayrollId.ToString(),
+            ["type"] = "payroll_rejected"
         };
 
         // Send push notification to employee

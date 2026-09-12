@@ -15,24 +15,31 @@ public record LoadBoardWebhookResultDto
 
 public enum LoadBoardWebhookEventType
 {
-    [Description("Unknown")] [EnumMember(Value = "unknown")]
+    [Description("Unknown")]
+    [EnumMember(Value = "unknown")]
     Unknown,
 
-    [Description("Load Posted")] [EnumMember(Value = "load_posted")]
+    [Description("Load Posted")]
+    [EnumMember(Value = "load_posted")]
     LoadPosted,
 
-    [Description("Load Cancelled")] [EnumMember(Value = "load_cancelled")]
+    [Description("Load Cancelled")]
+    [EnumMember(Value = "load_cancelled")]
     LoadCancelled,
 
-    [Description("Load Expired")] [EnumMember(Value = "load_expired")]
+    [Description("Load Expired")]
+    [EnumMember(Value = "load_expired")]
     LoadExpired,
 
-    [Description("Truck Post Expired")] [EnumMember(Value = "truck_post_expired")]
+    [Description("Truck Post Expired")]
+    [EnumMember(Value = "truck_post_expired")]
     TruckPostExpired,
 
-    [Description("Rate Updated")] [EnumMember(Value = "rate_updated")]
+    [Description("Rate Updated")]
+    [EnumMember(Value = "rate_updated")]
     RateUpdated,
 
-    [Description("Status Changed")] [EnumMember(Value = "status_changed")]
+    [Description("Status Changed")]
+    [EnumMember(Value = "status_changed")]
     StatusChanged
 }

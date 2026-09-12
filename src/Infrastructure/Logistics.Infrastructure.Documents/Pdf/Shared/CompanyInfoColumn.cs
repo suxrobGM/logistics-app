@@ -41,8 +41,8 @@ internal static class CompanyInfoColumn
 
             if (!includeTaxIds) return;
 
-            if (!string.IsNullOrEmpty(tenant.McNumber))   col.Item().Text($"MC#: {tenant.McNumber}");
-            if (!string.IsNullOrEmpty(tenant.VatNumber))  col.Item().Text($"VAT: {tenant.VatNumber}");
+            if (!string.IsNullOrEmpty(tenant.McNumber)) col.Item().Text($"MC#: {tenant.McNumber}");
+            if (!string.IsNullOrEmpty(tenant.VatNumber)) col.Item().Text($"VAT: {tenant.VatNumber}");
             if (!string.IsNullOrEmpty(tenant.EoriNumber)) col.Item().Text($"EORI: {tenant.EoriNumber}");
         });
     }
