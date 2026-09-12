@@ -84,11 +84,6 @@ expect class MessagingService {
     fun sendTypingIndicator(conversationId: String, isTyping: Boolean)
 
     /**
-     * Notifies that a message has been read.
-     */
-    suspend fun markAsRead(conversationId: String, messageId: String)
-
-    /**
      * Checks if the connection is currently active.
      */
     fun isConnected(): Boolean

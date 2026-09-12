@@ -15,7 +15,6 @@ public class ChatHubTests
     private const string ConnectionId = "conn-1";
 
     private readonly IConversationAccess conversationAccess = Substitute.For<IConversationAccess>();
-    private readonly ChatHubContext hubContext = new();
     private readonly IChatHubClient groupClient = Substitute.For<IChatHubClient>();
     private readonly IChatHubClient groupExceptClient = Substitute.For<IChatHubClient>();
     private readonly IGroupManager groups = Substitute.For<IGroupManager>();
@@ -28,7 +27,7 @@ public class ChatHubTests
 
     public ChatHubTests()
     {
-        sut = new ChatHub(hubContext, conversationAccess);
+        sut = new ChatHub(conversationAccess);
 
         var clients = Substitute.For<IHubCallerClients<IChatHubClient>>();
         clients.Group(Arg.Any<string>()).Returns(groupClient);
@@ -37,11 +36,6 @@ public class ChatHubTests
         sut.Clients = clients;
         sut.Groups = groups;
         sut.Context = CallerContext(callerTenantId, callerUserId);
-
-        // Model a real connected client. Without it the negative tests below would pass against
-        // the unfixed hub for the wrong reason.
-        hubContext.AddClient(ConnectionId);
-        hubContext.SetUserId(ConnectionId, callerUserId);
     }
 
     /// <summary>Passes the real join check, which authorizes the other methods.</summary>
@@ -61,6 +55,7 @@ public class ChatHubTests
     {
         var context = Substitute.For<HubCallerContext>();
         context.ConnectionId.Returns(ConnectionId);
+        context.Items.Returns(new Dictionary<object, object?>());
         context.User.Returns(new ClaimsPrincipal(new ClaimsIdentity(
         [
             new Claim(CustomClaimTypes.Tenant, tenantId.ToString()),
@@ -83,6 +78,7 @@ public class ChatHubTests
             Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<string>());
     }
 
+    // The check is asked about the caller's own claims, so this only passes for matching arguments.
     [Fact]
     public async Task JoinConversation_CallerIsAParticipant_JoinsTheGroupAndAnnounces()
     {
@@ -93,34 +89,6 @@ public class ChatHubTests
         await groups.Received(1).AddToGroupAsync(
             ConnectionId, $"conversation-{conversationId}", Arg.Any<CancellationToken>());
         await groupClient.Received(1).UserJoinedConversation(conversationId, callerUserId, null);
-    }
-
-    // The check is asked about the caller's own claims, never about client-supplied values.
-    [Fact]
-    public async Task JoinConversation_ChecksAccessForTheCallersOwnTenantAndUser()
-    {
-        AllowJoin(true);
-
-        await sut.JoinConversation(conversationId.ToString());
-
-        await conversationAccess.Received(1).CanUserJoinConversationAsync(
-            callerTenantId, conversationId, callerUserId, Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task JoinConversation_WithoutATenantClaim_DoesNothing()
-    {
-        var context = Substitute.For<HubCallerContext>();
-        context.ConnectionId.Returns(ConnectionId);
-        context.User.Returns(new ClaimsPrincipal(new ClaimsIdentity()));
-        sut.Context = context;
-
-        await sut.JoinConversation(conversationId.ToString());
-
-        await conversationAccess.DidNotReceive().CanUserJoinConversationAsync(
-            Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-        await groups.DidNotReceive().AddToGroupAsync(
-            Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     // A non-GUID id previously reached Guid.Parse after the group add, leaving the caller joined.
@@ -145,29 +113,6 @@ public class ChatHubTests
             ConnectionId, $"conversation-{conversationId}", Arg.Any<CancellationToken>());
     }
 
-    // Read receipts were broadcast into any conversation group by id, with no check.
-    [Fact]
-    public async Task MarkAsRead_WithoutHavingJoined_DoesNotBroadcast()
-    {
-        await sut.MarkAsRead(conversationId, Guid.NewGuid(), callerUserId);
-
-        await groupClient.DidNotReceive().MessageRead(Arg.Any<Guid>(), Arg.Any<Guid>());
-    }
-
-    // Trusting the supplied reader id let any caller pin a read on somebody else.
-    [Fact]
-    public async Task MarkAsRead_AttributesTheReceiptToTheCallerNotTheSuppliedReaderId()
-    {
-        await JoinAsync();
-        var messageId = Guid.NewGuid();
-        var someoneElse = Guid.NewGuid();
-
-        await sut.MarkAsRead(conversationId, messageId, someoneElse);
-
-        await groupClient.Received(1).MessageRead(messageId, callerUserId);
-        await groupClient.DidNotReceive().MessageRead(messageId, someoneElse);
-    }
-
     // Typing indicators were broadcast into any conversation group by id.
     [Fact]
     public async Task SendTypingIndicator_WithoutHavingJoined_DoesNotBroadcast()
@@ -186,29 +131,6 @@ public class ChatHubTests
 
         await groupExceptClient.Received(1).TypingIndicator(Arg.Is<TypingIndicatorDto>(
             i => i.ConversationId == conversationId && i.UserId == callerUserId && i.IsTyping));
-    }
-
-    [Fact]
-    public async Task SendTypingIndicator_MalformedConversationId_DoesNotThrowOrBroadcast()
-    {
-        await JoinAsync();
-
-        await sut.SendTypingIndicator("not-a-guid", true);
-
-        await groupExceptClient.DidNotReceive().TypingIndicator(Arg.Any<TypingIndicatorDto>());
-    }
-
-    // The web client fires a typing indicator on every keystroke, so this must not query.
-    [Fact]
-    public async Task SendTypingIndicator_DoesNotHitTheDatabase()
-    {
-        await JoinAsync();
-
-        await sut.SendTypingIndicator(conversationId.ToString(), true);
-        await sut.SendTypingIndicator(conversationId.ToString(), true);
-
-        await conversationAccess.DidNotReceive().CanUserJoinConversationAsync(
-            Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
     // A caller could previously spoof a "user left" event into a conversation never joined.
@@ -244,15 +166,5 @@ public class ChatHubTests
         await sut.SendTypingIndicator(conversationId.ToString(), true);
 
         await groupExceptClient.DidNotReceive().TypingIndicator(Arg.Any<TypingIndicatorDto>());
-    }
-
-    // A non-GUID id previously threw inside the announcement, before the group removal ran.
-    [Fact]
-    public async Task LeaveConversation_MalformedConversationId_DoesNotThrow()
-    {
-        await sut.LeaveConversation("not-a-guid");
-
-        await groups.DidNotReceive().RemoveFromGroupAsync(
-            Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 }

@@ -37,7 +37,6 @@ public static class Registrar
                 new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
         });
         services.AddSingleton<TrackingHubContext>();
-        services.AddSingleton<ChatHubContext>();
 
         // SignalR abstractions for Application layer
         services.AddScoped<IRealtimeMessagingService, SignalRMessagingService>();

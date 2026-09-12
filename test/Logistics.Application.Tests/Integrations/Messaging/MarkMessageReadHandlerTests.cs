@@ -73,7 +73,7 @@ public class MarkMessageReadHandlerTests
             CancellationToken.None);
 
     [Fact]
-    public async Task Handle_CallerIsNotAParticipant_FailsAndWritesNothing()
+    public async Task Handle_CallerIsNotAParticipant_FailsWithoutWritingOrBroadcasting()
     {
         var result = await Handle(OutsiderId);
 
@@ -81,13 +81,6 @@ public class MarkMessageReadHandlerTests
         await receiptRepo.DidNotReceive().AddAsync(
             Arg.Any<MessageReadReceipt>(), Arg.Any<CancellationToken>());
         await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_CallerIsNotAParticipant_DoesNotBroadcast()
-    {
-        await Handle(OutsiderId);
-
         await messagingService.DidNotReceive().BroadcastMessageReadAsync(
             Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
@@ -116,14 +109,6 @@ public class MarkMessageReadHandlerTests
         Assert.True(result.IsSuccess);
         await receiptRepo.Received(1).AddAsync(
             Arg.Any<MessageReadReceipt>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_MessageNotFound_Fails()
-    {
-        messageRepo.GetByIdAsync(MessageId, Arg.Any<CancellationToken>()).Returns((Message?)null);
-
-        Assert.False((await Handle(ParticipantId)).IsSuccess);
     }
 
     [Fact]

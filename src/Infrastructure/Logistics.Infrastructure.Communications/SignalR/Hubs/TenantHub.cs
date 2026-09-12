@@ -27,6 +27,12 @@ public abstract class TenantHub<TClient> : Hub<TClient>
         await base.OnConnectedAsync();
     }
 
+    /// <summary>The caller's tenant. Safe to read in any hub method: a connection without the claim never gets one.</summary>
+    protected Guid TenantId => Context.TenantIdFromClaim()!.Value;
+
+    /// <summary>The caller's user id, under the same guarantee as <see cref="TenantId"/>.</summary>
+    protected Guid UserId => Context.UserIdFromClaim()!.Value;
+
     /// <summary>The group this connection joins. Defaults to the whole tenant.</summary>
     protected virtual string GroupNameFor(Guid tenantId, Guid userId) => tenantId.ToString();
 
