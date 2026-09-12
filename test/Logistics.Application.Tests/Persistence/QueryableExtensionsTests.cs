@@ -83,4 +83,41 @@ public class QueryableExtensionsTests
 
         Assert.Equal([Oldest, Newest], ordered);
     }
+
+    // List screens send an empty sort on their first page, so this is the default path.
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("NotAProperty")]
+    public void OrderByWithTieBreaker_NoUsableSortField_OrdersByTheTieBreaker(string? orderBy)
+    {
+        // Source() yields Oldest first, so falling through unordered would fail this.
+        var ordered = Source().OrderBy(orderBy, r => r.Name).ToList();
+
+        Assert.Equal([Newest, Oldest], ordered);
+    }
+
+    [Fact]
+    public void OrderByWithTieBreaker_UsableSortField_KeepsTheRequestedOrder()
+    {
+        // Ordering by Name would put Newest first, so this fails if the tie-breaker took over.
+        var ordered = Source().OrderBy("CreatedAt", r => r.Name).ToList();
+
+        Assert.Equal([Oldest, Newest], ordered);
+    }
+
+    // A requested sort is rarely unique, so the tie-breaker applies on the success path too.
+    [Fact]
+    public void OrderByWithTieBreaker_RequestedSortHasTies_BreaksThemByTheTieBreaker()
+    {
+        var sameDay = new DateTime(2026, 2, 1);
+        var second = new Row("b", sameDay, new Customer("x"));
+        var first = new Row("a", sameDay, new Customer("x"));
+
+        var ordered = new[] { second, first }.AsQueryable()
+            .OrderBy("CreatedAt", r => r.Name)
+            .ToList();
+
+        Assert.Equal([first, second], ordered);
+    }
 }
