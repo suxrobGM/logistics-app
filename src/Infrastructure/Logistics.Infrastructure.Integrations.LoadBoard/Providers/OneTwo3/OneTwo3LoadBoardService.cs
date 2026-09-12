@@ -220,22 +220,15 @@ internal class OneTwo3LoadBoardService(
     public Task<LoadBoardWebhookResultDto> ProcessWebhookAsync(string payload, string? signature,
         string? webhookSecret)
     {
-        if (!string.IsNullOrEmpty(webhookSecret))
+        if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
         {
-            if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+            logger.LogWarning("Rejected 123Loadboard webhook with invalid or unverifiable signature");
+            return Task.FromResult(new LoadBoardWebhookResultDto
             {
-                logger.LogWarning("Rejected 123Loadboard webhook with invalid signature");
-                return Task.FromResult(new LoadBoardWebhookResultDto
-                {
-                    IsValid = false,
-                    EventType = LoadBoardWebhookEventType.Unknown,
-                    ErrorMessage = "Invalid webhook signature"
-                });
-            }
-        }
-        else
-        {
-            logger.LogWarning("123Loadboard webhook processed without signature verification - no webhook secret configured");
+                IsValid = false,
+                EventType = LoadBoardWebhookEventType.Unknown,
+                ErrorMessage = "Invalid webhook signature"
+            });
         }
 
         try
