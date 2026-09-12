@@ -97,32 +97,23 @@ Real-time chat messaging between employees (dispatchers and drivers).
 await connection.invoke("JoinConversation", conversationId);
 ```
 
+A caller who is not a participant of the conversation is not added to the group.
+
 **LeaveConversation**: Leave a conversation
 
 ```typescript
 await connection.invoke("LeaveConversation", conversationId);
 ```
 
-**SendMessage**: Send a message to a conversation
-
-```typescript
-await connection.invoke("SendMessage", {
-  conversationId: "conv-123",
-  content: "Hello!",
-});
-```
-
-**MarkAsRead**: Mark a message as read
-
-```typescript
-await connection.invoke("MarkAsRead", conversationId, messageId, readById);
-```
-
-**SendTypingIndicator**: Broadcast typing status
+**SendTypingIndicator**: Broadcast typing status. Requires a prior `JoinConversation`.
 
 ```typescript
 await connection.invoke("SendTypingIndicator", conversationId, true);
 ```
+
+Messages and read receipts go over the REST API (`POST /messages` and
+`PUT /messages/{id}/read`), not the hub. The API persists them and then broadcasts to the
+conversation group.
 
 ### Server → Client Events
 

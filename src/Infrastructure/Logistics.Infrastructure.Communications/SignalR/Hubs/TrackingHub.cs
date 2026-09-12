@@ -11,8 +11,6 @@ public class TrackingHub(
     ITruckGeolocationUpdater geolocationUpdater,
     TrackingHubContext hubContext) : TenantHub<ITrackingHubClient>
 {
-    private const string TripGroupPrefix = "trip:";
-
     protected override Task OnTenantConnectedAsync(Guid tenantId, Guid userId)
     {
         hubContext.AddClient(Context.ConnectionId, null);
@@ -53,17 +51,5 @@ public class TrackingHub(
             .Group(tenantId.ToString())
             .ReceiveGeolocationData(truckGeolocation);
         hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
-    }
-
-    /// <summary>Subscribe to updates for a specific trip.</summary>
-    public Task SubscribeToTrip(string tripId)
-    {
-        return Groups.AddToGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
-    }
-
-    /// <summary>Unsubscribe from updates for a specific trip.</summary>
-    public Task UnsubscribeFromTrip(string tripId)
-    {
-        return Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
     }
 }

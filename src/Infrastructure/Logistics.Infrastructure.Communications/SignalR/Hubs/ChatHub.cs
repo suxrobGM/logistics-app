@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Realtime;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Shared.Models.Messaging;
 using Microsoft.AspNetCore.SignalR;
@@ -5,35 +6,28 @@ using Microsoft.AspNetCore.SignalR;
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 /// <summary>Provides tenant-scoped messaging between dispatchers and drivers.</summary>
-public class ChatHub(ChatHubContext hubContext) : TenantHub<IChatHubClient>
+public class ChatHub(IConversationAccess conversationAccess) : TenantHub<IChatHubClient>
 {
-    protected override Task OnTenantConnectedAsync(Guid tenantId, Guid userId)
-    {
-        hubContext.AddClient(Context.ConnectionId);
-        hubContext.SetTenantId(Context.ConnectionId, tenantId.ToString());
-        hubContext.SetUserId(Context.ConnectionId, userId);
-        return Task.CompletedTask;
-    }
-
-    public override Task OnDisconnectedAsync(Exception? exception)
-    {
-        hubContext.RemoveClient(Context.ConnectionId);
-        return base.OnDisconnectedAsync(exception);
-    }
-
     /// <summary>
-    ///     Join a conversation to receive messages.
+    ///     Join a conversation to receive messages. A caller who is not a participant is not added.
     /// </summary>
     public async Task JoinConversation(string conversationId)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"conversation-{conversationId}");
-
-        var userId = hubContext.GetUserId(Context.ConnectionId);
-        if (userId.HasValue)
+        if (!Guid.TryParse(conversationId, out var conversationGuid))
         {
-            await Clients.Group($"conversation-{conversationId}")
-                .UserJoinedConversation(Guid.Parse(conversationId), userId.Value, null);
+            return;
         }
+
+        if (!await conversationAccess.CanUserJoinConversationAsync(TenantId, conversationGuid, UserId))
+        {
+            return;
+        }
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, GroupName(conversationGuid));
+        Context.Items[JoinedKey(conversationGuid)] = true;
+
+        await Clients.Group(GroupName(conversationGuid))
+            .UserJoinedConversation(conversationGuid, UserId, null);
     }
 
     /// <summary>
@@ -41,33 +35,21 @@ public class ChatHub(ChatHubContext hubContext) : TenantHub<IChatHubClient>
     /// </summary>
     public async Task LeaveConversation(string conversationId)
     {
-        var userId = hubContext.GetUserId(Context.ConnectionId);
-        if (userId.HasValue)
+        if (!Guid.TryParse(conversationId, out var conversationGuid))
         {
-            await Clients.Group($"conversation-{conversationId}")
-                .UserLeftConversation(Guid.Parse(conversationId), userId.Value);
+            return;
         }
 
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"conversation-{conversationId}");
-    }
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, GroupName(conversationGuid));
 
-    /// <summary>
-    ///     Send a message to a conversation.
-    ///     Messages are persisted via the API and then broadcast here.
-    /// </summary>
-    public async Task SendMessage(MessageDto message)
-    {
-        await Clients.Group($"conversation-{message.ConversationId}")
-            .ReceiveMessage(message);
-    }
+        // Announcing a departure is a broadcast, so only a caller who actually joined may make it.
+        if (HasJoined(conversationGuid))
+        {
+            await Clients.Group(GroupName(conversationGuid))
+                .UserLeftConversation(conversationGuid, UserId);
+        }
 
-    /// <summary>
-    ///     Notify that a message has been read.
-    /// </summary>
-    public async Task MarkAsRead(Guid conversationId, Guid messageId, Guid readById)
-    {
-        await Clients.Group($"conversation-{conversationId}")
-            .MessageRead(messageId, readById);
+        Context.Items.Remove(JoinedKey(conversationGuid));
     }
 
     /// <summary>
@@ -75,18 +57,31 @@ public class ChatHub(ChatHubContext hubContext) : TenantHub<IChatHubClient>
     /// </summary>
     public async Task SendTypingIndicator(string conversationId, bool isTyping)
     {
-        var userId = hubContext.GetUserId(Context.ConnectionId);
-        if (!userId.HasValue)
+        if (!Guid.TryParse(conversationId, out var conversationGuid) || !HasJoined(conversationGuid))
         {
             return;
         }
 
         var indicator = new TypingIndicatorDto
         {
-            ConversationId = Guid.Parse(conversationId), UserId = userId.Value, IsTyping = isTyping
+            ConversationId = conversationGuid, UserId = UserId, IsTyping = isTyping
         };
 
-        await Clients.GroupExcept($"conversation-{conversationId}", Context.ConnectionId)
+        await Clients.GroupExcept(GroupName(conversationGuid), Context.ConnectionId)
             .TypingIndicator(indicator);
     }
+
+    /// <summary>
+    ///     Whether this connection passed the <see cref="JoinConversation" /> check. The flag lives on
+    ///     the connection, so it lasts exactly as long as the group membership it guards.
+    /// </summary>
+    private bool HasJoined(Guid conversationId) => Context.Items.ContainsKey(JoinedKey(conversationId));
+
+    private static string JoinedKey(Guid conversationId) => $"joined-conversation-{conversationId}";
+
+    /// <summary>
+    ///     Built from the parsed Guid, not the caller's string, so a braced or upper-case id cannot
+    ///     land the caller in a group the server never broadcasts to.
+    /// </summary>
+    private static string GroupName(Guid conversationId) => $"conversation-{conversationId}";
 }

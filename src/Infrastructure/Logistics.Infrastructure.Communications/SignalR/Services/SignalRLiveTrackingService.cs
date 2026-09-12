@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Shared.Models;
@@ -32,7 +32,7 @@ internal sealed class SignalRLiveTrackingService(IHubContext<TrackingHub, ITrack
         var statusUpdate = new TripStatusUpdateDto { TripId = tripId, Status = newStatus, UpdatedAt = DateTime.UtcNow };
 
         await hubContext.Clients
-            .Groups(tenantId, $"trip:{tripId}")
+            .Group(tenantId)
             .ReceiveTripStatusUpdate(statusUpdate);
     }
 
@@ -45,7 +45,7 @@ internal sealed class SignalRLiveTrackingService(IHubContext<TrackingHub, ITrack
         var stopArrival = new StopArrivalUpdateDto { TripId = tripId, StopId = stopId, ArrivedAt = DateTime.UtcNow };
 
         await hubContext.Clients
-            .Groups(tenantId, $"trip:{tripId}")
+            .Group(tenantId)
             .ReceiveStopArrival(stopArrival);
     }
 

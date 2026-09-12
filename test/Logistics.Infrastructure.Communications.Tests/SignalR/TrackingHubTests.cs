@@ -18,6 +18,7 @@ public class TrackingHubTests
     private readonly ITruckGeolocationUpdater updater = Substitute.For<ITruckGeolocationUpdater>();
     private readonly TrackingHubContext hubContext = new();
     private readonly ITrackingHubClient groupClient = Substitute.For<ITrackingHubClient>();
+    private readonly IGroupManager groups = Substitute.For<IGroupManager>();
 
     private readonly Guid callerTenantId = Guid.NewGuid();
     private readonly Guid driverId = Guid.NewGuid();
@@ -33,7 +34,7 @@ public class TrackingHubTests
         clients.Group(Arg.Any<string>()).Returns(groupClient);
 
         sut.Clients = clients;
-        sut.Groups = Substitute.For<IGroupManager>();
+        sut.Groups = groups;
         sut.Context = CallerContext(callerTenantId, driverId);
     }
 

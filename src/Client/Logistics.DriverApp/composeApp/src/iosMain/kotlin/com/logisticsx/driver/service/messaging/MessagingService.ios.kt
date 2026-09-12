@@ -198,24 +198,6 @@ actual class MessagingService(
         }
     }
 
-    actual suspend fun markAsRead(conversationId: String, messageId: String) {
-        if (_connectionState.value != MessagingConnectionState.CONNECTED) {
-            return
-        }
-
-        try {
-            val userId = preferencesManager.getUserId() ?: return
-            client?.send(
-                "MarkAsRead",
-                JsonPrimitive(conversationId),
-                JsonPrimitive(messageId),
-                JsonPrimitive(userId)
-            )
-        } catch (e: Exception) {
-            Logger.e("MessagingService iOS: Failed to mark message as read: ${e.message}")
-        }
-    }
-
     actual fun isConnected(): Boolean {
         return client?.isConnected == true
     }

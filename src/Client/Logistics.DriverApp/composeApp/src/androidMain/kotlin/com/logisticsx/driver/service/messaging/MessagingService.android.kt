@@ -183,19 +183,6 @@ actual class MessagingService(
         }
     }
 
-    actual suspend fun markAsRead(conversationId: String, messageId: String) {
-        if (hubConnection?.connectionState != HubConnectionState.CONNECTED) {
-            return
-        }
-
-        try {
-            val userId = preferencesManager.getUserId() ?: return
-            hubConnection?.send("MarkAsRead", conversationId, messageId, userId)
-        } catch (e: Exception) {
-            Logger.e("MessagingService: Failed to mark message as read", e)
-        }
-    }
-
     actual fun isConnected(): Boolean {
         return hubConnection?.connectionState == HubConnectionState.CONNECTED
     }
