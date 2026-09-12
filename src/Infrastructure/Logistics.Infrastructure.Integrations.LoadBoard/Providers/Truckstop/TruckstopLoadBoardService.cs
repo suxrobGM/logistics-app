@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using Logistics.Infrastructure.Integrations.Common;
+using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Logistics.Domain.Entities;
@@ -218,12 +219,7 @@ internal class TruckstopLoadBoardService(
         if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
         {
             logger.LogWarning("Rejected Truckstop webhook with invalid or unverifiable signature");
-            return Task.FromResult(new LoadBoardWebhookResultDto
-            {
-                IsValid = false,
-                EventType = LoadBoardWebhookEventType.Unknown,
-                ErrorMessage = "Invalid webhook signature"
-            });
+            return Task.FromResult(LoadBoardWebhookResults.Invalid("Invalid webhook signature"));
         }
 
         try
@@ -239,10 +235,7 @@ internal class TruckstopLoadBoardService(
         catch (JsonException ex)
         {
             logger.LogError(ex, "Error processing Truckstop webhook");
-            return Task.FromResult(new LoadBoardWebhookResultDto
-            {
-                IsValid = false, EventType = LoadBoardWebhookEventType.Unknown, ErrorMessage = ex.Message
-            });
+            return Task.FromResult(LoadBoardWebhookResults.Invalid(ex.Message));
         }
     }
 

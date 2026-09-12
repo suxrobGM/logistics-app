@@ -1,8 +1,6 @@
-using System.Security.Claims;
 using Logistics.Application.Abstractions.Realtime;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
-using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Models.Messaging;
 using Microsoft.AspNetCore.SignalR;
 using NSubstitute;
@@ -12,7 +10,7 @@ namespace Logistics.Infrastructure.Communications.Tests.SignalR;
 
 public class ChatHubTests
 {
-    private const string ConnectionId = "conn-1";
+    private const string ConnectionId = HubTestContext.ConnectionId;
 
     private readonly IConversationAccess conversationAccess = Substitute.For<IConversationAccess>();
     private readonly IChatHubClient groupClient = Substitute.For<IChatHubClient>();
@@ -35,7 +33,7 @@ public class ChatHubTests
 
         sut.Clients = clients;
         sut.Groups = groups;
-        sut.Context = CallerContext(callerTenantId, callerUserId);
+        sut.Context = HubTestContext.Caller(callerTenantId, callerUserId);
     }
 
     /// <summary>Passes the real join check, which authorizes the other methods.</summary>
@@ -43,26 +41,12 @@ public class ChatHubTests
     {
         AllowJoin(true);
         await sut.JoinConversation(conversationId.ToString());
-        conversationAccess.ClearReceivedCalls();
     }
 
     private void AllowJoin(bool allowed) =>
         conversationAccess.CanUserJoinConversationAsync(
                 callerTenantId, conversationId, callerUserId, Arg.Any<CancellationToken>())
             .Returns(allowed);
-
-    private static HubCallerContext CallerContext(Guid tenantId, Guid userId)
-    {
-        var context = Substitute.For<HubCallerContext>();
-        context.ConnectionId.Returns(ConnectionId);
-        context.Items.Returns(new Dictionary<object, object?>());
-        context.User.Returns(new ClaimsPrincipal(new ClaimsIdentity(
-        [
-            new Claim(CustomClaimTypes.Tenant, tenantId.ToString()),
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString())
-        ])));
-        return context;
-    }
 
     // Any authenticated user could previously join any conversation group by id.
     [Fact]

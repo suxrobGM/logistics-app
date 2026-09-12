@@ -92,6 +92,21 @@ public static class WebhookSignature
         return false;
     }
 
+    /// <summary>
+    /// Constant-time equality for a shared-secret header. Fails closed when either side is
+    /// missing, so an unconfigured secret rejects every caller instead of accepting every caller.
+    /// </summary>
+    public static bool ConstantTimeEquals(string? provided, string? expected)
+    {
+        if (string.IsNullOrEmpty(provided) || string.IsNullOrEmpty(expected))
+        {
+            return false;
+        }
+
+        return CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(provided), Encoding.UTF8.GetBytes(expected));
+    }
+
     private static bool TryDecodeSecret(string secret, out byte[] key)
     {
         const string prefix = "whsec_";

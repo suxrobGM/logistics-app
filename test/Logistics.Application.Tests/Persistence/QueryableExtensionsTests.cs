@@ -77,6 +77,24 @@ public class QueryableExtensionsTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
+    public void OrderByWithTieBreaker_NoField_UsesTheDefaultSort(string? orderBy)
+    {
+        var ordered = Source().OrderBy(orderBy, r => r.Name, defaultOrderBy: "-CreatedAt").ToList();
+
+        Assert.Equal([Newest, Oldest], ordered);
+    }
+
+    [Fact]
+    public void OrderByWithTieBreaker_FieldGiven_IgnoresTheDefaultSort()
+    {
+        var ordered = Source().OrderBy("CreatedAt", r => r.Name, defaultOrderBy: "-CreatedAt").ToList();
+
+        Assert.Equal([Oldest, Newest], ordered);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
     public void OrderBy_NoField_LeavesOrderUntouched(string? orderBy)
     {
         var ordered = Source().OrderBy(orderBy).ToList();

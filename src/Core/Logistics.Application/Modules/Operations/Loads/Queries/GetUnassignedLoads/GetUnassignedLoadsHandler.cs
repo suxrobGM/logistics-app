@@ -29,7 +29,7 @@ internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow)
             ct: ct);
 
         var entities = await baseQuery
-            .OrderBy(string.IsNullOrEmpty(req.OrderBy) ? "-CreatedAt" : req.OrderBy, l => l.Id)
+            .OrderBy(req.OrderBy, l => l.Id, defaultOrderBy: "-CreatedAt")
             .ApplyPaging(req.Page, req.PageSize)
             .ToArrayAsync(ct);
 

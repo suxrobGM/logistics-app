@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Logistics.Infrastructure.Integrations.Common;
+using Logistics.Application.Tests.TestKit;
 using Xunit;
 
 namespace Logistics.Application.Tests.Eld;
@@ -19,28 +20,28 @@ public class WebhookSignatureTests
     [Fact]
     public void VerifyHmacSha256_ValidSignature_ReturnsTrue()
     {
-        var signature = ComputeHex(HmacPayload, HmacSecret);
+        var signature = WebhookTestKit.ComputeHmacHex(HmacPayload, HmacSecret);
         Assert.True(WebhookSignature.VerifyHmacSha256(HmacPayload, signature, HmacSecret));
     }
 
     [Fact]
     public void VerifyHmacSha256_UppercaseSignature_StillMatches()
     {
-        var signature = ComputeHex(HmacPayload, HmacSecret).ToUpperInvariant();
+        var signature = WebhookTestKit.ComputeHmacHex(HmacPayload, HmacSecret).ToUpperInvariant();
         Assert.True(WebhookSignature.VerifyHmacSha256(HmacPayload, signature, HmacSecret));
     }
 
     [Fact]
     public void VerifyHmacSha256_TamperedPayload_ReturnsFalse()
     {
-        var signature = ComputeHex(HmacPayload, HmacSecret);
+        var signature = WebhookTestKit.ComputeHmacHex(HmacPayload, HmacSecret);
         Assert.False(WebhookSignature.VerifyHmacSha256(HmacPayload + "extra", signature, HmacSecret));
     }
 
     [Fact]
     public void VerifyHmacSha256_WrongSecret_ReturnsFalse()
     {
-        var signature = ComputeHex(HmacPayload, HmacSecret);
+        var signature = WebhookTestKit.ComputeHmacHex(HmacPayload, HmacSecret);
         Assert.False(WebhookSignature.VerifyHmacSha256(HmacPayload, signature, "different-secret"));
     }
 
@@ -144,12 +145,6 @@ public class WebhookSignatureTests
     }
 
     #endregion
-
-    private static string ComputeHex(string payload, string secret)
-    {
-        var hash = HMACSHA256.HashData(Encoding.UTF8.GetBytes(secret), Encoding.UTF8.GetBytes(payload));
-        return Convert.ToHexStringLower(hash);
-    }
 
     private static string SvixNow() => DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
 

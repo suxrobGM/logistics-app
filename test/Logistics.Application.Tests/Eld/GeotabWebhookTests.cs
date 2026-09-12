@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -10,6 +8,7 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using Logistics.Application.Tests.TestKit;
 using Xunit;
 
 namespace Logistics.Application.Tests.Eld;
@@ -24,7 +23,7 @@ public class GeotabWebhookTests
 
     public GeotabWebhookTests()
     {
-        var httpClient = new HttpClient(new NeverCalledHandler()) { BaseAddress = new Uri("https://example") };
+        var httpClient = new HttpClient(new NeverCalledHttpHandler()) { BaseAddress = new Uri("https://example") };
         var client = new GeotabClient(httpClient, NullLogger<GeotabClient>.Instance);
         var options = Options.Create(new EldOptions());
         sut = new GeotabEldService(client, tenantUow, options, NullLogger<GeotabEldService>.Instance);
@@ -33,7 +32,7 @@ public class GeotabWebhookTests
     [Fact]
     public async Task ProcessWebhook_ValidSignature_ParsesPayload()
     {
-        var signature = ComputeHex(payload, secret);
+        var signature = WebhookTestKit.ComputeHmacHex(payload, secret);
 
         var result = await sut.ProcessWebhookAsync(payload, signature, secret);
 
@@ -65,25 +64,11 @@ public class GeotabWebhookTests
     public async Task ProcessWebhook_MalformedJson_ReturnsInvalid()
     {
         const string payload = "{not json";
-        var signature = ComputeHex(payload, secret);
+        var signature = WebhookTestKit.ComputeHmacHex(payload, secret);
 
         var result = await sut.ProcessWebhookAsync(payload, signature, secret);
 
         Assert.False(result.IsValid);
         Assert.NotNull(result.ErrorMessage);
-    }
-
-    private static string ComputeHex(string payload, string secret)
-    {
-        var hash = HMACSHA256.HashData(Encoding.UTF8.GetBytes(secret), Encoding.UTF8.GetBytes(payload));
-        return Convert.ToHexStringLower(hash);
-    }
-
-    private sealed class NeverCalledHandler : HttpMessageHandler
-    {
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
-        {
-            throw new InvalidOperationException("Webhook tests must not perform HTTP calls.");
-        }
     }
 }

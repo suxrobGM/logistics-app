@@ -1,5 +1,4 @@
-using System.Security.Cryptography;
-using System.Text;
+using Logistics.Infrastructure.Integrations.Common;
 using Logistics.TelegramBot.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,10 +18,8 @@ internal static class TelegramWebhookHandler
         TelegramBotOptions options)
     {
         // The endpoint is anonymous, so this header is the only proof the caller is Telegram.
-        // An unset secret therefore rejects everything rather than accepting everything.
         var secretHeader = context.Request.Headers["X-Telegram-Bot-Api-Secret-Token"].FirstOrDefault();
-        if (string.IsNullOrEmpty(options.SecretToken) ||
-            !ConstantTimeEquals(secretHeader, options.SecretToken))
+        if (!WebhookSignature.ConstantTimeEquals(secretHeader, options.SecretToken))
         {
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             return;
@@ -44,15 +41,5 @@ internal static class TelegramWebhookHandler
         });
 
         context.Response.StatusCode = StatusCodes.Status200OK;
-    }
-
-    private static bool ConstantTimeEquals(string? a, string? b)
-    {
-        if (a is null || b is null)
-            return false;
-
-        var aBytes = Encoding.UTF8.GetBytes(a);
-        var bBytes = Encoding.UTF8.GetBytes(b);
-        return CryptographicOperations.FixedTimeEquals(aBytes, bBytes);
     }
 }

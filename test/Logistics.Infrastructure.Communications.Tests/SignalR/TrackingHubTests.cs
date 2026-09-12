@@ -13,12 +13,11 @@ namespace Logistics.Infrastructure.Communications.Tests.SignalR;
 
 public class TrackingHubTests
 {
-    private const string ConnectionId = "conn-1";
+    private const string ConnectionId = HubTestContext.ConnectionId;
 
     private readonly ITruckGeolocationUpdater updater = Substitute.For<ITruckGeolocationUpdater>();
     private readonly TrackingHubContext hubContext = new();
     private readonly ITrackingHubClient groupClient = Substitute.For<ITrackingHubClient>();
-    private readonly IGroupManager groups = Substitute.For<IGroupManager>();
 
     private readonly Guid callerTenantId = Guid.NewGuid();
     private readonly Guid driverId = Guid.NewGuid();
@@ -34,26 +33,14 @@ public class TrackingHubTests
         clients.Group(Arg.Any<string>()).Returns(groupClient);
 
         sut.Clients = clients;
-        sut.Groups = groups;
-        sut.Context = CallerContext(callerTenantId, driverId);
+        sut.Groups = Substitute.For<IGroupManager>();
+        sut.Context = HubTestContext.Caller(callerTenantId, driverId);
     }
 
     private void AllowReporting(bool allowed) =>
         updater.CanDriverReportForTruckAsync(
                 callerTenantId, truckId, driverId, Arg.Any<CancellationToken>())
             .Returns(allowed);
-
-    private static HubCallerContext CallerContext(Guid tenantId, Guid userId)
-    {
-        var context = Substitute.For<HubCallerContext>();
-        context.ConnectionId.Returns(ConnectionId);
-        context.User.Returns(new ClaimsPrincipal(new ClaimsIdentity(
-        [
-            new Claim(CustomClaimTypes.Tenant, tenantId.ToString()),
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString())
-        ])));
-        return context;
-    }
 
     private static TruckGeolocationDto Report(Guid truckId, Guid tenantId) => new()
     {

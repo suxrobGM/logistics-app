@@ -3,6 +3,7 @@ using Logistics.Application.Abstractions.Realtime;
 using Logistics.Application.Modules.Integrations.Messaging.Commands;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
 using NSubstitute;
 using Xunit;
 
@@ -24,24 +25,21 @@ public class MarkMessageReadHandlerTests
 
     private readonly ITenantRepository<Message, Guid> messageRepo =
         Substitute.For<ITenantRepository<Message, Guid>>();
-    private readonly ITenantRepository<Conversation, Guid> conversationRepo =
-        Substitute.For<ITenantRepository<Conversation, Guid>>();
     private readonly ITenantRepository<ConversationParticipant, Guid> participantRepo =
         Substitute.For<ITenantRepository<ConversationParticipant, Guid>>();
     private readonly ITenantRepository<MessageReadReceipt, Guid> receiptRepo =
         Substitute.For<ITenantRepository<MessageReadReceipt, Guid>>();
 
+    private readonly Message message = Message.Create(ConversationId, Guid.NewGuid(), "hello");
     private readonly MarkMessageReadHandler sut;
 
     public MarkMessageReadHandlerTests()
     {
         tenantUow.Repository<Message>().Returns(messageRepo);
-        tenantUow.Repository<Conversation>().Returns(conversationRepo);
         tenantUow.Repository<ConversationParticipant>().Returns(participantRepo);
         tenantUow.Repository<MessageReadReceipt>().Returns(receiptRepo);
 
-        messageRepo.GetByIdAsync(MessageId, Arg.Any<CancellationToken>())
-            .Returns(Message.Create(ConversationId, Guid.NewGuid(), "hello"));
+        messageRepo.GetByIdAsync(MessageId, Arg.Any<CancellationToken>()).Returns(message);
 
         Conversation(isTenantChat: false);
 
@@ -65,10 +63,9 @@ public class MarkMessageReadHandlerTests
     }
 
     private void Conversation(bool isTenantChat) =>
-        conversationRepo.GetByIdAsync(ConversationId, Arg.Any<CancellationToken>())
-            .Returns(new Conversation { Id = ConversationId, IsTenantChat = isTenantChat });
+        message.Conversation = new Conversation { Id = ConversationId, IsTenantChat = isTenantChat };
 
-    private Task<Logistics.Shared.Models.Result> Handle(Guid readById) =>
+    private Task<Result> Handle(Guid readById) =>
         sut.Handle(new MarkMessageReadCommand { MessageId = MessageId, ReadById = readById },
             CancellationToken.None);
 
@@ -108,19 +105,6 @@ public class MarkMessageReadHandlerTests
 
         Assert.True(result.IsSuccess);
         await receiptRepo.Received(1).AddAsync(
-            Arg.Any<MessageReadReceipt>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_ConversationNotFound_Fails()
-    {
-        conversationRepo.GetByIdAsync(ConversationId, Arg.Any<CancellationToken>())
-            .Returns((Conversation?)null);
-
-        var result = await Handle(ParticipantId);
-
-        Assert.False(result.IsSuccess);
-        await receiptRepo.DidNotReceive().AddAsync(
             Arg.Any<MessageReadReceipt>(), Arg.Any<CancellationToken>());
     }
 

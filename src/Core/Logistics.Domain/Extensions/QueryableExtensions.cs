@@ -46,12 +46,15 @@ public static class QueryableExtensions
     /// <param name="query">The queryable source to order.</param>
     /// <param name="orderBy">The string to determine the order. May be null, empty, or unknown.</param>
     /// <param name="tieBreaker">A key that is unique per row, used last and as the fallback.</param>
+    /// <param name="defaultOrderBy">The sort string used when <paramref name="orderBy" /> is empty.</param>
     public static IOrderedQueryable<T> OrderBy<T, TKey>(
         this IQueryable<T> query,
         string? orderBy,
-        Expression<Func<T, TKey>> tieBreaker)
+        Expression<Func<T, TKey>> tieBreaker,
+        string? defaultOrderBy = null)
     {
-        var orderByQuery = string.IsNullOrEmpty(orderBy) ? null : CreateOrderQuery<T>(orderBy);
+        var effectiveOrderBy = string.IsNullOrEmpty(orderBy) ? defaultOrderBy : orderBy;
+        var orderByQuery = string.IsNullOrEmpty(effectiveOrderBy) ? null : CreateOrderQuery<T>(effectiveOrderBy);
 
         return orderByQuery is null
             ? query.OrderBy(tieBreaker)

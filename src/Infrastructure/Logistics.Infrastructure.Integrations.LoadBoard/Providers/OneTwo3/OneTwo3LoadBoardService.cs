@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Logistics.Infrastructure.Integrations.Common;
+using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
@@ -223,12 +224,7 @@ internal class OneTwo3LoadBoardService(
         if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
         {
             logger.LogWarning("Rejected 123Loadboard webhook with invalid or unverifiable signature");
-            return Task.FromResult(new LoadBoardWebhookResultDto
-            {
-                IsValid = false,
-                EventType = LoadBoardWebhookEventType.Unknown,
-                ErrorMessage = "Invalid webhook signature"
-            });
+            return Task.FromResult(LoadBoardWebhookResults.Invalid("Invalid webhook signature"));
         }
 
         try
@@ -244,10 +240,7 @@ internal class OneTwo3LoadBoardService(
         catch (JsonException ex)
         {
             logger.LogError(ex, "Error processing 123Loadboard webhook");
-            return Task.FromResult(new LoadBoardWebhookResultDto
-            {
-                IsValid = false, EventType = LoadBoardWebhookEventType.Unknown, ErrorMessage = ex.Message
-            });
+            return Task.FromResult(LoadBoardWebhookResults.Invalid(ex.Message));
         }
     }
 }

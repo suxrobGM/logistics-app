@@ -33,22 +33,16 @@ public class TrackingHub(
     [Authorize(Roles = TenantRoles.Driver)]
     public async Task SendGeolocationData(TruckGeolocationDto truckGeolocation)
     {
-        if (Context.TenantIdFromClaim() is not { } tenantId ||
-            Context.UserIdFromClaim() is not { } driverId)
-        {
-            return;
-        }
-
         if (!await geolocationUpdater.CanDriverReportForTruckAsync(
-                tenantId, truckGeolocation.TruckId, driverId))
+                TenantId, truckGeolocation.TruckId, UserId))
         {
             return;
         }
 
-        truckGeolocation.TenantId = tenantId;
+        truckGeolocation.TenantId = TenantId;
 
         await Clients
-            .Group(tenantId.ToString())
+            .Group(TenantId.ToString())
             .ReceiveGeolocationData(truckGeolocation);
         hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }

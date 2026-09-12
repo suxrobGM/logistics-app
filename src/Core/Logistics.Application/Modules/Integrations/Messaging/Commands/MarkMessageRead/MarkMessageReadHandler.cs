@@ -21,19 +21,11 @@ internal sealed class MarkMessageReadHandler(
             return Result.Fail($"Message with ID '{req.MessageId}' not found");
         }
 
-        // Only a participant may leave a receipt, mirroring SendMessageHandler's gate.
-        var conversation = await tenantUow.Repository<Conversation>()
-            .GetByIdAsync(message.ConversationId, ct);
-
-        if (conversation is null)
-        {
-            return Result.Fail($"Conversation with ID '{message.ConversationId}' not found");
-        }
-
         var participant = await tenantUow.Repository<ConversationParticipant>()
             .GetAsync(p => p.ConversationId == message.ConversationId && p.EmployeeId == req.ReadById, ct);
 
-        if (participant is null && !conversation.IsTenantChat)
+        // Only a participant may leave a receipt, mirroring SendMessageHandler's gate.
+        if (participant is null && !message.Conversation.IsTenantChat)
         {
             return Result.Fail("Reader is not a participant of this conversation");
         }
