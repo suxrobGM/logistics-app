@@ -4,7 +4,6 @@
   color: var(--text-secondary);
 }
 
-/* === Auth Loading State === */
 .auth-loading-container {
   min-height: 100vh;
   display: flex;

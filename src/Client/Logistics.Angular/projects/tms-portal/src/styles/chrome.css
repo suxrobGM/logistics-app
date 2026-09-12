@@ -1,12 +1,9 @@
-/**
- * TMS-only chrome: the sidebar gradients and the animations its layout components use.
- * Everything else - palette, tokens, typography, scrollbars - lives in shared/styles/theme.css.
- */
+/* TMS-only chrome: sidebar gradients and the animations its layout components use. Palette, tokens,
+   typography and scrollbars live in shared/styles/theme.css. */
 
 :root {
   --sidebar-bg: linear-gradient(165deg, #ffffff 0%, #f1f5f9 30%, #e2e8f0 70%, #cfe2eb 100%);
-  /* Translucent on purpose: an opaque fill reads as a white card pasted onto the blue-grey rail.
-     The footer's top border and its primary hairline are what separate it. */
+  /* Translucent on purpose: an opaque fill reads as a white card pasted onto the blue-grey rail. */
   --sidebar-footer-bg: linear-gradient(
     180deg,
     transparent 0%,
@@ -21,8 +18,7 @@
   --shimmer-base: #e2e8f0;
   --shimmer-highlight: #f1f5f9;
 
-  /* Read by sidebar.css for the rail itself and by nav-menu.css to park the flyout beside it.
-     They live in different components, so a literal would have to be kept in step by hand. */
+  /* Shared by sidebar.css and nav-menu.css, which sit in different components. */
   --sidebar-width: 260px;
   --sidebar-width-collapsed: 72px;
 }
@@ -44,8 +40,7 @@
   --shimmer-highlight: #2d3548;
 }
 
-/* The keycap chip. Global because the command palette and the sidebar search trigger are separate
-   components showing the same Ctrl+K hint. */
+/* Global because the command palette and the sidebar search trigger both show the Ctrl+K hint. */
 .kbd {
   display: inline-flex;
   align-items: center;
@@ -60,12 +55,8 @@
   color: var(--text-muted);
 }
 
-/**
- * The bell, the theme toggle and the copilot launcher are three separate components, so no
- * component-scoped class can give all three the same box. The container styles them instead of
- * each one naming a class it doesn't own - which also means the bell in the mobile header, which
- * is not in this row, needs no override to opt back out.
- */
+/* The bell, theme toggle and copilot launcher are separate components, so no component-scoped class
+   can give all three the same box. The container styles them, and the mobile bell opts out for free. */
 .nav-footer-actions {
   display: flex;
   align-items: stretch;
@@ -170,8 +161,7 @@
   }
 }
 
-/* Copilot drawer `animate.enter`. Must always run (Angular waits for animationend), so reduced
-   motion shortens it instead of removing it. */
+/* Angular waits for animationend, so reduced motion shortens this instead of removing it. */
 @keyframes copilot-drawer-in {
   from {
     opacity: 0;

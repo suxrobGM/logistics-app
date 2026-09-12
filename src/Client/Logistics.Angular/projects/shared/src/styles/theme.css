@@ -1,23 +1,16 @@
 /**
- * theme.css - the design system for tms / admin / customer.
+ * Design system for tms / admin / customer. Import it after `@import "tailwindcss"`.
  *
- * One palette (`:root` light, `.dark-theme` dark), one set of canonical shadcn tokens keyed to it,
- * and the base element layer. Import it after `@import "tailwindcss"` and you have the whole theme.
- *
- * The canonical tokens alias the palette WITHOUT re-declaring themselves under `.dark-theme`. That
- * works because ThemeService toggles `.dark-theme` on <html> - the same element `:root` selects - and
- * a custom property's `var()`s resolve on the element that declares them. So `--background` follows
- * `--bg-base` into dark automatically. (Move `.dark-theme` to <body> and every alias freezes light.)
- *
- * The website imports this file too, then re-points the palette to its own editorial one.
+ * The shadcn tokens alias the palette and are NOT re-declared under `.dark-theme`. That only works
+ * while `.dark-theme` sits on <html>, the element `:root` selects. Move it to <body> and every
+ * alias freezes light.
  */
 
 @import "@angular/cdk/overlay-prebuilt.css";
 @import "tw-animate-css";
 
-/* CDK fades the backdrop and the spartan overlay class fades it again, so they visibly double up.
-   Neutralise CDK's. Unlayered, so it beats CDK's runtime `@layer cdk-overlay`. Scoped off the
-   transparent variant so CDK's invisible click-catcher backdrops keep their own `opacity: 0`. */
+/* CDK and the spartan overlay class both fade the backdrop, so it visibly doubles up. Unlayered to
+   beat CDK's `@layer cdk-overlay`; the transparent variant keeps its own `opacity: 0`. */
 .cdk-overlay-backdrop:not(.cdk-overlay-transparent-backdrop) {
   opacity: var(--spartan-overlay-backdrop-opacity, 1);
   transition: var(--spartan-overlay-backdrop-transition, none);
@@ -79,37 +72,28 @@
   }
 }
 
-/* ============================================================================================== */
-/* Palette (light)                                                                                 */
-/* ============================================================================================== */
-
 :root {
-  /* Drives native scrollbars, form controls and the page canvas. Load-bearing: without it, dark
-     mode keeps light scrollbars. */
+  /* Without it, dark mode keeps light native scrollbars and form controls. */
   color-scheme: light;
 
   --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
 
-  /* surfaces */
   --bg-base: #f1f5f9;
   --bg-surface: #ffffff;
   --bg-elevated: #ffffff;
   --bg-hover: #e2e8f0;
   --bg-active: #cbd5e1;
 
-  /* text */
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
   --text-inverse: #f1f5f9;
 
-  /* borders */
   --border-subtle: #e2e8f0;
   --border-default: #cbd5e1;
   --border-strong: #94a3b8;
 
-  /* primary ramp (cyan) */
   --primary-50: #ecfeff;
   --primary-100: #cffafe;
   --primary-200: #a5f3fc;
@@ -121,13 +105,11 @@
   --primary-800: #164e63;
   --primary-900: #134e4a;
 
-  /* semantic */
   --success: #16a34a;
   --warning: #d97706;
   --danger: #dc2626;
   --info: #2563eb;
 
-  /* load-status ramp */
   --status-pending: #d97706;
   --status-dispatched: #2563eb;
   --status-pickedup: #7c3aed;
@@ -135,7 +117,6 @@
   --status-cancelled: #dc2626;
   --status-completed: #0891b2;
 
-  /* elevation + motion */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -143,13 +124,13 @@
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
 
-  /* Radius scale - one notch above Tailwind's defaults. The website re-pins Tailwind's. */
+  /* One notch above Tailwind's defaults. The website re-pins Tailwind's. */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
 
-  /* ---- canonical shadcn tokens (aliases; they follow the palette into dark on their own) ---- */
+  /* Canonical shadcn tokens. Aliases only - they follow the palette into dark on their own. */
   --background: var(--bg-base);
   --foreground: var(--text-primary);
   --card: var(--bg-surface);
@@ -172,7 +153,6 @@
   --input: var(--border-default);
   --ring: var(--primary-500);
 
-  /* sidebar */
   --sidebar: var(--bg-surface);
   --sidebar-foreground: var(--text-primary);
   --sidebar-primary: var(--primary-500);
@@ -182,10 +162,9 @@
   --sidebar-border: var(--border-subtle);
   --sidebar-ring: var(--primary-500);
 
-  /* ---- component knobs (read by the cva's in lib/ui) ---- */
+  /* Component knobs, read by the cva's in lib/ui. */
 
-  /* ui-button. Only `primary` needs variables; the other intents are plain utilities. The `-image`
-     pair exists because a `linear-gradient()` is not a valid `background-color`. */
+  /* The `-image` pair exists because a `linear-gradient()` is not a valid `background-color`. */
   --ui-btn-primary-bg: var(--primary);
   --ui-btn-primary-bg-hover: color-mix(in oklab, var(--primary) 88%, black);
   --ui-btn-primary-image: none;
@@ -193,32 +172,24 @@
   --ui-btn-primary-fg: var(--primary-foreground);
   --ui-btn-primary-weight: 500;
 
-  /* Ink on a saturated solid fill. `--inverse` is the theme's opposing ink - near-white in light,
-     near-black in dark - which is the flip a bright solid needs. */
+  /* Ink on a saturated solid fill: `--inverse` is near-white in light and near-black in dark. */
   --ui-btn-on-solid: var(--inverse);
   --ui-btn-help: var(--status-pickedup);
 
-  /* Chip radii - read by ui-badge, ui-progress, ui-skeleton. The badge's colours and metrics were
-     here too (`--ui-badge-*`), until the preset fork they indirected for went away; they are named
-     utilities in badge-variants.ts now. */
+  /* Chip radii, read by ui-badge, ui-progress and ui-skeleton. */
   --ui-radius-content: 2px;
   --ui-radius-pill: 12px;
 
-  /* ui-card */
   --ui-radius-card: 4px;
   --ui-card-body-padding: 1.25rem;
   --ui-card-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.1);
 
-  /* ui-data-table `<th>` */
   --ui-table-th-transform: uppercase;
   --ui-table-th-size: 0.75rem;
   --ui-table-th-tracking: 0.05em;
 }
 
-/* ============================================================================================== */
-/* Palette (dark) - only the palette flips; the aliases above follow it.                           */
-/* ============================================================================================== */
-
+/* Only the palette flips; the aliases above follow it. */
 .dark-theme {
   color-scheme: dark;
 
@@ -290,9 +261,6 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* aliases: bg-canvas / bg-surface / bg-elevated / bg-hover / bg-active,
-     border-subtle / border-default / border-strong. Straight off the raw ramp - they used to hop
-     through an `--elevated` / `--hover` / … set whose only readers were these six lines. */
   --color-canvas: var(--background);
   --color-surface: var(--card);
   --color-elevated: var(--bg-elevated);
@@ -308,13 +276,10 @@
   --color-danger: var(--danger);
   --color-info: var(--info);
 
-  /* `help` must be a REAL registered colour so the button cva can spell it as a named utility. An
-     arbitrary-property class is a different tailwind-merge class group, so it would not dedupe
-     against the base border colour and both would survive - leaving the outlined help button with
-     no border at all. */
+  /* Must be a REAL registered colour: an arbitrary-property class is a different tailwind-merge
+     group, so it would not dedupe and the outlined help button would end up with no border. */
   --color-help: var(--ui-btn-help);
 
-  /* load-status */
   --color-pending: var(--status-pending);
   --color-dispatched: var(--status-dispatched);
   --color-pickedup: var(--status-pickedup);
@@ -322,9 +287,8 @@
   --color-cancelled: var(--status-cancelled);
   --color-completed: var(--status-completed);
 
-  /* Static slate ramp - the only definition of the `surface-*` utilities. It does NOT follow the
-     theme, so a call site must pick both shades itself (`bg-surface-300 dark:bg-surface-600`).
-     Prefer a semantic token (`bg-card`, `bg-sidebar`, `bg-muted`) - those flip on their own. */
+  /* Static ramp: it does NOT follow the theme, so a call site must pick both shades itself
+     (`bg-surface-300 dark:bg-surface-600`). Prefer `bg-card` / `bg-sidebar` / `bg-muted`. */
   --color-surface-0: #ffffff;
   --color-surface-50: #f8fafc;
   --color-surface-100: #f1f5f9;
@@ -349,10 +313,6 @@
     }
   }
 }
-
-/* ============================================================================================== */
-/* Base layer                                                                                      */
-/* ============================================================================================== */
 
 html,
 body {
@@ -432,7 +392,7 @@ body {
   }
 }
 
-/* Scrollbars. `color-scheme` above already themes the native ones; these restyle WebKit's. */
+/* `color-scheme` above themes the native scrollbars. These restyle WebKit's. */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

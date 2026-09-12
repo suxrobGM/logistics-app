@@ -3,9 +3,8 @@
   min-height: 600px;
 }
 
-/* Fill the gridster panel and scroll the content. `ui-card`'s boxes are custom properties, which
-   inherit through component boundaries - so these reach the `<ui-card>` nested inside
-   `<app-stat-card>` without `::ng-deep` and without the children opting in. */
+/* `ui-card`'s boxes are custom properties, so these inherit through component boundaries and
+   reach the `<ui-card>` inside `<app-stat-card>` without `::ng-deep`. */
 .dashboard-panel {
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -19,7 +18,7 @@
   --ui-card-content-min-h: 0;
   --ui-card-content-overscroll: contain;
 
-  /* `x y` - a lone `visible` axis gets coerced to `auto`, double-scrolling ui-data-table. */
+  /* Must name both axes: a lone `visible` is coerced to `auto`, double-scrolling ui-data-table. */
   --ui-card-content-overflow: hidden auto;
 }
 
@@ -27,8 +26,7 @@
   --ui-card-body-padding: 0.625rem 1rem;
 }
 
-/* Stacked: panels size to their content instead of to a grid cell. Tall panels keep the values
-   above, so they are excluded rather than overridden back. */
+/* Stacked, panels size to their content instead of to a grid cell. Tall panels are excluded. */
 .dashboard-stack .dashboard-panel:not(.is-tall) {
   --ui-card-h: auto;
   --ui-card-body-flex: 0 1 auto;
@@ -36,8 +34,7 @@
   --ui-card-content-overflow: visible;
 }
 
-/* Maps, charts and tables size themselves to their parent and would collapse against an auto
-   height, so they keep a definite box and scroll inside it. */
+/* Maps, charts and tables size to their parent and would collapse against an auto height. */
 .dashboard-stack .dashboard-panel.is-tall {
   height: 20rem;
 }

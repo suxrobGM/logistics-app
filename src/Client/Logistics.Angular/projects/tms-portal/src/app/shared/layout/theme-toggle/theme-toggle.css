@@ -1,6 +1,5 @@
-/* Bare ghost button; `.nav-footer-actions` adds the bordered box where there is one.
-   `theme-toggle-sun` / `theme-toggle-moon` exist because the glyph is an <svg> now: a CSS
-   selector can no longer key off the icon's own class name. */
+/* Bare ghost button; `.nav-footer-actions` adds the bordered box where there is one. The glyph is
+   an <svg>, so the sun/moon classes exist because a selector cannot key off the icon's name. */
 .theme-toggle {
   display: flex;
   align-items: center;
