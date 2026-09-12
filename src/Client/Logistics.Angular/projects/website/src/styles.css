@@ -1,47 +1,44 @@
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
-/* spartan/ui token + variant layer (canonical shadcn tokens; see theme.css) */
 @import "../../shared/src/styles/theme.css";
 
-/* Disable dark mode - this project only supports light theme */
+/* The website is light-only, so `dark:` must never match. */
 @custom-variant dark (&:where(.dark-theme-disabled));
 
-/* Design System: Route Atlas Editorial */
+/* Route Atlas editorial palette. It has to live in `@theme`, not a hand-written `@layer utilities`
+   block: only a registered theme colour generates the variants, and a hand-written `.text-accent`
+   leaves `hover:text-accent` resolving against theme.css's unrelated shadcn `accent`, a pale grey. */
+@theme {
+  --color-ink: #141414;
+  --color-ink-light: #2d2d2d;
+  --color-paper: #faf7f2;
+  --color-paper-dark: #f0ebe3;
+  --color-accent: #e85d04;
+  --color-accent-dark: #c44d00;
+  --color-steel: #6b7280;
+
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: "Instrument Sans", system-ui, sans-serif;
+}
+
 :root {
-  /* Re-pin Tailwind's defaults: theme.css bumps the font + radius scale for the portals; the
-     website uses neither. */
+  /* theme.css bumps the font and radius scale for the portals; the website uses neither. */
   --font-sans: var(--font-body);
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
 
-  /* Primary - Rich Black */
-  --color-ink: #141414;
-  --color-ink-light: #2d2d2d;
-
-  /* Background - Warm Paper */
-  --color-paper: #faf7f2;
-  --color-paper-dark: #f0ebe3;
-
-  /* Accent - Rust/Vermillion */
-  --color-accent: #e85d04;
-  --color-accent-dark: #c44d00;
-
-  /* Supporting */
-  --color-steel: #6b7280;
-
-  /* Typography */
-  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
-  --font-body: "Instrument Sans", system-ui, sans-serif;
-
-  /* Feed the website palette into theme.css's tokens so its GENERATED `bg-subtle` / `border-default`
-     utilities (used by ui-alert, ui-card, ui-surface, ui-divider) resolve here. Override tokens, not
-     the utilities, so each has one definition and no hardcoded colours. `--elevated` is left alone:
-     it already defaults to white, which cards want against the warm paper canvas. */
+  /* Re-point theme.css's tokens so the shared components' generated utilities resolve here.
+     `--elevated` is left alone: white is what cards want against the warm paper canvas. */
   --subtle: var(--color-paper-dark);
   --border: color-mix(in srgb, var(--color-ink) 12%, transparent);
+
+  /* theme.css inlines `accent` as `var(--accent)`, so this token has to follow the palette too or
+     the shared select and menu highlights drift grey. */
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-paper);
 }
 
 html {
@@ -64,10 +61,8 @@ body {
   background-color: var(--color-paper);
 }
 
-/* Typography */
 @layer base {
-  /* theme.css colours links with the portals' primary. Here they are styled per-site with
-     utilities, so keep Tailwind preflight's `inherit`. */
+  /* theme.css colours links with the portals' primary. Links here are styled per-call-site. */
   a {
     color: inherit;
   }
@@ -109,7 +104,6 @@ body {
   }
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -133,67 +127,7 @@ body {
   background: var(--color-ink);
 }
 
-/* Firefox scrollbar */
 html {
   scrollbar-width: thin;
   scrollbar-color: var(--color-accent) var(--color-ink);
-}
-
-/* Utility classes for the design system */
-@layer utilities {
-  .font-display {
-    font-family: var(--font-display);
-  }
-
-  .font-body {
-    font-family: var(--font-body);
-  }
-
-  .text-ink {
-    color: var(--color-ink);
-  }
-
-  .text-paper {
-    color: var(--color-paper);
-  }
-
-  .text-accent {
-    color: var(--color-accent);
-  }
-
-  .text-steel {
-    color: var(--color-steel);
-  }
-
-  .bg-ink {
-    background-color: var(--color-ink);
-  }
-
-  .bg-ink-light {
-    background-color: var(--color-ink-light);
-  }
-
-  .bg-paper {
-    background-color: var(--color-paper);
-  }
-
-  .bg-paper-dark {
-    background-color: var(--color-paper-dark);
-  }
-
-  .bg-accent {
-    background-color: var(--color-accent);
-  }
-
-  .bg-accent-dark {
-    background-color: var(--color-accent-dark);
-  }
-
-  .border-accent {
-    border-color: var(--color-accent);
-  }
-
-  .border-ink {
-    border-color: var(--color-ink);
-  }
 }
