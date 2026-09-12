@@ -2,9 +2,7 @@
 #
 # api and identity are public on GHCR. The four client images are private and need read:packages.
 # GITHUB_REPOSITORY and IMAGE_TAG come from the deploy workflow. The defaults keep manual runs working.
-# Ports bind to 127.0.0.1 because the host nginx (deploy/nginx/logisticsx.conf) terminates TLS and is
-# the only public entry. They must match its proxy_pass targets.
-# Port table: docs/deployment/docker-deployment.md.
+# Ports, and the nginx targets they must match: docs/deployment/docker-deployment.md.
 
 name: logistics
 
