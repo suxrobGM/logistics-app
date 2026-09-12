@@ -6,6 +6,7 @@
 # is the only public entry point and terminates TLS. The host-side ports below must
 # match the proxy_pass targets in that nginx config; the canonical port table lives in
 # docs/deployment/docker-deployment.md.
+# Every image below is private on GHCR. Pulling needs a token with read:packages.
 
 name: logistics
 

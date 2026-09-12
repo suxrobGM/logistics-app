@@ -16,6 +16,12 @@ deploy/
 
 The main stack contains `identity-server`, `api`, `admin-portal`, `tms-portal`, `customer-portal`, and `website`. PostgreSQL is **external** (installed on the host or a managed instance) - it is not part of the compose file.
 
+## Image access
+
+All six images on GHCR are **private**. Pulling any of them needs a token with `read:packages` and access granted to the packages, so `docker compose pull` fails for anyone outside the project. See [COMMERCIAL-LICENSE.md](../../COMMERCIAL-LICENSE.md).
+
+Evaluating without that access means building the images yourself. The backend Dockerfiles are in this repository. The four client images need the private submodule, which ships only with a commercial license.
+
 ## Automated deployment (recommended)
 
 Deployment is handled by the [`deploy.yml`](https://github.com/suxrobGM/logistics-app/blob/main/.github/workflows/deploy.yml) GitHub Actions workflow. Pushing to the `prod` branch (or running it manually) will:
@@ -49,6 +55,8 @@ echo "$GHCR_PAT" | docker login ghcr.io -u <github-user> --password-stdin
 docker compose pull
 docker compose up -d
 ```
+
+The token must have `read:packages` and belong to an account granted access to the packages. Every image is private, so without that the pull fails on the first service.
 
 ### 3. Configure nginx + SSL
 
