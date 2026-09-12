@@ -1,9 +1,0 @@
-<ui-page-header [title]="'Edit a load #' + loadNumber()" backLink="/loads" />
-
-<app-load-form
-  [mode]="'edit'"
-  [initial]="initialData()"
-  [isLoading]="isLoading()"
-  (save)="updateLoad($event)"
-  (remove)="deleteLoad()"
-/>

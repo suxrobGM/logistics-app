@@ -6,3 +6,4 @@ openapi.json
 **/assets
 **/.angular
 **/generated
+private

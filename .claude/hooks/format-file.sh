@@ -12,7 +12,7 @@ FILE_PATH=$(echo "$INPUT" | node -e "process.stdin.resume();let d='';process.std
 EXT="${FILE_PATH##*.}"
 EXT="${EXT,,}" # lowercase
 
-ANGULAR_DIR="src/Client/Logistics.Angular"
+ANGULAR_DIR="private/src/Client/Logistics.Angular"
 
 case "$EXT" in
   ts|html|scss|css|json)

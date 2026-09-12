@@ -31,6 +31,8 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 | **Driver App**      | Kotlin Multiplatform  | Mobile app for drivers       |
 | **Database**        | PostgreSQL            | Multi-tenant storage         |
 
+The Angular portals and the driver app are closed source. They live in a private submodule at `private/` and need a commercial license. The API, Identity Server, and everything behind them are public.
+
 ## Features
 
 - **AI Dispatch Agent** - Picks a truck for a load, runs HOS feasibility checks, supports multiple LLMs, and shows the reasoning behind every decision.

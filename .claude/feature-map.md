@@ -25,9 +25,9 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - **Machine-readable API errors**: `Logistics.Shared.Models/ErrorCodes.cs`, mirrored in `projects/shared/src/lib/errors/upgrade-handler.ts` (see `.claude/rules/backend/api-design.md` for the contract)
 - **Webhooks**: `WebhookController.cs` + `Application/Modules/Integrations/Webhooks/Commands/`
 - **EF configurations**: `src/Infrastructure/Logistics.Infrastructure.Persistence/Configurations/{Feature}/`
-- **Frontend pages**: `src/Client/Logistics.Angular/projects/{portal}/src/app/pages/{feature}/`
+- **Frontend pages**: `private/src/Client/Logistics.Angular/projects/{portal}/src/app/pages/{feature}/`
   - Portals: `tms-portal` (dispatchers), `customer-portal` (shippers), `admin-portal` (super admin), `website` (marketing)
-- **Mobile (driver)**: `src/Client/Logistics.DriverApp/composeApp/src/commonMain/kotlin/com/logisticsx/driver/`
+- **Mobile (driver)**: `private/src/Client/Logistics.DriverApp/composeApp/src/commonMain/kotlin/com/logisticsx/driver/`
 - **Provider connect dialogs**: `tms-portal/src/app/shared/components/integrations/provider-connect-dialog/` - MUST be used for every ELD / load board / fuel card "add provider" dialog (see the Angular `CLAUDE.md` for how)
 - **Address inputs**: `<ui-address-form>` from `@logistics/shared` - MUST be used by every form that captures an `Address` value object; never raw `<input>`s. Country drives the State / Region / Province label (`state-labels.ts`), State stays required everywhere. Server-side counterpart: `Logistics.Application.Validators.AddressValidator`
 

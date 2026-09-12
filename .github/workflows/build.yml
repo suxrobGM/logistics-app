@@ -8,14 +8,17 @@ on:
 
 env:
   PRESENTATION_PROJECTS_DIR: ./src/Presentation
-  CLIENT_PROJECTS_DIR: ./src/Client
 
 jobs:
   build-backend:
     runs-on: ubuntu-latest
 
     steps:
+      # The clients live in a private submodule. This build must pass without them,
+      # which is what proves the public repo still stands on its own.
       - uses: actions/checkout@v6
+        with:
+          submodules: false
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -37,62 +40,5 @@ jobs:
       - name: Build License Issuer
         run: dotnet build tools/Logistics.LicenseIssuer/Logistics.LicenseIssuer.csproj
 
-  build-angular-apps:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      # The Angular CLI runs under Node, not Bun, and v22 requires
-      # ^22.22.3 || ^24.15.0 || >=26.0.0 - it refuses to start otherwise.
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24.15.0
-
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun install --force
-
-      - name: Generate API client
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run gen:api
-
-      - name: Build shared library
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run build:shared
-
-      # Pins the Signal Forms behaviours the ui-* form controls rely on.
-      - name: Test shared library
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run ng test shared --watch=false
-
-      # Every gate in tools/checks/, discovered - a new gate is a new file there, not a new step here.
-      # They catch what build/test/lint cannot: a bare spartan-* class (renders the component
-      # unstyled) and a hardcoded colour (does not follow the theme - how admin/customer dark mode broke).
-      - name: UI gates
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run check
-
-      - name: Lint (0 errors, 0 warnings)
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run lint --max-warnings 0
-
-      - name: Build TMS Portal
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run build:tms
-
-      - name: Build Admin Portal
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run build:admin
-
-      - name: Build Customer Portal
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run build:customer
-
-      - name: Build Website
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
-        run: bun run build:website
+      - name: Run tests
+        run: dotnet test Logistics.slnx

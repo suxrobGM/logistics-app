@@ -192,7 +192,7 @@ See [SignalR Hubs](signalr-hubs.md) for details.
 The Angular apps generate their API client from OpenAPI:
 
 ```bash
-cd src/Client/Logistics.Angular
+cd private/src/Client/Logistics.Angular
 bun run gen:api
 ```
 

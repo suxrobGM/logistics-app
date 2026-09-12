@@ -1,6 +1,0 @@
-@import "tailwindcss";
-
-@import "../../shared/src/styles/theme.css";
-
-/* Admin is the only app that ships <ui-editor>. */
-@import "../../shared/src/styles/quill.css";

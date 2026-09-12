@@ -1,7 +1,8 @@
 # Docker-based deployment to VPS.
 #
 # Secrets: SSH_HOST / SSH_USER / SSH_KEY (VPS access), GHCR_PAT (read:packages + write:packages),
-# DOCKER_ENV (full .env contents for compose), FIREBASE_CREDENTIALS_JSON (Firebase Admin SDK key).
+# DOCKER_ENV (full .env contents for compose), FIREBASE_CREDENTIALS_JSON (Firebase Admin SDK key),
+# PRIVATE_REPO_PAT (read access to suxrobGM/logistics-private, which holds the web clients).
 # One-time on the VPS: mkdir -p ~/deploy/logistics
 
 name: Build and Deploy
@@ -36,24 +37,31 @@ jobs:
             context: .
             file: ./src/Presentation/Logistics.IdentityServer/Dockerfile
           - image: admin-portal
-            context: .
-            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.spa
+            context: ./private/src/Client/Logistics.Angular
+            file: ./private/src/Client/Logistics.Angular/deploy/Dockerfile.spa
             build_args: APP_NAME=admin-portal
           - image: tms-portal
-            context: .
-            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.spa
+            context: ./private/src/Client/Logistics.Angular
+            file: ./private/src/Client/Logistics.Angular/deploy/Dockerfile.spa
             build_args: APP_NAME=tms-portal
           - image: customer-portal
-            context: .
-            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.spa
+            context: ./private/src/Client/Logistics.Angular
+            file: ./private/src/Client/Logistics.Angular/deploy/Dockerfile.spa
             build_args: APP_NAME=customer-portal
           - image: website
-            context: .
-            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.website
+            context: ./private/src/Client/Logistics.Angular
+            file: ./private/src/Client/Logistics.Angular/deploy/Dockerfile.website
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          token: ${{ secrets.PRIVATE_REPO_PAT }}
+
+      # A missing submodule would otherwise ship an image built from an empty tree.
+      - name: Assert private modules present
+        run: test -f private/src/Client/Logistics.Angular/package.json
 
       - name: Set lowercase repository name
         id: repo

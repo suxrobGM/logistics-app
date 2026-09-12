@@ -1,6 +1,0 @@
-#include "Config.xcconfig"
-
-// Production. Keep URLs in sync with the "prod" flavor in androidApp/build.gradle.kts.
-API_BASE_URL = https:/$()/api.logisticsx.app
-IDENTITY_SERVER_URL = https:/$()/id.logisticsx.app
-IS_PRODUCTION = YES

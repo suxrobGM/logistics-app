@@ -1,6 +1,0 @@
-{
-  "componentsPath": "projects/shared/src/lib/ui/primitives",
-  "importAlias": "@logistics/shared/ui/primitives",
-  "buildable": false,
-  "style": "vega"
-}

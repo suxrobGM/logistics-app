@@ -2,10 +2,10 @@
 
 [![Build Status](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml)
 [![Deploy](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml)
-[![PolyForm-Noncommercial-1.0.0][license-shield]][license]
+[![PolyForm-Free-Trial-1.0.0][license-shield]][license]
 
-[license]: https://polyformproject.org/licenses/noncommercial/1.0.0/
-[license-shield]: https://img.shields.io/badge/License-PolyForm--Noncommercial--1.0.0-blue.svg
+[license]: https://polyformproject.org/licenses/free-trial/1.0.0
+[license-shield]: https://img.shields.io/badge/License-PolyForm--Free--Trial--1.0.0-blue.svg
 
 LogisticsX is a fleet management system for trucking companies. It handles dispatch, driver trips, customer tracking, invoicing, and payroll in one place. An AI dispatcher can plan the day for you, and you approve or change what it suggests.
 
@@ -148,12 +148,23 @@ Read more in [AI Dispatch](docs/ai-dispatch.md), [AI Copilot](docs/ai-copilot.md
 
 The full list is in [features.md](docs/features.md).
 
+## What is in this repository
+
+The backend is open: domain, handlers, persistence, the AI dispatch agent, the MCP server, and every integration.
+
+The clients are closed and live in a private submodule at `private/`, empty in a public clone:
+
+- The four Angular web portals and the shared library.
+- The Kotlin Multiplatform driver app.
+
+The backend builds and runs without them. Access comes with a [commercial license](COMMERCIAL-LICENSE.md).
+
 ## Run it on your machine
 
 You need the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), [Bun](https://bun.sh), and Docker Desktop.
 
 ```bash
-git clone https://github.com/suxrobGM/logistics-app.git
+git clone --recurse-submodules https://github.com/suxrobGM/logistics-app.git
 cd logistics-app
 
 # Start Postgres and seed the demo companies
@@ -163,12 +174,14 @@ docker compose -f deploy/docker-compose.dev.yml up -d
 dotnet run --project src/Presentation/Logistics.IdentityServer
 dotnet run --project src/Presentation/Logistics.API
 
-# Start the TMS portal
-bun install
+# Start the TMS portal (needs access to the private submodule)
+cd private/src/Client/Logistics.Angular && bun install && cd -
 bun start:tms
 ```
 
 Open <http://localhost:7003> and log in as `owner@test.com` with password `Test12345#`.
+
+Without access to the private submodule you can still run the backend and call the API directly. The Swagger UI is at <https://localhost:7000/swagger>.
 
 The [Docker guide](docs/getting-started/docker-development.md) lists every service and port. If you would rather run Postgres yourself, follow the [local setup guide](docs/getting-started/local-development.md).
 
@@ -251,13 +264,13 @@ More in [screenshots.md](docs/screenshots.md).
 
 Pull requests are welcome. Fork the repo, branch off `main`, and open a PR. Coding conventions are in the [development guides](docs/development/backend-guide.md).
 
-You will be asked to sign the [Contributor License Agreement](CLA.md) on your first pull request. You keep your copyright. The agreement lets the project be offered under both the noncommercial and the commercial license.
+You will be asked to sign the [Contributor License Agreement](CLA.md) on your first pull request. You keep your copyright. The agreement lets the project be offered under both the source-available and the commercial license.
 
 ## License
 
-LogisticsX is released under the [PolyForm Noncommercial License 1.0.0][license].
+LogisticsX is released under the [PolyForm Free Trial License 1.0.0][license].
 
-It is free for personal projects, research, education, and evaluation. If you want to run it inside a business or host it for others, you need a commercial license. See [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md) for the options and prices, or email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
+You may read the source and evaluate it for up to 32 consecutive days. Any use beyond that, including running it inside a business or hosting it for others, needs a commercial license. See [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md) for the options and prices, or email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
 
 ## Contact
 

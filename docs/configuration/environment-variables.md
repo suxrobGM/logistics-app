@@ -112,7 +112,7 @@ Fmcsa__WebKey="your-fmcsa-webkey"
 
 ### TMS Portal (Runtime)
 
-The TMS portal Docker image uses runtime environment variable substitution for secrets. These are injected at container startup by the shared SPA entrypoint script (`src/Client/Logistics.Angular/deploy/docker-entrypoint-spa.sh`), which all three portals run.
+The TMS portal Docker image uses runtime environment variable substitution for secrets. These are injected at container startup by the shared SPA entrypoint script (`private/src/Client/Logistics.Angular/deploy/docker-entrypoint-spa.sh`), which all three portals run.
 
 ```bash
 # Mapped from Mapbox__AccessToken in docker-compose.yml

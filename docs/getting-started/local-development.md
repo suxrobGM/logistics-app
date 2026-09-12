@@ -12,7 +12,7 @@ cd logistics-app
 ## Step 2: Install Angular Dependencies
 
 ```bash
-cd src/Client/Logistics.Angular
+cd private/src/Client/Logistics.Angular
 bun install
 cd ../../..
 ```
@@ -98,7 +98,7 @@ dotnet run --project src/Presentation/Logistics.IdentityServer
 **Terminal 3 - Admin Portal**:
 
 ```bash
-cd src/Client/Logistics.Angular
+cd private/src/Client/Logistics.Angular
 bun run start:admin
 # Runs on http://localhost:7002
 ```
@@ -106,7 +106,7 @@ bun run start:admin
 **Terminal 4 - TMS Portal**:
 
 ```bash
-cd src/Client/Logistics.Angular
+cd private/src/Client/Logistics.Angular
 bun run start:tms
 # Runs on http://localhost:7003
 ```
@@ -114,7 +114,7 @@ bun run start:tms
 **Terminal 5 - Customer Portal (Optional)**:
 
 ```bash
-cd src/Client/Logistics.Angular
+cd private/src/Client/Logistics.Angular
 bun run start:customer
 # Runs on http://localhost:7004
 ```
@@ -199,7 +199,7 @@ lsof -i :7000
 ### Angular Build Errors
 
 ```bash
-cd src/Client/Logistics.Angular
+cd private/src/Client/Logistics.Angular
 bun install --force
 ```
 

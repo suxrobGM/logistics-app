@@ -8,9 +8,10 @@ Multi-tenant fleet management platform for trucking companies (intermodal contai
 | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | **This file**                                    | Repo-wide architecture, commands, ports                                                                                                                                                                                                   | Always                                                                                              |
 | [.claude/feature-map.md](.claude/feature-map.md) | Every feature → its entity, handlers, services, pages                                                                                                                                                                                     | **Before grepping for a feature.** Update it when you add or move a top-level feature               |
-| Nested `CLAUDE.md`                               | Local guidance for a subtree, e.g. [the Angular workspace](src/Client/Logistics.Angular/CLAUDE.md)                                                                                                                                        | When working in that directory                                                                      |
+| Nested `CLAUDE.md`                               | Local guidance for a subtree, e.g. [the Angular workspace](private/src/Client/Logistics.Angular/CLAUDE.md)                                                                                                                                | When working in that directory                                                                      |
 | [.claude/rules/](.claude/rules/)                 | Conventions and traps, scoped by `paths:` frontmatter                                                                                                                                                                                     | Auto-loaded by Claude Code when you touch a matching file. **Other agents must read them manually** |
 | [.claude/skills/](.claude/skills/)               | Step-by-step recipes for multi-file tasks (feature slice, webhook, job, provider, permission, migration)                                                                                                                                  | Before hand-rolling a task a skill already covers                                                   |
+| [private/](private/README.md)                    | Closed source: the web portals, the driver app, and their rules and skills                                                                                                                                                                | When working on a client. Empty in a public clone                                                   |
 | [docs/](docs/index.md)                           | Deep dives - [architecture](docs/architecture/overview.md), [multi-tenancy](docs/architecture/multi-tenancy.md), [domain model](docs/architecture/domain-model.md), [AI dispatch](docs/ai-dispatch.md), [roadmap](docs/roadmap/README.md) | When you need the full picture, not just the location                                               |
 
 ## Build & Run
@@ -26,12 +27,12 @@ dotnet test --filter "ClassName"                          # Filter by class
 dotnet run --project src/Presentation/Logistics.IdentityServer  # Identity: https://localhost:7001
 dotnet run --project src/Presentation/Logistics.API       # API: https://localhost:7000
 
-# Frontend (Angular workspace, bun)
-bun install
-bun start:tms                                             # TMS Portal dev server
+# Frontend (Angular workspace, bun) - private submodule
+cd private/src/Client/Logistics.Angular && bun install
+bun start:tms                                             # TMS Portal dev server (from repo root)
 
-# Mobile (Kotlin Multiplatform)
-cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
+# Mobile (Kotlin Multiplatform) - private submodule
+cd private/src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 ```
 
 ## Service Ports

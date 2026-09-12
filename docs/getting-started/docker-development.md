@@ -24,7 +24,7 @@ Then run the backend and a frontend on the host:
 dotnet run --project src/Presentation/Logistics.IdentityServer   # https://localhost:7001
 dotnet run --project src/Presentation/Logistics.API              # https://localhost:7000
 
-cd src/Client/Logistics.Angular
+cd private/src/Client/Logistics.Angular
 bun install
 bun start:tms        # also: start:admin, start:customer, start:website
 ```

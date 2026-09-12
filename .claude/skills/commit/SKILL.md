@@ -50,7 +50,7 @@ Breaking change: append `!` before the colon, e.g. `feat(api)!: drop v1 endpoint
 
 ## Steps
 
-1. Run `git status`, `git diff --staged`, and `git diff` to see staged and unstaged work.
+1. Run `git status`, `git diff --staged`, and `git diff` to see staged and unstaged work. If the output mentions `private (new commits)` or `private (modified content)`, follow **Submodules** below before staging anything.
 2. Run `git log -10 --oneline` and match the repo's existing subject style if it already has one.
 3. If nothing is staged, stage the files relevant to the request. Never stage unrelated changes.
 4. Skip secrets, credential files, build output, and large binaries. Ask before adding anything that looks like one.
@@ -66,6 +66,16 @@ MSG
 
 7. Run `git status` to confirm the commit landed. If a pre-commit hook changed files, amend once and stop.
 8. Do not push unless the user asks.
+
+## Submodules
+
+`private/` is a separate repository holding the web portals and the driver app. Staging it in the parent records which commit to use, not the file changes.
+
+1. Changes to files under `private/` are committed inside `private/`, not in the parent.
+2. Commit there first, then push it, then stage `private` in the parent and commit. Order matters.
+3. Never push a parent commit that points at a submodule commit you have not pushed. CI and deploy clone the submodule from its remote and will not find it.
+4. The submodule commit carries the real message. The parent commit only records the new commit id: `chore(private): bump private submodule`. Add one line naming what moved if the submodule log does not make it obvious.
+5. Finish with `git submodule status` in the parent. A leading `+` means the parent points at a different commit than the one checked out, which is what deploys the wrong frontend.
 
 ## Examples
 

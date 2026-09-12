@@ -4,23 +4,23 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "src/Client/*"
+    "src/Client/Logistics.DemoVideo"
   ],
   "scripts": {
     "prepare": "husky",
     "format": "prettier --write .",
-    "start:tms": "bun run --cwd src/Client/Logistics.Angular start:tms",
-    "start:customer": "bun run --cwd src/Client/Logistics.Angular start:customer",
-    "start:admin": "bun run --cwd src/Client/Logistics.Angular start:admin",
-    "start:website": "bun run --cwd src/Client/Logistics.Angular start:website",
-    "start:identity": "cd src/Presentation/Logistics.Identity && dotnet run",
+    "start:tms": "bun run --cwd private/src/Client/Logistics.Angular start:tms",
+    "start:customer": "bun run --cwd private/src/Client/Logistics.Angular start:customer",
+    "start:admin": "bun run --cwd private/src/Client/Logistics.Angular start:admin",
+    "start:website": "bun run --cwd private/src/Client/Logistics.Angular start:website",
+    "start:identity": "cd src/Presentation/Logistics.IdentityServer && dotnet run",
     "start:api": "cd src/Presentation/Logistics.API && dotnet run",
     "db:migrate:apply": "cd src/Presentation/Logistics.DbMigrator && dotnet run",
     "db:migrate:prod": "powershell -NoProfile -ExecutionPolicy Bypass -File deploy/Run-ProdMigrator.ps1",
     "license": "dotnet run --project tools/Logistics.LicenseIssuer --",
-    "build:angular": "bun run --cwd src/Client/Logistics.Angular build:all",
-    "gen:api": "bun run --cwd src/Client/Logistics.Angular gen:api",
-    "gen:api:live": "bun run --cwd src/Client/Logistics.Angular gen:api:live",
+    "build:angular": "bun run --cwd private/src/Client/Logistics.Angular build:all",
+    "gen:api": "bun run --cwd private/src/Client/Logistics.Angular gen:api",
+    "gen:api:live": "bun run --cwd private/src/Client/Logistics.Angular gen:api:live",
     "dev:video": "bun run --cwd src/Client/Logistics.DemoVideo dev",
     "build:video": "bun run --cwd src/Client/Logistics.DemoVideo build"
   },

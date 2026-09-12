@@ -7,7 +7,7 @@ Patterns and conventions for the Angular workspace (Angular 22, zoneless, Signal
 The Angular frontend uses a monorepo workspace with multiple projects:
 
 ```text
-src/Client/Logistics.Angular/
+private/src/Client/Logistics.Angular/
 ├── angular.json                    # Workspace configuration
 ├── package.json                    # Shared dependencies
 ├── tsconfig.json                   # Base TypeScript config

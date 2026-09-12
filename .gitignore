@@ -377,3 +377,8 @@ sample-pdf/
 .playwright-mcp/
 
 .DS_Store
+
+# Stale client paths. The web portals and the driver app moved to the private
+# submodule; local leftovers here must never be committed back.
+src/Client/Logistics.Angular/
+src/Client/Logistics.DriverApp/

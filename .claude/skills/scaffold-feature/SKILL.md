@@ -174,7 +174,7 @@ See `.claude/rules/backend/testing.md` for the mock-setup pattern.
 #### Angular API regen first
 
 ```bash
-cd src/Client/Logistics.Angular
+cd private/src/Client/Logistics.Angular
 bun run gen:api:live   # regenerates from running API
 ```
 
@@ -182,7 +182,7 @@ This produces typed clients in `projects/shared/src/lib/api/generated/`. Update 
 
 #### Page
 
-`src/Client/Logistics.Angular/projects/tms-portal/src/app/pages/subcontractors/`:
+`private/src/Client/Logistics.Angular/projects/tms-portal/src/app/pages/subcontractors/`:
 
 - `subcontractors.ts` (list page) + `.html` template
 - `subcontractor-edit.ts` (form) + `.html`

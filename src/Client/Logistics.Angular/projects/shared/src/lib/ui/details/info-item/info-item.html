@@ -1,8 +1,0 @@
-<ui-typography variant="body-sm" color="muted" class="mb-1 block">{{ label() }}</ui-typography>
-@if (isEmpty()) {
-  <div class="text-muted-foreground">{{ emptyText() }}</div>
-} @else {
-  <div class="text-foreground font-medium">
-    <ng-content>{{ value() }}</ng-content>
-  </div>
-}

@@ -1,6 +1,8 @@
 # Commercial Licensing
 
-LogisticsX is published under the [PolyForm Noncommercial License 1.0.0](LICENSE). Personal projects, research, education, and evaluation are free. Any commercial use needs a commercial license from the author. This page summarizes the options. The signed agreement governs; this page is informational.
+LogisticsX is published under the [PolyForm Free Trial License 1.0.0](LICENSE). You may read the source and evaluate it for up to 32 consecutive days. Any use beyond that needs a commercial license from the author. This page summarizes the options. The signed agreement governs, and this page is informational.
+
+The web portals and the driver app are closed source and are not covered by the trial. Every commercial license below includes their source, sent to you on purchase.
 
 Commercial use includes running LogisticsX inside a for-profit company, hosting it for others, and selling a product built on it.
 
@@ -11,6 +13,7 @@ Commercial use includes running LogisticsX inside a for-profit company, hosting 
 | Internal Use      | A carrier, broker, or logistics company that runs LogisticsX for its own operations | Run any number of instances for one legal entity                         | Offering the product to third parties                        |
 | Hosted / Reseller | A company that hosts LogisticsX and sells access to other businesses                | Run it as a service for up to the number of tenants written into the key | Redistributing the source, sublicensing                      |
 | Perpetual Source  | A company that forks LogisticsX and owns its copy                                   | A perpetual right to use and modify the source as of the purchase date   | Updates after the first year, unless the update plan is paid |
+| Client source     | Included with every type above                                                      | The Angular portal and driver app source, sent to you on purchase        | Redistribution of that source under any type                 |
 
 ## Pricing
 

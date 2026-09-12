@@ -1,5 +1,0 @@
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
-
-@import "../../shared/src/styles/theme.css";
-@import "./styles/chrome.css";

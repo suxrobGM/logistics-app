@@ -116,13 +116,16 @@ Both infrastructure rules discover what they cover instead of hand-listing it, s
 
 The repository follows the layer split above. Each project name is `Logistics.{Layer}.{Module}`.
 
-| Folder               | Projects                                                                                                                                                                            |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/Client`         | `Logistics.Angular` (workspace: tms-portal, customer-portal, admin-portal, website, shared library), `Logistics.DriverApp` (Kotlin Multiplatform), `Logistics.DemoVideo` (Remotion) |
-| `src/Core`           | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`                                              |
-| `src/Shared`         | `Logistics.Shared.Geo`, `Logistics.Shared.Identity`, `Logistics.Shared.Models`                                                                                                      |
-| `src/Infrastructure` | `Persistence`, `Communications`, `AI`, `Payments`, `Documents`, `Routing`, `Storage`, `Tax`, `Vin`, `Integrations.{Common, Eld, LoadBoard, FuelCards, Accounting}`                  |
-| `src/Presentation`   | `Logistics.API`, `Logistics.IdentityServer`, `Logistics.McpServer`, `Logistics.TelegramBot`, `Logistics.DbMigrator`                                                                 |
+| Folder               | Projects                                                                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/Client`         | `Logistics.DemoVideo` (Remotion). The Angular workspace and the driver app moved to the private submodule                                                          |
+| `private/`           | Closed source: `Logistics.Angular` (tms-portal, customer-portal, admin-portal, website, shared library), `Logistics.DriverApp` (Kotlin Multiplatform)              |
+| `src/Core`           | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`                             |
+| `src/Shared`         | `Logistics.Shared.Geo`, `Logistics.Shared.Identity`, `Logistics.Shared.Models`                                                                                     |
+| `src/Infrastructure` | `Persistence`, `Communications`, `AI`, `Payments`, `Documents`, `Routing`, `Storage`, `Tax`, `Vin`, `Integrations.{Common, Eld, LoadBoard, FuelCards, Accounting}` |
+| `src/Presentation`   | `Logistics.API`, `Logistics.IdentityServer`, `Logistics.McpServer`, `Logistics.TelegramBot`, `Logistics.DbMigrator`                                                |
+
+A public clone gets an empty `private/` directory. Everything else builds and runs without it.
 
 ## Tech Stack
 
