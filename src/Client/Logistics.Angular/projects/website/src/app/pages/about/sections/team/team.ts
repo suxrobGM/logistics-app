@@ -8,7 +8,9 @@ interface TeamMember {
   role: string;
   bio: string;
   initials: string;
-  linkedIn?: string;
+  /** Square headshot under `public/images/team/`. Null falls back to the initials avatar. */
+  photo: string | null;
+  linkedIn: string | null;
 }
 
 @Component({
@@ -23,13 +25,15 @@ export class Team {
       role: "CEO & Founder",
       bio: "Software engineer and founder. Spends his time building tools for the logistics industry.",
       initials: "SI",
+      photo: "images/team/sukhrob-ilyosbekov.jpg",
       linkedIn: "https://www.linkedin.com/in/suxrobgm",
     },
     {
       name: "Olim Gulomov",
-      role: "Co-Founder, Sales & Growth",
+      role: "Co-Founder",
       bio: "Leads sales and growth. Works with carriers to bring LogisticsX to more fleets.",
       initials: "OG",
+      photo: "images/team/olim-gulomov.jpg",
       linkedIn: "https://www.linkedin.com/in/olimgulomov",
     },
   ];

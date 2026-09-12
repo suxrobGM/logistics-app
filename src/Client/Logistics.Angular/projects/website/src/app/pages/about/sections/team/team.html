@@ -17,10 +17,21 @@
       >
         <!-- Avatar -->
         <div class="flex justify-center">
-          <ui-avatar
-            [label]="member.initials"
-            class="bg-accent font-display text-paper size-24 text-2xl shadow-lg transition-transform group-hover:scale-105"
-          />
+          @if (member.photo) {
+            <img
+              [src]="member.photo"
+              [alt]="member.name"
+              width="96"
+              height="96"
+              loading="lazy"
+              class="ring-paper size-24 rounded-full object-cover shadow-lg ring-4 transition-transform group-hover:scale-105"
+            />
+          } @else {
+            <ui-avatar
+              [label]="member.initials"
+              class="bg-accent font-display text-paper size-24 text-2xl shadow-lg transition-transform group-hover:scale-105"
+            />
+          }
         </div>
 
         <!-- Info -->
@@ -33,7 +44,7 @@
           <div class="mt-4">
             <a
               [href]="member.linkedIn"
-              class="text-steel hover:text-accent inline-flex items-center gap-1 text-sm transition-colors"
+              class="text-steel hover:text-accent inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
               target="_blank"
               rel="noopener noreferrer"
             >
