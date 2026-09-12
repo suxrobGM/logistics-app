@@ -270,7 +270,7 @@ You will be asked to sign the [Contributor License Agreement](CLA.md) on your fi
 
 LogisticsX is released under the [PolyForm Free Trial License 1.0.0][license].
 
-You may read the source and evaluate it for up to 32 consecutive days. Any use beyond that, including running it inside a business or hosting it for others, needs a commercial license. See [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md) for the options and prices, or email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
+You may read the source and evaluate it for the trial period set out in [LICENSE](LICENSE). Any use beyond that, including running it inside a business or hosting it for others, needs a commercial license. See [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md) for the options and prices, or email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
 
 ## Contact
 

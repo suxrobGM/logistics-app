@@ -215,11 +215,11 @@ License__HeartbeatEnabled=true
 #License__HeartbeatUrl="https://api.logisticsx.app/license/heartbeat"
 ```
 
-| Variable                    | Description                                                                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `License__Key`              | Signed commercial license key. When set it wins over the key installed on the admin portal License page. Leave empty for noncommercial use |
-| `License__HeartbeatEnabled` | Daily instance report to the author (instance id, hostname, version, key id, licensee, tenant count). Required under a commercial license  |
-| `License__HeartbeatUrl`     | Receiver for the heartbeat. Only change it for a test receiver                                                                             |
+| Variable                    | Description                                                                                                                                                   |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `License__Key`              | Signed commercial license key. When set it wins over the key installed on the admin portal License page. Leave empty while evaluating under the trial license |
+| `License__HeartbeatEnabled` | Daily instance report to the author (instance id, hostname, version, key id, licensee, tenant count). Required under a commercial license                     |
+| `License__HeartbeatUrl`     | Receiver for the heartbeat. Only change it for a test receiver                                                                                                |
 
 See [COMMERCIAL-LICENSE.md](../../COMMERCIAL-LICENSE.md) for the license types and what the heartbeat sends.
 
