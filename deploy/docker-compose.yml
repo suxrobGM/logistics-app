@@ -1,12 +1,10 @@
 # LogisticsX production stack (plain Docker Compose).
 #
-# Images are pulled from GHCR. GITHUB_REPOSITORY and IMAGE_TAG are appended to .env
-# by the deploy workflow; the defaults below keep manual `docker compose` runs working.
-# All app ports are bound to 127.0.0.1 - the host nginx (deploy/nginx/logisticsx.conf)
-# is the only public entry point and terminates TLS. The host-side ports below must
-# match the proxy_pass targets in that nginx config; the canonical port table lives in
-# docs/deployment/docker-deployment.md.
-# Every image below is private on GHCR. Pulling needs a token with read:packages.
+# api and identity are public on GHCR. The four client images are private and need read:packages.
+# GITHUB_REPOSITORY and IMAGE_TAG come from the deploy workflow. The defaults keep manual runs working.
+# Ports bind to 127.0.0.1 because the host nginx (deploy/nginx/logisticsx.conf) terminates TLS and is
+# the only public entry. They must match its proxy_pass targets.
+# Port table: docs/deployment/docker-deployment.md.
 
 name: logistics
 

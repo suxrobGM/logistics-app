@@ -18,9 +18,9 @@ The main stack contains `identity-server`, `api`, `admin-portal`, `tms-portal`, 
 
 ## Image access
 
-All six images on GHCR are **private**. Pulling any of them needs a token with `read:packages` and access granted to the packages, so `docker compose pull` fails for anyone outside the project. See [COMMERCIAL-LICENSE.md](../../COMMERCIAL-LICENSE.md).
+The `api` and `identity` images are public. The four client images (`admin-portal`, `tms-portal`, `customer-portal`, `website`) are **private**, because the Angular portals are closed source. Pulling those needs a commercial license and a token with `read:packages`. See [COMMERCIAL-LICENSE.md](../../COMMERCIAL-LICENSE.md).
 
-Evaluating without that access means building the images yourself. The backend Dockerfiles are in this repository. The four client images need the private submodule, which ships only with a commercial license.
+Without a license, run `identity-server` and `api` and call the API directly. Remove the four client services from your copy of the compose file, or the pull fails.
 
 ## Automated deployment (recommended)
 
@@ -56,7 +56,7 @@ docker compose pull
 docker compose up -d
 ```
 
-The token must have `read:packages` and belong to an account granted access to the packages. Every image is private, so without that the pull fails on the first service.
+The token must have `read:packages` and access to the four private client packages. `api` and `identity` pull without it.
 
 ### 3. Configure nginx + SSL
 
