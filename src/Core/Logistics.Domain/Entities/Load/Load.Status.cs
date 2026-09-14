@@ -118,16 +118,9 @@ public partial class Load
             return;
         }
 
-        var statusToConfirm = Status switch
+        if (NextDriverStatus is { } statusToConfirm)
         {
-            LoadStatus.Dispatched => (LoadStatus?)LoadStatus.PickedUp,
-            LoadStatus.PickedUp => LoadStatus.Delivered,
-            _ => null
-        };
-
-        if (statusToConfirm.HasValue)
-        {
-            RaiseProximityChangedEvent(statusToConfirm.Value);
+            RaiseProximityChangedEvent(statusToConfirm);
         }
     }
 }

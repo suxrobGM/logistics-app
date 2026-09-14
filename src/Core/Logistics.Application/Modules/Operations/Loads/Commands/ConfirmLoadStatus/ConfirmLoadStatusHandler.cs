@@ -31,7 +31,7 @@ internal sealed class ConfirmLoadStatusHandler(
 
         var loadStatus = req.LoadStatus!.Value;
 
-        if (!IsConfirmable(load.Status, loadStatus))
+        if (loadStatus != load.NextDriverStatus)
         {
             return Result.Fail(
                 $"This load is {load.Status.GetDescription()}, so it can't be marked {loadStatus.GetDescription()}.");
@@ -48,9 +48,6 @@ internal sealed class ConfirmLoadStatusHandler(
 
         return Result.Ok();
     }
-
-    private static bool IsConfirmable(LoadStatus current, LoadStatus target) =>
-        (current, target) is (LoadStatus.Dispatched, LoadStatus.PickedUp) or (LoadStatus.PickedUp, LoadStatus.Delivered);
 
     private async Task SendNotificationAsync(Load load)
     {

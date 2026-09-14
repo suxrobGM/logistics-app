@@ -40,13 +40,24 @@ public partial class Load : AuditableEntity, ITenantEntity
     /// Computed: true when the driver can confirm pickup right now.
     /// </summary>
     [NotMapped]
-    public bool CanConfirmPickUp => Status == LoadStatus.Dispatched && IsInProximity;
+    public bool CanConfirmPickUp => IsInProximity && NextDriverStatus == LoadStatus.PickedUp;
 
     /// <summary>
     /// Computed: true when the driver can confirm delivery right now.
     /// </summary>
     [NotMapped]
-    public bool CanConfirmDelivery => Status == LoadStatus.PickedUp && IsInProximity;
+    public bool CanConfirmDelivery => IsInProximity && NextDriverStatus == LoadStatus.Delivered;
+
+    /// <summary>
+    /// The status a driver confirms next: pickup when dispatched, delivery when picked up, otherwise none.
+    /// </summary>
+    [NotMapped]
+    public LoadStatus? NextDriverStatus => Status switch
+    {
+        LoadStatus.Dispatched => LoadStatus.PickedUp,
+        LoadStatus.PickedUp => LoadStatus.Delivered,
+        _ => null
+    };
 
     public DateTime? DispatchedAt { get; private set; }
     public DateTime? PickedUpAt { get; private set; }
