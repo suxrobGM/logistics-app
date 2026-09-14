@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -6,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 
-internal sealed class CreateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<CreateTruckCommand, Result>
+internal sealed class CreateTruckHandler(
+    ITenantUnitOfWork tenantUow,
+    IVehicleTransportGuard vehicleTransportGuard) : IAppRequestHandler<CreateTruckCommand, Result>
 {
 
     public async Task<Result> Handle(
@@ -14,6 +17,9 @@ internal sealed class CreateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequ
     {
         var limitResult = await CheckTruckLimitAsync(ct);
         if (!limitResult.IsSuccess) return limitResult;
+
+        var typeCheck = await vehicleTransportGuard.CheckTruckTypeAsync(req.TruckType);
+        if (!typeCheck.IsSuccess) return typeCheck;
 
         var truckWithThisNumber = await tenantUow.Repository<Truck>().GetAsync(i => i.Number == req.TruckNumber, ct);
 

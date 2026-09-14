@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -6,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
+internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow, IVehicleTransportGuard vehicleTransportGuard)
     : IAppRequestHandler<UpdateLoadCommand, Result>
 {
     public async Task<Result> Handle(UpdateLoadCommand req, CancellationToken ct)
@@ -16,6 +17,16 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
         if (load is null)
         {
             return Result.Fail("Could not find the specified load");
+        }
+
+        // Only a change is checked, so existing vehicle loads stay editable after the feature is turned off.
+        if (req.Type != load.Type)
+        {
+            var typeCheck = await vehicleTransportGuard.CheckLoadTypeAsync(req.Type);
+            if (!typeCheck.IsSuccess)
+            {
+                return typeCheck;
+            }
         }
 
         try

@@ -53,7 +53,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [HttpPost(Name = "CreateTenant")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Tenant.Manage)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> CreateTenant([FromBody] CreateTenantCommand request)
     {
         var result = await mediator.Send(request);
@@ -68,6 +68,17 @@ public class TenantController(IMediator mediator) : ControllerBase
     {
         User.EnsureOwnsTenant(id);
         request.Id = id;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("{id:guid}/presets", Name = "UpdateTenantPresets")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
+    public async Task<IActionResult> UpdateTenantPresets(Guid id, [FromBody] UpdateTenantPresetsCommand request)
+    {
+        request.TenantId = id;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }

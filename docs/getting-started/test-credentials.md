@@ -20,13 +20,13 @@ Runs the Admin Portal and is not attached to any tenant. Its credentials come fr
 
 Three tenants are seeded. The tenant slug is what the client sends in the `X-Tenant` header, and it is also the `{tenant}` in the `{tenant}_logisticsx` database name.
 
-| Slug   | Company                 | Region | Database          | Operating mode | Shape                                          |
-| ------ | ----------------------- | ------ | ----------------- | -------------- | ---------------------------------------------- |
-| `us`   | Heartland Logistics LLC | US     | `us_logisticsx`   | Fleet          | 10 employees, 5 trucks, 5 customers, 100 loads |
-| `eu`   | EuroFreight GmbH        | EU     | `eu_logisticsx`   | Fleet          | 10 employees, 5 trucks, 5 customers, 100 loads |
-| `solo` | Rodriguez Trucking LLC  | US     | `solo_logisticsx` | Owner-operator | 1 employee, 1 truck, 2 customers, 12 loads     |
+| Slug   | Company                 | Region | Database          | Presets                                 | Shape                                          |
+| ------ | ----------------------- | ------ | ----------------- | --------------------------------------- | ---------------------------------------------- |
+| `us`   | Heartland Logistics LLC | US     | `us_logisticsx`   | General freight, car hauler, intermodal | 10 employees, 5 trucks, 5 customers, 100 loads |
+| `eu`   | EuroFreight GmbH        | EU     | `eu_logisticsx`   | General freight, car hauler, intermodal | 10 employees, 5 trucks, 5 customers, 100 loads |
+| `solo` | Rodriguez Trucking LLC  | US     | `solo_logisticsx` | General freight, solo owner-operator    | 1 employee, 1 truck, 2 customers, 12 loads     |
 
-The EU tenant bills in EUR, uses metric units and the Europe/Berlin timezone. The `solo` tenant runs in owner-operator mode, so the TMS portal hides employees, payroll, timesheets and messaging for it.
+The EU tenant bills in EUR, uses metric units and the Europe/Berlin timezone. The `solo` tenant has the solo owner-operator preset, so it has no payroll or timesheets, and the TMS portal hides employees and messaging for it.
 
 ### US tenant (`us`)
 

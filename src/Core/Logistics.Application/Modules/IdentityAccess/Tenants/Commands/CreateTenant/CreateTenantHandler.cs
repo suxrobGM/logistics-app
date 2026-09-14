@@ -39,7 +39,7 @@ internal sealed class CreateTenantHandler(
             CompanyAddress = req.CompanyAddress,
             BillingEmail = req.BillingEmail!,
             ConnectionString = tenantDatabase.GenerateConnectionString(tenantName),
-            Settings = { OperatingMode = req.OperatingMode ?? OperatingMode.Fleet },
+            Presets = [.. req.Presets.Distinct()],
             // New tenants start subscription-less so they're usable immediately
             // (admin-led onboarding/impersonation). The subscription check only
             // enforces when IsSubscriptionRequired is true; an admin assigns a
@@ -63,8 +63,7 @@ internal sealed class CreateTenantHandler(
         await masterUow.Repository<Tenant>().AddAsync(tenant, ct);
         await masterUow.SaveChangesAsync(ct);
 
-        // Initialize feature configurations for the new tenant based on defaults
-        await featureService.InitializeFeaturesForTenantAsync(tenant.Id);
+        await featureService.ApplyPresetFeaturesAsync(tenant.Id, tenant.Presets);
 
         // Create owner account and send welcome email
         var ownerResult = await CreateOwnerAccountAsync(req, tenant);

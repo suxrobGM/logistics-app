@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -7,7 +8,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 
-internal sealed class UpdateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<UpdateTruckCommand, Result>
+internal sealed class UpdateTruckHandler(
+    ITenantUnitOfWork tenantUow,
+    IVehicleTransportGuard vehicleTransportGuard) : IAppRequestHandler<UpdateTruckCommand, Result>
 {
     public async Task<Result> Handle(
         UpdateTruckCommand req, CancellationToken ct)
@@ -18,6 +21,16 @@ internal sealed class UpdateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequ
         if (truck is null)
         {
             return Result.Fail($"Could not find a truck with ID {req.Id}");
+        }
+
+        // Only a change is checked, so existing car haulers stay editable after the feature is turned off.
+        if (req.TruckType != truck.Type)
+        {
+            var typeCheck = await vehicleTransportGuard.CheckTruckTypeAsync(req.TruckType);
+            if (!typeCheck.IsSuccess)
+            {
+                return typeCheck;
+            }
         }
 
         var numberTaken = truckRepository.Query().Any(i => i.Number == req.TruckNumber &&

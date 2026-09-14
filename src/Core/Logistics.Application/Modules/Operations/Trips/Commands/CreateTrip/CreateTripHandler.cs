@@ -1,7 +1,9 @@
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -10,11 +12,19 @@ namespace Logistics.Application.Modules.Operations.Trips.Commands;
 internal sealed class CreateTripHandler(
     ITenantUnitOfWork tenantUow,
     ILoadService loadService,
+    IVehicleTransportGuard vehicleTransportGuard,
     ILogger<CreateTripHandler> logger)
     : IAppRequestHandler<CreateTripCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateTripCommand req, CancellationToken ct)
     {
+        var vehicleLoad = req.NewLoads?.FirstOrDefault(l => l.Type == LoadType.Vehicle);
+        var typeCheck = await vehicleTransportGuard.CheckLoadTypeAsync(vehicleLoad?.Type);
+        if (!typeCheck.IsSuccess)
+        {
+            return Result<Guid>.Fail(typeCheck.Error!, typeCheck.ErrorCode!);
+        }
+
         Truck? truck = null;
         List<TripStop>? stops = null;
 

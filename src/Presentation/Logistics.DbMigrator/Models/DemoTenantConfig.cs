@@ -19,7 +19,8 @@ public sealed record DemoTenantConfig
     /// </summary>
     public string? SeedDataKey { get; init; }
 
-    public OperatingMode OperatingMode { get; init; } = OperatingMode.Fleet;
+    /// <summary>Empty falls back to general freight. No default items here: the binder appends to them.</summary>
+    public List<TenantPreset> Presets { get; init; } = [];
 
     /// <summary>Multiplier on the fake-data volumes; 1.0 is the fleet-sized demo.</summary>
     public double DataScale { get; init; } = 1.0;
@@ -29,6 +30,9 @@ public sealed record DemoTenantConfig
     /// <c>ConnectionStrings:*TenantDatabase</c> slot for this tenant name.
     /// </summary>
     public string? ConnectionString { get; init; }
+
+    public List<TenantPreset> ResolvePresets() =>
+        Presets.Count > 0 ? [.. Presets.Distinct()] : [TenantPreset.GeneralFreight];
 
     public string ResolveSeedDataKey() =>
         string.IsNullOrWhiteSpace(SeedDataKey) ? Region.ToString() : SeedDataKey;

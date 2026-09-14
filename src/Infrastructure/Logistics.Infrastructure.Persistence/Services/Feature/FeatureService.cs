@@ -28,31 +28,38 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
         return [.. AllFeatures.Where(context.IsEnabled)];
     }
 
-    public async Task InitializeFeaturesForTenantAsync(Guid tenantId)
+    public async Task ApplyPresetFeaturesAsync(Guid tenantId, IReadOnlyCollection<TenantPreset> presets)
     {
-        var context = await GetContextAsync(tenantId);
+        var configMap = (await GetTenantConfigsAsync(tenantId)).ToDictionary(c => c.Feature);
+        var presetFeatures = TenantPresetCatalog.Resolve(presets);
+        var repository = masterUow.Repository<TenantFeatureConfig>();
+        var now = DateTime.UtcNow;
 
-        // A feature without a config row initializes to whatever resolution already says for it,
-        // so the stored value and the computed one cannot disagree.
-        var newConfigs = AllFeatures
-            .Where(f => !context.ConfigMap.ContainsKey(f))
-            .Select(f => new TenantFeatureConfig
-            {
-                TenantId = tenantId,
-                Feature = f,
-                IsEnabled = context.IsEnabled(f),
-                IsAdminLocked = false,
-                UpdatedAt = DateTime.UtcNow
-            });
-
-        foreach (var config in newConfigs)
+        foreach (var feature in AllFeatures)
         {
-            await masterUow.Repository<TenantFeatureConfig>().AddAsync(config);
+            var isEnabled = presetFeatures.Contains(feature);
+
+            if (!configMap.TryGetValue(feature, out var config))
+            {
+                await repository.AddAsync(new TenantFeatureConfig
+                {
+                    TenantId = tenantId,
+                    Feature = feature,
+                    IsEnabled = isEnabled,
+                    UpdatedAt = now
+                });
+            }
+            else if (!config.IsAdminLocked && config.IsEnabled != isEnabled)
+            {
+                config.IsEnabled = isEnabled;
+                config.UpdatedAt = now;
+                repository.Update(config);
+            }
         }
 
         await masterUow.SaveChangesAsync();
 
-        // Cached before these rows existed.
+        // Cached before these writes.
         tenantConfigCache.Remove(tenantId);
     }
 

@@ -3,6 +3,7 @@ using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -87,8 +88,11 @@ public class BookLoadBoardLoadHandlerTests
         provider.BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>())
             .Returns(new LoadBoardBookingResultDto { Success = true, ExternalConfirmationId = "CONF-1" });
 
+        var vehicleTransportGuard = Substitute.For<IVehicleTransportGuard>();
+        vehicleTransportGuard.CheckLoadTypeAsync(Arg.Any<LoadType?>()).Returns(Result.Ok());
+
         sut = new BookLoadBoardLoadHandler(
-            tenantUow, tokenService, brokerCreditService, routeRegistry, broadcastService,
+            tenantUow, vehicleTransportGuard, tokenService, brokerCreditService, routeRegistry, broadcastService,
             NullLogger<BookLoadBoardLoadHandler>.Instance);
     }
 

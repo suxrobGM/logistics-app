@@ -80,7 +80,7 @@ public class GetOnboardingProgressHandlerTests
         var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(OperatingMode.Fleet, result.Value!.OperatingMode);
+        Assert.False(result.Value!.IsSolo);
         Assert.Equal(
             ["companyProfile", "addTruck", "inviteTeam", "addCustomer", "firstLoad", "getPaid", "connectEld"],
             result.Value.Steps.Select(s => s.Key));
@@ -90,11 +90,11 @@ public class GetOnboardingProgressHandlerTests
     [Fact]
     public async Task Handle_SoloOperator_OmitsInviteTeamStep()
     {
-        tenant.Settings.OperatingMode = OperatingMode.SoloOperator;
+        tenant.Presets = [TenantPreset.GeneralFreight, TenantPreset.SoloOperator];
 
         var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
-        Assert.Equal(OperatingMode.SoloOperator, result.Value!.OperatingMode);
+        Assert.True(result.Value!.IsSolo);
         Assert.DoesNotContain(result.Value.Steps, s => s.Key == "inviteTeam");
         Assert.Equal(6, result.Value.Steps.Count);
         employeeRepo.DidNotReceive().Query();

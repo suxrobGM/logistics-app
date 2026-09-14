@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
@@ -32,4 +33,6 @@ public record TenantDto
     public bool IsSubscriptionRequired { get; set; } = true;
 
     public TenantSettings? Settings { get; set; }
+
+    public List<TenantPreset> Presets { get; set; } = [];
 }

@@ -32,10 +32,11 @@ A one-person carrier can sign up, get a load suggested by the AI from a load boa
 
 ## Notes
 
-**2026-07-27 - shipped.** `OperatingMode` (`Fleet` | `SoloOperator`) sits on the `TenantSettings`
-complex type - column `settings_operating_mode`, default `fleet`, migration
-`20260727082723_AddTenantOperatingMode`. It is pickable when an admin creates a tenant and
-switchable later in Settings → Company. Decisions worth remembering:
+**Shipped.** Solo is the `SoloOperator` tenant preset, stored in `Tenant.Presets` (column
+`presets` on `tenants`). Only a platform admin sets it, when creating a tenant or through
+`PUT /tenants/{id}/presets`. It combines with the cargo presets (`GeneralFreight`, `CarHauler`,
+`Intermodal`), and `TenantPresetCatalog` turns off `Payroll` and `Timesheets` for it. Decisions
+worth remembering:
 
 - **Multi-role turned out to be unnecessary.** The first bullet above asked to verify that one user
   can hold Owner + Dispatcher + Driver cleanly. Wrong question: every driver-facing query keys off
@@ -70,6 +71,6 @@ switchable later in Settings → Company. Decisions worth remembering:
   existing employee Stripe Connect payout rails rather than `PayrollInvoice` cycles. Also deferred:
   **net-new business-side features in the mobile app** - it still has no create-load, invoice,
   expense or receipt-capture surface. This pass made the driver app usable by a solo owner, not
-  their back office. And **self-serve signup** - `POST /tenants` is still behind
-  `Permission.Tenant.Manage`, so the `/owner-operators` marketing page routes to Request a Demo and
-  a human provisions the tenant.
+  their back office. And **self-serve signup** - `POST /tenants` requires the SuperAdmin or Admin
+  role, so the `/owner-operators` marketing page routes to Request a Demo and a human provisions the
+  tenant.

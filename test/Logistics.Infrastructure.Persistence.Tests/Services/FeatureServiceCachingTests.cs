@@ -101,15 +101,15 @@ public class FeatureServiceCachingTests
     }
 
     [Fact]
-    public async Task InitializeFeaturesForTenant_EvictsTenantConfigs_SoNextReadSeesTheNewRows()
+    public async Task ApplyPresetFeatures_EvictsTenantConfigs_SoNextReadSeesTheNewRows()
     {
         await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AgenticDispatch);
         Assert.Equal(1, ConfigQueryCount);
 
-        await sut.InitializeFeaturesForTenantAsync(tenantId);
+        await sut.ApplyPresetFeaturesAsync(tenantId, [TenantPreset.GeneralFreight]);
         await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AgenticDispatch);
 
-        // Initialize reused the cached list, then evicted it; the read after re-queries.
+        // Apply reused the cached list, then evicted it; the read after re-queries.
         Assert.Equal(2, ConfigQueryCount);
     }
 

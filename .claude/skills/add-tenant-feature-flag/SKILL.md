@@ -1,19 +1,23 @@
 ---
 name: add-tenant-feature-flag
-description: Add a new plan-gated tenant feature flag (e.g. "ContainerTracking", "AdvancedAnalytics") that can be toggled per-tenant and gated by subscription plan tier. Use when adding a feature that should be: locked for some plans, opt-in per tenant, or admin-overridable. Walks through the four-tier resolution chain.
+description: Add a new plan-gated tenant feature flag (e.g. "ContainerTracking", "AdvancedAnalytics") that platform admins control per tenant through presets and per-feature overrides, gated by subscription plan tier. Use when adding a feature that should be locked for some plans, tied to a company type preset, or admin-overridable. Walks through the resolution chain and the preset catalog.
 ---
 
 # Add a Tenant Feature Flag
 
-`FeatureService.IsEnabledAsync(feature)` walks four tiers and returns the first that decides:
+Only platform admins change a tenant's features. Tenants read them and cannot toggle them.
 
-1. **Admin-locked override** - super admin set `IsAdminLocked = true`
-2. **Plan gating** - the tenant's plan grants it via `PlanFeature` **and** no negative `TenantFeatureConfig` override exists
-3. **Tenant config** - the tenant explicitly enabled/disabled it
-4. **Default config** - `DefaultFeatureConfig` for the platform
+`FeatureService.IsFeatureEnabledAsync(tenantId, feature)` returns the first rule that decides:
 
-Tenants with `IsSubscriptionRequired = false` (internal, demo) **bypass plan gating entirely** - a
-feature gated only by `PlanFeature` will not work for them.
+1. **Admin lock** - a `TenantFeatureConfig` row with `IsAdminLocked = true` returns its `IsEnabled`. This beats the plan.
+2. **Plan gating** - a feature the tenant's plan does not grant via `PlanFeature` is off.
+3. **Tenant config** - a `TenantFeatureConfig` row returns its `IsEnabled`.
+4. **Default** - with no row, a tenant with `IsSubscriptionRequired = false` gets the feature. Every other tenant uses `DefaultFeatureConfig` (a missing default counts as on).
+
+Tenant config rows come from **presets**. `ApplyPresetFeaturesAsync` writes one row per feature from
+`TenantPresetCatalog.Resolve` when a tenant is created and when an admin changes its presets. It
+skips admin-locked rows. Rows are a snapshot, so a feature added later has no row on existing
+tenants and resolves through rule 4.
 
 ## When to use this skill
 
@@ -26,28 +30,24 @@ Don't use it for:
 ## Files that must change
 
 1. `src/Core/Logistics.Domain.Primitives/Enums/Tenant/TenantFeature.cs` - enum value
-2. Master DB migration - adds row to `DefaultFeatureConfig` table for the new feature
-3. (Optional) Update `SubscriptionPlan` seeders / `PlanFeature` rows to grant the feature to specific tiers
-4. Backend: `[RequiresFeature]` on **every** command AND query in the module
-5. Backend: any Hangfire job touching the feature - jobs bypass the pipeline and must check explicitly
-6. Frontend: feature gate in route guards, components, or services
-7. Admin portal: feature toggles UI (usually picks up the new enum value automatically)
-8. TMS portal AI Settings or other surfaces: respect the gate
+2. Master DB migration - adds a `default_feature_configs` row, so existing tenants get the intended default
+3. `SubscriptionPlanSeeder` - `PlanFeature` rows for the tiers that grant it
+4. `src/Core/Logistics.Domain/Entities/Feature/TenantPresetCatalog.cs` - only if a preset should control it
+5. Backend: `[RequiresFeature]` on **every** command AND query in the module
+6. Backend: any Hangfire job touching the feature - jobs bypass the pipeline and must check explicitly
+7. Frontend: feature gate in route guards, components, or services
+
+The admin portal's tenant features page lists every enum value, so it needs no change.
 
 ## Step-by-step
 
 ### 1. Add the enum value
 
-`src/Core/Logistics.Domain.Primitives/Enums/Tenant/TenantFeature.cs`
-
 ```csharp
 public enum TenantFeature
 {
     // existing values
-    Dispatch,
     [Description("ELD / HOS")] Eld,
-    [Description("Safety & Compliance")] Safety,
-    // ← new
     ContainerTracking,
 }
 ```
@@ -56,34 +56,38 @@ public enum TenantFeature
 
 ### 2. Migration: add default config
 
-Use the `migration-creator` skill. The migration should INSERT a row into `default_feature_configs` with the new feature's platform default (typically `IsEnabled = true`). Pattern:
+Use the `migration-creator` skill. Insert the platform default in snake_case, which is what
+`SnakeCaseEnumConverter` writes:
 
 ```csharp
 migrationBuilder.Sql("""
-    INSERT INTO default_feature_configs (id, feature, is_enabled)
-    VALUES (gen_random_uuid(), 'ContainerTracking', true)
-""");
+    INSERT INTO default_feature_configs (id, feature, is_enabled_by_default)
+    VALUES (gen_random_uuid(), 'container_tracking', true)
+    ON CONFLICT (feature) DO NOTHING
+    """);
 ```
-
-Run against **master DB**.
 
 ### 3. Plan gating (if tier-restricted)
 
-If only certain plans should grant the feature, add `PlanFeature` rows. This is a master-DB many-to-many between `SubscriptionPlan` and `TenantFeature`. The simplest path is updating the plan seeder:
+Add the feature to the right tier array in `SubscriptionPlanSeeder`. The seeder syncs `PlanFeature`
+rows on every run. Enterprise takes every enum value automatically.
 
-```csharp
-// In the SubscriptionPlan seeder
-new PlanFeature { PlanId = enterprisePlanId, Feature = TenantFeature.ContainerTracking },
-```
+### 4. Presets
 
-Or via SQL in a migration if seeding is not run idempotently.
+Decide how the preset catalog treats the feature. Every feature resolves to on unless the catalog
+says otherwise:
 
-If the feature is universally available, **skip this step** - the `DefaultFeatureConfig` row from step 2 will resolve true for every tenant.
+- **Cargo feature** (only for one company type) - add it to `CargoFeatures` with its preset, like `VehicleTransport` → `CarHauler`.
+- **Team feature** a one-person carrier never uses - add it to `SoloExcludedFeatures`.
+- Otherwise leave the catalog alone. The plan still limits it.
 
-### 4. Backend: gate the API
+A new company type needs a `TenantPreset` value, a catalog entry, and the admin portal's preset
+options.
+
+### 5. Backend: gate the API
 
 Put `[RequiresFeature]` on the command/query itself. `FeatureCheckBehaviour` enforces it in the
-MediatR pipeline - no injection, no per-handler branch:
+MediatR pipeline:
 
 ```csharp
 [RequiresFeature(TenantFeature.ContainerTracking)]
@@ -94,76 +98,57 @@ public class CreateContainerCommand : ICommand<Result<Guid>>
 ```
 
 **Gate the queries too, not just the commands.** A half-gated module still serves the data to a
-tenant whose plan excludes it, and the gap is invisible - every request type in the module should
-carry the attribute.
+tenant whose plan excludes it.
 
-### 4b. Backend: gate the jobs
+When the feature is a field **value** on a shared request (a load type, a truck type), the attribute
+cannot express it. Check it in the handler through a guard, as `IVehicleTransportGuard` does for
+`VehicleTransport`.
 
-Hangfire jobs **bypass the MediatR pipeline**, so `[RequiresFeature]` is inert there - the job must
-ask `IFeatureService` itself:
+### 5b. Backend: gate the jobs
+
+Hangfire jobs **bypass the MediatR pipeline**, so `[RequiresFeature]` is inert there:
 
 ```csharp
-private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
+var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
+if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.ContainerTracking))
 {
-    var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
-    if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.ContainerTracking))
-    {
-        return;
-    }
-    // ...
+    return;
 }
 ```
 
-Signature is `IsFeatureEnabledAsync(Guid tenantId, TenantFeature feature)` - tenant id, no `ct`.
+Keep the check inside the job body, not in `TenantJobRunner.ForEachTenantAsync`: a job may need part
+of its work to run unflagged (`IftaQuarterCloseJob` gates the snapshot but not the breadcrumb purge).
 
-Keep the check inside the body, not in `TenantJobRunner.ForEachTenantAsync`: a job may need part of
-its work to run unflagged (`IftaQuarterCloseJob` gates the snapshot but not the breadcrumb purge,
-since breadcrumbs are written on every ELD ping regardless).
-
-### 5. Frontend: gate the UI
-
-In Angular, `feature.service.ts` (or equivalent) exposes the resolved features as signals. Pattern:
+### 6. Frontend: gate the UI
 
 ```typescript
 const features = inject(FeatureService);
-
-// In a component
-protected readonly canSeeContainers = computed(() => features.isEnabled('ContainerTracking'));
-
-// In template
-@if (canSeeContainers()) {
-  <a routerLink="/containers">Containers</a>
-}
+protected readonly canSeeContainers = computed(() => features.isEnabled("container_tracking"));
 ```
 
-For route-level guards, use a `CanActivateFn` that calls `FeatureService` and redirects if false.
-
-### 6. Admin portal toggles
-
-The admin portal's tenant feature-config page reads the `TenantFeature` enum and shows a toggle for each value. New enum values are picked up automatically - verify by opening the page and confirming the new toggle is visible.
+For route-level guards, use `featureGuard` from `@logistics/shared`.
 
 ## Verification checklist
 
 - [ ] Enum value added with description if needed
-- [ ] Master migration adds `DefaultFeatureConfig` row
-- [ ] (If tier-restricted) `PlanFeature` rows added for the right plans
-- [ ] `[RequiresFeature]` on every command **and** query in the module (no half-gating)
-- [ ] Every Hangfire job that touches the feature checks `IFeatureService.IsFeatureEnabledAsync`
-- [ ] Frontend guards on `FeatureService` (template + route guard)
-- [ ] Admin portal shows the new toggle
-- [ ] Test: tenant on a plan without the feature gets blocked end-to-end
-- [ ] Test: super admin can unlock by setting `IsAdminLocked = true; IsEnabled = true`
-- [ ] Test: non-subscription tenant gets the feature based on default + tenant config (skips plan check)
+- [ ] Master migration adds the `default_feature_configs` row
+- [ ] (If tier-restricted) plan seeder updated
+- [ ] Preset catalog decision made
+- [ ] `[RequiresFeature]` on every command **and** query in the module
+- [ ] Every Hangfire job that touches the feature checks `IsFeatureEnabledAsync`
+- [ ] Frontend guards on `FeatureService`
+- [ ] Test: a tenant on a plan without the feature is blocked end-to-end
+- [ ] Test: an admin lock with `IsEnabled = true` grants it outside the plan
 
 ## Common mistakes
 
-- **Forgetting the default config row** - `FeatureService` falls through to a missing config and either throws or returns false unexpectedly.
-- **Gating only in the UI** - the API still serves the data, so a sophisticated client can bypass. Always gate at the handler level.
-- **Plan gate without a tenant override path** - Enterprise customers sometimes want to disable a feature; the `TenantFeatureConfig` row is the way out.
-- **Half-gating a module** - this has actually happened: writes blocked, reads still serving. Gate every request type.
-- **Forgetting the jobs** - a downgraded tenant keeps getting nightly syncs writing into their books.
+- **Forgetting the default config row** - existing tenants have no row for the new feature, so they fall back to the default.
+- **Gating only in the UI** - the API still serves the data.
+- **Half-gating a module** - writes blocked, reads still serving. Gate every request type.
+- **Forgetting the jobs** - a downgraded tenant keeps getting nightly syncs.
+- **Expecting a catalog change to reach existing tenants** - rows are a snapshot. Only new tenants and re-applied presets pick it up.
 
 ## Related
 
-- `feature-map.md` → Identity & access → Feature flags row
+- `feature-map.md` → Feature flags and Tenant presets entries
 - `add-hangfire-job` - if the feature has a background job, the gate goes in the job body

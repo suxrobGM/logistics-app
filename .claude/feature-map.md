@@ -100,14 +100,14 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Application: `Modules/Platform/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client. Each step declares a `TenantFeature`, so a disabled feature drops its step rather than shipping one that can never complete
 - API/UI: `OnboardingController.cs` (`GET /onboarding/progress`, `Permission.Employee.Manage` - Owner + Manager), `tms-portal/pages/home/components/onboarding-checklist/`
 
-### Solo / owner-operator mode
+### Tenant presets and solo mode
 
-- Domain: `Primitives/Enums/Tenant/OperatingMode.cs` (`Fleet` | `SoloOperator`), stored on the `TenantSettings` VO (`settings_operating_mode` on `tenants`, master DB)
-- Application: `Modules/IdentityAccess/Tenants/Commands/CreateTenant` + `UpdateTenant` carry it; `Modules/Platform/Onboarding/` drops the `inviteTeam` step in solo mode
+- Domain: `Primitives/Enums/Tenant/TenantPreset.cs` (`GeneralFreight` | `CarHauler` | `Intermodal` | `SoloOperator`), stored as `Tenant.Presets` (`presets text[]` on `tenants`, master DB) with `Tenant.IsSolo`; `Entities/Feature/TenantPresetCatalog.cs` maps presets to features (presets combine; solo drops `Payroll`/`Timesheets`)
+- Application: `Modules/IdentityAccess/Tenants/Commands/CreateTenant` + `UpdateTenantPresets` (admin roles only) call `IFeatureService.ApplyPresetFeaturesAsync`; `Modules/Platform/Onboarding/` drops the `inviteTeam` step for solo; `Modules/Operations/Common/Services/VehicleTransportGuard.cs` gates vehicle load and car hauler truck types on `TenantFeature.VehicleTransport`
 - Infrastructure: `Infrastructure.AI/Agents/Dispatch/AIDispatchSystemPrompt.cs` - solo swaps in a `## Fleet Profile: SOLO OWNER-OPERATOR` section
-- API/UI: `tms-portal/core/services/tenant.service.ts` (`isSoloMode`), `core/services/sidebar-nav.service.ts` (`SOLO_HIDDEN_ITEMS`), `tms-portal/pages/settings/company-settings/`, `admin-portal/shared/components/tenant-form/`
+- API/UI: `TenantController.UpdateTenantPresets`, `tms-portal/core/services/tenant.service.ts` (`isSoloMode`), `core/services/sidebar-nav.service.ts` (`SOLO_HIDDEN_ITEMS`), `admin-portal/shared/components/tenant-form/`, `admin-portal/pages/tenants/tenant-edit/`
 - Note: solo relies on Owner holding `Permission.Driver.*` (`Shared.Identity/Policies/TenantRolePermissions.cs`), and driver-facing queries keying off `Truck.MainDriverId`/`SecondaryDriverId` rather than the role. There is no multi-role model
-- Seed: `DbMigrator` tenant `solo` (`SeedData/solo.json`, `SeedDataKey`/`OperatingMode`/`DataScale` on `Models/DemoTenantConfig.cs`)
+- Seed: `DbMigrator` tenants set `Presets` on `Models/DemoTenantConfig.cs`; `solo` also uses `SeedData/solo.json`, `SeedDataKey` and `DataScale`
 
 ## AI dispatch
 
@@ -463,8 +463,8 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Feature/DefaultFeatureConfig.cs`, `TenantFeatureConfig.cs`
 - Application: `Modules/IdentityAccess/Features/Commands/`, `Modules/IdentityAccess/Features/Queries/`, `Application.Abstractions/Features/IFeatureService.cs` (port)
-- Infrastructure: `Infrastructure.Persistence/Services/Feature/FeatureService.cs`
-- API/UI: `FeaturesController.cs`, `TenantFeaturesController.cs`, `admin-portal/pages/features/`
+- Infrastructure: `Infrastructure.Persistence/Services/Feature/FeatureService.cs` (`ApplyPresetFeaturesAsync` writes per-tenant rows from presets; admin-locked rows are kept)
+- API/UI: `FeaturesController.cs` (admin roles only), `TenantFeaturesController.cs` (read-only, current tenant), `admin-portal/pages/features/`. Tenants cannot toggle features; see _Tenant presets and solo mode_
 
 ## Documents & storage
 
@@ -528,7 +528,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Tenant settings
 
-- Domain: `Entities/Tenant.cs` → `TenantSettings` VO; `McNumber`/`VatNumber`/`EoriNumber`/`CompanyRegistrationNumber`/`TaxResidencyCountry`; `OperatingMode` (see _Solo / owner-operator mode_)
+- Domain: `Entities/Tenant.cs` → `TenantSettings` VO; `McNumber`/`VatNumber`/`EoriNumber`/`CompanyRegistrationNumber`/`TaxResidencyCountry`; `Presets` (see _Tenant presets and solo mode_)
 - Application: `Modules/IdentityAccess/Tenants/Commands/UpdateTenant` (regulatory IDs validated server-side via `RegexPatterns.VatNumber`/`McNumber`/`EoriNumber`; `AIEnabled` and `BlockAIOverage` toggles per tenant)
 - API/UI: `tms-portal/pages/settings/company-settings/`
 

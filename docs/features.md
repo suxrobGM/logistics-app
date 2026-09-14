@@ -112,14 +112,14 @@ The dashboard also shows active loads, fleet use, revenue, and a live map.
 
 ### Settings
 
-| Feature          | What it does                                                                                                                                      |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Roles            | Seven roles: super admin, admin, owner, manager, dispatcher, driver, and customer. Each has its own set of permissions.                           |
-| Invitations      | Invite team members by email.                                                                                                                     |
-| Company settings | Company profile, billing address, tax rates, integrations, and feature toggles.                                                                   |
-| Subscription     | Three plans (Starter, Professional, Enterprise). Some features are locked by plan. Billing runs through Stripe, priced per truck.                 |
-| Setup checklist  | A dashboard checklist for a new company: profile, first truck, team, first customer, first load, Stripe payouts, ELD.                             |
-| Solo mode        | For one-person carriers. Hides employees, payroll, timesheets, and messaging, shortens the checklist, and points the dispatch agent at one truck. |
+| Feature          | What it does                                                                                                                                  |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Roles            | Seven roles: super admin, admin, owner, manager, dispatcher, driver, and customer. Each has its own set of permissions.                       |
+| Invitations      | Invite team members by email.                                                                                                                 |
+| Company settings | Company profile, billing address, tax rates, and integrations.                                                                                |
+| Subscription     | Three plans (Starter, Professional, Enterprise). Some features are locked by plan. Billing runs through Stripe, priced per truck.             |
+| Setup checklist  | A dashboard checklist for a new company: profile, first truck, team, first customer, first load, Stripe payouts, ELD.                         |
+| Solo mode        | An admin-set preset for one-person carriers. Turns off payroll and timesheets, hides employees and messaging, and points the AI at one truck. |
 
 ## Customer portal
 
@@ -153,7 +153,7 @@ The web app for the platform operator.
 
 | Feature          | What it does                                                                     |
 | ---------------- | -------------------------------------------------------------------------------- |
-| Tenants          | Create and manage carrier companies. See users, plan, and subscription status.   |
+| Tenants          | Create and manage carrier companies, set their presets, see users and plan.      |
 | Plans            | Manage subscription plans and see active subscriptions.                          |
 | Users and admins | Manage users across all companies and the platform admin accounts.               |
 | Feature flags    | Turn features on or off per company, beyond what the plan allows.                |

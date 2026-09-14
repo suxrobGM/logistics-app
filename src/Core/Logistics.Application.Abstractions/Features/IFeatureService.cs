@@ -37,8 +37,7 @@ public interface IFeatureService
     Task<IReadOnlyList<DefaultFeatureStatusDto>> GetDefaultFeaturesAsync();
 
     /// <summary>
-    /// Initializes feature configurations for a new tenant based on defaults.
+    /// Writes a tenant's feature configurations from its presets. Admin-locked configurations keep their value.
     /// </summary>
-    /// <param name="tenantId">The tenant ID.</param>
-    Task InitializeFeaturesForTenantAsync(Guid tenantId);
+    Task ApplyPresetFeaturesAsync(Guid tenantId, IReadOnlyCollection<TenantPreset> presets);
 }

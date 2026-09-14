@@ -27,7 +27,6 @@ internal sealed class GetOnboardingProgressHandler(
     public async Task<Result<OnboardingProgressDto>> Handle(GetOnboardingProgressQuery req, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        var operatingMode = tenant.Settings.OperatingMode;
         var enabledFeatures = (await featureService.GetEnabledFeaturesAsync(tenant.Id)).ToHashSet();
 
         StepDefinition[] definitions =
@@ -52,7 +51,7 @@ internal sealed class GetOnboardingProgressHandler(
         var steps = new List<OnboardingStepDto>();
         foreach (var definition in definitions)
         {
-            if (definition.FleetOnly && operatingMode is OperatingMode.SoloOperator)
+            if (definition.FleetOnly && tenant.IsSolo)
             {
                 continue;
             }
@@ -70,7 +69,7 @@ internal sealed class GetOnboardingProgressHandler(
 
         return Result<OnboardingProgressDto>.Ok(new OnboardingProgressDto
         {
-            OperatingMode = operatingMode,
+            IsSolo = tenant.IsSolo,
             Steps = steps
         });
     }

@@ -14,8 +14,8 @@ internal sealed record DispatchPromptContext(string CompanyName)
 {
     public DistanceUnit DistanceUnit { get; init; } = DistanceUnit.Miles;
 
-    /// <summary><c>SoloOperator</c> swaps the fleet-wide framing for one-truck framing.</summary>
-    public OperatingMode OperatingMode { get; init; } = OperatingMode.Fleet;
+    /// <summary>Swaps the fleet-wide framing for one-truck framing.</summary>
+    public bool IsSolo { get; init; }
 
     public bool HasLoadBoardIntegration { get; init; }
 
@@ -33,6 +33,4 @@ internal sealed record DispatchPromptContext(string CompanyName)
 
     /// <summary>The tenant's learned dispatch policy, or null to omit the section.</summary>
     public LearnedDispatchPolicy? Policy { get; init; }
-
-    public bool IsSolo => OperatingMode == OperatingMode.SoloOperator;
 }

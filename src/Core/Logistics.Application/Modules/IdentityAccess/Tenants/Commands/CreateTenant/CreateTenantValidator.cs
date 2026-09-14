@@ -1,6 +1,7 @@
 using FluentValidation;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Application.Validators;
+using Logistics.Domain.Entities;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 
@@ -31,8 +32,8 @@ internal sealed class CreateTenantValidator : AbstractValidator<CreateTenantComm
             .NotNull()
             .SetValidator(new AddressValidator());
 
-        RuleFor(i => i.OperatingMode)
-            .IsInEnum()
-            .When(i => i.OperatingMode.HasValue);
+        RuleFor(i => i.Presets)
+            .Must(p => TenantPresetCatalog.IsValid(p))
+            .WithMessage(TenantPresetValidation.Message);
     }
 }

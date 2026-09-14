@@ -58,7 +58,7 @@ The Angular portals and the driver app are closed source. They live in a private
 - **Messaging** - In-app chat with read receipts and typing indicators.
 - **Customer Portal** - Shipment tracking, invoices, documents, online payments.
 - **Driver Mobile App** - Kotlin Multiplatform, Android and iOS.
-- **Owner-Operator (Solo) Mode** - A per-tenant operating mode for one-person carriers: team screens hidden, a shorter setup checklist, and a dispatch agent prompted for a single truck rather than a fleet.
+- **Tenant Presets** - An admin gives each company one or more presets (general freight, car hauler, intermodal) that turn on the matching features. The solo owner-operator preset hides team screens, shortens the setup checklist, and prompts the dispatch agent for a single truck rather than a fleet.
 - **Setup Checklist** - Dashboard checklist tracking what a new company still owes - profile, first truck, team, customer, load, Stripe payouts, ELD.
 - **Multi-Region** - US and European operations, with address validation, currency (USD or EUR), and map defaults that match the region.
 - **Multi-Tenant** - One PostgreSQL database per company. Demo seeders for a US fleet, an EU fleet, and a US owner-operator.

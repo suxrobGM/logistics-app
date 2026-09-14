@@ -38,7 +38,7 @@ picture is [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
   `AgentDecision`, `AgentConversation`, `AgentMessage`, `AgentTurnService`). `AIDispatch*` is what's
   left dispatch-only: `AIDispatchPolicy` and the dispatch service/surface.
 
-`AIDispatchSystemPrompt.Build` varies by `TenantSettings.OperatingMode`: `SoloOperator` swaps the
+`AIDispatchSystemPrompt.Build` varies by `Tenant.IsSolo` (the `SoloOperator` preset): solo swaps the
 fleet-framed lines and appends `## Fleet Profile: SOLO OWNER-OPERATOR`.
 
 ## Providers

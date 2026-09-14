@@ -80,7 +80,7 @@ public class AIDispatchConversationBuilderTests
         return conversation;
     }
 
-    private void SetTenant(OperatingMode operatingMode = OperatingMode.Fleet)
+    private void SetTenant(params TenantPreset[] presets)
     {
         tenantUow.GetCurrentTenant().Returns(new Tenant
         {
@@ -89,7 +89,7 @@ public class AIDispatchConversationBuilderTests
             ConnectionString = "test",
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" },
-            Settings = new() { OperatingMode = operatingMode }
+            Presets = [.. presets]
         });
     }
 
@@ -174,7 +174,7 @@ public class AIDispatchConversationBuilderTests
     [Fact]
     public async Task BuildAsync_SoloOperatorTenant_BuildsTheSoloPrompt()
     {
-        SetTenant(OperatingMode.SoloOperator);
+        SetTenant(TenantPreset.GeneralFreight, TenantPreset.SoloOperator);
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
         var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);

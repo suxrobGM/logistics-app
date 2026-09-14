@@ -27,7 +27,8 @@ public static class TenantMapper
             Subscription = entity.Subscription?.ToDto(),
             TruckCount = truckCount,
             IsSubscriptionRequired = entity.IsSubscriptionRequired,
-            Settings = entity.Settings
+            Settings = entity.Settings,
+            Presets = entity.Presets
         };
     }
 }

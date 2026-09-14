@@ -230,7 +230,7 @@ public class AIDispatchSystemPromptTests
 
     private static string SoloPrompt() =>
         AIDispatchSystemPrompt.Build(
-            new("Fleet") { OperatingMode = OperatingMode.SoloOperator });
+            new("Fleet") { IsSolo = true });
 
     [Fact]
     public void Build_SoloOperator_IncludesFleetProfileSection()
@@ -252,11 +252,11 @@ public class AIDispatchSystemPromptTests
     }
 
     [Fact]
-    public void Build_DefaultOperatingMode_MatchesFleet()
+    public void Build_DefaultIsSolo_MatchesFleet()
     {
         var defaulted = AIDispatchSystemPrompt.Build(new("Fleet"));
         var explicitFleet = AIDispatchSystemPrompt.Build(
-            new("Fleet") { OperatingMode = OperatingMode.Fleet });
+            new("Fleet") { IsSolo = false });
 
         Assert.Equal(explicitFleet, defaulted);
     }
@@ -305,7 +305,7 @@ public class AIDispatchSystemPromptTests
         var prompt = AIDispatchSystemPrompt.Build(new("Fleet")
         {
             DistanceUnit = DistanceUnit.Kilometers,
-            OperatingMode = OperatingMode.SoloOperator
+            IsSolo = true
         });
 
         Assert.Contains("Maximize rate per km", prompt);

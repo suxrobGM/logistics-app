@@ -32,7 +32,7 @@ with the agent's reasoning. A dispatcher approves or rejects one at a time; reje
 reason, which the next turn sees as a transcript note. There is no unattended mode - every write
 tool call becomes a `Suggested` decision, never an immediate execution.
 
-The system prompt separately varies by `TenantSettings.OperatingMode`. A `SoloOperator` tenant gets
+The system prompt separately varies by `Tenant.IsSolo` (the `SoloOperator` preset). A solo tenant gets
 a "Fleet Profile" section that drops fleet utilization, the truck-to-truck comparison and the
 assignment table, since there is one truck and the owner is the driver.
 
@@ -60,7 +60,7 @@ and the broker-reply envelope carry no sender and render unattributed.
    DispatchAgentSurface
 3. The turn creates an AgentSession (Type = Dispatch) - quota, tokens, and decisions
    ride the same session machinery copilot turns use
-4. DispatchAgentSurface builds the system prompt (learned policy, operating mode),
+4. DispatchAgentSurface builds the system prompt (learned policy, solo preset),
    replays the persisted transcript, and appends a fresh fleet-state snapshot notice
    to only this turn's final user message - never persisted, so it cannot replay stale
    on a later turn. The full dispatch tool catalogue applies; there is no per-caller

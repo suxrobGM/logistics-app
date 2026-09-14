@@ -49,7 +49,7 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
         var truckNumber = 101;
         var truckRepo = context.TenantUnitOfWork.Repository<Truck>();
 
-        var isSolo = context.OperatingMode is OperatingMode.SoloOperator;
+        var isSolo = context.IsSolo;
 
         for (var idx = 0; idx < drivers.Count; idx++)
         {

@@ -3,6 +3,7 @@ using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
@@ -40,6 +41,7 @@ internal sealed class DemoTenantsSeeder(
 
         var repo = context.MasterUnitOfWork.Repository<Tenant>();
         var databaseProvider = context.ServiceProvider.GetRequiredService<ITenantDatabaseService>();
+        var featureService = context.ServiceProvider.GetRequiredService<IFeatureService>();
 
         // Backfill: rename legacy "default" → "us" if found, so devs with existing master DBs
         // don't end up with both. The "us" tenant config supersedes "default".
@@ -78,10 +80,11 @@ internal sealed class DemoTenantsSeeder(
                 ApplyDemoTaxIdentifiers(tenant, profile);
                 tenant.Settings.MinBrokerCreditScore = DemoMinBrokerCreditScore;
                 tenant.Settings.DefaultRateFloorPerMile = profile.DefaultRateFloorPerMile;
-                tenant.Settings.OperatingMode = config.OperatingMode;
+                tenant.Presets = config.ResolvePresets();
 
                 await repo.AddAsync(tenant, cancellationToken);
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
+                await featureService.ApplyPresetFeaturesAsync(tenant.Id, tenant.Presets);
                 await databaseProvider.CreateDatabaseAsync(tenant.ConnectionString);
                 logger.LogInformation("Created tenant '{Name}' ({Region})", tenant.Name, profile.Region);
             }
@@ -110,9 +113,11 @@ internal sealed class DemoTenantsSeeder(
                     existing.Settings.DefaultRateFloorPerMile = profile.DefaultRateFloorPerMile;
                     updated = true;
                 }
-                if (existing.Settings.OperatingMode != config.OperatingMode)
+                var presets = config.ResolvePresets();
+                var presetsChanged = !existing.Presets.Order().SequenceEqual(presets.Order());
+                if (presetsChanged)
                 {
-                    existing.Settings.OperatingMode = config.OperatingMode;
+                    existing.Presets = presets;
                     updated = true;
                 }
 
@@ -120,6 +125,12 @@ internal sealed class DemoTenantsSeeder(
                 {
                     await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
                     logger.LogInformation("Updated tenant '{Name}'", existing.Name);
+                }
+
+                // A tenant seeded before presets existed has no feature rows, so matching presets alone don't apply them.
+                if (presetsChanged || existing.FeatureConfigs.Count == 0)
+                {
+                    await featureService.ApplyPresetFeaturesAsync(existing.Id, existing.Presets);
                 }
 
                 // Ensure DB exists even for existing tenants (idempotent - no-op if present).

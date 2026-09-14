@@ -1,15 +1,22 @@
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class CreateLoadHandler(ILoadService loadService)
+internal sealed class CreateLoadHandler(ILoadService loadService, IVehicleTransportGuard vehicleTransportGuard)
     : IAppRequestHandler<CreateLoadCommand, Result>
 {
     public async Task<Result> Handle(
         CreateLoadCommand req, CancellationToken ct)
     {
+        var typeCheck = await vehicleTransportGuard.CheckLoadTypeAsync(req.Type);
+        if (!typeCheck.IsSuccess)
+        {
+            return typeCheck;
+        }
+
         try
         {
             var createLoadParameters = new CreateLoadParameters(

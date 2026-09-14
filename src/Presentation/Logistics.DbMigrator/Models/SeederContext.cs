@@ -41,7 +41,7 @@ public class SeederContext
     /// <summary><c>SeedData/*.json</c> section this tenant reads from. Null during the master-only Infrastructure pass.</summary>
     public string? SeedDataKey { get; set; }
 
-    public OperatingMode OperatingMode { get; set; } = OperatingMode.Fleet;
+    public bool IsSolo { get; set; }
 
     public double DataScale { get; set; } = 1.0;
 

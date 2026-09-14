@@ -93,6 +93,23 @@ public class ControllerAuthorizationTests
     }
 
     [Fact]
+    public void Tenant_presets_and_tenant_features_are_platform_admin_only()
+    {
+        (Type Controller, string Action)[] actions =
+        [
+            (typeof(TenantController), nameof(TenantController.CreateTenant)),
+            (typeof(TenantController), nameof(TenantController.UpdateTenantPresets)),
+            (typeof(FeaturesController), nameof(FeaturesController.GetTenantFeatures)),
+            (typeof(FeaturesController), nameof(FeaturesController.UpdateTenantFeatures))
+        ];
+
+        foreach (var (controller, action) in actions)
+        {
+            Assert.Equal([AppRoles.SuperAdmin, AppRoles.Admin], RolesOn(controller, action));
+        }
+    }
+
+    [Fact]
     public void Unassigned_loads_require_dispatch_view()
     {
         var policy = typeof(LoadController)

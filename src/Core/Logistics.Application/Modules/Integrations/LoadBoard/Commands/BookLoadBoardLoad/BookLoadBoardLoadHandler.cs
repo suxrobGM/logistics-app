@@ -9,12 +9,14 @@ using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Mappings;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class BookLoadBoardLoadHandler(
     ITenantUnitOfWork tenantUow,
+    IVehicleTransportGuard vehicleTransportGuard,
     ILoadBoardTokenService tokenService,
     IBrokerCreditService brokerCreditService,
     IInboundEmailRouteRegistry routeRegistry,
@@ -36,6 +38,23 @@ internal sealed class BookLoadBoardLoadHandler(
         {
             return Result<LoadBoardBookingResultDto>.Fail(
                 $"Load board listing is not available (current status: {listing.Status})");
+        }
+
+        // Resolved before the provider call so a blocked vehicle load is never booked externally.
+        var loadType = listing.EquipmentType?.ToLowerInvariant() switch
+        {
+            "flatbed" => LoadType.GeneralFreight,
+            "dry van" => LoadType.GeneralFreight,
+            "reefer" => LoadType.RefrigeratedGoods,
+            "car carrier" or "auto carrier" or "car hauler" => LoadType.Vehicle,
+            "tanker" => LoadType.Liquid,
+            _ => LoadType.GeneralFreight
+        };
+
+        var typeCheck = await vehicleTransportGuard.CheckLoadTypeAsync(loadType);
+        if (!typeCheck.IsSuccess)
+        {
+            return Result<LoadBoardBookingResultDto>.Fail(typeCheck.Error!, typeCheck.ErrorCode!);
         }
 
         var providerConfig = await tenantUow.Repository<LoadBoardConfiguration>()
@@ -128,16 +147,6 @@ internal sealed class BookLoadBoardLoadHandler(
             return Result<LoadBoardBookingResultDto>.Fail(
                 bookingResult.ErrorMessage ?? "Failed to book load with provider");
         }
-
-        var loadType = listing.EquipmentType?.ToLowerInvariant() switch
-        {
-            "flatbed" => LoadType.GeneralFreight,
-            "dry van" => LoadType.GeneralFreight,
-            "reefer" => LoadType.RefrigeratedGoods,
-            "car carrier" or "auto carrier" or "car hauler" => LoadType.Vehicle,
-            "tanker" => LoadType.Liquid,
-            _ => LoadType.GeneralFreight
-        };
 
         var load = Load.Create(
             name: $"Load Board - {listing.BrokerName ?? listing.ProviderType.ToString()}",

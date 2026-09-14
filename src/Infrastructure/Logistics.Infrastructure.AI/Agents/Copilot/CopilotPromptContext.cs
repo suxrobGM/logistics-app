@@ -14,8 +14,8 @@ internal sealed record CopilotPromptContext(string CompanyName)
 {
     public DistanceUnit DistanceUnit { get; init; } = DistanceUnit.Miles;
 
-    /// <summary><c>SoloOperator</c> drops the fleet-wide framing.</summary>
-    public OperatingMode OperatingMode { get; init; } = OperatingMode.Fleet;
+    /// <summary>Drops the fleet-wide framing.</summary>
+    public bool IsSolo { get; init; }
 
     /// <summary>
     /// Whether the caller's tool set includes the dispatch write tools. The guardrails section

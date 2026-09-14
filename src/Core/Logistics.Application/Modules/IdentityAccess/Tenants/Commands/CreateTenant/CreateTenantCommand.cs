@@ -11,9 +11,7 @@ public class CreateTenantCommand : ICommand
     public string? BillingEmail { get; set; }
     public string? DotNumber { get; set; }
     public required Address CompanyAddress { get; set; }
-
-    /// <summary>Null falls back to <see cref="Domain.Primitives.Enums.OperatingMode.Fleet"/>.</summary>
-    public OperatingMode? OperatingMode { get; set; }
+    public List<TenantPreset> Presets { get; set; } = [];
 
     // Owner account created alongside the tenant
     public string OwnerEmail { get; set; } = null!;

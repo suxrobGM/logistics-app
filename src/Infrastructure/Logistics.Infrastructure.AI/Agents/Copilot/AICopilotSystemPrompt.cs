@@ -15,7 +15,7 @@ internal static class AICopilotSystemPrompt
         var conversionNote = context.DistanceUnit == DistanceUnit.Miles
             ? " Tool distance data is in kilometers - convert to miles (× 0.621) for all output."
             : "";
-        var operationNote = context.OperatingMode == OperatingMode.SoloOperator
+        var operationNote = context.IsSolo
             ? "This is a solo owner-operator running a single truck - avoid fleet-wide framing."
             : "";
         var company = PromptText.SanitizeCompanyName(context.CompanyName);

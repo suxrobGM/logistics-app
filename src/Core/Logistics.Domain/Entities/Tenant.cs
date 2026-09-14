@@ -60,6 +60,13 @@ public class Tenant : Entity, IMasterEntity
     public TenantSettings Settings { get; set; } = new();
 
     /// <summary>
+    ///     Admin-set company type. Kept off <see cref="Settings"/> because tenant owners can save those.
+    /// </summary>
+    public List<TenantPreset> Presets { get; set; } = [];
+
+    public bool IsSolo => Presets.Contains(TenantPreset.SoloOperator);
+
+    /// <summary>
     ///     Whether this tenant requires an active subscription to access the platform.
     ///     Set to false for internal/test tenants.
     /// </summary>

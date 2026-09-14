@@ -63,5 +63,7 @@ public enum TenantFeature
     AICopilot,
 
     [Description("AI Rate Negotiation")]
-    AIRateNegotiation
+    AIRateNegotiation,
+
+    VehicleTransport
 }

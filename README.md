@@ -51,7 +51,7 @@ The demo company is Heartland Logistics LLC, a US carrier with 10 employees:
 | Driver     | `eu_driver1@test.com`     |
 | Customer   | `eu_customer1@test.com`   |
 
-**Rodriguez Trucking LLC** is a one-person company in solo mode. The owner also drives the truck, so the same login works in the TMS portal and the driver app.
+**Rodriguez Trucking LLC** is a one-person company with the solo owner-operator preset. The owner also drives the truck, so the same login works in the TMS portal and the driver app.
 
 | Role     | Email                     |
 | -------- | ------------------------- |
@@ -75,7 +75,7 @@ Each role gets its own view:
 - Customers track shipments, download documents, and pay invoices in the customer portal.
 - Owners see the money, driver performance, payroll, and reports.
 
-If you are an owner-operator, turn on solo mode. It hides the team screens (employees, payroll, messaging), shortens the setup checklist, and tells the AI dispatcher it is working with one truck.
+When a platform admin creates a company, they pick its presets: general freight, car hauler, intermodal, or any mix of them. The presets turn on the matching features, so a car hauler gets vehicle transport and a drayage company gets container tracking. The solo owner-operator preset also hides the team screens (employees, payroll, messaging), shortens the setup checklist, and tells the AI dispatcher it is working with one truck.
 
 ## How the AI helps
 
@@ -144,7 +144,7 @@ Read more in [AI Dispatch](docs/ai-dispatch.md), [AI Copilot](docs/ai-copilot.md
 
 - Seven roles, from super admin to customer, each with its own permissions.
 - Email invitations for new team members.
-- Solo mode for owner-operators.
+- Company presets (general freight, car hauler, intermodal, solo owner-operator), set by a platform admin.
 
 The full list is in [features.md](docs/features.md).
 

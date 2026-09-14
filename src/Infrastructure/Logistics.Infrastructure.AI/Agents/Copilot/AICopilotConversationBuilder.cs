@@ -34,7 +34,7 @@ internal sealed class AICopilotConversationBuilder(
         var systemPrompt = AICopilotSystemPrompt.Build(new(tenant.Name ?? "Fleet")
         {
             DistanceUnit = tenant.Settings.DistanceUnit,
-            OperatingMode = tenant.Settings.OperatingMode,
+            IsSolo = tenant.IsSolo,
             // Metadata, not a name list: a new dispatch write tool must not silently lose the
             // guardrails section just because nobody remembered to extend a hardcoded pair.
             HasDispatchTools =
