@@ -129,39 +129,37 @@ internal sealed class ImportLoadFromPdfHandler(
         }
 
         // Step 7: Create the load
-        try
+        var createLoadParameters = new CreateLoadParameters(
+            extractedData.GetLoadName(),
+            LoadType.Vehicle,
+            (extractedData.OriginAddress!, originLocation),
+            (extractedData.DestinationAddress!, destinationLocation),
+            extractedData.PaymentAmount ?? 0,
+            0, // Will be calculated from coordinates
+            customer.Id,
+            truckId,
+            dispatcher.Id);
+
+        var created = await loadService.CreateLoadAsync(createLoadParameters, ct: ct);
+        if (!created.IsSuccess)
         {
-            var createLoadParameters = new CreateLoadParameters(
-                extractedData.GetLoadName(),
-                LoadType.Vehicle,
-                (extractedData.OriginAddress!, originLocation),
-                (extractedData.DestinationAddress!, destinationLocation),
-                extractedData.PaymentAmount ?? 0,
-                0, // Will be calculated from coordinates
-                customer.Id,
-                truckId,
-                dispatcher.Id);
-
-            var newLoad = await loadService.CreateLoadAsync(createLoadParameters, ct: ct);
-
-            logger.LogInformation("Created load {LoadId} from PDF import", newLoad.Id);
-
-            return Result<ImportLoadFromPdfResponse>.Ok(new ImportLoadFromPdfResponse
-            {
-                LoadId = newLoad.Id,
-                LoadName = newLoad.Name,
-                LoadNumber = newLoad.Number,
-                ExtractedData = extractedData,
-                CustomerCreated = customerCreated,
-                CustomerName = customer.Name,
-                Warnings = warnings
-            });
+            logger.LogError("Error creating load from PDF import: {Error}", created.Error);
+            return Result<ImportLoadFromPdfResponse>.Fail(created.Error!, created.ErrorCode!);
         }
-        catch (InvalidOperationException e)
+
+        var newLoad = created.Value!;
+        logger.LogInformation("Created load {LoadId} from PDF import", newLoad.Id);
+
+        return Result<ImportLoadFromPdfResponse>.Ok(new ImportLoadFromPdfResponse
         {
-            logger.LogError(e, "Error creating load from PDF import");
-            return Result<ImportLoadFromPdfResponse>.Fail(e.Message);
-        }
+            LoadId = newLoad.Id,
+            LoadName = newLoad.Name,
+            LoadNumber = newLoad.Number,
+            ExtractedData = extractedData,
+            CustomerCreated = customerCreated,
+            CustomerName = customer.Name,
+            Warnings = warnings
+        });
     }
 
     private async Task<(Customer? customer, bool created)> FindOrCreateCustomerAsync(

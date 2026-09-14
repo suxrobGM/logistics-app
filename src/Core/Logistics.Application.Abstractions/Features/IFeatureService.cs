@@ -18,6 +18,12 @@ public interface IFeatureService
     Task<bool> IsFeatureEnabledAsync(Guid tenantId, TenantFeature feature);
 
     /// <summary>
+    /// Fails with <see cref="ErrorCodes.FeatureDisabledByAdmin"/> or <see cref="ErrorCodes.FeatureNotInPlan"/> when the
+    /// feature is off. The client shows an upgrade prompt only for the second, so every feature gate should use this.
+    /// </summary>
+    Task<Result> CheckFeatureAsync(Guid tenantId, TenantFeature feature);
+
+    /// <summary>
     /// Gets all enabled features for a tenant.
     /// </summary>
     /// <param name="tenantId">The tenant ID.</param>
@@ -37,7 +43,8 @@ public interface IFeatureService
     Task<IReadOnlyList<DefaultFeatureStatusDto>> GetDefaultFeaturesAsync();
 
     /// <summary>
-    /// Writes a tenant's feature configurations from its presets. Admin-locked configurations keep their value.
+    /// Stages a tenant's feature configurations from its presets on the master unit of work; the caller saves.
+    /// Admin-locked configurations keep their value.
     /// </summary>
     Task ApplyPresetFeaturesAsync(Guid tenantId, IReadOnlyCollection<TenantPreset> presets);
 }

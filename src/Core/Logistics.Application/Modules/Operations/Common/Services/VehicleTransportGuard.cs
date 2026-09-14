@@ -11,17 +11,12 @@ internal sealed class VehicleTransportGuard(ITenantUnitOfWork tenantUow, IFeatur
     public Task<Result> CheckLoadTypeAsync(LoadType? type) =>
         type is LoadType.Vehicle ? CheckFeatureAsync() : Task.FromResult(Result.Ok());
 
+    public Task<Result> CheckLoadTypesAsync(IEnumerable<LoadType>? types) =>
+        types?.Contains(LoadType.Vehicle) == true ? CheckFeatureAsync() : Task.FromResult(Result.Ok());
+
     public Task<Result> CheckTruckTypeAsync(TruckType? type) =>
         type is TruckType.CarHauler or TruckType.CarTransporter ? CheckFeatureAsync() : Task.FromResult(Result.Ok());
 
-    private async Task<Result> CheckFeatureAsync()
-    {
-        var tenantId = tenantUow.GetCurrentTenant().Id;
-
-        return await featureService.IsFeatureEnabledAsync(tenantId, TenantFeature.VehicleTransport)
-            ? Result.Ok()
-            : Result.Fail(
-                "Vehicle transport is not enabled for your company. Contact support to enable it.",
-                ErrorCodes.FeatureDisabledByAdmin);
-    }
+    private Task<Result> CheckFeatureAsync() =>
+        featureService.CheckFeatureAsync(tenantUow.GetCurrentTenant().Id, TenantFeature.VehicleTransport);
 }

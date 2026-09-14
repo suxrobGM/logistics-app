@@ -169,7 +169,7 @@ public class AIDispatchConversationBuilderTests
 
     #endregion
 
-    #region Operating mode
+    #region Fleet vs solo owner-operator
 
     [Fact]
     public async Task BuildAsync_SoloOperatorTenant_BuildsTheSoloPrompt()

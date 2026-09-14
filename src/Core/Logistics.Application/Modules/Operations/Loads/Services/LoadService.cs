@@ -1,24 +1,35 @@
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Services;
 
-internal sealed class LoadService(ITenantUnitOfWork tenantUow) : ILoadService
+internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransportGuard vehicleTransportGuard)
+    : ILoadService
 {
-    public async Task<Load> CreateLoadAsync(CreateLoadParameters parameters, bool saveChanges = true,
+    public async Task<Result<Load>> CreateLoadAsync(CreateLoadParameters parameters, bool saveChanges = true,
         CancellationToken ct = default)
     {
         var created = await CreateLoadsAsync([parameters], saveChanges, ct);
-        return created.First();
+        return created.IsSuccess
+            ? Result<Load>.Ok(created.Value![0])
+            : Result<Load>.Fail(created.Error!, created.ErrorCode!);
     }
 
-    public async Task<IReadOnlyCollection<Load>> CreateLoadsAsync(IEnumerable<CreateLoadParameters> parameters,
+    public async Task<Result<IReadOnlyList<Load>>> CreateLoadsAsync(IEnumerable<CreateLoadParameters> parameters,
         bool saveChanges = true, CancellationToken ct = default)
     {
         var paramList = parameters as IList<CreateLoadParameters> ?? parameters.ToList();
         if (paramList.Count == 0)
         {
-            return [];
+            return Result<IReadOnlyList<Load>>.Ok([]);
+        }
+
+        var typeCheck = await vehicleTransportGuard.CheckLoadTypesAsync(paramList.Select(p => p.Type));
+        if (!typeCheck.IsSuccess)
+        {
+            return Result<IReadOnlyList<Load>>.Fail(typeCheck.Error!, typeCheck.ErrorCode!);
         }
 
         // 1) Collect distinct foreign keys (filter out null truck IDs)
@@ -69,7 +80,7 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow) : ILoadService
                 problems.Add($"Customers missing: {string.Join(", ", missingCustomers)}");
             }
 
-            throw new InvalidOperationException(string.Join(" | ", problems));
+            return Result<IReadOnlyList<Load>>.Fail(string.Join(" | ", problems));
         }
 
         // 4) Create domain entities in memory
@@ -122,7 +133,7 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow) : ILoadService
             await tenantUow.SaveChangesAsync(ct);
         }
 
-        return loads;
+        return Result<IReadOnlyList<Load>>.Ok(loads);
     }
 
     public async Task DeleteLoadAsync(Guid loadId)

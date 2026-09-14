@@ -24,13 +24,11 @@ internal sealed class UpdateTruckHandler(
         }
 
         // Only a change is checked, so existing car haulers stay editable after the feature is turned off.
-        if (req.TruckType != truck.Type)
+        var typeCheck =
+            await vehicleTransportGuard.CheckTruckTypeAsync(req.TruckType == truck.Type ? null : req.TruckType);
+        if (!typeCheck.IsSuccess)
         {
-            var typeCheck = await vehicleTransportGuard.CheckTruckTypeAsync(req.TruckType);
-            if (!typeCheck.IsSuccess)
-            {
-                return typeCheck;
-            }
+            return typeCheck;
         }
 
         var numberTaken = truckRepository.Query().Any(i => i.Number == req.TruckNumber &&

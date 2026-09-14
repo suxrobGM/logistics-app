@@ -10,5 +10,6 @@ namespace Logistics.Application.Modules.Operations.Common.Services;
 public interface IVehicleTransportGuard : IApplicationService
 {
     Task<Result> CheckLoadTypeAsync(LoadType? type);
+    Task<Result> CheckLoadTypesAsync(IEnumerable<LoadType>? types);
     Task<Result> CheckTruckTypeAsync(TruckType? type);
 }

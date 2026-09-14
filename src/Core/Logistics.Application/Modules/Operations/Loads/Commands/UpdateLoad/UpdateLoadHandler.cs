@@ -20,13 +20,10 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow, IVehicleTra
         }
 
         // Only a change is checked, so existing vehicle loads stay editable after the feature is turned off.
-        if (req.Type != load.Type)
+        var typeCheck = await vehicleTransportGuard.CheckLoadTypeAsync(req.Type == load.Type ? null : req.Type);
+        if (!typeCheck.IsSuccess)
         {
-            var typeCheck = await vehicleTransportGuard.CheckLoadTypeAsync(req.Type);
-            if (!typeCheck.IsSuccess)
-            {
-                return typeCheck;
-            }
+            return typeCheck;
         }
 
         try

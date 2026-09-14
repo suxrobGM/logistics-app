@@ -21,10 +21,8 @@ internal sealed class UpdateTenantPresetsHandler(
         }
 
         tenant.Presets = [.. req.Presets.Distinct()];
-        masterUow.Repository<Tenant>().Update(tenant);
-        await masterUow.SaveChangesAsync(ct);
-
         await featureService.ApplyPresetFeaturesAsync(tenant.Id, tenant.Presets);
+        await masterUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

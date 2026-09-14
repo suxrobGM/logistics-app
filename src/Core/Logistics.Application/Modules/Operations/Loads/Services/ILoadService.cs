@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Services;
 
@@ -8,30 +9,17 @@ namespace Logistics.Application.Modules.Operations.Loads.Services;
 public interface ILoadService : IApplicationService
 {
     /// <summary>
-    ///     Creates a new load with the specified parameters.
-    ///     It creates a new load, stores it in the database (if the saveChanges flag is true), and returns the created load
-    ///     entity.
-    ///     If the load creation fails, it throws an exception.
+    ///     Creates a load and stores it when <paramref name="saveChanges" /> is true. Fails when a referenced
+    ///     dispatcher, truck or customer is missing, or when a vehicle load needs a feature the tenant does not have.
     /// </summary>
-    /// <param name="parameters">Required parameters for creating a load</param>
-    /// <param name="saveChanges">Optional parameter to indicate whether to save changes immediately, default is true</param>
-    /// <param name="ct">Cancellation token</param>
-    /// <returns>Load entity</returns>
-    /// <exception cref="InvalidOperationException">Thrown when the load creation fails</exception>
-    Task<Load> CreateLoadAsync(CreateLoadParameters parameters, bool saveChanges = true,
+    Task<Result<Load>> CreateLoadAsync(CreateLoadParameters parameters, bool saveChanges = true,
         CancellationToken ct = default);
 
     /// <summary>
-    ///     Creates multiple loads with the specified parameters.
-    ///     It creates new loads, stores them in the database (if the saveChanges flag is true), and returns the created load
-    ///     entities.
-    ///     If any load creation fails, it throws an exception.
+    ///     Creates loads in one batch and returns them in the order given. Fails as a whole, for the same reasons as
+    ///     <see cref="CreateLoadAsync" />.
     /// </summary>
-    /// <param name="parameters">Enumerable of required parameters for creating loads</param>
-    /// <param name="saveChanges">Optional parameter to indicate whether to save changes immediately, default is true</param>
-    /// <param name="ct">Cancellation token</param>
-    /// <exception cref="InvalidOperationException">Thrown when any load creation fails</exception>
-    Task<IReadOnlyCollection<Load>> CreateLoadsAsync(IEnumerable<CreateLoadParameters> parameters,
+    Task<Result<IReadOnlyList<Load>>> CreateLoadsAsync(IEnumerable<CreateLoadParameters> parameters,
         bool saveChanges = true, CancellationToken ct = default);
 
     /// <summary>

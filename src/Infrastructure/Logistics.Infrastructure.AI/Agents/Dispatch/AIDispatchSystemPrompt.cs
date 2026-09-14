@@ -19,7 +19,7 @@ internal static class AIDispatchSystemPrompt
 
     /// <summary>
     /// Builds a comprehensive system prompt for the AI dispatch agent, tailored to the tenant's name,
-    /// operating mode, load board integration, and distance unit preference - see
+    /// solo preset, load board integration, and distance unit preference - see
     /// <see cref="DispatchPromptContext"/> for what it varies on.
     /// The prompt includes detailed instructions on priorities, rules, workflow, token efficiency, and edge case handling to guide the agent's decision-making process effectively.
     /// </summary>

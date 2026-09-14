@@ -5,6 +5,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Tenancy;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
 
@@ -83,8 +84,8 @@ internal sealed class DemoTenantsSeeder(
                 tenant.Presets = config.ResolvePresets();
 
                 await repo.AddAsync(tenant, cancellationToken);
-                await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
                 await featureService.ApplyPresetFeaturesAsync(tenant.Id, tenant.Presets);
+                await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
                 await databaseProvider.CreateDatabaseAsync(tenant.ConnectionString);
                 logger.LogInformation("Created tenant '{Name}' ({Region})", tenant.Name, profile.Region);
             }
@@ -121,16 +122,18 @@ internal sealed class DemoTenantsSeeder(
                     updated = true;
                 }
 
+                // A tenant seeded before presets existed has no feature rows, so matching presets alone don't apply them.
+                if (presetsChanged || !await context.MasterUnitOfWork.Repository<TenantFeatureConfig>().Query()
+                        .AnyAsync(c => c.TenantId == existing.Id, cancellationToken))
+                {
+                    await featureService.ApplyPresetFeaturesAsync(existing.Id, existing.Presets);
+                    updated = true;
+                }
+
                 if (updated)
                 {
                     await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
                     logger.LogInformation("Updated tenant '{Name}'", existing.Name);
-                }
-
-                // A tenant seeded before presets existed has no feature rows, so matching presets alone don't apply them.
-                if (presetsChanged || existing.FeatureConfigs.Count == 0)
-                {
-                    await featureService.ApplyPresetFeaturesAsync(existing.Id, existing.Presets);
                 }
 
                 // Ensure DB exists even for existing tenants (idempotent - no-op if present).

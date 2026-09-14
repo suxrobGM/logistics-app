@@ -101,8 +101,9 @@ public class CreateContainerCommand : ICommand<Result<Guid>>
 tenant whose plan excludes it.
 
 When the feature is a field **value** on a shared request (a load type, a truck type), the attribute
-cannot express it. Check it in the handler through a guard, as `IVehicleTransportGuard` does for
-`VehicleTransport`.
+cannot express it. Check it in the shared write path through a guard that calls
+`IFeatureService.CheckFeatureAsync`, as `IVehicleTransportGuard` does from `LoadService`. That keeps the
+error codes the same as `[RequiresFeature]`, so the client still shows the upgrade prompt.
 
 ### 5b. Backend: gate the jobs
 

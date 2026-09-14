@@ -1,55 +1,40 @@
-using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class CreateLoadHandler(ILoadService loadService, IVehicleTransportGuard vehicleTransportGuard)
+internal sealed class CreateLoadHandler(ILoadService loadService)
     : IAppRequestHandler<CreateLoadCommand, Result>
 {
     public async Task<Result> Handle(
         CreateLoadCommand req, CancellationToken ct)
     {
-        var typeCheck = await vehicleTransportGuard.CheckLoadTypeAsync(req.Type);
-        if (!typeCheck.IsSuccess)
-        {
-            return typeCheck;
-        }
+        var createLoadParameters = new CreateLoadParameters(
+            req.Name,
+            req.Type,
+            (req.OriginAddress, req.OriginLocation),
+            (req.DestinationAddress, req.DestinationLocation),
+            req.DeliveryCost,
+            req.Distance,
+            req.CustomerId,
+            req.AssignedTruckId,
+            req.AssignedDispatcherId,
+            Source: req.Source,
+            RequestedPickupDate: req.RequestedPickupDate,
+            RequestedDeliveryDate: req.RequestedDeliveryDate,
+            Notes: req.Notes,
+            ContainerId: req.ContainerId,
+            OriginTerminalId: req.OriginTerminalId,
+            DestinationTerminalId: req.DestinationTerminalId,
+            IsHazmat: req.IsHazmat,
+            HazmatClass: req.HazmatClass,
+            UnNumber: req.UnNumber);
 
-        try
-        {
-            var createLoadParameters = new CreateLoadParameters(
-                req.Name,
-                req.Type,
-                (req.OriginAddress, req.OriginLocation),
-                (req.DestinationAddress, req.DestinationLocation),
-                req.DeliveryCost,
-                req.Distance,
-                req.CustomerId,
-                req.AssignedTruckId,
-                req.AssignedDispatcherId,
-                Source: req.Source,
-                RequestedPickupDate: req.RequestedPickupDate,
-                RequestedDeliveryDate: req.RequestedDeliveryDate,
-                Notes: req.Notes,
-                ContainerId: req.ContainerId,
-                OriginTerminalId: req.OriginTerminalId,
-                DestinationTerminalId: req.DestinationTerminalId,
-                IsHazmat: req.IsHazmat,
-                HazmatClass: req.HazmatClass,
-                UnNumber: req.UnNumber);
-
-            // Load.Create() raises domain events for notifications:
-            // - NewLoadCreatedEvent (always)
-            // - LoadAssignedToTruckEvent (if truck assigned)
-            await loadService.CreateLoadAsync(createLoadParameters, ct: ct);
-
-            return Result.Ok();
-        }
-        catch (InvalidOperationException e)
-        {
-            return Result.Fail(e.Message);
-        }
+        // Load.Create() raises domain events for notifications:
+        // - NewLoadCreatedEvent (always)
+        // - LoadAssignedToTruckEvent (if truck assigned)
+        var created = await loadService.CreateLoadAsync(createLoadParameters, ct: ct);
+        return created.IsSuccess ? Result.Ok() : Result.Fail(created.Error!, created.ErrorCode!);
     }
 }

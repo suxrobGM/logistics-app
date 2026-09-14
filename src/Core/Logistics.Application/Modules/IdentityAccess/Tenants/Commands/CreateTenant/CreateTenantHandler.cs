@@ -61,9 +61,8 @@ internal sealed class CreateTenantHandler(
         }
 
         await masterUow.Repository<Tenant>().AddAsync(tenant, ct);
-        await masterUow.SaveChangesAsync(ct);
-
         await featureService.ApplyPresetFeaturesAsync(tenant.Id, tenant.Presets);
+        await masterUow.SaveChangesAsync(ct);
 
         // Create owner account and send welcome email
         var ownerResult = await CreateOwnerAccountAsync(req, tenant);

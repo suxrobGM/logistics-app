@@ -75,7 +75,13 @@ internal sealed class UpdateTripHandler(
         // }
 
         var attachedCount = 0; // attachResult.Data;
-        var createdCount = await CreateNewLoadsAsync(trip, loadsMap, req.NewLoads);
+        var created = await CreateNewLoadsAsync(trip, loadsMap, req.NewLoads);
+        if (!created.IsSuccess)
+        {
+            return Result.Fail(created.Error!, created.ErrorCode!);
+        }
+
+        var createdCount = created.Value;
 
         // Update stop order if optimized stops are provided
         if (req.OptimizedStops != null && req.OptimizedStops.Any())
@@ -171,44 +177,39 @@ internal sealed class UpdateTripHandler(
         return Result<int>.Ok(count);
     }
 
-    private async Task<int> CreateNewLoadsAsync(
+    private async Task<Result<int>> CreateNewLoadsAsync(
         Trip trip,
         Dictionary<Guid, Load> loadsMap,
         IEnumerable<CreateTripLoadCommand>? newLoadCommands)
     {
         if (newLoadCommands is null)
         {
-            return 0;
+            return Result<int>.Ok(0);
         }
 
-        var createdCount = 0;
-        var loadParametersList = new List<CreateLoadParameters>();
+        var created = await loadService.CreateLoadsAsync(newLoadCommands.Select(c => new CreateLoadParameters(
+            c.Name,
+            c.Type,
+            (c.OriginAddress, c.OriginLocation),
+            (c.DestinationAddress, c.DestinationLocation),
+            c.DeliveryCost,
+            c.Distance,
+            c.CustomerId,
+            trip.TruckId,
+            c.AssignedDispatcherId,
+            trip.Id)));
 
-        foreach (var c in newLoadCommands)
+        if (!created.IsSuccess)
         {
-            var createLoadParameters = new CreateLoadParameters(
-                c.Name,
-                c.Type,
-                (c.OriginAddress, c.OriginLocation),
-                (c.DestinationAddress, c.DestinationLocation),
-                c.DeliveryCost,
-                c.Distance,
-                c.CustomerId,
-                trip.TruckId,
-                c.AssignedDispatcherId,
-                trip.Id);
-
-            loadParametersList.Add(createLoadParameters);
-            createdCount++;
+            return Result<int>.Fail(created.Error!, created.ErrorCode!);
         }
 
-        var newLoads = await loadService.CreateLoadsAsync(loadParametersList);
-        foreach (var load in newLoads)
+        foreach (var load in created.Value!)
         {
             loadsMap[load.Id] = load;
         }
 
-        return createdCount;
+        return Result<int>.Ok(created.Value.Count);
     }
 
     /// <summary>

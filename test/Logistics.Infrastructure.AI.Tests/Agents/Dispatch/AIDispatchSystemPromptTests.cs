@@ -226,7 +226,7 @@ public class AIDispatchSystemPromptTests
 
     #endregion
 
-    #region Operating mode (fleet vs solo owner-operator)
+    #region Fleet vs solo owner-operator
 
     private static string SoloPrompt() =>
         AIDispatchSystemPrompt.Build(

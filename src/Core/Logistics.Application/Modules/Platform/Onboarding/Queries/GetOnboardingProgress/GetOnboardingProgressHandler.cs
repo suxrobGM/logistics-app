@@ -69,7 +69,6 @@ internal sealed class GetOnboardingProgressHandler(
 
         return Result<OnboardingProgressDto>.Ok(new OnboardingProgressDto
         {
-            IsSolo = tenant.IsSolo,
             Steps = steps
         });
     }

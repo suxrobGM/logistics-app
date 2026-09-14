@@ -22,6 +22,24 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
         return context.IsEnabled(feature);
     }
 
+    public async Task<Result> CheckFeatureAsync(Guid tenantId, TenantFeature feature)
+    {
+        var context = await GetContextAsync(tenantId);
+        if (context.IsEnabled(feature))
+        {
+            return Result.Ok();
+        }
+
+        var featureName = feature.GetDescription();
+        return context.IsAdminLocked(feature)
+            ? Result.Fail(
+                $"The '{featureName}' feature has been disabled by your platform administrator.",
+                ErrorCodes.FeatureDisabledByAdmin)
+            : Result.Fail(
+                $"The '{featureName}' feature is not included in your current subscription plan. Please upgrade to access this feature.",
+                ErrorCodes.FeatureNotInPlan);
+    }
+
     public async Task<IReadOnlyList<TenantFeature>> GetEnabledFeaturesAsync(Guid tenantId)
     {
         var context = await GetContextAsync(tenantId);
@@ -30,9 +48,9 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
 
     public async Task ApplyPresetFeaturesAsync(Guid tenantId, IReadOnlyCollection<TenantPreset> presets)
     {
-        var configMap = (await GetTenantConfigsAsync(tenantId)).ToDictionary(c => c.Feature);
+        var configs = await GetTenantConfigsAsync(tenantId);
+        var configMap = configs.ToDictionary(c => c.Feature);
         var presetFeatures = TenantPresetCatalog.Resolve(presets);
-        var repository = masterUow.Repository<TenantFeatureConfig>();
         var now = DateTime.UtcNow;
 
         foreach (var feature in AllFeatures)
@@ -41,26 +59,23 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
 
             if (!configMap.TryGetValue(feature, out var config))
             {
-                await repository.AddAsync(new TenantFeatureConfig
+                config = new TenantFeatureConfig
                 {
                     TenantId = tenantId,
                     Feature = feature,
                     IsEnabled = isEnabled,
                     UpdatedAt = now
-                });
+                };
+                await masterUow.Repository<TenantFeatureConfig>().AddAsync(config);
+                // The cached list is the one reads use, so staged rows count before the caller saves.
+                configs.Add(config);
             }
             else if (!config.IsAdminLocked && config.IsEnabled != isEnabled)
             {
                 config.IsEnabled = isEnabled;
                 config.UpdatedAt = now;
-                repository.Update(config);
             }
         }
-
-        await masterUow.SaveChangesAsync();
-
-        // Cached before these writes.
-        tenantConfigCache.Remove(tenantId);
     }
 
     public async Task<IReadOnlyList<FeatureStatusDto>> GetAllFeatureStatusAsync(Guid tenantId)

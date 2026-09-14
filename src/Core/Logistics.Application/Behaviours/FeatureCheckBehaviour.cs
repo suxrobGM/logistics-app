@@ -50,42 +50,21 @@ public sealed class FeatureCheckBehaviour<TRequest, TResponse>(
             return await next(cancellationToken);
         }
 
-        // Check if feature is enabled
-        var isEnabled = await featureService.IsFeatureEnabledAsync(tenantId, attribute.Feature);
+        var check = await featureService.CheckFeatureAsync(tenantId, attribute.Feature);
 
-        if (!isEnabled)
+        if (!check.IsSuccess)
         {
-            var featureName = attribute.Feature.GetDescription();
-
-            // Determine if it's admin-locked or not in plan
-            var allStatuses = await featureService.GetAllFeatureStatusAsync(tenantId);
-            var featureStatus = allStatuses.FirstOrDefault(s => s.Feature == attribute.Feature);
-
-            string errorCode;
-            string errorMessage;
-
-            if (featureStatus is { IsAdminLocked: true })
-            {
-                errorCode = ErrorCodes.FeatureDisabledByAdmin;
-                errorMessage = $"The '{featureName}' feature has been disabled by your platform administrator.";
-            }
-            else
-            {
-                errorCode = ErrorCodes.FeatureNotInPlan;
-                errorMessage = $"The '{featureName}' feature is not included in your current subscription plan. Please upgrade to access this feature.";
-            }
-
             var response = new TResponse();
             var errorProperty = typeof(TResponse).GetProperty(nameof(Result.Error));
             if (errorProperty?.CanWrite == true)
             {
-                errorProperty.SetValue(response, errorMessage);
+                errorProperty.SetValue(response, check.Error);
             }
 
             var errorCodeProperty = typeof(TResponse).GetProperty(nameof(Result.ErrorCode));
             if (errorCodeProperty?.CanWrite == true)
             {
-                errorCodeProperty.SetValue(response, errorCode);
+                errorCodeProperty.SetValue(response, check.ErrorCode);
             }
 
             return response;

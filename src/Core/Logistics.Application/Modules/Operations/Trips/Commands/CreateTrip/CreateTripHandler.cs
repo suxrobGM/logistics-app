@@ -1,9 +1,7 @@
-using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -12,19 +10,11 @@ namespace Logistics.Application.Modules.Operations.Trips.Commands;
 internal sealed class CreateTripHandler(
     ITenantUnitOfWork tenantUow,
     ILoadService loadService,
-    IVehicleTransportGuard vehicleTransportGuard,
     ILogger<CreateTripHandler> logger)
     : IAppRequestHandler<CreateTripCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateTripCommand req, CancellationToken ct)
     {
-        var vehicleLoad = req.NewLoads?.FirstOrDefault(l => l.Type == LoadType.Vehicle);
-        var typeCheck = await vehicleTransportGuard.CheckLoadTypeAsync(vehicleLoad?.Type);
-        if (!typeCheck.IsSuccess)
-        {
-            return Result<Guid>.Fail(typeCheck.Error!, typeCheck.ErrorCode!);
-        }
-
         Truck? truck = null;
         List<TripStop>? stops = null;
 
@@ -39,7 +29,13 @@ internal sealed class CreateTripHandler(
         }
 
         var existingLoads = await GetExistingLoadsAsync(req, truck);
-        var (newLoads, tempIdToLoadMap) = await CreateNewLoads(req);
+        var created = await CreateNewLoadsAsync(req);
+        if (!created.IsSuccess)
+        {
+            return Result<Guid>.Fail(created.Error!, created.ErrorCode!);
+        }
+
+        var (newLoads, tempIdToLoadMap) = created.Value;
 
         // List of all loads for the trip
         var loads = new List<Load>([.. existingLoads, .. newLoads]);
@@ -68,46 +64,47 @@ internal sealed class CreateTripHandler(
     /// <summary>
     ///     Creates new loads based on the provided command.
     /// </summary>
-    private async Task<(IEnumerable<Load>, Dictionary<string, Guid>)> CreateNewLoads(CreateTripCommand command)
+    private async Task<Result<(IReadOnlyList<Load> Loads, Dictionary<string, Guid> TempIdToLoadId)>>
+        CreateNewLoadsAsync(CreateTripCommand command)
     {
-        if (command.NewLoads is null || !command.NewLoads.Any())
+        var newLoads = command.NewLoads?.ToList() ?? [];
+        var tempIdToLoadId = new Dictionary<string, Guid>();
+        if (newLoads.Count == 0)
         {
-            return ([], new Dictionary<string, Guid>());
+            return Result<(IReadOnlyList<Load>, Dictionary<string, Guid>)>.Ok(([], tempIdToLoadId));
         }
 
-        var loads = new List<Load>();
-        var tempIdToLoadMap = new Dictionary<string, Guid>();
-        var newLoadsCount = 0;
-
-        foreach (var newLoad in command.NewLoads)
-        {
-            var createLoadParameters = new CreateLoadParameters(
-                newLoad.Name,
-                newLoad.Type,
-                (newLoad.OriginAddress, newLoad.OriginLocation),
-                (newLoad.DestinationAddress, newLoad.DestinationLocation),
-                newLoad.DeliveryCost,
-                newLoad.Distance,
-                newLoad.CustomerId,
+        var created = await loadService.CreateLoadsAsync(
+            newLoads.Select(l => new CreateLoadParameters(
+                l.Name,
+                l.Type,
+                (l.OriginAddress, l.OriginLocation),
+                (l.DestinationAddress, l.DestinationLocation),
+                l.DeliveryCost,
+                l.Distance,
+                l.CustomerId,
                 command.TruckId,
-                newLoad.AssignedDispatcherId);
+                l.AssignedDispatcherId)),
+            saveChanges: false);
 
-            var newLoadEntity = await loadService.CreateLoadAsync(createLoadParameters, false);
-            loads.Add(newLoadEntity);
+        if (!created.IsSuccess)
+        {
+            return Result<(IReadOnlyList<Load>, Dictionary<string, Guid>)>.Fail(created.Error!, created.ErrorCode!);
+        }
 
-            // Map temporary ID to actual database ID
-            if (!string.IsNullOrEmpty(newLoad.TempId))
+        var loads = created.Value!;
+        for (var i = 0; i < newLoads.Count; i++)
+        {
+            if (!string.IsNullOrEmpty(newLoads[i].TempId))
             {
-                tempIdToLoadMap[newLoad.TempId] = newLoadEntity.Id;
+                tempIdToLoadId[newLoads[i].TempId] = loads[i].Id;
             }
-
-            newLoadsCount++;
         }
 
         logger.LogInformation(
             "Created {Count} new loads for trip '{TripName}' with truck '{TruckId}'",
-            newLoadsCount, command.Name, command.TruckId?.ToString() ?? "unassigned");
-        return (loads, tempIdToLoadMap);
+            loads.Count, command.Name, command.TruckId?.ToString() ?? "unassigned");
+        return Result<(IReadOnlyList<Load>, Dictionary<string, Guid>)>.Ok((loads, tempIdToLoadId));
     }
 
     /// <summary>

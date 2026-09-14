@@ -1,5 +1,5 @@
 using FluentValidation;
-using Logistics.Domain.Entities;
+using Logistics.Application.Validators;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 
@@ -7,8 +7,6 @@ internal sealed class UpdateTenantPresetsValidator : AbstractValidator<UpdateTen
 {
     public UpdateTenantPresetsValidator()
     {
-        RuleFor(i => i.Presets)
-            .Must(p => TenantPresetCatalog.IsValid(p))
-            .WithMessage(TenantPresetValidation.Message);
+        RuleFor(i => i.Presets).MustBeValidPresets();
     }
 }
