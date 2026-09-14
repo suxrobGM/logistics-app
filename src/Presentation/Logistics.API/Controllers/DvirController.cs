@@ -51,6 +51,19 @@ public class DvirController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    /// Get uncorrected defects from the truck's latest pre-trip and post-trip reports
+    /// </summary>
+    [HttpGet("trucks/{truckId:guid}/open-defects", Name = "GetTruckOpenDvirDefects")]
+    [ProducesResponseType(typeof(List<DvirDefectDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dvir.View)]
+    public async Task<IActionResult> GetTruckOpenDefects(Guid truckId)
+    {
+        var result = await mediator.Send(new GetTruckOpenDvirDefectsQuery(truckId));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
     /// Create a new DVIR report
     /// </summary>
     [HttpPost(Name = "CreateDvirReport")]
