@@ -44,7 +44,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Domain: `Entities/Trip/`
 - Application: `Modules/Operations/Trips/Commands/`, `Modules/Operations/Trips/Queries/`
 - Infrastructure: `Routing/Optimization/` (trip optimizer)
-- API/UI: `TripController.cs`, `tms-portal/pages/trips/`
+- API/UI: `TripController.cs`, `tms-portal/pages/trips/`; driver stop events `DriverController.cs` (`POST /drivers/trips/{tripId}/stops/{stopId}/arrive|depart`, assignment-checked, sets `TripStop.ArrivedAt`/`DepartedAt`)
 
 ### Trucks
 
@@ -241,7 +241,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Safety/DvirReport.cs`, `DvirDefect.cs`
 - Application: `Modules/Compliance/Dvir/Commands/`, `Modules/Compliance/Dvir/Queries/`
-- API/UI: `DvirController.cs`, `tms-portal/pages/safety/`
+- API/UI: `DvirController.cs` (incl. `GET /dvir/trucks/{truckId}/open-defects`), `tms-portal/pages/safety/`
 - Feature flag: `TenantFeature.Dvir` (Starter+; enabled by default; gates commands and queries - separate from `Safety`, which stays Professional)
 
 ### Vehicle inspections
