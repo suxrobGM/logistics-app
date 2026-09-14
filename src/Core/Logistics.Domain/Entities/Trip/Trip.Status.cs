@@ -53,8 +53,7 @@ public partial class Trip
     /// <exception cref="InvalidOperationException">Thrown if stop is not found.</exception>
     public void MarkStopArrived(Guid stopId)
     {
-        var stop = Stops.FirstOrDefault(s => s.Id == stopId)
-                   ?? throw new InvalidOperationException("Stop not found");
+        var stop = GetStop(stopId);
 
         stop.ArrivedAt = DateTime.UtcNow;
 
@@ -73,8 +72,7 @@ public partial class Trip
     /// <exception cref="InvalidOperationException">Thrown if the stop is not found or not arrived yet.</exception>
     public void MarkStopDeparted(Guid stopId)
     {
-        var stop = Stops.FirstOrDefault(s => s.Id == stopId)
-                   ?? throw new InvalidOperationException("Stop not found");
+        var stop = GetStop(stopId);
 
         if (stop.ArrivedAt is null)
         {
@@ -82,6 +80,12 @@ public partial class Trip
         }
 
         stop.DepartedAt ??= DateTime.UtcNow;
+    }
+
+    private TripStop GetStop(Guid stopId)
+    {
+        return Stops.FirstOrDefault(s => s.Id == stopId)
+               ?? throw new InvalidOperationException("Stop not found");
     }
 
     /// <summary>
