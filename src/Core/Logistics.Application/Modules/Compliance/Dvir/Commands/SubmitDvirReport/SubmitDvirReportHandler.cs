@@ -26,6 +26,11 @@ internal sealed class SubmitDvirReportHandler(
             return Result<DvirReportDto>.Fail("You can only submit your own DVIR.");
         }
 
+        if (report.Status is DvirStatus.Submitted or DvirStatus.Cleared)
+        {
+            return Result<DvirReportDto>.Ok(report.ToDto());
+        }
+
         if (report.Status != DvirStatus.Draft)
         {
             return Result<DvirReportDto>.Fail("Only draft reports can be submitted.");
