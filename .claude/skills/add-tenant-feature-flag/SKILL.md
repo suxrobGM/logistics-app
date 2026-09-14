@@ -127,7 +127,7 @@ const features = inject(FeatureService);
 protected readonly canSeeContainers = computed(() => features.isEnabled("container_tracking"));
 ```
 
-For route-level guards, use `featureGuardFromData` from `@logistics/shared/guards` and put the flag in the route's `data.feature`.
+For route guards, use `featureGuardFromData` from `@logistics/shared/guards` with the flag in `data.feature`.
 
 ## Verification checklist
 
