@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 using Logistics.Application.Modules.IdentityAccess.Employees.Queries;
 using Logistics.Application.Modules.Operations.Loads.Commands;
+using Logistics.Application.Modules.Operations.Trips.Commands;
 
 namespace Logistics.API.Controllers;
 
@@ -52,6 +53,26 @@ public class DriverController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> UpdateLoadProximity([FromBody] UpdateLoadProximityCommand request)
     {
         var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("trips/{tripId:guid}/stops/{stopId:guid}/arrive", Name = "DriverMarkStopArrived")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Driver.Manage)]
+    public async Task<IActionResult> MarkStopArrived(Guid tripId, Guid stopId)
+    {
+        var result = await mediator.Send(new MarkStopArrivedCommand { TripId = tripId, StopId = stopId });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("trips/{tripId:guid}/stops/{stopId:guid}/depart", Name = "DriverMarkStopDeparted")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Driver.Manage)]
+    public async Task<IActionResult> MarkStopDeparted(Guid tripId, Guid stopId)
+    {
+        var result = await mediator.Send(new MarkStopDepartedCommand { TripId = tripId, StopId = stopId });
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }

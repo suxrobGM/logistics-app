@@ -12,6 +12,7 @@ public record TripStopDto
     public required Address Address { get; set; }
     public required GeoPoint Location { get; set; }
     public DateTime? ArrivedAt { get; set; }
+    public DateTime? DepartedAt { get; set; }
 
     public Guid LoadId { get; set; }
     public Guid TripId { get; set; }

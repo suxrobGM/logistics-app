@@ -8,13 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Operations.Trips.Commands;
 
-internal sealed class MarkStopArrivedHandler(
+internal sealed class MarkStopDepartedHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser,
-    ILogger<MarkStopArrivedHandler> logger)
-    : IAppRequestHandler<MarkStopArrivedCommand, Result>
+    ILogger<MarkStopDepartedHandler> logger)
+    : IAppRequestHandler<MarkStopDepartedCommand, Result>
 {
-    public async Task<Result> Handle(MarkStopArrivedCommand req, CancellationToken ct)
+    public async Task<Result> Handle(MarkStopDepartedCommand req, CancellationToken ct)
     {
         var trip = await tenantUow.Repository<Trip>().GetByIdAsync(req.TripId, ct);
 
@@ -30,7 +30,7 @@ internal sealed class MarkStopArrivedHandler(
 
         try
         {
-            trip.MarkStopArrived(req.StopId);
+            trip.MarkStopDeparted(req.StopId);
         }
         catch (InvalidOperationException ex)
         {
@@ -40,7 +40,7 @@ internal sealed class MarkStopArrivedHandler(
         await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation(
-            "Marked stop '{StopId}' as arrived for trip '{TripName}' (ID: {TripId})",
+            "Marked stop '{StopId}' as departed for trip '{TripName}' (ID: {TripId})",
             req.StopId, trip.Name, trip.Id);
 
         return Result.Ok();

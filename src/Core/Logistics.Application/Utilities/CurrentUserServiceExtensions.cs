@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Shared.Identity.Roles;
 
@@ -14,6 +15,17 @@ public static class CurrentUserServiceExtensions
     {
         return currentUserService.IsInRole(TenantRoles.Driver) &&
                !currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin);
+    }
+
+    /// <summary>A tenant driver may only act on a trip whose truck they drive; other callers are not restricted.</summary>
+    public static bool CanDriveTrip(this ICurrentUserService currentUserService, Trip trip)
+    {
+        if (!currentUserService.IsTenantDriver())
+        {
+            return true;
+        }
+
+        return currentUserService.GetUserId() is { } userId && trip.Truck?.IsDrivenBy(userId) == true;
     }
 
     /// <summary>Rejects access to another tenant's data unless the caller is a platform admin.</summary>

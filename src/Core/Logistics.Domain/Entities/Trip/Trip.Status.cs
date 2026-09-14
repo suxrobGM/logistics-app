@@ -41,6 +41,7 @@ public partial class Trip
         foreach (var stop in Stops)
         {
             stop.ArrivedAt = null;
+            stop.DepartedAt = null;
             stop.Load.Cancel();
         }
     }
@@ -64,6 +65,23 @@ public partial class Trip
         stop.Load.UpdateStatus(loadStatus, force: true);
 
         RefreshStatus();
+    }
+
+    /// <summary>
+    /// Marks an arrived stop as departed. A repeat keeps the first departure time.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if the stop is not found or not arrived yet.</exception>
+    public void MarkStopDeparted(Guid stopId)
+    {
+        var stop = Stops.FirstOrDefault(s => s.Id == stopId)
+                   ?? throw new InvalidOperationException("Stop not found");
+
+        if (stop.ArrivedAt is null)
+        {
+            throw new InvalidOperationException("Mark the stop as arrived before departing.");
+        }
+
+        stop.DepartedAt ??= DateTime.UtcNow;
     }
 
     /// <summary>
