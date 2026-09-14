@@ -24,8 +24,7 @@ internal sealed class ConfirmLoadStatusHandler(
             return Result.Fail($"Could not find load with ID '{req.LoadId}'");
         }
 
-        if (currentUser.IsTenantDriver() &&
-            (currentUser.GetUserId() is not { } driverId || !load.IsDrivenBy(driverId)))
+        if (!currentUser.CanDrive(load.AssignedTruck))
         {
             return Result.Fail("This load isn't assigned to your truck.");
         }

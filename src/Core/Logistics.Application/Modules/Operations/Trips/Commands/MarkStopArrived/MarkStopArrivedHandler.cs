@@ -23,7 +23,7 @@ internal sealed class MarkStopArrivedHandler(
             return Result.Fail($"Could not find the trip with ID '{req.TripId}'");
         }
 
-        if (!currentUser.CanDriveTrip(trip))
+        if (!currentUser.CanDrive(trip.Truck))
         {
             return Result.Fail("This trip isn't assigned to your truck.");
         }

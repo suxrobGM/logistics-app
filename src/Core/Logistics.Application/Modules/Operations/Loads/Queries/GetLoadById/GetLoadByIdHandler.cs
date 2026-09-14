@@ -17,17 +17,11 @@ internal sealed class GetLoadByIdHandler(
     {
         var load = await tenantUow.Repository<Load>().GetByIdAsync(req.Id, ct);
 
-        if (load is null || !CanRead(load))
+        if (load is null || !currentUserService.CanDrive(load.AssignedTruck))
         {
             return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
         }
 
         return Result<LoadDto>.Ok(load.ToDto(LoadIntermodalLookup.Empty));
-    }
-
-    private bool CanRead(Load load)
-    {
-        return !currentUserService.IsTenantDriver() ||
-               (currentUserService.GetUserId() is { } callerId && load.IsDrivenBy(callerId));
     }
 }

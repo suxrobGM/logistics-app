@@ -17,15 +17,15 @@ public static class CurrentUserServiceExtensions
                !currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin);
     }
 
-    /// <summary>A tenant driver may only act on a trip whose truck they drive; other callers are not restricted.</summary>
-    public static bool CanDriveTrip(this ICurrentUserService currentUserService, Trip trip)
+    /// <summary>A tenant driver may only act on a truck they drive; other callers are not restricted.</summary>
+    public static bool CanDrive(this ICurrentUserService currentUserService, Truck? truck)
     {
         if (!currentUserService.IsTenantDriver())
         {
             return true;
         }
 
-        return currentUserService.GetUserId() is { } userId && trip.Truck?.IsDrivenBy(userId) == true;
+        return currentUserService.GetUserId() is { } userId && truck?.IsDrivenBy(userId) == true;
     }
 
     /// <summary>Rejects access to another tenant's data unless the caller is a platform admin.</summary>
