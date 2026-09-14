@@ -6,7 +6,6 @@ internal sealed class ConfirmLoadStatusValidator : AbstractValidator<ConfirmLoad
 {
     public ConfirmLoadStatusValidator()
     {
-        RuleFor(i => i.DriverId).NotEmpty();
         RuleFor(i => i.LoadId).NotEmpty();
         RuleFor(i => i.LoadStatus).NotNull();
     }

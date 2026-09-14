@@ -1,6 +1,9 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Notifications;
 
@@ -8,6 +11,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
 internal sealed class ConfirmLoadStatusHandler(
     ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUser,
     INotificationService notificationService)
     : IAppRequestHandler<ConfirmLoadStatusCommand, Result>
 {
@@ -20,8 +24,21 @@ internal sealed class ConfirmLoadStatusHandler(
             return Result.Fail($"Could not find load with ID '{req.LoadId}'");
         }
 
+        if (currentUser.IsTenantDriver() &&
+            (currentUser.GetUserId() is not { } driverId || !load.IsDrivenBy(driverId)))
+        {
+            return Result.Fail("This load isn't assigned to your truck.");
+        }
+
         var loadStatus = req.LoadStatus!.Value;
-        load.UpdateStatus(loadStatus, true);
+
+        if (!IsConfirmable(load.Status, loadStatus))
+        {
+            return Result.Fail(
+                $"This load is {load.Status.GetDescription()}, so it can't be marked {loadStatus.GetDescription()}.");
+        }
+
+        load.UpdateStatus(loadStatus);
 
         var changes = await tenantUow.SaveChangesAsync(ct);
 
@@ -32,6 +49,9 @@ internal sealed class ConfirmLoadStatusHandler(
 
         return Result.Ok();
     }
+
+    private static bool IsConfirmable(LoadStatus current, LoadStatus target) =>
+        (current, target) is (LoadStatus.Dispatched, LoadStatus.PickedUp) or (LoadStatus.PickedUp, LoadStatus.Delivered);
 
     private async Task SendNotificationAsync(Load load)
     {
