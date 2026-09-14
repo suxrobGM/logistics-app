@@ -16,22 +16,19 @@ internal sealed class GetTruckOpenDvirDefectsHandler(ITenantUnitOfWork tenantUow
         var reports = tenantUow.Repository<DvirReport>().Query()
             .Where(r => r.TruckId == req.TruckId && r.Status != DvirStatus.Draft);
 
-        var defects = new List<DvirDefectDto>();
-
         // A newer inspection of the same type re-checks the same items, so it supersedes older ones.
-        foreach (var type in Enum.GetValues<DvirType>())
-        {
-            var latest = await reports
-                .Where(r => r.Type == type)
-                .OrderByDescending(r => r.InspectionDate)
-                .FirstOrDefaultAsync(ct);
+        var latestReportIds = await reports
+            .GroupBy(r => r.Type)
+            .Select(g => g.OrderByDescending(r => r.InspectionDate).Select(r => r.Id).First())
+            .ToListAsync(ct);
 
-            if (latest is not null)
-            {
-                defects.AddRange(latest.Defects.Where(d => !d.IsCorrected).Select(d => d.ToDto()));
-            }
-        }
+        var defects = await reports
+            .Where(r => latestReportIds.Contains(r.Id))
+            .OrderBy(r => r.Type)
+            .SelectMany(r => r.Defects)
+            .Where(d => !d.IsCorrected)
+            .ToListAsync(ct);
 
-        return Result<List<DvirDefectDto>>.Ok(defects);
+        return Result<List<DvirDefectDto>>.Ok(defects.Select(d => d.ToDto()).ToList());
     }
 }
