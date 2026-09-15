@@ -12,7 +12,7 @@ By signing this agreement (by commenting on your pull request as the CLA bot ins
 
 ## 2. Copyright license
 
-You keep the copyright in your contribution. You grant the Author a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute your contribution and such derivative works, under any license terms the Author chooses. This includes the PolyForm Noncommercial license, the Project's commercial licenses, and any future license.
+You keep the copyright in your contribution. You grant the Author a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute your contribution and such derivative works under any license terms the Author chooses. This includes the PolyForm Noncommercial license, the Project's commercial licenses, and any future license.
 
 ## 3. Patent license
 

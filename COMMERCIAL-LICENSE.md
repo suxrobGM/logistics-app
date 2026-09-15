@@ -1,19 +1,15 @@
 # Commercial Licensing
 
-LogisticsX is published under the [PolyForm Free Trial License 1.0.0](LICENSE). You may read the source and evaluate it for the trial period that license sets out. Any use beyond that needs a commercial license from the author. This page summarizes the options. The signed agreement governs, and this page is informational.
-
-The web portals and the driver app are closed source and are not covered by the trial. Every commercial license below includes their source, sent to you on purchase.
-
-Commercial use includes running LogisticsX inside a for-profit company, hosting it for others, and selling a product built on it.
+The public LogisticsX source is under the [PolyForm Noncommercial License 1.0.0](LICENSE). Commercial use, such as running LogisticsX in a for-profit company, hosting it for others, or selling a product built on it, needs a commercial license. Every commercial license includes the closed-source modules. This page is a summary. The signed agreement governs.
 
 ## License types
 
-| Type              | Who it is for                                                                       | What you get                                                             | Not included                                                 |
-| ----------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------ |
-| Internal Use      | A carrier, broker, or logistics company that runs LogisticsX for its own operations | Run any number of instances for one legal entity                         | Offering the product to third parties                        |
-| Hosted / Reseller | A company that hosts LogisticsX and sells access to other businesses                | Run it as a service for up to the number of tenants written into the key | Redistributing the source, sublicensing                      |
-| Perpetual Source  | A company that forks LogisticsX and owns its copy                                   | A perpetual right to use and modify the source as of the purchase date   | Updates after the first year, unless the update plan is paid |
-| Client source     | Included with every type above                                                      | The Angular portal and driver app source, sent to you on purchase        | Redistribution of that source under any type                 |
+| Type                  | Who it is for                                                                       | What you get                                                             | Not included                                                 |
+| --------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| Internal Use          | A carrier, broker, or logistics company that runs LogisticsX for its own operations | Run any number of instances for one legal entity                         | Offering the product to third parties                        |
+| Hosted / Reseller     | A company that hosts LogisticsX and sells access to other businesses                | Run it as a service for up to the number of tenants written into the key | Redistributing the source, sublicensing                      |
+| Perpetual Source      | A company that forks LogisticsX and owns its copy                                   | A perpetual right to use and modify the source as of the purchase date   | Updates after the first year, unless the update plan is paid |
+| Closed-source modules | Included with every type above                                                      | Source delivered directly to you                                         | Redistribution of that source under any type                 |
 
 ## Pricing
 
@@ -29,13 +25,13 @@ Hosted / Reseller keys carry the tenant cap. Growing past it means moving to the
 4. Support is a separate add-on.
 5. Hosted / Reseller: the tenant count reported by the heartbeat must stay within the cap in the key. The author may verify it once a year with 30 days notice.
 6. The licensee agrees not to remove the license check, the unlicensed-use notice, or the instance heartbeat.
-7. Non-payment ends the license after 30 days notice. Rights revert to the trial license in `LICENSE`.
+7. Unpaid fees end the commercial license 30 days after written notice. Only the public license rights remain, and they exclude the closed-source modules.
 
 ## How the license key works
 
 A license key is a signed token issued by the author for one legal entity. A SuperAdmin installs it on the admin portal License page, or the operator sets the `License__Key` environment variable. Until a valid key is installed, every portal shows a one-line unlicensed-use notice. Nothing else changes: no feature is locked, and an expired key only brings the notice back.
 
-Removing, disabling, or working around the key check, the notice, or the heartbeat grants no commercial rights. Commercial use without a valid key stays unlicensed, and bypassing the check on purpose is treated as willful infringement. The `LICENSE` file carries this as a Required Notice, so every copy of the source keeps it.
+Bypassing the key check, the notice, or the heartbeat grants no commercial rights and counts as willful infringement. `LICENSE` repeats this as a Required Notice.
 
 ## What the heartbeat sends
 
@@ -47,7 +43,7 @@ Once a day each deployment posts a small report to `https://api.logisticsx.app/l
 - the license key id and licensee name, when a valid key is installed
 - the number of tenants
 
-No tenant data, user data, or business data is sent. Operators can turn the heartbeat off with `License__HeartbeatEnabled=false`. Under a commercial license it stays on.
+No tenant data, user data, or business data is sent. Noncommercial users can turn the heartbeat off with `License__HeartbeatEnabled=false`. Under a commercial license it stays on.
 
 ## How to buy
 

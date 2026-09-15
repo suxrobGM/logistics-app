@@ -2,10 +2,10 @@
 
 [![Build Status](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml)
 [![Deploy](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml)
-[![PolyForm-Free-Trial-1.0.0][license-shield]][license]
+[![PolyForm-Noncommercial-1.0.0][license-shield]][license]
 
-[license]: https://polyformproject.org/licenses/free-trial/1.0.0
-[license-shield]: https://img.shields.io/badge/License-PolyForm--Free--Trial--1.0.0-blue.svg
+[license]: https://polyformproject.org/licenses/noncommercial/1.0.0
+[license-shield]: https://img.shields.io/badge/License-PolyForm--Noncommercial--1.0.0-blue.svg
 
 LogisticsX is a fleet management system for trucking companies. It handles dispatch, driver trips, customer tracking, invoicing, and payroll in one place. An AI dispatcher can plan the day for you, and you approve or change what it suggests.
 
@@ -150,9 +150,9 @@ The full list is in [features.md](docs/features.md).
 
 ## What is in this repository
 
-The backend is open: domain, handlers, persistence, the AI dispatch agent, the MCP server, and every integration.
+The backend is public: domain, handlers, persistence, the AI dispatch agent, the MCP server, and every integration.
 
-The clients are closed and live in a private submodule at `private/`, empty in a public clone:
+The clients are closed source and live in a private submodule at `private/`, empty in a public clone:
 
 - The four Angular web portals and the shared library.
 - The Kotlin Multiplatform driver app.
@@ -268,9 +268,7 @@ You will be asked to sign the [Contributor License Agreement](CLA.md) on your fi
 
 ## License
 
-LogisticsX is released under the [PolyForm Free Trial License 1.0.0][license].
-
-You may read the source and evaluate it for the trial period set out in [LICENSE](LICENSE). Any use beyond that, including running it inside a business or hosting it for others, needs a commercial license. See [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md) for the options and prices, or email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com).
+The public source is released under the [PolyForm Noncommercial License 1.0.0](LICENSE). Noncommercial use is free with no time limit. Commercial use needs a [commercial license](COMMERCIAL-LICENSE.md), which also includes the closed-source clients. Email [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com) with questions.
 
 ## Contact
 
