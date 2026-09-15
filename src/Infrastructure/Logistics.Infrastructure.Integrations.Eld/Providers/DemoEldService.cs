@@ -24,7 +24,7 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
 
     public void Initialize(EldProviderConfiguration configuration)
     {
-        logger.LogInformation("Initialized Demo ELD provider");
+        logger.LogDebug("Initialized Demo ELD provider");
     }
 
     public Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)

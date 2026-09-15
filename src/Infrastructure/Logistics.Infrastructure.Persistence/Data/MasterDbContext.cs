@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Persistence.Data;
 
@@ -26,18 +25,15 @@ public class MasterDbContext : IdentityDbContext<
     private readonly AuditableEntitySaveChangesInterceptor? auditableEntity;
     private readonly string connectionString;
     private readonly DispatchDomainEventsInterceptor? dispatchDomain;
-    private readonly ILogger<MasterDbContext>? logger;
 
     public MasterDbContext(
         MasterDbContextOptions options,
         DispatchDomainEventsInterceptor? dispatchDomain = null,
-        AuditableEntitySaveChangesInterceptor? auditableEntity = null,
-        ILogger<MasterDbContext>? logger = null)
+        AuditableEntitySaveChangesInterceptor? auditableEntity = null)
     {
         this.dispatchDomain = dispatchDomain;
         this.auditableEntity = auditableEntity;
         connectionString = options.ConnectionString ?? ConnectionStrings.LocalMaster;
-        this.logger = logger;
 
         NavigationDiscoveryGuard.Attach(ChangeTracker);
     }
@@ -59,8 +55,6 @@ public class MasterDbContext : IdentityDbContext<
         if (!options.IsConfigured)
         {
             DbContextHelpers.ConfigurePostgreSql(connectionString, options);
-            logger?.LogInformation("Configured master database with connection string: {ConnectionString}",
-                connectionString);
         }
     }
 

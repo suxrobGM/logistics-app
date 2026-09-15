@@ -40,7 +40,7 @@ internal class DatLoadBoardService(
                 new AuthenticationHeaderValue("Bearer", configuration.AccessToken);
         }
 
-        logger.LogInformation("Initialized DAT Load Board provider");
+        logger.LogDebug("Initialized DAT Load Board provider");
     }
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)

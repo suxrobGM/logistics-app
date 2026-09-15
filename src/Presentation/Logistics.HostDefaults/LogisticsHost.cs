@@ -37,7 +37,7 @@ public static class LogisticsHost
                 lc.MinimumLevel.Information()
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                     .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-                    .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                    .MinimumLevel.Override("Hangfire", LogEventLevel.Warning)
                     .MinimumLevel.Override("Microsoft.AspNetCore.DataProtection", LogEventLevel.Warning)
                     .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
                     .MinimumLevel.Override("System", LogEventLevel.Warning)

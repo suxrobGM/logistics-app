@@ -29,7 +29,6 @@ using Logistics.Infrastructure.Persistence.Data;
 using Logistics.Infrastructure.Persistence.Services.Accounting;
 using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
-using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Tax;
 using Logistics.Infrastructure.Vin;
 using Logistics.Infrastructure.Routing;
@@ -44,8 +43,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using Serilog.Extensions.Logging;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.AIDispatch;
 
@@ -57,9 +54,6 @@ internal static class Setup
     {
         var services = builder.Services;
         var configuration = builder.Configuration;
-
-        var serilogLogger = new SerilogLoggerFactory(Log.Logger)
-            .CreateLogger<IPersistenceInfrastructureBuilder>();
 
         // Application layers
         services.AddApplicationLayer();
@@ -81,7 +75,6 @@ internal static class Setup
         services.AddTelegramBotInfrastructure(configuration, builder.Environment.IsDevelopment());
         services.AddStorageInfrastructure(configuration);
         services.AddPersistenceInfrastructure(configuration)
-            .UseLogger(serilogLogger)
             .AddMasterDatabase()
             .AddTenantDatabase()
             .AddIdentity();
@@ -250,8 +243,12 @@ internal static class Setup
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        else
+        {
+            // Not in Development: it serves http only, so redirection just warns on every start.
+            app.UseHttpsRedirection();
+        }
 
-        app.UseHttpsRedirection();
         app.UseLogisticsCors();
 
         app.UseLocalStorageStaticFiles();

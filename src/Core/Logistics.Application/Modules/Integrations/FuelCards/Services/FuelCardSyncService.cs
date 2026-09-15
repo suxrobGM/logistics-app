@@ -109,7 +109,7 @@ internal sealed class FuelCardSyncService(
         config.LastSyncedAt = DateTime.UtcNow;
         await tenantUow.SaveChangesAsync(ct);
 
-        logger.LogInformation(
+        logger.LogDebug(
             "Fuel card sync for {Provider}: {Imported} imported ({Matched} matched, {Pending} pending)",
             config.ProviderType, result.Imported, result.Matched, result.Pending);
     }

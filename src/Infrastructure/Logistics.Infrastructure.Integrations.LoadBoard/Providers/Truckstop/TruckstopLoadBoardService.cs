@@ -40,7 +40,7 @@ internal class TruckstopLoadBoardService(
                 new AuthenticationHeaderValue("Bearer", configuration.AccessToken);
         }
 
-        logger.LogInformation("Initialized Truckstop Load Board provider");
+        logger.LogDebug("Initialized Truckstop Load Board provider");
     }
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)

@@ -40,7 +40,7 @@ internal class OneTwo3LoadBoardService(
             httpClient.DefaultRequestHeaders.Add("X-API-Key", configuration.ApiKey);
         }
 
-        logger.LogInformation("Initialized 123Loadboard provider");
+        logger.LogDebug("Initialized 123Loadboard provider");
     }
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)

@@ -50,7 +50,7 @@ public class TenantDbContext : DbContext
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenant.ConnectionString);
         Database.SetConnectionString(tenant.ConnectionString); // EF Core runtime retargeting
-        logger?.LogInformation("Switched tenant database to '{TenantName}'.", tenant.Name);
+        logger?.LogDebug("Switched tenant database to '{TenantName}'.", tenant.Name);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -68,7 +68,6 @@ public class TenantDbContext : DbContext
         if (!options.IsConfigured)
         {
             DbContextHelpers.ConfigurePostgreSql(defaultConnectionString, options);
-            logger?.LogInformation("Configured tenant database with default connection string.");
         }
     }
 

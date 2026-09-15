@@ -26,7 +26,7 @@ internal static class TenantJobRunner
         var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
         var tenants = await masterUow.Repository<Tenant>().GetListAsync(t => t.ConnectionString != null);
 
-        logger.LogInformation("Starting {Operation} for {TenantCount} tenants", operation, tenants.Count);
+        logger.LogDebug("Starting {Operation} for {TenantCount} tenants", operation, tenants.Count);
 
         foreach (var tenant in tenants)
         {
@@ -47,6 +47,6 @@ internal static class TenantJobRunner
             }
         }
 
-        logger.LogInformation("Completed {Operation} cycle", operation);
+        logger.LogDebug("Completed {Operation} cycle", operation);
     }
 }

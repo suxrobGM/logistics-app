@@ -46,7 +46,7 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
 
     public void Initialize(LoadBoardConfiguration configuration)
     {
-        logger.LogInformation("Initialized Demo Load Board provider");
+        logger.LogDebug("Initialized Demo Load Board provider");
     }
 
     public Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)

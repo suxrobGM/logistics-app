@@ -37,7 +37,7 @@ internal class DemoFuelCardService(
 
     public void Initialize(FuelCardProviderConfiguration configuration)
     {
-        logger.LogInformation("Initialized Demo fuel card provider");
+        logger.LogDebug("Initialized Demo fuel card provider");
     }
 
     public Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)

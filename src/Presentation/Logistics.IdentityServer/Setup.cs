@@ -8,14 +8,12 @@ using Logistics.HostDefaults;
 using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure.Communications;
 using Logistics.Infrastructure.Persistence;
-using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Data;
 using Logistics.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
-using Serilog.Extensions.Logging;
 
 namespace Logistics.IdentityServer;
 
@@ -26,16 +24,12 @@ internal static class Setup
         var services = builder.Services;
         var configuration = builder.Configuration;
 
-        var serilogLogger = new SerilogLoggerFactory(Log.Logger)
-            .CreateLogger<IPersistenceInfrastructureBuilder>();
-
         // Configuration options
         services.Configure<ImpersonationOptions>(configuration.GetSection(ImpersonationOptions.SectionName));
 
         // Infrastructure layers
         services.AddCommunicationsInfrastructure(configuration);
         services.AddPersistenceInfrastructure(configuration)
-            .UseLogger(serilogLogger)
             .AddMasterDatabase()
             .AddTenantDatabase()
             .AddIdentity(identityBuilder =>

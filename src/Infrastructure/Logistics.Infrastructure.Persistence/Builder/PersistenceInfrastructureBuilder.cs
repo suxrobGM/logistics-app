@@ -10,7 +10,6 @@ using Logistics.Infrastructure.Persistence.Services.Feature;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Modules.Platform.ReadModels;
 using Logistics.Application.Abstractions.SystemSettings;
@@ -24,7 +23,6 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
 {
     private readonly IConfiguration configuration;
     private readonly IServiceCollection services;
-    private ILogger<IPersistenceInfrastructureBuilder>? logger;
 
     internal PersistenceInfrastructureBuilder(IServiceCollection services, IConfiguration configuration)
     {
@@ -50,12 +48,6 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         return this;
     }
 
-    public IPersistenceInfrastructureBuilder UseLogger(ILogger<IPersistenceInfrastructureBuilder> infrastructureLogger)
-    {
-        logger = infrastructureLogger;
-        return this;
-    }
-
     public IPersistenceInfrastructureBuilder AddMasterDatabase(Action<MasterDbContextOptions>? configure = null)
     {
         var options = new MasterDbContextOptions();
@@ -72,7 +64,6 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         services.AddScoped<IFeatureService, FeatureService>();
         services.AddScoped<IAIQuotaService, AIQuotaService>();
         services.AddScoped<ISystemSettingsService, SystemSettingsService>();
-        logger?.LogInformation("Added master database with connection string: {ConnectionString}", connectionString);
         return this;
     }
 
@@ -89,7 +80,6 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         {
             services.AddScoped<ITenantDatabaseService, TenantDatabaseService>();
             services.AddSingleton(tenantsSettings);
-            logger?.LogInformation("Tenants database settings: {Settings}", tenantsSettings);
         }
 
         options.ConnectionString = connectionString;
@@ -98,8 +88,6 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
         services.AddScoped(typeof(TenantRepository<,>));
         services.AddScoped<ISafetyReportReader, SafetyReportReader>();
-        logger?.LogInformation("Added default tenant database with connection string: {ConnectionString}",
-            connectionString);
         return this;
     }
 }

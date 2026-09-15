@@ -82,11 +82,10 @@ internal sealed class LicenseExpiryReminderService(
         if (sentCount > 0)
         {
             await tenantUow.SaveChangesAsync(ct);
+            logger.LogInformation(
+                "Sent {Count} license-expiry reminders for tenant {TenantName}",
+                sentCount, tenant.Name);
         }
-
-        logger.LogInformation(
-            "Sent {Count} license-expiry reminders for tenant {TenantName}",
-            sentCount, tenant.Name);
     }
 
     private async Task SendNotificationAsync(string tenantId, DriverLicense license, int daysUntilExpiry)
