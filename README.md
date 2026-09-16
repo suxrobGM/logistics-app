@@ -1,4 +1,4 @@
-# LogisticsX
+﻿# LogisticsX
 
 [![Build Status](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/build.yml)
 [![Deploy](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml)
@@ -189,7 +189,7 @@ The [Docker guide](docs/getting-started/docker-development.md) lists every servi
 
 | Part         | Stack                                                                       |
 | ------------ | --------------------------------------------------------------------------- |
-| Backend      | .NET 10, ASP.NET Core, EF Core, SignalR, Duende IdentityServer              |
+| Backend      | .NET 10, ASP.NET Core, EF Core, SignalR, Open.IdentityServer                |
 | Web portals  | Angular 22, spartan/ui, Tailwind CSS                                        |
 | Driver app   | Kotlin Multiplatform, Compose Multiplatform                                 |
 | Database     | PostgreSQL 18, one database per company                                     |

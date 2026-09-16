@@ -1,4 +1,4 @@
-# Feature Map
+﻿# Feature Map
 
 Stable starting points for finding code by feature. Read this before grepping. If a feature isn't here, it doesn't exist yet (or this file is stale - flag it).
 
@@ -437,7 +437,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Auth / OAuth2
 
-- API/UI: `Logistics.IdentityServer/` (Duende), all portal `pages/login/`
+- API/UI: `Logistics.IdentityServer/` (Open.IdentityServer), all portal `pages/login/`
 
 ### Tenants
 

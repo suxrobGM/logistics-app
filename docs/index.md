@@ -1,4 +1,4 @@
-# LogisticsX Documentation
+﻿# LogisticsX Documentation
 
 Welcome to the LogisticsX docs.
 
@@ -24,7 +24,7 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 | Component           | Technology            | Purpose                      |
 | ------------------- | --------------------- | ---------------------------- |
 | **API**             | .NET 10, ASP.NET Core | RESTful backend              |
-| **Identity Server** | Duende IdentityServer | OAuth2/OIDC auth             |
+| **Identity Server** | Open.IdentityServer   | OAuth2/OIDC auth             |
 | **Admin App**       | Angular 22            | Super admin management       |
 | **TMS Portal**      | Angular 22            | Dispatcher/manager interface |
 | **Customer Portal** | Angular 22            | Customer self-service        |

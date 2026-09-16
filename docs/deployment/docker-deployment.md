@@ -1,4 +1,4 @@
-# Docker Compose Deployment
+﻿# Docker Compose Deployment
 
 LogisticsX deploys as a set of containers defined by a hand-maintained Docker Compose file under [`deploy/`](https://github.com/suxrobGM/logistics-app/tree/main/deploy). The host runs plain `docker compose`; nginx (on the host) terminates TLS and reverse-proxies each subdomain to a loopback-bound container port.
 
@@ -90,7 +90,7 @@ All app ports bind to `127.0.0.1`, so the containers are reachable only through 
 
 Migrations are not run automatically in production. Apply them with `deploy/Run-ProdMigrator.ps1`, which loads `deploy/.env`, forces the Production environment, shows the target database host and requires you to type `migrate-prod` before running `Logistics.DbMigrator` once (`--exit`). See [Environment Variables](../configuration/environment-variables.md#running-the-migrator-against-production) for the variables it needs.
 
-The migrator also applies the **Duende operational store** schema to the master DB (`Keys`, `PersistedGrants`, ...), where the IdentityServer persists signing keys and refresh tokens so sessions survive redeploys. Run the migrator **before** deploying an IdentityServer image that expects those tables. The first deploy after introducing this store still logs everyone out once; later redeploys keep sessions alive.
+The migrator also applies the **identity operational store** schema to the master DB (`identity.persisted_grants` and friends), where IdentityServer persists refresh tokens so sessions survive redeploys. Signing keys live separately in `public.signing_keys`, also in the master DB. Run the migrator **before** deploying an IdentityServer image that expects those tables.
 
 ## Service management
 

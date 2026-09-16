@@ -1,4 +1,4 @@
----
+﻿---
 name: migration-creator
 description: Creates EF Core migrations for master or tenant databases. Use when adding new entities, modifying existing ones, or changing relationships. Follow the workflow to ensure correct migration generation and application.
 ---
@@ -15,9 +15,11 @@ You help create EF Core migrations for the multi-tenant database system.
   - DbContext: `TenantDbContext`
   - Project: `Logistics.Infrastructure.Persistence`
 
-- **Duende operational store** (in the master DB): IdentityServer signing keys and refresh tokens
-  - DbContext: `PersistedGrantDbContext` (Duende package; configured by `Data/DuendeOperationalStore.cs`), output `Migrations/Duende`
-  - Only changes on Duende package upgrades with schema changes - never for app entities
+- **Identity operational store** (in the master DB): IdentityServer refresh tokens and grants
+  - DbContext: `PersistedGrantDbContext` (Open.IdentityServer package; configured by `Data/OperationalStoreSetup.cs`), output `Migrations/OperationalStore`
+  - Only changes on Open.IdentityServer package upgrades with schema changes - never for app entities
+  - Never run `dotnet ef database update` against this context: its design-time factory ignores
+    `ConnectionStrings__MasterDatabase` and always targets `localhost:5432`. Use the DbMigrator.
 
 ## Creating Migrations
 
@@ -41,10 +43,10 @@ dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.
 dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context TenantDbContext -o Migrations/Tenant
 ```
 
-**For the Duende operational store (Duende upgrades only):**
+**For the identity operational store (package upgrades only):**
 
 ```bash
-dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context PersistedGrantDbContext -o Migrations/Duende
+dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context PersistedGrantDbContext -o Migrations/OperationalStore
 ```
 
 ## Workflow

@@ -1,4 +1,4 @@
-# Architecture Overview
+﻿# Architecture Overview
 
 LogisticsX is a Domain-Driven Design (DDD) monolith with CQRS, organized into clear layers and a modular infrastructure split into focused projects. The runtime is .NET 10 on PostgreSQL 18, deployed with Docker Compose.
 
@@ -136,7 +136,7 @@ A public clone gets an empty `private/` directory. Everything else builds and ru
 | .NET 10               | Runtime                                       |
 | ASP.NET Core          | Web framework                                 |
 | Entity Framework Core | ORM (lazy loading enabled)                    |
-| Duende IdentityServer | OAuth2 / OIDC                                 |
+| Open.IdentityServer   | OAuth2 / OIDC                                 |
 | MediatR               | CQRS dispatch + pipeline behaviors            |
 | FluentValidation      | Request validation                            |
 | Serilog               | Structured logging                            |
@@ -386,7 +386,7 @@ Accounting sync providers: QuickBooks Online and a Demo provider, selected throu
 | Project                    | Role                                                                                                 |
 | -------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `Logistics.API`            | REST API, SignalR hubs, Hangfire background jobs, webhooks (Stripe, ELD)                             |
-| `Logistics.IdentityServer` | OAuth2 / OIDC via Duende IdentityServer, JWT issuance, user management                               |
+| `Logistics.IdentityServer` | OAuth2 / OIDC via Open.IdentityServer, JWT issuance, user management                                 |
 | `Logistics.McpServer`      | Library composed into the API: MCP over Streamable HTTP at `/mcp`, exposing the agent tool catalogue |
 | `Logistics.TelegramBot`    | Library composed into the API: Telegram bot for driver / dispatcher commands                         |
 | `Logistics.DbMigrator`     | Console app: standalone EF Core migrations runner (master + tenant)                                  |

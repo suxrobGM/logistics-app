@@ -1,4 +1,4 @@
-# Features
+﻿# Features
 
 Everything LogisticsX does today, grouped by app. Items that are planned but not built live in the [roadmap](roadmap/README.md).
 
@@ -170,5 +170,5 @@ The web app for the platform operator.
 | Multi-tenant | Each company gets its own PostgreSQL database. A master database holds the companies, subscriptions, and shared settings. |
 | Live updates | GPS positions, messages, and notifications arrive over SignalR connections.                                               |
 | API          | A REST API with OpenAPI docs. The Angular apps use TypeScript clients generated from the spec.                            |
-| Sign-in      | OAuth2 and OpenID Connect through Duende IdentityServer, with JWT access tokens and refresh token rotation.               |
+| Sign-in      | OAuth2 and OpenID Connect through Open.IdentityServer, with JWT access tokens and refresh token rotation.                 |
 | Deployment   | Docker Compose, with builds and deploys on GitHub Actions.                                                                |
