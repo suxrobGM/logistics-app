@@ -1,0 +1,15 @@
+namespace Logistics.Mediator;
+
+/// <summary>
+/// Wraps request handling. Behaviours run in the order they were registered with the service
+/// collection, the first registered being outermost. A behaviour that returns without awaiting
+/// <paramref name="next" /> short-circuits the pipeline and the handler never runs.
+/// </summary>
+public interface IPipelineBehavior<in TRequest, TResponse>
+    where TRequest : notnull
+{
+    Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken);
+}

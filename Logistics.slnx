@@ -17,6 +17,7 @@
     <Project Path="src/Core/Logistics.Application/Logistics.Application.csproj" />
     <Project Path="src/Core/Logistics.Mappings/Logistics.Mappings.csproj" />
     <Project Path="src/Core/Logistics.Domain.Primitives/Logistics.Domain.Primitives.csproj" />
+    <Project Path="src/Core/Logistics.Mediator/Logistics.Mediator.csproj" />
   </Folder>
   <Folder Name="/Shared/">
     <Project Path="src/Shared/Logistics.Shared.Models/Logistics.Shared.Models.csproj" />
