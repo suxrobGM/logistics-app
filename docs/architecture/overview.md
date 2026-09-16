@@ -137,7 +137,7 @@ A public clone gets an empty `private/` directory. Everything else builds and ru
 | ASP.NET Core          | Web framework                                 |
 | Entity Framework Core | ORM (lazy loading enabled)                    |
 | Open.IdentityServer   | OAuth2 / OIDC                                 |
-| MediatR               | CQRS dispatch + pipeline behaviors            |
+| Logistics.Mediator    | In-repo CQRS dispatch + pipeline behaviours   |
 | FluentValidation      | Request validation                            |
 | Serilog               | Structured logging                            |
 | SignalR               | Real-time hubs (tracking, chat, notification) |
@@ -187,7 +187,7 @@ A public clone gets an empty `private/` directory. Everything else builds and ru
 
 ### CQRS
 
-Commands and queries are separated and dispatched through MediatR. Both extend `IRequest<TResponse>` via the `ICommand<T>` / `IQuery<T>` markers in `Logistics.Application.Abstractions.Common`. A command targets the master or tenant DB purely by which unit of work its handler injects (`IMasterUnitOfWork` vs `ITenantUnitOfWork`) - there is no separate marker interface. Handlers own their own `SaveChangesAsync` calls - there is no auto-transaction wrapper.
+Commands and queries are separated and dispatched through `Logistics.Mediator` (`src/Core/Logistics.Mediator`), an in-repo replacement for MediatR, which moved to a commercial licence. Both extend `IRequest<TResponse>` via the `ICommand<T>` / `IQuery<T>` markers in `Logistics.Application.Abstractions.Common`. A command targets the master or tenant DB purely by which unit of work its handler injects (`IMasterUnitOfWork` vs `ITenantUnitOfWork`) - there is no separate marker interface. Handlers own their own `SaveChangesAsync` calls - there is no auto-transaction wrapper.
 
 Commands and queries live under `Logistics.Application/Modules/{Module}/{Feature}/{Commands|Queries}/`. See [module-layout.md](module-layout.md) for the six modules and the feature-folder convention.
 
@@ -196,15 +196,13 @@ public class CreateLoadCommand : ICommand;                 // flat fields, bound
 public record GetLoadByIdQuery(Guid Id) : IQuery<Result<LoadDto>>;
 ```
 
-### MediatR Pipeline
+### Request Pipeline
 
-A single pipeline applies to both commands and queries. Behaviours are constrained to `IRequest<TResponse>` where `TResponse : IResult, new()`, so they bind to `ICommand<T>` and `IQuery<T>` alike.
+A single pipeline applies to both commands and queries. `ICommand<T>` and `IQuery<T>` constrain `TResponse` to `Result`, so every request satisfies every behaviour's constraints.
 
 ```mermaid
 flowchart LR
-    Req["Request"] --> Lg["LoggingBehavior"]
-    Lg --> Ex["UnhandledExceptionBehaviour"]
-    Ex --> V["ValidationBehaviour<br/>(FluentValidation)"]
+    Req["Request"] --> V["ValidationBehaviour<br/>(FluentValidation)"]
     V --> F["FeatureCheckBehaviour"]
     F --> H["Handler"]
     H --> Resp["Response"]
@@ -212,7 +210,7 @@ flowchart LR
 
 `FeatureCheckBehaviour` reads the optional `[RequiresFeature]` attribute on the request type and short-circuits with a `Result.Fail` when the tenant's plan or admin lock disables the feature; the lookup is cached per closed generic instantiation.
 
-Hangfire jobs do not go through the MediatR pipeline, so `[RequiresFeature]` never applies to them - a job must gate features itself. CLAUDE.md holds the canonical rule.
+Hangfire jobs do not go through the request pipeline, so `[RequiresFeature]` never applies to them - a job must gate features itself. CLAUDE.md holds the canonical rule.
 
 ### Repository + Specification
 

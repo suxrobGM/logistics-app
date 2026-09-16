@@ -1,4 +1,4 @@
----
+﻿---
 paths:
   - "src/Presentation/Logistics.API/**/*.cs"
 ---
@@ -21,7 +21,7 @@ paths:
 
 ## Request binding
 
-- Bind the command/query **directly** as the request body - `Create([FromBody] CreateLoadCommand request)`. The MediatR request _is_ the wire contract; there is no `*Dto` wrapper on the write side.
+- Bind the command/query **directly** as the request body - `Create([FromBody] CreateLoadCommand request)`. The command/query record _is_ the wire contract; there is no `*Dto` wrapper on the write side.
 - For `PUT`/`DELETE`/`GET {id}`, take the id from the route and assign it: `request.Id = id;` (or `new GetLoadByIdQuery { Id = id }`).
 - Add a dedicated `*Request` record **only** when the wire shape must differ from the command (e.g. the client sends a subset, or a field is server-derived). Map it to the command in the controller. Don't introduce one by default.
 

@@ -1,4 +1,4 @@
----
+﻿---
 name: refactor-and-split
 description: Refactor existing code without changing behavior - split oversized files, extract duplicates, simplify over-engineered patterns. Use when files exceed size thresholds, code is duplicated 4+ times, or has speculative abstractions, dead options, or wrapper indirection. Triggers "refactor", "split", "deduplicate", "simplify", "untangle", "clean up". Complements built-in `simplify` (which only reviews recent diffs).
 ---
@@ -98,7 +98,7 @@ After every refactor:
 - Relevant test slice passes (`dotnet test --filter "{Class}Tests"`)
 - For Angular: `bun run lint` and the page renders (eyeball check)
 - No `using` becomes unused - clean imports
-- No public API surface changed (DTOs, controller routes, MediatR command/query records all stable)
+- No public API surface changed (DTOs, controller routes, command/query records all stable)
 
 If a refactor _requires_ changing public surface, that's no longer behavior-preserving - flag it and ask the user before continuing.
 
@@ -162,7 +162,7 @@ Code shapes that almost always benefit from simplification. Each item lists what
 
 - **Manual tenant filter** like `.Where(x => x.TenantId == tenantId)` - `TenantDbContext` already scopes queries per tenant. **Action:** drop the redundant `Where`.
 - **`.Include(...)` for navigation properties** - lazy loading is enabled. **Action:** delete the `Include`; let lazy load fire.
-- **MediatR `Send` from inside another handler in the same module** when a service call would do - usually fine to keep (convention), but flag if the chain is 3+ deep.
+- **`mediator.Send` from inside another handler in the same module** when a service call would do - usually fine to keep (convention), but flag if the chain is 3+ deep.
 - **String-concatenated SQL in `FromSqlRaw`** - security smell. **Action:** convert to `FromSqlInterpolated`. Don't just simplify - fix.
 
 ## Duplication patterns to watch for
@@ -190,13 +190,13 @@ LogisticsX-specific patterns that recur and are worth de-duplicating:
 
 ### Don't simplify (LogisticsX-specific)
 
-- **MediatR command/query handlers** even for one-line operations - the project convention requires this shape so cross-cutting behaviors (validation, logging, auditing) work uniformly. Don't replace with direct service calls.
+- **Command/query handlers** even for one-line operations - the project convention requires this shape so cross-cutting behaviors (validation, logging, auditing) work uniformly. Don't replace with direct service calls.
 - **`internal sealed` modifiers on handlers** - required by convention even though `public` would compile.
 - **`IRepository<T>` / `IUnitOfWork`** - these are convention layers; don't bypass to `DbContext` directly even when "simpler".
 - **Mapperly partial classes / `[Mapper]` attribute** - the pattern is repo-wide; don't replace with manual mapping.
 - **Existing `partial class` splits** for entities (Load, Trip, Container) - these were intentional. Don't recombine.
 - **`AuditableEntity` inheritance** when an entity could "just be" a record - auditing is enforced via interceptor.
-- **FluentValidation validators** even when they look thin - they participate in the MediatR pipeline.
+- **FluentValidation validators** even when they look thin - they participate in the request pipeline.
 - **Standalone components / signals / native control flow** in Angular - these are project-mandated.
 
 When in doubt, check `.claude/rules/` - if a pattern is documented as a convention there, don't simplify it away.
@@ -222,7 +222,7 @@ Use the `commit` skill afterwards.
 - [ ] File sizes now under the relevant soft thresholds
 - [ ] Duplicates extracted have at least 4 call sites
 - [ ] Removed code has no readers (`Find Usages` clean across the solution)
-- [ ] Project conventions preserved (handlers still MediatR, mappers still Mapperly, etc.)
+- [ ] Project conventions preserved (handlers still dispatched, mappers still Mapperly, etc.)
 - [ ] One concern per file
 - [ ] Commits split logically (simplify → dedup → split)
 

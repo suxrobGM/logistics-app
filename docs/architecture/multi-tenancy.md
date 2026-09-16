@@ -1,4 +1,4 @@
-# Multi-Tenancy Architecture
+﻿# Multi-Tenancy Architecture
 
 LogisticsX uses **database-per-tenant** isolation: a single master database stores tenants, subscriptions, and super-admin accounts; every tenant company gets its own PostgreSQL database with the full operational schema.
 
@@ -118,7 +118,7 @@ If none of the three resolve, `InvalidTenantException` is thrown.
 
 When there is no `HttpContext` (Hangfire workers, `DbMigrator`, integration tests), `CurrentTenantAccessor` returns a default tenant pointing at the connection string from `TenantDbContextOptions`. Jobs that need to run for a specific tenant set the connection string explicitly before opening `TenantDbContext`.
 
-Recurring jobs fan out per tenant with `TenantJobRunner.ForEachTenantAsync` and must check `IFeatureService` inside the body (they bypass the MediatR pipeline, so `[RequiresFeature]` is inert). See CLAUDE.md and [backend-guide.md](../development/backend-guide.md#background-jobs) for the canonical rule.
+Recurring jobs fan out per tenant with `TenantJobRunner.ForEachTenantAsync` and must check `IFeatureService` inside the body (they bypass the request pipeline, so `[RequiresFeature]` is inert). See CLAUDE.md and [backend-guide.md](../development/backend-guide.md#background-jobs) for the canonical rule.
 
 ### Subscription enforcement
 

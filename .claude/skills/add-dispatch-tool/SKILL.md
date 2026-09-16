@@ -1,4 +1,4 @@
----
+﻿---
 name: add-dispatch-tool
 description: Add a new tool to the AI agents (dispatch and copilot). Use when the user wants to give an agent a new capability (e.g., "add a tool that returns load board listings older than 24h"). Walks through the one file that must change, the domain folder to pick, and the silently load-bearing tool metadata.
 ---
@@ -44,7 +44,7 @@ using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
-using MediatR;
+using Logistics.Mediator;
 
 namespace Logistics.Infrastructure.AI.Tools.Operations;   // match the folder
 

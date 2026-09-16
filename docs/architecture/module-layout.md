@@ -1,4 +1,4 @@
-# Application Module Layout
+﻿# Application Module Layout
 
 `Logistics.Application` is organised into six modules. Each module owns the features inside one bounded context - pick a module by context, not by entity.
 
@@ -58,7 +58,7 @@ When two modules both look right, pick the one whose other features the new comm
 
 ## Module registrar
 
-Every module ships a `{Module}ModuleRegistrar.cs` that exposes a single `Add{Module}Module(IServiceCollection)` extension. Most are empty today - MediatR handlers, FluentValidation validators, and `IApplicationService` implementations are registered assembly-wide by the private `AddApplicationCommon` / `AddApplicationServices` scans in `Logistics.Application/Registrar.cs`. Only put a service in a module registrar when the global scan can't cover it (decorators, named instances, keyed services, factories).
+Every module ships a `{Module}ModuleRegistrar.cs` that exposes a single `Add{Module}Module(IServiceCollection)` extension. Most are empty today - request handlers, FluentValidation validators, and `IApplicationService` implementations are registered assembly-wide by the private `AddApplicationCommon` / `AddApplicationServices` scans in `Logistics.Application/Registrar.cs`. Only put a service in a module registrar when the global scan can't cover it (decorators, named instances, keyed services, factories).
 
 The whole layer is wired by the single aggregate `services.AddApplicationLayer()`, which runs `AddApplicationCommon`, `AddApplicationServices`, then all six `Add{Module}Module()` calls internally. The **API** is the only host that calls it - from `Logistics.API/Setup.cs` (`ConfigureServices`), reached through the thin `LogisticsHost.Run` shell in `Program.cs`. IdentityServer and DbMigrator do **not** wire the module registrars; DbMigrator pulls in only the narrow slices it needs for seeding (`AddApplicationTaxServices`, `AddApplicationFuelCardServices`).
 

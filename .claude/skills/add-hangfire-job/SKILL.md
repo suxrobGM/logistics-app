@@ -1,4 +1,4 @@
----
+﻿---
 name: add-hangfire-job
 description: Add a recurring or on-demand Hangfire background job (nightly sync, reminder sweep, cleanup, quarter close). Use when work must run on a schedule or outside a request - e.g. "sync fuel card transactions nightly", "email drivers whose licence expires in 30 days". Codifies the tenant fan-out, the per-tenant DI scope, and the feature gate that [RequiresFeature] cannot provide here.
 ---
@@ -9,7 +9,7 @@ Jobs live in `src/Presentation/Logistics.API/Jobs/`. There is no base class - a 
 with a primary constructor and a `static ScheduleJobs()`.
 
 **The thing that makes jobs different from everything else in this repo: they do not go through the
-MediatR pipeline.** No `FeatureCheckBehaviour`, no validation behaviour, no `ICurrentTenantAccessor`
+request pipeline.** No `FeatureCheckBehaviour`, no validation behaviour, no `ICurrentTenantAccessor`
 populated from a request. Every guard you get for free in a handler you must write yourself here.
 
 ## Decide first
@@ -77,7 +77,7 @@ why: `IftaQuarterCloseJob` needs its breadcrumb purge to run for every tenant wh
 snapshot stays IFTA-gated. So the check goes in **your body**, first thing:
 
 ```csharp
-// Jobs bypass the MediatR pipeline, so the [RequiresFeature] gate on the commands does not
+// Jobs bypass the request pipeline, so the [RequiresFeature] gate on the commands does not
 // apply here - check explicitly, or a downgraded tenant keeps having expenses written.
 var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
 if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.FuelCards))

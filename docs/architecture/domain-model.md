@@ -1,4 +1,4 @@
-# Domain Model
+﻿# Domain Model
 
 The domain layer (`src/Core/Logistics.Domain/`) holds entities, aggregates, value objects, domain events, and specifications. Entities are split into two databases by marker interface:
 
@@ -391,7 +391,7 @@ classDiagram
 
 ## Domain events
 
-Entities raise events from their methods. Events are dispatched via MediatR after `SaveChanges` succeeds, so a failed transaction never publishes its events.
+Entities raise events from their methods. Events are dispatched via the mediator after `SaveChanges` succeeds, so a failed transaction never publishes its events.
 
 ```mermaid
 sequenceDiagram

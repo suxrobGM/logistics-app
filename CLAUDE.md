@@ -1,4 +1,4 @@
-# CLAUDE.md
+﻿# CLAUDE.md
 
 Multi-tenant fleet management platform for trucking companies (intermodal containers, vehicle transport, freight).
 
@@ -48,11 +48,11 @@ cd private/src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 
 ## Architecture (first-pass facts)
 
-- **DDD + CQRS**: Commands/Queries via MediatR in `src/Core/Logistics.Application/`. Requests implement `ICommand<T>` or `IQuery<T>` (in `Application.Abstractions/Common/`); handlers own their `SaveChangesAsync` calls (no auto-transaction wrapper)
+- **DDD + CQRS**: Commands/Queries via `Logistics.Mediator` (in-repo, replaced MediatR) in `src/Core/Logistics.Application/`. Requests implement `ICommand<T>` or `IQuery<T>` (in `Application.Abstractions/Common/`); handlers own their `SaveChangesAsync` calls (no auto-transaction wrapper)
 - **Multi-tenant**: Master DB (tenants, subscriptions) + one DB per tenant. Tenant resolved per-request via `CurrentTenantAccessor` (`ICurrentTenantAccessor`) (priority: MCP API key → `X-Tenant` header → JWT claim)
 - **Lazy loading**: EF Core lazy loading enabled - do NOT use `.Include()` for navigation properties. The flip side: reading a navigation property inside a mapper or a list loop is an N+1. Batch the lookup and pass the value in (see [mapperly.md](.claude/rules/backend/mapperly.md))
 - **Modular infrastructure**: 14 focused projects under `src/Infrastructure/` (see [overview.md](docs/architecture/overview.md)). Shared HTTP-JSON plumbing, webhook signature validation (`WebhookSignature`), and the provider factory base for the third-party providers live in `Integrations.Common` - do NOT hand-roll a fourth copy
-- **Hangfire jobs bypass the MediatR pipeline**, so `[RequiresFeature]` is inert there. A job must check `IFeatureService` itself, and should fan out via `TenantJobRunner.ForEachTenantAsync` (`src/Presentation/Logistics.API/Jobs/`)
+- **Hangfire jobs bypass the request pipeline**, so `[RequiresFeature]` is inert there. A job must check `IFeatureService` itself, and should fan out via `TenantJobRunner.ForEachTenantAsync` (`src/Presentation/Logistics.API/Jobs/`)
 
 ### Layer boundaries
 

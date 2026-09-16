@@ -1,4 +1,4 @@
----
+﻿---
 paths:
   - "**/*.cs"
 ---
@@ -11,7 +11,7 @@ surrounding file and let the build tell you. What follows is the part no tool ch
 ## Non-obvious defaults
 
 - Primary constructors for DI; one type per file matching the filename.
-- `Async` suffix on async methods (**except** MediatR handlers). Always accept `CancellationToken`; never `.Result` / `.Wait()`.
+- `Async` suffix on async methods (**except** request handlers). Always accept `CancellationToken`; never `.Result` / `.Wait()`.
 
 ## Domain Events
 
