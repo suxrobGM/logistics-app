@@ -1,4 +1,4 @@
-﻿using Logistics.Domain.Entities;
+using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Persistence.Conventions;
 using Logistics.Infrastructure.Persistence.Extensions;
 using Logistics.Infrastructure.Persistence.Helpers;
@@ -81,14 +81,6 @@ public class MasterDbContext : IdentityDbContext<
         builder.Entity<IdentityUserLogin<Guid>>().ToTable("user_logins");
         builder.Entity<IdentityUserRole<Guid>>().ToTable("user_roles");
         builder.Entity<IdentityUserToken<Guid>>().ToTable("user_tokens");
-
-        builder.Entity<SigningKey>(key =>
-        {
-            key.ToTable("signing_keys").HasKey(x => x.Id);
-            key.Property(x => x.Algorithm).HasMaxLength(20).IsRequired();
-            key.Property(x => x.Data).IsRequired();
-            key.HasIndex(x => x.Created);
-        });
 
         // Scan and apply all configurations from the /Data/Configurations folder
         // for entities implementing IMasterEntity

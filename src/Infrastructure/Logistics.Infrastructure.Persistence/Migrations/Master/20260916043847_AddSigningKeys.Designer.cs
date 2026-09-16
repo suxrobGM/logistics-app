@@ -2058,7 +2058,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("user_tenant_accesses", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Infrastructure.Persistence.Data.SigningKey", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.SigningKey", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

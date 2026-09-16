@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-using Logistics.Infrastructure.Persistence.Data;
+using Logistics.Domain.Entities;
 
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Tokens;
@@ -25,11 +25,9 @@ public class SigningKeyProtector(IDataProtectionProvider dataProtectionProvider)
     public SigningKey Create()
     {
         using var rsa = RSA.Create(2048);
-        var id = Guid.NewGuid();
 
         return new SigningKey
         {
-            Id = id,
             Created = DateTime.UtcNow,
             Algorithm = SecurityAlgorithms.RsaSha256,
             Data = protector.Protect(

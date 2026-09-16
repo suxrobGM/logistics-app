@@ -1,14 +1,15 @@
-namespace Logistics.Infrastructure.Persistence.Data;
+using Logistics.Domain.Core;
+
+namespace Logistics.Domain.Entities;
 
 /// <summary>
 ///     A token signing key for the identity server. Lives in the master DB beside the data
 ///     protection key ring, because the key ring is what protects <see cref="Data"/>.
+///     The <see cref="Entity.Id"/> is also the JWK <c>kid</c> published in the discovery
+///     document and in every token header.
 /// </summary>
-public class SigningKey
+public class SigningKey : Entity, IMasterEntity
 {
-    /// <summary>Also the JWK <c>kid</c> published in the discovery document and in every token header.</summary>
-    public Guid Id { get; set; }
-
     public DateTime Created { get; set; }
 
     public string Algorithm { get; set; } = null!;
