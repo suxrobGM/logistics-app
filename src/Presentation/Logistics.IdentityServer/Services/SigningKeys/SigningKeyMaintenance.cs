@@ -25,7 +25,7 @@ public class SigningKeyMaintenance(
 
     private readonly SigningKeyOptions options = options.Value;
 
-    public async Task RunAsync(CancellationToken cancellationToken)
+    public async Task EnsureKeysAsync(CancellationToken cancellationToken)
     {
         using var scope = scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<MasterDbContext>();
@@ -68,8 +68,6 @@ public class SigningKeyMaintenance(
             cache.Invalidate();
             logger.LogInformation("Published a new signing key");
         }
-
-        await SweepConsumedGrantsAsync(scope, cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -80,7 +78,8 @@ public class SigningKeyMaintenance(
         {
             try
             {
-                await RunAsync(stoppingToken);
+                await EnsureKeysAsync(stoppingToken);
+                await SweepConsumedGrantsAsync(stoppingToken);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
@@ -93,8 +92,9 @@ public class SigningKeyMaintenance(
     ///     The operational store only expires grants, so one-time refresh tokens that were already
     ///     redeemed would otherwise sit there until their absolute lifetime runs out.
     /// </summary>
-    private async Task SweepConsumedGrantsAsync(IServiceScope scope, CancellationToken cancellationToken)
+    private async Task SweepConsumedGrantsAsync(CancellationToken cancellationToken)
     {
+        using var scope = scopeFactory.CreateScope();
         var grants = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
         var cutoff = DateTime.UtcNow - options.ConsumedGrantRetention;
 

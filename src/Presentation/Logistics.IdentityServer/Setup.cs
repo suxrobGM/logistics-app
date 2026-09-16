@@ -198,7 +198,7 @@ internal static class Setup
         {
             try
             {
-                maintenance.RunAsync(CancellationToken.None).GetAwaiter().GetResult();
+                maintenance.EnsureKeysAsync(CancellationToken.None).GetAwaiter().GetResult();
                 return;
             }
             catch (Exception ex) when (attempt < 5)
