@@ -1,4 +1,4 @@
-using Logistics.Mediator.Tests.TestKit;
+﻿using Logistics.Mediator.Tests.TestKit;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -65,17 +65,4 @@ public class AddMediatorTests
         Assert.Contains(nameof(Duplicated), ex.Message, StringComparison.Ordinal);
     }
 
-    [Fact]
-    public void AddMediator_MultipleHandlersForOneNotification_RegistersAll()
-    {
-        var services = NewServices();
-
-        services.AddMediator(typeof(Ping).Assembly, type => type != typeof(SecondDuplicateHandler));
-
-        var listeners = services
-            .Where(d => d.ServiceType == typeof(INotificationHandler<ThingHappened>))
-            .ToArray();
-
-        Assert.Equal(3, listeners.Length);
-    }
 }

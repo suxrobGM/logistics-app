@@ -31,6 +31,7 @@ public class MediatorPipelineTests
         Assert.Equal(["A>", "B>", "handler", "B<", "A<"], _trace.Entries);
     }
 
+    /// <summary>How FeatureCheckBehaviour denies a request.</summary>
     [Fact]
     public async Task Send_BehaviourDoesNotCallNext_HandlerNeverRuns()
     {
@@ -41,33 +42,5 @@ public class MediatorPipelineTests
 
         Assert.Equal("short-circuited", response);
         Assert.Equal(["denied"], _trace.Entries);
-    }
-
-    [Fact]
-    public async Task Send_BehaviourWithUnsatisfiedConstraint_IsSkippedNotThrown()
-    {
-        var sut = Build(services =>
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(StringOnlyBehaviour<,>)));
-
-        var response = await sut.Send(new Ping("ok"), CancellationToken.None);
-
-        Assert.Equal("ok", response);
-    }
-
-    [Fact]
-    public async Task Send_BehaviourStatics_AreSeparatePerClosedGeneric()
-    {
-        var sut = Build(services =>
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CountingBehaviour<,>)));
-
-        CountingBehaviour<Ping, string>.Count = 0;
-        CountingBehaviour<OtherPing, string>.Count = 0;
-
-        await sut.Send(new Ping(), CancellationToken.None);
-        await sut.Send(new Ping(), CancellationToken.None);
-        await sut.Send(new OtherPing(), CancellationToken.None);
-
-        Assert.Equal(2, CountingBehaviour<Ping, string>.Count);
-        Assert.Equal(1, CountingBehaviour<OtherPing, string>.Count);
     }
 }

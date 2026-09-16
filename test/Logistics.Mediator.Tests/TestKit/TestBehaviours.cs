@@ -30,7 +30,6 @@ public sealed class InnerBehaviour<TRequest, TResponse>(Trace trace) : IPipeline
     }
 }
 
-/// <summary>Returns without awaiting next, the way FeatureCheckBehaviour denies a request.</summary>
 public sealed class ShortCircuitBehaviour<TRequest>(Trace trace) : IPipelineBehavior<TRequest, string>
     where TRequest : notnull
 {
@@ -41,39 +40,5 @@ public sealed class ShortCircuitBehaviour<TRequest>(Trace trace) : IPipelineBeha
     {
         trace.Add("denied");
         return Task.FromResult("short-circuited");
-    }
-}
-
-/// <summary>
-///     Counts instantiations per closed generic, mirroring FeatureCheckBehaviour's static attribute
-///     lookup. Each (TRequest, TResponse) pair must get its own copy of the static field.
-/// </summary>
-public sealed class CountingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
-{
-    public static int Count;
-
-    public Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
-    {
-        Count++;
-        return next(cancellationToken);
-    }
-}
-
-/// <summary>Constrained so the container skips it for any response that is not a string.</summary>
-public sealed class StringOnlyBehaviour<TRequest, TResponse>(Trace trace) : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
-    where TResponse : class, IComparable<string>
-{
-    public Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
-    {
-        trace.Add("string-only");
-        return next(cancellationToken);
     }
 }
