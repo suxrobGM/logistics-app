@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0"/>
-    <PackageReference Include="AWSSDK.S3" Version="4.0.11.7"/>
+    <PackageReference Include="Azure.Storage.Blobs"/>
+    <PackageReference Include="AWSSDK.S3"/>
   </ItemGroup>
 
   <ItemGroup>

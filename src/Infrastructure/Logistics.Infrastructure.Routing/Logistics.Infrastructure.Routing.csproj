@@ -11,10 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.12"/>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12"/>
-    <PackageReference Include="NetTopologySuite" Version="2.6.0"/>
-    <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ" Version="4.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions"/>
+    <PackageReference Include="Microsoft.Extensions.Http"/>
+    <PackageReference Include="NetTopologySuite"/>
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON4STJ"/>
   </ItemGroup>
 
   <ItemGroup>
