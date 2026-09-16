@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\src\Core\Logistics.Application\Logistics.Application.csproj" />
     <ProjectReference Include="..\..\src\Core\Logistics.Application.Abstractions\Logistics.Application.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\Core\Logistics.Domain\Logistics.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Core\Logistics.Mediator\Logistics.Mediator.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.AI\Logistics.Infrastructure.AI.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Communications\Logistics.Infrastructure.Communications.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Documents\Logistics.Infrastructure.Documents.csproj" />

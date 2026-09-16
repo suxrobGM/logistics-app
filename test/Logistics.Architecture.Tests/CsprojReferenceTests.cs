@@ -1,4 +1,4 @@
-﻿using Xunit;
+using Xunit;
 using Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
 namespace Logistics.Architecture.Tests;
@@ -91,7 +91,7 @@ public class CsprojReferenceTests
     {
         get
         {
-            var root = Path.GetDirectoryName(CsprojAssertions.ResolveRepoFile("Logistics.slnx"))!;
+            var root = CsprojAssertions.ResolveRepoFile();
             var sep = Path.DirectorySeparatorChar;
             var data = new TheoryData<string>();
 

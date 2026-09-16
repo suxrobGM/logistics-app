@@ -141,6 +141,24 @@ public class BoundaryTests
             .Check(AssemblyAnchors.Architecture);
     }
 
+    /// <summary>
+    /// Logistics.Mediator sits below Logistics.Domain, so it is the lowest leaf in the graph.
+    /// Referencing anything of ours from inside it would invert that.
+    /// </summary>
+    [Fact]
+    public void Mediator_must_not_depend_on_any_other_Logistics_assembly()
+    {
+        Classes().That().ResideInAssembly(AssemblyAnchors.Mediator)
+            .Should().FollowCustomCondition(
+                cls => !cls.Dependencies.Any(d =>
+                    d.Target.FullName is { } name
+                    && name.StartsWith("Logistics.", StringComparison.Ordinal)
+                    && !name.StartsWith("Logistics.Mediator", StringComparison.Ordinal)),
+                "not depend on any other Logistics.* assembly",
+                "depends on another Logistics.* assembly")
+            .Check(AssemblyAnchors.Architecture);
+    }
+
     private static bool DependsOnNamespace(ArchUnitNET.Domain.IType cls, string namespacePrefix) =>
         cls.Dependencies.Any(d =>
             d.Target.FullName is { } fullName &&

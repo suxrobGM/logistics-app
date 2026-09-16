@@ -5,6 +5,9 @@
 //
 // Adding a new infrastructure project? Add its anchor to AllInfrastructure below - the
 // ArchLoader architecture and the boundary Theory both derive from that one array.
+//
+// Adding a new project under src/Core? Give it an anchor here, add it to the LoadAssemblies
+// call, and write the rule that pins its place in the graph. Nothing else will check it.
 
 using ArchUnitNET.Loader;
 using Logistics.Application.Abstractions.CurrentUser;
@@ -18,6 +21,7 @@ internal static class AssemblyAnchors
     public static readonly Assembly Application = typeof(Logistics.Application.Registrar).Assembly;
     public static readonly Assembly ApplicationAbstractions = typeof(ICurrentUserService).Assembly;
     public static readonly Assembly Domain = typeof(Logistics.Domain.Entities.Tenant).Assembly;
+    public static readonly Assembly Mediator = typeof(global::Logistics.Mediator.IMediator).Assembly;
 
     public static readonly Assembly InfrastructureAI = typeof(Logistics.Infrastructure.AI.Registrar).Assembly;
     public static readonly Assembly InfrastructureAccounting = typeof(Logistics.Infrastructure.Integrations.Accounting.Registrar).Assembly;
@@ -65,6 +69,6 @@ internal static class AssemblyAnchors
         ?? throw new InvalidOperationException($"No infrastructure anchor for assembly '{name}'.");
 
     public static readonly ArchitectureModel Architecture = new ArchLoader()
-        .LoadAssemblies([Application, ApplicationAbstractions, Domain, .. AllInfrastructure])
+        .LoadAssemblies([Application, ApplicationAbstractions, Domain, Mediator, .. AllInfrastructure])
         .Build();
 }
