@@ -55,7 +55,7 @@ Breaking change: append `!` before the colon, e.g. `feat(api)!: drop v1 endpoint
 3. If nothing is staged, stage the files relevant to the request. Never stage unrelated changes.
 4. Skip secrets, credential files, build output, and large binaries. Ask before adding anything that looks like one.
 5. Pick the single type that describes the dominant change.
-6. Commit with a bash heredoc so quoting stays safe. Use the **Bash** tool, not the PowerShell tool:
+6. Commit with a heredoc so quoting stays safe:
 
 ```bash
 git commit -m "$(cat <<'MSG'
@@ -64,17 +64,17 @@ MSG
 )"
 ```
 
-This repo exposes both a Bash tool and a PowerShell tool, and they take different
-syntax. The PowerShell here-string `@'...'@` is not valid in bash. Passed to the
-Bash tool it survives as literal text, and the subject line commits as
-`@ feat(billing): ...`. Never use `@'...'@` with the Bash tool. If you do use the
-PowerShell tool, the closing `'@` must sit at column 0 or PowerShell fails to parse.
+Shell syntax is not portable, and the heredoc above is bash. The lookalike here-string
+`@'...'@` is PowerShell. Mixing the two is the common failure: in bash the `@` is not
+special, so it survives into the message and the subject commits as
+`@ feat(billing): ...`. In PowerShell the closing `'@` must sit at column 0 or the parse
+fails. Confirm which shell you are invoking before writing any multi-line string.
 
-For a subject plus body, repeated `-m` flags work in either shell and avoid the
-whole problem:
+Repeated `-m` flags need no heredoc and behave the same in every shell. Prefer them
+whenever the message has a body:
 
 ```bash
-git commit -m "build: adopt central package management" -m "One sentence of why."
+git commit -m "fix(http): handle missing accept header" -m "One sentence of why."
 ```
 
 7. Run `git log -1 --format=%s` and read the subject back. A stray `@`, a leading
