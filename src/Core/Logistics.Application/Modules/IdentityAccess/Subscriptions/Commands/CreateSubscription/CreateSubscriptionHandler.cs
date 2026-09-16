@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -12,7 +13,7 @@ internal sealed class CreateSubscriptionHandler(
     ITenantUnitOfWork tenantUow,
     IStripeSubscriptionService stripeSubscriptionService,
     IStripeCustomerService stripeCustomerService,
-    ILogger<CreateSubscriptionHandler> logger) : IAppRequestHandler<CreateSubscriptionCommand, Result>
+    ILogger<CreateSubscriptionHandler> logger) : IRequestHandler<CreateSubscriptionCommand, Result>
 {
     /// <summary>No-card trial granted on a tenant's first subscription. Marketed on the pricing page.</summary>
     private const int FirstSubscriptionTrialDays = 30;

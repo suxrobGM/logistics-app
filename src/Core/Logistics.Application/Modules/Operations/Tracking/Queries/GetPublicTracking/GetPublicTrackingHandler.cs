@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Storage;
 using Logistics.Application.Modules.Operations.Tracking.Commands;
@@ -14,7 +15,7 @@ internal sealed class GetPublicTrackingHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorageService,
     ICommandEnqueuer commandEnqueuer)
-    : IAppRequestHandler<GetPublicTrackingQuery, Result<PublicTrackingDto>>
+    : IRequestHandler<GetPublicTrackingQuery, Result<PublicTrackingDto>>
 {
     public async Task<Result<PublicTrackingDto>> Handle(
         GetPublicTrackingQuery req,

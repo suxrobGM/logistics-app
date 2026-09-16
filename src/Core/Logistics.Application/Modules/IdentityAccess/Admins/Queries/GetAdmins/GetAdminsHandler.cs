@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Logistics.Application.Modules.IdentityAccess.Admins.Queries;
 
 internal sealed class GetAdminsHandler(UserManager<User> userManager)
-    : IAppRequestHandler<GetAdminsQuery, PagedResult<UserDto>>
+    : IRequestHandler<GetAdminsQuery, PagedResult<UserDto>>
 {
     public async Task<PagedResult<UserDto>> Handle(GetAdminsQuery req, CancellationToken ct)
     {

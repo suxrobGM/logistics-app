@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Logistics.Application.Abstractions;
 using Logistics.Application.Attributes;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Safety;

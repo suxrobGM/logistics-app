@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +13,7 @@ internal sealed class MarkStopArrivedHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser,
     ILogger<MarkStopArrivedHandler> logger)
-    : IAppRequestHandler<MarkStopArrivedCommand, Result>
+    : IRequestHandler<MarkStopArrivedCommand, Result>
 {
     public async Task<Result> Handle(MarkStopArrivedCommand req, CancellationToken ct)
     {

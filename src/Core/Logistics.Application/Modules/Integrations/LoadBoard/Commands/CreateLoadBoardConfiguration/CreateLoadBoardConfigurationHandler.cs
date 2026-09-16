@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
@@ -11,7 +12,7 @@ internal sealed class CreateLoadBoardConfigurationHandler(
     ITenantUnitOfWork tenantUow,
     ILoadBoardProviderFactory providerFactory,
     ILogger<CreateLoadBoardConfigurationHandler> logger)
-    : IAppRequestHandler<CreateLoadBoardConfigurationCommand, Result>
+    : IRequestHandler<CreateLoadBoardConfigurationCommand, Result>
 {
     public async Task<Result> Handle(CreateLoadBoardConfigurationCommand req, CancellationToken ct)
     {

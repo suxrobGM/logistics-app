@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
 internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<PayrollReportQuery, Result<PayrollReportDto>>
+    : IRequestHandler<PayrollReportQuery, Result<PayrollReportDto>>
 {
     public async Task<Result<PayrollReportDto>> Handle(PayrollReportQuery req, CancellationToken ct)
     {

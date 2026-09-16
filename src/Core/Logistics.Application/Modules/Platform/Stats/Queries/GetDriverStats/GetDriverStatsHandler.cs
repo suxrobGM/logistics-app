@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Loads.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
 internal sealed class GetDriverStatsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetDriverStatsQuery, Result<DriverStatsDto>>
+    : IRequestHandler<GetDriverStatsQuery, Result<DriverStatsDto>>
 {
     public async Task<Result<DriverStatsDto>> Handle(
         GetDriverStatsQuery req, CancellationToken ct)

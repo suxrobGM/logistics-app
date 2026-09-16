@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Queries;
 
 internal sealed class GetSubscriptionPlansHandler(IMasterUnitOfWork masterUow)
-    : IAppRequestHandler<GetSubscriptionPlansQuery, PagedResult<SubscriptionPlanDto>>
+    : IRequestHandler<GetSubscriptionPlansQuery, PagedResult<SubscriptionPlanDto>>
 {
     public Task<PagedResult<SubscriptionPlanDto>> Handle(
         GetSubscriptionPlansQuery req, CancellationToken ct)

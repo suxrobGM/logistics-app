@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +9,7 @@ namespace Logistics.Application.Modules.Platform.DemoRequests.Commands;
 
 internal sealed class CreateDemoRequestHandler(
     IMasterUnitOfWork masterUow,
-    ILogger<CreateDemoRequestHandler> logger) : IAppRequestHandler<CreateDemoRequestCommand, Result>
+    ILogger<CreateDemoRequestHandler> logger) : IRequestHandler<CreateDemoRequestCommand, Result>
 {
     public async Task<Result> Handle(CreateDemoRequestCommand req, CancellationToken ct)
     {

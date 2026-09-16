@@ -1,13 +1,13 @@
-using Logistics.Application.Modules.Compliance.Eld.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Compliance.Eld.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Eld.Queries;
 
 internal sealed class GetHosLimitsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetHosLimitsQuery, Result<HosLimitsDto>>
+    : IRequestHandler<GetHosLimitsQuery, Result<HosLimitsDto>>
 {
     public Task<Result<HosLimitsDto>> Handle(GetHosLimitsQuery req, CancellationToken ct)
     {

@@ -1,5 +1,5 @@
+﻿using Logistics.Mediator;
 using System.Linq.Expressions;
-using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -8,7 +8,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Queries;
 
 internal sealed class GetPostedTrucksHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetPostedTrucksQuery, Result<List<PostedTruckDto>>>
+    : IRequestHandler<GetPostedTrucksQuery, Result<List<PostedTruckDto>>>
 {
     public async Task<Result<List<PostedTruckDto>>> Handle(GetPostedTrucksQuery req, CancellationToken ct)
     {

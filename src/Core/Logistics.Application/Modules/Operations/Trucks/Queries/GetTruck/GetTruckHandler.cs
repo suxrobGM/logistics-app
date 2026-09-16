@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Queries;
 
 internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTruckQuery, Result<TruckDto>>
+    : IRequestHandler<GetTruckQuery, Result<TruckDto>>
 {
     public async Task<Result<TruckDto>> Handle(
         GetTruckQuery req, CancellationToken ct)

@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Application.Modules.Platform.ProductLicense.Services;
 using Logistics.Domain.Options;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Options;
 
@@ -13,7 +14,7 @@ internal sealed class SetProductLicenseKeyHandler(
     IProductLicenseService license,
     ProductLicenseKeyValidator validator,
     IOptions<ProductLicenseOptions> options)
-    : IAppRequestHandler<SetProductLicenseKeyCommand, Result<ProductLicenseStatusDto>>
+    : IRequestHandler<SetProductLicenseKeyCommand, Result<ProductLicenseStatusDto>>
 {
     public async Task<Result<ProductLicenseStatusDto>> Handle(SetProductLicenseKeyCommand req, CancellationToken ct)
     {

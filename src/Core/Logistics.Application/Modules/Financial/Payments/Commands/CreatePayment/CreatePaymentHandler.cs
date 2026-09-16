@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Payments.Commands;
 
 internal sealed class CreatePaymentHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CreatePaymentCommand, Result>
+    : IRequestHandler<CreatePaymentCommand, Result>
 {
     public async Task<Result> Handle(
         CreatePaymentCommand req, CancellationToken ct)

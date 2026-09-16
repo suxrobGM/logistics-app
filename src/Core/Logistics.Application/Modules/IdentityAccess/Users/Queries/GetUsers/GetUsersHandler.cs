@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Users.Queries;
 
 internal sealed class GetUsersHandler(IMasterUnitOfWork masterUow)
-    : IAppRequestHandler<GetUsersQuery, PagedResult<UserDto>>
+    : IRequestHandler<GetUsersQuery, PagedResult<UserDto>>
 {
     public Task<PagedResult<UserDto>> Handle(
         GetUsersQuery req,

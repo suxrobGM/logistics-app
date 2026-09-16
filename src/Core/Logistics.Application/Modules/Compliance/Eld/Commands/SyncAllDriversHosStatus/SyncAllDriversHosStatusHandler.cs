@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ internal sealed class SyncAllDriversHosStatusHandler(
     ITenantUnitOfWork tenantUow,
     IEldProviderFactory eldProviderFactory,
     ILogger<SyncAllDriversHosStatusHandler> logger)
-    : IAppRequestHandler<SyncAllDriversHosStatusCommand, Result>
+    : IRequestHandler<SyncAllDriversHosStatusCommand, Result>
 {
     public async Task<Result> Handle(SyncAllDriversHosStatusCommand req, CancellationToken ct)
     {

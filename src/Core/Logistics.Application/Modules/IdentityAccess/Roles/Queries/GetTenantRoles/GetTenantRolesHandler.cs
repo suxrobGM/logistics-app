@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Roles.Queries;
 
 internal sealed class GetTenantRolesHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTenantRolesQuery, PagedResult<RoleDto>>
+    : IRequestHandler<GetTenantRolesQuery, PagedResult<RoleDto>>
 {
     public Task<PagedResult<RoleDto>> Handle(
         GetTenantRolesQuery req, CancellationToken ct)

@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Claims;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
@@ -13,7 +14,7 @@ internal sealed class GetCurrentUserPermissionsHandler(
     UserManager<User> userManager,
     RoleManager<AppRole> roleManager,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetCurrentUserPermissionsQuery, Result<string[]>>
+    : IRequestHandler<GetCurrentUserPermissionsQuery, Result<string[]>>
 {
     public async Task<Result<string[]>> Handle(
         GetCurrentUserPermissionsQuery req, CancellationToken ct)

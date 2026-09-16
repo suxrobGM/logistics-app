@@ -1,8 +1,8 @@
-using Logistics.Application.Modules.Financial.Tax.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
@@ -10,7 +10,7 @@ namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 internal sealed class DeleteLineItemHandler(
     ITenantUnitOfWork tenantUow,
     IInvoiceTaxApplier taxApplier)
-    : IAppRequestHandler<DeleteLineItemCommand, Result>
+    : IRequestHandler<DeleteLineItemCommand, Result>
 {
     public async Task<Result> Handle(DeleteLineItemCommand req, CancellationToken ct)
     {

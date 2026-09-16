@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Tax.Commands;
@@ -8,7 +9,7 @@ namespace Logistics.Application.Modules.Financial.Tax.Commands;
 internal sealed class DeleteTenantTaxRateHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<DeleteTenantTaxRateCommand, Result>
+    : IRequestHandler<DeleteTenantTaxRateCommand, Result>
 {
     public async Task<Result> Handle(DeleteTenantTaxRateCommand req, CancellationToken ct)
     {

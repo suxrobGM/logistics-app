@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
 internal sealed class GetAIDispatchPolicyHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetAIDispatchPolicyQuery, Result<AIDispatchPolicyDto>>
+    : IRequestHandler<GetAIDispatchPolicyQuery, Result<AIDispatchPolicyDto>>
 {
     public async Task<Result<AIDispatchPolicyDto>> Handle(
         GetAIDispatchPolicyQuery request, CancellationToken ct)

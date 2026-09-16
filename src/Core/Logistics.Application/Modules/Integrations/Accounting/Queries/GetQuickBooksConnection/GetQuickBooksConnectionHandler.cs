@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Accounting.Queries;
 
 internal sealed class GetQuickBooksConnectionHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetQuickBooksConnectionQuery, Result<AccountingConnectionDto>>
+    : IRequestHandler<GetQuickBooksConnectionQuery, Result<AccountingConnectionDto>>
 {
     public async Task<Result<AccountingConnectionDto>> Handle(GetQuickBooksConnectionQuery req, CancellationToken ct)
     {

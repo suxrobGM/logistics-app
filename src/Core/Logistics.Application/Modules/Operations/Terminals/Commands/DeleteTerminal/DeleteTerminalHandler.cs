@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Terminals.Commands;
 
 internal sealed class DeleteTerminalHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<DeleteTerminalCommand, Result>
+    : IRequestHandler<DeleteTerminalCommand, Result>
 {
     public async Task<Result> Handle(DeleteTerminalCommand req, CancellationToken ct)
     {

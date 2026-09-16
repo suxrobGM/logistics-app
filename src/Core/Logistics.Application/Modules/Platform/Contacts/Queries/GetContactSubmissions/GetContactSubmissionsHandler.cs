@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Contacts.Queries;
 
 internal sealed class GetContactSubmissionsHandler(
-    IMasterUnitOfWork masterUow) : IAppRequestHandler<GetContactSubmissionsQuery, PagedResult<ContactSubmissionDto>>
+    IMasterUnitOfWork masterUow) : IRequestHandler<GetContactSubmissionsQuery, PagedResult<ContactSubmissionDto>>
 {
     public Task<PagedResult<ContactSubmissionDto>> Handle(GetContactSubmissionsQuery req, CancellationToken ct)
     {

@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 internal sealed class DeleteTenantHandler(
     ITenantDatabaseService tenantDatabase,
     IMasterUnitOfWork masterRepository,
-    IStripeCustomerService stripeCustomerService) : IAppRequestHandler<DeleteTenantCommand, Result>
+    IStripeCustomerService stripeCustomerService) : IRequestHandler<DeleteTenantCommand, Result>
 {
     private readonly IMasterUnitOfWork _masterUow = masterRepository;
     private readonly IStripeCustomerService _stripeCustomerService = stripeCustomerService;

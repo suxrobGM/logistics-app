@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Commands;
 internal sealed class BulkDispatchLoadsHandler(
     ITenantUnitOfWork tenantUow,
     IDispatchEligibilityService eligibilityService)
-    : IAppRequestHandler<BulkDispatchLoadsCommand, Result>
+    : IRequestHandler<BulkDispatchLoadsCommand, Result>
 {
     public async Task<Result> Handle(BulkDispatchLoadsCommand req, CancellationToken ct)
     {

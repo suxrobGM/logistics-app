@@ -1,8 +1,8 @@
-using Logistics.Application.Modules.Compliance.Eld.Services;
+﻿using Logistics.Application.Modules.Compliance.Eld.Services;
 using Logistics.Application.Modules.Integrations.Webhooks.Services;
-using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Eld;
@@ -14,7 +14,7 @@ internal sealed class ProcessEldWebhookHandler(
     IEldProviderFactory eldProviderFactory,
     IWebhookEventTracker webhookEvents,
     ILogger<ProcessEldWebhookHandler> logger)
-    : IAppRequestHandler<ProcessEldWebhookCommand, Result>
+    : IRequestHandler<ProcessEldWebhookCommand, Result>
 {
     public async Task<Result> Handle(ProcessEldWebhookCommand req, CancellationToken ct)
     {

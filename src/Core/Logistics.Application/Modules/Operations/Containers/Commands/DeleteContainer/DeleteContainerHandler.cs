@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Containers.Commands;
 
 internal sealed class DeleteContainerHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<DeleteContainerCommand, Result>
+    : IRequestHandler<DeleteContainerCommand, Result>
 {
     public async Task<Result> Handle(DeleteContainerCommand req, CancellationToken ct)
     {

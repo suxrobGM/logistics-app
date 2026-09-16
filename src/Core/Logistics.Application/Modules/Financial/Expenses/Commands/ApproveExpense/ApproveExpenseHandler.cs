@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Commands;
 
 internal sealed class ApproveExpenseHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<ApproveExpenseCommand, Result>
+    : IRequestHandler<ApproveExpenseCommand, Result>
 {
     public async Task<Result> Handle(ApproveExpenseCommand req, CancellationToken ct)
     {

@@ -1,8 +1,8 @@
-using Logistics.Application.Modules.Financial.Payroll.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Queries;
@@ -10,7 +10,7 @@ namespace Logistics.Application.Modules.Financial.Invoices.Queries;
 internal sealed class PreviewPayrollInvoiceHandler(
     ITenantUnitOfWork tenantUow,
     IPayrollService payrollService)
-    : IAppRequestHandler<PreviewPayrollInvoiceQuery, Result<InvoiceDto>>
+    : IRequestHandler<PreviewPayrollInvoiceQuery, Result<InvoiceDto>>
 {
     public async Task<Result<InvoiceDto>> Handle(
         PreviewPayrollInvoiceQuery req, CancellationToken ct)

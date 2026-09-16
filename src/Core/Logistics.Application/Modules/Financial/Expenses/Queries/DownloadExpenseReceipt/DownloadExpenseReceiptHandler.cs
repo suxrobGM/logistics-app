@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Storage;
 
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Financial.Expenses.Queries;
 internal sealed class DownloadExpenseReceiptHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorageService)
-    : IAppRequestHandler<DownloadExpenseReceiptQuery, Result<DocumentDownloadDto>>
+    : IRequestHandler<DownloadExpenseReceiptQuery, Result<DocumentDownloadDto>>
 {
     public async Task<Result<DocumentDownloadDto>> Handle(DownloadExpenseReceiptQuery req, CancellationToken ct)
     {

@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Eld.Queries;
 
 internal sealed class GetEldProviderConfigurationsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetEldProviderConfigurationsQuery, Result<List<EldProviderConfigurationDto>>>
+    : IRequestHandler<GetEldProviderConfigurationsQuery, Result<List<EldProviderConfigurationDto>>>
 {
     public async Task<Result<List<EldProviderConfigurationDto>>> Handle(
         GetEldProviderConfigurationsQuery req,

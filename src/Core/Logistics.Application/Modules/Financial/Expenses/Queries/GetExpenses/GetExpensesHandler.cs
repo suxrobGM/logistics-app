@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Queries;
 
 internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetExpensesQuery, PagedResult<ExpenseDto>>
+    : IRequestHandler<GetExpensesQuery, PagedResult<ExpenseDto>>
 {
     public async Task<PagedResult<ExpenseDto>> Handle(GetExpensesQuery req, CancellationToken ct)
     {

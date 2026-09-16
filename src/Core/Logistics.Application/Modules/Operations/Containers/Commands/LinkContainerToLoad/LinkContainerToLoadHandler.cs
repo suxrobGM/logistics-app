@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Containers.Commands;
 
 internal sealed class LinkContainerToLoadHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<LinkContainerToLoadCommand, Result>
+    : IRequestHandler<LinkContainerToLoadCommand, Result>
 {
     public async Task<Result> Handle(LinkContainerToLoadCommand req, CancellationToken ct)
     {

@@ -1,7 +1,7 @@
-using Logistics.Application.Modules.Operations.Loads.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +11,7 @@ internal sealed class CreateTripHandler(
     ITenantUnitOfWork tenantUow,
     ILoadService loadService,
     ILogger<CreateTripHandler> logger)
-    : IAppRequestHandler<CreateTripCommand, Result<Guid>>
+    : IRequestHandler<CreateTripCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateTripCommand req, CancellationToken ct)
     {

@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Commands;
 
 internal sealed class DeleteExpenseHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<DeleteExpenseCommand, Result>
+    : IRequestHandler<DeleteExpenseCommand, Result>
 {
     public async Task<Result> Handle(DeleteExpenseCommand req, CancellationToken ct)
     {

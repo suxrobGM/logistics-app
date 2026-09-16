@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Compliance.Eld.Commands;
 internal sealed class MapEldDriverHandler(
     ITenantUnitOfWork tenantUow,
     ILogger<MapEldDriverHandler> logger)
-    : IAppRequestHandler<MapEldDriverCommand, Result>
+    : IRequestHandler<MapEldDriverCommand, Result>
 {
     public async Task<Result> Handle(MapEldDriverCommand req, CancellationToken ct)
     {

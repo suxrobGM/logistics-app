@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Storage;
@@ -14,7 +15,7 @@ internal sealed class DownloadDocumentHandler(
     IBlobStorageService blobStorageService,
     IDocumentAccessService documentAccess,
     ILogger<DownloadDocumentHandler> logger)
-    : IAppRequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
+    : IRequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
 {
     public async Task<Result<DocumentDownloadDto>> Handle(DownloadDocumentQuery req, CancellationToken ct)
     {

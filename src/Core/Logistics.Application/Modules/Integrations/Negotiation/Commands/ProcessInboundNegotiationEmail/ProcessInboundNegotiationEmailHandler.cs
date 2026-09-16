@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Features;
@@ -6,6 +6,7 @@ using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -18,7 +19,7 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
     INegotiationTurnStarter turnStarter,
     IAIDispatchBroadcastService broadcastService,
     ILogger<ProcessInboundNegotiationEmailHandler> logger)
-    : IAppRequestHandler<ProcessInboundNegotiationEmailCommand, Result>
+    : IRequestHandler<ProcessInboundNegotiationEmailCommand, Result>
 {
     private const int MaxRawBodyChars = 64 * 1024;
 

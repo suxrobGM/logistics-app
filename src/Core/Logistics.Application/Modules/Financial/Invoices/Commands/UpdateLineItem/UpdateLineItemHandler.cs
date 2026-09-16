@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 
 internal sealed class UpdateLineItemHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateLineItemCommand, Result<InvoiceLineItemDto>>
+    : IRequestHandler<UpdateLineItemCommand, Result<InvoiceLineItemDto>>
 {
     public async Task<Result<InvoiceLineItemDto>> Handle(UpdateLineItemCommand req, CancellationToken ct)
     {

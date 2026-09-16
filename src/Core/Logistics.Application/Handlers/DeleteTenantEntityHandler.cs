@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Handlers;
@@ -12,7 +13,7 @@ namespace Logistics.Application.Handlers;
 /// <typeparam name="TCommand">Delete command carrying the target <see cref="IHaveId.Id" />.</typeparam>
 /// <typeparam name="TEntity">Tenant-scoped entity to delete.</typeparam>
 internal abstract class DeleteTenantEntityHandler<TCommand, TEntity>(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<TCommand, Result>
+    : IRequestHandler<TCommand, Result>
     where TCommand : ICommand<Result>, IHaveId
     where TEntity : class, IEntity<Guid>, ITenantEntity
 {

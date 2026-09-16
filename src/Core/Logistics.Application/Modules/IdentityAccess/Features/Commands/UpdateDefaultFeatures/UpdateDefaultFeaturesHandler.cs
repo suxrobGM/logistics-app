@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.IdentityAccess.Features.Commands;
 
 internal sealed class UpdateDefaultFeaturesHandler(IMasterUnitOfWork masterUow)
-    : IAppRequestHandler<UpdateDefaultFeaturesCommand, Result>
+    : IRequestHandler<UpdateDefaultFeaturesCommand, Result>
 {
     public async Task<Result> Handle(UpdateDefaultFeaturesCommand req, CancellationToken ct)
     {

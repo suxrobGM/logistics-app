@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Routing;
@@ -13,7 +14,7 @@ internal sealed class TripDispatchedHandler(
     ILogger<TripDispatchedHandler> logger,
     ITenantUnitOfWork tenantUow,
     ITripTrackingService tripTrackingService)
-    : IDomainEventHandler<TripDispatchedEvent>
+    : INotificationHandler<TripDispatchedEvent>
 {
     public async Task Handle(TripDispatchedEvent @event, CancellationToken cancellationToken)
     {

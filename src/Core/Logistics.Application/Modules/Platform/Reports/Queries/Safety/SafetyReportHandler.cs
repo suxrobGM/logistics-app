@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Reports;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Safety;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
 internal sealed class SafetyReportHandler(ISafetyReportReader reader)
-    : IAppRequestHandler<SafetyReportQuery, Result<SafetyReportDto>>
+    : IRequestHandler<SafetyReportQuery, Result<SafetyReportDto>>
 {
     public async Task<Result<SafetyReportDto>> Handle(SafetyReportQuery req, CancellationToken ct)
     {

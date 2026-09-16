@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.BlogPosts.Queries;
 
 internal sealed class GetPublishedBlogPostBySlugHandler(
-    IMasterUnitOfWork masterUow) : IAppRequestHandler<GetPublishedBlogPostBySlugQuery, Result<BlogPostDto>>
+    IMasterUnitOfWork masterUow) : IRequestHandler<GetPublishedBlogPostBySlugQuery, Result<BlogPostDto>>
 {
     public async Task<Result<BlogPostDto>> Handle(GetPublishedBlogPostBySlugQuery req, CancellationToken ct)
     {

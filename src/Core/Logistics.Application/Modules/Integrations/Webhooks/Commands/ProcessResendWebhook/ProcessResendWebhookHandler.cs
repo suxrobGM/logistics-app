@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Modules.Integrations.Negotiation;
 using Logistics.Application.Modules.Integrations.Negotiation.Commands;
@@ -20,7 +19,7 @@ internal sealed class ProcessResendWebhookHandler(
     IMediator mediator,
     IWebhookEventTracker webhookEvents,
     ILogger<ProcessResendWebhookHandler> logger)
-    : IAppRequestHandler<ProcessResendWebhookCommand, Result>
+    : IRequestHandler<ProcessResendWebhookCommand, Result>
 {
     private const string Provider = "Resend";
     private const string ReceivedEventType = "email.received";

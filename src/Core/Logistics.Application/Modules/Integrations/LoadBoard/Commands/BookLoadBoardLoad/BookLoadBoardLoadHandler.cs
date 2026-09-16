@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
@@ -22,7 +23,7 @@ internal sealed class BookLoadBoardLoadHandler(
     IInboundEmailRouteRegistry routeRegistry,
     IAIDispatchBroadcastService broadcastService,
     ILogger<BookLoadBoardLoadHandler> logger)
-    : IAppRequestHandler<BookLoadBoardLoadCommand, Result<LoadBoardBookingResultDto>>
+    : IRequestHandler<BookLoadBoardLoadCommand, Result<LoadBoardBookingResultDto>>
 {
     public async Task<Result<LoadBoardBookingResultDto>> Handle(
         BookLoadBoardLoadCommand req,

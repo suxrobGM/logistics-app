@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 internal sealed class UpdateTenantPresetsHandler(
     IMasterUnitOfWork masterUow,
     IFeatureService featureService)
-    : IAppRequestHandler<UpdateTenantPresetsCommand, Result>
+    : IRequestHandler<UpdateTenantPresetsCommand, Result>
 {
     public async Task<Result> Handle(UpdateTenantPresetsCommand req, CancellationToken ct)
     {

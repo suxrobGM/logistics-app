@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Modules.Integrations.UpdateNotifications.Commands;
 

@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Queries;
 
 internal sealed class GetNegotiationByIdHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetNegotiationByIdQuery, Result<RateNegotiationDto>>
+    : IRequestHandler<GetNegotiationByIdQuery, Result<RateNegotiationDto>>
 {
     public async Task<Result<RateNegotiationDto>> Handle(GetNegotiationByIdQuery req, CancellationToken ct)
     {

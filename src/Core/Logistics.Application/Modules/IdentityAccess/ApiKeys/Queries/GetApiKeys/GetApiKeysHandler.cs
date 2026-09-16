@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.ApiKeys.Queries;
 
 internal sealed class GetApiKeysHandler(
-    ITenantUnitOfWork tenantUow) : IAppRequestHandler<GetApiKeysQuery, Result<List<ApiKeyDto>>>
+    ITenantUnitOfWork tenantUow) : IRequestHandler<GetApiKeysQuery, Result<List<ApiKeyDto>>>
 {
     public async Task<Result<List<ApiKeyDto>>> Handle(GetApiKeysQuery req, CancellationToken ct)
     {

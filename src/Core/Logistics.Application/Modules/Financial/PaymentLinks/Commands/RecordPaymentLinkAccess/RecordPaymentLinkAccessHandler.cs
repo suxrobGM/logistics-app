@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +11,7 @@ internal sealed class RecordPaymentLinkAccessHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     ILogger<RecordPaymentLinkAccessHandler> logger)
-    : IAppRequestHandler<RecordPaymentLinkAccessCommand, Result>
+    : IRequestHandler<RecordPaymentLinkAccessCommand, Result>
 {
     public async Task<Result> Handle(RecordPaymentLinkAccessCommand req, CancellationToken ct)
     {

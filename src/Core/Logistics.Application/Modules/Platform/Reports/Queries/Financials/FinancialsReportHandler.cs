@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
 internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<FinancialsReportQuery, Result<FinancialsReportDto>>
+    : IRequestHandler<FinancialsReportQuery, Result<FinancialsReportDto>>
 {
     public async Task<Result<FinancialsReportDto>> Handle(FinancialsReportQuery req, CancellationToken ct)
     {

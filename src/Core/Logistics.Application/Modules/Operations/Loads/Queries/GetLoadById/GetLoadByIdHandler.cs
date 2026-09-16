@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 internal sealed class GetLoadByIdHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUserService)
-    : IAppRequestHandler<GetLoadByIdQuery, Result<LoadDto>>
+    : IRequestHandler<GetLoadByIdQuery, Result<LoadDto>>
 {
     public async Task<Result<LoadDto>> Handle(GetLoadByIdQuery req, CancellationToken ct)
     {

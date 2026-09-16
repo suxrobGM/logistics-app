@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Notifications.Queries;
 
 internal sealed class GetNotificationsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetNotificationsQuery, Result<NotificationDto[]>>
+    : IRequestHandler<GetNotificationsQuery, Result<NotificationDto[]>>
 {
     public async Task<Result<NotificationDto[]>> Handle(
         GetNotificationsQuery req,

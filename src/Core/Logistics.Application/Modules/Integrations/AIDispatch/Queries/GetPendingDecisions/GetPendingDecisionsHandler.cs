@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
 internal sealed class GetPendingDecisionsHandler(
-    ITenantUnitOfWork tenantUow) : IAppRequestHandler<GetPendingDecisionsQuery, Result<List<AgentDecisionDto>>>
+    ITenantUnitOfWork tenantUow) : IRequestHandler<GetPendingDecisionsQuery, Result<List<AgentDecisionDto>>>
 {
     public async Task<Result<List<AgentDecisionDto>>> Handle(
         GetPendingDecisionsQuery request, CancellationToken ct)

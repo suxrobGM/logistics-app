@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Options;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -16,7 +17,7 @@ internal sealed class CreatePaymentLinkHandler(
     ICurrentUserService currentUserService,
     IOptions<CustomerPortalOptions> portalOptions,
     ILogger<CreatePaymentLinkHandler> logger)
-    : IAppRequestHandler<CreatePaymentLinkCommand, Result<PaymentLinkDto>>
+    : IRequestHandler<CreatePaymentLinkCommand, Result<PaymentLinkDto>>
 {
     public async Task<Result<PaymentLinkDto>> Handle(CreatePaymentLinkCommand req, CancellationToken ct)
     {

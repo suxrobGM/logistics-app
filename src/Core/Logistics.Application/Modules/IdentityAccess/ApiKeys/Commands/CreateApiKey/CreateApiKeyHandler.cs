@@ -1,5 +1,5 @@
+﻿using Logistics.Mediator;
 using System.Security.Cryptography;
-using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.ApiKeys.Commands;
 
-internal sealed class CreateApiKeyHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<CreateApiKeyCommand, Result<ApiKeyCreatedDto>>
+internal sealed class CreateApiKeyHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<CreateApiKeyCommand, Result<ApiKeyCreatedDto>>
 {
     public async Task<Result<ApiKeyCreatedDto>> Handle(CreateApiKeyCommand req, CancellationToken ct)
     {

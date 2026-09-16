@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -15,7 +16,7 @@ internal sealed class CreatePublicCheckoutSessionHandler(
     ITenantUnitOfWork tenantUow,
     IStripeConnectService stripeConnectService,
     ILogger<CreatePublicCheckoutSessionHandler> logger)
-    : IAppRequestHandler<CreatePublicCheckoutSessionCommand, Result<PublicCheckoutSessionDto>>
+    : IRequestHandler<CreatePublicCheckoutSessionCommand, Result<PublicCheckoutSessionDto>>
 {
     public async Task<Result<PublicCheckoutSessionDto>> Handle(
         CreatePublicCheckoutSessionCommand req, CancellationToken ct)

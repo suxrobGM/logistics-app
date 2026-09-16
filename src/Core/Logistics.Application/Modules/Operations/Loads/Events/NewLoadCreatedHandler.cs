@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Operations.Loads.Events;
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Events;
 internal sealed class NewLoadCreatedHandler(
     ITenantUnitOfWork tenantUow,
     ILogger<NewLoadCreatedHandler> logger)
-    : IDomainEventHandler<NewLoadCreatedEvent>
+    : INotificationHandler<NewLoadCreatedEvent>
 {
     public async Task Handle(NewLoadCreatedEvent @event, CancellationToken cancellationToken)
     {

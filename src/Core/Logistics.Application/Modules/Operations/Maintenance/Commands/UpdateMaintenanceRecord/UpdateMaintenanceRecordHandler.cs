@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Maintenance;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Maintenance.Commands;
 
 internal sealed class UpdateMaintenanceRecordHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateMaintenanceRecordCommand, Result<MaintenanceRecordDto>>
+    : IRequestHandler<UpdateMaintenanceRecordCommand, Result<MaintenanceRecordDto>>
 {
     public async Task<Result<MaintenanceRecordDto>> Handle(UpdateMaintenanceRecordCommand req, CancellationToken ct)
     {

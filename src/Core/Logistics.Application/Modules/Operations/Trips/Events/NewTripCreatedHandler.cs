@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Events;
 
+using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Operations.Trips.Events;
 
 internal sealed class NewTripCreatedHandler(ILogger<NewTripCreatedHandler> logger)
-    : IDomainEventHandler<NewTripCreatedEvent>
+    : INotificationHandler<NewTripCreatedEvent>
 {
     public Task Handle(NewTripCreatedEvent @event, CancellationToken cancellationToken)
     {

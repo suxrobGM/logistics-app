@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Operations.Trips.Commands;
 internal sealed class CancelTripHandler(
     ITenantUnitOfWork tenantUow,
     ILogger<CancelTripHandler> logger)
-    : IAppRequestHandler<CancelTripCommand, Result>
+    : IRequestHandler<CancelTripCommand, Result>
 {
     public async Task<Result> Handle(CancelTripCommand req, CancellationToken ct)
     {

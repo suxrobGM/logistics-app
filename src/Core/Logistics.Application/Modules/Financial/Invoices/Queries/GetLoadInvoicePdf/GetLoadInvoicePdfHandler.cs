@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Documents;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Queries;
 
 internal sealed class GetLoadInvoicePdfHandler(ITenantUnitOfWork tenantUow, IInvoicePdfService pdfService)
-    : IAppRequestHandler<GetLoadInvoicePdfQuery, Result<InvoicePdfResult>>
+    : IRequestHandler<GetLoadInvoicePdfQuery, Result<InvoicePdfResult>>
 {
     public async Task<Result<InvoicePdfResult>> Handle(GetLoadInvoicePdfQuery request, CancellationToken ct)
     {

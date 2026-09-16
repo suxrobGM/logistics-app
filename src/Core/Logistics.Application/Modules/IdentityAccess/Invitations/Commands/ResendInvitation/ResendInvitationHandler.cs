@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Entities;
@@ -6,6 +6,7 @@ using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -18,7 +19,7 @@ internal sealed class ResendInvitationHandler(
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
     IOptions<IdentityServerOptions> identityServerOptions)
-    : IAppRequestHandler<ResendInvitationCommand, Result>
+    : IRequestHandler<ResendInvitationCommand, Result>
 {
     public async Task<Result> Handle(ResendInvitationCommand req, CancellationToken ct)
     {

@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
 public class GetTruckStatsListHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTrucksStatsListQuery, PagedResult<TruckStatsDto>>
+    : IRequestHandler<GetTrucksStatsListQuery, PagedResult<TruckStatsDto>>
 {
     public async Task<PagedResult<TruckStatsDto>> Handle(
         GetTrucksStatsListQuery req, CancellationToken ct)

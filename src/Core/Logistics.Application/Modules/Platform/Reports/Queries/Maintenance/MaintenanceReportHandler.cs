@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Maintenance;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
 internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<MaintenanceReportQuery, Result<MaintenanceReportDto>>
+    : IRequestHandler<MaintenanceReportQuery, Result<MaintenanceReportDto>>
 {
     public async Task<Result<MaintenanceReportDto>> Handle(MaintenanceReportQuery req, CancellationToken ct)
     {

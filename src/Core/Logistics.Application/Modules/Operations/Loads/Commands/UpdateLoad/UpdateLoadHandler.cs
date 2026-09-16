@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
 internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow, IVehicleTransportGuard vehicleTransportGuard)
-    : IAppRequestHandler<UpdateLoadCommand, Result>
+    : IRequestHandler<UpdateLoadCommand, Result>
 {
     public async Task<Result> Handle(UpdateLoadCommand req, CancellationToken ct)
     {

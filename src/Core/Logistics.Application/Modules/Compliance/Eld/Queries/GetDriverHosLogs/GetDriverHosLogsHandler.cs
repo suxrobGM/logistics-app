@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Compliance.Eld.Queries;
 
 internal sealed class GetDriverHosLogsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetDriverHosLogsQuery, PagedResult<HosLogDto>>
+    : IRequestHandler<GetDriverHosLogsQuery, PagedResult<HosLogDto>>
 {
     public async Task<PagedResult<HosLogDto>> Handle(
         GetDriverHosLogsQuery req,

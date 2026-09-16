@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Stripe;
@@ -13,7 +14,7 @@ internal sealed class ProcessPaymentHandler(
     ITenantUnitOfWork tenantUow,
     IStripePaymentService stripePaymentService,
     ILogger<ProcessPaymentHandler> logger)
-    : IAppRequestHandler<ProcessPaymentCommand, Result>
+    : IRequestHandler<ProcessPaymentCommand, Result>
 {
     public async Task<Result> Handle(
         ProcessPaymentCommand req, CancellationToken ct)

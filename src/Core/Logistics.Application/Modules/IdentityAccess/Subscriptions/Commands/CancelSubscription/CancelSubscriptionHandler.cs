@@ -1,10 +1,10 @@
-using Logistics.Application.Modules.Financial.StripeConnect.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -15,7 +15,7 @@ internal sealed class CancelSubscriptionHandler(
     IMasterUnitOfWork masterUow,
     IStripeSubscriptionService stripeSubscriptionService,
     ICurrentUserService currentUserService,
-    ILogger<DeleteSubscriptionHandler> logger) : IAppRequestHandler<CancelSubscriptionCommand, Result>
+    ILogger<DeleteSubscriptionHandler> logger) : IRequestHandler<CancelSubscriptionCommand, Result>
 {
     public async Task<Result> Handle(
         CancelSubscriptionCommand req, CancellationToken ct)

@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
@@ -12,7 +13,7 @@ internal sealed class CloseNegotiationHandler(
     ITenantUnitOfWork tenantUow,
     IInboundEmailRouteRegistry routeRegistry,
     IAIDispatchBroadcastService broadcastService)
-    : IAppRequestHandler<CloseNegotiationCommand, Result>
+    : IRequestHandler<CloseNegotiationCommand, Result>
 {
     public async Task<Result> Handle(CloseNegotiationCommand req, CancellationToken ct)
     {

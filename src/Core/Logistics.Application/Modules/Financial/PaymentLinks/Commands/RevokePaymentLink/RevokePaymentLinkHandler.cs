@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Financial.PaymentLinks.Commands;
 internal sealed class RevokePaymentLinkHandler(
     ITenantUnitOfWork tenantUow,
     ILogger<RevokePaymentLinkHandler> logger)
-    : IAppRequestHandler<RevokePaymentLinkCommand, Result>
+    : IRequestHandler<RevokePaymentLinkCommand, Result>
 {
     public async Task<Result> Handle(RevokePaymentLinkCommand req, CancellationToken ct)
     {

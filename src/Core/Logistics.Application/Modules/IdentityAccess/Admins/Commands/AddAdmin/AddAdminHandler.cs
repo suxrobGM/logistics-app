@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Email.Models;
@@ -9,6 +9,7 @@ using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +24,7 @@ internal sealed class AddAdminHandler(
     IEmailTemplateService emailTemplateService,
     ICurrentUserService currentUserService,
     IOptions<IdentityServerOptions> identityServerOptions)
-    : IAppRequestHandler<AddAdminCommand, Result<AddAdminResult>>
+    : IRequestHandler<AddAdminCommand, Result<AddAdminResult>>
 {
     public async Task<Result<AddAdminResult>> Handle(AddAdminCommand req, CancellationToken ct)
     {

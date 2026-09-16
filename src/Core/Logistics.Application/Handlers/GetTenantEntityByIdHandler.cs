@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Core;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Handlers;
@@ -13,7 +14,7 @@ namespace Logistics.Application.Handlers;
 /// <typeparam name="TEntity">Tenant-scoped entity to fetch.</typeparam>
 /// <typeparam name="TDto">DTO returned on success.</typeparam>
 internal abstract class GetTenantEntityByIdHandler<TQuery, TEntity, TDto>(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<TQuery, Result<TDto>>
+    : IRequestHandler<TQuery, Result<TDto>>
     where TQuery : IQuery<Result<TDto>>, IHaveId
     where TEntity : class, IEntity<Guid>, ITenantEntity
 {

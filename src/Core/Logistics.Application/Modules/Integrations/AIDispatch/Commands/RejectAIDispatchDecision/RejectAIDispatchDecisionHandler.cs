@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
@@ -13,7 +14,7 @@ internal sealed class RejectAIDispatchDecisionHandler(
     IAIDispatchDecisionGuard guard,
     IAgentDecisionNotes notes,
     ICurrentUserService currentUser,
-    IAIDispatchBroadcastService broadcastService) : IAppRequestHandler<RejectAIDispatchDecisionCommand, Result>
+    IAIDispatchBroadcastService broadcastService) : IRequestHandler<RejectAIDispatchDecisionCommand, Result>
 {
     public async Task<Result> Handle(RejectAIDispatchDecisionCommand request, CancellationToken ct)
     {

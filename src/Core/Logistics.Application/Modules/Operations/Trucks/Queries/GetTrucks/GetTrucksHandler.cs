@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Queries;
 
 internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
+    : IRequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
 {
     public async Task<PagedResult<TruckDto>> Handle(
         GetTrucksQuery req,

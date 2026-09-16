@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Payments.Stripe;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 
 internal sealed class UpdateTenantHandler(
     IMasterUnitOfWork masterUow,
-    IStripeCustomerService stripeCustomerService) : IAppRequestHandler<UpdateTenantCommand, Result>
+    IStripeCustomerService stripeCustomerService) : IRequestHandler<UpdateTenantCommand, Result>
 {
     public async Task<Result> Handle(UpdateTenantCommand req, CancellationToken ct)
     {

@@ -1,8 +1,8 @@
-using Logistics.Application.Modules.Operations.Loads.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +12,7 @@ internal sealed class UpdateTripHandler(
     ITenantUnitOfWork uow,
     ILoadService loadService,
     ILogger<UpdateTripHandler> logger)
-    : IAppRequestHandler<UpdateTripCommand, Result>
+    : IRequestHandler<UpdateTripCommand, Result>
 {
     public async Task<Result> Handle(UpdateTripCommand req, CancellationToken ct)
     {

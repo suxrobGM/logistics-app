@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class BulkDeleteLoadsHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<BulkDeleteLoadsCommand, Result>
+internal sealed class BulkDeleteLoadsHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<BulkDeleteLoadsCommand, Result>
 {
     public async Task<Result> Handle(BulkDeleteLoadsCommand req, CancellationToken ct)
     {

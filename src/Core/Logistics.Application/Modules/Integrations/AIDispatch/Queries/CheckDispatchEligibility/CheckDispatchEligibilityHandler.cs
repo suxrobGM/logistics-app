@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Dispatch;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 
 internal sealed class CheckDispatchEligibilityHandler(IDispatchEligibilityService eligibilityService)
-    : IAppRequestHandler<CheckDispatchEligibilityQuery, Result<EligibilityResultDto>>
+    : IRequestHandler<CheckDispatchEligibilityQuery, Result<EligibilityResultDto>>
 {
     public async Task<Result<EligibilityResultDto>> Handle(
         CheckDispatchEligibilityQuery req, CancellationToken ct)

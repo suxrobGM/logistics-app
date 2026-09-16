@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Terminals.Queries;
 
 internal sealed class GetTerminalsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTerminalsQuery, PagedResult<TerminalDto>>
+    : IRequestHandler<GetTerminalsQuery, PagedResult<TerminalDto>>
 {
     public Task<PagedResult<TerminalDto>> Handle(GetTerminalsQuery req, CancellationToken ct)
     {

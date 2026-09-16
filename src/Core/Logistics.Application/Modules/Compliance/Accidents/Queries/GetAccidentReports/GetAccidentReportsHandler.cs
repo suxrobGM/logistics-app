@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Accidents.Queries;
 
 internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetAccidentReportsQuery, PagedResult<AccidentReportDto>>
+    : IRequestHandler<GetAccidentReportsQuery, PagedResult<AccidentReportDto>>
 {
     public Task<PagedResult<AccidentReportDto>> Handle(GetAccidentReportsQuery req, CancellationToken ct)
     {

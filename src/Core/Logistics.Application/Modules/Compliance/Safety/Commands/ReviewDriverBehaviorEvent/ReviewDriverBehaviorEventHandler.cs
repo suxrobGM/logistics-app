@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.CurrentUser;
 
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Compliance.Safety.Commands;
 internal sealed class ReviewDriverBehaviorEventHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser)
-    : IAppRequestHandler<ReviewDriverBehaviorEventCommand, Result<DriverBehaviorEventDto>>
+    : IRequestHandler<ReviewDriverBehaviorEventCommand, Result<DriverBehaviorEventDto>>
 {
     public async Task<Result<DriverBehaviorEventDto>> Handle(ReviewDriverBehaviorEventCommand req, CancellationToken ct)
     {

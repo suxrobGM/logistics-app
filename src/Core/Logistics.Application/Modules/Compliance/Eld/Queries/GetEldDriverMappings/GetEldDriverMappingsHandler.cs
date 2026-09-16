@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Compliance.Eld.Queries;
 
 internal sealed class GetEldDriverMappingsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetEldDriverMappingsQuery, Result<List<EldDriverMappingDto>>>
+    : IRequestHandler<GetEldDriverMappingsQuery, Result<List<EldDriverMappingDto>>>
 {
     public async Task<Result<List<EldDriverMappingDto>>> Handle(GetEldDriverMappingsQuery req, CancellationToken ct)
     {

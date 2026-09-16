@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Application.Utilities;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Commands;
 
 internal sealed class UploadExpenseReceiptHandler(IBlobStorageService blobStorageService)
-    : IAppRequestHandler<UploadExpenseReceiptCommand, Result<string>>
+    : IRequestHandler<UploadExpenseReceiptCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(UploadExpenseReceiptCommand req, CancellationToken ct)
     {

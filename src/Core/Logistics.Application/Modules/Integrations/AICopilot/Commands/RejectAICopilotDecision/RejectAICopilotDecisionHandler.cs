@@ -1,10 +1,11 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Integrations.AICopilot.Services;
 using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.AICopilot.Commands;
@@ -14,7 +15,7 @@ internal sealed class RejectAICopilotDecisionHandler(
     IAICopilotDecisionGuard guard,
     IAgentDecisionNotes notes,
     ICurrentUserService currentUser,
-    IAICopilotBroadcastService broadcastService) : IAppRequestHandler<RejectAICopilotDecisionCommand, Result>
+    IAICopilotBroadcastService broadcastService) : IRequestHandler<RejectAICopilotDecisionCommand, Result>
 {
     public async Task<Result> Handle(RejectAICopilotDecisionCommand request, CancellationToken ct)
     {

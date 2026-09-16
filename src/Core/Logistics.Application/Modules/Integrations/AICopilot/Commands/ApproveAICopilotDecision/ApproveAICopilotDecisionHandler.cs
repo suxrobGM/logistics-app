@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.Agents;
@@ -7,6 +7,7 @@ using Logistics.Application.Modules.Integrations.AICopilot.Services;
 using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Options;
 
@@ -21,7 +22,7 @@ internal sealed class ApproveAICopilotDecisionHandler(
     ICurrentUserService currentUser,
     IAgentRunContext runContext,
     IAICopilotBroadcastService broadcastService,
-    IOptions<LlmOptions> llmOptions) : IAppRequestHandler<ApproveAICopilotDecisionCommand, Result>
+    IOptions<LlmOptions> llmOptions) : IRequestHandler<ApproveAICopilotDecisionCommand, Result>
 {
     public async Task<Result> Handle(ApproveAICopilotDecisionCommand request, CancellationToken ct)
     {

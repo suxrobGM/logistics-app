@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Containers.Commands;
 
 internal sealed class UpdateContainerHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateContainerCommand, Result>
+    : IRequestHandler<UpdateContainerCommand, Result>
 {
     public async Task<Result> Handle(UpdateContainerCommand req, CancellationToken ct)
     {

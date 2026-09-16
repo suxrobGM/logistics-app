@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Queries;
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Integrations.Negotiation.Queries;
 internal sealed class GetRateFloorContextHandler(
     ITenantUnitOfWork tenantUow,
     ILaneRateFloorResolver resolver)
-    : IAppRequestHandler<GetRateFloorContextQuery, Result<RateFloorContextDto>>
+    : IRequestHandler<GetRateFloorContextQuery, Result<RateFloorContextDto>>
 {
     public async Task<Result<RateFloorContextDto>> Handle(GetRateFloorContextQuery req, CancellationToken ct)
     {

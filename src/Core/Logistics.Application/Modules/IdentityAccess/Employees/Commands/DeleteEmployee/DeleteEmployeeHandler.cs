@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 
 internal sealed class DeleteEmployeeHandler(
     IMasterUnitOfWork masterUow,
-    ITenantUnitOfWork tenantUow) : IAppRequestHandler<DeleteEmployeeCommand, Result>
+    ITenantUnitOfWork tenantUow) : IRequestHandler<DeleteEmployeeCommand, Result>
 {
     public async Task<Result> Handle(
         DeleteEmployeeCommand req, CancellationToken ct)

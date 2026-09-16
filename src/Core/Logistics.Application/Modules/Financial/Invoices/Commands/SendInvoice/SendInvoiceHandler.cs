@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Utilities;
@@ -6,6 +6,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,7 +21,7 @@ internal sealed class SendInvoiceHandler(
     ICurrentUserService currentUserService,
     IOptions<CustomerPortalOptions> portalOptions,
     ILogger<SendInvoiceHandler> logger)
-    : IAppRequestHandler<SendInvoiceCommand, Result>
+    : IRequestHandler<SendInvoiceCommand, Result>
 {
     private const int DefaultExpirationDays = 30;
 

@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.ApiKeys.Commands;
 
 internal sealed class RevokeApiKeyHandler(
-    ITenantUnitOfWork tenantUow) : IAppRequestHandler<RevokeApiKeyCommand, Result>
+    ITenantUnitOfWork tenantUow) : IRequestHandler<RevokeApiKeyCommand, Result>
 {
     public async Task<Result> Handle(RevokeApiKeyCommand req, CancellationToken ct)
     {

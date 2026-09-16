@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Notifications;
 
@@ -15,7 +16,7 @@ internal sealed class LoadUpdatedNotificationHandler(
     ITelegramNotificationService telegramNotificationService,
     ITenantUnitOfWork tenantUow,
     ILogger<LoadUpdatedNotificationHandler> logger)
-    : IDomainEventHandler<LoadUpdatedEvent>
+    : INotificationHandler<LoadUpdatedEvent>
 {
     public async Task Handle(LoadUpdatedEvent @event, CancellationToken cancellationToken)
     {

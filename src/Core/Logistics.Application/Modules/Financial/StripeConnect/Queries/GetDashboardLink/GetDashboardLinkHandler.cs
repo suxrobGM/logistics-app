@@ -1,5 +1,6 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -10,7 +11,7 @@ internal sealed class GetDashboardLinkHandler(
     ITenantUnitOfWork tenantUow,
     IStripeConnectService stripeConnectService,
     ILogger<GetDashboardLinkHandler> logger)
-    : IAppRequestHandler<GetDashboardLinkQuery, Result<DashboardLinkDto>>
+    : IRequestHandler<GetDashboardLinkQuery, Result<DashboardLinkDto>>
 {
     public async Task<Result<DashboardLinkDto>> Handle(GetDashboardLinkQuery req, CancellationToken ct)
     {

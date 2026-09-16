@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
 internal sealed class GetLoadExceptionsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetLoadExceptionsQuery, Result<IEnumerable<LoadExceptionDto>>>
+    : IRequestHandler<GetLoadExceptionsQuery, Result<IEnumerable<LoadExceptionDto>>>
 {
     public async Task<Result<IEnumerable<LoadExceptionDto>>> Handle(GetLoadExceptionsQuery req, CancellationToken ct)
     {

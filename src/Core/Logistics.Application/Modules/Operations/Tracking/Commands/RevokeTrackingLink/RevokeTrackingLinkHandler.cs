@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Tracking.Commands;
 
 internal sealed class RevokeTrackingLinkHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<RevokeTrackingLinkCommand, Result>
+    : IRequestHandler<RevokeTrackingLinkCommand, Result>
 {
     public async Task<Result> Handle(RevokeTrackingLinkCommand req, CancellationToken ct)
     {

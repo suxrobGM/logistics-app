@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Abstractions.CurrentUser;
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Compliance.Privacy.Queries;
 internal sealed class GetMyDataDeletionsHandler(
     IMasterUnitOfWork masterUow,
     ICurrentUserService currentUserService)
-    : IAppRequestHandler<GetMyDataDeletionsQuery, Result<List<DataDeletionRequestDto>>>
+    : IRequestHandler<GetMyDataDeletionsQuery, Result<List<DataDeletionRequestDto>>>
 {
     public async Task<Result<List<DataDeletionRequestDto>>> Handle(GetMyDataDeletionsQuery req, CancellationToken ct)
     {

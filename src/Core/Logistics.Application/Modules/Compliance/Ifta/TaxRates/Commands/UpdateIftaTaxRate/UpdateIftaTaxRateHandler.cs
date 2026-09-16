@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Compliance.Ifta.TaxRates.Commands;
 
 internal sealed class UpdateIftaTaxRateHandler(
     IMasterUnitOfWork masterUow,
-    ILogger<UpdateIftaTaxRateHandler> logger) : IAppRequestHandler<UpdateIftaTaxRateCommand, Result>
+    ILogger<UpdateIftaTaxRateHandler> logger) : IRequestHandler<UpdateIftaTaxRateCommand, Result>
 {
     public async Task<Result> Handle(UpdateIftaTaxRateCommand req, CancellationToken ct)
     {

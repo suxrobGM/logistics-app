@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +12,7 @@ internal sealed class DispatchTripHandler(
     ITenantUnitOfWork tenantUow,
     IDispatchEligibilityService eligibilityService,
     ILogger<DispatchTripHandler> logger)
-    : IAppRequestHandler<DispatchTripCommand, Result>
+    : IRequestHandler<DispatchTripCommand, Result>
 {
     public async Task<Result> Handle(DispatchTripCommand req, CancellationToken ct)
     {

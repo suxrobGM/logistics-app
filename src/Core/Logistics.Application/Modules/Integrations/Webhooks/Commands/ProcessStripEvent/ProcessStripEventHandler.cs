@@ -1,11 +1,11 @@
-using Logistics.Application.Modules.Financial.StripeConnect.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Stripe;
@@ -27,7 +27,7 @@ internal sealed class ProcessStripEventHandler(
     IStripeAddressMapper stripeAddressMapper,
     IWebhookEventTracker webhookEvents,
     ILogger<ProcessStripEventHandler> logger)
-    : IAppRequestHandler<ProcessStripEventCommand, Result>
+    : IRequestHandler<ProcessStripEventCommand, Result>
 {
     public async Task<Result> Handle(
         ProcessStripEventCommand req, CancellationToken ct)

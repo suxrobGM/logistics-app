@@ -1,7 +1,7 @@
-using Logistics.Application.Modules.Financial.Payroll.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
@@ -9,7 +9,7 @@ namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 internal sealed class BatchCreatePayrollInvoicesHandler(
     ITenantUnitOfWork tenantUow,
     IPayrollService payrollService)
-    : IAppRequestHandler<BatchCreatePayrollInvoicesCommand, Result<BatchCreatePayrollInvoicesResult>>
+    : IRequestHandler<BatchCreatePayrollInvoicesCommand, Result<BatchCreatePayrollInvoicesResult>>
 {
     public async Task<Result<BatchCreatePayrollInvoicesResult>> Handle(
         BatchCreatePayrollInvoicesCommand req, CancellationToken ct)

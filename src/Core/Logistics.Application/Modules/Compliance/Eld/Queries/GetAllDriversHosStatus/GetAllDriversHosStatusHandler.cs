@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Specifications;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Compliance.Eld.Queries;
 
 internal sealed class GetAllDriversHosStatusHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetAllDriversHosStatusQuery, Result<List<DriverHosStatusDto>>>
+    : IRequestHandler<GetAllDriversHosStatusQuery, Result<List<DriverHosStatusDto>>>
 {
     public async Task<Result<List<DriverHosStatusDto>>> Handle(
         GetAllDriversHosStatusQuery req,

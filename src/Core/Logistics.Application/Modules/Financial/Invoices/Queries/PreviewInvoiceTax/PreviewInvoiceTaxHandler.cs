@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Tax;
 using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Queries;
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Financial.Invoices.Queries;
 internal sealed class PreviewInvoiceTaxHandler(
     ITenantUnitOfWork tenantUow,
     ITaxCalculator calculator)
-    : IAppRequestHandler<PreviewInvoiceTaxQuery, Result<PreviewInvoiceTaxResponse>>
+    : IRequestHandler<PreviewInvoiceTaxQuery, Result<PreviewInvoiceTaxResponse>>
 {
     public async Task<Result<PreviewInvoiceTaxResponse>> Handle(PreviewInvoiceTaxQuery req, CancellationToken ct)
     {

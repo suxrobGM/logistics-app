@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 internal sealed class DeleteSubscriptionHandler(
     IMasterUnitOfWork masterUow,
     IStripeSubscriptionService stripeSubscriptionService,
-    ILogger<DeleteSubscriptionHandler> logger) : IAppRequestHandler<DeleteSubscriptionCommand, Result>
+    ILogger<DeleteSubscriptionHandler> logger) : IRequestHandler<DeleteSubscriptionCommand, Result>
 {
     public async Task<Result> Handle(
         DeleteSubscriptionCommand req, CancellationToken ct)

@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Abstractions.CurrentUser;
@@ -12,7 +13,7 @@ namespace Logistics.Application.Modules.Compliance.Privacy.Commands;
 internal sealed class RequestDataExportHandler(
     IMasterUnitOfWork masterUow,
     ICurrentUserService currentUserService)
-    : IAppRequestHandler<RequestDataExportCommand, Result<Guid>>
+    : IRequestHandler<RequestDataExportCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(RequestDataExportCommand req, CancellationToken ct)
     {

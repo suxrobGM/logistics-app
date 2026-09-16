@@ -1,10 +1,10 @@
-using Logistics.Application.Modules.Financial.StripeConnect.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -16,7 +16,7 @@ internal sealed class ChangeSubscriptionPlanHandler(
     ITenantUnitOfWork tenantUow,
     IStripeSubscriptionService stripeSubscriptionService,
     ICurrentUserService currentUserService,
-    ILogger<ChangeSubscriptionPlanHandler> logger) : IAppRequestHandler<ChangeSubscriptionPlanCommand, Result>
+    ILogger<ChangeSubscriptionPlanHandler> logger) : IRequestHandler<ChangeSubscriptionPlanCommand, Result>
 {
     public async Task<Result> Handle(
         ChangeSubscriptionPlanCommand req, CancellationToken ct)

@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.LoadBoard;
@@ -9,6 +9,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,7 @@ internal sealed class ProposeCounterOfferHandler(
     IThreadedEmailSender emailSender,
     IAIDispatchBroadcastService broadcastService,
     ILogger<ProposeCounterOfferHandler> logger)
-    : IAppRequestHandler<ProposeCounterOfferCommand, Result<RateNegotiationDto>>
+    : IRequestHandler<ProposeCounterOfferCommand, Result<RateNegotiationDto>>
 {
     public async Task<Result<RateNegotiationDto>> Handle(ProposeCounterOfferCommand req, CancellationToken ct)
     {

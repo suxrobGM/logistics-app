@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.UpdateNotifications.Commands;
 
-internal sealed class UpdateNotificationHandler : IAppRequestHandler<UpdateNotificationCommand, Result>
+internal sealed class UpdateNotificationHandler : IRequestHandler<UpdateNotificationCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 

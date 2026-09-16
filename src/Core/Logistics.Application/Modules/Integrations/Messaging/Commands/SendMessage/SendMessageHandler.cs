@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Messaging;
 using Logistics.Application.Abstractions.Notifications;
@@ -14,7 +15,7 @@ internal sealed class SendMessageHandler(
     ITenantUnitOfWork tenantUow,
     IRealtimeMessagingService messagingService,
     IPushNotificationService pushNotificationService)
-    : IAppRequestHandler<SendMessageCommand, Result<MessageDto>>
+    : IRequestHandler<SendMessageCommand, Result<MessageDto>>
 {
     public async Task<Result<MessageDto>> Handle(SendMessageCommand req, CancellationToken ct)
     {

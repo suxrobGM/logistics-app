@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Compliance.Inspections.Queries;
 
 internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetConditionReportsQuery, Result<List<ConditionReportDto>>>
+    : IRequestHandler<GetConditionReportsQuery, Result<List<ConditionReportDto>>>
 {
     public async Task<Result<List<ConditionReportDto>>> Handle(GetConditionReportsQuery req, CancellationToken ct)
     {

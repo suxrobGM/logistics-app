@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Ifta.TaxRates.Queries;
 
 internal sealed class GetIftaTaxRatesHandler(
-    IMasterUnitOfWork masterUow) : IAppRequestHandler<GetIftaTaxRatesQuery, PagedResult<IftaTaxRateDto>>
+    IMasterUnitOfWork masterUow) : IRequestHandler<GetIftaTaxRatesQuery, PagedResult<IftaTaxRateDto>>
 {
     public Task<PagedResult<IftaTaxRateDto>> Handle(GetIftaTaxRatesQuery req, CancellationToken ct)
     {

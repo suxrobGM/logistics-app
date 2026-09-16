@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -13,7 +14,7 @@ internal sealed class PayPayrollInvoiceHandler(
     ITenantUnitOfWork tenantUow,
     IStripeConnectService stripeConnectService,
     ILogger<PayPayrollInvoiceHandler> logger)
-    : IAppRequestHandler<PayPayrollInvoiceCommand, Result>
+    : IRequestHandler<PayPayrollInvoiceCommand, Result>
 {
     public async Task<Result> Handle(PayPayrollInvoiceCommand req, CancellationToken ct)
     {

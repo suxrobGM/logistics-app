@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Modules.Integrations.AICopilot.Queries;
 using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Agents;
@@ -12,8 +13,8 @@ namespace Logistics.Application.Modules.Integrations.Agents;
 internal sealed class GetAIQuotaStatusHandler(
     IAIQuotaService quotaService,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetAIQuotaStatusQuery, Result<AIQuotaStatusDto>>,
-        IAppRequestHandler<GetAICopilotQuotaStatusQuery, Result<AIQuotaStatusDto>>
+    : IRequestHandler<GetAIQuotaStatusQuery, Result<AIQuotaStatusDto>>,
+        IRequestHandler<GetAICopilotQuotaStatusQuery, Result<AIQuotaStatusDto>>
 {
     public Task<Result<AIQuotaStatusDto>> Handle(GetAIQuotaStatusQuery request, CancellationToken ct) =>
         GetStatusAsync(ct);

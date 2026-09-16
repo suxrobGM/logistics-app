@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Storage;
 
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Operations.Tracking.Queries;
 internal sealed class DownloadPublicTrackingDocumentHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorage)
-    : IAppRequestHandler<DownloadPublicTrackingDocumentQuery, Result<DocumentDownloadDto>>
+    : IRequestHandler<DownloadPublicTrackingDocumentQuery, Result<DocumentDownloadDto>>
 {
     public async Task<Result<DocumentDownloadDto>> Handle(
         DownloadPublicTrackingDocumentQuery req,

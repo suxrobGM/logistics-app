@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Customers.Queries;
 
 internal sealed class GetCustomersHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetCustomersQuery, PagedResult<CustomerDto>>
+    : IRequestHandler<GetCustomersQuery, PagedResult<CustomerDto>>
 {
     public Task<PagedResult<CustomerDto>> Handle(GetCustomersQuery req, CancellationToken ct)
     {

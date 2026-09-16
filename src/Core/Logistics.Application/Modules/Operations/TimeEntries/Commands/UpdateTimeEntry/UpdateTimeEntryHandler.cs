@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.TimeEntries.Commands;
 
 internal sealed class UpdateTimeEntryHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateTimeEntryCommand, Result>
+    : IRequestHandler<UpdateTimeEntryCommand, Result>
 {
     public async Task<Result> Handle(UpdateTimeEntryCommand req, CancellationToken ct)
     {

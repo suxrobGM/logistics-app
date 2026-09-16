@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Commands;
 internal sealed class DispatchLoadHandler(
     ITenantUnitOfWork tenantUow,
     IDispatchEligibilityService eligibilityService)
-    : IAppRequestHandler<DispatchLoadCommand, Result>
+    : IRequestHandler<DispatchLoadCommand, Result>
 {
     public async Task<Result> Handle(DispatchLoadCommand req, CancellationToken ct)
     {

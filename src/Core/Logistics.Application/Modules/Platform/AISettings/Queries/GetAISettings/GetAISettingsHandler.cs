@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.AI;
 using Microsoft.Extensions.Options;
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Platform.AISettings.Queries;
 internal sealed class GetAISettingsHandler(
     ISystemSettingsService systemSettings,
     IMasterUnitOfWork masterUow,
-    IOptions<LlmOptions> llmOptions) : IAppRequestHandler<GetAISettingsQuery, Result<AISettingsDto>>
+    IOptions<LlmOptions> llmOptions) : IRequestHandler<GetAISettingsQuery, Result<AISettingsDto>>
 {
     public async Task<Result<AISettingsDto>> Handle(GetAISettingsQuery req, CancellationToken ct)
     {

@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Eld.Commands;
 
 internal sealed class DeleteEldDriverMappingHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<DeleteEldDriverMappingCommand, Result>
+    : IRequestHandler<DeleteEldDriverMappingCommand, Result>
 {
     public async Task<Result> Handle(DeleteEldDriverMappingCommand req, CancellationToken ct)
     {

@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
 internal sealed class UpdateLoadProximityHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateLoadProximityCommand, Result>
+    : IRequestHandler<UpdateLoadProximityCommand, Result>
 {
     public async Task<Result> Handle(UpdateLoadProximityCommand req, CancellationToken ct)
     {

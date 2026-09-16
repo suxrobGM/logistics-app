@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Containers.Commands;
 
 internal sealed class CreateContainerHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CreateContainerCommand, Result<ContainerDto>>
+    : IRequestHandler<CreateContainerCommand, Result<ContainerDto>>
 {
     public async Task<Result<ContainerDto>> Handle(CreateContainerCommand req, CancellationToken ct)
     {

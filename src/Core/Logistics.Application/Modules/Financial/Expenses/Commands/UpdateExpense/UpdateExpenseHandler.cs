@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Commands;
 
 internal sealed class UpdateExpenseHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateExpenseCommand, Result>
+    : IRequestHandler<UpdateExpenseCommand, Result>
 {
     public async Task<Result> Handle(UpdateExpenseCommand req, CancellationToken ct)
     {

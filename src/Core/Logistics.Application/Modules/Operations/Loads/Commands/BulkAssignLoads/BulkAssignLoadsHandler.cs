@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class BulkAssignLoadsHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<BulkAssignLoadsCommand, Result>
+internal sealed class BulkAssignLoadsHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<BulkAssignLoadsCommand, Result>
 {
     public async Task<Result> Handle(BulkAssignLoadsCommand req, CancellationToken ct)
     {

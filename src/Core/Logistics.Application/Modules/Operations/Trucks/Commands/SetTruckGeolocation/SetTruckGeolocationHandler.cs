@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Compliance.Ifta.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +12,7 @@ internal sealed class SetTruckGeolocationHandler(
     ITenantUnitOfWork tenantUow,
     ITruckLocationRecorder locationRecorder,
     ILogger<SetTruckGeolocationHandler> logger)
-    : IAppRequestHandler<SetTruckGeolocationCommand, Result>
+    : IRequestHandler<SetTruckGeolocationCommand, Result>
 {
     public async Task<Result> Handle(
         SetTruckGeolocationCommand req, CancellationToken ct)

@@ -1,11 +1,11 @@
-using Logistics.Application.Modules.Operations.Loads.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
 internal sealed class CreateLoadHandler(ILoadService loadService)
-    : IAppRequestHandler<CreateLoadCommand, Result>
+    : IRequestHandler<CreateLoadCommand, Result>
 {
     public async Task<Result> Handle(
         CreateLoadCommand req, CancellationToken ct)

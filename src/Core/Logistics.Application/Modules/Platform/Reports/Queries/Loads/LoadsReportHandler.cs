@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
-internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<LoadsReportQuery, Result<LoadsReportDto>>
+internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<LoadsReportQuery, Result<LoadsReportDto>>
 {
     public async Task<Result<LoadsReportDto>> Handle(LoadsReportQuery req, CancellationToken ct)
     {

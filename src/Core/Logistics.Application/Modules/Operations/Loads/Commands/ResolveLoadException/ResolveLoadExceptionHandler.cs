@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class ResolveLoadExceptionHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<ResolveLoadExceptionCommand, Result>
+internal sealed class ResolveLoadExceptionHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<ResolveLoadExceptionCommand, Result>
 {
     public async Task<Result> Handle(ResolveLoadExceptionCommand req, CancellationToken ct)
     {

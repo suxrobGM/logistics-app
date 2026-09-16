@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Utilities;
@@ -6,6 +6,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
@@ -25,7 +26,7 @@ internal sealed class CreateTenantHandler(
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
     IOptions<IdentityServerOptions> identityServerOptions)
-    : IAppRequestHandler<CreateTenantCommand, Result>
+    : IRequestHandler<CreateTenantCommand, Result>
 {
     public async Task<Result> Handle(CreateTenantCommand req, CancellationToken ct)
     {

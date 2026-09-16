@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.TimeEntries.Commands;
 
 internal sealed class DeleteTimeEntryHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<DeleteTimeEntryCommand, Result>
+    : IRequestHandler<DeleteTimeEntryCommand, Result>
 {
     public async Task<Result> Handle(DeleteTimeEntryCommand req, CancellationToken ct)
     {

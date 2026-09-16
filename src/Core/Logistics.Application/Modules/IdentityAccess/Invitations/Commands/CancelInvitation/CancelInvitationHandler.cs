@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
 internal sealed class CancelInvitationHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CancelInvitationCommand, Result>
+    : IRequestHandler<CancelInvitationCommand, Result>
 {
     public async Task<Result> Handle(CancelInvitationCommand req, CancellationToken ct)
     {

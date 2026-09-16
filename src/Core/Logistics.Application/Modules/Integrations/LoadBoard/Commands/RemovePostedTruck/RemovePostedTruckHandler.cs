@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
@@ -13,7 +14,7 @@ internal sealed class RemovePostedTruckHandler(
     ITenantUnitOfWork tenantUow,
     ILoadBoardTokenService tokenService,
     ILogger<RemovePostedTruckHandler> logger)
-    : IAppRequestHandler<RemovePostedTruckCommand, Result>
+    : IRequestHandler<RemovePostedTruckCommand, Result>
 {
     public async Task<Result> Handle(RemovePostedTruckCommand req, CancellationToken ct)
     {

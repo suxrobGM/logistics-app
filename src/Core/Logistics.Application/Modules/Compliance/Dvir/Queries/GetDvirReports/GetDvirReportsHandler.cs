@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Queries;
 
 internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetDvirReportsQuery, PagedResult<DvirReportDto>>
+    : IRequestHandler<GetDvirReportsQuery, PagedResult<DvirReportDto>>
 {
     public Task<PagedResult<DvirReportDto>> Handle(GetDvirReportsQuery req, CancellationToken ct)
     {

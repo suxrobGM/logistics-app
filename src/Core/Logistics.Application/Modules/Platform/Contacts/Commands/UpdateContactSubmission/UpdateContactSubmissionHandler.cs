@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +9,7 @@ namespace Logistics.Application.Modules.Platform.Contacts.Commands;
 
 internal sealed class UpdateContactSubmissionHandler(
     IMasterUnitOfWork masterUow,
-    ILogger<UpdateContactSubmissionHandler> logger) : IAppRequestHandler<UpdateContactSubmissionCommand, Result>
+    ILogger<UpdateContactSubmissionHandler> logger) : IRequestHandler<UpdateContactSubmissionCommand, Result>
 {
     public async Task<Result> Handle(UpdateContactSubmissionCommand req, CancellationToken ct)
     {

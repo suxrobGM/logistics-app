@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Queries;
 
-internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<GetEmployeesQuery, PagedResult<EmployeeDto>>
+internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<GetEmployeesQuery, PagedResult<EmployeeDto>>
 {
     public Task<PagedResult<EmployeeDto>> Handle(
         GetEmployeesQuery req,

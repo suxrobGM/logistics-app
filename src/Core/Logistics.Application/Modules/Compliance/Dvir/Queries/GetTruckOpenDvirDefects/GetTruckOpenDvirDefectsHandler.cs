@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Queries;
 
 internal sealed class GetTruckOpenDvirDefectsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTruckOpenDvirDefectsQuery, Result<List<DvirDefectDto>>>
+    : IRequestHandler<GetTruckOpenDvirDefectsQuery, Result<List<DvirDefectDto>>>
 {
     public async Task<Result<List<DvirDefectDto>>> Handle(GetTruckOpenDvirDefectsQuery req, CancellationToken ct)
     {

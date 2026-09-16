@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;

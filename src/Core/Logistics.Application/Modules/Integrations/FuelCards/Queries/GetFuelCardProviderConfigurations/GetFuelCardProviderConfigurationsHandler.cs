@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.FuelCards.Queries;
 
 internal sealed class GetFuelCardProviderConfigurationsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetFuelCardProviderConfigurationsQuery, Result<List<FuelCardProviderConfigurationDto>>>
+    : IRequestHandler<GetFuelCardProviderConfigurationsQuery, Result<List<FuelCardProviderConfigurationDto>>>
 {
     public async Task<Result<List<FuelCardProviderConfigurationDto>>> Handle(
         GetFuelCardProviderConfigurationsQuery req,

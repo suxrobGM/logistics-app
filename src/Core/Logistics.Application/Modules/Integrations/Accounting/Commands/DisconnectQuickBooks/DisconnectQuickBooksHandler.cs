@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Accounting;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +13,7 @@ internal sealed class DisconnectQuickBooksHandler(
     ITenantUnitOfWork tenantUow,
     IAccountingProviderFactory providerFactory,
     ILogger<DisconnectQuickBooksHandler> logger)
-    : IAppRequestHandler<DisconnectQuickBooksCommand, Result>
+    : IRequestHandler<DisconnectQuickBooksCommand, Result>
 {
     public async Task<Result> Handle(DisconnectQuickBooksCommand req, CancellationToken ct)
     {

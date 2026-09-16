@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Accounting;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Accounting.Queries;
@@ -10,7 +11,7 @@ internal sealed class GetQuickBooksAuthUrlHandler(
     ITenantUnitOfWork tenantUow,
     IAccountingProviderFactory providerFactory,
     IOAuthStateProtector stateProtector)
-    : IAppRequestHandler<GetQuickBooksAuthUrlQuery, Result<AccountingAuthUrlDto>>
+    : IRequestHandler<GetQuickBooksAuthUrlQuery, Result<AccountingAuthUrlDto>>
 {
     public Task<Result<AccountingAuthUrlDto>> Handle(GetQuickBooksAuthUrlQuery req, CancellationToken ct)
     {

@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Notifications;
 
@@ -13,7 +14,7 @@ internal sealed class ConfirmLoadStatusHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser,
     INotificationService notificationService)
-    : IAppRequestHandler<ConfirmLoadStatusCommand, Result>
+    : IRequestHandler<ConfirmLoadStatusCommand, Result>
 {
     public async Task<Result> Handle(ConfirmLoadStatusCommand req, CancellationToken ct)
     {

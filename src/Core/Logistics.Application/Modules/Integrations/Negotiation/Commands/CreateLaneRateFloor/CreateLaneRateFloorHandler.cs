@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
 
 internal sealed class CreateLaneRateFloorHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CreateLaneRateFloorCommand, Result<Guid>>
+    : IRequestHandler<CreateLaneRateFloorCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateLaneRateFloorCommand req, CancellationToken ct)
     {

@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Terminals.Commands;
 
 internal sealed class CreateTerminalHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CreateTerminalCommand, Result<TerminalDto>>
+    : IRequestHandler<CreateTerminalCommand, Result<TerminalDto>>
 {
     public async Task<Result<TerminalDto>> Handle(CreateTerminalCommand req, CancellationToken ct)
     {

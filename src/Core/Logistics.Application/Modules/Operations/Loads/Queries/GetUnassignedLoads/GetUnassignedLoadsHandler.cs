@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 /// Handler for getting loads that are not assigned to any active trip.
 /// </summary>
 internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow)
-    : IAppRequestHandler<GetUnassignedLoadsQuery, PagedResult<LoadDto>>
+    : IRequestHandler<GetUnassignedLoadsQuery, PagedResult<LoadDto>>
 {
     public async Task<PagedResult<LoadDto>> Handle(GetUnassignedLoadsQuery req, CancellationToken ct)
     {

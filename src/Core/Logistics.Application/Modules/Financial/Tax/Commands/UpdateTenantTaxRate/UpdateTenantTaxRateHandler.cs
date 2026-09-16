@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Tax.Commands;
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Financial.Tax.Commands;
 internal sealed class UpdateTenantTaxRateHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateTenantTaxRateCommand, Result<TenantTaxRateDto>>
+    : IRequestHandler<UpdateTenantTaxRateCommand, Result<TenantTaxRateDto>>
 {
     public async Task<Result<TenantTaxRateDto>> Handle(UpdateTenantTaxRateCommand req, CancellationToken ct)
     {

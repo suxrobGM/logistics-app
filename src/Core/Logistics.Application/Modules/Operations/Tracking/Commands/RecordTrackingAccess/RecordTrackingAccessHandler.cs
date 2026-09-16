@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Operations.Tracking.Commands;
 internal sealed class RecordTrackingAccessHandler(
     ITenantUnitOfWork tenantUow,
     ILogger<RecordTrackingAccessHandler> logger)
-    : IAppRequestHandler<RecordTrackingAccessCommand, Result>
+    : IRequestHandler<RecordTrackingAccessCommand, Result>
 {
     public async Task<Result> Handle(RecordTrackingAccessCommand req, CancellationToken ct)
     {

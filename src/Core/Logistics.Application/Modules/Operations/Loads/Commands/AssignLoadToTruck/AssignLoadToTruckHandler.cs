@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class AssignLoadToTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<AssignLoadToTruckCommand, Result>
+internal sealed class AssignLoadToTruckHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<AssignLoadToTruckCommand, Result>
 {
     public async Task<Result> Handle(AssignLoadToTruckCommand req, CancellationToken ct)
     {

@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Options;
 
@@ -14,7 +15,7 @@ internal sealed class ResendTenantWelcomeHandler(
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
     IOptions<IdentityServerOptions> identityServerOptions)
-    : IAppRequestHandler<ResendTenantWelcomeCommand, Result>
+    : IRequestHandler<ResendTenantWelcomeCommand, Result>
 {
     public async Task<Result> Handle(ResendTenantWelcomeCommand req, CancellationToken ct)
     {

@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 
 internal sealed class SetDriverDeviceTokenHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<SetDriverDeviceTokenCommand, Result>
+    : IRequestHandler<SetDriverDeviceTokenCommand, Result>
 {
     public async Task<Result> Handle(
         SetDriverDeviceTokenCommand req, CancellationToken ct)

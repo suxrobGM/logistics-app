@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 /// Hard delete is intentionally not supported - license history must be retained for audits.
 /// </summary>
 internal sealed class DeleteDriverLicenseHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<DeleteDriverLicenseCommand, Result>
+    : IRequestHandler<DeleteDriverLicenseCommand, Result>
 {
     public async Task<Result> Handle(DeleteDriverLicenseCommand req, CancellationToken ct)
     {

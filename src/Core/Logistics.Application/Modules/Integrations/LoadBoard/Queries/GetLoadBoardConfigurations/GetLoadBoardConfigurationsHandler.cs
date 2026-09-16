@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Queries;
 
 internal sealed class GetLoadBoardConfigurationsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetLoadBoardConfigurationsQuery, Result<List<LoadBoardConfigurationDto>>>
+    : IRequestHandler<GetLoadBoardConfigurationsQuery, Result<List<LoadBoardConfigurationDto>>>
 {
     public async Task<Result<List<LoadBoardConfigurationDto>>> Handle(
         GetLoadBoardConfigurationsQuery req,

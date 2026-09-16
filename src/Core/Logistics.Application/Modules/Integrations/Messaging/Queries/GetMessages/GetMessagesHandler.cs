@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Messaging;
 
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Integrations.Messaging.Queries;
 internal sealed class GetMessagesHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUserService)
-    : IAppRequestHandler<GetMessagesQuery, Result<MessageDto[]>>
+    : IRequestHandler<GetMessagesQuery, Result<MessageDto[]>>
 {
     public async Task<Result<MessageDto[]>> Handle(GetMessagesQuery req, CancellationToken ct)
     {

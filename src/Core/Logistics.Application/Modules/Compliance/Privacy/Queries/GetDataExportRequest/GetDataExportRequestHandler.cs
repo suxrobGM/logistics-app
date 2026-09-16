@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Storage;
 using Logistics.Application.Abstractions.CurrentUser;
@@ -14,7 +15,7 @@ internal sealed class GetDataExportRequestHandler(
     IMasterUnitOfWork masterUow,
     ICurrentUserService currentUserService,
     IBlobStorageService blobStorage)
-    : IAppRequestHandler<GetDataExportRequestQuery, Result<DataExportRequestDto>>
+    : IRequestHandler<GetDataExportRequestQuery, Result<DataExportRequestDto>>
 {
     public async Task<Result<DataExportRequestDto>> Handle(GetDataExportRequestQuery req, CancellationToken ct)
     {

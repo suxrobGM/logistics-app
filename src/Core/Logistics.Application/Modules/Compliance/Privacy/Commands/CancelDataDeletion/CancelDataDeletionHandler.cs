@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.CurrentUser;
 
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.Compliance.Privacy.Commands;
 internal sealed class CancelDataDeletionHandler(
     IMasterUnitOfWork masterUow,
     ICurrentUserService currentUserService)
-    : IAppRequestHandler<CancelDataDeletionCommand, Result>
+    : IRequestHandler<CancelDataDeletionCommand, Result>
 {
     public async Task<Result> Handle(CancelDataDeletionCommand req, CancellationToken ct)
     {

@@ -1,4 +1,5 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Routing;
@@ -6,7 +7,7 @@ using Logistics.Application.Abstractions.Routing;
 namespace Logistics.Application.Modules.Operations.Trips.Commands;
 
 internal sealed class OptimizeTripStopsHandler :
-    IAppRequestHandler<OptimizeTripStopsCommand, Result<OptimizedTripStopsDto>>
+    IRequestHandler<OptimizeTripStopsCommand, Result<OptimizedTripStopsDto>>
 {
     private readonly ITripOptimizer _optimizer;
     private ILogger<OptimizeTripStopsHandler> _log;

@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Commands;
 
 internal sealed class CreateBodyShopExpenseHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CreateBodyShopExpenseCommand, Result<Guid>>
+    : IRequestHandler<CreateBodyShopExpenseCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateBodyShopExpenseCommand req, CancellationToken ct)
     {

@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Containers.Commands;
 
 internal sealed class MoveContainerToTerminalHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<MoveContainerToTerminalCommand, Result>
+    : IRequestHandler<MoveContainerToTerminalCommand, Result>
 {
     public async Task<Result> Handle(MoveContainerToTerminalCommand req, CancellationToken ct)
     {

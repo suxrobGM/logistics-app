@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.BlogPosts.Queries;
 
 internal sealed class GetBlogPostHandler(
-    IMasterUnitOfWork masterUow) : IAppRequestHandler<GetBlogPostQuery, Result<BlogPostDto>>
+    IMasterUnitOfWork masterUow) : IRequestHandler<GetBlogPostQuery, Result<BlogPostDto>>
 {
     public async Task<Result<BlogPostDto>> Handle(GetBlogPostQuery req, CancellationToken ct)
     {

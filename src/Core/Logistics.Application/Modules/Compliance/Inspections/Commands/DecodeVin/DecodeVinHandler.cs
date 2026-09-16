@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Vin;
 
 namespace Logistics.Application.Modules.Compliance.Inspections.Commands;
 
 internal sealed class DecodeVinHandler(IVinDecoderService vinDecoder)
-    : IAppRequestHandler<DecodeVinCommand, Result<VehicleInfoDto>>
+    : IRequestHandler<DecodeVinCommand, Result<VehicleInfoDto>>
 {
     public async Task<Result<VehicleInfoDto>> Handle(DecodeVinCommand req, CancellationToken ct)
     {

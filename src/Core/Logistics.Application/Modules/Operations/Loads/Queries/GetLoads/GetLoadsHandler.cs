@@ -1,10 +1,11 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +14,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 internal sealed class GetLoadsHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUserService)
-    : IAppRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
+    : IRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
 {
     public async Task<PagedResult<LoadDto>> Handle(
         GetLoadsQuery req,

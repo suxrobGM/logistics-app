@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.CurrentUser;
 
@@ -8,7 +9,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
 internal sealed class ReportLoadExceptionHandler(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUserService) : IAppRequestHandler<ReportLoadExceptionCommand, Result>
+    ICurrentUserService currentUserService) : IRequestHandler<ReportLoadExceptionCommand, Result>
 {
     public async Task<Result> Handle(ReportLoadExceptionCommand req, CancellationToken ct)
     {

@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.ProductLicense.Commands;
 
 internal sealed class RecordProductLicenseHeartbeatHandler(IMasterUnitOfWork masterUow)
-    : IAppRequestHandler<RecordProductLicenseHeartbeatCommand, Result>
+    : IRequestHandler<RecordProductLicenseHeartbeatCommand, Result>
 {
     public async Task<Result> Handle(RecordProductLicenseHeartbeatCommand req, CancellationToken ct)
     {

@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
-internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<DriversReportQuery, PagedResult<DriverReportDto>>
+internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<DriversReportQuery, PagedResult<DriverReportDto>>
 {
     public async Task<PagedResult<DriverReportDto>> Handle(DriversReportQuery req, CancellationToken ct)
     {

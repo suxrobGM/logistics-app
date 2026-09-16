@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 internal sealed class UpdateEmployeeHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUserService)
-    : IAppRequestHandler<UpdateEmployeeCommand, Result>
+    : IRequestHandler<UpdateEmployeeCommand, Result>
 {
     public async Task<Result> Handle(
         UpdateEmployeeCommand req, CancellationToken ct)

@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Messaging;
 
 namespace Logistics.Application.Modules.Integrations.Messaging.Commands;
 
 internal sealed class CreateConversationHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CreateConversationCommand, Result<ConversationDto>>
+    : IRequestHandler<CreateConversationCommand, Result<ConversationDto>>
 {
     public async Task<Result<ConversationDto>> Handle(CreateConversationCommand req, CancellationToken ct)
     {

@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +20,7 @@ internal sealed class ImpersonateUserHandler(
     IOptions<ImpersonationOptions> impersonationOptions,
     IOptions<IdentityServerOptions> identityServerOptions,
     ILogger<ImpersonateUserHandler> logger)
-    : IAppRequestHandler<ImpersonateUserCommand, Result<ImpersonateUserResult>>
+    : IRequestHandler<ImpersonateUserCommand, Result<ImpersonateUserResult>>
 {
     public async Task<Result<ImpersonateUserResult>> Handle(
         ImpersonateUserCommand req, CancellationToken ct)

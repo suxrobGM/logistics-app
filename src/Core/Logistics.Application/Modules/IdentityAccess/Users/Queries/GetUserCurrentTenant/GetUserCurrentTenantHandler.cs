@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Users.Queries;
 
 internal sealed class GetUserCurrentTenantHandler :
-    IAppRequestHandler<GetUserCurrentTenantQuery, Result<TenantDto>>
+    IRequestHandler<GetUserCurrentTenantQuery, Result<TenantDto>>
 {
     private readonly IMasterUnitOfWork _masterUow;
 

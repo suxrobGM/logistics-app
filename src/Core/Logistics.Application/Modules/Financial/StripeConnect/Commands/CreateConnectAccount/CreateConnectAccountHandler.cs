@@ -1,5 +1,6 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -11,7 +12,7 @@ internal sealed class CreateConnectAccountHandler(
     ITenantUnitOfWork tenantUow,
     IStripeConnectService stripeConnectService,
     ILogger<CreateConnectAccountHandler> logger)
-    : IAppRequestHandler<CreateConnectAccountCommand, Result<CreateConnectAccountDto>>
+    : IRequestHandler<CreateConnectAccountCommand, Result<CreateConnectAccountDto>>
 {
     public async Task<Result<CreateConnectAccountDto>> Handle(CreateConnectAccountCommand req, CancellationToken ct)
     {

@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Users.Commands;
 
-internal sealed class UpdateUserHandler : IAppRequestHandler<UpdateUserCommand, Result>
+internal sealed class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Result>
 {
     private readonly IMasterUnitOfWork _masterUow;
     private readonly ITenantUnitOfWork _tenantUow;

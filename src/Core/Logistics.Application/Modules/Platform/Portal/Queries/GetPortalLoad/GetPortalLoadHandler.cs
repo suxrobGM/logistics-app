@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Portal.Queries;
 
 internal sealed class GetPortalLoadHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetPortalLoadQuery, Result<PortalLoadDto>>
+    : IRequestHandler<GetPortalLoadQuery, Result<PortalLoadDto>>
 {
     public async Task<Result<PortalLoadDto>> Handle(
         GetPortalLoadQuery req,

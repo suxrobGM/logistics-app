@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Payments.Queries;
 
 internal sealed class GetPaymentsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetPaymentsQuery, PagedResult<PaymentDto>>
+    : IRequestHandler<GetPaymentsQuery, PagedResult<PaymentDto>>
 {
     public Task<PagedResult<PaymentDto>> Handle(
         GetPaymentsQuery req,

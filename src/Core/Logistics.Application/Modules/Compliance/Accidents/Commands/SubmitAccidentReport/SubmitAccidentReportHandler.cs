@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Accidents.Commands;
 
 internal sealed class SubmitAccidentReportHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<SubmitAccidentReportCommand, Result<AccidentReportDto>>
+    : IRequestHandler<SubmitAccidentReportCommand, Result<AccidentReportDto>>
 {
     public async Task<Result<AccidentReportDto>> Handle(SubmitAccidentReportCommand req, CancellationToken ct)
     {

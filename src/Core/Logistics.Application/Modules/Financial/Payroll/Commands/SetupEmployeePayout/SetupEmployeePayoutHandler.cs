@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -11,7 +12,7 @@ internal sealed class SetupEmployeePayoutHandler(
     ITenantUnitOfWork tenantUow,
     IStripeConnectService stripeConnectService,
     ILogger<SetupEmployeePayoutHandler> logger)
-    : IAppRequestHandler<SetupEmployeePayoutCommand, Result>
+    : IRequestHandler<SetupEmployeePayoutCommand, Result>
 {
     public async Task<Result> Handle(SetupEmployeePayoutCommand req, CancellationToken ct)
     {

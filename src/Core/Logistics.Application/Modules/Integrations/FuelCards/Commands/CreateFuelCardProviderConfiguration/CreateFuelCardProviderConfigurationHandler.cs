@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.FuelCards;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +12,7 @@ internal sealed class CreateFuelCardProviderConfigurationHandler(
     ITenantUnitOfWork tenantUow,
     IFuelCardProviderFactory providerFactory,
     ILogger<CreateFuelCardProviderConfigurationHandler> logger)
-    : IAppRequestHandler<CreateFuelCardProviderConfigurationCommand, Result>
+    : IRequestHandler<CreateFuelCardProviderConfigurationCommand, Result>
 {
     public async Task<Result> Handle(CreateFuelCardProviderConfigurationCommand req, CancellationToken ct)
     {

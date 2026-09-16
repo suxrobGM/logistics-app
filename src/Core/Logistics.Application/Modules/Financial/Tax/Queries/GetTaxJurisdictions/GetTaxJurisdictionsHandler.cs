@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Tax;
 
 namespace Logistics.Application.Modules.Financial.Tax.Queries;
 
 internal sealed class GetTaxJurisdictionsHandler(ITaxJurisdictionsProvider provider)
-    : IAppRequestHandler<GetTaxJurisdictionsQuery, Result<IReadOnlyList<TaxJurisdictionInfoDto>>>
+    : IRequestHandler<GetTaxJurisdictionsQuery, Result<IReadOnlyList<TaxJurisdictionInfoDto>>>
 {
     public Task<Result<IReadOnlyList<TaxJurisdictionInfoDto>>> Handle(
         GetTaxJurisdictionsQuery req, CancellationToken ct)

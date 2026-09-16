@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.CurrentUser;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Features.Commands;
 internal sealed class UpdateTenantFeaturesAdminHandler(
     IMasterUnitOfWork masterUow,
     ICurrentUserService currentUserService)
-    : IAppRequestHandler<UpdateTenantFeaturesAdminCommand, Result>
+    : IRequestHandler<UpdateTenantFeaturesAdminCommand, Result>
 {
     public async Task<Result> Handle(UpdateTenantFeaturesAdminCommand req, CancellationToken ct)
     {

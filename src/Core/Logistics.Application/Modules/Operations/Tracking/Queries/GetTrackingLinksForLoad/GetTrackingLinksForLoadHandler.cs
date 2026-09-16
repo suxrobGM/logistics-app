@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Options;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Operations.Tracking.Queries;
 internal sealed class GetTrackingLinksForLoadHandler(
     ITenantUnitOfWork tenantUow,
     IOptions<CustomerPortalOptions> portalOptions)
-    : IAppRequestHandler<GetTrackingLinksForLoadQuery, Result<IEnumerable<TrackingLinkDto>>>
+    : IRequestHandler<GetTrackingLinksForLoadQuery, Result<IEnumerable<TrackingLinkDto>>>
 {
     public async Task<Result<IEnumerable<TrackingLinkDto>>> Handle(
         GetTrackingLinksForLoadQuery req,

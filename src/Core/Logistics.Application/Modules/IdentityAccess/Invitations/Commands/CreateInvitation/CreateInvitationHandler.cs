@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Utilities;
@@ -7,6 +7,7 @@ using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +24,7 @@ internal sealed class CreateInvitationHandler(
     IEmailTemplateService emailTemplateService,
     ICurrentUserService currentUserService,
     IOptions<IdentityServerOptions> identityServerOptions)
-    : IAppRequestHandler<CreateInvitationCommand, Result<InvitationDto>>
+    : IRequestHandler<CreateInvitationCommand, Result<InvitationDto>>
 {
     public async Task<Result<InvitationDto>> Handle(CreateInvitationCommand req, CancellationToken ct)
     {

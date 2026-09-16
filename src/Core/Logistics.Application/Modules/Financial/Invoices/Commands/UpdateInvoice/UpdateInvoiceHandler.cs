@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 
-internal sealed class UpdateInvoiceHandler : IAppRequestHandler<UpdateInvoiceCommand, Result>
+internal sealed class UpdateInvoiceHandler : IRequestHandler<UpdateInvoiceCommand, Result>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 

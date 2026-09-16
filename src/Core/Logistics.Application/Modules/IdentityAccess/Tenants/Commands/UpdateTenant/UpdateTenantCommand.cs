@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;

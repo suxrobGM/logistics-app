@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Invitations.Queries;
 internal sealed class GetInvitationsHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetInvitationsQuery, PagedResult<InvitationDto>>
+    : IRequestHandler<GetInvitationsQuery, PagedResult<InvitationDto>>
 {
     public async Task<PagedResult<InvitationDto>> Handle(GetInvitationsQuery req, CancellationToken ct)
     {

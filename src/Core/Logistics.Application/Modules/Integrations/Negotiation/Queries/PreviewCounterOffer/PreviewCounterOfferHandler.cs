@@ -1,6 +1,6 @@
+﻿using Logistics.Mediator;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
@@ -14,7 +14,7 @@ internal sealed class PreviewCounterOfferHandler(
     ITenantUnitOfWork tenantUow,
     INegotiationEmailComposer composer,
     IThreadedEmailSender emailSender)
-    : IAppRequestHandler<PreviewCounterOfferQuery, Result<CounterOfferPreviewDto>>
+    : IRequestHandler<PreviewCounterOfferQuery, Result<CounterOfferPreviewDto>>
 {
     private const string ToolName = "propose_counter_offer";
 

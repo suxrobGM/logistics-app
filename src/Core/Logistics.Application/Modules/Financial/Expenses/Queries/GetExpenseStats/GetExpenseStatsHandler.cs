@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Financial.Expenses.Queries;
 
 internal sealed class GetExpenseStatsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetExpenseStatsQuery, Result<ExpenseStatsDto>>
+    : IRequestHandler<GetExpenseStatsQuery, Result<ExpenseStatsDto>>
 {
     public async Task<Result<ExpenseStatsDto>> Handle(GetExpenseStatsQuery req, CancellationToken ct)
     {

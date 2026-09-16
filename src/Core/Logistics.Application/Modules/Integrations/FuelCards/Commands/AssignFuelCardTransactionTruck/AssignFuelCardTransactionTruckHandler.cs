@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Integrations.FuelCards.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Integrations.FuelCards.Commands;
 internal sealed class AssignFuelCardTransactionTruckHandler(
     ITenantUnitOfWork tenantUow,
     ILogger<AssignFuelCardTransactionTruckHandler> logger)
-    : IAppRequestHandler<AssignFuelCardTransactionTruckCommand, Result>
+    : IRequestHandler<AssignFuelCardTransactionTruckCommand, Result>
 {
     public async Task<Result> Handle(AssignFuelCardTransactionTruckCommand req, CancellationToken ct)
     {

@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 
 internal sealed class SubmitPayrollForApprovalHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<SubmitPayrollForApprovalCommand, Result>
+    : IRequestHandler<SubmitPayrollForApprovalCommand, Result>
 {
     public async Task<Result> Handle(SubmitPayrollForApprovalCommand req, CancellationToken ct)
     {

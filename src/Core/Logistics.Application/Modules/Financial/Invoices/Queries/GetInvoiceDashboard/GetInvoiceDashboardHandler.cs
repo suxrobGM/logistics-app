@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Queries;
 
 internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetInvoiceDashboardQuery, Result<InvoiceDashboardDto>>
+    : IRequestHandler<GetInvoiceDashboardQuery, Result<InvoiceDashboardDto>>
 {
     public async Task<Result<InvoiceDashboardDto>> Handle(GetInvoiceDashboardQuery req, CancellationToken ct)
     {

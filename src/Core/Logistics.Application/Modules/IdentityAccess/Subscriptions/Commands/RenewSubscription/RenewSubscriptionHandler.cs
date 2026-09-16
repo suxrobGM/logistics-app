@@ -1,9 +1,9 @@
-using Logistics.Application.Modules.Financial.StripeConnect.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Stripe;
@@ -17,7 +17,7 @@ internal sealed class RenewSubscriptionHandler(
     ITenantUnitOfWork tenantUow,
     IStripeSubscriptionService stripeSubscriptionService,
     ICurrentUserService currentUserService,
-    ILogger<RenewSubscriptionHandler> logger) : IAppRequestHandler<RenewSubscriptionCommand, Result>
+    ILogger<RenewSubscriptionHandler> logger) : IRequestHandler<RenewSubscriptionCommand, Result>
 {
     public async Task<Result> Handle(
         RenewSubscriptionCommand req, CancellationToken ct)

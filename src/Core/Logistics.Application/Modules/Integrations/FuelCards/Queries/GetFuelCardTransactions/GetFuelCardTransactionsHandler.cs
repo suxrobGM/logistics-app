@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.FuelCards.Queries;
 
 internal sealed class GetFuelCardTransactionsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetFuelCardTransactionsQuery, PagedResult<FuelCardTransactionDto>>
+    : IRequestHandler<GetFuelCardTransactionsQuery, PagedResult<FuelCardTransactionDto>>
 {
     public async Task<PagedResult<FuelCardTransactionDto>> Handle(
         GetFuelCardTransactionsQuery req,

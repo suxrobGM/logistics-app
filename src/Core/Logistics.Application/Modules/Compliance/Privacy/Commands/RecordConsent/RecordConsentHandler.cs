@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Privacy.Commands;
 
 internal sealed class RecordConsentHandler(IMasterUnitOfWork masterUow)
-    : IAppRequestHandler<RecordConsentCommand, Result<Guid>>
+    : IRequestHandler<RecordConsentCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(RecordConsentCommand req, CancellationToken ct)
     {

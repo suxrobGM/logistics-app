@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Notifications;
 
@@ -16,7 +17,7 @@ internal sealed class LoadRemovedFromTruckNotificationHandler(
     ITelegramNotificationService telegramNotificationService,
     ITenantUnitOfWork tenantUow,
     ILogger<LoadRemovedFromTruckNotificationHandler> logger)
-    : IDomainEventHandler<LoadRemovedFromTruckEvent>
+    : INotificationHandler<LoadRemovedFromTruckEvent>
 {
     public async Task Handle(LoadRemovedFromTruckEvent @event, CancellationToken cancellationToken)
     {

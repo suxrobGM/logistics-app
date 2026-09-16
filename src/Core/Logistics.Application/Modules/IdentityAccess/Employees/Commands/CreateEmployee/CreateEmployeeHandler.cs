@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Notifications;
 
@@ -10,7 +11,7 @@ internal sealed class CreateEmployeeHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     INotificationService notificationService)
-    : IAppRequestHandler<CreateEmployeeCommand, Result>
+    : IRequestHandler<CreateEmployeeCommand, Result>
 {
     public async Task<Result> Handle(
         CreateEmployeeCommand req, CancellationToken ct)

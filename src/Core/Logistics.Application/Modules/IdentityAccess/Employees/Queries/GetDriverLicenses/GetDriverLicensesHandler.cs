@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Queries;
 
 internal sealed class GetDriverLicensesHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetDriverLicensesQuery, Result<IList<DriverLicenseDto>>>
+    : IRequestHandler<GetDriverLicensesQuery, Result<IList<DriverLicenseDto>>>
 {
     public async Task<Result<IList<DriverLicenseDto>>> Handle(
         GetDriverLicensesQuery req, CancellationToken ct)

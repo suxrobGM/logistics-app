@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Queries;
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Integrations.LoadBoard.Queries;
 internal sealed class GetBrokerCreditHandler(
     ITenantUnitOfWork tenantUow,
     IBrokerCreditService brokerCreditService)
-    : IAppRequestHandler<GetBrokerCreditQuery, Result<BrokerCreditDto>>
+    : IRequestHandler<GetBrokerCreditQuery, Result<BrokerCreditDto>>
 {
     public async Task<Result<BrokerCreditDto>> Handle(GetBrokerCreditQuery req, CancellationToken ct)
     {

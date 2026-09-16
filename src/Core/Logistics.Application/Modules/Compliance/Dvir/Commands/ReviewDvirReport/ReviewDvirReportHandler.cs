@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 
 internal sealed class ReviewDvirReportHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<ReviewDvirReportCommand, Result<DvirReportDto>>
+    : IRequestHandler<ReviewDvirReportCommand, Result<DvirReportDto>>
 {
     public async Task<Result<DvirReportDto>> Handle(ReviewDvirReportCommand req, CancellationToken ct)
     {

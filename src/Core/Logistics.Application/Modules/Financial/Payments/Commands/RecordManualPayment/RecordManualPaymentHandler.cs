@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.CurrentUser;
@@ -13,7 +14,7 @@ internal sealed class RecordManualPaymentHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUserService,
     ILogger<RecordManualPaymentHandler> logger)
-    : IAppRequestHandler<RecordManualPaymentCommand, Result>
+    : IRequestHandler<RecordManualPaymentCommand, Result>
 {
     public async Task<Result> Handle(RecordManualPaymentCommand req, CancellationToken ct)
     {

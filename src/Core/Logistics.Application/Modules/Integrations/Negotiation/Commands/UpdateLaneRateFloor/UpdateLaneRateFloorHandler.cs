@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
 
 internal sealed class UpdateLaneRateFloorHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateLaneRateFloorCommand, Result>
+    : IRequestHandler<UpdateLaneRateFloorCommand, Result>
 {
     public async Task<Result> Handle(UpdateLaneRateFloorCommand req, CancellationToken ct)
     {

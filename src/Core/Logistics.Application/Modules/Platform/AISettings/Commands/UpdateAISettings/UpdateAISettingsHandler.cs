@@ -1,15 +1,15 @@
-using Logistics.Application.Abstractions.AI;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.AISettings.Commands;
 
 internal sealed class UpdateAISettingsHandler(
     ISystemSettingsService systemSettings,
-    IMasterUnitOfWork masterUow) : IAppRequestHandler<UpdateAISettingsCommand, Result>
+    IMasterUnitOfWork masterUow) : IRequestHandler<UpdateAISettingsCommand, Result>
 {
     public async Task<Result> Handle(UpdateAISettingsCommand req, CancellationToken ct)
     {

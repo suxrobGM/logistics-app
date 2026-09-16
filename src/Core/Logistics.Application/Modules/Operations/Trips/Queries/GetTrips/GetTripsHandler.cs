@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trips.Queries;
 
 internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTripsQuery, PagedResult<TripDto>>
+    : IRequestHandler<GetTripsQuery, PagedResult<TripDto>>
 {
     public Task<PagedResult<TripDto>> Handle(
         GetTripsQuery req, CancellationToken ct)

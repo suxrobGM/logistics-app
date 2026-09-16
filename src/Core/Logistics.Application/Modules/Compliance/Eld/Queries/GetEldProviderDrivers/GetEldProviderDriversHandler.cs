@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Eld;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Compliance.Eld.Queries;
 internal sealed class GetEldProviderDriversHandler(
     ITenantUnitOfWork tenantUow,
     IEldProviderFactory eldProviderFactory)
-    : IAppRequestHandler<GetEldProviderDriversQuery, Result<List<EldDriverDto>>>
+    : IRequestHandler<GetEldProviderDriversQuery, Result<List<EldDriverDto>>>
 {
     public async Task<Result<List<EldDriverDto>>> Handle(GetEldProviderDriversQuery req, CancellationToken ct)
     {

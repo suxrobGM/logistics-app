@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;

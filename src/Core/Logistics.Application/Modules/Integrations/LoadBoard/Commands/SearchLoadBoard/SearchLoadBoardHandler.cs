@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
@@ -14,7 +15,7 @@ internal sealed class SearchLoadBoardHandler(
     ITenantUnitOfWork tenantUow,
     ILoadBoardTokenService tokenService,
     ILogger<SearchLoadBoardHandler> logger)
-    : IAppRequestHandler<SearchLoadBoardCommand, Result<LoadBoardSearchResultDto>>
+    : IRequestHandler<SearchLoadBoardCommand, Result<LoadBoardSearchResultDto>>
 {
     public async Task<Result<LoadBoardSearchResultDto>> Handle(SearchLoadBoardCommand req, CancellationToken ct)
     {

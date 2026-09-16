@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 
 internal sealed class CreateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CreateDriverLicenseCommand, Result<Guid>>
+    : IRequestHandler<CreateDriverLicenseCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateDriverLicenseCommand req, CancellationToken ct)
     {

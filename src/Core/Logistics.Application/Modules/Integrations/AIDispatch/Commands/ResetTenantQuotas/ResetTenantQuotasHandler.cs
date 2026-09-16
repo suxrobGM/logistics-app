@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
 internal sealed class ResetTenantQuotasHandler(
-    IMasterUnitOfWork masterUow) : IAppRequestHandler<ResetTenantQuotasCommand, Result>
+    IMasterUnitOfWork masterUow) : IRequestHandler<ResetTenantQuotasCommand, Result>
 {
     public async Task<Result> Handle(ResetTenantQuotasCommand request, CancellationToken ct)
     {

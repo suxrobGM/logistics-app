@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Portal.Queries;
 
 internal sealed class GetPortalLoadDocumentsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetPortalLoadDocumentsQuery, Result<IEnumerable<DocumentDto>>>
+    : IRequestHandler<GetPortalLoadDocumentsQuery, Result<IEnumerable<DocumentDto>>>
 {
     public async Task<Result<IEnumerable<DocumentDto>>> Handle(
         GetPortalLoadDocumentsQuery req,

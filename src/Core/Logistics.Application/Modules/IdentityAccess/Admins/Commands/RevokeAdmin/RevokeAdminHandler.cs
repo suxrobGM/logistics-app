@@ -1,5 +1,6 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 namespace Logistics.Application.Modules.IdentityAccess.Admins.Commands;
 
 internal sealed class RevokeAdminHandler(UserManager<User> userManager)
-    : IAppRequestHandler<RevokeAdminCommand, Result>
+    : IRequestHandler<RevokeAdminCommand, Result>
 {
     public async Task<Result> Handle(RevokeAdminCommand req, CancellationToken ct)
     {

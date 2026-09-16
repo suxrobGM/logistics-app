@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Portal.Queries;
 
 internal sealed class GetCustomerUserHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetCustomerUserQuery, Result<CustomerUserDto>>
+    : IRequestHandler<GetCustomerUserQuery, Result<CustomerUserDto>>
 {
     public async Task<Result<CustomerUserDto>> Handle(
         GetCustomerUserQuery req,

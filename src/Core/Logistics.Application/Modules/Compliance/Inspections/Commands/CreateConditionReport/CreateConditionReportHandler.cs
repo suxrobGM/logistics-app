@@ -1,10 +1,11 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Storage;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -14,7 +15,7 @@ internal sealed class CreateConditionReportHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorage,
     ILogger<CreateConditionReportHandler> logger)
-    : IAppRequestHandler<CreateConditionReportCommand, Result<Guid>>
+    : IRequestHandler<CreateConditionReportCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateConditionReportCommand req, CancellationToken ct)
     {

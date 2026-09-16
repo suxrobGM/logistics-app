@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
 internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetCompanyStatsQuery, Result<CompanyStatsDto>>
+    : IRequestHandler<GetCompanyStatsQuery, Result<CompanyStatsDto>>
 {
     public async Task<Result<CompanyStatsDto>> Handle(
         GetCompanyStatsQuery req, CancellationToken ct)

@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Storage;
@@ -12,7 +13,7 @@ internal sealed class UploadTenantLogoHandler(
     IMasterUnitOfWork masterUow,
     IBlobStorageService blobStorageService,
     ILogger<UploadTenantLogoHandler> logger)
-    : IAppRequestHandler<UploadTenantLogoCommand, Result<string>>
+    : IRequestHandler<UploadTenantLogoCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(UploadTenantLogoCommand req, CancellationToken ct)
     {

@@ -1,9 +1,9 @@
-using Logistics.Application.Modules.Operations.Loads.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Geocoding;
@@ -17,7 +17,7 @@ internal sealed class ImportLoadFromPdfHandler(
     ILoadService loadService,
     ITenantUnitOfWork tenantUow,
     ILogger<ImportLoadFromPdfHandler> logger)
-    : IAppRequestHandler<ImportLoadFromPdfCommand, Result<ImportLoadFromPdfResponse>>
+    : IRequestHandler<ImportLoadFromPdfCommand, Result<ImportLoadFromPdfResponse>>
 {
     public async Task<Result<ImportLoadFromPdfResponse>> Handle(
         ImportLoadFromPdfCommand request,

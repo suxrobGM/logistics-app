@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
@@ -15,7 +16,7 @@ internal class DriverStats
     public decimal GrossEarnings { get; set; }
 }
 
-internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<DriverDashboardQuery, Result<DriverDashboardDto>>
+internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<DriverDashboardQuery, Result<DriverDashboardDto>>
 {
     public async Task<Result<DriverDashboardDto>> Handle(DriverDashboardQuery req, CancellationToken ct)
     {

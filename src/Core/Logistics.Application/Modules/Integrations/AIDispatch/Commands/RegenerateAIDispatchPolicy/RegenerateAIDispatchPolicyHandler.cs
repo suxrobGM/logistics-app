@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 internal sealed class RegenerateAIDispatchPolicyHandler(
     IAIDispatchPolicyLearner learner,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<RegenerateAIDispatchPolicyCommand, Result<AIDispatchPolicyDto>>
+    : IRequestHandler<RegenerateAIDispatchPolicyCommand, Result<AIDispatchPolicyDto>>
 {
     public async Task<Result<AIDispatchPolicyDto>> Handle(
         RegenerateAIDispatchPolicyCommand request, CancellationToken ct)

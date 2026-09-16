@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Messaging;
 

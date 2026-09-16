@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ namespace Logistics.Application.Modules.Platform.Onboarding.Queries;
 internal sealed class GetOnboardingProgressHandler(
     ITenantUnitOfWork tenantUow,
     IFeatureService featureService)
-    : IAppRequestHandler<GetOnboardingProgressQuery, Result<OnboardingProgressDto>>
+    : IRequestHandler<GetOnboardingProgressQuery, Result<OnboardingProgressDto>>
 {
     /// <summary>
     /// A step whose feature is switched off can never complete, and the checklist only auto-hides

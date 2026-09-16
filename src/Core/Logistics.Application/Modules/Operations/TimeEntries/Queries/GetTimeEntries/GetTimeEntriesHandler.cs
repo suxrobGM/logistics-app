@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.TimeEntries.Queries;
 
 internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTimeEntriesQuery, PagedResult<TimeEntryDto>>
+    : IRequestHandler<GetTimeEntriesQuery, PagedResult<TimeEntryDto>>
 {
     public async Task<PagedResult<TimeEntryDto>> Handle(GetTimeEntriesQuery req, CancellationToken ct)
     {

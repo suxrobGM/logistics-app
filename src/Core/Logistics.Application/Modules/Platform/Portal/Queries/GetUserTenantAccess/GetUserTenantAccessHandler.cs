@@ -1,14 +1,15 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Portal.Queries;
 
 internal sealed class GetUserTenantAccessHandler(IMasterUnitOfWork masterUow)
-    : IAppRequestHandler<GetUserTenantAccessQuery, Result<List<UserTenantAccessDto>>>
+    : IRequestHandler<GetUserTenantAccessQuery, Result<List<UserTenantAccessDto>>>
 {
     public async Task<Result<List<UserTenantAccessDto>>> Handle(
         GetUserTenantAccessQuery req,

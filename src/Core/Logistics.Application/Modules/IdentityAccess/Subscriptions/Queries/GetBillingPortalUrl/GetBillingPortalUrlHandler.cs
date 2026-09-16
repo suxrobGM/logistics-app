@@ -1,5 +1,6 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Payments.Stripe;
 
@@ -8,7 +9,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Queries;
 internal sealed class GetBillingPortalUrlHandler(
     IStripePortalService stripePortalService,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetBillingPortalUrlQuery, Result<BillingPortalUrlDto>>
+    : IRequestHandler<GetBillingPortalUrlQuery, Result<BillingPortalUrlDto>>
 {
     public async Task<Result<BillingPortalUrlDto>> Handle(
         GetBillingPortalUrlQuery req, CancellationToken ct)

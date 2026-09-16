@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Modules.IdentityAccess.Users.Queries;
 
 internal sealed class GetUserByIdHandler(UserManager<User> userManager)
-    : IAppRequestHandler<GetUserByIdQuery, Result<UserDto>>
+    : IRequestHandler<GetUserByIdQuery, Result<UserDto>>
 {
     public async Task<Result<UserDto>> Handle(
         GetUserByIdQuery req, CancellationToken ct)

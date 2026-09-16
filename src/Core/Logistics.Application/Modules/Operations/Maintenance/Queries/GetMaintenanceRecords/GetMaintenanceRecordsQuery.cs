@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums.Maintenance;
 using Logistics.Shared.Models;
 

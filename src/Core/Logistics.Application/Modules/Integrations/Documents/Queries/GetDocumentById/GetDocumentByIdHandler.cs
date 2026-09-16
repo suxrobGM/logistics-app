@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Queries;
@@ -11,7 +12,7 @@ namespace Logistics.Application.Modules.Integrations.Documents.Queries;
 internal sealed class GetDocumentByIdHandler(
     ITenantUnitOfWork tenantUow,
     IDocumentAccessService documentAccess)
-    : IAppRequestHandler<GetDocumentByIdQuery, Result<DocumentDto>>
+    : IRequestHandler<GetDocumentByIdQuery, Result<DocumentDto>>
 {
     public async Task<Result<DocumentDto>> Handle(GetDocumentByIdQuery req, CancellationToken ct)
     {

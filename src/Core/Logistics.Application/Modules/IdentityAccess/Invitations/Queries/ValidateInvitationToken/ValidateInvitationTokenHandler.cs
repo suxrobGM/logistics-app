@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Invitations.Queries;
 internal sealed class ValidateInvitationTokenHandler(
     IMasterUnitOfWork masterUow,
     UserManager<User> userManager)
-    : IAppRequestHandler<ValidateInvitationTokenQuery, Result<InvitationValidationResult>>
+    : IRequestHandler<ValidateInvitationTokenQuery, Result<InvitationValidationResult>>
 {
     public async Task<Result<InvitationValidationResult>> Handle(ValidateInvitationTokenQuery req, CancellationToken ct)
     {

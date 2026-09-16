@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.CustomerUsers.Commands;
 
 internal sealed class CreateCustomerUserHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CreateCustomerUserCommand, Result<CustomerUserDto>>
+    : IRequestHandler<CreateCustomerUserCommand, Result<CustomerUserDto>>
 {
     public async Task<Result<CustomerUserDto>> Handle(CreateCustomerUserCommand req, CancellationToken ct)
     {

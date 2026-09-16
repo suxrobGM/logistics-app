@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
@@ -12,7 +13,7 @@ internal sealed class UpdateSubscriptionPlanHandler(
     IMasterUnitOfWork masterUow,
     IStripePlanService stripePlanService,
     IStripeSubscriptionService stripeSubscriptionService,
-    ILogger<UpdateSubscriptionPlanHandler> logger) : IAppRequestHandler<UpdateSubscriptionPlanCommand, Result>
+    ILogger<UpdateSubscriptionPlanHandler> logger) : IRequestHandler<UpdateSubscriptionPlanCommand, Result>
 {
 
     public async Task<Result> Handle(

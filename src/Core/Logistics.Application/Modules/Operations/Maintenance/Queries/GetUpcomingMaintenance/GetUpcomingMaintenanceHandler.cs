@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Maintenance;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Maintenance.Queries;
 
 internal sealed class GetUpcomingMaintenanceHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetUpcomingMaintenanceQuery, Result<List<MaintenanceScheduleDto>>>
+    : IRequestHandler<GetUpcomingMaintenanceQuery, Result<List<MaintenanceScheduleDto>>>
 {
     public Task<Result<List<MaintenanceScheduleDto>>> Handle(GetUpcomingMaintenanceQuery req, CancellationToken ct)
     {

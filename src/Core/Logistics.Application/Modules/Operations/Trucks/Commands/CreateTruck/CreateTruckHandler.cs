@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 
 internal sealed class CreateTruckHandler(
     ITenantUnitOfWork tenantUow,
-    IVehicleTransportGuard vehicleTransportGuard) : IAppRequestHandler<CreateTruckCommand, Result>
+    IVehicleTransportGuard vehicleTransportGuard) : IRequestHandler<CreateTruckCommand, Result>
 {
 
     public async Task<Result> Handle(

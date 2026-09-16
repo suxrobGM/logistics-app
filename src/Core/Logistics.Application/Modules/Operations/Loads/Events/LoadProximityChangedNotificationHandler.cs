@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Notifications;
 
@@ -13,7 +14,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Events;
 internal sealed class LoadProximityChangedNotificationHandler(
     IPushNotificationService pushNotificationService,
     ILogger<LoadProximityChangedNotificationHandler> logger)
-    : IDomainEventHandler<LoadProximityChangedEvent>
+    : INotificationHandler<LoadProximityChangedEvent>
 {
     public async Task Handle(LoadProximityChangedEvent @event, CancellationToken cancellationToken)
     {

@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Financial.Invoices.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Queries;
 
 internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetInvoicesQuery, PagedResult<InvoiceDto>>
+    : IRequestHandler<GetInvoicesQuery, PagedResult<InvoiceDto>>
 {
     public Task<PagedResult<InvoiceDto>> Handle(GetInvoicesQuery req, CancellationToken ct)
     {

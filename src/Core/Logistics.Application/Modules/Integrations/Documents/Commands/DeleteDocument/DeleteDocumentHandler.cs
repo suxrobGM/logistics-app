@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Storage;
@@ -13,7 +14,7 @@ internal sealed class DeleteDocumentHandler(
     IBlobStorageService blobStorageService,
     IDocumentAccessService documentAccess,
     ILogger<DeleteDocumentHandler> logger)
-    : IAppRequestHandler<DeleteDocumentCommand, Result>
+    : IRequestHandler<DeleteDocumentCommand, Result>
 {
     public async Task<Result> Handle(
         DeleteDocumentCommand req, CancellationToken ct)

@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Safety.Queries;
 
 internal sealed class GetDriverBehaviorEventsHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetDriverBehaviorEventsQuery, PagedResult<DriverBehaviorEventDto>>
+    : IRequestHandler<GetDriverBehaviorEventsQuery, PagedResult<DriverBehaviorEventDto>>
 {
     public Task<PagedResult<DriverBehaviorEventDto>> Handle(GetDriverBehaviorEventsQuery req, CancellationToken ct)
     {

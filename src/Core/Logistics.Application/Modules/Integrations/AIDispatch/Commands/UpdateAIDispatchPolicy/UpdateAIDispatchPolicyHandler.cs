@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Integrations.AIDispatch.Commands;
 
 internal sealed class UpdateAIDispatchPolicyHandler(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUser) : IAppRequestHandler<UpdateAIDispatchPolicyCommand, Result>
+    ICurrentUserService currentUser) : IRequestHandler<UpdateAIDispatchPolicyCommand, Result>
 {
     public async Task<Result> Handle(UpdateAIDispatchPolicyCommand request, CancellationToken ct)
     {

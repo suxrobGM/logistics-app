@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Queries;
 
-internal sealed class GetSubscriptionHandler : IAppRequestHandler<GetSubscriptionQuery, Result<SubscriptionDto>>
+internal sealed class GetSubscriptionHandler : IRequestHandler<GetSubscriptionQuery, Result<SubscriptionDto>>
 {
     private readonly IMasterUnitOfWork _masterUow;
 

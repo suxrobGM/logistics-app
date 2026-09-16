@@ -1,9 +1,10 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Notifications;
 
@@ -21,7 +22,7 @@ internal sealed class PayrollPaidNotificationHandler(
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
     ILogger<PayrollPaidNotificationHandler> logger)
-    : IDomainEventHandler<PayrollPaidEvent>
+    : INotificationHandler<PayrollPaidEvent>
 {
     public async Task Handle(PayrollPaidEvent @event, CancellationToken cancellationToken)
     {

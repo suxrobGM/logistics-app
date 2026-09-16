@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Documents;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Queries;
 
 internal sealed class GetPayrollPayStubPdfHandler(ITenantUnitOfWork tenantUow, IPayrollPayStubService pdfService)
-    : IAppRequestHandler<GetPayrollPayStubPdfQuery, Result<InvoicePdfResult>>
+    : IRequestHandler<GetPayrollPayStubPdfQuery, Result<InvoicePdfResult>>
 {
     public async Task<Result<InvoicePdfResult>> Handle(GetPayrollPayStubPdfQuery request, CancellationToken ct)
     {

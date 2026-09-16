@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.DemoRequests.Queries;
 
 internal sealed class GetDemoRequestHandler(
-    IMasterUnitOfWork masterUow) : IAppRequestHandler<GetDemoRequestQuery, Result<DemoRequestDto>>
+    IMasterUnitOfWork masterUow) : IRequestHandler<GetDemoRequestQuery, Result<DemoRequestDto>>
 {
     public async Task<Result<DemoRequestDto>> Handle(GetDemoRequestQuery req, CancellationToken ct)
     {

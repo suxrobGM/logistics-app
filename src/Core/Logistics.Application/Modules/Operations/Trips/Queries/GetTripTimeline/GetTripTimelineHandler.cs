@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trips.Queries;
 
 internal sealed class GetTripTimelineHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTripTimelineQuery, Result<TripTimelineDto>>
+    : IRequestHandler<GetTripTimelineQuery, Result<TripTimelineDto>>
 {
     public async Task<Result<TripTimelineDto>> Handle(
         GetTripTimelineQuery req, CancellationToken ct)

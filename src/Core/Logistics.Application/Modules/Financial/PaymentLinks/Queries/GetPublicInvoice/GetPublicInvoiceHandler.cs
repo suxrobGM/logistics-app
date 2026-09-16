@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Modules.Financial.PaymentLinks.Commands;
@@ -14,7 +15,7 @@ internal sealed class GetPublicInvoiceHandler(
     ITenantUnitOfWork tenantUow,
     ICommandEnqueuer commandEnqueuer,
     ILogger<GetPublicInvoiceHandler> logger)
-    : IAppRequestHandler<GetPublicInvoiceQuery, Result<PublicInvoiceDto>>
+    : IRequestHandler<GetPublicInvoiceQuery, Result<PublicInvoiceDto>>
 {
     public async Task<Result<PublicInvoiceDto>> Handle(GetPublicInvoiceQuery req, CancellationToken ct)
     {

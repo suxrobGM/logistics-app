@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Loads.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Extensions;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Stats.Queries;
 
-internal sealed class GetDailyGrossesHandler : IAppRequestHandler<GetDailyGrossesQuery, Result<DailyGrossesDto>>
+internal sealed class GetDailyGrossesHandler : IRequestHandler<GetDailyGrossesQuery, Result<DailyGrossesDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 

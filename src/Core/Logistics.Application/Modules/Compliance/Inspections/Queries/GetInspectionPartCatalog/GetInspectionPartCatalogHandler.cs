@@ -1,11 +1,12 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Inspections.Queries;
 
 internal sealed class GetInspectionPartCatalogHandler
-    : IAppRequestHandler<GetInspectionPartCatalogQuery, Result<InspectionPartCatalogDto>>
+    : IRequestHandler<GetInspectionPartCatalogQuery, Result<InspectionPartCatalogDto>>
 {
     public Task<Result<InspectionPartCatalogDto>> Handle(GetInspectionPartCatalogQuery req, CancellationToken ct)
     {

@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.TimeEntries.Commands;
 
 internal sealed class CreateTimeEntryHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<CreateTimeEntryCommand, Result<Guid>>
+    : IRequestHandler<CreateTimeEntryCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateTimeEntryCommand req, CancellationToken ct)
     {

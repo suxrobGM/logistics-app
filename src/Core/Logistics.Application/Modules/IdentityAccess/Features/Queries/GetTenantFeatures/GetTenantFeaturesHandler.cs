@@ -1,4 +1,5 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Tenancy;
@@ -8,7 +9,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Features.Queries;
 internal sealed class GetTenantFeaturesHandler(
     IFeatureService featureService,
     ICurrentTenantAccessor tenantAccessor)
-    : IAppRequestHandler<GetTenantFeaturesQuery, Result<IReadOnlyList<FeatureStatusDto>>>
+    : IRequestHandler<GetTenantFeaturesQuery, Result<IReadOnlyList<FeatureStatusDto>>>
 {
     public async Task<Result<IReadOnlyList<FeatureStatusDto>>> Handle(
         GetTenantFeaturesQuery req,

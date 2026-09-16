@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Messaging.Queries;
 
 internal sealed class GetUnreadCountHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetUnreadCountQuery, Result<int>>
+    : IRequestHandler<GetUnreadCountQuery, Result<int>>
 {
     public async Task<Result<int>> Handle(GetUnreadCountQuery req, CancellationToken ct)
     {

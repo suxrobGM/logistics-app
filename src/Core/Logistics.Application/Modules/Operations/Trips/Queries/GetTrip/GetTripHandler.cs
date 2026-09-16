@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trips.Queries;
 
-internal sealed class GetTripHandler : IAppRequestHandler<GetTripQuery, Result<TripDto>>
+internal sealed class GetTripHandler : IRequestHandler<GetTripQuery, Result<TripDto>>
 {
     private readonly ITenantUnitOfWork _tenantUow;
 

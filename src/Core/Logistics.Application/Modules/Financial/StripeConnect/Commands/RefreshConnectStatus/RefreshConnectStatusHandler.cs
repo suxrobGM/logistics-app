@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +13,7 @@ internal sealed class RefreshConnectStatusHandler(
     ITenantUnitOfWork tenantUow,
     IStripeConnectService stripeConnectService,
     ILogger<RefreshConnectStatusHandler> logger)
-    : IAppRequestHandler<RefreshConnectStatusCommand, Result<StripeConnectStatusDto>>
+    : IRequestHandler<RefreshConnectStatusCommand, Result<StripeConnectStatusDto>>
 {
     public async Task<Result<StripeConnectStatusDto>> Handle(RefreshConnectStatusCommand req, CancellationToken ct)
     {

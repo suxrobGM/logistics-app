@@ -1,10 +1,11 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
@@ -12,7 +13,7 @@ namespace Logistics.Application.Modules.Compliance.Dvir.Commands;
 internal sealed class CreateDvirReportHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser)
-    : IAppRequestHandler<CreateDvirReportCommand, Result<DvirReportDto>>
+    : IRequestHandler<CreateDvirReportCommand, Result<DvirReportDto>>
 {
     public async Task<Result<DvirReportDto>> Handle(CreateDvirReportCommand req, CancellationToken ct)
     {

@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
@@ -14,7 +15,7 @@ internal sealed class PostTruckToLoadBoardHandler(
     ILoadBoardProviderFactory providerFactory,
     ILoadBoardTokenService tokenService,
     ILogger<PostTruckToLoadBoardHandler> logger)
-    : IAppRequestHandler<PostTruckToLoadBoardCommand, Result<PostTruckResultDto>>
+    : IRequestHandler<PostTruckToLoadBoardCommand, Result<PostTruckResultDto>>
 {
     public async Task<Result<PostTruckResultDto>> Handle(
         PostTruckToLoadBoardCommand req,

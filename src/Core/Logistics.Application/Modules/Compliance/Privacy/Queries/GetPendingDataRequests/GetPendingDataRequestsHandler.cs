@@ -1,15 +1,16 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Compliance.Privacy.Queries;
 
 internal sealed class GetPendingDataRequestsHandler(IMasterUnitOfWork masterUow)
-    : IAppRequestHandler<GetPendingDataRequestsQuery, Result<PendingDataRequestsDto>>
+    : IRequestHandler<GetPendingDataRequestsQuery, Result<PendingDataRequestsDto>>
 {
     public async Task<Result<PendingDataRequestsDto>> Handle(GetPendingDataRequestsQuery req, CancellationToken ct)
     {

@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Platform.BlogPosts.Commands;
 
 internal sealed class UpdateBlogPostHandler(
     IMasterUnitOfWork masterUow,
-    ILogger<UpdateBlogPostHandler> logger) : IAppRequestHandler<UpdateBlogPostCommand, Result>
+    ILogger<UpdateBlogPostHandler> logger) : IRequestHandler<UpdateBlogPostCommand, Result>
 {
     public async Task<Result> Handle(UpdateBlogPostCommand req, CancellationToken ct)
     {

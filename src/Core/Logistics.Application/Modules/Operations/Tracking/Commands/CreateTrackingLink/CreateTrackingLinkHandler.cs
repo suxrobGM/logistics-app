@@ -1,8 +1,9 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Options;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.CurrentUser;
@@ -13,7 +14,7 @@ internal sealed class CreateTrackingLinkHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUserService,
     IOptions<CustomerPortalOptions> portalOptions)
-    : IAppRequestHandler<CreateTrackingLinkCommand, Result<TrackingLinkDto>>
+    : IRequestHandler<CreateTrackingLinkCommand, Result<TrackingLinkDto>>
 {
     private const int DefaultExpirationDays = 30;
 

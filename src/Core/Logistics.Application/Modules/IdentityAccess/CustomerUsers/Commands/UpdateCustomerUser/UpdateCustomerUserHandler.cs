@@ -1,12 +1,13 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.CustomerUsers.Commands;
 
 internal sealed class UpdateCustomerUserHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<UpdateCustomerUserCommand, Result>
+    : IRequestHandler<UpdateCustomerUserCommand, Result>
 {
     public async Task<Result> Handle(UpdateCustomerUserCommand req, CancellationToken ct)
     {

@@ -1,13 +1,14 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
 
 internal sealed class GetTenantsHandler(IMasterUnitOfWork masterUow)
-    : IAppRequestHandler<GetTenantsQuery, PagedResult<TenantDto>>
+    : IRequestHandler<GetTenantsQuery, PagedResult<TenantDto>>
 {
     public Task<PagedResult<TenantDto>> Handle(
         GetTenantsQuery req, CancellationToken ct)

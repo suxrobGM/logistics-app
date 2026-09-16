@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Realtime;
 
@@ -9,7 +10,7 @@ namespace Logistics.Application.Modules.Integrations.Messaging.Commands;
 internal sealed class MarkMessageReadHandler(
     ITenantUnitOfWork tenantUow,
     IRealtimeMessagingService messagingService)
-    : IAppRequestHandler<MarkMessageReadCommand, Result>
+    : IRequestHandler<MarkMessageReadCommand, Result>
 {
     public async Task<Result> Handle(MarkMessageReadCommand req, CancellationToken ct)
     {

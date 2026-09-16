@@ -1,6 +1,7 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Eld;
@@ -11,7 +12,7 @@ internal sealed class CreateEldProviderConfigurationHandler(
     ITenantUnitOfWork tenantUow,
     IEldProviderFactory eldProviderFactory,
     ILogger<CreateEldProviderConfigurationHandler> logger)
-    : IAppRequestHandler<CreateEldProviderConfigurationCommand, Result>
+    : IRequestHandler<CreateEldProviderConfigurationCommand, Result>
 {
     public async Task<Result> Handle(CreateEldProviderConfigurationCommand req, CancellationToken ct)
     {

@@ -1,9 +1,9 @@
-using Logistics.Application.Modules.Financial.Tax.Services;
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
@@ -11,7 +11,7 @@ namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 internal sealed class CreateLoadInvoiceHandler(
     ITenantUnitOfWork tenantUow,
     IInvoiceTaxApplier taxApplier)
-    : IAppRequestHandler<CreateLoadInvoiceCommand, Result<Guid>>
+    : IRequestHandler<CreateLoadInvoiceCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(
         CreateLoadInvoiceCommand req, CancellationToken ct)

@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +11,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Invitations.Queries;
 internal sealed class GetInvitationByIdHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetInvitationByIdQuery, Result<InvitationDto>>
+    : IRequestHandler<GetInvitationByIdQuery, Result<InvitationDto>>
 {
     public async Task<Result<InvitationDto>> Handle(GetInvitationByIdQuery req, CancellationToken ct)
     {

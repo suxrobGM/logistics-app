@@ -1,7 +1,8 @@
-using Logistics.Application.Abstractions;
+﻿using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Documents;
 using Logistics.Application.Modules.Compliance.Ifta.Services;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
@@ -10,7 +11,7 @@ internal sealed class ExportIftaReportPdfHandler(
     IIftaReportService iftaReportService,
     IIftaReportPdfService pdfService,
     ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<ExportIftaReportPdfQuery, Result<byte[]>>
+    : IRequestHandler<ExportIftaReportPdfQuery, Result<byte[]>>
 {
     public async Task<Result<byte[]>> Handle(ExportIftaReportPdfQuery req, CancellationToken ct)
     {
