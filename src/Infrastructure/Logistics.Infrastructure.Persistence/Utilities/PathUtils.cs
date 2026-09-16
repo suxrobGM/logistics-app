@@ -24,14 +24,8 @@ internal static class PathHelper
             foreach (var segment in rawPath.Split('.', StringSplitOptions.RemoveEmptyEntries))
             {
                 var prop = current.GetProperty(segment,
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-
-                if (prop is null)
-                {
-                    throw new ArgumentException(
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase) ?? throw new ArgumentException(
                         $"Property '{segment}' not found on '{current.Name}'", nameof(path));
-                }
-
                 body = Expression.Property(body, prop);
                 current = prop.PropertyType;
             }
