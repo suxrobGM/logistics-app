@@ -1,24 +1,21 @@
 @page
 @model Logistics.IdentityServer.Pages.Home.Index
 
-<div class="welcome-page">
-    <h1>
+<div class="auth-centered">
+    <div class="welcome-page">
         <img src="~/logo.svg" class="logo" alt="LogisticsX">
-        LogisticsX Identity
-        <small class="text-muted">(version @Model.Version)</small>
-    </h1>
+        <h1>LogisticsX</h1>
+        <p class="text-muted">
+            Sign in once here to reach the TMS, customer and admin portals.
+        </p>
 
-    <ul>
-        <li>
-            Identity server publishes a
-            <a href="~/.well-known/openid-configuration">discovery document</a>
-            where you can find metadata and links to all the endpoints, key material, etc.
-        </li>
-        <li>
-            Click <a href="~/diagnostics">here</a> to see the claims for your current session.
-        </li>
-        <li>
-            Click <a href="~/grants">here</a> to manage your stored grants.
-        </li>
-    </ul>
+        @if (Model.IsSignedIn)
+        {
+            <a class="btn btn-primary" asp-page="/Account/Manage/Profile/Index">Manage your account</a>
+        }
+        else
+        {
+            <a class="btn btn-primary" asp-page="/Account/Login/Index">Sign in</a>
+        }
+    </div>
 </div>

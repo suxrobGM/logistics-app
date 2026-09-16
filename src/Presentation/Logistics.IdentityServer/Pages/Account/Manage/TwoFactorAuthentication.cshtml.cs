@@ -1,4 +1,4 @@
-using Logistics.Domain.Entities;
+﻿using Logistics.Domain.Entities;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +24,6 @@ public class TwoFactorAuthenticationModel : PageModel
         _logger = logger;
     }
 
-    public bool HasAuthenticator { get; set; }
-
     public int RecoveryCodesLeft { get; set; }
 
     [BindProperty]
@@ -44,7 +42,6 @@ public class TwoFactorAuthenticationModel : PageModel
             return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
         }
 
-        HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null;
         Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
         IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user);
         RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user);
