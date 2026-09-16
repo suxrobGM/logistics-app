@@ -1,5 +1,5 @@
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Behaviours;

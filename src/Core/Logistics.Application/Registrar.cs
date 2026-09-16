@@ -1,6 +1,7 @@
-using System.Reflection;
+﻿using System.Reflection;
 using FluentValidation;
 using Logistics.Application.Behaviours;
+using Logistics.Mediator;
 using Logistics.Application.Modules.Compliance;
 using Logistics.Application.Modules.Financial;
 using Logistics.Application.Modules.IdentityAccess;
@@ -102,22 +103,17 @@ public static class Registrar
             includeInternalTypes: true,
             filter: typeFilter is null ? null : result => typeFilter(result.ValidatorType));
 
-        services.AddMediatR(cfg =>
-        {
-            cfg.RegisterServicesFromAssembly(typeof(Registrar).Assembly);
-            if (typeFilter is not null)
-            {
-                cfg.TypeEvaluator = typeFilter;
-            }
+        services.AddMediator(typeof(Registrar).Assembly, typeFilter);
 
-            cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
-            cfg.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
-            cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
-            if (withFeatureCheck)
-            {
-                cfg.AddOpenBehavior(typeof(FeatureCheckBehaviour<,>));
-            }
-        });
+        // Registration order is pipeline order: the first registered behaviour runs outermost.
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        if (withFeatureCheck)
+        {
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(FeatureCheckBehaviour<,>));
+        }
+
         return services;
     }
 

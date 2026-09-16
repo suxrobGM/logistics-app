@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Privacy;
+﻿using Logistics.Application.Abstractions.Privacy;
 using Logistics.Domain.Options;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Interceptors;
@@ -25,8 +25,9 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssemblyContaining<DispatchDomainEventsInterceptor>());
+        // This assembly holds no handlers; the interceptor just needs IMediator resolvable in
+        // hosts (IdentityServer, DbMigrator) that never compose the Application layer.
+        services.AddMediator();
 
         services.AddScoped<DispatchDomainEventsInterceptor>();
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();

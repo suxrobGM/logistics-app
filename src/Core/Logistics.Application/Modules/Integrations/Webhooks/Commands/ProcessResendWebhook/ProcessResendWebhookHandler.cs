@@ -8,7 +8,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Integrations.Webhooks.Commands;

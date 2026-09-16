@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Trips.Commands;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using NSubstitute;
 using Xunit;
 

@@ -2,7 +2,7 @@ using Logistics.Application.Modules.Integrations.FuelCards.Commands;
 using Logistics.Application.Modules.Integrations.FuelCards.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

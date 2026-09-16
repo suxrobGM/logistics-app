@@ -1,5 +1,5 @@
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.Financial.PaymentLinks.Queries;

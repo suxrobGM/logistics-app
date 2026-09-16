@@ -1,7 +1,7 @@
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.Extensions.Caching.Memory;
 using NSubstitute;
 using Xunit;

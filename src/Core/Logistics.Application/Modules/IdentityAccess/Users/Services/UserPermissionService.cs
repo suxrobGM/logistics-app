@@ -1,5 +1,5 @@
 using Logistics.Application.Modules.IdentityAccess.Users.Queries;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Logistics.Application.Modules.IdentityAccess.Users.Services;

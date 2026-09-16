@@ -2,7 +2,7 @@ using Logistics.Application.Modules.IdentityAccess.Admins.Commands;
 using Logistics.Application.Modules.IdentityAccess.Admins.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

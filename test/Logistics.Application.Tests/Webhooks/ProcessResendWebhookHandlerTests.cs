@@ -6,7 +6,7 @@ using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;

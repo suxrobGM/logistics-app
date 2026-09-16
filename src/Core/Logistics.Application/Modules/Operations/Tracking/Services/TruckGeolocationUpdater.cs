@@ -3,7 +3,7 @@ using Logistics.Application.Modules.Operations.Trucks.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 
 namespace Logistics.Application.Modules.Operations.Tracking.Services;
 

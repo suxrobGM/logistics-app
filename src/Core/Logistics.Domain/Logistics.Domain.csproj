@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR.Contracts"/>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" />
     <PackageReference Include="System.Linq.Dynamic.Core"/>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Logistics.Mediator\Logistics.Mediator.csproj" />
     <ProjectReference Include="..\Logistics.Domain.Primitives\Logistics.Domain.Primitives.csproj"/>
   </ItemGroup>
 

@@ -8,7 +8,7 @@ using Logistics.Application.Modules.IdentityAccess.Customers.Queries;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using NSubstitute;
 using Xunit;
 

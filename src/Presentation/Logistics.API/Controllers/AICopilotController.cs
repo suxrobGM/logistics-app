@@ -2,7 +2,7 @@ using Logistics.Application.Modules.Integrations.AICopilot.Commands;
 using Logistics.Application.Modules.Integrations.AICopilot.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

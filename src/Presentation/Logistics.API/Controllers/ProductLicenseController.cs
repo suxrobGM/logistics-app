@@ -2,7 +2,7 @@ using Logistics.Application.Modules.Platform.ProductLicense.Commands;
 using Logistics.Application.Modules.Platform.ProductLicense.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;

@@ -1,5 +1,5 @@
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 
 namespace Logistics.Application.Abstractions;
 
@@ -7,7 +7,7 @@ namespace Logistics.Application.Abstractions;
 ///     Application-specific MediatR handler that **enforces** a result pattern.
 /// </summary>
 /// <remarks>
-///     This interface extends <see cref="MediatR.IRequestHandler{TRequest, TResponse}" /> and constrains:
+///     This interface extends <see cref="IRequestHandler{TRequest, TResponse}" /> and constrains:
 ///     <list type="bullet">
 ///         <item>
 ///             <description><typeparamref name="TRequest" /> must be a MediatR <see cref="IRequest{TResponse}" />.</description>

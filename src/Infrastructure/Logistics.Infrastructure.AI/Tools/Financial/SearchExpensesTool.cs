@@ -3,7 +3,7 @@ using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Financial.Expenses.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
-using MediatR;
+using Logistics.Mediator;
 
 namespace Logistics.Infrastructure.AI.Tools.Financial;
 

@@ -1,6 +1,6 @@
 using Logistics.Application.Modules.Compliance.Inspections.Commands;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

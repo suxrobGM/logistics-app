@@ -3,7 +3,7 @@ using Logistics.Application.Modules.Integrations.Accounting.Queries;
 using Logistics.Infrastructure.Integrations.Accounting;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

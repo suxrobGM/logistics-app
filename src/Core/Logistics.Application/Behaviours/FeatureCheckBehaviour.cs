@@ -3,7 +3,7 @@ using Logistics.Application.Attributes;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Tenancy;
 

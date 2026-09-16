@@ -1,5 +1,5 @@
 using Logistics.Domain.Core;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 

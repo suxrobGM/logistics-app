@@ -1,5 +1,5 @@
 using Logistics.Domain.Core;
-using MediatR;
+using Logistics.Mediator;
 
 namespace Logistics.Application.Abstractions;
 

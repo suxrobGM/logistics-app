@@ -4,7 +4,7 @@ using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Policies;
-using MediatR;
+using Logistics.Mediator;
 
 namespace Logistics.Infrastructure.AI.Tools.LoadBoard;
 

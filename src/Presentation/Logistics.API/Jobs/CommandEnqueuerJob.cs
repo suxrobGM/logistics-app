@@ -2,7 +2,7 @@ using Hangfire;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.Common;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 
 namespace Logistics.API.Jobs;
 

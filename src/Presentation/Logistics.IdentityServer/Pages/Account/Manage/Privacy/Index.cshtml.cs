@@ -3,7 +3,7 @@ using Logistics.Application.Modules.Compliance.Privacy.Queries;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

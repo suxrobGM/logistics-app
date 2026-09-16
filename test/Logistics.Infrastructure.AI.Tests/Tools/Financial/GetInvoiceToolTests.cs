@@ -5,7 +5,7 @@ using Logistics.Application.Modules.Financial.Invoices.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using NSubstitute;
 using Xunit;
 

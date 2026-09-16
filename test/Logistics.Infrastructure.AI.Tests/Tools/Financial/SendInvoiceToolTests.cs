@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 using Logistics.Application.Modules.Financial.Invoices.Commands;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using NSubstitute;
 using Xunit;
 

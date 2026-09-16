@@ -14,7 +14,6 @@
   <ItemGroup>
     <PackageReference Include="Open.IdentityServer.EntityFramework.Storage" />
     <PackageReference Include="EFCore.NamingConventions" />
-    <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
@@ -28,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\Logistics.Mediator\Logistics.Mediator.csproj" />
     <ProjectReference Include="..\..\Core\Logistics.Application.Abstractions\Logistics.Application.Abstractions.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Identity\Logistics.Shared.Identity.csproj" />
   </ItemGroup>

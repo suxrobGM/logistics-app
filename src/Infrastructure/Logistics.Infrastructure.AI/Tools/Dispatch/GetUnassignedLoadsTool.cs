@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 

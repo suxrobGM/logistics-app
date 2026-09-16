@@ -1,4 +1,4 @@
-using MediatR;
+using Logistics.Mediator;
 
 namespace Logistics.Domain.Core;
 

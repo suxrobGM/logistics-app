@@ -2,7 +2,7 @@ using Logistics.Application.Modules.Compliance.Ifta.TaxRates.Commands;
 using Logistics.Application.Modules.Compliance.Ifta.TaxRates.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

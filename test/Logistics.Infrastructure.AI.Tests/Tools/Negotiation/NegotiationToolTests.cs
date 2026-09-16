@@ -7,7 +7,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.AI.Tools.Negotiation;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using NSubstitute;
 using Xunit;
 

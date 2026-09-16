@@ -2,7 +2,7 @@ using Logistics.Application.Modules.Integrations.Negotiation.Commands;
 using Logistics.Application.Modules.Integrations.Negotiation.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-using MediatR;
+using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

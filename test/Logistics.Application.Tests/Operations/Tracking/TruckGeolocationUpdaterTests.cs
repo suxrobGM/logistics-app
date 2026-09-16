@@ -2,7 +2,7 @@ using Logistics.Application.Modules.Operations.Tracking.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using MediatR;
+using Logistics.Mediator;
 using NSubstitute;
 using Xunit;
 
