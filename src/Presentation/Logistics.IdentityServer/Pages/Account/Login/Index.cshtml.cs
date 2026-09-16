@@ -1,10 +1,10 @@
-#nullable enable
+﻿#nullable enable
 using System.Text.RegularExpressions;
 
-using Duende.IdentityServer.Events;
-using Duende.IdentityServer.Models;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
+using Open.IdentityServer.Events;
+using Open.IdentityServer.Models;
+using Open.IdentityServer.Services;
+using Open.IdentityServer.Stores;
 
 using Logistics.Domain.Entities;
 
@@ -23,7 +23,6 @@ namespace Logistics.IdentityServer.Pages.Account.Login;
 public class Index(
     IIdentityServerInteractionService interaction,
     IAuthenticationSchemeProvider schemeProvider,
-    IIdentityProviderStore identityProviderStore,
     IEventService events,
     UserManager<User> userManager,
     SignInManager<User> signInManager) : PageModel
@@ -118,7 +117,7 @@ public class Index(
         var context = await interaction.GetAuthorizationContextAsync(returnUrl);
         if (context?.IdP != null && await schemeProvider.GetSchemeAsync(context.IdP) != null)
         {
-            var local = context.IdP == Duende.IdentityServer.IdentityServerConstants.LocalIdentityProvider;
+            var local = context.IdP == Open.IdentityServer.IdentityServerConstants.LocalIdentityProvider;
 
             // this is meant to short circuit the UI and only trigger the one external IdP
             View = new ViewModel
@@ -145,16 +144,6 @@ public class Index(
                 DisplayName = x.DisplayName ?? x.Name,
                 AuthenticationScheme = x.Name
             }).ToList();
-
-        var dynamicSchemes = (await identityProviderStore.GetAllSchemeNamesAsync())
-            .Where(x => x.Enabled)
-            .Select(x => new ViewModel.ExternalProvider
-            {
-                AuthenticationScheme = x.Scheme,
-                DisplayName = x.DisplayName
-            });
-        providers.AddRange(dynamicSchemes);
-
 
         var allowLocal = true;
         var client = context?.Client;

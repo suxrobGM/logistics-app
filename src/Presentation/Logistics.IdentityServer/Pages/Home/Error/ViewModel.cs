@@ -1,4 +1,4 @@
-using Duende.IdentityServer.Models;
+using Open.IdentityServer.Models;
 
 namespace Logistics.IdentityServer.Pages.Error;
 

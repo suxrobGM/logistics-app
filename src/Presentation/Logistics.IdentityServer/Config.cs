@@ -1,5 +1,5 @@
-using Duende.IdentityModel;
-using Duende.IdentityServer.Models;
+using Open.IdentityServer;
+using Open.IdentityServer.Models;
 
 using Logistics.Shared.Identity.Claims;
 

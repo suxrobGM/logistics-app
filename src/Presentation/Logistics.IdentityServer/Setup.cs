@@ -1,11 +1,13 @@
-using System.Threading.RateLimiting;
-using Duende.IdentityServer;
+﻿using System.Threading.RateLimiting;
+using Open.IdentityServer;
 using Logistics.Application;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.HostDefaults;
 using Logistics.IdentityServer.Services;
+using Logistics.IdentityServer.Services.SigningKeys;
+using Open.IdentityServer.Stores;
 using Logistics.Infrastructure.Communications;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Data;
@@ -51,12 +53,22 @@ internal static class Setup
         services.AddRazorPages();
         AddAuthSchemes(services);
 
-        // Explicit app name (previously unset). This invalidates cookies protected before this
-        // change - a one-time forced re-login; there are no persisted grants to lose.
+        // The application name feeds purpose derivation for every protected payload, including
+        // the auth cookies and the signing keys. Changing it makes all of them unreadable.
         services.AddLogisticsDataProtection<MasterDbContext>("LogisticsX.IdentityServer");
 
         // Real health probe: master DB connectivity (composes with AddHealthChecks() in LogisticsHost).
         services.AddHealthChecks().AddDbContextCheck<MasterDbContext>("master-db");
+
+        // Replaces the automatic key management the Duende package provided. Registered before
+        // AddIdentityServer because the first ISigningCredentialStore registered is the one that signs.
+        services.Configure<SigningKeyOptions>(configuration.GetSection(SigningKeyOptions.SectionName));
+        services.AddScoped<SigningKeyProtector>();
+        services.AddSingleton<SigningKeyCache>();
+        services.AddScoped<ISigningCredentialStore, RotatingSigningKeyStore>();
+        services.AddScoped<IValidationKeysStore, RotatingSigningKeyStore>();
+        services.AddSingleton<SigningKeyMaintenance>();
+        services.AddHostedService(sp => sp.GetRequiredService<SigningKeyMaintenance>());
 
         services.AddIdentityServer(options =>
             {
@@ -65,7 +77,6 @@ internal static class Setup
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
 
-                // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
                 options.EmitStaticAudienceClaim = true;
             })
             .AddInMemoryIdentityResources(Config.IdentityResources())
@@ -73,15 +84,14 @@ internal static class Setup
             .AddInMemoryApiResources(Config.ApiResources())
             .AddInMemoryClients(Config.Clients(configuration))
             .AddAspNetIdentity<User>()
-            // Signing keys + refresh tokens in the master DB; without this both live in the
-            // container and every redeploy invalidates all sessions
+            // Refresh tokens in the master DB; without this they live in the container and
+            // every redeploy invalidates all sessions
             .AddOperationalStore(options =>
             {
-                DuendeOperationalStore.ConfigureStoreOptions(options);
-                options.ConfigureDbContext = b => DuendeOperationalStore.ConfigureDbContext(
+                OperationalStoreSetup.ConfigureStoreOptions(options);
+                options.ConfigureDbContext = b => OperationalStoreSetup.ConfigureDbContext(
                     b, configuration.GetConnectionString("MasterDatabase"));
                 options.EnableTokenCleanup = true;
-                options.RemoveConsumedTokens = true;
             });
 
         services.AddAuthentication()
@@ -113,7 +123,7 @@ internal static class Setup
             // Rate limit for impersonation token validation
             options.AddIpFixedWindowPolicy("impersonation", 5, TimeSpan.FromMinutes(15));
 
-            // Duende's token endpoint is middleware-generated, so rate-limit it globally by path.
+            // The token endpoint is middleware-generated, so rate-limit it globally by path.
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
                 context.Request.Path.StartsWithSegments("/connect/token")
                     ? RateLimitPartition.GetFixedWindowLimiter(
@@ -170,7 +180,33 @@ internal static class Setup
         app.UseIdentityServer();
         app.UseAuthorization();
         app.MapRazorPages().RequireAuthorization();
+
+        EnsureSigningKey(app);
         return app;
+    }
+
+    /// <summary>
+    ///     Runs before <c>app.Run()</c> rather than as a hosted service, because Kestrel is
+    ///     registered first and would otherwise start serving requests before a key exists.
+    /// </summary>
+    private static void EnsureSigningKey(WebApplication app)
+    {
+        var maintenance = app.Services.GetRequiredService<SigningKeyMaintenance>();
+        var logger = app.Services.GetRequiredService<ILogger<SigningKeyMaintenance>>();
+
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                maintenance.RunAsync(CancellationToken.None).GetAwaiter().GetResult();
+                return;
+            }
+            catch (Exception ex) when (attempt < 5)
+            {
+                logger.LogWarning(ex, "Signing key check failed (attempt {Attempt}), retrying", attempt);
+                Thread.Sleep(TimeSpan.FromSeconds(attempt * 2));
+            }
+        }
     }
 
     private static void AddAuthSchemes(IServiceCollection services)

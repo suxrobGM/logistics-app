@@ -1,5 +1,5 @@
-using Duende.IdentityServer.EntityFramework.DbContexts;
-using Duende.IdentityServer.EntityFramework.Options;
+﻿using Open.IdentityServer.EntityFramework.DbContexts;
+using Open.IdentityServer.EntityFramework.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -10,10 +10,9 @@ public class PersistedGrantDbContextFactory : IDesignTimeDbContextFactory<Persis
     public PersistedGrantDbContext CreateDbContext(string[] args)
     {
         var builder = new DbContextOptionsBuilder<PersistedGrantDbContext>();
-        DuendeOperationalStore.ConfigureDbContext(builder, null);
-        return new PersistedGrantDbContext(builder.Options)
-        {
-            StoreOptions = DuendeOperationalStore.ConfigureStoreOptions(new OperationalStoreOptions())
-        };
+        OperationalStoreSetup.ConfigureDbContext(builder, null);
+        return new PersistedGrantDbContext(
+            builder.Options,
+            OperationalStoreSetup.ConfigureStoreOptions(new OperationalStoreOptions()));
     }
 }

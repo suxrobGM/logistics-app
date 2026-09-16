@@ -1,4 +1,4 @@
-using Duende.IdentityServer.Models;
+using Open.IdentityServer.Models;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;

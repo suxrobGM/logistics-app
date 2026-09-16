@@ -1,4 +1,4 @@
-using Duende.IdentityServer.EntityFramework.DbContexts;
+﻿using Open.IdentityServer.EntityFramework.DbContexts;
 using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +19,9 @@ public class MigrateDatabaseWorker(
         logger.LogInformation("Master database migrated successfully");
 
         var grantDb = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-        logger.LogInformation("Applying migrations to Duende operational store (master DB)...");
+        logger.LogInformation("Applying migrations to the identity operational store (master DB)...");
         await grantDb.Database.MigrateAsync(cancellationToken);
-        logger.LogInformation("Duende operational store migrated successfully");
+        logger.LogInformation("Identity operational store migrated successfully");
 
         // Query all tenants with valid connection strings from the master database
         var tenants = await masterDb.Set<Tenant>()

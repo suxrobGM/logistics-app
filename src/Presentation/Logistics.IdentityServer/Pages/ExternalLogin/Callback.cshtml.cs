@@ -1,9 +1,9 @@
 using System.Security.Claims;
 
-using Duende.IdentityModel;
-using Duende.IdentityServer;
-using Duende.IdentityServer.Events;
-using Duende.IdentityServer.Services;
+using Open.IdentityServer;
+using Open.IdentityServer;
+using Open.IdentityServer.Events;
+using Open.IdentityServer.Services;
 
 using Logistics.Domain.Entities;
 
