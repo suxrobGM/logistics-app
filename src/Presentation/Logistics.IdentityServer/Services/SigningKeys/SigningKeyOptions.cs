@@ -4,7 +4,7 @@ public class SigningKeyOptions
 {
     public const string SectionName = "SigningKeys";
 
-    /// <summary>How old the newest key may get before a successor is published.</summary>
+    /// <summary>How old the newest key may get before a replacement is published.</summary>
     public TimeSpan Rotation { get; set; } = TimeSpan.FromDays(90);
 
     /// <summary>
@@ -20,6 +20,6 @@ public class SigningKeyOptions
     /// <summary>JWKS and every token issuance read the key set, so it is cached between reads.</summary>
     public TimeSpan CacheTtl { get; set; } = TimeSpan.FromSeconds(60);
 
-    /// <summary>Consumed refresh-token grants are swept after this long.</summary>
-    public TimeSpan ConsumedGrantRetention { get; set; } = TimeSpan.FromDays(1);
+    /// <summary>Refresh-token grants that were already redeemed are deleted after this long.</summary>
+    public TimeSpan UsedGrantRetention { get; set; } = TimeSpan.FromDays(1);
 }

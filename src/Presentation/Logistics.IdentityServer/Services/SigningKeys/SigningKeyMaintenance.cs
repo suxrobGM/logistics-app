@@ -8,8 +8,8 @@ using Open.IdentityServer.EntityFramework.DbContexts;
 namespace Logistics.IdentityServer.Services.SigningKeys;
 
 /// <summary>
-///     Keeps the signing key set healthy: publishes a successor before the current key ages out,
-///     prunes keys nobody can still hold a token for, and sweeps consumed refresh grants.
+///     Keeps the signing key set healthy: publishes a replacement before the current key expires,
+///     deletes keys nobody can still hold a token for, and deletes used refresh grants.
 ///     Owns every write to <c>signing_keys</c>.
 /// </summary>
 public class SigningKeyMaintenance(
@@ -43,19 +43,19 @@ public class SigningKeyMaintenance(
             var now = DateTime.UtcNow;
             var rotated = false;
 
-            // Publish the successor a propagation window before the incumbent is due to retire.
+            // Publish the replacement a propagation window before the current key expires.
             if (keys.Count == 0 || keys[0].Created <= now - (options.Rotation - options.Propagation))
             {
                 db.SigningKeys.Add(protector.Create());
                 rotated = true;
             }
 
-            // Keep the two newest regardless, so pruning can never leave us unable to sign.
-            var stale = keys.Skip(2).Where(x => x.Created <= now - options.Retention).ToList();
-            if (stale.Count > 0)
+            // Keep the two newest regardless, so deleting can never leave us unable to sign.
+            var expired = keys.Skip(2).Where(x => x.Created <= now - options.Retention).ToList();
+            if (expired.Count > 0)
             {
-                db.SigningKeys.RemoveRange(stale);
-                logger.LogInformation("Pruned {Count} retired signing key(s)", stale.Count);
+                db.SigningKeys.RemoveRange(expired);
+                logger.LogInformation("Deleted {Count} expired signing key(s)", expired.Count);
             }
 
             await db.SaveChangesAsync(cancellationToken);
@@ -79,7 +79,7 @@ public class SigningKeyMaintenance(
             try
             {
                 await EnsureKeysAsync(stoppingToken);
-                await SweepConsumedGrantsAsync(stoppingToken);
+                await DeleteUsedGrantsAsync(stoppingToken);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
@@ -92,11 +92,11 @@ public class SigningKeyMaintenance(
     ///     The operational store only expires grants, so one-time refresh tokens that were already
     ///     redeemed would otherwise sit there until their absolute lifetime runs out.
     /// </summary>
-    private async Task SweepConsumedGrantsAsync(CancellationToken cancellationToken)
+    private async Task DeleteUsedGrantsAsync(CancellationToken cancellationToken)
     {
         using var scope = scopeFactory.CreateScope();
         var grants = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-        var cutoff = DateTime.UtcNow - options.ConsumedGrantRetention;
+        var cutoff = DateTime.UtcNow - options.UsedGrantRetention;
 
         var removed = await grants.Database.CreateExecutionStrategy().ExecuteAsync(() =>
             grants.PersistedGrants
@@ -105,7 +105,7 @@ public class SigningKeyMaintenance(
 
         if (removed > 0)
         {
-            logger.LogInformation("Swept {Count} consumed grant(s)", removed);
+            logger.LogInformation("Deleted {Count} used grant(s)", removed);
         }
     }
 }

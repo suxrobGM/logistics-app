@@ -1,4 +1,4 @@
-﻿using Logistics.Infrastructure.Persistence.Data;
+using Logistics.Infrastructure.Persistence.Data;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -17,7 +17,7 @@ public class SigningKeyCache(
     IOptions<SigningKeyOptions> options,
     ILogger<SigningKeyCache> logger)
 {
-    private readonly SemaphoreSlim gate = new(1, 1);
+    private readonly SemaphoreSlim refreshLock = new(1, 1);
     private readonly SigningKeyOptions options = options.Value;
 
     private SigningCredentials? active;
@@ -45,7 +45,7 @@ public class SigningKeyCache(
             return;
         }
 
-        await gate.WaitAsync();
+        await refreshLock.WaitAsync();
         try
         {
             if (DateTimeOffset.UtcNow < expiresAt)
@@ -85,7 +85,7 @@ public class SigningKeyCache(
         }
         finally
         {
-            gate.Release();
+            refreshLock.Release();
         }
     }
 }
