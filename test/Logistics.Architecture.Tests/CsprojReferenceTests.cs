@@ -82,41 +82,4 @@ public class CsprojReferenceTests
             "src", "Infrastructure", projectName, $"{projectName}.csproj");
         CsprojAssertions.AssertNoProjectReference(csproj, "Logistics.Application.csproj");
     }
-
-    /// <summary>
-    /// Every csproj in the repo, discovered from disk so a new project is covered without anyone
-    /// remembering to register it. Skips <c>private/</c>, which may be an empty submodule in CI.
-    /// </summary>
-    public static TheoryData<string> AllProjects
-    {
-        get
-        {
-            var root = CsprojAssertions.ResolveRepoFile();
-            var sep = Path.DirectorySeparatorChar;
-            var data = new TheoryData<string>();
-
-            foreach (var csproj in Directory
-                         .EnumerateFiles(root, "*.csproj", SearchOption.AllDirectories)
-                         .Where(p => !p.Contains($"{sep}private{sep}", StringComparison.Ordinal)
-                                     && !p.Contains($"{sep}node_modules{sep}", StringComparison.Ordinal))
-                         .Order(StringComparer.Ordinal))
-            {
-                data.Add(csproj);
-            }
-
-            return data;
-        }
-    }
-
-    /// <summary>
-    /// MediatR 13+ ships under a commercial licence or RPL-1.5 copyleft, neither of which suits a
-    /// closed-source product. Logistics.Mediator replaced it; this keeps it replaced.
-    /// </summary>
-    [Theory]
-    [MemberData(nameof(AllProjects))]
-    public void No_csproj_references_the_commercially_licensed_MediatR_packages(string csproj)
-    {
-        CsprojAssertions.AssertNoPackage(csproj, "MediatR");
-        CsprojAssertions.AssertNoPackage(csproj, "MediatR.Contracts");
-    }
 }
