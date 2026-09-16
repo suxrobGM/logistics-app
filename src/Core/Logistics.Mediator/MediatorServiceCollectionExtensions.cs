@@ -42,7 +42,7 @@ public static class MediatorServiceCollectionExtensions
 
         var requestHandlers = new Dictionary<Type, Type>();
 
-        foreach (var type in GetLoadableTypes(assembly))
+        foreach (var type in assembly.GetTypes())
         {
             if (!type.IsClass || type.IsAbstract || type.ContainsGenericParameters)
             {
@@ -90,19 +90,5 @@ public static class MediatorServiceCollectionExtensions
         }
 
         return services;
-    }
-
-    // The Application assembly pulls Stripe, EF Core, FluentValidation and Mapperly; a partially
-    // restored context can fault the load rather than return nothing.
-    private static IEnumerable<Type> GetLoadableTypes(Assembly assembly)
-    {
-        try
-        {
-            return assembly.GetTypes();
-        }
-        catch (ReflectionTypeLoadException ex)
-        {
-            return ex.Types.Where(t => t is not null)!;
-        }
     }
 }
