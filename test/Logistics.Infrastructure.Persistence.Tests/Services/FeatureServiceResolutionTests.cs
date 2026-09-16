@@ -16,43 +16,43 @@ namespace Logistics.Infrastructure.Persistence.Tests.Services;
 /// </summary>
 public class FeatureServiceResolutionTests
 {
-    private readonly IMasterRepository<TenantFeatureConfig, Guid> configRepo =
+    private readonly IMasterRepository<TenantFeatureConfig, Guid> _configRepo =
         Substitute.For<IMasterRepository<TenantFeatureConfig, Guid>>();
 
-    private readonly IMasterRepository<DefaultFeatureConfig, Guid> defaultRepo =
+    private readonly IMasterRepository<DefaultFeatureConfig, Guid> _defaultRepo =
         Substitute.For<IMasterRepository<DefaultFeatureConfig, Guid>>();
 
-    private readonly IMasterRepository<PlanFeature, Guid> planFeatureRepo =
+    private readonly IMasterRepository<PlanFeature, Guid> _planFeatureRepo =
         Substitute.For<IMasterRepository<PlanFeature, Guid>>();
 
-    private readonly IMasterRepository<Tenant, Guid> tenantRepo = Substitute.For<IMasterRepository<Tenant, Guid>>();
-    private readonly FeatureService sut;
-    private readonly Guid tenantId = Guid.NewGuid();
-    private readonly Guid planId = Guid.NewGuid();
+    private readonly IMasterRepository<Tenant, Guid> _tenantRepo = Substitute.For<IMasterRepository<Tenant, Guid>>();
+    private readonly FeatureService _sut;
+    private readonly Guid _tenantId = Guid.NewGuid();
+    private readonly Guid _planId = Guid.NewGuid();
 
     public FeatureServiceResolutionTests()
     {
         var masterUow = Substitute.For<IMasterUnitOfWork>();
-        masterUow.Repository<TenantFeatureConfig>().Returns(configRepo);
-        masterUow.Repository<DefaultFeatureConfig>().Returns(defaultRepo);
-        masterUow.Repository<PlanFeature>().Returns(planFeatureRepo);
-        masterUow.Repository<Tenant>().Returns(tenantRepo);
+        masterUow.Repository<TenantFeatureConfig>().Returns(_configRepo);
+        masterUow.Repository<DefaultFeatureConfig>().Returns(_defaultRepo);
+        masterUow.Repository<PlanFeature>().Returns(_planFeatureRepo);
+        masterUow.Repository<Tenant>().Returns(_tenantRepo);
 
         SetTenantConfigs();
-        defaultRepo.GetListAsync(Arg.Any<ISpecification<DefaultFeatureConfig>?>(), Arg.Any<CancellationToken>())
+        _defaultRepo.GetListAsync(Arg.Any<ISpecification<DefaultFeatureConfig>?>(), Arg.Any<CancellationToken>())
             .Returns(_ => new List<DefaultFeatureConfig>
             {
                 new() { Feature = TenantFeature.AICopilot, IsEnabledByDefault = false }
             });
 
-        sut = new FeatureService(masterUow);
+        _sut = new FeatureService(masterUow);
     }
 
     private void SetTenant(bool isSubscriptionRequired, bool hasSubscription = false)
     {
         var tenant = new Tenant
         {
-            Id = tenantId,
+            Id = _tenantId,
             Name = "test",
             ConnectionString = "test",
             BillingEmail = "test@test.com",
@@ -71,26 +71,26 @@ public class FeatureServiceResolutionTests
         {
             tenant.Subscription = new Subscription
             {
-                TenantId = tenantId,
+                TenantId = _tenantId,
                 Tenant = tenant,
-                PlanId = planId,
+                PlanId = _planId,
                 Plan = null!
             };
         }
 
-        tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(tenant);
+        _tenantRepo.GetByIdAsync(_tenantId, Arg.Any<CancellationToken>()).Returns(tenant);
     }
 
     private void SetTenantConfigs(params TenantFeatureConfig[] configs)
     {
-        configRepo.GetListAsync(Arg.Any<Expression<Func<TenantFeatureConfig, bool>>>(), Arg.Any<CancellationToken>())
+        _configRepo.GetListAsync(Arg.Any<Expression<Func<TenantFeatureConfig, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(_ => configs.ToList());
     }
 
     private void SetPlanFeatures(params TenantFeature[] features)
     {
-        planFeatureRepo.GetListAsync(Arg.Any<Expression<Func<PlanFeature, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(_ => features.Select(f => new PlanFeature { PlanId = planId, Feature = f }).ToList());
+        _planFeatureRepo.GetListAsync(Arg.Any<Expression<Func<PlanFeature, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(_ => features.Select(f => new PlanFeature { PlanId = _planId, Feature = f }).ToList());
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class FeatureServiceResolutionTests
     {
         SetTenant(isSubscriptionRequired: false);
 
-        Assert.True(await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AICopilot));
+        Assert.True(await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AICopilot));
     }
 
     [Fact]
@@ -107,12 +107,12 @@ public class FeatureServiceResolutionTests
         SetTenant(isSubscriptionRequired: false);
         SetTenantConfigs(new TenantFeatureConfig
         {
-            TenantId = tenantId,
+            TenantId = _tenantId,
             Feature = TenantFeature.AICopilot,
             IsEnabled = false
         });
 
-        Assert.False(await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AICopilot));
+        Assert.False(await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AICopilot));
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class FeatureServiceResolutionTests
         SetTenant(isSubscriptionRequired: true, hasSubscription: true);
         SetPlanFeatures(TenantFeature.Dashboard);
 
-        Assert.False(await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AICopilot));
+        Assert.False(await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AICopilot));
     }
 
     [Fact]
@@ -130,6 +130,6 @@ public class FeatureServiceResolutionTests
         SetTenant(isSubscriptionRequired: true, hasSubscription: true);
         SetPlanFeatures(TenantFeature.AICopilot);
 
-        Assert.False(await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AICopilot));
+        Assert.False(await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AICopilot));
     }
 }

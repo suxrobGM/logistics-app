@@ -16,8 +16,8 @@ internal sealed class QuickBooksOnlineService(
     QuickBooksOAuthClient oauthClient,
     IOptions<AccountingOptions> options) : IAccountingProviderService
 {
-    private string? realmId;
-    private string? accessToken;
+    private string? _realmId;
+    private string? _accessToken;
 
     private string Environment => options.Value.QuickBooks?.Environment ?? "sandbox";
 
@@ -25,8 +25,8 @@ internal sealed class QuickBooksOnlineService(
 
     public void Initialize(AccountingProviderConfiguration configuration)
     {
-        realmId = configuration.RealmId;
-        accessToken = configuration.AccessToken;
+        _realmId = configuration.RealmId;
+        _accessToken = configuration.AccessToken;
     }
 
     private string RedirectUri =>
@@ -135,8 +135,8 @@ internal sealed class QuickBooksOnlineService(
     }
 
     private string RequireRealm() =>
-        realmId ?? throw new InvalidOperationException("QuickBooks service is not initialized (missing realm ID).");
+        _realmId ?? throw new InvalidOperationException("QuickBooks service is not initialized (missing realm ID).");
 
     private string RequireToken() =>
-        accessToken ?? throw new InvalidOperationException("QuickBooks service is not initialized (missing access token).");
+        _accessToken ?? throw new InvalidOperationException("QuickBooks service is not initialized (missing access token).");
 }

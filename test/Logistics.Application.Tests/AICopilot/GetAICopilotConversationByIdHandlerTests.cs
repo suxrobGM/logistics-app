@@ -10,20 +10,20 @@ namespace Logistics.Application.Tests.AICopilot;
 
 public class GetAICopilotConversationByIdHandlerTests
 {
-    private readonly AgentTestContext ctx = new();
-    private readonly GetAICopilotConversationByIdHandler sut;
+    private readonly AgentTestContext _ctx = new();
+    private readonly GetAICopilotConversationByIdHandler _sut;
 
     public GetAICopilotConversationByIdHandlerTests()
     {
-        sut = new GetAICopilotConversationByIdHandler(ctx.Queries, ctx.CurrentUser);
-        ctx.DecisionRepo.Query().Returns(new List<AgentDecision>().BuildMock());
-        ctx.MessageRepo.Query().Returns(new List<AgentMessage>().BuildMock());
+        _sut = new GetAICopilotConversationByIdHandler(_ctx.Queries, _ctx.CurrentUser);
+        _ctx.DecisionRepo.Query().Returns(new List<AgentDecision>().BuildMock());
+        _ctx.MessageRepo.Query().Returns(new List<AgentMessage>().BuildMock());
     }
 
     [Fact]
     public async Task Handle_ConversationNotFound_Fails()
     {
-        var result = await sut.Handle(new GetAICopilotConversationByIdQuery { Id = Guid.NewGuid() }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAICopilotConversationByIdQuery { Id = Guid.NewGuid() }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }
@@ -32,9 +32,9 @@ public class GetAICopilotConversationByIdHandlerTests
     [Fact]
     public async Task Handle_OtherUsersConversation_Fails()
     {
-        var conversation = ctx.SetConversation(createdById: Guid.NewGuid(), kind: AgentConversationKind.Copilot);
+        var conversation = _ctx.SetConversation(createdById: Guid.NewGuid(), kind: AgentConversationKind.Copilot);
 
-        var result = await sut.Handle(new GetAICopilotConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAICopilotConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }
@@ -42,9 +42,9 @@ public class GetAICopilotConversationByIdHandlerTests
     [Fact]
     public async Task Handle_DispatchKindConversation_Fails()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
 
-        var result = await sut.Handle(new GetAICopilotConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAICopilotConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }
@@ -53,12 +53,12 @@ public class GetAICopilotConversationByIdHandlerTests
     [Fact]
     public async Task Handle_Success_FiltersOutMessagesWithoutDisplayText()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Copilot);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Copilot);
         var textMessage = new AgentMessage { ConversationId = conversation.Id, Sequence = 1, DisplayText = "hello" };
         var toolResultMessage = new AgentMessage { ConversationId = conversation.Id, Sequence = 2, DisplayText = null };
-        ctx.MessageRepo.Query().Returns(new List<AgentMessage> { textMessage, toolResultMessage }.BuildMock());
+        _ctx.MessageRepo.Query().Returns(new List<AgentMessage> { textMessage, toolResultMessage }.BuildMock());
 
-        var result = await sut.Handle(new GetAICopilotConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAICopilotConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         var message = Assert.Single(result.Value!.Messages!);
@@ -68,12 +68,12 @@ public class GetAICopilotConversationByIdHandlerTests
     [Fact]
     public async Task Handle_Success_IncludesDecisionsForTheConversation()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Copilot);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Copilot);
         var session = new AgentSession { ConversationId = conversation.Id, Type = AgentSessionType.Copilot };
         var decision = new AgentDecision { SessionId = session.Id, Session = session, ToolName = "send_invoice" };
-        ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
+        _ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
 
-        var result = await sut.Handle(new GetAICopilotConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAICopilotConversationByIdQuery { Id = conversation.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         var returnedDecision = Assert.Single(result.Value!.Decisions!);

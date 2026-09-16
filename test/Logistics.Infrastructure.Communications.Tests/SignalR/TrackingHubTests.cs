@@ -15,31 +15,31 @@ public class TrackingHubTests
 {
     private const string ConnectionId = HubTestContext.ConnectionId;
 
-    private readonly ITruckGeolocationUpdater updater = Substitute.For<ITruckGeolocationUpdater>();
-    private readonly TrackingHubContext hubContext = new();
-    private readonly ITrackingHubClient groupClient = Substitute.For<ITrackingHubClient>();
+    private readonly ITruckGeolocationUpdater _updater = Substitute.For<ITruckGeolocationUpdater>();
+    private readonly TrackingHubContext _hubContext = new();
+    private readonly ITrackingHubClient _groupClient = Substitute.For<ITrackingHubClient>();
 
-    private readonly Guid callerTenantId = Guid.NewGuid();
-    private readonly Guid driverId = Guid.NewGuid();
-    private readonly Guid truckId = Guid.NewGuid();
+    private readonly Guid _callerTenantId = Guid.NewGuid();
+    private readonly Guid _driverId = Guid.NewGuid();
+    private readonly Guid _truckId = Guid.NewGuid();
 
-    private readonly TrackingHub sut;
+    private readonly TrackingHub _sut;
 
     public TrackingHubTests()
     {
-        sut = new TrackingHub(updater, hubContext);
+        _sut = new TrackingHub(_updater, _hubContext);
 
         var clients = Substitute.For<IHubCallerClients<ITrackingHubClient>>();
-        clients.Group(Arg.Any<string>()).Returns(groupClient);
+        clients.Group(Arg.Any<string>()).Returns(_groupClient);
 
-        sut.Clients = clients;
-        sut.Groups = Substitute.For<IGroupManager>();
-        sut.Context = HubTestContext.Caller(callerTenantId, driverId);
+        _sut.Clients = clients;
+        _sut.Groups = Substitute.For<IGroupManager>();
+        _sut.Context = HubTestContext.Caller(_callerTenantId, _driverId);
     }
 
     private void AllowReporting(bool allowed) =>
-        updater.CanDriverReportForTruckAsync(
-                callerTenantId, truckId, driverId, Arg.Any<CancellationToken>())
+        _updater.CanDriverReportForTruckAsync(
+                _callerTenantId, _truckId, _driverId, Arg.Any<CancellationToken>())
             .Returns(allowed);
 
     private static TruckGeolocationDto Report(Guid truckId, Guid tenantId) => new()
@@ -54,11 +54,11 @@ public class TrackingHubTests
     {
         AllowReporting(true);
 
-        await sut.SendGeolocationData(Report(truckId, Guid.NewGuid()));
+        await _sut.SendGeolocationData(Report(_truckId, Guid.NewGuid()));
 
-        var cached = hubContext.GetGeolocationData(ConnectionId);
+        var cached = _hubContext.GetGeolocationData(ConnectionId);
         Assert.NotNull(cached);
-        Assert.Equal(callerTenantId, cached.TenantId);
+        Assert.Equal(_callerTenantId, cached.TenantId);
     }
 
     [Fact]
@@ -66,10 +66,10 @@ public class TrackingHubTests
     {
         AllowReporting(false);
 
-        await sut.SendGeolocationData(Report(truckId, callerTenantId));
+        await _sut.SendGeolocationData(Report(_truckId, _callerTenantId));
 
-        Assert.Null(hubContext.GetGeolocationData(ConnectionId));
-        await groupClient.DidNotReceive().ReceiveGeolocationData(Arg.Any<TruckGeolocationDto>());
+        Assert.Null(_hubContext.GetGeolocationData(ConnectionId));
+        await _groupClient.DidNotReceive().ReceiveGeolocationData(Arg.Any<TruckGeolocationDto>());
     }
 
     [Fact]
@@ -77,10 +77,10 @@ public class TrackingHubTests
     {
         AllowReporting(true);
 
-        await sut.SendGeolocationData(Report(truckId, callerTenantId));
+        await _sut.SendGeolocationData(Report(_truckId, _callerTenantId));
 
-        await groupClient.Received(1).ReceiveGeolocationData(
-            Arg.Is<TruckGeolocationDto>(g => g.TenantId == callerTenantId));
+        await _groupClient.Received(1).ReceiveGeolocationData(
+            Arg.Is<TruckGeolocationDto>(g => g.TenantId == _callerTenantId));
     }
 
     [Fact]
@@ -89,9 +89,9 @@ public class TrackingHubTests
         var context = Substitute.For<HubCallerContext>();
         context.ConnectionId.Returns(ConnectionId);
         context.User.Returns(new ClaimsPrincipal(new ClaimsIdentity()));
-        sut.Context = context;
+        _sut.Context = context;
 
-        await sut.OnConnectedAsync();
+        await _sut.OnConnectedAsync();
 
         context.Received(1).Abort();
     }
@@ -102,10 +102,10 @@ public class TrackingHubTests
         var context = Substitute.For<HubCallerContext>();
         context.ConnectionId.Returns(ConnectionId);
         context.User.Returns(new ClaimsPrincipal(new ClaimsIdentity(
-            [new Claim(CustomClaimTypes.Tenant, callerTenantId.ToString())])));
-        sut.Context = context;
+            [new Claim(CustomClaimTypes.Tenant, _callerTenantId.ToString())])));
+        _sut.Context = context;
 
-        await sut.OnConnectedAsync();
+        await _sut.OnConnectedAsync();
 
         context.Received(1).Abort();
     }

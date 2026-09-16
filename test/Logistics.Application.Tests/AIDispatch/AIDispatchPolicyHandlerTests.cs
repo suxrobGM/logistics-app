@@ -12,17 +12,17 @@ namespace Logistics.Application.Tests.AIDispatch;
 
 public class AIDispatchPolicyHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
-    private readonly ITenantRepository<AIDispatchPolicy, Guid> policyRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ICurrentUserService _currentUser = Substitute.For<ICurrentUserService>();
+    private readonly ITenantRepository<AIDispatchPolicy, Guid> _policyRepo =
         Substitute.For<ITenantRepository<AIDispatchPolicy, Guid>>();
-    private readonly ITenantRepository<Employee, Guid> employeeRepo =
+    private readonly ITenantRepository<Employee, Guid> _employeeRepo =
         Substitute.For<ITenantRepository<Employee, Guid>>();
 
     public AIDispatchPolicyHandlerTests()
     {
-        tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
+        _tenantUow.Repository<AIDispatchPolicy>().Returns(_policyRepo);
+        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
         SetPolicy(null);
     }
 
@@ -35,7 +35,7 @@ public class AIDispatchPolicyHandlerTests
     [Fact]
     public async Task Get_NoRow_ReturnsBlankEnabledPolicy()
     {
-        var sut = new GetAIDispatchPolicyHandler(tenantUow);
+        var sut = new GetAIDispatchPolicyHandler(_tenantUow);
 
         var result = await sut.Handle(new GetAIDispatchPolicyQuery(), CancellationToken.None);
 
@@ -53,7 +53,7 @@ public class AIDispatchPolicyHandlerTests
         policy.EditManual("- My rule", isEnabled: true, Guid.NewGuid());
         SetPolicy(policy);
 
-        var sut = new GetAIDispatchPolicyHandler(tenantUow);
+        var sut = new GetAIDispatchPolicyHandler(_tenantUow);
 
         var result = await sut.Handle(new GetAIDispatchPolicyQuery(), CancellationToken.None);
 
@@ -70,12 +70,12 @@ public class AIDispatchPolicyHandlerTests
     public async Task Update_NoRow_CreatesOneAndStampsEditor()
     {
         var userId = Guid.NewGuid();
-        currentUser.GetUserId().Returns(userId);
+        _currentUser.GetUserId().Returns(userId);
 
         AIDispatchPolicy? added = null;
-        await policyRepo.AddAsync(Arg.Do<AIDispatchPolicy>(p => added = p), Arg.Any<CancellationToken>());
+        await _policyRepo.AddAsync(Arg.Do<AIDispatchPolicy>(p => added = p), Arg.Any<CancellationToken>());
 
-        var sut = new UpdateAIDispatchPolicyHandler(tenantUow, currentUser);
+        var sut = new UpdateAIDispatchPolicyHandler(_tenantUow, _currentUser);
 
         var result = await sut.Handle(
             new UpdateAIDispatchPolicyCommand { ManualContent = "- Prefer flatbeds", IsEnabled = true },
@@ -85,7 +85,7 @@ public class AIDispatchPolicyHandlerTests
         Assert.NotNull(added);
         Assert.Equal("- Prefer flatbeds", added!.ManualContent);
         Assert.Equal(userId, added.LastEditedByUserId);
-        await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     /// <summary>Editing directives must not disturb what the job learned.</summary>
@@ -96,7 +96,7 @@ public class AIDispatchPolicyHandlerTests
         policy.ApplyLearnedPolicy("- Learned rule", 20, DateTime.UtcNow, "deepseek-v4-flash", 0.001m);
         SetPolicy(policy);
 
-        var sut = new UpdateAIDispatchPolicyHandler(tenantUow, currentUser);
+        var sut = new UpdateAIDispatchPolicyHandler(_tenantUow, _currentUser);
 
         await sut.Handle(
             new UpdateAIDispatchPolicyCommand { ManualContent = "- My rule", IsEnabled = false },
@@ -105,7 +105,7 @@ public class AIDispatchPolicyHandlerTests
         Assert.Equal("- Learned rule", policy.GeneratedContent);
         Assert.Equal("- My rule", policy.ManualContent);
         Assert.False(policy.IsEnabled);
-        await policyRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _policyRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class AIDispatchPolicyHandlerTests
         policy.EditManual("- Old rule", isEnabled: true, Guid.NewGuid());
         SetPolicy(policy);
 
-        var sut = new UpdateAIDispatchPolicyHandler(tenantUow, currentUser);
+        var sut = new UpdateAIDispatchPolicyHandler(_tenantUow, _currentUser);
 
         await sut.Handle(
             new UpdateAIDispatchPolicyCommand { ManualContent = "   ", IsEnabled = true },
@@ -134,24 +134,24 @@ public class AIDispatchPolicyHandlerTests
         var policy = new AIDispatchPolicy();
         SetPolicy(policy);
 
-        var sut = new DeleteAIDispatchPolicyHandler(tenantUow);
+        var sut = new DeleteAIDispatchPolicyHandler(_tenantUow);
 
         var result = await sut.Handle(new DeleteAIDispatchPolicyCommand(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        policyRepo.Received(1).Delete(policy);
-        await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        _policyRepo.Received(1).Delete(policy);
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Delete_NoRow_SucceedsWithoutSaving()
     {
-        var sut = new DeleteAIDispatchPolicyHandler(tenantUow);
+        var sut = new DeleteAIDispatchPolicyHandler(_tenantUow);
 
         var result = await sut.Handle(new DeleteAIDispatchPolicyCommand(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await tenantUow.DidNotReceiveWithAnyArgs().SaveChangesAsync(default);
+        await _tenantUow.DidNotReceiveWithAnyArgs().SaveChangesAsync(default);
     }
 
     #endregion
@@ -179,6 +179,6 @@ public class AIDispatchPolicyHandlerTests
     private void SetPolicy(AIDispatchPolicy? policy)
     {
         var list = policy is null ? new List<AIDispatchPolicy>() : [policy];
-        policyRepo.Query().Returns(list.BuildMock());
+        _policyRepo.Query().Returns(list.BuildMock());
     }
 }

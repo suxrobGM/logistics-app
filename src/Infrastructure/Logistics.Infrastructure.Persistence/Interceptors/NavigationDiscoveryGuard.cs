@@ -12,14 +12,14 @@ namespace Logistics.Infrastructure.Persistence.Interceptors;
 /// </summary>
 public sealed class NavigationDiscoveryGuard
 {
-    private int detectingChanges;
+    private int _detectingChanges;
 
     private NavigationDiscoveryGuard(ChangeTracker changeTracker)
     {
-        changeTracker.DetectingAllChanges += (_, _) => detectingChanges++;
-        changeTracker.DetectedAllChanges += (_, _) => detectingChanges--;
-        changeTracker.DetectingEntityChanges += (_, _) => detectingChanges++;
-        changeTracker.DetectedEntityChanges += (_, _) => detectingChanges--;
+        changeTracker.DetectingAllChanges += (_, _) => _detectingChanges++;
+        changeTracker.DetectedAllChanges += (_, _) => _detectingChanges--;
+        changeTracker.DetectingEntityChanges += (_, _) => _detectingChanges++;
+        changeTracker.DetectedEntityChanges += (_, _) => _detectingChanges--;
         changeTracker.Tracked += OnTracked;
     }
 
@@ -27,7 +27,7 @@ public sealed class NavigationDiscoveryGuard
 
     private void OnTracked(object? sender, EntityTrackedEventArgs e)
     {
-        if (detectingChanges > 0 && !e.FromQuery && e.Entry.State == EntityState.Modified)
+        if (_detectingChanges > 0 && !e.FromQuery && e.Entry.State == EntityState.Modified)
         {
             throw new InvalidOperationException(
                 $"""

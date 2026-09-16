@@ -20,7 +20,7 @@ public class SigningKeyProtector(IDataProtectionProvider dataProtectionProvider)
     // would silently write an empty object.
     private static readonly JsonSerializerOptions SerializerOptions = new() { IncludeFields = true };
 
-    private readonly IDataProtector protector = dataProtectionProvider.CreateProtector(Purpose);
+    private readonly IDataProtector _protector = dataProtectionProvider.CreateProtector(Purpose);
 
     public SigningKey Create()
     {
@@ -30,7 +30,7 @@ public class SigningKeyProtector(IDataProtectionProvider dataProtectionProvider)
         {
             Created = DateTime.UtcNow,
             Algorithm = SecurityAlgorithms.RsaSha256,
-            Data = protector.Protect(
+            Data = _protector.Protect(
                 JsonSerializer.Serialize(rsa.ExportParameters(true), SerializerOptions))
         };
     }
@@ -38,7 +38,7 @@ public class SigningKeyProtector(IDataProtectionProvider dataProtectionProvider)
     public SigningCredentials Unprotect(SigningKey key)
     {
         var parameters = JsonSerializer.Deserialize<RSAParameters>(
-            protector.Unprotect(key.Data), SerializerOptions);
+            _protector.Unprotect(key.Data), SerializerOptions);
 
         var rsa = RSA.Create();
         rsa.ImportParameters(parameters);

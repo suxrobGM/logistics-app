@@ -13,18 +13,18 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Financial;
 
 public class SearchExpensesToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly SearchExpensesTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly SearchExpensesTool _sut;
 
     public SearchExpensesToolTests()
     {
-        sut = new SearchExpensesTool(mediator);
+        _sut = new SearchExpensesTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_ParsesFiltersAndProjectsCategory()
     {
-        mediator.Send(Arg.Any<GetExpensesQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetExpensesQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<ExpenseDto>.Ok(
                 [new ExpenseDto
                 {
@@ -35,7 +35,7 @@ public class SearchExpensesToolTests
                     TruckCategory = TruckExpenseCategory.Tires
                 }], 1, 20));
 
-        var result = await sut.ExecuteAsync(new JsonObject
+        var result = await _sut.ExecuteAsync(new JsonObject
         {
             ["type"] = "truck",
             ["status"] = "Approved",
@@ -46,7 +46,7 @@ public class SearchExpensesToolTests
         var expense = Assert.Single(root.GetProperty("expenses").EnumerateArray());
         Assert.Equal("Tires", expense.GetProperty("category").GetString());
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetExpensesQuery>(q =>
                 q.Type == ExpenseType.Truck &&
                 q.Status == ExpenseStatus.Approved &&

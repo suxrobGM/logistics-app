@@ -18,27 +18,27 @@ namespace Logistics.Application.Tests.Payroll;
 
 public class PayPayrollInvoiceHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IStripeConnectService stripeConnectService = Substitute.For<IStripeConnectService>();
-    private readonly ILogger<PayPayrollInvoiceHandler> logger = NullLogger<PayPayrollInvoiceHandler>.Instance;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IStripeConnectService _stripeConnectService = Substitute.For<IStripeConnectService>();
+    private readonly ILogger<PayPayrollInvoiceHandler> _logger = NullLogger<PayPayrollInvoiceHandler>.Instance;
 
-    private readonly ITenantRepository<Invoice, Guid> invoiceRepo =
+    private readonly ITenantRepository<Invoice, Guid> _invoiceRepo =
         Substitute.For<ITenantRepository<Invoice, Guid>>();
 
-    private readonly ITenantRepository<Employee, Guid> employeeRepo =
+    private readonly ITenantRepository<Employee, Guid> _employeeRepo =
         Substitute.For<ITenantRepository<Employee, Guid>>();
 
-    private readonly ITenantRepository<Payment, Guid> paymentRepo =
+    private readonly ITenantRepository<Payment, Guid> _paymentRepo =
         Substitute.For<ITenantRepository<Payment, Guid>>();
 
-    private readonly PayPayrollInvoiceHandler sut;
+    private readonly PayPayrollInvoiceHandler _sut;
 
     public PayPayrollInvoiceHandlerTests()
     {
-        tenantUow.Repository<Invoice>().Returns(invoiceRepo);
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
-        tenantUow.Repository<Payment>().Returns(paymentRepo);
-        tenantUow.GetCurrentTenant().Returns(new Tenant
+        _tenantUow.Repository<Invoice>().Returns(_invoiceRepo);
+        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
+        _tenantUow.Repository<Payment>().Returns(_paymentRepo);
+        _tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Name = "Test Tenant",
             ConnectionString = "test",
@@ -53,7 +53,7 @@ public class PayPayrollInvoiceHandlerTests
             }
         });
 
-        sut = new PayPayrollInvoiceHandler(tenantUow, stripeConnectService, logger);
+        _sut = new PayPayrollInvoiceHandler(_tenantUow, _stripeConnectService, _logger);
     }
 
     private static PayrollInvoice CreateApprovedPayrollInvoice(Guid employeeId, decimal amount = 1500m)
@@ -88,32 +88,32 @@ public class PayPayrollInvoiceHandlerTests
         var employee = CreateEmployee();
         var invoice = CreateApprovedPayrollInvoice(employee.Id);
 
-        invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
-        employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
-        stripeConnectService.CreateTransferAsync(
+        _invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
+        _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
+        _stripeConnectService.CreateTransferAsync(
                 150000, "USD", "acct_123", Arg.Any<string>())
             .Returns(new Transfer { Id = "tr_123" });
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new PayPayrollInvoiceCommand { InvoiceId = invoice.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await paymentRepo.Received(1).AddAsync(
+        await _paymentRepo.Received(1).AddAsync(
             Arg.Is<Payment>(p =>
                 p.Amount.Amount == 1500m &&
                 p.Status == PaymentStatus.Paid &&
                 p.StripePaymentIntentId == "tr_123"),
             Arg.Any<CancellationToken>());
-        await tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_InvoiceNotFound_ReturnsFailure()
     {
-        invoiceRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _invoiceRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns((Invoice?)null);
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new PayPayrollInvoiceCommand { InvoiceId = Guid.NewGuid() }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -127,9 +127,9 @@ public class PayPayrollInvoiceHandlerTests
         var invoice = CreateApprovedPayrollInvoice(employee.Id);
         invoice.Status = InvoiceStatus.Draft;
 
-        invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
+        _invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new PayPayrollInvoiceCommand { InvoiceId = invoice.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -142,10 +142,10 @@ public class PayPayrollInvoiceHandlerTests
         var employee = CreateEmployee(stripeAccountId: null);
         var invoice = CreateApprovedPayrollInvoice(employee.Id);
 
-        invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
-        employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
+        _invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
+        _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new PayPayrollInvoiceCommand { InvoiceId = invoice.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -158,18 +158,18 @@ public class PayPayrollInvoiceHandlerTests
         var employee = CreateEmployee();
         var invoice = CreateApprovedPayrollInvoice(employee.Id);
 
-        invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
-        employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
-        stripeConnectService.CreateTransferAsync(
+        _invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
+        _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
+        _stripeConnectService.CreateTransferAsync(
                 Arg.Any<long>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>())
             .ThrowsAsync(new StripeException("Insufficient funds"));
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new PayPayrollInvoiceCommand { InvoiceId = invoice.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("Insufficient funds", result.Error!);
-        await paymentRepo.DidNotReceive().AddAsync(Arg.Any<Payment>(), Arg.Any<CancellationToken>());
+        await _paymentRepo.DidNotReceive().AddAsync(Arg.Any<Payment>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -193,10 +193,10 @@ public class PayPayrollInvoiceHandlerTests
             }
         });
 
-        invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
-        employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
+        _invoiceRepo.GetByIdAsync(invoice.Id, Arg.Any<CancellationToken>()).Returns(invoice);
+        _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new PayPayrollInvoiceCommand { InvoiceId = invoice.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);

@@ -17,82 +17,82 @@ namespace Logistics.Application.Tests.LoadBoard;
 
 public class BookLoadBoardLoadHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ILoadBoardTokenService tokenService = Substitute.For<ILoadBoardTokenService>();
-    private readonly ILoadBoardProviderService provider = Substitute.For<ILoadBoardProviderService>();
-    private readonly IBrokerCreditService brokerCreditService = Substitute.For<IBrokerCreditService>();
-    private readonly IInboundEmailRouteRegistry routeRegistry = Substitute.For<IInboundEmailRouteRegistry>();
-    private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ILoadBoardTokenService _tokenService = Substitute.For<ILoadBoardTokenService>();
+    private readonly ILoadBoardProviderService _provider = Substitute.For<ILoadBoardProviderService>();
+    private readonly IBrokerCreditService _brokerCreditService = Substitute.For<IBrokerCreditService>();
+    private readonly IInboundEmailRouteRegistry _routeRegistry = Substitute.For<IInboundEmailRouteRegistry>();
+    private readonly IAIDispatchBroadcastService _broadcastService = Substitute.For<IAIDispatchBroadcastService>();
 
-    private readonly ITenantRepository<LoadBoardListing, Guid> listingRepo =
+    private readonly ITenantRepository<LoadBoardListing, Guid> _listingRepo =
         Substitute.For<ITenantRepository<LoadBoardListing, Guid>>();
-    private readonly ITenantRepository<LoadBoardConfiguration, Guid> configRepo =
+    private readonly ITenantRepository<LoadBoardConfiguration, Guid> _configRepo =
         Substitute.For<ITenantRepository<LoadBoardConfiguration, Guid>>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo =
+    private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly ITenantRepository<Employee, Guid> employeeRepo =
+    private readonly ITenantRepository<Employee, Guid> _employeeRepo =
         Substitute.For<ITenantRepository<Employee, Guid>>();
-    private readonly ITenantRepository<Customer, Guid> customerRepo =
+    private readonly ITenantRepository<Customer, Guid> _customerRepo =
         Substitute.For<ITenantRepository<Customer, Guid>>();
-    private readonly ITenantRepository<Load, Guid> loadRepo =
+    private readonly ITenantRepository<Load, Guid> _loadRepo =
         Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly ITenantRepository<RateNegotiation, Guid> negotiationRepo =
+    private readonly ITenantRepository<RateNegotiation, Guid> _negotiationRepo =
         Substitute.For<ITenantRepository<RateNegotiation, Guid>>();
 
-    private readonly Tenant tenant;
-    private readonly LoadBoardListing listing;
-    private readonly BookLoadBoardLoadCommand command;
-    private readonly BookLoadBoardLoadHandler sut;
+    private readonly Tenant _tenant;
+    private readonly LoadBoardListing _listing;
+    private readonly BookLoadBoardLoadCommand _command;
+    private readonly BookLoadBoardLoadHandler _sut;
 
     public BookLoadBoardLoadHandlerTests()
     {
-        tenant = new Tenant
+        _tenant = new Tenant
         {
             Name = "test",
             ConnectionString = "test",
             BillingEmail = "billing@test.com",
             CompanyAddress = new Address { Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US" }
         };
-        listing = CreateListing();
+        _listing = CreateListing();
 
         var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
         var dispatcher = new Employee { Email = "dispatcher@test.com", FirstName = "Dana", LastName = "Doe" };
         var config = new LoadBoardConfiguration { ProviderType = LoadBoardProviderType.Demo, ApiKey = "demo" };
 
-        command = new BookLoadBoardLoadCommand
+        _command = new BookLoadBoardLoadCommand
         {
-            ListingId = listing.Id,
+            ListingId = _listing.Id,
             TruckId = truck.Id,
             DispatcherId = dispatcher.Id
         };
 
-        tenantUow.Repository<LoadBoardListing>().Returns(listingRepo);
-        tenantUow.Repository<LoadBoardConfiguration>().Returns(configRepo);
-        tenantUow.Repository<Truck>().Returns(truckRepo);
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
-        tenantUow.Repository<Customer>().Returns(customerRepo);
-        tenantUow.Repository<Load>().Returns(loadRepo);
-        tenantUow.Repository<RateNegotiation>().Returns(negotiationRepo);
-        tenantUow.GetCurrentTenant().Returns(tenant);
+        _tenantUow.Repository<LoadBoardListing>().Returns(_listingRepo);
+        _tenantUow.Repository<LoadBoardConfiguration>().Returns(_configRepo);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
+        _tenantUow.Repository<Customer>().Returns(_customerRepo);
+        _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _tenantUow.Repository<RateNegotiation>().Returns(_negotiationRepo);
+        _tenantUow.GetCurrentTenant().Returns(_tenant);
 
-        listingRepo.GetByIdAsync(listing.Id, Arg.Any<CancellationToken>()).Returns(listing);
-        configRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardConfiguration, bool>>>(), Arg.Any<CancellationToken>())
+        _listingRepo.GetByIdAsync(_listing.Id, Arg.Any<CancellationToken>()).Returns(_listing);
+        _configRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardConfiguration, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(config);
-        truckRepo.GetByIdAsync(truck.Id, Arg.Any<CancellationToken>()).Returns(truck);
-        employeeRepo.GetByIdAsync(dispatcher.Id, Arg.Any<CancellationToken>()).Returns(dispatcher);
-        customerRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<Customer, bool>>>(), Arg.Any<CancellationToken>())
+        _truckRepo.GetByIdAsync(truck.Id, Arg.Any<CancellationToken>()).Returns(truck);
+        _employeeRepo.GetByIdAsync(dispatcher.Id, Arg.Any<CancellationToken>()).Returns(dispatcher);
+        _customerRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<Customer, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Customer?)null);
 
-        tokenService.GetReadyProviderAsync(config, Arg.Any<CancellationToken>())
-            .Returns(Result<ILoadBoardProviderService>.Ok(provider));
-        provider.BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>())
+        _tokenService.GetReadyProviderAsync(config, Arg.Any<CancellationToken>())
+            .Returns(Result<ILoadBoardProviderService>.Ok(_provider));
+        _provider.BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>())
             .Returns(new LoadBoardBookingResultDto { Success = true, ExternalConfirmationId = "CONF-1" });
 
         var vehicleTransportGuard = Substitute.For<IVehicleTransportGuard>();
         vehicleTransportGuard.CheckLoadTypeAsync(Arg.Any<LoadType?>()).Returns(Result.Ok());
 
-        sut = new BookLoadBoardLoadHandler(
-            tenantUow, vehicleTransportGuard, tokenService, brokerCreditService, routeRegistry, broadcastService,
+        _sut = new BookLoadBoardLoadHandler(
+            _tenantUow, vehicleTransportGuard, _tokenService, _brokerCreditService, _routeRegistry, _broadcastService,
             NullLogger<BookLoadBoardLoadHandler>.Instance);
     }
 
@@ -115,7 +115,7 @@ public class BookLoadBoardLoadHandlerTests
 
     private void SetupCredit(int? score, bool? authorityActive = true)
     {
-        brokerCreditService.GetBrokerCreditAsync(listing.BrokerMcNumber, Arg.Any<CancellationToken>())
+        _brokerCreditService.GetBrokerCreditAsync(_listing.BrokerMcNumber, Arg.Any<CancellationToken>())
             .Returns(new BrokerCreditDto
             {
                 McNumber = "123456",
@@ -132,61 +132,61 @@ public class BookLoadBoardLoadHandlerTests
     [Fact]
     public async Task Handle_NoThresholdConfigured_Books()
     {
-        tenant.Settings.MinBrokerCreditScore = null;
+        _tenant.Settings.MinBrokerCreditScore = null;
         SetupCredit(score: 10);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await provider.Received(1).BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>());
+        await _provider.Received(1).BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>());
     }
 
     [Fact]
     public async Task Handle_ScoreBelowThreshold_BlocksWithErrorCode()
     {
-        tenant.Settings.MinBrokerCreditScore = 70;
+        _tenant.Settings.MinBrokerCreditScore = 70;
         SetupCredit(score: 50);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
-        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
     }
 
     [Fact]
     public async Task Handle_ScoreBelowThreshold_OverrideBooks()
     {
-        tenant.Settings.MinBrokerCreditScore = 70;
+        _tenant.Settings.MinBrokerCreditScore = 70;
         SetupCredit(score: 50);
-        command.OverrideCreditCheck = true;
+        _command.OverrideCreditCheck = true;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await provider.Received(1).BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>());
+        await _provider.Received(1).BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>());
     }
 
     [Fact]
     public async Task Handle_MissingScore_NeverBlocks()
     {
-        tenant.Settings.MinBrokerCreditScore = 70;
-        brokerCreditService.GetBrokerCreditAsync(Arg.Any<string?>(), Arg.Any<CancellationToken>())
+        _tenant.Settings.MinBrokerCreditScore = 70;
+        _brokerCreditService.GetBrokerCreditAsync(Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns((BrokerCreditDto?)null);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await provider.Received(1).BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>());
+        await _provider.Received(1).BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>());
     }
 
     [Fact]
     public async Task Handle_InactiveAuthority_BlocksEvenWithoutThreshold()
     {
-        tenant.Settings.MinBrokerCreditScore = null;
+        _tenant.Settings.MinBrokerCreditScore = null;
         SetupCredit(score: 90, authorityActive: false);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
@@ -196,24 +196,24 @@ public class BookLoadBoardLoadHandlerTests
     [Fact]
     public async Task Handle_BlockedBooking_StillStampsCreditOnListing()
     {
-        tenant.Settings.MinBrokerCreditScore = 70;
+        _tenant.Settings.MinBrokerCreditScore = 70;
         SetupCredit(score: 50);
 
-        await sut.Handle(command, CancellationToken.None);
+        await _sut.Handle(_command, CancellationToken.None);
 
-        Assert.Equal(50, listing.BrokerCreditScore);
-        Assert.Equal(30, listing.BrokerDaysToPay);
-        Assert.NotNull(listing.BrokerCreditCheckedAt);
-        await tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
+        Assert.Equal(50, _listing.BrokerCreditScore);
+        Assert.Equal(30, _listing.BrokerDaysToPay);
+        Assert.NotNull(_listing.BrokerCreditCheckedAt);
+        await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_ScoreAtThreshold_Books()
     {
-        tenant.Settings.MinBrokerCreditScore = 70;
+        _tenant.Settings.MinBrokerCreditScore = 70;
         SetupCredit(score: 70);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
     }
@@ -224,12 +224,12 @@ public class BookLoadBoardLoadHandlerTests
 
     private RateNegotiation SetupNegotiation(decimal? floorTotal)
     {
-        var negotiation = RateNegotiation.Create(listing.Id, "broker@example.com", RateFloorSnapshot.None);
+        var negotiation = RateNegotiation.Create(_listing.Id, "broker@example.com", RateFloorSnapshot.None);
         negotiation.FloorTotalRate = floorTotal.HasValue
             ? new Money { Amount = floorTotal.Value, Currency = "USD" }
             : null;
 
-        negotiationRepo.GetAsync(
+        _negotiationRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<RateNegotiation, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns(negotiation);
@@ -240,39 +240,39 @@ public class BookLoadBoardLoadHandlerTests
     [Fact]
     public async Task Handle_NegotiatedRateWithoutThread_Fails()
     {
-        command.NegotiatedTotalRate = 2200m;
+        _command.NegotiatedTotalRate = 2200m;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
     }
 
     [Fact]
     public async Task Handle_NegotiatedRateBelowThreadFloor_Fails()
     {
         SetupNegotiation(floorTotal: 2000m);
-        command.NegotiatedTotalRate = 1900m;
+        _command.NegotiatedTotalRate = 1900m;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
-        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
     }
 
     [Fact]
     public async Task Handle_NegotiatedRateAtOrAboveFloor_BooksAndAcceptsThread()
     {
         var negotiation = SetupNegotiation(floorTotal: 2000m);
-        command.NegotiatedTotalRate = 2200m;
+        _command.NegotiatedTotalRate = 2200m;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(RateNegotiationStatus.Accepted, negotiation.Status);
         Assert.Equal(result.Value!.CreatedLoadId, negotiation.LoadId);
-        await loadRepo.Received(1).AddAsync(
+        await _loadRepo.Received(1).AddAsync(
             Arg.Is<Load>(l => l.DeliveryCost.Amount == 2200m), Arg.Any<CancellationToken>());
     }
 
@@ -280,12 +280,12 @@ public class BookLoadBoardLoadHandlerTests
     public async Task Handle_AcceptedThread_RevokesItsReplyRoute()
     {
         var negotiation = SetupNegotiation(floorTotal: 2000m);
-        command.NegotiatedTotalRate = 2200m;
+        _command.NegotiatedTotalRate = 2200m;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await routeRegistry.Received(1).RevokeAsync(
+        await _routeRegistry.Received(1).RevokeAsync(
             Arg.Is<IEnumerable<string>>(t => t.Single() == negotiation.ReplyToken),
             Arg.Any<CancellationToken>());
     }
@@ -294,25 +294,25 @@ public class BookLoadBoardLoadHandlerTests
     public async Task Handle_OmittedNegotiatedRateBelowThreadFloor_Fails()
     {
         SetupNegotiation(floorTotal: 2000m);
-        listing.TotalRate = new Money { Amount = 1800m, Currency = "USD" };
+        _listing.TotalRate = new Money { Amount = 1800m, Currency = "USD" };
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
-        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
     }
 
     [Fact]
     public async Task Handle_OmittedNegotiatedRateAboveThreadFloor_BooksAtTheListingRate()
     {
         SetupNegotiation(floorTotal: 2000m);
-        listing.TotalRate = new Money { Amount = 2500m, Currency = "USD" };
+        _listing.TotalRate = new Money { Amount = 2500m, Currency = "USD" };
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await loadRepo.Received(1).AddAsync(
+        await _loadRepo.Received(1).AddAsync(
             Arg.Is<Load>(l => l.DeliveryCost.Amount == 2500m), Arg.Any<CancellationToken>());
     }
 
@@ -320,12 +320,12 @@ public class BookLoadBoardLoadHandlerTests
     public async Task Handle_AcceptedThread_BroadcastsTheClosedThread()
     {
         var negotiation = SetupNegotiation(floorTotal: 2000m);
-        command.NegotiatedTotalRate = 2200m;
+        _command.NegotiatedTotalRate = 2200m;
 
-        await sut.Handle(command, CancellationToken.None);
+        await _sut.Handle(_command, CancellationToken.None);
 
-        await broadcastService.Received(1).BroadcastNegotiationAsync(
-            tenant.Id,
+        await _broadcastService.Received(1).BroadcastNegotiationAsync(
+            _tenant.Id,
             Arg.Is<RateNegotiationDto>(d =>
                 d.Id == negotiation.Id && d.Status == RateNegotiationStatus.Accepted));
     }
@@ -334,13 +334,13 @@ public class BookLoadBoardLoadHandlerTests
     public async Task Handle_ThreadWithPerMileOnlyFloor_RefusesUncheckedRate()
     {
         SetupNegotiation(floorTotal: null);
-        command.NegotiatedTotalRate = 2200m;
+        _command.NegotiatedTotalRate = 2200m;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationFloorMissing, result.ErrorCode);
-        await provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
     }
 
     #endregion

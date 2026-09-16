@@ -8,8 +8,8 @@ namespace Logistics.Infrastructure.Persistence;
 
 internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
 {
-    private readonly ConcurrentDictionary<(Type entity, Type key), object> repoCache = new();
-    private IDbContextTransaction? tx;
+    private readonly ConcurrentDictionary<(Type entity, Type key), object> _repoCache = new();
+    private IDbContextTransaction? _tx;
 
     protected DbContext Db { get; } = db;
 
@@ -23,7 +23,7 @@ internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
         where TEntity : class, IEntity<TKey>, TMarker
     {
         var key = (typeof(TEntity), typeof(TKey));
-        return (IRepository<TEntity, TKey>)repoCache.GetOrAdd(
+        return (IRepository<TEntity, TKey>)_repoCache.GetOrAdd(
             key,
             _ => CreateRepository<TEntity, TKey>());
     }
@@ -35,12 +35,12 @@ internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
 
     public async Task BeginTransactionAsync(CancellationToken ct = default)
     {
-        tx ??= await Db.Database.BeginTransactionAsync(ct);
+        _tx ??= await Db.Database.BeginTransactionAsync(ct);
     }
 
     public async Task CommitTransactionAsync(CancellationToken ct = default)
     {
-        if (tx is null)
+        if (_tx is null)
         {
             return;
         }
@@ -48,30 +48,30 @@ internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
         try
         {
             await Db.SaveChangesAsync(ct); // safe if already saved; keeps atomicity
-            await tx.CommitAsync(ct);
+            await _tx.CommitAsync(ct);
         }
         finally
         {
-            await tx.DisposeAsync();
-            tx = null;
+            await _tx.DisposeAsync();
+            _tx = null;
         }
     }
 
     public async Task RollbackTransactionAsync(CancellationToken ct = default)
     {
-        if (tx is null)
+        if (_tx is null)
         {
             return;
         }
 
         try
         {
-            await tx.RollbackAsync(ct);
+            await _tx.RollbackAsync(ct);
         }
         finally
         {
-            await tx.DisposeAsync();
-            tx = null;
+            await _tx.DisposeAsync();
+            _tx = null;
         }
     }
 
@@ -94,7 +94,7 @@ internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
 
     public void Dispose()
     {
-        tx?.Dispose();
+        _tx?.Dispose();
         Db.Dispose();
         GC.SuppressFinalize(this);
     }

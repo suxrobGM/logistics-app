@@ -5,13 +5,13 @@ namespace Logistics.Infrastructure.AI.Tests.Agents;
 
 public class AgentSessionCancellationRegistryTests
 {
-    private readonly AgentSessionCancellationRegistry sut = new();
+    private readonly AgentSessionCancellationRegistry _sut = new();
 
     [Fact]
     public void Register_ReturnsLinkedToken()
     {
         var sessionId = Guid.NewGuid();
-        var token = sut.Register(sessionId, CancellationToken.None);
+        var token = _sut.Register(sessionId, CancellationToken.None);
 
         Assert.False(token.IsCancellationRequested);
     }
@@ -19,7 +19,7 @@ public class AgentSessionCancellationRegistryTests
     [Fact]
     public async Task Register_DeadlineElapses_CancelsToken()
     {
-        var token = sut.Register(Guid.NewGuid(), CancellationToken.None, TimeSpan.FromMilliseconds(50));
+        var token = _sut.Register(Guid.NewGuid(), CancellationToken.None, TimeSpan.FromMilliseconds(50));
 
         Assert.False(token.IsCancellationRequested);
 
@@ -31,7 +31,7 @@ public class AgentSessionCancellationRegistryTests
     [Fact]
     public void Register_NoDeadline_LeavesTokenOpen()
     {
-        var token = sut.Register(Guid.NewGuid(), CancellationToken.None, deadline: null);
+        var token = _sut.Register(Guid.NewGuid(), CancellationToken.None, deadline: null);
 
         Assert.False(token.IsCancellationRequested);
     }
@@ -40,9 +40,9 @@ public class AgentSessionCancellationRegistryTests
     public void TryCancel_RegisteredSession_CancelsToken()
     {
         var sessionId = Guid.NewGuid();
-        var token = sut.Register(sessionId, CancellationToken.None);
+        var token = _sut.Register(sessionId, CancellationToken.None);
 
-        var result = sut.TryCancel(sessionId);
+        var result = _sut.TryCancel(sessionId);
 
         Assert.True(result);
         Assert.True(token.IsCancellationRequested);
@@ -51,7 +51,7 @@ public class AgentSessionCancellationRegistryTests
     [Fact]
     public void TryCancel_UnknownSession_ReturnsFalse()
     {
-        var result = sut.TryCancel(Guid.NewGuid());
+        var result = _sut.TryCancel(Guid.NewGuid());
 
         Assert.False(result);
     }
@@ -60,11 +60,11 @@ public class AgentSessionCancellationRegistryTests
     public void Unregister_RemovesSession()
     {
         var sessionId = Guid.NewGuid();
-        sut.Register(sessionId, CancellationToken.None);
+        _sut.Register(sessionId, CancellationToken.None);
 
-        sut.Unregister(sessionId);
+        _sut.Unregister(sessionId);
 
-        Assert.False(sut.TryCancel(sessionId));
+        Assert.False(_sut.TryCancel(sessionId));
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class AgentSessionCancellationRegistryTests
     {
         var cts = new CancellationTokenSource();
         var sessionId = Guid.NewGuid();
-        var token = sut.Register(sessionId, cts.Token);
+        var token = _sut.Register(sessionId, cts.Token);
 
         cts.Cancel();
 

@@ -14,7 +14,7 @@ internal sealed class StripeTaxConfigService(
 {
     private const string DefaultTaxCodeKey = "tax:stripe:default_code";
 
-    private readonly TimeSpan configTtl = TimeSpan.FromMinutes(taxOptions.Value.StripeConfigCacheMinutes);
+    private readonly TimeSpan _configTtl = TimeSpan.FromMinutes(taxOptions.Value.StripeConfigCacheMinutes);
 
     public async Task<string> GetDefaultTaxCodeAsync(CancellationToken ct = default)
     {
@@ -29,7 +29,7 @@ internal sealed class StripeTaxConfigService(
         {
             var settings = await new SettingsService().GetAsync(cancellationToken: ct);
             var code = settings?.Defaults?.TaxCode ?? fallback;
-            cache.Set(DefaultTaxCodeKey, code, configTtl);
+            cache.Set(DefaultTaxCodeKey, code, _configTtl);
             return code;
         }
         catch (StripeException ex)

@@ -10,20 +10,20 @@ namespace Logistics.Application.Tests.IdentityAccess;
 
 public class UserPermissionServiceTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly IMemoryCache cache = new MemoryCache(new MemoryCacheOptions());
-    private readonly UserPermissionService sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
+    private readonly UserPermissionService _sut;
 
-    private readonly Guid userId = Guid.NewGuid();
-    private readonly Guid tenantId = Guid.NewGuid();
+    private readonly Guid _userId = Guid.NewGuid();
+    private readonly Guid _tenantId = Guid.NewGuid();
 
     public UserPermissionServiceTests()
     {
-        sut = new UserPermissionService(mediator, cache);
+        _sut = new UserPermissionService(_mediator, _cache);
     }
 
     private void SetPermissions(params string[] permissions) =>
-        mediator.Send(Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<string[]>.Ok(permissions));
 
     [Fact]
@@ -31,11 +31,11 @@ public class UserPermissionServiceTests
     {
         SetPermissions("Permission.Dispatch.Manage");
 
-        await sut.GetPermissionsAsync(userId, tenantId);
-        var second = await sut.GetPermissionsAsync(userId, tenantId);
+        await _sut.GetPermissionsAsync(_userId, _tenantId);
+        var second = await _sut.GetPermissionsAsync(_userId, _tenantId);
 
         Assert.Contains("Permission.Dispatch.Manage", second);
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>());
     }
 
@@ -45,10 +45,10 @@ public class UserPermissionServiceTests
     {
         SetPermissions("Permission.Dispatch.Manage");
 
-        await sut.GetPermissionsAsync(userId, tenantId);
-        await sut.GetPermissionsAsync(userId, Guid.NewGuid());
+        await _sut.GetPermissionsAsync(_userId, _tenantId);
+        await _sut.GetPermissionsAsync(_userId, Guid.NewGuid());
 
-        await mediator.Received(2).Send(
+        await _mediator.Received(2).Send(
             Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>());
     }
 
@@ -59,14 +59,14 @@ public class UserPermissionServiceTests
     [Fact]
     public async Task GetPermissionsAsync_LookupFails_NotCachedAndRetriedNextTime()
     {
-        mediator.Send(Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetCurrentUserPermissionsQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<string[]>.Fail("database unavailable"));
 
-        Assert.Empty(await sut.GetPermissionsAsync(userId, tenantId));
+        Assert.Empty(await _sut.GetPermissionsAsync(_userId, _tenantId));
 
         SetPermissions("Permission.Dispatch.Manage");
 
-        Assert.Contains("Permission.Dispatch.Manage", await sut.GetPermissionsAsync(userId, tenantId));
+        Assert.Contains("Permission.Dispatch.Manage", await _sut.GetPermissionsAsync(_userId, _tenantId));
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class UserPermissionServiceTests
     {
         SetPermissions("Permission.Dispatch.Manage");
 
-        Assert.True(await sut.HasPermissionAsync(userId, tenantId, "Permission.Dispatch.Manage"));
-        Assert.False(await sut.HasPermissionAsync(userId, tenantId, "Permission.Invoice.Manage"));
+        Assert.True(await _sut.HasPermissionAsync(_userId, _tenantId, "Permission.Dispatch.Manage"));
+        Assert.False(await _sut.HasPermissionAsync(_userId, _tenantId, "Permission.Invoice.Manage"));
     }
 }

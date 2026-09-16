@@ -23,7 +23,7 @@ public class PagedToolEnvelopeTests
 {
     private const int ExpectedPageSize = 20;
 
-    private readonly IMediator mediator = Substitute.For<IMediator>();
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
 
     private static JsonElement Parse(string json) => JsonDocument.Parse(json).RootElement;
 
@@ -41,10 +41,10 @@ public class PagedToolEnvelopeTests
     [Fact]
     public async Task SearchLoads_EmptyPage_EmitsEnvelopeUnderLoads()
     {
-        mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<LoadDto>.Ok([], 0, ExpectedPageSize));
 
-        var root = Parse(await new SearchLoadsTool(mediator)
+        var root = Parse(await new SearchLoadsTool(_mediator)
             .ExecuteAsync(new JsonObject(), CancellationToken.None));
 
         AssertEnvelope(root, "loads", count: 0, total: 0);
@@ -53,10 +53,10 @@ public class PagedToolEnvelopeTests
     [Fact]
     public async Task SearchLoads_MoreThanOnePage_MarksTruncated()
     {
-        mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<LoadDto>.Ok([CopilotToolTestData.CreateLoad()], 91, ExpectedPageSize));
 
-        var root = Parse(await new SearchLoadsTool(mediator)
+        var root = Parse(await new SearchLoadsTool(_mediator)
             .ExecuteAsync(new JsonObject(), CancellationToken.None));
 
         AssertEnvelope(root, "loads", count: 1, total: 91);
@@ -65,16 +65,16 @@ public class PagedToolEnvelopeTests
     [Fact]
     public async Task SearchCustomers_EmitsEnvelopeUnderCustomers_AndAlwaysRequestsFirstPage()
     {
-        mediator.Send(Arg.Any<GetCustomersQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetCustomersQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<CustomerDto>.Ok([], 0, ExpectedPageSize));
 
-        var root = Parse(await new SearchCustomersTool(mediator)
+        var root = Parse(await new SearchCustomersTool(_mediator)
             .ExecuteAsync(new JsonObject { ["page"] = 3 }, CancellationToken.None));
 
         AssertEnvelope(root, "customers", count: 0, total: 0);
 
         // search_customers has no page parameter - it pins Page = 1 regardless of input.
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetCustomersQuery>(q => q.Page == 1 && q.PageSize == ExpectedPageSize),
             Arg.Any<CancellationToken>());
     }
@@ -82,10 +82,10 @@ public class PagedToolEnvelopeTests
     [Fact]
     public async Task SearchExpenses_EmitsEnvelopeUnderExpenses()
     {
-        mediator.Send(Arg.Any<GetExpensesQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetExpensesQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<ExpenseDto>.Ok([], 7, ExpectedPageSize));
 
-        var root = Parse(await new SearchExpensesTool(mediator)
+        var root = Parse(await new SearchExpensesTool(_mediator)
             .ExecuteAsync(new JsonObject(), CancellationToken.None));
 
         AssertEnvelope(root, "expenses", count: 0, total: 7);
@@ -94,10 +94,10 @@ public class PagedToolEnvelopeTests
     [Fact]
     public async Task GetInvoices_EmitsEnvelopeUnderInvoices()
     {
-        mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<InvoiceDto>.Ok([], 0, ExpectedPageSize));
 
-        var root = Parse(await new GetInvoicesTool(mediator)
+        var root = Parse(await new GetInvoicesTool(_mediator)
             .ExecuteAsync(new JsonObject(), CancellationToken.None));
 
         AssertEnvelope(root, "invoices", count: 0, total: 0);
@@ -108,25 +108,25 @@ public class PagedToolEnvelopeTests
     [InlineData(4)]
     public async Task PageableTools_PassPageThroughWithSharedPageSize(int page)
     {
-        mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<LoadDto>.Ok([], 0, ExpectedPageSize));
-        mediator.Send(Arg.Any<GetExpensesQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetExpensesQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<ExpenseDto>.Ok([], 0, ExpectedPageSize));
-        mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<InvoiceDto>.Ok([], 0, ExpectedPageSize));
 
         var input = new JsonObject { ["page"] = page };
-        await new SearchLoadsTool(mediator).ExecuteAsync(input, CancellationToken.None);
-        await new SearchExpensesTool(mediator).ExecuteAsync(input, CancellationToken.None);
-        await new GetInvoicesTool(mediator).ExecuteAsync(input, CancellationToken.None);
+        await new SearchLoadsTool(_mediator).ExecuteAsync(input, CancellationToken.None);
+        await new SearchExpensesTool(_mediator).ExecuteAsync(input, CancellationToken.None);
+        await new GetInvoicesTool(_mediator).ExecuteAsync(input, CancellationToken.None);
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetLoadsQuery>(q => q.Page == page && q.PageSize == ExpectedPageSize),
             Arg.Any<CancellationToken>());
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetExpensesQuery>(q => q.Page == page && q.PageSize == ExpectedPageSize),
             Arg.Any<CancellationToken>());
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetInvoicesQuery>(q => q.Page == page && q.PageSize == ExpectedPageSize),
             Arg.Any<CancellationToken>());
     }
@@ -134,10 +134,10 @@ public class PagedToolEnvelopeTests
     [Fact]
     public async Task PagedTools_QueryFails_EmitBareErrorWithNoEnvelope()
     {
-        mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<LoadDto>.Fail("database unavailable"));
 
-        var root = Parse(await new SearchLoadsTool(mediator)
+        var root = Parse(await new SearchLoadsTool(_mediator)
             .ExecuteAsync(new JsonObject(), CancellationToken.None));
 
         Assert.Equal("database unavailable", root.GetProperty("error").GetString());

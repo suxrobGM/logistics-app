@@ -24,13 +24,13 @@ public class MapboxGeocodingServiceTests
         }
         """;
 
-    private readonly ICurrentTenantAccessor tenantAccessor = Substitute.For<ICurrentTenantAccessor>();
+    private readonly ICurrentTenantAccessor _tenantAccessor = Substitute.For<ICurrentTenantAccessor>();
 
     private MapboxGeocodingService Build(CapturingHttpMessageHandler handler) =>
         new(
             new HttpClient(handler),
             MsOptions.Create(new MapboxOptions { AccessToken = "test-token" }),
-            tenantAccessor,
+            _tenantAccessor,
             NullLogger<MapboxGeocodingService>.Instance);
 
     private static Tenant TenantWith(TenantSettings settings) => new()
@@ -52,7 +52,7 @@ public class MapboxGeocodingServiceTests
     [Fact]
     public async Task GeocodeAddressAsync_USTenant_AddsCountryUSAndEnglishLanguage()
     {
-        tenantAccessor.GetCurrentTenant().Returns(TenantWith(
+        _tenantAccessor.GetCurrentTenant().Returns(TenantWith(
             new TenantSettings { Region = Region.US, Language = "en" }));
         var handler = new CapturingHttpMessageHandler(MapboxResponse);
         var sut = Build(handler);
@@ -68,7 +68,7 @@ public class MapboxGeocodingServiceTests
     [Fact]
     public async Task GeocodeAddressAsync_EUTenant_AddsCappedCountryListAndTenantLanguage()
     {
-        tenantAccessor.GetCurrentTenant().Returns(TenantWith(
+        _tenantAccessor.GetCurrentTenant().Returns(TenantWith(
             new TenantSettings { Region = Region.EU, Language = "de" }));
         var handler = new CapturingHttpMessageHandler(MapboxResponse);
         var sut = Build(handler);
@@ -86,7 +86,7 @@ public class MapboxGeocodingServiceTests
     [Fact]
     public async Task GeocodeAddressAsync_NoTenantContext_OmitsBiasButStillSucceeds()
     {
-        tenantAccessor.GetCurrentTenant().Returns(_ => throw new InvalidOperationException("no tenant"));
+        _tenantAccessor.GetCurrentTenant().Returns(_ => throw new InvalidOperationException("no tenant"));
         var handler = new CapturingHttpMessageHandler(MapboxResponse);
         var sut = Build(handler);
 

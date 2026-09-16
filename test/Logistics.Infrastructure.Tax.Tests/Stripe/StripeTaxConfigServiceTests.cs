@@ -7,9 +7,9 @@ namespace Logistics.Infrastructure.Tax.Tests.Stripe;
 
 public class StripeTaxConfigServiceTests
 {
-    private readonly IMemoryCache cache = new MemoryCache(new MemoryCacheOptions());
+    private readonly IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
 
-    private readonly TaxOptions options = new()
+    private readonly TaxOptions _options = new()
     {
         Provider = "stripe",
         FallbackTaxCode = "txcd_fallback_42",
@@ -19,8 +19,8 @@ public class StripeTaxConfigServiceTests
     private StripeTaxConfigService NewSut()
     {
         return new StripeTaxConfigService(
-            Options.Create(options),
-            cache,
+            Options.Create(_options),
+            _cache,
             NullLogger<StripeTaxConfigService>.Instance);
     }
 
@@ -28,7 +28,7 @@ public class StripeTaxConfigServiceTests
     public async Task GetDefaultTaxCodeAsync_CacheHit_ReturnsCached_WithoutCallingStripe()
     {
         // Pre-warm the cache to bypass the Stripe SDK call entirely.
-        cache.Set("tax:stripe:default_code", "txcd_cached_value");
+        _cache.Set("tax:stripe:default_code", "txcd_cached_value");
 
         var sut = NewSut();
         var code = await sut.GetDefaultTaxCodeAsync();
@@ -46,7 +46,7 @@ public class StripeTaxConfigServiceTests
 
         Assert.Equal("txcd_fallback_42", code);
         // Subsequent call hits the short-TTL fallback cache.
-        Assert.True(cache.TryGetValue("tax:stripe:default_code", out string? cached));
+        Assert.True(_cache.TryGetValue("tax:stripe:default_code", out string? cached));
         Assert.Equal("txcd_fallback_42", cached);
     }
 }

@@ -12,18 +12,18 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Financial;
 
 public class GetExpenseStatsToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly GetExpenseStatsTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly GetExpenseStatsTool _sut;
 
     public GetExpenseStatsToolTests()
     {
-        sut = new GetExpenseStatsTool(mediator);
+        _sut = new GetExpenseStatsTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_ReturnsCategoryRollups()
     {
-        mediator.Send(Arg.Any<GetExpenseStatsQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetExpenseStatsQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<ExpenseStatsDto>.Ok(new ExpenseStatsDto
             {
                 TotalAmount = 5000m,
@@ -31,7 +31,7 @@ public class GetExpenseStatsToolTests
                 ByTruckCategory = [new ExpenseCategoryStatDto { Category = "Fuel", Amount = 3200m, Count = 8 }]
             }));
 
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["from_date"] = "2026-07-01", ["to_date"] = "2026-07-31" },
             CancellationToken.None);
 
@@ -40,7 +40,7 @@ public class GetExpenseStatsToolTests
         var category = Assert.Single(root.GetProperty("by_truck_category").EnumerateArray());
         Assert.Equal("Fuel", category.GetProperty("Category").GetString());
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetExpenseStatsQuery>(q => q.FromDate != null && q.ToDate != null),
             Arg.Any<CancellationToken>());
     }

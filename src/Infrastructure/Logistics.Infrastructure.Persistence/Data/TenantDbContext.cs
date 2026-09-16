@@ -14,14 +14,14 @@ namespace Logistics.Infrastructure.Persistence.Data;
 
 public class TenantDbContext : DbContext
 {
-    private readonly AuditableEntitySaveChangesInterceptor? auditableEntity;
+    private readonly AuditableEntitySaveChangesInterceptor? _auditableEntity;
 
     // Default fallback connection string for local development and testing
-    private readonly string defaultConnectionString;
+    private readonly string _defaultConnectionString;
 
-    private readonly DispatchDomainEventsInterceptor? dispatchDomain;
-    private readonly IDataProtectionProvider? dataProtectionProvider;
-    private readonly ILogger<TenantDbContext>? logger;
+    private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
+    private readonly IDataProtectionProvider? _dataProtectionProvider;
+    private readonly ILogger<TenantDbContext>? _logger;
 
     public TenantDbContext(
         TenantDbContextOptions? tenantDbContextOptions = null,
@@ -30,12 +30,12 @@ public class TenantDbContext : DbContext
         IDataProtectionProvider? dataProtectionProvider = null,
         ILogger<TenantDbContext>? logger = null)
     {
-        this.dispatchDomain = dispatchDomain;
-        this.auditableEntity = auditableEntity;
-        this.dataProtectionProvider = dataProtectionProvider;
-        this.logger = logger;
+        _dispatchDomain = dispatchDomain;
+        _auditableEntity = auditableEntity;
+        _dataProtectionProvider = dataProtectionProvider;
+        _logger = logger;
 
-        defaultConnectionString = tenantDbContextOptions?.ConnectionString
+        _defaultConnectionString = tenantDbContextOptions?.ConnectionString
                                   ?? ConnectionStrings.LocalDefaultTenant;
 
         NavigationDiscoveryGuard.Attach(ChangeTracker);
@@ -50,24 +50,24 @@ public class TenantDbContext : DbContext
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenant.ConnectionString);
         Database.SetConnectionString(tenant.ConnectionString); // EF Core runtime retargeting
-        logger?.LogDebug("Switched tenant database to '{TenantName}'.", tenant.Name);
+        _logger?.LogDebug("Switched tenant database to '{TenantName}'.", tenant.Name);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (dispatchDomain is not null)
+        if (_dispatchDomain is not null)
         {
-            options.AddInterceptors(dispatchDomain);
+            options.AddInterceptors(_dispatchDomain);
         }
 
-        if (auditableEntity is not null)
+        if (_auditableEntity is not null)
         {
-            options.AddInterceptors(auditableEntity);
+            options.AddInterceptors(_auditableEntity);
         }
 
         if (!options.IsConfigured)
         {
-            DbContextHelpers.ConfigurePostgreSql(defaultConnectionString, options);
+            DbContextHelpers.ConfigurePostgreSql(_defaultConnectionString, options);
         }
     }
 
@@ -90,7 +90,7 @@ public class TenantDbContext : DbContext
 
         // Encrypt provider-secret columns at rest (ELD / LoadBoard / Accounting). Applied after
         // entity configs so it overrides their plain string mappings. No-op when no protector.
-        builder.ApplyEncryptedSecretColumns(dataProtectionProvider);
+        builder.ApplyEncryptedSecretColumns(_dataProtectionProvider);
 
         // Query-only DTOs for PostgreSQL functions - no table generation
         builder.Entity<CompanyStatsDto>(entity =>

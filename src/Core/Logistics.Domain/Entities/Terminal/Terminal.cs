@@ -12,7 +12,7 @@ public class Terminal : AuditableEntity, ITenantEntity
 {
     public required string Name { get; set; }
 
-    private string code = "";
+    private string _code = "";
 
     /// <summary>
     /// UN/LOCODE identifier (e.g. "BEANR" Antwerp, "USLAX" Los Angeles, "DEHAM" Hamburg).
@@ -22,8 +22,8 @@ public class Terminal : AuditableEntity, ITenantEntity
     /// </summary>
     public required string Code
     {
-        get => code;
-        set => code = NormalizeCode(value);
+        get => _code;
+        set => _code = NormalizeCode(value);
     }
 
     /// <summary>

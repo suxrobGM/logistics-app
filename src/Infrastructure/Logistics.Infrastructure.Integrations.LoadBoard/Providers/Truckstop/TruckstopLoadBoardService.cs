@@ -24,7 +24,7 @@ internal class TruckstopLoadBoardService(
     ILogger<TruckstopLoadBoardService> logger)
     : ILoadBoardProviderService
 {
-    private readonly TruckstopOptions options = options.Value.Truckstop ?? new TruckstopOptions();
+    private readonly TruckstopOptions _options = options.Value.Truckstop ?? new TruckstopOptions();
 
     public LoadBoardProviderType ProviderType => LoadBoardProviderType.Truckstop;
 
@@ -32,7 +32,7 @@ internal class TruckstopLoadBoardService(
 
     public void Initialize(LoadBoardConfiguration configuration)
     {
-        httpClient.BaseAddress = new Uri(options.BaseUrl);
+        httpClient.BaseAddress = new Uri(_options.BaseUrl);
 
         if (!string.IsNullOrEmpty(configuration.AccessToken))
         {
@@ -249,7 +249,7 @@ internal class TruckstopLoadBoardService(
         try
         {
             var authClient = httpClientFactory.CreateClient();
-            var response = await authClient.PostAsync(options.TokenUrl, new FormUrlEncodedContent(form));
+            var response = await authClient.PostAsync(_options.TokenUrl, new FormUrlEncodedContent(form));
             if (!response.IsSuccessStatusCode)
             {
                 logger.LogWarning("Truckstop token {Action} failed: {StatusCode}", action, response.StatusCode);

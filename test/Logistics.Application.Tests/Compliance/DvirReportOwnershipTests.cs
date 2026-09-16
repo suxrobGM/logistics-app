@@ -23,38 +23,38 @@ public class DvirReportOwnershipTests
     private static readonly Guid SupervisorId = Guid.NewGuid();
     private static readonly Guid TruckId = Guid.NewGuid();
 
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ICurrentUserService _currentUser = Substitute.For<ICurrentUserService>();
 
-    private readonly ITenantRepository<Employee, Guid> employeeRepo =
+    private readonly ITenantRepository<Employee, Guid> _employeeRepo =
         Substitute.For<ITenantRepository<Employee, Guid>>();
-    private readonly ITenantRepository<DvirReport, Guid> reportRepo =
+    private readonly ITenantRepository<DvirReport, Guid> _reportRepo =
         Substitute.For<ITenantRepository<DvirReport, Guid>>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo =
+    private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
 
     public DvirReportOwnershipTests()
     {
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
-        tenantUow.Repository<DvirReport>().Returns(reportRepo);
-        tenantUow.Repository<Truck>().Returns(truckRepo);
+        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
+        _tenantUow.Repository<DvirReport>().Returns(_reportRepo);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
 
         // Only the supervisor's role carries Dvir.Review; both roles carry Dvir.Manage.
         var driverRole = Role("tenant.driver", Permission.Dvir.Manage);
         var supervisorRole = Role("tenant.manager", Permission.Dvir.Manage, Permission.Dvir.Review);
 
-        employeeRepo.Query().Returns(new List<Employee>
+        _employeeRepo.Query().Returns(new List<Employee>
         {
             Employee(DriverId, driverRole),
             Employee(OtherDriverId, driverRole),
             Employee(SupervisorId, supervisorRole)
         }.BuildMock());
 
-        truckRepo.GetByIdAsync(TruckId, Arg.Any<CancellationToken>())
+        _truckRepo.GetByIdAsync(TruckId, Arg.Any<CancellationToken>())
             .Returns(Substitute.For<Truck>());
-        employeeRepo.GetByIdAsync(DriverId, Arg.Any<CancellationToken>())
+        _employeeRepo.GetByIdAsync(DriverId, Arg.Any<CancellationToken>())
             .Returns(Employee(DriverId, driverRole));
-        reportRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _reportRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(DraftReport());
     }
 
@@ -91,9 +91,9 @@ public class DvirReportOwnershipTests
         Type = DvirType.PreTrip
     };
 
-    private CreateDvirReportHandler CreateSut() => new(tenantUow, currentUser);
+    private CreateDvirReportHandler CreateSut() => new(_tenantUow, _currentUser);
 
-    private SubmitDvirReportHandler SubmitSut() => new(tenantUow, currentUser);
+    private SubmitDvirReportHandler SubmitSut() => new(_tenantUow, _currentUser);
 
     private static CreateDvirReportCommand CreateCommand() => new()
     {
@@ -105,41 +105,41 @@ public class DvirReportOwnershipTests
     [Fact]
     public async Task Create_AnotherDriverWithoutReview_IsRejected()
     {
-        currentUser.GetUserId().Returns(OtherDriverId);
+        _currentUser.GetUserId().Returns(OtherDriverId);
 
         var result = await CreateSut().Handle(CreateCommand(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("You can only file a DVIR for yourself.", result.Error);
-        await reportRepo.DidNotReceive().AddAsync(Arg.Any<DvirReport>(), Arg.Any<CancellationToken>());
+        await _reportRepo.DidNotReceive().AddAsync(Arg.Any<DvirReport>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Create_OwnDvir_IsAllowed()
     {
-        currentUser.GetUserId().Returns(DriverId);
+        _currentUser.GetUserId().Returns(DriverId);
 
         var result = await CreateSut().Handle(CreateCommand(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await reportRepo.Received(1).AddAsync(Arg.Any<DvirReport>(), Arg.Any<CancellationToken>());
+        await _reportRepo.Received(1).AddAsync(Arg.Any<DvirReport>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Create_SupervisorWithReview_IsAllowed()
     {
-        currentUser.GetUserId().Returns(SupervisorId);
+        _currentUser.GetUserId().Returns(SupervisorId);
 
         var result = await CreateSut().Handle(CreateCommand(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await reportRepo.Received(1).AddAsync(Arg.Any<DvirReport>(), Arg.Any<CancellationToken>());
+        await _reportRepo.Received(1).AddAsync(Arg.Any<DvirReport>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Create_Unauthenticated_IsRejected()
     {
-        currentUser.GetUserId().Returns((Guid?)null);
+        _currentUser.GetUserId().Returns((Guid?)null);
 
         var result = await CreateSut().Handle(CreateCommand(), CancellationToken.None);
 
@@ -149,20 +149,20 @@ public class DvirReportOwnershipTests
     [Fact]
     public async Task Submit_AnotherDriversReport_IsRejected()
     {
-        currentUser.GetUserId().Returns(OtherDriverId);
+        _currentUser.GetUserId().Returns(OtherDriverId);
 
         var result = await SubmitSut().Handle(
             new SubmitDvirReportCommand { ReportId = Guid.NewGuid() }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("You can only submit your own DVIR.", result.Error);
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Submit_OwnReport_IsAllowed()
     {
-        currentUser.GetUserId().Returns(DriverId);
+        _currentUser.GetUserId().Returns(DriverId);
 
         var result = await SubmitSut().Handle(
             new SubmitDvirReportCommand { ReportId = Guid.NewGuid() }, CancellationToken.None);
@@ -173,7 +173,7 @@ public class DvirReportOwnershipTests
     [Fact]
     public async Task Submit_SupervisorWithReview_IsAllowed()
     {
-        currentUser.GetUserId().Returns(SupervisorId);
+        _currentUser.GetUserId().Returns(SupervisorId);
 
         var result = await SubmitSut().Handle(
             new SubmitDvirReportCommand { ReportId = Guid.NewGuid() }, CancellationToken.None);

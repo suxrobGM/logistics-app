@@ -12,15 +12,15 @@ namespace Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 /// </summary>
 internal class GeotabClient(HttpClient httpClient, ILogger<GeotabClient> logger)
 {
-    private string baseUrl = "https://my.geotab.com";
-    private GeotabCredentials? credentials;
+    private string _baseUrl = "https://my.geotab.com";
+    private GeotabCredentials? _credentials;
 
     public void SetBaseUrl(string url)
     {
-        baseUrl = url.TrimEnd('/');
+        _baseUrl = url.TrimEnd('/');
     }
 
-    public bool IsAuthenticated => credentials is not null;
+    public bool IsAuthenticated => _credentials is not null;
 
     public async Task<bool> AuthenticateAsync(string database, string userName, string password, CancellationToken ct = default)
     {
@@ -35,10 +35,10 @@ internal class GeotabClient(HttpClient httpClient, ILogger<GeotabClient> logger)
             return false;
         }
 
-        credentials = auth.Credentials;
+        _credentials = auth.Credentials;
         if (!string.IsNullOrEmpty(auth.Path) && auth.Path != "ThisServer")
         {
-            baseUrl = $"https://{auth.Path}";
+            _baseUrl = $"https://{auth.Path}";
         }
 
         return true;
@@ -55,7 +55,7 @@ internal class GeotabClient(HttpClient httpClient, ILogger<GeotabClient> logger)
 
     private async Task<T?> CallAsync<T>(string method, object @params, bool requireAuth, CancellationToken ct)
     {
-        if (requireAuth && credentials is null)
+        if (requireAuth && _credentials is null)
         {
             throw new InvalidOperationException("Geotab client is not authenticated.");
         }
@@ -68,7 +68,7 @@ internal class GeotabClient(HttpClient httpClient, ILogger<GeotabClient> logger)
 
         try
         {
-            var response = await httpClient.PostAsJsonAsync($"{baseUrl}/apiv1", request, IntegrationJsonOptions.CamelCase, ct);
+            var response = await httpClient.PostAsJsonAsync($"{_baseUrl}/apiv1", request, IntegrationJsonOptions.CamelCase, ct);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -100,7 +100,7 @@ internal class GeotabClient(HttpClient httpClient, ILogger<GeotabClient> logger)
         {
             dict[prop.Name] = JsonSerializer.Deserialize<object?>(prop.Value.GetRawText(), IntegrationJsonOptions.CamelCase);
         }
-        dict["credentials"] = credentials;
+        dict["credentials"] = _credentials;
         return dict;
     }
 }

@@ -14,24 +14,24 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Intermodal;
 
 public class GetContainerStatusToolTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Container, Guid> containerRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<Container, Guid> _containerRepo =
         Substitute.For<ITenantRepository<Container, Guid>>();
-    private readonly ITenantRepository<Load, Guid> loadRepo =
+    private readonly ITenantRepository<Load, Guid> _loadRepo =
         Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly GetContainerStatusTool sut;
+    private readonly GetContainerStatusTool _sut;
 
     public GetContainerStatusToolTests()
     {
-        tenantUow.Repository<Container>().Returns(containerRepo);
-        tenantUow.Repository<Load>().Returns(loadRepo);
-        sut = new GetContainerStatusTool(tenantUow);
+        _tenantUow.Repository<Container>().Returns(_containerRepo);
+        _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _sut = new GetContainerStatusTool(_tenantUow);
     }
 
     [Fact]
     public async Task Execute_NoIdentifier_ReturnsErrorNamingBothParams()
     {
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
         var error = JsonDocument.Parse(result).RootElement.GetProperty("error").GetString();
         Assert.Contains("container_number", error);
@@ -41,13 +41,13 @@ public class GetContainerStatusToolTests
     [Fact]
     public async Task Execute_UnknownNumber_ReturnsError()
     {
-        containerRepo
+        _containerRepo
             .GetAsync(Arg.Any<Expression<Func<Container, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Container?)null);
 
         var input = new JsonObject { ["container_number"] = "MSCU9999999" };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         var error = JsonDocument.Parse(result).RootElement.GetProperty("error").GetString();
         Assert.Contains("MSCU9999999", error);
@@ -85,16 +85,16 @@ public class GetContainerStatusToolTests
         };
         container.MarkAtPort(terminal);
 
-        containerRepo
+        _containerRepo
             .GetAsync(Arg.Any<Expression<Func<Container, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(container);
-        loadRepo
+        _loadRepo
             .GetAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CreateLoad("LA to Phoenix"));
 
         var input = new JsonObject { ["container_number"] = "mscu1234567" };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.Equal("MSCU1234567", root.GetProperty("number").GetString());
@@ -119,15 +119,15 @@ public class GetContainerStatusToolTests
     public async Task Execute_ByIdWithNoTerminalOrLoad_EmitsNulls()
     {
         var containerId = Guid.NewGuid();
-        containerRepo.GetByIdAsync(containerId, Arg.Any<CancellationToken>())
+        _containerRepo.GetByIdAsync(containerId, Arg.Any<CancellationToken>())
             .Returns(new Container { Number = "TCLU7654321", IsoType = ContainerIsoType.Gp20 });
-        loadRepo
+        _loadRepo
             .GetAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Load?)null);
 
         var input = new JsonObject { ["container_id"] = containerId.ToString() };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.Equal("TCLU7654321", root.GetProperty("number").GetString());

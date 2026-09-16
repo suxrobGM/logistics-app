@@ -5,26 +5,26 @@ namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 public class TrackingHubContext
 {
-    private readonly ConcurrentDictionary<string, TruckGeolocationDto?> connectedClients = new();
+    private readonly ConcurrentDictionary<string, TruckGeolocationDto?> _connectedClients = new();
 
     public void AddClient(string connectionId, TruckGeolocationDto? geolocationData)
     {
-        connectedClients.TryAdd(connectionId, geolocationData);
+        _connectedClients.TryAdd(connectionId, geolocationData);
     }
 
     public TruckGeolocationDto? GetGeolocationData(string connectionId)
     {
-        connectedClients.TryGetValue(connectionId, out var geolocationData);
+        _connectedClients.TryGetValue(connectionId, out var geolocationData);
         return geolocationData;
     }
 
     public void UpdateGeolocationData(string connectionId, TruckGeolocationDto truckGeolocationDto)
     {
-        connectedClients.AddOrUpdate(connectionId, truckGeolocationDto, (_, _) => truckGeolocationDto);
+        _connectedClients.AddOrUpdate(connectionId, truckGeolocationDto, (_, _) => truckGeolocationDto);
     }
 
     public void RemoveClient(string connectionId)
     {
-        connectedClients.TryRemove(connectionId, out _);
+        _connectedClients.TryRemove(connectionId, out _);
     }
 }

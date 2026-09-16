@@ -20,7 +20,7 @@ public class Index(
     IOptions<ImpersonationOptions> impersonationOptions,
     ILogger<Index> logger) : PageModel
 {
-    private readonly string tmsPortalUrl = impersonationOptions.Value.TmsPortalUrl;
+    private readonly string _tmsPortalUrl = impersonationOptions.Value.TmsPortalUrl;
 
     public string? ErrorMessage { get; set; }
 
@@ -68,7 +68,7 @@ public class Index(
 
         // Redirect to TMS Portal with autoLogin to trigger OIDC flow
         // The TMS Portal will see the user is already signed in at IdentityServer and get tokens
-        var redirectUrl = !string.IsNullOrEmpty(returnUrl) ? returnUrl : $"{tmsPortalUrl}?autologin=true";
+        var redirectUrl = !string.IsNullOrEmpty(returnUrl) ? returnUrl : $"{_tmsPortalUrl}?autologin=true";
         return Redirect(redirectUrl);
     }
 }

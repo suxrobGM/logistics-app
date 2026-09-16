@@ -12,23 +12,23 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Operations;
 
 public class GetUpcomingMaintenanceToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly GetUpcomingMaintenanceTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly GetUpcomingMaintenanceTool _sut;
 
     public GetUpcomingMaintenanceToolTests()
     {
-        sut = new GetUpcomingMaintenanceTool(mediator);
+        _sut = new GetUpcomingMaintenanceTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_DefaultsWindowTo30Days()
     {
-        mediator.Send(Arg.Any<GetUpcomingMaintenanceQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetUpcomingMaintenanceQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<List<MaintenanceScheduleDto>>.Ok([]));
 
-        await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetUpcomingMaintenanceQuery>(q => q.DaysAhead == 30 && q.IncludeOverdue),
             Arg.Any<CancellationToken>());
     }
@@ -36,7 +36,7 @@ public class GetUpcomingMaintenanceToolTests
     [Fact]
     public async Task Execute_ProjectsOverdueSchedules()
     {
-        mediator.Send(Arg.Any<GetUpcomingMaintenanceQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetUpcomingMaintenanceQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<List<MaintenanceScheduleDto>>.Ok(
                 [new MaintenanceScheduleDto
                 {
@@ -47,7 +47,7 @@ public class GetUpcomingMaintenanceToolTests
                     DaysUntilDue = -3
                 }]));
 
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["days_ahead"] = 14 }, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;

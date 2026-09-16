@@ -16,13 +16,13 @@ public class MarkStopDepartedHandlerTests
 {
     private static readonly Guid DriverId = Guid.NewGuid();
 
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
-    private readonly ITenantRepository<Trip, Guid> tripRepo = Substitute.For<ITenantRepository<Trip, Guid>>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ICurrentUserService _currentUser = Substitute.For<ICurrentUserService>();
+    private readonly ITenantRepository<Trip, Guid> _tripRepo = Substitute.For<ITenantRepository<Trip, Guid>>();
 
-    private readonly Trip trip;
-    private readonly TripStop stop;
-    private readonly MarkStopDepartedHandler sut;
+    private readonly Trip _trip;
+    private readonly TripStop _stop;
+    private readonly MarkStopDepartedHandler _sut;
 
     public MarkStopDepartedHandlerTests()
     {
@@ -40,30 +40,30 @@ public class MarkStopDepartedHandlerTests
             DeliveryCost = Money.Zero("USD")
         };
 
-        trip = Trip.Create("Trip 1", truck, [load]);
-        stop = trip.Stops[0];
+        _trip = Trip.Create("Trip 1", truck, [load]);
+        _stop = _trip.Stops[0];
 
-        tenantUow.Repository<Trip>().Returns(tripRepo);
-        tripRepo.GetByIdAsync(trip.Id, Arg.Any<CancellationToken>()).Returns(trip);
-        currentUser.IsInRole(Arg.Is<string[]>(r => r.Contains(TenantRoles.Driver))).Returns(true);
-        currentUser.GetUserId().Returns(DriverId);
+        _tenantUow.Repository<Trip>().Returns(_tripRepo);
+        _tripRepo.GetByIdAsync(_trip.Id, Arg.Any<CancellationToken>()).Returns(_trip);
+        _currentUser.IsInRole(Arg.Is<string[]>(r => r.Contains(TenantRoles.Driver))).Returns(true);
+        _currentUser.GetUserId().Returns(DriverId);
 
-        sut = new MarkStopDepartedHandler(tenantUow, currentUser, NullLogger<MarkStopDepartedHandler>.Instance);
+        _sut = new MarkStopDepartedHandler(_tenantUow, _currentUser, NullLogger<MarkStopDepartedHandler>.Instance);
     }
 
     private Task<Result> Depart() =>
-        sut.Handle(new MarkStopDepartedCommand { TripId = trip.Id, StopId = stop.Id }, CancellationToken.None);
+        _sut.Handle(new MarkStopDepartedCommand { TripId = _trip.Id, StopId = _stop.Id }, CancellationToken.None);
 
     [Fact]
     public async Task Handle_DriverNotOnTruck_IsRejected()
     {
-        currentUser.GetUserId().Returns(Guid.NewGuid());
-        trip.MarkStopArrived(stop.Id);
+        _currentUser.GetUserId().Returns(Guid.NewGuid());
+        _trip.MarkStopArrived(_stop.Id);
 
         var result = await Depart();
 
         Assert.Equal("This trip isn't assigned to your truck.", result.Error);
-        Assert.Null(stop.DepartedAt);
+        Assert.Null(_stop.DepartedAt);
     }
 
     [Fact]
@@ -72,17 +72,17 @@ public class MarkStopDepartedHandlerTests
         var result = await Depart();
 
         Assert.Equal("Mark the stop as arrived before departing.", result.Error);
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_ArrivedStop_SetsDepartedAt()
     {
-        trip.MarkStopArrived(stop.Id);
+        _trip.MarkStopArrived(_stop.Id);
 
         var result = await Depart();
 
         Assert.True(result.IsSuccess);
-        Assert.NotNull(stop.DepartedAt);
+        Assert.NotNull(_stop.DepartedAt);
     }
 }

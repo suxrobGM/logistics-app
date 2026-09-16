@@ -11,46 +11,46 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
     where TEntity : class, IEntity<TEntityKey>
     where TDbContext : DbContext
 {
-    private readonly TDbContext dbContext;
+    private readonly TDbContext _dbContext;
 
     protected Repository(TDbContext dbContext)
     {
-        this.dbContext = dbContext;
+        _dbContext = dbContext;
     }
 
     public IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> specification)
     {
-        return dbContext.Set<TEntity>().ApplySpecification(specification);
+        return _dbContext.Set<TEntity>().ApplySpecification(specification);
     }
 
     public IQueryable<TEntity> Query()
     {
-        return dbContext.Set<TEntity>();
+        return _dbContext.Set<TEntity>();
     }
 
     public Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken ct = default)
     {
         if (predicate is null)
         {
-            return dbContext.Set<TEntity>().CountAsync(ct);
+            return _dbContext.Set<TEntity>().CountAsync(ct);
         }
 
-        return dbContext.Set<TEntity>().CountAsync(predicate, ct);
+        return _dbContext.Set<TEntity>().CountAsync(predicate, ct);
     }
 
     public Task<TEntity?> GetByIdAsync(TEntityKey id, CancellationToken ct = default)
     {
-        return dbContext.Set<TEntity>().FindAsync(id).AsTask();
+        return _dbContext.Set<TEntity>().FindAsync(id).AsTask();
     }
 
     public Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default)
     {
-        return dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate, ct);
+        return _dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate, ct);
     }
 
     public Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default)
     {
-        return dbContext.Set<TEntity>()
+        return _dbContext.Set<TEntity>()
             .Where(predicate)
             .ToListAsync(ct);
     }
@@ -60,27 +60,27 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
     {
         if (specification is null)
         {
-            return dbContext.Set<TEntity>().ToListAsync(ct);
+            return _dbContext.Set<TEntity>().ToListAsync(ct);
         }
 
-        return dbContext.Set<TEntity>()
+        return _dbContext.Set<TEntity>()
             .ApplySpecification(specification)
             .ToListAsync(ct);
     }
 
     public Task AddAsync(TEntity entity, CancellationToken ct = default)
     {
-        return dbContext.Set<TEntity>().AddAsync(entity, ct).AsTask();
+        return _dbContext.Set<TEntity>().AddAsync(entity, ct).AsTask();
     }
 
     public Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken ct = default)
     {
-        return dbContext.Set<TEntity>().AddRangeAsync(entities, ct);
+        return _dbContext.Set<TEntity>().AddRangeAsync(entities, ct);
     }
 
     public void Update(TEntity entity)
     {
-        dbContext.Set<TEntity>().Update(entity);
+        _dbContext.Set<TEntity>().Update(entity);
     }
 
     public void Delete(TEntity? entity)
@@ -90,6 +90,6 @@ public class Repository<TDbContext, TEntity, TEntityKey> : IRepository<TEntity, 
             return;
         }
 
-        dbContext.Set<TEntity>().Remove(entity);
+        _dbContext.Set<TEntity>().Remove(entity);
     }
 }

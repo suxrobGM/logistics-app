@@ -8,13 +8,13 @@ namespace Logistics.Infrastructure.Persistence.Repositories;
 internal sealed class MasterUnitOfWork
     : UnitOfWork<IMasterEntity>, IMasterUnitOfWork
 {
-    private readonly MasterDbContext db;
-    private readonly IServiceProvider services;
+    private readonly MasterDbContext _db;
+    private readonly IServiceProvider _services;
 
     public MasterUnitOfWork(MasterDbContext db, IServiceProvider services) : base(db)
     {
-        this.db = db;
-        this.services = services;
+        _db = db;
+        _services = services;
     }
 
     // Strongly typed repos (hide base with 'new')
@@ -33,6 +33,6 @@ internal sealed class MasterUnitOfWork
     protected override IRepository<TEntity, TKey> CreateRepository<TEntity, TKey>()
     {
         // MasterRepository<TEntity, TKey>(MasterDbContext db)
-        return ActivatorUtilities.CreateInstance<MasterRepository<TEntity, TKey>>(services, db);
+        return ActivatorUtilities.CreateInstance<MasterRepository<TEntity, TKey>>(_services, _db);
     }
 }

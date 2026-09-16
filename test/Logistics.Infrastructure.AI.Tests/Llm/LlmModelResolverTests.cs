@@ -11,12 +11,12 @@ namespace Logistics.Infrastructure.AI.Tests.Llm;
 
 public class LlmModelResolverTests
 {
-    private readonly ISystemSettingsService systemSettings = Substitute.For<ISystemSettingsService>();
-    private readonly LlmModelResolver sut;
+    private readonly ISystemSettingsService _systemSettings = Substitute.For<ISystemSettingsService>();
+    private readonly LlmModelResolver _sut;
 
     public LlmModelResolverTests()
     {
-        sut = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);
+        _sut = new LlmModelResolver(_systemSettings, NullLogger<LlmModelResolver>.Instance);
     }
 
     private static LlmOptions ConfigWith(params LlmProvider[] providersWithKeys)
@@ -46,10 +46,10 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_NoOverride_UsesSystemSetting()
     {
-        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
+        _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-sonnet-5");
 
-        var selection = await sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic));
+        var selection = await _sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic));
 
         Assert.Equal("claude-sonnet-5", selection.Model);
         Assert.Equal(LlmProvider.Anthropic, selection.Provider);
@@ -58,9 +58,9 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_NoSettingAndNoOverride_FallsBackToAppsettings()
     {
-        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>()).Returns((string?)null);
+        _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>()).Returns((string?)null);
 
-        var selection = await sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic));
+        var selection = await _sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic));
 
         Assert.Equal("claude-haiku-4-5", selection.Model);
         Assert.Equal(LlmProvider.Anthropic, selection.Provider);
@@ -73,10 +73,10 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_KnownOverrideWithApiKey_UsesItAndDerivesProvider()
     {
-        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
+        _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-sonnet-5");
 
-        var selection = await sut.ResolveAsync(
+        var selection = await _sut.ResolveAsync(
             ConfigWith(LlmProvider.Anthropic, LlmProvider.DeepSeek), "deepseek-v4-flash");
 
         Assert.Equal("deepseek-v4-flash", selection.Model);
@@ -87,10 +87,10 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_UnknownOverride_FallsBackToGlobalModel()
     {
-        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
+        _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-sonnet-5");
 
-        var selection = await sut.ResolveAsync(
+        var selection = await _sut.ResolveAsync(
             ConfigWith(LlmProvider.Anthropic), "gpt-9-imaginary");
 
         Assert.Equal("claude-sonnet-5", selection.Model);
@@ -103,10 +103,10 @@ public class LlmModelResolverTests
     [Fact]
     public async Task ResolveAsync_OverrideProviderHasNoApiKey_FallsBackToGlobalModel()
     {
-        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
+        _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-sonnet-5");
 
-        var selection = await sut.ResolveAsync(
+        var selection = await _sut.ResolveAsync(
             ConfigWith(LlmProvider.Anthropic), "deepseek-v4-flash");
 
         Assert.Equal("claude-sonnet-5", selection.Model);
@@ -119,10 +119,10 @@ public class LlmModelResolverTests
     [InlineData("   ")]
     public async Task ResolveAsync_BlankOverride_IsIgnored(string? modelId)
     {
-        systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
+        _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
             .Returns("claude-sonnet-5");
 
-        var selection = await sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic), modelId);
+        var selection = await _sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic), modelId);
 
         Assert.Equal("claude-sonnet-5", selection.Model);
     }

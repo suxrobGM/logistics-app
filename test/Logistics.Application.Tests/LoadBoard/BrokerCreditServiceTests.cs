@@ -11,32 +11,32 @@ namespace Logistics.Application.Tests.LoadBoard;
 
 public class BrokerCreditServiceTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly FmcsaClient fmcsaClient;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly FmcsaClient _fmcsaClient;
 
-    private readonly ITenantRepository<BrokerCreditRecord, Guid> recordRepo =
+    private readonly ITenantRepository<BrokerCreditRecord, Guid> _recordRepo =
         Substitute.For<ITenantRepository<BrokerCreditRecord, Guid>>();
-    private readonly ITenantRepository<LoadBoardConfiguration, Guid> configRepo =
+    private readonly ITenantRepository<LoadBoardConfiguration, Guid> _configRepo =
         Substitute.For<ITenantRepository<LoadBoardConfiguration, Guid>>();
 
-    private readonly BrokerCreditService sut;
+    private readonly BrokerCreditService _sut;
 
     public BrokerCreditServiceTests()
     {
-        fmcsaClient = Substitute.For<FmcsaClient>(
+        _fmcsaClient = Substitute.For<FmcsaClient>(
             new HttpClient(),
             Options.Create(new FmcsaOptions()),
             NullLogger<FmcsaClient>.Instance);
 
-        tenantUow.Repository<BrokerCreditRecord>().Returns(recordRepo);
-        tenantUow.Repository<LoadBoardConfiguration>().Returns(configRepo);
+        _tenantUow.Repository<BrokerCreditRecord>().Returns(_recordRepo);
+        _tenantUow.Repository<LoadBoardConfiguration>().Returns(_configRepo);
 
-        sut = new BrokerCreditService(tenantUow, fmcsaClient, NullLogger<BrokerCreditService>.Instance);
+        _sut = new BrokerCreditService(_tenantUow, _fmcsaClient, NullLogger<BrokerCreditService>.Instance);
     }
 
     private void SetupDemoConfig(bool present)
     {
-        configRepo.GetAsync(
+        _configRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardConfiguration, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns(present
@@ -50,7 +50,7 @@ public class BrokerCreditServiceTests
     [InlineData("MC-")]
     public async Task GetBrokerCredit_MissingOrInvalidMc_ReturnsNull(string? mcNumber)
     {
-        var result = await sut.GetBrokerCreditAsync(mcNumber);
+        var result = await _sut.GetBrokerCreditAsync(mcNumber);
 
         Assert.Null(result);
     }
@@ -58,7 +58,7 @@ public class BrokerCreditServiceTests
     [Fact]
     public async Task GetBrokerCredit_FreshCachedRecord_ReturnsCacheWithoutLookup()
     {
-        recordRepo.GetAsync(
+        _recordRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<BrokerCreditRecord, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns(new BrokerCreditRecord
@@ -69,26 +69,26 @@ public class BrokerCreditServiceTests
                 CheckedAt = DateTime.UtcNow.AddHours(-1)
             });
 
-        var result = await sut.GetBrokerCreditAsync("MC123456");
+        var result = await _sut.GetBrokerCreditAsync("MC123456");
 
         Assert.NotNull(result);
         Assert.Equal(77, result.CreditScore);
         Assert.Equal(BrokerCreditSource.Dat, result.Source);
-        await fmcsaClient.DidNotReceiveWithAnyArgs().GetAuthorityActiveAsync(default!);
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _fmcsaClient.DidNotReceiveWithAnyArgs().GetAuthorityActiveAsync(default!);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task GetBrokerCredit_DemoProvider_ReturnsDeterministicScoreAndPersists()
     {
         SetupDemoConfig(present: true);
-        recordRepo.GetAsync(
+        _recordRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<BrokerCreditRecord, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns((BrokerCreditRecord?)null);
 
-        var first = await sut.GetBrokerCreditAsync("MC123456");
-        var second = await sut.GetBrokerCreditAsync("123456");
+        var first = await _sut.GetBrokerCreditAsync("MC123456");
+        var second = await _sut.GetBrokerCreditAsync("123456");
 
         Assert.NotNull(first);
         Assert.NotNull(second);
@@ -96,21 +96,21 @@ public class BrokerCreditServiceTests
         Assert.Equal(first.DaysToPay, second.DaysToPay);
         Assert.InRange(first.CreditScore!.Value, 30, 100);
         Assert.Equal(BrokerCreditSource.Demo, first.Source);
-        await recordRepo.Received().AddAsync(Arg.Any<BrokerCreditRecord>(), Arg.Any<CancellationToken>());
-        await tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _recordRepo.Received().AddAsync(Arg.Any<BrokerCreditRecord>(), Arg.Any<CancellationToken>());
+        await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task GetBrokerCredit_NoDemoProvider_FallsBackToFmcsa()
     {
         SetupDemoConfig(present: false);
-        recordRepo.GetAsync(
+        _recordRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<BrokerCreditRecord, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns((BrokerCreditRecord?)null);
-        fmcsaClient.GetAuthorityActiveAsync("123456", Arg.Any<CancellationToken>()).Returns(false);
+        _fmcsaClient.GetAuthorityActiveAsync("123456", Arg.Any<CancellationToken>()).Returns(false);
 
-        var result = await sut.GetBrokerCreditAsync("MC123456");
+        var result = await _sut.GetBrokerCreditAsync("MC123456");
 
         Assert.NotNull(result);
         Assert.False(result.AuthorityActive);
@@ -122,7 +122,7 @@ public class BrokerCreditServiceTests
     public async Task GetBrokerCredit_NoSourceAvailable_ServesStaleRecord()
     {
         SetupDemoConfig(present: false);
-        recordRepo.GetAsync(
+        _recordRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<BrokerCreditRecord, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns(new BrokerCreditRecord
@@ -132,13 +132,13 @@ public class BrokerCreditServiceTests
                 Source = BrokerCreditSource.Truckstop,
                 CheckedAt = DateTime.UtcNow.AddDays(-3)
             });
-        fmcsaClient.GetAuthorityActiveAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _fmcsaClient.GetAuthorityActiveAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns((bool?)null);
 
-        var result = await sut.GetBrokerCreditAsync("MC123456");
+        var result = await _sut.GetBrokerCreditAsync("MC123456");
 
         Assert.NotNull(result);
         Assert.Equal(61, result.CreditScore);
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

@@ -10,7 +10,7 @@ namespace Logistics.Infrastructure.Persistence.Interceptors;
 public class AuditableEntitySaveChangesInterceptor(IHttpContextAccessor? httpContextAccessor = null)
     : SaveChangesInterceptor
 {
-    private readonly HttpContext? httpContext = httpContextAccessor?.HttpContext;
+    private readonly HttpContext? _httpContext = httpContextAccessor?.HttpContext;
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
@@ -37,13 +37,13 @@ public class AuditableEntitySaveChangesInterceptor(IHttpContextAccessor? httpCon
             if (entry.State is EntityState.Added)
             {
                 entry.Entity.CreatedAt = DateTime.UtcNow;
-                entry.Entity.CreatedBy = httpContext.GetUserId();
+                entry.Entity.CreatedBy = _httpContext.GetUserId();
             }
 
             if (entry.State is EntityState.Modified || entry.HasChangedOwnedEntities())
             {
                 entry.Entity.UpdatedAt = DateTime.UtcNow;
-                entry.Entity.UpdatedBy = httpContext.GetUserId();
+                entry.Entity.UpdatedBy = _httpContext.GetUserId();
             }
         }
     }

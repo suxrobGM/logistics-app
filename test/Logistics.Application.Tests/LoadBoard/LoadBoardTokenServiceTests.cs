@@ -12,25 +12,25 @@ namespace Logistics.Application.Tests.LoadBoard;
 
 public class LoadBoardTokenServiceTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ILoadBoardProviderFactory providerFactory = Substitute.For<ILoadBoardProviderFactory>();
-    private readonly ILoadBoardProviderService provider = Substitute.For<ILoadBoardProviderService>();
-    private readonly LoadBoardConfiguration config;
-    private readonly LoadBoardTokenService sut;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ILoadBoardProviderFactory _providerFactory = Substitute.For<ILoadBoardProviderFactory>();
+    private readonly ILoadBoardProviderService _provider = Substitute.For<ILoadBoardProviderService>();
+    private readonly LoadBoardConfiguration _config;
+    private readonly LoadBoardTokenService _sut;
 
     public LoadBoardTokenServiceTests()
     {
-        config = new LoadBoardConfiguration
+        _config = new LoadBoardConfiguration
         {
             ProviderType = LoadBoardProviderType.Truckstop,
             ApiKey = "key",
             ApiSecret = "secret"
         };
 
-        providerFactory.GetProvider(config.ProviderType).Returns(provider);
-        provider.RequiresOAuthToken.Returns(true);
+        _providerFactory.GetProvider(_config.ProviderType).Returns(_provider);
+        _provider.RequiresOAuthToken.Returns(true);
 
-        sut = new LoadBoardTokenService(tenantUow, providerFactory, NullLogger<LoadBoardTokenService>.Instance);
+        _sut = new LoadBoardTokenService(_tenantUow, _providerFactory, NullLogger<LoadBoardTokenService>.Instance);
     }
 
     private static OAuthTokenResultDto Token(string access, string? refresh = null) => new()
@@ -45,16 +45,16 @@ public class LoadBoardTokenServiceTests
     [Fact]
     public async Task GetReadyProvider_NonOAuthProvider_InitializesWithoutTokenWork()
     {
-        provider.RequiresOAuthToken.Returns(false);
+        _provider.RequiresOAuthToken.Returns(false);
 
-        var result = await sut.GetReadyProviderAsync(config);
+        var result = await _sut.GetReadyProviderAsync(_config);
 
         Assert.True(result.IsSuccess);
-        Assert.Same(provider, result.Value);
-        provider.Received(1).Initialize(config);
-        await provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!, default);
-        await provider.DidNotReceiveWithAnyArgs().RefreshTokenAsync(default!);
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        Assert.Same(_provider, result.Value);
+        _provider.Received(1).Initialize(_config);
+        await _provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!, default);
+        await _provider.DidNotReceiveWithAnyArgs().RefreshTokenAsync(default!);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     #endregion
@@ -64,47 +64,47 @@ public class LoadBoardTokenServiceTests
     [Fact]
     public async Task GetReadyProvider_ValidToken_SkipsAcquisition()
     {
-        config.AccessToken = "valid";
-        config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(15);
+        _config.AccessToken = "valid";
+        _config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(15);
 
-        var result = await sut.GetReadyProviderAsync(config);
+        var result = await _sut.GetReadyProviderAsync(_config);
 
         Assert.True(result.IsSuccess);
-        await provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!, default);
-        await provider.DidNotReceiveWithAnyArgs().RefreshTokenAsync(default!);
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
-        provider.Received(1).Initialize(config);
+        await _provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!, default);
+        await _provider.DidNotReceiveWithAnyArgs().RefreshTokenAsync(default!);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        _provider.Received(1).Initialize(_config);
     }
 
     [Fact]
     public async Task GetReadyProvider_TokenInsideExpirySkew_Reacquires()
     {
-        config.AccessToken = "nearly-expired";
-        config.TokenExpiresAt = DateTime.UtcNow.AddSeconds(30);
-        provider.AcquireTokenAsync(config.ApiKey, config.ApiSecret).Returns(Token("fresh"));
+        _config.AccessToken = "nearly-expired";
+        _config.TokenExpiresAt = DateTime.UtcNow.AddSeconds(30);
+        _provider.AcquireTokenAsync(_config.ApiKey, _config.ApiSecret).Returns(Token("fresh"));
 
-        var result = await sut.GetReadyProviderAsync(config);
+        var result = await _sut.GetReadyProviderAsync(_config);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal("fresh", config.AccessToken);
+        Assert.Equal("fresh", _config.AccessToken);
     }
 
     [Fact]
     public async Task GetReadyProvider_MissingToken_AcquiresAndPersists()
     {
-        provider.AcquireTokenAsync(config.ApiKey, config.ApiSecret).Returns(Token("acquired", "refresh-1"));
+        _provider.AcquireTokenAsync(_config.ApiKey, _config.ApiSecret).Returns(Token("acquired", "refresh-1"));
 
-        var result = await sut.GetReadyProviderAsync(config);
+        var result = await _sut.GetReadyProviderAsync(_config);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal("acquired", config.AccessToken);
-        Assert.Equal("refresh-1", config.RefreshToken);
-        Assert.NotNull(config.TokenExpiresAt);
-        await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        Assert.Equal("acquired", _config.AccessToken);
+        Assert.Equal("refresh-1", _config.RefreshToken);
+        Assert.NotNull(_config.TokenExpiresAt);
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
         Received.InOrder(() =>
         {
-            tenantUow.SaveChangesAsync(Arg.Any<CancellationToken>());
-            provider.Initialize(config);
+            _tenantUow.SaveChangesAsync(Arg.Any<CancellationToken>());
+            _provider.Initialize(_config);
         });
     }
 
@@ -115,46 +115,46 @@ public class LoadBoardTokenServiceTests
     [Fact]
     public async Task GetReadyProvider_ExpiredWithRefreshToken_RefreshesAndPersists()
     {
-        config.AccessToken = "expired";
-        config.RefreshToken = "refresh-old";
-        config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(-5);
-        provider.RefreshTokenAsync("refresh-old").Returns(Token("refreshed", "refresh-new"));
+        _config.AccessToken = "expired";
+        _config.RefreshToken = "refresh-old";
+        _config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(-5);
+        _provider.RefreshTokenAsync("refresh-old").Returns(Token("refreshed", "refresh-new"));
 
-        var result = await sut.GetReadyProviderAsync(config);
+        var result = await _sut.GetReadyProviderAsync(_config);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal("refreshed", config.AccessToken);
-        Assert.Equal("refresh-new", config.RefreshToken);
-        await provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!, default);
-        await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        Assert.Equal("refreshed", _config.AccessToken);
+        Assert.Equal("refresh-new", _config.RefreshToken);
+        await _provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!, default);
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task GetReadyProvider_RefreshReturnsNoRefreshToken_KeepsStoredOne()
     {
-        config.AccessToken = "expired";
-        config.RefreshToken = "refresh-keep";
-        config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(-5);
-        provider.RefreshTokenAsync("refresh-keep").Returns(Token("refreshed"));
+        _config.AccessToken = "expired";
+        _config.RefreshToken = "refresh-keep";
+        _config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(-5);
+        _provider.RefreshTokenAsync("refresh-keep").Returns(Token("refreshed"));
 
-        await sut.GetReadyProviderAsync(config);
+        await _sut.GetReadyProviderAsync(_config);
 
-        Assert.Equal("refresh-keep", config.RefreshToken);
+        Assert.Equal("refresh-keep", _config.RefreshToken);
     }
 
     [Fact]
     public async Task GetReadyProvider_RefreshFails_FallsBackToAcquisition()
     {
-        config.AccessToken = "expired";
-        config.RefreshToken = "refresh-dead";
-        config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(-5);
-        provider.RefreshTokenAsync("refresh-dead").Returns((OAuthTokenResultDto?)null);
-        provider.AcquireTokenAsync(config.ApiKey, config.ApiSecret).Returns(Token("reacquired"));
+        _config.AccessToken = "expired";
+        _config.RefreshToken = "refresh-dead";
+        _config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(-5);
+        _provider.RefreshTokenAsync("refresh-dead").Returns((OAuthTokenResultDto?)null);
+        _provider.AcquireTokenAsync(_config.ApiKey, _config.ApiSecret).Returns(Token("reacquired"));
 
-        var result = await sut.GetReadyProviderAsync(config);
+        var result = await _sut.GetReadyProviderAsync(_config);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal("reacquired", config.AccessToken);
+        Assert.Equal("reacquired", _config.AccessToken);
     }
 
     #endregion
@@ -164,14 +164,14 @@ public class LoadBoardTokenServiceTests
     [Fact]
     public async Task GetReadyProvider_AcquisitionFails_ReturnsFailWithoutSaveOrInitialize()
     {
-        provider.AcquireTokenAsync(config.ApiKey, config.ApiSecret).Returns((OAuthTokenResultDto?)null);
+        _provider.AcquireTokenAsync(_config.ApiKey, _config.ApiSecret).Returns((OAuthTokenResultDto?)null);
 
-        var result = await sut.GetReadyProviderAsync(config);
+        var result = await _sut.GetReadyProviderAsync(_config);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("Truckstop", result.Error);
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
-        provider.DidNotReceiveWithAnyArgs().Initialize(default!);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        _provider.DidNotReceiveWithAnyArgs().Initialize(default!);
     }
 
     #endregion

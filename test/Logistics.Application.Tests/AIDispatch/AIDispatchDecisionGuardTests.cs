@@ -9,14 +9,14 @@ namespace Logistics.Application.Tests.AIDispatch;
 
 public class AIDispatchDecisionGuardTests
 {
-    private readonly AgentTestContext ctx = new();
+    private readonly AgentTestContext _ctx = new();
 
     [Fact]
     public async Task LoadAsync_AIDisabledForTenant_Fails()
     {
-        ctx.Tenant.Settings.AIEnabled = false;
+        _ctx.Tenant.Settings.AIEnabled = false;
 
-        var result = await ctx.DispatchGuard(bypassAIGate: false)
+        var result = await _ctx.DispatchGuard(bypassAIGate: false)
             .LoadAsync(Guid.NewGuid(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -26,9 +26,9 @@ public class AIDispatchDecisionGuardTests
     [Fact]
     public async Task LoadAsync_DecisionNotFound_Fails()
     {
-        ctx.DecisionRepo.Query().Returns(new List<AgentDecision>().BuildMock());
+        _ctx.DecisionRepo.Query().Returns(new List<AgentDecision>().BuildMock());
 
-        var result = await ctx.DispatchGuard().LoadAsync(Guid.NewGuid(), CancellationToken.None);
+        var result = await _ctx.DispatchGuard().LoadAsync(Guid.NewGuid(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Decision not found", result.Error);
@@ -45,9 +45,9 @@ public class AIDispatchDecisionGuardTests
             Session = copilotSession,
             Status = AgentDecisionStatus.Suggested
         };
-        ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { copilotDecision }.BuildMock());
+        _ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { copilotDecision }.BuildMock());
 
-        var result = await ctx.DispatchGuard().LoadAsync(copilotDecision.Id, CancellationToken.None);
+        var result = await _ctx.DispatchGuard().LoadAsync(copilotDecision.Id, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("Decision not found", result.Error);
@@ -56,10 +56,10 @@ public class AIDispatchDecisionGuardTests
     [Fact]
     public async Task LoadAsync_DecisionNotSuggested_Fails()
     {
-        var decision = ctx.SetDispatchSuggestedDecision();
-        decision.Approve(ctx.UserId);
+        var decision = _ctx.SetDispatchSuggestedDecision();
+        decision.Approve(_ctx.UserId);
 
-        var result = await ctx.DispatchGuard().LoadAsync(decision.Id, CancellationToken.None);
+        var result = await _ctx.DispatchGuard().LoadAsync(decision.Id, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("suggested state", result.Error);
@@ -68,9 +68,9 @@ public class AIDispatchDecisionGuardTests
     [Fact]
     public async Task LoadAsync_Success_ReturnsTheDecision()
     {
-        var decision = ctx.SetDispatchSuggestedDecision();
+        var decision = _ctx.SetDispatchSuggestedDecision();
 
-        var result = await ctx.DispatchGuard().LoadAsync(decision.Id, CancellationToken.None);
+        var result = await _ctx.DispatchGuard().LoadAsync(decision.Id, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(decision.Id, result.Value!.Id);

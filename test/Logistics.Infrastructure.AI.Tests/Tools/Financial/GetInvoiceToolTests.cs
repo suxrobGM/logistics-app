@@ -13,21 +13,21 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Financial;
 
 public class GetInvoiceToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly GetInvoiceTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly GetInvoiceTool _sut;
 
     public GetInvoiceToolTests()
     {
-        sut = new GetInvoiceTool(mediator);
+        _sut = new GetInvoiceTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_MissingInvoiceId_ReturnsError()
     {
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
         Assert.Contains("invoice_id", result);
-        await mediator.DidNotReceiveWithAnyArgs().Send<Result<InvoiceDto>>(default!, default);
+        await _mediator.DidNotReceiveWithAnyArgs().Send<Result<InvoiceDto>>(default!, default);
     }
 
     [Fact]
@@ -47,10 +47,10 @@ public class GetInvoiceToolTests
                 new PaymentDto { Amount = CopilotToolTestData.Usd(200m) }
             ]
         };
-        mediator.Send(Arg.Any<GetInvoiceByIdQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetInvoiceByIdQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<InvoiceDto>.Ok(invoice));
 
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["invoice_id"] = invoice.Id.ToString() }, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;

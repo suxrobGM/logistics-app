@@ -23,7 +23,7 @@ public class SigningKeyMaintenance(
 
     private static readonly TimeSpan Period = TimeSpan.FromHours(12);
 
-    private readonly SigningKeyOptions options = options.Value;
+    private readonly SigningKeyOptions _options = options.Value;
 
     public async Task EnsureKeysAsync(CancellationToken cancellationToken)
     {
@@ -44,14 +44,14 @@ public class SigningKeyMaintenance(
             var rotated = false;
 
             // Publish the replacement a propagation window before the current key expires.
-            if (keys.Count == 0 || keys[0].Created <= now - (options.Rotation - options.Propagation))
+            if (keys.Count == 0 || keys[0].Created <= now - (_options.Rotation - _options.Propagation))
             {
                 db.SigningKeys.Add(protector.Create());
                 rotated = true;
             }
 
             // Keep the two newest regardless, so deleting can never leave us unable to sign.
-            var expired = keys.Skip(2).Where(x => x.Created <= now - options.Retention).ToList();
+            var expired = keys.Skip(2).Where(x => x.Created <= now - _options.Retention).ToList();
             if (expired.Count > 0)
             {
                 db.SigningKeys.RemoveRange(expired);
@@ -96,7 +96,7 @@ public class SigningKeyMaintenance(
     {
         using var scope = scopeFactory.CreateScope();
         var grants = scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-        var cutoff = DateTime.UtcNow - options.UsedGrantRetention;
+        var cutoff = DateTime.UtcNow - _options.UsedGrantRetention;
 
         var removed = await grants.Database.CreateExecutionStrategy().ExecuteAsync(() =>
             grants.PersistedGrants

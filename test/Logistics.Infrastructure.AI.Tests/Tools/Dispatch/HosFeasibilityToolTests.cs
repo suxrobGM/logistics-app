@@ -19,13 +19,13 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Dispatch;
 /// </summary>
 public class HosFeasibilityToolTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<DriverHosStatus, Guid> hosRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<DriverHosStatus, Guid> _hosRepo =
         Substitute.For<ITenantRepository<DriverHosStatus, Guid>>();
 
     public HosFeasibilityToolTests()
     {
-        tenantUow.Repository<DriverHosStatus>().Returns(hosRepo);
+        _tenantUow.Repository<DriverHosStatus>().Returns(_hosRepo);
     }
 
     private static DriverHosStatus Hos(
@@ -39,20 +39,20 @@ public class HosFeasibilityToolTests
         };
 
     private void SingleReturns(DriverHosStatus? hos) =>
-        hosRepo.GetAsync(Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>())
+        _hosRepo.GetAsync(Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(hos);
 
     private void BatchReturns(params DriverHosStatus[] statuses) =>
-        hosRepo.GetListAsync(Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>())
+        _hosRepo.GetListAsync(Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>())
             .Returns([.. statuses]);
 
     private Task<string> RunSingle(Guid driverId, double distanceKm) =>
-        new CheckHosFeasibilityTool(tenantUow).ExecuteAsync(
+        new CheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
             new JsonObject { ["driver_id"] = driverId.ToString(), ["distance_km"] = distanceKm },
             CancellationToken.None);
 
     private Task<string> RunBatch(params (Guid DriverId, double DistanceKm)[] checks) =>
-        new BatchCheckHosFeasibilityTool(tenantUow).ExecuteAsync(
+        new BatchCheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
             new JsonObject
             {
                 ["checks"] = new JsonArray([.. checks.Select(c => (JsonNode)new JsonObject
@@ -231,7 +231,7 @@ public class HosFeasibilityToolTests
 
         await RunBatch((first, 400), (second, 400));
 
-        await hosRepo.Received(1).GetListAsync(
+        await _hosRepo.Received(1).GetListAsync(
             Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>());
     }
 
@@ -242,7 +242,7 @@ public class HosFeasibilityToolTests
     [Fact]
     public async Task Single_MissingDriverId_EmitsError()
     {
-        var result = await new CheckHosFeasibilityTool(tenantUow).ExecuteAsync(
+        var result = await new CheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
             new JsonObject(), CancellationToken.None);
 
         Assert.Equal(
@@ -253,7 +253,7 @@ public class HosFeasibilityToolTests
     [Fact]
     public async Task Batch_EmptyChecks_EmitsError()
     {
-        var result = await new BatchCheckHosFeasibilityTool(tenantUow).ExecuteAsync(
+        var result = await new BatchCheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
             new JsonObject { ["checks"] = new JsonArray() }, CancellationToken.None);
 
         Assert.Equal(
@@ -270,11 +270,11 @@ public class HosFeasibilityToolTests
         SingleReturns(Hos(driverId, 600, 660));
         BatchReturns(Hos(driverId, 600, 660));
 
-        var single = JsonDocument.Parse(await new CheckHosFeasibilityTool(tenantUow).ExecuteAsync(
+        var single = JsonDocument.Parse(await new CheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
             new JsonObject { ["driver_id"] = driverId.ToString(), ["distance_km"] = distance },
             CancellationToken.None)).RootElement;
 
-        var batch = JsonDocument.Parse(await new BatchCheckHosFeasibilityTool(tenantUow).ExecuteAsync(
+        var batch = JsonDocument.Parse(await new BatchCheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
             new JsonObject
             {
                 ["checks"] = new JsonArray(new JsonObject
@@ -292,7 +292,7 @@ public class HosFeasibilityToolTests
     [Fact]
     public async Task Batch_UnparseableDriverId_EmitsErrorNamingTheProperty()
     {
-        var result = await new BatchCheckHosFeasibilityTool(tenantUow).ExecuteAsync(
+        var result = await new BatchCheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
             new JsonObject
             {
                 ["checks"] = new JsonArray(new JsonObject

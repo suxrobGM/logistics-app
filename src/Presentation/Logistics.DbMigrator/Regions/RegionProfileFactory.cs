@@ -12,11 +12,11 @@ public interface IRegionProfileFactory
 
 internal sealed class RegionProfileFactory(IEnumerable<IRegionProfile> profiles) : IRegionProfileFactory
 {
-    private readonly IReadOnlyDictionary<Region, IRegionProfile> profiles = profiles.ToDictionary(p => p.Region);
+    private readonly IReadOnlyDictionary<Region, IRegionProfile> _profiles = profiles.ToDictionary(p => p.Region);
 
     public IRegionProfile Get(Region region)
     {
-        return profiles.TryGetValue(region, out var profile)
+        return _profiles.TryGetValue(region, out var profile)
             ? profile
             : throw new InvalidOperationException($"No region profile registered for {region}.");
     }

@@ -12,108 +12,108 @@ namespace Logistics.Application.Tests.LoadBoard;
 
 public class CreateLoadBoardConfigurationHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ILoadBoardProviderFactory providerFactory = Substitute.For<ILoadBoardProviderFactory>();
-    private readonly ILoadBoardProviderService provider = Substitute.For<ILoadBoardProviderService>();
-    private readonly ITenantRepository<LoadBoardConfiguration, Guid> configRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ILoadBoardProviderFactory _providerFactory = Substitute.For<ILoadBoardProviderFactory>();
+    private readonly ILoadBoardProviderService _provider = Substitute.For<ILoadBoardProviderService>();
+    private readonly ITenantRepository<LoadBoardConfiguration, Guid> _configRepo =
         Substitute.For<ITenantRepository<LoadBoardConfiguration, Guid>>();
-    private readonly CreateLoadBoardConfigurationCommand command;
-    private readonly CreateLoadBoardConfigurationHandler sut;
+    private readonly CreateLoadBoardConfigurationCommand _command;
+    private readonly CreateLoadBoardConfigurationHandler _sut;
 
     public CreateLoadBoardConfigurationHandlerTests()
     {
-        command = new CreateLoadBoardConfigurationCommand
+        _command = new CreateLoadBoardConfigurationCommand
         {
             ProviderType = LoadBoardProviderType.Truckstop,
             ApiKey = "key",
             ApiSecret = "secret"
         };
 
-        tenantUow.Repository<LoadBoardConfiguration>().Returns(configRepo);
-        configRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardConfiguration, bool>>>(),
+        _tenantUow.Repository<LoadBoardConfiguration>().Returns(_configRepo);
+        _configRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardConfiguration, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns((LoadBoardConfiguration?)null);
 
-        providerFactory.IsProviderSupported(command.ProviderType).Returns(true);
-        providerFactory.GetProvider(command.ProviderType).Returns(provider);
+        _providerFactory.IsProviderSupported(_command.ProviderType).Returns(true);
+        _providerFactory.GetProvider(_command.ProviderType).Returns(_provider);
 
-        sut = new CreateLoadBoardConfigurationHandler(
-            tenantUow, providerFactory, NullLogger<CreateLoadBoardConfigurationHandler>.Instance);
+        _sut = new CreateLoadBoardConfigurationHandler(
+            _tenantUow, _providerFactory, NullLogger<CreateLoadBoardConfigurationHandler>.Instance);
     }
 
     [Fact]
     public async Task Handle_OAuthProvider_StoresAcquiredTokensOnConfiguration()
     {
-        provider.RequiresOAuthToken.Returns(true);
+        _provider.RequiresOAuthToken.Returns(true);
         var expiresAt = DateTime.UtcNow.AddMinutes(20);
-        provider.AcquireTokenAsync("key", "secret").Returns(new OAuthTokenResultDto
+        _provider.AcquireTokenAsync("key", "secret").Returns(new OAuthTokenResultDto
         {
             AccessToken = "access-1",
             RefreshToken = "refresh-1",
             ExpiresAt = expiresAt
         });
         LoadBoardConfiguration? added = null;
-        await configRepo.AddAsync(Arg.Do<LoadBoardConfiguration>(c => added = c), Arg.Any<CancellationToken>());
+        await _configRepo.AddAsync(Arg.Do<LoadBoardConfiguration>(c => added = c), Arg.Any<CancellationToken>());
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.NotNull(added);
         Assert.Equal("access-1", added.AccessToken);
         Assert.Equal("refresh-1", added.RefreshToken);
         Assert.Equal(expiresAt, added.TokenExpiresAt);
-        await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_OAuthAcquisitionFails_FailsWithoutAdding()
     {
-        provider.RequiresOAuthToken.Returns(true);
-        provider.AcquireTokenAsync("key", "secret").Returns((OAuthTokenResultDto?)null);
+        _provider.RequiresOAuthToken.Returns(true);
+        _provider.AcquireTokenAsync("key", "secret").Returns((OAuthTokenResultDto?)null);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        await configRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _configRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_KeyBasedProvider_ValidatesWithoutTokenAcquisition()
     {
-        provider.RequiresOAuthToken.Returns(false);
-        provider.ValidateCredentialsAsync("key", "secret").Returns(true);
+        _provider.RequiresOAuthToken.Returns(false);
+        _provider.ValidateCredentialsAsync("key", "secret").Returns(true);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!, default);
-        await configRepo.Received(1).AddAsync(
+        await _provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!, default);
+        await _configRepo.Received(1).AddAsync(
             Arg.Is<LoadBoardConfiguration>(c => c.AccessToken == null), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_KeyBasedProviderInvalidCredentials_Fails()
     {
-        provider.RequiresOAuthToken.Returns(false);
-        provider.ValidateCredentialsAsync("key", "secret").Returns(false);
+        _provider.RequiresOAuthToken.Returns(false);
+        _provider.ValidateCredentialsAsync("key", "secret").Returns(false);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        await configRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _configRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
     public async Task Handle_DuplicateConfiguration_Fails()
     {
-        configRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardConfiguration, bool>>>(),
+        _configRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardConfiguration, bool>>>(),
                 Arg.Any<CancellationToken>())
-            .Returns(new LoadBoardConfiguration { ProviderType = command.ProviderType, ApiKey = "existing" });
+            .Returns(new LoadBoardConfiguration { ProviderType = _command.ProviderType, ApiKey = "existing" });
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        await configRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _configRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 }

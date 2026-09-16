@@ -9,16 +9,16 @@ namespace Logistics.Application.Tests.Negotiation;
 
 public class CreateLaneRateFloorHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<LaneRateFloor, Guid> floorRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<LaneRateFloor, Guid> _floorRepo =
         Substitute.For<ITenantRepository<LaneRateFloor, Guid>>();
 
-    private readonly CreateLaneRateFloorHandler sut;
+    private readonly CreateLaneRateFloorHandler _sut;
 
     public CreateLaneRateFloorHandlerTests()
     {
-        tenantUow.Repository<LaneRateFloor>().Returns(floorRepo);
-        sut = new CreateLaneRateFloorHandler(tenantUow);
+        _tenantUow.Repository<LaneRateFloor>().Returns(_floorRepo);
+        _sut = new CreateLaneRateFloorHandler(_tenantUow);
     }
 
     private static CreateLaneRateFloorCommand Command() => new()
@@ -31,7 +31,7 @@ public class CreateLaneRateFloorHandlerTests
     };
 
     private void SetupExisting(LaneRateFloor? existing) =>
-        floorRepo.GetAsync(Arg.Any<Expression<Func<LaneRateFloor, bool>>>(), Arg.Any<CancellationToken>())
+        _floorRepo.GetAsync(Arg.Any<Expression<Func<LaneRateFloor, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(existing);
 
     [Fact]
@@ -39,16 +39,16 @@ public class CreateLaneRateFloorHandlerTests
     {
         SetupExisting(null);
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await floorRepo.Received(1).AddAsync(
+        await _floorRepo.Received(1).AddAsync(
             Arg.Is<LaneRateFloor>(f =>
                 f.OriginCountry == "US" && f.OriginState == "TX" &&
                 f.DestinationCountry == "US" && f.DestinationState == "IL" &&
                 f.MinRatePerMile == 2.25m),
             Arg.Any<CancellationToken>());
-        await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -56,11 +56,11 @@ public class CreateLaneRateFloorHandlerTests
     {
         SetupExisting(new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 1.00m });
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("already exists", result.Error);
-        await floorRepo.DidNotReceive().AddAsync(Arg.Any<LaneRateFloor>(), Arg.Any<CancellationToken>());
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _floorRepo.DidNotReceive().AddAsync(Arg.Any<LaneRateFloor>(), Arg.Any<CancellationToken>());
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

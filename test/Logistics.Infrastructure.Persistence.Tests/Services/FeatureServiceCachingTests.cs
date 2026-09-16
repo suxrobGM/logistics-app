@@ -15,33 +15,33 @@ namespace Logistics.Infrastructure.Persistence.Tests.Services;
 /// </summary>
 public class FeatureServiceCachingTests
 {
-    private readonly IMasterRepository<TenantFeatureConfig, Guid> configRepo =
+    private readonly IMasterRepository<TenantFeatureConfig, Guid> _configRepo =
         Substitute.For<IMasterRepository<TenantFeatureConfig, Guid>>();
 
-    private readonly IMasterRepository<DefaultFeatureConfig, Guid> defaultRepo =
+    private readonly IMasterRepository<DefaultFeatureConfig, Guid> _defaultRepo =
         Substitute.For<IMasterRepository<DefaultFeatureConfig, Guid>>();
 
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
-    private readonly FeatureService sut;
-    private readonly Guid tenantId = Guid.NewGuid();
-    private readonly IMasterRepository<Tenant, Guid> tenantRepo = Substitute.For<IMasterRepository<Tenant, Guid>>();
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly FeatureService _sut;
+    private readonly Guid _tenantId = Guid.NewGuid();
+    private readonly IMasterRepository<Tenant, Guid> _tenantRepo = Substitute.For<IMasterRepository<Tenant, Guid>>();
 
     public FeatureServiceCachingTests()
     {
-        masterUow.Repository<TenantFeatureConfig>().Returns(configRepo);
-        masterUow.Repository<DefaultFeatureConfig>().Returns(defaultRepo);
-        masterUow.Repository<Tenant>().Returns(tenantRepo);
+        _masterUow.Repository<TenantFeatureConfig>().Returns(_configRepo);
+        _masterUow.Repository<DefaultFeatureConfig>().Returns(_defaultRepo);
+        _masterUow.Repository<Tenant>().Returns(_tenantRepo);
 
-        configRepo.GetListAsync(Arg.Any<Expression<Func<TenantFeatureConfig, bool>>>(), Arg.Any<CancellationToken>())
+        _configRepo.GetListAsync(Arg.Any<Expression<Func<TenantFeatureConfig, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(_ => new List<TenantFeatureConfig>());
-        defaultRepo.GetListAsync(Arg.Any<ISpecification<DefaultFeatureConfig>?>(), Arg.Any<CancellationToken>())
+        _defaultRepo.GetListAsync(Arg.Any<ISpecification<DefaultFeatureConfig>?>(), Arg.Any<CancellationToken>())
             .Returns(_ => new List<DefaultFeatureConfig>());
 
         // Non-subscription tenant: plan gating is skipped, so all features are allowed.
-        tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>())
+        _tenantRepo.GetByIdAsync(_tenantId, Arg.Any<CancellationToken>())
             .Returns(new Tenant
             {
-                Id = tenantId,
+                Id = _tenantId,
                 Name = "Test",
                 ConnectionString = "test",
                 BillingEmail = "test@test.com",
@@ -56,18 +56,18 @@ public class FeatureServiceCachingTests
                 IsSubscriptionRequired = false
             });
 
-        sut = new FeatureService(masterUow);
+        _sut = new FeatureService(_masterUow);
     }
 
-    private int ConfigQueryCount => configRepo.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "GetListAsync");
-    private int DefaultQueryCount => defaultRepo.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "GetListAsync");
-    private int TenantQueryCount => tenantRepo.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "GetByIdAsync");
+    private int ConfigQueryCount => _configRepo.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "GetListAsync");
+    private int DefaultQueryCount => _defaultRepo.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "GetListAsync");
+    private int TenantQueryCount => _tenantRepo.ReceivedCalls().Count(c => c.GetMethodInfo().Name == "GetByIdAsync");
 
     [Fact]
     public async Task IsFeatureEnabled_SameFeatureTwice_QueriesMasterOnce()
     {
-        await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AgenticDispatch);
-        await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AgenticDispatch);
+        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AgenticDispatch);
+        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AgenticDispatch);
 
         Assert.Equal(1, ConfigQueryCount);
         Assert.Equal(1, DefaultQueryCount);
@@ -79,7 +79,7 @@ public class FeatureServiceCachingTests
     {
         foreach (var feature in Enum.GetValues<TenantFeature>())
         {
-            await sut.IsFeatureEnabledAsync(tenantId, feature);
+            await _sut.IsFeatureEnabledAsync(_tenantId, feature);
         }
 
         Assert.Equal(1, ConfigQueryCount);
@@ -92,8 +92,8 @@ public class FeatureServiceCachingTests
     {
         var otherTenantId = Guid.NewGuid();
 
-        await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AgenticDispatch);
-        await sut.IsFeatureEnabledAsync(otherTenantId, TenantFeature.AgenticDispatch);
+        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AgenticDispatch);
+        await _sut.IsFeatureEnabledAsync(otherTenantId, TenantFeature.AgenticDispatch);
 
         Assert.Equal(2, ConfigQueryCount);
         Assert.Equal(2, TenantQueryCount);
@@ -103,20 +103,20 @@ public class FeatureServiceCachingTests
     [Fact]
     public async Task ApplyPresetFeatures_StagesRowsIntoTheCache_SoReadsSeeThemWithoutRequerying()
     {
-        Assert.True(await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.VehicleTransport));
+        Assert.True(await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.VehicleTransport));
 
-        await sut.ApplyPresetFeaturesAsync(tenantId, [TenantPreset.GeneralFreight]);
+        await _sut.ApplyPresetFeaturesAsync(_tenantId, [TenantPreset.GeneralFreight]);
 
-        Assert.False(await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.VehicleTransport));
+        Assert.False(await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.VehicleTransport));
         Assert.Equal(1, ConfigQueryCount);
     }
 
     [Fact]
     public async Task GetEnabledFeatures_AfterIsFeatureEnabled_ReusesTheSameCache()
     {
-        await sut.IsFeatureEnabledAsync(tenantId, TenantFeature.AgenticDispatch);
-        await sut.GetEnabledFeaturesAsync(tenantId);
-        await sut.GetAllFeatureStatusAsync(tenantId);
+        await _sut.IsFeatureEnabledAsync(_tenantId, TenantFeature.AgenticDispatch);
+        await _sut.GetEnabledFeaturesAsync(_tenantId);
+        await _sut.GetAllFeatureStatusAsync(_tenantId);
 
         Assert.Equal(1, ConfigQueryCount);
         Assert.Equal(1, DefaultQueryCount);

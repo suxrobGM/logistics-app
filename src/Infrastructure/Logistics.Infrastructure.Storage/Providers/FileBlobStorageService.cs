@@ -9,7 +9,7 @@ namespace Logistics.Infrastructure.Storage.Providers;
 public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, ITenantUnitOfWork tenantUow)
     : IBlobStorageService
 {
-    private readonly FileBlobStorageOptions options = options.Value;
+    private readonly FileBlobStorageOptions _options = options.Value;
 
     public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType,
         CancellationToken ct = default)
@@ -88,7 +88,7 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
 
     public string GetPublicUrl(string containerName, string blobName, Guid tenantId)
     {
-        return $"{options.BaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
+        return $"{_options.BaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
     {
         var tenant = tenantUow.GetCurrentTenant();
         var tenantId = tenant.Id.ToString();
-        return Path.Combine(options.RootPath, tenantId, containerName);
+        return Path.Combine(_options.RootPath, tenantId, containerName);
     }
 
     private string GetFilePath(string containerName, string blobName)

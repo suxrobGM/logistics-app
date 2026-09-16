@@ -4,7 +4,7 @@ namespace Logistics.Infrastructure.Vin.Tests;
 
 internal sealed class StubHttpMessageHandler(Func<HttpRequestMessage, HttpResponseMessage> handler) : HttpMessageHandler
 {
-    private readonly Func<HttpRequestMessage, HttpResponseMessage> handler = handler;
+    private readonly Func<HttpRequestMessage, HttpResponseMessage> _handler = handler;
 
     public static StubHttpMessageHandler Json(string body, HttpStatusCode status = HttpStatusCode.OK) =>
         new(_ => new HttpResponseMessage(status)
@@ -17,6 +17,6 @@ internal sealed class StubHttpMessageHandler(Func<HttpRequestMessage, HttpRespon
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(handler(request));
+        return Task.FromResult(_handler(request));
     }
 }

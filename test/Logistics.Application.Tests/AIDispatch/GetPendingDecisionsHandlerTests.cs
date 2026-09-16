@@ -13,21 +13,21 @@ namespace Logistics.Application.Tests.AIDispatch;
 
 public class GetPendingDecisionsHandlerTests
 {
-    private readonly AgentTestContext ctx = new();
-    private readonly ITenantRepository<Load, Guid> loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly GetPendingDecisionsHandler sut;
+    private readonly AgentTestContext _ctx = new();
+    private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
+    private readonly ITenantRepository<Truck, Guid> _truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
+    private readonly GetPendingDecisionsHandler _sut;
 
     public GetPendingDecisionsHandlerTests()
     {
-        ctx.TenantUow.Repository<Load>().Returns(loadRepo);
-        ctx.TenantUow.Repository<Truck>().Returns(truckRepo);
-        loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
+        _ctx.TenantUow.Repository<Load>().Returns(_loadRepo);
+        _ctx.TenantUow.Repository<Truck>().Returns(_truckRepo);
+        _loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
             .Returns([]);
-        truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
+        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
             .Returns([]);
 
-        sut = new GetPendingDecisionsHandler(ctx.TenantUow);
+        _sut = new GetPendingDecisionsHandler(_ctx.TenantUow);
     }
 
     private static AgentDecision SuggestedDecision(AgentSessionType sessionType) => new()
@@ -44,11 +44,11 @@ public class GetPendingDecisionsHandlerTests
         var dispatchSuggested = SuggestedDecision(AgentSessionType.Dispatch);
         var copilotSuggested = SuggestedDecision(AgentSessionType.Copilot);
         var dispatchApproved = SuggestedDecision(AgentSessionType.Dispatch);
-        dispatchApproved.Approve(ctx.UserId);
-        ctx.DecisionRepo.Query().Returns(
+        dispatchApproved.Approve(_ctx.UserId);
+        _ctx.DecisionRepo.Query().Returns(
             new List<AgentDecision> { dispatchSuggested, copilotSuggested, dispatchApproved }.BuildMock());
 
-        var result = await sut.Handle(new GetPendingDecisionsQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetPendingDecisionsQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         var returned = Assert.Single(result.Value!);
@@ -73,13 +73,13 @@ public class GetPendingDecisionsHandlerTests
         var decision = SuggestedDecision(AgentSessionType.Dispatch);
         decision.LoadId = load.Id;
         decision.TruckId = truck.Id;
-        ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
-        loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
+        _ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
+        _loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
             .Returns([load]);
-        truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
+        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
             .Returns([truck]);
 
-        var result = await sut.Handle(new GetPendingDecisionsQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetPendingDecisionsQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         var dto = Assert.Single(result.Value!);
@@ -91,9 +91,9 @@ public class GetPendingDecisionsHandlerTests
     public async Task Handle_DecisionWithoutLoadOrTruck_LeavesNamesNull()
     {
         var decision = SuggestedDecision(AgentSessionType.Dispatch);
-        ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
+        _ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
 
-        var result = await sut.Handle(new GetPendingDecisionsQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetPendingDecisionsQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         var dto = Assert.Single(result.Value!);

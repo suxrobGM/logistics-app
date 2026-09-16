@@ -17,20 +17,20 @@ namespace Logistics.Application.Tests.IdentityAccess.Subscriptions;
 
 public class CancelSubscriptionHandlerTests
 {
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
-    private readonly IStripeSubscriptionService stripeSubscriptionService = Substitute.For<IStripeSubscriptionService>();
-    private readonly ICurrentUserService currentUserService = Substitute.For<ICurrentUserService>();
-    private readonly ILogger<DeleteSubscriptionHandler> logger = NullLogger<DeleteSubscriptionHandler>.Instance;
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly IStripeSubscriptionService _stripeSubscriptionService = Substitute.For<IStripeSubscriptionService>();
+    private readonly ICurrentUserService _currentUserService = Substitute.For<ICurrentUserService>();
+    private readonly ILogger<DeleteSubscriptionHandler> _logger = NullLogger<DeleteSubscriptionHandler>.Instance;
 
-    private readonly IMasterRepository<Subscription, Guid> subscriptionRepo =
+    private readonly IMasterRepository<Subscription, Guid> _subscriptionRepo =
         Substitute.For<IMasterRepository<Subscription, Guid>>();
 
-    private readonly CancelSubscriptionHandler sut;
+    private readonly CancelSubscriptionHandler _sut;
 
     public CancelSubscriptionHandlerTests()
     {
-        masterUow.Repository<Subscription>().Returns(subscriptionRepo);
-        sut = new CancelSubscriptionHandler(masterUow, stripeSubscriptionService, currentUserService, logger);
+        _masterUow.Repository<Subscription>().Returns(_subscriptionRepo);
+        _sut = new CancelSubscriptionHandler(_masterUow, _stripeSubscriptionService, _currentUserService, _logger);
     }
 
     [Fact]
@@ -39,8 +39,8 @@ public class CancelSubscriptionHandlerTests
         var ownerTenantId = Guid.NewGuid();
         var callerTenantId = Guid.NewGuid();
         var subscription = TestSubscription.Create(ownerTenantId);
-        subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
-        currentUserService.GetTenantId().Returns(callerTenantId);
+        _subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
+        _currentUserService.GetTenantId().Returns(callerTenantId);
 
         var command = new CancelSubscriptionCommand
         {
@@ -48,9 +48,9 @@ public class CancelSubscriptionHandlerTests
         };
 
         await Assert.ThrowsAsync<TenantAccessDeniedException>(
-            () => sut.Handle(command, CancellationToken.None));
+            () => _sut.Handle(command, CancellationToken.None));
 
-        await masterUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _masterUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -58,15 +58,15 @@ public class CancelSubscriptionHandlerTests
     {
         var tenantId = Guid.NewGuid();
         var subscription = TestSubscription.Create(tenantId);
-        subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
-        currentUserService.GetTenantId().Returns(tenantId);
+        _subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
+        _currentUserService.GetTenantId().Returns(tenantId);
 
         var command = new CancelSubscriptionCommand
         {
             Id = subscription.Id
         };
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(SubscriptionStatus.Cancelled, subscription.Status);
@@ -77,15 +77,15 @@ public class CancelSubscriptionHandlerTests
     {
         var ownerTenantId = Guid.NewGuid();
         var subscription = TestSubscription.Create(ownerTenantId);
-        subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
-        currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
+        _subscriptionRepo.GetByIdAsync(subscription.Id, Arg.Any<CancellationToken>()).Returns(subscription);
+        _currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
 
         var command = new CancelSubscriptionCommand
         {
             Id = subscription.Id
         };
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
     }
@@ -93,10 +93,10 @@ public class CancelSubscriptionHandlerTests
     [Fact]
     public async Task Handle_SubscriptionNotFound_ReturnsFailure()
     {
-        subscriptionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _subscriptionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns((Subscription?)null);
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new CancelSubscriptionCommand { Id = Guid.NewGuid() }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);

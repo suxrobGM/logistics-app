@@ -10,14 +10,14 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Dispatch;
 
 public class CheckDispatchEligibilityToolTests
 {
-    private readonly IDispatchEligibilityService eligibilityService =
+    private readonly IDispatchEligibilityService _eligibilityService =
         Substitute.For<IDispatchEligibilityService>();
 
-    private readonly CheckDispatchEligibilityTool sut;
+    private readonly CheckDispatchEligibilityTool _sut;
 
     public CheckDispatchEligibilityToolTests()
     {
-        sut = new CheckDispatchEligibilityTool(eligibilityService);
+        _sut = new CheckDispatchEligibilityTool(_eligibilityService);
     }
 
     [Fact]
@@ -28,11 +28,11 @@ public class CheckDispatchEligibilityToolTests
             ["load_id"] = Guid.NewGuid().ToString()
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.Contains("truck_id", root.GetProperty("error").GetString());
-        await eligibilityService.DidNotReceiveWithAnyArgs()
+        await _eligibilityService.DidNotReceiveWithAnyArgs()
             .CheckAsync(default, default, default, default);
     }
 
@@ -45,7 +45,7 @@ public class CheckDispatchEligibilityToolTests
             ["load_id"] = Guid.NewGuid().ToString()
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("truck_id", result);
     }
@@ -58,7 +58,7 @@ public class CheckDispatchEligibilityToolTests
             ["truck_id"] = Guid.NewGuid().ToString()
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("load_id", result);
     }
@@ -73,7 +73,7 @@ public class CheckDispatchEligibilityToolTests
             ["driver_id"] = "garbage"
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("driver_id", result);
     }
@@ -85,7 +85,7 @@ public class CheckDispatchEligibilityToolTests
         var loadId = Guid.NewGuid();
         var driverId = Guid.NewGuid();
 
-        eligibilityService
+        _eligibilityService
             .CheckAsync(truckId, loadId, driverId, Arg.Any<CancellationToken>())
             .Returns(EligibilityResult.Ok());
 
@@ -96,13 +96,13 @@ public class CheckDispatchEligibilityToolTests
             ["driver_id"] = driverId.ToString()
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.True(root.GetProperty("is_eligible").GetBoolean());
         Assert.Empty(root.GetProperty("issues").EnumerateArray());
 
-        await eligibilityService.Received(1)
+        await _eligibilityService.Received(1)
             .CheckAsync(truckId, loadId, driverId, Arg.Any<CancellationToken>());
     }
 
@@ -112,7 +112,7 @@ public class CheckDispatchEligibilityToolTests
         var truckId = Guid.NewGuid();
         var loadId = Guid.NewGuid();
 
-        eligibilityService
+        _eligibilityService
             .CheckAsync(truckId, loadId, null, Arg.Any<CancellationToken>())
             .Returns(EligibilityResult.Ok());
 
@@ -122,10 +122,10 @@ public class CheckDispatchEligibilityToolTests
             ["load_id"] = loadId.ToString()
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("\"is_eligible\":true", result);
-        await eligibilityService.Received(1)
+        await _eligibilityService.Received(1)
             .CheckAsync(truckId, loadId, null, Arg.Any<CancellationToken>());
     }
 
@@ -135,7 +135,7 @@ public class CheckDispatchEligibilityToolTests
         var truckId = Guid.NewGuid();
         var loadId = Guid.NewGuid();
 
-        eligibilityService
+        _eligibilityService
             .CheckAsync(truckId, loadId, null, Arg.Any<CancellationToken>())
             .Returns(new EligibilityResult(false, [
                 new EligibilityIssue(
@@ -150,7 +150,7 @@ public class CheckDispatchEligibilityToolTests
             ["load_id"] = loadId.ToString()
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.False(root.GetProperty("is_eligible").GetBoolean());

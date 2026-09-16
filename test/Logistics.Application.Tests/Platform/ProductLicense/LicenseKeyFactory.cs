@@ -9,9 +9,9 @@ namespace Logistics.Application.Tests.Platform.ProductLicense;
 /// </summary>
 internal sealed class LicenseKeyFactory : IDisposable
 {
-    private readonly ECDsa signer = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+    private readonly ECDsa _signer = ECDsa.Create(ECCurve.NamedCurves.nistP256);
 
-    public string PublicKey => Convert.ToBase64String(signer.ExportSubjectPublicKeyInfo());
+    public string PublicKey => Convert.ToBase64String(_signer.ExportSubjectPublicKeyInfo());
 
     public string Sign(
         DateTime? expires = null,
@@ -24,7 +24,7 @@ internal sealed class LicenseKeyFactory : IDisposable
         SigningCredentials? credentials = null)
     {
         return ProductLicenseToken.Sign(
-            credentials ?? ProductLicenseToken.CreateSigningCredentials(signer, keyId),
+            credentials ?? ProductLicenseToken.CreateSigningCredentials(_signer, keyId),
             licensee,
             tier,
             expires ?? DateTime.UtcNow.AddYears(1),
@@ -33,5 +33,5 @@ internal sealed class LicenseKeyFactory : IDisposable
             audience);
     }
 
-    public void Dispose() => signer.Dispose();
+    public void Dispose() => _signer.Dispose();
 }

@@ -12,7 +12,7 @@ namespace Logistics.TelegramBot.Handlers;
 /// </summary>
 internal sealed class CallbackQueryHandler(IEnumerable<ITelegramCommand> telegramCommands)
 {
-    private readonly Dictionary<string, ITelegramCommand> commands = telegramCommands.ToDictionary(c => c.Name);
+    private readonly Dictionary<string, ITelegramCommand> _commands = telegramCommands.ToDictionary(c => c.Name);
 
     /// <summary>
     /// Processes an incoming callback query from Telegram.
@@ -36,7 +36,7 @@ internal sealed class CallbackQueryHandler(IEnumerable<ITelegramCommand> telegra
             return;
 
         var commandName = $"/{parts[0]}";
-        if (!commands.TryGetValue(commandName, out var command))
+        if (!_commands.TryGetValue(commandName, out var command))
             return;
 
         if (command.RequiresAuth && context is null)

@@ -14,22 +14,22 @@ namespace Logistics.Application.Tests.Integrations.Documents;
 
 public class DeliveryDocumentBlobCleanupTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IBlobStorageService blobStorage = Substitute.For<IBlobStorageService>();
-    private readonly IDocumentAccessService documentAccess = Substitute.For<IDocumentAccessService>();
-    private readonly DeliveryDocumentService sut;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IBlobStorageService _blobStorage = Substitute.For<IBlobStorageService>();
+    private readonly IDocumentAccessService _documentAccess = Substitute.For<IDocumentAccessService>();
+    private readonly DeliveryDocumentService _sut;
 
     public DeliveryDocumentBlobCleanupTests()
     {
         var caller = new DocumentCaller(Guid.NewGuid(), IsReviewer: true);
 
-        tenantUow.Repository<DeliveryDocument>()
+        _tenantUow.Repository<DeliveryDocument>()
             .Returns(Substitute.For<ITenantRepository<DeliveryDocument, Guid>>());
-        documentAccess.ResolveCallerAsync(Arg.Any<CancellationToken>()).Returns(caller);
-        documentAccess.CanAccessOwnerAsync(
+        _documentAccess.ResolveCallerAsync(Arg.Any<CancellationToken>()).Returns(caller);
+        _documentAccess.CanAccessOwnerAsync(
                 caller, DocumentOwnerType.Load, Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(true);
-        blobStorage.UploadAsync(
+        _blobStorage.UploadAsync(
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<Stream>(),
@@ -37,16 +37,16 @@ public class DeliveryDocumentBlobCleanupTests
                 Arg.Any<CancellationToken>())
             .Returns("https://storage.test/document");
 
-        sut = new DeliveryDocumentService(
-            tenantUow, blobStorage, documentAccess, NullLogger<DeliveryDocumentService>.Instance);
+        _sut = new DeliveryDocumentService(
+            _tenantUow, _blobStorage, _documentAccess, NullLogger<DeliveryDocumentService>.Instance);
     }
 
     [Fact]
     public async Task Capture_DatabaseWritesNoRows_DeletesUploadedPhoto()
     {
-        tenantUow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(0);
+        _tenantUow.SaveChangesAsync(Arg.Any<CancellationToken>()).Returns(0);
 
-        var result = await sut.CaptureAsync(
+        var result = await _sut.CaptureAsync(
             DeliveryDocumentKind.ProofOfDelivery, CaptureWithOnePhoto(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -56,10 +56,10 @@ public class DeliveryDocumentBlobCleanupTests
     [Fact]
     public async Task Capture_DatabaseSaveThrows_DeletesUploadedPhoto()
     {
-        tenantUow.SaveChangesAsync(Arg.Any<CancellationToken>())
+        _tenantUow.SaveChangesAsync(Arg.Any<CancellationToken>())
             .ThrowsAsync(new InvalidOperationException("Database unavailable"));
 
-        var result = await sut.CaptureAsync(
+        var result = await _sut.CaptureAsync(
             DeliveryDocumentKind.BillOfLading, CaptureWithOnePhoto(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -67,7 +67,7 @@ public class DeliveryDocumentBlobCleanupTests
     }
 
     private async Task ReceivedOneDeleteAsync() =>
-        await blobStorage.Received(1).DeleteAsync(
+        await _blobStorage.Received(1).DeleteAsync(
             BlobConstants.DocumentsContainerName,
             Arg.Any<string>(),
             CancellationToken.None);

@@ -12,21 +12,21 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Operations;
 
 public class GetLoadToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly GetLoadTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly GetLoadTool _sut;
 
     public GetLoadToolTests()
     {
-        sut = new GetLoadTool(mediator);
+        _sut = new GetLoadTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_MissingLoadId_ReturnsError()
     {
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
         Assert.Contains("load_id", result);
-        await mediator.DidNotReceiveWithAnyArgs().Send<Result<LoadDto>>(default!, default);
+        await _mediator.DidNotReceiveWithAnyArgs().Send<Result<LoadDto>>(default!, default);
     }
 
     [Fact]
@@ -34,10 +34,10 @@ public class GetLoadToolTests
     {
         var customer = new CustomerDto { Id = Guid.NewGuid(), Name = "Acme", Email = "ap@acme.com" };
         var load = CopilotToolTestData.CreateLoad(deliveryCost: 1800m, customer: customer);
-        mediator.Send(Arg.Any<GetLoadByIdQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetLoadByIdQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadDto>.Ok(load));
 
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["load_id"] = load.Id.ToString() }, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;

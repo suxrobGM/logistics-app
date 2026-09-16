@@ -21,8 +21,8 @@ internal sealed class JurisdictionResolver : IJurisdictionResolver
 {
     private const string ResourceName = "Logistics.Infrastructure.Routing.Data.admin1-boundaries.geojson";
 
-    private readonly STRtree<(IPreparedGeometry Geometry, TaxJurisdiction Jurisdiction)> index = new();
-    private readonly GeometryFactory geometryFactory = new();
+    private readonly STRtree<(IPreparedGeometry Geometry, TaxJurisdiction Jurisdiction)> _index = new();
+    private readonly GeometryFactory _geometryFactory = new();
 
     public JurisdictionResolver(ILogger<JurisdictionResolver> logger)
     {
@@ -45,21 +45,21 @@ internal sealed class JurisdictionResolver : IJurisdictionResolver
             }
 
             var jurisdiction = TaxJurisdiction.Create(country, region);
-            index.Insert(
+            _index.Insert(
                 feature.Geometry.EnvelopeInternal,
                 (PreparedGeometryFactory.Prepare(feature.Geometry), jurisdiction));
             count++;
         }
 
-        index.Build();
+        _index.Build();
         logger.LogInformation("Loaded {Count} jurisdiction boundary polygons", count);
     }
 
     public TaxJurisdiction? Resolve(GeoPoint point)
     {
-        var ntsPoint = geometryFactory.CreatePoint(new Coordinate(point.Longitude, point.Latitude));
+        var ntsPoint = _geometryFactory.CreatePoint(new Coordinate(point.Longitude, point.Latitude));
 
-        foreach (var (geometry, jurisdiction) in index.Query(ntsPoint.EnvelopeInternal))
+        foreach (var (geometry, jurisdiction) in _index.Query(ntsPoint.EnvelopeInternal))
         {
             if (geometry.Covers(ntsPoint))
             {

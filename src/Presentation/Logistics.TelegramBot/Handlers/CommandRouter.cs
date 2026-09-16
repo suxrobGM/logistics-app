@@ -10,7 +10,7 @@ namespace Logistics.TelegramBot.Handlers;
 /// </summary>
 internal sealed class CommandRouter(IEnumerable<ITelegramCommand> telegramCommands)
 {
-    private readonly Dictionary<string, ITelegramCommand> commands = telegramCommands.ToDictionary(c => c.Name);
+    private readonly Dictionary<string, ITelegramCommand> _commands = telegramCommands.ToDictionary(c => c.Name);
 
     public async Task RouteAsync(
         ITelegramBotClient bot,
@@ -28,7 +28,7 @@ internal sealed class CommandRouter(IEnumerable<ITelegramCommand> telegramComman
         var atIndex = commandPart.IndexOf('@');
         var commandName = atIndex > 0 ? commandPart[..atIndex] : commandPart;
 
-        if (!commands.TryGetValue(commandName, out var command))
+        if (!_commands.TryGetValue(commandName, out var command))
         {
             await bot.SendMessage(
                 message.Chat.Id,

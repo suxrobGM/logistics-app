@@ -7,7 +7,7 @@ namespace Logistics.Application.Tests.Validators;
 
 public class UpdateTenantValidatorTests
 {
-    private readonly UpdateTenantValidator sut = new();
+    private readonly UpdateTenantValidator _sut = new();
 
     private static UpdateTenantCommand BaseCommand() => new()
     {
@@ -27,7 +27,7 @@ public class UpdateTenantValidatorTests
     {
         var cmd = BaseCommand();
         cmd.VatNumber = vat;
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldNotHaveValidationErrorFor(c => c.VatNumber);
     }
 
@@ -40,7 +40,7 @@ public class UpdateTenantValidatorTests
     {
         var cmd = BaseCommand();
         cmd.VatNumber = vat;
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor(c => c.VatNumber);
     }
 
@@ -49,11 +49,11 @@ public class UpdateTenantValidatorTests
     {
         var cmd = BaseCommand();
         cmd.VatNumber = null;
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldNotHaveValidationErrorFor(c => c.VatNumber);
 
         cmd.VatNumber = "";
-        result = sut.TestValidate(cmd);
+        result = _sut.TestValidate(cmd);
         result.ShouldNotHaveValidationErrorFor(c => c.VatNumber);
     }
 
@@ -70,7 +70,7 @@ public class UpdateTenantValidatorTests
     {
         var cmd = BaseCommand();
         cmd.McNumber = mc;
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldNotHaveValidationErrorFor(c => c.McNumber);
     }
 
@@ -83,7 +83,7 @@ public class UpdateTenantValidatorTests
     {
         var cmd = BaseCommand();
         cmd.McNumber = mc;
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor(c => c.McNumber);
     }
 
@@ -99,7 +99,7 @@ public class UpdateTenantValidatorTests
     {
         var cmd = BaseCommand();
         cmd.EoriNumber = eori;
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldNotHaveValidationErrorFor(c => c.EoriNumber);
     }
 
@@ -111,7 +111,7 @@ public class UpdateTenantValidatorTests
     {
         var cmd = BaseCommand();
         cmd.EoriNumber = eori;
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor(c => c.EoriNumber);
     }
 
@@ -126,7 +126,7 @@ public class UpdateTenantValidatorTests
     {
         var cmd = BaseCommand();
         cmd.TaxResidencyCountry = code;
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldNotHaveValidationErrorFor(c => c.TaxResidencyCountry);
     }
 
@@ -137,7 +137,7 @@ public class UpdateTenantValidatorTests
     {
         var cmd = BaseCommand();
         cmd.TaxResidencyCountry = code;
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor(c => c.TaxResidencyCountry);
     }
 
@@ -157,7 +157,7 @@ public class UpdateTenantValidatorTests
             ZipCode = "10115",
             Country = "DE",
         };
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldNotHaveValidationErrorFor(c => c.CompanyAddress);
     }
 
@@ -173,7 +173,7 @@ public class UpdateTenantValidatorTests
             ZipCode = "10115",
             Country = "DE",
         };
-        var result = sut.TestValidate(cmd);
+        var result = _sut.TestValidate(cmd);
         result.ShouldHaveValidationErrorFor("CompanyAddress.State");
     }
 

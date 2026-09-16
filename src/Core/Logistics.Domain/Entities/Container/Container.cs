@@ -9,7 +9,7 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public partial class Container : AuditableEntity, ITenantEntity
 {
-    private string number = "";
+    private string _number = "";
 
     /// <summary>
     /// ISO 6346 container number - 4 letters (owner + category) + 7 digits.
@@ -21,8 +21,8 @@ public partial class Container : AuditableEntity, ITenantEntity
     /// </summary>
     public required string Number
     {
-        get => number;
-        set => number = NormalizeNumber(value);
+        get => _number;
+        set => _number = NormalizeNumber(value);
     }
 
     /// <summary>

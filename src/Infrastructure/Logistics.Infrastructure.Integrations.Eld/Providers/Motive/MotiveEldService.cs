@@ -19,7 +19,7 @@ internal class MotiveEldService(
     ILogger<MotiveEldService> logger)
     : IEldProviderService
 {
-    private readonly string baseUrl = options.Value.Motive?.BaseUrl ?? "https://api.keeptruckin.com/v1";
+    private readonly string _baseUrl = options.Value.Motive?.BaseUrl ?? "https://api.keeptruckin.com/v1";
 
     public EldProviderType ProviderType => EldProviderType.Motive;
 
@@ -32,7 +32,7 @@ internal class MotiveEldService(
     {
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/users");
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/users");
             request.Headers.Add("X-Api-Key", apiKey);
 
             var response = await httpClient.SendAsync(request);
@@ -54,7 +54,7 @@ internal class MotiveEldService(
     public async Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveHosResponse>(
-            $"{baseUrl}/hours_of_service?driver_ids={externalDriverId}",
+            $"{_baseUrl}/hours_of_service?driver_ids={externalDriverId}",
             logger,
             $"Motive HOS for driver {externalDriverId}",
             IntegrationJsonOptions.SnakeCase);
@@ -65,7 +65,7 @@ internal class MotiveEldService(
     public async Task<IEnumerable<EldDriverHosDataDto>> GetAllDriversHosStatusAsync()
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveHosResponse>(
-            $"{baseUrl}/hours_of_service",
+            $"{_baseUrl}/hours_of_service",
             logger,
             "Motive HOS (all drivers)",
             IntegrationJsonOptions.SnakeCase);
@@ -81,7 +81,7 @@ internal class MotiveEldService(
         var endStr = endDate.ToString("yyyy-MM-dd");
 
         var result = await httpClient.TryGetFromJsonAsync<MotiveDriverLogsResponse>(
-            $"{baseUrl}/driver_logs?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
+            $"{_baseUrl}/driver_logs?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
             logger,
             $"Motive HOS logs for driver {externalDriverId}",
             IntegrationJsonOptions.SnakeCase);
@@ -98,7 +98,7 @@ internal class MotiveEldService(
         var endStr = endDate.ToString("yyyy-MM-dd");
 
         var result = await httpClient.TryGetFromJsonAsync<MotiveViolationsResponse>(
-            $"{baseUrl}/hos_violations?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
+            $"{_baseUrl}/hos_violations?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
             logger,
             $"Motive violations for driver {externalDriverId}",
             IntegrationJsonOptions.SnakeCase);
@@ -108,7 +108,7 @@ internal class MotiveEldService(
     public async Task<IEnumerable<EldDriverDto>> GetAllDriversAsync()
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveUsersResponse>(
-            $"{baseUrl}/users?role=driver",
+            $"{_baseUrl}/users?role=driver",
             logger,
             "Motive users (drivers)",
             IntegrationJsonOptions.SnakeCase);
@@ -118,7 +118,7 @@ internal class MotiveEldService(
     public async Task<IEnumerable<EldVehicleDto>> GetAllVehiclesAsync()
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveVehiclesResponse>(
-            $"{baseUrl}/vehicles",
+            $"{_baseUrl}/vehicles",
             logger,
             "Motive vehicles",
             IntegrationJsonOptions.SnakeCase);

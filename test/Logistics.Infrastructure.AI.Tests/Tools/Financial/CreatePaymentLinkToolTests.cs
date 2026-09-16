@@ -12,28 +12,28 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Financial;
 
 public class CreatePaymentLinkToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly CreatePaymentLinkTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly CreatePaymentLinkTool _sut;
 
     public CreatePaymentLinkToolTests()
     {
-        sut = new CreatePaymentLinkTool(mediator);
+        _sut = new CreatePaymentLinkTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_MissingInvoiceId_ReturnsError()
     {
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
         Assert.Contains("invoice_id", result);
-        await mediator.DidNotReceiveWithAnyArgs().Send<Result<PaymentLinkDto>>(default!, default);
+        await _mediator.DidNotReceiveWithAnyArgs().Send<Result<PaymentLinkDto>>(default!, default);
     }
 
     [Fact]
     public async Task Execute_ValidInput_ReturnsLinkUrl()
     {
         var invoiceId = Guid.NewGuid();
-        mediator.Send(Arg.Any<CreatePaymentLinkCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<CreatePaymentLinkCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<PaymentLinkDto>.Ok(new PaymentLinkDto
             {
                 Id = Guid.NewGuid(),
@@ -43,7 +43,7 @@ public class CreatePaymentLinkToolTests
                 Url = "https://pay.example.com/pay/tenant/tok_123"
             }));
 
-        var result = await sut.ExecuteAsync(new JsonObject
+        var result = await _sut.ExecuteAsync(new JsonObject
         {
             ["invoice_id"] = invoiceId.ToString(),
             ["expiration_days"] = 14,
@@ -54,7 +54,7 @@ public class CreatePaymentLinkToolTests
         Assert.True(root.GetProperty("success").GetBoolean());
         Assert.Equal("https://pay.example.com/pay/tenant/tok_123", root.GetProperty("url").GetString());
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<CreatePaymentLinkCommand>(c => c.InvoiceId == invoiceId && c.ExpirationDays == 14),
             Arg.Any<CancellationToken>());
     }

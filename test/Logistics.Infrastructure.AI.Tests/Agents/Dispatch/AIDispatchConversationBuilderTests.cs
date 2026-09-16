@@ -21,36 +21,36 @@ namespace Logistics.Infrastructure.AI.Tests.Agents.Dispatch;
 
 public class AIDispatchConversationBuilderTests
 {
-    private readonly ILogger<AIDispatchConversationBuilder> logger = NullLogger<AIDispatchConversationBuilder>.Instance;
+    private readonly ILogger<AIDispatchConversationBuilder> _logger = NullLogger<AIDispatchConversationBuilder>.Instance;
 
-    private readonly AIDispatchConversationBuilder sut;
-    private readonly IAgentToolRegistry toolRegistry = Substitute.For<IAgentToolRegistry>();
-    private readonly IFeatureService featureService = Substitute.For<IFeatureService>();
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ISystemSettingsService systemSettings = Substitute.For<ISystemSettingsService>();
-    private readonly ITenantRepository<AIDispatchPolicy, Guid> policyRepo =
+    private readonly AIDispatchConversationBuilder _sut;
+    private readonly IAgentToolRegistry _toolRegistry = Substitute.For<IAgentToolRegistry>();
+    private readonly IFeatureService _featureService = Substitute.For<IFeatureService>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ISystemSettingsService _systemSettings = Substitute.For<ISystemSettingsService>();
+    private readonly ITenantRepository<AIDispatchPolicy, Guid> _policyRepo =
         Substitute.For<ITenantRepository<AIDispatchPolicy, Guid>>();
 
     public AIDispatchConversationBuilderTests()
     {
-        toolRegistry.GetDispatchAgentTools(Arg.Any<IReadOnlySet<TenantFeature>>())
+        _toolRegistry.GetDispatchAgentTools(Arg.Any<IReadOnlySet<TenantFeature>>())
             .Returns([new AgentToolDefinition("test_tool", "A test tool")]);
 
         SetTenant();
 
-        tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
+        _tenantUow.Repository<AIDispatchPolicy>().Returns(_policyRepo);
         SetPolicies();
 
         var llmOptions = MsOptions.Options.Create(ValidConfig);
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient());
         var providerFactory = new LlmProviderFactory(llmOptions, httpClientFactory);
-        var modelResolver = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);
+        var modelResolver = new LlmModelResolver(_systemSettings, NullLogger<LlmModelResolver>.Instance);
 
         var sessionSetup = new LlmSessionSetup(
-            featureService, providerFactory, modelResolver, systemSettings, tenantUow);
+            _featureService, providerFactory, modelResolver, _systemSettings, _tenantUow);
 
-        sut = new AIDispatchConversationBuilder(toolRegistry, sessionSetup, tenantUow, logger);
+        _sut = new AIDispatchConversationBuilder(_toolRegistry, sessionSetup, _tenantUow, _logger);
     }
 
     private static LlmOptions ValidConfig => new()
@@ -82,7 +82,7 @@ public class AIDispatchConversationBuilderTests
 
     private void SetTenant(params TenantPreset[] presets)
     {
-        tenantUow.GetCurrentTenant().Returns(new Tenant
+        _tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
             Name = "Test Fleet",
@@ -95,7 +95,7 @@ public class AIDispatchConversationBuilderTests
 
     private void SetPolicies(params AIDispatchPolicy[] policies)
     {
-        policyRepo.Query().Returns(policies.ToList().BuildMock());
+        _policyRepo.Query().Returns(policies.ToList().BuildMock());
     }
 
     private static AIDispatchPolicy CreatePolicy(
@@ -117,7 +117,7 @@ public class AIDispatchConversationBuilderTests
         SetPolicies();
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
     }
@@ -129,7 +129,7 @@ public class AIDispatchConversationBuilderTests
         SetPolicies(CreatePolicy(learned: "## Learned preferences\n- Prefer short hauls (5 rejections)", isEnabled: false));
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.DoesNotContain("Dispatcher Preferences", conversation.SystemPrompt);
         Assert.DoesNotContain("Prefer short hauls", conversation.SystemPrompt);
@@ -143,7 +143,7 @@ public class AIDispatchConversationBuilderTests
             directives: "- Never assign Truck 42 to hazmat"));
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.Contains("Dispatcher Preferences", conversation.SystemPrompt);
         Assert.Contains("Prefer short hauls", conversation.SystemPrompt);
@@ -161,7 +161,7 @@ public class AIDispatchConversationBuilderTests
         SetPolicies(CreatePolicy(directives: "- Prefer flatbeds out of Dallas"));
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.Contains("Dispatcher directives", conversation.SystemPrompt);
         Assert.DoesNotContain("### Learned preferences", conversation.SystemPrompt);
@@ -177,7 +177,7 @@ public class AIDispatchConversationBuilderTests
         SetTenant(TenantPreset.GeneralFreight, TenantPreset.SoloOperator);
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.Contains("## Fleet Profile: SOLO OWNER-OPERATOR", conversation.SystemPrompt);
         Assert.DoesNotContain("Maximize fleet utilization", conversation.SystemPrompt);
@@ -188,7 +188,7 @@ public class AIDispatchConversationBuilderTests
     {
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.DoesNotContain("SOLO OWNER-OPERATOR", conversation.SystemPrompt);
         Assert.Contains("Maximize fleet utilization", conversation.SystemPrompt);
@@ -201,7 +201,7 @@ public class AIDispatchConversationBuilderTests
     {
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.NotNull(conversation.Provider);
         Assert.Single(conversation.Messages);
@@ -214,7 +214,7 @@ public class AIDispatchConversationBuilderTests
     {
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.Single(conversation.Tools);
     }
@@ -224,7 +224,7 @@ public class AIDispatchConversationBuilderTests
     {
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var conversation = await sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
+        var conversation = await _sut.BuildAsync(session, CreateConversation(), ValidConfig, CancellationToken.None);
 
         Assert.NotNull(conversation.SystemPrompt);
         Assert.NotEmpty(conversation.SystemPrompt);
@@ -236,7 +236,7 @@ public class AIDispatchConversationBuilderTests
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => sut.BuildAsync(session, CreateConversation(), EmptyApiKeyConfig, CancellationToken.None));
+            () => _sut.BuildAsync(session, CreateConversation(), EmptyApiKeyConfig, CancellationToken.None));
 
         Assert.Contains("API key", ex.Message);
     }
@@ -252,7 +252,7 @@ public class AIDispatchConversationBuilderTests
         conversation.AddTextMessage(AgentMessageRole.User, "Now do the rest");
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var llmConversation = await sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
+        var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
         Assert.Equal(3, llmConversation.Messages.Count);
     }
@@ -264,7 +264,7 @@ public class AIDispatchConversationBuilderTests
         var conversation = CreateConversation("Now do the rest");
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var llmConversation = await sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
+        var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
         var lastMessage = llmConversation.Messages[^1];
         Assert.True(lastMessage.Content.Count >= 2);
@@ -280,7 +280,7 @@ public class AIDispatchConversationBuilderTests
         var conversation = CreateConversation("hi");
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        var llmConversation = await sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
+        var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
         var lastMessage = llmConversation.Messages[^1];
         var injected = Assert.IsType<Logistics.Infrastructure.AI.Llm.Contracts.LlmTextBlock>(
@@ -297,7 +297,7 @@ public class AIDispatchConversationBuilderTests
         var originalContentJson = conversation.Messages[0].ContentJson;
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        await sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
+        await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
         Assert.Equal(originalContentJson, conversation.Messages[0].ContentJson);
         Assert.DoesNotContain("Current time:", conversation.Messages[0].ContentJson);

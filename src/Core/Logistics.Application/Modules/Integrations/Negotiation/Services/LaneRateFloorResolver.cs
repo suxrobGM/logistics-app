@@ -22,7 +22,7 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
     /// A dispatch turn resolves a floor per candidate listing within one scope, and the table is
     /// small enough to filter in memory - so read it once instead of once per listing.
     /// </summary>
-    private IReadOnlyList<LaneRateFloor>? cachedFloors;
+    private IReadOnlyList<LaneRateFloor>? _cachedFloors;
 
     public async Task<EffectiveRateFloorDto> ResolveAsync(LoadBoardListing listing, CancellationToken ct = default)
     {
@@ -61,7 +61,7 @@ internal sealed class LaneRateFloorResolver(ITenantUnitOfWork tenantUow) : ILane
     }
 
     private async Task<IReadOnlyList<LaneRateFloor>> GetFloorsAsync(CancellationToken ct) =>
-        cachedFloors ??= await tenantUow.Repository<LaneRateFloor>().GetListAsync(specification: null, ct);
+        _cachedFloors ??= await tenantUow.Repository<LaneRateFloor>().GetListAsync(specification: null, ct);
 
     private static EffectiveRateFloorDto Build(
         decimal minRatePerMile,

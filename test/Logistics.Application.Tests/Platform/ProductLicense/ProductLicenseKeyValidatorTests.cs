@@ -9,23 +9,23 @@ namespace Logistics.Application.Tests.Platform.ProductLicense;
 
 public class ProductLicenseKeyValidatorTests : IDisposable
 {
-    private readonly LicenseKeyFactory keys = new();
-    private readonly ProductLicenseKeyValidator sut;
+    private readonly LicenseKeyFactory _keys = new();
+    private readonly ProductLicenseKeyValidator _sut;
 
     public ProductLicenseKeyValidatorTests()
     {
-        sut = new ProductLicenseKeyValidator(keys.PublicKey);
+        _sut = new ProductLicenseKeyValidator(_keys.PublicKey);
     }
 
-    public void Dispose() => keys.Dispose();
+    public void Dispose() => _keys.Dispose();
 
     [Fact]
     public async Task Validate_ValidKey_ReturnsLicensedWithClaims()
     {
         var expires = new DateTime(2030, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        var key = keys.Sign(expires, tier: "PerpetualSource", licensee: "Acme", maxTenants: 5, keyId: "k1");
+        var key = _keys.Sign(expires, tier: "PerpetualSource", licensee: "Acme", maxTenants: 5, keyId: "k1");
 
-        var result = await sut.ValidateAsync(key);
+        var result = await _sut.ValidateAsync(key);
 
         Assert.True(result.IsValid);
         Assert.Null(result.Error);
@@ -39,9 +39,9 @@ public class ProductLicenseKeyValidatorTests : IDisposable
     [Fact]
     public async Task Validate_ExpiredKey_ReturnsExpiredButKeepsLicensee()
     {
-        var key = keys.Sign(DateTime.UtcNow.AddDays(-1), licensee: "Old Co");
+        var key = _keys.Sign(DateTime.UtcNow.AddDays(-1), licensee: "Old Co");
 
-        var result = await sut.ValidateAsync(key);
+        var result = await _sut.ValidateAsync(key);
 
         Assert.False(result.IsValid);
         Assert.Equal("expired", result.Error);
@@ -54,7 +54,7 @@ public class ProductLicenseKeyValidatorTests : IDisposable
     {
         using var other = new LicenseKeyFactory();
 
-        var result = await sut.ValidateAsync(other.Sign());
+        var result = await _sut.ValidateAsync(other.Sign());
 
         Assert.False(result.IsValid);
         Assert.Equal("invalid signature", result.Error);
@@ -64,7 +64,7 @@ public class ProductLicenseKeyValidatorTests : IDisposable
     [Fact]
     public async Task Validate_WrongIssuer_ReturnsInvalid()
     {
-        var result = await sut.ValidateAsync(keys.Sign(issuer: "SomeoneElse"));
+        var result = await _sut.ValidateAsync(_keys.Sign(issuer: "SomeoneElse"));
 
         Assert.False(result.IsValid);
         Assert.Equal("invalid issuer", result.Error);
@@ -73,7 +73,7 @@ public class ProductLicenseKeyValidatorTests : IDisposable
     [Fact]
     public async Task Validate_WrongAudience_ReturnsInvalid()
     {
-        var result = await sut.ValidateAsync(keys.Sign(audience: "other-product"));
+        var result = await _sut.ValidateAsync(_keys.Sign(audience: "other-product"));
 
         Assert.False(result.IsValid);
         Assert.Equal("invalid audience", result.Error);
@@ -83,9 +83,9 @@ public class ProductLicenseKeyValidatorTests : IDisposable
     public async Task Validate_Hs256Token_ReturnsInvalid()
     {
         var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(new string('s', 64)));
-        var key = keys.Sign(credentials: new SigningCredentials(secret, SecurityAlgorithms.HmacSha256));
+        var key = _keys.Sign(credentials: new SigningCredentials(secret, SecurityAlgorithms.HmacSha256));
 
-        var result = await sut.ValidateAsync(key);
+        var result = await _sut.ValidateAsync(key);
 
         Assert.False(result.IsValid);
         Assert.Null(result.Licensee);
@@ -94,7 +94,7 @@ public class ProductLicenseKeyValidatorTests : IDisposable
     [Fact]
     public async Task Validate_UnknownTier_ReturnsInvalid()
     {
-        var result = await sut.ValidateAsync(keys.Sign(tier: "Platinum"));
+        var result = await _sut.ValidateAsync(_keys.Sign(tier: "Platinum"));
 
         Assert.False(result.IsValid);
         Assert.Contains("unknown tier", result.Error);
@@ -103,7 +103,7 @@ public class ProductLicenseKeyValidatorTests : IDisposable
     [Fact]
     public async Task Validate_Garbage_ReturnsInvalid()
     {
-        var result = await sut.ValidateAsync("not-a-license-key");
+        var result = await _sut.ValidateAsync("not-a-license-key");
 
         Assert.False(result.IsValid);
         Assert.Equal("malformed key", result.Error);
@@ -114,7 +114,7 @@ public class ProductLicenseKeyValidatorTests : IDisposable
     {
         var expires = DateTime.UtcNow.AddMinutes(-1);
 
-        var result = await sut.ValidateAsync(keys.Sign(expires), nowUtc: DateTime.UtcNow);
+        var result = await _sut.ValidateAsync(_keys.Sign(expires), nowUtc: DateTime.UtcNow);
 
         Assert.True(result.IsValid);
     }

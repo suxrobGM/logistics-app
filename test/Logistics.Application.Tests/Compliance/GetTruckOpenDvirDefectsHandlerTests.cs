@@ -12,16 +12,16 @@ public class GetTruckOpenDvirDefectsHandlerTests
 {
     private static readonly Guid TruckId = Guid.NewGuid();
 
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<DvirReport, Guid> reportRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<DvirReport, Guid> _reportRepo =
         Substitute.For<ITenantRepository<DvirReport, Guid>>();
 
-    private readonly GetTruckOpenDvirDefectsHandler sut;
+    private readonly GetTruckOpenDvirDefectsHandler _sut;
 
     public GetTruckOpenDvirDefectsHandlerTests()
     {
-        tenantUow.Repository<DvirReport>().Returns(reportRepo);
-        sut = new GetTruckOpenDvirDefectsHandler(tenantUow);
+        _tenantUow.Repository<DvirReport>().Returns(_reportRepo);
+        _sut = new GetTruckOpenDvirDefectsHandler(_tenantUow);
     }
 
     private static DvirReport Report(
@@ -50,7 +50,7 @@ public class GetTruckOpenDvirDefectsHandlerTests
     [Fact]
     public async Task Handle_ReturnsUncorrectedDefectsFromLatestReportPerType()
     {
-        reportRepo.Query().Returns(new List<DvirReport>
+        _reportRepo.Query().Returns(new List<DvirReport>
         {
             Report(TruckId, DvirType.PreTrip, DvirStatus.Submitted, daysAgo: 3, ("superseded", false)),
             Report(TruckId, DvirType.PreTrip, DvirStatus.RequiresRepair, daysAgo: 1, ("brake light", false), ("mirror", true)),
@@ -59,7 +59,7 @@ public class GetTruckOpenDvirDefectsHandlerTests
             Report(Guid.NewGuid(), DvirType.PreTrip, DvirStatus.Submitted, daysAgo: 0, ("other truck", false))
         }.BuildMock());
 
-        var result = await sut.Handle(new GetTruckOpenDvirDefectsQuery(TruckId), CancellationToken.None);
+        var result = await _sut.Handle(new GetTruckOpenDvirDefectsQuery(TruckId), CancellationToken.None);
 
         Assert.Equal(["brake light", "tire tread"], result.Value!.Select(d => d.Description));
     }

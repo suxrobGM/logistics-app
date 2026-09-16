@@ -8,7 +8,7 @@ namespace Logistics.Infrastructure.AI.Tests.Tools;
 
 public class AgentToolRegistryTests
 {
-    private readonly AgentToolRegistry sut = new();
+    private readonly AgentToolRegistry _sut = new();
 
     /// <summary>A tenant with no gated features - the baseline every ungated tool must survive.</summary>
     private static readonly IReadOnlySet<TenantFeature> NoFeatures = new HashSet<TenantFeature>();
@@ -22,7 +22,7 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetCopilotTools_ReturnsNonEmptyList()
     {
-        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
+        var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
 
         Assert.NotEmpty(tools);
     }
@@ -30,7 +30,7 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetCopilotTools_AllToolsHaveNameAndDescription()
     {
-        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
+        var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
 
         foreach (var tool in tools)
         {
@@ -43,7 +43,7 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetCopilotTools_ExcludesLoadBoardTools_ByDefault()
     {
-        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
+        var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
 
         Assert.DoesNotContain(tools, t => t.Name == "search_loadboard");
         Assert.DoesNotContain(tools, t => t.Name == "book_loadboard_load");
@@ -61,7 +61,7 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetCopilotTools_ContainsCoreReadTools()
     {
-        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
+        var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
         var names = tools.Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_unassigned_loads", names);
@@ -79,7 +79,7 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetCopilotTools_IntermodalToolsAreReadsNotWrites()
     {
-        var names = sut.GetCopilotTools(With(TenantFeature.IntermodalContainers), EveryPermission).Select(t => t.Name).ToHashSet();
+        var names = _sut.GetCopilotTools(With(TenantFeature.IntermodalContainers), EveryPermission).Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_container_status", names);
         Assert.Contains("get_terminal_info", names);
@@ -91,7 +91,7 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetCopilotTools_WithoutIntermodalFeature_OmitsTheIntermodalTools()
     {
-        var names = sut.GetCopilotTools(NoFeatures, EveryPermission).Select(t => t.Name).ToHashSet();
+        var names = _sut.GetCopilotTools(NoFeatures, EveryPermission).Select(t => t.Name).ToHashSet();
 
         Assert.DoesNotContain("get_container_status", names);
         Assert.DoesNotContain("get_terminal_info", names);
@@ -101,12 +101,12 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetCopilotTools_GatedGroupsAreIndependent()
     {
-        var loadBoardOnly = sut.GetCopilotTools(With(TenantFeature.LoadBoard), EveryPermission)
+        var loadBoardOnly = _sut.GetCopilotTools(With(TenantFeature.LoadBoard), EveryPermission)
             .Select(t => t.Name).ToHashSet();
         Assert.Contains("search_loadboard", loadBoardOnly);
         Assert.DoesNotContain("get_container_status", loadBoardOnly);
 
-        var intermodalOnly = sut.GetCopilotTools(With(TenantFeature.IntermodalContainers), EveryPermission)
+        var intermodalOnly = _sut.GetCopilotTools(With(TenantFeature.IntermodalContainers), EveryPermission)
             .Select(t => t.Name).ToHashSet();
         Assert.Contains("get_container_status", intermodalOnly);
         Assert.DoesNotContain("search_loadboard", intermodalOnly);
@@ -138,13 +138,13 @@ public class AgentToolRegistryTests
 
         Assert.Equal(
             AgentToolCatalog.Definitions.Select(t => t.Name),
-            sut.GetCopilotTools(everyFeature, EveryPermission).Select(t => t.Name));
+            _sut.GetCopilotTools(everyFeature, EveryPermission).Select(t => t.Name));
     }
 
     [Fact]
     public void GetCopilotTools_ContainsCoreWriteTools()
     {
-        var tools = sut.GetCopilotTools(NoFeatures, EveryPermission);
+        var tools = _sut.GetCopilotTools(NoFeatures, EveryPermission);
         var names = tools.Select(t => t.Name).ToHashSet();
 
         Assert.Contains("assign_load_to_truck", names);
@@ -170,7 +170,7 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetDispatchAgentTools_ExcludesCopilotTools()
     {
-        var names = sut.GetDispatchAgentTools(EveryFeature)
+        var names = _sut.GetDispatchAgentTools(EveryFeature)
             .Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_unassigned_loads", names);
@@ -187,7 +187,7 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetDispatchAgentTools_IsIndependentOfTheToolsPermission()
     {
-        var dispatchTools = sut.GetDispatchAgentTools(EveryFeature);
+        var dispatchTools = _sut.GetDispatchAgentTools(EveryFeature);
 
         Assert.All(dispatchTools, t => Assert.True(t.Surfaces.HasFlag(AgentSurfaces.Dispatch)));
         Assert.Equal(
@@ -218,7 +218,7 @@ public class AgentToolRegistryTests
     {
         var invoiceScope = new HashSet<string> { "Permission.Invoice.View", "Permission.Invoice.Manage" };
 
-        var names = sut.GetCopilotTools(EveryFeature, invoiceScope).Select(t => t.Name).ToHashSet();
+        var names = _sut.GetCopilotTools(EveryFeature, invoiceScope).Select(t => t.Name).ToHashSet();
 
         Assert.Contains("get_invoices", names);
         Assert.Contains("create_load_invoice", names);
@@ -242,21 +242,21 @@ public class AgentToolRegistryTests
     [Fact]
     public void GetMcpTools_PublishesNoWriteTools()
     {
-        var writes = sut.GetMcpTools(EveryFeature)
+        var writes = _sut.GetMcpTools(EveryFeature)
             .Where(t => t.IsWrite)
             .Select(t => t.Name)
             .ToList();
 
         Assert.Empty(writes);
 
-        var readTool = sut.GetMcpTools(EveryFeature).Single(t => t.Name == "get_unassigned_loads");
+        var readTool = _sut.GetMcpTools(EveryFeature).Single(t => t.Name == "get_unassigned_loads");
         Assert.DoesNotContain("takes effect immediately", readTool.Description);
     }
 
     [Fact]
     public void GetMcpTools_PublishesReadsTheAgentsCannotSee()
     {
-        var names = sut.GetMcpTools(EveryFeature).Select(t => t.Name).ToHashSet();
+        var names = _sut.GetMcpTools(EveryFeature).Select(t => t.Name).ToHashSet();
 
         Assert.Contains("search_loadboard", names);
         Assert.Contains("get_unassigned_loads", names);
@@ -270,22 +270,22 @@ public class AgentToolRegistryTests
     [Fact]
     public void McpDenialReason_MatchesWhatTheCatalogueHides()
     {
-        var published = sut.GetMcpTools(EveryFeature).Select(t => t.Name).ToHashSet();
+        var published = _sut.GetMcpTools(EveryFeature).Select(t => t.Name).ToHashSet();
 
         Assert.All(AgentToolCatalog.Definitions, t =>
-            Assert.Equal(published.Contains(t.Name), sut.McpDenialReason(t.Name, EveryFeature) is null));
+            Assert.Equal(published.Contains(t.Name), _sut.McpDenialReason(t.Name, EveryFeature) is null));
     }
 
     [Fact]
     public void McpDenialReason_UnknownName()
     {
-        Assert.NotNull(sut.McpDenialReason("hallucinated_tool", EveryFeature));
+        Assert.NotNull(_sut.McpDenialReason("hallucinated_tool", EveryFeature));
     }
 
     [Fact]
     public void GetMcpTools_WithoutTheFeature_OmitsItsTools()
     {
-        var names = sut.GetMcpTools(NoFeatures).Select(t => t.Name).ToHashSet();
+        var names = _sut.GetMcpTools(NoFeatures).Select(t => t.Name).ToHashSet();
 
         Assert.DoesNotContain("search_loadboard", names);
         Assert.DoesNotContain("get_container_status", names);
@@ -295,8 +295,8 @@ public class AgentToolRegistryTests
     [Fact]
     public void TryGetDefinition_KnownAndUnknownNames()
     {
-        Assert.NotNull(sut.TryGetDefinition("create_load_invoice"));
-        Assert.Null(sut.TryGetDefinition("hallucinated_tool"));
+        Assert.NotNull(_sut.TryGetDefinition("create_load_invoice"));
+        Assert.Null(_sut.TryGetDefinition("hallucinated_tool"));
     }
 
     #endregion

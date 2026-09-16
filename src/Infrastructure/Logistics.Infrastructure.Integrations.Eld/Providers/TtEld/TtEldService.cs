@@ -19,14 +19,14 @@ internal class TtEldService(
     ILogger<TtEldService> logger)
     : IEldProviderService, IEldGpsTrackingProvider
 {
-    private readonly string baseUrl = options.Value.TtEld?.BaseUrl ?? "https://read.tteld.com";
-    private string? usdot;
+    private readonly string _baseUrl = options.Value.TtEld?.BaseUrl ?? "https://read.tteld.com";
+    private string? _usdot;
 
     public EldProviderType ProviderType => EldProviderType.TtEld;
 
     public void Initialize(EldProviderConfiguration configuration)
     {
-        usdot = configuration.ExternalAccountId
+        _usdot = configuration.ExternalAccountId
             ?? throw new InvalidOperationException("USDOT number (ExternalAccountId) is required for TT ELD");
         httpClient.DefaultRequestHeaders.Remove("x-api-key");
         httpClient.DefaultRequestHeaders.Remove("provider-token");
@@ -39,7 +39,7 @@ internal class TtEldService(
         try
         {
             using var request = new HttpRequestMessage(HttpMethod.Get,
-                $"{baseUrl}/api/externalservice/drivers-list/{usdot}?page=1&perPage=1&is_active=true");
+                $"{_baseUrl}/api/externalservice/drivers-list/{_usdot}?page=1&perPage=1&is_active=true");
             request.Headers.Add("x-api-key", apiKey);
             request.Headers.Add("provider-token", apiSecret);
 
@@ -84,7 +84,7 @@ internal class TtEldService(
         var toStr = endDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 
         var result = await httpClient.TryGetFromJsonAsync<List<TtEldTrackingPoint>>(
-            $"{baseUrl}/api/externalservice/trackings/{usdot}/{externalDriverId}/?from={fromStr}&to={toStr}",
+            $"{_baseUrl}/api/externalservice/trackings/{_usdot}/{externalDriverId}/?from={fromStr}&to={toStr}",
             logger,
             $"TT ELD tracking for vehicle {externalDriverId}",
             IntegrationJsonOptions.CamelCase);
@@ -94,7 +94,7 @@ internal class TtEldService(
     public async Task<IEnumerable<EldDriverDto>> GetAllDriversAsync()
     {
         return await GetAllPaginatedAsync<TtEldDriversResponse, TtEldDriverData, EldDriverDto>(
-            page => $"{baseUrl}/api/externalservice/drivers-list/{usdot}?page={page}&perPage=100&is_active=true",
+            page => $"{_baseUrl}/api/externalservice/drivers-list/{_usdot}?page={page}&perPage=100&is_active=true",
             r => r.Data,
             r => r.Meta?.TotalPages ?? 1,
             TtEldMapper.MapToDriverDto,
@@ -104,7 +104,7 @@ internal class TtEldService(
     public async Task<IEnumerable<EldVehicleDto>> GetAllVehiclesAsync()
     {
         return await GetAllPaginatedAsync<TtEldUnitsResponse, TtEldUnitData, EldVehicleDto>(
-            page => $"{baseUrl}/api/externalservice/current-units/{usdot}?page={page}&perPage=100&is_active=true",
+            page => $"{_baseUrl}/api/externalservice/current-units/{_usdot}?page={page}&perPage=100&is_active=true",
             r => r.Data,
             r => r.Meta?.TotalPages ?? 1,
             TtEldMapper.MapToVehicleDto,
@@ -127,7 +127,7 @@ internal class TtEldService(
     public async Task<IEnumerable<EldVehicleLocationDto>> GetAllVehicleLocationsAsync(CancellationToken ct = default)
     {
         var result = await httpClient.TryGetFromJsonAsync<TtEldTrackingV2Response>(
-            $"{baseUrl}/api/v2/units-by-usdot/{usdot}",
+            $"{_baseUrl}/api/v2/units-by-usdot/{_usdot}",
             logger,
             "TT ELD vehicle locations",
             IntegrationJsonOptions.CamelCase,

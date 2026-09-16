@@ -13,18 +13,18 @@ namespace Logistics.Application.Tests.Negotiation;
 
 public class LaneRateFloorResolverTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<LaneRateFloor, Guid> floorRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<LaneRateFloor, Guid> _floorRepo =
         Substitute.For<ITenantRepository<LaneRateFloor, Guid>>();
-    private readonly Tenant tenant = TestTenant.Create();
+    private readonly Tenant _tenant = TestTenant.Create();
 
-    private readonly LaneRateFloorResolver sut;
+    private readonly LaneRateFloorResolver _sut;
 
     public LaneRateFloorResolverTests()
     {
-        tenantUow.Repository<LaneRateFloor>().Returns(floorRepo);
-        tenantUow.GetCurrentTenant().Returns(tenant);
-        sut = new LaneRateFloorResolver(tenantUow);
+        _tenantUow.Repository<LaneRateFloor>().Returns(_floorRepo);
+        _tenantUow.GetCurrentTenant().Returns(_tenant);
+        _sut = new LaneRateFloorResolver(_tenantUow);
     }
 
     private static LoadBoardListing Listing(
@@ -63,7 +63,7 @@ public class LaneRateFloorResolverTests
         };
 
     private void SetupLanes(params LaneRateFloor[] lanes) =>
-        floorRepo.GetListAsync(Arg.Any<ISpecification<LaneRateFloor>?>(), Arg.Any<CancellationToken>())
+        _floorRepo.GetListAsync(Arg.Any<ISpecification<LaneRateFloor>?>(), Arg.Any<CancellationToken>())
             .Returns(lanes.ToList());
 
     [Fact]
@@ -74,7 +74,7 @@ public class LaneRateFloorResolverTests
         var destinationAny = new LaneRateFloor { OriginState = null, DestinationState = "IL", MinRatePerMile = 1.00m };
         SetupLanes(exact, originAny, destinationAny);
 
-        var result = await sut.ResolveAsync(Listing(), CancellationToken.None);
+        var result = await _sut.ResolveAsync(Listing(), CancellationToken.None);
 
         Assert.True(result.HasFloor);
         Assert.Equal(RateFloorSource.LaneExact, result.Source);
@@ -88,7 +88,7 @@ public class LaneRateFloorResolverTests
         var destinationAny = new LaneRateFloor { OriginState = null, DestinationState = "IL", MinRatePerMile = 1.00m };
         SetupLanes(originAny, destinationAny);
 
-        var result = await sut.ResolveAsync(Listing(), CancellationToken.None);
+        var result = await _sut.ResolveAsync(Listing(), CancellationToken.None);
 
         Assert.Equal(RateFloorSource.LaneOriginAny, result.Source);
     }
@@ -99,7 +99,7 @@ public class LaneRateFloorResolverTests
         var destinationAny = new LaneRateFloor { OriginState = null, DestinationState = "IL", MinRatePerMile = 1.00m };
         SetupLanes(destinationAny);
 
-        var result = await sut.ResolveAsync(Listing(), CancellationToken.None);
+        var result = await _sut.ResolveAsync(Listing(), CancellationToken.None);
 
         Assert.Equal(RateFloorSource.LaneDestinationAny, result.Source);
     }
@@ -110,7 +110,7 @@ public class LaneRateFloorResolverTests
         var exact = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 3.00m };
         SetupLanes(exact);
 
-        var result = await sut.ResolveAsync(
+        var result = await _sut.ResolveAsync(
             Listing(originState: " tx ", destinationState: " il "), CancellationToken.None);
 
         Assert.Equal(RateFloorSource.LaneExact, result.Source);
@@ -120,9 +120,9 @@ public class LaneRateFloorResolverTests
     public async Task ResolveAsync_NoLaneMatch_FallsBackToTenantDefault()
     {
         SetupLanes();
-        tenant.Settings.DefaultRateFloorPerMile = 1.75m;
+        _tenant.Settings.DefaultRateFloorPerMile = 1.75m;
 
-        var result = await sut.ResolveAsync(Listing(), CancellationToken.None);
+        var result = await _sut.ResolveAsync(Listing(), CancellationToken.None);
 
         Assert.True(result.HasFloor);
         Assert.Equal(RateFloorSource.TenantDefault, result.Source);
@@ -135,7 +135,7 @@ public class LaneRateFloorResolverTests
     {
         SetupLanes();
 
-        var result = await sut.ResolveAsync(Listing(), CancellationToken.None);
+        var result = await _sut.ResolveAsync(Listing(), CancellationToken.None);
 
         Assert.False(result.HasFloor);
         Assert.Equal(RateFloorSource.None, result.Source);
@@ -148,7 +148,7 @@ public class LaneRateFloorResolverTests
         var lane = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 3.00m };
         SetupLanes(lane);
 
-        var result = await sut.ResolveAsync(
+        var result = await _sut.ResolveAsync(
             Listing(distance: 1000, ratePerMile: 2.00m), CancellationToken.None);
 
         Assert.True(result.ListingBelowFloor);
@@ -161,7 +161,7 @@ public class LaneRateFloorResolverTests
         var lane = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 2.00m };
         SetupLanes(lane);
 
-        var result = await sut.ResolveAsync(
+        var result = await _sut.ResolveAsync(
             Listing(distance: 1000, ratePerMile: 2.50m), CancellationToken.None);
 
         Assert.False(result.ListingBelowFloor);
@@ -173,7 +173,7 @@ public class LaneRateFloorResolverTests
         var lane = new LaneRateFloor { OriginState = "TX", DestinationState = "IL", MinRatePerMile = 3.00m };
         SetupLanes(lane);
 
-        var result = await sut.ResolveAsync(
+        var result = await _sut.ResolveAsync(
             Listing(distance: null, ratePerMile: 2.00m), CancellationToken.None);
 
         Assert.True(result.ListingBelowFloor);
@@ -192,7 +192,7 @@ public class LaneRateFloorResolverTests
         };
         SetupLanes(lane);
 
-        var result = await sut.ResolveAsync(
+        var result = await _sut.ResolveAsync(
             Listing(distance: null, ratePerMile: null, totalRate: new Money { Amount = 800m, Currency = "USD" }),
             CancellationToken.None);
 

@@ -8,7 +8,7 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// </summary>
 internal sealed class AgentSessionCancellationRegistry
 {
-    private readonly ConcurrentDictionary<Guid, CancellationTokenSource> sessions = new();
+    private readonly ConcurrentDictionary<Guid, CancellationTokenSource> _sessions = new();
 
     /// <summary>
     /// Registers a session and returns a linked CancellationToken that can be cancelled by the
@@ -24,7 +24,7 @@ internal sealed class AgentSessionCancellationRegistry
         if (deadline is { } timeout && timeout > TimeSpan.Zero)
             cts.CancelAfter(timeout);
 
-        sessions[sessionId] = cts;
+        _sessions[sessionId] = cts;
         return cts.Token;
     }
 
@@ -33,7 +33,7 @@ internal sealed class AgentSessionCancellationRegistry
     /// </summary>
     public bool TryCancel(Guid sessionId)
     {
-        if (!sessions.TryGetValue(sessionId, out var cts))
+        if (!_sessions.TryGetValue(sessionId, out var cts))
             return false;
 
         cts.Cancel();
@@ -46,7 +46,7 @@ internal sealed class AgentSessionCancellationRegistry
     /// </summary>
     public void Unregister(Guid sessionId)
     {
-        if (sessions.TryRemove(sessionId, out var cts))
+        if (_sessions.TryRemove(sessionId, out var cts))
             cts.Dispose();
     }
 }

@@ -22,8 +22,8 @@ internal class CurrentTenantAccessor(
 {
     private const string TenantHeader = "X-Tenant";
 
-    private readonly HttpContext? httpContext = contextAccessor?.HttpContext;
-    private Tenant? cachedTenant;
+    private readonly HttpContext? _httpContext = contextAccessor?.HttpContext;
+    private Tenant? _cachedTenant;
 
     public Tenant GetCurrentTenant()
     {
@@ -32,15 +32,15 @@ internal class CurrentTenantAccessor(
 
     public async Task<Tenant> GetCurrentTenantAsync(CancellationToken ct = default)
     {
-        if (cachedTenant is not null)
+        if (_cachedTenant is not null)
         {
-            return cachedTenant;
+            return _cachedTenant;
         }
 
         // No HttpContext (e.g., background worker): return default/local tenant
-        if (httpContext is null)
+        if (_httpContext is null)
         {
-            return cachedTenant = CreateDefaultTenant();
+            return _cachedTenant = CreateDefaultTenant();
         }
 
         var tenantId = ResolveTenantIdFromHttpContext();
@@ -55,22 +55,22 @@ internal class CurrentTenantAccessor(
 
         CheckSubscription(tenant);
 
-        return cachedTenant = tenant;
+        return _cachedTenant = tenant;
     }
 
     private async Task EnsureAuthenticatedUserHasAccessAsync(Tenant tenant, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(httpContext!.User.FindFirstValue(CustomClaimTypes.Tenant)))
+        if (string.IsNullOrWhiteSpace(_httpContext!.User.FindFirstValue(CustomClaimTypes.Tenant)))
         {
             return;
         }
 
-        if (httpContext.User.GetTenantId() == tenant.Id)
+        if (_httpContext.User.GetTenantId() == tenant.Id)
         {
             return;
         }
 
-        var userId = httpContext.User.GetUserId();
+        var userId = _httpContext.User.GetUserId();
 
         if (userId is not null)
         {
@@ -108,21 +108,21 @@ internal class CurrentTenantAccessor(
     private string ResolveTenantIdFromHttpContext()
     {
         // 0) MCP API key context (set by ApiKeyAuthenticationHandler)
-        if (httpContext!.Items.TryGetValue("McpTenantId", out var mcpTenantId)
+        if (_httpContext!.Items.TryGetValue("McpTenantId", out var mcpTenantId)
             && mcpTenantId is Guid tenantGuid)
         {
             return tenantGuid.ToString();
         }
 
         // 1) Header
-        var headerValue = httpContext.Request.Headers[TenantHeader].FirstOrDefault();
+        var headerValue = _httpContext.Request.Headers[TenantHeader].FirstOrDefault();
         if (!string.IsNullOrWhiteSpace(headerValue))
         {
             return headerValue;
         }
 
         // 2) Claim
-        var claimValue = httpContext.User.FindFirstValue(CustomClaimTypes.Tenant);
+        var claimValue = _httpContext.User.FindFirstValue(CustomClaimTypes.Tenant);
 
         if (!string.IsNullOrWhiteSpace(claimValue))
         {
@@ -160,7 +160,7 @@ internal class CurrentTenantAccessor(
     /// </summary>
     private bool ShouldBypassSubscriptionCheck()
     {
-        var path = httpContext?.Request.Path;
+        var path = _httpContext?.Request.Path;
 
         if (!path.HasValue)
         {

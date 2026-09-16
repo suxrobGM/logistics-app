@@ -12,26 +12,26 @@ namespace Logistics.Application.Tests.Platform;
 
 public class GetOnboardingProgressHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IFeatureService featureService = Substitute.For<IFeatureService>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IFeatureService _featureService = Substitute.For<IFeatureService>();
 
-    private readonly ITenantRepository<Truck, Guid> truckRepo =
+    private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly ITenantRepository<Employee, Guid> employeeRepo =
+    private readonly ITenantRepository<Employee, Guid> _employeeRepo =
         Substitute.For<ITenantRepository<Employee, Guid>>();
-    private readonly ITenantRepository<Customer, Guid> customerRepo =
+    private readonly ITenantRepository<Customer, Guid> _customerRepo =
         Substitute.For<ITenantRepository<Customer, Guid>>();
-    private readonly ITenantRepository<Load, Guid> loadRepo =
+    private readonly ITenantRepository<Load, Guid> _loadRepo =
         Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly ITenantRepository<EldProviderConfiguration, Guid> eldConfigRepo =
+    private readonly ITenantRepository<EldProviderConfiguration, Guid> _eldConfigRepo =
         Substitute.For<ITenantRepository<EldProviderConfiguration, Guid>>();
 
-    private readonly Tenant tenant;
-    private readonly GetOnboardingProgressHandler sut;
+    private readonly Tenant _tenant;
+    private readonly GetOnboardingProgressHandler _sut;
 
     public GetOnboardingProgressHandlerTests()
     {
-        tenant = new Tenant
+        _tenant = new Tenant
         {
             Name = "acme",
             CompanyAddress = new Address
@@ -46,27 +46,27 @@ public class GetOnboardingProgressHandlerTests
             BillingEmail = "billing@acme.test"
         };
 
-        tenantUow.GetCurrentTenant().Returns(tenant);
-        tenantUow.Repository<Truck>().Returns(truckRepo);
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
-        tenantUow.Repository<Customer>().Returns(customerRepo);
-        tenantUow.Repository<Load>().Returns(loadRepo);
-        tenantUow.Repository<EldProviderConfiguration>().Returns(eldConfigRepo);
+        _tenantUow.GetCurrentTenant().Returns(_tenant);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
+        _tenantUow.Repository<Customer>().Returns(_customerRepo);
+        _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _tenantUow.Repository<EldProviderConfiguration>().Returns(_eldConfigRepo);
 
-        truckRepo.Query().Returns(QueryOf<Truck>(0));
-        employeeRepo.Query().Returns(QueryOf<Employee>(0));
-        customerRepo.Query().Returns(QueryOf<Customer>(0));
-        loadRepo.Query().Returns(QueryOf<Load>(0));
-        eldConfigRepo.Query().Returns(QueryOf<EldProviderConfiguration>(0));
+        _truckRepo.Query().Returns(QueryOf<Truck>(0));
+        _employeeRepo.Query().Returns(QueryOf<Employee>(0));
+        _customerRepo.Query().Returns(QueryOf<Customer>(0));
+        _loadRepo.Query().Returns(QueryOf<Load>(0));
+        _eldConfigRepo.Query().Returns(QueryOf<EldProviderConfiguration>(0));
 
         EnableFeatures(Enum.GetValues<TenantFeature>());
 
-        sut = new GetOnboardingProgressHandler(tenantUow, featureService);
+        _sut = new GetOnboardingProgressHandler(_tenantUow, _featureService);
     }
 
     private void EnableFeatures(params TenantFeature[] features)
     {
-        featureService.GetEnabledFeaturesAsync(Arg.Any<Guid>()).Returns(features);
+        _featureService.GetEnabledFeaturesAsync(Arg.Any<Guid>()).Returns(features);
     }
 
     private static IQueryable<T> QueryOf<T>(int count) where T : class
@@ -77,7 +77,7 @@ public class GetOnboardingProgressHandlerTests
     [Fact]
     public async Task Handle_FleetMode_EmitsAllSevenStepsIncomplete()
     {
-        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(
@@ -89,19 +89,19 @@ public class GetOnboardingProgressHandlerTests
     [Fact]
     public async Task Handle_SoloOperator_OmitsInviteTeamStep()
     {
-        tenant.Presets = [TenantPreset.GeneralFreight, TenantPreset.SoloOperator];
+        _tenant.Presets = [TenantPreset.GeneralFreight, TenantPreset.SoloOperator];
 
-        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.DoesNotContain(result.Value!.Steps, s => s.Key == "inviteTeam");
         Assert.Equal(6, result.Value.Steps.Count);
-        employeeRepo.DidNotReceive().Query();
+        _employeeRepo.DidNotReceive().Query();
     }
 
     [Fact]
     public async Task Handle_PopulatedTenant_MarksStepsComplete()
     {
-        tenant.CompanyAddress = new Address
+        _tenant.CompanyAddress = new Address
         {
             Line1 = "1 Main St",
             City = "Dallas",
@@ -109,14 +109,14 @@ public class GetOnboardingProgressHandlerTests
             ZipCode = "75001",
             Country = "US"
         };
-        tenant.ConnectStatus = StripeConnectStatus.Active;
-        truckRepo.Query().Returns(QueryOf<Truck>(3));
-        employeeRepo.Query().Returns(QueryOf<Employee>(4));
-        customerRepo.Query().Returns(QueryOf<Customer>(2));
-        loadRepo.Query().Returns(QueryOf<Load>(7));
-        eldConfigRepo.Query().Returns(QueryOf<EldProviderConfiguration>(1));
+        _tenant.ConnectStatus = StripeConnectStatus.Active;
+        _truckRepo.Query().Returns(QueryOf<Truck>(3));
+        _employeeRepo.Query().Returns(QueryOf<Employee>(4));
+        _customerRepo.Query().Returns(QueryOf<Customer>(2));
+        _loadRepo.Query().Returns(QueryOf<Load>(7));
+        _eldConfigRepo.Query().Returns(QueryOf<EldProviderConfiguration>(1));
 
-        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.All(result.Value!.Steps, s => Assert.True(s.IsComplete));
     }
@@ -124,9 +124,9 @@ public class GetOnboardingProgressHandlerTests
     [Fact]
     public async Task Handle_SingleEmployee_InviteTeamIncomplete()
     {
-        employeeRepo.Query().Returns(QueryOf<Employee>(1));
+        _employeeRepo.Query().Returns(QueryOf<Employee>(1));
 
-        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.False(result.Value!.Steps.Single(s => s.Key == "inviteTeam").IsComplete);
     }
@@ -138,9 +138,9 @@ public class GetOnboardingProgressHandlerTests
     [InlineData(StripeConnectStatus.Disabled)]
     public async Task Handle_ConnectStatusNotActive_GetPaidIncomplete(StripeConnectStatus status)
     {
-        tenant.ConnectStatus = status;
+        _tenant.ConnectStatus = status;
 
-        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.False(result.Value!.Steps.Single(s => s.Key == "getPaid").IsComplete);
     }
@@ -151,10 +151,10 @@ public class GetOnboardingProgressHandlerTests
         EnableFeatures(
             [.. Enum.GetValues<TenantFeature>().Where(f => f is not TenantFeature.Eld)]);
 
-        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.DoesNotContain(result.Value!.Steps, s => s.Key == "connectEld");
-        eldConfigRepo.DidNotReceive().Query();
+        _eldConfigRepo.DidNotReceive().Query();
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public class GetOnboardingProgressHandlerTests
     {
         EnableFeatures();
 
-        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.Equal(["companyProfile"], result.Value!.Steps.Select(s => s.Key));
     }
@@ -170,7 +170,7 @@ public class GetOnboardingProgressHandlerTests
     [Fact]
     public async Task Handle_PartialCompanyAddress_CompanyProfileIncomplete()
     {
-        tenant.CompanyAddress = new Address
+        _tenant.CompanyAddress = new Address
         {
             Line1 = "1 Main St",
             City = "Dallas",
@@ -179,7 +179,7 @@ public class GetOnboardingProgressHandlerTests
             Country = "US"
         };
 
-        var result = await sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetOnboardingProgressQuery(), CancellationToken.None);
 
         Assert.False(result.Value!.Steps.Single(s => s.Key == "companyProfile").IsComplete);
     }

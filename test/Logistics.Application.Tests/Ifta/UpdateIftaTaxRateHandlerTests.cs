@@ -11,22 +11,22 @@ namespace Logistics.Application.Tests.Ifta;
 
 public class UpdateIftaTaxRateHandlerTests
 {
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
-    private readonly IMasterRepository<IftaTaxRate, Guid> rateRepo =
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly IMasterRepository<IftaTaxRate, Guid> _rateRepo =
         Substitute.For<IMasterRepository<IftaTaxRate, Guid>>();
 
-    private readonly UpdateIftaTaxRateHandler sut;
-    private readonly Guid rateId = Guid.NewGuid();
+    private readonly UpdateIftaTaxRateHandler _sut;
+    private readonly Guid _rateId = Guid.NewGuid();
 
     public UpdateIftaTaxRateHandlerTests()
     {
-        masterUow.Repository<IftaTaxRate>().Returns(rateRepo);
-        sut = new UpdateIftaTaxRateHandler(masterUow, Substitute.For<ILogger<UpdateIftaTaxRateHandler>>());
+        _masterUow.Repository<IftaTaxRate>().Returns(_rateRepo);
+        _sut = new UpdateIftaTaxRateHandler(_masterUow, Substitute.For<ILogger<UpdateIftaTaxRateHandler>>());
     }
 
     private UpdateIftaTaxRateCommand Command() => new()
     {
-        Id = rateId,
+        Id = _rateId,
         CountryCode = "US",
         Region = "TX",
         Year = 2027,
@@ -45,43 +45,43 @@ public class UpdateIftaTaxRateHandlerTests
     [Fact]
     public async Task Handle_RateNotFound_ReturnsFail()
     {
-        rateRepo.GetByIdAsync(rateId, Arg.Any<CancellationToken>()).Returns((IftaTaxRate?)null);
+        _rateRepo.GetByIdAsync(_rateId, Arg.Any<CancellationToken>()).Returns((IftaTaxRate?)null);
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("not found", result.Error);
-        await masterUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _masterUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_NoConflict_UpdatesRateAndSaves()
     {
         var rate = Rate();
-        rateRepo.GetByIdAsync(rateId, Arg.Any<CancellationToken>()).Returns(rate);
-        rateRepo.GetAsync(Arg.Any<Expression<Func<IftaTaxRate, bool>>>(), Arg.Any<CancellationToken>())
+        _rateRepo.GetByIdAsync(_rateId, Arg.Any<CancellationToken>()).Returns(rate);
+        _rateRepo.GetAsync(Arg.Any<Expression<Func<IftaTaxRate, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((IftaTaxRate?)null);
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(0.21m, rate.RatePerGallon);
-        rateRepo.Received(1).Update(rate);
-        await masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        _rateRepo.Received(1).Update(rate);
+        await _masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_ConflictsWithAnotherRate_ReturnsFail()
     {
         var rate = Rate(region: "OK");
-        rateRepo.GetByIdAsync(rateId, Arg.Any<CancellationToken>()).Returns(rate);
-        rateRepo.GetAsync(Arg.Any<Expression<Func<IftaTaxRate, bool>>>(), Arg.Any<CancellationToken>())
+        _rateRepo.GetByIdAsync(_rateId, Arg.Any<CancellationToken>()).Returns(rate);
+        _rateRepo.GetAsync(Arg.Any<Expression<Func<IftaTaxRate, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(Rate());
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("already exists", result.Error);
-        await masterUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _masterUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

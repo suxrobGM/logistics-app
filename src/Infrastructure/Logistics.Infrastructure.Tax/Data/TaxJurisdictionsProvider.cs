@@ -4,9 +4,9 @@ namespace Logistics.Infrastructure.Tax.Data;
 
 internal sealed class TaxJurisdictionsProvider : ITaxJurisdictionsProvider
 {
-    private readonly Lazy<IReadOnlyList<TaxJurisdictionInfo>> jurisdictions = new(BuildList);
+    private readonly Lazy<IReadOnlyList<TaxJurisdictionInfo>> _jurisdictions = new(BuildList);
 
-    public IReadOnlyList<TaxJurisdictionInfo> GetSupportedJurisdictions() => jurisdictions.Value;
+    public IReadOnlyList<TaxJurisdictionInfo> GetSupportedJurisdictions() => _jurisdictions.Value;
 
     private static IReadOnlyList<TaxJurisdictionInfo> BuildList()
     {

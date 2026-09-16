@@ -16,26 +16,26 @@ namespace Logistics.Application.Tests.Operations;
 /// </summary>
 public class NaturalKeySearchTests
 {
-    private readonly ITenantRepository<Container, Guid> containerRepo =
+    private readonly ITenantRepository<Container, Guid> _containerRepo =
         Substitute.For<ITenantRepository<Container, Guid>>();
 
-    private readonly ITenantRepository<Terminal, Guid> terminalRepo =
+    private readonly ITenantRepository<Terminal, Guid> _terminalRepo =
         Substitute.For<ITenantRepository<Terminal, Guid>>();
 
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
 
     public NaturalKeySearchTests()
     {
-        tenantUow.Repository<Container>().Returns(containerRepo);
-        tenantUow.Repository<Terminal>().Returns(terminalRepo);
+        _tenantUow.Repository<Container>().Returns(_containerRepo);
+        _tenantUow.Repository<Terminal>().Returns(_terminalRepo);
 
-        containerRepo.Query().Returns(new List<Container>
+        _containerRepo.Query().Returns(new List<Container>
         {
             new() { Number = "MSCU1234567", IsoType = ContainerIsoType.Gp20 },
             new() { Number = "TCLU7654321", IsoType = ContainerIsoType.Gp40 }
         }.BuildMock());
 
-        terminalRepo.Query().Returns(new List<Terminal> { NewTerminal("USLAX"), NewTerminal("DEHAM") }.BuildMock());
+        _terminalRepo.Query().Returns(new List<Terminal> { NewTerminal("USLAX"), NewTerminal("DEHAM") }.BuildMock());
     }
 
     private static Terminal NewTerminal(string code) => new()
@@ -61,7 +61,7 @@ public class NaturalKeySearchTests
     [InlineData("mscu")]
     public async Task GetContainers_SearchIsCaseAndWhitespaceInsensitive(string search)
     {
-        var sut = new GetContainersHandler(tenantUow);
+        var sut = new GetContainersHandler(_tenantUow);
 
         var result = await sut.Handle(new GetContainersQuery { Search = search }, CancellationToken.None);
 
@@ -74,7 +74,7 @@ public class NaturalKeySearchTests
     [InlineData(" uslax ")]
     public async Task GetTerminals_SearchIsCaseAndWhitespaceInsensitive(string search)
     {
-        var sut = new GetTerminalsHandler(tenantUow);
+        var sut = new GetTerminalsHandler(_tenantUow);
 
         var result = await sut.Handle(new GetTerminalsQuery { Search = search }, CancellationToken.None);
 
@@ -85,7 +85,7 @@ public class NaturalKeySearchTests
     [Fact]
     public async Task GetTerminals_StillMatchesOnFreeFormName()
     {
-        var sut = new GetTerminalsHandler(tenantUow);
+        var sut = new GetTerminalsHandler(_tenantUow);
 
         var result = await sut.Handle(new GetTerminalsQuery { Search = "Terminal DEHAM" }, CancellationToken.None);
 

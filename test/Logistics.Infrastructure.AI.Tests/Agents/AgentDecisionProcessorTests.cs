@@ -19,21 +19,21 @@ namespace Logistics.Infrastructure.AI.Tests.Agents;
 
 public class AgentDecisionProcessorTests
 {
-    private readonly ITenantRepository<AgentDecision, Guid> decisionRepo =
+    private readonly ITenantRepository<AgentDecision, Guid> _decisionRepo =
         Substitute.For<ITenantRepository<AgentDecision, Guid>>();
 
-    private readonly ILogger<AgentDecisionProcessor> logger = NullLogger<AgentDecisionProcessor>.Instance;
+    private readonly ILogger<AgentDecisionProcessor> _logger = NullLogger<AgentDecisionProcessor>.Instance;
 
-    private readonly AgentDecisionProcessor sut;
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IAgentToolExecutor toolExecutor = Substitute.For<IAgentToolExecutor>();
-    private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
-    private readonly IAgentToolRegistry toolRegistry = new AgentToolRegistry();
+    private readonly AgentDecisionProcessor _sut;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IAgentToolExecutor _toolExecutor = Substitute.For<IAgentToolExecutor>();
+    private readonly IAIDispatchBroadcastService _broadcastService = Substitute.For<IAIDispatchBroadcastService>();
+    private readonly IAgentToolRegistry _toolRegistry = new AgentToolRegistry();
 
     public AgentDecisionProcessorTests()
     {
-        tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
-        tenantUow.GetCurrentTenant().Returns(new Tenant
+        _tenantUow.Repository<AgentDecision>().Returns(_decisionRepo);
+        _tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
             Name = "Test Tenant",
@@ -41,7 +41,7 @@ public class AgentDecisionProcessorTests
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });
-        sut = new AgentDecisionProcessor(toolExecutor, toolRegistry, tenantUow, broadcastService, logger);
+        _sut = new AgentDecisionProcessor(_toolExecutor, _toolRegistry, _tenantUow, _broadcastService, _logger);
     }
 
     private static AgentSession CreateSession()
@@ -65,15 +65,15 @@ public class AgentDecisionProcessorTests
         var session = CreateSession();
         var toolUse = CreateToolUse("get_available_trucks");
 
-        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new InvalidOperationException("Trip is not in Draft status"));
 
-        var results = await sut.ProcessToolCallsAsync(
+        var results = await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
 
         Assert.Single(results);
 
-        await decisionRepo.Received(1).AddAsync(
+        await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d =>
                 d.Status == AgentDecisionStatus.Failed &&
                 d.ToolOutput!.Contains("Trip is not in Draft status")),
@@ -87,17 +87,17 @@ public class AgentDecisionProcessorTests
         var first = CreateToolUse("get_available_trucks");
         var second = CreateToolUse("get_unassigned_loads");
 
-        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new OperationCanceledException());
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            sut.ProcessToolCallsAsync(
+            _sut.ProcessToolCallsAsync(
                 session, new ToolCallContext(), [first, second], null,
                 CancellationToken.None));
 
         // A cancel must stop the batch, not degrade into a failed decision and carry on executing
         // the remaining tools.
-        await toolExecutor.DidNotReceive().ExecuteToolAsync(
+        await _toolExecutor.DidNotReceive().ExecuteToolAsync(
             "get_unassigned_loads", Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
@@ -107,18 +107,18 @@ public class AgentDecisionProcessorTests
         var session = CreateSession();
         var toolUse = CreateToolUse("get_available_trucks");
 
-        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new InvalidOperationException(
                 "Login failed for user 'sa'; unauthorized at Host=db-prod-01;Password=hunter2"));
 
-        var results = await sut.ProcessToolCallsAsync(
+        var results = await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
 
         // The decision row is tenant-visible and the same text is fed back to the model.
         Assert.DoesNotContain("hunter2", results[0].Content);
         Assert.DoesNotContain("db-prod-01", results[0].Content);
 
-        await decisionRepo.Received(1).AddAsync(
+        await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d =>
                 d.Status == AgentDecisionStatus.Failed &&
                 !d.ToolOutput!.Contains("hunter2")),
@@ -142,13 +142,13 @@ public class AgentDecisionProcessorTests
         var session = CreateSession();
         var toolUse = CreateToolUse(toolName);
 
-        toolExecutor.ExecuteToolAsync(toolName, Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync(toolName, Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        await sut.ProcessToolCallsAsync(
+        await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
 
-        await decisionRepo.Received(1).AddAsync(
+        await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d => d.Type == expectedType),
             Arg.Any<CancellationToken>());
     }
@@ -167,7 +167,7 @@ public class AgentDecisionProcessorTests
     [InlineData("calculate_distance", false)]
     public void Registry_ClassifiesWriteToolsCorrectly(string toolName, bool expected)
     {
-        Assert.Equal(expected, toolRegistry.TryGetDefinition(toolName)!.IsWrite);
+        Assert.Equal(expected, _toolRegistry.TryGetDefinition(toolName)!.IsWrite);
     }
 
     #endregion
@@ -181,12 +181,12 @@ public class AgentDecisionProcessorTests
         var toolUse = CreateToolUse("get_available_trucks");
         var context = new ToolCallContext(CallerPermissions: new HashSet<string>());
 
-        var results = await sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
+        var results = await _sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
 
         Assert.Contains("permission_denied", Assert.Single(results).Content);
-        await toolExecutor.DidNotReceive().ExecuteToolAsync(
+        await _toolExecutor.DidNotReceive().ExecuteToolAsync(
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
-        await decisionRepo.Received(1).AddAsync(
+        await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d => d.Status == AgentDecisionStatus.Failed),
             Arg.Any<CancellationToken>());
     }
@@ -199,12 +199,12 @@ public class AgentDecisionProcessorTests
         var context = new ToolCallContext(
             CallerPermissions: new HashSet<string> { "Permission.Dispatch.View" });
 
-        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        await sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
+        await _sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
 
-        await toolExecutor.Received(1).ExecuteToolAsync(
+        await _toolExecutor.Received(1).ExecuteToolAsync(
             "get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
@@ -221,13 +221,13 @@ public class AgentDecisionProcessorTests
                 return Task.CompletedTask;
             });
 
-        toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        await sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
+        await _sut.ProcessToolCallsAsync(session, context, [toolUse], null, CancellationToken.None);
 
         Assert.Single(overridden);
-        await broadcastService.DidNotReceive().BroadcastDecisionAsync(
+        await _broadcastService.DidNotReceive().BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 
@@ -245,17 +245,17 @@ public class AgentDecisionProcessorTests
             ["truck_id"] = Guid.NewGuid().ToString()
         });
 
-        var results = await sut.ProcessToolCallsAsync(
+        var results = await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], "reasoning", CancellationToken.None);
 
         Assert.Single(results);
 
         // Tool executor should NOT be called - suggestion only, never executed inline.
-        await toolExecutor.DidNotReceive().ExecuteToolAsync(
+        await _toolExecutor.DidNotReceive().ExecuteToolAsync(
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
 
         // Decision should be persisted
-        await decisionRepo.Received(1).AddAsync(
+        await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d =>
                 d.Status == AgentDecisionStatus.Suggested &&
                 d.ToolName == "assign_load_to_truck"),
@@ -272,15 +272,15 @@ public class AgentDecisionProcessorTests
             ["load_ids"] = new JsonArray(Guid.NewGuid().ToString())
         });
 
-        var results = await sut.ProcessToolCallsAsync(
+        var results = await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
 
         Assert.Single(results);
 
-        await toolExecutor.DidNotReceive().ExecuteToolAsync(
+        await _toolExecutor.DidNotReceive().ExecuteToolAsync(
             "create_trip", Arg.Any<string>(), Arg.Any<CancellationToken>());
 
-        await decisionRepo.Received(1).AddAsync(
+        await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d =>
                 d.Status == AgentDecisionStatus.Suggested &&
                 d.ExecutedAt == null),
@@ -293,15 +293,15 @@ public class AgentDecisionProcessorTests
         var session = CreateSession();
         var toolUse = CreateToolUse("get_available_trucks");
 
-        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{\"total_trucks\": 5}");
 
-        var results = await sut.ProcessToolCallsAsync(
+        var results = await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
 
         Assert.Single(results);
 
-        await toolExecutor.Received(1).ExecuteToolAsync(
+        await _toolExecutor.Received(1).ExecuteToolAsync(
             "get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
@@ -322,13 +322,13 @@ public class AgentDecisionProcessorTests
             ["truck_id"] = truckId.ToString()
         });
 
-        toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{\"success\": true}");
 
-        await sut.ProcessToolCallsAsync(
+        await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
 
-        await decisionRepo.Received(1).AddAsync(
+        await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d =>
                 d.LoadId == loadId && d.TruckId == truckId),
             Arg.Any<CancellationToken>());
@@ -344,13 +344,13 @@ public class AgentDecisionProcessorTests
             ["truck_id"] = "also-not-a-guid"
         });
 
-        toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{\"success\": true}");
 
-        await sut.ProcessToolCallsAsync(
+        await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
 
-        await decisionRepo.Received(1).AddAsync(
+        await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d =>
                 d.LoadId == null && d.TruckId == null),
             Arg.Any<CancellationToken>());
@@ -365,7 +365,7 @@ public class AgentDecisionProcessorTests
     {
         var session = CreateSession();
 
-        toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
         var tools = new List<LlmToolUseBlock>
@@ -375,7 +375,7 @@ public class AgentDecisionProcessorTests
             CreateToolUse("get_available_trucks")
         };
 
-        await sut.ProcessToolCallsAsync(
+        await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), tools, "analyzing fleet", CancellationToken.None);
 
         Assert.Equal(3, session.DecisionCount);
@@ -387,13 +387,13 @@ public class AgentDecisionProcessorTests
         var session = CreateSession();
         var toolUse = CreateToolUse("get_available_trucks");
 
-        toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        await sut.ProcessToolCallsAsync(
+        await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], "Let me check the fleet status", CancellationToken.None);
 
-        await decisionRepo.Received(1).AddAsync(
+        await _decisionRepo.Received(1).AddAsync(
             Arg.Is<AgentDecision>(d => d.Reasoning == "Let me check the fleet status"),
             Arg.Any<CancellationToken>());
     }
@@ -412,13 +412,13 @@ public class AgentDecisionProcessorTests
             ["truck_id"] = Guid.NewGuid().ToString()
         });
 
-        toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{\"success\": true}");
 
-        await sut.ProcessToolCallsAsync(
+        await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
 
-        await broadcastService.Received(1).BroadcastDecisionAsync(
+        await _broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 
@@ -428,13 +428,13 @@ public class AgentDecisionProcessorTests
         var session = CreateSession();
         var toolUse = CreateToolUse("get_available_trucks");
 
-        toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        await sut.ProcessToolCallsAsync(
+        await _sut.ProcessToolCallsAsync(
             session, new ToolCallContext(), [toolUse], null, CancellationToken.None);
 
-        await broadcastService.Received(1).BroadcastDecisionAsync(
+        await _broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
     }
 

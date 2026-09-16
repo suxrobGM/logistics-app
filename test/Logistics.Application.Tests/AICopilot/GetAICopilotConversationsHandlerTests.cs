@@ -11,12 +11,12 @@ namespace Logistics.Application.Tests.AICopilot;
 
 public class GetAICopilotConversationsHandlerTests
 {
-    private readonly AgentTestContext ctx = new();
-    private readonly GetAICopilotConversationsHandler sut;
+    private readonly AgentTestContext _ctx = new();
+    private readonly GetAICopilotConversationsHandler _sut;
 
     public GetAICopilotConversationsHandlerTests()
     {
-        sut = new GetAICopilotConversationsHandler(ctx.Queries, ctx.CurrentUser);
+        _sut = new GetAICopilotConversationsHandler(_ctx.Queries, _ctx.CurrentUser);
     }
 
     /// <summary>
@@ -26,11 +26,11 @@ public class GetAICopilotConversationsHandlerTests
     [Fact]
     public async Task Handle_OwnerHasDispatchConversation_OnlyCopilotKindReturned()
     {
-        var copilotConversation = new AgentConversation { CreatedById = ctx.UserId, Kind = AgentConversationKind.Copilot };
-        var dispatchConversation = new AgentConversation { CreatedById = ctx.UserId, Kind = AgentConversationKind.Dispatch };
-        ctx.ConversationRepo.Query().Returns(new List<AgentConversation> { copilotConversation, dispatchConversation }.BuildMock());
+        var copilotConversation = new AgentConversation { CreatedById = _ctx.UserId, Kind = AgentConversationKind.Copilot };
+        var dispatchConversation = new AgentConversation { CreatedById = _ctx.UserId, Kind = AgentConversationKind.Dispatch };
+        _ctx.ConversationRepo.Query().Returns(new List<AgentConversation> { copilotConversation, dispatchConversation }.BuildMock());
 
-        var result = await sut.Handle(new GetAICopilotConversationsQuery { Page = 1, PageSize = 20 }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAICopilotConversationsQuery { Page = 1, PageSize = 20 }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         var item = Assert.Single(result.Value!);
@@ -41,9 +41,9 @@ public class GetAICopilotConversationsHandlerTests
     public async Task Handle_OtherUsersConversation_NotReturned()
     {
         var other = new AgentConversation { CreatedById = Guid.NewGuid(), Kind = AgentConversationKind.Copilot };
-        ctx.ConversationRepo.Query().Returns(new List<AgentConversation> { other }.BuildMock());
+        _ctx.ConversationRepo.Query().Returns(new List<AgentConversation> { other }.BuildMock());
 
-        var result = await sut.Handle(new GetAICopilotConversationsQuery { Page = 1, PageSize = 20 }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAICopilotConversationsQuery { Page = 1, PageSize = 20 }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Empty(result.Value!);

@@ -19,24 +19,24 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Dispatch;
 /// </summary>
 public class GetAvailableTrucksToolTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly ITenantRepository<Trip, Guid> tripRepo =
+    private readonly ITenantRepository<Trip, Guid> _tripRepo =
         Substitute.For<ITenantRepository<Trip, Guid>>();
-    private readonly ITenantRepository<DriverHosStatus, Guid> hosRepo =
+    private readonly ITenantRepository<DriverHosStatus, Guid> _hosRepo =
         Substitute.For<ITenantRepository<DriverHosStatus, Guid>>();
-    private readonly ITenantRepository<Employee, Guid> employeeRepo =
+    private readonly ITenantRepository<Employee, Guid> _employeeRepo =
         Substitute.For<ITenantRepository<Employee, Guid>>();
-    private readonly GetAvailableTrucksTool sut;
+    private readonly GetAvailableTrucksTool _sut;
 
     public GetAvailableTrucksToolTests()
     {
-        tenantUow.Repository<Truck>().Returns(truckRepo);
-        tenantUow.Repository<Trip>().Returns(tripRepo);
-        tenantUow.Repository<DriverHosStatus>().Returns(hosRepo);
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
-        sut = new GetAvailableTrucksTool(tenantUow);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _tenantUow.Repository<Trip>().Returns(_tripRepo);
+        _tenantUow.Repository<DriverHosStatus>().Returns(_hosRepo);
+        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
+        _sut = new GetAvailableTrucksTool(_tenantUow);
     }
 
     private static Employee Driver(Guid id) => new()
@@ -78,20 +78,20 @@ public class GetAvailableTrucksToolTests
 
     private void Setup(List<Truck> trucks, List<DriverHosStatus> hos, int totalTrucks = 10, int activeTrips = 3)
     {
-        truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
+        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(trucks);
-        truckRepo.CountAsync(null, Arg.Any<CancellationToken>()).Returns(totalTrucks);
-        tripRepo.CountAsync(Arg.Any<Expression<Func<Trip, bool>>>(), Arg.Any<CancellationToken>())
+        _truckRepo.CountAsync(null, Arg.Any<CancellationToken>()).Returns(totalTrucks);
+        _tripRepo.CountAsync(Arg.Any<Expression<Func<Trip, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(activeTrips);
-        hosRepo.GetListAsync(Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>())
+        _hosRepo.GetListAsync(Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(hos);
-        employeeRepo.GetListAsync(Arg.Any<Expression<Func<Employee, bool>>>(), Arg.Any<CancellationToken>())
+        _employeeRepo.GetListAsync(Arg.Any<Expression<Func<Employee, bool>>>(), Arg.Any<CancellationToken>())
             .Returns([.. trucks.Where(t => t.MainDriver is not null).Select(t => t.MainDriver!)]);
     }
 
     private async Task<JsonElement> Run()
     {
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
         return JsonDocument.Parse(result).RootElement;
     }
 
@@ -192,12 +192,12 @@ public class GetAvailableTrucksToolTests
 
         await Run();
 
-        await hosRepo.Received(1).GetListAsync(
+        await _hosRepo.Received(1).GetListAsync(
             Arg.Any<Expression<Func<DriverHosStatus, bool>>>(), Arg.Any<CancellationToken>());
 
         // Truck.MainDriver is a lazy navigation - reading it per truck would be five extra
         // SELECTs here and one per truck in a real fleet.
-        await employeeRepo.Received(1).GetListAsync(
+        await _employeeRepo.Received(1).GetListAsync(
             Arg.Any<Expression<Func<Employee, bool>>>(), Arg.Any<CancellationToken>());
     }
 
@@ -208,7 +208,7 @@ public class GetAvailableTrucksToolTests
 
         await Run();
 
-        await employeeRepo.DidNotReceive().GetListAsync(
+        await _employeeRepo.DidNotReceive().GetListAsync(
             Arg.Any<Expression<Func<Employee, bool>>>(), Arg.Any<CancellationToken>());
     }
 }

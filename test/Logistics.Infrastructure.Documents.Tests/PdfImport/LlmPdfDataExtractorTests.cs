@@ -31,8 +31,8 @@ public class LlmPdfDataExtractorTests
         }
         """;
 
-    private readonly ILlmClient llmClient = Substitute.For<ILlmClient>();
-    private readonly LlmPdfDataExtractor sut;
+    private readonly ILlmClient _llmClient = Substitute.For<ILlmClient>();
+    private readonly LlmPdfDataExtractor _sut;
 
     static LlmPdfDataExtractorTests()
     {
@@ -41,7 +41,7 @@ public class LlmPdfDataExtractorTests
 
     public LlmPdfDataExtractorTests()
     {
-        sut = new LlmPdfDataExtractor(llmClient, NullLogger<LlmPdfDataExtractor>.Instance);
+        _sut = new LlmPdfDataExtractor(_llmClient, NullLogger<LlmPdfDataExtractor>.Instance);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class LlmPdfDataExtractorTests
     {
         SetupCompletion(ValidJson);
 
-        var result = await sut.ExtractAsync(TextPdf("This is a dispatch sheet with enough text for the text path."), "load.pdf");
+        var result = await _sut.ExtractAsync(TextPdf("This is a dispatch sheet with enough text for the text path."), "load.pdf");
 
         Assert.True(result.IsSuccess);
         var dto = result.Value!;
@@ -67,7 +67,7 @@ public class LlmPdfDataExtractorTests
     {
         var captured = SetupCompletion(ValidJson);
 
-        await sut.ExtractAsync(TextPdf("A digital dispatch sheet with plenty of selectable text content."), "load.pdf");
+        await _sut.ExtractAsync(TextPdf("A digital dispatch sheet with plenty of selectable text content."), "load.pdf");
 
         Assert.NotNull(captured.Value);
         Assert.Empty(captured.Value!.Documents);
@@ -78,7 +78,7 @@ public class LlmPdfDataExtractorTests
     {
         var captured = SetupCompletion(ValidJson);
 
-        await sut.ExtractAsync(ImageOnlyPdf(), "scan.pdf");
+        await _sut.ExtractAsync(ImageOnlyPdf(), "scan.pdf");
 
         Assert.NotNull(captured.Value);
         var document = Assert.Single(captured.Value!.Documents);
@@ -90,7 +90,7 @@ public class LlmPdfDataExtractorTests
     {
         SetupCompletion($"```json\n{ValidJson}\n```");
 
-        var result = await sut.ExtractAsync(TextPdf("Dispatch sheet text long enough for the text path to run."), "load.pdf");
+        var result = await _sut.ExtractAsync(TextPdf("Dispatch sheet text long enough for the text path to run."), "load.pdf");
 
         Assert.True(result.IsSuccess);
         Assert.Equal("ORD-123", result.Value!.OrderId);
@@ -101,7 +101,7 @@ public class LlmPdfDataExtractorTests
     {
         SetupCompletion("Sorry, this does not look like a dispatch sheet.");
 
-        var result = await sut.ExtractAsync(TextPdf("Some unrelated document text that is sufficiently long here."), "load.pdf");
+        var result = await _sut.ExtractAsync(TextPdf("Some unrelated document text that is sufficiently long here."), "load.pdf");
 
         Assert.False(result.IsSuccess);
     }
@@ -111,7 +111,7 @@ public class LlmPdfDataExtractorTests
     {
         SetupCompletion("""{ "orderId": "ORD-1", "paymentAmount": "500" }""");
 
-        var result = await sut.ExtractAsync(TextPdf("Dispatch sheet text long enough for the text path to run here."), "load.pdf");
+        var result = await _sut.ExtractAsync(TextPdf("Dispatch sheet text long enough for the text path to run here."), "load.pdf");
 
         Assert.False(result.IsSuccess);
         Assert.Contains("Origin address", result.Error);
@@ -120,10 +120,10 @@ public class LlmPdfDataExtractorTests
     [Fact]
     public async Task ExtractAsync_LlmClientFails_PropagatesError()
     {
-        llmClient.CompleteAsync(Arg.Any<LlmCompletionRequest>(), Arg.Any<CancellationToken>())
+        _llmClient.CompleteAsync(Arg.Any<LlmCompletionRequest>(), Arg.Any<CancellationToken>())
             .Returns(Result<LlmCompletionResult>.Fail("LLM API key for provider 'Anthropic' is not configured."));
 
-        var result = await sut.ExtractAsync(TextPdf("A dispatch sheet with enough extractable text to take the path."), "load.pdf");
+        var result = await _sut.ExtractAsync(TextPdf("A dispatch sheet with enough extractable text to take the path."), "load.pdf");
 
         Assert.False(result.IsSuccess);
         Assert.Contains("not configured", result.Error);
@@ -133,7 +133,7 @@ public class LlmPdfDataExtractorTests
     private StrongBox<LlmCompletionRequest?> SetupCompletion(string responseText)
     {
         var captured = new StrongBox<LlmCompletionRequest?>(null);
-        llmClient
+        _llmClient
             .CompleteAsync(Arg.Do<LlmCompletionRequest>(r => captured.Value = r), Arg.Any<CancellationToken>())
             .Returns(Result<LlmCompletionResult>.Ok(
                 new LlmCompletionResult(responseText, "claude-haiku-4-5", 10, 20, 0.0001m)));

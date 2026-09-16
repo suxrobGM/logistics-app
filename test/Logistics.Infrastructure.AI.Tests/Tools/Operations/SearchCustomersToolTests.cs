@@ -12,29 +12,29 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Operations;
 
 public class SearchCustomersToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly SearchCustomersTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly SearchCustomersTool _sut;
 
     public SearchCustomersToolTests()
     {
-        sut = new SearchCustomersTool(mediator);
+        _sut = new SearchCustomersTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_ReturnsCompactCustomerList()
     {
-        mediator.Send(Arg.Any<GetCustomersQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetCustomersQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<CustomerDto>.Ok(
                 [new CustomerDto { Id = Guid.NewGuid(), Name = "Acme", Email = "ap@acme.com" }], 1, 20));
 
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["search"] = "Acme" }, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         var customer = Assert.Single(root.GetProperty("customers").EnumerateArray());
         Assert.Equal("Acme", customer.GetProperty("name").GetString());
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetCustomersQuery>(q => q.Search == "Acme" && q.PageSize == 20),
             Arg.Any<CancellationToken>());
     }

@@ -11,25 +11,25 @@ namespace Logistics.Application.Tests.FuelCards;
 
 public class AssignFuelCardTransactionTruckHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
 
-    private readonly ITenantRepository<FuelCardTransaction, Guid> transactionRepo =
+    private readonly ITenantRepository<FuelCardTransaction, Guid> _transactionRepo =
         Substitute.For<ITenantRepository<FuelCardTransaction, Guid>>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo =
+    private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly ITenantRepository<FuelCard, Guid> cardRepo =
+    private readonly ITenantRepository<FuelCard, Guid> _cardRepo =
         Substitute.For<ITenantRepository<FuelCard, Guid>>();
-    private readonly ITenantRepository<Expense, Guid> expenseRepo =
+    private readonly ITenantRepository<Expense, Guid> _expenseRepo =
         Substitute.For<ITenantRepository<Expense, Guid>>();
 
-    private readonly Truck truck;
-    private readonly FuelCardTransaction transaction;
-    private readonly AssignFuelCardTransactionTruckHandler sut;
+    private readonly Truck _truck;
+    private readonly FuelCardTransaction _transaction;
+    private readonly AssignFuelCardTransactionTruckHandler _sut;
 
     public AssignFuelCardTransactionTruckHandlerTests()
     {
-        truck = new Truck { Number = "T-200", Type = TruckType.FreightTruck };
-        transaction = new FuelCardTransaction
+        _truck = new Truck { Number = "T-200", Type = TruckType.FreightTruck };
+        _transaction = new FuelCardTransaction
         {
             ProviderType = FuelCardProviderType.Demo,
             ExternalTransactionId = "TX-1",
@@ -38,77 +38,77 @@ public class AssignFuelCardTransactionTruckHandlerTests
             ExternalCardId = "CARD-1"
         };
 
-        tenantUow.Repository<FuelCardTransaction>().Returns(transactionRepo);
-        tenantUow.Repository<Truck>().Returns(truckRepo);
-        tenantUow.Repository<FuelCard>().Returns(cardRepo);
-        tenantUow.Repository<Expense>().Returns(expenseRepo);
+        _tenantUow.Repository<FuelCardTransaction>().Returns(_transactionRepo);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _tenantUow.Repository<FuelCard>().Returns(_cardRepo);
+        _tenantUow.Repository<Expense>().Returns(_expenseRepo);
 
-        transactionRepo.GetByIdAsync(transaction.Id, Arg.Any<CancellationToken>()).Returns(transaction);
-        truckRepo.GetByIdAsync(truck.Id, Arg.Any<CancellationToken>()).Returns(truck);
-        cardRepo.GetAsync(
+        _transactionRepo.GetByIdAsync(_transaction.Id, Arg.Any<CancellationToken>()).Returns(_transaction);
+        _truckRepo.GetByIdAsync(_truck.Id, Arg.Any<CancellationToken>()).Returns(_truck);
+        _cardRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<FuelCard, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns((FuelCard?)null);
 
-        sut = new AssignFuelCardTransactionTruckHandler(
-            tenantUow, NullLogger<AssignFuelCardTransactionTruckHandler>.Instance);
+        _sut = new AssignFuelCardTransactionTruckHandler(
+            _tenantUow, NullLogger<AssignFuelCardTransactionTruckHandler>.Instance);
     }
 
     [Fact]
     public async Task Handle_PendingTransaction_MaterializesExpenseAndMatches()
     {
-        var result = await sut.Handle(new AssignFuelCardTransactionTruckCommand
+        var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
         {
-            TransactionId = transaction.Id,
-            TruckId = truck.Id
+            TransactionId = _transaction.Id,
+            TruckId = _truck.Id
         }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(FuelCardTransactionStatus.Matched, transaction.Status);
-        Assert.Equal(truck.Id, transaction.TruckId);
-        Assert.NotNull(transaction.ExpenseId);
-        await expenseRepo.Received(1).AddAsync(
+        Assert.Equal(FuelCardTransactionStatus.Matched, _transaction.Status);
+        Assert.Equal(_truck.Id, _transaction.TruckId);
+        Assert.NotNull(_transaction.ExpenseId);
+        await _expenseRepo.Received(1).AddAsync(
             Arg.Is<Expense>(e => e.Status == ExpenseStatus.Paid), Arg.Any<CancellationToken>());
-        await cardRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _cardRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
     public async Task Handle_RememberMapping_CreatesCardMapping()
     {
-        var result = await sut.Handle(new AssignFuelCardTransactionTruckCommand
+        var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
         {
-            TransactionId = transaction.Id,
-            TruckId = truck.Id,
+            TransactionId = _transaction.Id,
+            TruckId = _truck.Id,
             RememberMapping = true
         }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await cardRepo.Received(1).AddAsync(
-            Arg.Is<FuelCard>(c => c.ExternalCardId == "CARD-1" && c.TruckId == truck.Id),
+        await _cardRepo.Received(1).AddAsync(
+            Arg.Is<FuelCard>(c => c.ExternalCardId == "CARD-1" && c.TruckId == _truck.Id),
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_AlreadyMatched_Fails()
     {
-        transaction.Status = FuelCardTransactionStatus.Matched;
+        _transaction.Status = FuelCardTransactionStatus.Matched;
 
-        var result = await sut.Handle(new AssignFuelCardTransactionTruckCommand
+        var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
         {
-            TransactionId = transaction.Id,
-            TruckId = truck.Id
+            TransactionId = _transaction.Id,
+            TruckId = _truck.Id
         }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        await expenseRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _expenseRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
     public async Task Handle_TruckNotFound_Fails()
     {
-        var result = await sut.Handle(new AssignFuelCardTransactionTruckCommand
+        var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
         {
-            TransactionId = transaction.Id,
+            TransactionId = _transaction.Id,
             TruckId = Guid.NewGuid()
         }, CancellationToken.None);
 

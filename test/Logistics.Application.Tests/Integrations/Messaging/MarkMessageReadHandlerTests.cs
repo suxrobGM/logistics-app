@@ -19,27 +19,27 @@ public class MarkMessageReadHandlerTests
     private static readonly Guid ParticipantId = Guid.NewGuid();
     private static readonly Guid OutsiderId = Guid.NewGuid();
 
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IRealtimeMessagingService messagingService =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IRealtimeMessagingService _messagingService =
         Substitute.For<IRealtimeMessagingService>();
 
-    private readonly ITenantRepository<Message, Guid> messageRepo =
+    private readonly ITenantRepository<Message, Guid> _messageRepo =
         Substitute.For<ITenantRepository<Message, Guid>>();
-    private readonly ITenantRepository<ConversationParticipant, Guid> participantRepo =
+    private readonly ITenantRepository<ConversationParticipant, Guid> _participantRepo =
         Substitute.For<ITenantRepository<ConversationParticipant, Guid>>();
-    private readonly ITenantRepository<MessageReadReceipt, Guid> receiptRepo =
+    private readonly ITenantRepository<MessageReadReceipt, Guid> _receiptRepo =
         Substitute.For<ITenantRepository<MessageReadReceipt, Guid>>();
 
-    private readonly Message message = Message.Create(ConversationId, Guid.NewGuid(), "hello");
-    private readonly MarkMessageReadHandler sut;
+    private readonly Message _message = Message.Create(ConversationId, Guid.NewGuid(), "hello");
+    private readonly MarkMessageReadHandler _sut;
 
     public MarkMessageReadHandlerTests()
     {
-        tenantUow.Repository<Message>().Returns(messageRepo);
-        tenantUow.Repository<ConversationParticipant>().Returns(participantRepo);
-        tenantUow.Repository<MessageReadReceipt>().Returns(receiptRepo);
+        _tenantUow.Repository<Message>().Returns(_messageRepo);
+        _tenantUow.Repository<ConversationParticipant>().Returns(_participantRepo);
+        _tenantUow.Repository<MessageReadReceipt>().Returns(_receiptRepo);
 
-        messageRepo.GetByIdAsync(MessageId, Arg.Any<CancellationToken>()).Returns(message);
+        _messageRepo.GetByIdAsync(MessageId, Arg.Any<CancellationToken>()).Returns(_message);
 
         Conversation(isTenantChat: false);
 
@@ -48,25 +48,25 @@ public class MarkMessageReadHandlerTests
         {
             new() { ConversationId = ConversationId, EmployeeId = ParticipantId }
         };
-        participantRepo
+        _participantRepo
             .GetAsync(Arg.Any<Expression<Func<ConversationParticipant, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns(call => participants.AsQueryable()
                 .FirstOrDefault(call.Arg<Expression<Func<ConversationParticipant, bool>>>()));
 
-        receiptRepo
+        _receiptRepo
             .GetAsync(Arg.Any<Expression<Func<MessageReadReceipt, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns((MessageReadReceipt?)null);
 
-        sut = new MarkMessageReadHandler(tenantUow, messagingService);
+        _sut = new MarkMessageReadHandler(_tenantUow, _messagingService);
     }
 
     private void Conversation(bool isTenantChat) =>
-        message.Conversation = new Conversation { Id = ConversationId, IsTenantChat = isTenantChat };
+        _message.Conversation = new Conversation { Id = ConversationId, IsTenantChat = isTenantChat };
 
     private Task<Result> Handle(Guid readById) =>
-        sut.Handle(new MarkMessageReadCommand { MessageId = MessageId, ReadById = readById },
+        _sut.Handle(new MarkMessageReadCommand { MessageId = MessageId, ReadById = readById },
             CancellationToken.None);
 
     [Fact]
@@ -75,10 +75,10 @@ public class MarkMessageReadHandlerTests
         var result = await Handle(OutsiderId);
 
         Assert.False(result.IsSuccess);
-        await receiptRepo.DidNotReceive().AddAsync(
+        await _receiptRepo.DidNotReceive().AddAsync(
             Arg.Any<MessageReadReceipt>(), Arg.Any<CancellationToken>());
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
-        await messagingService.DidNotReceive().BroadcastMessageReadAsync(
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _messagingService.DidNotReceive().BroadcastMessageReadAsync(
             Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
@@ -88,10 +88,10 @@ public class MarkMessageReadHandlerTests
         var result = await Handle(ParticipantId);
 
         Assert.True(result.IsSuccess);
-        await receiptRepo.Received(1).AddAsync(
+        await _receiptRepo.Received(1).AddAsync(
             Arg.Is<MessageReadReceipt>(r => r.MessageId == MessageId && r.ReadById == ParticipantId),
             Arg.Any<CancellationToken>());
-        await messagingService.Received(1).BroadcastMessageReadAsync(
+        await _messagingService.Received(1).BroadcastMessageReadAsync(
             ConversationId, MessageId, ParticipantId.ToString(), Arg.Any<CancellationToken>());
     }
 
@@ -104,7 +104,7 @@ public class MarkMessageReadHandlerTests
         var result = await Handle(OutsiderId);
 
         Assert.True(result.IsSuccess);
-        await receiptRepo.Received(1).AddAsync(
+        await _receiptRepo.Received(1).AddAsync(
             Arg.Any<MessageReadReceipt>(), Arg.Any<CancellationToken>());
     }
 
@@ -112,7 +112,7 @@ public class MarkMessageReadHandlerTests
     [Fact]
     public async Task Handle_AlreadyMarkedRead_SucceedsWithoutWritingASecondReceipt()
     {
-        receiptRepo
+        _receiptRepo
             .GetAsync(Arg.Any<Expression<Func<MessageReadReceipt, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns(new MessageReadReceipt { MessageId = MessageId, ReadById = ParticipantId });
@@ -120,7 +120,7 @@ public class MarkMessageReadHandlerTests
         var result = await Handle(ParticipantId);
 
         Assert.True(result.IsSuccess);
-        await receiptRepo.DidNotReceive().AddAsync(
+        await _receiptRepo.DidNotReceive().AddAsync(
             Arg.Any<MessageReadReceipt>(), Arg.Any<CancellationToken>());
     }
 }

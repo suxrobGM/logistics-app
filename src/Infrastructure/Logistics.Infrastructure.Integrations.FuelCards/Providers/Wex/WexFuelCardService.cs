@@ -15,11 +15,11 @@ internal sealed class WexFuelCardService(
     ILogger<WexFuelCardService> logger)
     : BearerFuelCardService<WexTransactionsResponse>(httpClient, logger)
 {
-    private readonly WexOptions options = options.Value.Wex ?? new WexOptions();
+    private readonly WexOptions _options = options.Value.Wex ?? new WexOptions();
 
     public override FuelCardProviderType ProviderType => FuelCardProviderType.Wex;
 
-    protected override string BaseUrl => options.BaseUrl;
+    protected override string BaseUrl => _options.BaseUrl;
 
     protected override string ProbeUrl => "/fleet/v1/transactions?limit=1";
 

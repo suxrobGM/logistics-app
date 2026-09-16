@@ -10,27 +10,27 @@ namespace Logistics.Application.Tests.Platform.ProductLicense;
 
 public class RecordProductLicenseHeartbeatHandlerTests
 {
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
-    private readonly IMasterRepository<ProductLicenseHeartbeat, Guid> repo = Substitute.For<IMasterRepository<ProductLicenseHeartbeat, Guid>>();
-    private readonly RecordProductLicenseHeartbeatHandler sut;
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly IMasterRepository<ProductLicenseHeartbeat, Guid> _repo = Substitute.For<IMasterRepository<ProductLicenseHeartbeat, Guid>>();
+    private readonly RecordProductLicenseHeartbeatHandler _sut;
 
     public RecordProductLicenseHeartbeatHandlerTests()
     {
-        masterUow.Repository<ProductLicenseHeartbeat>().Returns(repo);
-        sut = new RecordProductLicenseHeartbeatHandler(masterUow);
+        _masterUow.Repository<ProductLicenseHeartbeat>().Returns(_repo);
+        _sut = new RecordProductLicenseHeartbeatHandler(_masterUow);
     }
 
     [Fact]
     public async Task Handle_NewInstance_AddsRow()
     {
-        repo.GetAsync(Arg.Any<Expression<Func<ProductLicenseHeartbeat, bool>>>(), Arg.Any<CancellationToken>())
+        _repo.GetAsync(Arg.Any<Expression<Func<ProductLicenseHeartbeat, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((ProductLicenseHeartbeat?)null);
         var command = Command();
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await repo.Received(1).AddAsync(
+        await _repo.Received(1).AddAsync(
             Arg.Is<ProductLicenseHeartbeat>(h =>
                 h.InstanceId == command.Report.InstanceId
                 && h.Hostname == "box-1"
@@ -38,7 +38,7 @@ public class RecordProductLicenseHeartbeatHandlerTests
                 && h.TenantCount == 4
                 && h.FirstSeenAt == h.LastSeenAt),
             Arg.Any<CancellationToken>());
-        await masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -53,11 +53,11 @@ public class RecordProductLicenseHeartbeatHandlerTests
             FirstSeenAt = firstSeen,
             LastSeenAt = firstSeen
         };
-        repo.GetAsync(Arg.Any<Expression<Func<ProductLicenseHeartbeat, bool>>>(), Arg.Any<CancellationToken>())
+        _repo.GetAsync(Arg.Any<Expression<Func<ProductLicenseHeartbeat, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(existing);
         var command = Command(existing.InstanceId);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(firstSeen, existing.FirstSeenAt);
@@ -65,9 +65,9 @@ public class RecordProductLicenseHeartbeatHandlerTests
         Assert.Equal("box-1", existing.Hostname);
         Assert.Equal("1.2.3", existing.Version);
         Assert.Equal("Acme", existing.Licensee);
-        await repo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        repo.Received(1).Update(existing);
-        await masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _repo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        _repo.Received(1).Update(existing);
+        await _masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     private static RecordProductLicenseHeartbeatCommand Command(Guid? instanceId = null) => new(

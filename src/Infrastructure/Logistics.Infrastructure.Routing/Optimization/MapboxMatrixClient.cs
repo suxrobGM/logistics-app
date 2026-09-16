@@ -8,16 +8,16 @@ namespace Logistics.Infrastructure.Routing.Optimization;
 
 internal sealed class MapboxMatrixClient(HttpClient http, IOptions<MapboxOptions> opt)
 {
-    private readonly MapboxOptions options = opt.Value;
+    private readonly MapboxOptions _options = opt.Value;
 
     public async Task<MapboxMatrixResult> GetMatrixAsync(IReadOnlyList<(double lng, double lat)> coords,
         CancellationToken ct)
     {
         // limit guard
-        if (coords.Count > options.MaxCoordsPerRequest)
+        if (coords.Count > _options.MaxCoordsPerRequest)
         {
             throw new InvalidOperationException(
-                $"Too many coordinates for Matrix request: {coords.Count} > max {options.MaxCoordsPerRequest}");
+                $"Too many coordinates for Matrix request: {coords.Count} > max {_options.MaxCoordsPerRequest}");
         }
 
         var coordStr = string.Join(';',
@@ -25,7 +25,7 @@ internal sealed class MapboxMatrixClient(HttpClient http, IOptions<MapboxOptions
                 $"{c.lng.ToString(CultureInfo.InvariantCulture)},{c.lat.ToString(CultureInfo.InvariantCulture)}"));
 
         var url =
-            $"https://api.mapbox.com/directions-matrix/v1/mapbox/driving/{coordStr}?annotations=distance,duration&access_token={options.AccessToken}";
+            $"https://api.mapbox.com/directions-matrix/v1/mapbox/driving/{coordStr}?annotations=distance,duration&access_token={_options.AccessToken}";
 
         var rsp = await http.GetFromJsonAsync<MapboxMatrixResponse>(url, ct);
         if (rsp is null || rsp.Code != "Ok" || rsp.Durations is null || rsp.Distances is null)

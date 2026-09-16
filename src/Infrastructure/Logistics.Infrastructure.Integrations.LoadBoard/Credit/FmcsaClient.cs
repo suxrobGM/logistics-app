@@ -13,9 +13,9 @@ public class FmcsaClient(
     IOptions<FmcsaOptions> options,
     ILogger<FmcsaClient> logger)
 {
-    private readonly FmcsaOptions options = options.Value;
+    private readonly FmcsaOptions _options = options.Value;
 
-    public bool IsConfigured => !string.IsNullOrWhiteSpace(options.WebKey);
+    public bool IsConfigured => !string.IsNullOrWhiteSpace(_options.WebKey);
 
     /// <summary>
     /// Looks up a broker/carrier by MC (docket) number. Returns null when no key is
@@ -29,7 +29,7 @@ public class FmcsaClient(
             return null;
         }
 
-        var url = $"{options.BaseUrl.TrimEnd('/')}/carriers/docket-number/{Uri.EscapeDataString(mcNumber)}?webKey={Uri.EscapeDataString(options.WebKey!)}";
+        var url = $"{_options.BaseUrl.TrimEnd('/')}/carriers/docket-number/{Uri.EscapeDataString(mcNumber)}?webKey={Uri.EscapeDataString(_options.WebKey!)}";
         var response = await httpClient.TryGetFromJsonAsync<FmcsaDocketResponse>(
             url, logger, $"FMCSA docket lookup {mcNumber}", ct: ct);
 

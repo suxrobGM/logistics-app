@@ -19,27 +19,27 @@ namespace Logistics.Infrastructure.AI.Tests.Agents;
 
 public class AgentLoopRunnerTests
 {
-    private readonly ILlmProvider provider = Substitute.For<ILlmProvider>();
-    private readonly IAgentToolExecutor toolExecutor = Substitute.For<IAgentToolExecutor>();
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<AgentSession, Guid> sessionRepo =
+    private readonly ILlmProvider _provider = Substitute.For<ILlmProvider>();
+    private readonly IAgentToolExecutor _toolExecutor = Substitute.For<IAgentToolExecutor>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<AgentSession, Guid> _sessionRepo =
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
-    private readonly AgentLoopRunner sut;
+    private readonly AgentLoopRunner _sut;
 
     /// <summary>
     /// The loop re-reads the session's status from the database each iteration to honour a cancel
     /// issued on another instance. Point that query at <paramref name="rows"/>.
     /// </summary>
     private void SessionInDatabase(params AgentSession[] rows) =>
-        sessionRepo.Query().Returns(rows.ToList().BuildMock());
+        _sessionRepo.Query().Returns(rows.ToList().BuildMock());
 
     public AgentLoopRunnerTests()
     {
-        tenantUow.Repository<AgentDecision>()
+        _tenantUow.Repository<AgentDecision>()
             .Returns(Substitute.For<ITenantRepository<AgentDecision, Guid>>());
-        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
+        _tenantUow.Repository<AgentSession>().Returns(_sessionRepo);
         SessionInDatabase();
-        tenantUow.GetCurrentTenant().Returns(new Tenant
+        _tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
             Name = "Test Tenant",
@@ -49,10 +49,10 @@ public class AgentLoopRunnerTests
         });
 
         var processor = new AgentDecisionProcessor(
-            toolExecutor, new AgentToolRegistry(), tenantUow,
+            _toolExecutor, new AgentToolRegistry(), _tenantUow,
             Substitute.For<IAIDispatchBroadcastService>(),
             NullLogger<AgentDecisionProcessor>.Instance);
-        sut = new AgentLoopRunner(processor, tenantUow, NullLogger<AgentLoopRunner>.Instance);
+        _sut = new AgentLoopRunner(processor, _tenantUow, NullLogger<AgentLoopRunner>.Instance);
     }
 
     private static AgentSession Session() => new()
@@ -62,7 +62,7 @@ public class AgentLoopRunnerTests
     };
 
     private LlmConversation Conversation() => new(
-        provider, "system prompt", [LlmMessage.FromUser("go")], [], "claude-haiku-4-5", 1000,
+        _provider, "system prompt", [LlmMessage.FromUser("go")], [], "claude-haiku-4-5", 1000,
         ReasoningEffort.None);
 
     private static LlmResponse TextResponse(string text, int inputTokens = 100, int outputTokens = 50) => new()
@@ -91,12 +91,12 @@ public class AgentLoopRunnerTests
     public async Task Run_EndTurnResponse_StopsAfterOneIterationAndSetsCost()
     {
         var session = Session();
-        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns(TextResponse("All done."));
 
-        await sut.RunAsync(session, Conversation(), new ToolCallContext(), null, CancellationToken.None);
+        await _sut.RunAsync(session, Conversation(), new ToolCallContext(), null, CancellationToken.None);
 
-        await provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
+        await _provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
         Assert.Equal("All done.", session.Summary);
         Assert.Equal(150, session.TotalTokensUsed);
         Assert.Equal(LlmPricing.Calculate("claude-haiku-4-5", 100, 50), session.EstimatedCostUsd);
@@ -107,16 +107,16 @@ public class AgentLoopRunnerTests
     {
         var session = Session();
         var conversation = Conversation();
-        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
-        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns(ToolCallResponse("get_available_trucks"), TextResponse("Done."));
 
         var iterations = 0;
-        await sut.RunAsync(session, conversation, new ToolCallContext(),
+        await _sut.RunAsync(session, conversation, new ToolCallContext(),
             () => { iterations++; return Task.CompletedTask; }, CancellationToken.None);
 
-        await provider.Received(2).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
+        await _provider.Received(2).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
         Assert.Equal(1, iterations);
         Assert.Equal(1, session.DecisionCount);
         // user, assistant(tool_use), user(tool_result), assistant(text)
@@ -129,7 +129,7 @@ public class AgentLoopRunnerTests
     {
         var session = Session();
         var calls = 0;
-        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
             {
                 calls++;
@@ -138,7 +138,7 @@ public class AgentLoopRunnerTests
                 return TextResponse("Recovered.");
             });
 
-        await sut.RunAsync(session, Conversation(), new ToolCallContext(), null, CancellationToken.None);
+        await _sut.RunAsync(session, Conversation(), new ToolCallContext(), null, CancellationToken.None);
 
         Assert.Equal(2, calls);
         Assert.Equal("Recovered.", session.Summary);
@@ -148,7 +148,7 @@ public class AgentLoopRunnerTests
     public async Task Run_RateLimitedEveryAttempt_StopsAfterFourCallsAndThrows()
     {
         var calls = 0;
-        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns<LlmResponse>(_ =>
             {
                 calls++;
@@ -156,7 +156,7 @@ public class AgentLoopRunnerTests
             });
 
         var ex = await Assert.ThrowsAsync<LlmRateLimitedException>(() =>
-            sut.RunAsync(Session(), Conversation(), new ToolCallContext(),
+            _sut.RunAsync(Session(), Conversation(), new ToolCallContext(),
                 null, CancellationToken.None));
 
         // One initial attempt plus MaxRetries backoff attempts.
@@ -204,9 +204,9 @@ public class AgentLoopRunnerTests
     {
         var session = Session();
         var calls = 0;
-        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
-        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
             {
                 calls++;
@@ -216,7 +216,7 @@ public class AgentLoopRunnerTests
             });
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            sut.RunAsync(session, Conversation(), new ToolCallContext(),
+            _sut.RunAsync(session, Conversation(), new ToolCallContext(),
                 null, CancellationToken.None));
 
         Assert.Equal(220, session.TotalTokensUsed);
@@ -237,14 +237,14 @@ public class AgentLoopRunnerTests
         rowAsPersisted.Cancel();
         SessionInDatabase(rowAsPersisted);
 
-        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns(TextResponse("should never run"));
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            sut.RunAsync(session, Conversation(), new ToolCallContext(),
+            _sut.RunAsync(session, Conversation(), new ToolCallContext(),
                 null, CancellationToken.None));
 
-        await provider.DidNotReceive().SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
+        await _provider.DidNotReceive().SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -255,13 +255,13 @@ public class AgentLoopRunnerTests
         rowAsPersisted.Id = session.Id;
         SessionInDatabase(rowAsPersisted);
 
-        provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns(TextResponse("All done."));
 
-        await sut.RunAsync(session, Conversation(), new ToolCallContext(),
+        await _sut.RunAsync(session, Conversation(), new ToolCallContext(),
             null, CancellationToken.None);
 
-        await provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
+        await _provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -272,7 +272,7 @@ public class AgentLoopRunnerTests
         await cts.CancelAsync();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            sut.RunAsync(session, Conversation(), new ToolCallContext(), null, cts.Token));
+            _sut.RunAsync(session, Conversation(), new ToolCallContext(), null, cts.Token));
 
         // The finally block ran: a cancel before any provider call burned nothing, so $0 exactly.
         Assert.Equal(0m, session.EstimatedCostUsd);
@@ -285,7 +285,7 @@ public class AgentLoopRunnerTests
         await cts.CancelAsync();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            sut.RunAsync(Session(), Conversation(), new ToolCallContext(),
+            _sut.RunAsync(Session(), Conversation(), new ToolCallContext(),
                 null, cts.Token));
     }
 }

@@ -5,7 +5,7 @@ namespace Logistics.DbMigrator.Regions;
 
 internal sealed class EURegionProfile : IRegionProfile
 {
-    private readonly Random random = new();
+    private readonly Random _random = new();
 
     public Region Region => Region.EU;
     public string DisplayName => "EU Demo";
@@ -149,30 +149,30 @@ internal sealed class EURegionProfile : IRegionProfile
         return wmi + GenerateAlphanumeric(14);
     }
 
-    public string GenerateBrokerPhone() => $"+31 10 555 {random.Next(1000, 9999)}";
+    public string GenerateBrokerPhone() => $"+31 10 555 {_random.Next(1000, 9999)}";
 
     public LicensePlate GeneratePlate()
     {
         var country = PickWeightedCountry();
         var number = country switch
         {
-            "DE" => $"{GenerateLetters(random.Next(1, 4))}-{GenerateLetters(random.Next(1, 3))} {random.Next(1, 9999)}",
-            "NL" => $"{random.Next(10, 100):D2}-{GenerateLetters(3)}-{random.Next(0, 10)}",
-            "FR" => $"{GenerateLetters(2)}-{random.Next(100, 1000):D3}-{GenerateLetters(2)}",
-            "BE" => $"{random.Next(1, 10)}-{GenerateLetters(3)}-{random.Next(100, 1000):D3}",
-            "IT" => $"{GenerateLetters(2)}{random.Next(100, 1000):D3}{GenerateLetters(2)}",
-            "ES" => $"{random.Next(1000, 10000):D4} {GenerateLetters(3)}",
+            "DE" => $"{GenerateLetters(_random.Next(1, 4))}-{GenerateLetters(_random.Next(1, 3))} {_random.Next(1, 9999)}",
+            "NL" => $"{_random.Next(10, 100):D2}-{GenerateLetters(3)}-{_random.Next(0, 10)}",
+            "FR" => $"{GenerateLetters(2)}-{_random.Next(100, 1000):D3}-{GenerateLetters(2)}",
+            "BE" => $"{_random.Next(1, 10)}-{GenerateLetters(3)}-{_random.Next(100, 1000):D3}",
+            "IT" => $"{GenerateLetters(2)}{_random.Next(100, 1000):D3}{GenerateLetters(2)}",
+            "ES" => $"{_random.Next(1000, 10000):D4} {GenerateLetters(3)}",
             "PL" => $"{GenerateLetters(2)} {GenerateAlphanumeric(5)}",
             "AT" => $"W-{GenerateAlphanumeric(5)}",
-            "CZ" => $"{random.Next(1, 10)}{GenerateLetters(2)} {random.Next(1000, 10000):D4}",
-            _ => $"{GenerateLetters(3)}-{random.Next(1000, 9999)}"
+            "CZ" => $"{_random.Next(1, 10)}{GenerateLetters(2)} {_random.Next(1000, 10000):D4}",
+            _ => $"{GenerateLetters(3)}-{_random.Next(1000, 9999)}"
         };
         return new LicensePlate(number, country);
     }
 
     private string PickWeightedCountry()
     {
-        var roll = random.Next(TotalPlateWeight);
+        var roll = _random.Next(TotalPlateWeight);
         var cumulative = 0;
         foreach (var (country, weight) in PlateCountries)
         {
@@ -188,12 +188,12 @@ internal sealed class EURegionProfile : IRegionProfile
     private string GenerateAlphanumeric(int length)
     {
         const string chars = "ABCDEFGHJKLMNPRSTUVWXYZ0123456789";
-        return new string(Enumerable.Range(0, length).Select(_ => chars[random.Next(chars.Length)]).ToArray());
+        return new string(Enumerable.Range(0, length).Select(_ => chars[_random.Next(chars.Length)]).ToArray());
     }
 
     private string GenerateLetters(int length)
     {
         const string letters = "ABCDEFGHJKLMNPRSTUVWXYZ";
-        return new string(Enumerable.Range(0, length).Select(_ => letters[random.Next(letters.Length)]).ToArray());
+        return new string(Enumerable.Range(0, length).Select(_ => letters[_random.Next(letters.Length)]).ToArray());
     }
 }

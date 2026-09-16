@@ -14,18 +14,18 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Dispatch;
 
 public class CalculateAssignmentMetricsToolTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Load, Guid> loadRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<Load, Guid> _loadRepo =
         Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo =
+    private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly CalculateAssignmentMetricsTool sut;
+    private readonly CalculateAssignmentMetricsTool _sut;
 
     public CalculateAssignmentMetricsToolTests()
     {
-        tenantUow.Repository<Load>().Returns(loadRepo);
-        tenantUow.Repository<Truck>().Returns(truckRepo);
-        sut = new CalculateAssignmentMetricsTool(tenantUow);
+        _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _sut = new CalculateAssignmentMetricsTool(_tenantUow);
     }
 
     private static Address SomeAddress => new()
@@ -66,9 +66,9 @@ public class CalculateAssignmentMetricsToolTests
 
     private void Setup(List<Load> loads, List<Truck> trucks)
     {
-        loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
+        _loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(loads);
-        truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
+        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(trucks);
     }
 
@@ -80,7 +80,7 @@ public class CalculateAssignmentMetricsToolTests
 
     private async Task<JsonElement> Run(params JsonNode[] candidates)
     {
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["candidates"] = new JsonArray(candidates) }, CancellationToken.None);
         return JsonDocument.Parse(result).RootElement;
     }
@@ -88,7 +88,7 @@ public class CalculateAssignmentMetricsToolTests
     [Fact]
     public async Task Execute_NoCandidates_ReturnsError()
     {
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["candidates"] = new JsonArray() }, CancellationToken.None);
 
         Assert.Equal(
@@ -142,7 +142,7 @@ public class CalculateAssignmentMetricsToolTests
     {
         // One bad id fails the whole call: the agent picks a winner from these numbers, and a
         // silently dropped candidate is one it never compares.
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject
             {
                 ["candidates"] = new JsonArray(
@@ -179,11 +179,11 @@ public class CalculateAssignmentMetricsToolTests
 
         // The prompt asks the agent to score every competing pairing at once, so the previous
         // per-candidate GetByIdAsync pair was 20 sequential round trips for this input.
-        await loadRepo.Received(1).GetListAsync(
+        await _loadRepo.Received(1).GetListAsync(
             Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>());
-        await truckRepo.Received(1).GetListAsync(
+        await _truckRepo.Received(1).GetListAsync(
             Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>());
-        await loadRepo.DidNotReceive().GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
-        await truckRepo.DidNotReceive().GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await _loadRepo.DidNotReceive().GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await _truckRepo.DidNotReceive().GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 }

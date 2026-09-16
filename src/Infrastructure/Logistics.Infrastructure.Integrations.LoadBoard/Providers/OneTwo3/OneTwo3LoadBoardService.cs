@@ -23,8 +23,8 @@ internal class OneTwo3LoadBoardService(
     ILogger<OneTwo3LoadBoardService> logger)
     : ILoadBoardProviderService
 {
-    private readonly OneTwo3LoadboardOptions options = options.Value.OneTwo3Loadboard ?? new OneTwo3LoadboardOptions();
-    private Guid configurationId;
+    private readonly OneTwo3LoadboardOptions _options = options.Value.OneTwo3Loadboard ?? new OneTwo3LoadboardOptions();
+    private Guid _configurationId;
 
     public LoadBoardProviderType ProviderType => LoadBoardProviderType.OneTwo3Loadboard;
 
@@ -32,8 +32,8 @@ internal class OneTwo3LoadBoardService(
 
     public void Initialize(LoadBoardConfiguration configuration)
     {
-        configurationId = configuration.Id;
-        httpClient.BaseAddress = new Uri(options.BaseUrl);
+        _configurationId = configuration.Id;
+        httpClient.BaseAddress = new Uri(_options.BaseUrl);
 
         if (!string.IsNullOrEmpty(configuration.ApiKey))
         {
@@ -48,7 +48,7 @@ internal class OneTwo3LoadBoardService(
         try
         {
             var testClient = httpClientFactory.CreateClient();
-            testClient.BaseAddress = new Uri(options.BaseUrl);
+            testClient.BaseAddress = new Uri(_options.BaseUrl);
             testClient.DefaultRequestHeaders.Add("X-API-Key", apiKey);
 
             var response = await testClient.GetAsync("/v1/account");
@@ -81,7 +81,7 @@ internal class OneTwo3LoadBoardService(
 
     public async Task<IEnumerable<LoadBoardListingDto>> SearchLoadsAsync(LoadBoardSearchCriteria criteria)
     {
-        if (!rateLimiter.TryAcquireSearch(configurationId))
+        if (!rateLimiter.TryAcquireSearch(_configurationId))
         {
             return [];
         }

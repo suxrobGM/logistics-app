@@ -12,20 +12,20 @@ namespace Logistics.Application.Modules.Platform.ProductLicense.Services;
 /// </summary>
 internal sealed class ProductLicenseKeyValidator
 {
-    private readonly JsonWebTokenHandler handler = new();
-    private readonly TokenValidationParameters parameters;
+    private readonly JsonWebTokenHandler _handler = new();
+    private readonly TokenValidationParameters _parameters;
 
     public ProductLicenseKeyValidator(string spkiBase64)
     {
         var ecdsa = ECDsa.Create();
         ecdsa.ImportSubjectPublicKeyInfo(Convert.FromBase64String(spkiBase64), out _);
 
-        parameters = ProductLicenseToken.CreateValidationParameters(ecdsa);
+        _parameters = ProductLicenseToken.CreateValidationParameters(ecdsa);
     }
 
     public async Task<ProductLicenseValidationResult> ValidateAsync(string key, DateTime? nowUtc = null)
     {
-        var result = await handler.ValidateTokenAsync(key.Trim(), parameters);
+        var result = await _handler.ValidateTokenAsync(key.Trim(), _parameters);
         if (!result.IsValid)
         {
             return ProductLicenseValidationResult.Invalid(DescribeFailure(result.Exception));

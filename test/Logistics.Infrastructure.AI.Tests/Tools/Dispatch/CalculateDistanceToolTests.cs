@@ -8,7 +8,7 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Dispatch;
 
 public class CalculateDistanceToolTests
 {
-    private readonly CalculateDistanceTool sut = new();
+    private readonly CalculateDistanceTool _sut = new();
 
     [Fact]
     public async Task Execute_ValidCoordinates_ReturnsDistanceAndDuration()
@@ -22,7 +22,7 @@ public class CalculateDistanceToolTests
             ["dest_lng"] = -118.2437
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var json = JsonDocument.Parse(result);
 
         Assert.True(json.RootElement.TryGetProperty("straight_line_km", out var straightLine));
@@ -47,7 +47,7 @@ public class CalculateDistanceToolTests
             ["dest_lng"] = -74.0
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var json = JsonDocument.Parse(result);
 
         Assert.Equal(0, json.RootElement.GetProperty("straight_line_km").GetDouble());
@@ -63,7 +63,7 @@ public class CalculateDistanceToolTests
             // Missing other coordinates
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var json = JsonDocument.Parse(result);
 
         Assert.True(json.RootElement.TryGetProperty("error", out var error));
@@ -73,7 +73,7 @@ public class CalculateDistanceToolTests
     [Fact]
     public async Task Execute_EmptyInput_ReturnsError()
     {
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
         var json = JsonDocument.Parse(result);
 
         Assert.True(json.RootElement.TryGetProperty("error", out _));

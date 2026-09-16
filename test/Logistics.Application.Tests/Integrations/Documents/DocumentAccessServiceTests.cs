@@ -11,23 +11,23 @@ namespace Logistics.Application.Tests.Integrations.Documents;
 
 public class DocumentAccessServiceTests
 {
-    private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
-    private readonly IUserPermissionService userPermissions = Substitute.For<IUserPermissionService>();
-    private readonly DocumentAccessService sut;
+    private readonly ICurrentUserService _currentUser = Substitute.For<ICurrentUserService>();
+    private readonly IUserPermissionService _userPermissions = Substitute.For<IUserPermissionService>();
+    private readonly DocumentAccessService _sut;
 
-    private readonly Guid callerId = Guid.NewGuid();
-    private readonly Guid tenantId = Guid.NewGuid();
+    private readonly Guid _callerId = Guid.NewGuid();
+    private readonly Guid _tenantId = Guid.NewGuid();
 
     public DocumentAccessServiceTests()
     {
-        currentUser.GetUserId().Returns(callerId);
-        currentUser.GetTenantId().Returns(tenantId);
-        sut = new DocumentAccessService(
-            Substitute.For<ITenantUnitOfWork>(), currentUser, userPermissions);
+        _currentUser.GetUserId().Returns(_callerId);
+        _currentUser.GetTenantId().Returns(_tenantId);
+        _sut = new DocumentAccessService(
+            Substitute.For<ITenantUnitOfWork>(), _currentUser, _userPermissions);
     }
 
     private void CallerHolds(params string[] permissions) =>
-        userPermissions.GetPermissionsAsync(callerId, tenantId, Arg.Any<CancellationToken>())
+        _userPermissions.GetPermissionsAsync(_callerId, _tenantId, Arg.Any<CancellationToken>())
             .Returns(permissions.ToHashSet());
 
     [Fact]
@@ -35,7 +35,7 @@ public class DocumentAccessServiceTests
     {
         CallerHolds(Permission.Document.View);
 
-        var caller = await sut.ResolveCallerAsync();
+        var caller = await _sut.ResolveCallerAsync();
 
         Assert.NotNull(caller);
         Assert.False(caller.IsReviewer);
@@ -46,7 +46,7 @@ public class DocumentAccessServiceTests
     {
         CallerHolds(Permission.Document.View, Permission.Document.Review);
 
-        var caller = await sut.ResolveCallerAsync();
+        var caller = await _sut.ResolveCallerAsync();
 
         Assert.NotNull(caller);
         Assert.True(caller.IsReviewer);
@@ -57,15 +57,15 @@ public class DocumentAccessServiceTests
     {
         CallerHolds(Permission.Load.View);
 
-        Assert.Null(await sut.ResolveCallerAsync());
+        Assert.Null(await _sut.ResolveCallerAsync());
     }
 
     [Fact]
     public async Task ResolveCaller_Unauthenticated_IsRejected()
     {
-        currentUser.GetUserId().Returns((Guid?)null);
+        _currentUser.GetUserId().Returns((Guid?)null);
 
-        Assert.Null(await sut.ResolveCallerAsync());
+        Assert.Null(await _sut.ResolveCallerAsync());
     }
 
     [Theory]

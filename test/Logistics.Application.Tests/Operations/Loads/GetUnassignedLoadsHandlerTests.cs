@@ -12,16 +12,16 @@ namespace Logistics.Application.Tests.Operations.Loads;
 
 public class GetUnassignedLoadsHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Load, Guid> loadRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<Load, Guid> _loadRepo =
         Substitute.For<ITenantRepository<Load, Guid>>();
 
-    private readonly GetUnassignedLoadsHandler sut;
+    private readonly GetUnassignedLoadsHandler _sut;
 
     public GetUnassignedLoadsHandlerTests()
     {
-        tenantUow.Repository<Load>().Returns(loadRepo);
-        sut = new GetUnassignedLoadsHandler(tenantUow);
+        _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _sut = new GetUnassignedLoadsHandler(_tenantUow);
     }
 
     // No container or terminal ids, so LoadIntermodalResolver short-circuits both lookups
@@ -45,11 +45,11 @@ public class GetUnassignedLoadsHandlerTests
     {
         var older = CreateDraftLoad("older", new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
         var newer = CreateDraftLoad("newer", new DateTime(2026, 2, 1, 0, 0, 0, DateTimeKind.Utc));
-        loadRepo.Query().Returns(new[] { older, newer }.BuildMock());
-        loadRepo.CountAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
+        _loadRepo.Query().Returns(new[] { older, newer }.BuildMock());
+        _loadRepo.CountAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(2);
 
-        var result = await sut.Handle(new GetUnassignedLoadsQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetUnassignedLoadsQuery(), CancellationToken.None);
 
         Assert.Equal(["newer", "older"], result.Value!.Select(l => l.Name).ToArray());
     }
@@ -63,11 +63,11 @@ public class GetUnassignedLoadsHandlerTests
         second.Id = Guid.Parse("22222222-2222-2222-2222-222222222222");
         var first = CreateDraftLoad("first", sameInstant);
         first.Id = Guid.Parse("11111111-1111-1111-1111-111111111111");
-        loadRepo.Query().Returns(new[] { second, first }.BuildMock());
-        loadRepo.CountAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
+        _loadRepo.Query().Returns(new[] { second, first }.BuildMock());
+        _loadRepo.CountAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(2);
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new GetUnassignedLoadsQuery { PageSize = 1 }, CancellationToken.None);
 
         var page = result.Value!.ToArray();

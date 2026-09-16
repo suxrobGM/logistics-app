@@ -7,7 +7,7 @@ namespace Logistics.Application.Tests.Validators;
 
 public class AddressValidatorTests
 {
-    private readonly AddressValidator sut = new();
+    private readonly AddressValidator _sut = new();
 
     private static Address ValidAddress() => new()
     {
@@ -21,7 +21,7 @@ public class AddressValidatorTests
     [Fact]
     public void Validate_FullyPopulated_Passes()
     {
-        var result = sut.TestValidate(ValidAddress());
+        var result = _sut.TestValidate(ValidAddress());
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -39,7 +39,7 @@ public class AddressValidatorTests
     public void Validate_StateProvidedForAnyCountry_Passes(string country, string state)
     {
         var address = ValidAddress() with { Country = country, State = state };
-        var result = sut.TestValidate(address);
+        var result = _sut.TestValidate(address);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -50,7 +50,7 @@ public class AddressValidatorTests
     public void Validate_StateMissing_FailsForAllCountries(string country)
     {
         var address = ValidAddress() with { Country = country, State = "" };
-        var result = sut.TestValidate(address);
+        var result = _sut.TestValidate(address);
         result.ShouldHaveValidationErrorFor(a => a.State);
     }
 
@@ -58,7 +58,7 @@ public class AddressValidatorTests
     public void Validate_Line1Empty_Fails()
     {
         var address = ValidAddress() with { Line1 = "" };
-        var result = sut.TestValidate(address);
+        var result = _sut.TestValidate(address);
         result.ShouldHaveValidationErrorFor(a => a.Line1);
     }
 
@@ -66,7 +66,7 @@ public class AddressValidatorTests
     public void Validate_CityEmpty_Fails()
     {
         var address = ValidAddress() with { City = "" };
-        var result = sut.TestValidate(address);
+        var result = _sut.TestValidate(address);
         result.ShouldHaveValidationErrorFor(a => a.City);
     }
 
@@ -74,7 +74,7 @@ public class AddressValidatorTests
     public void Validate_ZipCodeEmpty_Fails()
     {
         var address = ValidAddress() with { ZipCode = "" };
-        var result = sut.TestValidate(address);
+        var result = _sut.TestValidate(address);
         result.ShouldHaveValidationErrorFor(a => a.ZipCode);
     }
 
@@ -82,7 +82,7 @@ public class AddressValidatorTests
     public void Validate_CountryNot2Letters_Fails()
     {
         var address = ValidAddress() with { Country = "USA" };
-        var result = sut.TestValidate(address);
+        var result = _sut.TestValidate(address);
         result.ShouldHaveValidationErrorFor(a => a.Country);
     }
 
@@ -90,7 +90,7 @@ public class AddressValidatorTests
     public void Validate_Line1OverMaxLength_Fails()
     {
         var address = ValidAddress() with { Line1 = new string('x', 201) };
-        var result = sut.TestValidate(address);
+        var result = _sut.TestValidate(address);
         result.ShouldHaveValidationErrorFor(a => a.Line1);
     }
 }

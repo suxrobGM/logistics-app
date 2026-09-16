@@ -12,18 +12,18 @@ namespace Logistics.Application.Tests.Operations.Loads;
 
 public class GetLoadByIdHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Load, Guid> loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly ICurrentUserService currentUserService = Substitute.For<ICurrentUserService>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
+    private readonly ICurrentUserService _currentUserService = Substitute.For<ICurrentUserService>();
 
-    private readonly Guid driverId = Guid.NewGuid();
-    private readonly GetLoadByIdHandler sut;
+    private readonly Guid _driverId = Guid.NewGuid();
+    private readonly GetLoadByIdHandler _sut;
 
     public GetLoadByIdHandlerTests()
     {
-        tenantUow.Repository<Load>().Returns(loadRepo);
-        currentUserService.GetUserId().Returns(driverId);
-        sut = new GetLoadByIdHandler(tenantUow, currentUserService);
+        _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _currentUserService.GetUserId().Returns(_driverId);
+        _sut = new GetLoadByIdHandler(_tenantUow, _currentUserService);
     }
 
     private static Load CreateLoad(Truck? assignedTruck) => new()
@@ -51,11 +51,11 @@ public class GetLoadByIdHandlerTests
     [Fact]
     public async Task Handle_DriverAsksForALoadTheyDoNotDrive_ReturnsNotFound()
     {
-        currentUserService.IsInRole(TenantRoles.Driver).Returns(true);
+        _currentUserService.IsInRole(TenantRoles.Driver).Returns(true);
         var load = CreateLoad(CreateTruck(Guid.NewGuid()));
-        loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
 
-        var result = await sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
+        var result = await _sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }
@@ -63,11 +63,11 @@ public class GetLoadByIdHandlerTests
     [Fact]
     public async Task Handle_DriverAsksForTheirOwnLoad_ReturnsIt()
     {
-        currentUserService.IsInRole(TenantRoles.Driver).Returns(true);
-        var load = CreateLoad(CreateTruck(driverId));
-        loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        _currentUserService.IsInRole(TenantRoles.Driver).Returns(true);
+        var load = CreateLoad(CreateTruck(_driverId));
+        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
 
-        var result = await sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
+        var result = await _sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
     }
@@ -75,11 +75,11 @@ public class GetLoadByIdHandlerTests
     [Fact]
     public async Task Handle_DispatcherAsksForAnyLoad_ReturnsIt()
     {
-        currentUserService.IsInRole(TenantRoles.Driver).Returns(false);
+        _currentUserService.IsInRole(TenantRoles.Driver).Returns(false);
         var load = CreateLoad(CreateTruck(Guid.NewGuid()));
-        loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
 
-        var result = await sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
+        var result = await _sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
     }
@@ -87,12 +87,12 @@ public class GetLoadByIdHandlerTests
     [Fact]
     public async Task Handle_PlatformAdminWithDriverRole_ReturnsAnyLoad()
     {
-        currentUserService.IsInRole(TenantRoles.Driver).Returns(true);
-        currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
+        _currentUserService.IsInRole(TenantRoles.Driver).Returns(true);
+        _currentUserService.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
         var load = CreateLoad(CreateTruck(Guid.NewGuid()));
-        loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
 
-        var result = await sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
+        var result = await _sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
     }
@@ -100,11 +100,11 @@ public class GetLoadByIdHandlerTests
     [Fact]
     public async Task Handle_UnassignedLoad_IsNotVisibleToADriver()
     {
-        currentUserService.IsInRole(TenantRoles.Driver).Returns(true);
+        _currentUserService.IsInRole(TenantRoles.Driver).Returns(true);
         var load = CreateLoad(assignedTruck: null);
-        loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
 
-        var result = await sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
+        var result = await _sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }

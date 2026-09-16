@@ -21,18 +21,18 @@ namespace Logistics.Infrastructure.Persistence.Builder;
 
 internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastructureBuilder
 {
-    private readonly IConfiguration configuration;
-    private readonly IServiceCollection services;
+    private readonly IConfiguration _configuration;
+    private readonly IServiceCollection _services;
 
     internal PersistenceInfrastructureBuilder(IServiceCollection services, IConfiguration configuration)
     {
-        this.configuration = configuration;
-        this.services = services;
+        _configuration = configuration;
+        _services = services;
     }
 
     public IPersistenceInfrastructureBuilder AddIdentity(Action<IdentityBuilder>? configure = null)
     {
-        var identityBuilder = services.AddIdentityCore<User>(options =>
+        var identityBuilder = _services.AddIdentityCore<User>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireUppercase = false;
@@ -53,17 +53,17 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         var options = new MasterDbContextOptions();
         configure?.Invoke(options);
 
-        var connectionString = configuration.GetConnectionString(options.DbConnectionSection);
+        var connectionString = _configuration.GetConnectionString(options.DbConnectionSection);
         options.ConnectionString = connectionString;
 
-        services.AddSingleton(options);
-        services.AddDbContext<MasterDbContext>();
-        services.AddScoped<IMasterUnitOfWork, MasterUnitOfWork>();
-        services.AddScoped(typeof(MasterRepository<,>));
-        services.AddScoped<ICurrentTenantAccessor, CurrentTenantAccessor>();
-        services.AddScoped<IFeatureService, FeatureService>();
-        services.AddScoped<IAIQuotaService, AIQuotaService>();
-        services.AddScoped<ISystemSettingsService, SystemSettingsService>();
+        _services.AddSingleton(options);
+        _services.AddDbContext<MasterDbContext>();
+        _services.AddScoped<IMasterUnitOfWork, MasterUnitOfWork>();
+        _services.AddScoped(typeof(MasterRepository<,>));
+        _services.AddScoped<ICurrentTenantAccessor, CurrentTenantAccessor>();
+        _services.AddScoped<IFeatureService, FeatureService>();
+        _services.AddScoped<IAIQuotaService, AIQuotaService>();
+        _services.AddScoped<ISystemSettingsService, SystemSettingsService>();
         return this;
     }
 
@@ -73,21 +73,21 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         configure?.Invoke(options);
 
         var tenantsSettings =
-            configuration.GetSection(TenantDatabaseDefaults.SectionName).Get<TenantDatabaseDefaults>();
-        var connectionString = configuration.GetConnectionString(options.DefaultTenantDbConnectionSection);
+            _configuration.GetSection(TenantDatabaseDefaults.SectionName).Get<TenantDatabaseDefaults>();
+        var connectionString = _configuration.GetConnectionString(options.DefaultTenantDbConnectionSection);
 
         if (tenantsSettings is not null)
         {
-            services.AddScoped<ITenantDatabaseService, TenantDatabaseService>();
-            services.AddSingleton(tenantsSettings);
+            _services.AddScoped<ITenantDatabaseService, TenantDatabaseService>();
+            _services.AddSingleton(tenantsSettings);
         }
 
         options.ConnectionString = connectionString;
-        services.AddSingleton(options);
-        services.AddDbContext<TenantDbContext>();
-        services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
-        services.AddScoped(typeof(TenantRepository<,>));
-        services.AddScoped<ISafetyReportReader, SafetyReportReader>();
+        _services.AddSingleton(options);
+        _services.AddDbContext<TenantDbContext>();
+        _services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
+        _services.AddScoped(typeof(TenantRepository<,>));
+        _services.AddScoped<ISafetyReportReader, SafetyReportReader>();
         return this;
     }
 }

@@ -8,17 +8,17 @@ namespace Logistics.Application.Tests.Negotiation;
 
 public class NegotiationEmailComposerTests
 {
-    private readonly IEmailTemplateService emailTemplateService = Substitute.For<IEmailTemplateService>();
-    private readonly NegotiationEmailComposer sut;
-    private BrokerCounterOfferEmailModel? lastRenderedModel;
+    private readonly IEmailTemplateService _emailTemplateService = Substitute.For<IEmailTemplateService>();
+    private readonly NegotiationEmailComposer _sut;
+    private BrokerCounterOfferEmailModel? _lastRenderedModel;
 
     public NegotiationEmailComposerTests()
     {
-        emailTemplateService
-            .RenderAsync("BrokerCounterOffer", Arg.Do<BrokerCounterOfferEmailModel>(m => lastRenderedModel = m))
+        _emailTemplateService
+            .RenderAsync("BrokerCounterOffer", Arg.Do<BrokerCounterOfferEmailModel>(m => _lastRenderedModel = m))
             .Returns("<html>rendered</html>");
 
-        sut = new NegotiationEmailComposer(emailTemplateService);
+        _sut = new NegotiationEmailComposer(_emailTemplateService);
     }
 
     private static ComposeNegotiationEmailRequest Request(string agentMessage) => new()
@@ -44,12 +44,12 @@ public class NegotiationEmailComposerTests
     [Fact]
     public async Task ComposeAsync_MessageWithHtmlTags_StripsTags()
     {
-        var result = await sut.ComposeAsync(Request("<b>Hi</b> we can do <i>$2,150</i> total."));
+        var result = await _sut.ComposeAsync(Request("<b>Hi</b> we can do <i>$2,150</i> total."));
 
-        Assert.NotNull(lastRenderedModel);
-        Assert.DoesNotContain('<', lastRenderedModel!.Message);
-        Assert.DoesNotContain('>', lastRenderedModel.Message);
-        Assert.Equal("Hi we can do $2,150 total.", lastRenderedModel.Message);
+        Assert.NotNull(_lastRenderedModel);
+        Assert.DoesNotContain('<', _lastRenderedModel!.Message);
+        Assert.DoesNotContain('>', _lastRenderedModel.Message);
+        Assert.Equal("Hi we can do $2,150 total.", _lastRenderedModel.Message);
         Assert.Equal("<html>rendered</html>", result.HtmlBody);
     }
 
@@ -58,9 +58,9 @@ public class NegotiationEmailComposerTests
     {
         var raw = "Hi there,\n\n\tthis   works?";
 
-        await sut.ComposeAsync(Request(raw));
+        await _sut.ComposeAsync(Request(raw));
 
-        Assert.Equal("Hi there, this works?", lastRenderedModel!.Message);
+        Assert.Equal("Hi there, this works?", _lastRenderedModel!.Message);
     }
 
     [Fact]
@@ -69,9 +69,9 @@ public class NegotiationEmailComposerTests
         var word = "lorem ";
         var longMessage = string.Concat(Enumerable.Repeat(word, 200));
 
-        await sut.ComposeAsync(Request(longMessage));
+        await _sut.ComposeAsync(Request(longMessage));
 
-        var message = lastRenderedModel!.Message;
+        var message = _lastRenderedModel!.Message;
         Assert.True(message.Length <= 803);
         Assert.EndsWith("...", message);
         Assert.DoesNotContain("  ", message.Replace("...", string.Empty));
@@ -82,10 +82,10 @@ public class NegotiationEmailComposerTests
     {
         const string message = "We can move at this rate if pickup stays Monday.";
 
-        await sut.ComposeAsync(Request(message));
+        await _sut.ComposeAsync(Request(message));
 
-        Assert.Equal(message, lastRenderedModel!.Message);
-        Assert.DoesNotContain("...", lastRenderedModel.Message);
+        Assert.Equal(message, _lastRenderedModel!.Message);
+        Assert.DoesNotContain("...", _lastRenderedModel.Message);
     }
 
     #endregion
@@ -95,7 +95,7 @@ public class NegotiationEmailComposerTests
     [Fact]
     public async Task ComposeAsync_BuildsSubjectWithOriginDestinationAndReference()
     {
-        var result = await sut.ComposeAsync(Request("Sounds good."));
+        var result = await _sut.ComposeAsync(Request("Sounds good."));
 
         Assert.Equal("Rate offer: Chicago, IL -> Dallas, TX - RN-9F2A", result.Subject);
     }

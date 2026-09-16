@@ -13,25 +13,25 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Financial;
 
 public class GetInvoicesToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly GetInvoicesTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly GetInvoicesTool _sut;
 
     public GetInvoicesToolTests()
     {
-        sut = new GetInvoicesTool(mediator);
+        _sut = new GetInvoicesTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_AlwaysScopesToLoadInvoices()
     {
-        mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<InvoiceDto>.Ok([], 0, 20));
 
-        await sut.ExecuteAsync(
+        await _sut.ExecuteAsync(
             new JsonObject { ["status"] = "sent" }, CancellationToken.None);
 
         // Payroll/subscription invoices must never leak into copilot answers.
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetInvoicesQuery>(q =>
                 q.InvoiceType == InvoiceType.Load &&
                 q.Status == InvoiceStatus.Sent),
@@ -41,7 +41,7 @@ public class GetInvoicesToolTests
     [Fact]
     public async Task Execute_ReturnsCompactInvoiceList()
     {
-        mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetInvoicesQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<InvoiceDto>.Ok(
                 [new InvoiceDto
                 {
@@ -53,7 +53,7 @@ public class GetInvoicesToolTests
                     Total = CopilotToolTestData.Usd(1080m)
                 }], 1, 20));
 
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         var invoice = Assert.Single(root.GetProperty("invoices").EnumerateArray());

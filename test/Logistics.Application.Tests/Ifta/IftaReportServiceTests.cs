@@ -13,54 +13,54 @@ namespace Logistics.Application.Tests.Ifta;
 
 public class IftaReportServiceTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
 
-    private readonly ITenantRepository<TruckJurisdictionMileage, Guid> mileageRepo =
+    private readonly ITenantRepository<TruckJurisdictionMileage, Guid> _mileageRepo =
         Substitute.For<ITenantRepository<TruckJurisdictionMileage, Guid>>();
-    private readonly ITenantRepository<Expense, Guid> expenseRepo =
+    private readonly ITenantRepository<Expense, Guid> _expenseRepo =
         Substitute.For<ITenantRepository<Expense, Guid>>();
-    private readonly ITenantRepository<IftaQuarterSnapshot, Guid> snapshotRepo =
+    private readonly ITenantRepository<IftaQuarterSnapshot, Guid> _snapshotRepo =
         Substitute.For<ITenantRepository<IftaQuarterSnapshot, Guid>>();
-    private readonly IMasterRepository<IftaTaxRate, Guid> rateRepo =
+    private readonly IMasterRepository<IftaTaxRate, Guid> _rateRepo =
         Substitute.For<IMasterRepository<IftaTaxRate, Guid>>();
 
-    private readonly IftaReportService sut;
-    private readonly Guid truckId = Guid.NewGuid();
+    private readonly IftaReportService _sut;
+    private readonly Guid _truckId = Guid.NewGuid();
 
     public IftaReportServiceTests()
     {
-        tenantUow.Repository<TruckJurisdictionMileage>().Returns(mileageRepo);
-        tenantUow.Repository<Expense>().Returns(expenseRepo);
-        tenantUow.Repository<IftaQuarterSnapshot>().Returns(snapshotRepo);
-        masterUow.Repository<IftaTaxRate>().Returns(rateRepo);
+        _tenantUow.Repository<TruckJurisdictionMileage>().Returns(_mileageRepo);
+        _tenantUow.Repository<Expense>().Returns(_expenseRepo);
+        _tenantUow.Repository<IftaQuarterSnapshot>().Returns(_snapshotRepo);
+        _masterUow.Repository<IftaTaxRate>().Returns(_rateRepo);
 
         SetupMileage([]);
         SetupExpenses([]);
         SetupRates([]);
-        snapshotRepo.GetAsync(
+        _snapshotRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<IftaQuarterSnapshot, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns((IftaQuarterSnapshot?)null);
 
-        sut = new IftaReportService(tenantUow, masterUow);
+        _sut = new IftaReportService(_tenantUow, _masterUow);
     }
 
     private void SetupMileage(List<TruckJurisdictionMileage> rows) =>
-        mileageRepo.Query().Returns(rows.BuildMock());
+        _mileageRepo.Query().Returns(rows.BuildMock());
 
     private void SetupExpenses(List<Expense> rows) =>
-        expenseRepo.Query().Returns(rows.BuildMock());
+        _expenseRepo.Query().Returns(rows.BuildMock());
 
     private void SetupRates(List<IftaTaxRate> rates) =>
-        rateRepo.GetListAsync(
+        _rateRepo.GetListAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<IftaTaxRate, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns(rates);
 
     private TruckJurisdictionMileage Mileage(string region, decimal miles, DateOnly? date = null) => new()
     {
-        TruckId = truckId,
+        TruckId = _truckId,
         Jurisdiction = new TaxJurisdiction { CountryCode = "US", Region = region },
         Date = date ?? new DateOnly(2026, 5, 10),
         Miles = miles
@@ -68,7 +68,7 @@ public class IftaReportServiceTests
 
     private TruckExpense Fuel(string? region, decimal quantity, VolumeUnit unit = VolumeUnit.Gallons) => new()
     {
-        TruckId = truckId,
+        TruckId = _truckId,
         Category = TruckExpenseCategory.Fuel,
         Amount = new Money { Amount = quantity * 4, Currency = "USD" },
         ExpenseDate = new DateTime(2026, 5, 10, 0, 0, 0, DateTimeKind.Utc),
@@ -94,7 +94,7 @@ public class IftaReportServiceTests
         SetupExpenses([Fuel("TX", 200), Fuel("OK", 100)]);
         SetupRates([Rate("TX", 0.20m), Rate("OK", 0.19m)]);
 
-        var report = await sut.BuildReportAsync(2026, 2);
+        var report = await _sut.BuildReportAsync(2026, 2);
 
         Assert.Equal(1500m, report.TotalMiles);
         Assert.Equal(300m, report.TotalGallons);
@@ -119,7 +119,7 @@ public class IftaReportServiceTests
         SetupExpenses([Fuel("OK", 100)]);
         SetupRates([Rate("TX", 0.20m), Rate("OK", 0.19m)]);
 
-        var report = await sut.BuildReportAsync(2026, 2);
+        var report = await _sut.BuildReportAsync(2026, 2);
 
         var tx = report.Jurisdictions.Single(r => r.Region == "TX");
         Assert.Equal(100m, tx.TaxableGallons);
@@ -140,7 +140,7 @@ public class IftaReportServiceTests
         SetupExpenses([Fuel("IN", 100)]);
         SetupRates([Rate("IN", 0.57m, surcharge: 0.21m)]);
 
-        var report = await sut.BuildReportAsync(2026, 2);
+        var report = await _sut.BuildReportAsync(2026, 2);
 
         var row = report.Jurisdictions.Single(r => r.Region == "IN");
         Assert.Equal(0m, row.NetTaxableGallons);
@@ -155,7 +155,7 @@ public class IftaReportServiceTests
         SetupExpenses([Fuel("TX", 100)]);
         SetupRates([]);
 
-        var report = await sut.BuildReportAsync(2026, 2);
+        var report = await _sut.BuildReportAsync(2026, 2);
 
         var row = report.Jurisdictions.Single();
         Assert.True(row.RateMissing);
@@ -171,7 +171,7 @@ public class IftaReportServiceTests
         SetupExpenses([Fuel("TX", 378.5411784m, VolumeUnit.Liters)]); // = 100 gallons
         SetupRates([Rate("TX", 0.20m)]);
 
-        var report = await sut.BuildReportAsync(2026, 2);
+        var report = await _sut.BuildReportAsync(2026, 2);
 
         Assert.Equal(100m, report.TotalGallons);
     }
@@ -187,7 +187,7 @@ public class IftaReportServiceTests
             ClosedAt = new DateTime(2026, 4, 2, 0, 0, 0, DateTimeKind.Utc),
             TotalMiles = 1234m
         };
-        snapshotRepo.GetAsync(
+        _snapshotRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<IftaQuarterSnapshot, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns(new IftaQuarterSnapshot
@@ -198,7 +198,7 @@ public class IftaReportServiceTests
                 ReportJson = JsonSerializer.Serialize(frozen)
             });
 
-        var report = await sut.GetReportAsync(2026, 1);
+        var report = await _sut.GetReportAsync(2026, 1);
 
         Assert.True(report.IsClosed);
         Assert.Equal(1234m, report.TotalMiles);

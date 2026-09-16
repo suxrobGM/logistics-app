@@ -12,8 +12,8 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 {
-    private readonly DateTime startDate = DateTime.UtcNow.AddMonths(-3);
-    private readonly DateTime endDate = DateTime.UtcNow.AddDays(-1);
+    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-3);
+    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-1);
 
     private static readonly string[] VendorNames =
     [
@@ -90,7 +90,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
     private CompanyExpense CreateCompanyExpense()
     {
-        var expenseDate = random.UtcDate(startDate, endDate);
+        var expenseDate = random.UtcDate(_startDate, _endDate);
         var category = random.Pick(CompanyCategories);
         var amount = category switch
         {
@@ -118,7 +118,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
     private TruckExpense CreateTruckExpense(Truck truck)
     {
-        var expenseDate = random.UtcDate(startDate, endDate);
+        var expenseDate = random.UtcDate(_startDate, _endDate);
         var category = random.Pick(TruckCategories);
         var amount = category switch
         {
@@ -149,7 +149,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
     private BodyShopExpense CreateBodyShopExpense(Truck truck)
     {
-        var expenseDate = random.UtcDate(startDate, endDate);
+        var expenseDate = random.UtcDate(_startDate, _endDate);
         var completionDate = expenseDate.AddDays(random.Next(3, 14));
 
         var repairDescriptions = new[]

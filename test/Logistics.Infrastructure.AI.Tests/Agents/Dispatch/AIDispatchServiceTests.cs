@@ -27,24 +27,24 @@ namespace Logistics.Infrastructure.AI.Tests.Agents.Dispatch;
 /// </summary>
 public class AIDispatchServiceTests
 {
-    private readonly ITenantRepository<AgentSession, Guid> sessionRepo =
+    private readonly ITenantRepository<AgentSession, Guid> _sessionRepo =
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
-    private readonly ITenantRepository<AgentConversation, Guid> conversationRepo =
+    private readonly ITenantRepository<AgentConversation, Guid> _conversationRepo =
         Substitute.For<ITenantRepository<AgentConversation, Guid>>();
-    private readonly ITenantRepository<AgentMessage, Guid> messageRepo =
+    private readonly ITenantRepository<AgentMessage, Guid> _messageRepo =
         Substitute.For<ITenantRepository<AgentMessage, Guid>>();
 
-    private readonly IStripeUsageService stripeUsageService = Substitute.For<IStripeUsageService>();
-    private readonly IAIQuotaService quotaService = Substitute.For<IAIQuotaService>();
-    private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
+    private readonly IStripeUsageService _stripeUsageService = Substitute.For<IStripeUsageService>();
+    private readonly IAIQuotaService _quotaService = Substitute.For<IAIQuotaService>();
+    private readonly IAIDispatchBroadcastService _broadcastService = Substitute.For<IAIDispatchBroadcastService>();
 
-    private readonly AIDispatchService sut;
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly Tenant tenant;
+    private readonly AIDispatchService _sut;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly Tenant _tenant;
 
     public AIDispatchServiceTests()
     {
-        tenant = new Tenant
+        _tenant = new Tenant
         {
             Id = Guid.NewGuid(),
             Name = "Test",
@@ -53,10 +53,10 @@ public class AIDispatchServiceTests
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         };
 
-        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
-        tenantUow.Repository<AgentConversation>().Returns(conversationRepo);
-        tenantUow.Repository<AgentMessage>().Returns(messageRepo);
-        tenantUow.GetCurrentTenant().Returns(tenant);
+        _tenantUow.Repository<AgentSession>().Returns(_sessionRepo);
+        _tenantUow.Repository<AgentConversation>().Returns(_conversationRepo);
+        _tenantUow.Repository<AgentMessage>().Returns(_messageRepo);
+        _tenantUow.GetCurrentTenant().Returns(_tenant);
 
         var toolRegistry = Substitute.For<IAgentToolRegistry>();
         toolRegistry.GetDispatchAgentTools(Arg.Any<IReadOnlySet<TenantFeature>>()).Returns([]);
@@ -79,39 +79,39 @@ public class AIDispatchServiceTests
         var systemSettings = Substitute.For<ISystemSettingsService>();
         var modelResolver = new LlmModelResolver(systemSettings, NullLogger<LlmModelResolver>.Instance);
         var sessionSetup = new LlmSessionSetup(
-            featureService, providerFactory, modelResolver, systemSettings, tenantUow);
+            featureService, providerFactory, modelResolver, systemSettings, _tenantUow);
 
         var policyRepo = Substitute.For<ITenantRepository<AIDispatchPolicy, Guid>>();
         policyRepo.Query().Returns(new List<AIDispatchPolicy>().BuildMock());
-        tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
+        _tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
 
         var conversationBuilder = new AIDispatchConversationBuilder(
-            toolRegistry, sessionSetup, tenantUow, NullLogger<AIDispatchConversationBuilder>.Instance);
+            toolRegistry, sessionSetup, _tenantUow, NullLogger<AIDispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IAgentToolExecutor>();
         var decisionProcessor = new AgentDecisionProcessor(
-            toolExecutor, toolRegistry, tenantUow, broadcastService,
+            toolExecutor, toolRegistry, _tenantUow, _broadcastService,
             NullLogger<AgentDecisionProcessor>.Instance);
-        var loopRunner = new AgentLoopRunner(decisionProcessor, tenantUow, NullLogger<AgentLoopRunner>.Instance);
+        var loopRunner = new AgentLoopRunner(decisionProcessor, _tenantUow, NullLogger<AgentLoopRunner>.Instance);
 
         var cancellationRegistry = new AgentSessionCancellationRegistry();
 
         SetQuotaStatus(isOverQuota: false);
 
         var overageReporter = new AgentOverageReporter(
-            stripeUsageService, NullLogger<AgentOverageReporter>.Instance);
+            _stripeUsageService, NullLogger<AgentOverageReporter>.Instance);
 
-        var surface = new DispatchAgentSurface(conversationBuilder, broadcastService);
+        var surface = new DispatchAgentSurface(conversationBuilder, _broadcastService);
         var turnService = new AgentTurnService(
-            llmOptions, loopRunner, cancellationRegistry, tenantUow, quotaService, overageReporter,
+            llmOptions, loopRunner, cancellationRegistry, _tenantUow, _quotaService, overageReporter,
             new AgentRunContext(), NullLogger<AgentTurnService>.Instance);
 
-        sut = new AIDispatchService(turnService, surface, cancellationRegistry, tenantUow);
+        _sut = new AIDispatchService(turnService, surface, cancellationRegistry, _tenantUow);
     }
 
     private void SetQuotaStatus(bool isOverQuota, bool overageBlocked = false, bool overageBillable = true)
     {
-        quotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _quotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(new AIQuotaStatus(5m, isOverQuota ? 5m : 0m, isOverQuota)
             {
                 OverageBlocked = overageBlocked,
@@ -122,12 +122,12 @@ public class AIDispatchServiceTests
     private AgentConversation SetConversation()
     {
         var conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch };
-        conversationRepo.GetByIdAsync(conversation.Id, Arg.Any<CancellationToken>()).Returns(conversation);
+        _conversationRepo.GetByIdAsync(conversation.Id, Arg.Any<CancellationToken>()).Returns(conversation);
         return conversation;
     }
 
     private AIDispatchTurnRequest CreateRequest(AgentConversation conversation) =>
-        new(tenant.Id, conversation.Id, null);
+        new(_tenant.Id, conversation.Id, null);
 
     #region Turn adapter wiring (no network - the LLM-disabled early exit)
 
@@ -139,18 +139,18 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task RunTurnAsync_AIDisabled_AppendsNoticeToTheRightConversationAndBroadcastsTenantWide()
     {
-        tenant.Settings.AIEnabled = false;
+        _tenant.Settings.AIEnabled = false;
         var conversation = SetConversation();
 
-        await sut.RunTurnAsync(CreateRequest(conversation));
+        await _sut.RunTurnAsync(CreateRequest(conversation));
 
         var note = Assert.Single(conversation.Messages);
         Assert.Equal(AgentMessageRole.System, note.Role);
         Assert.Contains("AI is disabled", note.DisplayText);
 
-        await broadcastService.Received(1).BroadcastMessageAsync(
-            tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversation.Id));
-        await sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _broadcastService.Received(1).BroadcastMessageAsync(
+            _tenant.Id, Arg.Is<AgentMessageDto>(m => m.ConversationId == conversation.Id));
+        await _sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
@@ -159,22 +159,22 @@ public class AIDispatchServiceTests
         SetQuotaStatus(isOverQuota: true, overageBlocked: true);
         var conversation = SetConversation();
 
-        await sut.RunTurnAsync(CreateRequest(conversation));
+        await _sut.RunTurnAsync(CreateRequest(conversation));
 
         var note = Assert.Single(conversation.Messages);
         Assert.Contains("budget", note.DisplayText, StringComparison.OrdinalIgnoreCase);
-        await sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
     public async Task RunTurnAsync_ConversationNotFound_DoesNothing()
     {
-        var request = new AIDispatchTurnRequest(tenant.Id, Guid.NewGuid(), null);
+        var request = new AIDispatchTurnRequest(_tenant.Id, Guid.NewGuid(), null);
 
-        await sut.RunTurnAsync(request);
+        await _sut.RunTurnAsync(request);
 
-        await sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);
+        await _sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);
     }
 
     #endregion
@@ -187,7 +187,7 @@ public class AIDispatchServiceTests
         SetQuotaStatus(isOverQuota: true);
         var conversation = SetConversation();
         AgentSession? capturedSession = null;
-        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
+        _sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
         // The agent loop will fail because we don't have a real LLM API, but the session should
@@ -195,7 +195,7 @@ public class AIDispatchServiceTests
         // is strictly required, kept only for defense against an unexpected synchronous throw.
         try
         {
-            await sut.RunTurnAsync(CreateRequest(conversation));
+            await _sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch
         {
@@ -213,12 +213,12 @@ public class AIDispatchServiceTests
     {
         var conversation = SetConversation();
         AgentSession? capturedSession = null;
-        sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
+        _sessionRepo.AddAsync(Arg.Do<AgentSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
         try
         {
-            await sut.RunTurnAsync(CreateRequest(conversation));
+            await _sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch
         {
@@ -240,21 +240,21 @@ public class AIDispatchServiceTests
 
         try
         {
-            await sut.RunTurnAsync(CreateRequest(conversation));
+            await _sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch
         {
             // Expected
         }
 
-        await stripeUsageService.DidNotReceive()
+        await _stripeUsageService.DidNotReceive()
             .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task ReportOverageIfNeeded_DoesNotThrow_WhenStripeServiceFails()
     {
-        stripeUsageService.ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>())
+        _stripeUsageService.ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new Exception("Stripe API error"));
 
         SetQuotaStatus(isOverQuota: true);
@@ -263,7 +263,7 @@ public class AIDispatchServiceTests
         // Should not throw even if Stripe fails
         try
         {
-            await sut.RunTurnAsync(CreateRequest(conversation));
+            await _sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch (Exception ex) when (ex.Message != "Stripe API error")
         {
@@ -282,14 +282,14 @@ public class AIDispatchServiceTests
 
         try
         {
-            await sut.RunTurnAsync(CreateRequest(conversation));
+            await _sut.RunTurnAsync(CreateRequest(conversation));
         }
         catch
         {
             // Expected
         }
 
-        await tenantUow.Received().SaveChangesAsync(CancellationToken.None);
+        await _tenantUow.Received().SaveChangesAsync(CancellationToken.None);
     }
 
     #endregion
@@ -299,10 +299,10 @@ public class AIDispatchServiceTests
     [Fact]
     public async Task CancelAsync_SessionNotFound_ReturnsFalse()
     {
-        sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns((AgentSession?)null);
 
-        var result = await sut.CancelAsync(Guid.NewGuid());
+        var result = await _sut.CancelAsync(Guid.NewGuid());
 
         Assert.False(result);
     }
@@ -313,10 +313,10 @@ public class AIDispatchServiceTests
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
         session.Complete("done");
 
-        sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(session);
 
-        var result = await sut.CancelAsync(Guid.NewGuid());
+        var result = await _sut.CancelAsync(Guid.NewGuid());
 
         Assert.False(result);
     }
@@ -326,10 +326,10 @@ public class AIDispatchServiceTests
     {
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(session);
 
-        var result = await sut.CancelAsync(Guid.NewGuid());
+        var result = await _sut.CancelAsync(Guid.NewGuid());
 
         Assert.True(result);
         Assert.Equal(AgentSessionStatus.Cancelled, session.Status);

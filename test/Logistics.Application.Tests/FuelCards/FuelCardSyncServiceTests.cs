@@ -13,61 +13,61 @@ namespace Logistics.Application.Tests.FuelCards;
 
 public class FuelCardSyncServiceTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IFuelCardProviderFactory providerFactory = Substitute.For<IFuelCardProviderFactory>();
-    private readonly IFuelCardProviderService provider = Substitute.For<IFuelCardProviderService>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IFuelCardProviderFactory _providerFactory = Substitute.For<IFuelCardProviderFactory>();
+    private readonly IFuelCardProviderService _provider = Substitute.For<IFuelCardProviderService>();
 
-    private readonly ITenantRepository<FuelCardProviderConfiguration, Guid> configRepo =
+    private readonly ITenantRepository<FuelCardProviderConfiguration, Guid> _configRepo =
         Substitute.For<ITenantRepository<FuelCardProviderConfiguration, Guid>>();
-    private readonly ITenantRepository<FuelCardTransaction, Guid> transactionRepo =
+    private readonly ITenantRepository<FuelCardTransaction, Guid> _transactionRepo =
         Substitute.For<ITenantRepository<FuelCardTransaction, Guid>>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo =
+    private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly ITenantRepository<FuelCard, Guid> cardRepo =
+    private readonly ITenantRepository<FuelCard, Guid> _cardRepo =
         Substitute.For<ITenantRepository<FuelCard, Guid>>();
-    private readonly ITenantRepository<Expense, Guid> expenseRepo =
+    private readonly ITenantRepository<Expense, Guid> _expenseRepo =
         Substitute.For<ITenantRepository<Expense, Guid>>();
 
-    private readonly FuelCardProviderConfiguration config;
-    private readonly Truck truck;
-    private readonly FuelCardSyncService sut;
+    private readonly FuelCardProviderConfiguration _config;
+    private readonly Truck _truck;
+    private readonly FuelCardSyncService _sut;
 
     public FuelCardSyncServiceTests()
     {
-        config = new FuelCardProviderConfiguration
+        _config = new FuelCardProviderConfiguration
         {
             ProviderType = FuelCardProviderType.Demo,
             ApiKey = "demo",
             LastSyncedAt = DateTime.UtcNow.AddDays(-1)
         };
-        truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
+        _truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
 
-        tenantUow.Repository<FuelCardProviderConfiguration>().Returns(configRepo);
-        tenantUow.Repository<FuelCardTransaction>().Returns(transactionRepo);
-        tenantUow.Repository<Truck>().Returns(truckRepo);
-        tenantUow.Repository<FuelCard>().Returns(cardRepo);
-        tenantUow.Repository<Expense>().Returns(expenseRepo);
+        _tenantUow.Repository<FuelCardProviderConfiguration>().Returns(_configRepo);
+        _tenantUow.Repository<FuelCardTransaction>().Returns(_transactionRepo);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _tenantUow.Repository<FuelCard>().Returns(_cardRepo);
+        _tenantUow.Repository<Expense>().Returns(_expenseRepo);
 
-        configRepo.GetListAsync(
+        _configRepo.GetListAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<FuelCardProviderConfiguration, bool>>>(),
                 Arg.Any<CancellationToken>())
-            .Returns([config]);
-        truckRepo.GetListAsync(ct: Arg.Any<CancellationToken>()).Returns([truck]);
-        cardRepo.GetListAsync(
+            .Returns([_config]);
+        _truckRepo.GetListAsync(ct: Arg.Any<CancellationToken>()).Returns([_truck]);
+        _cardRepo.GetListAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<FuelCard, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns([]);
 
         SetupKnownTransactions([]);
 
-        providerFactory.GetProvider(config).Returns(provider);
+        _providerFactory.GetProvider(_config).Returns(_provider);
 
-        sut = new FuelCardSyncService(tenantUow, providerFactory, NullLogger<FuelCardSyncService>.Instance);
+        _sut = new FuelCardSyncService(_tenantUow, _providerFactory, NullLogger<FuelCardSyncService>.Instance);
     }
 
     private void SetupKnownTransactions(List<FuelCardTransaction> existing)
     {
-        transactionRepo.Query().Returns(existing.BuildMock());
+        _transactionRepo.Query().Returns(existing.BuildMock());
     }
 
     private static FuelCardTransactionData CreateData(string externalId, string? unitNumber, string? cardId = null)
@@ -88,41 +88,41 @@ public class FuelCardSyncServiceTests
     [Fact]
     public async Task Sync_UnitNumberMatchesTruck_MaterializesPaidExpenseAndRemembersCard()
     {
-        provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
+        _provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
             .Returns([CreateData("TX-1", "T-100", cardId: "CARD-1")]);
 
-        var result = await sut.SyncCurrentTenantAsync();
+        var result = await _sut.SyncCurrentTenantAsync();
 
         Assert.Equal(1, result.Imported);
         Assert.Equal(1, result.Matched);
         Assert.Equal(0, result.Pending);
 
-        await expenseRepo.Received(1).AddAsync(
+        await _expenseRepo.Received(1).AddAsync(
             Arg.Is<Expense>(e => e is TruckExpense
-                && ((TruckExpense)e).TruckId == truck.Id
+                && ((TruckExpense)e).TruckId == _truck.Id
                 && e.Status == ExpenseStatus.Paid
                 && ((TruckExpense)e).Category == TruckExpenseCategory.Fuel
                 && ((TruckExpense)e).PurchaseJurisdiction!.Region == "TX"),
             Arg.Any<CancellationToken>());
-        await cardRepo.Received(1).AddAsync(
-            Arg.Is<FuelCard>(c => c.ExternalCardId == "CARD-1" && c.TruckId == truck.Id),
+        await _cardRepo.Received(1).AddAsync(
+            Arg.Is<FuelCard>(c => c.ExternalCardId == "CARD-1" && c.TruckId == _truck.Id),
             Arg.Any<CancellationToken>());
-        await tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Sync_UnknownUnitNumber_StagesPendingWithoutExpense()
     {
-        provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
+        _provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
             .Returns([CreateData("TX-2", "POOL-9")]);
 
-        var result = await sut.SyncCurrentTenantAsync();
+        var result = await _sut.SyncCurrentTenantAsync();
 
         Assert.Equal(1, result.Imported);
         Assert.Equal(0, result.Matched);
         Assert.Equal(1, result.Pending);
-        await expenseRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await transactionRepo.Received(1).AddAsync(
+        await _expenseRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _transactionRepo.Received(1).AddAsync(
             Arg.Is<FuelCardTransaction>(t => t.Status == FuelCardTransactionStatus.Pending),
             Arg.Any<CancellationToken>());
     }
@@ -139,13 +139,13 @@ public class FuelCardSyncServiceTests
                 Amount = new Money { Amount = 100, Currency = "USD" }
             }
         ]);
-        provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
+        _provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
             .Returns([CreateData("TX-3", "T-100")]);
 
-        var result = await sut.SyncCurrentTenantAsync();
+        var result = await _sut.SyncCurrentTenantAsync();
 
         Assert.Equal(0, result.Imported);
-        await transactionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _transactionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
@@ -155,31 +155,31 @@ public class FuelCardSyncServiceTests
         {
             ProviderType = FuelCardProviderType.Demo,
             ExternalCardId = "CARD-7",
-            TruckId = truck.Id,
-            Truck = truck
+            TruckId = _truck.Id,
+            Truck = _truck
         };
-        cardRepo.GetListAsync(
+        _cardRepo.GetListAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<FuelCard, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns([card]);
-        provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
+        _provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
             .Returns([CreateData("TX-4", unitNumber: null, cardId: "CARD-7")]);
 
-        var result = await sut.SyncCurrentTenantAsync();
+        var result = await _sut.SyncCurrentTenantAsync();
 
         Assert.Equal(1, result.Matched);
-        await expenseRepo.Received(1).AddAsync(
-            Arg.Is<Expense>(e => ((TruckExpense)e).TruckId == truck.Id),
+        await _expenseRepo.Received(1).AddAsync(
+            Arg.Is<Expense>(e => ((TruckExpense)e).TruckId == _truck.Id),
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Sync_ProviderThrows_RecordsErrorAndContinues()
     {
-        provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
+        _provider.GetTransactionsAsync(Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
             .Returns<Task<IReadOnlyList<FuelCardTransactionData>>>(_ => throw new HttpRequestException("boom"));
 
-        var result = await sut.SyncCurrentTenantAsync();
+        var result = await _sut.SyncCurrentTenantAsync();
 
         Assert.NotNull(result.Errors);
         Assert.Contains(FuelCardProviderType.Demo, result.Errors.Keys);

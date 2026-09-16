@@ -8,16 +8,16 @@ namespace Logistics.Application.Tests.IdentityAccess.Roles;
 
 public class GetAppRolesHandlerTests
 {
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
-    private readonly IMasterRepository<AppRole, Guid> roleRepo =
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly IMasterRepository<AppRole, Guid> _roleRepo =
         Substitute.For<IMasterRepository<AppRole, Guid>>();
 
-    private readonly GetAppRolesHandler sut;
+    private readonly GetAppRolesHandler _sut;
 
     public GetAppRolesHandlerTests()
     {
-        masterUow.Repository<AppRole>().Returns(roleRepo);
-        sut = new GetAppRolesHandler(masterUow);
+        _masterUow.Repository<AppRole>().Returns(_roleRepo);
+        _sut = new GetAppRolesHandler(_masterUow);
     }
 
     // Stored in reverse name order, so paging the unordered set would fail this.
@@ -26,9 +26,9 @@ public class GetAppRolesHandlerTests
     {
         var zeta = new AppRole("zeta");
         var alpha = new AppRole("alpha");
-        roleRepo.Query().Returns(new[] { zeta, alpha }.AsQueryable());
+        _roleRepo.Query().Returns(new[] { zeta, alpha }.AsQueryable());
 
-        var result = await sut.Handle(new GetAppRolesQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetAppRolesQuery(), CancellationToken.None);
 
         Assert.Equal(["app.alpha", "app.zeta"], result.Value!.Select(r => r.Name).ToArray());
     }
@@ -38,9 +38,9 @@ public class GetAppRolesHandlerTests
     {
         var alpha = new AppRole("alpha");
         var zeta = new AppRole("zeta");
-        roleRepo.Query().Returns(new[] { alpha, zeta }.AsQueryable());
+        _roleRepo.Query().Returns(new[] { alpha, zeta }.AsQueryable());
 
-        var result = await sut.Handle(new GetAppRolesQuery { OrderBy = "-Name" }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAppRolesQuery { OrderBy = "-Name" }, CancellationToken.None);
 
         Assert.Equal(["app.zeta", "app.alpha"], result.Value!.Select(r => r.Name).ToArray());
     }
@@ -60,9 +60,9 @@ public class GetAppRolesHandlerTests
             Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             DisplayName = "first"
         };
-        roleRepo.Query().Returns(new[] { second, first }.AsQueryable());
+        _roleRepo.Query().Returns(new[] { second, first }.AsQueryable());
 
-        var result = await sut.Handle(new GetAppRolesQuery { PageSize = 1 }, CancellationToken.None);
+        var result = await _sut.Handle(new GetAppRolesQuery { PageSize = 1 }, CancellationToken.None);
 
         var page = result.Value!.ToArray();
         Assert.Single(page);

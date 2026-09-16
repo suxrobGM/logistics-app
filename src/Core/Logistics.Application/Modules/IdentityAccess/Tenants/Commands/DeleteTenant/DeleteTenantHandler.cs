@@ -12,20 +12,20 @@ internal sealed class DeleteTenantHandler(
     IMasterUnitOfWork masterRepository,
     IStripeCustomerService stripeCustomerService) : IAppRequestHandler<DeleteTenantCommand, Result>
 {
-    private readonly IMasterUnitOfWork masterUow = masterRepository;
-    private readonly IStripeCustomerService stripeCustomerService = stripeCustomerService;
-    private readonly ITenantDatabaseService tenantDatabase = tenantDatabase;
+    private readonly IMasterUnitOfWork _masterUow = masterRepository;
+    private readonly IStripeCustomerService _stripeCustomerService = stripeCustomerService;
+    private readonly ITenantDatabaseService _tenantDatabase = tenantDatabase;
 
     public async Task<Result> Handle(DeleteTenantCommand req, CancellationToken ct)
     {
-        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.Id, ct);
+        var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.Id, ct);
 
         if (tenant is null)
         {
             return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
         }
 
-        var isDeleted = await tenantDatabase.DeleteDatabaseAsync(tenant.ConnectionString!);
+        var isDeleted = await _tenantDatabase.DeleteDatabaseAsync(tenant.ConnectionString!);
 
         if (!isDeleted)
         {
@@ -34,11 +34,11 @@ internal sealed class DeleteTenantHandler(
 
         if (!string.IsNullOrEmpty(tenant.StripeCustomerId))
         {
-            await stripeCustomerService.DeleteCustomerAsync(tenant.StripeCustomerId);
+            await _stripeCustomerService.DeleteCustomerAsync(tenant.StripeCustomerId);
         }
 
-        masterUow.Repository<Tenant>().Delete(tenant);
-        await masterUow.SaveChangesAsync(ct);
+        _masterUow.Repository<Tenant>().Delete(tenant);
+        await _masterUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

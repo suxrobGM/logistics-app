@@ -14,12 +14,12 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Financial;
 
 public class PreviewTaxCalculationToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly PreviewTaxCalculationTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly PreviewTaxCalculationTool _sut;
 
     public PreviewTaxCalculationToolTests()
     {
-        sut = new PreviewTaxCalculationTool(mediator);
+        _sut = new PreviewTaxCalculationTool(_mediator);
     }
 
     [Fact]
@@ -31,10 +31,10 @@ public class PreviewTaxCalculationToolTests
             ["line_items"] = new JsonArray(new JsonObject { ["description"] = "x", ["amount"] = 100 })
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("\"error\"", result);
-        await mediator.DidNotReceiveWithAnyArgs().Send<Result<PreviewInvoiceTaxResponse>>(default!, default);
+        await _mediator.DidNotReceiveWithAnyArgs().Send<Result<PreviewInvoiceTaxResponse>>(default!, default);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class PreviewTaxCalculationToolTests
             ["line_items"] = new JsonArray(new JsonObject { ["description"] = "x", ["amount"] = 100 })
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("customer_id", result);
     }
@@ -61,7 +61,7 @@ public class PreviewTaxCalculationToolTests
             ["line_items"] = new JsonArray(new JsonObject { ["description"] = "x", ["amount"] = 100 })
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("currency", result);
     }
@@ -76,7 +76,7 @@ public class PreviewTaxCalculationToolTests
             ["line_items"] = new JsonArray()
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("line_items", result);
     }
@@ -120,10 +120,10 @@ public class PreviewTaxCalculationToolTests
             }]
         };
 
-        mediator.Send(Arg.Any<PreviewInvoiceTaxQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<PreviewInvoiceTaxQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<PreviewInvoiceTaxResponse>.Ok(response));
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var json = JsonDocument.Parse(result);
         var root = json.RootElement;
 
@@ -142,7 +142,7 @@ public class PreviewTaxCalculationToolTests
         Assert.Equal("DE", breakdown[0].GetProperty("jurisdiction").GetString());
 
         // Verify the query carried the parsed inputs.
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<PreviewInvoiceTaxQuery>(q =>
                 q.Request.CustomerId == customerId &&
                 q.Request.Currency == "EUR" &&
@@ -184,10 +184,10 @@ public class PreviewTaxCalculationToolTests
             }]
         };
 
-        mediator.Send(Arg.Any<PreviewInvoiceTaxQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<PreviewInvoiceTaxQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<PreviewInvoiceTaxResponse>.Ok(response));
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.Equal("ReverseCharge", root.GetProperty("tax_behavior").GetString());
@@ -204,10 +204,10 @@ public class PreviewTaxCalculationToolTests
             ["line_items"] = new JsonArray(new JsonObject { ["description"] = "x", ["amount"] = 100 })
         };
 
-        mediator.Send(Arg.Any<PreviewInvoiceTaxQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<PreviewInvoiceTaxQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<PreviewInvoiceTaxResponse>.Fail("Customer has no billing address"));
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.Equal("Customer has no billing address", root.GetProperty("error").GetString());
@@ -227,7 +227,7 @@ public class PreviewTaxCalculationToolTests
             })
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("amount", result);
     }

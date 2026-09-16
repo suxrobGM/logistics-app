@@ -12,40 +12,40 @@ public class ChatHubTests
 {
     private const string ConnectionId = HubTestContext.ConnectionId;
 
-    private readonly IConversationAccess conversationAccess = Substitute.For<IConversationAccess>();
-    private readonly IChatHubClient groupClient = Substitute.For<IChatHubClient>();
-    private readonly IChatHubClient groupExceptClient = Substitute.For<IChatHubClient>();
-    private readonly IGroupManager groups = Substitute.For<IGroupManager>();
+    private readonly IConversationAccess _conversationAccess = Substitute.For<IConversationAccess>();
+    private readonly IChatHubClient _groupClient = Substitute.For<IChatHubClient>();
+    private readonly IChatHubClient _groupExceptClient = Substitute.For<IChatHubClient>();
+    private readonly IGroupManager _groups = Substitute.For<IGroupManager>();
 
-    private readonly Guid callerTenantId = Guid.NewGuid();
-    private readonly Guid callerUserId = Guid.NewGuid();
-    private readonly Guid conversationId = Guid.NewGuid();
+    private readonly Guid _callerTenantId = Guid.NewGuid();
+    private readonly Guid _callerUserId = Guid.NewGuid();
+    private readonly Guid _conversationId = Guid.NewGuid();
 
-    private readonly ChatHub sut;
+    private readonly ChatHub _sut;
 
     public ChatHubTests()
     {
-        sut = new ChatHub(conversationAccess);
+        _sut = new ChatHub(_conversationAccess);
 
         var clients = Substitute.For<IHubCallerClients<IChatHubClient>>();
-        clients.Group(Arg.Any<string>()).Returns(groupClient);
-        clients.GroupExcept(Arg.Any<string>(), Arg.Any<IReadOnlyList<string>>()).Returns(groupExceptClient);
+        clients.Group(Arg.Any<string>()).Returns(_groupClient);
+        clients.GroupExcept(Arg.Any<string>(), Arg.Any<IReadOnlyList<string>>()).Returns(_groupExceptClient);
 
-        sut.Clients = clients;
-        sut.Groups = groups;
-        sut.Context = HubTestContext.Caller(callerTenantId, callerUserId);
+        _sut.Clients = clients;
+        _sut.Groups = _groups;
+        _sut.Context = HubTestContext.Caller(_callerTenantId, _callerUserId);
     }
 
     /// <summary>Passes the real join check, which authorizes the other methods.</summary>
     private async Task JoinAsync()
     {
         AllowJoin(true);
-        await sut.JoinConversation(conversationId.ToString());
+        await _sut.JoinConversation(_conversationId.ToString());
     }
 
     private void AllowJoin(bool allowed) =>
-        conversationAccess.CanUserJoinConversationAsync(
-                callerTenantId, conversationId, callerUserId, Arg.Any<CancellationToken>())
+        _conversationAccess.CanUserJoinConversationAsync(
+                _callerTenantId, _conversationId, _callerUserId, Arg.Any<CancellationToken>())
             .Returns(allowed);
 
     // Any authenticated user could previously join any conversation group by id.
@@ -54,11 +54,11 @@ public class ChatHubTests
     {
         AllowJoin(false);
 
-        await sut.JoinConversation(conversationId.ToString());
+        await _sut.JoinConversation(_conversationId.ToString());
 
-        await groups.DidNotReceive().AddToGroupAsync(
+        await _groups.DidNotReceive().AddToGroupAsync(
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
-        await groupClient.DidNotReceive().UserJoinedConversation(
+        await _groupClient.DidNotReceive().UserJoinedConversation(
             Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<string>());
     }
 
@@ -68,20 +68,20 @@ public class ChatHubTests
     {
         AllowJoin(true);
 
-        await sut.JoinConversation(conversationId.ToString());
+        await _sut.JoinConversation(_conversationId.ToString());
 
-        await groups.Received(1).AddToGroupAsync(
-            ConnectionId, $"conversation-{conversationId}", Arg.Any<CancellationToken>());
-        await groupClient.Received(1).UserJoinedConversation(conversationId, callerUserId, null);
+        await _groups.Received(1).AddToGroupAsync(
+            ConnectionId, $"conversation-{_conversationId}", Arg.Any<CancellationToken>());
+        await _groupClient.Received(1).UserJoinedConversation(_conversationId, _callerUserId, null);
     }
 
     // A non-GUID id previously reached Guid.Parse after the group add, leaving the caller joined.
     [Fact]
     public async Task JoinConversation_MalformedConversationId_DoesNotThrowOrJoin()
     {
-        await sut.JoinConversation("not-a-guid");
+        await _sut.JoinConversation("not-a-guid");
 
-        await groups.DidNotReceive().AddToGroupAsync(
+        await _groups.DidNotReceive().AddToGroupAsync(
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
@@ -91,19 +91,19 @@ public class ChatHubTests
     {
         AllowJoin(true);
 
-        await sut.JoinConversation(conversationId.ToString("B"));
+        await _sut.JoinConversation(_conversationId.ToString("B"));
 
-        await groups.Received(1).AddToGroupAsync(
-            ConnectionId, $"conversation-{conversationId}", Arg.Any<CancellationToken>());
+        await _groups.Received(1).AddToGroupAsync(
+            ConnectionId, $"conversation-{_conversationId}", Arg.Any<CancellationToken>());
     }
 
     // Typing indicators were broadcast into any conversation group by id.
     [Fact]
     public async Task SendTypingIndicator_WithoutHavingJoined_DoesNotBroadcast()
     {
-        await sut.SendTypingIndicator(conversationId.ToString(), true);
+        await _sut.SendTypingIndicator(_conversationId.ToString(), true);
 
-        await groupExceptClient.DidNotReceive().TypingIndicator(Arg.Any<TypingIndicatorDto>());
+        await _groupExceptClient.DidNotReceive().TypingIndicator(Arg.Any<TypingIndicatorDto>());
     }
 
     [Fact]
@@ -111,21 +111,21 @@ public class ChatHubTests
     {
         await JoinAsync();
 
-        await sut.SendTypingIndicator(conversationId.ToString(), true);
+        await _sut.SendTypingIndicator(_conversationId.ToString(), true);
 
-        await groupExceptClient.Received(1).TypingIndicator(Arg.Is<TypingIndicatorDto>(
-            i => i.ConversationId == conversationId && i.UserId == callerUserId && i.IsTyping));
+        await _groupExceptClient.Received(1).TypingIndicator(Arg.Is<TypingIndicatorDto>(
+            i => i.ConversationId == _conversationId && i.UserId == _callerUserId && i.IsTyping));
     }
 
     // A caller could previously spoof a "user left" event into a conversation never joined.
     [Fact]
     public async Task LeaveConversation_WithoutHavingJoined_StillLeavesButDoesNotAnnounce()
     {
-        await sut.LeaveConversation(conversationId.ToString());
+        await _sut.LeaveConversation(_conversationId.ToString());
 
-        await groups.Received(1).RemoveFromGroupAsync(
-            ConnectionId, $"conversation-{conversationId}", Arg.Any<CancellationToken>());
-        await groupClient.DidNotReceive().UserLeftConversation(Arg.Any<Guid>(), Arg.Any<Guid>());
+        await _groups.Received(1).RemoveFromGroupAsync(
+            ConnectionId, $"conversation-{_conversationId}", Arg.Any<CancellationToken>());
+        await _groupClient.DidNotReceive().UserLeftConversation(Arg.Any<Guid>(), Arg.Any<Guid>());
     }
 
     [Fact]
@@ -133,11 +133,11 @@ public class ChatHubTests
     {
         await JoinAsync();
 
-        await sut.LeaveConversation(conversationId.ToString());
+        await _sut.LeaveConversation(_conversationId.ToString());
 
-        await groups.Received(1).RemoveFromGroupAsync(
-            ConnectionId, $"conversation-{conversationId}", Arg.Any<CancellationToken>());
-        await groupClient.Received(1).UserLeftConversation(conversationId, callerUserId);
+        await _groups.Received(1).RemoveFromGroupAsync(
+            ConnectionId, $"conversation-{_conversationId}", Arg.Any<CancellationToken>());
+        await _groupClient.Received(1).UserLeftConversation(_conversationId, _callerUserId);
     }
 
     // Leaving drops the authorization, so a later broadcast must rejoin to earn it back.
@@ -145,10 +145,10 @@ public class ChatHubTests
     public async Task LeaveConversation_ThenTyping_DoesNotBroadcast()
     {
         await JoinAsync();
-        await sut.LeaveConversation(conversationId.ToString());
+        await _sut.LeaveConversation(_conversationId.ToString());
 
-        await sut.SendTypingIndicator(conversationId.ToString(), true);
+        await _sut.SendTypingIndicator(_conversationId.ToString(), true);
 
-        await groupExceptClient.DidNotReceive().TypingIndicator(Arg.Any<TypingIndicatorDto>());
+        await _groupExceptClient.DidNotReceive().TypingIndicator(Arg.Any<TypingIndicatorDto>());
     }
 }

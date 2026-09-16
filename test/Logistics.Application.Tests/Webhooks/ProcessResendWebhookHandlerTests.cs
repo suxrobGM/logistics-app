@@ -17,33 +17,33 @@ public class ProcessResendWebhookHandlerTests
 {
     private const string Token = "abcdefghijklmnopqrstuvwxyz234567";
 
-    private readonly IInboundEmailWebhookVerifier verifier = Substitute.For<IInboundEmailWebhookVerifier>();
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IMediator mediator = Substitute.For<IMediator>();
+    private readonly IInboundEmailWebhookVerifier _verifier = Substitute.For<IInboundEmailWebhookVerifier>();
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
 
-    private readonly IWebhookEventTracker webhookEvents = Substitute.For<IWebhookEventTracker>();
-    private readonly IMasterRepository<InboundEmailRoute, Guid> routeRepo =
+    private readonly IWebhookEventTracker _webhookEvents = Substitute.For<IWebhookEventTracker>();
+    private readonly IMasterRepository<InboundEmailRoute, Guid> _routeRepo =
         Substitute.For<IMasterRepository<InboundEmailRoute, Guid>>();
 
-    private readonly Guid tenantId = Guid.NewGuid();
-    private readonly ProcessResendWebhookHandler sut;
+    private readonly Guid _tenantId = Guid.NewGuid();
+    private readonly ProcessResendWebhookHandler _sut;
 
     public ProcessResendWebhookHandlerTests()
     {
-        masterUow.Repository<InboundEmailRoute>().Returns(routeRepo);
+        _masterUow.Repository<InboundEmailRoute>().Returns(_routeRepo);
 
-        verifier.Verify(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>())
+        _verifier.Verify(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>())
             .Returns(true);
 
         SetupAlreadyHandled(false);
-        SetupRoute(new InboundEmailRoute { ThreadToken = Token, TenantId = tenantId });
+        SetupRoute(new InboundEmailRoute { ThreadToken = Token, TenantId = _tenantId });
 
-        mediator.Send(Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Ok());
 
-        sut = new ProcessResendWebhookHandler(
-            verifier, masterUow, tenantUow, mediator, webhookEvents,
+        _sut = new ProcessResendWebhookHandler(
+            _verifier, _masterUow, _tenantUow, _mediator, _webhookEvents,
             NullLogger<ProcessResendWebhookHandler>.Instance);
     }
 
@@ -74,24 +74,24 @@ public class ProcessResendWebhookHandlerTests
     };
 
     private void SetupAlreadyHandled(bool handled) =>
-        webhookEvents.WasAlreadyHandledAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _webhookEvents.WasAlreadyHandledAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(handled);
 
     private void SetupRoute(InboundEmailRoute? route) =>
-        routeRepo.GetAsync(Arg.Any<Expression<Func<InboundEmailRoute, bool>>>(), Arg.Any<CancellationToken>())
+        _routeRepo.GetAsync(Arg.Any<Expression<Func<InboundEmailRoute, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(route);
 
     private Task AssertNoInnerCommand() =>
-        mediator.DidNotReceive().Send(
+        _mediator.DidNotReceive().Send(
             Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>());
 
     [Fact]
     public async Task Handle_BadSignature_FailsAsRejectedWithoutParsing()
     {
-        verifier.Verify(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>())
+        _verifier.Verify(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>())
             .Returns(false);
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.WebhookRejected, result.ErrorCode);
@@ -101,7 +101,7 @@ public class ProcessResendWebhookHandlerTests
     [Fact]
     public async Task Handle_UnparseableBody_FailsAsRejected()
     {
-        var result = await sut.Handle(Command("not json"), CancellationToken.None);
+        var result = await _sut.Handle(Command("not json"), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.WebhookRejected, result.ErrorCode);
@@ -111,7 +111,7 @@ public class ProcessResendWebhookHandlerTests
     [Fact]
     public async Task Handle_UnhandledEventType_IsAccepted()
     {
-        var result = await sut.Handle(Command(Body(type: "email.delivered")), CancellationToken.None);
+        var result = await _sut.Handle(Command(Body(type: "email.delivered")), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
@@ -122,17 +122,17 @@ public class ProcessResendWebhookHandlerTests
     {
         SetupAlreadyHandled(true);
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
-        await webhookEvents.DidNotReceiveWithAnyArgs().MarkHandledAsync(default!, default!, default);
+        await _webhookEvents.DidNotReceiveWithAnyArgs().MarkHandledAsync(default!, default!, default);
     }
 
     [Fact]
     public async Task Handle_AddressWithoutThreadToken_IsAccepted()
     {
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             Command(Body(receivedFor: "hello@mail.test.com")), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -144,10 +144,10 @@ public class ProcessResendWebhookHandlerTests
     {
         SetupRoute(null);
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await tenantUow.DidNotReceiveWithAnyArgs().SetCurrentTenantByIdAsync(default);
+        await _tenantUow.DidNotReceiveWithAnyArgs().SetCurrentTenantByIdAsync(default);
         await AssertNoInnerCommand();
     }
 
@@ -157,11 +157,11 @@ public class ProcessResendWebhookHandlerTests
         SetupRoute(new InboundEmailRoute
         {
             ThreadToken = Token,
-            TenantId = tenantId,
+            TenantId = _tenantId,
             RevokedAt = DateTime.UtcNow
         });
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
@@ -173,11 +173,11 @@ public class ProcessResendWebhookHandlerTests
         SetupRoute(new InboundEmailRoute
         {
             ThreadToken = Token,
-            TenantId = tenantId,
+            TenantId = _tenantId,
             ExpiresAt = DateTime.UtcNow.AddMinutes(-1)
         });
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         await AssertNoInnerCommand();
@@ -186,31 +186,31 @@ public class ProcessResendWebhookHandlerTests
     [Fact]
     public async Task Handle_InnerCommandFails_FailsWithoutRejectedCodeAndWritesNoLedgerRow()
     {
-        mediator.Send(Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<ProcessInboundNegotiationEmailCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Fail("provider unavailable"));
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         // No rejection code: the endpoint must answer 500 so the provider retries the delivery.
         Assert.False(result.IsSuccess);
         Assert.Null(result.ErrorCode);
-        await webhookEvents.DidNotReceiveWithAnyArgs().MarkHandledAsync(default!, default!, default);
+        await _webhookEvents.DidNotReceiveWithAnyArgs().MarkHandledAsync(default!, default!, default);
     }
 
     [Fact]
     public async Task Handle_HappyPath_RoutesToTenantAndRecordsTheEvent()
     {
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await tenantUow.Received(1).SetCurrentTenantByIdAsync(tenantId);
-        await mediator.Received(1).Send(
+        await _tenantUow.Received(1).SetCurrentTenantByIdAsync(_tenantId);
+        await _mediator.Received(1).Send(
             Arg.Is<ProcessInboundNegotiationEmailCommand>(c =>
                 c.ThreadToken == Token &&
                 c.ProviderEmailId == "email-1" &&
                 c.From == "broker@example.com"),
             Arg.Any<CancellationToken>());
-        await webhookEvents.Received(1).MarkHandledAsync(
+        await _webhookEvents.Received(1).MarkHandledAsync(
             "Resend",
             "email-1",
             Arg.Any<CancellationToken>());

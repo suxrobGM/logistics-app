@@ -24,7 +24,7 @@ public sealed class MapboxGeocodingService(
     // Mapbox rejects more than 5 ISO codes in a single `country` filter.
     private const int MaxCountryFilterCodes = 5;
 
-    private readonly MapboxOptions options = options.Value;
+    private readonly MapboxOptions _options = options.Value;
 
     public async Task<Result<GeoPoint>> GeocodeAddressAsync(
         string line1,
@@ -52,7 +52,7 @@ public sealed class MapboxGeocodingService(
 
             // Call Mapbox Geocoding API
             var url = $"https://api.mapbox.com/geocoding/v5/mapbox.places/{encodedSearch}.json" +
-                      $"?access_token={options.AccessToken}" +
+                      $"?access_token={_options.AccessToken}" +
                       "&limit=1" +
                       "&types=address,place";
 

@@ -11,14 +11,14 @@ namespace Logistics.Infrastructure.Tax.Tests.Stripe;
 
 public class StripeTaxCalculatorTests
 {
-    private readonly IStripeTaxCalculationApi api = Substitute.For<IStripeTaxCalculationApi>();
-    private readonly IStripeTaxConfigService config = Substitute.For<IStripeTaxConfigService>();
-    private readonly StripeTaxCalculator sut;
+    private readonly IStripeTaxCalculationApi _api = Substitute.For<IStripeTaxCalculationApi>();
+    private readonly IStripeTaxConfigService _config = Substitute.For<IStripeTaxConfigService>();
+    private readonly StripeTaxCalculator _sut;
 
     public StripeTaxCalculatorTests()
     {
-        config.GetDefaultTaxCodeAsync(Arg.Any<CancellationToken>()).Returns("txcd_99999999");
-        sut = new StripeTaxCalculator(api, config, NullLogger<StripeTaxCalculator>.Instance);
+        _config.GetDefaultTaxCodeAsync(Arg.Any<CancellationToken>()).Returns("txcd_99999999");
+        _sut = new StripeTaxCalculator(_api, _config, NullLogger<StripeTaxCalculator>.Instance);
     }
 
     #region Short-circuits
@@ -28,12 +28,12 @@ public class StripeTaxCalculatorTests
     {
         var request = Request(country: "DE", tenantRegion: Region.EU, exempt: true);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Empty(result.Lines);
         Assert.Empty(result.Breakdown);
         Assert.Equal(TaxBehavior.Exclusive, result.TaxBehavior);
-        await api.DidNotReceiveWithAnyArgs().CreateAsync(default!, default);
+        await _api.DidNotReceiveWithAnyArgs().CreateAsync(default!, default);
     }
 
     [Fact]
@@ -41,10 +41,10 @@ public class StripeTaxCalculatorTests
     {
         var request = Request(country: "DE", tenantRegion: Region.EU, lineAmounts: []);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Empty(result.Lines);
-        await api.DidNotReceiveWithAnyArgs().CreateAsync(default!, default);
+        await _api.DidNotReceiveWithAnyArgs().CreateAsync(default!, default);
     }
 
     #endregion
@@ -57,12 +57,12 @@ public class StripeTaxCalculatorTests
         var request = Request(country: "DE", tenantRegion: Region.EU, lineAmounts: [100m, 50.50m],
             customerTaxId: "DE123456789");
 
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
             .Returns(BuildCalculation(request));
 
-        await sut.CalculateAsync(request);
+        await _sut.CalculateAsync(request);
 
-        var captured = (CalculationCreateOptions)api.ReceivedCalls()
+        var captured = (CalculationCreateOptions)_api.ReceivedCalls()
             .Single(c => c.GetMethodInfo().Name == nameof(IStripeTaxCalculationApi.CreateAsync))
             .GetArguments()[0]!;
 
@@ -82,12 +82,12 @@ public class StripeTaxCalculatorTests
     public async Task Calculate_NoCustomerTaxId_OmitsTaxIdsArray()
     {
         var request = Request(country: "DE", tenantRegion: Region.EU, customerTaxId: null);
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
             .Returns(BuildCalculation(request));
 
-        await sut.CalculateAsync(request);
+        await _sut.CalculateAsync(request);
 
-        var captured = (CalculationCreateOptions)api.ReceivedCalls().First().GetArguments()[0]!;
+        var captured = (CalculationCreateOptions)_api.ReceivedCalls().First().GetArguments()[0]!;
         Assert.Null(captured.CustomerDetails!.TaxIds);
     }
 
@@ -108,12 +108,12 @@ public class StripeTaxCalculatorTests
             }]
         };
 
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
             .Returns(BuildCalculation(request));
 
-        await sut.CalculateAsync(request);
+        await _sut.CalculateAsync(request);
 
-        var captured = (CalculationCreateOptions)api.ReceivedCalls().First().GetArguments()[0]!;
+        var captured = (CalculationCreateOptions)_api.ReceivedCalls().First().GetArguments()[0]!;
         Assert.Equal("txcd_specific", captured.LineItems[0].TaxCode);
     }
 
@@ -121,12 +121,12 @@ public class StripeTaxCalculatorTests
     public async Task Calculate_JpyZeroDecimal_DoesNotMultiplyBy100()
     {
         var request = Request(country: "JP", tenantRegion: Region.US, currency: "JPY", lineAmounts: [1000m]);
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
             .Returns(BuildCalculation(request));
 
-        await sut.CalculateAsync(request);
+        await _sut.CalculateAsync(request);
 
-        var captured = (CalculationCreateOptions)api.ReceivedCalls().First().GetArguments()[0]!;
+        var captured = (CalculationCreateOptions)_api.ReceivedCalls().First().GetArguments()[0]!;
         Assert.Equal(1000, captured.LineItems[0].Amount);
     }
 
@@ -152,9 +152,9 @@ public class StripeTaxCalculatorTests
             }
         };
 
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(2, result.Lines.Count);
         var byId = result.Lines.ToDictionary(l => l.LineItemId);
@@ -176,9 +176,9 @@ public class StripeTaxCalculatorTests
                 Data = [LineItem(lineId, amountTax: 0, percentage: "0", reason: "reverse_charge")]
             }
         };
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(TaxBehavior.ReverseCharge, result.TaxBehavior);
         // Synthetic breakdown line surfaces the reverse-charge notice.
@@ -199,9 +199,9 @@ public class StripeTaxCalculatorTests
                 Data = [LineItem(lineId, amountTax: 0, percentage: "0", reason: "not_collecting")]
             }
         };
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.NotNull(result.Warning);
         Assert.Contains("not registered", result.Warning);
@@ -221,9 +221,9 @@ public class StripeTaxCalculatorTests
                 Data = [LineItem(lineIds[0], amountTax: 1900, percentage: "19.00", reason: null)]
             }
         };
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(2, result.Lines.Count);
         var missing = result.Lines.Single(l => l.LineItemId == lineIds[1]);
@@ -258,9 +258,9 @@ public class StripeTaxCalculatorTests
                 }
             ]
         };
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         var line = Assert.Single(result.Breakdown);
         Assert.Equal(19m, line.RatePercent);
@@ -289,9 +289,9 @@ public class StripeTaxCalculatorTests
                 BreakdownLine("US", "CA", "sales_tax", "1.50", taxable: 10000, amount: 150)
             ]
         };
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>()).Returns(calc);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(3, result.Breakdown.Count);
         Assert.All(result.Breakdown, b =>
@@ -313,10 +313,10 @@ public class StripeTaxCalculatorTests
 
         var stripeError = new StripeError { Code = "tax_calculation_error" };
         var ex = new StripeException("boom") { StripeError = stripeError };
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
             .Returns<Task<Calculation>>(_ => throw ex);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Empty(result.Lines);
         Assert.Empty(result.Breakdown);
@@ -328,10 +328,10 @@ public class StripeTaxCalculatorTests
     {
         var request = Request(country: "DE", tenantRegion: Region.EU);
         var ex = new StripeException("network down");
-        api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
+        _api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
             .Returns<Task<Calculation>>(_ => throw ex);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.NotNull(result.Warning);
         Assert.Contains("network down", result.Warning);

@@ -14,16 +14,16 @@ namespace Logistics.Application.Tests.Agents;
 /// </summary>
 public class AgentSurfaceScopeTests
 {
-    private readonly AgentTestContext ctx = new();
+    private readonly AgentTestContext _ctx = new();
 
     [Fact]
     public async Task CreateDispatchConversation_UsesDispatchKind()
     {
         AgentConversation? added = null;
-        await ctx.ConversationRepo.AddAsync(
+        await _ctx.ConversationRepo.AddAsync(
             Arg.Do<AgentConversation>(c => added = c), Arg.Any<CancellationToken>());
 
-        await new CreateAIDispatchConversationHandler(ctx.Commands, ctx.CurrentUser)
+        await new CreateAIDispatchConversationHandler(_ctx.Commands, _ctx.CurrentUser)
             .Handle(new CreateAIDispatchConversationCommand(), CancellationToken.None);
 
         Assert.Equal(AgentConversationKind.Dispatch, added!.Kind);
@@ -33,10 +33,10 @@ public class AgentSurfaceScopeTests
     public async Task CreateCopilotConversation_UsesCopilotKind()
     {
         AgentConversation? added = null;
-        await ctx.ConversationRepo.AddAsync(
+        await _ctx.ConversationRepo.AddAsync(
             Arg.Do<AgentConversation>(c => added = c), Arg.Any<CancellationToken>());
 
-        await new CreateAICopilotConversationHandler(ctx.Commands, ctx.CurrentUser)
+        await new CreateAICopilotConversationHandler(_ctx.Commands, _ctx.CurrentUser)
             .Handle(new CreateAICopilotConversationCommand(), CancellationToken.None);
 
         Assert.Equal(AgentConversationKind.Copilot, added!.Kind);
@@ -45,9 +45,9 @@ public class AgentSurfaceScopeTests
     [Fact]
     public async Task RenameDispatchConversation_RejectsACopilotConversation()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Copilot);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Copilot);
 
-        var result = await new RenameAIDispatchConversationHandler(ctx.Commands).Handle(
+        var result = await new RenameAIDispatchConversationHandler(_ctx.Commands).Handle(
             new RenameAIDispatchConversationCommand { ConversationId = conversation.Id, Title = "x" },
             CancellationToken.None);
 
@@ -57,10 +57,10 @@ public class AgentSurfaceScopeTests
     [Fact]
     public async Task RenameCopilotConversation_RejectsAnotherUsersConversation()
     {
-        var conversation = ctx.SetConversation(
+        var conversation = _ctx.SetConversation(
             createdById: Guid.NewGuid(), kind: AgentConversationKind.Copilot);
 
-        var result = await new RenameAICopilotConversationHandler(ctx.Commands, ctx.CurrentUser).Handle(
+        var result = await new RenameAICopilotConversationHandler(_ctx.Commands, _ctx.CurrentUser).Handle(
             new RenameAICopilotConversationCommand { ConversationId = conversation.Id, Title = "x" },
             CancellationToken.None);
 
@@ -71,10 +71,10 @@ public class AgentSurfaceScopeTests
     [Fact]
     public async Task DeleteDispatchConversation_AllowsAnotherUsersConversation()
     {
-        var conversation = ctx.SetConversation(
+        var conversation = _ctx.SetConversation(
             createdById: Guid.NewGuid(), kind: AgentConversationKind.Dispatch);
 
-        var result = await new DeleteAIDispatchConversationHandler(ctx.Commands).Handle(
+        var result = await new DeleteAIDispatchConversationHandler(_ctx.Commands).Handle(
             new DeleteAIDispatchConversationCommand { ConversationId = conversation.Id },
             CancellationToken.None);
 
@@ -84,14 +84,14 @@ public class AgentSurfaceScopeTests
     [Fact]
     public async Task DeleteCopilotConversation_RejectsAnotherUsersConversation()
     {
-        var conversation = ctx.SetConversation(
+        var conversation = _ctx.SetConversation(
             createdById: Guid.NewGuid(), kind: AgentConversationKind.Copilot);
 
-        var result = await new DeleteAICopilotConversationHandler(ctx.Commands, ctx.CurrentUser).Handle(
+        var result = await new DeleteAICopilotConversationHandler(_ctx.Commands, _ctx.CurrentUser).Handle(
             new DeleteAICopilotConversationCommand { ConversationId = conversation.Id },
             CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        ctx.ConversationRepo.DidNotReceiveWithAnyArgs().Delete(default);
+        _ctx.ConversationRepo.DidNotReceiveWithAnyArgs().Delete(default);
     }
 }

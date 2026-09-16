@@ -13,22 +13,22 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Operations;
 
 public class SearchLoadsToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly SearchLoadsTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly SearchLoadsTool _sut;
 
     public SearchLoadsToolTests()
     {
-        sut = new SearchLoadsTool(mediator);
+        _sut = new SearchLoadsTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_ParsesFiltersIntoQuery()
     {
         var customerId = Guid.NewGuid();
-        mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<LoadDto>.Ok([], 0, 20));
 
-        await sut.ExecuteAsync(new JsonObject
+        await _sut.ExecuteAsync(new JsonObject
         {
             ["statuses"] = new JsonArray("delivered"),
             ["customer_id"] = customerId.ToString(),
@@ -36,7 +36,7 @@ public class SearchLoadsToolTests
             ["page"] = 2
         }, CancellationToken.None);
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<GetLoadsQuery>(q =>
                 q.Statuses!.Single() == LoadStatus.Delivered &&
                 q.CustomerId == customerId &&
@@ -49,20 +49,20 @@ public class SearchLoadsToolTests
     [Fact]
     public async Task Execute_UnknownStatus_FailsTheCallRatherThanFilteringOnSomethingElse()
     {
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["statuses"] = new JsonArray("delivered_typo") }, CancellationToken.None);
 
         Assert.Contains("statuses", JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
-        await mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
+        await _mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
     }
 
     [Fact]
     public async Task Execute_MoreResultsThanPage_SetsTruncated()
     {
-        mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>())
             .Returns(PagedResult<LoadDto>.Ok([CopilotToolTestData.CreateLoad()], 55, 20));
 
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.True(root.GetProperty("truncated").GetBoolean());

@@ -10,17 +10,17 @@ namespace Logistics.Application.Tests.IdentityAccess.Employees;
 
 public class UpdateEmployeeHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Employee, Guid> employeeRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<Employee, Guid> _employeeRepo =
         Substitute.For<ITenantRepository<Employee, Guid>>();
-    private readonly ITenantRepository<TenantRole, Guid> roleRepo =
+    private readonly ITenantRepository<TenantRole, Guid> _roleRepo =
         Substitute.For<ITenantRepository<TenantRole, Guid>>();
-    private readonly ICurrentUserService currentUser = Substitute.For<ICurrentUserService>();
+    private readonly ICurrentUserService _currentUser = Substitute.For<ICurrentUserService>();
 
     public UpdateEmployeeHandlerTests()
     {
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
-        tenantUow.Repository<TenantRole>().Returns(roleRepo);
+        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
+        _tenantUow.Repository<TenantRole>().Returns(_roleRepo);
     }
 
     [Fact]
@@ -63,10 +63,10 @@ public class UpdateEmployeeHandlerTests
     {
         var target = Employee(Role("driver"));
         var newRole = Role("owner", new TenantRoleClaim("permission", "tenant.manage"));
-        employeeRepo.GetByIdAsync(target.Id, Arg.Any<CancellationToken>()).Returns(target);
-        roleRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<TenantRole, bool>>>(),
+        _employeeRepo.GetByIdAsync(target.Id, Arg.Any<CancellationToken>()).Returns(target);
+        _roleRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<TenantRole, bool>>>(),
             Arg.Any<CancellationToken>()).Returns(newRole);
-        currentUser.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
+        _currentUser.IsInRole(AppRoles.SuperAdmin, AppRoles.Admin).Returns(true);
 
         var result = await Handler().Handle(
             new UpdateEmployeeCommand { UserId = target.Id, Role = newRole.Name },
@@ -78,14 +78,14 @@ public class UpdateEmployeeHandlerTests
 
     private void Arrange(Employee caller, Employee target, TenantRole newRole)
     {
-        currentUser.GetUserId().Returns(caller.Id);
-        employeeRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _currentUser.GetUserId().Returns(caller.Id);
+        _employeeRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(call => call.ArgAt<Guid>(0) == target.Id ? target : caller);
-        roleRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<TenantRole, bool>>>(),
+        _roleRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<TenantRole, bool>>>(),
             Arg.Any<CancellationToken>()).Returns(newRole);
     }
 
-    private UpdateEmployeeHandler Handler() => new(tenantUow, currentUser);
+    private UpdateEmployeeHandler Handler() => new(_tenantUow, _currentUser);
 
     private static Employee Employee(TenantRole role) => new()
     {

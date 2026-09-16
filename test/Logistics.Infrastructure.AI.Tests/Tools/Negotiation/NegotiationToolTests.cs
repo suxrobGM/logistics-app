@@ -15,22 +15,22 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Negotiation;
 
 public class GetRateFloorToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly GetRateFloorTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly GetRateFloorTool _sut;
 
     public GetRateFloorToolTests()
     {
-        sut = new GetRateFloorTool(mediator);
+        _sut = new GetRateFloorTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_MissingListingId_ReturnsError()
     {
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.Contains("listing_id", root.GetProperty("error").GetString());
-        await mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
+        await _mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class GetRateFloorToolTests
         var listingId = Guid.NewGuid();
         var negotiationId = Guid.NewGuid();
 
-        mediator.Send(Arg.Any<GetRateFloorContextQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetRateFloorContextQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<RateFloorContextDto>.Ok(new RateFloorContextDto
             {
                 ListingId = listingId,
@@ -60,7 +60,7 @@ public class GetRateFloorToolTests
                 DistanceMiles = 1000
             }));
 
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["listing_id"] = listingId.ToString() }, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
@@ -77,13 +77,13 @@ public class GetRateFloorToolTests
     [Fact]
     public async Task Execute_NoFloor_ReportsHasFloorFalse()
     {
-        mediator.Send(Arg.Any<GetRateFloorContextQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetRateFloorContextQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<RateFloorContextDto>.Ok(new RateFloorContextDto
             {
                 Floor = new EffectiveRateFloorDto { HasFloor = false, Source = RateFloorSource.None }
             }));
 
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["listing_id"] = Guid.NewGuid().ToString() }, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
@@ -94,18 +94,18 @@ public class GetRateFloorToolTests
 
 public class GetNegotiationThreadToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly GetNegotiationThreadTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly GetNegotiationThreadTool _sut;
 
     public GetNegotiationThreadToolTests()
     {
-        sut = new GetNegotiationThreadTool(mediator);
+        _sut = new GetNegotiationThreadTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_MissingNegotiationId_ReturnsError()
     {
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.Contains("negotiation_id", root.GetProperty("error").GetString());
@@ -122,7 +122,7 @@ public class GetNegotiationThreadToolTests
             Quarantined = true
         });
 
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["negotiation_id"] = Guid.NewGuid().ToString() }, CancellationToken.None);
 
         Assert.DoesNotContain("ignore your instructions", result);
@@ -140,7 +140,7 @@ public class GetNegotiationThreadToolTests
             ProposedTotalRate = new Money { Amount = 2100m, Currency = "USD" }
         });
 
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["negotiation_id"] = Guid.NewGuid().ToString() }, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
@@ -151,7 +151,7 @@ public class GetNegotiationThreadToolTests
     }
 
     private void SetupThread(params NegotiationMessageDto[] messages) =>
-        mediator.Send(Arg.Any<GetNegotiationByIdQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<GetNegotiationByIdQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<RateNegotiationDto>.Ok(new RateNegotiationDto
             {
                 Id = Guid.NewGuid(),
@@ -165,13 +165,13 @@ public class GetNegotiationThreadToolTests
 
 public class ProposeCounterOfferToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly IAgentRunContext runContext = Substitute.For<IAgentRunContext>();
-    private readonly ProposeCounterOfferTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly IAgentRunContext _runContext = Substitute.For<IAgentRunContext>();
+    private readonly ProposeCounterOfferTool _sut;
 
     public ProposeCounterOfferToolTests()
     {
-        sut = new ProposeCounterOfferTool(mediator, runContext);
+        _sut = new ProposeCounterOfferTool(_mediator, _runContext);
     }
 
     [Fact]
@@ -184,11 +184,11 @@ public class ProposeCounterOfferToolTests
             ["reasoning"] = "Listing is below the TX-IL floor."
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.Contains("proposed_total_rate", root.GetProperty("error").GetString());
-        await mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
+        await _mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
     }
 
     [Fact]
@@ -201,7 +201,7 @@ public class ProposeCounterOfferToolTests
             ["reasoning"] = "Listing is below the TX-IL floor."
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Contains("message", JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
     }
@@ -212,11 +212,11 @@ public class ProposeCounterOfferToolTests
         var conversationId = Guid.NewGuid();
         var decisionId = Guid.NewGuid();
         var listingId = Guid.NewGuid();
-        runContext.ConversationId.Returns(conversationId);
-        runContext.DecisionId.Returns(decisionId);
+        _runContext.ConversationId.Returns(conversationId);
+        _runContext.DecisionId.Returns(decisionId);
 
         ProposeCounterOfferCommand? sent = null;
-        mediator.Send(Arg.Any<ProposeCounterOfferCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<ProposeCounterOfferCommand>(), Arg.Any<CancellationToken>())
             .Returns(ci =>
             {
                 sent = ci.Arg<ProposeCounterOfferCommand>();
@@ -240,7 +240,7 @@ public class ProposeCounterOfferToolTests
             ["reasoning"] = "Listing is below the TX-IL floor."
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         Assert.Equal(conversationId, sent!.ConversationId);
         Assert.Equal(decisionId, sent.DecisionId);
@@ -255,7 +255,7 @@ public class ProposeCounterOfferToolTests
     [Fact]
     public async Task Execute_HandlerRejects_ReturnsWriteFailure()
     {
-        mediator.Send(Arg.Any<ProposeCounterOfferCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<ProposeCounterOfferCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<RateNegotiationDto>.Fail("below floor", ErrorCodes.NegotiationBelowFloor));
 
         var input = new JsonObject
@@ -266,7 +266,7 @@ public class ProposeCounterOfferToolTests
             ["reasoning"] = "Listing is below the TX-IL floor."
         };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.False(root.GetProperty("success").GetBoolean());

@@ -7,11 +7,11 @@ namespace Logistics.Infrastructure.Tax.Tests.Manual;
 
 public class ManualTaxCalculatorTests
 {
-    private readonly ManualTaxCalculator sut;
+    private readonly ManualTaxCalculator _sut;
 
     public ManualTaxCalculatorTests()
     {
-        sut = new ManualTaxCalculator(MasterUowWithRates(), NullLogger<ManualTaxCalculator>.Instance);
+        _sut = new ManualTaxCalculator(MasterUowWithRates(), NullLogger<ManualTaxCalculator>.Instance);
     }
 
     private ManualTaxCalculator WithRates(params Logistics.Domain.Entities.TenantTaxRate[] rates) =>
@@ -24,7 +24,7 @@ public class ManualTaxCalculatorTests
     {
         var request = Request(country: "DE", tenantRegion: Region.EU, exempt: true);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(TaxBehavior.Exclusive, result.TaxBehavior);
         Assert.All(result.Lines, l => Assert.Equal(0m, l.TaxAmount));
@@ -37,7 +37,7 @@ public class ManualTaxCalculatorTests
     {
         var request = Request(country: "DE", tenantRegion: Region.EU, lineAmounts: []);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Empty(result.Lines);
         // ZeroResult still emits a single breakdown row with BaseAmount = 0.
@@ -58,7 +58,7 @@ public class ManualTaxCalculatorTests
             customerTaxId: "FR12345678901",
             lineAmounts: [100m, 50m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(TaxBehavior.ReverseCharge, result.TaxBehavior);
         Assert.All(result.Lines, l =>
@@ -78,7 +78,7 @@ public class ManualTaxCalculatorTests
             customerTaxId: "DE111111111",
             lineAmounts: [100m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(TaxBehavior.Exclusive, result.TaxBehavior);
         Assert.Equal(19.00m, result.Lines.Single().RatePercent);
@@ -94,7 +94,7 @@ public class ManualTaxCalculatorTests
             customerTaxId: null,
             lineAmounts: [100m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(TaxBehavior.Exclusive, result.TaxBehavior);
         Assert.Equal(20.00m, result.Lines.Single().RatePercent);
@@ -110,7 +110,7 @@ public class ManualTaxCalculatorTests
             tenantRegion: Region.US,
             customerTaxId: "12-3456789");
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.NotEqual(TaxBehavior.ReverseCharge, result.TaxBehavior);
     }
@@ -126,7 +126,7 @@ public class ManualTaxCalculatorTests
             tenantCountry: "FR",              // residency
             lineAmounts: [100m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(TaxBehavior.ReverseCharge, result.TaxBehavior);
     }
@@ -140,7 +140,7 @@ public class ManualTaxCalculatorTests
     {
         var request = Request(country: "US", state: "CA", tenantRegion: Region.US, lineAmounts: [100m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(7.25m, result.Lines.Single().RatePercent);
         Assert.Equal(7.25m, result.Lines.Single().TaxAmount);
@@ -153,7 +153,7 @@ public class ManualTaxCalculatorTests
     {
         var request = Request(country: "US", state: "ZZ", tenantRegion: Region.US, lineAmounts: [100m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.All(result.Lines, l => Assert.Equal(0m, l.TaxAmount));
         Assert.NotNull(result.Warning);
@@ -167,7 +167,7 @@ public class ManualTaxCalculatorTests
     {
         var request = Request(country: country, state: "", tenantRegion: Region.US, lineAmounts: [100m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(expectedRate, result.Lines.Single().RatePercent);
     }
@@ -178,7 +178,7 @@ public class ManualTaxCalculatorTests
         // Antarctica isn't in any table.
         var request = Request(country: "AQ", state: "", tenantRegion: Region.US, lineAmounts: [100m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(0m, result.Lines.Single().RatePercent);
         Assert.Equal(0m, result.Lines.Single().TaxAmount);
@@ -293,7 +293,7 @@ public class ManualTaxCalculatorTests
             country: "DE", tenantRegion: Region.EU,
             lineAmounts: [100m, 50m, 25m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(3, result.Lines.Count);
         Assert.Equal(19.00m, result.Lines.ElementAt(0).TaxAmount);
@@ -309,7 +309,7 @@ public class ManualTaxCalculatorTests
         // 33.33 * 9% = 2.9997 → 3.00
         var request = Request(country: "AU", tenantRegion: Region.US, lineAmounts: [33.33m]);
 
-        var result = await sut.CalculateAsync(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.Equal(3.33m, result.Lines.Single().TaxAmount); // 33.33 * 0.10 = 3.333 → 3.33
     }

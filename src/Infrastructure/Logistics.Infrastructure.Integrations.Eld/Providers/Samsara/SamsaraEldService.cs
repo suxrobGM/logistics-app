@@ -20,7 +20,7 @@ internal class SamsaraEldService(
     ILogger<SamsaraEldService> logger)
     : IEldProviderService
 {
-    private readonly string baseUrl = options.Value.Samsara?.BaseUrl ?? "https://api.samsara.com";
+    private readonly string _baseUrl = options.Value.Samsara?.BaseUrl ?? "https://api.samsara.com";
 
     public EldProviderType ProviderType => EldProviderType.Samsara;
 
@@ -35,7 +35,7 @@ internal class SamsaraEldService(
     {
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/fleet/drivers");
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/fleet/drivers");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
             var response = await httpClient.SendAsync(request);
@@ -57,7 +57,7 @@ internal class SamsaraEldService(
     public async Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
         var result = await httpClient.TryGetFromJsonAsync<SamsaraHosClockResponse>(
-            $"{baseUrl}/fleet/hos/drivers/{externalDriverId}/clocks",
+            $"{_baseUrl}/fleet/hos/drivers/{externalDriverId}/clocks",
             logger,
             $"Samsara HOS clocks for driver {externalDriverId}",
             IntegrationJsonOptions.CamelCase);
@@ -67,7 +67,7 @@ internal class SamsaraEldService(
     public async Task<IEnumerable<EldDriverHosDataDto>> GetAllDriversHosStatusAsync()
     {
         var result = await httpClient.TryGetFromJsonAsync<SamsaraHosClocksResponse>(
-            $"{baseUrl}/fleet/hos/clocks",
+            $"{_baseUrl}/fleet/hos/clocks",
             logger,
             "Samsara HOS clocks (all drivers)",
             IntegrationJsonOptions.CamelCase);
@@ -83,7 +83,7 @@ internal class SamsaraEldService(
         var endMs = new DateTimeOffset(endDate).ToUnixTimeMilliseconds();
 
         var result = await httpClient.TryGetFromJsonAsync<SamsaraHosLogsResponse>(
-            $"{baseUrl}/fleet/hos/logs?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
+            $"{_baseUrl}/fleet/hos/logs?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
             logger,
             $"Samsara HOS logs for driver {externalDriverId}",
             IntegrationJsonOptions.CamelCase);
@@ -99,7 +99,7 @@ internal class SamsaraEldService(
         var endMs = new DateTimeOffset(endDate).ToUnixTimeMilliseconds();
 
         var result = await httpClient.TryGetFromJsonAsync<SamsaraViolationsResponse>(
-            $"{baseUrl}/fleet/hos/violations?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
+            $"{_baseUrl}/fleet/hos/violations?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
             logger,
             $"Samsara violations for driver {externalDriverId}",
             IntegrationJsonOptions.CamelCase);
@@ -109,7 +109,7 @@ internal class SamsaraEldService(
     public async Task<IEnumerable<EldDriverDto>> GetAllDriversAsync()
     {
         var result = await httpClient.TryGetFromJsonAsync<SamsaraDriversResponse>(
-            $"{baseUrl}/fleet/drivers",
+            $"{_baseUrl}/fleet/drivers",
             logger,
             "Samsara drivers list",
             IntegrationJsonOptions.CamelCase);
@@ -119,7 +119,7 @@ internal class SamsaraEldService(
     public async Task<IEnumerable<EldVehicleDto>> GetAllVehiclesAsync()
     {
         var result = await httpClient.TryGetFromJsonAsync<SamsaraVehiclesResponse>(
-            $"{baseUrl}/fleet/vehicles",
+            $"{_baseUrl}/fleet/vehicles",
             logger,
             "Samsara vehicles list",
             IntegrationJsonOptions.CamelCase);

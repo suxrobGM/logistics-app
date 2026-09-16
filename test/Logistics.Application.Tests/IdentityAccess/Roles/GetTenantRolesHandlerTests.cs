@@ -8,16 +8,16 @@ namespace Logistics.Application.Tests.IdentityAccess.Roles;
 
 public class GetTenantRolesHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<TenantRole, Guid> roleRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<TenantRole, Guid> _roleRepo =
         Substitute.For<ITenantRepository<TenantRole, Guid>>();
 
-    private readonly GetTenantRolesHandler sut;
+    private readonly GetTenantRolesHandler _sut;
 
     public GetTenantRolesHandlerTests()
     {
-        tenantUow.Repository<TenantRole>().Returns(roleRepo);
-        sut = new GetTenantRolesHandler(tenantUow);
+        _tenantUow.Repository<TenantRole>().Returns(_roleRepo);
+        _sut = new GetTenantRolesHandler(_tenantUow);
     }
 
     // Stored in reverse name order, so paging the unordered set would fail this.
@@ -26,9 +26,9 @@ public class GetTenantRolesHandlerTests
     {
         var zeta = new TenantRole("zeta");
         var alpha = new TenantRole("alpha");
-        roleRepo.Query().Returns(new[] { zeta, alpha }.AsQueryable());
+        _roleRepo.Query().Returns(new[] { zeta, alpha }.AsQueryable());
 
-        var result = await sut.Handle(new GetTenantRolesQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetTenantRolesQuery(), CancellationToken.None);
 
         Assert.Equal(["tenant.alpha", "tenant.zeta"], result.Value!.Select(r => r.Name).ToArray());
     }
@@ -47,9 +47,9 @@ public class GetTenantRolesHandlerTests
             Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             DisplayName = "first"
         };
-        roleRepo.Query().Returns(new[] { second, first }.AsQueryable());
+        _roleRepo.Query().Returns(new[] { second, first }.AsQueryable());
 
-        var result = await sut.Handle(new GetTenantRolesQuery { PageSize = 1 }, CancellationToken.None);
+        var result = await _sut.Handle(new GetTenantRolesQuery { PageSize = 1 }, CancellationToken.None);
 
         var page = result.Value!.ToArray();
         Assert.Single(page);

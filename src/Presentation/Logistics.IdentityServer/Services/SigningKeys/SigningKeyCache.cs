@@ -17,38 +17,38 @@ public class SigningKeyCache(
     IOptions<SigningKeyOptions> options,
     ILogger<SigningKeyCache> logger)
 {
-    private readonly SemaphoreSlim refreshLock = new(1, 1);
-    private readonly SigningKeyOptions options = options.Value;
+    private readonly SemaphoreSlim _refreshLock = new(1, 1);
+    private readonly SigningKeyOptions _options = options.Value;
 
-    private SigningCredentials? active;
-    private DateTimeOffset expiresAt = DateTimeOffset.MinValue;
-    private IReadOnlyList<SecurityKeyInfo> validation = [];
+    private SigningCredentials? _active;
+    private DateTimeOffset _expiresAt = DateTimeOffset.MinValue;
+    private IReadOnlyList<SecurityKeyInfo> _validation = [];
 
-    public void Invalidate() => expiresAt = DateTimeOffset.MinValue;
+    public void Invalidate() => _expiresAt = DateTimeOffset.MinValue;
 
     public async Task<SigningCredentials?> GetActiveAsync()
     {
         await RefreshIfStaleAsync();
-        return active;
+        return _active;
     }
 
     public async Task<IEnumerable<SecurityKeyInfo>> GetValidationKeysAsync()
     {
         await RefreshIfStaleAsync();
-        return validation;
+        return _validation;
     }
 
     private async Task RefreshIfStaleAsync()
     {
-        if (DateTimeOffset.UtcNow < expiresAt)
+        if (DateTimeOffset.UtcNow < _expiresAt)
         {
             return;
         }
 
-        await refreshLock.WaitAsync();
+        await _refreshLock.WaitAsync();
         try
         {
-            if (DateTimeOffset.UtcNow < expiresAt)
+            if (DateTimeOffset.UtcNow < _expiresAt)
             {
                 return;
             }
@@ -67,25 +67,25 @@ public class SigningKeyCache(
             // Sign with the newest key that has been published long enough for relying parties to
             // have picked it up. If none has, fall back to the oldest available, which is the one
             // they are most likely to already hold.
-            var cutoff = DateTime.UtcNow - options.Propagation;
+            var cutoff = DateTime.UtcNow - _options.Propagation;
             var activeIndex = keys.FindIndex(x => x.Created <= cutoff);
             if (activeIndex < 0)
             {
                 activeIndex = credentials.Count - 1;
             }
 
-            active = credentials.Count == 0 ? null : credentials[activeIndex];
-            validation = credentials
+            _active = credentials.Count == 0 ? null : credentials[activeIndex];
+            _validation = credentials
                 .Select(x => new SecurityKeyInfo { Key = x.Key, SigningAlgorithm = x.Algorithm })
                 .ToList();
-            expiresAt = DateTimeOffset.UtcNow.Add(options.CacheTtl);
+            _expiresAt = DateTimeOffset.UtcNow.Add(_options.CacheTtl);
 
             logger.LogDebug("Loaded {Count} signing key(s), active kid {Kid}",
-                credentials.Count, active?.Key.KeyId ?? "none");
+                credentials.Count, _active?.Key.KeyId ?? "none");
         }
         finally
         {
-            refreshLock.Release();
+            _refreshLock.Release();
         }
     }
 }

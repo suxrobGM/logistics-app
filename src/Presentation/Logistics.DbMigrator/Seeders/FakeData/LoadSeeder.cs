@@ -18,8 +18,8 @@ internal class LoadSeeder(
     ILogger<LoadSeeder> logger,
     IInvoiceTaxApplier taxApplier) : SeederBase(logger)
 {
-    private readonly DateTime endDate = DateTime.UtcNow.AddDays(-1);
-    private readonly DateTime startDate = DateTime.UtcNow.AddMonths(-2);
+    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-1);
+    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-2);
 
     public override string Name => nameof(LoadSeeder);
     public override SeederType Type => SeederType.FakeData;
@@ -197,7 +197,7 @@ internal class LoadSeeder(
         Terminal? destinationTerminal,
         IRegionProfile region)
     {
-        var dispatchedAt = random.UtcDate(startDate, endDate);
+        var dispatchedAt = random.UtcDate(_startDate, _endDate);
         var pickedUpAt = dispatchedAt.AddHours(random.Next(1, 12));
         var deliveredAt = pickedUpAt.AddHours(random.Next(4, 48));
         var deliveryCost = random.Next(1_000, 3_000);

@@ -14,7 +14,7 @@ internal sealed class TenantUnitOfWork(
     IServiceProvider services)
     : UnitOfWork<ITenantEntity>(db), ITenantUnitOfWork
 {
-    private Tenant? currentTenant;
+    private Tenant? _currentTenant;
 
     // Strongly typed repos (hide base with 'new')
     public new ITenantRepository<TEntity, Guid> Repository<TEntity>()
@@ -32,28 +32,28 @@ internal sealed class TenantUnitOfWork(
     // Tenant context operations
     public Tenant GetCurrentTenant()
     {
-        if (currentTenant is null)
+        if (_currentTenant is null)
         {
-            currentTenant = currentTenantAccessor.GetCurrentTenant();
-            db.SwitchToTenant(currentTenant);
+            _currentTenant = currentTenantAccessor.GetCurrentTenant();
+            db.SwitchToTenant(_currentTenant);
         }
 
-        return currentTenant;
+        return _currentTenant;
     }
 
     public async Task<Tenant> SetCurrentTenantByIdAsync(Guid tenantId)
     {
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId);
-        currentTenant = tenant ?? throw new InvalidOperationException($"Tenant with ID '{tenantId}' not found");
+        _currentTenant = tenant ?? throw new InvalidOperationException($"Tenant with ID '{tenantId}' not found");
 
-        db.SwitchToTenant(currentTenant);
-        return currentTenant;
+        db.SwitchToTenant(_currentTenant);
+        return _currentTenant;
     }
 
     public void SetCurrentTenant(Tenant tenant)
     {
-        currentTenant = tenant ?? throw new ArgumentNullException(nameof(tenant));
-        db.SwitchToTenant(currentTenant);
+        _currentTenant = tenant ?? throw new ArgumentNullException(nameof(tenant));
+        db.SwitchToTenant(_currentTenant);
     }
 
     protected override IRepository<TEntity, TKey> CreateRepository<TEntity, TKey>()

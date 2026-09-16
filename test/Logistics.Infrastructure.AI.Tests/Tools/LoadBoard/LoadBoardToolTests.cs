@@ -15,8 +15,8 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.LoadBoard;
 
 public class LoadBoardToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly AgentRunContext runContext = new();
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly AgentRunContext _runContext = new();
 
     private static JsonElement Parse(string json) => JsonDocument.Parse(json).RootElement;
 
@@ -52,22 +52,22 @@ public class LoadBoardToolTests
     [Fact]
     public async Task Search_MissingOrigin_ReturnsErrorWithoutQuerying()
     {
-        var result = await new SearchLoadBoardTool(mediator).ExecuteAsync(
+        var result = await new SearchLoadBoardTool(_mediator).ExecuteAsync(
             new JsonObject { ["origin_city"] = "Dallas" }, CancellationToken.None);
 
         Assert.Equal(
             "Missing required input: origin_state",
             Parse(result).GetProperty("error").GetString());
-        await mediator.DidNotReceive().Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>());
+        await _mediator.DidNotReceive().Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Search_BuildsCommandFromCityStateAndRadius()
     {
-        mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardSearchResultDto>.Ok(new LoadBoardSearchResultDto()));
 
-        await new SearchLoadBoardTool(mediator).ExecuteAsync(
+        await new SearchLoadBoardTool(_mediator).ExecuteAsync(
             new JsonObject
             {
                 ["origin_city"] = "Dallas",
@@ -77,7 +77,7 @@ public class LoadBoardToolTests
             },
             CancellationToken.None);
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<SearchLoadBoardCommand>(c =>
                 c.OriginAddress!.City == "Dallas" &&
                 c.OriginAddress.State == "TX" &&
@@ -89,14 +89,14 @@ public class LoadBoardToolTests
     [Fact]
     public async Task Search_NoRadiusGiven_DefaultsTo100Miles()
     {
-        mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardSearchResultDto>.Ok(new LoadBoardSearchResultDto()));
 
-        await new SearchLoadBoardTool(mediator).ExecuteAsync(
+        await new SearchLoadBoardTool(_mediator).ExecuteAsync(
             new JsonObject { ["origin_city"] = "Dallas", ["origin_state"] = "TX" },
             CancellationToken.None);
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<SearchLoadBoardCommand>(c => c.OriginRadius == 100 && c.DestinationAddress == null),
             Arg.Any<CancellationToken>());
     }
@@ -105,14 +105,14 @@ public class LoadBoardToolTests
     public async Task Search_ReturnsPersistedListingIdSoBookingCanReferenceIt()
     {
         var listingId = Guid.NewGuid();
-        mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardSearchResultDto>.Ok(new LoadBoardSearchResultDto
             {
                 Listings = [Listing(listingId)],
                 TotalCount = 1
             }));
 
-        var root = Parse(await new SearchLoadBoardTool(mediator).ExecuteAsync(
+        var root = Parse(await new SearchLoadBoardTool(_mediator).ExecuteAsync(
             new JsonObject { ["origin_city"] = "Dallas", ["origin_state"] = "TX" },
             CancellationToken.None));
 
@@ -128,7 +128,7 @@ public class LoadBoardToolTests
     [Fact]
     public async Task Search_ProviderFailed_SurfacesItRatherThanReportingNoFreight()
     {
-        mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardSearchResultDto>.Ok(new LoadBoardSearchResultDto
             {
                 Listings = [],
@@ -138,7 +138,7 @@ public class LoadBoardToolTests
                 }
             }));
 
-        var root = Parse(await new SearchLoadBoardTool(mediator).ExecuteAsync(
+        var root = Parse(await new SearchLoadBoardTool(_mediator).ExecuteAsync(
             new JsonObject { ["origin_city"] = "Dallas", ["origin_state"] = "TX" },
             CancellationToken.None));
 
@@ -150,10 +150,10 @@ public class LoadBoardToolTests
     [Fact]
     public async Task Search_FeatureGateRejects_SurfacesTheError()
     {
-        mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<SearchLoadBoardCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardSearchResultDto>.Fail("Load board is not enabled for this plan"));
 
-        var root = Parse(await new SearchLoadBoardTool(mediator).ExecuteAsync(
+        var root = Parse(await new SearchLoadBoardTool(_mediator).ExecuteAsync(
             new JsonObject { ["origin_city"] = "Dallas", ["origin_state"] = "TX" },
             CancellationToken.None));
 
@@ -164,7 +164,7 @@ public class LoadBoardToolTests
 
     #region book_loadboard_load
 
-    private BookLoadBoardLoadTool BookingTool() => new(mediator, runContext);
+    private BookLoadBoardLoadTool BookingTool() => new(_mediator, _runContext);
 
     [Fact]
     public async Task Book_NoDispatcherOnTheRun_RefusesRatherThanGuessing()
@@ -179,13 +179,13 @@ public class LoadBoardToolTests
             CancellationToken.None);
 
         Assert.Contains("dispatcher", Parse(result).GetProperty("error").GetString()!);
-        await mediator.DidNotReceive().Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>());
+        await _mediator.DidNotReceive().Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Book_MissingListingId_NamesTheMissingProperty()
     {
-        runContext.SetTriggeredBy(Guid.NewGuid());
+        _runContext.SetTriggeredBy(Guid.NewGuid());
 
         var result = await BookingTool().ExecuteAsync(
             new JsonObject { ["truck_id"] = Guid.NewGuid().ToString() }, CancellationToken.None);
@@ -200,9 +200,9 @@ public class LoadBoardToolTests
         var listingId = Guid.NewGuid();
         var truckId = Guid.NewGuid();
         var loadId = Guid.NewGuid();
-        runContext.SetTriggeredBy(dispatcherId);
+        _runContext.SetTriggeredBy(dispatcherId);
 
-        mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardBookingResultDto>.Ok(new LoadBoardBookingResultDto
             {
                 Success = true,
@@ -225,7 +225,7 @@ public class LoadBoardToolTests
         Assert.Equal(1042, root.GetProperty("load_number").GetInt64());
         Assert.Equal("CONF-7", root.GetProperty("confirmation_id").GetString());
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<BookLoadBoardLoadCommand>(c =>
                 c.ListingId == listingId &&
                 c.TruckId == truckId &&
@@ -238,8 +238,8 @@ public class LoadBoardToolTests
     [Fact]
     public async Task Book_NeverOverridesTheBrokerCreditCheck()
     {
-        runContext.SetTriggeredBy(Guid.NewGuid());
-        mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
+        _runContext.SetTriggeredBy(Guid.NewGuid());
+        _mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardBookingResultDto>.Ok(new LoadBoardBookingResultDto { Success = true }));
 
         // Even if the model invents the argument, overriding is a dispatcher's judgement call.
@@ -252,15 +252,15 @@ public class LoadBoardToolTests
             },
             CancellationToken.None);
 
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<BookLoadBoardLoadCommand>(c => !c.OverrideCreditCheck), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Book_CommandFails_EmitsSuccessFalseAndError()
     {
-        runContext.SetTriggeredBy(Guid.NewGuid());
-        mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
+        _runContext.SetTriggeredBy(Guid.NewGuid());
+        _mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardBookingResultDto>.Fail("Broker credit below the tenant minimum"));
 
         var root = Parse(await BookingTool().ExecuteAsync(
@@ -278,8 +278,8 @@ public class LoadBoardToolTests
     [Fact]
     public async Task Book_ProviderRejectedTheBooking_ReportsFailureNotSuccess()
     {
-        runContext.SetTriggeredBy(Guid.NewGuid());
-        mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
+        _runContext.SetTriggeredBy(Guid.NewGuid());
+        _mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardBookingResultDto>.Ok(new LoadBoardBookingResultDto
             {
                 Success = false,

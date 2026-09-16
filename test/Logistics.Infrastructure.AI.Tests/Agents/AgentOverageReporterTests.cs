@@ -15,13 +15,13 @@ namespace Logistics.Infrastructure.AI.Tests.Agents;
 /// </summary>
 public class AgentOverageReporterTests
 {
-    private readonly IStripeUsageService stripeUsageService = Substitute.For<IStripeUsageService>();
-    private readonly AgentOverageReporter sut;
-    private readonly Guid tenantId = Guid.NewGuid();
+    private readonly IStripeUsageService _stripeUsageService = Substitute.For<IStripeUsageService>();
+    private readonly AgentOverageReporter _sut;
+    private readonly Guid _tenantId = Guid.NewGuid();
 
     public AgentOverageReporterTests()
     {
-        sut = new AgentOverageReporter(stripeUsageService, NullLogger<AgentOverageReporter>.Instance);
+        _sut = new AgentOverageReporter(_stripeUsageService, NullLogger<AgentOverageReporter>.Instance);
     }
 
     private static AgentSession Session(AgentSessionType type, bool isOverage, decimal cost = 0.25m)
@@ -45,10 +45,10 @@ public class AgentOverageReporterTests
         var session = Session(type, isOverage: true);
         session.Complete("done");
 
-        await sut.ReportIfOverBudgetAsync(session, tenantId);
+        await _sut.ReportIfOverBudgetAsync(session, _tenantId);
 
-        await stripeUsageService.Received(1)
-            .ReportAISessionOverageAsync(tenantId, 0.25m, Arg.Any<CancellationToken>());
+        await _stripeUsageService.Received(1)
+            .ReportAISessionOverageAsync(_tenantId, 0.25m, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -57,9 +57,9 @@ public class AgentOverageReporterTests
         var session = Session(AgentSessionType.Copilot, isOverage: false);
         session.Complete("done");
 
-        await sut.ReportIfOverBudgetAsync(session, tenantId);
+        await _sut.ReportIfOverBudgetAsync(session, _tenantId);
 
-        await stripeUsageService.DidNotReceiveWithAnyArgs()
+        await _stripeUsageService.DidNotReceiveWithAnyArgs()
             .ReportAISessionOverageAsync(default, default, default);
     }
 
@@ -70,9 +70,9 @@ public class AgentOverageReporterTests
         var session = Session(AgentSessionType.Copilot, isOverage: true);
         session.Fail("boom");
 
-        await sut.ReportIfOverBudgetAsync(session, tenantId);
+        await _sut.ReportIfOverBudgetAsync(session, _tenantId);
 
-        await stripeUsageService.DidNotReceiveWithAnyArgs()
+        await _stripeUsageService.DidNotReceiveWithAnyArgs()
             .ReportAISessionOverageAsync(default, default, default);
     }
 
@@ -82,9 +82,9 @@ public class AgentOverageReporterTests
         var session = Session(AgentSessionType.Copilot, isOverage: true);
         session.Cancel();
 
-        await sut.ReportIfOverBudgetAsync(session, tenantId);
+        await _sut.ReportIfOverBudgetAsync(session, _tenantId);
 
-        await stripeUsageService.DidNotReceiveWithAnyArgs()
+        await _stripeUsageService.DidNotReceiveWithAnyArgs()
             .ReportAISessionOverageAsync(default, default, default);
     }
 
@@ -93,13 +93,13 @@ public class AgentOverageReporterTests
     {
         // The turn already ran and its output is the user's - losing the meter event costs us the
         // charge, throwing here would cost them the answer.
-        stripeUsageService
+        _stripeUsageService
             .ReportAISessionOverageAsync(Arg.Any<Guid>(), Arg.Any<decimal>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new InvalidOperationException("stripe down"));
 
         var session = Session(AgentSessionType.Copilot, isOverage: true);
         session.Complete("done");
 
-        await sut.ReportIfOverBudgetAsync(session, tenantId);
+        await _sut.ReportIfOverBudgetAsync(session, _tenantId);
     }
 }

@@ -16,11 +16,11 @@ internal sealed class EfsFuelCardService(
     ILogger<EfsFuelCardService> logger)
     : BearerFuelCardService<EfsTransactionsResponse>(httpClient, logger)
 {
-    private readonly EfsOptions options = options.Value.Efs ?? new EfsOptions();
+    private readonly EfsOptions _options = options.Value.Efs ?? new EfsOptions();
 
     public override FuelCardProviderType ProviderType => FuelCardProviderType.Efs;
 
-    protected override string BaseUrl => options.BaseUrl;
+    protected override string BaseUrl => _options.BaseUrl;
 
     protected override string ProbeUrl => "/v1/transactions?limit=1";
 

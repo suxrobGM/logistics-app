@@ -22,18 +22,18 @@ public class MasterDbContext : IdentityDbContext<
         IdentityUserToken<Guid>>,
     IDataProtectionKeyContext
 {
-    private readonly AuditableEntitySaveChangesInterceptor? auditableEntity;
-    private readonly string connectionString;
-    private readonly DispatchDomainEventsInterceptor? dispatchDomain;
+    private readonly AuditableEntitySaveChangesInterceptor? _auditableEntity;
+    private readonly string _connectionString;
+    private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
 
     public MasterDbContext(
         MasterDbContextOptions options,
         DispatchDomainEventsInterceptor? dispatchDomain = null,
         AuditableEntitySaveChangesInterceptor? auditableEntity = null)
     {
-        this.dispatchDomain = dispatchDomain;
-        this.auditableEntity = auditableEntity;
-        connectionString = options.ConnectionString ?? ConnectionStrings.LocalMaster;
+        _dispatchDomain = dispatchDomain;
+        _auditableEntity = auditableEntity;
+        _connectionString = options.ConnectionString ?? ConnectionStrings.LocalMaster;
 
         NavigationDiscoveryGuard.Attach(ChangeTracker);
     }
@@ -44,19 +44,19 @@ public class MasterDbContext : IdentityDbContext<
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (dispatchDomain is not null)
+        if (_dispatchDomain is not null)
         {
-            options.AddInterceptors(dispatchDomain);
+            options.AddInterceptors(_dispatchDomain);
         }
 
-        if (auditableEntity is not null)
+        if (_auditableEntity is not null)
         {
-            options.AddInterceptors(auditableEntity);
+            options.AddInterceptors(_auditableEntity);
         }
 
         if (!options.IsConfigured)
         {
-            DbContextHelpers.ConfigurePostgreSql(connectionString, options);
+            DbContextHelpers.ConfigurePostgreSql(_connectionString, options);
         }
     }
 

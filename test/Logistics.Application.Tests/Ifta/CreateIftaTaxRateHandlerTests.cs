@@ -11,16 +11,16 @@ namespace Logistics.Application.Tests.Ifta;
 
 public class CreateIftaTaxRateHandlerTests
 {
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
-    private readonly IMasterRepository<IftaTaxRate, Guid> rateRepo =
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly IMasterRepository<IftaTaxRate, Guid> _rateRepo =
         Substitute.For<IMasterRepository<IftaTaxRate, Guid>>();
 
-    private readonly CreateIftaTaxRateHandler sut;
+    private readonly CreateIftaTaxRateHandler _sut;
 
     public CreateIftaTaxRateHandlerTests()
     {
-        masterUow.Repository<IftaTaxRate>().Returns(rateRepo);
-        sut = new CreateIftaTaxRateHandler(masterUow, Substitute.For<ILogger<CreateIftaTaxRateHandler>>());
+        _masterUow.Repository<IftaTaxRate>().Returns(_rateRepo);
+        _sut = new CreateIftaTaxRateHandler(_masterUow, Substitute.For<ILogger<CreateIftaTaxRateHandler>>());
     }
 
     private static CreateIftaTaxRateCommand Command(string country = "us", string? region = "tx") => new()
@@ -33,7 +33,7 @@ public class CreateIftaTaxRateHandlerTests
     };
 
     private void SetupExisting(IftaTaxRate? existing) =>
-        rateRepo.GetAsync(Arg.Any<Expression<Func<IftaTaxRate, bool>>>(), Arg.Any<CancellationToken>())
+        _rateRepo.GetAsync(Arg.Any<Expression<Func<IftaTaxRate, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(existing);
 
     [Fact]
@@ -41,10 +41,10 @@ public class CreateIftaTaxRateHandlerTests
     {
         SetupExisting(null);
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await rateRepo.Received(1).AddAsync(
+        await _rateRepo.Received(1).AddAsync(
             Arg.Is<IftaTaxRate>(r =>
                 r.Jurisdiction.CountryCode == "US" &&
                 r.Jurisdiction.Region == "TX" &&
@@ -52,7 +52,7 @@ public class CreateIftaTaxRateHandlerTests
                 r.Quarter == 1 &&
                 r.RatePerGallon == 0.20m),
             Arg.Any<CancellationToken>());
-        await masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -66,12 +66,12 @@ public class CreateIftaTaxRateHandlerTests
             RatePerGallon = 0.19m,
         });
 
-        var result = await sut.Handle(Command(), CancellationToken.None);
+        var result = await _sut.Handle(Command(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("already exists", result.Error);
-        await rateRepo.DidNotReceive().AddAsync(Arg.Any<IftaTaxRate>(), Arg.Any<CancellationToken>());
-        await masterUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _rateRepo.DidNotReceive().AddAsync(Arg.Any<IftaTaxRate>(), Arg.Any<CancellationToken>());
+        await _masterUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -79,10 +79,10 @@ public class CreateIftaTaxRateHandlerTests
     {
         SetupExisting(null);
 
-        var result = await sut.Handle(Command(region: "  "), CancellationToken.None);
+        var result = await _sut.Handle(Command(region: "  "), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await rateRepo.Received(1).AddAsync(
+        await _rateRepo.Received(1).AddAsync(
             Arg.Is<IftaTaxRate>(r => r.Jurisdiction.Region == null),
             Arg.Any<CancellationToken>());
     }

@@ -11,8 +11,8 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class PayrollSeeder(ILogger<PayrollSeeder> logger) : SeederBase(logger)
 {
-    private readonly DateTime startDate = DateTime.UtcNow.AddMonths(-2);
-    private readonly DateTime endDate = DateTime.UtcNow.AddDays(-1);
+    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-2);
+    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-1);
 
     public override string Name => nameof(PayrollSeeder);
     public override SeederType Type => SeederType.FakeData;
@@ -37,7 +37,7 @@ internal class PayrollSeeder(ILogger<PayrollSeeder> logger) : SeederBase(logger)
 
         var payrollService = context.ServiceProvider.GetRequiredService<PayrollService>();
 
-        await payrollService.GeneratePayrolls(employees, startDate, endDate);
+        await payrollService.GeneratePayrolls(employees, _startDate, _endDate);
 
         LogCompleted();
     }

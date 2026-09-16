@@ -10,26 +10,26 @@ namespace Logistics.Application.Tests.Operations.Tracking;
 
 public class TruckGeolocationUpdaterTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly TruckGeolocationUpdater sut;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<Truck, Guid> _truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
+    private readonly TruckGeolocationUpdater _sut;
 
-    private readonly Guid tenantId = Guid.NewGuid();
-    private readonly Guid driverId = Guid.NewGuid();
-    private readonly Guid truckId = Guid.NewGuid();
+    private readonly Guid _tenantId = Guid.NewGuid();
+    private readonly Guid _driverId = Guid.NewGuid();
+    private readonly Guid _truckId = Guid.NewGuid();
 
     public TruckGeolocationUpdaterTests()
     {
-        tenantUow.Repository<Truck>().Returns(truckRepo);
-        sut = new TruckGeolocationUpdater(Substitute.For<IMediator>(), tenantUow);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _sut = new TruckGeolocationUpdater(Substitute.For<IMediator>(), _tenantUow);
     }
 
     private void TruckIs(Truck? truck) =>
-        truckRepo.GetByIdAsync(truckId, Arg.Any<CancellationToken>()).Returns(truck);
+        _truckRepo.GetByIdAsync(_truckId, Arg.Any<CancellationToken>()).Returns(truck);
 
     private Truck TruckDrivenBy(Guid? mainDriverId, Guid? secondaryDriverId = null) => new()
     {
-        Id = truckId,
+        Id = _truckId,
         Number = "101",
         Type = TruckType.FreightTruck,
         MainDriverId = mainDriverId,
@@ -39,18 +39,18 @@ public class TruckGeolocationUpdaterTests
     [Fact]
     public async Task CanDriverReportForTruck_MainDriver_IsAllowed()
     {
-        TruckIs(TruckDrivenBy(driverId));
+        TruckIs(TruckDrivenBy(_driverId));
 
-        Assert.True(await sut.CanDriverReportForTruckAsync(tenantId, truckId, driverId));
-        await tenantUow.Received(1).SetCurrentTenantByIdAsync(tenantId);
+        Assert.True(await _sut.CanDriverReportForTruckAsync(_tenantId, _truckId, _driverId));
+        await _tenantUow.Received(1).SetCurrentTenantByIdAsync(_tenantId);
     }
 
     [Fact]
     public async Task CanDriverReportForTruck_SecondaryDriver_IsAllowed()
     {
-        TruckIs(TruckDrivenBy(Guid.NewGuid(), driverId));
+        TruckIs(TruckDrivenBy(Guid.NewGuid(), _driverId));
 
-        Assert.True(await sut.CanDriverReportForTruckAsync(tenantId, truckId, driverId));
+        Assert.True(await _sut.CanDriverReportForTruckAsync(_tenantId, _truckId, _driverId));
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class TruckGeolocationUpdaterTests
     {
         TruckIs(TruckDrivenBy(Guid.NewGuid()));
 
-        Assert.False(await sut.CanDriverReportForTruckAsync(tenantId, truckId, driverId));
+        Assert.False(await _sut.CanDriverReportForTruckAsync(_tenantId, _truckId, _driverId));
     }
 
     [Fact]
@@ -66,6 +66,6 @@ public class TruckGeolocationUpdaterTests
     {
         TruckIs(null);
 
-        Assert.False(await sut.CanDriverReportForTruckAsync(tenantId, truckId, driverId));
+        Assert.False(await _sut.CanDriverReportForTruckAsync(_tenantId, _truckId, _driverId));
     }
 }

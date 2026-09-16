@@ -16,20 +16,20 @@ namespace Logistics.Application.Tests.Payroll;
 
 public class SetupEmployeePayoutHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IStripeConnectService stripeConnectService = Substitute.For<IStripeConnectService>();
-    private readonly ILogger<SetupEmployeePayoutHandler> logger = NullLogger<SetupEmployeePayoutHandler>.Instance;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IStripeConnectService _stripeConnectService = Substitute.For<IStripeConnectService>();
+    private readonly ILogger<SetupEmployeePayoutHandler> _logger = NullLogger<SetupEmployeePayoutHandler>.Instance;
 
-    private readonly ITenantRepository<Employee, Guid> employeeRepo =
+    private readonly ITenantRepository<Employee, Guid> _employeeRepo =
         Substitute.For<ITenantRepository<Employee, Guid>>();
 
-    private readonly SetupEmployeePayoutHandler sut;
+    private readonly SetupEmployeePayoutHandler _sut;
 
     public SetupEmployeePayoutHandlerTests()
     {
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
-        tenantUow.GetCurrentTenant().Returns(CreateTenant());
-        sut = new SetupEmployeePayoutHandler(tenantUow, stripeConnectService, logger);
+        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
+        _tenantUow.GetCurrentTenant().Returns(CreateTenant());
+        _sut = new SetupEmployeePayoutHandler(_tenantUow, _stripeConnectService, _logger);
     }
 
     private static Employee CreateEmployee(string? stripeAccountId = null)
@@ -62,40 +62,40 @@ public class SetupEmployeePayoutHandlerTests
     public async Task Handle_NewEmployee_CreatesStripeAccount()
     {
         var employee = CreateEmployee();
-        employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
-        stripeConnectService.CreateEmployeeConnectedAccountAsync(employee, Arg.Any<Address>())
+        _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
+        _stripeConnectService.CreateEmployeeConnectedAccountAsync(employee, Arg.Any<Address>())
             .Returns(new StripeAccount { Id = "acct_new_123" });
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new SetupEmployeePayoutCommand { EmployeeId = employee.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal("acct_new_123", employee.StripeConnectedAccountId);
-        employeeRepo.Received(1).Update(employee);
-        await tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
+        _employeeRepo.Received(1).Update(employee);
+        await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_AlreadySetUp_ReturnsOkWithoutCreating()
     {
         var employee = CreateEmployee(stripeAccountId: "acct_existing");
-        employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
+        _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new SetupEmployeePayoutCommand { EmployeeId = employee.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await stripeConnectService.DidNotReceive()
+        await _stripeConnectService.DidNotReceive()
             .CreateEmployeeConnectedAccountAsync(Arg.Any<Employee>(), Arg.Any<Address>());
     }
 
     [Fact]
     public async Task Handle_EmployeeNotFound_ReturnsFailure()
     {
-        employeeRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _employeeRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns((Employee?)null);
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new SetupEmployeePayoutCommand { EmployeeId = Guid.NewGuid() }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -106,11 +106,11 @@ public class SetupEmployeePayoutHandlerTests
     public async Task Handle_StripeFailure_ReturnsError()
     {
         var employee = CreateEmployee();
-        employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
-        stripeConnectService.CreateEmployeeConnectedAccountAsync(employee, Arg.Any<Address>())
+        _employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
+        _stripeConnectService.CreateEmployeeConnectedAccountAsync(employee, Arg.Any<Address>())
             .ThrowsAsync(new StripeException("Account creation failed"));
 
-        var result = await sut.Handle(
+        var result = await _sut.Handle(
             new SetupEmployeePayoutCommand { EmployeeId = employee.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);

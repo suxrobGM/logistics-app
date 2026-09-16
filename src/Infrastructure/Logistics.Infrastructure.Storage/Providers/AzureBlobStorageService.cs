@@ -13,7 +13,7 @@ public class AzureBlobStorageService(
     ITenantUnitOfWork tenantUow)
     : IBlobStorageService
 {
-    private readonly AzureBlobStorageOptions options = options.Value;
+    private readonly AzureBlobStorageOptions _options = options.Value;
 
     public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType,
         CancellationToken ct = default)

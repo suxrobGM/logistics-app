@@ -14,12 +14,12 @@ internal sealed class InMemoryOneTwo3SearchRateLimiter(
     TimeProvider timeProvider,
     ILogger<InMemoryOneTwo3SearchRateLimiter> logger) : IOneTwo3SearchRateLimiter
 {
-    private readonly OneTwo3LoadboardOptions options = options.Value.OneTwo3Loadboard ?? new OneTwo3LoadboardOptions();
-    private readonly ConcurrentDictionary<Guid, WindowCounters> counters = new();
+    private readonly OneTwo3LoadboardOptions _options = options.Value.OneTwo3Loadboard ?? new OneTwo3LoadboardOptions();
+    private readonly ConcurrentDictionary<Guid, WindowCounters> _counters = new();
 
     public bool TryAcquireSearch(Guid configurationId)
     {
-        var counter = counters.GetOrAdd(configurationId, _ => new WindowCounters());
+        var counter = _counters.GetOrAdd(configurationId, _ => new WindowCounters());
         var now = timeProvider.GetUtcNow().UtcDateTime;
 
         lock (counter)
@@ -46,16 +46,16 @@ internal sealed class InMemoryOneTwo3SearchRateLimiter(
                 counter.MonthCount = 0;
             }
 
-            if (counter.HourCount >= options.MaxSearchesPerHour ||
-                counter.DayCount >= options.MaxSearchesPerDay ||
-                counter.MonthCount >= options.MaxSearchesPerMonth)
+            if (counter.HourCount >= _options.MaxSearchesPerHour ||
+                counter.DayCount >= _options.MaxSearchesPerDay ||
+                counter.MonthCount >= _options.MaxSearchesPerMonth)
             {
                 logger.LogWarning(
                     "123Loadboard search rate limit reached for configuration {ConfigurationId}: " +
                     "hour {HourCount}/{MaxHour}, day {DayCount}/{MaxDay}, month {MonthCount}/{MaxMonth}",
-                    configurationId, counter.HourCount, options.MaxSearchesPerHour,
-                    counter.DayCount, options.MaxSearchesPerDay,
-                    counter.MonthCount, options.MaxSearchesPerMonth);
+                    configurationId, counter.HourCount, _options.MaxSearchesPerHour,
+                    counter.DayCount, _options.MaxSearchesPerDay,
+                    counter.MonthCount, _options.MaxSearchesPerMonth);
                 return false;
             }
 

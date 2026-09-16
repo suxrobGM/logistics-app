@@ -10,24 +10,24 @@ namespace Logistics.Infrastructure.Persistence.Tests.Services;
 
 public class AIQuotaServiceTests
 {
-    private readonly IMasterUnitOfWork masterUow = Substitute.For<IMasterUnitOfWork>();
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
 
-    private readonly IMasterRepository<SubscriptionPlan, Guid> planRepo =
+    private readonly IMasterRepository<SubscriptionPlan, Guid> _planRepo =
         Substitute.For<IMasterRepository<SubscriptionPlan, Guid>>();
 
-    private readonly ITenantRepository<AgentSession, Guid> sessionRepo =
+    private readonly ITenantRepository<AgentSession, Guid> _sessionRepo =
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
 
-    private readonly AIQuotaService sut;
-    private readonly IMasterRepository<Tenant, Guid> tenantRepo = Substitute.For<IMasterRepository<Tenant, Guid>>();
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly AIQuotaService _sut;
+    private readonly IMasterRepository<Tenant, Guid> _tenantRepo = Substitute.For<IMasterRepository<Tenant, Guid>>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
 
     public AIQuotaServiceTests()
     {
-        masterUow.Repository<Tenant>().Returns(tenantRepo);
-        masterUow.Repository<SubscriptionPlan>().Returns(planRepo);
-        tenantUow.Repository<AgentSession>().Returns(sessionRepo);
-        sut = new AIQuotaService(masterUow, tenantUow);
+        _masterUow.Repository<Tenant>().Returns(_tenantRepo);
+        _masterUow.Repository<SubscriptionPlan>().Returns(_planRepo);
+        _tenantUow.Repository<AgentSession>().Returns(_sessionRepo);
+        _sut = new AIQuotaService(_masterUow, _tenantUow);
     }
 
     private const decimal EnterpriseBudget = 75m;
@@ -57,8 +57,8 @@ public class AIQuotaServiceTests
             WeeklyAIBudgetUsd = weeklyBudgetUsd
         };
 
-        tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(tenant);
-        planRepo.GetByIdAsync(planId, Arg.Any<CancellationToken>()).Returns(plan);
+        _tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(tenant);
+        _planRepo.GetByIdAsync(planId, Arg.Any<CancellationToken>()).Returns(plan);
         SetupPlanCatalogue(plan);
     }
 
@@ -79,13 +79,13 @@ public class AIQuotaServiceTests
             }
         ];
 
-        planRepo.GetListAsync(ct: Arg.Any<CancellationToken>()).Returns(catalogue);
+        _planRepo.GetListAsync(ct: Arg.Any<CancellationToken>()).Returns(catalogue);
     }
 
     private void SetupSessions(params AgentSession[] sessions)
     {
         var mock = sessions.ToList().BuildMock();
-        sessionRepo.Query().Returns(mock);
+        _sessionRepo.Query().Returns(mock);
     }
 
     private static AgentSession CreateCompletedSessionAt(
@@ -108,7 +108,7 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, budget);
         SetupSessions();
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.Equal(budget, status.WeeklyBudgetUsd);
     }
@@ -119,7 +119,7 @@ public class AIQuotaServiceTests
 
     private void SetupTenantWithoutSubscription(Guid tenantId, bool blockOverage = false)
     {
-        tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(new Tenant
+        _tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(new Tenant
         {
             Id = tenantId,
             Name = "Free Tenant",
@@ -139,7 +139,7 @@ public class AIQuotaServiceTests
         SetupTenantWithoutSubscription(tenantId);
         SetupSessions();
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.False(status.IsOverQuota);
         Assert.Equal(EnterpriseBudget, status.WeeklyBudgetUsd);
@@ -156,7 +156,7 @@ public class AIQuotaServiceTests
             CreateCompletedSessionAt(now, 0.75m),
             CreateCompletedSessionAt(now, 0.25m));
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         // Otherwise the usage panel reads as "never used AI".
         Assert.Equal(1m, status.SpentThisWeekUsd);
@@ -167,9 +167,9 @@ public class AIQuotaServiceTests
     public async Task GetQuotaStatus_TenantNotFound_ReturnsEmptyStatus()
     {
         var tenantId = Guid.NewGuid();
-        tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns((Tenant?)null);
+        _tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns((Tenant?)null);
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.False(status.IsOverQuota);
         Assert.Equal(0m, status.SpentThisWeekUsd);
@@ -196,7 +196,7 @@ public class AIQuotaServiceTests
 
         SetupSessions(completed, running, failed, cancelled);
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         // Failed and cancelled sessions burned real tokens, so their cost counts too.
         Assert.Equal(0.85m, status.SpentThisWeekUsd);
@@ -216,7 +216,7 @@ public class AIQuotaServiceTests
 
         SetupSessions(preLoopFailure, running);
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.Equal(0m, status.SpentThisWeekUsd);
         Assert.False(status.IsOverQuota);
@@ -234,7 +234,7 @@ public class AIQuotaServiceTests
 
         SetupSessions(thisWeek, lastWeek);
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.Equal(1m, status.SpentThisWeekUsd);
     }
@@ -254,7 +254,7 @@ public class AIQuotaServiceTests
             CreateCompletedSessionAt(now, 0.50m)
         );
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.False(status.IsOverQuota);
         Assert.Equal(1.50m, status.SpentThisWeekUsd);
@@ -273,7 +273,7 @@ public class AIQuotaServiceTests
             CreateCompletedSessionAt(now, 1m)
         );
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.True(status.IsOverQuota);
         Assert.Equal(3m, status.SpentThisWeekUsd);
@@ -291,7 +291,7 @@ public class AIQuotaServiceTests
             CreateCompletedSessionAt(now, 1.75m)
         );
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.True(status.IsOverQuota);
         Assert.Equal(3.50m, status.SpentThisWeekUsd);
@@ -318,7 +318,7 @@ public class AIQuotaServiceTests
             CreateCompletedSessionAt(now, 0.90m),                   // completed but not overage
             CreateCompletedSessionAt(now.AddDays(-14), 0.30m, isOverage: true)); // last week
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         // 3 units x $0.10 - per-session rounding, matching what Stripe actually invoices.
         Assert.Equal(0.30m, status.OverageChargesUsd);
@@ -331,7 +331,7 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, 10m);
         SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 1m));
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.Equal(0m, status.OverageChargesUsd);
     }
@@ -347,7 +347,7 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, 2m, blockOverage: true);
         SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 3m));
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.True(status.OverageBlocked);
     }
@@ -359,7 +359,7 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, 10m, blockOverage: true);
         SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 1m));
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.False(status.OverageBlocked);
     }
@@ -371,7 +371,7 @@ public class AIQuotaServiceTests
         SetupTenantWithPlan(tenantId, 2m);
         SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, 3m));
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.True(status.IsOverQuota);
         Assert.False(status.OverageBlocked);
@@ -384,7 +384,7 @@ public class AIQuotaServiceTests
         SetupTenantWithoutSubscription(tenantId, blockOverage: true);
         SetupSessions(CreateCompletedSessionAt(DateTime.UtcNow, EnterpriseBudget + 1m));
 
-        var status = await sut.GetQuotaStatusAsync(tenantId);
+        var status = await _sut.GetQuotaStatusAsync(tenantId);
 
         Assert.True(status.IsOverQuota);
         Assert.True(status.OverageBlocked);

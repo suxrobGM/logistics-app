@@ -24,7 +24,7 @@ internal class DatLoadBoardService(
     ILogger<DatLoadBoardService> logger)
     : ILoadBoardProviderService
 {
-    private readonly DatOptions options = options.Value.Dat ?? new DatOptions();
+    private readonly DatOptions _options = options.Value.Dat ?? new DatOptions();
 
     public LoadBoardProviderType ProviderType => LoadBoardProviderType.Dat;
 
@@ -32,7 +32,7 @@ internal class DatLoadBoardService(
 
     public void Initialize(LoadBoardConfiguration configuration)
     {
-        httpClient.BaseAddress = new Uri(options.BaseUrl);
+        httpClient.BaseAddress = new Uri(_options.BaseUrl);
 
         if (!string.IsNullOrEmpty(configuration.AccessToken))
         {
@@ -52,7 +52,7 @@ internal class DatLoadBoardService(
     {
         var authClient = httpClientFactory.CreateClient();
         var result = await authClient.TryPostAsJsonAsync<object, DatTokenResponse>(
-            options.AuthUrl, new { clientId = apiKey, clientSecret = apiSecret }, logger, "DAT token acquisition");
+            _options.AuthUrl, new { clientId = apiKey, clientSecret = apiSecret }, logger, "DAT token acquisition");
 
         var token = result.Value;
         if (string.IsNullOrEmpty(token?.AccessToken))

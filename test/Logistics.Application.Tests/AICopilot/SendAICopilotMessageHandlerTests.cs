@@ -12,17 +12,17 @@ namespace Logistics.Application.Tests.AICopilot;
 
 public class SendAICopilotMessageHandlerTests
 {
-    private readonly AgentTestContext ctx = new();
-    private readonly IBackgroundJobRunner<AICopilotTurnRequest> backgroundRunner =
+    private readonly AgentTestContext _ctx = new();
+    private readonly IBackgroundJobRunner<AICopilotTurnRequest> _backgroundRunner =
         Substitute.For<IBackgroundJobRunner<AICopilotTurnRequest>>();
 
-    private readonly SendAICopilotMessageHandler sut;
+    private readonly SendAICopilotMessageHandler _sut;
 
     public SendAICopilotMessageHandlerTests()
     {
         SetQuota(overageBlocked: false);
 
-        sut = new SendAICopilotMessageHandler(ctx.Commands, ctx.CurrentUser, backgroundRunner);
+        _sut = new SendAICopilotMessageHandler(_ctx.Commands, _ctx.CurrentUser, _backgroundRunner);
     }
 
     /// <summary>
@@ -31,8 +31,8 @@ public class SendAICopilotMessageHandlerTests
     /// </summary>
     private void SetQuota(bool overageBlocked, bool isOverQuota = false)
     {
-        ctx.Tenant.Settings.BlockAIOverage = overageBlocked;
-        ctx.QuotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _ctx.Tenant.Settings.BlockAIOverage = overageBlocked;
+        _ctx.QuotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(new AIQuotaStatus(5m, isOverQuota || overageBlocked ? 5m : 0m,
                 isOverQuota || overageBlocked)
             {
@@ -46,33 +46,33 @@ public class SendAICopilotMessageHandlerTests
     [Fact]
     public async Task Handle_NotOwner_Fails()
     {
-        var conversation = ctx.SetConversation(createdById: Guid.NewGuid());
+        var conversation = _ctx.SetConversation(createdById: Guid.NewGuid());
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
+        _backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
     }
 
     /// <summary>A dispatch-kind conversation must never accept a copilot send.</summary>
     [Fact]
     public async Task Handle_DispatchKindConversation_Fails()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
+        _backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
     }
 
     [Fact]
     public async Task Handle_TurnAlreadyRunning_Fails()
     {
-        var conversation = ctx.SetConversation();
+        var conversation = _ctx.SetConversation();
         conversation.BeginTurn();
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("in progress", result.Error);
@@ -81,9 +81,9 @@ public class SendAICopilotMessageHandlerTests
     [Fact]
     public async Task Handle_HappyPath_AppendsMessageBeginsTurnAndEnqueues()
     {
-        var conversation = ctx.SetConversation();
+        var conversation = _ctx.SetConversation();
 
-        var result = await sut.Handle(Command(conversation.Id, "invoice load 42"), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id, "invoice load 42"), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         var message = Assert.Single(conversation.Messages);
@@ -94,36 +94,36 @@ public class SendAICopilotMessageHandlerTests
         Assert.Equal(message.Id, result.Value!.UserMessageId);
 
         // Load-bearing: without the explicit Add, EF saves the pre-generated-id message as an UPDATE.
-        await ctx.MessageRepo.Received(1).AddAsync(message, Arg.Any<CancellationToken>());
-        backgroundRunner.Received(1).Enqueue(Arg.Is<AICopilotTurnRequest>(r =>
-            r.ConversationId == conversation.Id && r.UserId == ctx.UserId));
-        await ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _ctx.MessageRepo.Received(1).AddAsync(message, Arg.Any<CancellationToken>());
+        _backgroundRunner.Received(1).Enqueue(Arg.Is<AICopilotTurnRequest>(r =>
+            r.ConversationId == conversation.Id && r.UserId == _ctx.UserId));
+        await _ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_OverageBlocked_FailsWithBudgetErrorCode()
     {
-        var conversation = ctx.SetConversation();
+        var conversation = _ctx.SetConversation();
         SetQuota(overageBlocked: true);
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.AIBudgetReached, result.ErrorCode);
         Assert.Empty(conversation.Messages);
         Assert.NotEqual(AgentConversationStatus.Running, conversation.Status);
-        backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
+        _backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
     }
 
     [Fact]
     public async Task Handle_OverQuotaWithoutBlock_BillsThroughAndEnqueues()
     {
-        var conversation = ctx.SetConversation();
+        var conversation = _ctx.SetConversation();
         SetQuota(overageBlocked: false, isOverQuota: true);
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        backgroundRunner.Received(1).Enqueue(Arg.Any<AICopilotTurnRequest>());
+        _backgroundRunner.Received(1).Enqueue(Arg.Any<AICopilotTurnRequest>());
     }
 }

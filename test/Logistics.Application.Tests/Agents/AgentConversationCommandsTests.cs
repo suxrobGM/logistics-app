@@ -13,14 +13,14 @@ namespace Logistics.Application.Tests.Agents;
 /// </summary>
 public class AgentConversationCommandsTests
 {
-    private readonly AgentTestContext ctx = new();
+    private readonly AgentTestContext _ctx = new();
 
     public static TheoryData<AgentConversationKind> BothSurfaces =>
         [AgentConversationKind.Dispatch, AgentConversationKind.Copilot];
 
     private AgentConversationScope Scope(AgentConversationKind kind) =>
         kind == AgentConversationKind.Copilot
-            ? AgentConversationScope.Copilot(ctx.UserId)
+            ? AgentConversationScope.Copilot(_ctx.UserId)
             : AgentConversationScope.Dispatch;
 
     private static AgentConversationKind Other(AgentConversationKind kind) =>
@@ -33,11 +33,11 @@ public class AgentConversationCommandsTests
     [Fact]
     public async Task CreateAsync_NotAuthenticated_Fails()
     {
-        var result = await ctx.Commands.CreateAsync(
+        var result = await _ctx.Commands.CreateAsync(
             AgentConversationKind.Copilot, userId: null, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        await ctx.ConversationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _ctx.ConversationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Theory]
@@ -45,15 +45,15 @@ public class AgentConversationCommandsTests
     public async Task CreateAsync_Success_StampsKindAndCreator(AgentConversationKind kind)
     {
         AgentConversation? added = null;
-        await ctx.ConversationRepo.AddAsync(
+        await _ctx.ConversationRepo.AddAsync(
             Arg.Do<AgentConversation>(c => added = c), Arg.Any<CancellationToken>());
 
-        var result = await ctx.Commands.CreateAsync(kind, ctx.UserId, CancellationToken.None);
+        var result = await _ctx.Commands.CreateAsync(kind, _ctx.UserId, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(kind, added!.Kind);
-        Assert.Equal(ctx.UserId, added.CreatedById);
-        await ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        Assert.Equal(_ctx.UserId, added.CreatedById);
+        await _ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     #endregion
@@ -64,7 +64,7 @@ public class AgentConversationCommandsTests
     [MemberData(nameof(BothSurfaces))]
     public async Task RenameAsync_ConversationNotFound_Fails(AgentConversationKind kind)
     {
-        var result = await ctx.Commands.RenameAsync(
+        var result = await _ctx.Commands.RenameAsync(
             Scope(kind), Guid.NewGuid(), "New title", CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -75,9 +75,9 @@ public class AgentConversationCommandsTests
     [MemberData(nameof(BothSurfaces))]
     public async Task RenameAsync_OtherSurfacesConversation_Fails(AgentConversationKind kind)
     {
-        var conversation = ctx.SetConversation(kind: Other(kind));
+        var conversation = _ctx.SetConversation(kind: Other(kind));
 
-        var result = await ctx.Commands.RenameAsync(
+        var result = await _ctx.Commands.RenameAsync(
             Scope(kind), conversation.Id, "New title", CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -87,14 +87,14 @@ public class AgentConversationCommandsTests
     [MemberData(nameof(BothSurfaces))]
     public async Task RenameAsync_Success_TrimsTitleAndSaves(AgentConversationKind kind)
     {
-        var conversation = ctx.SetConversation(kind: kind);
+        var conversation = _ctx.SetConversation(kind: kind);
 
-        var result = await ctx.Commands.RenameAsync(
+        var result = await _ctx.Commands.RenameAsync(
             Scope(kind), conversation.Id, "  Plan the week  ", CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal("Plan the week", conversation.Title);
-        await ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     #endregion
@@ -105,7 +105,7 @@ public class AgentConversationCommandsTests
     [MemberData(nameof(BothSurfaces))]
     public async Task DeleteAsync_ConversationNotFound_Fails(AgentConversationKind kind)
     {
-        var result = await ctx.Commands.DeleteAsync(
+        var result = await _ctx.Commands.DeleteAsync(
             Scope(kind), Guid.NewGuid(), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -115,39 +115,39 @@ public class AgentConversationCommandsTests
     [MemberData(nameof(BothSurfaces))]
     public async Task DeleteAsync_OtherSurfacesConversation_Fails(AgentConversationKind kind)
     {
-        var conversation = ctx.SetConversation(kind: Other(kind));
+        var conversation = _ctx.SetConversation(kind: Other(kind));
 
-        var result = await ctx.Commands.DeleteAsync(Scope(kind), conversation.Id, CancellationToken.None);
+        var result = await _ctx.Commands.DeleteAsync(Scope(kind), conversation.Id, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        ctx.ConversationRepo.DidNotReceiveWithAnyArgs().Delete(default);
+        _ctx.ConversationRepo.DidNotReceiveWithAnyArgs().Delete(default);
     }
 
     [Theory]
     [MemberData(nameof(BothSurfaces))]
     public async Task DeleteAsync_TurnRunning_Fails(AgentConversationKind kind)
     {
-        var conversation = ctx.SetConversation(kind: kind);
+        var conversation = _ctx.SetConversation(kind: kind);
         conversation.BeginTurn();
 
-        var result = await ctx.Commands.DeleteAsync(Scope(kind), conversation.Id, CancellationToken.None);
+        var result = await _ctx.Commands.DeleteAsync(Scope(kind), conversation.Id, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("running", result.Error);
-        ctx.ConversationRepo.DidNotReceiveWithAnyArgs().Delete(default);
+        _ctx.ConversationRepo.DidNotReceiveWithAnyArgs().Delete(default);
     }
 
     [Theory]
     [MemberData(nameof(BothSurfaces))]
     public async Task DeleteAsync_Success_DeletesAndSaves(AgentConversationKind kind)
     {
-        var conversation = ctx.SetConversation(kind: kind);
+        var conversation = _ctx.SetConversation(kind: kind);
 
-        var result = await ctx.Commands.DeleteAsync(Scope(kind), conversation.Id, CancellationToken.None);
+        var result = await _ctx.Commands.DeleteAsync(Scope(kind), conversation.Id, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        ctx.ConversationRepo.Received(1).Delete(conversation);
-        await ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        _ctx.ConversationRepo.Received(1).Delete(conversation);
+        await _ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     #endregion
@@ -158,12 +158,12 @@ public class AgentConversationCommandsTests
     [Fact]
     public async Task CopilotScope_AnotherUsersConversation_IsNotVisible()
     {
-        var conversation = ctx.SetConversation(
+        var conversation = _ctx.SetConversation(
             createdById: Guid.NewGuid(), kind: AgentConversationKind.Copilot);
 
-        var renamed = await ctx.Commands.RenameAsync(
+        var renamed = await _ctx.Commands.RenameAsync(
             Scope(AgentConversationKind.Copilot), conversation.Id, "Mine now", CancellationToken.None);
-        var deleted = await ctx.Commands.DeleteAsync(
+        var deleted = await _ctx.Commands.DeleteAsync(
             Scope(AgentConversationKind.Copilot), conversation.Id, CancellationToken.None);
 
         Assert.False(renamed.IsSuccess);
@@ -173,10 +173,10 @@ public class AgentConversationCommandsTests
     [Fact]
     public async Task DispatchScope_AnotherUsersConversation_IsStillWritable()
     {
-        var conversation = ctx.SetConversation(
+        var conversation = _ctx.SetConversation(
             createdById: Guid.NewGuid(), kind: AgentConversationKind.Dispatch);
 
-        var result = await ctx.Commands.RenameAsync(
+        var result = await _ctx.Commands.RenameAsync(
             AgentConversationScope.Dispatch, conversation.Id, "Night shift", CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -185,9 +185,9 @@ public class AgentConversationCommandsTests
     [Fact]
     public async Task CopilotScope_Unauthenticated_MatchesNoConversation()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Copilot);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Copilot);
 
-        var result = await ctx.Commands.RenameAsync(
+        var result = await _ctx.Commands.RenameAsync(
             AgentConversationScope.Copilot(null), conversation.Id, "New title", CancellationToken.None);
 
         Assert.False(result.IsSuccess);

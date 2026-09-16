@@ -8,9 +8,9 @@ namespace Logistics.Application.Tests.LoadBoard;
 
 public class OneTwo3SearchRateLimiterTests
 {
-    private readonly TestTimeProvider time = new(new DateTime(2026, 8, 6, 10, 0, 0, DateTimeKind.Utc));
-    private readonly Guid configId = Guid.NewGuid();
-    private readonly InMemoryOneTwo3SearchRateLimiter sut;
+    private readonly TestTimeProvider _time = new(new DateTime(2026, 8, 6, 10, 0, 0, DateTimeKind.Utc));
+    private readonly Guid _configId = Guid.NewGuid();
+    private readonly InMemoryOneTwo3SearchRateLimiter _sut;
 
     public OneTwo3SearchRateLimiterTests()
     {
@@ -23,8 +23,8 @@ public class OneTwo3SearchRateLimiterTests
                 MaxSearchesPerMonth = 8
             }
         });
-        sut = new InMemoryOneTwo3SearchRateLimiter(
-            options, time, NullLogger<InMemoryOneTwo3SearchRateLimiter>.Instance);
+        _sut = new InMemoryOneTwo3SearchRateLimiter(
+            options, _time, NullLogger<InMemoryOneTwo3SearchRateLimiter>.Instance);
     }
 
     private int Acquire(int attempts, Guid? id = null)
@@ -32,7 +32,7 @@ public class OneTwo3SearchRateLimiterTests
         var granted = 0;
         for (var i = 0; i < attempts; i++)
         {
-            if (sut.TryAcquireSearch(id ?? configId))
+            if (_sut.TryAcquireSearch(id ?? _configId))
             {
                 granted++;
             }
@@ -51,7 +51,7 @@ public class OneTwo3SearchRateLimiterTests
     public void TryAcquireSearch_HourRolls_ResetsHourlyOnly()
     {
         Acquire(3);
-        time.Advance(TimeSpan.FromHours(1));
+        _time.Advance(TimeSpan.FromHours(1));
 
         // Daily ceiling (5) still applies: only 2 remain despite the fresh hour window
         Assert.Equal(2, Acquire(3));
@@ -61,7 +61,7 @@ public class OneTwo3SearchRateLimiterTests
     public void TryAcquireSearch_WithinSameHour_DoesNotReset()
     {
         Acquire(3);
-        time.Advance(TimeSpan.FromMinutes(30));
+        _time.Advance(TimeSpan.FromMinutes(30));
 
         Assert.Equal(0, Acquire(1));
     }
@@ -70,16 +70,16 @@ public class OneTwo3SearchRateLimiterTests
     public void TryAcquireSearch_MonthlyCeiling_Blocks()
     {
         Assert.Equal(3, Acquire(3));                  // month: 3
-        time.Advance(TimeSpan.FromHours(1));
+        _time.Advance(TimeSpan.FromHours(1));
         Assert.Equal(2, Acquire(3));                  // day cap 5 → month: 5
-        time.Advance(TimeSpan.FromDays(1));
+        _time.Advance(TimeSpan.FromDays(1));
         Assert.Equal(3, Acquire(3));                  // month cap 8 reached
-        time.Advance(TimeSpan.FromDays(1));
+        _time.Advance(TimeSpan.FromDays(1));
 
         Assert.Equal(0, Acquire(5));
 
         // A new month resets the ceiling
-        time.Set(new DateTime(2026, 9, 1, 0, 0, 0, DateTimeKind.Utc));
+        _time.Set(new DateTime(2026, 9, 1, 0, 0, 0, DateTimeKind.Utc));
         Assert.Equal(3, Acquire(3));
     }
 
@@ -93,12 +93,12 @@ public class OneTwo3SearchRateLimiterTests
 
     private sealed class TestTimeProvider(DateTime start) : TimeProvider
     {
-        private DateTimeOffset now = start;
+        private DateTimeOffset _now = start;
 
-        public override DateTimeOffset GetUtcNow() => now;
+        public override DateTimeOffset GetUtcNow() => _now;
 
-        public void Advance(TimeSpan by) => now = now.Add(by);
+        public void Advance(TimeSpan by) => _now = _now.Add(by);
 
-        public void Set(DateTime to) => now = to;
+        public void Set(DateTime to) => _now = to;
     }
 }

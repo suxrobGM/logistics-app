@@ -12,12 +12,12 @@ namespace Logistics.Application.Tests.Services;
 
 public class DispatchEligibilityServiceTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Truck, Guid> truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
-    private readonly ITenantRepository<Load, Guid> loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
-    private readonly ITenantRepository<Employee, Guid> employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<Truck, Guid> _truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
+    private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
+    private readonly ITenantRepository<Employee, Guid> _employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
 
-    private readonly DispatchEligibilityService sut;
+    private readonly DispatchEligibilityService _sut;
 
     private static readonly Guid TruckId = Guid.NewGuid();
     private static readonly Guid DriverId = Guid.NewGuid();
@@ -26,10 +26,10 @@ public class DispatchEligibilityServiceTests
 
     public DispatchEligibilityServiceTests()
     {
-        tenantUow.Repository<Truck>().Returns(truckRepo);
-        tenantUow.Repository<Load>().Returns(loadRepo);
-        tenantUow.Repository<Employee>().Returns(employeeRepo);
-        sut = new DispatchEligibilityService(tenantUow, NullLogger<DispatchEligibilityService>.Instance);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _tenantUow.Repository<Employee>().Returns(_employeeRepo);
+        _sut = new DispatchEligibilityService(_tenantUow, NullLogger<DispatchEligibilityService>.Instance);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.True(result.IsEligible);
         Assert.Empty(result.Issues);
@@ -56,7 +56,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.MissingHazmatEndorsement);
@@ -71,7 +71,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.True(result.IsEligible);
     }
@@ -88,7 +88,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.MissingAdrClass7Endorsement);
@@ -106,7 +106,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.TruckClassNotAllowed);
@@ -124,7 +124,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.AdrCertExpired);
@@ -141,7 +141,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         // Either NoActiveLicense (filtered out) or LicenseExpired (kept and flagged) Ã¢â‚¬â€ both are valid blocks
@@ -159,7 +159,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.MedicalCertExpired);
@@ -168,9 +168,9 @@ public class DispatchEligibilityServiceTests
     [Fact]
     public async Task CheckAsync_TruckNotFound_BlockedWithReason()
     {
-        truckRepo.GetByIdAsync(TruckId, Arg.Any<CancellationToken>()).Returns((Truck?)null);
+        _truckRepo.GetByIdAsync(TruckId, Arg.Any<CancellationToken>()).Returns((Truck?)null);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         Assert.Single(result.Issues);
@@ -190,7 +190,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.HazmatPlacardingRequired);
@@ -211,7 +211,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.True(result.IsEligible);
         Assert.DoesNotContain(result.Issues, i => i.Code == EligibilityIssueCode.TruckNotAdrCertified);
@@ -230,7 +230,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.True(result.IsEligible);
     }
@@ -246,7 +246,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.DriverNotAssigned);
@@ -266,7 +266,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId, DriverId);
+        var result = await _sut.CheckAsync(TruckId, LoadId, DriverId);
 
         Assert.True(result.IsEligible);
     }
@@ -286,7 +286,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
         Assert.Contains(result.Issues, i => i.Code == EligibilityIssueCode.MissingAdrEndorsement);
@@ -314,7 +314,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         Assert.True(result.IsEligible);
     }
@@ -329,7 +329,7 @@ public class DispatchEligibilityServiceTests
 
         WireRepos(truck, load, driver);
 
-        var result = await sut.CheckAsync(TruckId, LoadId);
+        var result = await _sut.CheckAsync(TruckId, LoadId);
 
         // Eligible (no Error severity), but a Warning is surfaced.
         Assert.True(result.IsEligible);
@@ -342,9 +342,9 @@ public class DispatchEligibilityServiceTests
 
     private void WireRepos(Truck truck, Load load, Employee driver)
     {
-        truckRepo.GetByIdAsync(TruckId, Arg.Any<CancellationToken>()).Returns(truck);
-        loadRepo.GetByIdAsync(LoadId, Arg.Any<CancellationToken>()).Returns(load);
-        employeeRepo.GetByIdAsync(DriverId, Arg.Any<CancellationToken>()).Returns(driver);
+        _truckRepo.GetByIdAsync(TruckId, Arg.Any<CancellationToken>()).Returns(truck);
+        _loadRepo.GetByIdAsync(LoadId, Arg.Any<CancellationToken>()).Returns(load);
+        _employeeRepo.GetByIdAsync(DriverId, Arg.Any<CancellationToken>()).Returns(driver);
     }
 
     private static DriverLicense BuildLicense(

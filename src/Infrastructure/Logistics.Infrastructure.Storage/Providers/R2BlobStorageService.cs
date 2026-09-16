@@ -17,7 +17,7 @@ public class R2BlobStorageService(
     ITenantUnitOfWork tenantUow)
     : IBlobStorageService
 {
-    private readonly R2BlobStorageOptions options = options.Value;
+    private readonly R2BlobStorageOptions _options = options.Value;
 
     public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType,
         CancellationToken ct = default)
@@ -27,7 +27,7 @@ public class R2BlobStorageService(
 
         var request = new PutObjectRequest
         {
-            BucketName = options.BucketName,
+            BucketName = _options.BucketName,
             Key = key,
             InputStream = content,
             ContentType = contentType,
@@ -43,7 +43,7 @@ public class R2BlobStorageService(
     {
         var key = GetTenantKey(containerName, blobName);
 
-        using var response = await s3Client.GetObjectAsync(options.BucketName, key, ct);
+        using var response = await s3Client.GetObjectAsync(_options.BucketName, key, ct);
         var memoryStream = new MemoryStream();
         await response.ResponseStream.CopyToAsync(memoryStream, ct);
         memoryStream.Position = 0;
@@ -53,7 +53,7 @@ public class R2BlobStorageService(
     public async Task DeleteAsync(string containerName, string blobName, CancellationToken ct = default)
     {
         var key = GetTenantKey(containerName, blobName);
-        await s3Client.DeleteObjectAsync(options.BucketName, key, ct);
+        await s3Client.DeleteObjectAsync(_options.BucketName, key, ct);
     }
 
     public async Task<bool> ExistsAsync(string containerName, string blobName, CancellationToken ct = default)
@@ -62,7 +62,7 @@ public class R2BlobStorageService(
 
         try
         {
-            await s3Client.GetObjectMetadataAsync(options.BucketName, key, ct);
+            await s3Client.GetObjectMetadataAsync(_options.BucketName, key, ct);
             return true;
         }
         catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
@@ -75,7 +75,7 @@ public class R2BlobStorageService(
         CancellationToken ct = default)
     {
         var key = GetTenantKey(containerName, blobName);
-        var response = await s3Client.GetObjectMetadataAsync(options.BucketName, key, ct);
+        var response = await s3Client.GetObjectMetadataAsync(_options.BucketName, key, ct);
 
         return new BlobFileProperties(
             response.Headers.ContentType,
@@ -87,14 +87,14 @@ public class R2BlobStorageService(
 
     public string GetPublicUrl(string containerName, string blobName, Guid tenantId)
     {
-        if (string.IsNullOrWhiteSpace(options.PublicBaseUrl))
+        if (string.IsNullOrWhiteSpace(_options.PublicBaseUrl))
         {
             throw new InvalidOperationException(
                 $"R2 {nameof(R2BlobStorageOptions.PublicBaseUrl)} is not configured. " +
                 "Set a public base URL (custom domain or r2.dev subdomain) to enable public blob URLs.");
         }
 
-        return $"{options.PublicBaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
+        return $"{_options.PublicBaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
     }
 
     public Task<string> GetSignedUrlAsync(string containerName, string blobName, TimeSpan expiry, Guid tenantId,
@@ -104,7 +104,7 @@ public class R2BlobStorageService(
 
         var request = new GetPreSignedUrlRequest
         {
-            BucketName = options.BucketName,
+            BucketName = _options.BucketName,
             Key = key,
             Verb = HttpVerb.GET,
             Expires = DateTime.UtcNow.Add(expiry)

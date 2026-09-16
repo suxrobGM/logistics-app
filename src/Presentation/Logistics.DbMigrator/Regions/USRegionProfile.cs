@@ -5,7 +5,7 @@ namespace Logistics.DbMigrator.Regions;
 
 internal sealed class USRegionProfile : IRegionProfile
 {
-    private readonly Random random = new();
+    private readonly Random _random = new();
 
     public Region Region => Region.US;
     public string DisplayName => "US Demo";
@@ -144,25 +144,25 @@ internal sealed class USRegionProfile : IRegionProfile
         return wmi + GenerateAlphanumeric(14);
     }
 
-    public string GenerateBrokerPhone() => $"+1 (312) 555-{random.Next(1000, 9999)}";
+    public string GenerateBrokerPhone() => $"+1 (312) 555-{_random.Next(1000, 9999)}";
 
     public LicensePlate GeneratePlate()
     {
         var letters = GenerateLetters(3);
-        var numbers = random.Next(1000, 9999);
-        var state = USStates[random.Next(USStates.Length)];
+        var numbers = _random.Next(1000, 9999);
+        var state = USStates[_random.Next(USStates.Length)];
         return new LicensePlate($"{letters}-{numbers}", state);
     }
 
     private string GenerateAlphanumeric(int length)
     {
         const string chars = "ABCDEFGHJKLMNPRSTUVWXYZ0123456789";
-        return new string(Enumerable.Range(0, length).Select(_ => chars[random.Next(chars.Length)]).ToArray());
+        return new string(Enumerable.Range(0, length).Select(_ => chars[_random.Next(chars.Length)]).ToArray());
     }
 
     private string GenerateLetters(int length)
     {
         const string letters = "ABCDEFGHJKLMNPRSTUVWXYZ";
-        return new string(Enumerable.Range(0, length).Select(_ => letters[random.Next(letters.Length)]).ToArray());
+        return new string(Enumerable.Range(0, length).Select(_ => letters[_random.Next(letters.Length)]).ToArray());
     }
 }

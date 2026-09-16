@@ -11,27 +11,27 @@ namespace Logistics.Application.Tests.AIDispatch;
 
 public class SendAIDispatchMessageHandlerTests
 {
-    private readonly AgentTestContext ctx = new();
-    private readonly IBackgroundJobRunner<AIDispatchTurnRequest> backgroundRunner =
+    private readonly AgentTestContext _ctx = new();
+    private readonly IBackgroundJobRunner<AIDispatchTurnRequest> _backgroundRunner =
         Substitute.For<IBackgroundJobRunner<AIDispatchTurnRequest>>();
 
-    private readonly IAIDispatchBroadcastService broadcastService =
+    private readonly IAIDispatchBroadcastService _broadcastService =
         Substitute.For<IAIDispatchBroadcastService>();
 
-    private readonly SendAIDispatchMessageHandler sut;
+    private readonly SendAIDispatchMessageHandler _sut;
 
     public SendAIDispatchMessageHandlerTests()
     {
         SetQuota(overageBlocked: false);
 
-        sut = new SendAIDispatchMessageHandler(
-            ctx.Commands, ctx.CurrentUser, backgroundRunner, broadcastService);
+        _sut = new SendAIDispatchMessageHandler(
+            _ctx.Commands, _ctx.CurrentUser, _backgroundRunner, _broadcastService);
     }
 
     private void SetQuota(bool overageBlocked, bool isOverQuota = false)
     {
-        ctx.Tenant.Settings.BlockAIOverage = overageBlocked;
-        ctx.QuotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _ctx.Tenant.Settings.BlockAIOverage = overageBlocked;
+        _ctx.QuotaService.GetQuotaStatusAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(new AIQuotaStatus(5m, isOverQuota || overageBlocked ? 5m : 0m,
                 isOverQuota || overageBlocked)
             {
@@ -46,33 +46,33 @@ public class SendAIDispatchMessageHandlerTests
     [Fact]
     public async Task Handle_CopilotKindConversation_Fails()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Copilot);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Copilot);
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
+        _backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
     }
 
     /// <summary>Dispatch conversations are tenant-shared: any user may send, not only the creator.</summary>
     [Fact]
     public async Task Handle_ConversationCreatedByAnotherUser_StillSucceeds()
     {
-        var conversation = ctx.SetConversation(createdById: Guid.NewGuid(), kind: AgentConversationKind.Dispatch);
+        var conversation = _ctx.SetConversation(createdById: Guid.NewGuid(), kind: AgentConversationKind.Dispatch);
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        backgroundRunner.Received(1).Enqueue(Arg.Any<AIDispatchTurnRequest>());
+        _backgroundRunner.Received(1).Enqueue(Arg.Any<AIDispatchTurnRequest>());
     }
 
     [Fact]
     public async Task Handle_TurnAlreadyRunning_Fails()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
         conversation.BeginTurn();
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("in progress", result.Error);
@@ -81,9 +81,9 @@ public class SendAIDispatchMessageHandlerTests
     [Fact]
     public async Task Handle_HappyPath_AppendsMessageBeginsTurnAndEnqueues()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
 
-        var result = await sut.Handle(Command(conversation.Id, "assign what you can"), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id, "assign what you can"), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         var message = Assert.Single(conversation.Messages);
@@ -94,75 +94,75 @@ public class SendAIDispatchMessageHandlerTests
         Assert.Equal(message.Id, result.Value!.UserMessageId);
 
         // Load-bearing: without the explicit Add, EF saves the pre-generated-id message as an UPDATE.
-        await ctx.MessageRepo.Received(1).AddAsync(message, Arg.Any<CancellationToken>());
-        backgroundRunner.Received(1).Enqueue(Arg.Is<AIDispatchTurnRequest>(r =>
-            r.ConversationId == conversation.Id && r.TriggeredByUserId == ctx.UserId));
-        await ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _ctx.MessageRepo.Received(1).AddAsync(message, Arg.Any<CancellationToken>());
+        _backgroundRunner.Received(1).Enqueue(Arg.Is<AIDispatchTurnRequest>(r =>
+            r.ConversationId == conversation.Id && r.TriggeredByUserId == _ctx.UserId));
+        await _ctx.TenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     /// <summary>A shared board needs the author: the transcript is read by people who did not type it.</summary>
     [Fact]
     public async Task Handle_HappyPath_StampsSenderOnTheMessage()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
 
-        await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         var message = Assert.Single(conversation.Messages);
-        Assert.Equal(ctx.UserId, message.SentByUserId);
+        Assert.Equal(_ctx.UserId, message.SentByUserId);
     }
 
     /// <summary>Without this the other dispatchers see the agent's answer but never the question.</summary>
     [Fact]
     public async Task Handle_HappyPath_BroadcastsTheMessageWithTheSendersName()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
-        ctx.SetEmployees((ctx.UserId, "Sarah", "Thompson"));
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        _ctx.SetEmployees((_ctx.UserId, "Sarah", "Thompson"));
 
-        await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
-        await broadcastService.Received(1).BroadcastMessageAsync(
-            ctx.Tenant.Id,
+        await _broadcastService.Received(1).BroadcastMessageAsync(
+            _ctx.Tenant.Id,
             Arg.Is<AgentMessageDto>(m =>
-                m.SentByUserId == ctx.UserId && m.SentByName == "Sarah Thompson"));
+                m.SentByUserId == _ctx.UserId && m.SentByName == "Sarah Thompson"));
     }
 
     [Fact]
     public async Task Handle_SenderHasNoEmployeeRow_BroadcastsWithoutAName()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
 
-        await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
-        await broadcastService.Received(1).BroadcastMessageAsync(
-            ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.SentByName == null));
+        await _broadcastService.Received(1).BroadcastMessageAsync(
+            _ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.SentByName == null));
     }
 
     [Fact]
     public async Task Handle_OverageBlocked_FailsWithBudgetErrorCode()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
         SetQuota(overageBlocked: true);
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.AIBudgetReached, result.ErrorCode);
         Assert.Empty(conversation.Messages);
         Assert.NotEqual(AgentConversationStatus.Running, conversation.Status);
-        backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
-        await broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);
+        _backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
+        await _broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);
     }
 
     [Fact]
     public async Task Handle_OverQuotaWithoutBlock_BillsThroughAndEnqueues()
     {
-        var conversation = ctx.SetConversation(kind: AgentConversationKind.Dispatch);
+        var conversation = _ctx.SetConversation(kind: AgentConversationKind.Dispatch);
         SetQuota(overageBlocked: false, isOverQuota: true);
 
-        var result = await sut.Handle(Command(conversation.Id), CancellationToken.None);
+        var result = await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        backgroundRunner.Received(1).Enqueue(Arg.Any<AIDispatchTurnRequest>());
+        _backgroundRunner.Received(1).Enqueue(Arg.Any<AIDispatchTurnRequest>());
     }
 }

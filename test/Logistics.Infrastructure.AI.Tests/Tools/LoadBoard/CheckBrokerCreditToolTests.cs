@@ -12,12 +12,12 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.LoadBoard;
 
 public class CheckBrokerCreditToolTests
 {
-    private readonly IBrokerCreditService brokerCreditService = Substitute.For<IBrokerCreditService>();
-    private readonly CheckBrokerCreditTool sut;
+    private readonly IBrokerCreditService _brokerCreditService = Substitute.For<IBrokerCreditService>();
+    private readonly CheckBrokerCreditTool _sut;
 
     public CheckBrokerCreditToolTests()
     {
-        sut = new CheckBrokerCreditTool(brokerCreditService);
+        _sut = new CheckBrokerCreditTool(_brokerCreditService);
     }
 
     [Fact]
@@ -25,22 +25,22 @@ public class CheckBrokerCreditToolTests
     {
         var input = new JsonObject();
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.Contains("mc_number", root.GetProperty("error").GetString());
-        await brokerCreditService.DidNotReceiveWithAnyArgs().GetBrokerCreditAsync(default);
+        await _brokerCreditService.DidNotReceiveWithAnyArgs().GetBrokerCreditAsync(default);
     }
 
     [Fact]
     public async Task Execute_NoDataAvailable_ReturnsWarningNotError()
     {
-        brokerCreditService.GetBrokerCreditAsync("MC999999", Arg.Any<CancellationToken>())
+        _brokerCreditService.GetBrokerCreditAsync("MC999999", Arg.Any<CancellationToken>())
             .Returns((BrokerCreditDto?)null);
 
         var input = new JsonObject { ["mc_number"] = "MC999999" };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.False(root.TryGetProperty("error", out _));
@@ -52,7 +52,7 @@ public class CheckBrokerCreditToolTests
     public async Task Execute_HappyPath_ShapesResponse()
     {
         var checkedAt = DateTime.UtcNow;
-        brokerCreditService.GetBrokerCreditAsync("MC123456", Arg.Any<CancellationToken>())
+        _brokerCreditService.GetBrokerCreditAsync("MC123456", Arg.Any<CancellationToken>())
             .Returns(new BrokerCreditDto
             {
                 McNumber = "123456",
@@ -65,7 +65,7 @@ public class CheckBrokerCreditToolTests
 
         var input = new JsonObject { ["mc_number"] = "MC123456" };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.Equal("123456", root.GetProperty("mc_number").GetString());
@@ -78,7 +78,7 @@ public class CheckBrokerCreditToolTests
     [Fact]
     public async Task Execute_InactiveAuthority_SurfacesFlag()
     {
-        brokerCreditService.GetBrokerCreditAsync("MC555555", Arg.Any<CancellationToken>())
+        _brokerCreditService.GetBrokerCreditAsync("MC555555", Arg.Any<CancellationToken>())
             .Returns(new BrokerCreditDto
             {
                 McNumber = "555555",
@@ -89,7 +89,7 @@ public class CheckBrokerCreditToolTests
 
         var input = new JsonObject { ["mc_number"] = "MC555555" };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.False(root.GetProperty("authority_active").GetBoolean());

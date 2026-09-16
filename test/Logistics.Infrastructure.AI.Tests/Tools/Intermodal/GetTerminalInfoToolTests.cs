@@ -14,21 +14,21 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Intermodal;
 
 public class GetTerminalInfoToolTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITenantRepository<Terminal, Guid> terminalRepo =
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ITenantRepository<Terminal, Guid> _terminalRepo =
         Substitute.For<ITenantRepository<Terminal, Guid>>();
-    private readonly GetTerminalInfoTool sut;
+    private readonly GetTerminalInfoTool _sut;
 
     public GetTerminalInfoToolTests()
     {
-        tenantUow.Repository<Terminal>().Returns(terminalRepo);
-        sut = new GetTerminalInfoTool(tenantUow);
+        _tenantUow.Repository<Terminal>().Returns(_terminalRepo);
+        _sut = new GetTerminalInfoTool(_tenantUow);
     }
 
     [Fact]
     public async Task Execute_NoIdentifier_ReturnsErrorNamingBothParams()
     {
-        var result = await sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
+        var result = await _sut.ExecuteAsync(new JsonObject(), CancellationToken.None);
 
         var error = JsonDocument.Parse(result).RootElement.GetProperty("error").GetString();
         Assert.Contains("code", error);
@@ -38,13 +38,13 @@ public class GetTerminalInfoToolTests
     [Fact]
     public async Task Execute_UnknownCode_ReturnsError()
     {
-        terminalRepo
+        _terminalRepo
             .GetAsync(Arg.Any<Expression<Func<Terminal, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Terminal?)null);
 
         var input = new JsonObject { ["code"] = "ZZZZZ" };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
 
         var error = JsonDocument.Parse(result).RootElement.GetProperty("error").GetString();
         Assert.Contains("ZZZZZ", error);
@@ -53,14 +53,14 @@ public class GetTerminalInfoToolTests
     [Fact]
     public async Task Execute_ByCode_ShapesResponse()
     {
-        terminalRepo
+        _terminalRepo
             .GetAsync(Arg.Any<Expression<Func<Terminal, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(CreateTerminal());
 
         // Lower case in, canonical UN/LOCODE out.
         var input = new JsonObject { ["code"] = "uslax" };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.Equal("USLAX", root.GetProperty("code").GetString());
@@ -74,12 +74,12 @@ public class GetTerminalInfoToolTests
     [Fact]
     public async Task Execute_FormatsAddressFlat_NotAsRecordSyntax()
     {
-        terminalRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _terminalRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(CreateTerminal());
 
         var input = new JsonObject { ["terminal_id"] = Guid.NewGuid().ToString() };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var address = JsonDocument.Parse(result).RootElement.GetProperty("address").GetString();
 
         Assert.Equal("425 S Palos Verdes St, San Pedro, CA, 90731, US", address);
@@ -89,12 +89,12 @@ public class GetTerminalInfoToolTests
     [Fact]
     public async Task Execute_DoesNotEmitCoordinates()
     {
-        terminalRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        _terminalRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(CreateTerminal());
 
         var input = new JsonObject { ["terminal_id"] = Guid.NewGuid().ToString() };
 
-        var result = await sut.ExecuteAsync(input, CancellationToken.None);
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
         var root = JsonDocument.Parse(result).RootElement;
 
         Assert.False(root.TryGetProperty("latitude", out _));

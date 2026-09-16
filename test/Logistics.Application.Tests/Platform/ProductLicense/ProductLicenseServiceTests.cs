@@ -12,31 +12,31 @@ namespace Logistics.Application.Tests.Platform.ProductLicense;
 
 public class ProductLicenseServiceTests : IDisposable
 {
-    private readonly LicenseKeyFactory keys = new();
-    private readonly ISystemSettingsService settings = Substitute.For<ISystemSettingsService>();
-    private readonly ProductLicenseOptions options = new();
-    private readonly MemoryCache cache = new(new MemoryCacheOptions());
-    private readonly ProductLicenseService sut;
+    private readonly LicenseKeyFactory _keys = new();
+    private readonly ISystemSettingsService _settings = Substitute.For<ISystemSettingsService>();
+    private readonly ProductLicenseOptions _options = new();
+    private readonly MemoryCache _cache = new(new MemoryCacheOptions());
+    private readonly ProductLicenseService _sut;
 
     public ProductLicenseServiceTests()
     {
-        sut = new ProductLicenseService(
-            settings,
-            Options.Create(options),
-            new ProductLicenseKeyValidator(keys.PublicKey),
-            cache);
+        _sut = new ProductLicenseService(
+            _settings,
+            Options.Create(_options),
+            new ProductLicenseKeyValidator(_keys.PublicKey),
+            _cache);
     }
 
     public void Dispose()
     {
-        keys.Dispose();
-        cache.Dispose();
+        _keys.Dispose();
+        _cache.Dispose();
     }
 
     [Fact]
     public async Task GetStatusAsync_NoKeyAnywhere_Unlicensed()
     {
-        var status = await sut.GetStatusAsync();
+        var status = await _sut.GetStatusAsync();
 
         Assert.False(status.IsLicensed);
         Assert.Equal(ProductLicenseKeySource.None, status.Source);
@@ -47,23 +47,23 @@ public class ProductLicenseServiceTests : IDisposable
     [Fact]
     public async Task GetStatusAsync_ConfigurationKeyWinsOverSystemSettings()
     {
-        options.Key = keys.Sign(licensee: "Config Co");
-        settings.GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>()).Returns("garbage");
+        _options.Key = _keys.Sign(licensee: "Config Co");
+        _settings.GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>()).Returns("garbage");
 
-        var status = await sut.GetStatusAsync();
+        var status = await _sut.GetStatusAsync();
 
         Assert.True(status.IsLicensed);
         Assert.Equal("Config Co", status.Licensee);
         Assert.Equal(ProductLicenseKeySource.Configuration, status.Source);
-        await settings.DidNotReceive().GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>());
+        await _settings.DidNotReceive().GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task GetStatusAsync_StoredKey_ReportsSystemSettingsSource()
     {
-        settings.GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>()).Returns(keys.Sign());
+        _settings.GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>()).Returns(_keys.Sign());
 
-        var status = await sut.GetStatusAsync();
+        var status = await _sut.GetStatusAsync();
 
         Assert.True(status.IsLicensed);
         Assert.Equal(ProductLicenseKeySource.SystemSettings, status.Source);
@@ -72,35 +72,35 @@ public class ProductLicenseServiceTests : IDisposable
     [Fact]
     public async Task GetStatusAsync_SecondCall_ServedFromCache()
     {
-        settings.GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>()).Returns(keys.Sign());
+        _settings.GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>()).Returns(_keys.Sign());
 
-        await sut.GetStatusAsync();
-        await sut.GetStatusAsync();
+        await _sut.GetStatusAsync();
+        await _sut.GetStatusAsync();
 
-        await settings.Received(1).GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>());
+        await _settings.Received(1).GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task InvalidateCache_ThenGetStatus_ReadsAgain()
     {
-        settings.GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>()).Returns(keys.Sign());
+        _settings.GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>()).Returns(_keys.Sign());
 
-        await sut.GetStatusAsync();
-        sut.InvalidateCache();
-        await sut.GetStatusAsync();
+        await _sut.GetStatusAsync();
+        _sut.InvalidateCache();
+        await _sut.GetStatusAsync();
 
-        await settings.Received(2).GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>());
+        await _settings.Received(2).GetAsync(ProductLicenseSettingsKeys.Key, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task GetOrCreateInstanceIdAsync_Missing_PersistsNewGuid()
     {
-        settings.GetAsync(ProductLicenseSettingsKeys.InstanceId, Arg.Any<CancellationToken>()).Returns((string?)null);
+        _settings.GetAsync(ProductLicenseSettingsKeys.InstanceId, Arg.Any<CancellationToken>()).Returns((string?)null);
 
-        var id = await sut.GetOrCreateInstanceIdAsync();
+        var id = await _sut.GetOrCreateInstanceIdAsync();
 
         Assert.NotEqual(Guid.Empty, id);
-        await settings.Received(1).SetAsync(
+        await _settings.Received(1).SetAsync(
             ProductLicenseSettingsKeys.InstanceId, id.ToString(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
 
@@ -108,11 +108,11 @@ public class ProductLicenseServiceTests : IDisposable
     public async Task GetOrCreateInstanceIdAsync_Existing_ReturnsStoredValue()
     {
         var stored = Guid.NewGuid();
-        settings.GetAsync(ProductLicenseSettingsKeys.InstanceId, Arg.Any<CancellationToken>()).Returns(stored.ToString());
+        _settings.GetAsync(ProductLicenseSettingsKeys.InstanceId, Arg.Any<CancellationToken>()).Returns(stored.ToString());
 
-        var id = await sut.GetOrCreateInstanceIdAsync();
+        var id = await _sut.GetOrCreateInstanceIdAsync();
 
         Assert.Equal(stored, id);
-        await settings.DidNotReceiveWithAnyArgs().SetAsync(default!, default!, default, default);
+        await _settings.DidNotReceiveWithAnyArgs().SetAsync(default!, default!, default, default);
     }
 }

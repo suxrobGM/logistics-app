@@ -12,9 +12,9 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
 
     // Scope-lifetime memo: without it every [RequiresFeature] check costs 3-5 master-DB round trips.
     // Holds entities, not snapshots, so a writer's tracked edits stay visible through the cache.
-    private readonly Dictionary<Guid, List<TenantFeatureConfig>> tenantConfigCache = [];
-    private readonly Dictionary<Guid, PlanAccess> planAccessCache = [];
-    private List<DefaultFeatureConfig>? defaultConfigCache;
+    private readonly Dictionary<Guid, List<TenantFeatureConfig>> _tenantConfigCache = [];
+    private readonly Dictionary<Guid, PlanAccess> _planAccessCache = [];
+    private List<DefaultFeatureConfig>? _defaultConfigCache;
 
     public async Task<bool> IsFeatureEnabledAsync(Guid tenantId, TenantFeature feature)
     {
@@ -117,7 +117,7 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
 
     private async Task<PlanAccess> GetPlanAccessAsync(Guid tenantId)
     {
-        if (planAccessCache.TryGetValue(tenantId, out var cached))
+        if (_planAccessCache.TryGetValue(tenantId, out var cached))
         {
             return cached;
         }
@@ -130,7 +130,7 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
             _ => new PlanAccess(false, null)
         };
 
-        planAccessCache[tenantId] = access;
+        _planAccessCache[tenantId] = access;
         return access;
     }
 
@@ -143,7 +143,7 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
 
     private async Task<List<TenantFeatureConfig>> GetTenantConfigsAsync(Guid tenantId)
     {
-        if (tenantConfigCache.TryGetValue(tenantId, out var cached))
+        if (_tenantConfigCache.TryGetValue(tenantId, out var cached))
         {
             return cached;
         }
@@ -151,12 +151,12 @@ internal class FeatureService(IMasterUnitOfWork masterUow) : IFeatureService
         var configs = await masterUow.Repository<TenantFeatureConfig>()
             .GetListAsync(c => c.TenantId == tenantId);
 
-        tenantConfigCache[tenantId] = configs;
+        _tenantConfigCache[tenantId] = configs;
         return configs;
     }
 
     private async Task<List<DefaultFeatureConfig>> GetDefaultConfigsAsync() =>
-        defaultConfigCache ??= await masterUow.Repository<DefaultFeatureConfig>().GetListAsync();
+        _defaultConfigCache ??= await masterUow.Repository<DefaultFeatureConfig>().GetListAsync();
 
     private async Task<Dictionary<TenantFeature, bool>> GetDefaultMapAsync() =>
         (await GetDefaultConfigsAsync()).ToDictionary(d => d.Feature, d => d.IsEnabledByDefault);

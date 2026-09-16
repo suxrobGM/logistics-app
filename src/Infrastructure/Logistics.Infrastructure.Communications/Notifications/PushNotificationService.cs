@@ -8,23 +8,23 @@ namespace Logistics.Infrastructure.Communications.Services;
 
 public class PushNotificationService : IPushNotificationService
 {
-    private readonly FirebaseApp? firebaseApp;
-    private readonly ILogger<PushNotificationService> logger;
+    private readonly FirebaseApp? _firebaseApp;
+    private readonly ILogger<PushNotificationService> _logger;
 
     public PushNotificationService(ILogger<PushNotificationService> logger)
     {
-        this.logger = logger;
+        _logger = logger;
 
         if (File.Exists("firebase-adminsdk-key.json"))
         {
-            firebaseApp = FirebaseApp.Create(new AppOptions
+            _firebaseApp = FirebaseApp.Create(new AppOptions
             {
                 Credential = GoogleCredential.FromFile("firebase-adminsdk-key.json")
             });
         }
         else
         {
-            firebaseApp = null;
+            _firebaseApp = null;
         }
     }
 
@@ -34,7 +34,7 @@ public class PushNotificationService : IPushNotificationService
         string deviceToken,
         IReadOnlyDictionary<string, string>? data = null)
     {
-        if (firebaseApp is null)
+        if (_firebaseApp is null)
         {
             return;
         }
@@ -47,11 +47,11 @@ public class PushNotificationService : IPushNotificationService
                 Notification = new Notification { Title = title, Body = body },
                 Data = data
             };
-            await FirebaseMessaging.GetMessaging(firebaseApp).SendAsync(message);
+            await FirebaseMessaging.GetMessaging(_firebaseApp).SendAsync(message);
         }
         catch (Exception ex)
         {
-            logger.LogError("Could not send a notification to device: {DeviceToken}\nRaised an exception: {Exception}",
+            _logger.LogError("Could not send a notification to device: {DeviceToken}\nRaised an exception: {Exception}",
                 deviceToken, ex.ToString());
         }
     }

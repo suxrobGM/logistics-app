@@ -11,29 +11,29 @@ namespace Logistics.Infrastructure.AI.Tests.Tools.Financial;
 
 public class SendInvoiceToolTests
 {
-    private readonly IMediator mediator = Substitute.For<IMediator>();
-    private readonly SendInvoiceTool sut;
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
+    private readonly SendInvoiceTool _sut;
 
     public SendInvoiceToolTests()
     {
-        sut = new SendInvoiceTool(mediator);
+        _sut = new SendInvoiceTool(_mediator);
     }
 
     [Fact]
     public async Task Execute_MissingInvoiceId_ReturnsError()
     {
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["recipient_email"] = "a@b.com", ["reasoning"] = "why" },
             CancellationToken.None);
 
         Assert.Contains("invoice_id", result);
-        await mediator.DidNotReceiveWithAnyArgs().Send<Result>(default!, default);
+        await _mediator.DidNotReceiveWithAnyArgs().Send<Result>(default!, default);
     }
 
     [Fact]
     public async Task Execute_MissingRecipientEmail_ReturnsError()
     {
-        var result = await sut.ExecuteAsync(
+        var result = await _sut.ExecuteAsync(
             new JsonObject { ["invoice_id"] = Guid.NewGuid().ToString(), ["reasoning"] = "why" },
             CancellationToken.None);
 
@@ -44,10 +44,10 @@ public class SendInvoiceToolTests
     public async Task Execute_ValidInput_SendsCommand()
     {
         var invoiceId = Guid.NewGuid();
-        mediator.Send(Arg.Any<SendInvoiceCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<SendInvoiceCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Ok());
 
-        var result = await sut.ExecuteAsync(new JsonObject
+        var result = await _sut.ExecuteAsync(new JsonObject
         {
             ["invoice_id"] = invoiceId.ToString(),
             ["recipient_email"] = "billing@acme.com",
@@ -56,7 +56,7 @@ public class SendInvoiceToolTests
         }, CancellationToken.None);
 
         Assert.Contains("\"success\":true", result);
-        await mediator.Received(1).Send(
+        await _mediator.Received(1).Send(
             Arg.Is<SendInvoiceCommand>(c =>
                 c.InvoiceId == invoiceId &&
                 c.RecipientEmail == "billing@acme.com" &&
@@ -67,10 +67,10 @@ public class SendInvoiceToolTests
     [Fact]
     public async Task Execute_CommandFails_ReturnsError()
     {
-        mediator.Send(Arg.Any<SendInvoiceCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<SendInvoiceCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result.Fail("Invoice is cancelled"));
 
-        var result = await sut.ExecuteAsync(new JsonObject
+        var result = await _sut.ExecuteAsync(new JsonObject
         {
             ["invoice_id"] = Guid.NewGuid().ToString(),
             ["recipient_email"] = "billing@acme.com",

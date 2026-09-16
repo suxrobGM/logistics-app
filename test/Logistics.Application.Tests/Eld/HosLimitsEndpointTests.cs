@@ -12,12 +12,12 @@ namespace Logistics.Application.Tests.Eld;
 
 public class HosLimitsEndpointTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly GetHosLimitsHandler sut;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly GetHosLimitsHandler _sut;
 
     public HosLimitsEndpointTests()
     {
-        sut = new GetHosLimitsHandler(tenantUow);
+        _sut = new GetHosLimitsHandler(_tenantUow);
     }
 
     [Fact]
@@ -25,7 +25,7 @@ public class HosLimitsEndpointTests
     {
         WireTenantRegion(Region.US);
 
-        var result = await sut.Handle(new GetHosLimitsQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetHosLimitsQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(HosLimits.FmcsaCode, result.Value!.RuleSetCode);
@@ -41,7 +41,7 @@ public class HosLimitsEndpointTests
     {
         WireTenantRegion(Region.EU);
 
-        var result = await sut.Handle(new GetHosLimitsQuery(), CancellationToken.None);
+        var result = await _sut.Handle(new GetHosLimitsQuery(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(HosLimits.EU561Code, result.Value!.RuleSetCode);
@@ -80,6 +80,6 @@ public class HosLimitsEndpointTests
             BillingEmail = "x@y.z",
             Settings = new TenantSettings { Region = region }
         };
-        tenantUow.GetCurrentTenant().Returns(tenant);
+        _tenantUow.GetCurrentTenant().Returns(tenant);
     }
 }

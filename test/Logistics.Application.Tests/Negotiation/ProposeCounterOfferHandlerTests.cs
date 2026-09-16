@@ -19,52 +19,52 @@ namespace Logistics.Application.Tests.Negotiation;
 
 public class ProposeCounterOfferHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly IInboundEmailRouteRegistry routeRegistry = Substitute.For<IInboundEmailRouteRegistry>();
-    private readonly IBrokerCreditService brokerCreditService = Substitute.For<IBrokerCreditService>();
-    private readonly ILaneRateFloorResolver floorResolver = Substitute.For<ILaneRateFloorResolver>();
-    private readonly INegotiationEmailComposer composer = Substitute.For<INegotiationEmailComposer>();
-    private readonly IThreadedEmailSender emailSender = Substitute.For<IThreadedEmailSender>();
-    private readonly IAIDispatchBroadcastService broadcastService = Substitute.For<IAIDispatchBroadcastService>();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IInboundEmailRouteRegistry _routeRegistry = Substitute.For<IInboundEmailRouteRegistry>();
+    private readonly IBrokerCreditService _brokerCreditService = Substitute.For<IBrokerCreditService>();
+    private readonly ILaneRateFloorResolver _floorResolver = Substitute.For<ILaneRateFloorResolver>();
+    private readonly INegotiationEmailComposer _composer = Substitute.For<INegotiationEmailComposer>();
+    private readonly IThreadedEmailSender _emailSender = Substitute.For<IThreadedEmailSender>();
+    private readonly IAIDispatchBroadcastService _broadcastService = Substitute.For<IAIDispatchBroadcastService>();
 
-    private readonly ITenantRepository<LoadBoardListing, Guid> listingRepo =
+    private readonly ITenantRepository<LoadBoardListing, Guid> _listingRepo =
         Substitute.For<ITenantRepository<LoadBoardListing, Guid>>();
-    private readonly ITenantRepository<RateNegotiation, Guid> negotiationRepo =
+    private readonly ITenantRepository<RateNegotiation, Guid> _negotiationRepo =
         Substitute.For<ITenantRepository<RateNegotiation, Guid>>();
-    private readonly ITenantRepository<NegotiationMessage, Guid> messageRepo =
+    private readonly ITenantRepository<NegotiationMessage, Guid> _messageRepo =
         Substitute.For<ITenantRepository<NegotiationMessage, Guid>>();
-    private readonly ITenantRepository<AgentDecision, Guid> decisionRepo =
+    private readonly ITenantRepository<AgentDecision, Guid> _decisionRepo =
         Substitute.For<ITenantRepository<AgentDecision, Guid>>();
-    private readonly Tenant tenant;
-    private readonly LoadBoardListing listing;
-    private readonly ProposeCounterOfferCommand command;
-    private readonly ProposeCounterOfferHandler sut;
+    private readonly Tenant _tenant;
+    private readonly LoadBoardListing _listing;
+    private readonly ProposeCounterOfferCommand _command;
+    private readonly ProposeCounterOfferHandler _sut;
 
     public ProposeCounterOfferHandlerTests()
     {
-        tenant = TestTenant.Create(companyName: "Test Carrier", mcNumber: "MC999");
+        _tenant = TestTenant.Create(companyName: "Test Carrier", mcNumber: "MC999");
 
-        listing = CreateListing();
-        command = new ProposeCounterOfferCommand
+        _listing = CreateListing();
+        _command = new ProposeCounterOfferCommand
         {
-            ListingId = listing.Id,
+            ListingId = _listing.Id,
             ProposedTotalRate = 2200m,
             ProposedRatePerMile = 2.20m,
             Message = "We can cover this at $2,200."
         };
 
-        tenantUow.Repository<LoadBoardListing>().Returns(listingRepo);
-        tenantUow.Repository<RateNegotiation>().Returns(negotiationRepo);
-        tenantUow.Repository<NegotiationMessage>().Returns(messageRepo);
-        messageRepo.Query().Returns(new List<NegotiationMessage>().BuildMock());
-        tenantUow.Repository<AgentDecision>().Returns(decisionRepo);
-        tenantUow.GetCurrentTenant().Returns(tenant);
+        _tenantUow.Repository<LoadBoardListing>().Returns(_listingRepo);
+        _tenantUow.Repository<RateNegotiation>().Returns(_negotiationRepo);
+        _tenantUow.Repository<NegotiationMessage>().Returns(_messageRepo);
+        _messageRepo.Query().Returns(new List<NegotiationMessage>().BuildMock());
+        _tenantUow.Repository<AgentDecision>().Returns(_decisionRepo);
+        _tenantUow.GetCurrentTenant().Returns(_tenant);
 
-        listingRepo.GetByIdAsync(listing.Id, Arg.Any<CancellationToken>()).Returns(listing);
+        _listingRepo.GetByIdAsync(_listing.Id, Arg.Any<CancellationToken>()).Returns(_listing);
         SetupActiveNegotiation(null);
 
         // No credit record: the gate passes and stamps nothing, so "persisted nothing" stays readable.
-        brokerCreditService.GetBrokerCreditAsync(Arg.Any<string?>(), Arg.Any<CancellationToken>())
+        _brokerCreditService.GetBrokerCreditAsync(Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns((BrokerCreditDto?)null);
 
         SetupFloor(new EffectiveRateFloorDto
@@ -76,19 +76,19 @@ public class ProposeCounterOfferHandlerTests
             ListingBelowFloor = true
         });
 
-        emailSender.ReplyDomain.Returns("mail.test.com");
-        emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>())
+        _emailSender.ReplyDomain.Returns("mail.test.com");
+        _emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>())
             .Returns(new ThreadedEmailResult(true, "resend-1"));
 
-        composer.ComposeAsync(Arg.Any<ComposeNegotiationEmailRequest>(), Arg.Any<CancellationToken>())
+        _composer.ComposeAsync(Arg.Any<ComposeNegotiationEmailRequest>(), Arg.Any<CancellationToken>())
             .Returns(ci => new ComposedNegotiationEmail(
                 "Rate offer: Dallas, TX -> Chicago, IL - NEG-1",
                 "<p>offer</p>",
                 ci.Arg<ComposeNegotiationEmailRequest>().AgentMessage));
 
-        sut = new ProposeCounterOfferHandler(
-            tenantUow, routeRegistry, brokerCreditService, floorResolver, composer, emailSender,
-            broadcastService, NullLogger<ProposeCounterOfferHandler>.Instance);
+        _sut = new ProposeCounterOfferHandler(
+            _tenantUow, _routeRegistry, _brokerCreditService, _floorResolver, _composer, _emailSender,
+            _broadcastService, NullLogger<ProposeCounterOfferHandler>.Instance);
     }
 
     private static LoadBoardListing CreateListing() => new()
@@ -123,17 +123,17 @@ public class ProposeCounterOfferHandlerTests
     };
 
     private void SetupFloor(EffectiveRateFloorDto floor) =>
-        floorResolver.ResolveAsync(Arg.Any<LoadBoardListing>(), Arg.Any<CancellationToken>()).Returns(floor);
+        _floorResolver.ResolveAsync(Arg.Any<LoadBoardListing>(), Arg.Any<CancellationToken>()).Returns(floor);
 
     private void SetupActiveNegotiation(RateNegotiation? negotiation) =>
-        negotiationRepo.GetAsync(Arg.Any<Expression<Func<RateNegotiation, bool>>>(), Arg.Any<CancellationToken>())
+        _negotiationRepo.GetAsync(Arg.Any<Expression<Func<RateNegotiation, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(negotiation);
 
     /// <summary>A thread already in flight, carrying the floor snapshot it opened against.</summary>
     private RateNegotiation ExistingThread(decimal floorTotal)
     {
         var existing = RateNegotiation.Create(
-            listing.Id,
+            _listing.Id,
             "broker@example.com",
             new RateFloorSnapshot(
                 2.00m, new Money { Amount = floorTotal, Currency = "USD" }, RateFloorSource.LaneExact));
@@ -143,7 +143,7 @@ public class ProposeCounterOfferHandlerTests
     }
 
     private void SetupCredit(int? score, bool? authorityActive = true) =>
-        brokerCreditService.GetBrokerCreditAsync(listing.BrokerMcNumber, Arg.Any<CancellationToken>())
+        _brokerCreditService.GetBrokerCreditAsync(_listing.BrokerMcNumber, Arg.Any<CancellationToken>())
             .Returns(new BrokerCreditDto
             {
                 McNumber = "123456",
@@ -155,15 +155,15 @@ public class ProposeCounterOfferHandlerTests
             });
 
     private Task AssertNothingSent() =>
-        emailSender.DidNotReceiveWithAnyArgs().SendAsync(default!, default);
+        _emailSender.DidNotReceiveWithAnyArgs().SendAsync(default!, default);
 
     private ThreadedEmail SentEmail() =>
-        (ThreadedEmail)emailSender.ReceivedCalls()
+        (ThreadedEmail)_emailSender.ReceivedCalls()
             .Single(c => c.GetMethodInfo().Name == nameof(IThreadedEmailSender.SendAsync))
             .GetArguments()[0]!;
 
     private NegotiationMessage StoredMessage() =>
-        (NegotiationMessage)messageRepo.ReceivedCalls()
+        (NegotiationMessage)_messageRepo.ReceivedCalls()
             .Single(c => c.GetMethodInfo().Name == nameof(ITenantRepository<NegotiationMessage, Guid>.AddAsync))
             .GetArguments()[0]!;
 
@@ -176,9 +176,9 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_ListingNotAvailable_Fails()
     {
-        listing.Status = LoadBoardListingStatus.Booked;
+        _listing.Status = LoadBoardListingStatus.Booked;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         await AssertNothingSent();
@@ -187,9 +187,9 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_NoBrokerEmail_Fails()
     {
-        listing.BrokerEmail = null;
+        _listing.BrokerEmail = null;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("broker email", result.Error, StringComparison.OrdinalIgnoreCase);
@@ -203,10 +203,10 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_CreditBelowThreshold_BlocksWithErrorCode()
     {
-        tenant.Settings.MinBrokerCreditScore = 70;
+        _tenant.Settings.MinBrokerCreditScore = 70;
         SetupCredit(score: 50);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
@@ -218,7 +218,7 @@ public class ProposeCounterOfferHandlerTests
     {
         SetupCredit(score: 90, authorityActive: false);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
@@ -233,7 +233,7 @@ public class ProposeCounterOfferHandlerTests
     {
         SetupFloor(new EffectiveRateFloorDto { HasFloor = false, Source = RateFloorSource.None });
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationFloorMissing, result.ErrorCode);
@@ -243,9 +243,9 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_OfferBelowFloor_FailsWithBelowFloor()
     {
-        command.ProposedTotalRate = 1900m;
+        _command.ProposedTotalRate = 1900m;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
@@ -255,9 +255,9 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_OfferAtFloor_Sends()
     {
-        command.ProposedTotalRate = 2000m;
+        _command.ProposedTotalRate = 2000m;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
     }
@@ -271,9 +271,9 @@ public class ProposeCounterOfferHandlerTests
             MinRatePerMile = 2.00m,
             Source = RateFloorSource.TenantDefault
         });
-        command.ProposedRatePerMile = null;
+        _command.ProposedRatePerMile = null;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationFloorMissing, result.ErrorCode);
@@ -289,7 +289,7 @@ public class ProposeCounterOfferHandlerTests
             Source = RateFloorSource.TenantDefault
         });
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
@@ -307,10 +307,10 @@ public class ProposeCounterOfferHandlerTests
             EffectiveFloorTotal = 3000m
         });
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await floorResolver.DidNotReceiveWithAnyArgs().ResolveAsync(default!, default);
+        await _floorResolver.DidNotReceiveWithAnyArgs().ResolveAsync(default!, default);
     }
 
     [Fact]
@@ -318,7 +318,7 @@ public class ProposeCounterOfferHandlerTests
     {
         ExistingThread(floorTotal: 2500m);
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
@@ -338,10 +338,10 @@ public class ProposeCounterOfferHandlerTests
             EffectiveFloorTotal = 2000m
         });
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await negotiationRepo.Received(1).AddAsync(
+        await _negotiationRepo.Received(1).AddAsync(
             Arg.Is<RateNegotiation>(n => n.FloorTotalRate!.Amount == 2000m && n.FloorRatePerMile == 2.00m),
             Arg.Any<CancellationToken>());
     }
@@ -356,7 +356,7 @@ public class ProposeCounterOfferHandlerTests
         var existing = ExistingThread(floorTotal: 2000m);
         existing.RoundCount = RateNegotiation.MaxRounds;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Contains("rounds", result.Error, StringComparison.OrdinalIgnoreCase);
@@ -366,70 +366,70 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_EmailSendFails_PersistsNothing()
     {
-        emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>())
+        _emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>())
             .Returns(new ThreadedEmailResult(false, null));
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        await negotiationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await messageRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _negotiationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _messageRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_EmailSendFails_RevokesTheRouteItOpened()
     {
-        emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>())
+        _emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>())
             .Returns(new ThreadedEmailResult(false, null));
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        await routeRegistry.Received(1).RevokeAsync(
+        await _routeRegistry.Received(1).RevokeAsync(
             Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_FirstOffer_OpensTheReplyRouteBeforeSending()
     {
-        await sut.Handle(command, CancellationToken.None);
+        await _sut.Handle(_command, CancellationToken.None);
 
         Received.InOrder(() =>
         {
-            routeRegistry.OpenAsync(
-                Arg.Any<string>(), tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
-            emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>());
+            _routeRegistry.OpenAsync(
+                Arg.Any<string>(), _tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
+            _emailSender.SendAsync(Arg.Any<ThreadedEmail>(), Arg.Any<CancellationToken>());
         });
     }
 
     [Fact]
     public async Task Handle_FirstOffer_PersistsThreadMessageAndRoute()
     {
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(1, result.Value!.RoundCount);
         Assert.Equal(RateNegotiationStatus.AwaitingBroker, result.Value.Status);
 
-        await negotiationRepo.Received(1).AddAsync(Arg.Any<RateNegotiation>(), Arg.Any<CancellationToken>());
-        await messageRepo.Received(1).AddAsync(
+        await _negotiationRepo.Received(1).AddAsync(Arg.Any<RateNegotiation>(), Arg.Any<CancellationToken>());
+        await _messageRepo.Received(1).AddAsync(
             Arg.Is<NegotiationMessage>(m =>
                 m.Direction == NegotiationMessageDirection.Outbound &&
                 m.ProposedTotalRate!.Amount == 2200m),
             Arg.Any<CancellationToken>());
-        await routeRegistry.Received(1).OpenAsync(
-            Arg.Any<string>(), tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
-        await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
-        await broadcastService.Received(1).BroadcastNegotiationAsync(tenant.Id, Arg.Any<RateNegotiationDto>());
+        await _routeRegistry.Received(1).OpenAsync(
+            Arg.Any<string>(), _tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _broadcastService.Received(1).BroadcastNegotiationAsync(_tenant.Id, Arg.Any<RateNegotiationDto>());
     }
 
     [Fact]
     public async Task Handle_FirstOffer_SendsToListingBrokerWithThreadReplyAddress()
     {
-        await sut.Handle(command, CancellationToken.None);
+        await _sut.Handle(_command, CancellationToken.None);
 
-        await emailSender.Received(1).SendAsync(
+        await _emailSender.Received(1).SendAsync(
             Arg.Is<ThreadedEmail>(e =>
                 e.To == "broker@example.com" &&
                 e.ReplyTo.StartsWith("offer-") &&
@@ -441,7 +441,7 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_FirstOffer_SendsUnderAWellFormedMessageId()
     {
-        await sut.Handle(command, CancellationToken.None);
+        await _sut.Handle(_command, CancellationToken.None);
 
         var sent = SentEmail();
         AssertMsgId(sent.MessageId);
@@ -454,7 +454,7 @@ public class ProposeCounterOfferHandlerTests
     [Fact]
     public async Task Handle_FirstOffer_StoresTheSentMessageIdNotTheProviderId()
     {
-        await sut.Handle(command, CancellationToken.None);
+        await _sut.Handle(_command, CancellationToken.None);
 
         var stored = StoredMessage();
         Assert.Equal(SentEmail().MessageId, stored.RfcMessageId);
@@ -468,9 +468,9 @@ public class ProposeCounterOfferHandlerTests
         var first = existing.AddOutboundMessage("first offer");
         first.RfcMessageId = "<neg-0@mail.test.com>";
         var reply = existing.AddInboundMessage("we want more", rfcMessageId: "<CAF-1@broker.example.com>");
-        messageRepo.Query().Returns(new List<NegotiationMessage> { first, reply }.BuildMock());
+        _messageRepo.Query().Returns(new List<NegotiationMessage> { first, reply }.BuildMock());
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         var sent = SentEmail();
@@ -478,20 +478,20 @@ public class ProposeCounterOfferHandlerTests
         Assert.Equal("<neg-0@mail.test.com> <CAF-1@broker.example.com>", sent.References);
         AssertMsgId(sent.InReplyToMessageId);
         Assert.All(sent.References!.Split(' '), AssertMsgId);
-        await negotiationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await routeRegistry.DidNotReceiveWithAnyArgs().OpenAsync(default!, default, default);
-        await routeRegistry.Received(1).RefreshAsync(
-            existing.ReplyToken, tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
+        await _negotiationRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        await _routeRegistry.DidNotReceiveWithAnyArgs().OpenAsync(default!, default, default);
+        await _routeRegistry.Received(1).RefreshAsync(
+            existing.ReplyToken, _tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_WithDecisionId_BackfillsNegotiationOnDecision()
     {
         var decision = new AgentDecision { Type = AgentDecisionType.Query };
-        decisionRepo.GetByIdAsync(decision.Id, Arg.Any<CancellationToken>()).Returns(decision);
-        command.DecisionId = decision.Id;
+        _decisionRepo.GetByIdAsync(decision.Id, Arg.Any<CancellationToken>()).Returns(decision);
+        _command.DecisionId = decision.Id;
 
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(result.Value!.Id, decision.NegotiationId);
