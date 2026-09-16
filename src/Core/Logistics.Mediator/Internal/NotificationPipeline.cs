@@ -1,13 +1,20 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Logistics.Mediator.Internal;
 
-/// <summary>
-/// Non-generic entry point to a closed <see cref="NotificationPipeline{TNotification}" />, so the
-/// mediator can cache one instance per notification runtime type.
-/// </summary>
-internal abstract class NotificationPipeline
+internal sealed class NotificationPipeline<TNotification> : NotificationPipelineBase
+    where TNotification : INotification
 {
-    public abstract Task Invoke(
+    public override async Task Invoke(
         INotification notification,
         IServiceProvider serviceProvider,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken)
+    {
+        var typed = (TNotification)notification;
+
+        foreach (var handler in serviceProvider.GetServices<INotificationHandler<TNotification>>())
+        {
+            await handler.Handle(typed, cancellationToken).ConfigureAwait(false);
+        }
+    }
 }

@@ -5,24 +5,20 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// Registers the mediator and discovers handlers.
+/// Registers the mediator and discovers handlers. Pipeline behaviours are registered directly,
+/// outermost first: <c>services.AddTransient(typeof(IPipelineBehavior&lt;,&gt;), typeof(MyBehaviour&lt;,&gt;))</c>.
 /// </summary>
-/// <remarks>
-/// Pipeline behaviours are not registered here. Register them directly, in the order they should
-/// run outermost first:
-/// <c>services.AddTransient(typeof(IPipelineBehavior&lt;,&gt;), typeof(MyBehaviour&lt;,&gt;));</c>
-/// </remarks>
 public static class MediatorServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers <see cref="IMediator" /> without scanning for handlers. Use this in a host that
-    /// dispatches requests but owns none of the handlers.
+    /// Registers <see cref="IMediator" /> without scanning. Use in a host that dispatches requests
+    /// but owns none of the handlers.
     /// </summary>
     public static IServiceCollection AddMediator(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        // TryAdd, because a host may call AddMediator once per layer it composes.
+        // TryAdd, because a host may call this once per layer it composes.
         services.TryAddTransient<IMediator, global::Logistics.Mediator.Mediator>();
         return services;
     }
@@ -58,8 +54,6 @@ public static class MediatorServiceCollectionExtensions
                 continue;
             }
 
-            // GetInterfaces is transitive, so a handler declared through a derived marker
-            // interface still surfaces its closed IRequestHandler / INotificationHandler.
             foreach (var contract in type.GetInterfaces())
             {
                 if (!contract.IsGenericType)
@@ -71,6 +65,7 @@ public static class MediatorServiceCollectionExtensions
 
                 if (definition == typeof(IRequestHandler<,>))
                 {
+                    // Without this, a duplicate silently wins: GetService returns the last one.
                     if (requestHandlers.TryGetValue(contract, out var existing) && existing != type)
                     {
                         throw new InvalidOperationException(
@@ -85,8 +80,8 @@ public static class MediatorServiceCollectionExtensions
                     continue;
                 }
 
-                // TryAddEnumerable dedupes on (service, implementation), so repeat calls are
-                // idempotent while distinct notification handlers for one event all register.
+                // Dedupes on (service, implementation), so repeat calls are idempotent while
+                // distinct notification handlers for one event all register.
                 services.TryAddEnumerable(new ServiceDescriptor(contract, type, ServiceLifetime.Transient));
             }
         }
@@ -94,6 +89,8 @@ public static class MediatorServiceCollectionExtensions
         return services;
     }
 
+    // The Application assembly pulls Stripe, EF Core, FluentValidation and Mapperly; a partially
+    // restored context can fault the load rather than return nothing.
     private static IEnumerable<Type> GetLoadableTypes(Assembly assembly)
     {
         try
