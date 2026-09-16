@@ -2,7 +2,6 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Documents.Pdf.Invoice;
 using Logistics.Infrastructure.Documents.Pdf.Shared;
-using QuestPDF;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -15,8 +14,6 @@ public class InvoicePdfService : IInvoicePdfService
 {
     public byte[] GenerateLoadInvoicePdf(LoadInvoice invoice, Tenant tenant)
     {
-        Settings.License = LicenseType.Community;
-
         var taxLabel = PdfFormatting.TaxLabel(tenant.Settings?.Region);
         var showTax = HasTax(invoice);
 

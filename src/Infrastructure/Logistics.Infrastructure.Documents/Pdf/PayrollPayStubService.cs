@@ -1,10 +1,8 @@
 using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Documents.Pdf.Payroll;
 using Logistics.Infrastructure.Documents.Pdf.Shared;
-using QuestPDF;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
 using Logistics.Application.Abstractions.Documents;
 using QuestDocument = QuestPDF.Fluent.Document;
 
@@ -14,8 +12,6 @@ public class PayrollPayStubService : IPayrollPayStubService
 {
     public byte[] GeneratePayStubPdf(PayrollInvoice payroll, Tenant tenant)
     {
-        Settings.License = LicenseType.Community;
-
         var doc = QuestDocument.Create(container =>
         {
             container.Page(page =>

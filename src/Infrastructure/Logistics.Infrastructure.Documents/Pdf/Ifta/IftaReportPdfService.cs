@@ -2,10 +2,8 @@ using Logistics.Application.Abstractions.Documents;
 using Logistics.Domain.Entities;
 using Logistics.Infrastructure.Documents.Pdf.Shared;
 using Logistics.Shared.Models;
-using QuestPDF;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
 using QuestDocument = QuestPDF.Fluent.Document;
 
 namespace Logistics.Infrastructure.Documents.Pdf.Ifta;
@@ -14,8 +12,6 @@ public class IftaReportPdfService : IIftaReportPdfService
 {
     public byte[] GenerateIftaReportPdf(IftaReportDto report, Tenant tenant)
     {
-        Settings.License = LicenseType.Community;
-
         var doc = QuestDocument.Create(container =>
         {
             container.Page(page =>

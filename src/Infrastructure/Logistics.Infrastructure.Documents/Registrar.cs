@@ -4,6 +4,8 @@ using Logistics.Infrastructure.Documents.Pdf;
 using Logistics.Infrastructure.Documents.PdfImport;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Abstractions.Documents;
+using QuestPDF;
+using QuestPDF.Infrastructure;
 
 namespace Logistics.Infrastructure.Documents;
 
@@ -14,6 +16,8 @@ public static class Registrar
     /// </summary>
     public static IServiceCollection AddDocumentsInfrastructure(this IServiceCollection services)
     {
+        Settings.License = LicenseType.Community;
+
         // PDF generation
         services.AddScoped<IInvoicePdfService, InvoicePdfService>();
         services.AddScoped<IPayrollPayStubService, PayrollPayStubService>();
