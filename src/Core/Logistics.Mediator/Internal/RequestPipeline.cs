@@ -11,15 +11,17 @@ internal sealed class RequestPipeline<TRequest, TResponse> : RequestPipelineBase
         CancellationToken cancellationToken)
     {
         var typedRequest = (TRequest)request;
+        var behaviours = serviceProvider.GetServices<IPipelineBehavior<TRequest, TResponse>>().ToArray();
 
-        // GetServices yields registration order, so reversing before the fold leaves the
-        // first-registered behaviour outermost. Without the Reverse the pipeline runs inside out.
-        var chain = serviceProvider
-            .GetServices<IPipelineBehavior<TRequest, TResponse>>()
-            .Reverse()
-            .Aggregate(
-                (RequestHandlerDelegate<TResponse>)Handler,
-                (next, behaviour) => ct => behaviour.Handle(typedRequest, next, ct));
+        var chain = (RequestHandlerDelegate<TResponse>)Handler;
+
+        // Folded back to front, so the first-registered behaviour ends up outermost.
+        for (var i = behaviours.Length - 1; i >= 0; i--)
+        {
+            var behaviour = behaviours[i];
+            var next = chain;
+            chain = ct => behaviour.Handle(typedRequest, next, ct);
+        }
 
         return await chain(cancellationToken).ConfigureAwait(false);
 

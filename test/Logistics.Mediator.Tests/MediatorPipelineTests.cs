@@ -36,7 +36,7 @@ public class MediatorPipelineTests
     public async Task Send_BehaviourDoesNotCallNext_HandlerNeverRuns()
     {
         var sut = Build(services =>
-            services.AddTransient<IPipelineBehavior<Ping, string>, ShortCircuitBehaviour<Ping>>());
+            services.AddTransient<IPipelineBehavior<Ping, string>, ShortCircuitBehaviour>());
 
         var response = await sut.Send(new Ping(), CancellationToken.None);
 

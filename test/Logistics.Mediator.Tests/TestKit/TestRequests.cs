@@ -17,8 +17,10 @@ public sealed class PingHandler(Trace trace) : IRequestHandler<Ping, string>
     }
 }
 
-// Internal and sealed, matching how the application declares its handlers: the scanner must find
-// these through GetTypes rather than GetExportedTypes.
+/// <summary>
+/// Internal and sealed, matching how the application declares its handlers: the scanner must find
+/// these through GetTypes rather than GetExportedTypes.
+/// </summary>
 internal sealed class OtherPingHandler : IRequestHandler<OtherPing, string>
 {
     public Task<string> Handle(OtherPing request, CancellationToken cancellationToken) =>

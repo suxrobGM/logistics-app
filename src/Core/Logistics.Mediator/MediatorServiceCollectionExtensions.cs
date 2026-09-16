@@ -75,15 +75,18 @@ public static class MediatorServiceCollectionExtensions
 
                     requestHandlers[contract] = type;
                 }
-                else if (definition != typeof(INotificationHandler<>))
+                else if (definition == typeof(INotificationHandler<>))
                 {
-                    continue;
+                    // Dedupes on (service, implementation), so repeat calls are idempotent while
+                    // distinct notification handlers for one event all register.
+                    services.TryAddEnumerable(new ServiceDescriptor(contract, type, ServiceLifetime.Transient));
                 }
-
-                // Dedupes on (service, implementation), so repeat calls are idempotent while
-                // distinct notification handlers for one event all register.
-                services.TryAddEnumerable(new ServiceDescriptor(contract, type, ServiceLifetime.Transient));
             }
+        }
+
+        foreach (var (contract, implementation) in requestHandlers)
+        {
+            services.TryAdd(new ServiceDescriptor(contract, implementation, ServiceLifetime.Transient));
         }
 
         return services;
