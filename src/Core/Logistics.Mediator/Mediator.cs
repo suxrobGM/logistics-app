@@ -18,7 +18,10 @@ public sealed class Mediator(IServiceProvider serviceProvider) : IMediator
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var result = await GetRequestPipeline(request.GetType())
+        // Keyed on the runtime type, never TResponse: the caller routinely holds the request as a
+        // marker interface, and the handler is registered against the concrete type.
+        var result = await RequestPipelines
+            .GetOrAdd(request.GetType(), CreateRequestPipeline)
             .Invoke(request, serviceProvider, cancellationToken)
             .ConfigureAwait(false);
 
@@ -26,19 +29,10 @@ public sealed class Mediator(IServiceProvider serviceProvider) : IMediator
     }
 
     /// <inheritdoc />
-    public Task<object?> Send(IBaseRequest request, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-        return GetRequestPipeline(request.GetType()).Invoke(request, serviceProvider, cancellationToken);
-    }
-
-    /// <inheritdoc />
     public Task Publish(INotification notification, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(notification);
 
-        // Keyed on the runtime type, never a static one: callers routinely hold the notification
-        // as a marker interface, and keying on that would dispatch to nothing.
         var pipeline = NotificationPipelines.GetOrAdd(notification.GetType(), static notificationType =>
         {
             var closed = typeof(NotificationPipeline<>).MakeGenericType(notificationType);
@@ -48,18 +42,15 @@ public sealed class Mediator(IServiceProvider serviceProvider) : IMediator
         return pipeline.Invoke(notification, serviceProvider, cancellationToken);
     }
 
-    private static RequestPipelineBase GetRequestPipeline(Type requestType) =>
-        RequestPipelines.GetOrAdd(requestType, static type =>
-        {
-            // Taking the response type from the request rather than the caller's type argument is
-            // what keeps the single-Type cache key correct under IRequest covariance.
-            var responseType = Array.Find(
-                    type.GetInterfaces(),
-                    i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>))
-                ?.GetGenericArguments()[0]
-                ?? throw new ArgumentException($"'{type}' does not implement IRequest<TResponse>.", nameof(requestType));
+    private static RequestPipelineBase CreateRequestPipeline(Type requestType)
+    {
+        var responseType = Array.Find(
+                requestType.GetInterfaces(),
+                i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>))
+            ?.GetGenericArguments()[0]
+            ?? throw new ArgumentException($"'{requestType}' does not implement IRequest<TResponse>.", nameof(requestType));
 
-            var closed = typeof(RequestPipeline<,>).MakeGenericType(type, responseType);
-            return (RequestPipelineBase)Activator.CreateInstance(closed)!;
-        });
+        var closed = typeof(RequestPipeline<,>).MakeGenericType(requestType, responseType);
+        return (RequestPipelineBase)Activator.CreateInstance(closed)!;
+    }
 }

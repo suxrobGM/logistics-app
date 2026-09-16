@@ -8,12 +8,6 @@ public interface IMediator
     Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Sends a request whose response type is not known statically. Use only where the request
-    /// arrives as a deserialised payload; prefer the generic overload everywhere else.
-    /// </summary>
-    Task<object?> Send(IBaseRequest request, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Publishes to every handler registered for the notification's runtime type, awaiting each in
     /// turn. Publishing a notification with no handlers does nothing.
     /// </summary>

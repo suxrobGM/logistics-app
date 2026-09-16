@@ -15,10 +15,10 @@ public class CommandEnqueuerJob(
 {
     public async Task RunAsync(object command, CancellationToken ct)
     {
-        if (command is not IBaseRequest request)
+        if (command is not ICommand request)
         {
             logger.LogWarning(
-                "CommandEnqueuerJob received a payload of type {Type} that is not an IBaseRequest; skipping.",
+                "CommandEnqueuerJob received a payload of type {Type} that is not an ICommand; skipping.",
                 command.GetType().FullName);
             return;
         }
@@ -44,7 +44,7 @@ public class CommandEnqueuerJob(
 /// </summary>
 public sealed class HangfireCommandEnqueuer(IBackgroundJobClient jobClient) : ICommandEnqueuer
 {
-    public void Enqueue<TCommand>(TCommand command) where TCommand : ICommand
+    public void Enqueue(ICommand command)
     {
         jobClient.Enqueue<CommandEnqueuerJob>(job => job.RunAsync(command, CancellationToken.None));
     }

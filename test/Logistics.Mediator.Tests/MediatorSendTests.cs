@@ -42,11 +42,11 @@ public class MediatorSendTests
         Assert.Contains(nameof(Unhandled), ex.Message, StringComparison.Ordinal);
     }
 
-    /// <summary>The path CommandEnqueuerJob takes: the response type is not known statically.</summary>
+    /// <summary>The path CommandEnqueuerJob takes: the request arrives as a marker interface.</summary>
     [Fact]
-    public async Task SendObject_RequestTypedAsIBaseRequest_DispatchesByRuntimeType()
+    public async Task Send_RequestTypedAsMarkerInterface_DispatchesByRuntimeType()
     {
-        IBaseRequest request = new Ping("boxed");
+        IRequest<string> request = new Ping("boxed");
 
         var response = await Build().Send(request, CancellationToken.None);
 

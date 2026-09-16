@@ -53,7 +53,7 @@ public class SearchLoadsToolTests
             new JsonObject { ["statuses"] = new JsonArray("delivered_typo") }, CancellationToken.None);
 
         Assert.Contains("statuses", JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
-        await _mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
+        await _mediator.DidNotReceive().Send(Arg.Any<GetLoadsQuery>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

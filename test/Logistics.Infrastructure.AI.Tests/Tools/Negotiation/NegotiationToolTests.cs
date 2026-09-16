@@ -30,7 +30,7 @@ public class GetRateFloorToolTests
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.Contains("listing_id", root.GetProperty("error").GetString());
-        await _mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
+        await _mediator.DidNotReceive().Send(Arg.Any<GetRateFloorContextQuery>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -188,7 +188,7 @@ public class ProposeCounterOfferToolTests
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.Contains("proposed_total_rate", root.GetProperty("error").GetString());
-        await _mediator.DidNotReceiveWithAnyArgs().Send(default!, default);
+        await _mediator.DidNotReceive().Send(Arg.Any<ProposeCounterOfferCommand>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

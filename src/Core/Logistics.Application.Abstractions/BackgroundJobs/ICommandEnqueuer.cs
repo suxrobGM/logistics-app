@@ -13,5 +13,5 @@ namespace Logistics.Application.Abstractions.BackgroundJobs;
 /// </remarks>
 public interface ICommandEnqueuer
 {
-    void Enqueue<TCommand>(TCommand command) where TCommand : ICommand;
+    void Enqueue(ICommand command);
 }
