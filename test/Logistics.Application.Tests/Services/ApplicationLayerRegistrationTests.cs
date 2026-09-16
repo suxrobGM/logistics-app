@@ -1,4 +1,4 @@
-using Logistics.Application.Modules.Compliance.Privacy.Services;
+﻿using Logistics.Application.Modules.Compliance.Privacy.Services;
 using Logistics.Application.Modules.Compliance.Safety.Services;
 using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.Application.Modules.Financial.Tax.Services;
@@ -6,6 +6,8 @@ using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Abstractions.Dispatch;
+using Logistics.Application.Behaviours;
+using Logistics.Mediator;
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Abstractions.Realtime;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,5 +59,23 @@ public class ApplicationLayerRegistrationTests
 
         Assert.NotNull(descriptor);
         Assert.Equal(ServiceLifetime.Scoped, descriptor!.Lifetime);
+    }
+
+    /// <summary>
+    ///     Registration order is pipeline order, so this pins which behaviour wraps which.
+    /// </summary>
+    [Fact]
+    public void AddApplicationLayer_RegistersBehavioursOutermostFirst()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddApplicationLayer();
+
+        var behaviours = services
+            .Where(d => d.ServiceType == typeof(IPipelineBehavior<,>))
+            .Select(d => d.ImplementationType!.Name)
+            .ToArray();
+
+        Assert.Equal(["ValidationBehaviour`2", "FeatureCheckBehaviour`2"], behaviours);
     }
 }

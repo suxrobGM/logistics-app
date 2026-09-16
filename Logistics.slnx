@@ -10,6 +10,7 @@
     <Project Path="test/Logistics.Infrastructure.Routing.Tests/Logistics.Infrastructure.Routing.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Tax.Tests/Logistics.Infrastructure.Tax.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Vin.Tests/Logistics.Infrastructure.Vin.Tests.csproj" />
+    <Project Path="test/Logistics.Mediator.Tests/Logistics.Mediator.Tests.csproj" />
   </Folder>
   <Folder Name="/Core/">
     <Project Path="src/Core/Logistics.Domain/Logistics.Domain.csproj" />
