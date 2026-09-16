@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
-/// <summary>Nested load payload for trip create/update; not a MediatR command.</summary>
+/// <summary>Nested load payload for trip create/update; not a dispatched command.</summary>
 public record CreateTripLoadCommand
 {
     public string? TempId { get; set; } // Temporary ID for mapping optimized stops

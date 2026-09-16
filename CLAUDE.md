@@ -1,4 +1,4 @@
-﻿# CLAUDE.md
+# CLAUDE.md
 
 Multi-tenant fleet management platform for trucking companies (intermodal containers, vehicle transport, freight).
 
@@ -61,6 +61,8 @@ Application references `Logistics.Application.Abstractions` for infrastructure p
 `test/Logistics.Architecture.Tests/` enforces this by **discovering** projects off disk - never reintroduce an `InlineData` roster there, since a hand-maintained list silently skips whatever nobody remembered to add.
 
 Adding an infrastructure project: the csproj rule finds it automatically, but the IL-level boundary rule also needs an anchor in `AssemblyAnchors.AllInfrastructure` **plus** a `ProjectReference` in the arch-tests csproj. Miss those and the project is simply unchecked - nothing fails.
+
+Adding a project under `src/Core` is the same trap with no list to join: give it an anchor in `AssemblyAnchors`, add it to `LoadAssemblies`, and write the rule that pins its place in the graph. `Logistics.Mediator` is the worked example.
 
 ## User Roles
 

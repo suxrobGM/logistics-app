@@ -120,7 +120,7 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `src/Client`         | `Logistics.DemoVideo` (Remotion). The Angular workspace and the driver app moved to the private submodule                                                          |
 | `private/`           | Closed source: `Logistics.Angular` (tms-portal, customer-portal, admin-portal, website, shared library), `Logistics.DriverApp` (Kotlin Multiplatform)              |
-| `src/Core`           | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`                             |
+| `src/Core`           | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`, `Logistics.Mediator`       |
 | `src/Shared`         | `Logistics.Shared.Geo`, `Logistics.Shared.Identity`, `Logistics.Shared.Models`                                                                                     |
 | `src/Infrastructure` | `Persistence`, `Communications`, `AI`, `Payments`, `Documents`, `Routing`, `Storage`, `Tax`, `Vin`, `Integrations.{Common, Eld, LoadBoard, FuelCards, Accounting}` |
 | `src/Presentation`   | `Logistics.API`, `Logistics.IdentityServer`, `Logistics.McpServer`, `Logistics.TelegramBot`, `Logistics.DbMigrator`                                                |

@@ -21,7 +21,7 @@ public class NegotiationWakeJob(
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         await tenantUow.SetCurrentTenantByIdAsync(tenantId);
 
-        // Hangfire bypasses the MediatR pipeline, so [RequiresFeature] is inert here.
+        // Hangfire bypasses the request pipeline, so [RequiresFeature] is inert here.
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
         if (!await featureService.IsFeatureEnabledAsync(tenantId, TenantFeature.AIRateNegotiation))
         {

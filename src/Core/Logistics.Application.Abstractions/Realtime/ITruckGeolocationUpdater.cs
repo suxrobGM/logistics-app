@@ -5,7 +5,7 @@ namespace Logistics.Application.Abstractions.Realtime;
 
 /// <summary>
 /// Persists the latest truck geolocation reported by a tracking client, and decides who may report
-/// it. Wraps the in-process MediatR command so SignalR hubs and other adapters can update
+/// it. Wraps the in-process command so SignalR hubs and other adapters can update
 /// geolocation without depending on the Application assembly.
 /// </summary>
 public interface ITruckGeolocationUpdater : IApplicationService

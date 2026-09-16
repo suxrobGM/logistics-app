@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using FluentValidation;
 using Logistics.Application.Behaviours;
 using Logistics.Mediator;
@@ -61,7 +61,7 @@ public static class Registrar
     }
 
     /// <summary>
-    /// Registers only the Compliance/Privacy MediatR slice, for hosts (the IdentityServer) that serve
+    /// Registers only the Compliance/Privacy handler slice, for hosts (the IdentityServer) that serve
     /// the GDPR self-service page without the full <see cref="AddApplicationLayer"/> stack.
     /// </summary>
     public static IServiceCollection AddApplicationPrivacyServices(this IServiceCollection services)
@@ -90,7 +90,7 @@ public static class Registrar
     }
 
     /// <summary>
-    /// Validators + MediatR with the core pipeline. <paramref name="typeFilter"/> narrows the scan
+    /// Validators + the mediator with the core pipeline. <paramref name="typeFilter"/> narrows the scan
     /// to one slice, for hosts that don't want the whole Application layer.
     /// </summary>
     private static IServiceCollection AddApplicationCommon(

@@ -1,7 +1,7 @@
 namespace Logistics.Application.Abstractions.Agents;
 
 /// <summary>
-/// Executes agent tool calls by dispatching to MediatR commands/queries or domain services.
+/// Executes agent tool calls by dispatching to commands/queries or domain services.
 /// </summary>
 public interface IAgentToolExecutor
 {

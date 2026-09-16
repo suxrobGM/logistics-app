@@ -45,7 +45,7 @@ internal static class Setup
         // Backs the signed download URL on the Manage Privacy page's data exports.
         services.AddStorageInfrastructure(configuration);
 
-        // Application services used directly by Razor pages. Still not the full Application/MediatR
+        // Application services used directly by Razor pages. Still not the full Application
         // stack - just UserService (Manage Profile) and the Privacy slice (Manage Privacy).
         services.AddScoped<IUserService, UserService>();
         services.AddApplicationPrivacyServices();

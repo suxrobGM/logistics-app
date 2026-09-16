@@ -18,7 +18,7 @@ src/Core/Logistics.Application/
 │   ├── Integrations/   # AIDispatch, LoadBoard, FuelCards, Accounting, Webhooks, Messaging, Documents
 │   └── Platform/       # Stats, Reports, BlogPosts, Notifications
 ├── Handlers/           # Generic base handlers (Delete/GetById/Update) that trivial slices subclass
-├── Behaviours/         # MediatR pipeline
+├── Behaviours/         # request pipeline
 └── Validators/         # Shared FluentValidation base validators (e.g. AddressValidator)
 
 src/Core/Logistics.Application.Abstractions/
@@ -279,7 +279,7 @@ public class LoadCompletedHandler : INotificationHandler<LoadCompletedEvent>
 
 ## Background Jobs
 
-Recurring Hangfire jobs live in `src/Presentation/Logistics.API/Jobs/`. The canonical rule is in CLAUDE.md: fan out with `TenantJobRunner.ForEachTenantAsync` (never hand-roll the loop), and because jobs bypass the MediatR pipeline the body must gate features itself with `IFeatureService` (`[RequiresFeature]` is inert). Keep the feature check inside the body - a job may still do some work for every tenant regardless of the flag, as `IftaQuarterCloseJob` does when it purges breadcrumbs for tenants without IFTA enabled. The worked pattern:
+Recurring Hangfire jobs live in `src/Presentation/Logistics.API/Jobs/`. The canonical rule is in CLAUDE.md: fan out with `TenantJobRunner.ForEachTenantAsync` (never hand-roll the loop), and because jobs bypass the request pipeline the body must gate features itself with `IFeatureService` (`[RequiresFeature]` is inert). Keep the feature check inside the body - a job may still do some work for every tenant regardless of the flag, as `IftaQuarterCloseJob` does when it purges breadcrumbs for tenants without IFTA enabled. The worked pattern:
 
 ```csharp
 [AutomaticRetry(Attempts = 2)]

@@ -34,7 +34,7 @@ public class FuelCardSyncJob(
 
     private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        // Jobs bypass the MediatR pipeline, so the [RequiresFeature] gate on the commands does not
+        // Jobs bypass the request pipeline, so the [RequiresFeature] gate on the commands does not
         // apply here - check explicitly, or a downgraded tenant keeps having expenses written.
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
         if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.FuelCards))
