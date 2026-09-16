@@ -1,13 +1,11 @@
 using FluentValidation;
-using Logistics.Shared.Models;
 using Logistics.Mediator;
 
 namespace Logistics.Application.Behaviours;
 
 public sealed class ValidationBehaviour<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
-    where TResponse : IResult, new()
+    where TRequest : notnull
 {
     public async Task<TResponse> Handle(
         TRequest request,

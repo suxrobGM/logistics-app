@@ -1,13 +1,12 @@
 using Hangfire;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.Common;
-using Logistics.Shared.Models;
 using Logistics.Mediator;
 
 namespace Logistics.API.Jobs;
 
 /// <summary>
-///     Hangfire job that dispatches a command via MediatR inside its own DI scope.
+///     Hangfire job that dispatches a command inside its own DI scope.
 ///     Wired up by <see cref="HangfireCommandEnqueuer"/>.
 /// </summary>
 public class CommandEnqueuerJob(
@@ -40,24 +39,12 @@ public class CommandEnqueuerJob(
 }
 
 /// <summary>
-///     Hangfire-backed implementation of <see cref="ICommandEnqueuer"/>. Serialises the
-///     command record and dispatches it via MediatR in a fresh DI scope.
+///     Hangfire-backed implementation of <see cref="ICommandEnqueuer"/>. Serialises the command
+///     record and dispatches it in a fresh DI scope.
 /// </summary>
 public sealed class HangfireCommandEnqueuer(IBackgroundJobClient jobClient) : ICommandEnqueuer
 {
     public void Enqueue<TCommand>(TCommand command) where TCommand : ICommand
-    {
-        EnqueueInternal(command);
-    }
-
-    public void Enqueue<TCommand, TResponse>(TCommand command)
-        where TCommand : ICommand<TResponse>
-        where TResponse : Logistics.Shared.Models.IResult, new()
-    {
-        EnqueueInternal(command);
-    }
-
-    private void EnqueueInternal(object command)
     {
         jobClient.Enqueue<CommandEnqueuerJob>(job => job.RunAsync(command, CancellationToken.None));
     }

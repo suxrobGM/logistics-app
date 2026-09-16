@@ -106,8 +106,6 @@ public static class Registrar
         services.AddMediator(typeof(Registrar).Assembly, typeFilter);
 
         // Registration order is pipeline order: the first registered behaviour runs outermost.
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         if (withFeatureCheck)
         {
