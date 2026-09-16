@@ -22,7 +22,7 @@ surrounding file and let the build tell you. What follows is the part no tool ch
 - Commands: `{Action}{Entity}Command` → Handlers: `{Command}Handler` (internal sealed)
 - Queries: `Get{Entity}ByIdQuery`, `Get{Entities}Query`
 - DTOs: `{Entity}Dto`, Mappers: `{Entity}Mapper`
-- Private fields: `camelCase` (no `_` prefix) - enforced by `.editorconfig`
+- Private instance fields: `_camelCase` - enforced by `.editorconfig`
 - Constants and static readonly: `PascalCase`
 
 ## Validation

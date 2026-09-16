@@ -300,16 +300,16 @@ private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, Cancellat
 
 ## Testing
 
-xUnit + NSubstitute (not Moq). The system under test is named `sut`; private fields are `camelCase` with
-no `_` prefix. Full conventions in [testing.md](../../.claude/rules/backend/testing.md).
+xUnit + NSubstitute (not Moq). The system under test is named `_sut`; private instance fields are
+`_camelCase`. Full conventions in [testing.md](../../.claude/rules/backend/testing.md).
 
 ```csharp
 public class CreateLoadHandlerTests
 {
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly CreateLoadHandler sut;
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly CreateLoadHandler _sut;
 
-    public CreateLoadHandlerTests() => sut = new CreateLoadHandler(tenantUow);
+    public CreateLoadHandlerTests() => _sut = new CreateLoadHandler(_tenantUow);
 
     [Fact]
     public async Task Handle_ValidLoad_ReturnsSuccess()
@@ -320,14 +320,14 @@ public class CreateLoadHandlerTests
             Name = "ACME-42",
             CustomerId = Guid.NewGuid()
         };
-        tenantUow.SaveChangesAsync().Returns(1);
+        _tenantUow.SaveChangesAsync().Returns(1);
 
         // Act
-        var result = await sut.Handle(command, CancellationToken.None);
+        var result = await _sut.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.True(result.IsSuccess);
-        await tenantUow.Repository<Load>().Received(1).AddAsync(Arg.Any<Load>());
+        await _tenantUow.Repository<Load>().Received(1).AddAsync(Arg.Any<Load>());
     }
 }
 ```

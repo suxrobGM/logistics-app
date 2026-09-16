@@ -50,18 +50,18 @@ Test commands are in CLAUDE.md; `--filter "FullyQualifiedName~Method"` narrows t
 
 ```csharp
 // Setup mocks
-private readonly IMyRepo repo = Substitute.For<IMyRepo>();
-private readonly MyService sut;
+private readonly IMyRepo _repo = Substitute.For<IMyRepo>();
+private readonly MyService _sut;
 
 public MyServiceTests()
 {
-    sut = new MyService(repo);
+    _sut = new MyService(_repo);
 }
 
 // Mock IQueryable (for EF Core .Query() chains)
 var mock = items.ToList().BuildMock();
-repo.Query().Returns(mock);
+_repo.Query().Returns(mock);
 
 // Mock async repository methods
-repo.GetByIdAsync(id, Arg.Any<CancellationToken>()).Returns(entity);
+_repo.GetByIdAsync(id, Arg.Any<CancellationToken>()).Returns(entity);
 ```
