@@ -12,7 +12,7 @@ public sealed class Mediator(IServiceProvider serviceProvider) : IMediator
     private static readonly ConcurrentDictionary<Type, NotificationPipelineBase> NotificationPipelines = new();
 
     /// <inheritdoc />
-    public async Task<TResponse> Send<TResponse>(
+    public Task<TResponse> Send<TResponse>(
         IRequest<TResponse> request,
         CancellationToken cancellationToken = default)
     {
@@ -20,12 +20,10 @@ public sealed class Mediator(IServiceProvider serviceProvider) : IMediator
 
         // Keyed on the runtime type, never TResponse: the caller routinely holds the request as a
         // marker interface, and the handler is registered against the concrete type.
-        var result = await RequestPipelines
-            .GetOrAdd(request.GetType(), CreateRequestPipeline)
-            .Invoke(request, serviceProvider, cancellationToken)
-            .ConfigureAwait(false);
+        var pipeline = (RequestPipelineBase<TResponse>)RequestPipelines
+            .GetOrAdd(request.GetType(), CreateRequestPipeline);
 
-        return (TResponse)result!;
+        return pipeline.Invoke(request, serviceProvider, cancellationToken);
     }
 
     /// <inheritdoc />

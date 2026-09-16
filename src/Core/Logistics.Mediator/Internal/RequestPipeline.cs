@@ -2,10 +2,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Mediator.Internal;
 
-internal sealed class RequestPipeline<TRequest, TResponse> : RequestPipelineBase
+internal sealed class RequestPipeline<TRequest, TResponse> : RequestPipelineBase<TResponse>
     where TRequest : IRequest<TResponse>
 {
-    public override async Task<object?> Invoke(
+    public override Task<TResponse> Invoke(
         object request,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
@@ -23,7 +23,7 @@ internal sealed class RequestPipeline<TRequest, TResponse> : RequestPipelineBase
             chain = ct => behaviour.Handle(typedRequest, next, ct);
         }
 
-        return await chain(cancellationToken).ConfigureAwait(false);
+        return chain(cancellationToken);
 
         Task<TResponse> Handler(CancellationToken ct)
         {
