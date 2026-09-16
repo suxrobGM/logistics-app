@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 

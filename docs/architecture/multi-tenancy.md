@@ -1,4 +1,4 @@
-﻿# Multi-Tenancy Architecture
+# Multi-Tenancy Architecture
 
 LogisticsX uses **database-per-tenant** isolation: a single master database stores tenants, subscriptions, and super-admin accounts; every tenant company gets its own PostgreSQL database with the full operational schema.
 

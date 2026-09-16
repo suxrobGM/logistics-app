@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.LoadBoard;

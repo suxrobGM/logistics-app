@@ -1,4 +1,4 @@
-﻿---
+---
 name: add-tenant-feature-flag
 description: Add a new plan-gated tenant feature flag (e.g. "ContainerTracking", "AdvancedAnalytics") that platform admins control per tenant through presets and per-feature overrides, gated by subscription plan tier. Use when adding a feature that should be locked for some plans, tied to a company type preset, or admin-overridable. Walks through the resolution chain and the preset catalog.
 ---

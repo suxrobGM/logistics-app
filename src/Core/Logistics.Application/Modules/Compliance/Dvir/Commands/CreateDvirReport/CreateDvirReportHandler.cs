@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;

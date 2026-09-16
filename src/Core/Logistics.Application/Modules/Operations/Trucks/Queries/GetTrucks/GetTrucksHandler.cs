@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Loads;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

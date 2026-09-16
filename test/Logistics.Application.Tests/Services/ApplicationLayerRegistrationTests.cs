@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Modules.Compliance.Privacy.Services;
+using Logistics.Application.Modules.Compliance.Privacy.Services;
 using Logistics.Application.Modules.Compliance.Safety.Services;
 using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.Application.Modules.Financial.Tax.Services;

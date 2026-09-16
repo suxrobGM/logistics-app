@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Modules.Integrations.AICopilot.Queries;
 using Logistics.Application.Modules.Integrations.AIDispatch.Queries;

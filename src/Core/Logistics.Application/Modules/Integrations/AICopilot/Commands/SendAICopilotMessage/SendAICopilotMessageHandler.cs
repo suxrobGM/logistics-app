@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.AICopilot;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.CurrentUser;

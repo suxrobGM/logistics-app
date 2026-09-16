@@ -1,4 +1,4 @@
-﻿# Domain Model
+# Domain Model
 
 The domain layer (`src/Core/Logistics.Domain/`) holds entities, aggregates, value objects, domain events, and specifications. Entities are split into two databases by marker interface:
 

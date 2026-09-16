@@ -1,4 +1,4 @@
-﻿---
+---
 name: add-webhook-handler
 description: Add a new external webhook receiver (Stripe, ELD, custom integration). Use when wiring an inbound webhook from a third-party service. Codifies signature validation, idempotency, audit logging, and the WebhookController + Modules/Integrations/Webhooks/Commands pattern so security checks are not silently skipped.
 ---

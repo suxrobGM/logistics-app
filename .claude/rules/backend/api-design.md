@@ -1,4 +1,4 @@
-﻿---
+---
 paths:
   - "src/Presentation/Logistics.API/**/*.cs"
 ---

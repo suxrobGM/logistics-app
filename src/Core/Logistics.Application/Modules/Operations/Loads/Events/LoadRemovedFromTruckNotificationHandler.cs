@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

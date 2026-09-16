@@ -1,4 +1,4 @@
-﻿using Logistics.Mediator;
+using Logistics.Mediator;
 using System.Linq.Expressions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

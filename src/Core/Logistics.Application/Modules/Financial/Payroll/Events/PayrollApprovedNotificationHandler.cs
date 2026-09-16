@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Events;

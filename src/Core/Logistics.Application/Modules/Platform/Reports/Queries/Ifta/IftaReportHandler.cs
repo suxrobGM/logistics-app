@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Compliance.Ifta.Services;
 using Logistics.Mediator;
 using Logistics.Shared.Models;

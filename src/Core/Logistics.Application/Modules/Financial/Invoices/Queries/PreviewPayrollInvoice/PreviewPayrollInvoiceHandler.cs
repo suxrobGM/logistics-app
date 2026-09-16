@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Modules.Financial.Payroll.Services;
+using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;

@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Modules.Financial.StripeConnect.Services;
+using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;

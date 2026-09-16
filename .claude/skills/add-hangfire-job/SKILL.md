@@ -1,4 +1,4 @@
-﻿---
+---
 name: add-hangfire-job
 description: Add a recurring or on-demand Hangfire background job (nightly sync, reminder sweep, cleanup, quarter close). Use when work must run on a schedule or outside a request - e.g. "sync fuel card transactions nightly", "email drivers whose licence expires in 30 days". Codifies the tenant fan-out, the per-tenant DI scope, and the feature gate that [RequiresFeature] cannot provide here.
 ---

@@ -1,4 +1,4 @@
-﻿using Logistics.Mediator;
+using Logistics.Mediator;
 using System.Security.Cryptography;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;

@@ -1,4 +1,4 @@
-﻿# Application Module Layout
+# Application Module Layout
 
 `Logistics.Application` is organised into six modules. Each module owns the features inside one bounded context - pick a module by context, not by entity.
 

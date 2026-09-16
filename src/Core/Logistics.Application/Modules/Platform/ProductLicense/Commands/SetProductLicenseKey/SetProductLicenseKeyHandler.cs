@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Application.Modules.Platform.ProductLicense.Services;

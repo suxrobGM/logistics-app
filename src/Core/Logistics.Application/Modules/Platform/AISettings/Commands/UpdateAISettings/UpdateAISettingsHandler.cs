@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions.AI;
+using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

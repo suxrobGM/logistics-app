@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Integrations.Agents;
 using Logistics.Application.Modules.Integrations.Agents.Services;

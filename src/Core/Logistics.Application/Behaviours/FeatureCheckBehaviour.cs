@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Application.Attributes;

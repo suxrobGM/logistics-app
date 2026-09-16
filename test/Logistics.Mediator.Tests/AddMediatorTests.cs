@@ -1,4 +1,4 @@
-﻿using Logistics.Mediator.Tests.TestKit;
+using Logistics.Mediator.Tests.TestKit;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 

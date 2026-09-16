@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Modules.Financial.StripeConnect.Services;
+using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
