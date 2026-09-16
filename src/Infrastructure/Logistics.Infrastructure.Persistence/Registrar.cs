@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions.Privacy;
 using Logistics.Domain.Options;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Interceptors;
-using Logistics.Infrastructure.Persistence.Privacy;
+using Logistics.Infrastructure.Persistence.Services.Privacy;
 using Logistics.Infrastructure.Persistence.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

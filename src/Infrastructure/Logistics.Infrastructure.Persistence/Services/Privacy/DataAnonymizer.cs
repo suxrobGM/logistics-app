@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Infrastructure.Persistence.Privacy;
+namespace Logistics.Infrastructure.Persistence.Services.Privacy;
 
 /// <summary>
 /// Replaces a user's directly-identifying fields with placeholder values across
