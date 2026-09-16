@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Abstractions.Features;
-using Logistics.Application.Abstractions.Modules.Platform.ReadModels;
+using Logistics.Application.Abstractions.Reports;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Application.Abstractions.AIDispatch;
-using Logistics.Infrastructure.Persistence.Reads.Platform;
+using Logistics.Infrastructure.Persistence.Reads;
 
 namespace Logistics.Infrastructure.Persistence.Builder;
 

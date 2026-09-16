@@ -1,5 +1,5 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Modules.Platform.ReadModels;
+using Logistics.Application.Abstractions.Reports;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Shared.Models;

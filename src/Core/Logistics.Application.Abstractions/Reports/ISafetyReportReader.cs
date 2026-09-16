@@ -1,6 +1,6 @@
 using Logistics.Domain.Primitives.Enums.Safety;
 
-namespace Logistics.Application.Abstractions.Modules.Platform.ReadModels;
+namespace Logistics.Application.Abstractions.Reports;
 
 /// <summary>
 /// Read-side projection for the Safety report. Bypasses the generic repository

@@ -1,11 +1,11 @@
-using Logistics.Application.Abstractions.Modules.Platform.ReadModels;
+using Logistics.Application.Abstractions.Reports;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Logistics.Infrastructure.Persistence.Reads.Platform;
+namespace Logistics.Infrastructure.Persistence.Reads;
 
 internal sealed class SafetyReportReader(TenantDbContext db, ITenantUnitOfWork tenantUow) : ISafetyReportReader
 {
