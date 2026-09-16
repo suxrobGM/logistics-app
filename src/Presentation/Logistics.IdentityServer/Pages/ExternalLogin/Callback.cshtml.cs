@@ -1,7 +1,6 @@
 using System.Security.Claims;
 
 using Open.IdentityServer;
-using Open.IdentityServer;
 using Open.IdentityServer.Events;
 using Open.IdentityServer.Services;
 
