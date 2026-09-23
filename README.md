@@ -238,9 +238,9 @@ The [architecture overview](docs/architecture/overview.md) explains how the piec
 
 ### Driver app screens
 
-|                           Trips                            |                              Trip detail                               |                              Load detail                               |
-| :--------------------------------------------------------: | :--------------------------------------------------------------------: | :--------------------------------------------------------------------: |
-| ![Trips](docs/store-assets/screenshots/phone/01-trips.png) | ![Trip Detail](docs/store-assets/screenshots/phone/02-trip-detail.png) | ![Load Detail](docs/store-assets/screenshots/phone/04-load-detail.png) |
+|                         Today                         |                            Trip detail                            |                            Load detail                            |
+| :---------------------------------------------------: | :---------------------------------------------------------------: | :---------------------------------------------------------------: |
+| ![Today](docs/store-assets/screenshots/raw/today.png) | ![Trip Detail](docs/store-assets/screenshots/raw/trip-detail.png) | ![Load Detail](docs/store-assets/screenshots/raw/load-detail.png) |
 
 </details>
 

@@ -145,18 +145,18 @@ Self-service portal for customers to track shipments, view documents, and access
 
 Native driver app built with Kotlin Multiplatform and Compose, supporting both Android and iOS.
 
-### Trips & Loads
+### Today, Trips & Loads
 
-|                         Trips                         |                            Trip Detail                            |
-| :---------------------------------------------------: | :---------------------------------------------------------------: |
-| ![Trips](store-assets/screenshots/phone/01-trips.png) | ![Trip Detail](store-assets/screenshots/phone/02-trip-detail.png) |
+|                      Today                       |                         Trip detail                          |                         Load detail                          |
+| :----------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+| ![Today](store-assets/screenshots/raw/today.png) | ![Trip Detail](store-assets/screenshots/raw/trip-detail.png) | ![Load Detail](store-assets/screenshots/raw/load-detail.png) |
 
-|                           Past Loads                            |                            Load Detail                            |
-| :-------------------------------------------------------------: | :---------------------------------------------------------------: |
-| ![Past Loads](store-assets/screenshots/phone/03-past-loads.png) | ![Load Detail](store-assets/screenshots/phone/04-load-detail.png) |
+|                         Past trips                         |                         Inspection                         |                        Documents                         |
+| :--------------------------------------------------------: | :--------------------------------------------------------: | :------------------------------------------------------: |
+| ![Past Trips](store-assets/screenshots/raw/past-trips.png) | ![Inspection](store-assets/screenshots/raw/inspection.png) | ![Documents](store-assets/screenshots/raw/documents.png) |
 
-### Messages, Account & Stats
+### Messages, Earnings & Account
 
-|                          Messages                           |                          Account                          |                         Stats                         |
-| :---------------------------------------------------------: | :-------------------------------------------------------: | :---------------------------------------------------: |
-| ![Messages](store-assets/screenshots/phone/05-messages.png) | ![Account](store-assets/screenshots/phone/06-account.png) | ![Stats](store-assets/screenshots/phone/07-stats.png) |
+|                      Chat                      |                        Earnings                        |                      More                      |
+| :--------------------------------------------: | :----------------------------------------------------: | :--------------------------------------------: |
+| ![Chat](store-assets/screenshots/raw/chat.png) | ![Earnings](store-assets/screenshots/raw/earnings.png) | ![More](store-assets/screenshots/raw/more.png) |
