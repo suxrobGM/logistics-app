@@ -39,6 +39,7 @@ internal sealed class ConfirmLoadStatusHandler(
         }
 
         load.UpdateStatus(loadStatus);
+        load.RefreshTripStatus();
 
         var changes = await tenantUow.SaveChangesAsync(ct);
 

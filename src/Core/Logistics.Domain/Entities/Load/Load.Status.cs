@@ -64,6 +64,17 @@ public partial class Load
     }
 
     /// <summary>
+    /// Refreshes the status of each trip that carries this load. Call it after a status change outside a trip.
+    /// </summary>
+    public void RefreshTripStatus()
+    {
+        foreach (var trip in TripStops.Select(s => s.Trip).Distinct())
+        {
+            trip.RefreshStatus();
+        }
+    }
+
+    /// <summary>
     /// Confirms pickup of the load.
     /// </summary>
     public void ConfirmPickup(DateTime? at = null)

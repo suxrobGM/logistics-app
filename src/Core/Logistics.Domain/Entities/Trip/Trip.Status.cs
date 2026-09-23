@@ -89,16 +89,23 @@ public partial class Trip
     }
 
     /// <summary>
-    /// Refreshes the trip status based on the current state of stops.
+    /// Moves the trip to InTransit once any load is picked up, and to Completed once every drop-off is delivered.
+    /// A completed or cancelled trip keeps its status.
     /// </summary>
-    private void RefreshStatus()
+    public void RefreshStatus()
     {
+        if (Status is TripStatus.Completed or TripStatus.Cancelled)
+        {
+            return;
+        }
+
         var allDropOffsDelivered = Stops
             .Where(s => s.Type == TripStopType.DropOff)
             .All(s => s.Load.Status == LoadStatus.Delivered);
 
+        // A delivered load was picked up first, so it also counts.
         var anyPickupDone = Stops
-            .Any(s => s is { Type: TripStopType.PickUp, Load.Status: LoadStatus.PickedUp });
+            .Any(s => s is { Type: TripStopType.PickUp, Load.Status: LoadStatus.PickedUp or LoadStatus.Delivered });
 
         if (allDropOffsDelivered)
         {
