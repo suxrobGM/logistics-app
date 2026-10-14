@@ -1,6 +1,9 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Email.Models;
+using Logistics.Application.Modules.Platform.Contacts.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -9,6 +12,7 @@ namespace Logistics.Application.Modules.Platform.Contacts.Commands;
 
 internal sealed class CreateContactSubmissionHandler(
     IMasterUnitOfWork masterUow,
+    IWebsiteLeadNotifier leadNotifier,
     ILogger<CreateContactSubmissionHandler> logger) : IRequestHandler<CreateContactSubmissionCommand, Result>
 {
     public async Task<Result> Handle(CreateContactSubmissionCommand req, CancellationToken ct)
@@ -30,6 +34,24 @@ internal sealed class CreateContactSubmissionHandler(
             "Created contact submission from {Email} with subject {Subject}",
             req.Email,
             req.Subject);
+
+        var subject = req.Subject.GetDescription();
+        await leadNotifier.NotifyAsync(
+            $"Contact form ({subject}): {req.FirstName} {req.LastName}",
+            req.Email,
+            new WebsiteLeadEmailModel
+            {
+                Heading = "New contact message",
+                Fields =
+                [
+                    new("Name", $"{req.FirstName} {req.LastName}"),
+                    new("Email", req.Email),
+                    new("Phone", req.Phone ?? "-"),
+                    new("Subject", subject),
+                ],
+                Message = req.Message,
+            },
+            ct);
 
         return Result.Ok();
     }
