@@ -9,8 +9,8 @@ namespace Logistics.Infrastructure.Integrations.Common;
 /// </summary>
 public static class WebhookSignature
 {
-    /// <summary>How far a Svix-signed timestamp may be from now, in either direction.</summary>
-    private static readonly TimeSpan SvixTolerance = TimeSpan.FromMinutes(5);
+    /// <summary>How far a signed timestamp (Svix, Samsara) may be from now, in either direction.</summary>
+    private static readonly TimeSpan SignedTimestampTolerance = TimeSpan.FromMinutes(5);
 
     /// <summary>
     /// Verifies that <paramref name="signatureHex"/> equals the lowercase hex
@@ -59,7 +59,7 @@ public static class WebhookSignature
         }
 
         var age = DateTimeOffset.UtcNow - DateTimeOffset.FromUnixTimeSeconds(unixSeconds);
-        if (age.Duration() > SvixTolerance)
+        if (age.Duration() > SignedTimestampTolerance)
         {
             return false;
         }
@@ -90,6 +90,46 @@ public static class WebhookSignature
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Verifies a Samsara-signed webhook: <c>X-Samsara-Signature: v1=&lt;hex&gt;</c> where the hex is the
+    /// HMAC-SHA256 of <c>v1:{X-Samsara-Timestamp}:{body}</c>, keyed by the base64-decoded webhook secret.
+    /// Fails closed on anything missing, malformed, or older/newer than the tolerance window.
+    /// </summary>
+    public static bool VerifySamsara(
+        string payload,
+        string? timestamp,
+        string? signatureHeader,
+        string? base64Secret,
+        DateTimeOffset? now = null)
+    {
+        const string prefix = "v1=";
+        if (string.IsNullOrEmpty(timestamp) ||
+            string.IsNullOrEmpty(signatureHeader) ||
+            string.IsNullOrEmpty(base64Secret) ||
+            !signatureHeader.StartsWith(prefix, StringComparison.Ordinal) ||
+            !long.TryParse(timestamp, out var unixSeconds))
+        {
+            return false;
+        }
+
+        var age = (now ?? DateTimeOffset.UtcNow) - DateTimeOffset.FromUnixTimeSeconds(unixSeconds);
+        if (age.Duration() > SignedTimestampTolerance)
+        {
+            return false;
+        }
+
+        var buffer = new byte[base64Secret.Length];
+        if (!Convert.TryFromBase64String(base64Secret.Trim(), buffer, out var written) || written == 0)
+        {
+            return false;
+        }
+
+        var message = Encoding.UTF8.GetBytes($"v1:{timestamp}:{payload}");
+        var expected = Encoding.UTF8.GetBytes(Convert.ToHexStringLower(HMACSHA256.HashData(buffer[..written], message)));
+        var provided = Encoding.UTF8.GetBytes(signatureHeader[prefix.Length..].Trim().ToLowerInvariant());
+        return provided.Length == expected.Length && CryptographicOperations.FixedTimeEquals(provided, expected);
     }
 
     /// <summary>
