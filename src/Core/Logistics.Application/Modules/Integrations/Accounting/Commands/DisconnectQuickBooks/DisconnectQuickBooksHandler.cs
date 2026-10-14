@@ -39,9 +39,7 @@ internal sealed class DisconnectQuickBooksHandler(
             }
         }
 
-        config.IsActive = false;
-        config.AccessToken = null;
-        config.RefreshToken = null;
+        config.Disconnect();
         await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation("Disconnected QuickBooks Online for tenant {TenantId}",

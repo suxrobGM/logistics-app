@@ -18,69 +18,87 @@ internal sealed class ConnectQuickBooksHandler(
 {
     public async Task<Result> Handle(ConnectQuickBooksCommand req, CancellationToken ct)
     {
-        var tenantId = stateProtector.TryUnprotect(req.State);
-        if (tenantId is null)
+        var state = stateProtector.TryUnprotect(req.State);
+        if (state is null)
         {
-            logger.LogWarning("QuickBooks callback received an invalid or tampered state");
-            return Result.Fail("Invalid OAuth state.");
+            logger.LogWarning("QuickBooks callback received an invalid, tampered or expired state");
+            return Result.Fail("The QuickBooks connection link expired. Start the connection again.");
         }
 
-        await tenantUow.SetCurrentTenantByIdAsync(tenantId.Value);
+        await tenantUow.SetCurrentTenantByIdAsync(state.TenantId);
 
         var provider = providerFactory.GetProvider(AccountingProviderType.QuickBooksOnline);
-        var connection = await provider.ExchangeCodeAsync(req.Code, req.RealmId, ct);
+        AccountingConnectionResultDto connection;
+        try
+        {
+            connection = await provider.ExchangeCodeAsync(req.Code, req.RealmId, ct);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogError(ex, "QuickBooks code exchange failed for tenant {TenantId}", state.TenantId);
+            return Result.Fail("QuickBooks did not accept the connection. Try connecting again.");
+        }
 
         var repo = tenantUow.Repository<AccountingProviderConfiguration>();
         var config = await repo.GetAsync(c => c.ProviderType == AccountingProviderType.QuickBooksOnline, ct);
-
         if (config is null)
         {
             config = new AccountingProviderConfiguration { ProviderType = AccountingProviderType.QuickBooksOnline };
             await repo.AddAsync(config, ct);
         }
 
-        config.RealmId = connection.RealmId;
-        config.CompanyName = connection.CompanyName;
-        config.AccessToken = connection.AccessToken;
-        config.RefreshToken = connection.RefreshToken;
-        config.TokenExpiresAt = connection.AccessTokenExpiresAt;
-        config.RefreshTokenExpiresAt = connection.RefreshTokenExpiresAt;
-        config.IsActive = true;
+        var companyChanged = config.Connect(connection.RealmId, connection.CompanyName, connection.AccessToken,
+            connection.RefreshToken, connection.AccessTokenExpiresAt, connection.RefreshTokenExpiresAt);
 
-        await ResolveDefaultAccountsAsync(provider, config, ct);
+        if (companyChanged)
+        {
+            // Every stored QBO id belongs to the previous company; pushing with them would hit the wrong records.
+            var mappings = tenantUow.Repository<QboEntityMapping>();
+            foreach (var mapping in await mappings.GetListAsync(_ => true, ct))
+            {
+                mappings.Delete(mapping);
+            }
+        }
 
+        provider.Initialize(config);
+        await ResolveDefaultsAsync(provider, config, ct);
         await tenantUow.SaveChangesAsync(ct);
 
-        logger.LogInformation("Connected QuickBooks Online for tenant {TenantId} (realm {RealmId})",
-            tenantId, connection.RealmId);
+        logger.LogInformation(
+            "User {UserId} connected QuickBooks Online for tenant {TenantId} (realm {RealmId}, company changed: {CompanyChanged})",
+            state.UserId, state.TenantId, connection.RealmId, companyChanged);
         return Result.Ok();
     }
 
     /// <summary>
-    ///     Pick sensible default QBO accounts (a bank/asset account for payments and an expense
-    ///     account for expense lines) from the company's Chart of Accounts, so expense pushes
-    ///     have the required AccountRefs. Best-effort - leaves them null if none can be resolved.
+    ///     Pick sensible defaults for anything not chosen yet - a bank account to pay expenses from, an
+    ///     expense account, and the sales item invoice lines post to - so the first sync works before the
+    ///     user opens the settings. Best-effort: leaves them null if the lists cannot be read.
     /// </summary>
-    private async Task ResolveDefaultAccountsAsync(
+    private async Task ResolveDefaultsAsync(
         IAccountingProviderService provider, AccountingProviderConfiguration config, CancellationToken ct)
     {
         try
         {
-            // Re-initialize with the just-persisted tokens so account queries authenticate.
-            provider.Initialize(config);
             var accounts = await provider.GetAccountsAsync(ct);
+            if (config.DefaultPaymentAccountId is null &&
+                accounts.FirstOrDefault(a => a.AccountType == "Bank") is { } bank)
+            {
+                config.DefaultPaymentAccountId = bank.Id;
+                config.DefaultPaymentAccountType = bank.AccountType;
+            }
 
-            config.DefaultPaymentAccountId ??=
-                accounts.FirstOrDefault(a => a.AccountType == "Bank")?.Id
-                ?? accounts.FirstOrDefault(a => a.Classification == "Asset")?.Id;
+            config.DefaultExpenseAccountId ??= accounts.FirstOrDefault(a => a.AccountType == "Expense")?.Id;
 
-            config.DefaultExpenseAccountId ??=
-                accounts.FirstOrDefault(a => a.AccountType == "Expense")?.Id
-                ?? accounts.FirstOrDefault(a => a.Classification == "Expense")?.Id;
+            var items = await provider.GetItemsAsync(ct);
+            var services = items.Where(i => i.Type == "Service").ToList();
+            config.DefaultItemId ??=
+                services.FirstOrDefault(i => i.Name.Equals("Services", StringComparison.OrdinalIgnoreCase))?.Id
+                ?? services.FirstOrDefault()?.Id;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            logger.LogWarning(ex, "Could not resolve default QBO accounts; expense sync will be skipped until set");
+            logger.LogWarning(ex, "Could not resolve default QBO accounts and items; the user can pick them in settings");
         }
     }
 }

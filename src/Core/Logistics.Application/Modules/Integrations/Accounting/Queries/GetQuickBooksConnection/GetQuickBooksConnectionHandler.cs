@@ -15,15 +15,37 @@ internal sealed class GetQuickBooksConnectionHandler(ITenantUnitOfWork tenantUow
         var config = await tenantUow.Repository<AccountingProviderConfiguration>()
             .GetAsync(c => c.ProviderType == AccountingProviderType.QuickBooksOnline, ct);
 
-        var dto = new AccountingConnectionDto
+        if (config is not { IsActive: true })
+        {
+            return Result<AccountingConnectionDto>.Ok(new AccountingConnectionDto
+            {
+                ProviderType = AccountingProviderType.QuickBooksOnline
+            });
+        }
+
+        var failed = await tenantUow.Repository<QboEntityMapping>()
+            .CountAsync(m => m.SyncStatus == QboSyncStatus.Failed, ct);
+
+        return Result<AccountingConnectionDto>.Ok(new AccountingConnectionDto
         {
             ProviderType = AccountingProviderType.QuickBooksOnline,
-            IsConnected = config is { IsActive: true, AccessToken: not null },
-            CompanyName = config?.CompanyName,
-            RealmId = config?.RealmId,
-            LastSyncedAt = config?.LastSyncedAt
-        };
-
-        return Result<AccountingConnectionDto>.Ok(dto);
+            IsConnected = !config.NeedsReconnect && config.RefreshToken is not null,
+            NeedsReconnect = config.NeedsReconnect,
+            CompanyName = config.CompanyName,
+            RealmId = config.RealmId,
+            LastSyncedAt = config.LastSyncedAt,
+            RefreshTokenExpiresAt = config.RefreshTokenExpiresAt,
+            FailedItemCount = failed,
+            Settings = new AccountingSettingsDto
+            {
+                DefaultItemId = config.DefaultItemId,
+                DepositAccountId = config.DepositAccountId,
+                PaymentAccountId = config.DefaultPaymentAccountId,
+                ExpenseAccountId = config.DefaultExpenseAccountId,
+                PayrollExpenseAccountId = config.PayrollExpenseAccountId,
+                SyncFromDate = config.SyncFromDate,
+                Mappings = config.GetMappings()
+            }
+        });
     }
 }

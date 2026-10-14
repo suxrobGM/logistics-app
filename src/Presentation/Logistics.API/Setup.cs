@@ -42,6 +42,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.AIDispatch;
@@ -89,6 +90,7 @@ internal static class Setup
         // Registered here (not the shared persistence builder) since it needs Data Protection -
         // keeps hosts without it, e.g. the DB migrator, constructible.
         services.AddScoped<IOAuthStateProtector, OAuthStateProtector>();
+        services.TryAddSingleton(TimeProvider.System);
 
         services.AddHttpContextAccessor();
         services.AddMemoryCache();
