@@ -26,42 +26,37 @@ public record EldVehicleMappingDto
     public DateTime? LastSyncedAt { get; set; }
 }
 
-public record CreateEldDriverMappingDto
+/// <summary>Which field an automatic ELD-to-TMS match agreed on, strongest first.</summary>
+public enum EldMatchReason
 {
-    public Guid EmployeeId { get; set; }
-    public EldProviderType ProviderType { get; set; }
+    Email,
+    LicenseNumber,
+    Name,
+    Vin,
+    TruckNumber
+}
+
+public record EldDriverMappingSuggestionDto
+{
     public required string ExternalDriverId { get; set; }
     public string? ExternalDriverName { get; set; }
+    public Guid EmployeeId { get; set; }
+    public string? EmployeeName { get; set; }
+    public EldMatchReason MatchedBy { get; set; }
 }
 
-public record CreateEldVehicleMappingDto
+public record EldVehicleMappingSuggestionDto
 {
-    public Guid TruckId { get; set; }
-    public EldProviderType ProviderType { get; set; }
     public required string ExternalVehicleId { get; set; }
     public string? ExternalVehicleName { get; set; }
+    public Guid TruckId { get; set; }
+    public string? TruckNumber { get; set; }
+    public EldMatchReason MatchedBy { get; set; }
 }
 
-/// <summary>
-/// Represents an external driver from an ELD provider that hasn't been mapped yet
-/// </summary>
-public record UnmappedEldDriverDto
+/// <summary>Unambiguous matches between the provider's unmapped drivers/vehicles and the tenant's.</summary>
+public record EldMappingSuggestionsDto
 {
-    public required string ExternalDriverId { get; set; }
-    public string? Name { get; set; }
-    public string? Email { get; set; }
-    public string? Phone { get; set; }
-    public EldProviderType ProviderType { get; set; }
-}
-
-/// <summary>
-/// Represents an external vehicle from an ELD provider that hasn't been mapped yet
-/// </summary>
-public record UnmappedEldVehicleDto
-{
-    public required string ExternalVehicleId { get; set; }
-    public string? Name { get; set; }
-    public string? Vin { get; set; }
-    public string? LicensePlate { get; set; }
-    public EldProviderType ProviderType { get; set; }
+    public List<EldDriverMappingSuggestionDto> Drivers { get; set; } = [];
+    public List<EldVehicleMappingSuggestionDto> Vehicles { get; set; } = [];
 }
