@@ -73,7 +73,7 @@ The web app for owners, managers, and dispatchers.
 | Timesheets     | Track hours and overtime and feed them into payroll.                                                                                                                   |
 | Expenses       | Record fuel, tolls, repairs, insurance, and other costs. Break spending down by category, truck, or period.                                                            |
 | Fuel cards     | WEX and EFS transactions import every night as paid fuel expenses, matched to trucks by card or unit number. Unmatched ones wait in a review queue.                    |
-| QuickBooks     | Customers, invoices, payments, and expenses sync to QuickBooks Online every night after a one-time OAuth connection.                                                   |
+| QuickBooks     | Customers, invoices, payments, expenses, and approved driver pay sync to QuickBooks Online every 15 minutes, posting to the items and accounts you map.                |
 
 ### Compliance and safety
 

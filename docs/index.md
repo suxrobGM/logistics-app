@@ -18,6 +18,7 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 | [Configuration](configuration/environment-variables.md) | Environment variables, services        |
 | [Stripe Webhooks](stripe-webhooks.md)                   | Endpoint, event list, local testing    |
 | [Samsara Setup](eld-samsara-setup.md)                   | API token scopes, webhook, mappings    |
+| [QuickBooks Setup](accounting-quickbooks-setup.md)      | Intuit app, connect, account mapping   |
 | [Roadmap](roadmap/README.md)                            | Feature backlog, phases, statuses      |
 
 ## Platform Overview
@@ -50,7 +51,7 @@ The Angular portals and the driver app are closed source. They live in a private
 - **Invoicing & Payments** - Stripe and Stripe Connect, with payment links and partial payments.
 - **Payroll & Timesheets** - Driver pay calculation and payroll invoices.
 - **Expense Tracking** - Categorized fleet expenses with reports.
-- **QuickBooks Sync** - Customers, invoices, payments, and expenses pushed to QuickBooks Online.
+- **QuickBooks Sync** - Customers, invoices, payments, expenses, and driver pay pushed to QuickBooks Online, with item and account mapping and a sync error queue.
 - **Fuel Card Sync** - WEX/EFS transactions imported nightly as fuel expenses with gallons and purchase state; unmatched ones queue for review.
 - **ELD / HOS Compliance** - Samsara, Motive, TT ELD, and Geotab.
 - **IFTA Fuel Tax Reporting** - Quarterly per-jurisdiction miles (from ELD GPS) and gallons (from fuel cards/expenses) with tax due, immutable quarter snapshots, filing reminders, and PDF/CSV export.
