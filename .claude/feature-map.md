@@ -222,20 +222,22 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Eld/HosLog.cs`, `HosViolation.cs` (`RuleSetCode`), `DriverHosStatus.cs`, `ValueObjects/HosLimits.cs`
 - Application: `Modules/Compliance/Eld/Commands/`, `Modules/Compliance/Eld/Queries/GetHosLimits/`, `Modules/Compliance/Eld/Services/RuleSetSelector.cs` (region → FMCSA / EU 561/2006)
-- Infrastructure: `Infrastructure.Integrations.Eld/` (Samsara, Motive, TT ELD, Geotab, Demo); local `Common/EldJsonOptions.cs` (per-provider camel/snake casing), plus `TryGetFromJsonAsync` from `Integrations.Common`
-- API/UI: `EldController.cs` (incl. `/eld/rules/limits`), `tms-portal/pages/eld/` (`EldRulesService`, region-aware dashboard)
+- Infrastructure: `Infrastructure.Integrations.Eld/` (Samsara, Motive, TT ELD, Geotab, Demo). Casing comes from `IntegrationJsonOptions` (camel/snake), reads from `TryGetFromJsonAsync`, 429 back-off from `RateLimitRetryHandler` - all in `Integrations.Common`. Samsara follows `pagination.endCursor`, picks its host from `EldProviderConfiguration.Region` (us/eu/ca) and implements `IEldGpsTrackingProvider` (`/fleet/vehicles/stats`)
+- API/UI: `EldController.cs` (incl. `/eld/rules/limits`), `tms-portal/pages/eld/` (`EldRulesService`, region-aware dashboard, `eld-hos-logs/`)
+- Docs: [docs/eld-samsara-setup.md](../docs/eld-samsara-setup.md) (tenant setup: token scopes, webhook URL + secret)
 
 ### ELD provider config
 
-- Domain: `Entities/Eld/EldProviderConfiguration.cs`
+- Domain: `Entities/Eld/EldProviderConfiguration.cs` (`ExternalAccountId` = TT ELD USDOT, `Region` = Samsara data region), `EldDriverMapping.cs`, `EldVehicleMapping.cs`
+- Application: `Commands/CreateEldProviderConfiguration/` (initializes the provider from the unsaved config before validating credentials), `MapEldDriver` / `MapEldVehicle` / `ApplyEldMappingSuggestions`, `Queries/GetEldMappingSuggestions/`, `Services/EldMappingSuggestionService.cs` + `EldMappingMatcher.cs` (driver by email → license → name, vehicle by VIN → truck number; unique keys only)
 - Infrastructure: `Infrastructure.Integrations.Eld/` factory
-- API/UI: (under `eld/`)
+- API/UI: `EldController.cs` (`/eld/providers/{id}/{drivers,vehicles,mappings,vehicles/mappings,suggestions}`), `tms-portal/pages/eld/eld-providers/` (connect dialog, webhook URL to copy), `eld-mappings/` (suggestions + driver + vehicle mapping cards)
 
 ### ELD sync
 
-- Application: `Modules/Compliance/Eld/Commands/ProcessEldWebhook/` (stamps `RuleSetCode` from tenant region)
-- Infrastructure: `WebhookSignature.VerifyHmacSha256` (used by Geotab)
-- API/UI: `Jobs/EldSyncJob.cs`, webhooks: `/webhooks/eld/{samsara,motive,geotab,tteld}`
+- Application: `Modules/Compliance/Eld/Services/EldSyncService.cs` - the only writer of ELD data: `SyncLiveAsync` (HOS clocks + vehicle GPS through `ITruckLocationRecorder`, broadcast via `IRealtimeLiveTrackingService`), `SyncHistoryAsync` (8-day rolling window of `HosLog` rows replaced from the provider, violations upserted). `Commands/ProcessEldWebhook/` (resolves the tenant from the URL, then signature, idempotency, dispatch) and `SyncAllDriversHosStatus` both call it
+- Infrastructure: `WebhookSignature.VerifySamsara` (`v1:{timestamp}:{body}`, base64 secret, 5-min window); `VerifyHmacSha256` for Motive / Geotab
+- API/UI: `Jobs/EldSyncJob.cs` (`eld-sync` every 5 min, `eld-history-sync` every 30 min, gated on `TenantFeature.Eld`), webhooks: `/webhooks/eld/{samsara,motive,geotab}/{tenantId}`
 
 ### DVIR inspections
 

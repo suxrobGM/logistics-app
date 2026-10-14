@@ -22,11 +22,11 @@ Inbound webhooks from external services (Stripe, Samsara, Motive, etc.) terminat
 
 Most providers use HMAC of the raw body with a shared secret, sent in a header:
 
-| Provider | Header                | Algorithm                  |
-| -------- | --------------------- | -------------------------- |
-| Stripe   | `Stripe-Signature`    | HMAC-SHA256 with timestamp |
-| Samsara  | `X-Samsara-Signature` | HMAC-SHA256                |
-| Motive   | `X-Motive-Signature`  | HMAC-SHA256                |
+| Provider | Header                                        | Algorithm                                                                                                  |
+| -------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Stripe   | `Stripe-Signature`                            | HMAC-SHA256 with timestamp                                                                                 |
+| Samsara  | `X-Samsara-Signature` + `X-Samsara-Timestamp` | `v1=` hex HMAC-SHA256 of `v1:{timestamp}:{body}`, base64-decoded secret (`WebhookSignature.VerifySamsara`) |
+| Motive   | `X-Motive-Signature`                          | HMAC-SHA256                                                                                                |
 
 For a new provider, find their signature spec in their docs **before** writing any code. If they don't sign webhooks, push back - unsigned webhooks are spoofable and should not be wired in without an alternative (mutual TLS, allowlisted source IPs).
 
@@ -191,9 +191,9 @@ var stripeEvent = EventUtility.ConstructEvent(rawBody, stripeSignatureHeader, we
 
 Stripe events have unique `id` fields - perfect for idempotency keys. Mount the endpoint at `/webhooks/stripe` (existing convention).
 
-### Samsara / Motive (ELD)
+### ELD providers (Samsara, Motive, Geotab)
 
-Both use `X-{Provider}-Signature` HMAC-SHA256. Mount at `/webhooks/eld/{provider}`. The signed payload contains the tenant's ELD account, but you'll typically need to look up the `EldProviderConfiguration` row to map back to a tenant.
+Mount at `/webhooks/eld/{provider}/{tenantId}` - the tenant registers its own URL (shown on the ELD providers page), and `ProcessEldWebhookHandler` switches to that tenant before verifying against its `EldProviderConfiguration.WebhookSecret`. The idempotency key is prefixed with the tenant id. Samsara signs a timestamped envelope (`VerifySamsara`); Motive and Geotab use the body-only `VerifyHmacSha256` (Motive's real scheme is unverified - its docs are not public).
 
 ### Calling back into the provider
 
