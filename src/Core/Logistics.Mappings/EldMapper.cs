@@ -19,7 +19,10 @@ public static class EldMapper
             LastSyncedAt = entity.LastSyncedAt,
             IsConnected = entity.IsActive && !string.IsNullOrEmpty(entity.ApiKey),
             MappedDriversCount = mappedDriversCount,
-            MappedVehiclesCount = mappedVehiclesCount
+            MappedVehiclesCount = mappedVehiclesCount,
+            ExternalAccountId = entity.ExternalAccountId,
+            Region = entity.Region,
+            HasWebhookSecret = !string.IsNullOrEmpty(entity.WebhookSecret)
         };
     }
 
