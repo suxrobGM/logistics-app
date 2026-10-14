@@ -125,5 +125,6 @@ Before the first TestFlight build:
 - Add `iosApp/iosApp/GoogleService-Info.plist` from the Firebase console (it is gitignored), enable
   the Push Notifications capability on the App ID, and upload an APNs key to Firebase. See the
   driver app README.
-- Bump the build number for every upload. `CURRENT_PROJECT_VERSION` is set on the `iosApp` target in
-  `project.pbxproj`, which overrides the value in `iosApp/Configuration/Config.xcconfig`.
+- Build and upload with the `driver-ios-release.yml` GitHub Actions workflow in the private repo
+  (no Mac needed; setup in the driver app README). It sets the build number to `100 + run number`
+  on the command line, which overrides the `CURRENT_PROJECT_VERSION` on the `iosApp` target.
