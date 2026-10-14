@@ -81,6 +81,14 @@ Resend__SenderName="LogisticsX"
 | `Resend__SenderEmail` | Sender email address (must be from a verified domain) |
 | `Resend__SenderName`  | Display name for the sender                           |
 
+### Notification Email
+
+```bash
+NotificationEmail="you@example.com"
+```
+
+Website demo requests and contact messages are emailed here, with the sender as the reply-to.
+
 ### Mapbox (Optional)
 
 ```bash
