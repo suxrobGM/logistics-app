@@ -32,18 +32,21 @@ Open turn-by-turn directions to any pickup, delivery, or stop directly in Apple 
 REAL-TIME STATUS UPDATES
 Confirm pickup and delivery as you go. Dispatch sees each update right away - no phone calls needed.
 
+PAPERWORK FROM THE CAB
+Photograph the bill of lading and proof of delivery, collect signatures, record pickup and delivery condition reports with VIN or container scanning, and file pre-trip and post-trip DVIRs. Dispatch sees it all in the portal.
+
 STAY IN SYNC
-Get instant notifications the moment an assignment changes. Message dispatch directly in the app. Never miss an update, even when you're on the road.
+Get a push notification the moment a load is assigned, changed or removed, and when dispatch messages you. Message dispatch directly in the app.
 
 BUILT FOR PROFESSIONAL DRIVERS
 - Clean, distraction-free interface designed for use on the go
 - Works with your existing LogisticsX account - no separate signup
 - Secure login and role-based access
-- Background location tracking for real-time delivery visibility
-- Supports intermodal container and vehicle transport operations
+- Location sharing only while you are on duty, and your phone shows it is on. Go off duty and it stops
+- Supports general freight, intermodal container and vehicle transport operations
 
 HOW IT WORKS
-Loads are assigned in the LogisticsX TMS portal - by your dispatcher if you drive for a fleet, or by you if you run your own authority. They arrive in the app instantly, complete with route details and instructions. Confirm pickup and delivery in the app, and the portal reflects it in real time.
+Loads are assigned in the LogisticsX TMS portal - by your dispatcher if you drive for a fleet, or by you if you run your own authority. They show up in the app with a push notification, complete with route details and instructions. Confirm pickup and delivery in the app, and the portal reflects it in real time.
 
 LogisticsX Driver requires an account on the LogisticsX platform. If you drive for a company that uses LogisticsX, they can add you. If you run your own authority, you can get your own account at logisticsx.app - the platform has a solo mode built for one-truck carriers.
 ```
