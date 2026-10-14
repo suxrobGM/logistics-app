@@ -1,8 +1,10 @@
 using Logistics.Application.Abstractions.Eld;
+using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Compliance.Eld.Services;
 using Logistics.Application.Modules.Integrations.Webhooks.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -14,11 +16,29 @@ internal sealed class ProcessEldWebhookHandler(
     IEldProviderFactory eldProviderFactory,
     IEldSyncService eldSyncService,
     IWebhookEventTracker webhookEvents,
+    IFeatureService featureService,
     ILogger<ProcessEldWebhookHandler> logger)
     : IRequestHandler<ProcessEldWebhookCommand, Result>
 {
     public async Task<Result> Handle(ProcessEldWebhookCommand req, CancellationToken ct)
     {
+        try
+        {
+            await tenantUow.SetCurrentTenantByIdAsync(req.TenantId);
+        }
+        catch (InvalidOperationException)
+        {
+            logger.LogWarning("{ProviderType} webhook for unknown tenant {TenantId}", req.ProviderType, req.TenantId);
+            return Result.Fail("Unknown tenant");
+        }
+
+        // A tenant downgraded off ELD still gets deliveries until it removes the webhook; acknowledge so
+        // the provider stops retrying, but write nothing.
+        if (!await featureService.IsFeatureEnabledAsync(req.TenantId, TenantFeature.Eld))
+        {
+            return Result.Ok();
+        }
+
         var config = await tenantUow.Repository<EldProviderConfiguration>()
             .GetAsync(c => c.ProviderType == req.ProviderType && c.IsActive, ct);
 
@@ -30,8 +50,7 @@ internal sealed class ProcessEldWebhookHandler(
 
         var providerService = eldProviderFactory.GetProvider(config);
         var webhookResult = await providerService.ProcessWebhookAsync(
-            req.RequestBodyJson,
-            req.Signature,
+            new EldWebhookRequestDto(req.RequestBodyJson, req.Signature, req.Timestamp),
             config.WebhookSecret);
 
         if (!webhookResult.IsValid)
@@ -42,9 +61,10 @@ internal sealed class ProcessEldWebhookHandler(
         }
 
         // Idempotency (master DB): providers retry deliveries. Prefer a provider-supplied event id;
-        // otherwise fall back to a hash of the raw body so a re-sent payload maps to the same key.
+        // otherwise fall back to a hash of the raw body so a re-sent payload maps to the same key. Scoped
+        // by tenant: the ledger is shared, and two tenants can receive byte-identical bodies.
         var provider = req.ProviderType.ToString();
-        var eventKey = webhookResult.ExternalEventId ?? webhookEvents.BuildKeyFromBody(req.RequestBodyJson);
+        var eventKey = $"{req.TenantId}:{webhookResult.ExternalEventId ?? webhookEvents.BuildKeyFromBody(req.RequestBodyJson)}";
 
         if (await webhookEvents.WasAlreadyHandledAsync(provider, eventKey, ct))
         {

@@ -123,9 +123,9 @@ internal class SamsaraEldService(
         return stats?.Select(SamsaraMapper.MapToLocationDto).OfType<EldVehicleLocationDto>().ToList() ?? [];
     }
 
-    public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
+    public Task<EldWebhookResultDto> ProcessWebhookAsync(EldWebhookRequestDto request, string? webhookSecret)
     {
-        if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+        if (!WebhookSignature.VerifySamsara(request.Body, request.Timestamp, request.Signature, webhookSecret))
         {
             logger.LogWarning("Rejected Samsara webhook with invalid or unverifiable signature");
             return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
@@ -133,7 +133,7 @@ internal class SamsaraEldService(
 
         try
         {
-            var webhook = JsonSerializer.Deserialize<SamsaraWebhookPayload>(payload, IntegrationJsonOptions.CamelCase);
+            var webhook = JsonSerializer.Deserialize<SamsaraWebhookPayload>(request.Body, IntegrationJsonOptions.CamelCase);
             return Task.FromResult(webhook is null
                 ? InvalidWebhook("Failed to parse webhook payload")
                 : SamsaraMapper.MapToWebhookResult(webhook));

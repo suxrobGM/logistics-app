@@ -70,5 +70,5 @@ public interface IEldProviderService
     /// <summary>
     /// Process an incoming webhook from the ELD provider
     /// </summary>
-    Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret);
+    Task<EldWebhookResultDto> ProcessWebhookAsync(EldWebhookRequestDto request, string? webhookSecret);
 }

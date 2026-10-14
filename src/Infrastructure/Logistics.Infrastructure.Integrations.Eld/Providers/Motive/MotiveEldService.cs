@@ -125,9 +125,9 @@ internal class MotiveEldService(
         return result?.Vehicles?.Select(MotiveMapper.MapToVehicleDto) ?? [];
     }
 
-    public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
+    public Task<EldWebhookResultDto> ProcessWebhookAsync(EldWebhookRequestDto request, string? webhookSecret)
     {
-        if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+        if (!WebhookSignature.VerifyHmacSha256(request.Body, request.Signature, webhookSecret))
         {
             logger.LogWarning("Rejected Motive webhook with invalid or unverifiable signature");
             return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
@@ -135,7 +135,7 @@ internal class MotiveEldService(
 
         try
         {
-            var webhook = JsonSerializer.Deserialize<MotiveWebhookPayload>(payload, IntegrationJsonOptions.SnakeCase);
+            var webhook = JsonSerializer.Deserialize<MotiveWebhookPayload>(request.Body, IntegrationJsonOptions.SnakeCase);
             if (webhook is null)
             {
                 return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));

@@ -79,6 +79,12 @@ public record EldVehicleDto
 }
 
 /// <summary>
+/// An inbound ELD webhook as received: the raw body (signatures cover the exact bytes) plus the
+/// signature header and, for providers that sign a timestamp (Samsara), the timestamp header.
+/// </summary>
+public record EldWebhookRequestDto(string Body, string? Signature, string? Timestamp = null);
+
+/// <summary>
 /// Result of processing a webhook from an ELD provider
 /// </summary>
 public record EldWebhookResultDto

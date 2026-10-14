@@ -105,7 +105,7 @@ internal class TtEldService(
             "TT ELD units");
     }
 
-    public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
+    public Task<EldWebhookResultDto> ProcessWebhookAsync(EldWebhookRequestDto request, string? webhookSecret)
     {
         // TT ELD does not support webhooks
         return Task.FromResult(new EldWebhookResultDto

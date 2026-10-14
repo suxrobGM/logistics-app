@@ -3,7 +3,9 @@ using System.Text;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Eld;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
+using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
@@ -89,6 +91,39 @@ public class SamsaraEldServiceTests
         await _sut.GetAllVehiclesAsync();
 
         Assert.Equal(expectedHost, _http.LastHost);
+    }
+
+    #endregion
+
+    #region Webhooks
+
+    [Fact]
+    public async Task ProcessWebhookAsync_V1TimestampedSignature_IsAccepted()
+    {
+        const string secret = "rGoy+beNph0qGBLj6Aqoydj6SGA=";
+        const string body = """{"eventId":"evt-9","eventType":"VehicleUpdated","data":{"vehicle":{"id":"112"}}}""";
+        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        var signature = "v1=" + Convert.ToHexStringLower(System.Security.Cryptography.HMACSHA256.HashData(
+            Convert.FromBase64String(secret), Encoding.UTF8.GetBytes($"v1:{timestamp}:{body}")));
+
+        var result = await _sut.ProcessWebhookAsync(new EldWebhookRequestDto(body, signature, timestamp), secret);
+
+        Assert.True(result.IsValid);
+        Assert.Equal(EldWebhookEventType.VehicleUpdated, result.EventType);
+        Assert.Equal("evt-9", result.ExternalEventId);
+        Assert.Equal("112", result.ExternalVehicleId);
+    }
+
+    [Fact]
+    public async Task ProcessWebhookAsync_BodyOnlyHmac_IsRejected()
+    {
+        const string secret = "shh";
+        const string body = """{"eventId":"evt-9","eventType":"Ping"}""";
+
+        var result = await _sut.ProcessWebhookAsync(
+            new EldWebhookRequestDto(body, WebhookTestKit.ComputeHmacHex(body, secret), null), secret);
+
+        Assert.False(result.IsValid);
     }
 
     #endregion

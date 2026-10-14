@@ -128,11 +128,11 @@ internal class GeotabEldService(
         return devices?.Select(GeotabMapper.MapToVehicleDto) ?? [];
     }
 
-    public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
+    public Task<EldWebhookResultDto> ProcessWebhookAsync(EldWebhookRequestDto request, string? webhookSecret)
     {
         // Geotab does not natively push HOS events; integrators sign Add-In / IOX
         // forwarder calls with HMAC-SHA256 of the body using the configured secret.
-        if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+        if (!WebhookSignature.VerifyHmacSha256(request.Body, request.Signature, webhookSecret))
         {
             logger.LogWarning("Rejected Geotab webhook with invalid or unverifiable signature");
             return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
@@ -140,7 +140,7 @@ internal class GeotabEldService(
 
         try
         {
-            var webhook = JsonSerializer.Deserialize<GeotabWebhookPayload>(payload, IntegrationJsonOptions.CamelCase);
+            var webhook = JsonSerializer.Deserialize<GeotabWebhookPayload>(request.Body, IntegrationJsonOptions.CamelCase);
             if (webhook is null)
             {
                 return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));

@@ -144,7 +144,7 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
         return Task.FromResult<IEnumerable<EldVehicleDto>>(vehicles);
     }
 
-    public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
+    public Task<EldWebhookResultDto> ProcessWebhookAsync(EldWebhookRequestDto request, string? webhookSecret)
     {
         // Demo provider doesn't process real webhooks
         return Task.FromResult(new EldWebhookResultDto

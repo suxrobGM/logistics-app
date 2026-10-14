@@ -34,7 +34,7 @@ public class GeotabWebhookTests
     {
         var signature = WebhookTestKit.ComputeHmacHex(payload, secret);
 
-        var result = await _sut.ProcessWebhookAsync(payload, signature, secret);
+        var result = await _sut.ProcessWebhookAsync(new EldWebhookRequestDto(payload, signature), secret);
 
         Assert.True(result.IsValid);
         Assert.Equal(EldWebhookEventType.ViolationCreated, result.EventType);
@@ -45,7 +45,7 @@ public class GeotabWebhookTests
     [Fact]
     public async Task ProcessWebhook_InvalidSignature_RejectsBeforeParsing()
     {
-        var result = await _sut.ProcessWebhookAsync(payload, "0000", secret);
+        var result = await _sut.ProcessWebhookAsync(new EldWebhookRequestDto(payload, "0000"), secret);
 
         Assert.False(result.IsValid);
         Assert.Equal("Invalid webhook signature", result.ErrorMessage);
@@ -54,7 +54,7 @@ public class GeotabWebhookTests
     [Fact]
     public async Task ProcessWebhook_NoSecretConfigured_RejectsPayload()
     {
-        var result = await _sut.ProcessWebhookAsync(payload, signature: null, webhookSecret: null);
+        var result = await _sut.ProcessWebhookAsync(new EldWebhookRequestDto(payload, null), webhookSecret: null);
 
         Assert.False(result.IsValid);
         Assert.NotNull(result.ErrorMessage);
@@ -66,7 +66,7 @@ public class GeotabWebhookTests
         const string payload = "{not json";
         var signature = WebhookTestKit.ComputeHmacHex(payload, secret);
 
-        var result = await _sut.ProcessWebhookAsync(payload, signature, secret);
+        var result = await _sut.ProcessWebhookAsync(new EldWebhookRequestDto(payload, signature), secret);
 
         Assert.False(result.IsValid);
         Assert.NotNull(result.ErrorMessage);

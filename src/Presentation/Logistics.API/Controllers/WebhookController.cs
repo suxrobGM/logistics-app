@@ -56,57 +56,21 @@ public class WebhookController(IMediator mediator) : ControllerBase
             : StatusCode(StatusCodes.Status500InternalServerError);
     }
 
-    [HttpPost("eld/samsara", Name = "ProcessSamsaraWebhook")]
-    public async Task<IActionResult> SamsaraWebhook()
-    {
-        var requestBodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-        var signature = Request.Headers["X-Samsara-Signature"].ToString();
+    /// <summary>
+    /// ELD webhooks are registered per tenant (the URL is shown on the provider settings page), because the
+    /// endpoint is anonymous and the signature can only be checked against the right tenant's secret.
+    /// </summary>
+    [HttpPost("eld/samsara/{tenantId:guid}", Name = "ProcessSamsaraWebhook")]
+    public Task<IActionResult> SamsaraWebhook(Guid tenantId) =>
+        ProcessEldWebhookAsync(tenantId, EldProviderType.Samsara, "X-Samsara-Signature", "X-Samsara-Timestamp");
 
-        var result = await mediator.Send(new ProcessEldWebhookCommand
-        {
-            ProviderType = EldProviderType.Samsara,
-            RequestBodyJson = requestBodyJson,
-            Signature = signature
-        });
-        return result.IsSuccess ? Ok() : BadRequest();
-    }
+    [HttpPost("eld/motive/{tenantId:guid}", Name = "ProcessMotiveWebhook")]
+    public Task<IActionResult> MotiveWebhook(Guid tenantId) =>
+        ProcessEldWebhookAsync(tenantId, EldProviderType.Motive, "X-Motive-Signature");
 
-    [HttpPost("eld/motive", Name = "ProcessMotiveWebhook")]
-    public async Task<IActionResult> MotiveWebhook()
-    {
-        var requestBodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-        var signature = Request.Headers["X-Motive-Signature"].ToString();
-
-        var result = await mediator.Send(new ProcessEldWebhookCommand
-        {
-            ProviderType = EldProviderType.Motive,
-            RequestBodyJson = requestBodyJson,
-            Signature = signature
-        });
-        return result.IsSuccess ? Ok() : BadRequest();
-    }
-
-    [HttpPost("eld/tteld", Name = "ProcessTtEldWebhook")]
-    public Task<IActionResult> TtEldWebhook()
-    {
-        // TT ELD does not support webhooks - GPS data is polled via EldSyncJob
-        return Task.FromResult<IActionResult>(Ok());
-    }
-
-    [HttpPost("eld/geotab", Name = "ProcessGeotabWebhook")]
-    public async Task<IActionResult> GeotabWebhook()
-    {
-        var requestBodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-        var signature = Request.Headers["X-Geotab-Signature"].ToString();
-
-        var result = await mediator.Send(new ProcessEldWebhookCommand
-        {
-            ProviderType = EldProviderType.Geotab,
-            RequestBodyJson = requestBodyJson,
-            Signature = signature
-        });
-        return result.IsSuccess ? Ok() : BadRequest();
-    }
+    [HttpPost("eld/geotab/{tenantId:guid}", Name = "ProcessGeotabWebhook")]
+    public Task<IActionResult> GeotabWebhook(Guid tenantId) =>
+        ProcessEldWebhookAsync(tenantId, EldProviderType.Geotab, "X-Geotab-Signature");
 
     [HttpPost("loadboard/dat", Name = "ProcessDatWebhook")]
     public Task<IActionResult> DatWebhook()
@@ -124,5 +88,21 @@ public class WebhookController(IMediator mediator) : ControllerBase
     public Task<IActionResult> OneTwo3LoadboardWebhook()
     {
         return Task.FromResult<IActionResult>(Ok());
+    }
+
+    private async Task<IActionResult> ProcessEldWebhookAsync(
+        Guid tenantId, EldProviderType providerType, string signatureHeader, string? timestampHeader = null)
+    {
+        var requestBodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+
+        var result = await mediator.Send(new ProcessEldWebhookCommand
+        {
+            TenantId = tenantId,
+            ProviderType = providerType,
+            RequestBodyJson = requestBodyJson,
+            Signature = Request.Headers[signatureHeader].ToString(),
+            Timestamp = timestampHeader is null ? null : Request.Headers[timestampHeader].ToString()
+        });
+        return result.IsSuccess ? Ok() : BadRequest();
     }
 }
