@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Accounting.Common;
 using Logistics.Shared.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Integrations.Accounting.Providers.QuickBooks;
@@ -14,7 +15,8 @@ namespace Logistics.Infrastructure.Integrations.Accounting.Providers.QuickBooks;
 internal sealed class QuickBooksOnlineService(
     HttpClient httpClient,
     QuickBooksOAuthClient oauthClient,
-    IOptions<AccountingOptions> options) : IAccountingProviderService
+    IOptions<AccountingOptions> options,
+    ILogger<QuickBooksOnlineService> logger) : IAccountingProviderService
 {
     private string? _realmId;
     private string? _accessToken;
@@ -54,14 +56,16 @@ internal sealed class QuickBooksOnlineService(
         };
     }
 
-    public async Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken, CancellationToken ct = default)
+    public async Task<OAuthTokenResultDto> RefreshTokenAsync(string refreshToken, CancellationToken ct = default)
     {
         var token = await oauthClient.RefreshAsync(refreshToken, ct);
+        var now = DateTime.UtcNow;
         return new OAuthTokenResultDto
         {
             AccessToken = token.AccessToken,
             RefreshToken = token.RefreshToken,
-            ExpiresAt = DateTime.UtcNow.AddSeconds(token.ExpiresIn)
+            ExpiresAt = now.AddSeconds(token.ExpiresIn),
+            RefreshTokenExpiresAt = token.RefreshTokenExpiresIn > 0 ? now.AddSeconds(token.RefreshTokenExpiresIn) : null
         };
     }
 
@@ -70,10 +74,8 @@ internal sealed class QuickBooksOnlineService(
 
     public async Task<IReadOnlyList<QboAccountDto>> GetAccountsAsync(CancellationToken ct = default)
     {
-        var url = QboEndpoints.QueryResource(Environment, RequireRealm(), "select * from Account maxresults 1000");
-        var result = await httpClient.GetQboAsync<QboQueryResponse<QboAccount>>(url, RequireToken(), "get accounts", ct);
-        var accounts = result.QueryResponse?.Account ?? [];
-        return accounts
+        var result = await QueryAsync("select * from Account where Active = true maxresults 1000", "get accounts", ct);
+        return (result.Account ?? [])
             .Where(a => a.Id is not null && a.Name is not null)
             .Select(a => new QboAccountDto
             {
@@ -85,53 +87,134 @@ internal sealed class QuickBooksOnlineService(
             .ToList();
     }
 
+    public async Task<IReadOnlyList<QboItemDto>> GetItemsAsync(CancellationToken ct = default)
+    {
+        var result = await QueryAsync("select * from Item where Active = true maxresults 1000", "get items", ct);
+        return (result.Item ?? [])
+            .Where(i => i.Id is not null && i.Name is not null && i.Type != "Category")
+            .Select(i => new QboItemDto { Id = i.Id!, Name = i.Name!, Type = i.Type })
+            .ToList();
+    }
+
     public async Task<QboUpsertResult> UpsertCustomerAsync(
-        QboCustomerPayload payload, string? qboId, string? syncToken, CancellationToken ct = default)
+        QboCustomerPayload payload, QboWriteTarget target, CancellationToken ct = default)
     {
-        var body = QboMapper.MapCustomer(payload, qboId, syncToken);
-        var response = await PostEntityAsync<QboCustomerResponse>("customer", body, "upsert customer", ct);
-        return ToResult(response.Customer?.Id, response.Customer?.SyncToken);
+        if (target.QboId is null)
+        {
+            var existing = (await FindByDisplayNameAsync("Customer", payload.Name, ct)).Customer?.FirstOrDefault();
+            if (existing?.Id is not null)
+            {
+                target = target with { QboId = existing.Id, SyncToken = existing.SyncToken };
+            }
+        }
+
+        return await WriteAsync("customer", target, (id, token) => QboMapper.MapCustomer(payload, id, token),
+            r => r.Customer, "upsert customer", ct);
     }
 
-    public async Task<QboUpsertResult> UpsertInvoiceAsync(
-        QboInvoicePayload payload, string? qboId, string? syncToken, CancellationToken ct = default)
+    public Task<QboUpsertResult> DeactivateCustomerAsync(QboWriteTarget target, CancellationToken ct = default) =>
+        WriteAsync("customer", target, (id, token) => QboMapper.MapCustomerDeactivation(id!, token),
+            r => r.Customer, "deactivate customer", ct);
+
+    public async Task<QboUpsertResult> UpsertVendorAsync(
+        QboVendorPayload payload, QboWriteTarget target, CancellationToken ct = default)
     {
-        var body = QboMapper.MapInvoice(payload, qboId, syncToken);
-        var response = await PostEntityAsync<QboInvoiceResponse>("invoice", body, "upsert invoice", ct);
-        return ToResult(response.Invoice?.Id, response.Invoice?.SyncToken);
+        if (target.QboId is null)
+        {
+            var existing = (await FindByDisplayNameAsync("Vendor", payload.DisplayName, ct)).Vendor?.FirstOrDefault();
+            if (existing?.Id is not null)
+            {
+                target = target with { QboId = existing.Id, SyncToken = existing.SyncToken };
+            }
+        }
+
+        return await WriteAsync("vendor", target, (id, token) => QboMapper.MapVendor(payload, id, token),
+            r => r.Vendor, "upsert vendor", ct);
     }
 
-    public async Task<QboUpsertResult> UpsertPaymentAsync(
-        QboPaymentPayload payload, string? qboId, string? syncToken, CancellationToken ct = default)
+    public Task<QboUpsertResult> UpsertInvoiceAsync(
+        QboInvoicePayload payload, QboWriteTarget target, CancellationToken ct = default) =>
+        WriteAsync("invoice", target, (id, token) => QboMapper.MapInvoice(payload, id, token),
+            r => r.Invoice, "upsert invoice", ct);
+
+    public Task<QboUpsertResult> VoidInvoiceAsync(QboWriteTarget target, CancellationToken ct = default) =>
+        WriteAsync("invoice", target, (id, token) => QboMapper.MapInvoiceVoid(id!, token),
+            r => r.Invoice, "void invoice", ct, operation: "void");
+
+    public Task<QboUpsertResult> UpsertPaymentAsync(
+        QboPaymentPayload payload, QboWriteTarget target, CancellationToken ct = default) =>
+        WriteAsync("payment", target, (id, token) => QboMapper.MapPayment(payload, id, token),
+            r => r.Payment, "upsert payment", ct);
+
+    public Task<QboUpsertResult> UpsertExpenseAsync(
+        QboExpensePayload payload, QboWriteTarget target, CancellationToken ct = default) =>
+        WriteAsync("purchase", target, (id, token) => QboMapper.MapPurchase(payload, id, token),
+            r => r.Purchase, "upsert expense", ct);
+
+    public Task<QboUpsertResult> UpsertBillAsync(
+        QboBillPayload payload, QboWriteTarget target, CancellationToken ct = default) =>
+        WriteAsync("bill", target, (id, token) => QboMapper.MapBill(payload, id, token),
+            r => r.Bill, "upsert bill", ct);
+
+    /// <summary>
+    ///     Post a create or update. Creates carry the request id so a retry after a lost response returns
+    ///     the first result. An update rejected as stale (the record was edited in QuickBooks since our
+    ///     last push) is retried once with the record's current SyncToken - the TMS stays the source of truth.
+    /// </summary>
+    private async Task<QboUpsertResult> WriteAsync(
+        string resource,
+        QboWriteTarget target,
+        Func<string?, string?, object> build,
+        Func<QboEntityResponse, IQboEntity?> pick,
+        string action,
+        CancellationToken ct,
+        string? operation = null)
     {
-        var body = QboMapper.MapPayment(payload, qboId, syncToken);
-        var response = await PostEntityAsync<QboPaymentResponse>("payment", body, "upsert payment", ct);
-        return ToResult(response.Payment?.Id, response.Payment?.SyncToken);
+        var requestId = target.QboId is null ? target.RequestId : null;
+        var url = QboEndpoints.CompanyResource(Environment, RequireRealm(), resource, requestId, operation);
+
+        try
+        {
+            return ToResult(pick(await PostAsync(url, build(target.QboId, target.SyncToken), action, ct)));
+        }
+        catch (QboApiException ex) when (ex.IsStaleObject && target.QboId is not null)
+        {
+            logger.LogInformation("QBO {Resource} {QboId} was edited in QuickBooks; retrying with its current SyncToken",
+                resource, target.QboId);
+            var readUrl = QboEndpoints.CompanyResource(Environment, RequireRealm(), $"{resource}/{target.QboId}");
+            var current = pick(await httpClient.GetQboAsync<QboEntityResponse>(readUrl, RequireToken(), $"read {resource}", ct));
+            return ToResult(pick(await PostAsync(url, build(target.QboId, current?.SyncToken), action, ct)));
+        }
     }
 
-    public async Task<QboUpsertResult> UpsertExpenseAsync(
-        QboExpensePayload payload, string? qboId, string? syncToken, CancellationToken ct = default)
+    private Task<QboEntityResponse> PostAsync(string url, object body, string action, CancellationToken ct) =>
+        httpClient.PostQboAsync<QboEntityResponse>(url, body, RequireToken(), action, ct);
+
+    private async Task<QboQueryEnvelope> FindByDisplayNameAsync(string entity, string displayName, CancellationToken ct)
     {
-        var body = QboMapper.MapPurchase(payload, qboId, syncToken);
-        var response = await PostEntityAsync<QboPurchaseResponse>("purchase", body, "upsert expense", ct);
-        return ToResult(response.Purchase?.Id, response.Purchase?.SyncToken);
+        // QBO query strings escape a single quote with a backslash. Active IN (true, false) also finds an
+        // inactive record, which a create would otherwise collide with on the unique display name.
+        var name = displayName.Replace("\\", "\\\\").Replace("'", "\\'");
+        return await QueryAsync(
+            $"select * from {entity} where DisplayName = '{name}' and Active in (true, false)",
+            $"find {entity.ToLowerInvariant()}", ct);
     }
 
-    private Task<TResponse> PostEntityAsync<TResponse>(
-        string resource, object body, string action, CancellationToken ct)
+    private async Task<QboQueryEnvelope> QueryAsync(string query, string action, CancellationToken ct)
     {
-        var url = QboEndpoints.CompanyResource(Environment, RequireRealm(), resource);
-        return httpClient.PostQboAsync<TResponse>(url, body, RequireToken(), action, ct);
+        var url = QboEndpoints.QueryResource(Environment, RequireRealm(), query);
+        var result = await httpClient.GetQboAsync<QboQueryResponse>(url, RequireToken(), action, ct);
+        return result.QueryResponse ?? new QboQueryEnvelope();
     }
 
-    private static QboUpsertResult ToResult(string? id, string? syncToken)
+    private static QboUpsertResult ToResult(IQboEntity? entity)
     {
-        if (id is null)
+        if (entity?.Id is null)
         {
             throw new InvalidOperationException("QBO response did not contain an entity Id.");
         }
 
-        return new QboUpsertResult { QboId = id, SyncToken = syncToken };
+        return new QboUpsertResult { QboId = entity.Id, SyncToken = entity.SyncToken };
     }
 
     private string RequireRealm() =>

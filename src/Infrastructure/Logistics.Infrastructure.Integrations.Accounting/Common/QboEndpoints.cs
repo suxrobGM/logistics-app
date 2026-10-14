@@ -21,8 +21,26 @@ internal static class QboEndpoints
             ? ProductionApiBase
             : SandboxApiBase;
 
-    public static string CompanyResource(string environment, string realmId, string resource) =>
-        $"{ApiBase(environment)}/v3/company/{realmId}/{resource}?minorversion={MinorVersion}";
+    /// <summary>
+    ///     Entity endpoint. <paramref name="requestId"/> (max 50 chars) makes a write idempotent: QBO answers a
+    ///     repeated id with the original response instead of creating the record again.
+    /// </summary>
+    public static string CompanyResource(
+        string environment, string realmId, string resource, string? requestId = null, string? operation = null)
+    {
+        var url = $"{ApiBase(environment)}/v3/company/{realmId}/{resource}?minorversion={MinorVersion}";
+        if (requestId is not null)
+        {
+            url += $"&requestid={Uri.EscapeDataString(requestId)}";
+        }
+
+        if (operation is not null)
+        {
+            url += $"&operation={operation}";
+        }
+
+        return url;
+    }
 
     public static string QueryResource(string environment, string realmId, string query) =>
         $"{ApiBase(environment)}/v3/company/{realmId}/query?minorversion={MinorVersion}&query={Uri.EscapeDataString(query)}";

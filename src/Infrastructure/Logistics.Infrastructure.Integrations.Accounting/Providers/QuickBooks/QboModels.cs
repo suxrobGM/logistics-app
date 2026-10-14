@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Logistics.Infrastructure.Integrations.Accounting.Providers.QuickBooks;
 
+// Wire models for the QBO v3 Accounting API (minor version pinned in QboEndpoints). Field names and
+// shapes follow Intuit's entity reference: developer.intuit.com/app/developer/qbo/docs/api/accounting
+
 // --- OAuth ---
 
 internal sealed record QboTokenResponse
@@ -12,16 +15,53 @@ internal sealed record QboTokenResponse
     [JsonPropertyName("x_refresh_token_expires_in")] public int RefreshTokenExpiresIn { get; set; }
 }
 
-// --- Reference type (QBO uses lowercase "value"/"name") ---
+internal sealed record QboTokenError
+{
+    [JsonPropertyName("error")] public string? Error { get; set; }
+}
+
+// --- Errors: {"Fault":{"Error":[{"Message","Detail","code"}],"type"}} (casing varies; reads are case-insensitive) ---
+
+internal sealed record QboFaultResponse
+{
+    public QboFault? Fault { get; set; }
+}
+
+internal sealed record QboFault
+{
+    public List<QboFaultError>? Error { get; set; }
+    public string? Type { get; set; }
+}
+
+internal sealed record QboFaultError
+{
+    public string? Message { get; set; }
+    public string? Detail { get; set; }
+    public string? Code { get; set; }
+}
+
+// --- Reference type (QBO uses lowercase "value"/"name"/"type") ---
 
 internal sealed record QboRef
 {
     [JsonPropertyName("value")] public string? Value { get; set; }
 
+    /// <summary>Only on polymorphic refs such as Purchase.EntityRef ("Vendor", "Customer", "Employee").</summary>
+    [JsonPropertyName("type")] public string? Type { get; set; }
+
     public static QboRef Of(string value) => new() { Value = value };
+
+    public static QboRef? OfOptional(string? value) => string.IsNullOrEmpty(value) ? null : new QboRef { Value = value };
 }
 
-// --- Common envelope pieces ---
+// --- Common pieces ---
+
+/// <summary>Every QBO transaction and name-list entity carries an Id and an optimistic-concurrency SyncToken.</summary>
+internal interface IQboEntity
+{
+    string? Id { get; }
+    string? SyncToken { get; }
+}
 
 internal sealed record QboEmail
 {
@@ -43,24 +83,37 @@ internal sealed record QboPhysicalAddress
     public string? Country { get; set; }
 }
 
-// --- Customer ---
+// --- Customer / Vendor ---
 
-internal sealed record QboCustomer
+internal sealed record QboCustomer : IQboEntity
 {
     public string? Id { get; set; }
     public string? SyncToken { get; set; }
+
+    /// <summary>On updates: only the fields sent are changed, so a linked customer keeps what we do not own.</summary>
+    [JsonPropertyName("sparse")] public bool? Sparse { get; set; }
+
+    public bool? Active { get; set; }
     public string? DisplayName { get; set; }
     public QboEmail? PrimaryEmailAddr { get; set; }
     public QboPhone? PrimaryPhone { get; set; }
     public QboPhysicalAddress? BillAddr { get; set; }
 }
 
-internal sealed record QboCustomerResponse
+internal sealed record QboVendor : IQboEntity
 {
-    public QboCustomer? Customer { get; set; }
+    public string? Id { get; set; }
+    public string? SyncToken { get; set; }
+    [JsonPropertyName("sparse")] public bool? Sparse { get; set; }
+    public bool? Active { get; set; }
+    public string? DisplayName { get; set; }
+    public string? GivenName { get; set; }
+    public string? FamilyName { get; set; }
+    public QboEmail? PrimaryEmailAddr { get; set; }
+    public QboPhone? PrimaryPhone { get; set; }
 }
 
-// --- Invoice ---
+// --- Lines ---
 
 internal sealed record QboLine
 {
@@ -95,61 +148,89 @@ internal sealed record QboTxnTaxDetail
     public decimal? TotalTax { get; set; }
 }
 
-internal sealed record QboInvoice
+// --- Invoice ---
+
+internal sealed record QboInvoice : IQboEntity
 {
     public string? Id { get; set; }
     public string? SyncToken { get; set; }
+    [JsonPropertyName("sparse")] public bool? Sparse { get; set; }
     public string? DocNumber { get; set; }
+    public string? TxnDate { get; set; }
+    public string? DueDate { get; set; }
     public QboRef? CustomerRef { get; set; }
     public QboRef? CurrencyRef { get; set; }
-    public string? DueDate { get; set; }
     public QboTxnTaxDetail? TxnTaxDetail { get; set; }
-    public List<QboLine> Line { get; set; } = [];
-}
-
-internal sealed record QboInvoiceResponse
-{
-    public QboInvoice? Invoice { get; set; }
+    public List<QboLine>? Line { get; set; }
 }
 
 // --- Payment ---
 
-internal sealed record QboPayment
+internal sealed record QboPayment : IQboEntity
 {
     public string? Id { get; set; }
     public string? SyncToken { get; set; }
+    [JsonPropertyName("sparse")] public bool? Sparse { get; set; }
+    public string? TxnDate { get; set; }
     public QboRef? CustomerRef { get; set; }
     public QboRef? CurrencyRef { get; set; }
+    public QboRef? DepositToAccountRef { get; set; }
     public decimal TotalAmt { get; set; }
     public string? PaymentRefNum { get; set; }
-    public List<QboLine> Line { get; set; } = [];
-}
-
-internal sealed record QboPaymentResponse
-{
-    public QboPayment? Payment { get; set; }
+    public List<QboLine>? Line { get; set; }
 }
 
 // --- Purchase (expense) ---
 
-internal sealed record QboPurchase
+internal sealed record QboPurchase : IQboEntity
 {
     public string? Id { get; set; }
     public string? SyncToken { get; set; }
+    [JsonPropertyName("sparse")] public bool? Sparse { get; set; }
     public QboRef? AccountRef { get; set; }
+    public QboRef? EntityRef { get; set; }
     public QboRef? CurrencyRef { get; set; }
+
+    /// <summary>"Cash", "Check" or "CreditCard"; must agree with the AccountRef's account type.</summary>
     public string? PaymentType { get; set; }
-    public decimal TotalAmt { get; set; }
+
     public string? TxnDate { get; set; }
-    public List<QboLine> Line { get; set; } = [];
+    public string? DocNumber { get; set; }
+    public string? PrivateNote { get; set; }
+    public List<QboLine>? Line { get; set; }
 }
 
-internal sealed record QboPurchaseResponse
+// --- Bill (driver pay) ---
+
+internal sealed record QboBill : IQboEntity
 {
-    public QboPurchase? Purchase { get; set; }
+    public string? Id { get; set; }
+    public string? SyncToken { get; set; }
+    [JsonPropertyName("sparse")] public bool? Sparse { get; set; }
+    public QboRef? VendorRef { get; set; }
+    public QboRef? CurrencyRef { get; set; }
+    public string? TxnDate { get; set; }
+    public string? DueDate { get; set; }
+    public string? DocNumber { get; set; }
+    public string? PrivateNote { get; set; }
+    public List<QboLine>? Line { get; set; }
 }
 
-// --- Account (Chart of Accounts) ---
+/// <summary>
+/// Write/read response envelope. QBO wraps the entity under its own name ({"Invoice": {...}}), so one
+/// record covers every resource we write.
+/// </summary>
+internal sealed record QboEntityResponse
+{
+    public QboCustomer? Customer { get; set; }
+    public QboVendor? Vendor { get; set; }
+    public QboInvoice? Invoice { get; set; }
+    public QboPayment? Payment { get; set; }
+    public QboPurchase? Purchase { get; set; }
+    public QboBill? Bill { get; set; }
+}
+
+// --- Lists ---
 
 internal sealed record QboAccount
 {
@@ -159,20 +240,28 @@ internal sealed record QboAccount
     public string? Classification { get; set; }
 }
 
-// --- Query responses ---
-
-internal sealed record QboQueryResponse<T>
+internal sealed record QboItem
 {
-    public QboQueryEnvelope<T>? QueryResponse { get; set; }
-}
-
-internal sealed record QboQueryEnvelope<T>
-{
-    public List<T>? Account { get; set; }
-    public List<T>? CompanyInfo { get; set; }
+    public string? Id { get; set; }
+    public string? Name { get; set; }
+    public string? Type { get; set; }
 }
 
 internal sealed record QboCompanyInfo
 {
     public string? CompanyName { get; set; }
+}
+
+internal sealed record QboQueryResponse
+{
+    public QboQueryEnvelope? QueryResponse { get; set; }
+}
+
+internal sealed record QboQueryEnvelope
+{
+    public List<QboAccount>? Account { get; set; }
+    public List<QboItem>? Item { get; set; }
+    public List<QboCustomer>? Customer { get; set; }
+    public List<QboVendor>? Vendor { get; set; }
+    public List<QboCompanyInfo>? CompanyInfo { get; set; }
 }

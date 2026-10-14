@@ -4,13 +4,16 @@ using Logistics.Shared.Models;
 namespace Logistics.Infrastructure.Integrations.Accounting.Providers.QuickBooks;
 
 /// <summary>
-///     Maps provider-neutral push payloads to QuickBooks Online wire models. When an existing
-///     <c>qboId</c>/<c>syncToken</c> is supplied, the resulting object carries them so QBO
-///     performs a full update rather than a create.
+///     Maps provider-neutral push payloads to QuickBooks Online wire models. With an existing
+///     <c>qboId</c>/<c>syncToken</c> the result is a sparse update of that record, otherwise a create.
 /// </summary>
 internal static class QboMapper
 {
+    private const string CreditCardAccountType = "Credit Card";
+
     private static string Date(DateTime value) => value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+    private static bool? SparseIfUpdate(string? qboId) => qboId is null ? null : true;
 
     public static QboCustomer MapCustomer(QboCustomerPayload p, string? qboId, string? syncToken)
     {
@@ -18,10 +21,31 @@ internal static class QboMapper
         {
             Id = qboId,
             SyncToken = syncToken,
+            Sparse = SparseIfUpdate(qboId),
+            Active = qboId is null ? null : true,
             DisplayName = p.Name,
             PrimaryEmailAddr = string.IsNullOrWhiteSpace(p.Email) ? null : new QboEmail { Address = p.Email },
             PrimaryPhone = string.IsNullOrWhiteSpace(p.Phone) ? null : new QboPhone { FreeFormNumber = p.Phone },
             BillAddr = MapAddress(p.BillingAddress)
+        };
+    }
+
+    public static QboCustomer MapCustomerDeactivation(string qboId, string? syncToken) =>
+        new() { Id = qboId, SyncToken = syncToken, Sparse = true, Active = false };
+
+    public static QboVendor MapVendor(QboVendorPayload p, string? qboId, string? syncToken)
+    {
+        return new QboVendor
+        {
+            Id = qboId,
+            SyncToken = syncToken,
+            Sparse = SparseIfUpdate(qboId),
+            Active = qboId is null ? null : true,
+            DisplayName = p.DisplayName,
+            GivenName = p.GivenName,
+            FamilyName = p.FamilyName,
+            PrimaryEmailAddr = string.IsNullOrWhiteSpace(p.Email) ? null : new QboEmail { Address = p.Email },
+            PrimaryPhone = string.IsNullOrWhiteSpace(p.Phone) ? null : new QboPhone { FreeFormNumber = p.Phone }
         };
     }
 
@@ -54,7 +78,8 @@ internal static class QboMapper
                 SalesItemLineDetail = new QboSalesItemLineDetail
                 {
                     Qty = l.Quantity,
-                    UnitPrice = decimal.Round(l.Amount, 2)
+                    UnitPrice = decimal.Round(l.Amount, 2),
+                    ItemRef = QboRef.OfOptional(l.ItemId)
                 }
             })
             .ToList();
@@ -63,7 +88,9 @@ internal static class QboMapper
         {
             Id = qboId,
             SyncToken = syncToken,
+            Sparse = SparseIfUpdate(qboId),
             DocNumber = p.DocNumber,
+            TxnDate = Date(p.TxnDate),
             CustomerRef = QboRef.Of(p.QboCustomerId),
             CurrencyRef = QboRef.Of(p.CurrencyCode),
             DueDate = p.DueDate.HasValue ? Date(p.DueDate.Value) : null,
@@ -72,14 +99,21 @@ internal static class QboMapper
         };
     }
 
+    /// <summary>A void request carries only the identity; QBO zeroes the amounts and keeps the record.</summary>
+    public static QboInvoice MapInvoiceVoid(string qboId, string? syncToken) =>
+        new() { Id = qboId, SyncToken = syncToken };
+
     public static QboPayment MapPayment(QboPaymentPayload p, string? qboId, string? syncToken)
     {
         return new QboPayment
         {
             Id = qboId,
             SyncToken = syncToken,
+            Sparse = SparseIfUpdate(qboId),
+            TxnDate = Date(p.TxnDate),
             CustomerRef = QboRef.Of(p.QboCustomerId),
             CurrencyRef = QboRef.Of(p.CurrencyCode),
+            DepositToAccountRef = QboRef.OfOptional(p.DepositAccountId),
             TotalAmt = decimal.Round(p.Amount, 2),
             PaymentRefNum = p.ReferenceNumber,
             Line =
@@ -99,23 +133,38 @@ internal static class QboMapper
         {
             Id = qboId,
             SyncToken = syncToken,
+            Sparse = SparseIfUpdate(qboId),
             AccountRef = QboRef.Of(p.PaymentAccountId),
+            EntityRef = p.VendorId is null ? null : new QboRef { Value = p.VendorId, Type = "Vendor" },
             CurrencyRef = QboRef.Of(p.CurrencyCode),
-            PaymentType = "Cash",
+            PaymentType = p.PaymentAccountType == CreditCardAccountType ? "CreditCard" : "Cash",
             TxnDate = Date(p.TxnDate),
-            Line =
-            [
-                new QboLine
-                {
-                    DetailType = "AccountBasedExpenseLineDetail",
-                    Description = p.Description,
-                    Amount = decimal.Round(p.Amount, 2),
-                    AccountBasedExpenseLineDetail = new QboAccountBasedExpenseLineDetail
-                    {
-                        AccountRef = QboRef.Of(p.ExpenseAccountId)
-                    }
-                }
-            ]
+            DocNumber = p.DocNumber,
+            Line = [ExpenseLine(p.Description, p.Amount, p.ExpenseAccountId)]
         };
     }
+
+    public static QboBill MapBill(QboBillPayload p, string? qboId, string? syncToken)
+    {
+        return new QboBill
+        {
+            Id = qboId,
+            SyncToken = syncToken,
+            Sparse = SparseIfUpdate(qboId),
+            VendorRef = QboRef.Of(p.VendorId),
+            CurrencyRef = QboRef.Of(p.CurrencyCode),
+            TxnDate = Date(p.TxnDate),
+            DueDate = p.DueDate.HasValue ? Date(p.DueDate.Value) : null,
+            DocNumber = p.DocNumber,
+            Line = [ExpenseLine(p.Description, p.Amount, p.ExpenseAccountId)]
+        };
+    }
+
+    private static QboLine ExpenseLine(string? description, decimal amount, string accountId) => new()
+    {
+        DetailType = "AccountBasedExpenseLineDetail",
+        Description = description,
+        Amount = decimal.Round(amount, 2),
+        AccountBasedExpenseLineDetail = new QboAccountBasedExpenseLineDetail { AccountRef = QboRef.Of(accountId) }
+    };
 }

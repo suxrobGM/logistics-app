@@ -139,4 +139,7 @@ public record OAuthTokenResultDto
     public required string AccessToken { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime ExpiresAt { get; set; }
+
+    /// <summary>When the (possibly rotated) refresh token expires, for providers that report it.</summary>
+    public DateTime? RefreshTokenExpiresAt { get; set; }
 }

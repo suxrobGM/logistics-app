@@ -81,7 +81,7 @@ public class QboMapperTests
         Assert.Equal("1007", result.DocNumber);
         Assert.Equal("2026-07-20", result.DueDate);
         Assert.Equal(19.00m, result.TxnTaxDetail?.TotalTax);
-        Assert.Equal(2, result.Line.Count);
+        Assert.Equal(2, result.Line!.Count);
         Assert.Equal(1000m, result.Line[0].Amount);
         Assert.Equal(100m, result.Line[1].Amount); // 50 * 2
         Assert.Equal(2m, result.Line[1].SalesItemLineDetail?.Qty);
@@ -121,7 +121,7 @@ public class QboMapperTests
         Assert.Equal("42", result.CustomerRef?.Value);
         Assert.Equal(1119m, result.TotalAmt);
         Assert.Equal("CHK-88", result.PaymentRefNum);
-        var link = Assert.Single(result.Line);
+        var link = Assert.Single(result.Line!);
         Assert.Equal(1119m, link.Amount);
         Assert.Equal("1007", link.LinkedTxn?[0].TxnId);
         Assert.Equal("Invoice", link.LinkedTxn?[0].TxnType);
@@ -144,9 +144,157 @@ public class QboMapperTests
 
         Assert.Equal("35", result.AccountRef?.Value);
         Assert.Equal("2026-07-01", result.TxnDate);
-        var line = Assert.Single(result.Line);
+        var line = Assert.Single(result.Line!);
         Assert.Equal("AccountBasedExpenseLineDetail", line.DetailType);
         Assert.Equal("60", line.AccountBasedExpenseLineDetail?.AccountRef?.Value);
         Assert.Equal(250.55m, line.Amount);
     }
+
+    #region Fields added for production sync
+
+    [Fact]
+    public void MapInvoice_SendsTxnDateAndPerLineItemRef()
+    {
+        var payload = new QboInvoicePayload
+        {
+            QboCustomerId = "42",
+            CurrencyCode = "USD",
+            TxnDate = new DateTime(2026, 7, 5, 0, 0, 0, DateTimeKind.Utc),
+            Lines =
+            [
+                new QboInvoiceLinePayload { Description = "Line haul", Amount = 1000m, ItemId = "7" },
+                new QboInvoiceLinePayload { Description = "Misc", Amount = 10m, ItemId = null }
+            ]
+        };
+
+        var result = QboMapper.MapInvoice(payload, null, null);
+
+        Assert.Equal("2026-07-05", result.TxnDate);
+        Assert.Equal("7", result.Line![0].SalesItemLineDetail?.ItemRef?.Value);
+        Assert.Null(result.Line[1].SalesItemLineDetail?.ItemRef);
+        Assert.Null(result.Sparse);
+    }
+
+    [Fact]
+    public void MapInvoice_Update_IsSparse()
+    {
+        var payload = new QboInvoicePayload { QboCustomerId = "42", CurrencyCode = "USD" };
+
+        var result = QboMapper.MapInvoice(payload, "130", "2");
+
+        Assert.True(result.Sparse);
+        Assert.Equal("2", result.SyncToken);
+    }
+
+    [Fact]
+    public void MapInvoiceVoid_CarriesOnlyIdentity()
+    {
+        var result = QboMapper.MapInvoiceVoid("130", "4");
+
+        Assert.Equal("130", result.Id);
+        Assert.Equal("4", result.SyncToken);
+        Assert.Null(result.Line);
+        Assert.Null(result.CustomerRef);
+    }
+
+    [Fact]
+    public void MapPayment_SendsTxnDateAndDepositAccount()
+    {
+        var payload = new QboPaymentPayload
+        {
+            QboCustomerId = "42",
+            QboInvoiceId = "130",
+            Amount = 500m,
+            CurrencyCode = "USD",
+            TxnDate = new DateTime(2026, 8, 1, 0, 0, 0, DateTimeKind.Utc),
+            DepositAccountId = "35"
+        };
+
+        var result = QboMapper.MapPayment(payload, null, null);
+
+        Assert.Equal("2026-08-01", result.TxnDate);
+        Assert.Equal("35", result.DepositToAccountRef?.Value);
+    }
+
+    [Fact]
+    public void MapPayment_NoDepositAccount_LeavesQuickBooksDefault()
+    {
+        var payload = new QboPaymentPayload { QboCustomerId = "42", QboInvoiceId = "130", CurrencyCode = "USD" };
+
+        Assert.Null(QboMapper.MapPayment(payload, null, null).DepositToAccountRef);
+    }
+
+    [Theory]
+    [InlineData("Credit Card", "CreditCard")]
+    [InlineData("Bank", "Cash")]
+    [InlineData(null, "Cash")]
+    public void MapPurchase_PaymentTypeFollowsThePaymentAccount(string? accountType, string expected)
+    {
+        var payload = new QboExpensePayload
+        {
+            PaymentAccountId = "41",
+            PaymentAccountType = accountType,
+            ExpenseAccountId = "61",
+            CurrencyCode = "USD"
+        };
+
+        Assert.Equal(expected, QboMapper.MapPurchase(payload, null, null).PaymentType);
+    }
+
+    [Fact]
+    public void MapPurchase_WithVendor_SetsVendorEntityRef()
+    {
+        var payload = new QboExpensePayload
+        {
+            PaymentAccountId = "41",
+            ExpenseAccountId = "61",
+            CurrencyCode = "USD",
+            DocNumber = "EXP-12",
+            VendorId = "56"
+        };
+
+        var result = QboMapper.MapPurchase(payload, null, null);
+
+        Assert.Equal("56", result.EntityRef?.Value);
+        Assert.Equal("Vendor", result.EntityRef?.Type);
+        Assert.Equal("EXP-12", result.DocNumber);
+    }
+
+    [Fact]
+    public void MapBill_PostsToVendorAndPayrollAccount()
+    {
+        var payload = new QboBillPayload
+        {
+            VendorId = "56",
+            ExpenseAccountId = "62",
+            Amount = 1834.456m,
+            CurrencyCode = "USD",
+            TxnDate = new DateTime(2026, 9, 30, 0, 0, 0, DateTimeKind.Utc),
+            DueDate = new DateTime(2026, 10, 3, 0, 0, 0, DateTimeKind.Utc),
+            DocNumber = "PAY-9",
+            Description = "Driver pay"
+        };
+
+        var result = QboMapper.MapBill(payload, null, null);
+
+        Assert.Equal("56", result.VendorRef?.Value);
+        Assert.Equal("2026-09-30", result.TxnDate);
+        Assert.Equal("2026-10-03", result.DueDate);
+        Assert.Equal("PAY-9", result.DocNumber);
+        var line = Assert.Single(result.Line!);
+        Assert.Equal(1834.46m, line.Amount);
+        Assert.Equal("62", line.AccountBasedExpenseLineDetail?.AccountRef?.Value);
+    }
+
+    [Fact]
+    public void MapCustomerDeactivation_IsSparseInactiveUpdate()
+    {
+        var result = QboMapper.MapCustomerDeactivation("58", "3");
+
+        Assert.True(result.Sparse);
+        Assert.False(result.Active);
+        Assert.Null(result.DisplayName);
+    }
+
+    #endregion
 }

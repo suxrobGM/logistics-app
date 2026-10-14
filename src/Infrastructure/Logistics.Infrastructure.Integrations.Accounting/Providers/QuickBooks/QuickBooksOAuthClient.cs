@@ -1,6 +1,8 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
+using Logistics.Application.Abstractions.Accounting;
 using Logistics.Infrastructure.Integrations.Accounting.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -65,11 +67,12 @@ internal sealed class QuickBooksOAuthClient(
         request.Headers.Authorization = BasicAuth();
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await httpClient.SendAsync(request, ct);
+        using var response = await httpClient.SendAsync(request, ct);
         if (!response.IsSuccessStatusCode)
         {
             // Revoke is best-effort; log and continue so a local disconnect still succeeds.
-            logger.LogWarning("QBO token revoke returned {StatusCode}", response.StatusCode);
+            logger.LogWarning("QBO token revoke returned {StatusCode} (intuit_tid {IntuitTid})",
+                response.StatusCode, response.GetIntuitTid());
         }
     }
 
@@ -78,7 +81,7 @@ internal sealed class QuickBooksOAuthClient(
         try
         {
             var url = QboEndpoints.QueryResource(environment, realmId, "select * from CompanyInfo");
-            var result = await httpClient.GetQboAsync<QboQueryResponse<QboCompanyInfo>>(url, accessToken, "get company info", ct);
+            var result = await httpClient.GetQboAsync<QboQueryResponse>(url, accessToken, "get company info", ct);
             return result.QueryResponse?.CompanyInfo?.FirstOrDefault()?.CompanyName;
         }
         catch (QboApiException ex)
@@ -98,15 +101,34 @@ internal sealed class QuickBooksOAuthClient(
         request.Headers.Authorization = BasicAuth();
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await httpClient.SendAsync(request, ct);
+        using var response = await httpClient.SendAsync(request, ct);
         if (!response.IsSuccessStatusCode)
         {
             var body = await response.Content.ReadAsStringAsync(ct);
-            throw new QboApiException(action, response.StatusCode, body);
+            var error = new QboApiException(action, response.StatusCode, body, response.GetIntuitTid());
+            logger.LogWarning("QBO {Action} failed with {StatusCode} (intuit_tid {IntuitTid})",
+                action, response.StatusCode, error.IntuitTid);
+
+            // Intuit answers an expired or revoked refresh token (and a reused code) with invalid_grant.
+            throw IsInvalidGrant(body)
+                ? new AccountingReconnectRequiredException("QuickBooks refused the stored refresh token.", error)
+                : error;
         }
 
         var token = await response.Content.ReadFromJsonAsync<QboTokenResponse>(QboJsonOptions.Default, ct);
-        return token ?? throw new QboApiException(action, response.StatusCode, "empty token response");
+        return token ?? throw new QboApiException(action, response.StatusCode, "empty token response", response.GetIntuitTid());
+    }
+
+    private static bool IsInvalidGrant(string body)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<QboTokenError>(body, QboJsonOptions.Default)?.Error == "invalid_grant";
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
     }
 
     private AuthenticationHeaderValue BasicAuth()
