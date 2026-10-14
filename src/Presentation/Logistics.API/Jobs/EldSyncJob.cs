@@ -222,7 +222,7 @@ public class EldSyncJob(
             existingStatus.CurrentDutyStatus = hosData.CurrentDutyStatus;
         }
 
-        existingStatus.StatusChangedAt = hosData.StatusChangedAt;
+        existingStatus.StatusChangedAt = hosData.StatusChangedAt ?? existingStatus.StatusChangedAt;
         existingStatus.DrivingMinutesRemaining = hosData.DrivingMinutesRemaining;
         existingStatus.OnDutyMinutesRemaining = hosData.OnDutyMinutesRemaining;
         existingStatus.CycleMinutesRemaining = hosData.CycleMinutesRemaining;

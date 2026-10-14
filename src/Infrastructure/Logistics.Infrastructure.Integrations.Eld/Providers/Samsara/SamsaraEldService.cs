@@ -1,44 +1,45 @@
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Logistics.Application.Abstractions.Eld;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Logistics.Application.Abstractions.Eld;
 
 namespace Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 
 /// <summary>
-///     Samsara ELD provider implementation.
-///     API Documentation: https://developers.samsara.com/docs
+///     Samsara ELD and telematics provider. API reference: https://developers.samsara.com/reference
 /// </summary>
 internal class SamsaraEldService(
     HttpClient httpClient,
     IOptions<EldOptions> options,
     ILogger<SamsaraEldService> logger)
-    : IEldProviderService
+    : IEldProviderService, IEldGpsTrackingProvider
 {
-    private readonly string _baseUrl = options.Value.Samsara?.BaseUrl ?? "https://api.samsara.com";
+    private readonly SamsaraOptions _options = options.Value.Samsara ?? new SamsaraOptions();
+    private string _baseUrl = (options.Value.Samsara ?? new SamsaraOptions()).BaseUrl;
 
     public EldProviderType ProviderType => EldProviderType.Samsara;
 
     public void Initialize(EldProviderConfiguration configuration)
     {
-        var apiToken = configuration.AccessToken ?? configuration.ApiKey;
+        _baseUrl = _options.BaseUrlFor(configuration.Region);
         httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", apiToken);
+            new AuthenticationHeaderValue("Bearer", configuration.AccessToken ?? configuration.ApiKey);
     }
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
     {
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/fleet/drivers");
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/fleet/drivers?limit=1");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
-            var response = await httpClient.SendAsync(request);
+            using var response = await httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
         catch (HttpRequestException ex)
@@ -50,28 +51,22 @@ internal class SamsaraEldService(
 
     public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
     {
-        // Samsara uses API tokens, not OAuth refresh tokens
+        // Samsara API tokens don't expire, there is nothing to refresh
         return Task.FromResult<OAuthTokenResultDto?>(null);
     }
 
     public async Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
-        var result = await httpClient.TryGetFromJsonAsync<SamsaraHosClockResponse>(
-            $"{_baseUrl}/fleet/hos/drivers/{externalDriverId}/clocks",
-            logger,
-            $"Samsara HOS clocks for driver {externalDriverId}",
-            IntegrationJsonOptions.CamelCase);
-        return result?.Data is null ? null : SamsaraMapper.MapToDto(externalDriverId, result.Data);
+        var clocks = await GetAllPagesAsync<SamsaraHosClock>(
+            $"/fleet/hos/clocks?driverIds={Uri.EscapeDataString(externalDriverId)}",
+            $"Samsara HOS clocks for driver {externalDriverId}");
+        return clocks?.Select(SamsaraMapper.MapToDto).FirstOrDefault(c => c is not null);
     }
 
     public async Task<IEnumerable<EldDriverHosDataDto>> GetAllDriversHosStatusAsync()
     {
-        var result = await httpClient.TryGetFromJsonAsync<SamsaraHosClocksResponse>(
-            $"{_baseUrl}/fleet/hos/clocks",
-            logger,
-            "Samsara HOS clocks (all drivers)",
-            IntegrationJsonOptions.CamelCase);
-        return result?.Data?.Select(d => SamsaraMapper.MapToDto(d.Driver?.Id ?? "", d)) ?? [];
+        var clocks = await GetAllPagesAsync<SamsaraHosClock>("/fleet/hos/clocks", "Samsara HOS clocks");
+        return clocks?.Select(SamsaraMapper.MapToDto).OfType<EldDriverHosDataDto>().ToList() ?? [];
     }
 
     public async Task<IEnumerable<EldHosLogEntryDto>> GetDriverHosLogsAsync(
@@ -79,15 +74,15 @@ internal class SamsaraEldService(
         DateTime startDate,
         DateTime endDate)
     {
-        var startMs = new DateTimeOffset(startDate).ToUnixTimeMilliseconds();
-        var endMs = new DateTimeOffset(endDate).ToUnixTimeMilliseconds();
+        var drivers = await GetAllPagesAsync<SamsaraDriverHosLogs>(
+            $"/fleet/hos/logs?driverIds={Uri.EscapeDataString(externalDriverId)}" +
+            $"&startTime={Rfc3339(startDate)}&endTime={Rfc3339(endDate)}",
+            $"Samsara HOS logs for driver {externalDriverId}");
 
-        var result = await httpClient.TryGetFromJsonAsync<SamsaraHosLogsResponse>(
-            $"{_baseUrl}/fleet/hos/logs?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
-            logger,
-            $"Samsara HOS logs for driver {externalDriverId}",
-            IntegrationJsonOptions.CamelCase);
-        return result?.Data?.Select(SamsaraMapper.MapToLogDto) ?? [];
+        return drivers?
+            .SelectMany(d => (d.HosLogs ?? []).Select(l => SamsaraMapper.MapToLogDto(d.Driver?.Id ?? externalDriverId, l)))
+            .OfType<EldHosLogEntryDto>()
+            .ToList() ?? [];
     }
 
     public async Task<IEnumerable<EldViolationDataDto>> GetDriverViolationsAsync(
@@ -95,35 +90,37 @@ internal class SamsaraEldService(
         DateTime startDate,
         DateTime endDate)
     {
-        var startMs = new DateTimeOffset(startDate).ToUnixTimeMilliseconds();
-        var endMs = new DateTimeOffset(endDate).ToUnixTimeMilliseconds();
+        var groups = await GetAllPagesAsync<SamsaraDriverViolations>(
+            $"/fleet/hos/violations?driverIds={Uri.EscapeDataString(externalDriverId)}" +
+            $"&startTime={Rfc3339(startDate)}&endTime={Rfc3339(endDate)}",
+            $"Samsara HOS violations for driver {externalDriverId}");
 
-        var result = await httpClient.TryGetFromJsonAsync<SamsaraViolationsResponse>(
-            $"{_baseUrl}/fleet/hos/violations?driverIds={externalDriverId}&startTime={startMs}&endTime={endMs}",
-            logger,
-            $"Samsara violations for driver {externalDriverId}",
-            IntegrationJsonOptions.CamelCase);
-        return result?.Data?.Select(v => SamsaraMapper.MapToViolationDto(externalDriverId, v)) ?? [];
+        return groups?
+            .SelectMany(g => g.Violations ?? [])
+            .Select(SamsaraMapper.MapToViolationDto)
+            .OfType<EldViolationDataDto>()
+            .ToList() ?? [];
     }
 
     public async Task<IEnumerable<EldDriverDto>> GetAllDriversAsync()
     {
-        var result = await httpClient.TryGetFromJsonAsync<SamsaraDriversResponse>(
-            $"{_baseUrl}/fleet/drivers",
-            logger,
-            "Samsara drivers list",
-            IntegrationJsonOptions.CamelCase);
-        return result?.Data?.Select(SamsaraMapper.MapToDriverDto) ?? [];
+        var drivers = await GetAllPagesAsync<SamsaraDriver>("/fleet/drivers", "Samsara drivers");
+        return drivers?.Where(d => !string.IsNullOrEmpty(d.Id)).Select(SamsaraMapper.MapToDriverDto).ToList() ?? [];
     }
 
     public async Task<IEnumerable<EldVehicleDto>> GetAllVehiclesAsync()
     {
-        var result = await httpClient.TryGetFromJsonAsync<SamsaraVehiclesResponse>(
-            $"{_baseUrl}/fleet/vehicles",
-            logger,
-            "Samsara vehicles list",
-            IntegrationJsonOptions.CamelCase);
-        return result?.Data?.Select(SamsaraMapper.MapToVehicleDto) ?? [];
+        var vehicles = await GetAllPagesAsync<SamsaraVehicle>("/fleet/vehicles", "Samsara vehicles");
+        return vehicles?.Where(v => !string.IsNullOrEmpty(v.Id)).Select(SamsaraMapper.MapToVehicleDto).ToList() ?? [];
+    }
+
+    public async Task<IEnumerable<EldVehicleLocationDto>> GetAllVehicleLocationsAsync(CancellationToken ct = default)
+    {
+        var stats = await GetAllPagesAsync<SamsaraVehicleStats>(
+            "/fleet/vehicles/stats?types=gps,obdOdometerMeters,gpsOdometerMeters",
+            "Samsara vehicle stats",
+            ct);
+        return stats?.Select(SamsaraMapper.MapToLocationDto).OfType<EldVehicleLocationDto>().ToList() ?? [];
     }
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
@@ -137,38 +134,54 @@ internal class SamsaraEldService(
         try
         {
             var webhook = JsonSerializer.Deserialize<SamsaraWebhookPayload>(payload, IntegrationJsonOptions.CamelCase);
-            if (webhook is null)
-            {
-                return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));
-            }
-
-            var eventType = webhook.EventType switch
-            {
-                "HosClocksUpdated" => EldWebhookEventType.DutyStatusChanged,
-                "HosViolationCreated" => EldWebhookEventType.ViolationCreated,
-                "HosViolationResolved" => EldWebhookEventType.ViolationResolved,
-                "DriverCreated" => EldWebhookEventType.DriverCreated,
-                "DriverUpdated" => EldWebhookEventType.DriverUpdated,
-                "VehicleCreated" => EldWebhookEventType.VehicleCreated,
-                "VehicleUpdated" => EldWebhookEventType.VehicleUpdated,
-                _ => EldWebhookEventType.Unknown
-            };
-
-            return Task.FromResult(new EldWebhookResultDto
-            {
-                EventType = eventType,
-                ExternalDriverId = webhook.Data?.DriverId,
-                ExternalVehicleId = webhook.Data?.VehicleId,
-                Data = webhook.Data,
-                IsValid = true
-            });
+            return Task.FromResult(webhook is null
+                ? InvalidWebhook("Failed to parse webhook payload")
+                : SamsaraMapper.MapToWebhookResult(webhook));
         }
         catch (JsonException ex)
         {
-            logger.LogError(ex, "Error processing Samsara webhook");
-            return Task.FromResult(InvalidWebhook(ex.Message));
+            logger.LogWarning(ex, "Unparseable Samsara webhook payload");
+            return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));
         }
     }
+
+    /// <summary>
+    /// Follows <c>pagination.endCursor</c> through every page. Null when any page fails, so a caller
+    /// never mistakes a partial read for the full set.
+    /// </summary>
+    private async Task<List<T>?> GetAllPagesAsync<T>(string pathAndQuery, string action, CancellationToken ct = default)
+    {
+        var items = new List<T>();
+        var separator = pathAndQuery.Contains('?') ? '&' : '?';
+        string? cursor = null;
+
+        do
+        {
+            var url = cursor is null
+                ? $"{_baseUrl}{pathAndQuery}"
+                : $"{_baseUrl}{pathAndQuery}{separator}after={Uri.EscapeDataString(cursor)}";
+
+            var page = await httpClient.TryGetFromJsonAsync<SamsaraPage<T>>(
+                url, logger, action, IntegrationJsonOptions.CamelCase, ct);
+            if (page is null)
+            {
+                return null;
+            }
+
+            items.AddRange(page.Data ?? []);
+
+            var next = page.Pagination is { HasNextPage: true, EndCursor.Length: > 0 }
+                ? page.Pagination.EndCursor
+                : null;
+            cursor = next == cursor ? null : next;
+        } while (cursor is not null);
+
+        return items;
+    }
+
+    private static string Rfc3339(DateTime value) =>
+        (value.Kind == DateTimeKind.Local ? value.ToUniversalTime() : value)
+        .ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture);
 
     private static EldWebhookResultDto InvalidWebhook(string error) => new()
     {

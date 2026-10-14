@@ -56,4 +56,10 @@ public class EldProviderConfiguration : Entity, ITenantEntity
     /// The account/organization ID in the ELD provider's system
     /// </summary>
     public string? ExternalAccountId { get; set; }
+
+    /// <summary>
+    /// Vendor data region for providers that host accounts per region (Samsara: <c>us</c>, <c>eu</c>, <c>ca</c>).
+    /// Null means the vendor default.
+    /// </summary>
+    public string? Region { get; set; }
 }

@@ -77,7 +77,7 @@ internal sealed class SyncAllDriversHosStatusHandler(
 
                     // Update HOS status
                     hosStatus.CurrentDutyStatus = hosData.CurrentDutyStatus;
-                    hosStatus.StatusChangedAt = hosData.StatusChangedAt;
+                    hosStatus.StatusChangedAt = hosData.StatusChangedAt ?? hosStatus.StatusChangedAt;
                     hosStatus.DrivingMinutesRemaining = hosData.DrivingMinutesRemaining;
                     hosStatus.OnDutyMinutesRemaining = hosData.OnDutyMinutesRemaining;
                     hosStatus.CycleMinutesRemaining = hosData.CycleMinutesRemaining;

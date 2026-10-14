@@ -20,5 +20,8 @@ internal sealed class EldProviderConfigurationEntityConfiguration : IEntityTypeC
 
         builder.Property(i => i.ExternalAccountId)
             .HasMaxLength(100);
+
+        builder.Property(i => i.Region)
+            .HasMaxLength(10);
     }
 }

@@ -10,7 +10,9 @@ public record EldDriverHosDataDto
     public required string ExternalDriverId { get; set; }
     public string? ExternalDriverName { get; set; }
     public required DutyStatus CurrentDutyStatus { get; set; }
-    public DateTime StatusChangedAt { get; set; }
+
+    /// <summary>Null when the provider does not report when the current status began (Samsara clocks).</summary>
+    public DateTime? StatusChangedAt { get; set; }
     public int DrivingMinutesRemaining { get; set; }
     public int OnDutyMinutesRemaining { get; set; }
     public int CycleMinutesRemaining { get; set; }
@@ -118,6 +120,9 @@ public record EldVehicleLocationDto
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public DateTime Timestamp { get; set; }
+
+    /// <summary>Odometer reading in whole miles, when the device reports one.</summary>
+    public int? OdometerMiles { get; set; }
 }
 
 /// <summary>
