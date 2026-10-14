@@ -36,9 +36,15 @@ public class QboEntityMapping : AuditableEntity, ITenantEntity
     public string? LastSyncedHash { get; set; }
 
     /// <summary>
-    /// When this entity was last pushed to the provider.
+    /// When this entity was last pushed successfully. Rows edited after this are pushed again.
     /// </summary>
     public DateTime? LastSyncedAt { get; set; }
+
+    /// <summary>
+    /// When a push was last attempted, successful or not. A failed row waits an hour from here
+    /// before it is retried.
+    /// </summary>
+    public DateTime? LastAttemptAt { get; set; }
 
     /// <summary>
     /// Outcome of the most recent push.
