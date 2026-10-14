@@ -1,62 +1,64 @@
 using Hangfire;
+using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Modules.Compliance.Eld.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Infrastructure.Communications.SignalR.Clients;
-using Logistics.Infrastructure.Communications.SignalR.Hubs;
-using Logistics.Shared.Models;
-using Microsoft.AspNetCore.SignalR;
-using Logistics.Application.Abstractions.Eld;
-using Logistics.Application.Modules.Compliance.Ifta.Services;
 
 namespace Logistics.API.Jobs;
 
 /// <summary>
-///     Hangfire job that periodically syncs HOS data from ELD providers for all tenants.
-///     Runs every 5 minutes as a fallback for webhook delivery failures.
+///     Pulls ELD data for every tenant through <see cref="IEldSyncService" />: HOS clocks and vehicle GPS
+///     every 5 minutes, HOS logs and violations every 30 minutes.
 /// </summary>
 public class EldSyncJob(
     ILogger<EldSyncJob> logger,
-    IServiceScopeFactory scopeFactory,
-    IHubContext<TrackingHub, ITrackingHubClient> trackingHub)
+    IServiceScopeFactory scopeFactory)
 {
-    /// <summary>
-    ///     Schedule the ELD sync job to run every 5 minutes.
-    /// </summary>
     public static void ScheduleJobs()
     {
         RecurringJob.AddOrUpdate<EldSyncJob>(
             "eld-sync",
             job => job.SyncAllTenantsAsync(CancellationToken.None),
-            Cron.MinuteInterval(5)); // Every 5 minutes
+            Cron.MinuteInterval(5));
+
+        RecurringJob.AddOrUpdate<EldSyncJob>(
+            "eld-history-sync",
+            job => job.SyncHistoryAllTenantsAsync(CancellationToken.None),
+            Cron.MinuteInterval(30));
     }
 
-    /// <summary>
-    ///     Main job entry point - syncs HOS data for all tenants.
-    /// </summary>
     [AutomaticRetry(Attempts = 2)]
     public Task SyncAllTenantsAsync(CancellationToken ct) =>
-        TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "ELD sync", SyncTenantAsync, ct);
+        TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "ELD sync",
+            (scope, tenant, token) => ForEachConfigAsync(scope, tenant,
+                (sync, config, c) => sync.SyncLiveAsync(config, c), token), ct);
 
-    private async Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
+    [AutomaticRetry(Attempts = 2)]
+    public Task SyncHistoryAllTenantsAsync(CancellationToken ct) =>
+        TenantJobRunner.ForEachTenantAsync(scopeFactory, logger, "ELD history sync",
+            (scope, tenant, token) => ForEachConfigAsync(scope, tenant,
+                (sync, config, c) => sync.SyncHistoryAsync(config, c), token), ct);
+
+    private async Task ForEachConfigAsync(
+        IServiceScope scope,
+        Tenant tenant,
+        Func<IEldSyncService, EldProviderConfiguration, CancellationToken, Task> body,
+        CancellationToken ct)
     {
-        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-        var eldFactory = scope.ServiceProvider.GetRequiredService<IEldProviderFactory>();
-        var locationRecorder = scope.ServiceProvider.GetRequiredService<ITruckLocationRecorder>();
-
-        // Switch to tenant database
-        tenantUow.SetCurrentTenant(tenant);
-
-        // Get active ELD configurations for this tenant
-        var configurations = await tenantUow.Repository<EldProviderConfiguration>()
-            .GetListAsync(c => c.IsActive, ct);
-
-        if (configurations.Count == 0)
+        // Jobs bypass the request pipeline, so [RequiresFeature] does not gate them - check here
+        var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
+        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.Eld))
         {
-            logger.LogDebug("No active ELD configurations for tenant {TenantName}", tenant.Name);
             return;
         }
+
+        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
+        tenantUow.SetCurrentTenant(tenant);
+
+        var configurations = await tenantUow.Repository<EldProviderConfiguration>()
+            .GetListAsync(c => c.IsActive, ct);
+        var sync = scope.ServiceProvider.GetRequiredService<IEldSyncService>();
 
         foreach (var config in configurations)
         {
@@ -67,7 +69,7 @@ public class EldSyncJob(
 
             try
             {
-                await SyncProviderDataAsync(tenantUow, eldFactory, locationRecorder, config, tenant, ct);
+                await body(sync, config, ct);
             }
             catch (Exception ex)
             {
@@ -75,164 +77,5 @@ public class EldSyncJob(
                     config.ProviderType, tenant.Name);
             }
         }
-    }
-
-    private async Task SyncProviderDataAsync(
-        ITenantUnitOfWork tenantUow,
-        IEldProviderFactory eldFactory,
-        ITruckLocationRecorder locationRecorder,
-        EldProviderConfiguration config,
-        Tenant tenant,
-        CancellationToken ct)
-    {
-        var provider = eldFactory.GetProvider(config);
-
-        // HOS sync (skip for GPS-only providers that return no HOS data)
-        var driverMappings = await tenantUow.Repository<EldDriverMapping>()
-            .GetListAsync(m => m.ProviderType == config.ProviderType && m.IsSyncEnabled, ct);
-
-        if (driverMappings.Count > 0)
-        {
-            logger.LogDebug("Syncing HOS data for {Count} drivers from {ProviderType}",
-                driverMappings.Count, config.ProviderType);
-
-            var allHosData = await provider.GetAllDriversHosStatusAsync();
-            var hosDataMap = allHosData.ToDictionary(h => h.ExternalDriverId);
-
-            foreach (var mapping in driverMappings)
-            {
-                if (ct.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                if (!hosDataMap.TryGetValue(mapping.ExternalDriverId, out var hosData))
-                {
-                    logger.LogWarning("No HOS data found for external driver {ExternalDriverId}",
-                        mapping.ExternalDriverId);
-                    continue;
-                }
-
-                await UpdateDriverHosStatusAsync(tenantUow, mapping, hosData, config.ProviderType, ct);
-            }
-        }
-
-        // GPS tracking sync (for providers that support it, e.g., TT ELD)
-        if (provider is IEldGpsTrackingProvider gpsProvider)
-        {
-            await SyncVehicleLocationsAsync(tenantUow, locationRecorder, gpsProvider, config, tenant, ct);
-        }
-
-        // Update configuration last synced time
-        config.LastSyncedAt = DateTime.UtcNow;
-        await tenantUow.SaveChangesAsync(ct);
-
-        logger.LogDebug("Completed ELD sync for {ProviderType}", config.ProviderType);
-    }
-
-    private async Task SyncVehicleLocationsAsync(
-        ITenantUnitOfWork tenantUow,
-        ITruckLocationRecorder locationRecorder,
-        IEldGpsTrackingProvider gpsProvider,
-        EldProviderConfiguration config,
-        Tenant tenant,
-        CancellationToken ct)
-    {
-        var locations = (await gpsProvider.GetAllVehicleLocationsAsync(ct)).ToList();
-
-        if (locations.Count == 0)
-        {
-            logger.LogDebug("No vehicle locations from {ProviderType}", config.ProviderType);
-            return;
-        }
-
-        var vehicleMappings = await tenantUow.Repository<EldVehicleMapping>()
-            .GetListAsync(m => m.ProviderType == config.ProviderType && m.IsSyncEnabled, ct);
-
-        if (vehicleMappings.Count == 0)
-        {
-            return;
-        }
-
-        var locationMap = locations
-            .GroupBy(l => l.ExternalVehicleId)
-            .ToDictionary(g => g.Key, g => g.First());
-
-        var syncedCount = 0;
-        foreach (var mapping in vehicleMappings)
-        {
-            if (!locationMap.TryGetValue(mapping.ExternalVehicleId, out var location))
-            {
-                continue;
-            }
-
-            var truck = mapping.Truck;
-            // GeoPoint takes (longitude, latitude) - the previous direct write passed them
-            // swapped, which threw for US longitudes and silently broke GPS sync.
-            var point = new GeoPoint(location.Longitude, location.Latitude);
-            var timestamp = location.Timestamp == default ? DateTime.UtcNow : location.Timestamp;
-
-            // Appends the breadcrumb, accrues IFTA jurisdiction mileage, sets CurrentLocation
-            await locationRecorder.RecordAsync(truck, point, timestamp, config.ProviderType, ct: ct);
-            mapping.LastSyncedAt = DateTime.UtcNow;
-            syncedCount++;
-
-            var geolocationDto = new TruckGeolocationDto
-            {
-                TruckId = truck.Id,
-                TenantId = tenant.Id,
-                CurrentLocation = point,
-                TruckNumber = truck.Number
-            };
-
-            await trackingHub.Clients
-                .Group(tenant.Id.ToString())
-                .ReceiveGeolocationData(geolocationDto);
-        }
-
-        await tenantUow.SaveChangesAsync(ct);
-
-        logger.LogDebug("Synced {Count} vehicle locations from {ProviderType}",
-            syncedCount, config.ProviderType);
-    }
-
-    private static async Task UpdateDriverHosStatusAsync(
-        ITenantUnitOfWork tenantUow,
-        EldDriverMapping mapping,
-        EldDriverHosDataDto hosData,
-        EldProviderType providerType,
-        CancellationToken ct)
-    {
-        var existingStatus = await tenantUow.Repository<DriverHosStatus>()
-            .GetAsync(s => s.EmployeeId == mapping.EmployeeId);
-
-        if (existingStatus == null)
-        {
-            existingStatus = new DriverHosStatus
-            {
-                EmployeeId = mapping.EmployeeId,
-                ExternalDriverId = mapping.ExternalDriverId,
-                ProviderType = providerType,
-                CurrentDutyStatus = hosData.CurrentDutyStatus
-            };
-            await tenantUow.Repository<DriverHosStatus>().AddAsync(existingStatus);
-        }
-        else
-        {
-            existingStatus.CurrentDutyStatus = hosData.CurrentDutyStatus;
-        }
-
-        existingStatus.StatusChangedAt = hosData.StatusChangedAt ?? existingStatus.StatusChangedAt;
-        existingStatus.DrivingMinutesRemaining = hosData.DrivingMinutesRemaining;
-        existingStatus.OnDutyMinutesRemaining = hosData.OnDutyMinutesRemaining;
-        existingStatus.CycleMinutesRemaining = hosData.CycleMinutesRemaining;
-        existingStatus.TimeUntilBreakRequired = hosData.TimeUntilBreakRequired;
-        existingStatus.IsInViolation = hosData.IsInViolation;
-        existingStatus.LastUpdatedAt = DateTime.UtcNow;
-
-        // Update mapping last synced time
-        mapping.LastSyncedAt = DateTime.UtcNow;
-
-        await tenantUow.SaveChangesAsync(ct);
     }
 }

@@ -73,23 +73,17 @@ internal class TtEldService(
         DateTime endDate)
         => Task.FromResult<IEnumerable<EldViolationDataDto>>([]);
 
-    #endregion
-
-    public async Task<IEnumerable<EldHosLogEntryDto>> GetDriverHosLogsAsync(
+    /// <summary>
+    /// TT ELD exposes GPS breadcrumbs, not duty-status logs; returning them as logs would fill the HOS
+    /// log page with fake Driving entries.
+    /// </summary>
+    public Task<IEnumerable<EldHosLogEntryDto>> GetDriverHosLogsAsync(
         string externalDriverId,
         DateTime startDate,
         DateTime endDate)
-    {
-        var fromStr = startDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-        var toStr = endDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+        => Task.FromResult<IEnumerable<EldHosLogEntryDto>>([]);
 
-        var result = await httpClient.TryGetFromJsonAsync<List<TtEldTrackingPoint>>(
-            $"{_baseUrl}/api/externalservice/trackings/{_usdot}/{externalDriverId}/?from={fromStr}&to={toStr}",
-            logger,
-            $"TT ELD tracking for vehicle {externalDriverId}",
-            IntegrationJsonOptions.CamelCase);
-        return result?.Select(p => TtEldMapper.MapToLogDto(p, externalDriverId)) ?? [];
-    }
+    #endregion
 
     public async Task<IEnumerable<EldDriverDto>> GetAllDriversAsync()
     {

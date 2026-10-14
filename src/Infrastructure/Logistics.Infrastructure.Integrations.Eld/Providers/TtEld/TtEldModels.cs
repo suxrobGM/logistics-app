@@ -66,14 +66,3 @@ internal record TtEldCoordinates
     public double Lat { get; init; }
     public double Lng { get; init; }
 }
-
-internal record TtEldTrackingPoint
-{
-    public string? Address { get; init; }
-    public TtEldCoordinates? Coordinates { get; init; }
-    public int? Rotation { get; init; }
-    public int? Speed { get; init; }
-    public string? DriverId { get; init; }
-    public int? Odometer { get; init; }
-    public string? Date { get; init; }
-}

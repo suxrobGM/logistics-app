@@ -21,7 +21,8 @@ internal static class TtEldMapper
     {
         return new EldVehicleDto
         {
-            ExternalVehicleId = data.Id ?? "",
+            // Same key the location feed uses (it has no unit id), so a vehicle mapping matches its GPS pings
+            ExternalVehicleId = data.Vin ?? data.TruckNumber ?? data.Id ?? "",
             Name = data.TruckNumber ?? "",
             Vin = data.Vin,
             LicensePlate = null,
@@ -41,25 +42,6 @@ internal static class TtEldMapper
             Latitude = data.Coordinates?.Lat ?? 0,
             Longitude = data.Coordinates?.Lng ?? 0,
             Timestamp = DateTime.TryParse(data.Timestamp, out var ts) ? ts.ToUniversalTime() : DateTime.UtcNow
-        };
-    }
-
-    public static EldHosLogEntryDto MapToLogDto(TtEldTrackingPoint data, string vehicleId)
-    {
-        var timestamp = DateTime.TryParse(data.Date, out var ts) ? ts.ToUniversalTime() : DateTime.UtcNow;
-        return new EldHosLogEntryDto
-        {
-            ExternalLogId = null,
-            ExternalDriverId = data.DriverId ?? vehicleId,
-            LogDate = timestamp.Date,
-            DutyStatus = DutyStatus.Driving, // GPS tracking point - no HOS data available from TT ELD
-            StartTime = timestamp,
-            EndTime = null,
-            DurationMinutes = 0,
-            Location = data.Address,
-            Latitude = data.Coordinates?.Lat,
-            Longitude = data.Coordinates?.Lng,
-            Remark = data.Speed.HasValue ? $"Speed: {data.Speed} | Odometer: {data.Odometer}" : null
         };
     }
 }

@@ -81,17 +81,20 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
         DateTime startDate,
         DateTime endDate)
     {
-        // Demo returns occasional violations for testing
+        // Every third demo driver has one missed break in the window. Derived from the id and the week so
+        // repeated syncs report the same violation instead of a new random one each time.
         var violations = new List<EldViolationDataDto>();
-        var days = (endDate - startDate).Days;
+        var seed = externalDriverId.Sum(c => c);
+        var week = (endDate - DateTime.UnixEpoch).Days / 7 * 7;
+        var violationDate = DateTime.UnixEpoch.AddDays(week + seed % 7).AddHours(14);
 
-        if (days > 7 && random.NextDouble() > 0.7)
+        if (seed % 3 == 0 && violationDate >= startDate && violationDate <= endDate)
         {
             violations.Add(new EldViolationDataDto
             {
-                ExternalViolationId = $"demo-violation-{Guid.NewGuid():N}",
+                ExternalViolationId = $"demo-violation-{externalDriverId}-{violationDate:yyyyMMdd}",
                 ExternalDriverId = externalDriverId,
-                ViolationDate = startDate.AddDays(random.Next(days)),
+                ViolationDate = violationDate,
                 ViolationType = HosViolationType.Break30Minute,
                 Description = "30-minute break violation - Demo",
                 SeverityLevel = 2
