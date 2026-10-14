@@ -1,5 +1,7 @@
 # LogisticsX Driver - App Store & Play Store Listing
 
+Play Console declarations, the Data safety answers, the review video script and the App Review notes are in [play-review-guide.md](play-review-guide.md).
+
 ---
 
 ## Promotional Text (170 chars max - iOS only, shown above description)
