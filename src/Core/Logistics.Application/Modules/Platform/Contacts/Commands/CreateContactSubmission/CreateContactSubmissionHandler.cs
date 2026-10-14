@@ -35,16 +35,17 @@ internal sealed class CreateContactSubmissionHandler(
             req.Email,
             req.Subject);
 
+        var name = $"{req.FirstName} {req.LastName}";
         var subject = req.Subject.GetDescription();
         await leadNotifier.NotifyAsync(
-            $"Contact form ({subject}): {req.FirstName} {req.LastName}",
+            $"Contact form ({subject}): {name}",
             req.Email,
             new WebsiteLeadEmailModel
             {
                 Heading = "New contact message",
                 Fields =
                 [
-                    new("Name", $"{req.FirstName} {req.LastName}"),
+                    new("Name", name),
                     new("Email", req.Email),
                     new("Phone", req.Phone ?? "-"),
                     new("Subject", subject),

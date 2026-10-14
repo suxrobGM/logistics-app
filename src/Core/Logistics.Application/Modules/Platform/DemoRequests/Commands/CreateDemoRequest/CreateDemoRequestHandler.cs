@@ -32,15 +32,16 @@ internal sealed class CreateDemoRequestHandler(
 
         logger.LogInformation("Created demo request from {Email} at {Company}", req.Email, req.Company);
 
+        var name = $"{req.FirstName} {req.LastName}";
         await leadNotifier.NotifyAsync(
-            $"Demo request: {req.FirstName} {req.LastName} ({req.Company})",
+            $"Demo request: {name} ({req.Company})",
             req.Email,
             new WebsiteLeadEmailModel
             {
                 Heading = "New demo request",
                 Fields =
                 [
-                    new("Name", $"{req.FirstName} {req.LastName}"),
+                    new("Name", name),
                     new("Email", req.Email),
                     new("Company", req.Company),
                     new("Phone", req.Phone ?? "-"),
