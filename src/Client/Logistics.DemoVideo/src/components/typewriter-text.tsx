@@ -38,7 +38,7 @@ export function TypewriterText(props: TypewriterTextProps): ReactElement {
   return (
     <div className="whitespace-pre-wrap" style={{ fontFamily, fontSize, fontWeight, color }}>
       {displayText}
-      <span className="text-primary font-light" style={{ opacity: cursorOpacity }}>
+      <span className="font-light text-primary" style={{ opacity: cursorOpacity }}>
         |
       </span>
     </div>

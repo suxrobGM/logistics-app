@@ -239,19 +239,16 @@ export async function cursorClick(page, target, { glideMs = 900 } = {}) {
 
 /** Hide elements whose text matches, before rolling. */
 export async function hideMatching(page, pattern) {
-  await page.evaluate(
-    (src) => {
-      const re = new RegExp(src, "i");
-      for (const el of document.querySelectorAll("*")) {
-        if (el.childElementCount > 3) continue;
-        if (re.test(el.textContent || "")) {
-          const box = el.closest("[class*=Card], [class*=Paper], [class*=Stack], li, tr") || el;
-          box.style.visibility = "hidden";
-        }
+  await page.evaluate((src) => {
+    const re = new RegExp(src, "i");
+    for (const el of document.querySelectorAll("*")) {
+      if (el.childElementCount > 3) continue;
+      if (re.test(el.textContent || "")) {
+        const box = el.closest("[class*=Card], [class*=Paper], [class*=Stack], li, tr") || el;
+        box.style.visibility = "hidden";
       }
-    },
-    pattern.source ?? String(pattern),
-  );
+    }
+  }, pattern.source ?? String(pattern));
 }
 
 /**

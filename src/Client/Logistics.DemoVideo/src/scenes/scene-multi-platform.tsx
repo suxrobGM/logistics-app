@@ -69,7 +69,7 @@ function DeviceFrame(props: DeviceFrameProps): ReactElement {
       style={{ transform: `scale(${scale})`, opacity: scale }}
     >
       <div
-        className="border-border-default bg-surface overflow-hidden border-2"
+        className="overflow-hidden border-2 border-border-default bg-surface"
         style={{
           width,
           height,
@@ -78,15 +78,15 @@ function DeviceFrame(props: DeviceFrameProps): ReactElement {
         }}
       >
         {/* Browser chrome */}
-        <div className="border-border-subtle bg-elevated flex h-7 items-center gap-1.5 border-b px-3">
-          <div className="bg-accent-red size-2 rounded-full" />
-          <div className="bg-accent-yellow size-2 rounded-full" />
-          <div className="bg-accent-green size-2 rounded-full" />
+        <div className="flex h-7 items-center gap-1.5 border-border-subtle border-b bg-elevated px-3">
+          <div className="size-2 rounded-full bg-accent-red" />
+          <div className="size-2 rounded-full bg-accent-yellow" />
+          <div className="size-2 rounded-full bg-accent-green" />
         </div>
         {/* Content */}
         <div style={{ height: height - 28, overflow: "hidden" }}>{children}</div>
       </div>
-      <div className="text-text-secondary mt-4 text-sm font-medium" style={{ fontFamily }}>
+      <div className="mt-4 font-medium text-sm text-text-secondary" style={{ fontFamily }}>
         {label}
       </div>
     </div>
@@ -121,7 +121,7 @@ function PhoneScreenshot(props: PhoneScreenshotProps): ReactElement {
           filter: "drop-shadow(0 25px 60px rgba(0,0,0,0.15))",
         }}
       />
-      <div className="text-text-secondary mt-4 text-sm font-medium" style={{ fontFamily }}>
+      <div className="mt-4 font-medium text-sm text-text-secondary" style={{ fontFamily }}>
         Driver App
       </div>
     </div>

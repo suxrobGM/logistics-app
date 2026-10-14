@@ -22,7 +22,7 @@ export function GlowButton(props: GlowButtonProps): ReactElement {
 
   return (
     <div
-      className="from-gradient-start to-gradient-end inline-flex items-center justify-center rounded-xl bg-linear-to-br px-12 py-4.5 text-[22px] font-semibold text-white"
+      className="inline-flex items-center justify-center rounded-xl bg-linear-to-br from-gradient-start to-gradient-end px-12 py-4.5 font-semibold text-[22px] text-white"
       style={{
         fontFamily,
         transform: `scale(${scale})`,

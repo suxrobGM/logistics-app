@@ -21,7 +21,7 @@ export function FeaturePill(props: FeaturePillProps): ReactElement {
 
   return (
     <div
-      className="mr-3 mb-2 inline-flex items-center rounded-full px-5 py-2 text-lg font-medium"
+      className="mr-3 mb-2 inline-flex items-center rounded-full px-5 py-2 font-medium text-lg"
       style={{
         fontFamily,
         backgroundColor: `${color}15`,
