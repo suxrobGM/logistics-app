@@ -20,6 +20,7 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 | [Stripe Webhooks](stripe-webhooks.md)                                | Endpoint, event list, local testing    |
 | [Samsara Setup](eld-samsara-setup.md)                                | API token scopes, webhook, mappings    |
 | [QuickBooks Setup](accounting-quickbooks-setup.md)                   | Intuit app, connect, account mapping   |
+| [Data Import](data-import.md)                                        | CSV/XLSX import from another TMS       |
 | [Roadmap](roadmap/README.md)                                         | Feature backlog, phases, statuses      |
 
 ## Platform Overview
@@ -46,6 +47,7 @@ The Angular portals and the driver app are closed source. They live in a private
 - **Trip Planning & Route Optimization** - Multi-stop routing through Mapbox.
 - **GPS Tracking** - Live fleet map over SignalR WebSockets.
 - **Fleet & Maintenance Tracking** - Trucks, trailers, schedules, VIN decoding.
+- **Data Import** - Bring customers, drivers, trucks, trailers and loads over from Datatruck, another TMS or a spreadsheet (CSV or XLSX) with header auto-mapping, a validation dry run and a per-row summary. See [Data Import](data-import.md).
 - **Load Board Integration** - Search DAT, see DAT market rates, create loads from listings, post trucks. See [DAT setup](loadboard-dat-setup.md).
 - **Broker Credit Check** - Credit score, days-to-pay, and FMCSA authority status on every load-board listing; low-credit bookings are blocked unless overridden.
 - **AI Rate Negotiation** - When a load-board listing pays below your lane floor, the agent drafts a counter-offer email to the broker. You approve it before it sends, and replies come back into the dispatch conversation. See [Broker Email Negotiation](broker-email-negotiation.md).

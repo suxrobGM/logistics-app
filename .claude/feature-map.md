@@ -52,6 +52,14 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Application: `Modules/Operations/Trucks/Commands/`, `Modules/Operations/Trucks/Queries/`
 - API/UI: `TruckController.cs`, `tms-portal/pages/trucks/`
 
+### Trailers
+
+- Domain: `Entities/Trailer.cs`, `Primitives/Enums/Trailer/` (`TrailerType` incl. `Chassis`, `TrailerStatus`); `Truck.CurrentTrailerId` (hooked trailer, filtered unique index), `Trip.TrailerId` (trailer pulled on the trip; loads read it through their trip as `LoadDto.TrailerNumber`). `LengthMeters` is always metres
+- Application: `Modules/Operations/Trailers/Commands/`, `Modules/Operations/Trailers/Queries/`; hooking is `UpdateTruckCommand.CurrentTrailerId` (moves a trailer off another truck); `CreateTrip` defaults to the truck's trailer, `UpdateTrip` takes the new truck's trailer when the truck changes
+- API/UI: `TrailerController.cs` (`Permission.Trailer.*`), `tms-portal/pages/trailers/`, current-trailer picker in `pages/trucks/components/truck-form/`, trailer picker in `pages/trips/components/trip-wizard-basic/`, driver app `feature/trips/TripDetailScreen.kt`
+- Seed: `DbMigrator/Seeders/FakeData/TrailerSeeder.cs` (one per truck plus spares)
+- Not built: trailer documents, trailer DVIR, load-board posting by trailer type
+
 ### Customers
 
 - Domain: `Entities/Customer.cs`
@@ -102,7 +110,16 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 ### Onboarding
 
 - Application: `Modules/Platform/Onboarding/Queries/GetOnboardingProgress/` - read-only checklist; step keys are camelCase, labels/icons/routes live on the client. Each step declares a `TenantFeature`, so a disabled feature drops its step rather than shipping one that can never complete
-- API/UI: `OnboardingController.cs` (`GET /onboarding/progress`, `Permission.Employee.Manage` - Owner + Manager), `tms-portal/pages/home/components/onboarding-checklist/`
+- API/UI: `OnboardingController.cs` (`GET /onboarding/progress`, `Permission.Employee.Manage` - Owner + Manager), `tms-portal/pages/home/components/onboarding-checklist/` (also links to the data import)
+
+### Data import (CSV / XLSX from another TMS)
+
+Stateless: the client re-sends the file on every step; nothing is stored. Full guide: [docs/data-import.md](../docs/data-import.md).
+
+- Application: `Modules/Platform/DataImport/` - `Constants/ImportFieldCatalog.cs` (fields + header synonyms per entity), `Constants/ImportPresets.cs` (source presets - add new ones here), `Services/` (`ImportHeaderMapper`, `ImportValueParser`, `ImportAddressParser`), `Importers/` (one `EntityImporter<TDraft>` per entity: customers, drivers, trucks, trailers, loads), `Commands/RunImport/` (validate = dry run, import), `Queries/PreviewImport|GetImportTemplate|GetImportPresets/`
+- Infrastructure: `Infrastructure.Documents/Spreadsheets/SpreadsheetReader.cs` (ExcelDataReader) behind `Application.Abstractions/Documents/ISpreadsheetReader`
+- API/UI: `ImportController.cs` (`/imports/*`, `Permission.Import.Manage`), `tms-portal/pages/settings/data-import/`
+- Trap: imported drivers get a password-less master `User`; `CreateInvitationHandler` lets such a member be invited and `AcceptInvitationHandler` sets the password on accept instead of failing "already an employee"
 
 ### Tenant presets and solo mode
 

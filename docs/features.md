@@ -16,18 +16,19 @@ The web app for owners, managers, and dispatchers.
 
 ### Dispatch and operations
 
-| Feature         | What it does                                                                                                                                             |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Loads           | Create loads with pickup and delivery stops, cargo details, and instructions. Follow each load from booked to delivered.                                 |
-| PDF import      | Upload a rate confirmation PDF and the system fills in the load for you. It reads the text first and falls back to an AI vision model for scanned pages. |
-| Trips           | Group loads into a trip with a planned multi-stop route. The system warns when a driver or truck is double-booked. Routes come from Mapbox.              |
-| Live tracking   | See every active driver on a map. Positions update over a live connection as drivers move.                                                               |
-| Public tracking | Share a tracking link with a customer or receiver. No login is needed.                                                                                   |
-| Fleet           | Trucks, trailers, registration and insurance dates, and who is assigned to what. Enter a VIN and the truck details fill in from the NHTSA database.      |
-| Maintenance     | Schedule service, record what was done and what it cost, and see what is coming due.                                                                     |
-| Customers       | Customer profiles with several contacts each, billing addresses, and shipment history.                                                                   |
-| Hazmat and ADR  | Mark a load as hazmat and record ADR equipment on each truck. Dispatch refuses to send a hazmat load to a truck without the right equipment.             |
-| Driver licenses | Track each driver's license classes and expiry dates. Drivers get reminders before a license expires, and dispatch will not assign an unlicensed driver. |
+| Feature         | What it does                                                                                                                                                                                                                  |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Loads           | Create loads with pickup and delivery stops, cargo details, and instructions. Follow each load from booked to delivered.                                                                                                      |
+| PDF import      | Upload a rate confirmation PDF and the system fills in the load for you. It reads the text first and falls back to an AI vision model for scanned pages.                                                                      |
+| Trips           | Group loads into a trip with a planned multi-stop route. The system warns when a driver or truck is double-booked. Routes come from Mapbox.                                                                                   |
+| Live tracking   | See every active driver on a map. Positions update over a live connection as drivers move.                                                                                                                                    |
+| Public tracking | Share a tracking link with a customer or receiver. No login is needed.                                                                                                                                                        |
+| Fleet           | Trucks and trailers, registration and insurance dates, and who is assigned to what. Hook a trailer to a truck and each trip records the trailer it pulled. Enter a VIN and the truck details fill in from the NHTSA database. |
+| Data import     | Move off another TMS or a spreadsheet: upload CSV or XLSX for customers, drivers, trucks, trailers and loads, check the column mapping, see a dry run, then import.                                                           |
+| Maintenance     | Schedule service, record what was done and what it cost, and see what is coming due.                                                                                                                                          |
+| Customers       | Customer profiles with several contacts each, billing addresses, and shipment history.                                                                                                                                        |
+| Hazmat and ADR  | Mark a load as hazmat and record ADR equipment on each truck. Dispatch refuses to send a hazmat load to a truck without the right equipment.                                                                                  |
+| Driver licenses | Track each driver's license classes and expiry dates. Drivers get reminders before a license expires, and dispatch will not assign an unlicensed driver.                                                                      |
 
 ### Intermodal
 
@@ -47,13 +48,13 @@ The web app for owners, managers, and dispatchers.
 
 ### Load boards
 
-| Feature             | What it does                                                                                                                                                                     |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Feature             | What it does                                                                                                                                                                                                                           |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Search              | Search DAT from one screen by origin, destination, dates and equipment, with an optional rate floor. A board that fails shows its error, so a failure never looks like "no freight". Truckstop and 123Loadboard are not available yet. |
-| DAT market rates    | With a DAT plan that includes RateView, each result shows the DAT spot rate for its lane.                                                                                        |
-| Create load         | Turn a listing into a load in the TMS with the truck assigned. Load boards have no booking API, so you confirm with the broker using the phone and email shown.                 |
-| Broker credit check | Every listing shows the broker's credit score, days to pay, and FMCSA authority status. Loads below your minimum score are blocked unless a dispatcher overrides.                |
-| Post trucks         | Advertise an open truck with its location, preferred destination, equipment, and availability window. Edit or remove it here; posts that expired on DAT are marked expired.     |
+| DAT market rates    | With a DAT plan that includes RateView, each result shows the DAT spot rate for its lane.                                                                                                                                              |
+| Create load         | Turn a listing into a load in the TMS with the truck assigned. Load boards have no booking API, so you confirm with the broker using the phone and email shown.                                                                        |
+| Broker credit check | Every listing shows the broker's credit score, days to pay, and FMCSA authority status. Loads below your minimum score are blocked unless a dispatcher overrides.                                                                      |
+| Post trucks         | Advertise an open truck with its location, preferred destination, equipment, and availability window. Edit or remove it here; posts that expired on DAT are marked expired.                                                            |
 
 ### AI
 
