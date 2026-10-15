@@ -44,6 +44,20 @@ public partial class Load
     }
 
     /// <summary>
+    /// Sets the status of a load imported from another system, dating each milestone from the source
+    /// rather than now, and raising no events: history must not notify drivers.
+    /// </summary>
+    public void RestoreImportedStatus(LoadStatus status, DateTime? pickedUpAt, DateTime? deliveredAt)
+    {
+        var now = DateTime.UtcNow;
+        Status = status;
+        DispatchedAt = status is LoadStatus.Draft or LoadStatus.Cancelled ? null : pickedUpAt ?? deliveredAt ?? now;
+        PickedUpAt = status is LoadStatus.PickedUp or LoadStatus.Delivered ? pickedUpAt ?? deliveredAt ?? now : null;
+        DeliveredAt = status is LoadStatus.Delivered ? deliveredAt ?? pickedUpAt ?? now : null;
+        CancelledAt = status is LoadStatus.Cancelled ? deliveredAt ?? pickedUpAt ?? now : null;
+    }
+
+    /// <summary>
     /// Dispatches the load to the assigned truck.
     /// Also sets the invoice to Issued status if it's in Draft.
     /// </summary>

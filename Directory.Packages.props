@@ -8,6 +8,7 @@
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.2" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
+    <PackageVersion Include="ExcelDataReader" Version="3.9.0" />
     <PackageVersion Include="FirebaseAdmin" Version="3.6.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageVersion Include="Fluid.Core" Version="2.40.0" />

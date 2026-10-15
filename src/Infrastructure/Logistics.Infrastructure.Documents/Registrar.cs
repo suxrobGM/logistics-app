@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions.Privacy;
 using Logistics.Infrastructure.Documents.Privacy;
 using Logistics.Infrastructure.Documents.Pdf;
 using Logistics.Infrastructure.Documents.PdfImport;
+using Logistics.Infrastructure.Documents.Spreadsheets;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Abstractions.Documents;
 using QuestPDF;
@@ -12,7 +13,7 @@ namespace Logistics.Infrastructure.Documents;
 public static class Registrar
 {
     /// <summary>
-    ///     Add document infrastructure (PDF generation/import, GDPR data export).
+    ///     Add document infrastructure (PDF generation/import, spreadsheet import, GDPR data export).
     /// </summary>
     public static IServiceCollection AddDocumentsInfrastructure(this IServiceCollection services)
     {
@@ -25,6 +26,9 @@ public static class Registrar
 
         // PDF import (LLM-based extraction)
         services.AddScoped<IPdfDataExtractor, LlmPdfDataExtractor>();
+
+        // CSV / XLSX data import
+        services.AddSingleton<ISpreadsheetReader, SpreadsheetReader>();
 
         // Privacy / GDPR
         services.AddScoped<IDataExportService, DataExportService>();

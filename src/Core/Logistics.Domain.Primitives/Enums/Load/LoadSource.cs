@@ -16,5 +16,10 @@ public enum LoadSource
     [Description("API")]
     Api,
 
-    LoadBoard
+    LoadBoard,
+
+    /// <summary>
+    /// Bulk CSV/XLSX import from another TMS or a spreadsheet; <c>ExternalSourceId</c> holds the source reference.
+    /// </summary>
+    Import
 }
