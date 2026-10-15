@@ -50,22 +50,27 @@ internal sealed class SendInvoiceHandler(
                 "Set it in Settings > Company before sending.");
         }
 
-        // Get or create a payment link for this invoice
-        var paymentLink = invoice.PaymentLinks.FirstOrDefault(p => p.IsValid);
-        if (paymentLink is null)
+        // A factored invoice is paid to the factor, so it gets the notice of assignment instead of a card payment link.
+        var factor = (invoice as LoadInvoice)?.Customer?.FactoringCompany;
+        PaymentLink? paymentLink = null;
+        if (factor is null)
         {
-            paymentLink = new PaymentLink
+            paymentLink = invoice.PaymentLinks.FirstOrDefault(p => p.IsValid);
+            if (paymentLink is null)
             {
-                Token = TokenGenerator.GenerateSecureToken(),
-                InvoiceId = invoice.Id,
-                ExpiresAt = DateTime.UtcNow.AddDays(DefaultExpirationDays),
-                IsActive = true,
-                CreatedByUserId = currentUserId ?? Guid.Empty
-            };
-            await tenantUow.Repository<PaymentLink>().AddAsync(paymentLink, ct);
+                paymentLink = new PaymentLink
+                {
+                    Token = TokenGenerator.GenerateSecureToken(),
+                    InvoiceId = invoice.Id,
+                    ExpiresAt = DateTime.UtcNow.AddDays(DefaultExpirationDays),
+                    IsActive = true,
+                    CreatedByUserId = currentUserId ?? Guid.Empty
+                };
+                await tenantUow.Repository<PaymentLink>().AddAsync(paymentLink, ct);
+            }
         }
 
-        var paymentUrl = $"{portalOptions.Value.BaseUrl}/pay/{tenant.Id}/{paymentLink.Token}";
+        var paymentUrl = paymentLink is null ? null : $"{portalOptions.Value.BaseUrl}/pay/{tenant.Id}/{paymentLink.Token}";
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         // Calculate amount due
@@ -102,7 +107,12 @@ internal sealed class SendInvoiceHandler(
             LoadNumber = loadNumber,
             PersonalMessage = req.PersonalMessage,
             PaymentUrl = paymentUrl,
-            ExpiresAt = paymentLink.ExpiresAt.ToString("MMMM dd, yyyy"),
+            ExpiresAt = paymentLink?.ExpiresAt.ToString("MMMM dd, yyyy"),
+            RemitToName = factor?.Name,
+            RemitToAddress = factor?.RemitToAddress is { } a
+                ? string.Join(", ", new[] { a.Line1, a.Line2, a.City, $"{a.State} {a.ZipCode}".Trim(), a.Country }
+                    .Where(s => !string.IsNullOrWhiteSpace(s)))
+                : null,
             LineItems = lineItems
         };
 

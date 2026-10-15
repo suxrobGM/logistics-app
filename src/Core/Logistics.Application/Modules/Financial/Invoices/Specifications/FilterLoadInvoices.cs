@@ -19,6 +19,7 @@ public sealed class FilterLoadInvoices : BaseSpecification<LoadInvoice>
         DateTime? startDate,
         DateTime? endDate,
         bool? overdueOnly,
+        FactoringStatus? factoringStatus,
         string? orderBy,
         int page,
         int pageSize)
@@ -90,6 +91,11 @@ public sealed class FilterLoadInvoices : BaseSpecification<LoadInvoice>
                 i.DueDate.Value < now &&
                 i.Status != InvoiceStatus.Paid &&
                 i.Status != InvoiceStatus.Cancelled);
+        }
+
+        if (factoringStatus.HasValue)
+        {
+            criteria = AddCriteria(criteria, i => i.FactoringStatus == factoringStatus.Value);
         }
 
         if (criteria is not null)

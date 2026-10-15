@@ -14,8 +14,20 @@ public record InvoiceEmailModel
     public string? CustomerName { get; init; }
     public long? LoadNumber { get; init; }
     public string? PersonalMessage { get; init; }
-    public required string PaymentUrl { get; init; }
-    public required string ExpiresAt { get; init; }
+
+    /// <summary>
+    /// Null for a factored invoice, which is paid to the factor instead (see <see cref="RemitToName"/>).
+    /// </summary>
+    public string? PaymentUrl { get; init; }
+    public string? ExpiresAt { get; init; }
+
+    /// <summary>
+    /// Factoring company the invoice was assigned to; the email then carries the notice of assignment.
+    /// </summary>
+    public string? RemitToName { get; init; }
+
+    public string? RemitToAddress { get; init; }
+
     public List<InvoiceLineItemEmailModel> LineItems { get; init; } = [];
 }
 

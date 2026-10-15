@@ -66,6 +66,16 @@ public record InvoiceDashboardDto
     public decimal CollectedThisMonth { get; set; }
 
     /// <summary>
+    /// Open balances customers owe the carrier directly, including charged-back and rejected factored invoices.
+    /// </summary>
+    public decimal OwedByCustomers { get; set; }
+
+    /// <summary>
+    /// Owed by factoring companies: invoices submitted and awaiting funding, plus reserve held on funded ones.
+    /// </summary>
+    public decimal OwedByFactor { get; set; }
+
+    /// <summary>
     /// Recent invoices for the dashboard.
     /// </summary>
     public List<InvoiceDto> RecentInvoices { get; set; } = [];

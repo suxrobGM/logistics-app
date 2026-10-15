@@ -74,6 +74,15 @@
                 </div>
             </div>
 
+            {% if RemitToName %}
+            <div style="border: 1px solid #1a1a1a; border-radius: 6px; padding: 16px; margin: 24px 0;">
+                <p style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">Notice of Assignment</p>
+                <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6; margin: 0;">
+                    This invoice has been assigned to and must be paid only to <strong>{{ RemitToName }}</strong>{% if RemitToAddress %}, {{ RemitToAddress }}{% endif %}.
+                    Payment to anyone else does not discharge the debt.
+                </p>
+            </div>
+            {% else %}
             <div style="text-align: center; margin: 32px 0;">
                 <a href="{{ PaymentUrl }}" style="display: inline-block; background-color: #28a745; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 500;">
                     Pay Invoice
@@ -83,6 +92,7 @@
             <p style="color: #6c757d; font-size: 14px; line-height: 1.6; margin: 16px 0 0 0;">
                 This payment link expires on {{ ExpiresAt }}.
             </p>
+            {% endif %}
 
             <hr style="border: none; border-top: 1px solid #e9ecef; margin: 24px 0;">
 

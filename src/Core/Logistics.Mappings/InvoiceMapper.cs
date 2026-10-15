@@ -32,7 +32,8 @@ public static class InvoiceMapper
                 LoadId = loadInvoice.LoadId,
                 LoadNumber = loadInvoice.Load.Number,
                 CustomerId = loadInvoice.CustomerId,
-                Customer = loadInvoice.Customer.ToDto()
+                Customer = loadInvoice.Customer.ToDto(),
+                FactoringStatus = loadInvoice.FactoringStatus
             },
             SubscriptionInvoice subscriptionInvoice => new InvoiceDto
             {

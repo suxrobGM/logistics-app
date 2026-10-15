@@ -53,6 +53,14 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
             .Select(i => i.ToDto())
             .ToList();
 
+        // A funded invoice is settled by the factor's purchase; what the factor still owes is its reserve.
+        var openInvoices = invoices.OfType<LoadInvoice>()
+            .Where(i => i.Status is InvoiceStatus.Issued or InvoiceStatus.Sent or InvoiceStatus.PartiallyPaid
+                or InvoiceStatus.Overdue)
+            .ToList();
+        var fundedItems = await tenantUow.Repository<FactoringBatchItem>()
+            .GetListAsync(i => i.Status == FactoringStatus.Funded, ct);
+
         var dashboard = new InvoiceDashboardDto
         {
             DraftCount = draftInvoices.Count,
@@ -69,9 +77,15 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
                               overdueInvoices.Sum(i => i.Total.Amount) +
                               partiallyPaidRemaining,
             CollectedThisMonth = paymentsThisMonth,
+            OwedByCustomers = openInvoices.Where(i => i.FactoringStatus != FactoringStatus.Submitted).Sum(Outstanding),
+            OwedByFactor = openInvoices.Where(i => i.FactoringStatus == FactoringStatus.Submitted).Sum(Outstanding)
+                           + fundedItems.Sum(i => i.ReserveOutstanding),
             RecentInvoices = recentInvoices
         };
 
         return Result<InvoiceDashboardDto>.Ok(dashboard);
     }
+
+    private static decimal Outstanding(Invoice invoice) =>
+        invoice.Total.Amount - invoice.Payments.Sum(p => p.Amount.Amount);
 }

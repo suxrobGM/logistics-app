@@ -14,5 +14,10 @@ public class CustomerDto
     public string? Notes { get; set; }
     public string? TaxId { get; set; }
     public bool IsVatExempt { get; set; }
+
+    /// <summary>
+    /// The factoring company this customer's invoices are sold to; null when the carrier collects itself.
+    /// </summary>
+    public Guid? FactoringCompanyId { get; set; }
     public DateTime CreatedAt { get; set; }
 }

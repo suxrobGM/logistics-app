@@ -28,7 +28,8 @@ internal sealed class CreateCustomerHandler(ITenantUnitOfWork tenantUow)
             Status = req.Status,
             Notes = req.Notes,
             TaxId = req.TaxId,
-            IsVatExempt = req.IsVatExempt
+            IsVatExempt = req.IsVatExempt,
+            FactoringCompanyId = req.FactoringCompanyId
         };
         await tenantUow.Repository<Customer>().AddAsync(newCustomer, ct);
         await tenantUow.SaveChangesAsync(ct);

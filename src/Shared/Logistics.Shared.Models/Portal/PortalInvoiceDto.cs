@@ -21,4 +21,9 @@ public class PortalInvoiceDto
     public DateTime CreatedAt { get; set; }
     public DateTime? PaidAt { get; set; }
     public DateTime? DueDate { get; set; }
+
+    /// <summary>
+    /// Set when the invoice was assigned to a factoring company: the customer pays the factor, not the carrier.
+    /// </summary>
+    public RemitToDto? RemitTo { get; set; }
 }

@@ -65,6 +65,12 @@ internal sealed class CreatePublicCheckoutSessionHandler(
             return Result<PublicCheckoutSessionDto>.Fail("This invoice has been cancelled.");
         }
 
+        if (invoice is LoadInvoice { Customer.FactoringCompany: { } factor })
+        {
+            return Result<PublicCheckoutSessionDto>.Fail(
+                $"This invoice was assigned to {factor.Name}. Please pay {factor.Name} directly.");
+        }
+
         var totalPaid = invoice.Payments.Sum(p => p.Amount.Amount);
         var amountDue = invoice.Total.Amount - totalPaid;
         var paymentAmount = req.Amount ?? amountDue;

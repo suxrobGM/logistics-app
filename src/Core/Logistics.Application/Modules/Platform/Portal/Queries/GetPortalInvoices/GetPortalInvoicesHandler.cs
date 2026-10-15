@@ -63,7 +63,10 @@ internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
             PaidAt = i.Payments.Any(p => p.Status == PaymentStatus.Paid)
                 ? i.Payments.Where(p => p.Status == PaymentStatus.Paid).Max(p => p.CreatedAt)
                 : null,
-            DueDate = i.DueDate
+            DueDate = i.DueDate,
+            RemitTo = i.Customer.FactoringCompany == null
+                ? null
+                : new RemitToDto { Name = i.Customer.FactoringCompany.Name, Address = i.Customer.FactoringCompany.RemitToAddress }
         }).ToArrayAsync(ct);
 
         return PagedResult<PortalInvoiceDto>.Ok(invoices, totalItems, req.PageSize);

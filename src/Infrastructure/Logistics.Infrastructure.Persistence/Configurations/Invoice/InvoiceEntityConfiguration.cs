@@ -61,6 +61,9 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
             builder.HasOne(i => i.Load)
                 .WithOne(l => l.Invoice)
                 .HasForeignKey<LoadInvoice>(i => i.LoadId);
+
+            builder.Property(i => i.FactoringStatus)
+                .HasDefaultValue(FactoringStatus.NotFactored);
         }
     }
 

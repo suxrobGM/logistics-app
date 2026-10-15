@@ -59,4 +59,9 @@ public class GetInvoicesQuery : SearchableQuery, IQuery<PagedResult<InvoiceDto>>
     ///     Filter payroll invoices by employee salary type
     /// </summary>
     public SalaryType? SalaryType { get; set; }
+
+    /// <summary>
+    ///     Filter load invoices by where they stand with the factoring company
+    /// </summary>
+    public FactoringStatus? FactoringStatus { get; set; }
 }

@@ -44,7 +44,12 @@ public record PublicInvoiceDto
     public long? LoadNumber { get; set; }
 
     /// <summary>
-    /// Whether the invoice can accept payments (not fully paid or cancelled).
+    /// Whether the invoice can accept payments (not fully paid, cancelled or factored).
     /// </summary>
-    public bool CanPay => Status != InvoiceStatus.Paid && Status != InvoiceStatus.Cancelled;
+    public bool CanPay => RemitTo is null && Status != InvoiceStatus.Paid && Status != InvoiceStatus.Cancelled;
+
+    /// <summary>
+    /// Set when the invoice was assigned to a factoring company, which the customer must pay instead.
+    /// </summary>
+    public RemitToDto? RemitTo { get; set; }
 }

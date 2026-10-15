@@ -16,7 +16,7 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
     {
         // Determine which type of invoices to query
         if (req.InvoiceType == InvoiceType.Load || req.LoadId.HasValue ||
-            req.CustomerId.HasValue || !string.IsNullOrEmpty(req.CustomerName))
+            req.CustomerId.HasValue || !string.IsNullOrEmpty(req.CustomerName) || req.FactoringStatus.HasValue)
         {
             return GetLoadInvoices(req);
         }
@@ -61,6 +61,7 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
             req.StartDate,
             req.EndDate,
             req.OverdueOnly,
+            req.FactoringStatus,
             req.OrderBy,
             req.Page,
             req.PageSize);
@@ -77,6 +78,7 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
             req.StartDate,
             req.EndDate,
             req.OverdueOnly,
+            req.FactoringStatus,
             null,
             1,
             int.MaxValue);

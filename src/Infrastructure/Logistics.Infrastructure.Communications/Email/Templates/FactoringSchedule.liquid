@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+        <div style="background-color: white; border-radius: 8px; padding: 40px;">
+            <h1 style="color: #1a1a1a; font-size: 22px; margin: 0 0 24px 0;">Schedule of Accounts #{{ ScheduleNumber }}</h1>
+
+            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+                <strong>{{ CompanyName }}</strong> submits the invoices below to {{ FactorName }} for purchase.
+                The schedule, each invoice and its delivery paperwork (POD/BOL, rate confirmation) are attached.
+            </p>
+
+            {% if Notes %}
+            <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6; margin: 0 0 16px 0;">{{ Notes }}</p>
+            {% endif %}
+
+            <table style="width: 100%; border-collapse: collapse; margin: 24px 0;">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding: 8px 0; color: #6c757d; font-size: 12px; border-bottom: 1px solid #e9ecef;">Invoice</th>
+                        <th style="text-align: left; padding: 8px 0; color: #6c757d; font-size: 12px; border-bottom: 1px solid #e9ecef;">Load</th>
+                        <th style="text-align: left; padding: 8px 0; color: #6c757d; font-size: 12px; border-bottom: 1px solid #e9ecef;">Debtor</th>
+                        <th style="text-align: right; padding: 8px 0; color: #6c757d; font-size: 12px; border-bottom: 1px solid #e9ecef;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in Invoices %}
+                    <tr>
+                        <td style="padding: 8px 0; color: #4a4a4a; font-size: 14px;">#{{ invoice.InvoiceNumber }}</td>
+                        <td style="padding: 8px 0; color: #4a4a4a; font-size: 14px;">#{{ invoice.LoadNumber }}</td>
+                        <td style="padding: 8px 0; color: #4a4a4a; font-size: 14px;">{{ invoice.CustomerName }}</td>
+                        <td style="text-align: right; padding: 8px 0; color: #4a4a4a; font-size: 14px;">{{ invoice.Amount }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3" style="padding: 12px 0 0 0; color: #1a1a1a; font-size: 14px; font-weight: 600; border-top: 1px solid #e9ecef;">Total</td>
+                        <td style="text-align: right; padding: 12px 0 0 0; color: #1a1a1a; font-size: 14px; font-weight: 600; border-top: 1px solid #e9ecef;">{{ Total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            {% if ReplyEmail %}
+            <p style="color: #6c757d; font-size: 12px; line-height: 1.6; margin: 0;">
+                Reply to this email or write to {{ ReplyEmail }} with funding details or questions.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

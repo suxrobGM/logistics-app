@@ -14,4 +14,5 @@ public class UpdateCustomerCommand : ICommand, IHaveId
     public string? Notes { get; set; }
     public string? TaxId { get; set; }
     public bool IsVatExempt { get; set; }
+    public Guid? FactoringCompanyId { get; set; }
 }

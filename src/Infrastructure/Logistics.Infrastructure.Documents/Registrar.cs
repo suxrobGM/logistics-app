@@ -24,6 +24,7 @@ public static class Registrar
         services.AddScoped<IPayrollPayStubService, PayrollPayStubService>();
         services.AddScoped<IIftaReportPdfService, Pdf.Ifta.IftaReportPdfService>();
         services.AddScoped<IVehicleBolPdfService, VehicleBolPdfService>();
+        services.AddScoped<IFactoringSchedulePdfService, Pdf.Factoring.FactoringSchedulePdfService>();
 
         // PDF import (LLM-based extraction)
         services.AddScoped<IPdfDataExtractor, LlmPdfDataExtractor>();

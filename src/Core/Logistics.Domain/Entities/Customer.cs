@@ -27,6 +27,13 @@ public class Customer : AuditableEntity, ITenantEntity
     public bool IsVatExempt { get; set; }
 
     /// <summary>
+    /// The factoring company this customer's invoices are sold to; null when the carrier collects itself.
+    /// Invoices to a factored customer carry the factor's notice of assignment and remit-to address.
+    /// </summary>
+    public Guid? FactoringCompanyId { get; set; }
+    public virtual FactoringCompany? FactoringCompany { get; set; }
+
+    /// <summary>
     /// Detention free time agreed with this customer. Null falls back to the tenant's.
     /// </summary>
     public int? DetentionFreeMinutes { get; set; }

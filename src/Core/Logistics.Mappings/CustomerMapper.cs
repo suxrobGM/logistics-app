@@ -10,5 +10,6 @@ public static partial class CustomerMapper
 {
     [MapperIgnoreSource(nameof(Customer.Invoices))]
     [MapperIgnoreSource(nameof(Customer.DomainEvents))]
+    [MapperIgnoreSource(nameof(Customer.FactoringCompany))]
     public static partial CustomerDto ToDto(this Customer entity);
 }

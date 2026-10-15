@@ -53,6 +53,11 @@ public record InvoiceDto
     public Guid? CustomerId { get; set; }
     public CustomerDto? Customer { get; set; }
 
+    /// <summary>
+    /// Where a load invoice stands with the factoring company.
+    /// </summary>
+    public FactoringStatus FactoringStatus { get; set; }
+
     // PayrollInvoice fields
     public Guid? EmployeeId { get; set; }
     public EmployeeDto? Employee { get; set; }

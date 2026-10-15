@@ -1,0 +1,3 @@
+namespace Logistics.Application.Modules.Financial.Factoring.Commands;
+
+internal sealed class CreateFactoringCompanyValidator : FactoringCompanyValidatorBase<CreateFactoringCompanyCommand>;

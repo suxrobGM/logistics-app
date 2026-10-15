@@ -8,11 +8,12 @@ using QuestPDF.Infrastructure;
 namespace Logistics.Infrastructure.Documents.Pdf.Invoice;
 
 /// <summary>
-/// Right-aligned totals box: Subtotal / Tax / Total / Paid / Balance Due.
+/// Right-aligned totals box: Subtotal / Tax / Total, then Paid / Balance Due when payments are shown.
 /// </summary>
 internal static class InvoiceTotalsSection
 {
-    public static void Render(IContainer container, LoadInvoice invoice, string taxLabel, bool showTax)
+    public static void Render(
+        IContainer container, LoadInvoice invoice, string taxLabel, bool showTax, bool showPayments)
     {
         var currency = invoice.Total.Currency;
 
@@ -39,7 +40,7 @@ internal static class InvoiceTotalsSection
             });
 
             var paid = invoice.Payments.Where(p => p.Status == PaymentStatus.Paid).ToList();
-            if (paid.Count == 0) return;
+            if (!showPayments || paid.Count == 0) return;
 
             var totalPaid = paid.Sum(p => p.Amount.Amount);
             totals.Item().PaddingTop(10).Row(row =>
