@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.IdentityAccess.Customers.Commands;
 using Logistics.Application.Modules.IdentityAccess.Customers.Queries;
+using Logistics.Application.Modules.Financial.Accessorials.Commands;
+using Logistics.Application.Modules.Financial.Accessorials.Queries;
 
 namespace Logistics.API.Controllers;
 
@@ -61,5 +63,29 @@ public class CustomerController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new DeleteCustomerCommand { Id = id });
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    ///     The customer's own detention terms; null fields use the company default.
+    /// </summary>
+    [HttpGet("{id:guid}/detention", Name = "GetCustomerDetentionTerms")]
+    [ProducesResponseType(typeof(DetentionTermsDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Customer.View)]
+    public async Task<IActionResult> GetDetentionTerms(Guid id)
+    {
+        var result = await mediator.Send(new GetCustomerDetentionTermsQuery { CustomerId = id });
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("{id:guid}/detention", Name = "UpdateCustomerDetentionTerms")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Customer.Manage)]
+    public async Task<IActionResult> UpdateDetentionTerms(Guid id, [FromBody] UpdateCustomerDetentionTermsCommand request)
+    {
+        request.CustomerId = id;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }

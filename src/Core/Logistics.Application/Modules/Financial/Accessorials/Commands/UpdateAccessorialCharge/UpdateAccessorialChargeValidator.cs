@@ -1,0 +1,3 @@
+namespace Logistics.Application.Modules.Financial.Accessorials.Commands;
+
+internal sealed class UpdateAccessorialChargeValidator : AccessorialChargeValidatorBase<UpdateAccessorialChargeCommand>;

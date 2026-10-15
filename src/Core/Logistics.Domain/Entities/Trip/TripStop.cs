@@ -26,6 +26,11 @@ public class TripStop : Entity, ITenantEntity
     public DateTime? ArrivedAt { get; set; }
     public DateTime? DepartedAt { get; set; }
 
+    /// <summary>
+    ///     When the dispatcher was told the truck had overstayed its free time here; at most one alert per stop.
+    /// </summary>
+    public DateTime? DetentionAlertedAt { get; set; }
+
     public Guid LoadId { get; set; }
 
     /// <summary>

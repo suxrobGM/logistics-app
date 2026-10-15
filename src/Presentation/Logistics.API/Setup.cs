@@ -292,6 +292,7 @@ internal static class Setup
         IftaFilingReminderJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
         ContainerDeadlineAlertJob.ScheduleJobs();
+        DetentionAlertJob.ScheduleJobs();
         LicenseExpiryReminderJob.ScheduleJobs();
         InvitationExpiryJob.ScheduleJobs();
         DataExportProcessingJob.ScheduleJobs();

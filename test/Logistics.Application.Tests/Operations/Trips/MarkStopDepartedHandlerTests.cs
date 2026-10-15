@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Modules.Operations.Trips.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -48,7 +49,8 @@ public class MarkStopDepartedHandlerTests
         _currentUser.IsInRole(Arg.Is<string[]>(r => r.Contains(TenantRoles.Driver))).Returns(true);
         _currentUser.GetUserId().Returns(DriverId);
 
-        _sut = new MarkStopDepartedHandler(_tenantUow, _currentUser, NullLogger<MarkStopDepartedHandler>.Instance);
+        _sut = new MarkStopDepartedHandler(_tenantUow, _currentUser, Substitute.For<ILoadChargeService>(),
+            NullLogger<MarkStopDepartedHandler>.Instance);
     }
 
     private Task<Result> Depart() =>

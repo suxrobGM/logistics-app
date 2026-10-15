@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -12,6 +13,7 @@ namespace Logistics.Application.Modules.Operations.Trips.Commands;
 internal sealed class MarkStopDepartedHandler(
     ITenantUnitOfWork tenantUow,
     ICurrentUserService currentUser,
+    ILoadChargeService loadChargeService,
     ILogger<MarkStopDepartedHandler> logger)
     : IRequestHandler<MarkStopDepartedCommand, Result>
 {
@@ -38,6 +40,7 @@ internal sealed class MarkStopDepartedHandler(
             return Result.Fail(ex.Message);
         }
 
+        await loadChargeService.ApplyDetentionAsync(trip.Stops.First(s => s.Id == req.StopId), ct);
         await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation(

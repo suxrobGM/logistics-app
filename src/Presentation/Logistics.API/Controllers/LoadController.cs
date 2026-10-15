@@ -267,6 +267,19 @@ public class LoadController(IMediator mediator) : ControllerBase
         });
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
+
+    /// <summary>
+    ///     Dwell time, free time and detention at each stop the truck has reached.
+    /// </summary>
+    [HttpGet("{id:guid}/detention", Name = "GetLoadDetention")]
+    [ProducesResponseType(typeof(List<StopDetentionDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Load.View)]
+    public async Task<IActionResult> GetDetention(Guid id)
+    {
+        var result = await mediator.Send(new GetLoadDetentionQuery { LoadId = id });
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+    }
 }
 
 /// <summary>
