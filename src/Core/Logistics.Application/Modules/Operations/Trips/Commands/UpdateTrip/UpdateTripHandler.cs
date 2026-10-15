@@ -48,6 +48,20 @@ internal sealed class UpdateTripHandler(
             truckChanged = true;
         }
 
+        if (req.TrailerId is { } trailerId && trailerId != trip.TrailerId)
+        {
+            if (await uow.Repository<Trailer>().GetByIdAsync(trailerId, ct) is null)
+            {
+                return Result.Fail($"Trailer '{trailerId}' not found.");
+            }
+
+            trip.TrailerId = trailerId;
+        }
+        else if (truckChanged && req.TrailerId is null)
+        {
+            trip.TrailerId = newTruck!.CurrentTrailerId;
+        }
+
         // A map of current loads on the trip for easy access, key is the load ID and value is the load entity
         var loadsMap = trip.GetLoads().ToDictionary(l => l.Id);
 

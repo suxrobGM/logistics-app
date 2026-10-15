@@ -78,6 +78,21 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(Truck)}.Manage";
     }
 
+    public static class Trailer
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Trailer)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Trailer)}.Manage";
+    }
+
+    /// <summary>
+    /// Bulk CSV/XLSX import of customers, drivers, trucks, trailers and loads. Manage only: an
+    /// import has nothing to view, and it writes every entity it touches.
+    /// </summary>
+    public static class Import
+    {
+        public const string Manage = $"{nameof(Permission)}.{nameof(Import)}.Manage";
+    }
+
     public static class User
     {
         public const string View = $"{nameof(Permission)}.{nameof(User)}.View";

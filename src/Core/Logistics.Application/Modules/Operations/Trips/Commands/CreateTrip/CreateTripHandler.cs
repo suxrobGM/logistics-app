@@ -28,6 +28,13 @@ internal sealed class CreateTripHandler(
             }
         }
 
+        var trailerId = req.TrailerId ?? truck?.CurrentTrailerId;
+        if (req.TrailerId is { } requestedTrailerId &&
+            await tenantUow.Repository<Trailer>().GetByIdAsync(requestedTrailerId, ct) is null)
+        {
+            return Result<Guid>.Fail($"Could not find the trailer with ID '{requestedTrailerId}'");
+        }
+
         var existingLoads = await GetExistingLoadsAsync(req, truck);
         var created = await CreateNewLoadsAsync(req);
         if (!created.IsSuccess)
@@ -47,6 +54,7 @@ internal sealed class CreateTripHandler(
         }
 
         var trip = Trip.Create(req.Name, truck, loads, stops, req.TotalDistance);
+        trip.TrailerId = trailerId;
 
         await tenantUow.Repository<Trip>().AddAsync(trip, ct);
 

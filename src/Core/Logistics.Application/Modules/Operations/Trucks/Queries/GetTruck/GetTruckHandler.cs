@@ -65,6 +65,7 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow)
     {
         var truckDto = truckEntity.ToDto(new List<LoadDto>());
         truckDto.Loads = [.. loads.Select(l => l.ToDto(intermodal))];
+        truckDto.CurrentTrailerNumber = truckEntity.CurrentTrailer?.Number;
         return truckDto;
     }
 }

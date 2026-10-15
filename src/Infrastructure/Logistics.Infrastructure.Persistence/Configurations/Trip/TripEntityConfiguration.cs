@@ -19,6 +19,11 @@ internal sealed class TripEntityConfiguration : IEntityTypeConfiguration<Trip>
         builder.HasIndex(i => i.Number)
             .IsUnique();
 
+        builder.HasOne(i => i.Trailer)
+            .WithMany()
+            .HasForeignKey(i => i.TrailerId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.HasMany(i => i.Stops)
             .WithOne(i => i.Trip)
             .HasForeignKey(i => i.TripId)

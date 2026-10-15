@@ -54,6 +54,12 @@ public class LoadDto
     public long? TripNumber { get; set; }
     public string? TripName { get; set; }
 
+    /// <summary>
+    ///     The trailer recorded on the load's trip.
+    /// </summary>
+    public Guid? TrailerId { get; set; }
+    public string? TrailerNumber { get; set; }
+
     public IEnumerable<string>? AssignedTruckDriversName { get; set; }
     public InvoiceDto? Invoice { get; set; }
 }

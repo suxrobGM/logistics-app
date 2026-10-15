@@ -6,6 +6,11 @@ public class CreateTripCommand : ICommand<Result<Guid>>
 {
     public string Name { get; set; } = null!;
     public Guid? TruckId { get; set; }
+
+    /// <summary>
+    ///     The trailer pulled on the trip. Defaults to the truck's current trailer when omitted.
+    /// </summary>
+    public Guid? TrailerId { get; set; }
     public IEnumerable<CreateTripLoadCommand>? NewLoads { get; set; }
     public IEnumerable<Guid>? AttachedLoadIds { get; set; }
     public IEnumerable<TripStopDto>? OptimizedStops { get; set; }

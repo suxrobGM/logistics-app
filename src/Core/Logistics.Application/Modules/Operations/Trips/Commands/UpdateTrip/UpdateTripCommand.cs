@@ -8,6 +8,11 @@ public class UpdateTripCommand : ICommand
     public string? Name { get; set; }
     public Guid? TruckId { get; set; }
 
+    /// <summary>
+    ///     Records a different trailer. Null keeps it, unless the truck changes, which takes the new truck's trailer.
+    /// </summary>
+    public Guid? TrailerId { get; set; }
+
     public IEnumerable<CreateTripLoadCommand>? NewLoads { get; set; }
     public IEnumerable<Guid>? AttachedLoadIds { get; set; }
     public IEnumerable<Guid>? DetachedLoadIds { get; set; }

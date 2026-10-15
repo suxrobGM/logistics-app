@@ -56,6 +56,8 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Driver)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Load)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Truck)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Trailer)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Import)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.TenantRole)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Notification)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Stat)));
@@ -91,6 +93,8 @@ public static class TenantRolePermissions
         list.AddRange(GetBasicPermissions());
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Load)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Truck)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Trailer)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Import)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Notification)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Customer)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Payment)));
@@ -130,6 +134,7 @@ public static class TenantRolePermissions
         list.Add(Permission.Payment.View);
         list.Add(Permission.Invoice.View);
         list.Add(Permission.Truck.View);
+        list.Add(Permission.Trailer.View);
         list.Add(Permission.Stat.View);
         list.Add(Permission.Eld.View);
         list.Add(Permission.Expense.View);
@@ -156,6 +161,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Driver)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Message)));
         list.Add(Permission.Truck.View);
+        list.Add(Permission.Trailer.View);
         list.Add(Permission.Load.View);
         list.Add(Permission.Stat.View);
         list.Add(Permission.Dvir.View);

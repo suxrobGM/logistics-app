@@ -22,5 +22,7 @@ public record TruckDto
     public GeoPoint? CurrentLocation { get; set; }
     public EmployeeDto? MainDriver { get; set; }
     public EmployeeDto? SecondaryDriver { get; set; }
+    public Guid? CurrentTrailerId { get; set; }
+    public string? CurrentTrailerNumber { get; set; }
     public IEnumerable<LoadDto> Loads { get; set; } = [];
 }

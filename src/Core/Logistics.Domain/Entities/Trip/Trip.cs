@@ -30,6 +30,12 @@ public partial class Trip : AuditableEntity, ITenantEntity
     public Guid? TruckId { get; set; }
     public virtual Truck? Truck { get; set; }
 
+    /// <summary>
+    /// The trailer pulled on this trip, kept so history survives a later swap on the truck.
+    /// </summary>
+    public Guid? TrailerId { get; set; }
+    public virtual Trailer? Trailer { get; set; }
+
     public virtual List<TripStop> Stops { get; } = [];
 
     /// <summary>

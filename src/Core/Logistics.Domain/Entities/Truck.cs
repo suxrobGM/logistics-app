@@ -82,6 +82,13 @@ public class Truck : Entity, ITenantEntity
 
     public Guid? SecondaryDriverId { get; set; }
 
+    /// <summary>
+    ///     The trailer currently hooked to this truck. New trips default to it.
+    /// </summary>
+    public virtual Trailer? CurrentTrailer { get; set; }
+
+    public Guid? CurrentTrailerId { get; set; }
+
     //public virtual List<Employee> Drivers { get; set; } = [];
     public virtual List<Load> Loads { get; } = [];
     public virtual List<Trip> Trips { get; } = [];

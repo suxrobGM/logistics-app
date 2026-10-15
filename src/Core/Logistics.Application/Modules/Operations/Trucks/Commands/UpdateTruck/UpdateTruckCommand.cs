@@ -20,6 +20,11 @@ public class UpdateTruckCommand : ICommand
     public string? LicensePlateState { get; set; }
 
     /// <summary>
+    /// The trailer hooked to the truck. Null unhooks it; a trailer hooked elsewhere moves here.
+    /// </summary>
+    public Guid? CurrentTrailerId { get; set; }
+
+    /// <summary>
     /// Replaces the truck's ADR equipment configuration when supplied. Null leaves it unchanged.
     /// </summary>
     public AdrEquipmentDto? AdrEquipment { get; set; }

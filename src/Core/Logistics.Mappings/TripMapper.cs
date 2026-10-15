@@ -10,6 +10,7 @@ public static partial class TripMapper
 {
     [MapperIgnoreSource(nameof(Trip.DomainEvents))]
     [MapProperty(nameof(Trip.Truck.Number), nameof(TripDto.TruckNumber))]
+    [MapProperty(nameof(Trip.Trailer.Number), nameof(TripDto.TrailerNumber))]
     [MapProperty(nameof(Trip.Stops), nameof(TripDto.Stops))]
     [MapProperty(nameof(Trip.CreatedAt), nameof(TripDto.CreatedAt))]
     [MapPropertyFromSource(nameof(TripDto.OriginAddress), Use = nameof(MapOriginAddress))]

@@ -44,10 +44,13 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
         baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
 
         var entities = await baseQuery.ToArrayAsync(ct);
+        var trailerNumbers = await GetTrailerNumbersAsync(entities, ct);
 
         if (!req.IncludeLoads)
         {
-            var withoutLoads = entities.Select(i => i.ToDto(new List<LoadDto>())).ToArray();
+            var withoutLoads = entities
+                .Select(i => WithTrailer(i.ToDto(new List<LoadDto>()), trailerNumbers))
+                .ToArray();
             return PagedResult<TruckDto>.Ok(withoutLoads, totalItems, req.PageSize);
         }
 
@@ -64,9 +67,30 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
             .ToDictionary(g => g.Key, g => g.ToArray());
 
         var trucks = entities
-            .Select(i => i.ToDto(loadsByTruck.GetValueOrDefault(i.Id, []).Select(load => load.ToDto(intermodal))))
+            .Select(i => WithTrailer(
+                i.ToDto(loadsByTruck.GetValueOrDefault(i.Id, []).Select(load => load.ToDto(intermodal))),
+                trailerNumbers))
             .ToArray();
 
         return PagedResult<TruckDto>.Ok(trucks, totalItems, req.PageSize);
+    }
+
+    private async Task<Dictionary<Guid, string>> GetTrailerNumbersAsync(Truck[] trucks, CancellationToken ct)
+    {
+        var trailerIds = trucks.Where(i => i.CurrentTrailerId != null).Select(i => i.CurrentTrailerId!.Value).ToArray();
+        if (trailerIds.Length == 0)
+        {
+            return [];
+        }
+
+        return await tenantUow.Repository<Trailer>().Query()
+            .Where(i => trailerIds.Contains(i.Id))
+            .ToDictionaryAsync(i => i.Id, i => i.Number, ct);
+    }
+
+    private static TruckDto WithTrailer(TruckDto dto, Dictionary<Guid, string> trailerNumbers)
+    {
+        dto.CurrentTrailerNumber = dto.CurrentTrailerId is { } id ? trailerNumbers.GetValueOrDefault(id) : null;
+        return dto;
     }
 }

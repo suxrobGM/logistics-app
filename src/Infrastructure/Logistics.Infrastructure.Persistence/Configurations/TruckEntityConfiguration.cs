@@ -28,6 +28,16 @@ internal sealed class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
             .HasForeignKey(i => i.SecondaryDriverId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        builder.HasOne(i => i.CurrentTrailer)
+            .WithMany()
+            .HasForeignKey(i => i.CurrentTrailerId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // A trailer can be hooked to one truck at a time.
+        builder.HasIndex(i => i.CurrentTrailerId)
+            .IsUnique()
+            .HasFilter("current_trailer_id IS NOT NULL");
+
         builder.HasMany(i => i.Loads)
             .WithOne(i => i.AssignedTruck)
             .HasForeignKey(i => i.AssignedTruckId)

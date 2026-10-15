@@ -32,6 +32,7 @@ public static class TruckMapper
             Loads = [],
             MainDriver = entity.MainDriver?.ToDto(),
             SecondaryDriver = entity.SecondaryDriver?.ToDto(),
+            CurrentTrailerId = entity.CurrentTrailerId,
         };
     }
 
