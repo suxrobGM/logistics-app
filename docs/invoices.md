@@ -136,6 +136,32 @@ POST /invoices/{id}/payments/manual
 }
 ```
 
+## Factoring
+
+Carriers who sell invoices to a factoring company set the factor up under Settings > Factoring
+(`/factoring/companies`) and pick it on each factored customer (`Customer.FactoringCompanyId`).
+
+- **Notice of assignment**: a factored customer's invoice PDF prints the factor's remit-to block and
+  leaves out the carrier's payment state; the invoice email swaps the payment link for the notice;
+  the customer portal shows "Pay to {factor}" and card checkout is refused.
+- **Submit** (`POST /factoring/batches`, Load Invoices > Submit to factor): the invoices go on a
+  schedule of accounts (`FactoringBatch`, one `FactoringBatchItem` per invoice) emailed to the
+  factor's submission address with the schedule PDF, each invoice PDF and the loads' POD, BOL and
+  rate confirmation. Each invoice must be issued, sent or overdue with no payments, billed to a
+  customer factored with that factor, not already submitted, and have a POD or BOL on its load; the
+  error names every invoice that fails.
+- **Funding** (`POST /factoring/batches/{id}/funding`): per invoice the advance and fee, or a
+  rejection. Advance + fee + reserve always equals the invoice total. Funding records a payment for
+  the total, so the invoice reads Paid; the reserve stays owed by the factor until
+  `POST .../items/{itemId}/reserverelease`.
+- **Chargeback** (`POST .../items/{itemId}/chargeback`): the sale payment is removed, the invoice
+  goes back to sent/overdue and `FactoringStatus` becomes `ChargedBack`.
+
+`LoadInvoice.FactoringStatus` is `NotFactored`, `Submitted`, `Funded`, `Rejected` or `ChargedBack`
+and filters `GET /invoices?FactoringStatus=`. The schedule status (`Submitted`, `PartiallyFunded`,
+`Funded`, `Rejected`) is derived from its items. See
+[factoring-integration](roadmap/factoring-integration.md) for what is not built.
+
 ## Dashboard Statistics
 
 ```http
@@ -155,6 +181,8 @@ Response:
   "paidAmount": 75000.00,
   "totalOutstanding": 20500.00,
   "collectedThisMonth": 12000.00,
+  "owedByCustomers": 18000.00,   // open balances customers owe the carrier
+  "owedByFactor": 3200.00,       // submitted and awaiting funding, plus reserve held
   "recentInvoices": [...]
 }
 ```

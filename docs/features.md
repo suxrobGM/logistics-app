@@ -92,6 +92,7 @@ Central Dispatch and Super Dispatch are not connected. Neither offers a public c
 | Tax            | Tax is worked out by Stripe Tax or by rates you enter yourself. US sales tax and EU VAT are both handled, and invoices show the breakdown.                             |
 | Payments       | Card and bank payments through Stripe. Send a payment link that expires, and accept partial payments against a balance.                                                |
 | Stripe Connect | Payments go straight to the company's bank account through Stripe Connect. Onboarding uses Stripe Express.                                                             |
+| Factoring      | Factored customers' invoices carry the factor's remit-to. Email schedules with PODs and BOLs to the factor, then track advance, fee, reserve and chargebacks.          |
 | Payroll        | Pay drivers by mile, by share of gross, hourly, or a fixed weekly or monthly salary. Generate payroll invoices with PDF stubs and keep a payment history per employee. |
 | Timesheets     | Track hours and overtime and feed them into payroll.                                                                                                                   |
 | Expenses       | Record fuel, tolls, repairs, insurance, and other costs. Break spending down by category, truck, or period.                                                            |

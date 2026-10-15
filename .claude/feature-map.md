@@ -328,6 +328,14 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Application: `Modules/Financial/Invoices/Commands/`, `Modules/Financial/Invoices/Queries/`, `IInvoiceTaxApplier`
 - API/UI: `InvoiceController.cs` + `preview-tax`, `tms-portal/pages/invoices/`, `customer-portal/pages/invoices/`
 
+### Factoring
+
+- Domain: `Entities/Factoring/` (`FactoringCompany` + `EstimateAmounts`, `FactoringBatch` = schedule of accounts with `IneligibilityReason`/`Submit`/`RefreshStatus`, `FactoringBatchItem` with `Fund`/`Reject`/`ReleaseReserve`/`ChargeBack`, `FactoringAmounts`), `Customer.FactoringCompanyId`, `LoadInvoice.Factoring.cs` (`FactoringStatus`)
+- Application: `Modules/Financial/Factoring/` (company CRUD, `SubmitInvoicesToFactor` - POD/BOL check, attachments, email, `RecordFactoringFunding`, `ReleaseFactoringReserve`, `ChargeBackFactoredInvoice`, batch queries, `Services/FactoringBatchDtos`); QBO in `Accounting/Services/AccountingSyncService.Factoring.cs` (sale payment to the clearing account, fee as a purchase)
+- Infrastructure: `Infrastructure.Documents/Pdf/Factoring/FactoringSchedulePdfService.cs`, `Pdf/Invoice/InvoiceRemitToSection.cs` (notice of assignment); attachments via `ThreadedEmail.Attachments` in `Communications/Email/ResendThreadedEmailSender.cs`; template `FactoringSchedule.liquid`
+- **Trap**: funding records a `Payment` for the invoice total (the invoice reads Paid), so anything customer-facing must check `Customer.FactoringCompany` before showing paid/balance - the PDF, the invoice email, the portal list and the public pay page all do
+- API/UI: `FactoringController.cs` (`/factoring/companies`, `/factoring/batches`), `tms-portal/pages/settings/factoring-settings/`, `tms-portal/pages/invoices/factoring-batches-list/` + `factoring-batch-details/` + `components/submit-to-factor-dialog/`. Docs: `docs/invoices.md#factoring`
+
 ### Tax engine
 
 - Domain: `Entities/TenantTaxRate.cs`, `Invoice.TaxBehavior`, `Invoice.TaxBreakdownJson`, `ValueObjects/TaxJurisdiction.cs` - build jurisdictions with `TaxJurisdiction.Create(country, region)` on every write path; it upper-cases and normalizes a blank region to null, which is what the equality comparisons rely on

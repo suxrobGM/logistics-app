@@ -1,7 +1,7 @@
 # Fuel Card Integrations (WEX / EFS / Comdata)
 
 - **Status**: Done
-- **Priority**: P0 - one of the "4 must-have TMS integrations" (ELD ✓, fuel cards ✓, factoring ✗, accounting ✓)
+- **Priority**: P0 - one of the "4 must-have TMS integrations" (ELD ✓, fuel cards ✓, factoring ✓, accounting ✓)
 - **Effort**: M
 - **Category**: Table stakes
 
