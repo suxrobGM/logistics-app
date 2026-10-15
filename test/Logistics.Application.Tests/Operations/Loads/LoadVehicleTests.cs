@@ -2,6 +2,7 @@ using FluentValidation.TestHelper;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Modules.Operations.Trips.Commands;
 using Logistics.Application.Validators;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -85,6 +86,34 @@ public class LoadVehicleTests
 
         result.ShouldHaveValidationErrorFor("Vehicles[1].Vin");
         result.ShouldNotHaveValidationErrorFor("Vehicles[0].Vin");
+    }
+
+    [Fact]
+    public void CreateTripValidator_NewVehicleLoadWithBadVin_Fails()
+    {
+        var command = new CreateTripCommand
+        {
+            Name = "Trip",
+            NewLoads =
+            [
+                new CreateTripLoadCommand
+                {
+                    Name = "Cars",
+                    Type = LoadType.Vehicle,
+                    OriginAddress = ValidCreateCommand(LoadType.Vehicle).OriginAddress,
+                    OriginLocation = new GeoPoint(-96.8, 32.8),
+                    DestinationAddress = ValidCreateCommand(LoadType.Vehicle).DestinationAddress,
+                    DestinationLocation = new GeoPoint(-97.7, 30.3),
+                    AssignedDispatcherId = Guid.NewGuid(),
+                    CustomerId = Guid.NewGuid(),
+                    Vehicles = [new LoadVehicleInput { Vin = "SHORT" }]
+                }
+            ]
+        };
+
+        var result = new CreateTripValidator().TestValidate(command);
+
+        Assert.False(result.IsValid);
     }
 
     #endregion

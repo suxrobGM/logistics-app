@@ -211,7 +211,8 @@ internal sealed class UpdateTripHandler(
             c.CustomerId,
             trip.TruckId,
             c.AssignedDispatcherId,
-            trip.Id)));
+            trip.Id,
+            Vehicles: c.Vehicles.ToLoadVehicles())));
 
         if (!created.IsSuccess)
         {

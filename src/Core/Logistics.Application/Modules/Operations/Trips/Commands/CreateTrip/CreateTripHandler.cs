@@ -92,7 +92,8 @@ internal sealed class CreateTripHandler(
                 l.Distance,
                 l.CustomerId,
                 command.TruckId,
-                l.AssignedDispatcherId)),
+                l.AssignedDispatcherId,
+                Vehicles: l.Vehicles.ToLoadVehicles())),
             saveChanges: false);
 
         if (!created.IsSuccess)

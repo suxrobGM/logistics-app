@@ -21,4 +21,7 @@ public record CreateTripLoadCommand
     public LoadType Type { get; set; }
     public required Guid AssignedDispatcherId { get; set; }
     public required Guid CustomerId { get; set; }
+
+    /// <summary>Vehicles carried by a <see cref="LoadType.Vehicle"/> load.</summary>
+    public List<LoadVehicleInput> Vehicles { get; set; } = [];
 }

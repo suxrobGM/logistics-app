@@ -1,4 +1,6 @@
 using FluentValidation;
+using Logistics.Application.Validators;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.Operations.Trips.Commands;
 
@@ -19,6 +21,16 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
             RuleFor(x => x.NewLoads!)
                 .Must(l => l.Any())
                 .WithMessage("NewLoads cannot be empty when provided.");
+
+            RuleForEach(x => x.NewLoads!)
+                .ChildRules(load =>
+                {
+                    load.RuleForEach(l => l.Vehicles).SetValidator(new LoadVehicleInputValidator());
+                    load.RuleFor(l => l.Vehicles)
+                        .Empty()
+                        .When(l => l.Type != LoadType.Vehicle)
+                        .WithMessage("Only vehicle loads can list vehicles.");
+                });
         });
 
         When(x => x.AttachedLoadIds is not null, () =>
