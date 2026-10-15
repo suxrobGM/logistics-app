@@ -16,7 +16,6 @@ between them. The upload is parsed in memory and never written to disk or blob s
 | Map columns | (client)                        | The user fixes the mapping; required fields must be mapped                       |
 | Validate    | `POST /imports/validate`        | Dry run: what each row would do (create / update / skip / error), nothing saved  |
 | Import      | `POST /imports`                 | Writes the valid rows and returns the same per-row summary, downloadable as CSV  |
-| Presets     | `GET /imports/presets`          | Source systems with known headers                                                |
 
 Files: `.csv` or `.xlsx` (first sheet; header row is the first non-blank row), up to 10 MB and 5,000
 rows. The extension and the browser's content type must agree. CSV is read as UTF-8 (a BOM is
@@ -74,36 +73,13 @@ Notes per entity:
 - **Enums** (types, statuses) match our name, its display text, or an alias list next to each
   importer ("V" and "Van" are dry van, "RGN" is lowboy, "Completed" and "Invoiced" are delivered).
 
-## Header mapping and presets
+## Header mapping
 
-Each column is suggested a field by, in order: the chosen preset's exact header, then the synonym
-table. Headers compare after normalisation (lower case, letters and digits only, `#` read as
-"number"), so "Unit #", "unit_number" and "UNIT NUMBER" are the same header. A field is suggested
-for the leftmost matching column only.
-
-Presets live in `Constants/ImportPresets.cs`:
-
-| Preset      | Covers                                                                                   |
-| ----------- | ---------------------------------------------------------------------------------------- |
-| Spreadsheet | Synonyms only                                                                            |
-| Datatruck   | Its published customer import columns and its truck and trailer form fields (snake_case) |
-
-The other TMSs publish no export or import headers we could verify (AscendTMS imports customers,
-carriers and locations but does not document the columns), so they rely on the synonyms.
-
-### Adding a preset
-
-When a pilot sends a sample export:
-
-1. Add an `ImportPreset` to `ImportPresets.All` with an id, a display name and, per entity, the
-   export's exact header mapped to an `ImportFieldKeys` constant. List only headers you saw in the
-   file.
-2. Prefer adding a spelling to `ImportFieldCatalog` instead when the header is unambiguous - every
-   source then benefits. A preset is for a header that means something different elsewhere (a bare
-   "state" that is the plate state).
-3. Add a case to `ImportHeaderMapperTests` with the real headers.
-
-The UI reads presets from the API, so nothing changes on the client.
+Each column is suggested a field from the synonym table in `ImportFieldCatalog`. Headers compare
+after normalisation (lower case, letters and digits only, `#` read as "number"), so "Unit #",
+"unit_number" and "UNIT NUMBER" are the same header. A field is suggested for the leftmost matching
+column only. When a pilot's export uses a spelling we miss, add it to the field's synonyms and a case
+to `ImportHeaderMapperTests`.
 
 ## Code map
 
@@ -114,6 +90,6 @@ The UI reads presets from the API, so nothing changes on the client.
   `EntityImporter<TDraft>`, which owns parse, in-file duplicate check, lookup, the
   create/update/skip decision and the write.
 - Handlers: `Commands/RunImport/` (validate and import), `Queries/PreviewImport/`,
-  `Queries/GetImportTemplate/`, `Queries/GetImportPresets/`; controller `ImportController.cs`.
+  `Queries/GetImportTemplate/`; controller `ImportController.cs`.
 - UI: `tms-portal/pages/settings/data-import/`, results table in
   `pages/settings/components/import-results/`.

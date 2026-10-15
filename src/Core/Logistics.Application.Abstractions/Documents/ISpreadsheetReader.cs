@@ -7,11 +7,6 @@ namespace Logistics.Application.Abstractions.Documents;
 public interface ISpreadsheetReader
 {
     /// <summary>
-    ///     True when <paramref name="fileName"/> has an extension the reader accepts (.csv, .xlsx).
-    /// </summary>
-    bool IsSupported(string fileName);
-
-    /// <summary>
     ///     Reads the header row and every non-blank data row. Cells are trimmed; empty cells are
     ///     null. Numbers come back in invariant culture and dates as ISO-8601, whatever the source.
     /// </summary>

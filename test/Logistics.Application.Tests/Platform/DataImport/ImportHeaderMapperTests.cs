@@ -15,7 +15,7 @@ public class ImportHeaderMapperTests
     [InlineData("﻿Unit Number")]
     public void Suggest_TruckNumberSpellings_MapToNumber(string header)
     {
-        var mapping = ImportHeaderMapper.Suggest([header], ImportEntityType.Trucks, null);
+        var mapping = ImportHeaderMapper.Suggest([header], ImportEntityType.Trucks);
 
         Assert.Equal(ImportFieldKeys.Number, mapping[0].FieldKey);
     }
@@ -26,7 +26,7 @@ public class ImportHeaderMapperTests
     [InlineData("Reference")]
     public void Suggest_LoadReferenceSpellings_MapToReference(string header)
     {
-        var mapping = ImportHeaderMapper.Suggest([header], ImportEntityType.Loads, null);
+        var mapping = ImportHeaderMapper.Suggest([header], ImportEntityType.Loads);
 
         Assert.Equal(ImportFieldKeys.Reference, mapping[0].FieldKey);
     }
@@ -34,7 +34,7 @@ public class ImportHeaderMapperTests
     [Fact]
     public void Suggest_McNumber_MapsForCustomers()
     {
-        var mapping = ImportHeaderMapper.Suggest(["Company Name", "MC#", "Zip Code"], ImportEntityType.Customers, null);
+        var mapping = ImportHeaderMapper.Suggest(["Company Name", "MC#", "Zip Code"], ImportEntityType.Customers);
 
         Assert.Equal([ImportFieldKeys.Name, ImportFieldKeys.McNumber, ImportFieldKeys.Zip],
             mapping.Select(m => m.FieldKey));
@@ -44,7 +44,7 @@ public class ImportHeaderMapperTests
     public void Suggest_PrefixedAddressHeaders_MapToPickupAndDelivery()
     {
         var mapping = ImportHeaderMapper.Suggest(
-            ["Origin City", "Shipper Zip", "Consignee State", "Delivery Address"], ImportEntityType.Loads, null);
+            ["Origin City", "Shipper Zip", "Consignee State", "Delivery Address"], ImportEntityType.Loads);
 
         Assert.Equal(["pickupCity", "pickupZip", "deliveryState", "deliveryStreet"], mapping.Select(m => m.FieldKey));
     }
@@ -52,7 +52,7 @@ public class ImportHeaderMapperTests
     [Fact]
     public void Suggest_SameFieldTwice_OnlyLeftmostColumnMaps()
     {
-        var mapping = ImportHeaderMapper.Suggest(["Unit #", "Truck Number"], ImportEntityType.Trucks, null);
+        var mapping = ImportHeaderMapper.Suggest(["Unit #", "Truck Number"], ImportEntityType.Trucks);
 
         Assert.Equal(ImportFieldKeys.Number, mapping[0].FieldKey);
         Assert.Null(mapping[1].FieldKey);
@@ -61,21 +61,9 @@ public class ImportHeaderMapperTests
     [Fact]
     public void Suggest_UnknownHeader_StaysUnmapped()
     {
-        var mapping = ImportHeaderMapper.Suggest(["Favourite colour"], ImportEntityType.Trucks, null);
+        var mapping = ImportHeaderMapper.Suggest(["Favourite colour"], ImportEntityType.Trucks);
 
         Assert.Null(mapping[0].FieldKey);
-    }
-
-    [Fact]
-    public void Suggest_DatatruckPreset_MapsSnakeCaseExport()
-    {
-        var mapping = ImportHeaderMapper.Suggest(
-            ["unit_number", "trailer_type", "plate_number", "plate_state"], ImportEntityType.Trailers,
-            ImportPresets.Datatruck);
-
-        Assert.Equal(
-            [ImportFieldKeys.Number, ImportFieldKeys.Type, ImportFieldKeys.LicensePlate, ImportFieldKeys.LicensePlateState],
-            mapping.Select(m => m.FieldKey));
     }
 
     [Theory]
@@ -88,7 +76,7 @@ public class ImportHeaderMapperTests
     {
         var headers = ImportRowMapper.BuildTemplate(entityType).TrimEnd().Split(',');
 
-        var mapping = ImportHeaderMapper.Suggest(headers, entityType, null);
+        var mapping = ImportHeaderMapper.Suggest(headers, entityType);
 
         Assert.Equal(ImportFieldCatalog.For(entityType).Select(f => f.Key), mapping.Select(m => m.FieldKey));
     }

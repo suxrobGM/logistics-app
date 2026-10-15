@@ -6,17 +6,15 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Platform.DataImport.Services;
 
 /// <summary>
-///     Suggests which field each column feeds: the preset's exact header first, then the synonym
-///     table. A field is suggested for one column at most - the leftmost match wins.
+///     Suggests which field each column feeds from the synonym table. A field is suggested for one
+///     column at most - the leftmost match wins.
 /// </summary>
 internal static class ImportHeaderMapper
 {
     public static IReadOnlyList<ImportColumnMappingDto> Suggest(
-        IReadOnlyList<string> headers, ImportEntityType entityType, string? presetId)
+        IReadOnlyList<string> headers, ImportEntityType entityType)
     {
         var fields = ImportFieldCatalog.For(entityType);
-        var presetHeaders = ImportPresets.Find(presetId)?.Headers.GetValueOrDefault(entityType);
-        var preset = presetHeaders?.ToDictionary(p => Normalize(p.Key), p => p.Value) ?? [];
         var synonyms = new Dictionary<string, string>();
         foreach (var field in fields)
         {
@@ -31,7 +29,7 @@ internal static class ImportHeaderMapper
         for (var i = 0; i < headers.Count; i++)
         {
             var header = Normalize(headers[i]);
-            var key = preset.GetValueOrDefault(header) ?? synonyms.GetValueOrDefault(header);
+            var key = synonyms.GetValueOrDefault(header);
             if (key is not null && !used.Add(key))
             {
                 key = null;

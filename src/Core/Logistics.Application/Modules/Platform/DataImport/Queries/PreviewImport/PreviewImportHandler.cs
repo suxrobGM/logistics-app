@@ -29,7 +29,7 @@ internal sealed class PreviewImportHandler(ISpreadsheetReader spreadsheetReader)
                 .. ImportFieldCatalog.For(req.EntityType)
                     .Select(f => new ImportFieldDto { Key = f.Key, Label = f.Label, Required = f.Required })
             ],
-            Mapping = ImportHeaderMapper.Suggest(headers, req.EntityType, req.Preset),
+            Mapping = ImportHeaderMapper.Suggest(headers, req.EntityType),
             PreviewRows = [.. table.Value.Rows.Take(PreviewRowCount).Select(r => r.Cells)],
             TotalRows = table.Value.Rows.Count
         };

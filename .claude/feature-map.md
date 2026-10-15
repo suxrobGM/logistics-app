@@ -119,7 +119,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 Stateless: the client re-sends the file on every step; nothing is stored. Full guide: [docs/data-import.md](../docs/data-import.md).
 
-- Application: `Modules/Platform/DataImport/` - `Constants/ImportFieldCatalog.cs` (fields + header synonyms per entity), `Constants/ImportPresets.cs` (source presets - add new ones here), `Services/` (`ImportHeaderMapper`, `ImportValueParser`, `ImportAddressParser`), `Importers/` (one `EntityImporter<TDraft>` per entity: customers, drivers, trucks, trailers, loads), `Commands/RunImport/` (validate = dry run, import), `Queries/PreviewImport|GetImportTemplate|GetImportPresets/`
+- Application: `Modules/Platform/DataImport/` - `Constants/ImportFieldCatalog.cs` (fields + header synonyms per entity), `Services/` (`ImportHeaderMapper`, `ImportValueParser`, `ImportAddressParser`), `Importers/` (one `EntityImporter<TDraft>` per entity: customers, drivers, trucks, trailers, loads), `Commands/RunImport/` (validate = dry run, import), `Queries/PreviewImport|GetImportTemplate/`
 - Infrastructure: `Infrastructure.Documents/Spreadsheets/SpreadsheetReader.cs` (ExcelDataReader) behind `Application.Abstractions/Documents/ISpreadsheetReader`
 - API/UI: `ImportController.cs` (`/imports/*`, `Permission.Import.Manage`), `tms-portal/pages/settings/data-import/`
 - Trap: imported drivers get a password-less master `User`; `CreateInvitationHandler` lets such a member be invited and `AcceptInvitationHandler` sets the password on accept instead of failing "already an employee"

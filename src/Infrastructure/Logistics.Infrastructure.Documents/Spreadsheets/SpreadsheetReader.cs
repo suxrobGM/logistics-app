@@ -14,7 +14,7 @@ public sealed class SpreadsheetReader : ISpreadsheetReader
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
-    public bool IsSupported(string fileName)
+    private static bool IsSupported(string fileName)
     {
         var extension = Path.GetExtension(fileName).ToLowerInvariant();
         return extension is ".csv" or ".xlsx";

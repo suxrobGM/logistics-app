@@ -5,8 +5,7 @@ namespace Logistics.Application.Modules.Platform.DataImport.Constants;
 
 /// <summary>
 ///     The fields each import accepts and the header synonyms that auto-map to them. Add a spelling
-///     here when a carrier's export uses one we miss; add a source-specific override to
-///     <see cref="ImportPresets"/> only when a header means different things in different systems.
+///     here when a carrier's export uses one we miss.
 /// </summary>
 internal static class ImportFieldCatalog
 {

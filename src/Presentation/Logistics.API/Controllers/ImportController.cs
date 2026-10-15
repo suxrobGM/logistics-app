@@ -25,14 +25,6 @@ public class ImportController(IMediator mediator) : ControllerBase
 
     private static readonly JsonSerializerOptions MappingJson = new(JsonSerializerDefaults.Web);
 
-    [HttpGet("presets", Name = "GetImportPresets")]
-    [ProducesResponseType(typeof(IReadOnlyList<ImportPresetDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetPresets()
-    {
-        var result = await mediator.Send(new GetImportPresetsQuery());
-        return Ok(result.Value);
-    }
-
     [HttpGet("templates/{entityType}", Name = "GetImportTemplate")]
     [Produces("text/csv")]
     [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
@@ -57,8 +49,7 @@ public class ImportController(IMediator mediator) : ControllerBase
             FileName = request.File.FileName,
             ContentType = request.File.ContentType,
             FileSizeBytes = request.File.Length,
-            EntityType = request.EntityType,
-            Preset = request.Preset
+            EntityType = request.EntityType
         });
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
@@ -120,7 +111,7 @@ public class ImportController(IMediator mediator) : ControllerBase
     }
 }
 
-public record PreviewImportRequest(IFormFile File, ImportEntityType EntityType, string? Preset);
+public record PreviewImportRequest(IFormFile File, ImportEntityType EntityType);
 
 /// <param name="Mapping">JSON array of <see cref="ImportColumnMappingDto"/>, as returned by preview and edited by the user.</param>
 public record RunImportRequest(

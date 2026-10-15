@@ -11,9 +11,4 @@ public class PreviewImportQuery : IQuery<Result<ImportPreviewDto>>, IImportFile
     public required string ContentType { get; init; }
     public long FileSizeBytes { get; init; }
     public ImportEntityType EntityType { get; init; }
-
-    /// <summary>
-    ///     A source preset id from <c>GET /imports/presets</c>; null uses the synonyms only.
-    /// </summary>
-    public string? Preset { get; init; }
 }

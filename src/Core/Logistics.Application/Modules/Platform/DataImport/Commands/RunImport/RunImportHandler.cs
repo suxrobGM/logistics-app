@@ -34,7 +34,7 @@ internal sealed class RunImportHandler(
 
         var importer = importers.Single(i => i.EntityType == req.EntityType);
         var rows = ImportRowMapper.ToRows(table.Value!, req.EntityType, req.Mapping);
-        var options = ImportOptionsFactory.For(
+        var options = ImportOptions.For(
             tenantUow.GetCurrentTenant(), !req.DryRun, req.UpdateExisting, req.SendInvitations);
 
         var results = await importer.ImportAsync(rows, options, ct);
