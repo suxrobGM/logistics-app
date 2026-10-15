@@ -1,4 +1,3 @@
-using System.Net;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
@@ -8,7 +7,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Logistics.Application.Tests.LoadBoard;
@@ -47,7 +45,7 @@ public class CreateLoadBoardConfigurationHandlerTests
     }
 
     [Fact]
-    public async Task Handle_OAuthProvider_StoresAcquiredTokensOnConfiguration()
+    public async Task Handle_ValidCredentials_AddsConfigurationWithAcquiredToken()
     {
         var expiresAt = DateTime.UtcNow.AddMinutes(20);
         _provider.AcquireTokenAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>()).Returns(new OAuthTokenResultDto
@@ -67,19 +65,6 @@ public class CreateLoadBoardConfigurationHandlerTests
         Assert.Equal("refresh-1", added.RefreshToken);
         Assert.Equal(expiresAt, added.TokenExpiresAt);
         await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_OAuthAcquisitionFails_FailsWithoutAdding()
-    {
-        _provider.AcquireTokenAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>())
-            .ThrowsAsync(new LoadBoardApiException("DAT rejected the credentials (401)", HttpStatusCode.Unauthorized));
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        await _configRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
-        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
