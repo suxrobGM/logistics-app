@@ -27,6 +27,7 @@ The web app for owners, managers, and dispatchers.
 | Data import     | Move off another TMS or a spreadsheet: upload CSV or XLSX for customers, drivers, trucks, trailers and loads, check the column mapping, see a dry run, then import.                                                           |
 | Maintenance     | Schedule service, record what was done and what it cost, and see what is coming due.                                                                                                                                          |
 | Customers       | Customer profiles with several contacts each, billing addresses, and shipment history.                                                                                                                                        |
+| LTL freight     | Record freight class, NMFC code, pallets, pieces, weight, dimensions and whether the freight stacks on the load.                                                                                                              |
 | Hazmat and ADR  | Mark a load as hazmat and record ADR equipment on each truck. Dispatch refuses to send a hazmat load to a truck without the right equipment.                                                                                  |
 | Driver licenses | Track each driver's license classes and expiry dates. Drivers get reminders before a license expires, and dispatch will not assign an unlicensed driver.                                                                      |
 
@@ -86,18 +87,21 @@ Central Dispatch and Super Dispatch are not connected. Neither offers a public c
 
 ### Money
 
-| Feature        | What it does                                                                                                                                                           |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Invoices       | Invoice a delivered load with base rate, fuel surcharge, detention, and other line items. Three invoice kinds: load, payroll, and subscription.                        |
-| Tax            | Tax is worked out by Stripe Tax or by rates you enter yourself. US sales tax and EU VAT are both handled, and invoices show the breakdown.                             |
-| Payments       | Card and bank payments through Stripe. Send a payment link that expires, and accept partial payments against a balance.                                                |
-| Stripe Connect | Payments go straight to the company's bank account through Stripe Connect. Onboarding uses Stripe Express.                                                             |
-| Factoring      | Factored customers' invoices carry the factor's remit-to. Email schedules with PODs and BOLs to the factor, then track advance, fee, reserve and chargebacks.          |
-| Payroll        | Pay drivers by mile, by share of gross, hourly, or a fixed weekly or monthly salary. Generate payroll invoices with PDF stubs and keep a payment history per employee. |
-| Timesheets     | Track hours and overtime and feed them into payroll.                                                                                                                   |
-| Expenses       | Record fuel, tolls, repairs, insurance, and other costs. Break spending down by category, truck, or period.                                                            |
-| Fuel cards     | WEX and EFS transactions import every night as paid fuel expenses, matched to trucks by card or unit number. Unmatched ones wait in a review queue.                    |
-| QuickBooks     | Customers, invoices, payments, expenses, and approved driver pay sync to QuickBooks Online every 15 minutes, posting to the items and accounts you map.                |
+| Feature                    | What it does                                                                                                                                                                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Invoices                   | Every load gets a draft invoice whose lines follow the load: linehaul, fuel surcharge and one line per accessorial, rebuilt when those change. Three invoice kinds: load, payroll, and subscription.                                        |
+| Accessorials               | A price list of extra charges (lumper, layover, liftgate, extra stop) billed flat, per hour, per mile or per stop. Add one to a load from the list or type one in.                                                                          |
+| Detention                  | Set free time and an hourly rate for the company or per customer. When the driver departs a stop past the free time, detention in quarter hours goes on the invoice; dispatchers are alerted when a truck overstays.                        |
+| Tax                        | Tax is worked out by Stripe Tax or by rates you enter yourself. US sales tax and EU VAT are both handled, and invoices show the breakdown.                                                                                                  |
+| Payments                   | Card and bank payments through Stripe. Send a payment link that expires, and accept partial payments against a balance.                                                                                                                     |
+| Stripe Connect             | Payments go straight to the company's bank account through Stripe Connect. Onboarding uses Stripe Express.                                                                                                                                  |
+| Factoring                  | Factored customers' invoices carry the factor's remit-to. Email schedules with PODs and BOLs to the factor, then track advance, fee, reserve and chargebacks.                                                                               |
+| Payroll                    | Pay drivers by mile, by share of gross, per load, per stop, hourly, or a fixed weekly or monthly salary. Generate payroll invoices with PDF stubs and keep a payment history per employee.                                                  |
+| Owner-operator settlements | Pay a share of linehaul with or without fuel surcharge and accessorials, and take truck lease, insurance, ELD fee, escrow (up to a target), cash advances and fuel card purchases off each settlement. The statement lists every deduction. |
+| Timesheets                 | Track hours and overtime and feed them into payroll.                                                                                                                                                                                        |
+| Expenses                   | Record fuel, tolls, repairs, insurance, and other costs. Break spending down by category, truck, or period.                                                                                                                                 |
+| Fuel cards                 | WEX and EFS transactions import every night as paid fuel expenses, matched to trucks by card or unit number. Unmatched ones wait in a review queue.                                                                                         |
+| QuickBooks                 | Customers, invoices, payments, expenses, and approved driver pay sync to QuickBooks Online every 15 minutes, posting to the items and accounts you map.                                                                                     |
 
 ### Compliance and safety
 

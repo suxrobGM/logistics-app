@@ -67,8 +67,17 @@ worth remembering:
   would have made `UserSeeder` skip and `EmployeeSeeder` re-home every existing `us` login onto it.
   `DemoTenantConfig.SeedDataKey` (falling back to the region name) plus a `DataScale` multiplier
   fixed both, with `us`/`eu` output byte-identical.
+- **Leased owner-operator settlements shipped on `PayrollInvoice`** (a fleet paying owner-operators,
+  not the solo owner paying themselves). A settlement is gross plus signed deduction lines: share of
+  linehaul with optional fuel surcharge / accessorial exclusions, recurring deductions (truck lease,
+  insurance, ELD fee), escrow with a target balance, cash advances (driver-requested or
+  dispatcher-issued) and fuel card purchases on the driver's truck. A separate settlement entity was
+  not needed - the payroll approval, pay stub PDF, Stripe Connect payout and QuickBooks Bill push all
+  apply unchanged, and the Bill carries the net. Details in [invoices](../invoices.md).
 - Deferred: **owner pay**. A solo owner still has no draw or settlement path; the plan remains the
-  existing employee Stripe Connect payout rails rather than `PayrollInvoice` cycles. Also deferred:
+  existing employee Stripe Connect payout rails rather than `PayrollInvoice` cycles. The driver app
+  has no earnings or settlement screen yet, so cash advance requests exist only as
+  `POST /drivers/cashadvances`. Also deferred:
   **net-new business-side features in the mobile app** - it still has no create-load, invoice,
   expense or receipt-capture surface. This pass made the driver app usable by a solo owner, not
   their back office. And **self-serve signup** - `POST /tenants` requires the SuperAdmin or Admin

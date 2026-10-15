@@ -8,21 +8,67 @@ The system uses Table Per Hierarchy (TPH) pattern with three invoice types:
 
 ### LoadInvoice
 
-- **Auto-created** when a Load is created (status: Draft)
+- **Auto-created** by `LoadFactory` when a Load is created (status: Draft)
 - Linked to a Customer and Load
-- Contains freight charges based on `Load.DeliveryCost`
-- Default line item: "Freight charges for Load #{number}"
+- Its lines are built from the load by `LoadInvoice.ReplaceLoadCharges`: one `BaseRate` line for
+  `Load.DeliveryCost` (the linehaul), one `FuelSurcharge` line for `Load.FuelSurcharge` when it is
+  not 0, and one line per `LoadAccessorial` (rate x quantity, typed as the accessorial's line type).
+  A fractional quantity (2.25 h of detention) becomes a single line carrying the total, with the
+  arithmetic in the description, because line quantities are whole numbers.
+- **Regenerated** whenever a load update changes the linehaul, the load type, the fuel surcharge or
+  the accessorials, and whenever detention is written. Regeneration owns only the `BaseRate` and
+  `FuelSurcharge` lines and lines whose `SourceId` points at an accessorial; hand-added lines and the
+  drayage `Demurrage`/`PerDiem`/`Chassis` lines are kept. A paid or cancelled invoice is never
+  regenerated.
 
-### PayrollInvoice
+### Accessorials and detention
 
-- Created for employee salary payments
-- Supports multiple salary calculation types:
-  - Per Mile
-  - Per Mile (Team)
-  - Percentage
-  - Salary
-  - Salary + Per Mile
-  - Hourly
+- **Catalog** (`AccessorialCharge`, Settings > Accessorials, `GET/POST/PUT/DELETE /accessorials`):
+  name, line type, default amount and unit (`Flat`, `PerHour`, `PerDistance`, `PerStop`). Picking
+  one on the load form copies its values into a `LoadAccessorial`, so a later price change never
+  rewrites existing invoices. Ad hoc accessorials need no catalog entry.
+- **Detention terms**: tenant default in `TenantSettings.DetentionFreeMinutes` (null = 120) and
+  `DetentionRatePerHour` (null = tracked and alerted, not billed), `GET/PUT /accessorials/detention`;
+  per customer in `Customer.DetentionFreeMinutes`/`DetentionRatePerHour`,
+  `GET/PUT /customers/{id}/detention`. Customer values win field by field.
+- **Calculation** (`DetentionCalculator`): dwell is `TripStop.ArrivedAt` to `DepartedAt`; detention is
+  the dwell past the free time, billed in whole quarter hours rounded down.
+- **Billing**: when the driver marks a stop departed, `LoadChargeService.ApplyDetentionAsync` writes
+  (or updates, or removes) one `Detention` accessorial for that stop (`TripStopId`) and regenerates the
+  invoice. A stop with no departure is never billed. `GET /loads/{id}/detention` returns dwell, free
+  time, billable hours and charge per stop for the load details page.
+- **Alert**: `DetentionAlertJob` (every 15 minutes) notifies dispatchers once per stop
+  (`TripStop.DetentionAlertedAt`) when a truck is still at a stop past its free time.
+
+### PayrollInvoice (driver settlement)
+
+- Created for employee pay, by the weekly/monthly generation job or by hand. `PayrollService`
+  builds its lines with `PayrollInvoice.ReplaceSettlementLines`: one `BasePay` line for the gross,
+  then one negative line per deduction, so `Total` is the net pay.
+- Gross pay by `SalaryType`: `Monthly`, `Weekly`, `Hourly` (time entries), `RatePerDistance`
+  (delivered km), `PerLoad` (delivered loads x rate), `PerStop` (trip stops departed in the period x
+  rate) and `ShareOfGross` - the percentage of each delivered load's linehaul plus fuel surcharge plus
+  accessorials, minus what the employee's `PayExcludesFuelSurcharge` / `PayExcludesAccessorials`
+  leave out. Weekly generation covers `Weekly`, `PerLoad` and `PerStop`; monthly covers `Monthly` and
+  `ShareOfGross`.
+- Deductions (owner-operator settlements):
+  - `RecurringDeduction` rows (truck lease, insurance, ELD fee, other) become `Deduction` lines on
+    every settlement; an `Escrow` one becomes an `Escrow` line, capped so the escrow balance stops at
+    its `EscrowTarget`. The balance is the sum of escrow lines on the employee's settlements that
+    were not rejected or cancelled (a positive escrow line is a release).
+  - Approved `CashAdvance` rows not yet deducted become `CashAdvance` lines on the next settlement.
+  - With `Employee.DeductFuelCardCharges`, matched fuel card transactions in the period on trucks the
+    employee is the main driver of become `FuelCard` lines.
+  - Advances and fuel transactions record the settlement that deducted them
+    (`PayrollInvoiceId`); rejecting or deleting the settlement hands them back.
+  - One-off deductions and reimbursements (lumper paid by the driver, tolls) are hand-added lines;
+    the API stores any deduction-type line negative whatever sign was typed.
+- Regenerating (period or employee change on a draft) rebuilds the `BasePay` line and every line
+  with a `SourceId`, keeping hand-added lines.
+- The pay stub PDF lists earnings, gross, each deduction and the net.
+- Endpoints: `GET/PUT /employees/{id}/payprofile` (exclusions, fuel deduction, recurring deductions,
+  escrow balance, advances owed); `/cashadvances` (list, issue, approve, reject, delete);
+  `POST/GET /drivers/cashadvances` for the signed-in driver's requests.
 
 ### SubscriptionInvoice
 
@@ -54,9 +100,23 @@ Each invoice can have multiple line items with types:
 | Layover       | Overnight delay charges |
 | Lumper        | Loading/unloading labor |
 | Accessorial   | Additional services     |
+| Demurrage     | Container demurrage     |
+| PerDiem       | Container per diem      |
+| Chassis       | Chassis rental          |
+| Storage       | Storage                 |
 | Discount      | Price reductions        |
 | Tax           | Tax charges             |
 | Other         | Miscellaneous           |
+| BasePay       | Settlement gross pay    |
+| Bonus         | Settlement bonus        |
+| Deduction     | Settlement deduction    |
+| Reimbursement | Driver-paid expense     |
+| Adjustment    | Settlement adjustment   |
+| Escrow        | Escrow contribution     |
+| CashAdvance   | Cash advance repaid     |
+| FuelCard      | Fuel card purchase      |
+
+Settlement deduction types (`Deduction`, `Escrow`, `CashAdvance`, `FuelCard`) are stored negative.
 
 ### Managing Line Items
 

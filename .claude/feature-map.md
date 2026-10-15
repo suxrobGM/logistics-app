@@ -39,13 +39,15 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Application: `Modules/Operations/Loads/` (Commands, Queries, Services, Specifications, Constants)
 - API/UI: `LoadController.cs`, `tms-portal/pages/loads/`
 - Car hauler vehicles: `Entities/Load/LoadVehicle.cs` + `Load.Vehicles.cs` (JSON complex collection `loads.vehicles`; `LoadVehicle.Id` is what a condition report points at), input `LoadVehicleInput` + `Validators/LoadVehicleInputValidator.cs`, `Services/LoadVehicleInputExtensions.cs`. Capacity warning: `Operations/Common/Services/VehicleCapacityChecker.cs` (used by `GetLoadByIdHandler` and `DispatchEligibilityService` as `VehicleCapacityExceeded`, a warning). eBOL: `Queries/GetVehicleBolPdf/` → `GET /loads/{id}/ebol`, `GET /portal/loads/{id}/ebol`; delivery email `Services/VehicleDeliveryEmailService.cs` (from `ConfirmLoadStatusHandler`, template `VehicleDelivered.liquid`). UI: `load-form/load-vehicles-section.ts` (per-row VIN decode, capacity warning), `pages/loads/components/load-vehicles-content/` (details + eBOL download), `shared/components/display/vehicle-damage-diagram/` (read-only diagram on condition-report-details), customer-portal `shipments/shipment-details` + `documents/`. Guide: [docs/car-hauler-guide.md](../docs/car-hauler-guide.md)
+- Charges and LTL: `Load.Billing.cs` (`FuelSurcharge`, `Accessorials`), `Load.Freight.cs` (freight class, NMFC, pallets, pieces, weight, dimensions, stackable), `LoadAccessorial.cs`; invoice lines from `Entities/Invoice/LoadInvoice.Charges.cs` (`ReplaceLoadCharges` - owns `BaseRate`, `FuelSurcharge` and lines whose `SourceId` is an accessorial). Application: `Services/LoadChargeService.cs` (replace accessorials, sync the invoice, write detention), `Services/LoadShipmentDetails.cs` (create path), `Commands/{Create,Update}Load/*Command.Charges.cs`. UI: `load-form/load-charges-section.ts`, `load-form/load-freight-section.ts`, `pages/loads/components/load-charges-content/`
+- Detention: `Entities/Trip/DetentionCalculator.cs` + `DetentionTerms.cs` (customer → tenant → 2 h), applied by `MarkStopDepartedHandler` → `LoadChargeService.ApplyDetentionAsync`; `Queries/GetLoadDetention/` (`GET /loads/{id}/detention`, UI `pages/loads/components/load-detention-content/`); alert `Modules/Operations/Trips/Services/DetentionAlertService.cs` + `Jobs/DetentionAlertJob.cs` (every 15 min, once per stop via `TripStop.DetentionAlertedAt`)
 
 ### Trips
 
 - Domain: `Entities/Trip/`
 - Application: `Modules/Operations/Trips/Commands/`, `Modules/Operations/Trips/Queries/`
 - Infrastructure: `Routing/Optimization/` (trip optimizer)
-- API/UI: `TripController.cs`, `tms-portal/pages/trips/`; driver stop events `DriverController.cs` (`POST /drivers/trips/{tripId}/stops/{stopId}/arrive|depart`, assignment-checked, sets `TripStop.ArrivedAt`/`DepartedAt`)
+- API/UI: `TripController.cs`, `tms-portal/pages/trips/`; driver stop events `DriverController.cs` (`POST /drivers/trips/{tripId}/stops/{stopId}/arrive|depart`, assignment-checked, sets `TripStop.ArrivedAt`/`DepartedAt`) - departure also bills detention (see Loads)
 
 ### Trucks
 
@@ -328,6 +330,12 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Application: `Modules/Financial/Invoices/Commands/`, `Modules/Financial/Invoices/Queries/`, `IInvoiceTaxApplier`
 - API/UI: `InvoiceController.cs` + `preview-tax`, `tms-portal/pages/invoices/`, `customer-portal/pages/invoices/`
 
+### Accessorials and detention terms
+
+- Domain: `Entities/Load/AccessorialCharge.cs` (tenant catalog), `TenantSettings.DetentionFreeMinutes`/`DetentionRatePerHour`, `Customer.DetentionFreeMinutes`/`DetentionRatePerHour`
+- Application: `Modules/Financial/Accessorials/` (catalog CRUD, tenant and customer detention terms)
+- API/UI: `AccessorialController.cs` (`/accessorials`, `/accessorials/detention`), `CustomerController` (`/customers/{id}/detention`), `tms-portal/pages/settings/accessorial-settings/`, `pages/customers/components/customer-detention-terms/`
+
 ### Factoring
 
 - Domain: `Entities/Factoring/` (`FactoringCompany` + `EstimateAmounts`, `FactoringBatch` = schedule of accounts with `IneligibilityReason`/`Submit`/`RefreshStatus`, `FactoringBatchItem` with `Fund`/`Reject`/`ReleaseReserve`/`ChargeBack`, `FactoringAmounts`), `Customer.FactoringCompanyId`, `LoadInvoice.Factoring.cs` (`FactoringStatus`)
@@ -388,6 +396,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Invoice/PayrollInvoice.cs`
 - Application: `Modules/Financial/Payroll/` (Commands, Queries, Services)
 - API/UI: `tms-portal/pages/payroll/`, `Jobs/PayrollGenerationJob.cs`
+- Settlements: `Entities/Invoice/PayrollInvoice.Settlement.cs` (`ReplaceSettlementLines`, signed deduction lines; `SettlementInputs`), `Entities/Employee/RecurringDeduction.cs`, `CashAdvance.cs`, `Employee.PayExcludesFuelSurcharge`/`PayExcludesAccessorials`/`DeductFuelCardCharges`, `FuelCardTransaction.PayrollInvoiceId`; `Services/PayrollService.cs` (gross by salary type incl. `PerLoad`/`PerStop`, escrow balance, claims/releases advances and fuel); commands `UpdateDriverPayProfile`, `IssueCashAdvance`, `RequestCashAdvance`, `ReviewCashAdvance`, `DeleteCashAdvance`; queries `GetDriverPayProfile`, `GetCashAdvances`. API: `EmployeeController` (`/employees/{id}/payprofile`), `CashAdvanceController` (`/cashadvances`), `DriverController` (`/drivers/cashadvances`). PDF: `Infrastructure.Documents/Pdf/Payroll/PayrollEarningsSection.cs`. UI: `pages/employees/components/driver-pay-profile/`, `cash-advances-panel/`, `pages/payroll/components/line-items-table/` (generated lines locked)
 
 ### Expenses
 
