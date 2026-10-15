@@ -561,7 +561,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Posted trucks
 
 - Domain: `Entities/LoadBoard/PostedTruck.cs`
-- Application: `Modules/Integrations/LoadBoard/Commands/PostTruckToLoadBoard`, `UpdatePostedTruck`, `RemovePostedTruck`
+- Application: `Modules/Integrations/LoadBoard/Commands/PostTruckToLoadBoard`, `RemovePostedTruck`
 - API/UI: `/loadboard/trucks`, `tms-portal/pages/loadboard/posted-trucks/`
 
 ### Background sync

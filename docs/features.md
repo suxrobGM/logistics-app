@@ -69,7 +69,7 @@ Central Dispatch and Super Dispatch are not connected. Neither offers a public c
 | DAT market rates    | With a DAT plan that includes RateView, each result shows the DAT spot rate for its lane.                                                                                                                                              |
 | Create load         | Turn a listing into a load in the TMS with the truck assigned. Load boards have no booking API, so you confirm with the broker using the phone and email shown.                                                                        |
 | Broker credit check | Every listing shows the broker's credit score, days to pay, and FMCSA authority status. Loads below your minimum score are blocked unless a dispatcher overrides.                                                                      |
-| Post trucks         | Advertise an open truck with its location, preferred destination, equipment, and availability window. Edit or remove it here; posts that expired on DAT are marked expired.                                                            |
+| Post trucks         | Advertise an open truck with its location, preferred destination, equipment, and availability window. Remove it here; posts that expired on DAT are marked expired.                                                                    |
 
 ### AI
 

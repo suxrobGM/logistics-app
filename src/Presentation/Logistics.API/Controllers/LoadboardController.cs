@@ -131,17 +131,6 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPut("trucks/{postedTruckId:guid}", Name = "UpdatePostedTruck")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.LoadBoard.Post)]
-    public async Task<IActionResult> UpdatePostedTruck(Guid postedTruckId, [FromBody] UpdatePostedTruckCommand request)
-    {
-        request.PostedTruckId = postedTruckId;
-        var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
-    }
-
     [HttpDelete("trucks/{postedTruckId:guid}", Name = "RemovePostedTruck")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

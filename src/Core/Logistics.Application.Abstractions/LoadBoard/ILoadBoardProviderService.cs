@@ -55,8 +55,6 @@ public interface ILoadBoardProviderService
     /// </summary>
     Task<PostTruckResultDto> PostTruckAsync(PostTruckRequest request, CancellationToken ct = default);
 
-    Task UpdateTruckPostAsync(string externalPostId, PostTruckRequest request, CancellationToken ct = default);
-
     Task RemoveTruckPostAsync(string externalPostId, CancellationToken ct = default);
 
     /// <summary>

@@ -114,14 +114,6 @@ internal sealed class DatLoadBoardService(
         return new PostTruckResultDto { ExternalPostId = posting.Id, ExpiresAt = posting.Exposure?.EndWhen };
     }
 
-    public Task UpdateTruckPostAsync(string externalPostId, PostTruckRequest request, CancellationToken ct = default)
-    {
-        return httpClient.SendJsonAsync(
-            HttpMethod.Patch,
-            $"{_options.FreightBaseUrl}/posting/v2/trucks/{Uri.EscapeDataString(externalPostId)}",
-            ToPostingRequest(request), UserToken, Vendor, ct);
-    }
-
     public async Task RemoveTruckPostAsync(string externalPostId, CancellationToken ct = default)
     {
         try

@@ -86,12 +86,6 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
         });
     }
 
-    public Task UpdateTruckPostAsync(string externalPostId, PostTruckRequest request, CancellationToken ct = default)
-    {
-        logger.LogInformation("Demo: Updating truck post {PostId}", externalPostId);
-        return Task.CompletedTask;
-    }
-
     public Task RemoveTruckPostAsync(string externalPostId, CancellationToken ct = default)
     {
         logger.LogInformation("Demo: Removing truck post {PostId}", externalPostId);

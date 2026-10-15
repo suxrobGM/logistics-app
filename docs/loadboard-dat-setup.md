@@ -58,7 +58,7 @@ email and the DAT One user email are not secrets: the edit dialog shows them.
   LogisticsX with the truck assigned and shows the broker's phone and email. Call or email the
   broker to confirm. The broker credit gate still applies.
 - **Truck posts.** Post a truck with its origin, an optional destination, an availability window
-  and equipment. You can update or remove a post, and removing it here takes it off DAT. Every 30
+  and equipment. You can remove a post, which takes it off DAT. Every 30
   minutes `LoadBoardSyncJob` checks the posts against DAT: a post DAT no longer lists is marked
   expired, and the post's expiry is copied from DAT.
 - **Not supported:** load posting (that is a broker workflow) and DAT webhooks (DAT publishes
