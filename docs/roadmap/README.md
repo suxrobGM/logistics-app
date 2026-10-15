@@ -48,6 +48,7 @@ in its **Notes** section. Keep this index's Status column in sync.
 | [EU market readiness](eu-market-readiness.md)        | P1       | M      | Planned     |
 | [Drayage / intermodal vertical](drayage-vertical.md) | P1       | L      | In progress |
 | [Owner-operator (solo) mode](owner-operator-mode.md) | P1       | M      | Done        |
+| [Car hauler load boards](car-hauler-load-boards.md)  | P1       | M      | Planned     |
 
 ## Launch hygiene
 

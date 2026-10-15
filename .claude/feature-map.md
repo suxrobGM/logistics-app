@@ -38,6 +38,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Domain: `Entities/Load/`
 - Application: `Modules/Operations/Loads/` (Commands, Queries, Services, Specifications, Constants)
 - API/UI: `LoadController.cs`, `tms-portal/pages/loads/`
+- Car hauler vehicles: `Entities/Load/LoadVehicle.cs` + `Load.Vehicles.cs` (JSON complex collection `loads.vehicles`; `LoadVehicle.Id` is what a condition report points at), input `LoadVehicleInput` + `Validators/LoadVehicleInputValidator.cs`, `Services/LoadVehicleInputExtensions.cs`. Capacity warning: `Operations/Common/Services/VehicleCapacityChecker.cs` (used by `GetLoadByIdHandler` and `DispatchEligibilityService` as `VehicleCapacityExceeded`, a warning). eBOL: `Queries/GetVehicleBolPdf/` → `GET /loads/{id}/ebol`, `GET /portal/loads/{id}/ebol`; delivery email `Services/VehicleDeliveryEmailService.cs` (from `ConfirmLoadStatusHandler`, template `VehicleDelivered.liquid`). UI: `load-form/load-vehicles-section.ts` (per-row VIN decode, capacity warning), `pages/loads/components/load-vehicles-content/` (details + eBOL download), `shared/components/display/vehicle-damage-diagram/` (read-only diagram on condition-report-details), customer-portal `shipments/shipment-details` + `documents/`. Guide: [docs/car-hauler-guide.md](../docs/car-hauler-guide.md)
 
 ### Trips
 
@@ -269,7 +270,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Vehicle inspections
 
-- Domain: `Entities/Inspection/VehicleConditionReport.cs`
+- Domain: `Entities/Inspection/LoadConditionReport.cs` (`LoadVehicleId` = the load vehicle inspected), `ConditionDefect.cs` (`Zone` / `DamageType` / `PhotoDocumentId` for diagram defects); enums `VehicleDamageZone`, `VehicleDamageType` + `VehicleDamageExtensions` (BOL codes, zone → part category) in `Domain.Primitives/Enums/Inspection/`
 - Application: `Modules/Compliance/Inspections/Commands/`, `Modules/Compliance/Inspections/Queries/`
 - API/UI: `InspectionController.cs` (list/get/create + `GET /inspections/parts`), `VinController.cs` (`GET /vins/{vin}`)
 
@@ -502,7 +503,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### PDF generation
 
 - Application: `Application.Abstractions/Documents/` (`IInvoicePdfService`, `IIftaReportPdfService`, … ports)
-- Infrastructure: `Infrastructure.Documents/Pdf/` (QuestPDF: invoices, payroll, BOL, POD)
+- Infrastructure: `Infrastructure.Documents/Pdf/` (QuestPDF: invoices, payroll, IFTA, car hauler eBOL - `VehicleBolPdfService.cs` + `VehicleBol/VehicleDiagram.cs`, the zone geometry the TMS and driver app copy)
 
 ### PDF import / extraction
 

@@ -46,6 +46,20 @@ The web app for owners, managers, and dispatchers.
 | Drayage billing        | One button on the load writes demurrage, per-diem and chassis lines (rate times days) onto the load's invoice. Running it again replaces those lines.                                              |
 | Deadline-aware AI      | The dispatch agent sees each load's last free day and hold flag, puts a box one day from demurrage ahead of loads with slack, and skips boxes on hold.                                             |
 
+### Car haulers
+
+| Feature             | What it does                                                                                                                                                                                                                            |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vehicles on a load  | A vehicle load lists each car with VIN, year, make, model, color, lot or stock number, operable flag, notes, and an optional per-vehicle rate. Decode VIN fills in the rest from NHTSA.                                                 |
+| PDF import          | Dispatch sheets with several vehicles import as one load with every vehicle on it.                                                                                                                                                      |
+| Capacity warning    | Each car hauler has a vehicle capacity. The load page, the eligibility check and the AI agent warn when a truck's open loads carry more vehicles. It never blocks.                                                                      |
+| Per-vehicle reports | The driver inspects each vehicle at pickup and at delivery. The delivery report shows the pickup damage for comparison.                                                                                                                 |
+| Damage diagram      | Damage is marked on a top-view car diagram by zone with the BOL codes S, D, C, CR, M and B, a severity, and an optional photo. The TMS and the eBOL show the same diagram.                                                              |
+| Signatures          | The shipper signs the BOL at pickup and the receiver signs the POD at delivery, on the driver's phone. If nobody can sign, the driver records why.                                                                                      |
+| Electronic BOL      | A PDF with every vehicle, its damage at pickup and delivery, both signatures, times and GPS. You can download it from the load in the TMS and from the shipment in the customer portal, and the customer is emailed a link at delivery. |
+
+Central Dispatch and Super Dispatch are not connected. Neither offers a public carrier API for searching or booking loads (see [the roadmap note](roadmap/car-hauler-load-boards.md)).
+
 ### Load boards
 
 | Feature             | What it does                                                                                                                                                                                                                           |
@@ -134,27 +148,27 @@ The dashboard also shows active loads, fleet use, revenue, and a live map.
 
 The web app for a carrier's customers.
 
-| Feature      | What it does                                                           |
-| ------------ | ---------------------------------------------------------------------- |
-| Shipments    | See every shipment, its status, expected delivery, and history.        |
-| Tracking     | Follow a shipment on a live map.                                       |
-| Invoices     | View and download invoices, and pay them online.                       |
-| Documents    | Download proof of delivery, bills of lading, and other load paperwork. |
-| Public links | Tracking and payment links work without an account.                    |
+| Feature      | What it does                                                                                                    |
+| ------------ | --------------------------------------------------------------------------------------------------------------- |
+| Shipments    | See every shipment, its status, expected delivery, and history.                                                 |
+| Tracking     | Follow a shipment on a live map.                                                                                |
+| Invoices     | View and download invoices, and pay them online.                                                                |
+| Documents    | Download proof of delivery, bills of lading, the electronic BOL of vehicle shipments, and other load paperwork. |
+| Public links | Tracking and payment links work without an account.                                                             |
 
 ## Driver app
 
 A Kotlin Multiplatform app for Android and iOS.
 
-| Feature           | What it does                                                                             |
-| ----------------- | ---------------------------------------------------------------------------------------- |
-| Trips and loads   | See assigned trips and loads with stops, cargo details, and instructions.                |
-| Status updates    | Update a load as you go: en route, at pickup, loaded, at delivery, delivered.            |
-| Proof of delivery | Capture photos, a signature, the receiver's name, and GPS coordinates.                   |
-| Inspections       | Fill in pre-trip and post-trip DVIR forms and vehicle condition reports with the camera. |
-| Licenses          | See your own driver licenses and their expiry dates.                                     |
-| Messaging         | Chat with dispatch.                                                                      |
-| Stats             | Personal performance, past loads, and earnings.                                          |
+| Feature           | What it does                                                                                                                                        |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Trips and loads   | See assigned trips and loads with stops, cargo details, and instructions.                                                                           |
+| Status updates    | Update a load as you go: en route, at pickup, loaded, at delivery, delivered.                                                                       |
+| Proof of delivery | Capture photos, a signature, the receiver's name, and GPS coordinates.                                                                              |
+| Inspections       | Fill in pre-trip and post-trip DVIR forms, and condition reports for each vehicle on a car hauler load, with the car damage diagram and the camera. |
+| Licenses          | See your own driver licenses and their expiry dates.                                                                                                |
+| Messaging         | Chat with dispatch.                                                                                                                                 |
+| Stats             | Personal performance, past loads, and earnings.                                                                                                     |
 
 ## Admin portal
 
