@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -11,18 +10,12 @@ namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class CreateLoadBoardConfigurationHandler(
     ITenantUnitOfWork tenantUow,
-    ILoadBoardProviderFactory providerFactory,
     ILoadBoardProviderGateway gateway,
     ILogger<CreateLoadBoardConfigurationHandler> logger)
     : IRequestHandler<CreateLoadBoardConfigurationCommand, Result>
 {
     public async Task<Result> Handle(CreateLoadBoardConfigurationCommand req, CancellationToken ct)
     {
-        if (!providerFactory.IsProviderSupported(req.ProviderType))
-        {
-            return Result.Fail($"Load board provider '{req.ProviderType}' is not supported");
-        }
-
         var existingConfig = await tenantUow.Repository<LoadBoardConfiguration>()
             .GetAsync(c => c.ProviderType == req.ProviderType, ct);
 
@@ -44,7 +37,8 @@ internal sealed class CreateLoadBoardConfigurationHandler(
             IsActive = true
         };
 
-        // Token providers prove the credentials by acquiring one, and keep it for the first call.
+        // Fails with "not available yet" for a board we have no provider for. Token providers prove
+        // the credentials by acquiring one, and keep it for the first call.
         var connection = await gateway.TestConnectionAsync(config, ct);
         if (!connection.IsSuccess)
         {

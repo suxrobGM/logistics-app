@@ -41,7 +41,7 @@ public class CreateLoadBoardConfigurationHandlerTests
         _providerFactory.GetProvider(_command.ProviderType).Returns(_provider);
 
         _sut = new CreateLoadBoardConfigurationHandler(
-            _tenantUow, _providerFactory,
+            _tenantUow,
             new LoadBoardProviderGateway(_tenantUow, _providerFactory, NullLogger<LoadBoardProviderGateway>.Instance),
             NullLogger<CreateLoadBoardConfigurationHandler>.Instance);
     }

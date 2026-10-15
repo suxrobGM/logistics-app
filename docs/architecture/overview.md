@@ -311,7 +311,7 @@ ELD providers for HOS compliance: Samsara, Motive (KeepTruckin), TT ELD, Geotab,
 
 ### Logistics.Infrastructure.Integrations.LoadBoard
 
-Load board providers: DAT and a Demo provider; Truckstop and 123Loadboard are stubs that report "not available yet". DAT covers search, truck posts with reconciliation and RateView market rates. Calls throw `LoadBoardApiException` (helper: `LoadBoardHttp`), and `ILoadBoardProviderGateway` in Application handles tokens, one 401 retry, and per-provider errors. Setup and verification status: [DAT setup](../loadboard-dat-setup.md).
+Load board providers: DAT and a Demo provider; Truckstop and 123Loadboard have no provider yet, so the gateway reports them "not available yet". DAT covers search, truck posts with reconciliation and RateView market rates. Calls throw `LoadBoardApiException` (helper: `LoadBoardHttp`), and `ILoadBoardProviderGateway` in Application handles tokens, one 401 retry, and per-provider errors. Setup and verification status: [DAT setup](../loadboard-dat-setup.md).
 
 ### Logistics.Infrastructure.Integrations.FuelCards
 

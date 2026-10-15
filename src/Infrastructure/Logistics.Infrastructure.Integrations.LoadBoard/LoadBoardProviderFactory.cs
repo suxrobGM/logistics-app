@@ -3,8 +3,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
-using Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
-using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Truckstop;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.LoadBoard;
 
@@ -24,8 +22,6 @@ internal sealed class LoadBoardProviderFactory(
         new Dictionary<LoadBoardProviderType, Type>
         {
             [LoadBoardProviderType.Dat] = typeof(DatLoadBoardService),
-            [LoadBoardProviderType.Truckstop] = typeof(TruckstopLoadBoardService),
-            [LoadBoardProviderType.OneTwo3Loadboard] = typeof(OneTwo3LoadBoardService),
             [LoadBoardProviderType.Demo] = typeof(DemoLoadBoardService)
         };
 
