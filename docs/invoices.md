@@ -16,9 +16,9 @@ The system uses Table Per Hierarchy (TPH) pattern with three invoice types:
   A fractional quantity (2.25 h of detention) becomes a single line carrying the total, with the
   arithmetic in the description, because line quantities are whole numbers.
 - **Regenerated** whenever a load update changes the linehaul, the load type, the fuel surcharge or
-  the accessorials, and whenever detention is written. Regeneration owns only the `BaseRate` and
-  `FuelSurcharge` lines and lines whose `SourceId` points at an accessorial; hand-added lines and the
-  drayage `Demurrage`/`PerDiem`/`Chassis` lines are kept. A paid or cancelled invoice is never
+  the accessorials, and whenever detention or drayage charges are written. Regeneration owns only the
+  `BaseRate` and `FuelSurcharge` lines and lines whose `SourceId` points at an accessorial; hand-added
+  lines are kept. A paid or cancelled invoice is never
   regenerated.
 
 ### Accessorials and detention

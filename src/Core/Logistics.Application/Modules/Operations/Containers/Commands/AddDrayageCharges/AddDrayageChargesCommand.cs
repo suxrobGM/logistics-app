@@ -5,8 +5,8 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Operations.Containers.Commands;
 
 /// <summary>
-/// Writes the load's container demurrage, per-diem and chassis charges onto the load's invoice as
-/// of now. Re-running replaces the lines it wrote last time instead of adding a second set.
+/// Writes the load's container demurrage, per-diem and chassis charges as of now as load
+/// accessorials and syncs the invoice. Re-running replaces the ones it wrote last time.
 /// </summary>
 [RequiresFeature(TenantFeature.IntermodalContainers)]
 public class AddDrayageChargesCommand : ICommand<Result>

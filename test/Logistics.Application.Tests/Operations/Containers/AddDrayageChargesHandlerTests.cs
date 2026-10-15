@@ -1,7 +1,10 @@
 using Logistics.Application.Modules.Operations.Containers.Commands;
+using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Application.Tests.Operations.Loads;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
+using NSubstitute;
 using Xunit;
 
 namespace Logistics.Application.Tests.Operations.Containers;
@@ -10,61 +13,55 @@ public class AddDrayageChargesHandlerTests
 {
     private static readonly DateTime Now = new(2026, 10, 12, 12, 0, 0, DateTimeKind.Utc);
 
-    private static LoadInvoice Invoice() => new()
+    private static Container OverdueContainer() => new()
     {
-        LoadId = Guid.NewGuid(),
-        CustomerId = Guid.NewGuid(),
-        Subtotal = Money.Zero("USD"),
-        TaxTotal = Money.Zero("USD"),
-        Total = new Money { Amount = 1200m, Currency = "USD" }
+        Number = "MSCU1234567",
+        IsoType = ContainerIsoType.Hc40,
+        LastFreeDay = new DateOnly(2026, 10, 9),
+        DemurrageRatePerDay = 150m,
+        PickedUpAt = new DateTime(2026, 10, 11, 8, 0, 0, DateTimeKind.Utc),
+        EmptyReturnDeadline = new DateOnly(2026, 10, 11),
+        PerDiemRatePerDay = 100m,
+        ChassisNumber = "DCLZ123456",
+        ChassisProvider = ChassisProvider.Dcli,
+        ChassisRatePerDay = 30m
     };
 
     [Fact]
-    public void BuildLines_AllCharges_PricesRateTimesDaysInInvoiceCurrency()
+    public void BuildAccessorials_AllCharges_PricesRatePerDay()
     {
-        var container = new Container
-        {
-            Number = "MSCU1234567",
-            IsoType = ContainerIsoType.Hc40,
-            LastFreeDay = new DateOnly(2026, 10, 9),
-            DemurrageRatePerDay = 150m,
-            PickedUpAt = new DateTime(2026, 10, 11, 8, 0, 0, DateTimeKind.Utc),
-            EmptyReturnDeadline = new DateOnly(2026, 10, 11),
-            PerDiemRatePerDay = 100m,
-            ChassisNumber = "DCLZ123456",
-            ChassisProvider = ChassisProvider.Dcli,
-            ChassisRatePerDay = 30m
-        };
-        var invoice = Invoice();
+        var load = LoadInvoiceChargesTests.NewLoad();
+        var container = OverdueContainer();
 
-        var lines = AddDrayageChargesHandler.BuildLines(container, container.GetFreeTime(Now), invoice, 1);
+        var accessorials = AddDrayageChargesHandler.BuildAccessorials(load, container, container.GetFreeTime(Now));
 
-        Assert.Collection(lines,
+        Assert.Collection(accessorials,
             demurrage =>
             {
-                Assert.Equal(InvoiceLineItemType.Demurrage, demurrage.Type);
-                Assert.Equal(150m, demurrage.Amount.Amount);
+                Assert.Equal(InvoiceLineItemType.Demurrage, demurrage.LineItemType);
+                Assert.Equal(150m, demurrage.Rate);
                 Assert.Equal(2, demurrage.Quantity);
-                Assert.Equal(1, demurrage.Order);
-                Assert.Equal("USD", demurrage.Amount.Currency);
             },
             perDiem =>
             {
-                Assert.Equal(InvoiceLineItemType.PerDiem, perDiem.Type);
+                Assert.Equal(InvoiceLineItemType.PerDiem, perDiem.LineItemType);
                 Assert.Equal(1, perDiem.Quantity);
-                Assert.Equal(2, perDiem.Order);
             },
             chassis =>
             {
-                Assert.Equal(InvoiceLineItemType.Chassis, chassis.Type);
+                Assert.Equal(InvoiceLineItemType.Chassis, chassis.LineItemType);
                 Assert.Equal(2, chassis.Quantity);
-                Assert.Contains("DCLZ123456", chassis.Description);
+                Assert.Contains("DCLZ123456", chassis.Name);
             });
-        Assert.All(lines, l => Assert.Equal(invoice.Id, l.InvoiceId));
+        Assert.All(accessorials, a =>
+        {
+            Assert.Equal(load.Id, a.LoadId);
+            Assert.Equal(AccessorialUnit.PerDay, a.Unit);
+        });
     }
 
     [Fact]
-    public void BuildLines_WithinFreeTimeAndOwnChassis_AddsNothing()
+    public void BuildAccessorials_WithinFreeTimeAndOwnChassis_AddsNothing()
     {
         var container = new Container
         {
@@ -77,8 +74,51 @@ public class AddDrayageChargesHandlerTests
             ChassisRatePerDay = 30m
         };
 
-        var lines = AddDrayageChargesHandler.BuildLines(container, container.GetFreeTime(Now), Invoice(), 0);
+        var accessorials = AddDrayageChargesHandler.BuildAccessorials(
+            LoadInvoiceChargesTests.NewLoad(), container, container.GetFreeTime(Now));
 
-        Assert.Empty(lines);
+        Assert.Empty(accessorials);
+    }
+
+    [Fact]
+    public async Task Handle_RunAgain_ReplacesItsOwnAccessorialsAndSyncsInvoice()
+    {
+        var container = OverdueContainer();
+        var load = LoadInvoiceChargesTests.NewLoad();
+        load.ContainerId = container.Id;
+        var lumper = new LoadAccessorial
+        {
+            LoadId = load.Id, Load = load, Name = "Lumper", LineItemType = InvoiceLineItemType.Lumper,
+            Unit = AccessorialUnit.Flat, Rate = 100m
+        };
+        var oldDemurrage = new LoadAccessorial
+        {
+            LoadId = load.Id, Load = load, Name = "Demurrage", LineItemType = InvoiceLineItemType.Demurrage,
+            Unit = AccessorialUnit.PerDay, Rate = 150m
+        };
+        load.Accessorials.AddRange([lumper, oldDemurrage]);
+
+        var tenantUow = Substitute.For<ITenantUnitOfWork>();
+        var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
+        var containerRepo = Substitute.For<ITenantRepository<Container, Guid>>();
+        var accessorialRepo = Substitute.For<ITenantRepository<LoadAccessorial, Guid>>();
+        tenantUow.Repository<Load>().Returns(loadRepo);
+        tenantUow.Repository<Container>().Returns(containerRepo);
+        tenantUow.Repository<LoadAccessorial>().Returns(accessorialRepo);
+        loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        containerRepo.GetByIdAsync(container.Id, Arg.Any<CancellationToken>()).Returns(container);
+        var loadCharges = Substitute.For<ILoadChargeService>();
+        loadCharges.SyncInvoiceAsync(load, Arg.Any<CancellationToken>()).Returns(true);
+
+        var result = await new AddDrayageChargesHandler(tenantUow, loadCharges)
+            .Handle(new AddDrayageChargesCommand { LoadId = load.Id }, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Contains(lumper, load.Accessorials);
+        Assert.DoesNotContain(oldDemurrage, load.Accessorials);
+        accessorialRepo.Received(1).Delete(oldDemurrage);
+        Assert.Single(load.Accessorials, a => a.LineItemType == InvoiceLineItemType.Demurrage);
+        await loadCharges.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
+        await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

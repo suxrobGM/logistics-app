@@ -92,7 +92,7 @@ public class LoadInvoiceChargesTests
     }
 
     [Fact]
-    public void ReplaceLoadCharges_Regenerate_KeepsHandAddedAndDrayageLines()
+    public void ReplaceLoadCharges_Regenerate_KeepsHandAddedLines()
     {
         var load = NewLoad();
         var invoice = LoadFactory.CreateInvoice(load);
@@ -101,12 +101,12 @@ public class LoadInvoiceChargesTests
             InvoiceId = invoice.Id, Description = "Tarp", Type = InvoiceLineItemType.Other,
             Amount = new Money { Amount = 40m, Currency = "USD" }, Order = 1
         };
-        var demurrage = new InvoiceLineItem
+        var storage = new InvoiceLineItem
         {
-            InvoiceId = invoice.Id, Description = "Demurrage", Type = InvoiceLineItemType.Demurrage,
+            InvoiceId = invoice.Id, Description = "Storage", Type = InvoiceLineItemType.Storage,
             Amount = new Money { Amount = 150m, Currency = "USD" }, Order = 2
         };
-        invoice.LineItems.AddRange([manual, demurrage]);
+        invoice.LineItems.AddRange([manual, storage]);
 
         load.DeliveryCost = new Money { Amount = 2100m, Currency = "USD" };
         load.FuelSurcharge = 200m;
@@ -116,7 +116,7 @@ public class LoadInvoiceChargesTests
         Assert.Single(removed);
         Assert.Equal(2, added.Count);
         Assert.Contains(manual, invoice.LineItems);
-        Assert.Contains(demurrage, invoice.LineItems);
+        Assert.Contains(storage, invoice.LineItems);
         Assert.Equal(2100m + 200m + 40m + 150m, invoice.Total.Amount);
         Assert.Equal([0, 1, 2, 3], invoice.LineItems.OrderBy(l => l.Order).Select(l => l.Order));
         Assert.Equal(InvoiceLineItemType.BaseRate, invoice.LineItems.OrderBy(l => l.Order).First().Type);

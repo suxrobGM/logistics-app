@@ -17,5 +17,8 @@ public enum AccessorialUnit
     PerDistance,
 
     [Description("Per stop")]
-    PerStop
+    PerStop,
+
+    [Description("Per day")]
+    PerDay
 }

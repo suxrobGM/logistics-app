@@ -47,8 +47,8 @@ A drayage tenant sees last-free-day countdowns on every container, gets escalati
   - Empty return terminal; street turn (`POST /containers/{id}/streetturn`) records the export
     booking and stops per diem. No matching engine.
   - Leaving `Returned` starts a new move and clears the per-move fields (line and rates stay).
-  - Billing: `POST /loads/{id}/drayagecharges` writes Demurrage / PerDiem / Chassis lines (rate x days)
-    onto the load invoice and replaces them on re-run. `Storage` exists as a line type for manual entry.
+  - Billing: `POST /loads/{id}/drayagecharges` writes Demurrage / PerDiem / Chassis per-day accessorials
+    (rate x days) on the load, replaces them on re-run, and syncs the load invoice. `Storage` exists as a line type for manual entry.
   - Alerts: `ContainerDeadlineAlertJob` (daily 12:00 UTC) notifies when a running clock is due today,
     tomorrow, or overdue - repeated daily with the growing charge while overdue.
   - AI: `get_container_status` returns the clocks, holds, appointments, chassis and street turn;
