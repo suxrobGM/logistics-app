@@ -2,7 +2,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
-public class LoadInvoice : Invoice
+public partial class LoadInvoice : Invoice
 {
     public override InvoiceType Type { get; set; } = InvoiceType.Load;
     public required Guid LoadId { get; set; }

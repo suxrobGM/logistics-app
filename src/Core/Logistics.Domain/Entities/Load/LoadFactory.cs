@@ -73,8 +73,8 @@ public static class LoadFactory
     }
 
     /// <summary>
-    /// Creates an invoice for the load with Draft status and base rate line item.
-    /// The invoice will be set to Issued when the load is dispatched.
+    /// Creates an invoice for the load with Draft status and the load's charge lines (base rate,
+    /// fuel surcharge, accessorials). The invoice will be set to Issued when the load is dispatched.
     /// </summary>
     public static LoadInvoice CreateInvoice(Load load)
     {
@@ -91,30 +91,9 @@ public static class LoadFactory
             Load = load
         };
 
-        // Add base rate line item
-        var lineItem = new InvoiceLineItem
-        {
-            InvoiceId = invoice.Id,
-            Description = GetLineItemDescription(load),
-            Type = InvoiceLineItemType.BaseRate,
-            Amount = load.DeliveryCost,
-            Quantity = 1,
-            Order = 0
-        };
-        invoice.LineItems.Add(lineItem);
-
+        invoice.ReplaceLoadCharges(load);
+        invoice.RecalculateTotals();
         return invoice;
-    }
-
-    private static string GetLineItemDescription(Load load)
-    {
-        return load.Type switch
-        {
-            LoadType.Vehicle => "Vehicle transport charges",
-            LoadType.RefrigeratedGoods => "Refrigerated transport charges",
-            LoadType.HazardousMaterials => "Hazmat transport charges",
-            _ => "Freight charges"
-        };
     }
 
     /// <summary>

@@ -123,6 +123,7 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
             load.HazmatClass = p.HazmatClass;
             load.UnNumber = p.UnNumber;
             load.Vehicles = p.Vehicles is null ? [] : [.. p.Vehicles];
+            p.Shipment?.ApplyTo(load);
             loads.Add(load);
         }
 

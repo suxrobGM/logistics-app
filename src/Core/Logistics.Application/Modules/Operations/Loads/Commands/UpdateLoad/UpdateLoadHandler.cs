@@ -10,7 +10,10 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow, IVehicleTransportGuard vehicleTransportGuard)
+internal sealed class UpdateLoadHandler(
+    ITenantUnitOfWork tenantUow,
+    IVehicleTransportGuard vehicleTransportGuard,
+    ILoadChargeService loadChargeService)
     : IRequestHandler<UpdateLoadCommand, Result>
 {
     public async Task<Result> Handle(UpdateLoadCommand req, CancellationToken ct)
@@ -41,6 +44,8 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow, IVehicleTra
             load.OriginLocation = PropertyUpdater.UpdateIfChanged(req.OriginLocation, load.OriginLocation);
             load.DestinationAddress = PropertyUpdater.UpdateIfChanged(req.DestinationAddress, load.DestinationAddress);
             load.DestinationLocation = PropertyUpdater.UpdateIfChanged(req.DestinationLocation, load.DestinationLocation);
+
+            var billedBefore = (load.DeliveryCost.Amount, load.Type);
 
             if (req.DeliveryCost is not null && req.DeliveryCost != load.DeliveryCost.Amount)
             {
@@ -85,6 +90,12 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow, IVehicleTra
                 load.MarkUpdated();
             }
 
+            var chargesChanged = await ApplyShipmentChangesAsync(req, load, ct);
+            if (chargesChanged || billedBefore != (load.DeliveryCost.Amount, load.Type))
+            {
+                await loadChargeService.SyncInvoiceAsync(load, ct);
+            }
+
             // SaveChanges dispatches domain events:
             // - LoadAssignedToTruckEvent (if truck assigned)
             // - LoadRemovedFromTruckEvent (if truck changed, for old truck)
@@ -97,6 +108,33 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow, IVehicleTra
         {
             return Result.Fail(ex.Message);
         }
+    }
+
+    /// <summary>Applies the LTL fields and charges; true when a charge changed.</summary>
+    private async Task<bool> ApplyShipmentChangesAsync(UpdateLoadCommand req, Load load, CancellationToken ct)
+    {
+        if (req.FreightClass.HasValue) load.FreightClass = req.FreightClass;
+        if (req.NmfcCode is not null) load.NmfcCode = req.NmfcCode;
+        if (req.PalletCount.HasValue) load.PalletCount = req.PalletCount;
+        if (req.PieceCount.HasValue) load.PieceCount = req.PieceCount;
+        if (req.Weight.HasValue) load.Weight = req.Weight;
+        if (req.Dimensions is not null) load.Dimensions = req.Dimensions;
+        if (req.IsStackable.HasValue) load.IsStackable = req.IsStackable.Value;
+
+        var changed = false;
+        if (req.FuelSurcharge.HasValue && req.FuelSurcharge != load.FuelSurcharge)
+        {
+            load.FuelSurcharge = req.FuelSurcharge.Value;
+            changed = true;
+        }
+
+        if (req.Accessorials is not null)
+        {
+            await loadChargeService.ReplaceAccessorialsAsync(load, req.Accessorials, ct);
+            changed = true;
+        }
+
+        return changed;
     }
 
     private async Task UpdateCustomerIfUpdated(UpdateLoadCommand req, Load loadEntity)

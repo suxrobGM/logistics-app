@@ -46,4 +46,16 @@ public record TenantSettings
     /// Null leaves the agent without a floor.
     /// </summary>
     public decimal? DefaultRateFloorPerMile { get; set; }
+
+    /// <summary>
+    /// Minutes a truck may wait at a stop before detention starts. Null means the 2-hour industry default.
+    /// A customer's own terms override it.
+    /// </summary>
+    public int? DetentionFreeMinutes { get; set; }
+
+    /// <summary>
+    /// Hourly detention rate billed past the free time. Null turns detention billing off (the dwell
+    /// alert still fires).
+    /// </summary>
+    public decimal? DetentionRatePerHour { get; set; }
 }

@@ -22,4 +22,9 @@ public record InvoiceLineItemDto
     public decimal TaxRatePercent { get; set; }
     public decimal TaxAmount { get; set; }
     public string? TaxCode { get; set; }
+
+    /// <summary>
+    /// The record a generated line was built from; null on hand-added lines, which a regeneration keeps.
+    /// </summary>
+    public Guid? SourceId { get; set; }
 }

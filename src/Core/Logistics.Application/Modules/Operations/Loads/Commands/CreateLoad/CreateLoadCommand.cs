@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-public class CreateLoadCommand : ICommand
+public partial class CreateLoadCommand : ICommand
 {
     public string Name { get; set; } = null!;
     public LoadType Type { get; set; }

@@ -26,5 +26,15 @@ public class Customer : AuditableEntity, ITenantEntity
     /// </summary>
     public bool IsVatExempt { get; set; }
 
+    /// <summary>
+    /// Detention free time agreed with this customer. Null falls back to the tenant's.
+    /// </summary>
+    public int? DetentionFreeMinutes { get; set; }
+
+    /// <summary>
+    /// Hourly detention rate agreed with this customer. Null falls back to the tenant's.
+    /// </summary>
+    public decimal? DetentionRatePerHour { get; set; }
+
     public virtual List<LoadInvoice> Invoices { get; set; } = [];
 }

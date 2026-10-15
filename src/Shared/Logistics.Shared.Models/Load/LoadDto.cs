@@ -31,6 +31,19 @@ public class LoadDto
     public bool IsHazmat { get; set; }
     public HazmatClass? HazmatClass { get; set; }
     public string? UnNumber { get; set; }
+    public FreightClass? FreightClass { get; set; }
+    public string? NmfcCode { get; set; }
+    public int? PalletCount { get; set; }
+    public int? PieceCount { get; set; }
+    public double? Weight { get; set; }
+    public string? Dimensions { get; set; }
+    public bool IsStackable { get; set; }
+    public decimal FuelSurcharge { get; set; }
+
+    /// <summary>
+    ///     Filled on a single-load read only.
+    /// </summary>
+    public List<LoadAccessorialDto> Accessorials { get; set; } = [];
     public Guid? ContainerId { get; set; }
     public string? ContainerNumber { get; set; }
     public ContainerIsoType? ContainerIsoType { get; set; }

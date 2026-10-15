@@ -25,6 +25,14 @@ public class InvoiceLineItem : Entity, ITenantEntity
     public string? Notes { get; set; }
 
     /// <summary>
+    /// The record a generated line was built from (a load accessorial, recurring deduction, cash
+    /// advance or fuel card transaction). Regenerating an invoice replaces lines that carry one and
+    /// leaves hand-added lines, which never do, alone. Not a foreign key - the sources live in
+    /// different tables.
+    /// </summary>
+    public Guid? SourceId { get; set; }
+
+    /// <summary>
     /// Effective tax rate for this line, populated by <c>ITaxCalculator</c>. 0 when no tax applies
     /// (e.g. reverse-charge B2B export, exempt customer, US tenant without Stripe Tax in
     /// non-registered jurisdiction).
