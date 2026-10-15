@@ -27,7 +27,6 @@ internal sealed class GetLoadByIdHandler(
         }
 
         var dto = load.ToDto(LoadIntermodalLookup.Empty);
-        dto.Accessorials = load.Accessorials.Select(a => a.ToDto()).ToList();
 
         if (load is { Type: LoadType.Vehicle, AssignedTruck: not null })
         {
