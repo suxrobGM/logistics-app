@@ -4,13 +4,14 @@ using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Operations.Containers.Queries;
 
 internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetContainersQuery, PagedResult<ContainerDto>>
 {
-    public Task<PagedResult<ContainerDto>> Handle(GetContainersQuery req, CancellationToken ct)
+    public async Task<PagedResult<ContainerDto>> Handle(GetContainersQuery req, CancellationToken ct)
     {
         var query = tenantUow.Repository<Container>().Query();
 
@@ -45,9 +46,29 @@ internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
         var containers = query
             .OrderBy(req.OrderBy)
             .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto())
             .ToArray();
 
-        return Task.FromResult(PagedResult<ContainerDto>.Ok(containers, totalItems, req.PageSize));
+        // Both terminals in one query - reading them off the navigations costs two SELECTs per row.
+        var terminalIds = containers.Select(c => c.CurrentTerminalId)
+            .Concat(containers.Select(c => c.EmptyReturnTerminalId))
+            .OfType<Guid>()
+            .Distinct()
+            .ToArray();
+
+        var terminals = terminalIds.Length == 0
+            ? []
+            : await tenantUow.Repository<Terminal>().Query()
+                .Where(t => terminalIds.Contains(t.Id))
+                .ToDictionaryAsync(t => t.Id, t => new TerminalRef(t.Name, t.Code), ct);
+
+        var now = DateTime.UtcNow;
+        var items = containers
+            .Select(c => c.ToDto(now, Find(terminals, c.CurrentTerminalId), Find(terminals, c.EmptyReturnTerminalId)))
+            .ToArray();
+
+        return PagedResult<ContainerDto>.Ok(items, totalItems, req.PageSize);
     }
+
+    private static TerminalRef? Find(Dictionary<Guid, TerminalRef> terminals, Guid? id) =>
+        id is { } key && terminals.TryGetValue(key, out var found) ? found : null;
 }

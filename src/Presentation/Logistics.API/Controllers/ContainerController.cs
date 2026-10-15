@@ -53,6 +53,28 @@ public class ContainerController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpPut("{id:guid}/drayage", Name = "UpdateContainerDrayage")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Container.Manage)]
+    public async Task<IActionResult> UpdateDrayage(Guid id, [FromBody] UpdateContainerDrayageCommand request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("{id:guid}/streetturn", Name = "StreetTurnContainer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Container.Manage)]
+    public async Task<IActionResult> StreetTurn(Guid id, [FromBody] StreetTurnContainerCommand request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPut("{id:guid}/status", Name = "UpdateContainerStatus")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

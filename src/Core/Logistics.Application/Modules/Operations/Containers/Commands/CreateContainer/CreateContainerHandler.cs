@@ -56,6 +56,6 @@ internal sealed class CreateContainerHandler(ITenantUnitOfWork tenantUow)
         await tenantUow.Repository<Container>().AddAsync(container, ct);
         await tenantUow.SaveChangesAsync(ct);
 
-        return Result<ContainerDto>.Ok(container.ToDto());
+        return Result<ContainerDto>.Ok(container.ToDto(DateTime.UtcNow));
     }
 }

@@ -8,5 +8,5 @@ namespace Logistics.Application.Modules.Operations.Containers.Queries;
 internal sealed class GetContainerByIdHandler(ITenantUnitOfWork tenantUow)
     : GetTenantEntityByIdHandler<GetContainerByIdQuery, Container, ContainerDto>(tenantUow)
 {
-    protected override ContainerDto MapToDto(Container entity) => entity.ToDto();
+    protected override ContainerDto MapToDto(Container entity) => entity.ToDto(DateTime.UtcNow);
 }

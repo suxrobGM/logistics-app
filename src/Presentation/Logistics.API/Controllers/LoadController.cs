@@ -117,6 +117,16 @@ public class LoadController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpPost("{id:guid}/drayagecharges", Name = "AddLoadDrayageCharges")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Invoice.Manage)]
+    public async Task<IActionResult> AddDrayageCharges(Guid id)
+    {
+        var result = await mediator.Send(new AddDrayageChargesCommand { LoadId = id });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("{id:guid}/dispatch", Name = "DispatchLoad")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
