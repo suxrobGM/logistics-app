@@ -1,0 +1,45 @@
+# Nightly PostgreSQL backups (optional; host cron running deploy/db-backup/pg-backup.sh does the same).
+# Its own compose project, so the app stack's `--remove-orphans` never removes it:
+#
+#   docker compose -f deploy/docker-compose.backup.yml up -d
+#
+# Variables come from deploy/.env (BACKUP_* and AWS_*); see docs/deployment/observability-and-backups.md.
+name: logistics-backup
+
+services:
+  db-backup:
+    # pg_dump must be the same major version as the server or newer.
+    image: "postgres:${BACKUP_POSTGRES_VERSION:-18}-alpine"
+    # PostgreSQL runs on the host and listens on localhost, which a bridged container cannot reach.
+    network_mode: host
+    environment:
+      PGHOST: "${BACKUP_PGHOST:-localhost}"
+      PGPORT: "${BACKUP_PGPORT:-5432}"
+      PGUSER: "${BACKUP_PGUSER:-postgres}"
+      PGPASSWORD: "${BACKUP_PGPASSWORD:?set BACKUP_PGPASSWORD in .env}"
+      BACKUP_DIR: /backups
+      BACKUP_DB_PATTERN: "${BACKUP_DB_PATTERN:-%_logisticsx}"
+      BACKUP_KEEP_DAILY: "${BACKUP_KEEP_DAILY:-7}"
+      BACKUP_KEEP_WEEKLY: "${BACKUP_KEEP_WEEKLY:-4}"
+      BACKUP_S3_BUCKET: "${BACKUP_S3_BUCKET:-}"
+      BACKUP_S3_ENDPOINT: "${BACKUP_S3_ENDPOINT:-}"
+      BACKUP_S3_PREFIX: "${BACKUP_S3_PREFIX:-postgres}"
+      BACKUP_HEARTBEAT_URL: "${BACKUP_HEARTBEAT_URL:-}"
+      AWS_ACCESS_KEY_ID: "${BACKUP_S3_ACCESS_KEY_ID:-}"
+      AWS_SECRET_ACCESS_KEY: "${BACKUP_S3_SECRET_ACCESS_KEY:-}"
+      AWS_DEFAULT_REGION: "${BACKUP_S3_REGION:-auto}"
+      BACKUP_SCHEDULE: "${BACKUP_SCHEDULE:-30 3 * * *}"
+    volumes:
+      - "${BACKUP_HOST_DIR:-/var/backups/logisticsx}:/backups"
+      - ./db-backup:/scripts:ro
+    # busybox crond starts jobs with an empty environment, so the container's is saved for the job.
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        if [ -n "$$BACKUP_S3_BUCKET" ]; then apk add --no-cache aws-cli > /dev/null; fi
+        export -p > /etc/backup.env
+        echo "$$BACKUP_SCHEDULE . /etc/backup.env; sh /scripts/pg-backup.sh >> /proc/1/fd/1 2>&1" > /etc/crontabs/root
+        exec crond -f -l 8
+    restart: unless-stopped
