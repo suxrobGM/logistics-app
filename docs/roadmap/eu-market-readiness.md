@@ -19,7 +19,7 @@ US competitors head-on.
 - **i18n**: portal translations (DE/NL/PL first - largest road-freight markets). Audit Angular i18n readiness; driver app strings in KMP.
 - **EU ELD/tacho providers**: Samsara/Geotab operate in the EU, but digital tachograph data (driver-card downloads) is the EU norm - evaluate a tachograph-data provider integration in `Infrastructure.Integrations.Eld`.
 - **WhatsApp driver/customer comms**: the standard channel outside the US; Telegram bot already exists (`Logistics.TelegramBot`) - add WhatsApp Business API alongside.
-- **EU load boards**: TIMOCOM / Trans.eu providers in `Infrastructure.Integrations.LoadBoard` (same factory pattern as DAT/Truckstop).
+- **EU load boards**: TIMOCOM / Trans.eu providers in `Infrastructure.Integrations.LoadBoard` (same factory pattern as DAT).
 - Marketing: EU-specific landing content on `website` (compliance stack is the story).
 
 ## Acceptance

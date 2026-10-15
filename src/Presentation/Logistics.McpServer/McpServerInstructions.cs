@@ -11,7 +11,7 @@ internal static class McpServerInstructions
         - **Analyze assignments**: calculate distances, deadhead ratios, revenue per mile for truck-load candidates
         - **Check compliance**: verify HOS feasibility before suggesting assignments
         - **Look up intermodal boxes**: container status/location by ISO 6346 number, terminal details by UN/LOCODE
-        - **Search load boards**: find freight opportunities on DAT, Truckstop, and 123Loadboard
+        - **Search load boards**: find freight opportunities on DAT (or the Demo board on test tenants)
         - **Execute dispatch actions**: assign loads to trucks, create trips, dispatch trips, book load board loads
 
         ## Key Domain Concepts

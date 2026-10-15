@@ -9,7 +9,7 @@ namespace Logistics.Infrastructure.Integrations.LoadBoard.Credit;
 
 /// <summary>
 /// Broker credit lookup: tenant-DB cache (24h TTL) → Demo provider (deterministic pseudo-score)
-/// → FMCSA authority status as the free fallback. Credit scores from DAT/Truckstop arrive via
+/// → FMCSA authority status as the free fallback. Credit scores from DAT arrive via
 /// search responses and are stamped onto listings by the provider mappers, not fetched here.
 /// </summary>
 internal sealed class BrokerCreditService(

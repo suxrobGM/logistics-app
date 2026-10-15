@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 namespace Logistics.Domain.Entities;
 
 /// <summary>
-/// Represents a truck that has been posted to external load boards (DAT, Truckstop, 123Loadboard)
+/// Represents a truck that has been posted to an external load board (DAT, or Demo for testing)
 /// to advertise available capacity to shippers and brokers.
 /// </summary>
 /// <remarks>
@@ -35,7 +35,7 @@ public class PostedTruck : AuditableEntity, ITenantEntity
     public virtual required Truck Truck { get; set; }
 
     /// <summary>
-    /// The load board provider where this truck is posted (DAT, Truckstop, 123Loadboard, Demo)
+    /// The load board provider where this truck is posted (DAT or Demo)
     /// </summary>
     public required LoadBoardProviderType ProviderType { get; set; }
 

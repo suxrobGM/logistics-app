@@ -57,7 +57,7 @@ It supports general freight, car hauling, and container drayage, for carriers in
 | Area        | Highlights                                                                                               |
 | ----------- | -------------------------------------------------------------------------------------------------------- |
 | Dispatch    | Loads, multi-stop trips, Mapbox routing, a live driver map, and tracking links you can share             |
-| Load boards | Search and book on DAT, Truckstop, and 123Loadboard, with a broker credit check on every listing         |
+| Load boards | Search and book on DAT, with a broker credit check on every listing                                      |
 | Money       | Invoices with US sales tax or EU VAT, Stripe payments and payouts, payroll, and QuickBooks sync          |
 | Fuel        | WEX and EFS fuel card imports every night, plus quarterly IFTA reports                                   |
 | Compliance  | Hours of service from Samsara, Motive, Geotab, and TT ELD, driver inspections, hazmat checks, GDPR tools |
