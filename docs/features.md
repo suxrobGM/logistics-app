@@ -31,12 +31,19 @@ The web app for owners, managers, and dispatchers.
 
 ### Intermodal
 
-| Feature             | What it does                                                                                                                                                         |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Container tracking  | Track a container across several loads by its ISO 6346 number, with seal number, booking reference, bill of lading, weight, and laden or empty status.               |
-| Container types     | Common ISO size and type codes are built in: 20' and 40' general purpose, 40' and 45' high cube, reefers, open tops, flat racks, and 20' tanks.                      |
-| Container lifecycle | A container moves through fixed stages: empty, loaded, at port, in transit, delivered, returned. Each change raises an event other parts of the system can react to. |
-| Terminals           | A directory of sea ports, rail terminals, inland depots, air cargo facilities, and border crossings, each keyed by its UN/LOCODE (for example `USLAX` or `DEHAM`).   |
+| Feature                | What it does                                                                                                                                                                                       |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Container tracking     | Track a container across several loads by its ISO 6346 number, with seal number, booking reference, bill of lading, weight, and laden or empty status.                                             |
+| Container types        | Common ISO size and type codes are built in: 20' and 40' general purpose, 40' and 45' high cube, reefers, open tops, flat racks, and 20' tanks.                                                    |
+| Container lifecycle    | A container moves through fixed stages: empty, loaded, at port, in transit, delivered, returned. Each change raises an event other parts of the system can react to.                               |
+| Terminals              | A directory of sea ports, rail terminals, inland depots, air cargo facilities, and border crossings, each keyed by its UN/LOCODE (for example `USLAX` or `DEHAM`).                                 |
+| Free time              | Enter the last free day and the empty return deadline with daily demurrage and per-diem rates. Every container shows days left or days over and the charge so far, in grey, amber or red.          |
+| Deadline alerts        | Each morning dispatchers get a notification for every container whose last free day or return deadline is today, tomorrow, or already past, with the accrued charge.                               |
+| Holds and appointments | Mark customs, freight, line or other holds and the available-for-pickup time, and record pickup and return appointment numbers and windows. Entered by hand; there is no terminal system feed yet. |
+| Chassis                | Record the chassis number, its pool (own, DCLI, TRAC, Flexi-Van) and a daily rate. Chassis days are counted from outgate to return.                                                                |
+| Street turns           | Mark an empty import box as reused for an export booking instead of going back to the line. Its per-diem clock stops there.                                                                        |
+| Drayage billing        | One button on the load writes demurrage, per-diem and chassis lines (rate times days) onto the load's invoice. Running it again replaces those lines.                                              |
+| Deadline-aware AI      | The dispatch agent sees each load's last free day and hold flag, puts a box one day from demurrage ahead of loads with slack, and skips boxes on hold.                                             |
 
 ### Load boards
 

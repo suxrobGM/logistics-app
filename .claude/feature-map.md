@@ -70,6 +70,10 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Application: `Modules/Operations/Containers/Commands/`, `Modules/Operations/Containers/Queries/`
 - API/UI: `ContainerController.cs`, `tms-portal/pages/containers/`
 - Feature flag: `TenantFeature.IntermodalContainers` (Professional+; off by default)
+- Drayage (per move, on the container): `Container.Drayage.cs` (steamship line, LFD / empty return deadline + daily rates, holds, appointments, chassis number/pool/rate, empty return terminal, street turn), clocks in `ContainerFreeTimeCalculator` (calendar days, UTC date, deadline day free). `PickedUpAt` is stamped when status leaves `AtPort`; leaving `Returned` clears the per-move data (`ContainerStatusMachine`)
+- Drayage commands: `UpdateContainerDrayage` (`PUT /containers/{id}/drayage`, full replace), `StreetTurnContainer` (`POST /containers/{id}/streetturn`), `AddDrayageCharges` (`POST /loads/{id}/drayagecharges`, replaces its own Demurrage/PerDiem/Chassis invoice lines)
+- Job: `ContainerDeadlineAlertJob` (daily 12:00 UTC) -> `Containers/Services/ContainerDeadlineAlertService` (`INotificationService`)
+- UI: `tms-portal/shared/components/drayage/container-drayage-panel/` (container + load details), `tags/free-time-tag`, `tags/container-holds-tag`, `pages/containers/components/drayage-form/` (container edit)
 
 ### Terminals (UN/LOCODE)
 
