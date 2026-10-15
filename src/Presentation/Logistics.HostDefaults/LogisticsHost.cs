@@ -10,8 +10,8 @@ namespace Logistics.HostDefaults;
 
 /// <summary>
 /// Shared host bootstrap for the presentation web apps. Owns the Serilog bootstrap logger,
-/// the standard resilience handler, health-check wiring, and the top-level try/catch/finally
-/// shell so each host's <c>Program.cs</c> collapses to a single <see cref="Run"/> call.
+/// the standard resilience handler, Sentry error tracking, health-check wiring, and the top-level
+/// try/catch/finally shell so each host's <c>Program.cs</c> collapses to a single <see cref="Run"/> call.
 /// </summary>
 public static class LogisticsHost
 {
@@ -28,6 +28,7 @@ public static class LogisticsHost
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddHealthChecks();
             builder.Services.ConfigureHttpClientDefaults(http => http.AddStandardResilienceHandler());
+            builder.AddLogisticsSentry();
 
             builder.Host.UseSerilog((ctx, lc) =>
             {
@@ -52,7 +53,8 @@ public static class LogisticsHost
                             rollingInterval: RollingInterval.Month);
                 }
 
-                lc.ReadFrom.Configuration(ctx.Configuration);
+                lc.WriteToSentryIfEnabled(ctx.Configuration)
+                    .ReadFrom.Configuration(ctx.Configuration);
             });
 
             var app = buildApp(builder);
