@@ -141,6 +141,33 @@ public class PortalController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    ///     Download a document of one of the customer's loads.
+    /// </summary>
+    [HttpGet("loads/{loadId:guid}/documents/{documentId:guid}/download", Name = "DownloadPortalLoadDocument")]
+    [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Portal.ViewDocuments)]
+    public async Task<IActionResult> DownloadLoadDocument(Guid loadId, Guid documentId)
+    {
+        var customerId = await GetCustomerIdAsync();
+        if (customerId is null)
+        {
+            return NotFound(new ErrorResponse("Customer user not found."));
+        }
+
+        var result = await mediator.Send(new DownloadPortalLoadDocumentQuery
+        {
+            LoadId = loadId,
+            DocumentId = documentId,
+            CustomerId = customerId.Value
+        });
+
+        return result.IsSuccess
+            ? File(result.Value!.FileContent, result.Value.ContentType, result.Value.OriginalFileName)
+            : NotFound(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
     ///     Download the electronic bill of lading of a vehicle load as a PDF.
     /// </summary>
     [HttpGet("loads/{loadId:guid}/ebol", Name = "DownloadPortalLoadVehicleBol")]
