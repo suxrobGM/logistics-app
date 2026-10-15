@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Logistics.API.Controllers;
 
 /// <summary>
-/// The tenant's accessorial price list and default detention terms.
+/// The tenant's accessorial price list.
 /// </summary>
 [ApiController]
 [Route("accessorials")]
@@ -54,24 +54,5 @@ public class AccessorialController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new DeleteAccessorialChargeCommand { Id = id });
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
-    }
-
-    [HttpGet("detention", Name = "GetDetentionTerms")]
-    [ProducesResponseType(typeof(DetentionTermsDto), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Load.View)]
-    public async Task<IActionResult> GetDetentionTerms()
-    {
-        var result = await mediator.Send(new GetDetentionTermsQuery());
-        return Ok(result.Value);
-    }
-
-    [HttpPut("detention", Name = "UpdateDetentionTerms")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Invoice.Manage)]
-    public async Task<IActionResult> UpdateDetentionTerms([FromBody] UpdateDetentionTermsCommand request)
-    {
-        var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }

@@ -334,8 +334,8 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Accessorials and detention terms
 
 - Domain: `Entities/Load/AccessorialCharge.cs` (tenant catalog), `TenantSettings.DetentionFreeMinutes`/`DetentionRatePerHour`, `Customer.DetentionFreeMinutes`/`DetentionRatePerHour`
-- Application: `Modules/Financial/Accessorials/` (catalog CRUD, tenant and customer detention terms)
-- API/UI: `AccessorialController.cs` (`/accessorials`, `/accessorials/detention`), `CustomerController` (`/customers/{id}/detention`), `tms-portal/pages/settings/accessorial-settings/`, `pages/customers/components/customer-detention-terms/`
+- Application: `Modules/Financial/Accessorials/` (catalog CRUD, customer detention terms; tenant terms save through `UpdateTenant`)
+- API/UI: `AccessorialController.cs` (`/accessorials`), `CustomerController` (`/customers/{id}/detention`), `tms-portal/pages/settings/accessorial-settings/`, tenant terms in `pages/settings/company-settings/`, `pages/customers/components/customer-detention-terms/`
 
 ### Factoring
 

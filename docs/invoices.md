@@ -22,11 +22,12 @@ The system uses Table Per Hierarchy (TPH) pattern with three invoice types:
 ### Accessorials and detention
 
 - **Catalog** (`AccessorialCharge`, Settings > Accessorials, `GET/POST/PUT/DELETE /accessorials`):
-  name, line type, default amount and unit (`Flat`, `PerHour`, `PerDistance`, `PerStop`). Picking
+  name, line type, default amount and unit (`Flat`, `PerHour`, `PerDistance`, `PerStop`, `PerDay`). Picking
   one on the load form copies its values into a `LoadAccessorial`, so a later price change never
   rewrites existing invoices. Ad hoc accessorials need no catalog entry.
 - **Detention terms**: tenant default in `TenantSettings.DetentionFreeMinutes` (null = 120) and
-  `DetentionRatePerHour` (null = tracked and alerted, not billed), `GET/PUT /accessorials/detention`;
+  `DetentionRatePerHour` (null = tracked and alerted, not billed), edited on Settings > Company
+  through `PUT /tenants/{id}`;
   per customer in `Customer.DetentionFreeMinutes`/`DetentionRatePerHour`,
   `GET/PUT /customers/{id}/detention`. Customer values win field by field.
 - **Calculation** (`DetentionCalculator`): dwell is `TripStop.ArrivedAt` to `DepartedAt`; detention is

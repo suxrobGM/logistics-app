@@ -52,5 +52,15 @@ internal sealed class UpdateTenantValidator : AbstractValidator<UpdateTenantComm
             .InclusiveBetween(0m, 100m)
             .When(i => i.Settings?.DefaultRateFloorPerMile is not null)
             .WithMessage("Default rate floor per mile must be between 0 and 100.");
+
+        RuleFor(i => i.Settings!.DetentionFreeMinutes)
+            .InclusiveBetween(0, 24 * 60)
+            .When(i => i.Settings?.DetentionFreeMinutes is not null)
+            .WithMessage("Detention free time must be between 0 and 24 hours.");
+
+        RuleFor(i => i.Settings!.DetentionRatePerHour)
+            .GreaterThanOrEqualTo(0)
+            .When(i => i.Settings?.DetentionRatePerHour is not null)
+            .WithMessage("Detention rate cannot be negative.");
     }
 }
