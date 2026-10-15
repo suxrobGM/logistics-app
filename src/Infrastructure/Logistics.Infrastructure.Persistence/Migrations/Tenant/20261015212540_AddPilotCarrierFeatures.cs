@@ -34,12 +34,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 type: "timestamp with time zone",
                 nullable: true);
 
-            migrationBuilder.AddColumn<DateTime>(
-                name: "last_attempt_at",
-                table: "qbo_entity_mappings",
-                type: "timestamp with time zone",
-                nullable: true);
-
             migrationBuilder.AlterColumn<string>(
                 name: "equipment_type",
                 table: "posted_trucks",
@@ -476,9 +470,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     employee_id = table.Column<Guid>(type: "uuid", nullable: false),
                     reason = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    status = table.Column<string>(type: "text", nullable: false),
-                    reviewed_by_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    reviewed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     payroll_invoice_id = table.Column<Guid>(type: "uuid", nullable: true),
                     amount_amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     amount_currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
@@ -512,10 +503,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     submission_email = table.Column<string>(type: "character varying(320)", maxLength: 320, nullable: false),
                     phone = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    recourse_type = table.Column<string>(type: "text", nullable: false),
                     advance_rate_percent = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
                     fee_percent = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
-                    is_default = table.Column<bool>(type: "boolean", nullable: false),
                     remit_to_address_city = table.Column<string>(type: "text", nullable: true),
                     remit_to_address_country = table.Column<string>(type: "text", nullable: true),
                     remit_to_address_line1 = table.Column<string>(type: "text", nullable: true),
@@ -735,9 +724,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_cash_advances_employee_id_status",
+                name: "ix_cash_advances_employee_id",
                 table: "cash_advances",
-                columns: new[] { "employee_id", "status" });
+                column: "employee_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_cash_advances_payroll_invoice_id",
@@ -964,10 +953,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
             migrationBuilder.DropColumn(
                 name: "detention_alerted_at",
                 table: "trip_stops");
-
-            migrationBuilder.DropColumn(
-                name: "last_attempt_at",
-                table: "qbo_entity_mappings");
 
             migrationBuilder.DropColumn(
                 name: "dimensions",

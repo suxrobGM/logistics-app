@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20261015013342_AddPilotCarrierFeatures")]
+    [Migration("20261015212540_AddPilotCarrierFeatures")]
     partial class AddPilotCarrierFeatures
     {
         /// <inheritdoc />
@@ -714,19 +714,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("character varying(500)")
                         .HasColumnName("reason");
 
-                    b.Property<DateTime?>("ReviewedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("reviewed_at");
-
-                    b.Property<Guid?>("ReviewedById")
-                        .HasColumnType("uuid")
-                        .HasColumnName("reviewed_by_id");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -755,11 +742,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasKey("Id")
                         .HasName("pk_cash_advances");
 
+                    b.HasIndex("EmployeeId")
+                        .HasDatabaseName("ix_cash_advances_employee_id");
+
                     b.HasIndex("PayrollInvoiceId")
                         .HasDatabaseName("ix_cash_advances_payroll_invoice_id");
-
-                    b.HasIndex("EmployeeId", "Status")
-                        .HasDatabaseName("ix_cash_advances_employee_id_status");
 
                     b.ToTable("cash_advances", (string)null);
                 });
@@ -2116,10 +2103,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("numeric(5,2)")
                         .HasColumnName("fee_percent");
 
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_default");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -2130,11 +2113,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("phone");
-
-                    b.Property<string>("RecourseType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("recourse_type");
 
                     b.Property<string>("SubmissionEmail")
                         .IsRequired()
@@ -4875,10 +4853,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("created_by");
-
-                    b.Property<DateTime?>("LastAttemptAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_attempt_at");
 
                     b.Property<string>("LastError")
                         .HasMaxLength(2000)
