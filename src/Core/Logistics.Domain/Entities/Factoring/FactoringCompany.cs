@@ -37,11 +37,6 @@ public class FactoringCompany : AuditableEntity, ITenantEntity
     public decimal FeePercent { get; set; }
 
     /// <summary>
-    /// The factoring company new factored customers default to.
-    /// </summary>
-    public bool IsDefault { get; set; }
-
-    /// <summary>
     /// Percent of an invoice held back until the customer pays the factor: whatever the advance and the
     /// fee leave over, so advance + fee + reserve is always the whole invoice.
     /// </summary>

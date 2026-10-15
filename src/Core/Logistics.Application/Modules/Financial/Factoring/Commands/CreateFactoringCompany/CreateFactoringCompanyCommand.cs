@@ -13,5 +13,4 @@ public class CreateFactoringCompanyCommand : ICommand<Result<FactoringCompanyDto
     public FactoringRecourseType RecourseType { get; set; } = FactoringRecourseType.Recourse;
     public decimal AdvanceRatePercent { get; set; }
     public decimal FeePercent { get; set; }
-    public bool IsDefault { get; set; }
 }

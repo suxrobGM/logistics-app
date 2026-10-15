@@ -18,10 +18,6 @@ internal sealed class UpdateFactoringCompanyHandler(ITenantUnitOfWork tenantUow)
         }
 
         FactoringCompanyFields.Apply(req, company);
-        if (company.IsDefault)
-        {
-            await FactoringCompanyFields.ClearOtherDefaultsAsync(tenantUow, company.Id, ct);
-        }
 
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();

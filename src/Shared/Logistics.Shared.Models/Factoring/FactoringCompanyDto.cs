@@ -18,6 +18,4 @@ public record FactoringCompanyDto
     /// Whatever the advance and the fee leave over; held until the customer pays the factor.
     /// </summary>
     public decimal ReservePercent { get; set; }
-
-    public bool IsDefault { get; set; }
 }

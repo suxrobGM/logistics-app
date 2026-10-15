@@ -126,21 +126,6 @@ public class SubmitInvoicesToFactorHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ExplicitFactorButCustomerFactoredElsewhere_NamesTheInvoice()
-    {
-        AddInvoice(_factor, 1001);
-        AddInvoice(Company(), 1002);
-        var command = Command();
-        command.FactoringCompanyId = _factor.Id;
-
-        var result = await _sut.Handle(command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.Contains("Invoice #1002", result.Error);
-        Assert.Contains("different company", result.Error);
-    }
-
-    [Fact]
     public async Task Handle_CustomerNotFactored_Fails()
     {
         AddInvoice(null, 1001);

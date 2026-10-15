@@ -15,5 +15,4 @@ public interface IFactoringCompanyFields
     FactoringRecourseType RecourseType { get; }
     decimal AdvanceRatePercent { get; }
     decimal FeePercent { get; }
-    bool IsDefault { get; }
 }

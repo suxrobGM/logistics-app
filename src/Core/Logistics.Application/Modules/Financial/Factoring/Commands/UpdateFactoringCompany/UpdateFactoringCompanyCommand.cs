@@ -14,5 +14,4 @@ public class UpdateFactoringCompanyCommand : ICommand<Result>, IHaveId, IFactori
     public FactoringRecourseType RecourseType { get; set; }
     public decimal AdvanceRatePercent { get; set; }
     public decimal FeePercent { get; set; }
-    public bool IsDefault { get; set; }
 }

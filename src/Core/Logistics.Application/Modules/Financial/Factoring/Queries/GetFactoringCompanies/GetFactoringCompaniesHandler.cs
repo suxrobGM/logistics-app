@@ -14,8 +14,7 @@ internal sealed class GetFactoringCompaniesHandler(ITenantUnitOfWork tenantUow)
     public async Task<Result<List<FactoringCompanyDto>>> Handle(GetFactoringCompaniesQuery req, CancellationToken ct)
     {
         var companies = await tenantUow.Repository<FactoringCompany>().Query()
-            .OrderByDescending(f => f.IsDefault)
-            .ThenBy(f => f.Name)
+            .OrderBy(f => f.Name)
             .ToListAsync(ct);
 
         return Result<List<FactoringCompanyDto>>.Ok(companies.Select(f => f.ToDto()).ToList());

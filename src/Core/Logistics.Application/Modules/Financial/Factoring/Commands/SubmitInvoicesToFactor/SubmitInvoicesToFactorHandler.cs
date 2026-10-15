@@ -43,7 +43,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
             return Result<FactoringBatchDto>.Fail("Some of the selected invoices no longer exist. Reload and try again.");
         }
 
-        var companyId = req.FactoringCompanyId ?? SingleFactorOf(invoices);
+        var companyId = SingleFactorOf(invoices);
         if (companyId is null)
         {
             return Result<FactoringBatchDto>.Fail(

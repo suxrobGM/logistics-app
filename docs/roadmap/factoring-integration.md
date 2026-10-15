@@ -18,13 +18,13 @@ for carriers already locked into factoring contracts.
 
 - **Factor profiles** (`FactoringCompany`, Settings > Factoring): name, submission email, phone,
   remit-to address, recourse or non-recourse, advance rate and fee. The reserve is what the two
-  leave over. One is the default.
+  leave over.
 - **Factored customers**: `Customer.FactoringCompanyId`. Their invoice PDFs carry a notice of
   assignment with the factor's remit-to address (and no carrier payment state), the invoice email
   carries the notice instead of a payment link, and the customer portal shows "Pay to {factor}" and
   refuses card checkout.
 - **Schedule of accounts** (`FactoringBatch` + `FactoringBatchItem`): select invoices on Load
-  Invoices > **Submit to factor**. Each must be issued/sent/overdue, unpaid, not already submitted,
+  Invoices > **Submit to factor**; the factor is the one their customers are factored with. Each must be issued/sent/overdue, unpaid, not already submitted,
   billed to a customer factored with that factor, and have a POD or BOL on its load. The factor gets
   one email (through Resend, with attachments) carrying the schedule PDF, every invoice PDF and the
   loads' POD, BOL and rate confirmation (`DocumentType.Contract`). If the email fails, the schedule
