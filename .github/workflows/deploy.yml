@@ -54,7 +54,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: recursive
           token: ${{ secrets.PRIVATE_REPO_PAT }}
@@ -68,10 +68,10 @@ jobs:
         run: echo "name=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -85,7 +85,7 @@ jobs:
         run: printf '%s' "$FIREBASE_CREDENTIALS_JSON" > ./src/Presentation/Logistics.API/firebase-adminsdk-key.json
 
       - name: Build and push ${{ matrix.image }}
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.file }}
@@ -105,7 +105,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Copy docker-compose to VPS
         uses: appleboy/scp-action@v1
@@ -118,7 +118,7 @@ jobs:
           strip_components: 1
 
       - name: Deploy with Docker Compose
-        uses: appleboy/ssh-action@v1.2.4
+        uses: appleboy/ssh-action@v1.2.5
         env:
           DOCKER_ENV: ${{ secrets.DOCKER_ENV }}
           GHCR_PAT: ${{ secrets.GHCR_PAT }}
@@ -155,7 +155,7 @@ jobs:
       # Polls until the API answers or the budget runs out, and FAILS the job if it never does -
       # the previous `curl || echo` reported success even when every container was crash-looping.
       - name: Health check
-        uses: appleboy/ssh-action@v1.2.4
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
