@@ -300,7 +300,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Employee/DriverLicense.cs`
 - Application: `Modules/IdentityAccess/Employees/Commands/{Create,Update,Delete}DriverLicense/`, `Application.Abstractions/Dispatch/IDispatchEligibilityService`, `Modules/Compliance/Safety/Services/LicenseExpiryReminderService`
 - Infrastructure: `Infrastructure.AI/Tools/Dispatch/CheckDispatchEligibilityTool.cs`
-- API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `screens/MyLicensesScreen.kt`, `Jobs/LicenseExpiryReminderJob.cs`
+- API/UI: `EmployeeController` (extended), `tms-portal/pages/employees/components/driver-licenses-tab/`, mobile `feature/more/LicensesScreen.kt`, `Jobs/LicenseExpiryReminderJob.cs`
 
 ### ADR / Hazmat
 
@@ -321,7 +321,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Privacy/`
 - Application: `Modules/Compliance/Privacy/` (Commands, Queries, Services)
 - Infrastructure: `Infrastructure.Documents/Privacy/`, `Infrastructure.Persistence/Services/Privacy/DataAnonymizer.cs`
-- API/UI: `PrivacyController.cs`, `Jobs/Data{Export,Deletion,Retention,ExportExpiry}Job.cs`, `<ui-cookie-banner>`, `admin-portal/data-requests/`
+- API/UI: `PrivacyController.cs`, `Jobs/Data{Export,Deletion,Retention,ExportExpiry}Job.cs`, `<ui-cookie-banner>`, `admin-portal/pages/data-requests/`
 
 ## Financial
 
@@ -329,7 +329,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Invoice/Invoice.cs` + `LoadInvoice`, `PayrollInvoice`, `SubscriptionInvoice`, `Invoice.RecalculateTotals`, `InvoiceTaxLine`
 - Application: `Modules/Financial/Invoices/Commands/`, `Modules/Financial/Invoices/Queries/`, `IInvoiceTaxApplier`
-- API/UI: `InvoiceController.cs` + `preview-tax`, `tms-portal/pages/invoices/`, `customer-portal/pages/invoices/`
+- API/UI: `InvoicesController.cs` + `preview-tax`, `tms-portal/pages/invoices/`, `customer-portal/pages/invoices/`
 
 ### Accessorials and detention terms
 
@@ -418,7 +418,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Accounting/` (`AccountingProviderConfiguration` - tokens, `NeedsReconnect`, default item/accounts, `SyncFromDate`, item/category mappings as `MappingsJson` (`ValueObjects/Accounting/AccountingMappings`); `QboEntityMapping` - one row per pushed record; failed rows retry on every run)
 - Application: `Modules/Integrations/Accounting/` - `Services/AccountingSyncService` (the only push path: selects only rows edited since their last push, batches lookups, 500 per type per run), `AccountingPayloads` (payload + content hash + QBO `requestid`), `AccountingConnectionService` (token refresh, flags reconnect on `invalid_grant`); Commands: Connect/DisconnectQuickBooks, UpdateQuickBooksSettings, SyncQuickBooks → `RunAccountingSync` (enqueued, also the sync-issues Retry); Queries: GetQuickBooksConnection/AuthUrl/Lookups/SyncIssues. Ports in `Application.Abstractions/Accounting/` (`IAccountingProviderService`, `IAccountingProviderFactory`, `IOAuthStateProtector`, `AccountingReconnectRequiredException`)
 - Infrastructure: `Infrastructure.Integrations.Accounting/` (QBO OAuth2 + REST push: Customer, Vendor, Invoice + void, Payment + void (deleted payments, e.g. a factoring charge-back), Purchase, Bill; stale-SyncToken retry, `requestid` on creates, `intuit_tid` in errors); token cols encrypted via `Persistence/Converters/EncryptedStringConverter`; `Persistence/Services/Accounting/OAuthStateProtector` (10-minute state)
-- API/UI: `AccountingController.cs` (+ anonymous `/accounting/quickbooks/callback` and `/disconnected`), `Jobs/AccountingSyncJob.cs` (15 min fan-out), `tms-portal/pages/settings/integrations-settings/` + `components/quickbooks-card/`, `quickbooks-settings-form/`, `quickbooks-sync-issues/`. Setup guide: `docs/accounting-quickbooks-setup.md`
+- API/UI: `AccountingController.cs` (+ anonymous `/accounting/quickbooks/callback` and `/disconnected`), `Jobs/AccountingSyncJob.cs` (15 min fan-out), `tms-portal/pages/settings/integrations-settings/` + `pages/settings/components/quickbooks-card/`, `quickbooks-settings-form/`, `quickbooks-sync-issues/`. Setup guide: `docs/accounting-quickbooks-setup.md`
 - **Trap**: `GetQuickBooksConnection` and `DisconnectQuickBooks` are deliberately not feature-gated - a downgraded tenant must still be able to revoke access
 
 ## Communication
@@ -433,7 +433,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Live tracking
 
 - Application: `Modules/Operations/Tracking/Commands/`, `Modules/Operations/Tracking/Queries/`
-- Infrastructure: `Infrastructure.Communications/SignalR/Hubs/TrackingHub.cs`, `Routing/Geocoding/` (Mapbox), `Routing/TripTrackingService.cs`
+- Infrastructure: `Infrastructure.Communications/SignalR/Hubs/TrackingHub.cs`, `SignalR/Services/SignalRTripTrackingService.cs` (port `Application.Abstractions/Routing/ITripTrackingService.cs`), `Infrastructure.Routing/Geocoding/` (Mapbox)
 - API/UI: `TrackingController.cs`, `customer-portal/pages/tracking/`
 
 ### Notifications
