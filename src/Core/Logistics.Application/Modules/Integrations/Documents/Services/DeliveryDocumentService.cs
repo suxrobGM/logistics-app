@@ -98,7 +98,8 @@ internal sealed class DeliveryDocumentService(
     private async Task AddSummaryDocumentIfNoPhotosAsync(CaptureInProgress capture, CancellationToken ct)
     {
         if (capture.Parameters.Photos.Count > 0 ||
-            (!capture.HasSignature && string.IsNullOrEmpty(capture.Parameters.RecipientName)))
+            (!capture.HasSignature && string.IsNullOrEmpty(capture.Parameters.RecipientName)
+             && string.IsNullOrEmpty(capture.Parameters.UnableToSignReason)))
         {
             return;
         }
@@ -137,7 +138,8 @@ internal sealed class DeliveryDocumentService(
             parameters.Longitude,
             capture.CapturedAt,
             parameters.TripStopId,
-            parameters.Notes);
+            parameters.Notes,
+            parameters.UnableToSignReason);
 
         await tenantUow.Repository<DeliveryDocument>().AddAsync(document, ct);
         capture.DocumentIds.Add(document.Id);

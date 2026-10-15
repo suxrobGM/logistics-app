@@ -20,6 +20,11 @@ public class DeliveryDocument : LoadDocument
     public Guid? TripStopId { get; set; }  // The trip stop this POD/BOL is associated with
     public string? Notes { get; set; }  // Additional notes from driver
 
+    /// <summary>
+    /// Why no signature was collected (unattended pickup or delivery, shipper refused, ...).
+    /// </summary>
+    public string? UnableToSignReason { get; set; }
+
     public virtual TripStop? TripStop { get; private set; }
 
     public static DeliveryDocument Create(
@@ -38,7 +43,8 @@ public class DeliveryDocument : LoadDocument
         double? captureLongitude = null,
         DateTime? capturedAt = null,
         Guid? tripStopId = null,
-        string? notes = null)
+        string? notes = null,
+        string? unableToSignReason = null)
     {
         var doc = new DeliveryDocument
         {
@@ -60,7 +66,8 @@ public class DeliveryDocument : LoadDocument
             CaptureLongitude = captureLongitude,
             CapturedAt = capturedAt ?? DateTime.UtcNow,
             TripStopId = tripStopId,
-            Notes = notes
+            Notes = notes,
+            UnableToSignReason = unableToSignReason
         };
 
         doc.DomainEvents.Add(new DeliveryDocumentCreatedEvent(doc.Id, loadId, type));

@@ -20,7 +20,8 @@ internal sealed class CaptureBillOfLadingHandler(IDeliveryDocumentService delive
                 req.RecipientName,
                 req.Latitude,
                 req.Longitude,
-                req.Notes),
+                req.Notes,
+                req.UnableToSignReason),
             ct);
     }
 }

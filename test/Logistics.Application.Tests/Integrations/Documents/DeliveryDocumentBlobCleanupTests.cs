@@ -89,5 +89,6 @@ public class DeliveryDocumentBlobCleanupTests
         RecipientName: null,
         Latitude: null,
         Longitude: null,
-        Notes: null);
+        Notes: null,
+        UnableToSignReason: null);
 }

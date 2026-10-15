@@ -30,6 +30,7 @@ public sealed record DocumentDto
     public DateTime? CapturedAt { get; init; }
     public Guid? TripStopId { get; init; }
     public string? Notes { get; init; }
+    public string? UnableToSignReason { get; init; }
 
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }

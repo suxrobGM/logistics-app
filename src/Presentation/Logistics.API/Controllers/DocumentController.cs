@@ -152,7 +152,8 @@ public class DocumentController(IMediator mediator) : ControllerBase
             RecipientName = request.RecipientName,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
-            Notes = request.Notes
+            Notes = request.Notes,
+            UnableToSignReason = request.UnableToSignReason
         };
 
         var result = await mediator.Send(cmd);
@@ -194,7 +195,8 @@ public class DocumentController(IMediator mediator) : ControllerBase
             RecipientName = request.RecipientName,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
-            Notes = request.Notes
+            Notes = request.Notes,
+            UnableToSignReason = request.UnableToSignReason
         };
 
         var result = await mediator.Send(cmd);
@@ -217,4 +219,5 @@ public record CaptureProofOfDeliveryRequest(
     string? RecipientName,
     double? Latitude,
     double? Longitude,
-    string? Notes);
+    string? Notes,
+    string? UnableToSignReason);

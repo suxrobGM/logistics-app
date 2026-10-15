@@ -107,6 +107,9 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
             builder.Property(d => d.Notes)
                 .HasMaxLength(2000);
 
+            builder.Property(d => d.UnableToSignReason)
+                .HasMaxLength(500);
+
             // TripStop relation
             builder.HasOne(d => d.TripStop)
                 .WithMany()

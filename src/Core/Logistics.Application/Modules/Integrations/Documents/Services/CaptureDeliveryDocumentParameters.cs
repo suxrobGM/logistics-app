@@ -13,6 +13,7 @@ namespace Logistics.Application.Modules.Integrations.Documents.Services;
 /// <param name="Latitude">Where the capture happened.</param>
 /// <param name="Longitude">Where the capture happened.</param>
 /// <param name="Notes">Free-form notes from the driver.</param>
+/// <param name="UnableToSignReason">Why no signature was collected, e.g. an unattended drop.</param>
 public sealed record CaptureDeliveryDocumentParameters(
     Guid LoadId,
     Guid? TripStopId,
@@ -21,4 +22,5 @@ public sealed record CaptureDeliveryDocumentParameters(
     string? RecipientName,
     double? Latitude,
     double? Longitude,
-    string? Notes);
+    string? Notes,
+    string? UnableToSignReason);

@@ -20,7 +20,8 @@ internal sealed class CaptureProofOfDeliveryHandler(IDeliveryDocumentService del
                 req.RecipientName,
                 req.Latitude,
                 req.Longitude,
-                req.Notes),
+                req.Notes,
+                req.UnableToSignReason),
             ct);
     }
 }

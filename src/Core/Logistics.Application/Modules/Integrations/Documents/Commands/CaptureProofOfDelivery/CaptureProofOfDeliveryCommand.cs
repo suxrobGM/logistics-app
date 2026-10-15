@@ -22,4 +22,9 @@ public class CaptureProofOfDeliveryCommand : ICommand<Result<Guid>>
 
     // Additional notes
     public string? Notes { get; set; }
+
+    /// <summary>
+    /// Why no signature was collected (unattended, refused, ...). Optional.
+    /// </summary>
+    public string? UnableToSignReason { get; set; }
 }
