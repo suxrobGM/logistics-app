@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
@@ -19,7 +18,7 @@ internal sealed class IssueCashAdvanceHandler(ITenantUnitOfWork tenantUow, ICurr
             return Result<CashAdvanceDto>.Fail($"Could not find an employee with ID '{req.EmployeeId}'");
         }
 
-        var currency = (tenantUow.GetCurrentTenant().Settings?.Currency ?? CurrencyCode.USD).ToString();
+        var currency = tenantUow.GetCurrentTenant().Settings.Currency.ToString();
         var advance = new CashAdvance
         {
             EmployeeId = employee.Id,

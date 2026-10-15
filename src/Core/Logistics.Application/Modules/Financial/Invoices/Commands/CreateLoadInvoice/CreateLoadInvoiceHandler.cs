@@ -1,7 +1,6 @@
 using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
@@ -40,7 +39,7 @@ internal sealed class CreateLoadInvoiceHandler(
         }
 
         var tenant = tenantUow.GetCurrentTenant();
-        var currency = (tenant.Settings?.Currency ?? CurrencyCode.USD).ToString();
+        var currency = tenant.Settings.Currency.ToString();
 
         var amount = new Money { Amount = req.PaymentAmount, Currency = currency };
         var invoice = new LoadInvoice

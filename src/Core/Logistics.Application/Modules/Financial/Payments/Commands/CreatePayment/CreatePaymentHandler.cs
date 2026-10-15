@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
@@ -14,7 +13,7 @@ internal sealed class CreatePaymentHandler(ITenantUnitOfWork tenantUow)
         CreatePaymentCommand req, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        var currency = (tenant.Settings?.Currency ?? CurrencyCode.USD).ToString();
+        var currency = tenant.Settings.Currency.ToString();
 
         var payment = new Payment
         {

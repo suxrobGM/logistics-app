@@ -65,7 +65,7 @@ internal class PayrollService(
         Employee employee, DateTime startDate, DateTime endDate, CancellationToken ct = default)
     {
         var tenant = tenantUow.GetCurrentTenant();
-        var currency = (tenant.Settings?.Currency ?? CurrencyCode.USD).ToString();
+        var currency = tenant.Settings.Currency.ToString();
 
         var payroll = new PayrollInvoice
         {
