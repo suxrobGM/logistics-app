@@ -36,5 +36,6 @@ public enum EligibilityIssueCode
     TruckClassNotAllowed,
     HazmatPlacardingRequired,
     MedicalCertExpired,
-    MedicalCertExpiringSoon
+    MedicalCertExpiringSoon,
+    VehicleCapacityExceeded
 }

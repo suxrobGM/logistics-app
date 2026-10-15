@@ -12,6 +12,12 @@ public class PortalLoadDto
     public long Number { get; set; }
     public string Name { get; set; } = string.Empty;
     public LoadStatus Status { get; set; }
+    public LoadType Type { get; set; }
+
+    /// <summary>
+    /// Vehicles on a car hauler load; the portal offers the electronic BOL when this is not empty.
+    /// </summary>
+    public List<LoadVehicleDto> Vehicles { get; set; } = [];
 
     // Addresses
     public Address? OriginAddress { get; set; }

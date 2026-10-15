@@ -1,3 +1,4 @@
+using Logistics.Shared.Models;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
@@ -30,4 +31,10 @@ public class UpdateLoadCommand : ICommand
     public bool? IsHazmat { get; set; }
     public HazmatClass? HazmatClass { get; set; }
     public string? UnNumber { get; set; }
+
+    /// <summary>
+    /// Replaces the load's vehicle list when sent; null leaves it unchanged. Send each existing
+    /// vehicle's id so its condition reports stay attached.
+    /// </summary>
+    public List<LoadVehicleInput>? Vehicles { get; set; }
 }

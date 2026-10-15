@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,8 @@ internal sealed class GetPortalLoadHandler(ITenantUnitOfWork tenantUow)
             Number = load.Number,
             Name = load.Name,
             Status = load.Status,
+            Type = load.Type,
+            Vehicles = load.Vehicles.ToDto(),
             OriginAddress = load.OriginAddress,
             DestinationAddress = load.DestinationAddress,
             CurrentAddress = load.AssignedTruck?.CurrentAddress,

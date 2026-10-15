@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
@@ -11,7 +12,11 @@ namespace Logistics.Infrastructure.Documents.PdfImport;
 /// </summary>
 internal static class DispatchSheetResponseParser
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        NumberHandling = JsonNumberHandling.AllowReadingFromString
+    };
 
     public static Result<ExtractedLoadDataDto> Parse(string llmText)
     {
@@ -44,11 +49,7 @@ internal static class DispatchSheetResponseParser
     private static ExtractedLoadDataDto MapToDto(ParsedLoad parsed) => new()
     {
         OrderId = parsed.OrderId,
-        VehicleYear = parsed.VehicleYear,
-        VehicleMake = parsed.VehicleMake,
-        VehicleModel = parsed.VehicleModel,
-        VehicleVin = parsed.VehicleVin,
-        VehicleType = parsed.VehicleType,
+        Vehicles = [.. (parsed.Vehicles ?? []).Select(MapVehicle)],
         OriginAddress = MapAddress(parsed.OriginAddress),
         DestinationAddress = MapAddress(parsed.DestinationAddress),
         OriginContactName = parsed.OriginContactName,
@@ -62,6 +63,18 @@ internal static class DispatchSheetResponseParser
         ShipperPhone = parsed.ShipperPhone,
         ShipperEmail = parsed.ShipperEmail,
         SourceTemplate = "AI"
+    };
+
+    private static LoadVehicleInput MapVehicle(ParsedVehicle v) => new()
+    {
+        Vin = string.IsNullOrWhiteSpace(v.Vin) ? null : v.Vin.Trim().ToUpperInvariant(),
+        Year = v.Year,
+        Make = v.Make?.Trim(),
+        Model = v.Model?.Trim(),
+        Color = v.Color?.Trim(),
+        LotNumber = v.LotNumber?.Trim(),
+        IsOperable = v.Operable ?? true,
+        Rate = ParseAmount(v.Price)
     };
 
     private static Address? MapAddress(ParsedAddress? a)
@@ -123,11 +136,7 @@ internal static class DispatchSheetResponseParser
     private sealed record ParsedLoad
     {
         public string? OrderId { get; init; }
-        public int? VehicleYear { get; init; }
-        public string? VehicleMake { get; init; }
-        public string? VehicleModel { get; init; }
-        public string? VehicleVin { get; init; }
-        public string? VehicleType { get; init; }
+        public List<ParsedVehicle>? Vehicles { get; init; }
         public ParsedAddress? OriginAddress { get; init; }
         public ParsedAddress? DestinationAddress { get; init; }
         public string? OriginContactName { get; init; }
@@ -140,6 +149,18 @@ internal static class DispatchSheetResponseParser
         public string? ShipperName { get; init; }
         public string? ShipperPhone { get; init; }
         public string? ShipperEmail { get; init; }
+    }
+
+    private sealed record ParsedVehicle
+    {
+        public string? Vin { get; init; }
+        public int? Year { get; init; }
+        public string? Make { get; init; }
+        public string? Model { get; init; }
+        public string? Color { get; init; }
+        public string? LotNumber { get; init; }
+        public bool? Operable { get; init; }
+        public string? Price { get; init; }
     }
 
     private sealed record ParsedAddress

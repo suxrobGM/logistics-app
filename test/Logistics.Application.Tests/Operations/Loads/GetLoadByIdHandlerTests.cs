@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -23,7 +24,7 @@ public class GetLoadByIdHandlerTests
     {
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _currentUserService.GetUserId().Returns(_driverId);
-        _sut = new GetLoadByIdHandler(_tenantUow, _currentUserService);
+        _sut = new GetLoadByIdHandler(_tenantUow, _currentUserService, Substitute.For<IVehicleCapacityChecker>());
     }
 
     private static Load CreateLoad(Truck? assignedTruck) => new()

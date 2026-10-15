@@ -1,3 +1,4 @@
+using Logistics.Shared.Models;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
@@ -28,4 +29,9 @@ public class CreateLoadCommand : ICommand
     public bool IsHazmat { get; set; }
     public HazmatClass? HazmatClass { get; set; }
     public string? UnNumber { get; set; }
+
+    /// <summary>
+    /// Vehicles carried by a <see cref="LoadType.Vehicle"/> load. Must be empty for other load types.
+    /// </summary>
+    public List<LoadVehicleInput> Vehicles { get; set; } = [];
 }

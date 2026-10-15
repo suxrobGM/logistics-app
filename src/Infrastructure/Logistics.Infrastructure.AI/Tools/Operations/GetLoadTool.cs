@@ -19,7 +19,7 @@ internal sealed class GetLoadTool(IMediator mediator)
 
     public static AgentToolDefinition Definition => new(
         "get_load",
-        "Get one load by ID: status, addresses, delivery cost, customer (with email), assigned truck, delivery timestamps, and whether it already has an invoice. ALWAYS call this before create_load_invoice - it supplies the delivery cost and shows whether the load is Delivered.")
+        "Get one load by ID: status, type, vehicles on a car hauler load (with any over-capacity warning for the assigned truck), addresses, delivery cost, customer (with email), assigned truck, delivery timestamps, and whether it already has an invoice. ALWAYS call this before create_load_invoice - it supplies the delivery cost and shows whether the load is Delivered.")
     {
         RequiredFeature = TenantFeature.Loads,
         RequiredPermission = Permission.Load.View,
@@ -42,6 +42,8 @@ internal sealed class GetLoadTool(IMediator mediator)
             name = l.Name,
             status = l.Status.ToString(),
             type = l.Type.ToString(),
+            vehicles = l.Vehicles.Count > 0 ? AgentVehicleSummary.Describe(l.Vehicles) : null,
+            vehicle_capacity_warning = l.VehicleCapacityWarning,
             origin = l.OriginAddress.ToString(),
             destination = l.DestinationAddress.ToString(),
             distance_km = Math.Round(DispatchUnits.MetersToKm(l.Distance), 1),

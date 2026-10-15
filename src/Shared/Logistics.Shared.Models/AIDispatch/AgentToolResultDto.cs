@@ -94,6 +94,10 @@ public class AgentToolLoadDto
     public DateOnly? ContainerLastFreeDay { get; set; }
     public int? ContainerDaysUntilLastFreeDay { get; set; }
     public bool? ContainerOnHold { get; set; }
+
+    // Car hauler loads: compared with the truck's vehicle_capacity before assigning.
+    public int? VehicleCount { get; set; }
+    public string? Vehicles { get; set; }
 }
 
 public class AgentToolTruckDto
@@ -104,6 +108,11 @@ public class AgentToolTruckDto
     public double? CurrentLat { get; set; }
     public double? CurrentLng { get; set; }
     public string? CurrentAddress { get; set; }
+
+    /// <summary>
+    /// How many vehicles a car hauler carries; null for other truck types.
+    /// </summary>
+    public int? VehicleCapacity { get; set; }
     public AgentToolDriverDto? MainDriver { get; set; }
 }
 

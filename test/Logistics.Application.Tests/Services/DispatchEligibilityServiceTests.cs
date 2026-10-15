@@ -1,5 +1,6 @@
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Application.Abstractions.Dispatch;
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -17,6 +18,8 @@ public class DispatchEligibilityServiceTests
     private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
     private readonly ITenantRepository<Employee, Guid> _employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
 
+    private readonly IVehicleCapacityChecker _capacityChecker = Substitute.For<IVehicleCapacityChecker>();
+
     private readonly DispatchEligibilityService _sut;
 
     private static readonly Guid TruckId = Guid.NewGuid();
@@ -29,7 +32,8 @@ public class DispatchEligibilityServiceTests
         _tenantUow.Repository<Truck>().Returns(_truckRepo);
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.Repository<Employee>().Returns(_employeeRepo);
-        _sut = new DispatchEligibilityService(_tenantUow, NullLogger<DispatchEligibilityService>.Instance);
+        _sut = new DispatchEligibilityService(
+            _tenantUow, _capacityChecker, NullLogger<DispatchEligibilityService>.Instance);
     }
 
     [Fact]
@@ -339,6 +343,25 @@ public class DispatchEligibilityServiceTests
     }
 
     #endregion
+
+    [Fact]
+    public async Task CheckAsync_VehicleLoadOverTruckCapacity_WarnsButStaysEligible()
+    {
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
+        var truck = CreateTruck(driver);
+        var load = CreateLoad(isHazmat: false);
+        load.Type = LoadType.Vehicle;
+        WireRepos(truck, load, driver);
+        _capacityChecker.GetWarningAsync(truck, load, Arg.Any<CancellationToken>())
+            .Returns("Truck T-1 carries up to 7 vehicles, but its open loads have 9.");
+
+        var result = await _sut.CheckAsync(TruckId, LoadId);
+
+        Assert.True(result.IsEligible);
+        var issue = Assert.Single(result.Issues);
+        Assert.Equal(EligibilityIssueCode.VehicleCapacityExceeded, issue.Code);
+        Assert.Equal(EligibilitySeverity.Warning, issue.Severity);
+    }
 
     private void WireRepos(Truck truck, Load load, Employee driver)
     {

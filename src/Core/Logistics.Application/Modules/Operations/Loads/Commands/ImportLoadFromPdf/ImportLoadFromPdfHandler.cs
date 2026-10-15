@@ -138,7 +138,8 @@ internal sealed class ImportLoadFromPdfHandler(
             0, // Will be calculated from coordinates
             customer.Id,
             truckId,
-            dispatcher.Id);
+            dispatcher.Id,
+            Vehicles: extractedData.Vehicles.ToLoadVehicles());
 
         var created = await loadService.CreateLoadAsync(createLoadParameters, ct: ct);
         if (!created.IsSuccess)

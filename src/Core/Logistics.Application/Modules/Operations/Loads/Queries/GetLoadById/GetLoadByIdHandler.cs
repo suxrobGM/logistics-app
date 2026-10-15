@@ -1,8 +1,10 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
@@ -11,7 +13,8 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
 internal sealed class GetLoadByIdHandler(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUserService)
+    ICurrentUserService currentUserService,
+    IVehicleCapacityChecker vehicleCapacityChecker)
     : IRequestHandler<GetLoadByIdQuery, Result<LoadDto>>
 {
     public async Task<Result<LoadDto>> Handle(GetLoadByIdQuery req, CancellationToken ct)
@@ -23,6 +26,14 @@ internal sealed class GetLoadByIdHandler(
             return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
         }
 
-        return Result<LoadDto>.Ok(load.ToDto(LoadIntermodalLookup.Empty));
+        var dto = load.ToDto(LoadIntermodalLookup.Empty);
+        dto.Accessorials = load.Accessorials.Select(a => a.ToDto()).ToList();
+
+        if (load is { Type: LoadType.Vehicle, AssignedTruck: not null })
+        {
+            dto.VehicleCapacityWarning = await vehicleCapacityChecker.GetWarningAsync(load.AssignedTruck, ct: ct);
+        }
+
+        return Result<LoadDto>.Ok(dto);
     }
 }

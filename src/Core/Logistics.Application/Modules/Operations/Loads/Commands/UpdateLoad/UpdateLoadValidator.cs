@@ -9,6 +9,9 @@ internal sealed class UpdateLoadValidator : AbstractValidator<UpdateLoadCommand>
     public UpdateLoadValidator()
     {
         RuleFor(i => i.Distance).GreaterThan(0);
+        RuleForEach(i => i.Vehicles!)
+            .SetValidator(new LoadVehicleInputValidator())
+            .When(i => i.Vehicles is not null);
         RuleFor(i => i.DeliveryCost)
             .GreaterThan(LoadConstants.MinDeliveryCost)
             .LessThan(LoadConstants.MaxDeliveryCost);

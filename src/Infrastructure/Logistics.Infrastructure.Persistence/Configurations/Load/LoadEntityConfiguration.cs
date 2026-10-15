@@ -17,6 +17,8 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
             money.Property(m => m.Currency).HasMaxLength(3);
         });
 
+        builder.ComplexCollection(i => i.Vehicles, vehicles => vehicles.ToJson("vehicles"));
+
         builder.Property(i => i.Number)
             .UseIdentityAlwaysColumn()
             .IsRequired()

@@ -12,7 +12,7 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
 {
     public static AgentToolDefinition Definition => new(
         "get_available_trucks",
-        "Get all trucks with Available status along with their driver info, HOS (Hours of Service) status, and a fleet summary (total trucks, available trucks, active trips, drivers in violation). Returns truck ID, number, type, current location, driver name, and remaining driving/on-duty hours.")
+        "Get all trucks with Available status along with their driver info, HOS (Hours of Service) status, and a fleet summary (total trucks, available trucks, active trips, drivers in violation). Returns truck ID, number, type, vehicle_capacity for car haulers, current location, driver name, and remaining driving/on-duty hours.")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All
@@ -63,6 +63,7 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
                 CurrentLat = truck.CurrentLocation?.Latitude,
                 CurrentLng = truck.CurrentLocation?.Longitude,
                 CurrentAddress = truck.CurrentAddress?.ToString(),
+                VehicleCapacity = truck.VehicleCapacity > 0 ? truck.VehicleCapacity : null,
                 MainDriver = driver is null ? null : new AgentToolDriverDto
                 {
                     Id = driver.Id,

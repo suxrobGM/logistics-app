@@ -49,11 +49,12 @@ public record ImportLoadFromPdfResponse
 public record ExtractedLoadDataDto
 {
     public string? OrderId { get; init; }
-    public int? VehicleYear { get; init; }
-    public string? VehicleMake { get; init; }
-    public string? VehicleModel { get; init; }
-    public string? VehicleVin { get; init; }
-    public string? VehicleType { get; init; }
+
+    /// <summary>
+    /// Every vehicle listed on the dispatch sheet.
+    /// </summary>
+    public List<LoadVehicleInput> Vehicles { get; init; } = [];
+
     public Address? OriginAddress { get; init; }
     public Address? DestinationAddress { get; init; }
     public string? OriginContactName { get; init; }
@@ -69,13 +70,18 @@ public record ExtractedLoadDataDto
     public string? SourceTemplate { get; init; }
 
     /// <summary>
-    /// Gets the vehicle description for use as Load name.
+    /// The load name: the single vehicle's description, a count for several, or the order id.
     /// </summary>
     public string GetLoadName()
     {
-        if (VehicleYear.HasValue && !string.IsNullOrEmpty(VehicleMake) && !string.IsNullOrEmpty(VehicleModel))
+        if (Vehicles.Count > 1)
         {
-            return $"{VehicleYear} {VehicleMake} {VehicleModel}";
+            return $"{Vehicles.Count} vehicles{(OrderId is null ? "" : $" - {OrderId}")}";
+        }
+
+        if (Vehicles is [{ Year: not null, Make: not null, Model: not null } vehicle])
+        {
+            return $"{vehicle.Year} {vehicle.Make} {vehicle.Model}";
         }
 
         return OrderId ?? "Imported Load";

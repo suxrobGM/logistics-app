@@ -17,11 +17,10 @@ public class LlmPdfDataExtractorTests
         """
         {
           "orderId": "ORD-123",
-          "vehicleYear": 2020,
-          "vehicleMake": "Toyota",
-          "vehicleModel": "Camry",
-          "vehicleVin": "1HGBH41JXMN109186",
-          "vehicleType": "Sedan",
+          "vehicles": [
+            { "vin": "1hgbh41jxmn109186", "year": 2020, "make": "Toyota", "model": "Camry", "color": "White", "lotNumber": "LOT-7", "operable": true, "price": "$600" },
+            { "vin": null, "year": "2018", "make": "Ford", "model": "F-150", "operable": false }
+          ],
           "originAddress": { "line1": "100 Pickup St", "city": "Dallas", "state": "TX", "zipCode": "75201", "country": "USA" },
           "destinationAddress": { "line1": "200 Dropoff Ave", "city": "Phoenix", "state": "AZ", "zipCode": "85001", "country": "USA" },
           "pickupDate": "2026-06-10",
@@ -54,7 +53,15 @@ public class LlmPdfDataExtractorTests
         Assert.True(result.IsSuccess);
         var dto = result.Value!;
         Assert.Equal("ORD-123", dto.OrderId);
-        Assert.Equal(2020, dto.VehicleYear);
+        Assert.Equal(2, dto.Vehicles.Count);
+        Assert.Equal("1HGBH41JXMN109186", dto.Vehicles[0].Vin);
+        Assert.Equal(2020, dto.Vehicles[0].Year);
+        Assert.Equal("LOT-7", dto.Vehicles[0].LotNumber);
+        Assert.Equal(600m, dto.Vehicles[0].Rate);
+        Assert.True(dto.Vehicles[0].IsOperable);
+        Assert.Equal(2018, dto.Vehicles[1].Year);
+        Assert.False(dto.Vehicles[1].IsOperable);
+        Assert.Equal("2 vehicles - ORD-123", dto.GetLoadName());
         Assert.Equal("Dallas", dto.OriginAddress!.City);
         Assert.Equal("Phoenix", dto.DestinationAddress!.City);
         Assert.Equal(1250.00m, dto.PaymentAmount);

@@ -1,3 +1,4 @@
+using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
@@ -23,6 +24,7 @@ namespace Logistics.Application.Modules.Operations.Loads.Services;
 /// <param name="ContainerId">Optional intermodal container being moved by this load.</param>
 /// <param name="OriginTerminalId">Optional origin terminal (port / rail / depot).</param>
 /// <param name="DestinationTerminalId">Optional destination terminal.</param>
+/// <param name="Vehicles">Vehicles carried by a vehicle load.</param>
 public record CreateLoadParameters(
     string Name,
     LoadType Type,
@@ -43,5 +45,6 @@ public record CreateLoadParameters(
     Guid? DestinationTerminalId = null,
     bool IsHazmat = false,
     HazmatClass? HazmatClass = null,
-    string? UnNumber = null
+    string? UnNumber = null,
+    IReadOnlyList<LoadVehicle>? Vehicles = null
 );

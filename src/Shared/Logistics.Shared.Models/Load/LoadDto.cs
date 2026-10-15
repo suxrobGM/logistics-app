@@ -60,6 +60,17 @@ public class LoadDto
     public Guid? TrailerId { get; set; }
     public string? TrailerNumber { get; set; }
 
+    /// <summary>
+    ///     Vehicles on a car hauler (<see cref="LoadType.Vehicle"/>) load; empty otherwise.
+    /// </summary>
+    public List<LoadVehicleDto> Vehicles { get; set; } = [];
+
+    /// <summary>
+    ///     Set on a single-load read when the assigned truck's open loads carry more vehicles than
+    ///     its <c>VehicleCapacity</c>. A warning, not a block.
+    /// </summary>
+    public string? VehicleCapacityWarning { get; set; }
+
     public IEnumerable<string>? AssignedTruckDriversName { get; set; }
     public InvoiceDto? Invoice { get; set; }
 }

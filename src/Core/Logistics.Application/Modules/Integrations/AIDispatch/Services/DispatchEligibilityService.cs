@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Dispatch;
+using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -8,6 +9,7 @@ namespace Logistics.Application.Modules.Integrations.AIDispatch.Services;
 
 internal sealed class DispatchEligibilityService(
     ITenantUnitOfWork tenantUow,
+    IVehicleCapacityChecker vehicleCapacityChecker,
     ILogger<DispatchEligibilityService> logger)
     : IDispatchEligibilityService
 {
@@ -75,6 +77,15 @@ internal sealed class DispatchEligibilityService(
         }
 
         CheckTruckAdrEquipment(truck, load, now, issues);
+
+        if (load.Type == LoadType.Vehicle
+            && await vehicleCapacityChecker.GetWarningAsync(truck, load, ct) is { } capacityWarning)
+        {
+            issues.Add(new(
+                EligibilityIssueCode.VehicleCapacityExceeded,
+                EligibilitySeverity.Warning,
+                capacityWarning));
+        }
 
         var hasError = issues.Any(i => i.Severity == EligibilitySeverity.Error);
         if (hasError)

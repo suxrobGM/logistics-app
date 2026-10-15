@@ -1,6 +1,7 @@
 using FluentValidation;
 using Logistics.Application.Modules.Operations.Loads.Constants;
 using Logistics.Application.Validators;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
@@ -17,6 +18,11 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
         RuleFor(i => i.DestinationAddress).NotNull().SetValidator(new AddressValidator());
         RuleFor(i => i.DestinationLocation).NotEmpty();
         RuleFor(i => i.Distance).GreaterThan(0);
+        RuleForEach(i => i.Vehicles).SetValidator(new LoadVehicleInputValidator());
+        RuleFor(i => i.Vehicles)
+            .Empty()
+            .When(i => i.Type != LoadType.Vehicle)
+            .WithMessage("Only vehicle loads can list vehicles.");
         RuleFor(i => i.DeliveryCost)
             .GreaterThan(LoadConstants.MinDeliveryCost)
             .LessThan(LoadConstants.MaxDeliveryCost);

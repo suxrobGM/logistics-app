@@ -1,5 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Modules.Operations.Loads.Services;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -59,6 +61,16 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow, IVehicleTra
             if (req.IsHazmat.HasValue) load.IsHazmat = req.IsHazmat.Value;
             if (req.HazmatClass.HasValue) load.HazmatClass = req.HazmatClass;
             if (req.UnNumber is not null) load.UnNumber = req.UnNumber;
+
+            if (req.Vehicles is not null)
+            {
+                load.Vehicles = req.Vehicles.ToLoadVehicles();
+            }
+
+            if (load.Type != LoadType.Vehicle && load.Vehicles.Count > 0)
+            {
+                return Result.Fail("Only vehicle loads can list vehicles.");
+            }
 
             if (req.Status.HasValue)
             {
