@@ -242,25 +242,6 @@ public class QboMapperTests
     }
 
     [Fact]
-    public void MapPurchase_WithVendor_SetsVendorEntityRef()
-    {
-        var payload = new QboExpensePayload
-        {
-            PaymentAccountId = "41",
-            ExpenseAccountId = "61",
-            CurrencyCode = "USD",
-            DocNumber = "EXP-12",
-            VendorId = "56"
-        };
-
-        var result = QboMapper.MapPurchase(payload, null, null);
-
-        Assert.Equal("56", result.EntityRef?.Value);
-        Assert.Equal("Vendor", result.EntityRef?.Type);
-        Assert.Equal("EXP-12", result.DocNumber);
-    }
-
-    [Fact]
     public void MapBill_PostsToVendorAndPayrollAccount()
     {
         var payload = new QboBillPayload

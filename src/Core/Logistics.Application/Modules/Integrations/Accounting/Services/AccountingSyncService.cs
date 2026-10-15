@@ -254,13 +254,8 @@ internal sealed partial class AccountingSyncService(
             var (payload, hash) = AccountingPayloads.Expense(
                 expense, config.DefaultPaymentAccountId, config.DefaultPaymentAccountType, accountId);
 
-            await PushAsync(run, QboLocalEntityType.Expense, expense.Id, hash, async target =>
-            {
-                var vendorId = string.IsNullOrWhiteSpace(expense.VendorName)
-                    ? null
-                    : await ResolveVendorAsync(run, expense.VendorName.Trim(), ct);
-                return await run.Provider.UpsertExpenseAsync(payload with { VendorId = vendorId }, target, ct);
-            }, ct);
+            await PushAsync(run, QboLocalEntityType.Expense, expense.Id, hash,
+                target => run.Provider.UpsertExpenseAsync(payload, target, ct), ct);
         }
     }
 
@@ -318,24 +313,6 @@ internal sealed partial class AccountingSyncService(
             await PushAsync(run, QboLocalEntityType.PayrollInvoice, payroll.Id, hash,
                 target => run.Provider.UpsertBillAsync(bill, target, ct), ct);
         }
-    }
-
-    /// <summary>
-    /// The QBO vendor for an expense payee, created on first use. Names are cached for the run; vendors
-    /// have no local entity, so nothing is persisted.
-    /// </summary>
-    private async Task<string> ResolveVendorAsync(SyncRun run, string name, CancellationToken ct)
-    {
-        if (run.VendorIds.TryGetValue(name, out var vendorId))
-        {
-            return vendorId;
-        }
-
-        var requestId = AccountingPayloads.Hash("vendor", name.ToUpperInvariant())[..48];
-        var result = await run.Provider.UpsertVendorAsync(
-            new QboVendorPayload { DisplayName = name }, new QboWriteTarget(null, null, requestId), ct);
-        run.VendorIds[name] = result.QboId;
-        return result.QboId;
     }
 
     /// <summary>
@@ -451,7 +428,6 @@ internal sealed partial class AccountingSyncService(
         public DateTime StartedAt { get; } = startedAt;
         public DateTime SyncFrom { get; } = config.SyncFromDate ?? DateTime.UnixEpoch;
         public Dictionary<(QboLocalEntityType, Guid), QboEntityMapping> Mappings { get; } = [];
-        public Dictionary<string, string> VendorIds { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         public string? SyncedQboId(QboLocalEntityType type, Guid localId) =>
             Mappings.TryGetValue((type, localId), out var m) && m.LastSyncedHash != AccountingPayloads.RetiredHash

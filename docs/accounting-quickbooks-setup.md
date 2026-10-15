@@ -19,7 +19,7 @@ straight away.
 | Load invoice cancelled after it was pushed | Invoice voided                                                                                       | once                                      |
 | Paid payment on a pushed invoice           | Payment applied to that invoice                                                                      | created or edited                         |
 | Pushed payment removed by a chargeback     | Payment voided                                                                                       | once                                      |
-| Approved or paid expense                   | Expense (Purchase), payee vendor by vendor name                                                      | created or edited                         |
+| Approved or paid expense                   | Expense (Purchase), vendor name in the line description                                              | created or edited                         |
 | Approved or paid payroll invoice           | Bill owed to the driver, who becomes a vendor                                                        | created or edited, if an account is set   |
 | Factored invoice bought by the factor      | Payment of the full invoice into the clearing account, and the factor fee as an Expense paid from it | funded, if the factoring accounts are set |
 

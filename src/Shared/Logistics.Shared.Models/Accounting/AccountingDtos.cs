@@ -203,9 +203,6 @@ public record QboExpensePayload
     public DateTime TxnDate { get; set; }
     public string? DocNumber { get; set; }
     public string? Description { get; set; }
-
-    /// <summary>The payee, when the expense names a vendor.</summary>
-    public string? VendorId { get; set; }
 }
 
 /// <summary>Provider-neutral bill payload: what the company owes a vendor (driver pay).</summary>

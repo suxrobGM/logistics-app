@@ -138,7 +138,6 @@ internal static class QboMapper
             SyncToken = syncToken,
             Sparse = SparseIfUpdate(qboId),
             AccountRef = QboRef.Of(p.PaymentAccountId),
-            EntityRef = p.VendorId is null ? null : new QboRef { Value = p.VendorId, Type = "Vendor" },
             CurrencyRef = QboRef.Of(p.CurrencyCode),
             PaymentType = p.PaymentAccountType == CreditCardAccountType ? "CreditCard" : "Cash",
             TxnDate = Date(p.TxnDate),

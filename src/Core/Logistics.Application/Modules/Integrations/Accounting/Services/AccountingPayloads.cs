@@ -106,7 +106,6 @@ internal static class AccountingPayloads
         return mapped ?? config.DefaultExpenseAccountId;
     }
 
-    /// <summary>The payee vendor id is resolved at push time (<c>payload with { VendorId }</c>); the hash keys on its name.</summary>
     public static (QboExpensePayload Payload, string Hash) Expense(
         Expense expense, string paymentAccountId, string? paymentAccountType, string expenseAccountId)
     {

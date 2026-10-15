@@ -40,14 +40,11 @@ internal sealed record QboFaultError
     public string? Code { get; set; }
 }
 
-// --- Reference type (QBO uses lowercase "value"/"name"/"type") ---
+// --- Reference type (QBO uses lowercase "value") ---
 
 internal sealed record QboRef
 {
     [JsonPropertyName("value")] public string? Value { get; set; }
-
-    /// <summary>Only on polymorphic refs such as Purchase.EntityRef ("Vendor", "Customer", "Employee").</summary>
-    [JsonPropertyName("type")] public string? Type { get; set; }
 
     public static QboRef Of(string value) => new() { Value = value };
 
@@ -188,7 +185,6 @@ internal sealed record QboPurchase : IQboEntity
     public string? SyncToken { get; set; }
     [JsonPropertyName("sparse")] public bool? Sparse { get; set; }
     public QboRef? AccountRef { get; set; }
-    public QboRef? EntityRef { get; set; }
     public QboRef? CurrencyRef { get; set; }
 
     /// <summary>"Cash", "Check" or "CreditCard"; must agree with the AccountRef's account type.</summary>
