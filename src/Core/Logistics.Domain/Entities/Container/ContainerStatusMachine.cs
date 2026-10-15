@@ -29,13 +29,20 @@ public static class ContainerStatusMachine
 
     /// <summary>
     /// Applies the status transition and returns the updated state.
+    /// <para>
+    /// Leaving <see cref="ContainerStatus.AtPort"/> stamps the outgate (<c>PickedUpAt</c>), which
+    /// stops demurrage. Leaving <see cref="ContainerStatus.Returned"/> starts a new move, so the
+    /// previous move's timestamps are cleared - otherwise the stale <c>ReturnedAt</c> would read as
+    /// "already returned" and silence the next move's per-diem clock.
+    /// </para>
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown for invalid transitions when force is false.</exception>
     public static ContainerStatusState Apply(
         ContainerStatus current,
         ContainerStatus target,
         bool force,
-        ContainerStatusTimestamps timestamps)
+        ContainerStatusTimestamps timestamps,
+        DateTime now)
     {
         if (target == current)
         {
@@ -48,19 +55,28 @@ public static class ContainerStatusMachine
                 $"Cannot change container status from '{current}' to '{target}'.");
         }
 
+        if (current == ContainerStatus.Returned)
+        {
+            timestamps = new ContainerStatusTimestamps(null, null, null, null);
+        }
+        else if (current == ContainerStatus.AtPort)
+        {
+            timestamps = timestamps with { PickedUpAt = now };
+        }
+
         return target switch
         {
             ContainerStatus.Loaded => new ContainerStatusState(
                 target,
-                timestamps with { LoadedAt = timestamps.LoadedAt ?? DateTime.UtcNow }),
+                timestamps with { LoadedAt = timestamps.LoadedAt ?? now }),
 
             ContainerStatus.Delivered => new ContainerStatusState(
                 target,
-                timestamps with { DeliveredAt = timestamps.DeliveredAt ?? DateTime.UtcNow }),
+                timestamps with { DeliveredAt = timestamps.DeliveredAt ?? now }),
 
             ContainerStatus.Returned => new ContainerStatusState(
                 target,
-                timestamps with { ReturnedAt = timestamps.ReturnedAt ?? DateTime.UtcNow }),
+                timestamps with { ReturnedAt = timestamps.ReturnedAt ?? now }),
 
             ContainerStatus.Empty or ContainerStatus.AtPort or ContainerStatus.InTransit =>
                 new ContainerStatusState(target, timestamps),
@@ -73,7 +89,8 @@ public static class ContainerStatusMachine
 public record ContainerStatusTimestamps(
     DateTime? LoadedAt,
     DateTime? DeliveredAt,
-    DateTime? ReturnedAt);
+    DateTime? ReturnedAt,
+    DateTime? PickedUpAt);
 
 public record ContainerStatusState(
     ContainerStatus Status,

@@ -21,8 +21,8 @@ public partial class Container
     {
         var previous = Status;
 
-        var timestamps = new ContainerStatusTimestamps(LoadedAt, DeliveredAt, ReturnedAt);
-        var result = ContainerStatusMachine.Apply(Status, newStatus, force, timestamps);
+        var timestamps = new ContainerStatusTimestamps(LoadedAt, DeliveredAt, ReturnedAt, PickedUpAt);
+        var result = ContainerStatusMachine.Apply(Status, newStatus, force, timestamps, DateTime.UtcNow);
 
         if (result.Status == previous)
         {
@@ -33,6 +33,12 @@ public partial class Container
         LoadedAt = result.Timestamps.LoadedAt;
         DeliveredAt = result.Timestamps.DeliveredAt;
         ReturnedAt = result.Timestamps.ReturnedAt;
+        PickedUpAt = result.Timestamps.PickedUpAt;
+
+        if (previous == ContainerStatus.Returned)
+        {
+            ResetMove();
+        }
 
         DomainEvents.Add(new ContainerStatusChangedEvent(Id, Number, previous, Status));
     }
