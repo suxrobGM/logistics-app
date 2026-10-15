@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Integrations.Accounting.Services;
 
-internal sealed class AccountingSyncService(
+internal sealed partial class AccountingSyncService(
     ITenantUnitOfWork tenantUow,
     IFeatureService featureService,
     IAccountingConnectionService connectionService,
@@ -55,6 +55,7 @@ internal sealed class AccountingSyncService(
             await RetireRemovedCustomersAsync(run, ct);
             await PushInvoicesAsync(run, ct);
             await PushPaymentsAsync(run, ct);
+            await PushFactoringFeesAsync(run, ct);
             await PushExpensesAsync(run, ct);
             await PushPayrollAsync(run, ct);
         }
@@ -195,6 +196,7 @@ internal sealed class AccountingSyncService(
         await LoadMappingsAsync(run, QboLocalEntityType.Payment, rows.Select(r => r.Payment.Id), ct);
         await LoadMappingsAsync(run, QboLocalEntityType.Invoice, rows.Select(r => r.InvoiceId), ct);
         await LoadMappingsAsync(run, QboLocalEntityType.Customer, rows.Select(r => r.CustomerId), ct);
+        var factoringSales = await FactoringSalePaymentIdsAsync(rows.Select(r => r.Payment.Id).ToList(), ct);
 
         foreach (var row in rows)
         {
@@ -207,8 +209,21 @@ internal sealed class AccountingSyncService(
                 continue;
             }
 
+            var depositAccountId = run.Config.DepositAccountId;
+            if (factoringSales.Contains(row.Payment.Id))
+            {
+                if (run.Config.FactoringClearingAccountId is null)
+                {
+                    await RecordFailureAsync(run, QboLocalEntityType.Payment, row.Payment.Id,
+                        "This invoice was sold to a factoring company. Choose the factoring clearing account in the QuickBooks settings to sync it.", ct);
+                    continue;
+                }
+
+                depositAccountId = run.Config.FactoringClearingAccountId;
+            }
+
             var (payload, hash) = AccountingPayloads.Payment(
-                row.Payment, customerQboId, invoiceQboId, run.Config.DepositAccountId);
+                row.Payment, customerQboId, invoiceQboId, depositAccountId);
             await PushAsync(run, QboLocalEntityType.Payment, row.Payment.Id, hash,
                 target => run.Provider.UpsertPaymentAsync(payload, target, ct), ct);
         }

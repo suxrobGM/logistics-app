@@ -11,15 +11,16 @@ The sync is one-way: LogisticsX is the source of truth and nothing is read back 
 you map against. It runs every 15 minutes, and **Sync now** on the settings card queues a run
 straight away.
 
-| LogisticsX                                 | QuickBooks Online                               | When                                    |
-| ------------------------------------------ | ----------------------------------------------- | --------------------------------------- |
-| Active customer                            | Customer (linked by display name if it exists)  | created or edited                       |
-| Customer made inactive or deleted          | Customer marked inactive                        | once                                    |
-| Load invoice (not draft)                   | Invoice, one line per invoice line, with item   | created or edited                       |
-| Load invoice cancelled after it was pushed | Invoice voided                                  | once                                    |
-| Paid payment on a pushed invoice           | Payment applied to that invoice                 | created or edited                       |
-| Approved or paid expense                   | Expense (Purchase), payee vendor by vendor name | created or edited                       |
-| Approved or paid payroll invoice           | Bill owed to the driver, who becomes a vendor   | created or edited, if an account is set |
+| LogisticsX                                 | QuickBooks Online                                                                                    | When                                      |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| Active customer                            | Customer (linked by display name if it exists)                                                       | created or edited                         |
+| Customer made inactive or deleted          | Customer marked inactive                                                                             | once                                      |
+| Load invoice (not draft)                   | Invoice, one line per invoice line, with item                                                        | created or edited                         |
+| Load invoice cancelled after it was pushed | Invoice voided                                                                                       | once                                      |
+| Paid payment on a pushed invoice           | Payment applied to that invoice                                                                      | created or edited                         |
+| Approved or paid expense                   | Expense (Purchase), payee vendor by vendor name                                                      | created or edited                         |
+| Approved or paid payroll invoice           | Bill owed to the driver, who becomes a vendor                                                        | created or edited, if an account is set   |
+| Factored invoice bought by the factor      | Payment of the full invoice into the clearing account, and the factor fee as an Expense paid from it | funded, if the factoring accounts are set |
 
 Only records changed since their last push are read, at most 500 of each kind per run, so a
 large first sync spreads over a few runs. Invoices, payments, expenses and driver pay dated before
@@ -108,6 +109,12 @@ The tenant's plan must include QuickBooks sync (Professional and up), and the us
      so on to their own expense accounts; unmapped categories use the default.
    - **Driver pay expense account**: set it to push approved payroll as bills owed to each driver
      (added as a QuickBooks vendor). Leave it empty if payroll runs through a payroll service.
+   - **Factoring clearing account** and **Factoring fee expense account**: for carriers who sell
+     invoices to a factor. Create a bank-type account such as "Factoring Clearing" first. When the
+     factor funds an invoice, the invoice is paid in full into that account and the fee is posted as
+     an expense out of it; record the advance and, later, the reserve as transfers from it to your
+     operating bank when they land. Without the clearing account, sale payments of factored
+     invoices show under Sync errors instead of landing in Undeposited Funds.
    - **Sync transactions from**: see above.
 4. Press **Sync now**, or wait for the next 15-minute run.
 
@@ -144,5 +151,7 @@ request on Intuit's side.
 - QuickBooks Desktop (only QuickBooks Online is supported).
 - Sales tax codes: invoice tax is sent as a total, so companies using QuickBooks automated sales
   tax may see QuickBooks recalculate it. Freight is usually not taxable, so most carriers send none.
+- Factoring: the advance and reserve transfers are left to the bookkeeper, and a chargeback is not
+  pushed - reverse the sale payment in QuickBooks by hand.
 - Payments recorded in QuickBooks do not flow back to LogisticsX, and paid driver pay bills are
   not marked paid in QuickBooks.

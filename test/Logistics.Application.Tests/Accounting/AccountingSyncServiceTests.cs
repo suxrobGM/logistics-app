@@ -248,6 +248,96 @@ public class AccountingSyncServiceTests
 
     #endregion
 
+    #region Factoring
+
+    [Fact]
+    public async Task SyncAsync_FactoredInvoiceSold_DepositsToClearingAndPostsTheFeeFromIt()
+    {
+        _config.DepositAccountId = "undeposited";
+        _config.FactoringClearingAccountId = "clearing";
+        _config.FactoringFeeAccountId = "fees";
+        var item = AddFundedFactoredInvoice();
+        _provider.UpsertPaymentAsync(Arg.Any<QboPaymentPayload>(), Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>())
+            .Returns(new QboUpsertResult { QboId = "p1" });
+        _provider.UpsertExpenseAsync(Arg.Any<QboExpensePayload>(), Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>())
+            .Returns(new QboUpsertResult { QboId = "e1" });
+
+        await _sut.SyncAsync(CancellationToken.None);
+
+        await _provider.Received(1).UpsertPaymentAsync(
+            Arg.Is<QboPaymentPayload>(p => p.DepositAccountId == "clearing" && p.Amount == 1000m),
+            Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>());
+        await _provider.Received(1).UpsertExpenseAsync(
+            Arg.Is<QboExpensePayload>(e => e.PaymentAccountId == "clearing" && e.ExpenseAccountId == "fees"
+                                           && e.Amount == 30m && e.DocNumber == "FCT-7-1007"),
+            Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>());
+        Assert.Contains(_mappings, m => m.LocalId == item.Id && m.LocalEntityType == QboLocalEntityType.FactoringFee);
+    }
+
+    [Fact]
+    public async Task SyncAsync_FactoredInvoiceSoldWithoutClearingAccount_RecordsAVisibleFailure()
+    {
+        var item = AddFundedFactoredInvoice();
+
+        await _sut.SyncAsync(CancellationToken.None);
+
+        await _provider.DidNotReceive().UpsertPaymentAsync(
+            Arg.Any<QboPaymentPayload>(), Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>());
+        var mapping = Assert.Single(_mappings, m => m.LocalId == item.PaymentId);
+        Assert.Equal(QboSyncStatus.Failed, mapping.SyncStatus);
+        Assert.Contains("factoring clearing account", mapping.LastError);
+    }
+
+    /// <summary>A pushed customer and invoice whose invoice the factor bought: sale payment of 1000, fee 30.</summary>
+    private FactoringBatchItem AddFundedFactoredInvoice()
+    {
+        var customer = NewCustomer("Acme");
+        _customers.Add(customer);
+        var invoice = NewInvoice(InvoiceStatus.Paid, customer.Id);
+        _invoices.Add(invoice);
+        _mappings.Add(Synced(customer.Id, DateTime.UtcNow, "c1"));
+        _mappings.Add(Synced(invoice.Id, DateTime.UtcNow, "i1", QboLocalEntityType.Invoice));
+
+        var money = new Money { Amount = 1000m, Currency = "USD" };
+        var payment = new Payment
+        {
+            Amount = money,
+            Status = PaymentStatus.Paid,
+            TenantId = Guid.NewGuid(),
+            BillingAddress = new Address { Line1 = "1 Main", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" },
+            RecordedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow
+        };
+        invoice.Payments.Add(payment);
+
+        var batch = new FactoringBatch
+        {
+            Number = 7,
+            FactoringCompanyId = Guid.NewGuid(),
+            Total = money,
+            SubmittedToEmail = "f@x.test"
+        };
+        var item = new FactoringBatchItem
+        {
+            BatchId = batch.Id,
+            Batch = batch,
+            InvoiceId = invoice.Id,
+            Invoice = invoice,
+            Amount = money,
+            Status = FactoringStatus.Funded,
+            AdvanceAmount = 900m,
+            FeeAmount = 30m,
+            ReserveAmount = 70m,
+            FundedAt = DateTime.UtcNow,
+            PaymentId = payment.Id,
+            CreatedAt = DateTime.UtcNow
+        };
+        Queryable(new List<FactoringBatchItem> { item });
+        return item;
+    }
+
+    #endregion
+
     private void Queryable<T>(List<T> rows) where T : class, Domain.Core.IEntity<Guid>, Domain.Core.ITenantEntity
     {
         var repo = Substitute.For<ITenantRepository<T, Guid>>();

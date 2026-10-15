@@ -89,6 +89,18 @@ public class AccountingProviderConfiguration : Entity, ITenantEntity
     public string? PayrollExpenseAccountId { get; set; }
 
     /// <summary>
+    /// Bank-type clearing account factored invoices are deposited to at their full total when the factor buys
+    /// them; the factor fee is paid out of it, and the advance and reserve are transferred from it to the bank
+    /// as they arrive. Null skips factoring sync (the sale payments and the fees).
+    /// </summary>
+    public string? FactoringClearingAccountId { get; set; }
+
+    /// <summary>
+    /// Expense account factoring fees post to.
+    /// </summary>
+    public string? FactoringFeeAccountId { get; set; }
+
+    /// <summary>
     /// Transactions (invoices, payments, expenses, driver pay) dated before this are never pushed, so
     /// history already entered in the accounting system is not duplicated. Set to the connect date on
     /// the first connection; the user can move it.
@@ -142,6 +154,8 @@ public class AccountingProviderConfiguration : Entity, ITenantEntity
             DefaultItemId = null;
             DepositAccountId = null;
             PayrollExpenseAccountId = null;
+            FactoringClearingAccountId = null;
+            FactoringFeeAccountId = null;
             MappingsJson = null;
             LastSyncedAt = null;
         }

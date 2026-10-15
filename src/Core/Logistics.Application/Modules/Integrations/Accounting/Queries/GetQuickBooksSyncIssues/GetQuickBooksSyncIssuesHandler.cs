@@ -49,6 +49,7 @@ internal sealed class GetQuickBooksSyncIssuesHandler(ITenantUnitOfWork tenantUow
         var expenseIds = Ids(QboLocalEntityType.Expense);
         var payrollIds = Ids(QboLocalEntityType.PayrollInvoice);
         var employeeIds = Ids(QboLocalEntityType.Employee);
+        var factoringFeeIds = Ids(QboLocalEntityType.FactoringFee);
 
         var labels = new Dictionary<Guid, string>();
         foreach (var c in await tenantUow.Repository<Customer>().GetListAsync(c => customerIds.Contains(c.Id), ct))
@@ -79,6 +80,15 @@ internal sealed class GetQuickBooksSyncIssuesHandler(ITenantUnitOfWork tenantUow
         foreach (var e in await tenantUow.Repository<Employee>().GetListAsync(e => employeeIds.Contains(e.Id), ct))
         {
             labels[e.Id] = $"{e.FirstName} {e.LastName} (vendor)";
+        }
+
+        var fees = await tenantUow.Repository<FactoringBatchItem>().Query()
+            .Where(i => factoringFeeIds.Contains(i.Id))
+            .Select(i => new { i.Id, InvoiceNumber = i.Invoice.Number })
+            .ToListAsync(ct);
+        foreach (var fee in fees)
+        {
+            labels[fee.Id] = $"Factoring fee on invoice {Num(fee.InvoiceNumber)}";
         }
 
         return labels;

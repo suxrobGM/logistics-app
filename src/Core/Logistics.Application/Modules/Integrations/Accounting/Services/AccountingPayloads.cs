@@ -127,6 +127,27 @@ internal static class AccountingPayloads
         return (payload, hash);
     }
 
+    /// <summary>The fee a factor kept on an invoice, paid out of the (bank-type) factoring clearing account.</summary>
+    public static (QboExpensePayload Payload, string Hash) FactoringFee(
+        FactoringBatchItem item, long batchNumber, long invoiceNumber, string clearingAccountId, string feeAccountId)
+    {
+        var payload = new QboExpensePayload
+        {
+            PaymentAccountId = clearingAccountId,
+            PaymentAccountType = "Bank",
+            ExpenseAccountId = feeAccountId,
+            Amount = item.FeeAmount ?? 0m,
+            CurrencyCode = item.Amount.Currency,
+            TxnDate = item.FundedAt ?? item.CreatedAt,
+            DocNumber = $"FCT-{batchNumber.ToString(CultureInfo.InvariantCulture)}-{invoiceNumber.ToString(CultureInfo.InvariantCulture)}",
+            Description = $"Factoring fee on invoice {invoiceNumber.ToString(CultureInfo.InvariantCulture)} (schedule {batchNumber.ToString(CultureInfo.InvariantCulture)})"
+        };
+
+        var hash = Hash(payload.DocNumber, Num(payload.Amount), payload.CurrencyCode, Date(payload.TxnDate),
+            clearingAccountId, feeAccountId);
+        return (payload, hash);
+    }
+
     public static (QboVendorPayload Payload, string Hash) Vendor(Employee employee)
     {
         var payload = new QboVendorPayload

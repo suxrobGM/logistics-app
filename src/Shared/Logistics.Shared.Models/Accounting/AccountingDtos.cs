@@ -30,6 +30,8 @@ public record AccountingSettingsDto
     public string? PaymentAccountId { get; set; }
     public string? ExpenseAccountId { get; set; }
     public string? PayrollExpenseAccountId { get; set; }
+    public string? FactoringClearingAccountId { get; set; }
+    public string? FactoringFeeAccountId { get; set; }
 
     /// <summary>Transactions dated before this are not pushed.</summary>
     public DateTime? SyncFromDate { get; set; }

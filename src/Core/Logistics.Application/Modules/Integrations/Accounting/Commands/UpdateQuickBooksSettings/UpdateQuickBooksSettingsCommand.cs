@@ -27,6 +27,12 @@ public class UpdateQuickBooksSettingsCommand : ICommand
     /// <summary>Expense account driver pay bills post to; null turns driver pay sync off.</summary>
     public string? PayrollExpenseAccountId { get; set; }
 
+    /// <summary>Bank-type clearing account factored invoices are deposited to; null turns factoring sync off.</summary>
+    public string? FactoringClearingAccountId { get; set; }
+
+    /// <summary>Expense account factoring fees post to.</summary>
+    public string? FactoringFeeAccountId { get; set; }
+
     /// <summary>Transactions dated before this are not pushed.</summary>
     public DateTime? SyncFromDate { get; set; }
 

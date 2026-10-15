@@ -43,6 +43,8 @@ internal sealed class GetQuickBooksConnectionHandler(ITenantUnitOfWork tenantUow
                 PaymentAccountId = config.DefaultPaymentAccountId,
                 ExpenseAccountId = config.DefaultExpenseAccountId,
                 PayrollExpenseAccountId = config.PayrollExpenseAccountId,
+                FactoringClearingAccountId = config.FactoringClearingAccountId,
+                FactoringFeeAccountId = config.FactoringFeeAccountId,
                 SyncFromDate = config.SyncFromDate,
                 Mappings = config.GetMappings()
             }

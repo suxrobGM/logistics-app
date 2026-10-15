@@ -14,5 +14,8 @@ public enum QboLocalEntityType
     PayrollInvoice = 5,
 
     /// <summary>An employee, pushed as the QBO Vendor their payroll bills are owed to.</summary>
-    Employee = 6
+    Employee = 6,
+
+    /// <summary>The fee a factoring company kept on a funded invoice, pushed as a QBO Purchase from the clearing account.</summary>
+    FactoringFee = 7
 }
