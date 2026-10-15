@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Logistics.API.Controllers;
 
 /// <summary>
-/// Cash advances to drivers. Approved advances are deducted from the driver's next settlement.
+/// Cash advances to drivers, deducted from the driver's next settlement.
 /// </summary>
 [ApiController]
 [Route("cashadvances")]
@@ -34,26 +34,6 @@ public class CashAdvanceController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(request);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    [HttpPost("{id:guid}/approve", Name = "ApproveCashAdvance")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Payroll.Manage)]
-    public async Task<IActionResult> Approve(Guid id)
-    {
-        var result = await mediator.Send(new ReviewCashAdvanceCommand { Id = id, Approve = true });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    [HttpPost("{id:guid}/reject", Name = "RejectCashAdvance")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Payroll.Manage)]
-    public async Task<IActionResult> Reject(Guid id)
-    {
-        var result = await mediator.Send(new ReviewCashAdvanceCommand { Id = id, Approve = false });
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("{id:guid}", Name = "DeleteCashAdvance")]

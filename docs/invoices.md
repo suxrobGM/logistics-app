@@ -55,7 +55,7 @@ The system uses Table Per Hierarchy (TPH) pattern with three invoice types:
     every settlement; an `Escrow` one becomes an `Escrow` line, capped so the escrow balance stops at
     its `EscrowTarget`. The balance is the sum of escrow lines on the employee's settlements that
     were not rejected or cancelled (a positive escrow line is a release).
-  - Approved `CashAdvance` rows not yet deducted become `CashAdvance` lines on the next settlement.
+  - `CashAdvance` rows not yet deducted become `CashAdvance` lines on the next settlement.
   - With `Employee.DeductFuelCardCharges`, matched fuel card transactions in the period on trucks the
     employee is the main driver of become `FuelCard` lines.
   - Advances and fuel transactions record the settlement that deducted them
@@ -66,8 +66,8 @@ The system uses Table Per Hierarchy (TPH) pattern with three invoice types:
   with a `SourceId`, keeping hand-added lines.
 - The pay stub PDF lists earnings, gross, each deduction and the net.
 - Endpoints: `GET/PUT /employees/{id}/payprofile` (exclusions, fuel deduction, recurring deductions,
-  escrow balance, advances owed); `/cashadvances` (list, issue, approve, reject, delete);
-  `POST/GET /drivers/cashadvances` for the signed-in driver's requests.
+  escrow balance, advances owed); `/cashadvances` (list, issue, delete). Advances are
+  dispatcher-issued only; there is no driver request flow.
 
 ### SubscriptionInvoice
 

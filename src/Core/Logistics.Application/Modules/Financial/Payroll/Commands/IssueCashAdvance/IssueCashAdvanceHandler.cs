@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -7,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Payroll.Commands;
 
-internal sealed class IssueCashAdvanceHandler(ITenantUnitOfWork tenantUow, ICurrentUserService currentUser)
+internal sealed class IssueCashAdvanceHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<IssueCashAdvanceCommand, Result<CashAdvanceDto>>
 {
     public async Task<Result<CashAdvanceDto>> Handle(IssueCashAdvanceCommand req, CancellationToken ct)
@@ -25,7 +24,6 @@ internal sealed class IssueCashAdvanceHandler(ITenantUnitOfWork tenantUow, ICurr
             Amount = new() { Amount = req.Amount, Currency = currency },
             Reason = req.Reason
         };
-        advance.Approve(currentUser.GetUserId() ?? Guid.Empty);
 
         await tenantUow.Repository<CashAdvance>().AddAsync(advance, ct);
         await tenantUow.SaveChangesAsync(ct);

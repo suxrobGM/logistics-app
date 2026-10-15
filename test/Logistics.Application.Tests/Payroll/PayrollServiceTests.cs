@@ -152,12 +152,13 @@ public class PayrollServiceTests
         {
             EmployeeId = _driver.Id, Amount = new Money { Amount = 300m, Currency = "USD" }
         };
-        advance.Approve(Guid.NewGuid());
-        var requested = new CashAdvance
+        var earlierInvoiceId = Guid.NewGuid();
+        var alreadyDeducted = new CashAdvance
         {
-            EmployeeId = _driver.Id, Amount = new Money { Amount = 999m, Currency = "USD" }
+            EmployeeId = _driver.Id, Amount = new Money { Amount = 999m, Currency = "USD" },
+            PayrollInvoiceId = earlierInvoiceId
         };
-        _advances.AddRange([advance, requested]);
+        _advances.AddRange([advance, alreadyDeducted]);
         var fuel = FuelOn(_truck, Start.AddDays(1), 400m);
         var otherTruckFuel = FuelOn(new Truck { Number = "T-2", Type = TruckType.FreightTruck }, Start.AddDays(1), 77m);
 
@@ -166,7 +167,7 @@ public class PayrollServiceTests
         Assert.Equal(2700m - 500m - 300m - 400m, payroll.Total.Amount);
         Assert.Equal(payroll.Id, advance.PayrollInvoiceId);
         Assert.Equal(payroll.Id, fuel.PayrollInvoiceId);
-        Assert.Null(requested.PayrollInvoiceId);
+        Assert.Equal(earlierInvoiceId, alreadyDeducted.PayrollInvoiceId);
         Assert.Null(otherTruckFuel.PayrollInvoiceId);
     }
 
@@ -174,7 +175,6 @@ public class PayrollServiceTests
     public async Task Build_Preview_DoesNotClaimAdvances()
     {
         var advance = new CashAdvance { EmployeeId = _driver.Id, Amount = new Money { Amount = 100m, Currency = "USD" } };
-        advance.Approve(Guid.NewGuid());
         _advances.Add(advance);
 
         var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, Start, End);
@@ -217,7 +217,6 @@ public class PayrollServiceTests
     public async Task Recalculate_ReleasesAndReclaimsAdvances()
     {
         var advance = new CashAdvance { EmployeeId = _driver.Id, Amount = new Money { Amount = 100m, Currency = "USD" } };
-        advance.Approve(Guid.NewGuid());
         _advances.Add(advance);
         var payroll = await _sut.CreatePayrollInvoiceAsync(_driver, Start, End);
 

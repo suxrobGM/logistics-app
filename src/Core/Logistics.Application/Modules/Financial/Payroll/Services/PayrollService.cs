@@ -219,7 +219,6 @@ internal class PayrollService(
 
         var advances = await tenantUow.Repository<CashAdvance>().GetListAsync(a =>
             a.EmployeeId == employee.Id &&
-            a.Status == CashAdvanceStatus.Approved &&
             a.PayrollInvoiceId == null, ct);
 
         var fuel = employee.DeductFuelCardCharges

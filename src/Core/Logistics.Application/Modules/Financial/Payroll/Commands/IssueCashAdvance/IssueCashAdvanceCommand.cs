@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Payroll.Commands;
 
-/// <summary>A dispatcher pays a driver an advance; it is approved at once and owed until the next settlement.</summary>
+/// <summary>A dispatcher pays a driver an advance; it is owed until the next settlement.</summary>
 [RequiresFeature(TenantFeature.Payroll)]
 public class IssueCashAdvanceCommand : ICommand<Result<CashAdvanceDto>>
 {

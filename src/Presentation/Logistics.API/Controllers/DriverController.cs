@@ -7,9 +7,6 @@ using Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 using Logistics.Application.Modules.IdentityAccess.Employees.Queries;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Trips.Commands;
-using Logistics.Application.Modules.Financial.Payroll.Commands;
-using Logistics.Application.Modules.Financial.Payroll.Queries;
-using Logistics.Shared.Identity.Claims;
 
 namespace Logistics.API.Controllers;
 
@@ -77,33 +74,5 @@ public class DriverController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new MarkStopDepartedCommand { TripId = tripId, StopId = stopId });
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    /// <summary>
-    ///     The signed-in driver asks for a cash advance; it is deducted from their next settlement once approved.
-    /// </summary>
-    [HttpPost("cashadvances", Name = "RequestCashAdvance")]
-    [ProducesResponseType(typeof(CashAdvanceDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Driver.Manage)]
-    public async Task<IActionResult> RequestCashAdvance([FromBody] RequestCashAdvanceCommand request)
-    {
-        var result = await mediator.Send(request);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    [HttpGet("cashadvances", Name = "GetMyCashAdvances")]
-    [ProducesResponseType(typeof(List<CashAdvanceDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Driver.Manage)]
-    public async Task<IActionResult> GetMyCashAdvances()
-    {
-        if (User.GetUserId() is not { } userId)
-        {
-            return BadRequest(ErrorResponse.FromResult(Result.Fail("User not authenticated.")));
-        }
-
-        var result = await mediator.Send(new GetCashAdvancesQuery { EmployeeId = userId });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 }

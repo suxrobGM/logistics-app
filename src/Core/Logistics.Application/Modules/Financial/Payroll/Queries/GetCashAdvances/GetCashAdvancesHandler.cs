@@ -1,6 +1,5 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
@@ -20,16 +19,6 @@ internal sealed class GetCashAdvancesHandler(ITenantUnitOfWork tenantUow)
         if (req.EmployeeId is { } employeeId)
         {
             query = query.Where(a => a.EmployeeId == employeeId);
-        }
-
-        if (req.Status is { } status)
-        {
-            query = query.Where(a => a.Status == status);
-        }
-
-        if (req.Outstanding)
-        {
-            query = query.Where(a => a.Status == CashAdvanceStatus.Approved && a.PayrollInvoiceId == null);
         }
 
         var rows = await query

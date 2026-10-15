@@ -14,7 +14,6 @@ public static partial class DriverPayMapper
 
     [MapperIgnoreSource(nameof(CashAdvance.DomainEvents))]
     [MapperIgnoreSource(nameof(CashAdvance.Employee))]
-    [MapperIgnoreSource(nameof(CashAdvance.ReviewedById))]
     [MapperIgnoreSource(nameof(CashAdvance.CreatedBy))]
     [MapperIgnoreSource(nameof(CashAdvance.UpdatedAt))]
     [MapperIgnoreSource(nameof(CashAdvance.UpdatedBy))]

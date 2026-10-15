@@ -28,7 +28,5 @@ internal sealed class CashAdvanceEntityConfiguration : IEntityTypeConfiguration<
             .WithMany()
             .HasForeignKey(a => a.PayrollInvoiceId)
             .OnDelete(DeleteBehavior.SetNull);
-
-        builder.HasIndex(a => new { a.EmployeeId, a.Status });
     }
 }

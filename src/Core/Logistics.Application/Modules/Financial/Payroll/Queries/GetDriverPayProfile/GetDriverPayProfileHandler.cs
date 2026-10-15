@@ -25,7 +25,6 @@ internal sealed class GetDriverPayProfileHandler(ITenantUnitOfWork tenantUow, IP
 
         var outstanding = await tenantUow.Repository<CashAdvance>().Query()
             .Where(a => a.EmployeeId == employee.Id &&
-                        a.Status == CashAdvanceStatus.Approved &&
                         a.PayrollInvoiceId == null)
             .SumAsync(a => a.Amount.Amount, ct);
 
