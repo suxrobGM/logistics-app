@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-internal sealed class UpdateLoadChargesValidator : AbstractValidator<UpdateLoadCommand>
+internal sealed class LoadChargesValidator : AbstractValidator<ILoadChargeFields>
 {
-    public UpdateLoadChargesValidator()
+    public LoadChargesValidator()
     {
         RuleFor(i => i.FuelSurcharge).GreaterThanOrEqualTo(0);
         RuleForEach(i => i.Accessorials).SetValidator(new LoadAccessorialValidator());

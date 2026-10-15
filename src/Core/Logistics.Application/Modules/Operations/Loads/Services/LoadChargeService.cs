@@ -67,7 +67,8 @@ internal sealed class LoadChargeService(
     public async Task ApplyDetentionAsync(TripStop stop, CancellationToken ct = default)
     {
         var load = stop.Load;
-        var detention = DetentionCalculator.Calculate(stop, DateTime.UtcNow, GetDetentionTerms(load.Customer));
+        var terms = DetentionTerms.For(tenantUow.GetCurrentTenant().Settings, load.Customer);
+        var detention = DetentionCalculator.Calculate(stop, DateTime.UtcNow, terms);
         var existing = load.FindDetention(stop.Id);
 
         if (detention is not { IsOngoing: false, Charge: > 0, RatePerHour: { } rate })
@@ -108,9 +109,6 @@ internal sealed class LoadChargeService(
 
         await SyncInvoiceAsync(load, ct);
     }
-
-    public DetentionTerms GetDetentionTerms(Customer? customer) =>
-        DetentionTerms.For(tenantUow.GetCurrentTenant().Settings, customer);
 
     internal static LoadAccessorial NewAccessorial(Load load, LoadAccessorialDto input) => new()
     {

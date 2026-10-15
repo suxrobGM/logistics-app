@@ -45,8 +45,6 @@ internal sealed class UpdateLoadHandler(
             load.DestinationAddress = PropertyUpdater.UpdateIfChanged(req.DestinationAddress, load.DestinationAddress);
             load.DestinationLocation = PropertyUpdater.UpdateIfChanged(req.DestinationLocation, load.DestinationLocation);
 
-            var billedBefore = (load.DeliveryCost.Amount, load.Type);
-
             if (req.DeliveryCost is not null && req.DeliveryCost != load.DeliveryCost.Amount)
             {
                 load.DeliveryCost = new() { Amount = req.DeliveryCost.Value, Currency = load.DeliveryCost.Currency };
@@ -90,11 +88,8 @@ internal sealed class UpdateLoadHandler(
                 load.MarkUpdated();
             }
 
-            var chargesChanged = await ApplyShipmentChangesAsync(req, load, ct);
-            if (chargesChanged || billedBefore != (load.DeliveryCost.Amount, load.Type))
-            {
-                await loadChargeService.SyncInvoiceAsync(load, ct);
-            }
+            await ApplyShipmentChangesAsync(req, load, ct);
+            await loadChargeService.SyncInvoiceAsync(load, ct);
 
             // SaveChanges dispatches domain events:
             // - LoadAssignedToTruckEvent (if truck assigned)
@@ -110,8 +105,7 @@ internal sealed class UpdateLoadHandler(
         }
     }
 
-    /// <summary>Applies the LTL fields and charges; true when a charge changed.</summary>
-    private async Task<bool> ApplyShipmentChangesAsync(UpdateLoadCommand req, Load load, CancellationToken ct)
+    private async Task ApplyShipmentChangesAsync(UpdateLoadCommand req, Load load, CancellationToken ct)
     {
         if (req.FreightClass.HasValue) load.FreightClass = req.FreightClass;
         if (req.NmfcCode is not null) load.NmfcCode = req.NmfcCode;
@@ -121,20 +115,12 @@ internal sealed class UpdateLoadHandler(
         if (req.Dimensions is not null) load.Dimensions = req.Dimensions;
         if (req.IsStackable.HasValue) load.IsStackable = req.IsStackable.Value;
 
-        var changed = false;
-        if (req.FuelSurcharge.HasValue && req.FuelSurcharge != load.FuelSurcharge)
-        {
-            load.FuelSurcharge = req.FuelSurcharge.Value;
-            changed = true;
-        }
+        if (req.FuelSurcharge.HasValue) load.FuelSurcharge = req.FuelSurcharge.Value;
 
         if (req.Accessorials is not null)
         {
             await loadChargeService.ReplaceAccessorialsAsync(load, req.Accessorials, ct);
-            changed = true;
         }
-
-        return changed;
     }
 
     private async Task UpdateCustomerIfUpdated(UpdateLoadCommand req, Load loadEntity)

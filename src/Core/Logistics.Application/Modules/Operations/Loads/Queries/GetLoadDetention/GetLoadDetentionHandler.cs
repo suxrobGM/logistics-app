@@ -1,4 +1,3 @@
-using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
@@ -6,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Queries;
 
-internal sealed class GetLoadDetentionHandler(ITenantUnitOfWork tenantUow, ILoadChargeService loadChargeService)
+internal sealed class GetLoadDetentionHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<GetLoadDetentionQuery, Result<List<StopDetentionDto>>>
 {
     public async Task<Result<List<StopDetentionDto>>> Handle(GetLoadDetentionQuery req, CancellationToken ct)
@@ -17,7 +16,7 @@ internal sealed class GetLoadDetentionHandler(ITenantUnitOfWork tenantUow, ILoad
             return Result<List<StopDetentionDto>>.Fail($"Could not find a load with ID '{req.LoadId}'");
         }
 
-        var terms = loadChargeService.GetDetentionTerms(load.Customer);
+        var terms = DetentionTerms.For(tenantUow.GetCurrentTenant().Settings, load.Customer);
         var now = DateTime.UtcNow;
 
         var stops = load.TripStops

@@ -8,6 +8,7 @@ internal sealed class UpdateLoadValidator : AbstractValidator<UpdateLoadCommand>
 {
     public UpdateLoadValidator()
     {
+        Include(new LoadChargesValidator());
         RuleFor(i => i.Distance).GreaterThan(0);
         RuleForEach(i => i.Vehicles!)
             .SetValidator(new LoadVehicleInputValidator())

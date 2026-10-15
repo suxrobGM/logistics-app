@@ -123,7 +123,21 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
             load.HazmatClass = p.HazmatClass;
             load.UnNumber = p.UnNumber;
             load.Vehicles = p.Vehicles is null ? [] : [.. p.Vehicles];
-            p.Shipment?.ApplyTo(load);
+            load.FuelSurcharge = p.FuelSurcharge;
+            load.FreightClass = p.FreightClass;
+            load.NmfcCode = p.NmfcCode;
+            load.PalletCount = p.PalletCount;
+            load.PieceCount = p.PieceCount;
+            load.Weight = p.Weight;
+            load.Dimensions = p.Dimensions;
+            load.IsStackable = p.IsStackable;
+            load.Accessorials = (p.Accessorials ?? []).Select(a => LoadChargeService.NewAccessorial(load, a)).ToList();
+            if (load.Invoice is { } invoice)
+            {
+                invoice.ReplaceLoadCharges(load);
+                invoice.RecalculateTotals();
+            }
+
             loads.Add(load);
         }
 

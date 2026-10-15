@@ -31,8 +31,15 @@ internal sealed class CreateLoadHandler(ILoadService loadService)
             HazmatClass: req.HazmatClass,
             UnNumber: req.UnNumber,
             Vehicles: req.Vehicles.ToLoadVehicles(),
-            Shipment: new LoadShipmentDetails(req.FuelSurcharge, req.Accessorials, req.FreightClass, req.NmfcCode,
-                req.PalletCount, req.PieceCount, req.Weight, req.Dimensions, req.IsStackable));
+            FuelSurcharge: req.FuelSurcharge,
+            Accessorials: req.Accessorials,
+            FreightClass: req.FreightClass,
+            NmfcCode: req.NmfcCode,
+            PalletCount: req.PalletCount,
+            PieceCount: req.PieceCount,
+            Weight: req.Weight,
+            Dimensions: req.Dimensions,
+            IsStackable: req.IsStackable);
 
         // Load.Create() raises domain events for notifications:
         // - NewLoadCreatedEvent (always)

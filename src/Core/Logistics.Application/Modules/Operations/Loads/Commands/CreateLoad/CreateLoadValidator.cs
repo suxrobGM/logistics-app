@@ -9,6 +9,7 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
 {
     public CreateLoadValidator()
     {
+        Include(new LoadChargesValidator());
         RuleFor(i => i.Name).NotEmpty();
         RuleFor(i => i.Type).IsInEnum();
         RuleFor(i => i.AssignedDispatcherId).NotEmpty();

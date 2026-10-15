@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;
 
-public partial class UpdateLoadCommand
+public partial class UpdateLoadCommand : ILoadChargeFields
 {
     public decimal? FuelSurcharge { get; set; }
 

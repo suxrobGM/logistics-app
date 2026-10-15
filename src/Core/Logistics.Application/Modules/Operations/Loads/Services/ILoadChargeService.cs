@@ -26,7 +26,4 @@ public interface ILoadChargeService : IApplicationService
     /// one when it earned none) and syncs the invoice.
     /// </summary>
     Task ApplyDetentionAsync(TripStop stop, CancellationToken ct = default);
-
-    /// <summary>Detention terms for a customer of the current tenant.</summary>
-    DetentionTerms GetDetentionTerms(Customer? customer);
 }

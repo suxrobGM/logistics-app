@@ -1,6 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Services;
 
@@ -25,7 +26,8 @@ namespace Logistics.Application.Modules.Operations.Loads.Services;
 /// <param name="OriginTerminalId">Optional origin terminal (port / rail / depot).</param>
 /// <param name="DestinationTerminalId">Optional destination terminal.</param>
 /// <param name="Vehicles">Vehicles carried by a vehicle load.</param>
-/// <param name="Shipment">LTL details, fuel surcharge and accessorials.</param>
+/// <param name="FuelSurcharge">Flat fuel surcharge billed on top of the linehaul.</param>
+/// <param name="Accessorials">Extra charges billed on the load.</param>
 public record CreateLoadParameters(
     string Name,
     LoadType Type,
@@ -48,5 +50,13 @@ public record CreateLoadParameters(
     HazmatClass? HazmatClass = null,
     string? UnNumber = null,
     IReadOnlyList<LoadVehicle>? Vehicles = null,
-    LoadShipmentDetails? Shipment = null
+    decimal FuelSurcharge = 0,
+    IReadOnlyList<LoadAccessorialDto>? Accessorials = null,
+    FreightClass? FreightClass = null,
+    string? NmfcCode = null,
+    int? PalletCount = null,
+    int? PieceCount = null,
+    double? Weight = null,
+    string? Dimensions = null,
+    bool IsStackable = false
 );
