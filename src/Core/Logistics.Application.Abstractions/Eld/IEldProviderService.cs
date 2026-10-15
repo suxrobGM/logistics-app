@@ -27,11 +27,6 @@ public interface IEldProviderService
     Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret);
 
     /// <summary>
-    /// Refresh an OAuth access token using a refresh token
-    /// </summary>
-    Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken);
-
-    /// <summary>
     /// Get current HOS status for a specific driver
     /// </summary>
     Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId);

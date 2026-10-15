@@ -33,11 +33,6 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
         return Task.FromResult(!string.IsNullOrEmpty(apiKey));
     }
 
-    public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
-    {
-        return Task.FromResult<OAuthTokenResultDto?>(null);
-    }
-
     public Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
         var driverIndex = Math.Abs(externalDriverId.GetHashCode()) % demoDriverNames.Length;

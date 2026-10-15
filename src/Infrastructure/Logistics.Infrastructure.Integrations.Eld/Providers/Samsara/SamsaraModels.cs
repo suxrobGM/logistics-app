@@ -21,7 +21,6 @@ internal record SamsaraDriver
     public string? Phone { get; init; }
     public string? Email { get; init; }
     public string? LicenseNumber { get; init; }
-    public string? LicenseState { get; init; }
 }
 
 internal record SamsaraVehicle
@@ -44,7 +43,6 @@ internal record SamsaraVehicle
 internal record SamsaraHosClock
 {
     public SamsaraRef? Driver { get; init; }
-    public SamsaraRef? CurrentVehicle { get; init; }
     public SamsaraDutyStatus? CurrentDutyStatus { get; init; }
     public SamsaraClocks? Clocks { get; init; }
     public SamsaraClockViolations? Violations { get; init; }
@@ -68,7 +66,7 @@ internal record SamsaraDriveClock(long? DriveRemainingDurationMs);
 
 internal record SamsaraShiftClock(long? ShiftRemainingDurationMs);
 
-internal record SamsaraCycleClock(long? CycleRemainingDurationMs, long? CycleTomorrowDurationMs);
+internal record SamsaraCycleClock(long? CycleRemainingDurationMs);
 
 internal record SamsaraBreakClock(long? TimeUntilBreakDurationMs);
 
@@ -104,7 +102,6 @@ internal record SamsaraViolation
     public string? Type { get; init; }
 
     public string? Description { get; init; }
-    public long? DurationMs { get; init; }
     public DateTimeOffset? ViolationStartTime { get; init; }
     public SamsaraRef? Driver { get; init; }
 }
@@ -127,12 +124,7 @@ internal record SamsaraGps
     public double Latitude { get; init; }
     public double Longitude { get; init; }
     public DateTimeOffset Time { get; init; }
-    public double? HeadingDegrees { get; init; }
-    public double? SpeedMilesPerHour { get; init; }
-    public SamsaraReverseGeo? ReverseGeo { get; init; }
 }
-
-internal record SamsaraReverseGeo(string? FormattedLocation);
 
 internal record SamsaraStatValue(DateTimeOffset Time, long Value);
 
@@ -148,7 +140,6 @@ internal record SamsaraWebhookPayload
 {
     public string? EventId { get; init; }
     public string? EventType { get; init; }
-    public long? OrgId { get; init; }
     public SamsaraWebhookData? Data { get; init; }
 }
 

@@ -45,12 +45,6 @@ internal class MotiveEldService(
         }
     }
 
-    public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
-    {
-        // Motive uses API keys, not OAuth refresh tokens
-        return Task.FromResult<OAuthTokenResultDto?>(null);
-    }
-
     public async Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
         var result = await httpClient.TryGetFromJsonAsync<MotiveHosResponse>(

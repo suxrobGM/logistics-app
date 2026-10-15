@@ -21,13 +21,15 @@ internal class SamsaraEldService(
     : IEldProviderService, IEldGpsTrackingProvider
 {
     private readonly SamsaraOptions _options = options.Value.Samsara ?? new SamsaraOptions();
-    private string _baseUrl = (options.Value.Samsara ?? new SamsaraOptions()).BaseUrl;
+    private string? _region;
+
+    private string BaseUrl => _options.BaseUrlFor(_region);
 
     public EldProviderType ProviderType => EldProviderType.Samsara;
 
     public void Initialize(EldProviderConfiguration configuration)
     {
-        _baseUrl = _options.BaseUrlFor(configuration.Region);
+        _region = configuration.Region;
         httpClient.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", configuration.AccessToken ?? configuration.ApiKey);
     }
@@ -36,7 +38,7 @@ internal class SamsaraEldService(
     {
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/fleet/drivers?limit=1");
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/fleet/drivers?limit=1");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
             using var response = await httpClient.SendAsync(request);
@@ -47,12 +49,6 @@ internal class SamsaraEldService(
             logger.LogError(ex, "Failed to validate Samsara credentials");
             return false;
         }
-    }
-
-    public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
-    {
-        // Samsara API tokens don't expire, there is nothing to refresh
-        return Task.FromResult<OAuthTokenResultDto?>(null);
     }
 
     public async Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
@@ -158,8 +154,8 @@ internal class SamsaraEldService(
         do
         {
             var url = cursor is null
-                ? $"{_baseUrl}{pathAndQuery}"
-                : $"{_baseUrl}{pathAndQuery}{separator}after={Uri.EscapeDataString(cursor)}";
+                ? $"{BaseUrl}{pathAndQuery}"
+                : $"{BaseUrl}{pathAndQuery}{separator}after={Uri.EscapeDataString(cursor)}";
 
             var page = await httpClient.TryGetFromJsonAsync<SamsaraPage<T>>(
                 url, logger, action, IntegrationJsonOptions.CamelCase, ct);

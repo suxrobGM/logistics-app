@@ -53,12 +53,6 @@ internal class TtEldService(
         }
     }
 
-    public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
-    {
-        // TT ELD uses API keys, not OAuth
-        return Task.FromResult<OAuthTokenResultDto?>(null);
-    }
-
     #region HOS Methods (not supported by TT ELD)
 
     public Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)

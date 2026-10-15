@@ -56,12 +56,6 @@ internal class GeotabEldService(
                && await client.AuthenticateAsync(database, userName, apiSecret);
     }
 
-    public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
-    {
-        // Geotab uses session credentials, not OAuth refresh tokens.
-        return Task.FromResult<OAuthTokenResultDto?>(null);
-    }
-
     public async Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
         var availability = await client.GetAsync<GeotabDutyStatusAvailability>(
