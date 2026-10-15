@@ -72,24 +72,27 @@ build turns cleartext off). Users can request deletion in the app and on the web
 sold or used for advertising, and there are no ad SDKs.
 
 "Shared" in Play's sense means passed to a third party. The carrier that employs the driver is the
-customer the app serves, and the load's customer sees the truck's location only through the
-disclosed feature, so the answers below mark nothing as shared. Firebase (Crashlytics, Cloud
-Messaging) processes data as LogisticsX's service provider, which Play does not count as sharing.
+customer the app serves, so what only the carrier's staff see is collected, not shared. The load's
+customer (the shipper or receiver) is a third party, and it sees some of the driver's data: the
+truck's live location and the driver's name on the public tracking page, and the BOL, POD and
+condition report photos and signatures in the customer portal and on the eBOL. Those types are
+declared as shared, for App functionality. Firebase (Crashlytics, Cloud Messaging) processes data as
+LogisticsX's service provider, which Play does not count as sharing.
 
-| Data type (Play category)                  | Collected | Optional | Purposes                              | Where it comes from in the app                                             |
-| ------------------------------------------ | --------- | -------- | ------------------------------------- | -------------------------------------------------------------------------- |
-| Location: Precise location                 | Yes       | Yes      | App functionality                     | GPS fixes while on duty, with a reverse-geocoded street address            |
-| Location: Approximate location             | Yes       | Yes      | App functionality                     | Used when the driver grants only approximate location                      |
-| Personal info: Name                        | Yes       | No       | App functionality, Account management | Profile and sign-in                                                        |
-| Personal info: Email address               | Yes       | No       | App functionality, Account management | Sign-in and profile                                                        |
-| Personal info: Phone number                | Yes       | Yes      | App functionality, Account management | Profile screen                                                             |
-| Personal info: User IDs                    | Yes       | No       | App functionality, Account management | Account and tenant IDs on every request                                    |
-| Photos and videos: Photos                  | Yes       | Yes      | App functionality                     | BOL, POD, condition report and DVIR photos, and drawn signatures           |
-| Messages: Other in-app messages            | Yes       | Yes      | App functionality                     | Chat with dispatch                                                         |
-| App activity: Other user-generated content | Yes       | Yes      | App functionality                     | Notes on captures, DVIR defects, deletion reason                           |
-| App info and performance: Crash logs       | Yes       | No       | App functionality, Analytics          | Firebase Crashlytics (Android build)                                       |
-| App info and performance: Diagnostics      | Yes       | No       | App functionality, Analytics          | Crashlytics device and OS details attached to crashes                      |
-| Device or other IDs                        | Yes       | No       | App functionality                     | FCM registration token for push notifications, Crashlytics installation ID |
+| Data type (Play category)                  | Collected | Shared | Optional | Purposes                              | Where it comes from in the app                                                                                 |
+| ------------------------------------------ | --------- | ------ | -------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Location: Precise location                 | Yes       | Yes    | Yes      | App functionality                     | GPS fixes while on duty, with a reverse-geocoded street address; the load's customer sees it on tracking       |
+| Location: Approximate location             | Yes       | Yes    | Yes      | App functionality                     | Used when the driver grants only approximate location; shown the same way                                      |
+| Personal info: Name                        | Yes       | Yes    | No       | App functionality, Account management | Profile and sign-in; the load's customer sees it on the tracking page and the eBOL                             |
+| Personal info: Email address               | Yes       | No     | No       | App functionality, Account management | Sign-in and profile                                                                                            |
+| Personal info: Phone number                | Yes       | No     | Yes      | App functionality, Account management | Profile screen                                                                                                 |
+| Personal info: User IDs                    | Yes       | No     | No       | App functionality, Account management | Account and tenant IDs on every request                                                                        |
+| Photos and videos: Photos                  | Yes       | Yes    | Yes      | App functionality                     | BOL, POD, condition report and DVIR photos, and drawn signatures; the load's customer gets BOL/POD/eBOL copies |
+| Messages: Other in-app messages            | Yes       | No     | Yes      | App functionality                     | Chat with dispatch                                                                                             |
+| App activity: Other user-generated content | Yes       | No     | Yes      | App functionality                     | Notes on captures, DVIR defects, deletion reason                                                               |
+| App info and performance: Crash logs       | Yes       | No     | No       | App functionality, Analytics          | Firebase Crashlytics (Android build)                                                                           |
+| App info and performance: Diagnostics      | Yes       | No     | No       | App functionality, Analytics          | Crashlytics device and OS details attached to crashes                                                          |
+| Device or other IDs                        | Yes       | No     | No       | App functionality                     | FCM registration token for push notifications, Crashlytics installation ID                                     |
 
 Not collected: financial info (earnings on the Stats screen are read from the carrier's payroll,
 not entered in the app), health, contacts, calendar, files, audio, web browsing, installed apps.
