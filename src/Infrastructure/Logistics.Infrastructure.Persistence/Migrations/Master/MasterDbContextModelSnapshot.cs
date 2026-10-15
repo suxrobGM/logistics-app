@@ -18,7 +18,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.10")
+                .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
@@ -1258,6 +1258,37 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("product_license_heartbeats", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.SigningKey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Algorithm")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("algorithm");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("data");
+
+                    b.HasKey("Id")
+                        .HasName("pk_signing_keys");
+
+                    b.HasIndex("Created")
+                        .HasDatabaseName("ix_signing_keys_created");
+
+                    b.ToTable("signing_keys", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1678,6 +1709,15 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("numeric(18,2)")
                                 .HasColumnName("settings_default_rate_floor_per_mile");
 
+                            b1.Property<int?>("DetentionFreeMinutes")
+                                .HasColumnType("integer")
+                                .HasColumnName("settings_detention_free_minutes");
+
+                            b1.Property<decimal?>("DetentionRatePerHour")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("settings_detention_rate_per_hour");
+
                             b1.Property<string>("DistanceUnit")
                                 .IsRequired()
                                 .HasColumnType("text")
@@ -2055,37 +2095,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("user_tenant_accesses", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.SigningKey", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Algorithm")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("algorithm");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("data");
-
-                    b.HasKey("Id")
-                        .HasName("pk_signing_keys");
-
-                    b.HasIndex("Created")
-                        .HasDatabaseName("ix_signing_keys_created");
-
-                    b.ToTable("signing_keys", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
                 {
                     b.Property<int>("Id")
@@ -2216,6 +2225,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid")
                         .HasColumnName("customer_id");
+
+                    b.Property<string>("FactoringStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("not_factored")
+                        .HasColumnName("factoring_status");
 
                     b.Property<Guid>("LoadId")
                         .HasColumnType("uuid")
