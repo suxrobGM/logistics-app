@@ -6,20 +6,21 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 
 ## Quick Links
 
-| Section                                                 | Description                            |
-| ------------------------------------------------------- | -------------------------------------- |
-| [Features](features.md)                                 | Complete feature list                  |
-| [Screenshots](screenshots.md)                           | Visual tour of all applications        |
-| [Getting Started](getting-started/prerequisites.md)     | Prerequisites, local setup, Docker     |
-| [Architecture](architecture/overview.md)                | System design, domain model, patterns  |
-| [API Reference](api/overview.md)                        | Authentication, endpoints, webhooks    |
-| [Deployment](deployment/overview.md)                    | VPS setup, one-command deploy with SSL |
-| [Development](development/backend-guide.md)             | Backend, Angular, mobile guides        |
-| [Configuration](configuration/environment-variables.md) | Environment variables, services        |
-| [Stripe Webhooks](stripe-webhooks.md)                   | Endpoint, event list, local testing    |
-| [Samsara Setup](eld-samsara-setup.md)                   | API token scopes, webhook, mappings    |
-| [QuickBooks Setup](accounting-quickbooks-setup.md)      | Intuit app, connect, account mapping   |
-| [Roadmap](roadmap/README.md)                            | Feature backlog, phases, statuses      |
+| Section                                                              | Description                            |
+| -------------------------------------------------------------------- | -------------------------------------- |
+| [Features](features.md)                                              | Complete feature list                  |
+| [Screenshots](screenshots.md)                                        | Visual tour of all applications        |
+| [Getting Started](getting-started/prerequisites.md)                  | Prerequisites, local setup, Docker     |
+| [Architecture](architecture/overview.md)                             | System design, domain model, patterns  |
+| [API Reference](api/overview.md)                                     | Authentication, endpoints, webhooks    |
+| [Deployment](deployment/overview.md)                                 | VPS setup, one-command deploy with SSL |
+| [Observability and Backups](deployment/observability-and-backups.md) | Sentry, DB backups, pilot checklist    |
+| [Development](development/backend-guide.md)                          | Backend, Angular, mobile guides        |
+| [Configuration](configuration/environment-variables.md)              | Environment variables, services        |
+| [Stripe Webhooks](stripe-webhooks.md)                                | Endpoint, event list, local testing    |
+| [Samsara Setup](eld-samsara-setup.md)                                | API token scopes, webhook, mappings    |
+| [QuickBooks Setup](accounting-quickbooks-setup.md)                   | Intuit app, connect, account mapping   |
+| [Roadmap](roadmap/README.md)                                         | Feature backlog, phases, statuses      |
 
 ## Platform Overview
 

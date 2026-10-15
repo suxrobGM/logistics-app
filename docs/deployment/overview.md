@@ -56,11 +56,13 @@ yourdomain.com           -> YOUR_VPS_IP
 - [ ] Stripe API keys (for payments)
 - [ ] Resend API key (for emails)
 - [ ] Mapbox access token (for maps)
+- [ ] Before onboarding a real carrier: the [pre-pilot checklist](observability-and-backups.md#pre-pilot-production-checklist)
 
 ## Guides
 
-| Guide                                                              | Description                  |
-| ------------------------------------------------------------------ | ---------------------------- |
-| [VPS Setup](vps-setup.md)                                          | Initial server configuration |
-| [Docker Compose Deployment](docker-deployment.md)                  | Configure and run the stack  |
-| [Environment Variables](../configuration/environment-variables.md) | Configuration reference      |
+| Guide                                                              | Description                      |
+| ------------------------------------------------------------------ | -------------------------------- |
+| [VPS Setup](vps-setup.md)                                          | Initial server configuration     |
+| [Docker Compose Deployment](docker-deployment.md)                  | Configure and run the stack      |
+| [Environment Variables](../configuration/environment-variables.md) | Configuration reference          |
+| [Observability and Backups](observability-and-backups.md)          | Sentry, backups, pilot checklist |
