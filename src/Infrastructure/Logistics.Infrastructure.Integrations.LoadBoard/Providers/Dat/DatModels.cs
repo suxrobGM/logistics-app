@@ -74,7 +74,6 @@ internal sealed record DatMatch
 {
     public string? MatchId { get; init; }
     public string? PostingId { get; init; }
-    public string? Status { get; init; }
     public DatPlace? Origin { get; init; }
     public DatPlace? Destination { get; init; }
     public DatTripLength? TripLength { get; init; }
