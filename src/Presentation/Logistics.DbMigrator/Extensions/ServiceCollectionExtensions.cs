@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, EmployeeSeeder>();
         services.AddScoped<ISeeder, CustomerSeeder>();
         services.AddScoped<ISeeder, TruckSeeder>();
+        services.AddScoped<ISeeder, TrailerSeeder>();
         services.AddScoped<ISeeder, MaintenanceSeeder>();
         services.AddScoped<ISeeder, TerminalSeeder>();
         services.AddScoped<ISeeder, ContainerSeeder>();

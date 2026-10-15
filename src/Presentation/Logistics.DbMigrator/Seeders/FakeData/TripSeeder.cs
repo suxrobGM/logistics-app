@@ -108,6 +108,7 @@ internal class TripSeeder(
 
             var tripName = $"{corridors[tripIdx % corridors.Count]} #{tripIdx + 1}";
             var trip = Trip.Create(tripName, truck, loads);
+            trip.TrailerId = truck.CurrentTrailerId;
             trip.Dispatch();
 
             foreach (var stop in trip.Stops)
