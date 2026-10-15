@@ -85,7 +85,9 @@ internal static class Setup
         services.AddLogisticsDataProtection<MasterDbContext>("LogisticsX");
 
         // Real health probe: master DB connectivity (composes with AddHealthChecks() in LogisticsHost).
-        services.AddHealthChecks().AddDbContextCheck<MasterDbContext>("master-db");
+        services.AddHealthChecks()
+            .AddDbContextCheck<MasterDbContext>("master-db")
+            .AddCheck<HangfireHealthCheck>("hangfire");
 
         // Registered here (not the shared persistence builder) since it needs Data Protection -
         // keeps hosts without it, e.g. the DB migrator, constructible.
