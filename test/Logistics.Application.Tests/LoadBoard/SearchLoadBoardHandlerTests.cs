@@ -30,8 +30,13 @@ public class SearchLoadBoardHandlerTests
         Substitute.For<ITenantRepository<LoadBoardListing, Guid>>();
     private readonly SearchLoadBoardHandler _sut;
 
-    private readonly LoadBoardConfiguration _demoConfig =
-        new() { ProviderType = LoadBoardProviderType.Demo, ApiKey = "demo" };
+    private readonly LoadBoardConfiguration _demoConfig = new()
+    {
+        ProviderType = LoadBoardProviderType.Demo,
+        ApiKey = "demo",
+        AccessToken = "demo-token",
+        TokenExpiresAt = DateTime.UtcNow.AddHours(1)
+    };
     private readonly LoadBoardConfiguration _datConfig = new()
     {
         ProviderType = LoadBoardProviderType.Dat,
@@ -54,7 +59,6 @@ public class SearchLoadBoardHandlerTests
         _factory.IsProviderSupported(Arg.Any<LoadBoardProviderType>()).Returns(true);
         _factory.GetProvider(LoadBoardProviderType.Demo).Returns(_demo);
         _factory.GetProvider(LoadBoardProviderType.Dat).Returns(_dat);
-        _dat.RequiresOAuthToken.Returns(true);
 
         var gateway = new LoadBoardProviderGateway(_tenantUow, _factory, NullLogger<LoadBoardProviderGateway>.Instance);
         _sut = new SearchLoadBoardHandler(_tenantUow, gateway, NullLogger<SearchLoadBoardHandler>.Instance);

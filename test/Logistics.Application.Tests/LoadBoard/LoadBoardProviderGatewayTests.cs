@@ -32,7 +32,6 @@ public class LoadBoardProviderGatewayTests
 
         _factory.IsProviderSupported(LoadBoardProviderType.Dat).Returns(true);
         _factory.GetProvider(LoadBoardProviderType.Dat).Returns(_provider);
-        _provider.RequiresOAuthToken.Returns(true);
 
         _sut = new LoadBoardProviderGateway(_tenantUow, _factory, NullLogger<LoadBoardProviderGateway>.Instance);
     }
@@ -198,7 +197,7 @@ public class LoadBoardProviderGatewayTests
     #region Connection test
 
     [Fact]
-    public async Task TestConnection_TokenProvider_AcquiresFreshTokenEvenWhenOneIsCached()
+    public async Task TestConnection_TokenCached_StillAcquiresFreshToken()
     {
         _config.AccessToken = "cached";
         _config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(15);
@@ -208,17 +207,6 @@ public class LoadBoardProviderGatewayTests
 
         Assert.True(result.IsSuccess);
         Assert.Equal("fresh", _config.AccessToken);
-    }
-
-    [Fact]
-    public async Task TestConnection_ApiKeyProviderRejectsKey_Fails()
-    {
-        _provider.RequiresOAuthToken.Returns(false);
-        _provider.ValidateCredentialsAsync(_config, Arg.Any<CancellationToken>()).Returns(false);
-
-        var result = await _sut.TestConnectionAsync(_config);
-
-        Assert.False(result.IsSuccess);
     }
 
     #endregion

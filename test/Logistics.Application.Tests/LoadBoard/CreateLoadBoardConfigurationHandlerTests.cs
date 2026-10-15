@@ -49,7 +49,6 @@ public class CreateLoadBoardConfigurationHandlerTests
     [Fact]
     public async Task Handle_OAuthProvider_StoresAcquiredTokensOnConfiguration()
     {
-        _provider.RequiresOAuthToken.Returns(true);
         var expiresAt = DateTime.UtcNow.AddMinutes(20);
         _provider.AcquireTokenAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>()).Returns(new OAuthTokenResultDto
         {
@@ -73,7 +72,6 @@ public class CreateLoadBoardConfigurationHandlerTests
     [Fact]
     public async Task Handle_OAuthAcquisitionFails_FailsWithoutAdding()
     {
-        _provider.RequiresOAuthToken.Returns(true);
         _provider.AcquireTokenAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new LoadBoardApiException("DAT rejected the credentials (401)", HttpStatusCode.Unauthorized));
 
@@ -82,32 +80,6 @@ public class CreateLoadBoardConfigurationHandlerTests
         Assert.False(result.IsSuccess);
         await _configRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
         await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_KeyBasedProvider_ValidatesWithoutTokenAcquisition()
-    {
-        _provider.RequiresOAuthToken.Returns(false);
-        _provider.ValidateCredentialsAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>()).Returns(true);
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.True(result.IsSuccess);
-        await _provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!);
-        await _configRepo.Received(1).AddAsync(
-            Arg.Is<LoadBoardConfiguration>(c => c.AccessToken == null), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_KeyBasedProviderInvalidCredentials_Fails()
-    {
-        _provider.RequiresOAuthToken.Returns(false);
-        _provider.ValidateCredentialsAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>()).Returns(false);
-
-        var result = await _sut.Handle(_command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        await _configRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]

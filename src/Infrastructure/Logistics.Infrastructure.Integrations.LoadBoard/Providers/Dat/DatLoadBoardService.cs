@@ -37,16 +37,9 @@ internal sealed class DatLoadBoardService(
 
     public LoadBoardProviderType ProviderType => LoadBoardProviderType.Dat;
 
-    public bool RequiresOAuthToken => true;
-
     public void Initialize(LoadBoardConfiguration configuration)
     {
         _configuration = configuration;
-    }
-
-    public Task<bool> ValidateCredentialsAsync(LoadBoardConfiguration configuration, CancellationToken ct = default)
-    {
-        throw new NotSupportedException("DAT validates credentials by acquiring a token.");
     }
 
     public async Task<OAuthTokenResultDto> AcquireTokenAsync(LoadBoardConfiguration configuration, CancellationToken ct = default)

@@ -5,8 +5,8 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Abstractions.LoadBoard;
 
 /// <summary>
-/// A load board vendor integration. Every call except <see cref="ValidateCredentialsAsync"/>
-/// throws <see cref="LoadBoardApiException"/> on a vendor failure; callers go through the
+/// A load board vendor integration. Every call throws <see cref="LoadBoardApiException"/> on a
+/// vendor failure; callers go through the
 /// application's load board gateway, which handles tokens, the one 401 retry, and turns the
 /// exception into a per-provider error.
 /// </summary>
@@ -19,25 +19,14 @@ public interface ILoadBoardProviderService
     LoadBoardProviderType ProviderType { get; }
 
     /// <summary>
-    /// True when API calls need an access token stored on the tenant configuration;
-    /// false when the API key itself is sent on each request.
-    /// </summary>
-    bool RequiresOAuthToken { get; }
-
-    /// <summary>
     /// Binds the service to a tenant configuration. Tokens are read from it at send time, so a
     /// token the gateway renews on the same configuration is picked up without re-initializing.
     /// </summary>
     void Initialize(LoadBoardConfiguration configuration);
 
     /// <summary>
-    /// Checks the credentials of a provider that does not use tokens. Token providers prove
-    /// their credentials by acquiring a token instead.
-    /// </summary>
-    Task<bool> ValidateCredentialsAsync(LoadBoardConfiguration configuration, CancellationToken ct = default);
-
-    /// <summary>
-    /// Acquires a fresh access token from the stored credentials.
+    /// Acquires a fresh access token from the stored credentials. This is also how a new
+    /// configuration proves its credentials.
     /// </summary>
     Task<OAuthTokenResultDto> AcquireTokenAsync(LoadBoardConfiguration configuration, CancellationToken ct = default);
 

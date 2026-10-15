@@ -32,7 +32,7 @@ internal sealed class LoadBoardProviderGateway(
         var provider = providerFactory.GetProvider(configuration.ProviderType);
         try
         {
-            if (provider.RequiresOAuthToken && !HasValidToken(configuration))
+            if (!HasValidToken(configuration))
             {
                 await RenewTokenAsync(provider, configuration, ct);
             }
@@ -42,7 +42,7 @@ internal sealed class LoadBoardProviderGateway(
             {
                 return Result<T>.Ok(await call(provider));
             }
-            catch (LoadBoardApiException ex) when (ex.IsUnauthorized && provider.RequiresOAuthToken)
+            catch (LoadBoardApiException ex) when (ex.IsUnauthorized)
             {
                 logger.LogInformation("{Provider} rejected the access token for configuration {ConfigurationId}, re-authenticating",
                     configuration.ProviderType, configuration.Id);
@@ -82,15 +82,8 @@ internal sealed class LoadBoardProviderGateway(
         var provider = providerFactory.GetProvider(configuration.ProviderType);
         try
         {
-            if (provider.RequiresOAuthToken)
-            {
-                await StoreTokenAsync(configuration, await provider.AcquireTokenAsync(configuration, ct), ct);
-                return Result.Ok();
-            }
-
-            return await provider.ValidateCredentialsAsync(configuration, ct)
-                ? Result.Ok()
-                : Result.Fail($"{name} rejected the credentials. Check them and try again.");
+            await StoreTokenAsync(configuration, await provider.AcquireTokenAsync(configuration, ct), ct);
+            return Result.Ok();
         }
         catch (LoadBoardApiException ex)
         {
