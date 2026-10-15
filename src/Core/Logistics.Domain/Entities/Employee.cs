@@ -22,6 +22,26 @@ public class Employee : Entity, ITenantEntity
     public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
 
     /// <summary>
+    ///     Share-of-gross pay is computed on the linehaul without the fuel surcharge.
+    /// </summary>
+    public bool PayExcludesFuelSurcharge { get; set; }
+
+    /// <summary>
+    ///     Share-of-gross pay is computed without accessorials (detention, lumper, ...).
+    /// </summary>
+    public bool PayExcludesAccessorials { get; set; }
+
+    /// <summary>
+    ///     Fuel card purchases on trucks this employee is the main driver of are deducted from their settlements.
+    /// </summary>
+    public bool DeductFuelCardCharges { get; set; }
+
+    /// <summary>
+    ///     Deductions taken from every settlement (truck lease, insurance, ELD fee, escrow).
+    /// </summary>
+    public virtual List<RecurringDeduction> RecurringDeductions { get; set; } = [];
+
+    /// <summary>
     ///     When employee joined to this tenant
     /// </summary>
     public DateTime JoinedDate { get; set; } = DateTime.UtcNow;

@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -10,7 +11,8 @@ namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 
 internal sealed class RejectPayrollInvoiceHandler(
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUserService)
+    ICurrentUserService currentUserService,
+    IPayrollService payrollService)
     : IRequestHandler<RejectPayrollInvoiceCommand, Result>
 {
     public async Task<Result> Handle(RejectPayrollInvoiceCommand req, CancellationToken ct)
@@ -29,6 +31,7 @@ internal sealed class RejectPayrollInvoiceHandler(
 
         var currentUserId = currentUserService.GetUserId() ?? Guid.Empty;
         payroll.Reject(currentUserId, req.Reason);
+        await payrollService.ReleaseDeductionsAsync(payroll, ct);
         tenantUow.Repository<PayrollInvoice>().Update(payroll);
         await tenantUow.SaveChangesAsync();
 

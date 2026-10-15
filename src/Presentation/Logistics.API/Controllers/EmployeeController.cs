@@ -153,4 +153,33 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     }
 
     #endregion
+
+    #region Pay profile
+
+    /// <summary>
+    ///     Settlement settings for a driver: share-of-gross exclusions, fuel card deduction, recurring
+    ///     deductions and the escrow balance.
+    /// </summary>
+    [HttpGet("{userId:guid}/payprofile", Name = "GetDriverPayProfile")]
+    [ProducesResponseType(typeof(DriverPayProfileDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Payroll.View)]
+    public async Task<IActionResult> GetPayProfile(Guid userId)
+    {
+        var result = await mediator.Send(new GetDriverPayProfileQuery { EmployeeId = userId });
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("{userId:guid}/payprofile", Name = "UpdateDriverPayProfile")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payroll.Manage)]
+    public async Task<IActionResult> UpdatePayProfile(Guid userId, [FromBody] UpdateDriverPayProfileCommand request)
+    {
+        request.EmployeeId = userId;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    #endregion
 }

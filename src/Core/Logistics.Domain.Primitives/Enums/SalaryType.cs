@@ -16,5 +16,11 @@ public enum SalaryType
     RatePerDistance,
 
     [Description("Rate per hour")]
-    Hourly
+    Hourly,
+
+    /// <summary>Flat amount (Employee.Salary) per load delivered in the period.</summary>
+    PerLoad,
+
+    /// <summary>Flat amount (Employee.Salary) per trip stop the driver departed in the period.</summary>
+    PerStop
 }

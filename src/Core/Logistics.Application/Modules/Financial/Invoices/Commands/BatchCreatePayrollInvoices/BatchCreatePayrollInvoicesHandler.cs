@@ -45,7 +45,7 @@ internal sealed class BatchCreatePayrollInvoicesHandler(
                 continue;
             }
 
-            var payroll = payrollService.CreatePayrollInvoice(employee, req.PeriodStart, req.PeriodEnd);
+            var payroll = await payrollService.CreatePayrollInvoiceAsync(employee, req.PeriodStart, req.PeriodEnd, ct);
             payrollsToCreate.Add(payroll);
         }
 

@@ -76,6 +76,11 @@ public class FuelCardTransaction : AuditableEntity, ITenantEntity
     public Guid? ExpenseId { get; set; }
 
     /// <summary>
+    /// The settlement this purchase was deducted from, for drivers who pay their own fuel.
+    /// </summary>
+    public Guid? PayrollInvoiceId { get; set; }
+
+    /// <summary>
     /// Raw provider payload for audits and disputes.
     /// </summary>
     public string? RawPayloadJson { get; set; }

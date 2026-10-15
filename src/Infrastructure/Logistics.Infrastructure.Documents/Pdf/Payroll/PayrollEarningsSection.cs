@@ -17,12 +17,13 @@ internal static class PayrollEarningsSection
     {
         var currency = payroll.Total.Currency;
         var lineItems = payroll.LineItems.OrderBy(li => li.Order).ToList();
-        var earnings = lineItems.Where(li => li.Type != InvoiceLineItemType.Deduction).ToList();
-        var deductions = lineItems.Where(li => li.Type == InvoiceLineItemType.Deduction).ToList();
+        var earnings = lineItems.Where(li => !li.Type.IsPayDeduction()).ToList();
+        var deductions = lineItems.Where(li => li.Type.IsPayDeduction()).ToList();
 
         var grossEarnings = earnings.Count > 0 ? earnings.Sum(e => e.Total) : payroll.Total.Amount;
-        var totalDeductions = deductions.Sum(d => d.Total);
-        var netPay = grossEarnings - totalDeductions;
+        // Deduction lines are stored negative; an escrow release is a positive one.
+        var totalDeductions = -deductions.Sum(d => d.Total);
+        var netPay = earnings.Count > 0 ? grossEarnings - totalDeductions : payroll.Total.Amount;
 
         container.Column(column =>
         {
@@ -124,7 +125,9 @@ internal static class PayrollEarningsSection
                 {
                     table.Cell().Element(PdfStyles.Cell).Text(item.Description);
                     table.Cell().Element(PdfStyles.Cell).AlignRight()
-                        .Text($"-{PdfFormatting.Money(item.Total, currency)}")
+                        .Text(item.Total < 0
+                            ? $"-{PdfFormatting.Money(-item.Total, currency)}"
+                            : $"+{PdfFormatting.Money(item.Total, currency)}")
                         .FontColor(Colors.Red.Darken2);
                 }
             });

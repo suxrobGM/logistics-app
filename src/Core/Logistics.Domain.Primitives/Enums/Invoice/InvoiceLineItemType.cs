@@ -21,5 +21,14 @@ public enum InvoiceLineItemType
     Bonus,
     Deduction,
     Reimbursement,
-    Adjustment
+    Adjustment,
+
+    /// <summary>Settlement deduction held in the driver's escrow balance; a positive line releases escrow.</summary>
+    Escrow,
+
+    /// <summary>Settlement deduction repaying a cash advance.</summary>
+    CashAdvance,
+
+    /// <summary>Settlement deduction for fuel card purchases on the driver's truck.</summary>
+    FuelCard
 }

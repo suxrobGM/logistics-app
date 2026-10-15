@@ -22,7 +22,7 @@ internal sealed class PreviewPayrollInvoiceHandler(
             return Result<InvoiceDto>.Fail($"Could not find an employer with ID '{req.EmployeeId}'");
         }
 
-        var payrollInvoice = payrollService.CreatePayrollInvoice(employee, req.PeriodStart, req.PeriodEnd);
+        var payrollInvoice = await payrollService.BuildPayrollInvoiceAsync(employee, req.PeriodStart, req.PeriodEnd, ct);
         var payrollInvoiceDto = payrollInvoice.ToDto();
         return Result<InvoiceDto>.Ok(payrollInvoiceDto);
     }

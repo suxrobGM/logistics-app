@@ -44,5 +44,11 @@ internal sealed class FuelCardTransactionEntityConfiguration : IEntityTypeConfig
             .WithMany()
             .HasForeignKey(i => i.TruckId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        // Deleting a settlement hands its fuel charges back to be deducted again.
+        builder.HasOne<PayrollInvoice>()
+            .WithMany()
+            .HasForeignKey(i => i.PayrollInvoiceId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

@@ -38,7 +38,10 @@ internal sealed class AddLineItemHandler(
             InvoiceId = invoice.Id,
             Description = req.Description,
             Type = req.Type,
-            Amount = invoice.Total with { Amount = req.Amount },
+            Amount = invoice.Total with
+            {
+                Amount = invoice is PayrollInvoice ? PayrollInvoice.SignedLineAmount(req.Type, req.Amount) : req.Amount
+            },
             Quantity = req.Quantity,
             Order = nextOrder,
             Notes = req.Notes

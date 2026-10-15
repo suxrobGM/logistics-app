@@ -35,7 +35,7 @@ internal sealed class CreatePayrollInvoiceHandler(
                 $"({overlappingPayroll.PeriodStart:d} - {overlappingPayroll.PeriodEnd:d})");
         }
 
-        var payroll = payrollService.CreatePayrollInvoice(employee, req.PeriodStart, req.PeriodEnd);
+        var payroll = await payrollService.CreatePayrollInvoiceAsync(employee, req.PeriodStart, req.PeriodEnd, ct);
         await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
         await tenantUow.SaveChangesAsync();
 

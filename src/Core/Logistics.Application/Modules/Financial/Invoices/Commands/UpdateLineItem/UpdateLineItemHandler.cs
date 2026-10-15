@@ -52,6 +52,14 @@ internal sealed class UpdateLineItemHandler(ITenantUnitOfWork tenantUow)
             lineItem.Amount = lineItem.Amount with { Amount = req.Amount.Value };
         }
 
+        if (invoice is PayrollInvoice)
+        {
+            lineItem.Amount = lineItem.Amount with
+            {
+                Amount = PayrollInvoice.SignedLineAmount(lineItem.Type, lineItem.Amount.Amount)
+            };
+        }
+
         if (req.Quantity.HasValue)
         {
             lineItem.Quantity = req.Quantity.Value;

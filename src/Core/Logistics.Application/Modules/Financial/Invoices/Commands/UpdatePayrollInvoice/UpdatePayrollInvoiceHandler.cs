@@ -59,7 +59,7 @@ internal sealed class UpdatePayrollInvoiceHandler(
         // Recalculate payroll amounts if period or employee changed
         if (needsRecalculation)
         {
-            payrollService.RecalculatePayroll(payroll);
+            await payrollService.RecalculatePayrollAsync(payroll, ct);
         }
 
         tenantUow.Repository<PayrollInvoice>().Update(payroll);
