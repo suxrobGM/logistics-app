@@ -88,16 +88,6 @@ public class AccountingController(
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPost("quickbooks/issues/retry", Name = "RetryQuickBooksSyncIssues")]
-    [ProducesResponseType(StatusCodes.Status202Accepted)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Accounting.Manage)]
-    public async Task<IActionResult> RetrySyncIssues([FromBody] RetryQuickBooksSyncIssuesCommand request)
-    {
-        var result = await mediator.Send(request);
-        return result.IsSuccess ? Accepted() : BadRequest(ErrorResponse.FromResult(result));
-    }
-
     /// <summary>
     ///     OAuth2 redirect target for QuickBooks. Intuit redirects the browser here (anonymous -
     ///     no app auth cookie/JWT), so the tenant is recovered from the signed <paramref name="state"/>.

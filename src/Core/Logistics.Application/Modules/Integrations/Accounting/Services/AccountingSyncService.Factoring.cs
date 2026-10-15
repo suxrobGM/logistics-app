@@ -31,7 +31,7 @@ internal sealed partial class AccountingSyncService
 
         var from = run.SyncFrom;
         var fees = await tenantUow.Repository<FactoringBatchItem>().Query()
-            .Where(NotUpToDate<FactoringBatchItem>(QboLocalEntityType.FactoringFee, run))
+            .Where(NotUpToDate<FactoringBatchItem>(QboLocalEntityType.FactoringFee))
             .Where(i => (i.Status == FactoringStatus.Funded || i.Status == FactoringStatus.ChargedBack)
                         && i.FeeAmount > 0 && i.FundedAt >= from)
             .OrderBy(i => i.FundedAt)

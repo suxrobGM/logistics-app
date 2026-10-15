@@ -113,21 +113,19 @@ public class AccountingSyncServiceTests
     #region Selection
 
     [Fact]
-    public async Task SyncAsync_PushesOnlyNewEditedAndDueForRetryCustomers()
+    public async Task SyncAsync_PushesOnlyNewEditedAndFailedCustomers()
     {
         var now = DateTime.UtcNow;
         var fresh = NewCustomer("New");
         var unchanged = NewCustomer("Unchanged");
         var edited = NewCustomer("Edited", updatedAt: now.AddMinutes(-5));
-        var failedRecently = NewCustomer("Failed recently");
-        var failedLongAgo = NewCustomer("Failed long ago");
+        var failed = NewCustomer("Failed");
         var prospect = NewCustomer("Prospect", CustomerStatus.Prospect);
-        _customers.AddRange([fresh, unchanged, edited, failedRecently, failedLongAgo, prospect]);
+        _customers.AddRange([fresh, unchanged, edited, failed, prospect]);
 
         _mappings.Add(Synced(unchanged.Id, lastSyncedAt: now.AddMinutes(-10)));
         _mappings.Add(Synced(edited.Id, lastSyncedAt: now.AddMinutes(-30)));
-        _mappings.Add(Failed(failedRecently.Id, lastAttemptAt: now.AddMinutes(-10)));
-        _mappings.Add(Failed(failedLongAgo.Id, lastAttemptAt: now.AddHours(-2)));
+        _mappings.Add(Failed(failed.Id));
 
         await _sut.SyncAsync(CancellationToken.None);
 
@@ -135,7 +133,7 @@ public class AccountingSyncServiceTests
             .Where(c => c.GetMethodInfo().Name == nameof(IAccountingProviderService.UpsertCustomerAsync))
             .Select(c => ((QboCustomerPayload)c.GetArguments()[0]!).Name)
             .ToList();
-        Assert.Equal(["Edited", "Failed long ago", "New"], pushed.Order());
+        Assert.Equal(["Edited", "Failed", "New"], pushed.Order());
         Assert.NotNull(_config.LastSyncedAt);
     }
 
@@ -154,11 +152,10 @@ public class AccountingSyncServiceTests
         var mapping = Assert.Single(_mappings);
         Assert.Equal(QboSyncStatus.Synced, mapping.SyncStatus);
         Assert.Equal("new", mapping.QboId);
-        Assert.NotNull(mapping.LastAttemptAt);
     }
 
     [Fact]
-    public async Task SyncAsync_PushFails_RecordsErrorAndAttemptTime()
+    public async Task SyncAsync_PushFails_RecordsTheError()
     {
         _customers.Add(NewCustomer("Acme"));
         _provider.UpsertCustomerAsync(Arg.Any<QboCustomerPayload>(), Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>())
@@ -169,7 +166,6 @@ public class AccountingSyncServiceTests
         var mapping = Assert.Single(_mappings);
         Assert.Equal(QboSyncStatus.Failed, mapping.SyncStatus);
         Assert.Equal("Duplicate Name Exists Error", mapping.LastError);
-        Assert.NotNull(mapping.LastAttemptAt);
     }
 
     #endregion
@@ -375,15 +371,13 @@ public class AccountingSyncServiceTests
         QboSyncToken = "0",
         LastSyncedHash = "old",
         LastSyncedAt = lastSyncedAt,
-        LastAttemptAt = lastSyncedAt,
         SyncStatus = QboSyncStatus.Synced
     };
 
-    private static QboEntityMapping Failed(Guid localId, DateTime lastAttemptAt) => new()
+    private static QboEntityMapping Failed(Guid localId) => new()
     {
         LocalId = localId,
         LocalEntityType = QboLocalEntityType.Customer,
-        LastAttemptAt = lastAttemptAt,
         SyncStatus = QboSyncStatus.Failed,
         LastError = "boom"
     };

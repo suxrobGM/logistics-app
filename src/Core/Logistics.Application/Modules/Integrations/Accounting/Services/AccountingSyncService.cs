@@ -18,9 +18,6 @@ internal sealed partial class AccountingSyncService(
     IAccountingConnectionService connectionService,
     ILogger<AccountingSyncService> logger) : IAccountingSyncService
 {
-    /// <summary>How long a failed record waits before the sync tries it again.</summary>
-    public static readonly TimeSpan FailedRetryDelay = TimeSpan.FromHours(1);
-
     /// <summary>Records per type per run, so a first sync of a large history spreads over several runs.</summary>
     public const int BatchSize = 500;
 
@@ -74,7 +71,7 @@ internal sealed partial class AccountingSyncService(
     {
         var mappings = Mappings;
         var customers = await tenantUow.Repository<Customer>().Query()
-            .Where(NotUpToDate<Customer>(QboLocalEntityType.Customer, run))
+            .Where(NotUpToDate<Customer>(QboLocalEntityType.Customer))
             .Where(c => c.Status == CustomerStatus.Active || mappings.Any(m =>
                 m.LocalEntityType == QboLocalEntityType.Customer && m.LocalId == c.Id && m.QboId != null))
             .OrderBy(c => c.CreatedAt)
@@ -103,12 +100,10 @@ internal sealed partial class AccountingSyncService(
     private async Task RetireRemovedCustomersAsync(SyncRun run, CancellationToken ct)
     {
         var customers = tenantUow.Repository<Customer>().Query();
-        var retryCutoff = run.RetryCutoff;
         var orphaned = await Mappings
             .Where(m => m.LocalEntityType == QboLocalEntityType.Customer && m.QboId != null
                         && m.LastSyncedHash != AccountingPayloads.RetiredHash
-                        && !(m.SyncStatus == QboSyncStatus.Failed && m.LastAttemptAt > retryCutoff)
-                        && !customers.Any(c => c.Id == m.LocalId))
+                        &&!customers.Any(c => c.Id == m.LocalId))
             .Take(BatchSize)
             .ToListAsync(ct);
 
@@ -125,7 +120,7 @@ internal sealed partial class AccountingSyncService(
         var mappings = Mappings;
         var from = run.SyncFrom;
         var invoices = await tenantUow.Repository<LoadInvoice>().Query()
-            .Where(NotUpToDate<LoadInvoice>(QboLocalEntityType.Invoice, run))
+            .Where(NotUpToDate<LoadInvoice>(QboLocalEntityType.Invoice))
             .Where(i => i.CreatedAt >= from && i.Status != InvoiceStatus.Draft
                         && i.Status != InvoiceStatus.PendingApproval && i.Status != InvoiceStatus.Rejected)
             .Where(i => i.Status != InvoiceStatus.Cancelled || mappings.Any(m =>
@@ -174,15 +169,13 @@ internal sealed partial class AccountingSyncService(
     {
         var mappings = Mappings;
         var from = run.SyncFrom;
-        var retryCutoff = run.RetryCutoff;
 
         // Payment's invoice FK is a shadow property, so payments are reached through their load invoice.
         var rows = await tenantUow.Repository<LoadInvoice>().Query()
             .SelectMany(i => i.Payments.Where(p =>
                     p.Status == PaymentStatus.Paid && (p.RecordedAt ?? p.CreatedAt) >= from
                     && !mappings.Any(m => m.LocalEntityType == QboLocalEntityType.Payment && m.LocalId == p.Id
-                        && ((m.SyncStatus == QboSyncStatus.Synced && m.LastSyncedAt >= (p.UpdatedAt ?? p.CreatedAt))
-                            || (m.SyncStatus == QboSyncStatus.Failed && m.LastAttemptAt > retryCutoff)))),
+                        && m.SyncStatus == QboSyncStatus.Synced && m.LastSyncedAt >= (p.UpdatedAt ?? p.CreatedAt))),
                 (i, p) => new { Payment = p, InvoiceId = i.Id, i.CustomerId })
             .OrderBy(r => r.Payment.CreatedAt)
             .Take(BatchSize)
@@ -240,7 +233,7 @@ internal sealed partial class AccountingSyncService(
 
         var from = run.SyncFrom;
         var expenses = await tenantUow.Repository<Expense>().Query()
-            .Where(NotUpToDate<Expense>(QboLocalEntityType.Expense, run))
+            .Where(NotUpToDate<Expense>(QboLocalEntityType.Expense))
             .Where(e => (e.Status == ExpenseStatus.Approved || e.Status == ExpenseStatus.Paid) && e.ExpenseDate >= from)
             .OrderBy(e => e.CreatedAt)
             .Take(BatchSize)
@@ -274,7 +267,7 @@ internal sealed partial class AccountingSyncService(
 
         var from = run.SyncFrom;
         var payrolls = await tenantUow.Repository<PayrollInvoice>().Query()
-            .Where(NotUpToDate<PayrollInvoice>(QboLocalEntityType.PayrollInvoice, run))
+            .Where(NotUpToDate<PayrollInvoice>(QboLocalEntityType.PayrollInvoice))
             .Where(p => (p.Status == InvoiceStatus.Approved || p.Status == InvoiceStatus.PartiallyPaid
                          || p.Status == InvoiceStatus.Paid) && p.PeriodEnd >= from)
             .OrderBy(p => p.CreatedAt)
@@ -292,6 +285,13 @@ internal sealed partial class AccountingSyncService(
         await LoadMappingsAsync(run, QboLocalEntityType.PayrollInvoice, payrolls.Select(p => p.Id), ct);
         await LoadMappingsAsync(run, QboLocalEntityType.Employee, employeeIds, ct);
 
+        foreach (var employee in employees.Values)
+        {
+            var (vendor, vendorHash) = AccountingPayloads.Vendor(employee);
+            await PushAsync(run, QboLocalEntityType.Employee, employee.Id, vendorHash,
+                target => run.Provider.UpsertVendorAsync(vendor, target, ct), ct);
+        }
+
         foreach (var payroll in payrolls)
         {
             if (!employees.TryGetValue(payroll.EmployeeId, out var employee))
@@ -299,15 +299,11 @@ internal sealed partial class AccountingSyncService(
                 continue;
             }
 
-            var (vendor, vendorHash) = AccountingPayloads.Vendor(employee);
-            await PushAsync(run, QboLocalEntityType.Employee, employee.Id, vendorHash,
-                target => run.Provider.UpsertVendorAsync(vendor, target, ct), ct);
-
             var vendorQboId = run.SyncedQboId(QboLocalEntityType.Employee, employee.Id);
             if (vendorQboId is null)
             {
                 await RecordFailureAsync(run, QboLocalEntityType.PayrollInvoice, payroll.Id,
-                    $"{vendor.DisplayName} could not be added as a QuickBooks vendor. Fix the employee's sync error first.", ct);
+                    $"{employee.FirstName} {employee.LastName} could not be added as a QuickBooks vendor. Fix the employee's sync error first.", ct);
                 continue;
             }
 
@@ -336,16 +332,14 @@ internal sealed partial class AccountingSyncService(
     }
 
     /// <summary>
-    /// Rows with no mapping, a successful push older than their last edit, or a failure older than
-    /// <see cref="FailedRetryDelay"/>. Everything else is skipped without being loaded.
+    /// Rows with no mapping, a failed push, or a successful push older than their last edit. Everything
+    /// else is skipped without being loaded.
     /// </summary>
-    private Expression<Func<T, bool>> NotUpToDate<T>(QboLocalEntityType type, SyncRun run) where T : AuditableEntity
+    private Expression<Func<T, bool>> NotUpToDate<T>(QboLocalEntityType type) where T : AuditableEntity
     {
         var mappings = Mappings;
-        var retryCutoff = run.RetryCutoff;
         return e => !mappings.Any(m => m.LocalEntityType == type && m.LocalId == e.Id
-            && ((m.SyncStatus == QboSyncStatus.Synced && m.LastSyncedAt >= (e.UpdatedAt ?? e.CreatedAt))
-                || (m.SyncStatus == QboSyncStatus.Failed && m.LastAttemptAt > retryCutoff)));
+            && m.SyncStatus == QboSyncStatus.Synced && m.LastSyncedAt >= (e.UpdatedAt ?? e.CreatedAt));
     }
 
     private async Task LoadMappingsAsync(
@@ -383,18 +377,12 @@ internal sealed partial class AccountingSyncService(
             return;
         }
 
-        if (mapping is { SyncStatus: QboSyncStatus.Failed } && mapping.LastAttemptAt > run.RetryCutoff)
-        {
-            return;
-        }
-
         if (hash == AccountingPayloads.RetiredHash && mapping?.QboId is null)
         {
             return;
         }
 
         mapping ??= await AddMappingAsync(run, type, localId, ct);
-        mapping.LastAttemptAt = run.StartedAt;
 
         try
         {
@@ -425,7 +413,6 @@ internal sealed partial class AccountingSyncService(
             mapping = await AddMappingAsync(run, type, localId, ct);
         }
 
-        mapping.LastAttemptAt = run.StartedAt;
         Fail(mapping, message);
         await tenantUow.SaveChangesAsync(ct);
     }
@@ -455,7 +442,6 @@ internal sealed partial class AccountingSyncService(
         public AccountingProviderConfiguration Config { get; } = config;
         public AccountingMappings AccountMappings { get; } = accountMappings;
         public DateTime StartedAt { get; } = startedAt;
-        public DateTime RetryCutoff { get; } = startedAt - FailedRetryDelay;
         public DateTime SyncFrom { get; } = config.SyncFromDate ?? DateTime.UnixEpoch;
         public Dictionary<(QboLocalEntityType, Guid), QboEntityMapping> Mappings { get; } = [];
         public Dictionary<string, string> VendorIds { get; } = new(StringComparer.OrdinalIgnoreCase);

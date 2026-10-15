@@ -18,7 +18,7 @@ internal sealed class GetQuickBooksSyncIssuesHandler(ITenantUnitOfWork tenantUow
     {
         var failed = await tenantUow.Repository<QboEntityMapping>().Query()
             .Where(m => m.SyncStatus == QboSyncStatus.Failed)
-            .OrderByDescending(m => m.LastAttemptAt)
+            .OrderByDescending(m => m.UpdatedAt ?? m.CreatedAt)
             .Take(MaxIssues)
             .ToListAsync(ct);
 
@@ -32,7 +32,7 @@ internal sealed class GetQuickBooksSyncIssuesHandler(ITenantUnitOfWork tenantUow
                 LocalId = m.LocalId,
                 Label = labels.GetValueOrDefault(m.LocalId) ?? $"Deleted {m.LocalEntityType.GetDescription().ToLowerInvariant()}",
                 Error = m.LastError,
-                LastAttemptAt = m.LastAttemptAt
+                UpdatedAt = m.UpdatedAt ?? m.CreatedAt
             })
             .ToList());
     }

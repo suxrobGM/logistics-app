@@ -125,9 +125,8 @@ re-posted until they are edited.
 
 Records QuickBooks refuses appear under **Sync errors** with QuickBooks' own message, for example
 a duplicate display name (QuickBooks display names are unique across customers, vendors and
-employees) or an item that was deleted. Fix the cause, then press **Retry** on the row or
-**Retry all**. A failed record that is not retried by hand is tried again an hour later, not on
-every run.
+employees) or an item that was deleted. Failed records are tried again on every
+run; fix the cause, then press **Retry** to run a sync now.
 
 - **An invoice or payment says its customer is not in QuickBooks yet**: fix the customer's error
   first; the invoice follows on the next run.

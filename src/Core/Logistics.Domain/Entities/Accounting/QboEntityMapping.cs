@@ -41,12 +41,6 @@ public class QboEntityMapping : AuditableEntity, ITenantEntity
     public DateTime? LastSyncedAt { get; set; }
 
     /// <summary>
-    /// When a push was last attempted, successful or not. A failed row waits an hour from here
-    /// before it is retried.
-    /// </summary>
-    public DateTime? LastAttemptAt { get; set; }
-
-    /// <summary>
     /// Outcome of the most recent push.
     /// </summary>
     public QboSyncStatus SyncStatus { get; set; } = QboSyncStatus.Synced;

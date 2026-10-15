@@ -78,7 +78,7 @@ public record AccountingSyncIssueDto
     public required string Label { get; set; }
 
     public string? Error { get; set; }
-    public DateTime? LastAttemptAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }
 
 /// <summary>
