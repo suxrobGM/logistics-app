@@ -15,7 +15,6 @@ internal sealed class QboApiException(string action, HttpStatusCode statusCode, 
     /// <summary>QBO "Stale Object Error": the SyncToken sent is older than the record's current one.</summary>
     private const string StaleObjectCode = "5010";
 
-    public HttpStatusCode StatusCode { get; } = statusCode;
     public string? IntuitTid { get; } = intuitTid;
     public IReadOnlyList<string> ErrorCodes { get; } = ParseFault(body)?.Error?.Select(e => e.Code ?? "").ToList() ?? [];
 

@@ -17,8 +17,6 @@ public record AccountingConnectionDto
     public string? CompanyName { get; set; }
     public string? RealmId { get; set; }
     public DateTime? LastSyncedAt { get; set; }
-    public DateTime? RefreshTokenExpiresAt { get; set; }
-    public int FailedItemCount { get; set; }
     public AccountingSettingsDto? Settings { get; set; }
 }
 

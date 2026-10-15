@@ -21,7 +21,7 @@ internal sealed class ChargeBackFactoredInvoiceHandler(ITenantUnitOfWork tenantU
         Payment? salePayment;
         try
         {
-            salePayment = item.ChargeBack(DateTime.SpecifyKind(req.ChargedBackAt, DateTimeKind.Utc));
+            salePayment = item.ChargeBack(DateTime.UtcNow);
         }
         catch (InvalidOperationException ex)
         {
@@ -33,7 +33,6 @@ internal sealed class ChargeBackFactoredInvoiceHandler(ITenantUnitOfWork tenantU
             tenantUow.Repository<Payment>().Delete(salePayment);
         }
 
-        batch.RefreshStatus();
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

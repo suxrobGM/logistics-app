@@ -19,11 +19,6 @@ internal sealed class GetFactoringBatchesHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(b => b.Status == status);
         }
 
-        if (req.FactoringCompanyId is { } companyId)
-        {
-            query = query.Where(b => b.FactoringCompanyId == companyId);
-        }
-
         var totalItems = await query.CountAsync(ct);
         var batches = await query
             .OrderBy(string.IsNullOrEmpty(req.OrderBy) ? "-SubmittedAt" : req.OrderBy)

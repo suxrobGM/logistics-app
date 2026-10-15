@@ -140,11 +140,9 @@ public class FactoringController(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Invoice.Manage)]
-    public async Task<IActionResult> ChargeBack(Guid id, Guid itemId, [FromBody] ChargeBackFactoredInvoiceCommand request)
+    public async Task<IActionResult> ChargeBack(Guid id, Guid itemId)
     {
-        request.BatchId = id;
-        request.ItemId = itemId;
-        var result = await mediator.Send(request);
+        var result = await mediator.Send(new ChargeBackFactoredInvoiceCommand { BatchId = id, ItemId = itemId });
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 

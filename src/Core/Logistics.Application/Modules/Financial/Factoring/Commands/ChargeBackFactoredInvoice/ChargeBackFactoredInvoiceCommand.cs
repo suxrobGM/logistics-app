@@ -9,5 +9,4 @@ public class ChargeBackFactoredInvoiceCommand : ICommand<Result>
 {
     public Guid BatchId { get; set; }
     public Guid ItemId { get; set; }
-    public DateTime ChargedBackAt { get; set; }
 }

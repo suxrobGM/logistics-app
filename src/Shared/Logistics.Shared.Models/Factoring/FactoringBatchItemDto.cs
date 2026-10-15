@@ -18,8 +18,6 @@ public record FactoringBatchItemDto
     public decimal ReserveReleasedAmount { get; set; }
     public decimal ReserveOutstanding { get; set; }
     public DateTime? FundedAt { get; set; }
-    public DateTime? ReserveReleasedAt { get; set; }
-    public DateTime? ChargedBackAt { get; set; }
     public string? RejectionReason { get; set; }
 
     /// <summary>

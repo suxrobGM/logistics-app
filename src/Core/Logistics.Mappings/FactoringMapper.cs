@@ -53,6 +53,8 @@ public static partial class FactoringMapper
     [MapperIgnoreSource(nameof(FactoringBatchItem.BatchId))]
     [MapperIgnoreSource(nameof(FactoringBatchItem.Invoice))]
     [MapperIgnoreSource(nameof(FactoringBatchItem.PaymentId))]
+    [MapperIgnoreSource(nameof(FactoringBatchItem.ReserveReleasedAt))]
+    [MapperIgnoreSource(nameof(FactoringBatchItem.ChargedBackAt))]
     [MapperIgnoreTarget(nameof(FactoringBatchItemDto.InvoiceNumber))]
     [MapperIgnoreTarget(nameof(FactoringBatchItemDto.LoadNumber))]
     [MapperIgnoreTarget(nameof(FactoringBatchItemDto.CustomerName))]

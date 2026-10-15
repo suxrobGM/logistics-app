@@ -23,9 +23,6 @@ internal sealed class GetQuickBooksConnectionHandler(ITenantUnitOfWork tenantUow
             });
         }
 
-        var failed = await tenantUow.Repository<QboEntityMapping>()
-            .CountAsync(m => m.SyncStatus == QboSyncStatus.Failed, ct);
-
         return Result<AccountingConnectionDto>.Ok(new AccountingConnectionDto
         {
             ProviderType = AccountingProviderType.QuickBooksOnline,
@@ -34,8 +31,6 @@ internal sealed class GetQuickBooksConnectionHandler(ITenantUnitOfWork tenantUow
             CompanyName = config.CompanyName,
             RealmId = config.RealmId,
             LastSyncedAt = config.LastSyncedAt,
-            RefreshTokenExpiresAt = config.RefreshTokenExpiresAt,
-            FailedItemCount = failed,
             Settings = new AccountingSettingsDto
             {
                 DefaultItemId = config.DefaultItemId,
