@@ -1,52 +1,30 @@
 #!/bin/sh
-# Dumps the master database and every tenant database (pg_dump -Fc), keeps 7 daily and
-# 4 weekly copies locally, and optionally copies the run to S3-compatible storage (Cloudflare R2).
+# Dumps the master database and every tenant database (pg_dump -Fc), keeps the newest daily runs
+# locally, and optionally copies each run to S3-compatible storage (Cloudflare R2).
 # Tenant databases are discovered from the server on each run, so a tenant provisioned
 # yesterday is in tonight's backup without any config change.
 #
-# Runs from host cron or from deploy/docker-compose.backup.yml. Restore: deploy/db-backup/pg-restore.sh
-# and docs/deployment/observability-and-backups.md.
-#
-# Connection: the standard libpq variables PGHOST, PGPORT, PGUSER, PGPASSWORD (or ~/.pgpass).
-#
-#   BACKUP_DIR            local root (default /var/backups/logisticsx)
-#   BACKUP_DB_PATTERN     SQL LIKE pattern of databases to dump (default %_logisticsx, which
-#                         matches master_logisticsx and the {tenant}_logisticsx template)
-#   BACKUP_KEEP_DAILY     daily runs kept locally (default 7)
-#   BACKUP_KEEP_WEEKLY    Sunday runs kept locally (default 4)
-#   BACKUP_S3_BUCKET      set to also upload; needs the aws CLI and AWS_ACCESS_KEY_ID /
-#                         AWS_SECRET_ACCESS_KEY
-#   BACKUP_S3_ENDPOINT    e.g. https://<account-id>.r2.cloudflarestorage.com (omit for AWS S3)
-#   BACKUP_S3_PREFIX      key prefix in the bucket (default postgres)
-#   BACKUP_HEARTBEAT_URL  pinged after a fully successful run (healthchecks.io, Better Stack, ...)
+# Runs inside deploy/docker-compose.backup.yml, which sets the PG* connection variables and the
+# BACKUP_* settings; deploy/.env.example lists them. Restore: deploy/db-backup/pg-restore.sh and
+# docs/deployment/observability-and-backups.md.
 set -eu
 
-BACKUP_DIR="${BACKUP_DIR:-/var/backups/logisticsx}"
-BACKUP_DB_PATTERN="${BACKUP_DB_PATTERN:-%_logisticsx}"
-BACKUP_KEEP_DAILY="${BACKUP_KEEP_DAILY:-7}"
-BACKUP_KEEP_WEEKLY="${BACKUP_KEEP_WEEKLY:-4}"
-BACKUP_S3_PREFIX="${BACKUP_S3_PREFIX:-postgres}"
+backup_dir=/backups
+keep_daily="${BACKUP_KEEP_DAILY:-7}"
+# Matches master_logisticsx and every tenant database named by the {tenant}_logisticsx template.
+db_pattern='%_logisticsx'
 
 log() { echo "$(date -u '+%Y-%m-%dT%H:%M:%SZ') $*"; }
 
-# Deletes all but the newest $2 run folders under $1 (folder names sort by date).
-prune() {
-  [ -d "$1" ] || return 0
-  ls -1 "$1" | sort -r | tail -n +"$(($2 + 1))" | while read -r old; do
-    log "pruning $1/$old"
-    rm -rf "${1:?}/$old"
-  done
-}
-
 day="$(date -u '+%Y-%m-%d')"
-run_dir="$BACKUP_DIR/daily/$day"
+run_dir="$backup_dir/daily/$day"
 mkdir -p "$run_dir"
 
 databases="$(psql -d postgres -At -c \
-  "SELECT datname FROM pg_database WHERE NOT datistemplate AND datname LIKE '$BACKUP_DB_PATTERN' ORDER BY datname")"
+  "SELECT datname FROM pg_database WHERE NOT datistemplate AND datname LIKE '$db_pattern' ORDER BY datname")"
 
 if [ -z "$databases" ]; then
-  log "no databases match '$BACKUP_DB_PATTERN' on ${PGHOST:-localhost}"
+  log "no databases match '$db_pattern' on ${PGHOST:-localhost}"
   exit 1
 fi
 
@@ -73,28 +51,22 @@ for db in $databases; do
   fi
 done
 
-if [ "$(date -u '+%u')" = "7" ]; then
-  mkdir -p "$BACKUP_DIR/weekly"
-  rm -rf "$BACKUP_DIR/weekly/$day"
-  cp -R "$run_dir" "$BACKUP_DIR/weekly/$day"
-fi
-
-prune "$BACKUP_DIR/daily" "$BACKUP_KEEP_DAILY"
-prune "$BACKUP_DIR/weekly" "$BACKUP_KEEP_WEEKLY"
+# Run folders are named by date, so the newest sort first.
+ls -1 "$backup_dir/daily" | sort -r | tail -n +"$((keep_daily + 1))" | while read -r old; do
+  log "pruning $backup_dir/daily/$old"
+  rm -rf "${backup_dir:?}/daily/$old"
+done
 
 if [ -n "${BACKUP_S3_BUCKET:-}" ]; then
   endpoint=""
   [ -n "${BACKUP_S3_ENDPOINT:-}" ] && endpoint="--endpoint-url $BACKUP_S3_ENDPOINT"
-  # Remote retention is a bucket lifecycle rule on these prefixes, not a delete here.
+  remote="s3://$BACKUP_S3_BUCKET/postgres/$day/"
+  # Remote retention is a bucket lifecycle rule, not a delete here.
   # shellcheck disable=SC2086
-  if aws s3 cp --recursive --only-show-errors $endpoint "$run_dir" "s3://$BACKUP_S3_BUCKET/$BACKUP_S3_PREFIX/daily/$day/"; then
-    log "uploaded to s3://$BACKUP_S3_BUCKET/$BACKUP_S3_PREFIX/daily/$day/"
-    if [ "$(date -u '+%u')" = "7" ]; then
-      # shellcheck disable=SC2086
-      aws s3 cp --recursive --only-show-errors $endpoint "$run_dir" "s3://$BACKUP_S3_BUCKET/$BACKUP_S3_PREFIX/weekly/$day/" || failed=1
-    fi
+  if aws s3 cp --recursive --only-show-errors $endpoint "$run_dir" "$remote"; then
+    log "uploaded to $remote"
   else
-    log "FAILED upload to s3://$BACKUP_S3_BUCKET"
+    log "FAILED upload to $remote"
     failed=1
   fi
 fi

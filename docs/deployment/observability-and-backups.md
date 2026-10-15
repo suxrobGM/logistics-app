@@ -52,19 +52,10 @@ report to its own Sentry project. The driver app is not wired; it reports throug
 
 1. Create Sentry projects: one ASP.NET Core project for the backend, one Angular project per
    portal (or one shared Angular project, using the same DSN three times).
-2. Add the DSNs to `.env` (the `DOCKER_ENV` secret):
-
-   ```bash
-   Sentry__Dsn=https://...@o0.ingest.sentry.io/1
-   SENTRY_DSN_TMS_PORTAL=https://...@o0.ingest.sentry.io/2
-   SENTRY_DSN_ADMIN_PORTAL=https://...@o0.ingest.sentry.io/3
-   SENTRY_DSN_CUSTOMER_PORTAL=https://...@o0.ingest.sentry.io/4
-   #SENTRY_ENVIRONMENT=production
-   ```
-
+2. Add the DSNs to `.env` (the `DOCKER_ENV` secret): the backend DSN plus one per portal, as
+   listed in the Sentry block of [`deploy/.env.example`](../../deploy/.env.example).
 3. Deploy. The deploy workflow appends `SENTRY_RELEASE=<commit sha>` to `.env`, so backend and
-   portal events from one deploy share a release. Without it the backend reports the product
-   version and the portals report no release.
+   portal events from one deploy share a release.
 4. Verify: raise a test error (for example a request that makes the API log an error) and check
    it arrives with `tenant_id` and `app` tags and without an email anywhere in the event.
 
@@ -86,75 +77,61 @@ already polls `/health` after each deploy; point an uptime monitor at
 
 ## Database backups
 
-PostgreSQL runs outside the compose stack, so backups do too. `deploy/db-backup/pg-backup.sh`:
+PostgreSQL runs outside the app stack, so backups run in their own compose project:
+`deploy/docker-compose.backup.yml` runs `deploy/db-backup/pg-backup.sh` nightly (03:30 UTC by
+default) in the `postgres:18` client image, with host networking since Postgres listens on the
+host's `localhost`. The script:
 
 - discovers databases on the server on every run (`datname LIKE '%_logisticsx'`), which covers
   `master_logisticsx` and every tenant database (`TenantDatabaseDefaults:NameTemplate` is
-  `{tenant}_logisticsx`). A tenant created today is in tonight's backup. If you changed the name
-  template, set `BACKUP_DB_PATTERN` to match.
+  `{tenant}_logisticsx`). A tenant created today is in tonight's backup.
 - writes `pg_dump -Fc` per database plus `globals.sql` (roles, without passwords) into
-  `daily/YYYY-MM-DD/`, checking each dump with `pg_restore --list` before keeping it.
-- keeps 7 daily runs, and on Sundays copies the run to `weekly/` (4 kept).
-- optionally copies the run to S3-compatible storage. Production documents already live on
-  Cloudflare R2 (`BlobStorage__Type=Cloudflare`), so use R2 here too, but a **separate bucket**
-  with its own API token. A leaked documents token then cannot delete the backups.
+  `daily/YYYY-MM-DD/` under `BACKUP_HOST_DIR`, checking each dump with `pg_restore --list` before
+  keeping it, and keeps the newest 7 runs locally.
+- optionally copies the run to `postgres/YYYY-MM-DD/` in S3-compatible storage. Production
+  documents already live on Cloudflare R2 (`BlobStorage__Type=Cloudflare`), so use R2 here too,
+  but a **separate bucket** with its own API token. A leaked documents token then cannot delete
+  the backups.
 - exits non-zero if any database, the upload, or the globals dump failed, and pings
   `BACKUP_HEARTBEAT_URL` only after a fully successful run. Point that at a dead-man's-switch
   monitor (healthchecks.io, Better Stack) so a run that never happens raises an alert.
 
-### Option A: compose service (recommended)
-
-`deploy/docker-compose.backup.yml` runs the script nightly (03:30 UTC by default) in the
-`postgres` client image with host networking, since Postgres listens on the host's `localhost`.
+Set the `BACKUP_*` variables in `deploy/.env` (the backups block of
+[`deploy/.env.example`](../../deploy/.env.example) lists them), then:
 
 ```bash
-# in deploy/.env
-BACKUP_PGPASSWORD=...
-BACKUP_POSTGRES_VERSION=18          # same major as the server, or newer
-BACKUP_S3_BUCKET=logisticsx-backups
-BACKUP_S3_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
-BACKUP_S3_ACCESS_KEY_ID=...
-BACKUP_S3_SECRET_ACCESS_KEY=...
-BACKUP_HEARTBEAT_URL=https://hc-ping.com/<uuid>
-
 docker compose -f deploy/docker-compose.backup.yml up -d
 docker compose -f deploy/docker-compose.backup.yml logs -f      # see each night's run
 docker compose -f deploy/docker-compose.backup.yml exec db-backup sh -c '. /etc/backup.env; sh /scripts/pg-backup.sh'   # run now
 ```
 
-It is a separate compose project, so the app deploy's `--remove-orphans` leaves it alone. The
-deploy workflow copies only `docker-compose.yml`; copy `docker-compose.backup.yml` and the
-`db-backup/` folder to the VPS once.
-
-### Option B: host cron
-
-With the PostgreSQL client tools (and the `aws` CLI for off-site copies) on the host:
-
-```cron
-30 3 * * * PGHOST=localhost PGUSER=postgres BACKUP_DIR=/var/backups/logisticsx BACKUP_S3_BUCKET=logisticsx-backups BACKUP_S3_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com /opt/logistics/db-backup/pg-backup.sh >> /var/log/logisticsx-backup.log 2>&1
-```
-
-Put the password in `~/.pgpass` (mode 600) and the R2 keys in `~/.aws/credentials` rather than in
-the crontab.
+The app deploy's `--remove-orphans` leaves this project alone. The deploy workflow copies only
+`docker-compose.yml`; copy `docker-compose.backup.yml` and the `db-backup/` folder to the VPS once.
 
 ### Off-site retention
 
-The script uploads but never deletes remote copies. Add two lifecycle rules on the backup bucket
-(R2: bucket settings, Object lifecycle rules): delete objects under `postgres/daily/` after 8 days
-and under `postgres/weekly/` after 35 days.
+The script uploads but never deletes remote copies. Add one lifecycle rule on the backup bucket
+(R2: bucket settings, Object lifecycle rules) that deletes objects under `postgres/` after 30
+days. Older history comes from that rule alone: there is no weekly tier, locally or remotely,
+because 30 off-site dailies already cover what four weekly copies did.
 
 ### Restore
 
 `deploy/db-backup/pg-restore.sh <file.dump> <target-database>` creates the target if needed and
 restores in a single transaction (`--no-owner --no-acl`, so the target server's roles do not have
-to match).
+to match). Run it in the backup container, which has the client tools and the connection:
+
+```bash
+docker compose -f deploy/docker-compose.backup.yml exec db-backup \
+  sh /scripts/pg-restore.sh /backups/daily/<day>/acme_logisticsx.dump acme_logisticsx_restore
+```
 
 **One tenant** (for example a tenant deleted data by mistake):
 
-1. Fetch the dump: from `BACKUP_DIR/daily/<day>/` or
-   `aws s3 cp s3://logisticsx-backups/postgres/daily/<day>/acme_logisticsx.dump . --endpoint-url ...`.
-2. Restore it next to the live database and inspect it:
-   `pg-restore.sh acme_logisticsx.dump acme_logisticsx_restore`.
+1. Find the dump: `/backups/daily/<day>/` in the container (`BACKUP_HOST_DIR` on the host), or
+   fetch an older one from the bucket into the container:
+   `docker compose -f deploy/docker-compose.backup.yml exec db-backup sh -c 'aws s3 cp s3://logisticsx-backups/postgres/<day>/acme_logisticsx.dump /backups/ --endpoint-url "$BACKUP_S3_ENDPOINT"'`.
+2. Restore it next to the live database as `acme_logisticsx_restore` and inspect it.
 3. Either copy the rows you need across, or swap the databases: stop the API
    (`docker compose stop api`), then
    `ALTER DATABASE acme_logisticsx RENAME TO acme_logisticsx_old;`
@@ -187,7 +164,7 @@ backup.
 - [ ] **Sentry.** `Sentry__Dsn` and the three portal DSNs set, a test error received from the API
       and from the TMS portal with the `tenant_id` tag, and an alert rule routed to a person.
 - [ ] **Backups.** Nightly backup running with off-site copy, heartbeat monitor configured,
-      lifecycle rules on the bucket, and the [restore drill](#restore-drill) done once with the
+      lifecycle rule on the bucket, and the [restore drill](#restore-drill) done once with the
       result written down.
 - [ ] **Health.** Uptime monitor on `https://api.yourdomain.com/health`.
 - [ ] **QuickBooks.** Production Intuit app keys and redirect URI, per

@@ -127,62 +127,22 @@ The portal Docker images use runtime environment variable substitution. These va
 MAPBOX_TOKEN="pk.xxx"
 ```
 
-| Variable             | Description                                                                        |
-| -------------------- | ---------------------------------------------------------------------------------- |
-| `MAPBOX_TOKEN`       | Mapbox public access token for maps (TMS portal)                                   |
-| `SENTRY_DSN`         | Portal's Sentry DSN; compose maps it from `SENTRY_DSN_{TMS,ADMIN,CUSTOMER}_PORTAL` |
-| `SENTRY_ENVIRONMENT` | Sentry environment name (default `production`)                                     |
-| `SENTRY_RELEASE`     | Sentry release; the deploy workflow sets it to the commit sha                      |
+| Variable                                             | Description                                                          |
+| ---------------------------------------------------- | -------------------------------------------------------------------- |
+| `MAPBOX_TOKEN`                                       | Mapbox public access token for maps (TMS portal)                     |
+| `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE` | Mapped by compose from the Sentry variables in `deploy/.env.example` |
 
 ### Sentry (Optional - Error Tracking)
 
-Off unless a DSN is set. Setup, scrubbing and the tenant tag:
+Off unless a DSN is set. The variables and their defaults are listed in the Sentry block of
+[`deploy/.env.example`](../../deploy/.env.example); setup, scrubbing and the tenant tag are in
 [Observability and Backups](../deployment/observability-and-backups.md#error-tracking-sentry).
-
-```bash
-Sentry__Dsn="https://xxx@o0.ingest.sentry.io/1"
-SENTRY_DSN_TMS_PORTAL="https://xxx@o0.ingest.sentry.io/2"
-SENTRY_DSN_ADMIN_PORTAL="https://xxx@o0.ingest.sentry.io/3"
-SENTRY_DSN_CUSTOMER_PORTAL="https://xxx@o0.ingest.sentry.io/4"
-```
-
-| Variable                     | Description                                                                                         |
-| ---------------------------- | --------------------------------------------------------------------------------------------------- |
-| `Sentry__Dsn`                | Backend DSN, read by the API and the Identity Server. Empty or unset disables Sentry                |
-| `SENTRY_DSN_TMS_PORTAL`      | TMS portal DSN (passed to the container as `SENTRY_DSN`)                                            |
-| `SENTRY_DSN_ADMIN_PORTAL`    | Admin portal DSN                                                                                    |
-| `SENTRY_DSN_CUSTOMER_PORTAL` | Customer portal DSN                                                                                 |
-| `SENTRY_ENVIRONMENT`         | Environment for every app. Backend default: the ASP.NET Core environment, lowercased                |
-| `SENTRY_RELEASE`             | Release for every app. Appended to `.env` by the deploy workflow; backend falls back to the version |
-
-Any other `Sentry__*` option of the .NET SDK (for example `Sentry__SampleRate`) can be set the same way.
 
 ### Database Backups (Optional)
 
-Read by `deploy/docker-compose.backup.yml`. When `deploy/db-backup/pg-backup.sh` runs from host cron
-instead, set the standard `PGHOST`/`PGPORT`/`PGUSER`/`PGPASSWORD` and the `BACKUP_*` names below
-(`BACKUP_S3_*` keys become `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`). See
+Read only by `deploy/docker-compose.backup.yml`. The variables are listed in the backups block of
+[`deploy/.env.example`](../../deploy/.env.example); setup and restore are in
 [Observability and Backups](../deployment/observability-and-backups.md#database-backups).
-
-| Variable                      | Description                                                              |
-| ----------------------------- | ------------------------------------------------------------------------ |
-| `BACKUP_PGPASSWORD`           | Password of the Postgres user the backup connects as (required)          |
-| `BACKUP_PGHOST`               | Postgres host (default `localhost`; the service uses host networking)    |
-| `BACKUP_PGPORT`               | Postgres port (default `5432`)                                           |
-| `BACKUP_PGUSER`               | Postgres user (default `postgres`)                                       |
-| `BACKUP_POSTGRES_VERSION`     | Client image major version; must be at least the server's (default `18`) |
-| `BACKUP_HOST_DIR`             | Host folder for local copies (default `/var/backups/logisticsx`)         |
-| `BACKUP_SCHEDULE`             | Cron expression, UTC (default `30 3 * * *`)                              |
-| `BACKUP_DB_PATTERN`           | SQL `LIKE` pattern of databases to dump (default `%_logisticsx`)         |
-| `BACKUP_KEEP_DAILY`           | Daily runs kept locally (default `7`)                                    |
-| `BACKUP_KEEP_WEEKLY`          | Sunday runs kept locally (default `4`)                                   |
-| `BACKUP_S3_BUCKET`            | Off-site bucket; unset means local copies only                           |
-| `BACKUP_S3_ENDPOINT`          | S3 endpoint, e.g. `https://<account-id>.r2.cloudflarestorage.com` for R2 |
-| `BACKUP_S3_ACCESS_KEY_ID`     | Access key for the backup bucket                                         |
-| `BACKUP_S3_SECRET_ACCESS_KEY` | Secret key for the backup bucket                                         |
-| `BACKUP_S3_REGION`            | Region (default `auto`, which R2 expects)                                |
-| `BACKUP_S3_PREFIX`            | Key prefix in the bucket (default `postgres`)                            |
-| `BACKUP_HEARTBEAT_URL`        | Pinged after each fully successful run (dead-man's-switch monitor)       |
 
 ### Database Migrator (run separately)
 

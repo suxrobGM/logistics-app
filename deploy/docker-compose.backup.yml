@@ -1,29 +1,26 @@
-# Nightly PostgreSQL backups (optional; host cron running deploy/db-backup/pg-backup.sh does the same).
+# Nightly PostgreSQL backups: runs deploy/db-backup/pg-backup.sh on a schedule.
 # Its own compose project, so the app stack's `--remove-orphans` never removes it:
 #
 #   docker compose -f deploy/docker-compose.backup.yml up -d
 #
-# Variables come from deploy/.env (BACKUP_* and AWS_*); see docs/deployment/observability-and-backups.md.
+# Variables come from deploy/.env; deploy/.env.example lists them. Setup and restore:
+# docs/deployment/observability-and-backups.md.
 name: logistics-backup
 
 services:
   db-backup:
     # pg_dump must be the same major version as the server or newer.
-    image: "postgres:${BACKUP_POSTGRES_VERSION:-18}-alpine"
+    image: postgres:18-alpine
     # PostgreSQL runs on the host and listens on localhost, which a bridged container cannot reach.
     network_mode: host
     environment:
       PGHOST: "${BACKUP_PGHOST:-localhost}"
-      PGPORT: "${BACKUP_PGPORT:-5432}"
+      PGPORT: "5432"
       PGUSER: "${BACKUP_PGUSER:-postgres}"
       PGPASSWORD: "${BACKUP_PGPASSWORD:?set BACKUP_PGPASSWORD in .env}"
-      BACKUP_DIR: /backups
-      BACKUP_DB_PATTERN: "${BACKUP_DB_PATTERN:-%_logisticsx}"
       BACKUP_KEEP_DAILY: "${BACKUP_KEEP_DAILY:-7}"
-      BACKUP_KEEP_WEEKLY: "${BACKUP_KEEP_WEEKLY:-4}"
       BACKUP_S3_BUCKET: "${BACKUP_S3_BUCKET:-}"
       BACKUP_S3_ENDPOINT: "${BACKUP_S3_ENDPOINT:-}"
-      BACKUP_S3_PREFIX: "${BACKUP_S3_PREFIX:-postgres}"
       BACKUP_HEARTBEAT_URL: "${BACKUP_HEARTBEAT_URL:-}"
       AWS_ACCESS_KEY_ID: "${BACKUP_S3_ACCESS_KEY_ID:-}"
       AWS_SECRET_ACCESS_KEY: "${BACKUP_S3_SECRET_ACCESS_KEY:-}"

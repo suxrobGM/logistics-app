@@ -1,11 +1,12 @@
 #!/bin/sh
 # Restores one pg_dump -Fc file into a database, creating it if needed.
 #
-#   pg-restore.sh <file.dump> <target-database>
+#   docker compose -f deploy/docker-compose.backup.yml exec db-backup \
+#     sh /scripts/pg-restore.sh /backups/daily/<day>/<db>.dump <target-database>
 #
-# Restore into a NEW name first (e.g. acme_logisticsx_restore) for a drill, or to inspect data
-# before swapping it in. Restoring over a live database: stop the api container first, then
-# drop and recreate the target. Connection comes from PGHOST/PGPORT/PGUSER/PGPASSWORD.
+# The backup container has the client tools and the PG* connection variables. Restore into a NEW
+# name first (e.g. acme_logisticsx_restore) for a drill, or to inspect data before swapping it in.
+# Restoring over a live database: stop the api container first, then drop and recreate the target.
 set -eu
 
 if [ "$#" -ne 2 ]; then
