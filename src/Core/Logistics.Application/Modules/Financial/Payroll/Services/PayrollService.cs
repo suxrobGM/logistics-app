@@ -105,10 +105,7 @@ internal class PayrollService(
             lineRepository.Delete(line);
         }
 
-        foreach (var line in added)
-        {
-            await lineRepository.AddAsync(line, ct);
-        }
+        await lineRepository.AddRangeAsync(added, ct);
 
         await ClaimDeductionsAsync(payroll, ct);
 

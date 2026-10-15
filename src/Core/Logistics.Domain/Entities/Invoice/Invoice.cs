@@ -55,6 +55,34 @@ public abstract partial class Invoice : AuditableEntity, IMasterEntity, ITenantE
     /// </summary>
     public string? SentToEmail { get; set; }
 
+    /// <summary>
+    /// Swaps the lines <paramref name="owns"/> matches for <paramref name="fresh"/>, which go first in
+    /// the line order; the other lines keep their relative order after them. Returns the removed
+    /// lines. The caller registers the removed and added lines with the repository.
+    /// </summary>
+    public IReadOnlyList<InvoiceLineItem> ReplaceLines(Func<InvoiceLineItem, bool> owns, IReadOnlyList<InvoiceLineItem> fresh)
+    {
+        var removed = LineItems.Where(owns).ToList();
+        foreach (var line in removed)
+        {
+            LineItems.Remove(line);
+        }
+
+        var order = fresh.Count;
+        foreach (var other in LineItems.OrderBy(li => li.Order))
+        {
+            other.Order = order++;
+        }
+
+        for (var i = 0; i < fresh.Count; i++)
+        {
+            fresh[i].Order = i;
+        }
+
+        LineItems.AddRange(fresh);
+        return removed;
+    }
+
     public void ApplyPayment(Payment payment)
     {
         Payments.Add(payment);

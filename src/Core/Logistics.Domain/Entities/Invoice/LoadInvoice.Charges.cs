@@ -5,7 +5,7 @@ namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// The lines a load invoice derives from its load: the linehaul, the fuel surcharge and one line per
-/// accessorial. Everything else on the invoice (drayage charges, hand-added lines) is left alone.
+/// accessorial. Hand-added lines are left alone.
 /// </summary>
 public partial class LoadInvoice
 {
@@ -20,21 +20,8 @@ public partial class LoadInvoice
     /// </summary>
     public (IReadOnlyList<InvoiceLineItem> Removed, IReadOnlyList<InvoiceLineItem> Added) ReplaceLoadCharges(Load load)
     {
-        var removed = LineItems.Where(IsLoadCharge).ToList();
-        foreach (var line in removed)
-        {
-            LineItems.Remove(line);
-        }
-
         var added = BuildLoadCharges(load);
-        var order = added.Count;
-        foreach (var other in LineItems.OrderBy(li => li.Order))
-        {
-            other.Order = order++;
-        }
-
-        LineItems.AddRange(added);
-        return (removed, added);
+        return (ReplaceLines(IsLoadCharge, added), added);
     }
 
     private List<InvoiceLineItem> BuildLoadCharges(Load load)
@@ -53,11 +40,6 @@ public partial class LoadInvoice
         foreach (var accessorial in load.Accessorials.OrderBy(a => a.Name, StringComparer.Ordinal))
         {
             lines.Add(AccessorialLine(accessorial));
-        }
-
-        for (var i = 0; i < lines.Count; i++)
-        {
-            lines[i].Order = i;
         }
 
         return lines;

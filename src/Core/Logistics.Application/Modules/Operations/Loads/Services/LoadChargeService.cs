@@ -57,10 +57,7 @@ internal sealed class LoadChargeService(
             lineRepository.Delete(line);
         }
 
-        foreach (var line in added)
-        {
-            await lineRepository.AddAsync(line, ct);
-        }
+        await lineRepository.AddRangeAsync(added, ct);
 
         await taxApplier.ApplyAsync(invoice, ct);
         tenantUow.Repository<Invoice>().Update(invoice);

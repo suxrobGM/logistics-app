@@ -26,20 +26,8 @@ public partial class PayrollInvoice
     public (IReadOnlyList<InvoiceLineItem> Removed, IReadOnlyList<InvoiceLineItem> Added) ReplaceSettlementLines(
         SettlementInputs inputs)
     {
-        var removed = LineItems.Where(IsGeneratedLine).ToList();
-        foreach (var line in removed)
-        {
-            LineItems.Remove(line);
-        }
-
         var added = BuildSettlementLines(inputs);
-        var order = added.Count;
-        foreach (var other in LineItems.OrderBy(li => li.Order))
-        {
-            other.Order = order++;
-        }
-
-        LineItems.AddRange(added);
+        var removed = ReplaceLines(IsGeneratedLine, added);
         RecalculateTotals();
         return (removed, added);
     }
@@ -84,11 +72,6 @@ public partial class PayrollInvoice
             var where = merchant.Length == 0 ? "" : $" - {merchant}";
             lines.Add(Line($"Fuel {fuel.TransactionDate:MM/dd}{where}", InvoiceLineItemType.FuelCard,
                 -fuel.Amount.Amount, fuel.Id));
-        }
-
-        for (var i = 0; i < lines.Count; i++)
-        {
-            lines[i].Order = i;
         }
 
         return lines;
