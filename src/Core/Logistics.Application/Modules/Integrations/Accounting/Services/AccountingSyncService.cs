@@ -49,9 +49,12 @@ internal sealed partial class AccountingSyncService(
         try
         {
             await PushCustomersAsync(run, ct);
-            await RetireRemovedCustomersAsync(run, ct);
+            await RetireRemovedAsync<Customer>(run, QboLocalEntityType.Customer,
+                target => run.Provider.DeactivateCustomerAsync(target, ct), ct);
             await PushInvoicesAsync(run, ct);
             await PushPaymentsAsync(run, ct);
+            await RetireRemovedAsync<Payment>(run, QboLocalEntityType.Payment,
+                target => run.Provider.VoidPaymentAsync(target, ct), ct);
             await PushFactoringFeesAsync(run, ct);
             await PushExpensesAsync(run, ct);
             await PushPayrollAsync(run, ct);
@@ -96,22 +99,26 @@ internal sealed partial class AccountingSyncService(
         }
     }
 
-    /// <summary>Customers are hard-deleted, so a pushed customer whose row is gone is made inactive in QuickBooks.</summary>
-    private async Task RetireRemovedCustomersAsync(SyncRun run, CancellationToken ct)
+    /// <summary>
+    /// Customers and payments are hard-deleted, so a pushed record whose row is gone is retired in QuickBooks:
+    /// a customer is made inactive, a payment (a factoring charge-back reverses the sale) is voided.
+    /// </summary>
+    private async Task RetireRemovedAsync<T>(
+        SyncRun run, QboLocalEntityType type, Func<QboWriteTarget, Task<QboUpsertResult>> retire, CancellationToken ct)
+        where T : class, IEntity<Guid>, ITenantEntity
     {
-        var customers = tenantUow.Repository<Customer>().Query();
+        var rows = tenantUow.Repository<T>().Query();
         var orphaned = await Mappings
-            .Where(m => m.LocalEntityType == QboLocalEntityType.Customer && m.QboId != null
+            .Where(m => m.LocalEntityType == type && m.QboId != null
                         && m.LastSyncedHash != AccountingPayloads.RetiredHash
-                        &&!customers.Any(c => c.Id == m.LocalId))
+                        && !rows.Any(r => r.Id == m.LocalId))
             .Take(BatchSize)
             .ToListAsync(ct);
 
         foreach (var mapping in orphaned)
         {
             run.Mappings.TryAdd((mapping.LocalEntityType, mapping.LocalId), mapping);
-            await PushAsync(run, QboLocalEntityType.Customer, mapping.LocalId, AccountingPayloads.RetiredHash,
-                target => run.Provider.DeactivateCustomerAsync(target, ct), ct);
+            await PushAsync(run, type, mapping.LocalId, AccountingPayloads.RetiredHash, retire, ct);
         }
     }
 

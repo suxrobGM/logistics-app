@@ -150,7 +150,7 @@ request on Intuit's side.
 - QuickBooks Desktop (only QuickBooks Online is supported).
 - Sales tax codes: invoice tax is sent as a total, so companies using QuickBooks automated sales
   tax may see QuickBooks recalculate it. Freight is usually not taxable, so most carriers send none.
-- Factoring: the advance and reserve transfers are left to the bookkeeper, and a chargeback is not
-  pushed - reverse the sale payment in QuickBooks by hand.
+- Factoring: the advance and reserve transfers are left to the bookkeeper. A chargeback voids the
+  sale payment in QuickBooks on the next sync, so the invoice is open again there too.
 - Payments recorded in QuickBooks do not flow back to LogisticsX, and paid driver pay bills are
   not marked paid in QuickBooks.

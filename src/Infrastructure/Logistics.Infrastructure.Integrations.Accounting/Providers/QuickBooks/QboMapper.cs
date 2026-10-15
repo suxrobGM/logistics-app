@@ -103,6 +103,9 @@ internal static class QboMapper
     public static QboInvoice MapInvoiceVoid(string qboId, string? syncToken) =>
         new() { Id = qboId, SyncToken = syncToken };
 
+    public static QboPayment MapPaymentVoid(string qboId, string? syncToken) =>
+        new() { Id = qboId, SyncToken = syncToken, Sparse = true };
+
     public static QboPayment MapPayment(QboPaymentPayload p, string? qboId, string? syncToken)
     {
         return new QboPayment

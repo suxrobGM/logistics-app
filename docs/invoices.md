@@ -215,7 +215,8 @@ Carriers who sell invoices to a factoring company set the factor up under Settin
   the total, so the invoice reads Paid; the reserve stays owed by the factor until
   `POST .../items/{itemId}/reserverelease`.
 - **Chargeback** (`POST .../items/{itemId}/chargeback`): the sale payment is removed, the invoice
-  goes back to sent/overdue and `FactoringStatus` becomes `ChargedBack`.
+  goes back to sent/overdue and `FactoringStatus` becomes `ChargedBack`. A sale payment already
+  pushed to QuickBooks is voided there on the next sync.
 
 `LoadInvoice.FactoringStatus` is `NotFactored`, `Submitted`, `Funded`, `Rejected` or `ChargedBack`
 and filters `GET /invoices?FactoringStatus=`. The schedule status (`Submitted`, `PartiallyFunded`,

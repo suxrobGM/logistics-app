@@ -35,6 +35,7 @@ public class AccountingSyncServiceTests
     private readonly List<QboEntityMapping> _mappings = [];
     private readonly List<Customer> _customers = [];
     private readonly List<LoadInvoice> _invoices = [];
+    private readonly List<Payment> _payments = [];
 
     public AccountingSyncServiceTests()
     {
@@ -57,6 +58,7 @@ public class AccountingSyncServiceTests
 
         Queryable(_customers);
         Queryable(_invoices);
+        Queryable(_payments);
         Queryable(new List<Expense>());
         Queryable(new List<PayrollInvoice>());
         var lineItems = Substitute.For<ITenantRepository<InvoiceLineItem, Guid>>();
@@ -214,6 +216,19 @@ public class AccountingSyncServiceTests
     }
 
     [Fact]
+    public async Task SyncAsync_PushedPaymentDeleted_VoidsIt()
+    {
+        _mappings.Add(Synced(Guid.NewGuid(), DateTime.UtcNow.AddDays(-1), "p9", QboLocalEntityType.Payment));
+        _provider.VoidPaymentAsync(Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>())
+            .Returns(new QboUpsertResult { QboId = "p9", SyncToken = "2" });
+
+        await _sut.SyncAsync(CancellationToken.None);
+
+        await _provider.Received(1).VoidPaymentAsync(Arg.Is<QboWriteTarget>(t => t.QboId == "p9"), Arg.Any<CancellationToken>());
+        Assert.Equal(AccountingPayloads.RetiredHash, _mappings[0].LastSyncedHash);
+    }
+
+    [Fact]
     public async Task SyncAsync_InvoiceBeforeSyncFromDate_IsNotPushed()
     {
         _config.SyncFromDate = DateTime.UtcNow.Date;
@@ -305,6 +320,7 @@ public class AccountingSyncServiceTests
             CreatedAt = DateTime.UtcNow
         };
         invoice.Payments.Add(payment);
+        _payments.Add(payment);
 
         var batch = new FactoringBatch
         {

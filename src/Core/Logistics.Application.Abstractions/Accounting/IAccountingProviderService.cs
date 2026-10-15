@@ -66,6 +66,9 @@ public interface IAccountingProviderService
     /// <summary>Create or update a payment linked to a pushed invoice.</summary>
     Task<QboUpsertResult> UpsertPaymentAsync(QboPaymentPayload payload, QboWriteTarget target, CancellationToken ct = default);
 
+    /// <summary>Void a pushed payment (the TMS payment was deleted, e.g. by a factoring charge-back).</summary>
+    Task<QboUpsertResult> VoidPaymentAsync(QboWriteTarget target, CancellationToken ct = default);
+
     /// <summary>Create or update an expense (QBO Purchase).</summary>
     Task<QboUpsertResult> UpsertExpenseAsync(QboExpensePayload payload, QboWriteTarget target, CancellationToken ct = default);
 

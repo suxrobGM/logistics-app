@@ -146,6 +146,11 @@ internal sealed class QuickBooksOnlineService(
         WriteAsync("payment", target, (id, token) => QboMapper.MapPayment(payload, id, token),
             r => r.Payment, "upsert payment", ct);
 
+    /// <remarks>QBO voids a payment through a sparse update with <c>include=void</c>, not <c>operation=void</c>.</remarks>
+    public Task<QboUpsertResult> VoidPaymentAsync(QboWriteTarget target, CancellationToken ct = default) =>
+        WriteAsync("payment", target, (id, token) => QboMapper.MapPaymentVoid(id!, token),
+            r => r.Payment, "void payment", ct, operation: "update&include=void");
+
     public Task<QboUpsertResult> UpsertExpenseAsync(
         QboExpensePayload payload, QboWriteTarget target, CancellationToken ct = default) =>
         WriteAsync("purchase", target, (id, token) => QboMapper.MapPurchase(payload, id, token),

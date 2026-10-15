@@ -38,13 +38,14 @@ for carriers already locked into factoring contracts.
 - **AR**: the invoice dashboard splits open receivables into owed by customers and owed by the
   factor (awaiting funding plus reserve held).
 - **QuickBooks**: with a bank-type factoring clearing account and a fee expense account set, the
-  sale payment deposits to the clearing account and the fee posts as a purchase paid from it.
+  sale payment deposits to the clearing account and the fee posts as a purchase paid from it. A
+  chargeback voids the pushed sale payment.
 
 ## Not built
 
 - Factor APIs (Triumph, RTS, OTR, Apex are partner-gated) and funded-status webhooks via the
   `add-webhook-handler` skill pattern. No provider seam exists yet; email is the only intake.
-- Pushing chargebacks and the advance/reserve bank transfers to QuickBooks.
+- Pushing the advance/reserve bank transfers to QuickBooks.
 - A per-invoice timeline on the invoice page (status badge only).
 
 ## Acceptance

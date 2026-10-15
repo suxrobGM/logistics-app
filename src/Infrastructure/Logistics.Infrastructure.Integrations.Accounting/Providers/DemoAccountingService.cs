@@ -81,6 +81,9 @@ internal sealed class DemoAccountingService : IAccountingProviderService
     public Task<QboUpsertResult> UpsertPaymentAsync(QboPaymentPayload payload, QboWriteTarget target, CancellationToken ct = default) =>
         Fake(target);
 
+    public Task<QboUpsertResult> VoidPaymentAsync(QboWriteTarget target, CancellationToken ct = default) =>
+        Fake(target);
+
     public Task<QboUpsertResult> UpsertExpenseAsync(QboExpensePayload payload, QboWriteTarget target, CancellationToken ct = default) =>
         Fake(target);
 

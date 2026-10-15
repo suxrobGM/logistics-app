@@ -63,6 +63,19 @@ public class QuickBooksOnlineServiceTests
     }
 
     [Fact]
+    public async Task VoidPaymentAsync_SendsASparseUpdateThatIncludesVoid()
+    {
+        _handler.Respond(HttpStatusCode.OK, """{"Payment":{"Id":"73","SyncToken":"3"}}""");
+
+        var result = await _sut.VoidPaymentAsync(new QboWriteTarget("73", "2", "req-1"));
+
+        Assert.Equal("3", result.SyncToken);
+        Assert.EndsWith("/payment", _handler.Requests[0].RequestUri!.AbsolutePath);
+        Assert.Contains("operation=update&include=void", _handler.Requests[0].RequestUri!.Query);
+        Assert.Contains("\"sparse\":true", _handler.Bodies[0]);
+    }
+
+    [Fact]
     public async Task UpsertInvoiceAsync_ValidationFault_ThrowsWithFaultDetailAndIntuitTid()
     {
         _handler.Respond(HttpStatusCode.BadRequest,
