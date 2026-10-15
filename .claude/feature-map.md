@@ -18,7 +18,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - **Application workflow services** (stay in Application): `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Services/`
 - **Application constants**: feature-scoped under `Modules/{Module}/{Feature}/Constants/`; cross-module shared in `Modules/Common/Constants/`
 - **Service implementations**: `src/Infrastructure/Logistics.Infrastructure.{Module}/`
-- **Shared provider HTTP**: `Logistics.Infrastructure.Integrations.Common/HttpClientJsonExtensions.cs` - `TryGetFromJsonAsync` (never throws; logs, returns `default`), used by LoadBoard/FuelCards/Eld. Don't copy it into a new integration. `Integrations.Accounting`'s QBO helpers deliberately **throw** so push errors surface - not duplicates, don't fold in
+- **Shared provider HTTP**: `Logistics.Infrastructure.Integrations.Common/HttpClientJsonExtensions.cs` - `TryGetFromJsonAsync` (never throws; logs, returns `default`), used by FuelCards/Eld (load boards throw instead: `Integrations.LoadBoard/LoadBoardHttp.cs`). Don't copy it into a new integration. `Integrations.Accounting`'s QBO helpers deliberately **throw** so push errors surface - not duplicates, don't fold in
 - **REST controllers**: `src/Presentation/Logistics.API/Controllers/{Feature}Controller.cs`
 - **SignalR hubs**: `src/Infrastructure/Logistics.Infrastructure.Communications/SignalR/Hubs/`
 - **Hangfire jobs**: `src/Presentation/Logistics.API/Jobs/` - fan out with `TenantJobRunner.ForEachTenantAsync` and gate features inside the body (see CLAUDE.md for the canonical `[RequiresFeature]`-is-inert rule)
@@ -509,10 +509,11 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Load board search
 
-- Domain: `Entities/LoadBoard/LoadBoardListing.cs`, `LoadBoardConfiguration.cs`
-- Application: `Modules/Integrations/LoadBoard/Commands/`, `Modules/Integrations/LoadBoard/Queries/`
-- Infrastructure: `Infrastructure.Integrations.LoadBoard/` (DAT, Truckstop, 123Loadboard, Demo)
-- API/UI: `LoadboardController.cs`, `tms-portal/pages/loadboard/`
+- Domain: `Entities/LoadBoard/LoadBoardListing.cs`, `LoadBoardConfiguration.cs` (`UserEmail` = DAT One seat, `MarketRatesEnabled` = RateView), `Enums/LoadBoardEquipmentType.cs` (the one equipment list; DAT codes in `Providers/Dat/DatEquipment.cs`)
+- Application: `Modules/Integrations/LoadBoard/Commands/` (search, create/update/test provider, create load from listing), `Queries/`; `Services/LoadBoardProviderGateway.cs` - the only way to call a board: token refresh, one 401 retry, vendor error to per-provider `Result`
+- Abstractions: `Application.Abstractions/LoadBoard/ILoadBoardProviderService.cs` (throws `LoadBoardApiException`; no booking call - no board has a booking API)
+- Infrastructure: `Infrastructure.Integrations.LoadBoard/` - `Providers/Dat/` (two-step org + user token, v1 search, truck posts, RateView), `Demo`, `NotYetAvailableLoadBoardService` (Truckstop, 123Loadboard); `LoadBoardHttp.cs` throwing HTTP helper. API verification status in `docs/loadboard-dat-setup.md`
+- API/UI: `LoadboardController.cs`, `tms-portal/pages/loadboard/` (`provider-dialog` add/edit, `loadboard.constants.ts` equipment + provider labels)
 
 ### Broker credit
 
@@ -524,12 +525,12 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Posted trucks
 
 - Domain: `Entities/LoadBoard/PostedTruck.cs`
-- Application: `Modules/Integrations/LoadBoard/Commands/PostTruck*`
-- API/UI: (under `load-board/`)
+- Application: `Modules/Integrations/LoadBoard/Commands/PostTruckToLoadBoard`, `UpdatePostedTruck`, `RemovePostedTruck`
+- API/UI: `/loadboard/trucks`, `tms-portal/pages/loadboard/posted-trucks/`
 
 ### Background sync
 
-- API/UI: `Jobs/LoadBoardSyncJob.cs`
+- API/UI: `Jobs/LoadBoardSyncJob.cs` (reconciles active posts with the board every 30 min; hourly expiry cleanup)
 
 ## Settings & integrations
 

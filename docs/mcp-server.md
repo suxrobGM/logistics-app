@@ -21,7 +21,7 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 | `calculate_assignment_metrics` | Read  | Revenue/mile and deadhead analysis for truck-load pairs   |
 | `get_container_status`         | Read  | ISO 6346 lookup: status, terminal, seal, B/L, linked load |
 | `get_terminal_info`            | Read  | UN/LOCODE lookup: name, type, country, street address     |
-| `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for available loads     |
+| `search_loadboard`             | Read  | Search the connected load boards (DAT) for loads          |
 | `get_rate_floor`               | Read  | Rate floor on a listing's lane, and the gap to its rate   |
 | `get_negotiation_thread`       | Read  | One negotiation: status, rounds, floor, recent messages   |
 | `search_loads`                 | Read  | Search loads by status, type, customer, or date range     |
@@ -35,7 +35,7 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 | `assign_load_to_truck`         | Write | Assign a load to a truck                                  |
 | `create_trip`                  | Write | Create a trip from assigned loads                         |
 | `dispatch_trip`                | Write | Transition trip to Dispatched status                      |
-| `book_loadboard_load`          | Write | Book a load from a load board                             |
+| `book_loadboard_load`          | Write | Create a load from a listing (broker confirms by phone)   |
 | `create_load_invoice`          | Write | Create an unpaid invoice for a load                       |
 | `send_invoice`                 | Write | Email an invoice with a payment link                      |
 | `create_payment_link`          | Write | Mint a public payment link for an invoice                 |

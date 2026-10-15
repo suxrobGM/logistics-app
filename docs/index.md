@@ -46,7 +46,7 @@ The Angular portals and the driver app are closed source. They live in a private
 - **Trip Planning & Route Optimization** - Multi-stop routing through Mapbox.
 - **GPS Tracking** - Live fleet map over SignalR WebSockets.
 - **Fleet & Maintenance Tracking** - Trucks, trailers, schedules, VIN decoding.
-- **Load Board Integration** - Search DAT, Truckstop, and 123Loadboard. Book loads. Post trucks.
+- **Load Board Integration** - Search DAT, see DAT market rates, create loads from listings, post trucks. See [DAT setup](loadboard-dat-setup.md).
 - **Broker Credit Check** - Credit score, days-to-pay, and FMCSA authority status on every load-board listing; low-credit bookings are blocked unless overridden.
 - **AI Rate Negotiation** - When a load-board listing pays below your lane floor, the agent drafts a counter-offer email to the broker. You approve it before it sends, and replies come back into the dispatch conversation. See [Broker Email Negotiation](broker-email-negotiation.md).
 - **Invoicing & Payments** - Stripe and Stripe Connect, with payment links and partial payments.

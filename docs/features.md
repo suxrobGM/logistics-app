@@ -47,12 +47,13 @@ The web app for owners, managers, and dispatchers.
 
 ### Load boards
 
-| Feature             | What it does                                                                                                                                                         |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Search              | Search DAT, Truckstop, and 123Loadboard from one screen. Filter by origin, destination, dates, equipment, and rate.                                                  |
-| Book                | Book a listing and the load is created in the TMS with the details filled in.                                                                                        |
-| Broker credit check | Every listing shows the broker's credit score, days to pay, and FMCSA authority status. Bookings below your minimum score are blocked unless a dispatcher overrides. |
-| Post trucks         | Advertise an open truck with its location, preferred destinations, equipment, and availability window. Posts refresh on their own.                                   |
+| Feature             | What it does                                                                                                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Search              | Search DAT from one screen by origin, destination, dates and equipment, with an optional rate floor. A board that fails shows its error, so a failure never looks like "no freight". Truckstop and 123Loadboard are not available yet. |
+| DAT market rates    | With a DAT plan that includes RateView, each result shows the DAT spot rate for its lane.                                                                                        |
+| Create load         | Turn a listing into a load in the TMS with the truck assigned. Load boards have no booking API, so you confirm with the broker using the phone and email shown.                 |
+| Broker credit check | Every listing shows the broker's credit score, days to pay, and FMCSA authority status. Loads below your minimum score are blocked unless a dispatcher overrides.                |
+| Post trucks         | Advertise an open truck with its location, preferred destination, equipment, and availability window. Edit or remove it here; posts that expired on DAT are marked expired.     |
 
 ### AI
 

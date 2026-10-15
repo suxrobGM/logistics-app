@@ -60,7 +60,7 @@ flowchart TB
         Postgres[("PostgreSQL 18<br/>Master + Tenant DBs")]
         SaaS["Stripe · Mapbox · Firebase<br/>Azure Blob · Cloudflare R2 · Resend"]
         Llm["Anthropic · OpenAI · DeepSeek"]
-        Providers["Samsara · Motive · TT ELD · Geotab<br/>DAT · Truckstop · 123LB<br/>WEX · EFS · QuickBooks Online"]
+        Providers["Samsara · Motive · TT ELD · Geotab<br/>DAT<br/>WEX · EFS · QuickBooks Online"]
     end
 
     Clients --> Presentation
@@ -177,7 +177,7 @@ A public clone gets an empty `private/` directory. Everything else builds and ru
 | Azure Blob / Cloudflare R2         | Document & photo storage (pluggable)    |
 | NHTSA API                          | VIN decoding                            |
 | Samsara / Motive / TT ELD / Geotab | ELD / HOS providers                     |
-| DAT / Truckstop / 123Loadboard     | Load board providers                    |
+| DAT                                | Load board (search, truck posts, rates) |
 | WEX / EFS                          | Fuel card transaction feeds             |
 | QuickBooks Online                  | Accounting sync                         |
 | Resend                             | Transactional email                     |
@@ -311,7 +311,7 @@ ELD providers for HOS compliance: Samsara, Motive (KeepTruckin), TT ELD, Geotab,
 
 ### Logistics.Infrastructure.Integrations.LoadBoard
 
-Load board providers: DAT, Truckstop, 123Loadboard, and a Demo provider. Search loads, post trucks, provider-specific request/response mappers.
+Load board providers: DAT and a Demo provider; Truckstop and 123Loadboard are stubs that report "not available yet". DAT covers search, truck posts with reconciliation and RateView market rates. Calls throw `LoadBoardApiException` (helper: `LoadBoardHttp`), and `ILoadBoardProviderGateway` in Application handles tokens, one 401 retry, and per-provider errors. Setup and verification status: [DAT setup](../loadboard-dat-setup.md).
 
 ### Logistics.Infrastructure.Integrations.FuelCards
 

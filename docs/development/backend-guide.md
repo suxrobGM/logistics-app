@@ -51,7 +51,7 @@ src/Infrastructure/
 │   └── Providers/                 # Samsara, Motive, TtEld, Geotab, Demo
 │
 ├── Logistics.Infrastructure.Integrations.LoadBoard/
-│   └── Providers/                 # DAT, Truckstop, 123Loadboard, Demo
+│   └── Providers/                 # DAT, Demo (Truckstop, 123Loadboard not available yet)
 │
 ├── Logistics.Infrastructure.Integrations.FuelCards/
 │   └── Providers/                 # Wex, Efs, Demo

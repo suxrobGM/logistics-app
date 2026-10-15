@@ -84,13 +84,13 @@ and the broker-reply envelope carry no sender and render unattributed.
 | `calculate_assignment_metrics` | Read  | Revenue/deadhead analysis for a potential assignment |
 | `get_container_status`         | Read  | ISO 6346 lookup: status, terminal, seal, B/L, load   |
 | `get_terminal_info`            | Read  | UN/LOCODE lookup: name, type, country, address       |
-| `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for opportunities  |
+| `search_loadboard`             | Read  | Search the connected load boards (DAT)               |
 | `get_rate_floor`               | Read  | Lowest rate this carrier accepts on a listing's lane |
 | `get_negotiation_thread`       | Read  | State and messages of one broker negotiation         |
 | `assign_load_to_truck`         | Write | Assign a load to a truck                             |
 | `create_trip`                  | Write | Create a trip from assigned loads                    |
 | `dispatch_trip`                | Write | Transition trip to Dispatched status                 |
-| `book_loadboard_load`          | Write | Book a load from a load board                        |
+| `book_loadboard_load`          | Write | Create a load from a listing (broker confirms by phone) |
 | `propose_counter_offer`        | Write | Email a broker a counter-offer on a listing          |
 
 Write tools always create `Suggested` decisions; read tools execute immediately.

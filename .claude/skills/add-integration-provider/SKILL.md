@@ -51,6 +51,8 @@ Add a separate `{Name}Client.cs` only when the vendor isn't a plain REST/JSON AP
 Use `TryGetFromJsonAsync` from `Integrations.Common` for reads - it never throws, it logs and returns
 `default`. Do **not** copy it into the family project. (`Integrations.Accounting`'s QuickBooks helpers
 deliberately _do_ throw so push failures surface. That is not a duplicate - don't fold them together.)
+Load board providers are the other exception: they call `LoadBoardHttp` (throws `LoadBoardApiException`) and
+are reached only through `ILoadBoardProviderGateway`, so a vendor error shows per provider instead of as "no freight".
 
 ### 3. Options aggregate
 
