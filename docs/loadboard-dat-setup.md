@@ -53,7 +53,7 @@ email and the DAT One user email are not secrets: the edit dialog shows them.
   days-to-pay, the posted rate, and, when enabled, the **DAT market rate** for the lane.
 - **Errors.** When DAT fails, search results show DAT's message for that provider instead of an
   empty list. An expired or revoked token gets one automatic re-authentication before the call
-  fails. A `429` is retried with back-off (`RateLimitRetryHandler`).
+  fails. A `429` is retried with back-off (the standard HTTP resilience handler).
 - **Creating a load from a listing.** DAT has **no booking API**. **Create Load** adds the load to
   LogisticsX with the truck assigned and shows the broker's phone and email. Call or email the
   broker to confirm. The broker credit gate still applies.

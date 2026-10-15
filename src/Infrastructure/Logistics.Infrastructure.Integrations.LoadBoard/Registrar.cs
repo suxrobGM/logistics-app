@@ -19,7 +19,7 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddHttpClient<DatLoadBoardService>().AddHttpMessageHandler(() => new RateLimitRetryHandler());
+        services.AddHttpClient<DatLoadBoardService>();
         services.AddScoped<TruckstopLoadBoardService>();
         services.AddScoped<OneTwo3LoadBoardService>();
         services.AddScoped<DemoLoadBoardService>();

@@ -19,10 +19,10 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddHttpClient<SamsaraEldService>().AddHttpMessageHandler(() => new RateLimitRetryHandler());
-        services.AddHttpClient<MotiveEldService>().AddHttpMessageHandler(() => new RateLimitRetryHandler());
-        services.AddHttpClient<TtEldService>().AddHttpMessageHandler(() => new RateLimitRetryHandler());
-        services.AddHttpClient<GeotabClient>().AddHttpMessageHandler(() => new RateLimitRetryHandler());
+        services.AddHttpClient<SamsaraEldService>();
+        services.AddHttpClient<MotiveEldService>();
+        services.AddHttpClient<TtEldService>();
+        services.AddHttpClient<GeotabClient>();
         services.AddScoped<GeotabEldService>();
         services.AddScoped<DemoEldService>();
 

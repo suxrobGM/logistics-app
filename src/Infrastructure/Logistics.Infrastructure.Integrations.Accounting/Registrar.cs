@@ -16,8 +16,8 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddHttpClient<QuickBooksOAuthClient>().AddHttpMessageHandler(() => new RateLimitRetryHandler());
-        services.AddHttpClient<QuickBooksOnlineService>().AddHttpMessageHandler(() => new RateLimitRetryHandler());
+        services.AddHttpClient<QuickBooksOAuthClient>();
+        services.AddHttpClient<QuickBooksOnlineService>();
         services.AddScoped<DemoAccountingService>();
 
         services.AddProviderIntegration<AccountingOptions, IAccountingProviderFactory, AccountingProviderFactory>(
