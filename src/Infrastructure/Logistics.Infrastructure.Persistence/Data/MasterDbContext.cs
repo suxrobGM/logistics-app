@@ -89,5 +89,9 @@ public class MasterDbContext : IdentityDbContext<
         // Prune entity types that are only relevant for the master database
         // It avoids issues with tenant-specific entities being included in the master context and migration errors
         builder.PruneTenantOnlyTypesForMaster();
+
+        // Discovered through Load.Vehicles before pruning drops Load. It is a JSON column on a tenant
+        // table, not an entity, so pruning by marker interface leaves it behind as an orphan table.
+        builder.Ignore<LoadVehicle>();
     }
 }
