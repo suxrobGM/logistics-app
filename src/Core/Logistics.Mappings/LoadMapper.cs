@@ -75,9 +75,7 @@ public static partial class LoadMapper
             Invoice = entity.Invoice?.ToDto(),
             TripId = entity.TripStops.FirstOrDefault()?.Trip.Id,
             TripName = entity.TripStops.FirstOrDefault()?.Trip.Name,
-            TripNumber = entity.TripStops.FirstOrDefault()?.Trip.Number,
-            TrailerId = entity.TripStops.FirstOrDefault()?.Trip.TrailerId,
-            TrailerNumber = entity.TripStops.FirstOrDefault()?.Trip.Trailer?.Number
+            TripNumber = entity.TripStops.FirstOrDefault()?.Trip.Number
         };
 
         if (entity.AssignedTruck?.CurrentAddress is not null)

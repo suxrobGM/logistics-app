@@ -68,7 +68,7 @@ public class LoadDto
     public string? TripName { get; set; }
 
     /// <summary>
-    ///     The trailer recorded on the load's trip.
+    ///     The trailer recorded on the load's trip. Set by the single-load query only.
     /// </summary>
     public Guid? TrailerId { get; set; }
     public string? TrailerNumber { get; set; }

@@ -57,7 +57,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 ### Trailers
 
-- Domain: `Entities/Trailer.cs`, `Primitives/Enums/Trailer/` (`TrailerType` incl. `Chassis`, `TrailerStatus`); `Truck.CurrentTrailerId` (hooked trailer, filtered unique index), `Trip.TrailerId` (trailer pulled on the trip; loads read it through their trip as `LoadDto.TrailerNumber`). `LengthMeters` is always metres
+- Domain: `Entities/Trailer.cs`, `Primitives/Enums/Trailer/` (`TrailerType` incl. `Chassis`, `TrailerStatus`); `Truck.CurrentTrailerId` (hooked trailer, filtered unique index), `Trip.TrailerId` (trailer pulled on the trip; loads read it through their trip as `LoadDto.TrailerNumber`, filled by `GetLoadById` only). `LengthMeters` is always metres
 - Application: `Modules/Operations/Trailers/Commands/`, `Modules/Operations/Trailers/Queries/`; hooking is `UpdateTruckCommand.CurrentTrailerId` (moves a trailer off another truck); `CreateTrip` defaults to the truck's trailer, `UpdateTrip` takes the new truck's trailer when the truck changes
 - API/UI: `TrailerController.cs` (`Permission.Trailer.*`), `tms-portal/pages/trailers/`, current-trailer picker in `pages/trucks/components/truck-form/`, trailer picker in `pages/trips/components/trip-wizard-basic/`, driver app `feature/trips/TripDetailScreen.kt`
 - Seed: `DbMigrator/Seeders/FakeData/TrailerSeeder.cs` (one per truck plus spares)

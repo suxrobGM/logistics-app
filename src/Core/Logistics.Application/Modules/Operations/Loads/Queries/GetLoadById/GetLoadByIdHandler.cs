@@ -28,6 +28,9 @@ internal sealed class GetLoadByIdHandler(
 
         var dto = load.ToDto(LoadIntermodalLookup.Empty);
         dto.Accessorials = load.Accessorials.Select(a => a.ToDto()).ToList();
+        var trip = load.TripStops.FirstOrDefault()?.Trip;
+        dto.TrailerId = trip?.TrailerId;
+        dto.TrailerNumber = trip?.Trailer?.Number;
 
         if (load is { Type: LoadType.Vehicle, AssignedTruck: not null })
         {
