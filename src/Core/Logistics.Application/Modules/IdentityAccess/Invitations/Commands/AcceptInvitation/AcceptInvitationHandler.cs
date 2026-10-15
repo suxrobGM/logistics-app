@@ -60,6 +60,7 @@ internal sealed class AcceptInvitationHandler(
         var existingUser = await userManager.FindByEmailAsync(invitation.Email);
         User user;
 
+        var claimsImportedEmployee = false;
         if (existingUser is not null)
         {
             user = existingUser;
@@ -68,6 +69,21 @@ internal sealed class AcceptInvitationHandler(
             {
                 user.TenantId = invitation.TenantId;
                 await userManager.UpdateAsync(user);
+            }
+
+            // A driver created by a data import has no password yet; accepting the invitation sets it.
+            if (!await userManager.HasPasswordAsync(user))
+            {
+                var passwordResult = await userManager.AddPasswordAsync(user, req.Password);
+                if (!passwordResult.Succeeded)
+                {
+                    var errors = string.Join(", ", passwordResult.Errors.Select(e => e.Description));
+                    return Result<AcceptInvitationResult>.Fail($"Failed to set password: {errors}");
+                }
+
+                user.EmailConfirmed = true;
+                await userManager.UpdateAsync(user);
+                claimsImportedEmployee = true;
             }
         }
         else
@@ -97,7 +113,7 @@ internal sealed class AcceptInvitationHandler(
         // Create Employee or CustomerUser based on invitation type
         if (invitation.Type == InvitationType.Employee)
         {
-            var result = await CreateEmployeeAsync(user, invitation, ct);
+            var result = await CreateEmployeeAsync(user, invitation, claimsImportedEmployee, ct);
             if (!result.IsSuccess)
             {
                 return Result<AcceptInvitationResult>.Fail(result.Error ?? "Failed to create employee.");
@@ -182,13 +198,16 @@ internal sealed class AcceptInvitationHandler(
         });
     }
 
-    private async Task<Result> CreateEmployeeAsync(User user, Invitation invitation, CancellationToken ct)
+    private async Task<Result> CreateEmployeeAsync(
+        User user, Invitation invitation, bool claimsImportedEmployee, CancellationToken ct)
     {
         // Check if employee already exists
         var existingEmployee = await tenantUow.Repository<Employee>().GetByIdAsync(user.Id, ct);
         if (existingEmployee is not null)
         {
-            return Result.Fail("User is already an employee of this organization.");
+            return claimsImportedEmployee
+                ? Result.Ok()
+                : Result.Fail("User is already an employee of this organization.");
         }
 
         var tenantRole = await tenantUow.Repository<TenantRole>()

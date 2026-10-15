@@ -72,8 +72,9 @@ internal sealed class CreateInvitationHandler(
 
         if (existingUser is not null)
         {
+            // An imported driver is a member without a password; inviting them is how they get one.
             var isAlreadyMember = await CheckExistingMembershipAsync(existingUser.Id, req.Type, ct);
-            if (isAlreadyMember)
+            if (isAlreadyMember && await userManager.HasPasswordAsync(existingUser))
             {
                 return Result<InvitationDto>.Fail("This user is already a member of your organization.");
             }
