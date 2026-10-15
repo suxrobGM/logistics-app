@@ -6,6 +6,7 @@ using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.Platform.Portal.Queries;
+using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Shared.Identity.Claims;
 
 namespace Logistics.API.Controllers;
@@ -137,6 +138,32 @@ public class PortalController(IMediator mediator) : ControllerBase
         });
 
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    ///     Download the electronic bill of lading of a vehicle load as a PDF.
+    /// </summary>
+    [HttpGet("loads/{loadId:guid}/ebol", Name = "DownloadPortalLoadVehicleBol")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Portal.ViewDocuments)]
+    public async Task<IActionResult> DownloadLoadVehicleBol(Guid loadId)
+    {
+        var customerId = await GetCustomerIdAsync();
+        if (customerId is null)
+        {
+            return NotFound(new ErrorResponse("Customer user not found."));
+        }
+
+        var result = await mediator.Send(new GetVehicleBolPdfQuery
+        {
+            LoadId = loadId,
+            CustomerId = customerId.Value
+        });
+
+        return result.IsSuccess
+            ? File(result.Value!.PdfBytes, "application/pdf", result.Value.FileName)
+            : NotFound(ErrorResponse.FromResult(result));
     }
 
     /// <summary>

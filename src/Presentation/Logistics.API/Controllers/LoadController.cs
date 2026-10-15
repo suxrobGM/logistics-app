@@ -160,6 +160,21 @@ public class LoadController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    /// <summary>
+    /// The car hauler electronic bill of lading for a vehicle load, as a PDF.
+    /// </summary>
+    [HttpGet("{id:guid}/ebol", Name = "DownloadLoadVehicleBol")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Load.View)]
+    public async Task<IActionResult> DownloadVehicleBol(Guid id)
+    {
+        var result = await mediator.Send(new GetVehicleBolPdfQuery { LoadId = id });
+        return result.IsSuccess
+            ? File(result.Value!.PdfBytes, "application/pdf", result.Value.FileName)
+            : NotFound(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("{id:guid}/assign", Name = "AssignLoadToTruck")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Notifications;
 using Logistics.Application.Modules.Operations.Loads.Commands;
+using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -32,7 +33,8 @@ public class ConfirmLoadStatusHandlerTests
         _loadRepo.GetByIdAsync(_load.Id, Arg.Any<CancellationToken>()).Returns(_load);
         _currentUser.IsInRole(Arg.Is<string[]>(r => r.Contains(TenantRoles.Driver))).Returns(true);
 
-        _sut = new ConfirmLoadStatusHandler(_tenantUow, _currentUser, Substitute.For<INotificationService>());
+        _sut = new ConfirmLoadStatusHandler(
+            _tenantUow, _currentUser, Substitute.For<INotificationService>(), Substitute.For<IVehicleDeliveryEmailService>());
     }
 
     private Load NewDispatchedLoad()
