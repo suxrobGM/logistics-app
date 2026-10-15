@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Inspections.Commands;
 
-[RequiresFeature(TenantFeature.Safety)]
+[RequiresFeature(TenantFeature.Safety, TenantFeature.VehicleTransport)]
 public class CreateConditionReportCommand : ICommand<Result<Guid>>
 {
     public required Guid LoadId { get; set; }

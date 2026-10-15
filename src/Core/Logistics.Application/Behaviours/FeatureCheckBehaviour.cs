@@ -9,8 +9,8 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Behaviours;
 
 /// <summary>
-///     Short-circuits a request whose <see cref="RequiresFeatureAttribute" /> names a feature the
-///     current tenant does not have, returning a failed result instead of running the handler.
+///     Short-circuits a request whose <see cref="RequiresFeatureAttribute" /> names only features the
+///     current tenant lacks, returning a failed result instead of running the handler.
 /// </summary>
 public sealed class FeatureCheckBehaviour<TRequest, TResponse>(
     IFeatureService featureService,
@@ -44,10 +44,18 @@ public sealed class FeatureCheckBehaviour<TRequest, TResponse>(
             return await next(cancellationToken);
         }
 
-        var check = await featureService.CheckFeatureAsync(tenantId, Attribute.Feature);
+        Result? firstFailure = null;
+        foreach (var feature in Attribute.Features)
+        {
+            var check = await featureService.CheckFeatureAsync(tenantId, feature);
+            if (check.IsSuccess)
+            {
+                return await next(cancellationToken);
+            }
 
-        return check.IsSuccess
-            ? await next(cancellationToken)
-            : new TResponse { Error = check.Error, ErrorCode = check.ErrorCode };
+            firstFailure ??= check;
+        }
+
+        return new TResponse { Error = firstFailure?.Error, ErrorCode = firstFailure?.ErrorCode };
     }
 }

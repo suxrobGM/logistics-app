@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Compliance.Inspections.Commands;
 
-[RequiresFeature(TenantFeature.Safety)]
+[RequiresFeature(TenantFeature.Safety, TenantFeature.VehicleTransport)]
 public class DecodeVinCommand : ICommand<Result<VehicleInfoDto>>
 {
     public required string Vin { get; set; }

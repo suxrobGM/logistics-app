@@ -3,14 +3,15 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Attributes;
 
 /// <summary>
-/// Marks a command or query as requiring a specific tenant feature to be enabled.
+/// Marks a command or query as requiring a tenant feature to be enabled.
 /// Used by the FeatureCheckBehavior pipeline to enforce feature toggles.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-public sealed class RequiresFeatureAttribute(TenantFeature feature) : Attribute
+public sealed class RequiresFeatureAttribute(params TenantFeature[] features) : Attribute
 {
     /// <summary>
-    /// The feature that must be enabled for the tenant to execute this request.
+    /// The features that admit the request: **any** one enabled is enough. When none is, the first
+    /// one's error is returned, so list the feature whose upgrade prompt fits best first.
     /// </summary>
-    public TenantFeature Feature { get; } = feature;
+    public TenantFeature[] Features { get; } = features;
 }

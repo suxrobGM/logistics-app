@@ -275,6 +275,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Inspection/LoadConditionReport.cs` (`LoadVehicleId` = the load vehicle inspected), `ConditionDefect.cs` (`Zone` / `DamageType` / `PhotoDocumentId` for diagram defects); enums `VehicleDamageZone`, `VehicleDamageType` + `VehicleDamageExtensions` (BOL codes, zone → part category) in `Domain.Primitives/Enums/Inspection/`
 - Application: `Modules/Compliance/Inspections/Commands/`, `Modules/Compliance/Inspections/Queries/`
 - API/UI: `InspectionController.cs` (list/get/create + `GET /inspections/parts`), `VinController.cs` (`GET /vins/{vin}`)
+- Feature flag: `TenantFeature.Safety` **or** `TenantFeature.VehicleTransport` (`[RequiresFeature]` takes several features, any one admits); car haulers get condition reports and VIN decode on any plan
 
 ### Accidents
 
