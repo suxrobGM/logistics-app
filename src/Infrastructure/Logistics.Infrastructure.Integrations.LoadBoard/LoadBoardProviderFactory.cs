@@ -1,4 +1,3 @@
-using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
@@ -24,11 +23,4 @@ internal sealed class LoadBoardProviderFactory(
             [LoadBoardProviderType.Dat] = typeof(DatLoadBoardService),
             [LoadBoardProviderType.Demo] = typeof(DemoLoadBoardService)
         };
-
-    public ILoadBoardProviderService GetProvider(LoadBoardConfiguration configuration)
-    {
-        var service = GetProvider(configuration.ProviderType);
-        service.Initialize(configuration);
-        return service;
-    }
 }

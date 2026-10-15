@@ -1,6 +1,4 @@
-using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Application.Abstractions.LoadBoard;
 
@@ -13,11 +11,6 @@ public interface ILoadBoardProviderFactory
     /// Get a load board provider service by type
     /// </summary>
     ILoadBoardProviderService GetProvider(LoadBoardProviderType providerType);
-
-    /// <summary>
-    /// Get a load board provider service initialized with the given configuration
-    /// </summary>
-    ILoadBoardProviderService GetProvider(LoadBoardConfiguration configuration);
 
     /// <summary>
     /// Check if a provider type is supported
