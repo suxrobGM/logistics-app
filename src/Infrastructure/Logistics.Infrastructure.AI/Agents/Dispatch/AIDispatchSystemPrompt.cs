@@ -35,7 +35,7 @@ internal static class AIDispatchSystemPrompt
         var sanitizedName = PromptText.SanitizeCompanyName(context.CompanyName);
         var policySection = BuildPolicySection(context.Policy);
 
-        // ~310 tokens, and names tools a gated tenant never gets - so it travels with them.
+        // ~420 tokens, and names tools a gated tenant never gets - so it travels with them.
         var intermodalSection = context.HasIntermodal
             ? """
 
@@ -53,6 +53,11 @@ internal static class AIDispatchSystemPrompt
                 `origin_lat` / `origin_lng`, not from terminal data.
               - The container's current terminal can differ from the load's origin terminal. If it does, say so
                 in your reasoning - repositioning the box is extra work the dispatcher should see.
+              - **Deadline priority**: loads also report `container_last_free_day` and
+                `container_days_until_last_free_day` (0 = today, negative = demurrage already accruing). Assign
+                loads at 1 day or less BEFORE loads with slack, even over a better-paying one, and cite the
+                last free day in the reasoning. `container_on_hold: true` means the terminal will not release
+                the box - do NOT assign it; list it under Issues.
               """
             : "";
 

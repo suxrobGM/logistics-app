@@ -197,7 +197,21 @@ public class AIDispatchSystemPromptTests
     }
 
     /// <summary>
-    /// ~310 tokens per request, naming tools a gated tenant is not given - a rule pointing at a
+    /// The roadmap's acceptance: a box one day from demurrage outranks a load with slack, and the
+    /// agent cites the deadline.
+    /// </summary>
+    [Fact]
+    public void Build_Intermodal_RanksLoadsByLastFreeDayAndSkipsHolds()
+    {
+        var prompt = IntermodalPrompt();
+
+        Assert.Contains("container_days_until_last_free_day", prompt);
+        Assert.Contains("BEFORE loads with slack", prompt);
+        Assert.Contains("container_on_hold", prompt);
+    }
+
+    /// <summary>
+    /// ~420 tokens per request, naming tools a gated tenant is not given - a rule pointing at a
     /// missing tool is worse than no rule.
     /// </summary>
     [Fact]

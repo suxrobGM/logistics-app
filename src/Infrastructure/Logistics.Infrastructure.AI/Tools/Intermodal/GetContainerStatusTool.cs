@@ -26,7 +26,7 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow)
 
     public static AgentToolDefinition Definition => new(
         "get_container_status",
-        "Look up an intermodal container by its ISO 6346 number. Returns status (Empty, Loaded, AtPort, InTransit, Delivered, Returned), ISO type, laden flag, gross weight, seal, booking reference, bill of lading, the terminal the box is currently at, and the load it is linked to. Call this for any load that reports a container_number before assigning it.")
+        "Look up an intermodal container by its ISO 6346 number. Returns status (Empty, Loaded, AtPort, InTransit, Delivered, Returned), ISO type, laden flag, gross weight, seal, booking reference, bill of lading, the terminal the box is currently at, the load it is linked to, and its drayage state: steamship line, demurrage (last free day) and per-diem (empty return) clocks with days remaining/over and accrued charge, chassis days, customs/freight/line holds and pickup availability, pickup/return appointments, the empty return terminal and any street turn. Call this for any load that reports a container_number before assigning it.")
     {
         RequiredFeature = TenantFeature.IntermodalContainers,
         RequiredPermission = Permission.Dispatch.View,
@@ -63,6 +63,9 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow)
             .GetAsync(l => l.ContainerId == container.Id, ct);
 
         var terminal = container.CurrentTerminal;
+        var emptyReturn = container.EmptyReturnTerminal;
+        var now = DateTime.UtcNow;
+        var freeTime = container.GetFreeTime(now);
 
         return ToolResult.Ok(new
         {
@@ -91,6 +94,41 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow)
             loaded_at = container.LoadedAt,
             delivered_at = container.DeliveredAt,
             returned_at = container.ReturnedAt,
+            steamship_line = container.SteamshipLineScac is null && container.SteamshipLineName is null
+                ? null
+                : new { scac = container.SteamshipLineScac, name = container.SteamshipLineName },
+            picked_up_at = container.PickedUpAt,
+            demurrage = FormatClock(freeTime.Demurrage),
+            per_diem = FormatClock(freeTime.PerDiem),
+            chassis = container.ChassisNumber is null && container.ChassisProvider is null
+                ? null
+                : new
+                {
+                    number = container.ChassisNumber,
+                    provider = container.ChassisProvider?.GetDescription(),
+                    days = freeTime.Chassis.Days,
+                    charge = freeTime.Chassis.Charge
+                },
+            total_accrued_charge = freeTime.TotalCharge,
+            holds = new
+            {
+                on_hold = container.IsOnHold,
+                customs = container.CustomsHold,
+                freight = container.FreightHold,
+                line = container.LineHold,
+                other = container.OtherHold
+            },
+            available_for_pickup = container.IsAvailableForPickup(now),
+            available_for_pickup_at = container.AvailableForPickupAt,
+            pickup_appointment = FormatAppointment(
+                container.PickupAppointmentNumber, container.PickupAppointmentFrom, container.PickupAppointmentTo),
+            return_appointment = FormatAppointment(
+                container.ReturnAppointmentNumber, container.ReturnAppointmentFrom, container.ReturnAppointmentTo),
+            empty_return_terminal = emptyReturn is null
+                ? null
+                : new { id = emptyReturn.Id, name = emptyReturn.Name, code = emptyReturn.Code },
+            street_turned_at = container.StreetTurnedAt,
+            street_turn_booking_reference = container.StreetTurnBookingReference,
             linked_load = load is null
                 ? null
                 : new
@@ -102,4 +140,21 @@ internal sealed class GetContainerStatusTool(ITenantUnitOfWork tenantUow)
                 }
         });
     }
+
+    private static object? FormatClock(FreeTimeClock clock) => clock.Status == FreeTimeStatus.NotSet
+        ? null
+        : new
+        {
+            deadline = clock.Deadline,
+            status = clock.Status.ToString(),
+            days_remaining = clock.DaysRemaining,
+            days_over = clock.DaysOver,
+            rate_per_day = clock.RatePerDay,
+            accrued_charge = clock.Charge
+        };
+
+    private static object? FormatAppointment(string? number, DateTime? from, DateTime? to) =>
+        number is null && from is null
+            ? null
+            : new { number, window_from = from, window_to = to };
 }

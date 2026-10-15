@@ -25,6 +25,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
             return ToolResult.Error(result.Error);
 
         var items = result.Value?.ToList() ?? [];
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var loads = items.Select(l => new AgentToolLoadDto
         {
             Id = l.Id,
@@ -42,7 +43,10 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
             ContainerNumber = l.ContainerNumber,
             ContainerIsoType = l.ContainerIsoType?.ToString(),
             OriginTerminal = FormatTerminal(l.OriginTerminalName, l.OriginTerminalCode),
-            DestinationTerminal = FormatTerminal(l.DestinationTerminalName, l.DestinationTerminalCode)
+            DestinationTerminal = FormatTerminal(l.DestinationTerminalName, l.DestinationTerminalCode),
+            ContainerLastFreeDay = l.ContainerLastFreeDay,
+            ContainerDaysUntilLastFreeDay = l.ContainerLastFreeDay is { } lfd ? lfd.DayNumber - today.DayNumber : null,
+            ContainerOnHold = l.ContainerIsOnHold
         }).ToList();
 
         return ToolResult.Typed(new AgentToolResultDto { Loads = loads, Count = items.Count });

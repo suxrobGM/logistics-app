@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Mappings;
 
 /// <summary>Container display values for one load.</summary>
-public readonly record struct ContainerRef(string Number, ContainerIsoType IsoType);
+public readonly record struct ContainerRef(string Number, ContainerIsoType IsoType, DateOnly? LastFreeDay, bool IsOnHold);
 
 /// <summary>Terminal display values for one load.</summary>
 public readonly record struct TerminalRef(string Name, string Code);

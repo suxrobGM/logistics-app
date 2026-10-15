@@ -48,6 +48,8 @@ public static partial class LoadMapper
             ContainerId = entity.ContainerId,
             ContainerNumber = container?.Number,
             ContainerIsoType = container?.IsoType,
+            ContainerLastFreeDay = container?.LastFreeDay,
+            ContainerIsOnHold = container?.IsOnHold,
             OriginTerminalId = entity.OriginTerminalId,
             OriginTerminalName = originTerminal?.Name,
             OriginTerminalCode = originTerminal?.Code,

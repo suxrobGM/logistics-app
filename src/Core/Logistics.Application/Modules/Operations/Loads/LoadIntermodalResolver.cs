@@ -33,7 +33,11 @@ internal static class LoadIntermodalResolver
             ? []
             : await uow.Repository<Container>().Query()
                 .Where(c => containerIds.Contains(c.Id))
-                .ToDictionaryAsync(c => c.Id, c => new ContainerRef(c.Number, c.IsoType), ct);
+                .ToDictionaryAsync(c => c.Id, c => new ContainerRef(
+                    c.Number,
+                    c.IsoType,
+                    c.LastFreeDay,
+                    c.CustomsHold || c.FreightHold || c.LineHold || c.OtherHold), ct);
 
         var terminals = terminalIds.Length == 0
             ? []

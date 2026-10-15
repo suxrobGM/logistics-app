@@ -88,6 +88,12 @@ public class AgentToolLoadDto
     public string? ContainerIsoType { get; set; }
     public string? OriginTerminal { get; set; }
     public string? DestinationTerminal { get; set; }
+
+    // Drayage deadline-aware dispatch: the agent ranks loads by these, so they ride on the list
+    // rather than needing a get_container_status call per load to discover them.
+    public DateOnly? ContainerLastFreeDay { get; set; }
+    public int? ContainerDaysUntilLastFreeDay { get; set; }
+    public bool? ContainerOnHold { get; set; }
 }
 
 public class AgentToolTruckDto

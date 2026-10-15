@@ -34,6 +34,8 @@ public class LoadDto
     public Guid? ContainerId { get; set; }
     public string? ContainerNumber { get; set; }
     public ContainerIsoType? ContainerIsoType { get; set; }
+    public DateOnly? ContainerLastFreeDay { get; set; }
+    public bool? ContainerIsOnHold { get; set; }
     public Guid? OriginTerminalId { get; set; }
     public string? OriginTerminalName { get; set; }
     public string? OriginTerminalCode { get; set; }

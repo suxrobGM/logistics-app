@@ -133,6 +133,37 @@ public class GetContainerStatusToolTests
         Assert.Equal("TCLU7654321", root.GetProperty("number").GetString());
         Assert.Equal(JsonValueKind.Null, root.GetProperty("current_terminal").ValueKind);
         Assert.Equal(JsonValueKind.Null, root.GetProperty("linked_load").ValueKind);
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("demurrage").ValueKind);
+    }
+
+    [Fact]
+    public async Task Execute_WithFreeTimeAndHold_ReportsClocksAndHolds()
+    {
+        var containerId = Guid.NewGuid();
+        var container = new Container
+        {
+            Number = "TCLU7654321",
+            IsoType = ContainerIsoType.Gp20,
+            LastFreeDay = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-2),
+            DemurrageRatePerDay = 150m,
+            CustomsHold = true
+        };
+        _containerRepo.GetByIdAsync(containerId, Arg.Any<CancellationToken>()).Returns(container);
+        _loadRepo
+            .GetAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns((Load?)null);
+
+        var input = new JsonObject { ["container_id"] = containerId.ToString() };
+
+        var result = await _sut.ExecuteAsync(input, CancellationToken.None);
+        var root = JsonDocument.Parse(result).RootElement;
+
+        var demurrage = root.GetProperty("demurrage");
+        Assert.Equal("Overdue", demurrage.GetProperty("status").GetString());
+        Assert.Equal(2, demurrage.GetProperty("days_over").GetInt32());
+        Assert.Equal(300m, demurrage.GetProperty("accrued_charge").GetDecimal());
+        Assert.True(root.GetProperty("holds").GetProperty("customs").GetBoolean());
+        Assert.False(root.GetProperty("available_for_pickup").GetBoolean());
     }
 
     private static Load CreateLoad(string name)
