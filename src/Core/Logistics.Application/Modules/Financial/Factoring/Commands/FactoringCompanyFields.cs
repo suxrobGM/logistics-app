@@ -10,7 +10,6 @@ internal static class FactoringCompanyFields
         company.RemitToAddress = fields.RemitToAddress;
         company.SubmissionEmail = fields.SubmissionEmail.Trim();
         company.Phone = fields.Phone;
-        company.RecourseType = fields.RecourseType;
         company.AdvanceRatePercent = fields.AdvanceRatePercent;
         company.FeePercent = fields.FeePercent;
     }

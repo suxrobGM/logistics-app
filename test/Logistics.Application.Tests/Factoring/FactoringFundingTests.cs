@@ -23,7 +23,7 @@ public class FactoringFundingTests
     }
 
     [Fact]
-    public void EstimateAmounts_NonRecourseNoReserve_ReserveIsZero()
+    public void EstimateAmounts_NoReserve_ReserveIsZero()
     {
         var amounts = Company(advance: 97m, fee: 3m).EstimateAmounts(2000m);
 

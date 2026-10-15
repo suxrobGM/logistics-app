@@ -17,7 +17,7 @@ for carriers already locked into factoring contracts.
 ## What was built
 
 - **Factor profiles** (`FactoringCompany`, Settings > Factoring): name, submission email, phone,
-  remit-to address, recourse or non-recourse, advance rate and fee. The reserve is what the two
+  remit-to address, advance rate and fee. The reserve is what the two
   leave over.
 - **Factored customers**: `Customer.FactoringCompanyId`. Their invoice PDFs carry a notice of
   assignment with the factor's remit-to address (and no carrier payment state), the invoice email

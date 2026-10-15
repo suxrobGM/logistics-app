@@ -1,4 +1,3 @@
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
@@ -10,7 +9,6 @@ public record FactoringCompanyDto
     public Address? RemitToAddress { get; set; }
     public required string SubmissionEmail { get; set; }
     public string? Phone { get; set; }
-    public FactoringRecourseType RecourseType { get; set; }
     public decimal AdvanceRatePercent { get; set; }
     public decimal FeePercent { get; set; }
 

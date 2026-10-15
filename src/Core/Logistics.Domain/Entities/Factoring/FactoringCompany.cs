@@ -1,5 +1,4 @@
 using Logistics.Domain.Core;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
@@ -23,8 +22,6 @@ public class FactoringCompany : AuditableEntity, ITenantEntity
     public required string SubmissionEmail { get; set; }
 
     public string? Phone { get; set; }
-
-    public FactoringRecourseType RecourseType { get; set; } = FactoringRecourseType.Recourse;
 
     /// <summary>
     /// Percent of an invoice paid to the carrier when the factor funds it.

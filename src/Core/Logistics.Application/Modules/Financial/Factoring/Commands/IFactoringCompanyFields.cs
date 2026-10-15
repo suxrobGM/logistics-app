@@ -1,4 +1,3 @@
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Modules.Financial.Factoring.Commands;
@@ -12,7 +11,6 @@ public interface IFactoringCompanyFields
     Address? RemitToAddress { get; }
     string SubmissionEmail { get; }
     string? Phone { get; }
-    FactoringRecourseType RecourseType { get; }
     decimal AdvanceRatePercent { get; }
     decimal FeePercent { get; }
 }
