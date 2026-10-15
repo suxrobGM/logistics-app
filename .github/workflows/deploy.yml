@@ -124,11 +124,12 @@ jobs:
           GHCR_PAT: ${{ secrets.GHCR_PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           IMAGE_TAG: latest
+          SENTRY_RELEASE: ${{ github.sha }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: DOCKER_ENV,GHCR_PAT,GITHUB_REPOSITORY,IMAGE_TAG
+          envs: DOCKER_ENV,GHCR_PAT,GITHUB_REPOSITORY,IMAGE_TAG,SENTRY_RELEASE
           script: |
             set -eu
             cd ${{ env.APP_DIR }}
@@ -139,6 +140,7 @@ jobs:
             export GITHUB_REPOSITORY=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
             echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY" >> .env
             echo "IMAGE_TAG=$IMAGE_TAG" >> .env
+            echo "SENTRY_RELEASE=$SENTRY_RELEASE" >> .env
 
             echo "$GHCR_PAT" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 

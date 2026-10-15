@@ -43,6 +43,10 @@ services:
 
   admin-portal:
     image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/admin-portal:${IMAGE_TAG:-latest}"
+    environment:
+      SENTRY_DSN: "${SENTRY_DSN_ADMIN_PORTAL:-}"
+      SENTRY_ENVIRONMENT: "${SENTRY_ENVIRONMENT:-production}"
+      SENTRY_RELEASE: "${SENTRY_RELEASE:-}"
     ports:
       - "127.0.0.1:${ADMIN_PORTAL_PORT:-7002}:80"
     depends_on:
@@ -58,6 +62,9 @@ services:
     image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/tms-portal:${IMAGE_TAG:-latest}"
     environment:
       MAPBOX_TOKEN: "${Mapbox__AccessToken}"
+      SENTRY_DSN: "${SENTRY_DSN_TMS_PORTAL:-}"
+      SENTRY_ENVIRONMENT: "${SENTRY_ENVIRONMENT:-production}"
+      SENTRY_RELEASE: "${SENTRY_RELEASE:-}"
     ports:
       - "127.0.0.1:${TMS_PORTAL_PORT:-7003}:80"
     depends_on:
@@ -71,6 +78,10 @@ services:
 
   customer-portal:
     image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/customer-portal:${IMAGE_TAG:-latest}"
+    environment:
+      SENTRY_DSN: "${SENTRY_DSN_CUSTOMER_PORTAL:-}"
+      SENTRY_ENVIRONMENT: "${SENTRY_ENVIRONMENT:-production}"
+      SENTRY_RELEASE: "${SENTRY_RELEASE:-}"
     ports:
       - "127.0.0.1:${CUSTOMER_PORTAL_PORT:-7004}:80"
     depends_on:
