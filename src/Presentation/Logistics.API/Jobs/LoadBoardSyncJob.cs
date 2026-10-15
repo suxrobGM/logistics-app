@@ -1,151 +1,107 @@
 using Hangfire;
+using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Models;
-using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
 namespace Logistics.API.Jobs;
 
 /// <summary>
-///     Hangfire job that periodically manages load board data for all tenants.
-///     - Refreshes posted trucks every 30 minutes to prevent expiration
-///     - Cleans up expired listings hourly
+///     Keeps load board data honest for every tenant:
+///     - every 30 minutes, reconciles active truck posts with what each board still holds
+///     - hourly, expires stale listings and posts past their window, and deletes old ones
 /// </summary>
 public class LoadBoardSyncJob(
     ILogger<LoadBoardSyncJob> logger,
     IServiceScopeFactory scopeFactory)
 {
-    /// <summary>
-    ///     Schedule the Load Board sync jobs.
-    /// </summary>
+    private const string LegacyRefreshJobId = "loadboard-refresh-trucks";
+
     public static void ScheduleJobs()
     {
-        // Refresh posted trucks every 30 minutes
+        // The old job re-sent every post every 30 minutes; its method no longer exists.
+        RecurringJob.RemoveIfExists(LegacyRefreshJobId);
+
         RecurringJob.AddOrUpdate<LoadBoardSyncJob>(
-            "loadboard-refresh-trucks",
-            job => job.RefreshPostedTrucksAsync(CancellationToken.None),
+            "loadboard-reconcile-trucks",
+            job => job.ReconcilePostedTrucksAsync(CancellationToken.None),
             Cron.MinuteInterval(30));
 
-        // Clean up expired listings every hour
         RecurringJob.AddOrUpdate<LoadBoardSyncJob>(
             "loadboard-cleanup",
             job => job.CleanupExpiredDataAsync(CancellationToken.None),
             Cron.Hourly());
     }
 
-    /// <summary>
-    ///     Refresh all posted trucks to prevent expiration on load boards.
-    /// </summary>
     [AutomaticRetry(Attempts = 2)]
-    public Task RefreshPostedTrucksAsync(CancellationToken ct) =>
+    public Task ReconcilePostedTrucksAsync(CancellationToken ct) =>
         TenantJobRunner.ForEachTenantAsync(
-            scopeFactory, logger, "load board truck refresh", RefreshTenantTrucksAsync, ct);
+            scopeFactory, logger, "load board post reconciliation", ReconcileTenantTrucksAsync, ct);
 
-    /// <summary>
-    ///     Clean up expired listings and expired truck posts.
-    /// </summary>
     [AutomaticRetry(Attempts = 2)]
     public Task CleanupExpiredDataAsync(CancellationToken ct) =>
         TenantJobRunner.ForEachTenantAsync(
             scopeFactory, logger, "load board cleanup", CleanupTenantDataAsync, ct);
 
-    private async Task RefreshTenantTrucksAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
+    /// <summary>
+    /// A post the board no longer lists expired or was taken down there (by DAT's own expiry,
+    /// or a dispatcher in DAT One); mark it expired so nobody plans around it.
+    /// </summary>
+    private async Task ReconcileTenantTrucksAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-        var tokenService = scope.ServiceProvider.GetRequiredService<ILoadBoardTokenService>();
-
-        tenantUow.SetCurrentTenant(tenant);
-
-        // Get all active posted trucks
-        var postedTrucks = await tenantUow.Repository<PostedTruck>()
-            .GetListAsync(p => p.Status == PostedTruckStatus.Available, ct);
-
-        if (postedTrucks.Count == 0)
+        if (!await IsLoadBoardEnabledAsync(scope, tenant))
         {
-            logger.LogDebug("No active posted trucks for tenant {TenantName}", tenant.Name);
             return;
         }
 
-        // Group by provider
-        var trucksByProvider = postedTrucks.GroupBy(p => p.ProviderType);
+        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
+        var gateway = scope.ServiceProvider.GetRequiredService<ILoadBoardProviderGateway>();
+        tenantUow.SetCurrentTenant(tenant);
 
-        foreach (var providerGroup in trucksByProvider)
+        var postedTrucks = await tenantUow.Repository<PostedTruck>()
+            .GetListAsync(p => p.Status == PostedTruckStatus.Available && p.ExternalPostId != null, ct);
+
+        foreach (var providerGroup in postedTrucks.GroupBy(p => p.ProviderType))
         {
-            if (ct.IsCancellationRequested)
-            {
-                break;
-            }
-
             var config = await tenantUow.Repository<LoadBoardConfiguration>()
                 .GetAsync(c => c.ProviderType == providerGroup.Key && c.IsActive, ct);
-
             if (config is null)
             {
-                logger.LogWarning("No active config for {ProviderType}, skipping refresh", providerGroup.Key);
                 continue;
             }
 
-            var providerResult = await tokenService.GetReadyProviderAsync(config, ct);
-            if (!providerResult.IsSuccess || providerResult.Value is null)
+            var result = await gateway.ExecuteAsync(config, p => p.GetPostedTrucksAsync(ct), ct);
+            if (!result.IsSuccess)
             {
-                logger.LogWarning("Could not authenticate with {ProviderType} for tenant {TenantName}: {Error}",
-                    providerGroup.Key, tenant.Name, providerResult.Error);
+                logger.LogWarning("Could not list {Provider} truck posts for tenant {TenantName}: {Error}",
+                    providerGroup.Key, tenant.Name, result.Error);
                 continue;
             }
 
-            var provider = providerResult.Value;
+            if (result.Value is not { } boardPosts)
+            {
+                continue;
+            }
 
+            var onBoard = boardPosts.ToDictionary(p => p.ExternalPostId);
+            var now = DateTime.UtcNow;
             foreach (var postedTruck in providerGroup)
             {
-                if (ct.IsCancellationRequested)
+                if (onBoard.TryGetValue(postedTruck.ExternalPostId!, out var boardPost))
                 {
-                    break;
+                    postedTruck.ExpiresAt = boardPost.ExpiresAt ?? postedTruck.ExpiresAt;
+                    postedTruck.LastRefreshedAt = now;
                 }
-
-                try
+                else
                 {
-                    if (string.IsNullOrEmpty(postedTruck.ExternalPostId))
-                    {
-                        continue;
-                    }
-
-                    // Refresh the post by updating with same data
-                    var updated = await provider.UpdateTruckPostAsync(
-                        postedTruck.ExternalPostId,
-                        new PostTruckRequest
-                        {
-                            TruckId = postedTruck.TruckId,
-                            ProviderType = postedTruck.ProviderType,
-                            AvailableAtAddress = postedTruck.AvailableAtAddress,
-                            AvailableAtLocation = postedTruck.AvailableAtLocation,
-                            DestinationPreference = postedTruck.DestinationPreference,
-                            DestinationRadius = postedTruck.DestinationRadius,
-                            AvailableFrom = postedTruck.AvailableFrom,
-                            AvailableTo = postedTruck.AvailableTo,
-                            EquipmentType = postedTruck.EquipmentType,
-                            MaxWeight = postedTruck.MaxWeight,
-                            MaxLength = postedTruck.MaxLength
-                        });
-
-                    if (updated)
-                    {
-                        postedTruck.LastRefreshedAt = DateTime.UtcNow;
-                    }
-                    else
-                    {
-                        logger.LogWarning(
-                            "Failed to refresh posted truck {PostedTruckId} on {ProviderType}",
-                            postedTruck.Id, postedTruck.ProviderType);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex,
-                        "Error refreshing posted truck {PostedTruckId} on {ProviderType}",
-                        postedTruck.Id, postedTruck.ProviderType);
+                    postedTruck.Status = PostedTruckStatus.Expired;
+                    logger.LogInformation("{Provider} no longer lists truck post {ExternalPostId}; marked expired",
+                        providerGroup.Key, postedTruck.ExternalPostId);
                 }
             }
+
+            config.LastSyncedAt = now;
         }
 
         await tenantUow.SaveChangesAsync(ct);
@@ -153,15 +109,18 @@ public class LoadBoardSyncJob(
 
     private async Task CleanupTenantDataAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
+        if (!await IsLoadBoardEnabledAsync(scope, tenant))
+        {
+            return;
+        }
+
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
 
         tenantUow.SetCurrentTenant(tenant);
         var now = DateTime.UtcNow;
 
-        // Clean up expired listings (delete those that expired more than 24 hours ago)
         var expiredListings = await tenantUow.Repository<LoadBoardListing>()
-            .GetListAsync(l => l.ExpiresAt < now.AddHours(-24)
-                && l.Status == LoadBoardListingStatus.Available, ct);
+            .GetListAsync(l => l.ExpiresAt < now && l.Status == LoadBoardListingStatus.Available, ct);
 
         foreach (var listing in expiredListings)
         {
@@ -175,10 +134,10 @@ public class LoadBoardSyncJob(
                 expiredListings.Count, tenant.Name);
         }
 
-        // Mark posted trucks as expired if past their availability window
         var expiredTrucks = await tenantUow.Repository<PostedTruck>()
-            .GetListAsync(p => p.Status == PostedTruckStatus.Available
-                && p.AvailableTo.HasValue && p.AvailableTo.Value < now, ct);
+            .GetListAsync(p => p.Status == PostedTruckStatus.Available &&
+                               ((p.AvailableTo.HasValue && p.AvailableTo.Value < now) ||
+                                (p.ExpiresAt.HasValue && p.ExpiresAt.Value < now)), ct);
 
         foreach (var truck in expiredTrucks)
         {
@@ -192,7 +151,6 @@ public class LoadBoardSyncJob(
                 expiredTrucks.Count, tenant.Name);
         }
 
-        // Delete very old expired data (older than 30 days)
         var cutoffDate = now.AddDays(-30);
 
         var oldListings = await tenantUow.Repository<LoadBoardListing>()
@@ -214,5 +172,14 @@ public class LoadBoardSyncJob(
         }
 
         await tenantUow.SaveChangesAsync(ct);
+    }
+
+    /// <summary>
+    /// Jobs bypass the request pipeline, so [RequiresFeature] does not gate them.
+    /// </summary>
+    private static async Task<bool> IsLoadBoardEnabledAsync(IServiceScope scope, Tenant tenant)
+    {
+        var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
+        return await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.LoadBoard);
     }
 }

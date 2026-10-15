@@ -1,65 +1,54 @@
-using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.LoadBoard;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class CreateLoadBoardConfigurationHandler(
     ITenantUnitOfWork tenantUow,
     ILoadBoardProviderFactory providerFactory,
+    ILoadBoardProviderGateway gateway,
     ILogger<CreateLoadBoardConfigurationHandler> logger)
     : IRequestHandler<CreateLoadBoardConfigurationCommand, Result>
 {
     public async Task<Result> Handle(CreateLoadBoardConfigurationCommand req, CancellationToken ct)
     {
-        // Check if provider is supported
         if (!providerFactory.IsProviderSupported(req.ProviderType))
         {
             return Result.Fail($"Load board provider '{req.ProviderType}' is not supported");
         }
 
-        // Check if configuration already exists for this provider
         var existingConfig = await tenantUow.Repository<LoadBoardConfiguration>()
             .GetAsync(c => c.ProviderType == req.ProviderType, ct);
 
         if (existingConfig is not null)
         {
             return Result.Fail(
-                $"Configuration for {req.ProviderType} already exists. Please update the existing configuration.");
+                $"{req.ProviderType.GetDescription()} is already connected. Edit the existing connection instead.");
         }
 
         var config = new LoadBoardConfiguration
         {
             ProviderType = req.ProviderType,
-            ApiKey = req.ApiKey,
+            ApiKey = req.ApiKey.Trim(),
             ApiSecret = req.ApiSecret,
-            WebhookSecret = req.WebhookSecret,
+            UserEmail = string.IsNullOrWhiteSpace(req.UserEmail) ? null : req.UserEmail.Trim(),
+            MarketRatesEnabled = req.MarketRatesEnabled,
             CompanyDotNumber = req.CompanyDotNumber,
             CompanyMcNumber = req.CompanyMcNumber,
             IsActive = true
         };
 
-        // OAuth providers validate by acquiring; the token must be stored or later calls are unauthenticated
-        var providerService = providerFactory.GetProvider(req.ProviderType);
-        if (providerService.RequiresOAuthToken)
+        // Token providers prove the credentials by acquiring one, and keep it for the first call.
+        var connection = await gateway.TestConnectionAsync(config, ct);
+        if (!connection.IsSuccess)
         {
-            var token = await providerService.AcquireTokenAsync(req.ApiKey, req.ApiSecret);
-            if (token is null)
-            {
-                return Result.Fail("Invalid API credentials. Please verify your API key and try again.");
-            }
-
-            config.AccessToken = token.AccessToken;
-            config.RefreshToken = token.RefreshToken;
-            config.TokenExpiresAt = token.ExpiresAt;
-        }
-        else if (!await providerService.ValidateCredentialsAsync(req.ApiKey, req.ApiSecret))
-        {
-            return Result.Fail("Invalid API credentials. Please verify your API key and try again.");
+            return connection;
         }
 
         await tenantUow.Repository<LoadBoardConfiguration>().AddAsync(config, ct);

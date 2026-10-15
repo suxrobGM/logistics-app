@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
@@ -18,16 +19,13 @@ namespace Logistics.Application.Tests.LoadBoard;
 public class BookLoadBoardLoadHandlerTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ILoadBoardTokenService _tokenService = Substitute.For<ILoadBoardTokenService>();
-    private readonly ILoadBoardProviderService _provider = Substitute.For<ILoadBoardProviderService>();
+    private readonly ICurrentUserService _currentUser = Substitute.For<ICurrentUserService>();
     private readonly IBrokerCreditService _brokerCreditService = Substitute.For<IBrokerCreditService>();
     private readonly IInboundEmailRouteRegistry _routeRegistry = Substitute.For<IInboundEmailRouteRegistry>();
     private readonly IAIDispatchBroadcastService _broadcastService = Substitute.For<IAIDispatchBroadcastService>();
 
     private readonly ITenantRepository<LoadBoardListing, Guid> _listingRepo =
         Substitute.For<ITenantRepository<LoadBoardListing, Guid>>();
-    private readonly ITenantRepository<LoadBoardConfiguration, Guid> _configRepo =
-        Substitute.For<ITenantRepository<LoadBoardConfiguration, Guid>>();
     private readonly ITenantRepository<Truck, Guid> _truckRepo =
         Substitute.For<ITenantRepository<Truck, Guid>>();
     private readonly ITenantRepository<Employee, Guid> _employeeRepo =
@@ -57,7 +55,6 @@ public class BookLoadBoardLoadHandlerTests
 
         var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
         var dispatcher = new Employee { Email = "dispatcher@test.com", FirstName = "Dana", LastName = "Doe" };
-        var config = new LoadBoardConfiguration { ProviderType = LoadBoardProviderType.Demo, ApiKey = "demo" };
 
         _command = new BookLoadBoardLoadCommand
         {
@@ -67,7 +64,6 @@ public class BookLoadBoardLoadHandlerTests
         };
 
         _tenantUow.Repository<LoadBoardListing>().Returns(_listingRepo);
-        _tenantUow.Repository<LoadBoardConfiguration>().Returns(_configRepo);
         _tenantUow.Repository<Truck>().Returns(_truckRepo);
         _tenantUow.Repository<Employee>().Returns(_employeeRepo);
         _tenantUow.Repository<Customer>().Returns(_customerRepo);
@@ -76,23 +72,16 @@ public class BookLoadBoardLoadHandlerTests
         _tenantUow.GetCurrentTenant().Returns(_tenant);
 
         _listingRepo.GetByIdAsync(_listing.Id, Arg.Any<CancellationToken>()).Returns(_listing);
-        _configRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardConfiguration, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(config);
         _truckRepo.GetByIdAsync(truck.Id, Arg.Any<CancellationToken>()).Returns(truck);
         _employeeRepo.GetByIdAsync(dispatcher.Id, Arg.Any<CancellationToken>()).Returns(dispatcher);
         _customerRepo.GetAsync(Arg.Any<System.Linq.Expressions.Expression<Func<Customer, bool>>>(), Arg.Any<CancellationToken>())
             .Returns((Customer?)null);
 
-        _tokenService.GetReadyProviderAsync(config, Arg.Any<CancellationToken>())
-            .Returns(Result<ILoadBoardProviderService>.Ok(_provider));
-        _provider.BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>())
-            .Returns(new LoadBoardBookingResultDto { Success = true, ExternalConfirmationId = "CONF-1" });
-
         var vehicleTransportGuard = Substitute.For<IVehicleTransportGuard>();
         vehicleTransportGuard.CheckLoadTypeAsync(Arg.Any<LoadType?>()).Returns(Result.Ok());
 
         _sut = new BookLoadBoardLoadHandler(
-            _tenantUow, vehicleTransportGuard, _tokenService, _brokerCreditService, _routeRegistry, _broadcastService,
+            _tenantUow, vehicleTransportGuard, _currentUser, _brokerCreditService, _routeRegistry, _broadcastService,
             NullLogger<BookLoadBoardLoadHandler>.Instance);
     }
 
@@ -127,6 +116,39 @@ public class BookLoadBoardLoadHandlerTests
             });
     }
 
+    #region Load creation
+
+    [Fact]
+    public async Task Handle_Books_ReturnsBrokerContactToConfirmWith()
+    {
+        _listing.BrokerPhone = "555-0100";
+        _listing.BrokerEmail = "loads@broker.example";
+
+        var result = await _sut.Handle(_command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("Test Broker", result.Value!.BrokerName);
+        Assert.Equal("555-0100", result.Value.BrokerPhone);
+        Assert.Equal("loads@broker.example", result.Value.BrokerEmail);
+        Assert.Equal(LoadBoardListingStatus.Booked, _listing.Status);
+    }
+
+    [Fact]
+    public async Task Handle_NoDispatcherGiven_AssignsTheSignedInUser()
+    {
+        var dispatcherId = _command.DispatcherId!.Value;
+        _command.DispatcherId = null;
+        _currentUser.GetUserId().Returns(dispatcherId);
+
+        var result = await _sut.Handle(_command, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        await _loadRepo.Received(1).AddAsync(
+            Arg.Is<Load>(l => l.AssignedDispatcherId == dispatcherId), Arg.Any<CancellationToken>());
+    }
+
+    #endregion
+
     #region Credit gate
 
     [Fact]
@@ -138,7 +160,7 @@ public class BookLoadBoardLoadHandlerTests
         var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await _provider.Received(1).BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>());
+        await _loadRepo.Received(1).AddAsync(Arg.Any<Load>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -151,7 +173,7 @@ public class BookLoadBoardLoadHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.BrokerCreditBelowThreshold, result.ErrorCode);
-        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _loadRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
@@ -164,7 +186,7 @@ public class BookLoadBoardLoadHandlerTests
         var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await _provider.Received(1).BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>());
+        await _loadRepo.Received(1).AddAsync(Arg.Any<Load>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -177,7 +199,7 @@ public class BookLoadBoardLoadHandlerTests
         var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await _provider.Received(1).BookLoadAsync(Arg.Any<string>(), Arg.Any<LoadBoardBookingRequest>());
+        await _loadRepo.Received(1).AddAsync(Arg.Any<Load>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -245,7 +267,7 @@ public class BookLoadBoardLoadHandlerTests
         var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
-        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _loadRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
@@ -258,7 +280,7 @@ public class BookLoadBoardLoadHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
-        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _loadRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
@@ -300,7 +322,7 @@ public class BookLoadBoardLoadHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationBelowFloor, result.ErrorCode);
-        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _loadRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     [Fact]
@@ -340,7 +362,7 @@ public class BookLoadBoardLoadHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.NegotiationFloorMissing, result.ErrorCode);
-        await _provider.DidNotReceiveWithAnyArgs().BookLoadAsync(default!, default!);
+        await _loadRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
 
     #endregion

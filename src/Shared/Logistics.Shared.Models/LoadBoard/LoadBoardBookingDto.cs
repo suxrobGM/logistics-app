@@ -8,9 +8,9 @@ public record LoadBoardBookingRequest
     public Guid TruckId { get; set; }
 
     /// <summary>
-    /// Dispatcher to assign to the load
+    /// Dispatcher to assign to the load; the signed-in user when omitted
     /// </summary>
-    public Guid DispatcherId { get; set; }
+    public Guid? DispatcherId { get; set; }
 
     /// <summary>
     /// Customer ID (if existing customer)
@@ -34,27 +34,16 @@ public record LoadBoardBookingRequest
     public bool OverrideCreditCheck { get; set; }
 }
 
+/// <summary>
+/// The load created from a listing. No load board books through its API, so the broker has not
+/// been told: the dispatcher confirms with the broker contact returned here.
+/// </summary>
 public record LoadBoardBookingResultDto
 {
-    public bool Success { get; set; }
+    public Guid CreatedLoadId { get; set; }
+    public long CreatedLoadNumber { get; set; }
 
-    /// <summary>
-    /// Confirmation ID from the load board provider
-    /// </summary>
-    public string? ExternalConfirmationId { get; set; }
-
-    /// <summary>
-    /// Error message if booking failed
-    /// </summary>
-    public string? ErrorMessage { get; set; }
-
-    /// <summary>
-    /// The created Load ID if successful
-    /// </summary>
-    public Guid? CreatedLoadId { get; set; }
-
-    /// <summary>
-    /// The created Load number if successful
-    /// </summary>
-    public long? CreatedLoadNumber { get; set; }
+    public string? BrokerName { get; set; }
+    public string? BrokerPhone { get; set; }
+    public string? BrokerEmail { get; set; }
 }

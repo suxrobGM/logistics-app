@@ -53,9 +53,9 @@ public class LoadBoardListing : AuditableEntity, ITenantEntity
     public DateTime? DeliveryDateEnd { get; set; }
 
     /// <summary>
-    /// Equipment type required (e.g., "Flatbed", "Dry Van", "Reefer")
+    /// Equipment the load needs; null when the board sent a code we do not map
     /// </summary>
-    public string? EquipmentType { get; set; }
+    public LoadBoardEquipmentType? EquipmentType { get; set; }
 
     /// <summary>
     /// Description of the commodity being transported

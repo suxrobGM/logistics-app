@@ -6,91 +6,81 @@ namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 
 internal static class DatMapper
 {
-    public static LoadBoardListingDto ToListingDto(DatLoad load)
+    /// <summary>
+    /// A search match as a listing. DAT gives a city, state and coordinates but no street or ZIP,
+    /// so those stay empty; a match carries no posting expiry, so neither does the listing.
+    /// </summary>
+    public static LoadBoardListingDto? ToListingDto(DatMatch match)
     {
+        var id = match.PostingId ?? match.MatchId;
+        if (string.IsNullOrEmpty(id))
+        {
+            return null;
+        }
+
+        var distance = match.TripLength?.DistanceMiles;
+        var (total, perMile) = ToRates(match.Rate, distance);
+
         return new LoadBoardListingDto
         {
-            ExternalListingId = load.Id ?? string.Empty,
+            ExternalListingId = id,
             ProviderType = LoadBoardProviderType.Dat,
             ProviderName = "DAT",
-            OriginAddress =
-                new Address
-                {
-                    Line1 = "N/A",
-                    City = load.Origin?.City ?? "Unknown",
-                    State = load.Origin?.State ?? "Unknown",
-                    ZipCode = "00000",
-                    Country = "US"
-                },
-            OriginLocation = new GeoPoint(load.Origin?.Longitude ?? 0, load.Origin?.Latitude ?? 0),
-            DestinationAddress =
-                new Address
-                {
-                    Line1 = "N/A",
-                    City = load.Destination?.City ?? "Unknown",
-                    State = load.Destination?.State ?? "Unknown",
-                    ZipCode = "00000",
-                    Country = "US"
-                },
-            DestinationLocation = new GeoPoint(load.Destination?.Longitude ?? 0, load.Destination?.Latitude ?? 0),
-            RatePerMile = load.RatePerMile,
-            TotalRate = load.TotalRate,
-            Currency = "USD",
-            Distance = load.Distance,
-            Weight = load.Weight,
-            Length = load.Length,
-            PickupDateStart = load.PickupDateStart,
-            PickupDateEnd = load.PickupDateEnd,
-            DeliveryDateStart = load.DeliveryDateStart,
-            DeliveryDateEnd = load.DeliveryDateEnd,
-            EquipmentType = load.EquipmentType,
-            Commodity = load.Commodity,
-            BrokerName = load.Broker?.Name,
-            BrokerPhone = load.Broker?.Phone,
-            BrokerEmail = load.Broker?.Email,
-            BrokerMcNumber = load.Broker?.McNumber,
-            BrokerCreditScore = load.Broker?.CreditScore,
-            BrokerDaysToPay = load.Broker?.DaysToPay,
-            Status = LoadBoardListingStatus.Available,
-            ExpiresAt = load.ExpiresAt ?? DateTime.MaxValue
+            OriginAddress = ToAddress(match.Origin?.Point),
+            OriginLocation = ToGeoPoint(match.Origin?.Point),
+            DestinationAddress = ToAddress(match.Destination?.Point),
+            DestinationLocation = ToGeoPoint(match.Destination?.Point),
+            TotalRate = total,
+            RatePerMile = perMile,
+            Currency = match.Rate?.BaseRate?.Currency ?? "USD",
+            Distance = distance,
+            Weight = match.Specs?.WeightInPounds,
+            Length = match.Specs?.LengthInFeet,
+            PickupDateStart = match.Availability?.Earliest,
+            PickupDateEnd = match.Availability?.Latest,
+            EquipmentType = DatEquipment.FromCode(match.Specs?.RequiredEquipmentType),
+            BrokerName = match.Poster?.Company,
+            BrokerPhone = ToPhone(match.Poster?.Contact?.Phone),
+            BrokerEmail = match.Poster?.Contact?.Email,
+            BrokerCreditScore = match.Credit?.Score,
+            BrokerDaysToPay = match.Credit?.DaysToPay,
+            Status = LoadBoardListingStatus.Available
         };
     }
 
-    public static PostedTruckDto ToPostedTruckDto(DatTruck truck)
+    /// <summary>
+    /// DAT posts either a trip total (FLAT) or a per-mile rate; the other is derived from the trip
+    /// length when there is one.
+    /// </summary>
+    private static (decimal? Total, decimal? PerMile) ToRates(DatRate? rate, double? distance)
     {
-        return new PostedTruckDto
+        if (rate?.BaseRate?.Amount is not { } amount || amount <= 0)
         {
-            ExternalPostId = truck.Id,
-            ProviderType = LoadBoardProviderType.Dat,
-            ProviderName = "DAT",
-            AvailableAtAddress =
-                new Address
-                {
-                    Line1 = "N/A",
-                    City = truck.Origin?.City ?? "Unknown",
-                    State = truck.Origin?.State ?? "Unknown",
-                    ZipCode = "00000",
-                    Country = "US"
-                },
-            AvailableAtLocation = new GeoPoint(truck.Origin?.Longitude ?? 0, truck.Origin?.Latitude ?? 0),
-            EquipmentType = truck.EquipmentType,
-            AvailableFrom = truck.AvailableFrom ?? DateTime.UtcNow,
-            AvailableTo = truck.AvailableTo,
-            ExpiresAt = truck.ExpiresAt
-        };
+            return (null, null);
+        }
+
+        var miles = distance is > 0 ? (decimal)distance.Value : (decimal?)null;
+        return rate.RateBasedOn?.ToUpperInvariant() == "PER_MILE"
+            ? (miles is { } m ? Math.Round(amount * m, 2) : null, amount)
+            : (amount, miles is { } n ? Math.Round(amount / n, 2) : null);
     }
 
-    public static LoadBoardWebhookEventType MapWebhookEventType(string? eventType)
+    private static Address ToAddress(DatPoint? point) =>
+        new LoadBoardPlace { City = point?.City, State = point?.State }.ToAddress();
+
+    /// <summary>
+    /// The listing requires a location; (0, 0) marks a match DAT sent without coordinates.
+    /// </summary>
+    private static GeoPoint ToGeoPoint(DatPoint? point) =>
+        new(point?.Longitude ?? 0, point?.Latitude ?? 0);
+
+    private static string? ToPhone(DatPhone? phone)
     {
-        return eventType?.ToLowerInvariant() switch
+        if (string.IsNullOrEmpty(phone?.Number))
         {
-            "load.posted" => LoadBoardWebhookEventType.LoadPosted,
-            "load.cancelled" => LoadBoardWebhookEventType.LoadCancelled,
-            "load.expired" => LoadBoardWebhookEventType.LoadExpired,
-            "rate.changed" or "rate.updated" => LoadBoardWebhookEventType.RateUpdated,
-            "status.changed" => LoadBoardWebhookEventType.StatusChanged,
-            "truck.expired" => LoadBoardWebhookEventType.TruckPostExpired,
-            _ => LoadBoardWebhookEventType.Unknown
-        };
+            return null;
+        }
+
+        return string.IsNullOrEmpty(phone.Extension) ? phone.Number : $"{phone.Number} x{phone.Extension}";
     }
 }

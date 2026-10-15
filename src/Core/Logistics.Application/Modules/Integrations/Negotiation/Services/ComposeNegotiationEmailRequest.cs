@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Services;
 
@@ -47,7 +48,7 @@ public record ComposeNegotiationEmailRequest
             DestinationCity = listing.DestinationAddress.City,
             DestinationState = listing.DestinationAddress.State,
             PickupDate = listing.PickupDateStart ?? listing.ExpiresAt,
-            EquipmentType = listing.EquipmentType ?? "Not specified",
+            EquipmentType = listing.EquipmentType?.GetDescription() ?? "Not specified",
             OfferAmount = offerAmount,
             Currency = ListingCurrency.Of(listing),
             OfferPerMile = offerPerMile,

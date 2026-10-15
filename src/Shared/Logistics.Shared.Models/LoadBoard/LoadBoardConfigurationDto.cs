@@ -14,25 +14,18 @@ public record LoadBoardConfigurationDto
     public int PostedTrucksCount { get; set; }
     public string? CompanyDotNumber { get; set; }
     public string? CompanyMcNumber { get; set; }
-}
 
-public record CreateLoadBoardConfigurationDto
-{
-    public LoadBoardProviderType ProviderType { get; set; }
-    public required string ApiKey { get; set; }
-    public string? ApiSecret { get; set; }
-    public string? WebhookSecret { get; set; }
-    public string? CompanyDotNumber { get; set; }
-    public string? CompanyMcNumber { get; set; }
-}
+    /// <summary>
+    /// The login, for providers whose login is not itself a secret (DAT: the service account
+    /// email), so the edit dialog can show which account is connected. API keys and passwords
+    /// are never returned.
+    /// </summary>
+    public string? AccountLogin { get; set; }
 
-public record UpdateLoadBoardConfigurationDto
-{
-    public Guid Id { get; set; }
-    public string? ApiKey { get; set; }
-    public string? ApiSecret { get; set; }
-    public string? WebhookSecret { get; set; }
-    public bool? IsActive { get; set; }
-    public string? CompanyDotNumber { get; set; }
-    public string? CompanyMcNumber { get; set; }
+    /// <summary>
+    /// The board user the API acts as (DAT: the DAT One user's email).
+    /// </summary>
+    public string? UserEmail { get; set; }
+
+    public bool MarketRatesEnabled { get; set; }
 }

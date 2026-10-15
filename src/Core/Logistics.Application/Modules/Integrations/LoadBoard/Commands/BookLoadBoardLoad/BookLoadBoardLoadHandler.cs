@@ -7,6 +7,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
@@ -18,7 +19,7 @@ namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 internal sealed class BookLoadBoardLoadHandler(
     ITenantUnitOfWork tenantUow,
     IVehicleTransportGuard vehicleTransportGuard,
-    ILoadBoardTokenService tokenService,
+    ICurrentUserService currentUser,
     IBrokerCreditService brokerCreditService,
     IInboundEmailRouteRegistry routeRegistry,
     IAIDispatchBroadcastService broadcastService,
@@ -41,14 +42,11 @@ internal sealed class BookLoadBoardLoadHandler(
                 $"Load board listing is not available (current status: {listing.Status})");
         }
 
-        // Resolved before the provider call so a blocked vehicle load is never booked externally.
-        var loadType = listing.EquipmentType?.ToLowerInvariant() switch
+        var loadType = listing.EquipmentType switch
         {
-            "flatbed" => LoadType.GeneralFreight,
-            "dry van" => LoadType.GeneralFreight,
-            "reefer" => LoadType.RefrigeratedGoods,
-            "car carrier" or "auto carrier" or "car hauler" => LoadType.Vehicle,
-            "tanker" => LoadType.Liquid,
+            LoadBoardEquipmentType.Reefer => LoadType.RefrigeratedGoods,
+            LoadBoardEquipmentType.AutoCarrier => LoadType.Vehicle,
+            LoadBoardEquipmentType.Tanker => LoadType.Liquid,
             _ => LoadType.GeneralFreight
         };
 
@@ -58,32 +56,18 @@ internal sealed class BookLoadBoardLoadHandler(
             return Result<LoadBoardBookingResultDto>.Fail(typeCheck.Error!, typeCheck.ErrorCode!);
         }
 
-        var providerConfig = await tenantUow.Repository<LoadBoardConfiguration>()
-            .GetAsync(c => c.ProviderType == listing.ProviderType && c.IsActive, ct);
-
-        if (providerConfig is null)
-        {
-            return Result<LoadBoardBookingResultDto>.Fail(
-                $"No active provider configuration found for {listing.ProviderType}");
-        }
-
-        // Resolve before staging entities: a token acquisition saves the scope mid-handler
-        var providerResult = await tokenService.GetReadyProviderAsync(providerConfig, ct);
-        if (!providerResult.IsSuccess || providerResult.Value is null)
-        {
-            return Result<LoadBoardBookingResultDto>.Fail(
-                providerResult.Error ?? $"Could not authenticate with {listing.ProviderType}");
-        }
-
-        var provider = providerResult.Value;
-
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
             return Result<LoadBoardBookingResultDto>.Fail("Truck not found");
         }
 
-        var dispatcher = await tenantUow.Repository<Employee>().GetByIdAsync(req.DispatcherId, ct);
+        if ((req.DispatcherId ?? currentUser.GetUserId()) is not { } dispatcherId)
+        {
+            return Result<LoadBoardBookingResultDto>.Fail("Dispatcher not found");
+        }
+
+        var dispatcher = await tenantUow.Repository<Employee>().GetByIdAsync(dispatcherId, ct);
         if (dispatcher is null)
         {
             return Result<LoadBoardBookingResultDto>.Fail("Dispatcher not found");
@@ -134,21 +118,8 @@ internal sealed class BookLoadBoardLoadHandler(
             }
         }
 
-        var bookingResult = await provider.BookLoadAsync(listing.ExternalListingId, new LoadBoardBookingRequest
-        {
-            TruckId = req.TruckId,
-            DispatcherId = req.DispatcherId,
-            CustomerId = req.CustomerId,
-            CustomerName = req.CustomerName,
-            Notes = req.Notes
-        });
-
-        if (!bookingResult.Success)
-        {
-            return Result<LoadBoardBookingResultDto>.Fail(
-                bookingResult.ErrorMessage ?? "Failed to book load with provider");
-        }
-
+        // No supported board books through its API: the load is created here and the dispatcher
+        // confirms with the broker contact in the result.
         var load = Load.Create(
             name: $"Load Board - {listing.BrokerName ?? listing.ProviderType.ToString()}",
             type: loadType,
@@ -164,7 +135,6 @@ internal sealed class BookLoadBoardLoadHandler(
 
         load.ExternalSourceProvider = listing.ProviderType;
         load.ExternalSourceId = listing.ExternalListingId;
-        load.ExternalBrokerReference = bookingResult.ExternalConfirmationId;
 
         await tenantUow.Repository<Load>().AddAsync(load, ct);
 
@@ -192,10 +162,11 @@ internal sealed class BookLoadBoardLoadHandler(
 
         return Result<LoadBoardBookingResultDto>.Ok(new LoadBoardBookingResultDto
         {
-            Success = true,
-            ExternalConfirmationId = bookingResult.ExternalConfirmationId,
             CreatedLoadId = load.Id,
-            CreatedLoadNumber = load.Number
+            CreatedLoadNumber = load.Number,
+            BrokerName = listing.BrokerName,
+            BrokerPhone = listing.BrokerPhone,
+            BrokerEmail = listing.BrokerEmail
         });
     }
 

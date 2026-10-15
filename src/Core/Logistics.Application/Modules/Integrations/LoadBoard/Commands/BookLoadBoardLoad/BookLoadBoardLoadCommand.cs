@@ -18,9 +18,9 @@ public class BookLoadBoardLoadCommand : ICommand<Result<LoadBoardBookingResultDt
     public Guid TruckId { get; set; }
 
     /// <summary>
-    /// Dispatcher to assign to the load
+    /// Dispatcher to assign to the load; the signed-in user when omitted
     /// </summary>
-    public Guid DispatcherId { get; set; }
+    public Guid? DispatcherId { get; set; }
 
     /// <summary>
     /// Customer ID (if existing customer)

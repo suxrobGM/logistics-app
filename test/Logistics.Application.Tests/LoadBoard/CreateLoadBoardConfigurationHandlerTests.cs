@@ -1,11 +1,14 @@
+using System.Net;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Logistics.Application.Tests.LoadBoard;
@@ -24,7 +27,7 @@ public class CreateLoadBoardConfigurationHandlerTests
     {
         _command = new CreateLoadBoardConfigurationCommand
         {
-            ProviderType = LoadBoardProviderType.Truckstop,
+            ProviderType = LoadBoardProviderType.Dat,
             ApiKey = "key",
             ApiSecret = "secret"
         };
@@ -38,7 +41,9 @@ public class CreateLoadBoardConfigurationHandlerTests
         _providerFactory.GetProvider(_command.ProviderType).Returns(_provider);
 
         _sut = new CreateLoadBoardConfigurationHandler(
-            _tenantUow, _providerFactory, NullLogger<CreateLoadBoardConfigurationHandler>.Instance);
+            _tenantUow, _providerFactory,
+            new LoadBoardProviderGateway(_tenantUow, _providerFactory, NullLogger<LoadBoardProviderGateway>.Instance),
+            NullLogger<CreateLoadBoardConfigurationHandler>.Instance);
     }
 
     [Fact]
@@ -46,7 +51,7 @@ public class CreateLoadBoardConfigurationHandlerTests
     {
         _provider.RequiresOAuthToken.Returns(true);
         var expiresAt = DateTime.UtcNow.AddMinutes(20);
-        _provider.AcquireTokenAsync("key", "secret").Returns(new OAuthTokenResultDto
+        _provider.AcquireTokenAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>()).Returns(new OAuthTokenResultDto
         {
             AccessToken = "access-1",
             RefreshToken = "refresh-1",
@@ -62,14 +67,15 @@ public class CreateLoadBoardConfigurationHandlerTests
         Assert.Equal("access-1", added.AccessToken);
         Assert.Equal("refresh-1", added.RefreshToken);
         Assert.Equal(expiresAt, added.TokenExpiresAt);
-        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_OAuthAcquisitionFails_FailsWithoutAdding()
     {
         _provider.RequiresOAuthToken.Returns(true);
-        _provider.AcquireTokenAsync("key", "secret").Returns((OAuthTokenResultDto?)null);
+        _provider.AcquireTokenAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new LoadBoardApiException("DAT rejected the credentials (401)", HttpStatusCode.Unauthorized));
 
         var result = await _sut.Handle(_command, CancellationToken.None);
 
@@ -82,12 +88,12 @@ public class CreateLoadBoardConfigurationHandlerTests
     public async Task Handle_KeyBasedProvider_ValidatesWithoutTokenAcquisition()
     {
         _provider.RequiresOAuthToken.Returns(false);
-        _provider.ValidateCredentialsAsync("key", "secret").Returns(true);
+        _provider.ValidateCredentialsAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>()).Returns(true);
 
         var result = await _sut.Handle(_command, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await _provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!, default);
+        await _provider.DidNotReceiveWithAnyArgs().AcquireTokenAsync(default!);
         await _configRepo.Received(1).AddAsync(
             Arg.Is<LoadBoardConfiguration>(c => c.AccessToken == null), Arg.Any<CancellationToken>());
     }
@@ -96,7 +102,7 @@ public class CreateLoadBoardConfigurationHandlerTests
     public async Task Handle_KeyBasedProviderInvalidCredentials_Fails()
     {
         _provider.RequiresOAuthToken.Returns(false);
-        _provider.ValidateCredentialsAsync("key", "secret").Returns(false);
+        _provider.ValidateCredentialsAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>()).Returns(false);
 
         var result = await _sut.Handle(_command, CancellationToken.None);
 

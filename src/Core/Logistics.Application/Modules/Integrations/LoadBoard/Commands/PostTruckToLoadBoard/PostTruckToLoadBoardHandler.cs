@@ -1,19 +1,17 @@
-using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.LoadBoard;
-using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class PostTruckToLoadBoardHandler(
     ITenantUnitOfWork tenantUow,
-    ILoadBoardProviderFactory providerFactory,
-    ILoadBoardTokenService tokenService,
+    ILoadBoardProviderGateway gateway,
     ILogger<PostTruckToLoadBoardHandler> logger)
     : IRequestHandler<PostTruckToLoadBoardCommand, Result<PostTruckResultDto>>
 {
@@ -21,13 +19,6 @@ internal sealed class PostTruckToLoadBoardHandler(
         PostTruckToLoadBoardCommand req,
         CancellationToken ct)
     {
-        // Check if provider is supported
-        if (!providerFactory.IsProviderSupported(req.ProviderType))
-        {
-            return Result<PostTruckResultDto>.Fail($"Load board provider '{req.ProviderType}' is not supported");
-        }
-
-        // Get provider configuration
         var providerConfig = await tenantUow.Repository<LoadBoardConfiguration>()
             .GetAsync(c => c.ProviderType == req.ProviderType && c.IsActive, ct);
 
@@ -37,88 +28,102 @@ internal sealed class PostTruckToLoadBoardHandler(
                 $"No active provider configuration found for {req.ProviderType}. Please configure the provider first.");
         }
 
-        // Get the truck
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
         if (truck is null)
         {
             return Result<PostTruckResultDto>.Fail("Truck not found");
         }
 
-        // Check if truck is already posted to this provider
+        var equipmentType = req.EquipmentType ?? DefaultEquipmentFor(truck.Type);
+        if (equipmentType is null)
+        {
+            return Result<PostTruckResultDto>.Fail(
+                $"Pick the equipment type to post: a {truck.Type.GetDescription()} has no load board equivalent.");
+        }
+
+        // One post per truck and board (unique index); an expired or booked one is replaced.
         var existingPost = await tenantUow.Repository<PostedTruck>()
-            .GetAsync(p => p.TruckId == req.TruckId
-                && p.ProviderType == req.ProviderType
-                && p.Status == PostedTruckStatus.Available, ct);
+            .GetAsync(p => p.TruckId == req.TruckId && p.ProviderType == req.ProviderType, ct);
 
-        if (existingPost is not null)
+        if (existingPost is { Status: PostedTruckStatus.Available })
         {
             return Result<PostTruckResultDto>.Fail(
-                $"Truck is already posted to {req.ProviderType}. Remove the existing post first or update it.");
+                $"Truck is already posted to {req.ProviderType.GetDescription()}. Remove the existing post first or update it.");
         }
 
-        // Post to the load board provider
-        var providerResult = await tokenService.GetReadyProviderAsync(providerConfig, ct);
-        if (!providerResult.IsSuccess || providerResult.Value is null)
-        {
-            return Result<PostTruckResultDto>.Fail(
-                providerResult.Error ?? $"Could not authenticate with {req.ProviderType}");
-        }
-
-        var postResult = await providerResult.Value.PostTruckAsync(new PostTruckRequest
+        var request = new PostTruckRequest
         {
             TruckId = req.TruckId,
-            ProviderType = req.ProviderType,
-            AvailableAtAddress = req.AvailableAtAddress,
-            AvailableAtLocation = req.AvailableAtLocation,
-            DestinationPreference = req.DestinationPreference,
+            Origin = req.Origin,
+            Destination = req.Destination,
             DestinationRadius = req.DestinationRadius,
             AvailableFrom = req.AvailableFrom,
             AvailableTo = req.AvailableTo,
-            EquipmentType = req.EquipmentType ?? truck.Type.ToString(),
+            EquipmentType = equipmentType.Value,
             MaxWeight = req.MaxWeight,
             MaxLength = req.MaxLength
-        });
-
-        if (!postResult.Success)
-        {
-            return Result<PostTruckResultDto>.Fail(
-                postResult.ErrorMessage ?? "Failed to post truck to load board");
-        }
-
-        // Create the posted truck record
-        var postedTruck = new PostedTruck
-        {
-            TruckId = req.TruckId,
-            Truck = truck,
-            ProviderType = req.ProviderType,
-            ExternalPostId = postResult.ExternalPostId,
-            AvailableAtAddress = req.AvailableAtAddress,
-            AvailableAtLocation = req.AvailableAtLocation,
-            DestinationPreference = req.DestinationPreference,
-            DestinationRadius = req.DestinationRadius,
-            AvailableFrom = req.AvailableFrom,
-            AvailableTo = req.AvailableTo,
-            EquipmentType = req.EquipmentType ?? truck.Type.ToString(),
-            MaxWeight = req.MaxWeight,
-            MaxLength = req.MaxLength,
-            Status = PostedTruckStatus.Available,
-            ExpiresAt = postResult.ExpiresAt,
-            LastRefreshedAt = DateTime.UtcNow
         };
 
-        await tenantUow.Repository<PostedTruck>().AddAsync(postedTruck, ct);
+        var postResult = await gateway.ExecuteAsync(providerConfig, p => p.PostTruckAsync(request, ct), ct);
+        if (!postResult.IsSuccess || postResult.Value is null)
+        {
+            return Result<PostTruckResultDto>.Fail(postResult.Error ?? "Failed to post truck to load board");
+        }
+
+        var posted = postResult.Value;
+        var postedTruck = existingPost ?? new PostedTruck
+        {
+            Truck = truck,
+            ProviderType = req.ProviderType,
+            // Boards locate a post by city/state or ZIP; there are no coordinates to store.
+            AvailableAtLocation = new GeoPoint(0, 0),
+            AvailableAtAddress = req.Origin.ToAddress()
+        };
+
+        postedTruck.TruckId = req.TruckId;
+        postedTruck.ExternalPostId = posted.ExternalPostId;
+        postedTruck.AvailableAtAddress = req.Origin.ToAddress();
+        postedTruck.DestinationPreference = req.Destination?.ToAddress();
+        postedTruck.DestinationRadius = req.DestinationRadius;
+        postedTruck.AvailableFrom = req.AvailableFrom;
+        postedTruck.AvailableTo = req.AvailableTo;
+        postedTruck.EquipmentType = equipmentType;
+        postedTruck.MaxWeight = req.MaxWeight;
+        postedTruck.MaxLength = req.MaxLength;
+        postedTruck.Status = PostedTruckStatus.Available;
+        postedTruck.ExpiresAt = posted.ExpiresAt;
+        postedTruck.LastRefreshedAt = DateTime.UtcNow;
+
+        if (existingPost is null)
+        {
+            await tenantUow.Repository<PostedTruck>().AddAsync(postedTruck, ct);
+        }
+
         await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation(
             "Posted truck {TruckId} to {Provider}, external post ID: {ExternalPostId}",
-            truck.Id, req.ProviderType, postResult.ExternalPostId);
+            truck.Id, req.ProviderType, posted.ExternalPostId);
 
-        return Result<PostTruckResultDto>.Ok(new PostTruckResultDto
-        {
-            Success = true,
-            ExternalPostId = postResult.ExternalPostId,
-            PostedTruckId = postedTruck.Id,
-            ExpiresAt = postResult.ExpiresAt
-        });
+        return Result<PostTruckResultDto>.Ok(posted with { PostedTruckId = postedTruck.Id });
     }
+
+    /// <summary>
+    /// The board equipment a truck of this type is usually posted as; null when there is none
+    /// (a tow truck) and the dispatcher has to choose.
+    /// </summary>
+    private static LoadBoardEquipmentType? DefaultEquipmentFor(TruckType truckType) => truckType switch
+    {
+        TruckType.Flatbed => LoadBoardEquipmentType.Flatbed,
+        TruckType.FreightTruck or TruckType.SwapBody => LoadBoardEquipmentType.Van,
+        TruckType.Reefer => LoadBoardEquipmentType.Reefer,
+        TruckType.Tanker => LoadBoardEquipmentType.Tanker,
+        TruckType.BoxTruck => LoadBoardEquipmentType.BoxTruck,
+        TruckType.DumpTruck => LoadBoardEquipmentType.DumpTrailer,
+        TruckType.CarHauler or TruckType.CarTransporter => LoadBoardEquipmentType.AutoCarrier,
+        TruckType.ContainerTruck => LoadBoardEquipmentType.Container,
+        TruckType.Tautliner or TruckType.Curtainsider => LoadBoardEquipmentType.Conestoga,
+        TruckType.LowLoader => LoadBoardEquipmentType.Lowboy,
+        _ => null
+    };
 }

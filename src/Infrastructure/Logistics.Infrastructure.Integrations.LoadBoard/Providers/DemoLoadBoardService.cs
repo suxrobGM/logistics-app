@@ -23,9 +23,10 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
         "New York, NY", "Houston, TX", "Kansas City, MO", "Memphis, TN"
     ];
 
-    private static readonly string[] equipmentTypes =
+    private static readonly LoadBoardEquipmentType[] equipmentTypes =
     [
-        "Dry Van", "Flatbed", "Reefer", "Step Deck", "Lowboy", "Car Hauler"
+        LoadBoardEquipmentType.Van, LoadBoardEquipmentType.Flatbed, LoadBoardEquipmentType.Reefer,
+        LoadBoardEquipmentType.StepDeck, LoadBoardEquipmentType.Lowboy, LoadBoardEquipmentType.AutoCarrier
     ];
 
     private static readonly string[] commodities =
@@ -49,100 +50,69 @@ internal class DemoLoadBoardService(ILogger<DemoLoadBoardService> logger) : ILoa
         logger.LogDebug("Initialized Demo Load Board provider");
     }
 
-    public Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
+    public Task<bool> ValidateCredentialsAsync(LoadBoardConfiguration configuration, CancellationToken ct = default)
     {
         // Demo provider always validates successfully with any non-empty key
-        return Task.FromResult(!string.IsNullOrEmpty(apiKey));
+        return Task.FromResult(!string.IsNullOrEmpty(configuration.ApiKey));
     }
 
-    public Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret)
+    public Task<OAuthTokenResultDto> AcquireTokenAsync(LoadBoardConfiguration configuration, CancellationToken ct = default)
+    {
+        throw new NotSupportedException("The demo provider does not use tokens.");
+    }
+
+    public Task<OAuthTokenResultDto?> RefreshTokenAsync(LoadBoardConfiguration configuration, CancellationToken ct = default)
     {
         return Task.FromResult<OAuthTokenResultDto?>(null);
     }
 
-    public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
+    public Task<IReadOnlyList<LoadBoardListingDto>> SearchLoadsAsync(LoadBoardSearchCriteria criteria, CancellationToken ct = default)
     {
-        return Task.FromResult<OAuthTokenResultDto?>(null);
-    }
-
-    public Task<IEnumerable<LoadBoardListingDto>> SearchLoadsAsync(LoadBoardSearchCriteria criteria)
-    {
-        var listings = new List<LoadBoardListingDto>();
         var count = Math.Min(criteria.MaxResults, random.Next(5, 25));
-
-        for (var i = 0; i < count; i++)
-        {
-            listings.Add(GenerateListingDto());
-        }
+        var listings = Enumerable.Range(0, count).Select(_ => GenerateListingDto()).ToList();
 
         logger.LogDebug("Demo provider returned {Count} load listings", listings.Count);
-        return Task.FromResult<IEnumerable<LoadBoardListingDto>>(listings);
+        return Task.FromResult<IReadOnlyList<LoadBoardListingDto>>(listings);
     }
 
-    public Task<LoadBoardListingDto?> GetLoadDetailsAsync(string externalListingId)
-    {
-        var listing = GenerateListingDto();
-        return Task.FromResult<LoadBoardListingDto?>(listing with { ExternalListingId = externalListingId });
-    }
-
-    public Task<LoadBoardBookingResultDto> BookLoadAsync(string externalListingId, LoadBoardBookingRequest request)
-    {
-        logger.LogInformation("Demo: Booking load {ListingId} for truck {TruckId}",
-            externalListingId, request.TruckId);
-
-        return Task.FromResult(new LoadBoardBookingResultDto
-        {
-            Success = true,
-            ExternalConfirmationId = $"DEMO-CONF-{Guid.NewGuid():N}"[..20].ToUpper()
-        });
-    }
-
-    public Task<bool> CancelBookingAsync(string externalListingId, string? reason)
-    {
-        logger.LogInformation("Demo: Cancelling booking for {ListingId}. Reason: {Reason}",
-            externalListingId, reason ?? "Not specified");
-        return Task.FromResult(true);
-    }
-
-    public Task<PostTruckResultDto> PostTruckAsync(PostTruckRequest request)
+    public Task<PostTruckResultDto> PostTruckAsync(PostTruckRequest request, CancellationToken ct = default)
     {
         logger.LogInformation("Demo: Posting truck {TruckId} to load board", request.TruckId);
 
         return Task.FromResult(new PostTruckResultDto
         {
-            Success = true,
             ExternalPostId = $"DEMO-POST-{Guid.NewGuid():N}"[..20].ToUpper(),
             ExpiresAt = DateTime.UtcNow.AddDays(7)
         });
     }
 
-    public Task<bool> UpdateTruckPostAsync(string externalPostId, PostTruckRequest request)
+    public Task UpdateTruckPostAsync(string externalPostId, PostTruckRequest request, CancellationToken ct = default)
     {
         logger.LogInformation("Demo: Updating truck post {PostId}", externalPostId);
-        return Task.FromResult(true);
+        return Task.CompletedTask;
     }
 
-    public Task<bool> RemoveTruckPostAsync(string externalPostId)
+    public Task RemoveTruckPostAsync(string externalPostId, CancellationToken ct = default)
     {
         logger.LogInformation("Demo: Removing truck post {PostId}", externalPostId);
-        return Task.FromResult(true);
+        return Task.CompletedTask;
     }
 
-    public Task<IEnumerable<PostedTruckDto>> GetPostedTrucksAsync()
+    public Task<IReadOnlyList<ProviderTruckPost>?> GetPostedTrucksAsync(CancellationToken ct = default)
     {
-        // Return empty list - posted trucks are tracked internally
-        return Task.FromResult<IEnumerable<PostedTruckDto>>([]);
+        return Task.FromResult<IReadOnlyList<ProviderTruckPost>?>(null);
     }
 
-    public Task<LoadBoardWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
+    public Task<IReadOnlyList<MarketRate?>> GetMarketRatesAsync(IReadOnlyList<MarketRateLane> lanes, CancellationToken ct = default)
     {
-        // Demo provider doesn't process real webhooks
-        return Task.FromResult(new LoadBoardWebhookResultDto
-        {
-            EventType = LoadBoardWebhookEventType.Unknown,
-            IsValid = false,
-            ErrorMessage = "Demo provider does not support webhooks"
-        });
+        IReadOnlyList<MarketRate?> rates = lanes
+            .Select(_ =>
+            {
+                var perMile = Math.Round(2.0m + (decimal)(random.NextDouble() * 1.2), 2);
+                return (MarketRate?)new MarketRate(perMile, null, perMile - 0.35m, perMile + 0.40m);
+            })
+            .ToList();
+        return Task.FromResult(rates);
     }
 
     #region Data Generation

@@ -2,7 +2,7 @@ using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Models;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Mediator;
 
@@ -30,7 +30,7 @@ internal sealed class SearchLoadBoardTool(IMediator mediator)
 
     public static AgentToolDefinition Definition => new(
         "search_loadboard",
-        "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.")
+        "Search the connected load boards (DAT) for available loads leaving a city. Use this when trucks have capacity gaps to find revenue opportunities. market_rate_per_mile, when present, is the DAT RateView spot rate for the lane.")
     {
         RequiredFeature = TenantFeature.LoadBoard,
         RequiredPermission = Permission.Dispatch.View,
@@ -44,10 +44,10 @@ internal sealed class SearchLoadBoardTool(IMediator mediator)
 
         var command = new SearchLoadBoardCommand
         {
-            OriginAddress = CityState(input.OriginCity, input.OriginState),
+            Origin = new LoadBoardPlace { City = input.OriginCity, State = input.OriginState },
             OriginRadius = input.RadiusMiles ?? 100,
-            DestinationAddress = input.DestinationState is { } destinationState
-                ? CityState(city: "", destinationState)
+            Destination = input.DestinationState is { } destinationState
+                ? new LoadBoardPlace { State = destinationState }
                 : null,
             MaxResults = MaxResults
         };
@@ -66,11 +66,12 @@ internal sealed class SearchLoadBoardTool(IMediator mediator)
             origin = l.OriginAddress.ToString(),
             destination = l.DestinationAddress.ToString(),
             rate_per_mile = l.RatePerMile,
+            market_rate_per_mile = l.MarketRatePerMile,
             total_rate = l.TotalRate,
             currency = l.Currency,
             distance_miles = l.Distance,
             weight = l.Weight,
-            equipment_type = l.EquipmentType,
+            equipment_type = l.EquipmentType?.GetDescription(),
             commodity = l.Commodity,
             pickup_date = l.PickupDateStart?.ToString("yyyy-MM-dd"),
             delivery_date = l.DeliveryDateStart?.ToString("yyyy-MM-dd"),
@@ -93,18 +94,4 @@ internal sealed class SearchLoadBoardTool(IMediator mediator)
                 .ToList()
         });
     }
-
-    /// <summary>
-    /// The command wants a full <see cref="Address"/>, but city and state are all a model
-    /// realistically has for a radius search. The remaining fields are required by the type, not
-    /// by the providers, which match on city, state, and radius.
-    /// </summary>
-    private static Address CityState(string city, string state) => new()
-    {
-        Line1 = "",
-        City = city,
-        State = state,
-        ZipCode = "",
-        Country = "US"
-    };
 }

@@ -31,7 +31,7 @@ internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext
 
     public static AgentToolDefinition Definition => new(
         "book_loadboard_load",
-        "Book a load from a load board. This claims the load and creates it in the system.")
+        "Create a load in the TMS from a load board listing and assign the truck. Load boards have no booking API, so this does NOT claim the load with the broker: tell the dispatcher to call or email the broker contact returned here to confirm it.")
     {
         RequiredFeature = TenantFeature.LoadBoard,
         RequiredPermission = Permission.Dispatch.Manage,
@@ -67,16 +67,17 @@ internal sealed class BookLoadBoardLoadTool(IMediator mediator, IAgentRunContext
             return ToolResult.WriteFailed(result);
 
         var booking = result.Value;
-        return booking.Success
-            ? ToolResult.Ok(new
-            {
-                success = true,
-                listing_id = input.ListingId,
-                truck_id = input.TruckId,
-                load_id = booking.CreatedLoadId,
-                load_number = booking.CreatedLoadNumber,
-                confirmation_id = booking.ExternalConfirmationId
-            })
-            : ToolResult.Ok(new { success = false, error = booking.ErrorMessage });
+        return ToolResult.Ok(new
+        {
+            success = true,
+            listing_id = input.ListingId,
+            truck_id = input.TruckId,
+            load_id = booking.CreatedLoadId,
+            load_number = booking.CreatedLoadNumber,
+            broker_confirmation_required = true,
+            broker_name = booking.BrokerName,
+            broker_phone = booking.BrokerPhone,
+            broker_email = booking.BrokerEmail
+        });
     }
 }

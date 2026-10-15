@@ -1,3 +1,4 @@
+using System.Net;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 using Logistics.Application.Modules.Integrations.LoadBoard.Services;
@@ -8,14 +9,21 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Logistics.Application.Tests.LoadBoard;
 
+/// <summary>
+/// Runs through the real gateway so a provider's vendor error is checked all the way to the
+/// per-provider error the dispatcher sees.
+/// </summary>
 public class SearchLoadBoardHandlerTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ILoadBoardTokenService _tokenService = Substitute.For<ILoadBoardTokenService>();
+    private readonly ILoadBoardProviderFactory _factory = Substitute.For<ILoadBoardProviderFactory>();
+    private readonly ILoadBoardProviderService _demo = Substitute.For<ILoadBoardProviderService>();
+    private readonly ILoadBoardProviderService _dat = Substitute.For<ILoadBoardProviderService>();
     private readonly ITenantRepository<LoadBoardConfiguration, Guid> _configRepo =
         Substitute.For<ITenantRepository<LoadBoardConfiguration, Guid>>();
     private readonly ITenantRepository<LoadBoardListing, Guid> _listingRepo =
@@ -24,8 +32,13 @@ public class SearchLoadBoardHandlerTests
 
     private readonly LoadBoardConfiguration _demoConfig =
         new() { ProviderType = LoadBoardProviderType.Demo, ApiKey = "demo" };
-    private readonly LoadBoardConfiguration _datConfig =
-        new() { ProviderType = LoadBoardProviderType.Dat, ApiKey = "dat" };
+    private readonly LoadBoardConfiguration _datConfig = new()
+    {
+        ProviderType = LoadBoardProviderType.Dat,
+        ApiKey = "svc@carrier.example",
+        AccessToken = "user-token",
+        TokenExpiresAt = DateTime.UtcNow.AddHours(1)
+    };
 
     public SearchLoadBoardHandlerTests()
     {
@@ -38,54 +51,103 @@ public class SearchLoadBoardHandlerTests
                 Arg.Any<CancellationToken>())
             .Returns([]);
 
-        _sut = new SearchLoadBoardHandler(_tenantUow, _tokenService, NullLogger<SearchLoadBoardHandler>.Instance);
+        _factory.IsProviderSupported(Arg.Any<LoadBoardProviderType>()).Returns(true);
+        _factory.GetProvider(LoadBoardProviderType.Demo).Returns(_demo);
+        _factory.GetProvider(LoadBoardProviderType.Dat).Returns(_dat);
+        _dat.RequiresOAuthToken.Returns(true);
+
+        var gateway = new LoadBoardProviderGateway(_tenantUow, _factory, NullLogger<LoadBoardProviderGateway>.Instance);
+        _sut = new SearchLoadBoardHandler(_tenantUow, gateway, NullLogger<SearchLoadBoardHandler>.Instance);
     }
 
-    private static LoadBoardListingDto CreateListing(string externalId) => new()
+    private static LoadBoardListingDto CreateListing(string externalId, DateTime? expiresAt = null) => new()
     {
         ExternalListingId = externalId,
         ProviderType = LoadBoardProviderType.Demo,
-        OriginAddress = new Address { Line1 = "1 St", City = "Dallas", State = "TX", ZipCode = "75001", Country = "US" },
+        OriginAddress = new Address { Line1 = "", City = "Dallas", State = "TX", ZipCode = "", Country = "US" },
         OriginLocation = new GeoPoint(-96.8, 32.8),
-        DestinationAddress = new Address { Line1 = "2 St", City = "Chicago", State = "IL", ZipCode = "60601", Country = "US" },
+        DestinationAddress = new Address { Line1 = "", City = "Chicago", State = "IL", ZipCode = "", Country = "US" },
         DestinationLocation = new GeoPoint(-87.6, 41.9),
         RatePerMile = 2.5m,
-        ExpiresAt = DateTime.UtcNow.AddDays(1)
+        EquipmentType = LoadBoardEquipmentType.Van,
+        ExpiresAt = expiresAt
     };
 
     [Fact]
-    public async Task Handle_OneProviderFailsAuth_OtherProviderStillReturnsListings()
+    public async Task Handle_ProviderApiFails_SurfacesVendorErrorAndKeepsOtherListings()
     {
-        var healthyProvider = Substitute.For<ILoadBoardProviderService>();
-        healthyProvider.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>())
+        _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
             .Returns([CreateListing("EXT-1"), CreateListing("EXT-2")]);
-        _tokenService.GetReadyProviderAsync(_demoConfig, Arg.Any<CancellationToken>())
-            .Returns(Result<ILoadBoardProviderService>.Ok(healthyProvider));
-        _tokenService.GetReadyProviderAsync(_datConfig, Arg.Any<CancellationToken>())
-            .Returns(Result<ILoadBoardProviderService>.Fail("Could not authenticate with Dat"));
+        _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new LoadBoardApiException("DAT returned 400 BadRequest - invalid origin", HttpStatusCode.BadRequest));
 
         var result = await _sut.Handle(new SearchLoadBoardCommand(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal(2, result.Value!.TotalCount);
-        Assert.Equal(2, result.Value.CountByProvider[LoadBoardProviderType.Demo]);
         Assert.Equal(0, result.Value.CountByProvider[LoadBoardProviderType.Dat]);
-        Assert.NotNull(result.Value.Errors);
-        Assert.Contains("authenticate", result.Value.Errors[LoadBoardProviderType.Dat]);
+        Assert.Equal("DAT: DAT returned 400 BadRequest - invalid origin", result.Value.Errors![LoadBoardProviderType.Dat]);
     }
 
     [Fact]
     public async Task Handle_AllProvidersHealthy_NoErrors()
     {
-        var provider = Substitute.For<ILoadBoardProviderService>();
-        provider.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>()).Returns([CreateListing("EXT-1")]);
-        _tokenService.GetReadyProviderAsync(Arg.Any<LoadBoardConfiguration>(), Arg.Any<CancellationToken>())
-            .Returns(Result<ILoadBoardProviderService>.Ok(provider));
+        _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
+            .Returns([CreateListing("EXT-1")]);
+        _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
+            .Returns([]);
 
         var result = await _sut.Handle(new SearchLoadBoardCommand(), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Null(result.Value!.Errors);
+    }
+
+    [Fact]
+    public async Task Handle_ListingWithoutExpiry_GetsAShelfLifeInsteadOfNever()
+    {
+        _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
+            .Returns([CreateListing("EXT-1")]);
+        _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>()).Returns([]);
+
+        var result = await _sut.Handle(new SearchLoadBoardCommand(), CancellationToken.None);
+
+        var expiresAt = Assert.Single(result.Value!.Listings).ExpiresAt;
+        Assert.NotNull(expiresAt);
+        Assert.InRange(expiresAt.Value, DateTime.UtcNow.AddHours(23), DateTime.UtcNow.AddHours(25));
+        await _listingRepo.Received(1).AddAsync(
+            Arg.Is<LoadBoardListing>(l => l.ExpiresAt == expiresAt.Value), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_MinRatePerMile_DropsCheaperListingsButKeepsUnpriced()
+    {
+        var cheap = CreateListing("CHEAP") with { RatePerMile = 1.5m };
+        var unpriced = CreateListing("UNPRICED") with { RatePerMile = null };
+        _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
+            .Returns([CreateListing("GOOD"), cheap, unpriced]);
+        _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>()).Returns([]);
+
+        var result = await _sut.Handle(new SearchLoadBoardCommand { MinRatePerMile = 2m }, CancellationToken.None);
+
+        Assert.Equal(["GOOD", "UNPRICED"], result.Value!.Listings.Select(l => l.ExternalListingId).Order());
+    }
+
+    [Fact]
+    public async Task Handle_MarketRatesEnabled_StampsLaneRateOnListings()
+    {
+        _datConfig.MarketRatesEnabled = true;
+        _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>()).Returns([]);
+        _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
+            .Returns([CreateListing("A") with { ProviderType = LoadBoardProviderType.Dat }]);
+        _dat.GetMarketRatesAsync(Arg.Any<IReadOnlyList<MarketRateLane>>(), Arg.Any<CancellationToken>())
+            .Returns([new MarketRate(2.75m, 2500m, 2.4m, 3.1m)]);
+
+        var result = await _sut.Handle(new SearchLoadBoardCommand(), CancellationToken.None);
+
+        var listing = Assert.Single(result.Value!.Listings);
+        Assert.Equal(2.75m, listing.MarketRatePerMile);
+        Assert.Null(result.Value.Errors);
     }
 
     [Fact]

@@ -29,9 +29,6 @@ internal sealed class LoadBoardListingEntityConfiguration : IEntityTypeConfigura
             money.Property(m => m.Currency).HasMaxLength(3);
         });
 
-        builder.Property(i => i.EquipmentType)
-            .HasMaxLength(50);
-
         builder.Property(i => i.Commodity)
             .HasMaxLength(200);
 

@@ -191,7 +191,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             PickupDateEnd = DateTime.UtcNow.AddDays(random.Next(4, 7)),
             DeliveryDateStart = DateTime.UtcNow.AddDays(random.Next(7, 9)),
             DeliveryDateEnd = DateTime.UtcNow.AddDays(random.Next(9, 12)),
-            EquipmentType = random.Pick(["Dry Van", "Reefer", "Flatbed"]),
+            EquipmentType = random.Pick([LoadBoardEquipmentType.Van, LoadBoardEquipmentType.Reefer, LoadBoardEquipmentType.Flatbed]),
             Commodity = random.Pick(["Palletized consumer goods", "Packaged food", "Building materials", "Auto parts"]),
             BrokerName = brokerName,
             BrokerEmail = BrokerEmail(brokerName),
@@ -350,7 +350,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
         return
             $"Hello {listing.BrokerName}, we can cover {listing.OriginAddress.City}, {listing.OriginAddress.State} " +
             $"to {listing.DestinationAddress.City}, {listing.DestinationAddress.State} " +
-            $"({lane.Miles:N0} miles, {listing.EquipmentType}) at {Format(ask)} all-in, " +
+            $"({lane.Miles:N0} miles, {listing.EquipmentType?.GetDescription()}) at {Format(ask)} all-in, " +
             $"which is {askPerMile:0.00} {ask.Currency} per mile. " +
             "Equipment is available for the posted pickup window. Reply to this address to confirm.";
     }

@@ -71,9 +71,9 @@ public class PostedTruck : AuditableEntity, ITenantEntity
     public DateTime? AvailableTo { get; set; }
 
     /// <summary>
-    /// Equipment type (e.g., "Flatbed", "Dry Van", "Reefer")
+    /// Equipment the truck is posted with
     /// </summary>
-    public string? EquipmentType { get; set; }
+    public LoadBoardEquipmentType? EquipmentType { get; set; }
 
     /// <summary>
     /// Maximum weight capacity in pounds

@@ -21,6 +21,9 @@ internal sealed class LoadBoardConfigurationEntityConfiguration : IEntityTypeCon
         builder.Property(i => i.ExternalAccountId)
             .HasMaxLength(100);
 
+        builder.Property(i => i.UserEmail)
+            .HasMaxLength(256);
+
         builder.Property(i => i.CompanyDotNumber)
             .HasMaxLength(20);
 

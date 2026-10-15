@@ -1,93 +1,246 @@
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 
-internal record DatTokenResponse
-{
-    public string? AccessToken { get; set; }
+// DAT wire shapes, camelCase on the wire. Verification status (see docs/loadboard-dat-setup.md):
+// - tokens: verified (public client code for /access/v1/token/organization and /token/user)
+// - search v1 request and match: verified against a captured production response (2021)
+// - posting: the load shape is verified; truck posts are assumed to mirror it
+// - RateView lookup: verified request and response
 
-    // DAT org tokens carry an absolute expiry timestamp, not expires_in seconds
-    public DateTime? ExpiresWhen { get; set; }
+#region Identity
+
+internal sealed record DatOrganizationTokenRequest(string Username, string Password);
+
+internal sealed record DatUserTokenRequest(string Username);
+
+internal sealed record DatTokenResponse
+{
+    public string? AccessToken { get; init; }
+
+    /// <summary>ISO-8601 UTC, e.g. <c>2026-10-14T21:05:00.000Z</c>.</summary>
+    public DateTime? ExpiresWhen { get; init; }
 }
 
-internal record DatSearchResponse
+#endregion
+
+#region Search (freight matching v1)
+
+internal sealed record DatSearchRequest(DatSearchCriteria Criteria);
+
+internal sealed record DatSearchCriteria
 {
-    public List<DatLoad>? Loads { get; set; }
-    public int TotalCount { get; set; }
+    public required DatDesiredSpecs DesiredSpecs { get; init; }
+    public int MaxAgeInMinutes { get; init; }
+    public DatAvailability? Availability { get; init; }
+    public required DatPlace Origin { get; init; }
+    public DatPlace? Destination { get; init; }
 }
 
-internal record DatLoad
+internal sealed record DatDesiredSpecs
 {
-    public string? Id { get; set; }
-    public DatLocation? Origin { get; set; }
-    public DatLocation? Destination { get; set; }
-    public decimal? RatePerMile { get; set; }
-    public decimal? TotalRate { get; set; }
-    public int? Distance { get; set; }
-    public int? Weight { get; set; }
-    public int? Length { get; set; }
-    public DateTime? PickupDateStart { get; set; }
-    public DateTime? PickupDateEnd { get; set; }
-    public DateTime? DeliveryDateStart { get; set; }
-    public DateTime? DeliveryDateEnd { get; set; }
-    public string? EquipmentType { get; set; }
-    public string? Commodity { get; set; }
-    public DatBroker? Broker { get; set; }
-    public DateTime? ExpiresAt { get; set; }
+    public string[]? EquipmentTypes { get; init; }
+
+    /// <summary>FULL, PARTIAL or BOTH.</summary>
+    public string Capacity { get; init; } = "BOTH";
 }
 
-internal record DatLocation
+internal sealed record DatAvailability
 {
-    public string? City { get; set; }
-    public string? State { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
+    public DateTime? Earliest { get; init; }
+    public DateTime? Latest { get; init; }
 }
 
-internal record DatBroker
+internal sealed record DatPlace(DatPoint Point);
+
+internal sealed record DatPoint
 {
-    public string? Name { get; set; }
-    public string? Phone { get; set; }
-    public string? Email { get; set; }
-    public string? McNumber { get; set; }
-
-    /// <summary>
-    /// Credit score (0-100) from DAT CreditStop, present only on subscriptions that include credit data.
-    /// </summary>
-    public int? CreditScore { get; set; }
-
-    /// <summary>
-    /// Average days-to-pay from DAT CreditStop, present only on subscriptions that include credit data.
-    /// </summary>
-    public int? DaysToPay { get; set; }
+    public string? City { get; init; }
+    public string? State { get; init; }
+    public double? Latitude { get; init; }
+    public double? Longitude { get; init; }
+    public DatMiles? Deadhead { get; init; }
 }
 
-internal record DatBookingResponse
+internal sealed record DatMiles
 {
-    public string? ConfirmationId { get; set; }
+    public int? Miles { get; init; }
 }
 
-internal record DatPostTruckResponse
+internal sealed record DatSearchCreatedResponse
 {
-    public string? PostId { get; set; }
-    public DateTime? ExpiresAt { get; set; }
+    public string? Id { get; init; }
 }
 
-internal record DatTrucksResponse
+internal sealed record DatMatch
 {
-    public List<DatTruck>? Trucks { get; set; }
+    public string? MatchId { get; init; }
+    public string? PostingId { get; init; }
+    public string? Status { get; init; }
+    public DatPlace? Origin { get; init; }
+    public DatPlace? Destination { get; init; }
+    public DatTripLength? TripLength { get; init; }
+    public DatMatchSpecs? Specs { get; init; }
+    public DatAvailability? Availability { get; init; }
+    public DatRate? Rate { get; init; }
+    public DatPoster? Poster { get; init; }
+    public DatCredit? Credit { get; init; }
 }
 
-internal record DatTruck
+internal sealed record DatTripLength
 {
-    public string? Id { get; set; }
-    public DatLocation? Origin { get; set; }
-    public string? EquipmentType { get; set; }
-    public DateTime? AvailableFrom { get; set; }
-    public DateTime? AvailableTo { get; set; }
-    public DateTime? ExpiresAt { get; set; }
+    public double? DistanceMiles { get; init; }
 }
 
-internal record DatWebhookPayload
+internal sealed record DatMatchSpecs
 {
-    public string? EventType { get; set; }
-    public string? LoadId { get; set; }
+    public string? RequiredEquipmentType { get; init; }
+    public int? LengthInFeet { get; init; }
+    public int? WeightInPounds { get; init; }
 }
+
+internal sealed record DatRate
+{
+    /// <summary>FLAT (a trip total) or PER_MILE.</summary>
+    public string? RateBasedOn { get; init; }
+    public DatMoney? BaseRate { get; init; }
+}
+
+internal sealed record DatMoney
+{
+    public decimal? Amount { get; init; }
+    public string? Currency { get; init; }
+}
+
+internal sealed record DatPoster
+{
+    public string? Company { get; init; }
+    public DatContact? Contact { get; init; }
+}
+
+internal sealed record DatContact
+{
+    public string? Email { get; init; }
+    public DatPhone? Phone { get; init; }
+}
+
+internal sealed record DatPhone
+{
+    public string? Number { get; init; }
+    public string? Extension { get; init; }
+}
+
+internal sealed record DatCredit
+{
+    public int? Score { get; init; }
+    public int? DaysToPay { get; init; }
+}
+
+#endregion
+
+#region Posting v2
+
+/// <summary>
+/// A truck post. Assumed to mirror the verified <c>/posting/v2/loads</c> body
+/// (<c>freight</c> / <c>lane</c> / <c>exposure</c>).
+/// </summary>
+internal sealed record DatTruckPostingRequest
+{
+    public required DatPostingFreight Freight { get; init; }
+    public required DatPostingLane Lane { get; init; }
+    public required DatPostingExposure Exposure { get; init; }
+    public string? ReferenceId { get; init; }
+}
+
+internal sealed record DatPostingFreight
+{
+    public required string EquipmentType { get; init; }
+    public string FullPartial { get; init; } = "FULL";
+    public int? LengthFeet { get; init; }
+    public int? WeightPounds { get; init; }
+}
+
+internal sealed record DatPostingLane
+{
+    public required DatPostingPlace Origin { get; init; }
+    public DatPostingPlace? Destination { get; init; }
+}
+
+internal sealed record DatPostingPlace
+{
+    public string? City { get; init; }
+    public string? StateProv { get; init; }
+    public string? PostalCode { get; init; }
+}
+
+internal sealed record DatPostingExposure
+{
+    public DateTime EarliestAvailabilityWhen { get; init; }
+    public DateTime? LatestAvailabilityWhen { get; init; }
+    public string PreferredContactMethod { get; init; } = "PHONE";
+
+    /// <summary>When the post comes off the board (assumed field name).</summary>
+    public DateTime? EndWhen { get; init; }
+}
+
+internal sealed record DatPosting
+{
+    public string? Id { get; init; }
+    public DatPostingExposure? Exposure { get; init; }
+}
+
+#endregion
+
+#region RateView
+
+internal sealed record DatRateLookupRequest
+{
+    public required DatRatePlace Origin { get; init; }
+    public required DatRatePlace Destination { get; init; }
+    public string RateType { get; init; } = "SPOT";
+    public required string Equipment { get; init; }
+    public bool IncludeMyRate { get; init; }
+    public DatRateEscalation TargetEscalation { get; init; } = new();
+    public DatRateTimePeriod RateTimePeriod { get; init; } = new();
+}
+
+internal sealed record DatRatePlace(string City, string StateOrProvince);
+
+internal sealed record DatRateEscalation
+{
+    public string EscalationType { get; init; } = "BEST_FIT";
+}
+
+internal sealed record DatRateTimePeriod
+{
+    public string RateTense { get; init; } = "CURRENT";
+}
+
+internal sealed record DatRateLookupResponse
+{
+    public List<DatRateResponseItem>? RateResponses { get; init; }
+}
+
+internal sealed record DatRateResponseItem
+{
+    public DatRateResult? Response { get; init; }
+}
+
+internal sealed record DatRateResult
+{
+    public DatRateValues? Rate { get; init; }
+}
+
+internal sealed record DatRateValues
+{
+    public DatRateRange? PerMile { get; init; }
+    public DatRateRange? PerTrip { get; init; }
+    public double? Mileage { get; init; }
+}
+
+internal sealed record DatRateRange
+{
+    public decimal? RateUsd { get; init; }
+    public decimal? HighUsd { get; init; }
+    public decimal? LowUsd { get; init; }
+}
+
+#endregion

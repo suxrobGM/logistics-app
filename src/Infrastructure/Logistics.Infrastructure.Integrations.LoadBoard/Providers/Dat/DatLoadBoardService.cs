@@ -1,30 +1,39 @@
-using System.Net.Http.Headers;
-using Logistics.Infrastructure.Integrations.Common;
-using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
-using System.Text.Json;
+using System.Net;
+using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 
 /// <summary>
-///     DAT Load Board provider implementation.
-///     Integrates with DAT Freight &amp; Analytics API for searching loads and posting trucks.
-///     Authentication: Bearer Token (Service Account or User Account)
-///     Base URL: https://freight.api.dat.com
+/// DAT (DAT One) through DAT's public freight APIs.
+/// <para>
+/// Auth is two-step: the carrier's service account (email + password) gets an organization
+/// token, and that token mints a user token for one DAT One seat (<see cref="LoadBoardConfiguration.UserEmail"/>).
+/// Every freight call uses the user token. The organization token is kept as the refresh
+/// credential, so renewing a user token skips the service-account login.
+/// </para>
+/// <para>DAT has no webhooks and no booking API: searches and post reconciliation are pulled.</para>
 /// </summary>
-internal class DatLoadBoardService(
+internal sealed class DatLoadBoardService(
     HttpClient httpClient,
-    IHttpClientFactory httpClientFactory,
     IOptions<LoadBoardOptions> options,
     ILogger<DatLoadBoardService> logger)
     : ILoadBoardProviderService
 {
+    private const string Vendor = "DAT";
+
+    /// <summary>
+    /// Used when DAT omits <c>expiresWhen</c>; short enough that a token is renewed early rather
+    /// than late.
+    /// </summary>
+    private static readonly TimeSpan FallbackTokenLifetime = TimeSpan.FromMinutes(30);
+
     private readonly DatOptions _options = options.Value.Dat ?? new DatOptions();
+    private LoadBoardConfiguration? _configuration;
 
     public LoadBoardProviderType ProviderType => LoadBoardProviderType.Dat;
 
@@ -32,216 +41,221 @@ internal class DatLoadBoardService(
 
     public void Initialize(LoadBoardConfiguration configuration)
     {
-        httpClient.BaseAddress = new Uri(_options.BaseUrl);
+        _configuration = configuration;
+    }
 
-        if (!string.IsNullOrEmpty(configuration.AccessToken))
+    public Task<bool> ValidateCredentialsAsync(LoadBoardConfiguration configuration, CancellationToken ct = default)
+    {
+        throw new NotSupportedException("DAT validates credentials by acquiring a token.");
+    }
+
+    public async Task<OAuthTokenResultDto> AcquireTokenAsync(LoadBoardConfiguration configuration, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(configuration.ApiSecret))
         {
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", configuration.AccessToken);
+            throw new LoadBoardApiException("Enter the DAT service account password.");
         }
 
-        logger.LogDebug("Initialized DAT Load Board provider");
+        var organization = await RequestTokenAsync(
+            "/access/v1/token/organization",
+            new DatOrganizationTokenRequest(configuration.ApiKey, configuration.ApiSecret),
+            bearerToken: null,
+            ct);
+
+        var user = await RequestUserTokenAsync(configuration, organization.AccessToken!, ct);
+        return user with { RefreshToken = organization.AccessToken };
     }
 
-    public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)
+    public async Task<OAuthTokenResultDto?> RefreshTokenAsync(LoadBoardConfiguration configuration, CancellationToken ct = default)
     {
-        return await AcquireTokenAsync(apiKey, apiSecret) != null;
+        return string.IsNullOrEmpty(configuration.RefreshToken)
+            ? null
+            : await RequestUserTokenAsync(configuration, configuration.RefreshToken, ct);
     }
 
-    public async Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret)
+    public async Task<IReadOnlyList<LoadBoardListingDto>> SearchLoadsAsync(
+        LoadBoardSearchCriteria criteria, CancellationToken ct = default)
     {
-        var authClient = httpClientFactory.CreateClient();
-        var result = await authClient.TryPostAsJsonAsync<object, DatTokenResponse>(
-            _options.AuthUrl, new { clientId = apiKey, clientSecret = apiSecret }, logger, "DAT token acquisition");
+        var request = DatSearchRequestBuilder.Build(criteria, _options.MaxPostingAgeMinutes);
+        var created = await httpClient.SendJsonAsync<DatSearchCreatedResponse>(
+            HttpMethod.Post, $"{_options.SearchBaseUrl}/search/v1/loads", request, UserToken, Vendor, ct);
 
-        var token = result.Value;
-        if (string.IsNullOrEmpty(token?.AccessToken))
+        if (string.IsNullOrEmpty(created.Id))
         {
-            return null;
+            throw new LoadBoardApiException("DAT accepted the search but returned no search id.");
+        }
+
+        var limit = Math.Clamp(criteria.MaxResults, 1, 1000);
+        var matches = await httpClient.SendJsonAsync<List<DatMatch>>(
+            HttpMethod.Get,
+            $"{_options.SearchBaseUrl}/search/v1/loads/{Uri.EscapeDataString(created.Id)}/matches?limit={limit}",
+            null, UserToken, Vendor, ct);
+
+        var listings = matches
+            .Select(DatMapper.ToListingDto)
+            .OfType<LoadBoardListingDto>()
+            .Where(l => DatSearchRequestBuilder.MatchesLocalFilters(l, criteria))
+            .ToList();
+
+        logger.LogInformation("DAT search {SearchId} returned {Count} matches", created.Id, listings.Count);
+        return listings;
+    }
+
+    public async Task<PostTruckResultDto> PostTruckAsync(PostTruckRequest request, CancellationToken ct = default)
+    {
+        var posting = await httpClient.SendJsonAsync<DatPosting>(
+            HttpMethod.Post, $"{_options.FreightBaseUrl}/posting/v2/trucks", ToPostingRequest(request), UserToken, Vendor, ct);
+
+        if (string.IsNullOrEmpty(posting.Id))
+        {
+            throw new LoadBoardApiException("DAT accepted the truck post but returned no post id.");
+        }
+
+        return new PostTruckResultDto { ExternalPostId = posting.Id, ExpiresAt = posting.Exposure?.EndWhen };
+    }
+
+    public Task UpdateTruckPostAsync(string externalPostId, PostTruckRequest request, CancellationToken ct = default)
+    {
+        return httpClient.SendJsonAsync(
+            HttpMethod.Patch,
+            $"{_options.FreightBaseUrl}/posting/v2/trucks/{Uri.EscapeDataString(externalPostId)}",
+            ToPostingRequest(request), UserToken, Vendor, ct);
+    }
+
+    public async Task RemoveTruckPostAsync(string externalPostId, CancellationToken ct = default)
+    {
+        try
+        {
+            await httpClient.SendJsonAsync(
+                HttpMethod.Delete,
+                $"{_options.FreightBaseUrl}/posting/v2/trucks/?id={Uri.EscapeDataString(externalPostId)}",
+                null, UserToken, Vendor, ct);
+        }
+        catch (LoadBoardApiException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            logger.LogInformation("DAT truck post {PostId} was already gone", externalPostId);
+        }
+    }
+
+    public async Task<IReadOnlyList<ProviderTruckPost>?> GetPostedTrucksAsync(CancellationToken ct = default)
+    {
+        var postings = await httpClient.SendJsonAsync<List<DatPosting>>(
+            HttpMethod.Get, $"{_options.FreightBaseUrl}/posting/v2/trucks", null, UserToken, Vendor, ct);
+
+        return postings
+            .Where(p => !string.IsNullOrEmpty(p.Id))
+            .Select(p => new ProviderTruckPost(p.Id!, p.Exposure?.EndWhen))
+            .ToList();
+    }
+
+    public async Task<IReadOnlyList<MarketRate?>> GetMarketRatesAsync(
+        IReadOnlyList<MarketRateLane> lanes, CancellationToken ct = default)
+    {
+        var rates = new MarketRate?[lanes.Count];
+
+        // RateView answers a lookup array in request order; lanes it cannot price are left out.
+        var priced = lanes
+            .Select((lane, index) => (lane, index, equipment: DatEquipment.ToRateViewEquipment(lane.EquipmentType)))
+            .Where(x => x.equipment is not null)
+            .ToList();
+
+        if (priced.Count == 0)
+        {
+            return rates;
+        }
+
+        var request = priced.Select(x => new DatRateLookupRequest
+        {
+            Origin = new DatRatePlace(x.lane.OriginCity, x.lane.OriginState),
+            Destination = new DatRatePlace(x.lane.DestinationCity, x.lane.DestinationState),
+            Equipment = x.equipment!
+        }).ToList();
+
+        var response = await httpClient.SendJsonAsync<DatRateLookupResponse>(
+            HttpMethod.Post, $"{_options.AnalyticsBaseUrl}/linehaulrates/v1/lookups", request, UserToken, Vendor, ct);
+
+        var results = response.RateResponses ?? [];
+        for (var i = 0; i < priced.Count && i < results.Count; i++)
+        {
+            rates[priced[i].index] = ToMarketRate(results[i].Response?.Rate);
+        }
+
+        return rates;
+    }
+
+    private string UserToken =>
+        _configuration?.AccessToken ?? throw new InvalidOperationException("DAT provider used before Initialize.");
+
+    private async Task<OAuthTokenResultDto> RequestUserTokenAsync(
+        LoadBoardConfiguration configuration, string organizationToken, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(configuration.UserEmail))
+        {
+            throw new LoadBoardApiException(
+                "Add the DAT One user email to the DAT connection: DAT issues API access per DAT One user.");
+        }
+
+        return await RequestTokenAsync(
+            "/access/v1/token/user", new DatUserTokenRequest(configuration.UserEmail), organizationToken, ct);
+    }
+
+    private async Task<OAuthTokenResultDto> RequestTokenAsync(
+        string path, object body, string? bearerToken, CancellationToken ct)
+    {
+        var token = await httpClient.SendJsonAsync<DatTokenResponse>(
+            HttpMethod.Post, $"{_options.IdentityBaseUrl}{path}", body, bearerToken, Vendor, ct);
+
+        if (string.IsNullOrEmpty(token.AccessToken))
+        {
+            throw new LoadBoardApiException("DAT returned no access token.");
         }
 
         return new OAuthTokenResultDto
         {
             AccessToken = token.AccessToken,
-            ExpiresAt = token.ExpiresWhen ?? DateTime.UtcNow.AddMinutes(50)
+            ExpiresAt = token.ExpiresWhen?.ToUniversalTime() ?? DateTime.UtcNow + FallbackTokenLifetime
         };
     }
 
-    public Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken)
+    private static DatTruckPostingRequest ToPostingRequest(PostTruckRequest request) => new()
     {
-        // DAT has no refresh grant; callers fall through to AcquireTokenAsync (client credentials).
-        return Task.FromResult<OAuthTokenResultDto?>(null);
-    }
-
-    public async Task<IEnumerable<LoadBoardListingDto>> SearchLoadsAsync(LoadBoardSearchCriteria criteria)
-    {
-        logger.LogInformation("Searching DAT loads: Origin={Origin}, Dest={Dest}",
-            criteria.OriginAddress?.City, criteria.DestinationAddress?.City);
-
-        var searchRequest = new
+        Freight = new DatPostingFreight
         {
-            origin = new
-            {
-                city = criteria.OriginAddress?.City,
-                state = criteria.OriginAddress?.State,
-                radius = criteria.OriginRadius
-            },
-            destination = criteria.DestinationAddress != null
-                ? new
-                {
-                    city = criteria.DestinationAddress.City,
-                    state = criteria.DestinationAddress.State,
-                    radius = criteria.DestinationRadius
-                }
-                : null,
-            pickupDate = new
-            {
-                start = criteria.PickupDateStart?.ToString("yyyy-MM-dd"),
-                end = criteria.PickupDateEnd?.ToString("yyyy-MM-dd")
-            },
-            equipmentTypes = criteria.EquipmentTypes,
-            limit = criteria.MaxResults
-        };
-
-        var result = await httpClient.TryPostAsJsonAsync<object, DatSearchResponse>(
-            "/freight/v3/loads/search", searchRequest, logger, "DAT search loads");
-
-        return result.Value?.Loads?.Select(DatMapper.ToListingDto) ?? [];
-    }
-
-    public async Task<LoadBoardListingDto?> GetLoadDetailsAsync(string externalListingId)
-    {
-        var load = await httpClient.TryGetFromJsonAsync<DatLoad>(
-            $"/freight/v3/loads/{externalListingId}", logger, $"DAT get load {externalListingId}");
-
-        return load != null ? DatMapper.ToListingDto(load) : null;
-    }
-
-    public async Task<LoadBoardBookingResultDto> BookLoadAsync(string externalListingId,
-        LoadBoardBookingRequest request)
-    {
-        logger.LogInformation("Booking DAT load {ListingId} for truck {TruckId}", externalListingId, request.TruckId);
-
-        var bookRequest = new
+            EquipmentType = DatEquipment.ToPostingCode(request.EquipmentType),
+            LengthFeet = request.MaxLength,
+            WeightPounds = request.MaxWeight
+        },
+        Lane = new DatPostingLane
         {
-            loadId = externalListingId,
-            truckId = request.TruckId.ToString(),
-            notes = request.Notes
-        };
-
-        var result = await httpClient.TryPostAsJsonAsync<object, DatBookingResponse>(
-            $"/freight/v3/loads/{externalListingId}/book", bookRequest, logger, $"DAT book load {externalListingId}");
-
-        return result.IsSuccess
-            ? new LoadBoardBookingResultDto { Success = true, ExternalConfirmationId = result.Value?.ConfirmationId }
-            : new LoadBoardBookingResultDto { Success = false, ErrorMessage = $"DAT booking failed: {result.ErrorBody}" };
-    }
-
-    public Task<bool> CancelBookingAsync(string externalListingId, string? reason)
-    {
-        return httpClient.TryPostAsync(
-            $"/freight/v3/loads/{externalListingId}/cancel", new { reason }, logger, $"DAT cancel booking {externalListingId}");
-    }
-
-    public async Task<PostTruckResultDto> PostTruckAsync(PostTruckRequest request)
-    {
-        logger.LogInformation("Posting truck {TruckId} to DAT", request.TruckId);
-
-        var postRequest = new
+            Origin = ToPostingPlace(request.Origin),
+            Destination = request.Destination is null ? null : ToPostingPlace(request.Destination)
+        },
+        Exposure = new DatPostingExposure
         {
-            origin = new
-            {
-                city = request.AvailableAtAddress.City,
-                state = request.AvailableAtAddress.State,
-                latitude = request.AvailableAtLocation.Latitude,
-                longitude = request.AvailableAtLocation.Longitude
-            },
-            destination = request.DestinationPreference != null
-                ? new
-                {
-                    city = request.DestinationPreference.City,
-                    state = request.DestinationPreference.State,
-                    radius = request.DestinationRadius
-                }
-                : null,
-            availableDate = new
-            {
-                start = request.AvailableFrom.ToString("yyyy-MM-dd"),
-                end = request.AvailableTo?.ToString("yyyy-MM-dd")
-            },
-            equipmentType = request.EquipmentType,
-            maxWeight = request.MaxWeight,
-            maxLength = request.MaxLength
-        };
+            EarliestAvailabilityWhen = request.AvailableFrom.ToUniversalTime(),
+            LatestAvailabilityWhen = request.AvailableTo?.ToUniversalTime()
+        },
+        ReferenceId = request.TruckId.ToString("N")[..8].ToUpperInvariant()
+    };
 
-        var result = await httpClient.TryPostAsJsonAsync<object, DatPostTruckResponse>(
-            "/freight/v3/trucks", postRequest, logger, $"DAT post truck {request.TruckId}");
-
-        return result.IsSuccess
-            ? new PostTruckResultDto
-            {
-                Success = true,
-                ExternalPostId = result.Value?.PostId,
-                ExpiresAt = result.Value?.ExpiresAt
-            }
-            : new PostTruckResultDto { Success = false, ErrorMessage = $"DAT post truck failed: {result.ErrorBody}" };
-    }
-
-    public Task<bool> UpdateTruckPostAsync(string externalPostId, PostTruckRequest request)
+    private static DatPostingPlace ToPostingPlace(LoadBoardPlace place) => new()
     {
-        var updateRequest = new
+        City = place.City,
+        StateProv = place.State,
+        PostalCode = place.PostalCode
+    };
+
+    private static MarketRate? ToMarketRate(DatRateValues? rate)
+    {
+        var perMile = rate?.PerMile?.RateUsd;
+        var perTrip = rate?.PerTrip?.RateUsd;
+        if (perMile is null && perTrip is not null && rate?.Mileage is > 0)
         {
-            availableDate = new
-            {
-                start = request.AvailableFrom.ToString("yyyy-MM-dd"),
-                end = request.AvailableTo?.ToString("yyyy-MM-dd")
-            },
-            equipmentType = request.EquipmentType,
-            maxWeight = request.MaxWeight,
-            maxLength = request.MaxLength
-        };
-
-        return httpClient.TryPutAsync(
-            $"/freight/v3/trucks/{externalPostId}", updateRequest, logger, $"DAT update truck post {externalPostId}");
-    }
-
-    public Task<bool> RemoveTruckPostAsync(string externalPostId)
-    {
-        return httpClient.TryDeleteAsync(
-            $"/freight/v3/trucks/{externalPostId}", logger, $"DAT remove truck post {externalPostId}");
-    }
-
-    public async Task<IEnumerable<PostedTruckDto>> GetPostedTrucksAsync()
-    {
-        var result = await httpClient.TryGetFromJsonAsync<DatTrucksResponse>(
-            "/freight/v3/trucks", logger, "DAT get posted trucks");
-
-        return result?.Trucks?.Select(DatMapper.ToPostedTruckDto) ?? [];
-    }
-
-    public Task<LoadBoardWebhookResultDto> ProcessWebhookAsync(string payload, string? signature,
-        string? webhookSecret)
-    {
-        if (!WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
-        {
-            logger.LogWarning("Rejected DAT webhook with invalid or unverifiable signature");
-            return Task.FromResult(LoadBoardWebhookResults.Invalid("Invalid webhook signature"));
+            perMile = Math.Round(perTrip.Value / (decimal)rate.Mileage.Value, 2);
         }
 
-        try
-        {
-            var webhook = JsonSerializer.Deserialize<DatWebhookPayload>(payload);
-            return Task.FromResult(new LoadBoardWebhookResultDto
-            {
-                IsValid = true,
-                EventType = DatMapper.MapWebhookEventType(webhook?.EventType),
-                ExternalListingId = webhook?.LoadId
-            });
-        }
-        catch (JsonException ex)
-        {
-            logger.LogError(ex, "Error processing DAT webhook");
-            return Task.FromResult(LoadBoardWebhookResults.Invalid(ex.Message));
-        }
+        return perMile is { } value
+            ? new MarketRate(value, perTrip, rate?.PerMile?.LowUsd, rate?.PerMile?.HighUsd)
+            : null;
     }
 }

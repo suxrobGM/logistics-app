@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Infrastructure.Integrations.Common;
 using Logistics.Infrastructure.Integrations.LoadBoard.Credit;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
@@ -6,31 +7,23 @@ using Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Truckstop;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard;
 
 public static class Registrar
 {
     /// <summary>
-    ///     Add LoadBoard provider integrations (DAT, Truckstop, 123Loadboard, Demo).
+    ///     Add LoadBoard provider integrations (DAT, Demo; Truckstop and 123Loadboard not available yet).
     /// </summary>
     public static IServiceCollection AddLoadBoardIntegrations(
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // LoadBoard providers (with HttpClient for external APIs)
-        services.AddHttpClient<DatLoadBoardService>();
-        services.AddHttpClient<TruckstopLoadBoardService>();
-        services.AddHttpClient<OneTwo3LoadBoardService>();
+        services.AddHttpClient<DatLoadBoardService>().AddHttpMessageHandler(() => new RateLimitRetryHandler());
+        services.AddScoped<TruckstopLoadBoardService>();
+        services.AddScoped<OneTwo3LoadBoardService>();
         services.AddScoped<DemoLoadBoardService>();
 
-        // Singleton: the typed-client service above is transient, counters would reset every resolution
-        services.TryAddSingleton(TimeProvider.System);
-        services.AddSingleton<IOneTwo3SearchRateLimiter, InMemoryOneTwo3SearchRateLimiter>();
-
-        // Options binding + factory pattern for provider selection
         services.AddProviderIntegration<LoadBoardOptions, ILoadBoardProviderFactory, LoadBoardProviderFactory>(
             configuration, LoadBoardOptions.SectionName);
 

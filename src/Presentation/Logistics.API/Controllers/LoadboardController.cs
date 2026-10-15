@@ -34,6 +34,27 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpPut("providers/{providerId:guid}", Name = "UpdateLoadBoardProvider")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.LoadBoard.Manage)]
+    public async Task<IActionResult> UpdateProvider(Guid providerId, [FromBody] UpdateLoadBoardConfigurationCommand request)
+    {
+        request.Id = providerId;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("providers/{providerId:guid}/test", Name = "TestLoadBoardProvider")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.LoadBoard.Manage)]
+    public async Task<IActionResult> TestProvider(Guid providerId)
+    {
+        var result = await mediator.Send(new TestLoadBoardConnectionCommand { Id = providerId });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpDelete("providers/{providerId:guid}", Name = "DeleteLoadBoardProvider")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -108,6 +129,17 @@ public class LoadBoardController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(request);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("trucks/{postedTruckId:guid}", Name = "UpdatePostedTruck")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.LoadBoard.Post)]
+    public async Task<IActionResult> UpdatePostedTruck(Guid postedTruckId, [FromBody] UpdatePostedTruckCommand request)
+    {
+        request.PostedTruckId = postedTruckId;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpDelete("trucks/{postedTruckId:guid}", Name = "RemovePostedTruck")]

@@ -19,9 +19,6 @@ internal sealed class PostedTruckEntityConfiguration : IEntityTypeConfiguration<
         builder.Property(i => i.ExternalPostId)
             .HasMaxLength(100);
 
-        builder.Property(i => i.EquipmentType)
-            .HasMaxLength(50);
-
         builder.HasOne(i => i.Truck)
             .WithMany()
             .HasForeignKey(i => i.TruckId)

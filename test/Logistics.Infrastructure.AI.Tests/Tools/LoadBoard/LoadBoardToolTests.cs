@@ -79,10 +79,10 @@ public class LoadBoardToolTests
 
         await _mediator.Received(1).Send(
             Arg.Is<SearchLoadBoardCommand>(c =>
-                c.OriginAddress!.City == "Dallas" &&
-                c.OriginAddress.State == "TX" &&
+                c.Origin!.City == "Dallas" &&
+                c.Origin.State == "TX" &&
                 c.OriginRadius == 250 &&
-                c.DestinationAddress!.State == "AZ"),
+                c.Destination!.State == "AZ"),
             Arg.Any<CancellationToken>());
     }
 
@@ -97,7 +97,7 @@ public class LoadBoardToolTests
             CancellationToken.None);
 
         await _mediator.Received(1).Send(
-            Arg.Is<SearchLoadBoardCommand>(c => c.OriginRadius == 100 && c.DestinationAddress == null),
+            Arg.Is<SearchLoadBoardCommand>(c => c.OriginRadius == 100 && c.Destination == null),
             Arg.Any<CancellationToken>());
     }
 
@@ -132,7 +132,7 @@ public class LoadBoardToolTests
             .Returns(Result<LoadBoardSearchResultDto>.Ok(new LoadBoardSearchResultDto
             {
                 Listings = [],
-                Errors = new Dictionary<LoadBoardProviderType, string?>
+                Errors = new Dictionary<LoadBoardProviderType, string>
                 {
                     [LoadBoardProviderType.Dat] = "credentials rejected"
                 }
@@ -205,10 +205,10 @@ public class LoadBoardToolTests
         _mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadBoardBookingResultDto>.Ok(new LoadBoardBookingResultDto
             {
-                Success = true,
                 CreatedLoadId = loadId,
                 CreatedLoadNumber = 1042,
-                ExternalConfirmationId = "CONF-7"
+                BrokerName = "Acme Brokerage",
+                BrokerPhone = "555-0100"
             }));
 
         var root = Parse(await BookingTool().ExecuteAsync(
@@ -223,7 +223,8 @@ public class LoadBoardToolTests
         Assert.True(root.GetProperty("success").GetBoolean());
         Assert.Equal(loadId, root.GetProperty("load_id").GetGuid());
         Assert.Equal(1042, root.GetProperty("load_number").GetInt64());
-        Assert.Equal("CONF-7", root.GetProperty("confirmation_id").GetString());
+        Assert.True(root.GetProperty("broker_confirmation_required").GetBoolean());
+        Assert.Equal("555-0100", root.GetProperty("broker_phone").GetString());
 
         await _mediator.Received(1).Send(
             Arg.Is<BookLoadBoardLoadCommand>(c =>
@@ -240,7 +241,7 @@ public class LoadBoardToolTests
     {
         _runContext.SetTriggeredBy(Guid.NewGuid());
         _mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
-            .Returns(Result<LoadBoardBookingResultDto>.Ok(new LoadBoardBookingResultDto { Success = true }));
+            .Returns(Result<LoadBoardBookingResultDto>.Ok(new LoadBoardBookingResultDto()));
 
         // Even if the model invents the argument, overriding is a dispatcher's judgement call.
         await BookingTool().ExecuteAsync(
@@ -273,30 +274,6 @@ public class LoadBoardToolTests
 
         Assert.False(root.GetProperty("success").GetBoolean());
         Assert.Equal("Broker credit below the tenant minimum", root.GetProperty("error").GetString());
-    }
-
-    [Fact]
-    public async Task Book_ProviderRejectedTheBooking_ReportsFailureNotSuccess()
-    {
-        _runContext.SetTriggeredBy(Guid.NewGuid());
-        _mediator.Send(Arg.Any<BookLoadBoardLoadCommand>(), Arg.Any<CancellationToken>())
-            .Returns(Result<LoadBoardBookingResultDto>.Ok(new LoadBoardBookingResultDto
-            {
-                Success = false,
-                ErrorMessage = "Listing already claimed"
-            }));
-
-        var root = Parse(await BookingTool().ExecuteAsync(
-            new JsonObject
-            {
-                ["listing_id"] = Guid.NewGuid().ToString(),
-                ["truck_id"] = Guid.NewGuid().ToString()
-            },
-            CancellationToken.None));
-
-        // A command that succeeded carrying a failed booking must not read as a booked load.
-        Assert.False(root.GetProperty("success").GetBoolean());
-        Assert.Equal("Listing already claimed", root.GetProperty("error").GetString());
     }
 
     #endregion

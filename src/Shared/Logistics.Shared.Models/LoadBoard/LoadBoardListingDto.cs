@@ -16,6 +16,15 @@ public record LoadBoardListingDto
     public required GeoPoint DestinationLocation { get; set; }
 
     public decimal? RatePerMile { get; set; }
+
+    /// <summary>
+    /// The board's current market spot rate for this lane (DAT RateView), per mile, when the
+    /// tenant enabled market rates. Looked up per search, never stored.
+    /// </summary>
+    public decimal? MarketRatePerMile { get; set; }
+
+    public decimal? MarketRateLowPerMile { get; set; }
+    public decimal? MarketRateHighPerMile { get; set; }
     public decimal? TotalRate { get; set; }
     public string? Currency { get; set; }
     public double? Distance { get; set; }
@@ -27,7 +36,7 @@ public record LoadBoardListingDto
     public DateTime? DeliveryDateStart { get; set; }
     public DateTime? DeliveryDateEnd { get; set; }
 
-    public string? EquipmentType { get; set; }
+    public LoadBoardEquipmentType? EquipmentType { get; set; }
     public string? Commodity { get; set; }
 
     public string? BrokerName { get; set; }
@@ -49,9 +58,14 @@ public record LoadBoardListingDto
 
     public LoadBoardListingStatus Status { get; set; }
     public DateTime? BookedAt { get; set; }
-    public DateTime ExpiresAt { get; set; }
+    /// <summary>
+    /// When the posting expires. Providers leave it null when the board does not say; the search
+    /// handler then stamps a short shelf life so stale listings still get cleaned up.
+    /// </summary>
+    public DateTime? ExpiresAt { get; set; }
 
-    public bool IsBookable => Status == LoadBoardListingStatus.Available && ExpiresAt > DateTime.UtcNow;
+    public bool IsBookable => Status == LoadBoardListingStatus.Available &&
+                              (ExpiresAt is null || ExpiresAt > DateTime.UtcNow);
 
     /// <summary>
     /// If booked, the internal Load ID

@@ -7,9 +7,23 @@ namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 public class CreateLoadBoardConfigurationCommand : ICommand
 {
     public LoadBoardProviderType ProviderType { get; set; }
+
+    /// <summary>
+    /// API key, or the login (DAT: service account email).
+    /// </summary>
     public required string ApiKey { get; set; }
+
+    /// <summary>
+    /// API secret, or the password (DAT: service account password).
+    /// </summary>
     public string? ApiSecret { get; set; }
-    public string? WebhookSecret { get; set; }
+
+    /// <summary>
+    /// DAT: the DAT One user the API acts as.
+    /// </summary>
+    public string? UserEmail { get; set; }
+
+    public bool MarketRatesEnabled { get; set; }
     public string? CompanyDotNumber { get; set; }
     public string? CompanyMcNumber { get; set; }
 }

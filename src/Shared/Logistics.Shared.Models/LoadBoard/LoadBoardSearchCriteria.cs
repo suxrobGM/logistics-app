@@ -1,78 +1,44 @@
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
 public record LoadBoardSearchCriteria
 {
-    /// <summary>
-    /// Origin location to search around
-    /// </summary>
-    public Address? OriginAddress { get; set; }
+    public LoadBoardPlace? Origin { get; set; }
 
     /// <summary>
-    /// Radius in miles from origin
+    /// Deadhead radius in miles around the origin.
     /// </summary>
     public int OriginRadius { get; set; } = 50;
 
-    /// <summary>
-    /// Destination location to search around
-    /// </summary>
-    public Address? DestinationAddress { get; set; }
+    public LoadBoardPlace? Destination { get; set; }
 
     /// <summary>
-    /// Radius in miles from destination
+    /// Radius in miles around the destination.
     /// </summary>
     public int DestinationRadius { get; set; } = 50;
 
-    /// <summary>
-    /// Pickup date range start
-    /// </summary>
     public DateTime? PickupDateStart { get; set; }
-
-    /// <summary>
-    /// Pickup date range end
-    /// </summary>
     public DateTime? PickupDateEnd { get; set; }
 
     /// <summary>
-    /// Equipment types to filter by (e.g., "Flatbed", "Dry Van", "Reefer")
+    /// Equipment to match; empty or null matches any.
     /// </summary>
-    public string[]? EquipmentTypes { get; set; }
+    public LoadBoardEquipmentType[]? EquipmentTypes { get; set; }
 
-    /// <summary>
-    /// Minimum rate per mile
-    /// </summary>
     public decimal? MinRatePerMile { get; set; }
-
-    /// <summary>
-    /// Minimum total rate
-    /// </summary>
     public decimal? MinTotalRate { get; set; }
 
     /// <summary>
-    /// Minimum weight in pounds
-    /// </summary>
-    public int? MinWeight { get; set; }
-
-    /// <summary>
-    /// Maximum weight in pounds
+    /// Maximum load weight in pounds.
     /// </summary>
     public int? MaxWeight { get; set; }
 
     /// <summary>
-    /// Maximum length in feet
+    /// Maximum load length in feet.
     /// </summary>
     public int? MaxLength { get; set; }
 
-    /// <summary>
-    /// Providers to search (null = search all configured providers)
-    /// </summary>
-    public LoadBoardProviderType[]? Providers { get; set; }
-
-    /// <summary>
-    /// Maximum results to return
-    /// </summary>
     public int MaxResults { get; set; } = 100;
 }
 
@@ -81,5 +47,10 @@ public record LoadBoardSearchResultDto
     public IEnumerable<LoadBoardListingDto> Listings { get; set; } = [];
     public int TotalCount { get; set; }
     public Dictionary<LoadBoardProviderType, int> CountByProvider { get; set; } = [];
-    public Dictionary<LoadBoardProviderType, string?>? Errors { get; set; }
+
+    /// <summary>
+    /// Why a provider returned nothing, keyed by provider. A failed provider never fails the
+    /// whole search, so the caller must show these or it reads as "no freight".
+    /// </summary>
+    public Dictionary<LoadBoardProviderType, string>? Errors { get; set; }
 }

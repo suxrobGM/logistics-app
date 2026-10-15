@@ -1,89 +1,75 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Application.Abstractions.LoadBoard;
 
 /// <summary>
-/// Interface for load board provider integrations.
-/// Each load board provider (DAT, Truckstop, 123Loadboard) implements this interface.
+/// A load board vendor integration. Every call except <see cref="ValidateCredentialsAsync"/>
+/// throws <see cref="LoadBoardApiException"/> on a vendor failure; callers go through the
+/// application's load board gateway, which handles tokens, the one 401 retry, and turns the
+/// exception into a per-provider error.
 /// </summary>
+/// <remarks>
+/// There is no booking call: no supported board exposes a booking API, so booking creates the
+/// load in the TMS and the dispatcher confirms with the broker by phone or email.
+/// </remarks>
 public interface ILoadBoardProviderService
 {
-    /// <summary>
-    /// The type of load board provider this service handles
-    /// </summary>
     LoadBoardProviderType ProviderType { get; }
 
     /// <summary>
-    /// Initialize the service with credentials from the configuration
-    /// </summary>
-    void Initialize(LoadBoardConfiguration configuration);
-
-    /// <summary>
-    /// True when API calls need an OAuth token stored on the tenant configuration;
-    /// false when the API key itself is sent on each request
+    /// True when API calls need an access token stored on the tenant configuration;
+    /// false when the API key itself is sent on each request.
     /// </summary>
     bool RequiresOAuthToken { get; }
 
     /// <summary>
-    /// Validate that the provided credentials are correct
+    /// Binds the service to a tenant configuration. Tokens are read from it at send time, so a
+    /// token the gateway renews on the same configuration is picked up without re-initializing.
     /// </summary>
-    Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret);
+    void Initialize(LoadBoardConfiguration configuration);
 
     /// <summary>
-    /// Acquire a new OAuth access token; null when unsupported or acquisition fails
+    /// Checks the credentials of a provider that does not use tokens. Token providers prove
+    /// their credentials by acquiring a token instead.
     /// </summary>
-    Task<OAuthTokenResultDto?> AcquireTokenAsync(string apiKey, string? apiSecret);
+    Task<bool> ValidateCredentialsAsync(LoadBoardConfiguration configuration, CancellationToken ct = default);
 
     /// <summary>
-    /// Refresh an OAuth access token using a refresh token
+    /// Acquires a fresh access token from the stored credentials.
     /// </summary>
-    Task<OAuthTokenResultDto?> RefreshTokenAsync(string refreshToken);
+    Task<OAuthTokenResultDto> AcquireTokenAsync(LoadBoardConfiguration configuration, CancellationToken ct = default);
 
     /// <summary>
-    /// Search for available loads on the load board
+    /// Renews the access token from the stored refresh credential (<see cref="LoadBoardConfiguration.RefreshToken"/>);
+    /// null when the provider has none or it was rejected, and the caller falls back to
+    /// <see cref="AcquireTokenAsync"/>.
     /// </summary>
-    Task<IEnumerable<LoadBoardListingDto>> SearchLoadsAsync(LoadBoardSearchCriteria criteria);
+    Task<OAuthTokenResultDto?> RefreshTokenAsync(LoadBoardConfiguration configuration, CancellationToken ct = default);
+
+    Task<IReadOnlyList<LoadBoardListingDto>> SearchLoadsAsync(LoadBoardSearchCriteria criteria, CancellationToken ct = default);
 
     /// <summary>
-    /// Get detailed information about a specific load listing
+    /// Posts a truck to advertise capacity and returns the board's id for the post.
     /// </summary>
-    Task<LoadBoardListingDto?> GetLoadDetailsAsync(string externalListingId);
+    Task<PostTruckResultDto> PostTruckAsync(PostTruckRequest request, CancellationToken ct = default);
+
+    Task UpdateTruckPostAsync(string externalPostId, PostTruckRequest request, CancellationToken ct = default);
+
+    Task RemoveTruckPostAsync(string externalPostId, CancellationToken ct = default);
 
     /// <summary>
-    /// Book/claim a load from the load board
+    /// The truck posts the board currently holds for this account, used to reconcile local
+    /// posts that expired or were removed on the board; null when the provider keeps no posts of
+    /// its own to compare against (Demo).
     /// </summary>
-    Task<LoadBoardBookingResultDto> BookLoadAsync(string externalListingId, LoadBoardBookingRequest request);
+    Task<IReadOnlyList<ProviderTruckPost>?> GetPostedTrucksAsync(CancellationToken ct = default);
 
     /// <summary>
-    /// Cancel a booking on the load board
+    /// Current market rates for the lanes, aligned by index; an entry is null where the board
+    /// has no rate. Only called when the tenant enabled market rates on the configuration
+    /// (DAT RateView is a separate subscription).
     /// </summary>
-    Task<bool> CancelBookingAsync(string externalListingId, string? reason);
-
-    /// <summary>
-    /// Post a truck to the load board to advertise available capacity
-    /// </summary>
-    Task<PostTruckResultDto> PostTruckAsync(PostTruckRequest request);
-
-    /// <summary>
-    /// Update an existing truck post on the load board
-    /// </summary>
-    Task<bool> UpdateTruckPostAsync(string externalPostId, PostTruckRequest request);
-
-    /// <summary>
-    /// Remove a truck post from the load board
-    /// </summary>
-    Task<bool> RemoveTruckPostAsync(string externalPostId);
-
-    /// <summary>
-    /// Get all posted trucks for the current account
-    /// </summary>
-    Task<IEnumerable<PostedTruckDto>> GetPostedTrucksAsync();
-
-    /// <summary>
-    /// Process an incoming webhook from the load board provider
-    /// </summary>
-    Task<LoadBoardWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret);
+    Task<IReadOnlyList<MarketRate?>> GetMarketRatesAsync(IReadOnlyList<MarketRateLane> lanes, CancellationToken ct = default);
 }

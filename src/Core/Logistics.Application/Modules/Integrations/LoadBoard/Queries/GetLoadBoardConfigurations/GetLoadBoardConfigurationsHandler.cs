@@ -32,14 +32,17 @@ internal sealed class GetLoadBoardConfigurationsHandler(ITenantUnitOfWork tenant
             {
                 Id = config.Id,
                 ProviderType = config.ProviderType,
-                ProviderName = config.ProviderType.ToString(),
+                ProviderName = config.ProviderType.GetDescription(),
                 IsActive = config.IsActive,
                 LastSyncedAt = config.LastSyncedAt,
                 IsConnected = config.IsActive && !string.IsNullOrEmpty(config.ApiKey),
                 ActiveListingsCount = activeListingsCount,
                 PostedTrucksCount = postedTrucksCount,
                 CompanyDotNumber = config.CompanyDotNumber,
-                CompanyMcNumber = config.CompanyMcNumber
+                CompanyMcNumber = config.CompanyMcNumber,
+                AccountLogin = config.ProviderType == LoadBoardProviderType.Dat ? config.ApiKey : null,
+                UserEmail = config.UserEmail,
+                MarketRatesEnabled = config.MarketRatesEnabled
             });
         }
 

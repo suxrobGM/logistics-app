@@ -1,18 +1,16 @@
-using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.LoadBoard;
-using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 
 namespace Logistics.Application.Modules.Integrations.LoadBoard.Commands;
 
 internal sealed class RemovePostedTruckHandler(
     ITenantUnitOfWork tenantUow,
-    ILoadBoardTokenService tokenService,
+    ILoadBoardProviderGateway gateway,
     ILogger<RemovePostedTruckHandler> logger)
     : IRequestHandler<RemovePostedTruckCommand, Result>
 {
@@ -24,35 +22,23 @@ internal sealed class RemovePostedTruckHandler(
             return Result.Fail("Posted truck not found");
         }
 
-        if (postedTruck.Status == PostedTruckStatus.Expired)
-        {
-            // Already expired, just delete the record
-            tenantUow.Repository<PostedTruck>().Delete(postedTruck);
-            await tenantUow.SaveChangesAsync(ct);
-            return Result.Ok();
-        }
-
-        // Get provider configuration
         var providerConfig = await tenantUow.Repository<LoadBoardConfiguration>()
             .GetAsync(c => c.ProviderType == postedTruck.ProviderType && c.IsActive, ct);
 
-        if (providerConfig is not null && !string.IsNullOrEmpty(postedTruck.ExternalPostId))
+        // A post still live on the board must come off it first, or brokers keep calling about a
+        // truck that is gone. Without an active configuration there is no way to reach the board.
+        if (postedTruck.Status == PostedTruckStatus.Available &&
+            providerConfig is not null &&
+            postedTruck.ExternalPostId is { Length: > 0 } externalPostId)
         {
-            // Try to remove from the load board provider
-            var providerResult = await tokenService.GetReadyProviderAsync(providerConfig, ct);
-            var provider = providerResult.IsSuccess ? providerResult.Value : null;
-            var removed = provider is not null &&
-                          await provider.RemoveTruckPostAsync(postedTruck.ExternalPostId);
-
-            if (!removed)
+            var removed = await gateway.ExecuteAsync(
+                providerConfig, p => p.RemoveTruckPostAsync(externalPostId, ct), ct);
+            if (!removed.IsSuccess)
             {
-                logger.LogWarning(
-                    "Failed to remove truck post {ExternalPostId} from {Provider}, removing local record anyway: {Error}",
-                    postedTruck.ExternalPostId, postedTruck.ProviderType, providerResult.Error);
+                return removed;
             }
         }
 
-        // Delete the local record
         tenantUow.Repository<PostedTruck>().Delete(postedTruck);
         await tenantUow.SaveChangesAsync(ct);
 

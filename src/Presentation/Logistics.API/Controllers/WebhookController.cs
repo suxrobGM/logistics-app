@@ -72,24 +72,6 @@ public class WebhookController(IMediator mediator) : ControllerBase
     public Task<IActionResult> GeotabWebhook(Guid tenantId) =>
         ProcessEldWebhookAsync(tenantId, EldProviderType.Geotab, "X-Geotab-Signature");
 
-    [HttpPost("loadboard/dat", Name = "ProcessDatWebhook")]
-    public Task<IActionResult> DatWebhook()
-    {
-        return Task.FromResult<IActionResult>(Ok());
-    }
-
-    [HttpPost("loadboard/truckstop", Name = "ProcessTruckstopWebhook")]
-    public Task<IActionResult> TruckstopWebhook()
-    {
-        return Task.FromResult<IActionResult>(Ok());
-    }
-
-    [HttpPost("loadboard/123loadboard", Name = "Process123LoadboardWebhook")]
-    public Task<IActionResult> OneTwo3LoadboardWebhook()
-    {
-        return Task.FromResult<IActionResult>(Ok());
-    }
-
     private async Task<IActionResult> ProcessEldWebhookAsync(
         Guid tenantId, EldProviderType providerType, string signatureHeader, string? timestampHeader = null)
     {
