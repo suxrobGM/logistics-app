@@ -26,5 +26,8 @@ A fuel transaction made on a connected card appears as a truck expense with gall
 
 ## Notes
 
-- **2026-07-16**: Shipped on `feat/fuel-integrations`. New `Infrastructure.Integrations.FuelCards/` project (WEX + EFS clients, deterministic Demo provider, factory) behind `IFuelCardProviderService`/`IFuelCardProviderFactory` ports. Transactions stage in `FuelCardTransaction` (unique (provider, external ID) = idempotency; RawPayloadJson kept for disputes), match by `FuelCard` mapping → unit-number auto-match (remembers the mapping) → Pending review queue. Matched transactions materialize as **Paid** `TruckExpense`s (Category=Fuel, gallons + `PurchaseJurisdiction` → feeds IFTA). Nightly `FuelCardSyncJob` (02:00 UTC, 3-day overlap window) + manual sync command. `TenantFeature.FuelCards` (Professional+), `Permission.FuelCard.View/Manage`. UI: `tms-portal/pages/fuel-cards/` (providers + review queue with assign/ignore). `FuelCardSeeder` seeds Demo provider + 90 days of transactions. Real WEX/EFS API contracts are best-effort pending partner sandbox access - Demo provider covers dev/demo; Comdata deferred.
-- **Shape worth copying for the next provider**: WEX and EFS both authenticate with a long-lived bearer API key, so the shared plumbing lives in `BearerFuelCardService<TProbeResponse>` - subclasses supply only the base URL, a credential-probe URL (`TProbeResponse` is just the probe's response shape, used to prove the credentials deserialize), and the transaction fetch/mapping. Config follows `LoadBoardOptions`/`EldOptions`: one aggregate `FuelCardsOptions` bound to the `"FuelCards"` section with a nullable entry per provider (`Wex`, `Efs`), read as `options.Value.Wex ?? new WexOptions()` so a provider that isn't configured degrades to empty credentials instead of throwing at startup.
+- **2026-07-16** - Shipped: WEX, EFS and a Demo provider; nightly sync plus manual sync; matched
+  transactions become paid fuel truck expenses that feed IFTA, unmatched ones wait in the review
+  queue at `tms-portal/pages/fuel-cards/`.
+- **Remaining:** the real WEX/EFS API contracts are best effort until a partner sandbox confirms
+  them; Comdata is deferred.

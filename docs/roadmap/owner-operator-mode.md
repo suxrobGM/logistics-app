@@ -48,11 +48,8 @@ worth remembering:
   Deploy note: the permission list is C#, but `GetCurrentUserPermissionsHandler` reads
   `TenantRoleClaim` rows, so nothing changes in a running environment until `TenantRoleSeeder`
   re-syncs them on a DbMigrator run.
-- **Two pre-existing bugs surfaced in the same pass,** neither solo-specific. Drivers had no
-  `Permission.Dvir` at all, so DVIR submission 403'd for every real driver. And the truck driver
-  autocomplete sent `Role: "Driver"` into a case-sensitive `Contains` on `"tenant.driver"`, so it
-  matched nobody. The role filter is deleted rather than corrected - nothing in the domain requires
-  the Driver role to be assigned to a truck, and an owner-operator has to be able to pick themselves.
+- **The truck driver picker has no role filter.** Nothing in the domain requires the Driver role
+  on a truck's driver, and an owner-operator has to be able to pick themselves.
 - **Solo mode is expressed as absence, not as a second UI.** The nav drops `employees`, `payroll`
   and `messages` (timesheets goes with its payroll parent), the onboarding checklist drops
   `inviteTeam`, and default sidebar favourites are filtered to ids the tenant can actually reach.
@@ -68,11 +65,9 @@ worth remembering:
   `DemoTenantConfig.SeedDataKey` (falling back to the region name) plus a `DataScale` multiplier
   fixed both, with `us`/`eu` output byte-identical.
 - **Leased owner-operator settlements shipped on `PayrollInvoice`** (a fleet paying owner-operators,
-  not the solo owner paying themselves). A settlement is gross plus signed deduction lines: share of
-  linehaul with optional fuel surcharge / accessorial exclusions, recurring deductions (truck lease,
-  insurance, ELD fee), escrow with a target balance, cash advances (dispatcher-issued) and fuel card purchases on the driver's truck. A separate settlement entity was
-  not needed - the payroll approval, pay stub PDF, Stripe Connect payout and QuickBooks Bill push all
-  apply unchanged, and the Bill carries the net. Details in [invoices](../invoices.md).
+  not the solo owner paying themselves). A separate settlement entity was not needed - the payroll
+  approval, pay stub PDF, Stripe Connect payout and QuickBooks Bill push all apply unchanged, and
+  the Bill carries the net. Details in [invoices](../invoices.md).
 - Deferred: **owner pay**. A solo owner still has no draw or settlement path; the plan remains the
   existing employee Stripe Connect payout rails rather than `PayrollInvoice` cycles. The driver app
   has no earnings or settlement screen yet, and no cash advance request flow. Also deferred:
