@@ -21,7 +21,8 @@ public interface IThreadedEmailSender
 /// A null <c>ReplyTo</c> sends from the configured sender address with no per-thread reply route,
 /// which is what a one-off transactional email needs. <c>MessageId</c> is the RFC 5322 Message-ID to
 /// send under, angle brackets included; null lets the provider assign one, which only a mail that
-/// nothing will ever reply into can afford.
+/// nothing will ever reply into can afford. <c>Attachments</c> travel inline with the message (the provider caps
+/// a message at 40 MB including them).
 /// </summary>
 public record ThreadedEmail(
     string To,
@@ -30,7 +31,8 @@ public record ThreadedEmail(
     string? ReplyTo,
     string? MessageId = null,
     string? InReplyToMessageId = null,
-    string? References = null);
+    string? References = null,
+    IReadOnlyList<EmailFileAttachment>? Attachments = null);
 
 /// <param name="ProviderMessageId">
 /// The provider's own handle on the send, for support lookups. Not an RFC 5322 Message-ID and never

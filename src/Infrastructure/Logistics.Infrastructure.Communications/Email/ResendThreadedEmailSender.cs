@@ -45,6 +45,13 @@ internal sealed class ResendThreadedEmailSender(
                 message.Headers["References"] = email.References;
             }
 
+            if (email.Attachments is { Count: > 0 })
+            {
+                message.Attachments = email.Attachments
+                    .Select(a => new EmailAttachment { Filename = a.FileName, Content = a.Content, ContentType = a.ContentType })
+                    .ToList();
+            }
+
             var response = await resend.EmailSendAsync(message, ct);
             logger.LogInformation(
                 "Threaded email has been sent to {Mail}, subject: '{Subject}', provider id: {ProviderId}",
