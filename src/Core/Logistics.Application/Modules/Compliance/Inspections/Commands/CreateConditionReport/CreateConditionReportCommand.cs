@@ -13,7 +13,13 @@ public class CreateConditionReportCommand : ICommand<Result<Guid>>
     public required Guid LoadId { get; set; }
     public required InspectionType Type { get; set; }
 
-    // Vehicle-cargo identifier (only required when load is LoadType.Vehicle)
+    /// <summary>
+    /// The load vehicle being inspected. Required on a vehicle load that lists its vehicles; its
+    /// VIN / year / make / model fill any identifier field left empty below.
+    /// </summary>
+    public Guid? LoadVehicleId { get; set; }
+
+    // Vehicle-cargo identifier (only used when load is LoadType.Vehicle)
     public string? Vin { get; set; }
     public int? VehicleYear { get; set; }
     public string? VehicleMake { get; set; }
@@ -25,9 +31,8 @@ public class CreateConditionReportCommand : ICommand<Result<Guid>>
     public string? SealNumber { get; set; }
 
     /// <summary>
-    /// Defects documented during inspection. Server-side, each defect's
-    /// <see cref="ConditionDefectInput.PartCategory"/> is validated against the
-    /// catalog returned by <c>CargoInspectionPartCategoryExtensions.GetCatalogFor(load.Type)</c>.
+    /// Defects documented during inspection. Server-side, each defect's part category is validated
+    /// against <c>CargoInspectionPartCategoryExtensions.GetCatalogFor(load.Type)</c>.
     /// </summary>
     public List<ConditionDefectInput> Defects { get; set; } = [];
 
@@ -42,6 +47,11 @@ public class CreateConditionReportCommand : ICommand<Result<Guid>>
     public required Guid InspectedById { get; set; }
 }
 
+/// <summary>
+/// A defect from the part list (<see cref="PartCategory"/> + <see cref="Description"/>) or from the
+/// vehicle diagram (<see cref="Zone"/> + <see cref="DamageType"/>; the part category is derived from
+/// the zone and the description is optional).
+/// </summary>
 public class ConditionDefectInput
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new(JsonSerializerDefaults.Web)
@@ -49,9 +59,23 @@ public class ConditionDefectInput
         Converters = { new JsonStringEnumConverter() }
     };
 
-    public required CargoInspectionPartCategory PartCategory { get; set; }
-    public required string Description { get; set; }
+    public CargoInspectionPartCategory? PartCategory { get; set; }
+    public string? Description { get; set; }
     public required DefectSeverity Severity { get; set; }
+
+    public VehicleDamageZone? Zone { get; set; }
+    public VehicleDamageType? DamageType { get; set; }
+
+    /// <summary>
+    /// Index into the report's <see cref="CreateConditionReportCommand.Photos"/> of the photo that
+    /// shows this defect.
+    /// </summary>
+    public int? PhotoIndex { get; set; }
+
+    /// <summary>
+    /// The part category this defect is filed under: the diagram zone's category when a zone is set.
+    /// </summary>
+    public CargoInspectionPartCategory? ResolvePartCategory() => Zone?.ToPartCategory() ?? PartCategory;
 
     public static List<ConditionDefectInput> ParseDefects(string? json)
     {

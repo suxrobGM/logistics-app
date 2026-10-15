@@ -15,7 +15,12 @@ public static class ConditionReportMapper
             PartCategoryDisplay = entity.PartCategory.GetDescription(),
             Description = entity.Description,
             Severity = entity.Severity,
-            SeverityDisplay = entity.Severity.GetDescription()
+            SeverityDisplay = entity.Severity.GetDescription(),
+            Zone = entity.Zone,
+            ZoneDisplay = entity.Zone?.GetDescription(),
+            DamageType = entity.DamageType,
+            DamageCode = entity.DamageType?.GetCode(),
+            PhotoDocumentId = entity.PhotoDocumentId
         };
     }
 }

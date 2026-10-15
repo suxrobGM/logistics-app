@@ -18,6 +18,12 @@ public class LoadConditionReport : AuditableEntity, ITenantEntity
 
     public required InspectionType Type { get; set; }
 
+    /// <summary>
+    /// The <see cref="LoadVehicle"/> this report inspects, on a vehicle load that lists its vehicles.
+    /// The VIN / year / make / model fields below snapshot that vehicle at inspection time.
+    /// </summary>
+    public Guid? LoadVehicleId { get; set; }
+
     // Vehicle-cargo identifier (only for LoadType.Vehicle)
     public string? Vin { get; set; }
     public int? VehicleYear { get; set; }

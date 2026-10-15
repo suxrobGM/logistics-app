@@ -24,6 +24,14 @@ internal sealed class ConditionDefectEntityConfiguration : IEntityTypeConfigurat
             .HasConversion<string>()
             .HasMaxLength(32);
 
+        builder.Property(d => d.Zone)
+            .HasConversion<string>()
+            .HasMaxLength(32);
+
+        builder.Property(d => d.DamageType)
+            .HasConversion<string>()
+            .HasMaxLength(16);
+
         builder.HasIndex(d => d.LoadConditionReportId);
         builder.HasIndex(d => d.PartCategory);
     }

@@ -18,6 +18,11 @@ public class ConditionReportDto
 
     public InspectionType Type { get; set; }
 
+    /// <summary>
+    /// The load vehicle this report inspects (car hauler loads that list their vehicles).
+    /// </summary>
+    public Guid? LoadVehicleId { get; set; }
+
     // Vehicle-cargo identifier (only populated when LoadType == Vehicle)
     public string? Vin { get; set; }
     public int? VehicleYear { get; set; }
@@ -54,6 +59,21 @@ public class ConditionDefectDto
     public string Description { get; set; } = string.Empty;
     public DefectSeverity Severity { get; set; }
     public string SeverityDisplay { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Vehicle diagram zone, for defects marked on the diagram.
+    /// </summary>
+    public VehicleDamageZone? Zone { get; set; }
+    public string? ZoneDisplay { get; set; }
+
+    public VehicleDamageType? DamageType { get; set; }
+
+    /// <summary>
+    /// Car hauler BOL code for <see cref="DamageType"/>: S, D, C, CR, M or B.
+    /// </summary>
+    public string? DamageCode { get; set; }
+
+    public Guid? PhotoDocumentId { get; set; }
 }
 
 /// <summary>

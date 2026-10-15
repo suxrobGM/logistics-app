@@ -25,4 +25,20 @@ public class ConditionDefect : Entity, ITenantEntity
     public required string Description { get; set; }
 
     public required DefectSeverity Severity { get; set; }
+
+    /// <summary>
+    /// Zone tapped on the vehicle diagram (vehicle loads only). <see cref="PartCategory"/> is the
+    /// zone's rolled-up category when this is set.
+    /// </summary>
+    public VehicleDamageZone? Zone { get; set; }
+
+    /// <summary>
+    /// Damage type for diagram-marked defects, printed as its BOL code (S, D, C, CR, M, B).
+    /// </summary>
+    public VehicleDamageType? DamageType { get; set; }
+
+    /// <summary>
+    /// The inspection photo (a <see cref="DeliveryDocument"/> of the parent report) showing this defect.
+    /// </summary>
+    public Guid? PhotoDocumentId { get; set; }
 }

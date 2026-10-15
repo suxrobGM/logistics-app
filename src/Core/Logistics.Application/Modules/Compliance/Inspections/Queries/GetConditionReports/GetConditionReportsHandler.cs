@@ -34,16 +34,6 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
 
         foreach (var report in reports)
         {
-            // Photos are stored as DeliveryDocument rows linked by LoadId + inspection
-            // timestamp proximity (legacy pattern - out of scope to refactor here).
-            var photos = await tenantUow.Repository<DeliveryDocument>().Query()
-                .Where(d => d.LoadId == report.LoadId &&
-                    (d.Type == DocumentType.PickupInspection || d.Type == DocumentType.DeliveryInspection) &&
-                    d.CapturedAt != null &&
-                    d.CapturedAt >= report.InspectedAt.AddMinutes(-5) &&
-                    d.CapturedAt <= report.InspectedAt.AddMinutes(5))
-                .ToListAsync(ct);
-
             var dto = new ConditionReportDto
             {
                 Id = report.Id,
@@ -51,6 +41,7 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
                 LoadReferenceId = report.Load?.Number.ToString(),
                 LoadType = report.Load?.Type ?? LoadType.GeneralFreight,
                 Type = report.Type,
+                LoadVehicleId = report.LoadVehicleId,
                 Vin = report.Vin,
                 VehicleYear = report.VehicleYear,
                 VehicleMake = report.VehicleMake,
@@ -67,7 +58,7 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
                 InspectedById = report.InspectedById,
                 InspectorName = report.InspectedBy?.GetFullName(),
                 Defects = [.. report.Defects.Select(d => d.ToDto())],
-                Photos = [.. photos.Select(p => p.ToDto())]
+                Photos = [.. report.Photos.Select(p => p.ToDto())]
             };
 
             dtos.Add(dto);

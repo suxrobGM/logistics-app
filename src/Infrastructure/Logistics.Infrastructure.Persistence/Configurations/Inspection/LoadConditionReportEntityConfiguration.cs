@@ -63,6 +63,7 @@ internal sealed class LoadConditionReportEntityConfiguration : IEntityTypeConfig
 
         // Indexes
         builder.HasIndex(v => v.LoadId);
+        builder.HasIndex(v => v.LoadVehicleId);
         builder.HasIndex(v => v.Vin);
         builder.HasIndex(v => v.ContainerNumber);
         builder.HasIndex(v => v.InspectedAt);

@@ -31,17 +31,19 @@ internal sealed class CreateConditionReportHandler(
             return Result<Guid>.Fail($"Employee with ID '{req.InspectedById}' not found");
         }
 
-        // Validate defect categories against the load's cargo type catalog
-        var catalog = CargoInspectionPartCategoryExtensions.GetCatalogFor(load.Type);
-        foreach (var defect in req.Defects)
+        var vehicleCheck = ResolveVehicle(load, req.LoadVehicleId);
+        if (!vehicleCheck.IsSuccess)
         {
-            if (!catalog.Contains(defect.PartCategory))
-            {
-                return Result<Guid>.Fail(
-                    $"Defect category '{defect.PartCategory}' is not valid for load type '{load.Type}'");
-            }
+            return Result<Guid>.Fail(vehicleCheck.Error!);
         }
 
+        var defectError = ValidateDefects(req, load.Type);
+        if (defectError is not null)
+        {
+            return Result<Guid>.Fail(defectError);
+        }
+
+        var vehicle = vehicleCheck.Value;
         string? signatureBlobPath = null;
 
         try
@@ -70,12 +72,14 @@ internal sealed class CreateConditionReportHandler(
                 req.Longitude);
 
             // Identifier fields - populated only for the matching cargo type
-            if (load.Type == LoadType.Vehicle && !string.IsNullOrWhiteSpace(req.Vin))
+            if (load.Type == LoadType.Vehicle)
             {
-                report.Vin = req.Vin.ToUpperInvariant();
-                report.VehicleYear = req.VehicleYear;
-                report.VehicleMake = req.VehicleMake;
-                report.VehicleModel = req.VehicleModel;
+                report.LoadVehicleId = vehicle?.Id;
+                var vin = string.IsNullOrWhiteSpace(req.Vin) ? vehicle?.Vin : req.Vin;
+                report.Vin = vin?.Trim().ToUpperInvariant();
+                report.VehicleYear = req.VehicleYear ?? vehicle?.Year;
+                report.VehicleMake = req.VehicleMake ?? vehicle?.Make;
+                report.VehicleModel = req.VehicleModel ?? vehicle?.Model;
                 report.VehicleBodyClass = req.VehicleBodyClass;
             }
             else if (load.Type.IsContainerLoad())
@@ -89,60 +93,24 @@ internal sealed class CreateConditionReportHandler(
 
             report.InspectorSignature = signatureBlobPath;
 
-            foreach (var input in req.Defects)
-            {
-                report.Defects.Add(new ConditionDefect
-                {
-                    PartCategory = input.PartCategory,
-                    Description = input.Description,
-                    Severity = input.Severity
-                });
-            }
-
             await tenantUow.Repository<LoadConditionReport>().AddAsync(report, ct);
 
-            var photoIndex = 0;
-            foreach (var photo in req.Photos)
+            var photoIds = await AddPhotosAsync(req, load, report, vehicle, ct);
+
+            foreach (var input in req.Defects)
             {
-                var uniqueFileName = BlobPathHelper.GenerateUniqueFileName(photo.FileName, photoIndex++);
-                var blobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "inspection", uniqueFileName);
+                var defect = new ConditionDefect
+                {
+                    PartCategory = input.ResolvePartCategory()!.Value,
+                    Description = input.Description?.Trim() ?? string.Empty,
+                    Severity = input.Severity,
+                    Zone = input.Zone,
+                    DamageType = input.DamageType,
+                    PhotoDocumentId = input.PhotoIndex is { } index ? photoIds[index] : null
+                };
 
-                await blobStorage.UploadAsync(
-                    BlobConstants.DocumentsContainerName,
-                    blobPath,
-                    photo.Content,
-                    photo.ContentType,
-                    ct);
-
-                var docType = req.Type == InspectionType.Pickup
-                    ? DocumentType.PickupInspection
-                    : DocumentType.DeliveryInspection;
-
-                var inspectionLabel = load.Type == LoadType.Vehicle
-                    ? report.Vin ?? "VIN n/a"
-                    : load.Type.IsContainerLoad()
-                        ? report.ContainerNumber ?? "Container n/a"
-                        : $"Load #{load.Number}";
-
-                var doc = DeliveryDocument.Create(
-                    uniqueFileName,
-                    photo.FileName,
-                    photo.ContentType,
-                    photo.FileSizeBytes,
-                    blobPath,
-                    BlobConstants.DocumentsContainerName,
-                    docType,
-                    req.LoadId,
-                    req.InspectedById,
-                    recipientName: null,
-                    recipientSignature: null,
-                    captureLatitude: req.Latitude,
-                    captureLongitude: req.Longitude,
-                    capturedAt: report.InspectedAt,
-                    tripStopId: null,
-                    notes: $"Cargo inspection - {inspectionLabel}");
-
-                await tenantUow.Repository<DeliveryDocument>().AddAsync(doc, ct);
+                report.Defects.Add(defect);
+                await tenantUow.Repository<ConditionDefect>().AddAsync(defect, ct);
             }
 
             await tenantUow.SaveChangesAsync(ct);
@@ -158,5 +126,111 @@ internal sealed class CreateConditionReportHandler(
             logger.LogError(ex, "Failed to create condition report for load {LoadId}", req.LoadId);
             return Result<Guid>.Fail($"Failed to create condition report: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// A vehicle load that lists its vehicles is inspected one vehicle at a time.
+    /// </summary>
+    private static Result<LoadVehicle?> ResolveVehicle(Load load, Guid? loadVehicleId)
+    {
+        if (loadVehicleId is null)
+        {
+            return load.Type == LoadType.Vehicle && load.Vehicles.Count > 0
+                ? Result<LoadVehicle?>.Fail("Choose which of the load's vehicles this report inspects.")
+                : Result<LoadVehicle?>.Ok(null);
+        }
+
+        var vehicle = load.FindVehicle(loadVehicleId.Value);
+        return vehicle is null
+            ? Result<LoadVehicle?>.Fail($"Vehicle '{loadVehicleId}' is not on load #{load.Number}.")
+            : Result<LoadVehicle?>.Ok(vehicle);
+    }
+
+    private static string? ValidateDefects(CreateConditionReportCommand req, LoadType loadType)
+    {
+        var catalog = CargoInspectionPartCategoryExtensions.GetCatalogFor(loadType);
+
+        foreach (var defect in req.Defects)
+        {
+            if (defect.ResolvePartCategory() is not { } category)
+            {
+                return "Each defect needs a part category or a vehicle diagram zone.";
+            }
+
+            if (!catalog.Contains(category))
+            {
+                return $"Defect category '{category}' is not valid for load type '{loadType}'";
+            }
+
+            if (defect.DamageType is null && string.IsNullOrWhiteSpace(defect.Description))
+            {
+                return "Each defect needs a damage type or a description.";
+            }
+
+            if (defect.PhotoIndex is { } index && (index < 0 || index >= req.Photos.Count))
+            {
+                return $"Defect photo index {index} does not match an uploaded photo.";
+            }
+        }
+
+        return null;
+    }
+
+    private async Task<List<Guid>> AddPhotosAsync(
+        CreateConditionReportCommand req,
+        Load load,
+        LoadConditionReport report,
+        LoadVehicle? vehicle,
+        CancellationToken ct)
+    {
+        var docType = req.Type == InspectionType.Pickup
+            ? DocumentType.PickupInspection
+            : DocumentType.DeliveryInspection;
+
+        var inspectionLabel = load.Type == LoadType.Vehicle
+            ? vehicle?.GetDisplayName() ?? report.Vin ?? "VIN n/a"
+            : load.Type.IsContainerLoad()
+                ? report.ContainerNumber ?? "Container n/a"
+                : $"Load #{load.Number}";
+
+        var photoIds = new List<Guid>(req.Photos.Count);
+        var photoIndex = 0;
+
+        foreach (var photo in req.Photos)
+        {
+            var uniqueFileName = BlobPathHelper.GenerateUniqueFileName(photo.FileName, photoIndex++);
+            var blobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "inspection", uniqueFileName);
+
+            await blobStorage.UploadAsync(
+                BlobConstants.DocumentsContainerName,
+                blobPath,
+                photo.Content,
+                photo.ContentType,
+                ct);
+
+            var doc = DeliveryDocument.Create(
+                uniqueFileName,
+                photo.FileName,
+                photo.ContentType,
+                photo.FileSizeBytes,
+                blobPath,
+                BlobConstants.DocumentsContainerName,
+                docType,
+                req.LoadId,
+                req.InspectedById,
+                recipientName: null,
+                recipientSignature: null,
+                captureLatitude: req.Latitude,
+                captureLongitude: req.Longitude,
+                capturedAt: report.InspectedAt,
+                tripStopId: null,
+                notes: $"Cargo inspection - {inspectionLabel}");
+
+            report.Photos.Add(doc);
+            await tenantUow.Repository<DeliveryDocument>().AddAsync(doc, ct);
+            photoIds.Add(doc.Id);
+        }
+
+        return photoIds;
     }
 }

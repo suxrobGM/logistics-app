@@ -90,6 +90,7 @@ public class InspectionsController(IMediator mediator) : ControllerBase
         {
             LoadId = request.LoadId,
             Type = request.Type,
+            LoadVehicleId = request.LoadVehicleId,
             Vin = request.Vin,
             VehicleYear = request.VehicleYear,
             VehicleMake = request.VehicleMake,
@@ -118,6 +119,7 @@ public class InspectionsController(IMediator mediator) : ControllerBase
 public record CreateInspectionRequest(
     Guid LoadId,
     InspectionType Type,
+    Guid? LoadVehicleId,
     string? Vin,
     int? VehicleYear,
     string? VehicleMake,
