@@ -16,63 +16,65 @@ internal static class EldMappingMatcher
     public static List<EldDriverMappingSuggestionDto> MatchDrivers(
         IReadOnlyCollection<EldDriverDto> eldDrivers, IReadOnlyCollection<DriverCandidate> employees)
     {
-        var suggestions = new List<EldDriverMappingSuggestionDto>();
-        var usedExternal = new HashSet<string>();
-        var usedEmployees = new HashSet<Guid>();
-
-        void Match(EldMatchReason reason, Func<EldDriverDto, IEnumerable<string?>> eldKeys, Func<DriverCandidate, IEnumerable<string?>> tmsKeys)
-        {
-            foreach (var (driver, employee) in UniquePairs(
-                         eldDrivers.Where(d => !usedExternal.Contains(d.ExternalDriverId)), eldKeys,
-                         employees.Where(e => !usedEmployees.Contains(e.EmployeeId)), tmsKeys))
+        return MatchInPasses(
+            eldDrivers, d => d.ExternalDriverId,
+            employees, e => e.EmployeeId,
+            (driver, employee, reason) => new EldDriverMappingSuggestionDto
             {
-                usedExternal.Add(driver.ExternalDriverId);
-                usedEmployees.Add(employee.EmployeeId);
-                suggestions.Add(new EldDriverMappingSuggestionDto
-                {
-                    ExternalDriverId = driver.ExternalDriverId,
-                    ExternalDriverName = driver.Name,
-                    EmployeeId = employee.EmployeeId,
-                    EmployeeName = employee.Name,
-                    MatchedBy = reason
-                });
-            }
-        }
-
-        Match(EldMatchReason.Email, d => [NormalizeEmail(d.Email)], e => [NormalizeEmail(e.Email)]);
-        Match(EldMatchReason.LicenseNumber, d => [NormalizeCode(d.LicenseNumber)], e => e.LicenseNumbers.Select(NormalizeCode));
-        Match(EldMatchReason.Name, d => [NormalizeName(d.Name)], e => [NormalizeName(e.Name)]);
-        return suggestions;
+                ExternalDriverId = driver.ExternalDriverId,
+                ExternalDriverName = driver.Name,
+                EmployeeId = employee.EmployeeId,
+                EmployeeName = employee.Name,
+                MatchedBy = reason
+            },
+            (EldMatchReason.Email, d => [NormalizeEmail(d.Email)], e => [NormalizeEmail(e.Email)]),
+            (EldMatchReason.LicenseNumber, d => [NormalizeCode(d.LicenseNumber)], e => e.LicenseNumbers.Select(NormalizeCode)),
+            (EldMatchReason.Name, d => [NormalizeName(d.Name)], e => [NormalizeName(e.Name)]));
     }
 
     public static List<EldVehicleMappingSuggestionDto> MatchVehicles(
         IReadOnlyCollection<EldVehicleDto> eldVehicles, IReadOnlyCollection<TruckCandidate> trucks)
     {
-        var suggestions = new List<EldVehicleMappingSuggestionDto>();
-        var usedExternal = new HashSet<string>();
-        var usedTrucks = new HashSet<Guid>();
-
-        void Match(EldMatchReason reason, Func<EldVehicleDto, IEnumerable<string?>> eldKeys, Func<TruckCandidate, IEnumerable<string?>> tmsKeys)
-        {
-            foreach (var (vehicle, truck) in UniquePairs(
-                         eldVehicles.Where(v => !usedExternal.Contains(v.ExternalVehicleId)), eldKeys,
-                         trucks.Where(t => !usedTrucks.Contains(t.TruckId)), tmsKeys))
+        return MatchInPasses(
+            eldVehicles, v => v.ExternalVehicleId,
+            trucks, t => t.TruckId,
+            (vehicle, truck, reason) => new EldVehicleMappingSuggestionDto
             {
-                usedExternal.Add(vehicle.ExternalVehicleId);
-                usedTrucks.Add(truck.TruckId);
-                suggestions.Add(new EldVehicleMappingSuggestionDto
-                {
-                    ExternalVehicleId = vehicle.ExternalVehicleId,
-                    ExternalVehicleName = vehicle.Name,
-                    TruckId = truck.TruckId,
-                    TruckNumber = truck.Number,
-                    MatchedBy = reason
-                });
+                ExternalVehicleId = vehicle.ExternalVehicleId,
+                ExternalVehicleName = vehicle.Name,
+                TruckId = truck.TruckId,
+                TruckNumber = truck.Number,
+                MatchedBy = reason
+            },
+            (EldMatchReason.Vin, v => [NormalizeCode(v.Vin)], t => [NormalizeCode(t.Vin)]),
+            (EldMatchReason.TruckNumber, VehicleNumberKeys, t => [NormalizeCode(t.Number)]));
+    }
+
+    /// <summary>
+    /// Runs the key passes in order; a record paired in one pass is left out of the later ones.
+    /// </summary>
+    private static List<TSuggestion> MatchInPasses<TEld, TTms, TSuggestion>(
+        IReadOnlyCollection<TEld> eldItems, Func<TEld, string> eldId,
+        IReadOnlyCollection<TTms> tmsItems, Func<TTms, Guid> tmsId,
+        Func<TEld, TTms, EldMatchReason, TSuggestion> toSuggestion,
+        params (EldMatchReason Reason, Func<TEld, IEnumerable<string?>> EldKeys, Func<TTms, IEnumerable<string?>> TmsKeys)[] passes)
+    {
+        var suggestions = new List<TSuggestion>();
+        var usedEld = new HashSet<string>();
+        var usedTms = new HashSet<Guid>();
+
+        foreach (var (reason, eldKeys, tmsKeys) in passes)
+        {
+            foreach (var (eld, tms) in UniquePairs(
+                         eldItems.Where(e => !usedEld.Contains(eldId(e))), eldKeys,
+                         tmsItems.Where(t => !usedTms.Contains(tmsId(t))), tmsKeys))
+            {
+                usedEld.Add(eldId(eld));
+                usedTms.Add(tmsId(tms));
+                suggestions.Add(toSuggestion(eld, tms, reason));
             }
         }
 
-        Match(EldMatchReason.Vin, v => [NormalizeCode(v.Vin)], t => [NormalizeCode(t.Vin)]);
-        Match(EldMatchReason.TruckNumber, VehicleNumberKeys, t => [NormalizeCode(t.Number)]);
         return suggestions;
     }
 
