@@ -7,7 +7,7 @@ the video the Play foreground-service declaration needs. Every answer below come
 - Package / bundle ID: `com.logisticsx.driver`
 - Privacy policy: <https://logisticsx.app/privacy>
 - Account deletion: <https://logisticsx.app/account-deletion>, and in the app under More > Privacy and data > Delete my account
-- Release build: the `Driver App Android Release` workflow in the private repo builds the signed prod AAB (tag `driver-vX.Y.Z` or run it by hand)
+- Release build: the `Driver App Release` workflow (`driver-release.yml`) in the private repo builds the signed prod AAB (tag `driver-vX.Y.Z` or run it by hand)
 
 ## Reviewer test account
 
@@ -128,6 +128,6 @@ Before the first TestFlight build:
 - Add `iosApp/iosApp/GoogleService-Info.plist` from the Firebase console (it is gitignored), enable
   the Push Notifications capability on the App ID, and upload an APNs key to Firebase. See the
   driver app README.
-- Build and upload with the `driver-ios-release.yml` GitHub Actions workflow in the private repo
+- Build and upload with the `driver-release.yml` GitHub Actions workflow in the private repo
   (no Mac needed; setup in the driver app README). It sets the build number to `100 + run number`
   on the command line, which overrides the `CURRENT_PROJECT_VERSION` on the `iosApp` target.
