@@ -39,6 +39,7 @@ public class EldSyncServiceTests
         _mapping = new EldDriverMapping
         {
             EmployeeId = Guid.NewGuid(),
+            ProviderConfigurationId = Guid.NewGuid(),
             ProviderType = EldProviderType.Samsara,
             ExternalDriverId = "88668"
         };

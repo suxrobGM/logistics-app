@@ -21,6 +21,11 @@ internal sealed class EldDriverMappingEntityConfiguration : IEntityTypeConfigura
             .HasForeignKey(i => i.EmployeeId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne<EldProviderConfiguration>()
+            .WithMany()
+            .HasForeignKey(i => i.ProviderConfigurationId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Property(i => i.ExternalDriverId)
             .HasMaxLength(100)
             .IsRequired();

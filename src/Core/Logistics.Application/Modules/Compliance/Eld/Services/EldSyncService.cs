@@ -337,6 +337,7 @@ internal sealed class EldSyncService(
         var mappings = employees.Zip(demoDrivers, (employee, driver) => new EldDriverMapping
         {
             EmployeeId = employee.Id,
+            ProviderConfigurationId = config.Id,
             ExternalDriverId = driver.ExternalDriverId,
             ExternalDriverName = driver.Name,
             ProviderType = EldProviderType.Demo

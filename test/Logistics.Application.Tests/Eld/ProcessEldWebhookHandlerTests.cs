@@ -39,6 +39,7 @@ public class ProcessEldWebhookHandlerTests
     private readonly EldDriverMapping _mapping = new()
     {
         EmployeeId = Guid.NewGuid(),
+        ProviderConfigurationId = Guid.NewGuid(),
         ProviderType = EldProviderType.Samsara,
         ExternalDriverId = "45646"
     };

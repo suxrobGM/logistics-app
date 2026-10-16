@@ -9,6 +9,11 @@ public class EldDriverMapping : Entity, ITenantEntity
     public virtual Employee Employee { get; set; } = null!;
 
     /// <summary>
+    /// The provider configuration this mapping belongs to; deleting the configuration cascades to its mappings
+    /// </summary>
+    public required Guid ProviderConfigurationId { get; set; }
+
+    /// <summary>
     /// Which ELD provider this mapping is for
     /// </summary>
     public required EldProviderType ProviderType { get; set; }

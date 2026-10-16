@@ -27,6 +27,7 @@ internal sealed class ApplyEldMappingSuggestionsHandler(
         await tenantUow.Repository<EldDriverMapping>().AddRangeAsync(suggestions.Drivers.Select(s => new EldDriverMapping
         {
             EmployeeId = s.EmployeeId,
+            ProviderConfigurationId = config.Id,
             ProviderType = config.ProviderType,
             ExternalDriverId = s.ExternalDriverId,
             ExternalDriverName = s.ExternalDriverName
