@@ -90,7 +90,7 @@ internal sealed class IftaReportService(
                 .Where(m => m.CountryCode == country && (m.Region ?? string.Empty) == region)
                 .Sum(m => m.Miles);
             var purchased = gallonsByJurisdiction.GetValueOrDefault((country, region));
-            var taxable = averageMpg > 0 ? Math.Round(miles / averageMpg, 2) : 0m;
+            var taxable = mpgKnown ? Math.Round(miles / averageMpg, 2) : 0m;
             var netTaxable = Math.Round(taxable - purchased, 2);
 
             rates.TryGetValue((country, region), out var rate);
@@ -124,7 +124,7 @@ internal sealed class IftaReportService(
             TotalMiles = Math.Round(totalMiles, 2),
             TotalGallons = Math.Round(totalGallons, 2),
             AverageMpg = averageMpg,
-            TotalTaxDue = mpgKnown ? Math.Round(rows.Where(r => r.TaxDue.HasValue).Sum(r => r.TaxDue!.Value), 2) : null,
+            TotalTaxDue = mpgKnown ? Math.Round(rows.Sum(r => r.TaxDue ?? 0m), 2) : null,
             HasMissingRates = rows.Any(r => r.RateMissing),
             HasMissingMileageOrFuel = !mpgKnown && rows.Count > 0,
             Jurisdictions = rows

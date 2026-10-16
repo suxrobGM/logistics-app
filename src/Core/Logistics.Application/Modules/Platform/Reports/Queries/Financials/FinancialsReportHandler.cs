@@ -11,10 +11,7 @@ namespace Logistics.Application.Modules.Platform.Reports.Queries;
 internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<FinancialsReportQuery, Result<FinancialsReportDto>>
 {
-    /// <summary>
-    /// Invoices a customer actually owes or has paid. Drafts and cancelled ones were counted as
-    /// invoiced and, once past due, as overdue - disagreeing with the invoice dashboard.
-    /// </summary>
+    // Drafts and cancelled invoices are not owed, so they count neither as invoiced nor as overdue.
     private static readonly InvoiceStatus[] Receivable =
     [
         InvoiceStatus.Issued, InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid, InvoiceStatus.Paid, InvoiceStatus.Overdue
@@ -52,13 +49,19 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
 
         var averageInvoiceValue = totalCount > 0 ? totalInvoiced / totalCount : 0;
         var collectionRate = totalInvoiced > 0 ? (totalPaid / totalInvoiced) * 100 : 0;
-        var overdueAmount = GetOverdueAmount(invoices);
-        var overdueInvoices = GetOverdueInvoicesCount(invoices);
+        var now = DateTime.UtcNow;
+        var overdue = invoices
+            .Select(i => (Invoice: i, Unpaid: i.Total.Amount - i.Payments.Sum(p => p.Amount.Amount)))
+            .Where(x => x.Invoice.DueDate < now && x.Unpaid > 0)
+            .ToList();
+        var overdueAmount = overdue.Sum(x => x.Unpaid);
+        var overdueInvoices = overdue.Count;
 
+        var createdDates = invoices.Select(i => i.CreatedAt).DefaultIfEmpty(now).ToList();
         var paymentTrends = CalculatePaymentTrends(
             invoices,
-            req.StartDate != default ? req.StartDate : invoices.Count > 0 ? invoices.Min(i => i.CreatedAt) : DateTime.UtcNow,
-            req.EndDate != default ? req.EndDate : invoices.Count > 0 ? invoices.Max(i => i.CreatedAt) : DateTime.UtcNow
+            req.StartDate != default ? req.StartDate : createdDates.Min(),
+            req.EndDate != default ? req.EndDate : createdDates.Max()
         );
 
         var topCustomers = GetTopCustomersByValue(invoices);
@@ -203,20 +206,5 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         }
 
         return trends;
-    }
-
-    private static decimal GetOverdueAmount(List<LoadInvoice> invoices)
-    {
-        var now = DateTime.UtcNow;
-        return invoices
-            .Where(i => i.DueDate.HasValue && i.DueDate < now && i.Payments.Sum(p => p.Amount.Amount) < i.Total.Amount)
-            .Sum(i => i.Total.Amount - i.Payments.Sum(p => p.Amount.Amount));
-    }
-
-    private static int GetOverdueInvoicesCount(List<LoadInvoice> invoices)
-    {
-        var now = DateTime.UtcNow;
-        return invoices
-            .Count(i => i.DueDate.HasValue && i.DueDate < now && i.Payments.Sum(p => p.Amount.Amount) < i.Total.Amount);
     }
 }

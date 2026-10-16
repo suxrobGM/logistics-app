@@ -4,6 +4,7 @@ using Logistics.Infrastructure.Documents.Pdf.Shared;
 using Logistics.Shared.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 using QuestDocument = QuestPDF.Fluent.Document;
 
 namespace Logistics.Infrastructure.Documents.Pdf.Ifta;
@@ -30,20 +31,12 @@ public class IftaReportPdfService : IIftaReportPdfService
 
                     if (report.HasMissingMileageOrFuel)
                     {
-                        col.Item()
-                            .Background(Colors.Orange.Lighten4)
-                            .Padding(8)
-                            .Text("This quarter has fuel purchases but no recorded miles, or miles but no fuel, so fleet MPG and tax due cannot be computed. Record the missing data before filing.")
-                            .FontSize(8).FontColor(Colors.Orange.Darken3);
+                        Warning(col.Item(), "This quarter has fuel purchases but no recorded miles, or miles but no fuel, so fleet MPG and tax due cannot be computed. Record the missing data before filing.");
                     }
 
                     if (report.HasMissingRates)
                     {
-                        col.Item()
-                            .Background(Colors.Orange.Lighten4)
-                            .Padding(8)
-                            .Text("Some jurisdictions have no published tax rate for this quarter - their tax due is omitted. Add the missing rates before filing.")
-                            .FontSize(8).FontColor(Colors.Orange.Darken3);
+                        Warning(col.Item(), "Some jurisdictions have no published tax rate for this quarter - their tax due is omitted. Add the missing rates before filing.");
                     }
                 });
 
@@ -54,4 +47,11 @@ public class IftaReportPdfService : IIftaReportPdfService
 
         return doc.GeneratePdf();
     }
+
+    private static void Warning(IContainer container, string message) =>
+        container
+            .Background(Colors.Orange.Lighten4)
+            .Padding(8)
+            .Text(message)
+            .FontSize(8).FontColor(Colors.Orange.Darken3);
 }
