@@ -25,20 +25,15 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
 
         // Calculate stats
         var draftInvoices = invoices.Where(i => i.Status == InvoiceStatus.Draft).ToList();
-        var pendingInvoices = invoices.Where(i => i.Status == InvoiceStatus.Issued && (i.DueDate == null || i.DueDate >= now)).ToList();
-        var overdueInvoices = invoices.Where(i =>
-            (i.Status == InvoiceStatus.Issued || i.Status == InvoiceStatus.PartiallyPaid) &&
-            i.DueDate.HasValue && i.DueDate < now).ToList();
-        var partiallyPaidInvoices = invoices.Where(i => i.Status == InvoiceStatus.PartiallyPaid && (i.DueDate == null || i.DueDate >= now)).ToList();
+        var openInvoices = invoices.Where(i => InvoiceStatuses.Open.Contains(i.Status)).ToList();
+        var overdueInvoices = openInvoices.Where(i => i.DueDate < now).ToList();
+        var notDueInvoices = openInvoices.Except(overdueInvoices).ToList();
+        var pendingInvoices = notDueInvoices.Where(i => i.Status != InvoiceStatus.PartiallyPaid).ToList();
+        var partiallyPaidInvoices = notDueInvoices.Where(i => i.Status == InvoiceStatus.PartiallyPaid).ToList();
         var paidInvoices = invoices.Where(i => i.Status == InvoiceStatus.Paid).ToList();
 
-        // Calculate amounts for partially paid invoices
-        decimal partiallyPaidRemaining = 0;
-        foreach (var invoice in partiallyPaidInvoices.Concat(overdueInvoices.Where(i => i.Status == InvoiceStatus.PartiallyPaid)))
-        {
-            var paid = invoice.Payments.Sum(p => p.Amount.Amount);
-            partiallyPaidRemaining += invoice.Total.Amount - paid;
-        }
+        var overdueRemaining = overdueInvoices.Sum(Outstanding);
+        var partiallyPaidRemaining = partiallyPaidInvoices.Sum(Outstanding);
 
         // Calculate payments this month
         var paymentsThisMonth = invoices
@@ -54,10 +49,7 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
             .ToList();
 
         // A funded invoice is settled by the factor's purchase; what the factor still owes is its reserve.
-        var openInvoices = invoices.OfType<LoadInvoice>()
-            .Where(i => i.Status is InvoiceStatus.Issued or InvoiceStatus.Sent or InvoiceStatus.PartiallyPaid
-                or InvoiceStatus.Overdue)
-            .ToList();
+        var openLoadInvoices = openInvoices.OfType<LoadInvoice>().ToList();
         var fundedItems = await tenantUow.Repository<FactoringBatchItem>()
             .GetListAsync(i => i.Status == FactoringStatus.Funded, ct);
 
@@ -68,17 +60,15 @@ internal sealed class GetInvoiceDashboardHandler(ITenantUnitOfWork tenantUow)
             PendingCount = pendingInvoices.Count,
             PendingAmount = pendingInvoices.Sum(i => i.Total.Amount),
             OverdueCount = overdueInvoices.Count,
-            OverdueAmount = overdueInvoices.Sum(i => i.Total.Amount),
+            OverdueAmount = overdueRemaining,
             PartiallyPaidCount = partiallyPaidInvoices.Count,
             PartiallyPaidAmount = partiallyPaidRemaining,
             PaidCount = paidInvoices.Count,
             PaidAmount = paidInvoices.Sum(i => i.Total.Amount),
-            TotalOutstanding = pendingInvoices.Sum(i => i.Total.Amount) +
-                              overdueInvoices.Sum(i => i.Total.Amount) +
-                              partiallyPaidRemaining,
+            TotalOutstanding = pendingInvoices.Sum(i => i.Total.Amount) + overdueRemaining + partiallyPaidRemaining,
             CollectedThisMonth = paymentsThisMonth,
-            OwedByCustomers = openInvoices.Where(i => i.FactoringStatus != FactoringStatus.Submitted).Sum(Outstanding),
-            OwedByFactor = openInvoices.Where(i => i.FactoringStatus == FactoringStatus.Submitted).Sum(Outstanding)
+            OwedByCustomers = openLoadInvoices.Where(i => i.FactoringStatus != FactoringStatus.Submitted).Sum(Outstanding),
+            OwedByFactor = openLoadInvoices.Where(i => i.FactoringStatus == FactoringStatus.Submitted).Sum(Outstanding)
                            + fundedItems.Sum(i => i.ReserveOutstanding),
             RecentInvoices = recentInvoices
         };

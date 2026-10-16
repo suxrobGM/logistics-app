@@ -165,22 +165,14 @@ internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow)
         stats.IdleTrucksCount = totalTrucks - activeTruckCount;
 
         // Financial health - single query for invoice stats
-        // Overdue is calculated dynamically: invoices with status Issued/PartiallyPaid where DueDate < now
         var invoiceRepository = tenantUow.Repository<LoadInvoice>();
-        var outstandingStatuses = new[]
-        {
-            InvoiceStatus.Issued, InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid
-        };
-
         var invoiceStats = await invoiceRepository.Query()
-            .Where(i => outstandingStatuses.Contains(i.Status))
+            .Where(i => InvoiceStatuses.Open.Contains(i.Status))
             .GroupBy(_ => 1)
             .Select(_ => new
             {
                 OutstandingTotal = _.Sum(i => i.Total.Amount - i.Payments.Sum(p => p.Amount.Amount)),
-                OverdueCount = _.Count(i =>
-                    (i.Status == InvoiceStatus.Issued || i.Status == InvoiceStatus.PartiallyPaid) &&
-                    i.DueDate.HasValue && i.DueDate < now)
+                OverdueCount = _.Count(i => i.DueDate < now)
             })
             .FirstOrDefaultAsync(ct);
 

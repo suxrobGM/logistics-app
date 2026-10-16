@@ -11,15 +11,10 @@ namespace Logistics.Application.Modules.Platform.Reports.Queries;
 internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<FinancialsReportQuery, Result<FinancialsReportDto>>
 {
-    // Drafts and cancelled invoices are not owed, so they count neither as invoiced nor as overdue.
-    private static readonly InvoiceStatus[] Receivable =
-    [
-        InvoiceStatus.Issued, InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid, InvoiceStatus.Paid, InvoiceStatus.Overdue
-    ];
-
     public async Task<Result<FinancialsReportDto>> Handle(FinancialsReportQuery req, CancellationToken ct)
     {
-        var invoicesQuery = tenantUow.Repository<LoadInvoice>().Query().Where(i => Receivable.Contains(i.Status));
+        var invoicesQuery = tenantUow.Repository<LoadInvoice>().Query()
+            .Where(i => InvoiceStatuses.Receivable.Contains(i.Status));
         var expenseQuery = tenantUow.Repository<Expense>().Query();
 
         if (req.StartDate != default)
@@ -50,11 +45,8 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         var averageInvoiceValue = totalCount > 0 ? totalInvoiced / totalCount : 0;
         var collectionRate = totalInvoiced > 0 ? (totalPaid / totalInvoiced) * 100 : 0;
         var now = DateTime.UtcNow;
-        var overdue = invoices
-            .Select(i => (Invoice: i, Unpaid: i.Total.Amount - i.Payments.Sum(p => p.Amount.Amount)))
-            .Where(x => x.Invoice.DueDate < now && x.Unpaid > 0)
-            .ToList();
-        var overdueAmount = overdue.Sum(x => x.Unpaid);
+        var overdue = invoices.Where(i => InvoiceStatuses.Open.Contains(i.Status) && i.DueDate < now).ToList();
+        var overdueAmount = overdue.Sum(i => i.Total.Amount - i.Payments.Sum(p => p.Amount.Amount));
         var overdueInvoices = overdue.Count;
 
         var createdDates = invoices.Select(i => i.CreatedAt).DefaultIfEmpty(now).ToList();
