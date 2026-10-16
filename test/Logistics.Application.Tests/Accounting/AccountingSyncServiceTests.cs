@@ -20,7 +20,7 @@ public class AccountingSyncServiceTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IFeatureService _features = Substitute.For<IFeatureService>();
-    private readonly IAccountingConnectionService _connection = Substitute.For<IAccountingConnectionService>();
+    private readonly IAccountingProviderFactory _providerFactory = Substitute.For<IAccountingProviderFactory>();
     private readonly IAccountingProviderService _provider = Substitute.For<IAccountingProviderService>();
     private readonly AccountingSyncService _sut;
 
@@ -29,7 +29,8 @@ public class AccountingSyncServiceTests
         ProviderType = AccountingProviderType.QuickBooksOnline,
         RealmId = "realm",
         AccessToken = "access",
-        RefreshToken = "refresh"
+        RefreshToken = "refresh",
+        TokenExpiresAt = DateTime.UtcNow.AddHours(1)
     };
 
     private readonly List<QboEntityMapping> _mappings = [];
@@ -42,7 +43,7 @@ public class AccountingSyncServiceTests
         var tenant = TestTenant.Create();
         _tenantUow.GetCurrentTenant().Returns(tenant);
         _features.IsFeatureEnabledAsync(tenant.Id, TenantFeature.Accounting).Returns(true);
-        _connection.GetProviderAsync(_config, Arg.Any<CancellationToken>()).Returns(_provider);
+        _providerFactory.GetProvider(_config).Returns(_provider);
 
         var configs = Substitute.For<ITenantRepository<AccountingProviderConfiguration, Guid>>();
         configs.GetAsync(Any<AccountingProviderConfiguration>(), Arg.Any<CancellationToken>()).Returns(_config);
@@ -68,7 +69,9 @@ public class AccountingSyncServiceTests
         _provider.UpsertCustomerAsync(Arg.Any<QboCustomerPayload>(), Arg.Any<QboWriteTarget>(), Arg.Any<CancellationToken>())
             .Returns(ci => new QboUpsertResult { QboId = ci.Arg<QboWriteTarget>().QboId ?? "new", SyncToken = "1" });
 
-        _sut = new AccountingSyncService(_tenantUow, _features, _connection, NullLogger<AccountingSyncService>.Instance);
+        var connection = new AccountingConnectionService(
+            _tenantUow, _providerFactory, NullLogger<AccountingConnectionService>.Instance);
+        _sut = new AccountingSyncService(_tenantUow, _features, connection, NullLogger<AccountingSyncService>.Instance);
     }
 
     #region Gating
@@ -81,13 +84,13 @@ public class AccountingSyncServiceTests
 
         await _sut.SyncAsync(CancellationToken.None);
 
-        await _connection.DidNotReceive().GetProviderAsync(Arg.Any<AccountingProviderConfiguration>(), Arg.Any<CancellationToken>());
+        _providerFactory.DidNotReceive().GetProvider(Arg.Any<AccountingProviderConfiguration>());
     }
 
     [Fact]
     public async Task SyncAsync_ConnectionNeedsReconnect_PushesNothing()
     {
-        _connection.GetProviderAsync(_config, Arg.Any<CancellationToken>()).Returns((IAccountingProviderService?)null);
+        _config.NeedsReconnect = true;
         _customers.Add(NewCustomer("Acme"));
 
         await _sut.SyncAsync(CancellationToken.None);
@@ -106,7 +109,7 @@ public class AccountingSyncServiceTests
 
         await _sut.SyncAsync(CancellationToken.None);
 
-        await _connection.Received(1).RejectAccessTokenAsync(_config, Arg.Any<CancellationToken>());
+        Assert.Null(_config.TokenExpiresAt);
         Assert.Null(_config.LastSyncedAt);
     }
 

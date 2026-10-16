@@ -2,6 +2,8 @@ using System.Collections.Concurrent;
 using Logistics.Application.Abstractions.Accounting;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Modules.Integrations.Accounting.Services;
@@ -16,6 +18,40 @@ internal sealed class AccountingConnectionService(
     // The recurring job and a manual "Sync now" can overlap; one refresh at a time per connection.
     // Multi-instance would need a distributed lock.
     private static readonly ConcurrentDictionary<Guid, SemaphoreSlim> RefreshLocks = new();
+
+    public async Task<Result<T>> ExecuteAsync<T>(
+        Func<IAccountingProviderService, AccountingProviderConfiguration, Task<T>> call, CancellationToken ct)
+    {
+        var config = await tenantUow.Repository<AccountingProviderConfiguration>()
+            .GetAsync(c => c.ProviderType == AccountingProviderType.QuickBooksOnline && c.IsActive, ct);
+        if (config is null)
+        {
+            return Result<T>.Fail("QuickBooks is not connected.");
+        }
+
+        var provider = await GetProviderAsync(config, ct);
+        if (provider is null)
+        {
+            return Result<T>.Fail("QuickBooks needs to be reconnected.");
+        }
+
+        try
+        {
+            return Result<T>.Ok(await call(provider, config));
+        }
+        catch (AccountingReconnectRequiredException ex)
+        {
+            await RejectAccessTokenAsync(config, ex, ct);
+            return Result<T>.Fail("QuickBooks rejected the connection. Try again in a moment, or reconnect.");
+        }
+    }
+
+    public async Task<Result> ExecuteAsync(
+        Func<IAccountingProviderService, AccountingProviderConfiguration, Task<Result>> call, CancellationToken ct)
+    {
+        var result = await ExecuteAsync<Result>(call, ct);
+        return result.IsSuccess ? result.Value! : Result.Fail(result.Error!);
+    }
 
     public async Task<IAccountingProviderService?> GetProviderAsync(
         AccountingProviderConfiguration config, CancellationToken ct)
@@ -45,9 +81,10 @@ internal sealed class AccountingConnectionService(
         return providerFactory.GetProvider(config);
     }
 
-    public async Task RejectAccessTokenAsync(AccountingProviderConfiguration config, CancellationToken ct)
+    private async Task RejectAccessTokenAsync(
+        AccountingProviderConfiguration config, AccountingReconnectRequiredException ex, CancellationToken ct)
     {
-        logger.LogWarning("{Provider} rejected the access token for tenant {TenantId}; refreshing on the next run",
+        logger.LogWarning(ex, "{Provider} rejected the access token for tenant {TenantId}; refreshing on the next run",
             config.ProviderType, tenantUow.GetCurrentTenant().Id);
         config.TokenExpiresAt = null;
         await tenantUow.SaveChangesAsync(ct);

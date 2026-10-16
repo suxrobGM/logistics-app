@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Logistics.Application.Abstractions.Accounting;
 using Logistics.Application.Modules.Integrations.Accounting.Services;
 using Logistics.Application.Tests.TestKit;
@@ -103,5 +104,39 @@ public class AccountingConnectionServiceTests
 
         Assert.Same(_provider, provider);
         await _provider.DidNotReceive().RefreshTokenAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_NotConnected_FailsWithoutCallingTheProvider()
+    {
+        StoreConfig(null);
+
+        var result = await _sut.ExecuteAsync((_, _) => Task.FromResult(Result.Ok()), CancellationToken.None);
+
+        Assert.Equal("QuickBooks is not connected.", result.Error);
+        _factory.DidNotReceive().GetProvider(Arg.Any<AccountingProviderConfiguration>());
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_AccessTokenRejected_FailsAndForgetsTheToken()
+    {
+        StoreConfig(_config);
+        _config.TokenExpiresAt = DateTime.UtcNow.AddMinutes(50);
+        _provider.GetAccountsAsync(Arg.Any<CancellationToken>())
+            .ThrowsAsync(new AccountingReconnectRequiredException("401"));
+
+        var result = await _sut.ExecuteAsync((p, _) => p.GetAccountsAsync(CancellationToken.None), CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Null(_config.TokenExpiresAt);
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    private void StoreConfig(AccountingProviderConfiguration? config)
+    {
+        var configs = Substitute.For<ITenantRepository<AccountingProviderConfiguration, Guid>>();
+        configs.GetAsync(Arg.Any<Expression<Func<AccountingProviderConfiguration, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(config);
+        _tenantUow.Repository<AccountingProviderConfiguration>().Returns(configs);
     }
 }

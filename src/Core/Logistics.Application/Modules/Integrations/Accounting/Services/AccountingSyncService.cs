@@ -31,23 +31,9 @@ internal sealed partial class AccountingSyncService(
             return;
         }
 
-        var config = await tenantUow.Repository<AccountingProviderConfiguration>()
-            .GetAsync(c => c.ProviderType == AccountingProviderType.QuickBooksOnline && c.IsActive, ct);
-        if (config is null)
+        var result = await connectionService.ExecuteAsync(async (provider, config) =>
         {
-            return;
-        }
-
-        var provider = await connectionService.GetProviderAsync(config, ct);
-        if (provider is null)
-        {
-            logger.LogInformation("Skipping accounting sync for {TenantName}: QuickBooks needs to be reconnected", tenant.Name);
-            return;
-        }
-
-        var run = new SyncRun(provider, config, config.Mappings, DateTime.UtcNow);
-        try
-        {
+            var run = new SyncRun(provider, config, config.Mappings, DateTime.UtcNow);
             await PushCustomersAsync(run, ct);
             await RetireRemovedAsync<Customer>(run, QboLocalEntityType.Customer,
                 target => run.Provider.DeactivateCustomerAsync(target, ct), ct);
@@ -58,16 +44,16 @@ internal sealed partial class AccountingSyncService(
             await PushFactoringFeesAsync(run, ct);
             await PushExpensesAsync(run, ct);
             await PushPayrollAsync(run, ct);
-        }
-        catch (AccountingReconnectRequiredException ex)
-        {
-            logger.LogWarning(ex, "QuickBooks rejected the access token during sync for {TenantName}", tenant.Name);
-            await connectionService.RejectAccessTokenAsync(config, ct);
-            return;
-        }
 
-        config.LastSyncedAt = run.StartedAt;
-        await tenantUow.SaveChangesAsync(ct);
+            config.LastSyncedAt = run.StartedAt;
+            await tenantUow.SaveChangesAsync(ct);
+            return Result.Ok();
+        }, ct);
+
+        if (!result.IsSuccess)
+        {
+            logger.LogInformation("Skipped accounting sync for {TenantName}: {Reason}", tenant.Name, result.Error);
+        }
     }
 
     private async Task PushCustomersAsync(SyncRun run, CancellationToken ct)

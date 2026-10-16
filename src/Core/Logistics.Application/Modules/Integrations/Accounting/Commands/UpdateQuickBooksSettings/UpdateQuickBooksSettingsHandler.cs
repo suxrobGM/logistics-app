@@ -1,8 +1,8 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Accounting;
 using Logistics.Application.Modules.Integrations.Accounting.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
@@ -15,21 +15,13 @@ internal sealed class UpdateQuickBooksSettingsHandler(
 {
     private static readonly string[] PaymentAccountTypes = ["Bank", "Credit Card"];
 
-    public async Task<Result> Handle(UpdateQuickBooksSettingsCommand req, CancellationToken ct)
+    public Task<Result> Handle(UpdateQuickBooksSettingsCommand req, CancellationToken ct) =>
+        connectionService.ExecuteAsync((provider, config) => ApplyAsync(req, provider, config, ct), ct);
+
+    private async Task<Result> ApplyAsync(
+        UpdateQuickBooksSettingsCommand req, IAccountingProviderService provider,
+        AccountingProviderConfiguration config, CancellationToken ct)
     {
-        var config = await tenantUow.Repository<AccountingProviderConfiguration>()
-            .GetAsync(c => c.ProviderType == AccountingProviderType.QuickBooksOnline && c.IsActive, ct);
-        if (config is null)
-        {
-            return Result.Fail("QuickBooks is not connected.");
-        }
-
-        var provider = await connectionService.GetProviderAsync(config, ct);
-        if (provider is null)
-        {
-            return Result.Fail("QuickBooks needs to be reconnected.");
-        }
-
         var accounts = (await provider.GetAccountsAsync(ct)).ToDictionary(a => a.Id);
         var itemIds = (await provider.GetItemsAsync(ct)).Select(i => i.Id).ToHashSet();
 
