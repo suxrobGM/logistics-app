@@ -1,5 +1,5 @@
 import { Composition } from "remotion";
-import { Teaser } from "./Teaser";
+import { type MusicTrack, Teaser } from "./Teaser";
 import { FPS, TOTAL } from "./timeline";
 
 export function Root() {
@@ -11,6 +11,7 @@ export function Root() {
       fps={FPS}
       width={1920}
       height={1080}
+      defaultProps={{ music: "ramp" as MusicTrack }}
     />
   );
 }

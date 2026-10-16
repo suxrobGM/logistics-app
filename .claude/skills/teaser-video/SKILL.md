@@ -1,6 +1,6 @@
 ---
 name: teaser-video
-description: Produce a launch-quality product teaser (~45s) with motion graphics, a synthesized score and sound design - real app UI captured with Playwright, composed in Remotion as 3D layers, kinetic type and camera moves cut to a tempo grid. Delivers MP4 + README GIF. Use for "make a teaser", "product video", "demo video for the website", "README gif", "refilm the teaser".
+description: Produce a launch-quality product teaser (~45s) with motion graphics, licensed music cut to the edit and recorded sound effects - real app UI captured with Playwright, composed in Remotion as 3D layers, kinetic type and camera moves cut to a tempo grid. Delivers MP4 + README GIF. Use for "make a teaser", "product video", "demo video for the website", "README gif", "refilm the teaser".
 ---
 
 # Teaser video
@@ -8,12 +8,12 @@ description: Produce a launch-quality product teaser (~45s) with motion graphics
 A teaser is motion design that happens to contain the product, not a screen recording with
 title cards between clips. The old pipeline (full-screen takes, crossfades, silence) produced
 exactly that flat look. This one composes the real UI as objects on a dark stage, moves a camera
-through them, cuts on the beat of a score generated for the edit, and lands sound effects on the
-same frames.
+through them, cuts on the beat of a licensed track edited to the timeline, and lands recorded
+sound effects on the same frames.
 
 ```
-capture (Playwright)          compose (Remotion)              score (Node DSP)
-  2x stills of screens   ->     scenes on a 120 BPM grid  <-    music.wav + sfx/*.wav
+capture (Playwright)          compose (Remotion)              audio (Mixkit + ffmpeg)
+  2x stills of screens   ->     scenes on a 120 BPM grid  <-    music-<track>.wav + sfx/*.wav
   1x CDP footage of flows       crops, 3D, camera, type          on the same grid
                                         |
                                  render -> review -> deliver (MP4 + GIF)
@@ -28,7 +28,7 @@ The working LogisticsX teaser is the reference implementation:
 | `reference/capture/stills.js`            | 2x screenshots into `compose/public/stills/`                            |
 | `reference/capture/take-ai-dispatch.js`  | The one filmed flow, with an event log for the edit and the SFX         |
 | `reference/compose/src/`                 | The Remotion project: timeline, theme, components, one file per scene   |
-| `reference/compose/audio/`               | `dsp.mjs` (oscillators, filters, reverb, WAV), `score.mjs`, `sfx.mjs`   |
+| `reference/compose/audio/build-audio.mjs` | Downloads the music and effects, edits each track onto the grid         |
 | `reference/compose/preview.mjs`          | Bundle once, render chosen frames as stills - the fast review loop      |
 | `reference/compose/deliver.sh`           | Web MP4, README GIF, 2fps review frames                                 |
 
@@ -47,7 +47,7 @@ cd ../compose
 mkdir -p public/phones public/tiles && cp <repo>/docs/store-assets/screenshots/raw/*.png public/phones/
 for n in loads loadboard invoices containers expenses home payroll eld messages maintenance safety customer; do
   ffmpeg -y -i public/stills/$n.png -vf scale=1600:900 -q:v 3 public/tiles/$n.jpg; done
-node audio/score.mjs && node audio/sfx.mjs
+node audio/build-audio.mjs                                  # needs ffmpeg with librubberband on PATH
 ```
 
 A new take changes the timings: update `SEGMENTS`, `CAMERA` and `PILLS` in
@@ -72,8 +72,9 @@ review the final cut frame by frame before delivering.
 ## 1. Storyboard to a tempo
 
 Pick the tempo first and make every duration a multiple of it. 120 BPM at 60fps gives a 30-frame
-beat and a 120-frame bar, so scenes start on bars, hits land on beats, and the score can be
-written against the same numbers. `src/timeline.ts` and `audio/score.mjs` share those constants.
+beat and a 120-frame bar, so scenes start on bars, hits land on beats, and the music can be
+edited against the same numbers. `src/timeline.ts` and the edit lists in `audio/build-audio.mjs`
+share those constants.
 
 Arc that works (bars): cold open with kinetic type (2) - the problem as UI fragments piling up (2)
 - silence, then the brand reveal on the downbeat (2) - the hero feature, longest (6) - three or
@@ -137,27 +138,53 @@ Iterate with `node preview.mjs <frames...>` and a contact sheet; it is far faste
 video. Many 3200px PNGs in one frame make headless Chrome fail to decode
 ("source image cannot be decoded"); use downscaled JPEG tiles wherever an image is drawn small.
 
-## 4. Score and sound design
+## 4. Music and sound effects
 
-Music cannot be licensed by an agent, so synthesize it. `audio/score.mjs` writes an arrangement
-per section (filtered pad and pulse, riser and snare roll into a silence, impact on the reveal,
-four-on-the-floor groove with sidechained bass and arp, a hotter montage, a final hit with a long
-tail). `audio/sfx.mjs` renders whooshes, swipes, clicks, keystrokes, pops, a chime, impacts and
-ticks. Cues live in `Teaser.tsx` as `{at, sfx, volume}` on the frame grid.
+Use licensed recordings, not synthesis. A generated score was tried first: technically clean but
+generic, with noise-based effects that read as hiss over the music. You cannot listen, so split
+the work: you screen and measure, the user picks by ear.
 
-You cannot listen, so measure: `showspectrumpic` for balance and arrangement,
-`ebur128` for loudness (aim around -12 LUFS integrated, -1 dBFS peak), `showwavespic` for
-dynamics. Keep effects 6-10 dB under the music unless they are the hit.
+**Source.** Mixkit's free music and sound-effect licenses allow commercial web, social and ad use
+with no attribution, and allow editing. They forbid music-only remixes, registering the audio with
+a rights-management (Content ID) service, and redistributing the raw files, including "with source
+files". So `build-audio.mjs` downloads them at build time, they are never committed, and
+`public/audio/CREDITS.md` records what was used. Avoid Pixabay for anything going to YouTube:
+uploads can be registered for Content ID after you download them.
+
+**Screening tracks.** Mixkit tag pages carry JSON-LD with each track's name, artist, genre,
+duration and preview URL, and the listing markup carries mood tags. Download the candidates and
+measure tempo (onset autocorrelation), beat clarity, where the energy rises and drops, breakdowns,
+and whether the track ends or just fades. Shortlist four or five, with mood and structure, for the
+user to listen to.
+
+**Fitting a track to the edit.** Beat-track it for the exact tempo, first downbeat and per-bar
+energy, then write its edit list in `MUSIC`: pieces of source time that put the drop on the logo
+reveal (8s) and the last phrase or the track's own ending on the close (40s). Cut on downbeats,
+preferably 4 or 8 bar phrase boundaries, and hide a jump behind one of the timeline's silences.
+A track already at 120 BPM needs nothing else ("Ramp It Up" is 120.01). Anything within a few
+percent is stretched with `rubberband`, pitch kept; avoid more than about 4%. Every region boundary
+gets a short fade (30ms out, 3ms in on the downbeat) so nothing clicks, and the masters get 4 dB
+of headroom because they peak above 0 dBFS once decoded.
+
+**Effects.** One recording per role (swoosh, whoosh, impact, click, key, pop, chime, tick), trimmed
+of digital silence only (a whoosh swells up from quiet), normalized, with its peak time saved to
+`sfx/peaks.json`. Cues in `Teaser.tsx` name the frame the sound should peak on, and its sequence
+starts that much earlier. Prefer recordings whose noise floor measures as digital silence.
+
+Measure the result: `ebur128` for loudness, and `showwavespic` of the whole cut plus 1s windows
+around every edit and silence, to confirm the drops land on the frame and nothing clicks.
+`deliver.sh` normalizes the final mix to -14 LUFS with a -1.5 dBTP ceiling in two linear passes.
 
 ## 5. Render, review, deliver
 
 ```bash
-npx remotion render Teaser out/render.mp4 --codec=h264 --crf=16 --audio-codec=aac --audio-bitrate=320k
-npx remotion render Teaser out/gif-src.mp4 --frames=720-1439 --props='{"gif":true}' --codec=h264 --crf=14 --muted
-./deliver.sh out/render.mp4 out/gif-src.mp4 out/final
+npx remotion render Teaser out/teaser-ramp.mkv --props='{"music":"ramp"}' --codec=h264 --crf=16 --audio-codec=pcm-16
+npx remotion render Teaser out/gif-src.mp4 --frames=720-1439 --props='{"gif":true,"music":"ramp"}' --codec=h264 --crf=14 --muted
+./deliver.sh out/teaser-ramp.mkv out/final out/gif-src.mp4   # -> out/final/teaser-ramp.mp4 + teaser.gif
 ```
 
-The full render takes about a minute. Read the 2fps review frames for PII, clipped panels,
+The master is MKV so the audio stays PCM until the single AAC encode. The full render takes about
+a minute. Read the 2fps review frames for PII, clipped panels,
 unreadable text and broken data, then spot-check a few at full resolution. Probe duration and
 size.
 

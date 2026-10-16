@@ -1,4 +1,4 @@
-/** 120 BPM at 60fps: a beat is 30 frames, a bar 120. Must match audio/score.mjs. */
+/** 120 BPM at 60fps: a beat is 30 frames, a bar 120. The music edits in audio/build-audio.mjs assume it. */
 export const FPS = 60;
 export const BEAT = 30;
 export const BAR = 120;

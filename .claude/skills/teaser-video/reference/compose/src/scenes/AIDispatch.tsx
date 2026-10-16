@@ -62,21 +62,20 @@ const takeToScene = (t: number) => {
   return seg ? seg.at + ((t - seg.src) / seg.speed) * 60 : null;
 };
 
+/** Cue times are the moment each sound peaks (see Teaser). */
 export const AI_SFX: Array<{ at: number; sfx: string; volume: number }> = [
-  { at: 0, sfx: "whoosh-low", volume: 0.5 },
+  { at: 12, sfx: "whoosh", volume: 0.4 },
   ...(KEYS as number[])
     .filter((_, i) => i % 3 === 0)
-    .map((t, i) => ({ at: takeToScene(t) ?? -1, sfx: `key${i % 4}`, volume: 0.55 }))
+    .map((t) => ({ at: takeToScene(t) ?? -1, sfx: "key", volume: 0.35 }))
     .filter((c) => c.at >= 0),
-  { at: takeToScene(2.26) ?? 110, sfx: "click", volume: 0.7 },
-  { at: takeToScene(8.59) ?? 224, sfx: "click", volume: 0.8 },
-  ...[244, 292, 340, 398].map((at) => ({ at, sfx: "pop", volume: 0.5 })),
-  { at: 398, sfx: "thud", volume: 0.35 },
-  { at: STILL.from - 6, sfx: "whoosh", volume: 0.45 },
-  { at: STILL.to - 4, sfx: "swipe-back", volume: 0.3 },
-  { at: FINALE - 2, sfx: "click", volume: 0.8 },
-  { at: FINALE + 4, sfx: "chime", volume: 0.65 },
-  { at: FINALE + 4, sfx: "thud", volume: 0.4 },
+  { at: takeToScene(2.26) ?? 110, sfx: "click", volume: 0.6 },
+  { at: takeToScene(8.59) ?? 224, sfx: "click", volume: 0.6 },
+  ...[244, 292, 340, 398].map((at) => ({ at, sfx: "pop", volume: 0.35 })),
+  { at: STILL.from, sfx: "whoosh", volume: 0.35 },
+  { at: STILL.to, sfx: "swoosh", volume: 0.3 },
+  { at: FINALE - 2, sfx: "click", volume: 0.6 },
+  { at: FINALE + 6, sfx: "chime", volume: 0.5 },
 ];
 
 const PILLS: Array<[number, string]> = [
