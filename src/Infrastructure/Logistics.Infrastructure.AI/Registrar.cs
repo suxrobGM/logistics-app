@@ -28,8 +28,8 @@ public static class Registrar
         var requestTimeout = llmSection.Get<LlmOptions>()?.RequestTimeoutSeconds
             ?? new LlmOptions().RequestTimeoutSeconds;
 
-        // The host's default resilience handler (30s total) would cut agent turns short and retry
-        // paid POSTs; the SDKs and AgentLoopRunner already retry what is safe.
+        // The host's default resilience handler (30s total) would cut agent turns short; the SDKs
+        // and AgentLoopRunner already retry what is safe.
 #pragma warning disable EXTEXP0001 // the supported way to opt one client out of ConfigureHttpClientDefaults
         services.AddHttpClient(LlmProviderFactory.HttpClientName,
                 client => client.Timeout = TimeSpan.FromSeconds(requestTimeout))

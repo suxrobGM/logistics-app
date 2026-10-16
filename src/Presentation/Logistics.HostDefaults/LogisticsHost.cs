@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Http.Resilience;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
@@ -27,7 +28,10 @@ public static class LogisticsHost
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddHealthChecks();
-            builder.Services.ConfigureHttpClientDefaults(http => http.AddStandardResilienceHandler());
+            // Retrying a POST whose response was lost would repeat the write (a second email, load
+            // post or charge), so only safe methods retry.
+            builder.Services.ConfigureHttpClientDefaults(http =>
+                http.AddStandardResilienceHandler(o => o.Retry.DisableForUnsafeHttpMethods()));
             builder.AddLogisticsSentry();
 
             builder.Host.UseSerilog((ctx, lc) =>
