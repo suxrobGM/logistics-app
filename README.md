@@ -29,11 +29,11 @@
 
 No signup. Every demo account uses the password `Test12345#`.
 
-| Where                                              | Log in as                                                     |
-| -------------------------------------------------- | ------------------------------------------------------------- |
-| [TMS portal](https://tms.logisticsx.app)           | `owner@test.com`, `manager1@test.com`, `dispatcher1@test.com` |
-| [Customer portal](https://customer.logisticsx.app) | `customer1@test.com`                                          |
-| Driver app                                         | `driver1@test.com`                                            |
+| Where | Log in as |
+| --- | --- |
+| [TMS portal](https://tms.logisticsx.app) | `owner@test.com`, `manager1@test.com`, `dispatcher1@test.com` |
+| [Customer portal](https://customer.logisticsx.app) | `customer1@test.com` |
+| Driver app | `driver1@test.com` |
 
 These accounts belong to Heartland Logistics LLC, a US carrier with 10 employees.
 
@@ -54,15 +54,16 @@ Small carriers often run on spreadsheets, group chats, and separate tools for ac
 
 It supports general freight, car hauling, and container drayage, for carriers in the US and Europe.
 
-| Area        | Highlights                                                                                               |
-| ----------- | -------------------------------------------------------------------------------------------------------- |
-| Dispatch    | Loads, multi-stop trips, Mapbox routing, a live driver map, and tracking links you can share             |
-| Load boards | Search and book on DAT, with a broker credit check on every listing                                      |
-| Money       | Invoices with US sales tax or EU VAT, Stripe payments and payouts, payroll, and QuickBooks sync          |
-| Fuel        | WEX and EFS fuel card imports every night, plus quarterly IFTA reports                                   |
-| Compliance  | Hours of service from Samsara, Motive, Geotab, and TT ELD, driver inspections, hazmat checks, GDPR tools |
-| Fleet       | Trucks, trailers, maintenance schedules, VIN lookup, and container tracking (ISO 6346)                   |
-| Apps        | A TMS portal, a customer portal, an admin portal, and a driver app for Android and iOS                   |
+- **Dispatch**: Loads, multi-stop trips, Mapbox routing, a live driver map, and tracking links you can share.
+- **Load boards**: Search DAT, see DAT market rates, post trucks, and turn a listing into a load, with a broker credit check on every listing. More boards on request.
+- **Money**: Invoices with accessorials and detention, sales tax or VAT, Stripe payouts, factoring, driver and owner-operator settlements, QuickBooks sync.
+- **Fuel**: WEX and EFS fuel card imports every night, plus quarterly IFTA reports.
+- **Compliance**: Hours of service from Samsara, Motive, and Geotab, GPS from Samsara and TT ELD, driver inspections, hazmat checks, GDPR tools.
+- **Fleet**: Trucks, trailers, maintenance schedules, VIN lookup, and container tracking (ISO 6346).
+- **Car hauling**: Vehicles with VINs on each load, per-vehicle condition reports on a damage diagram, and a signed eBOL.
+- **Drayage**: Last free day, per-diem and chassis clocks, holds, appointments, street turns, and demurrage billing.
+- **Onboarding**: Import customers, drivers, trucks, trailers, and loads from CSV or XLSX.
+- **Apps**: A TMS portal, a customer portal, an admin portal, and a driver app for Android and iOS.
 
 The full list is in [features.md](docs/features.md).
 
@@ -78,8 +79,8 @@ Read more: [AI Dispatch](docs/ai-dispatch.md) · [AI Copilot](docs/ai-copilot.md
 
 ## Screenshots
 
-|                        Agent timeline                        |                       Pending decisions                        |
-| :----------------------------------------------------------: | :------------------------------------------------------------: |
+| Agent timeline | Pending decisions |
+| :-: | :-: |
 | ![Timeline](docs/images/tms-portal/ai-dispatch-timeline.png) | ![Decisions](docs/images/tms-portal/ai-dispatch-decisions.png) |
 
 ![Driver app](docs/store-assets/feature-graphic.png)
@@ -87,16 +88,16 @@ Read more: [AI Dispatch](docs/ai-dispatch.md) · [AI Copilot](docs/ai-copilot.md
 <details>
 <summary>More screenshots</summary>
 
-|                     Dashboard                     |                     Loads                      |                       Load board                        |
-| :-----------------------------------------------: | :--------------------------------------------: | :-----------------------------------------------------: |
+| Dashboard | Loads | Load board |
+| :-: | :-: | :-: |
 | ![Dashboard](docs/images/tms-portal/tms-home.png) | ![Loads](docs/images/tms-portal/tms-loads.png) | ![Load board](docs/images/tms-portal/tms-loadboard.png) |
 
-|                           Invoicing                           |                      Payroll                       |                        IFTA                         |
-| :-----------------------------------------------------------: | :------------------------------------------------: | :-------------------------------------------------: |
+| Invoicing | Payroll | IFTA |
+| :-: | :-: | :-: |
 | ![Invoices](docs/images/tms-portal/tms-invoice-dashboard.png) | ![Payroll](docs/images/tms-portal/tms-payroll.png) | ![IFTA](docs/images/tms-portal/tms-ifta-report.png) |
 
-|                            Customer portal                             |                   Driver app: today                   |                      Driver app: trip                      |
-| :--------------------------------------------------------------------: | :---------------------------------------------------: | :--------------------------------------------------------: |
+| Customer portal | Driver app: today | Driver app: trip |
+| :-: | :-: | :-: |
 | ![Customer portal](docs/images/customer-portal/customer-dashboard.png) | ![Today](docs/store-assets/screenshots/raw/today.png) | ![Trip](docs/store-assets/screenshots/raw/trip-detail.png) |
 
 </details>
@@ -105,27 +106,27 @@ More in [screenshots.md](docs/screenshots.md).
 
 ## Codebase stats
 
-How big the source code is, measured in September 2026.
+How big the source code is, measured in October 2026.
 
-| Part of the code                           | Lines of code          |
-| ------------------------------------------ | ---------------------- |
-| Backend and tests (C#, public)             | 125,000                |
-| Web portals (TypeScript and HTML, private) | 107,000 across 4 apps  |
-| Driver app (Kotlin, private)               | 15,000                 |
-| Whole repository, all file types           | 345,000 in 4,571 files |
+| Part of the code | Lines of code |
+| --- | --- |
+| Backend and tests (C#, public) | 145,000 |
+| Web portals (TypeScript and HTML, private) | 110,000 across 4 apps |
+| Driver app (Kotlin, private) | 16,000 |
+| Whole repository, all file types | 377,000 in 5,050 files |
 
 What the backend contains:
 
-| Item                                                                          | Count                      |
-| ----------------------------------------------------------------------------- | -------------------------- |
-| API endpoints                                                                 | 372                        |
-| Data models (database entities)                                               | 90                         |
-| Business operations (212 commands that change data, 155 queries that read it) | 367                        |
-| Tools the AI agents can call                                                  | 31                         |
-| Scheduled background jobs                                                     | 22                         |
-| Third-party integrations (ELDs, load boards, fuel cards, accounting, Stripe)  | 12                         |
-| Automated tests                                                               | 1,000+                     |
-| Commits                                                                       | 1,900+ since November 2021 |
+| Item | Count |
+| --- | --- |
+| API endpoints | 419 |
+| Data models (database entities) | 98 |
+| Business operations (242 commands that change data, 175 queries that read it) | 417 |
+| Tools the AI agents can call | 31 |
+| Scheduled background jobs | 24 |
+| Third-party integrations (ELDs, load boards, fuel cards, accounting, Stripe) | 10 |
+| Automated tests | 1,350+ |
+| Commits | 2,000+ since November 2021 |
 
 ## Run it locally
 
@@ -170,25 +171,28 @@ Each tenant company gets its own PostgreSQL database. The [architecture overview
 
 ## Built with
 
-| Part        | Stack                                                                  |
-| ----------- | ---------------------------------------------------------------------- |
-| Backend     | .NET 10, ASP.NET Core, EF Core, SignalR, Hangfire, Open.IdentityServer |
-| Web portals | Angular 22, spartan/ui, Tailwind CSS                                   |
-| Driver app  | Kotlin Multiplatform, Compose Multiplatform                            |
-| Database    | PostgreSQL 18                                                          |
-| AI          | OpenAI, Anthropic, and DeepSeek models, Model Context Protocol         |
-| Payments    | Stripe, Stripe Connect, Stripe Tax                                     |
-| Hosting     | Docker Compose, Nginx, GitHub Actions                                  |
+| Part | Stack |
+| --- | --- |
+| Backend | .NET 10, ASP.NET Core, EF Core, SignalR, Hangfire, Open.IdentityServer |
+| Web portals | Angular 22, spartan/ui, Tailwind CSS |
+| Driver app | Kotlin Multiplatform, Compose Multiplatform |
+| Database | PostgreSQL 18 |
+| AI | OpenAI, Anthropic, and DeepSeek models, Model Context Protocol |
+| Payments | Stripe, Stripe Connect, Stripe Tax |
+| Hosting | Docker Compose, Nginx, GitHub Actions |
+| Monitoring | Sentry, nightly PostgreSQL backups |
 
 ## Documentation
 
-Start at the [docs index](docs/index.md), or go straight to a guide:
+Start at the [docs index](docs/README.md), or go straight to a guide:
 
 - [Features](docs/features.md)
 - [Getting started](docs/getting-started/prerequisites.md)
 - [Architecture](docs/architecture/overview.md)
 - [API reference](docs/api/overview.md)
-- [Deployment](docs/deployment/overview.md)
+- [Deployment](docs/deployment/overview.md) and [observability and backups](docs/deployment/observability-and-backups.md)
+- [Car hauler guide](docs/car-hauler-guide.md) and [data import](docs/data-import.md)
+- Integration setup: [Samsara](docs/eld-samsara-setup.md), [QuickBooks](docs/accounting-quickbooks-setup.md), [DAT](docs/loadboard-dat-setup.md)
 - [Backend guide](docs/development/backend-guide.md) and [Angular guide](docs/development/angular-guide.md)
 
 ## Contributing
