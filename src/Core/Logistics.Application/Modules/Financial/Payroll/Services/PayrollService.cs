@@ -217,12 +217,14 @@ internal class PayrollService(
             ? await GetEscrowBalanceAsync(employee.Id, payroll.Id, ct)
             : 0;
 
+        // Rows this payroll already claimed still carry its id in the database during a recalculation:
+        // ReleaseDeductionsAsync clears it only in memory.
         var advances = await tenantUow.Repository<CashAdvance>().GetListAsync(a =>
             a.EmployeeId == employee.Id &&
-            a.PayrollInvoiceId == null, ct);
+            (a.PayrollInvoiceId == null || a.PayrollInvoiceId == payroll.Id), ct);
 
         var fuel = employee.DeductFuelCardCharges
-            ? await GetFuelChargesAsync(employee.Id, payroll.PeriodStart, payroll.PeriodEnd, ct)
+            ? await GetFuelChargesAsync(employee.Id, payroll, ct)
             : [];
 
         return new SettlementInputs(gross.Amount, gross.Description, deductions, escrowBalance, advances, fuel);
@@ -233,9 +235,10 @@ internal class PayrollService(
     /// co-driver is never charged, so a team truck's fuel is not deducted twice.
     /// </summary>
     private async Task<List<FuelCardTransaction>> GetFuelChargesAsync(
-        Guid employeeId, DateTime startDate, DateTime endDate, CancellationToken ct)
+        Guid employeeId, PayrollInvoice payroll, CancellationToken ct)
     {
-        var periodEnd = endDate.Date.AddDays(1);
+        var startDate = payroll.PeriodStart;
+        var periodEnd = payroll.PeriodEnd.Date.AddDays(1);
         var truckIds = await tenantUow.Repository<Truck>().Query()
             .Where(t => t.MainDriverId == employeeId)
             .Select(t => t.Id)
@@ -244,7 +247,7 @@ internal class PayrollService(
         return await tenantUow.Repository<FuelCardTransaction>().GetListAsync(t =>
             t.TruckId != null && truckIds.Contains(t.TruckId.Value) &&
             t.Status == FuelCardTransactionStatus.Matched &&
-            t.PayrollInvoiceId == null &&
+            (t.PayrollInvoiceId == null || t.PayrollInvoiceId == payroll.Id) &&
             t.TransactionDate >= startDate && t.TransactionDate < periodEnd, ct);
     }
 
