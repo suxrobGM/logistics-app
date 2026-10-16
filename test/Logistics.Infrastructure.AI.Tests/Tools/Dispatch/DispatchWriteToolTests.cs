@@ -115,7 +115,7 @@ public class DispatchWriteToolTests
         Assert.Equal(tripId, root.GetProperty("trip_id").GetGuid());
 
         await _mediator.Received(1).Send(
-            Arg.Is<CreateTripCommand>(c => c.Name == "Overnight run" && c.AttachedLoadIds.Count() == 1),
+            Arg.Is<CreateTripCommand>(c => c.Name == "Overnight run" && c.AttachedLoadIds != null && c.AttachedLoadIds.Count() == 1),
             Arg.Any<CancellationToken>());
     }
 

@@ -19,7 +19,9 @@ public class PushNotificationService : IPushNotificationService
         {
             _firebaseApp = FirebaseApp.Create(new AppOptions
             {
-                Credential = GoogleCredential.FromFile("firebase-adminsdk-key.json")
+                Credential = CredentialFactory
+                    .FromFile<ServiceAccountCredential>("firebase-adminsdk-key.json")
+                    .ToGoogleCredential()
             });
         }
         else
@@ -41,9 +43,12 @@ public class PushNotificationService : IPushNotificationService
 
         try
         {
+            // The driver app registers FCM registration tokens, not Installation IDs, so Fid is not a drop-in replacement.
+#pragma warning disable CS0618
             var message = new Message
             {
                 Token = deviceToken,
+#pragma warning restore CS0618
                 Notification = new Notification { Title = title, Body = body },
                 Data = data
             };

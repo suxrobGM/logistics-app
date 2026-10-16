@@ -66,7 +66,7 @@ internal sealed class GetInvoicesTool(IMediator mediator)
         var result = await mediator.Send(query, ct);
 
         if (!result.IsSuccess)
-            return ToolResult.Error(result.Error);
+            return ToolResult.Error(result.Error ?? "Unknown error");
 
         var items = result.Value?.ToList() ?? [];
         var invoices = items.Select(i => new

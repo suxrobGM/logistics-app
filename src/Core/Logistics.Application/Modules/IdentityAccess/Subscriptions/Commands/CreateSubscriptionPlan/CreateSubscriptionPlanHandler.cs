@@ -3,15 +3,13 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
 
 internal sealed class CreateSubscriptionPlanHandler(
     IMasterUnitOfWork masterUow,
-    IStripePlanService stripePlanService,
-    ILogger<CreateSubscriptionPlanHandler> logger) : IRequestHandler<CreateSubscriptionPlanCommand, Result>
+    IStripePlanService stripePlanService) : IRequestHandler<CreateSubscriptionPlanCommand, Result>
 {
     public async Task<Result> Handle(
         CreateSubscriptionPlanCommand req, CancellationToken ct)

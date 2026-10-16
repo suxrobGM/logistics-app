@@ -30,7 +30,7 @@ public class GetTenantRolesHandlerTests
 
         var result = await _sut.Handle(new GetTenantRolesQuery(), CancellationToken.None);
 
-        Assert.Equal(["tenant.alpha", "tenant.zeta"], result.Value!.Select(r => r.Name).ToArray());
+        Assert.Equal(["tenant.alpha", "tenant.zeta"], result.Value!.Select(r => r.Name));
     }
 
     // Both roles sort equally by name, so only the Id tie-breaker decides page 1.

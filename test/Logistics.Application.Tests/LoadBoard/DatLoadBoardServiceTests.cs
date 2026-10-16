@@ -270,7 +270,8 @@ public class DatLoadBoardServiceTests
 
         var posts = await _sut.GetPostedTrucksAsync();
 
-        Assert.Equal(["P-1", "P-2"], posts!.Select(p => p.ExternalPostId));
+        Assert.NotNull(posts);
+        Assert.Equal(["P-1", "P-2"], posts.Select(p => p.ExternalPostId));
         Assert.Equal(new DateTime(2026, 10, 16, 0, 0, 0, DateTimeKind.Utc), posts[0].ExpiresAt);
     }
 

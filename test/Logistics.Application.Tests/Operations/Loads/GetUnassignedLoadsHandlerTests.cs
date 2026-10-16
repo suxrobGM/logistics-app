@@ -51,7 +51,7 @@ public class GetUnassignedLoadsHandlerTests
 
         var result = await _sut.Handle(new GetUnassignedLoadsQuery(), CancellationToken.None);
 
-        Assert.Equal(["newer", "older"], result.Value!.Select(l => l.Name).ToArray());
+        Assert.Equal(["newer", "older"], result.Value!.Select(l => l.Name));
     }
 
     // Both loads share a CreatedAt, so only the Id tie-breaker decides page 1.

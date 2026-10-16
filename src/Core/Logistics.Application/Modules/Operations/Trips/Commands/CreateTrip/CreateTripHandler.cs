@@ -107,9 +107,9 @@ internal sealed class CreateTripHandler(
         var loads = created.Value!;
         for (var i = 0; i < newLoads.Count; i++)
         {
-            if (!string.IsNullOrEmpty(newLoads[i].TempId))
+            if (newLoads[i].TempId is { Length: > 0 } tempId)
             {
-                tempIdToLoadId[newLoads[i].TempId] = loads[i].Id;
+                tempIdToLoadId[tempId] = loads[i].Id;
             }
         }
 

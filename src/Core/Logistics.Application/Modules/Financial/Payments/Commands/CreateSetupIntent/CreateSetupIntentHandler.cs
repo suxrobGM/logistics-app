@@ -2,15 +2,13 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Modules.Financial.Payments.Commands;
 
 internal sealed class CreateSetupIntentHandler(
     ITenantUnitOfWork tenantUow,
-    IStripePaymentService stripePaymentService,
-    ILogger<CreateSetupIntentHandler> logger) : IRequestHandler<CreateSetupIntentCommand, Result<SetupIntentDto>>
+    IStripePaymentService stripePaymentService) : IRequestHandler<CreateSetupIntentCommand, Result<SetupIntentDto>>
 {
     public async Task<Result<SetupIntentDto>> Handle(CreateSetupIntentCommand req, CancellationToken ct)
     {

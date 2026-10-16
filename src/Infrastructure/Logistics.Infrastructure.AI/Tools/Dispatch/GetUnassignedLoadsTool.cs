@@ -22,7 +22,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
         var result = await mediator.Send(new GetUnassignedLoadsQuery(), ct);
 
         if (!result.IsSuccess)
-            return ToolResult.Error(result.Error);
+            return ToolResult.Error(result.Error ?? "Unknown error");
 
         var items = result.Value?.ToList() ?? [];
         var today = DateOnly.FromDateTime(DateTime.UtcNow);

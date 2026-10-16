@@ -107,8 +107,8 @@ public class TenantDbContext : DbContext
             entity.Property(t => t.Drivers)
                 .HasColumnType("jsonb")
                 .HasConversion(
-                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                    v => JsonSerializer.Deserialize<List<EmployeeDto>>(v, (JsonSerializerOptions)null));
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                    v => JsonSerializer.Deserialize<List<EmployeeDto>>(v, (JsonSerializerOptions?)null) ?? new List<EmployeeDto>());
         });
     }
 }

@@ -432,6 +432,7 @@ public class ProposeCounterOfferHandlerTests
         await _emailSender.Received(1).SendAsync(
             Arg.Is<ThreadedEmail>(e =>
                 e.To == "broker@example.com" &&
+                e.ReplyTo != null &&
                 e.ReplyTo.StartsWith("offer-") &&
                 e.ReplyTo.EndsWith("@mail.test.com") &&
                 e.InReplyToMessageId == null),

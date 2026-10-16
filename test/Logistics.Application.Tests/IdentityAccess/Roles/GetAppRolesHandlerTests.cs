@@ -30,7 +30,7 @@ public class GetAppRolesHandlerTests
 
         var result = await _sut.Handle(new GetAppRolesQuery(), CancellationToken.None);
 
-        Assert.Equal(["app.alpha", "app.zeta"], result.Value!.Select(r => r.Name).ToArray());
+        Assert.Equal(["app.alpha", "app.zeta"], result.Value!.Select(r => r.Name));
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class GetAppRolesHandlerTests
 
         var result = await _sut.Handle(new GetAppRolesQuery { OrderBy = "-Name" }, CancellationToken.None);
 
-        Assert.Equal(["app.zeta", "app.alpha"], result.Value!.Select(r => r.Name).ToArray());
+        Assert.Equal(["app.zeta", "app.alpha"], result.Value!.Select(r => r.Name));
     }
 
     // Both roles sort equally by name, so only the Id tie-breaker decides page 1.
