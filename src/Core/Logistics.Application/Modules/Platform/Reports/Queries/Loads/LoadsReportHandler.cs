@@ -9,6 +9,8 @@ namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
 internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<LoadsReportQuery, Result<LoadsReportDto>>
 {
+    private const double MetersPerTravelDay = 500_000;
+
     public async Task<Result<LoadsReportDto>> Handle(LoadsReportQuery req, CancellationToken ct)
     {
         var hasStart = req.StartDate != default;
@@ -143,7 +145,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
             l.Status == LoadStatus.Delivered &&
             l.DeliveredAt.HasValue &&
             l.DispatchedAt.HasValue &&
-            l.DeliveredAt <= l.DispatchedAt.Value.AddDays(Math.Max(1, l.Distance / 500)));
+            l.DeliveredAt <= l.DispatchedAt.Value.AddDays(Math.Max(1, l.Distance / MetersPerTravelDay)));
 
         var deliveryRate = totalLoads > 0 ? (double)deliveredLoads / totalLoads * 100 : 0;
         var onTimeRate = deliveredLoads > 0 ? (double)onTimeDeliveries / deliveredLoads * 100 : 0;
@@ -153,7 +155,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IRequest
             new() { Metric = "Delivery Rate", Value = deliveryRate, Unit = "%" },
             new() { Metric = "On-Time Delivery", Value = onTimeRate, Unit = "%" },
             new() { Metric = "Average Load Value", Value = (double)(totalRevenue / Math.Max(totalLoads, 1)), Unit = "$" },
-            new() { Metric = "Distance Efficiency", Value = totalDistance / Math.Max(totalLoads, 1), Unit = "km" }
+            new() { Metric = "Distance Efficiency", Value = totalDistance / Math.Max(totalLoads, 1), Unit = "m" }
         ];
     }
 }
