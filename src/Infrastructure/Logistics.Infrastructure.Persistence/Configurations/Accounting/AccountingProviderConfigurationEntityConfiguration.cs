@@ -38,8 +38,13 @@ internal sealed class AccountingProviderConfigurationEntityConfiguration
         builder.Property(i => i.PayrollExpenseAccountId)
             .HasMaxLength(100);
 
-        builder.Property(i => i.MappingsJson)
-            .HasColumnType("jsonb");
+        builder.ComplexProperty(i => i.Mappings, mappings =>
+        {
+            mappings.ToJson("mappings");
+            mappings.ComplexCollection(m => m.Items);
+            mappings.ComplexCollection(m => m.CompanyExpenseAccounts);
+            mappings.ComplexCollection(m => m.TruckExpenseAccounts);
+        });
 
         // AccessToken / RefreshToken are encrypted at rest (EncryptedStringConverter) and stored
         // as unbounded text - ciphertext is larger than the plaintext token.

@@ -77,7 +77,7 @@ internal sealed class UpdateQuickBooksSettingsHandler(
         config.FactoringClearingAccountId = req.FactoringClearingAccountId;
         config.FactoringFeeAccountId = req.FactoringFeeAccountId;
         config.SyncFromDate = req.SyncFromDate is { } from ? DateTime.SpecifyKind(from.Date, DateTimeKind.Utc) : null;
-        config.SetMappings(req.Mappings);
+        config.Mappings = req.Mappings;
 
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();

@@ -41,7 +41,7 @@ internal sealed class GetQuickBooksConnectionHandler(ITenantUnitOfWork tenantUow
                 FactoringClearingAccountId = config.FactoringClearingAccountId,
                 FactoringFeeAccountId = config.FactoringFeeAccountId,
                 SyncFromDate = config.SyncFromDate,
-                Mappings = config.GetMappings()
+                Mappings = config.Mappings
             }
         });
     }

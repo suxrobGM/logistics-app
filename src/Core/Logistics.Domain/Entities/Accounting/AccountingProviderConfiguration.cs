@@ -1,5 +1,3 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Logistics.Domain.Core;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -12,11 +10,6 @@ namespace Logistics.Domain.Entities;
 /// </summary>
 public class AccountingProviderConfiguration : Entity, ITenantEntity
 {
-    private static readonly JsonSerializerOptions MappingsJsonOptions = new(JsonSerializerDefaults.Web)
-    {
-        Converters = { new JsonStringEnumConverter() }
-    };
-
     public required AccountingProviderType ProviderType { get; set; }
 
     /// <summary>
@@ -108,10 +101,9 @@ public class AccountingProviderConfiguration : Entity, ITenantEntity
     public DateTime? SyncFromDate { get; set; }
 
     /// <summary>
-    /// Persisted JSON of <see cref="AccountingMappings"/>. Use <see cref="GetMappings"/> /
-    /// <see cref="SetMappings"/> to access.
+    /// Which provider item or account each TMS category posts to.
     /// </summary>
-    public string? MappingsJson { get; set; }
+    public AccountingMappings Mappings { get; set; } = new();
 
     /// <summary>
     /// Whether this provider configuration is active (a disconnect deactivates it).
@@ -122,14 +114,6 @@ public class AccountingProviderConfiguration : Entity, ITenantEntity
     /// When data was last pushed to this provider.
     /// </summary>
     public DateTime? LastSyncedAt { get; set; }
-
-    public AccountingMappings GetMappings() =>
-        string.IsNullOrWhiteSpace(MappingsJson)
-            ? new AccountingMappings()
-            : JsonSerializer.Deserialize<AccountingMappings>(MappingsJson, MappingsJsonOptions) ?? new AccountingMappings();
-
-    public void SetMappings(AccountingMappings mappings) =>
-        MappingsJson = JsonSerializer.Serialize(mappings, MappingsJsonOptions);
 
     /// <summary>
     /// Store a completed OAuth connection. Connecting a different company than before clears every
@@ -156,7 +140,7 @@ public class AccountingProviderConfiguration : Entity, ITenantEntity
             PayrollExpenseAccountId = null;
             FactoringClearingAccountId = null;
             FactoringFeeAccountId = null;
-            MappingsJson = null;
+            Mappings = new AccountingMappings();
             LastSyncedAt = null;
         }
 

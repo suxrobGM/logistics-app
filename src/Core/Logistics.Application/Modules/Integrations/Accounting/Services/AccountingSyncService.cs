@@ -45,7 +45,7 @@ internal sealed partial class AccountingSyncService(
             return;
         }
 
-        var run = new SyncRun(provider, config, config.GetMappings(), DateTime.UtcNow);
+        var run = new SyncRun(provider, config, config.Mappings, DateTime.UtcNow);
         try
         {
             await PushCustomersAsync(run, ct);

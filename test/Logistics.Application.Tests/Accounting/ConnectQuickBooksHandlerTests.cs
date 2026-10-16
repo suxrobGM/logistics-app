@@ -79,7 +79,7 @@ public class ConnectQuickBooksHandlerTests
         Assert.Equal("i1", config.DefaultItemId);
         Assert.Null(config.DepositAccountId);
         Assert.Null(config.PayrollExpenseAccountId);
-        Assert.Empty(config.GetMappings().Items);
+        Assert.Empty(config.Mappings.Items);
         Assert.False(config.NeedsReconnect);
         Assert.Equal(DateTime.UtcNow.Date, config.SyncFromDate);
     }
@@ -96,7 +96,7 @@ public class ConnectQuickBooksHandlerTests
         _mappings.DidNotReceive().Delete(Arg.Any<QboEntityMapping>());
         Assert.Equal("old-bank", config.DefaultPaymentAccountId);
         Assert.Equal("old-deposit", config.DepositAccountId);
-        Assert.Single(config.GetMappings().Items);
+        Assert.Single(config.Mappings.Items);
         Assert.False(config.NeedsReconnect);
         Assert.Equal("access", config.AccessToken);
     }
@@ -138,10 +138,10 @@ public class ConnectQuickBooksHandlerTests
             DepositAccountId = "old-deposit",
             PayrollExpenseAccountId = "old-payroll"
         };
-        config.SetMappings(new AccountingMappings
+        config.Mappings = new AccountingMappings
         {
             Items = [new LineItemTypeMapping { LineItemType = InvoiceLineItemType.FuelSurcharge, QboId = "old-fsc" }]
-        });
+        };
         return config;
     }
 

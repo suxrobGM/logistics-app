@@ -45,18 +45,18 @@ internal static class ModelBuilderPruningExtensions
             }
 
             // 2) Ignore navigations pointing to excluded types.
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            // Only touch hosts that have something to ignore: modelBuilder.Entity() pins a type as explicitly
+            // configured, which would keep the convention-discovered stand-ins for complex JSON types
+            // (e.g. AccountingMappings) that EF otherwise drops when the model is finalized.
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes().ToList())
             {
-                var hostEntity = modelBuilder.Entity(entityType.ClrType);
+                var ignored = entityType.ClrType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(prop => GetNavigationTargetType(prop.PropertyType) is { } navType && typesToIgnore.Contains(navType))
+                    .ToList();
 
-                foreach (var prop in entityType.ClrType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                foreach (var prop in ignored)
                 {
-                    var navType = GetNavigationTargetType(prop.PropertyType);
-
-                    if (navType is not null && typesToIgnore.Contains(navType))
-                    {
-                        hostEntity.Ignore(prop.Name);
-                    }
+                    modelBuilder.Entity(entityType.ClrType).Ignore(prop.Name);
                 }
             }
         }
