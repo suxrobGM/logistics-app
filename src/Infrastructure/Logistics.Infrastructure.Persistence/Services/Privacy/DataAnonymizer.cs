@@ -65,6 +65,7 @@ internal sealed class DataAnonymizer(
                     employee.LastName = DeletedLastName;
                     employee.Email = anonymizedEmail;
                     employee.PhoneNumber = null;
+                    employee.Address = null;
                     employee.DeviceToken = null;
                 }
 
@@ -118,6 +119,18 @@ internal sealed class DataAnonymizer(
         {
             access.CustomerName = DeletedDisplayName;
             access.IsActive = false;
+        }
+
+        // The consent rows stay as proof of what was agreed; only the network identifiers go.
+        var consents = await masterUow.Repository<ConsentRecord>()
+            .Query()
+            .Where(c => c.UserId == user.Id)
+            .ToListAsync(ct);
+
+        foreach (var consent in consents)
+        {
+            consent.IpAddress = null;
+            consent.UserAgent = null;
         }
 
         await masterUow.SaveChangesAsync(ct);
