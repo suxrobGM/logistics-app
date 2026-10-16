@@ -1,4 +1,4 @@
-using Logistics.Application.Abstractions.Storage;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -9,7 +9,7 @@ namespace Logistics.Application.Modules.Platform.Portal.Queries;
 
 internal sealed class DownloadPortalLoadDocumentHandler(
     ITenantUnitOfWork tenantUow,
-    IBlobStorageService blobStorage)
+    IDocumentDownloadService documentDownloads)
     : IRequestHandler<DownloadPortalLoadDocumentQuery, Result<DocumentDownloadDto>>
 {
     private const string NotFound = "Document not found or access denied.";
@@ -28,18 +28,6 @@ internal sealed class DownloadPortalLoadDocumentHandler(
             return Result<DocumentDownloadDto>.Fail(NotFound);
         }
 
-        if (!await blobStorage.ExistsAsync(document.BlobContainer, document.BlobPath, ct))
-        {
-            return Result<DocumentDownloadDto>.Fail("Document file not found in storage.");
-        }
-
-        return Result<DocumentDownloadDto>.Ok(new DocumentDownloadDto
-        {
-            FileName = document.FileName,
-            OriginalFileName = document.OriginalFileName,
-            ContentType = document.ContentType,
-            FileSizeBytes = document.FileSizeBytes,
-            FileContent = await blobStorage.DownloadAsync(document.BlobContainer, document.BlobPath, ct)
-        });
+        return await documentDownloads.OpenAsync(document, ct);
     }
 }

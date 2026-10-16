@@ -5,16 +5,13 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Modules.Integrations.Documents.Queries;
 
 internal sealed class DownloadDocumentHandler(
     ITenantUnitOfWork tenantUow,
-    IBlobStorageService blobStorageService,
     IDocumentAccessService documentAccess,
-    ILogger<DownloadDocumentHandler> logger)
+    IDocumentDownloadService documentDownloads)
     : IRequestHandler<DownloadDocumentQuery, Result<DocumentDownloadDto>>
 {
     public async Task<Result<DocumentDownloadDto>> Handle(DownloadDocumentQuery req, CancellationToken ct)
@@ -36,31 +33,6 @@ internal sealed class DownloadDocumentHandler(
             return Result<DocumentDownloadDto>.Fail("Document not found or access denied.");
         }
 
-        try
-        {
-            var exists = await blobStorageService.ExistsAsync(document.BlobContainer, document.BlobPath, ct);
-            if (!exists)
-            {
-                return Result<DocumentDownloadDto>.Fail("Document file not found in storage");
-            }
-
-            var stream = await blobStorageService.DownloadAsync(document.BlobContainer, document.BlobPath, ct);
-
-            var dto = new DocumentDownloadDto
-            {
-                FileName = document.FileName,
-                OriginalFileName = document.OriginalFileName,
-                ContentType = document.ContentType,
-                FileSizeBytes = document.FileSizeBytes,
-                FileContent = stream
-            };
-
-            return Result<DocumentDownloadDto>.Ok(dto);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to download document {DocumentId}", req.DocumentId);
-            return Result<DocumentDownloadDto>.Fail("Failed to download document.");
-        }
+        return await documentDownloads.OpenAsync(document, ct);
     }
 }

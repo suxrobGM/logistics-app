@@ -4,13 +4,13 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Storage;
+using Logistics.Application.Modules.Integrations.Documents.Services;
 
 namespace Logistics.Application.Modules.Operations.Tracking.Queries;
 
 internal sealed class DownloadPublicTrackingDocumentHandler(
     ITenantUnitOfWork tenantUow,
-    IBlobStorageService blobStorage)
+    IDocumentDownloadService documentDownloads)
     : IRequestHandler<DownloadPublicTrackingDocumentQuery, Result<DocumentDownloadDto>>
 {
     public async Task<Result<DocumentDownloadDto>> Handle(
@@ -55,30 +55,6 @@ internal sealed class DownloadPublicTrackingDocumentHandler(
             return Result<DocumentDownloadDto>.Fail("Document has been deleted.");
         }
 
-        try
-        {
-            var exists = await blobStorage.ExistsAsync(document.BlobContainer, document.BlobPath, ct);
-            if (!exists)
-            {
-                return Result<DocumentDownloadDto>.Fail("Document file not found in storage.");
-            }
-
-            var stream = await blobStorage.DownloadAsync(document.BlobContainer, document.BlobPath, ct);
-
-            var dto = new DocumentDownloadDto
-            {
-                FileName = document.FileName,
-                OriginalFileName = document.OriginalFileName,
-                ContentType = document.ContentType,
-                FileSizeBytes = document.FileSizeBytes,
-                FileContent = stream
-            };
-
-            return Result<DocumentDownloadDto>.Ok(dto);
-        }
-        catch (Exception ex)
-        {
-            return Result<DocumentDownloadDto>.Fail($"Failed to download document: {ex.Message}");
-        }
+        return await documentDownloads.OpenAsync(document, ct);
     }
 }
