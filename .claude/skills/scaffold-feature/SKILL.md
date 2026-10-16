@@ -51,7 +51,6 @@ internal sealed class SubcontractorEntityConfiguration : IEntityTypeConfiguratio
         builder.ToTable("subcontractors");
         builder.HasKey(s => s.Id);
         builder.Property(s => s.Name).HasMaxLength(200).IsRequired();
-        builder.Property(s => s.Status).HasConversion<string>();
         // builder.ComplexProperty(s => s.Address); for value objects
     }
 }
@@ -62,7 +61,7 @@ value-object member, EF can't express it - enforce it in code on every write pat
 `IftaTaxRateUniqueness.FindConflictAsync`) and give the value object a normalizing factory like
 `TaxJurisdiction.Create` so casing or an empty-vs-null member can't defeat the comparison.
 
-The `MasterDbContext` / `TenantDbContext` discover configurations via `ApplyConfigurationsFromAssembly` - you don't need to register them.
+The `MasterDbContext` / `TenantDbContext` discover configurations via `ApplyMasterConfigurationsFromAssembly<MasterDbContext>()` / `ApplyTenantConfigurationsFromAssembly<TenantDbContext>()` - you don't need to register them. Enums need no `HasConversion` - `SnakeCaseEnumConvention` stores every enum property as a snake_case string.
 
 ### 3. Migration
 
@@ -82,9 +81,10 @@ numeric suffix, or date. Inspect the generated SQL before committing.
 ### 4. Reads (inline `.Query()` first)
 
 Default to an inline `.Query()` inside the query handler - do **not** create a `Specification<T>` class for a
-one-off read. Only add a dedicated spec (`src/Core/Logistics.Domain/Specifications/{Feature}/`) when the same
-condition is genuinely reused across handlers; there are just a few left in the codebase
-(`FilterLoadInvoices`, `FilterPayrollInvoices`, `FilterLoadsByDeliveryDate`).
+one-off read. Only add a dedicated spec (`src/Core/Logistics.Application/Modules/{Module}/{Feature}/Specifications/`)
+when the same condition is genuinely reused across handlers; there are just a few left in the codebase
+(`FilterLoadInvoices`, `FilterPayrollInvoices`, `FilterLoadsByDeliveryDate`). `Logistics.Domain/Specifications/`
+holds only the base classes.
 
 ### 5. Commands and queries
 
@@ -117,7 +117,7 @@ calls - there is no auto-transaction wrapper.
 
 ### 6. DTOs and Mapperly mapper
 
-`src/Shared/Logistics.Shared.Models/{Entity}Dto.cs` for the public DTO.
+`src/Shared/Logistics.Shared.Models/{Feature}/{Entity}Dto.cs` for the public DTO.
 
 `src/Core/Logistics.Mappings/{Entity}Mapper.cs`:
 
@@ -143,7 +143,7 @@ Never write manual mapping in handlers.
 public class SubcontractorController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    [Authorize(Policy = Permission.Subcontractors.View)]
+    [Authorize(Policy = Permission.Subcontractor.View)]
     [ProducesResponseType<PagedResponse<SubcontractorDto>>(200)]
     public async Task<IActionResult> GetList([FromQuery] GetSubcontractorsQuery query, CancellationToken ct)
         => Ok(await mediator.Send(query, ct));
@@ -161,11 +161,11 @@ REST conventions:
 
 ### 8. Permissions
 
-Add `Subcontractors.View` and `Subcontractors.Manage` to the `Permission` constants (use the `add-permission` skill - `src/Shared/Logistics.Shared.Identity/Policies/`, plus the hand-mirrored `projects/shared/src/lib/models/permissions.ts`). Wire to `TenantRole` claims via the seeder or admin UI.
+Add `Subcontractor.View` and `Subcontractor.Manage` (singular class, like `Permission.Load`) to the `Permission` constants (use the `add-permission` skill - `src/Shared/Logistics.Shared.Identity/Policies/`, plus the hand-mirrored `projects/shared/src/lib/models/permissions.ts`). Wire to `TenantRole` claims via the seeder or admin UI.
 
 ### 9. Tests
 
-`test/Logistics.Application.Tests/Commands/{Feature}/Create{Entity}HandlerTests.cs` - xUnit + NSubstitute. Field name `sut`.
+`test/Logistics.Application.Tests/{Module}/{Feature}/{Class}Tests.cs` (e.g. `Operations/Trailers/`) - xUnit + NSubstitute. Field name `_sut`.
 
 See `.claude/rules/backend/testing.md` for the mock-setup pattern.
 
@@ -178,21 +178,25 @@ cd private/src/Client/Logistics.Angular
 bun run gen:api:live   # regenerates from running API
 ```
 
-This produces typed clients in `projects/shared/src/lib/api/generated/`. Update the barrel (`models.ts`) if a new DTO needs to be exported.
+This produces typed clients in `projects/shared/src/lib/api/generated/`. No barrel edit - `@logistics/shared/api` re-exports `generated/`.
 
 #### Page
 
+Follow the `add-angular-page` skill and `private/.claude/rules/frontend/folder-structure.md`. Copy the
+shape of `pages/trailers/`:
+
 `private/src/Client/Logistics.Angular/projects/tms-portal/src/app/pages/subcontractors/`:
 
-- `subcontractors.ts` (list page) + `.html` template
-- `subcontractor-edit.ts` (form) + `.html`
-- `subcontractor-store.ts` if state is non-trivial (`@ngrx/signals`)
+- `subcontractor.routes.ts` - the feature's routes, with `data.permission`
+- `subcontractors-list/`, `subcontractor-add/`, `subcontractor-edit/`, `subcontractor-details/` - one folder per page (`.ts` + `.html`)
+- `store/` if state is non-trivial (`@ngrx/signals`)
 
 Conventions: standalone components, signals (`signal()`, `computed()`), `input()`/`output()` (not decorators), native control flow (`@if`, `@for`), `<ui-form-field>` for inputs.
 
 #### Routing
 
-Add a route entry in the portal's `app.routes.ts`. Add a sidebar menu entry if user-facing.
+Register the feature's routes lazily in the portal's `app.routes.ts`. If user-facing, add the nav item in
+`shared/layout/sidebar/nav/{section}.nav.ts`.
 
 #### HTTP cache
 
@@ -200,10 +204,14 @@ Default cache TTL is 2 min. If the feature gets real-time updates via SignalR, a
 
 ### 11. Update feature-map.md
 
-Add a row under the appropriate domain section in `.claude/feature-map.md`:
+Add an entry under the appropriate domain section in `.claude/feature-map.md`, listing only the layers it touches:
 
 ```markdown
-| Subcontractors | `Entities/Subcontractor.cs` | `Modules/Operations/Subcontractors/Commands/`, `Modules/Operations/Subcontractors/Queries/` | - | `SubcontractorController.cs`, `tms-portal/pages/subcontractors/` |
+### Subcontractors
+
+- Domain: `Entities/Subcontractor.cs`
+- Application: `Modules/Operations/Subcontractors/Commands/`, `Modules/Operations/Subcontractors/Queries/`
+- API/UI: `SubcontractorController.cs`, `tms-portal/pages/subcontractors/`
 ```
 
 ## Verification checklist
@@ -219,7 +227,7 @@ Add a row under the appropriate domain section in `.claude/feature-map.md`:
 - [ ] Angular API client regenerated
 - [ ] Angular page + route added
 - [ ] Cache rule added if real-time
-- [ ] **Row added to `.claude/feature-map.md`**
+- [ ] **Entry added to `.claude/feature-map.md`**
 - [ ] `dotnet build` passes
 - [ ] `bun run lint` passes
 - [ ] Feature reachable end-to-end in the running app
@@ -227,8 +235,7 @@ Add a row under the appropriate domain section in `.claude/feature-map.md`:
 ## Common mistakes
 
 - Missing `[Authorize(Policy = ...)]` - controller falls back to default auth, leaks data across tenants.
-- Regenerating the Angular client but not committing the `models.ts` barrel - breaks the build.
-- Skipping the feature-map row - the feature becomes invisible to future sessions.
+- Skipping the feature-map entry - the feature becomes invisible to future sessions.
 
 ## Related skills
 
@@ -244,4 +251,4 @@ Add a row under the appropriate domain section in `.claude/feature-map.md`:
 - `.claude/rules/backend/mapperly.md`
 - `.claude/rules/backend/testing.md`
 - `.claude/rules/code-quality.md`
-- `.claude/rules/frontend/angular-conventions.md`
+- `private/.claude/rules/frontend/angular-conventions.md`

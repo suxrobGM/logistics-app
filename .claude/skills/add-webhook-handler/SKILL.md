@@ -11,8 +11,8 @@ Inbound webhooks from external services (Stripe, Samsara, Motive, etc.) terminat
 
 1. `src/Presentation/Logistics.API/Controllers/WebhookController.cs` - endpoint route (`[Route("webhooks")]`)
 2. `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Commands/Process{Provider}Webhook/` - command + handler (Stripe lives in `Modules/Integrations/Webhooks/Commands/`, ELD in `Modules/Compliance/Eld/Commands/`)
-3. `src/Infrastructure/Logistics.Infrastructure.{Module}/{Provider}/{Provider}WebhookService.cs` - signature validation (use `WebhookSignature.VerifyHmacSha256`)
-4. `appsettings.json` - webhook secret config (matched by env var, never committed)
+3. Signature validation with a `WebhookSignature.*` helper, in one of two existing shapes: a verifier port in `Application.Abstractions` implemented in infrastructure (`IInboundEmailWebhookVerifier` → `ResendWebhookVerifier`), or the family's provider service verifies its own webhooks (ELD `{Name}EldService`)
+4. Webhook secret - per-tenant integrations keep it on the `{Family}ProviderConfiguration` entity (`EldProviderConfiguration.WebhookSecret`); `appsettings.json` (env var, never committed) only for install-wide vendors (Stripe, Resend)
 5. `…/Process{Provider}Webhook/Process{Provider}WebhookValidator.cs` - schema validation (skip if the only rule is `Id NotEmpty`)
 6. Tests - at minimum: bad signature returns 400, replay returns 200 idempotent
 
@@ -22,11 +22,12 @@ Inbound webhooks from external services (Stripe, Samsara, Motive, etc.) terminat
 
 Most providers use HMAC of the raw body with a shared secret, sent in a header:
 
-| Provider | Header                                        | Algorithm                                                                                                  |
-| -------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Stripe   | `Stripe-Signature`                            | HMAC-SHA256 with timestamp                                                                                 |
-| Samsara  | `X-Samsara-Signature` + `X-Samsara-Timestamp` | `v1=` hex HMAC-SHA256 of `v1:{timestamp}:{body}`, base64-decoded secret (`WebhookSignature.VerifySamsara`) |
-| Motive   | `X-Motive-Signature`                          | HMAC-SHA256                                                                                                |
+| Provider | Header | Algorithm |
+| --- | --- | --- |
+| Stripe | `Stripe-Signature` | HMAC-SHA256 with timestamp |
+| Samsara | `X-Samsara-Signature` + `X-Samsara-Timestamp` | `v1=` hex HMAC-SHA256 of `v1:{timestamp}:{body}`, base64-decoded secret (`WebhookSignature.VerifySamsara`) |
+| Motive | `X-Motive-Signature` | HMAC-SHA256 |
+| Resend (Svix) | `svix-id` + `svix-timestamp` + `svix-signature` | base64 HMAC-SHA256 of `{id}.{timestamp}.{body}`, `whsec_` secret (`WebhookSignature.VerifySvix`) |
 
 For a new provider, find their signature spec in their docs **before** writing any code. If they don't sign webhooks, push back - unsigned webhooks are spoofable and should not be wired in without an alternative (mutual TLS, allowlisted source IPs).
 
@@ -63,19 +64,26 @@ Do **not** hand-roll HMAC + comparison. Use `WebhookSignature.VerifyHmacSha256` 
 compares with `CryptographicOperations.FixedTimeEquals`, and it **fails closed** (returns `false` when either the
 secret or the signature is missing).
 
-`Infrastructure.{Module}/{Provider}/{Provider}WebhookService.cs`:
+Two shapes exist - copy whichever fits:
 
-```csharp
-internal sealed class ProviderWebhookService(IOptions<ProviderOptions> options)
-{
-    public bool VerifySignature(string rawBody, string? signatureHex) =>
-        WebhookSignature.VerifyHmacSha256(rawBody, signatureHex, options.Value.WebhookSecret);
-}
-```
+- **Install-wide vendor** (one secret for the whole install): a verifier port in
+  `Application.Abstractions`, implemented in infrastructure. `IInboundEmailWebhookVerifier` →
+  `Infrastructure.Communications/Email/ResendWebhookVerifier.cs`:
 
-Never compare signatures with `==` or `string.Equals` - they leak timing information and enable forgery. If a
-provider signs with a scheme the helper doesn't cover (e.g. a timestamped envelope), extend the helper rather
-than open-coding a compare.
+  ```csharp
+  internal sealed class ResendWebhookVerifier(IOptions<ResendOptions> options) : IInboundEmailWebhookVerifier
+  {
+      public bool Verify(string rawBody, string? messageId, string? timestamp, string? signature) =>
+          WebhookSignature.VerifySvix(rawBody, messageId, timestamp, signature, options.Value.WebhookSecret);
+  }
+  ```
+
+- **Per-tenant integration**: the family's provider service verifies against the tenant's stored
+  secret (`SamsaraEldService` → `VerifySamsara`, `MotiveEldService` → `VerifyHmacSha256`).
+
+Never compare signatures with `==` or `string.Equals` - they leak timing information and enable forgery.
+Timestamped envelopes are already covered (`VerifySamsara`, `VerifySvix`); if a provider signs with a
+scheme no helper covers, extend `WebhookSignature` rather than open-coding a compare.
 
 For Stripe specifically, use `EventUtility.ConstructEvent(rawBody, signature, secret)` from the Stripe SDK - it
 handles timestamp tolerance and constant-time compare for you.
@@ -91,7 +99,7 @@ the same key.
 
 ```csharp
 internal sealed class ProviderWebhookHandler(
-    IProviderWebhookService webhookService,
+    IProviderWebhookVerifier webhookVerifier,
     ITenantUnitOfWork tenantUow,
     IWebhookEventTracker webhookEvents,
     ILogger<ProviderWebhookHandler> logger)
@@ -100,7 +108,7 @@ internal sealed class ProviderWebhookHandler(
     public async Task<Result> Handle(ProviderWebhookCommand cmd, CancellationToken ct)
     {
         // 1. Verify signature FIRST, before parsing
-        if (!webhookService.VerifySignature(cmd.RawBody, cmd.Signature))
+        if (!webhookVerifier.Verify(cmd.RawBody, cmd.Signature))
         {
             logger.LogWarning("Webhook signature verification failed");
             return Result.Fail("Invalid signature");   // controller maps to 400
@@ -152,8 +160,13 @@ Order matters:
 
 ### 5. Config
 
-Declare `ProviderOptions:WebhookSecret` as an empty string in `appsettings.json`; the real value
-comes from the env var `ProviderOptions__WebhookSecret`. **Never commit a real secret.**
+**Per-tenant integration** (ELD and the like): the secret lives on the tenant's
+`{Family}ProviderConfiguration.WebhookSecret` (`EldProviderConfiguration.WebhookSecret` today), entered
+through the connect dialog. No `appsettings` entry.
+
+**Install-wide vendor** (Stripe, Resend): declare `ProviderOptions:WebhookSecret` as an empty string in
+`appsettings.json`; the real value comes from the env var `ProviderOptions__WebhookSecret`. **Never
+commit a real secret.**
 
 ### 6. Tests
 
@@ -163,12 +176,12 @@ running once; unknown event type → logged, 200, no crash; happy path → comma
 ## Verification checklist
 
 - [ ] Endpoint added to `WebhookController` with `[AllowAnonymous]` and raw-body reading
-- [ ] Signature verified with `WebhookSignature.VerifyHmacSha256` (or provider SDK's verify) - fails closed
+- [ ] Signature verified with a `WebhookSignature.*` helper (or provider SDK's verify) - fails closed
 - [ ] Signature verified **before** payload parsing
 - [ ] Idempotency via `IWebhookEventTracker`; `EventKey` = provider event id, else `BuildKeyFromBody`
 - [ ] Event key recorded in the master-DB ledger after the work runs
 - [ ] Unknown event types log and return 200
-- [ ] Webhook secret loaded from env var, not appsettings.json
+- [ ] Webhook secret on the tenant's provider configuration (per-tenant) or from an env var (install-wide), never committed
 - [ ] Tests cover: bad signature, replay, unknown event type, happy path
 - [ ] Provider's webhook dashboard configured to point at the new endpoint
 - [ ] Endpoint URL added to deployment docs / runbook

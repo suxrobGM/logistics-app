@@ -15,8 +15,8 @@ populated from a request. Every guard you get for free in a handler you must wri
 ## Decide first
 
 1. **Recurring or on-demand?** Recurring → `RecurringJob.AddOrUpdate` in `ScheduleJobs()`. On-demand →
-   no `ScheduleJobs()`; something enqueues it (see `AIDispatchSessionJob` + `HangfireAIDispatchRunner`,
-   `CommandEnqueuerJob` + `HangfireCommandEnqueuer`).
+   no `ScheduleJobs()`; something enqueues it (see `AIDispatchTurnJob` + `HangfireAIDispatchTurnRunner`,
+   `NegotiationWakeJob` + `HangfireNegotiationWakeRunner`, `CommandEnqueuerJob` + `HangfireCommandEnqueuer`).
 2. **Per-tenant or global?** Almost always per-tenant → fan out with `TenantJobRunner.ForEachTenantAsync`.
    Global (master DB only, e.g. `WebhookEventCleanupJob`) → one scope, no fan-out.
 3. **Is the work behind a tenant feature flag?** If yes, you must check it explicitly.
@@ -57,7 +57,7 @@ pulled from the per-tenant scope inside the body.
 ## 2. Register it
 
 One line in the `ScheduleJobs(this WebApplication app)` extension in
-`src/Presentation/Logistics.API/Setup.cs` (~line 233):
+`src/Presentation/Logistics.API/Setup.cs`:
 
 ```csharp
 ThingSyncJob.ScheduleJobs();
@@ -86,23 +86,30 @@ if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.FuelCar
 }
 ```
 
-Only 3 of the current 16 recurring jobs do this. If your job writes anything a downgraded tenant
-shouldn't get, it needs to be the 4th.
+8 of the current 20 recurring jobs do this (7 in the job body, plus `AccountingSyncJob` inside
+`AccountingSyncService`). If your job writes anything a downgraded tenant shouldn't get, it needs to
+be the 9th.
 
 ## 4. Tenant context
 
+Per-tenant work inside `ForEachTenantAsync` already has the tenant set - the runner calls
+`SetCurrentTenant(tenant)` on each scope before your body runs. Don't set it again.
+
+Only on-demand jobs that receive a tenant id set it themselves (`AIDispatchTurnJob`,
+`AICopilotTurnJob`, `NegotiationWakeJob`):
+
 ```csharp
 var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-tenantUow.SetCurrentTenant(tenant);        // BEFORE any Repository<T>() call
+await tenantUow.SetCurrentTenantByIdAsync(tenantId);   // BEFORE any Repository<T>() call
 ```
 
-Calling `Repository<T>()` before `SetCurrentTenant` reads whatever tenant the scope last resolved.
+Calling `Repository<T>()` before the tenant is set reads whatever tenant the scope last resolved.
 It does not throw. It returns the wrong tenant's rows.
 
 ## 5. Keep the body thin
 
 Put the real work in an application service (`Logistics.Application/Modules/{Module}/{Feature}/Services/`)
-and have the job orchestrate: resolve → gate → set tenant → call service → log. That service is what
+and have the job orchestrate: resolve → gate → call service → log. That service is what
 gets unit-tested; the job itself is glue.
 
 `TenantJobRunner` already wraps each tenant in its own try/catch and logs, so **don't** add a
@@ -117,7 +124,7 @@ per-tenant try/catch that swallows - you'd hide the failure from the cycle log.
 - [ ] Renamed an id? `RecurringJob.RemoveIfExists("old-id")` added
 - [ ] Per-tenant work fans out via `TenantJobRunner.ForEachTenantAsync`
 - [ ] Feature-gated work checks `IFeatureService` **inside the body**
-- [ ] `tenantUow.SetCurrentTenant(tenant)` precedes every `Repository<T>()` call
+- [ ] On-demand job with a tenant id: `await tenantUow.SetCurrentTenantByIdAsync(tenantId)` precedes every `Repository<T>()` call (fan-out scopes already have the tenant set)
 - [ ] All services resolved from the per-tenant `IServiceScope`, none from the constructor
 - [ ] Real logic lives in an application service and has a unit test
 

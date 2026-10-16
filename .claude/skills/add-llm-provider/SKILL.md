@@ -9,7 +9,7 @@ Providers sit behind the `ILlmProvider` adapter.
 
 ## Decide the path
 
-- **New OpenAI-compatible provider** (DeepSeek-style): no SDK code - `OpenAICompatibleLlmProvider` handles it via `BaseUrl`. Skip step 3.
+- **New OpenAI-compatible provider** (DeepSeek-style): no SDK code - `OpenAICompatibleLlmProvider` handles it via `BaseUrl`. Skip steps 3 and 4.
 - **New custom-SDK provider** (e.g. Gemini, Mistral): new `ILlmProvider` implementation in step 3.
 - **New model from an existing provider** (e.g. a new Claude version): steps 4–6 only.
 
@@ -21,8 +21,8 @@ Providers sit behind the `ILlmProvider` adapter.
 2. `src/Core/Logistics.Application.Abstractions/AI/LlmOptions.cs` - provider config section. Config is
    deliberately **not** in `Infrastructure.AI` (the application layer reads it) - see `.claude/rules/backend/ai-agent.md`
 3. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/Providers/{X}LlmProvider.cs` - only for non-OpenAI-compatible
-4. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/LlmProviderFactory.cs` - resolution case
-5. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/LlmPricing.cs` - pricing, multiplier, tier, billing units
+4. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/LlmProviderFactory.cs` - resolution arm (custom SDK only)
+5. `src/Infrastructure/Logistics.Infrastructure.AI/Llm/LlmPricing.cs` - per-token USD prices (input, output, cache read, cache write)
 6. `src/Core/Logistics.Application.Abstractions/AI/LlmModelCatalog.cs` - add the model `{ Id, DisplayName, Provider }`
 
 ## Step-by-step
@@ -44,9 +44,9 @@ public enum LlmProvider
 In `LlmOptions.cs`:
 
 ```csharp
-public record LlmProviderOptions
+public class LlmProviderOptions
 {
-    public string ApiKey { get; set; } = "";
+    public required string ApiKey { get; set; }
     public string Model { get; set; } = "";
     public string? BaseUrl { get; set; } // null for native SDKs
 }
@@ -62,9 +62,9 @@ If the provider is OpenAI-compatible (most modern providers are), **skip this st
 If it requires a custom SDK, add `Llm/Providers/NewLlmProvider.cs`:
 
 ```csharp
-internal sealed class NewLlmProvider(IOptions<LlmProviderOptions> options) : ILlmProvider
+internal sealed class NewLlmProvider(LlmProviderOptions config, HttpClient httpClient) : ILlmProvider
 {
-    public async Task<LlmResponse> SendMessageAsync(LlmRequest request, CancellationToken ct)
+    public async Task<LlmResponse> SendAsync(LlmRequest request, CancellationToken ct)
     {
         // Translate LlmRequest → provider SDK request
         // Translate provider response → LlmResponse (Llm/Contracts only - no SDK types leak out)
@@ -72,22 +72,26 @@ internal sealed class NewLlmProvider(IOptions<LlmProviderOptions> options) : ILl
 }
 ```
 
+Use the `HttpClient` the factory passes in - the named `llm` client, which carries the configured
+`RequestTimeoutSeconds` and has `RemoveAllResilienceHandlers()` (`Infrastructure.AI/Registrar.cs`).
+A client of your own gets the host's default resilience handler, whose 30s total cuts agent turns short.
+
 Provider-specific SDK types **must not leak** outside this class. The agent loop uses only the `Llm/Contracts/` records (`LlmRequest`, `LlmResponse`, `LlmToolUseBlock`).
 
-### 4. Resolve in `LlmProviderFactory`
+### 4. (Custom SDK only) Resolve in `LlmProviderFactory`
+
+`Create` news up a provider per call. Any enum value without an arm falls through to
+`OpenAICompatibleLlmProvider`, so compatible providers need no change here:
 
 ```csharp
-public ILlmProvider GetProvider(LlmProvider provider) => provider switch
+return type switch
 {
-    LlmProvider.Anthropic => anthropic,
-    LlmProvider.OpenAI => openai,
-    LlmProvider.DeepSeek => deepseek,        // OpenAI-compatible reuse
-    LlmProvider.NewProvider => newProvider,  // ← here
-    _ => throw new NotSupportedException($"Unknown provider: {provider}")
+    LlmProvider.Anthropic => new AnthropicLlmProvider(config, httpClient),
+    LlmProvider.OpenAI => new OpenAIResponsesLlmProvider(config, httpClient),
+    LlmProvider.NewProvider => new NewLlmProvider(config, httpClient),  // ← custom SDK only
+    _ => new OpenAICompatibleLlmProvider(config, httpClient)
 };
 ```
-
-For OpenAI-compatible providers, instantiate `OpenAICompatibleLlmProvider` with the right `BaseUrl` from options.
 
 ### 5. Update `LlmPricing.cs`
 
@@ -98,7 +102,7 @@ cost this computes; there is no tier or multiplier to pick.
 private static readonly Dictionary<string, ModelPricing> Pricing = new()
 {
     // existing entries
-    ["new-model-1"] = new(0.50m, 2.0m, 0.05m), // input, output, cache-read per M tokens
+    ["new-model-1"] = new(0.50m, 2.0m, 0.05m, 0.625m), // input, output, cache read, cache write per M tokens
 };
 ```
 
@@ -133,7 +137,7 @@ selected model in `UpdateAISettingsCommand`. The admin UI populates automaticall
 - [ ] Enum value added
 - [ ] Config section + appsettings entry + env var documented
 - [ ] (If custom SDK) Provider implementation, no SDK types leak
-- [ ] Factory resolves the new provider
+- [ ] (If custom SDK) Factory arm added; compatible providers fall through with no change
 - [ ] **`LlmPricing.Pricing` entry added** (per-token USD prices)
 - [ ] `LlmModelCatalog` includes the model (id matches the `LlmPricing` keys) with the right `ReasoningStyle`
 - [ ] Admin AI Settings page shows the new model in the dropdown

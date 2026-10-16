@@ -19,7 +19,7 @@ catalogue are both driven by the assembly scan, so a tool joins every surface by
 
 Pick `{Domain}` by the Application module the tool dispatches into: `Dispatch/`, `Financial/`
 (invoices, payments, tax, expenses), `Operations/` (loads, customers, maintenance), `LoadBoard/`,
-`Intermodal/`. Which surfaces may call it is metadata, not folder membership - a `Financial/` tool can
+`Intermodal/`, `Negotiation/` (broker rate negotiation). Which surfaces may call it is metadata, not folder membership - a `Financial/` tool can
 still name `AgentSurfaces.Dispatch`.
 
 There is no separate write-tool list and no `IsWrite` flag: a tool is a write exactly when its

@@ -1,16 +1,16 @@
 ---
 name: add-integration-provider
-description: Add a third-party integration provider - a new ELD (Samsara/Motive/Geotab-style), load board (DAT/Truckstop), fuel card (WEX/EFS), or accounting (QuickBooks) vendor, or a whole new integration family. Use when wiring an external vendor API into the platform. Covers the ProviderFactoryBase pattern, options binding, secrets, and the two frontend constant lists that silently break if you update only one.
+description: Add a third-party integration provider - a new ELD (Samsara/Motive/Geotab-style), load board (DAT-style), fuel card (WEX/EFS), or accounting (QuickBooks) vendor, or a whole new integration family. Use when wiring an external vendor API into the platform. Covers the ProviderFactoryBase pattern, options binding, secrets, and the frontend provider constants that silently break when only one of a family's lists is updated.
 ---
 
 # Add an integration provider
 
-Four families exist today, all on the same shape:
+Four families exist today, all on the same shape (providers are added per pilot carrier, so no list here is final):
 
 | Family     | Project                                     | Enum                     | Factory                     |
 | ---------- | ------------------------------------------- | ------------------------ | --------------------------- |
 | ELD / HOS  | `Logistics.Infrastructure.Integrations.Eld` | `EldProviderType`        | `EldProviderFactory`        |
-| Load board | `...Integrations.LoadBoard`                 | `LoadBoardType`          | `LoadBoardProviderFactory`  |
+| Load board | `...Integrations.LoadBoard`                 | `LoadBoardProviderType`  | `LoadBoardProviderFactory`  |
 | Fuel cards | `...Integrations.FuelCards`                 | `FuelCardProviderType`   | `FuelCardProviderFactory`   |
 | Accounting | `...Integrations.Accounting`                | `AccountingProviderType` | `AccountingProviderFactory` |
 
@@ -54,6 +54,10 @@ deliberately _do_ throw so push failures surface. That is not a duplicate - don'
 Load board providers are the other exception: they call `LoadBoardHttp` (throws `LoadBoardApiException`) and
 are reached only through `ILoadBoardProviderGateway`, so a vendor error shows per provider instead of as "no freight".
 
+Retries come from the host's standard resilience handler (`ConfigureHttpClientDefaults` in
+`Logistics.HostDefaults/LogisticsHost.cs`), GET-only via `DisableForUnsafeHttpMethods` - POST/PUT/DELETE
+are never retried. Don't add a provider retry handler on top.
+
 ### 3. Options aggregate
 
 Add the property to the family's options root, e.g. `EldOptions.cs`:
@@ -83,31 +87,36 @@ services.AddScoped<NameEldService>();
 
 ### 6. Configuration
 
-`src/Presentation/Logistics.API/appsettings.json`, the family's section (`"Eld"`, `"Accounting"`;
-`"LoadBoard"` and `"FuelCards"` don't exist yet and must be created). Env-var override form is
-`{Section}__{Provider}__BaseUrl`.
+`src/Presentation/Logistics.API/appsettings.json`, the family's section. Only `"LoadBoard"` and
+`"Accounting"` exist today; `"Eld"` and `"FuelCards"` must be created when a provider needs a
+non-default value. Env-var override form is `{Section}__{Provider}__BaseUrl`.
 
-> Known gap to not repeat: `GeotabOptions` exists in `EldOptions` and in the factory map, but has **no
-> `appsettings` section**. Options bind to null and the provider fails at first call with a confusing
-> error. Add the section.
+Providers read their options as `options.Value.{Name} ?? new {Name}Options()`, with defaults on the
+options record, so a missing section binds to null and falls back to the defaults instead of
+failing at first call. Keep that shape.
 
 ## Frontend
 
-### 7. Provider constants — both lists
+### 7. Provider constants
 
-`projects/tms-portal/src/app/pages/{family}/components/{family}.constants.ts` holds **two** exports:
+`projects/tms-portal/src/app/pages/{family}/components/{family}.constants.ts`. The shape differs per
+family:
 
-- `{FAMILY}_PROVIDER_OPTIONS` - what the dropdown offers
-- `{FAMILY}_PROVIDER_LABELS` - how a stored value is displayed
-
-Update **both**. Updating only the labels gives a provider that renders but can't be picked (this is
-the current state of TtEld); updating only the options gives a pickable provider that shows as a raw
-enum string everywhere.
+- **ELD** (`eld.constants.ts`): exported `ELD_PROVIDER_OPTIONS` (what the dropdown offers), private
+  `ELD_PROVIDER_LABELS` (how a stored value is displayed), and private `ELD_WEBHOOK_PROVIDERS`
+  (push vendors; drives the webhook URL shown to the tenant). Update all that apply - labels only
+  gives a provider that renders but can't be picked; options only gives a pickable provider that
+  shows as a raw enum string.
+- **Fuel cards** (`fuel-cards.constants.ts`): one list, `FUEL_CARD_PROVIDER_OPTIONS`; labels are
+  looked up from it.
+- **Load boards** (`loadboard.constants.ts`): `PROVIDER_LABELS` covers every enum value (typed
+  `Record<LoadBoardProviderType, string>`, so a missing one is a type error); `PROVIDER_OPTIONS` lists
+  the connectable ones, labelled from `PROVIDER_LABELS`.
 
 ### 8. Regenerate the API client
 
 ```bash
-bun run gen:api:live      # requires the API running; or gen:api against a fresh swagger.json
+bun run gen:api:live      # requires the API running; or gen:api against a fresh openapi.json
 ```
 
 The constants cast snake_case strings to the **generated** union (`"demo" as EldProviderType`). Skip
@@ -129,8 +138,8 @@ Only if the credential fields differ from the family's existing dialog. It must 
 - [ ] Property added to `{Family}Options`
 - [ ] Arm added to the factory's `ProviderMap`
 - [ ] `AddHttpClient` / `AddScoped` in the family `Registrar.cs`
-- [ ] `appsettings.json` section present (create the family section if missing)
-- [ ] **Both** `_PROVIDER_OPTIONS` and `_PROVIDER_LABELS` updated
+- [ ] `appsettings.json` section added if the provider needs a non-default value (create the family section if missing)
+- [ ] Family constants updated (ELD: options + labels + webhook set; fuel cards: options; load boards: labels + options)
 - [ ] `bun run gen:api` run after the enum change
 - [ ] Webhook receiver added via `add-webhook-handler` (push vendors only)
 - [ ] Unit test for the mapper against a captured vendor payload
@@ -138,7 +147,7 @@ Only if the credential fields differ from the family's existing dialog. It must 
 
 ## Adding a whole new family
 
-Roadmap items like factoring and EDI will need this. On top of the above:
+Roadmap items like EDI will need this. On top of the above:
 
 1. New `src/Infrastructure/Logistics.Infrastructure.Integrations.{X}/` project + solution entry.
 2. Port interfaces (`I{X}ProviderService`, `I{X}ProviderFactory`) in
