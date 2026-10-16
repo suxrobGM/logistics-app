@@ -15,6 +15,13 @@ public interface ILoadChargeService : IApplicationService
     Task ReplaceAccessorialsAsync(Load load, IReadOnlyList<LoadAccessorialDto> accessorials, CancellationToken ct = default);
 
     /// <summary>
+    /// Removes the load's accessorials that <paramref name="owns"/> matches and adds <paramref name="fresh"/>
+    /// in their place.
+    /// </summary>
+    Task ReplaceAccessorialsAsync(
+        Load load, Func<LoadAccessorial, bool> owns, IReadOnlyList<LoadAccessorial> fresh, CancellationToken ct = default);
+
+    /// <summary>
     /// Rebuilds the invoice's linehaul, fuel surcharge and accessorial lines from the load and
     /// re-applies tax. Returns false (and changes nothing) when the load has no invoice or it is paid
     /// or cancelled.

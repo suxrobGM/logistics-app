@@ -14,14 +14,8 @@ internal sealed class LoadChargeService(
     public async Task ReplaceAccessorialsAsync(
         Load load, IReadOnlyList<LoadAccessorialDto> accessorials, CancellationToken ct = default)
     {
-        var repository = tenantUow.Repository<LoadAccessorial>();
         var keep = accessorials.Where(a => a.Id is not null).Select(a => a.Id!.Value).ToHashSet();
-
-        foreach (var stale in load.Accessorials.Where(a => !keep.Contains(a.Id)).ToList())
-        {
-            load.Accessorials.Remove(stale);
-            repository.Delete(stale);
-        }
+        RemoveAccessorials(load, a => !keep.Contains(a.Id));
 
         foreach (var input in accessorials)
         {
@@ -36,9 +30,17 @@ internal sealed class LoadChargeService(
                 continue;
             }
 
-            var added = NewAccessorial(load, input);
-            load.Accessorials.Add(added);
-            await repository.AddAsync(added, ct);
+            await AddAccessorialAsync(load, NewAccessorial(load, input), ct);
+        }
+    }
+
+    public async Task ReplaceAccessorialsAsync(
+        Load load, Func<LoadAccessorial, bool> owns, IReadOnlyList<LoadAccessorial> fresh, CancellationToken ct = default)
+    {
+        RemoveAccessorials(load, owns);
+        foreach (var accessorial in fresh)
+        {
+            await AddAccessorialAsync(load, accessorial, ct);
         }
     }
 
@@ -78,8 +80,7 @@ internal sealed class LoadChargeService(
                 return;
             }
 
-            load.Accessorials.Remove(existing);
-            tenantUow.Repository<LoadAccessorial>().Delete(existing);
+            RemoveAccessorials(load, a => a == existing);
         }
         else
         {
@@ -98,8 +99,7 @@ internal sealed class LoadChargeService(
                     LineItemType = InvoiceLineItemType.Detention,
                     Unit = AccessorialUnit.PerHour
                 };
-                load.Accessorials.Add(existing);
-                await tenantUow.Repository<LoadAccessorial>().AddAsync(existing, ct);
+                await AddAccessorialAsync(load, existing, ct);
             }
 
             existing.Name = name;
@@ -108,6 +108,23 @@ internal sealed class LoadChargeService(
         }
 
         await SyncInvoiceAsync(load, ct);
+    }
+
+    /// <summary>A removed accessorial must leave the repository too, or EF keeps the row.</summary>
+    private void RemoveAccessorials(Load load, Func<LoadAccessorial, bool> predicate)
+    {
+        var repository = tenantUow.Repository<LoadAccessorial>();
+        foreach (var stale in load.Accessorials.Where(predicate).ToList())
+        {
+            load.Accessorials.Remove(stale);
+            repository.Delete(stale);
+        }
+    }
+
+    private async Task AddAccessorialAsync(Load load, LoadAccessorial accessorial, CancellationToken ct)
+    {
+        load.Accessorials.Add(accessorial);
+        await tenantUow.Repository<LoadAccessorial>().AddAsync(accessorial, ct);
     }
 
     internal static LoadAccessorial NewAccessorial(Load load, LoadAccessorialDto input) => new()

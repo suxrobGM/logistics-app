@@ -35,16 +35,8 @@ internal sealed class AddDrayageChargesHandler(
             return Result.Fail($"Could not find container with ID '{containerId}'");
         }
 
-        var repository = tenantUow.Repository<LoadAccessorial>();
-        foreach (var stale in load.Accessorials.Where(a => DrayageTypes.Contains(a.LineItemType)).ToList())
-        {
-            load.Accessorials.Remove(stale);
-            repository.Delete(stale);
-        }
-
         var fresh = BuildAccessorials(load, container, container.GetFreeTime(DateTime.UtcNow));
-        load.Accessorials.AddRange(fresh);
-        await repository.AddRangeAsync(fresh, ct);
+        await loadCharges.ReplaceAccessorialsAsync(load, a => DrayageTypes.Contains(a.LineItemType), fresh, ct);
 
         if (!await loadCharges.SyncInvoiceAsync(load, ct))
         {

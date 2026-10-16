@@ -101,10 +101,8 @@ public class AddDrayageChargesHandlerTests
         var tenantUow = Substitute.For<ITenantUnitOfWork>();
         var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
         var containerRepo = Substitute.For<ITenantRepository<Container, Guid>>();
-        var accessorialRepo = Substitute.For<ITenantRepository<LoadAccessorial, Guid>>();
         tenantUow.Repository<Load>().Returns(loadRepo);
         tenantUow.Repository<Container>().Returns(containerRepo);
-        tenantUow.Repository<LoadAccessorial>().Returns(accessorialRepo);
         loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
         containerRepo.GetByIdAsync(container.Id, Arg.Any<CancellationToken>()).Returns(container);
         var loadCharges = Substitute.For<ILoadChargeService>();
@@ -114,10 +112,11 @@ public class AddDrayageChargesHandlerTests
             .Handle(new AddDrayageChargesCommand { LoadId = load.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Contains(lumper, load.Accessorials);
-        Assert.DoesNotContain(oldDemurrage, load.Accessorials);
-        accessorialRepo.Received(1).Delete(oldDemurrage);
-        Assert.Single(load.Accessorials, a => a.LineItemType == InvoiceLineItemType.Demurrage);
+        await loadCharges.Received(1).ReplaceAccessorialsAsync(
+            load,
+            Arg.Is<Func<LoadAccessorial, bool>>(owns => owns(oldDemurrage) && !owns(lumper)),
+            Arg.Is<IReadOnlyList<LoadAccessorial>>(fresh => fresh.Count(a => a.LineItemType == InvoiceLineItemType.Demurrage) == 1),
+            Arg.Any<CancellationToken>());
         await loadCharges.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
         await tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
