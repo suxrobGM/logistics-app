@@ -1,17 +1,28 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
 internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
     : IRequestHandler<FinancialsReportQuery, Result<FinancialsReportDto>>
 {
+    /// <summary>
+    /// Invoices a customer actually owes or has paid. Drafts and cancelled ones were counted as
+    /// invoiced and, once past due, as overdue - disagreeing with the invoice dashboard.
+    /// </summary>
+    private static readonly InvoiceStatus[] Receivable =
+    [
+        InvoiceStatus.Issued, InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid, InvoiceStatus.Paid, InvoiceStatus.Overdue
+    ];
+
     public async Task<Result<FinancialsReportDto>> Handle(FinancialsReportQuery req, CancellationToken ct)
     {
-        var invoicesQuery = tenantUow.Repository<LoadInvoice>().Query();
+        var invoicesQuery = tenantUow.Repository<LoadInvoice>().Query().Where(i => Receivable.Contains(i.Status));
         var expenseQuery = tenantUow.Repository<Expense>().Query();
 
         if (req.StartDate != default)
@@ -26,7 +37,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
             invoicesQuery = invoicesQuery.Where(i => i.CreatedAt <= to);
         }
 
-        var invoices = invoicesQuery.ToList();
+        var invoices = await invoicesQuery.ToListAsync(ct);
 
         var totalCount = invoices.Count;
         var totalInvoiced = invoices.Sum(i => i.Total.Amount);
@@ -41,17 +52,26 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
 
         var averageInvoiceValue = totalCount > 0 ? totalInvoiced / totalCount : 0;
         var collectionRate = totalInvoiced > 0 ? (totalPaid / totalInvoiced) * 100 : 0;
+        var overdueAmount = GetOverdueAmount(invoices);
+        var overdueInvoices = GetOverdueInvoicesCount(invoices);
 
         var paymentTrends = CalculatePaymentTrends(
             invoices,
-            req.StartDate == default ? invoices.Min(i => i.CreatedAt) : req.StartDate,
-            req.EndDate == default ? invoices.Max(i => i.CreatedAt) : req.EndDate
+            req.StartDate != default ? req.StartDate : invoices.Count > 0 ? invoices.Min(i => i.CreatedAt) : DateTime.UtcNow,
+            req.EndDate != default ? req.EndDate : invoices.Count > 0 ? invoices.Max(i => i.CreatedAt) : DateTime.UtcNow
         );
 
         var topCustomers = GetTopCustomersByValue(invoices);
         var statusDistribution = GetStatusDistribution(invoices, fullyPaidInvoices, partiallyPaidInvoices, unpaidInvoices);
         var revenueTrends = CalculateRevenueTrends(invoices, expenseQuery, req.StartDate, req.EndDate);
-        var financialMetrics = CalculateFinancialMetrics(invoices, totalInvoiced, totalPaid, totalDue);
+        List<FinancialMetricDto> financialMetrics =
+        [
+            new() { Metric = "Average Invoice Value", Value = averageInvoiceValue, Unit = "$", Category = "Revenue" },
+            new() { Metric = "Collection Rate", Value = collectionRate, Unit = "%", Category = "Performance" },
+            new() { Metric = "Outstanding Amount", Value = totalDue, Unit = "$", Category = "Risk" },
+            new() { Metric = "Overdue Amount", Value = overdueAmount, Unit = "$", Category = "Risk" },
+            new() { Metric = "Overdue Invoices", Value = overdueInvoices, Unit = "count", Category = "Risk" }
+        ];
 
         var dto = new FinancialsReportDto
         {
@@ -64,8 +84,8 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
             AverageInvoiceValue = averageInvoiceValue,
             CollectionRate = collectionRate,
             OutstandingAmount = totalDue,
-            OverdueAmount = GetOverdueAmount(invoices),
-            OverdueInvoices = GetOverdueInvoicesCount(invoices),
+            OverdueAmount = overdueAmount,
+            OverdueInvoices = overdueInvoices,
             PaymentTrends = paymentTrends,
             TopCustomers = topCustomers,
             StatusDistribution = statusDistribution,
@@ -185,35 +205,18 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         return trends;
     }
 
-    private static List<FinancialMetricDto> CalculateFinancialMetrics(List<LoadInvoice> invoices, decimal totalInvoiced, decimal totalPaid, decimal totalDue)
-    {
-        var avgInvoiceValue = invoices.Count != 0 ? totalInvoiced / invoices.Count : 0;
-        var collectionRate = totalInvoiced > 0 ? (double)(totalPaid / totalInvoiced) * 100 : 0;
-        var overdueAmount = GetOverdueAmount(invoices);
-        var overdueCount = GetOverdueInvoicesCount(invoices);
-
-        return
-        [
-            new() { Metric = "Average Invoice Value", Value = avgInvoiceValue, Unit = "$", Category = "Revenue" },
-            new() { Metric = "Collection Rate", Value = (decimal)collectionRate, Unit = "%", Category = "Performance" },
-            new() { Metric = "Outstanding Amount", Value = totalDue, Unit = "$", Category = "Risk" },
-            new() { Metric = "Overdue Amount", Value = overdueAmount, Unit = "$", Category = "Risk" },
-            new() { Metric = "Overdue Invoices", Value = overdueCount, Unit = "count", Category = "Risk" }
-        ];
-    }
-
     private static decimal GetOverdueAmount(List<LoadInvoice> invoices)
     {
-        var today = DateTime.Today;
+        var now = DateTime.UtcNow;
         return invoices
-            .Where(i => i.DueDate.HasValue && i.DueDate < today && i.Payments.Sum(p => p.Amount.Amount) < i.Total.Amount)
+            .Where(i => i.DueDate.HasValue && i.DueDate < now && i.Payments.Sum(p => p.Amount.Amount) < i.Total.Amount)
             .Sum(i => i.Total.Amount - i.Payments.Sum(p => p.Amount.Amount));
     }
 
     private static int GetOverdueInvoicesCount(List<LoadInvoice> invoices)
     {
-        var today = DateTime.Today;
+        var now = DateTime.UtcNow;
         return invoices
-            .Count(i => i.DueDate.HasValue && i.DueDate < today && i.Payments.Sum(p => p.Amount.Amount) < i.Total.Amount);
+            .Count(i => i.DueDate.HasValue && i.DueDate < now && i.Payments.Sum(p => p.Amount.Amount) < i.Total.Amount);
     }
 }

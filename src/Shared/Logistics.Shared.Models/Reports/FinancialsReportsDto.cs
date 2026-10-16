@@ -61,6 +61,5 @@ public class FinancialMetricDto
     public string Metric { get; set; } = string.Empty;
     public decimal Value { get; set; }
     public string Unit { get; set; } = string.Empty;
-    public double Trend { get; set; }
     public string Category { get; set; } = string.Empty;
 }
