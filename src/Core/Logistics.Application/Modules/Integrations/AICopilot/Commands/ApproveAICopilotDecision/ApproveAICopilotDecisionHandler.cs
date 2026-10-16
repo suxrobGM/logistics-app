@@ -56,7 +56,8 @@ internal sealed class ApproveAICopilotDecisionHandler(
                 message => broadcastService.BroadcastMessageAsync(tenant.Id, conversation.CreatedById, message), ct),
             ct);
 
-        await broadcastService.BroadcastDecisionAsync(tenant.Id, conversation.CreatedById, decision.ToDto());
+        await broadcastService.BroadcastDecisionAsync(
+            tenant.Id, conversation.CreatedById, await tenantUow.ToLabeledDtoAsync(decision, ct));
         return outcome;
     }
 }

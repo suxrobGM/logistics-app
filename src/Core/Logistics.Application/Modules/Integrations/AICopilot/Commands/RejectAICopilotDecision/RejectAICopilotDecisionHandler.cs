@@ -33,7 +33,8 @@ internal sealed class RejectAICopilotDecisionHandler(
             conversation, notes.RejectionNote(decision, request.Reason), userId,
             message => broadcastService.BroadcastMessageAsync(tenantId, conversation.CreatedById, message), ct);
 
-        await broadcastService.BroadcastDecisionAsync(tenantId, conversation.CreatedById, decision.ToDto());
+        await broadcastService.BroadcastDecisionAsync(
+            tenantId, conversation.CreatedById, await tenantUow.ToLabeledDtoAsync(decision, ct));
         return Result.Ok();
     }
 }

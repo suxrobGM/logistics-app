@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Infrastructure.AI.Agents;
@@ -5,6 +6,7 @@ using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Infrastructure.AI.Llm;
 using Logistics.Shared.Models;
@@ -22,6 +24,9 @@ public class AgentDecisionProcessorTests
     private readonly ITenantRepository<AgentDecision, Guid> _decisionRepo =
         Substitute.For<ITenantRepository<AgentDecision, Guid>>();
 
+    private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
+    private readonly ITenantRepository<Truck, Guid> _truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
+
     private readonly ILogger<AgentDecisionProcessor> _logger = NullLogger<AgentDecisionProcessor>.Instance;
 
     private readonly AgentDecisionProcessor _sut;
@@ -33,6 +38,10 @@ public class AgentDecisionProcessorTests
     public AgentDecisionProcessorTests()
     {
         _tenantUow.Repository<AgentDecision>().Returns(_decisionRepo);
+        _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>()).Returns([]);
+        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>()).Returns([]);
         _tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
@@ -420,6 +429,37 @@ public class AgentDecisionProcessorTests
 
         await _broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<AgentDecisionDto>());
+    }
+
+    /// <summary>The live card shows these; without them it falls back to the GUIDs in the tool input.</summary>
+    [Fact]
+    public async Task ProcessToolCalls_WriteTool_BroadcastsLoadNameAndTruckNumber()
+    {
+        var load = new Load
+        {
+            Name = "Load 42",
+            Type = LoadType.GeneralFreight,
+            Customer = null!,
+            OriginAddress = new Address { Line1 = "1 Origin", City = "City", State = "ST", ZipCode = "00000", Country = "US" },
+            OriginLocation = new GeoPoint(0, 0),
+            DestinationAddress = new Address { Line1 = "1 Dest", City = "City", State = "ST", ZipCode = "00000", Country = "US" },
+            DestinationLocation = new GeoPoint(0, 0),
+            DeliveryCost = Money.Zero("USD")
+        };
+        var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
+        _loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>()).Returns([load]);
+        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>()).Returns([truck]);
+        var toolUse = CreateToolUse("assign_load_to_truck", new JsonObject
+        {
+            ["load_id"] = load.Id.ToString(),
+            ["truck_id"] = truck.Id.ToString()
+        });
+
+        await _sut.ProcessToolCallsAsync(
+            CreateSession(), new ToolCallContext(), [toolUse], null, CancellationToken.None);
+
+        await _broadcastService.Received(1).BroadcastDecisionAsync(
+            Arg.Any<Guid>(), Arg.Is<AgentDecisionDto>(d => d.LoadName == "Load 42" && d.TruckNumber == "T-100"));
     }
 
     [Fact]

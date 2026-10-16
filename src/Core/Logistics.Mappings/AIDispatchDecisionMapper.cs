@@ -14,6 +14,14 @@ public static partial class AIDispatchDecisionMapper
         return dto;
     }
 
+    public static AgentDecisionDto ToDto(this AgentDecision entity, string? loadName, string? truckNumber)
+    {
+        var dto = entity.ToDto();
+        dto.LoadName = loadName;
+        dto.TruckNumber = truckNumber;
+        return dto;
+    }
+
     [MapperIgnoreSource(nameof(AgentDecision.DomainEvents))]
     [MapperIgnoreSource(nameof(AgentDecision.Session))]
     [MapperIgnoreSource(nameof(AgentDecision.ToolOutput))]

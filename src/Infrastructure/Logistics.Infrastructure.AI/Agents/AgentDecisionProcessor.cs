@@ -7,7 +7,8 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Infrastructure.AI.Llm;
 using Logistics.Infrastructure.AI.Tools;
-using Logistics.Mappings;
+using Logistics.Application.Modules.Integrations.Agents.Services;
+using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.AIDispatch;
 
@@ -53,9 +54,9 @@ internal sealed class AgentDecisionProcessor(
         // Save all decisions first, then broadcast - ensures clients see committed data
         await tenantUow.SaveChangesAsync(ct);
 
-        foreach (var decision in decisions)
+        foreach (var dto in await tenantUow.ToLabeledDtosAsync(decisions, ct))
         {
-            await BroadcastDecisionAsync(decision, context);
+            await BroadcastDecisionAsync(dto, context);
         }
 
         return toolResults;
@@ -164,18 +165,18 @@ internal sealed class AgentDecisionProcessor(
         }
     }
 
-    private async Task BroadcastDecisionAsync(AgentDecision decision, ToolCallContext context)
+    private async Task BroadcastDecisionAsync(AgentDecisionDto decision, ToolCallContext context)
     {
         try
         {
             if (context.DecisionBroadcastOverride is not null)
             {
-                await context.DecisionBroadcastOverride(decision.ToDto());
+                await context.DecisionBroadcastOverride(decision);
                 return;
             }
 
             var tenantId = tenantUow.GetCurrentTenant().Id;
-            await broadcastService.BroadcastDecisionAsync(tenantId, decision.ToDto());
+            await broadcastService.BroadcastDecisionAsync(tenantId, decision);
         }
         catch (Exception ex)
         {

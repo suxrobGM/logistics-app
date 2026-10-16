@@ -62,7 +62,7 @@ internal sealed class AgentConversationQueries(
         dto.Messages = messages
             .Select(m => m.ToDto(m.SentByUserId is { } id ? senderNames.GetValueOrDefault(id) : null))
             .ToList();
-        dto.Decisions = decisions.Select(d => d.ToDto()).ToList();
+        dto.Decisions = await tenantUow.ToLabeledDtosAsync(decisions, ct);
 
         if (includeSessions)
         {
