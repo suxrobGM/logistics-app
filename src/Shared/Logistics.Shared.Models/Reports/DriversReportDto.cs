@@ -50,6 +50,7 @@ public class DriverEfficiencyDto
 {
     public string Metric { get; set; } = string.Empty;
     public double Value { get; set; }
+
+    /// <summary>"$", "%", "loads", or "m" for a distance in meters (converted to the tenant unit by the client).</summary>
     public string Unit { get; set; } = string.Empty;
-    public double Trend { get; set; }
 }

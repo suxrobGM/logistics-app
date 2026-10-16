@@ -171,10 +171,10 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IReq
 
         return new List<DriverEfficiencyDto>
         {
-            new() { Metric = "Avg Earnings/Driver", Value = avgEarningsPerDriver, Unit = "$", Trend = 8.5 },
-            new() { Metric = "Avg Distance/Driver", Value = avgDistancePerDriver, Unit = "km", Trend = 4.2 },
-            new() { Metric = "Avg Loads/Driver", Value = avgLoadsPerDriver, Unit = "loads", Trend = 6.1 },
-            new() { Metric = "Driver Utilization", Value = (double)driverStats.Count(d => d.LoadsDelivered > 0) / Math.Max(totalDrivers, 1) * 100, Unit = "%", Trend = 2.3 }
+            new() { Metric = "Avg Earnings/Driver", Value = avgEarningsPerDriver, Unit = "$" },
+            new() { Metric = "Avg Distance/Driver", Value = avgDistancePerDriver, Unit = "m" },
+            new() { Metric = "Avg Loads/Driver", Value = avgLoadsPerDriver, Unit = "loads" },
+            new() { Metric = "Driver Utilization", Value = (double)driverStats.Count(d => d.LoadsDelivered > 0) / Math.Max(totalDrivers, 1) * 100, Unit = "%" }
         };
     }
 }
