@@ -142,8 +142,6 @@ internal sealed class AgentTurnService(
         AgentSession session,
         IEnumerable<LlmMessage> appended)
     {
-        var nextSequence = conversation.NextSequence();
-
         // The user message that triggered this turn was created before the session existed.
         var triggerMessage = conversation.Messages
             .Where(m => m.Role == AgentMessageRole.User && m.SessionId is null)
@@ -158,19 +156,12 @@ internal sealed class AgentTurnService(
             var textParts = message.Content.OfType<LlmTextBlock>().Select(t => t.Text).ToList();
             var displayText = textParts.Count > 0 ? string.Join("\n\n", textParts) : null;
 
-            var row = new AgentMessage
-            {
-                ConversationId = conversation.Id,
-                Sequence = nextSequence++,
-                Role = message.Role == LlmRole.Assistant
-                    ? AgentMessageRole.Assistant
-                    : AgentMessageRole.User,
-                ContentJson = AgentTranscriptCodec.Encode(message.Content),
-                DisplayText = displayText?.Length > 4000 ? displayText[..4000] : displayText,
-                SessionId = session.Id
-            };
+            var row = conversation.AddTurnMessage(
+                session.Id,
+                message.Role == LlmRole.Assistant ? AgentMessageRole.Assistant : AgentMessageRole.User,
+                AgentTranscriptCodec.Encode(message.Content),
+                displayText?.Length > 4000 ? displayText[..4000] : displayText);
 
-            conversation.Messages.Add(row);
             await tenantUow.Repository<AgentMessage>().AddAsync(row, CancellationToken.None);
             rows.Add(row);
         }

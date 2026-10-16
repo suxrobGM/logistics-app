@@ -48,7 +48,26 @@ public class AgentConversation : AuditableEntity, ITenantEntity
         return message;
     }
 
-    public int NextSequence() => ++LastSequence;
+    /// <summary>
+    /// A row from an agent turn: provider replay content plus the text the transcript shows, if any.
+    /// Same registration rule as <see cref="AddTextMessage"/>.
+    /// </summary>
+    public AgentMessage AddTurnMessage(Guid sessionId, AgentMessageRole role, string contentJson, string? displayText)
+    {
+        var message = new AgentMessage
+        {
+            ConversationId = Id,
+            Sequence = NextSequence(),
+            Role = role,
+            ContentJson = contentJson,
+            DisplayText = displayText,
+            SessionId = sessionId
+        };
+        Messages.Add(message);
+        return message;
+    }
+
+    private int NextSequence() => ++LastSequence;
 
     public void BeginTurn()
     {
