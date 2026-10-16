@@ -122,7 +122,15 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
             load.IsHazmat = p.IsHazmat;
             load.HazmatClass = p.HazmatClass;
             load.UnNumber = p.UnNumber;
-            load.Vehicles = p.Vehicles is null ? [] : [.. p.Vehicles];
+            try
+            {
+                load.SetVehicles(p.Vehicles ?? []);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Result<IReadOnlyList<Load>>.Fail(ex.Message);
+            }
+
             load.FuelSurcharge = p.FuelSurcharge;
             load.FreightClass = p.FreightClass;
             load.NmfcCode = p.NmfcCode;

@@ -4,6 +4,7 @@ using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Modules.Operations.Trips.Commands;
 using Logistics.Application.Validators;
+using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
@@ -141,6 +142,40 @@ public class LoadVehicleTests
 
     #endregion
 
+    #region Load.SetVehicles
+
+    [Fact]
+    public void SetVehicles_FreightLoad_Throws()
+    {
+        var load = NewLoad(LoadType.GeneralFreight);
+
+        Assert.Throws<InvalidOperationException>(() => load.SetVehicles([new LoadVehicle { Vin = ValidVin }]));
+        Assert.Empty(load.Vehicles);
+    }
+
+    [Fact]
+    public void SetVehicles_FreightLoadNoVehicles_Clears()
+    {
+        var load = NewLoad(LoadType.GeneralFreight);
+
+        load.SetVehicles([]);
+
+        Assert.Empty(load.Vehicles);
+    }
+
+    [Fact]
+    public void SetVehicles_VehicleLoad_ReplacesTheList()
+    {
+        var load = NewLoad(LoadType.Vehicle);
+        load.SetVehicles([new LoadVehicle { Make = "Ford" }]);
+
+        load.SetVehicles([new LoadVehicle { Vin = ValidVin }]);
+
+        Assert.Equal(ValidVin, Assert.Single(load.Vehicles).Vin);
+    }
+
+    #endregion
+
     #region Capacity warning
 
     [Theory]
@@ -164,6 +199,18 @@ public class LoadVehicleTests
     }
 
     #endregion
+
+    private static Load NewLoad(LoadType type) => new()
+    {
+        Name = "Test",
+        Type = type,
+        Customer = null!,
+        OriginAddress = ValidCreateCommand(type).OriginAddress,
+        OriginLocation = new GeoPoint(-96.8, 32.8),
+        DestinationAddress = ValidCreateCommand(type).DestinationAddress,
+        DestinationLocation = new GeoPoint(-97.7, 30.3),
+        DeliveryCost = Money.Zero("USD")
+    };
 
     private static CreateLoadCommand ValidCreateCommand(LoadType type) => new()
     {
