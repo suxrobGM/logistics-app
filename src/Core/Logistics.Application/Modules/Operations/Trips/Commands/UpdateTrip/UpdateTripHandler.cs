@@ -205,18 +205,8 @@ internal sealed class UpdateTripHandler(
             return Result<int>.Ok(0);
         }
 
-        var created = await loadService.CreateLoadsAsync(newLoadCommands.Select(c => new CreateLoadParameters(
-            c.Name,
-            c.Type,
-            (c.OriginAddress, c.OriginLocation),
-            (c.DestinationAddress, c.DestinationLocation),
-            c.DeliveryCost,
-            c.Distance,
-            c.CustomerId,
-            trip.TruckId,
-            c.AssignedDispatcherId,
-            trip.Id,
-            Vehicles: c.Vehicles.ToLoadVehicles())));
+        var created = await loadService.CreateLoadsAsync(
+            newLoadCommands.Select(c => c.ToCreateLoadParameters(trip.TruckId, trip.Id)));
 
         if (!created.IsSuccess)
         {

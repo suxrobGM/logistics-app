@@ -1,4 +1,5 @@
 using FluentValidation;
+using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Application.Validators;
 using Logistics.Domain.Primitives.Enums;
 
@@ -25,6 +26,7 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
             RuleForEach(x => x.NewLoads!)
                 .ChildRules(load =>
                 {
+                    load.Include(new LoadChargesValidator());
                     load.RuleForEach(l => l.Vehicles).SetValidator(new LoadVehicleInputValidator());
                     load.RuleFor(l => l.Vehicles)
                         .Empty()
