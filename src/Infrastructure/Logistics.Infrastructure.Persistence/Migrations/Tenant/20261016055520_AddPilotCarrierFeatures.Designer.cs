@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20261015212540_AddPilotCarrierFeatures")]
+    [Migration("20261016055520_AddPilotCarrierFeatures")]
     partial class AddPilotCarrierFeatures
     {
         /// <inheritdoc />
@@ -206,10 +206,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_synced_at");
 
-                    b.Property<string>("MappingsJson")
-                        .HasColumnType("jsonb")
-                        .HasColumnName("mappings_json");
-
                     b.Property<bool>("NeedsReconnect")
                         .HasColumnType("boolean")
                         .HasColumnName("needs_reconnect");
@@ -244,6 +240,48 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("TokenExpiresAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("token_expires_at");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Mappings", "Logistics.Domain.Entities.AccountingProviderConfiguration.Mappings#AccountingMappings", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.ComplexCollection(typeof(List<Dictionary<string, object>>), "CompanyExpenseAccounts", "Logistics.Domain.Entities.AccountingProviderConfiguration.Mappings#AccountingMappings.CompanyExpenseAccounts#CompanyExpenseCategoryMapping", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<string>("Category")
+                                        .IsRequired();
+
+                                    b2.Property<string>("QboId")
+                                        .IsRequired();
+                                });
+
+                            b1.ComplexCollection(typeof(List<Dictionary<string, object>>), "Items", "Logistics.Domain.Entities.AccountingProviderConfiguration.Mappings#AccountingMappings.Items#LineItemTypeMapping", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<string>("LineItemType")
+                                        .IsRequired();
+
+                                    b2.Property<string>("QboId")
+                                        .IsRequired();
+                                });
+
+                            b1.ComplexCollection(typeof(List<Dictionary<string, object>>), "TruckExpenseAccounts", "Logistics.Domain.Entities.AccountingProviderConfiguration.Mappings#AccountingMappings.TruckExpenseAccounts#TruckExpenseCategoryMapping", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<string>("Category")
+                                        .IsRequired();
+
+                                    b2.Property<string>("QboId")
+                                        .IsRequired();
+                                });
+
+                            b1
+                                .ToJson("mappings")
+                                .HasColumnType("jsonb");
+                        });
 
                     b.HasKey("Id")
                         .HasName("pk_accounting_provider_configurations");
@@ -1529,10 +1567,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("AccessToken")
-                        .HasColumnType("text")
-                        .HasColumnName("access_token");
-
                     b.Property<string>("ApiKey")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1560,18 +1594,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("text")
                         .HasColumnName("provider_type");
 
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("text")
-                        .HasColumnName("refresh_token");
-
                     b.Property<string>("Region")
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)")
                         .HasColumnName("region");
-
-                    b.Property<DateTime?>("TokenExpiresAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("token_expires_at");
 
                     b.Property<string>("WebhookSecret")
                         .HasColumnType("text")
@@ -1613,6 +1639,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_synced_at");
 
+                    b.Property<Guid>("ProviderConfigurationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_configuration_id");
+
                     b.Property<string>("ProviderType")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1624,6 +1654,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                     b.HasKey("Id")
                         .HasName("pk_eld_vehicle_mappings");
+
+                    b.HasIndex("ProviderConfigurationId")
+                        .HasDatabaseName("ix_eld_vehicle_mappings_provider_configuration_id");
 
                     b.HasIndex("TruckId")
                         .HasDatabaseName("ix_eld_vehicle_mappings_truck_id");
@@ -3878,55 +3911,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasDatabaseName("ix_load_exceptions_resolved_at");
 
                     b.ToTable("load_exceptions", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.LoadVehicle", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Color")
-                        .HasColumnType("text")
-                        .HasColumnName("color");
-
-                    b.Property<bool>("IsOperable")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_operable");
-
-                    b.Property<string>("LotNumber")
-                        .HasColumnType("text")
-                        .HasColumnName("lot_number");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("text")
-                        .HasColumnName("make");
-
-                    b.Property<string>("Model")
-                        .HasColumnType("text")
-                        .HasColumnName("model");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text")
-                        .HasColumnName("notes");
-
-                    b.Property<decimal?>("Rate")
-                        .HasColumnType("numeric")
-                        .HasColumnName("rate");
-
-                    b.Property<string>("Vin")
-                        .HasColumnType("text")
-                        .HasColumnName("vin");
-
-                    b.Property<int?>("Year")
-                        .HasColumnType("integer")
-                        .HasColumnName("year");
-
-                    b.HasKey("Id")
-                        .HasName("pk_load_vehicle");
-
-                    b.ToTable("load_vehicle", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Maintenance.MaintenancePart", b =>
@@ -7298,6 +7282,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.EldVehicleMapping", b =>
                 {
+                    b.HasOne("Logistics.Domain.Entities.EldProviderConfiguration", null)
+                        .WithMany()
+                        .HasForeignKey("ProviderConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_eld_vehicle_mappings_eld_provider_configurations_provider_c");
+
                     b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
                         .WithMany()
                         .HasForeignKey("TruckId")

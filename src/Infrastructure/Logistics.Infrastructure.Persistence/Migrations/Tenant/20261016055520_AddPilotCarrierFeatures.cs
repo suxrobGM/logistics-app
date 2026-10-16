@@ -16,6 +16,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 name: "webhook_secret",
                 table: "load_board_configurations");
 
+            migrationBuilder.DropColumn(
+                name: "access_token",
+                table: "eld_provider_configurations");
+
+            migrationBuilder.DropColumn(
+                name: "refresh_token",
+                table: "eld_provider_configurations");
+
+            migrationBuilder.DropColumn(
+                name: "token_expires_at",
+                table: "eld_provider_configurations");
+
             migrationBuilder.AddColumn<Guid>(
                 name: "current_trailer_id",
                 table: "trucks",
@@ -174,6 +186,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "provider_configuration_id",
+                table: "eld_vehicle_mappings",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddColumn<string>(
                 name: "region",
@@ -423,10 +442,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
-                name: "mappings_json",
+                name: "mappings",
                 table: "accounting_provider_configurations",
                 type: "jsonb",
-                nullable: true);
+                nullable: false,
+                defaultValue: """{"Items":[],"CompanyExpenseAccounts":[],"TruckExpenseAccounts":[]}""");
 
             migrationBuilder.AddColumn<bool>(
                 name: "needs_reconnect",
@@ -544,26 +564,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         principalTable: "loads",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "load_vehicle",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    vin = table.Column<string>(type: "text", nullable: true),
-                    year = table.Column<int>(type: "integer", nullable: true),
-                    make = table.Column<string>(type: "text", nullable: true),
-                    model = table.Column<string>(type: "text", nullable: true),
-                    color = table.Column<string>(type: "text", nullable: true),
-                    lot_number = table.Column<string>(type: "text", nullable: true),
-                    is_operable = table.Column<bool>(type: "boolean", nullable: false),
-                    notes = table.Column<string>(type: "text", nullable: true),
-                    rate = table.Column<decimal>(type: "numeric", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_load_vehicle", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -707,6 +707,22 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 table: "fuel_card_transactions",
                 column: "payroll_invoice_id");
 
+            // Vehicle mappings predate the foreign key: point each at its provider's configuration and
+            // drop the ones whose provider is no longer configured, or the constraint below fails.
+            migrationBuilder.Sql("""
+                UPDATE eld_vehicle_mappings m SET provider_configuration_id = c.id
+                FROM eld_provider_configurations c
+                WHERE c.provider_type = m.provider_type;
+
+                DELETE FROM eld_vehicle_mappings
+                WHERE provider_configuration_id = '00000000-0000-0000-0000-000000000000';
+                """);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_eld_vehicle_mappings_provider_configuration_id",
+                table: "eld_vehicle_mappings",
+                column: "provider_configuration_id");
+
             migrationBuilder.CreateIndex(
                 name: "ix_customers_factoring_company_id",
                 table: "customers",
@@ -790,6 +806,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 principalTable: "factoring_companies",
                 principalColumn: "id",
                 onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_eld_vehicle_mappings_eld_provider_configurations_provider_c",
+                table: "eld_vehicle_mappings",
+                column: "provider_configuration_id",
+                principalTable: "eld_provider_configurations",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "fk_fuel_card_transactions_invoice_payroll_invoice_id",
@@ -880,6 +904,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 table: "customers");
 
             migrationBuilder.DropForeignKey(
+                name: "fk_eld_vehicle_mappings_eld_provider_configurations_provider_c",
+                table: "eld_vehicle_mappings");
+
+            migrationBuilder.DropForeignKey(
                 name: "fk_fuel_card_transactions_invoice_payroll_invoice_id",
                 table: "fuel_card_transactions");
 
@@ -902,9 +930,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "load_accessorials");
-
-            migrationBuilder.DropTable(
-                name: "load_vehicle");
 
             migrationBuilder.DropTable(
                 name: "recurring_deductions");
@@ -933,6 +958,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
             migrationBuilder.DropIndex(
                 name: "ix_fuel_card_transactions_payroll_invoice_id",
                 table: "fuel_card_transactions");
+
+            migrationBuilder.DropIndex(
+                name: "ix_eld_vehicle_mappings_provider_configuration_id",
+                table: "eld_vehicle_mappings");
 
             migrationBuilder.DropIndex(
                 name: "ix_customers_factoring_company_id",
@@ -1025,6 +1054,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
             migrationBuilder.DropColumn(
                 name: "pay_excludes_fuel_surcharge",
                 table: "employees");
+
+            migrationBuilder.DropColumn(
+                name: "provider_configuration_id",
+                table: "eld_vehicle_mappings");
 
             migrationBuilder.DropColumn(
                 name: "region",
@@ -1175,7 +1208,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 table: "accounting_provider_configurations");
 
             migrationBuilder.DropColumn(
-                name: "mappings_json",
+                name: "mappings",
                 table: "accounting_provider_configurations");
 
             migrationBuilder.DropColumn(
@@ -1214,6 +1247,24 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 name: "webhook_secret",
                 table: "load_board_configurations",
                 type: "text",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "access_token",
+                table: "eld_provider_configurations",
+                type: "text",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "refresh_token",
+                table: "eld_provider_configurations",
+                type: "text",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "token_expires_at",
+                table: "eld_provider_configurations",
+                type: "timestamp with time zone",
                 nullable: true);
         }
     }
