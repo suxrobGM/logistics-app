@@ -28,6 +28,9 @@ internal sealed class SubmitInvoicesToFactorHandler(
     /// </summary>
     public const long MaxAttachmentBytes = 28L * 1024 * 1024;
 
+    private const string TooLargeMessage =
+        "The invoices and their paperwork are too large for one email. Submit fewer invoices at a time.";
+
     /// <summary>Signed delivery paperwork; one of these must be on the load before a factor will buy the invoice.</summary>
     private static readonly DocumentType[] DeliveryProof = [DocumentType.ProofOfDelivery, DocumentType.BillOfLading];
 
@@ -37,7 +40,9 @@ internal sealed class SubmitInvoicesToFactorHandler(
     public async Task<Result<FactoringBatchDto>> Handle(SubmitInvoicesToFactorCommand req, CancellationToken ct)
     {
         var ids = req.InvoiceIds.Distinct().ToList();
-        var invoices = await tenantUow.Repository<LoadInvoice>().GetListAsync(i => ids.Contains(i.Id), ct);
+        var invoices = (await tenantUow.Repository<LoadInvoice>().GetListAsync(i => ids.Contains(i.Id), ct))
+            .OrderBy(i => i.Number)
+            .ToList();
         if (invoices.Count != ids.Count)
         {
             return Result<FactoringBatchDto>.Fail("Some of the selected invoices no longer exist. Reload and try again.");
@@ -63,7 +68,6 @@ internal sealed class SubmitInvoicesToFactorHandler(
         var documentsByLoad = documents.ToLookup(d => d.LoadId);
 
         var problems = invoices
-            .OrderBy(i => i.Number)
             .Select(i => (Invoice: i, Reason: FactoringBatch.IneligibilityReason(i, company.Id)
                 ?? (documentsByLoad[i.LoadId].Any(d => DeliveryProof.Contains(d.Type))
                     ? null
@@ -76,9 +80,14 @@ internal sealed class SubmitInvoicesToFactorHandler(
             return Result<FactoringBatchDto>.Fail(string.Join(" ", problems));
         }
 
+        if (documents.Sum(d => d.FileSizeBytes) > MaxAttachmentBytes)
+        {
+            return Result<FactoringBatchDto>.Fail(TooLargeMessage);
+        }
+
         var tenant = tenantUow.GetCurrentTenant();
         var attachments = new List<EmailFileAttachment>();
-        foreach (var invoice in invoices.OrderBy(i => i.Number))
+        foreach (var invoice in invoices)
         {
             attachments.Add(new EmailFileAttachment(
                 $"Invoice-{invoice.Number}.pdf", invoicePdfService.GenerateLoadInvoicePdf(invoice, tenant), "application/pdf"));
@@ -90,8 +99,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
 
         if (attachments.Sum(a => (long)a.Content.Length) > MaxAttachmentBytes)
         {
-            return Result<FactoringBatchDto>.Fail(
-                "The invoices and their paperwork are too large for one email. Submit fewer invoices at a time.");
+            return Result<FactoringBatchDto>.Fail(TooLargeMessage);
         }
 
         var previousStatuses = invoices.ToDictionary(i => i.Id, i => i.FactoringStatus);
@@ -129,11 +137,9 @@ internal sealed class SubmitInvoicesToFactorHandler(
 
     private async Task<EmailFileAttachment> DownloadAsync(LoadInvoice invoice, LoadDocument document, CancellationToken ct)
     {
-        await using var stream = await blobStorage.DownloadAsync(document.BlobContainer, document.BlobPath, ct);
-        using var buffer = new MemoryStream();
-        await stream.CopyToAsync(buffer, ct);
+        var content = await blobStorage.DownloadBytesAsync(document.BlobContainer, document.BlobPath, ct);
         var fileName = $"Load-{invoice.Load.Number}-{document.Type}-{document.OriginalFileName}";
-        return new EmailFileAttachment(fileName, buffer.ToArray(), document.ContentType);
+        return new EmailFileAttachment(fileName, content, document.ContentType);
     }
 
     private async Task<bool> SendAsync(
@@ -149,7 +155,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
             Total = $"{batch.Total.Amount:N2} {batch.Total.Currency}",
             Notes = batch.Notes,
             ReplyEmail = tenant.BillingEmail,
-            Invoices = invoices.OrderBy(i => i.Number).Select(i => new FactoringScheduleInvoiceEmailModel
+            Invoices = invoices.Select(i => new FactoringScheduleInvoiceEmailModel
             {
                 InvoiceNumber = i.Number,
                 LoadNumber = i.Load.Number,
