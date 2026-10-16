@@ -15,7 +15,7 @@ public static class MaintenanceMapper
             TruckNumber = entity.Truck?.Number ?? string.Empty,
             Type = entity.MaintenanceType,
             TypeDisplay = entity.MaintenanceType.GetDescription(),
-            Description = entity.Description,
+            Description = entity.Description ?? string.Empty,
             ServiceDate = entity.ServiceDate,
             OdometerReading = entity.OdometerReading,
             EngineHours = entity.EngineHours,
@@ -38,7 +38,7 @@ public static class MaintenanceMapper
         return new MaintenancePartDto
         {
             Id = entity.Id,
-            PartNumber = entity.PartNumber,
+            PartNumber = entity.PartNumber ?? string.Empty,
             PartName = entity.PartName,
             Quantity = entity.Quantity,
             UnitCost = entity.UnitCost,

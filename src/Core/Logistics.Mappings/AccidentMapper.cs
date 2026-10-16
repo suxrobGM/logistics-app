@@ -25,7 +25,7 @@ public static class AccidentMapper
             Location = entity.Address ?? string.Empty,
             Latitude = entity.Latitude,
             Longitude = entity.Longitude,
-            Description = entity.Description,
+            Description = entity.Description ?? string.Empty,
             WeatherConditions = entity.WeatherConditions,
             RoadConditions = entity.RoadConditions,
             PoliceReportFiled = entity.PoliceReportFiled,
