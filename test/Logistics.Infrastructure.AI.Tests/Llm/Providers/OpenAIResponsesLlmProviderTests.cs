@@ -169,7 +169,7 @@ public class OpenAIResponsesLlmProviderTests
     [InlineData(ReasoningEffort.Max, "high")]
     public void BuildOptions_ReasoningModel_MapsAndClampsEffortLevels(ReasoningEffort effort, string expected)
     {
-        var options = OpenAIResponsesLlmProvider.BuildOptions(Request("gpt-6-sol", effort));
+        var options = OpenAIResponsesLlmProvider.BuildOptions(Request("gpt-6.1-sol", effort));
 
         Assert.Equal(
             new ResponseReasoningEffortLevel(expected),

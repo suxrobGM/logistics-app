@@ -24,7 +24,7 @@ internal static class LlmPricing
 
         // OpenAI GPT-6 - https://developers.openai.com/api/docs/pricing
         // Short-context rates; prompts over 272K input tokens bill higher.
-        ["gpt-6-sol"] = new(2m, 10m, 0.20m, 2.50m),
+        ["gpt-6.1-sol"] = new(2m, 10m, 0.10m, 2.50m),
         ["gpt-6-luna"] = new(0.10m, 0.50m, 0.01m, 0.125m),
 
         // DeepSeek - https://api-docs.deepseek.com/quick_start/pricing/

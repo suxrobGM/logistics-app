@@ -11,7 +11,7 @@ You can switch LLM providers without code changes:
 
 | Provider      | Models                                | Notes                                         |
 | ------------- | ------------------------------------- | --------------------------------------------- |
-| **OpenAI**    | GPT-6 Luna (default), GPT-6 Sol       | Default provider. OpenAI SDK, `/v1/responses` |
+| **OpenAI**    | GPT-6 Luna (default), GPT-6.1 Sol     | Default provider. OpenAI SDK, `/v1/responses` |
 | **Anthropic** | Claude Haiku 5.5, Claude Sonnet 5.5   | Prompt caching; adaptive thinking             |
 | **DeepSeek**  | DeepSeek V4.1 Flash, DeepSeek V4 Pro  | OpenAI-compatible chat-completions API        |
 

@@ -17,7 +17,7 @@ public static class LlmModelCatalog
         new("deepseek-v4-pro", "DeepSeek V4 Pro", LlmProvider.DeepSeek),
         new("claude-haiku-5-5", "Claude Haiku 5.5", LlmProvider.Anthropic, ReasoningStyle.AnthropicAdaptive),
         new("claude-sonnet-5-5", "Claude Sonnet 5.5", LlmProvider.Anthropic, ReasoningStyle.AnthropicAdaptive),
-        new("gpt-6-sol", "GPT-6 Sol", LlmProvider.OpenAI, ReasoningStyle.OpenAIEffort),
+        new("gpt-6.1-sol", "GPT-6.1 Sol", LlmProvider.OpenAI, ReasoningStyle.OpenAIEffort),
     ];
 
     public static LlmModelInfo? Find(string? id) =>
