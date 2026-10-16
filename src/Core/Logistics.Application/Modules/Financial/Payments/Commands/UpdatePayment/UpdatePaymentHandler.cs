@@ -1,26 +1,40 @@
+using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mediator;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Financial.Payments.Commands;
 
-internal sealed class UpdatePaymentHandler(ITenantUnitOfWork tenantUow)
-    : UpdateTenantEntityHandler<UpdatePaymentCommand, Payment>(tenantUow)
+internal sealed class UpdatePaymentHandler(ITenantUnitOfWork tenantUow) : IRequestHandler<UpdatePaymentCommand, Result>
 {
-    protected override void ApplyChanges(UpdatePaymentCommand req, Payment payment)
+    public async Task<Result> Handle(UpdatePaymentCommand req, CancellationToken ct)
     {
+        var payment = await tenantUow.Repository<Payment>().GetByIdAsync(req.Id, ct);
+        if (payment is null)
+        {
+            return Result.Fail($"Could not find a {EntityName.Humanize<Payment>()} with ID '{req.Id}'");
+        }
+
         if (req.StripePaymentMethodId is not null)
         {
             payment.StripePaymentMethodId = req.StripePaymentMethodId;
         }
 
         payment.Status = PropertyUpdater.UpdateIfChanged(req.Status, payment.Status);
+        payment.BillingAddress = PropertyUpdater.UpdateIfChanged(req.BillingAddress, payment.BillingAddress);
+        payment.Description = PropertyUpdater.UpdateIfChanged(req.Description, payment.Description);
+
         if (req.Amount is not null && req.Amount != payment.Amount.Amount)
         {
             payment.Amount = new() { Amount = req.Amount.Value, Currency = payment.Amount.Currency };
+            var invoice = await tenantUow.Repository<Invoice>().GetAsync(i => i.Payments.Any(p => p.Id == payment.Id), ct);
+            invoice?.RecalculatePaymentStatus(DateTime.UtcNow);
         }
 
-        payment.BillingAddress = PropertyUpdater.UpdateIfChanged(req.BillingAddress, payment.BillingAddress);
-        payment.Description = PropertyUpdater.UpdateIfChanged(req.Description, payment.Description);
+        tenantUow.Repository<Payment>().Update(payment);
+        await tenantUow.SaveChangesAsync(ct);
+        return Result.Ok();
     }
 }

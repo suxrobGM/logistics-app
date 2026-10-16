@@ -61,6 +61,55 @@ public class InvoicePaymentTests
         Assert.Empty(invoice.Payments);
     }
 
+    [Fact]
+    public void RemovePayment_LastPaymentOnPayroll_BackToApproved()
+    {
+        var total = new Money { Amount = 1000m, Currency = "USD" };
+        var payroll = new PayrollInvoice
+        {
+            EmployeeId = Guid.NewGuid(),
+            Subtotal = total,
+            TaxTotal = Money.Zero("USD"),
+            Total = total,
+            Status = InvoiceStatus.Approved,
+            DueDate = Now.AddDays(-1)
+        };
+        var payment = Payment(1000m);
+        payroll.ApplyPayment(payment);
+
+        payroll.RemovePayment(payment, Now);
+
+        Assert.Equal(InvoiceStatus.Approved, payroll.Status);
+    }
+
+    #endregion
+
+    #region Update payment
+
+    [Fact]
+    public async Task UpdatePayment_AmountLowered_InvoiceNoLongerPaid()
+    {
+        var tenantUow = Substitute.For<ITenantUnitOfWork>();
+        var paymentRepo = Substitute.For<ITenantRepository<Payment, Guid>>();
+        var invoiceRepo = Substitute.For<ITenantRepository<Invoice, Guid>>();
+        tenantUow.Repository<Payment>().Returns(paymentRepo);
+        tenantUow.Repository<Invoice>().Returns(invoiceRepo);
+
+        var invoice = Invoice(Customer(null));
+        var payment = Payment(1000m);
+        invoice.ApplyPayment(payment);
+        paymentRepo.GetByIdAsync(payment.Id, Arg.Any<CancellationToken>()).Returns(payment);
+        invoiceRepo.GetAsync(Arg.Any<Expression<Func<Invoice, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(invoice);
+        var sut = new UpdatePaymentHandler(tenantUow);
+
+        var result = await sut.Handle(new UpdatePaymentCommand { Id = payment.Id, Amount = 400m }, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(400m, payment.Amount.Amount);
+        Assert.Equal(InvoiceStatus.PartiallyPaid, invoice.Status);
+    }
+
     #endregion
 
     #region Delete payment
