@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Infrastructure.AI.Agents;
@@ -11,6 +10,7 @@ using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Infrastructure.AI.Llm;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
+using MockQueryable;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -40,8 +40,8 @@ public class AgentDecisionProcessorTests
         _tenantUow.Repository<AgentDecision>().Returns(_decisionRepo);
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.Repository<Truck>().Returns(_truckRepo);
-        _loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>()).Returns([]);
-        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>()).Returns([]);
+        _loadRepo.Query().Returns(new List<Load>().BuildMock());
+        _truckRepo.Query().Returns(new List<Truck>().BuildMock());
         _tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Id = Guid.NewGuid(),
@@ -447,8 +447,8 @@ public class AgentDecisionProcessorTests
             DeliveryCost = Money.Zero("USD")
         };
         var truck = new Truck { Number = "T-100", Type = TruckType.FreightTruck };
-        _loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>()).Returns([load]);
-        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>()).Returns([truck]);
+        _loadRepo.Query().Returns(new List<Load> { load }.BuildMock());
+        _truckRepo.Query().Returns(new List<Truck> { truck }.BuildMock());
         var toolUse = CreateToolUse("assign_load_to_truck", new JsonObject
         {
             ["load_id"] = load.Id.ToString(),

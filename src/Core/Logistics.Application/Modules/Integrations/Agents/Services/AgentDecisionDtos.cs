@@ -2,6 +2,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Integrations.Agents.Services;
 
@@ -19,13 +20,17 @@ public static class AgentDecisionDtos
         var truckIds = decisions.Select(d => d.TruckId).OfType<Guid>().Distinct().ToList();
 
         var loadNames = loadIds.Count > 0
-            ? (await tenantUow.Repository<Load>().GetListAsync(l => loadIds.Contains(l.Id), ct))
-                .ToDictionary(l => l.Id, l => l.Name)
+            ? await tenantUow.Repository<Load>().Query()
+                .Where(l => loadIds.Contains(l.Id))
+                .Select(l => new { l.Id, l.Name })
+                .ToDictionaryAsync(l => l.Id, l => l.Name, ct)
             : [];
 
         var truckNumbers = truckIds.Count > 0
-            ? (await tenantUow.Repository<Truck>().GetListAsync(t => truckIds.Contains(t.Id), ct))
-                .ToDictionary(t => t.Id, t => t.Number)
+            ? await tenantUow.Repository<Truck>().Query()
+                .Where(t => truckIds.Contains(t.Id))
+                .Select(t => new { t.Id, t.Number })
+                .ToDictionaryAsync(t => t.Id, t => t.Number, ct)
             : [];
 
         return decisions

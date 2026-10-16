@@ -20,9 +20,10 @@ internal sealed class GetPendingDecisionsHandler(
             .Query()
             .DispatchOnly()
             .Where(d => d.Status == AgentDecisionStatus.Suggested)
+            .OrderByDescending(d => d.CreatedAt)
             .ToListAsync(ct);
 
-        var dtos = await tenantUow.ToLabeledDtosAsync(decisions.OrderByDescending(d => d.CreatedAt).ToList(), ct);
+        var dtos = await tenantUow.ToLabeledDtosAsync(decisions, ct);
         return Result<List<AgentDecisionDto>>.Ok(dtos);
     }
 }

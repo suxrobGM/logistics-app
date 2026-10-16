@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Logistics.Application.Modules.Integrations.AIDispatch.Queries;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
@@ -22,10 +21,8 @@ public class GetPendingDecisionsHandlerTests
     {
         _ctx.TenantUow.Repository<Load>().Returns(_loadRepo);
         _ctx.TenantUow.Repository<Truck>().Returns(_truckRepo);
-        _loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns([]);
-        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns([]);
+        _loadRepo.Query().Returns(new List<Load>().BuildMock());
+        _truckRepo.Query().Returns(new List<Truck>().BuildMock());
 
         _sut = new GetPendingDecisionsHandler(_ctx.TenantUow);
     }
@@ -74,10 +71,8 @@ public class GetPendingDecisionsHandlerTests
         decision.LoadId = load.Id;
         decision.TruckId = truck.Id;
         _ctx.DecisionRepo.Query().Returns(new List<AgentDecision> { decision }.BuildMock());
-        _loadRepo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns([load]);
-        _truckRepo.GetListAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns([truck]);
+        _loadRepo.Query().Returns(new List<Load> { load }.BuildMock());
+        _truckRepo.Query().Returns(new List<Truck> { truck }.BuildMock());
 
         var result = await _sut.Handle(new GetPendingDecisionsQuery(), CancellationToken.None);
 
