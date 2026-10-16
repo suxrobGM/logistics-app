@@ -34,15 +34,17 @@ public static class DateTimeExtensions
         DateTime iterator;
         DateTime limit;
 
+        // Step whole days: stepping from a start time later in the day than the end time skipped
+        // the last day, and the daily gross handler dropped deliveries made on it.
         if (endDate > startDate)
         {
-            iterator = startDate;
-            limit = endDate;
+            iterator = startDate.Date;
+            limit = endDate.Date;
         }
         else
         {
-            iterator = endDate;
-            limit = startDate;
+            iterator = endDate.Date;
+            limit = startDate.Date;
         }
 
         while (iterator <= limit)
