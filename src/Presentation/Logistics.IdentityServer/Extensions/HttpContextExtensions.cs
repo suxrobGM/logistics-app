@@ -1,4 +1,3 @@
-#nullable enable
 namespace Logistics.IdentityServer.Extensions;
 
 public static class HttpContextExtensions

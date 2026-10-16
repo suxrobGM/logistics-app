@@ -11,7 +11,7 @@ public class LoggedOut : PageModel
 {
     private readonly IIdentityServerInteractionService _interactionService;
 
-    public LoggedOutViewModel View { get; set; }
+    public LoggedOutViewModel View { get; set; } = new();
 
     public LoggedOut(IIdentityServerInteractionService interactionService)
     {

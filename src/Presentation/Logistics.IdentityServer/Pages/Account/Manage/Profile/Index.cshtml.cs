@@ -22,11 +22,11 @@ public class ProfileModel : PageModel
         _userService = userService;
     }
 
-    public string Username { get; set; }
+    public string? Username { get; set; }
 
-    [TempData] public string StatusMessage { get; set; }
+    [TempData] public string? StatusMessage { get; set; }
 
-    [BindProperty] public InputModel Input { get; set; }
+    [BindProperty] public InputModel Input { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync()
     {

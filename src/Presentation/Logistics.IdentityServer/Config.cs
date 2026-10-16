@@ -84,6 +84,6 @@ public static class Config
 
     public static IEnumerable<Client> Clients(IConfiguration configuration)
     {
-        return configuration.GetSection("IdentityServer:Clients").Get<Client[]>();
+        return configuration.GetSection("IdentityServer:Clients").Get<Client[]>() ?? [];
     }
 }

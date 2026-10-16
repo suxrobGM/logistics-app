@@ -155,7 +155,7 @@ public class Index(
             return new AcceptInvitationApiResult
             {
                 IsSuccess = false,
-                ErrorMessage = error.Error
+                ErrorMessage = error?.Error
             };
         }
         catch (Exception ex)

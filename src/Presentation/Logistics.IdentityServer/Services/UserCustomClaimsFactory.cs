@@ -1,5 +1,3 @@
-#nullable enable
-
 using System.Security.Claims;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;

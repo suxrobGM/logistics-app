@@ -18,7 +18,7 @@ public class ResendEmailConfirmationModel(
 {
 
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; set; } = new();
 
     public void OnGet()
     {

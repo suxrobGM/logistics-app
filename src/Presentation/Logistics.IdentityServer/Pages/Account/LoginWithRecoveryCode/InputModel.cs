@@ -10,5 +10,5 @@ public class InputModel
     [Required]
     [DataType(DataType.Text)]
     [Display(Name = "Recovery Code")]
-    public string RecoveryCode { get; set; }
+    public string RecoveryCode { get; set; } = string.Empty;
 }

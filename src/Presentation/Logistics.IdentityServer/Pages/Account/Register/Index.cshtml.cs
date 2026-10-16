@@ -42,18 +42,18 @@ public class Index : PageModel
     }
 
     [BindProperty]
-    public InputModel Input { get; set; }
-    public string ReturnUrl { get; set; }
-    public string CaptchaSiteKey { get; }
-    public IList<AuthenticationScheme> ExternalLogins { get; set; }
+    public InputModel Input { get; set; } = new();
+    public string? ReturnUrl { get; set; }
+    public string? CaptchaSiteKey { get; }
+    public IList<AuthenticationScheme> ExternalLogins { get; set; } = [];
 
-    public async Task OnGetAsync(string returnUrl = null)
+    public async Task OnGetAsync(string? returnUrl = null)
     {
         ReturnUrl = returnUrl;
         ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
     }
 
-    public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+    public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
         returnUrl ??= Url.Content("~/");
         var captchaValue = HttpContext.Request.Form["g-recaptcha-response"].ToString();

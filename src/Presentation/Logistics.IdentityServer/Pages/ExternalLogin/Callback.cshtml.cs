@@ -65,7 +65,7 @@ public class Callback : PageModel
                           externalUser.FindFirst(ClaimTypes.NameIdentifier) ??
                           throw new Exception("Unknown userid");
 
-        var provider = result.Properties.Items["scheme"];
+        var provider = result.Properties.Items["scheme"] ?? throw new Exception("Unknown external login scheme");
         var providerUserId = userIdClaim.Value;
 
         // find external user
@@ -197,7 +197,7 @@ public class Callback : PageModel
     private void CaptureExternalLoginContext(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
     {
         // capture the idp used to login, so the session knows where the user came from
-        localClaims.Add(new Claim(JwtClaimTypes.IdentityProvider, externalResult.Properties.Items["scheme"]));
+        localClaims.Add(new Claim(JwtClaimTypes.IdentityProvider, externalResult.Properties!.Items["scheme"]!));
 
         // if the external system sent a session id claim, copy it over
         // so we can use it for single sign-out

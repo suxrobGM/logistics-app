@@ -20,10 +20,10 @@ public class GenerateRecoveryCodesModel : PageModel
     }
 
     [TempData]
-    public string[] RecoveryCodes { get; set; }
+    public string[]? RecoveryCodes { get; set; }
 
     [TempData]
-    public string StatusMessage { get; set; }
+    public string? StatusMessage { get; set; }
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -59,7 +59,7 @@ public class GenerateRecoveryCodesModel : PageModel
         }
 
         var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
-        RecoveryCodes = recoveryCodes.ToArray();
+        RecoveryCodes = recoveryCodes?.ToArray();
 
         _logger.LogInformation("User with ID '{UserId}' has generated new 2FA recovery codes.", userId);
         StatusMessage = "You have generated new recovery codes.";

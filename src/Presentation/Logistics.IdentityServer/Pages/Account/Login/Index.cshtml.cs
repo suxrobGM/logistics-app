@@ -1,4 +1,4 @@
-﻿#nullable enable
+﻿
 using System.Text.RegularExpressions;
 
 using Open.IdentityServer.Events;
@@ -84,7 +84,7 @@ public class Index(
             ModelState.AddModelError(string.Empty, LoginOptions.InvalidCredentialsErrorMessage);
         }
 
-        if (ModelState.IsValid)
+        if (ModelState.IsValid && user is not null)
         {
             var result = await signInManager.PasswordSignInAsync(user.UserName!, Input.Password, Input.RememberLogin, lockoutOnFailure: true);
             if (result.Succeeded)

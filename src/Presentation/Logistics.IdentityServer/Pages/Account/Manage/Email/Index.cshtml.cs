@@ -15,15 +15,15 @@ public partial class EmailModel(
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService) : PageModel
 {
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     public bool IsEmailConfirmed { get; set; }
 
     [TempData]
-    public string StatusMessage { get; set; }
+    public string? StatusMessage { get; set; }
 
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; set; } = new();
 
 
     private async Task LoadAsync(User user)
@@ -33,7 +33,7 @@ public partial class EmailModel(
 
         Input = new InputModel
         {
-            NewEmail = email
+            NewEmail = email ?? string.Empty
         };
 
         IsEmailConfirmed = await userManager.IsEmailConfirmedAsync(user);
@@ -113,7 +113,7 @@ public partial class EmailModel(
             protocol: Request.Scheme);
         var confirmModel = new EmailConfirmationEmailModel { ConfirmUrl = callbackUrl! };
         var confirmBody = await emailTemplateService.RenderAsync("EmailConfirmation", confirmModel);
-        await emailSender.SendEmailAsync(email, "Confirm your email", confirmBody);
+        await emailSender.SendEmailAsync(email!, "Confirm your email", confirmBody);
 
         StatusMessage = "Verification email sent. Please check your email.";
         return RedirectToPage();
