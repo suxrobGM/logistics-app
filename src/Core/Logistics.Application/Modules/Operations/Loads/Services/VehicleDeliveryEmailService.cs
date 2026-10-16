@@ -20,9 +20,13 @@ internal sealed class VehicleDeliveryEmailService(
 {
     public async Task SendAsync(Load load, CancellationToken ct = default)
     {
+        if (load is not { Type: LoadType.Vehicle, Status: LoadStatus.Delivered } || load.Vehicles.Count == 0)
+        {
+            return;
+        }
+
         var email = load.Customer?.Email;
-        if (load is not { Type: LoadType.Vehicle, Status: LoadStatus.Delivered } || load.Vehicles.Count == 0
-            || string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrWhiteSpace(email))
         {
             return;
         }
