@@ -25,6 +25,8 @@ const MUSIC = {
     artist: "Ahjay Stelino",
     url: "https://assets.mixkit.co/music/69/69.mp3",
     tempo: 1,
+    // The drop brings in a grainy shaker around 6-12 kHz that reads as hiss: pull it down.
+    eq: "equalizer=f=9000:t=q:w=0.8:g=-8,highshelf=f=13000:g=-4",
     // Bars 4-23: the quiet intro, its build into the drop at 8s, the lift at 24s. Then the last
     // two bars of the closing phrase and the track's own ending.
     pieces: [
@@ -47,7 +49,7 @@ const MUSIC = {
 const EFFECTS = {
   swoosh: { id: 3115, title: "Fast transitions swoosh" },
   whoosh: { id: 1490, title: "Fast whoosh transition" },
-  impact: { id: 2902, title: "Movie impact intro presentation" },
+  impact: { id: 498, title: "Deep heartbeat impact" },
   click: { id: 1113, title: "Mouse click close" },
   key: { id: 2541, title: "Single key press in a laptop" },
   pop: { id: 2356, title: "Dry pop up notification alert" },
@@ -90,7 +92,7 @@ async function buildMusic(name, m) {
     "-i",
     path(src),
     "-af",
-    `aresample=48000,${tempoFilter},volume=-4dB`,
+    `aresample=48000,${tempoFilter},${m.eq ?? "anull"},volume=-4dB`,
     "-c:a",
     "pcm_f32le",
     path(stretched),
