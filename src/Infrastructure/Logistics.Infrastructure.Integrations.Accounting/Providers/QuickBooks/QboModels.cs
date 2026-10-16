@@ -5,8 +5,6 @@ namespace Logistics.Infrastructure.Integrations.Accounting.Providers.QuickBooks;
 // Wire models for the QBO v3 Accounting API (minor version pinned in QboEndpoints). Field names and
 // shapes follow Intuit's entity reference: developer.intuit.com/app/developer/qbo/docs/api/accounting
 
-// --- OAuth ---
-
 internal sealed record QboTokenResponse
 {
     [JsonPropertyName("access_token")] public string AccessToken { get; set; } = "";
@@ -20,8 +18,9 @@ internal sealed record QboTokenError
     [JsonPropertyName("error")] public string? Error { get; set; }
 }
 
-// --- Errors: {"Fault":{"Error":[{"Message","Detail","code"}],"type"}} (casing varies; reads are case-insensitive) ---
-
+/// <summary>
+/// <c>{"Fault":{"Error":[{"Message","Detail","code"}],"type"}}</c>. QBO varies the casing, so it is read case-insensitively.
+/// </summary>
 internal sealed record QboFaultResponse
 {
     public QboFault? Fault { get; set; }
@@ -40,8 +39,7 @@ internal sealed record QboFaultError
     public string? Code { get; set; }
 }
 
-// --- Reference type (QBO uses lowercase "value") ---
-
+/// <summary>A QBO entity reference. QBO spells the id property lowercase <c>"value"</c>.</summary>
 internal sealed record QboRef
 {
     [JsonPropertyName("value")] public string? Value { get; set; }
@@ -50,8 +48,6 @@ internal sealed record QboRef
 
     public static QboRef? OfOptional(string? value) => string.IsNullOrEmpty(value) ? null : new QboRef { Value = value };
 }
-
-// --- Common pieces ---
 
 /// <summary>Every QBO transaction and name-list entity carries an Id and an optimistic-concurrency SyncToken.</summary>
 internal interface IQboEntity
@@ -80,8 +76,6 @@ internal sealed record QboPhysicalAddress
     public string? Country { get; set; }
 }
 
-// --- Customer / Vendor ---
-
 internal sealed record QboCustomer : IQboEntity
 {
     public string? Id { get; set; }
@@ -109,8 +103,6 @@ internal sealed record QboVendor : IQboEntity
     public QboEmail? PrimaryEmailAddr { get; set; }
     public QboPhone? PrimaryPhone { get; set; }
 }
-
-// --- Lines ---
 
 internal sealed record QboLine
 {
@@ -145,8 +137,6 @@ internal sealed record QboTxnTaxDetail
     public decimal? TotalTax { get; set; }
 }
 
-// --- Invoice ---
-
 internal sealed record QboInvoice : IQboEntity
 {
     public string? Id { get; set; }
@@ -161,8 +151,6 @@ internal sealed record QboInvoice : IQboEntity
     public List<QboLine>? Line { get; set; }
 }
 
-// --- Payment ---
-
 internal sealed record QboPayment : IQboEntity
 {
     public string? Id { get; set; }
@@ -176,8 +164,6 @@ internal sealed record QboPayment : IQboEntity
     public string? PaymentRefNum { get; set; }
     public List<QboLine>? Line { get; set; }
 }
-
-// --- Purchase (expense) ---
 
 internal sealed record QboPurchase : IQboEntity
 {
@@ -195,8 +181,6 @@ internal sealed record QboPurchase : IQboEntity
     public string? PrivateNote { get; set; }
     public List<QboLine>? Line { get; set; }
 }
-
-// --- Bill (driver pay) ---
 
 internal sealed record QboBill : IQboEntity
 {
@@ -225,8 +209,6 @@ internal sealed record QboEntityResponse
     public QboPurchase? Purchase { get; set; }
     public QboBill? Bill { get; set; }
 }
-
-// --- Lists ---
 
 internal sealed record QboAccount
 {
