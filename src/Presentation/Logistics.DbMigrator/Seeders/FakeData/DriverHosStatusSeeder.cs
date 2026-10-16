@@ -35,7 +35,7 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
 
         if (drivers.Count == 0)
         {
-            logger.LogWarning("No drivers available for HOS status seeding");
+            Logger.LogWarning("No drivers available for HOS status seeding");
             LogCompleted(0);
             return;
         }

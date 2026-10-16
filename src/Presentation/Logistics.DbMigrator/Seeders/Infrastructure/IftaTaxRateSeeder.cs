@@ -22,7 +22,7 @@ internal sealed class IftaTaxRateSeeder(ILogger<IftaTaxRateSeeder> logger) : See
         var path = Path.Combine(AppContext.BaseDirectory, "SeedData", "ifta-tax-rates.json");
         if (!File.Exists(path))
         {
-            logger.LogWarning("IFTA rate seed file not found at {Path}; skipping", path);
+            Logger.LogWarning("IFTA rate seed file not found at {Path}; skipping", path);
             return;
         }
 
@@ -34,7 +34,7 @@ internal sealed class IftaTaxRateSeeder(ILogger<IftaTaxRateSeeder> logger) : See
 
         if (seed?.Quarters is null || seed.Rates is null)
         {
-            logger.LogWarning("IFTA rate seed file is empty or malformed; skipping");
+            Logger.LogWarning("IFTA rate seed file is empty or malformed; skipping");
             return;
         }
 

@@ -39,7 +39,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
         if (!await userManager.IsInRoleAsync(superAdmin, AppRoles.SuperAdmin))
         {
             await userManager.AddToRoleAsync(superAdmin, AppRoles.SuperAdmin);
-            logger.LogInformation("Assigned '{Role}' role to '{Admin}'", AppRoles.SuperAdmin, superAdmin.Email);
+            Logger.LogInformation("Assigned '{Role}' role to '{Admin}'", AppRoles.SuperAdmin, superAdmin.Email);
         }
 
         LogCompleted();
@@ -63,7 +63,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
                 $"Failed to create super admin: {string.Join(", ", result.Errors.Select(e => e.Description))}");
         }
 
-        logger.LogInformation("Created super admin '{Admin}'", user.Email);
+        Logger.LogInformation("Created super admin '{Admin}'", user.Email);
         return user;
     }
 
@@ -104,7 +104,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
 
         if (!updated)
         {
-            logger.LogInformation("Super admin already up to date");
+            Logger.LogInformation("Super admin already up to date");
             return;
         }
 
@@ -115,7 +115,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
                 $"Failed to sync super admin: {string.Join(", ", result.Errors.Select(e => e.Description))}");
         }
 
-        logger.LogInformation("Synced super admin '{Admin}'", superAdmin.Email);
+        Logger.LogInformation("Synced super admin '{Admin}'", superAdmin.Email);
     }
 
     private async Task RemoveDuplicateUserAsync(UserManager<User> userManager, Guid superAdminId, string targetEmail)
@@ -124,7 +124,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
         if (duplicate is not null && duplicate.Id != superAdminId)
         {
             await userManager.DeleteAsync(duplicate);
-            logger.LogInformation("Removed duplicate user '{Email}' blocking super admin email change", targetEmail);
+            Logger.LogInformation("Removed duplicate user '{Email}' blocking super admin email change", targetEmail);
         }
     }
 }

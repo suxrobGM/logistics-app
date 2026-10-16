@@ -60,7 +60,7 @@ internal class TenantRoleSeeder(ILogger<TenantRoleSeeder> logger) : SeederBase(l
                 }
 
                 dbContext.Set<TenantRole>().Add(role);
-                logger.LogInformation("Created tenant role '{Role}'", role.Name);
+                Logger.LogInformation("Created tenant role '{Role}'", role.Name);
                 continue;
             }
 
@@ -103,7 +103,7 @@ internal class TenantRoleSeeder(ILogger<TenantRoleSeeder> logger) : SeederBase(l
 
             if (added > 0 || removed > 0)
             {
-                logger.LogInformation(
+                Logger.LogInformation(
                     "Synced tenant role '{Role}': +{Added} -{Removed} permissions",
                     existingRole.Name, added, removed);
             }

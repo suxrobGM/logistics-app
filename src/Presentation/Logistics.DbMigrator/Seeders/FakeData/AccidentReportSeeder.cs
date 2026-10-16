@@ -83,7 +83,7 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
 
         if (drivers.Count == 0)
         {
-            logger.LogWarning("No drivers available for accident report seeding");
+            Logger.LogWarning("No drivers available for accident report seeding");
             LogCompleted(0);
             return;
         }
@@ -94,7 +94,7 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
 
         if (trucks.Count == 0)
         {
-            logger.LogWarning("No trucks available for accident report seeding");
+            Logger.LogWarning("No trucks available for accident report seeding");
             LogCompleted(0);
             return;
         }

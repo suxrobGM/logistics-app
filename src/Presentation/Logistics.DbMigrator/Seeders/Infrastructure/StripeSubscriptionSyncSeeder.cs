@@ -71,7 +71,7 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
         if (!stripeSub.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantIdStr)
             || !Guid.TryParse(tenantIdStr, out var tenantId))
         {
-            logger.LogWarning("Skipping Stripe subscription {SubscriptionId}: missing or invalid tenant_id metadata",
+            Logger.LogWarning("Skipping Stripe subscription {SubscriptionId}: missing or invalid tenant_id metadata",
                 stripeSub.Id);
             return false;
         }
@@ -79,7 +79,7 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
         if (!stripeSub.Metadata.TryGetValue(StripeMetadataKeys.PlanId, out var planIdStr)
             || !Guid.TryParse(planIdStr, out var planId))
         {
-            logger.LogWarning("Skipping Stripe subscription {SubscriptionId}: missing or invalid plan_id metadata",
+            Logger.LogWarning("Skipping Stripe subscription {SubscriptionId}: missing or invalid plan_id metadata",
                 stripeSub.Id);
             return false;
         }
@@ -87,7 +87,7 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId, ct);
         if (tenant is null)
         {
-            logger.LogWarning("Skipping Stripe subscription {SubscriptionId}: tenant {TenantId} not found",
+            Logger.LogWarning("Skipping Stripe subscription {SubscriptionId}: tenant {TenantId} not found",
                 stripeSub.Id, tenantId);
             return false;
         }
@@ -95,7 +95,7 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
         var plan = await masterUow.Repository<SubscriptionPlan>().GetByIdAsync(planId, ct);
         if (plan is null)
         {
-            logger.LogWarning("Skipping Stripe subscription {SubscriptionId}: plan {PlanId} not found",
+            Logger.LogWarning("Skipping Stripe subscription {SubscriptionId}: plan {PlanId} not found",
                 stripeSub.Id, planId);
             return false;
         }
@@ -113,7 +113,7 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
                 && existing.PlanId == planId
                 && existing.CancelAtPeriodEnd == stripeSub.CancelAtPeriodEnd)
             {
-                logger.LogInformation("Subscription {SubscriptionId} already in sync", stripeSub.Id);
+                Logger.LogInformation("Subscription {SubscriptionId} already in sync", stripeSub.Id);
                 return false;
             }
 
@@ -122,7 +122,7 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
             existing.CancelAtPeriodEnd = stripeSub.CancelAtPeriodEnd;
             subscriptionRepo.Update(existing);
 
-            logger.LogInformation("Updated subscription {SubscriptionId} for tenant {TenantName}",
+            Logger.LogInformation("Updated subscription {SubscriptionId} for tenant {TenantName}",
                 stripeSub.Id, tenant.Name);
             return true;
         }
@@ -136,7 +136,7 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
             tenant.Subscription.CancelAtPeriodEnd = stripeSub.CancelAtPeriodEnd;
             subscriptionRepo.Update(tenant.Subscription);
 
-            logger.LogInformation("Relinked subscription {SubscriptionId} to tenant {TenantName}",
+            Logger.LogInformation("Relinked subscription {SubscriptionId} to tenant {TenantName}",
                 stripeSub.Id, tenant.Name);
             return true;
         }
@@ -155,7 +155,7 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
         };
 
         await subscriptionRepo.AddAsync(subscription, ct);
-        logger.LogInformation("Created subscription {SubscriptionId} for tenant {TenantName}",
+        Logger.LogInformation("Created subscription {SubscriptionId} for tenant {TenantName}",
             stripeSub.Id, tenant.Name);
         return true;
     }

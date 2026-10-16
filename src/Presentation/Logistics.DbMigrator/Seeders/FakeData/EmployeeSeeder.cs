@@ -37,7 +37,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
 
         if (users.Count == 0)
         {
-            logger.LogWarning("No users available to create employees from");
+            Logger.LogWarning("No users available to create employees from");
             LogCompleted(0);
             return;
         }
@@ -83,7 +83,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
         if (companyEmployees.Drivers.Count == 0)
         {
             companyEmployees.Drivers.Add(ownerEmployee);
-            logger.LogInformation("No dedicated drivers seeded - {Owner} drives their own truck",
+            Logger.LogInformation("No dedicated drivers seeded - {Owner} drives their own truck",
                 split.Owner.UserName);
         }
 
@@ -152,7 +152,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
                     drivers.Add(user);
                     break;
                 default:
-                    logger.LogWarning("Unknown seed role '{Role}' for {Email} - treating as driver",
+                    Logger.LogWarning("Unknown seed role '{Role}' for {Email} - treating as driver",
                         role, key);
                     drivers.Add(user);
                     break;
@@ -189,7 +189,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
         user.TenantId = tenantId;
         await employeeRepository.AddAsync(employee);
         employee.Role = role;
-        logger.LogInformation("Created employee {Name} with role {Role}", user.UserName, role.Name);
+        Logger.LogInformation("Created employee {Name} with role {Role}", user.UserName, role.Name);
         return employee;
     }
 }

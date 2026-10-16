@@ -59,7 +59,7 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
             }
 
             usersList.Add(user);
-            logger.LogInformation("Created user {FirstName} {LastName}", fakeUser.FirstName, fakeUser.LastName);
+            Logger.LogInformation("Created user {FirstName} {LastName}", fakeUser.FirstName, fakeUser.LastName);
         }
 
         context.CreatedUsers = usersList;

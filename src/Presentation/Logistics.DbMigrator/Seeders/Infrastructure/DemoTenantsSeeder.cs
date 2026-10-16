@@ -35,7 +35,7 @@ internal sealed class DemoTenantsSeeder(
         var tenantConfigs = context.Configuration.GetSection("Tenants").Get<List<DemoTenantConfig>>();
         if (tenantConfigs is null || tenantConfigs.Count == 0)
         {
-            logger.LogWarning("No 'Tenants' configured. Skipping demo tenant seeding.");
+            Logger.LogWarning("No 'Tenants' configured. Skipping demo tenant seeding.");
             LogCompleted();
             return;
         }
@@ -53,7 +53,7 @@ internal sealed class DemoTenantsSeeder(
             {
                 legacy.Name = "us";
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
-                logger.LogInformation("Renamed legacy tenant 'default' → 'us' in master DB");
+                Logger.LogInformation("Renamed legacy tenant 'default' → 'us' in master DB");
             }
         }
 
@@ -87,7 +87,7 @@ internal sealed class DemoTenantsSeeder(
                 await featureService.ApplyPresetFeaturesAsync(tenant.Id, tenant.Presets);
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
                 await databaseProvider.CreateDatabaseAsync(tenant.ConnectionString);
-                logger.LogInformation("Created tenant '{Name}' ({Region})", tenant.Name, profile.Region);
+                Logger.LogInformation("Created tenant '{Name}' ({Region})", tenant.Name, profile.Region);
             }
             else
             {
@@ -133,7 +133,7 @@ internal sealed class DemoTenantsSeeder(
                 if (updated)
                 {
                     await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
-                    logger.LogInformation("Updated tenant '{Name}'", existing.Name);
+                    Logger.LogInformation("Updated tenant '{Name}'", existing.Name);
                 }
 
                 // Ensure DB exists even for existing tenants (idempotent - no-op if present).

@@ -44,7 +44,7 @@ internal class FuelCardSeeder(ILogger<FuelCardSeeder> logger) : SeederBase(logge
         var syncService = context.ServiceProvider.GetRequiredService<IFuelCardSyncService>();
         var result = await syncService.SyncCurrentTenantAsync(FuelCardProviderType.Demo, cancellationToken);
 
-        logger.LogInformation(
+        Logger.LogInformation(
             "Seeded Demo fuel card provider: {Imported} transactions ({Matched} matched, {Pending} pending)",
             result.Imported, result.Matched, result.Pending);
         LogCompleted(result.Imported);

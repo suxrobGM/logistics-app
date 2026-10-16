@@ -100,7 +100,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         var loads = await loadRepository.GetListAsync(ct: cancellationToken);
         if (loads.Count == 0)
         {
-            logger.LogWarning("No loads available for condition report seeding");
+            Logger.LogWarning("No loads available for condition report seeding");
             LogCompleted(0);
             return;
         }
@@ -109,7 +109,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
             ?? await employeeRepository.GetListAsync(e => e.Role != null && e.Role.Name == TenantRoles.Driver, ct: cancellationToken);
         if (drivers.Count == 0)
         {
-            logger.LogWarning("No drivers available for condition report seeding");
+            Logger.LogWarning("No drivers available for condition report seeding");
             LogCompleted(0);
             return;
         }

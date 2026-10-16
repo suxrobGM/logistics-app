@@ -43,7 +43,7 @@ internal class ContainerSeeder(ILogger<ContainerSeeder> logger) : SeederBase(log
 
         if (terminals.Count == 0)
         {
-            logger.LogWarning("No terminals available - skipping containers");
+            Logger.LogWarning("No terminals available - skipping containers");
             context.CreatedContainers = [];
             LogCompleted(0);
             return;

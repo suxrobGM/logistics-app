@@ -59,7 +59,7 @@ internal class LoadSeeder(
 
         if (freightTrucks.Count == 0 && containerTrucks.Count == 0 && carHaulerTrucks.Count == 0)
         {
-            logger.LogWarning("No trucks available for loads");
+            Logger.LogWarning("No trucks available for loads");
             LogCompleted();
             return;
         }

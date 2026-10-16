@@ -52,7 +52,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         var trucks = context.CreatedTrucks ?? await truckRepository.GetListAsync(ct: cancellationToken);
         if (trucks.Count == 0)
         {
-            logger.LogWarning("No trucks available for expense seeding");
+            Logger.LogWarning("No trucks available for expense seeding");
             LogCompleted(0);
             return;
         }

@@ -39,7 +39,7 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
 
         if (drivers.Count == 0)
         {
-            logger.LogWarning("No drivers available to assign trucks to");
+            Logger.LogWarning("No drivers available to assign trucks to");
             context.CreatedTrucks = [];
             LogCompleted(0);
             return;
@@ -77,7 +77,7 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
             truckNumber++;
             trucksList.Add(truck);
             await truckRepo.AddAsync(truck, cancellationToken);
-            logger.LogInformation("Created truck {Number} ({Year} {Make} {Model})",
+            Logger.LogInformation("Created truck {Number} ({Year} {Make} {Model})",
                 truck.Number, truck.Year, truck.Make, truck.Model);
         }
 

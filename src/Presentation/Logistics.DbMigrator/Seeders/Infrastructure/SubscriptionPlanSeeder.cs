@@ -133,7 +133,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 }
 
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
-                logger.LogInformation("Created subscription plan '{PlanName}' with {FeatureCount} features",
+                Logger.LogInformation("Created subscription plan '{PlanName}' with {FeatureCount} features",
                     planDef.Name, distinctFeatures.Count);
             }
             else
@@ -208,11 +208,11 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 if (updated)
                 {
                     await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
-                    logger.LogInformation("Updated subscription plan '{PlanName}'", planDef.Name);
+                    Logger.LogInformation("Updated subscription plan '{PlanName}'", planDef.Name);
                 }
                 else
                 {
-                    logger.LogInformation("Subscription plan '{PlanName}' already up to date", planDef.Name);
+                    Logger.LogInformation("Subscription plan '{PlanName}' already up to date", planDef.Name);
                 }
             }
         }

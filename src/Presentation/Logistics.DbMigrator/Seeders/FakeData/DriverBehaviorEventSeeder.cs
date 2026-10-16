@@ -63,7 +63,7 @@ internal class DriverBehaviorEventSeeder(ILogger<DriverBehaviorEventSeeder> logg
 
         if (drivers.Count == 0)
         {
-            logger.LogWarning("No drivers available for driver behavior event seeding");
+            Logger.LogWarning("No drivers available for driver behavior event seeding");
             LogCompleted(0);
             return;
         }

@@ -66,13 +66,13 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
             if (plan.StripeAIOveragePriceId != previousOveragePriceId)
             {
                 var swapped = await subscriptionService.SyncAIOverageItemAsync(plan);
-                logger.LogInformation(
+                Logger.LogInformation(
                     "Reconciled AI overage price for plan '{PlanName}' ({Swapped} subscriptions updated)",
                     plan.Name, swapped);
             }
 
             syncedCount++;
-            logger.LogInformation("Synced plan '{PlanName}' to Stripe (product: {ProductId})",
+            Logger.LogInformation("Synced plan '{PlanName}' to Stripe (product: {ProductId})",
                 plan.Name, plan.StripeProductId);
         }
 
@@ -95,7 +95,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
         if (existingMeter is not null)
         {
             meterId = existingMeter.Id;
-            logger.LogInformation("Found existing Stripe billing meter: {MeterId}", meterId);
+            Logger.LogInformation("Found existing Stripe billing meter: {MeterId}", meterId);
         }
         else
         {
@@ -116,7 +116,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
             }, cancellationToken: ct);
 
             meterId = meter.Id;
-            logger.LogInformation("Created Stripe billing meter: {MeterId}", meterId);
+            Logger.LogInformation("Created Stripe billing meter: {MeterId}", meterId);
         }
 
         await settingService.SetAsync(StripeSettingKeys.AIOverageMeterId, meterId,

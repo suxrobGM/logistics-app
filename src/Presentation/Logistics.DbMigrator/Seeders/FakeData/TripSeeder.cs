@@ -51,7 +51,7 @@ internal class TripSeeder(
         var carHaulerTrucks = trucks.Where(t => t.Type == TruckType.CarHauler).ToList();
         if (carHaulerTrucks.Count == 0)
         {
-            logger.LogWarning("No car hauler trucks available for trips");
+            Logger.LogWarning("No car hauler trucks available for trips");
             LogCompleted(0);
             return;
         }
@@ -75,7 +75,7 @@ internal class TripSeeder(
             var maxStart = routePoints.Count - (loadsCount + 1);
             if (maxStart < 0)
             {
-                logger.LogWarning(
+                Logger.LogWarning(
                     "Region has {PointCount} route points - too few for a {LoadCount}-leg trip; skipping",
                     routePoints.Count, loadsCount);
                 continue;
@@ -117,7 +117,7 @@ internal class TripSeeder(
 
             await tripRepo.AddAsync(trip, cancellationToken);
             count++;
-            logger.LogInformation("Created Trip {Trip} with {LoadCount} loads", trip.Name, loadsCount);
+            Logger.LogInformation("Created Trip {Trip} with {LoadCount} loads", trip.Name, loadsCount);
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);

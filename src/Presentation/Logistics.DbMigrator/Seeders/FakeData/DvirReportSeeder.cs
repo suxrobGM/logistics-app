@@ -136,7 +136,7 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
 
         if (drivers.Count == 0)
         {
-            logger.LogWarning("No drivers available for DVIR seeding");
+            Logger.LogWarning("No drivers available for DVIR seeding");
             LogCompleted(0);
             return;
         }
@@ -147,7 +147,7 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
 
         if (trucks.Count == 0)
         {
-            logger.LogWarning("No trucks available for DVIR seeding");
+            Logger.LogWarning("No trucks available for DVIR seeding");
             LogCompleted(0);
             return;
         }

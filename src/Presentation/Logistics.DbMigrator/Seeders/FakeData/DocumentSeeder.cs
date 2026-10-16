@@ -43,7 +43,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
         var loads = await loadRepository.GetListAsync(ct: cancellationToken);
         if (loads.Count == 0)
         {
-            logger.LogWarning("No loads available for document seeding");
+            Logger.LogWarning("No loads available for document seeding");
             LogCompleted(0);
             return;
         }
@@ -53,7 +53,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
             ?? await employeeRepository.GetListAsync(e => e.Role != null && e.Role.Name == TenantRoles.Driver, ct: cancellationToken);
         if (drivers.Count == 0)
         {
-            logger.LogWarning("No drivers available for document seeding");
+            Logger.LogWarning("No drivers available for document seeding");
             LogCompleted(0);
             return;
         }

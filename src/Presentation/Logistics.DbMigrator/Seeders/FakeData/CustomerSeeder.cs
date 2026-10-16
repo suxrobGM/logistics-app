@@ -34,7 +34,7 @@ internal class CustomerSeeder(ILogger<CustomerSeeder> logger) : SeederBase(logge
 
             customersList.Add(customer);
             await customerRepository.AddAsync(customer, cancellationToken);
-            logger.LogInformation("Created customer '{CustomerName}'", customer.Name);
+            Logger.LogInformation("Created customer '{CustomerName}'", customer.Name);
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);

@@ -135,7 +135,7 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
 
         if (trucks.Count == 0)
         {
-            logger.LogWarning("No trucks available for maintenance seeding");
+            Logger.LogWarning("No trucks available for maintenance seeding");
             LogCompleted(0);
             return;
         }
@@ -181,7 +181,7 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
-        logger.LogInformation("Seeded {ScheduleCount} maintenance schedules and {RecordCount} service records", scheduleCount, recordCount);
+        Logger.LogInformation("Seeded {ScheduleCount} maintenance schedules and {RecordCount} service records", scheduleCount, recordCount);
         LogCompleted(recordCount);
     }
 

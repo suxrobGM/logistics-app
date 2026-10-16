@@ -37,7 +37,7 @@ internal class NotificationSeeder(ILogger<NotificationSeeder> logger) : SeederBa
             };
 
             await notificationRepository.AddAsync(notification, cancellationToken);
-            logger.LogInformation("Created notification {Title}", notification.Title);
+            Logger.LogInformation("Created notification {Title}", notification.Title);
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
