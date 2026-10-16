@@ -44,8 +44,6 @@ public class FuelCardSyncJob(
 
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
 
-        tenantUow.SetCurrentTenant(tenant);
-
         var hasActiveConfig = await tenantUow.Repository<FuelCardProviderConfiguration>()
             .GetAsync(c => c.IsActive, ct) is not null;
 

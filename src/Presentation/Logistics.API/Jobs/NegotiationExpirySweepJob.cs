@@ -38,8 +38,6 @@ public class NegotiationExpirySweepJob(
         }
 
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-        tenantUow.SetCurrentTenant(tenant);
-
         var stale = await tenantUow.Repository<RateNegotiation>()
             .GetListAsync(RateNegotiation.LapsedAt(DateTime.UtcNow), ct);
 

@@ -57,8 +57,6 @@ public class LoadBoardSyncJob(
 
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         var gateway = scope.ServiceProvider.GetRequiredService<ILoadBoardProviderGateway>();
-        tenantUow.SetCurrentTenant(tenant);
-
         var postedTrucks = await tenantUow.Repository<PostedTruck>()
             .GetListAsync(p => p.Status == PostedTruckStatus.Available && p.ExternalPostId != null, ct);
 
@@ -116,7 +114,6 @@ public class LoadBoardSyncJob(
 
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
 
-        tenantUow.SetCurrentTenant(tenant);
         var now = DateTime.UtcNow;
 
         var expiredListings = await tenantUow.Repository<LoadBoardListing>()

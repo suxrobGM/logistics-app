@@ -1,7 +1,6 @@
 using Hangfire;
 using Logistics.Application.Modules.Integrations.Accounting.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 
 namespace Logistics.API.Jobs;
 
@@ -30,7 +29,6 @@ public class AccountingSyncJob(
 
     private static Task SyncTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>().SetCurrentTenant(tenant);
         return scope.ServiceProvider.GetRequiredService<IAccountingSyncService>().SyncAsync(ct);
     }
 }

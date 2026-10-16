@@ -54,8 +54,6 @@ public class EldSyncJob(
         }
 
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-        tenantUow.SetCurrentTenant(tenant);
-
         var configurations = await tenantUow.Repository<EldProviderConfiguration>()
             .GetListAsync(c => c.IsActive, ct);
         var sync = scope.ServiceProvider.GetRequiredService<IEldSyncService>();

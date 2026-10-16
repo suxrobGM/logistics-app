@@ -2,7 +2,6 @@ using Hangfire;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Compliance.Ifta.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.API.Jobs;
@@ -31,9 +30,6 @@ public class IftaQuarterCloseJob(
     private async Task ProcessTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
-
-        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-        tenantUow.SetCurrentTenant(tenant);
 
         var closeService = scope.ServiceProvider.GetRequiredService<IIftaQuarterCloseService>();
 

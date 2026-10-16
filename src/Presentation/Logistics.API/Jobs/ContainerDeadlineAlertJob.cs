@@ -2,7 +2,6 @@ using Hangfire;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Operations.Containers.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.API.Jobs;
@@ -39,9 +38,6 @@ public class ContainerDeadlineAlertJob(
         {
             return;
         }
-
-        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-        tenantUow.SetCurrentTenant(tenant);
 
         var alertService = scope.ServiceProvider.GetRequiredService<IContainerDeadlineAlertService>();
         var sent = await alertService.SendAlertsAsync(DateTime.UtcNow, ct);

@@ -1,7 +1,6 @@
 using Hangfire;
 using Logistics.Application.Modules.Operations.Trips.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 
 namespace Logistics.API.Jobs;
 
@@ -27,9 +26,6 @@ public class DetentionAlertJob(
 
     private async Task SendTenantAsync(IServiceScope scope, Tenant tenant, CancellationToken ct)
     {
-        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-        tenantUow.SetCurrentTenant(tenant);
-
         var alertService = scope.ServiceProvider.GetRequiredService<IDetentionAlertService>();
         var sent = await alertService.SendAlertsAsync(DateTime.UtcNow, ct);
 

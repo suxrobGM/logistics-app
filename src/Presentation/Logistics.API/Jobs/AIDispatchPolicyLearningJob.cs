@@ -2,7 +2,6 @@ using Hangfire;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Integrations.AIDispatch.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.API.Jobs;
@@ -45,9 +44,6 @@ public class AIDispatchPolicyLearningJob(
         {
             return;
         }
-
-        var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
-        tenantUow.SetCurrentTenant(tenant);
 
         var learner = scope.ServiceProvider.GetRequiredService<IAIDispatchPolicyLearner>();
         var result = await learner.LearnForCurrentTenantAsync(force: false, ct);

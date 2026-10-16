@@ -5,7 +5,7 @@ namespace Logistics.API.Jobs;
 
 /// <summary>
 /// Shared tenant fan-out for the recurring Hangfire jobs. Runs <paramref name="body"/> once per
-/// tenant that has a provisioned database, giving each its own DI scope and its own try/catch so
+/// tenant that has a provisioned database, giving each its own DI scope with the tenant already set and its own try/catch so
 /// one tenant's failure never aborts the rest of the cycle.
 /// </summary>
 internal static class TenantJobRunner
@@ -39,6 +39,7 @@ internal static class TenantJobRunner
 
             try
             {
+                tenantScope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>().SetCurrentTenant(tenant);
                 await body(tenantScope, tenant, ct);
             }
             catch (Exception ex)
