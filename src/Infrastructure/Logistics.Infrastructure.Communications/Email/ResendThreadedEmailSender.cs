@@ -20,30 +20,33 @@ internal sealed class ResendThreadedEmailSender(
 
         try
         {
+            var headers = new Dictionary<string, string>();
+
+            if (!string.IsNullOrEmpty(email.MessageId))
+            {
+                headers["Message-ID"] = email.MessageId;
+            }
+
+            if (!string.IsNullOrEmpty(email.InReplyToMessageId))
+            {
+                headers["In-Reply-To"] = email.InReplyToMessageId;
+            }
+
+            if (!string.IsNullOrEmpty(email.References))
+            {
+                headers["References"] = email.References;
+            }
+
             var message = new EmailMessage
             {
                 From = $"{options.Value.SenderName} <{options.Value.SenderEmail}>",
                 Subject = email.Subject,
                 HtmlBody = email.HtmlBody,
-                ReplyTo = email.ReplyTo
+                ReplyTo = email.ReplyTo is null ? null : (EmailAddressList)email.ReplyTo,
+                Headers = headers
             };
 
             message.To.Add(email.To);
-
-            if (!string.IsNullOrEmpty(email.MessageId))
-            {
-                message.Headers["Message-ID"] = email.MessageId;
-            }
-
-            if (!string.IsNullOrEmpty(email.InReplyToMessageId))
-            {
-                message.Headers["In-Reply-To"] = email.InReplyToMessageId;
-            }
-
-            if (!string.IsNullOrEmpty(email.References))
-            {
-                message.Headers["References"] = email.References;
-            }
 
             if (email.Attachments is { Count: > 0 })
             {
