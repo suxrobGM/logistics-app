@@ -1,191 +1,173 @@
 ---
 name: teaser-video
-description: Film, cut, and deliver a short teaser/demo video of any app by driving it with Playwright and editing with ffmpeg - storyboard, authenticated capture, PII review, animated title cards, MP4 + GIF. Use for "make a teaser", "record a demo video", "product launch video", "screen recording for the README".
-user-invocable: true
-metadata:
-  version: 1.0.0
-  updated: 2026-08-01
-  portable: true
-  requires:
-    - node >=24
-    - npm packages (installed into a scratch dir, not the project): playwright, ffmpeg-static, pngjs
-    - a Chromium/Chrome channel available to Playwright
-  files:
-    - SKILL.md
-    - reference/package.json
-    - reference/login.js
-    - reference/scout.js
-    - reference/rig.js
-    - reference/build.js
-    - reference/cards.js
-    - reference/jitter.js
+description: Produce a launch-quality product teaser (~45s) with motion graphics, a synthesized score and sound design - real app UI captured with Playwright, composed in Remotion as 3D layers, kinetic type and camera moves cut to a tempo grid. Delivers MP4 + README GIF. Use for "make a teaser", "product video", "demo video for the website", "README gif", "refilm the teaser".
 ---
 
 # Teaser video
 
-Produce a launch-quality teaser (~30-45s) of a running app: storyboard it, film
-it by driving the real UI, cut it with ffmpeg, and hand back an MP4 plus a GIF
-for the README.
+A teaser is motion design that happens to contain the product, not a screen recording with
+title cards between clips. The old pipeline (full-screen takes, crossfades, silence) produced
+exactly that flat look. This one composes the real UI as objects on a dark stage, moves a camera
+through them, cuts on the beat of a score generated for the edit, and lands sound effects on the
+same frames.
 
-The output must look like a product video, not a screen recording. The
-difference is direction - staging, framing, and rhythm - not resolution.
-
-Reference implementations live in `reference/`; they are working ESM modules,
-not pseudocode. Set up in a scratch directory - never inside the project:
-
-```bash
-cp -r <skill>/reference/* "$SCRATCH/" && cd "$SCRATCH" && npm install
-export TEASER_BASE_URL="https://the-app.example.com"
+```
+capture (Playwright)          compose (Remotion)              score (Node DSP)
+  2x stills of screens   ->     scenes on a 120 BPM grid  <-    music.wav + sfx/*.wav
+  1x CDP footage of flows       crops, 3D, camera, type          on the same grid
+                                        |
+                                 render -> review -> deliver (MP4 + GIF)
 ```
 
-`reference/package.json` declares `"type": "module"` and the three
-dependencies. Every script reads `TEASER_BASE_URL`, so nothing is hardcoded to
-one app.
+The working LogisticsX teaser is the reference implementation:
 
-## Before anything else: the two hard rules
+| Path                                     | What it is                                                              |
+| ---------------------------------------- | ----------------------------------------------------------------------- |
+| `reference/capture/session.js`           | Signed-in page via a persistent profile; in-app navigation              |
+| `reference/capture/rig.js`               | CDP screencast, constant-rate assembly, injected cursor                 |
+| `reference/capture/stills.js`            | 2x screenshots into `compose/public/stills/`                            |
+| `reference/capture/take-ai-dispatch.js`  | The one filmed flow, with an event log for the edit and the SFX         |
+| `reference/compose/src/`                 | The Remotion project: timeline, theme, components, one file per scene   |
+| `reference/compose/audio/`               | `dsp.mjs` (oscillators, filters, reverb, WAV), `score.mjs`, `sfx.mjs`   |
+| `reference/compose/preview.mjs`          | Bundle once, render chosen frames as stills - the fast review loop      |
+| `reference/compose/deliver.sh`           | Web MP4, README GIF, 2fps review frames                                 |
 
-**1. Never trigger real-world side effects without explicit, itemized consent.**
+Work in the scratchpad, never in the repo. `compose/public/` is not committed; rebuild it:
 
-Filming a real app means clicking real buttons. Some of those send email, post
-publicly, charge money, or submit forms to third parties. Before you touch the
-app:
+```bash
+cp -r <skill>/reference/{capture,compose} "$SCRATCH/" && cd "$SCRATCH"
+(cd capture && npm install) && (cd compose && npm install)
+export MSYS_NO_PATHCONV=1 && cd capture
+node stills.js home=/home loads=/loads eld=/eld invoices=/invoices payroll=/payroll maintenance=/maintenance \
+  loadboard=/loadboard safety=/safety financials=/reports/financials containers=/containers expenses=/expenses messages=/messages
+TEASER_USER=customer1@test.com TEASER_BASE=https://customer.logisticsx.app TEASER_ROOT_IS_HOME=1 node stills.js customer=/shipments
+node take-ai-dispatch.js && mkdir -p ../compose/public/footage && cp takes/ai-run.mp4 ../compose/public/footage/ai.mp4
+node stills.js ai-final=/ai-dispatch                       # the finished session, for the close-ups
+cd ../compose
+mkdir -p public/phones public/tiles && cp <repo>/docs/store-assets/screenshots/raw/*.png public/phones/
+for n in loads loadboard invoices containers expenses home payroll eld messages maintenance safety customer; do
+  ffmpeg -y -i public/stills/$n.png -vf scale=1600:900 -q:v 3 public/tiles/$n.jpg; done
+node audio/score.mjs && node audio/sfx.mjs
+```
 
-- Enumerate every action in your storyboard that leaves the machine.
-- Tell the user exactly what each one does and how many times, then get
-  agreement on the count.
-- Prefer a mode that stops short of the irreversible step (a preview, a
-  dry-run, a confirmation gate you can film and then decline).
+A new take changes the timings: update `SEGMENTS`, `CAMERA` and `PILLS` in
+`scenes/AIDispatch.tsx` from `takes/ai-run.json`, and re-measure the crop rects on `ai-final.png`.
+The finale crop shows whatever state the decision is in when `ai-final` is captured.
 
-There is no such thing as a read-only probe against a live system. A
-"diagnostic" click that lands in an already-running session fires for real. If
-you are debugging why an action did not work, assume your next click _will_
-work, and be ready for it.
+## The two hard rules
 
-If something fires that you did not intend: stop the process at its source
-immediately (kill the session/worker, not just the UI button, which may not
-take effect), verify the stopped state by reading it back, and tell the user
-plainly in your final message - count included.
+**1. No real-world side effects without itemized consent.** Filming clicks real buttons. List
+every action in the storyboard that writes data or leaves the machine (email, push, payments,
+third-party calls), say what each does and how many times, and get agreement. Prefer filming up to
+the irreversible step and cutting on the click. If something fires unintentionally, stop it at
+the source, verify, and report it with a count.
 
-**2. Assume every frame is public and full of PII.**
+For LogisticsX specifically: approving an AI dispatch `assign_load_to_truck` decision only writes
+`Load.AssignedTruckId`; `create_trip` pushes to the driver and Telegram; `propose_counter_offer`
+emails a real broker. Never confirm the last two on camera.
 
-Real accounts carry names, emails, addresses, and documents. Decide the policy
-with the user up front:
+**2. Every frame is public.** Use seeded demo accounts, frame around anything personal, and
+review the final cut frame by frame before delivering.
 
-- **Frame around it** (default) - compose shots that exclude identity. Crop
-  persistent chrome (sidebars, avatars, account menus) at the ffmpeg stage.
-- **Hide before rolling** - `page.evaluate` a `visibility: hidden` on offending
-  cards _before_ the camera rolls. Never film it and hope to cut around it.
-- **Use a seeded demo account** - cleanest when one exists.
+## 1. Storyboard to a tempo
 
-Review every frame of the final cut at full resolution before delivering. Not
-the contact sheet - the frames.
+Pick the tempo first and make every duration a multiple of it. 120 BPM at 60fps gives a 30-frame
+beat and a 120-frame bar, so scenes start on bars, hits land on beats, and the score can be
+written against the same numbers. `src/timeline.ts` and `audio/score.mjs` share those constants.
 
-## Workflow
+Arc that works (bars): cold open with kinetic type (2) - the problem as UI fragments piling up (2)
+- silence, then the brand reveal on the downbeat (2) - the hero feature, longest (6) - three or
+four short proof scenes (1-2 each) - a fast montage, one screen per beat (2) - close and URL (4).
 
-### 1. Scout and storyboard
+Write down, per scene: what the viewer should feel, which captured asset carries it, and the
+one sentence on screen. A scene with no job gets cut before anything is filmed.
 
-Take authenticated screenshots of every candidate screen first (`reference/scout.js`).
-Look at them. Then write a storyboard table: beat, shot, what the viewer should
-_feel_, and length. A shot with no assigned job gets cut before it is filmed.
+## 2. Capture
 
-Arc that works: tension (the problem) → reveal (the product) → proof (it really
-does the thing) → scale (the results) → trust (where it runs) → close.
+**Stills (2x)** carry most of the video. `deviceScaleFactor: 2` and `page.screenshot` give
+3200x1800 PNGs of a 1600x900 page, sharp up to 2x zoom. The `Crop` component takes a rect in the
+page's CSS pixels, so measure regions on a 1600x900 downscale with a 100px grid
+(`drawgrid=w=100:h=100`).
 
-Note in the storyboard which screens hold PII and which are safe.
+**Footage (1x)** only for flows that must visibly happen: typing, an agent working, a click. CDP
+`Page.startScreencast` records in CSS pixels whatever the device scale factor, so takes are
+1600x900. Keep the camera at or below ~1.3x on footage and use a 2x still of the end state for
+close-ups. `zoom: 2` on the document does give 2x frames but breaks `vh` layout and Mapbox; do not
+use it. Log event times during the take (`mark()` in the take script) - keystrokes, clicks,
+arrivals - they drive the edit and the SFX.
 
-### 2. Stage the set
+Curate before rolling: dismiss cookie banners, avoid tiles showing zeros or broken numbers, and
+clean junk test records in the demo tenant through the UI (with consent).
 
-Curate before rolling, never after:
+**Auth gotchas (LogisticsX):** the SPA keeps tokens in `sessionStorage`, so navigate in-app with
+`history.pushState` + `popstate` instead of `page.goto`. The identity server rate-limits the login
+page to 10 attempts per 15 minutes per IP; use a persistent Playwright profile
+(`launchPersistentContext`) so later scripts bounce straight through "Sign in". The customer
+portal lands on `/`, so treat the root as signed-in there. Under Git Bash set
+`MSYS_NO_PATHCONV=1` or route arguments like `/loads` become Windows paths.
 
-- Pick views where the data looks its best - full charts, active lists,
-  recognizable names, non-zero counts. Never film a spinner, an empty state, or
-  a half-rendered chart.
-- Set UI state deliberately (panel widths, collapsed/expanded, filters, scroll
-  position) via `localStorage` in an init script or a pre-roll `page.evaluate`.
-- Dismiss toasts, banners, and cookie bars off-camera.
-- Let data settle: `networkidle` plus a few seconds.
+**The AI dispatch take:** the agent only sees Draft loads that are not in a trip, so check the
+tenant has some ("0 unassigned loads" makes a dull take). Keep the request to one load: every
+HttpClient gets the standard resilience handler (10s per attempt, 30s total), LLM client
+included, so a whole-fleet request times out with "didn't complete within the allowed timeout
+of '00:00:30'".
 
-### 3. Film
+## 3. Compose in Remotion
 
-Use **CDP screencast** (`Page.startScreencast`), not screen recording. It
-captures the page off-screen at ~100fps, so nothing the user is doing appears in
-frame and the machine stays usable. Playwright drives; CDP films.
-`reference/rig.js` implements it.
+Load the `remotion-best-practices` skill first. The look:
 
-- One subject per shot. Frame the thing, not "the whole app".
-- Camera moves come from **scripted eased scrolling inside the page**
-  (`cameraScroll`), never from a filter. See the zoompan warning below.
-- The cursor is an actor: use the injected SVG cursor (`cursorClick`) that
-  glides with easing and dips on press, or hide it. No idle drift.
-- Rehearse each take, extract frames, look at them, adjust, then film for real.
+- **A flat ink stage** with a faint drifting dot grid, plus one global lens layer (vignette and
+  animated grain). No gradients, glows or coloured icon circles; colour only for state (green
+  approved, red violation, amber warning). The brand mark is the one gradient on screen.
+- **The UI as objects.** Crops of real screens float in a `perspective` container with
+  `preserve-3d`, enter on springs from depth, dim as newer ones arrive, and collapse to a point
+  before a cut. Browser chrome (`Window`) frames footage; phones get a bezel component.
+- **A camera, not zooms.** Keyframes of `{frame, scale, focus x/y}` in page coordinates,
+  interpolated with an ease-in-out, drive a transform on the window. Never animate the footage
+  itself with ffmpeg `zoompan` (it rounds to whole pixels and shakes).
+- **Kinetic type** in the app's own fonts (`@remotion/google-fonts`): lines rise out of masks,
+  words stagger by 3-5 frames, numbers count up with tabular figures, mono labels type themselves.
+  Over busy UI, dim the layers behind the text instead of adding a glow.
+- **Speed ramps** as `OffthreadVideo` segments, each with its own `trimBefore` and
+  `playbackRate`. Map logged take times through the same segment table to place SFX.
+- **Custom graphics where the product has none on screen**, e.g. the tilted US route map built
+  from `us-atlas` + `d3-geo` with the demo tenant's real lanes.
 
-**Filming an external window** (a browser the app itself opens, a desktop app)
-needs OS capture - `gdigrab`/`x11grab`/`avfoundation` (`recordDesktop` in the
-rig). This captures _everything on screen_, including the user's own work. Warn
-the user, ask them to step away, and review the result frame by frame; delete it
-if it caught anything private.
+Iterate with `node preview.mjs <frames...>` and a contact sheet; it is far faster than rendering
+video. Many 3200px PNGs in one frame make headless Chrome fail to decode
+("source image cannot be decoded"); use downscaled JPEG tiles wherever an image is drawn small.
 
-### 4. Title cards
+## 4. Score and sound design
 
-Animated HTML/CSS filmed in-browser, not static images. Inject the card markup
-into a blank page **on the app's own origin** so its web fonts and palette
-resolve, then screencast it. Pull the real display font off the live page
-(`getComputedStyle`) and pin a known-good mono stack rather than sniffing one.
+Music cannot be licensed by an agent, so synthesize it. `audio/score.mjs` writes an arrangement
+per section (filtered pad and pulse, riser and snare roll into a silence, impact on the reveal,
+four-on-the-floor groove with sidechained bass and arp, a hotter montage, a final hit with a long
+tail). `audio/sfx.mjs` renders whooshes, swipes, clicks, keystrokes, pops, a chime, impacts and
+ticks. Cues live in `Teaser.tsx` as `{at, sfx, volume}` on the frame grid.
 
-Match the app's motion language (its own easing curves and durations). Load the
-`frontend-design` skill before designing them if the project has no established
-card style.
+You cannot listen, so measure: `showspectrumpic` for balance and arrangement,
+`ebur128` for loudness (aim around -12 LUFS integrated, -1 dBFS peak), `showwavespic` for
+dynamics. Keep effects 6-10 dB under the music unless they are the hit.
 
-### 5. Cut
+## 5. Render, review, deliver
 
-`reference/build.js` normalizes each segment to a common size/fps, then
-crossfades the chain. Keep cuts every ~2.5-4s. Give the payoff moment room at
-normal speed while compressing the routine around it.
+```bash
+npx remotion render Teaser out/render.mp4 --codec=h264 --crf=16 --audio-codec=aac --audio-bitrate=320k
+npx remotion render Teaser out/gif-src.mp4 --frames=720-1439 --props='{"gif":true}' --codec=h264 --crf=14 --muted
+./deliver.sh out/render.mp4 out/gif-src.mp4 out/final
+```
 
-### 6. Review, then deliver
+The full render takes about a minute. Read the 2fps review frames for PII, clipped panels,
+unreadable text and broken data, then spot-check a few at full resolution. Probe duration and
+size.
 
-- Generate a contact sheet **and** per-second full-resolution frames.
-- Read the frames for PII, clipped panels, and unreadable text.
-- Verify duration and dimensions with a probe.
-- Deliver an MP4 plus, for READMEs, a palette-optimized GIF (GitHub will not
-  inline-play a committed MP4). Keep the GIF under ~10 MB.
-- Leave it silent unless asked; you cannot license music. Say so.
+The README GIF is the AI dispatch scene rendered with `gif: true`, which drops the film grain and
+the drifting grid: per-frame noise doubles the GIF size. At 800px, 15fps and 128 colours it is
+about 7.5 MB; keep it under ~10 MB. GitHub will not inline a committed MP4, so the website gets
+the MP4 and the README gets the GIF.
 
-## Hard-won specifics
+In LogisticsX the outputs replace `docs/images/teaser.gif` and, in the private submodule,
+`src/Client/Logistics.Angular/projects/website/public/demo-video.mp4`.
 
-**Never use `zoompan` for push-ins.** It recomputes zoom per frame and rounds
-the crop window to whole pixels, so the image snaps back and forth - it reads as
-an earthquake. Use locked-off shots plus real in-page scrolling. If you must
-have a push-in, pre-scale the source 4x first, and verify with a frame-delta
-measurement (`reference/jitter.js`): a locked-off static shot should measure
-well under 1.0 mean delta; visible shake reads 3+.
-
-**Screencast stops emitting frames when animation settles.** A card whose
-animation ends after 1.2s yields a 1.2s clip. Pad with
-`tpad=stop_mode=clone:stop_duration=N` and cut to the length you want with `-t`.
-
-**Assemble timestamped frames, not a fixed rate.** Screencast frames arrive with
-`metadata.timestamp`; write an ffmpeg concat list with real per-frame durations,
-then resample to constant 60fps. Assuming a fixed interval produces judder.
-
-**`ffmpeg-static` as a dev dependency**, resolved by module path. Never depend on
-ffmpeg being on PATH. (`ffprobe` is _not_ in that package - parse `ffmpeg -i`
-stderr instead.)
-
-**Authenticated capture:** log in once headed, save `storageState`, reuse it
-across every take (`reference/login.js`). Sessions expire - finish filming the
-same day or re-run it. Also seed any `localStorage` UI preferences there.
-
-**Localhost from a deployed origin is blocked** by Chrome's local-network access
-policy. If the page must reach a local service, launch with
-`--disable-features=LocalNetworkAccessChecks,PrivateNetworkAccessChecks,BlockInsecurePrivateNetworkRequests`.
-
-**Crop persistent chrome at a fixed offset.** Film at viewport width
-`1920 + railWidth`, then `crop=1920:1080:railWidth:0` to drop the sidebar and
-land exactly on 1080p.
-
-## Deliverables
-
-Report the path, duration, and dimensions; state plainly what is still needed
-from the user (music, a GitHub-native video upload); and disclose anything that
-happened during filming that they would want to know.
+Report paths, duration and dimensions, and anything that happened while filming that the user
+should know (writes to the demo tenant, production errors seen on camera).
