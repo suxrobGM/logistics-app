@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -14,10 +15,16 @@ namespace Logistics.Application.Modules.Integrations.Accounting.Services;
 /// </summary>
 internal static class AccountingPayloads
 {
+    /// <summary>
+    /// Pinned rather than shared with the API's options, so a change to those never reshapes the JSON
+    /// and re-pushes every record.
+    /// </summary>
+    private static readonly JsonSerializerOptions HashJsonOptions = new(JsonSerializerDefaults.General);
+
     public static (QboCustomerPayload Payload, string Hash) Customer(Customer customer)
     {
         var address = customer.Address;
-        var payload = new QboCustomerPayload
+        return WithHash(new QboCustomerPayload
         {
             Name = customer.Name,
             Email = customer.Email,
@@ -31,11 +38,7 @@ internal static class AccountingPayloads
                 ZipCode = address.ZipCode,
                 Country = address.Country
             }
-        };
-
-        var hash = Hash(customer.Name, customer.Email, customer.Phone, address?.Line1, address?.Line2,
-            address?.City, address?.State, address?.ZipCode, address?.Country);
-        return (payload, hash);
+        });
     }
 
     public static (QboInvoicePayload Payload, string Hash) Invoice(
@@ -53,7 +56,7 @@ internal static class AccountingPayloads
             })
             .ToList();
 
-        var payload = new QboInvoicePayload
+        return WithHash(new QboInvoicePayload
         {
             QboCustomerId = qboCustomerId,
             DocNumber = invoice.Number.ToString(CultureInfo.InvariantCulture),
@@ -62,19 +65,12 @@ internal static class AccountingPayloads
             DueDate = invoice.DueDate,
             TaxTotal = invoice.TaxTotal.Amount,
             Lines = lines
-        };
-
-        var lineHash = string.Join('|', lines.Select(l =>
-            $"{l.Description}:{Num(l.Amount)}:{l.Quantity}:{l.ItemId}"));
-        var hash = Hash(payload.DocNumber, payload.CurrencyCode, qboCustomerId, Date(payload.TxnDate),
-            Date(payload.DueDate), Num(payload.TaxTotal), lineHash);
-        return (payload, hash);
+        });
     }
 
     public static (QboPaymentPayload Payload, string Hash) Payment(
-        Payment payment, string qboCustomerId, string qboInvoiceId, string? depositAccountId)
-    {
-        var payload = new QboPaymentPayload
+        Payment payment, string qboCustomerId, string qboInvoiceId, string? depositAccountId) =>
+        WithHash(new QboPaymentPayload
         {
             QboCustomerId = qboCustomerId,
             QboInvoiceId = qboInvoiceId,
@@ -83,12 +79,7 @@ internal static class AccountingPayloads
             TxnDate = payment.RecordedAt ?? payment.CreatedAt,
             ReferenceNumber = payment.ReferenceNumber ?? payment.StripePaymentIntentId,
             DepositAccountId = depositAccountId
-        };
-
-        var hash = Hash(Num(payload.Amount), payload.CurrencyCode, qboCustomerId, qboInvoiceId,
-            Date(payload.TxnDate), payload.ReferenceNumber, depositAccountId);
-        return (payload, hash);
-    }
+        });
 
     /// <summary>The account an expense posts to: its category's mapping, else the default expense account.</summary>
     public static string? ExpenseAccountId(
@@ -104,9 +95,8 @@ internal static class AccountingPayloads
     }
 
     public static (QboExpensePayload Payload, string Hash) Expense(
-        Expense expense, string paymentAccountId, string? paymentAccountType, string expenseAccountId)
-    {
-        var payload = new QboExpensePayload
+        Expense expense, string paymentAccountId, string? paymentAccountType, string expenseAccountId) =>
+        WithHash(new QboExpensePayload
         {
             PaymentAccountId = paymentAccountId,
             PaymentAccountType = paymentAccountType,
@@ -116,18 +106,15 @@ internal static class AccountingPayloads
             TxnDate = expense.ExpenseDate,
             DocNumber = $"EXP-{expense.Number.ToString(CultureInfo.InvariantCulture)}",
             Description = ExpenseDescription(expense)
-        };
-
-        var hash = Hash(payload.DocNumber, Num(payload.Amount), payload.CurrencyCode, Date(payload.TxnDate),
-            paymentAccountId, paymentAccountType, expenseAccountId, expense.VendorName, payload.Description);
-        return (payload, hash);
-    }
+        });
 
     /// <summary>The fee a factor kept on an invoice, paid out of the (bank-type) factoring clearing account.</summary>
     public static (QboExpensePayload Payload, string Hash) FactoringFee(
         FactoringBatchItem item, long batchNumber, long invoiceNumber, string clearingAccountId, string feeAccountId)
     {
-        var payload = new QboExpensePayload
+        var batch = batchNumber.ToString(CultureInfo.InvariantCulture);
+        var invoice = invoiceNumber.ToString(CultureInfo.InvariantCulture);
+        return WithHash(new QboExpensePayload
         {
             PaymentAccountId = clearingAccountId,
             PaymentAccountType = "Bank",
@@ -135,32 +122,24 @@ internal static class AccountingPayloads
             Amount = item.FeeAmount ?? 0m,
             CurrencyCode = item.Amount.Currency,
             TxnDate = item.FundedAt ?? item.CreatedAt,
-            DocNumber = $"FCT-{batchNumber.ToString(CultureInfo.InvariantCulture)}-{invoiceNumber.ToString(CultureInfo.InvariantCulture)}",
-            Description = $"Factoring fee on invoice {invoiceNumber.ToString(CultureInfo.InvariantCulture)} (schedule {batchNumber.ToString(CultureInfo.InvariantCulture)})"
-        };
-
-        var hash = Hash(payload.DocNumber, Num(payload.Amount), payload.CurrencyCode, Date(payload.TxnDate),
-            clearingAccountId, feeAccountId);
-        return (payload, hash);
+            DocNumber = $"FCT-{batch}-{invoice}",
+            Description = $"Factoring fee on invoice {invoice} (schedule {batch})"
+        });
     }
 
-    public static (QboVendorPayload Payload, string Hash) Vendor(Employee employee)
-    {
-        var payload = new QboVendorPayload
+    public static (QboVendorPayload Payload, string Hash) Vendor(Employee employee) =>
+        WithHash(new QboVendorPayload
         {
             DisplayName = $"{employee.FirstName} {employee.LastName}".Trim(),
             GivenName = employee.FirstName,
             FamilyName = employee.LastName,
             Email = employee.Email,
             Phone = employee.PhoneNumber
-        };
-        return (payload, Hash(payload.DisplayName, payload.Email, payload.Phone));
-    }
+        });
 
     public static (QboBillPayload Payload, string Hash) Bill(
-        PayrollInvoice payroll, string vendorId, string expenseAccountId)
-    {
-        var payload = new QboBillPayload
+        PayrollInvoice payroll, string vendorId, string expenseAccountId) =>
+        WithHash(new QboBillPayload
         {
             VendorId = vendorId,
             ExpenseAccountId = expenseAccountId,
@@ -170,12 +149,7 @@ internal static class AccountingPayloads
             DueDate = payroll.DueDate,
             DocNumber = $"PAY-{payroll.Number.ToString(CultureInfo.InvariantCulture)}",
             Description = $"Driver pay {Date(payroll.PeriodStart)} to {Date(payroll.PeriodEnd)}"
-        };
-
-        var hash = Hash(payload.DocNumber, Num(payload.Amount), payload.CurrencyCode, vendorId, expenseAccountId,
-            Date(payload.TxnDate), Date(payload.DueDate), payload.Description);
-        return (payload, hash);
-    }
+        });
 
     /// <summary>
     /// Provider request id for a create: stable for the same record and content, so a retry after a crash
@@ -183,18 +157,16 @@ internal static class AccountingPayloads
     /// </summary>
     public static string RequestId(Guid localId, string hash) => $"{localId:N}{Hash(hash)[..16]}";
 
-    public static string Hash(params string?[] parts)
-    {
-        var joined = string.Join('|', parts.Select(p => p ?? string.Empty));
-        return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(joined)));
-    }
+    private static (T Payload, string Hash) WithHash<T>(T payload) =>
+        (payload, Hash(JsonSerializer.Serialize(payload, HashJsonOptions)));
+
+    private static string Hash(string value) =>
+        Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
 
     private static string? ExpenseDescription(Expense expense) =>
         string.IsNullOrEmpty(expense.VendorName)
             ? expense.Notes
             : string.IsNullOrEmpty(expense.Notes) ? expense.VendorName : $"{expense.VendorName} - {expense.Notes}";
 
-    private static string Num(decimal value) => value.ToString(CultureInfo.InvariantCulture);
-
-    private static string? Date(DateTime? value) => value?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    private static string Date(DateTime value) => value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 }
