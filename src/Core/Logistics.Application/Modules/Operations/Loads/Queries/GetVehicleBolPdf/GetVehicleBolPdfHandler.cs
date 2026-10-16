@@ -119,10 +119,7 @@ internal sealed class GetVehicleBolPdfHandler(
 
         try
         {
-            await using var stream = await blobStorage.DownloadAsync(BlobConstants.DocumentsContainerName, blobPath, ct);
-            using var buffer = new MemoryStream();
-            await stream.CopyToAsync(buffer, ct);
-            return buffer.ToArray();
+            return await blobStorage.DownloadBytesAsync(BlobConstants.DocumentsContainerName, blobPath, ct);
         }
         catch (Exception ex)
         {
