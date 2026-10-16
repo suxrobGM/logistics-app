@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Geo;
 
 namespace Logistics.Application.Modules.Platform.DataImport.Services;
 
@@ -10,13 +11,11 @@ namespace Logistics.Application.Modules.Platform.DataImport.Services;
 /// </summary>
 internal static partial class ImportAddressParser
 {
-    private static readonly Dictionary<string, string> CountryNames = new(StringComparer.OrdinalIgnoreCase)
+    /// <summary>Spellings people type that are not the country's display name in <see cref="Countries"/>.</summary>
+    private static readonly Dictionary<string, string> CountryAliases = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["USA"] = "US", ["United States"] = "US", ["United States of America"] = "US", ["U.S."] = "US",
-        ["U.S.A."] = "US", ["Canada"] = "CA", ["Mexico"] = "MX", ["Germany"] = "DE", ["Deutschland"] = "DE",
-        ["France"] = "FR", ["Poland"] = "PL", ["Polska"] = "PL", ["Netherlands"] = "NL", ["Spain"] = "ES",
-        ["Italy"] = "IT", ["United Kingdom"] = "GB", ["UK"] = "GB", ["Belgium"] = "BE", ["Austria"] = "AT",
-        ["Czech Republic"] = "CZ", ["Czechia"] = "CZ", ["Lithuania"] = "LT", ["Latvia"] = "LV", ["Romania"] = "RO"
+        ["USA"] = "US", ["United States of America"] = "US", ["U.S."] = "US", ["U.S.A."] = "US",
+        ["UK"] = "GB", ["Deutschland"] = "DE", ["Polska"] = "PL", ["Czech Republic"] = "CZ"
     };
 
     public static Address? Build(
@@ -57,7 +56,7 @@ internal static partial class ImportAddressParser
         }
 
         var trimmed = country.Trim();
-        return CountryNames.TryGetValue(trimmed, out var code) ? code : trimmed.ToUpperInvariant();
+        return CodeForName(trimmed) ?? trimmed.ToUpperInvariant();
     }
 
     private static (string? Street, string? City, string? State, string? Zip, string? Country) ParseFull(string value)
@@ -95,11 +94,16 @@ internal static partial class ImportAddressParser
         return (street, city, state, zip, country);
     }
 
+    private static string? CodeForName(string name) =>
+        CountryAliases.TryGetValue(name, out var code)
+            ? code
+            : Countries.AllCountries.FirstOrDefault(c => c.DisplayName.Equals(name, StringComparison.OrdinalIgnoreCase))?.Code;
+
     /// <summary>
     ///     Two-letter codes other than US are not treated as countries: "CA" is California far more often than Canada.
     /// </summary>
     private static bool IsCountry(string part) =>
-        CountryNames.ContainsKey(part) || part.Equals("US", StringComparison.OrdinalIgnoreCase);
+        CodeForName(part) is not null || part.Equals("US", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>"TX 75201", "TX 75201-1234", "ON M5V 2T6", or a bare "TX".</summary>
     [GeneratedRegex(@"^(?<state>[A-Za-z]{2,3})(?:\s+(?<zip>\d{5}(?:-\d{4})?|[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d))?$")]
