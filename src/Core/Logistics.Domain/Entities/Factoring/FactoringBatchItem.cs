@@ -121,21 +121,7 @@ public class FactoringBatchItem : AuditableEntity, ITenantEntity
         var payment = Invoice.Payments.FirstOrDefault(p => p.Id == PaymentId);
         if (payment is not null)
         {
-            Invoice.Payments.Remove(payment);
-        }
-
-        var paid = Invoice.Payments.Sum(p => p.Amount.Amount);
-        if (paid > 0m)
-        {
-            Invoice.Status = InvoiceStatus.PartiallyPaid;
-        }
-        else if (Invoice.DueDate < chargedBackAt)
-        {
-            Invoice.Status = InvoiceStatus.Overdue;
-        }
-        else
-        {
-            Invoice.Status = Invoice.SentAt is not null ? InvoiceStatus.Sent : InvoiceStatus.Issued;
+            Invoice.RemovePayment(payment, chargedBackAt);
         }
 
         Invoice.FactoringStatus = FactoringStatus.ChargedBack;

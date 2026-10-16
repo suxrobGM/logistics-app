@@ -89,4 +89,26 @@ public abstract partial class Invoice : AuditableEntity, IMasterEntity, ITenantE
         var paid = Payments.Sum(p => p.Amount);
         Status = paid >= Total.Amount ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
     }
+
+    /// <summary>
+    /// Reverses <see cref="ApplyPayment"/>: drops the payment and sets the status from what is still
+    /// paid, the due date and whether the invoice was sent. The caller deletes the payment.
+    /// </summary>
+    public void RemovePayment(Payment payment, DateTime now)
+    {
+        Payments.Remove(payment);
+        var paid = Payments.Sum(p => p.Amount.Amount);
+        if (paid > 0m)
+        {
+            Status = paid >= Total.Amount ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
+        }
+        else if (DueDate < now)
+        {
+            Status = InvoiceStatus.Overdue;
+        }
+        else
+        {
+            Status = SentAt is not null ? InvoiceStatus.Sent : InvoiceStatus.Issued;
+        }
+    }
 }
