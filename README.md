@@ -21,9 +21,9 @@
   <a href="https://tms.logisticsx.app"><img src="https://img.shields.io/badge/Live_Demo-Try_It_Now-10b981?style=for-the-badge&logo=rocket&logoColor=white" alt="Live Demo"></a>
 </p>
 
-![The AI dispatcher plans a day of assignments and waits for approval](docs/images/teaser.gif)
+![The AI dispatcher checks driver hours, suggests a truck and waits for approval](docs/images/teaser.gif)
 
-<p align="center"><i>The AI dispatcher planning a day of work. <a href="https://logisticsx.app">Watch the 60-second tour</a>.</i></p>
+<p align="center"><i>The AI dispatcher checks driver hours, suggests a truck and waits for your approval. <a href="https://logisticsx.app">Watch the full teaser</a>.</i></p>
 
 ## Try the demo
 
