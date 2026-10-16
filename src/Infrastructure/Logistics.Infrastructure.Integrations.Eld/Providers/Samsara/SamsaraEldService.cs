@@ -31,7 +31,7 @@ internal class SamsaraEldService(
     {
         _region = configuration.Region;
         httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", configuration.AccessToken ?? configuration.ApiKey);
+            new AuthenticationHeaderValue("Bearer", configuration.ApiKey);
     }
 
     public async Task<bool> ValidateCredentialsAsync(string apiKey, string? apiSecret)

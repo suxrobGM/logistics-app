@@ -20,23 +20,6 @@ public class EldProviderConfiguration : Entity, ITenantEntity
     public string? ApiSecret { get; set; }
 
     /// <summary>
-    /// OAuth access token for providers that use OAuth (encrypted at rest)
-    /// </summary>
-    [EncryptedSecret]
-    public string? AccessToken { get; set; }
-
-    /// <summary>
-    /// OAuth refresh token for token renewal (encrypted at rest)
-    /// </summary>
-    [EncryptedSecret]
-    public string? RefreshToken { get; set; }
-
-    /// <summary>
-    /// When the current access token expires
-    /// </summary>
-    public DateTime? TokenExpiresAt { get; set; }
-
-    /// <summary>
     /// Secret for validating incoming webhooks from the provider
     /// </summary>
     [EncryptedSecret]
