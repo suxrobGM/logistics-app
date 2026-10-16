@@ -31,6 +31,8 @@ internal sealed class UpdateLoadHandler(
             return typeCheck;
         }
 
+        var chargesBefore = ChargeInputs(load);
+
         try
         {
             var truckChanged = await AssignTruckIfUpdated(req, load);
@@ -81,7 +83,12 @@ internal sealed class UpdateLoadHandler(
             }
 
             await ApplyShipmentChangesAsync(req, load, ct);
-            await loadChargeService.SyncInvoiceAsync(load, ct);
+
+            // A rebuild bumps the invoice's UpdatedAt, which re-pushes it to the accounting system.
+            if (!ChargeInputs(load).SequenceEqual(chargesBefore))
+            {
+                await loadChargeService.SyncInvoiceAsync(load, ct);
+            }
 
             // SaveChanges dispatches domain events:
             // - LoadAssignedToTruckEvent (if truck assigned)
@@ -96,6 +103,18 @@ internal sealed class UpdateLoadHandler(
             return Result.Fail(ex.Message);
         }
     }
+
+    /// <summary>
+    ///     Every load value <see cref="LoadInvoice.ReplaceLoadCharges" /> reads to build the invoice lines.
+    /// </summary>
+    private static List<object> ChargeInputs(Load load) =>
+    [
+        load.Type,
+        load.DeliveryCost.Amount,
+        load.DeliveryCost.Currency,
+        load.FuelSurcharge,
+        .. load.Accessorials.Select(a => (a.Id, a.Name, a.LineItemType, a.Rate, a.Quantity))
+    ];
 
     private async Task ApplyShipmentChangesAsync(UpdateLoadCommand req, Load load, CancellationToken ct)
     {

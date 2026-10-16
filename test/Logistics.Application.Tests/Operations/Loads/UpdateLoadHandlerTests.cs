@@ -65,6 +65,87 @@ public class UpdateLoadHandlerTests
 
     #endregion
 
+    #region Invoice sync
+
+    [Fact]
+    public async Task Handle_NoChargeChange_DoesNotRebuildTheInvoice()
+    {
+        var load = Load(LoadType.GeneralFreight);
+
+        await Update(new UpdateLoadCommand
+        {
+            Id = load.Id,
+            Notes = "Gate code 1234",
+            DeliveryCost = load.DeliveryCost.Amount,
+            Status = LoadStatus.Dispatched
+        });
+
+        await _loadChargeService.DidNotReceive().SyncInvoiceAsync(Arg.Any<Load>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_DeliveryCostChanged_RebuildsTheInvoice()
+    {
+        var load = Load(LoadType.GeneralFreight);
+
+        await Update(new UpdateLoadCommand { Id = load.Id, DeliveryCost = 1250m });
+
+        await _loadChargeService.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_FuelSurchargeChanged_RebuildsTheInvoice()
+    {
+        var load = Load(LoadType.GeneralFreight);
+
+        await Update(new UpdateLoadCommand { Id = load.Id, FuelSurcharge = 75m });
+
+        await _loadChargeService.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_TypeChanged_RebuildsTheInvoice()
+    {
+        var load = Load(LoadType.GeneralFreight);
+
+        await Update(new UpdateLoadCommand { Id = load.Id, Type = LoadType.RefrigeratedGoods });
+
+        await _loadChargeService.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Handle_AccessorialsResent_RebuildsOnlyWhenOneChanged(bool rateChanged)
+    {
+        var load = Load(LoadType.GeneralFreight);
+        var lumper = new LoadAccessorial
+        {
+            Load = load,
+            LoadId = load.Id,
+            Name = "Lumper",
+            LineItemType = InvoiceLineItemType.Lumper,
+            Unit = AccessorialUnit.Flat,
+            Rate = 150m
+        };
+        load.Accessorials.Add(lumper);
+        _loadChargeService
+            .When(s => s.ReplaceAccessorialsAsync(load, Arg.Any<IReadOnlyList<LoadAccessorialDto>>(),
+                Arg.Any<CancellationToken>()))
+            .Do(_ => lumper.Rate = rateChanged ? 175m : 150m);
+
+        await Update(new UpdateLoadCommand
+        {
+            Id = load.Id,
+            Accessorials = [new LoadAccessorialDto { Id = lumper.Id, Name = "Lumper", Rate = 150m }]
+        });
+
+        await _loadChargeService.Received(rateChanged ? 1 : 0)
+            .SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
+    }
+
+    #endregion
+
     private Task<Result> Update(UpdateLoadCommand command) => _sut.Handle(command, CancellationToken.None);
 
     private Load Load(LoadType type)
