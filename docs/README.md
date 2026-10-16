@@ -6,34 +6,38 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 
 ## Quick Links
 
-| Section                                                              | Description                            |
-| -------------------------------------------------------------------- | -------------------------------------- |
-| [Features](features.md)                                              | Complete feature list                  |
-| [Screenshots](screenshots.md)                                        | Visual tour of all applications        |
-| [Getting Started](getting-started/prerequisites.md)                  | Prerequisites, local setup, Docker     |
-| [Architecture](architecture/overview.md)                             | System design, domain model, patterns  |
-| [API Reference](api/overview.md)                                     | Authentication, endpoints, webhooks    |
-| [Deployment](deployment/overview.md)                                 | VPS setup, one-command deploy with SSL |
-| [Observability and Backups](deployment/observability-and-backups.md) | Sentry, DB backups, pilot checklist    |
-| [Development](development/backend-guide.md)                          | Backend, Angular, mobile guides        |
-| [Configuration](configuration/environment-variables.md)              | Environment variables, services        |
-| [Stripe Webhooks](stripe-webhooks.md)                                | Endpoint, event list, local testing    |
-| [Samsara Setup](eld-samsara-setup.md)                                | API token scopes, webhook, mappings    |
-| [QuickBooks Setup](accounting-quickbooks-setup.md)                   | Intuit app, connect, account mapping   |
-| [Data Import](data-import.md)                                        | CSV/XLSX import from another TMS       |
-| [Roadmap](roadmap/README.md)                                         | Feature backlog, phases, statuses      |
+| Section | Description |
+| --- | --- |
+| [Features](features.md) | Complete feature list |
+| [Screenshots](screenshots.md) | Visual tour of all applications |
+| [Getting Started](getting-started/prerequisites.md) | Prerequisites, local setup, Docker |
+| [Architecture](architecture/overview.md) | System design, domain model, patterns |
+| [API Reference](api/overview.md) | Authentication, endpoints, webhooks |
+| [Deployment](deployment/overview.md) | VPS setup, one-command deploy with SSL |
+| [Observability and Backups](deployment/observability-and-backups.md) | Sentry, DB backups, pilot checklist |
+| [Development](development/backend-guide.md) | Backend, Angular, mobile guides |
+| [Configuration](configuration/environment-variables.md) | Environment variables, services |
+| [Stripe Webhooks](stripe-webhooks.md) | Endpoint, event list, local testing |
+| [Samsara Setup](eld-samsara-setup.md) | API token scopes, webhook, mappings |
+| [QuickBooks Setup](accounting-quickbooks-setup.md) | Intuit app, connect, account mapping |
+| [Data Import](data-import.md) | CSV/XLSX import from another TMS |
+| [DAT Setup](loadboard-dat-setup.md) | Credentials, verified endpoints |
+| [Car Hauler Guide](car-hauler-guide.md) | Vehicle loads, condition reports, eBOL |
+| [Invoices & Billing](invoices.md) | Load charges, settlements, factoring |
+| [AI Dispatch](ai-dispatch.md) | Agent, models, approvals, quota |
+| [Roadmap](roadmap/README.md) | Feature backlog, phases, statuses |
 
 ## Platform Overview
 
-| Component           | Technology            | Purpose                      |
-| ------------------- | --------------------- | ---------------------------- |
-| **API**             | .NET 10, ASP.NET Core | RESTful backend              |
-| **Identity Server** | Open.IdentityServer   | OAuth2/OIDC auth             |
-| **Admin App**       | Angular 22            | Super admin management       |
-| **TMS Portal**      | Angular 22            | Dispatcher/manager interface |
-| **Customer Portal** | Angular 22            | Customer self-service        |
-| **Driver App**      | Kotlin Multiplatform  | Mobile app for drivers       |
-| **Database**        | PostgreSQL            | Multi-tenant storage         |
+| Component | Technology | Purpose |
+| --- | --- | --- |
+| **API** | .NET 10, ASP.NET Core | RESTful backend |
+| **Identity Server** | Open.IdentityServer | OAuth2/OIDC auth |
+| **Admin App** | Angular 22 | Super admin management |
+| **TMS Portal** | Angular 22 | Dispatcher/manager interface |
+| **Customer Portal** | Angular 22 | Customer self-service |
+| **Driver App** | Kotlin Multiplatform | Mobile app for drivers |
+| **Database** | PostgreSQL | Multi-tenant storage |
 
 The Angular portals and the driver app are closed source. They live in a private submodule at `private/` and need a commercial license. The API, Identity Server, and everything behind them are public.
 
@@ -44,24 +48,27 @@ The Angular portals and the driver app are closed source. They live in a private
 - **Load Management & Dispatching** - Create, assign, and track shipments.
 - **Intermodal Containers** - ISO 6346 tracking with a lifecycle state machine (Empty → Loaded → At Port → In Transit → Delivered → Returned).
 - **Terminals & Depots** - UN/LOCODE directory for sea ports, rail terminals, inland depots, air cargo facilities, and border crossings.
+- **Drayage** - Last free day and per-diem clocks, holds, appointments, chassis, street turns, daily deadline alerts, and demurrage/per-diem/chassis billing.
+- **Car Haulers** - Vehicles on a load with VIN decode, per-vehicle condition reports on a damage diagram, a signed eBOL, and a capacity warning. See [Car Hauler Guide](car-hauler-guide.md).
 - **Trip Planning & Route Optimization** - Multi-stop routing through Mapbox.
 - **GPS Tracking** - Live fleet map over SignalR WebSockets.
 - **Fleet & Maintenance Tracking** - Trucks, trailers, schedules, VIN decoding.
 - **Data Import** - Bring customers, drivers, trucks, trailers and loads over from Datatruck, another TMS or a spreadsheet (CSV or XLSX) with header auto-mapping, a validation dry run and a per-row summary. See [Data Import](data-import.md).
-- **Load Board Integration** - Search DAT, see DAT market rates, create loads from listings, post trucks. See [DAT setup](loadboard-dat-setup.md).
+- **Load Board Integration** - Search DAT, see DAT market rates, create loads from listings, post trucks. More boards are added as carriers need them. See [DAT setup](loadboard-dat-setup.md).
 - **Broker Credit Check** - Credit score, days-to-pay, and FMCSA authority status on every load-board listing; low-credit bookings are blocked unless overridden.
 - **AI Rate Negotiation** - When a load-board listing pays below your lane floor, the agent drafts a counter-offer email to the broker. You approve it before it sends, and replies come back into the dispatch conversation. See [Broker Email Negotiation](broker-email-negotiation.md).
-- **Invoicing & Payments** - Stripe and Stripe Connect, with payment links and partial payments.
-- **Payroll & Timesheets** - Driver pay calculation and payroll invoices.
+- **Invoicing & Payments** - Invoice lines from linehaul, fuel surcharge and accessorials, detention billed from stop times, Stripe and Stripe Connect, payment links, and partial payments. See [Invoices](invoices.md).
+- **Factoring** - Email schedules of accounts with POD/BOL to the factor and track advance, fee, reserve and chargebacks.
+- **Payroll & Settlements** - Pay per mile, share of gross, per load, per stop, hourly or salary; owner-operator settlements with recurring deductions, escrow, cash advances and fuel card charges.
 - **Expense Tracking** - Categorized fleet expenses with reports.
 - **QuickBooks Sync** - Customers, invoices, payments, expenses, and driver pay pushed to QuickBooks Online, with item and account mapping and a sync error queue.
 - **Fuel Card Sync** - WEX/EFS transactions imported nightly as fuel expenses with gallons and purchase state; unmatched ones queue for review.
-- **ELD / HOS Compliance** - Samsara, Motive, TT ELD, and Geotab.
+- **ELD / HOS Compliance** - Hours of service from Samsara, Motive, and Geotab; GPS from Samsara and TT ELD. See [Samsara setup](eld-samsara-setup.md).
 - **IFTA Fuel Tax Reporting** - Quarterly per-jurisdiction miles (from ELD GPS) and gallons (from fuel cards/expenses) with tax due, immutable quarter snapshots, filing reminders, and PDF/CSV export.
 - **Safety & DVIR** - Digital inspections, incident tracking, compliance records.
-- **Reports & Analytics** - 6 report types: driver, truck, revenue, customer, payroll, expense. The quarterly IFTA report lives at `/reports/ifta`.
+- **Reports & Analytics** - 9 reports: revenue, financials, loads, drivers, team, payroll, maintenance, safety, and quarterly IFTA.
 - **Messaging** - In-app chat with read receipts and typing indicators.
-- **Customer Portal** - Shipment tracking, invoices, documents, online payments.
+- **Customer Portal** - Shipment tracking, invoices, online payments, and downloads of the load's PODs, BOLs and eBOL.
 - **Driver Mobile App** - Kotlin Multiplatform, Android and iOS.
 - **Tenant Presets** - An admin gives each company one or more presets (general freight, car hauler, intermodal) that turn on the matching features. The solo owner-operator preset hides team screens, shortens the setup checklist, and prompts the dispatch agent for a single truck rather than a fleet.
 - **Setup Checklist** - Dashboard checklist tracking what a new company still owes - profile, first truck, team, customer, load, Stripe payouts, ELD.
@@ -72,11 +79,11 @@ The Angular portals and the driver app are closed source. They live in a private
 
 ## Service Ports
 
-| Service         | Development              | Production              |
-| --------------- | ------------------------ | ----------------------- |
-| API             | <https://localhost:7000> | api.yourdomain.com      |
-| Identity Server | <https://localhost:7001> | id.yourdomain.com       |
-| Admin App       | <https://localhost:7002> | admin.yourdomain.com    |
-| TMS Portal      | <https://localhost:7003> | tms.yourdomain.com      |
+| Service | Development | Production |
+| --- | --- | --- |
+| API | <https://localhost:7000> | api.yourdomain.com |
+| Identity Server | <https://localhost:7001> | id.yourdomain.com |
+| Admin App | <https://localhost:7002> | admin.yourdomain.com |
+| TMS Portal | <https://localhost:7003> | tms.yourdomain.com |
 | Customer Portal | <https://localhost:7004> | customer.yourdomain.com |
-| Website         | <http://localhost:7005>  | yourdomain.com          |
+| Website | <http://localhost:7005> | yourdomain.com |
