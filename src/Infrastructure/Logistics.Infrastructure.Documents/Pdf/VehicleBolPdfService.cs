@@ -2,6 +2,7 @@ using System.Globalization;
 using Logistics.Application.Abstractions.Documents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Documents.Pdf.Shared;
 using Logistics.Infrastructure.Documents.Pdf.VehicleBol;
 using QuestPDF.Fluent;
@@ -77,8 +78,8 @@ public sealed class VehicleBolPdfService : IVehicleBolPdfService
         container.Row(row =>
         {
             row.Spacing(12);
-            row.RelativeItem().Element(c => RenderStop(c, "Pickup", document.Origin.ToString(), document.Pickup));
-            row.RelativeItem().Element(c => RenderStop(c, "Delivery", document.Destination.ToString(), document.Delivery));
+            row.RelativeItem().Element(c => RenderStop(c, "Pickup", document.Origin, document.Pickup));
+            row.RelativeItem().Element(c => RenderStop(c, "Delivery", document.Destination, document.Delivery));
             row.RelativeItem().Border(1).BorderColor(Colors.Grey.Lighten2).Padding(8).Column(col =>
             {
                 col.Item().Text("Customer").Bold();
@@ -88,12 +89,18 @@ public sealed class VehicleBolPdfService : IVehicleBolPdfService
         });
     }
 
-    private static void RenderStop(IContainer container, string title, string address, VehicleBolSignature? signature)
+    private static void RenderStop(IContainer container, string title, Address address, VehicleBolSignature? signature)
     {
         container.Border(1).BorderColor(Colors.Grey.Lighten2).Padding(8).Column(col =>
         {
             col.Item().Text(title).Bold();
-            col.Item().Text(address);
+            col.Item().Text(address.Line1);
+            if (!string.IsNullOrEmpty(address.Line2))
+            {
+                col.Item().Text(address.Line2);
+            }
+
+            col.Item().Text(PdfFormatting.CityLine(address));
             if (signature?.SignedAt is { } signedAt)
             {
                 col.Item().PaddingTop(4).Text(FormatTime(signedAt)).FontColor(Colors.Grey.Darken1);
@@ -130,7 +137,7 @@ public sealed class VehicleBolPdfService : IVehicleBolPdfService
 
                 if (vehicle.Rate is { } rate)
                 {
-                    text.Span($"   Rate: {rate.ToString("N2", CultureInfo.InvariantCulture)} {currency}");
+                    text.Span($"   Rate: {PdfFormatting.Money(rate, currency)}");
                 }
 
                 if (!string.IsNullOrEmpty(vehicle.Notes))
