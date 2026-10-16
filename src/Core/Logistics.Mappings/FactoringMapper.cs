@@ -49,6 +49,10 @@ public static partial class FactoringMapper
     }
 
     [MapperIgnoreSource(nameof(FactoringBatchItem.DomainEvents))]
+    [MapperIgnoreSource(nameof(FactoringBatchItem.CreatedAt))]
+    [MapperIgnoreSource(nameof(FactoringBatchItem.CreatedBy))]
+    [MapperIgnoreSource(nameof(FactoringBatchItem.UpdatedAt))]
+    [MapperIgnoreSource(nameof(FactoringBatchItem.UpdatedBy))]
     [MapperIgnoreSource(nameof(FactoringBatchItem.Batch))]
     [MapperIgnoreSource(nameof(FactoringBatchItem.BatchId))]
     [MapperIgnoreSource(nameof(FactoringBatchItem.Invoice))]

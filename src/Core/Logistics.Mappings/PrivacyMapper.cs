@@ -11,6 +11,7 @@ public static partial class PrivacyMapper
     [MapperIgnoreSource(nameof(DataExportRequest.DomainEvents))]
     [MapperIgnoreSource(nameof(DataExportRequest.BlobContainer))]
     [MapperIgnoreSource(nameof(DataExportRequest.BlobName))]
+    [MapperIgnoreSource(nameof(DataExportRequest.BlobTenantId))]
     [MapperIgnoreTarget(nameof(DataExportRequestDto.DownloadUrl))]
     public static partial DataExportRequestDto ToDto(this DataExportRequest entity);
 

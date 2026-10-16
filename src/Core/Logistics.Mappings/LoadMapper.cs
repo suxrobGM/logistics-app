@@ -5,6 +5,7 @@ using Riok.Mapperly.Abstractions;
 namespace Logistics.Mappings;
 
 [Mapper]
+[UseStaticMapper(typeof(CustomerMapper))]
 public static partial class LoadMapper
 {
     /// <summary>
@@ -87,6 +88,7 @@ public static partial class LoadMapper
         return dto;
     }
 
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
     [MapperIgnoreSource(nameof(Load.DomainEvents))]
     [MapperIgnoreSource(nameof(Load.Invoice))]
     [MapperIgnoreSource(nameof(Load.AssignedDispatcher))]
@@ -94,9 +96,6 @@ public static partial class LoadMapper
     [MapperIgnoreSource(nameof(Load.AssignedTruck))]
     [MapperIgnoreSource(nameof(Load.AssignedTruckId))]
     [MapperIgnoreSource(nameof(Load.TripStops))]
-    [MapperIgnoreSource(nameof(Load.Type))]
-    [MapperIgnoreSource(nameof(Load.OriginLocation))]
-    [MapperIgnoreSource(nameof(Load.DestinationLocation))]
     [MapProperty(nameof(Load.OriginLocation), nameof(TripLoadDto.OriginLocation))]
     [MapProperty(nameof(Load.DestinationLocation), nameof(TripLoadDto.DestinationLocation))]
     [MapProperty(nameof(Load.Type), nameof(TripLoadDto.Type))]

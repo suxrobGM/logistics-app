@@ -15,6 +15,7 @@ public static partial class AgentConversationMapper
     [MapperIgnoreSource(nameof(AgentConversation.CreatedBy))]
     [MapperIgnoreSource(nameof(AgentConversation.UpdatedAt))]
     [MapperIgnoreSource(nameof(AgentConversation.UpdatedBy))]
+    [MapperIgnoreSource(nameof(AgentConversation.LastSequence))]
     [MapperIgnoreTarget(nameof(AgentConversationDto.Messages))]
     [MapperIgnoreTarget(nameof(AgentConversationDto.Decisions))]
     [MapperIgnoreTarget(nameof(AgentConversationDto.Sessions))]

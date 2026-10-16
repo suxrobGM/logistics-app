@@ -6,6 +6,7 @@ using Riok.Mapperly.Abstractions;
 namespace Logistics.Mappings;
 
 [Mapper]
+[UseStaticMapper(typeof(TripStopMapper))]
 public static partial class TripMapper
 {
     [MapperIgnoreSource(nameof(Trip.DomainEvents))]

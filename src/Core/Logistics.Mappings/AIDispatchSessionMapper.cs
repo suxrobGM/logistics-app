@@ -21,5 +21,9 @@ public static partial class AIDispatchSessionMapper
     [MapperIgnoreSource(nameof(AgentSession.ModelUsed))]
     [MapperIgnoreSource(nameof(AgentSession.Summary))]
     [MapperIgnoreSource(nameof(AgentSession.IsOverage))]
+    [MapperIgnoreSource(nameof(AgentSession.CreatedAt))]
+    [MapperIgnoreSource(nameof(AgentSession.CreatedBy))]
+    [MapperIgnoreSource(nameof(AgentSession.UpdatedAt))]
+    [MapperIgnoreSource(nameof(AgentSession.UpdatedBy))]
     public static partial AgentSessionDto ToDto(this AgentSession entity);
 }

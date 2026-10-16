@@ -19,6 +19,7 @@ public static partial class FuelCardMapper
     [MapperIgnoreSource(nameof(FuelCardTransaction.CreatedBy))]
     [MapperIgnoreSource(nameof(FuelCardTransaction.UpdatedAt))]
     [MapperIgnoreSource(nameof(FuelCardTransaction.UpdatedBy))]
+    [MapperIgnoreSource(nameof(FuelCardTransaction.PayrollInvoiceId))]
     [MapperIgnoreTarget(nameof(FuelCardTransactionDto.TruckNumber))]
     public static partial FuelCardTransactionDto ToDto(this FuelCardTransaction entity);
 

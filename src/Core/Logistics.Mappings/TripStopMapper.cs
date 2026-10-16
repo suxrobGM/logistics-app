@@ -7,6 +7,9 @@ namespace Logistics.Mappings;
 [Mapper]
 public static partial class TripStopMapper
 {
-    [MapperIgnoreSource(nameof(Trip.DomainEvents))]
+    [MapperIgnoreSource(nameof(TripStop.DomainEvents))]
+    [MapperIgnoreSource(nameof(TripStop.Trip))]
+    [MapperIgnoreSource(nameof(TripStop.Load))]
+    [MapperIgnoreSource(nameof(TripStop.DetentionAlertedAt))]
     public static partial TripStopDto ToDto(this TripStop entity);
 }
