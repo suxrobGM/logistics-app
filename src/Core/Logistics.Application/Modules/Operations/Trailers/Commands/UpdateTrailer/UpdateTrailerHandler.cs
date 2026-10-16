@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Operations.Trailers.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
@@ -6,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trailers.Commands;
 
-internal sealed class UpdateTrailerHandler(ITenantUnitOfWork tenantUow)
+internal sealed class UpdateTrailerHandler(ITenantUnitOfWork tenantUow, ITrailerHookService trailerHookService)
     : IRequestHandler<UpdateTrailerCommand, Result>
 {
     public async Task<Result> Handle(UpdateTrailerCommand req, CancellationToken ct)
@@ -36,6 +37,8 @@ internal sealed class UpdateTrailerHandler(ITenantUnitOfWork tenantUow)
         trailer.Model = req.Model;
         trailer.LengthMeters = req.LengthMeters;
         trailer.Notes = req.Notes;
+
+        await trailerHookService.UnhookUnlessActiveAsync(trailer, ct);
 
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();

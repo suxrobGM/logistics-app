@@ -45,8 +45,7 @@ internal class TrailerSeeder(ILogger<TrailerSeeder> logger) : SeederBase(logger)
         {
             var trailer = CreateTrailer($"T{501 + count}", TypeFor(truck.Type, count), region);
             await trailerRepo.AddAsync(trailer, cancellationToken);
-            truck.CurrentTrailer = trailer;
-            truck.CurrentTrailerId = trailer.Id;
+            truck.HookTrailer(trailer);
             count++;
         }
 

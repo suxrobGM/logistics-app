@@ -26,6 +26,7 @@ public static class TripFactory
             Name = name,
             TruckId = truck?.Id,
             Truck = truck,
+            TrailerId = truck?.CurrentTrailerId,
             TotalDistance = optimizedTotalDistance ?? loadsArr.Sum(l => l.Distance)
         };
 

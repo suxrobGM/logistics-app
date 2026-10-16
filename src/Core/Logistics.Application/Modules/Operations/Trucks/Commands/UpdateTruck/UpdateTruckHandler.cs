@@ -1,9 +1,9 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Modules.Operations.Trailers.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
@@ -12,7 +12,8 @@ namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 
 internal sealed class UpdateTruckHandler(
     ITenantUnitOfWork tenantUow,
-    IVehicleTransportGuard vehicleTransportGuard) : IRequestHandler<UpdateTruckCommand, Result>
+    IVehicleTransportGuard vehicleTransportGuard,
+    ITrailerHookService trailerHookService) : IRequestHandler<UpdateTruckCommand, Result>
 {
     public async Task<Result> Handle(
         UpdateTruckCommand req, CancellationToken ct)
@@ -86,10 +87,6 @@ internal sealed class UpdateTruckHandler(
         return Result.Ok();
     }
 
-    /// <summary>
-    ///     Hooks (or unhooks) a trailer. A trailer hooked to another truck is unhooked there first,
-    ///     since the unique index allows one truck per trailer.
-    /// </summary>
     private async Task<Result?> SetTrailerAsync(Truck truck, Guid? trailerId, CancellationToken ct)
     {
         if (trailerId == truck.CurrentTrailerId)
@@ -97,38 +94,25 @@ internal sealed class UpdateTruckHandler(
             return null;
         }
 
-        if (trailerId is null)
+        Trailer? trailer = null;
+        if (trailerId is not null)
         {
-            truck.CurrentTrailer = null;
-            truck.CurrentTrailerId = null;
+            trailer = await tenantUow.Repository<Trailer>().GetByIdAsync(trailerId.Value, ct);
+            if (trailer is null)
+            {
+                return Result.Fail($"Could not find a trailer with ID {trailerId}");
+            }
+        }
+
+        try
+        {
+            await trailerHookService.HookAsync(truck, trailer, ct);
             return null;
         }
-
-        var trailer = await tenantUow.Repository<Trailer>().GetByIdAsync(trailerId.Value, ct);
-        if (trailer is null)
+        catch (InvalidOperationException ex)
         {
-            return Result.Fail($"Could not find a trailer with ID {trailerId}");
+            return Result.Fail(ex.Message);
         }
-
-        if (trailer.Status != TrailerStatus.Active)
-        {
-            return Result.Fail($"Trailer '{trailer.Number}' is {trailer.Status.GetDescription()} and cannot be hooked");
-        }
-
-        var previousTruck = await tenantUow.Repository<Truck>()
-            .GetAsync(i => i.CurrentTrailerId == trailer.Id && i.Id != truck.Id, ct);
-        if (previousTruck is not null)
-        {
-            previousTruck.CurrentTrailer = null;
-            previousTruck.CurrentTrailerId = null;
-
-            // Postgres checks the unique index per statement, so the unhook must land before the hook.
-            await tenantUow.SaveChangesAsync(ct);
-        }
-
-        truck.CurrentTrailer = trailer;
-        truck.CurrentTrailerId = trailer.Id;
-        return null;
     }
 
     /// <summary>

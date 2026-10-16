@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Documents;
+using Logistics.Application.Modules.Operations.Trailers.Services;
 using Logistics.Application.Modules.Platform.DataImport.Commands;
 using Logistics.Application.Modules.Platform.DataImport.Importers;
 using Logistics.Application.Tests.TestKit;
@@ -31,7 +32,7 @@ public class RunImportHandlerTests
                 new SpreadsheetRow(3, ["T-2", "Flatbed"]),
                 new SpreadsheetRow(4, [null, "Van"])
             ]));
-        _sut = new RunImportHandler(_tenantUow, _reader, [new TrailerImporter(_tenantUow)]);
+        _sut = new RunImportHandler(_tenantUow, _reader, [new TrailerImporter(_tenantUow, Substitute.For<ITrailerHookService>())]);
     }
 
     [Fact]

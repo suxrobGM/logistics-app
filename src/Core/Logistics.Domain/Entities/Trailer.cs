@@ -32,4 +32,17 @@ public class Trailer : AuditableEntity, ITenantEntity
     public decimal? LengthMeters { get; set; }
 
     public string? Notes { get; set; }
+
+    /// <summary>
+    ///     Only an Active trailer can be hooked to a truck or pulled on a trip.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The trailer is not Active.</exception>
+    public void EnsureCanBeHooked()
+    {
+        if (Status != TrailerStatus.Active)
+        {
+            throw new InvalidOperationException(
+                $"Trailer '{Number}' is {Status.GetDescription()} and cannot be hooked");
+        }
+    }
 }

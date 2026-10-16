@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Operations.Trailers.Services;
 using Logistics.Application.Modules.Platform.DataImport.Constants;
 using Logistics.Application.Modules.Platform.DataImport.Services;
 using Logistics.Domain.Entities;
@@ -12,7 +13,8 @@ namespace Logistics.Application.Modules.Platform.DataImport.Importers;
 ///     Trailers match on number. Length is stored in metres, read as feet unless the header or the
 ///     tenant's region says metres.
 /// </summary>
-internal sealed class TrailerImporter(ITenantUnitOfWork tenantUow) : EntityImporter<TrailerImporter.Draft>
+internal sealed class TrailerImporter(ITenantUnitOfWork tenantUow, ITrailerHookService trailerHookService)
+    : EntityImporter<TrailerImporter.Draft>
 {
     /// <summary>
     ///     Equipment codes and spellings other systems and load boards use.
@@ -101,6 +103,10 @@ internal sealed class TrailerImporter(ITenantUnitOfWork tenantUow) : EntityImpor
             if (draft.Existing is null)
             {
                 await repository.AddAsync(trailer, ct);
+            }
+            else
+            {
+                await trailerHookService.UnhookUnlessActiveAsync(trailer, ct);
             }
         }
 

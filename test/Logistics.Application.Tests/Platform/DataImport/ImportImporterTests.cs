@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Abstractions.Geocoding;
 using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Modules.Operations.Trailers.Services;
 using Logistics.Application.Modules.Platform.DataImport.Importers;
 using Logistics.Application.Modules.Platform.DataImport.Services;
 using Logistics.Domain.Entities;
@@ -25,7 +26,7 @@ public class ImportImporterTests
     {
         _tenantUow.Repository<Trailer>().Returns(_trailerRepo);
         _trailerRepo.Query().Returns(_ => _trailers.BuildMock());
-        _sut = new TrailerImporter(_tenantUow);
+        _sut = new TrailerImporter(_tenantUow, Substitute.For<ITrailerHookService>());
     }
 
     #region Create, skip, update
