@@ -28,8 +28,14 @@ public static class Registrar
         // per session, one wedged connection would tie up a Hangfire worker for a very long time.
         var requestTimeout = llmSection.Get<LlmOptions>()?.RequestTimeoutSeconds
             ?? new LlmOptions().RequestTimeoutSeconds;
+        // The host adds the standard resilience handler to every client (10s per attempt, 30s
+        // total), which would cut agent turns off long before this timeout and retry paid POSTs.
+        // The SDKs and AgentLoopRunner already retry what is safe to retry.
+#pragma warning disable EXTEXP0001 // the supported way to opt one client out of ConfigureHttpClientDefaults
         services.AddHttpClient(LlmProviderFactory.HttpClientName,
-            client => client.Timeout = TimeSpan.FromSeconds(requestTimeout));
+                client => client.Timeout = TimeSpan.FromSeconds(requestTimeout))
+            .RemoveAllResilienceHandlers();
+#pragma warning restore EXTEXP0001
 
         services.AddSingleton<LlmProviderFactory>();
         services.AddScoped<LlmModelResolver>();
