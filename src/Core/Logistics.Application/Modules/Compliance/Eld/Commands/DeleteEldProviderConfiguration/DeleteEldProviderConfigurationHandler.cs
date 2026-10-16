@@ -31,14 +31,6 @@ internal sealed class DeleteEldProviderConfigurationHandler(
             tenantUow.Repository<EldDriverMapping>().Delete(mapping);
         }
 
-        var vehicleMappings = await tenantUow.Repository<EldVehicleMapping>()
-            .GetListAsync(m => m.ProviderType == config.ProviderType, ct);
-
-        foreach (var mapping in vehicleMappings)
-        {
-            tenantUow.Repository<EldVehicleMapping>().Delete(mapping);
-        }
-
         // Delete related HOS statuses
         var hosStatuses = await tenantUow.Repository<DriverHosStatus>()
             .GetListAsync(h => h.ProviderType == config.ProviderType, ct);

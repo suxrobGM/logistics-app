@@ -195,7 +195,7 @@ public class EldSyncServiceTests
         _provider.GetAllDriversHosStatusAsync().Returns([]);
         var truck = new Truck { Number = "T-7", Type = TruckType.FreightTruck };
         _vehicleMappings.GetListAsync(Any<EldVehicleMapping>(), Arg.Any<CancellationToken>()).Returns(
-            [new EldVehicleMapping { TruckId = truck.Id, ProviderType = EldProviderType.Samsara, ExternalVehicleId = "112" }]);
+            [new EldVehicleMapping { TruckId = truck.Id, ProviderConfigurationId = _config.Id, ProviderType = EldProviderType.Samsara, ExternalVehicleId = "112" }]);
         _trucks.GetListAsync(Any<Truck>(), Arg.Any<CancellationToken>()).Returns([truck]);
         var seen = new DateTime(2026, 10, 14, 12, 0, 0, DateTimeKind.Utc);
         ((IEldGpsTrackingProvider)_provider).GetAllVehicleLocationsAsync(Arg.Any<CancellationToken>()).Returns(

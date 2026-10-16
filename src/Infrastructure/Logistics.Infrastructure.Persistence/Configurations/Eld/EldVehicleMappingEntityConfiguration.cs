@@ -21,6 +21,11 @@ internal sealed class EldVehicleMappingEntityConfiguration : IEntityTypeConfigur
             .HasForeignKey(i => i.TruckId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne<EldProviderConfiguration>()
+            .WithMany()
+            .HasForeignKey(i => i.ProviderConfigurationId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Property(i => i.ExternalVehicleId)
             .HasMaxLength(100)
             .IsRequired();

@@ -35,6 +35,7 @@ internal sealed class ApplyEldMappingSuggestionsHandler(
         await tenantUow.Repository<EldVehicleMapping>().AddRangeAsync(suggestions.Vehicles.Select(s => new EldVehicleMapping
         {
             TruckId = s.TruckId,
+            ProviderConfigurationId = config.Id,
             ProviderType = config.ProviderType,
             ExternalVehicleId = s.ExternalVehicleId,
             ExternalVehicleName = s.ExternalVehicleName

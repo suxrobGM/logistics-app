@@ -16,6 +16,13 @@ internal sealed class MapEldVehicleHandler(ITenantUnitOfWork tenantUow)
             return Result.Fail($"Truck with ID {req.TruckId} not found");
         }
 
+        var config = await tenantUow.Repository<EldProviderConfiguration>()
+            .GetAsync(c => c.ProviderType == req.ProviderType, ct);
+        if (config is null)
+        {
+            return Result.Fail("ELD provider configuration not found");
+        }
+
         var mappings = tenantUow.Repository<EldVehicleMapping>();
         if (await mappings.GetAsync(m => m.TruckId == req.TruckId && m.ProviderType == req.ProviderType, ct) is not null)
         {
@@ -31,6 +38,7 @@ internal sealed class MapEldVehicleHandler(ITenantUnitOfWork tenantUow)
         await mappings.AddAsync(new EldVehicleMapping
         {
             TruckId = req.TruckId,
+            ProviderConfigurationId = config.Id,
             ProviderType = req.ProviderType,
             ExternalVehicleId = req.ExternalVehicleId,
             ExternalVehicleName = req.ExternalVehicleName
