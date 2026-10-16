@@ -93,7 +93,7 @@ internal sealed partial class AccountingSyncService(
             }
             else
             {
-                await PushAsync(run, QboLocalEntityType.Customer, customer.Id, AccountingPayloads.RetiredHash,
+                await PushAsync(run, QboLocalEntityType.Customer, customer.Id, null,
                     target => run.Provider.DeactivateCustomerAsync(target, ct), ct);
             }
         }
@@ -110,7 +110,7 @@ internal sealed partial class AccountingSyncService(
         var rows = tenantUow.Repository<T>().Query();
         var orphaned = await Mappings
             .Where(m => m.LocalEntityType == type && m.QboId != null
-                        && m.LastSyncedHash != AccountingPayloads.RetiredHash
+                        && m.SyncStatus != QboSyncStatus.Retired
                         && !rows.Any(r => r.Id == m.LocalId))
             .Take(BatchSize)
             .ToListAsync(ct);
@@ -118,7 +118,7 @@ internal sealed partial class AccountingSyncService(
         foreach (var mapping in orphaned)
         {
             run.Mappings.TryAdd((mapping.LocalEntityType, mapping.LocalId), mapping);
-            await PushAsync(run, type, mapping.LocalId, AccountingPayloads.RetiredHash, retire, ct);
+            await PushAsync(run, type, mapping.LocalId, null, retire, ct);
         }
     }
 
@@ -152,7 +152,7 @@ internal sealed partial class AccountingSyncService(
         {
             if (invoice.Status == InvoiceStatus.Cancelled)
             {
-                await PushAsync(run, QboLocalEntityType.Invoice, invoice.Id, AccountingPayloads.RetiredHash,
+                await PushAsync(run, QboLocalEntityType.Invoice, invoice.Id, null,
                     target => run.Provider.VoidInvoiceAsync(target, ct), ct);
                 continue;
             }
@@ -182,7 +182,7 @@ internal sealed partial class AccountingSyncService(
             .SelectMany(i => i.Payments.Where(p =>
                     p.Status == PaymentStatus.Paid && (p.RecordedAt ?? p.CreatedAt) >= from
                     && !mappings.Any(m => m.LocalEntityType == QboLocalEntityType.Payment && m.LocalId == p.Id
-                        && m.SyncStatus == QboSyncStatus.Synced && m.LastSyncedAt >= (p.UpdatedAt ?? p.CreatedAt))),
+                        && m.SyncStatus != QboSyncStatus.Failed && m.LastSyncedAt >= (p.UpdatedAt ?? p.CreatedAt))),
                 (i, p) => new { Payment = p, InvoiceId = i.Id, i.CustomerId })
             .OrderBy(r => r.Payment.CreatedAt)
             .Take(BatchSize)
@@ -323,7 +323,7 @@ internal sealed partial class AccountingSyncService(
     {
         var mappings = Mappings;
         return e => !mappings.Any(m => m.LocalEntityType == type && m.LocalId == e.Id
-            && m.SyncStatus == QboSyncStatus.Synced && m.LastSyncedAt >= (e.UpdatedAt ?? e.CreatedAt));
+            && m.SyncStatus != QboSyncStatus.Failed && m.LastSyncedAt >= (e.UpdatedAt ?? e.CreatedAt));
     }
 
     private async Task LoadMappingsAsync(
@@ -344,24 +344,26 @@ internal sealed partial class AccountingSyncService(
     }
 
     /// <summary>
-    /// Push one record if new or changed and record the outcome on its mapping. A failure is stored and
-    /// does not abort the run; only a rejected token does. Saves after each record so a crash loses at
-    /// most the one in flight (and its request id makes the provider return it again).
+    /// Push one record if new or changed and record the outcome on its mapping. A null
+    /// <paramref name="hash"/> retires the record (deactivate or void), which only applies once it was pushed.
+    /// A failure is stored and does not abort the run; only a rejected token does. Saves after each record
+    /// so a crash loses at most the one in flight (and its request id makes the provider return it again).
     /// </summary>
     private async Task PushAsync(
-        SyncRun run, QboLocalEntityType type, Guid localId, string hash,
+        SyncRun run, QboLocalEntityType type, Guid localId, string? hash,
         Func<QboWriteTarget, Task<QboUpsertResult>> write, CancellationToken ct)
     {
         run.Mappings.TryGetValue((type, localId), out var mapping);
+        var status = hash is null ? QboSyncStatus.Retired : QboSyncStatus.Synced;
 
-        if (mapping is { SyncStatus: QboSyncStatus.Synced } && mapping.LastSyncedHash == hash)
+        if (mapping is not null && mapping.SyncStatus == status && mapping.LastSyncedHash == hash)
         {
             // Touched but unchanged: mark it current so the selection stops loading it (saved at the end of the run).
             mapping.LastSyncedAt = run.StartedAt;
             return;
         }
 
-        if (hash == AccountingPayloads.RetiredHash && mapping?.QboId is null)
+        if (hash is null && mapping?.QboId is null)
         {
             return;
         }
@@ -370,13 +372,13 @@ internal sealed partial class AccountingSyncService(
 
         try
         {
-            var result = await write(new QboWriteTarget(
-                mapping.QboId, mapping.QboSyncToken, AccountingPayloads.RequestId(localId, hash)));
+            var result = await write(new QboWriteTarget(mapping.QboId, mapping.QboSyncToken,
+                AccountingPayloads.RequestId(localId, hash ?? nameof(QboSyncStatus.Retired))));
             mapping.QboId = result.QboId;
             mapping.QboSyncToken = result.SyncToken;
             mapping.LastSyncedHash = hash;
             mapping.LastSyncedAt = run.StartedAt;
-            mapping.SyncStatus = QboSyncStatus.Synced;
+            mapping.SyncStatus = status;
             mapping.LastError = null;
         }
         catch (Exception ex) when (ex is not AccountingReconnectRequiredException and not OperationCanceledException)
@@ -430,7 +432,7 @@ internal sealed partial class AccountingSyncService(
         public Dictionary<(QboLocalEntityType, Guid), QboEntityMapping> Mappings { get; } = [];
 
         public string? SyncedQboId(QboLocalEntityType type, Guid localId) =>
-            Mappings.TryGetValue((type, localId), out var m) && m.LastSyncedHash != AccountingPayloads.RetiredHash
+            Mappings.TryGetValue((type, localId), out var m) && m.SyncStatus != QboSyncStatus.Retired
                 ? m.QboId
                 : null;
     }

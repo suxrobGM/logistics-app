@@ -6,5 +6,8 @@ namespace Logistics.Domain.Primitives.Enums;
 public enum QboSyncStatus
 {
     Synced = 1,
-    Failed = 2
+    Failed = 2,
+
+    /// <summary>The provider record was deactivated (customer) or voided (invoice, payment).</summary>
+    Retired = 3
 }

@@ -186,7 +186,7 @@ public class AccountingSyncServiceTests
         await _sut.SyncAsync(CancellationToken.None);
 
         await _provider.Received(1).DeactivateCustomerAsync(Arg.Is<QboWriteTarget>(t => t.QboId == "58"), Arg.Any<CancellationToken>());
-        Assert.Equal(AccountingPayloads.RetiredHash, _mappings[0].LastSyncedHash);
+        Assert.Equal(QboSyncStatus.Retired, _mappings[0].SyncStatus);
     }
 
     [Fact]
@@ -225,7 +225,7 @@ public class AccountingSyncServiceTests
         await _sut.SyncAsync(CancellationToken.None);
 
         await _provider.Received(1).VoidPaymentAsync(Arg.Is<QboWriteTarget>(t => t.QboId == "p9"), Arg.Any<CancellationToken>());
-        Assert.Equal(AccountingPayloads.RetiredHash, _mappings[0].LastSyncedHash);
+        Assert.Equal(QboSyncStatus.Retired, _mappings[0].SyncStatus);
     }
 
     [Fact]

@@ -14,9 +14,6 @@ namespace Logistics.Application.Modules.Integrations.Accounting.Services;
 /// </summary>
 internal static class AccountingPayloads
 {
-    /// <summary>The hash a mapping records once the provider record was deactivated or voided.</summary>
-    public const string RetiredHash = "retired";
-
     public static (QboCustomerPayload Payload, string Hash) Customer(Customer customer)
     {
         var address = customer.Address;
