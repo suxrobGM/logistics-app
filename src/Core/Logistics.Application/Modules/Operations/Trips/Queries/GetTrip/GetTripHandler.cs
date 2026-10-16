@@ -26,7 +26,7 @@ internal sealed class GetTripHandler : IRequestHandler<GetTripQuery, Result<Trip
             return Result<TripDto>.Fail($"Could not find a trip with ID '{req.TripId}'");
         }
 
-        var tripeDto = trip.ToDto();
+        var tripeDto = trip.ToDto(trip.Trailer?.Number);
         return Result<TripDto>.Ok(tripeDto);
     }
 }

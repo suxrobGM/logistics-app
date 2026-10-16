@@ -10,7 +10,8 @@ public static partial class TripMapper
 {
     [MapperIgnoreSource(nameof(Trip.DomainEvents))]
     [MapProperty(nameof(Trip.Truck.Number), nameof(TripDto.TruckNumber))]
-    [MapProperty(nameof(Trip.Trailer.Number), nameof(TripDto.TrailerNumber))]
+    [MapperIgnoreSource(nameof(Trip.Trailer))]
+    [MapperIgnoreTarget(nameof(TripDto.TrailerNumber))]
     [MapProperty(nameof(Trip.Stops), nameof(TripDto.Stops))]
     [MapProperty(nameof(Trip.CreatedAt), nameof(TripDto.CreatedAt))]
     [MapPropertyFromSource(nameof(TripDto.OriginAddress), Use = nameof(MapOriginAddress))]
@@ -18,7 +19,14 @@ public static partial class TripMapper
     [MapPropertyFromSource(nameof(TripDto.Loads), Use = nameof(MapLoads))]
     [MapPropertyFromSource(nameof(TripDto.LoadsCount), Use = nameof(MapLoadsCount))]
     [MapPropertyFromSource(nameof(TripDto.TotalRevenue), Use = nameof(MapTotalRevenue))]
-    public static partial TripDto ToDto(this Trip entity);
+    private static partial TripDto MapTrip(Trip entity);
+
+    /// <summary>
+    /// <paramref name="trailerNumber"/> is passed in rather than read off <c>Trip.Trailer</c>, which would lazy-load one
+    /// trailer per row in a list.
+    /// </summary>
+    public static TripDto ToDto(this Trip entity, string? trailerNumber) =>
+        MapTrip(entity) with { TrailerNumber = trailerNumber };
 
     private static IEnumerable<TripLoadDto> MapLoads(Trip trip)
     {

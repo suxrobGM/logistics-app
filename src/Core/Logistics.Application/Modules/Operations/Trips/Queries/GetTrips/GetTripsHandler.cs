@@ -48,10 +48,19 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow)
 
         var totalItems = query.Count();
 
-        var items = query
+        var trips = query
             .OrderBy(req.OrderBy)
             .ApplyPaging(req.Page, req.PageSize)
-            .Select(trip => trip.ToDto())
+            .ToArray();
+
+        var trailerIds = trips.Where(t => t.TrailerId is not null).Select(t => t.TrailerId!.Value).Distinct().ToList();
+        var trailerNumbers = tenantUow.Repository<Trailer>().Query()
+            .Where(t => trailerIds.Contains(t.Id))
+            .Select(t => new { t.Id, t.Number })
+            .ToDictionary(t => t.Id, t => t.Number);
+
+        var items = trips
+            .Select(trip => trip.ToDto(trip.TrailerId is { } id ? trailerNumbers.GetValueOrDefault(id) : null))
             .ToArray();
 
         return Task.FromResult(PagedResult<TripDto>.Ok(items, totalItems, req.PageSize));
