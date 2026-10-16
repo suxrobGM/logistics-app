@@ -9,7 +9,8 @@ paths:
 
 `src/Client/Logistics.DemoVideo/` is a standalone **Remotion** project that renders the marketing
 video - `remotion studio` to preview, `remotion render` to output. It is not part of the Angular
-workspace and is not in the root `package.json`. There is no Next.js and no router here.
+workspace; it is the only workspace in the root `package.json`, which runs it via `bun dev:video` /
+`bun build:video`. There is no Next.js and no router here.
 
 For Remotion APIs themselves (sequencing, transitions, audio, captions, fonts, charts), use the
 `remotion-best-practices` skill rather than guessing.

@@ -12,8 +12,8 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - **Commands**: `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Commands/{Verb}{Entity}/`
 - **Queries**: `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Queries/Get{Entity}/`
 - **Domain events**: `src/Core/Logistics.Domain/Events/`; handlers in `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Events/`
-- **Domain specifications** (base + cross-feature): `src/Core/Logistics.Domain/Specifications/`
-- **Application specifications** (feature-scoped, e.g. `SearchTrucks`, `GetInvoices`): `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Specifications/`
+- **Domain specifications** (base classes only): `src/Core/Logistics.Domain/Specifications/`
+- **Application specifications** (feature-scoped, e.g. `FilterLoadInvoices`, `FilterLoadsByDeliveryDate`): `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Specifications/`
 - **Infrastructure-port interfaces** (implemented by Infrastructure): `src/Core/Logistics.Application.Abstractions/{Domain}/`
 - **Application workflow services** (stay in Application): `src/Core/Logistics.Application/Modules/{Module}/{Feature}/Services/`
 - **Application constants**: feature-scoped under `Modules/{Module}/{Feature}/Constants/`; cross-module shared in `Modules/Common/Constants/`
@@ -58,7 +58,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 ### Trailers
 
 - Domain: `Entities/Trailer.cs`, `Primitives/Enums/Trailer/` (`TrailerType` incl. `Chassis`, `TrailerStatus`); `Truck.CurrentTrailerId` (hooked trailer, filtered unique index), `Trip.TrailerId` (trailer pulled on the trip; loads read it through their trip as `LoadDto.TrailerNumber`, filled by `GetLoadById` only). `LengthMeters` is always metres
-- Application: `Modules/Operations/Trailers/Commands/`, `Modules/Operations/Trailers/Queries/`; hooking is `UpdateTruckCommand.CurrentTrailerId` (moves a trailer off another truck); `CreateTrip` defaults to the truck's trailer, `UpdateTrip` takes the new truck's trailer when the truck changes
+- Application: `Modules/Operations/Trailers/Commands/`, `Modules/Operations/Trailers/Queries/`; hooking goes through `Modules/Operations/Trailers/Services/TrailerHookService` - `HookAsync` (from `UpdateTruckCommand.CurrentTrailerId`; moves a trailer off another truck) and `UnhookUnlessActiveAsync` (from `UpdateTrailer` and the data-import `TrailerImporter`, when a trailer leaves Active); `CreateTrip` defaults to the truck's trailer, `UpdateTrip` takes the new truck's trailer when the truck changes
 - API/UI: `TrailerController.cs` (`Permission.Trailer.*`), `tms-portal/pages/trailers/`, current-trailer picker in `pages/trucks/components/truck-form/`, trailer picker in `pages/trips/components/trip-wizard-basic/`, driver app `feature/trips/TripDetailScreen.kt`
 - Seed: `DbMigrator/Seeders/FakeData/TrailerSeeder.cs` (one per truck plus spares)
 - Not built: trailer documents, trailer DVIR, load-board posting by trailer type
@@ -75,6 +75,11 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 - Application: `Modules/IdentityAccess/CustomerUsers/Commands/`
 - API/UI: `CustomerUserController.cs`, `customer-portal/pages/`
 
+### Customer portal
+
+- Application: `Modules/Platform/Portal/Queries/` (portal loads, load documents + download, invoices, customer users, tenant access)
+- API/UI: `PortalController.cs` (`/portal/*`), `customer-portal/pages/` (`shipments/`, `documents/`, `invoices/`, `tracking/`, `payment/`, `account/`)
+
 ### Containers (ISO 6346)
 
 - Domain: `Entities/Container/` - `Number` is canonicalised on write by `Container.NormalizeNumber`
@@ -90,7 +95,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 - Domain: `Entities/Terminal/` - `Code` is canonicalised on write by `Terminal.NormalizeCode`
 - Application: `Modules/Operations/Terminals/Commands/`, `Modules/Operations/Terminals/Queries/`
-- API/UI: `tms-portal/pages/terminals/`
+- API/UI: `TerminalController.cs`, `tms-portal/pages/terminals/`
 - Feature flag: `TenantFeature.IntermodalContainers` (shared with Containers)
 
 ### Employees / Drivers
@@ -167,7 +172,7 @@ with `Type == Dispatch`.
 
 ### Tool registry
 
-- Infrastructure: `Infrastructure.AI/Tools/` (catalogue, schema/binding) + `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/`
+- Infrastructure: `Infrastructure.AI/Tools/` (catalogue, schema/binding) + `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal,Negotiation}/`
 - API/UI: shared with `Logistics.McpServer` and the AI copilot
 - Behavior metadata (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`) lives on
   each `AgentToolDefinition` - there is no separate write-tool list anywhere
@@ -208,7 +213,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### LLM providers
 
-- Infrastructure: `Infrastructure.AI/Llm/` (`LlmProviderFactory`) and `Llm/Providers/` (Anthropic, OpenAI)
+- Infrastructure: `Infrastructure.AI/Llm/` (`LlmProviderFactory`) and `Llm/Providers/` (`AnthropicLlmProvider`, `OpenAIResponsesLlmProvider`, `OpenAICompatibleLlmProvider` - DeepSeek etc.)
 
 ### Quota / pricing
 
@@ -246,7 +251,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Eld/HosLog.cs`, `HosViolation.cs` (`RuleSetCode`), `DriverHosStatus.cs`, `ValueObjects/HosLimits.cs`
 - Application: `Modules/Compliance/Eld/Commands/`, `Modules/Compliance/Eld/Queries/GetHosLimits/`, `Modules/Compliance/Eld/Services/RuleSetSelector.cs` (region → FMCSA / EU 561/2006)
-- Infrastructure: `Infrastructure.Integrations.Eld/` (Samsara, Motive, TT ELD, Geotab, Demo). Casing comes from `IntegrationJsonOptions` (camel/snake), reads from `TryGetFromJsonAsync` - all in `Integrations.Common` (429/5xx retries come from the host-wide standard resilience handler). Samsara follows `pagination.endCursor`, picks its host from `EldProviderConfiguration.Region` (us/eu/ca) and implements `IEldGpsTrackingProvider` (`/fleet/vehicles/stats`)
+- Infrastructure: `Infrastructure.Integrations.Eld/` (Samsara, Motive, TT ELD, Geotab, Demo). Casing comes from `IntegrationJsonOptions` (camel/snake), reads from `TryGetFromJsonAsync` - all in `Integrations.Common` (429/5xx retries come from the host-wide standard resilience handler, GET only - unsafe methods are never retried). Samsara follows `pagination.endCursor`, picks its host from `EldProviderConfiguration.Region` (us/eu/ca) and implements `IEldGpsTrackingProvider` (`/fleet/vehicles/stats`)
 - API/UI: `EldController.cs` (incl. `/eld/rules/limits`), `tms-portal/pages/eld/` (`EldRulesService`, region-aware dashboard, `eld-hos-logs/`)
 - Docs: [docs/eld-samsara-setup.md](../docs/eld-samsara-setup.md) (tenant setup: token scopes, webhook URL + secret)
 
@@ -321,13 +326,13 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/Privacy/`
 - Application: `Modules/Compliance/Privacy/` (Commands, Queries, Services)
 - Infrastructure: `Infrastructure.Documents/Privacy/`, `Infrastructure.Persistence/Services/Privacy/DataAnonymizer.cs`
-- API/UI: `PrivacyController.cs`, `Jobs/Data{Export,Deletion,Retention,ExportExpiry}Job.cs`, `<ui-cookie-banner>`, `admin-portal/pages/data-requests/`
+- API/UI: `PrivacyController.cs`, `Jobs/Data{ExportProcessing,Deletion,Retention,ExportExpiry}Job.cs`, `<ui-cookie-banner>`, `admin-portal/pages/data-requests/`
 
 ## Financial
 
 ### Invoices (TPH)
 
-- Domain: `Entities/Invoice/Invoice.cs` + `LoadInvoice`, `PayrollInvoice`, `SubscriptionInvoice`, `Invoice.RecalculateTotals`, `InvoiceTaxLine`
+- Domain: `Entities/Invoice/Invoice.cs` + `LoadInvoice`, `PayrollInvoice`, `SubscriptionInvoice`, `Invoice.RecalculateTotals`, `InvoiceTaxLine`; `Domain.Primitives/Enums/Invoice/InvoiceStatuses.cs` (`Open`, `Receivable`) - every receivables figure filters on these; never list statuses inline
 - Application: `Modules/Financial/Invoices/Commands/`, `Modules/Financial/Invoices/Queries/`, `IInvoiceTaxApplier`
 - API/UI: `InvoicesController.cs` + `preview-tax`, `tms-portal/pages/invoices/`, `customer-portal/pages/invoices/`
 
@@ -415,7 +420,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Accounting sync (QBO)
 
-- Domain: `Entities/Accounting/` (`AccountingProviderConfiguration` - tokens, `NeedsReconnect`, default item/accounts, `SyncFromDate`, item/category mappings as `MappingsJson` (`ValueObjects/Accounting/AccountingMappings`); `QboEntityMapping` - one row per pushed record; failed rows retry on every run)
+- Domain: `Entities/Accounting/` (`AccountingProviderConfiguration` - tokens, `NeedsReconnect`, default item/accounts, `SyncFromDate`, item/category mappings as the `Mappings` JSON complex property (column `mappings`, `ValueObjects/Accounting/AccountingMappings`); `QboEntityMapping` - one row per pushed record; failed rows retry on every run)
 - Application: `Modules/Integrations/Accounting/` - `Services/AccountingSyncService` (the only push path, via `AccountingReceivablesSyncService` and `AccountingPayablesSyncService`: selects only rows edited since their last push, batches lookups, 500 per type per run), `AccountingMappingService` (reads and writes `QboEntityMapping`: what is not up to date, push outcomes, retiring), `AccountingPayloads` (payload + content hash + QBO `requestid`), `AccountingConnectionService` (token refresh, flags reconnect on `invalid_grant`); Commands: Connect/DisconnectQuickBooks, UpdateQuickBooksSettings, SyncQuickBooks → `RunAccountingSync` (enqueued, also the sync-issues Retry); Queries: GetQuickBooksConnection/AuthUrl/Lookups/SyncIssues. Ports in `Application.Abstractions/Accounting/` (`IAccountingProviderService`, `IAccountingProviderFactory`, `IOAuthStateProtector`, `AccountingReconnectRequiredException`)
 - Infrastructure: `Infrastructure.Integrations.Accounting/` (QBO OAuth2 + REST push: Customer, Vendor, Invoice + void, Payment + void (deleted payments, e.g. a factoring charge-back), Purchase, Bill; stale-SyncToken retry, `requestid` on creates, `intuit_tid` in errors); token cols encrypted via `Persistence/Converters/EncryptedStringConverter`; `Persistence/Services/Accounting/OAuthStateProtector` (10-minute state)
 - API/UI: `AccountingController.cs` (+ anonymous `/accounting/quickbooks/callback` and `/disconnected`), `Jobs/AccountingSyncJob.cs` (15 min fan-out), `tms-portal/pages/settings/integrations-settings/` + `pages/settings/components/quickbooks-card/`, `quickbooks-settings-form/`, `quickbooks-sync-issues/`. Setup guide: `docs/accounting-quickbooks-setup.md`
@@ -457,7 +462,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Users
 
 - Domain: `Entities/User.cs`, `UserTenantAccess.cs`
-- Application: `Modules/IdentityAccess/Users/` (Commands, Queries, Services, Specifications)
+- Application: `Modules/IdentityAccess/Users/` (Commands, Queries, Services)
 - API/UI: `UserController.cs`, `admin-portal/pages/users/`, `tms-portal/pages/settings/`
 
 ### Roles / permissions
@@ -514,7 +519,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Documents (POD, BOL, …)
 
 - Domain: `Entities/Document/` (Load, Truck, Employee, Delivery)
-- Application: `Modules/Integrations/Documents/Commands/`, `Modules/Integrations/Documents/Queries/`
+- Application: `Modules/Integrations/Documents/Commands/`, `Modules/Integrations/Documents/Queries/`; `Services/DocumentDownloadService.cs` (`IDocumentDownloadService` - the one blob-to-download path, shared by `DownloadDocument`, the portal and public tracking downloads)
 - Infrastructure: `Infrastructure.Documents/`
 - API/UI: `DocumentController.cs`, `customer-portal/pages/documents/`
 
@@ -621,6 +626,14 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Domain: `Entities/TelegramChat.cs`, `TelegramLoginState.cs`
 - API/UI: `Logistics.TelegramBot/`
 
+## Hosting
+
+### Observability & backups
+
+- API/UI: `Logistics.HostDefaults/` (`SentryExtensions.cs`, `SentryEventScrubber.cs`, `TenantSentryEventProcessor.cs`), `Logistics.API/Jobs/HangfireHealthCheck.cs` (`hangfire` health check, registered in `Setup.cs`), Angular `projects/shared/src/lib/errors/error-tracking.ts` (lazy Sentry SDK)
+- Deploy: `deploy/db-backup/pg-backup.sh` / `pg-restore.sh`, `deploy/docker-compose.backup.yml`
+- Guide: [docs/deployment/observability-and-backups.md](../docs/deployment/observability-and-backups.md)
+
 ## Tests
 
 All under `test/` (singular):
@@ -628,7 +641,9 @@ All under `test/` (singular):
 - `Logistics.Application.Tests/` - application handlers, services
 - `Logistics.Architecture.Tests/` - layering/dependency boundaries; discovers projects, never hard-code a list
 - `Logistics.Infrastructure.AI.Tests/` - AI agent, tools, prompts, pricing (quota lives in `Logistics.Infrastructure.Persistence.Tests/`, next to `AIQuotaService`)
-- `Logistics.Infrastructure.{Documents,Payments,Persistence,Routing,Tax,Vin}.Tests/` - per-module
+- `Logistics.Infrastructure.{Communications,Documents,Payments,Persistence,Routing,Tax,Vin}.Tests/` - per-module
+- `Logistics.HostDefaults.Tests/` - Sentry scrubbing and tenant tagging
+- `Logistics.Mediator.Tests/` - the in-repo mediator
 
 ## Updating this map
 

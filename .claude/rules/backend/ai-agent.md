@@ -2,6 +2,8 @@
 paths:
   - "src/Infrastructure/Logistics.Infrastructure.AI/**/*.cs"
   - "src/Core/Logistics.Application/Modules/Integrations/AIDispatch/**/*.cs"
+  - "src/Core/Logistics.Application/Modules/Integrations/AICopilot/**/*.cs"
+  - "src/Core/Logistics.Application/Modules/Integrations/Agents/**/*.cs"
   - "src/Core/Logistics.Application/Modules/Platform/AISettings/**/*.cs"
   - "src/Presentation/Logistics.McpServer/**/*.cs"
 ---
@@ -16,15 +18,15 @@ picture is [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 `Logistics.Infrastructure.AI/` is grouped by capability, not layer. There is no `Services/`,
 `Models/` or `Prompts/` folder - if you are about to create one, you want one of these:
 
-| Folder                                                        | Holds                                                                                                                                                                                                                            |
-| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Llm/`                                                        | `ILlmProvider`, factory, one-shot `LlmClient`, model resolution, pricing, sanitising                                                                                                                                             |
-| `Llm/Contracts/`                                              | The `Llm*` wire records the rest of the project sees                                                                                                                                                                             |
-| `Llm/Providers/`                                              | The only files allowed to touch a vendor SDK                                                                                                                                                                                     |
-| `Agents/`                                                     | Shared runtime: loop runner, decision processor, cancellation, tool-call context, `AgentTurnService` (the one turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`), transcript codec/replay |
-| `Agents/Dispatch/`, `Agents/Copilot/`                         | One folder per agent surface (each implements `IAgentSurface` for `AgentTurnService`)                                                                                                                                            |
-| `Tools/`                                                      | Tool base class, schema/binding (`AgentToolJson`), `ToolResult`, `DispatchUnits`, the catalogue                                                                                                                                  |
-| `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal}/` | Tools grouped by the Application module they dispatch into                                                                                                                                                                       |
+| Folder | Holds |
+| --- | --- |
+| `Llm/` | `ILlmProvider`, factory, one-shot `LlmClient`, model resolution, pricing, sanitising |
+| `Llm/Contracts/` | The `Llm*` wire records the rest of the project sees |
+| `Llm/Providers/` | The only files allowed to touch a vendor SDK |
+| `Agents/` | Shared runtime: loop runner, decision processor, cancellation, tool-call context, `AgentTurnService` (the one turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`), transcript codec/replay |
+| `Agents/Dispatch/`, `Agents/Copilot/` | One folder per agent surface (each implements `IAgentSurface` for `AgentTurnService`) |
+| `Tools/` | Tool base class, schema/binding (`AgentToolJson`), `ToolResult`, `DispatchUnits`, the catalogue |
+| `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal,Negotiation}/` | Tools grouped by the Application module they dispatch into |
 
 - **Config is not here.** `LlmOptions`, `LlmModelCatalog` and `AISettingsKeys` live in
   `Application.Abstractions/AI/` (the application layer reads them); the agent ports
@@ -53,6 +55,10 @@ on the model** - the wire protocol belongs to the endpoint, not the model's reas
 | `OpenAIResponsesLlmProvider`  | `/v1/responses`                         | `OpenAI`                      |
 | `OpenAICompatibleLlmProvider` | `/v1/chat/completions` via `BaseUrl`    | the rest (DeepSeek, GLM, ...) |
 
+- **Providers use the factory's named `llm` client.** It carries only `RequestTimeoutSeconds` and no
+  resilience handler (`RemoveAllResilienceHandlers` in `Registrar.cs`) - the host default's 30s
+  total would cut agent turns, and the SDKs plus `AgentLoopRunner` already retry what is safe. Don't
+  give a provider its own `HttpClient`; it would pick the host handler back up.
 - **Don't move OpenAI back onto chat completions.** Function tools plus any non-`none`
   `reasoning_effort` is a hard 400 there; that was the outage this split fixed.
 - **Don't collapse the two OpenAI classes** without re-checking DeepSeek: as of Aug 2026 it serves

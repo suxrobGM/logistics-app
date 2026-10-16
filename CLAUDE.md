@@ -18,14 +18,14 @@ Multi-tenant fleet management platform for trucking companies (intermodal contai
 
 ```bash
 # Local dev infrastructure (Postgres; runs the migrator once) - requires Docker
-docker compose -f deploy/docker-compose.dev.yml up -d     # Postgres: 5433
+docker compose -f deploy/docker-compose.dev.yml up -d     # Postgres: 5433 (most devs run a native :5432 instead)
 
 # Backend only
 dotnet build                                              # Build all
 dotnet test                                               # Run all tests
 dotnet test --filter "ClassName"                          # Filter by class
-dotnet run --project src/Presentation/Logistics.IdentityServer  # Identity: https://localhost:7001
-dotnet run --project src/Presentation/Logistics.API       # API: https://localhost:7000
+dotnet run --project src/Presentation/Logistics.IdentityServer  # Identity: http://localhost:7001
+dotnet run --project src/Presentation/Logistics.API       # API: http://localhost:7000
 
 # Frontend (Angular workspace, bun) - private submodule
 cd private/src/Client/Logistics.Angular && bun install
@@ -51,7 +51,8 @@ cd private/src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 - **DDD + CQRS**: Commands/Queries via `Logistics.Mediator` (in-repo, replaced MediatR) in `src/Core/Logistics.Application/`. Requests implement `ICommand<T>` or `IQuery<T>` (in `Application.Abstractions/Common/`); handlers own their `SaveChangesAsync` calls (no auto-transaction wrapper)
 - **Multi-tenant**: Master DB (tenants, subscriptions) + one DB per tenant. Tenant resolved per-request via `CurrentTenantAccessor` (`ICurrentTenantAccessor`) (priority: MCP API key → `X-Tenant` header → JWT claim)
 - **Lazy loading**: EF Core lazy loading enabled - do NOT use `.Include()` for navigation properties. The flip side: reading a navigation property inside a mapper or a list loop is an N+1. Batch the lookup and pass the value in (see [mapperly.md](.claude/rules/backend/mapperly.md))
-- **Modular infrastructure**: 14 focused projects under `src/Infrastructure/` (see [overview.md](docs/architecture/overview.md)). Shared HTTP-JSON plumbing, webhook signature validation (`WebhookSignature`), and the provider factory base for the third-party providers live in `Integrations.Common` - do NOT hand-roll a fourth copy
+- **Modular infrastructure**: 15 focused projects under `src/Infrastructure/` (see [overview.md](docs/architecture/overview.md)). Shared HTTP-JSON plumbing, webhook signature validation (`WebhookSignature`), and the provider factory base for the third-party providers live in `Integrations.Common` - do NOT hand-roll a fourth copy
+- **Outbound HTTP**: every `HttpClient` gets the standard resilience handler from `LogisticsHost` (`ConfigureHttpClientDefaults`), with retries disabled for unsafe methods - never stack a second retry handler. The `llm` client opts out (`RemoveAllResilienceHandlers` in `Infrastructure.AI/Registrar.cs`) because the handler's 30s total would cut agent turns
 - **Hangfire jobs bypass the request pipeline**, so `[RequiresFeature]` is inert there. A job must check `IFeatureService` itself, and should fan out via `TenantJobRunner.ForEachTenantAsync` (`src/Presentation/Logistics.API/Jobs/`)
 
 ### Layer boundaries

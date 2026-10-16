@@ -28,7 +28,7 @@ Other `Logistics.Infrastructure.*.Tests` projects cover their own infrastructure
 - Test class name: `{ClassUnderTest}Tests`
 - Test method name: `{Method}_{Scenario}_{ExpectedResult}` (e.g., `GetQuotaStatus_OverQuota_RemainingIsZero`)
 - Use `#region` blocks to group related tests (e.g., `#region Session counting`)
-- Field naming: `sut` for the system under test
+- Field naming: `_sut` for the system under test
 - Use `[Fact]` for single cases, `[Theory]` + `[InlineData]` for parameterized tests
 - Inject mocked dependencies via constructor, wire them in the constructor body
 
