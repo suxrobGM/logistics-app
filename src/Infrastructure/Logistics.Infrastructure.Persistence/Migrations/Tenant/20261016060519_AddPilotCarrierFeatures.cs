@@ -201,6 +201,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 maxLength: 10,
                 nullable: true);
 
+            migrationBuilder.AddColumn<Guid>(
+                name: "provider_configuration_id",
+                table: "eld_driver_mappings",
+                type: "uuid",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
             migrationBuilder.AddColumn<string>(
                 name: "unable_to_sign_reason",
                 table: "documents",
@@ -707,20 +714,28 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 table: "fuel_card_transactions",
                 column: "payroll_invoice_id");
 
-            // Vehicle mappings predate the foreign key: point each at its provider's configuration and
-            // drop the ones whose provider is no longer configured, or the constraint below fails.
-            migrationBuilder.Sql("""
-                UPDATE eld_vehicle_mappings m SET provider_configuration_id = c.id
-                FROM eld_provider_configurations c
-                WHERE c.provider_type = m.provider_type;
-
-                DELETE FROM eld_vehicle_mappings
-                WHERE provider_configuration_id = '00000000-0000-0000-0000-000000000000';
-                """);
-
             migrationBuilder.CreateIndex(
                 name: "ix_eld_vehicle_mappings_provider_configuration_id",
                 table: "eld_vehicle_mappings",
+                column: "provider_configuration_id");
+
+            // ELD mappings predate the foreign keys: point each at its provider's configuration and
+            // drop the ones whose provider is no longer configured, or the constraints below fail.
+            foreach (var table in new[] { "eld_driver_mappings", "eld_vehicle_mappings" })
+            {
+                migrationBuilder.Sql($"""
+                    UPDATE {table} m SET provider_configuration_id = c.id
+                    FROM eld_provider_configurations c
+                    WHERE c.provider_type = m.provider_type;
+
+                    DELETE FROM {table}
+                    WHERE provider_configuration_id = '00000000-0000-0000-0000-000000000000';
+                    """);
+            }
+
+            migrationBuilder.CreateIndex(
+                name: "ix_eld_driver_mappings_provider_configuration_id",
+                table: "eld_driver_mappings",
                 column: "provider_configuration_id");
 
             migrationBuilder.CreateIndex(
@@ -806,6 +821,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 principalTable: "factoring_companies",
                 principalColumn: "id",
                 onDelete: ReferentialAction.SetNull);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_eld_driver_mappings_eld_provider_configuration_provider_con",
+                table: "eld_driver_mappings",
+                column: "provider_configuration_id",
+                principalTable: "eld_provider_configurations",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "fk_eld_vehicle_mappings_eld_provider_configurations_provider_c",
@@ -904,6 +927,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 table: "customers");
 
             migrationBuilder.DropForeignKey(
+                name: "fk_eld_driver_mappings_eld_provider_configuration_provider_con",
+                table: "eld_driver_mappings");
+
+            migrationBuilder.DropForeignKey(
                 name: "fk_eld_vehicle_mappings_eld_provider_configurations_provider_c",
                 table: "eld_vehicle_mappings");
 
@@ -962,6 +989,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
             migrationBuilder.DropIndex(
                 name: "ix_eld_vehicle_mappings_provider_configuration_id",
                 table: "eld_vehicle_mappings");
+
+            migrationBuilder.DropIndex(
+                name: "ix_eld_driver_mappings_provider_configuration_id",
+                table: "eld_driver_mappings");
 
             migrationBuilder.DropIndex(
                 name: "ix_customers_factoring_company_id",
@@ -1062,6 +1093,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
             migrationBuilder.DropColumn(
                 name: "region",
                 table: "eld_provider_configurations");
+
+            migrationBuilder.DropColumn(
+                name: "provider_configuration_id",
+                table: "eld_driver_mappings");
 
             migrationBuilder.DropColumn(
                 name: "unable_to_sign_reason",

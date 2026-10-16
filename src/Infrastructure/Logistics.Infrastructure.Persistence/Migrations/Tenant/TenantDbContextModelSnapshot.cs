@@ -1535,6 +1535,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_synced_at");
 
+                    b.Property<Guid>("ProviderConfigurationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("provider_configuration_id");
+
                     b.Property<string>("ProviderType")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1545,6 +1549,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                     b.HasIndex("EmployeeId")
                         .HasDatabaseName("ix_eld_driver_mappings_employee_id");
+
+                    b.HasIndex("ProviderConfigurationId")
+                        .HasDatabaseName("ix_eld_driver_mappings_provider_configuration_id");
 
                     b.HasIndex("ProviderType", "EmployeeId")
                         .IsUnique()
@@ -7273,6 +7280,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_eld_driver_mappings_employee_employee_id");
+
+                    b.HasOne("Logistics.Domain.Entities.EldProviderConfiguration", null)
+                        .WithMany()
+                        .HasForeignKey("ProviderConfigurationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_eld_driver_mappings_eld_provider_configuration_provider_con");
 
                     b.Navigation("Employee");
                 });
