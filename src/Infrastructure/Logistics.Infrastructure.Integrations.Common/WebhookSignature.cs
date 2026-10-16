@@ -23,14 +23,7 @@ public static class WebhookSignature
             return false;
         }
 
-        var keyBytes = Encoding.UTF8.GetBytes(secret);
-        var payloadBytes = Encoding.UTF8.GetBytes(payload);
-        var computed = HMACSHA256.HashData(keyBytes, payloadBytes);
-        var expected = Convert.ToHexStringLower(computed);
-        var providedBytes = Encoding.UTF8.GetBytes(signatureHex.Trim().ToLowerInvariant());
-        var expectedBytes = Encoding.UTF8.GetBytes(expected);
-        return providedBytes.Length == expectedBytes.Length
-               && CryptographicOperations.FixedTimeEquals(providedBytes, expectedBytes);
+        return HexHmacMatches(Encoding.UTF8.GetBytes(secret), Encoding.UTF8.GetBytes(payload), signatureHex);
     }
 
     /// <summary>
@@ -58,8 +51,7 @@ public static class WebhookSignature
             return false;
         }
 
-        var age = DateTimeOffset.UtcNow - DateTimeOffset.FromUnixTimeSeconds(unixSeconds);
-        if (age.Duration() > SignedTimestampTolerance)
+        if (!IsFresh(unixSeconds, DateTimeOffset.UtcNow))
         {
             return false;
         }
@@ -114,8 +106,7 @@ public static class WebhookSignature
             return false;
         }
 
-        var age = (now ?? DateTimeOffset.UtcNow) - DateTimeOffset.FromUnixTimeSeconds(unixSeconds);
-        if (age.Duration() > SignedTimestampTolerance)
+        if (!IsFresh(unixSeconds, now ?? DateTimeOffset.UtcNow))
         {
             return false;
         }
@@ -127,8 +118,17 @@ public static class WebhookSignature
         }
 
         var message = Encoding.UTF8.GetBytes($"v1:{timestamp}:{payload}");
-        var expected = Encoding.UTF8.GetBytes(Convert.ToHexStringLower(HMACSHA256.HashData(buffer[..written], message)));
-        var provided = Encoding.UTF8.GetBytes(signatureHeader[prefix.Length..].Trim().ToLowerInvariant());
+        return HexHmacMatches(buffer[..written], message, signatureHeader[prefix.Length..]);
+    }
+
+    private static bool IsFresh(long unixSeconds, DateTimeOffset now) =>
+        (now - DateTimeOffset.FromUnixTimeSeconds(unixSeconds)).Duration() <= SignedTimestampTolerance;
+
+    /// <summary>Constant-time check that <paramref name="providedHex"/> is the lowercase hex HMAC-SHA256 of the message.</summary>
+    private static bool HexHmacMatches(byte[] key, byte[] message, string providedHex)
+    {
+        var expected = Encoding.UTF8.GetBytes(Convert.ToHexStringLower(HMACSHA256.HashData(key, message)));
+        var provided = Encoding.UTF8.GetBytes(providedHex.Trim().ToLowerInvariant());
         return provided.Length == expected.Length && CryptographicOperations.FixedTimeEquals(provided, expected);
     }
 
