@@ -106,7 +106,7 @@ public class SettlementLinesTests
             Order = 6
         });
 
-        var (removed, added) = payroll.ReplaceSettlementLines(SettlementInputs.GrossOnly(1500m, "Gross"));
+        var (removed, added) = payroll.ReplaceSettlementLines(new SettlementInputs(1500m, "Gross", [], 0, [], []));
 
         Assert.Equal(2, removed.Count);
         Assert.Single(added);
