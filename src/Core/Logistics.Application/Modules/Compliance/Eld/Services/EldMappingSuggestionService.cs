@@ -27,10 +27,14 @@ internal sealed class EldMappingSuggestionService(
         var mappedExternalVehicles = vehicleMappings.Select(m => m.ExternalVehicleId).ToHashSet();
         var mappedTrucks = vehicleMappings.Select(m => m.TruckId).ToList();
 
-        var eldDrivers = (await provider.GetAllDriversAsync())
+        var driversTask = provider.GetAllDriversAsync();
+        var vehiclesTask = provider.GetAllVehiclesAsync();
+        await Task.WhenAll(driversTask, vehiclesTask);
+
+        var eldDrivers = (await driversTask)
             .Where(d => !string.IsNullOrEmpty(d.ExternalDriverId) && !mappedExternalDrivers.Contains(d.ExternalDriverId))
             .ToList();
-        var eldVehicles = (await provider.GetAllVehiclesAsync())
+        var eldVehicles = (await vehiclesTask)
             .Where(v => !string.IsNullOrEmpty(v.ExternalVehicleId) && !mappedExternalVehicles.Contains(v.ExternalVehicleId))
             .ToList();
 

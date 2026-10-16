@@ -31,8 +31,11 @@ internal sealed class GetQuickBooksLookupsHandler(
 
         try
         {
-            var accounts = await provider.GetAccountsAsync(ct);
-            var items = await provider.GetItemsAsync(ct);
+            var accountsTask = provider.GetAccountsAsync(ct);
+            var itemsTask = provider.GetItemsAsync(ct);
+            await Task.WhenAll(accountsTask, itemsTask);
+            var accounts = await accountsTask;
+            var items = await itemsTask;
             return Result<AccountingLookupsDto>.Ok(new AccountingLookupsDto
             {
                 Accounts = accounts.ToList(),
