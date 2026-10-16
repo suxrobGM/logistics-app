@@ -76,15 +76,6 @@ internal sealed class SearchLoadBoardHandler(
             allListings.AddRange(result.Value);
             countByProvider[config.ProviderType] = result.Value.Count;
             logger.LogDebug("Found {Count} listings from {Provider}", result.Value.Count, config.ProviderType);
-
-            if (config.MarketRatesEnabled)
-            {
-                var ratesError = await AttachMarketRatesAsync(config, result.Value, ct);
-                if (ratesError is not null)
-                {
-                    errors[config.ProviderType] = $"Market rates unavailable. {ratesError}";
-                }
-            }
         }
 
         var sortedListings = allListings
@@ -92,6 +83,17 @@ internal sealed class SearchLoadBoardHandler(
             .OrderByDescending(l => l.RatePerMile ?? 0)
             .Take(req.MaxResults)
             .ToList();
+
+        // Priced after the floor and the cap, so lookups and the lane cap go to listings the user will see.
+        foreach (var config in configs.Where(c => c.MarketRatesEnabled && !errors.ContainsKey(c.ProviderType)))
+        {
+            var listings = sortedListings.Where(l => l.ProviderType == config.ProviderType).ToList();
+            var ratesError = await AttachMarketRatesAsync(config, listings, ct);
+            if (ratesError is not null)
+            {
+                errors[config.ProviderType] = $"Market rates unavailable. {ratesError}";
+            }
+        }
 
         await PersistListingsAsync(sortedListings, ct);
 
