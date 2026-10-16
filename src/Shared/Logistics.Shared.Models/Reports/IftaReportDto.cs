@@ -20,11 +20,20 @@ public record IftaReportDto
     /// <summary>Fleet average MPG = total miles / total gallons.</summary>
     public decimal AverageMpg { get; set; }
 
-    /// <summary>Sum of computable per-jurisdiction tax due (negative = net credit).</summary>
-    public decimal TotalTaxDue { get; set; }
+    /// <summary>
+    /// Sum of computable per-jurisdiction tax due (negative = net credit). Null when
+    /// <see cref="HasMissingMileageOrFuel"/>: without a fleet MPG no row can be computed.
+    /// </summary>
+    public decimal? TotalTaxDue { get; set; }
 
     /// <summary>True when any jurisdiction row has no published rate for the quarter.</summary>
     public bool HasMissingRates { get; set; }
+
+    /// <summary>
+    /// True when the quarter has fuel but no miles, or miles but no fuel. Fleet MPG is then undefined,
+    /// so taxable gallons and tax due are too - computing them anyway credits every gallon bought.
+    /// </summary>
+    public bool HasMissingMileageOrFuel { get; set; }
 
     public List<IftaJurisdictionRowDto> Jurisdictions { get; set; } = [];
 }

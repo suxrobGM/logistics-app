@@ -15,7 +15,7 @@ internal static class IftaSummarySection
             Stat(row, "Total Miles", report.TotalMiles.ToString("N1"));
             Stat(row, "Total Gallons", report.TotalGallons.ToString("N1"));
             Stat(row, "Fleet Avg MPG", report.AverageMpg.ToString("N2"));
-            Stat(row, "Net Tax Due (USD)", report.TotalTaxDue.ToString("N2"));
+            Stat(row, "Net Tax Due (USD)", report.TotalTaxDue?.ToString("N2") ?? "-");
         });
     }
 

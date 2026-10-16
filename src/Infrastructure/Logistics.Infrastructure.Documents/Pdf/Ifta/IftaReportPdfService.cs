@@ -28,6 +28,15 @@ public class IftaReportPdfService : IIftaReportPdfService
                     col.Item().Element(c => IftaSummarySection.Render(c, report));
                     col.Item().Element(c => IftaJurisdictionTableSection.Render(c, report));
 
+                    if (report.HasMissingMileageOrFuel)
+                    {
+                        col.Item()
+                            .Background(Colors.Orange.Lighten4)
+                            .Padding(8)
+                            .Text("This quarter has fuel purchases but no recorded miles, or miles but no fuel, so fleet MPG and tax due cannot be computed. Record the missing data before filing.")
+                            .FontSize(8).FontColor(Colors.Orange.Darken3);
+                    }
+
                     if (report.HasMissingRates)
                     {
                         col.Item()

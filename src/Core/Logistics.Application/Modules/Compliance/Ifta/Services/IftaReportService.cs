@@ -68,7 +68,8 @@ internal sealed class IftaReportService(
 
         var totalMiles = mileage.Sum(m => m.Miles);
         var totalGallons = fuelPurchases.Sum(p => ToGallons(p.Quantity!.Value, p.QuantityUnit));
-        var averageMpg = totalGallons > 0 ? Math.Round(totalMiles / totalGallons, 2) : 0m;
+        var mpgKnown = totalMiles > 0 && totalGallons > 0;
+        var averageMpg = mpgKnown ? Math.Round(totalMiles / totalGallons, 2) : 0m;
 
         var rates = (await masterUow.Repository<IftaTaxRate>()
                 .GetListAsync(r => r.Year == year && r.Quarter == quarter, ct))
@@ -96,7 +97,7 @@ internal sealed class IftaReportService(
 
             // Surcharge jurisdictions (IN/KY/VA) levy the surcharge on ALL taxable gallons;
             // unlike the base rate it is never offset by purchased gallons.
-            decimal? taxDue = rate is null
+            decimal? taxDue = rate is null || !mpgKnown
                 ? null
                 : Math.Round(netTaxable * rate.RatePerGallon + taxable * (rate.SurchargeRatePerGallon ?? 0m), 2);
 
@@ -123,8 +124,9 @@ internal sealed class IftaReportService(
             TotalMiles = Math.Round(totalMiles, 2),
             TotalGallons = Math.Round(totalGallons, 2),
             AverageMpg = averageMpg,
-            TotalTaxDue = Math.Round(rows.Where(r => r.TaxDue.HasValue).Sum(r => r.TaxDue!.Value), 2),
+            TotalTaxDue = mpgKnown ? Math.Round(rows.Where(r => r.TaxDue.HasValue).Sum(r => r.TaxDue!.Value), 2) : null,
             HasMissingRates = rows.Any(r => r.RateMissing),
+            HasMissingMileageOrFuel = !mpgKnown && rows.Count > 0,
             Jurisdictions = rows
         };
     }

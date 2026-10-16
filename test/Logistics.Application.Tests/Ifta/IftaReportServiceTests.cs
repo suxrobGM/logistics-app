@@ -164,6 +164,36 @@ public class IftaReportServiceTests
         Assert.Equal(0m, report.TotalTaxDue);
     }
 
+    /// <summary>Without miles there is no fleet MPG; computing anyway credited every gallon bought.</summary>
+    [Fact]
+    public async Task BuildReport_FuelWithoutMiles_LeavesTaxUncomputed()
+    {
+        SetupMileage([]);
+        SetupExpenses([Fuel("TX", 160), Fuel("OK", 120)]);
+        SetupRates([Rate("TX", 0.20m), Rate("OK", 0.19m)]);
+
+        var report = await _sut.BuildReportAsync(2026, 2);
+
+        Assert.True(report.HasMissingMileageOrFuel);
+        Assert.Null(report.TotalTaxDue);
+        Assert.Equal(0m, report.AverageMpg);
+        Assert.All(report.Jurisdictions, row => Assert.Null(row.TaxDue));
+    }
+
+    [Fact]
+    public async Task BuildReport_MilesWithoutFuel_LeavesTaxUncomputed()
+    {
+        SetupMileage([Mileage("TX", 500)]);
+        SetupExpenses([]);
+        SetupRates([Rate("TX", 0.20m)]);
+
+        var report = await _sut.BuildReportAsync(2026, 2);
+
+        Assert.True(report.HasMissingMileageOrFuel);
+        Assert.Null(report.TotalTaxDue);
+        Assert.Null(report.Jurisdictions.Single().TaxDue);
+    }
+
     [Fact]
     public async Task BuildReport_LiterPurchases_ConvertToGallons()
     {
