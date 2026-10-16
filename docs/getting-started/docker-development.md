@@ -33,10 +33,10 @@ bun start:tms        # also: start:admin, start:customer, start:website
 
 From `deploy/docker-compose.dev.yml`:
 
-| Service  | URL / Port            | Notes                                                            |
-| -------- | --------------------- | ---------------------------------------------------------------- |
-| postgres | localhost:5433        | Postgres 18; data in the `logistics-pg-data` volume              |
-| migrator | runs once, then exits | Migrates master + tenant DBs, seeds the `us`/`eu`/`solo` tenants |
+| Service | URL / Port | Notes |
+| --- | --- | --- |
+| postgres | localhost:5433 | Postgres 18; data in the `logistics-pg-data` volume |
+| migrator | runs, then stays up | Migrates master + tenant DBs, seeds the `us`/`eu`/`solo` tenants; done when its log shows "Database seeding completed successfully" |
 
 The migrator builds from `src/Presentation/Logistics.DbMigrator/Dockerfile` and creates the `master_logisticsx`, `us_logisticsx`, `eu_logisticsx`, and `solo_logisticsx` databases.
 
@@ -44,14 +44,14 @@ Three demo tenants are seeded: `us` (Heartland Logistics LLC) and `eu` (EuroFrei
 
 ## Service URLs
 
-| Service         | URL                            |
-| --------------- | ------------------------------ |
-| API (Swagger)   | https://localhost:7000/swagger |
-| Identity Server | https://localhost:7001         |
-| Admin Portal    | http://localhost:7002          |
-| TMS Portal      | http://localhost:7003          |
-| Customer Portal | http://localhost:7004          |
-| Website         | http://localhost:7005          |
+| Service | URL |
+| --- | --- |
+| API (Swagger) | https://localhost:7000/swagger |
+| Identity Server | https://localhost:7001 |
+| Admin Portal | http://localhost:7002 |
+| TMS Portal | http://localhost:7003 |
+| Customer Portal | http://localhost:7004 |
+| Website | http://localhost:7005 |
 
 ## App configuration / secrets
 
@@ -60,7 +60,7 @@ The .NET services read connection strings and secrets from their own `appsetting
 ## Re-running migrations
 
 ```bash
-docker compose -f deploy/docker-compose.dev.yml up migrator
+docker compose -f deploy/docker-compose.dev.yml up --build migrator
 ```
 
 ## Stopping / cleaning up

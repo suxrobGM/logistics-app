@@ -92,8 +92,9 @@ For the best experience with VS Code:
 
 - C# Dev Kit
 - Angular Language Service
-- ESLint
-- Prettier
+- ESLint (Angular lint)
+- Biome (formats TS, JSON, CSS)
+- Prettier (Angular HTML templates only)
 - Docker
 - PostgreSQL (by Chris Kolkman)
 

@@ -23,12 +23,12 @@ API_PORT=7000
 IDENTITY_SERVER_PORT=7001
 ```
 
-| Variable               | Description                                                       |
-| ---------------------- | ----------------------------------------------------------------- |
-| `GITHUB_REPOSITORY`    | GHCR image owner/repo (set by CI; default suxrobgm/logistics-app) |
-| `IMAGE_TAG`            | Image tag to pull (set by CI; default latest)                     |
-| `API_PORT`             | Port for the API service (default: 7000)                          |
-| `IDENTITY_SERVER_PORT` | Port for the Identity Server (default: 7001)                      |
+| Variable | Description |
+| --- | --- |
+| `GITHUB_REPOSITORY` | GHCR image owner/repo (set by CI; default suxrobgm/logistics-app) |
+| `IMAGE_TAG` | Image tag to pull (set by CI; default latest) |
+| `API_PORT` | Port for the API service (default: 7000) |
+| `IDENTITY_SERVER_PORT` | Port for the Identity Server (default: 7001) |
 
 ### Database (External PostgreSQL)
 
@@ -41,11 +41,11 @@ ConnectionStrings__EUTenantDatabase="Host=localhost;Port=5432;Database=eu_logist
 #ConnectionStrings__SoloTenantDatabase="Host=localhost;Port=5432;Database=solo_logisticsx;Username=postgres;Password=your-secure-password"
 ```
 
-| Variable                                | Description                                                            |
-| --------------------------------------- | ---------------------------------------------------------------------- |
-| `ConnectionStrings__MasterDatabase`     | Full connection string for the master database                         |
-| `ConnectionStrings__USTenantDatabase`   | Fallback tenant database the API registers `TenantDbContext` with      |
-| `ConnectionStrings__EUTenantDatabase`   | EU demo tenant database - read by the migrator only                    |
+| Variable | Description |
+| --- | --- |
+| `ConnectionStrings__MasterDatabase` | Full connection string for the master database |
+| `ConnectionStrings__USTenantDatabase` | Fallback tenant database the API registers `TenantDbContext` with |
+| `ConnectionStrings__EUTenantDatabase` | EU demo tenant database - read by the migrator only |
 | `ConnectionStrings__SoloTenantDatabase` | Optional. Owner-operator demo tenant - only needed if `solo` is seeded |
 
 ### Stripe Integration
@@ -55,9 +55,9 @@ Stripe__SecretKey="sk_live_xxx"
 Stripe__WebhookSecret="whsec_xxx"
 ```
 
-| Variable                | Description                           |
-| ----------------------- | ------------------------------------- |
-| `Stripe__SecretKey`     | Stripe API secret key                 |
+| Variable | Description |
+| --- | --- |
+| `Stripe__SecretKey` | Stripe API secret key |
 | `Stripe__WebhookSecret` | Webhook signature verification secret |
 
 ### Google reCAPTCHA (Optional)
@@ -75,11 +75,11 @@ Resend__SenderEmail="noreply@logisticsx.app"
 Resend__SenderName="LogisticsX"
 ```
 
-| Variable              | Description                                           |
-| --------------------- | ----------------------------------------------------- |
-| `Resend__ApiKey`      | Resend API key from resend.com dashboard              |
+| Variable | Description |
+| --- | --- |
+| `Resend__ApiKey` | Resend API key from resend.com dashboard |
 | `Resend__SenderEmail` | Sender email address (must be from a verified domain) |
-| `Resend__SenderName`  | Display name for the sender                           |
+| `Resend__SenderName` | Display name for the sender |
 
 ### Notification Email
 
@@ -98,15 +98,17 @@ Mapbox__AccessToken="pk.xxx"
 ### LLM API (Optional - AI Dispatch)
 
 ```bash
-Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"
+Llm__Providers__OpenAi__ApiKey="sk-xxx"
 ```
 
-| Variable                            | Description                                                                        |
-| ----------------------------------- | ---------------------------------------------------------------------------------- |
-| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key for AI dispatch agent                                            |
-| `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key (alternative provider)                                              |
-| `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key (alternative provider)                                            |
-| `Llm__DefaultProvider`              | Default LLM provider: `Anthropic`, `OpenAI`, `DeepSeek`, `Glm` (default: `OpenAI`) |
+| Variable | Description |
+| --- | --- |
+| `Llm__Providers__OpenAi__ApiKey` | OpenAI API key, used by the default dispatch model (`gpt-6-luna`) |
+| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key (alternative provider) |
+| `Llm__Providers__DeepSeek__ApiKey` | DeepSeek API key (alternative provider) |
+| `Llm__DefaultProvider` | Default LLM provider: `Anthropic`, `OpenAI`, `DeepSeek`, `Glm` (default: `OpenAI`) |
+| `Llm__DefaultReasoningEffort` | `None`, `Low`, `Medium`, `High`, `XHigh` or `Max` (default: `Medium`) |
+| `Llm__PolicyLearningModel` | Model for the nightly dispatch-policy learning pass (default: `deepseek-flash`) |
 
 ### FMCSA Broker Credit Lookup (Optional)
 
@@ -114,8 +116,8 @@ Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"
 Fmcsa__WebKey="your-fmcsa-webkey"
 ```
 
-| Variable        | Description                                                                                                               |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Variable | Description |
+| --- | --- |
 | `Fmcsa__WebKey` | Free webKey from <https://mobile.fmcsa.dot.gov/QCDevsite/>. Load board broker vetting skips FMCSA checks when it's unset. |
 
 ### Portals (Runtime)
@@ -127,9 +129,9 @@ The portal Docker images use runtime environment variable substitution. These va
 MAPBOX_TOKEN="pk.xxx"
 ```
 
-| Variable                                             | Description                                                          |
-| ---------------------------------------------------- | -------------------------------------------------------------------- |
-| `MAPBOX_TOKEN`                                       | Mapbox public access token for maps (TMS portal)                     |
+| Variable | Description |
+| --- | --- |
+| `MAPBOX_TOKEN` | Mapbox public access token for maps (TMS portal) |
 | `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE` | Mapped by compose from the Sentry variables in `deploy/.env.example` |
 
 ### Sentry (Optional - Error Tracking)
@@ -158,10 +160,10 @@ SuperAdmin__LastName="Admin"
 TenantDatabaseDefaults__Password="your-secure-tenant-db-password"
 ```
 
-| Variable                           | Description                                                  |
-| ---------------------------------- | ------------------------------------------------------------ |
-| `SuperAdmin__*`                    | Initial super admin account credentials (synced on each run) |
-| `TenantDatabaseDefaults__Password` | Password used when provisioning new tenant databases         |
+| Variable | Description |
+| --- | --- |
+| `SuperAdmin__*` | Initial super admin account credentials (synced on each run) |
+| `TenantDatabaseDefaults__Password` | Password used when provisioning new tenant databases |
 
 #### Running the migrator against production
 
@@ -194,16 +196,16 @@ The migrator seeds one demo tenant per entry in the `Tenants` array of its
 `appsettings.json`. `DemoTenantsSeeder` reads the whole array, so adding an entry is all it takes to
 get a new demo company; there is no other list to keep in sync.
 
-| Field              | Required | Description                                                                                                                                                                                                                          |
-| ------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Name`             | yes      | Tenant slug, lowercase. This is the value clients send in the `X-Tenant` header, and the `{tenant}` token in the `{tenant}_logisticsx` database name.                                                                                |
-| `CompanyName`      | yes      | Display name (e.g. `Heartland Logistics LLC`).                                                                                                                                                                                       |
-| `BillingEmail`     | yes      | Billing contact on the tenant record.                                                                                                                                                                                                |
-| `Region`           | yes      | `Us` or `Eu`. Drives currency, units, date format, timezone, and the region's seed route points and company address.                                                                                                                 |
-| `SeedDataKey`      | no       | Top-level section in `SeedData/*.json` this tenant draws its users and customers from. Defaults to the region name. **Two tenants in the same region need distinct keys** - see below.                                               |
-| `Presets`          | no       | Tenant presets, e.g. `["GeneralFreight", "SoloOperator"]`. Empty means `GeneralFreight`. When the list changes, the next run re-applies the preset features.                                                                         |
-| `DataScale`        | no       | Multiplier on the fake-data volumes. `1.0` (default) is the fleet-sized demo of 100 loads; `0.12` gives a one-truck tenant 12. Scaled counts never floor below 1.                                                                    |
-| `ConnectionString` | no       | Explicit connection string. When omitted, the seeder falls back to `ConnectionStrings:*TenantDatabase` - a region code stays uppercase (`us` -> `USTenantDatabase`), any other name is title-cased (`solo` -> `SoloTenantDatabase`). |
+| Field | Required | Description |
+| --- | --- | --- |
+| `Name` | yes | Tenant slug, lowercase. This is the value clients send in the `X-Tenant` header, and the `{tenant}` token in the `{tenant}_logisticsx` database name. |
+| `CompanyName` | yes | Display name (e.g. `Heartland Logistics LLC`). |
+| `BillingEmail` | yes | Billing contact on the tenant record. |
+| `Region` | yes | `Us` or `Eu`. Drives currency, units, date format, timezone, and the region's seed route points and company address. |
+| `SeedDataKey` | no | Top-level section in `SeedData/*.json` this tenant draws its users and customers from. Defaults to the region name. **Two tenants in the same region need distinct keys** - see below. |
+| `Presets` | no | Tenant presets, e.g. `["GeneralFreight", "SoloOperator"]`. Empty means `GeneralFreight`. When the list changes, the next run re-applies the preset features. |
+| `DataScale` | no | Multiplier on the fake-data volumes. `1.0` (default) is the fleet-sized demo of 100 loads; `0.12` gives a one-truck tenant 12. Scaled counts never floor below 1. |
+| `ConnectionString` | no | Explicit connection string. When omitted, the seeder falls back to `ConnectionStrings:*TenantDatabase` - a region code stays uppercase (`us` -> `USTenantDatabase`), any other name is title-cased (`solo` -> `SoloTenantDatabase`). |
 
 `SeedDataKey` is load-bearing because a seed user belongs to exactly one tenant (`User.TenantId`).
 Two tenants sharing a key means the second run re-homes the first tenant's logins onto the second
@@ -236,11 +238,11 @@ License__HeartbeatEnabled=true
 #License__HeartbeatUrl="https://api.logisticsx.app/license/heartbeat"
 ```
 
-| Variable                    | Description                                                                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `License__Key`              | Signed commercial license key. When set it wins over the key installed on the admin portal License page. Leave empty for noncommercial use |
-| `License__HeartbeatEnabled` | Daily instance report to the author (instance id, hostname, version, key id, licensee, tenant count). Required under a commercial license  |
-| `License__HeartbeatUrl`     | Receiver for the heartbeat. Only change it for a test receiver                                                                             |
+| Variable | Description |
+| --- | --- |
+| `License__Key` | Signed commercial license key. When set it wins over the key installed on the admin portal License page. Leave empty for noncommercial use |
+| `License__HeartbeatEnabled` | Daily instance report to the author (instance id, hostname, version, key id, licensee, tenant count). Required under a commercial license |
+| `License__HeartbeatUrl` | Receiver for the heartbeat. Only change it for a test receiver |
 
 See [COMMERCIAL-LICENSE.md](../../COMMERCIAL-LICENSE.md) for the license types and what the heartbeat sends.
 
@@ -252,39 +254,7 @@ ASPNETCORE_ENVIRONMENT="Production"
 
 ## Complete .env Example
 
-```bash
-# Ports (images are selected by GITHUB_REPOSITORY + IMAGE_TAG, appended by CI)
-API_PORT=7000
-IDENTITY_SERVER_PORT=7001
-
-# Database (external PostgreSQL)
-ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
-ConnectionStrings__USTenantDatabase="Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=your-secure-password"
-ConnectionStrings__EUTenantDatabase="Host=localhost;Port=5432;Database=eu_logisticsx;Username=postgres;Password=your-secure-password"
-#ConnectionStrings__SoloTenantDatabase="Host=localhost;Port=5432;Database=solo_logisticsx;Username=postgres;Password=your-secure-password"
-
-# Stripe
-Stripe__SecretKey="sk_live_xxx"
-Stripe__WebhookSecret="whsec_xxx"
-
-# Super Admin and Tenant Database
-SuperAdmin__Email="admin@yourdomain.com"
-SuperAdmin__Password="YourSecurePassword123#"
-SuperAdmin__FirstName="Admin"
-SuperAdmin__LastName="Admin"
-TenantDatabaseDefaults__Password="your-secure-tenant-db-password"
-
-# Resend (Email)
-Resend__ApiKey="re_your_api_key_here"
-Resend__SenderEmail="noreply@logisticsx.app"
-Resend__SenderName="LogisticsX"
-
-# Optional: Mapbox
-Mapbox__AccessToken="pk.xxx"
-
-# Optional: LLM API (AI Dispatch)
-Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"
-```
+[deploy/.env.example](../../deploy/.env.example) is the full, current list. Copy it to `deploy/.env`. The QuickBooks variables are explained in [QuickBooks setup](../accounting-quickbooks-setup.md).
 
 ## API Configuration (appsettings.json)
 

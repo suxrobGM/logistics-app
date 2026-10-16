@@ -167,11 +167,24 @@ backup.
       lifecycle rule on the bucket, and the [restore drill](#restore-drill) done once with the
       result written down.
 - [ ] **Health.** Uptime monitor on `https://api.yourdomain.com/health`.
+- [ ] **Migrations.** `deploy/Run-ProdMigrator.ps1` run, so the `AddPilotCarrierFeatures` and
+      `RepairConversationLastSequence` tenant migrations apply and role claims re-sync. Without it the
+      trailer and data import permissions are missing and those pages return 403.
 - [ ] **QuickBooks.** Production Intuit app keys and redirect URI, per
-      [QuickBooks setup](../accounting-quickbooks-setup.md).
+      [QuickBooks setup](../accounting-quickbooks-setup.md), and one end-to-end run against a sandbox
+      company (still open per [the roadmap](../roadmap/quickbooks-sync.md)).
 - [ ] **Samsara.** Production API token and webhook secret for each pilot tenant, per
       [Samsara setup](../eld-samsara-setup.md).
-- [ ] **DAT.** Production DAT credentials, per [DAT setup](../loadboard-dat-setup.md).
+- [ ] **DAT.** Production DAT credentials, per [DAT setup](../loadboard-dat-setup.md), and the
+      **Assumed** truck-posting rows in that guide checked against the live API.
+- [ ] **AI.** An API key for the provider of the selected dispatch model (default `gpt-6-luna`, so
+      `Llm__Providers__OpenAi__ApiKey`) and for `Llm__PolicyLearningModel` (default `deepseek-flash`,
+      so the DeepSeek key).
+- [ ] **IFTA rates.** Official rates for the current quarter entered in Admin portal > IFTA rates;
+      `SeedData/ifta-tax-rates.json` holds approximations.
+- [ ] **Tenant presets.** Each pilot tenant has its presets set (car hauler turns on vehicle
+      transport, intermodal turns on containers).
+- [ ] **Mapbox and notifications.** `Mapbox__AccessToken` and `NotificationEmail` set.
 - [ ] **Firebase.** `FIREBASE_CREDENTIALS_JSON` secret holds the production Admin SDK key (push
       notifications to the driver app), and the driver app build uses the production Firebase
       project (Crashlytics).

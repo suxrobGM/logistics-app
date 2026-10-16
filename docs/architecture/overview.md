@@ -41,7 +41,7 @@ flowchart TB
         SharedGeo["Shared.Geo<br/>Geolocation utilities"]
     end
 
-    subgraph Infra["Infrastructure (14 projects)"]
+    subgraph Infra["Infrastructure (15 projects)"]
         direction LR
         Persistence["Persistence"]
         AI["AI"]
@@ -87,7 +87,7 @@ flowchart TB
     Ab["Application.Abstractions<br/>Infrastructure ports · marker interfaces · DTOs"]
     D["Domain<br/>Entities · Aggregates · Events · Specifications"]
     Pr["Domain.Primitives<br/>Value objects · Enums"]
-    I["Infrastructure<br/>Persistence · Communications · AI · Payments · Documents · Routing · Storage · Tax · Vin<br/>Integrations.Common · Integrations.Eld · Integrations.LoadBoard · Integrations.FuelCards · Integrations.Accounting"]
+    I["Infrastructure<br/>Persistence · Communications · AI · Payments · Documents · Routing · Storage · Tax · Vin · Licensing<br/>Integrations.Common · Integrations.Eld · Integrations.LoadBoard · Integrations.FuelCards · Integrations.Accounting"]
 
     P --> A
     P -.composition root.-> I
@@ -116,14 +116,14 @@ Both infrastructure rules discover what they cover instead of hand-listing it, s
 
 The repository follows the layer split above. Each project name is `Logistics.{Layer}.{Module}`.
 
-| Folder               | Projects                                                                                                                                                           |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `src/Client`         | `Logistics.DemoVideo` (Remotion). The Angular workspace and the driver app moved to the private submodule                                                          |
-| `private/`           | Closed source: `Logistics.Angular` (tms-portal, customer-portal, admin-portal, website, shared library), `Logistics.DriverApp` (Kotlin Multiplatform)              |
-| `src/Core`           | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`, `Logistics.Mediator`       |
-| `src/Shared`         | `Logistics.Shared.Geo`, `Logistics.Shared.Identity`, `Logistics.Shared.Models`                                                                                     |
+| Folder | Projects |
+| --- | --- |
+| `src/Client` | `Logistics.DemoVideo` (Remotion). The Angular workspace and the driver app moved to the private submodule |
+| `private/` | Closed source: `Logistics.Angular` (tms-portal, customer-portal, admin-portal, website, shared library), `Logistics.DriverApp` (Kotlin Multiplatform) |
+| `src/Core` | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`, `Logistics.Mediator` |
+| `src/Shared` | `Logistics.Shared.Geo`, `Logistics.Shared.Identity`, `Logistics.Shared.Models` |
 | `src/Infrastructure` | `Persistence`, `Communications`, `AI`, `Payments`, `Documents`, `Routing`, `Storage`, `Tax`, `Vin`, `Integrations.{Common, Eld, LoadBoard, FuelCards, Accounting}` |
-| `src/Presentation`   | `Logistics.API`, `Logistics.IdentityServer`, `Logistics.McpServer`, `Logistics.TelegramBot`, `Logistics.DbMigrator`                                                |
+| `src/Presentation` | `Logistics.API`, `Logistics.IdentityServer`, `Logistics.McpServer`, `Logistics.TelegramBot`, `Logistics.DbMigrator` |
 
 A public clone gets an empty `private/` directory. Everything else builds and runs without it.
 
@@ -131,57 +131,59 @@ A public clone gets an empty `private/` directory. Everything else builds and ru
 
 ### Backend
 
-| Technology            | Purpose                                       |
-| --------------------- | --------------------------------------------- |
-| .NET 10               | Runtime                                       |
-| ASP.NET Core          | Web framework                                 |
-| Entity Framework Core | ORM (lazy loading enabled)                    |
-| Open.IdentityServer   | OAuth2 / OIDC                                 |
-| Logistics.Mediator    | In-repo CQRS dispatch + pipeline behaviours   |
-| FluentValidation      | Request validation                            |
-| Serilog               | Structured logging                            |
-| SignalR               | Real-time hubs (tracking, chat, notification) |
-| Hangfire              | Background jobs                               |
-| QuestPDF              | Invoice & payroll PDF generation              |
+| Technology | Purpose |
+| --- | --- |
+| .NET 10 | Runtime |
+| ASP.NET Core | Web framework |
+| Entity Framework Core | ORM (lazy loading enabled) |
+| Open.IdentityServer | OAuth2 / OIDC |
+| Logistics.Mediator | In-repo CQRS dispatch + pipeline behaviours |
+| FluentValidation | Request validation |
+| Serilog | Structured logging |
+| SignalR | Real-time hubs (tracking, chat, notification) |
+| Hangfire | Background jobs |
+| QuestPDF | Invoice, settlement, IFTA, factoring and eBOL PDFs |
 
 ### Frontend & Mobile
 
-| Technology              | Used by                                   |
-| ----------------------- | ----------------------------------------- |
+| Technology | Used by |
+| --- | --- |
 | Angular 22 + spartan/ui | TMS Portal, Customer Portal, Admin Portal |
-| Angular 22 SSR          | Marketing Website                         |
-| Tailwind CSS            | All Angular projects                      |
-| Kotlin Multiplatform    | Driver App (shared business logic)        |
-| Compose Multiplatform   | Driver App UI                             |
-| Remotion                | DemoVideo (programmatic marketing video)  |
+| Angular 22 SSR | Marketing Website |
+| Tailwind CSS | All Angular projects |
+| Kotlin Multiplatform | Driver App (shared business logic) |
+| Compose Multiplatform | Driver App UI |
+| Remotion | DemoVideo (programmatic marketing video) |
 
 ### Infrastructure & DevOps
 
-| Technology     | Purpose          |
-| -------------- | ---------------- |
-| PostgreSQL 18  | Database         |
-| Docker         | Containerization |
-| Docker Compose | Orchestration    |
-| Nginx          | Reverse proxy    |
-| GitHub Actions | CI/CD            |
+| Technology | Purpose |
+| --- | --- |
+| PostgreSQL 18 | Database |
+| Docker | Containerization |
+| Docker Compose | Orchestration |
+| Nginx | Reverse proxy |
+| GitHub Actions | CI/CD |
 
 ### External Services
 
-| Service                            | Purpose                                 |
-| ---------------------------------- | --------------------------------------- |
-| Stripe                             | Subscription billing                    |
-| Stripe Connect                     | Direct payouts to trucking companies    |
-| Anthropic / OpenAI / DeepSeek      | LLM providers for the AI dispatch agent |
-| Firebase                           | Push notifications                      |
-| Mapbox                             | Maps, geocoding, route optimization     |
-| Azure Blob / Cloudflare R2         | Document & photo storage (pluggable)    |
-| NHTSA API                          | VIN decoding                            |
-| Samsara / Motive / TT ELD / Geotab | ELD / HOS providers                     |
-| DAT                                | Load board (search, truck posts, rates) |
-| WEX / EFS                          | Fuel card transaction feeds             |
-| QuickBooks Online                  | Accounting sync                         |
-| Resend                             | Transactional email                     |
-| Google reCAPTCHA                   | Public form protection                  |
+| Service | Purpose |
+| --- | --- |
+| Stripe | Subscription billing |
+| Stripe Connect | Direct payouts to trucking companies |
+| Anthropic / OpenAI / DeepSeek | LLM providers for the AI dispatch agent |
+| Firebase | Push notifications |
+| Mapbox | Maps, geocoding, route optimization |
+| Azure Blob / Cloudflare R2 | Document & photo storage (pluggable) |
+| NHTSA API | VIN decoding |
+| Samsara / Motive / TT ELD / Geotab | ELD / HOS providers |
+| DAT | Load board (search, truck posts, rates) |
+| WEX / EFS | Fuel card transaction feeds |
+| QuickBooks Online | Accounting sync |
+| Resend | Transactional email |
+| Google reCAPTCHA | Public form protection |
+| Sentry | Error tracking (API, Identity Server, portals) |
+| FMCSA QCMobile | Broker authority checks |
 
 ## Design Patterns
 
@@ -337,8 +339,8 @@ Accounting sync providers: QuickBooks Online and a Demo provider, selected throu
 
 ### Logistics.Infrastructure.Documents
 
-- PDF generation via QuestPDF (invoices, payroll stubs, BOL, POD)
-- Template-based PDF import / extraction
+- PDF generation via QuestPDF: invoices (with the factoring notice of assignment), payroll stubs and settlements, IFTA reports, factoring schedules of accounts, and the car hauler eBOL
+- LLM PDF import (rate confirmations, multi-vehicle dispatch sheets) and the CSV/XLSX `SpreadsheetReader` used by data import
 
 ### Logistics.Infrastructure.Routing
 
@@ -381,29 +383,29 @@ Accounting sync providers: QuickBooks Online and a Demo provider, selected throu
 
 ## Presentation Projects
 
-| Project                    | Role                                                                                                 |
-| -------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `Logistics.API`            | REST API, SignalR hubs, Hangfire background jobs, webhooks (Stripe, ELD)                             |
-| `Logistics.IdentityServer` | OAuth2 / OIDC via Open.IdentityServer, JWT issuance, user management                                 |
-| `Logistics.McpServer`      | Library composed into the API: MCP over Streamable HTTP at `/mcp`, exposing the agent tool catalogue |
-| `Logistics.TelegramBot`    | Library composed into the API: Telegram bot for driver / dispatcher commands                         |
-| `Logistics.DbMigrator`     | Console app: standalone EF Core migrations runner (master + tenant)                                  |
-| `Logistics.HostDefaults`   | Shared library: host bootstrap for the web hosts (`LogisticsHost.Run`, CORS, data protection)        |
+| Project | Role |
+| --- | --- |
+| `Logistics.API` | REST API, SignalR hubs, Hangfire background jobs, webhooks (Stripe, ELD) |
+| `Logistics.IdentityServer` | OAuth2 / OIDC via Open.IdentityServer, JWT issuance, user management |
+| `Logistics.McpServer` | Library composed into the API: MCP over Streamable HTTP at `/mcp`, exposing the agent tool catalogue |
+| `Logistics.TelegramBot` | Library composed into the API: Telegram bot for driver / dispatcher commands |
+| `Logistics.DbMigrator` | Console app: standalone EF Core migrations runner (master + tenant) |
+| `Logistics.HostDefaults` | Shared library: host bootstrap for the web hosts (`LogisticsHost.Run`, CORS, data protection) |
 
 Only **two** projects are independently runnable web hosts (API, IdentityServer). `McpServer` and `TelegramBot` are class libraries with no `Program.cs`; the API composes them (`AddMcpServerInfrastructure` + `MapMcpEndpoint`, `AddTelegramBotInfrastructure` + `MapTelegramWebhook`). `DbMigrator` is a console app. See [Hosts and cross-cutting concerns](#hosts-and-cross-cutting-concerns).
 
 ## Hosts and cross-cutting concerns
 
-The two web hosts share a bootstrap: `Program.cs` is a one-line `LogisticsHost.Run(args, …)` shell (`Logistics.HostDefaults`) that owns the Serilog logger, the standard HTTP resilience handler, health checks at `/health`, and the top-level try/catch. Each host's real wiring lives in its own `Setup.cs` (`ConfigureServices` + `ConfigurePipeline`); the API additionally schedules its Hangfire jobs. `HostDefaults` also supplies `AddLogisticsCors`, `AddLogisticsDataProtection` (app names `LogisticsX` / `LogisticsX.IdentityServer`, key ring persisted in the master DB), and the `AddIpFixedWindowPolicy` rate-limit helper.
+The two web hosts share a bootstrap: `Program.cs` is a one-line `LogisticsHost.Run(args, …)` shell (`Logistics.HostDefaults`) that owns the Serilog logger, Sentry error tracking (only when `Sentry__Dsn` is set; see [Observability and Backups](../deployment/observability-and-backups.md)), the standard HTTP resilience handler (retries disabled for unsafe methods; the LLM client opts out so long agent turns are not cut off at 30 s), health checks at `/health` (the API adds a Hangfire heartbeat check), and the top-level try/catch. Each host's real wiring lives in its own `Setup.cs` (`ConfigureServices` + `ConfigurePipeline`); the API additionally schedules its Hangfire jobs. `HostDefaults` also supplies `AddLogisticsCors`, `AddLogisticsDataProtection` (app names `LogisticsX` / `LogisticsX.IdentityServer`, key ring persisted in the master DB), and the `AddIpFixedWindowPolicy` rate-limit helper.
 
 ### Rate limiting
 
-| Policy             | Applies to           | Limit                               | Partitioned by                         |
-| ------------------ | -------------------- | ----------------------------------- | -------------------------------------- |
-| _global_ (unnamed) | API, all endpoints   | 100 / min, fixed window             | authenticated user, else `Host` header |
-| `impersonation`    | API + IdentityServer | 5 / 15 min, fixed window (no queue) | client IP                              |
-| `login`            | IdentityServer login | 10 / 15 min, sliding window         | client IP                              |
-| `mcp`              | API `/mcp` endpoint  | 100 / min, fixed window             | API-key subject, else IP               |
+| Policy | Applies to | Limit | Partitioned by |
+| --- | --- | --- | --- |
+| _global_ (unnamed) | API, all endpoints | 100 / min, fixed window | authenticated user, else `Host` header |
+| `impersonation` | API + IdentityServer | 5 / 15 min, fixed window (no queue) | client IP |
+| `login` | IdentityServer login | 10 / 15 min, sliding window | client IP |
+| `mcp` | API `/mcp` endpoint | 100 / min, fixed window | API-key subject, else IP |
 
 Rejections return `429`. The per-IP `impersonation` policy is built by the shared `AddIpFixedWindowPolicy` helper in `HostDefaults`.
 
@@ -416,7 +418,7 @@ The dashboard is mounted at `/hangfire` and gated by `HangfireDashboardAuthoriza
 Inbound third-party webhooks land on `WebhookController` (mounted at `/webhooks/*`, `[AllowAnonymous]` - the signature is the auth) and follow two invariants:
 
 - **Tenant from the URL.** The endpoints are anonymous, so ELD webhooks are registered per tenant at `/webhooks/eld/{provider}/{tenantId}` and the signature is checked against that tenant's stored secret.
-- **Signature first, fail closed.** The raw request body is verified before it is parsed - `WebhookSignature.VerifySamsara` (`v1:{timestamp}:{body}`, 5-minute replay window) for Samsara, `WebhookSignature.VerifyHmacSha256` for the other ELD and load-board providers (both constant-time, in `Integrations.Common`), `EventUtility.ConstructEvent` for Stripe. A configured-but-missing or incorrect signature returns `400`. Stripe specifics live in [stripe-webhooks.md](../stripe-webhooks.md).
+- **Signature first, fail closed.** The raw request body is verified before it is parsed - `WebhookSignature.VerifySamsara` (`v1:{timestamp}:{body}`, 5-minute replay window) for Samsara, `WebhookSignature.VerifyHmacSha256` for Motive and Geotab, `WebhookSignature.VerifySvix` for Resend (all constant-time, in `Integrations.Common`), `EventUtility.ConstructEvent` for Stripe. A configured-but-missing or incorrect signature returns `400`. Stripe specifics live in [stripe-webhooks.md](../stripe-webhooks.md).
 - **Idempotency.** Providers retry, so each processed delivery is recorded in the master-DB `ProcessedWebhookEvent` ledger, unique on `(Provider, EventKey)`. `EventKey` is the provider's event id when present, else a SHA-256 hash of the raw body. A duplicate is a no-op returning `200`. `WebhookEventCleanupJob` prunes old rows daily.
 
 ## Multi-Tenancy

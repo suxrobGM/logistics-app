@@ -10,52 +10,52 @@ in its **Notes** section. Keep this index's Status column in sync.
 
 ## Phase 1 - Table stakes (US small-carrier deal-breakers)
 
-| Feature                                             | Priority | Effort | Status  |
-| --------------------------------------------------- | -------- | ------ | ------- |
-| [QuickBooks sync](quickbooks-sync.md)               | P0       | M      | Done    |
-| [IFTA fuel tax reporting](ifta-reporting.md)        | P0       | M      | Done    |
-| [Fuel card integrations](fuel-card-integrations.md) | P0       | M      | Done    |
-| [Factoring integration](factoring-integration.md)   | P0       | M      | Done    |
-| [Broker credit check](broker-credit-check.md)       | P0       | S      | Done    |
-| [EDI integration](edi-integration.md)               | P2       | XL     | Planned |
+| Feature | Priority | Effort | Status |
+| --- | --- | --- | --- |
+| [QuickBooks sync](quickbooks-sync.md) | P0 | M | Done (sandbox run pending) |
+| [IFTA fuel tax reporting](ifta-reporting.md) | P0 | M | Done |
+| [Fuel card integrations](fuel-card-integrations.md) | P0 | M | Done |
+| [Factoring integration](factoring-integration.md) | P0 | M | Done (email v1) |
+| [Broker credit check](broker-credit-check.md) | P0 | S | Done |
+| [EDI integration](edi-integration.md) | P2 | XL | Planned |
 
 ## Phase 2 - AI differentiation (extend the existing agent platform)
 
-| Feature                                                | Priority | Effort | Status  |
-| ------------------------------------------------------ | -------- | ------ | ------- |
-| [AI preference learning](ai-preference-learning.md)    | P1       | M      | Done    |
-| [AI exception sentinel](ai-exception-sentinel.md)      | P1       | L      | Planned |
-| [Graduated autonomy](ai-graduated-autonomy.md)         | P1       | M      | Planned |
-| [AI eval harness](ai-eval-harness.md)                  | P1       | M      | Planned |
-| [Container & terminal AI tools](ai-container-tools.md) | P1       | S      | Done    |
-| [TMS-wide AI copilot](ai-tms-copilot.md)               | P1       | L      | Done    |
-| [AI rate negotiation](ai-rate-negotiation.md)          | P2       | L      | Done    |
-| [Voice driver assistant](ai-voice-driver-assistant.md) | P2       | XL     | Planned |
-| [MCP client (outbound)](mcp-client-integrations.md)    | P2       | L      | Planned |
+| Feature | Priority | Effort | Status |
+| --- | --- | --- | --- |
+| [AI preference learning](ai-preference-learning.md) | P1 | M | Done |
+| [AI exception sentinel](ai-exception-sentinel.md) | P1 | L | Planned |
+| [Graduated autonomy](ai-graduated-autonomy.md) | P1 | M | Planned |
+| [AI eval harness](ai-eval-harness.md) | P1 | M | Planned |
+| [Container & terminal AI tools](ai-container-tools.md) | P1 | S | Done |
+| [TMS-wide AI copilot](ai-tms-copilot.md) | P1 | L | Done |
+| [AI rate negotiation](ai-rate-negotiation.md) | P2 | L | Done |
+| [Voice driver assistant](ai-voice-driver-assistant.md) | P2 | XL | Planned |
+| [MCP client (outbound)](mcp-client-integrations.md) | P2 | L | Planned |
 
 ## Phase 3 - Wedge products (attack competitor economics)
 
-| Feature                                              | Priority | Effort | Status  |
-| ---------------------------------------------------- | -------- | ------ | ------- |
-| [Same-day carrier pay](same-day-pay.md)              | P1       | L      | Planned |
-| [AI customer update agent](customer-update-agent.md) | P1       | M      | Planned |
-| [Predictive maintenance](predictive-maintenance.md)  | P2       | L      | Planned |
+| Feature | Priority | Effort | Status |
+| --- | --- | --- | --- |
+| [Same-day carrier pay](same-day-pay.md) | P1 | L | Planned |
+| [AI customer update agent](customer-update-agent.md) | P1 | M | Planned |
+| [Predictive maintenance](predictive-maintenance.md) | P2 | L | Planned |
 
 ## Phase 4 - Market expansion
 
-| Feature                                              | Priority | Effort | Status      |
-| ---------------------------------------------------- | -------- | ------ | ----------- |
-| [EU market readiness](eu-market-readiness.md)        | P1       | M      | Planned     |
-| [Drayage / intermodal vertical](drayage-vertical.md) | P1       | L      | In progress |
-| [Owner-operator (solo) mode](owner-operator-mode.md) | P1       | M      | Done        |
-| [Car hauler load boards](car-hauler-load-boards.md)  | P1       | M      | Planned     |
+| Feature | Priority | Effort | Status |
+| --- | --- | --- | --- |
+| [EU market readiness](eu-market-readiness.md) | P1 | M | Planned |
+| [Drayage / intermodal vertical](drayage-vertical.md) | P1 | L | In Progress |
+| [Owner-operator (solo) mode](owner-operator-mode.md) | P1 | M | Done |
+| [Car hauler load boards](car-hauler-load-boards.md) | P1 | M | Planned (blocked on vendor access) |
 
 ## Launch hygiene
 
-| Feature                                         | Priority | Effort | Status |
-| ----------------------------------------------- | -------- | ------ | ------ |
-| [AI cost guardrails](ai-cost-guardrails.md)     | P0       | S      | Done   |
-| [Pricing page polish](pricing-launch-polish.md) | P1       | S      | Done   |
+| Feature | Priority | Effort | Status |
+| --- | --- | --- | --- |
+| [AI cost guardrails](ai-cost-guardrails.md) | P0 | S | Done |
+| [Pricing page polish](pricing-launch-polish.md) | P1 | S | Done |
 
 ## Competitive cheat sheet
 
