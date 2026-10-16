@@ -99,6 +99,26 @@ public class PayrollServiceTests
         Assert.Equal((decimal)expected, payroll.LineItems.Single(l => l.Type == InvoiceLineItemType.BasePay).Total);
     }
 
+    /// <summary>Load distances are meters; paying the rate on them raw overpaid by ~1600x.</summary>
+    [Theory]
+    [InlineData(DistanceUnit.Miles, 160_934.4, 0.65, 65.00)]
+    [InlineData(DistanceUnit.Kilometers, 100_000, 0.50, 50.00)]
+    public async Task Build_RatePerDistance_PaysPerTenantUnit(
+        DistanceUnit unit, double meters, double rate, double expected)
+    {
+        var tenant = TestTenant.Create();
+        tenant.Settings.DistanceUnit = unit;
+        _tenantUow.GetCurrentTenant().Returns(tenant);
+        _driver.SalaryType = SalaryType.RatePerDistance;
+        _driver.Salary = new Money { Amount = (decimal)rate, Currency = "USD" };
+        Delivered(1000m).Distance = meters;
+
+        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, Start, End);
+
+        Assert.Equal((decimal)expected, Math.Round(payroll.Total.Amount, 2));
+        Assert.Equal(meters, payroll.TotalDistanceDriven);
+    }
+
     [Fact]
     public async Task Build_PerLoad_PaysFlatPerDeliveredLoad()
     {

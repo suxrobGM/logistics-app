@@ -25,7 +25,7 @@ public partial class Load : AuditableEntity, ITenantEntity
     public required Money DeliveryCost { get; set; }
 
     /// <summary>
-    /// Total distance of the load in kilometers.
+    /// Total distance of the load in meters.
     /// </summary>
     public double Distance { get; set; }
 

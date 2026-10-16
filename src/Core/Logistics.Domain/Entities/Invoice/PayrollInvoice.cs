@@ -21,7 +21,7 @@ public partial class PayrollInvoice : Invoice
     #region Calculated Earnings Data
 
     /// <summary>
-    /// Total distance driven during the period (in kilometers).
+    /// Total distance driven during the period, in meters.
     /// Used for RatePerDistance salary type calculations.
     /// </summary>
     public double TotalDistanceDriven { get; set; }

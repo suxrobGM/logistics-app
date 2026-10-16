@@ -302,11 +302,14 @@ internal class PayrollService(
                 return new GrossPay(months * rate, $"Monthly salary x {months}");
             case SalaryType.RatePerDistance:
             {
-                // Load distances are kilometres; the rate is per tenant distance unit.
+                // Load distances are meters; the rate is per the tenant's distance unit.
                 var loads = await GetDeliveredLoadsAsync(employee.Id, startDate, endDate, ct);
-                var distance = loads.Sum(l => l.Distance);
-                return new GrossPay((decimal)distance * rate, $"{loads.Count} load(s), {distance:0} km x {rate:0.00}",
-                    Distance: distance);
+                var meters = loads.Sum(l => l.Distance);
+                var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
+                var distance = unit.FromMeters(meters);
+                return new GrossPay((decimal)distance * rate,
+                    $"{loads.Count} load(s), {distance:0} {unit.Abbreviation()} x {rate:0.00}",
+                    Distance: meters);
             }
             case SalaryType.Hourly:
             {

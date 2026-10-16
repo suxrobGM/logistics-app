@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Documents.Pdf.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -76,7 +77,8 @@ internal static class PayrollHeaderSection
                     }
                     if (payroll.TotalDistanceDriven > 0)
                     {
-                        col.Item().Text($"Total Distance Driven: {payroll.TotalDistanceDriven:F1} km")
+                        var unit = tenant.Settings.DistanceUnit;
+                        col.Item().Text($"Total Distance Driven: {unit.FromMeters(payroll.TotalDistanceDriven):F1} {unit.Abbreviation()}")
                             .FontSize(10).FontColor(Colors.Grey.Darken2);
                     }
                 });

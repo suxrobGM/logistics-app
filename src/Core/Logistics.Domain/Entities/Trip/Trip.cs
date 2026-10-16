@@ -17,7 +17,7 @@ public partial class Trip : AuditableEntity, ITenantEntity
     public required string Name { get; set; }
 
     /// <summary>
-    /// Total distance of the trip in kilometers.
+    /// Total distance of the trip in meters.
     /// </summary>
     public double TotalDistance { get; set; }
 
