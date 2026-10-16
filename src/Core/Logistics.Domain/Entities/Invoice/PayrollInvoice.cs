@@ -5,6 +5,10 @@ namespace Logistics.Domain.Entities;
 public partial class PayrollInvoice : Invoice
 {
     public override InvoiceType Type { get; set; } = InvoiceType.Payroll;
+
+    /// <summary>A payroll invoice is paid only once approved, so losing its payments returns it there.</summary>
+    protected override InvoiceStatus UnpaidStatus(DateTime now) => InvoiceStatus.Approved;
+
     public required Guid EmployeeId { get; set; }
     public virtual Employee Employee { get; set; } = null!;
 

@@ -86,29 +86,43 @@ public abstract partial class Invoice : AuditableEntity, IMasterEntity, ITenantE
     public void ApplyPayment(Payment payment)
     {
         Payments.Add(payment);
-        var paid = Payments.Sum(p => p.Amount);
-        Status = paid >= Total.Amount ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
+        RecalculatePaymentStatus(DateTime.UtcNow);
     }
 
     /// <summary>
-    /// Reverses <see cref="ApplyPayment"/>: drops the payment and sets the status from what is still
-    /// paid, the due date and whether the invoice was sent. The caller deletes the payment.
+    /// Reverses <see cref="ApplyPayment"/>: drops the payment and recalculates the status. The caller
+    /// deletes the payment.
     /// </summary>
     public void RemovePayment(Payment payment, DateTime now)
     {
         Payments.Remove(payment);
+        RecalculatePaymentStatus(now);
+    }
+
+    /// <summary>
+    /// Sets the status from what the payments add up to. Call it after a payment's amount changes.
+    /// </summary>
+    public void RecalculatePaymentStatus(DateTime now)
+    {
         var paid = Payments.Sum(p => p.Amount.Amount);
         if (paid > 0m)
         {
             Status = paid >= Total.Amount ? InvoiceStatus.Paid : InvoiceStatus.PartiallyPaid;
         }
-        else if (DueDate < now)
-        {
-            Status = InvoiceStatus.Overdue;
-        }
         else
         {
-            Status = SentAt is not null ? InvoiceStatus.Sent : InvoiceStatus.Issued;
+            Status = UnpaidStatus(now);
         }
+    }
+
+    /// <summary>The status of an invoice with nothing paid: from the due date and whether it was sent.</summary>
+    protected virtual InvoiceStatus UnpaidStatus(DateTime now)
+    {
+        if (DueDate < now)
+        {
+            return InvoiceStatus.Overdue;
+        }
+
+        return SentAt is not null ? InvoiceStatus.Sent : InvoiceStatus.Issued;
     }
 }
