@@ -68,7 +68,7 @@ public class AIDispatchServiceTests
             MaxTokens = 100,
             Providers = new Dictionary<LlmProvider, LlmProviderOptions>
             {
-                [LlmProvider.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-haiku-4-5" }
+                [LlmProvider.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-haiku-5-5" }
             }
         });
 

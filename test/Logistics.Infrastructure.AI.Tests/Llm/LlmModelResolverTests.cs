@@ -23,9 +23,9 @@ public class LlmModelResolverTests
     {
         var providers = new Dictionary<LlmProvider, LlmProviderOptions>
         {
-            [LlmProvider.Anthropic] = new() { ApiKey = "", Model = "claude-haiku-4-5" },
-            [LlmProvider.OpenAI] = new() { ApiKey = "", Model = "gpt-5.6-luna" },
-            [LlmProvider.DeepSeek] = new() { ApiKey = "", Model = "deepseek-v4-flash" }
+            [LlmProvider.Anthropic] = new() { ApiKey = "", Model = "claude-haiku-5-5" },
+            [LlmProvider.OpenAI] = new() { ApiKey = "", Model = "gpt-6-luna" },
+            [LlmProvider.DeepSeek] = new() { ApiKey = "", Model = "deepseek-flash" }
         };
 
         foreach (var provider in providersWithKeys)
@@ -47,11 +47,11 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_NoOverride_UsesSystemSetting()
     {
         _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-sonnet-5");
+            .Returns("claude-sonnet-5-5");
 
         var selection = await _sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic));
 
-        Assert.Equal("claude-sonnet-5", selection.Model);
+        Assert.Equal("claude-sonnet-5-5", selection.Model);
         Assert.Equal(LlmProvider.Anthropic, selection.Provider);
     }
 
@@ -62,7 +62,7 @@ public class LlmModelResolverTests
 
         var selection = await _sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic));
 
-        Assert.Equal("claude-haiku-4-5", selection.Model);
+        Assert.Equal("claude-haiku-5-5", selection.Model);
         Assert.Equal(LlmProvider.Anthropic, selection.Provider);
     }
 
@@ -74,12 +74,12 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_KnownOverrideWithApiKey_UsesItAndDerivesProvider()
     {
         _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-sonnet-5");
+            .Returns("claude-sonnet-5-5");
 
         var selection = await _sut.ResolveAsync(
-            ConfigWith(LlmProvider.Anthropic, LlmProvider.DeepSeek), "deepseek-v4-flash");
+            ConfigWith(LlmProvider.Anthropic, LlmProvider.DeepSeek), "deepseek-flash");
 
-        Assert.Equal("deepseek-v4-flash", selection.Model);
+        Assert.Equal("deepseek-flash", selection.Model);
         // Provider comes from the catalog, so it cannot drift.
         Assert.Equal(LlmProvider.DeepSeek, selection.Provider);
     }
@@ -88,12 +88,12 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_UnknownOverride_FallsBackToGlobalModel()
     {
         _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-sonnet-5");
+            .Returns("claude-sonnet-5-5");
 
         var selection = await _sut.ResolveAsync(
             ConfigWith(LlmProvider.Anthropic), "gpt-9-imaginary");
 
-        Assert.Equal("claude-sonnet-5", selection.Model);
+        Assert.Equal("claude-sonnet-5-5", selection.Model);
     }
 
     /// <summary>
@@ -104,12 +104,12 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_OverrideProviderHasNoApiKey_FallsBackToGlobalModel()
     {
         _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-sonnet-5");
+            .Returns("claude-sonnet-5-5");
 
         var selection = await _sut.ResolveAsync(
-            ConfigWith(LlmProvider.Anthropic), "deepseek-v4-flash");
+            ConfigWith(LlmProvider.Anthropic), "deepseek-flash");
 
-        Assert.Equal("claude-sonnet-5", selection.Model);
+        Assert.Equal("claude-sonnet-5-5", selection.Model);
         Assert.Equal(LlmProvider.Anthropic, selection.Provider);
     }
 
@@ -120,11 +120,11 @@ public class LlmModelResolverTests
     public async Task ResolveAsync_BlankOverride_IsIgnored(string? modelId)
     {
         _systemSettings.GetAsync(AISettingsKeys.Model, Arg.Any<CancellationToken>())
-            .Returns("claude-sonnet-5");
+            .Returns("claude-sonnet-5-5");
 
         var selection = await _sut.ResolveAsync(ConfigWith(LlmProvider.Anthropic), modelId);
 
-        Assert.Equal("claude-sonnet-5", selection.Model);
+        Assert.Equal("claude-sonnet-5-5", selection.Model);
     }
 
     #endregion

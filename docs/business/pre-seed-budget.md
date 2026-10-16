@@ -42,7 +42,7 @@ done. Remaining risk is distribution, which this raise directly addresses.
 - **No engineering payroll** - the founder builds and operates everything. This eliminates the single
   largest cost typical of a SaaS startup.
 - **Self-hosted infrastructure** on a low-cost VPS (~$100/yr) - keeps infra near-zero until tenant count grows.
-- The default LLM is a **low-cost Standard-tier model** (currently GPT-5.6 Luna, with DeepSeek as an
+- The default LLM is a **low-cost Standard-tier model** (currently GPT-6 Luna, with DeepSeek as an
   alternative - both extremely low cost-per-token); the $50/mo line is a conservative ceiling.
 - **Stripe fees** (~2.9% + 30¢ + Connect fees) come out of payment volume - they scale with revenue and
   are **not** a budgeted cash line.

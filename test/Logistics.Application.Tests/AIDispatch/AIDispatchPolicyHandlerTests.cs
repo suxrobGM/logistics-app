@@ -49,7 +49,7 @@ public class AIDispatchPolicyHandlerTests
     public async Task Get_ExistingRow_ReturnsBothSections()
     {
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("- Learned rule", 20, DateTime.UtcNow, "deepseek-v4-flash", 0.001m);
+        policy.ApplyLearnedPolicy("- Learned rule", 20, DateTime.UtcNow, "deepseek-flash", 0.001m);
         policy.EditManual("- My rule", isEnabled: true, Guid.NewGuid());
         SetPolicy(policy);
 
@@ -93,7 +93,7 @@ public class AIDispatchPolicyHandlerTests
     public async Task Update_ExistingRow_LeavesGeneratedContentAlone()
     {
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("- Learned rule", 20, DateTime.UtcNow, "deepseek-v4-flash", 0.001m);
+        policy.ApplyLearnedPolicy("- Learned rule", 20, DateTime.UtcNow, "deepseek-flash", 0.001m);
         SetPolicy(policy);
 
         var sut = new UpdateAIDispatchPolicyHandler(_tenantUow, _currentUser);
@@ -165,7 +165,7 @@ public class AIDispatchPolicyHandlerTests
     public void ToDto_OmitsModelAndCost()
     {
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("- Learned rule", 20, DateTime.UtcNow, "claude-sonnet-5", 12.34m);
+        policy.ApplyLearnedPolicy("- Learned rule", 20, DateTime.UtcNow, "claude-sonnet-5-5", 12.34m);
 
         var dto = policy.ToDto();
         var propertyNames = dto.GetType().GetProperties().Select(p => p.Name).ToList();

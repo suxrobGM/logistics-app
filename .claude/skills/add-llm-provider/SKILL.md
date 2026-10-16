@@ -118,9 +118,9 @@ public static readonly IReadOnlyList<LlmModelInfo> Models =
 parameter for the admin-set effort level:
 
 - `OpenAIEffort` - takes a reasoning effort, which OpenAI only accepts alongside function tools on
-  `/v1/responses` (the GPT-5.6 Luna 400). Put these under `LlmProvider.OpenAI` - that enum value is
+  `/v1/responses` (the GPT-6 Luna 400). Put these under `LlmProvider.OpenAI` - that enum value is
   what selects the Responses provider.
-- `AnthropicAdaptive` - Claude adaptive thinking + effort (Sonnet 5 class). Also suppresses
+- `AnthropicAdaptive` - Claude adaptive thinking + effort (Sonnet 5.5 / Haiku 5.5 class). Also suppresses
   temperature, which these models reject.
 - `None` (default) - no reasoning parameter is ever sent. For models without a reasoning control,
   and for compatible endpoints that reject it (DeepSeek).
@@ -143,7 +143,7 @@ selected model in `UpdateAISettingsCommand`. The admin UI populates automaticall
 
 - **Wrong `ReasoningStyle`**: a flagged non-reasoning endpoint rejects the parameter. Unsure? Start with `None`.
 - **`LlmProvider.OpenAI` for a non-OpenAI endpoint**: that value selects the Responses provider, and only OpenAI/Azure serve `/v1/responses`. Everything else 404s.
-- **Catalog id ≠ `LlmPricing` key**: silently falls back to Sonnet 5 rates.
+- **Catalog id ≠ `LlmPricing` key**: silently falls back to Sonnet 5.5 rates.
 - **No `BaseUrl`** on a compatible provider: defaults to OpenAI's endpoint and 401s.
 - **Raw token counts**: OpenAI folds cached tokens into `input_tokens`, so fill `LlmTokenUsage` via `OpenAIUsage.From` or every cache hit bills twice.
 - **SDK types leaking**: importing the provider SDK in any file other than `Llm/Providers/{X}LlmProvider.cs` breaks the abstraction.

@@ -14,28 +14,30 @@ internal static class LlmPricing
         decimal CacheReadPerMToken = 0m,
         decimal CacheWritePerMToken = 0m);
 
-    // Prices as of July 2026
+    // Prices as of October 2026
     private static readonly Dictionary<string, ModelPricing> Pricing = new()
     {
         // Anthropic - https://platform.claude.com/docs/en/about-claude/pricing
-        // Sonnet 5 intro pricing ends 2026-08-31 (reverts to 3 / 15 / 0.30 / 3.75).
-        ["claude-sonnet-5"] = new(2m, 10m, 0.20m, 2.50m),
-        ["claude-haiku-4-5"] = new(1m, 5m, 0.10m, 1.25m),
+        // Haiku 5.5 rates cover prompts up to 100K tokens (0.50 / 2.50 beyond).
+        ["claude-sonnet-5-5"] = new(2m, 10m, 0.20m, 2.50m),
+        ["claude-haiku-5-5"] = new(0.10m, 0.50m, 0.01m, 0.125m),
 
-        // OpenAI GPT-5.6 - https://openai.com/api/pricing/ (cache writes: 1.25x input)
-        ["gpt-5.6-terra"] = new(2m, 12m, 0.20m, 2.50m),
-        ["gpt-5.6-luna"] = new(0.20m, 1.20m, 0.02m, 0.25m),
+        // OpenAI GPT-6 - https://developers.openai.com/api/docs/pricing
+        // Short-context rates; prompts over 272K input tokens bill higher.
+        ["gpt-6-sol"] = new(2m, 10m, 0.20m, 2.50m),
+        ["gpt-6-luna"] = new(0.10m, 0.50m, 0.01m, 0.125m),
 
         // DeepSeek - https://api-docs.deepseek.com/quick_start/pricing/
-        ["deepseek-v4-flash"] = new(0.14m, 0.28m, 0.0028m),
-        ["deepseek-v4-pro"] = new(0.435m, 0.87m, 0.003625m),
+        // Peak-hour rates (off-peak is half): the call time is unknown, so charge the higher one.
+        ["deepseek-flash"] = new(0.30m, 1.20m, 0.006m),
+        ["deepseek-v4-pro"] = new(1.32m, 3.96m, 0.044m),
     };
 
     /// <summary>
     /// Cost fallback for an unrecognised model: charging Sonnet rates is the conservative choice,
     /// since an unknown model is most often a cheap or misconfigured one.
     /// </summary>
-    private static readonly ModelPricing DefaultPricing = Pricing["claude-sonnet-5"];
+    private static readonly ModelPricing DefaultPricing = Pricing["claude-sonnet-5-5"];
 
     /// <summary>All model ids with a pricing entry. Used by parity tests against the catalog.</summary>
     internal static IReadOnlyCollection<string> KnownModels => Pricing.Keys;

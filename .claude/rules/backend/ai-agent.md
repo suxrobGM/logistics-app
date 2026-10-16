@@ -56,8 +56,8 @@ on the model** - the wire protocol belongs to the endpoint, not the model's reas
 - **Don't move OpenAI back onto chat completions.** Function tools plus any non-`none`
   `reasoning_effort` is a hard 400 there; that was the outage this split fixed.
 - **Don't collapse the two OpenAI classes** without re-checking DeepSeek: as of Aug 2026 it serves
-  Responses for `deepseek-v4-flash` but not `deepseek-v4-pro`, and its Responses base URL drops the
-  `/v1` the chat one carries.
+  Responses for `deepseek-flash` but not `deepseek-v4-pro`, and its
+  Responses base URL drops the `/v1` the chat one carries.
 - Responses defaults to `store: true`, so `StoredOutputEnabled = false` is load-bearing - tool
   outputs carry driver names, loads and HOS data.
 - Reasoning items are **not** replayed across tool turns. Responses tolerates their absence but
@@ -67,9 +67,9 @@ on the model** - the wire protocol belongs to the endpoint, not the model's reas
 prompt. Both details are load-bearing: **newest** (a breakpoint searches back only 20 blocks, and one
 parallel-tool turn can exceed that) and **last** (the prefix caches only up to it). Reads bill at a
 tenth of input, so hits lower `EstimatedCostUsd` and the budget with it. `CacheReadTokens` stuck at
-zero means an invalidated prefix (tools or model changed) or a prompt under the per-model minimum -
-1024 tokens on Sonnet 5, 4096 on Haiku 4.5, silently skipped. OpenAI and DeepSeek cache server-side,
-hence provider-level and not in the loop.
+zero means an invalidated prefix (tools or model changed) or a prompt under the per-model minimum,
+which is silently skipped. OpenAI and DeepSeek cache server-side, hence provider-level and not in
+the loop.
 
 **The two vendors report cached tokens differently.** OpenAI's `input_tokens` **includes**
 `cached_tokens`; Anthropic's **excludes** cache reads. `LlmPricing.Calculate` adds the input and
@@ -134,7 +134,7 @@ reintroduce one.
   `LlmThinkingBlock` (**including redacted ones** - drop one and the next turn is rejected);
   `None` models get no reasoning parameter.
 - `LlmPricing` owns per-token prices - **read the numbers there**, never copy them into docs.
-  Unknown models charge at Sonnet 5 rates.
+  Unknown models charge at Sonnet 5.5 rates.
 - Quota is **cost-based**: `AgentSession.EstimatedCostUsd` (written in `AgentLoopRunner`'s finally,
   so failed and cancelled sessions count) summed weekly against
   `SubscriptionPlan.WeeklyAIBudgetUsd`. The tenant API exposes a percentage and

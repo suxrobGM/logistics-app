@@ -143,7 +143,7 @@ public class LlmPdfDataExtractorTests
         _llmClient
             .CompleteAsync(Arg.Do<LlmCompletionRequest>(r => captured.Value = r), Arg.Any<CancellationToken>())
             .Returns(Result<LlmCompletionResult>.Ok(
-                new LlmCompletionResult(responseText, "claude-haiku-4-5", 10, 20, 0.0001m)));
+                new LlmCompletionResult(responseText, "claude-haiku-5-5", 10, 20, 0.0001m)));
         return captured;
     }
 

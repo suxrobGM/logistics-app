@@ -59,7 +59,7 @@ public class AIDispatchConversationBuilderTests
         MaxTokens = 4096,
         Providers = new Dictionary<LlmProvider, LlmProviderOptions>
         {
-            [LlmProvider.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-sonnet-5" }
+            [LlmProvider.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-sonnet-5-5" }
         }
     };
 
@@ -104,7 +104,7 @@ public class AIDispatchConversationBuilderTests
         bool isEnabled = true)
     {
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy(learned, 20, DateTime.UtcNow, "deepseek-v4-flash", 0.001m);
+        policy.ApplyLearnedPolicy(learned, 20, DateTime.UtcNow, "deepseek-flash", 0.001m);
         policy.EditManual(directives, isEnabled, Guid.NewGuid());
         return policy;
     }
@@ -206,7 +206,7 @@ public class AIDispatchConversationBuilderTests
         Assert.NotNull(conversation.Provider);
         Assert.Single(conversation.Messages);
         Assert.Equal(ValidConfig.MaxTokens, conversation.MaxTokens);
-        Assert.Equal("claude-sonnet-5", conversation.Model);
+        Assert.Equal("claude-sonnet-5-5", conversation.Model);
     }
 
     [Fact]

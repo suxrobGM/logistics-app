@@ -11,9 +11,9 @@ You can switch LLM providers without code changes:
 
 | Provider      | Models                                | Notes                                         |
 | ------------- | ------------------------------------- | --------------------------------------------- |
-| **OpenAI**    | GPT-5.6 Luna (default), GPT-5.6 Terra | Default provider. OpenAI SDK, `/v1/responses` |
-| **Anthropic** | Claude Haiku 4.5, Claude Sonnet 5     | Prompt caching; Sonnet 5 adaptive thinking    |
-| **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro    | OpenAI-compatible chat-completions API        |
+| **OpenAI**    | GPT-6 Luna (default), GPT-6 Sol       | Default provider. OpenAI SDK, `/v1/responses` |
+| **Anthropic** | Claude Haiku 5.5, Claude Sonnet 5.5   | Prompt caching; adaptive thinking             |
+| **DeepSeek**  | DeepSeek V4.1 Flash, DeepSeek V4 Pro  | OpenAI-compatible chat-completions API        |
 
 Quota is **cost-based**: every session's `AgentSession.EstimatedCostUsd` (failed and cancelled runs
 too) counts against the plan's `WeeklyAIBudgetUsd` - required on every plan, and falling back to the
@@ -196,7 +196,7 @@ preferences are STRONG DEFAULTS ranking _below_ hard constraints and below this 
 text is treated as untrusted (control characters stripped): it is LLM output derived from
 dispatcher-typed rejection reasons, which is a prompt-injection path.
 
-**Cost** - learning runs on `Llm:PolicyLearningModel` (default `deepseek-v4-flash`) via the optional
+**Cost** - learning runs on `Llm:PolicyLearningModel` (default `deepseek-flash`) via the optional
 `LlmCompletionRequest.ModelId` override, and creates **no** `AgentSession` row, so it does not
 consume the tenant's weekly quota. Cost is recorded on the policy row (`GenerationCostUsd`) for
 platform observability and is never exposed to the tenant.
@@ -216,7 +216,7 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
 | `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key                                                             |
 | `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key                                                           |
 | `Llm__MaxTokens`                    | Max tokens per response (default: 16384)                                   |
-| `Llm__PolicyLearningModel`          | Model for nightly policy learning (default: `deepseek-v4-flash`)           |
+| `Llm__PolicyLearningModel`          | Model for nightly policy learning (default: `deepseek-flash`)           |
 
 ### appsettings.json
 
@@ -225,19 +225,19 @@ re-learning tomorrow unless learning is also switched off - the confirm dialog s
   "Llm": {
     "DefaultProvider": "OpenAI",
     "MaxTokens": 16384,
-    "DefaultReasoningEffort": "None",
+    "DefaultReasoningEffort": "Medium",
     "Providers": {
       "Anthropic": {
         "ApiKey": "<key>",
-        "Model": "claude-haiku-4-5"
+        "Model": "claude-haiku-5-5"
       },
       "OpenAI": {
         "ApiKey": "<key>",
-        "Model": "gpt-5.6-luna"
+        "Model": "gpt-6-luna"
       },
       "DeepSeek": {
         "ApiKey": "<key>",
-        "Model": "deepseek-v4-flash",
+        "Model": "deepseek-flash",
         "BaseUrl": "https://api.deepseek.com/v1"
       }
     }

@@ -135,7 +135,7 @@ public class OpenAIResponsesLlmProviderTests
     public void BuildInputItems_PutsTheSystemPromptFirst()
     {
         var result = OpenAIResponsesLlmProvider.BuildInputItems(
-            Request("gpt-5.6-luna", ReasoningEffort.Low)).ToList();
+            Request("gpt-6-luna", ReasoningEffort.Low)).ToList();
 
         var first = Assert.IsType<MessageResponseItem>(result[0], exactMatch: false);
         Assert.Equal(MessageRole.Developer, first.Role);
@@ -156,7 +156,7 @@ public class OpenAIResponsesLlmProviderTests
     [Fact]
     public void BuildOptions_ReasoningModelWithEffortNone_SendsExplicitNone()
     {
-        var options = OpenAIResponsesLlmProvider.BuildOptions(Request("gpt-5.6-luna", ReasoningEffort.None));
+        var options = OpenAIResponsesLlmProvider.BuildOptions(Request("gpt-6-luna", ReasoningEffort.None));
 
         Assert.Equal(ResponseReasoningEffortLevel.None, options.ReasoningOptions?.ReasoningEffortLevel);
     }
@@ -169,7 +169,7 @@ public class OpenAIResponsesLlmProviderTests
     [InlineData(ReasoningEffort.Max, "high")]
     public void BuildOptions_ReasoningModel_MapsAndClampsEffortLevels(ReasoningEffort effort, string expected)
     {
-        var options = OpenAIResponsesLlmProvider.BuildOptions(Request("gpt-5.6-terra", effort));
+        var options = OpenAIResponsesLlmProvider.BuildOptions(Request("gpt-6-sol", effort));
 
         Assert.Equal(
             new ResponseReasoningEffortLevel(expected),
@@ -177,7 +177,6 @@ public class OpenAIResponsesLlmProviderTests
     }
 
     [Theory]
-    [InlineData("claude-haiku-4-5")]
     [InlineData("unknown-model")]
     public void BuildOptions_NonReasoningModel_SendsNoReasoningOptions(string model)
     {
@@ -190,7 +189,7 @@ public class OpenAIResponsesLlmProviderTests
     public void BuildOptions_DisablesStoredOutput()
     {
         // Responses defaults to store:true; tool outputs carry driver names and HOS data.
-        var options = OpenAIResponsesLlmProvider.BuildOptions(Request("gpt-5.6-luna", ReasoningEffort.Low));
+        var options = OpenAIResponsesLlmProvider.BuildOptions(Request("gpt-6-luna", ReasoningEffort.Low));
 
         Assert.False(options.StoredOutputEnabled);
     }
@@ -202,7 +201,7 @@ public class OpenAIResponsesLlmProviderTests
     [Fact]
     public void AddTools_AlwaysAppendsTheHostedWebSearchTool()
     {
-        var request = Request("gpt-5.6-luna", ReasoningEffort.Low);
+        var request = Request("gpt-6-luna", ReasoningEffort.Low);
         var options = OpenAIResponsesLlmProvider.BuildOptions(request);
 
         OpenAIResponsesLlmProvider.AddTools(options, request);

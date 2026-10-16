@@ -7,14 +7,16 @@ namespace Logistics.Infrastructure.AI.Tests.Llm;
 public class LlmPricingTests
 {
     [Theory]
-    [InlineData("claude-sonnet-5", 1_000_000, 0, 0, 0, 2.0)]
-    [InlineData("claude-sonnet-5", 0, 1_000_000, 0, 0, 10.0)]
-    [InlineData("claude-haiku-4-5", 1_000_000, 0, 0, 0, 1.0)]
-    [InlineData("claude-haiku-4-5", 0, 1_000_000, 0, 0, 5.0)]
-    [InlineData("gpt-5.6-terra", 1_000_000, 0, 0, 0, 2.0)]
-    [InlineData("gpt-5.6-terra", 0, 1_000_000, 0, 0, 12.0)]
-    [InlineData("gpt-5.6-luna", 1_000_000, 0, 0, 0, 0.20)]
-    [InlineData("gpt-5.6-luna", 0, 1_000_000, 0, 0, 1.20)]
+    [InlineData("claude-sonnet-5-5", 1_000_000, 0, 0, 0, 2.0)]
+    [InlineData("claude-sonnet-5-5", 0, 1_000_000, 0, 0, 10.0)]
+    [InlineData("claude-haiku-5-5", 1_000_000, 0, 0, 0, 0.10)]
+    [InlineData("claude-haiku-5-5", 0, 1_000_000, 0, 0, 0.50)]
+    [InlineData("gpt-6-sol", 1_000_000, 0, 0, 0, 2.0)]
+    [InlineData("gpt-6-sol", 0, 1_000_000, 0, 0, 10.0)]
+    [InlineData("gpt-6-luna", 1_000_000, 0, 0, 0, 0.10)]
+    [InlineData("gpt-6-luna", 0, 1_000_000, 0, 0, 0.50)]
+    [InlineData("deepseek-flash", 1_000_000, 0, 0, 0, 0.30)]
+    [InlineData("deepseek-flash", 0, 1_000_000, 0, 0, 1.20)]
     public void Calculate_BaseTokenPricing_ReturnsCorrectCost(
         string model, int input, int output, int cacheRead, int cacheWrite, decimal expected)
     {
@@ -24,8 +26,8 @@ public class LlmPricingTests
     }
 
     [Theory]
-    [InlineData("claude-sonnet-5", 0.20, 2.50)]
-    [InlineData("gpt-5.6-luna", 0.02, 0.25)]
+    [InlineData("claude-sonnet-5-5", 0.20, 2.50)]
+    [InlineData("gpt-6-luna", 0.01, 0.125)]
     public void Calculate_CacheTokens_IncludedInCost(string model, decimal cacheRead, decimal cacheWrite)
     {
         var result = LlmPricing.Calculate(
@@ -39,8 +41,8 @@ public class LlmPricingTests
     {
         // Catches the OpenAI cache overcharge: cached tokens sit inside input_tokens, so a
         // provider that forwards both raw prices a cache hit at full rate or higher.
-        var cached = LlmPricing.Calculate("gpt-5.6-luna", 200, 0, cacheReadTokens: 800);
-        var uncached = LlmPricing.Calculate("gpt-5.6-luna", 1000, 0);
+        var cached = LlmPricing.Calculate("gpt-6-luna", 200, 0, cacheReadTokens: 800);
+        var uncached = LlmPricing.Calculate("gpt-6-luna", 1000, 0);
 
         Assert.True(cached < uncached, $"cached {cached} should undercut uncached {uncached}");
     }
@@ -49,7 +51,7 @@ public class LlmPricingTests
     public void Calculate_UnknownModel_UsesSonnetDefaults()
     {
         var unknown = LlmPricing.Calculate("unknown-model", 1_000_000, 0);
-        var sonnet = LlmPricing.Calculate("claude-sonnet-5", 1_000_000, 0);
+        var sonnet = LlmPricing.Calculate("claude-sonnet-5-5", 1_000_000, 0);
 
         Assert.Equal(sonnet, unknown);
     }
@@ -57,7 +59,7 @@ public class LlmPricingTests
     [Fact]
     public void Calculate_ZeroTokens_ReturnsZero()
     {
-        var result = LlmPricing.Calculate("claude-sonnet-5", 0, 0);
+        var result = LlmPricing.Calculate("claude-sonnet-5-5", 0, 0);
 
         Assert.Equal(0m, result);
     }
@@ -65,8 +67,8 @@ public class LlmPricingTests
     [Fact]
     public void Calculate_SmallTokenCount_ReturnsSubDollarAmount()
     {
-        // 1000 input tokens of Sonnet 5 = $2 / 1000 = $0.002
-        var result = LlmPricing.Calculate("claude-sonnet-5", 1000, 0);
+        // 1000 input tokens of Sonnet 5.5 = $2 / 1000 = $0.002
+        var result = LlmPricing.Calculate("claude-sonnet-5-5", 1000, 0);
 
         Assert.Equal(0.002m, result);
     }

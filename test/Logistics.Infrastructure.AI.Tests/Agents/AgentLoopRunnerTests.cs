@@ -58,11 +58,11 @@ public class AgentLoopRunnerTests
     private static AgentSession Session() => new()
     {
         StartedAt = DateTime.UtcNow,
-        ModelUsed = "claude-haiku-4-5"
+        ModelUsed = "claude-haiku-5-5"
     };
 
     private LlmConversation Conversation() => new(
-        _provider, "system prompt", [LlmMessage.FromUser("go")], [], "claude-haiku-4-5", 1000,
+        _provider, "system prompt", [LlmMessage.FromUser("go")], [], "claude-haiku-5-5", 1000,
         ReasoningEffort.None);
 
     private static LlmResponse TextResponse(string text, int inputTokens = 100, int outputTokens = 50) => new()
@@ -99,7 +99,7 @@ public class AgentLoopRunnerTests
         await _provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
         Assert.Equal("All done.", session.Summary);
         Assert.Equal(150, session.TotalTokensUsed);
-        Assert.Equal(LlmPricing.Calculate("claude-haiku-4-5", 100, 50), session.EstimatedCostUsd);
+        Assert.Equal(LlmPricing.Calculate("claude-haiku-5-5", 100, 50), session.EstimatedCostUsd);
     }
 
     [Fact]

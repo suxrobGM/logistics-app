@@ -188,7 +188,7 @@ public class AnthropicLlmProviderTests
     public void SystemPromptAndTranscript_StayWithinTheFourBreakpointLimit()
     {
         var parameters = AnthropicLlmProvider.BuildParameters(
-            Request("claude-sonnet-5", ReasoningEffort.High));
+            Request("claude-sonnet-5-5", ReasoningEffort.High));
         var mapped = AnthropicLlmProvider.BuildMessages([LlmMessage.FromUser("go")]);
 
         var breakpoints = parameters.System.Count(s => s.CacheControl is not null)
@@ -221,7 +221,7 @@ public class AnthropicLlmProviderTests
     public void BuildParameters_AdaptiveModel_MapsEffortToAdaptiveThinking(
         ReasoningEffort effort, SdkEffort expected)
     {
-        var parameters = AnthropicLlmProvider.BuildParameters(Request("claude-sonnet-5", effort));
+        var parameters = AnthropicLlmProvider.BuildParameters(Request("claude-sonnet-5-5", effort));
 
         Assert.NotNull(parameters.Thinking);
         Assert.Equal(ThinkingType.adaptive, parameters.Thinking!.Type);
@@ -231,7 +231,7 @@ public class AnthropicLlmProviderTests
     [Fact]
     public void BuildParameters_AdaptiveModel_EffortNone_OmitsThinking()
     {
-        var parameters = AnthropicLlmProvider.BuildParameters(Request("claude-sonnet-5", ReasoningEffort.None));
+        var parameters = AnthropicLlmProvider.BuildParameters(Request("claude-sonnet-5-5", ReasoningEffort.None));
 
         Assert.Null(parameters.Thinking);
     }
@@ -239,14 +239,13 @@ public class AnthropicLlmProviderTests
     [Fact]
     public void BuildParameters_AdaptiveModel_NeverSendsTemperature()
     {
-        // Sonnet 5 rejects non-default sampling parameters outright.
-        var parameters = AnthropicLlmProvider.BuildParameters(Request("claude-sonnet-5", ReasoningEffort.None));
+        // Sonnet 5.5 rejects non-default sampling parameters outright.
+        var parameters = AnthropicLlmProvider.BuildParameters(Request("claude-sonnet-5-5", ReasoningEffort.None));
 
         Assert.Null(parameters.Temperature);
     }
 
     [Theory]
-    [InlineData("claude-haiku-4-5")]
     [InlineData("unknown-model")]
     public void BuildParameters_NonReasoningModel_SendsNoThinkingAndKeepsTemperature(string model)
     {
@@ -263,7 +262,7 @@ public class AnthropicLlmProviderTests
     [Fact]
     public void BuildTools_AlwaysAppendsTheServerWebSearchTool()
     {
-        var request = Request("claude-sonnet-5", ReasoningEffort.None);
+        var request = Request("claude-sonnet-5-5", ReasoningEffort.None);
 
         var tools = AnthropicLlmProvider.BuildTools(request);
 

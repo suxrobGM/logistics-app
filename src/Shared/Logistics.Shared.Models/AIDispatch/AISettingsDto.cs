@@ -8,7 +8,7 @@ namespace Logistics.Shared.Models;
 /// </summary>
 public record AISettingsDto
 {
-    /// <summary>The globally selected model id (e.g. "gpt-5.6-luna").</summary>
+    /// <summary>The globally selected model id (e.g. "gpt-6-luna").</summary>
     public string Model { get; set; } = string.Empty;
 
     /// <summary>The resolved provider for the selected model.</summary>

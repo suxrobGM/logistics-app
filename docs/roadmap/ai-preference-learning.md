@@ -40,7 +40,7 @@ user-facing surface is **Dispatch Policy**. Decisions worth remembering:
   `ManualContent` (dispatcher-owned). A single column plus a flag forces a choice between clobbering
   dispatcher text and freezing the loop on first edit.
 - **Off-quota, not quota-counted.** No `AgentSession` row is created, so `AIQuotaService` never
-  sees it. Runs on `Llm:PolicyLearningModel` (`deepseek-v4-flash`) via the new optional
+  sees it. Runs on `Llm:PolicyLearningModel` (`deepseek-flash`) via the new optional
   `LlmCompletionRequest.ModelId`, which falls back to the global model when the id is unknown _or its
   provider has no API key_ - that second condition matters on single-provider installs.
 - **Daily 04:00 UTC, not weekly.** A `LastDecisionAt` watermark makes a quiet night free, and daily

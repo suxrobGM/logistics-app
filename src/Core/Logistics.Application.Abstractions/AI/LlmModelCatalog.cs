@@ -9,15 +9,15 @@ namespace Logistics.Application.Abstractions.AI;
 /// </summary>
 public static class LlmModelCatalog
 {
-    // Models[0] is the UI fallback - keep the platform default (gpt-5.6-luna) first.
+    // Models[0] is the UI fallback - keep the platform default (gpt-6-luna) first.
     public static readonly IReadOnlyList<LlmModelInfo> Models =
     [
-        new("gpt-5.6-luna", "GPT-5.6 Luna", LlmProvider.OpenAI, ReasoningStyle.OpenAIEffort),
-        new("deepseek-v4-flash", "DeepSeek V4 Flash", LlmProvider.DeepSeek),
+        new("gpt-6-luna", "GPT-6 Luna", LlmProvider.OpenAI, ReasoningStyle.OpenAIEffort),
+        new("deepseek-flash", "DeepSeek V4.1 Flash", LlmProvider.DeepSeek),
         new("deepseek-v4-pro", "DeepSeek V4 Pro", LlmProvider.DeepSeek),
-        new("claude-haiku-4-5", "Claude Haiku 4.5", LlmProvider.Anthropic),
-        new("claude-sonnet-5", "Claude Sonnet 5", LlmProvider.Anthropic, ReasoningStyle.AnthropicAdaptive),
-        new("gpt-5.6-terra", "GPT-5.6 Terra", LlmProvider.OpenAI, ReasoningStyle.OpenAIEffort),
+        new("claude-haiku-5-5", "Claude Haiku 5.5", LlmProvider.Anthropic, ReasoningStyle.AnthropicAdaptive),
+        new("claude-sonnet-5-5", "Claude Sonnet 5.5", LlmProvider.Anthropic, ReasoningStyle.AnthropicAdaptive),
+        new("gpt-6-sol", "GPT-6 Sol", LlmProvider.OpenAI, ReasoningStyle.OpenAIEffort),
     ];
 
     public static LlmModelInfo? Find(string? id) =>
@@ -38,7 +38,7 @@ public record LlmModelInfo(
 
 /// <summary>
 /// Which reasoning control a model exposes. <see cref="None"/> models never receive a reasoning
-/// parameter (Haiku's legacy budget-token thinking is deliberately unsupported).
+/// parameter.
 /// </summary>
 public enum ReasoningStyle
 {

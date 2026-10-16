@@ -25,7 +25,7 @@ public class LlmOptions
     /// <summary>
     /// Reasoning depth used when the admin has not set <c>AI.ReasoningEffort</c> yet.
     /// </summary>
-    public ReasoningEffort DefaultReasoningEffort { get; set; } = ReasoningEffort.None;
+    public ReasoningEffort DefaultReasoningEffort { get; set; } = ReasoningEffort.Medium;
 
     /// <summary>
     /// Per-call ceiling on an LLM HTTP request. Generous because a high reasoning effort on a large

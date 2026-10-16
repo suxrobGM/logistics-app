@@ -47,7 +47,7 @@ public class AIDispatchPolicyLearnerTests
         SetDecisions();
         SetPolicy(null);
 
-        var llmOptions = Options.Create(new LlmOptions { PolicyLearningModel = "deepseek-v4-flash" });
+        var llmOptions = Options.Create(new LlmOptions { PolicyLearningModel = "deepseek-flash" });
 
         _sut = new AIDispatchPolicyLearner(
             _tenantUow, _llmClient, llmOptions, NullLogger<AIDispatchPolicyLearner>.Instance);
@@ -150,7 +150,7 @@ public class AIDispatchPolicyLearnerTests
         SetDecisions(decisions);
 
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("old", 20, decisions.Max(d => d.CreatedAt), "deepseek-v4-flash", 0.001m);
+        policy.ApplyLearnedPolicy("old", 20, decisions.Max(d => d.CreatedAt), "deepseek-flash", 0.001m);
         SetPolicy(policy);
 
         var result = await _sut.LearnForCurrentTenantAsync();
@@ -167,7 +167,7 @@ public class AIDispatchPolicyLearnerTests
         SetDecisions(decisions);
 
         var policy = new AIDispatchPolicy();
-        policy.ApplyLearnedPolicy("old", 20, decisions.Max(d => d.CreatedAt), "deepseek-v4-flash", 0.001m);
+        policy.ApplyLearnedPolicy("old", 20, decisions.Max(d => d.CreatedAt), "deepseek-flash", 0.001m);
         // Push LastRunAt outside the manual cooldown.
         typeof(AIDispatchPolicy).GetProperty(nameof(AIDispatchPolicy.LastRunAt))!
             .SetValue(policy, DateTime.UtcNow.AddHours(-2));
@@ -216,7 +216,7 @@ public class AIDispatchPolicyLearnerTests
         Assert.NotNull(added);
         Assert.Contains("Prefer short hauls", added!.GeneratedContent);
         Assert.Equal(decisions.Max(d => d.CreatedAt), added.LastDecisionAt);
-        Assert.Equal("deepseek-v4-flash", added.ModelUsed);
+        Assert.Equal("deepseek-flash", added.ModelUsed);
         await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -327,7 +327,7 @@ public class AIDispatchPolicyLearnerTests
 
         await _sut.LearnForCurrentTenantAsync();
 
-        Assert.Equal("deepseek-v4-flash", CapturedRequest().ModelId);
+        Assert.Equal("deepseek-flash", CapturedRequest().ModelId);
     }
 
     /// <summary>The existing policy is fed back so wording stays stable instead of flapping nightly.</summary>
@@ -365,7 +365,7 @@ public class AIDispatchPolicyLearnerTests
     {
         _llmClient.CompleteAsync(Arg.Any<LlmCompletionRequest>(), Arg.Any<CancellationToken>())
             .Returns(Result<LlmCompletionResult>.Ok(
-                new LlmCompletionResult(text, "deepseek-v4-flash", 1200, 300, 0.0004m)));
+                new LlmCompletionResult(text, "deepseek-flash", 1200, 300, 0.0004m)));
     }
 
     private LlmCompletionRequest CapturedRequest()
