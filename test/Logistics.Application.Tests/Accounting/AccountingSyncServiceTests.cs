@@ -71,7 +71,11 @@ public class AccountingSyncServiceTests
 
         var connection = new AccountingConnectionService(
             _tenantUow, _providerFactory, NullLogger<AccountingConnectionService>.Instance);
-        _sut = new AccountingSyncService(_tenantUow, _features, connection, NullLogger<AccountingSyncService>.Instance);
+        var mappingService = new AccountingMappingService(_tenantUow, NullLogger<AccountingMappingService>.Instance);
+        _sut = new AccountingSyncService(_tenantUow, _features, connection,
+            new AccountingReceivablesSyncService(_tenantUow, mappingService),
+            new AccountingPayablesSyncService(_tenantUow, mappingService, NullLogger<AccountingPayablesSyncService>.Instance),
+            NullLogger<AccountingSyncService>.Instance);
     }
 
     #region Gating
