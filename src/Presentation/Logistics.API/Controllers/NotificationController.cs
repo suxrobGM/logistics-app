@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 using Logistics.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Logistics.Application.Modules.Integrations.UpdateNotifications.Commands;
+using Logistics.Application.Modules.Platform.Notifications.Commands;
 using Logistics.Application.Modules.Platform.Notifications.Queries;
 
 namespace Logistics.API.Controllers;
@@ -23,13 +23,12 @@ public class NotificationController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPut("{id:guid}", Name = "UpdateNotification")]
+    [HttpPost("read", Name = "MarkNotificationsRead")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Notification.Manage)]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateNotificationCommand request)
+    public async Task<IActionResult> MarkRead([FromBody] MarkNotificationsReadCommand request)
     {
-        request.Id = id;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
