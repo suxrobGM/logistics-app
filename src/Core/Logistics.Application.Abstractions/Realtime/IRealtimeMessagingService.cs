@@ -13,10 +13,9 @@ public interface IRealtimeMessagingService
         MessageDto message,
         CancellationToken ct = default);
 
-    Task BroadcastMessageReadAsync(
+    Task BroadcastConversationReadAsync(
         Guid conversationId,
-        Guid messageId,
-        string readById,
+        Guid readById,
         CancellationToken ct = default);
 
     Task BroadcastTypingIndicatorAsync(

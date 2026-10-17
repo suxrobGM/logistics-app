@@ -54,13 +54,9 @@ internal sealed class MarkConversationReadHandler(
 
         await tenantUow.SaveChangesAsync(ct);
 
-        foreach (var message in unreadMessages)
+        if (unreadMessages.Count > 0)
         {
-            await messagingService.BroadcastMessageReadAsync(
-                req.ConversationId,
-                message.Id,
-                req.ReadById.ToString(),
-                ct);
+            await messagingService.BroadcastConversationReadAsync(req.ConversationId, req.ReadById, ct);
         }
 
         return Result.Ok();

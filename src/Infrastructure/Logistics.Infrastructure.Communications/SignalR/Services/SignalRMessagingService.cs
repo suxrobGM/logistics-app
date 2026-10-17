@@ -22,15 +22,14 @@ internal sealed class SignalRMessagingService(IHubContext<ChatHub, IChatHubClien
             .ReceiveMessage(message);
     }
 
-    public async Task BroadcastMessageReadAsync(
+    public async Task BroadcastConversationReadAsync(
         Guid conversationId,
-        Guid messageId,
-        string readById,
+        Guid readById,
         CancellationToken ct = default)
     {
         await hubContext.Clients
             .Group($"conversation-{conversationId}")
-            .MessageRead(messageId, Guid.Parse(readById));
+            .ConversationRead(conversationId, readById);
     }
 
     public async Task BroadcastTypingIndicatorAsync(

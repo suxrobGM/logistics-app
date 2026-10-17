@@ -13,9 +13,9 @@ public interface IChatHubClient
     Task ReceiveMessage(MessageDto message);
 
     /// <summary>
-    /// Called when a message is marked as read.
+    /// Called when a reader has read every message others sent in a conversation.
     /// </summary>
-    Task MessageRead(Guid messageId, Guid readById);
+    Task ConversationRead(Guid conversationId, Guid readById);
 
     /// <summary>
     /// Called when a user starts or stops typing.

@@ -88,8 +88,8 @@ public class MarkConversationReadHandlerTests
         await _receiptRepo.DidNotReceive().AddAsync(
             Arg.Any<MessageReadReceipt>(), Arg.Any<CancellationToken>());
         await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
-        await _messagingService.DidNotReceive().BroadcastMessageReadAsync(
-            Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await _messagingService.DidNotReceive().BroadcastConversationReadAsync(
+            Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -104,8 +104,8 @@ public class MarkConversationReadHandlerTests
         await _receiptRepo.Received(1).AddAsync(
             Arg.Is<MessageReadReceipt>(r => r.MessageId == message.Id && r.ReadById == ParticipantId),
             Arg.Any<CancellationToken>());
-        await _messagingService.Received(1).BroadcastMessageReadAsync(
-            ConversationId, message.Id, ParticipantId.ToString(), Arg.Any<CancellationToken>());
+        await _messagingService.Received(1).BroadcastConversationReadAsync(
+            ConversationId, ParticipantId, Arg.Any<CancellationToken>());
     }
 
     // The badge counts by LastReadAt, so it must move even when another participant read everything first.
