@@ -1,44 +1,53 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
-    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-        <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 40px;">
-            <h1 style="color: #1a1a1a; font-size: 24px; margin: 0 0 24px 0;">You're Invited!</h1>
+{% assign Title = "Join " | append: CompanyName %}
+{% assign Sender = CompanyName %}
+{% assign Preheader = InvitedByName | append: " invited you to join " | append: CompanyName | append: " on LogisticsX." %}
+<h1 class="h1 t-ink" style="margin: 0 0 16px; font-size: 24px; line-height: 1.3; font-weight: 700; color: #18181b;">You're invited to join {{ CompanyName }}</h1>
 
-            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
-                <strong>{{ InvitedByName }}</strong> has invited you to join <strong>{{ CompanyName }}</strong> as a {{ TypeLabel }}.
-            </p>
+<p class="t-body" style="margin: 0; font-size: 16px; line-height: 1.6; color: #3f3f46;">
+  {{ InvitedByName }} invited you to join {{ CompanyName }} as a {{ TypeLabel }}.
+</p>
 
-            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
-                <strong>Role:</strong> {{ RoleDisplayName }}
-            </p>
+{% if PersonalMessage %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0 0;">
+  <tr>
+    <td class="c-rule" style="border-left: 3px solid #d4d4d8; padding: 2px 0 2px 16px;">
+      <p class="t-muted" style="margin: 0 0 4px; font-size: 13px; line-height: 1.5; color: #71717a;">{{ InvitedByName }} wrote:</p>
+      <p class="t-body" style="margin: 0; font-size: 15px; line-height: 1.6; color: #3f3f46; white-space: pre-wrap;">{{ PersonalMessage }}</p>
+    </td>
+  </tr>
+</table>
+{% endif %}
 
-            {% if PersonalMessage %}
-            <div style="background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 16px; margin: 16px 0; border-radius: 0 4px 4px 0;">
-                <p style="color: #4a4a4a; font-size: 14px; font-style: italic; margin: 0;">"{{ PersonalMessage }}"</p>
-            </div>
-            {% endif %}
+<table role="presentation" class="c-panel" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0 0; background-color: #f4f4f5; border-radius: 8px;">
+  <tr>
+    <td class="panel-cell" style="padding: 20px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="t-muted" style="padding: 4px 12px 4px 0; font-size: 14px; line-height: 1.5; color: #71717a; vertical-align: top;">Role</td>
+          <td class="t-ink" align="right" style="padding: 4px 0; font-size: 14px; line-height: 1.5; font-weight: 600; color: #18181b; text-align: right; vertical-align: top;">{{ RoleDisplayName }}</td>
+        </tr>
+        <tr>
+          <td class="t-muted" style="padding: 4px 12px 4px 0; font-size: 14px; line-height: 1.5; color: #71717a; vertical-align: top;">Expires</td>
+          <td class="t-ink" align="right" style="padding: 4px 0; font-size: 14px; line-height: 1.5; font-weight: 600; color: #18181b; text-align: right; vertical-align: top;">{{ ExpiresAt }}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
 
-            <div style="text-align: center; margin: 32px 0;">
-                <a href="{{ AcceptUrl }}" style="display: inline-block; background-color: #007bff; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 500;">
-                    Accept Invitation
-                </a>
-            </div>
+<table role="presentation" class="btn" cellpadding="0" cellspacing="0" border="0" style="margin: 28px 0 0;">
+  <tr>
+    <td align="center" style="border-radius: 8px; background-color: #18181b;">
+      <a href="{{ AcceptUrl }}" style="display: inline-block; padding: 14px 28px; font-size: 16px; line-height: 1.25; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px;">Accept invitation</a>
+    </td>
+  </tr>
+</table>
 
-            <p style="color: #6c757d; font-size: 14px; line-height: 1.6; margin: 16px 0 0 0;">
-                This invitation expires on {{ ExpiresAt }}.
-            </p>
-
-            <hr style="border: none; border-top: 1px solid #e9ecef; margin: 24px 0;">
-
-            <p style="color: #6c757d; font-size: 12px; line-height: 1.6; margin: 0;">
-                If you did not expect this invitation, you can safely ignore this email.
-            </p>
-        </div>
-    </div>
-</body>
-</html>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 32px;">
+  <tr>
+    <td class="c-rule" style="border-top: 1px solid #e4e4e7; padding-top: 20px;">
+      <p class="t-muted" style="margin: 0 0 6px; font-size: 13px; line-height: 1.5; color: #71717a;">Not expecting this? You can ignore it. Button not working? Paste this link into your browser:</p>
+      <p class="t-muted url" style="margin: 0; font-size: 13px; line-height: 1.5; color: #71717a; word-break: break-all;"><a href="{{ AcceptUrl }}" style="color: #71717a; text-decoration: underline;">{{ AcceptUrl }}</a></p>
+    </td>
+  </tr>
+</table>

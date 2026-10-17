@@ -1,56 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
-    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-        <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 40px;">
-            <h1 style="color: #1a1a1a; font-size: 22px; margin: 0 0 24px 0;">Rate Offer{% if ReferenceNumber %} - {{ ReferenceNumber }}{% endif %}</h1>
+{% assign Title = "Rate offer " | append: ReferenceNumber %}
+{% assign Sender = CompanyName %}
+{% assign Preheader = OfferTotal | append: " for " | append: OriginCity | append: ", " | append: OriginState | append: " to " | append: DestinationCity | append: ", " | append: DestinationState | append: "." %}
+<p class="t-body" style="margin: 0 0 16px; font-size: 16px; line-height: 1.6; color: #3f3f46;">{% if BrokerName %}Hi {{ BrokerName }},{% else %}Hello,{% endif %}</p>
 
-            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
-                {% if BrokerName %}Hi {{ BrokerName }},{% else %}Hello,{% endif %}
-            </p>
+<p class="t-body" style="margin: 0; font-size: 16px; line-height: 1.6; color: #3f3f46; white-space: pre-wrap;">{{ Message }}</p>
 
-            <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 24px 0;">
-                <p style="color: #6c757d; font-size: 14px; margin: 0 0 12px 0;">Load Details</p>
+<table role="presentation" class="c-panel" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0 0; background-color: #f4f4f5; border-radius: 8px;">
+  <tr>
+    <td class="panel-cell" style="padding: 20px;">
+      <p class="t-muted" style="margin: 0 0 4px; font-size: 13px; line-height: 1.5; color: #71717a;">{% if ReferenceNumber %}Ref {{ ReferenceNumber }}{% else %}Load{% endif %}</p>
+      <p class="t-ink" style="margin: 0 0 12px; font-size: 17px; line-height: 1.5; font-weight: 600; color: #18181b;">{{ OriginCity }}, {{ OriginState }} &rarr; {{ DestinationCity }}, {{ DestinationState }}</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="t-muted" style="padding: 4px 12px 4px 0; font-size: 14px; line-height: 1.5; color: #71717a; vertical-align: top;">Pickup</td>
+          <td class="t-ink" align="right" style="padding: 4px 0; font-size: 14px; line-height: 1.5; font-weight: 600; color: #18181b; text-align: right; vertical-align: top;">{{ PickupDate }}</td>
+        </tr>
+        <tr>
+          <td class="t-muted" style="padding: 4px 12px 4px 0; font-size: 14px; line-height: 1.5; color: #71717a; vertical-align: top;">Equipment</td>
+          <td class="t-ink" align="right" style="padding: 4px 0; font-size: 14px; line-height: 1.5; font-weight: 600; color: #18181b; text-align: right; vertical-align: top;">{{ EquipmentType }}</td>
+        </tr>
+        <tr>
+          <td class="t-ink c-rule" style="padding: 12px 12px 0 0; border-top: 1px solid #e4e4e7; font-size: 15px; line-height: 1.5; font-weight: 600; color: #18181b; vertical-align: middle;">Our offer</td>
+          <td class="t-ink c-rule" align="right" style="padding: 12px 0 0; border-top: 1px solid #e4e4e7; font-size: 20px; line-height: 1.3; font-weight: 700; color: #18181b; text-align: right; vertical-align: middle; white-space: nowrap;">
+            {{ OfferTotal }}{% if OfferPerMile %}<br><span class="t-muted" style="font-size: 13px; font-weight: 500; color: #71717a;">{{ OfferPerMile }}/mi</span>{% endif %}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
 
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                    <span style="color: #1a1a1a; font-size: 16px; font-weight: 600;">{{ OriginCity }}, {{ OriginState }}</span>
-                    <span style="color: #6c757d;">&rarr;</span>
-                    <span style="color: #1a1a1a; font-size: 16px; font-weight: 600;">{{ DestinationCity }}, {{ DestinationState }}</span>
-                </div>
+<p class="t-body" style="margin: 24px 0 0; font-size: 16px; line-height: 1.6; color: #3f3f46;">
+  {{ CompanyName }}{% if CompanyMcNumber %}<br><span class="t-muted" style="font-size: 14px; color: #71717a;">MC# {{ CompanyMcNumber }}</span>{% endif %}
+</p>
 
-                <p style="color: #4a4a4a; font-size: 14px; margin: 0 0 8px 0;">
-                    <strong>Pickup:</strong> {{ PickupDate }}
-                </p>
-                <p style="color: #4a4a4a; font-size: 14px; margin: 0 0 8px 0;">
-                    <strong>Equipment:</strong> {{ EquipmentType }}
-                </p>
-
-                <hr style="border: none; border-top: 1px solid #e9ecef; margin: 16px 0;">
-
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; background-color: #e8f5e9; margin: 8px -20px -20px -20px; padding: 16px 20px; border-radius: 0 0 8px 8px;">
-                    <span style="color: #2e7d32; font-size: 16px; font-weight: 600;">Our Offer</span>
-                    <span style="color: #2e7d32; font-size: 20px; font-weight: 700;">
-                        {{ OfferTotal }}{% if OfferPerMile %} <span style="font-size: 14px; font-weight: 500;">({{ OfferPerMile }}/mi)</span>{% endif %}
-                    </span>
-                </div>
-            </div>
-
-            <p style="color: #4a4a4a; font-size: 15px; line-height: 1.6; margin: 0 0 16px 0;">{{ Message }}</p>
-
-            <p style="color: #4a4a4a; font-size: 15px; line-height: 1.6; margin: 24px 0 0 0;">
-                {{ CompanyName }}{% if CompanyMcNumber %} - MC# {{ CompanyMcNumber }}{% endif %}
-            </p>
-
-            <hr style="border: none; border-top: 1px solid #e9ecef; margin: 24px 0;">
-
-            <p style="color: #6c757d; font-size: 12px; line-height: 1.6; margin: 0;">
-                {{ ReplyInstructions }}
-            </p>
-        </div>
-    </div>
-</body>
-</html>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 32px;">
+  <tr>
+    <td class="c-rule" style="border-top: 1px solid #e4e4e7; padding-top: 20px;">
+      <p class="t-muted" style="margin: 0; font-size: 13px; line-height: 1.5; color: #71717a;">{{ ReplyInstructions }}</p>
+    </td>
+  </tr>
+</table>

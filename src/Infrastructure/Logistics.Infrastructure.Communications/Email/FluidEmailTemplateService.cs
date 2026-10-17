@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 using Fluid;
 using Logistics.Application.Abstractions.Email;
 using Microsoft.Extensions.Logging;
@@ -8,6 +10,17 @@ namespace Logistics.Infrastructure.Communications.Email;
 
 internal sealed class FluidEmailTemplateService : IEmailTemplateService
 {
+    /// <summary>
+    /// Shell every template renders inside; it prints the template's output as <c>Body</c>.
+    /// </summary>
+    private const string LayoutTemplateName = "_Layout";
+
+    /// <summary>
+    /// HTML-encodes every output so tenant- and user-supplied text cannot inject markup.
+    /// All ranges are allowed so names with accents stay readable in the source.
+    /// </summary>
+    private static readonly TextEncoder Encoder = HtmlEncoder.Create(UnicodeRanges.All);
+
     private readonly Assembly _assembly;
     private readonly ILogger<FluidEmailTemplateService> _logger;
     private readonly TemplateOptions _options;
@@ -33,8 +46,13 @@ internal sealed class FluidEmailTemplateService : IEmailTemplateService
         try
         {
             var template = await GetOrLoadTemplateAsync(templateName);
+            var layout = await GetOrLoadTemplateAsync(LayoutTemplateName);
+
+            // The layout shares the context so it sees the Title, Preheader and Sender the template assigns.
             var context = new TemplateContext(model, _options);
-            return await template.RenderAsync(context);
+            var body = await template.RenderAsync(context, Encoder, isolateContext: false);
+            context.SetValue("Body", body);
+            return await layout.RenderAsync(context, Encoder, isolateContext: false);
         }
         catch (Exception ex)
         {

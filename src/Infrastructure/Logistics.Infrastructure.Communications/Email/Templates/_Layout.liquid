@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title>{{ Title }}</title>
+  <!--[if mso]><style>* { font-family: Arial, sans-serif !important; }</style><![endif]-->
+  <style>
+    body { margin: 0; padding: 0; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table { border-collapse: collapse; }
+    img { border: 0; display: block; }
+    .url, .url a { word-break: break-all; overflow-wrap: anywhere; }
+
+    @media only screen and (max-width: 600px) {
+      .shell { padding: 16px 12px 24px !important; }
+      .card { padding: 28px 20px !important; border-radius: 10px !important; }
+      .h1 { font-size: 22px !important; }
+      .btn, .btn tbody, .btn tr, .btn td, .btn a { display: block !important; width: 100% !important; box-sizing: border-box; }
+      .panel-cell { padding: 16px !important; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .c-bg { background-color: #09090b !important; }
+      .c-card { background-color: #18181b !important; border-color: #27272a !important; }
+      .c-panel { background-color: #27272a !important; }
+      .c-rule { border-color: #3f3f46 !important; }
+      .t-ink { color: #fafafa !important; }
+      .t-body { color: #d4d4d8 !important; }
+      .t-muted, .t-muted a { color: #a1a1aa !important; }
+      .btn td { background-color: #fafafa !important; }
+      .btn a { color: #18181b !important; }
+    }
+  </style>
+</head>
+<body class="c-bg" style="margin: 0; padding: 0; background-color: #f4f4f5;">
+  {% if Preheader %}
+  <div style="display: none; max-height: 0; max-width: 0; overflow: hidden; opacity: 0; font-size: 1px; line-height: 1px; color: #f4f4f5; mso-hide: all;">{{ Preheader }}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
+  {% endif %}
+  <table role="presentation" class="c-bg" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f5;">
+    <tr>
+      <td class="shell" align="center" style="padding: 40px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 560px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+          <tr>
+            <td class="t-ink" style="padding: 0 4px 16px; font-size: 16px; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; color: #18181b;">
+              {% if Sender %}{{ Sender }}{% else %}LogisticsX{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td class="card c-card" style="padding: 40px; background-color: #ffffff; border: 1px solid #e4e4e7; border-radius: 12px;">
+              {{ Body | raw }}
+            </td>
+          </tr>
+          <tr>
+            <td class="t-muted" style="padding: 20px 4px 0; font-size: 12px; line-height: 1.6; color: #71717a;">
+              {% if Sender %}Sent by {{ Sender }} through LogisticsX.{% else %}LogisticsX &middot; Fleet management for trucking companies{% endif %}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

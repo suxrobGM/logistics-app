@@ -1,61 +1,44 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
-    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
-        <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 40px;">
-            <div style="text-align: center; margin-bottom: 24px;">
-                <div style="display: inline-block; background-color: #d4edda; border-radius: 50%; padding: 16px;">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                </div>
-            </div>
+{% assign Title = "Payroll #" | append: PayrollNumber | append: " approved" %}
+{% assign Preheader = TotalAmount | append: " for " | append: PeriodStart | append: " - " | append: PeriodEnd | append: " is on its way." %}
+<p style="margin: 0 0 16px;"><span style="display: inline-block; padding: 4px 10px; border-radius: 999px; background-color: #dcfce7; color: #166534; font-size: 12px; line-height: 1.4; font-weight: 600;">Approved</span></p>
 
-            <h1 style="color: #28a745; font-size: 24px; margin: 0 0 24px 0; text-align: center;">Payroll Approved</h1>
+<h1 class="h1 t-ink" style="margin: 0 0 16px; font-size: 24px; line-height: 1.3; font-weight: 700; color: #18181b;">Your payroll was approved</h1>
 
-            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
-                Hi {{ EmployeeName }},
-            </p>
+<p class="t-body" style="margin: 0 0 16px; font-size: 16px; line-height: 1.6; color: #3f3f46;">Hi {{ EmployeeName }},</p>
 
-            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
-                Great news! Your payroll has been approved and is being processed for payment.
-            </p>
+<p class="t-body" style="margin: 0; font-size: 16px; line-height: 1.6; color: #3f3f46;">
+  Good news: your payroll was approved and is now being processed for payment.
+</p>
 
-            <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 24px 0;">
-                <p style="color: #6c757d; font-size: 14px; margin: 0 0 16px 0; font-weight: 600;">Payroll Details</p>
+<table role="presentation" class="c-panel" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0 0; background-color: #f4f4f5; border-radius: 8px;">
+  <tr>
+    <td class="panel-cell" style="padding: 20px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="t-muted" style="padding: 4px 12px 4px 0; font-size: 14px; line-height: 1.5; color: #71717a; vertical-align: top;">Payroll</td>
+          <td class="t-ink" align="right" style="padding: 4px 0; font-size: 14px; line-height: 1.5; font-weight: 600; color: #18181b; text-align: right; vertical-align: top;">#{{ PayrollNumber }}</td>
+        </tr>
+        <tr>
+          <td class="t-muted" style="padding: 4px 12px 4px 0; font-size: 14px; line-height: 1.5; color: #71717a; vertical-align: top;">Pay period</td>
+          <td class="t-ink" align="right" style="padding: 4px 0; font-size: 14px; line-height: 1.5; font-weight: 600; color: #18181b; text-align: right; vertical-align: top;">{{ PeriodStart }} &ndash; {{ PeriodEnd }}</td>
+        </tr>
+        <tr>
+          <td class="t-ink c-rule" style="padding: 12px 12px 0 0; border-top: 1px solid #e4e4e7; font-size: 15px; line-height: 1.5; font-weight: 600; color: #18181b; vertical-align: middle;">Total earnings</td>
+          <td class="t-ink c-rule" align="right" style="padding: 12px 0 0; border-top: 1px solid #e4e4e7; font-size: 20px; line-height: 1.3; font-weight: 700; color: #18181b; text-align: right; vertical-align: middle;">{{ TotalAmount }}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
 
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #6c757d; font-size: 14px;">Payroll Number:</span>
-                    <span style="color: #1a1a1a; font-size: 14px; font-weight: 500;">#{{ PayrollNumber }}</span>
-                </div>
+<p class="t-body" style="margin: 24px 0 0; font-size: 15px; line-height: 1.6; color: #3f3f46;">
+  You'll be paid on your company's regular pay schedule. Questions? Ask your manager or HR.
+</p>
 
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="color: #6c757d; font-size: 14px;">Pay Period:</span>
-                    <span style="color: #1a1a1a; font-size: 14px;">{{ PeriodStart }} - {{ PeriodEnd }}</span>
-                </div>
-
-                <hr style="border: none; border-top: 1px solid #e9ecef; margin: 16px 0;">
-
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: #1a1a1a; font-size: 16px; font-weight: 600;">Total Earnings:</span>
-                    <span style="color: #28a745; font-size: 20px; font-weight: 700;">{{ TotalAmount }}</span>
-                </div>
-            </div>
-
-            <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6; margin: 24px 0 0 0;">
-                You will receive payment according to your company's pay schedule. If you have any questions, please contact your manager or HR department.
-            </p>
-
-            <hr style="border: none; border-top: 1px solid #e9ecef; margin: 24px 0;">
-
-            <p style="color: #6c757d; font-size: 12px; line-height: 1.6; margin: 0; text-align: center;">
-                This is an automated notification. Please do not reply to this email.
-            </p>
-        </div>
-    </div>
-</body>
-</html>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 32px;">
+  <tr>
+    <td class="c-rule" style="border-top: 1px solid #e4e4e7; padding-top: 20px;">
+      <p class="t-muted" style="margin: 0; font-size: 13px; line-height: 1.5; color: #71717a;">This is an automated message, so replies aren't monitored.</p>
+    </td>
+  </tr>
+</table>
