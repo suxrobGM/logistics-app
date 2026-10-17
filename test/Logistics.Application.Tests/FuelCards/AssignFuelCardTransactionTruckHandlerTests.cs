@@ -43,7 +43,10 @@ public class AssignFuelCardTransactionTruckHandlerTests
         _tenantUow.Repository<FuelCard>().Returns(_cardRepo);
         _tenantUow.Repository<Expense>().Returns(_expenseRepo);
 
-        _transactionRepo.GetByIdAsync(_transaction.Id, Arg.Any<CancellationToken>()).Returns(_transaction);
+        _transactionRepo.GetListAsync(
+                Arg.Any<System.Linq.Expressions.Expression<Func<FuelCardTransaction, bool>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns(_ => [_transaction]);
         _truckRepo.GetByIdAsync(_truck.Id, Arg.Any<CancellationToken>()).Returns(_truck);
         _cardRepo.GetAsync(
                 Arg.Any<System.Linq.Expressions.Expression<Func<FuelCard, bool>>>(),
@@ -59,7 +62,7 @@ public class AssignFuelCardTransactionTruckHandlerTests
     {
         var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
         {
-            TransactionId = _transaction.Id,
+            TransactionIds = [_transaction.Id],
             TruckId = _truck.Id
         }, CancellationToken.None);
 
@@ -77,7 +80,7 @@ public class AssignFuelCardTransactionTruckHandlerTests
     {
         var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
         {
-            TransactionId = _transaction.Id,
+            TransactionIds = [_transaction.Id],
             TruckId = _truck.Id,
             RememberMapping = true
         }, CancellationToken.None);
@@ -89,13 +92,43 @@ public class AssignFuelCardTransactionTruckHandlerTests
     }
 
     [Fact]
+    public async Task Handle_TwoTransactionsOnOneCard_CreatesOneCardMapping()
+    {
+        var second = new FuelCardTransaction
+        {
+            ProviderType = FuelCardProviderType.Demo,
+            ExternalTransactionId = "TX-2",
+            TransactionDate = DateTime.UtcNow,
+            Amount = new Money { Amount = 80, Currency = "USD" },
+            ExternalCardId = "CARD-1"
+        };
+        _transactionRepo.GetListAsync(
+                Arg.Any<System.Linq.Expressions.Expression<Func<FuelCardTransaction, bool>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns(_ => [_transaction, second]);
+
+        var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
+        {
+            TransactionIds = [_transaction.Id, second.Id],
+            TruckId = _truck.Id,
+            RememberMapping = true
+        }, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(FuelCardTransactionStatus.Matched, second.Status);
+        await _expenseRepo.Received(2).AddAsync(Arg.Any<Expense>(), Arg.Any<CancellationToken>());
+        await _cardRepo.Received(1).AddAsync(Arg.Any<FuelCard>(), Arg.Any<CancellationToken>());
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task Handle_AlreadyMatched_Fails()
     {
         _transaction.Status = FuelCardTransactionStatus.Matched;
 
         var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
         {
-            TransactionId = _transaction.Id,
+            TransactionIds = [_transaction.Id],
             TruckId = _truck.Id
         }, CancellationToken.None);
 
@@ -108,7 +141,7 @@ public class AssignFuelCardTransactionTruckHandlerTests
     {
         var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
         {
-            TransactionId = _transaction.Id,
+            TransactionIds = [_transaction.Id],
             TruckId = Guid.NewGuid()
         }, CancellationToken.None);
 

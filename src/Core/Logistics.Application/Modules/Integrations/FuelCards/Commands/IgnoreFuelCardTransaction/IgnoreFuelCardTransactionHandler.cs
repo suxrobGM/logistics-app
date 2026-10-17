@@ -12,18 +12,14 @@ internal sealed class IgnoreFuelCardTransactionHandler(ITenantUnitOfWork tenantU
 {
     public async Task<Result> Handle(IgnoreFuelCardTransactionCommand req, CancellationToken ct)
     {
-        var transaction = await tenantUow.Repository<FuelCardTransaction>().GetByIdAsync(req.TransactionId, ct);
-        if (transaction is null)
+        var transactions = await tenantUow.Repository<FuelCardTransaction>().GetListAsync(
+            t => req.TransactionIds.Contains(t.Id) && t.Status != FuelCardTransactionStatus.Matched, ct);
+
+        foreach (var transaction in transactions)
         {
-            return Result.Fail("Fuel card transaction not found");
+            transaction.Status = FuelCardTransactionStatus.Ignored;
         }
 
-        if (transaction.Status == FuelCardTransactionStatus.Matched)
-        {
-            return Result.Fail("Transaction is already matched to a truck and cannot be ignored");
-        }
-
-        transaction.Status = FuelCardTransactionStatus.Ignored;
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

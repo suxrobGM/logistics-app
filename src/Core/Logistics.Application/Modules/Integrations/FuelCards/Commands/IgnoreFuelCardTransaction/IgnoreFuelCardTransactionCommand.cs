@@ -5,11 +5,11 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Integrations.FuelCards.Commands;
 
 /// <summary>
-/// Dismisses a pending fuel card transaction (e.g. cash advance or non-fleet purchase)
-/// so it leaves the review queue without creating an expense.
+/// Dismisses pending fuel card transactions (e.g. cash advances or non-fleet purchases)
+/// so they leave the review queue without creating an expense. Matched transactions are skipped.
 /// </summary>
 [RequiresFeature(TenantFeature.FuelCards)]
 public class IgnoreFuelCardTransactionCommand : ICommand<Result>
 {
-    public Guid TransactionId { get; set; }
+    public required List<Guid> TransactionIds { get; set; }
 }

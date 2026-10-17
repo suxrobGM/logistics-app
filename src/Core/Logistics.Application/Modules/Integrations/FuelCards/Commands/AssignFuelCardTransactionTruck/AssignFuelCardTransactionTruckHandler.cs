@@ -16,15 +16,14 @@ internal sealed class AssignFuelCardTransactionTruckHandler(
 {
     public async Task<Result> Handle(AssignFuelCardTransactionTruckCommand req, CancellationToken ct)
     {
-        var transaction = await tenantUow.Repository<FuelCardTransaction>().GetByIdAsync(req.TransactionId, ct);
-        if (transaction is null)
-        {
-            return Result.Fail("Fuel card transaction not found");
-        }
+        var transactions = (await tenantUow.Repository<FuelCardTransaction>()
+                .GetListAsync(t => req.TransactionIds.Contains(t.Id), ct))
+            .Where(t => t.Status != FuelCardTransactionStatus.Matched)
+            .ToList();
 
-        if (transaction.Status == FuelCardTransactionStatus.Matched)
+        if (transactions.Count == 0)
         {
-            return Result.Fail("Transaction is already matched to a truck");
+            return Result.Fail("No pending fuel card transactions to assign");
         }
 
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
@@ -33,40 +32,61 @@ internal sealed class AssignFuelCardTransactionTruckHandler(
             return Result.Fail("Truck not found");
         }
 
-        var expense = FuelCardExpenseFactory.CreateExpense(transaction, truck.Id);
-        await tenantUow.Repository<Expense>().AddAsync(expense, ct);
+        // Several selected transactions can share a card; a card added earlier in this batch is not queryable yet.
+        var mappedCards = new HashSet<(FuelCardProviderType, string)>();
 
-        transaction.TruckId = truck.Id;
-        transaction.ExpenseId = expense.Id;
-        transaction.Status = FuelCardTransactionStatus.Matched;
-
-        if (req.RememberMapping && (transaction.ExternalCardId ?? transaction.CardNumberMasked) is { } cardId)
+        foreach (var transaction in transactions)
         {
-            var cardRepo = tenantUow.Repository<FuelCard>();
-            var card = await cardRepo.GetAsync(
-                c => c.ProviderType == transaction.ProviderType && c.ExternalCardId == cardId, ct);
+            var expense = FuelCardExpenseFactory.CreateExpense(transaction, truck.Id);
+            await tenantUow.Repository<Expense>().AddAsync(expense, ct);
 
-            if (card is null)
+            transaction.TruckId = truck.Id;
+            transaction.ExpenseId = expense.Id;
+            transaction.Status = FuelCardTransactionStatus.Matched;
+
+            if (req.RememberMapping && (transaction.ExternalCardId ?? transaction.CardNumberMasked) is { } cardId)
             {
-                await cardRepo.AddAsync(new FuelCard
-                {
-                    ProviderType = transaction.ProviderType,
-                    ExternalCardId = cardId,
-                    UnitNumber = transaction.UnitNumber,
-                    TruckId = truck.Id
-                }, ct);
-            }
-            else
-            {
-                card.TruckId = truck.Id;
+                await RememberCardAsync(transaction, cardId, truck, mappedCards, ct);
             }
         }
 
         await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation(
-            "Assigned fuel card transaction {TransactionId} to truck {TruckNumber}",
-            transaction.Id, truck.Number);
+            "Assigned {Count} fuel card transactions to truck {TruckNumber}",
+            transactions.Count, truck.Number);
         return Result.Ok();
+    }
+
+    private async Task RememberCardAsync(
+        FuelCardTransaction transaction,
+        string cardId,
+        Truck truck,
+        HashSet<(FuelCardProviderType, string)> mappedCards,
+        CancellationToken ct)
+    {
+        if (!mappedCards.Add((transaction.ProviderType, cardId)))
+        {
+            return;
+        }
+
+        var cardRepo = tenantUow.Repository<FuelCard>();
+        var card = await cardRepo.GetAsync(
+            c => c.ProviderType == transaction.ProviderType && c.ExternalCardId == cardId, ct);
+
+        if (card is null)
+        {
+            await cardRepo.AddAsync(new FuelCard
+            {
+                ProviderType = transaction.ProviderType,
+                ExternalCardId = cardId,
+                UnitNumber = transaction.UnitNumber,
+                TruckId = truck.Id
+            }, ct);
+        }
+        else
+        {
+            card.TruckId = truck.Id;
+        }
     }
 }

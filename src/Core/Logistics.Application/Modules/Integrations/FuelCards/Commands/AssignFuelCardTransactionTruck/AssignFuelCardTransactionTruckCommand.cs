@@ -5,12 +5,13 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Integrations.FuelCards.Commands;
 
 /// <summary>
-/// Assigns a pending fuel card transaction to a truck, materializing it as a fuel expense.
+/// Assigns pending fuel card transactions to a truck, materializing each as a fuel expense.
+/// Transactions that are already matched are skipped.
 /// </summary>
 [RequiresFeature(TenantFeature.FuelCards)]
 public class AssignFuelCardTransactionTruckCommand : ICommand<Result>
 {
-    public Guid TransactionId { get; set; }
+    public required List<Guid> TransactionIds { get; set; }
     public Guid TruckId { get; set; }
 
     /// <summary>

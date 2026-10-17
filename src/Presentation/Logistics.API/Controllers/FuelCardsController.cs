@@ -67,26 +67,23 @@ public class FuelCardsController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPost("transactions/{transactionId:guid}/assign", Name = "AssignFuelCardTransactionTruck")]
+    [HttpPost("transactions/assign", Name = "AssignFuelCardTransactionTruck")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.FuelCard.Manage)]
-    public async Task<IActionResult> AssignTransaction(
-        Guid transactionId,
-        [FromBody] AssignFuelCardTransactionTruckCommand request)
+    public async Task<IActionResult> AssignTransactions([FromBody] AssignFuelCardTransactionTruckCommand request)
     {
-        request.TransactionId = transactionId;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPost("transactions/{transactionId:guid}/ignore", Name = "IgnoreFuelCardTransaction")]
+    [HttpPost("transactions/ignore", Name = "IgnoreFuelCardTransaction")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.FuelCard.Manage)]
-    public async Task<IActionResult> IgnoreTransaction(Guid transactionId)
+    public async Task<IActionResult> IgnoreTransactions([FromBody] IgnoreFuelCardTransactionCommand request)
     {
-        var result = await mediator.Send(new IgnoreFuelCardTransactionCommand { TransactionId = transactionId });
+        var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
