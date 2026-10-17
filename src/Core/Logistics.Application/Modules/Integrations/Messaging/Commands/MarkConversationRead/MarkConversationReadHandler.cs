@@ -14,21 +14,24 @@ internal sealed class MarkConversationReadHandler(
 {
     public async Task<Result> Handle(MarkConversationReadCommand req, CancellationToken ct)
     {
-        var conversation = await tenantUow.Repository<Conversation>()
-            .GetByIdAsync(req.ConversationId, ct);
-
-        if (conversation is null)
-        {
-            return Result.Fail($"Conversation with ID '{req.ConversationId}' not found");
-        }
-
         var participant = await tenantUow.Repository<ConversationParticipant>()
             .GetAsync(p => p.ConversationId == req.ConversationId && p.EmployeeId == req.ReadById, ct);
 
         // Only a participant may leave a receipt, mirroring SendMessageHandler's gate.
-        if (participant is null && !conversation.IsTenantChat)
+        if (participant is null)
         {
-            return Result.Fail("Reader is not a participant of this conversation");
+            var conversation = await tenantUow.Repository<Conversation>()
+                .GetByIdAsync(req.ConversationId, ct);
+
+            if (conversation is null)
+            {
+                return Result.Fail($"Conversation with ID '{req.ConversationId}' not found");
+            }
+
+            if (!conversation.IsTenantChat)
+            {
+                return Result.Fail("Reader is not a participant of this conversation");
+            }
         }
 
         var unreadMessages = await tenantUow.Repository<Message>().GetListAsync(
