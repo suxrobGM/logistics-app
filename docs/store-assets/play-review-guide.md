@@ -129,5 +129,6 @@ Before the first TestFlight build:
   the Push Notifications capability on the App ID, and upload an APNs key to Firebase. See the
   driver app README.
 - Build and upload with the `driver-release.yml` GitHub Actions workflow in the private repo
-  (no Mac needed; setup in the driver app README). It sets the build number to `100 + run number`
-  on the command line, which overrides the `CURRENT_PROJECT_VERSION` on the `iosApp` target.
+  (no Mac needed; setup in the driver app README). It sets the build number one past the highest
+  either store has seen, on the command line, which overrides the `CURRENT_PROJECT_VERSION` on the
+  `iosApp` target.

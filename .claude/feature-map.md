@@ -444,7 +444,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 ### Notifications
 
 - Domain: `Entities/Notification.cs`
-- Application: `Modules/Platform/Notifications/Queries/`, `Modules/Integrations/UpdateNotifications/Commands/`, `Application.Abstractions/Notifications/INotificationService.cs` (port)
+- Application: `Modules/Platform/Notifications/Commands/`, `Modules/Platform/Notifications/Queries/`, `Application.Abstractions/Notifications/INotificationService.cs` (port)
 - Infrastructure: `Infrastructure.Communications/Notifications/` (Firebase push), `SignalR/Hubs/NotificationHub.cs`
 - API/UI: `NotificationController.cs`, `tms-portal/pages/notifications/`
 
