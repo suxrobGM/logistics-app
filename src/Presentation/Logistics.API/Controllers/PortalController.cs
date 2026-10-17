@@ -117,6 +117,25 @@ public class PortalController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    ///     Get the documents of all the customer's loads, newest first.
+    /// </summary>
+    [HttpGet("documents", Name = "GetPortalDocuments")]
+    [ProducesResponseType(typeof(IEnumerable<DocumentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Portal.ViewDocuments)]
+    public async Task<IActionResult> GetDocuments()
+    {
+        var customerId = await GetCustomerIdAsync();
+        if (customerId is null)
+        {
+            return NotFound(new ErrorResponse("Customer user not found."));
+        }
+
+        var result = await mediator.Send(new GetPortalDocumentsQuery { CustomerId = customerId.Value });
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
     ///     Get documents for a specific load.
     /// </summary>
     [HttpGet("loads/{loadId:guid}/documents", Name = "GetPortalLoadDocuments")]
