@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Logistics.Application.Modules.Integrations.FuelCards.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -24,6 +25,7 @@ public class AssignFuelCardTransactionTruckHandlerTests
 
     private readonly Truck _truck;
     private readonly FuelCardTransaction _transaction;
+    private readonly List<FuelCardTransaction> _transactions;
     private readonly AssignFuelCardTransactionTruckHandler _sut;
 
     public AssignFuelCardTransactionTruckHandlerTests()
@@ -43,13 +45,18 @@ public class AssignFuelCardTransactionTruckHandlerTests
         _tenantUow.Repository<FuelCard>().Returns(_cardRepo);
         _tenantUow.Repository<Expense>().Returns(_expenseRepo);
 
+        _transactions = [_transaction];
+
+        // Run the handler's real predicate, so the Matched filter is exercised.
         _transactionRepo.GetListAsync(
-                Arg.Any<System.Linq.Expressions.Expression<Func<FuelCardTransaction, bool>>>(),
+                Arg.Any<Expression<Func<FuelCardTransaction, bool>>>(),
                 Arg.Any<CancellationToken>())
-            .Returns(_ => [_transaction]);
+            .Returns(call => _transactions.AsQueryable()
+                .Where(call.Arg<Expression<Func<FuelCardTransaction, bool>>>())
+                .ToList());
         _truckRepo.GetByIdAsync(_truck.Id, Arg.Any<CancellationToken>()).Returns(_truck);
         _cardRepo.GetAsync(
-                Arg.Any<System.Linq.Expressions.Expression<Func<FuelCard, bool>>>(),
+                Arg.Any<Expression<Func<FuelCard, bool>>>(),
                 Arg.Any<CancellationToken>())
             .Returns((FuelCard?)null);
 
@@ -102,10 +109,7 @@ public class AssignFuelCardTransactionTruckHandlerTests
             Amount = new Money { Amount = 80, Currency = "USD" },
             ExternalCardId = "CARD-1"
         };
-        _transactionRepo.GetListAsync(
-                Arg.Any<System.Linq.Expressions.Expression<Func<FuelCardTransaction, bool>>>(),
-                Arg.Any<CancellationToken>())
-            .Returns(_ => [_transaction, second]);
+        _transactions.Add(second);
 
         var result = await _sut.Handle(new AssignFuelCardTransactionTruckCommand
         {

@@ -16,10 +16,8 @@ internal sealed class AssignFuelCardTransactionTruckHandler(
 {
     public async Task<Result> Handle(AssignFuelCardTransactionTruckCommand req, CancellationToken ct)
     {
-        var transactions = (await tenantUow.Repository<FuelCardTransaction>()
-                .GetListAsync(t => req.TransactionIds.Contains(t.Id), ct))
-            .Where(t => t.Status != FuelCardTransactionStatus.Matched)
-            .ToList();
+        var transactions = await tenantUow.Repository<FuelCardTransaction>().GetListAsync(
+            t => req.TransactionIds.Contains(t.Id) && t.Status != FuelCardTransactionStatus.Matched, ct);
 
         if (transactions.Count == 0)
         {
@@ -32,9 +30,6 @@ internal sealed class AssignFuelCardTransactionTruckHandler(
             return Result.Fail("Truck not found");
         }
 
-        // Several selected transactions can share a card; a card added earlier in this batch is not queryable yet.
-        var mappedCards = new HashSet<(FuelCardProviderType, string)>();
-
         foreach (var transaction in transactions)
         {
             var expense = FuelCardExpenseFactory.CreateExpense(transaction, truck.Id);
@@ -43,10 +38,18 @@ internal sealed class AssignFuelCardTransactionTruckHandler(
             transaction.TruckId = truck.Id;
             transaction.ExpenseId = expense.Id;
             transaction.Status = FuelCardTransactionStatus.Matched;
+        }
 
-            if (req.RememberMapping && (transaction.ExternalCardId ?? transaction.CardNumberMasked) is { } cardId)
+        if (req.RememberMapping)
+        {
+            // Transactions can share a card, and a card added in this batch is not queryable until save.
+            var cardTransactions = transactions
+                .Where(t => CardId(t) is not null)
+                .DistinctBy(t => (t.ProviderType, CardId(t)));
+
+            foreach (var transaction in cardTransactions)
             {
-                await RememberCardAsync(transaction, cardId, truck, mappedCards, ct);
+                await RememberCardAsync(transaction, CardId(transaction)!, truck, ct);
             }
         }
 
@@ -58,18 +61,15 @@ internal sealed class AssignFuelCardTransactionTruckHandler(
         return Result.Ok();
     }
 
+    private static string? CardId(FuelCardTransaction transaction) =>
+        transaction.ExternalCardId ?? transaction.CardNumberMasked;
+
     private async Task RememberCardAsync(
         FuelCardTransaction transaction,
         string cardId,
         Truck truck,
-        HashSet<(FuelCardProviderType, string)> mappedCards,
         CancellationToken ct)
     {
-        if (!mappedCards.Add((transaction.ProviderType, cardId)))
-        {
-            return;
-        }
-
         var cardRepo = tenantUow.Repository<FuelCard>();
         var card = await cardRepo.GetAsync(
             c => c.ProviderType == transaction.ProviderType && c.ExternalCardId == cardId, ct);
