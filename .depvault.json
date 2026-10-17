@@ -1,0 +1,5 @@
+{
+  "project": "98265823-6aba-45c2-a46f-4e6c11bec17d",
+  "name": "logistics-app",
+  "ignore": ["/.playwright-mcp/**"]
+}
