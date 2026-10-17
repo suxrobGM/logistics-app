@@ -275,6 +275,16 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpPost("payrolls/previews", Name = "PreviewPayrollInvoices")]
+    [ProducesResponseType(typeof(InvoiceDto[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payroll.View)]
+    public async Task<IActionResult> PreviewPayrollInvoices([FromBody] PreviewPayrollInvoicesQuery request)
+    {
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("payrolls", Name = "CreatePayrollInvoice")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
