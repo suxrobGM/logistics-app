@@ -112,11 +112,11 @@ public class MessageController(IMediator mediator) : ControllerBase
             : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPut("{messageId:guid}/read", Name = "MarkMessageRead")]
+    [HttpPost("conversations/{conversationId:guid}/read", Name = "MarkConversationRead")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Message.View)]
-    public async Task<IActionResult> MarkAsRead(Guid messageId)
+    public async Task<IActionResult> MarkConversationRead(Guid conversationId)
     {
         var readerId = User.GetUserId();
         if (readerId is null)
@@ -124,9 +124,9 @@ public class MessageController(IMediator mediator) : ControllerBase
             return BadRequest(new ErrorResponse("Unable to identify reader"));
         }
 
-        var command = new MarkMessageReadCommand
+        var command = new MarkConversationReadCommand
         {
-            MessageId = messageId,
+            ConversationId = conversationId,
             ReadById = readerId.Value
         };
         var result = await mediator.Send(command);
