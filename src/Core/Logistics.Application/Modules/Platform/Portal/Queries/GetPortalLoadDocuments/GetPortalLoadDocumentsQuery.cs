@@ -5,7 +5,7 @@ namespace Logistics.Application.Modules.Platform.Portal.Queries;
 /// <summary>
 /// Query to get documents for a load in the customer portal.
 /// </summary>
-public class GetPortalLoadDocumentsQuery : IQuery<Result<IEnumerable<DocumentDto>>>
+public class GetPortalLoadDocumentsQuery : IQuery<Result<PortalDocumentDto[]>>
 {
     /// <summary>
     /// The load ID to get documents for.

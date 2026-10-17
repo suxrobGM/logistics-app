@@ -120,7 +120,7 @@ public class PortalController(IMediator mediator) : ControllerBase
     ///     Get the documents of all the customer's loads, newest first.
     /// </summary>
     [HttpGet("documents", Name = "GetPortalDocuments")]
-    [ProducesResponseType(typeof(IEnumerable<DocumentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PortalDocumentDto[]), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permission.Portal.ViewDocuments)]
     public async Task<IActionResult> GetDocuments()
@@ -139,7 +139,7 @@ public class PortalController(IMediator mediator) : ControllerBase
     ///     Get documents for a specific load.
     /// </summary>
     [HttpGet("loads/{loadId:guid}/documents", Name = "GetPortalLoadDocuments")]
-    [ProducesResponseType(typeof(IEnumerable<DocumentDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PortalDocumentDto[]), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize(Policy = Permission.Portal.ViewDocuments)]
     public async Task<IActionResult> GetLoadDocuments(Guid loadId)
