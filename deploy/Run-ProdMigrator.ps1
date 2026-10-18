@@ -73,7 +73,7 @@ if ($confirmation -ne 'migrate-prod') {
 Write-Host ''
 Write-Host "Running DbMigrator against $dbHost ..." -ForegroundColor Cyan
 
-& dotnet run --project $migratorProject -- --exit
+& dotnet run --project $migratorProject --no-launch-profile -- --exit
 $exitCode = $LASTEXITCODE
 
 if ($exitCode -eq 0) {
