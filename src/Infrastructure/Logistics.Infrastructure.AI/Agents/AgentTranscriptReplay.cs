@@ -8,13 +8,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
-/// Rebuilds the LLM message sequence from a persisted <see cref="AgentConversation"/> transcript;
-/// shared by every agent surface.
+/// Rebuilds the LLM messages from the stored transcript. A pure function of the rows, so
+/// consecutive turns replay identical bytes and keep hitting the prompt cache.
 /// </summary>
-/// <remarks>
-/// Everything here is a pure function of the stored rows, so a turn replays the same bytes the next
-/// turn will: the provider's prompt cache only hits a prefix that has not changed.
-/// </remarks>
 internal static class AgentTranscriptReplay
 {
     /// <summary>Rows replayed at most, give or take one turn - see <see cref="WindowStart"/>.</summary>
@@ -24,9 +20,8 @@ internal static class AgentTranscriptReplay
     internal const int WindowStep = 20;
 
     /// <summary>
-    /// Earlier turns' tool results longer than this replay as <see cref="OmittedToolResult"/>. Fleet
-    /// lists are stale by the next turn and dominate input tokens; short results (errors, a
-    /// suggestion's status) stay.
+    /// Longer tool results from earlier turns replay as <see cref="OmittedToolResult"/>: fleet lists
+    /// are stale by then and dominate input. Errors and statuses are short and stay.
     /// </summary>
     internal const int MaxReplayedToolResultChars = 1500;
 
@@ -35,10 +30,7 @@ internal static class AgentTranscriptReplay
 
     internal const string OmittedHistoryNote = "[Earlier conversation omitted.]";
 
-    /// <summary>
-    /// Loads the replay window in SQL - the transcript navigation would lazy-load every row and
-    /// every tool result the conversation ever produced.
-    /// </summary>
+    /// <summary>Queries the window - the <c>Messages</c> navigation would lazy-load every row.</summary>
     public static async Task<List<LlmMessage>> LoadAsync(
         ITenantUnitOfWork tenantUow, AgentConversation conversation, CancellationToken ct)
     {
@@ -46,7 +38,7 @@ internal static class AgentTranscriptReplay
             .Where(m => m.ConversationId == conversation.Id);
 
         // Cut only at a plain chat message: starting mid-turn orphans a tool_use/tool_result pair
-        // and the provider rejects the request. The conversation always opens with one.
+        // and the provider rejects the request.
         var start = WindowStart(conversation.LastSequence);
         var boundary = 1;
         if (start > 1)
@@ -65,10 +57,7 @@ internal static class AgentTranscriptReplay
         return BuildMessages(window, truncated: boundary > 1);
     }
 
-    /// <summary>
-    /// The first sequence worth replaying. Snapped to <see cref="WindowStep"/> so it only moves
-    /// every that many rows - a window sliding one row per turn would change the prefix every turn.
-    /// </summary>
+    /// <summary>Snapped to <see cref="WindowStep"/>, so the replayed prefix holds still between steps.</summary>
     internal static int WindowStart(int lastSequence)
     {
         var overflow = lastSequence - MaxTranscriptMessages;
@@ -101,10 +90,7 @@ internal static class AgentTranscriptReplay
         return messages;
     }
 
-    /// <summary>
-    /// When the person sent the message. Stored with the row rather than stamped per request, so
-    /// replaying it never changes and the system prompt can drop "today is".
-    /// </summary>
+    /// <summary>From the row, never the clock, so a replayed message never changes.</summary>
     internal static string SentStamp(DateTime createdAt) =>
         $"[Sent: {createdAt.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)} UTC]";
 

@@ -11,9 +11,8 @@ using Logistics.Shared.Models;
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
 /// <summary>
-/// Ranks the Available trucks for each unassigned load in one call. Everything the prompt used to
-/// ask the model to work out by hand - the truck-type rule, the HOS arithmetic, deadhead, trailer
-/// fit, rate per mile - runs here, on the same rules the write tools enforce.
+/// Ranks the Available trucks for each unassigned load. The type rule, HOS, deadhead, trailer fit
+/// and rate run here, on the rules the write tools enforce, so the model does no arithmetic.
 /// </summary>
 internal sealed class GetDispatchCandidatesTool(
     IMediator mediator,

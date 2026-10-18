@@ -20,13 +20,11 @@ internal static class LlmErrorSanitizer
         message.Length > MaxLength ? message[..MaxLength] : message;
 
     /// <summary>
-    /// For a failure of the LLM call itself. An auth-shaped failure here really does mean the
-    /// provider credentials, so it is worth naming - it is the one thing an operator can fix.
+    /// For a failed LLM call. Classified by kind: only a real auth failure may name the API key, or
+    /// an outage sends the operator off to audit credentials.
     /// </summary>
     public static string ForSession(Exception ex)
     {
-        // Classified by kind, never by exception type alone: an outage reported as an auth error
-        // sends an operator off to audit credentials that were never the problem.
         if (ex is LlmProviderException provider)
         {
             return provider.Kind switch
@@ -45,9 +43,8 @@ internal static class LlmErrorSanitizer
     }
 
     /// <summary>
-    /// For a failure inside a tool. Unlike <see cref="ForSession"/> this must NOT blame the LLM
-    /// credentials - a tool talks to the database and to vendor APIs, so an auth-shaped failure
-    /// here means something else entirely. Say only that it failed.
+    /// For a failed tool. Never blames the LLM key: a tool talks to the database and vendor APIs, so
+    /// an auth-shaped failure here is something else.
     /// </summary>
     public static string ForToolCall(Exception ex) =>
         LooksSensitive(ex.Message)

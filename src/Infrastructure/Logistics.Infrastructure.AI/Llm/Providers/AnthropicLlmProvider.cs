@@ -2,7 +2,6 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Anthropic;
 using Anthropic.Core;
-using Anthropic.Core;
 using Anthropic.Exceptions;
 using Anthropic.Models.Messages;
 using Logistics.Application.Abstractions.Agents;
@@ -12,15 +11,11 @@ using Logistics.Infrastructure.AI.Llm.Contracts;
 
 namespace Logistics.Infrastructure.AI.Llm.Providers;
 
-/// <summary>
-/// LLM provider over the official Anthropic SDK (<c>Anthropic</c> package).
-/// </summary>
 internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient httpClient) : ILlmProvider
 {
     public async Task<LlmResponse> SendAsync(LlmRequest request, CancellationToken ct)
     {
-        // The HttpClient is factory-pooled; the SDK keeps its own retries (408/409/429/5xx), which
-        // is why the named client carries no resilience handler.
+        // The SDK retries 408/409/429/5xx itself, hence no resilience handler on the pooled client.
         var client = new AnthropicClient
         {
             ApiKey = config.ApiKey,
@@ -45,17 +40,15 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
     }
 
     /// <summary>
-    /// The full request. Adaptive models never get a temperature (they reject non-default
-    /// sampling) and always get adaptive thinking plus an explicit effort: neither Sonnet 5.5 nor
-    /// Haiku 5.5 has a clean "off", and omitting <c>thinking</c> still runs adaptive at the
-    /// model's default effort - so <see cref="ReasoningEffort.None"/> rides on <c>low</c>.
+    /// Adaptive models reject a temperature and have no clean "off" - omitting <c>thinking</c>
+    /// still runs it at the default effort - so they always get an explicit effort, and
+    /// <see cref="ReasoningEffort.None"/> maps to <c>low</c>.
     /// </summary>
     internal static MessageCreateParams BuildParameters(LlmRequest request)
     {
         var isAdaptive = LlmModelCatalog.ReasoningStyleOf(request.Model) == ReasoningStyle.AnthropicAdaptive;
 
-        // Optional fields are set only when they carry a value: the SDK serializes an assigned null as
-        // a JSON null rather than leaving the field out.
+        // The SDK sends an assigned null as JSON null, so optional fields are only ever set to a value.
         var parameters = new MessageCreateParams
         {
             Model = request.Model,
@@ -91,10 +84,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         _ => Effort.High
     };
 
-    /// <summary>
-    /// Function tools plus Anthropic's server-side web search. The search runs inside one API
-    /// call, so the agent loop never executes it; <c>max_uses</c> bounds the per-call spend.
-    /// </summary>
+    /// <summary>Web search runs server-side inside the call; <c>max_uses</c> bounds its spend.</summary>
     internal static List<ToolUnion> BuildTools(LlmRequest request)
     {
         var tools = request.Tools
@@ -110,10 +100,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         return tools;
     }
 
-    /// <summary>
-    /// The dynamic-filtering web search is Sonnet-only among the catalog's models; Haiku gets the
-    /// basic variant, which every model accepts.
-    /// </summary>
+    /// <summary>Of the catalog's models only Sonnet accepts the dynamic-filtering variant.</summary>
     private static ToolUnion WebSearchFor(string model) =>
         model.StartsWith("claude-sonnet", StringComparison.Ordinal)
             ? new ToolUnion(new WebSearchTool20260209 { MaxUses = 3 })
@@ -133,9 +120,8 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
     }
 
     /// <summary>
-    /// Preserves block order and keeps every text block: replies interleave text with tool calls,
-    /// and the transcript must replay in the shape it arrived. Server-tool blocks are kept verbatim
-    /// so the turn replays exactly as the model produced it.
+    /// Keeps every block, in order: the turn must replay exactly as it arrived, server-tool blocks
+    /// included.
     /// </summary>
     internal static LlmResponse MapResponse(Message response)
     {
@@ -182,13 +168,9 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         };
 
     /// <summary>
-    /// Maps the transcript and caches its prefix - the loop resends the whole conversation every
-    /// iteration, and a cache read costs a tenth of full input.
+    /// One cache breakpoint, on the newest message's last block: a breakpoint looks back only 20
+    /// blocks, and caches only up to itself.
     /// </summary>
-    /// <remarks>
-    /// Breakpoint placement is load-bearing: newest message because a breakpoint only searches back
-    /// 20 content blocks, last block because the prefix caches only up to it.
-    /// </remarks>
     internal static List<MessageParam> BuildMessages(IReadOnlyList<LlmMessage> messages)
     {
         var mapped = new List<MessageParam>(messages.Count);
@@ -204,8 +186,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
     {
         var blocks = message.Content.Select(ToBlockParam).ToList();
 
-        // The newest message is always a user turn (the prompt, or tool results), so its last
-        // block is text, a tool result or a document - never a thinking block.
+        // The newest message is a user turn, so its last block is never a thinking block.
         if (cacheLastBlock && blocks.Count > 0)
             blocks[^1] = CachedBlockParam(message.Content[^1]);
 
@@ -238,10 +219,6 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         _ => throw new NotSupportedException($"Unsupported content block {block.GetType().Name}.")
     };
 
-    /// <summary>
-    /// The cache breakpoint's block. Built separately because the SDK sends an assigned null
-    /// <c>cache_control</c> as a JSON null, so only this block may set it.
-    /// </summary>
     private static ContentBlockParam CachedBlockParam(LlmContentBlock block) => block switch
     {
         LlmTextBlock text => new TextBlockParam { Text = text.Text, CacheControl = new CacheControlEphemeral() },

@@ -30,9 +30,8 @@ public class AgentConversation : AuditableEntity, ITenantEntity
     public virtual List<AgentMessage> Messages { get; } = [];
 
     /// <summary>
-    /// Highest sequence handed out so far. Held here so allocating the next one never reads the
-    /// Messages navigation, which lazy-loads the whole transcript - and for the same reason the
-    /// Add methods never touch <see cref="Messages"/>: EF fixes a registered row into it if it is loaded.
+    /// Highest sequence handed out. Kept here, and the Add methods never touch
+    /// <see cref="Messages"/>, because reading that navigation lazy-loads the whole transcript.
     /// </summary>
     public int LastSequence { get; private set; }
 

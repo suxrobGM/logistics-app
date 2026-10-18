@@ -8,13 +8,10 @@ using Logistics.Application.Abstractions.AI;
 namespace Logistics.Infrastructure.AI.Llm.Providers;
 
 /// <summary>
-/// LLM provider for OpenAI-compatible chat-completions APIs (DeepSeek, GLM, Groq, Mistral, etc.),
-/// via the official OpenAI .NET SDK with a configurable base URL.
+/// Chat completions for OpenAI-compatible endpoints (DeepSeek, GLM, ...) via <c>BaseUrl</c>. Never
+/// OpenAI itself: function tools plus a reasoning effort is a 400 here - see
+/// <see cref="OpenAIResponsesLlmProvider"/>.
 /// </summary>
-/// <remarks>
-/// Deliberately not OpenAI itself - those go through <see cref="OpenAIResponsesLlmProvider"/>,
-/// because function tools plus a non-<c>none</c> reasoning effort is a hard 400 here.
-/// </remarks>
 internal sealed class OpenAICompatibleLlmProvider(LlmProviderOptions config, HttpClient httpClient) : ILlmProvider
 {
     public async Task<LlmResponse> SendAsync(LlmRequest request, CancellationToken ct)
@@ -68,9 +65,8 @@ internal sealed class OpenAICompatibleLlmProvider(LlmProviderOptions config, Htt
     }
 
     /// <summary>
-    /// Maps one provider-agnostic message to one or more OpenAI messages. A tool-results turn holds one
-    /// block per tool call (Anthropic's shape), but OpenAI needs a separate tool message per
-    /// tool_call_id - collapsing them into one is an HTTP 400 as soon as the model calls two tools.
+    /// One tool message per <c>tool_call_id</c>: collapsing a multi-result turn into one message is
+    /// a 400 as soon as the model calls two tools.
     /// </summary>
     internal static IEnumerable<ChatMessage> ToOpenAIMessages(LlmMessage message)
     {
@@ -90,7 +86,6 @@ internal sealed class OpenAICompatibleLlmProvider(LlmProviderOptions config, Htt
             if (documents.Count == 0)
                 return [ChatMessage.CreateUserMessage(text)];
 
-            // Multimodal message: text plus inline documents (e.g. PDFs) as content parts.
             var parts = new List<ChatMessageContentPart>();
             if (!string.IsNullOrEmpty(text))
             {

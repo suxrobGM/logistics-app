@@ -3,13 +3,9 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Infrastructure.AI.Agents.Dispatch;
 
 /// <summary>
-/// Everything <see cref="AIDispatchSystemPrompt.Build"/> varies on.
+/// Everything <see cref="AIDispatchSystemPrompt.Build"/> varies on. Flags are named init properties
+/// so two swapped <c>bool</c>s cannot compile into a different prompt.
 /// </summary>
-/// <remarks>
-/// Only the company name is positional. Everything else is an init property so each flag is named
-/// at the call site - the builder previously took several trailing optionals, where swapping two
-/// <c>bool</c>s or two enums compiled cleanly and silently changed the prompt.
-/// </remarks>
 internal sealed record DispatchPromptContext(string CompanyName)
 {
     public DistanceUnit DistanceUnit { get; init; } = DistanceUnit.Miles;
@@ -19,24 +15,15 @@ internal sealed record DispatchPromptContext(string CompanyName)
 
     public bool HasLoadBoardIntegration { get; init; }
 
-    /// <summary>
-    /// Whether the tenant has <c>TenantFeature.IntermodalContainers</c>. The section names tools a gated
-    /// tenant is not given, so it must move in lockstep with them.
-    /// </summary>
+    /// <summary><c>TenantFeature.IntermodalContainers</c>; gates a section naming its tools.</summary>
     public bool HasIntermodal { get; init; }
 
-    /// <summary>
-    /// Whether the tenant has <c>TenantFeature.VehicleTransport</c>, which adds the car hauler
-    /// capacity and inoperable-vehicle rules.
-    /// </summary>
+    /// <summary><c>TenantFeature.VehicleTransport</c>; adds the car hauler rules.</summary>
     public bool HasVehicleTransport { get; init; }
 
-    /// <summary>
-    /// Whether the tenant has <c>TenantFeature.AIRateNegotiation</c> AND a load board. The section
-    /// names negotiation tools that only exist alongside listings to negotiate on.
-    /// </summary>
+    /// <summary><c>TenantFeature.AIRateNegotiation</c> and a load board - the tools need both.</summary>
     public bool HasRateNegotiation { get; init; }
 
-    /// <summary>The tenant's learned dispatch policy, or null to omit the section.</summary>
+    /// <summary>Null omits the section.</summary>
     public LearnedDispatchPolicy? Policy { get; init; }
 }

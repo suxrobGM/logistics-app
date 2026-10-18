@@ -1,8 +1,5 @@
 namespace Logistics.Infrastructure.AI.Llm.Contracts;
 
-/// <summary>
-/// The provider-agnostic response returned from an LLM call.
-/// </summary>
 internal record LlmResponse
 {
     public required LlmMessage AssistantMessage { get; init; }

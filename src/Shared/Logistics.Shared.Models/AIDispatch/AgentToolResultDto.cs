@@ -4,10 +4,9 @@ using System.Text.Json.Serialization;
 namespace Logistics.Shared.Models;
 
 /// <summary>
-/// The one declaration of what an agent tool returns: serialized snake_case for the model, and
-/// reaching the UI as generated camelCase on <see cref="AgentDecisionDto.ToolResult"/>. Declaring
-/// it twice is what let prompt tuning silently blank the dispatch transcript. Every member is
-/// optional - this is the union of what any tool can return, and a tool sets only its own keys.
+/// The one declaration of what the UI-rendered tools return: snake_case for the model, generated
+/// camelCase for the UI on <see cref="AgentDecisionDto.ToolResult"/>. A union - each tool sets only
+/// its own keys.
 /// </summary>
 public class AgentToolResultDto
 {
@@ -99,13 +98,9 @@ public class AgentToolLoadDto
     public int? ContainerDaysUntilLastFreeDay { get; set; }
     public bool? ContainerOnHold { get; set; }
 
-    /// <summary>
-    /// The hazmat class ("Class3", or "unspecified") on a hazmat load; null otherwise. Tells the agent
-    /// to run check_dispatch_eligibility before assigning.
-    /// </summary>
+    /// <summary>"Class3", or "unspecified", on a hazmat load; null otherwise.</summary>
     public string? HazmatClass { get; set; }
 
-    // Car hauler loads: compared with the truck's vehicle_capacity before assigning.
     public int? VehicleCount { get; set; }
     public string? Vehicles { get; set; }
 }
@@ -119,14 +114,10 @@ public class AgentToolTruckDto
     public double? CurrentLng { get; set; }
     public string? CurrentAddress { get; set; }
 
-    /// <summary>
-    /// How many vehicles a car hauler carries; null for other truck types.
-    /// </summary>
+    /// <summary>Null for anything but a car hauler.</summary>
     public int? VehicleCapacity { get; set; }
 
-    /// <summary>
-    /// The trailer hooked to the truck; null when none is. Its type decides what freight a tractor can pull.
-    /// </summary>
+    /// <summary>Null when no trailer is hooked.</summary>
     public AgentToolTrailerDto? CurrentTrailer { get; set; }
     public AgentToolDriverDto? MainDriver { get; set; }
 }

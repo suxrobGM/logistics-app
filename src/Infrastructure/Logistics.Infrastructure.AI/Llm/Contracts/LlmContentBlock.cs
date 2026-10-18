@@ -2,10 +2,6 @@ using System.Text.Json.Nodes;
 
 namespace Logistics.Infrastructure.AI.Llm.Contracts;
 
-/// <summary>
-/// Base type for the polymorphic content blocks that make up an <see cref="LlmMessage"/>.
-/// Providers map these to their SDK-native content representations.
-/// </summary>
 internal abstract record LlmContentBlock;
 
 internal record LlmTextBlock(string Text) : LlmContentBlock;
@@ -14,12 +10,12 @@ internal record LlmToolUseBlock(string Id, string Name, JsonNode? Input) : LlmCo
 
 internal record LlmToolResultBlock(string ToolUseId, string Content) : LlmContentBlock;
 
-/// <summary>An inline document such as a PDF (base64-encoded). Mapped to provider-native document content.</summary>
+/// <summary>A base64 inline document, such as a PDF.</summary>
 internal record LlmDocumentBlock(string MediaType, string Base64Data) : LlmContentBlock;
 
 /// <summary>
-/// An Anthropic thinking block, kept so the tool loop can echo it back - with thinking on, an
-/// assistant turn replayed without it is rejected. Only in-turn replay is required.
+/// Anthropic only. Echoed back within the turn - with thinking on, a replayed assistant turn without
+/// it is rejected. Never persisted.
 /// </summary>
 internal record LlmThinkingBlock(string Thinking, string? Signature) : LlmContentBlock;
 
@@ -27,8 +23,7 @@ internal record LlmThinkingBlock(string Thinking, string? Signature) : LlmConten
 internal record LlmRedactedThinkingBlock(string Data) : LlmContentBlock;
 
 /// <summary>
-/// A provider-native block nothing outside the provider reads - Anthropic's server tool calls and
-/// their results (web search). Echoed back verbatim within the turn: a later thinking block was
-/// produced with it in the prefix, so dropping it invalidates that block. Never persisted.
+/// Raw JSON of a block only its provider reads (Anthropic web search calls and results). Echoed
+/// back verbatim within the turn - a later thinking block's signature covers it. Never persisted.
 /// </summary>
 internal record LlmProviderBlock(string Json) : LlmContentBlock;

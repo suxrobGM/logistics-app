@@ -1,8 +1,7 @@
 namespace Logistics.Infrastructure.AI.Tools;
 
 /// <summary>
-/// Durations as the agent should quote them ("12h 45m"). Tools hand over the finished string
-/// because the model reformats raw minutes unreliably and the prompts used to spend lines on it.
+/// Durations as the agent quotes them ("12h 45m") - the model reformats raw minutes unreliably.
 /// </summary>
 internal static class AgentDuration
 {

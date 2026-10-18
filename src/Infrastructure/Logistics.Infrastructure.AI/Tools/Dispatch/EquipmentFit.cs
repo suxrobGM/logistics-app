@@ -15,8 +15,7 @@ internal enum EquipmentMatch
 
 /// <summary>
 /// The freight-to-equipment pairings a dispatcher expects. Soft, unlike
-/// <see cref="TruckLoadCompatibility"/>: whether a reefer load fits a tractor depends on the
-/// trailer it pulls, so these rank candidates rather than exclude them.
+/// <see cref="TruckLoadCompatibility"/>: a tractor's fit depends on the trailer it pulls.
 /// </summary>
 internal static class EquipmentFit
 {

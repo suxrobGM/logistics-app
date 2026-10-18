@@ -52,10 +52,7 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
         }
     }
 
-    /// <summary>
-    /// Builds the request options. The system prompt goes in as an input item, not here - see
-    /// <see cref="BuildInputItems"/>.
-    /// </summary>
+    /// <summary>The system prompt is not set here - it is the first input item.</summary>
     internal static CreateResponseOptions BuildOptions(LlmRequest request)
     {
         var options = new CreateResponseOptions
@@ -86,10 +83,7 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
         return options;
     }
 
-    /// <summary>
-    /// Function tools plus OpenAI's hosted web-search tool. The search runs server-side within one
-    /// response, so the agent loop never executes it.
-    /// </summary>
+    /// <summary>The hosted web search runs server-side within the response.</summary>
     internal static void AddTools(CreateResponseOptions options, LlmRequest request)
     {
         foreach (var tool in request.Tools)
@@ -105,7 +99,6 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
         options.Tools.Add(ResponseTool.CreateWebSearchTool());
     }
 
-    /// <summary>Flattens the system prompt and transcript into one ordered input-item list.</summary>
     internal static IEnumerable<ResponseItem> BuildInputItems(LlmRequest request)
     {
         yield return ResponseItem.CreateDeveloperMessageItem(request.SystemPrompt);
@@ -117,9 +110,8 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
     }
 
     /// <summary>
-    /// Maps one provider-agnostic message to one or more input items. Responses has no tool role:
-    /// a call and its result are each a <i>top-level</i> item keyed by <c>call_id</c>, so an
-    /// assistant turn chat completions collapsed into one message fans out into 1+N items.
+    /// Responses has no tool role: each call and each result is a top-level item keyed by
+    /// <c>call_id</c>, so one assistant turn fans out into 1+N items.
     /// </summary>
     internal static IEnumerable<ResponseItem> ToInputItems(LlmMessage message)
     {
@@ -185,8 +177,8 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
     }
 
     /// <summary>
-    /// Read from the output items, not only Status: Status is Completed both when the model
-    /// answered and when it asked for tools, which would end every tool session after one iteration.
+    /// Read from the output items too: Status is Completed whether the model answered or asked for
+    /// tools.
     /// </summary>
     private static LlmStopReason MapStopReason(ResponseResult response, int toolCallCount) =>
         response.IncompleteStatusDetails?.Reason switch

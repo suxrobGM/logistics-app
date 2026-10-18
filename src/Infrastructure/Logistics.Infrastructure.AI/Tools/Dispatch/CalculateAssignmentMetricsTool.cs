@@ -40,8 +40,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
         if (input.Candidates.Length == 0)
             return ToolResult.Error("Missing or empty candidates array");
 
-        // The prompt tells the agent to score every competing pairing at once, so a per-candidate
-        // GetByIdAsync pair meant 2N sequential round trips. Two batched reads instead.
+        // Two batched reads, not a GetByIdAsync pair per candidate.
         var loadIds = input.Candidates.Select(c => c.LoadId).Distinct().ToList();
         var truckIds = input.Candidates.Select(c => c.TruckId).Distinct().ToList();
 
@@ -98,7 +97,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
             }));
         }
 
-        // Best pairings first; unscoreable candidates trail them, as before.
+        // Best pairings first; unscoreable candidates last.
         var candidates = scored
             .OrderByDescending(s => s.Rate)
             .Select(s => (object)s.Row)

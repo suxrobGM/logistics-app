@@ -4,13 +4,11 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-/// <summary>An Available truck with what dispatch needs to know about it.</summary>
 internal sealed record AvailableTruck(Truck Truck, Employee? Driver, DriverHosStatus? Hos, Trailer? Trailer);
 
 /// <summary>
-/// The Available trucks with their main driver, that driver's HOS row and the hooked trailer.
-/// Each is a lazy navigation, so reading them per truck would be one SELECT per truck - in the
-/// tools every dispatch run starts with. Three batched reads instead.
+/// Available trucks with driver, HOS row and hooked trailer. Each is a lazy navigation, so they are
+/// batch-read rather than queried per truck.
 /// </summary>
 internal static class AvailableFleet
 {

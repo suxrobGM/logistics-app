@@ -9,14 +9,10 @@ using Microsoft.Extensions.Logging;
 namespace Logistics.Infrastructure.AI.Agents;
 
 /// <summary>
-/// The provider-agnostic agent iteration loop, shared by the dispatch agent and the copilot.
-/// New messages accumulate on <see cref="LlmConversation.Messages"/> - callers that persist the
-/// transcript read them from there after the run.
+/// The agent loop shared by every surface. New messages accumulate on
+/// <see cref="LlmConversation.Messages"/>, where callers read them to persist the turn. No retries:
+/// the vendor SDKs already retry 429 and 5xx, so a failure that gets here is final.
 /// </summary>
-/// <remarks>
-/// No retry here: both vendor SDKs already retry 429 and 5xx with backoff, and a second layer would
-/// multiply the attempts. A failure that reaches this loop is final.
-/// </remarks>
 internal sealed class AgentLoopRunner(
     AgentDecisionProcessor decisionProcessor,
     ITenantUnitOfWork tenantUow,
@@ -24,7 +20,7 @@ internal sealed class AgentLoopRunner(
 {
     private const int MaxIterations = 25;
 
-    /// <summary>Appended when a reply hits the output cap, so neither the user nor the next turn reads it as complete.</summary>
+    /// <summary>Marks a reply cut off at the output cap, for the user and for the next turn.</summary>
     internal const string TruncatedNotice = "[Reply cut off at the output length limit.]";
 
     public async Task RunAsync(
@@ -119,17 +115,15 @@ internal sealed class AgentLoopRunner(
     }
 
     /// <summary>
-    /// A cut-off reply without its tool calls: their arguments may be incomplete, so they must not
-    /// run, and a tool call left without a result would make the replayed transcript invalid.
+    /// Drops the tool calls: their arguments may be cut off, and a call without a result would make
+    /// the replayed transcript invalid.
     /// </summary>
     private static LlmMessage Truncated(LlmMessage reply) =>
         new(reply.Role, [.. reply.Content.Where(b => b is not LlmToolUseBlock), new LlmTextBlock(TruncatedNotice)]);
 
     /// <summary>
-    /// Honours a cancel issued on a different instance. AgentSessionCancellationRegistry is
-    /// process-local, but a session runs in a Hangfire worker while the cancel arrives at whichever
-    /// API instance the request landed on - there, TryCancel finds nothing and the worker would
-    /// keep burning tokens against a session the database already shows as Cancelled.
+    /// Honours a cancel that landed on another instance: the cancellation registry is process-local,
+    /// so only the database row tells this Hangfire worker to stop.
     /// </summary>
     private async Task ThrowIfCancelledElsewhereAsync(AgentSession session, CancellationToken ct)
     {

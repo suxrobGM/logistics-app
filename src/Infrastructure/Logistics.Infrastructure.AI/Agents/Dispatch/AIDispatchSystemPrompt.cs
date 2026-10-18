@@ -14,10 +14,8 @@ internal static class AIDispatchSystemPrompt
         """;
 
     /// <summary>
-    /// The system prompt for the dispatch agent. Static per tenant on purpose - no date, no
-    /// per-request text - so it stays in the provider's prompt cache across turns; the time comes
-    /// from each message's <c>[Sent: ...]</c> stamp. See <see cref="DispatchPromptContext"/> for
-    /// what it varies on.
+    /// Static per tenant - no date, no per-request text - so it stays cached across turns; the time
+    /// comes from each message's <c>[Sent: ...]</c> stamp.
     /// </summary>
     public static string Build(DispatchPromptContext context)
     {
@@ -178,9 +176,8 @@ internal static class AIDispatchSystemPrompt
     }
 
     /// <summary>
-    /// Renders the learned policy as strong defaults. The ranking language is load-bearing: this is
-    /// untrusted text on a prompt-injection path and must never promote itself to a hard rule.
-    /// Returns an empty string when there is nothing to inject.
+    /// The ranking language is load-bearing: policy text is untrusted, on a prompt-injection path,
+    /// and must never promote itself to a hard rule.
     /// </summary>
     private static string BuildPolicySection(LearnedDispatchPolicy? policy)
     {
@@ -214,13 +211,12 @@ internal static class AIDispatchSystemPrompt
             """;
     }
 
-    /// <summary>A labelled sub-section, or nothing when there is no content for it.</summary>
     private static string Subsection(string heading, string? content) =>
         content is null ? "" : $"### {heading}\n{content}\n\n";
 
     /// <summary>
-    /// Strips control characters (newlines and tabs survive) and clamps to whole lines. The last point
-    /// at which anything can stop untrusted policy text reaching the model, so both steps live here.
+    /// Strips control characters (newlines and tabs survive) and keeps whole lines only - the last
+    /// point before untrusted policy text reaches the model, so both steps live here.
     /// </summary>
     private static string? ClampPolicyText(string? text, int maxChars)
     {

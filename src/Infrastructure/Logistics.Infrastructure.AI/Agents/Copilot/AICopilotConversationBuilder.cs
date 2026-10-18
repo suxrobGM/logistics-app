@@ -37,8 +37,7 @@ internal sealed class AICopilotConversationBuilder(
         {
             DistanceUnit = tenant.Settings.DistanceUnit,
             IsSolo = tenant.IsSolo,
-            // Metadata, not a name list: a new dispatch write tool must not silently lose the
-            // guardrails section just because nobody remembered to extend a hardcoded pair.
+            // Read from metadata, so a new dispatch write tool brings the guardrails along.
             HasDispatchTools =
                 tools.Any(t => t.IsWrite && t.RequiredPermission == Permission.Dispatch.Manage)
         });
@@ -51,8 +50,7 @@ internal sealed class AICopilotConversationBuilder(
 
         var messages = await AgentTranscriptReplay.LoadAsync(tenantUow, conversation, ct);
 
-        // Same admin-set effort as dispatch. Thinking blocks replay in-turn; the persisted
-        // transcript drops them, which is fine - prior turns replay without them.
+        // Thinking blocks replay only within the turn; the persisted transcript drops them.
         return new LlmConversation(
             setup.Provider, systemPrompt, messages, tools, selection.Model, config.MaxTokens, setup.Effort);
     }
