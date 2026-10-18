@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
@@ -50,7 +51,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
             .ToDictionary(t => t.Id);
 
         var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
-        var suffix = DispatchUnits.Suffix(unit);
+        var suffix = unit.Abbreviation();
 
         var scored = new List<(double Rate, Dictionary<string, object?> Row)>();
         var errors = new List<object>();
@@ -71,15 +72,14 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
                 continue;
             }
 
-            var deadheadKm = truck.CurrentLocation is not null && load.OriginLocation is not null
-                ? DispatchUnits.MetersToKm(truck.CurrentLocation.DistanceTo(load.OriginLocation))
+            var deadheadMeters = truck.CurrentLocation is not null && load.OriginLocation is not null
+                ? truck.CurrentLocation.DistanceTo(load.OriginLocation)
                 : 0.0;
-            var loadedKm = DispatchUnits.MetersToKm(load.Distance);
 
-            var deadhead = DispatchUnits.FromKm(deadheadKm, unit);
-            var total = DispatchUnits.FromKm(deadheadKm + loadedKm, unit);
-            var linehaul = (double)(load.DeliveryCost?.Amount ?? 0);
-            var rate = Math.Round(total > 0 ? linehaul / total : 0, 2);
+            var deadhead = DispatchUnits.FromMeters(deadheadMeters, unit);
+            var total = DispatchUnits.FromMeters(deadheadMeters + load.Distance, unit);
+            var linehaul = load.DeliveryCost?.Amount ?? 0;
+            var rate = DispatchUnits.RatePer(linehaul, total);
 
             // Keys carry the unit so the model never has to guess whether to convert.
             scored.Add((rate, new Dictionary<string, object?>
@@ -89,7 +89,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
                 ["load_name"] = load.Name,
                 ["truck_number"] = truck.Number,
                 [$"deadhead_{suffix}"] = deadhead,
-                [$"loaded_{suffix}"] = DispatchUnits.FromKm(loadedKm, unit),
+                [$"loaded_{suffix}"] = DispatchUnits.FromMeters(load.Distance, unit),
                 [$"total_{suffix}"] = total,
                 ["delivery_cost"] = linehaul,
                 [$"revenue_per_{suffix}"] = rate,

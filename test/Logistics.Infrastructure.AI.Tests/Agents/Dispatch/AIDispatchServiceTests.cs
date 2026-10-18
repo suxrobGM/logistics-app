@@ -129,13 +129,6 @@ public class AIDispatchServiceTests
     private AIDispatchTurnRequest CreateRequest(AgentConversation conversation) =>
         new(_tenant.Id, conversation.Id, null);
 
-    #region Turn adapter wiring (no network - the LLM-disabled early exit)
-
-    /// <summary>
-    /// Proves the adapter threads TenantId/ConversationId through to AgentTurnService and that
-    /// DispatchAgentSurface broadcasts tenant-wide, without needing a real LLM call: the
-    /// AI-disabled path short-circuits before the agent loop runs.
-    /// </summary>
     private List<AgentMessage> AddedMessages() =>
     [
         .. _messageRepo.ReceivedCalls()
@@ -143,6 +136,13 @@ public class AIDispatchServiceTests
             .Select(c => (AgentMessage)c.GetArguments()[0]!)
     ];
 
+    #region Turn adapter wiring (no network - the LLM-disabled early exit)
+
+    /// <summary>
+    /// Proves the adapter threads TenantId/ConversationId through to AgentTurnService and that
+    /// DispatchAgentSurface broadcasts tenant-wide, without needing a real LLM call: the
+    /// AI-disabled path short-circuits before the agent loop runs.
+    /// </summary>
     [Fact]
     public async Task RunTurnAsync_AIDisabled_AppendsNoticeToTheRightConversationAndBroadcastsTenantWide()
     {

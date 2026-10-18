@@ -25,15 +25,14 @@ internal static class LlmErrorSanitizer
     /// </summary>
     public static string ForSession(Exception ex)
     {
-        if (ex is LlmProviderException provider)
+        switch ((ex as LlmProviderException)?.Kind)
         {
-            return provider.Kind switch
-            {
-                LlmFailureKind.Authentication => AuthenticationError,
-                LlmFailureKind.RateLimited => "Rate limited by the LLM API. Please try again in a few minutes.",
-                LlmFailureKind.Unavailable => "The LLM provider is unavailable or overloaded. Please try again shortly.",
-                _ => LooksSensitive(ex.Message) ? AuthenticationError : Truncate(ex.Message)
-            };
+            case LlmFailureKind.Authentication:
+                return AuthenticationError;
+            case LlmFailureKind.RateLimited:
+                return "Rate limited by the LLM API. Please try again in a few minutes.";
+            case LlmFailureKind.Unavailable:
+                return "The LLM provider is unavailable or overloaded. Please try again shortly.";
         }
 
         if (ex is UnauthorizedAccessException || LooksSensitive(ex.Message))

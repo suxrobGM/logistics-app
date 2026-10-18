@@ -60,7 +60,7 @@ internal sealed class OpenAICompatibleLlmProvider(LlmProviderOptions config, Htt
         }
         catch (ClientResultException ex)
         {
-            throw OpenAIFailure.From(ex);
+            throw new LlmProviderException(LlmProviderException.KindFor(ex.Status), ex.Message, ex);
         }
     }
 

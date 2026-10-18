@@ -17,7 +17,7 @@ internal static class AICopilotSystemPrompt
     {
         var isKm = context.DistanceUnit == DistanceUnit.Kilometers;
         var unitLabel = isKm ? "kilometers" : "miles";
-        var conversionNote = isKm ? "" : " Convert `_km` values to miles (× 0.621).";
+        var distanceKeys = PromptText.DistanceKeys(context.DistanceUnit);
         var operationNote = context.IsSolo
             ? "\nThis is a solo owner-operator running a single truck - avoid fleet-wide framing."
             : "";
@@ -69,7 +69,7 @@ internal static class AICopilotSystemPrompt
             - Concise Markdown. Short lists over wide tables. Lead with the answer, not your process.
             - Refer to loads, invoices, and trucks by their number, never by GUID.
             - Money with its currency, dates as yyyy-MM-dd, durations as "2h 15m".
-            - Distances in {unitLabel}. Every distance key ends in its unit (`_km`, `_mi`).{conversionNote}
+            - Distances in {unitLabel}. {distanceKeys}
             """;
     }
 }

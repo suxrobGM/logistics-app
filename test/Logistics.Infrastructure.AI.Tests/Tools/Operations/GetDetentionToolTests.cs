@@ -24,13 +24,7 @@ public class GetDetentionToolTests
     public GetDetentionToolTests()
     {
         _tenantUow.Repository<TripStop>().Returns(_stopRepo);
-        _tenantUow.GetCurrentTenant().Returns(new Tenant
-        {
-            Name = "Test Tenant",
-            ConnectionString = "test-connection",
-            BillingEmail = "test@test.com",
-            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
-        });
+        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create());
         _sut = new GetDetentionTool(_mediator, _tenantUow);
     }
 

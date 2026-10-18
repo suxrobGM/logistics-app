@@ -24,11 +24,12 @@ internal sealed class LlmProviderException(LlmFailureKind kind, string message, 
 {
     public LlmFailureKind Kind { get; } = kind;
 
+    /// <summary>Status 0 is System.ClientModel's transport failure (no response).</summary>
     public static LlmFailureKind KindFor(int status) => status switch
     {
         401 or 403 => LlmFailureKind.Authentication,
         429 => LlmFailureKind.RateLimited,
-        >= 500 => LlmFailureKind.Unavailable,
+        0 or >= 500 => LlmFailureKind.Unavailable,
         _ => LlmFailureKind.Rejected
     };
 }

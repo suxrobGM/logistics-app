@@ -64,10 +64,10 @@ internal static class AgentTranscriptReplay
         return overflow <= 0 ? 1 : (overflow + WindowStep - 1) / WindowStep * WindowStep + 1;
     }
 
-    internal static List<LlmMessage> BuildMessages(IEnumerable<AgentMessage> window, bool truncated)
+    private static List<LlmMessage> BuildMessages(List<AgentMessage> window, bool truncated)
     {
-        var messages = new List<LlmMessage>();
-        foreach (var row in window.OrderBy(m => m.Sequence))
+        var messages = new List<LlmMessage>(window.Count);
+        foreach (var row in window)
         {
             var blocks = row.Role == AgentMessageRole.System
                 ? [new LlmTextBlock($"[system note] {row.DisplayText}")]

@@ -48,7 +48,7 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
         }
         catch (ClientResultException ex)
         {
-            throw OpenAIFailure.From(ex);
+            throw new LlmProviderException(LlmProviderException.KindFor(ex.Status), ex.Message, ex);
         }
     }
 

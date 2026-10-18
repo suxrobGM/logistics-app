@@ -83,11 +83,9 @@ public class AIDispatchConversationBuilderTests
     private AgentConversation CreateConversation(string text = "Assign what you can")
     {
         var conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch };
-        Persist(conversation.AddTextMessage(AgentMessageRole.User, text));
+        _rows.Add(conversation.AddTextMessage(AgentMessageRole.User, text));
         return conversation;
     }
-
-    private void Persist(AgentMessage row) => _rows.Add(row);
 
     private void SetTenant(params TenantPreset[] presets)
     {
@@ -256,9 +254,9 @@ public class AIDispatchConversationBuilderTests
     public async Task BuildAsync_RebuildsMessagesFromTranscript()
     {
         var conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch };
-        Persist(conversation.AddTextMessage(AgentMessageRole.User, "Assign truck 5 to load 42"));
-        Persist(conversation.AddTextMessage(AgentMessageRole.Assistant, "Done - see summary."));
-        Persist(conversation.AddTextMessage(AgentMessageRole.User, "Now do the rest"));
+        _rows.Add(conversation.AddTextMessage(AgentMessageRole.User, "Assign truck 5 to load 42"));
+        _rows.Add(conversation.AddTextMessage(AgentMessageRole.Assistant, "Done - see summary."));
+        _rows.Add(conversation.AddTextMessage(AgentMessageRole.User, "Now do the rest"));
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
         var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);

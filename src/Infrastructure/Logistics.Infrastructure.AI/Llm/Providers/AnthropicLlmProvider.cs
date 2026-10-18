@@ -108,10 +108,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
 
     private static InputSchema ToInputSchema(JsonNode schema)
     {
-        var properties = schema["properties"] is JsonObject props
-            ? props.ToDictionary(p => p.Key, p => JsonSerializer.SerializeToElement(p.Value))
-            : [];
-
+        var properties = ToInputDictionary(schema["properties"]);
         var required = schema["required"] is JsonArray req
             ? req.Select(r => r!.GetValue<string>()).ToList()
             : [];
@@ -131,7 +128,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
             if (block.TryPickText(out var text))
                 content.Add(new LlmTextBlock(text.Text));
             else if (block.TryPickToolUse(out var toolUse))
-                content.Add(new LlmToolUseBlock(toolUse.ID, toolUse.Name, ToJsonNode(toolUse.Input)));
+                content.Add(new LlmToolUseBlock(toolUse.ID, toolUse.Name, JsonSerializer.SerializeToNode(toolUse.Input)));
             else if (block.TryPickThinking(out var thinking))
                 content.Add(new LlmThinkingBlock(thinking.Thinking, thinking.Signature));
             // Redacted blocks replay too - dropping one leaves a hole the API rejects next iteration.
@@ -235,9 +232,6 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         },
         _ => ToBlockParam(block)
     };
-
-    private static JsonNode? ToJsonNode(IReadOnlyDictionary<string, JsonElement> input) =>
-        JsonSerializer.SerializeToNode(input);
 
     private static Dictionary<string, JsonElement> ToInputDictionary(JsonNode? input) =>
         input is JsonObject obj

@@ -71,8 +71,6 @@ internal sealed class GetDispatchCandidatesTool(
     private async Task<Dictionary<string, object?>> PlanAsync(
         LoadDto load, List<AvailableTruck> fleet, DistanceUnit unit, int limit, CancellationToken ct)
     {
-        var suffix = DispatchUnits.Suffix(unit);
-        var loadedKm = DispatchUnits.MetersToKm(load.Distance);
         var (typeIncompatible, hosInfeasible, noDriver) = (0, 0, 0);
         var scored = new List<Scored>();
 
@@ -90,27 +88,37 @@ internal sealed class GetDispatchCandidatesTool(
                 continue;
             }
 
-            double? deadheadKm = entry.Truck.CurrentLocation is { } at
-                ? DispatchUnits.MetersToKm(at.DistanceTo(load.OriginLocation))
-                : null;
-            var tripKm = (deadheadKm ?? 0) + loadedKm;
+            double? deadheadMeters = entry.Truck.CurrentLocation is { } at ? at.DistanceTo(load.OriginLocation) : null;
+            var tripMeters = (deadheadMeters ?? 0) + load.Distance;
+            var tripKm = DispatchUnits.MetersToKm(tripMeters);
 
-            var verdict = entry.Hos is null ? HosFeasibility.Unknown(tripKm) : HosFeasibility.Evaluate(entry.Hos, tripKm);
-            if (entry.Hos is not null && !verdict.Feasible && !verdict.FeasibleMultiDay)
+            HosFeasibility verdict;
+            HosFit fit;
+            if (entry.Hos is null)
             {
-                hosInfeasible++;
-                continue;
+                verdict = HosFeasibility.Unknown(tripKm);
+                fit = HosFit.Unknown;
+            }
+            else
+            {
+                verdict = HosFeasibility.Evaluate(entry.Hos, tripKm);
+                if (!verdict.Feasible && !verdict.FeasibleMultiDay)
+                {
+                    hosInfeasible++;
+                    continue;
+                }
+
+                fit = verdict.Feasible ? HosFit.Feasible : HosFit.MultiDay;
             }
 
-            var hos = HosLabel(entry.Hos is not null, verdict);
             var (equipment, note) = EquipmentFit.Evaluate(load.Type, entry.Truck.Type, entry.Trailer?.Type);
-            scored.Add(new Scored(entry, deadheadKm, tripKm, verdict, hos, equipment, note));
+            scored.Add(new Scored(entry, deadheadMeters, tripMeters, verdict, fit, equipment, note));
         }
 
         var best = scored
             .OrderBy(s => s.Equipment)
-            .ThenBy(s => s.Hos switch { "feasible" => 0, "multi_day" => 1, _ => 2 })
-            .ThenBy(s => s.DeadheadKm ?? double.MaxValue)
+            .ThenBy(s => s.Hos)
+            .ThenBy(s => s.DeadheadMeters ?? double.MaxValue)
             .Take(limit)
             .ToList();
 
@@ -118,7 +126,7 @@ internal sealed class GetDispatchCandidatesTool(
         var candidates = new List<(bool Blocked, Dictionary<string, object?> Row)>(best.Count);
         foreach (var candidate in best)
         {
-            var row = Describe(candidate, load, unit, suffix);
+            var row = Describe(candidate, load, unit);
             var blocked = false;
 
             if (needsEligibility)
@@ -137,7 +145,7 @@ internal sealed class GetDispatchCandidatesTool(
             ["load_id"] = load.Id,
             ["load_name"] = load.Name,
             ["load_type"] = load.Type.ToString(),
-            [$"loaded_{suffix}"] = DispatchUnits.FromKm(loadedKm, unit),
+            [$"loaded_{unit.Abbreviation()}"] = DispatchUnits.FromMeters(load.Distance, unit),
             ["linehaul"] = load.DeliveryCost,
             // Blocked candidates trail the rest without disturbing their order.
             ["candidates"] = candidates.OrderBy(c => c.Blocked).Select(c => c.Row).ToList(),
@@ -150,10 +158,11 @@ internal sealed class GetDispatchCandidatesTool(
         };
     }
 
-    private static Dictionary<string, object?> Describe(Scored candidate, LoadDto load, DistanceUnit unit, string suffix)
+    private static Dictionary<string, object?> Describe(Scored candidate, LoadDto load, DistanceUnit unit)
     {
         var (truck, driver, hos, trailer) = candidate.Entry;
-        var total = DispatchUnits.FromKm(candidate.TripKm, unit);
+        var suffix = unit.Abbreviation();
+        var total = DispatchUnits.FromMeters(candidate.TripMeters, unit);
 
         return new Dictionary<string, object?>
         {
@@ -163,31 +172,33 @@ internal sealed class GetDispatchCandidatesTool(
             ["trailer_type"] = trailer?.Type.ToString(),
             ["driver_id"] = driver!.Id,
             ["driver_name"] = driver.GetFullName(),
-            [$"deadhead_{suffix}"] = candidate.DeadheadKm is { } km ? DispatchUnits.FromKm(km, unit) : null,
+            [$"deadhead_{suffix}"] = candidate.DeadheadMeters is { } m ? DispatchUnits.FromMeters(m, unit) : null,
             [$"total_{suffix}"] = total,
             ["drive_time"] = AgentDuration.Format(candidate.Verdict.EstimatedDrivingMinutes),
             ["driving_time_left"] = hos is null ? null : AgentDuration.Format(hos.DrivingMinutesRemaining),
-            ["hos"] = candidate.Hos,
+            ["hos"] = HosLabels[(int)candidate.Hos],
             ["equipment"] = candidate.Equipment.ToString().ToLowerInvariant(),
             ["equipment_note"] = candidate.EquipmentNote,
-            [$"revenue_per_{suffix}"] = total > 0 ? Math.Round((double)load.DeliveryCost / total, 2) : 0
+            [$"revenue_per_{suffix}"] = DispatchUnits.RatePer(load.DeliveryCost, total)
         };
     }
 
-    private static string HosLabel(bool hasHosData, HosFeasibility verdict)
+    /// <summary>Declaration order is the ranking order; <see cref="HosLabels"/> follows it.</summary>
+    private enum HosFit
     {
-        if (!hasHosData)
-            return "unknown";
-
-        return verdict.Feasible ? "feasible" : "multi_day";
+        Feasible,
+        MultiDay,
+        Unknown
     }
+
+    private static readonly string[] HosLabels = ["feasible", "multi_day", "unknown"];
 
     private sealed record Scored(
         AvailableTruck Entry,
-        double? DeadheadKm,
-        double TripKm,
+        double? DeadheadMeters,
+        double TripMeters,
         HosFeasibility Verdict,
-        string Hos,
+        HosFit Hos,
         EquipmentMatch Equipment,
         string? EquipmentNote);
 }

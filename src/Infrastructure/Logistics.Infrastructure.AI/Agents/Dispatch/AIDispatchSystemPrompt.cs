@@ -22,7 +22,7 @@ internal static class AIDispatchSystemPrompt
         var isKm = context.DistanceUnit == DistanceUnit.Kilometers;
         var unitLabel = isKm ? "km" : "miles";
         var perUnitLabel = isKm ? "km" : "mile";
-        var conversionNote = isKm ? "" : " Convert `_km` values to miles (× 0.621).";
+        var distanceKeys = PromptText.DistanceKeys(context.DistanceUnit);
         var isSolo = context.IsSolo;
 
         var sanitizedName = PromptText.SanitizeCompanyName(context.CompanyName);
@@ -123,7 +123,7 @@ internal static class AIDispatchSystemPrompt
             If unsure, ask a short clarifying question. Only the provided tools exist. Never fabricate fleet data - every claim about loads, trucks or drivers must come from a tool result in this conversation.
 
             ## Units & Formatting
-            - Report distances in {{unitLabel}}. Every distance key ends in its unit (`_km`, `_mi`).{{conversionNote}}
+            - Report distances in {{unitLabel}}. {{distanceKeys}}
             - Quote durations as hours and minutes ("12h 45m"); turn any `_minutes` value into that form.
 
             ## Priority Order
