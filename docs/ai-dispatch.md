@@ -60,11 +60,11 @@ and the broker-reply envelope carry no sender and render unattributed.
    DispatchAgentSurface
 3. The turn creates an AgentSession (Type = Dispatch) - quota, tokens, and decisions
    ride the same session machinery copilot turns use
-4. DispatchAgentSurface builds the system prompt (learned policy, solo preset),
-   replays the persisted transcript, and appends a fresh fleet-state snapshot notice
-   to only this turn's final user message - never persisted, so it cannot replay stale
-   on a later turn. The full dispatch tool catalogue applies; there is no per-caller
-   tool scoping, since the endpoint's policy is the gate
+4. DispatchAgentSurface builds the system prompt (learned policy, solo preset) and
+   replays the persisted transcript (see the replay notes in ai-copilot.md). The prompt
+   is static per tenant - it tells the agent to re-gather fleet data before any dispatch
+   action, since earlier turns' results may be stale. The full dispatch tool catalogue
+   applies; there is no per-caller tool scoping, since the endpoint's policy is the gate
 5. AgentLoopRunner iterates: read tools execute; write tools become Suggested decisions
 6. Every appended message is persisted to agent_messages and broadcast tenant-wide over
    /hubs/ai-dispatch; approving or rejecting a decision appends a system note to the
@@ -75,7 +75,8 @@ and the broker-reply envelope carry no sender and render unattributed.
 
 | Tool                           | Type  | Description                                          |
 | ------------------------------ | ----- | ---------------------------------------------------- |
-| `get_unassigned_loads`         | Read  | All Draft loads not in any trip                      |
+| `get_unassigned_loads`         | Read  | Draft loads not in any trip (up to 50, with total)   |
+| `get_dispatch_candidates`      | Read  | Ranked trucks per load: type, HOS, deadhead, fit     |
 | `get_available_trucks`         | Read  | Available trucks with driver HOS data                |
 | `get_driver_hos_status`        | Read  | Detailed HOS for a specific driver                   |
 | `check_hos_feasibility`        | Read  | Can a driver complete a trip given HOS remaining?    |

@@ -125,7 +125,9 @@ parameter for the admin-set effort level:
   `/v1/responses` (the GPT-6 Luna 400). Put these under `LlmProvider.OpenAI` - that enum value is
   what selects the Responses provider.
 - `AnthropicAdaptive` - Claude adaptive thinking + effort (Sonnet 5.5 / Haiku 5.5 class). Also suppresses
-  temperature, which these models reject.
+  temperature, which these models reject. These models have no clean "off", so effort `None` is sent
+  as `low`. Check `AnthropicLlmProvider.WebSearchFor` too: the dynamic-filtering web search tool is
+  only accepted by some models.
 - `None` (default) - no reasoning parameter is ever sent. For models without a reasoning control,
   and for compatible endpoints that reject it (DeepSeek).
 

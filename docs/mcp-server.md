@@ -12,7 +12,8 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 
 | Tool                           | Type  | Description                                               |
 | ------------------------------ | ----- | --------------------------------------------------------- |
-| `get_unassigned_loads`         | Read  | All Draft loads not assigned to any trip                  |
+| `get_unassigned_loads`         | Read  | Draft loads not assigned to any trip (up to 50)           |
+| `get_dispatch_candidates`      | Read  | Ranked trucks per load: type, HOS, deadhead, trailer fit  |
 | `get_available_trucks`         | Read  | Available trucks with trailer, driver HOS, fleet summary  |
 | `get_driver_hos_status`        | Read  | Detailed HOS status for a specific driver                 |
 | `check_hos_feasibility`        | Read  | Can a driver complete a trip given HOS remaining?         |

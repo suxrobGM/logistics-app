@@ -41,9 +41,15 @@ copilot-only types:
 - `AgentMessage` (`agent_messages`): sequenced rows storing the provider content blocks as JSON
   (`ContentJson`, including `tool_use` ids so the exact sequence replays) plus a `DisplayText` the
   UI renders. Tool-result rows have no `DisplayText` and never leave the server.
-- Replay (`AgentTranscriptReplay`, shared with the dispatch builder) truncates to the last 30 rows,
-  cutting only at a plain user chat message - starting mid-turn would orphan a
-  tool_use/tool_result pair and the provider rejects the request.
+- Replay (`AgentTranscriptReplay.LoadAsync`, shared with the dispatch builder) loads its window in
+  SQL - never through the `Messages` navigation, which would lazy-load the whole transcript. The
+  window is about the last 40 rows; its start moves in steps of 20 so the replayed prefix (and the
+  provider's prompt cache) holds still between steps, and it cuts only at a plain user chat
+  message - starting mid-turn would orphan a tool_use/tool_result pair and the provider rejects
+  the request.
+- Replay is a pure function of the stored rows, so the bytes match turn to turn: each user message
+  carries a `[Sent: ...]` stamp from its `CreatedAt` (the system prompts carry no date), and an
+  earlier turn's tool result over 1500 characters replays as a short "call the tool again" stub.
 - The copilot follows the same admin-set reasoning effort as the dispatch agent. Thinking blocks
   are replayed within a turn's tool loop (`LlmThinkingBlock`), but the persisted transcript drops
   them - prior turns replay fine without them, only in-turn replay is required.

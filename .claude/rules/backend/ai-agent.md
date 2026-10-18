@@ -51,14 +51,27 @@ on the model** - the wire protocol belongs to the endpoint, not the model's reas
 
 | Provider                      | Surface                                 | Serves                        |
 | ----------------------------- | --------------------------------------- | ----------------------------- |
-| `AnthropicLlmProvider`        | Anthropic SDK (caching, adaptive think) | `Anthropic`                   |
+| `AnthropicLlmProvider`        | official `Anthropic` SDK (caching, adaptive thinking) | `Anthropic` |
 | `OpenAIResponsesLlmProvider`  | `/v1/responses`                         | `OpenAI`                      |
 | `OpenAICompatibleLlmProvider` | `/v1/chat/completions` via `BaseUrl`    | the rest (DeepSeek, GLM, ...) |
 
 - **Providers use the factory's named `llm` client.** It carries only `RequestTimeoutSeconds` and no
   resilience handler (`RemoveAllResilienceHandlers` in `Registrar.cs`) - the host default's 30s
-  total would cut agent turns, and the SDKs plus `AgentLoopRunner` already retry what is safe. Don't
-  give a provider its own `HttpClient`; it would pick the host handler back up.
+  total would cut agent turns. **The vendor SDKs are the only retry layer** (both retry 429 and
+  5xx); `AgentLoopRunner` deliberately has none. Don't give a provider its own `HttpClient`; it
+  would pick the host handler back up.
+- **Providers translate their SDK's exceptions into `LlmProviderException`** (`LlmFailureKind`), and
+  `LlmErrorSanitizer` classifies by kind. Never classify by exception type: Anthropic's SDK throws the
+  same base type for a 401 and a 529, and an outage once read as "check the API key".
+- **Stop reasons are `LlmStopReason`, mapped per provider.** `MaxTokens` must not run the reply's tool
+  calls (they may be cut off); `PauseTurn` (Anthropic server tools) resends the conversation as it
+  stands. Both are handled in `AgentLoopRunner`.
+- **The official Anthropic SDK serializes an assigned `null`** as a JSON null rather than omitting
+  the field. Set optional request fields (`Thinking`, `OutputConfig`, `Temperature`,
+  `CacheControl`) only when they carry a value - see `BuildParameters` and `CachedBlockParam`.
+- **Anthropic server-tool blocks (web search) round-trip as `LlmProviderBlock`** - raw JSON, echoed
+  back within the turn, never persisted. Dropping them breaks `pause_turn` and invalidates any later
+  thinking block, whose signature covers the prefix that contained them.
 - **Don't move OpenAI back onto chat completions.** Function tools plus any non-`none`
   `reasoning_effort` is a hard 400 there; that was the outage this split fixed.
 - **Don't collapse the two OpenAI classes** without re-checking DeepSeek: as of Aug 2026 it serves
@@ -76,6 +89,12 @@ tenth of input, so hits lower `EstimatedCostUsd` and the budget with it. `CacheR
 zero means an invalidated prefix (tools or model changed) or a prompt under the per-model minimum,
 which is silently skipped. OpenAI and DeepSeek cache server-side, hence provider-level and not in
 the loop.
+
+**Keep every request append-only and deterministic.** The cache, and Anthropic's preserved-thinking
+check, compare the prefix byte for byte. So: no date or per-request text in a system prompt (the
+time comes from `AgentTranscriptReplay.SentStamp`), no in-memory notes added to a replayed message,
+and the replay window moves in `WindowStep` jumps. History may only change at the start of a turn,
+when no thinking block exists yet - that is why earlier turns' large tool results can be stubbed.
 
 **The two vendors report cached tokens differently.** OpenAI's `input_tokens` **includes**
 `cached_tokens`; Anthropic's **excludes** cache reads. `LlmPricing.Calculate` adds the input and
@@ -136,7 +155,9 @@ reintroduce one.
 - `LlmModelCatalog` owns the selectable models and each `ReasoningStyle`: `OpenAIEffort` models
   **always get an explicit reasoning effort** (`None` → `"none"`) and are the reason OpenAI routes
   to `/v1/responses` - the same combination on chat completions is a 400 once function tools are
-  present; `AnthropicAdaptive` models never get a temperature and replay thinking blocks via
+  present; `AnthropicAdaptive` models never get a temperature, always get adaptive thinking plus an explicit
+  effort (`None` rides on `low` - omitting `thinking` still runs adaptive at the model's default), and
+  replay thinking blocks via
   `LlmThinkingBlock` (**including redacted ones** - drop one and the next turn is rejected);
   `None` models get no reasoning parameter.
 - `LlmPricing` owns per-token prices - **read the numbers there**, never copy them into docs.
@@ -149,15 +170,10 @@ reintroduce one.
   tenant falls back to the Enterprise budget through `AIWeeklyBudget`
   (`Application.Abstractions/AIDispatch/`) - resolve a budget elsewhere and unsubscribed tenants
   vanish from the admin report.
-- Overage: billed-not-blocked by default. `AIOverageBilling`
-  (`Application.Abstractions/Payments/Stripe/`) owns **both** halves of the rule - `Billable` /
-  `IsBillable` (completed over-budget sessions only) and cost→units ($0.10/unit, 3× markup, min 1).
-  `AgentOverageReporter` meters Stripe through it and `AIQuotaService` sums the tenant-visible
-  `OverageChargesUsd` through it; re-deriving either half makes the displayed number contradict the
-  invoice. `IsOverage` is stamped at session start - the crossing run is free and
-  failed/cancelled runs never bill; both priced into the markup. `TenantSettings.BlockAIOverage`
-  swaps billing for a hard pause: `OverageBlocked` gates copilot sends (`AIBudgetReached`, not an
-  upgrade code) and fail-fasts dispatch sessions, which must keep `IsOverage` false or they'd bill.
+- Overage: billed-not-blocked by default; `TenantSettings.BlockAIOverage` swaps billing for a hard
+  pause. `AIOverageBilling` (`Application.Abstractions/Payments/Stripe/`) owns **both** halves of the
+  rule (which sessions bill, cost→units) - re-derive either half and the displayed number
+  contradicts the invoice. Details in [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 
 Resolution is setting → appsettings default for both halves, each through one owner
 (`LlmModelResolver`, `AISettingsResolver`) so the admin screen cannot report a setting the agents
