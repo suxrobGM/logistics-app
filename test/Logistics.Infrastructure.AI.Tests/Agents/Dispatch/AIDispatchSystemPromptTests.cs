@@ -266,6 +266,27 @@ public class AIDispatchSystemPromptTests
     }
 
     [Fact]
+    public void Build_HazmatLoads_RequireTheEligibilityCheck()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
+
+        Assert.Contains("`hazmat_class`", prompt);
+        Assert.Contains("Call `check_dispatch_eligibility`", prompt);
+    }
+
+    [Fact]
+    public void Build_CarHaulerRule_TravelsWithTheVehicleTransportFeature()
+    {
+        var without = AIDispatchSystemPrompt.Build(new("Fleet"));
+        var with = AIDispatchSystemPrompt.Build(new("Fleet") { HasVehicleTransport = true });
+
+        Assert.DoesNotContain("Car hauler loads", without);
+        Assert.Contains("Car hauler loads", with);
+        Assert.Contains("`vehicle_capacity`", with);
+        Assert.Contains("(inoperable)", with);
+    }
+
+    [Fact]
     public void Build_Intermodal_PrefersATruckWithAChassis()
     {
         var prompt = AIDispatchSystemPrompt.Build(new("Fleet") { HasIntermodal = true });

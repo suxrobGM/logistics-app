@@ -95,6 +95,12 @@ public class AgentToolLoadDto
     public int? ContainerDaysUntilLastFreeDay { get; set; }
     public bool? ContainerOnHold { get; set; }
 
+    /// <summary>
+    /// The hazmat class ("Class3", or "unspecified") on a hazmat load; null otherwise. Tells the agent
+    /// to run check_dispatch_eligibility before assigning.
+    /// </summary>
+    public string? HazmatClass { get; set; }
+
     // Car hauler loads: compared with the truck's vehicle_capacity before assigning.
     public int? VehicleCount { get; set; }
     public string? Vehicles { get; set; }

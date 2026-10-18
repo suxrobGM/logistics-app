@@ -11,7 +11,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
 {
     public static AgentToolDefinition Definition => new(
         "get_unassigned_loads",
-        "Get all Draft loads that are not assigned to any trip. Returns load ID, name, type, origin, destination, distance, delivery cost, customer, and for car hauler loads vehicle_count and vehicles (compare with a truck's vehicle_capacity).")
+        "Get all Draft loads that are not assigned to any trip. Returns load ID, name, type, origin, destination, distance, delivery cost, customer, hazmat_class on hazmat loads, and for car hauler loads vehicle_count and vehicles (compare with a truck's vehicle_capacity).")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All
@@ -47,6 +47,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
             ContainerLastFreeDay = l.ContainerLastFreeDay,
             ContainerDaysUntilLastFreeDay = l.ContainerLastFreeDay is { } lfd ? lfd.DayNumber - today.DayNumber : null,
             ContainerOnHold = l.ContainerIsOnHold,
+            HazmatClass = l.IsHazmat ? l.HazmatClass?.ToString() ?? "unspecified" : null,
             VehicleCount = l.Vehicles.Count > 0 ? l.Vehicles.Count : null,
             Vehicles = l.Vehicles.Count > 0 ? AgentVehicleSummary.Describe(l.Vehicles) : null
         }).ToList();

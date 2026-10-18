@@ -63,6 +63,15 @@ internal static class AIDispatchSystemPrompt
               """
             : "";
 
+        var carHaulerRule = context.HasVehicleTransport
+            ? """
+
+              - **Car hauler loads**: a load's `vehicle_count` plus the vehicles already on the truck must fit its
+                `vehicle_capacity` - `check_dispatch_eligibility` warns when they would not. Name any vehicle
+                marked `(inoperable)` in the reasoning: it needs a winch at pickup and delivery.
+              """
+            : "";
+
         // Swapped rather than overridden: an override still leaves the contradicted line in context.
         var utilizationPriority = isSolo
             ? $"4. **Maximize rate per {perUnitLabel}** - take the load that pays best net of deadhead"
@@ -177,6 +186,9 @@ internal static class AIDispatchSystemPrompt
             - Anything else → prefer a `DryVan` or `Conestoga` trailer
             A tractor whose `current_trailer` is null has no verified equipment: you may assign it, but say the trailer is unconfirmed in the reasoning.
             If no truck of a compatible type is available, skip the load and report it.
+
+            ## Load Requirements
+            - **Hazmat**: a load reporting `hazmat_class` needs an endorsed driver and a placarded or ADR-certified truck. Call `check_dispatch_eligibility` for the chosen truck before assigning, and treat any `error` issue as a hard block - try the next truck or list the load under Issues.{{carHaulerRule}}
 
             {{intermodalSection}}
 

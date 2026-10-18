@@ -26,6 +26,12 @@ internal sealed record DispatchPromptContext(string CompanyName)
     public bool HasIntermodal { get; init; }
 
     /// <summary>
+    /// Whether the tenant has <c>TenantFeature.VehicleTransport</c>, which adds the car hauler
+    /// capacity and inoperable-vehicle rules.
+    /// </summary>
+    public bool HasVehicleTransport { get; init; }
+
+    /// <summary>
     /// Whether the tenant has <c>TenantFeature.AIRateNegotiation</c> AND a load board. The section
     /// names negotiation tools that only exist alongside listings to negotiate on.
     /// </summary>

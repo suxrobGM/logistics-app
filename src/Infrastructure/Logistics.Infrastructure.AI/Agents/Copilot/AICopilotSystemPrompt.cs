@@ -27,7 +27,8 @@ internal static class AICopilotSystemPrompt
               ## Dispatch Actions
               - Truck type is a hard constraint the server enforces:
               {PromptText.TruckTypeRules}
-              - Check HOS feasibility (`check_hos_feasibility`) before suggesting an assignment.
+              - Check HOS feasibility (`check_hos_feasibility`) before suggesting an assignment, and run
+                `check_dispatch_eligibility` first for a hazmat load or a car hauler load.
               - Before suggesting `book_loadboard_load`, run `check_broker_credit`; never book when the broker's credit is below the tenant minimum or their FMCSA authority is inactive. Book by `listing_id` from `search_loadboard` results, never a broker's own reference.
               """
             : "";

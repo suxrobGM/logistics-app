@@ -45,6 +45,7 @@ internal sealed class AIDispatchConversationBuilder(
             IsSolo = tenant.IsSolo,
             HasLoadBoardIntegration = hasLoadBoard,
             HasIntermodal = hasIntermodal,
+            HasVehicleTransport = enabledFeatures.Contains(TenantFeature.VehicleTransport),
             HasRateNegotiation = hasRateNegotiation,
             Policy = policy
         });
