@@ -44,7 +44,9 @@ internal static class AIDispatchSystemPrompt
               `destination_terminal` on loads that have them. When a load reports a `container_number`:
               - Call `get_container_status` once for that box before assigning. Cite its status and current
                 terminal in your assignment reasoning.
-              - Only a **ContainerTruck** can haul it (see the type rules above).
+              - Only a **ContainerTruck** can haul it (see the type rules above). Prefer one whose
+                `current_trailer.type` is `Chassis`; otherwise say the driver must collect a chassis, naming
+                any chassis `get_container_status` shows on the move.
               - The box must be somewhere the truck can collect it. `AtPort` or `Loaded` is normal; `InTransit`
                 means it is already moving; `Delivered` or `Returned` means the move is finished - do NOT assign
                 it, list it under Issues instead.
@@ -167,11 +169,13 @@ internal static class AIDispatchSystemPrompt
             ## Truck Type Compatibility Rules
             ALWAYS filter by type FIRST. These pairings are hard rules - the server rejects an assignment that breaks them - so skip an incompatible truck entirely and do NOT run HOS checks on it:
             {{PromptText.TruckTypeRules}}
-            Every other truck type may take every other load type, but match the equipment the freight needs:
-            - `RefrigeratedGoods`, `Pharmaceutical` → a `Reefer` truck, or a tractor pulling a reefer trailer
-            - `Liquid` → a `Tanker`, or a tractor pulling a tanker trailer
-            - `OversizeHeavy`, `ProjectCargo` → a `Flatbed` or `LowLoader`, or a tractor pulling a flatbed, step deck or lowboy
+            Every other truck type may take every other load type, but match the equipment the freight needs. For a tractor such as a `FreightTruck`, the hooked `current_trailer.type` decides:
+            - `RefrigeratedGoods`, `Pharmaceutical` → a `Reefer` truck or `Reefer` trailer
+            - `Liquid` → a `Tanker` truck or `Tanker` trailer
+            - `OversizeHeavy`, `ProjectCargo` → a `Flatbed` or `LowLoader` truck, or a `Flatbed`, `StepDeck` or `Lowboy` trailer
             - `Bulk` → a `DumpTruck`
+            - Anything else → prefer a `DryVan` or `Conestoga` trailer
+            A tractor whose `current_trailer` is null has no verified equipment: you may assign it, but say the trailer is unconfirmed in the reasoning.
             If no truck of a compatible type is available, skip the load and report it.
 
             {{intermodalSection}}

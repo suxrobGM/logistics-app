@@ -12,7 +12,7 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
 {
     public static AgentToolDefinition Definition => new(
         "get_available_trucks",
-        "Get all trucks with Available status along with their driver info, HOS (Hours of Service) status, and a fleet summary (total trucks, available trucks, active trips, drivers in violation). Returns truck ID, number, type, vehicle_capacity for car haulers, current location, driver name, and remaining driving/on-duty hours.")
+        "Get all trucks with Available status along with their driver info, HOS (Hours of Service) status, and a fleet summary (total trucks, available trucks, active trips, drivers in violation). Returns truck ID, number, type, vehicle_capacity for car haulers, current_trailer (number and type, e.g. Reefer or Chassis; null when none is hooked), current location, driver name, and remaining driving/on-duty hours.")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All
@@ -43,6 +43,18 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
                 .ToDictionary(e => e.Id)
             : [];
 
+        var trailerIds = trucks
+            .Where(t => t.CurrentTrailerId is not null)
+            .Select(t => t.CurrentTrailerId!.Value)
+            .ToList();
+
+        // Truck.CurrentTrailer is lazy too - same batching as the drivers.
+        var trailers = trailerIds.Count > 0
+            ? (await tenantUow.Repository<Trailer>()
+                .GetListAsync(t => trailerIds.Contains(t.Id), ct))
+                .ToDictionary(t => t.Id)
+            : [];
+
         var totalTrucks = await tenantUow.Repository<Truck>().CountAsync(ct: ct);
         var activeTrips = await tenantUow.Repository<Trip>()
             .CountAsync(t => t.Status == TripStatus.Dispatched || t.Status == TripStatus.InTransit, ct);
@@ -54,6 +66,8 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
                 && hosStatuses.TryGetValue(truck.MainDriverId.Value, out var hos) ? hos : null;
             var driver = truck.MainDriverId is not null
                 && drivers.TryGetValue(truck.MainDriverId.Value, out var found) ? found : null;
+            var trailer = truck.CurrentTrailerId is not null
+                && trailers.TryGetValue(truck.CurrentTrailerId.Value, out var hooked) ? hooked : null;
 
             return new AgentToolTruckDto
             {
@@ -64,6 +78,11 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
                 CurrentLng = truck.CurrentLocation?.Longitude,
                 CurrentAddress = truck.CurrentAddress?.ToString(),
                 VehicleCapacity = truck.VehicleCapacity > 0 ? truck.VehicleCapacity : null,
+                CurrentTrailer = trailer is null ? null : new AgentToolTrailerDto
+                {
+                    Number = trailer.Number,
+                    Type = trailer.Type.ToString()
+                },
                 MainDriver = driver is null ? null : new AgentToolDriverDto
                 {
                     Id = driver.Id,

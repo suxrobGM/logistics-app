@@ -211,4 +211,27 @@ public class GetAvailableTrucksToolTests
         await _employeeRepo.DidNotReceive().GetListAsync(
             Arg.Any<Expression<Func<Employee, bool>>>(), Arg.Any<CancellationToken>());
     }
+
+    [Fact]
+    public async Task Execute_HookedTrailer_EmitsItsNumberAndType_OthersNull()
+    {
+        var trailerRepo = Substitute.For<ITenantRepository<Trailer, Guid>>();
+        _tenantUow.Repository<Trailer>().Returns(trailerRepo);
+        var chassis = new Trailer { Number = "CH-9", Type = TrailerType.Chassis };
+        var withTrailer = AvailableTruck("T-1", null);
+        withTrailer.CurrentTrailerId = chassis.Id;
+        Setup([withTrailer, AvailableTruck("T-2", null)], []);
+        trailerRepo.GetListAsync(Arg.Any<Expression<Func<Trailer, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns([chassis]);
+
+        var root = await Run();
+        var trucks = root.GetProperty("trucks");
+
+        var trailerJson = trucks[0].GetProperty("current_trailer");
+        Assert.Equal("CH-9", trailerJson.GetProperty("number").GetString());
+        Assert.Equal("Chassis", trailerJson.GetProperty("type").GetString());
+        Assert.Equal(JsonValueKind.Null, trucks[1].GetProperty("current_trailer").ValueKind);
+        await trailerRepo.Received(1).GetListAsync(
+            Arg.Any<Expression<Func<Trailer, bool>>>(), Arg.Any<CancellationToken>());
+    }
 }

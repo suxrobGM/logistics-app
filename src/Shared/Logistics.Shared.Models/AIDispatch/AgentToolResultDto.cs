@@ -113,7 +113,18 @@ public class AgentToolTruckDto
     /// How many vehicles a car hauler carries; null for other truck types.
     /// </summary>
     public int? VehicleCapacity { get; set; }
+
+    /// <summary>
+    /// The trailer hooked to the truck; null when none is. Its type decides what freight a tractor can pull.
+    /// </summary>
+    public AgentToolTrailerDto? CurrentTrailer { get; set; }
     public AgentToolDriverDto? MainDriver { get; set; }
+}
+
+public class AgentToolTrailerDto
+{
+    public string? Number { get; set; }
+    public string? Type { get; set; }
 }
 
 public class AgentToolDriverDto

@@ -254,6 +254,25 @@ public class AIDispatchSystemPromptTests
         Assert.DoesNotContain("`Hazmat`", prompt);
     }
 
+    /// <summary>A FreightTruck is a tractor; the trailer it pulls is what makes it fit reefer or flatbed freight.</summary>
+    [Fact]
+    public void Build_EquipmentFit_ReadsTheHookedTrailer()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
+
+        Assert.Contains("`current_trailer.type` decides", prompt);
+        Assert.Contains("`Reefer` trailer", prompt);
+        Assert.Contains("trailer is unconfirmed", prompt);
+    }
+
+    [Fact]
+    public void Build_Intermodal_PrefersATruckWithAChassis()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(new("Fleet") { HasIntermodal = true });
+
+        Assert.Contains("`Chassis`", prompt);
+    }
+
     #endregion
 
     #region Fleet vs solo owner-operator
