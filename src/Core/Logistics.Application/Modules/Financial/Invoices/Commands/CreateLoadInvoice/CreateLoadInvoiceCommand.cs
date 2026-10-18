@@ -12,11 +12,8 @@ public class CreateLoadInvoiceCommand : ICommand<Result<Guid>>
     public string? StripePaymentMethodId { get; set; }
 
     /// <summary>
-    ///     The payment recorded against the new invoice when <see cref="RecordPayment" /> is true.
-    ///     Ignored otherwise - the invoice total always comes from the load's charges.
+    ///     The payment recorded against the new invoice; null creates it unpaid, to be settled later.
+    ///     The invoice total always comes from the load's charges.
     /// </summary>
-    public decimal PaymentAmount { get; set; }
-
-    /// <summary>When false, the invoice is created unpaid, to be settled later.</summary>
-    public bool RecordPayment { get; set; } = true;
+    public decimal? PaymentAmount { get; set; }
 }

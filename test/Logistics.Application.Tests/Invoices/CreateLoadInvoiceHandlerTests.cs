@@ -50,8 +50,7 @@ public class CreateLoadInvoiceHandlerTests
         var result = await _sut.Handle(new CreateLoadInvoiceCommand
         {
             LoadId = load.Id,
-            CustomerId = load.Customer.Id,
-            RecordPayment = false
+            CustomerId = load.Customer.Id
         }, default);
 
         Assert.True(result.IsSuccess);

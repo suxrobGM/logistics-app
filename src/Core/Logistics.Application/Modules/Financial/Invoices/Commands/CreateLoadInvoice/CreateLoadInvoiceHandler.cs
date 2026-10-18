@@ -42,13 +42,13 @@ internal sealed class CreateLoadInvoiceHandler(
         invoice.CustomerId = req.CustomerId;
         invoice.Customer = customer;
 
-        if (req.RecordPayment)
+        if (req.PaymentAmount is { } paymentAmount)
         {
             var payment = new Payment
             {
                 StripePaymentMethodId = req.StripePaymentMethodId,
                 TenantId = tenant.Id,
-                Amount = new() { Amount = req.PaymentAmount, Currency = invoice.Total.Currency },
+                Amount = new() { Amount = paymentAmount, Currency = invoice.Total.Currency },
                 BillingAddress = tenant.CompanyAddress
             };
 

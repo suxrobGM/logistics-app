@@ -114,7 +114,7 @@ public class CreateLoadInvoiceToolTests
             Arg.Is<CreateLoadInvoiceCommand>(c =>
                 c.LoadId == load.Id &&
                 c.CustomerId == customer.Id &&
-                !c.RecordPayment),
+                c.PaymentAmount == null),
             Arg.Any<CancellationToken>());
     }
 }

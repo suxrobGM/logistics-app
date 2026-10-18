@@ -54,9 +54,7 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
         var result = await mediator.Send(new CreateLoadInvoiceCommand
         {
             CustomerId = load.Customer.Id,
-            LoadId = input.LoadId,
-            // The customer has not paid yet - settled later via a payment link.
-            RecordPayment = false
+            LoadId = input.LoadId
         }, ct);
 
         if (!result.IsSuccess)
