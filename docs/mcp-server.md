@@ -13,7 +13,7 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 | Tool                           | Type  | Description                                               |
 | ------------------------------ | ----- | --------------------------------------------------------- |
 | `get_unassigned_loads`         | Read  | All Draft loads not assigned to any trip                  |
-| `get_available_trucks`         | Read  | Available trucks with driver HOS data and fleet summary   |
+| `get_available_trucks`         | Read  | Available trucks with trailer, driver HOS, fleet summary  |
 | `get_driver_hos_status`        | Read  | Detailed HOS status for a specific driver                 |
 | `check_hos_feasibility`        | Read  | Can a driver complete a trip given HOS remaining?         |
 | `batch_check_hos_feasibility`  | Read  | Batch HOS feasibility for multiple driver-load pairs      |
@@ -25,13 +25,15 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 | `get_rate_floor`               | Read  | Rate floor on a listing's lane, and the gap to its rate   |
 | `get_negotiation_thread`       | Read  | One negotiation: status, rounds, floor, recent messages   |
 | `search_loads`                 | Read  | Search loads by status, type, customer, or date range     |
-| `get_load`                     | Read  | One load: status, cost, customer, invoice state           |
+| `get_load`                     | Read  | One load: status, charges, freight, customer, invoice     |
 | `search_customers`             | Read  | Look up customers by name                                 |
 | `get_invoices`                 | Read  | List load invoices by load/customer/status/date           |
-| `get_invoice`                  | Read  | One invoice: totals, payments, send history               |
+| `get_invoice`                  | Read  | One invoice: totals, payments, send history, factoring    |
 | `search_expenses`              | Read  | List expenses by type/status/truck/date                   |
 | `get_expense_stats`            | Read  | Expense rollups by category, monthly trend, top trucks    |
 | `get_upcoming_maintenance`     | Read  | Trucks with maintenance due (date-based schedules)        |
+| `get_detention`                | Read  | Dwell and detention for a load, or every truck waiting    |
+| `get_condition_reports`        | Read  | A load's pickup/delivery condition reports and defects   |
 | `assign_load_to_truck`         | Write | Assign a load to a truck                                  |
 | `create_trip`                  | Write | Create a trip from assigned loads                         |
 | `dispatch_trip`                | Write | Transition trip to Dispatched status                      |

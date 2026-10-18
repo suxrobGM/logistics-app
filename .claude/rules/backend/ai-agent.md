@@ -26,7 +26,7 @@ picture is [docs/ai-dispatch.md](../../../docs/ai-dispatch.md).
 | `Agents/` | Shared runtime: loop runner, decision processor, cancellation, tool-call context, `AgentTurnService` (the one turn lifecycle every conversational agent runs through, parameterized by `IAgentSurface`), transcript codec/replay |
 | `Agents/Dispatch/`, `Agents/Copilot/` | One folder per agent surface (each implements `IAgentSurface` for `AgentTurnService`) |
 | `Tools/` | Tool base class, schema/binding (`AgentToolJson`), `ToolResult`, `DispatchUnits`, the catalogue |
-| `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal,Negotiation}/` | Tools grouped by the Application module they dispatch into |
+| `Tools/{Dispatch,Financial,Operations,Compliance,LoadBoard,Intermodal,Negotiation}/` | Tools grouped by the Application module they dispatch into |
 
 - **Config is not here.** `LlmOptions`, `LlmModelCatalog` and `AISettingsKeys` live in
   `Application.Abstractions/AI/` (the application layer reads them); the agent ports

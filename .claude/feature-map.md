@@ -53,6 +53,7 @@ This file answers _where_. For _how it works_, follow the deep dive: **AI dispat
 
 - Domain: `Entities/Truck.cs`
 - Application: `Modules/Operations/Trucks/Commands/`, `Modules/Operations/Trucks/Queries/`
+- Truck/load type pairings: `Domain.Primitives/Enums/Truck/TruckLoadCompatibility.cs` (car haulers carry only vehicles, container trucks only containers) - enforced by `AssignLoadToTruckHandler` and `DispatchEligibilityService` (`TruckTypeIncompatible`), and rendered into both agent prompts by `Infrastructure.AI/Agents/PromptText.cs`
 - API/UI: `TruckController.cs`, `tms-portal/pages/trucks/`
 
 ### Trailers
@@ -172,7 +173,7 @@ with `Type == Dispatch`.
 
 ### Tool registry
 
-- Infrastructure: `Infrastructure.AI/Tools/` (catalogue, schema/binding) + `Tools/{Dispatch,Financial,Operations,LoadBoard,Intermodal,Negotiation}/`
+- Infrastructure: `Infrastructure.AI/Tools/` (catalogue, schema/binding) + `Tools/{Dispatch,Financial,Operations,Compliance,LoadBoard,Intermodal,Negotiation}/`
 - API/UI: shared with `Logistics.McpServer` and the AI copilot
 - Behavior metadata (`IsWrite`, `RequiredPermission`, `DecisionType`, `RequiredFeature`) lives on
   each `AgentToolDefinition` - there is no separate write-tool list anywhere
@@ -207,9 +208,9 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Jobs: `Logistics.API/Jobs/AICopilotTurnJob.cs`
 - API/UI: `AICopilotController.cs` (`ai/copilot` - conversations CRUD + rename, messages, cancel, `quota`, decisions approve/reject), `tms-portal/shared/layout/copilot-drawer/`; state in `core/store/copilot.store.ts` (persists drawer width, polls stuck Running turns, gates the launcher on `Copilot.View`)
 
-### Copilot tools (loads, customers, invoicing, expenses, maintenance)
+### Copilot tools (loads, customers, invoicing, expenses, maintenance, detention, inspections)
 
-- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `GetUpcomingMaintenanceTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `AgentToolJson.cs` schema and binding)
+- Infrastructure: `Tools/SearchLoadsTool.cs`, `GetLoadTool.cs`, `Operations/GetDetentionTool.cs`, `Compliance/GetConditionReportsTool.cs`, `SearchCustomersTool.cs`, `GetInvoicesTool.cs`, `GetInvoiceTool.cs`, `SearchExpensesTool.cs`, `GetExpenseStatsTool.cs`, `GetUpcomingMaintenanceTool.cs`, `CreateLoadInvoiceTool.cs`, `SendInvoiceTool.cs`, `CreatePaymentLinkTool.cs` (+ shared `AgentToolJson.cs` schema and binding)
 
 ### LLM providers
 

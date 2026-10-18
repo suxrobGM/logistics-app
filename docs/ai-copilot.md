@@ -116,9 +116,11 @@ the dispatch agent (if dispatch-scoped), and the MCP server in one change. The c
 | `get_invoices` / `get_invoice`          | Read  | `GetInvoicesQuery` / `GetInvoiceByIdQuery`                            |
 | `search_expenses` / `get_expense_stats` | Read  | `GetExpensesQuery` / `GetExpenseStatsQuery`                           |
 | `get_upcoming_maintenance`              | Read  | `GetUpcomingMaintenanceQuery` (date-based only)                       |
-| `create_load_invoice`                   | Write | `CreateLoadInvoiceCommand` (unpaid, amount defaults to delivery cost) |
-| `send_invoice`                          | Write | `SendInvoiceCommand` (emails with a payment link)                     |
-| `create_payment_link`                   | Write | `CreatePaymentLinkCommand`                                            |
+| `get_detention`                         | Read  | `GetLoadDetentionQuery`, or open stops across the fleet without a load |
+| `get_condition_reports`                 | Read  | `GetConditionReportsQuery` (defects with car hauler BOL codes)        |
+| `create_load_invoice`                   | Write | `CreateLoadInvoiceCommand` (unpaid, one line per load charge)         |
+| `send_invoice`                          | Write | `SendInvoiceCommand` (payment link, or remit-to notice if factored)   |
+| `create_payment_link`                   | Write | `CreatePaymentLinkCommand` (refused for factored customers)           |
 
 Plus every dispatch tool, for users holding `Permission.Dispatch.*`.
 
