@@ -25,7 +25,7 @@ internal static class AICopilotSystemPrompt
             ? $"""
 
               ## Dispatch Actions
-              - Truck type is a hard constraint the server enforces:
+              - Truck type is a hard constraint: `assign_load_to_truck` rejects a mismatch, and a trip holding one cannot be dispatched:
               {PromptText.TruckTypeRules}
               - Check HOS feasibility (`check_hos_feasibility`) before suggesting an assignment, and run
                 `check_dispatch_eligibility` first for a hazmat load or a car hauler load.
