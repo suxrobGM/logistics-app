@@ -86,7 +86,7 @@ public class SendAIDispatchMessageHandlerTests
         var result = await _sut.Handle(Command(conversation.Id, "assign what you can"), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        var message = Assert.Single(conversation.Messages);
+        var message = Assert.Single(_ctx.AddedMessages);
         Assert.Equal("assign what you can", message.DisplayText);
         Assert.Equal(AgentMessageRole.User, message.Role);
         Assert.Equal(1, message.Sequence);
@@ -108,7 +108,7 @@ public class SendAIDispatchMessageHandlerTests
 
         await _sut.Handle(Command(conversation.Id), CancellationToken.None);
 
-        var message = Assert.Single(conversation.Messages);
+        var message = Assert.Single(_ctx.AddedMessages);
         Assert.Equal(_ctx.UserId, message.SentByUserId);
     }
 
@@ -148,7 +148,7 @@ public class SendAIDispatchMessageHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.AIBudgetReached, result.ErrorCode);
-        Assert.Empty(conversation.Messages);
+        Assert.Empty(_ctx.AddedMessages);
         Assert.NotEqual(AgentConversationStatus.Running, conversation.Status);
         _backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
         await _broadcastService.DidNotReceiveWithAnyArgs().BroadcastMessageAsync(default, default!);

@@ -8,6 +8,7 @@ using Logistics.Infrastructure.AI.Llm;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -119,7 +120,7 @@ internal sealed class AgentTurnService(
             ? []
             : await PersistTurnMessagesAsync(conversation, session, state.Messages.Skip(priorMessageCount));
 
-        conversation.Title ??= DeriveTitle(conversation);
+        conversation.Title ??= await DeriveTitleAsync(conversation);
         conversation.LastMessageAt = DateTime.UtcNow;
         conversation.EndTurn();
         await tenantUow.SaveChangesAsync(CancellationToken.None);
@@ -143,10 +144,12 @@ internal sealed class AgentTurnService(
         IEnumerable<LlmMessage> appended)
     {
         // The user message that triggered this turn was created before the session existed.
-        var triggerMessage = conversation.Messages
-            .Where(m => m.Role == AgentMessageRole.User && m.SessionId is null)
+        var triggerMessage = await tenantUow.Repository<AgentMessage>().Query()
+            .Where(m => m.ConversationId == conversation.Id
+                && m.Role == AgentMessageRole.User
+                && m.SessionId == null)
             .OrderByDescending(m => m.Sequence)
-            .FirstOrDefault();
+            .FirstOrDefaultAsync(CancellationToken.None);
         if (triggerMessage is not null)
             triggerMessage.SessionId = session.Id;
 
@@ -183,13 +186,15 @@ internal sealed class AgentTurnService(
         await BroadcastMessageSafeAsync(request, surface, conversation, row);
     }
 
-    private static string? DeriveTitle(AgentConversation conversation)
+    private async Task<string?> DeriveTitleAsync(AgentConversation conversation)
     {
-        var firstUserText = conversation.Messages
-            .Where(m => m.Role == AgentMessageRole.User && m.DisplayText is not null)
+        var firstUserText = await tenantUow.Repository<AgentMessage>().Query()
+            .Where(m => m.ConversationId == conversation.Id
+                && m.Role == AgentMessageRole.User
+                && m.DisplayText != null)
             .OrderBy(m => m.Sequence)
-            .Select(m => m.DisplayText!)
-            .FirstOrDefault();
+            .Select(m => m.DisplayText)
+            .FirstOrDefaultAsync(CancellationToken.None);
 
         if (firstUserText is null)
             return null;

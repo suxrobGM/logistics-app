@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.AI.Llm.Contracts;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.Features;
@@ -16,6 +17,7 @@ namespace Logistics.Infrastructure.AI.Agents.Copilot;
 internal sealed class AICopilotConversationBuilder(
     IAgentToolRegistry toolRegistry,
     LlmSessionSetup sessionSetup,
+    ITenantUnitOfWork tenantUow,
     ILogger<AICopilotConversationBuilder> logger)
 {
     public async Task<LlmConversation> BuildAsync(
@@ -47,7 +49,7 @@ internal sealed class AICopilotConversationBuilder(
             "Copilot turn {SessionId} initialized with {ToolCount} tools, model {Model}, provider {Provider}",
             session.Id, tools.Count, selection.Model, selection.Provider);
 
-        var messages = AgentTranscriptReplay.BuildMessages(conversation.Messages);
+        var messages = await AgentTranscriptReplay.LoadAsync(tenantUow, conversation, ct);
 
         // Same admin-set effort as dispatch. Thinking blocks replay in-turn; the persisted
         // transcript drops them, which is fine - prior turns replay without them.

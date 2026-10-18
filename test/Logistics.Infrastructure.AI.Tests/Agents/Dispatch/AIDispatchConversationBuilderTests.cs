@@ -7,6 +7,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Infrastructure.AI.Llm;
+using Logistics.Infrastructure.AI.Llm.Contracts;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MockQueryable;
@@ -30,6 +31,9 @@ public class AIDispatchConversationBuilderTests
     private readonly ISystemSettingsService _systemSettings = Substitute.For<ISystemSettingsService>();
     private readonly ITenantRepository<AIDispatchPolicy, Guid> _policyRepo =
         Substitute.For<ITenantRepository<AIDispatchPolicy, Guid>>();
+    private readonly ITenantRepository<AgentMessage, Guid> _messageRepo =
+        Substitute.For<ITenantRepository<AgentMessage, Guid>>();
+    private readonly List<AgentMessage> _rows = [];
 
     public AIDispatchConversationBuilderTests()
     {
@@ -39,6 +43,8 @@ public class AIDispatchConversationBuilderTests
         SetTenant();
 
         _tenantUow.Repository<AIDispatchPolicy>().Returns(_policyRepo);
+        _tenantUow.Repository<AgentMessage>().Returns(_messageRepo);
+        _messageRepo.Query().Returns(_ => _rows.BuildMock());
         SetPolicies();
 
         var llmOptions = MsOptions.Options.Create(ValidConfig);
@@ -73,12 +79,15 @@ public class AIDispatchConversationBuilderTests
         }
     };
 
-    private static AgentConversation CreateConversation(string text = "Assign what you can")
+    /// <summary>A conversation whose single user message is "in the database".</summary>
+    private AgentConversation CreateConversation(string text = "Assign what you can")
     {
         var conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch };
-        conversation.AddTextMessage(AgentMessageRole.User, text);
+        Persist(conversation.AddTextMessage(AgentMessageRole.User, text));
         return conversation;
     }
+
+    private void Persist(AgentMessage row) => _rows.Add(row);
 
     private void SetTenant(params TenantPreset[] presets)
     {
@@ -241,15 +250,15 @@ public class AIDispatchConversationBuilderTests
         Assert.Contains("API key", ex.Message);
     }
 
-    #region Turn context injection
+    #region Transcript replay
 
     [Fact]
     public async Task BuildAsync_RebuildsMessagesFromTranscript()
     {
         var conversation = new AgentConversation { Kind = AgentConversationKind.Dispatch };
-        conversation.AddTextMessage(AgentMessageRole.User, "Assign truck 5 to load 42");
-        conversation.AddTextMessage(AgentMessageRole.Assistant, "Done - see summary.");
-        conversation.AddTextMessage(AgentMessageRole.User, "Now do the rest");
+        Persist(conversation.AddTextMessage(AgentMessageRole.User, "Assign truck 5 to load 42"));
+        Persist(conversation.AddTextMessage(AgentMessageRole.Assistant, "Done - see summary."));
+        Persist(conversation.AddTextMessage(AgentMessageRole.User, "Now do the rest"));
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
         var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
@@ -257,50 +266,38 @@ public class AIDispatchConversationBuilderTests
         Assert.Equal(3, llmConversation.Messages.Count);
     }
 
-    /// <summary>The turn-context text lands only on the final user message, appended in-memory.</summary>
+    /// <summary>The time comes from the stored row, so the system prompt carries no date.</summary>
     [Fact]
-    public async Task BuildAsync_AppendsTurnContextToFinalUserMessage()
+    public async Task BuildAsync_StampsUserMessagesWithWhenTheyWereSent()
     {
         var conversation = CreateConversation("Now do the rest");
+        var sentAt = _rows[0].CreatedAt;
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
         var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
-        var lastMessage = llmConversation.Messages[^1];
-        Assert.True(lastMessage.Content.Count >= 2);
-        Assert.Contains(lastMessage.Content, block =>
-            block is Logistics.Infrastructure.AI.Llm.Contracts.LlmTextBlock text &&
-            text.Text.Contains("Current time:", StringComparison.Ordinal));
+        var stamp = Assert.IsType<LlmTextBlock>(llmConversation.Messages[^1].Content[0]);
+        Assert.Equal(AgentTranscriptReplay.SentStamp(sentAt), stamp.Text);
+        Assert.DoesNotContain(DateTime.UtcNow.ToString("yyyy-MM-dd"), llmConversation.SystemPrompt);
     }
 
-    /// <summary>Chit-chat must not be ordered to call fleet tools - the directive is conditional.</summary>
+    /// <summary>
+    /// The prompt cache only hits an unchanged prefix, so building the same turn twice must give the
+    /// same bytes - nothing may be stamped per request.
+    /// </summary>
     [Fact]
-    public async Task BuildAsync_TurnContext_MakesFleetChecksConditional()
-    {
-        var conversation = CreateConversation("hi");
-        var session = new AgentSession { StartedAt = DateTime.UtcNow };
-
-        var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
-
-        var lastMessage = llmConversation.Messages[^1];
-        var injected = Assert.IsType<Logistics.Infrastructure.AI.Llm.Contracts.LlmTextBlock>(
-            lastMessage.Content[^1]);
-        Assert.Contains("about to propose or take any", injected.Text);
-        Assert.Contains("no tool calls", injected.Text);
-    }
-
-    /// <summary>Persisted rows keep only the user's typed text - the turn context must never leak in.</summary>
-    [Fact]
-    public async Task BuildAsync_DoesNotMutateThePersistedTranscript()
+    public async Task BuildAsync_SameTranscript_ReplaysIdentically()
     {
         var conversation = CreateConversation("Assign what you can");
-        var originalContentJson = conversation.Messages[0].ContentJson;
         var session = new AgentSession { StartedAt = DateTime.UtcNow };
 
-        await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
+        var first = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
+        var second = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
-        Assert.Equal(originalContentJson, conversation.Messages[0].ContentJson);
-        Assert.DoesNotContain("Current time:", conversation.Messages[0].ContentJson);
+        Assert.Equal(first.SystemPrompt, second.SystemPrompt);
+        Assert.Equal(
+            first.Messages.SelectMany(m => m.Content).Cast<LlmTextBlock>().Select(t => t.Text),
+            second.Messages.SelectMany(m => m.Content).Cast<LlmTextBlock>().Select(t => t.Text));
     }
 
     #endregion

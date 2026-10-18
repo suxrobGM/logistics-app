@@ -40,6 +40,12 @@ internal sealed class AgentTestContext
         Substitute.For<ITenantRepository<AgentConversation, Guid>>();
     public ITenantRepository<AgentMessage, Guid> MessageRepo { get; } =
         Substitute.For<ITenantRepository<AgentMessage, Guid>>();
+
+    /// <summary>The rows handlers registered through <see cref="MessageRepo"/>, in call order.</summary>
+    public IReadOnlyList<AgentMessage> AddedMessages =>
+        [.. MessageRepo.ReceivedCalls()
+            .Where(c => c.GetMethodInfo().Name == nameof(MessageRepo.AddAsync))
+            .Select(c => (AgentMessage)c.GetArguments()[0]!)];
     public ITenantRepository<AgentSession, Guid> SessionRepo { get; } =
         Substitute.For<ITenantRepository<AgentSession, Guid>>();
     public ITenantRepository<Employee, Guid> EmployeeRepo { get; } =

@@ -86,7 +86,7 @@ public class SendAICopilotMessageHandlerTests
         var result = await _sut.Handle(Command(conversation.Id, "invoice load 42"), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        var message = Assert.Single(conversation.Messages);
+        var message = Assert.Single(_ctx.AddedMessages);
         Assert.Equal("invoice load 42", message.DisplayText);
         Assert.Equal(AgentMessageRole.User, message.Role);
         Assert.Equal(1, message.Sequence);
@@ -110,7 +110,7 @@ public class SendAICopilotMessageHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(ErrorCodes.AIBudgetReached, result.ErrorCode);
-        Assert.Empty(conversation.Messages);
+        Assert.Empty(_ctx.AddedMessages);
         Assert.NotEqual(AgentConversationStatus.Running, conversation.Status);
         _backgroundRunner.DidNotReceiveWithAnyArgs().Enqueue(default!);
     }

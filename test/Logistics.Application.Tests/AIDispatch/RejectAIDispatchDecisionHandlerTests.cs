@@ -31,7 +31,7 @@ public class RejectAIDispatchDecisionHandlerTests
             CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        var note = Assert.Single(conversation.Messages);
+        var note = Assert.Single(_ctx.AddedMessages);
         Assert.Equal(AgentMessageRole.System, note.Role);
         Assert.Equal("Rejected: assign_load_to_truck - wrong truck", note.DisplayText);
 
@@ -51,7 +51,7 @@ public class RejectAIDispatchDecisionHandlerTests
             new RejectAIDispatchDecisionCommand { DecisionId = decision.Id, Reason = "wrong truck" },
             CancellationToken.None);
 
-        Assert.Equal(_ctx.UserId, Assert.Single(conversation.Messages).SentByUserId);
+        Assert.Equal(_ctx.UserId, Assert.Single(_ctx.AddedMessages).SentByUserId);
         await _broadcastService.Received(1).BroadcastMessageAsync(
             _ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.SentByName == "Marcus Johnson"));
     }
@@ -65,6 +65,6 @@ public class RejectAIDispatchDecisionHandlerTests
         await _sut.Handle(
             new RejectAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
 
-        Assert.Equal("Rejected: assign_load_to_truck", Assert.Single(conversation.Messages).DisplayText);
+        Assert.Equal("Rejected: assign_load_to_truck", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
 }

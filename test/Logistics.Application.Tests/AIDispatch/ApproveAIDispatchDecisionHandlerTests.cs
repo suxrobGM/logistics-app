@@ -51,7 +51,7 @@ public class ApproveAIDispatchDecisionHandlerTests
             new ApproveAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        var note = Assert.Single(conversation.Messages);
+        var note = Assert.Single(_ctx.AddedMessages);
         Assert.Equal(AgentMessageRole.System, note.Role);
         Assert.StartsWith("Approved and executed: assign_load_to_truck", note.DisplayText);
 
@@ -74,7 +74,7 @@ public class ApproveAIDispatchDecisionHandlerTests
         await _sut.Handle(
             new ApproveAIDispatchDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
 
-        Assert.Equal(_ctx.UserId, Assert.Single(conversation.Messages).SentByUserId);
+        Assert.Equal(_ctx.UserId, Assert.Single(_ctx.AddedMessages).SentByUserId);
         await _broadcastService.Received(1).BroadcastMessageAsync(
             _ctx.Tenant.Id, Arg.Is<AgentMessageDto>(m => m.SentByName == "Sarah Thompson"));
     }
@@ -92,6 +92,6 @@ public class ApproveAIDispatchDecisionHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(AgentDecisionStatus.Failed, decision.Status);
-        Assert.Contains("failed to execute", Assert.Single(conversation.Messages).DisplayText);
+        Assert.Contains("failed to execute", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
 }

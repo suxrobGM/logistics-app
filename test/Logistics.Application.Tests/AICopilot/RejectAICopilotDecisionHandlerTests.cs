@@ -59,7 +59,7 @@ public class RejectAICopilotDecisionHandlerTests
         Assert.Equal(AgentDecisionStatus.Rejected, decision.Status);
         Assert.Equal(_ctx.UserId, decision.ApprovedByUserId);
 
-        var note = Assert.Single(conversation.Messages);
+        var note = Assert.Single(_ctx.AddedMessages);
         Assert.Equal(AgentMessageRole.System, note.Role);
         Assert.Equal("Rejected: send_invoice - wrong invoice", note.DisplayText);
 
@@ -80,6 +80,6 @@ public class RejectAICopilotDecisionHandlerTests
         await _sut.Handle(
             new RejectAICopilotDecisionCommand { DecisionId = decision.Id }, CancellationToken.None);
 
-        Assert.Equal("Rejected: send_invoice", Assert.Single(conversation.Messages).DisplayText);
+        Assert.Equal("Rejected: send_invoice", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
 }

@@ -31,7 +31,8 @@ public class AgentConversation : AuditableEntity, ITenantEntity
 
     /// <summary>
     /// Highest sequence handed out so far. Held here so allocating the next one never reads the
-    /// Messages navigation, which lazy-loads the whole transcript.
+    /// Messages navigation, which lazy-loads the whole transcript - and for the same reason the
+    /// Add methods never touch <see cref="Messages"/>: EF fixes a registered row into it if it is loaded.
     /// </summary>
     public int LastSequence { get; private set; }
 
@@ -43,7 +44,6 @@ public class AgentConversation : AuditableEntity, ITenantEntity
     public AgentMessage AddTextMessage(AgentMessageRole role, string text, Guid? sentByUserId = null)
     {
         var message = AgentMessage.TextMessage(Id, NextSequence(), role, text, sentByUserId);
-        Messages.Add(message);
         LastMessageAt = DateTime.UtcNow;
         return message;
     }
@@ -63,7 +63,6 @@ public class AgentConversation : AuditableEntity, ITenantEntity
             DisplayText = displayText,
             SessionId = sessionId
         };
-        Messages.Add(message);
         return message;
     }
 

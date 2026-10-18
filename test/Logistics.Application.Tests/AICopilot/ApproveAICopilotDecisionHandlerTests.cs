@@ -68,7 +68,7 @@ public class ApproveAICopilotDecisionHandlerTests
         Assert.Equal(AgentDecisionStatus.Executed, decision.Status);
         Assert.Equal(_ctx.UserId, decision.ApprovedByUserId);
 
-        var note = Assert.Single(conversation.Messages);
+        var note = Assert.Single(_ctx.AddedMessages);
         Assert.Equal(AgentMessageRole.System, note.Role);
         Assert.StartsWith("Approved and executed: send_invoice", note.DisplayText);
 
@@ -93,6 +93,6 @@ public class ApproveAICopilotDecisionHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal(AgentDecisionStatus.Failed, decision.Status);
-        Assert.Contains("failed to execute", Assert.Single(conversation.Messages).DisplayText);
+        Assert.Contains("failed to execute", Assert.Single(_ctx.AddedMessages).DisplayText);
     }
 }

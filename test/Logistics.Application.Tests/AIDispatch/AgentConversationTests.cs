@@ -16,15 +16,30 @@ public class AgentConversationTests
         var conversation = new AgentConversation();
         var sessionId = Guid.NewGuid();
 
-        conversation.AddTextMessage(AgentMessageRole.User, "Find a truck for the Phoenix load");
-        conversation.AddTurnMessage(sessionId, AgentMessageRole.Assistant, "[]", null);
-        conversation.AddTurnMessage(sessionId, AgentMessageRole.User, "[]", null);
-        conversation.AddTurnMessage(sessionId, AgentMessageRole.Assistant, "[]", "Summary");
-        var note = conversation.AddTextMessage(AgentMessageRole.System, "Approved and executed");
+        List<AgentMessage> rows =
+        [
+            conversation.AddTextMessage(AgentMessageRole.User, "Find a truck for the Phoenix load"),
+            conversation.AddTurnMessage(sessionId, AgentMessageRole.Assistant, "[]", null),
+            conversation.AddTurnMessage(sessionId, AgentMessageRole.User, "[]", null),
+            conversation.AddTurnMessage(sessionId, AgentMessageRole.Assistant, "[]", "Summary"),
+            conversation.AddTextMessage(AgentMessageRole.System, "Approved and executed")
+        ];
 
-        var sequences = conversation.Messages.Select(m => m.Sequence).ToList();
-        Assert.Equal([1, 2, 3, 4, 5], sequences);
-        Assert.Equal(5, note.Sequence);
+        Assert.Equal([1, 2, 3, 4, 5], rows.Select(m => m.Sequence));
         Assert.Equal(5, conversation.LastSequence);
+    }
+
+    /// <summary>
+    /// Touching the navigation lazy-loads the whole transcript, on every send and every turn row.
+    /// </summary>
+    [Fact]
+    public void AddMethods_NeverTouchTheMessagesNavigation()
+    {
+        var conversation = new AgentConversation();
+
+        conversation.AddTextMessage(AgentMessageRole.User, "hi");
+        conversation.AddTurnMessage(Guid.NewGuid(), AgentMessageRole.Assistant, "[]", "hello");
+
+        Assert.Empty(conversation.Messages);
     }
 }

@@ -136,6 +136,13 @@ public class AIDispatchServiceTests
     /// DispatchAgentSurface broadcasts tenant-wide, without needing a real LLM call: the
     /// AI-disabled path short-circuits before the agent loop runs.
     /// </summary>
+    private List<AgentMessage> AddedMessages() =>
+    [
+        .. _messageRepo.ReceivedCalls()
+            .Where(c => c.GetMethodInfo().Name == nameof(_messageRepo.AddAsync))
+            .Select(c => (AgentMessage)c.GetArguments()[0]!)
+    ];
+
     [Fact]
     public async Task RunTurnAsync_AIDisabled_AppendsNoticeToTheRightConversationAndBroadcastsTenantWide()
     {
@@ -144,7 +151,7 @@ public class AIDispatchServiceTests
 
         await _sut.RunTurnAsync(CreateRequest(conversation));
 
-        var note = Assert.Single(conversation.Messages);
+        var note = Assert.Single(AddedMessages());
         Assert.Equal(AgentMessageRole.System, note.Role);
         Assert.Contains("AI is disabled", note.DisplayText);
 
@@ -161,7 +168,7 @@ public class AIDispatchServiceTests
 
         await _sut.RunTurnAsync(CreateRequest(conversation));
 
-        var note = Assert.Single(conversation.Messages);
+        var note = Assert.Single(AddedMessages());
         Assert.Contains("budget", note.DisplayText, StringComparison.OrdinalIgnoreCase);
         await _sessionRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
     }
