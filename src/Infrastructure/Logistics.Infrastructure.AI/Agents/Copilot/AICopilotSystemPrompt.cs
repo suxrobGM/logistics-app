@@ -22,10 +22,11 @@ internal static class AICopilotSystemPrompt
 
         // Travels with the dispatch tools - callers without them never pay these tokens.
         var dispatchActionsSection = context.HasDispatchTools
-            ? """
+            ? $"""
 
               ## Dispatch Actions
-              - Truck type is a hard constraint: FreightTruck hauls GeneralFreight/Hazmat/Refrigerated; CarHauler only VehicleTransport; ContainerTruck only IntermodalContainer.
+              - Truck type is a hard constraint the server enforces:
+              {PromptText.TruckTypeRules}
               - Check HOS feasibility (`check_hos_feasibility`) before suggesting an assignment.
               - Before suggesting `book_loadboard_load`, run `check_broker_credit`; never book when the broker's credit is below the tenant minimum or their FMCSA authority is inactive. Book by `listing_id` from `search_loadboard` results, never a broker's own reference.
               """

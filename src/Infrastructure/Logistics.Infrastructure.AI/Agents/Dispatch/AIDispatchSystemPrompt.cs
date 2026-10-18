@@ -165,10 +165,13 @@ internal static class AIDispatchSystemPrompt
             {{utilizationPriority}}
 
             ## Truck Type Compatibility Rules
-            ALWAYS filter by type FIRST. Incompatible trucks must be skipped entirely - do NOT run HOS checks on them.
-            - **FreightTruck** → can haul `GeneralFreight`, `Hazmat`, `Refrigerated`
-            - **CarHauler** → can haul `VehicleTransport` ONLY
-            - **ContainerTruck** → can haul `IntermodalContainer` ONLY
+            ALWAYS filter by type FIRST. These pairings are hard rules - the server rejects an assignment that breaks them - so skip an incompatible truck entirely and do NOT run HOS checks on it:
+            {{PromptText.TruckTypeRules}}
+            Every other truck type may take every other load type, but match the equipment the freight needs:
+            - `RefrigeratedGoods`, `Pharmaceutical` → a `Reefer` truck, or a tractor pulling a reefer trailer
+            - `Liquid` → a `Tanker`, or a tractor pulling a tanker trailer
+            - `OversizeHeavy`, `ProjectCargo` → a `Flatbed` or `LowLoader`, or a tractor pulling a flatbed, step deck or lowboy
+            - `Bulk` → a `DumpTruck`
             If no truck of a compatible type is available, skip the load and report it.
 
             {{intermodalSection}}

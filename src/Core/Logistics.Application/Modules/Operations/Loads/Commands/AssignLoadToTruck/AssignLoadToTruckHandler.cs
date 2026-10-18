@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
@@ -15,6 +16,20 @@ internal sealed class AssignLoadToTruckHandler(ITenantUnitOfWork tenantUow) : IR
         if (load is null)
         {
             return Result.Fail($"Load not found with ID '{req.LoadId}'");
+        }
+
+        if (req.TruckId is { } truckId)
+        {
+            var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckId, ct);
+            if (truck is null)
+            {
+                return Result.Fail($"Truck not found with ID '{truckId}'");
+            }
+
+            if (TruckLoadCompatibility.DescribeMismatch(truck.Number, truck.Type, load.Type) is { } mismatch)
+            {
+                return Result.Fail(mismatch);
+            }
         }
 
         load.AssignedTruckId = req.TruckId;

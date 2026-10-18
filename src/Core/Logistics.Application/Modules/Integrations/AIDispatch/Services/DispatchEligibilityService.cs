@@ -76,6 +76,11 @@ internal sealed class DispatchEligibilityService(
             CheckLicense(primaryLicense, load, now, issues);
         }
 
+        if (TruckLoadCompatibility.DescribeMismatch(truck.Number, truck.Type, load.Type) is { } typeMismatch)
+        {
+            issues.Add(new(EligibilityIssueCode.TruckTypeIncompatible, EligibilitySeverity.Error, typeMismatch));
+        }
+
         CheckTruckAdrEquipment(truck, load, now, issues);
 
         if (load.Type == LoadType.Vehicle

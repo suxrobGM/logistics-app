@@ -238,6 +238,22 @@ public class AIDispatchSystemPromptTests
         Assert.Contains("ContainerTruck", prompt);
     }
 
+    /// <summary>
+    /// The rules must name the LoadType values get_unassigned_loads returns. They once said
+    /// `VehicleTransport` and `Hazmat`, which no load ever carries.
+    /// </summary>
+    [Fact]
+    public void Build_TypeRules_NameRealLoadAndTruckTypes()
+    {
+        var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
+
+        Assert.Contains("`Vehicle` loads → `CarHauler` or `CarTransporter` only", prompt);
+        Assert.Contains("`IntermodalContainer`, `TankContainer`, `ReeferContainer` loads → `ContainerTruck` only", prompt);
+        Assert.Contains("`RefrigeratedGoods`", prompt);
+        Assert.DoesNotContain("VehicleTransport", prompt);
+        Assert.DoesNotContain("`Hazmat`", prompt);
+    }
+
     #endregion
 
     #region Fleet vs solo owner-operator

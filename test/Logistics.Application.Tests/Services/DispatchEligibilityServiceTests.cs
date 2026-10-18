@@ -349,6 +349,7 @@ public class DispatchEligibilityServiceTests
     {
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
         var truck = CreateTruck(driver);
+        truck.Type = TruckType.CarHauler;
         var load = CreateLoad(isHazmat: false);
         load.Type = LoadType.Vehicle;
         WireRepos(truck, load, driver);
@@ -361,6 +362,23 @@ public class DispatchEligibilityServiceTests
         var issue = Assert.Single(result.Issues);
         Assert.Equal(EligibilityIssueCode.VehicleCapacityExceeded, issue.Code);
         Assert.Equal(EligibilitySeverity.Warning, issue.Severity);
+    }
+
+    [Fact]
+    public async Task CheckAsync_ContainerLoadOnFreightTruck_BlockedAsIncompatible()
+    {
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
+        var truck = CreateTruck(driver);
+        var load = CreateLoad(isHazmat: false);
+        load.Type = LoadType.IntermodalContainer;
+        WireRepos(truck, load, driver);
+
+        var result = await _sut.CheckAsync(TruckId, LoadId);
+
+        Assert.False(result.IsEligible);
+        var issue = Assert.Single(result.Issues);
+        Assert.Equal(EligibilityIssueCode.TruckTypeIncompatible, issue.Code);
+        Assert.Equal(EligibilitySeverity.Error, issue.Severity);
     }
 
     private void WireRepos(Truck truck, Load load, Employee driver)
