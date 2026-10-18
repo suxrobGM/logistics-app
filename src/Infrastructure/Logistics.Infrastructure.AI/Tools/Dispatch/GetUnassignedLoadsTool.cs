@@ -11,7 +11,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
 {
     public static AgentToolDefinition Definition => new(
         "get_unassigned_loads",
-        "Get all Draft loads that are not assigned to any trip. Returns load ID, name, type, origin, destination, distance, delivery cost, customer, hazmat_class on hazmat loads, and for car hauler loads vehicle_count and vehicles (compare with a truck's vehicle_capacity).")
+        "Get the Draft loads not assigned to any trip (up to 50; total says how many exist). Returns load ID, name, type, origin, destination, distance, delivery cost, customer, hazmat_class on hazmat loads, and for car hauler loads vehicle_count and vehicles (compare with a truck's vehicle_capacity).")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All
@@ -19,7 +19,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
 
     protected override async Task<string> ExecuteAsync(NoToolInput input, CancellationToken ct)
     {
-        var result = await mediator.Send(new GetUnassignedLoadsQuery(), ct);
+        var result = await mediator.Send(new GetUnassignedLoadsQuery { PageSize = ToolResult.MaxUnassignedLoads }, ct);
 
         if (!result.IsSuccess)
             return ToolResult.Error(result.Error ?? "Unknown error");
@@ -52,7 +52,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
             Vehicles = l.Vehicles.Count > 0 ? AgentVehicleSummary.Describe(l.Vehicles) : null
         }).ToList();
 
-        return ToolResult.Typed(new AgentToolResultDto { Loads = loads, Count = items.Count });
+        return ToolResult.Typed(new AgentToolResultDto { Loads = loads, Count = items.Count, Total = result.TotalItems });
     }
 
     /// <summary>"Los Angeles (USLAX)" - null when the load has no terminal, so it stays out of the JSON.</summary>

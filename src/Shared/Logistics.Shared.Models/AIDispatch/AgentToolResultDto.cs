@@ -18,6 +18,10 @@ public class AgentToolResultDto
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? Count { get; set; }
 
+    /// <summary>All matching rows when <see cref="Count"/> is one page of them.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? Total { get; set; }
+
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public bool? Feasible { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

@@ -59,4 +59,10 @@ internal static class ToolResult
 
     /// <summary>Default page size for the paged search tools - also stated in their descriptions.</summary>
     public const int MaxResults = 20;
+
+    /// <summary>
+    /// Unassigned loads one dispatch run plans. The query pages at 10 by default, which silently
+    /// left every load past the tenth out of the run.
+    /// </summary>
+    public const int MaxUnassignedLoads = 50;
 }
