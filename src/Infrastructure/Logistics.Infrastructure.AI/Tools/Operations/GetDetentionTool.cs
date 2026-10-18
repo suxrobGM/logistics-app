@@ -22,7 +22,7 @@ internal sealed class GetDetentionTool(IMediator mediator, ITenantUnitOfWork ten
 
     public static AgentToolDefinition Definition => new(
         "get_detention",
-        "Dwell time and detention at stops. With load_id: every stop of that load the truck has reached - dwell, free time, minutes over, detention charge, and whether it is already billed on the load. Without load_id: every truck at a stop it has not departed yet, most overdue first. Times are in minutes. Detention is billed automatically when the truck departs.")
+        "Dwell time and detention at stops. With load_id: every stop of that load the truck has reached - dwell, free time, time over, detention charge, and whether it is already billed on the load. Without load_id: every truck at a stop it has not departed yet, most overdue first. Times are formatted durations such as 2h 15m. Detention is billed automatically when the truck departs.")
     {
         RequiredFeature = TenantFeature.Loads,
         RequiredPermission = Permission.Load.View,
@@ -43,9 +43,9 @@ internal sealed class GetDetentionTool(IMediator mediator, ITenantUnitOfWork ten
             stop_type = s.StopType.ToString(),
             arrived_at = s.ArrivedAt.ToString("yyyy-MM-dd HH:mm"),
             departed_at = s.DepartedAt?.ToString("yyyy-MM-dd HH:mm"),
-            dwell_minutes = s.DwellMinutes,
-            free_minutes = s.FreeMinutes,
-            over_minutes = s.OverMinutes,
+            dwell = AgentDuration.Format(s.DwellMinutes),
+            free_time = AgentDuration.Format(s.FreeMinutes),
+            over = AgentDuration.Format(s.OverMinutes),
             rate_per_hour = s.RatePerHour,
             charge = s.Charge,
             is_ongoing = s.IsOngoing,
@@ -86,9 +86,9 @@ internal sealed class GetDetentionTool(IMediator mediator, ITenantUnitOfWork ten
                 customer = x.Row.Customer?.Name,
                 stop_type = x.Row.Stop.Type.ToString(),
                 arrived_at = x.Row.Stop.ArrivedAt!.Value.ToString("yyyy-MM-dd HH:mm"),
-                dwell_minutes = x.Detention.DwellMinutes,
-                free_minutes = x.Detention.FreeMinutes,
-                over_minutes = x.Detention.OverMinutes,
+                dwell = AgentDuration.Format(x.Detention.DwellMinutes),
+                free_time = AgentDuration.Format(x.Detention.FreeMinutes),
+                over = AgentDuration.Format(x.Detention.OverMinutes),
                 accrued_charge = x.Detention.Charge
             })
             .ToList();

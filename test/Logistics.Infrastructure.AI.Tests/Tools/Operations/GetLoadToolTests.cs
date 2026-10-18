@@ -41,12 +41,12 @@ public class GetLoadToolTests
             new JsonObject { ["load_id"] = load.Id.ToString() }, CancellationToken.None);
 
         var root = JsonDocument.Parse(result).RootElement;
-        Assert.Equal(1800m, root.GetProperty("delivery_cost").GetDecimal());
+        Assert.Equal(1800m, root.GetProperty("linehaul").GetDecimal());
         Assert.Equal("ap@acme.com", root.GetProperty("customer_email").GetString());
         Assert.False(root.GetProperty("has_invoice").GetBoolean());
     }
 
-    /// <summary>delivery_cost is only the linehaul; the agent quotes total_charges as the price.</summary>
+    /// <summary>The linehaul is only part of the price; the agent quotes total_charges.</summary>
     [Fact]
     public async Task Execute_LoadWithCharges_TotalsLinehaulFuelAndAccessorials()
     {

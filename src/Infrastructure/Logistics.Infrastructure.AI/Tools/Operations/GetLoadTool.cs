@@ -20,7 +20,7 @@ internal sealed class GetLoadTool(IMediator mediator)
 
     public static AgentToolDefinition Definition => new(
         "get_load",
-        "Get one load by ID: status, type, hazmat class, vehicles on a car hauler load (with any over-capacity warning for the assigned truck), LTL freight details, addresses, charges (delivery_cost is the linehaul; fuel_surcharge and accessorials add to it in total_charges), customer (with email), assigned truck and trailer, delivery timestamps, and its invoice. ALWAYS call this before create_load_invoice - it shows whether the load is Delivered and already invoiced.")
+        "Get one load by ID: status, type, hazmat class, vehicles on a car hauler load (with any over-capacity warning for the assigned truck), LTL freight details, addresses, charges (total_charges is the price: linehaul plus fuel_surcharge and accessorials), customer (with email), assigned truck and trailer, delivery timestamps, and its invoice. ALWAYS call this before create_load_invoice - it shows whether the load is Delivered and already invoiced.")
     {
         RequiredFeature = TenantFeature.Loads,
         RequiredPermission = Permission.Load.View,
@@ -50,7 +50,7 @@ internal sealed class GetLoadTool(IMediator mediator)
             origin = l.OriginAddress.ToString(),
             destination = l.DestinationAddress.ToString(),
             distance_km = Math.Round(DispatchUnits.MetersToKm(l.Distance), 1),
-            delivery_cost = l.DeliveryCost,
+            linehaul = l.DeliveryCost,
             fuel_surcharge = l.FuelSurcharge != 0 ? l.FuelSurcharge : (decimal?)null,
             accessorials = l.Accessorials.Count > 0
                 ? l.Accessorials.Select(a => new { name = a.Name, total = a.Total }).ToArray()

@@ -57,7 +57,7 @@ public class GetDetentionToolTests
         var result = await _sut.ExecuteAsync(new JsonObject { ["load_id"] = loadId.ToString() }, CancellationToken.None);
 
         var stop = Assert.Single(JsonDocument.Parse(result).RootElement.GetProperty("stops").EnumerateArray());
-        Assert.Equal(120, stop.GetProperty("over_minutes").GetInt32());
+        Assert.Equal("2h", stop.GetProperty("over").GetString());
         Assert.True(stop.GetProperty("is_billed").GetBoolean());
         await _mediator.Received(1).Send(
             Arg.Is<GetLoadDetentionQuery>(q => q.LoadId == loadId), Arg.Any<CancellationToken>());
@@ -76,8 +76,8 @@ public class GetDetentionToolTests
         var waiting = root.GetProperty("waiting").EnumerateArray().ToList();
         Assert.Equal(2, waiting.Count);
         Assert.Equal("T-2", waiting[0].GetProperty("truck_number").GetString());
-        Assert.True(waiting[0].GetProperty("over_minutes").GetInt32() > 0);
-        Assert.Equal(0, waiting[1].GetProperty("over_minutes").GetInt32());
+        Assert.NotEqual("0m", waiting[0].GetProperty("over").GetString());
+        Assert.Equal("0m", waiting[1].GetProperty("over").GetString());
         await _mediator.DidNotReceiveWithAnyArgs().Send<Result<List<StopDetentionDto>>>(default!, default);
     }
 
