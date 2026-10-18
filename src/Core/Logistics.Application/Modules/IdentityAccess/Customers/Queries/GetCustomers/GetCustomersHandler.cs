@@ -16,7 +16,8 @@ internal sealed class GetCustomersHandler(ITenantUnitOfWork tenantUow)
 
         if (!string.IsNullOrEmpty(req.Search))
         {
-            query = query.Where(i => i.Name.Contains(req.Search));
+            var search = req.Search.ToLower();
+            query = query.Where(i => i.Name.ToLower().Contains(search));
         }
 
         var totalItems = query.Count();

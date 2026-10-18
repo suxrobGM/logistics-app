@@ -12,13 +12,13 @@ internal sealed class SearchCustomersTool(IMediator mediator)
 {
     internal sealed record Input
     {
-        [Description("Customer name or name fragment (case-sensitive substring match)")]
+        [Description("Customer name or a fragment of it (case-insensitive)")]
         public string? Search { get; init; }
     }
 
     public static AgentToolDefinition Definition => new(
         "search_customers",
-        "Search customers by name. The match is a case-sensitive substring - if nothing is found, retry with a shorter fragment (e.g. 'Acme' instead of 'acme logistics'). Returns up to 20 customers with ID, name, email, and phone.")
+        "Search customers by name (case-insensitive substring). If nothing matches, retry once with a shorter fragment before concluding the customer does not exist. Returns up to 20 customers with ID, name, email, and phone.")
     {
         RequiredFeature = TenantFeature.Customers,
         RequiredPermission = Permission.Customer.View,
