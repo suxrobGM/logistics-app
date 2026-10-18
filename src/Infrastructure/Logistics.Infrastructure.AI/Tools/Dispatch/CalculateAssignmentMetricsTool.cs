@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json.Serialization;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -27,26 +26,10 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
         public required Guid TruckId { get; init; }
     }
 
-    /// <summary>
-    /// One scored truck/load pairing. A record rather than an anonymous type so the sort can read
-    /// <see cref="RevenuePerMile"/> directly - the keys are snake_case because the model reads them
-    /// by name, hence the explicit attributes.
-    /// </summary>
-    private sealed record CandidateMetric(
-        [property: JsonPropertyName("load_id")] Guid LoadId,
-        [property: JsonPropertyName("truck_id")] Guid TruckId,
-        [property: JsonPropertyName("load_name")] string? LoadName,
-        [property: JsonPropertyName("truck_number")] string TruckNumber,
-        [property: JsonPropertyName("deadhead_miles")] double DeadheadMiles,
-        [property: JsonPropertyName("loaded_miles")] double LoadedMiles,
-        [property: JsonPropertyName("total_miles")] double TotalMiles,
-        [property: JsonPropertyName("delivery_cost")] double DeliveryCost,
-        [property: JsonPropertyName("revenue_per_mile")] double RevenuePerMile,
-        [property: JsonPropertyName("deadhead_ratio")] double DeadheadRatio);
 
     public static AgentToolDefinition Definition => new(
         "calculate_assignment_metrics",
-        "Calculate linehaul revenue per mile/km (delivery_cost, excluding fuel surcharge and accessorials), deadhead ratio, and profitability for candidate truck-load pairs. Use this when multiple trucks are candidates for a load to pick the most profitable option.")
+        "Score candidate truck-load pairs: deadhead, loaded and total distance, linehaul (delivery_cost, excluding fuel surcharge and accessorials), linehaul rate per distance unit, and deadhead ratio, best rate first. Distances are in the tenant's unit, named in each key (_mi or _km).")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All
@@ -67,7 +50,10 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
         var trucks = (await tenantUow.Repository<Truck>().GetListAsync(t => truckIds.Contains(t.Id), ct))
             .ToDictionary(t => t.Id);
 
-        var metrics = new List<CandidateMetric>();
+        var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
+        var suffix = DispatchUnits.Suffix(unit);
+
+        var scored = new List<(double Rate, Dictionary<string, object?> Row)>();
         var errors = new List<object>();
 
         foreach (var candidate in input.Candidates)
@@ -86,33 +72,36 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
                 continue;
             }
 
-            var deadheadKm = 0.0;
-            if (truck.CurrentLocation is not null && load.OriginLocation is not null)
-                deadheadKm = DispatchUnits.MetersToKm(truck.CurrentLocation.DistanceTo(load.OriginLocation));
-
+            var deadheadKm = truck.CurrentLocation is not null && load.OriginLocation is not null
+                ? DispatchUnits.MetersToKm(truck.CurrentLocation.DistanceTo(load.OriginLocation))
+                : 0.0;
             var loadedKm = DispatchUnits.MetersToKm(load.Distance);
-            var totalMiles = DispatchUnits.KmToMiles(deadheadKm + loadedKm);
-            var deadheadMiles = DispatchUnits.KmToMiles(deadheadKm);
-            var loadedMiles = DispatchUnits.KmToMiles(loadedKm);
-            var deliveryCost = (double)(load.DeliveryCost?.Amount ?? 0);
 
-            metrics.Add(new CandidateMetric(
-                candidate.LoadId,
-                candidate.TruckId,
-                load.Name,
-                truck.Number,
-                Math.Round(deadheadMiles, 1),
-                Math.Round(loadedMiles, 1),
-                Math.Round(totalMiles, 1),
-                deliveryCost,
-                RevenuePerMile: Math.Round(totalMiles > 0 ? deliveryCost / totalMiles : 0, 2),
-                DeadheadRatio: Math.Round(totalMiles > 0 ? deadheadMiles / totalMiles : 0, 3)));
+            var deadhead = DispatchUnits.FromKm(deadheadKm, unit);
+            var total = DispatchUnits.FromKm(deadheadKm + loadedKm, unit);
+            var linehaul = (double)(load.DeliveryCost?.Amount ?? 0);
+            var rate = Math.Round(total > 0 ? linehaul / total : 0, 2);
+
+            // Keys carry the unit so the model never has to guess whether to convert.
+            scored.Add((rate, new Dictionary<string, object?>
+            {
+                ["load_id"] = candidate.LoadId,
+                ["truck_id"] = candidate.TruckId,
+                ["load_name"] = load.Name,
+                ["truck_number"] = truck.Number,
+                [$"deadhead_{suffix}"] = deadhead,
+                [$"loaded_{suffix}"] = DispatchUnits.FromKm(loadedKm, unit),
+                [$"total_{suffix}"] = total,
+                ["delivery_cost"] = linehaul,
+                [$"revenue_per_{suffix}"] = rate,
+                ["deadhead_ratio"] = Math.Round(total > 0 ? deadhead / total : 0, 3)
+            }));
         }
 
         // Best pairings first; unscoreable candidates trail them, as before.
-        var candidates = metrics
-            .OrderByDescending(m => m.RevenuePerMile)
-            .Cast<object>()
+        var candidates = scored
+            .OrderByDescending(s => s.Rate)
+            .Select(s => (object)s.Row)
             .Concat(errors)
             .ToList();
 

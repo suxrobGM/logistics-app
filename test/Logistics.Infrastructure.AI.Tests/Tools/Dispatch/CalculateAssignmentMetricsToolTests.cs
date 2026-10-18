@@ -25,6 +25,7 @@ public class CalculateAssignmentMetricsToolTests
     {
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.Repository<Truck>().Returns(_truckRepo);
+        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create());
         _sut = new CalculateAssignmentMetricsTool(_tenantUow);
     }
 
@@ -112,16 +113,32 @@ public class CalculateAssignmentMetricsToolTests
         Assert.Equal(truckId, candidate.GetProperty("truck_id").GetGuid());
         Assert.Equal("Dallas run", candidate.GetProperty("load_name").GetString());
         Assert.Equal("T-1", candidate.GetProperty("truck_number").GetString());
-        Assert.Equal(0, candidate.GetProperty("deadhead_miles").GetDouble());
-        Assert.Equal(62.1, candidate.GetProperty("loaded_miles").GetDouble(), 1);
-        Assert.Equal(62.1, candidate.GetProperty("total_miles").GetDouble(), 1);
+        Assert.Equal(0, candidate.GetProperty("deadhead_mi").GetDouble());
+        Assert.Equal(62.1, candidate.GetProperty("loaded_mi").GetDouble(), 1);
+        Assert.Equal(62.1, candidate.GetProperty("total_mi").GetDouble(), 1);
         Assert.Equal(1242.74, candidate.GetProperty("delivery_cost").GetDouble(), 2);
-        Assert.Equal(20.0, candidate.GetProperty("revenue_per_mile").GetDouble(), 1);
+        Assert.Equal(20.0, candidate.GetProperty("revenue_per_mi").GetDouble(), 1);
         Assert.Equal(0, candidate.GetProperty("deadhead_ratio").GetDouble());
     }
 
     [Fact]
-    public async Task Execute_SeveralCandidates_SortsByRevenuePerMileDescending()
+    public async Task Execute_KilometreTenant_ReportsKilometreKeys()
+    {
+        // The prompt converts only _km keys; a miles figure under a km tenant was converted twice.
+        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create(DistanceUnit.Kilometers));
+        var loadId = Guid.NewGuid();
+        var truckId = Guid.NewGuid();
+        Setup([CreateLoad(loadId, "Dallas run", 100_000, 1000m)], [CreateTruck(truckId, "T-1")]);
+
+        var candidate = (await Run(Candidate(loadId, truckId))).GetProperty("candidates")[0];
+
+        Assert.Equal(100, candidate.GetProperty("total_km").GetDouble(), 1);
+        Assert.Equal(10.0, candidate.GetProperty("revenue_per_km").GetDouble(), 1);
+        Assert.False(candidate.TryGetProperty("total_mi", out _));
+    }
+
+    [Fact]
+    public async Task Execute_SeveralCandidates_SortsByRevenuePerUnitDescending()
     {
         var cheapLoad = Guid.NewGuid();
         var richLoad = Guid.NewGuid();
