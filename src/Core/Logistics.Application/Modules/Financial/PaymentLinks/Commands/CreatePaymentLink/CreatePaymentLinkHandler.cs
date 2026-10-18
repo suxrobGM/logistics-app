@@ -30,7 +30,7 @@ internal sealed class CreatePaymentLinkHandler(
         }
 
         // The pay page refuses factored invoices, so a link would be dead on arrival.
-        if (invoice is LoadInvoice { Customer.FactoringCompany: { } factor })
+        if (invoice is LoadInvoice { AssignedFactor: { } factor })
         {
             return Result<PaymentLinkDto>.Fail(
                 $"This invoice is assigned to {factor.Name}; the customer pays {factor.Name} directly, so it cannot have a payment link.");

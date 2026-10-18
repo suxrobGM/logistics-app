@@ -34,7 +34,7 @@ public class InvoicePdfService : IInvoicePdfService
 
                     // A factored invoice is the factor's to collect: the carrier's own payment record (the
                     // factor's purchase included) would read to the customer as already paid.
-                    if (invoice.Customer?.FactoringCompany is { } factor)
+                    if (invoice.AssignedFactor is { } factor)
                     {
                         col.Item().Element(c => InvoiceTotalsSection.Render(c, invoice, taxLabel, showTax, showPayments: false));
                         col.Item().Element(c => InvoiceRemitToSection.Render(c, factor));

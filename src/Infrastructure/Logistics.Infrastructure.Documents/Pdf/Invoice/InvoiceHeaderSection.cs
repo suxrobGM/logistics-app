@@ -52,7 +52,7 @@ internal static class InvoiceHeaderSection
                     {
                         KeyValueRow(col, "Due Date:", invoice.DueDate.Value.ToString("MMM dd, yyyy"));
                     }
-                    if (invoice.Customer?.FactoringCompany is null)
+                    if (invoice.AssignedFactor is null)
                     {
                         KeyValueRow(col, "Status:", PdfFormatting.Display(invoice.Status));
                     }

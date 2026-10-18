@@ -83,7 +83,7 @@ internal sealed class GetPublicInvoiceHandler(
         {
             dto.CustomerName = loadInvoice.Customer?.Name;
             dto.LoadNumber = loadInvoice.Load?.Number;
-            if (loadInvoice.Customer?.FactoringCompany is { } factor)
+            if (loadInvoice.AssignedFactor is { } factor)
             {
                 dto.RemitTo = new RemitToDto { Name = factor.Name, Address = factor.RemitToAddress };
             }

@@ -51,7 +51,7 @@ internal sealed class SendInvoiceHandler(
         }
 
         // A factored invoice is paid to the factor, so it gets the notice of assignment instead of a card payment link.
-        var factor = (invoice as LoadInvoice)?.Customer?.FactoringCompany;
+        var factor = (invoice as LoadInvoice)?.AssignedFactor;
         PaymentLink? paymentLink = null;
         if (factor is null)
         {
