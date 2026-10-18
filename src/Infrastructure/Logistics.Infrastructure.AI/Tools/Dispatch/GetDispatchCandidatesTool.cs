@@ -42,13 +42,12 @@ internal sealed class GetDispatchCandidatesTool(
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {
-        var result = await mediator.Send(new GetUnassignedLoadsQuery { PageSize = ToolResult.MaxUnassignedLoads }, ct);
+        var query = new GetUnassignedLoadsQuery { PageSize = ToolResult.MaxUnassignedLoads, LoadIds = input.LoadIds };
+        var result = await mediator.Send(query, ct);
         if (!result.IsSuccess)
             return ToolResult.Error(result.Error ?? "Unknown error");
 
-        var loads = (result.Value ?? [])
-            .Where(l => input.LoadIds is not { Length: > 0 } ids || ids.Contains(l.Id))
-            .ToList();
+        var loads = result.Value?.ToList() ?? [];
 
         var fleet = await AvailableFleet.LoadAsync(tenantUow, ct);
         var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;

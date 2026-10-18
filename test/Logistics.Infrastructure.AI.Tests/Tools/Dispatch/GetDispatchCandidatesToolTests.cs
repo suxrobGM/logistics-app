@@ -153,14 +153,16 @@ public class GetDispatchCandidatesToolTests
     }
 
     [Fact]
-    public async Task Execute_LoadIds_PlansOnlyThoseLoads()
+    public async Task Execute_LoadIds_PassesThemToTheQuery()
     {
-        var wanted = Load();
-        Setup([Load(), wanted], Truck("T-1", TruckType.BoxTruck, Pickup));
+        // Filtered in the query, so a requested load past the first page is still planned.
+        var wanted = Guid.NewGuid();
+        Setup([]);
 
-        var loads = (await Run(new JsonObject { ["load_ids"] = new JsonArray(wanted.Id.ToString()) })).GetProperty("loads");
+        await Run(new JsonObject { ["load_ids"] = new JsonArray(wanted.ToString()) });
 
-        Assert.Equal(wanted.Id, Assert.Single(loads.EnumerateArray()).GetProperty("load_id").GetGuid());
+        await _mediator.Received(1).Send(
+            Arg.Is<GetUnassignedLoadsQuery>(q => q.LoadIds!.SequenceEqual(new[] { wanted })), Arg.Any<CancellationToken>());
     }
 
     [Fact]

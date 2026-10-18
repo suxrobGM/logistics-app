@@ -74,4 +74,19 @@ public class GetUnassignedLoadsHandlerTests
         Assert.Single(page);
         Assert.Equal("first", page[0].Name);
     }
+
+    [Fact]
+    public async Task Handle_LoadIds_ReturnsOnlyThoseLoads()
+    {
+        var instant = new DateTime(2026, 4, 1, 0, 0, 0, DateTimeKind.Utc);
+        var wanted = CreateDraftLoad("wanted", instant);
+        _loadRepo.Query().Returns(new[] { CreateDraftLoad("other", instant), wanted }.BuildMock());
+        _loadRepo.CountAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(2);
+
+        var result = await _sut.Handle(
+            new GetUnassignedLoadsQuery { LoadIds = [wanted.Id] }, CancellationToken.None);
+
+        Assert.Equal("wanted", Assert.Single(result.Value!).Name);
+    }
 }

@@ -8,4 +8,6 @@ namespace Logistics.Application.Modules.Operations.Loads.Queries;
 /// </summary>
 public sealed class GetUnassignedLoadsQuery : PagedQuery, IQuery<PagedResult<LoadDto>>
 {
+    /// <summary>Restricts the page to these loads; the total still counts every unassigned load.</summary>
+    public Guid[]? LoadIds { get; init; }
 }

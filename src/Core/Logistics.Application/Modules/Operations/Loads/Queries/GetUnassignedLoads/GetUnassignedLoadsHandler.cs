@@ -25,6 +25,9 @@ internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow)
         var baseQuery = loadRepo.Query()
             .Where(l => l.Status == LoadStatus.Draft && l.TripStops.Count == 0);
 
+        if (req.LoadIds is { Length: > 0 } ids)
+            baseQuery = baseQuery.Where(l => ids.Contains(l.Id));
+
         var totalItems = await loadRepo.CountAsync(
             predicate: l => l.Status == LoadStatus.Draft && l.TripStops.Count == 0,
             ct: ct);
