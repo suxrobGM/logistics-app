@@ -21,7 +21,7 @@ public class AIDispatchSystemPromptTests
 
         Assert.Contains("## Suggestion Workflow", prompt);
         Assert.Contains("creates a **suggestion** for dispatcher approval", prompt);
-        Assert.Contains("Do NOT chain write actions that depend on a suggested action", prompt);
+        Assert.Contains("Never chain a write onto a suggestion", prompt);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class AIDispatchSystemPromptTests
     {
         var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
 
-        Assert.Contains("**HOS compliance** - see HOS rules below. This is a hard constraint, not a suggestion", prompt);
+        Assert.Contains("**HOS compliance** - a hard constraint", prompt);
     }
 
     [Fact]
@@ -38,6 +38,7 @@ public class AIDispatchSystemPromptTests
         var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
 
         Assert.Contains("get_unassigned_loads", prompt);
+        Assert.Contains("get_dispatch_candidates", prompt);
         Assert.Contains("get_available_trucks", prompt);
         Assert.Contains("batch_check_hos_feasibility", prompt);
         Assert.Contains("assign_load_to_truck", prompt);
@@ -117,12 +118,13 @@ public class AIDispatchSystemPromptTests
     }
 
     [Fact]
-    public void Build_DateStamp_IsDeclaredAuthoritative()
+    public void Build_CarriesNoDate_TheTimeComesFromSentStamps()
     {
+        // A date in the system prompt changes the cached prefix every day; the stamp is per message.
         var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
 
-        Assert.Contains("authoritative current date", prompt);
-        Assert.Contains("[Current time: ...]", prompt);
+        Assert.Contains("`[Sent: ...]` UTC stamp", prompt);
+        Assert.DoesNotContain(DateTime.UtcNow.ToString("yyyy-MM-dd"), prompt);
     }
 
     #endregion
@@ -249,29 +251,28 @@ public class AIDispatchSystemPromptTests
 
         Assert.Contains("`Vehicle` loads → `CarHauler` or `CarTransporter` only", prompt);
         Assert.Contains("`IntermodalContainer`, `TankContainer`, `ReeferContainer` loads → `ContainerTruck` only", prompt);
-        Assert.Contains("`RefrigeratedGoods`", prompt);
         Assert.DoesNotContain("VehicleTransport", prompt);
         Assert.DoesNotContain("`Hazmat`", prompt);
     }
 
-    /// <summary>A FreightTruck is a tractor; the trailer it pulls is what makes it fit reefer or flatbed freight.</summary>
+    /// <summary>The trailer-fit rules live in EquipmentFit now; the prompt only reads its verdict.</summary>
     [Fact]
-    public void Build_EquipmentFit_ReadsTheHookedTrailer()
+    public void Build_EquipmentFit_ReadsTheCandidateVerdict()
     {
         var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
 
-        Assert.Contains("`current_trailer.type` decides", prompt);
-        Assert.Contains("`Reefer` trailer", prompt);
-        Assert.Contains("trailer is unconfirmed", prompt);
+        Assert.Contains("prefer `equipment: match`", prompt);
+        Assert.Contains("the trailer is unverified", prompt);
+        Assert.DoesNotContain("`current_trailer.type` decides", prompt);
     }
 
     [Fact]
-    public void Build_HazmatLoads_RequireTheEligibilityCheck()
+    public void Build_HazmatLoads_NeverAssignABlockedCandidate()
     {
         var prompt = AIDispatchSystemPrompt.Build(new("Fleet"));
 
-        Assert.Contains("`hazmat_class`", prompt);
-        Assert.Contains("Call `check_dispatch_eligibility`", prompt);
+        Assert.Contains("Hazmat and car hauler loads", prompt);
+        Assert.Contains("Never assign a candidate with `blocked: true`", prompt);
     }
 
     [Fact]

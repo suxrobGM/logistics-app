@@ -20,8 +20,8 @@ internal sealed record DispatchPromptContext(string CompanyName)
     public bool HasLoadBoardIntegration { get; init; }
 
     /// <summary>
-    /// Whether the tenant has <c>TenantFeature.IntermodalContainers</c>. The section costs ~310 tokens
-    /// per request and names tools a gated tenant is not given, so it must move in lockstep with them.
+    /// Whether the tenant has <c>TenantFeature.IntermodalContainers</c>. The section names tools a gated
+    /// tenant is not given, so it must move in lockstep with them.
     /// </summary>
     public bool HasIntermodal { get; init; }
 
