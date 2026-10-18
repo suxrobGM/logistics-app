@@ -83,7 +83,7 @@ public class GetDetentionToolTests
 
     private static TripStop Stop(string truckNumber, double arrivedHoursAgo)
     {
-        var address = new Address { Line1 = "1 Dock", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" };
+        var address = CopilotToolTestData.SomeAddress;
         var load = new Load
         {
             Name = $"Load for {truckNumber}",

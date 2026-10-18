@@ -25,7 +25,7 @@ public class LoadInvoiceChargesTests
         };
     }
 
-    private static LoadAccessorial Accessorial(Load load, string name, InvoiceLineItemType type, decimal rate,
+    internal static LoadAccessorial Accessorial(Load load, string name, InvoiceLineItemType type, decimal rate,
         decimal quantity = 1, AccessorialUnit unit = AccessorialUnit.Flat) => new()
     {
         LoadId = load.Id,

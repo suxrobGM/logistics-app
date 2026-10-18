@@ -14,16 +14,9 @@ public static class TruckLoadCompatibility
     public static IReadOnlyList<LoadType> ContainerLoadTypes { get; } =
         [LoadType.IntermodalContainer, LoadType.TankContainer, LoadType.ReeferContainer];
 
-    public static bool CanHaul(TruckType truckType, LoadType loadType)
-    {
-        if (VehicleLoadTypes.Contains(loadType) || VehicleTruckTypes.Contains(truckType))
-            return VehicleLoadTypes.Contains(loadType) && VehicleTruckTypes.Contains(truckType);
-
-        if (ContainerLoadTypes.Contains(loadType) || ContainerTruckTypes.Contains(truckType))
-            return ContainerLoadTypes.Contains(loadType) && ContainerTruckTypes.Contains(truckType);
-
-        return true;
-    }
+    public static bool CanHaul(TruckType truckType, LoadType loadType) =>
+        VehicleTruckTypes.Contains(truckType) == VehicleLoadTypes.Contains(loadType)
+        && ContainerTruckTypes.Contains(truckType) == ContainerLoadTypes.Contains(loadType);
 
     /// <summary>"Truck T-1 is a CarHauler and can only carry Vehicle loads." Null when the pairing is allowed.</summary>
     public static string? DescribeMismatch(string truckNumber, TruckType truckType, LoadType loadType)

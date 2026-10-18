@@ -50,13 +50,10 @@ internal sealed class GetConditionReportsTool(IMediator mediator)
 
     private static string? DescribeVehicle(ConditionReportDto report)
     {
-        var name = string.Join(' ', new[] { report.VehicleYear?.ToString(), report.VehicleMake, report.VehicleModel }
+        var vin = string.IsNullOrEmpty(report.Vin) ? null : $"VIN {report.Vin}";
+        var description = string.Join(' ', new[] { report.VehicleYear?.ToString(), report.VehicleMake, report.VehicleModel, vin }
             .Where(p => !string.IsNullOrWhiteSpace(p)));
-
-        if (string.IsNullOrEmpty(report.Vin))
-            return string.IsNullOrEmpty(name) ? null : name;
-
-        return string.IsNullOrEmpty(name) ? $"VIN {report.Vin}" : $"{name} VIN {report.Vin}";
+        return description.Length == 0 ? null : description;
     }
 
     /// <summary>"Front bumper: D, Minor - 3 inch dent" - zone over part, BOL code when the defect has one.</summary>

@@ -2,7 +2,6 @@ using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
 using NSubstitute;
 using Xunit;
 
@@ -72,18 +71,8 @@ public class AssignLoadToTruckHandlerTests
 
     private (Load Load, Truck Truck) Wire(LoadType loadType, TruckType truckType)
     {
-        var address = new Address { Line1 = "1 Main", City = "City", State = "ST", ZipCode = "00000", Country = "US" };
-        var load = new Load
-        {
-            Name = "L-1",
-            Type = loadType,
-            Customer = null!,
-            OriginAddress = address,
-            OriginLocation = new GeoPoint(0, 0),
-            DestinationAddress = address,
-            DestinationLocation = new GeoPoint(0, 0),
-            DeliveryCost = Money.Zero("USD")
-        };
+        var load = LoadInvoiceChargesTests.NewLoad();
+        load.Type = loadType;
         var truck = new Truck { Number = "T-1", Type = truckType };
         _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
         _truckRepo.GetByIdAsync(truck.Id, Arg.Any<CancellationToken>()).Returns(truck);

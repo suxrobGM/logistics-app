@@ -43,7 +43,7 @@ internal sealed class GetLoadTool(IMediator mediator)
             name = l.Name,
             status = l.Status.ToString(),
             type = l.Type.ToString(),
-            hazmat_class = l.IsHazmat ? l.HazmatClass?.ToString() ?? "unspecified" : null,
+            hazmat_class = AgentHazmat.DescribeClass(l),
             vehicles = l.Vehicles.Count > 0 ? AgentVehicleSummary.Describe(l.Vehicles) : null,
             vehicle_capacity_warning = l.VehicleCapacityWarning,
             freight = DescribeFreight(l),

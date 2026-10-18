@@ -1,7 +1,6 @@
 using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
@@ -39,20 +38,9 @@ internal sealed class CreateLoadInvoiceHandler(
         }
 
         var tenant = tenantUow.GetCurrentTenant();
-        var currency = load.DeliveryCost.Currency;
-
-        // The tax applier recomputes the totals from the lines, so an invoice without them bills zero.
-        var invoice = new LoadInvoice
-        {
-            Subtotal = Money.Zero(currency),
-            TaxTotal = Money.Zero(currency),
-            Total = Money.Zero(currency),
-            CustomerId = req.CustomerId,
-            Customer = customer,
-            LoadId = req.LoadId,
-            Load = load
-        };
-        invoice.ReplaceLoadCharges(load);
+        var invoice = LoadFactory.CreateInvoice(load);
+        invoice.CustomerId = req.CustomerId;
+        invoice.Customer = customer;
 
         if (req.RecordPayment)
         {
@@ -60,7 +48,7 @@ internal sealed class CreateLoadInvoiceHandler(
             {
                 StripePaymentMethodId = req.StripePaymentMethodId,
                 TenantId = tenant.Id,
-                Amount = new() { Amount = req.PaymentAmount, Currency = currency },
+                Amount = new() { Amount = req.PaymentAmount, Currency = invoice.Total.Currency },
                 BillingAddress = tenant.CompanyAddress
             };
 

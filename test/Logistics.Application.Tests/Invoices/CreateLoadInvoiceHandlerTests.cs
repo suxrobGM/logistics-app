@@ -41,16 +41,7 @@ public class CreateLoadInvoiceHandlerTests
     {
         var load = LoadInvoiceChargesTests.NewLoad(linehaul: 2000m);
         load.FuelSurcharge = 300m;
-        load.Accessorials.Add(new LoadAccessorial
-        {
-            LoadId = load.Id,
-            Load = load,
-            Name = "Lumper",
-            LineItemType = InvoiceLineItemType.Lumper,
-            Unit = AccessorialUnit.Flat,
-            Rate = 150m,
-            Quantity = 1
-        });
+        load.Accessorials.Add(LoadInvoiceChargesTests.Accessorial(load, "Lumper", InvoiceLineItemType.Lumper, 150m));
         _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
         _customerRepo.GetByIdAsync(load.Customer.Id, Arg.Any<CancellationToken>()).Returns(load.Customer);
         Invoice? added = null;

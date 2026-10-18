@@ -15,7 +15,7 @@ internal sealed class VehicleTransportGuard(ITenantUnitOfWork tenantUow, IFeatur
         types?.Contains(LoadType.Vehicle) == true ? CheckFeatureAsync() : Task.FromResult(Result.Ok());
 
     public Task<Result> CheckTruckTypeAsync(TruckType? type) =>
-        type is TruckType.CarHauler or TruckType.CarTransporter ? CheckFeatureAsync() : Task.FromResult(Result.Ok());
+        type is { } t && TruckLoadCompatibility.VehicleTruckTypes.Contains(t) ? CheckFeatureAsync() : Task.FromResult(Result.Ok());
 
     private Task<Result> CheckFeatureAsync() =>
         featureService.CheckFeatureAsync(tenantUow.GetCurrentTenant().Id, TenantFeature.VehicleTransport);
