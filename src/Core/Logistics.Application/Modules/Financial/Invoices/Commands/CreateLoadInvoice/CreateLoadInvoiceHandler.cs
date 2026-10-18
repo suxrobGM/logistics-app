@@ -39,18 +39,20 @@ internal sealed class CreateLoadInvoiceHandler(
         }
 
         var tenant = tenantUow.GetCurrentTenant();
-        var currency = tenant.Settings.Currency.ToString();
+        var currency = load.DeliveryCost.Currency;
 
-        var amount = new Money { Amount = req.PaymentAmount, Currency = currency };
+        // The tax applier recomputes the totals from the lines, so an invoice without them bills zero.
         var invoice = new LoadInvoice
         {
-            Subtotal = amount,
+            Subtotal = Money.Zero(currency),
             TaxTotal = Money.Zero(currency),
-            Total = amount,
+            Total = Money.Zero(currency),
             CustomerId = req.CustomerId,
             Customer = customer,
-            LoadId = req.LoadId
+            LoadId = req.LoadId,
+            Load = load
         };
+        invoice.ReplaceLoadCharges(load);
 
         if (req.RecordPayment)
         {
