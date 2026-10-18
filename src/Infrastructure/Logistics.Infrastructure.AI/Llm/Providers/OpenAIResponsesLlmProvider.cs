@@ -41,8 +41,15 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
             options.InputItems.Add(item);
         }
 
-        var response = await client.CreateResponseAsync(options, ct);
-        return MapResponse(response.Value);
+        try
+        {
+            var response = await client.CreateResponseAsync(options, ct);
+            return MapResponse(response.Value);
+        }
+        catch (ClientResultException ex)
+        {
+            throw OpenAIFailure.From(ex);
+        }
     }
 
     /// <summary>
@@ -177,6 +184,18 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
         }
     }
 
+    /// <summary>
+    /// Read from the output items, not only Status: Status is Completed both when the model
+    /// answered and when it asked for tools, which would end every tool session after one iteration.
+    /// </summary>
+    private static LlmStopReason MapStopReason(ResponseResult response, int toolCallCount) =>
+        response.IncompleteStatusDetails?.Reason switch
+        {
+            { } reason when reason == ResponseIncompleteStatusReason.MaxOutputTokens => LlmStopReason.MaxTokens,
+            { } reason when reason == ResponseIncompleteStatusReason.ContentFilter => LlmStopReason.Refusal,
+            _ => toolCallCount > 0 ? LlmStopReason.ToolUse : LlmStopReason.EndTurn
+        };
+
     private static LlmResponse MapResponse(ResponseResult response)
     {
         var content = new List<LlmContentBlock>();
@@ -217,9 +236,7 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
         {
             AssistantMessage = new LlmMessage(LlmRole.Assistant, content),
             TextContent = textContent,
-            // From the output items, not Status: Status is Completed both when the model answered
-            // and when it asked for tools, which would end every tool session after one iteration.
-            StopReason = toolCalls.Count > 0 ? "tool_use" : "end_turn",
+            StopReason = MapStopReason(response, toolCalls.Count),
             ToolCalls = toolCalls,
             Usage = OpenAIUsage.From(
                 response.Usage?.InputTokenCount ?? 0,

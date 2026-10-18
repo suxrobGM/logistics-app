@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Infrastructure.AI.Agents;
-using System.Net;
 using System.Text.Json.Nodes;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -69,7 +68,7 @@ public class AgentLoopRunnerTests
     {
         AssistantMessage = new LlmMessage(LlmRole.Assistant, [new LlmTextBlock(text)]),
         TextContent = text,
-        StopReason = "end_turn",
+        StopReason = LlmStopReason.EndTurn,
         ToolCalls = [],
         Usage = new LlmTokenUsage(inputTokens, outputTokens)
     };
@@ -81,7 +80,7 @@ public class AgentLoopRunnerTests
         {
             AssistantMessage = new LlmMessage(LlmRole.Assistant, [toolUse]),
             TextContent = null,
-            StopReason = "tool_use",
+            StopReason = LlmStopReason.ToolUse,
             ToolCalls = [toolUse],
             Usage = new LlmTokenUsage(200, 20)
         };
@@ -125,46 +124,34 @@ public class AgentLoopRunnerTests
     }
 
     [Fact]
-    public async Task Run_RateLimited_RetriesThenSucceeds()
+    public async Task Run_ProviderFailure_IsNotRetriedByTheLoop()
     {
-        var session = Session();
-        var calls = 0;
-        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
-            .Returns(_ =>
-            {
-                calls++;
-                if (calls == 1)
-                    throw new HttpRequestException("rate limited", null, HttpStatusCode.TooManyRequests);
-                return TextResponse("Recovered.");
-            });
-
-        await _sut.RunAsync(session, Conversation(), new ToolCallContext(), null, CancellationToken.None);
-
-        Assert.Equal(2, calls);
-        Assert.Equal("Recovered.", session.Summary);
-    }
-
-    [Fact]
-    public async Task Run_RateLimitedEveryAttempt_StopsAfterFourCallsAndThrows()
-    {
+        // Both SDKs already retry 429 and 5xx; a second layer here multiplied the attempts.
         var calls = 0;
         _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
             .Returns<LlmResponse>(_ =>
             {
                 calls++;
-                throw new HttpRequestException("rate limited", null, HttpStatusCode.TooManyRequests);
+                throw new LlmProviderException(LlmFailureKind.RateLimited, "429");
             });
 
-        var ex = await Assert.ThrowsAsync<LlmRateLimitedException>(() =>
-            _sut.RunAsync(Session(), Conversation(), new ToolCallContext(),
-                null, CancellationToken.None));
+        await Assert.ThrowsAsync<LlmProviderException>(() =>
+            _sut.RunAsync(Session(), Conversation(), new ToolCallContext(), null, CancellationToken.None));
 
-        // One initial attempt plus MaxRetries backoff attempts.
-        Assert.Equal(4, calls);
+        Assert.Equal(1, calls);
+    }
 
-        // The tenant must be told about the rate limit, not sent to check the API key.
-        var sanitized = LlmErrorSanitizer.ForSession(ex);
-        Assert.Contains("Rate limited", sanitized);
+    [Theory]
+    [InlineData(nameof(LlmFailureKind.RateLimited), "Rate limited")]
+    [InlineData(nameof(LlmFailureKind.Unavailable), "unavailable or overloaded")]
+    public void ForSession_TransientFailure_DoesNotBlameTheApiKey(string kind, string expected)
+    {
+        // An Anthropic overload used to surface as "API authentication error", sending the
+        // operator off to audit credentials that were never the problem.
+        var sanitized = LlmErrorSanitizer.ForSession(
+            new LlmProviderException(Enum.Parse<LlmFailureKind>(kind), "Service unavailable"));
+
+        Assert.Contains(expected, sanitized);
         Assert.DoesNotContain("API key", sanitized);
     }
 
@@ -172,9 +159,45 @@ public class AgentLoopRunnerTests
     public void ForSession_GenuineAuthFailure_StillReportsKeyProblem()
     {
         var sanitized = LlmErrorSanitizer.ForSession(
-            new HttpRequestException("401 Unauthorized", null, HttpStatusCode.Unauthorized));
+            new LlmProviderException(LlmFailureKind.Authentication, "401 Unauthorized"));
 
         Assert.Equal("API authentication error. Check the LLM API key configuration.", sanitized);
+    }
+
+    [Fact]
+    public async Task Run_MaxTokens_DropsTheCutOffToolCallsAndStops()
+    {
+        // A cut-off tool call may carry half its arguments, and one left without a result would
+        // make every later replay of the transcript invalid.
+        var session = Session();
+        var conversation = Conversation();
+        var cutOff = ToolCallResponse("assign_load_to_truck") with { StopReason = LlmStopReason.MaxTokens };
+        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>()).Returns(cutOff);
+
+        await _sut.RunAsync(session, conversation, new ToolCallContext(), null, CancellationToken.None);
+
+        await _provider.Received(1).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
+        await _toolExecutor.DidNotReceiveWithAnyArgs().ExecuteToolAsync(default!, default!, default);
+        var reply = conversation.Messages[^1];
+        Assert.DoesNotContain(reply.Content, b => b is LlmToolUseBlock);
+        Assert.Equal(AgentLoopRunner.TruncatedNotice, Assert.IsType<LlmTextBlock>(reply.Content[^1]).Text);
+        Assert.Equal(AgentLoopRunner.TruncatedNotice, session.Summary);
+    }
+
+    [Fact]
+    public async Task Run_PauseTurn_ResendsWithoutAddingToolResults()
+    {
+        // The server paused its own search loop; resending the conversation as it stands resumes it.
+        var conversation = Conversation();
+        var paused = TextResponse("Searching...") with { StopReason = LlmStopReason.PauseTurn };
+        _provider.SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>())
+            .Returns(paused, TextResponse("Roads are clear."));
+
+        await _sut.RunAsync(Session(), conversation, new ToolCallContext(), null, CancellationToken.None);
+
+        await _provider.Received(2).SendAsync(Arg.Any<LlmRequest>(), Arg.Any<CancellationToken>());
+        // user, assistant(paused), assistant(final) - no tool_result message in between
+        Assert.Equal([LlmRole.User, LlmRole.Assistant, LlmRole.Assistant], conversation.Messages.Select(m => m.Role));
     }
 
     [Fact]

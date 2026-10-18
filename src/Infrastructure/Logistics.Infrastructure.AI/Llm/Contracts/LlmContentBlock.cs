@@ -25,3 +25,10 @@ internal record LlmThinkingBlock(string Thinking, string? Signature) : LlmConten
 
 /// <summary>Safety-redacted reasoning. Opaque, but still has to be echoed back.</summary>
 internal record LlmRedactedThinkingBlock(string Data) : LlmContentBlock;
+
+/// <summary>
+/// A provider-native block nothing outside the provider reads - Anthropic's server tool calls and
+/// their results (web search). Echoed back verbatim within the turn: a later thinking block was
+/// produced with it in the prefix, so dropping it invalidates that block. Never persisted.
+/// </summary>
+internal record LlmProviderBlock(string Json) : LlmContentBlock;

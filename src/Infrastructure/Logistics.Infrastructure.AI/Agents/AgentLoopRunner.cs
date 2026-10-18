@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using System.Net;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -15,14 +13,19 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// New messages accumulate on <see cref="LlmConversation.Messages"/> - callers that persist the
 /// transcript read them from there after the run.
 /// </summary>
+/// <remarks>
+/// No retry here: both vendor SDKs already retry 429 and 5xx with backoff, and a second layer would
+/// multiply the attempts. A failure that reaches this loop is final.
+/// </remarks>
 internal sealed class AgentLoopRunner(
     AgentDecisionProcessor decisionProcessor,
     ITenantUnitOfWork tenantUow,
     ILogger<AgentLoopRunner> logger)
 {
     private const int MaxIterations = 25;
-    private const int MaxRetries = 3;
-    private static readonly int[] RetryDelaysMs = [2000, 4000, 8000];
+
+    /// <summary>Appended when a reply hits the output cap, so neither the user nor the next turn reads it as complete.</summary>
+    internal const string TruncatedNotice = "[Reply cut off at the output length limit.]";
 
     public async Task RunAsync(
         AgentSession session,
@@ -68,23 +71,40 @@ internal sealed class AgentLoopRunner(
                 Effort = conversation.Effort
             };
 
-            var result = await SendWithRetryAsync(conversation.Provider, llmRequest, session, ct);
+            var result = await conversation.Provider.SendAsync(llmRequest, ct);
 
             session.InputTokensUsed += result.Usage.InputTokens;
             session.OutputTokensUsed += result.Usage.OutputTokens;
             session.CacheReadTokens += result.Usage.CacheReadTokens;
             session.CacheCreationTokens += result.Usage.CacheCreationTokens;
 
+            if (result.StopReason == LlmStopReason.MaxTokens)
+            {
+                conversation.Messages.Add(Truncated(result.AssistantMessage));
+                session.Summary = result.TextContent is null
+                    ? TruncatedNotice
+                    : $"{result.TextContent}\n\n{TruncatedNotice}";
+                logger.LogWarning(
+                    "Agent session {SessionId} hit the {MaxTokens}-token output cap on iteration {Iteration}",
+                    session.Id, conversation.MaxTokens, iteration + 1);
+                break;
+            }
+
             conversation.Messages.Add(result.AssistantMessage);
 
             if (result.TextContent is not null)
                 session.Summary = result.TextContent;
 
-            if (result.StopReason == "end_turn" || result.ToolCalls.Count == 0)
+            // The server paused its own tool loop (web search); resending the conversation as it
+            // stands resumes it. No tool results to add.
+            if (result.StopReason == LlmStopReason.PauseTurn)
+                continue;
+
+            if (result.ToolCalls.Count == 0)
             {
                 logger.LogInformation(
-                    "Agent session {SessionId} completed after {Iterations} iterations, {Tokens} tokens",
-                    session.Id, iteration + 1, session.TotalTokensUsed);
+                    "Agent session {SessionId} completed after {Iterations} iterations, {Tokens} tokens ({StopReason})",
+                    session.Id, iteration + 1, session.TotalTokensUsed, result.StopReason);
                 break;
             }
 
@@ -97,6 +117,13 @@ internal sealed class AgentLoopRunner(
                 await onIterationCompleted();
         }
     }
+
+    /// <summary>
+    /// A cut-off reply without its tool calls: their arguments may be incomplete, so they must not
+    /// run, and a tool call left without a result would make the replayed transcript invalid.
+    /// </summary>
+    private static LlmMessage Truncated(LlmMessage reply) =>
+        new(reply.Role, [.. reply.Content.Where(b => b is not LlmToolUseBlock), new LlmTextBlock(TruncatedNotice)]);
 
     /// <summary>
     /// Honours a cancel issued on a different instance. AgentSessionCancellationRegistry is
@@ -121,36 +148,5 @@ internal sealed class AgentLoopRunner(
             "Agent session {SessionId} is {Status} in the database - stopping this worker",
             session.Id, status);
         throw new OperationCanceledException($"Session {session.Id} was {status} elsewhere.");
-    }
-
-    private async Task<LlmResponse> SendWithRetryAsync(
-        ILlmProvider provider,
-        LlmRequest request,
-        AgentSession session,
-        CancellationToken ct)
-    {
-        for (var attempt = 0; attempt <= MaxRetries; attempt++)
-        {
-            try
-            {
-                return await provider.SendAsync(request, ct);
-            }
-            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.TooManyRequests)
-            {
-                // Rethrow on the final attempt rather than letting the provider's own exception
-                // escape - LlmErrorSanitizer cannot tell that one apart from an auth failure.
-                if (attempt == MaxRetries)
-                    throw new LlmRateLimitedException(
-                        "Rate limited by the LLM API after maximum retries. Please try again later.", ex);
-
-                var delay = RetryDelaysMs[attempt];
-                logger.LogWarning(
-                    "Rate limited on session {SessionId}, attempt {Attempt}/{MaxRetries}. Retrying in {Delay}ms",
-                    session.Id, attempt + 1, MaxRetries, delay);
-                await Task.Delay(delay, ct);
-            }
-        }
-
-        throw new UnreachableException("The retry loop either returns a response or throws.");
     }
 }

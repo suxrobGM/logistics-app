@@ -8,6 +8,8 @@ internal static class LlmErrorSanitizer
 {
     private const int MaxLength = 500;
 
+    private const string AuthenticationError = "API authentication error. Check the LLM API key configuration.";
+
     private static readonly string[] SensitiveMarkers =
         ["api key", "authentication", "unauthorized", "password", "secret", "token=", "connection string"];
 
@@ -23,13 +25,21 @@ internal static class LlmErrorSanitizer
     /// </summary>
     public static string ForSession(Exception ex)
     {
-        // Already our own message, and deliberately not auth: a rate-limit window must not send an
-        // operator off to audit credentials that were never the problem.
-        if (ex is LlmRateLimitedException)
-            return ex.Message;
+        // Classified by kind, never by exception type alone: an outage reported as an auth error
+        // sends an operator off to audit credentials that were never the problem.
+        if (ex is LlmProviderException provider)
+        {
+            return provider.Kind switch
+            {
+                LlmFailureKind.Authentication => AuthenticationError,
+                LlmFailureKind.RateLimited => "Rate limited by the LLM API. Please try again in a few minutes.",
+                LlmFailureKind.Unavailable => "The LLM provider is unavailable or overloaded. Please try again shortly.",
+                _ => LooksSensitive(ex.Message) ? AuthenticationError : Truncate(ex.Message)
+            };
+        }
 
-        if (ex is HttpRequestException or UnauthorizedAccessException || LooksSensitive(ex.Message))
-            return "API authentication error. Check the LLM API key configuration.";
+        if (ex is UnauthorizedAccessException || LooksSensitive(ex.Message))
+            return AuthenticationError;
 
         return Truncate(ex.Message);
     }

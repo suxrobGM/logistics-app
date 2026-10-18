@@ -56,8 +56,15 @@ internal sealed class OpenAICompatibleLlmProvider(LlmProviderOptions config, Htt
                 tool.Name, tool.Description, BinaryData.FromString(tool.InputSchema.ToJsonString())));
         }
 
-        var completion = await chatClient.CompleteChatAsync(messages, options, ct);
-        return MapResponse(completion.Value);
+        try
+        {
+            var completion = await chatClient.CompleteChatAsync(messages, options, ct);
+            return MapResponse(completion.Value);
+        }
+        catch (ClientResultException ex)
+        {
+            throw OpenAIFailure.From(ex);
+        }
     }
 
     /// <summary>
@@ -155,8 +162,10 @@ internal sealed class OpenAICompatibleLlmProvider(LlmProviderOptions config, Htt
 
         var stopReason = completion.FinishReason switch
         {
-            ChatFinishReason.ToolCalls => "tool_use",
-            _ => "end_turn"
+            ChatFinishReason.ToolCalls => LlmStopReason.ToolUse,
+            ChatFinishReason.Length => LlmStopReason.MaxTokens,
+            ChatFinishReason.ContentFilter => LlmStopReason.Refusal,
+            _ => LlmStopReason.EndTurn
         };
 
         return new LlmResponse
