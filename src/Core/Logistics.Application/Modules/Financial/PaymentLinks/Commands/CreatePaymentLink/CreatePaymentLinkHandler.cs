@@ -29,6 +29,13 @@ internal sealed class CreatePaymentLinkHandler(
             return Result<PaymentLinkDto>.Fail("Invoice not found.");
         }
 
+        // The pay page refuses factored invoices, so a link would be dead on arrival.
+        if (invoice is LoadInvoice { Customer.FactoringCompany: { } factor })
+        {
+            return Result<PaymentLinkDto>.Fail(
+                $"This invoice is assigned to {factor.Name}; the customer pays {factor.Name} directly, so it cannot have a payment link.");
+        }
+
         // Generate a secure random token
         var token = TokenGenerator.GenerateSecureToken();
 

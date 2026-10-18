@@ -38,7 +38,7 @@ internal sealed class GetInvoicesTool(IMediator mediator)
 
     public static AgentToolDefinition Definition => new(
         "get_invoices",
-        "List load invoices filtered by load, customer, status, overdue flag, or date range. Returns up to 20 per page with number, status, total, due date, and customer.")
+        "List load invoices filtered by load, customer, status, overdue flag, or date range. Returns up to 20 per page with number, status, total, due date, customer, and factoring_status for factored customers (a funded factored invoice reads Paid though the customer pays the factor).")
     {
         RequiredFeature = TenantFeature.Invoices,
         RequiredPermission = Permission.Invoice.View,
@@ -82,6 +82,7 @@ internal sealed class GetInvoicesTool(IMediator mediator)
             load_id = i.LoadId,
             customer = i.Customer?.Name,
             customer_id = i.CustomerId,
+            factoring_status = InvoiceFactoring.StatusOf(i),
             created_at = i.CreatedDate.ToString("yyyy-MM-dd")
         }).ToList();
 

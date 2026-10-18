@@ -19,7 +19,7 @@ internal sealed class GetInvoiceTool(IMediator mediator)
 
     public static AgentToolDefinition Definition => new(
         "get_invoice",
-        "Get one invoice by ID: status, totals, amount paid, due date, send history, customer (with email), and the load it bills.")
+        "Get one invoice by ID: status, totals, amount paid, due date, send history, customer (with email), the load it bills, and factoring_status when the customer is factored. A factored invoice reads Paid once the factor funds it - that money came from the factor, not the customer.")
     {
         RequiredFeature = TenantFeature.Invoices,
         RequiredPermission = Permission.Invoice.View,
@@ -56,6 +56,7 @@ internal sealed class GetInvoiceTool(IMediator mediator)
             customer = i.Customer?.Name,
             customer_id = i.CustomerId,
             customer_email = i.Customer?.Email,
+            factoring_status = InvoiceFactoring.StatusOf(i),
             notes = i.Notes,
             created_at = i.CreatedDate.ToString("yyyy-MM-dd")
         });

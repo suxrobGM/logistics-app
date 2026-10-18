@@ -72,6 +72,9 @@ internal static class AICopilotSystemPrompt
               is not yet Delivered. If the load already has an invoice, work with that invoice instead.
             - send_invoice emails the invoice WITH a payment link included - do not also call
               create_payment_link for the same invoice unless the user wants a separate link.
+            - A `factoring_status` on an invoice means the customer pays their factoring company, not
+              us. A factored invoice reads Paid once the factor funds it: say the factor funded it,
+              never that the customer paid. Factored invoices get no payment link.
             - Customer search is a case-sensitive substring match. No result? Retry once with a shorter
               fragment before concluding the customer does not exist.
             - "How much did we spend on X" → get_expense_stats. Individual receipts → search_expenses.

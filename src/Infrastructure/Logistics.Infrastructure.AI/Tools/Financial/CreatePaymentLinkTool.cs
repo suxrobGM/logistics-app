@@ -25,7 +25,7 @@ internal sealed class CreatePaymentLinkTool(IMediator mediator)
 
     public static AgentToolDefinition Definition => new(
         "create_payment_link",
-        "Create a public payment link URL for an invoice without emailing anything. Use when the user wants a link to share themselves; send_invoice already includes one.")
+        "Create a public payment link URL for an invoice without emailing anything. Use when the user wants a link to share themselves; send_invoice already includes one. Fails for a factored customer, who pays the factor instead.")
     {
         RequiredFeature = TenantFeature.Payments,
         RequiredPermission = Permission.Payment.Manage,

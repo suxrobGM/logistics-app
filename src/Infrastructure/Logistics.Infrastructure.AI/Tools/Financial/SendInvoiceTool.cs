@@ -28,7 +28,7 @@ internal sealed class SendInvoiceTool(IMediator mediator)
 
     public static AgentToolDefinition Definition => new(
         "send_invoice",
-        "Email an invoice to a recipient. This mints a 30-day payment link and includes it in the email - do NOT also call create_payment_link for the same invoice.")
+        "Email an invoice to a recipient. For an unfactored customer this mints a 30-day payment link and includes it - do NOT also call create_payment_link for the same invoice. A factored customer gets the factor's remit-to notice instead of a link.")
     {
         RequiredFeature = TenantFeature.Invoices,
         RequiredPermission = Permission.Invoice.Manage,
