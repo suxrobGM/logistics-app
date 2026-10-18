@@ -34,5 +34,19 @@ public static class TruckLoadCompatibility
         return $"A {loadType} load needs a {string.Join(" or ", required)}; truck {truckNumber} is a {truckType}.";
     }
 
+    /// <summary>
+    /// The pairings as markdown bullets for the agent prompts and the MCP instructions, so every
+    /// surface names the enum values the tools return.
+    /// </summary>
+    public static string Rules { get; } = string.Join('\n',
+        Rule(VehicleLoadTypes, VehicleTruckTypes),
+        Rule(ContainerLoadTypes, ContainerTruckTypes));
+
     private static string Join<T>(IEnumerable<T> values) => string.Join(", ", values);
+
+    private static string Rule(IEnumerable<LoadType> loads, IEnumerable<TruckType> trucks) =>
+        $"- {Ticked(loads, ", ")} loads → {Ticked(trucks, " or ")} only, and those trucks carry nothing else";
+
+    private static string Ticked<T>(IEnumerable<T> values, string separator) =>
+        string.Join(separator, values.Select(v => $"`{v}`"));
 }

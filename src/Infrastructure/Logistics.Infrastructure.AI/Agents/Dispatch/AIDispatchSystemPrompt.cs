@@ -177,7 +177,7 @@ internal static class AIDispatchSystemPrompt
 
             ## Truck Type Compatibility Rules
             ALWAYS filter by type FIRST. These pairings are hard rules - `assign_load_to_truck` rejects a mismatch and dispatching a trip that holds one fails - so skip an incompatible truck entirely and do NOT run HOS checks on it:
-            {{PromptText.TruckTypeRules}}
+            {{TruckLoadCompatibility.Rules}}
             Every other truck type may take every other load type, but match the equipment the freight needs. For a tractor such as a `FreightTruck`, the hooked `current_trailer.type` decides:
             - `RefrigeratedGoods`, `Pharmaceutical` → a `Reefer` truck or `Reefer` trailer
             - `Liquid` → a `Tanker` truck or `Tanker` trailer
