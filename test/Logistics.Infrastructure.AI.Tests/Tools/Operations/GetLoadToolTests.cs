@@ -45,4 +45,30 @@ public class GetLoadToolTests
         Assert.Equal("ap@acme.com", root.GetProperty("customer_email").GetString());
         Assert.False(root.GetProperty("has_invoice").GetBoolean());
     }
+
+    /// <summary>delivery_cost is only the linehaul; the agent quotes total_charges as the price.</summary>
+    [Fact]
+    public async Task Execute_LoadWithCharges_TotalsLinehaulFuelAndAccessorials()
+    {
+        var load = CopilotToolTestData.CreateLoad(deliveryCost: 1800m);
+        load.FuelSurcharge = 220m;
+        load.Accessorials =
+        [
+            new LoadAccessorialDto { Name = "Detention", Rate = 75m, Quantity = 2, Total = 150m },
+            new LoadAccessorialDto { Name = "Lumper", Rate = 80m, Total = 80m }
+        ];
+        load.PalletCount = 6;
+        load.FreightClass = Logistics.Domain.Primitives.Enums.FreightClass.Class70;
+        _mediator.Send(Arg.Any<GetLoadByIdQuery>(), Arg.Any<CancellationToken>())
+            .Returns(Result<LoadDto>.Ok(load));
+
+        var result = await _sut.ExecuteAsync(
+            new JsonObject { ["load_id"] = load.Id.ToString() }, CancellationToken.None);
+
+        var root = JsonDocument.Parse(result).RootElement;
+        Assert.Equal(220m, root.GetProperty("fuel_surcharge").GetDecimal());
+        Assert.Equal(2, root.GetProperty("accessorials").GetArrayLength());
+        Assert.Equal(2250m, root.GetProperty("total_charges").GetDecimal());
+        Assert.StartsWith("class 70, 6 pallets", root.GetProperty("freight").GetString());
+    }
 }

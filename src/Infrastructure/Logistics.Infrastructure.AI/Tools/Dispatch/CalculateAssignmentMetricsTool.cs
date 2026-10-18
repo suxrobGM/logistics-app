@@ -46,7 +46,7 @@ internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow
 
     public static AgentToolDefinition Definition => new(
         "calculate_assignment_metrics",
-        "Calculate revenue per mile/km, deadhead ratio, and profitability for candidate truck-load pairs. Use this when multiple trucks are candidates for a load to pick the most profitable option.")
+        "Calculate linehaul revenue per mile/km (delivery_cost, excluding fuel surcharge and accessorials), deadhead ratio, and profitability for candidate truck-load pairs. Use this when multiple trucks are candidates for a load to pick the most profitable option.")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All

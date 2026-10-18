@@ -92,10 +92,10 @@ public class CreateLoadInvoiceToolTests
     }
 
     [Fact]
-    public async Task Execute_NoAmountGiven_DefaultsToLoadDeliveryCostWithoutRecordingPayment()
+    public async Task Execute_LoadWithoutInvoice_CreatesUnpaidInvoiceAndReportsItsTotal()
     {
         var customer = SomeCustomer;
-        var load = CopilotToolTestData.CreateLoad(deliveryCost: 2350m, customer: customer);
+        var load = CopilotToolTestData.CreateLoad(deliveryCost: 1400m, customer: customer);
         _mediator.Send(Arg.Any<GetLoadByIdQuery>(), Arg.Any<CancellationToken>())
             .Returns(Result<LoadDto>.Ok(load));
         var invoiceId = SetupCreatedInvoice();
@@ -106,7 +106,7 @@ public class CreateLoadInvoiceToolTests
 
         var root = JsonDocument.Parse(result).RootElement;
         Assert.True(root.GetProperty("success").GetBoolean());
-        Assert.Equal(2350m, root.GetProperty("amount").GetDecimal());
+        Assert.Equal(1500m, root.GetProperty("total").GetDecimal());
         Assert.Equal(invoiceId, root.GetProperty("invoice_id").GetGuid());
 
         // The copilot must never mark the invoice paid on creation.
@@ -114,30 +114,7 @@ public class CreateLoadInvoiceToolTests
             Arg.Is<CreateLoadInvoiceCommand>(c =>
                 c.LoadId == load.Id &&
                 c.CustomerId == customer.Id &&
-                c.PaymentAmount == 2350m &&
                 !c.RecordPayment),
-            Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Execute_ExplicitAmount_OverridesDeliveryCost()
-    {
-        var load = CopilotToolTestData.CreateLoad(deliveryCost: 2350m, customer: SomeCustomer);
-        _mediator.Send(Arg.Any<GetLoadByIdQuery>(), Arg.Any<CancellationToken>())
-            .Returns(Result<LoadDto>.Ok(load));
-        SetupCreatedInvoice();
-
-        await _sut.ExecuteAsync(
-            new JsonObject
-            {
-                ["load_id"] = load.Id.ToString(),
-                ["amount"] = 999m,
-                ["reasoning"] = "Load delivered"
-            },
-            CancellationToken.None);
-
-        await _mediator.Received(1).Send(
-            Arg.Is<CreateLoadInvoiceCommand>(c => c.PaymentAmount == 999m),
             Arg.Any<CancellationToken>());
     }
 }

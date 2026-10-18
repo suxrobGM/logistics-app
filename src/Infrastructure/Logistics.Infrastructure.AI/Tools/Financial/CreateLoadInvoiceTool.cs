@@ -20,14 +20,11 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
 
         [Description("Brief explanation of why this invoice should be created")]
         public required string Reasoning { get; init; }
-
-        [Description("Invoice total. Omit to use the load's delivery cost - only set when the user explicitly names a different amount")]
-        public decimal? Amount { get; init; }
     }
 
     public static AgentToolDefinition Definition => new(
         "create_load_invoice",
-        "Create an UNPAID invoice for a load, billed to the load's customer. Call get_load first: the amount defaults to the load's delivery cost, and you should warn the user when the load is not yet Delivered. Fails if the load already has an invoice.")
+        "Create an UNPAID invoice for a load that has none, billed to the load's customer with one line per load charge (linehaul, fuel surcharge, accessorials). Call get_load first: new loads usually already have an invoice, and you should warn the user when the load is not yet Delivered. To bill a different amount the user changes the load's charges. Fails if the load already has an invoice.")
     {
         RequiredFeature = TenantFeature.Invoices,
         RequiredPermission = Permission.Invoice.Manage,
@@ -54,15 +51,10 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
             });
         }
 
-        var amount = input.Amount ?? load.DeliveryCost;
-        if (amount <= 0)
-            return ToolResult.Error("Invoice amount must be greater than zero");
-
         var result = await mediator.Send(new CreateLoadInvoiceCommand
         {
             CustomerId = load.Customer.Id,
             LoadId = input.LoadId,
-            PaymentAmount = amount,
             // The customer has not paid yet - settled later via a payment link.
             RecordPayment = false
         }, ct);
@@ -70,7 +62,7 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
         if (!result.IsSuccess)
             return ToolResult.WriteFailed(result);
 
-        // Read the created invoice back for its number and currency, which the command does not return.
+        // Read the created invoice back for its number and totals, which the command does not return.
         var created = await mediator.Send(new GetInvoiceByIdQuery { Id = result.Value }, ct);
 
         var invoice = created.Value;
@@ -79,7 +71,7 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
             success = true,
             invoice_id = result.Value,
             invoice_number = invoice?.Number,
-            amount,
+            total = invoice?.Total.Amount,
             currency = invoice?.Total.Currency,
             load_number = load.Number,
             customer = load.Customer.Name

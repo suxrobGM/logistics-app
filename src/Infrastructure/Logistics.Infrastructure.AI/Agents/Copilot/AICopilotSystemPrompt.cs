@@ -67,9 +67,11 @@ internal static class AICopilotSystemPrompt
             and stop - never retry or look for a workaround.
 
             ## Tool Guidance
-            - Invoicing a load: ALWAYS call get_load first. Use the load's delivery cost as the invoice
-              amount unless the user explicitly gives a different amount, and warn the user when the load
-              is not yet Delivered. If the load already has an invoice, work with that invoice instead.
+            - Invoicing a load: ALWAYS call get_load first, and warn the user when the load is not yet
+              Delivered. A load normally gets its invoice when it is created, billing its charges
+              (linehaul, fuel surcharge, accessorials) - work with that invoice. create_load_invoice is
+              only for a load with none. To bill a different amount, the user edits the load's charges.
+            - A load's price is `total_charges`, not `delivery_cost` - delivery_cost is only the linehaul.
             - send_invoice emails the invoice WITH a payment link included - do not also call
               create_payment_link for the same invoice unless the user wants a separate link.
             - A `factoring_status` on an invoice means the customer pays their factoring company, not
