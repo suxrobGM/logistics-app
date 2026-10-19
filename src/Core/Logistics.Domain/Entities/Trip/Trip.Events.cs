@@ -9,7 +9,7 @@ public partial class Trip
 {
     /// <summary>
     /// Assigns or reassigns this trip to a truck and raises the TripAssignedToTruckEvent. The trip
-    /// takes the truck's current trailer.
+    /// takes the truck's current trailer, and its drivers once the trip is dispatched.
     /// </summary>
     /// <param name="newTruck">The new truck to assign this trip to.</param>
     /// <exception cref="InvalidOperationException">Thrown if trip is not in Draft status.</exception>
@@ -26,6 +26,11 @@ public partial class Trip
         TruckId = newTruck.Id;
         Truck = newTruck;
         TrailerId = newTruck.CurrentTrailerId;
+
+        if (Status != TripStatus.Draft)
+        {
+            RecordDrivers();
+        }
 
         TripFactory.RaiseTruckAssignedEvent(
             this,

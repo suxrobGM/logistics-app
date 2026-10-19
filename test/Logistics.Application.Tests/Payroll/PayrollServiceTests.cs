@@ -161,6 +161,7 @@ public class PayrollServiceTests
         _driver.SalaryType = SalaryType.PerStop;
         _driver.Salary = new Money { Amount = 40m, Currency = "USD" };
         var trip = Trip.Create("Trip", _truck, [LoadInvoiceChargesTests.NewLoad(), LoadInvoiceChargesTests.NewLoad()]);
+        trip.Dispatch();
         foreach (var stop in trip.Stops)
         {
             stop.DepartedAt = Start.AddDays(1);
@@ -172,6 +173,29 @@ public class PayrollServiceTests
         var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         Assert.Equal(3 * 40m, payroll.Total.Amount);
+    }
+
+    [Fact]
+    public async Task Build_LoadOnTrip_CreditsTheTripDriverAfterTheTruckIsReassigned()
+    {
+        _driver.SalaryType = SalaryType.PerLoad;
+        _driver.Salary = new Money { Amount = 250m, Currency = "USD" };
+        var replacement = new Employee
+        {
+            Email = "r@x.com", FirstName = "Raj", LastName = "Rao", SalaryType = SalaryType.PerLoad,
+            Salary = new Money { Amount = 250m, Currency = "USD" }
+        };
+        var load = Delivered(1000m);
+        var trip = Trip.Create("Trip", _truck, [load]);
+        trip.Dispatch();
+        load.TripStops.Add(trip.Stops[0]);
+        _truck.MainDriverId = replacement.Id;
+
+        var original = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
+        var reassigned = await _sut.BuildPayrollInvoiceAsync(replacement, StartDay, EndDay);
+
+        Assert.Equal(250m, original.Total.Amount);
+        Assert.Equal(0m, reassigned.Total.Amount);
     }
 
     #endregion

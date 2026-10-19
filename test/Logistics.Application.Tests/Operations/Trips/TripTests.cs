@@ -52,6 +52,45 @@ public class TripTests
         Assert.Equal(LoadStatus.PickedUp, load.Status);
     }
 
+    [Fact]
+    public void Dispatch_RecordsTheTrucksDrivers_AndKeepsThemWhenTheTruckChangesDrivers()
+    {
+        var main = Guid.NewGuid();
+        var team = Guid.NewGuid();
+        _truck.MainDriverId = main;
+        _truck.SecondaryDriverId = team;
+        var trip = Trip.Create("Trip", _truck, [NewLoad()]);
+
+        trip.Dispatch();
+        _truck.MainDriverId = Guid.NewGuid();
+
+        Assert.Equal(main, trip.DriverId);
+        Assert.Equal(team, trip.SecondaryDriverId);
+    }
+
+    [Fact]
+    public void AssignToTruck_DispatchedTrip_RecordsTheNewTrucksDrivers()
+    {
+        var trip = Trip.Create("Trip", _truck, [NewLoad()]);
+        trip.Dispatch();
+        var newDriver = Guid.NewGuid();
+
+        trip.AssignToTruck(new Truck { Number = "TRK-002", Type = TruckType.FreightTruck, MainDriverId = newDriver });
+
+        Assert.Equal(newDriver, trip.DriverId);
+        Assert.Null(trip.SecondaryDriverId);
+    }
+
+    [Fact]
+    public void AssignToTruck_DraftTrip_RecordsNoDrivers()
+    {
+        var trip = Trip.Create("Trip", _truck, [NewLoad()]);
+
+        trip.AssignToTruck(new Truck { Number = "TRK-002", Type = TruckType.FreightTruck, MainDriverId = Guid.NewGuid() });
+
+        Assert.Null(trip.DriverId);
+    }
+
     #endregion
 
     #region MarkStopArrived

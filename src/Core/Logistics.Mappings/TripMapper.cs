@@ -12,6 +12,8 @@ public static partial class TripMapper
     [MapperIgnoreSource(nameof(Trip.DomainEvents))]
     [MapProperty(nameof(Trip.Truck.Number), nameof(TripDto.TruckNumber))]
     [MapperIgnoreSource(nameof(Trip.Trailer))]
+    [MapperIgnoreSource(nameof(Trip.DriverId))]
+    [MapperIgnoreSource(nameof(Trip.SecondaryDriverId))]
     [MapperIgnoreTarget(nameof(TripDto.TrailerNumber))]
     [MapProperty(nameof(Trip.Stops), nameof(TripDto.Stops))]
     [MapProperty(nameof(Trip.CreatedAt), nameof(TripDto.CreatedAt))]

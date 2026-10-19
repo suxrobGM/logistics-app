@@ -338,7 +338,8 @@ internal class PayrollService(
     }
 
     /// <summary>
-    /// Loads delivered in the period by any truck the employee drives, main or secondary.
+    /// Loads delivered in the period on a trip the employee drove, main or secondary. A load on no trip has
+    /// no recorded driver, so it goes to whoever drives its truck now.
     /// </summary>
     private Task<List<DeliveredLoad>> GetDeliveredLoadsAsync(
         Guid employeeId, DateOnly startDate, DateOnly endDate, CancellationToken ct)
@@ -346,8 +347,10 @@ internal class PayrollService(
         var (from, to) = UtcRange(startDate, endDate);
         return tenantUow.Repository<Load>().Query()
             .Where(l => l.DeliveredAt >= from && l.DeliveredAt < to &&
-                        l.AssignedTruck != null &&
-                        (l.AssignedTruck.MainDriverId == employeeId || l.AssignedTruck.SecondaryDriverId == employeeId))
+                        (l.TripStops.Any()
+                            ? l.TripStops.Any(s => s.Trip.DriverId == employeeId || s.Trip.SecondaryDriverId == employeeId)
+                            : l.AssignedTruck != null &&
+                              (l.AssignedTruck.MainDriverId == employeeId || l.AssignedTruck.SecondaryDriverId == employeeId)))
             .Select(l => new DeliveredLoad(
                 l.DeliveryCost.Amount,
                 l.FuelSurcharge,
@@ -357,15 +360,14 @@ internal class PayrollService(
     }
 
     /// <summary>
-    /// Stops the driver app marked departed in the period, on trips run by a truck the employee drives.
+    /// Stops the driver app marked departed in the period, on trips the employee drove.
     /// </summary>
     private Task<int> CountDepartedStopsAsync(Guid employeeId, DateOnly startDate, DateOnly endDate, CancellationToken ct)
     {
         var (from, to) = UtcRange(startDate, endDate);
         return tenantUow.Repository<TripStop>().Query()
             .CountAsync(s => s.DepartedAt >= from && s.DepartedAt < to &&
-                             s.Trip.Truck != null &&
-                             (s.Trip.Truck.MainDriverId == employeeId || s.Trip.Truck.SecondaryDriverId == employeeId), ct);
+                             (s.Trip.DriverId == employeeId || s.Trip.SecondaryDriverId == employeeId), ct);
     }
 
     private static string Percent(decimal ratio) => (ratio * 100).ToString("0.##", CultureInfo.InvariantCulture) + "%";

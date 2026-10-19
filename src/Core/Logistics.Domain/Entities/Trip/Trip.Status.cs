@@ -9,7 +9,8 @@ namespace Logistics.Domain.Entities;
 public partial class Trip
 {
     /// <summary>
-    /// Dispatches the trip and each of its loads still in Draft, which issues their invoices.
+    /// Dispatches the trip and each of its loads still in Draft, which issues their invoices, and records
+    /// the truck's drivers.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown if trip is not in Draft status.</exception>
     public void Dispatch()
@@ -21,6 +22,7 @@ public partial class Trip
 
         Status = TripStatus.Dispatched;
         DispatchedAt = DateTime.UtcNow;
+        RecordDrivers();
 
         foreach (var load in GetLoads().Where(l => l.Status == LoadStatus.Draft))
         {
@@ -105,6 +107,12 @@ public partial class Trip
         }
 
         stop.DepartedAt ??= DateTime.UtcNow;
+    }
+
+    private void RecordDrivers()
+    {
+        DriverId = Truck?.MainDriverId;
+        SecondaryDriverId = Truck?.SecondaryDriverId;
     }
 
     private TripStop GetStop(Guid stopId)

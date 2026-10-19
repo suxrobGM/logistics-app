@@ -31,6 +31,17 @@ public partial class Trip : AuditableEntity, ITenantEntity
     public virtual Truck? Truck { get; set; }
 
     /// <summary>
+    /// The truck's main driver, recorded at dispatch and on a later truck change, so payroll credits whoever
+    /// drove even after the truck is reassigned.
+    /// </summary>
+    public Guid? DriverId { get; private set; }
+
+    /// <summary>
+    /// The truck's secondary (team) driver, recorded alongside <see cref="DriverId"/>.
+    /// </summary>
+    public Guid? SecondaryDriverId { get; private set; }
+
+    /// <summary>
     /// The trailer pulled on this trip, kept so history survives a later swap on the truck.
     /// </summary>
     public Guid? TrailerId { get; set; }

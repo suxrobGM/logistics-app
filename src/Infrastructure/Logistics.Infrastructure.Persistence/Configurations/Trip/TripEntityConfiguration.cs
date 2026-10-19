@@ -24,6 +24,16 @@ internal sealed class TripEntityConfiguration : IEntityTypeConfiguration<Trip>
             .HasForeignKey(i => i.TrailerId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        builder.HasOne<Employee>()
+            .WithMany()
+            .HasForeignKey(i => i.DriverId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne<Employee>()
+            .WithMany()
+            .HasForeignKey(i => i.SecondaryDriverId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.HasMany(i => i.Stops)
             .WithOne(i => i.Trip)
             .HasForeignKey(i => i.TripId)
