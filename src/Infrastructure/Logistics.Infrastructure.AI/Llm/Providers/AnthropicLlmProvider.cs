@@ -13,16 +13,16 @@ namespace Logistics.Infrastructure.AI.Llm.Providers;
 
 internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient httpClient) : ILlmProvider
 {
+    // The SDK retries 408/409/429/5xx itself, hence no resilience handler on the pooled client.
+    private readonly AnthropicClient client = new()
+    {
+        ApiKey = config.ApiKey,
+        HttpClient = httpClient,
+        Timeout = httpClient.Timeout
+    };
+
     public async Task<LlmResponse> SendAsync(LlmRequest request, CancellationToken ct)
     {
-        // The SDK retries 408/409/429/5xx itself, hence no resilience handler on the pooled client.
-        var client = new AnthropicClient
-        {
-            ApiKey = config.ApiKey,
-            HttpClient = httpClient,
-            Timeout = httpClient.Timeout
-        };
-
         try
         {
             var response = await client.Messages.Create(BuildParameters(request), ct);
