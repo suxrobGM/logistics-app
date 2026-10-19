@@ -75,7 +75,9 @@ public class PayrollServiceTests
         }
 
         load.AssignToTruck(_truck);
-        load.UpdateStatus(LoadStatus.Delivered, force: true);
+        load.Dispatch();
+        load.ConfirmPickup();
+        load.ConfirmDelivery();
         typeof(Load).GetProperty(nameof(Load.DeliveredAt))!.SetValue(load, Start.AddDays(2));
         _loads.Add(load);
         return load;

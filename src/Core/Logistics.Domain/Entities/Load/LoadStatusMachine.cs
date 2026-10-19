@@ -37,14 +37,12 @@ public static class LoadStatusMachine
     /// </summary>
     /// <param name="current">Current load status.</param>
     /// <param name="target">Target status to transition to.</param>
-    /// <param name="force">If true, bypass transition validation.</param>
     /// <param name="timestamps">Current timestamp values.</param>
     /// <returns>Updated state with new status and timestamps.</returns>
-    /// <exception cref="InvalidOperationException">Thrown for invalid transitions when force is false.</exception>
+    /// <exception cref="InvalidOperationException">Thrown for invalid transitions.</exception>
     public static LoadStatusState Apply(
         LoadStatus current,
         LoadStatus target,
-        bool force,
         LoadStatusTimestamps timestamps)
     {
         if (target == current)
@@ -52,7 +50,7 @@ public static class LoadStatusMachine
             return new LoadStatusState(current, timestamps);
         }
 
-        if (!force && !CanTransition(current, target))
+        if (!CanTransition(current, target))
         {
             throw new InvalidOperationException($"Cannot change load status from '{current}' to '{target}'.");
         }

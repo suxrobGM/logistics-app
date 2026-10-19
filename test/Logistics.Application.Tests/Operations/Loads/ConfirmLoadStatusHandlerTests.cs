@@ -53,7 +53,7 @@ public class ConfirmLoadStatusHandlerTests
             AssignedTruck = _truck,
             AssignedTruckId = _truck.Id
         };
-        load.UpdateStatus(LoadStatus.Dispatched, force: true);
+        load.Dispatch();
         return load;
     }
 
@@ -123,7 +123,8 @@ public class ConfirmLoadStatusHandlerTests
     {
         _currentUser.GetUserId().Returns(DriverId);
         var other = NewDispatchedLoad();
-        other.UpdateStatus(LoadStatus.Delivered, force: true);
+        other.ConfirmPickup();
+        other.ConfirmDelivery();
         var trip = DispatchedTripWith(other);
 
         await Confirm(LoadStatus.PickedUp);

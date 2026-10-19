@@ -53,4 +53,79 @@ public class TripTests
     }
 
     #endregion
+
+    #region MarkStopArrived
+
+    private static TripStop StopOf(Trip trip, TripStopType type) => trip.Stops.First(s => s.Type == type);
+
+    [Fact]
+    public void MarkStopArrived_PickupThenDropOff_DeliversLoadAndCompletesTrip()
+    {
+        var load = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [load]);
+        trip.Dispatch();
+
+        trip.MarkStopArrived(StopOf(trip, TripStopType.PickUp).Id);
+        Assert.Equal(LoadStatus.PickedUp, load.Status);
+        Assert.Equal(TripStatus.InTransit, trip.Status);
+
+        trip.MarkStopArrived(StopOf(trip, TripStopType.DropOff).Id);
+        Assert.Equal(LoadStatus.Delivered, load.Status);
+        Assert.NotNull(load.PickedUpAt);
+        Assert.Equal(TripStatus.Completed, trip.Status);
+    }
+
+    [Fact]
+    public void MarkStopArrived_DraftTrip_Throws()
+    {
+        var load = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [load]);
+
+        Assert.Throws<InvalidOperationException>(() => trip.MarkStopArrived(StopOf(trip, TripStopType.PickUp).Id));
+        Assert.Equal(TripStatus.Draft, trip.Status);
+        Assert.Equal(LoadStatus.Draft, load.Status);
+    }
+
+    [Fact]
+    public void MarkStopArrived_CancelledTrip_Throws()
+    {
+        var load = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [load]);
+        trip.Dispatch();
+        trip.Cancel();
+
+        Assert.Throws<InvalidOperationException>(() => trip.MarkStopArrived(StopOf(trip, TripStopType.PickUp).Id));
+        Assert.Equal(LoadStatus.Cancelled, load.Status);
+    }
+
+    [Fact]
+    public void MarkStopArrived_StopAlreadyArrived_Throws()
+    {
+        var load = NewLoad();
+        var other = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [load, other]);
+        trip.Dispatch();
+        var pickup = trip.Stops.First(s => s.Load == load && s.Type == TripStopType.PickUp);
+        trip.MarkStopArrived(pickup.Id);
+        trip.MarkStopArrived(trip.Stops.First(s => s.Load == load && s.Type == TripStopType.DropOff).Id);
+
+        Assert.Throws<InvalidOperationException>(() => trip.MarkStopArrived(pickup.Id));
+        Assert.Equal(LoadStatus.Delivered, load.Status);
+    }
+
+    [Fact]
+    public void MarkStopArrived_LoadCancelledOnActiveTrip_StaysCancelled()
+    {
+        var load = NewLoad();
+        var other = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [load, other]);
+        trip.Dispatch();
+        load.Cancel();
+
+        trip.MarkStopArrived(trip.Stops.First(s => s.Load == load && s.Type == TripStopType.PickUp).Id);
+
+        Assert.Equal(LoadStatus.Cancelled, load.Status);
+    }
+
+    #endregion
 }

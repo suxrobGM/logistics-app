@@ -53,21 +53,40 @@ public partial class Trip
     }
 
     /// <summary>
-    /// Marks a stop as arrived and updates the trip status accordingly.
+    /// Marks a stop as arrived, picks up or delivers its load, and updates the trip status accordingly.
+    /// A drop-off reached before its pickup picks the load up first; a load already past that point,
+    /// or cancelled, keeps its status.
     /// </summary>
     /// <param name="stopId">The ID of the stop to mark as arrived.</param>
-    /// <exception cref="InvalidOperationException">Thrown if stop is not found.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the stop is not found or already arrived, or the trip is not Dispatched or InTransit.
+    /// </exception>
     public void MarkStopArrived(Guid stopId)
     {
+        if (Status is not (TripStatus.Dispatched or TripStatus.InTransit))
+        {
+            throw new InvalidOperationException($"Stops can't be arrived at on a trip that is {Status}.");
+        }
+
         var stop = GetStop(stopId);
+
+        if (stop.ArrivedAt is not null)
+        {
+            throw new InvalidOperationException("This stop is already marked as arrived.");
+        }
 
         stop.ArrivedAt = DateTime.UtcNow;
 
-        var loadStatus = stop.Type == TripStopType.PickUp
-            ? LoadStatus.PickedUp
-            : LoadStatus.Delivered;
+        var load = stop.Load;
+        if (load.Status == LoadStatus.Dispatched)
+        {
+            load.ConfirmPickup();
+        }
 
-        stop.Load.UpdateStatus(loadStatus, force: true);
+        if (stop.Type == TripStopType.DropOff && load.Status == LoadStatus.PickedUp)
+        {
+            load.ConfirmDelivery();
+        }
 
         RefreshStatus();
     }

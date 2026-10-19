@@ -112,8 +112,10 @@ internal class TripSeeder(
 
             foreach (var stop in trip.Stops)
             {
-                trip.MarkStopArrived(stop.Id);
+                stop.ArrivedAt = stop.Type == TripStopType.PickUp ? stop.Load.PickedUpAt : stop.Load.DeliveredAt;
             }
+
+            trip.RefreshStatus();
 
             await tripRepo.AddAsync(trip, cancellationToken);
             count++;

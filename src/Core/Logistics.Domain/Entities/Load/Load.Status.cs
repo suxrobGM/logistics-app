@@ -19,14 +19,8 @@ public partial class Load
     /// Enforces valid status transitions and sets timestamps accordingly.
     /// </summary>
     /// <param name="newStatus">Target status.</param>
-    /// <param name="force">
-    /// If true, bypass transition validation (useful for data import/seeding).
-    /// Still applies timestamp logic.
-    /// </param>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown for invalid transitions when <paramref name="force"/> is false.
-    /// </exception>
-    public void UpdateStatus(LoadStatus newStatus, bool force = false)
+    /// <exception cref="InvalidOperationException">Thrown for invalid transitions.</exception>
+    public void UpdateStatus(LoadStatus newStatus)
     {
         var timestamps = new LoadStatusTimestamps(
             DispatchedAt,
@@ -34,7 +28,7 @@ public partial class Load
             DeliveredAt,
             CancelledAt);
 
-        var result = LoadStatusMachine.Apply(Status, newStatus, force, timestamps);
+        var result = LoadStatusMachine.Apply(Status, newStatus, timestamps);
 
         Status = result.Status;
         DispatchedAt = result.Timestamps.DispatchedAt;

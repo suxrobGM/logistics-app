@@ -71,7 +71,7 @@ internal sealed class UpdateLoadHandler(
 
             if (req.Status.HasValue)
             {
-                load.UpdateStatus(req.Status.Value, force: false);
+                load.UpdateStatus(req.Status.Value);
                 load.RefreshTripStatus();
             }
 

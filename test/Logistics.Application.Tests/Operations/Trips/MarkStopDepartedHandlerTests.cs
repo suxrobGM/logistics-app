@@ -42,6 +42,7 @@ public class MarkStopDepartedHandlerTests
         };
 
         _trip = Trip.Create("Trip 1", truck, [load]);
+        _trip.Dispatch();
         _stop = _trip.Stops[0];
 
         _tenantUow.Repository<Trip>().Returns(_tripRepo);
