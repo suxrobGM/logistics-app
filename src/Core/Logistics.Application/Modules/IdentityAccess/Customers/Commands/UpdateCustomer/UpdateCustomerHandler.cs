@@ -20,6 +20,12 @@ internal sealed class UpdateCustomerHandler(ITenantUnitOfWork tenantUow, IMaster
             return Result.Fail($"Could not find a customer with ID '{req.Id}'");
         }
 
+        if (!string.IsNullOrEmpty(req.Name) && await tenantUow.Repository<Customer>().Query()
+                .AnyAsync(c => c.Id != req.Id && c.Name.ToLower() == req.Name.ToLower(), ct))
+        {
+            return Result.Fail($"A customer named '{req.Name}' already exists");
+        }
+
         var previousName = customerEntity.Name;
         customerEntity.Name = PropertyUpdater.UpdateIfChanged(req.Name, customerEntity.Name);
         customerEntity.Email = PropertyUpdater.UpdateIfChanged(req.Email, customerEntity.Email);

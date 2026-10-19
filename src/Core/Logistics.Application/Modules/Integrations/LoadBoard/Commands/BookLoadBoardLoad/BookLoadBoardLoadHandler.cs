@@ -106,7 +106,7 @@ internal sealed class BookLoadBoardLoadHandler(
         {
             var customerName = req.CustomerName ?? listing.BrokerName ?? "Unknown Broker";
             customer = await tenantUow.Repository<Customer>()
-                .GetAsync(c => c.Name == customerName, ct);
+                .GetAsync(c => c.Name.ToLower() == customerName.ToLower(), ct);
 
             if (customer is null)
             {

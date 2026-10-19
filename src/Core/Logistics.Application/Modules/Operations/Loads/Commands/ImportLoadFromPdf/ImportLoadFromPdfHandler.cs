@@ -175,7 +175,7 @@ internal sealed class ImportLoadFromPdfHandler(
 
         // Try to find existing customer by name
         var existingCustomer = await tenantUow.Repository<Customer>()
-            .GetAsync(c => c.Name == shipperName, ct);
+            .GetAsync(c => c.Name.ToLower() == shipperName.ToLower(), ct);
 
         if (existingCustomer is not null)
         {

@@ -12,7 +12,8 @@ internal sealed class CreateCustomerHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result<CustomerDto>> Handle(CreateCustomerCommand req, CancellationToken ct)
     {
-        var existingCustomer = await tenantUow.Repository<Customer>().GetAsync(i => i.Name == req.Name, ct);
+        var existingCustomer = await tenantUow.Repository<Customer>()
+            .GetAsync(i => i.Name.ToLower() == req.Name.ToLower(), ct);
 
         if (existingCustomer is not null)
         {
