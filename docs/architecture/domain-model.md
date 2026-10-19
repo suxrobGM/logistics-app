@@ -5,7 +5,7 @@ The domain layer (`src/Core/Logistics.Domain/`) holds entities, aggregates, valu
 - `IMasterEntity` - lives in the **master DB** (platform state shared across tenants).
 - `ITenantEntity` - lives in **tenant DBs** (per-company operational data).
 
-A few entities (notably `User` and `Invoice`) implement both because they need to be visible from either side.
+Each entity implements exactly one of them.
 
 ## Base abstractions
 

@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-public abstract partial class Invoice : AuditableEntity, IMasterEntity, ITenantEntity, IAuditableEntity
+public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditableEntity
 {
     public long Number { get; set; }
     public abstract InvoiceType Type { get; set; }

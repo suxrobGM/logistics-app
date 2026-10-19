@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-public class Payment : AuditableEntity, IMasterEntity, ITenantEntity
+public class Payment : AuditableEntity, ITenantEntity
 {
     public required Money Amount { get; set; }
     public PaymentStatus Status { get; set; }
