@@ -84,7 +84,7 @@ Central Dispatch and Super Dispatch are not connected. Neither offers a public c
 | Learned preferences | A nightly job reads the decisions you approved and rejected and writes a short policy the agent follows next time. Dispatchers can edit it. |
 | Rate negotiation | When a listing pays below your lane floor, the agent drafts a counter-offer email to the broker. You approve before it sends. Replies come back into the conversation. See [broker email negotiation](broker-email-negotiation.md). |
 | Copilot | A chat panel on every page. Ask about loads, customers, or expenses, or have it invoice delivered loads and send payment links. It only uses the tools your role allows, and it asks before it writes. See [AI Copilot](ai-copilot.md). |
-| Tools | Both agents share one set of 31 tools covering dispatch, load boards, negotiation, finance, intermodal, and operations. |
+| Tools | Both agents draw on one shared tool catalogue covering dispatch, load boards, negotiation, finance, intermodal, and operations. |
 | MCP server | Connect Claude Desktop, Cursor, Windsurf, and other MCP clients to your fleet. API keys are created per company, shown once, and rate limited. See [MCP Server](mcp-server.md). |
 
 ### Money
