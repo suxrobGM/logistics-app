@@ -53,9 +53,9 @@ internal sealed class TruckLocationRecorder(
             OdometerReading = odometerReading
         }, ct);
 
-        if (address is not null
-            || truck.CurrentLocation is not { } current
-            || current.DistanceTo(location) > AddressStaleMeters)
+        var addressStale = truck.CurrentLocation is not { } current
+                           || current.DistanceTo(location) > AddressStaleMeters;
+        if (address is not null || addressStale)
         {
             truck.CurrentAddress = address;
         }

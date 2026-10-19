@@ -84,8 +84,8 @@ internal sealed class LoadImporter(
         var trucks = await tenantUow.Repository<Truck>().Query().ToListAsync(ct);
         var drivers = new EmployeeMatcher(await tenantUow.Repository<Employee>().Query().ToListAsync(ct));
 
-        if (drafts.Any(d => d.Type == LoadType.Vehicle) &&
-            await vehicleTransportGuard.CheckLoadTypeAsync(LoadType.Vehicle) is { IsSuccess: false } typeCheck)
+        var hasVehicleLoads = drafts.Any(d => d.Type == LoadType.Vehicle);
+        if (hasVehicleLoads && await vehicleTransportGuard.CheckLoadTypeAsync(LoadType.Vehicle) is { IsSuccess: false } typeCheck)
         {
             foreach (var draft in drafts.Where(d => d.Type == LoadType.Vehicle))
             {

@@ -73,10 +73,9 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
             draft.Existing = byNumber.GetValueOrDefault(draft.Key);
             draft.Exists = draft.Existing is not null;
 
-            if (draft.Type is { } type && type != draft.Existing?.Type &&
-                await vehicleTransportGuard.CheckTruckTypeAsync(type) is { IsSuccess: false } typeCheck)
+            if (await TypeChangeErrorAsync(draft) is { } typeError)
             {
-                draft.Errors.Add(typeCheck.Error!);
+                draft.Errors.Add(typeError);
             }
 
             if (VinFormat.Normalize(draft.Row.Get(Vin)) is { } vin)
@@ -158,6 +157,18 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
         }
 
         await tenantUow.SaveChangesAsync(ct);
+    }
+
+    /// <summary>Why the row's truck type can't be set, checking only a change; null when it can.</summary>
+    private async Task<string?> TypeChangeErrorAsync(Draft draft)
+    {
+        if (draft.Type is not { } type || type == draft.Existing?.Type)
+        {
+            return null;
+        }
+
+        var typeCheck = await vehicleTransportGuard.CheckTruckTypeAsync(type);
+        return typeCheck.IsSuccess ? null : typeCheck.Error;
     }
 
     private void CheckTruckLimit(IReadOnlyList<Draft> drafts, int currentCount)
