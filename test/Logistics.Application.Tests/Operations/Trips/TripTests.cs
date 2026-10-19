@@ -20,7 +20,7 @@ public class TripTests
     };
 
     private Load NewLoad() => Load.Create(
-        "Test Load", LoadType.GeneralFreight, 1000, Address, new GeoPoint(0, 0), Address, new GeoPoint(1, 1),
+        $"Load {Guid.NewGuid():N}", LoadType.GeneralFreight, 1000, Address, new GeoPoint(0, 0), Address, new GeoPoint(1, 1),
         new Customer { Name = "Acme" }, _truck, _dispatcher, "USD");
 
     #region Dispatch
@@ -177,6 +177,117 @@ public class TripTests
         trip.RefreshStatus();
 
         Assert.Equal(TripStatus.Draft, trip.Status);
+    }
+
+    #endregion
+
+    #region Status from loads
+
+    private static void Deliver(Trip trip, Load load)
+    {
+        trip.MarkStopArrived(trip.Stops.First(s => s.Load == load && s.Type == TripStopType.PickUp).Id);
+        trip.MarkStopArrived(trip.Stops.First(s => s.Load == load && s.Type == TripStopType.DropOff).Id);
+    }
+
+    [Fact]
+    public void RefreshStatus_OtherLoadsDeliveredAndOneCancelled_CompletesTrip()
+    {
+        var cancelled = NewLoad();
+        var delivered = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [cancelled, delivered]);
+        trip.Dispatch();
+        cancelled.Cancel();
+
+        Deliver(trip, delivered);
+
+        Assert.Equal(TripStatus.Completed, trip.Status);
+        Assert.NotNull(trip.CompletedAt);
+    }
+
+    [Fact]
+    public void RefreshStatus_LastUndeliveredLoadCancelled_CompletesTrip()
+    {
+        var delivered = NewLoad();
+        var remaining = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [delivered, remaining]);
+        trip.Dispatch();
+        Deliver(trip, delivered);
+        Assert.Equal(TripStatus.InTransit, trip.Status);
+
+        remaining.Cancel();
+        trip.RefreshStatus();
+
+        Assert.Equal(TripStatus.Completed, trip.Status);
+    }
+
+    [Fact]
+    public void RefreshStatus_OneLoadCancelledAndOtherPickedUp_StaysInTransit()
+    {
+        var cancelled = NewLoad();
+        var pickedUp = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [cancelled, pickedUp]);
+        trip.Dispatch();
+        trip.MarkStopArrived(trip.Stops.First(s => s.Load == pickedUp && s.Type == TripStopType.PickUp).Id);
+
+        cancelled.Cancel();
+        trip.RefreshStatus();
+
+        Assert.Equal(TripStatus.InTransit, trip.Status);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RefreshStatus_EveryLoadCancelled_CancelsTrip(bool dispatched)
+    {
+        var first = NewLoad();
+        var second = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [first, second]);
+        if (dispatched)
+        {
+            trip.Dispatch();
+        }
+
+        first.Cancel();
+        second.Cancel();
+        trip.RefreshStatus();
+
+        Assert.Equal(TripStatus.Cancelled, trip.Status);
+        Assert.NotNull(trip.CancelledAt);
+    }
+
+    #endregion
+
+    #region Cancel
+
+    [Fact]
+    public void Cancel_TripWithDeliveredLoad_ThrowsAndChangesNothing()
+    {
+        var delivered = NewLoad();
+        var remaining = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [delivered, remaining]);
+        trip.Dispatch();
+        Deliver(trip, delivered);
+
+        var ex = Assert.Throws<InvalidOperationException>(trip.Cancel);
+
+        Assert.Equal("This trip has delivered loads. Cancel its remaining loads individually instead.", ex.Message);
+        Assert.Equal(TripStatus.InTransit, trip.Status);
+        Assert.Equal(LoadStatus.Dispatched, remaining.Status);
+    }
+
+    [Fact]
+    public void Cancel_NoLoadDelivered_CancelsTripAndLoads()
+    {
+        var load = NewLoad();
+        var trip = Trip.Create("Trip", _truck, [load]);
+        trip.Dispatch();
+        trip.MarkStopArrived(StopOf(trip, TripStopType.PickUp).Id);
+
+        trip.Cancel();
+
+        Assert.Equal(TripStatus.Cancelled, trip.Status);
+        Assert.Equal(LoadStatus.Cancelled, load.Status);
     }
 
     #endregion

@@ -271,7 +271,7 @@ stateDiagram-v2
     Cancelled --> [*]
 ```
 
-`Trip.MarkStopArrived(stopId)` propagates the per-stop arrival to the underlying `Load` (via `force: true`) and refreshes the trip's status (`Dispatched` → `InTransit` → `Completed`). Cancelling a trip cascades a `Load.Cancel()` to every stop's load.
+`Trip.MarkStopArrived(stopId)` propagates the per-stop arrival to the underlying `Load` (via `force: true`) and refreshes the trip's status (`Dispatched` → `InTransit` → `Completed`). `Trip.RefreshStatus` ignores cancelled loads: the trip completes once every other load is delivered, and is cancelled once every load is. Cancelling a trip cascades a `Load.Cancel()` to every stop's load, and is refused once any load is delivered - cancel the remaining loads one by one instead.
 
 ### Container
 

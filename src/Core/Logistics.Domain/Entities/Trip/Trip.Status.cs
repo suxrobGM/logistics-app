@@ -35,12 +35,21 @@ public partial class Trip
     /// <summary>
     /// Cancels the trip and all associated loads.
     /// </summary>
-    /// <exception cref="InvalidOperationException">Thrown if trip is already completed.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the trip is already completed, or any of its loads is delivered: a delivered load can't be
+    /// cancelled, so its remaining loads are cancelled one by one instead.
+    /// </exception>
     public void Cancel()
     {
         if (!TripStatusMachine.CanCancel(Status))
         {
             throw new InvalidOperationException("Cannot cancel a completed trip");
+        }
+
+        if (Stops.Any(s => s.Load.Status == LoadStatus.Delivered))
+        {
+            throw new InvalidOperationException(
+                "This trip has delivered loads. Cancel its remaining loads individually instead.");
         }
 
         Status = TripStatus.Cancelled;
@@ -122,31 +131,44 @@ public partial class Trip
     }
 
     /// <summary>
-    /// Moves the trip to InTransit once any load is picked up, and to Completed once every drop-off is delivered.
-    /// A draft, completed or cancelled trip keeps its status.
+    /// Derives the trip's status from its loads, ignoring cancelled ones: the trip is Cancelled once every
+    /// load is cancelled, Completed once every other load is delivered, and InTransit once any is picked
+    /// up. A draft trip only follows its loads into Cancelled; a completed or cancelled trip keeps its status.
     /// </summary>
     public void RefreshStatus()
     {
-        if (Status is TripStatus.Draft or TripStatus.Completed or TripStatus.Cancelled)
+        if (Status is TripStatus.Completed or TripStatus.Cancelled)
         {
             return;
         }
 
-        var allDropOffsDelivered = Stops
-            .Where(s => s.Type == TripStopType.DropOff)
-            .All(s => s.Load.Status == LoadStatus.Delivered);
+        if (Stops.Count == 0)
+        {
+            return;
+        }
 
-        // A delivered load was picked up first, so it also counts.
-        var anyPickupDone = Stops
-            .Any(s => s is { Type: TripStopType.PickUp, Load.Status: LoadStatus.PickedUp or LoadStatus.Delivered });
+        var remaining = Stops.Select(s => s.Load).Where(l => l.Status != LoadStatus.Cancelled).ToArray();
 
-        if (allDropOffsDelivered)
+        if (remaining.Length == 0)
+        {
+            Status = TripStatus.Cancelled;
+            CancelledAt = DateTime.UtcNow;
+            return;
+        }
+
+        if (Status == TripStatus.Draft)
+        {
+            return;
+        }
+
+        if (remaining.All(l => l.Status == LoadStatus.Delivered))
         {
             Status = TripStatus.Completed;
             CompletedAt = DateTime.UtcNow;
             DomainEvents.Add(new TripCompletedEvent(Id));
         }
-        else if (anyPickupDone)
+        // A delivered load was picked up first, so it also counts.
+        else if (remaining.Any(l => l.Status is LoadStatus.PickedUp or LoadStatus.Delivered))
         {
             Status = TripStatus.InTransit;
         }
