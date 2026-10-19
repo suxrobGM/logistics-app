@@ -81,7 +81,7 @@ public class BookLoadBoardLoadHandlerTests
         vehicleTransportGuard.CheckLoadTypeAsync(Arg.Any<LoadType?>()).Returns(Result.Ok());
 
         _sut = new BookLoadBoardLoadHandler(
-            _tenantUow, vehicleTransportGuard, _currentUser, _brokerCreditService, _routeRegistry, _broadcastService,
+            _tenantUow, vehicleTransportGuard, _currentUser, new BrokerCreditChecker(_tenantUow, _brokerCreditService), _routeRegistry, _broadcastService,
             NullLogger<BookLoadBoardLoadHandler>.Instance);
     }
 

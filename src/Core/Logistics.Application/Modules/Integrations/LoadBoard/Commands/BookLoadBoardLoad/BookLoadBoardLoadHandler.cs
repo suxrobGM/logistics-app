@@ -20,7 +20,7 @@ internal sealed class BookLoadBoardLoadHandler(
     ITenantUnitOfWork tenantUow,
     IVehicleTransportGuard vehicleTransportGuard,
     ICurrentUserService currentUser,
-    IBrokerCreditService brokerCreditService,
+    IBrokerCreditChecker brokerCreditChecker,
     IInboundEmailRouteRegistry routeRegistry,
     IAIDispatchBroadcastService broadcastService,
     ILogger<BookLoadBoardLoadHandler> logger)
@@ -73,12 +73,11 @@ internal sealed class BookLoadBoardLoadHandler(
             return Result<LoadBoardBookingResultDto>.Fail("Dispatcher not found");
         }
 
-        var creditGate = await BrokerCreditGate.EvaluateAsync(
-            tenantUow, brokerCreditService, listing, req.OverrideCreditCheck, ct);
+        var creditCheck = await brokerCreditChecker.CheckAsync(listing, req.OverrideCreditCheck, ct);
 
-        if (!creditGate.IsSuccess)
+        if (!creditCheck.IsSuccess)
         {
-            return Result<LoadBoardBookingResultDto>.Fail(creditGate.Error!, creditGate.ErrorCode!);
+            return Result<LoadBoardBookingResultDto>.Fail(creditCheck.Error!, creditCheck.ErrorCode!);
         }
 
         var negotiation = await tenantUow.Repository<RateNegotiation>()

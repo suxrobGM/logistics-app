@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Modules.Integrations.LoadBoard.Services;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.LoadBoard;
 using Logistics.Application.Modules.Integrations.Negotiation.Commands;
@@ -88,7 +89,7 @@ public class ProposeCounterOfferHandlerTests
                 ci.Arg<ComposeNegotiationEmailRequest>().AgentMessage));
 
         _sut = new ProposeCounterOfferHandler(
-            _tenantUow, _routeRegistry, _brokerCreditService, _floorResolver, _composer, _emailSender,
+            _tenantUow, _routeRegistry, new BrokerCreditChecker(_tenantUow, _brokerCreditService), _floorResolver, _composer, _emailSender,
             _broadcastService, NullLogger<ProposeCounterOfferHandler>.Instance);
     }
 

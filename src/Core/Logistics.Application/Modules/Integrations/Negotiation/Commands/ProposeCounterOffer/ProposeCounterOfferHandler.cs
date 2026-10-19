@@ -19,7 +19,7 @@ namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
 internal sealed class ProposeCounterOfferHandler(
     ITenantUnitOfWork tenantUow,
     IInboundEmailRouteRegistry routeRegistry,
-    IBrokerCreditService brokerCreditService,
+    IBrokerCreditChecker brokerCreditChecker,
     ILaneRateFloorResolver floorResolver,
     INegotiationEmailComposer composer,
     IThreadedEmailSender emailSender,
@@ -72,12 +72,11 @@ internal sealed class ProposeCounterOfferHandler(
             return Result<RateNegotiationDto>.Fail(rejection.Error, rejection.Code);
         }
 
-        var creditGate = await BrokerCreditGate.EvaluateAsync(
-            tenantUow, brokerCreditService, listing, overrideCheck: false, ct);
+        var creditCheck = await brokerCreditChecker.CheckAsync(listing, overrideCheck: false, ct);
 
-        if (!creditGate.IsSuccess)
+        if (!creditCheck.IsSuccess)
         {
-            return Result<RateNegotiationDto>.Fail(creditGate.Error!, creditGate.ErrorCode!);
+            return Result<RateNegotiationDto>.Fail(creditCheck.Error!, creditCheck.ErrorCode!);
         }
 
         if (negotiation is null)
