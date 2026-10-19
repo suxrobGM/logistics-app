@@ -215,6 +215,11 @@ internal sealed class UpdateTripHandler(
 
         foreach (var load in created.Value!)
         {
+            if (trip.Status == TripStatus.Dispatched)
+            {
+                load.Dispatch();
+            }
+
             loadsMap[load.Id] = load;
         }
 

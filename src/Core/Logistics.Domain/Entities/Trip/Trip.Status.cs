@@ -9,7 +9,7 @@ namespace Logistics.Domain.Entities;
 public partial class Trip
 {
     /// <summary>
-    /// Dispatches the trip.
+    /// Dispatches the trip and each of its loads still in Draft, which issues their invoices.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown if trip is not in Draft status.</exception>
     public void Dispatch()
@@ -21,6 +21,12 @@ public partial class Trip
 
         Status = TripStatus.Dispatched;
         DispatchedAt = DateTime.UtcNow;
+
+        foreach (var load in GetLoads().Where(l => l.Status == LoadStatus.Draft))
+        {
+            load.Dispatch();
+        }
+
         DomainEvents.Add(new TripDispatchedEvent(Id));
     }
 
