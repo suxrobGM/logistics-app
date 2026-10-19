@@ -10,8 +10,9 @@ internal sealed class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
     {
         builder.ToTable("trucks");
 
-        builder.HasIndex(i => i.Number)
-            .IsUnique();
+        // Number is unique case-insensitively through the raw-SQL index ux_trucks_number_lower, created in the
+        // migration because EF can't model an expression index.
+        builder.Property(i => i.Number).HasMaxLength(50);
 
         builder.Property(i => i.Vin).HasMaxLength(17);
         builder.HasIndex(i => i.Vin)

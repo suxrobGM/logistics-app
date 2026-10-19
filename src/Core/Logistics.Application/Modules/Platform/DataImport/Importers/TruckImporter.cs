@@ -40,6 +40,11 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
     {
         var draft = new Draft(row, row.Get(Number) ?? "");
         draft.ReadRequired(Number, "Truck number");
+        if (draft.Key.Length > 50)
+        {
+            draft.Errors.Add("Truck number is longer than 50 characters.");
+        }
+
         draft.Type = draft.ReadEnum(ImportFieldKeys.Type, "Truck type", TypeAliases);
         draft.Status = draft.ReadEnum(Status, "Status", StatusAliases);
         draft.Year = draft.ReadInt(Year, "Year");

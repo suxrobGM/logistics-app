@@ -23,11 +23,13 @@ internal sealed class CreateTruckHandler(
         var typeCheck = await vehicleTransportGuard.CheckTruckTypeAsync(req.TruckType);
         if (!typeCheck.IsSuccess) return typeCheck;
 
-        var truckWithThisNumber = await tenantUow.Repository<Truck>().GetAsync(i => i.Number == req.TruckNumber, ct);
+        var number = req.TruckNumber.Trim();
+        var truckWithThisNumber = await tenantUow.Repository<Truck>()
+            .GetAsync(i => i.Number.ToLower() == number.ToLower(), ct);
 
         if (truckWithThisNumber is not null)
         {
-            return Result.Fail($"Already exists truck with number {req.TruckNumber}");
+            return Result.Fail($"Already exists truck with number {number}");
         }
 
         var driverResult = await TruckDriverAssignment.FindAssignableDriverAsync(tenantUow, req.MainDriverId, ct);

@@ -7,7 +7,7 @@ internal sealed class CreateTruckValidator : AbstractValidator<CreateTruckComman
 {
     public CreateTruckValidator()
     {
-        RuleFor(i => i.TruckNumber).NotEmpty();
+        RuleFor(i => i.TruckNumber).NotEmpty().MaximumLength(50);
         RuleFor(i => i.Vin).MaximumLength(17);
         RuleFor(i => i.TruckType).NotEmpty().IsInEnum();
         RuleFor(i => i.MainDriverId).NotEmpty();

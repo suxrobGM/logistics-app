@@ -35,11 +35,11 @@ internal sealed class UpdateTruckHandler(
             return typeCheck;
         }
 
-        var numberTaken = truckRepository.Query().Any(i => i.Number == req.TruckNumber &&
-                                                           i.Id != truck.Id);
-        if (numberTaken)
+        var number = req.TruckNumber?.Trim();
+        if (!string.IsNullOrEmpty(number) && await truckRepository
+                .GetAsync(i => i.Number.ToLower() == number.ToLower() && i.Id != truck.Id, ct) is not null)
         {
-            return Result.Fail($"Already exists truck with number {req.TruckNumber}");
+            return Result.Fail($"Already exists truck with number {number}");
         }
 
         // Update drivers

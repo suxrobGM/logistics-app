@@ -90,6 +90,18 @@ public class UpdateTruckHandlerTests
         await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
+    [Fact]
+    public async Task Handle_NumberOfAnotherTruckInOtherCase_Fails()
+    {
+        AddTruck("TRK-100");
+        var truck = AddTruck("TRK-101");
+
+        var result = await _sut.Handle(new UpdateTruckCommand { Id = truck.Id, TruckNumber = " trk-100 " }, default);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("TRK-101", truck.Number);
+    }
+
     private Truck AddTruck(string number)
     {
         var truck = new Truck { Number = number, Type = TruckType.FreightTruck };

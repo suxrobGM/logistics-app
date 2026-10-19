@@ -6,6 +6,7 @@ internal sealed class UpdateTruckValidator : AbstractValidator<UpdateTruckComman
 {
     public UpdateTruckValidator()
     {
+        RuleFor(i => i.TruckNumber).MaximumLength(50);
         RuleFor(i => i.TruckType).IsInEnum();
         RuleFor(i => i.TruckStatus).IsInEnum();
         RuleFor(i => i.Vin).MaximumLength(17);

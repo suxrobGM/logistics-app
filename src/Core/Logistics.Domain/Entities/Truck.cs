@@ -7,9 +7,17 @@ namespace Logistics.Domain.Entities;
 
 public class Truck : Entity, ITenantEntity
 {
+    private string _number = "";
     private string? _vin;
 
-    public required string Number { get; set; }
+    /// <summary>
+    ///     Trimmed on write; the casing is kept as typed, but numbers are unique regardless of case.
+    /// </summary>
+    public required string Number
+    {
+        get => _number;
+        set => _number = value.Trim();
+    }
 
     public required TruckType Type { get; set; }
 
