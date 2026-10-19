@@ -140,35 +140,18 @@ public class AnthropicLlmProviderTests
     #region Prompt caching
 
     [Fact]
-    public void BuildMessages_MarksOnlyTheNewestMessageForCaching()
+    public void BuildParameters_CachesTheConversationAtTheRequestLevel()
     {
         // The breakpoint has to move each iteration: it only looks back 20 content blocks for an
         // existing entry, and one turn with several parallel tool calls can add more than that.
-        var mapped = Wire(AnthropicLlmProvider.BuildMessages(
-        [
-            LlmMessage.FromUser("first"),
-            LlmMessage.FromUser("second"),
-            LlmMessage.FromToolResults([new LlmToolResultBlock("call_1", "done")])
-        ]));
+        var parameters = AnthropicLlmProvider.BuildParameters(Request("claude-sonnet-5-5", ReasoningEffort.High));
 
-        Assert.False(mapped[0].GetProperty("content")[0].TryGetProperty("cache_control", out _));
-        Assert.False(mapped[1].GetProperty("content")[0].TryGetProperty("cache_control", out _));
-        Assert.Equal("ephemeral",
-            mapped[2].GetProperty("content")[0].GetProperty("cache_control").GetProperty("type").GetString());
-    }
-
-    [Fact]
-    public void BuildMessages_CachesTheLastBlockOfAMultiBlockTurn()
-    {
-        // The prefix only caches up to the breakpoint, so marking anything but the last block
-        // leaves the rest re-billed.
-        var content = Wire(AnthropicLlmProvider.BuildMessages(
-        [
-            LlmMessage.FromToolResults([new LlmToolResultBlock("call_1", "a"), new LlmToolResultBlock("call_2", "b")])
-        ]))[0].GetProperty("content");
-
-        Assert.False(content[0].TryGetProperty("cache_control", out _));
-        Assert.True(content[1].TryGetProperty("cache_control", out _));
+        Assert.Equal("ephemeral", Wire(parameters.CacheControl!).GetProperty("type").GetString());
+        foreach (var message in Wire(parameters.Messages).EnumerateArray())
+        {
+            Assert.All(message.GetProperty("content").EnumerateArray(),
+                block => Assert.False(block.TryGetProperty("cache_control", out _)));
+        }
     }
 
     [Fact]

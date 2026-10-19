@@ -68,7 +68,7 @@ on the model** - the wire protocol belongs to the endpoint, not the model's reas
   stands. Both are handled in `AgentLoopRunner`.
 - **The official Anthropic SDK serializes an assigned `null`** as a JSON null rather than omitting
   the field. Set optional request fields (`Thinking`, `OutputConfig`, `Temperature`,
-  `CacheControl`) only when they carry a value - see `BuildParameters` and `CachedBlockParam`.
+  `CacheControl`) only when they carry a value - see `BuildParameters`.
 - **Anthropic server-tool blocks (web search) round-trip as `LlmProviderBlock`** - raw JSON, echoed
   back within the turn, never persisted. Dropping them breaks `pause_turn` and invalidates any later
   thinking block, whose signature covers the prefix that contained them.
@@ -82,9 +82,10 @@ on the model** - the wire protocol belongs to the endpoint, not the model's reas
 - Reasoning items are **not** replayed across tool turns. Responses tolerates their absence but
   rejects one not immediately followed by its `function_call`. `LlmThinkingBlock` is Anthropic-only.
 
-**Anthropic caching.** `BuildMessages` breakpoints the newest message's last block, plus the system
-prompt. Both details are load-bearing: **newest** (a breakpoint searches back only 20 blocks, and one
-parallel-tool turn can exceed that) and **last** (the prefix caches only up to it). Reads bill at a
+**Anthropic caching.** `BuildParameters` breakpoints the system prompt explicitly and sets the
+request-level `CacheControl`, which the API applies to the last cacheable block. Don't swap that for
+a fixed per-block marker: a breakpoint searches back only 20 blocks (one parallel-tool turn can
+exceed that) and caches only up to itself, so it must sit on the newest block. Reads bill at a
 tenth of input, so hits lower `EstimatedCostUsd` and the budget with it. `CacheReadTokens` stuck at
 zero means an invalidated prefix (tools or model changed) or a prompt under the per-model minimum,
 which is silently skipped. OpenAI and DeepSeek cache server-side, hence provider-level and not in

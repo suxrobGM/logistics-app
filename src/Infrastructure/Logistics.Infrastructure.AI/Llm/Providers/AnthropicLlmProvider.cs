@@ -57,8 +57,11 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
             {
                 new() { Text = request.SystemPrompt, CacheControl = new CacheControlEphemeral() }
             },
-            Messages = BuildMessages(request.Messages),
-            Tools = BuildTools(request)
+            Messages = [.. request.Messages.Select(m => ToMessageParam(m))],
+            Tools = BuildTools(request),
+            // Marks the last cacheable block, so the breakpoint moves with the conversation: one
+            // looks back only 20 blocks, and caches only up to itself.
+            CacheControl = new CacheControlEphemeral()
         };
 
         if (isAdaptive)
@@ -164,35 +167,11 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
             _ => LlmStopReason.EndTurn
         };
 
-    /// <summary>
-    /// One cache breakpoint, on the newest message's last block: a breakpoint looks back only 20
-    /// blocks, and caches only up to itself.
-    /// </summary>
-    internal static List<MessageParam> BuildMessages(IReadOnlyList<LlmMessage> messages)
+    internal static MessageParam ToMessageParam(LlmMessage message) => new()
     {
-        var mapped = new List<MessageParam>(messages.Count);
-        for (var i = 0; i < messages.Count; i++)
-        {
-            mapped.Add(ToMessageParam(messages[i], cacheLastBlock: i == messages.Count - 1));
-        }
-
-        return mapped;
-    }
-
-    internal static MessageParam ToMessageParam(LlmMessage message, bool cacheLastBlock = false)
-    {
-        var blocks = message.Content.Select(ToBlockParam).ToList();
-
-        // The newest message is a user turn, so its last block is never a thinking block.
-        if (cacheLastBlock && blocks.Count > 0)
-            blocks[^1] = CachedBlockParam(message.Content[^1]);
-
-        return new MessageParam
-        {
-            Role = message.Role == LlmRole.User ? Role.User : Role.Assistant,
-            Content = blocks
-        };
-    }
+        Role = message.Role == LlmRole.User ? Role.User : Role.Assistant,
+        Content = message.Content.Select(ToBlockParam).ToList()
+    };
 
     private static ContentBlockParam ToBlockParam(LlmContentBlock block) => block switch
     {
@@ -214,23 +193,6 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
         LlmProviderBlock native => JsonSerializer.Deserialize<ContentBlockParam>(native.Json)
             ?? throw new InvalidOperationException("Provider block did not deserialize."),
         _ => throw new NotSupportedException($"Unsupported content block {block.GetType().Name}.")
-    };
-
-    private static ContentBlockParam CachedBlockParam(LlmContentBlock block) => block switch
-    {
-        LlmTextBlock text => new TextBlockParam { Text = text.Text, CacheControl = new CacheControlEphemeral() },
-        LlmToolResultBlock result => new ToolResultBlockParam
-        {
-            ToolUseID = result.ToolUseId,
-            Content = result.Content,
-            CacheControl = new CacheControlEphemeral()
-        },
-        LlmDocumentBlock document => new DocumentBlockParam
-        {
-            Source = new Base64PdfSource { Data = document.Base64Data },
-            CacheControl = new CacheControlEphemeral()
-        },
-        _ => ToBlockParam(block)
     };
 
     private static Dictionary<string, JsonElement> ToInputDictionary(JsonNode? input) =>
