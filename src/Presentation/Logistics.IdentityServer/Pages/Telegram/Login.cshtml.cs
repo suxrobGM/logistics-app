@@ -107,10 +107,7 @@ public class Login(
 
         // Mark the login state as consumed with results
         loginState.IsConsumed = true;
-        loginState.UserId = user.Id;
         loginState.TenantId = tenant.Id;
-        loginState.UserDisplayName = user.GetFullName();
-        loginState.TenantName = tenant.Name;
         await masterUow.SaveChangesAsync(ct);
 
         // Show success page

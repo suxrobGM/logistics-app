@@ -184,11 +184,43 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 principalTable: "tenants",
                 principalColumn: "id",
                 onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.DropColumn(
+                name: "tenant_name",
+                table: "telegram_login_states");
+
+            migrationBuilder.DropColumn(
+                name: "user_display_name",
+                table: "telegram_login_states");
+
+            migrationBuilder.DropColumn(
+                name: "user_id",
+                table: "telegram_login_states");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<string>(
+                name: "tenant_name",
+                table: "telegram_login_states",
+                type: "character varying(256)",
+                maxLength: 256,
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "user_display_name",
+                table: "telegram_login_states",
+                type: "character varying(256)",
+                maxLength: 256,
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "user_id",
+                table: "telegram_login_states",
+                type: "uuid",
+                nullable: true);
+
             migrationBuilder.DropForeignKey(
                 name: "fk_inbound_email_routes_tenant_tenant_id",
                 table: "inbound_email_routes");

@@ -19,8 +19,5 @@ public class TelegramLoginState : Entity, IMasterEntity
     /// <summary>
     /// Set after the user authenticates - the bot polls for this.
     /// </summary>
-    public Guid? UserId { get; set; }
     public Guid? TenantId { get; set; }
-    public string? UserDisplayName { get; set; }
-    public string? TenantName { get; set; }
 }
