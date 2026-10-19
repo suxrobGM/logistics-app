@@ -16,8 +16,7 @@ internal sealed class DeletePaymentHandler(ITenantUnitOfWork tenantUow) : IReque
             return Result.Fail($"Could not find a {EntityName.Humanize<Payment>()} with ID '{req.Id}'");
         }
 
-        var invoice = await tenantUow.Repository<Invoice>().GetAsync(i => i.Payments.Any(p => p.Id == payment.Id), ct);
-        invoice?.RemovePayment(payment, DateTime.UtcNow);
+        payment.Invoice?.RemovePayment(payment, DateTime.UtcNow);
 
         tenantUow.Repository<Payment>().Delete(payment);
         await tenantUow.SaveChangesAsync(ct);

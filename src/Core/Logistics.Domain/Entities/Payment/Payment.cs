@@ -13,6 +13,9 @@ public class Payment : AuditableEntity, ITenantEntity
     public required Address BillingAddress { get; set; }
     public string? StripePaymentIntentId { get; set; }
 
+    public Guid? InvoiceId { get; set; }
+    public virtual Invoice? Invoice { get; set; }
+
     #region Manual Payment Fields
 
     /// <summary>

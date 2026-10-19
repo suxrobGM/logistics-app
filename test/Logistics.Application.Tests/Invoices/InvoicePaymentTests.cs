@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Logistics.Application.Modules.Financial.Payments.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -33,6 +32,21 @@ public class InvoicePaymentTests
         Assert.Equal(1000m, invoice.AmountDue);
         Assert.Equal(InvoiceStatus.Sent, invoice.Status);
         Assert.Single(invoice.Payments);
+    }
+
+    [Fact]
+    public void RecalculatePaymentStatus_PendingPaymentSettles_InvoicePaid()
+    {
+        var invoice = Invoice(Customer(null));
+        var payment = Payment(1000m, PaymentStatus.Pending);
+        invoice.ApplyPayment(payment);
+        Assert.Equal(invoice.Id, payment.InvoiceId);
+        Assert.Equal(InvoiceStatus.Issued, invoice.Status);
+
+        payment.Status = PaymentStatus.Paid;
+        payment.Invoice!.RecalculatePaymentStatus(Now);
+
+        Assert.Equal(InvoiceStatus.Paid, invoice.Status);
     }
 
     [Fact]
@@ -150,16 +164,12 @@ public class InvoicePaymentTests
     {
         var tenantUow = Substitute.For<ITenantUnitOfWork>();
         var paymentRepo = Substitute.For<ITenantRepository<Payment, Guid>>();
-        var invoiceRepo = Substitute.For<ITenantRepository<Invoice, Guid>>();
         tenantUow.Repository<Payment>().Returns(paymentRepo);
-        tenantUow.Repository<Invoice>().Returns(invoiceRepo);
 
         var invoice = Invoice(Customer(null));
         var payment = Payment(1000m);
         invoice.ApplyPayment(payment);
         paymentRepo.GetByIdAsync(payment.Id, Arg.Any<CancellationToken>()).Returns(payment);
-        invoiceRepo.GetAsync(Arg.Any<Expression<Func<Invoice, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(invoice);
         var sut = new UpdatePaymentHandler(tenantUow);
 
         var result = await sut.Handle(new UpdatePaymentCommand { Id = payment.Id, Amount = 400m }, CancellationToken.None);
@@ -174,17 +184,13 @@ public class InvoicePaymentTests
     {
         var tenantUow = Substitute.For<ITenantUnitOfWork>();
         var paymentRepo = Substitute.For<ITenantRepository<Payment, Guid>>();
-        var invoiceRepo = Substitute.For<ITenantRepository<Invoice, Guid>>();
         tenantUow.Repository<Payment>().Returns(paymentRepo);
-        tenantUow.Repository<Invoice>().Returns(invoiceRepo);
 
         var invoice = Invoice(Customer(null));
         invoice.DueDate = DateTime.UtcNow.AddDays(10);
         var payment = Payment(1000m);
         invoice.ApplyPayment(payment);
         paymentRepo.GetByIdAsync(payment.Id, Arg.Any<CancellationToken>()).Returns(payment);
-        invoiceRepo.GetAsync(Arg.Any<Expression<Func<Invoice, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(invoice);
         var sut = new UpdatePaymentHandler(tenantUow);
 
         var result = await sut.Handle(
@@ -203,16 +209,12 @@ public class InvoicePaymentTests
     {
         var tenantUow = Substitute.For<ITenantUnitOfWork>();
         var paymentRepo = Substitute.For<ITenantRepository<Payment, Guid>>();
-        var invoiceRepo = Substitute.For<ITenantRepository<Invoice, Guid>>();
         tenantUow.Repository<Payment>().Returns(paymentRepo);
-        tenantUow.Repository<Invoice>().Returns(invoiceRepo);
 
         var invoice = Invoice(Customer(null));
         var payment = Payment(1000m);
         invoice.ApplyPayment(payment);
         paymentRepo.GetByIdAsync(payment.Id, Arg.Any<CancellationToken>()).Returns(payment);
-        invoiceRepo.GetAsync(Arg.Any<Expression<Func<Invoice, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(invoice);
         var sut = new DeletePaymentHandler(tenantUow);
 
         var result = await sut.Handle(new DeletePaymentCommand { Id = payment.Id }, CancellationToken.None);

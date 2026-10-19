@@ -96,8 +96,15 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
                     && string.Equals(p.Amount.Currency, currency, StringComparison.OrdinalIgnoreCase))
         .Sum(p => p.Amount.Amount);
 
+    /// <summary>
+    /// Links the payment to this invoice, whatever its status, and recalculates the invoice status. A payment
+    /// that settles later pays the invoice once its status becomes <see cref="PaymentStatus.Paid"/> and the
+    /// status is recalculated.
+    /// </summary>
     public void ApplyPayment(Payment payment)
     {
+        payment.InvoiceId = Id;
+        payment.Invoice = this;
         Payments.Add(payment);
         RecalculatePaymentStatus(DateTime.UtcNow);
     }

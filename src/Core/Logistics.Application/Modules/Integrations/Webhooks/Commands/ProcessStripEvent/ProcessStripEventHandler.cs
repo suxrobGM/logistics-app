@@ -276,6 +276,7 @@ internal sealed class ProcessStripEventHandler(
         }
 
         payment.Status = newStatus;
+        payment.Invoice?.RecalculatePaymentStatus(DateTime.UtcNow);
         tenantUow.Repository<Payment>().Update(payment);
         await tenantUow.SaveChangesAsync();
 
@@ -308,6 +309,7 @@ internal sealed class ProcessStripEventHandler(
         }
 
         payment.Status = PaymentStatus.Failed;
+        payment.Invoice?.RecalculatePaymentStatus(DateTime.UtcNow);
         var errorMessage = paymentIntent.LastPaymentError?.Message;
         if (!string.IsNullOrEmpty(errorMessage))
         {
@@ -401,13 +403,10 @@ internal sealed class ProcessStripEventHandler(
 
         await tenantUow.Repository<Payment>().AddAsync(payment);
 
-        // Only apply the payment to the invoice once it actually settles. Pending SEPA payments
-        // remain unlinked until payment_intent.succeeded fires.
-        if (status == PaymentStatus.Paid)
-        {
-            invoice.ApplyPayment(payment);
-            tenantUow.Repository<DomainInvoice>().Update(invoice);
-        }
+        // A pending (ACH/SEPA) payment is linked now but pays nothing until payment_intent.succeeded
+        // marks it Paid and recalculates the invoice.
+        invoice.ApplyPayment(payment);
+        tenantUow.Repository<DomainInvoice>().Update(invoice);
 
         await tenantUow.SaveChangesAsync();
 

@@ -15,5 +15,9 @@ internal sealed class PaymentEntityConfiguration : IEntityTypeConfiguration<Paym
             money.Property(m => m.Amount).HasPrecision(18, 2);
             money.Property(m => m.Currency).HasMaxLength(3);
         });
+
+        builder.HasOne(p => p.Invoice)
+            .WithMany(i => i.Payments)
+            .HasForeignKey(p => p.InvoiceId);
     }
 }

@@ -77,7 +77,7 @@ internal static class LoadLookupResolver
                 .GroupBy(s => s.LoadId)
                 .ToDictionary(g => g.Key, g => new TripRef(g.First().Id, g.First().Name, g.First().Number));
 
-        // The collections ride along in the same query: Payment's invoice key is a shadow property.
+        // The collections ride along in the same query instead of a lazy SELECT per invoice.
         var invoices = loadIds.Length == 0
             ? []
             : await uow.Repository<LoadInvoice>().Query()

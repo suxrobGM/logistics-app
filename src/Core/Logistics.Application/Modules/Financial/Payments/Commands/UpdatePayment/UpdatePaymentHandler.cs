@@ -36,8 +36,7 @@ internal sealed class UpdatePaymentHandler(ITenantUnitOfWork tenantUow) : IReque
 
         if (statusChanged || amountChanged)
         {
-            var invoice = await tenantUow.Repository<Invoice>().GetAsync(i => i.Payments.Any(p => p.Id == payment.Id), ct);
-            invoice?.RecalculatePaymentStatus(DateTime.UtcNow);
+            payment.Invoice?.RecalculatePaymentStatus(DateTime.UtcNow);
         }
 
         tenantUow.Repository<Payment>().Update(payment);

@@ -21,9 +21,9 @@ Subscribe to exactly these nine events. Anything else is accepted and ignored (r
 | `customer.subscription.created` | Creates or updates the tenant's `Subscription`                                       |
 | `customer.subscription.updated` | Syncs status, `CancelAtPeriodEnd`, and plan changes                                  |
 | `customer.subscription.deleted` | Marks the subscription cancelled                                                     |
-| `checkout.session.completed`    | Records a `Payment` against the invoice; applies it if the session already settled   |
+| `checkout.session.completed`    | Records a `Payment` on the invoice; it pays the invoice only once its status is `Paid` |
 | `payment_intent.processing`     | Moves the payment to `Pending` (delayed methods: ACH, SEPA, BACS)                    |
-| `payment_intent.succeeded`      | Moves the payment to `Paid`                                                          |
+| `payment_intent.succeeded`      | Moves the payment to `Paid` and recalculates its invoice status                      |
 | `payment_intent.payment_failed` | Moves the payment to `Failed` and appends the Stripe error to the description        |
 | `account.updated`               | Syncs the tenant's `ConnectStatus`, `ChargesEnabled`, `PayoutsEnabled` (**Connect**) |
 

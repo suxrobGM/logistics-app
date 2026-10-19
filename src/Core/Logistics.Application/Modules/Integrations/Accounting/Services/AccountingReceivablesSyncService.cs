@@ -107,7 +107,6 @@ internal sealed class AccountingReceivablesSyncService(
         var mappings = mappingService.Mappings;
         var from = run.SyncFrom;
 
-        // Payment's invoice FK is a shadow property, so payments are reached through their load invoice.
         var rows = await tenantUow.Repository<LoadInvoice>().Query()
             .SelectMany(i => i.Payments.Where(p =>
                     p.Status == PaymentStatus.Paid && (p.RecordedAt ?? p.CreatedAt) >= from
