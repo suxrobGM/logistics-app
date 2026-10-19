@@ -63,9 +63,4 @@ public record InvoiceDto
     public EmployeeDto? Employee { get; set; }
     public DateTime? PeriodStart { get; set; }
     public DateTime? PeriodEnd { get; set; }
-
-    // SubscriptionInvoice fields
-    public Guid? SubscriptionId { get; set; }
-    public DateTime? BillingPeriodStart { get; set; }
-    public DateTime? BillingPeriodEnd { get; set; }
 }

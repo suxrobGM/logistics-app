@@ -333,7 +333,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Invoices (TPH)
 
-- Domain: `Entities/Invoice/Invoice.cs` + `LoadInvoice`, `PayrollInvoice`, `SubscriptionInvoice`, `Invoice.RecalculateTotals`, `InvoiceTaxLine`; `Domain.Primitives/Enums/Invoice/InvoiceStatuses.cs` (`Open`, `Receivable`) - every receivables figure filters on these; never list statuses inline
+- Domain: `Entities/Invoice/Invoice.cs` + `LoadInvoice`, `PayrollInvoice`, `Invoice.RecalculateTotals`, `InvoiceTaxLine`; `Domain.Primitives/Enums/Invoice/InvoiceStatuses.cs` (`Open`, `Receivable`) - every receivables figure filters on these; never list statuses inline
 - Application: `Modules/Financial/Invoices/Commands/`, `Modules/Financial/Invoices/Queries/`, `IInvoiceTaxApplier`
 - API/UI: `InvoicesController.cs` + `preview-tax`, `tms-portal/pages/invoices/`, `customer-portal/pages/invoices/`
 

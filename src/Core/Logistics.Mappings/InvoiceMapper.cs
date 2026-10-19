@@ -15,29 +15,6 @@ public static class InvoiceMapper
                 loadInvoice.LineItems,
                 loadInvoice.Load.Number,
                 loadInvoice.Customer.ToDto()),
-            SubscriptionInvoice subscriptionInvoice => new InvoiceDto
-            {
-                Id = subscriptionInvoice.Id,
-                Type = InvoiceType.Subscription,
-                Number = subscriptionInvoice.Number,
-                Status = subscriptionInvoice.Status,
-                CreatedDate = subscriptionInvoice.CreatedAt,
-                Subtotal = subscriptionInvoice.Subtotal,
-                TaxTotal = subscriptionInvoice.TaxTotal,
-                Total = subscriptionInvoice.Total,
-                TaxBehavior = subscriptionInvoice.TaxBehavior,
-                TaxBreakdown = subscriptionInvoice.GetTaxBreakdown().ToDto(),
-                DueDate = subscriptionInvoice.DueDate,
-                Notes = subscriptionInvoice.Notes,
-                StripeInvoiceId = subscriptionInvoice.StripeInvoiceId,
-                Payments = subscriptionInvoice.Payments.Select(i => i.ToDto()),
-                LineItems = subscriptionInvoice.LineItems.Select(i => i.ToDto()),
-                SentAt = subscriptionInvoice.SentAt,
-                SentToEmail = subscriptionInvoice.SentToEmail,
-                SubscriptionId = subscriptionInvoice.SubscriptionId,
-                BillingPeriodStart = subscriptionInvoice.BillingPeriodStart,
-                BillingPeriodEnd = subscriptionInvoice.BillingPeriodEnd
-            },
             PayrollInvoice payrollInvoice => new InvoiceDto
             {
                 Id = payrollInvoice.Id,

@@ -15,7 +15,6 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
 
         builder.HasDiscriminator(i => i.Type)
             .HasValue<LoadInvoice>(InvoiceType.Load)
-            .HasValue<SubscriptionInvoice>(InvoiceType.Subscription)
             .HasValue<PayrollInvoice>(InvoiceType.Payroll);
 
         builder.Property(i => i.Number)
@@ -53,7 +52,7 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
 
     #region Derived Types Configuration
 
-    // Fine-tune derived types for LoadInvoice, SubscriptionInvoice, and PayrollInvoice
+    // Fine-tune derived types for LoadInvoice and PayrollInvoice
     public sealed class LoadInvoiceEntityConfiguration : IEntityTypeConfiguration<LoadInvoice>
     {
         public void Configure(EntityTypeBuilder<LoadInvoice> builder)
@@ -64,16 +63,6 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
 
             builder.Property(i => i.FactoringStatus)
                 .HasDefaultValue(FactoringStatus.NotFactored);
-        }
-    }
-
-    public sealed class SubscriptionInvoiceEntityConfiguration : IEntityTypeConfiguration<SubscriptionInvoice>
-    {
-        public void Configure(EntityTypeBuilder<SubscriptionInvoice> builder)
-        {
-            // builder.HasOne(i => i.Subscription)
-            //     .WithMany(s => s.Invoices)
-            //     .HasForeignKey(i => i.SubscriptionId);
         }
     }
 

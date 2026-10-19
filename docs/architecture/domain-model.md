@@ -363,18 +363,11 @@ classDiagram
         +DateTime PeriodEnd
     }
 
-    class SubscriptionInvoice {
-        +Guid TenantId
-        +Tenant Tenant
-        +Guid SubscriptionId
-    }
-
     Invoice <|-- LoadInvoice
     Invoice <|-- PayrollInvoice
-    Invoice <|-- SubscriptionInvoice
 ```
 
-`LoadInvoice` and `PayrollInvoice` live in the **tenant DB**; `SubscriptionInvoice` lives in the **master DB** (platform billing). The base class implements both `IMasterEntity` and `ITenantEntity` so each subclass can be picked up by the right `DbContext`.
+Invoices and payments live in the **tenant DB** only. The tenant's own platform subscription is billed by Stripe and tracked on the master `Subscription`; it has no invoice rows.
 
 ## Value objects
 
