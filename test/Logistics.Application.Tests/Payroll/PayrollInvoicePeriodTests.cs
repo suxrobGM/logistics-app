@@ -30,11 +30,14 @@ public class PayrollInvoicePeriodTests
     [InlineData("2026-10-04", "2026-10-10", 1)] // Sunday to Saturday
     [InlineData("2026-10-05", "2026-10-11", 1)] // Monday to Sunday
     [InlineData("2026-10-04", "2026-10-17", 2)]
-    [InlineData("2026-10-04", "2026-10-14", 2)] // leftover days count when the period starts on Sunday
-    [InlineData("2026-10-05", "2026-10-15", 1)] // and are dropped otherwise
+    [InlineData("2026-10-04", "2026-10-14", 2)] // a partial week counts as a full one
+    [InlineData("2026-10-05", "2026-10-15", 2)] // whatever weekday the period starts on
     [InlineData("2026-10-04", "2026-10-06", 1)]
-    [InlineData("2026-10-05", "2026-10-07", 0)]
-    public void PeriodWeeks_CountsWholeWeeksAndSundayStartedRemainders(string start, string end, int expected)
+    [InlineData("2026-10-05", "2026-10-07", 1)]
+    [InlineData("2026-10-05", "2026-10-09", 1)] // Monday to Friday
+    [InlineData("2026-10-07", "2026-10-07", 1)] // a single day
+    [InlineData("2026-10-07", "2026-10-21", 3)] // 15 days
+    public void PeriodWeeks_RoundsPartialWeeksUp(string start, string end, int expected)
     {
         Assert.Equal(expected, Period(DateOnly.Parse(start), DateOnly.Parse(end)).PeriodWeeks());
     }
@@ -45,6 +48,8 @@ public class PayrollInvoicePeriodTests
     [InlineData("2025-12-01", "2026-01-31", 2)]
     [InlineData("2026-10-15", "2026-11-15", 2)]
     [InlineData("2026-10-15", "2026-11-14", 1)] // the last month ends before the start day
+    [InlineData("2026-10-15", "2026-10-20", 1)] // a partial month counts as a full one
+    [InlineData("2026-10-20", "2026-11-25", 2)]
     public void PeriodMonths_CountsTheStartMonth(string start, string end, int expected)
     {
         Assert.Equal(expected, Period(DateOnly.Parse(start), DateOnly.Parse(end)).PeriodMonths());

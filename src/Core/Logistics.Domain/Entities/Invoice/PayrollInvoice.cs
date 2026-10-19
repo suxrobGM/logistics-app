@@ -24,19 +24,19 @@ public partial class PayrollInvoice : Invoice
             PeriodEnd.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc));
 
     /// <summary>
-    /// Weeks a weekly salary pays for: the whole weeks, plus one for the leftover days only when the period
-    /// starts on Sunday, the first day of the pay week.
+    /// Weeks a weekly salary pays for: the period's days, both dates included, divided by 7 and rounded
+    /// up, so a partial week pays as a full one whatever weekday the period starts on.
     /// </summary>
     public int PeriodWeeks()
     {
         var days = PeriodEnd.DayNumber - PeriodStart.DayNumber + 1;
-        var weeks = days / 7;
-        return days % 7 > 0 && PeriodStart.DayOfWeek == DayOfWeek.Sunday ? weeks + 1 : weeks;
+        return (int)Math.Ceiling(days / 7.0);
     }
 
     /// <summary>
-    /// Months a monthly salary pays for, counting the start month. A last month that ends before the start
-    /// day of the month is not counted.
+    /// Months a monthly salary pays for, counting the start month, so a partial month pays as a full
+    /// one. A last month that ends before the start day of the month is not counted: the month before
+    /// it already reached that day.
     /// </summary>
     public int PeriodMonths()
     {
