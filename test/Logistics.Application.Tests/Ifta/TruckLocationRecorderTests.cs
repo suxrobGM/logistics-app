@@ -22,27 +22,26 @@ public class TruckLocationRecorderTests
 
     private readonly ITenantRepository<TruckLocationHistory, Guid> _historyRepo =
         Substitute.For<ITenantRepository<TruckLocationHistory, Guid>>();
-    private readonly ITenantRepository<TruckJurisdictionMileage, Guid> _rollupRepo =
-        Substitute.For<ITenantRepository<TruckJurisdictionMileage, Guid>>();
 
     private readonly Truck _truck = new() { Number = "T-100", Type = TruckType.FreightTruck };
     private readonly TruckLocationRecorder _sut;
+    private FormattableString? _upsert;
 
     public TruckLocationRecorderTests()
     {
         _tenantUow.Repository<TruckLocationHistory>().Returns(_historyRepo);
-        _tenantUow.Repository<TruckJurisdictionMileage>().Returns(_rollupRepo);
+        _tenantUow.ExecuteSqlAsync(Arg.Do<FormattableString>(sql => _upsert = sql), Arg.Any<CancellationToken>())
+            .Returns(1);
 
         SetupPrevious(null);
-        _rollupRepo.GetAsync(
-                Arg.Any<System.Linq.Expressions.Expression<Func<TruckJurisdictionMileage, bool>>>(),
-                Arg.Any<CancellationToken>())
-            .Returns((TruckJurisdictionMileage?)null);
         _resolver.Resolve(Arg.Any<GeoPoint>())
             .Returns(new TaxJurisdiction { CountryCode = "US", Region = "TX" });
 
         _sut = new TruckLocationRecorder(_tenantUow, _resolver, NullLogger<TruckLocationRecorder>.Instance);
     }
+
+    private decimal AccruedMiles => (decimal)_upsert!.GetArgument(3)!;
+    private string? AccruedRegion => (string?)_upsert!.GetArgument(5);
 
     private void SetupPrevious(TruckLocationHistory? previous)
     {
@@ -64,47 +63,37 @@ public class TruckLocationRecorderTests
         await _sut.RecordAsync(_truck, Dallas, DateTime.UtcNow);
 
         await _historyRepo.Received(1).AddAsync(Arg.Any<TruckLocationHistory>(), Arg.Any<CancellationToken>());
-        await _rollupRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        Assert.Null(_upsert);
         Assert.Equal(Dallas, _truck.CurrentLocation);
     }
 
     [Fact]
-    public async Task Record_NormalSegment_AccruesJurisdictionMiles()
+    public async Task Record_NormalSegment_UpsertsJurisdictionMiles()
     {
         var now = DateTime.UtcNow;
         SetupPrevious(Previous(Dallas, now.AddHours(-1)));
 
         await _sut.RecordAsync(_truck, FortWorth, now);
 
-        await _rollupRepo.Received(1).AddAsync(
-            Arg.Is<TruckJurisdictionMileage>(m =>
-                m.TruckId == _truck.Id
-                && m.Jurisdiction.Region == "TX"
-                && m.Miles > 25 && m.Miles < 40),
-            Arg.Any<CancellationToken>());
+        Assert.NotNull(_upsert);
+        Assert.Equal(_truck.Id, _upsert.GetArgument(1));
+        Assert.Equal(DateOnly.FromDateTime(now), _upsert.GetArgument(2));
+        Assert.InRange(AccruedMiles, 25m, 40m);
+        Assert.Equal("US", _upsert.GetArgument(4));
+        Assert.Equal("TX", AccruedRegion);
     }
 
     [Fact]
-    public async Task Record_ExistingRollup_AccumulatesMiles()
+    public async Task Record_NormalSegment_AddsToAnExistingRowAtomically()
     {
         var now = DateTime.UtcNow;
         SetupPrevious(Previous(Dallas, now.AddHours(-1)));
-        var rollup = new TruckJurisdictionMileage
-        {
-            TruckId = _truck.Id,
-            Jurisdiction = new TaxJurisdiction { CountryCode = "US", Region = "TX" },
-            Date = DateOnly.FromDateTime(now),
-            Miles = 100
-        };
-        _rollupRepo.GetAsync(
-                Arg.Any<System.Linq.Expressions.Expression<Func<TruckJurisdictionMileage, bool>>>(),
-                Arg.Any<CancellationToken>())
-            .Returns(rollup);
 
         await _sut.RecordAsync(_truck, FortWorth, now);
 
-        Assert.True(rollup.Miles > 125);
-        await _rollupRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        var sql = _upsert!.Format;
+        Assert.Contains("ON CONFLICT (truck_id, date, jurisdiction_country_code, jurisdiction_region)", sql);
+        Assert.Contains("miles = truck_jurisdiction_mileage.miles + excluded.miles", sql);
     }
 
     [Fact]
@@ -117,7 +106,7 @@ public class TruckLocationRecorderTests
         await _sut.RecordAsync(_truck, Chicago, now);
 
         await _historyRepo.Received(1).AddAsync(Arg.Any<TruckLocationHistory>(), Arg.Any<CancellationToken>());
-        await _rollupRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        Assert.Null(_upsert);
     }
 
     [Fact]
@@ -129,9 +118,7 @@ public class TruckLocationRecorderTests
 
         await _sut.RecordAsync(_truck, Chicago, now);
 
-        await _rollupRepo.Received(1).AddAsync(
-            Arg.Is<TruckJurisdictionMileage>(m => m.Miles > 700),
-            Arg.Any<CancellationToken>());
+        Assert.True(AccruedMiles > 700);
     }
 
     [Fact]
@@ -143,6 +130,7 @@ public class TruckLocationRecorderTests
         await _sut.RecordAsync(_truck, FortWorth, now.AddMinutes(-10));
 
         await _historyRepo.DidNotReceiveWithAnyArgs().AddAsync(default!, default);
+        Assert.Null(_upsert);
     }
 
     [Fact]
@@ -154,9 +142,7 @@ public class TruckLocationRecorderTests
 
         await _sut.RecordAsync(_truck, FortWorth, now, odometerReading: 10_040);
 
-        await _rollupRepo.Received(1).AddAsync(
-            Arg.Is<TruckJurisdictionMileage>(m => m.Miles == 40),
-            Arg.Any<CancellationToken>());
+        Assert.Equal(40m, AccruedMiles);
     }
 
     [Fact]
@@ -169,8 +155,6 @@ public class TruckLocationRecorderTests
 
         await _sut.RecordAsync(_truck, FortWorth, now);
 
-        await _rollupRepo.Received(1).AddAsync(
-            Arg.Is<TruckJurisdictionMileage>(m => m.Jurisdiction.Region == "TX"),
-            Arg.Any<CancellationToken>());
+        Assert.Equal("TX", AccruedRegion);
     }
 }

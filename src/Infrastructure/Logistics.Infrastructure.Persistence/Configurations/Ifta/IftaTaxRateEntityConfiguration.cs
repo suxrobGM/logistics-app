@@ -19,8 +19,10 @@ internal sealed class IftaTaxRateEntityConfiguration : IEntityTypeConfiguration<
         builder.Property(r => r.RatePerGallon).HasPrecision(8, 4);
         builder.Property(r => r.SurchargeRatePerGallon).HasPrecision(8, 4);
 
-        // Row identity (year, quarter, jurisdiction) is enforced by the seeder/upsert -
-        // complex-type members can't participate in a unique index.
+        // Row identity (year, quarter, jurisdiction) is the raw-SQL unique index
+        // ux_ifta_tax_rates_year_quarter_jurisdiction (NULLS NOT DISTINCT on region), created in the migration
+        // because complex-type members can't be in an EF index. IftaTaxRateUniqueness still probes first
+        // so a duplicate gets a readable error.
         builder.HasIndex(r => new { r.Year, r.Quarter });
     }
 }

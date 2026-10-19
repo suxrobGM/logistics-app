@@ -33,6 +33,11 @@ internal abstract class UnitOfWork<TMarker>(DbContext db) : IUnitOfWork<TMarker>
         return Db.SaveChangesAsync(ct);
     }
 
+    public Task<int> ExecuteSqlAsync(FormattableString sql, CancellationToken ct = default)
+    {
+        return Db.Database.ExecuteSqlAsync(sql, ct);
+    }
+
     public async Task BeginTransactionAsync(CancellationToken ct = default)
     {
         _tx ??= await Db.Database.BeginTransactionAsync(ct);

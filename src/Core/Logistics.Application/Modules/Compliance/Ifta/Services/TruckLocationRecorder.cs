@@ -95,27 +95,17 @@ internal sealed class TruckLocationRecorder(
         }
 
         var date = DateOnly.FromDateTime(timestampUtc);
-        var rollupRepo = tenantUow.Repository<TruckJurisdictionMileage>();
-        var rollup = await rollupRepo.GetAsync(m =>
-            m.TruckId == truck.Id &&
-            m.Date == date &&
-            m.Jurisdiction.CountryCode == jurisdiction.CountryCode &&
-            m.Jurisdiction.Region == jurisdiction.Region, ct);
+        var segmentMiles = Math.Round(miles, 2);
 
-        if (rollup is null)
-        {
-            await rollupRepo.AddAsync(new TruckJurisdictionMileage
-            {
-                TruckId = truck.Id,
-                Jurisdiction = jurisdiction,
-                Date = date,
-                Miles = Math.Round(miles, 2)
-            }, ct);
-        }
-        else
-        {
-            rollup.Miles += Math.Round(miles, 2);
-        }
+        // One atomic statement against the (truck, date, jurisdiction) unique index, NULLS NOT DISTINCT on
+        // region: concurrent pings for the same day add up instead of racing a read-then-insert.
+        await tenantUow.ExecuteSqlAsync($"""
+            INSERT INTO truck_jurisdiction_mileage
+                (id, truck_id, date, miles, jurisdiction_country_code, jurisdiction_region)
+            VALUES ({Guid.NewGuid()}, {truck.Id}, {date}, {segmentMiles}, {jurisdiction.CountryCode}, {jurisdiction.Region})
+            ON CONFLICT (truck_id, date, jurisdiction_country_code, jurisdiction_region)
+            DO UPDATE SET miles = truck_jurisdiction_mileage.miles + excluded.miles
+            """, ct);
     }
 
     /// <summary>

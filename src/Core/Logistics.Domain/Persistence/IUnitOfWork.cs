@@ -30,6 +30,13 @@ public interface IUnitOfWork<in TMarker> : IDisposable
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 
     /// <summary>
+    ///     Runs one SQL command immediately, with every interpolated value sent as a parameter. For an
+    ///     atomic statement EF cannot express, such as an upsert. It bypasses change tracking: tracked
+    ///     entities are not refreshed and pending changes are not saved.
+    /// </summary>
+    Task<int> ExecuteSqlAsync(FormattableString sql, CancellationToken ct = default);
+
+    /// <summary>
     ///     Begins a database transaction (idempotent; does nothing if one is already active).
     /// </summary>
     Task BeginTransactionAsync(CancellationToken ct = default);
