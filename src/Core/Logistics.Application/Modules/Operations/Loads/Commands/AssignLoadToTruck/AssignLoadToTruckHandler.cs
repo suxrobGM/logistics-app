@@ -18,26 +18,35 @@ internal sealed class AssignLoadToTruckHandler(ITenantUnitOfWork tenantUow) : IR
             return Result.Fail($"Load not found with ID '{req.LoadId}'");
         }
 
-        if (req.TruckId != load.AssignedTruckId && load.TruckChangeBlockedReason() is { } blocked)
+        if (req.TruckId == load.AssignedTruckId)
+        {
+            return Result.Ok();
+        }
+
+        if (load.TruckChangeBlockedReason() is { } blocked)
         {
             return Result.Fail(blocked);
         }
 
-        if (req.TruckId is { } truckId)
+        if (req.TruckId is not { } truckId)
         {
-            var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckId, ct);
-            if (truck is null)
-            {
-                return Result.Fail($"Truck not found with ID '{truckId}'");
-            }
-
-            if (TruckLoadCompatibility.DescribeMismatch(truck.Number, truck.Type, load.Type) is { } mismatch)
-            {
-                return Result.Fail(mismatch);
-            }
+            load.UnassignTruck();
+            await tenantUow.SaveChangesAsync(ct);
+            return Result.Ok();
         }
 
-        load.AssignedTruckId = req.TruckId;
+        var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckId, ct);
+        if (truck is null)
+        {
+            return Result.Fail($"Truck not found with ID '{truckId}'");
+        }
+
+        if (TruckLoadCompatibility.DescribeMismatch(truck.Number, truck.Type, load.Type) is { } mismatch)
+        {
+            return Result.Fail(mismatch);
+        }
+
+        load.AssignToTruck(truck);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

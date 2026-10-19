@@ -1,7 +1,9 @@
 using System.Linq.Expressions;
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using MockQueryable;
 using NSubstitute;
 using Xunit;
@@ -12,6 +14,7 @@ public class BulkAssignLoadsHandlerTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly List<Load> _loads = [];
+    private readonly Truck _truck = new() { Number = "T-1", Type = TruckType.FreightTruck };
     private readonly BulkAssignLoadsHandler _sut;
 
     public BulkAssignLoadsHandlerTests()
@@ -21,19 +24,22 @@ public class BulkAssignLoadsHandlerTests
         repo.GetListAsync(Arg.Any<Expression<Func<Load, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(ci => _loads.Where(ci.Arg<Expression<Func<Load, bool>>>().Compile()).ToList());
         _tenantUow.Repository<Load>().Returns(repo);
+        var truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
+        truckRepo.GetByIdAsync(_truck.Id, Arg.Any<CancellationToken>()).Returns(_truck);
+        _tenantUow.Repository<Truck>().Returns(truckRepo);
         _sut = new BulkAssignLoadsHandler(_tenantUow);
     }
 
     [Fact]
-    public async Task Handle_LoadsOffTrip_AssignsEveryLoad()
+    public async Task Handle_LoadsOffTrip_AssignsAndNotifiesEveryLoad()
     {
         _loads.AddRange([LoadInvoiceChargesTests.NewLoad(), LoadInvoiceChargesTests.NewLoad()]);
-        var truckId = Guid.NewGuid();
 
-        var result = await Handle(truckId);
+        var result = await Handle(_truck.Id);
 
         Assert.True(result.IsSuccess);
-        Assert.All(_loads, l => Assert.Equal(truckId, l.AssignedTruckId));
+        Assert.All(_loads, l => Assert.Equal(_truck.Id, l.AssignedTruckId));
+        Assert.All(_loads, l => Assert.Single(l.DomainEvents.OfType<LoadAssignedToTruckEvent>()));
     }
 
     [Fact]

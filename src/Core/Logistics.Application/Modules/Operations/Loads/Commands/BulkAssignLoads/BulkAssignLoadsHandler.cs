@@ -30,9 +30,15 @@ internal sealed class BulkAssignLoadsHandler(ITenantUnitOfWork tenantUow) : IReq
             return Result.Fail($"Loads {numbers} are on a trip, which sets their truck. Change the trip's truck instead.");
         }
 
-        foreach (var load in loads)
+        var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
+        if (truck is null)
         {
-            load.AssignedTruckId = req.TruckId;
+            return Result.Fail($"Truck not found with ID '{req.TruckId}'");
+        }
+
+        foreach (var load in loads.Where(l => l.AssignedTruckId != truck.Id))
+        {
+            load.AssignToTruck(truck);
         }
 
         await tenantUow.SaveChangesAsync(ct);

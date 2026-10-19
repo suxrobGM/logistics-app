@@ -111,7 +111,23 @@ internal sealed class LoadImporter(
             }
 
             ResolveTruck(draft, trucks, drivers);
+
+            if (TruckChangeError(draft) is { } truckError)
+            {
+                draft.Errors.Add(truckError);
+            }
         }
+    }
+
+    /// <summary>Why an existing load's truck can't change to the row's truck; null when it can or doesn't change.</summary>
+    private static string? TruckChangeError(Draft draft)
+    {
+        if (draft.Existing is not { } load || draft.Truck is not { } truck)
+        {
+            return null;
+        }
+
+        return truck.Id == load.AssignedTruckId ? null : load.TruckChangeBlockedReason();
     }
 
     protected override async Task WriteAsync(IReadOnlyList<Draft> drafts, ImportOptions options, CancellationToken ct)
@@ -121,8 +137,11 @@ internal sealed class LoadImporter(
         {
             if (draft.Existing is { } load)
             {
-                load.AssignedTruck = draft.Truck ?? load.AssignedTruck;
-                load.AssignedTruckId = draft.Truck?.Id ?? load.AssignedTruckId;
+                if (draft.Truck is { } truck && truck.Id != load.AssignedTruckId)
+                {
+                    load.AssignToTruck(truck);
+                }
+
                 load.RequestedPickupDate = draft.PickupDate ?? load.RequestedPickupDate;
                 load.RequestedDeliveryDate = draft.DeliveryDate ?? load.RequestedDeliveryDate;
                 load.Notes = draft.Row.Get(Notes) ?? load.Notes;

@@ -28,6 +28,16 @@ public partial class Load
     }
 
     /// <summary>
+    /// Takes this load off its truck and raises LoadRemovedFromTruckEvent for it.
+    /// </summary>
+    public void UnassignTruck()
+    {
+        MarkRemovedFromTruck();
+        AssignedTruckId = null;
+        AssignedTruck = null;
+    }
+
+    /// <summary>
     /// Marks this load as removed from the truck and raises LoadRemovedFromTruckEvent.
     /// </summary>
     public void MarkRemovedFromTruck()

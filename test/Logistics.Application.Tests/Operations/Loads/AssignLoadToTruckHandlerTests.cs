@@ -1,5 +1,6 @@
 using Logistics.Application.Modules.Operations.Loads.Commands;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using NSubstitute;
@@ -30,6 +31,7 @@ public class AssignLoadToTruckHandlerTests
 
         Assert.True(result.IsSuccess);
         Assert.Equal(truck.Id, load.AssignedTruckId);
+        Assert.Single(load.DomainEvents.OfType<LoadAssignedToTruckEvent>());
         await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
@@ -62,11 +64,13 @@ public class AssignLoadToTruckHandlerTests
     {
         var (load, truck) = Wire(LoadType.Vehicle, TruckType.CarHauler);
         load.AssignedTruckId = truck.Id;
+        load.AssignedTruck = truck;
 
         var result = await _sut.Handle(new AssignLoadToTruckCommand { LoadId = load.Id, TruckId = null }, default);
 
         Assert.True(result.IsSuccess);
         Assert.Null(load.AssignedTruckId);
+        Assert.Single(load.DomainEvents.OfType<LoadRemovedFromTruckEvent>());
     }
 
     [Fact]
@@ -80,6 +84,19 @@ public class AssignLoadToTruckHandlerTests
 
         Assert.Contains("Change the trip's truck instead.", result.Error);
         Assert.Null(load.AssignedTruckId);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_SameTruck_SucceedsWithoutNotifying()
+    {
+        var (load, truck) = Wire(LoadType.GeneralFreight, TruckType.FreightTruck);
+        load.AssignedTruckId = truck.Id;
+
+        var result = await _sut.Handle(new AssignLoadToTruckCommand { LoadId = load.Id, TruckId = truck.Id }, default);
+
+        Assert.True(result.IsSuccess);
+        Assert.Empty(load.DomainEvents);
         await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
