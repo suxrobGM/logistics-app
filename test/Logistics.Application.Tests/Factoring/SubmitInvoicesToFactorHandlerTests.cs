@@ -4,6 +4,7 @@ using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Email.Models;
 using Logistics.Application.Abstractions.Storage;
 using Logistics.Application.Modules.Financial.Factoring.Commands;
+using Logistics.Application.Modules.Financial.Factoring.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -66,7 +67,7 @@ public class SubmitInvoicesToFactorHandlerTests
         var schedulePdf = Substitute.For<IFactoringSchedulePdfService>();
         schedulePdf.GenerateSchedulePdf(Arg.Any<FactoringBatch>(), Arg.Any<Tenant>()).Returns([8]);
 
-        _sut = new SubmitInvoicesToFactorHandler(_tenantUow, invoicePdf, schedulePdf, _blobStorage, _emailSender,
+        _sut = new SubmitInvoicesToFactorHandler(_tenantUow, new FactoringBatchDtoBuilder(_tenantUow), invoicePdf, schedulePdf, _blobStorage, _emailSender,
             _templates, NullLogger<SubmitInvoicesToFactorHandler>.Instance);
     }
 

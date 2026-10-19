@@ -6,14 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Financial.Factoring.Services;
 
-/// <summary>
-/// Builds schedule DTOs with their invoice details in one query per kind of row, instead of walking the
-/// lazy navigations per item.
-/// </summary>
-internal static class FactoringBatchDtos
+internal sealed class FactoringBatchDtoBuilder(ITenantUnitOfWork tenantUow) : IFactoringBatchDtoBuilder
 {
-    public static async Task<FactoringBatchDto> DetailAsync(
-        ITenantUnitOfWork tenantUow, FactoringBatch batch, CancellationToken ct)
+    public async Task<FactoringBatchDto> BuildAsync(FactoringBatch batch, CancellationToken ct)
     {
         var company = await tenantUow.Repository<FactoringCompany>().GetByIdAsync(batch.FactoringCompanyId, ct);
         var items = await tenantUow.Repository<FactoringBatchItem>().GetListAsync(i => i.BatchId == batch.Id, ct);

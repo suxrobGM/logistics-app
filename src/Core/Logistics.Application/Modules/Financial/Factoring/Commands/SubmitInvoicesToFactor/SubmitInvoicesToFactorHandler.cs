@@ -15,6 +15,7 @@ namespace Logistics.Application.Modules.Financial.Factoring.Commands;
 
 internal sealed class SubmitInvoicesToFactorHandler(
     ITenantUnitOfWork tenantUow,
+    IFactoringBatchDtoBuilder batchDtoBuilder,
     IInvoicePdfService invoicePdfService,
     IFactoringSchedulePdfService schedulePdfService,
     IBlobStorageService blobStorage,
@@ -126,7 +127,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
         logger.LogInformation(
             "Submitted schedule {Number} with {Count} invoices to factoring company {FactoringCompanyId}",
             batch.Number, invoices.Count, company.Id);
-        return Result<FactoringBatchDto>.Ok(await FactoringBatchDtos.DetailAsync(tenantUow, batch, ct));
+        return Result<FactoringBatchDto>.Ok(await batchDtoBuilder.BuildAsync(batch, ct));
     }
 
     private static Guid? SingleFactorOf(IEnumerable<LoadInvoice> invoices)
