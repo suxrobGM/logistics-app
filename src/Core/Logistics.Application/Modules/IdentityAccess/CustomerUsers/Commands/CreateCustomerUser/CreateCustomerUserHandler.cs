@@ -8,7 +8,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.CustomerUsers.Commands;
 
-internal sealed class CreateCustomerUserHandler(ITenantUnitOfWork tenantUow)
+internal sealed class CreateCustomerUserHandler(ITenantUnitOfWork tenantUow, ICustomerPortalAccess portalAccess)
     : IRequestHandler<CreateCustomerUserCommand, Result<CustomerUserDto>>
 {
     public async Task<Result<CustomerUserDto>> Handle(CreateCustomerUserCommand req, CancellationToken ct)
@@ -29,7 +29,7 @@ internal sealed class CreateCustomerUserHandler(ITenantUnitOfWork tenantUow)
             return Result<CustomerUserDto>.Fail("A customer user already exists for this user and customer.");
         }
 
-        if (await CustomerPortalAccess.HasActiveAsync(tenantUow, req.UserId, ct))
+        if (await portalAccess.HasActiveAsync(req.UserId, ct))
         {
             return Result<CustomerUserDto>.Fail(CustomerPortalAccess.AlreadyActiveMessage);
         }

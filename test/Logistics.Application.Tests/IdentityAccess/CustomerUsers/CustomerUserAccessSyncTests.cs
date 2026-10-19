@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Commands;
+using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -42,7 +43,7 @@ public class CustomerUserAccessSyncTests
     [Fact]
     public async Task DeleteCustomerUser_WithAccessRow_DeletesBoth()
     {
-        var sut = new DeleteCustomerUserHandler(_tenantUow, _masterUow);
+        var sut = new DeleteCustomerUserHandler(_tenantUow, _masterUow, new CustomerPortalAccess(_tenantUow, _masterUow));
 
         var result = await sut.Handle(new DeleteCustomerUserCommand { Id = _customerUser.Id }, CancellationToken.None);
 
@@ -55,7 +56,7 @@ public class CustomerUserAccessSyncTests
     [Fact]
     public async Task UpdateCustomerUser_Deactivate_DeactivatesAccessRow()
     {
-        var sut = new UpdateCustomerUserHandler(_tenantUow, _masterUow);
+        var sut = new UpdateCustomerUserHandler(_tenantUow, _masterUow, new CustomerPortalAccess(_tenantUow, _masterUow));
 
         var result = await sut.Handle(
             new UpdateCustomerUserCommand { Id = _customerUser.Id, IsActive = false },
@@ -74,7 +75,7 @@ public class CustomerUserAccessSyncTests
         var other = new CustomerUser { UserId = _customerUser.UserId, CustomerId = Guid.NewGuid(), Email = "a@b.c" };
         _customerUserRepo.GetAsync(Arg.Any<Expression<Func<CustomerUser, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(ci => new[] { _customerUser, other }.FirstOrDefault(ci.Arg<Expression<Func<CustomerUser, bool>>>().Compile()));
-        var sut = new UpdateCustomerUserHandler(_tenantUow, _masterUow);
+        var sut = new UpdateCustomerUserHandler(_tenantUow, _masterUow, new CustomerPortalAccess(_tenantUow, _masterUow));
 
         var result = await sut.Handle(
             new UpdateCustomerUserCommand { Id = _customerUser.Id, IsActive = true },

@@ -18,7 +18,8 @@ internal sealed class AcceptInvitationHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     UserManager<User> userManager,
-    INotificationService notificationService)
+    INotificationService notificationService,
+    ICustomerPortalAccess portalAccess)
     : IRequestHandler<AcceptInvitationCommand, Result<AcceptInvitationResult>>
 {
     public async Task<Result<AcceptInvitationResult>> Handle(AcceptInvitationCommand req, CancellationToken ct)
@@ -241,7 +242,7 @@ internal sealed class AcceptInvitationHandler(
             return Result.Fail("User is already associated with this customer.");
         }
 
-        if (await CustomerPortalAccess.HasActiveAsync(tenantUow, user.Id, ct))
+        if (await portalAccess.HasActiveAsync(user.Id, ct))
         {
             return Result.Fail(CustomerPortalAccess.AlreadyActiveMessage);
         }

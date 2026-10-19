@@ -7,7 +7,10 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.CustomerUsers.Commands;
 
-internal sealed class UpdateCustomerUserHandler(ITenantUnitOfWork tenantUow, IMasterUnitOfWork masterUow)
+internal sealed class UpdateCustomerUserHandler(
+    ITenantUnitOfWork tenantUow,
+    IMasterUnitOfWork masterUow,
+    ICustomerPortalAccess portalAccess)
     : IRequestHandler<UpdateCustomerUserCommand, Result>
 {
     public async Task<Result> Handle(UpdateCustomerUserCommand req, CancellationToken ct)
@@ -26,14 +29,14 @@ internal sealed class UpdateCustomerUserHandler(ITenantUnitOfWork tenantUow, IMa
 
         if (req.IsActive is { } isActive && isActive != customerUser.IsActive)
         {
-            if (isActive && await CustomerPortalAccess.HasActiveAsync(tenantUow, customerUser.UserId, ct))
+            if (isActive && await portalAccess.HasActiveAsync(customerUser.UserId, ct))
             {
                 return Result.Fail(CustomerPortalAccess.AlreadyActiveMessage);
             }
 
             customerUser.IsActive = isActive;
 
-            var access = await CustomerPortalAccess.FindAsync(tenantUow, masterUow, customerUser.Id, ct);
+            var access = await portalAccess.FindAsync(customerUser.Id, ct);
 
             if (access is not null)
             {

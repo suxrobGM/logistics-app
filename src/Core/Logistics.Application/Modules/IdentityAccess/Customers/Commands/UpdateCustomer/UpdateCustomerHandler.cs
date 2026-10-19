@@ -9,7 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.IdentityAccess.Customers.Commands;
 
-internal sealed class UpdateCustomerHandler(ITenantUnitOfWork tenantUow, IMasterUnitOfWork masterUow)
+internal sealed class UpdateCustomerHandler(
+    ITenantUnitOfWork tenantUow,
+    IMasterUnitOfWork masterUow,
+    ICustomerPortalAccess portalAccess)
     : IRequestHandler<UpdateCustomerCommand, Result>
 {
     public async Task<Result> Handle(UpdateCustomerCommand req, CancellationToken ct)
@@ -56,7 +59,7 @@ internal sealed class UpdateCustomerHandler(ITenantUnitOfWork tenantUow, IMaster
 
     private async Task RenamePortalAccessAsync(Customer customer, CancellationToken ct)
     {
-        var accesses = await CustomerPortalAccess.ListForCustomerAsync(tenantUow, masterUow, customer.Id, ct);
+        var accesses = await portalAccess.ListForCustomerAsync(customer.Id, ct);
         if (accesses.Count == 0)
         {
             return;

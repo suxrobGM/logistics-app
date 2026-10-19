@@ -7,7 +7,10 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.Customers.Commands;
 
-internal sealed class DeleteCustomerHandler(ITenantUnitOfWork tenantUow, IMasterUnitOfWork masterUow)
+internal sealed class DeleteCustomerHandler(
+    ITenantUnitOfWork tenantUow,
+    IMasterUnitOfWork masterUow,
+    ICustomerPortalAccess portalAccess)
     : IRequestHandler<DeleteCustomerCommand, Result>
 {
     public async Task<Result> Handle(DeleteCustomerCommand req, CancellationToken ct)
@@ -20,7 +23,7 @@ internal sealed class DeleteCustomerHandler(ITenantUnitOfWork tenantUow, IMaster
         }
 
         // The delete cascades to the customer's portal users; their master access rows go first.
-        var accesses = await CustomerPortalAccess.ListForCustomerAsync(tenantUow, masterUow, customer.Id, ct);
+        var accesses = await portalAccess.ListForCustomerAsync(customer.Id, ct);
         if (accesses.Count > 0)
         {
             foreach (var access in accesses)
