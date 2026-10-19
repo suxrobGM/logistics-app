@@ -69,8 +69,13 @@ public class Login(
         var employee = await tenantUow.Repository<Employee>()
             .GetByIdAsync(user.Id, ct);
 
-        var roleName = employee?.Role?.Name;
-        var chatRole = TelegramRecipients.RoleOf(roleName);
+        if (employee is null)
+        {
+            ErrorMessage = "Only employees of your company can connect the bot.";
+            return Page();
+        }
+
+        var chatRole = TelegramRecipients.RoleOf(employee.Role?.Name);
 
         // For group chats, require Owner/Admin/Manager role
         if (loginState.ChatType == TelegramChatType.Group)

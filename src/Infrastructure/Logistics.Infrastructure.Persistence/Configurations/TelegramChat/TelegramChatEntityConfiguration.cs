@@ -14,5 +14,10 @@ internal sealed class TelegramChatEntityConfiguration : IEntityTypeConfiguration
 
         builder.HasIndex(t => t.ChatId).IsUnique();
         builder.HasIndex(t => t.UserId);
+
+        builder.HasOne<Employee>()
+            .WithMany()
+            .HasForeignKey(t => t.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -794,11 +794,28 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 UPDATE trucks SET secondary_driver_id = NULL
                 WHERE secondary_driver_id IN (SELECT id FROM employees WHERE status <> 'active');
                 """);
+
+            migrationBuilder.Sql("""
+                DELETE FROM telegram_chats c
+                WHERE c.user_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM employees e WHERE e.id = c.user_id);
+                """);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_telegram_chats_employees_user_id",
+                table: "telegram_chats",
+                column: "user_id",
+                principalTable: "employees",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "fk_telegram_chats_employees_user_id",
+                table: "telegram_chats");
+
             migrationBuilder.Sql("""
                 DROP INDEX IF EXISTS ux_customers_name_lower;
                 DROP INDEX IF EXISTS ux_employees_email_lower;

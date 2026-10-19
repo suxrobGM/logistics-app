@@ -7469,6 +7469,15 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Truck");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.TelegramChat", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("fk_telegram_chats_employees_user_id");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.TenantRoleClaim", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.TenantRole", "Role")

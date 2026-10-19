@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
@@ -13,7 +12,7 @@ namespace Logistics.Application.Tests.IdentityAccess.Employees;
 public class DeleteEmployeeHandlerTests
 {
     [Fact]
-    public async Task Handle_RemovesTheEmployeesTelegramChats()
+    public async Task Handle_DeletesTheEmployee()
     {
         var tenantUow = Substitute.For<ITenantUnitOfWork>();
         var masterUow = Substitute.For<IMasterUnitOfWork>();
@@ -34,17 +33,10 @@ public class DeleteEmployeeHandlerTests
         loadRepo.Query().Returns(new List<Load>().BuildMock());
         tenantUow.Repository<Load>().Returns(loadRepo);
 
-        var chat = new TelegramChat { ChatId = 42, UserId = employee.Id };
-        var chatRepo = Substitute.For<ITenantRepository<TelegramChat, Guid>>();
-        chatRepo.GetListAsync(Arg.Any<Expression<Func<TelegramChat, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns([chat]);
-        tenantUow.Repository<TelegramChat>().Returns(chatRepo);
-
         var result = await new DeleteEmployeeHandler(masterUow, tenantUow).Handle(
             new DeleteEmployeeCommand { UserId = employee.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        chatRepo.Received(1).Delete(chat);
         employeeRepo.Received(1).Delete(employee);
     }
 }

@@ -41,13 +41,6 @@ internal sealed class DeleteEmployeeHandler(
             }
         }
 
-        var telegramChats = await tenantUow.Repository<TelegramChat>()
-            .GetListAsync(c => c.UserId == employee.Id, ct);
-        foreach (var chat in telegramChats)
-        {
-            tenantUow.Repository<TelegramChat>().Delete(chat);
-        }
-
         tenantUow.Repository<Employee>().Delete(employee);
         await tenantUow.SaveChangesAsync();
         await masterUow.SaveChangesAsync();
