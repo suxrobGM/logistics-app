@@ -37,10 +37,26 @@ public class UserController(IMediator mediator, IUserPermissionService userPermi
         return Ok(permissions);
     }
 
+    [HttpGet("me", Name = "GetCurrentUser")]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        if (User.GetUserId() is not { } userId)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
+
+        var result = await mediator.Send(new GetUserByIdQuery { UserId = userId.ToString() });
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
+    }
+
     [HttpGet("{id:guid}", Name = "GetUserById")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permission.User.View)]
+    [Authorize(Policy = Permission.User.Manage)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await mediator.Send(new GetUserByIdQuery { UserId = id });

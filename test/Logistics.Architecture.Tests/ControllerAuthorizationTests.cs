@@ -123,6 +123,20 @@ public class ControllerAuthorizationTests
         Assert.Equal(Permission.User.Manage, policy);
     }
 
+    /// <summary>
+    /// Every role holds User.View, so gating the read on it let any user read any user's profile
+    /// across tenants. Reading someone else needs User.Manage; your own profile comes from /users/me.
+    /// </summary>
+    [Fact]
+    public void Reading_another_user_requires_user_manage()
+    {
+        var policy = typeof(UserController)
+            .GetMethod(nameof(UserController.GetById), BindingFlags.Public | BindingFlags.Instance)
+            ?.GetCustomAttribute<AuthorizeAttribute>()?.Policy;
+
+        Assert.Equal(Permission.User.Manage, policy);
+    }
+
     [Fact]
     public void Unassigned_loads_require_dispatch_view()
     {
