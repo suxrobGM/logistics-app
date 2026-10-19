@@ -39,7 +39,8 @@ internal static class AgentTranscriptReplay
 
         // Cut only at a plain chat message: starting mid-turn orphans a tool_use/tool_result pair
         // and the provider rejects the request.
-        var start = WindowStart(conversation.LastSequence);
+        var lastSequence = await rows.MaxAsync(m => (int?)m.Sequence, ct) ?? 0;
+        var start = WindowStart(lastSequence);
         var boundary = 1;
         if (start > 1)
         {

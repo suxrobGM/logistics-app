@@ -40,12 +40,13 @@ public class ProcessInboundNegotiationEmailHandlerTests
 
         _negotiation = RateNegotiation.Create(
             Guid.NewGuid(), "broker@example.com", RateFloorSnapshot.None, conversationId: Guid.NewGuid());
-        _negotiation.AddOutboundMessage("first offer");
+        _negotiation.AddOutboundMessage(1, "first offer");
 
         _tenantUow.Repository<RateNegotiation>().Returns(_negotiationRepo);
         _tenantUow.Repository<NegotiationMessage>().Returns(_messageRepo);
         _tenantUow.Repository<LoadBoardListing>().Returns(_listingRepo);
         _tenantUow.GetCurrentTenant().Returns(_tenant);
+        _tenantUow.SqlQueryAsync<int>(Arg.Any<FormattableString>(), Arg.Any<CancellationToken>()).Returns([1]);
 
         _featureService.IsFeatureEnabledAsync(_tenant.Id, TenantFeature.AIRateNegotiation).Returns(true);
 

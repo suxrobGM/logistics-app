@@ -58,12 +58,6 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     public virtual List<NegotiationMessage> Messages { get; } = [];
 
     /// <summary>
-    /// Highest sequence handed out so far. Held here so allocating the next one never reads the
-    /// Messages navigation, which lazy-loads every stored RawBody.
-    /// </summary>
-    public int LastSequence { get; private set; }
-
-    /// <summary>
     /// Reference quoted in the email subject. Derived from the listing rather than the thread so a
     /// preview rendered before the thread exists carries the same reference the sent mail will.
     /// </summary>
@@ -135,9 +129,11 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     /// Records a counter sent to the broker: consumes a round and restarts the reply window. The
     /// returned row is not added to <see cref="Messages"/> - touching that navigation lazy-loads
     /// every stored RawBody. Callers MUST register it via repository AddAsync instead (pre-generated
-    /// ids make a collection-only add save as an UPDATE and fail anyway).
+    /// ids make a collection-only add save as an UPDATE and fail anyway). <paramref name="sequence"/> must be
+    /// reserved in the database first: a counter and a broker reply can land on one thread at once.
     /// </summary>
     public NegotiationMessage AddOutboundMessage(
+        int sequence,
         string textBody,
         string? subject = null,
         Money? proposedTotalRate = null,
@@ -147,7 +143,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         var message = new NegotiationMessage
         {
             NegotiationId = Id,
-            Sequence = NextSequence(),
+            Sequence = sequence,
             Direction = NegotiationMessageDirection.Outbound,
             Subject = subject,
             TextBody = textBody,
@@ -167,9 +163,11 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
     /// Records a broker reply. A quarantined message is stored for audit but moves nothing. The
     /// returned row is not added to <see cref="Messages"/> - touching that navigation lazy-loads
     /// every stored RawBody. Callers MUST register it via repository AddAsync instead (pre-generated
-    /// ids make a collection-only add save as an UPDATE and fail anyway).
+    /// ids make a collection-only add save as an UPDATE and fail anyway). Same sequence rule as
+    /// <see cref="AddOutboundMessage"/>.
     /// </summary>
     public NegotiationMessage AddInboundMessage(
+        int sequence,
         string textBody,
         string? subject = null,
         string? rawBody = null,
@@ -182,7 +180,7 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         var message = new NegotiationMessage
         {
             NegotiationId = Id,
-            Sequence = NextSequence(),
+            Sequence = sequence,
             Direction = NegotiationMessageDirection.Inbound,
             Subject = subject,
             TextBody = textBody,
@@ -216,8 +214,6 @@ public class RateNegotiation : AuditableEntity, ITenantEntity
         CloseReason = reason;
         ClosedAt = DateTime.UtcNow;
     }
-
-    private int NextSequence() => ++LastSequence;
 
     /// <summary>
     /// 128 bits of entropy as 32 lowercase hex characters. Lowercase hex rather than base64url

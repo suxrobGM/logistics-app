@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.Common;
 using Logistics.Application.Abstractions.Negotiation;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -54,7 +55,8 @@ internal sealed class NegotiationTurnStarter(
             return;
         }
 
-        var message = conversation.AddTextMessage(AgentMessageRole.User, BuildEnvelope(negotiation, brokerText));
+        var sequence = await tenantUow.ReserveSequencesAsync(conversation, 1, ct);
+        var message = conversation.AddTextMessage(sequence, AgentMessageRole.User, BuildEnvelope(negotiation, brokerText));
         await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         await tenantUow.SaveChangesAsync(ct);
 

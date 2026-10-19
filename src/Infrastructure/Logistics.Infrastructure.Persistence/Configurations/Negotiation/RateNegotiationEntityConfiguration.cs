@@ -22,6 +22,10 @@ internal sealed class RateNegotiationEntityConfiguration : IEntityTypeConfigurat
         builder.HasIndex(n => n.Status);
         builder.HasIndex(n => n.ExpiresAt);
 
+        // The message sequence counter. Only the reservation statement in NegotiationMessageSequences reads
+        // or advances it, so no tracked copy can write a stale value back.
+        builder.Property<int>("LastSequence");
+
         builder.Property(n => n.ReplyToken)
             .HasMaxLength(64)
             .IsRequired();

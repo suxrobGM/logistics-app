@@ -31,7 +31,8 @@ internal sealed class AgentDecisionNotes(
         Func<AgentMessageDto, Task> broadcastMessageAsync,
         CancellationToken ct)
     {
-        var message = conversation.AddTextMessage(AgentMessageRole.System, note, actedByUserId);
+        var sequence = await tenantUow.ReserveSequencesAsync(conversation, 1, ct);
+        var message = conversation.AddTextMessage(sequence, AgentMessageRole.System, note, actedByUserId);
         await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         await tenantUow.SaveChangesAsync(ct);
 

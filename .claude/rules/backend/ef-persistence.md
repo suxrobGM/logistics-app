@@ -14,7 +14,8 @@ that reaches the tracker only via a tracked parent's navigation collection as an
 saves an UPDATE affecting 0 rows - a misleading `DbUpdateConcurrencyException`.
 
 ```csharp
-var message = conversation.AddTextMessage(role, text);
+var sequence = await tenantUow.ReserveSequencesAsync(conversation, 1, ct);
+var message = conversation.AddTextMessage(sequence, role, text);
 await tenantUow.Repository<AgentMessage>().AddAsync(message, ct); // without this, save throws
 await tenantUow.SaveChangesAsync(ct);
 ```

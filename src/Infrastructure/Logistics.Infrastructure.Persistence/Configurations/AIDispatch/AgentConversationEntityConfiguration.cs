@@ -15,6 +15,10 @@ internal sealed class AgentConversationEntityConfiguration : IEntityTypeConfigur
 
         builder.HasIndex(c => c.CreatedById);
 
+        // The message sequence counter. Only the reservation statement in AgentMessageSequences reads or
+        // advances it, so no tracked copy can write a stale value back.
+        builder.Property<int>("LastSequence");
+
         builder.HasMany(c => c.Messages)
             .WithOne(m => m.Conversation)
             .HasForeignKey(m => m.ConversationId)

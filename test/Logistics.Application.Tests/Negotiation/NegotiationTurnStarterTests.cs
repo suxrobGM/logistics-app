@@ -45,6 +45,7 @@ public class NegotiationTurnStarterTests
         _tenantUow.Repository<AgentMessage>().Returns(_messageRepo);
         _tenantUow.Repository<RateNegotiation>().Returns(_negotiationRepo);
         _tenantUow.GetCurrentTenant().Returns(_tenant);
+        _tenantUow.SqlQueryAsync<int>(Arg.Any<FormattableString>(), Arg.Any<CancellationToken>()).Returns([1]);
 
         _conversationRepo.GetByIdAsync(_conversation.Id, Arg.Any<CancellationToken>()).Returns(_conversation);
         _negotiationRepo.GetByIdAsync(_negotiation.Id, Arg.Any<CancellationToken>()).Returns(_negotiation);

@@ -56,7 +56,9 @@ public class AIDispatchServiceTests
         _tenantUow.Repository<AgentSession>().Returns(_sessionRepo);
         _tenantUow.Repository<AgentConversation>().Returns(_conversationRepo);
         _tenantUow.Repository<AgentMessage>().Returns(_messageRepo);
+        _messageRepo.Query().Returns(_ => new List<AgentMessage>().BuildMock());
         _tenantUow.GetCurrentTenant().Returns(_tenant);
+        _tenantUow.SqlQueryAsync<int>(Arg.Any<FormattableString>(), Arg.Any<CancellationToken>()).Returns([1]);
 
         var toolRegistry = Substitute.For<IAgentToolRegistry>();
         toolRegistry.GetDispatchAgentTools(Arg.Any<IReadOnlySet<TenantFeature>>()).Returns([]);
@@ -297,6 +299,44 @@ public class AIDispatchServiceTests
         }
 
         await _tenantUow.Received().SaveChangesAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task RunTurnAsync_AIDisabled_NoticeTakesTheSequenceReservedInTheDatabase()
+    {
+        _tenant.Settings.AIEnabled = false;
+        _tenantUow.SqlQueryAsync<int>(Arg.Any<FormattableString>(), Arg.Any<CancellationToken>()).Returns([42]);
+        var conversation = SetConversation();
+
+        await _sut.RunTurnAsync(CreateRequest(conversation));
+
+        Assert.Equal(42, Assert.Single(AddedMessages()).Sequence);
+    }
+
+    /// <summary>
+    /// A broker reply saved mid-turn is the trigger of the turn its wake-up starts. Stamping at the
+    /// end of the turn used to claim it for the turn that never saw it.
+    /// </summary>
+    [Fact]
+    public async Task RunTurnAsync_StampsOnlyTheUserRowsWaitingAtTurnStart()
+    {
+        var conversation = SetConversation();
+        var trigger = AgentMessage.TextMessage(conversation.Id, 1, AgentMessageRole.User, "Assign load 42");
+        var brokerReply = AgentMessage.TextMessage(conversation.Id, 2, AgentMessageRole.User, "Broker reply");
+        List<AgentMessage> rows = [trigger];
+        _messageRepo.Query().Returns(_ => rows.BuildMock());
+
+        AgentSession? session = null;
+        await _sessionRepo.AddAsync(Arg.Do<AgentSession>(s => session = s), Arg.Any<CancellationToken>());
+        _broadcastService
+            .When(b => b.BroadcastTurnUpdateAsync(Arg.Any<Guid>(), Arg.Any<AgentTurnUpdateDto>()))
+            .Do(_ => rows.Add(brokerReply));
+
+        await _sut.RunTurnAsync(CreateRequest(conversation));
+
+        Assert.NotNull(session);
+        Assert.Equal(session.Id, trigger.SessionId);
+        Assert.Null(brokerReply.SessionId);
     }
 
     #endregion

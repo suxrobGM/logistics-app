@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Application.Abstractions.AI;
 using Logistics.Application.Abstractions.AIDispatch;
+using Logistics.Application.Modules.Integrations.Agents.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -75,6 +76,7 @@ internal sealed class AgentTurnService(
         };
 
         await tenantUow.Repository<AgentSession>().AddAsync(session, ct);
+        await StampTriggerMessagesAsync(conversation, session, ct);
         await tenantUow.SaveChangesAsync(ct);
 
         var linkedCt = cancellationRegistry.Register(
@@ -118,7 +120,7 @@ internal sealed class AgentTurnService(
         // Persist even on failure - the audit trail and the next turn's context both depend on it.
         List<AgentMessage> newMessages = state is null
             ? []
-            : await PersistTurnMessagesAsync(conversation, session, state.Messages.Skip(priorMessageCount));
+            : await PersistTurnMessagesAsync(conversation, session, state.Messages.Skip(priorMessageCount).ToList());
 
         conversation.Title ??= await DeriveTitleAsync(conversation);
         conversation.LastMessageAt = DateTime.UtcNow;
@@ -135,31 +137,48 @@ internal sealed class AgentTurnService(
     }
 
     /// <summary>
+    /// The user rows this turn answers were saved before its session existed: the dispatcher's
+    /// message, plus any broker reply that landed while the previous turn ran. Stamped now, because a
+    /// broker reply arriving mid-turn belongs to the turn its wake-up starts, not this one.
+    /// </summary>
+    private async Task StampTriggerMessagesAsync(
+        AgentConversation conversation, AgentSession session, CancellationToken ct)
+    {
+        var triggers = await tenantUow.Repository<AgentMessage>().Query()
+            .Where(m => m.ConversationId == conversation.Id
+                && m.Role == AgentMessageRole.User
+                && m.SessionId == null)
+            .ToListAsync(ct);
+
+        foreach (var trigger in triggers)
+        {
+            trigger.SessionId = session.Id;
+        }
+    }
+
+    /// <summary>
     /// Maps the turn's appended LLM messages onto transcript rows. Tool-result rows get a null
     /// DisplayText - replayed to the provider, never rendered.
     /// </summary>
     private async Task<List<AgentMessage>> PersistTurnMessagesAsync(
         AgentConversation conversation,
         AgentSession session,
-        IEnumerable<LlmMessage> appended)
+        IReadOnlyList<LlmMessage> appended)
     {
-        // The user message that triggered this turn was created before the session existed.
-        var triggerMessage = await tenantUow.Repository<AgentMessage>().Query()
-            .Where(m => m.ConversationId == conversation.Id
-                && m.Role == AgentMessageRole.User
-                && m.SessionId == null)
-            .OrderByDescending(m => m.Sequence)
-            .FirstOrDefaultAsync(CancellationToken.None);
-        if (triggerMessage is not null)
-            triggerMessage.SessionId = session.Id;
+        if (appended.Count == 0)
+        {
+            return [];
+        }
 
-        var rows = new List<AgentMessage>();
+        var sequence = await tenantUow.ReserveSequencesAsync(conversation, appended.Count, CancellationToken.None);
+        var rows = new List<AgentMessage>(appended.Count);
         foreach (var message in appended)
         {
             var textParts = message.Content.OfType<LlmTextBlock>().Select(t => t.Text).ToList();
             var displayText = textParts.Count > 0 ? string.Join("\n\n", textParts) : null;
 
             var row = conversation.AddTurnMessage(
+                sequence++,
                 session.Id,
                 message.Role == LlmRole.Assistant ? AgentMessageRole.Assistant : AgentMessageRole.User,
                 AgentTranscriptCodec.Encode(message.Content),
@@ -179,7 +198,8 @@ internal sealed class AgentTurnService(
         AgentTurnRequest request, IAgentSurface surface, AgentConversation conversation, string notice,
         CancellationToken ct)
     {
-        var row = conversation.AddTextMessage(AgentMessageRole.System, notice);
+        var sequence = await tenantUow.ReserveSequencesAsync(conversation, 1, ct);
+        var row = conversation.AddTextMessage(sequence, AgentMessageRole.System, notice);
         await tenantUow.Repository<AgentMessage>().AddAsync(row, ct);
         conversation.EndTurn();
         await tenantUow.SaveChangesAsync(ct);

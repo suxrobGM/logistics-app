@@ -23,16 +23,16 @@ public class AgentTranscriptReplayTests
         _messageRepo.Query().Returns(_ => _rows.BuildMock());
     }
 
-    private void UserMessage(string text) => _rows.Add(_conversation.AddTextMessage(AgentMessageRole.User, text));
+    private void UserMessage(string text) => _rows.Add(_conversation.AddTextMessage(_rows.Count + 1, AgentMessageRole.User, text));
 
     /// <summary>One tool round trip: assistant tool_use, then the user-role tool_result row.</summary>
     private void ToolRound(string result)
     {
         var sessionId = Guid.NewGuid();
         var callId = Guid.NewGuid().ToString();
-        _rows.Add(_conversation.AddTurnMessage(sessionId, AgentMessageRole.Assistant,
+        _rows.Add(_conversation.AddTurnMessage(_rows.Count + 1, sessionId, AgentMessageRole.Assistant,
             AgentTranscriptCodec.Encode([new LlmToolUseBlock(callId, "get_available_trucks", null)]), null));
-        _rows.Add(_conversation.AddTurnMessage(sessionId, AgentMessageRole.User,
+        _rows.Add(_conversation.AddTurnMessage(_rows.Count + 1, sessionId, AgentMessageRole.User,
             AgentTranscriptCodec.Encode([new LlmToolResultBlock(callId, result)]), null));
     }
 

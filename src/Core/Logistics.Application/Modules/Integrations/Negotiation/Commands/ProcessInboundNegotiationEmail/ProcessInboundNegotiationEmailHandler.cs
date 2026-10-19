@@ -66,7 +66,9 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
             email.TextBody ?? email.HtmlBody ?? "", MaxRawBodyChars, ellipsis: "");
         var strippedText = EmailReplyParser.Strip(email.TextBody ?? email.HtmlBody ?? "");
 
+        var sequence = await tenantUow.ReserveSequenceAsync(negotiation, ct);
         var message = negotiation.AddInboundMessage(
+            sequence,
             textBody: senderMatches ? strippedText : "",
             subject: email.Subject ?? req.Subject,
             rawBody: rawBody,

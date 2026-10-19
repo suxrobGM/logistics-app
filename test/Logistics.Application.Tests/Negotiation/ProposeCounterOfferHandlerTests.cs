@@ -59,6 +59,7 @@ public class ProposeCounterOfferHandlerTests
         _messageRepo.Query().Returns(new List<NegotiationMessage>().BuildMock());
         _tenantUow.Repository<AgentDecision>().Returns(_decisionRepo);
         _tenantUow.GetCurrentTenant().Returns(_tenant);
+        _tenantUow.SqlQueryAsync<int>(Arg.Any<FormattableString>(), Arg.Any<CancellationToken>()).Returns([1]);
 
         _listingRepo.GetByIdAsync(_listing.Id, Arg.Any<CancellationToken>()).Returns(_listing);
         SetupActiveNegotiation(null);
@@ -420,7 +421,8 @@ public class ProposeCounterOfferHandlerTests
             Arg.Any<CancellationToken>());
         await _routeRegistry.Received(1).OpenAsync(
             Arg.Any<string>(), _tenant.Id, Arg.Any<DateTime?>(), Arg.Any<CancellationToken>());
-        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        // A new thread is saved first: its sequence counter lives on the row.
+        await _tenantUow.Received(2).SaveChangesAsync(Arg.Any<CancellationToken>());
         await _broadcastService.Received(1).BroadcastNegotiationAsync(_tenant.Id, Arg.Any<RateNegotiationDto>());
     }
 
@@ -466,9 +468,9 @@ public class ProposeCounterOfferHandlerTests
     public async Task Handle_SecondOffer_ChainsThreadHeadersAndReusesRoute()
     {
         var existing = ExistingThread(floorTotal: 2000m);
-        var first = existing.AddOutboundMessage("first offer");
+        var first = existing.AddOutboundMessage(1, "first offer");
         first.RfcMessageId = "<neg-0@mail.test.com>";
-        var reply = existing.AddInboundMessage("we want more", rfcMessageId: "<CAF-1@broker.example.com>");
+        var reply = existing.AddInboundMessage(2, "we want more", rfcMessageId: "<CAF-1@broker.example.com>");
         _messageRepo.Query().Returns(new List<NegotiationMessage> { first, reply }.BuildMock());
 
         var result = await _sut.Handle(_command, CancellationToken.None);

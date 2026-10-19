@@ -34,7 +34,6 @@ public static partial class NegotiationMapper
     [MapperIgnoreSource(nameof(RateNegotiation.LoadBoardListing))]
     [MapperIgnoreSource(nameof(RateNegotiation.Load))]
     [MapperIgnoreSource(nameof(RateNegotiation.Messages))]
-    [MapperIgnoreSource(nameof(RateNegotiation.LastSequence))]
     [MapperIgnoreSource(nameof(RateNegotiation.IsOpen))]
     [MapperIgnoreSource(nameof(RateNegotiation.CanCounter))]
     [MapperIgnoreTarget(nameof(RateNegotiationDto.Messages))]

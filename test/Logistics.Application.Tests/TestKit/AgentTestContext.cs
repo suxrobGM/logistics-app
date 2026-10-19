@@ -80,6 +80,7 @@ internal sealed class AgentTestContext
         TenantUow.Repository<AgentSession>().Returns(SessionRepo);
         TenantUow.Repository<Employee>().Returns(EmployeeRepo);
         TenantUow.GetCurrentTenant().Returns(Tenant);
+        TenantUow.SqlQueryAsync<int>(Arg.Any<FormattableString>(), Arg.Any<CancellationToken>()).Returns([1]);
         CurrentUser.GetUserId().Returns(UserId);
         SessionRepo.Query().Returns(_ => new List<AgentSession>().BuildMock());
         EmployeeRepo.Query().Returns(_ => new List<Employee>().BuildMock());

@@ -1,6 +1,9 @@
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using NSubstitute;
 using Xunit;
 
 namespace Logistics.Application.Tests.Negotiation;
@@ -10,31 +13,37 @@ public class RateNegotiationTests
     private static RateNegotiation NewThread() =>
         RateNegotiation.Create(Guid.NewGuid(), "broker@example.com", RateFloorSnapshot.None);
 
+    /// <summary>
+    /// The Messages navigation is never written, because reading it on a tracked thread lazy-loads
+    /// every stored RawBody.
+    /// </summary>
     [Fact]
-    public void AddMessage_NumbersEachOneOnce()
+    public void AddMessage_LeavesTheMessagesNavigationUntouchedAndKeepsTheReservedSequence()
     {
         var negotiation = NewThread();
+        negotiation.AddOutboundMessage(1, "offer");
 
-        var first = negotiation.AddOutboundMessage("offer");
-        var second = negotiation.AddInboundMessage("reply");
-        var third = negotiation.AddOutboundMessage("counter");
-
-        Assert.Equal([1, 2, 3], new[] { first.Sequence, second.Sequence, third.Sequence });
+        Assert.Equal(2, negotiation.AddInboundMessage(2, "reply").Sequence);
+        Assert.Empty(negotiation.Messages);
     }
 
     /// <summary>
-    /// The counter allocates on its own: the Messages navigation is never written, because reading
-    /// it on a tracked thread lazy-loads every stored RawBody.
+    /// A counter-offer and an inbound reply on the same thread used to read the same in-memory
+    /// counter, and the second save hit the unique (negotiation, sequence) index.
     /// </summary>
     [Fact]
-    public void AddMessage_LeavesTheMessagesNavigationUntouchedAndKeepsCounting()
+    public async Task ReserveSequenceAsync_AdvancesTheCounterInTheDatabase()
     {
+        var tenantUow = Substitute.For<ITenantUnitOfWork>();
         var negotiation = NewThread();
-        negotiation.AddOutboundMessage("offer");
-        negotiation.AddInboundMessage("reply");
+        FormattableString? sql = null;
+        tenantUow.SqlQueryAsync<int>(Arg.Do<FormattableString>(s => sql = s), Arg.Any<CancellationToken>())
+            .Returns([4]);
 
-        Assert.Empty(negotiation.Messages);
-        Assert.Equal(3, negotiation.AddOutboundMessage("counter").Sequence);
+        Assert.Equal(4, await tenantUow.ReserveSequenceAsync(negotiation, CancellationToken.None));
+        Assert.NotNull(sql);
+        Assert.Contains("UPDATE rate_negotiations SET last_sequence = last_sequence + 1", sql.Format);
+        Assert.Equal([negotiation.Id], sql.GetArguments());
     }
 
     #region Expiry sweep predicate

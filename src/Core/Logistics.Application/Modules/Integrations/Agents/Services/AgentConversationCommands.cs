@@ -132,7 +132,8 @@ internal sealed class AgentConversationCommands(
             }
         }
 
-        var message = conversation.AddTextMessage(AgentMessageRole.User, text.Trim(), userId);
+        var sequence = await tenantUow.ReserveSequencesAsync(conversation, 1, ct);
+        var message = conversation.AddTextMessage(sequence, AgentMessageRole.User, text.Trim(), userId);
         await tenantUow.Repository<AgentMessage>().AddAsync(message, ct);
         conversation.BeginTurn();
         await tenantUow.SaveChangesAsync(ct);

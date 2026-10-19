@@ -140,7 +140,16 @@ internal sealed class ProposeCounterOfferHandler(
                 "Could not send the counter-offer email to the broker. Nothing was changed.");
         }
 
+        // The sequence counter lives on the thread row, so a new thread is saved before reserving one.
+        if (isNewThread)
+        {
+            await negotiationRepo.AddAsync(negotiation, ct);
+            await tenantUow.SaveChangesAsync(ct);
+        }
+
+        var sequence = await tenantUow.ReserveSequenceAsync(negotiation, ct);
         var message = negotiation.AddOutboundMessage(
+            sequence,
             textBody: composed.SanitizedMessage,
             subject: composed.Subject,
             proposedTotalRate: new Money { Amount = req.ProposedTotalRate, Currency = currency },
@@ -153,11 +162,6 @@ internal sealed class ProposeCounterOfferHandler(
         if (req.ConversationId.HasValue)
         {
             negotiation.ConversationId = req.ConversationId;
-        }
-
-        if (isNewThread)
-        {
-            await negotiationRepo.AddAsync(negotiation, ct);
         }
 
         await tenantUow.Repository<NegotiationMessage>().AddAsync(message, ct);

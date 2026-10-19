@@ -1,4 +1,5 @@
 using Logistics.Application.Modules.Integrations.Negotiation;
+using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
@@ -232,6 +233,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             listing.BrokerMcNumber);
 
         await negotiations.AddAsync(negotiation, cancellationToken);
+        await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
 
         var openedAt = random.UtcDate(DateTime.UtcNow.AddHours(-96), DateTime.UtcNow.AddHours(-6));
         var askPerMile = decimal.Round(lane.FloorPerMile + 0.18m, 2);
@@ -239,6 +241,9 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
 
         Money Total(decimal perMile) =>
             new() { Amount = decimal.Round(perMile * lane.Miles, 0), Currency = currency };
+
+        Task<int> NextSequenceAsync() =>
+            context.TenantUnitOfWork.ReserveSequenceAsync(negotiation, cancellationToken);
 
         async Task AddAsync(NegotiationMessage message, double hoursIn)
         {
@@ -253,6 +258,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
 
             await AddAsync(
                 negotiation.AddInboundMessage(
+                    await NextSequenceAsync(),
                     $"Best I can do right now is {Format(counter)}. Shipper is firm on the pickup window, " +
                     "let me know quickly if that works for you.",
                     $"Re: {negotiation.Reference}",
@@ -263,6 +269,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
 
         await AddAsync(
             negotiation.AddOutboundMessage(
+                await NextSequenceAsync(),
                 OutboundBody(listing, lane, ask, askPerMile),
                 $"{negotiation.Reference} - {listing.OriginAddress.City} to {listing.DestinationAddress.City}",
                 ask,
@@ -286,6 +293,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
 
                 await AddAsync(
                     negotiation.AddOutboundMessage(
+                        await NextSequenceAsync(),
                         $"Deal at {Format(settled)} all-in. Rate confirmation to follow, dispatch will call with the driver details.",
                         $"Re: {negotiation.Reference}",
                         settled,
@@ -294,6 +302,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
 
                 await AddAsync(
                     negotiation.AddInboundMessage(
+                        await NextSequenceAsync(),
                         $"Accepted at {Format(settled)}. Rate con is attached, please sign and return today.",
                         $"Re: {negotiation.Reference}",
                         proposedTotalRate: settled),
@@ -314,6 +323,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             case NegotiationScenario.Declined:
                 await AddAsync(
                     negotiation.AddInboundMessage(
+                        await NextSequenceAsync(),
                         $"We cannot go above {Format(listing.TotalRate!)} on this one. Covering it with another carrier.",
                         $"Re: {negotiation.Reference}",
                         proposedTotalRate: listing.TotalRate),
@@ -324,6 +334,7 @@ internal class NegotiationSeeder(ILogger<NegotiationSeeder> logger) : SeederBase
             case NegotiationScenario.Expired:
                 await AddAsync(
                     negotiation.AddInboundMessage(
+                        await NextSequenceAsync(),
                         "Unlimited freight leads, click here to claim your free trial.",
                         "You have new load matches",
                         quarantined: true),

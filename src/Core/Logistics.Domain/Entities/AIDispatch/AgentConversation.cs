@@ -30,42 +30,36 @@ public class AgentConversation : AuditableEntity, ITenantEntity
     public virtual List<AgentMessage> Messages { get; } = [];
 
     /// <summary>
-    /// Highest sequence handed out. Kept here, and the Add methods never touch
-    /// <see cref="Messages"/>, because reading that navigation lazy-loads the whole transcript.
+    /// <paramref name="sequence"/> must be reserved in the database first: several writers append to
+    /// one conversation concurrently, so no in-memory counter can hand it out. Never touches
+    /// <see cref="Messages"/>, which lazy-loads the whole transcript. Callers MUST also register the
+    /// returned row via repository AddAsync (pre-generated ids make a collection-only add save as an
+    /// UPDATE and fail).
     /// </summary>
-    public int LastSequence { get; private set; }
-
-    /// <summary>
-    /// The only allocator of sequence numbers - never build an <see cref="AgentMessage"/> directly.
-    /// Callers MUST also register the returned row via repository AddAsync (pre-generated ids make
-    /// a collection-only add save as an UPDATE and fail).
-    /// </summary>
-    public AgentMessage AddTextMessage(AgentMessageRole role, string text, Guid? sentByUserId = null)
+    public AgentMessage AddTextMessage(int sequence, AgentMessageRole role, string text, Guid? sentByUserId = null)
     {
-        var message = AgentMessage.TextMessage(Id, NextSequence(), role, text, sentByUserId);
+        var message = AgentMessage.TextMessage(Id, sequence, role, text, sentByUserId);
         LastMessageAt = DateTime.UtcNow;
         return message;
     }
 
     /// <summary>
     /// A row from an agent turn: provider replay content plus the text the transcript shows, if any.
-    /// Same registration rule as <see cref="AddTextMessage"/>.
+    /// Same sequence and registration rules as <see cref="AddTextMessage"/>.
     /// </summary>
-    public AgentMessage AddTurnMessage(Guid sessionId, AgentMessageRole role, string contentJson, string? displayText)
+    public AgentMessage AddTurnMessage(
+        int sequence, Guid sessionId, AgentMessageRole role, string contentJson, string? displayText)
     {
-        var message = new AgentMessage
+        return new AgentMessage
         {
             ConversationId = Id,
-            Sequence = NextSequence(),
+            Sequence = sequence,
             Role = role,
             ContentJson = contentJson,
             DisplayText = displayText,
             SessionId = sessionId
         };
-        return message;
     }
-
-    private int NextSequence() => ++LastSequence;
 
     public void BeginTurn()
     {

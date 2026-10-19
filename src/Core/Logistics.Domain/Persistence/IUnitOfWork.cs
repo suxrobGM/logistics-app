@@ -37,6 +37,13 @@ public interface IUnitOfWork<in TMarker> : IDisposable
     Task<int> ExecuteSqlAsync(FormattableString sql, CancellationToken ct = default);
 
     /// <summary>
+    ///     Runs one SQL statement immediately, parameterized like <see cref="ExecuteSqlAsync" />, and returns
+    ///     its single column, which must be named <c>"Value"</c>. Sent as written, so it may be a statement
+    ///     with <c>RETURNING</c>. Bypasses change tracking the same way.
+    /// </summary>
+    Task<List<T>> SqlQueryAsync<T>(FormattableString sql, CancellationToken ct = default);
+
+    /// <summary>
     ///     Begins a database transaction (idempotent; does nothing if one is already active).
     /// </summary>
     Task BeginTransactionAsync(CancellationToken ct = default);
