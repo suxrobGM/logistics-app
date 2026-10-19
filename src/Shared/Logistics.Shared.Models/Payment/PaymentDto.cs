@@ -10,7 +10,6 @@ public record PaymentDto
 
     public Money Amount { get; set; } = null!;
     public string? StripePaymentMethodId { get; set; }
-    public Guid TenantId { get; set; }
     public PaymentStatus Status { get; set; }
     public Address? BillingAddress { get; set; }
     public string? Description { get; set; }

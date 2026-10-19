@@ -68,7 +68,6 @@ internal sealed class PayPayrollInvoiceHandler(
                 Status = PaymentStatus.Paid,
                 StripePaymentMethodId = null,
                 StripePaymentIntentId = transfer.Id,
-                TenantId = tenant.Id,
                 Description = $"Stripe payout for Payroll #{payrollInvoice.Number}",
                 BillingAddress = tenant.CompanyAddress
             };

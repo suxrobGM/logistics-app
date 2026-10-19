@@ -47,7 +47,6 @@ internal sealed class CreateLoadInvoiceHandler(
             var payment = new Payment
             {
                 StripePaymentMethodId = req.StripePaymentMethodId,
-                TenantId = tenant.Id,
                 Amount = new() { Amount = paymentAmount, Currency = invoice.Total.Currency },
                 BillingAddress = tenant.CompanyAddress
             };

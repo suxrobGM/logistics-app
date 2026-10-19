@@ -342,7 +342,6 @@ classDiagram
         +InvoiceStatus Status
         +Money Total
         +DateTime? DueDate
-        +string? StripeInvoiceId
         +List~InvoiceLineItem~ LineItems
         +List~Payment~ Payments
         +List~PaymentLink~ PaymentLinks

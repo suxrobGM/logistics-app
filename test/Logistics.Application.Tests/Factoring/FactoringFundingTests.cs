@@ -7,8 +7,6 @@ namespace Logistics.Application.Tests.Factoring;
 
 public class FactoringFundingTests
 {
-    private static readonly Guid TenantId = Guid.NewGuid();
-
     #region Rates
 
     [Fact]
@@ -53,7 +51,7 @@ public class FactoringFundingTests
     {
         var (batch, item, invoice) = SubmittedBatch(Company());
 
-        var payment = item.Fund(900m, 30m, DateTime.UtcNow, TenantId, Address);
+        var payment = item.Fund(900m, 30m, DateTime.UtcNow, Address);
         batch.RefreshStatus();
 
         Assert.Equal(FactoringStatus.Funded, item.Status);
@@ -72,16 +70,16 @@ public class FactoringFundingTests
     public void Fund_AlreadyFunded_Throws()
     {
         var (_, item, _) = SubmittedBatch(Company());
-        item.Fund(900m, 30m, DateTime.UtcNow, TenantId, Address);
+        item.Fund(900m, 30m, DateTime.UtcNow, Address);
 
-        Assert.Throws<InvalidOperationException>(() => item.Fund(900m, 30m, DateTime.UtcNow, TenantId, Address));
+        Assert.Throws<InvalidOperationException>(() => item.Fund(900m, 30m, DateTime.UtcNow, Address));
     }
 
     [Fact]
     public void ReleaseReserve_PartialThenRest_LeavesNothingOutstanding()
     {
         var (_, item, _) = SubmittedBatch(Company());
-        item.Fund(900m, 30m, DateTime.UtcNow, TenantId, Address);
+        item.Fund(900m, 30m, DateTime.UtcNow, Address);
 
         item.ReleaseReserve(50m, DateTime.UtcNow);
         item.ReleaseReserve(20m, DateTime.UtcNow);
@@ -94,7 +92,7 @@ public class FactoringFundingTests
     public void ReleaseReserve_MoreThanHeld_Throws()
     {
         var (_, item, _) = SubmittedBatch(Company());
-        item.Fund(900m, 30m, DateTime.UtcNow, TenantId, Address);
+        item.Fund(900m, 30m, DateTime.UtcNow, Address);
 
         Assert.Throws<InvalidOperationException>(() => item.ReleaseReserve(71m, DateTime.UtcNow));
     }
@@ -107,7 +105,7 @@ public class FactoringFundingTests
         var batch = FactoringBatch.Submit(
             factor, [Invoice(customer, number: 1), Invoice(customer, number: 2)], DateTime.UtcNow, null);
 
-        batch.Items[0].Fund(900m, 30m, DateTime.UtcNow, TenantId, Address);
+        batch.Items[0].Fund(900m, 30m, DateTime.UtcNow, Address);
         batch.RefreshStatus();
         Assert.Equal(FactoringBatchStatus.PartiallyFunded, batch.Status);
 
@@ -138,7 +136,7 @@ public class FactoringFundingTests
         var (batch, item, invoice) = SubmittedBatch(Company());
         invoice.SentAt = DateTime.UtcNow.AddDays(-5);
         invoice.DueDate = DateTime.UtcNow.AddDays(10);
-        var sale = item.Fund(900m, 30m, DateTime.UtcNow, TenantId, Address);
+        var sale = item.Fund(900m, 30m, DateTime.UtcNow, Address);
 
         var removed = item.ChargeBack(DateTime.UtcNow);
         batch.RefreshStatus();
@@ -158,7 +156,7 @@ public class FactoringFundingTests
     {
         var (_, item, invoice) = SubmittedBatch(Company());
         invoice.DueDate = DateTime.UtcNow.AddDays(-1);
-        item.Fund(900m, 30m, DateTime.UtcNow.AddDays(-20), TenantId, Address);
+        item.Fund(900m, 30m, DateTime.UtcNow.AddDays(-20), Address);
 
         item.ChargeBack(DateTime.UtcNow);
 

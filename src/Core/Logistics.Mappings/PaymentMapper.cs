@@ -13,7 +13,6 @@ public static class PaymentMapper
             Amount = entity.Amount,
             CreatedDate = entity.CreatedAt,
             StripePaymentMethodId = entity.StripePaymentMethodId,
-            TenantId = entity.TenantId,
             Status = entity.Status,
             Description = entity.Description,
             BillingAddress = entity.BillingAddress

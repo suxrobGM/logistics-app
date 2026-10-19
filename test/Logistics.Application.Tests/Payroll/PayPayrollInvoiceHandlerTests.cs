@@ -182,7 +182,6 @@ public class PayPayrollInvoiceHandlerTests
         {
             Amount = new Money { Amount = 1500m, Currency = "USD" },
             Status = PaymentStatus.Paid,
-            TenantId = Guid.NewGuid(),
             BillingAddress = new Address
             {
                 Line1 = "N/A",

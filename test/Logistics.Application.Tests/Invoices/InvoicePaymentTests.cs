@@ -145,7 +145,6 @@ public class InvoicePaymentTests
     {
         Amount = new Money { Amount = amount, Currency = "USD" },
         Status = PaymentStatus.Paid,
-        TenantId = Guid.NewGuid(),
         BillingAddress = FactoringTestData.Address
     };
 }

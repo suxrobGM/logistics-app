@@ -175,7 +175,6 @@ internal class LoadSeeder(
             Amount = load.Invoice?.Total ?? load.DeliveryCost,
             Status = PaymentStatus.Paid,
             StripePaymentMethodId = null,
-            TenantId = tenant.Id,
             Description = $"Payment for Load #{load.Number}",
             BillingAddress = tenant.CompanyAddress,
             ReferenceNumber = $"SEED-{load.Number:D6}",

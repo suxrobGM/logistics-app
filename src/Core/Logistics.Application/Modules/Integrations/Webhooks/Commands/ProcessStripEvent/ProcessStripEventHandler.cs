@@ -110,7 +110,6 @@ internal sealed class ProcessStripEventHandler(
         {
             Amount = new Money { Amount = amount, Currency = stripeInvoice.Currency },
             StripePaymentMethodId = stripeInvoice.DefaultPaymentMethodId,
-            TenantId = tenant.Id,
             Status = PaymentStatus.Paid,
             BillingAddress = stripeAddressMapper.ToAddress(stripeInvoice.CustomerAddress)
         };
@@ -393,7 +392,6 @@ internal sealed class ProcessStripEventHandler(
         {
             Amount = new Money { Amount = amount, Currency = currency },
             Status = status,
-            TenantId = tenantId,
             StripePaymentIntentId = paymentIntentId,
             // Stripe's billing details aren't expanded onto the session payload; reuse the
             // tenant's company address as a placeholder, matching ProcessPublicPaymentHandler.

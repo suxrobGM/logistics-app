@@ -36,7 +36,7 @@ internal sealed class RecordFactoringFundingHandler(ITenantUnitOfWork tenantUow)
                 }
                 else
                 {
-                    payments.Add(item.Fund(line.AdvanceAmount, line.FeeAmount, fundedAt, tenant.Id, tenant.CompanyAddress));
+                    payments.Add(item.Fund(line.AdvanceAmount, line.FeeAmount, fundedAt, tenant.CompanyAddress));
                 }
             }
         }

@@ -321,7 +321,6 @@ public class AccountingSyncServiceTests
         {
             Amount = money,
             Status = PaymentStatus.Paid,
-            TenantId = Guid.NewGuid(),
             BillingAddress = new Address { Line1 = "1 Main", City = "Dallas", State = "TX", ZipCode = "75201", Country = "US" },
             RecordedAt = DateTime.UtcNow,
             CreatedAt = DateTime.UtcNow

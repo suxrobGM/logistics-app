@@ -74,7 +74,6 @@ public class GetInvoiceDashboardHandlerTests
         {
             Amount = new Money { Amount = 400m, Currency = "USD" },
             Status = PaymentStatus.Paid,
-            TenantId = Guid.NewGuid(),
             BillingAddress = FactoringTestData.Address
         });
         GivenInvoices(invoice);

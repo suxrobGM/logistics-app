@@ -19,7 +19,6 @@ internal sealed class CreatePaymentHandler(ITenantUnitOfWork tenantUow)
         {
             Amount = new() { Amount = req.Amount, Currency = currency },
             StripePaymentMethodId = req.StripePaymentMethodId,
-            TenantId = tenant.Id,
             BillingAddress = req.BillingAddress!,
             Description = req.Description
         };

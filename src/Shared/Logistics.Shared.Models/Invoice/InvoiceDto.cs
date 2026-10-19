@@ -32,7 +32,6 @@ public record InvoiceDto
 
     public string? Notes { get; set; }
     public DateTime? DueDate { get; set; }
-    public string? StripeInvoiceId { get; set; }
 
     public IEnumerable<PaymentDto> Payments { get; set; } = [];
     public IEnumerable<InvoiceLineItemDto> LineItems { get; set; } = [];

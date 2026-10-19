@@ -9,7 +9,6 @@ public class Payment : AuditableEntity, ITenantEntity
     public required Money Amount { get; set; }
     public PaymentStatus Status { get; set; }
     public string? StripePaymentMethodId { get; set; }
-    public required Guid TenantId { get; set; }
     public string? Description { get; set; }
     public required Address BillingAddress { get; set; }
     public string? StripePaymentIntentId { get; set; }
@@ -20,11 +19,6 @@ public class Payment : AuditableEntity, ITenantEntity
     /// Reference number for manual payments (check number, receipt number, etc.).
     /// </summary>
     public string? ReferenceNumber { get; set; }
-
-    /// <summary>
-    /// User ID who recorded the manual payment.
-    /// </summary>
-    public Guid? RecordedByUserId { get; set; }
 
     /// <summary>
     /// When the manual payment was recorded.

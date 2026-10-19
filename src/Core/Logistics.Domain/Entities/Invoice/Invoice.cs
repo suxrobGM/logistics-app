@@ -39,7 +39,6 @@ public abstract partial class Invoice : AuditableEntity, ITenantEntity, IAuditab
 
     public string? Notes { get; set; }
     public DateTime? DueDate { get; set; }
-    public string? StripeInvoiceId { get; set; }
 
     public virtual List<Payment> Payments { get; set; } = [];
     public virtual List<InvoiceLineItem> LineItems { get; set; } = [];

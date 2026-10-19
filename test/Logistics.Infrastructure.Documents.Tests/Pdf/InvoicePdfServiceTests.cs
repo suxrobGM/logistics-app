@@ -61,7 +61,6 @@ public class InvoicePdfServiceTests
         {
             Amount = money,
             Status = PaymentStatus.Paid,
-            TenantId = Guid.NewGuid(),
             BillingAddress = Address,
             ReferenceNumber = "SOA-7"
         });

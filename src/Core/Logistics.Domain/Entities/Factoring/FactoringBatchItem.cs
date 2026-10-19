@@ -59,7 +59,7 @@ public class FactoringBatchItem : AuditableEntity, ITenantEntity
     /// the invoice is paid in full by a payment for its total; the factor's advance, fee and reserve are
     /// kept here. Add the returned payment with the repository.
     /// </summary>
-    public Payment Fund(decimal advance, decimal fee, DateTime fundedAt, Guid tenantId, Address billingAddress)
+    public Payment Fund(decimal advance, decimal fee, DateTime fundedAt, Address billingAddress)
     {
         EnsureStatus(FactoringStatus.Submitted, "funded");
         var amounts = FactoringAmounts.FromAdvanceAndFee(Amount.Amount, advance, fee);
@@ -68,7 +68,6 @@ public class FactoringBatchItem : AuditableEntity, ITenantEntity
         {
             Amount = Amount,
             Status = PaymentStatus.Paid,
-            TenantId = tenantId,
             BillingAddress = billingAddress,
             Description = $"Invoice #{Invoice.Number} sold to factoring company (schedule #{Batch.Number})",
             ReferenceNumber = $"SOA-{Batch.Number}",
