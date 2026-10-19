@@ -115,7 +115,7 @@ internal sealed class TelegramAuthService(
         }
 
         TenantByChat[chatId] = tenant.Id;
-        return new TelegramChatContext(tenant.Id, chat.UserId, chat.ChatType, tenant.Name);
+        return new TelegramChatContext(tenant.Name);
     }
 
     public async Task<bool> DisconnectAsync(long chatId, CancellationToken ct = default)

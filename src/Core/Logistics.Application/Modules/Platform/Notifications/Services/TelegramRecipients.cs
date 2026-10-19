@@ -20,19 +20,12 @@ public static class TelegramRecipients
     /// The connected chat the bot may run commands for: its row still exists and its connecting
     /// employee is still on the tenant and Active. Null otherwise.
     /// </summary>
-    public static async Task<TelegramChat?> FindAuthorizedChatAsync(
+    public static Task<TelegramChat?> FindAuthorizedChatAsync(
         ITenantUnitOfWork tenantUow, long chatId, CancellationToken ct)
     {
-        var chat = await tenantUow.Repository<TelegramChat>().Query()
-            .FirstOrDefaultAsync(c => c.ChatId == chatId && c.UserId != null, ct);
-
-        if (chat is null)
-            return null;
-
-        var employeeActive = await tenantUow.Repository<Employee>().Query()
-            .AnyAsync(e => e.Id == chat.UserId && e.Status == EmployeeStatus.Active, ct);
-
-        return employeeActive ? chat : null;
+        var activeEmployees = tenantUow.Repository<Employee>().Query().Where(e => e.Status == EmployeeStatus.Active);
+        return tenantUow.Repository<TelegramChat>().Query()
+            .FirstOrDefaultAsync(c => c.ChatId == chatId && activeEmployees.Any(e => e.Id == c.UserId), ct);
     }
 
     /// <summary>
@@ -44,18 +37,15 @@ public static class TelegramRecipients
         ITenantUnitOfWork tenantUow, TelegramChatRole? targetRole, CancellationToken ct)
     {
         var chats = await tenantUow.Repository<TelegramChat>().Query()
-            .Where(c => c.NotificationsEnabled && c.UserId != null)
+            .Where(c => c.NotificationsEnabled)
+            .Join(tenantUow.Repository<Employee>().Query().Where(e => e.Status == EmployeeStatus.Active),
+                c => c.UserId, e => (Guid?)e.Id,
+                (c, e) => new { Chat = c, RoleName = e.Role != null ? e.Role.Name : null })
             .ToListAsync(ct);
 
-        var userIds = chats.Select(c => c.UserId!.Value).Distinct().ToList();
-        var roleNames = await tenantUow.Repository<Employee>().Query()
-            .Where(e => userIds.Contains(e.Id) && e.Status == EmployeeStatus.Active)
-            .Select(e => new { e.Id, RoleName = e.Role != null ? e.Role.Name : null })
-            .ToDictionaryAsync(e => e.Id, e => e.RoleName, ct);
-
         return chats
-            .Where(c => roleNames.TryGetValue(c.UserId!.Value, out var roleName)
-                && (c.ChatType == TelegramChatType.Group || targetRole is null || RoleOf(roleName) == targetRole))
+            .Where(x => x.Chat.ChatType == TelegramChatType.Group || targetRole is null || RoleOf(x.RoleName) == targetRole)
+            .Select(x => x.Chat)
             .ToList();
     }
 }

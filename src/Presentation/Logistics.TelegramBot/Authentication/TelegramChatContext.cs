@@ -1,9 +1,3 @@
-using Logistics.Domain.Primitives.Enums;
-
 namespace Logistics.TelegramBot.Authentication;
 
-internal sealed record TelegramChatContext(
-    Guid TenantId,
-    Guid? UserId,
-    TelegramChatType ChatType,
-    string TenantName);
+internal sealed record TelegramChatContext(string TenantName);
