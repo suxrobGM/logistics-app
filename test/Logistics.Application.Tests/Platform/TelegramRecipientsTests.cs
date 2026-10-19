@@ -15,6 +15,7 @@ public class TelegramRecipientsTests
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly List<TelegramChat> _chats = [];
     private readonly List<Employee> _employees = [];
+    private readonly TelegramRecipients _sut;
 
     public TelegramRecipientsTests()
     {
@@ -25,6 +26,7 @@ public class TelegramRecipientsTests
         var employeeRepo = Substitute.For<ITenantRepository<Employee, Guid>>();
         employeeRepo.Query().Returns(_ => _employees.BuildMock());
         _tenantUow.Repository<Employee>().Returns(employeeRepo);
+        _sut = new TelegramRecipients(_tenantUow);
     }
 
     [Theory]
@@ -37,7 +39,7 @@ public class TelegramRecipientsTests
         AddChat(employee.Id, TelegramChatType.Private);
         AddChat(employee.Id, TelegramChatType.Group);
 
-        Assert.Empty(await TelegramRecipients.ListAsync(_tenantUow, null, CancellationToken.None));
+        Assert.Empty(await _sut.ListAsync(null, CancellationToken.None));
     }
 
     [Fact]
@@ -45,7 +47,7 @@ public class TelegramRecipientsTests
     {
         AddChat(Guid.NewGuid(), TelegramChatType.Group);
 
-        Assert.Empty(await TelegramRecipients.ListAsync(_tenantUow, null, CancellationToken.None));
+        Assert.Empty(await _sut.ListAsync(null, CancellationToken.None));
     }
 
     /// <summary>The role comes from the employee now, so a promoted driver gets dispatcher alerts.</summary>
@@ -58,8 +60,7 @@ public class TelegramRecipientsTests
         var dispatcherChat = AddChat(dispatcher.Id, TelegramChatType.Private);
         var groupChat = AddChat(driver.Id, TelegramChatType.Group);
 
-        var recipients = await TelegramRecipients.ListAsync(
-            _tenantUow, TelegramChatRole.Dispatcher, CancellationToken.None);
+        var recipients = await _sut.ListAsync(TelegramChatRole.Dispatcher, CancellationToken.None);
 
         Assert.Equal([dispatcherChat, groupChat], recipients);
     }
@@ -70,7 +71,7 @@ public class TelegramRecipientsTests
         var employee = AddEmployee(TenantRoles.Driver, EmployeeStatus.Active);
         AddChat(employee.Id, TelegramChatType.Private).NotificationsEnabled = false;
 
-        Assert.Empty(await TelegramRecipients.ListAsync(_tenantUow, null, CancellationToken.None));
+        Assert.Empty(await _sut.ListAsync(null, CancellationToken.None));
     }
 
     #region Command authorization
@@ -81,7 +82,7 @@ public class TelegramRecipientsTests
         var employee = AddEmployee(TenantRoles.Driver, EmployeeStatus.Active);
         var chat = AddChat(employee.Id, TelegramChatType.Private);
 
-        Assert.Same(chat, await TelegramRecipients.FindAuthorizedChatAsync(_tenantUow, chat.ChatId, CancellationToken.None));
+        Assert.Same(chat, await _sut.FindAuthorizedChatAsync(chat.ChatId, CancellationToken.None));
     }
 
     [Theory]
@@ -93,7 +94,7 @@ public class TelegramRecipientsTests
         var employee = AddEmployee(TenantRoles.Dispatcher, status);
         var chat = AddChat(employee.Id, TelegramChatType.Group);
 
-        Assert.Null(await TelegramRecipients.FindAuthorizedChatAsync(_tenantUow, chat.ChatId, CancellationToken.None));
+        Assert.Null(await _sut.FindAuthorizedChatAsync(chat.ChatId, CancellationToken.None));
     }
 
     [Fact]
@@ -101,7 +102,7 @@ public class TelegramRecipientsTests
     {
         var chat = AddChat(Guid.NewGuid(), TelegramChatType.Private);
 
-        Assert.Null(await TelegramRecipients.FindAuthorizedChatAsync(_tenantUow, chat.ChatId, CancellationToken.None));
+        Assert.Null(await _sut.FindAuthorizedChatAsync(chat.ChatId, CancellationToken.None));
     }
 
     [Fact]
@@ -111,7 +112,7 @@ public class TelegramRecipientsTests
         var chat = AddChat(employee.Id, TelegramChatType.Private);
         _chats.Remove(chat);
 
-        Assert.Null(await TelegramRecipients.FindAuthorizedChatAsync(_tenantUow, chat.ChatId, CancellationToken.None));
+        Assert.Null(await _sut.FindAuthorizedChatAsync(chat.ChatId, CancellationToken.None));
     }
 
     #endregion

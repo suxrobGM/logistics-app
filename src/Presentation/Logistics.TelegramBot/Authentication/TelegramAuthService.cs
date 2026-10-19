@@ -12,6 +12,7 @@ namespace Logistics.TelegramBot.Authentication;
 internal sealed class TelegramAuthService(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
+    ITelegramRecipients recipients,
     ILogger<TelegramAuthService> logger)
 {
     /// <summary>
@@ -106,7 +107,7 @@ internal sealed class TelegramAuthService(
         }
 
         tenantUow.SetCurrentTenant(tenant);
-        var chat = await TelegramRecipients.FindAuthorizedChatAsync(tenantUow, chatId, ct);
+        var chat = await recipients.FindAuthorizedChatAsync(chatId, ct);
 
         if (chat is null)
         {

@@ -35,7 +35,7 @@ internal sealed class TelegramNotificationService(
             var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
             await tenantUow.SetCurrentTenantByIdAsync(tenantId);
 
-            var chats = await TelegramRecipients.ListAsync(tenantUow, targetRole, ct);
+            var chats = await scope.ServiceProvider.GetRequiredService<ITelegramRecipients>().ListAsync(targetRole, ct);
 
             var formattedMessage = $"*{Escape(title)}*\n{Escape(message)}";
 
