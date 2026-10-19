@@ -1,9 +1,16 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Modules.Financial.Payroll.Services;
 
 public interface IPayrollService : IApplicationService
 {
+    /// <summary>Salary types <see cref="GenerateMonthlyPayrollsAsync"/> pays.</summary>
+    static readonly SalaryType[] MonthlySalaryTypes = [SalaryType.Monthly, SalaryType.ShareOfGross];
+
+    /// <summary>Salary types <see cref="GenerateWeeklyPayrollsAsync"/> pays.</summary>
+    static readonly SalaryType[] WeeklySalaryTypes = [SalaryType.Weekly, SalaryType.PerLoad, SalaryType.PerStop];
+
     Task GenerateMonthlyPayrollsAsync();
     Task GenerateWeeklyPayrollsAsync();
 

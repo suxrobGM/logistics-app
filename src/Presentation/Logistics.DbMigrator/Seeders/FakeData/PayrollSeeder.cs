@@ -13,9 +13,6 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class PayrollSeeder(ILogger<PayrollSeeder> logger) : SeederBase(logger)
 {
-    private static readonly SalaryType[] MonthlySalaryTypes = [SalaryType.Monthly, SalaryType.ShareOfGross];
-    private static readonly SalaryType[] WeeklySalaryTypes = [SalaryType.Weekly, SalaryType.PerLoad, SalaryType.PerStop];
-
     private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-2);
     private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-1);
 
@@ -42,9 +39,9 @@ internal class PayrollSeeder(ILogger<PayrollSeeder> logger) : SeederBase(logger)
 
         var payrollService = context.ServiceProvider.GetRequiredService<IPayrollService>();
 
-        await SeedPeriodsAsync(context, payrollService, employees, MonthlySalaryTypes,
+        await SeedPeriodsAsync(context, payrollService, employees, IPayrollService.MonthlySalaryTypes,
             DateRangeGenerator.GenerateMonthlyRanges(_startDate, _endDate), cancellationToken);
-        await SeedPeriodsAsync(context, payrollService, employees, WeeklySalaryTypes,
+        await SeedPeriodsAsync(context, payrollService, employees, IPayrollService.WeeklySalaryTypes,
             DateRangeGenerator.GenerateWeeklyRanges(_startDate, _endDate), cancellationToken);
 
         LogCompleted();

@@ -18,7 +18,7 @@ internal partial class PayrollService(
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var start = new DateOnly(today.Year, today.Month, 1).AddMonths(-1);
         return GenerateForEveryTenantAsync("monthly", start, start.AddMonths(1).AddDays(-1),
-            [SalaryType.Monthly, SalaryType.ShareOfGross]);
+            IPayrollService.MonthlySalaryTypes);
     }
 
     public Task GenerateWeeklyPayrollsAsync()
@@ -26,7 +26,7 @@ internal partial class PayrollService(
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var start = today.AddDays(-((int)today.DayOfWeek + 7));
         return GenerateForEveryTenantAsync("weekly", start, start.AddDays(6),
-            [SalaryType.Weekly, SalaryType.PerLoad, SalaryType.PerStop]);
+            IPayrollService.WeeklySalaryTypes);
     }
 
     public async Task<PayrollInvoice> BuildPayrollInvoiceAsync(
@@ -91,7 +91,7 @@ internal partial class PayrollService(
     }
 
     private async Task GenerateForEveryTenantAsync(
-        string cadence, DateOnly startDate, DateOnly endDate, List<SalaryType> salaryTypes)
+        string cadence, DateOnly startDate, DateOnly endDate, SalaryType[] salaryTypes)
     {
         var tenants = await masterUow.Repository<Tenant>().GetListAsync();
 
