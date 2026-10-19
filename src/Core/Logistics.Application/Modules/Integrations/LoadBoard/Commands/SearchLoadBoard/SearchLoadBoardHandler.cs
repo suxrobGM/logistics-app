@@ -201,6 +201,11 @@ internal sealed class SearchLoadBoardHandler(
                 entity.BrokerCreditScore = dto.BrokerCreditScore ?? entity.BrokerCreditScore;
                 entity.BrokerDaysToPay = dto.BrokerDaysToPay ?? entity.BrokerDaysToPay;
 
+                if (entity.Status == LoadBoardListingStatus.Expired && expiresAt > DateTime.UtcNow)
+                {
+                    entity.Status = LoadBoardListingStatus.Available;
+                }
+
                 dto.Status = entity.Status;
                 dto.BookedAt = entity.BookedAt;
                 dto.LoadId = entity.LoadId;

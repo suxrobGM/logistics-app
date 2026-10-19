@@ -123,6 +123,37 @@ public class SearchLoadBoardHandlerTests
             Arg.Is<LoadBoardListing>(l => l.ExpiresAt == expiresAt.Value), Arg.Any<CancellationToken>());
     }
 
+    /// <summary>An expired listing the board still lists used to keep Expired, so booking and countering refused it.</summary>
+    [Theory]
+    [InlineData(LoadBoardListingStatus.Expired, LoadBoardListingStatus.Available)]
+    [InlineData(LoadBoardListingStatus.Booked, LoadBoardListingStatus.Booked)]
+    public async Task Handle_ListingFoundAgain_ReopensOnlyAnExpiredOne(
+        LoadBoardListingStatus stored, LoadBoardListingStatus expected)
+    {
+        var listing = new LoadBoardListing
+        {
+            ExternalListingId = "EXT-1",
+            ProviderType = LoadBoardProviderType.Demo,
+            OriginAddress = new Address { Line1 = "", City = "Dallas", State = "TX", ZipCode = "", Country = "US" },
+            OriginLocation = new GeoPoint(-96.8, 32.8),
+            DestinationAddress = new Address { Line1 = "", City = "Chicago", State = "IL", ZipCode = "", Country = "US" },
+            DestinationLocation = new GeoPoint(-87.6, 41.9),
+            Status = stored,
+            ExpiresAt = DateTime.UtcNow.AddHours(-1)
+        };
+        _listingRepo.GetListAsync(Arg.Any<System.Linq.Expressions.Expression<Func<LoadBoardListing, bool>>>(),
+                Arg.Any<CancellationToken>())
+            .Returns([listing]);
+        _demo.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>())
+            .Returns([CreateListing("EXT-1", DateTime.UtcNow.AddHours(6))]);
+        _dat.SearchLoadsAsync(Arg.Any<LoadBoardSearchCriteria>(), Arg.Any<CancellationToken>()).Returns([]);
+
+        var result = await _sut.Handle(new SearchLoadBoardCommand(), CancellationToken.None);
+
+        Assert.Equal(expected, listing.Status);
+        Assert.Equal(expected, Assert.Single(result.Value!.Listings).Status);
+    }
+
     [Fact]
     public async Task Handle_MinRatePerMile_DropsCheaperListingsButKeepsUnpriced()
     {
