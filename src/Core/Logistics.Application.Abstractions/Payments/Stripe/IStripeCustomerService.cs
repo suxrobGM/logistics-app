@@ -7,11 +7,6 @@ namespace Logistics.Application.Abstractions.Payments.Stripe;
 public interface IStripeCustomerService
 {
     /// <summary>
-    ///     Retrieve a Stripe customer by their ID.
-    /// </summary>
-    Task<StripeCustomer> GetCustomerAsync(string stripeCustomerId);
-
-    /// <summary>
     ///     Create a new customer in Stripe for the given tenant.
     /// </summary>
     Task<StripeCustomer> CreateCustomerAsync(Tenant tenant);

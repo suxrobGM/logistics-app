@@ -394,7 +394,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 ### Stripe webhooks
 
-- Application: `Modules/Integrations/Webhooks/Commands/ProcessStripEvent/` (`invoice.paid`, `customer.subscription.*`, `payment_intent.processing|succeeded|payment_failed`, `account.updated`, `checkout.session.completed`)
+- Application: `Modules/Integrations/Webhooks/Commands/ProcessStripEvent/` (`customer.subscription.*`, `payment_intent.processing|succeeded|payment_failed`, `account.updated`, `checkout.session.completed`)
 - Infrastructure: `Infrastructure.Payments/Stripe/`
 - API/UI: `WebhookController.cs` (`/webhooks/stripe`)
 

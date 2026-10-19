@@ -171,8 +171,9 @@ internal sealed class GetCompanyStatsHandler(ITenantUnitOfWork tenantUow)
         stats.OutstandingInvoiceTotal = invoiceStats?.OutstandingTotal ?? 0;
         stats.OverdueInvoiceCount = invoiceStats?.OverdueCount ?? 0;
 
-        // Payments received this week
-        stats.PaymentsReceivedThisWeek = await tenantUow.Repository<Payment>().Query()
+        // Customer receipts only: payroll payouts sit on payroll invoices.
+        stats.PaymentsReceivedThisWeek = await invoiceRepository.Query()
+            .SelectMany(i => i.Payments)
             .Where(p => p.Status == PaymentStatus.Paid && p.CreatedAt >= startOfWeek)
             .SumAsync(p => p.Amount.Amount, ct);
 

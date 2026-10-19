@@ -13,11 +13,10 @@ The route is `POST /webhooks/stripe` and is `[AllowAnonymous]` - authentication 
 
 ## Events to Subscribe To
 
-Subscribe to exactly these nine events. Anything else is accepted and ignored (returns `200`), but subscribing to events you don't handle just adds noise and retry traffic.
+Subscribe to exactly these eight events. Anything else is accepted and ignored (returns `200`), but subscribing to events you don't handle just adds noise and retry traffic.
 
 | Event                           | What the handler does                                                                |
 | ------------------------------- | ------------------------------------------------------------------------------------ |
-| `invoice.paid`                  | Records a `Payment` row for the tenant's subscription invoice                        |
 | `customer.subscription.created` | Creates or updates the tenant's `Subscription`                                       |
 | `customer.subscription.updated` | Syncs status, `CancelAtPeriodEnd`, and plan changes                                  |
 | `customer.subscription.deleted` | Marks the subscription cancelled                                                     |
@@ -35,7 +34,7 @@ Every handler is keyed off `tenant_id` in Stripe object metadata. Objects withou
 
 So in the Stripe Dashboard you need two destinations, both pointing at the same URL:
 
-1. **Platform events** - `invoice.paid`, `customer.subscription.*`, `checkout.session.completed`, `payment_intent.*`
+1. **Platform events** - `customer.subscription.*`, `checkout.session.completed`, `payment_intent.*`
 2. **Connected account events** - `account.updated`
 
 > **Known limitation.** `StripeOptions` exposes a single `WebhookSecret`, and `ProcessStripEventHandler` passes that one secret to `EventUtility.ConstructEvent`. Only one of the two endpoints can verify. The other returns `400`, and Stripe retries it for up to three days before giving up. Until `StripeOptions` grows a second secret (`ConnectWebhookSecret`) and the handler tries both, Connect status must be refreshed by polling `GET /stripe/connect/status` rather than by webhook.
@@ -64,7 +63,6 @@ Put that `whsec_...` in `Stripe__WebhookSecret`, then fire test events:
 ```bash
 stripe trigger checkout.session.completed
 stripe trigger payment_intent.succeeded
-stripe trigger invoice.paid
 ```
 
 Triggered events carry no `tenant_id` metadata, so handlers will short-circuit. To exercise a handler end to end, drive the real flow (create a checkout session from the customer portal) and let Stripe emit the event naturally.

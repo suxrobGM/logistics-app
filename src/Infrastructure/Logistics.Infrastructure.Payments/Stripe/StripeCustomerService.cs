@@ -8,15 +8,6 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 
 internal sealed class StripeCustomerService(ILogger<StripeCustomerService> logger) : IStripeCustomerService
 {
-    public Task<StripeCustomer> GetCustomerAsync(string stripeCustomerId)
-    {
-        var options = new CustomerGetOptions
-        {
-            Expand = ["subscriptions"]
-        };
-        return new CustomerService().GetAsync(stripeCustomerId, options);
-    }
-
     public async Task<StripeCustomer> CreateCustomerAsync(Tenant tenant)
     {
         // ReSharper disable once UseObjectOrCollectionInitializer

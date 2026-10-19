@@ -33,7 +33,6 @@ public static class Registrar
         services.AddSingleton<IStripeConnectService, StripeConnectService>();
         services.AddSingleton<IStripePortalService, StripePortalService>();
         services.AddScoped<IStripeUsageService, StripeUsageService>();
-        services.AddSingleton<IStripeAddressMapper, StripeAddressMapper>();
 
         return services;
     }

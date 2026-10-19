@@ -12,7 +12,6 @@ using Stripe;
 using Stripe.Checkout;
 using Logistics.Application.Abstractions.Payments.Stripe;
 using DomainInvoice = Logistics.Domain.Entities.Invoice;
-using StripeInvoice = Stripe.Invoice;
 using StripeSubscription = Stripe.Subscription;
 using Subscription = Logistics.Domain.Entities.Subscription;
 
@@ -22,9 +21,7 @@ internal sealed class ProcessStripEventHandler(
     ITenantUnitOfWork tenantUow,
     IMasterUnitOfWork masterUow,
     IStripeService stripeService,
-    IStripeCustomerService stripeCustomerService,
     IStripeConnectService stripeConnectService,
-    IStripeAddressMapper stripeAddressMapper,
     IWebhookEventTracker webhookEvents,
     ILogger<ProcessStripEventHandler> logger)
     : IRequestHandler<ProcessStripEventCommand, Result>
@@ -51,7 +48,6 @@ internal sealed class ProcessStripEventHandler(
 
             var result = stripeEvent.Type switch
             {
-                EventTypes.InvoicePaid => await HandleInvoicePaid((stripeEvent.Data.Object as StripeInvoice)!),
                 EventTypes.CustomerSubscriptionCreated => await HandleSubscriptionCreated(
                     (stripeEvent.Data.Object as StripeSubscription)!),
                 EventTypes.CustomerSubscriptionUpdated => await HandleSubscriptionUpdated(
@@ -84,45 +80,6 @@ internal sealed class ProcessStripEventHandler(
             return Result.Fail("Could not process the Stripe event.");
         }
     }
-
-
-    #region Invoice Handlers
-
-    private async Task<Result> HandleInvoicePaid(StripeInvoice stripeInvoice)
-    {
-        var customer = await stripeCustomerService.GetCustomerAsync(stripeInvoice.CustomerId);
-        if (!customer.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
-        {
-            return Result.Fail($"{StripeMetadataKeys.TenantId} not found in invoice metadata.");
-        }
-
-        if (!Guid.TryParse(tenantId, out var parsedTenantId))
-        {
-            return Result.Fail($"Invalid tenant ID format: {tenantId}");
-        }
-
-        await tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
-
-        var amount = stripeInvoice.AmountPaid / 100m; // Convert from cents
-        var tenant = tenantUow.GetCurrentTenant();
-
-        var payment = new Payment
-        {
-            Amount = new Money { Amount = amount, Currency = stripeInvoice.Currency },
-            StripePaymentMethodId = stripeInvoice.DefaultPaymentMethodId,
-            Status = PaymentStatus.Paid,
-            BillingAddress = stripeAddressMapper.ToAddress(stripeInvoice.CustomerAddress)
-        };
-
-        await tenantUow.Repository<Payment>().AddAsync(payment);
-        await tenantUow.SaveChangesAsync();
-
-        logger.LogInformation("Added payment for tenant {TenantId} with amount {Amount}, invoice ID {StripeInvoiceId}",
-            tenantId, payment.Amount, stripeInvoice.Id);
-        return Result.Ok();
-    }
-
-    #endregion
 
 
     #region Subscription Handlers
@@ -251,9 +208,6 @@ internal sealed class ProcessStripEventHandler(
 
     private async Task<Result> HandlePaymentIntentStatus(PaymentIntent paymentIntent, PaymentStatus newStatus)
     {
-        // Subscription billing flows through invoice.paid which already creates the Payment row
-        // (without StripePaymentIntentId). The lookup below naturally skips those events because
-        // no row matches the intent ID.
         if (!TryGetTenantId(paymentIntent.Metadata, out var tenantId))
         {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in PaymentIntent metadata.");
