@@ -5,11 +5,6 @@ namespace Logistics.Application.Modules.Operations.Trips.Commands;
 public sealed class OptimizeTripStopsCommand : ICommand<Result<OptimizedTripStopsDto>>
 {
     /// <summary>
-    ///     Which strategy to use for route optimization.
-    /// </summary>
-    // public TripRoutingStrategy Strategy { get; set; }
-
-    /// <summary>
     ///     Specify the capacity of the car hauler truck which is used for route optimization.
     /// </summary>
     public int MaxVehicles { get; set; }
