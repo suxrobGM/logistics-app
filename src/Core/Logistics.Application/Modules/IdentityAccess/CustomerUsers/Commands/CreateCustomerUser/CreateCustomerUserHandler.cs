@@ -28,6 +28,12 @@ internal sealed class CreateCustomerUserHandler(ITenantUnitOfWork tenantUow)
             return Result<CustomerUserDto>.Fail("A customer user already exists for this user and customer.");
         }
 
+        if (await tenantUow.Repository<CustomerUser>().GetAsync(cu => cu.UserId == req.UserId && cu.IsActive, ct) is not null)
+        {
+            return Result<CustomerUserDto>.Fail(
+                "This user already has active portal access for another customer. Deactivate it first.");
+        }
+
         var customerUser = new CustomerUser
         {
             UserId = req.UserId,

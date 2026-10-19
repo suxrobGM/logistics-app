@@ -25,6 +25,12 @@ internal sealed class UpdateCustomerUserHandler(ITenantUnitOfWork tenantUow, IMa
 
         if (req.IsActive is { } isActive && isActive != customerUser.IsActive)
         {
+            if (isActive && await tenantUow.Repository<CustomerUser>()
+                    .GetAsync(cu => cu.UserId == customerUser.UserId && cu.IsActive, ct) is not null)
+            {
+                return Result.Fail("This user already has active portal access for another customer. Deactivate it first.");
+            }
+
             customerUser.IsActive = isActive;
 
             var tenantId = tenantUow.GetCurrentTenant().Id;

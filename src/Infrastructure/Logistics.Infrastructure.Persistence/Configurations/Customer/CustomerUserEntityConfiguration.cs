@@ -10,7 +10,7 @@ internal sealed class CustomerUserEntityConfiguration : IEntityTypeConfiguration
     {
         builder.ToTable("customer_users");
 
-        builder.HasIndex(cu => cu.UserId);
+        builder.HasIndex(cu => cu.UserId).IsUnique().HasFilter("is_active");
         builder.HasIndex(cu => cu.Email);
         builder.HasIndex(cu => new { cu.CustomerId, cu.UserId }).IsUnique();
 

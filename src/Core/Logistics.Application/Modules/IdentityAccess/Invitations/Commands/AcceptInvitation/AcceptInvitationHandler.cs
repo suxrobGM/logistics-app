@@ -240,6 +240,11 @@ internal sealed class AcceptInvitationHandler(
             return Result.Fail("User is already associated with this customer.");
         }
 
+        if (await tenantUow.Repository<CustomerUser>().GetAsync(cu => cu.UserId == user.Id && cu.IsActive, ct) is not null)
+        {
+            return Result.Fail("User already has active portal access for another customer of this company.");
+        }
+
         var customer = await tenantUow.Repository<Customer>().GetByIdAsync(invitation.CustomerId.Value, ct);
         if (customer is null)
         {

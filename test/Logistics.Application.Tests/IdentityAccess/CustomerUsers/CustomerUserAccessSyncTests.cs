@@ -66,4 +66,22 @@ public class CustomerUserAccessSyncTests
         Assert.False(_access.IsActive);
         await _masterUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
+
+    [Fact]
+    public async Task UpdateCustomerUser_ReactivateWhileActiveForAnotherCustomer_Fails()
+    {
+        _customerUser.IsActive = false;
+        var other = new CustomerUser { UserId = _customerUser.UserId, CustomerId = Guid.NewGuid(), Email = "a@b.c" };
+        _customerUserRepo.GetAsync(Arg.Any<Expression<Func<CustomerUser, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(ci => new[] { _customerUser, other }.FirstOrDefault(ci.Arg<Expression<Func<CustomerUser, bool>>>().Compile()));
+        var sut = new UpdateCustomerUserHandler(_tenantUow, _masterUow);
+
+        var result = await sut.Handle(
+            new UpdateCustomerUserCommand { Id = _customerUser.Id, IsActive = true },
+            CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.False(_customerUser.IsActive);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
 }
