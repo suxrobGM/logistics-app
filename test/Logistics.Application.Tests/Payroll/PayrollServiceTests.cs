@@ -18,6 +18,8 @@ public class PayrollServiceTests
 {
     private static readonly DateTime Start = new(2026, 10, 4, 0, 0, 0, DateTimeKind.Utc);
     private static readonly DateTime End = new(2026, 10, 10, 0, 0, 0, DateTimeKind.Utc);
+    private static readonly DateOnly StartDay = DateOnly.FromDateTime(Start);
+    private static readonly DateOnly EndDay = DateOnly.FromDateTime(End);
 
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly List<Load> _loads = [];
@@ -94,7 +96,7 @@ public class PayrollServiceTests
         _driver.PayExcludesAccessorials = excludeAccessorials;
         Delivered(2000m, fuelSurcharge: 400m, accessorials: 200m);
 
-        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, Start, End);
+        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         Assert.Equal((decimal)expected, payroll.LineItems.Single(l => l.Type == InvoiceLineItemType.BasePay).Total);
     }
@@ -113,7 +115,7 @@ public class PayrollServiceTests
         _driver.Salary = new Money { Amount = (decimal)rate, Currency = "USD" };
         Delivered(1000m).Distance = meters;
 
-        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, Start, End);
+        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         Assert.Equal((decimal)expected, Math.Round(payroll.Total.Amount, 2));
         Assert.Equal(meters, payroll.TotalDistanceDriven);
@@ -129,9 +131,26 @@ public class PayrollServiceTests
         var outsidePeriod = Delivered(500m);
         typeof(Load).GetProperty(nameof(Load.DeliveredAt))!.SetValue(outsidePeriod, End.AddDays(3));
 
-        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, Start, End);
+        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         Assert.Equal(500m, payroll.Total.Amount);
+    }
+
+    [Fact]
+    public async Task Build_LoadDeliveredLateOnTheLastDay_IsInThePeriod()
+    {
+        _driver.SalaryType = SalaryType.PerLoad;
+        _driver.Salary = new Money { Amount = 250m, Currency = "USD" };
+        var lastDay = Delivered(1000m);
+        typeof(Load).GetProperty(nameof(Load.DeliveredAt))!.SetValue(lastDay, End.AddHours(23).AddMinutes(59));
+        var nextDay = Delivered(1000m);
+        typeof(Load).GetProperty(nameof(Load.DeliveredAt))!.SetValue(nextDay, End.AddDays(1));
+
+        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
+
+        Assert.Equal(250m, payroll.Total.Amount);
+        Assert.Equal(StartDay, payroll.PeriodStart);
+        Assert.Equal(EndDay, payroll.PeriodEnd);
     }
 
     [Fact]
@@ -148,7 +167,7 @@ public class PayrollServiceTests
         trip.Stops[0].DepartedAt = null;
         _stops.AddRange(trip.Stops);
 
-        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, Start, End);
+        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         Assert.Equal(3 * 40m, payroll.Total.Amount);
     }
@@ -182,7 +201,7 @@ public class PayrollServiceTests
         var fuel = FuelOn(_truck, Start.AddDays(1), 400m);
         var otherTruckFuel = FuelOn(new Truck { Number = "T-2", Type = TruckType.FreightTruck }, Start.AddDays(1), 77m);
 
-        var payroll = await _sut.CreatePayrollInvoiceAsync(_driver, Start, End);
+        var payroll = await _sut.CreatePayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         Assert.Equal(2700m - 500m - 300m - 400m, payroll.Total.Amount);
         Assert.Equal(payroll.Id, advance.PayrollInvoiceId);
@@ -197,7 +216,7 @@ public class PayrollServiceTests
         var advance = new CashAdvance { EmployeeId = _driver.Id, Amount = new Money { Amount = 100m, Currency = "USD" } };
         _advances.Add(advance);
 
-        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, Start, End);
+        var payroll = await _sut.BuildPayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         Assert.Contains(payroll.LineItems, l => l.Type == InvoiceLineItemType.CashAdvance);
         Assert.Null(advance.PayrollInvoiceId);
@@ -208,7 +227,7 @@ public class PayrollServiceTests
     {
         var fuel = FuelOn(_truck, Start.AddDays(1), 400m);
 
-        var payroll = await _sut.CreatePayrollInvoiceAsync(_driver, Start, End);
+        var payroll = await _sut.CreatePayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         Assert.DoesNotContain(payroll.LineItems, l => l.Type == InvoiceLineItemType.FuelCard);
         Assert.Null(fuel.PayrollInvoiceId);
@@ -227,7 +246,7 @@ public class PayrollServiceTests
         _payrolls.Add(EarlierSettlement(-500m, InvoiceStatus.Rejected));
 
         var balance = await _sut.GetEscrowBalanceAsync(_driver.Id);
-        var payroll = await _sut.CreatePayrollInvoiceAsync(_driver, Start, End);
+        var payroll = await _sut.CreatePayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         Assert.Equal(900m, balance);
         Assert.Equal(-100m, payroll.LineItems.Single(l => l.Type == InvoiceLineItemType.Escrow).Total);
@@ -238,7 +257,7 @@ public class PayrollServiceTests
     {
         var advance = new CashAdvance { EmployeeId = _driver.Id, Amount = new Money { Amount = 100m, Currency = "USD" } };
         _advances.Add(advance);
-        var payroll = await _sut.CreatePayrollInvoiceAsync(_driver, Start, End);
+        var payroll = await _sut.CreatePayrollInvoiceAsync(_driver, StartDay, EndDay);
 
         await _sut.RecalculatePayrollAsync(payroll);
 

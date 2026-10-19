@@ -15,8 +15,8 @@ public partial class PayrollInvoice : Invoice
     /// <summary>
     /// Week, fortnight or month covered.
     /// </summary>
-    public DateTime PeriodStart { get; set; }
-    public DateTime PeriodEnd { get; set; }
+    public DateOnly PeriodStart { get; set; }
+    public DateOnly PeriodEnd { get; set; }
 
     #region Calculated Earnings Data
 

@@ -8,6 +8,6 @@ namespace Logistics.Application.Modules.Financial.Invoices.Queries;
 public class PreviewPayrollInvoiceQuery : IQuery<Result<InvoiceDto>>
 {
     public Guid EmployeeId { get; set; }
-    public DateTime PeriodStart { get; set; }
-    public DateTime PeriodEnd { get; set; }
+    public DateOnly PeriodStart { get; set; }
+    public DateOnly PeriodEnd { get; set; }
 }

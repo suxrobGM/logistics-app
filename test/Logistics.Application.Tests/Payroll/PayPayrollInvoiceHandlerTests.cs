@@ -66,8 +66,8 @@ public class PayPayrollInvoiceHandlerTests
             TaxTotal = Money.Zero("USD"),
             Total = money,
             Status = InvoiceStatus.Approved,
-            PeriodStart = DateTime.UtcNow.AddDays(-14),
-            PeriodEnd = DateTime.UtcNow
+            PeriodStart = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-14)),
+            PeriodEnd = DateOnly.FromDateTime(DateTime.UtcNow)
         };
     }
 

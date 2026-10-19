@@ -53,12 +53,14 @@ public sealed class FilterPayrollInvoices : BaseSpecification<PayrollInvoice>
         // Filter by date range (based on PeriodStart/PeriodEnd)
         if (startDate.HasValue)
         {
-            criteria = AddCriteria(criteria, i => i.PeriodEnd >= startDate.Value);
+            var from = DateOnly.FromDateTime(startDate.Value);
+            criteria = AddCriteria(criteria, i => i.PeriodEnd >= from);
         }
 
         if (endDate.HasValue)
         {
-            criteria = AddCriteria(criteria, i => i.PeriodStart <= endDate.Value);
+            var to = DateOnly.FromDateTime(endDate.Value);
+            criteria = AddCriteria(criteria, i => i.PeriodStart <= to);
         }
 
         if (criteria is not null)

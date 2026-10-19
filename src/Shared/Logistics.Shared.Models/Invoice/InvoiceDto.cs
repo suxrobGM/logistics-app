@@ -68,6 +68,6 @@ public record InvoiceDto
     // PayrollInvoice fields
     public Guid? EmployeeId { get; set; }
     public EmployeeDto? Employee { get; set; }
-    public DateTime? PeriodStart { get; set; }
-    public DateTime? PeriodEnd { get; set; }
+    public DateOnly? PeriodStart { get; set; }
+    public DateOnly? PeriodEnd { get; set; }
 }

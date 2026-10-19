@@ -173,10 +173,10 @@ public record BatchCreatePayrollInvoicesRequest
     /// <summary>
     /// Start date of the payroll period.
     /// </summary>
-    public required DateTime PeriodStart { get; set; }
+    public required DateOnly PeriodStart { get; set; }
 
     /// <summary>
     /// End date of the payroll period.
     /// </summary>
-    public required DateTime PeriodEnd { get; set; }
+    public required DateOnly PeriodEnd { get; set; }
 }

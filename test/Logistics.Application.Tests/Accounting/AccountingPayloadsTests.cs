@@ -135,8 +135,8 @@ public class AccountingPayloadsTests
         {
             EmployeeId = Guid.NewGuid(),
             Number = 9,
-            PeriodStart = new DateTime(2026, 9, 24, 0, 0, 0, DateTimeKind.Utc),
-            PeriodEnd = new DateTime(2026, 9, 30, 0, 0, 0, DateTimeKind.Utc),
+            PeriodStart = new DateOnly(2026, 9, 24),
+            PeriodEnd = new DateOnly(2026, 9, 30),
             Subtotal = new Money { Amount = 1500m, Currency = "USD" },
             TaxTotal = Money.Zero("USD"),
             Total = new Money { Amount = 1500m, Currency = "USD" }
@@ -147,7 +147,7 @@ public class AccountingPayloadsTests
         Assert.Equal("56", bill.VendorId);
         Assert.Equal("62", bill.ExpenseAccountId);
         Assert.Equal(1500m, bill.Amount);
-        Assert.Equal(payroll.PeriodEnd, bill.TxnDate);
+        Assert.Equal(new DateTime(2026, 9, 30, 0, 0, 0, DateTimeKind.Utc), bill.TxnDate);
         Assert.Equal("PAY-9", bill.DocNumber);
     }
 

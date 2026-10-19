@@ -18,5 +18,5 @@ public record PayrollPaidEvent(
     decimal OutstandingAmount,
     string Currency,
     bool IsFullyPaid,
-    DateTime PeriodStart,
-    DateTime PeriodEnd) : IDomainEvent;
+    DateOnly PeriodStart,
+    DateOnly PeriodEnd) : IDomainEvent;

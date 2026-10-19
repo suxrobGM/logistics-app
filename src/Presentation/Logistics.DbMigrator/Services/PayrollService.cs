@@ -32,7 +32,7 @@ public class PayrollService(
             foreach (var employee in employees)
             {
                 var isPayrollExisting =
-                    await IsPayrollExisting(payrollRepository, employee.Id, StartDate, EndDate);
+                    await IsPayrollExisting(payrollRepository, employee.Id, DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
 
                 if (isPayrollExisting)
                 {
@@ -52,8 +52,8 @@ public class PayrollService(
     private static async Task<bool> IsPayrollExisting(
         ITenantRepository<PayrollInvoice, Guid> payrollRepository,
         Guid employeeId,
-        DateTime startDate,
-        DateTime endDate)
+        DateOnly startDate,
+        DateOnly endDate)
     {
         var payroll = await payrollRepository.GetAsync(p =>
             p.EmployeeId == employeeId &&
@@ -74,8 +74,8 @@ public class PayrollService(
             TaxTotal = Money.Zero("USD"),
             Total = money,
             Status = InvoiceStatus.Paid,
-            PeriodStart = startDate,
-            PeriodEnd = endDate,
+            PeriodStart = DateOnly.FromDateTime(startDate),
+            PeriodEnd = DateOnly.FromDateTime(endDate),
             EmployeeId = employee.Id,
             Employee = employee
         };

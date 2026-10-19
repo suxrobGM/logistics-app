@@ -91,7 +91,7 @@ internal sealed class AccountingPayablesSyncService(
             return;
         }
 
-        var from = run.SyncFrom;
+        var from = DateOnly.FromDateTime(run.SyncFrom);
         var payrolls = await tenantUow.Repository<PayrollInvoice>().Query()
             .Where(mappingService.NotUpToDate<PayrollInvoice>(QboLocalEntityType.PayrollInvoice))
             .Where(p => (p.Status == InvoiceStatus.Approved || p.Status == InvoiceStatus.PartiallyPaid

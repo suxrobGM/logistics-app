@@ -145,7 +145,7 @@ internal static class AccountingPayloads
             ExpenseAccountId = expenseAccountId,
             Amount = payroll.Total.Amount,
             CurrencyCode = payroll.Total.Currency,
-            TxnDate = payroll.PeriodEnd,
+            TxnDate = payroll.PeriodEnd.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
             DueDate = payroll.DueDate,
             DocNumber = $"PAY-{payroll.Number.ToString(CultureInfo.InvariantCulture)}",
             Description = $"Driver pay {Date(payroll.PeriodStart)} to {Date(payroll.PeriodEnd)}"
@@ -169,4 +169,6 @@ internal static class AccountingPayloads
             : string.IsNullOrEmpty(expense.Notes) ? expense.VendorName : $"{expense.VendorName} - {expense.Notes}";
 
     private static string Date(DateTime value) => value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+    private static string Date(DateOnly value) => value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 }

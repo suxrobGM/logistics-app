@@ -22,8 +22,8 @@ internal class PayrollService(
         {
             tenantUow.SetCurrentTenant(tenant);
 
-            var previousMonthStart =
-                new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1);
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var previousMonthStart = new DateOnly(today.Year, today.Month, 1).AddMonths(-1);
             var previousMonthEnd = previousMonthStart.AddMonths(1).AddDays(-1);
             var employees = await tenantUow.Repository<Employee>().GetListAsync(e =>
                 e.SalaryType == SalaryType.Monthly ||
@@ -45,7 +45,7 @@ internal class PayrollService(
         foreach (var tenant in tenants)
         {
             tenantUow.SetCurrentTenant(tenant);
-            var previousWeekStart = StartOfPreviousWeek(DateTime.UtcNow);
+            var previousWeekStart = StartOfPreviousWeek(DateOnly.FromDateTime(DateTime.UtcNow));
             var previousWeekEnd = previousWeekStart.AddDays(6);
             var employees = await tenantUow.Repository<Employee>().GetListAsync(e =>
                 e.SalaryType == SalaryType.Weekly ||
@@ -62,7 +62,7 @@ internal class PayrollService(
     }
 
     public async Task<PayrollInvoice> BuildPayrollInvoiceAsync(
-        Employee employee, DateTime startDate, DateTime endDate, CancellationToken ct = default)
+        Employee employee, DateOnly startDate, DateOnly endDate, CancellationToken ct = default)
     {
         var tenant = tenantUow.GetCurrentTenant();
         var currency = tenant.Settings.Currency.ToString();
@@ -85,7 +85,7 @@ internal class PayrollService(
     }
 
     public async Task<PayrollInvoice> CreatePayrollInvoiceAsync(
-        Employee employee, DateTime startDate, DateTime endDate, CancellationToken ct = default)
+        Employee employee, DateOnly startDate, DateOnly endDate, CancellationToken ct = default)
     {
         var payroll = await BuildPayrollInvoiceAsync(employee, startDate, endDate, ct);
         await ClaimDeductionsAsync(payroll, ct);
@@ -154,12 +154,13 @@ internal class PayrollService(
             return 0;
         }
 
+        var (from, to) = UtcRange(payroll.PeriodStart, payroll.PeriodEnd);
         var timeEntries = await tenantUow.Repository<TimeEntry>()
             .GetListAsync(te =>
                 te.EmployeeId == payroll.EmployeeId &&
                 te.PayrollInvoiceId == null &&
-                te.Date >= payroll.PeriodStart.Date &&
-                te.Date <= payroll.PeriodEnd.Date);
+                te.Date >= from &&
+                te.Date < to);
 
         foreach (var entry in timeEntries)
         {
@@ -174,12 +175,13 @@ internal class PayrollService(
         return timeEntries.Count;
     }
 
-    public bool ValidateTimeEntryDate(DateTime entryDate, DateTime periodStart, DateTime periodEnd)
+    public bool ValidateTimeEntryDate(DateTime entryDate, DateOnly periodStart, DateOnly periodEnd)
     {
-        return entryDate.Date >= periodStart.Date && entryDate.Date <= periodEnd.Date;
+        var day = DateOnly.FromDateTime(entryDate);
+        return day >= periodStart && day <= periodEnd;
     }
 
-    private async Task GenerateAsync(List<Employee> employees, DateTime startDate, DateTime endDate)
+    private async Task GenerateAsync(List<Employee> employees, DateOnly startDate, DateOnly endDate)
     {
         foreach (var employee in employees)
         {
@@ -193,7 +195,7 @@ internal class PayrollService(
         }
     }
 
-    private async Task<bool> IsPayrollInvoiceExisting(Guid employeeId, DateTime startDate, DateTime endDate)
+    private async Task<bool> IsPayrollInvoiceExisting(Guid employeeId, DateOnly startDate, DateOnly endDate)
     {
         var payroll = await tenantUow.Repository<PayrollInvoice>().GetAsync(p =>
             p.EmployeeId == employeeId &&
@@ -237,8 +239,7 @@ internal class PayrollService(
     private async Task<List<FuelCardTransaction>> GetFuelChargesAsync(
         Guid employeeId, PayrollInvoice payroll, CancellationToken ct)
     {
-        var startDate = payroll.PeriodStart;
-        var periodEnd = payroll.PeriodEnd.Date.AddDays(1);
+        var (from, to) = UtcRange(payroll.PeriodStart, payroll.PeriodEnd);
         var truckIds = await tenantUow.Repository<Truck>().Query()
             .Where(t => t.MainDriverId == employeeId)
             .Select(t => t.Id)
@@ -248,7 +249,7 @@ internal class PayrollService(
             t.TruckId != null && truckIds.Contains(t.TruckId.Value) &&
             t.Status == FuelCardTransactionStatus.Matched &&
             (t.PayrollInvoiceId == null || t.PayrollInvoiceId == payroll.Id) &&
-            t.TransactionDate >= startDate && t.TransactionDate < periodEnd, ct);
+            t.TransactionDate >= from && t.TransactionDate < to, ct);
     }
 
     private async Task ClaimDeductionsAsync(PayrollInvoice payroll, CancellationToken ct)
@@ -275,7 +276,7 @@ internal class PayrollService(
     }
 
     private async Task<GrossPay> CalculateGrossPayAsync(
-        Employee employee, DateTime startDate, DateTime endDate, CancellationToken ct)
+        Employee employee, DateOnly startDate, DateOnly endDate, CancellationToken ct)
     {
         var rate = employee.Salary.Amount;
 
@@ -313,10 +314,11 @@ internal class PayrollService(
             }
             case SalaryType.Hourly:
             {
+                var (from, to) = UtcRange(startDate, endDate);
                 var hours = await tenantUow.Repository<TimeEntry>().Query()
                     .Where(te => te.EmployeeId == employee.Id &&
-                                 te.Date >= startDate.Date &&
-                                 te.Date <= endDate.Date)
+                                 te.Date >= from &&
+                                 te.Date < to)
                     .SumAsync(te => te.TotalHours, ct);
                 return new GrossPay(hours * rate, $"{hours:0.##} hour(s) x {rate:0.00}", Hours: hours);
             }
@@ -339,11 +341,11 @@ internal class PayrollService(
     /// Loads delivered in the period by any truck the employee drives, main or secondary.
     /// </summary>
     private Task<List<DeliveredLoad>> GetDeliveredLoadsAsync(
-        Guid employeeId, DateTime startDate, DateTime endDate, CancellationToken ct)
+        Guid employeeId, DateOnly startDate, DateOnly endDate, CancellationToken ct)
     {
-        var periodEnd = endDate.Date.AddDays(1);
+        var (from, to) = UtcRange(startDate, endDate);
         return tenantUow.Repository<Load>().Query()
-            .Where(l => l.DeliveredAt >= startDate && l.DeliveredAt < periodEnd &&
+            .Where(l => l.DeliveredAt >= from && l.DeliveredAt < to &&
                         l.AssignedTruck != null &&
                         (l.AssignedTruck.MainDriverId == employeeId || l.AssignedTruck.SecondaryDriverId == employeeId))
             .Select(l => new DeliveredLoad(
@@ -357,21 +359,21 @@ internal class PayrollService(
     /// <summary>
     /// Stops the driver app marked departed in the period, on trips run by a truck the employee drives.
     /// </summary>
-    private Task<int> CountDepartedStopsAsync(Guid employeeId, DateTime startDate, DateTime endDate, CancellationToken ct)
+    private Task<int> CountDepartedStopsAsync(Guid employeeId, DateOnly startDate, DateOnly endDate, CancellationToken ct)
     {
-        var periodEnd = endDate.Date.AddDays(1);
+        var (from, to) = UtcRange(startDate, endDate);
         return tenantUow.Repository<TripStop>().Query()
-            .CountAsync(s => s.DepartedAt >= startDate && s.DepartedAt < periodEnd &&
+            .CountAsync(s => s.DepartedAt >= from && s.DepartedAt < to &&
                              s.Trip.Truck != null &&
                              (s.Trip.Truck.MainDriverId == employeeId || s.Trip.Truck.SecondaryDriverId == employeeId), ct);
     }
 
     private static string Percent(decimal ratio) => (ratio * 100).ToString("0.##", CultureInfo.InvariantCulture) + "%";
 
-    private static int CountWeeks(DateTime startDate, DateTime endDate)
+    private static int CountWeeks(DateOnly startDate, DateOnly endDate)
     {
         // Assuming a week starts on Sunday and ends on Saturday.
-        var days = (endDate - startDate).Days + 1; // +1 to include the start day in the count
+        var days = endDate.DayNumber - startDate.DayNumber + 1; // +1 to include the start day in the count
         var fullWeeks = days / 7;
         var remainingDays = days % 7;
 
@@ -390,7 +392,7 @@ internal class PayrollService(
         return fullWeeks;
     }
 
-    private static int CountMonths(DateTime startDate, DateTime endDate)
+    private static int CountMonths(DateOnly startDate, DateOnly endDate)
     {
         var months = (endDate.Year - startDate.Year) * 12 + endDate.Month - startDate.Month;
 
@@ -403,11 +405,15 @@ internal class PayrollService(
         return months + 1; // +1 to include the starting month
     }
 
-    private static DateTime StartOfPreviousWeek(DateTime date)
+    private static DateOnly StartOfPreviousWeek(DateOnly date)
     {
         var daysToSubtract = (int)date.DayOfWeek + 7;
-        return date.AddDays(-daysToSubtract).Date;
+        return date.AddDays(-daysToSubtract);
     }
+
+    /// <summary>The period's days as a UTC [start, day after end) range, for comparing timestamps.</summary>
+    private static (DateTime From, DateTime To) UtcRange(DateOnly start, DateOnly end) =>
+        (start.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc), end.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc));
 
     private sealed record GrossPay(decimal Amount, string Description, double Distance = 0, decimal Hours = 0);
 

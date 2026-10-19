@@ -13,8 +13,8 @@ public class SettlementLinesTests
         Subtotal = Money.Zero("USD"),
         TaxTotal = Money.Zero("USD"),
         Total = Money.Zero("USD"),
-        PeriodStart = new DateTime(2026, 10, 4),
-        PeriodEnd = new DateTime(2026, 10, 10)
+        PeriodStart = new DateOnly(2026, 10, 4),
+        PeriodEnd = new DateOnly(2026, 10, 10)
     };
 
     private static RecurringDeduction Deduction(PayDeductionType type, decimal amount, decimal? target = null) => new()

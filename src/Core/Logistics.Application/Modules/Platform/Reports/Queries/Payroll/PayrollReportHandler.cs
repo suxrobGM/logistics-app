@@ -16,13 +16,13 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
 
         if (req.StartDate != default)
         {
-            var from = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
+            var from = DateOnly.FromDateTime(req.StartDate);
             payrollsQuery = payrollsQuery.Where(p => p.PeriodStart >= from);
         }
 
         if (req.EndDate != default)
         {
-            var to = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
+            var to = DateOnly.FromDateTime(req.EndDate);
             payrollsQuery = payrollsQuery.Where(p => p.PeriodEnd <= to);
         }
 
@@ -35,11 +35,7 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
         var averagePayrollAmount = payrolls.Any() ? totalPayroll / payrolls.Count : 0;
 
         var statusBreakdown = CalculateStatusBreakdown(payrolls);
-        var payrollTrends = CalculatePayrollTrends(
-            payrolls,
-            req.StartDate == default ? payrolls.Any() ? payrolls.Min(p => p.PeriodStart) : DateTime.UtcNow.AddMonths(-6) : req.StartDate,
-            req.EndDate == default ? payrolls.Any() ? payrolls.Max(p => p.PeriodEnd) : DateTime.UtcNow : req.EndDate
-        );
+        var payrollTrends = CalculatePayrollTrends(payrolls, TrendStart(req, payrolls), TrendEnd(req, payrolls));
         var topEmployees = GetTopEmployeesByEarnings(payrolls);
         var salaryTypeBreakdown = CalculateSalaryTypeBreakdown(payrolls, totalPayroll);
 
@@ -73,18 +69,42 @@ internal sealed class PayrollReportHandler(ITenantUnitOfWork tenantUow)
         };
     }
 
+    private static DateOnly TrendStart(PayrollReportQuery req, List<PayrollInvoice> payrolls)
+    {
+        if (req.StartDate != default)
+        {
+            return DateOnly.FromDateTime(req.StartDate);
+        }
+
+        return payrolls.Count > 0
+            ? payrolls.Min(p => p.PeriodStart)
+            : DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-6));
+    }
+
+    private static DateOnly TrendEnd(PayrollReportQuery req, List<PayrollInvoice> payrolls)
+    {
+        if (req.EndDate != default)
+        {
+            return DateOnly.FromDateTime(req.EndDate);
+        }
+
+        return payrolls.Count > 0
+            ? payrolls.Max(p => p.PeriodEnd)
+            : DateOnly.FromDateTime(DateTime.UtcNow);
+    }
+
     private List<PayrollTrendDto> CalculatePayrollTrends(
         List<PayrollInvoice> payrolls,
-        DateTime startDate,
-        DateTime endDate)
+        DateOnly startDate,
+        DateOnly endDate)
     {
         var trends = new List<PayrollTrendDto>();
-        var currentDate = DateTime.SpecifyKind(new DateTime(startDate.Year, startDate.Month, 1), DateTimeKind.Utc);
+        var currentDate = new DateOnly(startDate.Year, startDate.Month, 1);
 
         while (currentDate <= endDate)
         {
-            var monthStart = DateTime.SpecifyKind(new DateTime(currentDate.Year, currentDate.Month, 1), DateTimeKind.Utc);
-            var monthEnd = DateTime.SpecifyKind(monthStart.AddMonths(1).AddDays(-1), DateTimeKind.Utc);
+            var monthStart = new DateOnly(currentDate.Year, currentDate.Month, 1);
+            var monthEnd = monthStart.AddMonths(1).AddDays(-1);
 
             var monthPayrolls = payrolls
                 .Where(p => p.PeriodStart >= monthStart && p.PeriodStart <= monthEnd)

@@ -7,6 +7,6 @@ namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 public class CreatePayrollInvoiceCommand : ICommand
 {
     public Guid EmployeeId { get; set; }
-    public DateTime PeriodStart { get; set; }
-    public DateTime PeriodEnd { get; set; }
+    public DateOnly PeriodStart { get; set; }
+    public DateOnly PeriodEnd { get; set; }
 }

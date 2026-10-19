@@ -11,6 +11,6 @@ namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 public record BatchCreatePayrollInvoicesCommand : ICommand<Result<BatchCreatePayrollInvoicesResult>>
 {
     public required List<Guid> EmployeeIds { get; set; }
-    public required DateTime PeriodStart { get; set; }
-    public required DateTime PeriodEnd { get; set; }
+    public required DateOnly PeriodStart { get; set; }
+    public required DateOnly PeriodEnd { get; set; }
 }

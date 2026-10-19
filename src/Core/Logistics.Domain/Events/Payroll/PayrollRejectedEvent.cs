@@ -14,6 +14,6 @@ public record PayrollRejectedEvent(
     string EmployeeEmail,
     string? EmployeeDeviceToken,
     string RejectionReason,
-    DateTime PeriodStart,
-    DateTime PeriodEnd,
+    DateOnly PeriodStart,
+    DateOnly PeriodEnd,
     Guid RejectedById) : IDomainEvent;

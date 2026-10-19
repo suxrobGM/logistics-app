@@ -33,8 +33,8 @@ internal sealed class BatchCreatePayrollInvoicesHandler(
             var overlappingPayroll = await tenantUow.Repository<PayrollInvoice>()
                 .GetAsync(p =>
                     p.EmployeeId == employeeId &&
-                    p.PeriodStart < req.PeriodEnd &&
-                    p.PeriodEnd > req.PeriodStart, ct);
+                    p.PeriodStart <= req.PeriodEnd &&
+                    p.PeriodEnd >= req.PeriodStart, ct);
 
             if (overlappingPayroll is not null)
             {

@@ -11,14 +11,14 @@ public interface IPayrollService : IApplicationService
     /// Builds a settlement for the period - gross pay, recurring deductions, escrow, owed cash
     /// advances and fuel card charges - without claiming the advances or fuel charges. For previews.
     /// </summary>
-    Task<PayrollInvoice> BuildPayrollInvoiceAsync(Employee employee, DateTime startDate, DateTime endDate,
+    Task<PayrollInvoice> BuildPayrollInvoiceAsync(Employee employee, DateOnly startDate, DateOnly endDate,
         CancellationToken ct = default);
 
     /// <summary>
     /// Builds a settlement like <see cref="BuildPayrollInvoiceAsync"/> and marks its cash advances and
     /// fuel card charges as deducted by it. The caller adds the invoice and saves.
     /// </summary>
-    Task<PayrollInvoice> CreatePayrollInvoiceAsync(Employee employee, DateTime startDate, DateTime endDate,
+    Task<PayrollInvoice> CreatePayrollInvoiceAsync(Employee employee, DateOnly startDate, DateOnly endDate,
         CancellationToken ct = default);
 
     /// <summary>
@@ -54,5 +54,5 @@ public interface IPayrollService : IApplicationService
     /// <param name="periodStart">Payroll period start.</param>
     /// <param name="periodEnd">Payroll period end.</param>
     /// <returns>True if valid, false otherwise.</returns>
-    bool ValidateTimeEntryDate(DateTime entryDate, DateTime periodStart, DateTime periodEnd);
+    bool ValidateTimeEntryDate(DateTime entryDate, DateOnly periodStart, DateOnly periodEnd);
 }
