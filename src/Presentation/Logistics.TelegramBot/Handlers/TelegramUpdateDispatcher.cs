@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Logistics.Domain.Persistence;
 using Logistics.TelegramBot.Authentication;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -11,7 +10,6 @@ namespace Logistics.TelegramBot.Handlers;
 internal sealed class TelegramUpdateDispatcher(
     ITelegramBotClient bot,
     TelegramAuthService authService,
-    ITenantUnitOfWork tenantUow,
     CommandRouter commandRouter,
     CallbackQueryHandler callbackQueryHandler,
     ILogger<TelegramUpdateDispatcher> logger)
@@ -44,12 +42,6 @@ internal sealed class TelegramUpdateDispatcher(
             }
 
             var context = await authService.ResolveChatContextAsync(chatId.Value, ct);
-
-            // Set tenant context if authenticated
-            if (context is not null)
-            {
-                await tenantUow.SetCurrentTenantByIdAsync(context.TenantId);
-            }
 
             switch (update.Type)
             {

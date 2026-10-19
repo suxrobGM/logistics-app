@@ -10,10 +10,8 @@ using Logistics.Application.Abstractions.Features;
 namespace Logistics.TelegramBot.Services;
 
 /// <summary>
-/// Background service that warms the Telegram chat cache on application startup.
-/// This ensures that notifications can be sent immediately without waiting for the first cache miss.
-/// The cache is warmed by loading all tenants with the TelegramBot feature enabled,
-/// then loading their Telegram chats and populating the authentication cache with the chat contexts.
+/// On startup, records which tenant database each connected chat lives in, for every tenant with the
+/// TelegramBot feature, so the bot can find a chat whose login state has since been purged.
 /// </summary>
 internal sealed class TelegramChatCacheWarmer(
     IServiceScopeFactory scopeFactory,
@@ -61,13 +59,7 @@ internal sealed class TelegramChatCacheWarmer(
 
             foreach (var chat in chats)
             {
-                var context = new TelegramChatContext(
-                    tenant.Id,
-                    chat.UserId,
-                    chat.ChatType,
-                    tenant.Name);
-
-                TelegramAuthService.WarmCache(chat.ChatId, context);
+                TelegramAuthService.RememberTenant(chat.ChatId, tenant.Id);
                 totalChats++;
             }
         }

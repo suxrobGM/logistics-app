@@ -1,8 +1,10 @@
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.TelegramBot.Authentication;
@@ -12,7 +14,11 @@ internal sealed class TelegramAuthService(
     ITenantUnitOfWork tenantUow,
     ILogger<TelegramAuthService> logger)
 {
-    private static readonly ConcurrentDictionary<long, TelegramChatContext> Cache = new();
+    /// <summary>
+    /// Which tenant database each connected chat lives in. A routing hint only: every update is
+    /// still authorized against that database.
+    /// </summary>
+    private static readonly ConcurrentDictionary<long, Guid> TenantByChat = new();
 
     /// <summary>
     /// Creates a login state and returns the state token for the login URL.
@@ -68,7 +74,8 @@ internal sealed class TelegramAuthService(
     }
 
     /// <summary>
-    /// Polls for a consumed login state. Returns the context if login is complete, null if still pending.
+    /// Completes a login from its state token. Returns the context once the login is consumed and
+    /// the chat authorizes, null while it is still pending.
     /// </summary>
     public async Task<TelegramChatContext?> CheckLoginStateAsync(
         string state,
@@ -77,83 +84,89 @@ internal sealed class TelegramAuthService(
         var loginState = await masterUow.Repository<TelegramLoginState>()
             .GetAsync(s => s.State == state, ct);
 
-        if (loginState is null || !loginState.IsConsumed)
+        if (loginState is null || !loginState.IsConsumed || loginState.TenantId is null)
             return null;
 
-        if (loginState.TenantId is null || loginState.TenantName is null)
-            return null;
-
-        var context = new TelegramChatContext(
-            loginState.TenantId.Value,
-            loginState.UserId,
-            loginState.ChatType,
-            loginState.TenantName);
-
-        // Cache the context
-        Cache[loginState.ChatId] = context;
-
-        logger.LogInformation(
-            "Telegram chat {ChatId} authenticated via Identity Server for tenant {TenantName}",
-            loginState.ChatId, loginState.TenantName);
-
-        return context;
+        TenantByChat[loginState.ChatId] = loginState.TenantId.Value;
+        return await ResolveChatContextAsync(loginState.ChatId, ct);
     }
 
     /// <summary>
-    /// Resolves chat context from cache, falling back to the master DB if not cached.
-    /// Handles the case where Identity Server created the TelegramChat but the
-    /// bot's in-memory cache hasn't been updated yet (e.g., after login completes).
+    /// Authorizes the chat against its tenant database on every call: the chat row must still exist
+    /// and its connecting employee must still be Active. Also switches <see cref="ITenantUnitOfWork"/>
+    /// to that tenant.
     /// </summary>
     public async Task<TelegramChatContext?> ResolveChatContextAsync(long chatId, CancellationToken ct = default)
     {
-        if (Cache.TryGetValue(chatId, out var cached))
-            return cached;
-
-        // DB fallback: find the most recent consumed login state for this chatId
-        var loginState = await masterUow.Repository<TelegramLoginState>()
-            .GetAsync(s => s.ChatId == chatId && s.IsConsumed && s.TenantId != null, ct);
-
-        if (loginState?.TenantId is null || loginState.TenantName is null)
+        var tenant = await FindTenantAsync(chatId, ct);
+        if (tenant is null)
+        {
+            TenantByChat.TryRemove(chatId, out _);
             return null;
+        }
 
-        var context = new TelegramChatContext(
-            loginState.TenantId.Value,
-            loginState.UserId,
-            loginState.ChatType,
-            loginState.TenantName);
+        tenantUow.SetCurrentTenant(tenant);
+        var chat = await TelegramRecipients.FindAuthorizedChatAsync(tenantUow, chatId, ct);
 
-        Cache[chatId] = context;
-        return context;
+        if (chat is null)
+        {
+            TenantByChat.TryRemove(chatId, out _);
+            return null;
+        }
+
+        TenantByChat[chatId] = tenant.Id;
+        return new TelegramChatContext(tenant.Id, chat.UserId, chat.ChatType, tenant.Name);
     }
 
     public async Task<bool> DisconnectAsync(long chatId, CancellationToken ct = default)
     {
-        var context = await ResolveChatContextAsync(chatId, ct);
-        if (context is null)
+        var tenant = await FindTenantAsync(chatId, ct);
+        TenantByChat.TryRemove(chatId, out _);
+
+        if (tenant is null)
             return false;
 
-        await tenantUow.SetCurrentTenantByIdAsync(context.TenantId);
+        tenantUow.SetCurrentTenant(tenant);
         var chat = await tenantUow.Repository<TelegramChat>()
             .GetAsync(c => c.ChatId == chatId, ct);
 
-        if (chat is not null)
-        {
-            tenantUow.Repository<TelegramChat>().Delete(chat);
-            await tenantUow.SaveChangesAsync(ct);
-        }
+        if (chat is null)
+            return false;
 
-        Cache.TryRemove(chatId, out _);
+        tenantUow.Repository<TelegramChat>().Delete(chat);
+        await tenantUow.SaveChangesAsync(ct);
 
         logger.LogInformation(
             "Telegram chat {ChatId} disconnected from tenant {TenantName}",
-            chatId, context.TenantName);
+            chatId, tenant.Name);
 
         return true;
     }
 
-    public static void WarmCache(long chatId, TelegramChatContext context)
+    public static void RememberTenant(long chatId, Guid tenantId)
     {
-        Cache[chatId] = context;
+        TenantByChat[chatId] = tenantId;
+    }
+
+    /// <summary>
+    /// The tenant whose database holds the chat's row. Login states are purged an hour after they
+    /// expire, so a chat connected before the last restart is found only through the map the
+    /// cache warmer fills from the tenant databases; a chat connected since, only through its
+    /// latest consumed login state.
+    /// </summary>
+    private async Task<Tenant?> FindTenantAsync(long chatId, CancellationToken ct)
+    {
+        Guid? tenantId = TenantByChat.TryGetValue(chatId, out var known)
+            ? known
+            : await masterUow.Repository<TelegramLoginState>().Query()
+                .Where(s => s.ChatId == chatId && s.IsConsumed && s.TenantId != null)
+                .OrderByDescending(s => s.ExpiresAt)
+                .Select(s => s.TenantId)
+                .FirstOrDefaultAsync(ct);
+
+        return tenantId is null
+            ? null
+            : await masterUow.Repository<Tenant>().GetByIdAsync(tenantId.Value, ct);
     }
 
     private static string GenerateState()

@@ -17,6 +17,25 @@ public static class TelegramRecipients
     };
 
     /// <summary>
+    /// The connected chat the bot may run commands for: its row still exists and its connecting
+    /// employee is still on the tenant and Active. Null otherwise.
+    /// </summary>
+    public static async Task<TelegramChat?> FindAuthorizedChatAsync(
+        ITenantUnitOfWork tenantUow, long chatId, CancellationToken ct)
+    {
+        var chat = await tenantUow.Repository<TelegramChat>().Query()
+            .FirstOrDefaultAsync(c => c.ChatId == chatId && c.UserId != null, ct);
+
+        if (chat is null)
+            return null;
+
+        var employeeActive = await tenantUow.Repository<Employee>().Query()
+            .AnyAsync(e => e.Id == chat.UserId && e.Status == EmployeeStatus.Active, ct);
+
+        return employeeActive ? chat : null;
+    }
+
+    /// <summary>
     /// The chats a tenant notification goes to. Only chats whose connecting employee is still on the
     /// tenant and Active qualify; group chats get every notification, private chats only those for
     /// the employee's current role.

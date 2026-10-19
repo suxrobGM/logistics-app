@@ -73,6 +73,49 @@ public class TelegramRecipientsTests
         Assert.Empty(await TelegramRecipients.ListAsync(_tenantUow, null, CancellationToken.None));
     }
 
+    #region Command authorization
+
+    [Fact]
+    public async Task FindAuthorizedChatAsync_EmployeeActive_ReturnsTheChat()
+    {
+        var employee = AddEmployee(TenantRoles.Driver, EmployeeStatus.Active);
+        var chat = AddChat(employee.Id, TelegramChatType.Private);
+
+        Assert.Same(chat, await TelegramRecipients.FindAuthorizedChatAsync(_tenantUow, chat.ChatId, CancellationToken.None));
+    }
+
+    [Theory]
+    [InlineData(EmployeeStatus.Terminated)]
+    [InlineData(EmployeeStatus.Suspended)]
+    [InlineData(EmployeeStatus.OnLeave)]
+    public async Task FindAuthorizedChatAsync_EmployeeNotActive_ReturnsNull(EmployeeStatus status)
+    {
+        var employee = AddEmployee(TenantRoles.Dispatcher, status);
+        var chat = AddChat(employee.Id, TelegramChatType.Group);
+
+        Assert.Null(await TelegramRecipients.FindAuthorizedChatAsync(_tenantUow, chat.ChatId, CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task FindAuthorizedChatAsync_EmployeeRemoved_ReturnsNull()
+    {
+        var chat = AddChat(Guid.NewGuid(), TelegramChatType.Private);
+
+        Assert.Null(await TelegramRecipients.FindAuthorizedChatAsync(_tenantUow, chat.ChatId, CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task FindAuthorizedChatAsync_ChatRowDeleted_ReturnsNull()
+    {
+        var employee = AddEmployee(TenantRoles.Driver, EmployeeStatus.Active);
+        var chat = AddChat(employee.Id, TelegramChatType.Private);
+        _chats.Remove(chat);
+
+        Assert.Null(await TelegramRecipients.FindAuthorizedChatAsync(_tenantUow, chat.ChatId, CancellationToken.None));
+    }
+
+    #endregion
+
     private Employee AddEmployee(string roleName, EmployeeStatus status)
     {
         var employee = new Employee
