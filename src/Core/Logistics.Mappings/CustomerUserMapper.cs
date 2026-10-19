@@ -22,7 +22,6 @@ public static partial class CustomerUserMapper
             Email = entity.Email,
             DisplayName = entity.DisplayName,
             IsActive = entity.IsActive,
-            LastLoginAt = entity.LastLoginAt,
             CreatedAt = entity.CreatedAt
         };
     }

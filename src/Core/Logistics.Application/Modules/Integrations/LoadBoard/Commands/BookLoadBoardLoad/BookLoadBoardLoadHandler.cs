@@ -135,7 +135,6 @@ internal sealed class BookLoadBoardLoadHandler(
         );
 
         load.Source = LoadSource.LoadBoard;
-        load.ExternalSourceProvider = listing.ProviderType;
         load.ExternalSourceId = listing.ExternalListingId;
 
         await tenantUow.Repository<Load>().AddAsync(load, ct);

@@ -26,7 +26,6 @@ internal sealed class LoadExceptionEntityConfiguration : IEntityTypeConfiguratio
             .HasForeignKey(e => e.LoadId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // No FK constraint on ReportedById - users may exist in master DB only
         builder.HasIndex(e => e.LoadId);
         builder.HasIndex(e => e.ResolvedAt);
     }

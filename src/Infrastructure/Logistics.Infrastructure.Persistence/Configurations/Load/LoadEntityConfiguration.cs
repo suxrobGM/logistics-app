@@ -34,16 +34,12 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
             .HasForeignKey(i => i.AssignedDispatcherId);
         //.OnDelete(DeleteBehavior.SetNull);
 
-        // External load board source tracking
         builder.Property(i => i.ExternalSourceId)
             .HasMaxLength(100);
 
         builder.HasIndex(i => new { i.Source, i.ExternalSourceId })
             .IsUnique()
             .HasFilter("external_source_id IS NOT NULL");
-
-        builder.Property(i => i.ExternalBrokerReference)
-            .HasMaxLength(100);
 
         // Order-intake & intermodal fields
         builder.Property(i => i.Notes)

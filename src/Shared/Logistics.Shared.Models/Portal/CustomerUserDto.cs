@@ -12,6 +12,5 @@ public class CustomerUserDto
     public string Email { get; set; } = string.Empty;
     public string? DisplayName { get; set; }
     public bool IsActive { get; set; }
-    public DateTime? LastLoginAt { get; set; }
     public DateTime CreatedAt { get; set; }
 }

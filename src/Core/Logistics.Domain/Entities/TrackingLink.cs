@@ -29,11 +29,6 @@ public class TrackingLink : AuditableEntity, ITenantEntity
     public bool IsActive { get; set; } = true;
 
     /// <summary>
-    /// The user who created this tracking link.
-    /// </summary>
-    public required Guid CreatedByUserId { get; set; }
-
-    /// <summary>
     /// Number of times this tracking link has been accessed.
     /// </summary>
     public int AccessCount { get; set; }

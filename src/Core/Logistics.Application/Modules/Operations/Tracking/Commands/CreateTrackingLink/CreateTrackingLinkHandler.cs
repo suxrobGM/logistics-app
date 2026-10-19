@@ -36,8 +36,7 @@ internal sealed class CreateTrackingLinkHandler(
         {
             Token = TokenGenerator.GenerateSecureToken(64),
             LoadId = req.LoadId,
-            ExpiresAt = DateTime.UtcNow.AddDays(DefaultExpirationDays),
-            CreatedByUserId = currentUserId.Value
+            ExpiresAt = DateTime.UtcNow.AddDays(DefaultExpirationDays)
         };
 
         await tenantUow.Repository<TrackingLink>().AddAsync(trackingLink, ct);

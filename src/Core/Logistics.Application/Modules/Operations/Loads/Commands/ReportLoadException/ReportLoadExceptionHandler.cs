@@ -31,7 +31,6 @@ internal sealed class ReportLoadExceptionHandler(
             Type = req.Type,
             Reason = req.Reason,
             OccurredAt = DateTime.UtcNow,
-            ReportedById = userId.Value,
             ReportedByName = currentUserService.GetUserName()
         };
 

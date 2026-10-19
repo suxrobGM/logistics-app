@@ -133,19 +133,10 @@ public partial class Load : AuditableEntity, ITenantEntity
     public virtual Terminal? DestinationTerminal { get; set; }
 
     /// <summary>
-    /// If the load was booked from a load board, the provider type.
-    /// </summary>
-    public LoadBoardProviderType? ExternalSourceProvider { get; set; }
-
-    /// <summary>
-    /// External listing ID from the load board provider.
+    /// The listing ID of a booked load-board load, or the source system's reference of an imported one;
+    /// unique per <see cref="Source"/>.
     /// </summary>
     public string? ExternalSourceId { get; set; }
-
-    /// <summary>
-    /// Broker reference number from the load board.
-    /// </summary>
-    public string? ExternalBrokerReference { get; set; }
 
     /// <summary>
     /// Copies the origin onto this load's pickup stops and the destination onto its drop-off stops, and re-sums

@@ -30,11 +30,6 @@ public class CustomerUser : AuditableEntity, ITenantEntity
     public bool IsActive { get; set; } = true;
 
     /// <summary>
-    /// Last time the user logged into the portal.
-    /// </summary>
-    public DateTime? LastLoginAt { get; set; }
-
-    /// <summary>
     /// Display name for the portal user.
     /// </summary>
     public string? DisplayName { get; set; }

@@ -165,7 +165,6 @@ internal sealed class DataExportService(
                         c.Email,
                         c.DisplayName,
                         c.IsActive,
-                        c.LastLoginAt,
                         c.CreatedAt
                     }), ct);
                 }
