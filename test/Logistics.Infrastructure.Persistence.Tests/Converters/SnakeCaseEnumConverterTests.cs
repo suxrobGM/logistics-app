@@ -1,4 +1,6 @@
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Persistence.Converters;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Xunit;
 
 namespace Logistics.Infrastructure.Persistence.Tests.Converters;
@@ -187,6 +189,38 @@ public class SnakeCaseEnumConverterTests
         var serialized = ToProvider(converter, value);
         var deserialized = FromProvider(converter, serialized);
         Assert.Equal(value, deserialized);
+    }
+
+    public static TheoryData<Type> DomainEnums()
+    {
+        var data = new TheoryData<Type>();
+        foreach (var type in typeof(HosViolationType).Assembly.GetTypes().Where(t => t.IsEnum))
+        {
+            data.Add(type);
+        }
+
+        return data;
+    }
+
+    [Theory]
+    [MemberData(nameof(DomainEnums))]
+    public void Roundtrip_EveryDomainEnumMember(Type enumType)
+    {
+        var converter = (ValueConverter)Activator.CreateInstance(
+            typeof(SnakeCaseEnumConverter<>).MakeGenericType(enumType))!;
+
+        foreach (var value in Enum.GetValues(enumType))
+        {
+            var stored = converter.ConvertToProvider(value);
+            Assert.Equal(value, converter.ConvertFromProvider(stored));
+        }
+    }
+
+    [Fact]
+    public void FromSnakeCase_MemberWithUnderscoreAndDigits_ReadsBack()
+    {
+        var converter = new SnakeCaseEnumConverter<HosViolationType>();
+        Assert.Equal(HosViolationType.EUContinuousDriving4_5h, FromProvider(converter, "eu_continuous_driving4_5h"));
     }
 
     #endregion

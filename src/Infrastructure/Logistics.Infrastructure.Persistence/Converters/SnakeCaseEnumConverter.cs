@@ -18,8 +18,18 @@ public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
     public SnakeCaseEnumConverter()
         : base(
             v => EnumToSnake.GetValueOrDefault(v, ToSnakeCase(v.ToString())),
-            v => string.IsNullOrEmpty(v) ? default : SnakeToEnum.GetValueOrDefault(v, ParseFallback(v)))
+            v => FromSnakeCase(v))
     {
+    }
+
+    private static TEnum FromSnakeCase(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return default;
+        }
+
+        return SnakeToEnum.TryGetValue(value, out var e) ? e : ParseFallback(value);
     }
 
     private static FrozenDictionary<TEnum, string> BuildEnumToSnakeCache()
