@@ -41,13 +41,12 @@ internal sealed class SearchLoadsTool(IMediator mediator)
 
     public static AgentToolDefinition Definition => new(
         "search_loads",
-        "Search loads by status, type, customer, truck, date range, or free text. Returns up to 20 loads per page with number, status, origin/destination, linehaul, total_charges (the price), and customer. Use for load history questions ('delivered loads last week', 'loads for customer X').")
+        "Search loads by status, type, customer, truck, date range, or free text. Returns up to 20 loads per page with number, status, origin/destination, linehaul, fuel_surcharge and customer. Accessorials are not included here: call get_load for total_charges, the price. Use for load history questions ('delivered loads last week', 'loads for customer X').")
     {
         RequiredFeature = TenantFeature.Loads,
         RequiredPermission = Permission.Load.View,
         Surfaces = AgentSurfaces.Copilot | AgentSurfaces.Mcp
     };
-
 
     protected override async Task<string> ExecuteAsync(Input input, CancellationToken ct)
     {
@@ -81,7 +80,7 @@ internal sealed class SearchLoadsTool(IMediator mediator)
             origin = l.OriginAddress.ToString(),
             destination = l.DestinationAddress.ToString(),
             linehaul = l.DeliveryCost,
-            total_charges = l.DeliveryCost + l.FuelSurcharge + l.Accessorials.Sum(a => a.Total),
+            fuel_surcharge = l.FuelSurcharge,
             customer = l.Customer?.Name,
             customer_id = l.Customer?.Id,
             truck_number = l.AssignedTruckNumber,
