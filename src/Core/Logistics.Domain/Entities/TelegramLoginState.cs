@@ -23,5 +23,4 @@ public class TelegramLoginState : Entity, IMasterEntity
     public Guid? TenantId { get; set; }
     public string? UserDisplayName { get; set; }
     public string? TenantName { get; set; }
-    public TelegramChatRole? ResolvedRole { get; set; }
 }

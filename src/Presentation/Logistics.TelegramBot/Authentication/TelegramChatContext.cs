@@ -6,5 +6,4 @@ internal sealed record TelegramChatContext(
     Guid TenantId,
     Guid? UserId,
     TelegramChatType ChatType,
-    TelegramChatRole? Role,
     string TenantName);

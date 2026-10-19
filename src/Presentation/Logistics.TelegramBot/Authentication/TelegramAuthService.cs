@@ -87,7 +87,6 @@ internal sealed class TelegramAuthService(
             loginState.TenantId.Value,
             loginState.UserId,
             loginState.ChatType,
-            loginState.ResolvedRole,
             loginState.TenantName);
 
         // Cache the context
@@ -121,7 +120,6 @@ internal sealed class TelegramAuthService(
             loginState.TenantId.Value,
             loginState.UserId,
             loginState.ChatType,
-            loginState.ResolvedRole,
             loginState.TenantName);
 
         Cache[chatId] = context;

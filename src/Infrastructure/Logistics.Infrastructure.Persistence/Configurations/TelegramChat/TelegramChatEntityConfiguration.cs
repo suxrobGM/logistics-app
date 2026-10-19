@@ -12,15 +12,6 @@ internal sealed class TelegramChatEntityConfiguration : IEntityTypeConfiguration
 
         builder.HasKey(t => t.Id);
 
-        builder.Property(t => t.Username)
-            .HasMaxLength(128);
-
-        builder.Property(t => t.FirstName)
-            .HasMaxLength(128);
-
-        builder.Property(t => t.GroupTitle)
-            .HasMaxLength(256);
-
         builder.HasIndex(t => t.ChatId).IsUnique();
         builder.HasIndex(t => t.UserId);
     }

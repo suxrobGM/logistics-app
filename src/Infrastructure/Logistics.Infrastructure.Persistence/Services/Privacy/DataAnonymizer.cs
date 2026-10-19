@@ -79,6 +79,13 @@ internal sealed class DataAnonymizer(
                     customerUser.IsActive = false;
                 }
 
+                var telegramChats = await tenantUow.Repository<TelegramChat>()
+                    .GetListAsync(c => c.UserId == user.Id, ct);
+                foreach (var chat in telegramChats)
+                {
+                    tenantUow.Repository<TelegramChat>().Delete(chat);
+                }
+
                 await tenantUow.SaveChangesAsync(ct);
             }
             catch (Exception ex)

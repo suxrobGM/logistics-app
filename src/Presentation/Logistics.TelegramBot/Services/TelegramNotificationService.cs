@@ -8,6 +8,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types.Enums;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Modules.Platform.Notifications.Services;
 
 namespace Logistics.TelegramBot.Services;
 
@@ -34,21 +35,12 @@ internal sealed class TelegramNotificationService(
             var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
             await tenantUow.SetCurrentTenantByIdAsync(tenantId);
 
-            var chats = await tenantUow.Repository<TelegramChat>()
-                .GetListAsync(c => c.NotificationsEnabled, ct: ct);
+            var chats = await TelegramRecipients.ListAsync(tenantUow, targetRole, ct);
 
             var formattedMessage = $"*{Escape(title)}*\n{Escape(message)}";
 
             foreach (var chat in chats)
             {
-                // Group chats get all notifications; private chats filter by role
-                if (chat.ChatType == TelegramChatType.Private &&
-                    targetRole is not null &&
-                    chat.Role != targetRole)
-                {
-                    continue;
-                }
-
                 try
                 {
                     await bot.SendMessage(

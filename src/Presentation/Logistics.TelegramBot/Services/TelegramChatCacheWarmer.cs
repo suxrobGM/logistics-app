@@ -65,7 +65,6 @@ internal sealed class TelegramChatCacheWarmer(
                     tenant.Id,
                     chat.UserId,
                     chat.ChatType,
-                    chat.Role,
                     tenant.Name);
 
                 TelegramAuthService.WarmCache(chat.ChatId, context);

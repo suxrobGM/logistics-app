@@ -70,12 +70,6 @@ internal sealed class TelegramUpdateDispatcher(
                     await HandleBotMembershipChangeAsync(update.MyChatMember, ct);
                     break;
             }
-
-            // Fire-and-forget LastInteractionAt update
-            if (context is not null)
-            {
-                _ = Task.Run(() => UpdateLastInteractionAsync(chatId.Value, context), CancellationToken.None);
-            }
         }
         catch (Exception ex)
         {
@@ -130,25 +124,6 @@ internal sealed class TelegramUpdateDispatcher(
                 chatId, newStatus);
 
             await authService.DisconnectAsync(chatId, ct);
-        }
-    }
-
-    private async Task UpdateLastInteractionAsync(long chatId, TelegramChatContext context)
-    {
-        try
-        {
-            var chat = await tenantUow.Repository<Domain.Entities.TelegramChat>()
-                .GetAsync(c => c.ChatId == chatId);
-
-            if (chat is not null)
-            {
-                chat.LastInteractionAt = DateTime.UtcNow;
-                await tenantUow.SaveChangesAsync();
-            }
-        }
-        catch
-        {
-            // Best-effort - don't fail request for tracking
         }
     }
 }

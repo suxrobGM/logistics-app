@@ -1,7 +1,7 @@
+using Logistics.Application.Modules.Platform.Notifications.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Shared.Identity.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -70,7 +70,7 @@ public class Login(
             .GetByIdAsync(user.Id, ct);
 
         var roleName = employee?.Role?.Name;
-        var chatRole = ResolveChatRole(roleName);
+        var chatRole = TelegramRecipients.RoleOf(roleName);
 
         // For group chats, require Owner/Admin/Manager role
         if (loginState.ChatType == TelegramChatType.Group)
@@ -90,9 +90,6 @@ public class Login(
         {
             existingChat.UserId = user.Id;
             existingChat.ChatType = loginState.ChatType;
-            existingChat.Role = loginState.ChatType == TelegramChatType.Group ? null : chatRole;
-            existingChat.FirstName = user.FirstName;
-            existingChat.GroupTitle = loginState.ChatType == TelegramChatType.Group ? null : null;
             existingChat.ConnectedAt = DateTime.UtcNow;
         }
         else
@@ -101,9 +98,7 @@ public class Login(
             {
                 ChatId = loginState.ChatId,
                 ChatType = loginState.ChatType,
-                Role = loginState.ChatType == TelegramChatType.Group ? null : chatRole,
-                UserId = user.Id,
-                FirstName = user.FirstName
+                UserId = user.Id
             };
             await tenantUow.Repository<TelegramChat>().AddAsync(newChat, ct);
         }
@@ -116,7 +111,6 @@ public class Login(
         loginState.TenantId = tenant.Id;
         loginState.UserDisplayName = user.GetFullName();
         loginState.TenantName = tenant.Name;
-        loginState.ResolvedRole = loginState.ChatType == TelegramChatType.Group ? null : chatRole;
         await masterUow.SaveChangesAsync(ct);
 
         // Show success page
@@ -125,15 +119,5 @@ public class Login(
         UserName = user.GetFullName();
         RoleDisplay = chatRole?.ToString();
         return Page();
-    }
-
-    private static TelegramChatRole? ResolveChatRole(string? roleName)
-    {
-        return roleName switch
-        {
-            TenantRoles.Driver => TelegramChatRole.Driver,
-            TenantRoles.Owner or TenantRoles.Manager or TenantRoles.Dispatcher => TelegramChatRole.Dispatcher,
-            _ => null
-        };
     }
 }
