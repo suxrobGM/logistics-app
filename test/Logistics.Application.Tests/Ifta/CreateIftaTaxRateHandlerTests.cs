@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Logistics.Application.Modules.Compliance.Ifta.TaxRates;
 using Logistics.Application.Modules.Compliance.Ifta.TaxRates.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -20,7 +21,7 @@ public class CreateIftaTaxRateHandlerTests
     public CreateIftaTaxRateHandlerTests()
     {
         _masterUow.Repository<IftaTaxRate>().Returns(_rateRepo);
-        _sut = new CreateIftaTaxRateHandler(_masterUow, Substitute.For<ILogger<CreateIftaTaxRateHandler>>());
+        _sut = new CreateIftaTaxRateHandler(_masterUow, new IftaTaxRateDuplicateChecker(_masterUow), Substitute.For<ILogger<CreateIftaTaxRateHandler>>());
     }
 
     private static CreateIftaTaxRateCommand Command(string country = "us", string? region = "tx") => new()

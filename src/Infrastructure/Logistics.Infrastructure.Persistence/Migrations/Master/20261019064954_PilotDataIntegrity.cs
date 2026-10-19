@@ -167,7 +167,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 unique: true,
                 filter: "stripe_subscription_id IS NOT NULL");
 
-            // Not in the EF model: complex-type members can't be indexed. IftaTaxRateUniqueness relies on it.
+            // Not in the EF model: complex-type members can't be indexed. IftaTaxRateDuplicateChecker relies on it.
             migrationBuilder.Sql("""
                 CREATE UNIQUE INDEX ux_ifta_tax_rates_year_quarter_jurisdiction
                     ON ifta_tax_rates (year, quarter, jurisdiction_country_code, jurisdiction_region)

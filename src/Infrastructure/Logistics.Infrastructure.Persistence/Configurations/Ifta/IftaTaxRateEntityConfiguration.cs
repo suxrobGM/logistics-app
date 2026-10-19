@@ -21,7 +21,7 @@ internal sealed class IftaTaxRateEntityConfiguration : IEntityTypeConfiguration<
 
         // Row identity (year, quarter, jurisdiction) is the raw-SQL unique index
         // ux_ifta_tax_rates_year_quarter_jurisdiction (NULLS NOT DISTINCT on region), created in the migration
-        // because complex-type members can't be in an EF index. IftaTaxRateUniqueness still probes first
+        // because complex-type members can't be in an EF index. IftaTaxRateDuplicateChecker still probes first
         // so a duplicate gets a readable error.
         builder.HasIndex(r => new { r.Year, r.Quarter });
     }

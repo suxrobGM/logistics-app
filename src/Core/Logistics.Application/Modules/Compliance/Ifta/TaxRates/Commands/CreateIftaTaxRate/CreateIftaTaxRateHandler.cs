@@ -10,14 +10,15 @@ namespace Logistics.Application.Modules.Compliance.Ifta.TaxRates.Commands;
 
 internal sealed class CreateIftaTaxRateHandler(
     IMasterUnitOfWork masterUow,
+    IIftaTaxRateDuplicateChecker duplicateChecker,
     ILogger<CreateIftaTaxRateHandler> logger) : IRequestHandler<CreateIftaTaxRateCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateIftaTaxRateCommand req, CancellationToken ct)
     {
         var jurisdiction = TaxJurisdiction.Create(req.CountryCode, req.Region);
 
-        var conflict = await IftaTaxRateUniqueness.FindConflictAsync(
-            masterUow, jurisdiction, req.Year, req.Quarter, excludeId: null, ct);
+        var conflict = await duplicateChecker.FindConflictAsync(
+            jurisdiction, req.Year, req.Quarter, excludeId: null, ct);
 
         if (conflict is not null)
         {
