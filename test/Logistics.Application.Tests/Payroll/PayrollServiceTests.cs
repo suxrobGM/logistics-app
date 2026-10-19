@@ -7,6 +7,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Domain.Specifications;
 using Microsoft.Extensions.Logging.Abstractions;
 using MockQueryable;
 using NSubstitute;
@@ -21,6 +22,7 @@ public class PayrollServiceTests
     private static readonly DateOnly StartDay = DateOnly.FromDateTime(Start);
     private static readonly DateOnly EndDay = DateOnly.FromDateTime(End);
 
+    private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly List<Load> _loads = [];
     private readonly List<Truck> _trucks = [];
@@ -29,6 +31,7 @@ public class PayrollServiceTests
     private readonly List<FuelCardTransaction> _fuel = [];
     private readonly List<PayrollInvoice> _payrolls = [];
     private readonly List<TripStop> _stops = [];
+    private readonly List<Employee> _employees = [];
     private readonly Employee _driver = new() { Email = "d@x.com", FirstName = "Ana", LastName = "Diaz", Salary = Money.Zero("USD") };
     private readonly Truck _truck;
     private readonly PayrollService _sut;
@@ -46,10 +49,11 @@ public class PayrollServiceTests
         Wire(_fuel);
         Wire(_payrolls);
         Wire(_stops);
+        Wire(_employees);
         Wire(new List<TimeEntry>());
         _tenantUow.Repository<InvoiceLineItem>().Returns(Substitute.For<ITenantRepository<InvoiceLineItem, Guid>>());
 
-        _sut = new PayrollService(Substitute.For<IMasterUnitOfWork>(), _tenantUow, NullLogger<PayrollService>.Instance);
+        _sut = new PayrollService(_masterUow, _tenantUow, NullLogger<PayrollService>.Instance);
     }
 
     private void Wire<T>(List<T> items) where T : class, IEntity<Guid>, ITenantEntity
@@ -289,6 +293,50 @@ public class PayrollServiceTests
 
         Assert.Equal(payroll.Id, advance.PayrollInvoiceId);
         Assert.Single(payroll.LineItems, l => l.Type == InvoiceLineItemType.CashAdvance);
+    }
+
+    #endregion
+
+    #region Generation
+
+    [Fact]
+    public async Task GenerateWeekly_SkipsEmployeesAlreadyPaidAndOtherSalaryTypes()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var lastWeekStart = today.AddDays(-((int)today.DayOfWeek + 7));
+        var tenants = Substitute.For<IMasterRepository<Tenant, Guid>>();
+        tenants.GetListAsync(Arg.Any<ISpecification<Tenant>?>(), Arg.Any<CancellationToken>())
+            .Returns([TestTenant.Create()]);
+        _masterUow.Repository<Tenant>().Returns(tenants);
+
+        _driver.SalaryType = SalaryType.PerLoad;
+        var alreadyPaid = new Employee
+        {
+            Email = "p@x.com", FirstName = "Pat", LastName = "Lee", SalaryType = SalaryType.Weekly,
+            Salary = new Money { Amount = 900m, Currency = "USD" }
+        };
+        var monthly = new Employee
+        {
+            Email = "m@x.com", FirstName = "Mo", LastName = "Kim", SalaryType = SalaryType.Monthly,
+            Salary = new Money { Amount = 4000m, Currency = "USD" }
+        };
+        _employees.AddRange([_driver, alreadyPaid, monthly]);
+        var existing = EarlierSettlement(0m, InvoiceStatus.Paid);
+        existing.EmployeeId = alreadyPaid.Id;
+        existing.PeriodStart = lastWeekStart;
+        existing.PeriodEnd = lastWeekStart.AddDays(6);
+        _payrolls.Add(existing);
+
+        await _sut.GenerateWeeklyPayrollsAsync();
+
+        var payrolls = _tenantUow.Repository<PayrollInvoice>();
+        await payrolls.Received(1).AddAsync(Arg.Any<PayrollInvoice>(), Arg.Any<CancellationToken>());
+        await payrolls.Received(1).AddAsync(
+            Arg.Is<PayrollInvoice>(p => p.EmployeeId == _driver.Id &&
+                                        p.PeriodStart == lastWeekStart &&
+                                        p.PeriodEnd == lastWeekStart.AddDays(6)),
+            Arg.Any<CancellationToken>());
+        await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     #endregion

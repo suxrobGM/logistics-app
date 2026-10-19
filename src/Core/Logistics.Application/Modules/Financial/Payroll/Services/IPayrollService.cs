@@ -40,19 +40,8 @@ public interface IPayrollService : IApplicationService
     Task<decimal> GetEscrowBalanceAsync(Guid employeeId, Guid? exceptPayrollId = null, CancellationToken ct = default);
 
     /// <summary>
-    /// Links time entries to a payroll invoice.
-    /// Validates that time entry dates fall within the payroll period.
+    /// Links an hourly employee's unlinked time entries in the period to a saved settlement. A no-op for
+    /// other salary types. The caller saves.
     /// </summary>
-    /// <param name="payroll">The payroll invoice.</param>
-    /// <returns>Number of time entries linked.</returns>
-    Task<int> LinkTimeEntriesToPayrollAsync(PayrollInvoice payroll);
-
-    /// <summary>
-    /// Validates that a time entry date falls within a payroll period.
-    /// </summary>
-    /// <param name="entryDate">The time entry date.</param>
-    /// <param name="periodStart">Payroll period start.</param>
-    /// <param name="periodEnd">Payroll period end.</param>
-    /// <returns>True if valid, false otherwise.</returns>
-    bool ValidateTimeEntryDate(DateTime entryDate, DateOnly periodStart, DateOnly periodEnd);
+    Task LinkTimeEntriesToPayrollAsync(PayrollInvoice payroll, CancellationToken ct = default);
 }

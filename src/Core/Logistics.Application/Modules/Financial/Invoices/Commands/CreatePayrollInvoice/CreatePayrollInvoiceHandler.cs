@@ -40,7 +40,7 @@ internal sealed class CreatePayrollInvoiceHandler(
         await tenantUow.SaveChangesAsync();
 
         // Link time entries to the payroll (for hourly employees)
-        await payrollService.LinkTimeEntriesToPayrollAsync(payroll);
+        await payrollService.LinkTimeEntriesToPayrollAsync(payroll, ct);
         await tenantUow.SaveChangesAsync();
 
         return Result.Ok();

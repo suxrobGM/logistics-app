@@ -14,81 +14,37 @@ internal class PayrollService(
     ILogger<PayrollService> logger)
     : IPayrollService
 {
-    public async Task GenerateMonthlyPayrollsAsync()
+    public Task GenerateMonthlyPayrollsAsync()
     {
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync();
-
-        foreach (var tenant in tenants)
-        {
-            tenantUow.SetCurrentTenant(tenant);
-
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            var previousMonthStart = new DateOnly(today.Year, today.Month, 1).AddMonths(-1);
-            var previousMonthEnd = previousMonthStart.AddMonths(1).AddDays(-1);
-            var employees = await tenantUow.Repository<Employee>().GetListAsync(e =>
-                e.SalaryType == SalaryType.Monthly ||
-                e.SalaryType == SalaryType.ShareOfGross);
-
-            await GenerateAsync(employees, previousMonthStart, previousMonthEnd);
-
-            logger.LogInformation(
-                "Generated monthly payrolls for the tenant: {TenantName}, date range: {StartDate} - {EndDate}",
-                tenant.Name, previousMonthStart.ToShortDateString(), previousMonthEnd.ToShortDateString());
-            await tenantUow.SaveChangesAsync();
-        }
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var start = new DateOnly(today.Year, today.Month, 1).AddMonths(-1);
+        return GenerateForEveryTenantAsync("monthly", start, start.AddMonths(1).AddDays(-1),
+            [SalaryType.Monthly, SalaryType.ShareOfGross]);
     }
 
-    public async Task GenerateWeeklyPayrollsAsync()
+    public Task GenerateWeeklyPayrollsAsync()
     {
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync();
-
-        foreach (var tenant in tenants)
-        {
-            tenantUow.SetCurrentTenant(tenant);
-            var previousWeekStart = StartOfPreviousWeek(DateOnly.FromDateTime(DateTime.UtcNow));
-            var previousWeekEnd = previousWeekStart.AddDays(6);
-            var employees = await tenantUow.Repository<Employee>().GetListAsync(e =>
-                e.SalaryType == SalaryType.Weekly ||
-                e.SalaryType == SalaryType.PerLoad ||
-                e.SalaryType == SalaryType.PerStop);
-
-            await GenerateAsync(employees, previousWeekStart, previousWeekEnd);
-
-            logger.LogInformation(
-                "Generated weekly payrolls for the tenant: {TenantName}, date range: {StartDate} - {EndDate}",
-                tenant.Name, previousWeekStart.ToShortDateString(), previousWeekEnd.ToShortDateString());
-            await tenantUow.SaveChangesAsync();
-        }
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var start = today.AddDays(-((int)today.DayOfWeek + 7));
+        return GenerateForEveryTenantAsync("weekly", start, start.AddDays(6),
+            [SalaryType.Weekly, SalaryType.PerLoad, SalaryType.PerStop]);
     }
 
     public async Task<PayrollInvoice> BuildPayrollInvoiceAsync(
         Employee employee, DateOnly startDate, DateOnly endDate, CancellationToken ct = default)
     {
-        var tenant = tenantUow.GetCurrentTenant();
-        var currency = tenant.Settings.Currency.ToString();
-
-        var payroll = new PayrollInvoice
-        {
-            Subtotal = Money.Zero(currency),
-            TaxTotal = Money.Zero(currency),
-            Total = Money.Zero(currency),
-            Status = InvoiceStatus.Draft,
-            PeriodStart = startDate,
-            PeriodEnd = endDate,
-            EmployeeId = employee.Id,
-            Employee = employee
-        };
-
-        var inputs = await BuildInputsAsync(payroll, ct);
-        payroll.ReplaceSettlementLines(inputs);
+        var payroll = NewDraft(employee, startDate, endDate);
+        payroll.ReplaceSettlementLines(await BuildInputsAsync(payroll, ct));
         return payroll;
     }
 
     public async Task<PayrollInvoice> CreatePayrollInvoiceAsync(
         Employee employee, DateOnly startDate, DateOnly endDate, CancellationToken ct = default)
     {
-        var payroll = await BuildPayrollInvoiceAsync(employee, startDate, endDate, ct);
-        await ClaimDeductionsAsync(payroll, ct);
+        var payroll = NewDraft(employee, startDate, endDate);
+        var inputs = await BuildInputsAsync(payroll, ct);
+        payroll.ReplaceSettlementLines(inputs);
+        ClaimDeductions(payroll, inputs);
         return payroll;
     }
 
@@ -106,8 +62,7 @@ internal class PayrollService(
         }
 
         await lineRepository.AddRangeAsync(added, ct);
-
-        await ClaimDeductionsAsync(payroll, ct);
+        ClaimDeductions(payroll, inputs);
 
         logger.LogInformation(
             "Recalculated payroll {PayrollId} for employee {EmployeeId}: Net={Amount}, Distance={Distance}, Hours={Hours}",
@@ -147,62 +102,70 @@ internal class PayrollService(
         return -held;
     }
 
-    public async Task<int> LinkTimeEntriesToPayrollAsync(PayrollInvoice payroll)
+    public async Task LinkTimeEntriesToPayrollAsync(PayrollInvoice payroll, CancellationToken ct = default)
     {
-        if (payroll.Employee?.SalaryType != SalaryType.Hourly)
+        if (payroll.Employee.SalaryType != SalaryType.Hourly)
         {
-            return 0;
+            return;
         }
 
         var (from, to) = UtcRange(payroll.PeriodStart, payroll.PeriodEnd);
-        var timeEntries = await tenantUow.Repository<TimeEntry>()
-            .GetListAsync(te =>
-                te.EmployeeId == payroll.EmployeeId &&
-                te.PayrollInvoiceId == null &&
-                te.Date >= from &&
-                te.Date < to);
+        var timeEntries = await tenantUow.Repository<TimeEntry>().GetListAsync(te =>
+            te.EmployeeId == payroll.EmployeeId &&
+            te.PayrollInvoiceId == null &&
+            te.Date >= from &&
+            te.Date < to, ct);
 
         foreach (var entry in timeEntries)
         {
             entry.PayrollInvoiceId = payroll.Id;
-            tenantUow.Repository<TimeEntry>().Update(entry);
         }
 
-        logger.LogInformation(
-            "Linked {Count} time entries to payroll {PayrollId}",
-            timeEntries.Count, payroll.Id);
-
-        return timeEntries.Count;
+        logger.LogInformation("Linked {Count} time entries to payroll {PayrollId}", timeEntries.Count, payroll.Id);
     }
 
-    public bool ValidateTimeEntryDate(DateTime entryDate, DateOnly periodStart, DateOnly periodEnd)
+    private async Task GenerateForEveryTenantAsync(
+        string cadence, DateOnly startDate, DateOnly endDate, List<SalaryType> salaryTypes)
     {
-        var day = DateOnly.FromDateTime(entryDate);
-        return day >= periodStart && day <= periodEnd;
-    }
+        var tenants = await masterUow.Repository<Tenant>().GetListAsync();
 
-    private async Task GenerateAsync(List<Employee> employees, DateOnly startDate, DateOnly endDate)
-    {
-        foreach (var employee in employees)
+        foreach (var tenant in tenants)
         {
-            if (await IsPayrollInvoiceExisting(employee.Id, startDate, endDate))
+            tenantUow.SetCurrentTenant(tenant);
+
+            var alreadyGenerated = await tenantUow.Repository<PayrollInvoice>().Query()
+                .Where(p => p.PeriodStart >= startDate && p.PeriodEnd <= endDate)
+                .Select(p => p.EmployeeId)
+                .ToHashSetAsync();
+            var employees = await tenantUow.Repository<Employee>()
+                .GetListAsync(e => salaryTypes.Contains(e.SalaryType));
+
+            foreach (var employee in employees.Where(e => !alreadyGenerated.Contains(e.Id)))
             {
-                continue;
+                var payroll = await CreatePayrollInvoiceAsync(employee, startDate, endDate);
+                await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
             }
 
-            var payroll = await CreatePayrollInvoiceAsync(employee, startDate, endDate);
-            await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
+            logger.LogInformation(
+                "Generated {Cadence} payrolls for the tenant: {TenantName}, date range: {StartDate} - {EndDate}",
+                cadence, tenant.Name, startDate.ToShortDateString(), endDate.ToShortDateString());
+            await tenantUow.SaveChangesAsync();
         }
     }
 
-    private async Task<bool> IsPayrollInvoiceExisting(Guid employeeId, DateOnly startDate, DateOnly endDate)
+    private PayrollInvoice NewDraft(Employee employee, DateOnly startDate, DateOnly endDate)
     {
-        var payroll = await tenantUow.Repository<PayrollInvoice>().GetAsync(p =>
-            p.EmployeeId == employeeId &&
-            p.PeriodStart >= startDate &&
-            p.PeriodEnd <= endDate);
-
-        return payroll != null;
+        var currency = tenantUow.GetCurrentTenant().Settings.Currency.ToString();
+        return new PayrollInvoice
+        {
+            Subtotal = Money.Zero(currency),
+            TaxTotal = Money.Zero(currency),
+            Total = Money.Zero(currency),
+            PeriodStart = startDate,
+            PeriodEnd = endDate,
+            EmployeeId = employee.Id,
+            Employee = employee
+        };
     }
 
     private async Task<SettlementInputs> BuildInputsAsync(PayrollInvoice payroll, CancellationToken ct)
@@ -252,24 +215,15 @@ internal class PayrollService(
             t.TransactionDate >= from && t.TransactionDate < to, ct);
     }
 
-    private async Task ClaimDeductionsAsync(PayrollInvoice payroll, CancellationToken ct)
+    /// <summary>Every owed advance and fuel charge in the inputs becomes a settlement line, so all are claimed.</summary>
+    private static void ClaimDeductions(PayrollInvoice payroll, SettlementInputs inputs)
     {
-        var claimed = payroll.LineItems
-            .Where(li => li.Type is InvoiceLineItemType.CashAdvance or InvoiceLineItemType.FuelCard)
-            .Select(li => li.SourceId!.Value)
-            .ToList();
-
-        if (claimed.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var advance in await tenantUow.Repository<CashAdvance>().GetListAsync(a => claimed.Contains(a.Id), ct))
+        foreach (var advance in inputs.CashAdvances)
         {
             advance.PayrollInvoiceId = payroll.Id;
         }
 
-        foreach (var fuel in await tenantUow.Repository<FuelCardTransaction>().GetListAsync(t => claimed.Contains(t.Id), ct))
+        foreach (var fuel in inputs.FuelCharges)
         {
             fuel.PayrollInvoiceId = payroll.Id;
         }
@@ -405,12 +359,6 @@ internal class PayrollService(
         }
 
         return months + 1; // +1 to include the starting month
-    }
-
-    private static DateOnly StartOfPreviousWeek(DateOnly date)
-    {
-        var daysToSubtract = (int)date.DayOfWeek + 7;
-        return date.AddDays(-daysToSubtract);
     }
 
     /// <summary>The period's days as a UTC [start, day after end) range, for comparing timestamps.</summary>
