@@ -11,8 +11,7 @@ public static partial class LoadMapper
     /// <summary>
     /// Container / terminal values come from <paramref name="intermodal"/> only - there is no
     /// navigation-property fallback, so a handler that skips the resolver gets blank fields instead
-    /// of silently paying three lazy SELECTs per row. Single-row callers pass
-    /// <see cref="LoadIntermodalLookup.Empty"/> and resolve nothing.
+    /// of silently paying three lazy SELECTs per row. Single-row callers resolve a one-load batch.
     /// </summary>
     public static LoadDto ToDto(this Load entity, LoadIntermodalLookup intermodal)
     {

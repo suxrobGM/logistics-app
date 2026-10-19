@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Logistics.Application.Modules.Operations.Loads;
 
 /// <summary>
-/// Resolves a page of loads' container and terminal values in two queries. Without it
+/// Resolves a batch of loads' container and terminal values in two queries. Without it
 /// <c>LoadMapper</c> reads them off navigation properties, turning a 25-row page into up to 75 extra
-/// SELECTs. Use it in any handler that maps more than one load.
+/// SELECTs. Every handler that maps a load uses it, single-row ones included.
 /// </summary>
 internal static class LoadIntermodalResolver
 {

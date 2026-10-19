@@ -26,7 +26,8 @@ internal sealed class GetLoadByIdHandler(
             return Result<LoadDto>.Fail($"Could not find a load with ID '{req.Id}'");
         }
 
-        var dto = load.ToDto(LoadIntermodalLookup.Empty);
+        var intermodal = await LoadIntermodalResolver.ResolveAsync(tenantUow, [load], ct);
+        var dto = load.ToDto(intermodal);
         dto.Accessorials = load.Accessorials.Select(a => a.ToDto()).ToList();
         var trip = load.TripStops.FirstOrDefault()?.Trip;
         dto.TrailerId = trip?.TrailerId;

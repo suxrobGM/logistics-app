@@ -6,6 +6,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Roles;
+using MockQueryable;
 using NSubstitute;
 using Xunit;
 
@@ -108,5 +109,22 @@ public class GetLoadByIdHandlerTests
         var result = await _sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task Handle_LoadWithContainer_ReturnsTheContainerNumber()
+    {
+        _currentUserService.IsInRole(TenantRoles.Driver).Returns(false);
+        var container = new Container { Number = "MSCU1234565", IsoType = ContainerIsoType.Hc40 };
+        var load = CreateLoad(assignedTruck: null);
+        load.ContainerId = container.Id;
+        _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
+        var containerRepo = Substitute.For<ITenantRepository<Container, Guid>>();
+        containerRepo.Query().Returns(new[] { container }.BuildMock());
+        _tenantUow.Repository<Container>().Returns(containerRepo);
+
+        var result = await _sut.Handle(new GetLoadByIdQuery { Id = load.Id }, CancellationToken.None);
+
+        Assert.Equal("MSCU1234565", result.Value!.ContainerNumber);
     }
 }
