@@ -13,6 +13,11 @@ public class Payment : AuditableEntity, ITenantEntity
     public required Address BillingAddress { get; set; }
     public string? StripePaymentIntentId { get; set; }
 
+    /// <summary>
+    /// Stripe Connect transfer (tr_...) that paid a payroll invoice out to the employee.
+    /// </summary>
+    public string? StripeTransferId { get; set; }
+
     public Guid? InvoiceId { get; set; }
     public virtual Invoice? Invoice { get; set; }
 

@@ -102,7 +102,7 @@ public class PayPayrollInvoiceHandlerTests
             Arg.Is<Payment>(p =>
                 p.Amount.Amount == 1500m &&
                 p.Status == PaymentStatus.Paid &&
-                p.StripePaymentIntentId == "tr_123"),
+                p.StripeTransferId == "tr_123" && p.StripePaymentIntentId == null),
             Arg.Any<CancellationToken>());
         await _tenantUow.Received().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
