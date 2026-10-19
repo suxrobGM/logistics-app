@@ -15,7 +15,6 @@ public class CreateLoadInvoiceHandlerTests
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<Load, Guid> _loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
     private readonly ITenantRepository<LoadInvoice, Guid> _loadInvoiceRepo = Substitute.For<ITenantRepository<LoadInvoice, Guid>>();
-    private readonly ITenantRepository<Customer, Guid> _customerRepo = Substitute.For<ITenantRepository<Customer, Guid>>();
     private readonly ITenantRepository<Invoice, Guid> _invoiceRepo = Substitute.For<ITenantRepository<Invoice, Guid>>();
     private readonly CreateLoadInvoiceHandler _sut;
 
@@ -23,7 +22,6 @@ public class CreateLoadInvoiceHandlerTests
     {
         _tenantUow.Repository<Load>().Returns(_loadRepo);
         _tenantUow.Repository<LoadInvoice>().Returns(_loadInvoiceRepo);
-        _tenantUow.Repository<Customer>().Returns(_customerRepo);
         _tenantUow.Repository<Invoice>().Returns(_invoiceRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenant.Create());
 
@@ -43,14 +41,12 @@ public class CreateLoadInvoiceHandlerTests
         load.FuelSurcharge = 300m;
         load.Accessorials.Add(LoadInvoiceChargesTests.Accessorial(load, "Lumper", InvoiceLineItemType.Lumper, 150m));
         _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
-        _customerRepo.GetByIdAsync(load.Customer.Id, Arg.Any<CancellationToken>()).Returns(load.Customer);
         Invoice? added = null;
         await _invoiceRepo.AddAsync(Arg.Do<Invoice>(i => added = i), Arg.Any<CancellationToken>());
 
         var result = await _sut.Handle(new CreateLoadInvoiceCommand
         {
             LoadId = load.Id,
-            CustomerId = load.Customer.Id
         }, default);
 
         Assert.True(result.IsSuccess);
@@ -78,14 +74,12 @@ public class CreateLoadInvoiceHandlerTests
         var sut = new CreateLoadInvoiceHandler(_tenantUow, taxApplier);
         var load = LoadInvoiceChargesTests.NewLoad(linehaul: 2000m);
         _loadRepo.GetByIdAsync(load.Id, Arg.Any<CancellationToken>()).Returns(load);
-        _customerRepo.GetByIdAsync(load.Customer.Id, Arg.Any<CancellationToken>()).Returns(load.Customer);
         Invoice? added = null;
         await _invoiceRepo.AddAsync(Arg.Do<Invoice>(i => added = i), Arg.Any<CancellationToken>());
 
         var result = await sut.Handle(new CreateLoadInvoiceCommand
         {
             LoadId = load.Id,
-            CustomerId = load.Customer.Id,
             PaymentAmount = 2200m
         }, default);
 

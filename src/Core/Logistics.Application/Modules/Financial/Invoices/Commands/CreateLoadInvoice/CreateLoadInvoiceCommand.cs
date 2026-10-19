@@ -3,11 +3,11 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Modules.Financial.Invoices.Commands;
 
 /// <summary>
-///     Creates a load invoice built from the load's charges (linehaul, fuel surcharge, accessorials).
+///     Creates a load invoice billed to the load's customer and built from its charges (linehaul, fuel
+///     surcharge, accessorials).
 /// </summary>
 public class CreateLoadInvoiceCommand : ICommand<Result<Guid>>
 {
-    public Guid CustomerId { get; set; }
     public Guid LoadId { get; set; }
     public string? StripePaymentMethodId { get; set; }
 

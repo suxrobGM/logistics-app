@@ -112,6 +112,21 @@ public class LoadChargeServiceTests
     }
 
     [Fact]
+    public async Task SyncInvoice_LoadCustomerChanged_BillsTheNewCustomer()
+    {
+        var customer = new Customer { Name = "New Broker" };
+        _load.CustomerId = customer.Id;
+        _load.Customer = customer;
+
+        var synced = await _sut.SyncInvoiceAsync(_load);
+
+        Assert.True(synced);
+        Assert.Equal(customer.Id, _invoice.CustomerId);
+        Assert.Same(customer, _invoice.Customer);
+        await _taxApplier.Received(1).ApplyAsync(_invoice, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task ReplaceAccessorials_KeepsListedUpdatesAndRemovesTheRest()
     {
         var keep = new LoadAccessorial

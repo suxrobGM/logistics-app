@@ -53,7 +53,6 @@ internal sealed class CreateLoadInvoiceTool(IMediator mediator)
 
         var result = await mediator.Send(new CreateLoadInvoiceCommand
         {
-            CustomerId = load.Customer.Id,
             LoadId = input.LoadId
         }, ct);
 

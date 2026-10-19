@@ -105,10 +105,12 @@ internal sealed class UpdateLoadHandler(
     }
 
     /// <summary>
-    ///     Every load value <see cref="LoadInvoice.ReplaceLoadCharges" /> reads to build the invoice lines.
+    ///     Every load value the invoice is built from: its customer (who it is billed to, and the tax) and
+    ///     what <see cref="LoadInvoice.ReplaceLoadCharges" /> reads to build the lines.
     /// </summary>
     private static List<object> ChargeInputs(Load load) =>
     [
+        load.CustomerId,
         load.Type,
         load.DeliveryCost.Amount,
         load.DeliveryCost.Currency,
@@ -146,6 +148,7 @@ internal sealed class UpdateLoadHandler(
 
         if (loadEntity.CustomerId != customer.Id)
         {
+            loadEntity.CustomerId = customer.Id;
             loadEntity.Customer = customer;
         }
     }

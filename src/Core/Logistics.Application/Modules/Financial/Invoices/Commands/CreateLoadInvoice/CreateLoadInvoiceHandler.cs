@@ -31,17 +31,8 @@ internal sealed class CreateLoadInvoiceHandler(
                 ErrorCodes.LoadInvoiceExists);
         }
 
-        var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId, ct);
-
-        if (customer is null)
-        {
-            return Result<Guid>.Fail($"Could not find a customer with ID '{req.CustomerId}'");
-        }
-
         var tenant = tenantUow.GetCurrentTenant();
         var invoice = LoadFactory.CreateInvoice(load);
-        invoice.CustomerId = req.CustomerId;
-        invoice.Customer = customer;
 
         await taxApplier.ApplyAsync(invoice, ct);
 

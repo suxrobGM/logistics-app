@@ -113,7 +113,6 @@ public class CreateLoadInvoiceToolTests
         await _mediator.Received(1).Send(
             Arg.Is<CreateLoadInvoiceCommand>(c =>
                 c.LoadId == load.Id &&
-                c.CustomerId == customer.Id &&
                 c.PaymentAmount == null),
             Arg.Any<CancellationToken>());
     }

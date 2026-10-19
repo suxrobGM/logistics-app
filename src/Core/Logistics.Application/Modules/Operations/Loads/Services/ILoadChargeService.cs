@@ -22,9 +22,9 @@ public interface ILoadChargeService : IApplicationService
         Load load, Func<LoadAccessorial, bool> owns, IReadOnlyList<LoadAccessorial> fresh, CancellationToken ct = default);
 
     /// <summary>
-    /// Rebuilds the invoice's linehaul, fuel surcharge and accessorial lines from the load and
-    /// re-applies tax. Returns false (and changes nothing) when the load has no invoice or it is paid
-    /// or cancelled.
+    /// Bills the invoice to the load's customer, rebuilds its linehaul, fuel surcharge and accessorial
+    /// lines from the load and re-applies tax. Returns false (and changes nothing) when the load has no
+    /// invoice or it is paid or cancelled.
     /// </summary>
     Task<bool> SyncInvoiceAsync(Load load, CancellationToken ct = default);
 

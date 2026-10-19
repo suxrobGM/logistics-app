@@ -104,6 +104,21 @@ public class UpdateLoadHandlerTests
     }
 
     [Fact]
+    public async Task Handle_CustomerChanged_RebuildsTheInvoice()
+    {
+        var load = Load(LoadType.GeneralFreight);
+        var customer = new Customer { Name = "New Broker" };
+        var customerRepo = Substitute.For<ITenantRepository<Customer, Guid>>();
+        customerRepo.GetByIdAsync(customer.Id, Arg.Any<CancellationToken>()).Returns(customer);
+        _tenantUow.Repository<Customer>().Returns(customerRepo);
+
+        await Update(new UpdateLoadCommand { Id = load.Id, CustomerId = customer.Id });
+
+        Assert.Equal(customer.Id, load.CustomerId);
+        await _loadChargeService.Received(1).SyncInvoiceAsync(load, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task Handle_TypeChanged_RebuildsTheInvoice()
     {
         var load = Load(LoadType.GeneralFreight);

@@ -52,6 +52,9 @@ internal sealed class LoadChargeService(
             return false;
         }
 
+        invoice.CustomerId = load.Customer.Id;
+        invoice.Customer = load.Customer;
+
         var (removed, added) = invoice.ReplaceLoadCharges(load);
         var lineRepository = tenantUow.Repository<InvoiceLineItem>();
         foreach (var line in removed)
