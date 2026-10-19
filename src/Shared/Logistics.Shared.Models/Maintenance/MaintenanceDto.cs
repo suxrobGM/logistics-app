@@ -27,7 +27,6 @@ public class MaintenanceRecordDto
 
     public string? Notes { get; set; }
     public List<MaintenancePartDto> Parts { get; set; } = [];
-    public List<DocumentDto> Documents { get; set; } = [];
 
     public DateTime CreatedAt { get; set; }
 }

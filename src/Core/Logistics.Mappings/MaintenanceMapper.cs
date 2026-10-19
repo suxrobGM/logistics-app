@@ -28,7 +28,6 @@ public static class MaintenanceMapper
             PerformedByName = entity.PerformedBy?.GetFullName(),
             Notes = entity.WorkPerformed,
             Parts = entity.Parts.Select(p => p.ToDto()).ToList(),
-            Documents = entity.Documents.Select(d => d.ToDto()).ToList(),
             CreatedAt = entity.CreatedAt
         };
     }

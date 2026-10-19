@@ -66,5 +66,4 @@ public class AccidentReport : AuditableEntity, ITenantEntity
 
     public virtual List<AccidentWitness> Witnesses { get; set; } = [];
     public virtual List<AccidentThirdParty> ThirdParties { get; set; } = [];
-    public virtual List<TruckDocument> Documents { get; set; } = [];
 }

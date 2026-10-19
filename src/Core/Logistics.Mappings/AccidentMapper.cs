@@ -46,7 +46,6 @@ public static class AccidentMapper
             TripId = entity.TripId,
             Witnesses = entity.Witnesses.Select(w => w.ToDto()).ToList(),
             ThirdParties = entity.ThirdParties.Select(tp => tp.ToDto()).ToList(),
-            Documents = entity.Documents.Select(d => d.ToDto()).ToList(),
             CreatedAt = entity.CreatedAt
         };
     }

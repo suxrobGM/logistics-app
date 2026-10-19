@@ -95,9 +95,4 @@ public class DvirReport : AuditableEntity, ITenantEntity
     /// List of defects found during inspection
     /// </summary>
     public virtual List<DvirDefect> Defects { get; set; } = [];
-
-    /// <summary>
-    /// Photos taken during inspection
-    /// </summary>
-    public virtual List<TruckDocument> Photos { get; set; } = [];
 }

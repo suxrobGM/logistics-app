@@ -32,7 +32,6 @@ public class DvirReportDto
     public Guid? TripId { get; set; }
 
     public List<DvirDefectDto> Defects { get; set; } = [];
-    public List<DocumentDto> Photos { get; set; } = [];
 
     public DateTime CreatedAt { get; set; }
 }

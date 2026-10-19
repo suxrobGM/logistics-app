@@ -33,6 +33,5 @@ public class MaintenanceRecord : AuditableEntity, ITenantEntity
     public Guid? PerformedById { get; set; }
     public virtual Employee? PerformedBy { get; set; }
 
-    public virtual List<TruckDocument> Documents { get; set; } = [];
     public virtual List<MaintenancePart> Parts { get; set; } = [];
 }

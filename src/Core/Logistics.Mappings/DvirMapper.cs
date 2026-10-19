@@ -32,7 +32,6 @@ public static class DvirMapper
             DefectsCorrected = entity.DefectsCorrected,
             TripId = entity.TripId,
             Defects = entity.Defects.Select(d => d.ToDto()).ToList(),
-            Photos = entity.Photos.Select(p => p.ToDto()).ToList(),
             CreatedAt = entity.CreatedAt
         };
     }

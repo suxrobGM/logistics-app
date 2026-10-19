@@ -57,8 +57,6 @@ public class AccidentReportDto
 
     public List<AccidentWitnessDto> Witnesses { get; set; } = [];
     public List<AccidentThirdPartyDto> ThirdParties { get; set; } = [];
-    public List<DocumentDto> Photos { get; set; } = [];
-    public List<DocumentDto> Documents { get; set; } = [];
 
     public DateTime CreatedAt { get; set; }
 }
