@@ -17,7 +17,7 @@ internal sealed class GetDriverHosStatusTool(ITenantUnitOfWork tenantUow)
 
     public static AgentToolDefinition Definition => new(
         "get_driver_hos_status",
-        "Get detailed HOS (Hours of Service) status for a specific driver. Returns current duty status, driving minutes remaining, on-duty minutes remaining, cycle minutes remaining, violation status, and next mandatory break time.")
+        "Get detailed HOS (Hours of Service) status for a specific driver. Returns current duty status, driving, on-duty and cycle time left (e.g. 6h 30m), violation status, and time until the next mandatory break.")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All
@@ -35,12 +35,14 @@ internal sealed class GetDriverHosStatusTool(ITenantUnitOfWork tenantUow)
         {
             driver_id = hos.EmployeeId,
             current_duty_status = hos.CurrentDutyStatus.ToString(),
-            driving_minutes_remaining = hos.DrivingMinutesRemaining,
-            on_duty_minutes_remaining = hos.OnDutyMinutesRemaining,
-            cycle_minutes_remaining = hos.CycleMinutesRemaining,
+            driving_time_left = AgentDuration.Format(hos.DrivingMinutesRemaining),
+            on_duty_time_left = AgentDuration.Format(hos.OnDutyMinutesRemaining),
+            cycle_time_left = AgentDuration.Format(hos.CycleMinutesRemaining),
             is_in_violation = hos.IsInViolation,
             is_available = hos.IsAvailableForDispatch(),
-            time_until_break = hos.TimeUntilBreakRequired?.ToString(),
+            time_until_break = hos.TimeUntilBreakRequired is { } untilBreak
+                ? AgentDuration.Format((int)untilBreak.TotalMinutes)
+                : null,
             last_updated = hos.LastUpdatedAt
         });
     }

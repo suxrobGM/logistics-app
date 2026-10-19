@@ -48,7 +48,7 @@ public class HosFeasibilityToolTests
 
     private Task<string> RunSingle(Guid driverId, double distanceKm) =>
         new CheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
-            new JsonObject { ["driver_id"] = driverId.ToString(), ["distance_km"] = distanceKm },
+            new JsonObject { ["driver_id"] = driverId.ToString(), ["distance"] = distanceKm, ["distance_unit"] = "Kilometers" },
             CancellationToken.None);
 
     private Task<string> RunBatch(params (Guid DriverId, double DistanceKm)[] checks) =>
@@ -58,7 +58,8 @@ public class HosFeasibilityToolTests
                 ["checks"] = new JsonArray([.. checks.Select(c => (JsonNode)new JsonObject
                 {
                     ["driver_id"] = c.DriverId.ToString(),
-                    ["distance_km"] = c.DistanceKm
+                    ["distance"] = c.DistanceKm,
+                    ["distance_unit"] = "Kilometers"
                 })])
             },
             CancellationToken.None);
@@ -163,6 +164,20 @@ public class HosFeasibilityToolTests
         Assert.False(batch.GetProperty("feasible").GetBoolean());
     }
 
+    [Fact]
+    public async Task Single_DistanceInMiles_ConvertsBeforeEstimatingDriveTime()
+    {
+        var driverId = Guid.NewGuid();
+        SingleReturns(Hos(driverId, 600, 660));
+
+        // 250 mi is ~402 km, ~301 minutes at 80 km/h. Read as km it would be 187.
+        var root = JsonDocument.Parse(await new CheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
+            new JsonObject { ["driver_id"] = driverId.ToString(), ["distance"] = 250, ["distance_unit"] = "Miles" },
+            CancellationToken.None)).RootElement;
+
+        Assert.Equal(301, root.GetProperty("estimated_driving_minutes").GetInt32());
+    }
+
     #endregion
 
     #region Payload shapes must stay distinct
@@ -246,7 +261,7 @@ public class HosFeasibilityToolTests
             new JsonObject(), CancellationToken.None);
 
         Assert.Equal(
-            "Missing required input: driver_id, distance_km",
+            "Missing required input: driver_id, distance, distance_unit",
             JsonDocument.Parse(result).RootElement.GetProperty("error").GetString());
     }
 
@@ -271,7 +286,7 @@ public class HosFeasibilityToolTests
         BatchReturns(Hos(driverId, 600, 660));
 
         var single = JsonDocument.Parse(await new CheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
-            new JsonObject { ["driver_id"] = driverId.ToString(), ["distance_km"] = distance },
+            new JsonObject { ["driver_id"] = driverId.ToString(), ["distance"] = distance, ["distance_unit"] = "Kilometers" },
             CancellationToken.None)).RootElement;
 
         var batch = JsonDocument.Parse(await new BatchCheckHosFeasibilityTool(_tenantUow).ExecuteAsync(
@@ -280,7 +295,8 @@ public class HosFeasibilityToolTests
                 ["checks"] = new JsonArray(new JsonObject
                 {
                     ["driver_id"] = driverId.ToString(),
-                    ["distance_km"] = distance
+                    ["distance"] = distance,
+                    ["distance_unit"] = "Kilometers"
                 })
             },
             CancellationToken.None)).RootElement.GetProperty("results")[0];
@@ -298,7 +314,8 @@ public class HosFeasibilityToolTests
                 ["checks"] = new JsonArray(new JsonObject
                 {
                     ["driver_id"] = "not-a-guid",
-                    ["distance_km"] = 400
+                    ["distance"] = 400,
+                    ["distance_unit"] = "Kilometers"
                 })
             },
             CancellationToken.None);

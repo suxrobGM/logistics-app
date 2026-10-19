@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 
@@ -21,8 +22,13 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow)
         [Description("The driver's employee ID (GUID)")]
         public required Guid DriverId { get; init; }
 
-        [Description("Estimated driving distance in kilometers")]
-        public required double DistanceKm { get; init; }
+        [Description("Estimated driving distance, in distance_unit")]
+        public required double Distance { get; init; }
+
+        [Description("The unit of distance - the suffix of the key it was read from: _km is Kilometers, _mi is Miles")]
+        public required DistanceUnit DistanceUnit { get; init; }
+
+        internal double Km() => DispatchUnits.MetersToKm(DistanceUnit.ToMeters(Distance));
     }
 
     public static AgentToolDefinition Definition => new(
@@ -47,13 +53,13 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow)
         {
             var hos = hosStatuses.GetValueOrDefault(check.DriverId);
             var verdict = hos is null
-                ? HosFeasibility.Unknown(check.DistanceKm)
-                : HosFeasibility.Evaluate(hos, check.DistanceKm);
+                ? HosFeasibility.Unknown(check.Km())
+                : HosFeasibility.Evaluate(hos, check.Km());
 
             return new AgentToolHosCheckDto
             {
                 DriverId = check.DriverId,
-                DistanceKm = check.DistanceKm,
+                DistanceKm = Math.Round(check.Km(), 1),
                 Feasible = verdict.Feasible,
                 FeasibleMultiDay = verdict.FeasibleMultiDay,
                 EstimatedDrivingMinutes = verdict.EstimatedDrivingMinutes,

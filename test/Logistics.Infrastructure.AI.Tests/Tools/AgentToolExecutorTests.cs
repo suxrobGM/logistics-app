@@ -1,18 +1,25 @@
 using System.Text.Json;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Infrastructure.AI.Tools.Dispatch;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
 using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools;
 
 public class AgentToolExecutorTests
 {
-    /// <summary>calculate_distance has no dependencies, so the whole path can run for real.</summary>
+    /// <summary>calculate_distance needs only the tenant's unit, so the whole path can run for real.</summary>
     private static AgentToolExecutor Executor()
     {
-        var services = new ServiceCollection().AddScoped<CalculateDistanceTool>();
+        var tenantUow = Substitute.For<ITenantUnitOfWork>();
+        tenantUow.GetCurrentTenant().Returns(TestTenants.Create(DistanceUnit.Kilometers));
+        var services = new ServiceCollection()
+            .AddScoped<CalculateDistanceTool>()
+            .AddSingleton(tenantUow);
         return new AgentToolExecutor(services.BuildServiceProvider(), NullLogger<AgentToolExecutor>.Instance);
     }
 
@@ -26,7 +33,7 @@ public class AgentToolExecutorTests
 
         var json = JsonDocument.Parse(result).RootElement;
         Assert.True(json.GetProperty("straight_line_km").GetDouble() > 150);
-        Assert.True(json.GetProperty("estimated_minutes").GetInt32() > 0);
+        Assert.NotEqual("0m", json.GetProperty("drive_time").GetString());
     }
 
     [Fact]

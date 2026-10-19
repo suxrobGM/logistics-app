@@ -1,12 +1,18 @@
 using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Identity.Policies;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class CalculateDistanceTool : AgentTool<CalculateDistanceTool.Input>, IAgentToolMetadata
+internal sealed class CalculateDistanceTool(ITenantUnitOfWork tenantUow)
+    : AgentTool<CalculateDistanceTool.Input>, IAgentToolMetadata
 {
+    /// <summary>Roads run longer than the straight line between two points.</summary>
+    private const double RoadFactor = 1.3;
+
     internal sealed record Input
     {
         [Description("Origin latitude")]
@@ -24,7 +30,7 @@ internal sealed class CalculateDistanceTool : AgentTool<CalculateDistanceTool.In
 
     public static AgentToolDefinition Definition => new(
         "calculate_distance",
-        "Calculate the driving distance and estimated duration between two geographic points.")
+        "Estimate the driving distance (in the tenant's unit, named in each key) and drive time between two geographic points.")
     {
         RequiredPermission = Permission.Dispatch.View,
         Surfaces = AgentSurfaces.All
@@ -34,15 +40,18 @@ internal sealed class CalculateDistanceTool : AgentTool<CalculateDistanceTool.In
     {
         var origin = new GeoPoint(input.OriginLng, input.OriginLat);
         var destination = new GeoPoint(input.DestLng, input.DestLat);
-        var straightLineKm = DispatchUnits.MetersToKm(origin.DistanceTo(destination));
-        var drivingDistanceKm = straightLineKm * 1.3;
-        var estimatedMinutes = (int)(drivingDistanceKm / 80.0 * 60);
+        var straightLineMeters = origin.DistanceTo(destination);
+        var drivingMeters = straightLineMeters * RoadFactor;
 
-        return Task.FromResult(ToolResult.Ok(new
+        var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
+        var suffix = unit.Abbreviation();
+
+        return Task.FromResult(ToolResult.Ok(new Dictionary<string, object?>
         {
-            straight_line_km = Math.Round(straightLineKm, 1),
-            estimated_driving_km = Math.Round(drivingDistanceKm, 1),
-            estimated_minutes = estimatedMinutes
+            [$"straight_line_{suffix}"] = DispatchUnits.FromMeters(straightLineMeters, unit),
+            [$"estimated_driving_{suffix}"] = DispatchUnits.FromMeters(drivingMeters, unit),
+            ["drive_time"] = AgentDuration.Format(
+                HosFeasibility.EstimateDrivingMinutes(DispatchUnits.MetersToKm(drivingMeters)))
         }));
     }
 }

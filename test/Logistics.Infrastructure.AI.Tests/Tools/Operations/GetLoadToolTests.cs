@@ -5,6 +5,7 @@ using Logistics.Application.Modules.Operations.Loads.Queries;
 using Logistics.Infrastructure.AI.Tools;
 using Logistics.Shared.Models;
 using Logistics.Mediator;
+using Logistics.Domain.Persistence;
 using NSubstitute;
 using Xunit;
 
@@ -17,7 +18,9 @@ public class GetLoadToolTests
 
     public GetLoadToolTests()
     {
-        _sut = new GetLoadTool(_mediator);
+        var tenantUow = Substitute.For<ITenantUnitOfWork>();
+        tenantUow.GetCurrentTenant().Returns(TestTenants.Create());
+        _sut = new GetLoadTool(_mediator, tenantUow);
     }
 
     [Fact]
@@ -44,6 +47,7 @@ public class GetLoadToolTests
         Assert.Equal(1800m, root.GetProperty("linehaul").GetDecimal());
         Assert.Equal("ap@acme.com", root.GetProperty("customer_email").GetString());
         Assert.False(root.GetProperty("has_invoice").GetBoolean());
+        Assert.True(root.TryGetProperty("distance_mi", out _));
     }
 
     /// <summary>The linehaul is only part of the price; the agent quotes total_charges.</summary>

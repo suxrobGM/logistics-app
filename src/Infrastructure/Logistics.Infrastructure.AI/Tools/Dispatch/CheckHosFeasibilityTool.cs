@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Logistics.Application.Abstractions.Agents;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 
@@ -15,8 +16,13 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow)
         [Description("The driver's employee ID (GUID)")]
         public required Guid DriverId { get; init; }
 
-        [Description("Estimated driving distance in kilometers")]
-        public required double DistanceKm { get; init; }
+        [Description("Estimated driving distance, in distance_unit")]
+        public required double Distance { get; init; }
+
+        [Description("The unit of distance - the suffix of the key it was read from: _km is Kilometers, _mi is Miles")]
+        public required DistanceUnit DistanceUnit { get; init; }
+
+        internal double Km() => DispatchUnits.MetersToKm(DistanceUnit.ToMeters(Distance));
     }
 
     public static AgentToolDefinition Definition => new(
@@ -37,10 +43,10 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow)
             return ToolResult.Typed(new AgentToolResultDto
             {
                 Feasible = false,
-                Reason = HosFeasibility.Unknown(input.DistanceKm).Reason
+                Reason = HosFeasibility.Unknown(input.Km()).Reason
             });
 
-        var verdict = HosFeasibility.Evaluate(hos, input.DistanceKm);
+        var verdict = HosFeasibility.Evaluate(hos, input.Km());
 
         return ToolResult.Typed(new AgentToolResultDto
         {

@@ -43,7 +43,7 @@ internal readonly record struct HosFeasibility(
             && !hos.IsInViolation
             && hos.DrivingMinutesRemaining >= MinimumUsefulDrivingMinutes;
 
-        var reason = $"Insufficient hours: need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min driving - too low to make meaningful progress";
+        var reason = $"Insufficient hours: need {AgentDuration.Format(estimatedDrivingMinutes)}, have {AgentDuration.Format(hos.DrivingMinutesRemaining)} driving - too low to make meaningful progress";
         if (feasible)
         {
             reason = "Driver has sufficient hours to complete in one stretch";
@@ -54,7 +54,7 @@ internal readonly record struct HosFeasibility(
         }
         else if (multiDay)
         {
-            reason = $"Not completable in current window (need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min), but feasible as multi-day trip with rest stops";
+            reason = $"Not completable in current window (need {AgentDuration.Format(estimatedDrivingMinutes)}, have {AgentDuration.Format(hos.DrivingMinutesRemaining)}), but feasible as multi-day trip with rest stops";
         }
 
         return new HosFeasibility(feasible, multiDay, estimatedDrivingMinutes, reason);

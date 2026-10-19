@@ -2,13 +2,23 @@ using Logistics.Infrastructure.AI.Tools.Dispatch;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Logistics.Infrastructure.AI.Tools;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
+using NSubstitute;
 using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools.Dispatch;
 
 public class CalculateDistanceToolTests
 {
-    private readonly CalculateDistanceTool _sut = new();
+    private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly CalculateDistanceTool _sut;
+
+    public CalculateDistanceToolTests()
+    {
+        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create(DistanceUnit.Kilometers));
+        _sut = new CalculateDistanceTool(_tenantUow);
+    }
 
     [Fact]
     public async Task Execute_ValidCoordinates_ReturnsDistanceAndDuration()
@@ -27,13 +37,32 @@ public class CalculateDistanceToolTests
 
         Assert.True(json.RootElement.TryGetProperty("straight_line_km", out var straightLine));
         Assert.True(json.RootElement.TryGetProperty("estimated_driving_km", out var drivingKm));
-        Assert.True(json.RootElement.TryGetProperty("estimated_minutes", out var minutes));
+        Assert.True(json.RootElement.TryGetProperty("drive_time", out var driveTime));
 
         // NY to LA straight line is ~3,940 km
         Assert.InRange(straightLine.GetDouble(), 3500, 4500);
         // Driving distance should be ~1.3x straight line
         Assert.True(drivingKm.GetDouble() > straightLine.GetDouble());
-        Assert.True(minutes.GetInt32() > 0);
+        Assert.Contains("h", driveTime.GetString());
+    }
+
+    [Fact]
+    public async Task Execute_MilesTenant_NamesAndConvertsTheDistanceInMiles()
+    {
+        _tenantUow.GetCurrentTenant().Returns(TestTenants.Create(DistanceUnit.Miles));
+        var input = new JsonObject
+        {
+            ["origin_lat"] = 40.7128,
+            ["origin_lng"] = -74.0060,
+            ["dest_lat"] = 34.0522,
+            ["dest_lng"] = -118.2437
+        };
+
+        var json = JsonDocument.Parse(await _sut.ExecuteAsync(input, CancellationToken.None)).RootElement;
+
+        // ~3,940 km is ~2,450 mi
+        Assert.InRange(json.GetProperty("straight_line_mi").GetDouble(), 2200, 2800);
+        Assert.False(json.TryGetProperty("straight_line_km", out _));
     }
 
     [Fact]
@@ -51,7 +80,7 @@ public class CalculateDistanceToolTests
         var json = JsonDocument.Parse(result);
 
         Assert.Equal(0, json.RootElement.GetProperty("straight_line_km").GetDouble());
-        Assert.Equal(0, json.RootElement.GetProperty("estimated_minutes").GetInt32());
+        Assert.Equal("0m", json.RootElement.GetProperty("drive_time").GetString());
     }
 
     [Fact]
