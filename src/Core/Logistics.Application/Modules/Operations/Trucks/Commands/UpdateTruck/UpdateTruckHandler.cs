@@ -69,6 +69,11 @@ internal sealed class UpdateTruckHandler(
         truck.LicensePlate = PropertyUpdater.UpdateIfChanged(req.LicensePlate, truck.LicensePlate);
         truck.LicensePlateState = PropertyUpdater.UpdateIfChanged(req.LicensePlateState, truck.LicensePlateState);
 
+        if (truck.Vin is not null && await truckRepository.GetAsync(i => i.Vin == truck.Vin && i.Id != truck.Id, ct) is not null)
+        {
+            return Result.Fail($"Already exists truck with VIN {truck.Vin}");
+        }
+
         if (req.Year is not null && truck.Year != req.Year)
         {
             truck.Year = req.Year.Value;

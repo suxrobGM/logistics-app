@@ -3,6 +3,7 @@ using Logistics.Application.Modules.Platform.DataImport.Constants;
 using Logistics.Application.Modules.Platform.DataImport.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 using static Logistics.Application.Modules.Platform.DataImport.Constants.ImportFieldKeys;
@@ -60,6 +61,7 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
             .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
         var drivers = new EmployeeMatcher(await tenantUow.Repository<Employee>().Query().ToListAsync(ct));
         var claimedDrivers = new Dictionary<Guid, string>();
+        var claimedVins = new Dictionary<string, string>();
 
         foreach (var draft in drafts)
         {
@@ -70,6 +72,19 @@ internal sealed class TruckImporter(ITenantUnitOfWork tenantUow, IVehicleTranspo
                 await vehicleTransportGuard.CheckTruckTypeAsync(type) is { IsSuccess: false } typeCheck)
             {
                 draft.Errors.Add(typeCheck.Error!);
+            }
+
+            if (VinFormat.Normalize(draft.Row.Get(Vin)) is { } vin)
+            {
+                var vinOwner = trucks.FirstOrDefault(t => t.Vin == vin && t.Id != draft.Existing?.Id);
+                if (vinOwner is not null)
+                {
+                    draft.Errors.Add($"VIN {vin} already belongs to truck {vinOwner.Number}.");
+                }
+                else if (!claimedVins.TryAdd(vin, draft.Key))
+                {
+                    draft.Errors.Add($"VIN {vin} is also given to truck {claimedVins[vin]} in this file.");
+                }
             }
 
             if (draft.Row.Get(Driver) is not { } driverCell)

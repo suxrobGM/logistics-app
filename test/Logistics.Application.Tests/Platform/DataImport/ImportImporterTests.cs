@@ -101,6 +101,30 @@ public class ImportImporterTests
     }
 
     [Fact]
+    public async Task ImportAsync_VinOfAnotherTrailer_IsARowError()
+    {
+        _trailers.Add(new Trailer { Number = "T-9", Type = TrailerType.DryVan, Vin = "1UYVS2538AU123456" });
+
+        var result = Assert.Single(await _sut.ImportAsync(
+            [Row(2, (Keys.Number, "T-1"), (Keys.Vin, " 1uyvs2538au123456 "))],
+            Options(commit: false), CancellationToken.None));
+
+        Assert.Equal(ImportRowAction.Error, result.Action);
+        Assert.Contains(result.Messages, m => m.Contains("already belongs to trailer T-9"));
+    }
+
+    [Fact]
+    public async Task ImportAsync_SameVinTwiceInFile_FailsTheLaterRow()
+    {
+        var results = await _sut.ImportAsync(
+            [Row(2, (Keys.Number, "T-1"), (Keys.Vin, "VIN1")), Row(3, (Keys.Number, "T-2"), (Keys.Vin, "vin1"))],
+            Options(commit: false), CancellationToken.None);
+
+        Assert.Equal(ImportRowAction.Create, results[0].Action);
+        Assert.Equal(ImportRowAction.Error, results[1].Action);
+    }
+
+    [Fact]
     public async Task ImportAsync_MissingNumberAndBadYear_ReportsBoth()
     {
         var result = Assert.Single(await _sut.ImportAsync([Row(2, (Keys.Year, "twenty"))], Options(commit: false),

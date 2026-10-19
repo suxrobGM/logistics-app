@@ -14,6 +14,7 @@ internal sealed class TrailerEntityConfiguration : IEntityTypeConfiguration<Trai
         builder.HasIndex(t => t.Number).IsUnique();
 
         builder.Property(t => t.Vin).HasMaxLength(17);
+        builder.HasIndex(t => t.Vin).IsUnique().HasFilter("vin IS NOT NULL");
         builder.Property(t => t.LicensePlate).HasMaxLength(20);
         builder.Property(t => t.LicensePlateState).HasMaxLength(10);
         builder.Property(t => t.Make).HasMaxLength(100);

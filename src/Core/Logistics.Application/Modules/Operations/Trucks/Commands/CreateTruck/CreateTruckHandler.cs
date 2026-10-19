@@ -58,6 +58,11 @@ internal sealed class CreateTruckHandler(
         truckEntity.LicensePlate = req.LicensePlate;
         truckEntity.LicensePlateState = req.LicensePlateState;
 
+        if (truckEntity.Vin is not null && await tenantUow.Repository<Truck>().GetAsync(i => i.Vin == truckEntity.Vin, ct) is not null)
+        {
+            return Result.Fail($"Already exists truck with VIN {truckEntity.Vin}");
+        }
+
         await tenantUow.Repository<Truck>().AddAsync(truckEntity, ct);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();

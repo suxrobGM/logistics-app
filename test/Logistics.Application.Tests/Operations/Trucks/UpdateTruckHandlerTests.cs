@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Trailers.Services;
 using Logistics.Application.Modules.Operations.Trucks.Commands;
@@ -28,6 +29,8 @@ public class UpdateTruckHandlerTests
         _truckRepo.Query().Returns(_ => _trucks.BuildMock());
         _truckRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(ci => _trucks.FirstOrDefault(t => t.Id == ci.Arg<Guid>()));
+        _truckRepo.GetAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
+            .Returns(ci => _trucks.AsQueryable().FirstOrDefault(ci.Arg<Expression<Func<Truck, bool>>>()));
         _guard.CheckTruckTypeAsync(Arg.Any<TruckType?>()).Returns(Result.Ok());
         _sut = new UpdateTruckHandler(_tenantUow, _guard, Substitute.For<ITrailerHookService>());
     }
@@ -72,6 +75,19 @@ public class UpdateTruckHandlerTests
         Assert.True(result.IsSuccess);
         Assert.Same(driver, truck.MainDriver);
         await _tenantUow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_VinOfAnotherTruck_FailsWithoutSaving()
+    {
+        AddTruck("100").Vin = "1HGBH41JXMN109186";
+        var truck = AddTruck("101");
+
+        var result = await _sut.Handle(new UpdateTruckCommand { Id = truck.Id, Vin = " 1hgbh41jxmn109186" }, default);
+
+        Assert.False(result.IsSuccess);
+        Assert.Contains("VIN", result.Error);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     private Truck AddTruck(string number)

@@ -1,4 +1,5 @@
 using Logistics.Domain.Core;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
@@ -6,6 +7,8 @@ namespace Logistics.Domain.Entities;
 
 public class Truck : Entity, ITenantEntity
 {
+    private string? _vin;
+
     public required string Number { get; set; }
 
     public required TruckType Type { get; set; }
@@ -33,9 +36,14 @@ public class Truck : Entity, ITenantEntity
     public int? Year { get; set; }
 
     /// <summary>
-    ///     Vehicle Identification Number (17-character unique identifier)
+    ///     Vehicle Identification Number (17-character unique identifier), canonicalised on write by
+    ///     <see cref="VinFormat.Normalize" />.
     /// </summary>
-    public string? Vin { get; set; }
+    public string? Vin
+    {
+        get => _vin;
+        set => _vin = VinFormat.Normalize(value);
+    }
 
     /// <summary>
     ///     Vehicle license plate number

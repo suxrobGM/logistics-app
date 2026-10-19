@@ -1,17 +1,27 @@
 using Logistics.Domain.Core;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Domain.Entities;
 
 public class Trailer : AuditableEntity, ITenantEntity
 {
+    private string? _vin;
+
     public required string Number { get; set; }
 
     public required TrailerType Type { get; set; }
 
     public TrailerStatus Status { get; set; } = TrailerStatus.Active;
 
-    public string? Vin { get; set; }
+    /// <summary>
+    ///     Canonicalised on write by <see cref="VinFormat.Normalize" />.
+    /// </summary>
+    public string? Vin
+    {
+        get => _vin;
+        set => _vin = VinFormat.Normalize(value);
+    }
 
     public string? LicensePlate { get; set; }
 

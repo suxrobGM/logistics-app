@@ -50,6 +50,17 @@ public class NaturalKeyNormalizationTests
         Assert.Equal(expected, NewTerminal(input).Code);
     }
 
+    [Theory]
+    [InlineData(" 1hgbh41jxmn109186 ", "1HGBH41JXMN109186")]
+    [InlineData("1HGBH41JXMN109186", "1HGBH41JXMN109186")]
+    [InlineData("   ", null)]
+    [InlineData(null, null)]
+    public void TruckAndTrailerVin_IsCanonicalisedOnWrite(string? input, string? expected)
+    {
+        Assert.Equal(expected, new Truck { Number = "T-1", Type = TruckType.FreightTruck, Vin = input }.Vin);
+        Assert.Equal(expected, new Trailer { Number = "TR-1", Type = TrailerType.DryVan, Vin = input }.Vin);
+    }
+
     /// <summary>A later assignment must normalise too, not just the initialiser.</summary>
     [Fact]
     public void ReassigningTheKey_NormalisesAgain()

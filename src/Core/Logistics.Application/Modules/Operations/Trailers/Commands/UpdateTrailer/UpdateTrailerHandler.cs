@@ -38,6 +38,11 @@ internal sealed class UpdateTrailerHandler(ITenantUnitOfWork tenantUow, ITrailer
         trailer.LengthMeters = req.LengthMeters;
         trailer.Notes = req.Notes;
 
+        if (trailer.Vin is not null && await repository.GetAsync(i => i.Vin == trailer.Vin && i.Id != trailer.Id, ct) is not null)
+        {
+            return Result.Fail($"A trailer with VIN '{trailer.Vin}' already exists");
+        }
+
         await trailerHookService.UnhookUnlessActiveAsync(trailer, ct);
 
         await tenantUow.SaveChangesAsync(ct);

@@ -13,6 +13,11 @@ internal sealed class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
         builder.HasIndex(i => i.Number)
             .IsUnique();
 
+        builder.Property(i => i.Vin).HasMaxLength(17);
+        builder.HasIndex(i => i.Vin)
+            .IsUnique()
+            .HasFilter("vin IS NOT NULL");
+
         builder.ComplexProperty(i => i.AdrEquipment, adr =>
         {
             adr.Property(a => a.OrangePlateNumber).HasMaxLength(8);

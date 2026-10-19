@@ -34,6 +34,11 @@ internal sealed class CreateTrailerHandler(ITenantUnitOfWork tenantUow)
             Notes = req.Notes
         };
 
+        if (trailer.Vin is not null && await tenantUow.Repository<Trailer>().GetAsync(i => i.Vin == trailer.Vin, ct) is not null)
+        {
+            return Result<TrailerDto>.Fail($"A trailer with VIN '{trailer.Vin}' already exists");
+        }
+
         await tenantUow.Repository<Trailer>().AddAsync(trailer, ct);
         await tenantUow.SaveChangesAsync(ct);
         return Result<TrailerDto>.Ok(trailer.ToDto());
