@@ -12,7 +12,9 @@ internal sealed class HosViolationEntityConfiguration : IEntityTypeConfiguration
 
         builder.HasIndex(i => new { i.EmployeeId, i.ViolationDate });
 
-        builder.HasIndex(i => i.ExternalViolationId);
+        builder.HasIndex(i => new { i.ProviderType, i.ExternalViolationId })
+            .IsUnique()
+            .HasFilter("external_violation_id IS NOT NULL");
 
         builder.HasOne(i => i.Employee)
             .WithMany()

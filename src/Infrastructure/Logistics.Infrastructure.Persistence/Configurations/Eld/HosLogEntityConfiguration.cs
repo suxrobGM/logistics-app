@@ -12,7 +12,9 @@ internal sealed class HosLogEntityConfiguration : IEntityTypeConfiguration<HosLo
 
         builder.HasIndex(i => new { i.EmployeeId, i.LogDate });
 
-        builder.HasIndex(i => i.ExternalLogId);
+        builder.HasIndex(i => new { i.EmployeeId, i.ProviderType, i.ExternalLogId })
+            .IsUnique()
+            .HasFilter("external_log_id IS NOT NULL");
 
         builder.HasOne(i => i.Employee)
             .WithMany()

@@ -157,6 +157,31 @@ public class EldSyncServiceTests
         await _logs.DidNotReceive().AddAsync(Arg.Any<HosLog>(), Arg.Any<CancellationToken>());
     }
 
+    [Fact]
+    public async Task SyncHistoryAsync_StoredCopyStartedBeforeWindow_UpdatesItInsteadOfAddingADuplicate()
+    {
+        var moved = new HosLog
+        {
+            EmployeeId = _mapping.EmployeeId,
+            ProviderType = EldProviderType.Samsara,
+            LogDate = DateTime.UtcNow.AddDays(-9).Date,
+            DutyStatus = DutyStatus.OffDuty,
+            StartTime = DateTime.UtcNow.AddDays(-9),
+            ExternalLogId = "a"
+        };
+        var start = DateTime.UtcNow.AddHours(-6);
+        _logs.GetListAsync(Any<HosLog>(), Arg.Any<CancellationToken>())
+            .Returns(ci => new[] { moved }.AsQueryable().Where(ci.Arg<Expression<Func<HosLog, bool>>>()).ToList());
+        _provider.GetDriverHosLogsAsync("88668", Arg.Any<DateTime>(), Arg.Any<DateTime>())
+            .Returns([Log("a", start, DutyStatus.Driving)]);
+
+        await _sut.SyncHistoryAsync(_config, CancellationToken.None);
+
+        Assert.Equal(start, moved.StartTime);
+        await _logs.DidNotReceive().AddAsync(Arg.Any<HosLog>(), Arg.Any<CancellationToken>());
+        _logs.DidNotReceive().Delete(moved);
+    }
+
     #endregion
 
     #region Violations

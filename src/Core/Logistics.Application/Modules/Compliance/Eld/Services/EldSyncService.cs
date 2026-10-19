@@ -179,11 +179,14 @@ internal sealed class EldSyncService(
             return;
         }
 
+        // A fetched log whose stored copy started before the window (the ELD moved its start) is loaded too, so it
+        // is updated in place instead of inserted twice against the unique (employee, provider, log id) index.
         var repo = tenantUow.Repository<HosLog>();
+        var keys = fetched.Keys.ToList();
         var stored = await repo.GetListAsync(l =>
             l.EmployeeId == mapping.EmployeeId &&
             l.ProviderType == mapping.ProviderType &&
-            l.StartTime >= windowStart, ct);
+            (l.StartTime >= windowStart || keys.Contains(l.ExternalLogId!)), ct);
 
         var seen = new HashSet<string>();
         foreach (var log in stored)
