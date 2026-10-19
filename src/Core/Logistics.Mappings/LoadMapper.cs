@@ -44,7 +44,6 @@ public static partial class LoadMapper
             RequestedPickupDate = entity.RequestedPickupDate,
             RequestedDeliveryDate = entity.RequestedDeliveryDate,
             Notes = entity.Notes,
-            IsHazmat = entity.IsHazmat,
             HazmatClass = entity.HazmatClass,
             UnNumber = entity.UnNumber,
             FreightClass = entity.FreightClass,

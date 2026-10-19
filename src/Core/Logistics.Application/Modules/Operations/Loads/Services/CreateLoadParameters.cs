@@ -46,7 +46,6 @@ public record CreateLoadParameters(
     Guid? ContainerId = null,
     Guid? OriginTerminalId = null,
     Guid? DestinationTerminalId = null,
-    bool IsHazmat = false,
     HazmatClass? HazmatClass = null,
     string? UnNumber = null,
     IReadOnlyList<LoadVehicle>? Vehicles = null,

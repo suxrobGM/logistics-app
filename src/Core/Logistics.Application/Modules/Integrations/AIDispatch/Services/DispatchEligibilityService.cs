@@ -158,7 +158,7 @@ internal sealed class DispatchEligibilityService(
             }
         }
 
-        if (!load.IsHazmat)
+        if (load.HazmatClass is null)
         {
             return;
         }
@@ -210,7 +210,7 @@ internal sealed class DispatchEligibilityService(
         DateTime now,
         List<EligibilityIssue> issues)
     {
-        if (!load.IsHazmat)
+        if (load.HazmatClass is null)
         {
             return;
         }

@@ -45,7 +45,7 @@ internal sealed class GetLoadTool(IMediator mediator, ITenantUnitOfWork tenantUo
             ["name"] = l.Name,
             ["status"] = l.Status.ToString(),
             ["type"] = l.Type.ToString(),
-            ["hazmat_class"] = AgentHazmat.DescribeClass(l),
+            ["hazmat_class"] = l.HazmatClass?.ToString(),
             ["vehicles"] = l.Vehicles.Count > 0 ? AgentVehicleSummary.Describe(l.Vehicles) : null,
             ["vehicle_capacity_warning"] = l.VehicleCapacityWarning,
             ["freight"] = DescribeFreight(l),

@@ -183,6 +183,23 @@ public class UpdateLoadHandlerTests
 
     #endregion
 
+    #region Hazmat
+
+    [Fact]
+    public async Task Handle_NoHazmatClass_ClearsTheClassAndUnNumber()
+    {
+        var load = Load(LoadType.GeneralFreight);
+        load.HazmatClass = HazmatClass.Class3;
+        load.UnNumber = "UN1203";
+
+        await Update(new UpdateLoadCommand { Id = load.Id, Name = "Renamed" });
+
+        Assert.Null(load.HazmatClass);
+        Assert.Null(load.UnNumber);
+    }
+
+    #endregion
+
     #region Route
 
     [Fact]

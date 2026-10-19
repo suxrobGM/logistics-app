@@ -70,9 +70,8 @@ internal sealed class UpdateLoadHandler(
             if (req.ContainerId.HasValue) load.ContainerId = req.ContainerId;
             if (req.OriginTerminalId.HasValue) load.OriginTerminalId = req.OriginTerminalId;
             if (req.DestinationTerminalId.HasValue) load.DestinationTerminalId = req.DestinationTerminalId;
-            if (req.IsHazmat.HasValue) load.IsHazmat = req.IsHazmat.Value;
-            if (req.HazmatClass.HasValue) load.HazmatClass = req.HazmatClass;
-            if (req.UnNumber is not null) load.UnNumber = req.UnNumber;
+            load.HazmatClass = req.HazmatClass;
+            load.UnNumber = req.UnNumber;
 
             // Also runs without new vehicles, so a type change away from Vehicle cannot strand the old ones.
             load.SetVehicles(req.Vehicles?.ToLoadVehicles() ?? load.Vehicles);

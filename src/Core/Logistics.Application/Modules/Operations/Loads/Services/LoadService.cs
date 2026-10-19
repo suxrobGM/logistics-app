@@ -121,7 +121,6 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow, IVehicleTransport
             load.ContainerId = p.ContainerId;
             load.OriginTerminalId = p.OriginTerminalId;
             load.DestinationTerminalId = p.DestinationTerminalId;
-            load.IsHazmat = p.IsHazmat;
             load.HazmatClass = p.HazmatClass;
             load.UnNumber = p.UnNumber;
             try

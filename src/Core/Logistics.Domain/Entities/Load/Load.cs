@@ -100,13 +100,8 @@ public partial class Load : AuditableEntity, ITenantEntity
     public string? Notes { get; set; }
 
     /// <summary>
-    /// True when the load contains hazardous materials. When set, <see cref="HazmatClass"/>
-    /// and <see cref="UnNumber"/> should also be populated.
-    /// </summary>
-    public bool IsHazmat { get; set; }
-
-    /// <summary>
-    /// UN/ADR hazardous material class (1–9). Required for ADR-aware dispatch eligibility.
+    /// UN/ADR hazardous material class (1–9); set exactly when the load carries hazardous materials.
+    /// Drives hazmat dispatch eligibility.
     /// </summary>
     public HazmatClass? HazmatClass { get; set; }
 

@@ -25,7 +25,6 @@ public class TripNewLoadTests
             ContainerId = Guid.NewGuid(),
             OriginTerminalId = Guid.NewGuid(),
             DestinationTerminalId = Guid.NewGuid(),
-            IsHazmat = true,
             HazmatClass = HazmatClass.Class2,
             UnNumber = "UN1203",
             FuelSurcharge = 120,
@@ -52,7 +51,6 @@ public class TripNewLoadTests
         Assert.Equal(load.ContainerId, p.ContainerId);
         Assert.Equal(load.OriginTerminalId, p.OriginTerminalId);
         Assert.Equal(load.DestinationTerminalId, p.DestinationTerminalId);
-        Assert.True(p.IsHazmat);
         Assert.Equal(HazmatClass.Class2, p.HazmatClass);
         Assert.Equal("UN1203", p.UnNumber);
         Assert.Equal(120, p.FuelSurcharge);

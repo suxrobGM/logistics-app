@@ -122,7 +122,7 @@ internal sealed class GetDispatchCandidatesTool(
             .Take(limit)
             .ToList();
 
-        var needsEligibility = AgentHazmat.DescribeClass(load) is not null || load.Vehicles.Count > 0;
+        var needsEligibility = load.HazmatClass is not null || load.Vehicles.Count > 0;
         var candidates = new List<(bool Blocked, Dictionary<string, object?> Row)>(best.Count);
         foreach (var candidate in best)
         {

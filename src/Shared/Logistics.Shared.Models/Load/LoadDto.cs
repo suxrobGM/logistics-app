@@ -28,7 +28,6 @@ public class LoadDto
     public DateTime? RequestedPickupDate { get; set; }
     public DateTime? RequestedDeliveryDate { get; set; }
     public string? Notes { get; set; }
-    public bool IsHazmat { get; set; }
     public HazmatClass? HazmatClass { get; set; }
     public string? UnNumber { get; set; }
     public FreightClass? FreightClass { get; set; }

@@ -41,7 +41,7 @@ public class DispatchEligibilityServiceTests
     {
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
         var truck = CreateTruck(driver);
-        var load = CreateLoad(isHazmat: false);
+        var load = CreateLoad();
 
         WireRepos(truck, load, driver);
 
@@ -56,7 +56,7 @@ public class DispatchEligibilityServiceTests
     {
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3, originCountry: "US", destCountry: "US");
+        var load = CreateLoad(hazmatClass: HazmatClass.Class3, originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
 
@@ -71,7 +71,7 @@ public class DispatchEligibilityServiceTests
     {
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3, originCountry: "US", destCountry: "US");
+        var load = CreateLoad(hazmatClass: HazmatClass.Class3, originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
 
@@ -87,7 +87,7 @@ public class DispatchEligibilityServiceTests
             LicenseEndorsement.Adr));
         var truck = CreateAdrTruck(driver, allowedClasses: HazmatClassFlags.Class7,
             certExpiry: DateTime.UtcNow.AddYears(1));
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class7,
+        var load = CreateLoad(hazmatClass: HazmatClass.Class7,
             originCountry: "DE", destCountry: "FR");
 
         WireRepos(truck, load, driver);
@@ -105,7 +105,7 @@ public class DispatchEligibilityServiceTests
             LicenseEndorsement.Adr));
         var truck = CreateAdrTruck(driver, allowedClasses: HazmatClassFlags.Class3,
             certExpiry: DateTime.UtcNow.AddYears(1));
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class6,
+        var load = CreateLoad(hazmatClass: HazmatClass.Class6,
             originCountry: "DE", destCountry: "FR");
 
         WireRepos(truck, load, driver);
@@ -123,7 +123,7 @@ public class DispatchEligibilityServiceTests
             LicenseEndorsement.Adr));
         var truck = CreateAdrTruck(driver, allowedClasses: HazmatClassFlags.Class3,
             certExpiry: DateTime.UtcNow.AddDays(-1));
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
+        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
             originCountry: "DE", destCountry: "FR");
 
         WireRepos(truck, load, driver);
@@ -141,7 +141,7 @@ public class DispatchEligibilityServiceTests
             expiresAt: DateTime.UtcNow.AddDays(-1),
             status: DriverLicenseStatus.Active));
         var truck = CreateTruck(driver);
-        var load = CreateLoad(isHazmat: false);
+        var load = CreateLoad();
 
         WireRepos(truck, load, driver);
 
@@ -159,7 +159,7 @@ public class DispatchEligibilityServiceTests
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
             medicalCertExpiresAt: DateTime.UtcNow.AddDays(-1)));
         var truck = CreateTruck(driver);
-        var load = CreateLoad(isHazmat: false);
+        var load = CreateLoad();
 
         WireRepos(truck, load, driver);
 
@@ -189,7 +189,7 @@ public class DispatchEligibilityServiceTests
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, LicenseEndorsement.Hazmat));
         // Truck not placarded Ã¢â‚¬â€ required for US Hazmat transport.
         var truck = CreateTruck(driver, isHazmatPlacarded: false);
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
+        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
             originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
@@ -210,7 +210,7 @@ public class DispatchEligibilityServiceTests
         // Explicitly assert no ADR equipment.
         Assert.False(truck.AdrEquipment.IsAdrCertified);
 
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
+        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
             originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
@@ -230,7 +230,7 @@ public class DispatchEligibilityServiceTests
     {
         var driver = CreateDriver(license: BuildLicense("US", cls));
         var truck = CreateTruck(driver);
-        var load = CreateLoad(isHazmat: false, originCountry: "US", destCountry: "US");
+        var load = CreateLoad(originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
 
@@ -246,7 +246,7 @@ public class DispatchEligibilityServiceTests
         var truck = CreateTruck(driver);
         truck.MainDriver = null;
         truck.MainDriverId = null;
-        var load = CreateLoad(isHazmat: false, originCountry: "US", destCountry: "US");
+        var load = CreateLoad(originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
 
@@ -265,7 +265,7 @@ public class DispatchEligibilityServiceTests
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
         truck.MainDriver = null;
         truck.MainDriverId = null;
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
+        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
             originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
@@ -285,7 +285,7 @@ public class DispatchEligibilityServiceTests
         // and demands ADR Ã¢â‚¬â€ which the truck doesn't have Ã¢â€ â€™ blocked.
         var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EUCE));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
+        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
             originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
@@ -314,7 +314,7 @@ public class DispatchEligibilityServiceTests
             Licenses = [euLicense, usLicense]
         };
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
-        var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
+        var load = CreateLoad(hazmatClass: HazmatClass.Class3,
             originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
@@ -330,7 +330,7 @@ public class DispatchEligibilityServiceTests
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
             medicalCertExpiresAt: DateTime.UtcNow.AddDays(3)));
         var truck = CreateTruck(driver);
-        var load = CreateLoad(isHazmat: false, originCountry: "US", destCountry: "US");
+        var load = CreateLoad(originCountry: "US", destCountry: "US");
 
         WireRepos(truck, load, driver);
 
@@ -351,7 +351,7 @@ public class DispatchEligibilityServiceTests
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
         var truck = CreateTruck(driver);
         truck.Type = TruckType.CarHauler;
-        var load = CreateLoad(isHazmat: false);
+        var load = CreateLoad();
         load.Type = LoadType.Vehicle;
         WireRepos(truck, load, driver);
         _capacityChecker.GetWarningAsync(truck, load, Arg.Any<CancellationToken>())
@@ -370,7 +370,7 @@ public class DispatchEligibilityServiceTests
     {
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA));
         var truck = CreateTruck(driver);
-        var load = CreateLoad(isHazmat: false);
+        var load = CreateLoad();
         load.Type = LoadType.IntermodalContainer;
         WireRepos(truck, load, driver);
 
@@ -451,7 +451,6 @@ public class DispatchEligibilityServiceTests
     }
 
     private static Load CreateLoad(
-        bool isHazmat,
         HazmatClass? hazmatClass = null,
         string originCountry = "DE",
         string destCountry = "FR")
@@ -482,7 +481,6 @@ public class DispatchEligibilityServiceTests
             },
             DestinationLocation = new GeoPoint(0, 0),
             DeliveryCost = Money.Zero("USD"),
-            IsHazmat = isHazmat,
             HazmatClass = hazmatClass
         };
     }

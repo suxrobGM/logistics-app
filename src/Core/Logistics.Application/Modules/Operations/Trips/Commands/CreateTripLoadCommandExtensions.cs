@@ -24,7 +24,6 @@ internal static class CreateTripLoadCommandExtensions
             ContainerId: load.ContainerId,
             OriginTerminalId: load.OriginTerminalId,
             DestinationTerminalId: load.DestinationTerminalId,
-            IsHazmat: load.IsHazmat,
             HazmatClass: load.HazmatClass,
             UnNumber: load.UnNumber,
             Vehicles: load.Vehicles.ToLoadVehicles(),

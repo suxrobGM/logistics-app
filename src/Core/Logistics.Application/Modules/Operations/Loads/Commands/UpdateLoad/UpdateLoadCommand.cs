@@ -28,8 +28,14 @@ public partial class UpdateLoadCommand : ICommand
     public Guid? OriginTerminalId { get; set; }
     public Guid? DestinationTerminalId { get; set; }
 
-    public bool? IsHazmat { get; set; }
+    /// <summary>
+    /// Unlike most fields here, always applied: null clears the class and makes the load non-hazmat.
+    /// </summary>
     public HazmatClass? HazmatClass { get; set; }
+
+    /// <summary>
+    /// Replaced together with <see cref="HazmatClass"/>; null clears it.
+    /// </summary>
     public string? UnNumber { get; set; }
 
     /// <summary>

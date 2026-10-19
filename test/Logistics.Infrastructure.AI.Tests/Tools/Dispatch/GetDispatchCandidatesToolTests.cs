@@ -126,7 +126,7 @@ public class GetDispatchCandidatesToolTests
         var blocked = Truck("T-blocked", TruckType.BoxTruck, Pickup);
         var clear = Truck("T-clear", TruckType.BoxTruck, new GeoPoint(-97.0, 32.9));
         var load = Load();
-        load.IsHazmat = true;
+        load.HazmatClass = HazmatClass.Class3;
         Setup([load], blocked, clear);
         _eligibility.CheckAsync(blocked.Truck.Id, load.Id, null, Arg.Any<CancellationToken>())
             .Returns(EligibilityResult.Block(new EligibilityIssue(

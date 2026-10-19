@@ -27,7 +27,6 @@ internal sealed class CreateLoadHandler(ILoadService loadService)
             ContainerId: req.ContainerId,
             OriginTerminalId: req.OriginTerminalId,
             DestinationTerminalId: req.DestinationTerminalId,
-            IsHazmat: req.IsHazmat,
             HazmatClass: req.HazmatClass,
             UnNumber: req.UnNumber,
             Vehicles: req.Vehicles.ToLoadVehicles(),

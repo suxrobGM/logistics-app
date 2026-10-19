@@ -47,7 +47,7 @@ internal sealed class GetUnassignedLoadsTool(IMediator mediator)
             ContainerLastFreeDay = l.ContainerLastFreeDay,
             ContainerDaysUntilLastFreeDay = l.ContainerLastFreeDay is { } lfd ? lfd.DayNumber - today.DayNumber : null,
             ContainerOnHold = l.ContainerIsOnHold,
-            HazmatClass = AgentHazmat.DescribeClass(l),
+            HazmatClass = l.HazmatClass?.ToString(),
             VehicleCount = l.Vehicles.Count > 0 ? l.Vehicles.Count : null,
             Vehicles = l.Vehicles.Count > 0 ? AgentVehicleSummary.Describe(l.Vehicles) : null
         }).ToList();
