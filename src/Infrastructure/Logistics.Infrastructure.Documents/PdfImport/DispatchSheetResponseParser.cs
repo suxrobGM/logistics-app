@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
@@ -67,7 +68,7 @@ internal static class DispatchSheetResponseParser
 
     private static LoadVehicleInput MapVehicle(ParsedVehicle v) => new()
     {
-        Vin = string.IsNullOrWhiteSpace(v.Vin) ? null : v.Vin.Trim().ToUpperInvariant(),
+        Vin = VinFormat.Normalize(v.Vin),
         Year = v.Year,
         Make = v.Make?.Trim(),
         Model = v.Model?.Trim(),

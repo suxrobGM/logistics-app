@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Services;
@@ -12,7 +13,7 @@ internal static class LoadVehicleInputExtensions
         [.. inputs.Select(v => new LoadVehicle
         {
             Id = v.Id ?? Guid.NewGuid(),
-            Vin = string.IsNullOrWhiteSpace(v.Vin) ? null : v.Vin.Trim().ToUpperInvariant(),
+            Vin = VinFormat.Normalize(v.Vin),
             Year = v.Year,
             Make = Clean(v.Make),
             Model = Clean(v.Model),
