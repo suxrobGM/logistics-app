@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Application.Modules.Operations.Trailers.Services;
 using Logistics.Application.Modules.Operations.Trucks.Commands;
 using Logistics.Domain.Entities;
@@ -32,7 +33,7 @@ public class UpdateTruckHandlerTests
         _truckRepo.GetAsync(Arg.Any<Expression<Func<Truck, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(ci => _trucks.AsQueryable().FirstOrDefault(ci.Arg<Expression<Func<Truck, bool>>>()));
         _guard.CheckTruckTypeAsync(Arg.Any<TruckType?>()).Returns(Result.Ok());
-        _sut = new UpdateTruckHandler(_tenantUow, _guard, Substitute.For<ITrailerHookService>());
+        _sut = new UpdateTruckHandler(_tenantUow, _guard, Substitute.For<ITrailerHookService>(), new TruckDriverFinder(_tenantUow));
     }
 
     [Theory]

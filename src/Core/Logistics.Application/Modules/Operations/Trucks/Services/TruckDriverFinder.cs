@@ -5,14 +5,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Trucks.Services;
 
-internal static class TruckDriverAssignment
+internal sealed class TruckDriverFinder(ITenantUnitOfWork tenantUow) : ITruckDriverFinder
 {
-    /// <summary>
-    ///     Loads the driver for a truck's main or secondary seat, refusing one who is not Active or who already
-    ///     holds either seat on another truck. <paramref name="truckId" /> is the truck being edited, if any.
-    /// </summary>
-    public static async Task<Result<Employee>> FindAssignableDriverAsync(
-        ITenantUnitOfWork tenantUow, Guid driverId, Guid? truckId, CancellationToken ct)
+    public async Task<Result<Employee>> FindAssignableDriverAsync(Guid driverId, Guid? truckId, CancellationToken ct)
     {
         var driver = await tenantUow.Repository<Employee>().GetByIdAsync(driverId, ct);
         if (driver is null)

@@ -14,7 +14,8 @@ namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 internal sealed class UpdateTruckHandler(
     ITenantUnitOfWork tenantUow,
     IVehicleTransportGuard vehicleTransportGuard,
-    ITrailerHookService trailerHookService) : IRequestHandler<UpdateTruckCommand, Result>
+    ITrailerHookService trailerHookService,
+    ITruckDriverFinder driverFinder) : IRequestHandler<UpdateTruckCommand, Result>
 {
     public async Task<Result> Handle(
         UpdateTruckCommand req, CancellationToken ct)
@@ -161,7 +162,7 @@ internal sealed class UpdateTruckHandler(
             return null;
         }
 
-        var driverResult = await TruckDriverAssignment.FindAssignableDriverAsync(tenantUow, newDriverId.Value, truck.Id, ct);
+        var driverResult = await driverFinder.FindAssignableDriverAsync(newDriverId.Value, truck.Id, ct);
         if (driverResult.Value is not { } driver)
         {
             return Result.Fail(driverResult.Error!);

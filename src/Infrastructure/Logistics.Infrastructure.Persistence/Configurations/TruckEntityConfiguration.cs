@@ -35,7 +35,7 @@ internal sealed class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
             .HasForeignKey(i => i.SecondaryDriverId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        // A driver holds one seat on one truck; TruckDriverAssignment checks the cross-seat case.
+        // A driver holds one seat on one truck; TruckDriverFinder checks the cross-seat case.
         builder.HasIndex(i => i.MainDriverId)
             .IsUnique()
             .HasFilter("main_driver_id IS NOT NULL");

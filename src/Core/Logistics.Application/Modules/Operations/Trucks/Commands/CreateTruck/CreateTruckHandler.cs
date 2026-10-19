@@ -11,7 +11,8 @@ namespace Logistics.Application.Modules.Operations.Trucks.Commands;
 
 internal sealed class CreateTruckHandler(
     ITenantUnitOfWork tenantUow,
-    IVehicleTransportGuard vehicleTransportGuard) : IRequestHandler<CreateTruckCommand, Result>
+    IVehicleTransportGuard vehicleTransportGuard,
+    ITruckDriverFinder driverFinder) : IRequestHandler<CreateTruckCommand, Result>
 {
 
     public async Task<Result> Handle(
@@ -32,7 +33,7 @@ internal sealed class CreateTruckHandler(
             return Result.Fail($"Already exists truck with number {number}");
         }
 
-        var driverResult = await TruckDriverAssignment.FindAssignableDriverAsync(tenantUow, req.MainDriverId, null, ct);
+        var driverResult = await driverFinder.FindAssignableDriverAsync(req.MainDriverId, null, ct);
         if (driverResult.Value is not { } driver)
         {
             return Result.Fail(driverResult.Error!);

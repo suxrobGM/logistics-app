@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Logistics.Application.Modules.Operations.Common.Services;
+using Logistics.Application.Modules.Operations.Trucks.Services;
 using Logistics.Application.Modules.Operations.Trucks.Commands;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
@@ -37,7 +38,7 @@ public class CreateTruckHandlerTests
         _employeeRepo.GetByIdAsync(_driver.Id, Arg.Any<CancellationToken>()).Returns(_driver);
         var guard = Substitute.For<IVehicleTransportGuard>();
         guard.CheckTruckTypeAsync(Arg.Any<TruckType?>()).Returns(Result.Ok());
-        _sut = new CreateTruckHandler(_tenantUow, guard);
+        _sut = new CreateTruckHandler(_tenantUow, guard, new TruckDriverFinder(_tenantUow));
     }
 
     [Fact]
