@@ -1,9 +1,7 @@
 ﻿using Open.IdentityServer.EntityFramework.DbContexts;
 using Open.IdentityServer.EntityFramework.Options;
-using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.Infrastructure.Persistence.Data;
 using Logistics.DbMigrator.Extensions;
-using Logistics.DbMigrator.Services;
 using Logistics.DbMigrator.Workers;
 using Logistics.Application;
 using Logistics.Infrastructure.Integrations.FuelCards;
@@ -41,7 +39,7 @@ builder.Services.AddApplicationFuelCardServices();
 builder.Services.AddPaymentsInfrastructure(builder.Configuration);
 builder.Services.AddTaxInfrastructure(builder.Configuration);
 builder.Services.AddFuelCardIntegrations(builder.Configuration);
-builder.Services.AddScoped<PayrollService>();
+builder.Services.AddApplicationPayrollServices();
 builder.Services.AddSeeders();
 
 // These hosted services will run in the order they are registered

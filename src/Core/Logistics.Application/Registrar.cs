@@ -61,6 +61,21 @@ public static class Registrar
     }
 
     /// <summary>
+    /// Registers payroll application services (<see cref="Modules.Financial.Payroll.Services.IPayrollService"/>).
+    /// Used by hosts like DbMigrator that seed payroll history through the same calculation the app
+    /// uses, without pulling in the full <see cref="AddApplicationLayer"/> stack.
+    /// </summary>
+    public static IServiceCollection AddApplicationPayrollServices(this IServiceCollection services)
+    {
+        services.Scan(scan => scan
+            .FromAssemblies(typeof(Registrar).Assembly)
+            .AddClasses(c => c.AssignableTo<Modules.Financial.Payroll.Services.IPayrollService>(), publicOnly: false)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+        return services;
+    }
+
+    /// <summary>
     /// Registers only the Compliance/Privacy handler slice, for hosts (the IdentityServer) that serve
     /// the GDPR self-service page without the full <see cref="AddApplicationLayer"/> stack.
     /// </summary>

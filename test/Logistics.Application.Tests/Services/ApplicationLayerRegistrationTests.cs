@@ -10,7 +10,9 @@ using Logistics.Application.Behaviours;
 using Logistics.Mediator;
 using Logistics.Application.Abstractions.ProductLicense;
 using Logistics.Application.Abstractions.Realtime;
+using Logistics.Domain.Persistence;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Xunit;
 
 namespace Logistics.Application.Tests.Services;
@@ -58,6 +60,25 @@ public class ApplicationLayerRegistrationTests
 
         Assert.NotNull(descriptor);
         Assert.Equal(ServiceLifetime.Scoped, descriptor!.Lifetime);
+    }
+
+    /// <summary>
+    ///     The DbMigrator seeds payroll through this slice, so it must resolve from the units of work
+    ///     and logging alone, with nothing else from the Application layer.
+    /// </summary>
+    [Fact]
+    public void AddApplicationPayrollServices_ResolvesPayrollServiceFromUnitsOfWorkAlone()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddScoped(_ => Substitute.For<IMasterUnitOfWork>());
+        services.AddScoped(_ => Substitute.For<ITenantUnitOfWork>());
+        services.AddApplicationPayrollServices();
+
+        using var provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
+        using var scope = provider.CreateScope();
+
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<IPayrollService>());
     }
 
     /// <summary>
