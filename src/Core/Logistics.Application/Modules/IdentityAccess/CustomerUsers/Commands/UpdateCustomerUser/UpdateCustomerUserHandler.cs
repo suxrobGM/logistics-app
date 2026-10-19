@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
@@ -25,17 +26,14 @@ internal sealed class UpdateCustomerUserHandler(ITenantUnitOfWork tenantUow, IMa
 
         if (req.IsActive is { } isActive && isActive != customerUser.IsActive)
         {
-            if (isActive && await tenantUow.Repository<CustomerUser>()
-                    .GetAsync(cu => cu.UserId == customerUser.UserId && cu.IsActive, ct) is not null)
+            if (isActive && await CustomerPortalAccess.HasActiveAsync(tenantUow, customerUser.UserId, ct))
             {
-                return Result.Fail("This user already has active portal access for another customer. Deactivate it first.");
+                return Result.Fail(CustomerPortalAccess.AlreadyActiveMessage);
             }
 
             customerUser.IsActive = isActive;
 
-            var tenantId = tenantUow.GetCurrentTenant().Id;
-            var access = await masterUow.Repository<UserTenantAccess>()
-                .GetAsync(a => a.TenantId == tenantId && a.CustomerUserId == customerUser.Id, ct);
+            var access = await CustomerPortalAccess.FindAsync(tenantUow, masterUow, customerUser.Id, ct);
 
             if (access is not null)
             {

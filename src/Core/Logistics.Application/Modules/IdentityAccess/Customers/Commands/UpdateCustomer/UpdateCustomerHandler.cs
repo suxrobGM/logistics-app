@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -20,8 +21,9 @@ internal sealed class UpdateCustomerHandler(ITenantUnitOfWork tenantUow, IMaster
             return Result.Fail($"Could not find a customer with ID '{req.Id}'");
         }
 
-        if (!string.IsNullOrEmpty(req.Name) && await tenantUow.Repository<Customer>().Query()
-                .AnyAsync(c => c.Id != req.Id && c.Name.ToLower() == req.Name.ToLower(), ct))
+        var nameChanged = !string.IsNullOrEmpty(req.Name)
+                          && !string.Equals(req.Name, customerEntity.Name, StringComparison.OrdinalIgnoreCase);
+        if (nameChanged && await IsNameTakenAsync(req.Name, req.Id, ct))
         {
             return Result.Fail($"A customer named '{req.Name}' already exists");
         }
@@ -48,21 +50,17 @@ internal sealed class UpdateCustomerHandler(ITenantUnitOfWork tenantUow, IMaster
         return Result.Ok();
     }
 
+    private Task<bool> IsNameTakenAsync(string name, Guid customerId, CancellationToken ct) =>
+        tenantUow.Repository<Customer>().Query()
+            .AnyAsync(c => c.Id != customerId && c.Name.ToLower() == name.ToLower(), ct);
+
     private async Task RenamePortalAccessAsync(Customer customer, CancellationToken ct)
     {
-        var customerUserIds = await tenantUow.Repository<CustomerUser>().Query()
-            .Where(cu => cu.CustomerId == customer.Id)
-            .Select(cu => (Guid?)cu.Id)
-            .ToListAsync(ct);
-
-        if (customerUserIds.Count == 0)
+        var accesses = await CustomerPortalAccess.ListForCustomerAsync(tenantUow, masterUow, customer.Id, ct);
+        if (accesses.Count == 0)
         {
             return;
         }
-
-        var tenantId = tenantUow.GetCurrentTenant().Id;
-        var accesses = await masterUow.Repository<UserTenantAccess>()
-            .GetListAsync(a => a.TenantId == tenantId && customerUserIds.Contains(a.CustomerUserId), ct);
 
         foreach (var access in accesses)
         {

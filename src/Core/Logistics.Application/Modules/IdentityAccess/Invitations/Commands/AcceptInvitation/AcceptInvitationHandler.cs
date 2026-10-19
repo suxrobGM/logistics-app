@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Modules.Common.Constants;
+using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -240,9 +241,9 @@ internal sealed class AcceptInvitationHandler(
             return Result.Fail("User is already associated with this customer.");
         }
 
-        if (await tenantUow.Repository<CustomerUser>().GetAsync(cu => cu.UserId == user.Id && cu.IsActive, ct) is not null)
+        if (await CustomerPortalAccess.HasActiveAsync(tenantUow, user.Id, ct))
         {
-            return Result.Fail("User already has active portal access for another customer of this company.");
+            return Result.Fail(CustomerPortalAccess.AlreadyActiveMessage);
         }
 
         var customer = await tenantUow.Repository<Customer>().GetByIdAsync(invitation.CustomerId.Value, ct);

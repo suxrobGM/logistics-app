@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
@@ -19,9 +20,7 @@ internal sealed class DeleteCustomerUserHandler(ITenantUnitOfWork tenantUow, IMa
         }
 
         // Revoke the master access row first, so a failure part-way leaves the user locked out rather than in.
-        var tenantId = tenantUow.GetCurrentTenant().Id;
-        var access = await masterUow.Repository<UserTenantAccess>()
-            .GetAsync(a => a.TenantId == tenantId && a.CustomerUserId == customerUser.Id, ct);
+        var access = await CustomerPortalAccess.FindAsync(tenantUow, masterUow, customerUser.Id, ct);
 
         if (access is not null)
         {

@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.IdentityAccess.CustomerUsers.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -28,10 +29,9 @@ internal sealed class CreateCustomerUserHandler(ITenantUnitOfWork tenantUow)
             return Result<CustomerUserDto>.Fail("A customer user already exists for this user and customer.");
         }
 
-        if (await tenantUow.Repository<CustomerUser>().GetAsync(cu => cu.UserId == req.UserId && cu.IsActive, ct) is not null)
+        if (await CustomerPortalAccess.HasActiveAsync(tenantUow, req.UserId, ct))
         {
-            return Result<CustomerUserDto>.Fail(
-                "This user already has active portal access for another customer. Deactivate it first.");
+            return Result<CustomerUserDto>.Fail(CustomerPortalAccess.AlreadyActiveMessage);
         }
 
         var customerUser = new CustomerUser
