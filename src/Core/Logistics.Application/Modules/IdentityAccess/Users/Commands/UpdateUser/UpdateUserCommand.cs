@@ -7,5 +7,4 @@ public class UpdateUserCommand : ICommand
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? PhoneNumber { get; set; }
-    public Guid? TenantId { get; set; }
 }

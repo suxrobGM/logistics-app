@@ -1,5 +1,6 @@
 using System.Text;
 
+using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Domain.Entities;
 
 using Microsoft.AspNetCore.Authorization;
@@ -16,11 +17,16 @@ public class ConfirmEmailChangeModel : PageModel
 {
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
+    private readonly IUserService _userService;
 
-    public ConfirmEmailChangeModel(UserManager<User> userManager, SignInManager<User> signInManager)
+    public ConfirmEmailChangeModel(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IUserService userService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _userService = userService;
     }
 
     [TempData]
@@ -46,6 +52,8 @@ public class ConfirmEmailChangeModel : PageModel
             StatusMessage = "Error changing email.";
             return Page();
         }
+
+        await _userService.SyncTenantProfilesAsync(user);
 
         await _signInManager.RefreshSignInAsync(user);
         StatusMessage = "Thank you for confirming your email change.";

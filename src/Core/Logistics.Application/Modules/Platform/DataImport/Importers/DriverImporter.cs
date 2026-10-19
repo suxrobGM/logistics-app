@@ -1,4 +1,5 @@
 using Logistics.Application.Modules.IdentityAccess.Invitations.Commands;
+using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Application.Modules.Platform.DataImport.Constants;
 using Logistics.Application.Modules.Platform.DataImport.Services;
 using Logistics.Domain.Entities;
@@ -22,6 +23,7 @@ internal sealed class DriverImporter(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     UserManager<User> userManager,
+    IUserService userService,
     IMediator mediator) : EntityImporter<DriverImporter.Draft>
 {
     public override ImportEntityType EntityType => ImportEntityType.Drivers;
@@ -58,8 +60,9 @@ internal sealed class DriverImporter(
         var employees = await tenantUow.Repository<Employee>().Query()
             .Where(e => emails.Contains(e.Email.ToLower()))
             .ToListAsync(ct);
+        var employeeIds = employees.Select(e => e.Id).ToArray();
         var users = await masterUow.Repository<User>().Query()
-            .Where(u => u.Email != null && emails.Contains(u.Email.ToLower()))
+            .Where(u => employeeIds.Contains(u.Id) || (u.Email != null && emails.Contains(u.Email.ToLower())))
             .ToListAsync(ct);
         var tenantId = tenantUow.GetCurrentTenant().Id;
 
@@ -67,7 +70,9 @@ internal sealed class DriverImporter(
         {
             draft.Existing = employees.FirstOrDefault(e => e.Email.Equals(draft.Key, StringComparison.OrdinalIgnoreCase));
             draft.Exists = draft.Existing is not null;
-            draft.User = users.FirstOrDefault(u => u.Email!.Equals(draft.Key, StringComparison.OrdinalIgnoreCase));
+            draft.User = draft.Existing is { } employee
+                ? users.FirstOrDefault(u => u.Id == employee.Id)
+                : users.FirstOrDefault(u => u.Email!.Equals(draft.Key, StringComparison.OrdinalIgnoreCase));
 
             if (draft.Existing is null && draft.User is { TenantId: { } userTenant } && userTenant != tenantId)
             {
@@ -81,19 +86,10 @@ internal sealed class DriverImporter(
         var tenant = tenantUow.GetCurrentTenant();
         var driverRole = await tenantUow.Repository<TenantRole>().GetAsync(r => r.Name == TenantRoles.Driver, ct);
         var created = new List<Draft>();
+        var renamedUsers = new List<User>();
 
         foreach (var draft in drafts)
         {
-            if (draft.Existing is { } employee)
-            {
-                employee.FirstName = draft.FirstName ?? employee.FirstName;
-                employee.LastName = draft.LastName ?? employee.LastName;
-                employee.PhoneNumber = draft.Row.Get(Phone) ?? employee.PhoneNumber;
-                employee.Address = draft.Address ?? employee.Address;
-                employee.JoinedDate = draft.HireDate ?? employee.JoinedDate;
-                continue;
-            }
-
             var user = draft.User;
             if (user is null)
             {
@@ -114,16 +110,29 @@ internal sealed class DriverImporter(
                     continue;
                 }
             }
-            else if (user.TenantId is null)
+            else
             {
-                user.TenantId = tenant.Id;
-                await userManager.UpdateAsync(user);
+                var renamed = ApplyProfile(user, draft);
+                if (renamed || user.TenantId is null)
+                {
+                    user.TenantId ??= tenant.Id;
+                    await userManager.UpdateAsync(user);
+                }
+
+                if (renamed)
+                {
+                    renamedUsers.Add(user);
+                }
+            }
+
+            if (draft.Existing is { } employee)
+            {
+                employee.Address = draft.Address ?? employee.Address;
+                employee.JoinedDate = draft.HireDate ?? employee.JoinedDate;
+                continue;
             }
 
             var driver = Employee.CreateEmployeeFromUser(user, options.Currency);
-            driver.FirstName = draft.FirstName!;
-            driver.LastName = draft.LastName!;
-            driver.PhoneNumber = draft.Row.Get(Phone) ?? user.PhoneNumber;
             driver.Address = draft.Address;
             driver.JoinedDate = draft.HireDate ?? DateTime.UtcNow;
             driver.Role = driverRole;
@@ -133,10 +142,30 @@ internal sealed class DriverImporter(
 
         await tenantUow.SaveChangesAsync(ct);
 
+        foreach (var user in renamedUsers)
+        {
+            await userService.SyncTenantProfilesAsync(user, ct);
+        }
+
         if (options.SendInvitations)
         {
             await InviteAsync(created, ct);
         }
+    }
+
+    /// <summary>The file's name and phone go onto the master user, which every tenant row copies.</summary>
+    private static bool ApplyProfile(User user, Draft draft)
+    {
+        var firstName = draft.FirstName ?? user.FirstName;
+        var lastName = draft.LastName ?? user.LastName;
+        var phone = draft.Row.Get(Phone) ?? user.PhoneNumber;
+        if (firstName == user.FirstName && lastName == user.LastName && phone == user.PhoneNumber)
+        {
+            return false;
+        }
+
+        (user.FirstName, user.LastName, user.PhoneNumber) = (firstName, lastName, phone);
+        return true;
     }
 
     private async Task InviteAsync(IEnumerable<Draft> drafts, CancellationToken ct)

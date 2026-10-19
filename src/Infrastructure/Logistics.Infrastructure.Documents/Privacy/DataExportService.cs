@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using Logistics.Application.Abstractions.Privacy;
+using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -117,16 +118,7 @@ internal sealed class DataExportService(
 
     private async Task WriteTenantsDataAsync(ZipArchive archive, User user, CancellationToken ct)
     {
-        var accessTenantIds = await masterUow.Repository<UserTenantAccess>()
-            .Query()
-            .Where(a => a.UserId == user.Id)
-            .Select(a => a.TenantId)
-            .ToListAsync(ct);
-
-        var tenants = await masterUow.Repository<Tenant>()
-            .Query()
-            .Where(t => t.Id == user.TenantId || accessTenantIds.Contains(t.Id))
-            .ToListAsync(ct);
+        var tenants = await UserTenants.ListAsync(masterUow, user, ct);
 
         foreach (var tenant in tenants)
         {

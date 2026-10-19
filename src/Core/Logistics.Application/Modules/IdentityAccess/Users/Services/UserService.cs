@@ -1,11 +1,13 @@
+using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Application.Modules.IdentityAccess.Users.Services;
 
 public class UserService(
     IMasterUnitOfWork masterUow,
-    ITenantUnitOfWork tenantUow) : IUserService
+    IServiceScopeFactory scopeFactory) : IUserService
 {
     public async Task UpdateUserAsync(UpdateUserParams userParams)
     {
@@ -32,29 +34,36 @@ public class UserService(
             user.PhoneNumber = userParams.PhoneNumber;
         }
 
-        if (userParams.TenantId.HasValue)
-        {
-            await UpdateTenantEmployeeDataAsync(userParams.TenantId.Value, user);
-        }
-
         await masterUow.SaveChangesAsync();
+        await SyncTenantProfilesAsync(user);
     }
 
-    private async Task UpdateTenantEmployeeDataAsync(Guid tenantId, User user)
+    public async Task SyncTenantProfilesAsync(User user, CancellationToken ct = default)
     {
-        await tenantUow.SetCurrentTenantByIdAsync(tenantId);
-        var employeeRepository = tenantUow.Repository<Employee>();
-        var employee = await employeeRepository.GetByIdAsync(user.Id);
-
-        if (employee is null)
+        foreach (var tenant in await UserTenants.ListAsync(masterUow, user, ct))
         {
-            return;
-        }
+            // A scope per tenant: Employee ids are user ids, so one context would hand back the previous
+            // tenant's tracked row from FindAsync.
+            using var scope = scopeFactory.CreateScope();
+            var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
+            tenantUow.SetCurrentTenant(tenant);
 
-        employee.FirstName = user.FirstName;
-        employee.LastName = user.LastName;
-        employee.Email = user.Email!;
-        employee.PhoneNumber = user.PhoneNumber;
-        await tenantUow.SaveChangesAsync();
+            var employee = await tenantUow.Repository<Employee>().GetByIdAsync(user.Id, ct);
+            if (employee is not null)
+            {
+                employee.Email = user.Email!;
+                employee.FirstName = user.FirstName;
+                employee.LastName = user.LastName;
+                employee.PhoneNumber = user.PhoneNumber;
+            }
+
+            var customerUsers = await tenantUow.Repository<CustomerUser>().GetListAsync(c => c.UserId == user.Id, ct);
+            foreach (var customerUser in customerUsers)
+            {
+                customerUser.Email = user.Email!;
+            }
+
+            await tenantUow.SaveChangesAsync(ct);
+        }
     }
 }

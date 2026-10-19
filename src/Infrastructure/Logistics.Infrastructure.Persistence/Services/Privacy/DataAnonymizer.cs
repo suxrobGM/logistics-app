@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Privacy;
+using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -45,16 +46,7 @@ internal sealed class DataAnonymizer(
 
     private async Task AnonymizeTenantRecordsAsync(User user, CancellationToken ct)
     {
-        var accessTenantIds = await masterUow.Repository<UserTenantAccess>()
-            .Query()
-            .Where(a => a.UserId == user.Id)
-            .Select(a => a.TenantId)
-            .ToListAsync(ct);
-
-        var tenants = await masterUow.Repository<Tenant>()
-            .Query()
-            .Where(t => t.Id == user.TenantId || accessTenantIds.Contains(t.Id))
-            .ToListAsync(ct);
+        var tenants = await UserTenants.ListAsync(masterUow, user, ct);
 
         var anonymizedEmail = AnonymizedEmail(user.Id);
 
