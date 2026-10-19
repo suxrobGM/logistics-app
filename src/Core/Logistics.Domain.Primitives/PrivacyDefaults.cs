@@ -23,7 +23,7 @@ public static class PrivacyDefaults
     public static readonly TimeSpan DeletionGracePeriod = TimeSpan.FromDays(30);
 
     /// <summary>
-    /// Read notifications older than this are purged by the retention job.
+    /// Notifications older than this are purged by the retention job, read or not.
     /// </summary>
     public static readonly TimeSpan NotificationRetention = TimeSpan.FromDays(365);
 

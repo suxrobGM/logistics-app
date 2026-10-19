@@ -6,5 +6,10 @@ namespace Logistics.Infrastructure.Persistence.Configurations;
 
 internal sealed class NotificationEntityConfiguration : IEntityTypeConfiguration<Notification>
 {
-    public void Configure(EntityTypeBuilder<Notification> builder) => builder.ToTable("notifications");
+    public void Configure(EntityTypeBuilder<Notification> builder)
+    {
+        builder.ToTable("notifications");
+
+        builder.HasIndex(n => n.CreatedDate);
+    }
 }

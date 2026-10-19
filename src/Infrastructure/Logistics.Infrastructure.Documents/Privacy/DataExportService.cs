@@ -160,19 +160,6 @@ internal sealed class DataExportService(
                         c.CreatedAt
                     }), ct);
                 }
-
-                var notifications = await tenantUow.Repository<Notification>()
-                    .Query()
-                    .OrderByDescending(n => n.CreatedDate)
-                    .Take(1000)
-                    .ToListAsync(ct);
-
-                if (notifications.Count > 0)
-                {
-                    await WriteJsonAsync(archive, $"{folder}/notifications.json",
-                        notifications.Select(n => new { n.Title, n.Message, n.IsRead, n.CreatedDate }),
-                        ct);
-                }
             }
             catch (Exception ex)
             {
