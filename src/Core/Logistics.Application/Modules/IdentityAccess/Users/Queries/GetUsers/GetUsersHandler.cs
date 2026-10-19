@@ -18,11 +18,12 @@ internal sealed class GetUsersHandler(IMasterUnitOfWork masterUow)
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            var search = req.Search.ToLower();
             query = query.Where(i =>
-                i.FirstName.Contains(req.Search) ||
-                i.LastName.Contains(req.Search) ||
-                (i.PhoneNumber != null && i.PhoneNumber.Contains(req.Search)) ||
-                (i.Email != null && i.Email.Contains(req.Search)));
+                i.FirstName.ToLower().Contains(search) ||
+                i.LastName.ToLower().Contains(search) ||
+                (i.PhoneNumber != null && i.PhoneNumber.ToLower().Contains(search)) ||
+                (i.Email != null && i.Email.ToLower().Contains(search)));
         }
 
         var totalItems = query.Count();

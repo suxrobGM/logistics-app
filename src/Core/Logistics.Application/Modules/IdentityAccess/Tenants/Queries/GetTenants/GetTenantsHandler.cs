@@ -17,9 +17,10 @@ internal sealed class GetTenantsHandler(IMasterUnitOfWork masterUow)
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            var search = req.Search.ToLower();
             query = query.Where(i =>
-                (!string.IsNullOrEmpty(i.Name) && i.Name.Contains(req.Search)) ||
-                (!string.IsNullOrEmpty(i.CompanyName) && i.CompanyName.Contains(req.Search)));
+                (!string.IsNullOrEmpty(i.Name) && i.Name.ToLower().Contains(search)) ||
+                (!string.IsNullOrEmpty(i.CompanyName) && i.CompanyName.ToLower().Contains(search)));
         }
 
         var totalItems = query.Count();

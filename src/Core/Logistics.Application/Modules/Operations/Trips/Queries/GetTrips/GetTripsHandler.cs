@@ -18,7 +18,8 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow)
 
         if (!string.IsNullOrEmpty(req.Name))
         {
-            query = query.Where(i => i.Name.Contains(req.Name));
+            var name = req.Name.ToLower();
+            query = query.Where(i => i.Name.ToLower().Contains(name));
         }
 
         if (req.Status.HasValue)

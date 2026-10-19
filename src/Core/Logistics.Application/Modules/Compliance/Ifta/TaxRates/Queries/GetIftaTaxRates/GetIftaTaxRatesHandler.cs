@@ -16,9 +16,10 @@ internal sealed class GetIftaTaxRatesHandler(
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            var search = req.Search.ToLower();
             query = query.Where(x =>
-                x.Jurisdiction.CountryCode.Contains(req.Search) ||
-                (x.Jurisdiction.Region != null && x.Jurisdiction.Region.Contains(req.Search)));
+                x.Jurisdiction.CountryCode.ToLower().Contains(search) ||
+                (x.Jurisdiction.Region != null && x.Jurisdiction.Region.ToLower().Contains(search)));
         }
 
         if (req.Year.HasValue)

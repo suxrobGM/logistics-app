@@ -16,10 +16,11 @@ internal sealed class GetTerminalsHandler(ITenantUnitOfWork tenantUow)
 
         if (!string.IsNullOrEmpty(req.Search))
         {
-            // Code is stored canonical; Name is free-form, so it keeps the raw term.
+            // Code is stored canonical; Name is free-form, so it matches case-insensitively.
             var code = Terminal.NormalizeCode(req.Search);
+            var search = req.Search.ToLower();
 
-            query = query.Where(i => i.Name.Contains(req.Search) || i.Code.Contains(code));
+            query = query.Where(i => i.Name.ToLower().Contains(search) || i.Code.Contains(code));
         }
 
         if (req.Type.HasValue)

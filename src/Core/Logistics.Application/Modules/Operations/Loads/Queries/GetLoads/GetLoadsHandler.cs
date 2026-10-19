@@ -32,14 +32,15 @@ internal sealed class GetLoadsHandler(
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            var search = req.Search.ToLower();
             baseQuery = baseQuery.Where(i =>
-                (i.Name != null && i.Name.Contains(req.Search)) ||
-                (i.Customer != null && i.Customer.Name.Contains(req.Search)) ||
-                i.Number.ToString().Contains(req.Search) ||
-                i.OriginAddress.Line1.Contains(req.Search) ||
-                (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.Contains(req.Search)) ||
-                i.DestinationAddress.Line1.Contains(req.Search) ||
-                (i.DestinationAddress.Line2 != null && i.DestinationAddress.Line2.Contains(req.Search)));
+                (i.Name != null && i.Name.ToLower().Contains(search)) ||
+                (i.Customer != null && i.Customer.Name.ToLower().Contains(search)) ||
+                i.Number.ToString().Contains(search) ||
+                i.OriginAddress.Line1.ToLower().Contains(search) ||
+                (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.ToLower().Contains(search)) ||
+                i.DestinationAddress.Line1.ToLower().Contains(search) ||
+                (i.DestinationAddress.Line2 != null && i.DestinationAddress.Line2.ToLower().Contains(search)));
         }
 
         if (req.OnlyActiveLoads)

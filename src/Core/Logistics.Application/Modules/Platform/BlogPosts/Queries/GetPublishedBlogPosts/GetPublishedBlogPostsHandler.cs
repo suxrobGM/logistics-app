@@ -18,9 +18,10 @@ internal sealed class GetPublishedBlogPostsHandler(
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            var search = req.Search.ToLower();
             query = query.Where(x =>
-                x.Title.Contains(req.Search) ||
-                (x.Excerpt != null && x.Excerpt.Contains(req.Search)));
+                x.Title.ToLower().Contains(search) ||
+                (x.Excerpt != null && x.Excerpt.ToLower().Contains(search)));
         }
 
         if (!string.IsNullOrEmpty(req.Category))

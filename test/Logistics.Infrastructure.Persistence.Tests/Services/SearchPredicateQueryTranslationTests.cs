@@ -6,15 +6,15 @@ using Xunit;
 namespace Logistics.Infrastructure.Persistence.Tests.Services;
 
 /// <summary>
-/// Forces translation of the three list-search predicates via <c>ToQueryString</c>, the same way
+/// Forces translation of the list-search predicates via <c>ToQueryString</c>, the same way
 /// <see cref="TenantQuotaUsageQueryTranslationTests"/> does. The handler tests build their data
 /// with MockQueryable, which evaluates predicates in memory, so they cannot catch a predicate that
 /// only PostgreSQL rejects.
 /// </summary>
 public class SearchPredicateQueryTranslationTests
 {
-    // Copies of the predicates in GetExpensesHandler, GetPortalLoadsHandler and
-    // GetPortalInvoicesHandler. This project references Persistence only, so it cannot call them.
+    // Copies of the predicates in GetExpensesHandler, GetPortalLoadsHandler, GetPortalInvoicesHandler
+    // and GetLoadsHandler. This project references Persistence only, so it cannot call them.
     private static IQueryable<Expense> ExpenseSearch(TenantDbContext db, string search) =>
         db.Set<Expense>().Where(e =>
             (e.VendorName ?? "").ToLower().Contains(search) ||
@@ -29,6 +29,12 @@ public class SearchPredicateQueryTranslationTests
         db.Set<LoadInvoice>().Where(i =>
             i.Number.ToString().Contains(search) ||
             (i.Load != null && i.Load.Name.ToLower().Contains(search)));
+
+    private static IQueryable<Load> LoadSearch(TenantDbContext db, string search) =>
+        db.Set<Load>().Where(i =>
+            (i.Customer != null && i.Customer.Name.ToLower().Contains(search)) ||
+            i.Number.ToString().Contains(search) ||
+            (i.OriginAddress.Line2 != null && i.OriginAddress.Line2.ToLower().Contains(search)));
 
     [Fact]
     public void ExpenseSearch_TranslatesToACaseInsensitiveSqlFilter()
@@ -63,8 +69,19 @@ public class SearchPredicateQueryTranslationTests
         Assert.Contains("LIKE", sql, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void LoadSearch_TranslatesAcrossTheCustomerJoinAndAddressColumns()
+    {
+        using var db = new TenantDbContext();
+
+        var sql = LoadSearch(db, "acme").ToQueryString();
+
+        Assert.Contains("lower(", sql, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("JOIN", sql, StringComparison.OrdinalIgnoreCase);
+    }
+
     /// <summary>
-    /// Control. Without it the three tests above would still pass if <c>ToQueryString</c> stopped
+    /// Control. Without it the tests above would still pass if <c>ToQueryString</c> stopped
     /// forcing translation. This is the shape the handlers used before, and it must stay rejected.
     /// </summary>
     [Fact]

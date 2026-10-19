@@ -20,12 +20,13 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
 
         if (!string.IsNullOrEmpty(req.Search))
         {
-            baseQuery = baseQuery.Where(i => i.Number.Contains(req.Search) ||
-                            i.MainDriver != null && (i.MainDriver.FirstName.Contains(req.Search) ||
-                                                     i.MainDriver.LastName.Contains(req.Search)) ||
+            var search = req.Search.ToLower();
+            baseQuery = baseQuery.Where(i => i.Number.ToLower().Contains(search) ||
+                            i.MainDriver != null && (i.MainDriver.FirstName.ToLower().Contains(search) ||
+                                                     i.MainDriver.LastName.ToLower().Contains(search)) ||
                             (i.SecondaryDriver != null &&
-                             (i.SecondaryDriver.FirstName.Contains(req.Search) ||
-                              i.SecondaryDriver.LastName.Contains(req.Search))));
+                             (i.SecondaryDriver.FirstName.ToLower().Contains(search) ||
+                              i.SecondaryDriver.LastName.ToLower().Contains(search))));
         }
 
         baseQuery = baseQuery.OrderBy(req.OrderBy);

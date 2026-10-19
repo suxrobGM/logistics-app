@@ -17,13 +17,14 @@ internal sealed class GetContainersHandler(ITenantUnitOfWork tenantUow)
 
         if (!string.IsNullOrEmpty(req.Search))
         {
-            // Number is stored canonical; the other two are free-form, so they keep the raw term.
+            // Number is stored canonical; the other two are free-form, so they match case-insensitively.
             var number = Container.NormalizeNumber(req.Search);
+            var search = req.Search.ToLower();
 
             query = query.Where(i =>
                 i.Number.Contains(number) ||
-                (i.BookingReference != null && i.BookingReference.Contains(req.Search)) ||
-                (i.BillOfLadingNumber != null && i.BillOfLadingNumber.Contains(req.Search)));
+                (i.BookingReference != null && i.BookingReference.ToLower().Contains(search)) ||
+                (i.BillOfLadingNumber != null && i.BillOfLadingNumber.ToLower().Contains(search)));
         }
 
         if (req.Status.HasValue)

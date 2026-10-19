@@ -17,9 +17,10 @@ internal sealed class GetAppRolesHandler(IMasterUnitOfWork masterUow)
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            var search = req.Search.ToLower();
             query = query.Where(i =>
-                (i.Name != null && i.Name.Contains(req.Search)) ||
-                (i.DisplayName != null && i.DisplayName.Contains(req.Search)));
+                (i.Name != null && i.Name.ToLower().Contains(search)) ||
+                (i.DisplayName != null && i.DisplayName.ToLower().Contains(search)));
         }
 
         var totalItems = query.Count();

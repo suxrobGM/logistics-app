@@ -16,11 +16,12 @@ internal sealed class GetDemoRequestsHandler(
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            var search = req.Search.ToLower();
             query = query.Where(x =>
-                x.Email.Contains(req.Search) ||
-                x.FirstName.Contains(req.Search) ||
-                x.LastName.Contains(req.Search) ||
-                x.Company.Contains(req.Search));
+                x.Email.ToLower().Contains(search) ||
+                x.FirstName.ToLower().Contains(search) ||
+                x.LastName.ToLower().Contains(search) ||
+                x.Company.ToLower().Contains(search));
         }
 
         var totalItems = query.Count();

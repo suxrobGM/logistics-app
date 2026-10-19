@@ -17,10 +17,11 @@ internal sealed class GetTrailersHandler(ITenantUnitOfWork tenantUow)
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            var search = req.Search.ToLower();
             query = query.Where(i =>
-                i.Number.Contains(req.Search) ||
-                (i.Vin != null && i.Vin.Contains(req.Search)) ||
-                (i.LicensePlate != null && i.LicensePlate.Contains(req.Search)));
+                i.Number.ToLower().Contains(search) ||
+                (i.Vin != null && i.Vin.ToLower().Contains(search)) ||
+                (i.LicensePlate != null && i.LicensePlate.ToLower().Contains(search)));
         }
 
         if (req.Status.HasValue)

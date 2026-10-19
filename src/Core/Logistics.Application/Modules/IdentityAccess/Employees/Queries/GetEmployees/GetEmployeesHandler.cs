@@ -17,11 +17,12 @@ internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IReques
 
         if (!string.IsNullOrEmpty(req.Search))
         {
+            var search = req.Search.ToLower();
             query = query.Where(i =>
-                (i.FirstName != null && i.FirstName.Contains(req.Search)) ||
-                (i.LastName != null && i.LastName.Contains(req.Search)) ||
-                (i.PhoneNumber != null && i.PhoneNumber.Contains(req.Search)) ||
-                (i.Email != null && i.Email.Contains(req.Search)));
+                (i.FirstName != null && i.FirstName.ToLower().Contains(search)) ||
+                (i.LastName != null && i.LastName.ToLower().Contains(search)) ||
+                (i.PhoneNumber != null && i.PhoneNumber.ToLower().Contains(search)) ||
+                (i.Email != null && i.Email.ToLower().Contains(search)));
         }
 
         if (req.Roles.Length > 0)
