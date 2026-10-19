@@ -62,14 +62,14 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
             .Where(l => l.AssignedTruckId != null && truckIds.Contains(l.AssignedTruckId.Value))
             .ToArrayAsync(ct);
 
-        var intermodal = await LoadIntermodalResolver.ResolveAsync(tenantUow, pageLoads, ct);
+        var lookup = await LoadLookupResolver.ResolveAsync(tenantUow, pageLoads, ct);
         var loadsByTruck = pageLoads
             .GroupBy(l => l.AssignedTruckId!.Value)
             .ToDictionary(g => g.Key, g => g.ToArray());
 
         var trucks = entities
             .Select(i => WithTrailer(
-                i.ToDto(loadsByTruck.GetValueOrDefault(i.Id, []).Select(load => load.ToDto(intermodal))),
+                i.ToDto(loadsByTruck.GetValueOrDefault(i.Id, []).Select(load => load.ToDto(lookup))),
                 trailerNumbers))
             .ToArray();
 

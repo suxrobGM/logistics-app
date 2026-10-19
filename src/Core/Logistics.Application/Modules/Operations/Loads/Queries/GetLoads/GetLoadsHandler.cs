@@ -92,8 +92,8 @@ internal sealed class GetLoadsHandler(
         }
 
         var entities = await baseQuery.ToArrayAsync(ct);
-        var intermodal = await LoadIntermodalResolver.ResolveAsync(tenantUow, entities, ct);
-        var loads = entities.Select(i => i.ToDto(intermodal)).ToArray();
+        var lookup = await LoadLookupResolver.ResolveAsync(tenantUow, entities, ct);
+        var loads = entities.Select(i => i.ToDto(lookup)).ToArray();
 
         return PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize);
     }

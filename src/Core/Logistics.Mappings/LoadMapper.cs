@@ -9,15 +9,17 @@ namespace Logistics.Mappings;
 public static partial class LoadMapper
 {
     /// <summary>
-    /// Container / terminal values come from <paramref name="intermodal"/> only - there is no
-    /// navigation-property fallback, so a handler that skips the resolver gets blank fields instead
-    /// of silently paying three lazy SELECTs per row. Single-row callers resolve a one-load batch.
+    /// Related values come from <paramref name="lookup"/> only - there is no navigation-property
+    /// fallback, so a handler that skips the resolver gets blank fields instead of silently paying
+    /// a lazy SELECT per row. Single-row callers resolve a one-load batch.
     /// </summary>
-    public static LoadDto ToDto(this Load entity, LoadIntermodalLookup intermodal)
+    public static LoadDto ToDto(this Load entity, LoadLookup lookup)
     {
-        var container = intermodal.FindContainer(entity.ContainerId);
-        var originTerminal = intermodal.FindTerminal(entity.OriginTerminalId);
-        var destinationTerminal = intermodal.FindTerminal(entity.DestinationTerminalId);
+        var container = lookup.FindContainer(entity.ContainerId);
+        var originTerminal = lookup.FindTerminal(entity.OriginTerminalId);
+        var destinationTerminal = lookup.FindTerminal(entity.DestinationTerminalId);
+        var truck = lookup.FindTruck(entity.AssignedTruckId);
+        var trip = lookup.FindTrip(entity.Id);
 
         var dto = new LoadDto
         {
@@ -66,22 +68,22 @@ public static partial class LoadMapper
             DestinationTerminalCode = destinationTerminal?.Code,
             Status = entity.Status,
             AssignedDispatcherId = entity.AssignedDispatcherId,
-            AssignedDispatcherName = entity.AssignedDispatcher?.GetFullName(),
+            AssignedDispatcherName = lookup.FindEmployeeName(entity.AssignedDispatcherId),
             AssignedTruckId = entity.AssignedTruckId,
-            AssignedTruckNumber = entity.AssignedTruck?.Number,
-            AssignedTruckDriversName = entity.AssignedTruck?.GetDriversNames(),
+            AssignedTruckNumber = truck?.Number,
+            AssignedTruckDriversName = truck?.DriversNames,
             Vehicles = entity.Vehicles.ToDto(),
-            Customer = entity.Customer?.ToDto(),
-            Invoice = entity.Invoice?.ToDto(),
-            TripId = entity.TripStops.FirstOrDefault()?.Trip.Id,
-            TripName = entity.TripStops.FirstOrDefault()?.Trip.Name,
-            TripNumber = entity.TripStops.FirstOrDefault()?.Trip.Number
+            Customer = lookup.FindCustomer(entity.CustomerId),
+            Invoice = lookup.FindInvoice(entity.Id),
+            TripId = trip?.Id,
+            TripName = trip?.Name,
+            TripNumber = trip?.Number
         };
 
-        if (entity.AssignedTruck?.CurrentAddress is not null)
+        if (truck?.CurrentAddress is not null)
         {
-            dto.CurrentAddress = entity.AssignedTruck.CurrentAddress;
-            dto.CurrentLocation = entity.AssignedTruck.CurrentLocation;
+            dto.CurrentAddress = truck.CurrentAddress;
+            dto.CurrentLocation = truck.CurrentLocation;
         }
 
         return dto;

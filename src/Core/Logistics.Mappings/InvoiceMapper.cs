@@ -10,31 +10,11 @@ public static class InvoiceMapper
     {
         return entity switch
         {
-            LoadInvoice loadInvoice => new InvoiceDto
-            {
-                Id = loadInvoice.Id,
-                Type = InvoiceType.Load,
-                Number = loadInvoice.Number,
-                Status = loadInvoice.Status,
-                CreatedDate = loadInvoice.CreatedAt,
-                Subtotal = loadInvoice.Subtotal,
-                TaxTotal = loadInvoice.TaxTotal,
-                Total = loadInvoice.Total,
-                TaxBehavior = loadInvoice.TaxBehavior,
-                TaxBreakdown = loadInvoice.GetTaxBreakdown().ToDto(),
-                DueDate = loadInvoice.DueDate,
-                Notes = loadInvoice.Notes,
-                StripeInvoiceId = loadInvoice.StripeInvoiceId,
-                Payments = loadInvoice.Payments.Select(i => i.ToDto()),
-                LineItems = loadInvoice.LineItems.Select(i => i.ToDto()),
-                SentAt = loadInvoice.SentAt,
-                SentToEmail = loadInvoice.SentToEmail,
-                LoadId = loadInvoice.LoadId,
-                LoadNumber = loadInvoice.Load.Number,
-                CustomerId = loadInvoice.CustomerId,
-                Customer = loadInvoice.Customer.ToDto(),
-                FactoringStatus = loadInvoice.FactoringStatus
-            },
+            LoadInvoice loadInvoice => loadInvoice.ToDto(
+                loadInvoice.Payments,
+                loadInvoice.LineItems,
+                loadInvoice.Load.Number,
+                loadInvoice.Customer.ToDto()),
             SubscriptionInvoice subscriptionInvoice => new InvoiceDto
             {
                 Id = subscriptionInvoice.Id,
@@ -85,4 +65,39 @@ public static class InvoiceMapper
             _ => throw new NotImplementedException($"Mapping for {entity.GetType().Name} is not implemented.")
         };
     }
+
+    /// <summary>
+    /// Takes the related rows explicitly so a batch of loads can map its invoices without a lazy
+    /// SELECT per invoice for each collection.
+    /// </summary>
+    public static InvoiceDto ToDto(
+        this LoadInvoice loadInvoice,
+        IEnumerable<Payment> payments,
+        IEnumerable<InvoiceLineItem> lineItems,
+        long loadNumber,
+        CustomerDto? customer) => new()
+    {
+        Id = loadInvoice.Id,
+        Type = InvoiceType.Load,
+        Number = loadInvoice.Number,
+        Status = loadInvoice.Status,
+        CreatedDate = loadInvoice.CreatedAt,
+        Subtotal = loadInvoice.Subtotal,
+        TaxTotal = loadInvoice.TaxTotal,
+        Total = loadInvoice.Total,
+        TaxBehavior = loadInvoice.TaxBehavior,
+        TaxBreakdown = loadInvoice.GetTaxBreakdown().ToDto(),
+        DueDate = loadInvoice.DueDate,
+        Notes = loadInvoice.Notes,
+        StripeInvoiceId = loadInvoice.StripeInvoiceId,
+        Payments = payments.Select(i => i.ToDto()),
+        LineItems = lineItems.Select(i => i.ToDto()),
+        SentAt = loadInvoice.SentAt,
+        SentToEmail = loadInvoice.SentToEmail,
+        LoadId = loadInvoice.LoadId,
+        LoadNumber = loadNumber,
+        CustomerId = loadInvoice.CustomerId,
+        Customer = customer,
+        FactoringStatus = loadInvoice.FactoringStatus
+    };
 }

@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -21,11 +22,10 @@ public class GetUnassignedLoadsHandlerTests
     public GetUnassignedLoadsHandlerTests()
     {
         _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _tenantUow.StubLoadLookups();
         _sut = new GetUnassignedLoadsHandler(_tenantUow);
     }
 
-    // No container or terminal ids, so LoadIntermodalResolver short-circuits both lookups
-    // and these tests need no repository beyond Load.
     private static Load CreateDraftLoad(string name, DateTime createdAt) => new()
     {
         Name = name,

@@ -37,8 +37,8 @@ internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow)
             .ApplyPaging(req.Page, req.PageSize)
             .ToArrayAsync(ct);
 
-        var intermodal = await LoadIntermodalResolver.ResolveAsync(uow, entities, ct);
-        var loads = entities.Select(l => l.ToDto(intermodal)).ToArray();
+        var lookup = await LoadLookupResolver.ResolveAsync(uow, entities, ct);
+        var loads = entities.Select(l => l.ToDto(lookup)).ToArray();
 
         return PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize);
     }

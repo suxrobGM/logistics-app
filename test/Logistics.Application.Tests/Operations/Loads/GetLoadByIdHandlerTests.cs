@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Operations.Common.Services;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -24,6 +25,7 @@ public class GetLoadByIdHandlerTests
     public GetLoadByIdHandlerTests()
     {
         _tenantUow.Repository<Load>().Returns(_loadRepo);
+        _tenantUow.StubLoadLookups();
         _currentUserService.GetUserId().Returns(_driverId);
         _sut = new GetLoadByIdHandler(_tenantUow, _currentUserService, Substitute.For<IVehicleCapacityChecker>());
     }

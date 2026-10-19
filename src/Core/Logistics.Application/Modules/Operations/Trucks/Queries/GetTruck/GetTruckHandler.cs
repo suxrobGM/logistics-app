@@ -23,9 +23,9 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow)
 
         // Resolve only the loads that reach the DTO, not ones OnlyActiveLoads drops.
         var loads = SelectLoads(truckEntity, req.IncludeLoads, req.OnlyActiveLoads);
-        var intermodal = await LoadIntermodalResolver.ResolveAsync(tenantUow, loads, ct);
+        var lookup = await LoadLookupResolver.ResolveAsync(tenantUow, loads, ct);
 
-        var truckDto = ConvertToDto(truckEntity, loads, intermodal);
+        var truckDto = ConvertToDto(truckEntity, loads, lookup);
         return Result<TruckDto>.Ok(truckDto);
     }
 
@@ -61,10 +61,10 @@ internal sealed class GetTruckHandler(ITenantUnitOfWork tenantUow)
     private static TruckDto ConvertToDto(
         Truck truckEntity,
         IReadOnlyCollection<Load> loads,
-        LoadIntermodalLookup intermodal)
+        LoadLookup lookup)
     {
         var truckDto = truckEntity.ToDto(new List<LoadDto>());
-        truckDto.Loads = [.. loads.Select(l => l.ToDto(intermodal))];
+        truckDto.Loads = [.. loads.Select(l => l.ToDto(lookup))];
         truckDto.CurrentTrailerNumber = truckEntity.CurrentTrailer?.Number;
         return truckDto;
     }

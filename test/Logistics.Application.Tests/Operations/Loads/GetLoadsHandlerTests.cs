@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions.CurrentUser;
 using Logistics.Application.Modules.Operations.Loads.Queries;
+using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -37,6 +38,7 @@ public class GetLoadsHandlerTests
         var tenantUow = Substitute.For<ITenantUnitOfWork>();
         var loadRepo = Substitute.For<ITenantRepository<Load, Guid>>();
         tenantUow.Repository<Load>().Returns(loadRepo);
+        tenantUow.StubLoadLookups();
         var load = new Load
         {
             Name = "Load 1",
