@@ -36,8 +36,9 @@ internal sealed class UpdateTruckHandler(
         }
 
         var number = req.TruckNumber?.Trim();
-        if (!string.IsNullOrEmpty(number) && await truckRepository
-                .GetAsync(i => i.Number.ToLower() == number.ToLower() && i.Id != truck.Id, ct) is not null)
+        var numberChanged = !string.IsNullOrEmpty(number)
+                            && !string.Equals(number, truck.Number, StringComparison.OrdinalIgnoreCase);
+        if (numberChanged && await IsNumberTakenAsync(number!, truck.Id, ct))
         {
             return Result.Fail($"Already exists truck with number {number}");
         }
@@ -69,11 +70,13 @@ internal sealed class UpdateTruckHandler(
         truck.Make = PropertyUpdater.UpdateIfChanged(req.Make, truck.Make);
         truck.Model = PropertyUpdater.UpdateIfChanged(req.Model, truck.Model);
 
+        var previousVin = truck.Vin;
         truck.Vin = PropertyUpdater.UpdateIfChanged(req.Vin, truck.Vin);
         truck.LicensePlate = PropertyUpdater.UpdateIfChanged(req.LicensePlate, truck.LicensePlate);
         truck.LicensePlateState = PropertyUpdater.UpdateIfChanged(req.LicensePlateState, truck.LicensePlateState);
 
-        if (truck.Vin is not null && await truckRepository.GetAsync(i => i.Vin == truck.Vin && i.Id != truck.Id, ct) is not null)
+        var vinChanged = truck.Vin is not null && truck.Vin != previousVin;
+        if (vinChanged && await IsVinTakenAsync(truck.Vin!, truck.Id, ct))
         {
             return Result.Fail($"Already exists truck with VIN {truck.Vin}");
         }
@@ -96,6 +99,13 @@ internal sealed class UpdateTruckHandler(
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
+
+    private async Task<bool> IsNumberTakenAsync(string number, Guid truckId, CancellationToken ct) =>
+        await tenantUow.Repository<Truck>()
+            .GetAsync(t => t.Number.ToLower() == number.ToLower() && t.Id != truckId, ct) is not null;
+
+    private async Task<bool> IsVinTakenAsync(string vin, Guid truckId, CancellationToken ct) =>
+        await tenantUow.Repository<Truck>().GetAsync(t => t.Vin == vin && t.Id != truckId, ct) is not null;
 
     private async Task<Result?> SetTrailerAsync(Truck truck, Guid? trailerId, CancellationToken ct)
     {

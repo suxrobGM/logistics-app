@@ -29,6 +29,7 @@ internal sealed class UpdateTrailerHandler(ITenantUnitOfWork tenantUow, ITrailer
         trailer.Number = number;
         trailer.Type = req.Type;
         trailer.Status = req.Status;
+        var previousVin = trailer.Vin;
         trailer.Vin = req.Vin;
         trailer.LicensePlate = req.LicensePlate;
         trailer.LicensePlateState = req.LicensePlateState;
@@ -38,7 +39,8 @@ internal sealed class UpdateTrailerHandler(ITenantUnitOfWork tenantUow, ITrailer
         trailer.LengthMeters = req.LengthMeters;
         trailer.Notes = req.Notes;
 
-        if (trailer.Vin is not null && await repository.GetAsync(i => i.Vin == trailer.Vin && i.Id != trailer.Id, ct) is not null)
+        var vinChanged = trailer.Vin is not null && trailer.Vin != previousVin;
+        if (vinChanged && await repository.GetAsync(t => t.Vin == trailer.Vin && t.Id != trailer.Id, ct) is not null)
         {
             return Result.Fail($"A trailer with VIN '{trailer.Vin}' already exists");
         }
