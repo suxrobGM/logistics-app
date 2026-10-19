@@ -6,7 +6,7 @@
         "FirstName": "Dana",
         "LastName": "Whitfield",
         "Password": "Test12345#",
-        "CustomerNames": ["Cardinal Freight Brokers"]
+        "CustomerName": "Cardinal Freight Brokers"
       }
     ],
     "Customers": [

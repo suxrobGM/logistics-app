@@ -6,14 +6,14 @@
         "FirstName": "Sven",
         "LastName": "Holm",
         "Password": "Test12345#",
-        "CustomerNames": ["Maersk"]
+        "CustomerName": "Maersk"
       },
       {
         "Email": "eu_customer2@test.com",
         "FirstName": "Camille",
         "LastName": "Bernard",
         "Password": "Test12345#",
-        "CustomerNames": ["CMA CGM", "Hapag-Lloyd"]
+        "CustomerName": "CMA CGM"
       }
     ],
     "Customers": [

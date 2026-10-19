@@ -11,8 +11,7 @@ public record CustomerPortalUserData
     public required string Password { get; set; }
 
     /// <summary>
-    /// Names of customers this user should be associated with.
-    /// Supports multi-tenant scenarios where a user can access multiple companies.
+    /// The customer this user signs in for; a portal user is active for one customer per tenant.
     /// </summary>
-    public required string[] CustomerNames { get; set; }
+    public required string CustomerName { get; set; }
 }

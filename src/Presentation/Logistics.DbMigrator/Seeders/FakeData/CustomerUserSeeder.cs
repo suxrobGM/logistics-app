@@ -47,7 +47,6 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
         var customerUserRepository = context.TenantUnitOfWork.Repository<CustomerUser>();
         var tenantAccessRepository = context.MasterUnitOfWork.Repository<UserTenantAccess>();
         var customerUsersList = new List<CustomerUser>();
-        var createdTenantAccessKeys = new HashSet<(Guid UserId, Guid TenantId)>();
 
         foreach (var portalUserData in portalUsers)
         {
@@ -75,71 +74,52 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
                 Logger.LogInformation("Created portal user {Email}", portalUserData.Email);
             }
 
-            // Create CustomerUser for each associated customer
-            foreach (var customerName in portalUserData.CustomerNames)
+            var customer = customers.FirstOrDefault(c => c.Name == portalUserData.CustomerName);
+            if (customer is null)
             {
-                var customer = customers.FirstOrDefault(c => c.Name == customerName);
-                if (customer is null)
+                Logger.LogWarning("Customer '{CustomerName}' not found for portal user {Email}",
+                    portalUserData.CustomerName, portalUserData.Email);
+                continue;
+            }
+
+            var customerUser = await customerUserRepository.GetAsync(
+                cu => cu.UserId == user.Id && cu.CustomerId == customer.Id,
+                cancellationToken);
+
+            if (customerUser is null)
+            {
+                customerUser = new CustomerUser
                 {
-                    Logger.LogWarning("Customer '{CustomerName}' not found for portal user {Email}",
-                        customerName, portalUserData.Email);
-                    continue;
-                }
+                    UserId = user.Id,
+                    CustomerId = customer.Id,
+                    Email = portalUserData.Email,
+                    DisplayName = $"{portalUserData.FirstName} {portalUserData.LastName}",
+                    IsActive = true
+                };
 
-                // Check if CustomerUser already exists
-                var existingCustomerUser = await customerUserRepository.GetAsync(
-                    cu => cu.UserId == user.Id && cu.CustomerId == customer.Id,
-                    cancellationToken);
+                await customerUserRepository.AddAsync(customerUser, cancellationToken);
+                Logger.LogInformation("Created CustomerUser linking {Email} to {CustomerName}",
+                    portalUserData.Email, customer.Name);
+            }
 
-                CustomerUser customerUser;
-                if (existingCustomerUser is null)
+            customerUsersList.Add(customerUser);
+
+            var existingAccess = await tenantAccessRepository.GetAsync(
+                uta => uta.UserId == user.Id && uta.TenantId == tenant.Id,
+                cancellationToken);
+
+            if (existingAccess is null)
+            {
+                await tenantAccessRepository.AddAsync(new UserTenantAccess
                 {
-                    customerUser = new CustomerUser
-                    {
-                        UserId = user.Id,
-                        CustomerId = customer.Id,
-                        Email = portalUserData.Email,
-                        DisplayName = $"{portalUserData.FirstName} {portalUserData.LastName}",
-                        IsActive = true
-                    };
-
-                    await customerUserRepository.AddAsync(customerUser, cancellationToken);
-                    Logger.LogInformation("Created CustomerUser linking {Email} to {CustomerName}",
-                        portalUserData.Email, customerName);
-                }
-                else
-                {
-                    customerUser = existingCustomerUser;
-                }
-
-                customerUsersList.Add(customerUser);
-
-                // Create UserTenantAccess in master database (only once per user+tenant)
-                var accessKey = (user.Id, tenant.Id);
-                if (!createdTenantAccessKeys.Contains(accessKey))
-                {
-                    var existingAccess = await tenantAccessRepository.GetAsync(
-                        uta => uta.UserId == user.Id && uta.TenantId == tenant.Id,
-                        cancellationToken);
-
-                    if (existingAccess is null)
-                    {
-                        var tenantAccess = new UserTenantAccess
-                        {
-                            UserId = user.Id,
-                            TenantId = tenant.Id,
-                            CustomerUserId = customerUser.Id,
-                            CustomerName = customer.Name,
-                            IsActive = true
-                        };
-
-                        await tenantAccessRepository.AddAsync(tenantAccess, cancellationToken);
-                        Logger.LogInformation("Created UserTenantAccess for {Email} to tenant {TenantName}",
-                            portalUserData.Email, tenant.Name);
-                    }
-
-                    createdTenantAccessKeys.Add(accessKey);
-                }
+                    UserId = user.Id,
+                    TenantId = tenant.Id,
+                    CustomerUserId = customerUser.Id,
+                    CustomerName = customer.Name,
+                    IsActive = true
+                }, cancellationToken);
+                Logger.LogInformation("Created UserTenantAccess for {Email} to tenant {TenantName}",
+                    portalUserData.Email, tenant.Name);
             }
         }
 

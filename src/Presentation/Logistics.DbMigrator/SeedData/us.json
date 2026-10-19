@@ -6,14 +6,14 @@
         "FirstName": "Linda",
         "LastName": "Murphy",
         "Password": "Test12345#",
-        "CustomerNames": ["Walmart Inc."]
+        "CustomerName": "Walmart Inc."
       },
       {
         "Email": "customer2@test.com",
         "FirstName": "Greg",
         "LastName": "Patterson",
         "Password": "Test12345#",
-        "CustomerNames": ["Amazon Logistics", "Target Corporation"]
+        "CustomerName": "Amazon Logistics"
       }
     ],
     "Customers": [
