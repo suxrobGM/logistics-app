@@ -16,19 +16,11 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
     {
         var startDate = req.StartDate == default ? DateTime.UtcNow.AddMonths(-6) : req.StartDate;
         var endDate = req.EndDate == default ? DateTime.UtcNow : req.EndDate;
-        var now = DateTime.UtcNow;
-        var dueSoonThreshold = now.AddDays(30);
 
-        var recordRepo = tenantUow.Repository<MaintenanceRecord>();
-        var scheduleRepo = tenantUow.Repository<MaintenanceSchedule>();
-
-        // Build base queries with filters
-        var recordQuery = recordRepo.Query()
+        var recordQuery = tenantUow.Repository<MaintenanceRecord>().Query()
             .Where(r => r.ServiceDate >= startDate && r.ServiceDate <= endDate);
-        var activeScheduleQuery = scheduleRepo.Query()
-            .Where(s => s.IsActive);
 
-        // Combined record summary (1 query instead of 6)
+        // Combined record summary (1 query instead of 4)
         var recordSummary = await recordQuery
             .GroupBy(_ => 1)
             .Select(g => new
@@ -36,9 +28,7 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
                 TotalCost = g.Sum(r => r.TotalCost),
                 LaborCost = g.Sum(r => r.LaborCost),
                 PartsCost = g.Sum(r => r.PartsCost),
-                TotalServices = g.Count(),
-                ScheduledServices = g.Count(r => r.MaintenanceScheduleId.HasValue),
-                UnscheduledServices = g.Count(r => !r.MaintenanceScheduleId.HasValue)
+                TotalServices = g.Count()
             })
             .FirstOrDefaultAsync(ct);
 
@@ -46,23 +36,6 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
         var laborCost = recordSummary?.LaborCost ?? 0;
         var partsCost = recordSummary?.PartsCost ?? 0;
         var totalServices = recordSummary?.TotalServices ?? 0;
-        var scheduledServices = recordSummary?.ScheduledServices ?? 0;
-        var unscheduledServices = recordSummary?.UnscheduledServices ?? 0;
-
-        // Combined schedule summary (1 query instead of 3)
-        var scheduleSummary = await activeScheduleQuery
-            .GroupBy(_ => 1)
-            .Select(g => new
-            {
-                TotalSchedules = g.Count(),
-                OverdueCount = g.Count(s => s.NextDueDate.HasValue && s.NextDueDate.Value < now),
-                DueSoonCount = g.Count(s => s.NextDueDate.HasValue && s.NextDueDate.Value >= now && s.NextDueDate.Value <= dueSoonThreshold)
-            })
-            .FirstOrDefaultAsync(ct);
-
-        var totalSchedules = scheduleSummary?.TotalSchedules ?? 0;
-        var overdueCount = scheduleSummary?.OverdueCount ?? 0;
-        var dueSoonCount = scheduleSummary?.DueSoonCount ?? 0;
 
         // Breakdowns
         var serviceTypeBreakdownData = await recordQuery
@@ -148,13 +121,6 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
 
             // Service Summary
             TotalServices = totalServices,
-            ScheduledServices = scheduledServices,
-            UnscheduledServices = unscheduledServices,
-
-            // Schedule Summary
-            TotalSchedules = totalSchedules,
-            OverdueCount = overdueCount,
-            DueSoonCount = dueSoonCount,
 
             // Breakdowns
             ByServiceType = serviceTypeBreakdown,

@@ -39,23 +39,6 @@ public class MaintenanceController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Get upcoming maintenance schedules
-    /// </summary>
-    [HttpGet("upcoming", Name = "GetUpcomingMaintenance")]
-    [ProducesResponseType(typeof(List<MaintenanceScheduleDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Maintenance.View)]
-    public async Task<IActionResult> GetUpcoming([FromQuery] int daysAhead = 30, [FromQuery] Guid? truckId = null, [FromQuery] bool includeOverdue = true)
-    {
-        var result = await mediator.Send(new GetUpcomingMaintenanceQuery
-        {
-            DaysAhead = daysAhead,
-            TruckId = truckId,
-            IncludeOverdue = includeOverdue
-        });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    /// <summary>
     /// Get a maintenance record by ID
     /// </summary>
     [HttpGet("records/{id:guid}", Name = "GetMaintenanceRecordById")]

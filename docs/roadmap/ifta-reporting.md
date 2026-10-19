@@ -16,7 +16,7 @@ We already ingest the hard half (mileage by state via ELD GPS data); fuel purcha
 - Jurisdiction mileage: derive state/province crossings from ELD location history (`Infrastructure.Integrations.Eld` providers already pull vehicle locations). Store per-truck per-jurisdiction miles per quarter.
 - Fuel purchases: extend `Entities/Expense/TruckExpense` with gallons + jurisdiction, or a dedicated `FuelPurchase` entity (`migration-creator` skill).
 - Quarterly IFTA report: per-jurisdiction summary (miles, gallons, tax due) with CSV + PDF export via `Infrastructure.Documents/Pdf/` (QuestPDF, same as invoices).
-- Hangfire job to snapshot quarters; reminder notifications before filing deadlines (mirror `MaintenanceReminderJob`).
+- Hangfire job to snapshot quarters; reminder notifications before filing deadlines (mirror `LicenseExpiryReminderJob`).
 - Page: `tms-portal/pages/reports/` or new `pages/ifta/`.
 - Note EU angle: same mileage-by-jurisdiction engine later powers EU road-toll/km-charge reporting - keep jurisdiction logic country-agnostic.
 

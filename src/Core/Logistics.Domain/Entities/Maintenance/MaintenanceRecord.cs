@@ -11,12 +11,6 @@ public class MaintenanceRecord : AuditableEntity, ITenantEntity
     public Guid TruckId { get; set; }
     public virtual Truck Truck { get; set; } = null!;
 
-    /// <summary>
-    /// Link to schedule if this was scheduled maintenance
-    /// </summary>
-    public Guid? MaintenanceScheduleId { get; set; }
-    public virtual MaintenanceSchedule? MaintenanceSchedule { get; set; }
-
     public required MaintenanceType MaintenanceType { get; set; }
     public required DateTime ServiceDate { get; set; }
     public required int OdometerReading { get; set; }

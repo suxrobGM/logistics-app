@@ -18,11 +18,6 @@ internal sealed class MaintenanceRecordEntityConfiguration : IEntityTypeConfigur
             .HasForeignKey(i => i.TruckId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(i => i.MaintenanceSchedule)
-            .WithMany()
-            .HasForeignKey(i => i.MaintenanceScheduleId)
-            .OnDelete(DeleteBehavior.SetNull);
-
         builder.HasOne(i => i.PerformedBy)
             .WithMany()
             .HasForeignKey(i => i.PerformedById)

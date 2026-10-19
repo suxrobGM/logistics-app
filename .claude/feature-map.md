@@ -293,7 +293,7 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 
 - Domain: `Entities/Maintenance/`
 - Application: `Modules/Operations/Maintenance/Commands/`, `Modules/Operations/Maintenance/Queries/`
-- API/UI: `MaintenanceController.cs`, `tms-portal/pages/maintenance/`, `Jobs/MaintenanceReminderJob.cs`
+- API/UI: `MaintenanceController.cs`, `tms-portal/pages/maintenance/`
 
 ### Driver licensing
 

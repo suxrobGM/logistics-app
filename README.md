@@ -59,7 +59,7 @@ It supports general freight, car hauling, and container drayage, for carriers in
 - **Money**: Invoices with accessorials and detention, sales tax or VAT, Stripe payouts, factoring, driver and owner-operator settlements, QuickBooks sync.
 - **Fuel**: WEX and EFS fuel card imports every night, plus quarterly IFTA reports.
 - **Compliance**: Hours of service from Samsara, Motive, and Geotab, GPS from Samsara and TT ELD, driver inspections, hazmat checks, GDPR tools.
-- **Fleet**: Trucks, trailers, maintenance schedules, VIN lookup, and container tracking (ISO 6346).
+- **Fleet**: Trucks, trailers, maintenance records, VIN lookup, and container tracking (ISO 6346).
 - **Car hauling**: Vehicles with VINs on each load, per-vehicle condition reports on a damage diagram, and a signed eBOL.
 - **Drayage**: Last free day, per-diem and chassis clocks, holds, appointments, street turns, and demurrage billing.
 - **Onboarding**: Import customers, drivers, trucks, trailers, and loads from CSV or XLSX.

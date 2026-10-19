@@ -32,7 +32,6 @@ The server exposes the same tools used by the built-in AI dispatch agent. If the
 | `get_invoice`                  | Read  | One invoice: totals, payments, send history, factoring    |
 | `search_expenses`              | Read  | List expenses by type/status/truck/date                   |
 | `get_expense_stats`            | Read  | Expense rollups by category, monthly trend, top trucks    |
-| `get_upcoming_maintenance`     | Read  | Trucks with maintenance due (date-based schedules)        |
 | `get_detention`                | Read  | Dwell and detention for a load, or every truck waiting    |
 | `get_condition_reports`        | Read  | A load's pickup/delivery condition reports and defects   |
 | `assign_load_to_truck`         | Write | Assign a load to a truck                                  |

@@ -290,7 +290,6 @@ internal static class Setup
         FuelCardSyncJob.ScheduleJobs();
         IftaQuarterCloseJob.ScheduleJobs();
         IftaFilingReminderJob.ScheduleJobs();
-        MaintenanceReminderJob.ScheduleJobs();
         ContainerDeadlineAlertJob.ScheduleJobs();
         DetentionAlertJob.ScheduleJobs();
         LicenseExpiryReminderJob.ScheduleJobs();
@@ -304,8 +303,9 @@ internal static class Setup
         NegotiationExpirySweepJob.ScheduleJobs();
         ProductLicenseHeartbeatJob.ScheduleJobs();
 
-        // Remove old stale dispatch agent job if it exists
+        // Remove recurring jobs whose code is gone, so Hangfire storage stops firing them
         RecurringJob.RemoveIfExists("ai-dispatch");
+        RecurringJob.RemoveIfExists("ProcessMaintenanceReminders");
         return app;
     }
 

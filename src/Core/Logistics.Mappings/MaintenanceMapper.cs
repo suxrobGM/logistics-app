@@ -45,48 +45,4 @@ public static class MaintenanceMapper
             TotalCost = entity.TotalCost
         };
     }
-
-    public static MaintenanceScheduleDto ToDto(this MaintenanceSchedule entity, int? currentOdometer = null)
-    {
-        var isOverdue = false;
-        int? milesUntilDue = null;
-        int? daysUntilDue = null;
-
-        if (entity.NextDueMileage.HasValue && currentOdometer.HasValue)
-        {
-            milesUntilDue = entity.NextDueMileage.Value - currentOdometer.Value;
-            if (milesUntilDue < 0) isOverdue = true;
-        }
-
-        if (entity.NextDueDate.HasValue)
-        {
-            daysUntilDue = (entity.NextDueDate.Value - DateTime.UtcNow).Days;
-            if (daysUntilDue < 0) isOverdue = true;
-        }
-
-        return new MaintenanceScheduleDto
-        {
-            Id = entity.Id,
-            TruckId = entity.TruckId,
-            TruckNumber = entity.Truck?.Number ?? string.Empty,
-            Type = entity.MaintenanceType,
-            TypeDisplay = entity.MaintenanceType.GetDescription(),
-            IntervalType = entity.IntervalType,
-            MileageInterval = entity.MileageInterval,
-            DaysInterval = entity.DaysInterval,
-            EngineHoursInterval = entity.EngineHoursInterval,
-            LastServiceOdometer = entity.LastServiceMileage,
-            LastServiceDate = entity.LastServiceDate,
-            LastServiceEngineHours = entity.LastServiceEngineHours,
-            NextServiceOdometer = entity.NextDueMileage,
-            NextServiceDate = entity.NextDueDate,
-            NextServiceEngineHours = entity.NextDueEngineHours,
-            IsOverdue = isOverdue,
-            MilesUntilDue = milesUntilDue,
-            DaysUntilDue = daysUntilDue,
-            IsActive = entity.IsActive,
-            Notes = entity.Notes,
-            CreatedAt = entity.CreatedAt
-        };
-    }
 }

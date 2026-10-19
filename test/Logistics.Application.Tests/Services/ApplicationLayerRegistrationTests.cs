@@ -21,7 +21,6 @@ public class ApplicationLayerRegistrationTests
     [InlineData(typeof(ILoadService))]
     [InlineData(typeof(IPayrollService))]
     [InlineData(typeof(IUserService))]
-    [InlineData(typeof(IMaintenanceReminderService))]
     [InlineData(typeof(ILicenseExpiryReminderService))]
     [InlineData(typeof(IInvitationExpiryService))]
     [InlineData(typeof(IDispatchEligibilityService))]

@@ -9,7 +9,7 @@ using Logistics.Domain.Primitives.Enums.Maintenance;
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
 /// <summary>
-/// Seeds sample maintenance schedules and service records for testing.
+/// Seeds sample maintenance service records for testing.
 /// </summary>
 internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase(logger)
 {
@@ -98,20 +98,6 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
         [MaintenanceType.TransmissionService] = ["Transmission Fluid", "Transmission Filter"]
     };
 
-    // Schedules should generally be based on these common maintenance types
-    private static readonly MaintenanceType[] ScheduledMaintenanceTypes =
-    [
-        MaintenanceType.OilChange,
-        MaintenanceType.TireRotation,
-        MaintenanceType.BrakeInspection,
-        MaintenanceType.AirFilterReplacement,
-        MaintenanceType.FuelFilterReplacement,
-        MaintenanceType.AnnualDotInspection,
-        MaintenanceType.PreventiveMaintenance,
-        MaintenanceType.TransmissionService,
-        MaintenanceType.CoolantFlush
-    ];
-
     public override string Name => nameof(MaintenanceSeeder);
     public override SeederType Type => SeederType.FakeData;
     public override int Order => 155; // Before DVIR (158)
@@ -126,7 +112,6 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
     {
         LogStarting();
 
-        var scheduleRepository = context.TenantUnitOfWork.Repository<MaintenanceSchedule>();
         var recordRepository = context.TenantUnitOfWork.Repository<MaintenanceRecord>();
         var truckRepository = context.TenantUnitOfWork.Repository<Truck>();
 
@@ -140,31 +125,10 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
             return;
         }
 
-        var scheduleCount = 0;
         var recordCount = 0;
 
         foreach (var truck in trucks)
         {
-            // Create 3-5 maintenance schedules per truck
-            var schedulesToCreate = random.Next(3, 6);
-            var usedTypes = new HashSet<MaintenanceType>();
-
-            for (var i = 0; i < schedulesToCreate; i++)
-            {
-                MaintenanceType maintenanceType;
-                do
-                {
-                    maintenanceType = random.Pick(ScheduledMaintenanceTypes);
-                } while (usedTypes.Contains(maintenanceType) && usedTypes.Count < ScheduledMaintenanceTypes.Length);
-
-                if (usedTypes.Contains(maintenanceType)) continue;
-                usedTypes.Add(maintenanceType);
-
-                var schedule = CreateMaintenanceSchedule(truck, maintenanceType);
-                await scheduleRepository.AddAsync(schedule, cancellationToken);
-                scheduleCount++;
-            }
-
             // Create 5-15 service records per truck over the past 90 days
             var recordsToCreate = random.Next(5, 16);
             var startDate = DateTime.UtcNow.AddDays(-90);
@@ -181,55 +145,7 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
-        Logger.LogInformation("Seeded {ScheduleCount} maintenance schedules and {RecordCount} service records", scheduleCount, recordCount);
         LogCompleted(recordCount);
-    }
-
-    private MaintenanceSchedule CreateMaintenanceSchedule(Truck truck, MaintenanceType maintenanceType)
-    {
-        var intervalType = PickIntervalType(maintenanceType);
-        var lastServiceDate = DateTime.UtcNow.AddDays(-random.Next(10, 120));
-        var lastServiceMileage = random.Next(100000, 400000);
-
-        var schedule = new MaintenanceSchedule
-        {
-            TruckId = truck.Id,
-            MaintenanceType = maintenanceType,
-            IntervalType = intervalType,
-            IsActive = true,
-            LastServiceDate = lastServiceDate,
-            LastServiceMileage = lastServiceMileage,
-            Notes = $"Regular {maintenanceType} schedule"
-        };
-
-        // Set intervals and next due based on interval type
-        switch (intervalType)
-        {
-            case MaintenanceIntervalType.Mileage:
-                schedule.MileageInterval = GetMileageInterval(maintenanceType);
-                schedule.NextDueMileage = lastServiceMileage + schedule.MileageInterval;
-                break;
-
-            case MaintenanceIntervalType.TimeBased:
-                schedule.DaysInterval = GetDaysInterval(maintenanceType);
-                schedule.NextDueDate = lastServiceDate.AddDays(schedule.DaysInterval.Value);
-                break;
-
-            case MaintenanceIntervalType.EngineHours:
-                schedule.EngineHoursInterval = random.Next(200, 500);
-                schedule.LastServiceEngineHours = random.Next(5000, 15000);
-                schedule.NextDueEngineHours = schedule.LastServiceEngineHours + schedule.EngineHoursInterval;
-                break;
-
-            case MaintenanceIntervalType.Combined:
-                schedule.MileageInterval = GetMileageInterval(maintenanceType);
-                schedule.DaysInterval = GetDaysInterval(maintenanceType);
-                schedule.NextDueMileage = lastServiceMileage + schedule.MileageInterval;
-                schedule.NextDueDate = lastServiceDate.AddDays(schedule.DaysInterval.Value);
-                break;
-        }
-
-        return schedule;
     }
 
     private MaintenanceRecord CreateMaintenanceRecord(Truck truck, MaintenanceType maintenanceType, DateTime serviceDate)
@@ -284,45 +200,5 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
         }
 
         return record;
-    }
-
-    private MaintenanceIntervalType PickIntervalType(MaintenanceType maintenanceType)
-    {
-        // Some maintenance types have natural interval types
-        return maintenanceType switch
-        {
-            MaintenanceType.OilChange => random.NextDouble() < 0.7
-                ? MaintenanceIntervalType.Mileage
-                : MaintenanceIntervalType.Combined,
-            MaintenanceType.AnnualDotInspection => MaintenanceIntervalType.TimeBased,
-            MaintenanceType.TireRotation => MaintenanceIntervalType.Mileage,
-            _ => random.Pick(Enum.GetValues<MaintenanceIntervalType>())
-        };
-    }
-
-    private int GetMileageInterval(MaintenanceType maintenanceType)
-    {
-        return maintenanceType switch
-        {
-            MaintenanceType.OilChange => random.Next(10000, 20000),
-            MaintenanceType.TireRotation => random.Next(15000, 25000),
-            MaintenanceType.BrakeInspection => random.Next(20000, 40000),
-            MaintenanceType.AirFilterReplacement => random.Next(15000, 30000),
-            MaintenanceType.FuelFilterReplacement => random.Next(20000, 40000),
-            MaintenanceType.TransmissionService => random.Next(50000, 100000),
-            MaintenanceType.CoolantFlush => random.Next(30000, 60000),
-            _ => random.Next(15000, 50000)
-        };
-    }
-
-    private int GetDaysInterval(MaintenanceType maintenanceType)
-    {
-        return maintenanceType switch
-        {
-            MaintenanceType.AnnualDotInspection => 365,
-            MaintenanceType.OilChange => random.Next(60, 120),
-            MaintenanceType.PreventiveMaintenance => random.Next(30, 90),
-            _ => random.Next(90, 180)
-        };
     }
 }

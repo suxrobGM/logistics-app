@@ -1,7 +1,7 @@
 # AI Copilot
 
 A conversational agent in the TMS portal chat drawer. Users ask questions and delegate work across
-the whole TMS - loads, invoices, payments, expenses, maintenance, customers, and dispatch - and the
+the whole TMS - loads, invoices, payments, expenses, customers, and dispatch - and the
 copilot answers with real data or proposes actions for approval. Available on every plan from
 Starter up (`TenantFeature.AICopilot`), drawing on the same weekly quota as dispatch.
 
@@ -121,7 +121,6 @@ the dispatch agent (if dispatch-scoped), and the MCP server in one change. The c
 | `search_customers`                      | Read  | `GetCustomersQuery`                                                   |
 | `get_invoices` / `get_invoice`          | Read  | `GetInvoicesQuery` / `GetInvoiceByIdQuery`                            |
 | `search_expenses` / `get_expense_stats` | Read  | `GetExpensesQuery` / `GetExpenseStatsQuery`                           |
-| `get_upcoming_maintenance`              | Read  | `GetUpcomingMaintenanceQuery` (date-based only)                       |
 | `get_detention`                         | Read  | `GetLoadDetentionQuery`, or open stops across the fleet without a load |
 | `get_condition_reports`                 | Read  | `GetConditionReportsQuery` (defects with car hauler BOL codes)        |
 | `create_load_invoice`                   | Write | `CreateLoadInvoiceCommand` (unpaid, one line per load charge)         |

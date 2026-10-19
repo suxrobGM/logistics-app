@@ -9,13 +9,6 @@ public record MaintenanceReportDto
 
     // Service Summary
     public int TotalServices { get; set; }
-    public int ScheduledServices { get; set; }
-    public int UnscheduledServices { get; set; }
-
-    // Schedule Summary
-    public int TotalSchedules { get; set; }
-    public int OverdueCount { get; set; }
-    public int DueSoonCount { get; set; }
 
     // Breakdowns
     public IReadOnlyList<MaintenanceTypeBreakdownDto> ByServiceType { get; set; } = [];

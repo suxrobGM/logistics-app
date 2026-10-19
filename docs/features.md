@@ -25,7 +25,7 @@ The web app for owners, managers, and dispatchers.
 | Public tracking | Share a tracking link with a customer or receiver. No login is needed. |
 | Fleet | Trucks and trailers, registration and insurance dates, and who is assigned to what. Hook a trailer to a truck and each trip records the trailer it pulled. Enter a VIN and the truck details fill in from the NHTSA database. |
 | Data import | Move off another TMS or a spreadsheet: upload CSV or XLSX for customers, drivers, trucks, trailers and loads, check the column mapping, see a dry run, then import. See [data import](data-import.md). |
-| Maintenance | Schedule service, record what was done and what it cost, and see what is coming due. |
+| Maintenance | Record what was done on each truck and what it cost. |
 | Customers | Customer profiles with several contacts each, billing addresses, and shipment history. |
 | LTL freight | Record freight class, NMFC code, pallets, pieces, weight, dimensions and whether the freight stacks on the load. |
 | Hazmat and ADR | Mark a load as hazmat and record ADR equipment on each truck. Dispatch refuses to send a hazmat load to a truck without the right equipment. |
@@ -83,7 +83,7 @@ Central Dispatch and Super Dispatch are not connected. Neither offers a public c
 | Follow-ups | Reject a suggestion or send a follow-up message, and the agent adjusts within the same conversation. |
 | Learned preferences | A nightly job reads the decisions you approved and rejected and writes a short policy the agent follows next time. Dispatchers can edit it. |
 | Rate negotiation | When a listing pays below your lane floor, the agent drafts a counter-offer email to the broker. You approve before it sends. Replies come back into the conversation. See [broker email negotiation](broker-email-negotiation.md). |
-| Copilot | A chat panel on every page. Ask about loads, customers, expenses, or maintenance, or have it invoice delivered loads and send payment links. It only uses the tools your role allows, and it asks before it writes. See [AI Copilot](ai-copilot.md). |
+| Copilot | A chat panel on every page. Ask about loads, customers, or expenses, or have it invoice delivered loads and send payment links. It only uses the tools your role allows, and it asks before it writes. See [AI Copilot](ai-copilot.md). |
 | Tools | Both agents share one set of 31 tools covering dispatch, load boards, negotiation, finance, intermodal, and operations. |
 | MCP server | Connect Claude Desktop, Cursor, Windsurf, and other MCP clients to your fleet. API keys are created per company, shown once, and rate limited. See [MCP Server](mcp-server.md). |
 
@@ -126,7 +126,7 @@ Central Dispatch and Super Dispatch are not connected. Neither offers a public c
 | Drivers | Miles, load counts, on-time delivery, and a detailed view per driver. |
 | Team | Headcount and activity across the company. |
 | Payroll | Pay totals, history, and cost trends. |
-| Maintenance | Service costs and upcoming work per truck. |
+| Maintenance | Service costs per truck, type and vendor. |
 | Safety | Inspections, defects, and accidents. |
 | IFTA | The quarterly fuel tax report described above. |
 
