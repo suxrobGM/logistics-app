@@ -437,18 +437,17 @@ public class DispatchEligibilityServiceTests
         DateTime? medicalCertExpiresAt = null,
         DriverLicenseStatus status = DriverLicenseStatus.Active)
     {
-        return new DriverLicense
-        {
-            EmployeeId = DriverId,
-            LicenseNumber = "LIC-" + Guid.NewGuid().ToString("N")[..6],
-            LicenseClass = cls,
-            Endorsements = endorsements,
-            IssuingCountry = country,
-            IssuedDate = DateTime.UtcNow.AddYears(-2),
-            ExpiresAt = expiresAt ?? DateTime.UtcNow.AddYears(2),
-            MedicalCertExpiresAt = medicalCertExpiresAt,
-            Status = status
-        };
+        var license = DriverLicense.Create(
+            DriverId,
+            "LIC-" + Guid.NewGuid().ToString("N")[..6],
+            cls,
+            country,
+            DateTime.UtcNow.AddYears(-2),
+            expiresAt ?? DateTime.UtcNow.AddYears(2),
+            endorsements,
+            medicalCertExpiresAt: medicalCertExpiresAt);
+        license.Status = status;
+        return license;
     }
 
     private static Employee CreateDriver(DriverLicense license)

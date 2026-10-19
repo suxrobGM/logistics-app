@@ -73,8 +73,7 @@ internal sealed class LicenseExpiryReminderService(
 
             await SendNotificationAsync(tenant.Id.ToString(), license, daysUntilExpiry);
 
-            license.LastReminderSentAt = now;
-            license.LastReminderThresholdDays = threshold;
+            license.RecordReminderSent(threshold);
             tenantUow.Repository<DriverLicense>().Update(license);
             sentCount++;
         }

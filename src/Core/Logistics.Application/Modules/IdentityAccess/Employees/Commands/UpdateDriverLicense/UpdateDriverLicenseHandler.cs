@@ -40,7 +40,11 @@ internal sealed class UpdateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
         }
         license.IssuingRegion = PropertyUpdater.UpdateIfChanged(req.IssuingRegion, license.IssuingRegion);
         license.IssuedDate = PropertyUpdater.UpdateIfChanged(req.IssuedDate, license.IssuedDate);
-        license.ExpiresAt = PropertyUpdater.UpdateIfChanged(req.ExpiresAt, license.ExpiresAt);
+        if (req.ExpiresAt.HasValue)
+        {
+            license.SetExpiry(req.ExpiresAt.Value);
+        }
+
         license.Status = PropertyUpdater.UpdateIfChanged(req.Status, license.Status);
 
         // Nullable-struct targets - PropertyUpdater has no overload for these.

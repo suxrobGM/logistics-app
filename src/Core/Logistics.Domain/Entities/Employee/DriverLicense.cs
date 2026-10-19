@@ -33,7 +33,7 @@ public class DriverLicense : AuditableEntity, ITenantEntity
     public string? IssuingRegion { get; set; }
 
     public DateTime IssuedDate { get; set; }
-    public DateTime ExpiresAt { get; set; }
+    public DateTime ExpiresAt { get; private set; }
 
     /// <summary>
     /// US DOT medical card expiry. Applies only to US CDL holders.
@@ -50,15 +50,25 @@ public class DriverLicense : AuditableEntity, ITenantEntity
     public virtual EmployeeDocument? Document { get; set; }
 
     /// <summary>
-    /// Last time the expiry-reminder job sent a notification for this license, used by
-    /// the job to avoid duplicate reminders for the same threshold.
+    /// The threshold (60, 30, 7) of the most recent expiry reminder, so the job sends each one once.
     /// </summary>
-    public DateTime? LastReminderSentAt { get; set; }
+    public int? LastReminderThresholdDays { get; private set; }
 
     /// <summary>
-    /// The threshold (60, 30, 7) of the most recent reminder.
+    /// Sets the expiry. A new expiry (a renewal or a correction) restarts the expiry reminders.
     /// </summary>
-    public int? LastReminderThresholdDays { get; set; }
+    public void SetExpiry(DateTime expiresAt)
+    {
+        if (expiresAt == ExpiresAt)
+        {
+            return;
+        }
+
+        ExpiresAt = expiresAt;
+        LastReminderThresholdDays = null;
+    }
+
+    public void RecordReminderSent(int thresholdDays) => LastReminderThresholdDays = thresholdDays;
 
     public bool IsExpired(DateTime utcNow) =>
         Status == DriverLicenseStatus.Expired || ExpiresAt <= utcNow;
