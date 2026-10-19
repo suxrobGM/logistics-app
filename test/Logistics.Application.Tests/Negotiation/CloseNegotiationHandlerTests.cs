@@ -39,7 +39,7 @@ public class CloseNegotiationHandlerTests
 
         _negotiationRepo.GetByIdAsync(_negotiation.Id, Arg.Any<CancellationToken>()).Returns(_negotiation);
 
-        _sut = new CloseNegotiationHandler(_tenantUow, _routeRegistry, _broadcastService);
+        _sut = new CloseNegotiationHandler(_tenantUow, _routeRegistry, new NegotiationPublisher(_tenantUow, _broadcastService));
     }
 
     private CloseNegotiationCommand Command() => new() { Id = _negotiation.Id, Reason = "Broker went quiet" };

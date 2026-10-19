@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Abstractions.Email;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
@@ -17,7 +16,7 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
     IFeatureService featureService,
     IInboundEmailReader inboundEmailReader,
     INegotiationTurnStarter turnStarter,
-    IAIDispatchBroadcastService broadcastService,
+    INegotiationPublisher negotiationPublisher,
     ILogger<ProcessInboundNegotiationEmailHandler> logger)
     : IRequestHandler<ProcessInboundNegotiationEmailCommand, Result>
 {
@@ -78,7 +77,7 @@ internal sealed class ProcessInboundNegotiationEmailHandler(
         await tenantUow.Repository<NegotiationMessage>().AddAsync(message, ct);
         await tenantUow.SaveChangesAsync(ct);
 
-        await NegotiationBroadcast.PublishAsync(tenantUow, broadcastService, negotiation, ct);
+        await negotiationPublisher.PublishAsync(negotiation, ct);
 
         if (!senderMatches)
         {

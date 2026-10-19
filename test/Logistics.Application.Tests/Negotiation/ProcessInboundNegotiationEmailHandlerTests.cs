@@ -64,7 +64,7 @@ public class ProcessInboundNegotiationEmailHandlerTests
                 "<reply@example.com>"));
 
         _sut = new ProcessInboundNegotiationEmailHandler(
-            _tenantUow, _featureService, _inboundEmailReader, _turnStarter, _broadcastService,
+            _tenantUow, _featureService, _inboundEmailReader, _turnStarter, new NegotiationPublisher(_tenantUow, _broadcastService),
             NullLogger<ProcessInboundNegotiationEmailHandler>.Instance);
     }
 

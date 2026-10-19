@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.AIDispatch;
 using Logistics.Application.Modules.Integrations.Negotiation.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -12,7 +11,7 @@ namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
 internal sealed class CloseNegotiationHandler(
     ITenantUnitOfWork tenantUow,
     IInboundEmailRouteRegistry routeRegistry,
-    IAIDispatchBroadcastService broadcastService)
+    INegotiationPublisher negotiationPublisher)
     : IRequestHandler<CloseNegotiationCommand, Result>
 {
     public async Task<Result> Handle(CloseNegotiationCommand req, CancellationToken ct)
@@ -36,7 +35,7 @@ internal sealed class CloseNegotiationHandler(
 
         await routeRegistry.RevokeAsync([negotiation.ReplyToken], ct);
 
-        await NegotiationBroadcast.PublishAsync(tenantUow, broadcastService, negotiation, ct);
+        await negotiationPublisher.PublishAsync(negotiation, ct);
 
         return Result.Ok();
     }
