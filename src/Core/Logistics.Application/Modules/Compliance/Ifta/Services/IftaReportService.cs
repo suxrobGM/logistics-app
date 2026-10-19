@@ -32,8 +32,8 @@ internal sealed class IftaReportService(
 
     public async Task<IftaReportDto> BuildReportAsync(int year, int quarter, CancellationToken ct = default)
     {
-        var start = IftaQuarters.StartOf(year, quarter);
-        var end = IftaQuarters.EndOf(year, quarter);
+        var start = IftaQuarters.GetStartDate(year, quarter);
+        var end = IftaQuarters.GetEndDate(year, quarter);
         var startDate = DateOnly.FromDateTime(start);
         var endDate = DateOnly.FromDateTime(end);
 

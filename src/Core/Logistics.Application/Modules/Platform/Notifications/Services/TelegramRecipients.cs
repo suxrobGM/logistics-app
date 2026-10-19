@@ -9,7 +9,7 @@ namespace Logistics.Application.Modules.Platform.Notifications.Services;
 public sealed class TelegramRecipients(ITenantUnitOfWork tenantUow) : ITelegramRecipients
 {
     /// <summary>The Telegram audience a tenant role belongs to; null for roles the bot never notifies.</summary>
-    public static TelegramChatRole? RoleOf(string? tenantRoleName) => tenantRoleName switch
+    public static TelegramChatRole? GetChatRole(string? tenantRoleName) => tenantRoleName switch
     {
         TenantRoles.Driver => TelegramChatRole.Driver,
         TenantRoles.Owner or TenantRoles.Manager or TenantRoles.Dispatcher => TelegramChatRole.Dispatcher,
@@ -33,7 +33,7 @@ public sealed class TelegramRecipients(ITenantUnitOfWork tenantUow) : ITelegramR
             .ToListAsync(ct);
 
         return chats
-            .Where(x => x.Chat.ChatType == TelegramChatType.Group || targetRole is null || RoleOf(x.RoleName) == targetRole)
+            .Where(x => x.Chat.ChatType == TelegramChatType.Group || targetRole is null || GetChatRole(x.RoleName) == targetRole)
             .Select(x => x.Chat)
             .ToList();
     }

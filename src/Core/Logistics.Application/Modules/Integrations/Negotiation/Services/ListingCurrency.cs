@@ -11,5 +11,5 @@ public static class ListingCurrency
 {
     public const string Default = "USD";
 
-    public static string Of(LoadBoardListing listing) => listing.TotalRate?.Currency ?? Default;
+    public static string Get(LoadBoardListing listing) => listing.TotalRate?.Currency ?? Default;
 }

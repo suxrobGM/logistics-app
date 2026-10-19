@@ -44,7 +44,7 @@ internal sealed record QboRef
 {
     [JsonPropertyName("value")] public string? Value { get; set; }
 
-    public static QboRef Of(string value) => new() { Value = value };
+    public static QboRef Create(string value) => new() { Value = value };
 
     public static QboRef? OfOptional(string? value) => string.IsNullOrEmpty(value) ? null : new QboRef { Value = value };
 }

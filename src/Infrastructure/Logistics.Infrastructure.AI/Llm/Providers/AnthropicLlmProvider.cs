@@ -46,7 +46,7 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config, HttpClient
     /// </summary>
     internal static MessageCreateParams BuildParameters(LlmRequest request)
     {
-        var isAdaptive = LlmModelCatalog.ReasoningStyleOf(request.Model) == ReasoningStyle.AnthropicAdaptive;
+        var isAdaptive = LlmModelCatalog.GetReasoningStyle(request.Model) == ReasoningStyle.AnthropicAdaptive;
 
         // The SDK sends an assigned null as JSON null, so optional fields are only ever set to a value.
         var parameters = new MessageCreateParams

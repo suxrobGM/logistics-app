@@ -65,7 +65,7 @@ internal sealed class OpenAIResponsesLlmProvider(LlmProviderOptions config, Http
             StoredOutputEnabled = false
         };
 
-        if (LlmModelCatalog.ReasoningStyleOf(request.Model) == ReasoningStyle.OpenAIEffort)
+        if (LlmModelCatalog.GetReasoningStyle(request.Model) == ReasoningStyle.OpenAIEffort)
         {
             options.ReasoningOptions = new ResponseReasoningOptions
             {

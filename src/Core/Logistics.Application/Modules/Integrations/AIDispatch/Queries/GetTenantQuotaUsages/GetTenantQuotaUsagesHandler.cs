@@ -114,7 +114,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
         }
 
         var monthlyRevenue = plan is not null && subscription is not null
-            ? MonthlyRevenueOf(plan, subscription, usage.TruckCount)
+            ? CalculateMonthlyRevenue(plan, subscription, usage.TruckCount)
             : 0m;
 
         return new TenantQuotaUsageDto
@@ -146,7 +146,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
     /// paused, past due) contributes nothing - reporting its list price would show a healthy
     /// margin for a tenant generating cost against no revenue at all.
     /// </summary>
-    private static decimal MonthlyRevenueOf(SubscriptionPlan plan, Subscription subscription, int truckCount)
+    private static decimal CalculateMonthlyRevenue(SubscriptionPlan plan, Subscription subscription, int truckCount)
     {
         if (subscription.Status != SubscriptionStatus.Active)
         {

@@ -35,7 +35,7 @@ internal sealed class GetRateFloorContextHandler(
             ListingTotalRate = listing.TotalRate?.Amount,
             ListingRatePerMile = listing.RatePerMile,
             DistanceMiles = listing.Distance,
-            Currency = ListingCurrency.Of(listing)
+            Currency = ListingCurrency.Get(listing)
         });
     }
 }

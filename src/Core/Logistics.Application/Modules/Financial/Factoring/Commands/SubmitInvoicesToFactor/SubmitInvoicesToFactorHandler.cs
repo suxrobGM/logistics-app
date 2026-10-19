@@ -49,7 +49,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
             return Result<FactoringBatchDto>.Fail("Some of the selected invoices no longer exist. Reload and try again.");
         }
 
-        var companyId = SingleFactorOf(invoices);
+        var companyId = FindSharedFactoringCompanyId(invoices);
         if (companyId is null)
         {
             return Result<FactoringBatchDto>.Fail(
@@ -130,7 +130,7 @@ internal sealed class SubmitInvoicesToFactorHandler(
         return Result<FactoringBatchDto>.Ok(await batchDtoBuilder.BuildAsync(batch, ct));
     }
 
-    private static Guid? SingleFactorOf(IEnumerable<LoadInvoice> invoices)
+    private static Guid? FindSharedFactoringCompanyId(IEnumerable<LoadInvoice> invoices)
     {
         var factors = invoices.Select(i => i.Customer.FactoringCompanyId).Distinct().ToList();
         return factors is [{ } only] ? only : null;

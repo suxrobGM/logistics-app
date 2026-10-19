@@ -24,7 +24,7 @@ internal static class AgentToolCatalog
         Entries.ToDictionary(e => e.Definition.Name, e => e.Definition);
 
     private static readonly Dictionary<string, IReadOnlyList<(AgentEntityKind Kind, string Key)>> EntityIdsByName =
-        Entries.ToDictionary(e => e.Definition.Name, e => AgentToolJson.EntityIdsIn(InputTypeOf(e.Type)));
+        Entries.ToDictionary(e => e.Definition.Name, e => AgentToolJson.EntityIdsIn(GetInputType(e.Type)));
 
     public static Type? ImplementationFor(string name) => TypesByName.GetValueOrDefault(name);
 
@@ -40,13 +40,13 @@ internal static class AgentToolCatalog
     private static (Type Type, AgentToolDefinition Definition)[] Discover() =>
         [.. typeof(AgentToolCatalog).Assembly.GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false } && t.IsAssignableTo(typeof(IAgentTool)))
-            .Select(t => (Type: t, Definition: DefinitionOf(t)))
+            .Select(t => (Type: t, Definition: GetDefinition(t)))
             // Reflection order is not guaranteed, and the catalogue sits in the cached prompt
             // prefix - it has to come out the same way every time.
             .OrderBy(e => e.Definition.IsWrite)
             .ThenBy(e => e.Definition.Name, StringComparer.Ordinal)];
 
-    private static AgentToolDefinition DefinitionOf(Type toolType)
+    private static AgentToolDefinition GetDefinition(Type toolType)
     {
         var property = toolType.GetProperty(
             nameof(IAgentToolMetadata.Definition),
@@ -59,10 +59,10 @@ internal static class AgentToolCatalog
                 + "Implement IAgentToolMetadata with a public static Definition property.");
         }
 
-        return definition with { InputSchema = AgentToolJson.SchemaFor(InputTypeOf(toolType)) };
+        return definition with { InputSchema = AgentToolJson.SchemaFor(GetInputType(toolType)) };
     }
 
-    private static Type InputTypeOf(Type toolType)
+    private static Type GetInputType(Type toolType)
     {
         for (var type = toolType; type is not null; type = type.BaseType)
         {

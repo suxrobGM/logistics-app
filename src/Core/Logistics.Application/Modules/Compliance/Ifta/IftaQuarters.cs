@@ -7,12 +7,12 @@ namespace Logistics.Application.Modules.Compliance.Ifta;
 public static class IftaQuarters
 {
     /// <summary>Inclusive UTC start of the quarter.</summary>
-    public static DateTime StartOf(int year, int quarter) =>
+    public static DateTime GetStartDate(int year, int quarter) =>
         new(year, (quarter - 1) * 3 + 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
     /// <summary>Exclusive UTC end of the quarter.</summary>
-    public static DateTime EndOf(int year, int quarter) =>
-        StartOf(year, quarter).AddMonths(3);
+    public static DateTime GetEndDate(int year, int quarter) =>
+        GetStartDate(year, quarter).AddMonths(3);
 
     public static (int Year, int Quarter) Current(DateTime utcNow) =>
         (utcNow.Year, (utcNow.Month - 1) / 3 + 1);
@@ -29,7 +29,7 @@ public static class IftaQuarters
     /// </summary>
     public static DateTime FilingDeadline(int year, int quarter)
     {
-        var monthAfterEnd = EndOf(year, quarter);
+        var monthAfterEnd = GetEndDate(year, quarter);
         return monthAfterEnd.AddMonths(1).AddDays(-1);
     }
 }

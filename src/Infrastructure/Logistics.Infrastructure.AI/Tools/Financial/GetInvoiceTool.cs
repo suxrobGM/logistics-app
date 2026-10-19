@@ -56,7 +56,7 @@ internal sealed class GetInvoiceTool(IMediator mediator)
             customer = i.Customer?.Name,
             customer_id = i.CustomerId,
             customer_email = i.Customer?.Email,
-            factoring_status = InvoiceFactoring.StatusOf(i),
+            factoring_status = InvoiceFactoring.GetStatus(i),
             notes = i.Notes,
             created_at = i.CreatedDate.ToString("yyyy-MM-dd")
         });

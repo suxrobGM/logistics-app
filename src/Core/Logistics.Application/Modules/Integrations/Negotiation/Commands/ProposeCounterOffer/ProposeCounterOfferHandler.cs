@@ -57,7 +57,7 @@ internal sealed class ProposeCounterOfferHandler(
         var negotiation = await negotiationRepo.GetAsync(RateNegotiation.OpenForListing(listing.Id), ct);
 
         var isNewThread = negotiation is null;
-        var currency = ListingCurrency.Of(listing);
+        var currency = ListingCurrency.Get(listing);
 
         // Floor first: it is a local read that rejects most bad offers, whereas the credit gate
         // costs a vendor API call and a write. Round 1 resolves the lane floor and freezes it on the

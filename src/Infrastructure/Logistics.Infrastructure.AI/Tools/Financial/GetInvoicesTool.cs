@@ -82,7 +82,7 @@ internal sealed class GetInvoicesTool(IMediator mediator)
             load_id = i.LoadId,
             customer = i.Customer?.Name,
             customer_id = i.CustomerId,
-            factoring_status = InvoiceFactoring.StatusOf(i),
+            factoring_status = InvoiceFactoring.GetStatus(i),
             created_at = i.CreatedDate.ToString("yyyy-MM-dd")
         }).ToList();
 

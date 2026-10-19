@@ -50,7 +50,7 @@ public record ComposeNegotiationEmailRequest
             PickupDate = listing.PickupDateStart ?? listing.ExpiresAt,
             EquipmentType = listing.EquipmentType?.GetDescription() ?? "Not specified",
             OfferAmount = offerAmount,
-            Currency = ListingCurrency.Of(listing),
+            Currency = ListingCurrency.Get(listing),
             OfferPerMile = offerPerMile,
             AgentMessage = agentMessage,
             CompanyName = tenant.CompanyName ?? tenant.Name,

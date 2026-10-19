@@ -75,7 +75,7 @@ public class Login(
             return Page();
         }
 
-        var chatRole = TelegramRecipients.RoleOf(employee.Role?.Name);
+        var chatRole = TelegramRecipients.GetChatRole(employee.Role?.Name);
 
         // For group chats, require Owner/Admin/Manager role
         if (loginState.ChatType == TelegramChatType.Group)

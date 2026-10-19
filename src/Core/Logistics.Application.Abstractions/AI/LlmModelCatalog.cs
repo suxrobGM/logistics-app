@@ -26,7 +26,7 @@ public static class LlmModelCatalog
     public static bool IsValid(string? id) => Find(id) is not null;
 
     /// <summary>Unknown models get <see cref="ReasoningStyle.None"/> - never send a parameter an endpoint might reject.</summary>
-    public static ReasoningStyle ReasoningStyleOf(string? modelId) =>
+    public static ReasoningStyle GetReasoningStyle(string? modelId) =>
         Find(modelId)?.Reasoning ?? ReasoningStyle.None;
 }
 

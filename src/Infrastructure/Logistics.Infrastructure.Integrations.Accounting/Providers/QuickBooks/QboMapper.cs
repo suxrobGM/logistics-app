@@ -91,8 +91,8 @@ internal static class QboMapper
             Sparse = SparseIfUpdate(qboId),
             DocNumber = p.DocNumber,
             TxnDate = Date(p.TxnDate),
-            CustomerRef = QboRef.Of(p.QboCustomerId),
-            CurrencyRef = QboRef.Of(p.CurrencyCode),
+            CustomerRef = QboRef.Create(p.QboCustomerId),
+            CurrencyRef = QboRef.Create(p.CurrencyCode),
             DueDate = p.DueDate.HasValue ? Date(p.DueDate.Value) : null,
             TxnTaxDetail = p.TaxTotal > 0 ? new QboTxnTaxDetail { TotalTax = decimal.Round(p.TaxTotal, 2) } : null,
             Line = lines
@@ -114,8 +114,8 @@ internal static class QboMapper
             SyncToken = syncToken,
             Sparse = SparseIfUpdate(qboId),
             TxnDate = Date(p.TxnDate),
-            CustomerRef = QboRef.Of(p.QboCustomerId),
-            CurrencyRef = QboRef.Of(p.CurrencyCode),
+            CustomerRef = QboRef.Create(p.QboCustomerId),
+            CurrencyRef = QboRef.Create(p.CurrencyCode),
             DepositToAccountRef = QboRef.OfOptional(p.DepositAccountId),
             TotalAmt = decimal.Round(p.Amount, 2),
             PaymentRefNum = p.ReferenceNumber,
@@ -137,8 +137,8 @@ internal static class QboMapper
             Id = qboId,
             SyncToken = syncToken,
             Sparse = SparseIfUpdate(qboId),
-            AccountRef = QboRef.Of(p.PaymentAccountId),
-            CurrencyRef = QboRef.Of(p.CurrencyCode),
+            AccountRef = QboRef.Create(p.PaymentAccountId),
+            CurrencyRef = QboRef.Create(p.CurrencyCode),
             PaymentType = p.PaymentAccountType == CreditCardAccountType ? "CreditCard" : "Cash",
             TxnDate = Date(p.TxnDate),
             DocNumber = p.DocNumber,
@@ -153,8 +153,8 @@ internal static class QboMapper
             Id = qboId,
             SyncToken = syncToken,
             Sparse = SparseIfUpdate(qboId),
-            VendorRef = QboRef.Of(p.VendorId),
-            CurrencyRef = QboRef.Of(p.CurrencyCode),
+            VendorRef = QboRef.Create(p.VendorId),
+            CurrencyRef = QboRef.Create(p.CurrencyCode),
             TxnDate = Date(p.TxnDate),
             DueDate = p.DueDate.HasValue ? Date(p.DueDate.Value) : null,
             DocNumber = p.DocNumber,
@@ -167,6 +167,6 @@ internal static class QboMapper
         DetailType = "AccountBasedExpenseLineDetail",
         Description = description,
         Amount = decimal.Round(amount, 2),
-        AccountBasedExpenseLineDetail = new QboAccountBasedExpenseLineDetail { AccountRef = QboRef.Of(accountId) }
+        AccountBasedExpenseLineDetail = new QboAccountBasedExpenseLineDetail { AccountRef = QboRef.Create(accountId) }
     };
 }
