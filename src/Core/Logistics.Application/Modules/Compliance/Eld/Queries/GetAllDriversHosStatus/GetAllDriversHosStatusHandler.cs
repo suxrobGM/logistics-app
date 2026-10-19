@@ -35,8 +35,7 @@ internal sealed class GetAllDriversHosStatusHandler(ITenantUnitOfWork tenantUow)
                 IsInViolation = h.IsInViolation,
                 IsAvailableForDispatch = !h.IsInViolation && h.DrivingMinutesRemaining >= 60,
                 LastUpdatedAt = h.LastUpdatedAt,
-                NextMandatoryBreakAt = h.NextMandatoryBreakAt,
-                ProviderType = h.ProviderType
+                NextMandatoryBreakAt = h.NextMandatoryBreakAt
             })
             .ToListAsync(ct);
 

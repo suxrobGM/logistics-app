@@ -22,9 +22,13 @@ internal sealed class DeleteEldProviderConfigurationHandler(
             return Result.Fail("ELD provider configuration not found");
         }
 
-        // Delete related HOS statuses
+        // Delete the HOS statuses of the drivers this provider maps
+        var mappedEmployeeIds = (await tenantUow.Repository<EldDriverMapping>()
+                .GetListAsync(m => m.ProviderType == config.ProviderType, ct))
+            .Select(m => m.EmployeeId)
+            .ToList();
         var hosStatuses = await tenantUow.Repository<DriverHosStatus>()
-            .GetListAsync(h => h.ProviderType == config.ProviderType, ct);
+            .GetListAsync(h => mappedEmployeeIds.Contains(h.EmployeeId), ct);
 
         foreach (var hosStatus in hosStatuses)
         {

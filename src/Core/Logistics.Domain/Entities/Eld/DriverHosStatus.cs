@@ -9,13 +9,6 @@ public class DriverHosStatus : Entity, ITenantEntity
     public virtual Employee Employee { get; set; } = null!;
 
     /// <summary>
-    /// The driver's ID in the ELD provider's system
-    /// </summary>
-    public string? ExternalDriverId { get; set; }
-
-    public EldProviderType ProviderType { get; set; }
-
-    /// <summary>
     /// Current duty status of the driver
     /// </summary>
     public required DutyStatus CurrentDutyStatus { get; set; }

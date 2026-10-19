@@ -45,8 +45,7 @@ public static class EldMapper
             IsInViolation = entity.IsInViolation,
             IsAvailableForDispatch = entity.IsAvailableForDispatch(),
             LastUpdatedAt = entity.LastUpdatedAt,
-            NextMandatoryBreakAt = entity.NextMandatoryBreakAt,
-            ProviderType = entity.ProviderType
+            NextMandatoryBreakAt = entity.NextMandatoryBreakAt
         };
     }
 

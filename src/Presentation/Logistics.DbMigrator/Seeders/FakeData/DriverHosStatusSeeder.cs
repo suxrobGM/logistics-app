@@ -80,7 +80,6 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
         {
             EmployeeId = driver.Id,
             CurrentDutyStatus = DutyStatus.OnDutyNotDriving,
-            ProviderType = EldProviderType.Demo,
             StatusChangedAt = DateTime.UtcNow.AddMinutes(-random.Next(5, 60)),
             DrivingMinutesRemaining = drivingRemaining,
             OnDutyMinutesRemaining = onDutyRemaining,
@@ -100,7 +99,6 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
         {
             EmployeeId = driver.Id,
             CurrentDutyStatus = random.NextDouble() < 0.5 ? DutyStatus.Driving : DutyStatus.OnDutyNotDriving,
-            ProviderType = EldProviderType.Demo,
             StatusChangedAt = DateTime.UtcNow.AddMinutes(-random.Next(30, 180)),
             DrivingMinutesRemaining = drivingRemaining,
             OnDutyMinutesRemaining = onDutyRemaining,
@@ -120,7 +118,6 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
         {
             EmployeeId = driver.Id,
             CurrentDutyStatus = DutyStatus.OnDutyNotDriving,
-            ProviderType = EldProviderType.Demo,
             StatusChangedAt = DateTime.UtcNow.AddMinutes(-random.Next(5, 30)),
             DrivingMinutesRemaining = drivingRemaining,
             OnDutyMinutesRemaining = onDutyRemaining,
@@ -138,7 +135,6 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
         {
             EmployeeId = driver.Id,
             CurrentDutyStatus = random.NextDouble() < 0.5 ? DutyStatus.OffDuty : DutyStatus.SleeperBerth,
-            ProviderType = EldProviderType.Demo,
             StatusChangedAt = DateTime.UtcNow.AddHours(-random.Next(1, 8)),
             DrivingMinutesRemaining = 660, // Full 11 hours (resting)
             OnDutyMinutesRemaining = 840,  // Full 14 hours
@@ -155,7 +151,6 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
         {
             EmployeeId = driver.Id,
             CurrentDutyStatus = DutyStatus.Driving,
-            ProviderType = EldProviderType.Demo,
             StatusChangedAt = DateTime.UtcNow.AddMinutes(-random.Next(10, 60)),
             DrivingMinutesRemaining = 0,
             OnDutyMinutesRemaining = random.Next(0, 30),

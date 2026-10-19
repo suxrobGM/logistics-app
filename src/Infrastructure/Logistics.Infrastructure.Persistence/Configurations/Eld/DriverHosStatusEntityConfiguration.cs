@@ -17,8 +17,5 @@ internal sealed class DriverHosStatusEntityConfiguration : IEntityTypeConfigurat
             .WithMany()
             .HasForeignKey(i => i.EmployeeId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Property(i => i.ExternalDriverId)
-            .HasMaxLength(100);
     }
 }

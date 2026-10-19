@@ -21,7 +21,7 @@ internal sealed class DeleteEldDriverMappingHandler(ITenantUnitOfWork tenantUow)
 
         // Also delete associated HOS status if exists
         var hosStatus = await tenantUow.Repository<DriverHosStatus>()
-            .GetAsync(h => h.EmployeeId == mapping.EmployeeId && h.ProviderType == mapping.ProviderType, ct);
+            .GetAsync(h => h.EmployeeId == mapping.EmployeeId, ct);
 
         if (hosStatus is not null)
         {

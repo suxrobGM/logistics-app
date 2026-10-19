@@ -132,8 +132,6 @@ internal sealed class EldSyncService(
             status = new DriverHosStatus
             {
                 EmployeeId = mapping.EmployeeId,
-                ExternalDriverId = mapping.ExternalDriverId,
-                ProviderType = mapping.ProviderType,
                 CurrentDutyStatus = hosData.CurrentDutyStatus,
                 StatusChangedAt = hosData.StatusChangedAt ?? now
             };

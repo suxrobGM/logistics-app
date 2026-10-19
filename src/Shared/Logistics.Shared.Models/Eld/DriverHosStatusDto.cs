@@ -24,6 +24,4 @@ public record DriverHosStatusDto
 
     public DateTime LastUpdatedAt { get; set; }
     public DateTime? NextMandatoryBreakAt { get; set; }
-
-    public EldProviderType ProviderType { get; set; }
 }
