@@ -11,7 +11,7 @@ namespace Logistics.Infrastructure.AI.Agents;
 /// Rebuilds the LLM messages from the stored transcript. A pure function of the rows, so
 /// consecutive turns replay identical bytes and keep hitting the prompt cache.
 /// </summary>
-internal static class AgentTranscriptReplay
+internal sealed class AgentTranscriptLoader(ITenantUnitOfWork tenantUow)
 {
     /// <summary>Rows replayed at most, give or take one turn - see <see cref="WindowStart"/>.</summary>
     internal const int MaxTranscriptMessages = 40;
@@ -31,8 +31,7 @@ internal static class AgentTranscriptReplay
     internal const string OmittedHistoryNote = "[Earlier conversation omitted.]";
 
     /// <summary>Queries the window - the <c>Messages</c> navigation would lazy-load every row.</summary>
-    public static async Task<List<LlmMessage>> LoadAsync(
-        ITenantUnitOfWork tenantUow, AgentConversation conversation, CancellationToken ct)
+    public async Task<List<LlmMessage>> LoadAsync(AgentConversation conversation, CancellationToken ct)
     {
         var rows = tenantUow.Repository<AgentMessage>().Query()
             .Where(m => m.ConversationId == conversation.Id);

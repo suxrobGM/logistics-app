@@ -56,7 +56,7 @@ public class AIDispatchConversationBuilderTests
         var sessionSetup = new LlmSessionSetup(
             _featureService, providerFactory, modelResolver, _systemSettings, _tenantUow);
 
-        _sut = new AIDispatchConversationBuilder(_toolRegistry, sessionSetup, _tenantUow, _logger);
+        _sut = new AIDispatchConversationBuilder(_toolRegistry, sessionSetup, _tenantUow, new AgentTranscriptLoader(_tenantUow), _logger);
     }
 
     private static LlmOptions ValidConfig => new()
@@ -275,7 +275,7 @@ public class AIDispatchConversationBuilderTests
         var llmConversation = await _sut.BuildAsync(session, conversation, ValidConfig, CancellationToken.None);
 
         var stamp = Assert.IsType<LlmTextBlock>(llmConversation.Messages[^1].Content[0]);
-        Assert.Equal(AgentTranscriptReplay.SentStamp(sentAt), stamp.Text);
+        Assert.Equal(AgentTranscriptLoader.SentStamp(sentAt), stamp.Text);
         Assert.DoesNotContain(DateTime.UtcNow.ToString("yyyy-MM-dd"), llmConversation.SystemPrompt);
     }
 

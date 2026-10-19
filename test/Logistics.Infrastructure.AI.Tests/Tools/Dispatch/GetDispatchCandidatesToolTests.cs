@@ -36,7 +36,7 @@ public class GetDispatchCandidatesToolTests
         _tenantUow.Repository<DriverHosStatus>().Returns(_hosRepo);
         _tenantUow.Repository<Employee>().Returns(_employeeRepo);
         _tenantUow.GetCurrentTenant().Returns(TestTenants.Create());
-        _sut = new GetDispatchCandidatesTool(_mediator, _tenantUow, _eligibility);
+        _sut = new GetDispatchCandidatesTool(_mediator, _tenantUow, _eligibility, new AvailableTruckLoader(_tenantUow));
     }
 
     private static LoadDto Load(LoadType type = LoadType.GeneralFreight, double distanceMeters = 400_000)

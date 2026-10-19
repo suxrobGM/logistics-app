@@ -42,7 +42,7 @@ Dispatch is a **tenant-shared, multi-turn conversation** - any user with `Permis
 can open and read one; anyone with `Permission.Dispatch.Manage` can send messages, cancel a running
 turn, rename, or delete. It reuses the same conversation/turn machinery as the
 [AI copilot](ai-copilot.md) (`AgentConversation`/`AgentMessage`, `AgentTurnService`,
-`AgentTranscriptReplay`), scoped by `AgentConversationKind.Dispatch` - a dispatch conversation never
+`AgentTranscriptLoader`), scoped by `AgentConversationKind.Dispatch` - a dispatch conversation never
 leaks into the copilot's per-user list, and vice versa.
 
 Every row a person caused carries that person on `AgentMessage.SentByUserId` - the dispatcher who
@@ -286,7 +286,7 @@ src/Infrastructure/Logistics.Infrastructure.AI/
 │   ├── AgentLoopRunner.cs                  # The 25-iteration loop, retries, token accounting
 │   ├── AgentDecisionProcessor.cs           # Tool call → decision entity, execute vs suggest
 │   ├── AgentTranscriptCodec.cs             # Content-block <-> JSON wire encoding
-│   ├── AgentTranscriptReplay.cs            # Shared replay/truncation, both surfaces
+│   ├── AgentTranscriptLoader.cs            # Shared replay/truncation, both surfaces
 │   ├── AgentSessionCancellationRegistry.cs # Process-local cancellation, wall-clock deadline
 │   ├── AgentOverageReporter.cs             # Meters a session past budget to Stripe
 │   ├── LlmSessionSetup.cs                  # Model + provider + tenant features, once per run

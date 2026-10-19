@@ -93,7 +93,7 @@ the loop.
 
 **Keep every request append-only and deterministic.** The cache, and Anthropic's preserved-thinking
 check, compare the prefix byte for byte. So: no date or per-request text in a system prompt (the
-time comes from `AgentTranscriptReplay.SentStamp`), no in-memory notes added to a replayed message,
+time comes from `AgentTranscriptLoader.SentStamp`), no in-memory notes added to a replayed message,
 and the replay window moves in `WindowStep` jumps. History may only change at the start of a turn,
 when no thinking block exists yet - that is why earlier turns' large tool results can be stubbed.
 

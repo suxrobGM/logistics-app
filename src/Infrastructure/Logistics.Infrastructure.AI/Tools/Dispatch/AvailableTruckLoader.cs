@@ -8,12 +8,11 @@ internal sealed record AvailableTruck(Truck Truck, Employee? Driver, DriverHosSt
 
 /// <summary>
 /// Available trucks with driver, HOS row and hooked trailer. Each is a lazy navigation, so they are
-/// batch-read rather than queried per truck. A main driver who is not Active is left out, so the truck
-/// reads as driverless.
+/// batch-read rather than queried per truck.
 /// </summary>
-internal static class AvailableFleet
+internal sealed class AvailableTruckLoader(ITenantUnitOfWork tenantUow)
 {
-    public static async Task<List<AvailableTruck>> LoadAsync(ITenantUnitOfWork tenantUow, CancellationToken ct)
+    public async Task<List<AvailableTruck>> LoadAsync(CancellationToken ct)
     {
         var trucks = await tenantUow.Repository<Truck>()
             .GetListAsync(t => t.Status == TruckStatus.Available, ct);

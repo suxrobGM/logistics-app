@@ -36,7 +36,7 @@ public class GetAvailableTrucksToolTests
         _tenantUow.Repository<Trip>().Returns(_tripRepo);
         _tenantUow.Repository<DriverHosStatus>().Returns(_hosRepo);
         _tenantUow.Repository<Employee>().Returns(_employeeRepo);
-        _sut = new GetAvailableTrucksTool(_tenantUow);
+        _sut = new GetAvailableTrucksTool(_tenantUow, new AvailableTruckLoader(_tenantUow));
     }
 
     private static Employee Driver(Guid id) => new()

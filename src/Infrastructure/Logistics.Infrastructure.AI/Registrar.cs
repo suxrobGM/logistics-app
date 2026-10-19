@@ -6,6 +6,7 @@ using Logistics.Infrastructure.AI.Agents;
 using Logistics.Infrastructure.AI.Agents.Copilot;
 using Logistics.Infrastructure.AI.Agents.Dispatch;
 using Logistics.Infrastructure.AI.Tools;
+using Logistics.Infrastructure.AI.Tools.Dispatch;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Abstractions.AIDispatch;
@@ -52,6 +53,8 @@ public static class Registrar
         services.AddSingleton<IAgentToolRegistry, AgentToolRegistry>();
 
         services.AddScoped<AgentTurnService>();
+        services.AddScoped<AgentTranscriptLoader>();
+        services.AddScoped<AvailableTruckLoader>();
 
         services.AddScoped<IAIDispatchService, AIDispatchService>();
         services.AddScoped<DispatchAgentSurface>();

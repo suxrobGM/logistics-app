@@ -41,7 +41,7 @@ copilot-only types:
 - `AgentMessage` (`agent_messages`): sequenced rows storing the provider content blocks as JSON
   (`ContentJson`, including `tool_use` ids so the exact sequence replays) plus a `DisplayText` the
   UI renders. Tool-result rows have no `DisplayText` and never leave the server.
-- Replay (`AgentTranscriptReplay.LoadAsync`, shared with the dispatch builder) loads its window in
+- Replay (`AgentTranscriptLoader.LoadAsync`, shared with the dispatch builder) loads its window in
   SQL - never through the `Messages` navigation, which would lazy-load the whole transcript. The
   window is about the last 40 rows; its start moves in steps of 20 so the replayed prefix (and the
   provider's prompt cache) holds still between steps, and it cuts only at a plain user chat

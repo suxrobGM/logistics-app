@@ -17,7 +17,8 @@ namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 internal sealed class GetDispatchCandidatesTool(
     IMediator mediator,
     ITenantUnitOfWork tenantUow,
-    IDispatchEligibilityService eligibilityService)
+    IDispatchEligibilityService eligibilityService,
+    AvailableTruckLoader truckLoader)
     : AgentTool<GetDispatchCandidatesTool.Input>, IAgentToolMetadata
 {
     private const int DefaultLimit = 3;
@@ -49,7 +50,7 @@ internal sealed class GetDispatchCandidatesTool(
 
         var loads = result.Value?.ToList() ?? [];
 
-        var fleet = await AvailableFleet.LoadAsync(tenantUow, ct);
+        var fleet = await truckLoader.LoadAsync(ct);
         var unit = tenantUow.GetCurrentTenant().Settings.DistanceUnit;
         var limit = Math.Clamp(input.Limit ?? DefaultLimit, 1, MaxLimit);
 

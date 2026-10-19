@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.AI.Tools.Dispatch;
 
-internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
+internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow, AvailableTruckLoader truckLoader)
     : AgentTool<NoToolInput>, IAgentToolMetadata
 {
     public static AgentToolDefinition Definition => new(
@@ -20,7 +20,7 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow)
 
     protected override async Task<string> ExecuteAsync(NoToolInput input, CancellationToken ct)
     {
-        var fleet = await AvailableFleet.LoadAsync(tenantUow, ct);
+        var fleet = await truckLoader.LoadAsync(ct);
 
         var totalTrucks = await tenantUow.Repository<Truck>().CountAsync(ct: ct);
         var activeTrips = await tenantUow.Repository<Trip>()

@@ -89,7 +89,8 @@ public class AIDispatchServiceTests
         _tenantUow.Repository<AIDispatchPolicy>().Returns(policyRepo);
 
         var conversationBuilder = new AIDispatchConversationBuilder(
-            toolRegistry, sessionSetup, _tenantUow, NullLogger<AIDispatchConversationBuilder>.Instance);
+            toolRegistry, sessionSetup, _tenantUow, new AgentTranscriptLoader(_tenantUow),
+            NullLogger<AIDispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IAgentToolExecutor>();
         var decisionProcessor = new AgentDecisionProcessor(

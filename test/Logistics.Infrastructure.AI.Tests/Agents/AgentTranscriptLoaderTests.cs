@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Logistics.Infrastructure.AI.Tests.Agents;
 
-public class AgentTranscriptReplayTests
+public class AgentTranscriptLoaderTests
 {
     private readonly ITenantUnitOfWork _tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly ITenantRepository<AgentMessage, Guid> _messageRepo =
@@ -17,7 +17,7 @@ public class AgentTranscriptReplayTests
     private readonly AgentConversation _conversation = new() { Kind = AgentConversationKind.Dispatch };
     private readonly List<AgentMessage> _rows = [];
 
-    public AgentTranscriptReplayTests()
+    public AgentTranscriptLoaderTests()
     {
         _tenantUow.Repository<AgentMessage>().Returns(_messageRepo);
         _messageRepo.Query().Returns(_ => _rows.BuildMock());
@@ -37,7 +37,7 @@ public class AgentTranscriptReplayTests
     }
 
     private Task<List<LlmMessage>> Load() =>
-        AgentTranscriptReplay.LoadAsync(_tenantUow, _conversation, CancellationToken.None);
+        new AgentTranscriptLoader(_tenantUow).LoadAsync(_conversation, CancellationToken.None);
 
     #region Window
 
@@ -49,7 +49,7 @@ public class AgentTranscriptReplayTests
     [InlineData(61, 41)] // ...then jumps, instead of sliding one row per turn
     public void WindowStart_MovesInWholeSteps(int lastSequence, int expected)
     {
-        Assert.Equal(expected, AgentTranscriptReplay.WindowStart(lastSequence));
+        Assert.Equal(expected, AgentTranscriptLoader.WindowStart(lastSequence));
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class AgentTranscriptReplayTests
 
         var first = messages[0];
         Assert.Equal(LlmRole.User, first.Role);
-        Assert.Equal(AgentTranscriptReplay.OmittedHistoryNote, Assert.IsType<LlmTextBlock>(first.Content[0]).Text);
+        Assert.Equal(AgentTranscriptLoader.OmittedHistoryNote, Assert.IsType<LlmTextBlock>(first.Content[0]).Text);
         Assert.DoesNotContain(first.Content, b => b is LlmToolResultBlock);
         Assert.True(messages.Count < _rows.Count);
     }
@@ -81,7 +81,7 @@ public class AgentTranscriptReplayTests
 
         Assert.Equal(3, messages.Count);
         Assert.DoesNotContain(messages.SelectMany(m => m.Content),
-            b => b is LlmTextBlock { Text: AgentTranscriptReplay.OmittedHistoryNote });
+            b => b is LlmTextBlock { Text: AgentTranscriptLoader.OmittedHistoryNote });
     }
 
     #endregion
@@ -92,11 +92,11 @@ public class AgentTranscriptReplayTests
     public async Task Load_LargeToolResultFromAnEarlierTurn_ReplaysAsAStub()
     {
         UserMessage("plan");
-        ToolRound(new string('x', AgentTranscriptReplay.MaxReplayedToolResultChars + 1));
+        ToolRound(new string('x', AgentTranscriptLoader.MaxReplayedToolResultChars + 1));
 
         var result = (await Load()).SelectMany(m => m.Content).OfType<LlmToolResultBlock>().Single();
 
-        Assert.Equal(AgentTranscriptReplay.OmittedToolResult, result.Content);
+        Assert.Equal(AgentTranscriptLoader.OmittedToolResult, result.Content);
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public class AgentTranscriptReplayTests
 
         var messages = await Load();
 
-        Assert.Equal(AgentTranscriptReplay.SentStamp(_rows[0].CreatedAt),
+        Assert.Equal(AgentTranscriptLoader.SentStamp(_rows[0].CreatedAt),
             Assert.IsType<LlmTextBlock>(messages[0].Content[0]).Text);
         Assert.IsType<LlmToolResultBlock>(Assert.Single(messages[2].Content));
     }

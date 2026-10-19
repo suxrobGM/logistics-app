@@ -20,6 +20,7 @@ internal sealed class AIDispatchConversationBuilder(
     IAgentToolRegistry toolRegistry,
     LlmSessionSetup sessionSetup,
     ITenantUnitOfWork tenantUow,
+    AgentTranscriptLoader transcriptLoader,
     ILogger<AIDispatchConversationBuilder> logger)
 {
     public async Task<LlmConversation> BuildAsync(
@@ -59,7 +60,7 @@ internal sealed class AIDispatchConversationBuilder(
             "Dispatch turn {SessionId} initialized with {ToolCount} tools, model {Model}, provider {Provider}",
             session.Id, tools.Count, model, resolvedProvider);
 
-        var messages = await AgentTranscriptReplay.LoadAsync(tenantUow, conversation, ct);
+        var messages = await transcriptLoader.LoadAsync(conversation, ct);
 
         return new LlmConversation(
             setup.Provider, systemPrompt, messages, tools, model, config.MaxTokens, setup.Effort);
