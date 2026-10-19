@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
 
-internal sealed class UpdateLaneRateFloorHandler(ITenantUnitOfWork tenantUow)
+internal sealed class UpdateLaneRateFloorHandler(ITenantUnitOfWork tenantUow, ILaneRateFloorDuplicateChecker duplicateChecker)
     : IRequestHandler<UpdateLaneRateFloorCommand, Result>
 {
     public async Task<Result> Handle(UpdateLaneRateFloorCommand req, CancellationToken ct)
@@ -18,8 +18,8 @@ internal sealed class UpdateLaneRateFloorHandler(ITenantUnitOfWork tenantUow)
             return Result.Fail($"Could not find a lane rate floor with ID '{req.Id}'");
         }
 
-        var conflict = await LaneRateFloorUniqueness.FindConflictAsync(
-            tenantUow, LaneKey.Country(req.OriginCountry), LaneKey.State(req.OriginState),
+        var conflict = await duplicateChecker.FindConflictAsync(
+            LaneKey.Country(req.OriginCountry), LaneKey.State(req.OriginState),
             LaneKey.Country(req.DestinationCountry), LaneKey.State(req.DestinationState), req.Id, ct);
 
         if (conflict is not null)

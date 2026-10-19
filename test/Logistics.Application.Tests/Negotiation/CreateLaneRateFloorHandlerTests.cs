@@ -18,7 +18,7 @@ public class CreateLaneRateFloorHandlerTests
     public CreateLaneRateFloorHandlerTests()
     {
         _tenantUow.Repository<LaneRateFloor>().Returns(_floorRepo);
-        _sut = new CreateLaneRateFloorHandler(_tenantUow);
+        _sut = new CreateLaneRateFloorHandler(_tenantUow, new LaneRateFloorDuplicateChecker(_tenantUow));
     }
 
     private static CreateLaneRateFloorCommand Command() => new()

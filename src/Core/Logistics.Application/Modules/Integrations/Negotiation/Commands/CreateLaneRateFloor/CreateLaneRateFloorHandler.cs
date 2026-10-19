@@ -6,15 +6,15 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.Negotiation.Commands;
 
-internal sealed class CreateLaneRateFloorHandler(ITenantUnitOfWork tenantUow)
+internal sealed class CreateLaneRateFloorHandler(ITenantUnitOfWork tenantUow, ILaneRateFloorDuplicateChecker duplicateChecker)
     : IRequestHandler<CreateLaneRateFloorCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateLaneRateFloorCommand req, CancellationToken ct)
     {
         var floor = req.ToEntity();
 
-        var conflict = await LaneRateFloorUniqueness.FindConflictAsync(
-            tenantUow, floor.OriginCountry, floor.OriginState,
+        var conflict = await duplicateChecker.FindConflictAsync(
+            floor.OriginCountry, floor.OriginState,
             floor.DestinationCountry, floor.DestinationState, excludeId: null, ct);
 
         if (conflict is not null)
