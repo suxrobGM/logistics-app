@@ -4,6 +4,7 @@ using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Mediator;
 using Logistics.Shared.Models;
 
@@ -41,17 +42,24 @@ internal sealed class UpdateLoadHandler(
             await UpdateCustomerIfUpdated(req, load);
 
             load.Name = PropertyUpdater.UpdateIfChanged(req.Name, load.Name);
+
+            var routeBefore = Route(load);
             load.OriginAddress = PropertyUpdater.UpdateIfChanged(req.OriginAddress, load.OriginAddress);
             load.OriginLocation = PropertyUpdater.UpdateIfChanged(req.OriginLocation, load.OriginLocation);
             load.DestinationAddress = PropertyUpdater.UpdateIfChanged(req.DestinationAddress, load.DestinationAddress);
             load.DestinationLocation = PropertyUpdater.UpdateIfChanged(req.DestinationLocation, load.DestinationLocation);
+            load.Distance = PropertyUpdater.UpdateIfChanged(req.Distance, load.Distance);
+
+            if (Route(load) != routeBefore)
+            {
+                load.RefreshTripStops();
+            }
 
             if (req.DeliveryCost is not null && req.DeliveryCost != load.DeliveryCost.Amount)
             {
                 load.DeliveryCost = new() { Amount = req.DeliveryCost.Value, Currency = load.DeliveryCost.Currency };
             }
 
-            load.Distance = PropertyUpdater.UpdateIfChanged(req.Distance, load.Distance);
             load.Type = PropertyUpdater.UpdateIfChanged(req.Type, load.Type);
             load.Source = PropertyUpdater.UpdateIfChanged(req.Source, load.Source);
             load.Notes = PropertyUpdater.UpdateIfChanged(req.Notes, load.Notes);
@@ -117,6 +125,9 @@ internal sealed class UpdateLoadHandler(
         load.FuelSurcharge,
         .. load.Accessorials.Select(a => (a.Id, a.Name, a.LineItemType, a.Rate, a.Quantity))
     ];
+
+    private static (Address, GeoPoint, Address, GeoPoint, double) Route(Load load) =>
+        (load.OriginAddress, load.OriginLocation, load.DestinationAddress, load.DestinationLocation, load.Distance);
 
     private async Task ApplyShipmentChangesAsync(UpdateLoadCommand req, Load load, CancellationToken ct)
     {

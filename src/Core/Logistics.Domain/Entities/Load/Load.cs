@@ -152,6 +152,32 @@ public partial class Load : AuditableEntity, ITenantEntity
     /// </summary>
     public string? ExternalBrokerReference { get; set; }
 
+    /// <summary>
+    /// Copies the origin onto this load's pickup stops and the destination onto its drop-off stops, and re-sums
+    /// each trip's distance from its loads. Call it after the load's addresses, locations or distance change.
+    /// </summary>
+    public void RefreshTripStops()
+    {
+        foreach (var stop in TripStops)
+        {
+            if (stop.Type == TripStopType.PickUp)
+            {
+                stop.Address = OriginAddress;
+                stop.Location = OriginLocation;
+            }
+            else
+            {
+                stop.Address = DestinationAddress;
+                stop.Location = DestinationLocation;
+            }
+        }
+
+        foreach (var trip in TripStops.Select(s => s.Trip).Distinct())
+        {
+            trip.TotalDistance = trip.GetLoads().Sum(l => l.Distance);
+        }
+    }
+
     public bool IsDrivenBy(Guid driverId)
     {
         return AssignedTruck?.IsDrivenBy(driverId) == true;

@@ -183,6 +183,33 @@ public class UpdateLoadHandlerTests
 
     #endregion
 
+    #region Route
+
+    [Fact]
+    public async Task Handle_RouteChanged_MovesTheTripStopsAndResumsTheTripDistance()
+    {
+        var load = Load(LoadType.GeneralFreight);
+        load.Distance = 1000;
+        var trip = Trip.Create("Trip", null, [load], optimizedTotalDistance: 900);
+        load.TripStops.Add(trip.Stops[0]);
+        load.TripStops.Add(trip.Stops[1]);
+        var origin = new Address { Line1 = "9 Elm", City = "Austin", State = "TX", ZipCode = "73301", Country = "US" };
+        var destination = new GeoPoint(-97.7, 30.3);
+
+        await Update(new UpdateLoadCommand
+        {
+            Id = load.Id, OriginAddress = origin, DestinationLocation = destination, Distance = 2500
+        });
+
+        var pickup = trip.Stops.Single(s => s.Type == TripStopType.PickUp);
+        var dropOff = trip.Stops.Single(s => s.Type == TripStopType.DropOff);
+        Assert.Equal(origin, pickup.Address);
+        Assert.Equal(destination, dropOff.Location);
+        Assert.Equal(2500, trip.TotalDistance);
+    }
+
+    #endregion
+
     private Task<Result> Update(UpdateLoadCommand command) => _sut.Handle(command, CancellationToken.None);
 
     private Load Load(LoadType type)
