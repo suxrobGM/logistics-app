@@ -9,6 +9,7 @@ using Logistics.Infrastructure.Persistence.Options;
 using Logistics.Shared.Identity.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Infrastructure.Persistence.Services;
@@ -137,7 +138,7 @@ internal class CurrentTenantAccessor(
     {
         // Safe defaults for non-HTTP scenarios (jobs, migrations, etc.)
         // Note: "us" matches the demo seed tenant slug; the runtime fallback resolves
-        // to that DB via TenantDbContextOptions.ConnectionString.
+        // to the database named in TenantDbContextOptions.ConnectionString.
         return new Tenant
         {
             Name = "us",
@@ -150,8 +151,8 @@ internal class CurrentTenantAccessor(
                 ZipCode = "02125",
                 Country = "US"
             },
-            ConnectionString = dbContextContextOptions?.ConnectionString
-                               ?? ConnectionStrings.LocalDefaultTenant
+            DatabaseName = new NpgsqlConnectionStringBuilder(dbContextContextOptions?.ConnectionString
+                ?? ConnectionStrings.LocalDefaultTenant).Database!
         };
     }
 

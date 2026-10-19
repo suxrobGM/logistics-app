@@ -62,7 +62,7 @@ public class TenantSentryEventProcessorTests
     {
         Name = "acme",
         BillingEmail = "billing@acme.test",
-        ConnectionString = "Host=localhost",
+        DatabaseName = "test",
         CompanyAddress = new Address { Line1 = "1 Main St", City = "Boston", State = "MA", ZipCode = "02101", Country = "US" }
     };
 }

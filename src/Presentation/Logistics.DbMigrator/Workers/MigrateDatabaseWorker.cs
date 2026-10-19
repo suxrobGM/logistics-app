@@ -23,11 +23,7 @@ public class MigrateDatabaseWorker(
         await grantDb.Database.MigrateAsync(cancellationToken);
         logger.LogInformation("Identity operational store migrated successfully");
 
-        // Query all tenants with valid connection strings from the master database
-        var tenants = await masterDb.Set<Tenant>()
-            .Where(t => t.ConnectionString != null && t.ConnectionString != "")
-            .Select(t => new { t.Name, t.ConnectionString })
-            .ToListAsync(cancellationToken);
+        var tenants = await masterDb.Set<Tenant>().ToListAsync(cancellationToken);
 
         logger.LogInformation("Found {Count} tenant database(s) to migrate", tenants.Count);
 
@@ -39,7 +35,7 @@ public class MigrateDatabaseWorker(
             {
                 using var tenantScope = scopeFactory.CreateScope();
                 var tenantDb = tenantScope.ServiceProvider.GetRequiredService<TenantDbContext>();
-                tenantDb.Database.SetConnectionString(tenant.ConnectionString);
+                tenantDb.SwitchToTenant(tenant);
 
                 logger.LogInformation("Applying migrations to tenant '{TenantName}'...", tenant.Name);
                 await tenantDb.Database.MigrateAsync(cancellationToken);

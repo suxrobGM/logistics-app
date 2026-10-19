@@ -37,16 +37,12 @@ Production uses an external (installed) PostgreSQL instance instead of a contain
 ```bash
 ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
 ConnectionStrings__USTenantDatabase="Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=your-secure-password"
-ConnectionStrings__EUTenantDatabase="Host=localhost;Port=5432;Database=eu_logisticsx;Username=postgres;Password=your-secure-password"
-#ConnectionStrings__SoloTenantDatabase="Host=localhost;Port=5432;Database=solo_logisticsx;Username=postgres;Password=your-secure-password"
 ```
 
 | Variable | Description |
 | --- | --- |
 | `ConnectionStrings__MasterDatabase` | Full connection string for the master database |
 | `ConnectionStrings__USTenantDatabase` | Fallback tenant database the API registers `TenantDbContext` with |
-| `ConnectionStrings__EUTenantDatabase` | EU demo tenant database - read by the migrator only |
-| `ConnectionStrings__SoloTenantDatabase` | Optional. Owner-operator demo tenant - only needed if `solo` is seeded |
 
 ### Stripe Integration
 
@@ -163,7 +159,7 @@ TenantDatabaseDefaults__Password="your-secure-tenant-db-password"
 | Variable | Description |
 | --- | --- |
 | `SuperAdmin__*` | Initial super admin account credentials (synced on each run) |
-| `TenantDatabaseDefaults__Password` | Password used when provisioning new tenant databases |
+| `TenantDatabaseDefaults__Password` | Password for every tenant database. A tenant stores only its database name; host, port and credentials come from `TenantDatabaseDefaults__*` (API, Identity Server and migrator) |
 
 #### Running the migrator against production
 
@@ -187,7 +183,7 @@ The script (PowerShell 5.1 compatible, resolves everything from its own folder):
    the migrator's exit code.
 
 Because it reads `.env`, the production values for `ConnectionStrings__MasterDatabase`,
-`TenantDatabaseDefaults__*`, `SuperAdmin__*` and the `Tenants__N__ConnectionString` overrides
+`TenantDatabaseDefaults__*` and `SuperAdmin__*`
 below must all be present there - `.env.example` marks which ones the migrator needs.
 
 #### Demo tenants (`Tenants[]`)
@@ -205,30 +201,15 @@ get a new demo company; there is no other list to keep in sync.
 | `SeedDataKey` | no | Top-level section in `SeedData/*.json` this tenant draws its users and customers from. Defaults to the region name. **Two tenants in the same region need distinct keys** - see below. |
 | `Presets` | no | Tenant presets, e.g. `["GeneralFreight", "SoloOperator"]`. Empty means `GeneralFreight`. When the list changes, the next run re-applies the preset features. |
 | `DataScale` | no | Multiplier on the fake-data volumes. `1.0` (default) is the fleet-sized demo of 100 loads; `0.12` gives a one-truck tenant 12. Scaled counts never floor below 1. |
-| `ConnectionString` | no | Explicit connection string. When omitted, the seeder falls back to `ConnectionStrings:*TenantDatabase` - a region code stays uppercase (`us` -> `USTenantDatabase`), any other name is title-cased (`solo` -> `SoloTenantDatabase`). |
 
 `SeedDataKey` is load-bearing because a seed user belongs to exactly one tenant (`User.TenantId`).
 Two tenants sharing a key means the second run re-homes the first tenant's logins onto the second
 tenant. `us` and `eu` leave it unset and inherit their region names; `solo` sets `Solo`.
 
-In Docker the array is set through the double-underscore index form, and the index must match the
-tenant's position in `appsettings.json`:
-
-```yaml
-Tenants__0__ConnectionString: "Host=postgres;Port=5432;Database=us_logisticsx;Username=postgres;Password=Test12345#"
-Tenants__1__ConnectionString: "Host=postgres;Port=5432;Database=eu_logisticsx;Username=postgres;Password=Test12345#"
-Tenants__2__ConnectionString: "Host=postgres;Port=5432;Database=solo_logisticsx;Username=postgres;Password=Test12345#"
-```
-
-`Tenants__N__ConnectionString` wins over the `ConnectionStrings:*TenantDatabase` fallback, which
-is why `deploy/docker-compose.dev.yml` uses it: the containerized run needs `Host=postgres`, not the
-`Host=localhost` baked into `appsettings.json`.
-
-The same applies to a production run through `deploy/Run-ProdMigrator.ps1`. Every entry in the
-committed `Tenants[]` array carries an explicit `ConnectionString`, so setting
-`ConnectionStrings__*TenantDatabase` alone will **not** redirect the demo tenants - put
-`Tenants__0__ConnectionString` / `Tenants__1__ConnectionString` / `Tenants__2__ConnectionString`
-in `.env` (or drop the explicit strings from `appsettings.json`).
+A demo tenant's database name comes from `TenantDatabaseDefaults:NameTemplate`, and it is reached
+through `TenantDatabaseDefaults` like every other tenant. To point the migrator at another server,
+override `TenantDatabaseDefaults__Host` (and port or credentials) - `deploy/docker-compose.dev.yml`
+sets it to `postgres`.
 
 ### Commercial License
 

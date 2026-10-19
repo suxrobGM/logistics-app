@@ -142,7 +142,7 @@ public class VehicleBolPdfServiceTests
             Name = "acme",
             CompanyName = "Acme Auto Transport",
             CompanyAddress = Address(),
-            ConnectionString = "n/a",
+            DatabaseName = "test",
             BillingEmail = "billing@acme.test",
             DotNumber = "1234567"
         },

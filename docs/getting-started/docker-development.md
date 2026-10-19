@@ -40,7 +40,7 @@ From `deploy/docker-compose.dev.yml`:
 
 The migrator builds from `src/Presentation/Logistics.DbMigrator/Dockerfile` and creates the `master_logisticsx`, `us_logisticsx`, `eu_logisticsx`, and `solo_logisticsx` databases.
 
-Three demo tenants are seeded: `us` (Heartland Logistics LLC) and `eu` (EuroFreight GmbH) are fleets with 10 employees and 100 loads each; `solo` (Rodriguez Trucking LLC) runs in owner-operator mode with one person, one truck and 12 loads. Tenant metadata comes from the migrator's own `appsettings.json`; the compose file only overrides the connection strings, via `Tenants__N__ConnectionString` - the index has to match the tenant's position in that array. Adding a fourth tenant there means adding `Tenants__3__ConnectionString` here.
+Three demo tenants are seeded: `us` (Heartland Logistics LLC) and `eu` (EuroFreight GmbH) are fleets with 10 employees and 100 loads each; `solo` (Rodriguez Trucking LLC) runs in owner-operator mode with one person, one truck and 12 loads. Tenant metadata comes from the migrator's own `appsettings.json`; the compose file only points the master connection string and `TenantDatabaseDefaults__Host` at the `postgres` container.
 
 ## Service URLs
 

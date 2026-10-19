@@ -41,7 +41,7 @@ public class PayPayrollInvoiceHandlerTests
         _tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Name = "Test Tenant",
-            ConnectionString = "test",
+            DatabaseName = "test",
             BillingEmail = "test@test.com",
             CompanyAddress = new Address
             {

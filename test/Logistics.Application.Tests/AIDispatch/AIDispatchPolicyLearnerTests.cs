@@ -29,7 +29,7 @@ public class AIDispatchPolicyLearnerTests
         _tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Name = "Test Fleet",
-            ConnectionString = "test",
+            DatabaseName = "test",
             BillingEmail = "billing@test.com",
             CompanyAddress = new Address
             {

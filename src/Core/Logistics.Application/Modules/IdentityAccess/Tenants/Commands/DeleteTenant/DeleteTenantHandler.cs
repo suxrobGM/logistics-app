@@ -26,7 +26,7 @@ internal sealed class DeleteTenantHandler(
             return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
         }
 
-        var isDeleted = await _tenantDatabase.DeleteDatabaseAsync(tenant.ConnectionString!);
+        var isDeleted = await _tenantDatabase.DeleteDatabaseAsync(tenant.DatabaseName);
 
         if (!isDeleted)
         {

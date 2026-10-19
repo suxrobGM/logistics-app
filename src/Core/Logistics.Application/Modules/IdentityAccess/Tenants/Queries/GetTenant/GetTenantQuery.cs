@@ -6,5 +6,4 @@ public sealed class GetTenantQuery : IQuery<Result<TenantDto>>
 {
     public Guid? Id { get; set; }
     public string? Name { get; set; }
-    public bool IncludeConnectionString { get; set; }
 }

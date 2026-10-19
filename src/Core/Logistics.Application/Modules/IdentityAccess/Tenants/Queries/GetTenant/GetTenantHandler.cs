@@ -23,7 +23,7 @@ internal sealed class GetTenantHandler(IMasterUnitOfWork masterUow, ITenantUnitO
         await tenantUow.SetCurrentTenantByIdAsync(tenantEntity.Id);
         var truckCount = await tenantUow.Repository<Truck>().CountAsync(ct: ct);
 
-        var tenantDto = tenantEntity.ToDto(req.IncludeConnectionString, truckCount);
+        var tenantDto = tenantEntity.ToDto(truckCount);
         return Result<TenantDto>.Ok(tenantDto);
     }
 }

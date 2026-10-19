@@ -19,7 +19,7 @@ internal partial class TenantDatabaseService(
     ILogger<TenantDatabaseService> logger)
     : ITenantDatabaseService
 {
-    public string GenerateConnectionString(string tenantName)
+    public string GenerateDatabaseName(string tenantName)
     {
         if (string.IsNullOrEmpty(databaseOptions.NameTemplate))
         {
@@ -27,17 +27,14 @@ internal partial class TenantDatabaseService(
                 "The NameTemplate is not defined in the TenantDatabaseDefaults appsettings.json section");
         }
 
-        var databaseName = TenantDatabaseNameRegex().Replace(databaseOptions.NameTemplate, tenantName);
-        var connectionString =
-            $"Host={databaseOptions.Host}; Database={databaseName}; Port={databaseOptions.Port}; Username={databaseOptions.UserId}; Password={databaseOptions.Password}";
-        return connectionString;
+        return TenantDatabaseNameRegex().Replace(databaseOptions.NameTemplate, tenantName);
     }
 
-    public async Task<bool> CreateDatabaseAsync(string connectionString)
+    public async Task<bool> CreateDatabaseAsync(string databaseName)
     {
         try
         {
-            context.Database.SetConnectionString(connectionString);
+            context.Database.SetConnectionString(databaseOptions.BuildConnectionString(databaseName));
             await context.Database.MigrateAsync();
             await AddTenantRoles();
             return true;
@@ -49,34 +46,23 @@ internal partial class TenantDatabaseService(
         }
     }
 
-    public async Task<bool> DeleteDatabaseAsync(string connectionString)
+    public async Task<bool> DeleteDatabaseAsync(string databaseName)
     {
         try
         {
-            var sourceBuilder = new NpgsqlConnectionStringBuilder(connectionString);
-            var targetDbName = sourceBuilder.Database;
-
-            var masterBuilder = new NpgsqlConnectionStringBuilder
-            {
-                Host = sourceBuilder.Host,
-                Port = sourceBuilder.Port,
-                Username = sourceBuilder.Username,
-                Password = sourceBuilder.Password,
-                Database = "postgres"
-            };
-
-            await using var connection = new NpgsqlConnection(masterBuilder.ConnectionString);
+            await using var connection = new NpgsqlConnection(databaseOptions.BuildConnectionString("postgres"));
             await connection.OpenAsync();
 
             // Terminate all active connections to the target database before dropping
             await using (var terminateCmd = new NpgsqlCommand(
-                $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{targetDbName}' AND pid <> pg_backend_pid()",
+                "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = @name AND pid <> pg_backend_pid()",
                 connection))
             {
+                terminateCmd.Parameters.AddWithValue("name", databaseName);
                 await terminateCmd.ExecuteNonQueryAsync();
             }
 
-            await using var dropCmd = new NpgsqlCommand($"DROP DATABASE IF EXISTS \"{targetDbName}\"", connection);
+            await using var dropCmd = new NpgsqlCommand($"DROP DATABASE IF EXISTS \"{databaseName}\"", connection);
             await dropCmd.ExecuteNonQueryAsync();
             return true;
         }

@@ -3,6 +3,7 @@ using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.DbMigrator.Services;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Persistence.Options;
 using Microsoft.AspNetCore.Identity;
@@ -14,7 +15,7 @@ namespace Logistics.DbMigrator.Workers;
 ///
 /// Pass 1 - global Infrastructure seeders run once against master DB
 ///          (roles, super admin, plans, Stripe, DemoTenantsSeeder which provisions tenants).
-/// Pass 2 - for each demo tenant, mutate the singleton TenantDbContextOptions.ConnectionString,
+/// Pass 2 - for each demo tenant, point the singleton TenantDbContextOptions.ConnectionString at its database,
 ///          open a fresh DI scope (which produces a TenantDbContext bound to that tenant's DB),
 ///          and run the tenant-scoped seeders (Infrastructure-tenant-scoped + all FakeData).
 /// </summary>
@@ -55,6 +56,7 @@ internal class SeederOrchestrationWorker(
 
         var masterRepo = rootScope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>().Repository<Tenant>();
         var tenantOptions = rootScope.ServiceProvider.GetRequiredService<TenantDbContextOptions>();
+        var databaseDefaults = rootScope.ServiceProvider.GetRequiredService<TenantDatabaseDefaults>();
         var regionFactory = rootScope.ServiceProvider.GetRequiredService<IRegionProfileFactory>();
 
         foreach (var tenantConfig in tenantConfigs)
@@ -67,9 +69,7 @@ internal class SeederOrchestrationWorker(
             }
 
             // Switch the singleton options so the next-built TenantDbContext targets this tenant.
-            // Source the connection string from the persisted Tenant entity, which holds whatever
-            // DemoTenantsSeeder resolved (explicit config or the WithReference fallback).
-            tenantOptions.ConnectionString = tenantEntity.ConnectionString;
+            tenantOptions.ConnectionString = databaseDefaults.BuildConnectionString(tenantEntity.DatabaseName);
 
             using var tenantScope = scopeFactory.CreateScope();
             var tenantContext = BuildContext(tenantScope, configuration);

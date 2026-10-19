@@ -25,12 +25,10 @@ public class TenantController(IMediator mediator) : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetTenantById(string identifier)
     {
-        var includeConnectionString = HttpContext.User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin);
         var result = await mediator.Send(new GetTenantQuery
         {
             Id = Guid.TryParse(identifier, out var id) ? id : null,
-            Name = identifier,
-            IncludeConnectionString = includeConnectionString
+            Name = identifier
         });
 
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
@@ -41,11 +39,6 @@ public class TenantController(IMediator mediator) : ControllerBase
     [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetTenantList([FromQuery] GetTenantsQuery query)
     {
-        if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin))
-        {
-            query.IncludeConnectionStrings = true;
-        }
-
         var result = await mediator.Send(query);
         return Ok(PagedResponse<TenantDto>.FromPagedResult(result, query.Page, query.PageSize));
     }

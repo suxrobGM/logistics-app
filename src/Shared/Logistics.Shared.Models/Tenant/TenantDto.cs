@@ -22,9 +22,6 @@ public record TenantDto
     public string? LogoUrl { get; set; }
     public string? PhoneNumber { get; set; }
 
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public string? ConnectionString { get; set; }
-
     public SubscriptionDto? Subscription { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

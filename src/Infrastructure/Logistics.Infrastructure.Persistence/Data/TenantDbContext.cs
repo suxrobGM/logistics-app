@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Options;
 using Logistics.Infrastructure.Persistence.Conventions;
 using Logistics.Infrastructure.Persistence.Extensions;
 using Logistics.Infrastructure.Persistence.Helpers;
@@ -19,6 +20,7 @@ public class TenantDbContext : DbContext
 
     private readonly DispatchDomainEventsInterceptor? _dispatchDomain;
     private readonly IDataProtectionProvider? _dataProtectionProvider;
+    private readonly TenantDatabaseDefaults? _databaseDefaults;
     private readonly ILogger<TenantDbContext>? _logger;
 
     public TenantDbContext(
@@ -26,11 +28,13 @@ public class TenantDbContext : DbContext
         DispatchDomainEventsInterceptor? dispatchDomain = null,
         AuditableEntitySaveChangesInterceptor? auditableEntity = null,
         IDataProtectionProvider? dataProtectionProvider = null,
+        TenantDatabaseDefaults? databaseDefaults = null,
         ILogger<TenantDbContext>? logger = null)
     {
         _dispatchDomain = dispatchDomain;
         _auditableEntity = auditableEntity;
         _dataProtectionProvider = dataProtectionProvider;
+        _databaseDefaults = databaseDefaults;
         _logger = logger;
 
         _defaultConnectionString = tenantDbContextOptions?.ConnectionString
@@ -43,11 +47,18 @@ public class TenantDbContext : DbContext
     ///     Switch the underlying connection to a tenant-specific database.
     ///     Call this BEFORE the first query or SaveChanges.
     /// </summary>
-    /// <param name="tenant">The tenant to switch to, containing the connection string. </param>
+    /// <param name="tenant">The tenant to switch to; its database is reached with the configured defaults.</param>
     public void SwitchToTenant(Tenant tenant)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(tenant.ConnectionString);
-        Database.SetConnectionString(tenant.ConnectionString); // EF Core runtime retargeting
+        ArgumentException.ThrowIfNullOrWhiteSpace(tenant.DatabaseName);
+
+        if (_databaseDefaults is null)
+        {
+            throw new InvalidOperationException(
+                $"The '{TenantDatabaseDefaults.SectionName}' configuration section is required to reach tenant databases.");
+        }
+
+        Database.SetConnectionString(_databaseDefaults.BuildConnectionString(tenant.DatabaseName)); // EF Core runtime retargeting
         _logger?.LogDebug("Switched tenant database to '{TenantName}'.", tenant.Name);
     }
 

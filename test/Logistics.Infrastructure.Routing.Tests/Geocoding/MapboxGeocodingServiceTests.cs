@@ -36,7 +36,7 @@ public class MapboxGeocodingServiceTests
     private static Tenant TenantWith(TenantSettings settings) => new()
     {
         Name = "Test Tenant",
-        ConnectionString = "test",
+        DatabaseName = "test",
         BillingEmail = "test@test.com",
         CompanyAddress = new Address
         {

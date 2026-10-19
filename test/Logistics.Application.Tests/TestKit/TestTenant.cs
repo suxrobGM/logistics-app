@@ -10,7 +10,7 @@ internal static class TestTenant
         Name = "test",
         CompanyName = companyName,
         McNumber = mcNumber,
-        ConnectionString = "test",
+        DatabaseName = "test",
         BillingEmail = "billing@test.com",
         CompanyAddress = new Address
         {

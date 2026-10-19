@@ -46,7 +46,7 @@ public class SetupEmployeePayoutHandlerTests
     private static Tenant CreateTenant() => new()
     {
         Name = "test",
-        ConnectionString = "test",
+        DatabaseName = "test",
         BillingEmail = "billing@test.com",
         CompanyAddress = new Address
         {

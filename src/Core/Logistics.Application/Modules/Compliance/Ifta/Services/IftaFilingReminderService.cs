@@ -28,7 +28,7 @@ internal sealed class IftaFilingReminderService(
             return;
         }
 
-        var tenants = await masterUow.Repository<Tenant>().GetListAsync(t => t.ConnectionString != null);
+        var tenants = await masterUow.Repository<Tenant>().GetListAsync();
 
         foreach (var tenant in tenants)
         {

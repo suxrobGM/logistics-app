@@ -46,7 +46,7 @@ public class AgentDecisionProcessorTests
         {
             Id = Guid.NewGuid(),
             Name = "Test Tenant",
-            ConnectionString = "test-connection",
+            DatabaseName = "test",
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });

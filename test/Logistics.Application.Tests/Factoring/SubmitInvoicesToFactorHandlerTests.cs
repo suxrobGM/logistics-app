@@ -42,7 +42,7 @@ public class SubmitInvoicesToFactorHandlerTests
         _tenantUow.GetCurrentTenant().Returns(new Tenant
         {
             Name = "Carrier",
-            ConnectionString = "test",
+            DatabaseName = "test",
             BillingEmail = "billing@carrier.test",
             CompanyAddress = Address
         });

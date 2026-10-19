@@ -71,7 +71,7 @@ erDiagram
     TENANT {
         guid Id
         string Name "slug, lowercase"
-        string ConnectionString "tenant DB"
+        string DatabaseName "tenant DB"
         Address CompanyAddress
         bool IsSubscriptionRequired
         TenantSettings Settings
@@ -107,7 +107,7 @@ The master DB also stores `SuperAdmin`, `BlogPost`, `ContactSubmission`, `DemoRe
 
 ### Tenants and subscriptions
 
-Every customer company is one `Tenant` row. The connection string for that company's tenant DB is stored in `Tenant.ConnectionString`, which is generated from `TenantDatabaseDefaults.NameTemplate` at provisioning time (see [Multi-Tenancy](multi-tenancy.md)).
+Every customer company is one `Tenant` row. It stores only the name of its tenant DB (`Tenant.DatabaseName`, generated from `TenantDatabaseDefaults.NameTemplate` at provisioning time); host and credentials come from `TenantDatabaseDefaults` at runtime, so no password is kept in the master DB (see [Multi-Tenancy](multi-tenancy.md)).
 
 Subscriptions are 1:1 with tenants and reference a `SubscriptionPlan`. Plan tiers (Starter / Professional / Enterprise) gate features through the `PlanFeature` join table and set the weekly AI budget via `WeeklyAIBudgetUsd` (USD of estimated model cost; the dispatch model itself is global, set by an admin - not per plan).
 

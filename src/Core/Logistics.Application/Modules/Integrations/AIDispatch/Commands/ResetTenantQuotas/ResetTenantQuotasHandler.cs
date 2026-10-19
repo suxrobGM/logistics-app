@@ -21,8 +21,7 @@ internal sealed class ResetTenantQuotasHandler(
         }
         else
         {
-            tenants = await tenantRepo.GetListAsync(
-                t => t.ConnectionString != null, ct);
+            tenants = await tenantRepo.GetListAsync(ct: ct);
         }
 
         var now = DateTime.UtcNow;

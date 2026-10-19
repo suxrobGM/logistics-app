@@ -60,10 +60,7 @@ internal sealed class DemoTenantsSeeder(
         foreach (var config in tenantConfigs)
         {
             var profile = regionProfileFactory.Get(config.Region);
-            var connectionString = ResolveConnectionString(config, context.Configuration)
-                ?? throw new InvalidOperationException(
-                    $"No connection string for tenant '{config.Name}'. Set Tenants[].ConnectionString " +
-                    $"or ConnectionStrings:{ConnectionStringKey(config.Name)}.");
+            var databaseName = databaseProvider.GenerateDatabaseName(config.Name);
             var existing = await repo.GetAsync(t => t.Name == config.Name, cancellationToken);
 
             if (existing is null)
@@ -74,7 +71,7 @@ internal sealed class DemoTenantsSeeder(
                     CompanyName = config.CompanyName,
                     BillingEmail = config.BillingEmail,
                     CompanyAddress = profile.CompanyAddress,
-                    ConnectionString = connectionString,
+                    DatabaseName = databaseName,
                     IsSubscriptionRequired = false
                 };
                 ApplyRegionalSettings(tenant, profile);
@@ -86,7 +83,7 @@ internal sealed class DemoTenantsSeeder(
                 await repo.AddAsync(tenant, cancellationToken);
                 await featureService.ApplyPresetFeaturesAsync(tenant.Id, tenant.Presets);
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
-                await databaseProvider.CreateDatabaseAsync(tenant.ConnectionString);
+                await databaseProvider.CreateDatabaseAsync(tenant.DatabaseName);
                 Logger.LogInformation("Created tenant '{Name}' ({Region})", tenant.Name, profile.Region);
             }
             else
@@ -94,7 +91,7 @@ internal sealed class DemoTenantsSeeder(
                 var updated = false;
                 if (existing.CompanyName != config.CompanyName) { existing.CompanyName = config.CompanyName; updated = true; }
                 if (existing.BillingEmail != config.BillingEmail) { existing.BillingEmail = config.BillingEmail; updated = true; }
-                if (existing.ConnectionString != connectionString) { existing.ConnectionString = connectionString; updated = true; }
+                if (existing.DatabaseName != databaseName) { existing.DatabaseName = databaseName; updated = true; }
                 if (existing.Settings.Region != profile.Region)
                 {
                     ApplyRegionalSettings(existing, profile);
@@ -137,35 +134,11 @@ internal sealed class DemoTenantsSeeder(
                 }
 
                 // Ensure DB exists even for existing tenants (idempotent - no-op if present).
-                await databaseProvider.CreateDatabaseAsync(existing.ConnectionString);
+                await databaseProvider.CreateDatabaseAsync(existing.DatabaseName);
             }
         }
 
         LogCompleted(tenantConfigs.Count);
-    }
-
-    private static string? ResolveConnectionString(DemoTenantConfig config, IConfiguration configuration)
-    {
-        if (!string.IsNullOrWhiteSpace(config.ConnectionString))
-        {
-            return config.ConnectionString;
-        }
-        return configuration.GetConnectionString(ConnectionStringKey(config.Name));
-    }
-
-    /// <summary>
-    /// The <c>ConnectionStrings:*TenantDatabase</c> slot for a tenant, set by <c>deploy/.env</c> in a
-    /// container deployment.
-    /// </summary>
-    private static string ConnectionStringKey(string name)
-    {
-        // A region code is an acronym ("us" -> USTenantDatabase); any other name is a word.
-        if (Enum.TryParse<Region>(name, ignoreCase: true, out var region))
-        {
-            return $"{region}TenantDatabase";
-        }
-
-        return $"{char.ToUpperInvariant(name[0])}{name[1..]}TenantDatabase";
     }
 
     private static void ApplyRegionalSettings(Tenant tenant, IRegionProfile profile)

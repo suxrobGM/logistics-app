@@ -47,7 +47,7 @@ public class BookLoadBoardLoadHandlerTests
         _tenant = new Tenant
         {
             Name = "test",
-            ConnectionString = "test",
+            DatabaseName = "test",
             BillingEmail = "billing@test.com",
             CompanyAddress = new Address { Line1 = "1 Test St", City = "Test", State = "TX", ZipCode = "00000", Country = "US" }
         };

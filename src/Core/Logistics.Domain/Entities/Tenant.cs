@@ -17,7 +17,7 @@ public class Tenant : Entity, IMasterEntity
     public string? CompanyName { get; set; }
 
     public required Address CompanyAddress { get; set; }
-    public required string ConnectionString { get; set; }
+    public required string DatabaseName { get; set; }
     public required string BillingEmail { get; set; }
     public string? DotNumber { get; set; }
     public string? StripeCustomerId { get; set; }

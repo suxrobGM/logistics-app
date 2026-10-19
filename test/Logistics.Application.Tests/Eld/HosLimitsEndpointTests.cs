@@ -76,7 +76,7 @@ public class HosLimitsEndpointTests
                 State = "x",
                 Country = region == Region.EU ? "DE" : "US"
             },
-            ConnectionString = "x",
+            DatabaseName = "test",
             BillingEmail = "x@y.z",
             Settings = new TenantSettings { Region = region }
         };

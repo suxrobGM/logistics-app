@@ -1,8 +1,8 @@
 namespace Logistics.Domain.Options;
 
 /// <summary>
-/// Defaults applied when provisioning a new tenant database
-/// (host, credentials, and the name template used by ITenantDatabaseService).
+/// Host, credentials, and the name template for tenant databases. A tenant stores only its
+/// database name; the connection string is built from these settings at runtime.
 /// </summary>
 public record TenantDatabaseDefaults
 {
@@ -16,4 +16,9 @@ public record TenantDatabaseDefaults
     public int? Port { get; set; }
     public string? UserId { get; set; }
     public string? Password { get; set; }
+
+    public string BuildConnectionString(string databaseName)
+    {
+        return $"Host={Host}; Port={Port}; Database={databaseName}; Username={UserId}; Password={Password}";
+    }
 }

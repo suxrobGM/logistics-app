@@ -39,7 +39,7 @@ public class AIQuotaServiceTests
         {
             Id = tenantId,
             Name = "Test",
-            ConnectionString = "test",
+            DatabaseName = "test",
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" },
             IsSubscriptionRequired = true,
@@ -123,7 +123,7 @@ public class AIQuotaServiceTests
         {
             Id = tenantId,
             Name = "Free Tenant",
-            ConnectionString = "test",
+            DatabaseName = "test",
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" },
             IsSubscriptionRequired = false,

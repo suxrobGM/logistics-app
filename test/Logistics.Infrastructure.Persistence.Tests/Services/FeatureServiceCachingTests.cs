@@ -43,7 +43,7 @@ public class FeatureServiceCachingTests
             {
                 Id = _tenantId,
                 Name = "Test",
-                ConnectionString = "test",
+                DatabaseName = "test",
                 BillingEmail = "test@test.com",
                 CompanyAddress = new()
                 {

@@ -5,7 +5,7 @@ namespace Logistics.Mappings;
 
 public static class TenantMapper
 {
-    public static TenantDto ToDto(this Tenant entity, bool includeConnectionString = false, int? truckCount = null)
+    public static TenantDto ToDto(this Tenant entity, int? truckCount = null)
     {
         return new TenantDto
         {
@@ -20,7 +20,6 @@ public static class TenantMapper
             CompanyRegistrationNumber = entity.CompanyRegistrationNumber,
             TaxResidencyCountry = entity.TaxResidencyCountry,
             CompanyAddress = entity.CompanyAddress,
-            ConnectionString = includeConnectionString ? entity.ConnectionString : null,
             StripeCustomerId = entity.StripeCustomerId,
             LogoUrl = entity.LogoPath,
             PhoneNumber = entity.PhoneNumber,

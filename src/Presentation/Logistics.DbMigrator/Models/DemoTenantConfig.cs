@@ -25,12 +25,6 @@ public sealed record DemoTenantConfig
     /// <summary>Multiplier on the fake-data volumes; 1.0 is the fleet-sized demo.</summary>
     public double DataScale { get; init; } = 1.0;
 
-    /// <summary>
-    /// Optional explicit connection string. When omitted, DemoTenantsSeeder reads the
-    /// <c>ConnectionStrings:*TenantDatabase</c> slot for this tenant name.
-    /// </summary>
-    public string? ConnectionString { get; init; }
-
     public List<TenantPreset> ResolvePresets() =>
         Presets.Count > 0 ? [.. Presets.Distinct()] : [TenantPreset.GeneralFreight];
 

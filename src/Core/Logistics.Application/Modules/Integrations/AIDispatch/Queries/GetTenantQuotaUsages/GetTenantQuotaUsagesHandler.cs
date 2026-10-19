@@ -77,7 +77,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
     private async Task<List<QuotaTenant>> LoadQuotaTenantsAsync(CancellationToken ct)
     {
         var tenants = await masterUow.Repository<Tenant>()
-            .GetListAsync(t => t.ConnectionString != null, ct);
+            .GetListAsync(ct: ct);
 
         var subscriptions = (await masterUow.Repository<Subscription>().GetListAsync(ct: ct))
             .DistinctBy(s => s.TenantId)

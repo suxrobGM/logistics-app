@@ -42,7 +42,7 @@ public class GetOnboardingProgressHandlerTests
                 ZipCode = "",
                 Country = ""
             },
-            ConnectionString = "Host=localhost",
+            DatabaseName = "test",
             BillingEmail = "billing@acme.test"
         };
 

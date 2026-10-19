@@ -29,7 +29,7 @@ public class InvoicePdfServiceTests
     private static readonly Tenant Tenant = new()
     {
         Name = "Carrier",
-        ConnectionString = "test",
+        DatabaseName = "test",
         BillingEmail = "billing@carrier.test",
         CompanyAddress = Address
     };

@@ -39,7 +39,7 @@ internal sealed class CreateTenantHandler(
             DotNumber = req.DotNumber,
             CompanyAddress = req.CompanyAddress,
             BillingEmail = req.BillingEmail!,
-            ConnectionString = tenantDatabase.GenerateConnectionString(tenantName),
+            DatabaseName = tenantDatabase.GenerateDatabaseName(tenantName),
             Presets = [.. req.Presets.Distinct()],
             // New tenants start subscription-less so they're usable immediately
             // (admin-led onboarding/impersonation). The subscription check only
@@ -55,7 +55,7 @@ internal sealed class CreateTenantHandler(
             return Result.Fail($"Tenant name '{tenant.Name}' is already taken, please chose another name");
         }
 
-        var created = await tenantDatabase.CreateDatabaseAsync(tenant.ConnectionString);
+        var created = await tenantDatabase.CreateDatabaseAsync(tenant.DatabaseName);
         if (!created)
         {
             return Result.Fail("Could not create the tenant's database");

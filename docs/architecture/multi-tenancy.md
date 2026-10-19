@@ -102,7 +102,7 @@ sequenceDiagram
     Master-->>TS: Tenant record (with subscription)
     TS->>TS: CheckSubscription()<br/>(Active/Trialing - or bypass for billing endpoints)
     TS-->>Mw: Tenant
-    Mw->>TDb: Open TenantDbContext using tenant.ConnectionString
+    Mw->>TDb: Open TenantDbContext on tenant.DatabaseName (host and credentials from TenantDatabaseDefaults)
     TDb-->>Client: Response
 ```
 
@@ -165,15 +165,14 @@ sequenceDiagram
     participant TDb as New Tenant DB
 
     Admin->>API: POST /tenants (CreateTenantCommand)
-    API->>Master: Insert Tenant row (slug, region, settings)
-    API->>TDS: GenerateConnectionString(slug)
-    TDS-->>API: "Host=...;Database=acme_logisticsx;..."
-    API->>Postgres: Create database
-    API->>TDS: CreateDatabaseAsync(connectionString)
+    API->>TDS: GenerateDatabaseName(slug)
+    TDS-->>API: "acme_logisticsx"
+    API->>TDS: CreateDatabaseAsync(databaseName)
+    TDS->>Postgres: Create database (EF Core migrate)
     TDS->>TDb: Apply EF Core migrations
     TDS->>TDb: Seed roles & permissions
-    API->>TDb: Seed initial owner user, default settings
-    API->>Master: Update Tenant.ConnectionString
+    API->>Master: Insert Tenant row (slug, database name, settings)
+    API->>TDb: Seed initial owner user
     API-->>Admin: Tenant created
 ```
 
@@ -187,7 +186,7 @@ With many tenants the connection-pool budget matters. Every tenant DB shares the
 - Each tenant DB pool is created lazily on first use and reused for subsequent requests for that tenant.
 - Idle pools are reaped by Npgsql defaults; tune `Maximum Pool Size` per environment.
 
-For very large fleet counts, run multiple Postgres instances and shard tenants across them - the runtime only needs the right `ConnectionString` on the `Tenant` record.
+For very large fleet counts, run multiple Postgres instances and shard tenants across them. Every tenant connection is built from `TenantDatabaseDefaults` plus `Tenant.DatabaseName`, so sharding would first need a per-tenant host on the `Tenant` record.
 
 ## Migrations
 

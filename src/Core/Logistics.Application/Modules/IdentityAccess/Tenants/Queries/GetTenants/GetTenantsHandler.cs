@@ -28,7 +28,7 @@ internal sealed class GetTenantsHandler(IMasterUnitOfWork masterUow)
         var items = query
             .OrderBy(req.OrderBy)
             .ApplyPaging(req.Page, req.PageSize)
-            .Select(i => i.ToDto(req.IncludeConnectionStrings, null))
+            .Select(i => i.ToDto(null))
             .ToArray();
 
         return Task.FromResult(PagedResult<TenantDto>.Ok(items, totalItems, req.PageSize));

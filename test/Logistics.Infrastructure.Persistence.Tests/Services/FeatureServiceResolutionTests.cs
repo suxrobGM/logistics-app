@@ -54,7 +54,7 @@ public class FeatureServiceResolutionTests
         {
             Id = _tenantId,
             Name = "test",
-            ConnectionString = "test",
+            DatabaseName = "test",
             BillingEmail = "test@test.com",
             CompanyAddress = new()
             {

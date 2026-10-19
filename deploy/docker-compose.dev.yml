@@ -32,9 +32,8 @@ services:
       retries: 10
 
   # One-shot DB migrate + seed. Metadata comes from the DbMigrator's appsettings.json; here we
-  # only force Development and point the DB hosts at `postgres`. Tenant hosts must use
-  # Tenants__N__ConnectionString (the seeder reads it before the ConnectionStrings:*TenantDatabase
-  # fallback).
+  # only force Development and point the DB hosts at `postgres`. Tenant databases are reached
+  # through TenantDatabaseDefaults plus the database name stored on each tenant.
   migrator:
     build:
       context: ..
@@ -46,9 +45,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__MasterDatabase: "Host=postgres;Port=5432;Database=master_logisticsx;Username=postgres;Password=Test12345#"
-      Tenants__0__ConnectionString: "Host=postgres;Port=5432;Database=us_logisticsx;Username=postgres;Password=Test12345#"
-      Tenants__1__ConnectionString: "Host=postgres;Port=5432;Database=eu_logisticsx;Username=postgres;Password=Test12345#"
-      Tenants__2__ConnectionString: "Host=postgres;Port=5432;Database=solo_logisticsx;Username=postgres;Password=Test12345#"
+      TenantDatabaseDefaults__Host: "postgres"
       SuperAdmin__Email: "admin@test.com"
       SuperAdmin__Password: "Test12345#"
 
