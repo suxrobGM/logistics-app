@@ -167,7 +167,7 @@ backup.
       lifecycle rule on the bucket, and the [restore drill](#restore-drill) done once with the
       result written down.
 - [ ] **Health.** Uptime monitor on `https://api.yourdomain.com/health`.
-- [ ] **Migrations.** `deploy/Run-ProdMigrator.ps1` run, so the `AddPilotCarrierFeatures` and
+- [ ] **Migrations.** `deploy/run-prod-migrator.ps1` run, so the `AddPilotCarrierFeatures` and
       `RepairConversationLastSequence` tenant migrations apply and role claims re-sync. Without it the
       trailer and data import permissions are missing and those pages return 403.
 - [ ] **QuickBooks.** Production Intuit app keys and redirect URI, per

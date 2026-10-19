@@ -10,7 +10,7 @@ deploy/
   docker-compose.dev.yml        # local dev infra (Postgres + migrator)
   docker-compose.portainer.yml  # Portainer (separate stack, one-time manual deploy)
   .env.example                  # template for the DOCKER_ENV secret / .env
-  Run-ProdMigrator.ps1          # deliberate prod DB migrate+seed (loads .env, typed confirmation)
+  run-prod-migrator.ps1         # deliberate prod DB migrate+seed (loads .env, typed confirmation)
   nginx/logisticsx.conf         # host nginx reverse proxy (subdomains -> 127.0.0.1:port)
 ```
 
@@ -88,7 +88,7 @@ All app ports bind to `127.0.0.1`, so the containers are reachable only through 
 
 ## Database migrations
 
-Migrations are not run automatically in production. Apply them with `deploy/Run-ProdMigrator.ps1`, which loads `deploy/.env`, forces the Production environment, shows the target database host and requires you to type `migrate-prod` before running `Logistics.DbMigrator` once (`--exit`). See [Environment Variables](../configuration/environment-variables.md#running-the-migrator-against-production) for the variables it needs.
+Migrations are not run automatically in production. Apply them with `deploy/run-prod-migrator.ps1`, which loads `deploy/.env`, forces the Production environment, shows the target database host and requires you to type `migrate-prod` before running `Logistics.DbMigrator` once (`--exit`). See [Environment Variables](../configuration/environment-variables.md#running-the-migrator-against-production) for the variables it needs.
 
 The migrator also applies the **identity operational store** schema to the master DB (`identity.persisted_grants` and friends), where IdentityServer persists refresh tokens so sessions survive redeploys. Signing keys live separately in `public.signing_keys`, also in the master DB. Run the migrator **before** deploying an IdentityServer image that expects those tables.
 

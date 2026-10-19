@@ -163,13 +163,13 @@ TenantDatabaseDefaults__Password="your-secure-tenant-db-password"
 
 #### Running the migrator against production
 
-`deploy/Run-ProdMigrator.ps1` is the supported way to migrate production. It exists so a
+`deploy/run-prod-migrator.ps1` is the supported way to migrate production. It exists so a
 production migration is never one stray `dotnet run` away: the migrator has no
 `appsettings.Production.json` to fall back on, and its committed `appsettings.json` points at
 `localhost`.
 
 ```powershell
-powershell -NoProfile -File .\deploy\Run-ProdMigrator.ps1
+powershell -NoProfile -File .\deploy\run-prod-migrator.ps1
 ```
 
 The script (PowerShell 5.1 compatible, resolves everything from its own folder):
