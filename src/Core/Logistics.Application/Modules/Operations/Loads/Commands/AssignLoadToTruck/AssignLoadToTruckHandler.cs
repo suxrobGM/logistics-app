@@ -18,10 +18,9 @@ internal sealed class AssignLoadToTruckHandler(ITenantUnitOfWork tenantUow) : IR
             return Result.Fail($"Load not found with ID '{req.LoadId}'");
         }
 
-        if (req.TruckId != load.AssignedTruckId && load.TripStops.FirstOrDefault() is { } stop)
+        if (req.TruckId != load.AssignedTruckId && load.TruckChangeBlockedReason() is { } blocked)
         {
-            return Result.Fail(
-                $"Load #{load.Number} is on trip #{stop.Trip.Number}, which sets its truck. Change the trip's truck instead.");
+            return Result.Fail(blocked);
         }
 
         if (req.TruckId is { } truckId)

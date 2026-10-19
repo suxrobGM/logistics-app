@@ -30,7 +30,7 @@ public partial class Trip
         }
 
         TripFactory.AddStopsForLoads(this, loads);
-        TotalDistance = GetLoads().Sum(l => l.Distance);
+        RecalculateDistance();
     }
 
     /// <summary>
@@ -57,6 +57,12 @@ public partial class Trip
         }
 
         RenumberStops();
+        RecalculateDistance();
+    }
+
+    /// <summary>Re-sums <see cref="TotalDistance"/> from the trip's loads.</summary>
+    public void RecalculateDistance()
+    {
         TotalDistance = GetLoads().Sum(l => l.Distance);
     }
 

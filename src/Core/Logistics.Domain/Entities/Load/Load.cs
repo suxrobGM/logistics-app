@@ -139,6 +139,14 @@ public partial class Load : AuditableEntity, ITenantEntity
     public string? ExternalSourceId { get; set; }
 
     /// <summary>
+    /// Why this load's truck can't be changed directly - a trip sets the truck of its loads - or null when the
+    /// load is on no trip.
+    /// </summary>
+    public string? TruckChangeBlockedReason() => TripStops.FirstOrDefault() is { } stop
+        ? $"Load #{Number} is on trip #{stop.Trip.Number}, which sets its truck. Change the trip's truck instead."
+        : null;
+
+    /// <summary>
     /// Copies the origin onto this load's pickup stops and the destination onto its drop-off stops, and re-sums
     /// each trip's distance from its loads. Call it after the load's addresses, locations or distance change.
     /// </summary>
@@ -160,7 +168,7 @@ public partial class Load : AuditableEntity, ITenantEntity
 
         foreach (var trip in TripStops.Select(s => s.Trip).Distinct())
         {
-            trip.TotalDistance = trip.GetLoads().Sum(l => l.Distance);
+            trip.RecalculateDistance();
         }
     }
 
