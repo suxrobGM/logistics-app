@@ -5,13 +5,16 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Mediator;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 
 internal sealed class ResendTenantWelcomeHandler(
     IMasterUnitOfWork masterUow,
+    ITenantUnitOfWork tenantUow,
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
     IOptions<IdentityServerOptions> identityServerOptions)
@@ -26,7 +29,14 @@ internal sealed class ResendTenantWelcomeHandler(
             return Result.Fail("Tenant not found");
         }
 
-        var owner = await masterUow.Repository<User>().GetAsync(u => u.TenantId == req.TenantId, ct);
+        tenantUow.SetCurrentTenant(tenant);
+        var ownerId = await tenantUow.Repository<Employee>().Query()
+            .Where(e => e.Role != null && e.Role.Name == TenantRoles.Owner)
+            .OrderBy(e => e.JoinedDate)
+            .Select(e => (Guid?)e.Id)
+            .FirstOrDefaultAsync(ct);
+
+        var owner = ownerId is null ? null : await masterUow.Repository<User>().GetByIdAsync(ownerId.Value, ct);
 
         if (owner is null)
         {
