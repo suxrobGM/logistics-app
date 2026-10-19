@@ -21,5 +21,14 @@ internal sealed class LoadAccessorialEntityConfiguration : IEntityTypeConfigurat
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(a => a.LoadId);
+
+        builder.HasOne<TripStop>()
+            .WithMany()
+            .HasForeignKey(a => a.TripStopId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasIndex(a => a.TripStopId)
+            .IsUnique()
+            .HasFilter("line_item_type = 'detention'");
     }
 }
