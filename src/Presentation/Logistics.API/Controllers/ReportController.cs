@@ -85,7 +85,7 @@ public class ReportController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Get safety report with DVIR, accident, and driver behavior metrics
+    /// Get safety report with DVIR and accident metrics
     /// </summary>
     [HttpGet("safety", Name = "GetSafetyReport")]
     [ProducesResponseType(typeof(SafetyReportDto), StatusCodes.Status200OK)]

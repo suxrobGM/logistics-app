@@ -8,7 +8,7 @@ of lading (eBOL). This is the onboarding checklist for pilot car haulers.
 1. **Turn on vehicle transport.** A platform admin enables `TenantFeature.VehicleTransport` for the
    tenant (the car hauler preset does this). Without it, vehicle loads and car hauler trucks are
    rejected. It also unlocks condition reports, VIN decode and the eBOL on any plan; the rest of
-   the Safety area (accidents, driver behavior) still needs `TenantFeature.Safety`.
+   the Safety area (accidents) still needs `TenantFeature.Safety`.
 2. **Add your trucks as car haulers.** Set each truck's type to Car hauler and its **vehicle
    capacity**, the number of cars it carries (for example 7 or 9). Dispatch warns when a truck's
    open loads have more vehicles than this. It warns and never blocks, because what fits depends on

@@ -34,11 +34,6 @@ internal sealed class SafetyReportHandler(ISafetyReportReader reader)
         var estimatedDamageCost = facts.AccidentByStatusSeverityAndMonth.Sum(r => r.Damage);
         var injuriesReported = facts.AccidentByStatusSeverityAndMonth.Sum(r => r.Injuries);
 
-        // Behavior rollups
-        var totalBehaviorEvents = facts.BehaviorByTypeAndMonth.Sum(r => r.Count);
-        var unreviewedBehaviorEvents = facts.BehaviorByTypeAndMonth.Sum(r => r.Unreviewed);
-
-        var driverAccidentLookup = facts.DriverAccidentCounts.ToDictionary(r => r.DriverId, r => r.Count);
         var truckAccidentLookup = facts.TruckAccidentCounts.ToDictionary(r => r.TruckId, r => r.Count);
 
         var dto = new SafetyReportDto
@@ -56,10 +51,6 @@ internal sealed class SafetyReportHandler(ISafetyReportReader reader)
             UnresolvedAccidents = unresolvedAccidents,
             EstimatedDamageCost = estimatedDamageCost,
             InjuriesReported = injuriesReported,
-
-            // Behavior summary
-            TotalBehaviorEvents = totalBehaviorEvents,
-            UnreviewedBehaviorEvents = unreviewedBehaviorEvents,
 
             // Breakdowns
             DvirStatusBreakdown = facts.DvirByStatusAndMonth
@@ -96,17 +87,6 @@ internal sealed class SafetyReportHandler(ISafetyReportReader reader)
                 .OrderByDescending(x => x.Count)
                 .ToList(),
 
-            BehaviorEventBreakdown = facts.BehaviorByTypeAndMonth
-                .GroupBy(r => r.EventType)
-                .Select(g => new SafetyEventTypeBreakdownDto
-                {
-                    EventType = g.Key.ToString(),
-                    EventTypeDisplay = g.Key.GetDescription(),
-                    Count = g.Sum(r => r.Count)
-                })
-                .OrderByDescending(x => x.Count)
-                .ToList(),
-
             // Trends (gap-filled)
             DvirTrends = BuildCountTrends(
                 facts.DvirByStatusAndMonth.Select(r => (r.Year, r.Month, r.Count)),
@@ -114,20 +94,15 @@ internal sealed class SafetyReportHandler(ISafetyReportReader reader)
             AccidentTrends = BuildValueTrends(
                 facts.AccidentByStatusSeverityAndMonth.Select(r => (r.Year, r.Month, r.Count, r.Damage)),
                 startDate, endDate),
-            BehaviorTrends = BuildCountTrends(
-                facts.BehaviorByTypeAndMonth.Select(r => (r.Year, r.Month, r.Count)),
-                startDate, endDate),
 
-            // Top offenders - merged behavior + accident counts per driver, defects + accidents per truck
-            TopDriversByEvents = facts.TopBehaviorByDriver
+            // Top offenders - accidents per driver, defects + accidents per truck
+            TopDriversByAccidents = facts.TopAccidentDrivers
                 .Select(r => new SafetyDriverSummaryDto
                 {
                     DriverId = r.DriverId,
                     DriverName = facts.DriverNames.GetValueOrDefault(r.DriverId, "Unknown"),
-                    BehaviorEventCount = r.Count,
-                    AccidentCount = driverAccidentLookup.GetValueOrDefault(r.DriverId, 0)
+                    AccidentCount = r.Count
                 })
-                .OrderByDescending(d => d.BehaviorEventCount + d.AccidentCount)
                 .Take(5)
                 .ToList(),
 

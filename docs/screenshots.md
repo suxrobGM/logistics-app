@@ -71,8 +71,6 @@ Available from a drawer on every screen.
 
 ![DVIR inspection reports](images/tms-portal/tms-dvir.png)
 
-![Driver behaviour events](images/tms-portal/tms-driver-behavior.png)
-
 ### Maintenance
 
 ![Maintenance dashboard](images/tms-portal/tms-maintenance.png)

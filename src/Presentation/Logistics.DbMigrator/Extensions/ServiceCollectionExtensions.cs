@@ -44,7 +44,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, DocumentSeeder>();
         services.AddScoped<ISeeder, ConditionReportSeeder>();
         services.AddScoped<ISeeder, DvirReportSeeder>();
-        services.AddScoped<ISeeder, DriverBehaviorEventSeeder>();
         services.AddScoped<ISeeder, DriverHosStatusSeeder>();
         services.AddScoped<ISeeder, AccidentReportSeeder>();
         services.AddScoped<ISeeder, ExpenseSeeder>();

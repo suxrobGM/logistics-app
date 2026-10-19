@@ -214,7 +214,7 @@ erDiagram
     }
 ```
 
-A tenant DB also includes the supporting graph: **HOS / ELD** (`HosLog`, `HosViolation`, `DriverHosStatus`, `EldDriverMapping`, `EldVehicleMapping`, `EldProviderConfiguration`), **Safety** (`DvirReport`, `DvirDefect`, `AccidentReport`, `DriverBehaviorEvent`), **Maintenance** (`MaintenanceSchedule`, `MaintenanceRecord`, `MaintenancePart`), **Expenses** (`CompanyExpense`, `TruckExpense`, `BodyShopExpense`), **Messaging** (`Conversation`, `Message`, `MessageReadReceipt`), **Load board** (`LoadBoardConfiguration`, `LoadBoardListing`, `PostedTruck`), and **Notifications** / **Tracking links**.
+A tenant DB also includes the supporting graph: **HOS / ELD** (`HosLog`, `HosViolation`, `DriverHosStatus`, `EldDriverMapping`, `EldVehicleMapping`, `EldProviderConfiguration`), **Safety** (`DvirReport`, `DvirDefect`, `AccidentReport`), **Maintenance** (`MaintenanceSchedule`, `MaintenanceRecord`, `MaintenancePart`), **Expenses** (`CompanyExpense`, `TruckExpense`, `BodyShopExpense`), **Messaging** (`Conversation`, `Message`, `MessageReadReceipt`), **Load board** (`LoadBoardConfiguration`, `LoadBoardListing`, `PostedTruck`), and **Notifications** / **Tracking links**.
 
 ## Aggregates
 

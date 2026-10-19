@@ -16,7 +16,7 @@ keep that property when changing prices). Missing: the standard trust signals ar
 - **Annual billing discount** (~2 months free): annual Stripe Prices per plan, toggle on `website/pages/home/sections/pricing/`, handled in `StripeSubscriptionService`/`StripePlanService`.
 - **Free trial**: DataTruck advertises one on every plan. 30 days was chosen (over the 14 originally sketched here) via Stripe trial settings; show "30-day free trial, no credit card" on pricing cards.
 - **"From $41/mo" framing**: 1 truck on Starter is the lowest credible number in the market - headline it on the website hero/pricing.
-- **DVIR/safety gating check**: DVIR is a federal legal requirement but lives in Professional (`SubscriptionPlanSeeder` puts `Safety` in Pro). Consider moving basic DVIR down to Starter, keep driver-behavior analytics + accident management in Pro - avoids "the cheap plan is non-compliant" perception.
+- **DVIR/safety gating check**: DVIR is a federal legal requirement but lives in Professional (`SubscriptionPlanSeeder` puts `Safety` in Pro). Consider moving basic DVIR down to Starter, keep accident management in Pro - avoids "the cheap plan is non-compliant" perception.
 - **EUR display** when [eu-market-readiness](eu-market-readiness.md) starts - `Money` VO already supports currency.
 - **Comparison page**: `website/pages/compare/` exists - add DataTruck row highlighting "AI included vs. +$399/mo".
 - Keep seeder, `pricing.ts`, and Stripe Prices in sync - three sources of truth today; consider generating the website tiers from the API instead of hardcoding.

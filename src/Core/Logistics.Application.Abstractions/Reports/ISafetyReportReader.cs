@@ -23,20 +23,16 @@ public interface ISafetyReportReader
 /// <param name="DvirByStatusAndMonth">DVIR counts grouped by status × year × month × has-defects flag.</param>
 /// <param name="TopTruckDefects">Top 10 trucks by total defect count over the window.</param>
 /// <param name="AccidentByStatusSeverityAndMonth">Accident counts plus summed damage and injuries grouped by status × severity × year × month.</param>
-/// <param name="DriverAccidentCounts">Accident counts per driver, used to merge with <see cref="TopBehaviorByDriver"/>.</param>
+/// <param name="TopAccidentDrivers">Top 10 drivers by accident count over the window.</param>
 /// <param name="TruckAccidentCounts">Accident counts per truck, used to merge with <see cref="TopTruckDefects"/>.</param>
-/// <param name="BehaviorByTypeAndMonth">Driver-behavior event counts and unreviewed counts grouped by type × year × month.</param>
-/// <param name="TopBehaviorByDriver">Top 10 drivers by total behavior-event count over the window.</param>
-/// <param name="DriverNames">Display names keyed by employee id; populated only for ids in <see cref="TopBehaviorByDriver"/>.</param>
+/// <param name="DriverNames">Display names keyed by employee id; populated only for ids in <see cref="TopAccidentDrivers"/>.</param>
 /// <param name="TruckNumbers">Truck numbers keyed by truck id; populated only for ids in <see cref="TopTruckDefects"/>.</param>
 public sealed record SafetyFacts(
     IReadOnlyList<DvirGroupRow> DvirByStatusAndMonth,
     IReadOnlyList<TruckDefectRow> TopTruckDefects,
     IReadOnlyList<AccidentGroupRow> AccidentByStatusSeverityAndMonth,
-    IReadOnlyList<DriverEventCountRow> DriverAccidentCounts,
+    IReadOnlyList<DriverEventCountRow> TopAccidentDrivers,
     IReadOnlyList<TruckEventCountRow> TruckAccidentCounts,
-    IReadOnlyList<BehaviorGroupRow> BehaviorByTypeAndMonth,
-    IReadOnlyList<DriverEventCountRow> TopBehaviorByDriver,
     IReadOnlyDictionary<Guid, string> DriverNames,
     IReadOnlyDictionary<Guid, string> TruckNumbers);
 
@@ -62,11 +58,8 @@ public sealed record AccidentGroupRow(
     decimal Damage,
     int Injuries);
 
-/// <summary>Event count per driver (employee id). Used for both top-K behavior lists and accident-count lookups.</summary>
+/// <summary>Accident count per driver (employee id).</summary>
 public sealed record DriverEventCountRow(Guid DriverId, int Count);
 
 /// <summary>Event count per truck. Used for accident-count lookups against the top-defect trucks.</summary>
 public sealed record TruckEventCountRow(Guid TruckId, int Count);
-
-/// <summary>One row per (event type, year, month) behavior group, including the unreviewed subset count.</summary>
-public sealed record BehaviorGroupRow(DriverBehaviorEventType EventType, int Year, int Month, int Count, int Unreviewed);

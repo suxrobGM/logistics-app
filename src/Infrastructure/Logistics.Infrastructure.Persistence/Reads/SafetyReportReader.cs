@@ -47,11 +47,13 @@ internal sealed class SafetyReportReader(TenantDbContext db, ITenantUnitOfWork t
                 g.Sum(a => a.NumberOfInjuries ?? 0)))
             .ToListAsync(ct);
 
-        var driverAccidentCounts = await db.Set<AccidentReport>()
+        var topAccidentDrivers = await db.Set<AccidentReport>()
             .AsNoTracking()
             .Where(a => a.AccidentDateTime >= startDate && a.AccidentDateTime <= endDate)
             .GroupBy(a => a.DriverId)
             .Select(g => new DriverEventCountRow(g.Key, g.Count()))
+            .OrderByDescending(x => x.Count)
+            .Take(TopK)
             .ToListAsync(ct);
 
         var truckAccidentCounts = await db.Set<AccidentReport>()
@@ -61,29 +63,8 @@ internal sealed class SafetyReportReader(TenantDbContext db, ITenantUnitOfWork t
             .Select(g => new TruckEventCountRow(g.Key, g.Count()))
             .ToListAsync(ct);
 
-        var behaviorByTypeAndMonth = await db.Set<DriverBehaviorEvent>()
-            .AsNoTracking()
-            .Where(b => b.OccurredAt >= startDate && b.OccurredAt <= endDate)
-            .GroupBy(b => new { b.EventType, b.OccurredAt.Year, b.OccurredAt.Month })
-            .Select(g => new BehaviorGroupRow(
-                g.Key.EventType,
-                g.Key.Year,
-                g.Key.Month,
-                g.Count(),
-                g.Count(e => !e.ReviewedAt.HasValue)))
-            .ToListAsync(ct);
-
-        var topBehaviorByDriver = await db.Set<DriverBehaviorEvent>()
-            .AsNoTracking()
-            .Where(b => b.OccurredAt >= startDate && b.OccurredAt <= endDate)
-            .GroupBy(b => b.EmployeeId)
-            .Select(g => new DriverEventCountRow(g.Key, g.Count()))
-            .OrderByDescending(x => x.Count)
-            .Take(TopK)
-            .ToListAsync(ct);
-
         // Only fetch lookup names for IDs actually referenced by the top-K sets.
-        var topDriverIds = topBehaviorByDriver.Select(x => x.DriverId).ToList();
+        var topDriverIds = topAccidentDrivers.Select(x => x.DriverId).ToList();
         var driverNames = topDriverIds.Count == 0
             ? []
             : await db.Set<Employee>()
@@ -105,10 +86,8 @@ internal sealed class SafetyReportReader(TenantDbContext db, ITenantUnitOfWork t
             dvirByStatusAndMonth,
             topTruckDefects,
             accidentByStatusSeverityAndMonth,
-            driverAccidentCounts,
+            topAccidentDrivers,
             truckAccidentCounts,
-            behaviorByTypeAndMonth,
-            topBehaviorByDriver,
             driverNames,
             truckNumbers);
     }

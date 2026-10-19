@@ -113,7 +113,6 @@ Central Dispatch and Super Dispatch are not connected. Neither offers a public c
 | IFTA | Quarterly fuel tax per jurisdiction. Miles come from ELD GPS, gallons from fuel cards and expenses. Closed quarters are frozen for audits. Includes filing reminders and PDF and CSV export. |
 | DVIR | Digital pre-trip and post-trip inspections with damage marked on a vehicle diagram, defects by severity, and photos. History per vehicle. |
 | Accidents | Record accident reports with the people, vehicles, and documents involved, and follow them to close. |
-| Driver behavior | Log speeding, harsh braking, and similar events per driver. |
 | Documents | One place for proof of delivery, bills of lading, employee records, and compliance paperwork. Files are stored in Azure Blob Storage, Cloudflare R2, or on local disk. |
 | Privacy (GDPR) | Customers and employees can ask for a copy of their data or for deletion. Requests are handled in the admin portal, and retention rules clean up old data on their own. |
 
@@ -128,7 +127,7 @@ Central Dispatch and Super Dispatch are not connected. Neither offers a public c
 | Team | Headcount and activity across the company. |
 | Payroll | Pay totals, history, and cost trends. |
 | Maintenance | Service costs and upcoming work per truck. |
-| Safety | Inspections, defects, accidents, and behavior events. |
+| Safety | Inspections, defects, and accidents. |
 | IFTA | The quarterly fuel tax report described above. |
 
 The dashboard also shows active loads, fleet use, revenue, and a live map.

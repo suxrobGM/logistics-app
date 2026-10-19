@@ -289,12 +289,6 @@ registry, `AgentLoopRunner`, decisions, and quota. Gated by `TenantFeature.AICop
 - Application: `Modules/Compliance/Accidents/Commands/`, `Modules/Compliance/Accidents/Queries/`
 - API/UI: `AccidentController.cs`, `tms-portal/pages/safety/`
 
-### Driver behavior
-
-- Domain: `Entities/Safety/DriverBehaviorEvent.cs`
-- Application: `Modules/Compliance/Safety/Commands/`, `Modules/Compliance/Safety/Services/`
-- API/UI: `DriverBehaviorController.cs`
-
 ### Maintenance
 
 - Domain: `Entities/Maintenance/`
