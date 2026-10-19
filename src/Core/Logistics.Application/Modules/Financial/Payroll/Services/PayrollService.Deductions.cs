@@ -58,13 +58,10 @@ internal partial class PayrollService
     {
         var employeeId = payroll.Employee.Id;
         var (from, to) = payroll.PeriodUtcRange();
-        var truckIds = await tenantUow.Repository<Truck>().Query()
-            .Where(t => t.MainDriverId == employeeId)
-            .Select(t => t.Id)
-            .ToListAsync(ct);
+        var trucks = tenantUow.Repository<Truck>().Query();
 
         return await tenantUow.Repository<FuelCardTransaction>().GetListAsync(t =>
-            t.TruckId != null && truckIds.Contains(t.TruckId.Value) &&
+            trucks.Any(truck => truck.Id == t.TruckId && truck.MainDriverId == employeeId) &&
             t.Status == FuelCardTransactionStatus.Matched &&
             (t.PayrollInvoiceId == null || t.PayrollInvoiceId == payroll.Id) &&
             t.TransactionDate >= from && t.TransactionDate < to, ct);
