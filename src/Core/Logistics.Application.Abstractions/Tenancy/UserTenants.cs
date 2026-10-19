@@ -11,12 +11,8 @@ public static class UserTenants
     /// </summary>
     public static async Task<List<Tenant>> ListAsync(IMasterUnitOfWork masterUow, User user, CancellationToken ct)
     {
-        var accessTenantIds = (await masterUow.Repository<UserTenantAccess>()
-                .GetListAsync(a => a.UserId == user.Id, ct))
-            .Select(a => a.TenantId)
-            .ToList();
-
-        return await masterUow.Repository<Tenant>()
-            .GetListAsync(t => t.Id == user.TenantId || accessTenantIds.Contains(t.Id), ct);
+        var accesses = masterUow.Repository<UserTenantAccess>().Query();
+        return await masterUow.Repository<Tenant>().GetListAsync(
+            t => t.Id == user.TenantId || accesses.Any(a => a.UserId == user.Id && a.TenantId == t.Id), ct);
     }
 }

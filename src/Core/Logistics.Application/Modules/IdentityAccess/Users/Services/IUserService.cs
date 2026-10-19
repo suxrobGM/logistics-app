@@ -4,7 +4,11 @@ namespace Logistics.Application.Modules.IdentityAccess.Users.Services;
 
 public interface IUserService : IApplicationService
 {
-    Task UpdateUserAsync(UpdateUserParams userParams);
+    /// <summary>
+    ///     Applies the non-empty fields to the master user and, when one changed, saves and syncs the tenant
+    ///     profiles. Returns false when the user doesn't exist.
+    /// </summary>
+    Task<bool> UpdateUserAsync(UpdateUserParams userParams, CancellationToken ct = default);
 
     /// <summary>
     ///     Copies the master user's email, name and phone onto their <see cref="Employee" /> and email onto their

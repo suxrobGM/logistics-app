@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,33 +10,26 @@ public class UserService(
     IMasterUnitOfWork masterUow,
     IServiceScopeFactory scopeFactory) : IUserService
 {
-    public async Task UpdateUserAsync(UpdateUserParams userParams)
+    public async Task<bool> UpdateUserAsync(UpdateUserParams userParams, CancellationToken ct = default)
     {
-        var userRepository = masterUow.Repository<User>();
-        var user = await userRepository.GetByIdAsync(userParams.Id);
-
+        var user = await masterUow.Repository<User>().GetByIdAsync(userParams.Id, ct);
         if (user is null)
         {
-            return;
+            return false;
         }
 
-        if (!string.IsNullOrEmpty(userParams.FirstName))
+        var before = (user.FirstName, user.LastName, user.PhoneNumber);
+        user.FirstName = PropertyUpdater.UpdateIfChanged(userParams.FirstName, user.FirstName);
+        user.LastName = PropertyUpdater.UpdateIfChanged(userParams.LastName, user.LastName);
+        user.PhoneNumber = PropertyUpdater.UpdateIfChanged(userParams.PhoneNumber, user.PhoneNumber);
+
+        if ((user.FirstName, user.LastName, user.PhoneNumber) != before)
         {
-            user.FirstName = userParams.FirstName;
+            await masterUow.SaveChangesAsync(ct);
+            await SyncTenantProfilesAsync(user, ct);
         }
 
-        if (!string.IsNullOrEmpty(userParams.LastName))
-        {
-            user.LastName = userParams.LastName;
-        }
-
-        if (!string.IsNullOrEmpty(userParams.PhoneNumber))
-        {
-            user.PhoneNumber = userParams.PhoneNumber;
-        }
-
-        await masterUow.SaveChangesAsync();
-        await SyncTenantProfilesAsync(user);
+        return true;
     }
 
     public async Task SyncTenantProfilesAsync(User user, CancellationToken ct = default)

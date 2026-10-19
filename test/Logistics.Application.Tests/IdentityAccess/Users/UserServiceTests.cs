@@ -21,9 +21,7 @@ public class UserServiceTests
 
     public UserServiceTests()
     {
-        _masterUow.Repository<UserTenantAccess>().GetListAsync(
-                Arg.Any<Expression<Func<UserTenantAccess, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(ci => _accesses.AsQueryable().Where(ci.Arg<Expression<Func<UserTenantAccess, bool>>>()).ToList());
+        _masterUow.Repository<UserTenantAccess>().Query().Returns(_ => _accesses.AsQueryable());
         _masterUow.Repository<Tenant>().GetListAsync(
                 Arg.Any<Expression<Func<Tenant, bool>>>(), Arg.Any<CancellationToken>())
             .Returns(ci => _tenants.AsQueryable().Where(ci.Arg<Expression<Func<Tenant, bool>>>()).ToList());
