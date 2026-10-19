@@ -134,6 +134,7 @@ internal sealed class BookLoadBoardLoadHandler(
             currency: tenantUow.GetCurrentTenant().Settings.Currency.ToString()
         );
 
+        load.Source = LoadSource.LoadBoard;
         load.ExternalSourceProvider = listing.ProviderType;
         load.ExternalSourceId = listing.ExternalListingId;
 

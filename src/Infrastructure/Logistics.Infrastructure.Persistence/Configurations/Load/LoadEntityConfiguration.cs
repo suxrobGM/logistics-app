@@ -36,6 +36,10 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
         builder.Property(i => i.ExternalSourceId)
             .HasMaxLength(100);
 
+        builder.HasIndex(i => new { i.Source, i.ExternalSourceId })
+            .IsUnique()
+            .HasFilter("external_source_id IS NOT NULL");
+
         builder.Property(i => i.ExternalBrokerReference)
             .HasMaxLength(100);
 
