@@ -32,13 +32,17 @@ public class DriverLicense : AuditableEntity, ITenantEntity
     /// </summary>
     public string? IssuingRegion { get; set; }
 
-    public DateTime IssuedDate { get; set; }
-    public DateTime ExpiresAt { get; private set; }
+    public DateOnly IssuedDate { get; set; }
 
     /// <summary>
-    /// US DOT medical card expiry. Applies only to US CDL holders.
+    /// Last day the licence is valid.
     /// </summary>
-    public DateTime? MedicalCertExpiresAt { get; set; }
+    public DateOnly ExpiresAt { get; private set; }
+
+    /// <summary>
+    /// US DOT medical card expiry (last valid day). Applies only to US CDL holders.
+    /// </summary>
+    public DateOnly? MedicalCertExpiresAt { get; set; }
 
     public DriverLicenseStatus Status { get; set; } = DriverLicenseStatus.Active;
 
@@ -57,7 +61,7 @@ public class DriverLicense : AuditableEntity, ITenantEntity
     /// <summary>
     /// Sets the expiry. A new expiry (a renewal or a correction) restarts the expiry reminders.
     /// </summary>
-    public void SetExpiry(DateTime expiresAt)
+    public void SetExpiry(DateOnly expiresAt)
     {
         if (expiresAt == ExpiresAt)
         {
@@ -70,9 +74,6 @@ public class DriverLicense : AuditableEntity, ITenantEntity
 
     public void RecordReminderSent(int thresholdDays) => LastReminderThresholdDays = thresholdDays;
 
-    public bool IsExpired(DateTime utcNow) =>
-        Status == DriverLicenseStatus.Expired || ExpiresAt <= utcNow;
-
     public bool HasEndorsement(LicenseEndorsement endorsement) =>
         Endorsements.HasFlag(endorsement);
 
@@ -81,11 +82,11 @@ public class DriverLicense : AuditableEntity, ITenantEntity
         string licenseNumber,
         LicenseClass licenseClass,
         string issuingCountry,
-        DateTime issuedDate,
-        DateTime expiresAt,
+        DateOnly issuedDate,
+        DateOnly expiresAt,
         LicenseEndorsement endorsements = LicenseEndorsement.None,
         string? issuingRegion = null,
-        DateTime? medicalCertExpiresAt = null,
+        DateOnly? medicalCertExpiresAt = null,
         Guid? documentId = null)
     {
         var license = new DriverLicense

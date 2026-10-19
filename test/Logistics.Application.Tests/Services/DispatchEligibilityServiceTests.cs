@@ -26,6 +26,7 @@ public class DispatchEligibilityServiceTests
     private static readonly Guid DriverId = Guid.NewGuid();
     private static readonly Guid LoadId = Guid.NewGuid();
     private static readonly Guid CustomerId = Guid.NewGuid();
+    private static readonly DateOnly Today = DateOnly.FromDateTime(DateTime.UtcNow);
 
     public DispatchEligibilityServiceTests()
     {
@@ -138,7 +139,7 @@ public class DispatchEligibilityServiceTests
     public async Task CheckAsync_LicenseExpired_Blocked()
     {
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
-            expiresAt: DateTime.UtcNow.AddDays(-1),
+            expiresAt: Today.AddDays(-1),
             status: DriverLicenseStatus.Active));
         var truck = CreateTruck(driver);
         var load = CreateLoad();
@@ -157,7 +158,7 @@ public class DispatchEligibilityServiceTests
     public async Task CheckAsync_MedicalCertExpired_Blocked()
     {
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
-            medicalCertExpiresAt: DateTime.UtcNow.AddDays(-1)));
+            medicalCertExpiresAt: Today.AddDays(-1)));
         var truck = CreateTruck(driver);
         var load = CreateLoad();
 
@@ -328,7 +329,7 @@ public class DispatchEligibilityServiceTests
     public async Task CheckAsync_USCdl_MedicalCertExpiringWithin7Days_WarningNotError()
     {
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA,
-            medicalCertExpiresAt: DateTime.UtcNow.AddDays(3)));
+            medicalCertExpiresAt: Today.AddDays(3)));
         var truck = CreateTruck(driver);
         var load = CreateLoad(originCountry: "US", destCountry: "US");
 
@@ -382,6 +383,19 @@ public class DispatchEligibilityServiceTests
         Assert.Equal(EligibilitySeverity.Error, issue.Severity);
     }
 
+    [Fact]
+    public async Task CheckAsync_LicenseExpiresToday_StillEligible()
+    {
+        var driver = CreateDriver(license: BuildLicense("US", LicenseClass.USClassA, expiresAt: Today));
+        var truck = CreateTruck(driver);
+        var load = CreateLoad();
+        WireRepos(truck, load, driver);
+
+        var result = await _sut.CheckAsync(TruckId, LoadId);
+
+        Assert.True(result.IsEligible);
+    }
+
     [Theory]
     [InlineData(EmployeeStatus.Suspended)]
     [InlineData(EmployeeStatus.Terminated)]
@@ -433,8 +447,8 @@ public class DispatchEligibilityServiceTests
         string country,
         LicenseClass cls,
         LicenseEndorsement endorsements = LicenseEndorsement.None,
-        DateTime? expiresAt = null,
-        DateTime? medicalCertExpiresAt = null,
+        DateOnly? expiresAt = null,
+        DateOnly? medicalCertExpiresAt = null,
         DriverLicenseStatus status = DriverLicenseStatus.Active)
     {
         var license = DriverLicense.Create(
@@ -442,8 +456,8 @@ public class DispatchEligibilityServiceTests
             "LIC-" + Guid.NewGuid().ToString("N")[..6],
             cls,
             country,
-            DateTime.UtcNow.AddYears(-2),
-            expiresAt ?? DateTime.UtcNow.AddYears(2),
+            Today.AddYears(-2),
+            expiresAt ?? Today.AddYears(2),
             endorsements,
             medicalCertExpiresAt: medicalCertExpiresAt);
         license.Status = status;

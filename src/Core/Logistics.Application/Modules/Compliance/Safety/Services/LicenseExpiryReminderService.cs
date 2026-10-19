@@ -41,9 +41,8 @@ internal sealed class LicenseExpiryReminderService(
 
     private async Task ProcessTenantAsync(Tenant tenant, CancellationToken ct)
     {
-        var now = DateTime.UtcNow;
-        var maxThresholdDays = ReminderDays.Max();
-        var maxDate = now.AddDays(maxThresholdDays);
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var maxDate = today.AddDays(ReminderDays.Max());
 
         var licenses = await tenantUow.Repository<DriverLicense>()
             .GetListAsync(
@@ -54,7 +53,7 @@ internal sealed class LicenseExpiryReminderService(
 
         foreach (var license in licenses)
         {
-            var daysUntilExpiry = (int)Math.Ceiling((license.ExpiresAt - now).TotalDays);
+            var daysUntilExpiry = license.ExpiresAt.DayNumber - today.DayNumber;
 
             // Pick the smallest threshold that the license is at or under.
             // e.g. 25 days â†’ uses the 30-day threshold.

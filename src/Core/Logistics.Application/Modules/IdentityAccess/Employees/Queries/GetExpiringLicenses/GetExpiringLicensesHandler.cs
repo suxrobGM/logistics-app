@@ -14,7 +14,7 @@ internal sealed class GetExpiringLicensesHandler(ITenantUnitOfWork tenantUow)
     public async Task<Result<IList<DriverLicenseDto>>> Handle(
         GetExpiringLicensesQuery req, CancellationToken ct)
     {
-        var threshold = DateTime.UtcNow.AddDays(req.WindowDays);
+        var threshold = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(req.WindowDays);
 
         var licenses = await tenantUow.Repository<DriverLicense>()
             .GetListAsync(

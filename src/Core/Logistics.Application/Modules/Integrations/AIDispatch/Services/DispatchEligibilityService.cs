@@ -72,8 +72,9 @@ internal sealed class DispatchEligibilityService(
 
         var issues = new List<EligibilityIssue>();
         var now = DateTime.UtcNow;
+        var today = DateOnly.FromDateTime(now);
 
-        var primaryLicense = SelectPrimaryLicense(driver, load, now);
+        var primaryLicense = SelectPrimaryLicense(driver, load, today);
         if (primaryLicense is null)
         {
             issues.Add(new(
@@ -83,7 +84,7 @@ internal sealed class DispatchEligibilityService(
         }
         else
         {
-            CheckLicense(primaryLicense, load, now, issues);
+            CheckLicense(primaryLicense, load, today, issues);
         }
 
         if (TruckLoadCompatibility.DescribeMismatch(truck.Number, truck.Type, load.Type) is { } typeMismatch)
@@ -123,13 +124,13 @@ internal sealed class DispatchEligibilityService(
     /// Picks the most relevant license for the load: prefer one matching the load's
     /// jurisdiction (US load â†’ US-issued license), then most recent expiry.
     /// </summary>
-    private static DriverLicense? SelectPrimaryLicense(Employee driver, Load load, DateTime now)
+    private static DriverLicense? SelectPrimaryLicense(Employee driver, Load load, DateOnly today)
     {
         var preferUs = load.OriginAddress.Country is "US" or "USA"
                        || load.DestinationAddress.Country is "US" or "USA";
 
         return driver.Licenses
-            .Where(l => l.Status == DriverLicenseStatus.Active && l.ExpiresAt > now)
+            .Where(l => l.Status == DriverLicenseStatus.Active && l.ExpiresAt >= today)
             .OrderByDescending(l => preferUs && l.IssuingCountry == "US")
             .ThenByDescending(l => l.ExpiresAt)
             .FirstOrDefault()
@@ -142,10 +143,10 @@ internal sealed class DispatchEligibilityService(
     private static void CheckLicense(
         DriverLicense license,
         Load load,
-        DateTime now,
+        DateOnly today,
         List<EligibilityIssue> issues)
     {
-        if (license.ExpiresAt <= now)
+        if (license.ExpiresAt < today)
         {
             issues.Add(new(
                 EligibilityIssueCode.LicenseExpired,
@@ -157,14 +158,14 @@ internal sealed class DispatchEligibilityService(
         if (license.MedicalCertExpiresAt.HasValue)
         {
             var medCert = license.MedicalCertExpiresAt.Value;
-            if (medCert <= now)
+            if (medCert < today)
             {
                 issues.Add(new(
                     EligibilityIssueCode.MedicalCertExpired,
                     EligibilitySeverity.Error,
                     $"DOT medical certificate expired on {medCert:yyyy-MM-dd}."));
             }
-            else if ((medCert - now).TotalDays <= MedicalCertExpiringWarningDays)
+            else if (medCert.DayNumber - today.DayNumber <= MedicalCertExpiringWarningDays)
             {
                 issues.Add(new(
                     EligibilityIssueCode.MedicalCertExpiringSoon,

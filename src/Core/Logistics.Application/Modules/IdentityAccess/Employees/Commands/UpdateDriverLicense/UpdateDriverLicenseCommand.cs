@@ -8,9 +8,9 @@ public class UpdateDriverLicenseCommand : ICommand
     public LicenseClass? LicenseClass { get; set; }
     public LicenseEndorsement[]? Endorsements { get; set; }
     public string? IssuingRegion { get; set; }
-    public DateTime? IssuedDate { get; set; }
-    public DateTime? ExpiresAt { get; set; }
-    public DateTime? MedicalCertExpiresAt { get; set; }
+    public DateOnly? IssuedDate { get; set; }
+    public DateOnly? ExpiresAt { get; set; }
+    public DateOnly? MedicalCertExpiresAt { get; set; }
     public DriverLicenseStatus? Status { get; set; }
     public Guid? DocumentId { get; set; }
 }

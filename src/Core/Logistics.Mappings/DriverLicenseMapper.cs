@@ -22,7 +22,7 @@ public static class DriverLicenseMapper
             MedicalCertExpiresAt = entity.MedicalCertExpiresAt,
             Status = entity.Status,
             DocumentId = entity.DocumentId,
-            DaysUntilExpiry = (int)(entity.ExpiresAt - DateTime.UtcNow).TotalDays
+            DaysUntilExpiry = entity.ExpiresAt.DayNumber - DateOnly.FromDateTime(DateTime.UtcNow).DayNumber
         };
     }
 }

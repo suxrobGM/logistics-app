@@ -6,7 +6,7 @@ namespace Logistics.Application.Tests.IdentityAccess.Employees;
 
 public class DriverLicenseTests
 {
-    private static readonly DateTime Expiry = new(2027, 3, 1, 0, 0, 0, DateTimeKind.Utc);
+    private static readonly DateOnly Expiry = new(2027, 3, 1);
 
     [Fact]
     public void SetExpiry_Renewed_RestartsReminders()
