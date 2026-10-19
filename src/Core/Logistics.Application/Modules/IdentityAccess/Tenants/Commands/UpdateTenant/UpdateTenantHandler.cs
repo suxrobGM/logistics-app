@@ -21,10 +21,8 @@ internal sealed class UpdateTenantHandler(
             return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
         }
 
-        tenant.Name = PropertyUpdater.UpdateIfChanged(req.Name, tenant.Name, s => s.Trim().ToLower());
         tenant.CompanyName = PropertyUpdater.UpdateIfChanged(req.CompanyName, tenant.CompanyName);
         tenant.CompanyAddress = PropertyUpdater.UpdateIfChanged(req.CompanyAddress, tenant.CompanyAddress);
-        tenant.ConnectionString = PropertyUpdater.UpdateIfChanged(req.ConnectionString, tenant.ConnectionString);
         tenant.BillingEmail = PropertyUpdater.UpdateIfChanged(req.BillingEmail, tenant.BillingEmail);
         tenant.DotNumber = PropertyUpdater.UpdateIfChanged(req.DotNumber, tenant.DotNumber);
         tenant.McNumber = PropertyUpdater.UpdateIfChanged(req.McNumber, tenant.McNumber);
@@ -35,7 +33,10 @@ internal sealed class UpdateTenantHandler(
         tenant.TaxResidencyCountry = PropertyUpdater.UpdateIfChanged(
             req.TaxResidencyCountry, tenant.TaxResidencyCountry);
         tenant.PhoneNumber = PropertyUpdater.UpdateIfChanged(req.PhoneNumber, tenant.PhoneNumber);
-        tenant.Settings = PropertyUpdater.UpdateIfChanged(req.Settings, tenant.Settings);
+        // AI enablement is admin-only; it changes through UpdateTenantAdminSettings.
+        tenant.Settings = PropertyUpdater.UpdateIfChanged(
+            req.Settings is null ? null : req.Settings with { AIEnabled = tenant.Settings.AIEnabled },
+            tenant.Settings);
 
         if (!string.IsNullOrEmpty(tenant.StripeCustomerId))
         {

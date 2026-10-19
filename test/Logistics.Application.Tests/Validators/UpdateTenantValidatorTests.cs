@@ -12,7 +12,6 @@ public class UpdateTenantValidatorTests
     private static UpdateTenantCommand BaseCommand() => new()
     {
         Id = Guid.NewGuid(),
-        Name = "acme",
         BillingEmail = "billing@acme.test",
     };
 
