@@ -256,17 +256,27 @@ internal sealed class AcceptInvitationHandler(
 
         await tenantUow.Repository<CustomerUser>().AddAsync(customerUser, ct);
 
-        // Also add UserTenantAccess entry for portal tenant selection
-        var tenantAccess = new UserTenantAccess
-        {
-            UserId = user.Id,
-            TenantId = invitation.TenantId!.Value,
-            CustomerUserId = customerUser.Id,
-            CustomerName = customer.Name,
-            IsActive = true
-        };
+        var tenantId = invitation.TenantId!.Value;
+        var accessRepository = masterUow.Repository<UserTenantAccess>();
+        var tenantAccess = await accessRepository.GetAsync(a => a.UserId == user.Id && a.TenantId == tenantId, ct);
 
-        await masterUow.Repository<UserTenantAccess>().AddAsync(tenantAccess, ct);
+        if (tenantAccess is null)
+        {
+            await accessRepository.AddAsync(new UserTenantAccess
+            {
+                UserId = user.Id,
+                TenantId = tenantId,
+                CustomerUserId = customerUser.Id,
+                CustomerName = customer.Name,
+                IsActive = true
+            }, ct);
+        }
+        else
+        {
+            tenantAccess.CustomerUserId = customerUser.Id;
+            tenantAccess.CustomerName = customer.Name;
+            tenantAccess.IsActive = true;
+        }
 
         return Result.Ok();
     }

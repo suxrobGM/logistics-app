@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.IdentityAccess.CustomerUsers.Commands;
 
-internal sealed class UpdateCustomerUserHandler(ITenantUnitOfWork tenantUow)
+internal sealed class UpdateCustomerUserHandler(ITenantUnitOfWork tenantUow, IMasterUnitOfWork masterUow)
     : IRequestHandler<UpdateCustomerUserCommand, Result>
 {
     public async Task<Result> Handle(UpdateCustomerUserCommand req, CancellationToken ct)
@@ -23,9 +23,19 @@ internal sealed class UpdateCustomerUserHandler(ITenantUnitOfWork tenantUow)
             customerUser.DisplayName = req.DisplayName;
         }
 
-        if (req.IsActive.HasValue)
+        if (req.IsActive is { } isActive && isActive != customerUser.IsActive)
         {
-            customerUser.IsActive = req.IsActive.Value;
+            customerUser.IsActive = isActive;
+
+            var tenantId = tenantUow.GetCurrentTenant().Id;
+            var access = await masterUow.Repository<UserTenantAccess>()
+                .GetAsync(a => a.TenantId == tenantId && a.CustomerUserId == customerUser.Id, ct);
+
+            if (access is not null)
+            {
+                access.IsActive = isActive;
+                await masterUow.SaveChangesAsync(ct);
+            }
         }
 
         tenantUow.Repository<CustomerUser>().Update(customerUser);
