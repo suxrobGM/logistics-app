@@ -45,9 +45,15 @@ internal sealed class DataAnonymizer(
 
     private async Task AnonymizeTenantRecordsAsync(User user, CancellationToken ct)
     {
+        var accessTenantIds = await masterUow.Repository<UserTenantAccess>()
+            .Query()
+            .Where(a => a.UserId == user.Id)
+            .Select(a => a.TenantId)
+            .ToListAsync(ct);
+
         var tenants = await masterUow.Repository<Tenant>()
             .Query()
-            .Where(t => t.Users.Any(u => u.Id == user.Id))
+            .Where(t => t.Id == user.TenantId || accessTenantIds.Contains(t.Id))
             .ToListAsync(ct);
 
         var anonymizedEmail = AnonymizedEmail(user.Id);
@@ -69,11 +75,12 @@ internal sealed class DataAnonymizer(
                     employee.DeviceToken = null;
                 }
 
-                var customerUser = await tenantUow.Repository<CustomerUser>()
+                var customerUsers = await tenantUow.Repository<CustomerUser>()
                     .Query()
-                    .FirstOrDefaultAsync(c => c.UserId == user.Id, ct);
+                    .Where(c => c.UserId == user.Id)
+                    .ToListAsync(ct);
 
-                if (customerUser is not null)
+                foreach (var customerUser in customerUsers)
                 {
                     customerUser.Email = anonymizedEmail;
                     customerUser.DisplayName = DeletedDisplayName;

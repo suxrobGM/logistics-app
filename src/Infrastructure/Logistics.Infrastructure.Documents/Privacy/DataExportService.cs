@@ -110,9 +110,15 @@ internal sealed class DataExportService(
 
     private async Task WriteTenantsDataAsync(ZipArchive archive, User user, CancellationToken ct)
     {
+        var accessTenantIds = await masterUow.Repository<UserTenantAccess>()
+            .Query()
+            .Where(a => a.UserId == user.Id)
+            .Select(a => a.TenantId)
+            .ToListAsync(ct);
+
         var tenants = await masterUow.Repository<Tenant>()
             .Query()
-            .Where(t => t.Users.Any(u => u.Id == user.Id))
+            .Where(t => t.Id == user.TenantId || accessTenantIds.Contains(t.Id))
             .ToListAsync(ct);
 
         foreach (var tenant in tenants)
@@ -138,22 +144,23 @@ internal sealed class DataExportService(
                     }, ct);
                 }
 
-                var customerUser = await tenantUow.Repository<CustomerUser>()
+                var customerUsers = await tenantUow.Repository<CustomerUser>()
                     .Query()
-                    .FirstOrDefaultAsync(c => c.UserId == user.Id, ct);
+                    .Where(c => c.UserId == user.Id)
+                    .ToListAsync(ct);
 
-                if (customerUser is not null)
+                if (customerUsers.Count > 0)
                 {
-                    await WriteJsonAsync(archive, $"{folder}/customer-user.json", new
+                    await WriteJsonAsync(archive, $"{folder}/customer-users.json", customerUsers.Select(c => new
                     {
-                        customerUser.Id,
-                        customerUser.CustomerId,
-                        customerUser.Email,
-                        customerUser.DisplayName,
-                        customerUser.IsActive,
-                        customerUser.LastLoginAt,
-                        customerUser.CreatedAt
-                    }, ct);
+                        c.Id,
+                        c.CustomerId,
+                        c.Email,
+                        c.DisplayName,
+                        c.IsActive,
+                        c.LastLoginAt,
+                        c.CreatedAt
+                    }), ct);
                 }
 
                 var notifications = await tenantUow.Repository<Notification>()
@@ -191,7 +198,7 @@ internal sealed class DataExportService(
               data-requests.json    - your past data export & deletion requests
               tenants/<name>/       - per-organization data
                 employee.json       - employee record (if applicable)
-                customer-user.json  - customer portal user (if applicable)
+                customer-users.json - customer portal users (if applicable)
                 notifications.json  - recent notifications visible to you
 
             Operational records (loads, trips, invoices, payments, audit logs)
