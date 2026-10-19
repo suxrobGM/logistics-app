@@ -1,7 +1,9 @@
 using Logistics.Application.Abstractions.Privacy;
+using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Domain.Options;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Interceptors;
+using Logistics.Infrastructure.Persistence.Reads;
 using Logistics.Infrastructure.Persistence.Services.Privacy;
 using Logistics.Infrastructure.Persistence.Services;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +49,7 @@ public static class Registrar
 
         // Privacy / GDPR
         services.AddScoped<IDataAnonymizer, DataAnonymizer>();
+        services.AddScoped<IUserTenantReader, UserTenantReader>();
 
         return new PersistenceInfrastructureBuilder(services, configuration);
     }

@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Logistics.Application.Abstractions.Tenancy;
 using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Application.Tests.TestKit;
 using Logistics.Domain.Entities;
@@ -14,6 +15,7 @@ public class UserServiceTests
 {
     private readonly IMasterUnitOfWork _masterUow = Substitute.For<IMasterUnitOfWork>();
     private readonly IServiceScopeFactory _scopeFactory = Substitute.For<IServiceScopeFactory>();
+    private readonly IUserTenantReader _userTenantReader = Substitute.For<IUserTenantReader>();
     private readonly Dictionary<Guid, (List<Employee> Employees, List<CustomerUser> CustomerUsers)> _tenantRows = [];
     private readonly List<UserTenantAccess> _accesses = [];
     private readonly List<Tenant> _tenants = [];
@@ -21,12 +23,11 @@ public class UserServiceTests
 
     public UserServiceTests()
     {
-        _masterUow.Repository<UserTenantAccess>().Query().Returns(_ => _accesses.AsQueryable());
-        _masterUow.Repository<Tenant>().GetListAsync(
-                Arg.Any<Expression<Func<Tenant, bool>>>(), Arg.Any<CancellationToken>())
-            .Returns(ci => _tenants.AsQueryable().Where(ci.Arg<Expression<Func<Tenant, bool>>>()).ToList());
+        _userTenantReader.ListAsync(Arg.Any<User>(), Arg.Any<CancellationToken>())
+            .Returns(ci => _tenants.Where(t => t.Id == ci.Arg<User>().TenantId
+                || _accesses.Any(a => a.UserId == ci.Arg<User>().Id && a.TenantId == t.Id)).ToList());
         _scopeFactory.CreateScope().Returns(_ => CreateScope());
-        _sut = new UserService(_masterUow, _scopeFactory);
+        _sut = new UserService(_masterUow, _userTenantReader, _scopeFactory);
     }
 
     [Fact]

@@ -19,6 +19,7 @@ namespace Logistics.Infrastructure.Documents.Privacy;
 internal sealed class DataExportService(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
+    IUserTenantReader userTenantReader,
     ILogger<DataExportService> logger) : IDataExportService
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -118,7 +119,7 @@ internal sealed class DataExportService(
 
     private async Task WriteTenantsDataAsync(ZipArchive archive, User user, CancellationToken ct)
     {
-        var tenants = await UserTenants.ListAsync(masterUow, user, ct);
+        var tenants = await userTenantReader.ListAsync(user, ct);
 
         foreach (var tenant in tenants)
         {

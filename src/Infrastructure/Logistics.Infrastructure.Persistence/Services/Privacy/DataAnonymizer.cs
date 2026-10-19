@@ -18,6 +18,7 @@ internal sealed class DataAnonymizer(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     UserManager<User> userManager,
+    IUserTenantReader userTenantReader,
     ILogger<DataAnonymizer> logger) : IDataAnonymizer
 {
     private const string DeletedFirstName = "Deleted";
@@ -46,7 +47,7 @@ internal sealed class DataAnonymizer(
 
     private async Task AnonymizeTenantRecordsAsync(User user, CancellationToken ct)
     {
-        var tenants = await UserTenants.ListAsync(masterUow, user, ct);
+        var tenants = await userTenantReader.ListAsync(user, ct);
 
         var anonymizedEmail = AnonymizedEmail(user.Id);
 

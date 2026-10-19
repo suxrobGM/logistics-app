@@ -8,6 +8,7 @@ namespace Logistics.Application.Modules.IdentityAccess.Users.Services;
 
 public class UserService(
     IMasterUnitOfWork masterUow,
+    IUserTenantReader userTenantReader,
     IServiceScopeFactory scopeFactory) : IUserService
 {
     public async Task<bool> UpdateUserAsync(UpdateUserParams userParams, CancellationToken ct = default)
@@ -34,7 +35,7 @@ public class UserService(
 
     public async Task SyncTenantProfilesAsync(User user, CancellationToken ct = default)
     {
-        foreach (var tenant in await UserTenants.ListAsync(masterUow, user, ct))
+        foreach (var tenant in await userTenantReader.ListAsync(user, ct))
         {
             // A scope per tenant: Employee ids are user ids, so one context would hand back the previous
             // tenant's tracked row from FindAsync.
