@@ -69,6 +69,20 @@ public class AssignLoadToTruckHandlerTests
         Assert.Null(load.AssignedTruckId);
     }
 
+    [Fact]
+    public async Task Handle_LoadOnTrip_FailsWithoutSaving()
+    {
+        var (load, truck) = Wire(LoadType.GeneralFreight, TruckType.FreightTruck);
+        var trip = Trip.Create("Trip", null, [load]);
+        load.TripStops.Add(trip.Stops[0]);
+
+        var result = await _sut.Handle(new AssignLoadToTruckCommand { LoadId = load.Id, TruckId = truck.Id }, default);
+
+        Assert.Contains("Change the trip's truck instead.", result.Error);
+        Assert.Null(load.AssignedTruckId);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
     private (Load Load, Truck Truck) Wire(LoadType loadType, TruckType truckType)
     {
         var load = LoadInvoiceChargesTests.NewLoad();

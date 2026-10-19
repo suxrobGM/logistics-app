@@ -18,6 +18,12 @@ internal sealed class AssignLoadToTruckHandler(ITenantUnitOfWork tenantUow) : IR
             return Result.Fail($"Load not found with ID '{req.LoadId}'");
         }
 
+        if (req.TruckId != load.AssignedTruckId && load.TripStops.FirstOrDefault() is { } stop)
+        {
+            return Result.Fail(
+                $"Load #{load.Number} is on trip #{stop.Trip.Number}, which sets its truck. Change the trip's truck instead.");
+        }
+
         if (req.TruckId is { } truckId)
         {
             var truck = await tenantUow.Repository<Truck>().GetByIdAsync(truckId, ct);

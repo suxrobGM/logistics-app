@@ -171,6 +171,12 @@ internal sealed class UpdateLoadHandler(
             return false;
         }
 
+        if (loadEntity.TripStops.FirstOrDefault() is { } stop)
+        {
+            throw new InvalidOperationException(
+                $"Load #{loadEntity.Number} is on trip #{stop.Trip.Number}, which sets its truck. Change the trip's truck instead.");
+        }
+
         // Use domain method which raises LoadAssignedToTruckEvent for notifications
         loadEntity.AssignToTruck(truck);
         return true;

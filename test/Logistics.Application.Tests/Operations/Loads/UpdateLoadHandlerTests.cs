@@ -161,6 +161,28 @@ public class UpdateLoadHandlerTests
 
     #endregion
 
+    #region Truck
+
+    [Fact]
+    public async Task Handle_TruckChangeOnLoadOnTrip_Fails()
+    {
+        var load = Load(LoadType.GeneralFreight);
+        var trip = Trip.Create("Trip", null, [load]);
+        load.TripStops.Add(trip.Stops[0]);
+        var truck = new Truck { Number = "T-2", Type = TruckType.FreightTruck };
+        var truckRepo = Substitute.For<ITenantRepository<Truck, Guid>>();
+        truckRepo.GetByIdAsync(truck.Id).Returns(truck);
+        _tenantUow.Repository<Truck>().Returns(truckRepo);
+
+        var result = await Update(new UpdateLoadCommand { Id = load.Id, AssignedTruckId = truck.Id });
+
+        Assert.Contains("Change the trip's truck instead.", result.Error);
+        Assert.Null(load.AssignedTruckId);
+        await _tenantUow.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    #endregion
+
     private Task<Result> Update(UpdateLoadCommand command) => _sut.Handle(command, CancellationToken.None);
 
     private Load Load(LoadType type)
